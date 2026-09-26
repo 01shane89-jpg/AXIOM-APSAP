@@ -131,8 +131,10 @@ try {
 } catch (e) { console.error("GDACS failed:", e.message); }
 
 // ReliefWeb: newest humanitarian reports per country (situation reports, flash updates, maps). Documents, not events.
-const RW = "https://api.reliefweb.int/v2/reports?appname=" + encodeURIComponent(process.env.RELIEFWEB_APPNAME || "axiom-asap");
-try {
+// Off unless RELIEFWEB_APPNAME is set: from 2026-09 the API answers 403 without an appname approved by ReliefWeb (a
+// registration), and its RSS feed answers GitHub's servers with an empty 202 challenge. Both confirmed on 2026-09-26.
+const RW = "https://api.reliefweb.int/v2/reports?appname=" + encodeURIComponent(process.env.RELIEFWEB_APPNAME || "");
+if (process.env.RELIEFWEB_APPNAME) try {
   const iso = [...new Set(Object.values(ISO3))];
   const body = { limit: 1000, sort: ["date.created:desc"], preset: "latest",
     filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
