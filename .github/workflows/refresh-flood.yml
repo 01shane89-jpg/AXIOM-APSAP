@@ -35,22 +35,12 @@ jobs:
       - name: Pull official weather warnings and translate them
         run: node tools/refresh_warnings.mjs
         continue-on-error: true
-        env:
-          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
       - name: Pull local news (GDELT and national outlets) and translate headlines
         run: node tools/refresh_news.mjs
         continue-on-error: true
-        env:
-          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
       - name: Pull official and established social media accounts
         run: node tools/refresh_social.mjs
         continue-on-error: true
-        env:
-          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
-          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
-          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
       - name: Commit if a snapshot changed
         run: |
           git add -N data/live
