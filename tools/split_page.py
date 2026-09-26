@@ -56,7 +56,8 @@ PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-
 PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) '
             'window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):
-    page = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+    page = ('<!doctype html>\n<html lang="en" translate="no"><head><meta charset="utf-8">'
+            '<meta name="google" content="notranslate"><meta http-equiv="content-language" content="en">'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + PWA_HEAD + '</head><body>\n' + page + "\n" + PWA_TAIL + "\n</body></html>\n")
 open("index.html", "w", encoding="utf-8").write(page)
 
