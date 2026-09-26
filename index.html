@@ -130,6 +130,7 @@ html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:no
 .breport ul{margin:2px 0 2px 16px;padding:0}
 @media (max-width:640px){.breport .rgrid{grid-template-columns:1fr}.breport ol.rsrc{column-count:1}}
 @media print{html.briefing .breport{break-before:page;page-break-before:always;margin-top:0;font-size:8.6px;line-height:1.28}html.briefing .breport .rdraft{padding:2px 5px}html.briefing .breport h3{margin:4px 0 1px}html.briefing .breport td{padding:1px 3px}html.briefing .breport ol.rsrc{font-size:7.4px;line-height:1.2;column-count:3}html.briefing .breport header h2{font-size:16px}}
+.tlrow.hasthumb{display:grid;grid-template-columns:96px 1fr;column-gap:10px}.tlrow.hasthumb>.ytthumb{grid-row:1/4;width:96px;height:54px;object-fit:cover;border-radius:3px;background:var(--surface2)}.tlrow.hasthumb>span{grid-column:2}
 .bpage a.bl{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}.bpage a.bl:hover{color:#12324a;border-bottom-style:solid}.bpage h3 a.bl{color:#12324a}
 .bpage .po{display:none}.bpage sup.po{font-size:.75em;color:#555;margin-left:1px}.bpage .bsrcs{margin-top:4px;font-size:8px;line-height:1.25;color:#444;column-count:2;column-gap:12px;overflow-wrap:anywhere}.bpage .bsrcs b{font-weight:600}
 @media print{.bpage sup.po{display:inline}.bpage div.po{display:block}.bpage a.bl{border-bottom:0}}
@@ -3676,6 +3677,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Emergencies: IFRC GO. Internet outages: IODA (Georgia Tech). Piracy reports: ReCAAP ISC (titles and links only).']]],
     ["News, posts and reference", [
       ['Headlines and posts belong to the outlets and accounts named on each item; OSAP shows the headline, a short extract and a link.'],
+      ['Videos: titles, dates and thumbnails come from each YouTube channel&rsquo;s public feed; every video belongs to its channel and plays on YouTube. YouTube is a trademark of Google LLC.'],
       ['Machine translation: MADLAD-400 (Google, Apache-2.0), run in OSAP&rsquo;s refresh job, and MyMemory. Every translation is marked and keeps the original.'],
       ['Airports: <a href="https://ourairports.com/">OurAirports</a> (public domain). Seaports: UN/LOCODE (UNECE). Some facts and coordinates cite Wikipedia (CC BY-SA 4.0).'],
       ['Fonts: IBM Plex (SIL Open Font License).']]]];
@@ -4097,7 +4099,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
         derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
-        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof };
+        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -4204,13 +4207,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
-        return '<button type="button" class="tlrow" data-openrec="' + esc(r.id) + '"><span class="tlt">' + esc(fmtTs(r)) + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
+        return '<button type="button" class="tlrow' + (r.thumb ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (r.thumb ? '<img class="ytthumb" src="' + esc(r.thumb) + '" alt="" loading="lazy" width="96" height="54">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
     railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the GitHub job every 15 minutes once the app is hosted.",
-      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky and Telegram. Every post is that account's claim.");
+      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky, Telegram and YouTube. Every post is that account's claim. Videos open on YouTube.");
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
