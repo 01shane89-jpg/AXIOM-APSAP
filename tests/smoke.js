@@ -15,7 +15,7 @@ const { chromium } = require(process.env.PW || 'playwright');
   });
   const url = 'file://' + path.resolve(__dirname, '..', 'index.html');
   let failed = false;
-  for (const cc of ['th','vn','kh','la','mm','ph','my','sg','id','bn','tl','cn','tw','kp','kr','jp','oki','mn','au','nz','pg']) {
+  for (const cc of ['th','vn','kh','la','mm','ph','my','sg','id','bn','tl','cn','tw','kp','kr','jp','oki','mn','au','nz','pg','in','pk','np','bt','bd','lk','mv']) {
     await p.goto('about:blank'); await p.goto(url + '#' + (cc === 'th' ? '' : cc + '/') + 'timeline'); await p.waitForTimeout(1200);
     const n = await p.evaluate(() => window.TSAP ? TSAP.records.length : -1);
     const views = await p.$$eval('#view-seg button', bs => bs.map(x => x.dataset.view));
