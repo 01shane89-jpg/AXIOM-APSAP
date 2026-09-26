@@ -1,0 +1,2692 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<title>AXIOM APSAP</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>.leaflet-image-layer,.leaflet-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane,.leaflet-pane>canvas,.leaflet-pane>svg,.leaflet-tile,.leaflet-tile-container,.leaflet-zoom-box{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:0 0}.leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0}.leaflet-marker-icon,.leaflet-marker-shadow{display:block}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer{max-width:none!important;max-height:none!important;width:auto;padding:0}.leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none}.leaflet-container{-webkit-tap-highlight-color:transparent}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,.4)}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800}.leaflet-overlay-pane svg{-moz-user-select:none}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto}.leaflet-bottom,.leaflet-top{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0}svg.leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-pan-anim .leaflet-tile,.leaflet-zoom-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-control,.leaflet-popup-pane{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-image-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-image-layer.leaflet-interactive,.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-container{background:#ddd;outline-offset:1px}.leaflet-container a{color:#0078a8}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,.5)}.leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:.75rem;line-height:1.5}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:#000}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block}.leaflet-bar a:focus,.leaflet-bar a:hover{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-toggle{background-image:url(images/layers.png);width:36px;height:36px}.leaflet-retina .leaflet-control-layers-toggle{background-image:url(images/layers-2x.png);background-size:26px 26px}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-default-icon-path{background-image:url(images/marker-icon.png)}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.8);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4}.leaflet-control-attribution a{text-decoration:none}.leaflet-control-attribution a:focus,.leaflet-control-attribution a:hover{text-decoration:underline}.leaflet-attribution-flag{display:inline!important;vertical-align:baseline!important;width:1em;height:.6669em}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,.8);text-shadow:1px 1px #fff}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers{box-shadow:none}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-layers{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px}.leaflet-popup-content p{margin:17px 0;margin:1.3em 0}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:0 0}.leaflet-container a.leaflet-popup-close-button:focus,.leaflet-container a.leaflet-popup-close-button:hover{color:#585858}.leaflet-popup-scrolled{overflow:auto}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto}.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999}.leaflet-div-icon{background:#fff;border:1px solid #666}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before,.leaflet-tooltip-top:before{position:absolute;pointer-events:none;border:6px solid transparent;background:0 0;content:""}.leaflet-tooltip-bottom{margin-top:6px}.leaflet-tooltip-top{margin-top:-6px}.leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px}.leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff}.leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff}.leaflet-tooltip-left{margin-left:-6px}.leaflet-tooltip-right{margin-left:6px}.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px}.leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff}.leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff}@media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style>
+<style>
+:root{
+  --paper:#EDF0EC; --surface:#FFFFFF; --surface2:#F5F7F4;
+  --ink:#121A15; --muted:#5C6B60; --line:#D2D9D1; --line-soft:#E3E8E1;
+  --accent:#18596B; --accent-soft:#DCE9EC;
+  --l3:#9E3118; --l2:#C2792B; --l1:#93A395;
+  --l3-fill:#9E3118; --l2-fill:#C2792B; --l1-fill:#8FA394;
+  --over:#A32617; --near:#C2792B; --calm:#8C9A90;
+  --rain:#3E9CBE; --power:#6B3FA0; --care:#0F7B6C; --util:#B0641E;
+  --sat-flood:#D01418; --sat-recur:#B79A00; --sat-water:#1799B8;
+  --shadow:0 1px 2px rgba(18,26,21,.06),0 6px 18px rgba(18,26,21,.06);
+  --base-filter:brightness(1);
+  --base-bright:1;
+}
+/* Themes are chosen with our own [data-map] attribute, never [data-theme]:
+   the artifact host owns that one and re-stamps it, which silently reverted
+   any choice made here. Three explicit steps, no OS following. */
+:root[data-map="grey"]{
+  --paper:#5A625C; --surface:#6B736D; --surface2:#616A63;
+  --ink:#FAFCFA; --muted:#D3DAD4; --line:#848C86; --line-soft:#767E78;
+  --accent:#9FE7F5; --accent-soft:#48565A;
+  --l3:#FF9F84; --l2:#F5C877; --l1:#B6C2B8;
+  --l3-fill:#FF9F84; --l2-fill:#F5C877; --l1-fill:#BCC7BE;
+  --over:#FF8A66; --near:#F5C877; --calm:#C3CCC5;
+  --rain:#A6E6F7; --power:#C9A9FF; --care:#7FE3D0; --util:#FFC489;
+  --sat-flood:#FF8A8E; --sat-recur:#FFF07A; --sat-water:#9DEEFF;
+  --shadow:0 1px 2px rgba(0,0,0,.22),0 6px 18px rgba(0,0,0,.18);
+  --base-filter:grayscale(.35) brightness(.94) contrast(1.04);
+}
+:root[data-map="dark"]{
+  --paper:#1C2620; --surface:#243029; --surface2:#2D3A33;
+  --ink:#F0F5F0; --muted:#AEBFB3; --line:#3D4C43; --line-soft:#324038;
+  --accent:#79D2E4; --accent-soft:#1B3E49;
+  --l3:#F0866A; --l2:#EDB863; --l1:#7B8F82;
+  --l3-fill:#F0866A; --l2-fill:#EDB863; --l1-fill:#85998B;
+  --over:#FF7D60; --near:#EDB863; --calm:#7C8F84;
+  --rain:#79D2E4; --power:#B79BFF; --care:#5FD9C4; --util:#FFBE7D;
+  --sat-flood:#FF7C80; --sat-recur:#F7E86A; --sat-water:#7FE6FF;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 20px rgba(0,0,0,.3);
+  --base-filter:brightness(1.45) saturate(.9);
+}
+
+html,body{height:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;margin:0;text-wrap:balance}
+.mono,.n{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+
+header{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:900;
+  background:var(--surface); border-bottom:1px solid var(--line);
+  padding-block:10px; padding-inline:16px;
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px;
+}
+header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.live{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--near);flex:none}
+.dot.on{background:#1F8A4C}
+.live{flex-wrap:wrap}
+.hdrchk{text-transform:none;letter-spacing:0}
+#hdr-refresh{padding:3px 10px;font-size:11.5px;text-transform:none;letter-spacing:0}
+.live b{color:var(--ink);font-weight:600;letter-spacing:0;text-transform:none;font-size:12.5px}
+.srcline{margin-left:auto;font-size:11.5px;color:var(--muted)}
+
+.shell{display:grid;grid-template-columns:1fr 372px;gap:0}
+@media (max-width:920px){.shell{grid-template-columns:1fr}}
+#map{width:100%;height:calc(100svh - 64px);min-height:430px;background:var(--surface2)}
+@media (max-width:920px){#map{height:60svh;min-height:340px}}
+.rail{
+  border-left:1px solid var(--line); background:var(--surface);
+  overflow-y:auto; max-height:calc(100svh - 64px);
+  padding-block:0 28px; padding-inline:16px;
+}
+@media (max-width:920px){.rail{border-left:none;border-top:1px solid var(--line);max-height:none}}
+
+.sec{padding-block:16px;border-bottom:1px solid var(--line-soft)}
+.sec:last-child{border-bottom:none}
+.sec>h2{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.sec>h2+.sub{font-size:11.5px;color:var(--muted);margin:0 0 10px;line-height:1.4}
+
+code.fp{font-family:var(--mono,ui-monospace,monospace);font-size:11px;word-break:break-all;color:var(--ink)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+.kpi{background:var(--surface);padding:10px 11px}
+.kpi .v{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .v.hot{color:var(--over)}
+.kpi .u{font-size:11px;color:var(--muted);font-weight:500}
+.kpi .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;line-height:1.3}
+
+.ctl{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:13px}
+.ctl input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;margin:2px 0 0;flex:none}
+.ctl label{cursor:pointer;flex:1}
+.ctl .hint{font-size:11px;color:var(--muted);display:block;line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
+.sub2{padding-left:24px;margin-bottom:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-left:24px}
+.seg button{
+  font:inherit;font-size:11.5px;padding:3px 9px;border:none;cursor:pointer;
+  background:var(--surface);color:var(--muted);font-family:"IBM Plex Mono",monospace;
+}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+
+.lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
+.sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
+.sw.round{border-radius:50%}
+.lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
+
+.rows{display:flex;flex-direction:column}
+.row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;
+  padding:7px 0;border-top:1px solid var(--line-soft);cursor:pointer;
+}
+.row:first-child{border-top:none}
+.row:hover{background:var(--surface2)}
+.row .d1{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:var(--over);font-variant-numeric:tabular-nums}
+.row .d1.rainv{color:var(--rain)}
+.row .nm{font-size:13px;overflow:hidden;text-overflow:ellipsis}
+.row .pl{grid-column:2/4;font-size:11.5px;color:var(--muted);margin-top:-2px}
+.row .bar{grid-column:1/4;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-top:4px}
+.row .bar i{display:block;height:100%;background:var(--over);opacity:.75}
+.row .bar i.rainb{background:var(--rain)}
+
+.warn{padding:8px 0;border-top:1px solid var(--line-soft);font-size:12.5px;line-height:1.45}
+.warn:first-of-type{border-top:none}
+.warn .wt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+.warn ul{margin:3px 0 0;padding-left:16px}
+.warn li{margin-bottom:2px}
+.warn .th{display:block;margin-top:4px;font-size:11px;color:var(--muted);line-height:1.4}
+details>summary{cursor:pointer;font-size:11.5px;color:var(--muted);list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"\25B8 ";display:inline-block;transition:transform .15s}
+details[open]>summary::before{content:"\25BE "}
+
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{text-align:right;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;
+   color:var(--muted);padding:0 0 5px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:5px 0;border-bottom:1px solid var(--line-soft);text-align:right;white-space:nowrap}
+td:first-child{padding-right:10px;white-space:normal}
+th+th,td+td{padding-left:10px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--surface2)}
+.obs{color:var(--muted);font-size:11.5px}
+
+.note{font-size:12px;color:var(--muted);line-height:1.5}
+.note p{margin:0 0 7px}
+.note p:last-child{margin-bottom:0}
+.note b{color:var(--ink);font-weight:600}
+ul.src{list-style:none;margin:0;padding:0;font-size:12px}
+ul.src li{padding:3px 0;border-bottom:1px solid var(--line-soft)}
+ul.src li:last-child{border-bottom:none}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.banner{
+  margin-top:9px;padding:7px 9px;border-radius:3px;background:var(--accent-soft);
+  color:var(--ink);font-size:11.5px;line-height:1.4;border-left:3px solid var(--accent);
+}
+.banner[hidden]{display:none}
+button.refresh{
+  font:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:3px;
+  background:var(--surface);color:var(--ink);cursor:pointer;
+}
+button.refresh:hover{background:var(--surface2)}
+button.refresh[disabled]{opacity:.55;cursor:default}
+button.refresh.primary{
+  background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;
+  font-size:12.5px;padding:6px 14px;
+}
+button.refresh.primary:hover{filter:brightness(1.08)}
+.refbar{display:flex;align-items:center;gap:9px;margin-top:11px;flex-wrap:wrap}
+.badge{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em;
+  padding:3px 7px;border-radius:2px;border:1px solid currentColor;
+}
+.badge.live{color:#1F8A4C;background:rgba(31,138,76,.1)}
+.badge.stale{color:var(--near);background:rgba(194,121,43,.1)}
+.badge.working{color:var(--muted);background:transparent}
+select.mini{
+  font:inherit;font-size:11.5px;font-family:"IBM Plex Mono",monospace;padding:3px 5px;
+  border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink);
+}
+
+.leaflet-container{background:var(--surface2);font-family:inherit}
+.basefilter{filter:var(--base-filter) brightness(var(--base-bright,1))}
+.leaflet-control-zoom a{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 88%,transparent)!important;color:var(--muted)!important;font-size:10px!important}
+.leaflet-control-attribution a{color:var(--muted)!important}
+.leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
+.plabel{
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-size:10.5px;font-weight:600;color:var(--ink);
+  white-space:nowrap;text-align:center;line-height:14px;pointer-events:none;
+  text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 5px var(--paper),0 0 5px var(--paper);
+}
+.leaflet-popup-content-wrapper{background:var(--surface);color:var(--ink);border-radius:3px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.leaflet-popup-tip{background:var(--surface);border:1px solid var(--line)}
+.leaflet-popup-content{margin:11px 13px;font-size:13px;line-height:1.5;min-width:215px}
+.leaflet-popup-close-button{color:var(--muted)!important}
+.pop h3{font-size:15px;font-weight:700;margin-bottom:1px}
+.pop .tier{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:6px}
+.pop .why{color:var(--muted);font-size:12px;margin-bottom:8px}
+.pop dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:12px}
+.pop dt{color:var(--muted)}
+.pop dd{margin:0;text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- view tabs + border view ---------- */
+.viewtabs{display:inline-flex;gap:2px;background:var(--surface2);border:1px solid var(--line);border-radius:4px;padding:2px}
+.viewtabs button{
+  font:inherit;font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 11px;border:none;border-radius:3px;
+  background:transparent;color:var(--muted);cursor:pointer;font-family:"IBM Plex Sans Condensed",sans-serif;
+}
+.viewtabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.viewtabs button:hover{color:var(--ink)}
+.live[hidden]{display:none}
+.flash{width:9px;height:9px;margin:2px;background:var(--ink);transform:rotate(45deg);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--ink)}
+.xing{width:8px;height:8px;margin:1px;background:var(--surface);border:2.5px solid var(--over)}
+.sitelabel{text-align:left!important;font-size:10.5px}
+.sitelabels-off .sitelabel{display:none}
+.fac{margin:2px;border:1.6px solid;border-radius:1px;box-shadow:0 0 0 1px var(--surface)}
+#phase-seg{margin:2px 0 0 24px}
+#phase-seg button{padding:3px 7px}
+.pbdate{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:4px 0 2px}
+.pbdate b{font-family:"IBM Plex Mono",monospace;font-size:17px;font-variant-numeric:tabular-nums}
+.pbends{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10.5px}
+.abadge{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;padding:0 5px;border-radius:8px;margin-left:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
+.abadge.new{background:var(--over);color:#fff;border-color:var(--over)}
+.alrow{border-left:3px solid transparent;padding-left:8px}
+.alrow.sev3{border-left-color:var(--over)}
+.alrow.sev2{border-left-color:var(--near)}
+.newtag{color:var(--over);font-weight:700;letter-spacing:.06em}
+.chip.rule{color:var(--accent);border-color:var(--accent)}
+.rule{padding:4px 0;border-top:1px solid var(--line-soft)}
+.rule:first-child{border-top:none}
+.rthr{display:flex;align-items:center;gap:8px;margin:0 0 4px}
+.rthr input{width:80px}
+.alwait{margin:0;padding-left:18px;font-size:12.5px}
+.alwait li{margin-bottom:3px}
+.mbars{display:flex;align-items:flex-end;gap:3px;height:96px;padding-top:14px}
+.mb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.mb i{display:block;width:100%;background:var(--over);opacity:.8;border-radius:1px 1px 0 0;min-height:1px}
+.mbv{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mbl{font-size:9.5px;color:var(--muted);margin-top:3px}
+.chip.k{color:var(--ink)}
+/* ---------- AXIOM TSAP additions ---------- */
+header .ctabs{order:9;flex:1 1 100%;display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+.ctabs button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;white-space:nowrap;flex:none}
+.ctabs button:hover{color:var(--ink)}
+.ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctabs button .n{font-weight:500;opacity:.75;margin-left:5px;font-size:11px}
+header .viewtabs{order:10;flex:1 1 100%;display:flex;overflow-x:auto;scrollbar-width:thin}
+header .viewtabs button{white-space:nowrap;flex:none}
+header .viewtabs button.stub{color:color-mix(in srgb,var(--muted) 70%,transparent);font-weight:500}
+header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
+.brand{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+#map{height:calc(100svh - var(--hdr-h,64px))}
+.rail{max-height:calc(100svh - var(--hdr-h,64px))}
+@media (max-width:920px){#map{height:60svh}.rail{max-height:none}}
+.tlf{display:grid;grid-template-columns:auto 1fr;gap:5px 9px;align-items:center;font-size:11.5px;color:var(--muted)}
+.tlf .mini{width:100%;min-width:0;box-sizing:border-box}
+.tllist{display:flex;flex-direction:column;margin-top:8px}
+.tlrow{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr;gap:1px;padding:7px 4px;border-top:1px solid var(--line-soft);cursor:pointer;width:100%}
+.tlrow:hover{background:var(--surface2)}
+.tlrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tlt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tln{font-size:13px;line-height:1.35}
+.tlm{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:2px}
+.tls{font-size:11px;color:var(--muted)}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:2px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.l-flood{color:var(--rain);border-color:var(--rain)}
+.chip.l-border{color:var(--over);border-color:var(--over)}
+.chip.st{color:var(--near);border-color:var(--near)}
+.chip.sev3{color:var(--over)}
+.pkghead{display:flex;align-items:center}
+.pkghead h2{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:0}
+.pkghead .x{margin-left:auto;font:inherit;font-size:18px;line-height:1;background:none;border:none;color:var(--muted);cursor:pointer;padding:0 4px}
+.pkgt{font-size:16px;font-weight:700;margin:6px 0 6px}
+.pkgchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.pkgd{font-size:12.5px;margin:0 0 8px;line-height:1.5}
+.pkgh{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+.pkgdl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px}
+.pkgdl dt{color:var(--muted)}
+.pkgdl dd{margin:0}
+.sub{display:block;font-size:11px;color:var(--muted);line-height:1.35}
+#tl-pkg{border:1px solid var(--accent);border-radius:3px;padding:12px;margin-top:12px;background:var(--surface)}
+table.reg td{white-space:normal;text-align:left;vertical-align:top}
+table.reg td.n{text-align:right}
+table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header>
+  <nav class="ctabs" id="country-seg" aria-label="Country"></nav>
+  <nav class="viewtabs" id="view-seg" role="tablist" aria-label="Layer"></nav>
+  <span class="brand">AXIOM APSAP</span>
+  <h1 id="hdr-title">Flood</h1>
+  <div class="live" id="hdr-live"><span class="dot" id="hdr-dot"></span> Flood data as of <b id="hdr-asof">&mdash;</b> <span class="badge stale" id="hdr-state">SNAPSHOT</span> <span class="hdrchk" id="hdr-checked"></span> <button type="button" class="refresh" id="hdr-refresh">Refresh</button></div>
+  <div class="seg" id="theme-seg" role="group" aria-label="Map theme" style="margin-left:auto">
+    <button type="button" data-theme-set="light" aria-pressed="true">Light</button>
+    <button type="button" data-theme-set="grey" aria-pressed="false">Grey</button>
+    <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+  </div>
+  <div class="srcline" id="hdr-src" style="margin-left:0">thaiwater.net &middot; NASA MODIS &middot; GISTDA &middot; Esri</div>
+</header>
+
+<div class="shell">
+  <div id="map"></div>
+  <aside class="rail">
+  <div id="rail-flood">
+
+    <div class="sec">
+      <h2>Right now</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="v hot" id="k-over">&mdash;</div><div class="k">Gauges above their bank</div></div>
+        <div class="kpi"><div class="v hot" id="k-max">&mdash;<span class="u"> m</span></div><div class="k">Deepest overflow</div></div>
+        <div class="kpi"><div class="v" id="k-sub">&mdash;</div><div class="k">Subdistricts with flood water</div></div>
+        <div class="kpi"><div class="v" id="k-hh">&mdash;</div><div class="k">Households where satellite saw water</div></div>
+      </div>
+      <div class="refbar">
+        <button class="refresh primary" id="btn-refresh">Refresh now</button>
+        <span class="badge stale" id="live-badge">SNAPSHOT</span>
+        <label for="every" class="obs" style="margin-left:auto">Auto</label>
+        <select id="every" class="mini">
+          <option value="5">5 min</option>
+          <option value="15" selected>15 min</option>
+          <option value="30">30 min</option>
+          <option value="0">off</option>
+        </select>
+      </div>
+      <p class="obs" id="refresh-msg" style="margin:8px 0 0"></p>
+      <div class="banner" id="offline-note" hidden></div>
+    </div>
+
+    <div class="sec">
+      <h2>Map layers</h2>
+      <div class="ctl"><input type="checkbox" id="lyr-expo" checked><label for="lyr-expo">Areas with flood water<span class="hint">Subdistricts where a gauge is over its bank or satellite saw water</span></label></div>
+      <div class="ctl"><input type="checkbox" id="lyr-infra" checked><label for="lyr-infra">Power &amp; hospitals in the water<span class="hint">Grid assets and hospitals inside the flooded subdistricts</span></label></div>
+      <div class="ctl"><input type="checkbox" id="lyr-gauge" checked><label for="lyr-gauge">Live river gauges<span class="hint">Telemetry stations, hourly</span></label></div>
+      <div class="ctl sub2" style="padding-left:24px"><input type="checkbox" id="lyr-allg"><label for="lyr-allg" style="font-size:12px">Include gauges well below bank</label></div>
+      <div class="ctl"><input type="checkbox" id="lyr-rain" checked><label for="lyr-rain">Rain in the last 24 h<span class="hint">Stations above 60 mm</span></label></div>
+      <div class="ctl"><input type="checkbox" id="lyr-flood" checked><label for="lyr-flood">Satellite water detection<span class="hint">NASA MODIS, 3-day composite</span></label></div>
+      <div class="seg" role="group" aria-label="Satellite composite date">
+        <button type="button" id="d24" aria-pressed="true">to 24 Sep</button>
+        <button type="button" id="d25" aria-pressed="false">to 25 Sep</button>
+      </div>
+      <div class="sub2"><input type="range" id="op-flood" min="20" max="100" value="100" aria-label="Satellite layer opacity"></div>
+      <div class="ctl"><input type="checkbox" id="lyr-base" checked><label for="lyr-base">Esri basemap</label></div>
+      <div class="sub2">
+        <label for="op-bright" style="font-size:11px;color:var(--muted)">Basemap brightness</label>
+        <input type="range" id="op-bright" min="70" max="175" value="100" aria-label="Basemap brightness">
+      </div>
+      <div class="ctl"><input type="checkbox" id="lyr-prov"><label for="lyr-prov">Provincial alert level<span class="hint">DDPM, RID, ONWR and GISTDA bulletins, 21&ndash;25 Sep</span></label></div>
+    </div>
+
+    <div class="sec">
+      <h2>Legend</h2>
+      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Gauge above its bank<span class="d">Circle grows with the depth over the bank</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Rain station, 24 h total<span class="d">Circle grows from 60 mm up</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--power);border-radius:3px"></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--care);border-radius:3px"></span><div>Hospital in the flood footprint</div></div>
+      <div class="lg"><span class="sw" style="background:var(--util);border-radius:3px"></span><div>Water works in the flood footprint</div></div>
+      <div class="lg"><span class="sw" style="background:var(--over);opacity:.45"></span><div>Subdistrict by an overflowing gauge</div></div>
+      <div class="lg"><span class="sw" style="background:var(--sat-water);opacity:.45"></span><div>Subdistrict with satellite-seen water</div></div>
+      <div class="lg" style="margin-top:8px"><span class="sw" style="background:#FA1E24"></span><div>Flood (MODIS)<span class="d">Water where the sensor does not normally see any</span></div></div>
+      <div class="lg"><span class="sw" style="background:#FFFF00"></span><div>Recurring flood</div></div>
+      <div class="lg"><span class="sw" style="background:#32D2F5"></span><div>Surface water</div></div>
+      <div class="lg"><span class="sw" style="background:#AFAFAF;opacity:.35"></span><div>No clear view<span class="d">Cloud covered the whole 3-day window</span></div></div>
+    </div>
+
+    <div class="sec">
+      <h2>Water over the bank</h2>
+      <p class="sub" id="over-sub">&mdash;</p>
+      <div class="rows" id="over-list"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Heaviest rain, last 24 h</h2>
+      <p class="sub">Telemetry stations reporting to the national network.</p>
+      <div class="rows" id="rain-list"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Official warnings</h2>
+      <p class="sub">Issued by the Hydro-Informatics Institute. English is a structured reading of the Thai bulletin.</p>
+      <div id="warn-list"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Power &amp; hospitals in the water</h2>
+      <p class="sub" id="infra-sub">&mdash;</p>
+      <div class="rows" id="infra-list"></div>
+      <p class="note" style="margin-top:9px">No live outage feed exists for Thailand that is reachable from outside the country &mdash; PEA&rsquo;s outage map is geo-blocked and MEA refuses connections. These are assets whose mapped location falls inside a flooded subdistrict: <b>exposure, not reported outages</b>. Positions come from OpenStreetMap, which is community-mapped and uneven, so absence here means nothing.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Homes in the water</h2>
+      <p class="sub" id="expo-sub">&mdash;</p>
+      <div class="tw"><table id="expo-tab">
+        <thead><tr><th>Province</th><th>Subdist.</th><th>Households</th><th>People</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+
+    <div class="sec">
+      <h2>How to read this</h2>
+      <div class="note">
+        <p><b>Households are who lives there, not whose floor is wet.</b> The counts are the registered households inside subdistricts where flood water is present. They are not a damage assessment, and no official per-house damage figure exists for this event yet.</p><p><b>The household figures never change; the footprint does.</b> GISTDA&#8217;s registry is a fixed 2014 edition &#8212; it only moves when houses get built, so there is nothing to refresh in it. What moves hourly is <i>which</i> subdistricts are in the water, and that is recomputed on every refresh from the gauges that are over their bank. Treat the counts as an order of magnitude.</p>
+        <p><b>Two clocks, not one.</b> The gauge-driven subdistricts are live. The satellite-derived ones are fixed at build time, because the MODIS composite is itself daily and is packaged with the page.</p>
+        <p><b>Gauges are the live signal.</b> They update hourly and say exactly how far water is above or below the bank at a point. Satellite detection is daily, 250 m, and blind under cloud &mdash; absence of colour is not evidence of dry ground.</p>
+        <p><b>Two kinds of evidence, drawn differently.</b> Rust subdistricts have an overflowing gauge within about 2 km. Blue ones had flood water seen from orbit. Where both apply the outline is heavier.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Sources</h2>
+      <ul class="src">
+        <li><a href="https://www.thaiwater.net/" target="_blank" rel="noopener">thaiwater.net &mdash; national water-level, rainfall and warning feeds (HII)</a></li>
+        <li><a href="https://gistdaportal.gistda.or.th/arcgis/rest/services/app/admin_poly/MapServer" target="_blank" rel="noopener">GISTDA subdistrict boundaries with household and population counts</a></li>
+        <li><a href="https://worldview.earthdata.nasa.gov/?l=MODIS_Combined_Flood_3-Day" target="_blank" rel="noopener">NASA LANCE MCDWD flood product</a></li>
+        <li><a href="https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f" target="_blank" rel="noopener">Esri World Light Gray Canvas basemap</a></li>
+        <li><a href="https://www.nationthailand.com/news/general/40071481" target="_blank" rel="noopener">Sri Racha evacuation and Pattaya port closure, 25 Sep</a></li>
+        <li><a href="https://www.nationthailand.com/news/general/40071476" target="_blank" rel="noopener">ONWR water situation and eastern watch, 25 Sep</a></li>
+        <li><a href="https://www.nationthailand.com/news/general/40071247" target="_blank" rel="noopener">RID alert for 11 Chao Phraya basin provinces</a></li>
+      </ul>
+    </div>
+
+  </div>
+  <div id="rail-border" hidden>
+
+    <div class="sec">
+      <h2>Right now</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="v" id="b-days">&mdash;</div><div class="k">Days since the 27 Dec ceasefire</div></div>
+        <div class="kpi"><div class="v hot" id="b-xing">&mdash;</div><div class="k">Land crossings closed</div></div>
+        <div class="kpi"><div class="v hot" id="b-disp">&mdash;</div><div class="k" id="b-disp-k">Cambodians still displaced</div></div>
+        <div class="kpi"><div class="v" id="b-pop">&mdash;</div><div class="k">Thai residents within 20 km of the line</div></div>
+      </div>
+      <div class="banner" id="b-status"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Map layers</h2>
+      <div class="ctl"><input type="checkbox" id="bl-ev" checked><label for="bl-ev">Incidents<span class="hint">Clashes, strikes, landmines and standoffs, each with its source</span></label></div>
+      <div class="seg" id="phase-seg" role="group" aria-label="Conflict phase">
+        <button type="button" data-phase="all" aria-pressed="true">All</button>
+        <button type="button" data-phase="jul25" aria-pressed="false">Jul &rsquo;25</button>
+        <button type="button" data-phase="dec25" aria-pressed="false">Dec &rsquo;25</button>
+        <button type="button" data-phase="ceasefire26" aria-pressed="false">Since truce</button>
+      </div>
+      <div class="ctl" style="margin-top:6px"><input type="checkbox" id="bl-site" checked><label for="bl-site">Flashpoints &amp; crossings<span class="hint">Disputed temples and hills, and the closed border checkpoints</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-border" checked><label for="bl-border">Border line<span class="hint">As mapped in OpenStreetMap; parts of it are the dispute</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-band" checked><label for="bl-band">20 km and 50 km from the line<span class="hint">BM-21 rocket reach, and the US Embassy&rsquo;s no-travel zone</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-tamb" checked><label for="bl-tamb">Thai subdistricts near the line<span class="hint">Shaded by distance: under 10 km, 10&ndash;20 km, 20&ndash;50 km</span></label></div>
+      <div class="sub2"><input type="range" id="op-tamb" min="10" max="100" value="50" aria-label="Subdistrict shading"></div>
+      <div class="ctl"><input type="checkbox" id="bl-civ"><label for="bl-civ">Hospitals &amp; power sites<span class="hint">Both sides, within 50 km of the line</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-sch"><label for="bl-sch">Schools<span class="hint">Both sides, within 20 km. Dense: best zoomed in</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-mil"><label for="bl-mil">Military areas (OSM)<span class="hint">Community-mapped and patchy; absence means nothing</span></label></div>
+      <div class="ctl"><input type="checkbox" id="bl-fire"><label for="bl-fire">Satellite heat detections<span class="hint">NASA VIIRS 375 m, one day&rsquo;s passes. Live from NASA.</span></label></div>
+      <div class="sub2" style="display:flex;align-items:center;gap:8px"><label for="fire-date" class="obs">Day</label><select id="fire-date" class="mini"></select></div>
+      <p class="obs" style="margin:6px 0 0">Basemap, theme and brightness are shared with the flood view.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Legend</h2>
+      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Armed clash</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--l3)"></span><div>Air or artillery strike</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Landmine</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--util)"></span><div>Standoff or fortification</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--power)"></span><div>Territorial control<span class="d">Positions taken or held, villages sealed off</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--care)"></span><div>Civilian harm or displacement</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Maritime</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
+      <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
+      <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
+      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital, school (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
+      <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
+      <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
+    </div>
+
+    <div class="sec">
+      <h2>Incidents</h2>
+      <p class="sub" id="ev-sub">&mdash;</p>
+      <div class="rows" id="ev-list"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Border crossings</h2>
+      <p class="sub">Thailand shut its land checkpoints with Cambodia in June 2025. The government says they stay shut until Cambodia meets its conditions.</p>
+      <div class="tw"><table id="xing-tab">
+        <thead><tr><th>Crossing</th><th>Status</th><th>Since</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+
+    <div class="sec">
+      <h2>People near the line</h2>
+      <p class="sub" id="pop-sub">&mdash;</p>
+      <div class="tw"><table id="pop-tab">
+        <thead><tr><th>Province</th><th>&lt;10 km</th><th>&lt;20 km</th><th>&lt;50 km</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="note" style="margin-top:9px">Thai side only. There is no open Cambodian equivalent of GISTDA&rsquo;s subdistrict register, so the far side of the line is not counted here. That gap is in the data, not on the ground.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Hospitals &amp; schools near the line</h2>
+      <p class="sub">Mapped facilities by distance from the border, from OpenStreetMap.</p>
+      <div class="tw"><table id="fac-tab">
+        <thead><tr><th></th><th>TH &lt;10</th><th>TH &lt;20</th><th>KH &lt;10</th><th>KH &lt;20</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="rows" id="hosp-list" style="margin-top:10px"></div>
+      <p class="note" style="margin-top:9px">Phanom Dong Rak Hospital in Surin was hit by rocket fire in July 2025, and schools on both sides have served as shelters. OpenStreetMap is thinner in rural Cambodia than in Thailand, so the Cambodian counts are a floor. <b>Proximity, not a record of damage.</b></p>
+    </div>
+
+    <div class="sec">
+      <h2>Toll so far</h2>
+      <p class="sub">Official figures from each government, with their dates. The two sides dispute each other&rsquo;s counts.</p>
+      <div id="cas-list"></div>
+    </div>
+
+    <div class="sec">
+      <h2>How to read this</h2>
+      <div class="note">
+        <p><b>This is a curated record, not a live feed.</b> No open, keyless source publishes border incidents in real time. Each incident here was taken from a named outlet and links to it. Claims made by one army are attributed to that army.</p>
+        <p><b>Where the line runs is itself the dispute.</b> The border drawn here is OpenStreetMap&rsquo;s. Thailand works from a 1:50,000 map, Cambodia from the French 1:200,000 Annex I map, and several flashpoints sit in the gap between them.</p>
+        <p><b>Distances are measured from that line.</b> A subdistrict counts by where its centre falls, and residents are GISTDA&rsquo;s 2014 register. Read them as orders of magnitude.</p>
+        <p><b>Heat detections are not strikes.</b> VIIRS picks up any fire hotter than its surroundings. In the dry season that is mostly field burning. A cluster near a flashpoint on the day of a reported clash is worth a look, but it is not confirmation.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Sources</h2>
+      <ul class="src" id="b-src"></ul>
+      <ul class="src" style="margin-top:6px">
+        <li><a href="https://gistdaportal.gistda.or.th/arcgis/rest/services/app/admin_poly/MapServer" target="_blank" rel="noopener">GISTDA subdistrict boundaries with household and population counts</a></li>
+        <li><a href="https://download.geofabrik.de/asia.html" target="_blank" rel="noopener">OpenStreetMap Thailand and Cambodia extracts (Geofabrik)</a></li>
+        <li><a href="https://firms.modaps.eosdis.nasa.gov/" target="_blank" rel="noopener">NASA FIRMS VIIRS active fire / thermal anomalies</a></li>
+      </ul>
+    </div>
+
+  </div>
+  <div id="rail-timeline" hidden>
+    <div class="sec" id="tl-pkg" hidden></div>
+    <div class="sec" id="pb">
+      <h2>Historical playback</h2>
+      <p class="sub">Pick a date and the map and list rebuild from what had been reported by then.</p>
+      <div class="ctl"><input type="checkbox" id="pb-on"><label for="pb-on">Play back to a date<span class="hint">Filters below still apply</span></label></div>
+      <div id="pb-body" hidden>
+        <div class="pbdate"><b id="pb-date"></b><span class="obs" id="pb-sum"></span></div>
+        <input type="range" id="pb-day" min="0" max="1" value="1" aria-label="Playback date">
+        <div class="pbends obs"><span id="pb-min"></span><span id="pb-max"></span></div>
+        <div class="refbar">
+          <button type="button" class="refresh primary" id="pb-play">Play</button>
+          <button type="button" class="refresh" id="pb-back" aria-label="One step back">&lsaquo;</button>
+          <button type="button" class="refresh" id="pb-fwd" aria-label="One step forward">&rsaquo;</button>
+          <label for="pb-win" class="obs" style="margin-left:auto">Show</label>
+          <select id="pb-win" class="mini"><option value="7">last 7 days</option><option value="30" selected>last 30 days</option><option value="90">last 90 days</option><option value="0">everything so far</option></select>
+        </div>
+        <div class="note" style="margin-top:9px">
+          <p><b>This replays when things happened</b>, using each record&rsquo;s own date. Crossings that are still closed stay on the map from the day they closed. Older records in the window are drawn fainter.</p>
+          <p><b>Flood history is short.</b> Gauge and rain readings exist only for 25&ndash;26 Sep 2026, so earlier dates show border records only.</p>
+          <p><b>&ldquo;What did we know on that date&rdquo; is not available yet.</b> Every record entered APSAP when this build was made, so there is no earlier state to rebuild.</p>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2>Master timeline</h2>
+      <p class="sub">Every record from the working layers, newest first. Click one to open its evidence package.</p>
+      <div class="tlf">
+        <label for="tl-layer">Layer</label>
+        <select id="tl-layer" class="mini"><option value="">All working layers</option><option value="flood">Flood</option><option value="border">Border</option></select>
+        <label for="tl-type">Record</label>
+        <select id="tl-type" class="mini"><option value="">All kinds</option><option value="event">Events (sourced reports)</option><option value="claim">Claims (official statements)</option><option value="observation">Observations (instrument readings)</option></select>
+        <label for="tl-src">Source</label>
+        <select id="tl-src" class="mini"></select>
+        <label for="tl-prov">Province</label>
+        <input id="tl-prov" class="mini" list="tl-prov-list" placeholder="Any province or place" autocomplete="off">
+        <datalist id="tl-prov-list"></datalist>
+        <label for="tl-from">From</label>
+        <input id="tl-from" class="mini" type="date">
+        <label for="tl-to">To</label>
+        <input id="tl-to" class="mini" type="date">
+        <label for="tl-q">Keyword</label>
+        <input id="tl-q" class="mini" type="search" placeholder="e.g. landmine, Sa Kaeo" autocomplete="off">
+      </div>
+      <div class="refbar" style="margin-top:8px"><span class="obs" id="tl-count"></span><button type="button" class="refresh" id="tl-reset" style="margin-left:auto">Clear filters</button></div>
+      <p class="obs" id="tl-nomap" style="margin:4px 0 0"></p>
+      <div class="tllist" id="tl-list"></div>
+    </div>
+    <div class="sec">
+      <h2>On the map</h2>
+      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Border record</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Flood record</div></div>
+      <div class="lg"><span class="sw round" style="background:transparent;border:2px solid var(--muted)"></span><div>Observation<span class="d">Hollow ring: an instrument reading</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--muted);border:1px dashed var(--ink)"></span><div>Claim<span class="d">Dashed edge: an official statement</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Event<span class="d">Solid: a sourced report of something that happened. Larger means more severe.</span></div></div>
+    </div>
+    <div class="sec">
+      <h2>Source registry</h2>
+      <p class="sub">Every source a record on this page comes from. Ratings are proposed by the build and marked with a question mark; none has been set by an analyst.</p>
+      <div class="tw"><table class="reg">
+        <thead><tr><th>Source</th><th>Kind</th><th>Records</th><th>Rel.</th></tr></thead>
+        <tbody id="reg-body"></tbody>
+      </table></div>
+    </div>
+    <div class="sec">
+      <h2>How to read this</h2>
+      <div class="note">
+        <p><b>Nothing here is confirmed.</b> Observations are instrument readings. Claims are what an agency said. Events are what a named outlet reported. Each keeps its source, and none has been reviewed by an analyst.</p>
+        <p><b>A trusted source can still be wrong.</b> Reliability describes the source; it never turns a report into a fact.</p>
+        <p><b>Sources are linked, not stored.</b> Every record links to the page it came from. Each record also carries a SHA-256 fingerprint of what this build packaged, so a changed record can be spotted.</p>
+        <p id="tl-built"></p>
+      </div>
+    </div>
+  </div>
+  <div id="rail-alerts" hidden>
+    <div class="sec">
+      <h2>Active alerts</h2>
+      <p class="sub" id="al-sum"></p>
+      <div class="refbar" style="margin:0 0 6px"><button type="button" class="refresh" id="al-read">Mark all as seen</button></div>
+      <div class="tllist" id="al-list"></div>
+    </div>
+    <div class="sec">
+      <h2>Rules</h2>
+      <p class="sub">Turn rules on or off and set thresholds. Settings are saved in this browser only.</p>
+      <div id="al-rules"></div>
+      <p class="obs" id="al-asof" style="margin:8px 0 0"></p>
+      <div class="refbar"><button type="button" class="refresh" id="al-reset">Reset to defaults</button></div>
+    </div>
+    <div class="sec">
+      <h2>Waiting for a feed</h2>
+      <p class="sub">Rules from the platform spec that have no data to run on yet.</p>
+      <ul class="alwait" id="al-wait"></ul>
+    </div>
+    <div class="sec">
+      <h2>How alerts work</h2>
+      <div class="note">
+        <p><b>An alert is a notice, not a finding.</b> Firing a rule does not confirm a record or change it. Open the alert to see the record&rsquo;s evidence package.</p>
+        <p><b>Each alert fires once.</b> It is keyed to the rule, the rule&rsquo;s version and the record, so a rebuild or refresh cannot create duplicates.</p>
+        <p><b>Alerts show inside this page.</b> An artifact page cannot send phone or email notifications. &ldquo;New&rdquo; means new since you last opened this tab in this browser.</p>
+      </div>
+    </div>
+  </div>
+  <div id="rail-curated" hidden></div>
+  <div id="rail-stub" hidden></div>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="assets/tiles-flood.js"></script>
+<script src="data/thailand/power.js"></script>
+<script src="data/thailand/flood-live-snapshot.js"></script>
+<script src="data/thailand/flood-exposure.js"></script>
+<script src="data/thailand/province-alerts.js"></script>
+<script>
+(function () {
+  "use strict";
+  var BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  var TW = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/";
+
+  function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888"; }
+  function num(v){ return (v == null) ? "\u2014" : Math.round(v).toLocaleString(); }
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+
+  /* ---------- packaged basemap, loaded only if the live service is blocked ----------
+     One bundle per theme. Serving the LIGHT tiles under the dark theme is why
+     Dark looked broken in sandboxed viewers, so the fallback now matches. */
+  var BUNDLES = {
+    light: { src: "assets/tiles-base.js", global: "TILES_BASE", state: 0, waiting: [] },
+    dark:  { src: "assets/tiles-base-dark.js", global: "TILES_BASE_DARK", state: 0, waiting: [] }
+  };
+  function noteOffline() {
+    var b = document.getElementById("offline-note");
+    if (!b.hidden) return;
+    b.textContent = "This viewer blocks outside requests, so the basemap is using the Esri "
+      + "canvas tiles packaged with the page (zoom 6-9 over Thailand). The same block stops "
+      + "the live data refresh.";
+    b.hidden = false;
+  }
+  function loadBase(which, cb) {
+    var b = BUNDLES[which] || BUNDLES.light;
+    noteOffline();
+    if (window[b.global]) { b.state = 2; cb(window[b.global]); return; }
+    if (b.state === 2) { cb(window[b.global]); return; }
+    b.waiting.push(cb);
+    if (b.state === 1) return;
+    b.state = 1;
+    var s = document.createElement("script");
+    s.src = b.src;
+    s.onload = s.onerror = function () {
+      b.state = 2;
+      var q = b.waiting; b.waiting = [];
+      q.forEach(function (f) { f(window[b.global]); });
+    };
+    document.body.appendChild(s);
+  }
+  var Hybrid = L.TileLayer.extend({
+    createTile: function (coords, done) {
+      var tile = document.createElement("img");
+      L.DomEvent.on(tile, "load", L.Util.bind(this._tileOnLoad, this, done, tile));
+      tile.onerror = function () {
+        if (tile._fellBack) { done(null, tile); return; }
+        tile._fellBack = true;
+        loadBase(isDark() ? "dark" : "light", function (store) {
+          var k = coords.z + "/" + coords.x + "/" + coords.y;
+          tile.src = (store && store[k]) || BLANK;
+        });
+      };
+      tile.alt = ""; tile.setAttribute("role", "presentation");
+      tile.src = this.getTileUrl(coords);
+      return tile;
+    }
+  });
+
+  /* ---------- map ---------- */
+  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 5, maxZoom: 13, preferCanvas: true });
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+  [["provpane", 350], ["floodpane", 450], ["rainpane", 440], ["expopane", 460], ["infrapane", 620]].forEach(function (p) {
+    map.createPane(p[0]);
+    map.getPane(p[0]).style.zIndex = p[1];
+    if (p[0] === "floodpane") map.getPane(p[0]).style.pointerEvents = "none";
+  });
+
+  /* Esri ships a purpose-built canvas for each theme. Inverting the light one
+     produced a near-black map, so each theme gets its own tiles instead. */
+  var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_{v}_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+  function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
+  function isDark() { return theme() === "dark"; }
+  var baseLayer = new Hybrid(ESRI.replace("{v}", isDark() ? "Dark" : "Light"),
+    { maxNativeZoom: 9, minNativeZoom: 6, maxZoom: 13, className: "basefilter",
+      attribution: "Esri, HERE, Garmin, FAO, NOAA, USGS" }).addTo(map);
+  function syncBasemap() {
+    var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
+    if (baseLayer._url !== want) { baseLayer.setUrl(want); baseLayer.redraw(); }
+  }
+
+  /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
+  var floodStore = function () { return window.TILES_FLOOD; };
+  var Packed = L.TileLayer.extend({
+    getTileUrl: function (c) {
+      var s = floodStore();
+      return (s && s[c.z + "/" + c.x + "/" + c.y]) || BLANK;
+    }
+  });
+  var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, maxZoom: 13,
+    opacity: 1, pane: "floodpane", attribution: "NASA LANCE MCDWD" }).addTo(map);
+
+  var d24 = document.getElementById("d24"), d25 = document.getElementById("d25");
+  function setDate(which) {
+    d24.setAttribute("aria-pressed", which === 24 ? "true" : "false");
+    d25.setAttribute("aria-pressed", which === 25 ? "true" : "false");
+    if (which === 25 && !window.TILES_FLOOD25) {
+      var s = document.createElement("script");
+      s.src = "assets/tiles-flood25.js";
+      s.onload = function () { floodStore = function () { return window.TILES_FLOOD25; }; floodLayer.redraw(); };
+      s.onerror = function () { d24.click(); };
+      document.body.appendChild(s);
+      return;
+    }
+    floodStore = which === 25 ? function () { return window.TILES_FLOOD25; }
+                              : function () { return window.TILES_FLOOD; };
+    floodLayer.redraw();
+  }
+  d24.addEventListener("click", function () { setDate(24); });
+  d25.addEventListener("click", function () { setDate(25); });
+
+  /* ---------- province alert tiers (context, off by default) ---------- */
+  var TIER = { 3: { label: "Overflow expected", css: "--l3-fill", fill: 0.5 },
+               2: { label: "Basin / watershed warning", css: "--l2-fill", fill: 0.34 },
+               1: { label: "Nationwide vigilance", css: "--l1-fill", fill: 0.18 } };
+  function provStyle(f) {
+    var lvl = f.properties.lvl, t = TIER[lvl];
+    return { color: lvl === 3 ? tok("--l3") : tok("--muted"), weight: lvl === 3 ? 1.6 : 0.7,
+             opacity: lvl === 3 ? 0.95 : 0.5, fillColor: tok(t.css), fillOpacity: t.fill };
+  }
+  var provLayer = L.geoJSON(window.PROVINCES, {
+    pane: "provpane",
+    style: provStyle,
+    onEachFeature: function (f, layer) {
+      var p = f.properties, t = TIER[p.lvl];
+      layer.bindPopup('<div class="pop"><h3>' + esc(p.name) + "</h3>" +
+        '<div class="tier" style="color:' + tok(t.css) + '">' + t.label + "</div>" +
+        '<div class="why">' + esc(p.why) + "</div></div>");
+    }
+  });
+
+  /* ---------- subdistricts with flood water ---------- */
+  var EX = window.EXPOSURE;
+  var KIND = { gauge: { c: "--over", l: "Gauge over its bank within ~2 km" },
+               sat:   { c: "--sat-water", l: "Flood water seen from orbit" },
+               both:  { c: "--over", l: "Overflowing gauge and satellite-seen water" } };
+  var expoLayer = L.layerGroup();
+  var expoByKey = {};
+  function drawExposure() {
+    expoLayer.clearLayers();
+    expoByKey = {};
+    EX.features.forEach(function (f) {
+      if (!f.rings || !f.rings.length) return;
+      var latlngs = f.rings.map(function (r) { return r.map(function (p) { return [p[1], p[0]]; }); });
+      var k = KIND[f.kind] || KIND.sat;
+      var poly = L.polygon(latlngs, {
+        pane: "expopane", color: tok(k.c), weight: f.kind === "both" ? 1.5 : 0.9,
+        opacity: 0.9, fillColor: tok(k.c), fillOpacity: f.kind === "sat" ? 0.2 : 0.26
+      });
+      poly.bindPopup('<div class="pop"><h3>' + esc(f.t) + "</h3>" +
+        '<div class="tier" style="color:' + tok(k.c) + '">' + esc(f.a) + ", " + esc(f.p) + "</div>" +
+        '<div class="why">' + k.l + "</div><dl>" +
+        "<dt>Households</dt><dd>" + num(f.house) + "</dd>" +
+        "<dt>People</dt><dd>" + num(f.pop) + "</dd></dl>" +
+        '<div class="why" style="margin:7px 0 0;font-size:11px">Registered residents of this ' +
+        'subdistrict (GISTDA, 2014). The count is a fixed registry figure; what changes between ' +
+        'refreshes is whether the subdistrict is in the water.</div></div>');
+      poly._kind = f.kind;
+      expoLayer.addLayer(poly);
+      expoByKey[f.p + "|" + f.a + "|" + f.t] = poly;
+    });
+  }
+  drawExposure();
+  expoLayer.addTo(map);
+
+  /* ---------- live recompute of the gauge-driven footprint ----------
+     Household and population counts are a static registry - they only move when
+     houses get built. What moves hourly is WHICH subdistricts are in the water,
+     so on every refresh we re-ask GISTDA which subdistricts lie within 2 km of a
+     gauge that is currently over its bank. One buffered multipoint query, the
+     same rule the baked snapshot was built with. The satellite-derived
+     subdistricts stay as built, because that composite is itself daily. */
+  var GISTDA = "https://gistdaportal.gistda.or.th/arcgis/rest/services/app/" +
+               "admin_poly/MapServer/0/query";
+  var SAT_FEATURES = EX.features.filter(function (f) { return f.kind === "sat" || f.kind === "both"; })
+    .map(function (f) { var c = {}; for (var k in f) c[k] = f[k]; c.kind = "sat"; return c; });
+
+  function refreshExposure(overStations) {
+    var pts = overStations.filter(function (s) { return isFinite(s.lat) && isFinite(s.lon); })
+      .map(function (s) { return [+s.lon.toFixed(5), +s.lat.toFixed(5)]; });
+    if (!pts.length) return Promise.resolve(false);
+    var body = new URLSearchParams({
+      geometry: JSON.stringify({ points: pts, spatialReference: { wkid: 4326 } }),
+      geometryType: "esriGeometryMultipoint", inSR: "4326", outSR: "4326",
+      spatialRel: "esriSpatialRelIntersects", distance: "2000", units: "esriSRUnit_Meter",
+      outFields: "prov_name,amp_name,tam_name,total,house", returnGeometry: "true",
+      maxAllowableOffset: "0.003", geometryPrecision: "4", f: "json"
+    });
+    return fetch(GISTDA, { method: "POST", body: body, cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("GISTDA HTTP " + r.status); return r.json(); })
+      .then(function (j) {
+        if (j.error) throw new Error("GISTDA " + (j.error.message || "error"));
+        var title = function (x) {
+          return String(x || "").toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        };
+        var gauge = (j.features || []).map(function (ft) {
+          var a = ft.attributes || {};
+          return { p: title(a.prov_name), a: title(a.amp_name), t: title(a.tam_name),
+                   house: parseInt(a.house, 10) || 0, pop: parseInt(a.total, 10) || 0,
+                   kind: "gauge", rings: (ft.geometry || {}).rings };
+        });
+        var key = function (f) { return f.p + "|" + f.a + "|" + f.t; };
+        var gk = {};
+        gauge.forEach(function (f) { gk[key(f)] = 1; });
+        var sat = SAT_FEATURES.filter(function (f) { return !gk[key(f)]; });
+        SAT_FEATURES.forEach(function (f) { if (gk[key(f)]) gk[key(f)] = 2; });
+        gauge.forEach(function (f) { if (gk[key(f)] === 2) f.kind = "both"; });
+        var sum = function (fs, k) {
+          return fs.reduce(function (n, f) { return n + (f[k] || 0); }, 0);
+        };
+        EX.features = gauge.concat(sat);
+        EX.totals = {
+          gauge: { n: gauge.length, house: sum(gauge, "house"), pop: sum(gauge, "pop") },
+          sat: { n: SAT_FEATURES.length, house: sum(SAT_FEATURES, "house"), pop: sum(SAT_FEATURES, "pop") },
+          all: { n: EX.features.length, house: sum(EX.features, "house"), pop: sum(EX.features, "pop") }
+        };
+        drawExposure();
+        return true;
+      });
+  }
+
+  /* ---------- power and hospitals standing in the flood footprint ----------
+     There is no reachable live outage feed for Thailand: PEA's outage map is
+     geo-blocked outside the country and MEA refuses connections. So this is
+     exposure - assets whose location falls inside a flooded subdistrict - and
+     the page says so rather than implying a reported outage. */
+  var POWER = window.POWER || [];
+  var infraLayer = L.layerGroup();
+  function drawInfra() {
+    infraLayer.clearLayers();
+    POWER.forEach(function (o) {
+      var col = tok(o.g === "power" ? "--power" : (o.g === "water" ? "--util" : "--care"));
+      var m = L.circleMarker([o.lat, o.lon], {
+        pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
+        color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
+      });
+      m.bindPopup('<div class="pop"><h3>' + esc(o.n) + "</h3>" +
+        '<div class="tier" style="color:' + col + '">' + esc(o.k) + "</div>" +
+        '<div class="why">Inside <b>' + esc(o.t) + "</b>, " + esc(o.a) + ", " + esc(o.p) +
+        " \u2014 a subdistrict with flood water present.</div>" +
+        (o.op ? '<dl><dt>Operator</dt><dd>' + esc(o.op) + "</dd></dl>" : "") +
+        '<div class="why" style="margin:7px 0 0;font-size:11px">Location from OpenStreetMap. ' +
+        'This is exposure, not a reported outage.</div></div>');
+      infraLayer.addLayer(m);
+    });
+  }
+  drawInfra();
+  infraLayer.addTo(map);
+
+  /* ---------- live gauges + rainfall ---------- */
+  var gaugeLayer = L.layerGroup().addTo(map);
+  var rainLayer = L.layerGroup().addTo(map);
+  var LIVE = window.LIVE;
+
+  function gaugeStyle(s) {
+    if (s.lv === 5) return { r: Math.min(14, 5 + (s.d || 0) * 2.6), c: tok("--over"), o: 0.92 };
+    if (s.lv === 4) return { r: 4.2, c: tok("--near"), o: 0.8 };
+    return { r: 2.4, c: tok("--calm"), o: 0.55 };
+  }
+  function gaugePopup(s) {
+    var over = s.lv === 5;
+    return '<div class="pop"><h3>' + esc(s.n) + "</h3>" +
+      '<div class="tier" style="color:' + (over ? tok("--over") : tok("--muted")) + '">' +
+      esc(s.a) + (s.p ? ", " + esc(s.p) : "") + "</div>" +
+      '<div class="why">' + (over
+        ? "<b style='color:" + tok("--over") + "'>" + (s.d || 0).toFixed(2) + " m above the bank</b>"
+        : (s.d != null ? (s.d).toFixed(2) + " m below the bank" : "Level unavailable")) + "</div><dl>" +
+      (s.msl != null ? "<dt>Water level</dt><dd>" + s.msl.toFixed(2) + " m MSL</dd>" : "") +
+      (s.b ? "<dt>Basin</dt><dd>" + esc(s.b) + "</dd>" : "") +
+      (s.ag ? "<dt>Operator</dt><dd>" + esc(s.ag) + "</dd>" : "") +
+      "<dt>Reading</dt><dd>" + esc(s.t) + "</dd></dl></div>";
+  }
+  function drawGauges() {
+    gaugeLayer.clearLayers();
+    var all = document.getElementById("lyr-allg").checked;
+    LIVE.stations.forEach(function (s) {
+      if (!all && s.lv < 4) return;
+      var st = gaugeStyle(s);
+      gaugeLayer.addLayer(L.circleMarker([s.lat, s.lon], {
+        radius: st.r, color: tok("--surface"), weight: s.lv === 5 ? 1.4 : 0.8,
+        fillColor: st.c, fillOpacity: st.o
+      }).bindPopup(gaugePopup(s)));
+    });
+  }
+  function drawRain() {
+    rainLayer.clearLayers();
+    LIVE.rain.forEach(function (r) {
+      var rad = 2.5 + Math.min(10, (r.mm - 60) / 18);
+      /* hollow rings: 500-odd rain stations overlap heavily and filled discs
+         merge into one blob that hides the gauges underneath */
+      rainLayer.addLayer(L.circleMarker([r.lat, r.lon], {
+        pane: "rainpane", radius: rad, color: tok("--rain"), weight: 1,
+        opacity: 0.5, fillColor: tok("--rain"), fillOpacity: 0.06
+      }).bindPopup('<div class="pop"><h3>' + r.mm.toFixed(1) + " mm in 24 h</h3>" +
+        '<div class="tier" style="color:' + tok("--rain") + '">' + esc(r.a) + (r.p ? ", " + esc(r.p) : "") + "</div>" +
+        '<div class="why">' + esc(r.n || "Rain gauge") + "</div><dl>" +
+        "<dt>Last hour</dt><dd>" + (r.h1 || 0).toFixed(1) + " mm</dd>" +
+        "<dt>Reading</dt><dd>" + esc(r.t) + "</dd></dl></div>"));
+    });
+  }
+
+  /* ---------- rail ---------- */
+  function fillRail() {
+    document.getElementById("hdr-asof").textContent = LIVE.asof + " ICT";
+    var over = LIVE.over.map(function (i) { return LIVE.stations[i]; });
+    var maxd = over.length ? Math.max.apply(null, over.map(function (s) { return s.d || 0; })) : 0;
+    document.getElementById("k-over").textContent = over.length;
+    document.getElementById("k-max").innerHTML = maxd.toFixed(2) + '<span class="u"> m</span>';
+    document.getElementById("k-sub").textContent = EX.totals.all.n;
+    document.getElementById("k-hh").textContent = num(EX.totals.sat.house);
+
+    var provs = {};
+    over.forEach(function (s) { if (s.p) provs[s.p] = 1; });
+    document.getElementById("over-sub").textContent =
+      over.length + " telemetry gauges in " + Object.keys(provs).length +
+      " provinces are reading above their bank. Click one to fly to it.";
+
+    var ol = document.getElementById("over-list");
+    ol.textContent = "";
+    over.slice(0, 14).forEach(function (s) {
+      var d = document.createElement("div");
+      d.className = "row";
+      d.innerHTML = '<span class="d1">' + (s.d || 0).toFixed(2) + ' m</span>' +
+        '<span class="nm">' + esc(s.n) + '</span><span></span>' +
+        '<span class="pl">' + esc(s.a) + (s.p ? ", " + esc(s.p) : "") + '</span>' +
+        '<span class="bar"><i style="width:' + Math.max(4, Math.min(100, (s.d || 0) / (maxd || 1) * 100)) + '%"></i></span>';
+      d.addEventListener("click", function () { map.setView([s.lat, s.lon], 11); });
+      ol.appendChild(d);
+    });
+
+    var rl = document.getElementById("rain-list");
+    rl.textContent = "";
+    var rmax = LIVE.rain.length ? LIVE.rain[0].mm : 1;
+    LIVE.rain.slice(0, 10).forEach(function (r) {
+      var d = document.createElement("div");
+      d.className = "row";
+      d.innerHTML = '<span class="d1 rainv">' + Math.round(r.mm) + ' mm</span>' +
+        '<span class="nm">' + esc(r.a || r.n) + '</span><span></span>' +
+        '<span class="pl">' + esc(r.p) + '</span>' +
+        '<span class="bar"><i class="rainb" style="width:' + (r.mm / rmax * 100).toFixed(0) + '%"></i></span>';
+      d.addEventListener("click", function () { map.setView([r.lat, r.lon], 11); });
+      rl.appendChild(d);
+    });
+
+    var wl = document.getElementById("warn-list");
+    wl.textContent = "";
+    LIVE.warnings.slice(0, 5).forEach(function (w) {
+      var d = document.createElement("div");
+      d.className = "warn";
+      d.innerHTML = '<div class="wt">' + esc(w.t) + '</div><ul>' +
+        w.en.slice(0, 4).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") +
+        '</ul><details><summary>Thai original</summary><span class="th">' + esc(w.th) + '</span></details>';
+      wl.appendChild(d);
+    });
+
+    var nPow = POWER.filter(function (o) { return o.g === "power"; }).length;
+    var nCare = POWER.filter(function (o) { return o.g === "care"; }).length;
+    var nUtil = POWER.length - nPow - nCare;
+    var provSet = {};
+    POWER.forEach(function (o) { provSet[o.p] = 1; });
+    document.getElementById("infra-sub").textContent = POWER.length
+      ? nPow + " power assets, " + nCare + " hospitals" +
+        (nUtil ? " and " + nUtil + " water works" : "") + " across " +
+        Object.keys(provSet).length + " provinces sit inside a subdistrict with flood water."
+      : "No mapped power or hospital assets fall inside the flooded subdistricts.";
+    var il = document.getElementById("infra-list");
+    il.textContent = "";
+    POWER.slice().sort(function (a, b) { return a.g === b.g ? 0 : (a.g === "power" ? -1 : 1); })
+      .slice(0, 12).forEach(function (o) {
+        var d = document.createElement("div");
+        d.className = "row";
+        d.innerHTML = '<span class="d1" style="color:' + tok(o.g === "power" ? "--power" : (o.g === "water" ? "--util" : "--care")) +
+          ';font-size:10.5px;letter-spacing:.05em">' + esc(o.k.toUpperCase()) + "</span>" +
+          '<span class="nm">' + esc(o.n) + "</span><span></span>" +
+          '<span class="pl">' + esc(o.t) + ", " + esc(o.a) + ", " + esc(o.p) + "</span>";
+        d.addEventListener("click", function () { map.setView([o.lat, o.lon], 12); });
+        il.appendChild(d);
+      });
+
+    document.getElementById("expo-sub").innerHTML =
+      num(EX.totals.sat.house) + " households live in the " + EX.totals.sat.n +
+      " subdistricts where satellite saw flood water. A further " + num(EX.totals.gauge.house) +
+      " live within about 2 km of one of the " + over.length + " overflowing gauges.";
+
+    var byProv = {};
+    EX.features.forEach(function (f) {
+      var e = byProv[f.p] || (byProv[f.p] = { n: 0, house: 0, pop: 0, f: f });
+      e.n++; e.house += f.house; e.pop += f.pop;
+    });
+    var rowsP = Object.keys(byProv).map(function (k) { return [k, byProv[k]]; })
+      .sort(function (a, b) { return b[1].house - a[1].house; }).slice(0, 12);
+    var tb = document.querySelector("#expo-tab tbody");
+    tb.textContent = "";
+    rowsP.forEach(function (pair) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + esc(pair[0]) + '</td><td class="n">' + pair[1].n +
+        '</td><td class="n">' + num(pair[1].house) + '</td><td class="n obs">' + num(pair[1].pop) + "</td>";
+      tr.addEventListener("click", function () {
+        var key = pair[1].f.p + "|" + pair[1].f.a + "|" + pair[1].f.t;
+        var poly = expoByKey[key];
+        if (poly) map.fitBounds(poly.getBounds().pad(2.2));
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  /* ---------- live refresh ----------
+     Runs wherever the page is allowed to call the API: a served page, or a file
+     opened straight from disk (thaiwater returns Access-Control-Allow-Origin:
+     null, so file:// is accepted). A sandbox that blocks outside requests cannot
+     refresh at all; the page then says so instead of pretending to be live.
+     A manual click ALWAYS retries, even after a failure. */
+  var btn = document.getElementById("btn-refresh");
+  var msg = document.getElementById("refresh-msg");
+  var badge = document.getElementById("live-badge");
+  var everyEl = document.getElementById("every");
+  var timer = null, tick = null, nextAt = 0, busy = false;
+
+  var hbtn = document.getElementById("hdr-refresh"), hstate = document.getElementById("hdr-state"),
+      hchk = document.getElementById("hdr-checked"), hdot = document.getElementById("hdr-dot");
+  function setBadge(state, text) {
+    badge.className = "badge " + state;
+    badge.textContent = text;
+    hstate.className = "badge " + state;
+    hstate.textContent = text;
+    hdot.className = "dot" + (state === "live" ? " on" : "");
+  }
+  function clockOf(d) {
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  }
+  function period() { return parseInt(everyEl.value, 10) * 60 * 1000; }
+  function schedule() {
+    if (timer) { clearInterval(timer); timer = null; }
+    if (tick) { clearInterval(tick); tick = null; }
+    var p = period();
+    if (!p) { nextAt = 0; renderCountdown(); return; }
+    nextAt = Date.now() + p;
+    timer = setInterval(function () { refresh(true); }, p);
+    tick = setInterval(renderCountdown, 1000);
+    renderCountdown();
+  }
+  function renderCountdown() {
+    var el = document.getElementById("next-in");
+    if (!el) return;
+    if (!nextAt) { el.textContent = "auto off"; return; }
+    var s = Math.max(0, Math.round((nextAt - Date.now()) / 1000));
+    el.textContent = "next in " + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+  }
+  everyEl.addEventListener("change", schedule);
+
+  function pullStations(wl) {
+    var out = [];
+    wl.forEach(function (r) {
+      var st = r.station || {}, g = r.geocode || {};
+      var lat = parseFloat(st.tele_station_lat), lon = parseFloat(st.tele_station_long);
+      if (!isFinite(lat) || !isFinite(lon) || r.situation_level == null) return;
+      var n = st.tele_station_name || {};
+      var ag = (r.agency || {}).agency_shortname || {};
+      var bs = (r.basin || {}).basin_name || {};
+      out.push({ n: (n.en || n.th || "Gauge"), p: ((g.province_name || {}).en || ""),
+        a: ((g.amphoe_name || {}).en || ""), lv: r.situation_level,
+        msl: parseFloat(r.waterlevel_msl), d: parseFloat(r.diff_wl_bank),
+        t: r.waterlevel_datetime, ag: (ag.en || ag.th || ""), b: (bs.en || bs.th || ""),
+        lat: lat, lon: lon });
+    });
+    return out;
+  }
+  function pullRain(rn) {
+    var out = [];
+    rn.forEach(function (r) {
+      var st = r.station || {}, g = r.geocode || {}, mm = parseFloat(r.rain_24h);
+      var lat = parseFloat(st.tele_station_lat), lon = parseFloat(st.tele_station_long);
+      if (!isFinite(lat) || !isFinite(lon) || !(mm >= 60)) return;
+      var n = st.tele_station_name || {};
+      out.push({ n: (n.en || n.th || ""), p: ((g.province_name || {}).en || ""),
+        a: ((g.amphoe_name || {}).en || ""), mm: mm, h1: parseFloat(r.rain_1h) || 0,
+        t: r.rainfall_datetime, lat: lat, lon: lon });
+    });
+    out.sort(function (a, b) { return b.mm - a.mm; });
+    return out;
+  }
+
+  function getJSON(path) {
+    return fetch(TW + path, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error(path + " HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  function refresh(auto) {
+    if (busy) return;
+    busy = true;
+    btn.disabled = true; hbtn.disabled = true;
+    btn.textContent = "Refreshing\u2026"; hbtn.textContent = "Refreshing\u2026";
+    setBadge("working", "CHECKING");
+    return Promise.all([getJSON("waterlevel_load"), getJSON("rain_24h")])
+      .then(function (res) {
+        var stations = pullStations(res[0].waterlevel_data.data);
+        var rain = pullRain(res[1].data);
+        if (!stations.length) throw new Error("feed returned no stations");
+        var over = [];
+        stations.forEach(function (s, i) { if (s.lv === 5) over.push(i); });
+        over.sort(function (a, b) { return (stations[b].d || 0) - (stations[a].d || 0); });
+        LIVE.stations = stations; LIVE.rain = rain; LIVE.over = over;
+        LIVE.asof = stations.reduce(function (m, s) { return s.t > m ? s.t : m; }, "");
+        drawGauges(); drawRain(); fillRail();
+        setBadge("live", "LIVE");
+        var when = clockOf(new Date());
+        hchk.textContent = "\u00b7 refreshed " + when;
+        msg.innerHTML = "Updated from thaiwater.net at <b>" + when +
+          "</b> \u00b7 recomputing who is in the water\u2026";
+        schedule();
+        /* the gauges moved, so the flooded-subdistrict set has to move with them */
+        return refreshExposure(over.map(function (i) { return stations[i]; }))
+          .then(function (ok) {
+            fillRail();
+            msg.innerHTML = "Updated from thaiwater.net at <b>" + when + "</b> \u00b7 " +
+              (ok ? "footprint recomputed" : "footprint unchanged") +
+              " \u00b7 <span id=\"next-in\"></span>";
+          })
+          .catch(function (e) {
+            msg.innerHTML = "Gauges updated at <b>" + when + "</b>, but the subdistrict " +
+              "footprint could not be recomputed (" + esc(String(e.message || e)) +
+              ") \u2014 it is still the one built in. <span id=\"next-in\"></span>";
+          });
+      })
+      .catch(function (err) {
+        setBadge("stale", "SNAPSHOT");
+        hchk.textContent = "\u00b7 live feed unreachable, tried " + clockOf(new Date());
+        msg.innerHTML = "Could not reach thaiwater.net (" + esc(String(err.message || err)) +
+          "). Still showing the snapshot built at " + esc(LIVE.built || "") +
+          '. <b>This viewer blocks outside requests, so it cannot refresh.</b> ' +
+          'Download the page and open the file in a browser; there, Refresh pulls live gauges and rain. ' +
+          '<span id="next-in"></span>';
+        if (!auto) schedule();
+      })
+      .then(function () {
+        busy = false;
+        btn.disabled = false; hbtn.disabled = false;
+        btn.textContent = "Refresh now"; hbtn.textContent = "Refresh";
+        renderCountdown();
+      });
+  }
+
+  btn.addEventListener("click", function () { refresh(false); });
+  hbtn.addEventListener("click", function () { refresh(false); });
+
+  /* ---------- toggles ---------- */
+  function bind(id, on, off) {
+    var el = document.getElementById(id);
+    el.addEventListener("change", function () { (el.checked ? on : off)(); });
+  }
+  bind("lyr-base", function () { baseLayer.addTo(map); }, function () { map.removeLayer(baseLayer); });
+  bind("lyr-flood", function () { floodLayer.addTo(map); }, function () { map.removeLayer(floodLayer); });
+  bind("lyr-expo", function () { expoLayer.addTo(map); }, function () { map.removeLayer(expoLayer); });
+  bind("lyr-gauge", function () { gaugeLayer.addTo(map); }, function () { map.removeLayer(gaugeLayer); });
+  bind("lyr-infra", function () { infraLayer.addTo(map); }, function () { map.removeLayer(infraLayer); });
+  bind("lyr-rain", function () { rainLayer.addTo(map); }, function () { map.removeLayer(rainLayer); });
+  bind("lyr-prov", function () { provLayer.addTo(map); provLayer.bringToBack(); },
+                   function () { map.removeLayer(provLayer); });
+  document.getElementById("lyr-allg").addEventListener("change", drawGauges);
+  document.getElementById("op-flood").addEventListener("input", function () {
+    floodLayer.setOpacity(this.value / 100);
+  });
+
+  /* ---------- theme and basemap brightness ----------
+     The page follows the viewer's theme by default; these let you override it,
+     because an inverted light-grey basemap can read very dark on some screens. */
+  function restyle() {
+    syncBasemap();
+    provLayer.setStyle(provStyle);
+    expoLayer.eachLayer(function (poly) {
+      var k = KIND[poly._kind] || KIND.sat;
+      poly.setStyle({ color: tok(k.c), fillColor: tok(k.c) });
+    });
+    drawGauges(); drawRain(); drawInfra();
+    if (window.TBW) window.TBW.restyle();
+  }
+  var themeSeg = document.getElementById("theme-seg");
+  function applyTheme(v) {
+    if (["light", "grey", "dark"].indexOf(v) < 0) v = "light";
+    document.documentElement.setAttribute("data-map", v);
+    Array.prototype.forEach.call(themeSeg.querySelectorAll("button"), function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-theme-set") === v ? "true" : "false");
+    });
+    try { localStorage.setItem("tfw-theme", v); } catch (e) {}
+    restyle();
+  }
+  themeSeg.addEventListener("click", function (e) {
+    var b = e.target;
+    while (b && b !== themeSeg && !b.getAttribute("data-theme-set")) b = b.parentNode;
+    if (b && b.getAttribute && b.getAttribute("data-theme-set")) applyTheme(b.getAttribute("data-theme-set"));
+  });
+
+  var brightEl = document.getElementById("op-bright");
+  function applyBright() {
+    document.documentElement.style.setProperty("--base-bright", (brightEl.value / 100).toFixed(2));
+    try { localStorage.setItem("tfw-bright", brightEl.value); } catch (e) {}
+  }
+  brightEl.addEventListener("input", applyBright);
+
+  /* The overlays were tuned against a light ground, so that is the default;
+     Auto and Dark remain one click away and the choice is remembered. */
+  var saved = null;
+  try { saved = localStorage.getItem("tfw-theme"); } catch (e) {}
+  applyTheme(saved || "light");
+  try {
+    var b0 = localStorage.getItem("tfw-bright");
+    if (b0) brightEl.value = b0;
+  } catch (e) {}
+  applyBright();
+
+  var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mqDark.addEventListener) mqDark.addEventListener("change", restyle);
+
+  drawGauges(); drawRain(); fillRail();
+  msg.textContent = "Snapshot built " + (LIVE.built || "") + " \u2014 checking for a live feed\u2026";
+  refresh(true);          /* one probe on load: goes live, or says it cannot */
+  schedule();
+
+  var THAILAND = L.latLngBounds([5.5, 97.2], [20.6, 105.8]);
+  function frame() {
+    map.invalidateSize();
+    if (window.TSAP && window.TSAP.country && window.TSAP.country !== "th") return;
+    if (document.documentElement.getAttribute("data-view") === "border" && window.TBW) { window.TBW.fit(); return; }
+    map.fitBounds(THAILAND, { padding: [8, 8], animate: false });
+  }
+  frame();
+  setTimeout(frame, 250);
+  window.addEventListener("resize", function () { map.invalidateSize(); });
+
+  /* hooks for the border view, which shares this map */
+  var FLOOD_LAYERS = [["lyr-flood", floodLayer], ["lyr-expo", expoLayer], ["lyr-gauge", gaugeLayer],
+                      ["lyr-infra", infraLayer], ["lyr-rain", rainLayer], ["lyr-prov", provLayer]];
+  window.FW = {
+    map: map, tok: tok, esc: esc, num: num,
+    hide: function () { FLOOD_LAYERS.forEach(function (p) { map.removeLayer(p[1]); }); },
+    show: function () {
+      FLOOD_LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
+      if (map.hasLayer(provLayer)) provLayer.bringToBack();
+      frame();
+    }
+  };
+})();
+</script>
+
+<script src="data/thailand/border-geometry.js"></script>
+<script src="data/thailand/border-conflict.js"></script>
+<script>
+/* ================= Border conflict view =================
+   Shares the map, basemap and theme with the flood view. Everything it draws
+   lives in its own panes and layer groups so switching views is a clean swap. */
+(function () {
+  "use strict";
+  var FW = window.FW, map = FW.map, tok = FW.tok, esc = FW.esc, num = FW.num;
+  var BD = window.BORDER, CF = window.CONFLICT;
+  var TODAY = new Date();
+
+  [["bandpane", 330], ["tambpane", 360], ["borderpane", 470], ["firepane", 480],
+   ["assetpane", 600], ["sitepane", 630], ["evpane", 640]].forEach(function (p) {
+    map.createPane(p[0]);
+    map.getPane(p[0]).style.zIndex = p[1];
+  });
+  map.getPane("bandpane").style.pointerEvents = "none";
+  map.getPane("firepane").style.pointerEvents = "none";
+
+  function title(s) {
+    return String(s || "").toLowerCase().replace(/(^|[\s-])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
+  }
+  function fmtDate(iso) {
+    var d = new Date(iso + "T00:00:00Z");
+    if (isNaN(d)) return esc(iso);
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  }
+  function daysSince(iso) {
+    return Math.floor((Date.UTC(TODAY.getUTCFullYear(), TODAY.getUTCMonth(), TODAY.getUTCDate()) -
+                       Date.parse(iso + "T00:00:00Z")) / 86400000);
+  }
+  function srcLink(url, name) {
+    if (!url) return "";
+    var host = name;
+    if (!host) { try { host = new URL(url).hostname.replace(/^www\./, ""); } catch (e) { host = "source"; } }
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(host) + "</a>";
+  }
+
+  /* ---------- boundary and range bands ---------- */
+  var borderLayer = L.layerGroup();
+  var borderLines = BD.border.map(function (l) { return l.map(function (p) { return [p[1], p[0]]; }); });
+  function drawBorder() {
+    borderLayer.clearLayers();
+    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--surface"), weight: 5, opacity: 0.9, interactive: false }));
+    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--ink"), weight: 1.8, opacity: 0.95, dashArray: "7 4", interactive: false }));
+  }
+
+  function polys(coords) {
+    return coords.map(function (poly) { return poly.map(function (r) { return r.map(function (p) { return [p[1], p[0]]; }); }); });
+  }
+  var bandLayer = L.layerGroup();
+  function drawBands() {
+    bandLayer.clearLayers();
+    bandLayer.addLayer(L.polygon(polys(BD.bands["50"]), { pane: "bandpane", color: tok("--near"), weight: 1, opacity: 0.6,
+      dashArray: "2 4", fillColor: tok("--near"), fillOpacity: 0.05, interactive: false }));
+    bandLayer.addLayer(L.polygon(polys(BD.bands["20"]), { pane: "bandpane", color: tok("--over"), weight: 1, opacity: 0.7,
+      dashArray: "2 4", fillColor: tok("--over"), fillOpacity: 0.07, interactive: false }));
+  }
+
+  /* ---------- Thai subdistricts near the line ---------- */
+  function tambTier(km) { return km < 10 ? 3 : (km < 20 ? 2 : 1); }
+  var TAMB_STYLE = { 3: ["--l3-fill", 0.34], 2: ["--l2-fill", 0.26], 1: ["--l1-fill", 0.12] };
+  var tambLayer = L.layerGroup(), tambByKey = {};
+  BD.tambons.forEach(function (t) {
+    var tier = tambTier(t.km);
+    var poly = L.polygon(t.rings.map(function (r) { return r.map(function (p) { return [p[1], p[0]]; }); }), {
+      pane: "tambpane", weight: 0.6, opacity: 0.7
+    });
+    poly._tier = tier;
+    poly.bindPopup('<div class="pop"><h3>' + esc(title(t.t)) + "</h3>" +
+      '<div class="tier" style="color:' + tok(TAMB_STYLE[tier][0]) + '">' + esc(title(t.a)) + ", " + esc(title(t.p)) + "</div>" +
+      '<div class="why">Centre lies <b>' + t.km.toFixed(1) + " km</b> from the border line.</div><dl>" +
+      "<dt>Households</dt><dd>" + num(t.house) + "</dd><dt>People</dt><dd>" + num(t.pop) + "</dd></dl>" +
+      '<div class="why" style="margin:7px 0 0;font-size:11px">Registered residents (GISTDA, 2014). Distance, not a threat assessment.</div></div>');
+    tambLayer.addLayer(poly);
+    tambByKey[t.p + "|" + t.a + "|" + t.t] = poly;
+  });
+  function styleTambons() {
+    tambLayer.eachLayer(function (p) {
+      var s = TAMB_STYLE[p._tier];
+      p.setStyle({ color: tok(s[0]), fillColor: tok(s[0]), fillOpacity: s[1] });
+    });
+  }
+
+  /* ---------- civilian facilities and military areas near the line ---------- */
+  var ASSET = {
+    care:   { css: "--care",  r: 5,   l: "Hospital" },
+    clinic: { css: "--care",  r: 3.5, l: "Clinic" },
+    school: { css: "--rain",  r: 3,   l: "School" },
+    power:  { css: "--power", r: 4.5, l: "Power site" },
+    mil:    { css: "--muted", r: 4,   l: "Military area" }
+  };
+  var civLayer = L.layerGroup(), schLayer = L.layerGroup(), milLayer = L.layerGroup();
+  function drawAssets() {
+    civLayer.clearLayers(); schLayer.clearLayers(); milLayer.clearLayers();
+    BD.assets.forEach(function (a) {
+      var s = ASSET[a.g];
+      if (!s) return;
+      var col = tok(s.css), px = Math.round(s.r * 2);
+      /* squares, so places read differently from the round incident dots */
+      var m = L.marker([a.lat, a.lon], {
+        pane: "assetpane", keyboard: false,
+        icon: L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+          html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
+                ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
+      });
+      m.bindPopup('<div class="pop"><h3>' + esc(a.n) + "</h3>" +
+        (a.n2 ? '<div class="why" style="margin:-2px 0 4px">' + esc(a.n2) + "</div>" : "") +
+        '<div class="tier" style="color:' + col + '">' + esc(a.k) + " · " + (a.side === "TH" ? "Thailand" : "Cambodia") + "</div>" +
+        '<div class="why"><b>' + a.km.toFixed(1) + " km</b> from the border line.</div>" +
+        '<div class="why" style="margin:7px 0 0;font-size:11px">Location from OpenStreetMap, which is community-mapped and uneven on both sides. Proximity, not a report of damage.</div></div>');
+      (a.g === "mil" ? milLayer : (a.g === "school" ? schLayer : civLayer)).addLayer(m);
+    });
+  }
+
+  /* ---------- flashpoints and crossings ---------- */
+  var siteLayer = L.layerGroup();
+  function sitePopup(s) {
+    return '<div class="pop"><h3>' + esc(s.name) + "</h3>" +
+      '<div class="tier" style="color:' + tok("--ink") + '">' + esc(title(s.kind)) + "</div>" +
+      '<div class="why">' + esc(s.status || "") + "</div>" +
+      (s.prec === "approx" ? '<div class="why" style="font-size:11px">Position approximate (place-level).</div>' : "") +
+      (s.src ? '<div class="why" style="font-size:11px;margin:4px 0 0">Source: ' + srcLink(s.src) + "</div>" : "") + "</div>";
+  }
+  function drawSites() {
+    siteLayer.clearLayers();
+    (CF.sites || []).concat((CF.crossings || []).map(function (c) {
+      return { name: c.name, kind: "crossing", status: (c.detail || c.status) + (c.since ? " Shut since " + fmtDate(c.since) + "." : ""),
+               lat: c.lat, lon: c.lon, src: c.src, prec: c.prec };
+    })).forEach(function (s) {
+      if (!isFinite(s.lat) || !isFinite(s.lon) || s.prec === "none") return;
+      var isX = s.kind === "crossing";
+      var m = L.marker([s.lat, s.lon], {
+        pane: "sitepane",
+        icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
+          html: isX ? '<div class="xing"></div>' : '<div class="flash"></div>' }),
+        keyboard: false
+      }).bindPopup(sitePopup(s));
+      siteLayer.addLayer(m);
+      if (!isX) {
+        siteLayer.addLayer(L.marker([s.lat, s.lon], { pane: "sitepane", interactive: false, keyboard: false,
+          icon: L.divIcon({ className: "plabel sitelabel", iconSize: [160, 14], iconAnchor: [-8, 7],
+            html: esc(s.name.split(/ \(| \/ |, /)[0]) }) }));
+      }
+    });
+  }
+
+  /* ---------- incidents ---------- */
+  var KINDS = {
+    clash:      { css: "--over",   l: "Armed clash" },
+    strike:     { css: "--l3",     l: "Air or artillery strike" },
+    landmine:   { css: "--near",   l: "Landmine" },
+    standoff:   { css: "--util",   l: "Standoff / fortification" },
+    civilian:   { css: "--care",   l: "Civilian harm / displacement" },
+    occupation: { css: "--power",  l: "Territorial control" },
+    maritime:   { css: "--rain",   l: "Maritime" },
+    diplomatic: { css: "--muted",  l: "Diplomatic" }
+  };
+  var PHASES = { all: "All", jul25: "Jul 2025", dec25: "Dec 2025", ceasefire26: "Since ceasefire" };
+  var phase = "all";
+  try { phase = localStorage.getItem("tbw-phase") || "all"; } catch (e) {}
+  if (!PHASES[phase]) phase = "all";
+  var EVENTS = (CF.events || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  var evLayer = L.layerGroup();
+  function inPhase(e) {
+    if (phase === "all") return true;
+    if (phase === "jul25") return e.phase === "jul25" || e.phase === "prelude";
+    return e.phase === phase;
+  }
+  function evPopup(e) {
+    var k = KINDS[e.kind] || KINDS.clash;
+    return '<div class="pop"><h3>' + esc(e.title) + "</h3>" +
+      '<div class="tier" style="color:' + tok(k.css) + '">' + k.l + " · " + fmtDate(e.date) + "</div>" +
+      '<div class="why">' + esc(e.detail) + "</div><dl>" +
+      "<dt>Place</dt><dd>" + esc(e.place) + "</dd>" +
+      (e.prov ? "<dt>Area</dt><dd>" + esc(e.prov) + "</dd>" : "") + "</dl>" +
+      (e.prec === "approx" ? '<div class="why" style="font-size:11px;margin:6px 0 0">Plotted at place level; the exact spot was not reported.</div>' : "") +
+      '<div class="why" style="font-size:11px;margin:4px 0 0">Source: ' + srcLink(e.src, e.srcname) + "</div></div>";
+  }
+  function drawEvents() {
+    evLayer.clearLayers();
+    EVENTS.forEach(function (e) {
+      if (!inPhase(e) || !isFinite(e.lat) || !isFinite(e.lon) || e.prec === "none") return;
+      var k = KINDS[e.kind] || KINDS.clash;
+      var age = daysSince(e.date);
+      evLayer.addLayer(L.circleMarker([e.lat, e.lon], {
+        pane: "evpane", radius: age < 45 ? 8 : 6, color: tok("--surface"), weight: 1.5,
+        fillColor: tok(k.css), fillOpacity: age < 45 ? 0.95 : 0.8
+      }).bindPopup(evPopup(e)));
+    });
+  }
+
+  /* ---------- satellite fire / heat detections (live tiles) ----------
+     NASA GIBS serves VIIRS 375 m thermal anomalies as ordinary image tiles, so
+     they load in any browser that can reach NASA; no API key, no CORS needed.
+     Heat detections cannot tell shelling from field burning - the page says so. */
+  /* GIBS publishes thermal anomalies only as vector tiles on WMTS, but its WMS
+     renders the same points to PNG, with open CORS. */
+  var GIBS_WMS = "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi";
+  function isoDay(offset) {
+    var d = new Date(Date.UTC(TODAY.getUTCFullYear(), TODAY.getUTCMonth(), TODAY.getUTCDate() - offset));
+    return d.toISOString().slice(0, 10);
+  }
+  var fireLayer = L.tileLayer.wms(GIBS_WMS, {
+    layers: "VIIRS_NOAA20_Thermal_Anomalies_375m_All", format: "image/png", transparent: true,
+    version: "1.3.0", TIME: isoDay(1), pane: "firepane", maxZoom: 13, attribution: "NASA FIRMS / GIBS"
+  });
+  var fireSel = document.getElementById("fire-date");
+  function optGroup(label, days) {
+    var g = document.createElement("optgroup");
+    g.label = label;
+    days.forEach(function (d) {
+      var o = document.createElement("option");
+      o.value = d[0];
+      o.textContent = d[1];
+      g.appendChild(o);
+    });
+    fireSel.appendChild(g);
+  }
+  var recent = [];
+  for (var i = 1; i <= 10; i++) recent.push([isoDay(i), fmtDate(isoDay(i))]);
+  optGroup("Latest passes", recent);
+  optGroup("During the fighting", [["2025-07-25", "25 Jul 2025"], ["2025-07-26", "26 Jul 2025"],
+    ["2025-12-09", "9 Dec 2025"], ["2025-12-10", "10 Dec 2025"], ["2025-12-13", "13 Dec 2025"],
+    ["2025-12-15", "15 Dec 2025"], ["2025-12-26", "26 Dec 2025"]]);
+  optGroup("Dry-season burning, for scale", [["2026-03-15", "15 Mar 2026"]]);
+  fireSel.addEventListener("change", function () { fireLayer.setParams({ TIME: fireSel.value }); });
+
+  /* ---------- rail ---------- */
+  function fillRail() {
+    var cfDate = CF.ceasefire || "2025-12-27";
+    document.getElementById("b-days").textContent = daysSince(cfDate);
+    var xs = CF.crossings || [];
+    var closed = xs.filter(function (c) { return /closed|front/i.test(c.status); }).length;
+    document.getElementById("b-xing").innerHTML = closed + '<span class="u"> / ' + xs.length + "</span>";
+    var disp = CF.displaced || {};
+    document.getElementById("b-disp").textContent = disp.value || "—";
+    document.getElementById("b-disp-k").textContent = disp.label || "Cambodians still displaced";
+    var near = BD.tambons.filter(function (t) { return t.km < 20; });
+    var pop20 = near.reduce(function (s, t) { return s + t.pop; }, 0);
+    document.getElementById("b-pop").textContent = pop20 >= 1e6 ? (pop20 / 1e6).toFixed(2) + "M" : num(pop20);
+    document.getElementById("b-status").innerHTML = CF.status || "";
+
+    // recent incidents
+    var el = document.getElementById("ev-list");
+    el.textContent = "";
+    var shown = EVENTS.filter(inPhase);
+    document.getElementById("ev-sub").textContent = shown.length + " sourced incidents" +
+      (phase === "all" ? " since the crisis began" : " in this phase") + ", newest first. Click one to fly to it.";
+    shown.slice(0, 40).forEach(function (e) {
+      var k = KINDS[e.kind] || KINDS.clash;
+      var d = document.createElement("div");
+      d.className = "row";
+      d.innerHTML = '<span class="d1" style="color:' + tok(k.css) + ';font-size:11px;min-width:78px">' +
+        fmtDate(e.date) + "</span>" +
+        '<span class="nm" style="white-space:normal">' + esc(e.title) + "</span><span></span>" +
+        '<span class="pl">' + esc(k.l) + " · " + esc(e.place) + "</span>";
+      d.addEventListener("click", function () {
+        if (!isFinite(e.lat) || e.prec === "none") return;
+        map.setView([e.lat, e.lon], 11);
+        evLayer.eachLayer(function (m) {
+          var ll = m.getLatLng();
+          if (Math.abs(ll.lat - e.lat) < 1e-6 && Math.abs(ll.lng - e.lon) < 1e-6) m.openPopup();
+        });
+      });
+      el.appendChild(d);
+    });
+
+    // crossings
+    var tb = document.querySelector("#xing-tab tbody");
+    tb.textContent = "";
+    xs.forEach(function (c) {
+      var tr = document.createElement("tr");
+      var isClosed = /closed|front/i.test(c.status);
+      tr.title = c.detail || "";
+      tr.innerHTML = '<td style="white-space:normal">' + esc(c.name) + '</td><td style="color:' + (isClosed ? tok("--over") : tok("--muted")) +
+        ';font-weight:600;font-size:11.5px">' + esc(c.status) + '</td><td class="n obs">' + (c.since ? fmtDate(c.since) : "") + "</td>";
+      tr.addEventListener("click", function () { if (isFinite(c.lat)) map.setView([c.lat, c.lon], 12); });
+      tb.appendChild(tr);
+    });
+
+    // people near the line, by province
+    var byProv = {};
+    BD.tambons.forEach(function (t) {
+      var p = byProv[t.p] || (byProv[t.p] = { n10: 0, p10: 0, p20: 0, p50: 0, f: t, best: 99 });
+      if (t.km < 10) { p.n10++; p.p10 += t.pop; }
+      if (t.km < 20) p.p20 += t.pop;
+      p.p50 += t.pop;
+      if (t.km < p.best) { p.best = t.km; p.f = t; }
+    });
+    var tb2 = document.querySelector("#pop-tab tbody");
+    tb2.textContent = "";
+    Object.keys(byProv).map(function (k) { return [k, byProv[k]]; })
+      .filter(function (r) { return r[1].p20 > 0; })
+      .sort(function (a, b) { return b[1].p20 - a[1].p20; })
+      .forEach(function (r) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + esc(title(r[0])) + '</td><td class="n">' + num(r[1].p10) +
+          '</td><td class="n">' + num(r[1].p20) + '</td><td class="n obs">' + num(r[1].p50) + "</td>";
+        tr.addEventListener("click", function () {
+          var poly = tambByKey[r[1].f.p + "|" + r[1].f.a + "|" + r[1].f.t];
+          if (poly) map.fitBounds(poly.getBounds().pad(2.5));
+        });
+        tb2.appendChild(tr);
+      });
+    var p10 = BD.tambons.filter(function (t) { return t.km < 10; }).reduce(function (s, t) { return s + t.pop; }, 0);
+    document.getElementById("pop-sub").innerHTML = "<b>" + num(p10) + "</b> registered residents live in Thai subdistricts centred within 10 km of the line, and <b>" +
+      num(pop20) + "</b> within 20 km, roughly the reach of the BM-21 rockets used in both rounds of fighting.";
+
+    // facilities
+    function cnt(side, g, km) { return BD.assets.filter(function (a) { return a.side === side && a.g === g && a.km < km; }).length; }
+    var ft = document.querySelector("#fac-tab tbody");
+    ft.innerHTML =
+      "<tr><td>Hospitals</td><td class=n>" + cnt("TH", "care", 10) + "</td><td class=n>" + cnt("TH", "care", 20) +
+      "</td><td class=n>" + cnt("KH", "care", 10) + "</td><td class=n>" + cnt("KH", "care", 20) + "</td></tr>" +
+      "<tr><td>Schools</td><td class=n>" + cnt("TH", "school", 10) + "</td><td class=n>" + cnt("TH", "school", 20) +
+      "</td><td class=n>" + cnt("KH", "school", 10) + "</td><td class=n>" + cnt("KH", "school", 20) + "</td></tr>" +
+      "<tr><td>Power sites</td><td class=n>" + cnt("TH", "power", 10) + "</td><td class=n>" + cnt("TH", "power", 20) +
+      "</td><td class=n>" + cnt("KH", "power", 10) + "</td><td class=n>" + cnt("KH", "power", 20) + "</td></tr>";
+    var hl = document.getElementById("hosp-list");
+    hl.textContent = "";
+    BD.assets.filter(function (a) { return a.g === "care" && a.km < 20; }).slice(0, 14).forEach(function (a) {
+      var d = document.createElement("div");
+      d.className = "row";
+      d.innerHTML = '<span class="d1" style="color:' + tok("--care") + '">' + a.km.toFixed(1) + " km</span>" +
+        '<span class="nm">' + esc(a.n) + '</span><span class="obs">' + a.side + "</span>";
+      d.addEventListener("click", function () { map.setView([a.lat, a.lon], 12); });
+      hl.appendChild(d);
+    });
+
+    // casualties
+    var cl = document.getElementById("cas-list");
+    cl.textContent = "";
+    (CF.casualties || []).forEach(function (c) {
+      var d = document.createElement("div");
+      d.className = "warn";
+      d.innerHTML = '<div class="wt">' + esc(c.label) + "</div>" +
+        '<div style="font-family:IBM Plex Mono,monospace;font-weight:600;font-size:15px">' + esc(c.value) + "</div>" +
+        '<span class="th" style="margin-top:2px">' + esc(c.note || "") + (c.src ? " · " + srcLink(c.src) : "") + "</span>";
+      cl.appendChild(d);
+    });
+
+    var sl = document.getElementById("b-src");
+    sl.textContent = "";
+    var seen = {};
+    EVENTS.concat(CF.sites || [], CF.crossings || []).forEach(function (e) {
+      if (!e.src || seen[e.src]) return;
+      seen[e.src] = 1;
+    });
+    Object.keys(seen).slice(0, 60).forEach(function (u) {
+      var li = document.createElement("li");
+      var ev = EVENTS.filter(function (e) { return e.src === u; })[0];
+      li.innerHTML = srcLink(u, (ev && ev.srcname ? ev.srcname + " — " + ev.title : null));
+      sl.appendChild(li);
+    });
+  }
+
+  /* ---------- phase filter ---------- */
+  var phaseSeg = document.getElementById("phase-seg");
+  function setPhase(p) {
+    phase = p;
+    try { localStorage.setItem("tbw-phase", p); } catch (e) {}
+    Array.prototype.forEach.call(phaseSeg.querySelectorAll("button"), function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-phase") === p ? "true" : "false");
+    });
+    drawEvents(); fillRail();
+  }
+  phaseSeg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-phase]");
+    if (b) setPhase(b.getAttribute("data-phase"));
+  });
+
+  /* ---------- layer toggles ---------- */
+  var LAYERS = [["bl-ev", evLayer], ["bl-site", siteLayer], ["bl-border", borderLayer], ["bl-band", bandLayer],
+                ["bl-tamb", tambLayer], ["bl-civ", civLayer], ["bl-sch", schLayer], ["bl-mil", milLayer], ["bl-fire", fireLayer]];
+  var active = false;
+  LAYERS.forEach(function (p) {
+    document.getElementById(p[0]).addEventListener("change", function () {
+      if (!active) return;
+      if (this.checked) p[1].addTo(map); else map.removeLayer(p[1]);
+    });
+  });
+  document.getElementById("op-tamb").addEventListener("input", function () {
+    var f = this.value / 100;
+    tambLayer.eachLayer(function (p) { p.setStyle({ fillOpacity: TAMB_STYLE[p._tier][1] * f * 2, opacity: 0.7 * f * 1.4 }); });
+  });
+
+  /* site names crowd each other along the northern escarpment at overview zoom */
+  function labelsByZoom() {
+    map.getContainer().classList.toggle("sitelabels-off", map.getZoom() < 9);
+  }
+  map.on("zoomend", labelsByZoom);
+  labelsByZoom();
+
+  function restyle() { drawBorder(); drawBands(); styleTambons(); drawAssets(); drawSites(); drawEvents(); }
+  restyle(); setPhase(phase);
+
+  var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]);
+  window.TBW = {
+    show: function () {
+      active = true;
+      LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
+      map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
+    },
+    hide: function () {
+      active = false;
+      LAYERS.forEach(function (p) { map.removeLayer(p[1]); });
+    },
+    restyle: function () { restyle(); fillRail(); },
+    fit: function () { map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false }); }
+  };
+})();
+</script>
+<script src="data/layers/th/insurgency.js"></script>
+<script src="data/layers/th/crime.js"></script>
+<script src="data/layers/th/scam.js"></script>
+<script src="data/layers/th/aml.js"></script>
+<script src="data/layers/th/weather.js"></script>
+<script src="data/layers/th/safety.js"></script>
+<script src="data/layers/th/transport.js"></script>
+<script src="data/layers/th/infra.js"></script>
+<script src="data/layers/th/health.js"></script>
+<script src="data/layers/tw/border.js"></script>
+<script src="data/layers/tw/safety.js"></script>
+<script src="data/layers/tw/health.js"></script>
+<script src="data/layers/tw/aml.js"></script>
+<script src="data/layers/tw/flood.js"></script>
+<script src="data/layers/tw/infra.js"></script>
+<script src="data/layers/tw/transport.js"></script>
+<script src="data/layers/tw/scam.js"></script>
+<script src="data/layers/tw/weather.js"></script>
+<script src="data/layers/tw/crime.js"></script>
+<script src="data/layers/ph/border.js"></script>
+<script src="data/layers/ph/transport.js"></script>
+<script src="data/layers/ph/insurgency.js"></script>
+<script src="data/layers/ph/flood.js"></script>
+<script src="data/layers/ph/scam.js"></script>
+<script src="data/layers/ph/aml.js"></script>
+<script src="data/layers/ph/safety.js"></script>
+<script src="data/layers/ph/crime.js"></script>
+<script src="data/layers/ph/health.js"></script>
+<script src="data/layers/ph/infra.js"></script>
+<script src="data/layers/ph/weather.js"></script>
+<script src="data/layers/kr/transport.js"></script>
+<script src="data/layers/kr/border.js"></script>
+<script src="data/layers/kr/safety.js"></script>
+<script src="data/layers/kr/aml.js"></script>
+<script src="data/layers/kr/scam.js"></script>
+<script src="data/layers/kr/crime.js"></script>
+<script src="data/layers/kr/health.js"></script>
+<script src="data/layers/kr/weather.js"></script>
+<script src="data/layers/kr/infra.js"></script>
+<script src="data/layers/kr/flood.js"></script>
+<script src="data/layers/oki/border.js"></script>
+<script src="data/layers/oki/crime.js"></script>
+<script src="data/layers/oki/infra.js"></script>
+<script src="data/layers/oki/scam.js"></script>
+<script src="data/layers/oki/aml.js"></script>
+<script src="data/layers/oki/transport.js"></script>
+<script src="data/layers/oki/safety.js"></script>
+<script src="data/layers/oki/health.js"></script>
+<script src="data/layers/oki/weather.js"></script>
+<script src="data/layers/oki/flood.js"></script>
+<script src="data/layers/mn/aml.js"></script>
+<script src="data/layers/mn/safety.js"></script>
+<script src="data/layers/mn/weather.js"></script>
+<script src="data/layers/mn/crime.js"></script>
+<script src="data/layers/mn/border.js"></script>
+<script src="data/layers/mn/health.js"></script>
+<script src="data/layers/mn/transport.js"></script>
+<script src="data/layers/mn/infra.js"></script>
+<script src="data/layers/mn/scam.js"></script>
+<script src="data/layers/mn/flood.js"></script>
+<script src="data/basemap/country-outlines.js"></script>
+<script>
+/* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
+   Every flood and border item the page already carries is normalised into one record shape
+   (observation / claim / event) with its source, time, place and validation state. The
+   timeline, the evidence package and the source registry are all built from those records,
+   so they are views over one list, not separate stores. Nothing here is analyst-confirmed:
+   records are "observed" (instrument readings) or "reported" (a named source said it). */
+(function () {
+  "use strict";
+  var FW = window.FW, map = FW.map, tok = FW.tok, esc = FW.esc;
+  var LIVE = window.LIVE, CF = window.CONFLICT, PROV = window.PROVINCES;
+  /* ---------- country: one page, one country at a time. The hash is "#<cc>/<view>"; Thailand has no prefix ---------- */
+  var COUNTRIES = [
+    { id: "th", name: "Thailand", bounds: [[5.5, 97.2], [20.6, 105.8]] },
+    { id: "ph", name: "Philippines", bounds: [[4.4, 116.8], [21.2, 127.0]] },
+    { id: "tw", name: "Taiwan", bounds: [[21.8, 118.1], [25.4, 122.1]] },
+    { id: "kp", name: "North Korea", bounds: [[37.6, 124.2], [43.1, 130.8]] },
+    { id: "kr", name: "South Korea", bounds: [[33.0, 125.0], [38.7, 130.0]] },
+    { id: "mn", name: "Mongolia", bounds: [[41.5, 87.7], [52.2, 119.9]] },
+    { id: "oki", name: "Okinawa", bounds: [[24.0, 122.9], [27.9, 128.4]] }
+  ];
+  var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
+  var HASH = (location.hash || "").replace("#", "").split("/");
+  var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
+  var WANT = HASH.length > 1 ? HASH[1] : HASH[0];
+
+  /* ---------- source registry ----------
+     Reliability letters here are PROPOSED by the build, not analyst ratings. The page shows
+     them as proposals and never uses them to change a record's validation state. */
+  var SOURCES = {};
+  function src(id, name, kind, proposed, note, url) {
+    if (!SOURCES[id]) SOURCES[id] = { id: id, name: name, kind: kind, proposed: proposed, note: note || "", url: url || "", n: 0 };
+    return SOURCES[id];
+  }
+  src("hii", "Hydro-Informatics Institute (ThaiWater)", "Thai government agency", "B",
+      "National telemetry hub. Readings come from gauge operators such as RID and HII.", "https://www.thaiwater.net/");
+  ["DDPM", "RID", "ONWR", "GISTDA", "TMD"].forEach(function (a) {
+    var names = { DDPM: "Department of Disaster Prevention and Mitigation", RID: "Royal Irrigation Department",
+                  ONWR: "Office of the National Water Resources", GISTDA: "GISTDA", TMD: "Thai Meteorological Department" };
+    src(a.toLowerCase(), names[a] + " (" + a + ")", "Thai government agency", "B", "Provincial bulletins, 21–25 Sep 2026.");
+  });
+  function outletSource(name, url) {
+    var raw = String(name || "");
+    var m = raw.match(/^Wikipedia(?: \(cites (.+)\))?$/);
+    if (m) return src("wikipedia", "Wikipedia", "Tertiary compilation", "D",
+      "Used where it cites primary reporting; the cited outlets are listed on each record.", "https://en.wikipedia.org/");
+    if (/^AKP/.test(raw)) return src("akp", "AKP (Cambodian government news agency)", "Government of a party to the dispute", "C",
+      "Official Cambodian position. A party's own statement, not independent reporting.");
+    var host = ""; try { host = new URL(url).hostname.replace(/^www\./, ""); } catch (e) {}
+    var id = raw.toLowerCase().replace(/\s*\(.*\)$/, "").replace(/[^a-z0-9]+/g, "-");
+    return src(id, raw, "News outlet", "C", "", host ? "https://" + host + "/" : "");
+  }
+
+  /* ---------- records ---------- */
+  var R = [], byId = {};
+  function add(r) {
+    r.id = r.layer + "-" + R.length;
+    r.src.n++;
+    R.push(r); byId[r.id] = r;
+  }
+  var BUILT = LIVE.built || "", CF_ASOF = CF.asof || "";
+  /* ---------- record fingerprints: SHA-256 over a fixed field list, so any change to a packaged record shows ---------- */
+  var FP = {}, FP_FIELDS = ["layer", "type", "kind", "cat", "title", "detail", "ts", "datePub", "place", "district", "prov", "lat", "lon", "prec",
+    "killed", "injured", "arrested", "people", "amount_thb", "value", "value_unit", "storm_name", "cases", "deaths_reported", "magnitude",
+    "mode", "route", "asset_type", "country", "agency", "target", "victims", "ongoing", "operator", "th", "derived", "cites", "url", "issued", "recorded"];
+  function canon(r) { return JSON.stringify(FP_FIELDS.map(function (k) { return [k, r[k] == null ? null : r[k]]; }).concat([["source", r.src ? r.src.name : null]])); }
+  function sha256(str) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve("unavailable in this browser");
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)).then(function (b) {
+      return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+    });
+  }
+  function fingerprint(r) { return sha256(canon(r)).then(function (h) { FP[r.id] = h; return h; }); }
+
+  if (TH) LIVE.over.forEach(function (i) {
+    var s = LIVE.stations[i];
+    add({ layer: "flood", type: "observation", cat: "Water over the bank",
+      title: (s.d || 0).toFixed(2) + " m over the bank at " + s.n,
+      detail: "Telemetry reading " + (s.msl != null ? s.msl.toFixed(2) + " m MSL" : "") + (s.b ? ", " + s.b : "") +
+              (s.ag ? ". Gauge operated by " + s.ag + "." : "."),
+      ts: s.t, place: s.a, prov: s.p, lat: s.lat, lon: s.lon, prec: "exact",
+      val: s.d || 0, sev: s.d >= 2 ? 3 : (s.d >= 0.5 ? 2 : 1), src: SOURCES.hii, url: "https://www.thaiwater.net/",
+      issued: s.t, recorded: BUILT, operator: s.ag });
+  });
+  if (TH) LIVE.rain.filter(function (r) { return r.mm >= 150; }).forEach(function (r) {
+    add({ layer: "flood", type: "observation", cat: "Heavy rain (24 h)",
+      title: Math.round(r.mm) + " mm of rain in 24 h" + (r.a ? ", " + r.a : ""),
+      detail: "Rain station " + (r.n || "") + ". Last hour " + (r.h1 || 0).toFixed(1) + " mm.",
+      ts: r.t, place: r.a, prov: r.p, lat: r.lat, lon: r.lon, prec: "exact",
+      val: r.mm, sev: r.mm >= 250 ? 3 : 2, src: SOURCES.hii, url: "https://www.thaiwater.net/", issued: r.t, recorded: BUILT });
+  });
+  if (TH) LIVE.warnings.forEach(function (w) {
+    add({ layer: "flood", type: "claim", cat: "Official warning",
+      title: w.en[0] + (w.en.length > 1 ? " (+" + (w.en.length - 1) + " more)" : ""),
+      detail: w.en.join(" · "), th: w.th, ts: w.t, place: "", prov: "", lat: null, lon: null, prec: "none",
+      sev: /flash-flood|over the bank/i.test(w.en.join(" ")) ? 3 : 2, src: SOURCES.hii, url: "https://www.thaiwater.net/",
+      issued: w.t, recorded: BUILT,
+      derived: "English lines are a structured reading of the Thai bulletin (a derivative). The Thai original is kept." });
+  });
+  if (TH) PROV.features.forEach(function (f) {
+    var p = f.properties;
+    if (p.lvl < 2) return;
+    var ag = (String(p.why).match(/\b(DDPM|RID|ONWR|GISTDA|TMD)\b/) || [])[1] || "DDPM";
+    add({ layer: "flood", type: "claim", cat: p.lvl === 3 ? "Overflow expected" : "Basin or watershed warning",
+      title: (p.lvl === 3 ? "Overflow expected: " : "Watch: ") + p.name, detail: p.why,
+      ts: "2026-09-25", tsLabel: "Bulletin window 21–25 Sep 2026", place: "", prov: p.name,
+      lat: p.c ? p.c[1] : null, lon: p.c ? p.c[0] : null, prec: "province",
+      sev: p.lvl === 3 ? 3 : 2, src: SOURCES[ag.toLowerCase()], url: "", issued: "21–25 Sep 2026", recorded: BUILT });
+  });
+  var SEV = { clash: 3, strike: 3, civilian: 3, landmine: 2, occupation: 2, standoff: 1, maritime: 1, diplomatic: 1 };
+  var KINDNAME = { clash: "Armed clash", strike: "Air or artillery strike", landmine: "Landmine", standoff: "Standoff or fortification",
+    occupation: "Territorial control", civilian: "Civilian harm or displacement", maritime: "Maritime", diplomatic: "Diplomatic" };
+  if (TH) CF.events.forEach(function (e) {
+    var cites = (String(e.srcname).match(/\(cites (.+)\)/) || [])[1] || "";
+    add({ layer: "border", type: "event", cat: KINDNAME[e.kind] || e.kind, title: e.title, detail: e.detail,
+      ts: e.date, place: e.place, prov: e.prov === "—" ? "" : e.prov, lat: e.lat, lon: e.lon, prec: e.prec || "none",
+      sev: SEV[e.kind] || 1, src: outletSource(e.srcname, e.src), cites: cites, url: e.src,
+      issued: e.date, recorded: CF_ASOF });
+  });
+  if (TH) CF.crossings.forEach(function (x) {
+    var s = /wikipedia/.test(x.src) ? outletSource("Wikipedia", x.src) : outletSource("Nation Thailand", x.src);
+    add({ layer: "border", type: "event", cat: "Crossing closed", title: "Crossing closed: " + x.name,
+      detail: x.detail || x.status, ts: x.since, place: x.name, prov: "", lat: x.lat, lon: x.lon, prec: "exact",
+      sev: 2, src: s, url: x.src, issued: x.since, recorded: CF_ASOF, ongoing: true });
+  });
+  function measures(r) {
+    return [r.storm_name ? "Storm " + r.storm_name : "", r.magnitude != null ? "Magnitude " + r.magnitude : "",
+      r.value != null ? r.value.toLocaleString() + (r.value_unit ? " " + r.value_unit : "") : "",
+      r.cases != null ? r.cases.toLocaleString() + " cases" : "", r.deaths_reported != null ? r.deaths_reported.toLocaleString() + " deaths reported" : "",
+      r.mode ? r.mode : "", r.route ? r.route : "", r.asset_type ? r.asset_type : ""].filter(Boolean);
+  }
+  var TD = {}, TDALL = window.TSAP_DATA || {}, CN = {};
+  Object.keys(TDALL).forEach(function (k) {
+    var p = k.split("/"), cc = p.length > 1 ? p[0] : "th", lid = p.length > 1 ? p[1] : k;
+    CN[cc] = (CN[cc] || 0) + TDALL[k].events.length;
+    if (cc === CC) TD[lid] = TDALL[k];
+  });
+  if (TH) CN.th += (LIVE.over || []).length + (CF.events || []).length;
+  Object.keys(TD).forEach(function (lid) {
+    var D = TD[lid];
+    D.events.forEach(function (e) {
+      var k = D.kinds[e.kind] || D.kinds.other;
+      var att = e.attribution && !/^outlet/i.test(e.attribution) ? " Attributed to " + e.attribution + "." : "";
+      add({ layer: lid, type: k.claim ? "claim" : "event", cat: k.label, kind: D.kinds[e.kind] ? e.kind : "other",
+        title: e.title, detail: (e.detail || "") + att, ts: e.date, datePub: !!e.date_is_pub,
+        place: e.place || "", district: e.district || "", prov: e.prov || "", lat: e.lat, lon: e.lon, prec: e.prec || "none",
+        sev: (e.killed > 0 ? 3 : (k.sev || 1)), killed: e.killed, injured: e.injured, victims: e.victims, target: e.target,
+        arrested: e.arrested, people: e.people, amount_thb: e.amount_thb, country: e.country, agency: e.agency,
+        value: e.value, value_unit: e.value_unit, storm_name: e.storm_name, cases: e.cases, deaths_reported: e.deaths_reported,
+        magnitude: e.magnitude, mode: e.mode, route: e.route, asset_type: e.asset_type,
+        src: outletSource(e.srcname, e.src), url: e.src, issued: e.date, recorded: D.asof });
+    });
+  });
+  R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+
+  /* ---------- layers ---------- */
+  var LAYERS = [
+    { id: "timeline", name: "Timeline", title: "Master timeline" },
+    { id: "alerts", name: "Alerts", title: "Alerts" },
+    { id: "flood", name: "Flood", title: "Flood", live: true },
+    { id: "border", name: "Border", title: "Border security", live: true },
+    { id: "insurgency", name: "Southern insurgency", sources: "Royal Thai Police, ISOC public releases, SBPAC, provincial authorities",
+      shows: "IEDs, small-arms attacks, ambushes, arson; weekly and monthly trends; district heat maps; casualties by type." },
+    { id: "crime", name: "Organized crime", sources: "Royal Thai Police, Department of Special Investigation, AMLO",
+      shows: "Drug and human trafficking, illegal gambling, cybercrime, extortion, wildlife trafficking.",
+      sensitive: true },
+    { id: "scam", name: "Scam centers", sources: "Official raid and rescue releases, sanctions lists, corporate registries",
+      shows: "Known compounds, victim rescues, sanctions, corporate ownership, transport routes.", sensitive: true },
+    { id: "aml", name: "Money laundering", sources: "AMLO, Bank of Thailand advisories, Ministry of Commerce corporate registry",
+      shows: "Shell companies, casinos, real estate, crypto, cross-border transfers, facilitators.", sensitive: true },
+    { id: "weather", name: "Weather", sources: "Thai Meteorological Department, Royal Thai Navy Hydrographic Department",
+      shows: "Rain, lightning, typhoons, wind, radar, satellite, forecasts.",
+      now: "Rain-station totals are already live in the Flood layer." },
+    { id: "infra", name: "Infrastructure", sources: "Department of Highways, State Railway of Thailand, Airports of Thailand, Port Authority of Thailand",
+      shows: "Airports, ports, railways, power, cell towers, hospitals, bridges, fuel, water treatment.",
+      now: "Power sites and hospitals inside flooded subdistricts are already in the Flood layer (OpenStreetMap)." },
+    { id: "transport", name: "Transportation", sources: "Department of Highways, State Railway of Thailand, Airports of Thailand, Port Authority of Thailand",
+      shows: "Road and bridge closures, traffic, rail disruptions, airport delays, port operations." },
+    { id: "safety", name: "Public safety", sources: "DDPM, Thai Meteorological Department (earthquakes), provincial authorities",
+      shows: "Fire, chemical spills, industrial accidents, building collapse, earthquakes, civil disturbances." },
+    { id: "health", name: "Public health", sources: "Ministry of Public Health, Department of Disease Control",
+      shows: "Disease outbreaks, hospital alerts, animal disease, food contamination, air quality, heat warnings." }
+  ];
+  /* each area names its layers for what matters there; "null" hides a layer that does not apply */
+  var AREA_NAMES = {
+    ph: { flood: "Floods and landslides", border: "Maritime Domain Awareness", insurgency: "NPA and Mindanao conflict",
+          crime: "Organized crime", scam: "POGOs and scam hubs", aml: "Money laundering", weather: "Typhoons and weather",
+          infra: "Power grid and infrastructure", transport: "Sea, air and road transport", safety: "Earthquakes, volcanoes and safety", health: "Public health" },
+    tw: { flood: "Floods and landslides", border: "Cross-Strait military activity", insurgency: null, crime: "Organized crime",
+          scam: "Fraud rings", aml: "Money laundering", weather: "Typhoons and weather", infra: "Undersea cables and infrastructure",
+          transport: "Transportation", safety: "Earthquakes and public safety", health: "Public health" },
+    kp: { flood: "Floods", border: "Missiles and military activity", insurgency: null, crime: "Illicit networks",
+          scam: "Cyber theft and IT workers", aml: "Sanctions evasion", weather: "Weather", infra: "Infrastructure",
+          transport: "Transportation", safety: "Public safety", health: "Public health" },
+    kr: { flood: "Monsoon floods", border: "DMZ and North Korea", insurgency: null, crime: "Drugs and organized crime",
+          scam: "Voice phishing and scam compounds", aml: "Money laundering", weather: "Weather", infra: "Infrastructure",
+          transport: "Transportation", safety: "Fires and public safety", health: "Public health" },
+    mn: { flood: "Floods", border: "Borders with Russia and China", insurgency: null, crime: "Crime and smuggling",
+          scam: "Fraud", aml: "Money laundering", weather: "Dzud and weather", infra: "Infrastructure",
+          transport: "Transportation", safety: "Public safety", health: "Livestock disease and air quality" },
+    oki: { flood: "Storm surge and floods", border: "Senkaku and Sakishima maritime", insurgency: null, crime: "Crime and US-base incidents",
+          scam: "Fraud", aml: "Money laundering", weather: "Typhoons", infra: "Infrastructure",
+          transport: "Air and sea links", safety: "Earthquakes and tsunami", health: "Public health and PFAS" }
+  };
+  if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null; });
+  if (!TH) LAYERS.forEach(function (l) {
+    if (l.id === "flood" || l.id === "border") l.live = false;
+    var an = (AREA_NAMES[CC] || {})[l.id];
+    if (an) { l.name = an; l.title = an; }
+    if (l.sources) { l.sources = "Official agencies and established news outlets for " + C.name + ", being collected"; l.now = null; }
+  });
+  var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
+  var LCOL = { flood: "--rain", border: "--over" };
+  Object.keys(TD).forEach(function (lid) {
+    if (!LBY[lid]) return;
+    LBY[lid].live = true; LBY[lid].curated = true; LCOL[lid] = TD[lid].color || "--muted";
+    LBY[lid].title = LBY[lid].name;
+  });
+
+  /* outline basemap (Natural Earth 1:50m, public domain) so countries outside the packaged Thai tiles still have land and borders */
+  if (!TH && window.COUNTRY_BASE) {
+    map.createPane("cbase"); map.getPane("cbase").style.zIndex = 250; map.getPane("cbase").style.pointerEvents = "none";
+    var CNAME = { ph: "Philippines", tw: "Taiwan", kp: "North Korea", kr: "South Korea", mn: "Mongolia", oki: "Japan" };
+    var cbase = L.geoJSON(window.COUNTRY_BASE, { pane: "cbase", interactive: false, style: function (f) {
+      var me = f.properties.n === CNAME[CC];
+      return { color: me ? tok("--accent") : tok("--muted"), weight: me ? 1.6 : 0.8, opacity: me ? 0.9 : 0.6,
+               fillColor: tok("--surface"), fillOpacity: me ? 0.35 : 0.12 };
+    } }).addTo(map);
+  }
+  var cseg = document.getElementById("country-seg");
+  cseg.innerHTML = COUNTRIES.map(function (c) {
+    return '<button type="button" data-cc="' + c.id + '"' + (c.id === CC ? ' aria-current="true"' : "") + ">" + esc(c.name) +
+      (c.id === CC || c.id === "th" ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
+  }).join("");
+  cseg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-cc]");
+    if (!b || b.getAttribute("data-cc") === CC) return;
+    var cc = b.getAttribute("data-cc");
+    location.hash = (cc === "th" ? "" : cc + "/") + (current || "timeline");
+    location.reload();
+  });
+  window.addEventListener("hashchange", function () {
+    var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 && CBY[h[0]] ? h[0] : "th";
+    if (cc !== CC) location.reload();
+  });
+  var seg = document.getElementById("view-seg");
+  seg.innerHTML = LAYERS.map(function (l) {
+    return '<button type="button" role="tab" data-view="' + l.id + '" aria-selected="false"' +
+      (l.live || l.id === "timeline" || l.id === "alerts" ? "" : ' class="stub" title="Not connected yet"') + ">" + esc(l.name) + "</button>";
+  }).join("");
+
+  /* ---------- map markers for the timeline view ---------- */
+  map.createPane("tlpane"); map.getPane("tlpane").style.zIndex = 650;
+  var tlLayer = L.layerGroup(), markers = {};
+
+  /* ---------- timeline rail ---------- */
+  var railT = document.getElementById("rail-timeline");
+  var F = { layer: "", type: "", prov: "", from: "", to: "", src: "", q: "" };
+  var provs = {}; R.forEach(function (r) { if (r.prov) provs[r.prov] = 1; });
+  var srcIds = Object.keys(SOURCES).filter(function (k) { return SOURCES[k].n; })
+    .sort(function (a, b) { return SOURCES[b].n - SOURCES[a].n; });
+
+  document.getElementById("tl-layer").innerHTML = '<option value="">All working layers</option>' +
+    LAYERS.filter(function (l) { return l.live; }).map(function (l) { return '<option value="' + l.id + '">' + esc(l.name) + "</option>"; }).join("");
+  document.getElementById("tl-prov-list").innerHTML = Object.keys(provs).sort()
+    .map(function (p) { return '<option value="' + esc(p) + '">'; }).join("");
+  document.getElementById("tl-src").innerHTML = '<option value="">All sources</option>' + srcIds.map(function (k) {
+    return '<option value="' + k + '">' + esc(SOURCES[k].name) + " (" + SOURCES[k].n + ")</option>";
+  }).join("");
+
+  /* ---------- historical playback (valid time) ---------- */
+  var DAY = 86400000;
+  function dnum(iso) { return Math.floor(Date.parse(String(iso).slice(0, 10) + "T00:00:00Z") / DAY); }
+  function diso(n) { return new Date(n * DAY).toISOString().slice(0, 10); }
+  var dMin = Infinity, dMax = -Infinity;
+  R.forEach(function (r) { var n = dnum(r.ts); if (isFinite(n)) { dMin = Math.min(dMin, n); dMax = Math.max(dMax, n); } });
+  if (!isFinite(dMin)) { dMax = dnum("2026-09-26"); dMin = dMax; }
+  var PB = { on: false, day: dMax, win: 30, timer: null };
+  function age(r) { return PB.day - dnum(r.ts); }
+  function inPlayback(r) {
+    if (!PB.on) return true;
+    var a = age(r);
+    if (!(a >= 0)) return false;
+    if (r.ongoing) return true;
+    return !PB.win || a < PB.win;
+  }
+  function match(r) {
+    if (!inPlayback(r)) return false;
+    if (F.layer && r.layer !== F.layer) return false;
+    if (F.type && r.type !== F.type) return false;
+    if (F.src && r.src.id !== F.src) return false;
+    if (F.prov && (r.prov + " " + r.place).toLowerCase().indexOf(F.prov.toLowerCase()) < 0) return false;
+    var d = String(r.ts).slice(0, 10);
+    if (F.from && d < F.from) return false;
+    if (F.to && d > F.to) return false;
+    if (F.q) {
+      var hay = (r.title + " " + r.detail + " " + r.cat + " " + r.place + " " + r.prov + " " + r.src.name + " " + (r.cites || "")).toLowerCase();
+      if (hay.indexOf(F.q.toLowerCase()) < 0) return false;
+    }
+    return true;
+  }
+  function fmtTs(r) {
+    if (r.tsLabel) return r.tsLabel;
+    var t = String(r.ts);
+    var d = new Date(t.slice(0, 10) + "T00:00:00Z");
+    var day = isNaN(d) ? t.slice(0, 10) : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    return day + (t.length > 10 ? " " + t.slice(11, 16) + " ICT" : "") + (r.datePub ? " (report date)" : "");
+  }
+  var STATE = { observation: ["Observed", "instrument reading, not reviewed"], claim: ["Reported", "official statement, not confirmed"],
+                event: ["Reported", "sourced report, not confirmed"] };
+  function chip(cls, text) { return '<span class="chip ' + cls + '">' + esc(text) + "</span>"; }
+
+  function markerStyle(r) {
+    var c = tok(LCOL[r.layer] || "--muted");
+    var rad = 3.5 + r.sev * 1.6;
+    if (r.type === "observation") return { radius: rad, color: c, weight: 2, fillColor: c, fillOpacity: 0.12 };
+    if (r.type === "claim") return { radius: rad, color: tok("--ink"), weight: 1, dashArray: "2 2", fillColor: c, fillOpacity: 0.55 };
+    return { radius: rad, color: tok("--surface"), weight: 1.4, fillColor: c, fillOpacity: 0.95 };
+  }
+  var shown = [];
+  function render() {
+    shown = R.filter(match);
+    var list = document.getElementById("tl-list");
+    list.textContent = "";
+    tlLayer.clearLayers(); markers = {};
+    var located = 0;
+    shown.forEach(function (r, i) {
+      if (isFinite(r.lat) && isFinite(r.lon) && r.lat != null) {
+        located++;
+        var st0 = markerStyle(r);
+        if (PB.on && !r.ongoing) {
+          var fade = Math.max(0.3, 1 - age(r) / (PB.win || (dMax - dMin + 1)));
+          st0.fillOpacity *= fade; st0.opacity = Math.max(0.35, fade);
+        }
+        var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, st0));
+        m.bindTooltip(esc(r.title), { direction: "top" });
+        m.on("click", function () { select(r.id, false); });
+        tlLayer.addLayer(m); markers[r.id] = m;
+      }
+      if (i >= 250) return;
+      var d = document.createElement("button");
+      d.type = "button"; d.className = "tlrow"; d.setAttribute("data-id", r.id);
+      d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + '</span>' +
+        '<span class="tln">' + esc(r.title) + "</span>" +
+        '<span class="tlm">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
+        '<span class="tls">' + esc(r.src.name) + (r.prov ? " · " + esc(r.prov) : "") + "</span></span>";
+      d.addEventListener("click", function () { select(r.id, true); });
+      list.appendChild(d);
+    });
+    document.getElementById("tl-count").textContent = shown.length + " of " + R.length + " records" +
+      (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map";
+    if (PB.on) {
+      var ev = shown.filter(function (r) { return r.type === "event" && !r.ongoing; }).length;
+      var open = shown.filter(function (r) { return r.ongoing; }).length;
+      document.getElementById("pb-sum").textContent = shown.length + " records" +
+        (ev ? " \u00b7 " + ev + " incident" + (ev === 1 ? "" : "s") : "") +
+        (open ? " \u00b7 " + open + " crossing" + (open === 1 ? "" : "s") + " closed" : "");
+    }
+    var rest = document.getElementById("tl-nomap");
+    rest.textContent = shown.length - located ? (shown.length - located) + " have no mapped location and appear only in the list." : "";
+  }
+
+  /* ---------- evidence package ---------- */
+  function km(a, b) {
+    var R0 = 6371, t = Math.PI / 180, dl = (b.lat - a.lat) * t, dn = (b.lon - a.lon) * t;
+    var x = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a.lat * t) * Math.cos(b.lat * t) * Math.sin(dn / 2) * Math.sin(dn / 2);
+    return 2 * R0 * Math.asin(Math.sqrt(x));
+  }
+  function related(r) {
+    var t0 = Date.parse(String(r.ts).slice(0, 10));
+    return R.filter(function (o) {
+      if (o === r) return false;
+      var dt = Math.abs(Date.parse(String(o.ts).slice(0, 10)) - t0) / 86400000;
+      if (r.lat != null && o.lat != null && isFinite(r.lat) && isFinite(o.lat)) return km(r, o) <= 25 && dt <= 30;
+      return r.place && o.place === r.place && dt <= 30;
+    }).slice(0, 6);
+  }
+  var PREC = { exact: "Point given by the source or mapped exactly", approx: "Approximate, placed from the described location",
+               province: "Province centroid; the bulletin names the province only", none: "No location" };
+  function select(id, fly, boxId) {
+    var r = byId[id]; if (!r) return;
+    var st = STATE[r.type], s = r.src;
+    var rel = related(r);
+    var box = document.getElementById(boxId || "tl-pkg");
+    box.hidden = false;
+    box.innerHTML =
+      '<div class="pkghead"><h2>Evidence package</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
+      '<div class="pkgchips">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
+        chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
+      '<p class="pkgd">' + esc(r.detail) + "</p>" +
+      (r.th ? '<details><summary>Thai original</summary><span class="th">' + esc(r.th) + "</span></details>" : "") +
+      '<dl class="pkgdl">' +
+        "<dt>What</dt><dd>" + esc(r.cat) + (r.target ? '<span class="sub">Target: ' + esc(r.target) + "</span>" : "") + "</dd>" +
+        (r.killed != null || r.injured != null ? "<dt>Casualties</dt><dd>" + (r.killed != null ? r.killed + " killed" : "Deaths not stated") +
+          ", " + (r.injured != null ? r.injured + " injured" : "injuries not stated") +
+          (r.victims ? '<span class="sub">' + esc(r.victims) + "</span>" : "") + '<span class="sub">As reported by the source</span></dd>' : "") +
+        "<dt>Where</dt><dd>" + esc([r.place, r.prov].filter(Boolean).join(", ") || "Not stated") +
+          '<span class="sub">' + esc(PREC[r.prec] || r.prec) + "</span></dd>" +
+        (r.arrested != null || r.people != null || r.amount_thb != null || measures(r).length ? "<dt>Figures</dt><dd>" + esc([r.arrested != null ? r.arrested + " arrested" : "",
+          r.people != null ? r.people.toLocaleString() + " people" : "", r.amount_thb != null ? fmtBaht(r.amount_thb) : ""].concat(measures(r)).filter(Boolean).join(", ")) +
+          '<span class="sub">As reported by the source</span></dd>' : "") +
+        (r.agency ? "<dt>Lead agency</dt><dd>" + esc(r.agency) + "</dd>" : "") +
+        "<dt>When</dt><dd>" + esc(fmtTs(r)) + (r.ongoing ? '<span class="sub">Still in effect at last check</span>' : "") + "</dd>" +
+        "<dt>Reported by</dt><dd>" + esc(s.name) + '<span class="sub">' + esc(s.kind) + "</span>" +
+          (r.cites ? '<span class="sub">Cites ' + esc(r.cites) + "</span>" : "") +
+          (r.operator ? '<span class="sub">Gauge operator ' + esc(r.operator) + "</span>" : "") + "</dd>" +
+        "<dt>Verified?</dt><dd>" + esc(st[0]) + '<span class="sub">' + esc(st[1]) + ". No analyst has confirmed it.</span></dd>" +
+      "</dl>" +
+      '<h4 class="pkgh">Source traceability</h4><dl class="pkgdl">' +
+        "<dt>Issuing source</dt><dd>" + esc(s.name) + "</dd>" +
+        "<dt>Published</dt><dd>" + esc(r.issued || "Unknown") + "</dd>" +
+        "<dt>Last update</dt><dd>" + (r.ongoing ? "Status as of " + esc(CF_ASOF) : "Not tracked yet") + "</dd>" +
+        "<dt>Original</dt><dd>" + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.url.replace(/^https?:\/\/(www\.)?/, "").slice(0, 60)) + "</a>" : "No bulletin link archived") + "</dd>" +
+        '<dt>Record fingerprint</dt><dd><code class="fp" data-fp="' + r.id + '">' + esc(FP[r.id] || "computing\u2026") + "</code>" +
+          '<span class="sub">SHA-256 of this record as packaged in the build. It changes if any field changes. It does not cover the source page.</span></dd>' +
+        "<dt>Recorded in APSAP</dt><dd>" + esc(r.recorded || "") + "</dd>" +
+        "<dt>Validation</dt><dd>Not validated</dd>" +
+        "<dt>Source reliability</dt><dd>Not rated<span class=\"sub\">Proposed " + esc(s.proposed) + " (Admiralty A–F), for an analyst to set</span></dd>" +
+        "<dt>Information credibility</dt><dd>Not assessed<span class=\"sub\">Admiralty 1–6</span></dd>" +
+        (r.derived ? "<dt>Derived text</dt><dd>" + esc(r.derived) + "</dd>" : "") +
+      "</dl>" +
+      '<h4 class="pkgh">Related records</h4>' +
+      (rel.length ? '<div class="pkgrel">' + rel.map(function (o) {
+        return '<button type="button" class="tlrow" data-id="' + o.id + '"><span class="tlt">' + esc(fmtTs(o)) +
+          '</span><span class="tln">' + esc(o.title) + "</span></button>";
+      }).join("") + "</div>" : '<p class="obs">Nothing within 25 km and 30 days.</p>') +
+      '<p class="obs" style="margin-top:6px">Related means close in place and time. It is not a claim that the records are connected.</p>';
+    if (!FP[r.id]) fingerprint(r).then(function (h) { Array.prototype.forEach.call(box.querySelectorAll('code[data-fp="' + r.id + '"]'), function (c) { c.textContent = h; }); });
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; });
+    Array.prototype.forEach.call(box.querySelectorAll(".pkgrel .tlrow"), function (b) {
+      b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
+    });
+    document.querySelector(".rail").scrollTop = 0;
+    var inCur = boxId === "cl-pkg", m = inCur ? CM[id] : markers[id];
+    if (m) {
+      if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
+      m.setStyle({ weight: 3, color: tok("--ink") });
+      setTimeout(function () { var mm = inCur ? CM[id] : markers[id]; if (mm) mm.setStyle(inCur ? cStyle(r) : markerStyle(r)); }, 2500);
+    }
+  }
+
+  function bindF(id, key, ev) {
+    var el = document.getElementById(id);
+    el.addEventListener(ev || "change", function () { F[key] = el.value.trim(); render(); });
+  }
+  bindF("tl-layer", "layer"); bindF("tl-type", "type"); bindF("tl-src", "src");
+  bindF("tl-from", "from"); bindF("tl-to", "to");
+  bindF("tl-prov", "prov", "input"); bindF("tl-q", "q", "input");
+  var pbOn = document.getElementById("pb-on"), pbBody = document.getElementById("pb-body");
+  var pbDay = document.getElementById("pb-day"), pbPlay = document.getElementById("pb-play");
+  var pbWin = document.getElementById("pb-win");
+  function fmtDay(n) {
+    return new Date(n * DAY).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  }
+  pbDay.min = 0; pbDay.max = dMax - dMin; pbDay.value = dMax - dMin;
+  document.getElementById("pb-min").textContent = fmtDay(dMin);
+  document.getElementById("pb-max").textContent = fmtDay(dMax);
+  function pbSet(n) {
+    PB.day = Math.max(dMin, Math.min(dMax, n));
+    pbDay.value = PB.day - dMin;
+    document.getElementById("pb-date").textContent = fmtDay(PB.day);
+    render();
+  }
+  function pbStep() { return PB.win && PB.win <= 7 ? 1 : 7; }
+  function pbStop() {
+    if (PB.timer) { clearInterval(PB.timer); PB.timer = null; }
+    pbPlay.textContent = "Play";
+  }
+  pbOn.addEventListener("change", function () {
+    PB.on = pbOn.checked; pbBody.hidden = !PB.on;
+    if (!PB.on) pbStop();
+    pbSet(PB.day);
+  });
+  pbDay.addEventListener("input", function () { pbStop(); pbSet(dMin + parseInt(pbDay.value, 10)); });
+  pbWin.addEventListener("change", function () { PB.win = parseInt(pbWin.value, 10); render(); });
+  document.getElementById("pb-back").addEventListener("click", function () { pbStop(); pbSet(PB.day - pbStep()); });
+  document.getElementById("pb-fwd").addEventListener("click", function () { pbStop(); pbSet(PB.day + pbStep()); });
+  pbPlay.addEventListener("click", function () {
+    if (PB.timer) { pbStop(); return; }
+    if (PB.day >= dMax) pbSet(dMin);
+    pbPlay.textContent = "Pause";
+    PB.timer = setInterval(function () {
+      if (PB.day >= dMax) { pbStop(); return; }
+      pbSet(PB.day + pbStep());
+    }, 450);
+  });
+  document.getElementById("tl-reset").addEventListener("click", function () {
+    ["tl-layer", "tl-type", "tl-src", "tl-from", "tl-to", "tl-prov", "tl-q"].forEach(function (i) { document.getElementById(i).value = ""; });
+    for (var k in F) F[k] = "";
+    render();
+  });
+
+  /* ---------- source registry table ---------- */
+  document.getElementById("reg-body").innerHTML = srcIds.map(function (k) {
+    var s = SOURCES[k];
+    return "<tr><td>" + (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>" : esc(s.name)) +
+      (s.note ? '<span class="sub">' + esc(s.note) + "</span>" : "") + "</td><td>" + esc(s.kind) +
+      '</td><td class="n">' + s.n + '</td><td class="n">' + esc(s.proposed) + "?</td></tr>";
+  }).join("");
+  document.getElementById("tl-built").textContent = (TH ? "Flood data built " + BUILT + "; border record runs to " + CF_ASOF : C.name + ": " + R.length + " records") + ". Computing the build fingerprint\u2026";
+  Promise.all(R.map(fingerprint)).then(function (hs) {
+    return sha256(hs.slice().sort().join("\n")).then(function (m) {
+      window.TSAP.buildFingerprint = m;
+      document.getElementById("tl-built").textContent = (TH ? "Flood data built " + BUILT + "; border record runs to " + CF_ASOF : C.name + ": " + R.length + " records") + ". Build fingerprint (SHA-256 over all " +
+        hs.length + " record fingerprints): " + m + ".";
+    });
+  });
+
+  /* ---------- stub rail ---------- */
+  var railS = document.getElementById("rail-stub");
+  function fillStub(l) {
+    railS.innerHTML = '<div class="sec"><h2>' + esc(l.name) + '</h2>' +
+      '<div class="banner" style="margin-top:4px;border-left-color:var(--muted)"><b>' + (TH ? "Not connected yet." : "Not collected yet for " + esc(C.name) + ".") + "</b> " +
+      (l.analyst ? "This layer is for analysts only and needs sign-in and case access, which a public page cannot provide."
+                 : "No feed is wired to this layer, so nothing is drawn on the map.") + "</div></div>" +
+      '<div class="sec"><h2>Will show</h2><p class="note">' + esc(l.shows) + "</p></div>" +
+      '<div class="sec"><h2>Planned sources</h2><p class="note">' + esc(l.sources) + "</p>" +
+      '<p class="note" style="margin-top:8px">Each source is added to the registry with its own reliability rating before any of its records are shown.</p></div>' +
+      (l.now ? '<div class="sec"><h2>Available today</h2><p class="note">' + esc(l.now) + "</p></div>" : "") +
+      (l.sensitive ? '<div class="sec"><h2>Handling</h2><p class="note">This layer will name people, phone numbers, companies and accounts. ' +
+        "Those details belong inside an investigation with access control, not on a shared map. Only public incident reports (arrests, raids, sanctions) would appear here.</p></div>" : "");
+  }
+
+  /* ---------- alert engine ----------
+     Rules are versioned data evaluated over the same records the timeline uses. An alert is a
+     notification about a record, never a change to it: firing a rule does not confirm anything.
+     Each alert carries a dedupe key (rule@version:record), so re-running the rules or rebuilding
+     the page cannot produce the same alert twice. Thresholds are this viewer's own setting. */
+  var AS_OF = dMax;   /* the newest record date: "recent" is measured from the data, not the clock */
+  var RULES = [
+    { id: "flood-bank", v: 1, name: "River over its bank", layer: "flood", unit: "m", def: 1, min: 0, step: 0.1,
+      desc: "A gauge reads at least this far above its bank.",
+      test: function (r, t) { return r.cat === "Water over the bank" && r.val >= t; },
+      sev: function (r) { return r.val >= 2 ? 3 : 2; } },
+    { id: "flood-rain", v: 1, name: "Extreme rain", layer: "flood", unit: "mm / 24 h", def: 200, min: 50, step: 10,
+      desc: "A rain station records at least this much in 24 hours.",
+      test: function (r, t) { return r.cat === "Heavy rain (24 h)" && r.val >= t; },
+      sev: function (r) { return r.val >= 250 ? 3 : 2; } },
+    { id: "flood-warning", v: 1, name: "Official flood or rain warning", layer: "flood",
+      desc: "HII issues a warning bulletin.",
+      test: function (r) { return r.cat === "Official warning"; }, sev: function (r) { return r.sev; } },
+    { id: "flood-overflow", v: 1, name: "Overflow expected in a province", layer: "flood",
+      desc: "A provincial bulletin says overflow is expected.",
+      test: function (r) { return r.cat === "Overflow expected"; }, sev: function () { return 3; } },
+    { id: "border-closure", v: 1, name: "Border crossing closed", layer: "border",
+      desc: "A land crossing is reported closed.",
+      test: function (r) { return r.cat === "Crossing closed"; }, sev: function () { return 2; } },
+    { id: "border-violence", v: 1, name: "Clash, strike or landmine", layer: "border", unit: "days", def: 30, min: 1, step: 1,
+      desc: "An armed clash, strike or landmine incident reported within this many days of the latest record.",
+      test: function (r, t) { return /^(Armed clash|Air or artillery strike|Landmine)$/.test(r.cat) && AS_OF - dnum(r.ts) < t; },
+      sev: function (r) { return r.sev; } },
+    { id: "border-activity", v: 1, name: "Any new border incident", layer: "border", unit: "days", def: 14, min: 1, step: 1,
+      desc: "Any border incident reported within this many days of the latest record.",
+      test: function (r, t) { return r.layer === "border" && r.cat !== "Crossing closed" && AS_OF - dnum(r.ts) < t; },
+      sev: function (r) { return r.sev; } }
+  ];
+  if (TD.insurgency) RULES.push({ id: "insurgency-attack", v: 1, name: "Insurgent attack", layer: "insurgency", unit: "days", def: 30, min: 1, step: 1,
+    desc: "An IED, shooting, ambush, arson or attack on a facility in the southern border provinces within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "insurgency" && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
+    sev: function (r) { return r.sev; } });
+  if (TD.scam) RULES.push({ id: "scam-compound", v: 1, name: "Scam compound reported", layer: "scam", unit: "days", def: 60, min: 1, step: 1,
+    desc: "A scam compound is reported (new, resumed or relocated) within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "scam" && r.kind === "compound" && AS_OF - dnum(r.ts) < t; },
+    sev: function () { return 2; } });
+  if (TD.aml) RULES.push({ id: "aml-arrest", v: 1, name: "Money laundering arrest or charge", layer: "aml", unit: "days", def: 60, min: 1, step: 1,
+    desc: "An arrest, charge or seizure in a money laundering case within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "aml" && /^(arrest_charge|asset_seizure)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+    sev: function () { return 2; } });
+  if (TD.weather) RULES.push({ id: "weather-warning", v: 1, name: "Weather warning issued", layer: "weather", unit: "days", def: 7, min: 1, step: 1,
+    desc: "A heavy rain, storm, heat or drought warning issued within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "weather" && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+    sev: function (r) { return r.kind === "storm" ? 3 : 2; } });
+  if (TD.transport) RULES.push({ id: "road-closure", v: 1, name: "Road or bridge closed", layer: "transport", unit: "days", def: 14, min: 1, step: 1,
+    desc: "A road or bridge closure reported within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "transport" && /^(road_closure|bridge_closure)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+    sev: function () { return 2; } });
+  var HOSP = !!(TD.health && TD.health.events.some(function (e) { return e.kind === "hospital_strain"; }));
+  if (HOSP) RULES.push({ id: "hospital-strain", v: 1, name: "Hospital under strain", layer: "health", unit: "days", def: 30, min: 1, step: 1,
+    desc: "A hospital reported as overwhelmed or under strain within this many days of the latest record.",
+    test: function (r, t) { return r.layer === "health" && r.kind === "hospital_strain" && AS_OF - dnum(r.ts) < t; },
+    sev: function () { return 3; } });
+  if (TD.safety) RULES.push({ id: "fire-casualties", v: 1, name: "Fire with casualties", layer: "safety", unit: "people hurt", def: 1, min: 1, step: 1,
+    desc: "A fire, wildfire or explosion in the last 60 days where at least this many people were reported killed or injured.",
+    test: function (r, t) { return r.layer === "safety" && /^(fire|wildfire|industrial_explosion)$/.test(r.kind) && AS_OF - dnum(r.ts) < 60 && (r.killed || 0) + (r.injured || 0) >= t; },
+    sev: function (r) { return r.killed ? 3 : 2; } });
+  var WAITING = [
+    TD.transport ? null : ["Road closes", "Transportation"], ["Military exercise announced", "Border (official statements feed)"],
+    TD.insurgency ? null : ["IED occurs", "Southern insurgency"], TD.scam ? null : ["New scam center identified", "Scam centers"],
+    TD.aml ? null : ["Money laundering arrest", "Money laundering"], TD.weather ? null : ["Weather warning issued", "Weather (TMD)"],
+    HOSP ? null : ["Hospital overwhelmed", "Public health"], TD.safety ? null : ["Fire exceeds threshold", "Public safety"]
+  ];
+  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var ASET = lsGet("tsap-alert-rules", {});
+  RULES.forEach(function (ru) {
+    var s = ASET[ru.id] || {};
+    ru.on = s.on !== false;
+    ru.t = (ru.unit && isFinite(s.t)) ? s.t : ru.def;
+  });
+  var SEEN = lsGet("tsap-alert-seen", null);
+  var firstVisit = SEEN === null;
+  SEEN = SEEN || {};
+  var ALERTS = [];
+  function evaluate() {
+    var byKey = {};
+    RULES.forEach(function (ru) {
+      if (!ru.on) return;
+      R.forEach(function (r) {
+        if (!ru.test(r, ru.t)) return;
+        var key = ru.id + "@" + ru.v + ":" + r.id;
+        if (byKey[key]) return;
+        byKey[key] = { key: key, rule: ru, rec: r, sev: ru.sev(r) };
+      });
+    });
+    ALERTS = Object.keys(byKey).map(function (k) { return byKey[k]; })
+      .sort(function (a, b) { return a.rec.ts < b.rec.ts ? 1 : (a.rec.ts > b.rec.ts ? -1 : b.sev - a.sev); });
+    if (firstVisit) { ALERTS.forEach(function (a) { SEEN[a.key] = 1; }); lsSet("tsap-alert-seen", SEEN); firstVisit = false; }
+  }
+  var alertLayer = L.layerGroup();
+  var railA = document.getElementById("rail-alerts");
+  function unseen() { return ALERTS.filter(function (a) { return !SEEN[a.key]; }).length; }
+  function badge() {
+    var b = seg.querySelector('[data-view="alerts"]');
+    if (b) b.innerHTML = "Alerts" + (ALERTS.length ? ' <span class="abadge' + (unseen() ? " new" : "") + '">' +
+      (unseen() ? unseen() + " new" : ALERTS.length) + "</span>" : "");
+  }
+  function renderAlerts() {
+    evaluate(); badge();
+    var n3 = ALERTS.filter(function (a) { return a.sev === 3; }).length;
+    document.getElementById("al-sum").textContent = ALERTS.length + " active alert" + (ALERTS.length === 1 ? "" : "s") +
+      (n3 ? " · " + n3 + " high severity" : "") + (unseen() ? " · " + unseen() + " new since you last looked" : "");
+    var list = document.getElementById("al-list");
+    list.textContent = "";
+    alertLayer.clearLayers();
+    ALERTS.forEach(function (a, i) {
+      var r = a.rec;
+      if (r.lat != null && isFinite(r.lat) && isFinite(r.lon)) {
+        var m = L.circleMarker([r.lat, r.lon], { pane: "tlpane", radius: 5 + a.sev * 2,
+          color: tok(a.sev === 3 ? "--over" : "--near"), weight: 2.5, fillColor: tok(a.sev === 3 ? "--over" : "--near"), fillOpacity: 0.35 });
+        m.bindTooltip(esc(a.rule.name + ": " + r.title), { direction: "top" });
+        m.on("click", function () { openRec(r.id); });
+        alertLayer.addLayer(m);
+      }
+      if (i >= 150) return;
+      var d = document.createElement("button");
+      d.type = "button"; d.className = "tlrow alrow sev" + a.sev + (SEEN[a.key] ? "" : " new");
+      d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + (SEEN[a.key] ? "" : ' <b class="newtag">NEW</b>') + "</span>" +
+        '<span class="tln">' + esc(r.title) + "</span>" +
+        '<span class="tlm">' + chip("sev" + a.sev, ["", "Low", "Medium", "High"][a.sev]) + chip("rule", a.rule.name) +
+        '<span class="tls">' + esc(r.src.name) + "</span></span>";
+      d.addEventListener("click", function () { SEEN[a.key] = 1; lsSet("tsap-alert-seen", SEEN); openRec(r.id); });
+      list.appendChild(d);
+    });
+    if (!ALERTS.length) list.innerHTML = '<p class="obs">No rule is firing with the current settings.</p>';
+  }
+  function openRec(id) { setView("timeline"); select(id, true); }
+  function renderRules() {
+    var box = document.getElementById("al-rules");
+    box.innerHTML = RULES.map(function (ru) {
+      return '<div class="rule"><div class="ctl"><input type="checkbox" id="ar-' + ru.id + '"' + (ru.on ? " checked" : "") + ">" +
+        '<label for="ar-' + ru.id + '">' + esc(ru.name) + '<span class="hint">' + esc(ru.desc) + " Rule v" + ru.v + ".</span></label></div>" +
+        (ru.unit ? '<div class="sub2 rthr"><label for="at-' + ru.id + '" class="obs">Threshold</label>' +
+          '<input type="number" class="mini" id="at-' + ru.id + '" value="' + ru.t + '" min="' + ru.min + '" step="' + ru.step + '">' +
+          '<span class="obs">' + esc(ru.unit) + "</span></div>" : "") + "</div>";
+    }).join("");
+    RULES.forEach(function (ru) {
+      document.getElementById("ar-" + ru.id).addEventListener("change", function () { ru.on = this.checked; saveRules(); });
+      var t = document.getElementById("at-" + ru.id);
+      if (t) t.addEventListener("change", function () {
+        var v = parseFloat(this.value);
+        if (!isFinite(v) || v < ru.min) { v = ru.def; this.value = v; }
+        ru.t = v; saveRules();
+      });
+    });
+    document.getElementById("al-wait").innerHTML = WAITING.filter(Boolean).map(function (w) {
+      return "<li>" + esc(w[0]) + ' <span class="obs">— needs the ' + esc(w[1]) + " layer</span></li>";
+    }).join("");
+  }
+  function saveRules() {
+    var o = {};
+    RULES.forEach(function (ru) { o[ru.id] = { on: ru.on, t: ru.t }; });
+    lsSet("tsap-alert-rules", o);
+    renderAlerts();
+  }
+  document.getElementById("al-read").addEventListener("click", function () {
+    ALERTS.forEach(function (a) { SEEN[a.key] = 1; }); lsSet("tsap-alert-seen", SEEN); renderAlerts();
+  });
+  document.getElementById("al-reset").addEventListener("click", function () {
+    RULES.forEach(function (ru) { ru.on = true; ru.t = ru.def; }); renderRules(); saveRules();
+  });
+  document.getElementById("al-asof").textContent = "Recent means within the chosen days of " +
+    new Date(AS_OF * DAY).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) +
+    ", the newest record in this build.";
+
+  /* ---------- curated layers (sourced incident records packaged with the page) ---------- */
+  var railC = document.getElementById("rail-curated"), curLayer = L.layerGroup(), CM = {}, curId = null, curOff = {};
+  function kindOf(r) { var D = TD[r.layer]; return (D && (D.kinds[r.kind] || D.kinds.other)) || { label: r.kind, color: "--muted" }; }
+  function cStyle(r) {
+    var c = tok(kindOf(r).color || "--muted");
+    var rad = 4 + r.sev + (r.killed ? Math.min(6, 1 + r.killed) : 0);
+    return { radius: rad, color: tok("--surface"), weight: 1.3, fillColor: c, fillOpacity: 0.9, dashArray: null };
+  }
+  function fmtBaht(v) { return v >= 1e9 ? (v / 1e9).toFixed(1) + " bn baht" : v >= 1e6 ? Math.round(v / 1e6) + " m baht" : Math.round(v).toLocaleString() + " baht"; }
+  function monthKey(ts) { return String(ts).slice(0, 7); }
+  function showCurated(lid) {
+    curId = lid;
+    var D = TD[lid], recs = R.filter(function (r) { return r.layer === lid; });
+    var vis = recs.filter(function (r) { return !curOff[lid + ":" + r.kind]; });
+    var viol = recs.filter(function (r) { return kindOf(r).violent || kindOf(r).counted; });
+    var sum = function (a, k) { return a.reduce(function (n, r) { return n + (r[k] || 0); }, 0); };
+    var lastV = viol.length ? viol.reduce(function (m, r) { return r.ts > m ? r.ts : m; }, "") : "";
+    var since = lastV ? dnum(D.asof) - dnum(lastV) : null;
+    /* month buckets */
+    var months = {}, mk = [];
+    recs.forEach(function (r) { var k = monthKey(r.ts); if (!months[k]) months[k] = { n: 0, k: 0 }; if (kindOf(r).violent || kindOf(r).counted) { months[k].n++; months[k].k += r[D.tableField || "killed"] || 0; } });
+    if (recs.length) {
+      var y = +D.from.slice(0, 4), m = +D.from.slice(5, 7), ey = +D.asof.slice(0, 4), em = +D.asof.slice(5, 7);
+      while (y < ey || (y === ey && m <= em)) { mk.push(y + "-" + ("0" + m).slice(-2)); m++; if (m > 12) { m = 1; y++; } }
+    }
+    var mmax = Math.max.apply(null, [1].concat(mk.map(function (k) { return (months[k] || {}).n || 0; })));
+    var bars = mk.map(function (k) {
+      var o = months[k] || { n: 0, k: 0 };
+      var lbl = new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
+      return '<div class="mb" title="' + esc(lbl + ": " + o.n + " " + (D.unit || "incidents") + (!D.tableField || D.tableField === "killed" ? ", " + o.k + " killed" : "")) + '"><span class="mbv">' + (o.n || "") +
+        '</span><i style="height:' + Math.round(o.n / mmax * 100) + '%"></i><span class="mbl">' + esc(lbl) + "</span></div>";
+    }).join("");
+    /* kinds */
+    var kc = {};
+    recs.forEach(function (r) { kc[r.kind] = (kc[r.kind] || 0) + 1; });
+    var kinds = Object.keys(D.kinds).filter(function (k) { return kc[k]; }).map(function (k) {
+      var kd = D.kinds[k], id = "ck-" + lid + "-" + k;
+      return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (curOff[lid + ":" + k] ? "" : " checked") + ">" +
+        '<label for="' + id + '"><span class="sw round" style="display:inline-block;width:10px;height:10px;margin-right:6px;background:var(' + kd.color + ')"></span>' +
+        esc(kd.label) + ' <span class="obs">' + kc[k] + "</span></label></div>";
+    }).join("");
+    /* districts */
+    var dist = {};
+    (D.tableAll ? recs : viol).forEach(function (r) { if (r.lat == null) return; var k = (D.byProvince ? (r.prov || "Unknown") : (r.district || r.place || "Unknown")) + "|" + (D.byProvince ? (r.country || "") : (r.prov || "")); var o = dist[k] || (dist[k] = { n: 0, k: 0, r: r }); o.n++; o.k += r[D.tableField || "killed"] || 0; });
+    var drows = Object.keys(dist).sort(function (a, b) { return dist[b].n - dist[a].n || dist[b].k - dist[a].k; }).slice(0, 10).map(function (k) {
+      var p = k.split("|");
+      return '<tr data-id="' + dist[k].r.id + '"><td>' + esc(p[0]) + '<span class="sub">' + esc(p[1]) + '</span></td><td class="n">' + dist[k].n + '</td><td class="n">' + (D.tableField === "amount_thb" ? fmtBaht(dist[k].k).replace(" baht", "") : dist[k].k.toLocaleString()) + "</td></tr>";
+    }).join("");
+    /* sources */
+    var sc = {};
+    recs.forEach(function (r) { sc[r.src.name] = (sc[r.src.name] || 0) + 1; });
+    var srcs = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; })
+      .map(function (k) { return "<li>" + esc(k) + ' <span class="obs">' + sc[k] + "</span></li>"; }).join("");
+    railC.innerHTML =
+      '<div class="sec" id="cl-pkg" hidden></div>' +
+      '<div class="sec"><h2>Right now</h2><div class="kpis">' + (D.kpis || [
+        { type: "count", label: "Violent incidents recorded", hot: true },
+        { type: "sum", field: "killed", label: "Killed, as reported", hot: true },
+        { type: "sum", field: "injured", label: "Injured, as reported" },
+        { type: "days", label: "Days since the last recorded attack" }]).map(function (kp) {
+          var v = kp.type === "count" ? viol.length : kp.type === "all" ? recs.length :
+                  kp.type === "sum" ? sum(kp.all ? recs : viol, kp.field) :
+                  kp.type === "kind" ? recs.filter(function (r) { return r.kind === kp.kind; }).length :
+                  kp.type === "assets" ? (D.assets || []).length :
+                  kp.type === "max" ? recs.reduce(function (m, r) { return Math.max(m, r[kp.field] || 0); }, 0) :
+                  (since == null ? "\u2014" : since);
+          if ((kp.type === "sum" || kp.type === "max") && kp.money) v = fmtBaht(v).replace(" baht", "");
+          else if (typeof v === "number") v = v.toLocaleString();
+          return '<div class="kpi"><div class="v' + (kp.hot ? " hot" : "") + '">' + v + '</div><div class="k">' + esc(kp.label) + "</div></div>";
+        }).join("") +
+      "</div>" + (D.status ? '<div class="banner">' + D.status + "</div>" : "") + "</div>" +
+      '<div class="sec"><h2>' + esc(D.chartTitle || "Incidents by month") + '</h2><p class="sub">' + esc(D.chartSub || "Violent incidents in this record. Hover a bar for deaths.") + '</p><div class="mbars">' + bars + "</div></div>" +
+      '<div class="sec"><h2>Map layers</h2>' + kinds + "</div>" +
+      (drows ? '<div class="sec"><h2>' + (D.byProvince ? "By place" : "By district") + '</h2><div class="tw"><table class="reg"><thead><tr><th>' + (D.byProvince ? "Province or area" : "District") + '</th><th>' + esc(D.unitShort || "Incidents") + '</th><th>' + esc(D.tableLabel || "Killed") + '</th></tr></thead><tbody>' + drows + "</tbody></table></div></div>" : "") +
+      (D.assets ? '<div class="sec"><h2>Key assets</h2><p class="sub">Reference points from public sources, shown as rings. Not events, and no status is implied.</p>' +
+        '<div class="ctl"><input type="checkbox" id="ck-' + lid + '-assets" data-assets="1"' + (curOff[lid + ":__assets"] ? "" : " checked") + '><label for="ck-' + lid + '-assets">Show assets on the map <span class="obs">' + D.assets.length + "</span></label></div>" +
+        '<div class="tw"><table class="reg"><thead><tr><th>Asset</th><th>Type</th></tr></thead><tbody>' +
+        D.assets.map(function (a, i) { return '<tr data-asset="' + i + '"><td>' + esc(a.title) + '<span class="sub">' + esc(a.prov || "") + "</span></td><td>" + esc(a.asset_type || "") + "</td></tr>"; }).join("") +
+        "</tbody></table></div></div>" : "") +
+      '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its evidence package.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
+      '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
+      '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
+    var list = document.getElementById("cl-list");
+    curLayer.clearLayers(); CM = {};
+    var AM = [];
+    (D.assets || []).forEach(function (a, i) {
+      if (curOff[lid + ":__assets"] || a.lat == null || !isFinite(a.lat) || !isFinite(a.lon)) return;
+      var col = tok((D.assetTypes || {})[a.asset_type] || "--muted");
+      var am = L.circleMarker([a.lat, a.lon], { pane: "tlpane", radius: 7, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.12 });
+      am.bindTooltip(esc(a.title + " \u00b7 " + (a.asset_type || "asset")), { direction: "top" });
+      am.bindPopup('<b>' + esc(a.title) + '</b><br>' + esc([a.asset_type, a.place, a.prov].filter(Boolean).join(" \u00b7 ")) +
+        (a.agency ? "<br>Operator: " + esc(a.agency) : "") + "<br>" + esc(PREC[a.prec] || a.prec || "") +
+        (/^https?:\/\//.test(a.src || "") ? '<br>Source: <a href="' + esc(a.src) + '" target="_blank" rel="noopener noreferrer">' + esc(a.srcname || a.src) + "</a>" : ""));
+      curLayer.addLayer(am); AM[i] = am;
+    });
+    Array.prototype.forEach.call(railC.querySelectorAll("tr[data-asset]"), function (tr) {
+      tr.style.cursor = "pointer";
+      tr.addEventListener("click", function () { var am = AM[+tr.getAttribute("data-asset")]; if (am) { FW.map.setView(am.getLatLng(), 9); am.openPopup(); } });
+    });
+    var ab = railC.querySelector("input[data-assets]");
+    if (ab) ab.addEventListener("change", function () { curOff[lid + ":__assets"] = !ab.checked; showCurated(lid); });
+    vis.forEach(function (r) {
+      if (r.lat != null && isFinite(r.lat) && isFinite(r.lon)) {
+        var mk2 = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, cStyle(r)));
+        mk2.bindTooltip(esc(r.title), { direction: "top" });
+        mk2.on("click", function () { select(r.id, false, "cl-pkg"); });
+        curLayer.addLayer(mk2); CM[r.id] = mk2;
+      }
+      var d = document.createElement("button");
+      d.type = "button"; d.className = "tlrow";
+      d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + "</span>" + '<span class="tln">' + esc(r.title) + "</span>" +
+        '<span class="tlm">' + chip("k", kindOf(r).label) + (r.killed ? chip("sev3", r.killed + " killed") : "") +
+        (r.injured ? chip("", r.injured + " injured") : "") + (r.arrested ? chip("", r.arrested + " arrested") : "") +
+        (r.people ? chip("", r.people.toLocaleString() + " people") : "") + (r.amount_thb ? chip("", fmtBaht(r.amount_thb)) : "") + measures(r).slice(0, 2).map(function (m) { return chip("", m); }).join("") + '<span class="tls">' + esc([r.district, r.prov].filter(Boolean).join(", ")) + "</span></span>";
+      d.addEventListener("click", function () { select(r.id, true, "cl-pkg"); });
+      list.appendChild(d);
+    });
+    Array.prototype.forEach.call(railC.querySelectorAll("input[data-k]"), function (cb) {
+      cb.addEventListener("change", function () { curOff[lid + ":" + cb.getAttribute("data-k")] = !cb.checked; showCurated(lid); });
+    });
+    Array.prototype.forEach.call(railC.querySelectorAll("tr[data-id]"), function (tr) {
+      tr.addEventListener("click", function () { var m = CM[tr.getAttribute("data-id")]; if (m) map.setView(m.getLatLng(), 10); });
+    });
+  }
+
+  /* ---------- view switching ---------- */
+  var railF = document.getElementById("rail-flood"), railB = document.getElementById("rail-border");
+  var h1 = document.getElementById("hdr-title"), live = document.getElementById("hdr-live"), srcline = document.getElementById("hdr-src");
+  var rail = document.querySelector(".rail");
+  var SRCLINE = { flood: "thaiwater.net · NASA MODIS · GISTDA · Esri",
+                  border: "Sourced reporting · OpenStreetMap · GISTDA · NASA FIRMS",
+                  alerts: "Rules run over every record in this build",
+                  timeline: R.length + " records · " + srcIds.length + " sources" };
+  var current = null;
+  function setView(v, fromLoad) {
+    if (!LBY[v]) v = "flood";
+    if (v === current) return;
+    current = v;
+    var l = LBY[v];
+    document.documentElement.setAttribute("data-view", v);
+    Array.prototype.forEach.call(seg.querySelectorAll("button"), function (b) {
+      b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
+    });
+    h1.textContent = l.title || l.name;
+    srcline.textContent = ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
+    railF.hidden = !(v === "flood" && TH);
+    railB.hidden = !(v === "border" && TH);
+    railT.hidden = v !== "timeline";
+    railA.hidden = v !== "alerts";
+    railC.hidden = !l.curated;
+    railS.hidden = !!(l.live || v === "timeline" || v === "alerts");
+    rail.scrollTop = 0;
+    if (v !== "timeline") pbStop();
+    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer);
+    if (l.curated) {
+      curLayer.addTo(map); showCurated(v);
+      map.invalidateSize();
+      map.fitBounds(TH && TD[v].bounds ? TD[v].bounds : C.bounds, { padding: [10, 10], animate: false });
+    }
+    else if (v === "flood" && TH) window.FW.show();
+    else if (v === "border" && TH) window.TBW.show();
+    else {
+      if (v === "timeline") { tlLayer.addTo(map); render(); }
+      else if (v === "alerts") { alertLayer.addTo(map); renderAlerts(); }
+      else fillStub(l);
+      map.invalidateSize();
+      map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
+    }
+    try { localStorage.setItem("tw-view", v); } catch (e) {}
+    if (!fromLoad) { try { history.replaceState(null, "", "#" + (TH ? "" : CC + "/") + v); } catch (e) {} }
+  }
+  seg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-view]");
+    if (b) setView(b.getAttribute("data-view"));
+  });
+  seg.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var i = LAYERS.map(function (l) { return l.id; }).indexOf(current);
+    var n = LAYERS[(i + (e.key === "ArrowRight" ? 1 : LAYERS.length - 1)) % LAYERS.length].id;
+    setView(n);
+    seg.querySelector('[data-view="' + n + '"]').focus();
+  });
+
+  /* the header wraps onto two rows now, so the map is sized from its real height */
+  var hdr = document.querySelector("header");
+  function sizeToHeader() {
+    document.documentElement.style.setProperty("--hdr-h", hdr.offsetHeight + "px");
+    map.invalidateSize();
+  }
+  sizeToHeader();
+  window.addEventListener("resize", sizeToHeader);
+
+  renderRules(); evaluate(); badge();
+
+  var want = WANT;
+  if (!LBY[want]) { try { want = localStorage.getItem("tw-view"); } catch (e) { want = null; } }
+  if (!TH && (!LBY[want] || want === "flood" || want === "border") && !(TD[want])) want = "timeline";
+  document.getElementById("hdr-live").hidden = !TH;
+  if (!TH) document.title = "AXIOM APSAP \u00b7 " + C.name;
+  setView(want || "flood", true);
+  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
+})();
+</script>
+
+
+</body></html>

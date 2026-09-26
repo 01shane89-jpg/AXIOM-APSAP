@@ -1,0 +1,82 @@
+{
+ "asof": "2026-09-26",
+ "color": "--l3",
+ "srcline": "Sourced reporting · SBPAC statistics",
+ "bounds": [
+  [
+   5.6,
+   100.4
+  ],
+  [
+   7.2,
+   102.1
+  ]
+ ],
+ "status": "<b>A curated record, not a full count.</b> 45 records from English-language reporting for Jan–Sep 2026, 34 of them attacks. SBPAC counted 103 incidents through July alone, so most events are missing here.",
+ "kinds": {
+  "ied": {
+   "label": "IED or bombing",
+   "color": "--over",
+   "sev": 3,
+   "violent": true
+  },
+  "attack_on_facility": {
+   "label": "Attack on a facility",
+   "color": "--power",
+   "sev": 3,
+   "violent": true
+  },
+  "ambush": {
+   "label": "Ambush",
+   "color": "--near",
+   "sev": 3,
+   "violent": true
+  },
+  "shooting": {
+   "label": "Shooting",
+   "color": "--sat-water",
+   "sev": 2,
+   "violent": true
+  },
+  "arson": {
+   "label": "Arson",
+   "color": "--sat-recur",
+   "sev": 2,
+   "violent": true
+  },
+  "raid_or_arrest": {
+   "label": "Security raid or arrest",
+   "color": "--care",
+   "sev": 1
+  },
+  "propaganda": {
+   "label": "Propaganda",
+   "color": "--calm",
+   "sev": 1
+  },
+  "peace_talks": {
+   "label": "Peace dialogue",
+   "color": "--rain",
+   "sev": 1,
+   "claim": true
+  },
+  "statistics": {
+   "label": "Official statistics",
+   "color": "--accent",
+   "sev": 1,
+   "claim": true
+  },
+  "other": {
+   "label": "Other or summary",
+   "color": "--muted",
+   "sev": 1
+  }
+ },
+ "notes": [
+  "<b>Every record is a report, not a finding.</b> Each one links to the article it came from and keeps who made the claim, such as police or the army. None has been confirmed by an analyst.",
+  "<b>Counts are floors.</b> Only reporting that could be opened and read was used. Bangkok Post and several other outlets were blocked, and Songkhla's four border districts have no records.",
+  "<b>Totals cover attacks only.</b> Deaths during security raids and arrests are shown on each record but not added to the killed total. The one-night waves of 11 Jan and 22 Aug have a summary record plus a few site records, so treat the incident count as approximate.",
+  "<b>Places are approximate.</b> Markers sit at the district centre unless the article gave more. Some records may not be insurgent violence; the record's detail says so where the police or rights groups suggested another motive.",
+  "<b>Figures disagree between sources.</b> For 22 Aug the army counted 51 incidents, The Nation 34 and Thai Examiner 78. The record uses one figure and names the others."
+ ]
+}
