@@ -8,10 +8,24 @@ It is a separate build for now and is meant to fold into AXIOM later (see [Path 
 
 ## Run it
 
-Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) and open `http://localhost:8000/`. It needs no build step. Leaflet loads from cdnjs.
+Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) and open `http://localhost:8000/`. It needs no build step, and it ships its own copy of Leaflet (`assets/vendor/`), so it runs with no network at all.
 
 - Pick an area with the country tabs; the URL hash is `#<cc>/<view>` (Thailand has no prefix, e.g. `#ph/border`, `#timeline`).
 - Every marker and list row opens an evidence package: what, where, when, who reported it, the source link, a SHA-256 record fingerprint, and the source's proposed Admiralty reliability letter.
+
+## Install on a computer, Android or iPhone
+
+When the site is hosted (for example on GitHub Pages), ASAP installs as an app:
+
+- **Computer (Chrome or Edge):** open the site and click the install icon at the right of the address bar.
+- **Android (Chrome):** open the site, tap the menu, then **Install app** (or **Add to Home screen**).
+- **iPhone or iPad (Safari):** open the site, tap **Share**, then **Add to Home Screen**.
+
+After the first visit the service worker (`sw.js`) keeps the whole app and all packaged data on the device, so it opens and works offline. When online it always fetches the newest `index.html` and flood snapshot first. Map tiles are cached as you view them (up to 1,500). `tools/split_page.py` regenerates `sw.js` with a new version whenever any packaged file changes, which replaces the old cache.
+
+## Hourly flood data
+
+`.github/workflows/refresh-flood.yml` runs `tools/refresh_flood.mjs` every hour. It pulls ThaiWater gauges and rain and commits a new `data/thailand/flood-live-snapshot.js` when the newest gauge reading has changed; on a feed failure it leaves the old snapshot in place and the run shows as failed. Scheduled workflows only run on the default branch, so this starts once the code is on `main`. Run it by hand from the **Actions** tab (**Refresh flood snapshot**, then **Run workflow**).
 
 ## What is live and what is a snapshot
 
