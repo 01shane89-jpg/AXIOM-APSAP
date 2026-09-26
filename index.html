@@ -353,6 +353,11 @@ html.phone header .ctoggle{display:none!important}
 .ctabs button:hover{color:var(--ink)}
 .ctabs .creg{flex:none;align-self:center;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 2px 0 10px;white-space:nowrap}
 .ctabs .creg:first-child{margin-left:0}
+.ctabs button.creg{border:0;background:none;padding:4px 2px;cursor:pointer;font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.ctabs button.creg::after{content:" \25B8";letter-spacing:0}
+.ctabs button.creg[aria-expanded="true"]::after{content:" \25BE"}
+.ctabs button[hidden]{display:none}
+.ctabs button.cworld{font-weight:500}
 .ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .ctabs button .n{font-weight:500;opacity:.75;margin-left:5px;font-size:11px}
 header .viewtabs{order:10;flex:1 1 100%;display:flex;overflow-x:auto;scrollbar-width:thin}
@@ -854,8 +859,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_{v}_Gray_Base/MapServer/tile/{z}/{y}/{x}";
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
   function isDark() { return theme() === "dark"; }
+  /* Esri serves every zoom; only the packaged offline copy starts at zoom 6. Forcing zoom-6 tiles on a zoomed-out
+     world view asked for thousands of tiles at once and froze the page (Russia, Canada) */
   var baseLayer = new Hybrid(ESRI.replace("{v}", isDark() ? "Dark" : "Light"),
-    { maxNativeZoom: 9, minNativeZoom: 6, maxZoom: 13, className: "basefilter",
+    { maxNativeZoom: 9, maxZoom: 13, className: "basefilter",
       attribution: "Powered by Esri · Esri, HERE, Garmin, FAO, NOAA, USGS" }).addTo(map);
   function syncBasemap() {
     var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
@@ -870,7 +877,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return (s && s[c.z + "/" + c.x + "/" + c.y]) || BLANK;
     }
   });
-  var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, maxZoom: 13,
+  var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, minZoom: 5, maxZoom: 13,
     opacity: 1, pane: "floodpane", attribution: "NASA LANCE MCDWD" }).addTo(map);
 
   var d24 = document.getElementById("d24"), d25 = document.getElementById("d25");
@@ -2246,6 +2253,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
+<script src="data/basemap/world-countries.js"></script>
+<script src="data/basemap/world-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
    Every flood and border item the page already carries is normalised into one record shape
@@ -2288,6 +2297,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     { id: "lk", name: "Sri Lanka", region: "South Asia", ne: "Sri Lanka", bounds: [[5.8, 79.5], [9.9, 82.0]] },
     { id: "mv", name: "Maldives", region: "South Asia", ne: "Maldives", bounds: [[-0.8, 72.5], [7.2, 73.8]] }
   ];
+  /* every other country (UN members plus Taiwan's neighbours already above, Kosovo, Palestine and Western Sahara): automatic
+     global feeds only, no hand-researched layers yet. Their entries live in data/basemap/world-countries.js */
+  (function () {
+    var ORDER = ["Mainland Southeast Asia", "Maritime Southeast Asia", "East Asia", "Oceania", "South Asia", "Western and Central Asia",
+      "Europe", "Africa", "North America and Caribbean", "South America"];
+    var seen = {}; COUNTRIES.forEach(function (c) { seen[c.id] = 1; });
+    (window.ASAP_WORLD || []).forEach(function (w) { if (!seen[w.id] && /^[a-z]{2}$/.test(w.id)) COUNTRIES.push({ id: w.id, name: w.name, region: w.region, ne: w.ne, a3: w.a3, bounds: w.bounds, world: true }); });
+    var pos = {}; COUNTRIES.forEach(function (c, i) { pos[c.id] = i; });
+    COUNTRIES.sort(function (a, b) { var ra = ORDER.indexOf(a.region), rb = ORDER.indexOf(b.region); return ra - rb || (a.world ? 1 : 0) - (b.world ? 1 : 0) || (a.world && b.world ? a.name.localeCompare(b.name) : pos[a.id] - pos[b.id]); });
+  })();
   var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
@@ -2535,7 +2554,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: "Terrorism and extremism", crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
     tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: "Martial-arts group violence", crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
   };
-  if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null || !!TD[l.id]; });
+  if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return C.world ? !!TD[l.id] || l.id === "timeline" : n !== null || !!TD[l.id]; });
   if (!TH) LAYERS.forEach(function (l) {
     if (l.id === "flood" || l.id === "border") l.live = false;
     var an = (AREA_NAMES[CC] || {})[l.id];
@@ -2561,7 +2580,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* outline basemap (Natural Earth 1:50m, public domain) so countries outside the packaged Thai tiles still have land and borders */
   if (!TH && window.COUNTRY_BASE) {
     map.createPane("cbase"); map.getPane("cbase").style.zIndex = 250; map.getPane("cbase").style.pointerEvents = "none";
-    var cbase = L.geoJSON(window.COUNTRY_BASE, { pane: "cbase", interactive: false, style: function (f) {
+    var cbase = L.geoJSON({ type: "FeatureCollection", features: window.COUNTRY_BASE.features.concat((window.WORLD_BASE || {}).features || []) }, { pane: "cbase", interactive: false, style: function (f) {
       var me = f.properties.n === C.ne;
       return { color: me ? tok("--accent") : tok("--muted"), weight: me ? 1.6 : 0.8, opacity: me ? 0.9 : 0.6,
                fillColor: tok("--surface"), fillOpacity: me ? 0.35 : 0.12 };
@@ -2569,17 +2588,31 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   var cseg = document.getElementById("country-seg");
   var lastReg = "";
+  /* regions fold open and shut; the researched regions and the current country's region start open, and choices are remembered */
+  var REGS = [], regOpen = {};
+  COUNTRIES.forEach(function (c) { if (REGS.indexOf(c.region) < 0) REGS.push(c.region); });
+  try { regOpen = JSON.parse(localStorage.getItem("asap-regions-open") || "{}") || {}; } catch (e) { regOpen = {}; }
+  function rOpen(r) { return r === C.region || (r in regOpen ? !!regOpen[r] : COUNTRIES.some(function (c) { return c.region === r && !c.world; })); }
   cseg.innerHTML = COUNTRIES.map(function (c) {
-    var head = c.region !== lastReg ? '<span class="creg">' + esc(c.region) + "</span>" : "";
+    var ri = REGS.indexOf(c.region), head = c.region !== lastReg ? '<button type="button" class="creg" data-reg="' + ri + '" aria-expanded="' + rOpen(c.region) + '">' + esc(c.region) + "</button>" : "";
     lastReg = c.region;
-    return head + '<button type="button" data-cc="' + c.id + '"' + (c.id === CC ? ' aria-current="true"' : "") + ">" + esc(c.name) +
-      (c.id === CC || c.id === "th" ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
+    return head + '<button type="button" data-cc="' + c.id + '" data-reg="' + ri + '"' + (c.id === CC ? ' aria-current="true"' : "") +
+      (rOpen(c.region) ? "" : " hidden") + (c.world ? ' class="cworld" title="Automatic global feeds only; not yet researched"' : "") + ">" + esc(c.name) +
+      (c.id === CC || c.id === "th" || c.world ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
   }).join("");
+  cseg.addEventListener("click", function (e) {
+    var h = e.target.closest && e.target.closest("button.creg"); if (!h) return;
+    var o = h.getAttribute("aria-expanded") !== "true", ri = h.getAttribute("data-reg");
+    h.setAttribute("aria-expanded", o ? "true" : "false"); regOpen[REGS[+ri]] = o;
+    try { localStorage.setItem("asap-regions-open", JSON.stringify(regOpen)); } catch (x) {}
+    Array.prototype.forEach.call(cseg.querySelectorAll('button[data-cc][data-reg="' + ri + '"]'), function (b) { b.hidden = !o; });
+    window.dispatchEvent(new Event("resize"));
+  });
   /* the country row folds into one bar naming the current country and its region; opening it is remembered in this browser,
      and picking a country folds it again */
   var cme = COUNTRIES.filter(function (c) { return c.id === CC; })[0] || {}, ctog = document.createElement("button");
   ctog.type = "button"; ctog.className = "ctoggle"; ctog.setAttribute("aria-controls", "country-seg");
-  ctog.innerHTML = 'Country <b>' + esc(cme.name || CC) + "</b>" + (cme.region ? ' · ' + esc(cme.region) : "") + ' <span class="chev" aria-hidden="true">&#9662;</span>';
+  ctog.innerHTML = 'Country <b>' + esc(cme.name || CC) + "</b>" + (cme.region ? ' · ' + esc(cme.region) : "") + (cme.world ? ' · <i>global feeds only</i>' : "") + ' <span class="chev" aria-hidden="true">&#9662;</span>';
   var cOpen = false; try { cOpen = localStorage.getItem("asap-countries-open") === "1"; } catch (e) {}
   function setCOpen(o) { cOpen = o; ctog.setAttribute("aria-expanded", o ? "true" : "false"); ctog.title = o ? "Hide the country list" : "Show every country, by region";
     try { localStorage.setItem("asap-countries-open", o ? "1" : "0"); } catch (e) {} window.dispatchEvent(new Event("resize")); }
@@ -3800,6 +3833,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
     cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
     "in": "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+  COUNTRIES.forEach(function (c) { if (c.a3 && !ISO3[c.id]) ISO3[c.id] = c.a3; });
   var GD_TYPE = { TC: ["Tropical cyclone", "weather", "storm"], FL: ["Flood", "flood", "flood_event"], DR: ["Drought", "weather", "drought"],
     VO: ["Volcano", "safety", "other"], WF: ["Wildfire", "safety", "other"] };
   src("gdacs", "GDACS (Global Disaster Alert and Coordination System, UN and European Commission)", "International alert system", "B",
