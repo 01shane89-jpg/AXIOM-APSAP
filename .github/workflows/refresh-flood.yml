@@ -41,6 +41,9 @@ jobs:
       - name: Pull official and established social media accounts
         run: node tools/refresh_social.mjs
         continue-on-error: true
+      - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
+        run: node tools/refresh_more.mjs
+        continue-on-error: true
       - name: Commit if a snapshot changed
         run: |
           git add -N data/live
