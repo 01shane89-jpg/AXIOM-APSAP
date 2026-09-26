@@ -81,6 +81,13 @@
    "sev": 1,
    "counted": true
   },
+  "statistics": {
+   "label": "Statistics or period total",
+   "color": "--accent",
+   "sev": 1,
+   "claim": true,
+   "counted": false
+  },
   "other": {
    "label": "Other",
    "color": "--muted",

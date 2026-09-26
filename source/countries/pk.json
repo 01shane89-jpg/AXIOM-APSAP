@@ -906,7 +906,8 @@
   "agency": "FIA",
   "src": "https://en.dailypakistan.com.pk/15-Sep-2026/islamabad-call-centre-scam-fia-probes-alleged-rs172-billion-laundering",
   "srcname": "Daily Pakistan",
-  "attribution": "FIA allegations reported by Daily Pakistan"
+  "attribution": "FIA allegations reported by Daily Pakistan",
+  "claim": true
  },
  {
   "layer": "insurgency",
@@ -986,7 +987,8 @@
   "agency": "Pakistan military",
   "src": "https://www.aljazeera.com/news/2026/9/25/pakistani-forces-kill-afghan-taliban-fighters-in-border-escalation",
   "srcname": "Al Jazeera",
-  "attribution": "Strike details are Pakistani claims and Afghan government statements reported by Al Jazeera"
+  "attribution": "Strike details are Pakistani claims and Afghan government statements reported by Al Jazeera",
+  "claim": true
  },
  {
   "layer": "border",
@@ -1006,6 +1008,7 @@
   "agency": "Ministry of Information and Broadcasting",
   "src": "https://www.geo.tv/latest/683689-13-taliban-fighters-killed-as-security-forces-thwart-border-aggression",
   "srcname": "Geo News",
-  "attribution": "Claim by Pakistan's Ministry of Information and Broadcasting; Kabul denied (per Geo/AP reporting)"
+  "attribution": "Claim by Pakistan's Ministry of Information and Broadcasting; Kabul denied (per Geo/AP reporting)",
+  "claim": true
  }
 ]

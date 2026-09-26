@@ -559,10 +559,10 @@
  },
  {
   "layer": "border",
-  "date": "2026-04-19",
+  "date": "2026-04-22",
   "kind": "military_activity",
-  "title": "Chinese destroyer and frigate pass south of Hateruma",
-  "detail": "Japan's Joint Staff Office reported destroyer Baotou and frigate Huanggang operating in the southwest region between April 19 and 22, including a passage about 80 km south of Hateruma Island.",
+  "title": "Chinese destroyer and frigate pass 80 km south of Hateruma",
+  "detail": "Japan's Joint Staff Office reported destroyer Baotou and frigate Huanggang about 80 km south of Hateruma Island on April 22, part of movements through the southwest region from April 19.",
   "place": "South of Hateruma Island",
   "district": null,
   "prov": "Yaeyama islands",
@@ -844,7 +844,8 @@
   "agency": "Okinawa Prefectural Police",
   "src": "https://www.stripes.com/branches/army/2026-05-27/soldier-sexual-assault-case-okinawa-21792469.html",
   "srcname": "Stars and Stripes",
-  "attribution": "Okinawa police via Stars and Stripes"
+  "attribution": "Okinawa police via Stars and Stripes",
+  "claim": true
  },
  {
   "layer": "health",
@@ -1308,7 +1309,7 @@
  {
   "layer": "scam",
   "date": "2026-07-30",
-  "kind": "other",
+  "kind": "statistics",
   "title": "Okinawa special-fraud losses about ¥1.2 billion in first half of 2026",
   "detail": "National Police Agency figures put first-half 2026 special-fraud losses at a record ~¥181.6 billion nationwide, with Okinawa losses reported at about ¥1.2 billion.",
   "place": "Okinawa Prefecture",
@@ -1576,7 +1577,8 @@
   "agency": "Okinawa Prefectural Police",
   "src": "https://www.stripes.com/theaters/asia_pacific/2026-09-02/hotel-fire-okinawa-marine-rescue-22727580.html",
   "srcname": "Stars and Stripes",
-  "attribution": "Okinawa police via Stars and Stripes"
+  "attribution": "Okinawa police via Stars and Stripes",
+  "claim": true
  },
  {
   "layer": "scam",
@@ -1765,7 +1767,8 @@
   "src": "https://www.stripes.com/theaters/asia_pacific/2026-09-11/pfas-report-okinawa-military-bases-22816829.html",
   "srcname": "Stars and Stripes",
   "attribution": "Okinawa Times via Stars and Stripes",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  },
  {
   "layer": "crime",

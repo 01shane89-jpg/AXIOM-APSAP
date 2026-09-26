@@ -8,6 +8,7 @@ BASE["flood"] = {"color": "--rain", "kinds": {
   "river_warning": {"label": "River or flood warning", "color": "--calm", "sev": 1, "counted": True, "claim": True},
   "dam_release": {"label": "Dam release", "color": "--care", "sev": 1, "counted": True, "claim": True},
   "landslide": {"label": "Landslide", "color": "--sat-recur", "sev": 2, "counted": True},
+  "statistics": {"label": "Statistics or period total", "color": "--accent", "sev": 1, "claim": True, "counted": False},
   "other": {"label": "Other", "color": "--muted", "sev": 1, "counted": True}}}
 BASE["border"] = {"color": "--over", "kinds": {
   "border_incident": {"label": "Border incident", "color": "--over", "sev": 2, "counted": True},
@@ -17,9 +18,12 @@ BASE["border"] = {"color": "--over", "kinds": {
   "maritime_incident": {"label": "Maritime incident", "color": "--sat-water", "sev": 2, "counted": True},
   "airspace_incursion": {"label": "Airspace incursion", "color": "--rain", "sev": 2, "counted": True},
   "diplomatic_statement": {"label": "Diplomatic statement", "color": "--calm", "sev": 1, "claim": True},
+  "statistics": {"label": "Statistics or period total", "color": "--accent", "sev": 1, "claim": True, "counted": False},
   "other": {"label": "Other", "color": "--muted", "sev": 1, "counted": True}}}
 BASE["infra"]["kinds"]["telecom_outage"] = {"label": "Telecom or cable outage", "color": "--calm", "sev": 2, "counted": True}
 BASE["weather"]["kinds"]["storm"]["label"] = "Storm or typhoon"
+for _l in BASE:
+  if "statistics" in BASE[_l]["kinds"]: BASE[_l]["kinds"]["statistics"].update(label="Statistics or period total", counted=False)
 BASE["health"]["kinds"]["ddc_warning"]["label"] = "Health agency warning or measure"
 COL = {"insurgency": "--l3", "crime": "--care", "scam": "--sat-flood", "aml": "--util"}
 BOUNDS = {
@@ -64,7 +68,7 @@ for lid, es in by.items():
   for k in kinds.values(): k.setdefault("counted", not k.get("violent"))
   es.sort(key=lambda e: e["date"])
   kc = collections.Counter(e["kind"] if e["kind"] in kinds else "other" for e in es)
-  top = [k for k, _ in kc.most_common() if k != "other"][:3]
+  top = [k for k, _ in kc.most_common() if k not in ("other", "statistics")][:3]
   srcs = collections.Counter(e["srcname"] for e in es)
   cfg = {"asof": "2026-09-26", "color": COL.get(lid, B.get("color", "--muted")),
     "srcline": "Sourced reporting · " + ", ".join(s for s, _ in srcs.most_common(3)),

@@ -17,7 +17,8 @@
   "attribution": "Military-government claims by Maj-Gen Zaw Min Tun and Police Lt-Gen Win Zaw Moe; not independently verified",
   "killed": null,
   "injured": null,
-  "arrested": null
+  "arrested": null,
+  "claim": true
  },
  {
   "layer": "insurgency",
