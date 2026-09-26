@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: "23 * * * *"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, probe); empty runs all"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -27,24 +32,39 @@ jobs:
         with:
           node-version: 20
       - name: Pull ThaiWater feeds
+        if: ${{ !inputs.only || inputs.only == 'flood' }}
         run: node tools/refresh_flood.mjs
         continue-on-error: true
       - name: Pull USGS earthquakes, air quality, GDACS alerts and ReliefWeb reports
+        if: ${{ !inputs.only || inputs.only == 'feeds' }}
         run: node tools/refresh_feeds.mjs
         continue-on-error: true
       - name: Pull official weather warnings and translate them
+        if: ${{ !inputs.only || inputs.only == 'warnings' }}
         run: node tools/refresh_warnings.mjs
         continue-on-error: true
       - name: Pull local news (GDELT and national outlets) and translate headlines
+        if: ${{ !inputs.only || inputs.only == 'news' }}
         run: node tools/refresh_news.mjs
         continue-on-error: true
       - name: Pull official and established social media accounts
+        if: ${{ !inputs.only || inputs.only == 'social' }}
         run: node tools/refresh_social.mjs
         continue-on-error: true
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
+        if: ${{ !inputs.only || inputs.only == 'more' }}
         run: node tools/refresh_more.mjs
         continue-on-error: true
+      - name: Pull tropical cyclone positions and forecast tracks (JMA, JTWC, GDACS) and the weather forecast
+        if: ${{ !inputs.only || inputs.only == 'storms' }}
+        run: node tools/refresh_storms.mjs
+        continue-on-error: true
+      - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
+        if: ${{ inputs.only == 'probe' }}
+        run: node tools/probe_storms.mjs
+        continue-on-error: true
       - name: Commit if a snapshot changed
+        if: ${{ inputs.only != 'probe' }}
         run: |
           git add -N data/live
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live; then echo "no change"; exit 0; fi
