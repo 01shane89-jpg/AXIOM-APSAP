@@ -254,9 +254,12 @@ select.mini{
 .mbl{font-size:9.5px;color:var(--muted);margin-top:3px}
 .chip.k{color:var(--ink)}
 /* ---------- AXIOM TSAP additions ---------- */
-header .ctabs{order:9;flex:1 1 100%;display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+header .ctabs{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;row-gap:4px}
+@media (max-width:700px){header .ctabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
 .ctabs button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;white-space:nowrap;flex:none}
 .ctabs button:hover{color:var(--ink)}
+.ctabs .creg{flex:none;align-self:center;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 2px 0 10px;white-space:nowrap}
+.ctabs .creg:first-child{margin-left:0}
 .ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .ctabs button .n{font-weight:500;opacity:.75;margin-left:5px;font-size:11px}
 header .viewtabs{order:10;flex:1 1 100%;display:flex;overflow-x:auto;scrollbar-width:thin}
@@ -1788,6 +1791,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/mn/infra.js"></script>
 <script src="data/layers/mn/scam.js"></script>
 <script src="data/layers/mn/flood.js"></script>
+<script src="data/layers/kp/border.js"></script>
+<script src="data/layers/kp/weather.js"></script>
+<script src="data/layers/kp/health.js"></script>
+<script src="data/layers/kp/scam.js"></script>
+<script src="data/layers/kp/flood.js"></script>
+<script src="data/layers/kp/crime.js"></script>
+<script src="data/layers/kp/aml.js"></script>
+<script src="data/layers/kp/safety.js"></script>
+<script src="data/layers/kp/transport.js"></script>
+<script src="data/layers/kp/infra.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -1802,13 +1815,27 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var LIVE = window.LIVE, CF = window.CONFLICT, PROV = window.PROVINCES;
   /* ---------- country: one page, one country at a time. The hash is "#<cc>/<view>"; Thailand has no prefix ---------- */
   var COUNTRIES = [
-    { id: "th", name: "Thailand", bounds: [[5.5, 97.2], [20.6, 105.8]] },
-    { id: "ph", name: "Philippines", bounds: [[4.4, 116.8], [21.2, 127.0]] },
-    { id: "tw", name: "Taiwan", bounds: [[21.8, 118.1], [25.4, 122.1]] },
-    { id: "kp", name: "North Korea", bounds: [[37.6, 124.2], [43.1, 130.8]] },
-    { id: "kr", name: "South Korea", bounds: [[33.0, 125.0], [38.7, 130.0]] },
-    { id: "mn", name: "Mongolia", bounds: [[41.5, 87.7], [52.2, 119.9]] },
-    { id: "oki", name: "Okinawa", bounds: [[24.0, 122.9], [27.9, 128.4]] }
+    { id: "th", name: "Thailand", region: "Mainland Southeast Asia", ne: "Thailand", bounds: [[5.5, 97.2], [20.6, 105.8]] },
+    { id: "vn", name: "Vietnam", region: "Mainland Southeast Asia", ne: "Vietnam", bounds: [[8.3, 101.8], [23.6, 109.7]] },
+    { id: "kh", name: "Cambodia", region: "Mainland Southeast Asia", ne: "Cambodia", bounds: [[10.1, 102.0], [15.0, 107.9]] },
+    { id: "la", name: "Laos", region: "Mainland Southeast Asia", ne: "Laos", bounds: [[13.6, 99.8], [22.8, 108.0]] },
+    { id: "mm", name: "Myanmar", region: "Mainland Southeast Asia", ne: "Myanmar", bounds: [[9.6, 91.9], [28.8, 101.4]] },
+    { id: "ph", name: "Philippines", region: "Maritime Southeast Asia", ne: "Philippines", bounds: [[4.4, 116.8], [21.2, 127.0]] },
+    { id: "my", name: "Malaysia", region: "Maritime Southeast Asia", ne: "Malaysia", bounds: [[0.6, 99.3], [7.7, 119.6]] },
+    { id: "sg", name: "Singapore", region: "Maritime Southeast Asia", ne: "Singapore", bounds: [[1.1, 103.5], [1.6, 104.2]] },
+    { id: "id", name: "Indonesia", region: "Maritime Southeast Asia", ne: "Indonesia", bounds: [[-11.2, 94.9], [6.2, 141.3]] },
+    { id: "bn", name: "Brunei", region: "Maritime Southeast Asia", ne: "Brunei", bounds: [[3.9, 113.9], [5.2, 115.5]] },
+    { id: "tl", name: "Timor-Leste", region: "Maritime Southeast Asia", ne: "Timor-Leste", bounds: [[-9.8, 123.7], [-7.8, 127.6]] },
+    { id: "cn", name: "China", region: "East Asia", ne: "China", bounds: [[17.9, 73.3], [53.9, 135.1]] },
+    { id: "tw", name: "Taiwan", region: "East Asia", ne: "Taiwan", bounds: [[21.8, 118.1], [25.4, 122.1]] },
+    { id: "kp", name: "North Korea", region: "East Asia", ne: "North Korea", bounds: [[37.6, 124.2], [43.1, 130.8]] },
+    { id: "kr", name: "South Korea", region: "East Asia", ne: "South Korea", bounds: [[33.0, 125.0], [38.7, 130.0]] },
+    { id: "jp", name: "Japan", region: "East Asia", ne: "Japan", bounds: [[30.5, 128.5], [45.8, 146.1]] },
+    { id: "oki", name: "Okinawa", region: "East Asia", ne: "Japan", bounds: [[24.0, 122.9], [27.9, 128.4]] },
+    { id: "mn", name: "Mongolia", region: "East Asia", ne: "Mongolia", bounds: [[41.5, 87.7], [52.2, 119.9]] },
+    { id: "au", name: "Australia", region: "Oceania", ne: "Australia", bounds: [[-44.0, 112.6], [-9.8, 154.0]] },
+    { id: "nz", name: "New Zealand", region: "Oceania", ne: "New Zealand", bounds: [[-47.5, 166.0], [-34.0, 178.8]] },
+    { id: "pg", name: "Papua New Guinea", region: "Oceania", ne: "Papua New Guinea", bounds: [[-11.9, 140.6], [-1.1, 156.3]] }
   ];
   var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
   var HASH = (location.hash || "").replace("#", "").split("/");
@@ -1998,6 +2025,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (l.id === "flood" || l.id === "border") l.live = false;
     var an = (AREA_NAMES[CC] || {})[l.id];
     if (an) { l.name = an; l.title = an; }
+    else if (l.id === "insurgency") { l.name = "Insurgency"; l.title = "Insurgency"; }
     if (l.sources) { l.sources = "Official agencies and established news outlets for " + C.name + ", being collected"; l.now = null; }
   });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
@@ -2011,16 +2039,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* outline basemap (Natural Earth 1:50m, public domain) so countries outside the packaged Thai tiles still have land and borders */
   if (!TH && window.COUNTRY_BASE) {
     map.createPane("cbase"); map.getPane("cbase").style.zIndex = 250; map.getPane("cbase").style.pointerEvents = "none";
-    var CNAME = { ph: "Philippines", tw: "Taiwan", kp: "North Korea", kr: "South Korea", mn: "Mongolia", oki: "Japan" };
     var cbase = L.geoJSON(window.COUNTRY_BASE, { pane: "cbase", interactive: false, style: function (f) {
-      var me = f.properties.n === CNAME[CC];
+      var me = f.properties.n === C.ne;
       return { color: me ? tok("--accent") : tok("--muted"), weight: me ? 1.6 : 0.8, opacity: me ? 0.9 : 0.6,
                fillColor: tok("--surface"), fillOpacity: me ? 0.35 : 0.12 };
     } }).addTo(map);
   }
   var cseg = document.getElementById("country-seg");
+  var lastReg = "";
   cseg.innerHTML = COUNTRIES.map(function (c) {
-    return '<button type="button" data-cc="' + c.id + '"' + (c.id === CC ? ' aria-current="true"' : "") + ">" + esc(c.name) +
+    var head = c.region !== lastReg ? '<span class="creg">' + esc(c.region) + "</span>" : "";
+    lastReg = c.region;
+    return head + '<button type="button" data-cc="' + c.id + '"' + (c.id === CC ? ' aria-current="true"' : "") + ">" + esc(c.name) +
       (c.id === CC || c.id === "th" ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
   }).join("");
   cseg.addEventListener("click", function (e) {
