@@ -1,6 +1,6 @@
 # AXIOM OSAP
 
-<p align="center"><img src="assets/logo-mark.png" alt="" width="96"><br><b>AXIOM OSAP</b></p>
+<p align="center"><img src="assets/logo.png" alt="AXIOM OSAP, Open Source Awareness Platform" width="320"></p>
 
 Open Source Awareness Platform. One map, one timeline and one set of alert rules for 28 areas, grouped as Mainland Southeast Asia (Thailand, Vietnam, Cambodia, Laos, Myanmar), Maritime Southeast Asia (Philippines, Malaysia, Singapore, Indonesia, Brunei, Timor-Leste), East Asia (China, Taiwan, North Korea, South Korea, Japan, Okinawa, Mongolia), Oceania (Australia, New Zealand, Papua New Guinea) and South Asia (India, Pakistan, Nepal, Bhutan, Bangladesh, Sri Lanka, Maldives). Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there.
 
