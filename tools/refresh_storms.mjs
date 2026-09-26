@@ -27,6 +27,12 @@ const num = (x) => (x == null || x === "" || isNaN(+x) ? null : +x);
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z]/g, "");
 
 /* ---------- JMA ---------- */
+// JMA gives the heading in Japanese (北北東 = NNE); anything else (ほとんど停滞 = almost stationary) is kept as "slow or stationary"
+function compass(c) {
+  if (!c) return "";
+  if (/^[北南東西]+$/.test(c)) return c.replace(/北/g, "N").replace(/南/g, "S").replace(/東/g, "E").replace(/西/g, "W");
+  return /停滞|ゆっくり/.test(c) ? "slow or stationary" : c;
+}
 export function parseJma(id, spec, fc) {
   const title = spec.find((p) => p.part === "title") || spec[0] || {};
   const parts = spec.filter((p) => p && p.part !== "title" && p.position && p.position.deg);
@@ -37,7 +43,7 @@ export function parseJma(id, spec, fc) {
     const mw = p.maximumWind || {}, f = byH[p.advancedHours == null ? "a" : p.advancedHours] || {};
     return { h: p.advancedHours == null ? 0 : p.advancedHours, t: ((p.validtime || {}).UTC || "").replace(/:00Z$/, "Z"),
       lat: r2(+p.position.deg[0]), lon: r2(+p.position.deg[1]), wind_kt: num(((mw.sustained || {}).kt)), gust_kt: num(((mw.gust || {}).kt)),
-      pressure: num(p.pressure), cat: (p.category || {}).en || "", course: p.course || "", speed_kt: num((p.speed || {}).kt),
+      pressure: num(p.pressure), cat: (p.category || {}).en || "", course: compass(p.course), speed_kt: num((p.speed || {}).kt),
       r_km: num((p.probabilityCircleRadius || {}).km), storm_km: num(((p.stormWarning || [])[0] || {}).range && p.stormWarning[0].range.km),
       tangent: ((f.probabilityCircle || {}).tangent || []).map((l) => l.map((c) => [r2(+c[0]), r2(+c[1])])) };
   };
@@ -153,7 +159,8 @@ export function group(products) {
     const lead = s.products.find((p) => p.now) || s.products[0];
     s.now = lead.now || (lead.past || []).slice(-1)[0] || null; s.lead = lead.agency;
   }
-  return storms.filter((s) => s.now);
+  // a storm whose newest position is more than 36 hours old has ended or lost its warnings
+  return storms.filter((s) => s.now && Date.now() - new Date(s.now.t) < 36 * 36e5);
 }
 
 /* ---------- Open-Meteo 7-day forecast ---------- */
