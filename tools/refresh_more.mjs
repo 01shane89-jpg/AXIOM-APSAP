@@ -201,6 +201,9 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
       asam.push({ ref: a.reference || "", date, lat, lon, victim: a.victim || "", hostility: a.hostility || "", navArea: a.navArea || "", subreg: a.subreg || "",
         text: String(a.description || "").replace(/\s+/g, " ").slice(0, 700), ccs: ccsAt(lat, lon, 1.5) });
     }
+    const raw = j.asam || j.data || [];
+    if (!asam.length && raw.length) console.error("ASAM: " + raw.length + " records, none placed; first record keys: " + Object.keys(raw[0]).join(",") + " sample date/lat/lon: " + [raw[0].date, raw[0].latitude, raw[0].longitude].join(" | "));
+    if (!raw.length) console.error("ASAM: no records; top-level keys: " + Object.keys(j).join(","));
     status.push({ source: "NGA ASAM", ok: true, n: asam.length });
   } catch (e) { status.push({ source: "NGA ASAM", ok: false, error: err(e) }); }
   try {

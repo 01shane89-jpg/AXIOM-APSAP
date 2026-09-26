@@ -52,4 +52,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/thailand/flood-live-snapshot.js data/live
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
+          git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
           git push

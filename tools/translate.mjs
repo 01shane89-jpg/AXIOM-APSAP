@@ -1,12 +1,13 @@
 // Machine translation to English for the hourly jobs (warnings and news).
-// Uses MyMemory's free anonymous service (no account or key; small daily quota). Texts past the quota stay
-// untranslated and are marked so; the cache means they are picked up on later runs.
+// Uses MyMemory's free anonymous service (no account or key; small daily quota), then Google Translate's free web
+// endpoint (translate.googleapis.com, client=gtx: no key, unofficial, may be throttled or withdrawn). Texts neither
+// could translate stay untranslated and are marked so; the cache means they are picked up on later runs.
 // Results are cached in data/live/translation-cache.json so the same headline is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
 
 const CACHE_FILE = "data/live/translation-cache.json";
-const MAX_CACHE = 6000, TIMEOUT = 30000, MYMEMORY_LIMIT = Number(process.env.MYMEMORY_LIMIT || 60);
+const MAX_CACHE = 6000, TIMEOUT = 30000, MYMEMORY_LIMIT = Number(process.env.MYMEMORY_LIMIT || 60), GTX_LIMIT = Number(process.env.GTX_LIMIT || 400);
 let cache = {};
 try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (e) {}
 const key = (s, lang) => crypto.createHash("sha1").update((lang || "") + "|" + s).digest("hex").slice(0, 20);
@@ -37,7 +38,19 @@ export async function translateAll(items) {
         out[k] = { en, tool: "MyMemory" };
         cache[key(it.text, it.lang)] = { en, tool: "MyMemory", at: Date.now() };
       }
-    } catch (e) { console.error("MyMemory failed:", e.message); break; }
+    } catch (e) { console.error("MyMemory failed:", e.message); if (/429/.test(e.message)) myMemoryUsed = MYMEMORY_LIMIT; break; }
+  }
+  let gtxUsed = 0;
+  for (const k of todo) {
+    if (out[k] || gtxUsed >= GTX_LIMIT) continue;
+    const it = items[k], src = (it.lang || "").split("-")[0] || "auto";
+    try {
+      gtxUsed++;
+      const j = await get("https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&tl=en&sl=" + encodeURIComponent(src) + "&q=" + encodeURIComponent(it.text.slice(0, 1200)));
+      const en = Array.isArray(j) && Array.isArray(j[0]) ? j[0].map((x) => (x && x[0]) || "").join("").trim() : "";
+      if (en) { out[k] = { en, tool: "Google Translate (free web endpoint)" }; cache[key(it.text, it.lang)] = { en, tool: "Google Translate (free web endpoint)", at: Date.now() }; }
+      await new Promise((r) => setTimeout(r, 250));
+    } catch (e) { console.error("Google web translation failed:", e.message); break; }
   }
   return out.map((o) => o || { en: null, tool: null });
 }
