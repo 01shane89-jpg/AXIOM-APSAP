@@ -1,7 +1,8 @@
 name: Refresh live snapshots
 
 # Hourly: pull ThaiWater gauges and rain, USGS earthquakes, Open-Meteo air quality, GDACS alerts,
-# ReliefWeb reports and official weather warnings (translated to English), and commit
+# ReliefWeb reports, official weather warnings, local news and official social media accounts
+# (non-English text translated to English), and commit
 # the new snapshots, so the hosted app shows data at most about an hour old even where the browser
 # cannot reach those services. One feed failing does not stop the others.
 on:
@@ -19,7 +20,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +37,25 @@ jobs:
         continue-on-error: true
         env:
           GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
+      - name: Pull local news (GDELT and national outlets) and translate headlines
+        run: node tools/refresh_news.mjs
+        continue-on-error: true
+        env:
+          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
+      - name: Pull official and established social media accounts
+        run: |
+          if [ -n "$TELEGRAM_SESSION" ]; then npm install --no-save --no-package-lock telegram@2 >/dev/null; fi
+          node tools/refresh_social.mjs
+        continue-on-error: true
+        env:
+          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION }}
       - name: Commit if a snapshot changed
         run: |
           git add -N data/live

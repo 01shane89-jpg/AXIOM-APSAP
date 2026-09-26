@@ -1,0 +1,23 @@
+{
+  "note": "Official and established accounts only: disaster agencies, police, militaries, ministries and news desks. Never private individuals. Handles are unverified until the first run, which records whether each one worked. 'cc': '*' means a regional or global account whose posts are assigned to an area only when they name the country.",
+  "bluesky": [
+    { "cc": "*", "handle": "reuters.com", "kind": "news desk" },
+    { "cc": "*", "handle": "apnews.com", "kind": "news desk" },
+    { "cc": "*", "handle": "afp.com", "kind": "news desk" }
+  ],
+  "reddit": {
+    "rule": "Only link posts that point to an allowed outlet or government site are kept, and only the article link and headline are stored; the poster's name is never read.",
+    "subreddits": { "th": "Thailand", "vn": "VietNam", "kh": "cambodia", "la": "laos", "mm": "myanmar", "ph": "Philippines", "my": "malaysia", "sg": "singapore",
+      "id": "indonesia", "bn": "Brunei", "tl": "EastTimor", "cn": "China", "tw": "taiwan", "kp": "northkorea", "kr": "korea", "jp": "japan", "oki": "okinawa",
+      "mn": "mongolia", "au": "australia", "nz": "newzealand", "pg": "PapuaNewGuinea", "in": "india", "pk": "pakistan", "np": "Nepal", "bt": "bhutan",
+      "bd": "bangladesh", "lk": "srilanka", "mv": "maldives" },
+    "allowed_domains": ["reuters.com", "apnews.com", "afp.com", "bbc.com", "bbc.co.uk", "aljazeera.com", "nikkei.com", "asia.nikkei.com", "scmp.com", "channelnewsasia.com",
+      "bangkokpost.com", "nationthailand.com", "e.vnexpress.net", "khmertimeskh.com", "laotiantimes.com", "irrawaddy.com", "rappler.com", "inquirer.net", "philstar.com",
+      "malaymail.com", "thestar.com.my", "straitstimes.com", "antaranews.com", "thejakartapost.com", "borneobulletin.com.bn", "tatoli.tl", "taipeitimes.com", "focustaiwan.tw",
+      "yna.co.kr", "koreaherald.com", "nknews.org", "japantimes.co.jp", "nhk.or.jp", "kyodonews.net", "ryukyushimpo.jp", "montsame.mn", "abc.net.au", "rnz.co.nz", "nzherald.co.nz",
+      "postcourier.com.pg", "thehindu.com", "indianexpress.com", "dawn.com", "kathmandupost.com", "kuenselonline.com", "thedailystar.net", "dailymirror.lk", "sun.mv", "edition.mv"],
+    "allowed_suffixes": [".gov", ".gov.au", ".govt.nz", ".go.th", ".gov.vn", ".gov.kh", ".gov.la", ".gov.mm", ".gov.ph", ".gov.my", ".gov.sg", ".go.id", ".gov.bn", ".gov.tl",
+      ".gov.cn", ".gov.tw", ".go.kr", ".go.jp", ".gov.mn", ".gov.pg", ".gov.in", ".nic.in", ".gov.pk", ".gov.np", ".gov.bt", ".gov.bd", ".gov.lk", ".gov.mv", ".int", ".un.org"]
+  },
+  "telegram": []
+}

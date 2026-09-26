@@ -2116,6 +2116,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/gdacs.js"></script>
 <script src="data/live/reliefweb.js"></script>
 <script src="data/live/warnings.js"></script>
+<script src="data/live/news.js"></script>
+<script src="data/live/social.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2396,7 +2398,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
-  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true });
+  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
+    { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
+    { id: "social", name: "Social media", title: "Social media", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -3609,6 +3613,83 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       }).join("") + "</ul>" : '<p class="obs">No warning in this period.</p>') + "</div>";
   }
 
+  /* ---------- local news: GDELT and national outlets (hourly snapshot, headlines machine-translated in the job) ----------
+     Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
+  LCOL.news = "--accent";
+  var GAZ = null;
+  function gazetteer() {
+    if (GAZ) return GAZ;
+    var g = {};
+    function put(name, lat, lon) {
+      name = String(name || "").replace(/\s+(District|Province|City|Region|Prefecture|State|Division)$/i, "").trim();
+      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name)) return;
+      if (!g[name.toLowerCase()]) g[name.toLowerCase()] = { name: name, lat: lat, lon: lon };
+    }
+    R.forEach(function (r) { if (r.lat != null && !r.news && !r.social) { put(r.place, r.lat, r.lon); put(r.prov, r.lat, r.lon); } });
+    var S0 = (window.ASAP_SOF || {})[CC] || {};
+    ["posts", "hospitals", "airports"].forEach(function (k) { (S0[k] || []).forEach(function (i) { put(i.city || i.municipality, i.lat, i.lon); }); });
+    GAZ = Object.keys(g).sort(function (a, b) { return b.length - a.length; }).map(function (k) { return g[k]; });
+    return GAZ;
+  }
+  function placeFor(text) {
+    var t = " " + String(text || "").toLowerCase() + " ", gz = gazetteer();
+    for (var i = 0; i < gz.length; i++) {
+      var n = gz[i].name.toLowerCase(), at = t.indexOf(n);
+      if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return gz[i];
+    }
+    return null;
+  }
+  function addNewsRecords(key, layer, flag) {
+    R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var w = window[key]; if (!w || !w.items || !LBY[layer]) return;
+    (w.items[CC] || []).forEach(function (i) {
+      var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
+        layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
+        "F", layer === "news" ? "Read hourly from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read hourly. Posts are that account's claims.", i.link);
+      var en = i.title_en || i.title, sen = i.summary_en || i.summary, pl = placeFor(en + " " + (sen || ""));
+      var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
+        title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
+        derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
+        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof };
+      rec[flag] = true; add(rec);
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  LCOL.social = "--sat-flood";
+  addNewsRecords("ASAP_NEWS", "news", "news");
+  addNewsRecords("ASAP_SOCIAL", "social", "social");
+  function feedList(key, layer, flag, title, empty, note) {
+    var w = window[key], recs = R.filter(function (r) { return r[flag] && inPeriod(r); });
+    sofLayer.clearLayers(); sofM = {};
+    recs.forEach(function (r) {
+      if (r.lat == null) return;
+      var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
+      m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
+        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM[r.id] = m;
+    });
+    var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
+    var head = '<div class="sec"><div class="banner" style="margin:0"><b>Unverified reports.</b> ' + note + "</div></div>";
+    if (!w) return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">NO DATA</span> ' + empty + "</p></div>";
+    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " +
+      (srcs.length ? srcs.map(function (s) { return esc(s.source) + (s.ok ? " (" + s.n + ")" : ' <span class="badge stale">' + (s.skipped ? "NOT SET UP" : "FAILED") + "</span>"); }).join(", ") : "no source set up for this area") + "</p>" +
+      '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name.</p>" +
+      (recs.length ? '<div class="tllist">' + recs.slice(0, 60).map(function (r) {
+        return '<button type="button" class="tlrow" data-openrec="' + esc(r.id) + '"><span class="tlt">' + esc(fmtTs(r)) + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div>";
+  }
+  function showSocial() {
+    railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the hourly GitHub job once the app is hosted.",
+      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky, Reddit and Telegram. Every post is that account's claim. Reddit items are links to established outlets or government sites; posters' names are never collected.");
+  }
+  function showNews() {
+    railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
+      "Headlines from GDELT (local-language news worldwide, filtered to security, disaster and unrest) and national outlets. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+  }
+
   function showHazards() {
     sofLayer.clearLayers(); sofM = {};
     var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon) && inPeriodDate(new Date(q.time).toISOString()); }).sort(function (a, b) { return b.time - a.time; });
@@ -3689,7 +3770,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-period]"); if (b) setPeriod(b.getAttribute("data-period")); });
   periodUI();
 
-  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else showPartners(); }
+  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else showPartners(); }
 
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
@@ -3701,7 +3782,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "USGS · Open-Meteo (Copernicus CAMS) · NASA and GDACS links" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

@@ -56,6 +56,25 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 - GDACS, ReliefWeb and warnings come only from the hourly snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
 - NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
+## Local news and social media
+
+- **Local news** (every area): headlines from the last 24 hours from the GDELT news index (filtered to security, disaster, protest and political themes) and national outlets' RSS feeds listed in `tools/news_feeds.json`. Headlines are machine-translated to English in the hourly job and shown with the original and the translation service. Each is an unverified report with a link. State-owned outlets are labelled as such. Headlines that name a known place are placed on the map at approximate precision.
+- **Social media** (every area): posts from official and established accounts only (disaster agencies, police, militaries, news desks), listed in `tools/social_accounts.json`. Posts are unverified claims with links, translated like the news. Author names of Reddit posts are never read; only link posts to allowed news or government domains are kept.
+- Both come from hourly snapshots (`tools/refresh_news.mjs`, `tools/refresh_social.mjs`) and follow the reporting period.
+
+### Secrets for social media and translation
+
+Add these under the repository's Settings, Secrets and variables, Actions. A platform with missing secrets is skipped and the tab says so.
+
+| Secret | Used for |
+| --- | --- |
+| `GOOGLE_TRANSLATE_KEY` | Google Cloud Translation (recommended; otherwise MyMemory's small free quota) |
+| `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` | Bluesky (optional: public posts load without them) |
+| `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | Reddit (a "script" app at reddit.com/prefs/apps) |
+| `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, `TELEGRAM_SESSION` | Telegram public channels |
+
+**Telegram session, one time:** get `api_id` and `api_hash` at my.telegram.org (API development tools). On any computer with Node.js, in this repository, run `npx -y -p telegram@2 -p input node tools/telegram_login.mjs`, enter the id, hash, phone number and the login code Telegram sends, and save the long string it prints as the `TELEGRAM_SESSION` secret. Then add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
+
 ## Rules for records
 
 These come from the AXIOM doctrine and are enforced by review, not by code:
