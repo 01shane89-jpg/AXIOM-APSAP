@@ -11,6 +11,7 @@ It is a separate build for now and is meant to fold into AXIOM later (see [Path 
 Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) and open `http://localhost:8000/`. It needs no build step, and it ships its own copy of Leaflet (`assets/vendor/`), so it runs with no network at all.
 
 - Pick an area with the country tabs; the URL hash is `#<cc>/<view>` (Thailand has no prefix, e.g. `#ph/border`, `#timeline`).
+- The **Period** control in the header (7 d, 30 d, 90 d, All, or custom dates) filters every view: map, layers, Timeline, Alerts, Live hazards, completed exercises and the country brief. It defaults to the last 30 days and is remembered per browser. Ongoing items (for example a crossing still closed) always show.
 - Every marker and list row opens an evidence package: what, where, when, who reported it, the source link, a SHA-256 record fingerprint, and the source's proposed Admiralty reliability letter.
 
 ## Install on a computer, Android or iPhone
