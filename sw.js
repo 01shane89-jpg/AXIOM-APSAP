@@ -363,7 +363,7 @@
      newest published data and an offline one falls back to the last copy it saw.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "81265cbe964a";
+const VERSION = "8cb6e109d358";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const PRECACHE = [
 "./",
@@ -728,7 +728,9 @@ const FRESH = [/\/index\.html$/, /\/$/, /data\/thailand\/flood-live-snapshot\.js
 const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(SHELL).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
+  // cache: "reload" skips the browser's HTTP cache (GitHub Pages lets it keep files for 10 minutes),
+  // so a new version never stores the previous deploy's files.
+  e.waitUntil(caches.open(SHELL).then((c) => c.addAll(PRECACHE.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith("asap-shell-") && k !== SHELL).map((k) => caches.delete(k))))
@@ -744,7 +746,8 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (NEVER.some((r) => r.test(url.href))) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
-    e.respondWith(fetch(req).then((res) => {
+    // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
+    e.respondWith(fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then((res) => {
       if (res.ok) { const copy = res.clone(); caches.open(SHELL).then((c) => c.put(req, copy)); }
       return res;
     }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"))));
