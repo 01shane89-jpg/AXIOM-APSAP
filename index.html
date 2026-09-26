@@ -2012,6 +2012,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/lk/transport.js"></script>
 <script src="data/layers/lk/safety.js"></script>
 <script src="data/layers/lk/flood.js"></script>
+<script src="data/layers/lk/insurgency.js"></script>
 <script src="data/layers/mm/crime.js"></script>
 <script src="data/layers/mm/insurgency.js"></script>
 <script src="data/layers/mm/aml.js"></script>
@@ -2043,6 +2044,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/mv/infra.js"></script>
 <script src="data/layers/mv/crime.js"></script>
 <script src="data/layers/mv/scam.js"></script>
+<script src="data/layers/mv/insurgency.js"></script>
 <script src="data/layers/my/safety.js"></script>
 <script src="data/layers/my/infra.js"></script>
 <script src="data/layers/my/flood.js"></script>
@@ -2053,6 +2055,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/my/scam.js"></script>
 <script src="data/layers/my/crime.js"></script>
 <script src="data/layers/my/border.js"></script>
+<script src="data/layers/my/insurgency.js"></script>
 <script src="data/layers/np/scam.js"></script>
 <script src="data/layers/np/transport.js"></script>
 <script src="data/layers/np/border.js"></script>
@@ -2063,6 +2066,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/np/flood.js"></script>
 <script src="data/layers/np/safety.js"></script>
 <script src="data/layers/np/infra.js"></script>
+<script src="data/layers/np/insurgency.js"></script>
 <script src="data/layers/nz/crime.js"></script>
 <script src="data/layers/nz/safety.js"></script>
 <script src="data/layers/nz/flood.js"></script>
@@ -2073,6 +2077,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/nz/health.js"></script>
 <script src="data/layers/nz/border.js"></script>
 <script src="data/layers/nz/aml.js"></script>
+<script src="data/layers/nz/insurgency.js"></script>
 <script src="data/layers/oki/border.js"></script>
 <script src="data/layers/oki/crime.js"></script>
 <script src="data/layers/oki/infra.js"></script>
@@ -2134,6 +2139,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/tl/transport.js"></script>
 <script src="data/layers/tl/scam.js"></script>
 <script src="data/layers/tl/border.js"></script>
+<script src="data/layers/tl/weather.js"></script>
+<script src="data/layers/tl/aml.js"></script>
+<script src="data/layers/tl/safety.js"></script>
+<script src="data/layers/tl/insurgency.js"></script>
 <script src="data/layers/tw/border.js"></script>
 <script src="data/layers/tw/safety.js"></script>
 <script src="data/layers/tw/health.js"></script>
@@ -2491,8 +2500,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     in: { flood: "Monsoon floods", border: "LoC, LAC and border security", insurgency: "Militancy and Maoist conflict", crime: "Organized crime", scam: "Cyber fraud and scam compounds", aml: "Money laundering and betting", weather: "Monsoon, cyclones and heat", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Public health" },
     bd: { flood: "Floods and landslides", border: "Border and Rohingya frontier", insurgency: "Political and Hill Tracts violence", crime: "Narcotics and sea trafficking", scam: "Fraud and scam compounds", aml: "Money laundering", weather: "Cyclones and weather", infra: "Power and energy supply", transport: "Transportation", safety: "Public safety", health: "Dengue and measles" },
     bt: { flood: "Floods, glacial lakes and landslides", border: "India border and trade gates", insurgency: null, crime: "Drugs and smuggling", scam: "Fraud", aml: "Money laundering", weather: "Weather", infra: "Hydropower and lifelines", transport: "Transportation", safety: "Public safety", health: "Public health" },
-    np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: null, crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Grey list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
-    lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: null, crime: "Narcotics and underworld violence", scam: "Scam-centre crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
+    np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: "Conflict legacy and security", crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Grey list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
+    lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: "Terrorism and extremism", crime: "Narcotics and underworld violence", scam: "Scam-centre crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
     pg: { flood: "Floods and landslides", border: "Border and maritime security", insurgency: "Tribal conflict and Bougainville", crime: "Law and order", scam: "Scams and trafficking", aml: "Financial crime and grey list", weather: "Cyclones and drought", infra: "Power and water supply", transport: "Transport and sea safety", safety: "Public safety and disorder", health: "Public health" },
     nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" },
     cn: { flood: "Floods and geohazards", border: "Frontier and maritime claims", insurgency: "Terrorism and extremism", crime: "Organized crime and narcotics", scam: "Telecom fraud and overseas compounds", aml: "Illicit finance and underground banking", weather: "Typhoons and extreme weather", infra: "Critical infrastructure", transport: "Transportation", safety: "Work safety and disasters", health: "Public health" },
@@ -2505,10 +2514,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     la: { flood: "Mekong and tributary flooding", border: "Mekong frontier and border security", insurgency: null, crime: "Golden Triangle drugs and wildlife crime", scam: "Scam compound crackdown", aml: "Money laundering and sanctions", weather: "Monsoon and severe weather", infra: "Hydropower and grid", transport: "Roads and Laos-China Railway", safety: "UXO and public safety", health: "Dengue, haze and animal disease" },
     pk: { flood: "Monsoon and glacial floods", border: "Western front and LoC", insurgency: "Counter-terrorism (TTP and BLA)", crime: "Organized crime", scam: "Foreign-run scam call centres", aml: "Hawala, hundi and financial crime", weather: "Weather", infra: "Energy and fuel security", transport: "Transportation", safety: "Public safety", health: "Public health" },
     jp: { flood: "Heavy rain and landslides", border: "Air and maritime defense", insurgency: "Terrorism and extremism", crime: "Organized crime and smuggling", scam: "Special fraud (tokushu sagi)", aml: "Scam proceeds and mule accounts", weather: "Typhoons and extreme heat", infra: "Infrastructure", transport: "Transportation", safety: "Earthquakes and public safety", health: "Heatstroke and infectious disease" },
-    mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: null, crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
-    tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: null, crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
+    mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: "Terrorism and extremism", crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
+    tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: "Martial-arts group violence", crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
   };
-  if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null; });
+  if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null || !!TD[l.id]; });
   if (!TH) LAYERS.forEach(function (l) {
     if (l.id === "flood" || l.id === "border") l.live = false;
     var an = (AREA_NAMES[CC] || {})[l.id];
