@@ -1,6 +1,6 @@
 // Machine translation to English for the hourly jobs (warnings and news).
-// Provider order: Google Cloud Translation when GOOGLE_TRANSLATE_KEY is set (all 28 areas' languages),
-// otherwise MyMemory's free anonymous service (small daily quota; texts past it stay untranslated and are marked so).
+// Uses MyMemory's free anonymous service (no account or key; small daily quota). Texts past the quota stay
+// untranslated and are marked so; the cache means they are picked up on later runs.
 // Results are cached in data/live/translation-cache.json so the same headline is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -12,14 +12,6 @@ try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (e) {}
 const key = (s, lang) => crypto.createHash("sha1").update((lang || "") + "|" + s).digest("hex").slice(0, 20);
 let myMemoryUsed = 0;
 
-async function post(url, body) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
-  try {
-    const r = await fetch(url, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.json();
-  } finally { clearTimeout(t); }
-}
 async function get(url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try { const r = await fetch(url, { signal: ctl.signal }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
@@ -34,21 +26,6 @@ export async function translateAll(items) {
     return c ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
-  const gkey = process.env.GOOGLE_TRANSLATE_KEY;
-  if (gkey && todo.length) {
-    for (let i = 0; i < todo.length; i += 100) {
-      const chunk = todo.slice(i, i + 100);
-      try {
-        const j = await post("https://translation.googleapis.com/language/translate/v2?key=" + encodeURIComponent(gkey),
-          { q: chunk.map((k) => items[k].text), target: "en", format: "text" });
-        (j.data && j.data.translations || []).forEach((tr, n) => {
-          const k = chunk[n];
-          out[k] = { en: tr.translatedText, tool: "Google Cloud Translation" };
-          cache[key(items[k].text, items[k].lang)] = { en: tr.translatedText, tool: "Google Cloud Translation", at: Date.now() };
-        });
-      } catch (e) { console.error("Google translation failed:", e.message.replace(gkey, "***")); break; }
-    }
-  }
   for (const k of todo) {
     if (out[k] || myMemoryUsed >= MYMEMORY_LIMIT) continue;
     const it = items[k], src = (it.lang || "").split("-")[0] || "autodetect";

@@ -52,7 +52,7 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 - The page asks both services directly. When that fails (the claude.ai viewer blocks outside requests), it uses the hourly snapshot in `data/live/`, written by `tools/refresh_feeds.mjs` in the same GitHub Actions job as the flood refresh.
 - **Disaster alerts (GDACS)**: current cyclone, flood, drought, volcano and wildfire alerts affecting the area, with cyclone tracks. They also become Weather, Flood or Public safety records (as claims: GDACS alert levels are modelled impact estimates), and the **GDACS orange or red disaster alert** rule fires on them.
 - **Humanitarian reports (ReliefWeb)**: the newest situation reports, flash updates and maps per country. Documents, listed with links; not records.
-- **Official weather warnings**: agency RSS, Atom or CAP feeds listed in `tools/warning_feeds.json` (JMA, Bureau of Meteorology, MetService, BMKG, NDMA SACHET so far). Each run records whether every feed worked, and the tab shows failed feeds. Warnings become Weather records (claims). Non-English text is machine-translated to English in the job (`tools/translate.mjs`) and the original is kept in the evidence package, labelled with the translation service. With a `GOOGLE_TRANSLATE_KEY` repository secret it uses Google Cloud Translation; without one it uses MyMemory's small free quota and marks the rest untranslated.
+- **Official weather warnings**: agency RSS, Atom or CAP feeds listed in `tools/warning_feeds.json` (JMA, Bureau of Meteorology, MetService, BMKG, NDMA SACHET so far). Each run records whether every feed worked, and the tab shows failed feeds. Warnings become Weather records (claims). Non-English text is machine-translated to English in the job (`tools/translate.mjs`) and the original is kept in the evidence package, labelled with the translation service. It uses MyMemory's free anonymous service (no key); text past its small daily quota is marked untranslated.
 - GDACS, ReliefWeb and warnings come only from the hourly snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
 - NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
@@ -62,15 +62,9 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 - **Social media** (every area): posts from official and established accounts only (disaster agencies, police, militaries, news desks), listed in `tools/social_accounts.json`. Posts are unverified claims with links, translated like the news. Author names of Reddit posts are never read; only link posts to allowed news or government domains are kept.
 - Both come from hourly snapshots (`tools/refresh_news.mjs`, `tools/refresh_social.mjs`) and follow the reporting period.
 
-### Secrets for social media and translation
+### No accounts or keys
 
-Add these under the repository's Settings, Secrets and variables, Actions. A platform with missing secrets is skipped and the tab says so.
-
-| Secret | Used for |
-| --- | --- |
-| `GOOGLE_TRANSLATE_KEY` | Google Cloud Translation (recommended; otherwise MyMemory's small free quota) |
-| `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` | Bluesky (optional: public posts load without them) |
-| `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | Reddit (a "script" app at reddit.com/prefs/apps) |
+Every feed here is free and needs no login. Bluesky uses its public read API; Reddit uses public subreddit listings (Reddit often blocks cloud servers, and the tab then shows it as blocked); translation uses MyMemory's free anonymous service, and headlines past its daily quota are shown in the original and marked untranslated until a later run translates them.
 
 **Telegram** needs no account or phone number: the job reads each listed channel's public web page (`t.me/s/<channel>`). Channels that have turned that page off show as failed in the tab. Add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
 
