@@ -1,0 +1,293 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "la",
+ "country": "Laos",
+ "asof": "2026-09-26",
+ "advisory": {
+  "level": 2,
+  "level_text": "Exercise increased caution",
+  "issued": "2026-07-28",
+  "updated": null,
+  "indicators": [
+   "C",
+   "U",
+   "O"
+  ],
+  "indicator_names": [
+   "crime",
+   "civil unrest",
+   "other"
+  ],
+  "areas": [
+   {
+    "area": "Xaisomboun Province",
+    "level": 3,
+    "reason": "civil unrest"
+   }
+  ],
+  "notes": "Advises avoiding Special Economic Zones, especially Bokeo SEZ, and the Lao-Burma border.",
+  "src": "https://travel.state.gov/en/international-travel/travel-advisories/laos.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "47aa126fadf548ef51c7c673be85517637ddccce89dbd3f75dbfee9d64db06c4"
+ },
+ "posts": [
+  {
+   "id": "sof:la:post:u-s-embassy-vientiane",
+   "name": "U.S. Embassy Vientiane",
+   "kind": "embassy",
+   "city": "Vientiane",
+   "address": "Thadeua Road, Km 9, Ban Somvang Thai, Hatsayphong District, Vientiane, Lao PDR",
+   "services_note": null,
+   "lat": 17.915,
+   "lon": 102.665,
+   "prec": "approx",
+   "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Laos.html",
+   "srcname": "travel.state.gov country information page",
+   "coord_basis": "estimated from published address",
+   "fp": "177e2703abd1a1e0a572124d0f8367958848a287080e328c712680995d8f988d"
+  }
+ ],
+ "airports": [
+  {
+   "id": "sof:la:airport:vlvt",
+   "name": "Wattay International Airport",
+   "icao": "VLVT",
+   "ident": "VLVT",
+   "iata": "VTE",
+   "type": "large_airport",
+   "municipality": "Vientiane",
+   "region": "LA-VT",
+   "scheduled_service": true,
+   "lat": 17.98505,
+   "lon": 102.56669,
+   "prec": "exact",
+   "elevation_ft": 564,
+   "longest_runway": {
+    "ident": "13/31",
+    "length_ft": 9843,
+    "length_m": 3000,
+    "width_ft": 148,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/VLVT/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "e4189f2441f8e11dd6c614e4b2341356cdb6c70361be4884d21f1fa6c500ccf3"
+  },
+  {
+   "id": "sof:la:airport:vllb",
+   "name": "Luang Phabang International Airport",
+   "icao": "VLLB",
+   "ident": "VLLB",
+   "iata": "LPQ",
+   "type": "large_airport",
+   "municipality": "Luang Phabang",
+   "region": "LA-LP",
+   "scheduled_service": true,
+   "lat": 19.90427,
+   "lon": 102.16719,
+   "prec": "exact",
+   "elevation_ft": 955,
+   "longest_runway": {
+    "ident": "06/24",
+    "length_ft": 8202,
+    "length_m": 2500,
+    "width_ft": 148,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/VLLB/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "360bda827aded3d739538cba25d7f7d97ebcc229242e4d8dee0fe94ca7613429"
+  },
+  {
+   "id": "sof:la:airport:vlps",
+   "name": "Pakse International Airport",
+   "icao": "VLPS",
+   "ident": "VLPS",
+   "iata": "PKZ",
+   "type": "large_airport",
+   "municipality": "Pakse",
+   "region": "LA-CH",
+   "scheduled_service": true,
+   "lat": 15.13397,
+   "lon": 105.77987,
+   "prec": "exact",
+   "elevation_ft": 351,
+   "longest_runway": {
+    "ident": "15/33",
+    "length_ft": 7874,
+    "length_m": 2400,
+    "width_ft": 147,
+    "surface": "CON"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/VLPS/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "e852ce4cd9f826131c4edf4e0701e141b64c6a8d3a22b061c80b4548e6a8e66e"
+  },
+  {
+   "id": "sof:la:airport:la-0006",
+   "name": "Bokeo International Airport",
+   "icao": "VLBK",
+   "ident": "LA-0006",
+   "iata": "BOR",
+   "type": "medium_airport",
+   "municipality": "Ton Phueng",
+   "region": "LA-BK",
+   "scheduled_service": true,
+   "lat": 20.32399,
+   "lon": 100.16539,
+   "prec": "exact",
+   "elevation_ft": 1175,
+   "longest_runway": {
+    "ident": "03/21",
+    "length_ft": 8858,
+    "length_m": 2700,
+    "width_ft": 197,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/LA-0006/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "e3a7126e673a130aa0355116b1bc7f58dccabe93d87971ce9f21e319a0d03f7b"
+  }
+ ],
+ "seaports": [],
+ "hospitals": [
+  {
+   "id": "sof:la:hospital:mahosot-hospital",
+   "name": "Mahosot Hospital",
+   "city": "Vientiane",
+   "address": "Quai Fa Ngum, Vientiane",
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Listed by Australian Embassy Vientiane; named by travel.state.gov",
+   "lat": 17.9599,
+   "lon": 102.6121,
+   "prec": "exact",
+   "src": "https://laos.embassy.gov.au/vtan/md02.html",
+   "srcname": "Australian Embassy Laos medical advice",
+   "coord_basis": "https://en.wikipedia.org/wiki/Mahosot_Hospital",
+   "fp": "e93d0e69771645cd3b4f2042c43498fd626f98dd469ff0bd9738d75e4caf5bc8"
+  },
+  {
+   "id": "sof:la:hospital:mittaphap-friendship-hospital",
+   "name": "Mittaphap (Friendship) Hospital",
+   "city": "Vientiane",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Listed by Australian Embassy as trauma hospital (150 beds)",
+   "lat": 17.97,
+   "lon": 102.6,
+   "prec": "approx",
+   "src": "https://laos.embassy.gov.au/vtan/md02.html",
+   "srcname": "Australian Embassy Laos medical advice",
+   "coord_basis": "estimated, city-level only (no published address)",
+   "fp": "68d67bed59126b72d9e90f0bc533419611e76c72c6ae89bfb43fc6b6a25def32"
+  },
+  {
+   "id": "sof:la:hospital:sethathirath-hospital",
+   "name": "Sethathirath Hospital",
+   "city": "Vientiane",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Listed by Australian Embassy Vientiane",
+   "lat": 17.99,
+   "lon": 102.64,
+   "prec": "approx",
+   "src": "https://laos.embassy.gov.au/vtan/md02.html",
+   "srcname": "Australian Embassy Laos medical advice",
+   "coord_basis": "estimated, city-level only (no published address)",
+   "fp": "b64d7288ee7ac39ecd6f1ab9d2815721ab65eb9f9e506c0228e8e7a4b56238a9"
+  },
+  {
+   "id": "sof:la:hospital:103-military-hospital",
+   "name": "103 Military Hospital",
+   "city": "Vientiane",
+   "address": null,
+   "emergency_24h": null,
+   "type": "military",
+   "trauma_level": null,
+   "notes": "Named by travel.state.gov (limited mental health services)",
+   "lat": 17.96,
+   "lon": 102.62,
+   "prec": "approx",
+   "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Laos.html",
+   "srcname": "English Wikipedia",
+   "coord_basis": "estimated, city-level only (no published address)",
+   "fp": "c4488264775d1df4b842d16556b87e8d4b3dbea82ab369a772e609c9e06245a6"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "sof:la:exercise:peace-train-2026",
+   "also_cc": [
+    "cn"
+   ],
+   "name": "Peace Train",
+   "iteration": "Peace Train-2026",
+   "start": "2026-09-08",
+   "end": null,
+   "dates_text": "Opened September 8, 2026, running through late September",
+   "status": "ongoing",
+   "type": "Chinese/PLA exercise (China-Laos bilateral medical/HADR)",
+   "location": "Vientiane, Laos",
+   "lat": 17.97,
+   "lon": 102.63,
+   "prec": "approx",
+   "participants": [
+    "China (PLA)",
+    "Laos (Lao People's Army)"
+   ],
+   "us_participation": false,
+   "scale": "over 700 personnel",
+   "summary": "China-Laos joint humanitarian medical rescue exercise using medical trains, field equipment and unmanned systems, focused on typhoon response and cross-border medical rescue.",
+   "src": "https://english.news.cn/20260908/68cc2bb091cc4d5db79282f1af38ce8f/c.html",
+   "srcname": "Xinhua",
+   "src_date": "2026-09-08",
+   "coord_basis": "approximate exercise area",
+   "fp": "678f71234122dadded76a6de154cddbf1d4bfa2d5cfd44f26102bf92cb7d1f0b"
+  },
+  {
+   "id": "sof:la:exercise:laros-2026-with-tayfun-2026-training-course",
+   "also_cc": [],
+   "name": "Laros",
+   "iteration": "Laros 2026 (with Tayfun 2026 training course)",
+   "start": null,
+   "end": null,
+   "dates_text": "Russian contingent arrived in Laos, reported May 25, 2026",
+   "status": "completed",
+   "type": "Russia-partner exercise (Laos-Russia counter-terrorism)",
+   "location": "Kommadam Academy of the Lao People's Army, Laos",
+   "lat": 17.97,
+   "lon": 102.63,
+   "prec": "approx",
+   "participants": [
+    "Russia (Eastern Military District)",
+    "Lao People's Army special units"
+   ],
+   "us_participation": false,
+   "scale": null,
+   "summary": "Russian Eastern Military District troops trained Lao special units and held the joint counter-terrorism exercise Laros 2026. Included for situational awareness; no US or US-partner involvement.",
+   "src": "https://www.globalsecurity.org/wmd/library/news/russia/2026/05/russia-260525-russia-mod01.htm",
+   "srcname": "GlobalSecurity.org (Russian MoD)",
+   "src_date": "2026-05-25",
+   "coord_basis": "Academy location not given precisely; plotted at Vientiane",
+   "fp": "e580edac8d6a9995cae86fa1625c9b86e499c93d1c20ac8937abeef916f39951"
+  }
+ ],
+ "gaps": [
+  "la.usembassy.gov 403. No Wikipedia articles/coordinates for Mittaphap, Sethathirath or 103 Military; coordinates are city-level guesses and must be verified. Australian embassy recommends Thai hospitals (Aek Udon, Udon Thani; Wattana, Nong Khai) for serious care - not included as outside Laos. No hospital outside Vientiane confirmed.",
+  "Landlocked: no seaports."
+ ]
+}

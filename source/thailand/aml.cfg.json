@@ -1,0 +1,124 @@
+{
+ "asof": "2026-09-26",
+ "color": "--util",
+ "srcline": "Sourced reporting · AMLO and agency releases",
+ "bounds": [
+  [
+   5.6,
+   97.3
+  ],
+  [
+   20.5,
+   105.7
+  ]
+ ],
+ "status": "<b>A curated record, not a full count.</b> Public reports of seizures, charges, crackdowns and policy. Amounts are as announced by the agency.",
+ "unit": "cases",
+ "unitShort": "Cases",
+ "chartTitle": "Cases by month",
+ "chartSub": "Records in this layer by month.",
+ "tableLabel": "Baht, may overlap",
+ "tableAll": true,
+ "byProvince": true,
+ "kpis": [
+  {
+   "type": "all",
+   "label": "Cases recorded",
+   "hot": true
+  },
+  {
+   "type": "max",
+   "field": "amount_thb",
+   "money": true,
+   "label": "Largest single amount reported, baht"
+  },
+  {
+   "type": "kind",
+   "kind": "mule_accounts",
+   "label": "Mule-account actions"
+  },
+  {
+   "type": "kind",
+   "kind": "crypto",
+   "label": "Crypto cases"
+  }
+ ],
+ "kinds": {
+  "asset_seizure": {
+   "label": "Asset seizure or freeze",
+   "color": "--util",
+   "sev": 2,
+   "counted": true
+  },
+  "mule_accounts": {
+   "label": "Mule accounts",
+   "color": "--near",
+   "sev": 1,
+   "counted": true
+  },
+  "crypto": {
+   "label": "Crypto",
+   "color": "--sat-water",
+   "sev": 2,
+   "counted": true
+  },
+  "underground_banking": {
+   "label": "Underground banking",
+   "color": "--over",
+   "sev": 2,
+   "counted": true
+  },
+  "gambling_laundering": {
+   "label": "Gambling laundering",
+   "color": "--power",
+   "sev": 2,
+   "counted": true
+  },
+  "shell_nominee": {
+   "label": "Shell or nominee company",
+   "color": "--l3",
+   "sev": 2,
+   "counted": true
+  },
+  "advisory_policy": {
+   "label": "Advisory or policy",
+   "color": "--rain",
+   "sev": 1,
+   "claim": true,
+   "counted": true
+  },
+  "sanction": {
+   "label": "Sanction",
+   "color": "--sat-flood",
+   "sev": 1,
+   "claim": true,
+   "counted": true
+  },
+  "arrest_charge": {
+   "label": "Arrest or charge",
+   "color": "--care",
+   "sev": 2,
+   "counted": true
+  },
+  "statistics": {
+   "label": "Statistics or period total",
+   "color": "--accent",
+   "sev": 1,
+   "claim": true,
+   "counted": false
+  },
+  "other": {
+   "label": "Other",
+   "color": "--muted",
+   "sev": 1,
+   "counted": true
+  }
+ },
+ "notes": [
+  "<b>Every record is a report, not a finding.</b> A seizure or charge is not a conviction, and the amounts are the agency's own figures.",
+  "<b>Amounts overlap.</b> One network (the Yim Leak, Ben Smith, Chen Zhi and Kok An case) appears in several records as assets are frozen, added to and auctioned. So the page shows the largest single amount, not a total.",
+  "<b>No personal details.</b> This is a shared map, so records describe people (\"a 34-year-old Myanmar national\") instead of naming them, and never show phone numbers, accounts or addresses. Those belong inside an investigation with access control. People are named only where they are formally charged or sanctioned in a major case and the name is the story.",
+  "<b>Nationwide items have no marker.</b> Policy and advisories appear in the list and timeline only."
+ ],
+ "tableField": "amount_thb"
+}

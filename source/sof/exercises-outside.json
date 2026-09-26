@@ -1,0 +1,235 @@
+{
+ "schema": "apsap-sof/1",
+ "asof": "2026-09-26",
+ "exercises": [
+  {
+   "cc": "xx",
+   "also_cc": [
+    "jp",
+    "au",
+    "nz"
+   ],
+   "name": "Valiant Shield",
+   "iteration": "Valiant Shield 2026",
+   "start": "2026-06-23",
+   "end": "2026-07-01",
+   "dates_text": "June 23 - July 1, 2026 (Japan segment announced June 22 - July 1)",
+   "status": "completed",
+   "type": "US-led joint/multinational multi-domain",
+   "location": "Guam, Commonwealth of the Northern Mariana Islands, Mariana Islands Range Complex, Philippine Sea, and US/Japanese bases in Japan",
+   "lat": 13.45,
+   "lon": 144.79,
+   "prec": "approx",
+   "coord_note": "Primary hub Guam; Japan segment also held at bases in Japan",
+   "participants": [
+    "United States",
+    "Japan",
+    "Australia",
+    "Canada",
+    "New Zealand"
+   ],
+   "us_participation": true,
+   "scale": "George Washington Carrier Strike Group, USS Minnesota; JS Kaga, JS Fuyuzuki, JS Jingei; HMCS Charlottetown; 80 ADF personnel with P-8A and MQ-28A",
+   "summary": "Biennial US joint multi-domain exercise across the Marianas, Philippine Sea and Japan, with a Typhon missile system deployed to Japan for the Japan segment.",
+   "src": "https://news.usni.org/2026/06/23/u-s-kicks-off-western-pacific-exercises-valiant-shield-resolute-dragon",
+   "srcname": "USNI News",
+   "src_date": "2026-06-23",
+   "fp": "c0b041b74d01e037a76d0d835ebc9c9e36cbaeb6a041da5ac4b4c4a994328d3b"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "jp",
+    "kr"
+   ],
+   "name": "RIMPAC",
+   "iteration": "RIMPAC 2026 (30th)",
+   "start": "2026-06-24",
+   "end": "2026-07-31",
+   "dates_text": "June 24 - July 31, 2026",
+   "status": "completed",
+   "type": "multinational naval (held off Hawaii)",
+   "location": "Hawaiian Islands; Joint Base Pearl Harbor-Hickam, Hawaii, USA",
+   "lat": 21.35,
+   "lon": -157.95,
+   "prec": "approx",
+   "coord_note": "Held outside the 28 listed countries (Hawaii); full participant list not given in source",
+   "participants": [
+    "United States",
+    "Chile (deputy commander)",
+    "Japan (vice commander)",
+    "Republic of Korea (maritime component)",
+    "Canada (air component)",
+    "30-31 nations in total"
+   ],
+   "us_participation": true,
+   "scale": "30+ surface ships, 5 submarines, 15 national land forces, 206+ aircraft, over 30,000 personnel",
+   "summary": "World's largest international maritime exercise, hosted by US Pacific Fleet off Hawaii with record participation of about 30 nations.",
+   "src": "https://www.dvidshub.net/news/568770/rimpac-2026-expands-global-maritime-partnerships-with-participation-30-nations",
+   "srcname": "DVIDS",
+   "src_date": "2026-06-26",
+   "fp": "fb69b87df889f12449b0ef60ab526e73c9644cb3aca38a02c0501ee6c3f655f3"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "sg"
+   ],
+   "name": "Tiger Balm",
+   "iteration": "Tiger Balm 2026 (45th)",
+   "start": "2026-05-04",
+   "end": "2026-05-15",
+   "dates_text": "4-15 May 2026",
+   "status": "completed",
+   "type": "bilateral army field",
+   "location": "Joint Base Lewis-McChord and Yakima Training Centre, Washington, USA",
+   "lat": 47.09,
+   "lon": -122.58,
+   "prec": "approx",
+   "coord_note": "Held in the USA (outside listed countries)",
+   "participants": [
+    "Singapore Army (6th Division/HQ Sense and Strike, 24th Singapore Infantry Brigade)",
+    "US Army (1-2 Stryker BCT, Washington National Guard)"
+   ],
+   "us_participation": true,
+   "scale": "approx. 600 Singapore personnel",
+   "summary": "Longest-running Singapore-US Army bilateral exercise, focusing on multi-domain operations and sense-strike integration.",
+   "src": "https://www.mindef.gov.sg/news-and-events/latest-releases/16may26-nr/",
+   "srcname": "Singapore Ministry of Defence",
+   "src_date": "2026-05-16",
+   "fp": "f4e51703112b02a2b5a2035968e4183aea02b82ed5e39c91632a830bdf393d07"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "sg"
+   ],
+   "name": "Valiant Mark",
+   "iteration": "Valiant Mark 28 (2026)",
+   "start": "2026-04-27",
+   "end": "2026-05-08",
+   "dates_text": "27 April to 8 May 2026",
+   "status": "completed",
+   "type": "bilateral marine/army field",
+   "location": "Marine Corps Air Ground Combat Center, Twentynine Palms, California, USA",
+   "lat": 34.23,
+   "lon": -116.06,
+   "prec": "approx",
+   "coord_note": "Held in the USA (outside listed countries)",
+   "participants": [
+    "Singapore Armed Forces (7th SIB, 1st Bn Singapore Guards, Army Deployment Force)",
+    "US Marine Corps (3rd LAR Battalion)"
+   ],
+   "us_participation": true,
+   "scale": "approx. 250 participants",
+   "summary": "28th SAF-USMC bilateral exercise with unmanned systems exchanges, urban operations, live firing and a battalion-level amphibious mission.",
+   "src": "https://www.mindef.gov.sg/news-and-events/latest-releases/9may26-nr/",
+   "srcname": "Singapore Ministry of Defence",
+   "src_date": "2026-05-09",
+   "fp": "0f274d3298e7eed3263bd9983279ddfce5b42b0382646d86d2f33f494510ff33"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "au",
+    "in",
+    "jp",
+    "nz"
+   ],
+   "name": "Sea Dragon",
+   "iteration": "Sea Dragon 2026",
+   "start": "2026-03-08",
+   "end": "2026-03-28",
+   "dates_text": "March 8-28, 2026",
+   "status": "completed",
+   "type": "multinational anti-submarine warfare (maritime patrol aircraft)",
+   "location": "Andersen Air Force Base, Guam, with operations near Saipan",
+   "lat": 13.58,
+   "lon": 144.93,
+   "prec": "approx",
+   "coord_note": "Held in Guam (outside listed countries)",
+   "participants": [
+    "United States Navy (VP-4, VP-45)",
+    "Australia (RAAF)",
+    "India (Indian Navy)",
+    "Japan (JMSDF)",
+    "New Zealand (RNZAF)"
+   ],
+   "us_participation": true,
+   "scale": "P-8A Poseidon aircraft from five nations",
+   "summary": "US-led multinational ASW exercise for P-8A crews; JMSDF VP-3 won the 2026 Dragon Belt.",
+   "src": "https://www.cpf.navy.mil/Newsroom/News/Article/4447566/australia-india-japan-new-zealand-us-complete-exercise-sea-dragon-2026/",
+   "srcname": "U.S. Pacific Fleet",
+   "src_date": "2026-03-28",
+   "fp": "9a3cbd4b653c2747ee4c4b7ea64b74d66e9017870d2c415bd5c04cb159dac819"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "jp",
+    "au",
+    "nz",
+    "kr"
+   ],
+   "name": "Pacific Vanguard",
+   "iteration": "Pacific Vanguard 2026",
+   "start": "2026-08-30",
+   "end": null,
+   "dates_text": "Beginning August 30, 2026",
+   "status": "completed",
+   "type": "multinational naval (ASW/air defense)",
+   "location": "Waters around Guam, western Pacific",
+   "lat": 13.45,
+   "lon": 144.79,
+   "prec": "approx",
+   "coord_note": "Held around Guam (outside listed countries); precise area not stated",
+   "participants": [
+    "United States (USNS Charles Drew, P-8A)",
+    "Japan (JS Fuyuzuki, a submarine, P-1)",
+    "Australia (HMAS Sydney)",
+    "New Zealand (RNZAF P-8A)",
+    "Canada (HMCS Regina)",
+    "Republic of Korea Navy"
+   ],
+   "us_participation": true,
+   "scale": null,
+   "summary": "Six-nation cooperative maritime exercise emphasizing anti-submarine warfare and air defense.",
+   "src": "https://www.zona-militar.com/en/2026/08/31/with-a-submarine-a-destroyer-and-a-p-1-patrol-aircraft-the-japan-maritime-self-defense-force-is-present-at-the-pacific-vanguard-2026-exercise/",
+   "srcname": "Zona Militar",
+   "src_date": "2026-08-31",
+   "fp": "e520e60a5ee7521b06f9ed6cec506cfd73c8a003eb9faca35a7a3da535fa7199"
+  },
+  {
+   "cc": "xx",
+   "also_cc": [
+    "cn",
+    "jp",
+    "oki",
+    "kr"
+   ],
+   "name": "China-Russia Joint Strategic Air Patrol",
+   "iteration": "11th Joint Strategic Air Patrol (2026)",
+   "start": "2026-06-27",
+   "end": "2026-06-27",
+   "dates_text": "June 27, 2026 (approx. six hours)",
+   "status": "completed",
+   "type": "Chinese/PLA exercise (China-Russia joint bomber patrol)",
+   "location": "International airspace over the Sea of Japan, Tsushima Strait, East China Sea (between Okinawa and Miyako, south of Amami Oshima and Jeju) and western Pacific",
+   "lat": 25.5,
+   "lon": 126.0,
+   "prec": "approx",
+   "coord_note": "International airspace; plotted in the Miyako Strait area between Okinawa and Miyako",
+   "participants": [
+    "China (PLAAF H-6 bombers, J-16 fighters)",
+    "Russia (Tu-95, Tu-142, Su-35)"
+   ],
+   "us_participation": false,
+   "scale": "11 aircraft: 2 H-6, 2 Tu-95, 2 Tu-142, 4 J-16, 1 Su-35",
+   "summary": "11th China-Russia joint strategic bomber patrol near Japan and South Korea, prompting JASDF and ROKAF scrambles and a formal South Korean protest.",
+   "src": "https://news.usni.org/2026/06/30/russia-china-fly-joint-bomber-missions-near-japan-south-korea",
+   "srcname": "USNI News",
+   "src_date": "2026-06-30",
+   "fp": "e77018d7ca26c0c0bec50f7ad17facd29fdb22972353d4fcda14ef98159ceaec"
+  }
+ ]
+}
