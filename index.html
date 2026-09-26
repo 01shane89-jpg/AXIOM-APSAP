@@ -1880,6 +1880,27 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/nz/transport.js"></script>
 <script src="data/layers/nz/border.js"></script>
 <script src="data/layers/nz/aml.js"></script>
+<script src="data/layers/cn/scam.js"></script>
+<script src="data/layers/cn/border.js"></script>
+<script src="data/layers/cn/aml.js"></script>
+<script src="data/layers/cn/weather.js"></script>
+<script src="data/layers/cn/flood.js"></script>
+<script src="data/layers/cn/health.js"></script>
+<script src="data/layers/cn/transport.js"></script>
+<script src="data/layers/id/flood.js"></script>
+<script src="data/layers/id/aml.js"></script>
+<script src="data/layers/id/crime.js"></script>
+<script src="data/layers/id/safety.js"></script>
+<script src="data/layers/id/insurgency.js"></script>
+<script src="data/layers/id/scam.js"></script>
+<script src="data/layers/id/border.js"></script>
+<script src="data/layers/id/transport.js"></script>
+<script src="data/layers/au/weather.js"></script>
+<script src="data/layers/au/flood.js"></script>
+<script src="data/layers/au/safety.js"></script>
+<script src="data/layers/au/crime.js"></script>
+<script src="data/layers/au/insurgency.js"></script>
+<script src="data/layers/au/border.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2113,7 +2134,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: null, crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Grey list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
     lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: null, crime: "Narcotics and underworld violence", scam: "Scam-centre crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
     pg: { flood: "Floods and landslides", border: "Border and maritime security", insurgency: "Tribal conflict and Bougainville", crime: "Law and order", scam: "Scams and trafficking", aml: "Financial crime and grey list", weather: "Cyclones and drought", infra: "Power and water supply", transport: "Transport and sea safety", safety: "Public safety and disorder", health: "Public health" },
-    nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" }
+    nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" },
+    cn: { flood: "Floods and geohazards", border: "Frontier and maritime claims", insurgency: "Terrorism and extremism", crime: "Organized crime and narcotics", scam: "Telecom fraud and overseas compounds", aml: "Illicit finance and underground banking", weather: "Typhoons and extreme weather", infra: "Critical infrastructure", transport: "Transportation", safety: "Work safety and disasters", health: "Public health" },
+    id: { flood: "Floods and landslides", border: "Maritime and border security", insurgency: "Papua conflict and counterterrorism", crime: "Narcotics and organized crime", scam: "Online scams and trafficked workers", aml: "Money laundering and gambling finance", weather: "Weather and drought", infra: "Power, water and telecoms", transport: "Transport and Mudik", safety: "Volcanoes, quakes and disasters", health: "Public health" },
+    au: { flood: "Floods and river warnings", border: "Maritime border and approaches", insurgency: "Terrorism and violent extremism", crime: "Organized crime and contraband", scam: "Scams and fraud", aml: "Financial crime", weather: "Cyclones, heat and severe weather", infra: "Power, telco and Triple Zero outages", transport: "Roads, rail and aviation", safety: "Bushfires and emergencies", health: "Public and animal health" }
   };
   if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null; });
   if (!TH) LAYERS.forEach(function (l) {
