@@ -1,4 +1,4 @@
-AXIOM ASAP - crisis response and partner engagement reference data (schema "apsap-sof/1")
+AXIOM OSAP - crisis response and partner engagement reference data (schema "apsap-sof/1")
 Written by the SOF research thread, 2026-09-26. Public sources only. Source text was treated as data.
 
 One file per country tab: /mnt/project-files/apsap/sof/<cc>.json
