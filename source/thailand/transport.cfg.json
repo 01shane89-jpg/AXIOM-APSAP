@@ -1,0 +1,36 @@
+{
+ "asof": "2026-09-26",
+ "color": "--care",
+ "srcline": "Sourced reporting · Highways, rail and airport notices as carried by the press",
+ "bounds": [[5.6, 97.3], [20.5, 105.7]],
+ "unit": "disruptions", "unitShort": "Records",
+ "chartTitle": "Disruptions by month",
+ "chartSub": "Closures, crashes and service disruptions by month. Holiday road-toll statistics are not counted. Hover a bar for deaths.",
+ "tableAll": true, "byProvince": true,
+ "status": "<b>A curated record, not a traffic feed.</b> 42 records for Jan–Sep 2026. Most road closures are from the September floods. Air, port and ferry coverage is thin, and February to May has few records.",
+ "kpis": [
+  {"type": "count", "label": "Disruptions recorded", "hot": true},
+  {"type": "kind", "kind": "road_closure", "label": "Road closures"},
+  {"type": "kind", "kind": "mass_casualty_crash", "label": "Mass-casualty crashes"},
+  {"type": "sum", "field": "killed", "label": "Killed in recorded incidents"}
+ ],
+ "kinds": {
+  "road_closure": {"label": "Road closure", "color": "--over", "sev": 2, "counted": true},
+  "bridge_closure": {"label": "Bridge closure", "color": "--near", "sev": 2, "counted": true},
+  "construction": {"label": "Construction works", "color": "--sat-recur", "sev": 1, "counted": true},
+  "rail_disruption": {"label": "Rail disruption", "color": "--util", "sev": 2, "counted": true},
+  "air_disruption": {"label": "Air disruption", "color": "--rain", "sev": 1, "counted": true},
+  "port_disruption": {"label": "Port disruption", "color": "--sat-water", "sev": 1, "counted": true},
+  "ferry_incident": {"label": "Boat or ferry incident", "color": "--sat-flood", "sev": 2, "counted": true},
+  "mass_casualty_crash": {"label": "Mass-casualty crash", "color": "--l3", "sev": 3, "counted": true},
+  "statistics": {"label": "Holiday road-toll statistics", "color": "--accent", "sev": 1, "claim": true},
+  "other": {"label": "Other, incl. border crossings", "color": "--muted", "sev": 1, "counted": true}
+ },
+ "notes": [
+  "<b>Every record is a report, not a finding.</b> Each links to its article. None has been confirmed by an analyst.",
+  "<b>Holiday tolls are statistics, not incidents.</b> The New Year (272 dead) and Songkran (242 dead) figures are official totals for the seven-day periods. They are kept as claims and left out of the killed total and the chart.",
+  "<b>Figures differ between tabs.</b> The Sikhio train disaster is 30 dead and 69 injured here (Wikipedia's later count) and 32 and 66 in Public safety (reports on the day). Both records link to their source.",
+  "<b>Some records overlap with other tabs.</b> Flood road closures repeat what Flood and Weather show; the Thai–Cambodian border closure is also in Border.",
+  "<b>Places are approximate.</b> Markers sit at the district or site centre unless marked exact."
+ ]
+}

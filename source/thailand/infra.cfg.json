@@ -1,0 +1,447 @@
+{
+ "asof": "2026-09-26",
+ "color": "--util",
+ "srcline": "Sourced reporting · RID, MEA, airport notices · asset list from public references",
+ "bounds": [
+  [
+   5.6,
+   97.3
+  ],
+  [
+   20.5,
+   105.7
+  ]
+ ],
+ "unit": "events",
+ "unitShort": "Events",
+ "chartTitle": "Infrastructure events by month",
+ "chartSub": "Outages, dam releases, disruptions and damage by month.",
+ "tableAll": true,
+ "byProvince": true,
+ "tableLabel": "Killed",
+ "status": "<b>A reference map plus a thin event record.</b> 26 key assets (airports, ports, dams, border bridges, power, water) and 15 events for Jan–Sep 2026. Unplanned blackouts, water failures and port disruptions are missing because their pages could not be opened.",
+ "kpis": [
+  {
+   "type": "assets",
+   "label": "Key assets mapped",
+   "hot": true
+  },
+  {
+   "type": "all",
+   "label": "Events recorded"
+  },
+  {
+   "type": "kind",
+   "kind": "dam_reservoir",
+   "label": "Dam and reservoir notices"
+  },
+  {
+   "type": "kind",
+   "kind": "outage",
+   "label": "Power cuts, planned"
+  }
+ ],
+ "kinds": {
+  "outage": {
+   "label": "Power cut",
+   "color": "--power",
+   "sev": 1,
+   "counted": true
+  },
+  "dam_reservoir": {
+   "label": "Dam or reservoir notice",
+   "color": "--rain",
+   "sev": 2,
+   "counted": true,
+   "claim": true
+  },
+  "port_airport_disruption": {
+   "label": "Airport or port disruption",
+   "color": "--near",
+   "sev": 2,
+   "counted": true
+  },
+  "bridge_damage": {
+   "label": "Bridge or expressway damage",
+   "color": "--over",
+   "sev": 2,
+   "counted": true
+  },
+  "telecom_outage": {
+   "label": "Telecom outage, unconfirmed",
+   "color": "--calm",
+   "sev": 1,
+   "counted": true,
+   "claim": true
+  },
+  "water_supply": {
+   "label": "Water supply",
+   "color": "--sat-water",
+   "sev": 2,
+   "counted": true
+  },
+  "other": {
+   "label": "Other",
+   "color": "--muted",
+   "sev": 1,
+   "counted": true
+  }
+ },
+ "assetTypes": {
+  "airport": "--rain",
+  "port": "--sat-water",
+  "dam": "--care",
+  "bridge": "--sat-recur",
+  "power": "--power",
+  "rail": "--util",
+  "water": "--sat-flood",
+  "telecom": "--calm"
+ },
+ "assets": [
+  {
+   "title": "Suvarnabhumi Airport (BKK)",
+   "asset_type": "airport",
+   "place": "Suvarnabhumi Airport",
+   "prov": "Samut Prakan",
+   "lat": 13.6925,
+   "lon": 100.75,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Suvarnabhumi_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Thailand's primary international airport serving Bangkok, operated by Airports of Thailand."
+  },
+  {
+   "title": "Don Mueang International Airport (DMK)",
+   "asset_type": "airport",
+   "place": "Don Mueang International Airport",
+   "prov": "Bangkok",
+   "lat": 13.9125,
+   "lon": 100.60667,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Don_Mueang_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Bangkok's second airport and main low-cost carrier hub, operated by Airports of Thailand."
+  },
+  {
+   "title": "Phuket International Airport (HKT)",
+   "asset_type": "airport",
+   "place": "Phuket International Airport, Mai Khao",
+   "prov": "Phuket",
+   "lat": 8.11306,
+   "lon": 98.31667,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Phuket_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Main gateway for Phuket and the Andaman coast; described by Wikipedia as one of Thailand's busiest airports."
+  },
+  {
+   "title": "Chiang Mai International Airport (CNX)",
+   "asset_type": "airport",
+   "place": "Chiang Mai International Airport, Suthep",
+   "prov": "Chiang Mai",
+   "lat": 18.76667,
+   "lon": 98.9625,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Chiang_Mai_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Principal airport of northern Thailand, operated by Airports of Thailand."
+  },
+  {
+   "title": "Hat Yai International Airport (HDY)",
+   "asset_type": "airport",
+   "place": "Hat Yai International Airport, Khlong La",
+   "prov": "Songkhla",
+   "lat": 6.93306,
+   "lon": 100.39278,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Hat_Yai_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Main airport of the lower south, operated by Airports of Thailand."
+  },
+  {
+   "title": "U-Tapao International Airport (UTP)",
+   "asset_type": "airport",
+   "place": "U-Tapao International Airport",
+   "prov": "Rayong",
+   "lat": 12.67972,
+   "lon": 101.005,
+   "prec": "exact",
+   "agency": "Royal Thai Navy (operator per Wikipedia)",
+   "src": "https://en.wikipedia.org/wiki/U-Tapao_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Public international airport serving Rayong and Pattaya; the civil terminal shares the site with a navy airfield (military facilities not mapped here)."
+  },
+  {
+   "title": "Mae Fah Luang–Chiang Rai International Airport (CEI)",
+   "asset_type": "airport",
+   "place": "Mae Fah Luang–Chiang Rai International Airport, Ban Du",
+   "prov": "Chiang Rai",
+   "lat": 19.95222,
+   "lon": 99.88278,
+   "prec": "exact",
+   "agency": "Airports of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Chiang_Rai_International_Airport",
+   "srcname": "Wikipedia",
+   "detail": "Airport serving Chiang Rai and Phayao, operated by Airports of Thailand."
+  },
+  {
+   "title": "Laem Chabang Port",
+   "asset_type": "port",
+   "place": "Laem Chabang Port",
+   "prov": "Chon Buri",
+   "lat": 13.087972,
+   "lon": 100.925722,
+   "prec": "exact",
+   "agency": "Port Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Laem_Chabang",
+   "srcname": "Wikipedia",
+   "detail": "Thailand's largest container port, overseen by the Port Authority of Thailand."
+  },
+  {
+   "title": "Bangkok Port (Khlong Toei)",
+   "asset_type": "port",
+   "place": "Bangkok Port, Khlong Toei",
+   "prov": "Bangkok",
+   "lat": 13.705,
+   "lon": 100.57,
+   "prec": "approx",
+   "agency": "Port Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Bangkok_Port",
+   "srcname": "Wikipedia",
+   "detail": "River port on the Chao Phraya handling container and general cargo, limited to smaller vessels; operated by the Port Authority of Thailand."
+  },
+  {
+   "title": "Map Ta Phut Industrial Estate and Port",
+   "asset_type": "port",
+   "place": "Map Ta Phut",
+   "prov": "Rayong",
+   "lat": 12.6913,
+   "lon": 101.1426,
+   "prec": "approx",
+   "agency": "Industrial Estate Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Map_Ta_Phut_Industrial_Estate",
+   "srcname": "Wikipedia",
+   "detail": "Thailand's largest industrial estate and petrochemical hub, with a deep-sea industrial port; run by the Industrial Estate Authority of Thailand."
+  },
+  {
+   "title": "Songkhla Port",
+   "asset_type": "port",
+   "place": "Songkhla Port",
+   "prov": "Songkhla",
+   "lat": 6.8790221,
+   "lon": 100.5498542,
+   "prec": "approx",
+   "agency": "Chaophaya Terminal International (operator per UNIS)",
+   "src": "https://www.unisco.com/international-ports/songkhla-thailand",
+   "srcname": "UNIS port directory",
+   "detail": "Regional multipurpose deep-sea port on the Gulf of Thailand handling containers, general cargo and petroleum products."
+  },
+  {
+   "title": "Ranong Port",
+   "asset_type": "port",
+   "place": "Ranong Port",
+   "prov": "Ranong",
+   "lat": 9.93,
+   "lon": 98.59,
+   "prec": "approx",
+   "agency": "Port Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Port_Authority_of_Thailand",
+   "srcname": "Wikipedia",
+   "detail": "Port Authority of Thailand port on the Kraburi River estuary facing Myanmar, Thailand's Andaman-side gateway."
+  },
+  {
+   "title": "Mae Moh Power Plant",
+   "asset_type": "power",
+   "place": "Mae Moh Power Plant",
+   "prov": "Lampang",
+   "lat": 18.3,
+   "lon": 99.74,
+   "prec": "approx",
+   "agency": "Electricity Generating Authority of Thailand",
+   "src": "https://www.egat.co.th/home/en/maemoh-pp-about/",
+   "srcname": "EGAT",
+   "detail": "Thailand's largest lignite-fired power plant (per EGAT), fed by the adjacent Mae Moh mine."
+  },
+  {
+   "title": "Bhumibol Dam",
+   "asset_type": "dam",
+   "place": "Bhumibol Dam",
+   "prov": "Tak",
+   "lat": 17.2425,
+   "lon": 98.97222,
+   "prec": "exact",
+   "agency": "Electricity Generating Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Bhumibol_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Concrete arch dam on the Ping River for hydropower, storage, flood control and irrigation; a key Chao Phraya basin reservoir."
+  },
+  {
+   "title": "Sirikit Dam",
+   "asset_type": "dam",
+   "place": "Queen Sirikit Dam",
+   "prov": "Uttaradit",
+   "lat": 17.76389,
+   "lon": 100.56333,
+   "prec": "exact",
+   "agency": "Electricity Generating Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Sirikit_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Embankment dam on the Nan River for irrigation, flood control and hydropower; a key Chao Phraya basin reservoir."
+  },
+  {
+   "title": "Srinagarind Dam",
+   "asset_type": "dam",
+   "place": "Srinagarind Dam",
+   "prov": "Kanchanaburi",
+   "lat": 14.40861,
+   "lon": 99.12833,
+   "prec": "exact",
+   "agency": "Electricity Generating Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Srinagarind_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Embankment hydroelectric dam on the Khwae Yai River with pumped-storage units."
+  },
+  {
+   "title": "Ubol Ratana Dam",
+   "asset_type": "dam",
+   "place": "Ubol Ratana Dam",
+   "prov": "Khon Kaen",
+   "lat": 16.7753944,
+   "lon": 102.618325,
+   "prec": "exact",
+   "agency": "Electricity Generating Authority of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Ubol_Ratana_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Multi-purpose earth/rockfill dam on the Nam Phong for power, irrigation and flood control in the northeast."
+  },
+  {
+   "title": "Pa Sak Jolasid Dam",
+   "asset_type": "dam",
+   "place": "Pa Sak Jolasid Dam",
+   "prov": "Lopburi",
+   "lat": 14.86139,
+   "lon": 101.06611,
+   "prec": "exact",
+   "agency": "Royal Irrigation Department",
+   "src": "https://en.wikipedia.org/wiki/Pa_Sak_Jolasid_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Largest reservoir in central Thailand on the Pa Sak River, used for irrigation and flood control for the lower Chao Phraya basin."
+  },
+  {
+   "title": "Mae Klong Dam",
+   "asset_type": "dam",
+   "place": "Mae Klong Dam",
+   "prov": "Kanchanaburi",
+   "lat": 13.95,
+   "lon": 99.62,
+   "prec": "approx",
+   "agency": "Royal Irrigation Department / EGAT",
+   "src": "https://en.wikipedia.org/wiki/Mae_Klong_Dam",
+   "srcname": "Wikipedia",
+   "detail": "Barrage on the Mae Klong River supplying irrigation across six provinces and raw water for western Bangkok; run by RID and EGAT."
+  },
+  {
+   "title": "First Thai–Lao Friendship Bridge",
+   "asset_type": "bridge",
+   "place": "First Thai–Lao Friendship Bridge",
+   "prov": "Nong Khai",
+   "lat": 17.8783,
+   "lon": 102.7156,
+   "prec": "exact",
+   "agency": null,
+   "src": "https://en.wikipedia.org/wiki/First_Thai%E2%80%93Lao_Friendship_Bridge",
+   "srcname": "Wikipedia",
+   "detail": "Mekong road-and-rail bridge (opened 1994) linking Nong Khai with Vientiane."
+  },
+  {
+   "title": "Second Thai–Lao Friendship Bridge",
+   "asset_type": "bridge",
+   "place": "Second Thai–Lao Friendship Bridge",
+   "prov": "Mukdahan",
+   "lat": 16.6011,
+   "lon": 104.7358,
+   "prec": "exact",
+   "agency": null,
+   "src": "https://en.wikipedia.org/wiki/Second_Thai%E2%80%93Lao_Friendship_Bridge",
+   "srcname": "Wikipedia",
+   "detail": "Mekong road bridge (opened 2007) linking Mukdahan with Savannakhet on the East–West Economic Corridor."
+  },
+  {
+   "title": "Third Thai–Lao Friendship Bridge",
+   "asset_type": "bridge",
+   "place": "Third Thai–Lao Friendship Bridge",
+   "prov": "Nakhon Phanom",
+   "lat": 17.45,
+   "lon": 104.73,
+   "prec": "approx",
+   "agency": null,
+   "src": "https://en.wikipedia.org/wiki/Thai%E2%80%93Lao_Friendship_Bridge",
+   "srcname": "Wikipedia",
+   "detail": "Mekong bridge (opened 2011) linking Nakhon Phanom with Thakhek."
+  },
+  {
+   "title": "Fourth Thai–Lao Friendship Bridge",
+   "asset_type": "bridge",
+   "place": "Fourth Thai–Lao Friendship Bridge",
+   "prov": "Chiang Rai",
+   "lat": 20.21,
+   "lon": 100.43,
+   "prec": "approx",
+   "agency": null,
+   "src": "https://en.wikipedia.org/wiki/Thai%E2%80%93Lao_Friendship_Bridge",
+   "srcname": "Wikipedia",
+   "detail": "Mekong bridge (opened 2013) linking Chiang Khong with Houayxay."
+  },
+  {
+   "title": "Fifth Thai–Lao Friendship Bridge",
+   "asset_type": "bridge",
+   "place": "Fifth Thai–Lao Friendship Bridge",
+   "prov": "Bueng Kan",
+   "lat": 18.37,
+   "lon": 103.65,
+   "prec": "approx",
+   "agency": null,
+   "src": "https://en.wikipedia.org/wiki/Thai%E2%80%93Lao_Friendship_Bridge",
+   "srcname": "Wikipedia",
+   "detail": "Mekong bridge (opened 2025 per Wikipedia) linking Bueng Kan with Pakxan."
+  },
+  {
+   "title": "Krung Thep Aphiwat Central Terminal",
+   "asset_type": "rail",
+   "place": "Krung Thep Aphiwat Central Terminal (Bang Sue)",
+   "prov": "Bangkok",
+   "lat": 13.805,
+   "lon": 100.54167,
+   "prec": "exact",
+   "agency": "State Railway of Thailand",
+   "src": "https://en.wikipedia.org/wiki/Krung_Thep_Aphiwat_Central_Terminal",
+   "srcname": "Wikipedia",
+   "detail": "Thailand's largest railway station and main intercity rail hub, also serving SRT Red Lines and the MRT."
+  },
+  {
+   "title": "Bangkhen Water Treatment Plant",
+   "asset_type": "water",
+   "place": "Bangkhen Water Treatment Plant",
+   "prov": "Bangkok",
+   "lat": 13.87,
+   "lon": 100.57,
+   "prec": "approx",
+   "agency": "Metropolitan Waterworks Authority",
+   "src": "https://www.mwa.co.th/wp-content/uploads/2023/01/Bangkhen-Water-Treatment-Plant.pdf",
+   "srcname": "MWA",
+   "detail": "Metropolitan Waterworks Authority's main plant treating Chao Phraya raw water for Bangkok (about 3.6 million m3/day per MWA)."
+  }
+ ],
+ "notes": [
+  "<b>Assets are reference points, not events.</b> Airports, ports, dams and bridges are shown as rings on the map and listed under Key assets. They are not in the Timeline and say nothing about current status.",
+  "<b>Planned power cuts are scheduled maintenance.</b> They are recorded because they disrupt service, not because anything failed.",
+  "<b>Dam notices are claims.</b> Chao Phraya Dam release warnings on 19–23 Sep describe one rising-flow episode, so the map shows several markers for one event.",
+  "<b>Crashes are in other tabs.</b> The Sikhio and Makkasan rail disasters are recorded in Transportation and Public safety and not repeated here.",
+  "<b>The telecom record is weak.</b> It rests on one automated connectivity measurement that its source rates as low corroboration."
+ ]
+}

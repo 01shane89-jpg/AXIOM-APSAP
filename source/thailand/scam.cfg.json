@@ -1,0 +1,96 @@
+{
+ "asof": "2026-09-26",
+ "color": "--sat-flood",
+ "srcline": "Sourced reporting · sanctions notices",
+ "bounds": [
+  [
+   10.0,
+   97.0
+  ],
+  [
+   21.5,
+   106.5
+  ]
+ ],
+ "status": "<b>A curated record, not a full count.</b> Compounds, raids, rescues, border measures and sanctions from public reporting. Compound locations are approximate.",
+ "unit": "records",
+ "unitShort": "Records",
+ "chartTitle": "Activity by month",
+ "chartSub": "Raids, rescues, measures, sanctions and arrests by month.",
+ "tableField": "people",
+ "tableLabel": "People, as claimed",
+ "tableAll": true,
+ "byProvince": true,
+ "kpis": [
+  {
+   "type": "kind",
+   "kind": "compound",
+   "label": "Known compounds mapped",
+   "hot": true
+  },
+  {
+   "type": "kind",
+   "kind": "raid",
+   "label": "Raids"
+  },
+  {
+   "type": "kind",
+   "kind": "rescue_repatriation",
+   "label": "Rescues or repatriations"
+  },
+  {
+   "type": "kind",
+   "kind": "sanction",
+   "label": "Sanctions"
+  }
+ ],
+ "kinds": {
+  "compound": {
+   "label": "Known compound",
+   "color": "--sat-flood",
+   "sev": 2
+  },
+  "raid": {
+   "label": "Raid or crackdown",
+   "color": "--over",
+   "sev": 2,
+   "counted": true
+  },
+  "rescue_repatriation": {
+   "label": "Rescue or repatriation",
+   "color": "--care",
+   "sev": 2,
+   "counted": true
+  },
+  "border_measure": {
+   "label": "Thai border measure",
+   "color": "--near",
+   "sev": 1,
+   "counted": true
+  },
+  "sanction": {
+   "label": "Sanction",
+   "color": "--power",
+   "sev": 1,
+   "claim": true,
+   "counted": true
+  },
+  "arrest": {
+   "label": "Arrest",
+   "color": "--sat-water",
+   "sev": 1,
+   "counted": true
+  },
+  "other": {
+   "label": "Other",
+   "color": "--muted",
+   "sev": 1,
+   "counted": true
+  }
+ },
+ "notes": [
+  "<b>Compound markers are reference points, not live status.</b> Each shows where reporting placed a compound on the date cited. Compounds move, rename and reopen after raids.",
+  "<b>Official figures are claims.</b> Numbers rescued or arrested come from the government or group announcing them and are rarely independently checked. Government tallies (for example Cambodia's crackdown figures) are far larger than any single raid, so the page does not add them up.",
+  "<b>No personal details.</b> This is a shared map, so records describe people (\"a 34-year-old Myanmar national\") instead of naming them, and never show phone numbers, accounts or addresses. Sanctioned people and companies may be named because the sanction itself is public. Everything else belongs inside an investigation with access control."
+ ]
+}

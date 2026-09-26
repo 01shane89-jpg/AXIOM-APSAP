@@ -1,0 +1,35 @@
+{
+ "asof": "2026-09-26",
+ "color": "--rain",
+ "srcline": "Sourced reporting · TMD and DDPM warnings as carried by the press",
+ "bounds": [[5.6, 97.3], [20.5, 105.7]],
+ "unit": "records", "unitShort": "Records",
+ "chartTitle": "Weather records by month",
+ "chartSub": "Warnings and reported weather events by month.",
+ "tableLabel": "Killed, as reported", "tableAll": true, "byProvince": true,
+ "status": "<b>A curated record, not a weather feed.</b> 42 records for Jan–Sep 2026, mostly warnings as carried by the press. TMD's own site could not be opened, so its numbered storm bulletins are missing. Live rain and river levels are in the Flood tab.",
+ "kpis": [
+  {"type": "all", "label": "Weather records", "hot": true},
+  {"type": "kind", "kind": "heavy_rain_warning", "label": "Heavy rain warnings"},
+  {"type": "kind", "kind": "severe_thunderstorm", "label": "Severe storms reported"},
+  {"type": "sum", "field": "killed", "all": true, "label": "Killed, as reported"}
+ ],
+ "kinds": {
+  "storm": {"label": "Tropical storm", "color": "--over", "sev": 2, "counted": true, "claim": true},
+  "severe_thunderstorm": {"label": "Severe thunderstorm", "color": "--near", "sev": 2, "counted": true},
+  "heavy_rain_warning": {"label": "Heavy rain warning", "color": "--rain", "sev": 2, "counted": true, "claim": true},
+  "monsoon": {"label": "Monsoon", "color": "--sat-water", "sev": 1, "counted": true, "claim": true},
+  "heat": {"label": "Heat", "color": "--power", "sev": 2, "counted": true, "claim": true},
+  "cold": {"label": "Cold", "color": "--calm", "sev": 1, "counted": true, "claim": true},
+  "drought": {"label": "Drought", "color": "--sat-recur", "sev": 2, "counted": true, "claim": true},
+  "forecast_announcement": {"label": "Season announcement", "color": "--accent", "sev": 1, "counted": true, "claim": true},
+  "other": {"label": "Other weather impact", "color": "--muted", "sev": 1, "counted": true}
+ },
+ "notes": [
+  "<b>Warnings are claims about the future.</b> A heavy rain, storm, heat or cold warning is shown as a claim by the agency that issued it, not as something that happened. Only severe storms and other impacts are events.",
+  "<b>Counts are floors.</b> TMD's website, Bangkok Post and ReliefWeb could not be opened, so official bulletins and some impact figures are missing.",
+  "<b>Nationwide warnings have no marker.</b> Records that cover many provinces have no point on the map but appear in the list and the Timeline. Other markers sit at a province or district centre.",
+  "<b>Some records overlap with Flood.</b> The Nan floods of 18–21 Aug and Bangkok road flooding on 25 Sep may repeat what the Flood tab shows from live gauges.",
+  "<b>Figures are as reported.</b> Rain totals, temperatures and heat index values come from the article and are not checked against station data."
+ ]
+}
