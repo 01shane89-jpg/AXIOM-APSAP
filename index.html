@@ -3745,7 +3745,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
-      "Headlines from GDELT (local-language news worldwide, filtered to security, disaster and unrest) and national outlets. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
   }
 
   /* ---------- further free sources (hourly snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
@@ -4122,7 +4122,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

@@ -39,8 +39,10 @@ const SCN = { Thailand: "th", Vietnam: "vn", Cambodia: "kh", Laos: "la", Burma: 
   Indonesia: "id", Brunei: "bn", "Timor-Leste": "tl", "East Timor": "tl", China: "cn", Taiwan: "tw", "North Korea": "kp", "South Korea": "kr", Japan: "jp",
   Mongolia: "mn", Australia: "au", "New Zealand": "nz", "Papua New Guinea": "pg", India: "in", Pakistan: "pk", Nepal: "np", Bhutan: "bt", Bangladesh: "bd",
   "Sri Lanka": "lk", Maldives: "mv" };
-const codes = Object.entries(FIPS), BATCH = 7;
-for (let b = 0; b < codes.length; b += BATCH) {
+// Off by default: from GitHub's runners GDELT refused or dropped every request on the first two hourly runs
+// (2026-09-26). Set GDELT=1 to try it again.
+const codes = Object.entries(FIPS), BATCH = 7, USE_GDELT = process.env.GDELT === "1";
+for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   const part = codes.slice(b, b + BATCH);
   if (b) await sleep(GDELT_GAP);
   const url = "https://api.gdeltproject.org/api/v2/doc/doc?query=" + encodeURIComponent("(" + part.map((x) => "sourcecountry:" + x[1]).join(" OR ") + ") " + THEMES) +

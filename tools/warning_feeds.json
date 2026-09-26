@@ -9,7 +9,6 @@
     { "cc": "au",  "agency": "Bureau of Meteorology (Western Australia)", "url": "http://www.bom.gov.au/fwo/IDZ00060.warnings_wa.xml", "lang": "en" },
     { "cc": "au",  "agency": "Bureau of Meteorology (Northern Territory)", "url": "http://www.bom.gov.au/fwo/IDZ00055.warnings_nt.xml", "lang": "en" },
     { "cc": "nz",  "agency": "MetService", "url": "https://alerts.metservice.com/cap/rss", "lang": "en" },
-    { "cc": "id",  "agency": "BMKG", "url": "https://signature.bmkg.go.id/alert/public/en/rss.xml", "lang": "en" },
     { "cc": "in",  "agency": "NDMA SACHET (IMD and state authorities)", "url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml", "lang": "en" },
     { "cc": "tw",  "agency": "Taiwan NCDR (civil protection alerts)", "url": "https://alerts.ncdr.nat.gov.tw/RssAtomFeed.ashx", "lang": "zh" },
     { "cc": "cn",  "agency": "Hong Kong Observatory", "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en", "lang": "en", "type": "hko" },
