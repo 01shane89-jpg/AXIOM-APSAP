@@ -4,8 +4,7 @@
 //   Bluesky  - works without secrets through the public API; BLUESKY_HANDLE + BLUESKY_APP_PASSWORD use the account.
 //   Reddit   - REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET (app-only OAuth). Only link posts to allowed outlets or government
 //              sites are kept, and only the article headline and link are stored; posters' names are never read.
-//   Telegram - TELEGRAM_API_ID + TELEGRAM_API_HASH + TELEGRAM_SESSION (make the session once with tools/telegram_login.mjs).
-//              Needs the "telegram" npm package, which the workflow installs.
+//   Telegram - no secrets: reads each listed channel's public web preview (t.me/s/<channel>).
 // Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js.
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
@@ -87,31 +86,48 @@ if (env.REDDIT_CLIENT_ID && env.REDDIT_CLIENT_SECRET) {
   } catch (e) { status.push({ platform: "Reddit", source: "login", ok: false, error: err(e) }); }
 } else status.push({ platform: "Reddit", source: "Reddit", ok: false, skipped: true, error: "not set up: add REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET" });
 
-// Telegram
-if (env.TELEGRAM_API_ID && env.TELEGRAM_API_HASH && env.TELEGRAM_SESSION && (cfg.telegram || []).length) {
-  try {
-    const { TelegramClient } = await import("telegram");
-    const { StringSession } = await import("telegram/sessions/index.js");
-    const client = new TelegramClient(new StringSession(env.TELEGRAM_SESSION), Number(env.TELEGRAM_API_ID), env.TELEGRAM_API_HASH, { connectionRetries: 2 });
-    client.setLogLevel("error");
-    await client.connect();
-    for (const ch of cfg.telegram) {
+// Telegram: public channel web previews (t.me/s/<channel>), no login, account or phone number.
+// Only channels that have turned the public preview on can be read this way; others report "no preview".
+const unhtml = (h) => h.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<")
+  .replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/g, " ").replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n)).trim();
+export function parseTgPreview(html, channel) {
+  const out = [];
+  for (const block of html.split(/<div class="tgme_widget_message_wrap/).slice(1)) {
+    const post = (block.match(/data-post="([^"]+)"/) || [])[1];
+    const txt = (block.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/) || [])[1];
+    const when = (block.match(/<time[^>]*datetime="([^"]+)"/) || [])[1];
+    if (!post || !txt || !when) continue;
+    if (post.split("/")[0].toLowerCase() !== channel.toLowerCase()) continue;
+    const text = unhtml(txt);
+    if (text) out.push({ id: post.split("/")[1], text, date: new Date(when) });
+  }
+  return out;
+}
+if ((cfg.telegram || []).length) {
+  for (const ch of cfg.telegram) {
+    const src = "@" + ch.channel;
+    try {
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+      let html;
       try {
-        const msgs = await client.getMessages(ch.channel, { limit: 30 });
-        let n = 0;
-        for (const m of msgs) {
-          if (!m.message || m.date * 1000 < SINCE) continue;
-          push(ch.cc, m.message, { platform: "Telegram", account: "@" + ch.channel, kind: ch.kind, title: m.message.slice(0, 300), summary: "",
-            date: new Date(m.date * 1000).toISOString().slice(0, 16), link: "https://t.me/" + ch.channel + "/" + m.id, lang: ch.lang || "" });
-          n++;
-        }
-        status.push({ platform: "Telegram", source: "@" + ch.channel, cc: ch.cc, ok: true, n });
-      } catch (e) { status.push({ platform: "Telegram", source: "@" + ch.channel, cc: ch.cc, ok: false, error: err(e) }); }
-    }
-    await client.disconnect();
-  } catch (e) { status.push({ platform: "Telegram", source: "login", ok: false, error: err(e) }); }
-} else status.push({ platform: "Telegram", source: "Telegram", ok: false, skipped: true,
-  error: (cfg.telegram || []).length ? "not set up: add TELEGRAM_API_ID, TELEGRAM_API_HASH and TELEGRAM_SESSION" : "no channels listed in tools/social_accounts.json" });
+        const r = await fetch("https://t.me/s/" + encodeURIComponent(ch.channel), { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (AXIOM-ASAP hourly)" } });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        html = (await r.text()).slice(0, 3e6);
+      } finally { clearTimeout(t); }
+      const posts = parseTgPreview(html, ch.channel);
+      if (!posts.length && !/tgme_widget_message/.test(html)) throw new Error("no public preview");
+      let n = 0;
+      for (const m of posts) {
+        if (isNaN(m.date) || m.date.getTime() < SINCE) continue;
+        push(ch.cc, m.text, { platform: "Telegram", account: src, kind: ch.kind, title: m.text.slice(0, 300), summary: "",
+          date: m.date.toISOString().slice(0, 16), link: "https://t.me/" + ch.channel + "/" + m.id, lang: ch.lang || "" });
+        n++;
+      }
+      status.push({ platform: "Telegram", source: src, cc: ch.cc, ok: true, n });
+    } catch (e) { status.push({ platform: "Telegram", source: src, cc: ch.cc, ok: false, error: err(e) }); }
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+} else status.push({ platform: "Telegram", source: "Telegram", ok: false, skipped: true, error: "no channels listed in tools/social_accounts.json" });
 
 for (const cc of Object.keys(items)) {
   const seen = new Set();
