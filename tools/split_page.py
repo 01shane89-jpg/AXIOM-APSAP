@@ -54,8 +54,15 @@ PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-
             '<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">'
             '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">'
             '<meta name="apple-mobile-web-app-title" content="ASAP"><meta name="apple-mobile-web-app-status-bar-style" content="default">')
-PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) '
-            'window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>')
+# A new deploy installs a new worker, which takes over at once (skipWaiting + clients.claim in sw.js); the page then
+# reloads once so no file from the old version stays in use. The worker is re-checked on every open and on return.
+PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () {'
+            ' var had = !!navigator.serviceWorker.controller, reloaded = false;'
+            ' navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } });'
+            ' navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {'
+            ' reg.update().catch(function () {});'
+            ' document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); });'
+            ' }).catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):
     page = ('<!doctype html>\n<html lang="en" translate="no"><head><meta charset="utf-8">'
             '<meta name="google" content="notranslate"><meta http-equiv="content-language" content="en">'

@@ -2248,7 +2248,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* ---------- records ---------- */
   var R = [], byId = {}, SEQ = 0;
   /* ---------- reporting period: one date range that filters every view (remembered per browser) ---------- */
-  var PERIOD_KEY = "asap-period", PERIOD = { p: "30" }, PR = { from: "", to: "" };
+  /* records the reporting period hides are counted and one tap shows every date (the default is All) */
+  function hiddenNote(n, inline) {
+    var t = n + " older record" + (n === 1 ? "" : "s") + " hidden by the reporting period. " + '<button type="button" class="refresh" data-period="all">Show all</button>';
+    return inline ? " " + t : '<p class="obs">' + t + "</p>";
+  }
+  var PERIOD_KEY = "asap-period", PERIOD = { p: "all" }, PR = { from: "", to: "" };
   try { var pv = JSON.parse(localStorage.getItem(PERIOD_KEY)); if (pv && /^(7|30|90|all|custom)$/.test(pv.p)) PERIOD = pv; } catch (e) {}
   function periodCalc() {
     var today = Math.floor(Date.now() / 864e5);
@@ -2598,6 +2603,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     document.getElementById("tl-count").textContent = shown.length + " of " + R.length + " records" +
       (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map · period: " + periodLabel();
     if (!shown.length && R.length) list.innerHTML = '<p class="obs">Nothing in this reporting period (' + esc(periodLabel()) + '). <button type="button" class="refresh" data-period="all">Show all dates</button></p>';
+    else if (PERIOD.p !== "all") { var hid = R.filter(function (r) { return !inPeriod(r); }).length; if (hid) list.insertAdjacentHTML("afterbegin", hiddenNote(hid)); }
     if (PB.on) {
       var ev = shown.filter(function (r) { return r.type === "event" && !r.ongoing; }).length;
       var open = shown.filter(function (r) { return r.ongoing; }).length;
@@ -3077,7 +3083,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         }).join("") +
       "</div>" + (D.status ? '<div class="banner">' + D.status + "</div>" : "") + freshness(recsAll, D) +
       '<p class="fresh">Reporting period: ' + esc(periodLabel()) + " · " + recs.length + " of " + recsAll.length + " records" +
-      (!recs.length && recsAll.length ? ' <button type="button" class="refresh" data-period="all">Show all dates</button>' : "") + "</p></div>" +
+      (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p></div>" +
       '<div class="sec"><h2>' + esc(D.chartTitle || "Incidents by month") + '</h2><p class="sub">' + esc(D.chartSub || "Violent incidents in this record. Hover a bar for deaths.") + '</p><div class="mbars">' + bars + "</div></div>" +
       '<div class="sec"><h2>Map layers</h2>' + kinds + "</div>" +
       (drows ? '<div class="sec"><h2>' + (D.byProvince ? "By place" : "By district") + '</h2><div class="tw"><table class="reg"><thead><tr><th>' + (D.byProvince ? "Province or area" : "District") + '</th><th>' + esc(D.unitShort || "Incidents") + '</th><th>' + esc(D.tableLabel || "Killed") + '</th></tr></thead><tbody>' + drows + "</tbody></table></div></div>" : "") +
@@ -3885,6 +3891,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     return null;
   }
+  var ENT = document.createElement("textarea");
+  function unent(t) { if (!t || t.indexOf("&") < 0) return t; ENT.innerHTML = t; return ENT.value; }
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key]; if (!w || !w.items || !LBY[layer]) return;
@@ -3892,7 +3900,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
         "F", layer === "news" ? "Read hourly from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read hourly. Posts are that account's claims.", i.link);
-      var en = i.title_en || i.title, sen = i.summary_en || i.summary, pl = placeFor(en + " " + (sen || ""));
+      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary), pl = placeFor(en + " " + (sen || ""));
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
         derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
@@ -3906,8 +3914,87 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   LCOL.social = "--sat-flood";
   addNewsRecords("ASAP_NEWS", "news", "news");
   addNewsRecords("ASAP_SOCIAL", "social", "social");
+  /* ---------- Top stories: a fixed, rule-based score for each hour's headlines (no AI, no hidden weights) ----------
+     Points: +3 when the headline matches one of this app's layer topics and +1 for each further topic (up to 2), or +1 when
+     only the summary does; +2 when the headline names this area or a known place in it; +2 for each other outlet or official
+     account carrying the same story (up to 3); +1 for a state outlet; +1 when published in the 12 hours before the snapshot.
+     Sport, entertainment, lifestyle and advertising headlines with no layer topic are left out; with a topic they lose 2 points.
+     A story makes Top stories at 5 points or more. */
+  var NTOP = [
+    ["Security", /\b(military|army|navy|air force|armed forces|troops?|soldiers?|missiles?|drones?|coast ?guard|border|insurgen\w*|militants?|rebels?|terror\w*|bomb\w*|attack\w*|clash\w*|shoot\w*|gunm[ae]n|explosions?|incursions?|warships?|sovereignty|defen[cs]e (minister|ministry|forces?|department|chief))\b/i],
+    ["Disaster", /\b(typhoons?|cyclones?|tropical storm|storms?|flood\w*|landslides?|earthquakes?|quakes?|tsunamis?|volcan\w*|eruptions?|wildfires?|fires?|droughts?|heat ?waves?|evacuat\w*|rescu\w*|disasters?|monsoon|heavy rain|dams?|STS|signal no\.? ?\d|code (white|red)|red alert)\b/i],
+    ["Crime", /\b(arrest\w*|police|cops?|murder\w*|killed|killing|manhunt|drugs?|narcotics|traffick\w*|smuggl\w*|raids?|seiz\w*|charged|court|jail\w*|prison\w*|robbery|kidnap\w*|corruption|brib\w*|graft)\b/i],
+    ["Scams", /\b(scam\w*|fraud\w*|money laundering|launder\w*|online gambling|call cent(er|re)s?|cyber ?crime|phishing|ponzi)\b/i],
+    ["Infrastructure", /\b(power (cut|outage)s?|blackouts?|outages?|railways?|rail|trains?|airports?|flights?|seaports?|bridges?|road closures?|highways?|internet|telecom\w*|water supply|suspended|collaps\w*)\b/i],
+    ["Health", /\b(outbreaks?|virus\w*|dengue|cholera|covid|influenza|bird flu|h5n1|measles|malaria|swine fever|rabies|mpox|zika|chikungunya|tuberculosis|diseases?|hospitals?|vaccin\w*|epidemic|pandemic|poison\w*)\b/i],
+    ["Politics and unrest", /\b(protest\w*|rall(y|ies)|riots?|strikes?|unrest|coup|impeach\w*|elections?|parliament|minister|president|prime minister|government|senate|sanctions?|tariffs?|curfew|martial law|state of emergency)\b/i]];
+  var NROUTINE = /\b(football|soccer|cricket|tennis|golf|basketball|baseball|badminton|boxing|olympic\w*|world cup|league|premier league|sprint(er)?s?|athletes?|coach|striker|fifa|nba|grand prix|celebrit\w*|actors?|actress|singers?|k-?pop|concerts?|album|movies?|films?|drama|fashion|beauty|recipes?|restaurants?|horoscope|lifestyle|sponsored|advertis\w*|promotion|giveaway|lottery|blackpink|waterworld|chess|fide|art market|promoters?|bout|heavyweight|ufc|man city|manchester|fixtures?|transfer window)\b/i;
+  var NSTOP = { that: 1, this: 1, with: 1, from: 1, after: 1, over: 1, into: 1, amid: 1, says: 1, said: 1, will: 1, have: 1, been: 1, were: 1, their: 1, about: 1, more: 1, than: 1, what: 1, when: 1, where: 1, which: 1, while: 1, year: 1, years: 1, first: 1, news: 1 };
+  function nWords(t) {
+    var o = {}; String(t || "").toLowerCase().replace(/[^a-z0-9À-ɏ ]+/g, " ").split(/\s+/).forEach(function (w) { if (w.length >= 4 && !NSTOP[w]) o[w] = 1; });
+    return o;
+  }
+  function nSame(a, b) {
+    var n = 0, u = 0, k; for (k in a) { u++; if (b[k]) n++; } for (k in b) if (!a[k]) u++;
+    return n >= 2 && n / Math.max(1, u) >= 0.3;
+  }
+  var NDEM = { th: "Thai|Thailand|Bangkok", vn: "Vietnam\\w*|Hanoi", kh: "Cambodia\\w*|Phnom Penh", la: "Lao|Laos|Laotian|Vientiane", mm: "Myanmar|Burm\\w+|Naypyidaw|Yangon",
+    ph: "Philippine\\w*|Filipino\\w*|Manila", my: "Malaysia\\w*|Kuala Lumpur", sg: "Singapore\\w*", id: "Indonesia\\w*|Jakarta", bn: "Brunei\\w*", tl: "Timor\\w*|Dili",
+    cn: "China|Chinese|Beijing", tw: "Taiwan\\w*|Taipei", kp: "North Korea\\w*|Pyongyang|DPRK", kr: "South Korea\\w*|Seoul", jp: "Japan\\w*|Tokyo", oki: "Okinawa\\w*|Naha",
+    mn: "Mongolia\\w*|Ulaanbaatar", au: "Australia\\w*", nz: "New Zealand\\w*|Kiwis?", pg: "Papua New Guinea|PNG|Port Moresby", "in": "India|Indian|New Delhi", pk: "Pakistan\\w*|Islamabad",
+    np: "Nepal\\w*|Kathmandu", bt: "Bhutan\\w*|Thimphu", bd: "Bangladesh\\w*|Dhaka", lk: "Sri Lanka\\w*|Colombo", mv: "Maldiv\\w*|Mal[eé]" };
+  function newsRank(recs) {
+    var w = window.ASAP_NEWS, asof = w && w.asof ? new Date(w.asof.replace(" ", "T").replace(/Z?$/, "Z")).getTime() : Date.now();
+    var here = new RegExp("\\b(" + (NDEM[CC] || C.name) + ")\\b", "i");
+    var others = R.filter(function (r) { return r.social && inPeriod(r); });
+    var all = recs.concat(others).map(function (r) { return { r: r, words: nWords(r.title), outlet: r.src.name }; });
+    return recs.map(function (r, i) {
+      var me = all[i], why = [], score = 0;
+      var topics = NTOP.filter(function (t) { return t[1].test(r.title); }).map(function (t) { return t[0]; });
+      if (topics.length) { score += 3 + Math.min(2, topics.length - 1); why.push(topics.join(", ") + " +" + (3 + Math.min(2, topics.length - 1))); }
+      else {
+        var sub = NTOP.filter(function (t) { return t[1].test((r.detail || "").slice(0, 200)); }).map(function (t) { return t[0]; });
+        if (sub.length) { score += 1; topics = sub; why.push(sub[0] + " (summary only) +1"); }
+      }
+      var routine = NROUTINE.test(r.title);
+      if (routine && !topics.length) return { r: r, score: -1, routine: true, why: ["sport, entertainment or advertising: left out"], topics: [], also: [] };
+      if (routine) { score -= 2; why.push("sport or entertainment wording −2"); }
+      if (here.test(r.title) || placeFor(r.title)) { score += 2; why.push("names " + C.name + " or a place in it +2"); }
+      var also = [];
+      all.forEach(function (o, j) { if (j !== i && o.outlet !== me.outlet && also.indexOf(o.outlet) < 0 && nSame(me.words, o.words)) also.push(o.outlet); });
+      if (also.length) { var c = Math.min(3, also.length); score += 2 * c; why.push((also.length + 1) + " outlets or accounts +" + 2 * c); }
+      if (/State media/.test(r.src.kind || "")) { score += 1; why.push("state outlet +1"); }
+      var t = new Date(String(r.issued || r.ts).replace(" ", "T") + (/Z$|[+-]\d\d:?\d\d$/.test(r.issued || "") ? "" : "Z")).getTime();
+      if (!isNaN(t) && asof - t < 12 * 36e5) { score += 1; why.push("last 12 hours +1"); }
+      return { r: r, score: score, routine: false, why: why, topics: topics, also: also };
+    });
+  }
+  /* one line per story: the best-scored headline stands for the others that carry it */
+  function topStories(recs) {
+    var ranked = newsRank(recs).filter(function (x) { return x.score >= 5; }).sort(function (a, b) { return b.score - a.score || (a.r.ts < b.r.ts ? 1 : -1); });
+    var out = [], used = {};
+    ranked.forEach(function (x) {
+      if (used[x.r.id]) return;
+      var mw = nWords(x.r.title);
+      ranked.forEach(function (y) { if (y !== x && nSame(mw, nWords(y.r.title))) used[y.r.id] = 1; });
+      used[x.r.id] = 1; out.push(x);
+    });
+    return out;
+  }
+  var newsAll = false;
+  function topHtml(recs) {
+    var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs).slice(0, 12);
+    return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules each hour (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
+      routine + " sport, entertainment or advertising headline" + (routine === 1 ? "" : "s") + " left out.</p>" +
+      (top.length ? '<div class="tllist">' + top.map(function (x) {
+        return '<button type="button" class="tlrow" data-openrec="' + esc(x.r.id) + '"><span class="tlt">' + esc(fmtTs(x.r)) + ' · <b>' + x.score + " pts</b></span><span class=\"tln\">" + esc(x.r.title) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc(x.r.src.name) + (x.also.length ? " · also " + esc(x.also.slice(0, 3).join(", ")) + (x.also.length > 3 ? " +" + (x.also.length - 3) : "") : "") +
+          (x.r.orig ? " · machine translation" : "") + '</span><span class="tls">' + esc(x.why.join(" · ")) + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">No headline reaches 5 points in this period.</p>') +
+      '<p><button type="button" class="refresh" id="news-all">' + (newsAll ? "Hide the full list" : "Show all " + recs.length + " headlines") + "</button></p></div>";
+  }
   function feedList(key, layer, flag, title, empty, note) {
-    var w = window[key], recs = R.filter(function (r) { return r[flag] && inPeriod(r); });
+    var w = window[key], recsAll = R.filter(function (r) { return r[flag]; }), recs = recsAll.filter(inPeriod);
     sofLayer.clearLayers(); sofM = {};
     recs.forEach(function (r) {
       if (r.lat == null) return;
@@ -3921,11 +4008,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!w) return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">NO DATA</span> ' + empty + "</p></div>";
     return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " +
       (srcs.length ? srcs.map(function (s) { return esc(s.source) + (s.ok ? " (" + s.n + ")" : ' <span class="badge stale">' + (s.skipped ? "NOT SET UP" : "FAILED") + "</span>"); }).join(", ") : "no source set up for this area") + "</p>" +
-      '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name.</p>" +
-      (recs.length ? '<div class="tllist">' + recs.slice(0, 60).map(function (r) {
+      '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name." +
+      (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
+      (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
+      (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
         return '<button type="button" class="tlrow" data-openrec="' + esc(r.id) + '"><span class="tlt">' + esc(fmtTs(r)) + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
-      }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div>";
+      }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
     railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the hourly GitHub job once the app is hosted.",
@@ -3934,6 +4023,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
       "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+    var b = document.getElementById("news-all");
+    if (b) b.addEventListener("click", function () { newsAll = !newsAll; showNews(); });
   }
 
   /* ---------- further free sources (hourly snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
@@ -4433,5 +4524,5 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
 
 
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
