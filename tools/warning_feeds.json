@@ -1,5 +1,5 @@
 {
-  "note": "Official warning feeds the hourly job reads. Each run records whether a feed worked, so the page shows which ones are live. Add a feed here when an agency publishes RSS, Atom or CAP. match: optional regex an item must contain to be kept (for a feed that covers a wider area).",
+  "note": "Official warning feeds the hourly job reads. Each run records whether a feed worked, so the page shows which ones are live. Add a feed here when an agency publishes RSS, Atom or CAP; JSON feeds need an adapter in tools/refresh_warnings.mjs ('type'). match: optional regex an item must contain to be kept (for a feed that covers a wider area).",
   "feeds": [
     { "cc": "jp",  "agency": "Japan Meteorological Agency", "url": "https://www.data.jma.go.jp/developer/xml/feed/extra.xml", "lang": "ja" },
     { "cc": "oki", "agency": "Japan Meteorological Agency", "url": "https://www.data.jma.go.jp/developer/xml/feed/extra.xml", "lang": "ja", "match": "沖縄|宮古|八重山|大東|奄美" },
@@ -10,6 +10,10 @@
     { "cc": "au",  "agency": "Bureau of Meteorology (Northern Territory)", "url": "http://www.bom.gov.au/fwo/IDZ00055.warnings_nt.xml", "lang": "en" },
     { "cc": "nz",  "agency": "MetService", "url": "https://alerts.metservice.com/cap/rss", "lang": "en" },
     { "cc": "id",  "agency": "BMKG", "url": "https://signature.bmkg.go.id/alert/public/en/rss.xml", "lang": "en" },
-    { "cc": "in",  "agency": "NDMA SACHET (IMD and state authorities)", "url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml", "lang": "en" }
+    { "cc": "in",  "agency": "NDMA SACHET (IMD and state authorities)", "url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml", "lang": "en" },
+    { "cc": "tw",  "agency": "Taiwan NCDR (civil protection alerts)", "url": "https://alerts.ncdr.nat.gov.tw/RssAtomFeed.ashx", "lang": "zh" },
+    { "cc": "cn",  "agency": "Hong Kong Observatory", "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en", "lang": "en", "type": "hko" },
+    { "cc": "cn",  "agency": "China National Meteorological Centre", "url": "https://www.nmc.cn/rest/findAlarm?pageNo=1&pageSize=50&signaltype=&signallevel=&province=", "lang": "zh", "type": "nmc" },
+    { "cc": "my",  "agency": "MET Malaysia (data.gov.my)", "url": "https://api.data.gov.my/weather/warning?limit=50", "lang": "en", "type": "metmy" }
   ]
 }

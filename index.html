@@ -2126,6 +2126,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/maritime.js"></script>
 <script src="data/live/sanctions.js"></script>
 <script src="data/live/displacement.js"></script>
+<script src="data/live/national-quakes.js"></script>
+<script src="data/live/eonet.js"></script>
+<script src="data/live/ifrc.js"></script>
+<script src="data/live/cdc.js"></script>
+<script src="data/live/navwarnings.js"></script>
+<script src="data/live/ucdp.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -3841,6 +3847,103 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     sancPatterns().forEach(function (p) { if (p.re.test(t) && out.indexOf(p.e) < 0) out.push(p.e); });
     return out;
   }
+  /* ---------- batch 2 from the research catalogue: national quake catalogues, NASA EONET, IFRC GO, CDC notices,
+     NGA navigational warnings, UCDP conflict events ---------- */
+  src("cdc", "U.S. CDC travel health notices", "U.S. government agency", "B", "Travel health notices; CDC's assessments.", "https://wwwnc.cdc.gov/travel/notices");
+  src("ucdp", "Uppsala Conflict Data Program (candidate events)", "Research institution", "B",
+    "Events coded by UCDP from media and NGO reports, about a month behind. Fatality figures are UCDP's best estimates with low and high bounds.", "https://ucdp.uu.se/");
+  function addMoreRecords2() {
+    R = R.filter(function (r) { if (r.more2) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var D = window.ASAP_CDC, U = window.ASAP_UCDP, lay = LBY.insurgency ? "insurgency" : LBY.border ? "border" : LBY.safety ? "safety" : null;
+    if (LBY.health && D) (D.items || []).filter(hasCC).forEach(function (x) {
+      add({ layer: "health", type: "claim", cat: "CDC travel health notice", kind: "other", more2: true, live: true, title: x.title, detail: x.summary || "", ts: x.date, place: "", prov: "",
+        lat: null, lon: null, prec: "none", sev: x.level >= 3 ? 3 : x.level === 2 ? 2 : 1, src: SOURCES.cdc, url: x.link, issued: x.date, recorded: D.asof });
+    });
+    if (lay && U) (U.items || []).filter(hasCC).forEach(function (e) {
+      add({ layer: lay, type: "report", cat: "Conflict event (UCDP, " + e.type + ")", kind: "other", more2: true, live: true,
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + e.conflict + ". " : "") +
+          "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
+        prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province", sev: e.best >= 10 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES.ucdp, url: U.src, issued: e.date, recorded: U.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addMoreRecords2();
+  function nqHtml() {
+    var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
+    if (!N) return "";
+    list.forEach(function (q, i) {
+      var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3), color: "#5d4037", weight: 1.5, fillColor: "#8d6e63", fillOpacity: 0.35, dashArray: "2 2" });
+      m.bindPopup('<div class="pop"><div class="tier">Earthquake · ' + esc(q.agency) + " · " + esc(q.time.replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + '</h3><p class="obs">' +
+        esc([q.depth != null ? "depth " + Math.round(q.depth) + " km" : "", q.intensity ? "max intensity " + q.intensity : "", q.note].filter(Boolean).join(" · ")) +
+        '</p><p class="obs"><a href="' + esc(q.link) + '" target="_blank" rel="noopener">' + esc(q.agency) + "</a></p></div>", { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["nq:" + i] = m;
+    });
+    var bad = (N.status || []).filter(function (s) { return !s.ok; }).map(function (s) { return s.agency; });
+    return '<div class="sec"><h2>Earthquakes from national agencies</h2><p class="obs">' + snapBadge(N) + (bad.length ? " · failed: " + esc(bad.join(", ")) : "") + "</p>" +
+      (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (q, i) {
+        return '<button type="button" class="tlrow" data-sof="nq:' + i + '"><span class="tln">M' + q.mag.toFixed(1) + " · " + esc(q.place) + '</span><span class="tlm"><span class="tls">' + esc(q.agency + " · " + q.time.replace("T", " ") + "Z") + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">None from JMA, BMKG or TMD for ' + esc(C.name) + " in this period.</p>") +
+      '<p class="note">JMA, BMKG and TMD catalogues catch small local quakes USGS misses. Magnitudes use each agency\'s scale, so the same quake can differ from USGS.</p></div>';
+  }
+  function eonetHtml() {
+    var E = window.ASAP_EONET, list = E ? (E.items || []).filter(hasCC) : [];
+    if (!E) return "";
+    list.forEach(function (e, i) {
+      if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 }));
+      var m = L.circleMarker([e.last.lat, e.last.lon], { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7 });
+      m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(e.last.date.replace("T", " ")) + "Z</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
+        '</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["eo:" + i] = m;
+    });
+    return '<div class="sec"><h2>Open natural events (NASA EONET)</h2><p class="obs">' + snapBadge(E) + "</p>" + (list.length ? '<div class="tllist">' + list.map(function (e, i) {
+      return '<button type="button" class="tlrow" data-sof="eo:' + i + '"><span class="tln">' + esc(e.title) + '</span><span class="tlm"><span class="tls">' + esc([e.cat, e.last.mag, e.last.date.slice(0, 10)].filter(Boolean).join(" · ")) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No open event in or near ' + esc(C.name) + ".</p>") +
+      '<p class="note">Open storms, wildfires, volcanoes and floods catalogued by NASA from JTWC, fire and volcano sources. Storm tracks are solid teal lines. Observations, not warnings.</p></div>';
+  }
+  function ifrcHtml() {
+    var I = window.ASAP_IFRC, list = I ? (I.items || []).filter(function (e) { return hasCC(e) && inPeriodDate(e.start); }) : [];
+    if (!I) return "";
+    return '<div class="sec"><h2>Red Cross Red Crescent emergencies (IFRC GO)</h2><p class="obs">' + snapBadge(I) + "</p>" + (list.length ? '<ul class="note">' + list.slice(0, 12).map(function (e) {
+      return '<li><a href="' + esc(e.link) + '" target="_blank" rel="noopener">' + esc(e.name) + '</a> <span class="obs">' + esc([e.type, e.start, e.affected ? num0(e.affected) + " affected (IFRC figure)" : "",
+        e.appeals.map(function (a) { return a.type + " " + a.code; }).join(", ")].filter(Boolean).join(" · ")) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No IFRC emergency for ' + esc(C.name) + " in this period.</p>") +
+      '<p class="note">IFRC and national society figures are their claims, often early estimates.</p></div>';
+  }
+  function num0(v) { return Math.round(v).toLocaleString("en-GB"); }
+  function cdcHtml() {
+    var D = window.ASAP_CDC, list = D ? (D.items || []).filter(hasCC) : [];
+    if (!D) return "";
+    return '<div class="sec"><h2>Travel health notices (U.S. CDC)</h2><p class="obs">' + snapBadge(D) + "</p>" + (list.length ? '<ul class="note">' + list.map(function (x) {
+      return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc(x.date) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No current CDC notice names ' + esc(C.name) + ".</p>") + '<p class="note">Current notices, whatever the period. ' + (LBY.health ? "Each is also a Public health record." : "") + "</p></div>";
+  }
+  function navwHtml() {
+    var W = window.ASAP_NAVW, list = W ? (W.items || []).filter(hasCC) : [];
+    if (!W) return "";
+    var col = { "missile or rocket": "#c62828", "military exercise": "#e07b00", navigation: "#1565c0" };
+    list.forEach(function (w, i) {
+      if (!w.pos.length) return;
+      var c = col[w.kind] || "#1565c0";
+      var shape = w.pos.length >= 3 ? L.polygon(w.pos, { pane: "tlpane", color: c, weight: 1.5, fillOpacity: 0.15 }) : L.circleMarker(w.pos[0], { pane: "tlpane", radius: 7, color: c, weight: 2, fillOpacity: 0.3 });
+      shape.bindPopup('<div class="pop"><div class="tier">Navigational warning · ' + esc(w.id) + " · " + esc(w.kind) + "</div><p>" + esc(w.text) + '</p><p class="obs">Issued ' + esc(w.issued) + (w.authority ? " by " + esc(w.authority) : "") + "</p></div>", { maxWidth: 360 });
+      sofLayer.addLayer(shape); sofM["nw:" + i] = shape;
+    });
+    return '<div class="sec"><h2>Navigational warnings in force (NGA HYDROPAC)</h2><p class="obs">' + snapBadge(W) + "</p>" + (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (w, i) {
+      return '<button type="button" class="tlrow" data-sof="nw:' + i + '"><span class="tln"><b style="color:' + (col[w.kind] || "#1565c0") + '">●</b> ' + esc(w.id + " · " + w.kind) + '</span><span class="tlm"><span class="tls">' + esc(w.text.slice(0, 100)) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No HYDROPAC warning in force near ' + esc(C.name) + ".</p>") +
+      '<p class="note">Warnings as broadcast, including rocket-launch, missile and live-firing areas. Areas are drawn from the coordinates in the text; always read the text.</p></div>';
+  }
+  function ucdpHtml() {
+    var U = window.ASAP_UCDP, list = U ? (U.items || []).filter(function (e) { return hasCC(e) && inPeriodDate(e.date); }) : [];
+    if (!U) return "";
+    var deaths = list.reduce(function (s, e) { return s + e.best; }, 0);
+    return '<div class="sec"><h2>Conflict events (UCDP candidate data)</h2><p class="obs">' + snapBadge(U) + " · monthly, about a month behind</p>" +
+      '<p class="obs">' + list.length + (list.length === 1 ? " event" : " events") + " in this period, " + deaths + (deaths === 1 ? " death" : " deaths") + " (UCDP best estimates)." + (list.length ? " Each is a record in " + esc((LBY.insurgency || LBY.border || LBY.safety || {}).name || "the map") + "." : "") + "</p>" +
+      '<p class="note">Preliminary events coded from media and NGO reports; later releases revise them. <a href="https://ucdp.uu.se/" target="_blank" rel="noopener">UCDP</a>, CC BY 4.0.</p></div>';
+  }
+
   LCOL.security = "--over";
   function showSecurity() {
     sofLayer.clearLayers(); sofM = {};
@@ -3879,7 +3982,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         : '<p class="obs">No record names a listed person or company.</p>') +
       '<input type="search" id="sanc-q" class="mini" placeholder="Search the list for ' + esc(C.name) + '" style="width:100%;margin-top:6px"><div id="sanc-r"></div>' : "") +
       '<p class="note" style="margin-top:6px">A name match is not an identity match: different people and firms share names. Check the OFAC entry before relying on it.</p></div>';
-    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>' + ih + mh + sh;
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>' + ucdpHtml() + ih + navwHtml() + mh + sh;
     var q = document.getElementById("sanc-q");
     if (q) q.addEventListener("input", function () {
       var v = q.value.trim().toLowerCase(), box = document.getElementById("sanc-r");
@@ -3938,7 +4041,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
     nh = satHtml() + nh;
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> GDACS alert levels and air quality are model estimates, warnings are the agencies\' statements, and USGS earthquake solutions can be revised. ' +
-      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + tsuHtml() + wh + qh + volcHtml() + whoHtml() + ah + rh + dispHtml() + nh;
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + tsuHtml() + eonetHtml() + wh + qh + nqHtml() + volcHtml() + whoHtml() + cdcHtml() + ah + ifrcHtml() + rh + dispHtml() + nh;
     satWire();
     document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
   }
@@ -3984,7 +4087,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)", security: "IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

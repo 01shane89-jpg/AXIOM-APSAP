@@ -16,7 +16,9 @@ FIXED = {"POWER": "data/thailand/power.js", "LIVE": "data/thailand/flood-live-sn
          "ASAP_NEWS": "data/live/news.js", "ASAP_SOCIAL": "data/live/social.js",
          "ASAP_ADV": "data/live/advisories.js", "ASAP_TSU": "data/live/tsunami.js", "ASAP_VOLC": "data/live/volcano.js",
          "ASAP_IODA": "data/live/outages.js", "ASAP_WHO": "data/live/outbreaks.js", "ASAP_MAR": "data/live/maritime.js",
-         "ASAP_SANC": "data/live/sanctions.js", "ASAP_UNHCR": "data/live/displacement.js"}
+         "ASAP_SANC": "data/live/sanctions.js", "ASAP_UNHCR": "data/live/displacement.js",
+         "ASAP_NQ": "data/live/national-quakes.js", "ASAP_EONET": "data/live/eonet.js", "ASAP_IFRC": "data/live/ifrc.js",
+         "ASAP_CDC": "data/live/cdc.js", "ASAP_NAVW": "data/live/navwarnings.js", "ASAP_UCDP": "data/live/ucdp.js"}
 written = []
 
 def out(path, body):
