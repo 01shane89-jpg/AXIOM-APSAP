@@ -73,6 +73,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .fresh{font-size:11.5px;color:var(--muted);margin:6px 0 0}
 .sofpin span{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;color:#fff;font:700 11px/1 "IBM Plex Mono",monospace;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.35)}
 .sofpin.inline{display:inline-block;vertical-align:-4px}.sofpin.inline span{width:16px;height:16px;font-size:9.5px;box-shadow:none}
+.cond td,.cond th{font-size:12px;padding:3px 4px;white-space:nowrap}.cond tr.today td{font-weight:600}
 .advlvl{border-left:4px solid;padding:6px 10px;margin:4px 0 6px;font-size:14px;background:var(--surface)}
 .fresh .badge{margin-left:4px}
 .badge.sparse{border-color:var(--muted);color:var(--muted)}
@@ -3077,7 +3078,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var gaps = (SOF.gaps || []).length ? '<div class="sec"><h2>Gaps</h2><ul class="note">' + SOF.gaps.map(function (g) { return "<li>" + esc(g) + "</li>"; }).join("") + "</ul></div>" : "";
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reference data, not verified.</b> Gathered ' + esc(fmtD(SOF.asof)) +
       " from public sources. Airports come from crowd-maintained OurAirports data: check the national AIP before any operational use. Hospital and post locations marked approx are estimated from published addresses.</div></div>" +
-      adv + filt + lists + gaps;
+      adv + '<div id="sof-cond"></div>' + filt + lists + gaps;
+    drawCond();
     Array.prototype.forEach.call(railO.querySelectorAll("input[data-k]"), function (cb) {
       cb.addEventListener("change", function () { sofOff[cb.getAttribute("data-k")] = !cb.checked; drawSof(kinds); });
     });
@@ -3129,6 +3131,143 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var m = sofM[b.getAttribute("data-sof")];
     if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 9)); m.openPopup(); }
   });
+  /* ---------- light and sea conditions (computed in the page; sea state fetched on request) ----------
+     Sun and moon use the standard low-precision formulas (Meeus, as in SunCalc): good to a minute or two. */
+  var TZ = { th: "Asia/Bangkok", vn: "Asia/Ho_Chi_Minh", kh: "Asia/Phnom_Penh", la: "Asia/Vientiane", mm: "Asia/Yangon", ph: "Asia/Manila",
+    my: "Asia/Kuala_Lumpur", sg: "Asia/Singapore", bn: "Asia/Brunei", tl: "Asia/Dili", cn: "Asia/Shanghai", tw: "Asia/Taipei", kp: "Asia/Pyongyang",
+    kr: "Asia/Seoul", jp: "Asia/Tokyo", oki: "Asia/Tokyo", nz: "Pacific/Auckland", pg: "Pacific/Port_Moresby", "in": "Asia/Kolkata", pk: "Asia/Karachi",
+    np: "Asia/Kathmandu", bt: "Asia/Thimphu", bd: "Asia/Dhaka", lk: "Asia/Colombo", mv: "Indian/Maldives" };
+  function tzAt(lat, lon) {
+    if (CC === "id") return lon < 112.5 ? "Asia/Jakarta" : lon < 127.5 ? "Asia/Makassar" : "Asia/Jayapura";
+    if (CC === "mn") return lon < 99 ? "Asia/Hovd" : "Asia/Ulaanbaatar";
+    if (CC === "au") return lon < 129 ? "Australia/Perth" : lon < 138 ? (lat > -26 ? "Australia/Darwin" : "Australia/Adelaide")
+      : lat > -29 ? "Australia/Brisbane" : lat < -39.6 ? "Australia/Hobart" : "Australia/Sydney";
+    return TZ[CC] || "UTC";
+  }
+  var AR = Math.PI / 180, DMS = 864e5, J2000 = 2451545, OBL = AR * 23.4397;
+  function jd(ms) { return ms / DMS - 0.5 + 2440588 - J2000; }
+  function fromJd(j) { return (j + J2000 + 0.5 - 2440588) * DMS; }
+  function raOf(l, b) { return Math.atan2(Math.sin(l) * Math.cos(OBL) - Math.tan(b) * Math.sin(OBL), Math.cos(l)); }
+  function decOf(l, b) { return Math.asin(Math.sin(b) * Math.cos(OBL) + Math.cos(b) * Math.sin(OBL) * Math.sin(l)); }
+  function sunL(M) { return M + AR * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M)) + AR * 102.9372 + Math.PI; }
+  function sunEq(d) { var M = AR * (357.5291 + 0.98560028 * d), L = sunL(M); return { dec: decOf(L, 0), ra: raOf(L, 0) }; }
+  function moonEq(d) {
+    var L = AR * (218.316 + 13.176396 * d), M = AR * (134.963 + 13.064993 * d), F = AR * (93.272 + 13.22935 * d);
+    var l = L + AR * 6.289 * Math.sin(M), b = AR * 5.128 * Math.sin(F);
+    return { ra: raOf(l, b), dec: decOf(l, b), dist: 385001 - 20905 * Math.cos(M) };
+  }
+  /* sun event times (ms) for the local date whose solar noon is nearest noonMs; NaN when the sun never reaches that angle */
+  function sunTimes(noonMs, lat, lon) {
+    var lw = -AR * lon, phi = AR * lat, d = jd(noonMs), n = Math.round(d - 0.0009 - lw / (2 * Math.PI));
+    var ds = 0.0009 + lw / (2 * Math.PI) + n, M = AR * (357.5291 + 0.98560028 * ds), L = sunL(M), dec = decOf(L, 0);
+    var corr = 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L), noon = ds + corr;
+    function at(h) {
+      var w = Math.acos((Math.sin(h * AR) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec)));
+      var set = 0.0009 + (w + lw) / (2 * Math.PI) + n + corr;
+      return [fromJd(noon - (set - noon)), fromJd(set)];
+    }
+    var r = at(-0.833), nt = at(-12);
+    return { bmnt: nt[0], rise: r[0], set: r[1], eent: nt[1] };
+  }
+  function moonAlt(ms, lat, lon) {
+    var d = jd(ms), c = moonEq(d), H = AR * (280.16 + 360.9856235 * d) + AR * lon - c.ra, phi = AR * lat;
+    return Math.asin(Math.sin(phi) * Math.sin(c.dec) + Math.cos(phi) * Math.cos(c.dec) * Math.cos(H));
+  }
+  function moonIllum(ms) {
+    var d = jd(ms), s = sunEq(d), m = moonEq(d), sd = 149598000;
+    var p = Math.acos(Math.sin(s.dec) * Math.sin(m.dec) + Math.cos(s.dec) * Math.cos(m.dec) * Math.cos(s.ra - m.ra));
+    var inc = Math.atan2(sd * Math.sin(p), m.dist - sd * Math.cos(p));
+    var ang = Math.atan2(Math.cos(s.dec) * Math.sin(s.ra - m.ra), Math.sin(s.dec) * Math.cos(m.dec) - Math.cos(s.dec) * Math.sin(m.dec) * Math.cos(s.ra - m.ra));
+    return { frac: (1 + Math.cos(inc)) / 2, waxing: ang < 0 };
+  }
+  /* moonrise and moonset between two instants, by 10-minute scan with linear interpolation */
+  function moonRiseSet(t0, t1, lat, lon) {
+    var hc = 0.133 * AR, step = 6e5, prev = moonAlt(t0, lat, lon) - hc, rise = null, set = null;
+    for (var t = t0 + step; t <= t1; t += step) {
+      var cur = moonAlt(t, lat, lon) - hc;
+      if (prev < 0 && cur >= 0 && rise === null) rise = t - step * cur / (cur - prev);
+      if (prev >= 0 && cur < 0 && set === null) set = t - step * cur / (cur - prev);
+      prev = cur;
+    }
+    return { rise: rise, set: set, up: prev >= 0 };
+  }
+  function tzOffsetMin(tz, ms) {
+    var p = {}; new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" })
+      .formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
+    return (Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute) - Math.floor(ms / 6e4) * 6e4) / 6e4;
+  }
+  var condZulu = false, condPt = null, SEA_TIMEOUT = 20000;
+  function condClock(ms, tz) {
+    if (ms == null || isNaN(ms)) return "none";
+    return new Date(ms).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: condZulu ? "UTC" : tz }) + (condZulu ? "Z" : "");
+  }
+  function condPoint() {
+    var c = map.getCenter(), b = C.bounds;
+    return { lat: Math.max(b[0][0], Math.min(b[1][0], c.lat)), lon: Math.max(b[0][1], Math.min(b[1][1], c.lng)) };
+  }
+  function condHtml() {
+    var pt = condPt = condPoint(), tz = tzAt(pt.lat, pt.lon), now = Date.now(), off = tzOffsetMin(tz, now);
+    var loc = new Date(now + off * 6e4), y = loc.getUTCFullYear(), mo = loc.getUTCMonth(), dd = loc.getUTCDate();
+    var sun = "", moon = "";
+    for (var i = 0; i < 7; i++) {
+      var mid = Date.UTC(y, mo, dd + i) - tzOffsetMin(tz, Date.UTC(y, mo, dd + i)) * 6e4, st = sunTimes(Date.UTC(y, mo, dd + i, 12) - pt.lon / 15 * 36e5, pt.lat, pt.lon);
+      var mr = moonRiseSet(mid, mid + DMS, pt.lat, pt.lon), il = moonIllum(mid + DMS);
+      var lbl = new Date(Date.UTC(y, mo, dd + i)).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+      var cls = i === 0 ? ' class="today"' : "";
+      sun += "<tr" + cls + "><td>" + lbl + '</td><td class="n">' + condClock(st.bmnt, tz) + '</td><td class="n">' + condClock(st.rise, tz) + '</td><td class="n">' + condClock(st.set, tz) + '</td><td class="n">' + condClock(st.eent, tz) + "</td></tr>";
+      moon += "<tr" + cls + "><td>" + lbl + '</td><td class="n">' + condClock(mr.rise, tz) + '</td><td class="n">' + condClock(mr.set, tz) + '</td><td class="n">' + Math.round(il.frac * 100) + "% " + (il.waxing ? "waxing" : "waning") + "</td></tr>";
+    }
+    var tzName = condZulu ? "UTC (Z)" : tz.replace(/^.*\//, "").replace(/_/g, " ") + " time, UTC" + (off >= 0 ? "+" : "−") + Math.floor(Math.abs(off) / 60) + (Math.abs(off) % 60 ? ":" + ("0" + Math.abs(off) % 60).slice(-2) : "");
+    var ll = pt.lat.toFixed(3) + ", " + pt.lon.toFixed(3);
+    return '<div class="sec"><h2>Light and sea conditions</h2>' +
+      '<p class="obs">At the map centre, ' + ll + (window.MGRS_OF ? " (" + esc(window.MGRS_OF(pt.lat, pt.lon)) + ")" : "") + ". Pan the map to move it. Times are " + esc(tzName) +
+      '. <a href="#" id="cond-z">' + (condZulu ? "Show local time" : "Show Zulu") + "</a></p>" +
+      '<table class="reg cond"><tr><th>Sun</th><th>BMNT</th><th>Rise</th><th>Set</th><th>EENT</th></tr>' + sun + "</table>" +
+      '<table class="reg cond" style="margin-top:8px"><tr><th>Moon</th><th>Rise</th><th>Set</th><th>Lit at 24:00</th></tr>' + moon + "</table>" +
+      '<p class="note" style="margin-top:6px">Computed in the page from standard formulas, accurate to a minute or two at sea level. BMNT and EENT are nautical twilight (sun 12° below the horizon). "none" means the event does not happen that day.</p>' +
+      '<div id="cond-sea"><button type="button" class="refresh" id="cond-sea-go">Get sea state and tide</button> ' +
+      '<a href="https://www.windy.com/-Waves-waves?waves,' + pt.lat.toFixed(3) + "," + pt.lon.toFixed(3) + ',8" target="_blank" rel="noopener">Waves on Windy</a></div></div>';
+  }
+  function seaState() {
+    var box = document.getElementById("cond-sea"), pt = condPt, tz = tzAt(pt.lat, pt.lon);
+    box.innerHTML = '<span class="obs">Asking Open-Meteo for the marine forecast…</span>';
+    var url = "https://marine-api.open-meteo.com/v1/marine?latitude=" + pt.lat.toFixed(3) + "&longitude=" + pt.lon.toFixed(3) +
+      "&daily=wave_height_max,wave_period_max,swell_wave_height_max&hourly=sea_level_height_msl&timezone=" + encodeURIComponent(tz) + "&forecast_days=7";
+    var ctl = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, SEA_TIMEOUT);
+    fetch(url, { signal: ctl ? ctl.signal : undefined }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (j) {
+      clearTimeout(t);
+      var dy = j.daily || {}, hr = j.hourly || {}, lv = hr.sea_level_height_msl || [], tm = hr.time || [];
+      if (!dy.time || !dy.wave_height_max || dy.wave_height_max.every(function (v) { return v == null; })) {
+        box.innerHTML = '<p class="obs">No marine forecast at this point. It is probably inland: pan the map so its centre is over the sea, then try again.</p>'; return;
+      }
+      var tides = {};
+      for (var i = 1; i < lv.length - 1; i++) {
+        if (lv[i] == null || lv[i - 1] == null || lv[i + 1] == null) continue;
+        var hi = lv[i] > lv[i - 1] && lv[i] >= lv[i + 1], lo = lv[i] < lv[i - 1] && lv[i] <= lv[i + 1];
+        if (hi || lo) { var k = tm[i].slice(0, 10); (tides[k] = tides[k] || []).push((hi ? "H " : "L ") + tm[i].slice(11, 16) + " " + lv[i].toFixed(1) + " m"); }
+      }
+      function f(v, u) { return v == null ? "–" : v.toFixed(1) + " " + u; }
+      box.innerHTML = '<table class="reg cond"><tr><th>Sea</th><th>Max wave</th><th>Swell</th><th>Period</th></tr>' + dy.time.map(function (d, i) {
+        return "<tr><td>" + esc(new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })) + '</td><td class="n">' + f(dy.wave_height_max[i], "m") + '</td><td class="n">' + f((dy.swell_wave_height_max || [])[i], "m") + '</td><td class="n">' + f((dy.wave_period_max || [])[i], "s") + "</td></tr>" +
+          (tides[d] ? '<tr><td></td><td colspan="3" class="obs">Tide ' + esc(tides[d].join(" · ")) + "</td></tr>" : "");
+      }).join("") + "</table>" +
+        '<p class="note" style="margin-top:6px">A model forecast from Open-Meteo, fetched ' + esc(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })) +
+        ', in local time (' + esc(tz) + '). Tide highs and lows come from a coarse global model at hourly steps, not port tables. Not for navigation. ' +
+        '<a href="' + esc(url) + '" target="_blank" rel="noopener">Raw data</a></p>';
+    }).catch(function (e) {
+      clearTimeout(t);
+      box.innerHTML = '<p class="obs">Could not reach Open-Meteo (' + esc(e && e.name === "AbortError" ? "timed out after " + SEA_TIMEOUT / 1000 + " s" : "outside requests blocked or offline") +
+        '). <a href="' + esc(url) + '" target="_blank" rel="noopener">Open the forecast directly</a>.</p>';
+    });
+  }
+  function drawCond() {
+    var el = document.getElementById("sof-cond"); if (!el) return;
+    el.innerHTML = condHtml();
+    document.getElementById("cond-z").addEventListener("click", function (e) { e.preventDefault(); condZulu = !condZulu; drawCond(); });
+    document.getElementById("cond-sea-go").addEventListener("click", seaState);
+  }
+  map.on("moveend", function () { if (current === "crisis") drawCond(); });
+
   function showSof(v) { if (v === "crisis") showCrisis(); else showPartners(); }
 
   function setView(v, fromLoad) {
