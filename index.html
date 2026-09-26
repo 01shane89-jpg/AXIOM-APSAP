@@ -71,6 +71,9 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .live{flex-wrap:wrap}
 .hdrchk{text-transform:none;letter-spacing:0}
 .fresh{font-size:11.5px;color:var(--muted);margin:6px 0 0}
+.sofpin span{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;color:#fff;font:700 11px/1 "IBM Plex Mono",monospace;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.35)}
+.sofpin.inline{display:inline-block;vertical-align:-4px}.sofpin.inline span{width:16px;height:16px;font-size:9.5px;box-shadow:none}
+.advlvl{border-left:4px solid;padding:6px 10px;margin:4px 0 6px;font-size:14px;background:var(--surface)}
 .fresh .badge{margin-left:4px}
 .badge.sparse{border-color:var(--muted);color:var(--muted)}
 .rprog{display:none;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted)}
@@ -672,6 +675,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   </div>
   <div id="rail-curated" hidden></div>
   <div id="rail-stub" hidden></div>
+  <div id="rail-sof" hidden></div>
   </aside>
 </div>
 
@@ -2058,6 +2062,35 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/vn/transport.js"></script>
 <script src="data/layers/vn/safety.js"></script>
 <script src="data/layers/vn/flood.js"></script>
+<script src="data/sof/au.js"></script>
+<script src="data/sof/bd.js"></script>
+<script src="data/sof/bn.js"></script>
+<script src="data/sof/bt.js"></script>
+<script src="data/sof/cn.js"></script>
+<script src="data/sof/id.js"></script>
+<script src="data/sof/in.js"></script>
+<script src="data/sof/jp.js"></script>
+<script src="data/sof/kh.js"></script>
+<script src="data/sof/kp.js"></script>
+<script src="data/sof/kr.js"></script>
+<script src="data/sof/la.js"></script>
+<script src="data/sof/lk.js"></script>
+<script src="data/sof/mm.js"></script>
+<script src="data/sof/mn.js"></script>
+<script src="data/sof/mv.js"></script>
+<script src="data/sof/my.js"></script>
+<script src="data/sof/np.js"></script>
+<script src="data/sof/nz.js"></script>
+<script src="data/sof/oki.js"></script>
+<script src="data/sof/pg.js"></script>
+<script src="data/sof/ph.js"></script>
+<script src="data/sof/pk.js"></script>
+<script src="data/sof/sg.js"></script>
+<script src="data/sof/th.js"></script>
+<script src="data/sof/tl.js"></script>
+<script src="data/sof/tw.js"></script>
+<script src="data/sof/vn.js"></script>
+<script src="data/sof/exercises-outside.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2318,6 +2351,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     else if (l.id === "insurgency") { l.name = "Insurgency"; l.title = "Insurgency"; }
     if (l.sources) { l.sources = "Official agencies and established news outlets for " + C.name + ", being collected"; l.now = null; }
   });
+  if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
+    { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
+    { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -2956,6 +2992,145 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
                   alerts: "Rules run over every record in this build",
                   timeline: R.length + " records · " + srcIds.length + " sources" };
   var current = null;
+  /* ---------- SOF reference layers: crisis response and partner engagement ----------
+     Reference data from public sources (schema apsap-sof/1), packaged per country. These are
+     reference points and announced plans, not events: they never enter the Timeline or Alerts. */
+  var SOF = (window.ASAP_SOF || {})[CC] || null, SOF_OUT = window.ASAP_SOF_OUT || null;
+  var railO = document.getElementById("rail-sof"), sofLayer = L.layerGroup(), sofOff = {}, sofM = {};
+  var SOFK = {
+    posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent" },
+    airports: { label: "Airports", letter: "A", color: "--rain" },
+    seaports: { label: "Seaports", letter: "S", color: "--sat-water" },
+    hospitals: { label: "Hospitals", letter: "H", color: "--over" }
+  };
+  var ADV_TONE = ["", "--calm", "--near", "--over", "--over"];
+  function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
+  function sofIcon(k) {
+    var c = tok(SOFK[k].color);
+    return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
+      html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
+  }
+  function kv(pairs) {
+    return "<dl>" + pairs.filter(function (p) { return p[1] != null && p[1] !== ""; }).map(function (p) {
+      return "<dt>" + esc(p[0]) + "</dt><dd>" + esc(String(p[1])) + "</dd>"; }).join("") + "</dl>";
+  }
+  function srcFoot(i) {
+    return '<p class="obs" style="margin-top:6px">Source: <a href="' + esc(i.src) + '" target="_blank" rel="noopener">' + esc(i.srcname || i.src) + "</a>" +
+      (i.coord_basis ? "<br>Location: " + esc(/^https?:/.test(i.coord_basis) ? "from " + i.coord_basis.replace(/^https?:\/\/(www\.)?/, "").split("/")[0] : i.coord_basis) + " (" + esc(i.prec || "approx") + ")" : "") +
+      (i.lat != null ? "<br>" + esc(i.lat.toFixed(4) + ", " + i.lon.toFixed(4)) + (window.MGRS_OF ? " · MGRS " + esc(MGRS_OF(i.lat, i.lon)) : "") : "") +
+      '<br>Fingerprint <code class="fp">' + esc((i.fp || "").slice(0, 16)) + "…</code></p>";
+  }
+  function sofFacts(k, i) {
+    if (k === "posts") return kv([["Type", i.kind.replace(/_/g, " ")], ["City", i.city], ["Address", i.address], ["Services", i.services_note]]);
+    if (k === "airports") {
+      var rw = i.longest_runway || {};
+      return kv([["ICAO / IATA", [i.icao, i.iata].filter(Boolean).join(" / ")], ["Type", (i.type || "").replace(/_/g, " ")], ["Longest runway", rw.ident ? rw.ident + ", " + (rw.length_m || "?") + " m (" + (rw.length_ft || "?") + " ft)" : null],
+        ["Width, surface", rw.width_ft ? rw.width_ft + " ft, " + (rw.surface || "") : rw.surface], ["Runways", i.runway_count], ["Elevation", i.elevation_ft != null ? i.elevation_ft + " ft" : null],
+        ["Scheduled service", i.scheduled_service == null ? null : (i.scheduled_service ? "yes" : "no")], ["Municipality", i.municipality]]);
+    }
+    if (k === "seaports") return kv([["UN/LOCODE", i.unlocode], ["Note", i.coord_flag]]);
+    return kv([["City", i.city], ["Address", i.address], ["24 h emergency", i.emergency_24h == null ? "not stated" : (i.emergency_24h ? "yes" : "no")],
+      ["Type", i.type], ["Trauma designation", i.trauma_level], ["Notes", i.notes]]);
+  }
+  function drawSof(kinds) {
+    sofLayer.clearLayers(); sofM = {};
+    kinds.forEach(function (k) {
+      if (sofOff[k]) return;
+      (SOF[k] || []).forEach(function (i) {
+        if (i.lat == null || i.lon == null) return;
+        var m = L.marker([i.lat, i.lon], { icon: sofIcon(k), keyboard: false, pane: "tlpane" });
+        m.bindPopup('<div class="pop"><div class="tier" style="color:' + tok(SOFK[k].color) + '">' + esc(SOFK[k].label.replace(/s$/, "")) + " · reference</div><h3>" + esc(i.name) + "</h3>" + sofFacts(k, i) + srcFoot(i) + "</div>", { maxWidth: 320 });
+        sofLayer.addLayer(m); sofM[i.id] = m;
+      });
+    });
+  }
+  function sofRow(k, i, extra) {
+    return '<button type="button" class="tlrow" data-sof="' + esc(i.id) + '"><span class="tln">' + esc(i.name) + "</span>" +
+      '<span class="tlm">' + chip("k", SOFK[k].letter + " · " + SOFK[k].label.replace(/s$/, "")) + (extra ? '<span class="tls">' + esc(extra) + "</span>" : "") +
+      (i.prec === "approx" ? chip("", "approx location") : "") + "</span></button>";
+  }
+  function showCrisis() {
+    var a = SOF.advisory || {}, kinds = ["posts", "airports", "seaports", "hospitals"];
+    var lvl = a.level || 0;
+    var adv = '<div class="sec"><h2>U.S. travel advisory</h2>' +
+      '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc(a.level_text || "") + "</div>" +
+      '<p class="obs">A U.S. Department of State claim, issued ' + esc(fmtD(a.issued)) + (a.updated ? ", updated " + esc(fmtD(a.updated)) : "") + ". " +
+      (a.indicator_names && a.indicator_names.length ? "Risk indicators: " + esc(a.indicator_names.join(", ")) + "." : "") + "</p>" +
+      (a.areas && a.areas.length ? '<table class="reg" style="margin-top:6px"><tr><th>Area</th><th>Level</th><th>Reason</th></tr>' + a.areas.map(function (x) {
+        return "<tr><td>" + esc(x.area) + '</td><td class="n">' + esc(String(x.level || "")) + "</td><td>" + esc(x.reason || "") + "</td></tr>"; }).join("") + "</table>" : "") +
+      (a.notes ? '<p class="note" style="margin-top:6px">' + esc(a.notes) + "</p>" : "") +
+      '<p class="obs"><a href="' + esc(a.src) + '" target="_blank" rel="noopener">Read the advisory</a></p></div>';
+    var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
+      var n = (SOF[k] || []).length, id = "sofk-" + k;
+      return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
+        '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+    }).join("") + "</div>";
+    var lists = kinds.map(function (k) {
+      var arr = SOF[k] || [];
+      if (!arr.length) return "";
+      return '<div class="sec"><h2>' + esc(SOFK[k].label) + '</h2><div class="tllist">' + arr.map(function (i) {
+        var extra = k === "airports" ? [i.icao, i.longest_runway && i.longest_runway.length_m ? i.longest_runway.length_m + " m runway" : ""].filter(Boolean).join(" · ")
+          : k === "seaports" ? i.unlocode : k === "hospitals" ? [i.city, i.emergency_24h ? "24 h emergency" : ""].filter(Boolean).join(" · ") : [i.kind.replace(/_/g, " "), i.city].join(" · ");
+        return sofRow(k, i, extra);
+      }).join("") + "</div></div>";
+    }).join("");
+    var gaps = (SOF.gaps || []).length ? '<div class="sec"><h2>Gaps</h2><ul class="note">' + SOF.gaps.map(function (g) { return "<li>" + esc(g) + "</li>"; }).join("") + "</ul></div>" : "";
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Reference data, not verified.</b> Gathered ' + esc(fmtD(SOF.asof)) +
+      " from public sources. Airports come from crowd-maintained OurAirports data: check the national AIP before any operational use. Hospital and post locations marked approx are estimated from published addresses.</div></div>" +
+      adv + filt + lists + gaps;
+    Array.prototype.forEach.call(railO.querySelectorAll("input[data-k]"), function (cb) {
+      cb.addEventListener("change", function () { sofOff[cb.getAttribute("data-k")] = !cb.checked; drawSof(kinds); });
+    });
+    drawSof(kinds);
+  }
+  function exName(x) { var n = x.name || "", it = x.iteration || ""; return !it ? n : it.toLowerCase().indexOf(n.toLowerCase()) >= 0 ? it : n + " " + it; }
+  function exStatus(x) {
+    var today = new Date().toISOString().slice(0, 10);
+    if (x.end && x.end < today) return "completed";
+    if (x.start && x.start <= today && (!x.end || x.end >= today)) return "ongoing";
+    if (x.start && x.start > today) return "scheduled";
+    return x.status || "announced";
+  }
+  function showPartners() {
+    var own = (SOF.exercises || []).slice();
+    var out = ((SOF_OUT && SOF_OUT.exercises) || []).filter(function (x) { return (x.also_cc || []).indexOf(CC) >= 0; });
+    var all = own.concat(out).sort(function (a, b) { return (b.start || "0") < (a.start || "0") ? -1 : 1; });
+    var up = all.filter(function (x) { var s = exStatus(x); return s === "ongoing" || s === "scheduled" || s === "announced"; });
+    var done = all.filter(function (x) { return exStatus(x) === "completed"; });
+    sofLayer.clearLayers(); sofM = {};
+    all.forEach(function (x) {
+      if (x.lat == null || x.lon == null) return;
+      var st = exStatus(x), col = tok(st === "completed" ? "--muted" : (x.us_participation ? "--accent" : "--near"));
+      var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 8, color: col, weight: 2, fillColor: col, fillOpacity: st === "completed" ? 0.15 : 0.45 });
+      m.bindPopup(exPop(x), { maxWidth: 340 }); sofLayer.addLayer(m); sofM[x.id] = m;
+    });
+    function row(x) {
+      var st = exStatus(x);
+      return '<button type="button" class="tlrow" data-sof="' + esc(x.id) + '"><span class="tlt">' + esc(x.dates_text || [fmtD(x.start), fmtD(x.end)].filter(Boolean).join(" to ") || "dates not announced") + "</span>" +
+        '<span class="tln">' + esc(exName(x)) + "</span>" +
+        '<span class="tlm">' + chip(st === "completed" ? "" : "k", st) + (x.us_participation ? chip("rule", "U.S. taking part") : x.us_participation === false ? chip("", "no U.S. role stated") : "") +
+        '<span class="tls">' + esc((x.participants || []).slice(0, 6).join(", ") + ((x.participants || []).length > 6 ? " +" + (x.participants.length - 6) : "")) + "</span></span></button>";
+    }
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Announced plans, not confirmed events.</b> Dates and participants are as published by the organisers or reported, gathered ' + esc(fmtD(SOF.asof)) +
+      ". Status is worked out from those dates against today. Exercises held elsewhere that involve " + esc(C.name) + " are included.</div></div>" +
+      '<div class="sec"><h2>Current and upcoming</h2>' + (up.length ? '<div class="tllist">' + up.map(row).join("") + "</div>" : '<p class="note">None announced in this data.</p>') + "</div>" +
+      '<div class="sec"><h2>Completed in 2026</h2>' + (done.length ? '<div class="tllist">' + done.map(row).join("") + "</div>" : '<p class="note">None in this data.</p>') + "</div>" +
+      '<div class="sec"><p class="obs">Map: blue = U.S. taking part, amber = other, faded = completed.</p></div>';
+  }
+  function exPop(x) {
+    return '<div class="pop"><div class="tier">Exercise · ' + esc(exStatus(x)) + "</div><h3>" + esc(exName(x)) + "</h3>" +
+      kv([["Dates", x.dates_text || [fmtD(x.start), fmtD(x.end)].filter(Boolean).join(" to ")], ["Type", x.type], ["Where", x.location], ["Scale", x.scale],
+        ["Participants", (x.participants || []).join(", ")], ["U.S. role", x.us_participation == null ? "not stated" : (x.us_participation ? "taking part" : "none stated")]]) +
+      (x.summary ? '<p class="note" style="margin-top:6px">' + esc(x.summary) + "</p>" : "") + srcFoot(x) + "</div>";
+  }
+  if (railO) railO.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-sof]");
+    if (!b) return;
+    var m = sofM[b.getAttribute("data-sof")];
+    if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 9)); m.openPopup(); }
+  });
+  function showSof(v) { if (v === "crisis") showCrisis(); else showPartners(); }
+
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
@@ -2973,10 +3148,15 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     railA.hidden = v !== "alerts";
     railC.hidden = !l.curated;
     railS.hidden = !!(l.live || v === "timeline" || v === "alerts");
+    railO.hidden = !l.sof;
     rail.scrollTop = 0;
     if (v !== "timeline") pbStop();
-    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer);
-    if (l.curated) {
+    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer);
+    if (l.sof) {
+      sofLayer.addTo(map); showSof(v); map.invalidateSize();
+      map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
+    }
+    else if (l.curated) {
       curLayer.addTo(map); showCurated(v);
       map.invalidateSize();
       map.fitBounds(TH && TD[v].bounds ? TD[v].bounds : C.bounds, { padding: [10, 10], animate: false });

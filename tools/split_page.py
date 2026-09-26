@@ -10,7 +10,7 @@ src = open(sys.argv[1], encoding="utf-8").read()
 FIXED = {"POWER": "data/thailand/power.js", "LIVE": "data/thailand/flood-live-snapshot.js",
          "EXPOSURE": "data/thailand/flood-exposure.js", "PROVINCES": "data/thailand/province-alerts.js",
          "BORDER": "data/thailand/border-geometry.js", "CONFLICT": "data/thailand/border-conflict.js",
-         "COUNTRY_BASE": "data/basemap/country-outlines.js"}
+         "COUNTRY_BASE": "data/basemap/country-outlines.js", "ASAP_SOF_OUT": "data/sof/exercises-outside.js"}
 written = []
 
 def out(path, body):
@@ -24,6 +24,9 @@ def repl(m):
     g = re.match(r'\s*window\.([A-Z_]+)\s*=', body)
     if g and g.group(1) in FIXED:
         return out(FIXED[g.group(1)], body)
+    s = re.match(r'\s*window\.ASAP_SOF=window\.ASAP_SOF\|\|\{\};window\.ASAP_SOF\["([a-z]+)"\]', body)
+    if s:
+        return out("data/sof/%s.js" % s.group(1), body)
     k = re.match(r'\s*window\.TSAP_DATA=window\.TSAP_DATA\|\|\{\};window\.TSAP_DATA\["([a-z]+)(?:/([a-z]+))?"\]', body)
     if k:
         cc, lid = (k.group(1), k.group(2)) if k.group(2) else ("th", k.group(1))
