@@ -1901,6 +1901,24 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/au/crime.js"></script>
 <script src="data/layers/au/insurgency.js"></script>
 <script src="data/layers/au/border.js"></script>
+<script src="data/layers/kh/border.js"></script>
+<script src="data/layers/kh/aml.js"></script>
+<script src="data/layers/kh/health.js"></script>
+<script src="data/layers/kh/safety.js"></script>
+<script src="data/layers/kh/transport.js"></script>
+<script src="data/layers/kh/flood.js"></script>
+<script src="data/layers/kh/scam.js"></script>
+<script src="data/layers/kh/crime.js"></script>
+<script src="data/layers/bn/flood.js"></script>
+<script src="data/layers/bn/transport.js"></script>
+<script src="data/layers/bn/infra.js"></script>
+<script src="data/layers/bn/aml.js"></script>
+<script src="data/layers/bn/scam.js"></script>
+<script src="data/layers/bn/safety.js"></script>
+<script src="data/layers/bn/health.js"></script>
+<script src="data/layers/bn/weather.js"></script>
+<script src="data/layers/bn/crime.js"></script>
+<script src="data/layers/bn/border.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2137,7 +2155,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" },
     cn: { flood: "Floods and geohazards", border: "Frontier and maritime claims", insurgency: "Terrorism and extremism", crime: "Organized crime and narcotics", scam: "Telecom fraud and overseas compounds", aml: "Illicit finance and underground banking", weather: "Typhoons and extreme weather", infra: "Critical infrastructure", transport: "Transportation", safety: "Work safety and disasters", health: "Public health" },
     id: { flood: "Floods and landslides", border: "Maritime and border security", insurgency: "Papua conflict and counterterrorism", crime: "Narcotics and organized crime", scam: "Online scams and trafficked workers", aml: "Money laundering and gambling finance", weather: "Weather and drought", infra: "Power, water and telecoms", transport: "Transport and Mudik", safety: "Volcanoes, quakes and disasters", health: "Public health" },
-    au: { flood: "Floods and river warnings", border: "Maritime border and approaches", insurgency: "Terrorism and violent extremism", crime: "Organized crime and contraband", scam: "Scams and fraud", aml: "Financial crime", weather: "Cyclones, heat and severe weather", infra: "Power, telco and Triple Zero outages", transport: "Roads, rail and aviation", safety: "Bushfires and emergencies", health: "Public and animal health" }
+    au: { flood: "Floods and river warnings", border: "Maritime border and approaches", insurgency: "Terrorism and violent extremism", crime: "Organized crime and contraband", scam: "Scams and fraud", aml: "Financial crime", weather: "Cyclones, heat and severe weather", infra: "Power, telco and Triple Zero outages", transport: "Roads, rail and aviation", safety: "Bushfires and emergencies", health: "Public and animal health" },
+    kh: { flood: "Mekong and Tonle Sap flooding", border: "Thai border and Gulf of Thailand", insurgency: null, crime: "Drugs and organized crime", scam: "Scam compounds and crackdown", aml: "Illicit finance and sanctions", weather: "Monsoon, storms and heat", infra: "Power, water and megaprojects", transport: "Roads and aviation", safety: "Fire, UXO and hazmat", health: "Avian flu and vector-borne disease" },
+    bn: { flood: "Floods", border: "Maritime and border posts", insurgency: null, crime: "Border control and enforcement", scam: "Fraud", aml: "Financial crime and unlicensed finance", weather: "Weather", infra: "Water and power utilities", transport: "Transportation", safety: "Fire and rescue", health: "Health and haze" }
   };
   if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return n !== null; });
   if (!TH) LAYERS.forEach(function (l) {
