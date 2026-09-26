@@ -2107,6 +2107,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/sof/tw.js"></script>
 <script src="data/sof/vn.js"></script>
 <script src="data/sof/exercises-outside.js"></script>
+<script src="data/live/quakes.js"></script>
+<script src="data/live/air-quality.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2370,6 +2372,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
+  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -2753,6 +2756,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     desc: "An IED, shooting, ambush, arson or attack on a facility " + (TH ? "in the southern border provinces " : "") + "within this many days.",
     test: function (r, t) { return r.layer === "insurgency" && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.sev; } });
+  if (LBY.safety) RULES.push({ id: "quake-strong", v: 1, name: "Strong earthquake", layer: "safety", unit: "magnitude", def: 5.5, min: 2.5, step: 0.5,
+    desc: "USGS reports an earthquake of at least this magnitude in or near the area in the last 7 days.",
+    test: function (r, t) { return r.quake && r.magnitude >= t; },
+    sev: function (r) { return r.magnitude >= 6.5 ? 3 : 2; } });
   if (TD.scam) RULES.push({ id: "scam-compound", v: 1, name: "Scam compound reported", layer: "scam", unit: "days", def: 60, min: 1, step: 1,
     desc: "A scam compound is reported (new, resumed or relocated) within this many days.",
     test: function (r, t) { return r.layer === "scam" && r.kind === "compound" && AS_OF - dnum(r.ts) < t; },
@@ -3390,7 +3397,138 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.getElementById("brief-btn").addEventListener("click", openBrief);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !briefEl.hidden) closeBrief(); });
 
-  function showSof(v) { if (v === "crisis") showCrisis(); else showPartners(); }
+  /* ---------- live hazards: USGS earthquakes (become Public safety records) and model air quality ----------
+     Each feed is fetched straight from its public API. The hosted app also carries an hourly snapshot written
+     by GitHub Actions (window.ASAP_QUAKES, window.ASAP_AQ), used whenever the live request fails. */
+  var USGS = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
+  var AQAPI = "https://air-quality-api.open-meteo.com/v1/air-quality";
+  var HZ_TIMEOUT = 20000, HZ = { q: null, qFrom: "", qErr: "", aq: null, aqFrom: "", aqErr: "", busy: false };
+  src("usgs", "U.S. Geological Survey earthquake catalog", "U.S. government agency", "A",
+      "Automatic and reviewed solutions from the global seismic network. Early magnitudes and locations are revised.", "https://earthquake.usgs.gov/");
+  var QPAD = 1.0;
+  function inArea(lat, lon) {
+    var b = C.bounds; return lat >= b[0][0] - QPAD && lat <= b[1][0] + QPAD && lon >= b[0][1] - QPAD && lon <= b[1][1] + QPAD;
+  }
+  function hzFetch(url) {
+    var ctl = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, HZ_TIMEOUT);
+    return fetch(url, { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) {
+      clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
+    }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "timed out after " + HZ_TIMEOUT / 1000 + " s" : "unreachable (outside requests blocked or offline)"); });
+  }
+  function quakesFromGeo(g) {
+    return (g.features || []).map(function (f) {
+      var p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
+      return { id: f.id, mag: p.mag, place: p.place || "", time: p.time, depth: c[2], lat: c[1], lon: c[0], url: p.url || "",
+        tsunami: p.tsunami, alert: p.alert || null, status: p.status || "", type: p.type || "earthquake" };
+    }).filter(function (q) { return q.type === "earthquake" && isFinite(q.lat) && isFinite(q.lon) && q.mag != null; });
+  }
+  function useSnapshotQuakes() {
+    var s = window.ASAP_QUAKES;
+    if (s && s.features) { HZ.q = s.features; HZ.qFrom = "snapshot " + s.asof; } else { HZ.q = null; HZ.qFrom = ""; }
+  }
+  /* earthquakes in this area become Public safety observations, so they reach Timeline and Alerts */
+  function addQuakeRecords() {
+    R = R.filter(function (r) { if (r.quake) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    if (LBY.safety && HZ.q) HZ.q.filter(function (q) { return inArea(q.lat, q.lon); }).forEach(function (q) {
+      var d = new Date(q.time), iso = d.toISOString();
+      add({ layer: "safety", type: "observation", cat: "Earthquake (USGS)", kind: "earthquake", quake: true, live: true,
+        title: "M" + q.mag.toFixed(1) + " earthquake, " + q.place,
+        detail: "Depth " + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + ". USGS " + (q.status === "reviewed" ? "reviewed" : "automatic") +
+          " solution" + (q.alert ? ", PAGER " + q.alert + " alert" : "") + (q.tsunami ? ", tsunami flag set (check the regional tsunami centre)" : "") + ". Magnitude and location may be revised.",
+        ts: iso.slice(0, 16), tsLabel: d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) + " " + iso.slice(11, 16) + "Z",
+        place: q.place, prov: "", lat: q.lat, lon: q.lon, prec: "exact", magnitude: q.mag,
+        sev: q.mag >= 6.5 ? 3 : q.mag >= 5 ? 2 : 1, src: SOURCES.usgs, url: q.url, issued: iso.slice(0, 16), recorded: HZ.qFrom });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  function aqPoints() {
+    var S0 = (window.ASAP_SOF || {})[CC], pts = S0 ? (S0.posts || []).filter(function (p) { return p.lat != null; }).slice(0, 6).map(function (p) { return { name: p.city || p.name, lat: p.lat, lon: p.lon }; }) : [];
+    if (!pts.length) pts = [{ name: C.name + " (centre)", lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2 }];
+    return pts;
+  }
+  function useSnapshotAQ() {
+    var s = window.ASAP_AQ;
+    if (s && s.points && s.points[CC]) { HZ.aq = s.points[CC]; HZ.aqFrom = "snapshot " + s.asof; } else { HZ.aq = null; HZ.aqFrom = ""; }
+  }
+  function pullHazards(done) {
+    if (HZ.busy) return; HZ.busy = true;
+    var pts = aqPoints();
+    var aqUrl = AQAPI + "?latitude=" + pts.map(function (p) { return p.lat.toFixed(3); }).join(",") + "&longitude=" + pts.map(function (p) { return p.lon.toFixed(3); }).join(",") +
+      "&current=us_aqi,pm2_5,pm10&timezone=GMT";
+    Promise.all([
+      hzFetch(USGS).then(function (g) { HZ.q = quakesFromGeo(g); HZ.qFrom = "live " + new Date().toISOString().slice(0, 16).replace("T", " ") + "Z"; HZ.qErr = ""; },
+        function (e) { HZ.qErr = e.message; useSnapshotQuakes(); }),
+      hzFetch(aqUrl).then(function (j) {
+        var arr = Array.isArray(j) ? j : [j];
+        HZ.aq = pts.map(function (p, i) { var c = (arr[i] || {}).current || {}; return { name: p.name, lat: p.lat, lon: p.lon, time: c.time || "", us_aqi: c.us_aqi, pm2_5: c.pm2_5, pm10: c.pm10 }; });
+        HZ.aqFrom = "live " + new Date().toISOString().slice(0, 16).replace("T", " ") + "Z"; HZ.aqErr = "";
+      }, function (e) { HZ.aqErr = e.message; useSnapshotAQ(); })
+    ]).then(function () {
+      HZ.busy = false; addQuakeRecords(); render(); renderAlerts();
+      if (current === "hazards") showHazards();
+      if (done) done();
+    });
+  }
+  var AQI = [[50, "Good", "#3a9d4a"], [100, "Moderate", "#c9a800"], [150, "Unhealthy for sensitive groups", "#e07b00"], [200, "Unhealthy", "#c62828"], [300, "Very unhealthy", "#7b3fa0"], [1e9, "Hazardous", "#7a1e2c"]];
+  function aqiBand(v) { for (var i = 0; i < AQI.length; i++) if (v <= AQI[i][0]) return AQI[i]; return AQI[AQI.length - 1]; }
+  function showHazards() {
+    sofLayer.clearLayers(); sofM = {};
+    var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon); }).sort(function (a, b) { return b.time - a.time; });
+    qs.forEach(function (q) {
+      var r = R.filter(function (x) { return x.quake && x.url === q.url; })[0];
+      var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25 });
+      m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
+        '<p class="obs">Depth ' + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + " · " + esc(q.lat.toFixed(3) + ", " + q.lon.toFixed(3)) + " · MGRS " + esc(window.MGRS_OF(q.lat, q.lon, 3)) + "</p>" +
+        '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a>' : "") + "</p></div>", { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["q:" + q.id] = m;
+    });
+    (HZ.aq || []).forEach(function (p, i) {
+      if (p.us_aqi == null) return;
+      var band = aqiBand(p.us_aqi);
+      var m = L.circleMarker([p.lat, p.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: band[2], fillOpacity: 0.85 });
+      m.bindPopup('<div class="pop"><div class="tier">Air quality · model estimate</div><h3>' + esc(p.name) + ": US AQI " + Math.round(p.us_aqi) + "</h3><p class=\"obs\">" + esc(band[1]) +
+        (p.pm2_5 != null ? " · PM2.5 " + p.pm2_5.toFixed(0) + " µg/m³" : "") + (p.pm10 != null ? " · PM10 " + p.pm10.toFixed(0) + " µg/m³" : "") + "</p></div>");
+      sofLayer.addLayer(m); sofM["aq:" + i] = m;
+    });
+    function state(from, err) {
+      return from ? (/^live/.test(from) ? '<span class="badge">LIVE</span> ' : '<span class="badge stale">SNAPSHOT</span> ') + esc(from.replace(/^(live|snapshot) /, "")) +
+        (err ? ' <span class="obs">· live request failed: ' + esc(err) + "</span>" : "") : '<span class="badge stale">NO DATA</span> <span class="obs">' + esc(err || "not fetched yet") + "</span>";
+    }
+    var big = qs.filter(function (q) { return q.mag >= 4.5; }).length;
+    var qh = '<div class="sec"><h2>Earthquakes, magnitude 2.5 and up, last 7 days</h2><p class="obs">' + state(HZ.qFrom, HZ.qErr) + "</p>" +
+      (HZ.q ? '<p class="obs">' + qs.length + " in or near " + esc(C.name) + (qs.length ? ", " + big + " at 4.5 or above" : "") + ". " +
+        (LBY.safety ? "Each one is also a Public safety record, so it shows in Timeline and can raise an alert." : "") + "</p>" : "") +
+      (qs.length ? '<div class="tllist">' + qs.slice(0, 40).map(function (q) {
+        return '<button type="button" class="tlrow" data-sof="q:' + esc(q.id) + '"><span class="tln">M' + q.mag.toFixed(1) + " · " + esc(q.place) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z · depth " + (q.depth != null ? Math.round(q.depth) + " km" : "?") +
+          (q.tsunami ? " · tsunami flag" : "") + (q.alert ? " · PAGER " + esc(q.alert) : "") + "</span></span></button>";
+      }).join("") + "</div>" : "") + "</div>";
+    var ah = '<div class="sec"><h2>Air quality now</h2><p class="obs">' + state(HZ.aqFrom, HZ.aqErr) + "</p>" +
+      (HZ.aq ? '<table class="reg cond"><tr><th>Place</th><th>US AQI</th><th>PM2.5</th><th>PM10</th></tr>' + HZ.aq.map(function (p, i) {
+        var band = p.us_aqi != null ? aqiBand(p.us_aqi) : null;
+        return '<tr data-sof="aq:' + i + '" style="cursor:pointer"><td>' + esc(p.name) + '</td><td class="n">' + (band ? '<b style="color:' + band[2] + '">' + Math.round(p.us_aqi) + "</b> " + esc(band[1]) : "–") +
+          '</td><td class="n">' + (p.pm2_5 != null ? p.pm2_5.toFixed(0) : "–") + '</td><td class="n">' + (p.pm10 != null ? p.pm10.toFixed(0) : "–") + "</td></tr>";
+      }).join("") + "</table>" : "") +
+      '<p class="note" style="margin-top:6px">A model estimate (Copernicus CAMS via Open-Meteo) at the U.S. posts, not a station reading. PM values in µg/m³.</p></div>';
+    var b = C.bounds, cy = (b[0][0] + b[1][0]) / 2, cx = (b[0][1] + b[1][1]) / 2;
+    var nh = '<div class="sec"><h2>Fire and flood from satellites</h2><p class="obs">NASA\'s fire data needs a personal NASA key to load here, so these open the agencies\' own viewers at this area.</p><ul class="note">' +
+      '<li><a href="https://firms.modaps.eosdis.nasa.gov/map/#d:24hrs;@' + cx.toFixed(2) + "," + cy.toFixed(2) + ',6.0z" target="_blank" rel="noopener">NASA FIRMS active fires, last 24 hours</a></li>' +
+      '<li><a href="https://worldview.earthdata.nasa.gov/?v=' + [b[0][1], b[0][0], b[1][1], b[1][0]].join(",") +
+        '&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All,VIIRS_SNPP_CorrectedReflectance_TrueColor" target="_blank" rel="noopener">NASA Worldview satellite imagery with fire detections</a></li>' +
+      '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> Earthquakes are USGS network solutions and can be revised. Air quality is a model estimate. ' +
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + qh + ah + nh;
+    document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
+  }
+  useSnapshotQuakes(); useSnapshotAQ(); addQuakeRecords();
+  setTimeout(function () { pullHazards(); }, 1500);
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("[data-openrec]");
+    if (a) { e.preventDefault(); openRec(a.getAttribute("data-openrec")); }
+  });
+
+  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else showPartners(); }
 
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
@@ -3402,7 +3540,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "USGS · Open-Meteo (Copernicus CAMS) · NASA and GDACS links" }[v]) ||
+      ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
     railT.hidden = v !== "timeline";

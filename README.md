@@ -23,9 +23,9 @@ When the site is hosted (for example on GitHub Pages), ASAP installs as an app:
 
 After the first visit the service worker (`sw.js`) keeps the whole app and all packaged data on the device, so it opens and works offline. When online it always fetches the newest `index.html` and flood snapshot first. Map tiles are cached as you view them (up to 1,500). `tools/split_page.py` regenerates `sw.js` with a new version whenever any packaged file changes, which replaces the old cache.
 
-## Hourly flood data
+## Hourly flood and hazard data
 
-`.github/workflows/refresh-flood.yml` runs `tools/refresh_flood.mjs` every hour. It pulls ThaiWater gauges and rain and commits a new `data/thailand/flood-live-snapshot.js` when the newest gauge reading has changed; on a feed failure it leaves the old snapshot in place and the run shows as failed. Scheduled workflows only run on the default branch, so this starts once the code is on `main`. Run it by hand from the **Actions** tab (**Refresh flood snapshot**, then **Run workflow**).
+`.github/workflows/refresh-flood.yml` runs every hour. `tools/refresh_flood.mjs` pulls ThaiWater gauges and rain into `data/thailand/flood-live-snapshot.js` (only when the newest gauge reading has changed), and `tools/refresh_feeds.mjs` writes USGS earthquakes and air quality into `data/live/`. A feed that fails leaves its old snapshot in place without stopping the others, and the job commits whatever changed. Scheduled workflows only run on the default branch, so this starts once the code is on `main`. Run it by hand from the **Actions** tab (**Refresh live snapshots**, then **Run workflow**).
 
 ## What is live and what is a snapshot
 
@@ -44,6 +44,12 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 - **MGRS**: every located record shows its grid reference (WGS84) in the evidence package: 1 m for exact points, 1 km for approximate places, 10 km for province centres.
 - **Country brief**: the header button opens a one-page brief (advisory, light, posts, hospitals, airports, seaports, recent reporting, exercises) sized to print on A4 or Letter or save as PDF.
 - The research files are in `source/sof/` (schema in `source/sof/SCHEMA.txt`); `python3 tools/embed_sof.py <page.html>` embeds them in a single-file page.
+
+## Live hazards
+
+- **Live hazards** (every area): USGS earthquakes of magnitude 2.5 and up from the last 7 days in or near the area, and model air quality (US AQI, PM2.5, PM10 from Copernicus CAMS via Open-Meteo) at the U.S. posts. Earthquakes also become Public safety records, so they show in Timeline, and the **Strong earthquake** alert fires at magnitude 5.5 by default.
+- The page asks both services directly. When that fails (the claude.ai viewer blocks outside requests), it uses the hourly snapshot in `data/live/`, written by `tools/refresh_feeds.mjs` in the same GitHub Actions job as the flood refresh.
+- NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
 ## Rules for records
 
