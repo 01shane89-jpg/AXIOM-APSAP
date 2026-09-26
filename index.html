@@ -3740,7 +3740,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showSocial() {
     railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the hourly GitHub job once the app is hosted.",
-      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky, Reddit and Telegram. Every post is that account's claim. Reddit items are links to established outlets or government sites; posters' names are never collected.");
+      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky and Telegram. Every post is that account's claim.");
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
@@ -4121,7 +4121,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

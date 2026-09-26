@@ -7,7 +7,7 @@ import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 6000);
+const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 // GDELT uses FIPS country codes for the outlet's country
 const FIPS = { th: "TH", vn: "VM", kh: "CB", la: "LA", mm: "BM", ph: "RP", my: "MY", sg: "SN", id: "ID", bn: "BX", tl: "TT",
@@ -21,7 +21,7 @@ const LANG = { English: "en", Thai: "th", Vietnamese: "vi", Khmer: "km", Lao: "l
 async function get(url, asText) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
-    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (compatible; AXIOM-ASAP news refresh)" } });
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)", accept: "application/rss+xml, application/xml, application/json, text/xml, */*" } });
     if (!r.ok) throw new Error("HTTP " + r.status);
     return asText ? await r.text() : await r.json();
   } finally { clearTimeout(t); }
@@ -33,17 +33,30 @@ const iso = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString
 const status = [], items = {};
 function push(cc, arr) { (items[cc] = items[cc] || []).push(...arr); }
 
-let first = true;
-for (const [cc, f] of Object.entries(FIPS)) {
-  if (!first) await sleep(GDELT_GAP); first = false;   // GDELT asks for no more than one request every five seconds
-  const url = "https://api.gdeltproject.org/api/v2/doc/doc?query=" + encodeURIComponent("sourcecountry:" + f + " " + THEMES) +
-    "&mode=artlist&maxrecords=50&format=json&timespan=24h&sort=datedesc";
-  try {
-    const j = await get(url);
-    const arts = (j.articles || []).filter((a) => a.url && a.title).map((a) => ({ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate),
-      link: a.url, outlet: a.domain || "", lang: LANG[a.language] || (a.language || "").slice(0, 2).toLowerCase(), via: "GDELT" }));
-    push(cc, arts); status.push({ cc, source: "GDELT", ok: true, n: arts.length });
-  } catch (e) { status.push({ cc, source: "GDELT", ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
+// GDELT allows about one request every five seconds per client and rate-limits shared cloud addresses hard, so the
+// areas are asked in a few batches (sourcecountry:A OR sourcecountry:B ...) and results are split by the outlet's country.
+const SCN = { Thailand: "th", Vietnam: "vn", Cambodia: "kh", Laos: "la", Burma: "mm", Myanmar: "mm", Philippines: "ph", Malaysia: "my", Singapore: "sg",
+  Indonesia: "id", Brunei: "bn", "Timor-Leste": "tl", "East Timor": "tl", China: "cn", Taiwan: "tw", "North Korea": "kp", "South Korea": "kr", Japan: "jp",
+  Mongolia: "mn", Australia: "au", "New Zealand": "nz", "Papua New Guinea": "pg", India: "in", Pakistan: "pk", Nepal: "np", Bhutan: "bt", Bangladesh: "bd",
+  "Sri Lanka": "lk", Maldives: "mv" };
+const codes = Object.entries(FIPS), BATCH = 7;
+for (let b = 0; b < codes.length; b += BATCH) {
+  const part = codes.slice(b, b + BATCH);
+  if (b) await sleep(GDELT_GAP);
+  const url = "https://api.gdeltproject.org/api/v2/doc/doc?query=" + encodeURIComponent("(" + part.map((x) => "sourcecountry:" + x[1]).join(" OR ") + ") " + THEMES) +
+    "&mode=artlist&maxrecords=250&format=json&timespan=24h&sort=datedesc";
+  let j = null, error = "";
+  for (let attempt = 0; attempt < 2 && !j; attempt++) {
+    try { j = await get(url); } catch (e) { error = e.name === "AbortError" ? "timed out" : e.message; if (/429/.test(error)) await sleep(GDELT_GAP * 3); }
+  }
+  const n = {};
+  if (j) for (const a of j.articles || []) {
+    const cc = SCN[a.sourcecountry]; if (!cc || !a.url || !a.title || !part.some((x) => x[0] === cc)) continue;
+    push(cc, [{ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate), link: a.url, outlet: a.domain || "",
+      lang: LANG[a.language] || (a.language || "").slice(0, 2).toLowerCase(), via: "GDELT" }]);
+    n[cc] = (n[cc] || 0) + 1;
+  }
+  for (const [cc] of part) status.push(j ? { cc, source: "GDELT", ok: true, n: n[cc] || 0 } : { cc, source: "GDELT", ok: false, error });
 }
 const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
 for (const f of feeds) {

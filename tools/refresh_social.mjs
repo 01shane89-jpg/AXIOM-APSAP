@@ -1,9 +1,7 @@
 // Hourly social-media refresh (run by .github/workflows/refresh-flood.yml, or by hand with Node 18+).
 // Official and established accounts only (tools/social_accounts.json). No accounts, keys or logins are used:
 //   Bluesky  - the public read API.
-//   Reddit   - public subreddit listings (.json). Reddit often blocks cloud servers; if the first listings are refused,
-//              Reddit is marked blocked for this run. Only link posts to allowed outlets or government sites are kept,
-//              and only the article headline and link are stored; posters' names are never read.
+//   (Reddit was tried and dropped: it refuses requests from GitHub's servers.)
 //   Telegram - no secrets: reads each listed channel's public web preview (t.me/s/<channel>).
 // Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js.
 import fs from "node:fs";
@@ -51,31 +49,6 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
       }
       status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: true, n });
     } catch (e) { status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: false, error: err(e) }); }
-  }
-}
-
-// Reddit (public listings, no login)
-{
-  const R = cfg.reddit, allowed = (host) => R.allowed_domains.some((d) => host === d || host.endsWith("." + d)) || R.allowed_suffixes.some((s) => host.endsWith(s));
-  let refused = 0, tried = 0;
-  for (const [cc, sub] of Object.entries(R.subreddits)) {
-    if (tried >= 2 && refused === tried) { status.push({ platform: "Reddit", source: "Reddit", ok: false, error: "blocked: Reddit refused the first listings from this server" }); break; }
-    tried++;
-    try {
-      const j = await req("https://www.reddit.com/r/" + sub + "/new.json?limit=50&raw_json=1");
-      let n = 0;
-      for (const c of (j.data && j.data.children) || []) {
-        const d = c.data || {};
-        if (d.is_self || !d.url || d.over_18 || d.created_utc * 1000 < SINCE) continue;
-        let host = ""; try { host = new URL(d.url).hostname.replace(/^www\./, ""); } catch (e) {}
-        if (!allowed(host)) continue;
-        (items[cc] = items[cc] || []).push({ platform: "Reddit", account: "r/" + sub + " → " + host, kind: "link to " + host, title: String(d.title || "").slice(0, 300), summary: "",
-          date: new Date(d.created_utc * 1000).toISOString().slice(0, 16), link: d.url, lang: "en" });
-        n++;
-      }
-      status.push({ platform: "Reddit", source: "r/" + sub, cc, ok: true, n });
-    } catch (e) { refused++; status.push({ platform: "Reddit", source: "r/" + sub, cc, ok: false, error: err(e) }); }
-    await new Promise((r) => setTimeout(r, 2500));
   }
 }
 

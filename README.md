@@ -69,12 +69,12 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 ## Local news and social media
 
 - **Local news** (every area): headlines from the last 24 hours from the GDELT news index (filtered to security, disaster, protest and political themes) and national outlets' RSS feeds listed in `tools/news_feeds.json`. Headlines are machine-translated to English in the hourly job and shown with the original and the translation service. Each is an unverified report with a link. State-owned outlets are labelled as such. Headlines that name a known place are placed on the map at approximate precision.
-- **Social media** (every area): posts from official and established accounts only (disaster agencies, police, militaries, news desks), listed in `tools/social_accounts.json`. Posts are unverified claims with links, translated like the news. Author names of Reddit posts are never read; only link posts to allowed news or government domains are kept.
+- **Social media** (every area): posts from official and established accounts only (disaster agencies, police, militaries, news desks), listed in `tools/social_accounts.json`. Posts are unverified claims with links, translated like the news.
 - Both come from hourly snapshots (`tools/refresh_news.mjs`, `tools/refresh_social.mjs`) and follow the reporting period.
 
 ### No accounts or keys
 
-Every feed here is free and needs no login. Bluesky uses its public read API; Reddit uses public subreddit listings (Reddit often blocks cloud servers, and the tab then shows it as blocked); translation uses MyMemory's free anonymous service, and headlines past its daily quota are shown in the original and marked untranslated until a later run translates them.
+Every feed here is free and needs no login. Bluesky uses its public read API and Telegram its public channel pages (Reddit was dropped because it refuses GitHub's servers). Translation uses MyMemory's free anonymous service, then Google Translate's free web endpoint (no key, unofficial, so it may be throttled); anything neither translates is shown in the original, marked untranslated, and retried on later runs. GDACS falls back to its RSS feed (no cyclone tracks) and ReliefWeb to its RSS feeds when their APIs refuse GitHub.
 
 **Telegram** needs no account or phone number: the job reads each listed channel's public web page (`t.me/s/<channel>`). Channels that have turned that page off show as failed in the tab. Add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
 

@@ -12,11 +12,19 @@ const AQAPI = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const TIMEOUT = 30000;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 
+async function getText(url) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)" } });
+    if (!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).replace(/\s+/g, " ").slice(0, 160));
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
 async function getJSON(url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
     const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "AXIOM-ASAP hazard refresh" } });
-    if (!r.ok) throw new Error("HTTP " + r.status);
+    if (!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).replace(/\s+/g, " ").slice(0, 160));
     return await r.json();
   } finally { clearTimeout(t); }
 }
@@ -83,8 +91,24 @@ function lines(geo) {
   }
   return out.slice(0, 6).map((l) => l.slice(0, 300));
 }
+// The event-list API has refused requests from GitHub (HTTP 400); the public RSS feed carries the same alerts without tracks.
+const isoOr = (d) => { const t = new Date(d); return isNaN(t) ? d : t.toISOString().slice(0, 19); };
+async function gdacsFromRss() {
+  const xml = await getText("https://www.gdacs.org/xml/rss.xml"), features = [];
+  const tag = (it, t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : ""; };
+  for (const it of xml.split(/<item[\s>]/).slice(1)) {
+    const pt = (tag(it, "georss:point") || "").split(/\s+/).map(Number), lat = pt[0] || +tag(it, "geo:lat"), lon = pt[1] || +tag(it, "geo:long");
+    const isoTags = [...it.matchAll(/<gdacs:iso3>([A-Z]{3})<\/gdacs:iso3>/g)].map((m) => m[1]);
+    features.push({ geometry: { type: "Point", coordinates: [lon, lat] }, properties: { eventtype: tag(it, "gdacs:eventtype"), eventid: tag(it, "gdacs:eventid"),
+      episodeid: tag(it, "gdacs:episodeid"), name: tag(it, "gdacs:eventname") || tag(it, "title"), description: tag(it, "title"), alertlevel: tag(it, "gdacs:alertlevel"),
+      fromdate: isoOr(tag(it, "gdacs:fromdate")), todate: isoOr(tag(it, "gdacs:todate")), iso3: isoTags[0] || "", affectedcountries: isoTags.map((i) => ({ iso3: i })),
+      severitydata: { severitytext: tag(it, "gdacs:severity").replace(/<[^>]+>/g, "") }, url: { report: tag(it, "link").replace(/&amp;/g, "&") }, iscurrent: tag(it, "gdacs:iscurrent") || "true" } });
+  }
+  return { features: features.filter((f) => /^(TC|FL|DR|VO|WF)$/.test(f.properties.eventtype)) };
+}
 try {
-  const g = await getJSON(GDACS);
+  let g, via = GDACS;
+  try { g = await getJSON(GDACS); } catch (e) { console.error("GDACS API failed (" + e.message + "), using RSS"); g = await gdacsFromRss(); via = "https://www.gdacs.org/xml/rss.xml"; }
   const wanted = new Set(Object.values(ISO3));
   const inRegion = (lat, lon) => lat >= -50 && lat <= 56 && lon >= 58 && lon <= 180;
   const events = [];
@@ -102,7 +126,7 @@ try {
     }
     events.push(ev);
   }
-  write("data/live/gdacs.js", "ASAP_GDACS", { asof: stamp, src: GDACS, events });
+  write("data/live/gdacs.js", "ASAP_GDACS", { asof: stamp, src: via, events });
   console.log("gdacs events", events.length); ok++;
 } catch (e) { console.error("GDACS failed:", e.message); }
 
@@ -114,13 +138,32 @@ try {
     filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
       { field: "date.created", value: { from: new Date(Date.now() - 90 * 864e5).toISOString() } }] },
     fields: { include: ["title", "date.created", "primary_country.iso3", "source.shortname", "source.name", "url_alias", "url", "format.name", "disaster_type.name"] } };
+  let j = null, fails = [];
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
-  let j;
   try {
-    const r = await fetch(RW, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json", "user-agent": "AXIOM-ASAP hazard refresh" }, body: JSON.stringify(body) });
-    if (!r.ok) throw new Error("HTTP " + r.status);
+    const r = await fetch(RW, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)" }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).replace(/\s+/g, " ").slice(0, 200));
     j = await r.json();
-  } finally { clearTimeout(t); }
+  } catch (e) { fails.push("API: " + e.message); } finally { clearTimeout(t); }
+  if (!j) { // ReliefWeb now asks API users to register an appname; its public RSS needs nothing
+    const data = [];
+    for (const [cc, i3] of Object.entries(ISO3)) {
+      if (cc === "oki") continue;
+      try {
+        const xml = await getText("https://reliefweb.int/updates/rss.xml?search=" + encodeURIComponent("primary_country.iso3:" + i3.toLowerCase()));
+        for (const it of xml.split(/<item[\s>]/).slice(1, 41)) {
+          const tg = (x) => { const m = it.match(new RegExp("<" + x + "[^>]*>([\\s\\S]*?)</" + x + ">")); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : ""; };
+          const d = new Date(tg("pubDate")); if (isNaN(d) || Date.now() - d > 90 * 864e5) continue;
+          data.push({ fields: { title: tg("title"), date: { created: d.toISOString() }, primary_country: { iso3: i3.toLowerCase() }, source: [{ shortname: tg("source") || tg("dc:creator") }],
+            url_alias: tg("link"), format: [{ name: tg("category") }] } });
+        }
+      } catch (e) { fails.push(cc + " RSS: " + e.message); if (fails.length > 4 && !data.length) break; }
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    if (!data.length) throw new Error(fails.slice(0, 3).join("; "));
+    j = { data };
+    console.error("ReliefWeb API failed, used RSS:", fails[0]);
+  }
   const reports = {};
   for (const d of j.data || []) {
     const f = d.fields || {}, pc = ((f.primary_country || {}).iso3 || "").toUpperCase();
