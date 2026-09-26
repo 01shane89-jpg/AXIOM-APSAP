@@ -1,7 +1,7 @@
 {
-  "name": "AXIOM ASAP",
-  "short_name": "ASAP",
-  "description": "Asia Pacific Situational Awareness Platform: one map, timeline and alert set for 28 areas, from public sources.",
+  "name": "AXIOM OSAP",
+  "short_name": "OSAP",
+  "description": "Open Source Awareness Platform: one map, timeline and alert set from public sources.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
