@@ -1,13 +1,14 @@
 name: Refresh live snapshots
 
-# Hourly: pull ThaiWater gauges and rain, USGS earthquakes, Open-Meteo air quality, GDACS alerts,
+# Every 15 minutes: pull ThaiWater gauges and rain, USGS earthquakes, Open-Meteo air quality, GDACS alerts,
 # ReliefWeb reports, official weather warnings, local news and official social media accounts
 # (non-English text translated to English), and commit
-# the new snapshots, so the hosted app shows data at most about an hour old even where the browser
+# the new snapshots, so the hosted app shows data at most about 15 minutes old (plus the sources' own delay) even where the browser
 # cannot reach those services. One feed failing does not stop the others.
 on:
   schedule:
-    - cron: "23 * * * *"
+    # Off the hour and quarter-hour, when GitHub delays scheduled runs most. Free while the repository is public.
+    - cron: "8,23,38,53 * * * *"
   workflow_dispatch:
     inputs:
       only:
