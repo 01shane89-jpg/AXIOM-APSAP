@@ -321,6 +321,13 @@ select.mini{
 .chip.k{color:var(--ink)}
 /* ---------- AXIOM TSAP additions ---------- */
 header .ctabs{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;row-gap:4px}
+header .ctoggle{order:9;flex:0 1 auto;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12.5px;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;max-width:100%}
+header .ctoggle b{color:var(--ink);font-weight:700}
+header .ctoggle .chev{transition:transform .15s}
+header .ctoggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+header .ctoggle + .ctabs{order:9}
+header .ctoggle[aria-expanded="false"] + .ctabs{display:none}
+html.phone header .ctoggle{display:none!important}
 @media (max-width:700px){header .ctabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
 .ctabs button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;white-space:nowrap;flex:none}
 .ctabs button:hover{color:var(--ink)}
@@ -2490,6 +2497,17 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     return head + '<button type="button" data-cc="' + c.id + '"' + (c.id === CC ? ' aria-current="true"' : "") + ">" + esc(c.name) +
       (c.id === CC || c.id === "th" ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
   }).join("");
+  /* the country row folds into one bar naming the current country and its region; opening it is remembered in this browser,
+     and picking a country folds it again */
+  var cme = COUNTRIES.filter(function (c) { return c.id === CC; })[0] || {}, ctog = document.createElement("button");
+  ctog.type = "button"; ctog.className = "ctoggle"; ctog.setAttribute("aria-controls", "country-seg");
+  ctog.innerHTML = 'Country <b>' + esc(cme.name || CC) + "</b>" + (cme.region ? ' · ' + esc(cme.region) : "") + ' <span class="chev" aria-hidden="true">&#9662;</span>';
+  var cOpen = false; try { cOpen = localStorage.getItem("asap-countries-open") === "1"; } catch (e) {}
+  function setCOpen(o) { cOpen = o; ctog.setAttribute("aria-expanded", o ? "true" : "false"); ctog.title = o ? "Hide the country list" : "Show every country, by region";
+    try { localStorage.setItem("asap-countries-open", o ? "1" : "0"); } catch (e) {} window.dispatchEvent(new Event("resize")); }
+  cseg.parentNode.insertBefore(ctog, cseg); setCOpen(cOpen);
+  ctog.addEventListener("click", function () { setCOpen(!cOpen); });
+  cseg.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("button[data-cc]")) { try { localStorage.setItem("asap-countries-open", "0"); } catch (x) {} } }, true);
   cseg.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || b.getAttribute("data-cc") === CC) return;
@@ -4550,6 +4568,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <style>
 /* ---------- phone layout (up to 700 px wide): full-screen map, the side panel as a bottom sheet (bar, half, full), pickers as menus ---------- */
 #phone-nav{display:none}
+#rail-handle{display:none}
 @media (max-width:700px){
   html.phone,html.phone body{height:100%;overflow:hidden}
   html.phone header{gap:6px;row-gap:6px;padding:8px 10px}
