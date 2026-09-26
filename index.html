@@ -2656,8 +2656,26 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function mgrsFor(r) { return window.MGRS_OF(r.lat, r.lon, r.prec === "exact" ? 5 : r.prec === "province" ? 2 : 3); }
   var PREC = { exact: "Point given by the source or mapped exactly", approx: "Approximate, placed from the described location",
                province: "Province centroid; the bulletin names the province only", none: "No location" };
+  /* on a phone, a tap on a map point opens a small info box beside it; "Full details" opens the whole package as a sheet */
+  var fullNext = false;
+  function quickCard(r, mk, boxId) {
+    var st = STATE[r.type];
+    L.popup({ maxWidth: 280, autoPanPaddingTopLeft: [10, 50], className: "qpop" }).setLatLng(mk.getLatLng()).setContent(
+      '<div class="pop qcard"><div class="tier">' + esc(LBY[r.layer].name + " · " + r.type + " · " + st[0]) + "</div><h3>" + esc(r.title.length > 160 ? r.title.slice(0, 157) + "…" : r.title) + "</h3>" +
+      '<p class="obs">' + esc([fmtTs(r), [r.place, r.prov].filter(Boolean).join(", "), r.src.name].filter(Boolean).join(" · ")) + "</p>" +
+      '<button type="button" class="full" data-full="' + esc(r.id) + '" data-box="' + esc(boxId || "") + '">Full details</button></div>').openOn(map);
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-full]"); if (!b) return;
+    map.closePopup(); fullNext = true; select(b.getAttribute("data-full"), false, b.getAttribute("data-box") || undefined);
+  });
   function select(id, fly, boxId) {
     var r = byId[id]; if (!r) return;
+    if (fly === false && !fullNext && window.ASAP_PHONE && window.ASAP_PHONE.on()) {
+      var qm = boxId === "cl-pkg" ? CM[id] : markers[id];
+      if (qm) { quickCard(r, qm, boxId); return; }
+    }
+    fullNext = false;
     var st = STATE[r.type], s = r.src;
     var rel = related(r);
     var box = document.getElementById(boxId || "tl-pkg");
@@ -2716,9 +2734,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
     document.querySelector(".rail").scrollTop = 0;
-    /* on a phone the rail sits below the map, so a tapped record's package opened off screen and the tap looked like it did nothing */
-    var rb = box.getBoundingClientRect();
-    if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    /* on a phone the package opens as a sheet over the page; on a tablet the rail sits below the map, so it is scrolled into view */
+    if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) {
+      var rb = box.getBoundingClientRect();
+      if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
     var inCur = boxId === "cl-pkg", m = inCur ? CM[id] : markers[id];
     if (m) {
       if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
@@ -4521,6 +4541,127 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }, true);
 })();
 </script>
+<style>
+/* ---------- phone layout (up to 700 px wide): map on top, the side panel as a pull-up sheet, pickers as menus ---------- */
+#phone-nav{display:none}
+@media (max-width:700px){
+  html.phone,html.phone body{height:100%;overflow:hidden}
+  html.phone header{gap:6px;row-gap:6px;padding:8px 10px}
+  html.phone header .ctabs,html.phone header .viewtabs,html.phone #hdr-src{display:none!important}
+  html.phone #phone-nav{display:flex;order:9;flex:1 1 100%;gap:6px;min-width:0;max-width:100%}
+  html.phone #phone-nav select{flex:1 1 0;width:0;min-width:0;min-height:40px;font:inherit;font-size:15px;font-weight:600;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+  html.phone #phone-nav label{position:absolute;left:-9999px}
+  html.phone #hdr-title{font-size:17px}
+  html.phone #period-seg .plbl{display:none}
+  html.phone #period-seg,html.phone #theme-seg{margin-left:0!important}
+  html.phone #period-seg button,html.phone #theme-seg button,html.phone #brief-btn{min-height:32px}
+  html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--map-under,42svh))!important;min-height:0}
+  html.phone .shell{display:block}
+  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,42svh);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
+    border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding-inline:14px;transition:height .2s ease}
+  html.phone .rail .tlrow{min-height:44px;padding-block:8px}
+  html.phone .rail .tln{font-size:14px;line-height:1.35}
+  html.phone .rail .obs,html.phone .rail .note,html.phone .rail .tls{font-size:12.5px}
+  html.phone .rail button.refresh,html.phone .rail select{min-height:36px}
+  html.phone[data-sheet="peek"]{--sheet-h:42svh;--map-under:42svh}
+  html.phone[data-sheet="min"]{--sheet-h:58px;--map-under:58px}
+  html.phone[data-sheet="full"]{--sheet-h:calc(100svh - var(--hdr-h,120px));--map-under:42svh}
+  #rail-handle{display:none}
+  html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;gap:8px;margin:0 -14px;padding:6px 14px 8px;background:var(--surface);border-bottom:1px solid var(--line-soft)}
+  html.phone #rail-handle .grab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:0;cursor:pointer;min-height:40px;justify-content:center}
+  html.phone #rail-handle .grab i{display:block;width:40px;height:5px;border-radius:3px;background:var(--line)}
+  html.phone #rail-handle .hide{background:none;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12.5px;color:var(--muted);padding:6px 10px;min-height:36px}
+  html.phone .leaflet-popup-content{max-width:calc(100vw - 90px)!important;font-size:14px}
+  html.phone .leaflet-container a.leaflet-popup-close-button{width:36px;height:36px;font-size:22px;line-height:36px}
+  html.phone .pkgsheet{position:fixed!important;left:0;right:0;bottom:0;max-height:82svh;overflow-y:auto;overscroll-behavior:contain;z-index:3001;background:var(--surface);
+    border-radius:14px 14px 0 0;padding:0 16px 28px;box-shadow:0 -6px 24px rgba(0,0,0,.35);font-size:14px}
+  html.phone .pkgsheet .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;z-index:2}
+  html.phone .pkgsheet .pkghead .x{font-size:28px;min-width:44px;min-height:44px}
+  #pkg-back{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:3000}
+  .qcard h3{font-size:15px;margin:4px 0 6px;line-height:1.3}
+  .qcard .full{display:block;width:100%;margin-top:8px;min-height:40px;font:inherit;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff}
+}
+</style>
+<script>
+/* Phone layout. Tapping something on the map opens a small info box right beside it (a map popup, closed by tapping
+   elsewhere or its ×); "Full details" opens the evidence package as a sheet over the page, closed by tapping outside it or
+   its ×. The side panel becomes a pull-up sheet under the map, and the country and tab pickers become two menus. */
+(function () {
+  var mq = window.matchMedia("(max-width: 700px)"), root = document.documentElement;
+  var map = window.__asapMap, rail = document.querySelector(".rail");
+  if (!map || !rail) return;
+  function on() { return mq.matches; }
+  function apply() {
+    root.classList.toggle("phone", on());
+    if (on() && !root.getAttribute("data-sheet")) root.setAttribute("data-sheet", "peek");
+    window.dispatchEvent(new Event("resize"));
+    setTimeout(function () { map.invalidateSize(); }, 250);
+  }
+  /* menus in place of the country and tab rows */
+  var nav = document.createElement("div"); nav.id = "phone-nav";
+  var cs = document.createElement("select"), vs = document.createElement("select");
+  cs.id = "ph-country"; vs.id = "ph-view"; cs.setAttribute("aria-label", "Country"); vs.setAttribute("aria-label", "Tab");
+  var grp = null;
+  Array.prototype.forEach.call(document.querySelectorAll("#country-seg > *"), function (el) {
+    if (el.classList.contains("creg")) { grp = document.createElement("optgroup"); grp.label = el.textContent; cs.appendChild(grp); return; }
+    var o = document.createElement("option"); o.value = el.getAttribute("data-cc"); o.textContent = el.childNodes[0].textContent;
+    if (el.getAttribute("aria-current") === "true") o.selected = true;
+    (grp || cs).appendChild(o);
+  });
+  function views() {
+    vs.innerHTML = "";
+    Array.prototype.forEach.call(document.querySelectorAll("#view-seg button[data-view]"), function (b) {
+      var o = document.createElement("option"); o.value = b.getAttribute("data-view"); o.textContent = b.textContent.replace(/\s+/g, " ").trim();
+      if (b.getAttribute("aria-selected") === "true") o.selected = true;
+      vs.appendChild(o);
+    });
+  }
+  views();
+  cs.addEventListener("change", function () { var b = document.querySelector('#country-seg button[data-cc="' + cs.value + '"]'); if (b) b.click(); });
+  vs.addEventListener("change", function () { var b = document.querySelector('#view-seg button[data-view="' + vs.value + '"]'); if (b) b.click(); if (root.getAttribute("data-sheet") === "min") root.setAttribute("data-sheet", "peek"); });
+  new MutationObserver(function () { var b = document.querySelector('#view-seg button[aria-selected="true"]'); if (b && vs.value !== b.getAttribute("data-view")) vs.value = b.getAttribute("data-view"); })
+    .observe(document.getElementById("view-seg"), { attributes: true, subtree: true, attributeFilter: ["aria-selected"] });
+  nav.appendChild(cs); nav.appendChild(vs);
+  var vt = document.getElementById("view-seg"); vt.parentNode.insertBefore(nav, vt.nextSibling);
+  /* the pull-up sheet's handle */
+  var h = document.createElement("div"); h.id = "rail-handle";
+  h.innerHTML = '<button type="button" class="grab" aria-label="Show more or less of the panel"><i></i><span></span></button><button type="button" class="hide">Map only</button>';
+  rail.insertBefore(h, rail.firstChild);
+  function label() {
+    var s = root.getAttribute("data-sheet");
+    h.querySelector(".grab span").textContent = s === "full" ? "Show the map" : s === "min" ? "Show the panel" : "Pull up for more";
+    h.querySelector(".hide").hidden = s === "min";
+  }
+  function setSheet(s) { root.setAttribute("data-sheet", s); label(); window.dispatchEvent(new Event("resize")); setTimeout(function () { map.invalidateSize(); }, 230); }
+  h.querySelector(".grab").addEventListener("click", function () { var s = root.getAttribute("data-sheet"); setSheet(s === "full" ? "peek" : s === "min" ? "peek" : "full"); });
+  h.querySelector(".hide").addEventListener("click", function () { setSheet("min"); });
+  /* a list row that points at something on the map brings the map back into view first */
+  rail.addEventListener("click", function (e) {
+    if (!on() || root.getAttribute("data-sheet") !== "full") return;
+    if (e.target.closest && e.target.closest("[data-sof], tr[data-asset], tr[data-id]")) setSheet("peek");
+  }, true);
+  /* full details as a sheet with a backdrop */
+  var back = document.createElement("div"); back.id = "pkg-back"; back.hidden = true; document.body.appendChild(back);
+  var open = null;
+  function close() { if (open) { open.hidden = true; open.classList.remove("pkgsheet"); open = null; } back.hidden = true; }
+  back.addEventListener("click", close);
+  window.ASAP_PHONE = {
+    on: on,
+    sheet: function (box) {
+      if (!on()) return false;
+      if (open && open !== box) open.classList.remove("pkgsheet");
+      open = box; box.classList.add("pkgsheet"); box.scrollTop = 0; back.hidden = false;
+      var x = box.querySelector(".pkghead .x"); if (x) x.addEventListener("click", close);
+      return true;
+    },
+    close: close
+  };
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+  mq.addEventListener ? mq.addEventListener("change", function () { if (!on()) close(); apply(); }) : mq.addListener(apply);
+  apply(); label();
+})();
+</script>
+
 
 
 
