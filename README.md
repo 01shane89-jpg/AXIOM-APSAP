@@ -24,9 +24,9 @@ When the site is hosted (for example on GitHub Pages), ASAP installs as an app:
 
 After the first visit the service worker (`sw.js`) keeps the whole app and all packaged data on the device, so it opens and works offline. When online it always fetches the newest `index.html` and flood snapshot first. Map tiles are cached as you view them (up to 1,500). `tools/split_page.py` regenerates `sw.js` with a new version whenever any packaged file changes, which replaces the old cache.
 
-## Hourly flood and hazard data
+## Flood and hazard data every 15 minutes
 
-`.github/workflows/refresh-flood.yml` runs every hour. `tools/refresh_flood.mjs` pulls ThaiWater gauges and rain into `data/thailand/flood-live-snapshot.js` (only when the newest gauge reading has changed), and `tools/refresh_feeds.mjs` writes USGS earthquakes and air quality into `data/live/`. A feed that fails leaves its old snapshot in place without stopping the others, and the job commits whatever changed. Scheduled workflows only run on the default branch, so this starts once the code is on `main`. Run it by hand from the **Actions** tab (**Refresh live snapshots**, then **Run workflow**).
+`.github/workflows/refresh-flood.yml` runs every 15 minutes (at 8, 23, 38 and 53 past the hour; Actions minutes are free while the repository is public). `tools/refresh_flood.mjs` pulls ThaiWater gauges and rain into `data/thailand/flood-live-snapshot.js` (only when the newest gauge reading has changed), and `tools/refresh_feeds.mjs` writes USGS earthquakes and air quality into `data/live/`. A feed that fails leaves its old snapshot in place without stopping the others, and the job commits whatever changed. Scheduled workflows only run on the default branch, so this starts once the code is on `main`. Run it by hand from the **Actions** tab (**Refresh live snapshots**, then **Run workflow**).
 
 ## What is live and what is a snapshot
 
@@ -49,16 +49,16 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 ## Live hazards
 
 - **Live hazards** (every area): USGS earthquakes of magnitude 2.5 and up from the last 7 days in or near the area, and model air quality (US AQI, PM2.5, PM10 from Copernicus CAMS via Open-Meteo) at the U.S. posts. Earthquakes also become Public safety records, so they show in Timeline, and the **Strong earthquake** alert fires at magnitude 5.5 by default.
-- The page asks both services directly. When that fails (the claude.ai viewer blocks outside requests), it uses the hourly snapshot in `data/live/`, written by `tools/refresh_feeds.mjs` in the same GitHub Actions job as the flood refresh.
+- The page asks both services directly. When that fails (the claude.ai viewer blocks outside requests), it uses the latest snapshot in `data/live/`, written by `tools/refresh_feeds.mjs` in the same GitHub Actions job as the flood refresh.
 - **Disaster alerts (GDACS)**: current cyclone, flood, drought, volcano and wildfire alerts affecting the area, with cyclone tracks. They also become Weather, Flood or Public safety records (as claims: GDACS alert levels are modelled impact estimates), and the **GDACS orange or red disaster alert** rule fires on them.
-- **Tropical cyclones** (Weather and Live hazards tabs, every area): each active storm's current position and forecast track from JMA (RSMC Tokyo, with its 70% probability circles joined into a cone by JMA's own tangent lines) and JTWC's warning text, plus GDACS's past track. Agencies' tracks are drawn side by side and never merged; each is labelled with its agency and issue time. The page works out each track's closest approach to the area's reference places and says so; a "Tropical cyclone forecast to pass near" alert rule (default 300 km) uses it. Written hourly by `tools/refresh_storms.mjs` to `data/live/storms.js`.
+- **Tropical cyclones** (Weather and Live hazards tabs, every area): each active storm's current position and forecast track from JMA (RSMC Tokyo, with its 70% probability circles joined into a cone by JMA's own tangent lines) and JTWC's warning text, plus GDACS's past track. Agencies' tracks are drawn side by side and never merged; each is labelled with its agency and issue time. The page works out each track's closest approach to the area's reference places and says so; a "Tropical cyclone forecast to pass near" alert rule (default 300 km) uses it. Written every 15 minutes by `tools/refresh_storms.mjs` to `data/live/storms.js`.
 - **Weather forecast, next 7 days** (Weather and Live hazards tabs): Open-Meteo daily forecast (model output, not an official forecast) at the same places as the air-quality points, in `data/live/wx-forecast.js`. Official warnings are shown above it.
 - **Humanitarian reports (ReliefWeb)**: turned off. Since September 2026 its API needs an approved appname (a registration) and its RSS feed returns an empty challenge page to GitHub's servers.
 - **Official weather warnings**: agency RSS, Atom or CAP feeds listed in `tools/warning_feeds.json` (JMA, Bureau of Meteorology, MetService, NDMA SACHET so far; BMKG refuses GitHub's servers and was dropped). Each run records whether every feed worked, and the tab shows failed feeds. Warnings become Weather records (claims). Non-English text is machine-translated to English in the job (`tools/translate.mjs`) and the original is kept in the evidence package, labelled with the translation service. It uses MyMemory's free anonymous service (no key); text past its small daily quota is marked untranslated.
-- GDACS, ReliefWeb and warnings come only from the hourly snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
+- GDACS, ReliefWeb and warnings come only from the snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
 - NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
-## More free sources (hourly, no keys)
+## More free sources (every 15 minutes, no keys)
 
 `tools/refresh_more.mjs` writes one snapshot per source to `data/live/`. A source that fails keeps its last snapshot, and the tab shows its age.
 
@@ -70,10 +70,10 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 
 ## Local news and social media
 
-- **Local news** (every area): headlines from national outlets' RSS feeds listed in `tools/news_feeds.json`. The GDELT news index is off by default (`GDELT=1` turns it on) because it refused or dropped every request from GitHub's servers; Khmer Times, The Irrawaddy, Borneo Bulletin and Kuensel were dropped for the same reason (Khmer Times and The Irrawaddy still come in through their public Telegram channels). Headlines are machine-translated to English in the hourly job and shown with the original and the translation service. Each is an unverified report with a link. State-owned outlets are labelled as such. Headlines that name a known place are placed on the map at approximate precision.
+- **Local news** (every area): headlines from national outlets' RSS feeds listed in `tools/news_feeds.json`. The GDELT news index is off by default (`GDELT=1` turns it on) because it refused or dropped every request from GitHub's servers; Khmer Times, The Irrawaddy, Borneo Bulletin and Kuensel were dropped for the same reason (Khmer Times and The Irrawaddy still come in through their public Telegram channels). Headlines are machine-translated to English in the refresh job and shown with the original and the translation service. Each is an unverified report with a link. State-owned outlets are labelled as such. Headlines that name a known place are placed on the map at approximate precision.
 - **Top stories** (Local news tab): each hour's headlines are scored by fixed rules shown on every story: +3 for a headline matching a layer topic (security, disaster, crime, scams, infrastructure, health, politics and unrest) and +1 per further topic, +1 if only the summary matches, +2 if it names the area or a known place in it, +2 per other outlet or official account carrying the same story (up to 3), +1 for a state outlet, +1 if published in the last 12 hours. Sport, entertainment and advertising headlines without a topic are left out. Stories at 5 points or more are listed, one line per story; "Show all" opens every headline.
 - **Social media** (every area): posts from official and established accounts only (disaster agencies, police, militaries, news desks), listed in `tools/social_accounts.json`. Posts are unverified claims with links, translated like the news.
-- Both come from hourly snapshots (`tools/refresh_news.mjs`, `tools/refresh_social.mjs`) and follow the reporting period.
+- Both come from the 15-minute snapshots (`tools/refresh_news.mjs`, `tools/refresh_social.mjs`) and follow the reporting period.
 
 ### No accounts or keys
 
