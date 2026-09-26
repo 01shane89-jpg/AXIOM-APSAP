@@ -1,0 +1,91 @@
+AXIOM ASAP - crisis response and partner engagement reference data (schema "apsap-sof/1")
+Written by the SOF research thread, 2026-09-26. Public sources only. Source text was treated as data.
+
+One file per country tab: /mnt/project-files/apsap/sof/<cc>.json
+cc values (28): th kh la mm vn my sg id ph bn tl cn tw jp oki kr kp mn au nz pg in pk bd lk np bt mv
+  jp  = Japan excluding Okinawa Prefecture; oki = Okinawa Prefecture (JP-47) only.
+  cn  = mainland China plus Hong Kong SAR and Macau SAR (items carry "region").
+Also: exercises-outside.json = 2026 exercises hosted outside these 28 (e.g. RIMPAC off Hawaii) that involve them.
+
+Top-level object:
+{
+  "schema": "apsap-sof/1",
+  "cc": "th",
+  "country": "Thailand",
+  "asof": "2026-09-26",                  date the data was gathered
+  "advisory":  { ... }                   U.S. State Dept travel advisory (object, see below)
+  "posts":     [ ... ]                   U.S. diplomatic posts, or covering post / protecting power
+  "airports":  [ ... ]                   main airports with longest runway
+  "seaports":  [ ... ]                   main commercial / naval seaports
+  "hospitals": [ ... ]                   major emergency / referral hospitals
+  "exercises": [ ... ]                   publicly announced 2026 military exercises
+  "gaps":      [ "text", ... ]           what is missing or uncertain
+}
+
+Every point item (posts, airports, seaports, hospitals, exercises) has:
+  "id"          stable id "sof:<cc>:<kind>:<slug>" (dedupe key)
+  "lat","lon"   WGS84 decimal degrees (null only if genuinely unknown)
+  "prec"        "exact" (surveyed / published point) or "approx" (city, district, arc-minute or estimated)
+  "coord_basis" where the coordinate came from (e.g. "OurAirports", "Wikipedia article coordinates",
+                "UN/LOCODE arc-minute", "estimated from published address; verify")
+  "src"         URL of the page or dataset record that supports the item
+  "srcname"     publisher name
+  "fp"          SHA-256 hex of the item's canonical JSON (sorted keys, no spaces) with "fp" removed
+
+advisory:
+  "level" 1-4, "level_text" ("Exercise normal precautions" | "Exercise increased caution" |
+  "Reconsider travel" | "Do not travel"), "issued" YYYY-MM-DD (date on the advisory page),
+  "updated" YYYY-MM-DD or null, "indicators" list of State Dept letters, "indicator_names" list,
+  "areas" [{ "area", "level", "reason" }] area-specific higher (or noted) levels,
+  "notes", "src", "srcname", "fp".
+  Letters: C crime, T terrorism, U civil unrest, H health, N natural disaster, E time-limited event,
+  K kidnapping or hostage taking, D wrongful detention, O other.
+  NOTE: the travel.state.gov index table showed stale dates for several countries; the values here
+  come from each country's own advisory page, fetched 2026-09-26.
+
+posts:
+  "name", "kind" (embassy | consulate_general | consulate | consular_agency | ait_office |
+  covering_post | protecting_power), "city", "address" (as published), "services_note".
+  No phone numbers are recorded anywhere in this dataset.
+
+airports (from OurAirports open data, github.com/davidmegginson/ourairports-data, fetched 2026-09-26):
+  "name", "icao" (null if none), "ident" (OurAirports ident; equals ICAO when one exists),
+  "iata", "type" (large_airport | medium_airport; includes some military air bases),
+  "municipality", "region" (ISO 3166-2), "scheduled_service" bool, "elevation_ft",
+  "longest_runway" { "ident" e.g. "03L/21R", "length_ft", "length_m", "width_ft", "surface" },
+  "runway_count" (open runways listed). Selection: capital / main hubs first, then other large
+  airports by longest runway, topped up with medium airports for small countries. OurAirports is
+  crowd-maintained; check the national AIP before operational use.
+
+seaports:
+  "name", "unlocode" (e.g. "TH LCH"), "locode_function" (UN/LOCODE function code; "1" in first
+  position = port), "coord_flag" (set when sources disagree or the LOCODE entry lacks the port flag).
+  Selection of "main" ports is the researcher's judgment (largest commercial ports plus notable
+  naval / logistics harbours), not an official ranking. Coordinates are arc-minute (about 1.8 km).
+
+hospitals:
+  "name", "city", "address" (as published), "emergency_24h" true/false/null as stated by a source,
+  "type" (public | private | military | null), "trauma_level" (only if a source states a formal
+  designation, else null), "notes" (e.g. "listed by U.S. Embassy").
+
+exercises:
+  "name", "iteration", "start","end" YYYY-MM-DD or null, "dates_text" (source wording),
+  "status" as of asof (completed | ongoing | scheduled | announced), "type", "location",
+  "participants" [..], "us_participation" true/false/null, "scale" (text as stated), "also_cc"
+  [other tabs involved], "summary" (researcher's words, attributing claims), "src_date".
+  Includes PLA / non-partner exercises where publicly announced, typed accordingly, because they
+  matter to situational awareness.
+
+Doctrine notes for the page: all items are reference data or source claims, not verified facts.
+Advisory levels are U.S. government claims with their issue date. Exercise dates are as announced
+and can change. Nothing here names private individuals.
+
+Source caveats (2026-09-26 run):
+- Every *.usembassy.gov page returned HTTP 403 to the research tools, so embassy medical-provider
+  lists were NOT used. Post addresses come from travel.state.gov country pages (China: the embassy
+  home page). Hospitals come mostly from English Wikipedia, hospital sites, JNTO / Korea Tourism
+  prefectural lists and ministry pages: treat them as lower-confidence reference data.
+- Roughly half of post and hospital coordinates are "approx" (estimated from published address).
+- trauma_level is set only where a source used that wording (e.g. Hong Kong designated trauma
+  centres, Australian/NZ major trauma centres); Wikipedia-only claims were moved to notes.
+- Exercise records marked "announced" may not have happened; several have null dates.
