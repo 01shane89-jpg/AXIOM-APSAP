@@ -122,6 +122,14 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
+.bpage.breport{margin-top:14px}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
+.breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
+.breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
+.breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
+.breport sup a{color:#335;text-decoration:none}.breport ol.rsrc{margin:2px 0 0 16px;padding:0;font-size:.9em;color:#444;column-count:2;column-gap:14px}.breport ol.rsrc li{overflow-wrap:anywhere;break-inside:avoid}.breport ol.rsrc a{color:inherit}
+.breport ul{margin:2px 0 2px 16px;padding:0}
+@media (max-width:640px){.breport .rgrid{grid-template-columns:1fr}.breport ol.rsrc{column-count:1}}
+@media print{html.briefing .breport{break-before:page;page-break-before:always;margin-top:0;font-size:8.6px;line-height:1.28}html.briefing .breport .rdraft{padding:2px 5px}html.briefing .breport h3{margin:4px 0 1px}html.briefing .breport td{padding:1px 3px}html.briefing .breport ol.rsrc{font-size:7.4px;line-height:1.2;column-count:3}html.briefing .breport header h2{font-size:16px}}
 .bpage a.bl{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}.bpage a.bl:hover{color:#12324a;border-bottom-style:solid}.bpage h3 a.bl{color:#12324a}
 .bpage .po{display:none}.bpage sup.po{font-size:.75em;color:#555;margin-left:1px}.bpage .bsrcs{margin-top:4px;font-size:8px;line-height:1.25;color:#444;column-count:2;column-gap:12px;overflow-wrap:anywhere}.bpage .bsrcs b{font-weight:600}
 @media print{.bpage sup.po{display:inline}.bpage div.po{display:block}.bpage a.bl{border-bottom:0}}
@@ -396,6 +404,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   <div class="pseg" id="period-seg" role="group" aria-label="Reporting period" style="margin-left:auto"><span class="plbl">Period</span><button type="button" data-p="7">7 d</button><button type="button" data-p="30">30 d</button><button type="button" data-p="90">90 d</button><button type="button" data-p="all">All</button><button type="button" data-p="custom">Custom</button><span id="period-custom" hidden><input type="date" id="period-from" aria-label="Period from" class="mini"> to <input type="date" id="period-to" aria-label="Period to" class="mini"></span></div>
   <button type="button" class="refresh" id="credits-btn" title="Where the data comes from, and the credits each source asks for">Credits</button>
   <button type="button" class="refresh" id="brief-btn" title="One-page country brief to print or save as PDF">Country brief</button>
+  <button type="button" class="refresh" id="report-btn" title="PMESII summary and threat assessment for this country (AI draft)">Country report</button>
   <div class="seg" id="theme-seg" role="group" aria-label="Map theme">
     <button type="button" data-theme-set="light" aria-pressed="true">Light</button>
     <button type="button" data-theme-set="grey" aria-pressed="false">Grey</button>
@@ -2173,6 +2182,34 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/sof/tl.js"></script>
 <script src="data/sof/tw.js"></script>
 <script src="data/sof/vn.js"></script>
+<script src="data/brief/au.js"></script>
+<script src="data/brief/bd.js"></script>
+<script src="data/brief/bn.js"></script>
+<script src="data/brief/bt.js"></script>
+<script src="data/brief/cn.js"></script>
+<script src="data/brief/id.js"></script>
+<script src="data/brief/in.js"></script>
+<script src="data/brief/jp.js"></script>
+<script src="data/brief/kh.js"></script>
+<script src="data/brief/kp.js"></script>
+<script src="data/brief/kr.js"></script>
+<script src="data/brief/la.js"></script>
+<script src="data/brief/lk.js"></script>
+<script src="data/brief/mm.js"></script>
+<script src="data/brief/mn.js"></script>
+<script src="data/brief/mv.js"></script>
+<script src="data/brief/my.js"></script>
+<script src="data/brief/np.js"></script>
+<script src="data/brief/nz.js"></script>
+<script src="data/brief/oki.js"></script>
+<script src="data/brief/pg.js"></script>
+<script src="data/brief/ph.js"></script>
+<script src="data/brief/pk.js"></script>
+<script src="data/brief/sg.js"></script>
+<script src="data/brief/th.js"></script>
+<script src="data/brief/tl.js"></script>
+<script src="data/brief/tw.js"></script>
+<script src="data/brief/vn.js"></script>
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
@@ -3543,7 +3580,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ex = list("Partner exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + bl(x.src, esc(exName(x))) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
     }
     return '<div class="bbar noprint"><button type="button" class="refresh primary" id="brief-print">Print</button> <button type="button" class="refresh" id="brief-close">Close</button>' +
-      ' <span class="obs">Fits one page on A4 or Letter. Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
+      ' <a class="refresh" href="#report" onclick="document.getElementById(\'report\').scrollIntoView();return false">Country report</a> <span class="obs">The brief fits one page on A4 or Letter; the country report prints after it on its own pages. Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
       '<article class="bpage"><header><div><b>AXIOM OSAP</b> · Country brief</div><h2>' + esc(C.name) + "</h2><div>Compiled " + esc(z) + " from public sources held in the app</div></header>" +
       '<p class="bwarn">Every item is a report or reference entry, not a finding. None has been confirmed by an analyst. Check locations and facilities before relying on them.</p>' +
       (a ? "<h3>" + bl(a.src || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", "U.S. travel advisory: Level " + esc(String(a.level)) + ", " + esc(a.level_text || "")) + '</h3><p class="bm">State Department claim, issued ' + esc(a.issued || "") + (a.updated ? ", updated " + esc(a.updated) : "") +
@@ -3569,13 +3606,42 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     m.parentNode.removeChild(m);
     return html;
   }
-  function openBrief() {
-    briefEl.innerHTML = fitBrief(); briefEl.hidden = false; document.documentElement.classList.add("briefing");
+  /* Country report: PMESII summary and threat assessment, drafted by AI from cited public sources (data/brief/<cc>.js).
+     Everything in it is shown as a draft: the ratings and watch points are AI judgements, not analyst assessments. */
+  var RLEVEL = { Low: 1, Moderate: 1, High: 1, Critical: 1 };
+  function reportHtml() {
+    var B = (window.ASAP_BRIEF || {})[CC];
+    if (!B) return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(C.name) + '</h2></header><p class="bwarn">No country report has been researched for this area yet.</p></article>';
+    var src = (B.sources || []).filter(function (x) { return x && /^https?:\/\//.test(x.url || ""); }), idx = {};
+    (B.sources || []).forEach(function (x, i) { var k = src.indexOf(x); if (k >= 0) idx[i] = k + 1; });
+    function cite(arr) {
+      var n = (arr || []).map(function (i) { return idx[i]; }).filter(Boolean);
+      return n.length ? " <sup>" + n.map(function (k) { return '<a href="' + esc(src[k - 1].url) + '" target="_blank" rel="noopener" title="' + esc(src[k - 1].title || src[k - 1].publisher || "") + '">[' + k + "]</a>"; }).join("") + "</sup>" : "";
+    }
+    function rt(r) { r = RLEVEL[r] ? r : "Moderate"; return '<span class="rt rt-' + r + '">' + esc(r) + "</span>"; }
+    var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
+    var T = B.threat || {}, ov = T.overall || {};
+    return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
+      '<p class="rdraft">Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports.</p>' +
+      "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
+      "<h3>Threat assessment: " + rt(ov.rating) + "</h3>" + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
+        return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
+      }).join("") + "</table>" +
+      ((T.watch_points || []).length ? "<h3>Watch points</h3><ul>" + T.watch_points.map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("") + "</ul>" : "") +
+      ((B.gaps || []).length ? '<h3>Gaps</h3><p class="bm">' + B.gaps.map(esc).join(" · ") + "</p>" : "") +
+      (src.length ? '<h3>Sources</h3><ol class="rsrc">' + src.map(function (x) { return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title || x.url) + "</a>" + (x.publisher ? ", " + esc(x.publisher) : "") + (x.accessed ? ", accessed " + esc(x.accessed) : "") + "</li>"; }).join("") + "</ol>" : "") +
+      "</article>";
+  }
+  function openBrief(ev, toReport) {
+    briefEl.innerHTML = fitBrief().replace(/<\/article>$/, "</article>" + reportHtml()); briefEl.hidden = false; document.documentElement.classList.add("briefing");
     document.getElementById("brief-close").addEventListener("click", closeBrief);
     document.getElementById("brief-print").addEventListener("click", function () { try { window.print(); } catch (e) {} });
+    if (toReport) { var r = document.getElementById("report"); if (r) r.scrollIntoView(); } else briefEl.scrollTop = 0;
   }
   function closeBrief() { briefEl.hidden = true; briefEl.innerHTML = ""; document.documentElement.classList.remove("briefing"); }
-  document.getElementById("brief-btn").addEventListener("click", openBrief);
+  document.getElementById("brief-btn").addEventListener("click", function (e) { openBrief(e, false); });
+  document.getElementById("report-btn").addEventListener("click", function (e) { openBrief(e, true); });
 
   /* ---------- credits: every source the app draws on, with the wording each one asks for ---------- */
   var CREDITS = [
@@ -4651,7 +4717,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   html.phone #phone-nav label{position:absolute;left:-9999px}
   html.phone #hdr-title{font-size:17px}
   html.phone:not(.hdr-open) #hdr-checked,html.phone:not(.hdr-open) #hdr-refresh,html.phone:not(.hdr-open) #hdr-prog,
-  html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #credits-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
+  html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #report-btn,html.phone:not(.hdr-open) #credits-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
   html.phone #ph-more{flex:0 0 auto;min-height:40px;min-width:44px;font:inherit;font-size:14px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
   html.phone.hdr-open #ph-more{background:var(--ink);color:var(--surface)}
   html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
