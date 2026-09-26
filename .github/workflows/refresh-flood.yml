@@ -1,0 +1,35 @@
+name: Refresh flood snapshot
+
+# Hourly: pull ThaiWater gauges and rain and commit the new snapshot, so the hosted app
+# shows data at most about an hour old even where the browser cannot reach ThaiWater.
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-flood
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pull ThaiWater feeds
+        run: node tools/refresh_flood.mjs
+      - name: Commit if the snapshot changed
+        run: |
+          if git diff --quiet data/thailand/flood-live-snapshot.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/thailand/flood-live-snapshot.js
+          git commit -m "Refresh flood snapshot $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push
