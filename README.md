@@ -50,6 +50,10 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 
 - **Live hazards** (every area): USGS earthquakes of magnitude 2.5 and up from the last 7 days in or near the area, and model air quality (US AQI, PM2.5, PM10 from Copernicus CAMS via Open-Meteo) at the U.S. posts. Earthquakes also become Public safety records, so they show in Timeline, and the **Strong earthquake** alert fires at magnitude 5.5 by default.
 - The page asks both services directly. When that fails (the claude.ai viewer blocks outside requests), it uses the hourly snapshot in `data/live/`, written by `tools/refresh_feeds.mjs` in the same GitHub Actions job as the flood refresh.
+- **Disaster alerts (GDACS)**: current cyclone, flood, drought, volcano and wildfire alerts affecting the area, with cyclone tracks. They also become Weather, Flood or Public safety records (as claims: GDACS alert levels are modelled impact estimates), and the **GDACS orange or red disaster alert** rule fires on them.
+- **Humanitarian reports (ReliefWeb)**: the newest situation reports, flash updates and maps per country. Documents, listed with links; not records.
+- **Official weather warnings**: agency RSS, Atom or CAP feeds listed in `tools/warning_feeds.json` (JMA, Bureau of Meteorology, MetService, BMKG, NDMA SACHET so far). Each run records whether every feed worked, and the tab shows failed feeds. Warnings become Weather records (claims). Non-English text is machine-translated to English in the job (`tools/translate.mjs`) and the original is kept in the evidence package, labelled with the translation service. With a `GOOGLE_TRANSLATE_KEY` repository secret it uses Google Cloud Translation; without one it uses MyMemory's small free quota and marks the rest untranslated.
+- GDACS, ReliefWeb and warnings come only from the hourly snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
 - NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
 ## Rules for records

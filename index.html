@@ -2113,6 +2113,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
+<script src="data/live/gdacs.js"></script>
+<script src="data/live/reliefweb.js"></script>
+<script src="data/live/warnings.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2603,6 +2606,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
       '<p class="pkgd">' + esc(r.detail) + "</p>" +
       (r.th ? '<details><summary>Thai original</summary><span class="th">' + esc(r.th) + "</span></details>" : "") +
+      (r.orig ? '<details><summary>' + esc(r.origLang || "Original") + ' original</summary><span class="th">' + esc(r.orig) + "</span></details>" : "") +
       '<dl class="pkgdl">' +
         "<dt>What</dt><dd>" + esc(r.cat) + (r.target ? '<span class="sub">Target: ' + esc(r.target) + "</span>" : "") + "</dd>" +
         (r.killed != null || r.injured != null ? "<dt>Casualties</dt><dd>" + (r.killed != null ? r.killed + " killed" : "Deaths not stated") +
@@ -2783,6 +2787,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     desc: "USGS reports an earthquake of at least this magnitude in or near the area in the last 7 days.",
     test: function (r, t) { return r.quake && r.magnitude >= t; },
     sev: function (r) { return r.magnitude >= 6.5 ? 3 : 2; } });
+  RULES.push({ id: "gdacs-alert", v: 1, name: "GDACS orange or red disaster alert", layer: "weather", unit: "level", def: 2, min: 1, step: 1,
+    desc: "GDACS issues an alert at this level or above (1 green, 2 orange, 3 red) for a cyclone, flood, drought, volcano or wildfire affecting the area.",
+    test: function (r, t) { return r.gdacs && r.sev >= t; },
+    sev: function (r) { return r.sev >= 3 ? 3 : 2; } });
   if (TD.scam) RULES.push({ id: "scam-compound", v: 1, name: "Scam compound reported", layer: "scam", unit: "days", def: 60, min: 1, step: 1,
     desc: "A scam compound is reported (new, resumed or relocated) within this many days.",
     test: function (r, t) { return r.layer === "scam" && r.kind === "compound" && AS_OF - dnum(r.ts) < t; },
@@ -3497,6 +3505,110 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   var AQI = [[50, "Good", "#3a9d4a"], [100, "Moderate", "#c9a800"], [150, "Unhealthy for sensitive groups", "#e07b00"], [200, "Unhealthy", "#c62828"], [300, "Very unhealthy", "#7b3fa0"], [1e9, "Hazardous", "#7a1e2c"]];
   function aqiBand(v) { for (var i = 0; i < AQI.length; i++) if (v <= AQI[i][0]) return AQI[i]; return AQI[AQI.length - 1]; }
+  /* ---------- GDACS disaster alerts and ReliefWeb reports (hourly snapshots from the GitHub job; no live request) ---------- */
+  var ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
+    cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
+    "in": "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+  var GD_TYPE = { TC: ["Tropical cyclone", "weather", "storm"], FL: ["Flood", "flood", "flood_event"], DR: ["Drought", "weather", "drought"],
+    VO: ["Volcano", "safety", "other"], WF: ["Wildfire", "safety", "other"] };
+  src("gdacs", "GDACS (Global Disaster Alert and Coordination System, UN and European Commission)", "International alert system", "B",
+      "Automated alerts: the alert level is a modelled estimate of impact, not a damage report.", "https://www.gdacs.org/");
+  function gdacsEvents() {
+    var g = window.ASAP_GDACS; if (!g || !g.events) return [];
+    return g.events.filter(function (e) {
+      var mine = (e.iso3 || []).indexOf(ISO3[CC]) >= 0 && (CC !== "oki" && CC !== "jp" || (CC === "oki") === (e.lat < 28 && e.lon < 131));
+      return mine || (e.type === "TC" && inArea(e.lat, e.lon));
+    });
+  }
+  function gdDate(s) { var d = new Date(s); return isNaN(d) ? String(s || "").slice(0, 10) : d.toISOString().slice(0, 10); }
+  function addGdacsRecords() {
+    R = R.filter(function (r) { if (r.gdacs) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var g = window.ASAP_GDACS;
+    gdacsEvents().forEach(function (e) {
+      var t = GD_TYPE[e.type]; if (!t || !LBY[t[1]]) return;
+      var d = gdDate(e.from);
+      add({ layer: t[1], type: "claim", cat: t[0] + " alert (GDACS)", kind: t[2], gdacs: true, live: true, gdAlert: e.alert,
+        title: (e.alert ? e.alert + " alert: " : "") + t[0] + (e.name ? " " + e.name : ""),
+        detail: (e.desc ? e.desc + ". " : "") + (e.severity ? e.severity + ". " : "") + "GDACS alert levels are modelled impact estimates, not damage reports." +
+          (e.to ? " Active " + gdDate(e.from) + " to " + gdDate(e.to) + "." : ""),
+        ts: d, place: e.name || "", prov: "", lat: e.lat, lon: e.lon, prec: "approx", ongoing: !!e.current,
+        sev: /red/i.test(e.alert) ? 3 : /orange/i.test(e.alert) ? 2 : 1, src: SOURCES.gdacs, url: e.url, issued: d, recorded: g ? g.asof : "" });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addGdacsRecords();
+  function gdacsHtml() {
+    var g = window.ASAP_GDACS, evs = gdacsEvents().filter(function (e) { return e.current || inPeriodDate(gdDate(e.to || e.from)); });
+    var col = { Red: "#c62828", Orange: "#e07b00", Green: "#3a9d4a" };
+    evs.forEach(function (e, i) {
+      var c = col[e.alert] || "#888";
+      (e.track || []).forEach(function (line) { if (line.length > 1) sofLayer.addLayer(L.polyline(line, { pane: "tlpane", color: c, weight: 2, opacity: 0.8, dashArray: "4 3" })); });
+      var m = L.circleMarker([e.lat, e.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: c, fillOpacity: 0.8 });
+      m.bindPopup('<div class="pop"><div class="tier">' + esc((GD_TYPE[e.type] || [e.type])[0]) + " · GDACS " + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + "</h3>" +
+        '<p class="obs">' + esc([e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "")].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["gd:" + i] = m;
+    });
+    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+      (g ? (evs.length ? '<div class="tllist">' + evs.map(function (e, i) {
+        return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : ""), e.current ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">No GDACS alert for ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note" style="margin-top:6px">Cyclone tracks are drawn as dashed lines. Alert levels (green, orange, red) are GDACS\'s modelled impact estimates, shown as claims.</p></div>';
+  }
+  function reliefHtml() {
+    var w = window.ASAP_RW, list = w && w.reports ? (w.reports[CC] || []).filter(function (x) { return inPeriodDate(x.date); }) : [];
+    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+      (w ? (list.length ? '<ul class="note">' + list.slice(0, 15).map(function (x) {
+        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc([x.date, x.source, x.type].filter(Boolean).join(" · ")) + "</span></li>";
+      }).join("") + "</ul>" : '<p class="obs">No ReliefWeb report for ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note">Reports are documents published by agencies and NGOs. Each is that organisation\'s account, not a confirmed finding.</p></div>';
+  }
+
+  /* ---------- official weather warnings (hourly snapshot; non-English text machine-translated in the job, original kept) ---------- */
+  var LANGN = { ja: "Japanese", th: "Thai", vi: "Vietnamese", km: "Khmer", lo: "Lao", my: "Burmese", id: "Indonesian", ms: "Malay", zh: "Chinese", ko: "Korean",
+    mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum" };
+  function mtNote(i) {
+    if (!i.mt) return "";
+    var ln = LANGN[i.lang] || i.lang;
+    return i.mt === "untranslated" ? "Not translated yet (the free translation quota ran out); shown in the original " + ln + "."
+      : "English is a machine translation (" + i.mt + ") of the original " + ln + " text, which is kept. It may be wrong.";
+  }
+  function warnItems() { var w = window.ASAP_WARN; return w && w.items ? (w.items[CC] || []) : []; }
+  function addWarnRecords() {
+    R = R.filter(function (r) { if (r.warn) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    if (!LBY.weather) return;
+    var w = window.ASAP_WARN;
+    warnItems().forEach(function (i) {
+      var s = src("warn-" + i.agency.toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.agency, "National weather or disaster agency", "B",
+        "Official warning feed, read hourly. Warnings are the agency's statements.", i.feed);
+      var en = i.title_en || i.title, sen = i.summary_en || i.summary;
+      add({ layer: "weather", type: "claim", cat: "Official weather warning", kind: "other", warn: true, live: true,
+        title: en + (sen && sen !== en ? ": " + sen.slice(0, 140) : ""), detail: sen || "",
+        orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang, derived: mtNote(i) || undefined,
+        ts: i.date || (w ? w.asof.slice(0, 10) : ""), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: "", prov: "", lat: null, lon: null, prec: "none",
+        sev: /extreme|severe|特別警報/i.test(i.title + " " + i.severity) ? 3 : 2, src: s, url: i.link || i.feed, issued: i.date, recorded: w ? w.asof : "" });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addWarnRecords();
+  function warnHtml() {
+    var w = window.ASAP_WARN, feeds = w && w.feeds ? w.feeds.filter(function (f) { return f.cc === CC; }) : [];
+    var list = warnItems().filter(function (i) { return inPeriodDate(i.date); });
+    var head = '<div class="sec"><h2>Official weather warnings</h2>';
+    if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!feeds.length) return head + '<p class="obs">No machine-readable warning feed is set up for ' + esc(C.name) + " yet. Check the national weather agency's own site.</p></div>";
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " + feeds.map(function (f) {
+        return esc(f.agency) + (f.ok ? " (" + f.n + ")" : ' <span class="badge stale">FEED FAILED</span>'); }).join(", ") + "</p>" +
+      (list.length ? '<ul class="note">' + list.slice(0, 20).map(function (i) {
+        var en = i.title_en || i.title, sen = i.summary_en || i.summary;
+        return '<li><a href="' + esc(i.link || i.feed) + '" target="_blank" rel="noopener">' + esc(en) + "</a>" + (sen && sen !== en ? " " + esc(sen.slice(0, 200)) : "") +
+          ' <span class="obs">' + esc([i.date ? i.date.replace("T", " ") + "Z" : "", i.agency].filter(Boolean).join(" · ")) + "</span>" +
+          (i.mt ? '<details><summary class="obs">' + (i.mt === "untranslated" ? "Untranslated" : "Machine translation (" + esc(i.mt) + ")") + ", original " + esc(LANGN[i.lang] || i.lang) + '</summary><span class="th">' + esc(i.title + (i.summary ? " — " + i.summary : "")) + "</span></details>" : "") + "</li>";
+      }).join("") + "</ul>" : '<p class="obs">No warning in this period.</p>') + "</div>";
+  }
+
   function showHazards() {
     sofLayer.clearLayers(); sofM = {};
     var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon) && inPeriodDate(new Date(q.time).toISOString()); }).sort(function (a, b) { return b.time - a.time; });
@@ -3529,6 +3641,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           '<span class="tlm"><span class="tls">' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z · depth " + (q.depth != null ? Math.round(q.depth) + " km" : "?") +
           (q.tsunami ? " · tsunami flag" : "") + (q.alert ? " · PAGER " + esc(q.alert) : "") + "</span></span></button>";
       }).join("") + "</div>" : "") + "</div>";
+    var gh = gdacsHtml(), rh = reliefHtml(), wh = warnHtml();
     var ah = '<div class="sec"><h2>Air quality now</h2><p class="obs">' + state(HZ.aqFrom, HZ.aqErr) + "</p>" +
       (HZ.aq ? '<table class="reg cond"><tr><th>Place</th><th>US AQI</th><th>PM2.5</th><th>PM10</th></tr>' + HZ.aq.map(function (p, i) {
         var band = p.us_aqi != null ? aqiBand(p.us_aqi) : null;
@@ -3542,8 +3655,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<li><a href="https://worldview.earthdata.nasa.gov/?v=' + [b[0][1], b[0][0], b[1][1], b[1][0]].join(",") +
         '&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All,VIIRS_SNPP_CorrectedReflectance_TrueColor" target="_blank" rel="noopener">NASA Worldview satellite imagery with fire detections</a></li>' +
       '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
-    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> Earthquakes are USGS network solutions and can be revised. Air quality is a model estimate. ' +
-      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + qh + ah + nh;
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> GDACS alert levels and air quality are model estimates, warnings are the agencies\' statements, and USGS earthquake solutions can be revised. ' +
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + wh + qh + ah + rh + nh;
     document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
   }
   useSnapshotQuakes(); useSnapshotAQ(); addQuakeRecords();

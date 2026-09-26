@@ -3,7 +3,8 @@
 // data/live/air-quality.js (Open-Meteo CAMS air quality at the same points the page asks for:
 // up to six U.S. posts per area from source/sof, or the area centre when there are none).
 // The page uses these files only when its own live request fails.
-// Exit codes: 0 = at least one feed refreshed or unchanged, 1 = both feeds failed (old files are left untouched).
+// Also writes data/live/gdacs.js (GDACS disaster alerts and cyclone tracks) and data/live/reliefweb.js (ReliefWeb reports).
+// Exit codes: 0 = at least one feed refreshed, 1 = every feed failed (old files are left untouched).
 import fs from "node:fs";
 
 const USGS = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
@@ -65,5 +66,75 @@ try {
   write("data/live/air-quality.js", "ASAP_AQ", { asof: stamp, src: AQAPI, points });
   console.log("air quality points", pts.length); ok++;
 } catch (e) { console.error("Open-Meteo failed:", e.message); }
+
+
+// GDACS: current disaster alerts (tropical cyclones, floods, droughts, volcanoes, wildfires) with cyclone tracks.
+// Earthquakes are left to USGS. GDACS alert levels are automated impact estimates, so the page shows them as claims.
+const ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
+  cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
+  in: "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+const GDACS = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF";
+function lines(geo) {
+  const out = [];
+  for (const f of (geo && geo.features) || []) {
+    const g = f.geometry || {};
+    if (g.type === "LineString") out.push(g.coordinates.map((c) => [+c[1].toFixed(3), +c[0].toFixed(3)]));
+    if (g.type === "MultiLineString") for (const l of g.coordinates) out.push(l.map((c) => [+c[1].toFixed(3), +c[0].toFixed(3)]));
+  }
+  return out.slice(0, 6).map((l) => l.slice(0, 300));
+}
+try {
+  const g = await getJSON(GDACS);
+  const wanted = new Set(Object.values(ISO3));
+  const inRegion = (lat, lon) => lat >= -50 && lat <= 56 && lon >= 58 && lon <= 180;
+  const events = [];
+  for (const f of g.features || []) {
+    const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
+    if (!p.eventtype || (f.geometry || {}).type !== "Point") continue;
+    const iso = [...new Set([p.iso3, ...((p.affectedcountries || []).map((a) => a.iso3))].filter(Boolean))];
+    if (!iso.some((i) => wanted.has(i)) && !inRegion(c[1], c[0])) continue;
+    const ev = { id: p.eventtype + "-" + p.eventid + "-" + (p.episodeid || ""), type: p.eventtype, name: p.name || p.eventname || "",
+      desc: p.description || p.htmldescription || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "",
+      lat: c[1], lon: c[0], iso3: iso, severity: (p.severitydata || {}).severitytext || "",
+      url: (p.url || {}).report || "https://www.gdacs.org/", current: p.iscurrent !== "false" && p.iscurrent !== false };
+    if (ev.type === "TC" && (p.url || {}).geometry) {
+      try { ev.track = lines(await getJSON(p.url.geometry)); } catch (e) { ev.track = []; }
+    }
+    events.push(ev);
+  }
+  write("data/live/gdacs.js", "ASAP_GDACS", { asof: stamp, src: GDACS, events });
+  console.log("gdacs events", events.length); ok++;
+} catch (e) { console.error("GDACS failed:", e.message); }
+
+// ReliefWeb: newest humanitarian reports per country (situation reports, flash updates, maps). Documents, not events.
+const RW = "https://api.reliefweb.int/v2/reports?appname=" + encodeURIComponent(process.env.RELIEFWEB_APPNAME || "axiom-asap");
+try {
+  const iso = [...new Set(Object.values(ISO3))];
+  const body = { limit: 1000, sort: ["date.created:desc"], preset: "latest",
+    filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
+      { field: "date.created", value: { from: new Date(Date.now() - 90 * 864e5).toISOString() } }] },
+    fields: { include: ["title", "date.created", "primary_country.iso3", "source.shortname", "source.name", "url_alias", "url", "format.name", "disaster_type.name"] } };
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+  let j;
+  try {
+    const r = await fetch(RW, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json", "user-agent": "AXIOM-ASAP hazard refresh" }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    j = await r.json();
+  } finally { clearTimeout(t); }
+  const reports = {};
+  for (const d of j.data || []) {
+    const f = d.fields || {}, pc = ((f.primary_country || {}).iso3 || "").toUpperCase();
+    const src = (f.source || []).map((s) => s.shortname || s.name).filter(Boolean).slice(0, 3).join(", ");
+    for (const [cc, i3] of Object.entries(ISO3)) {
+      if (i3 !== pc || cc === "oki") continue;
+      const list = reports[cc] = reports[cc] || [];
+      if (list.length < 40) list.push({ title: f.title || "", date: ((f.date || {}).created || "").slice(0, 10), source: src,
+        type: ((f.format || [])[0] || {}).name || "", disaster: (f.disaster_type || []).map((x) => x.name).slice(0, 2).join(", "),
+        url: f.url_alias || f.url || "" });
+    }
+  }
+  write("data/live/reliefweb.js", "ASAP_RW", { asof: stamp, src: "https://reliefweb.int/", reports });
+  console.log("reliefweb countries", Object.keys(reports).length); ok++;
+} catch (e) { console.error("ReliefWeb failed:", e.message); }
 
 process.exit(ok ? 0 : 1);
