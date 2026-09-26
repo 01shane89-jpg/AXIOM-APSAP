@@ -1,5 +1,5 @@
 // Hourly official-warning refresh (run by .github/workflows/refresh-flood.yml, or by hand with Node 18+).
-// Reads the RSS, Atom or CAP feeds listed in tools/warning_feeds.json, keeps the newest items per area,
+// Reads the RSS, Atom or CAP feeds (or JSON, with a "type" adapter) listed in tools/warning_feeds.json, keeps the newest items per area,
 // translates non-English titles and summaries to English (tools/translate.mjs), and writes data/live/warnings.js.
 // Every feed's result (ok, item count, or the error) is recorded so the page can show which feeds are live.
 // Exit codes: 0 = at least one feed worked, 1 = every feed failed (the old file is left untouched).
@@ -19,12 +19,28 @@ async function getText(url) {
     return await r.text();
   } finally { clearTimeout(t); }
 }
+// Agencies that publish JSON instead of RSS/Atom/CAP. Each adapter returns the same shape as parseFeed.
+const strip = (h) => String(h || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const ADAPT = {
+  // Hong Kong Observatory warning summary: { WTCSGNL: { name, code, actionCode, issueTime, updateTime, type? }, ... }
+  hko: (j) => Object.values(j || {}).filter((w) => w && w.name && w.actionCode !== "CANCEL").map((w) => ({
+    title: w.name + (w.type ? " (" + w.type + ")" : ""), summary: w.actionCode ? "Status: " + w.actionCode.toLowerCase() : "",
+    date: w.updateTime || w.issueTime, link: "https://www.hko.gov.hk/en/wxinfo/dailywx/wxwarntoday.htm", severity: w.code || "" })),
+  // China NMC: { data: { page: { list: [ { title, issuetime, url, alertid } ] } } }
+  nmc: (j) => (((j || {}).data || {}).page || {}).list?.map((w) => ({ title: w.title || "", summary: "", date: (w.issuetime || "").replace(/\//g, "-").replace(" ", "T") + "+08:00",
+    link: w.url ? (w.url.startsWith("http") ? w.url : "https://www.nmc.cn" + w.url) : "https://www.nmc.cn/publish/alarm.html", severity: /红色/.test(w.title) ? "red" : /橙色/.test(w.title) ? "orange" : "" })) || [],
+  // MET Malaysia via data.gov.my: [ { warning_issue: { issued, title_en }, valid_from, valid_to, heading_en, text_en } ]
+  metmy: (j) => (Array.isArray(j) ? j : (j && j.data) || []).map((w) => ({ title: w.heading_en || (w.warning_issue || {}).title_en || "", summary: strip(w.text_en).slice(0, 400),
+    date: (w.warning_issue || {}).issued || w.valid_from, link: "https://www.met.gov.my/en/forecast/weather/warning/", severity: "",
+    valid_to: w.valid_to })).filter((w) => w.title && (!w.valid_to || Date.parse(w.valid_to) > Date.now() - 864e5))
+};
 function iso(d) { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); }
 
 const status = [], items = {};
 for (const f of feeds) {
   try {
-    let list = parseFeed(await getText(f.url));
+    const body = await getText(f.url);
+    let list = f.type ? ADAPT[f.type](JSON.parse(body)) : parseFeed(body);
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
     list = list.map((i) => ({ ...i, date: iso(i.date) })).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
     (items[f.cc] = items[f.cc] || []).push(...list.map((i) => ({ ...i, agency: f.agency, lang: f.lang, feed: f.url })));

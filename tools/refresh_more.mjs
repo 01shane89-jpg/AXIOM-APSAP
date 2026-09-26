@@ -8,6 +8,7 @@
 //   data/live/maritime.js    ASAP_MAR    NGA anti-shipping activity messages, MARAD advisories, ReCAAP ISC documents (reports)
 //   data/live/sanctions.js   ASAP_SANC   OFAC SDN entries with an address in the covered areas (names only; no identifiers or remarks)
 //   data/live/displacement.js ASAP_UNHCR UNHCR refugee statistics per area (UNHCR figures, often from governments)
+//   plus national-quakes.js, eonet.js, ifrc.js, cdc.js, navwarnings.js, ucdp.js (batch 2, see below).
 // Set ONLY=adv,tsu,... to run some of them.
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
@@ -271,6 +272,133 @@ await job("unhcr", "displacement.js", "ASAP_UNHCR", async () => {
     await sleep(400);
   }
   return { src: "https://www.unhcr.org/refugee-statistics/", items, fails, note: Object.keys(items).length + " areas" };
+});
+
+// ---------- batch 2 (from the research catalogue /apsap/sources/catalog.json) ----------
+
+// 9. National earthquake catalogues that see small regional quakes USGS misses: JMA (jp/oki), BMKG (id), TMD (th and neighbours).
+await job("nq", "national-quakes.js", "ASAP_NQ", async () => {
+  const items = [], status = [], since = Date.now() - 7 * 864e5;
+  const put = (agency, q) => { if (!isNaN(q.lat) && !isNaN(q.lon) && Date.parse(q.time) >= since) items.push({ agency, ...q, ccs: ccsAt(q.lat, q.lon, 1) }); };
+  try { // JMA: [{ at, anm, en_anm, cod: "+35.1+139.2-10000/", mag, maxi, eid, json }]
+    const j = await get("https://www.jma.go.jp/bosai/quake/data/list.json"); let n = 0;
+    for (const x of Array.isArray(j) ? j : []) {
+      const m = String(x.cod || "").match(/^([+-]\d+(?:\.\d+)?)([+-]\d+(?:\.\d+)?)([+-]\d+)?/); if (!m || x.mag == null || x.mag === "") continue;
+      if (items.some((i) => i.agency === "JMA" && i.id === x.eid)) continue;
+      put("JMA", { id: x.eid, time: isoMin(x.at), lat: +m[1], lon: +m[2], depth: m[3] ? Math.abs(+m[3]) / 1000 : null, mag: +x.mag,
+        place: x.en_anm || x.anm || "", intensity: x.maxi || "", link: "https://www.jma.go.jp/bosai/map.html#contents=earthquake_map" }); n++;
+    }
+    status.push({ agency: "JMA", ok: true, n });
+  } catch (e) { status.push({ agency: "JMA", ok: false, error: err(e) }); }
+  try { // BMKG: { Infogempa: { gempa: [{ DateTime, Coordinates: "lat,lon", Magnitude, Kedalaman: "10 km", Wilayah, Potensi }] } }
+    const j = await get("https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json"); let n = 0;
+    for (const x of ((j.Infogempa || {}).gempa) || []) {
+      const c = String(x.Coordinates || "").split(",").map(parseFloat);
+      put("BMKG", { id: x.DateTime, time: isoMin(x.DateTime), lat: c[0], lon: c[1], depth: parseFloat(x.Kedalaman) || null, mag: parseFloat(x.Magnitude),
+        place: x.Wilayah || "", note: x.Potensi || "", link: "https://www.bmkg.go.id/gempabumi/gempabumi-terkini" }); n++;
+    }
+    status.push({ agency: "BMKG", ok: true, n });
+  } catch (e) { status.push({ agency: "BMKG", ok: false, error: err(e) }); }
+  try { // TMD RSS: geo:lat / geo:long, magnitude in a tmd: tag or the title
+    const xml = await get("https://earthquake.tmd.go.th/feed/rss_tmd.xml", "text"); let n = 0;
+    for (const it of xml.split(/<item[\s>]/).slice(1)) {
+      const tag = (t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">", "i")); return m ? unhtml(m[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : ""; };
+      const title = tag("title"), lat = parseFloat(tag("geo:lat")), lon = parseFloat(tag("geo:long"));
+      const mag = parseFloat(tag("tmd:magnitude") || (title.match(/(?:M|magnitude|ขนาด)\s*[:=]?\s*(\d+(?:\.\d+)?)/i) || [])[1]);
+      const time = isoMin(tag("tmd:time") || tag("pubDate") || tag("dc:date"));
+      if (isNaN(mag)) continue;
+      put("TMD", { id: tag("guid") || tag("link") || time, time, lat, lon, depth: parseFloat(tag("tmd:depth")) || null, mag, place: tag("tmd:location") || title, link: tag("link") || "https://earthquake.tmd.go.th/" }); n++;
+    }
+    status.push({ agency: "TMD", ok: true, n });
+  } catch (e) { status.push({ agency: "TMD", ok: false, error: err(e) }); }
+  if (!status.some((s) => s.ok)) throw new Error(status.map((s) => s.agency + ": " + s.error).join("; "));
+  return { status, items, note: items.length + " quakes" };
+});
+
+// 10. NASA EONET open natural events (storms with track points, wildfires, volcanoes, floods) in the Asia-Pacific box.
+await job("eonet", "eonet.js", "ASAP_EONET", async () => {
+  const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?status=open&bbox=58,56,180,-50&days=30");
+  const items = [];
+  for (const e of j.events || []) {
+    const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates)).map((g) => ({ lat: g.coordinates[1], lon: g.coordinates[0], date: isoMin(g.date),
+      mag: g.magnitudeValue != null ? g.magnitudeValue + " " + (g.magnitudeUnit || "") : "" }));
+    if (!pts.length) continue;
+    const last = pts[pts.length - 1], ccs = [...new Set(pts.flatMap((p) => ccsAt(p.lat, p.lon, 1)))];
+    if (!ccs.length) continue;
+    items.push({ id: e.id, title: e.title, cat: ((e.categories || [])[0] || {}).title || "", link: ((e.sources || [])[0] || {}).url || e.link || "",
+      srcs: (e.sources || []).map((s) => s.id).join(", "), last, track: pts.length > 1 ? pts.map((p) => [+p.lat.toFixed(2), +p.lon.toFixed(2)]) : null, ccs });
+  }
+  return { src: "https://eonet.gsfc.nasa.gov/", items, note: items.length + " events" };
+});
+
+// 11. IFRC GO emergencies (Asia Pacific region). Figures are IFRC's and national societies' claims.
+await job("ifrc", "ifrc.js", "ASAP_IFRC", async () => {
+  const j = await get("https://goadmin.ifrc.org/api/v2/event/?regions__in=2&ordering=-disaster_start_date&limit=60");
+  const iso2 = Object.fromEntries(Object.entries(ISO).filter(([cc]) => cc !== "oki").map(([cc, v]) => [v[0], cc]));
+  const items = [];
+  for (const e of j.results || []) {
+    const ccs = [...new Set((e.countries || []).map((c) => iso2[String(c.iso || "").toUpperCase()]).filter(Boolean))];
+    if (!ccs.length) continue;
+    if (ccs.includes("jp")) ccs.push("oki");
+    items.push({ id: e.id, name: e.name || "", type: (e.dtype || {}).name || "", start: isoDay(e.disaster_start_date), ccs, affected: e.num_affected || null,
+      summary: unhtml(e.summary || "").slice(0, 500), appeals: (e.appeals || []).map((a) => ({ code: a.code || "", type: a.atype_display || "", amount: a.amount_requested || null })),
+      link: "https://go.ifrc.org/emergencies/" + e.id });
+  }
+  return { src: "https://go.ifrc.org/", items, note: items.length + " emergencies" };
+});
+
+// 12. CDC travel health notices (RSS). Assigned by the country named in the title.
+await job("cdc", "cdc.js", "ASAP_CDC", async () => {
+  const list = parseFeed(await get("https://wwwnc.cdc.gov/travel/rss/notices.xml", "text")), items = [];
+  for (const x of list) {
+    const t = unhtml(x.title); let ccs = ccsInText(t); if (ccs.includes("jp")) ccs.push("oki"); if (!ccs.length) continue;
+    items.push({ title: t, level: +((t.match(/Level\s*(\d)/i) || [])[1] || 0) || null, date: isoDay(x.date), link: x.link, summary: unhtml(x.summary).slice(0, 400), ccs });
+  }
+  return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
+});
+
+// 13. NGA broadcast navigational warnings (HYDROPAC, NAVAREA IV/XII not needed here). Positions parsed from the text.
+function navPos(text) {
+  const out = [];
+  for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
+    let lat = +m[1] + +m[2] / 60, lon = +m[4] + +m[5] / 60; if (m[3] === "S") lat = -lat; if (m[6] === "W") lon = -lon; out.push([+lat.toFixed(3), +lon.toFixed(3)]);
+    if (out.length >= 12) break;
+  }
+  return out;
+}
+await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
+  const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=P&status=A&output=json");
+  const items = [];
+  for (const w of j["broadcast-warn"] || j.broadcastWarn || j.data || []) {
+    const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text).filter((p) => inRegion(p[0], p[1]));
+    let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
+    if (!ccs.length) continue;
+    items.push({ id: "HYDROPAC " + (w.msgNumber || "") + "/" + String(w.msgYear || "").slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
+      text: text.slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
+  }
+  return { src: "https://msi.nga.mil/NavWarnings", items, note: items.length + " warnings" };
+});
+
+// 14. UCDP Candidate Events (monthly, about a month behind). The newest file name is read from the downloads page.
+await job("ucdp", "ucdp.js", "ASAP_UCDP", async () => {
+  let url = "";
+  try {
+    const h = await get("https://ucdp.uu.se/downloads/", "text");
+    const names = [...h.matchAll(/candidateged\/(GEDEvent_v(\d+)_0_(\d+)\.csv)/g)].sort((a, b) => (+b[2] - +a[2]) || (+b[3] - +a[3]));
+    if (names.length) url = "https://ucdp.uu.se/downloads/candidateged/" + names[0][1];
+  } catch (e) {}
+  if (!url) { const d = new Date(Date.now() - 40 * 864e5); url = "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v" + String(d.getUTCFullYear()).slice(2) + "_0_" + (d.getUTCMonth() + 1) + ".csv"; }
+  const rows = csvRows(await get(url, "text")), head = rows.shift().map((h) => h.trim()), ix = (k) => head.indexOf(k);
+  const need = ["latitude", "longitude", "date_start", "best"]; if (need.some((k) => ix(k) < 0)) throw new Error("unexpected columns in " + url);
+  const V = { 1: "state-based", 2: "non-state", 3: "one-sided (against civilians)" }, items = [];
+  for (const r of rows) {
+    const lat = +r[ix("latitude")], lon = +r[ix("longitude")]; if (isNaN(lat) || !inRegion(lat, lon)) continue;
+    const ccs = ccsAt(lat, lon, 0).filter((cc) => ccsInText(r[ix("country")] || "").includes(cc) || cc === "oki"); if (!ccs.length) continue;
+    items.push({ id: r[ix("id")], date: isoDay(r[ix("date_start")]), end: isoDay(r[ix("date_end")]), lat, lon, where: r[ix("where_description")] || "", adm1: r[ix("adm_1")] || "",
+      conflict: r[ix("conflict_name")] || "", sideA: r[ix("side_a")] || "", sideB: r[ix("side_b")] || "", type: V[r[ix("type_of_violence")]] || "",
+      best: +r[ix("best")] || 0, low: +r[ix("low")] || 0, high: +r[ix("high")] || 0, prec: +r[ix("where_prec")] || null, headline: (r[ix("source_headline")] || "").slice(0, 160), ccs });
+  }
+  return { src: url, items, note: items.length + " events" };
 });
 
 process.exit(okAny ? 0 : 1);
