@@ -799,6 +799,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
   /* ---------- map ---------- */
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 5, maxZoom: 13, preferCanvas: true });
+  window.__asapMap = map;
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
   [["provpane", 350], ["floodpane", 450], ["rainpane", 440], ["expopane", 460], ["infrapane", 620]].forEach(function (p) {
     map.createPane(p[0]);
@@ -4194,6 +4195,53 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
 </script>
+<script>
+/* Map clicks. Leaflet draws each map pane's circles on its own full-size canvas, and a browser sends a click only to the
+   topmost canvas. Once a view had put markers in a higher pane (the Timeline does), that pane's canvas sat over every
+   other view's markers and swallowed their clicks, so tapping a point did nothing. Canvases here ignore the pointer, and
+   one listener finds the topmost clickable circle or shape under it across every pane and hands the event to it. */
+(function () {
+  var map = window.__asapMap;
+  if (!map || !map.getContainer || !window.L || !L.Canvas) return;
+  var st = document.createElement("style");
+  st.textContent = "#map .leaflet-pane > canvas{pointer-events:none!important}";
+  document.head.appendChild(st);
+  var box = map.getContainer();
+  function renderers() {
+    var out = [];
+    map.eachLayer(function (l) { if (l instanceof L.Canvas && l._container) out.push(l); });
+    out.sort(function (a, b) {
+      var za = +getComputedStyle(a._container.parentNode).zIndex || 0, zb = +getComputedStyle(b._container.parentNode).zIndex || 0; return zb - za; });
+    return out;
+  }
+  function hitAt(e) {
+    var pt = map.mouseEventToLayerPoint(e), rs = renderers();
+    for (var i = 0; i < rs.length; i++) {
+      var r = rs[i], pane = r._container.parentNode;
+      if (getComputedStyle(pane).display === "none" || getComputedStyle(pane).visibility === "hidden") continue;
+      for (var o = r._drawLast; o; o = o.prev) {
+        var l = o.layer;
+        if (l && l.options && l.options.interactive !== false && l._containsPoint && l._containsPoint(pt) && map.hasLayer(l)) return { r: r, l: l };
+      }
+    }
+    return null;
+  }
+  box.addEventListener("click", function (e) {
+    if (e.target && e.target.closest && e.target.closest(".leaflet-marker-icon, .leaflet-popup, .leaflet-control, .leaflet-interactive:not(canvas)")) return;
+    var h = hitAt(e); if (!h) return;
+    if (map._draggableMoved && map._draggableMoved(h.l)) return;
+    e.stopPropagation();
+    if (h.r._fireEvent) h.r._fireEvent([h.l], e);
+    else { var ll = map.mouseEventToLatLng(e); h.l.fire("click", { latlng: ll, layerPoint: map.latLngToLayerPoint(ll), containerPoint: map.latLngToContainerPoint(ll), originalEvent: e }, true); if (h.l._popup) h.l.openPopup(ll); }
+  }, true);
+  var raf = 0;
+  box.addEventListener("mousemove", function (e) {
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = 0; box.style.cursor = hitAt(e) ? "pointer" : ""; });
+  }, true);
+})();
+</script>
+
 
 
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>
