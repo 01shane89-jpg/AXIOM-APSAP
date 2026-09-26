@@ -3239,7 +3239,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (an.live ? '<p class="obs"><span class="badge stale">SNAPSHOT</span> State Department feed ' + esc(AV.asof) + (an.date ? ", advisory dated " + esc(fmtD(an.date)) : "") +
         (an.link ? ' · <a href="' + esc(an.link) + '" target="_blank" rel="noopener">current advisory</a>' : "") + "</p>" +
         (an.changed ? '<p class="note"><b>The level has changed from ' + esc(String(an.was)) + " to " + esc(String(an.level)) + "</b> since the details below were compiled (" + esc(fmtD(SOF.asof)) + "). The area table and indicators may be out of date; read the current advisory.</p>" : "")
-        : '<p class="obs">' + (AV ? "Not in the hourly feed; " : "") + "compiled " + esc(fmtD(SOF.asof)) + ".</p>") +
+        : '<p class="obs">' + (AV ? "Not in the 15-minute feed; " : "") + "compiled " + esc(fmtD(SOF.asof)) + ".</p>") +
       '<p class="obs">A U.S. Department of State claim, issued ' + esc(fmtD(a.issued)) + (a.updated ? ", updated " + esc(fmtD(a.updated)) : "") + ". " +
       (a.indicator_names && a.indicator_names.length ? "Risk indicators: " + esc(a.indicator_names.join(", ")) + "." : "") + "</p>" +
       (a.areas && a.areas.length ? '<table class="reg" style="margin-top:6px"><tr><th>Area</th><th>Level</th><th>Reason</th></tr>' + a.areas.map(function (x) {
@@ -3537,7 +3537,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !briefEl.hidden) closeBrief(); });
 
   /* ---------- live hazards: USGS earthquakes (become Public safety records) and model air quality ----------
-     Each feed is fetched straight from its public API. The hosted app also carries an hourly snapshot written
+     Each feed is fetched straight from its public API. The hosted app also carries a snapshot written every 15 minutes
      by GitHub Actions (window.ASAP_QUAKES, window.ASAP_AQ), used whenever the live request fails. */
   var USGS = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
   var AQAPI = "https://air-quality-api.open-meteo.com/v1/air-quality";
@@ -3611,7 +3611,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   var AQI = [[50, "Good", "#3a9d4a"], [100, "Moderate", "#c9a800"], [150, "Unhealthy for sensitive groups", "#e07b00"], [200, "Unhealthy", "#c62828"], [300, "Very unhealthy", "#7b3fa0"], [1e9, "Hazardous", "#7a1e2c"]];
   function aqiBand(v) { for (var i = 0; i < AQI.length; i++) if (v <= AQI[i][0]) return AQI[i]; return AQI[AQI.length - 1]; }
-  /* ---------- GDACS disaster alerts and ReliefWeb reports (hourly snapshots from the GitHub job; no live request) ---------- */
+  /* ---------- GDACS disaster alerts and ReliefWeb reports (15-minute snapshots from the GitHub job; no live request) ---------- */
   var ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
     cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
     "in": "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
@@ -3655,7 +3655,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         '<p class="obs">' + esc([e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "")].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["gd:" + i] = m;
     });
-    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
       (g ? (evs.length ? '<div class="tllist">' + evs.map(function (e, i) {
         return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : ""), e.current ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
@@ -3664,14 +3664,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function reliefHtml() {
     var w = window.ASAP_RW, list = w && w.reports ? (w.reports[CC] || []).filter(function (x) { return inPeriodDate(x.date); }) : [];
-    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
       (w ? (list.length ? '<ul class="note">' + list.slice(0, 15).map(function (x) {
         return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc([x.date, x.source, x.type].filter(Boolean).join(" · ")) + "</span></li>";
       }).join("") + "</ul>" : '<p class="obs">No ReliefWeb report for ' + esc(C.name) + " in this period.</p>") : "") +
       '<p class="note">Reports are documents published by agencies and NGOs. Each is that organisation\'s account, not a confirmed finding.</p></div>';
   }
 
-  /* ---------- tropical cyclones and the 7-day forecast (hourly snapshots from the GitHub job) ----------
+  /* ---------- tropical cyclones and the 7-day forecast (15-minute snapshots from the GitHub job) ----------
      Positions, forecast tracks and probability circles are the issuing agency's products (JMA, JTWC, GDACS), each kept with its
      agency and issue time. The page only draws them and works out distances; it never merges or adjusts agencies' tracks. */
   var STC = { JMA: "#d84315", JTWC: "#7b1fa2", GDACS: "#607d8b" };
@@ -3786,9 +3786,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function stormHtml() {
     var s = window.ASAP_STORMS, list = stormsHere();
     var head = '<div class="sec"><h2>Tropical cyclones</h2>';
-    if (!s) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!s) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     var failed = (s.status || []).filter(function (x) { return !x.ok; });
-    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(s.asof) + " · hourly · " + (s.status || []).map(function (x) {
+    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(s.asof) + " · every 15 min · " + (s.status || []).map(function (x) {
       return esc(x.source) + (x.ok ? "" : ' <span class="badge stale">FAILED</span>'); }).join(", ") + "</p>";
     if (!list.length) return out + '<p class="obs">No active tropical cyclone within 500 km of ' + esc(C.name) + " in the latest JMA, JTWC or GDACS products.</p></div>";
     list.forEach(function (st, si) {
@@ -3823,10 +3823,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function wxHtml() {
     var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
     var head = '<div class="sec" id="wx-fc"><h2>Weather forecast, next 7 days</h2>';
-    if (!f) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!f) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     if (!pts.length) return head + '<p class="obs">No forecast point for ' + esc(C.name) + ".</p></div>";
     var p = pts[Math.min(wxPick, pts.length - 1)];
-    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(f.asof) + " · hourly · Open-Meteo</p>" +
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(f.asof) + " · every 15 min · Open-Meteo</p>" +
       (pts.length > 1 ? '<p><label class="obs" for="wx-pt">Place </label><select id="wx-pt">' + pts.map(function (x, i) { return '<option value="' + i + '"' + (x === p ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></p>" : "") +
       '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>°C</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
         var hot = (d.g != null && d.g >= 90) || (d.p != null && d.p >= 50) || d.code >= 95;
@@ -3847,7 +3847,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* top of the Weather view: storms first, then the official warnings, then the forecast */
   function wxTopHtml() { return stormHtml() + warnHtml() + wxHtml(); }
 
-  /* ---------- official weather warnings (hourly snapshot; non-English text machine-translated in the job, original kept) ---------- */
+  /* ---------- official weather warnings (15-minute snapshot; non-English text machine-translated in the job, original kept) ---------- */
   var LANGN = { ja: "Japanese", th: "Thai", vi: "Vietnamese", km: "Khmer", lo: "Lao", my: "Burmese", id: "Indonesian", ms: "Malay", zh: "Chinese", ko: "Korean",
     mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum" };
   function mtNote(i) {
@@ -3863,7 +3863,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var w = window.ASAP_WARN;
     warnItems().forEach(function (i) {
       var s = src("warn-" + i.agency.toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.agency, "National weather or disaster agency", "B",
-        "Official warning feed, read hourly. Warnings are the agency's statements.", i.feed);
+        "Official warning feed, read every 15 minutes. Warnings are the agency's statements.", i.feed);
       var en = i.title_en || i.title, sen = i.summary_en || i.summary;
       add({ layer: "weather", type: "claim", cat: "Official weather warning", kind: "other", warn: true, live: true,
         title: en + (sen && sen !== en ? ": " + sen.slice(0, 140) : ""), detail: sen || "",
@@ -3879,9 +3879,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var w = window.ASAP_WARN, feeds = w && w.feeds ? w.feeds.filter(function (f) { return f.cc === CC; }) : [];
     var list = warnItems().filter(function (i) { return inPeriodDate(i.date); });
     var head = '<div class="sec"><h2>Official weather warnings</h2>';
-    if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     if (!feeds.length) return head + '<p class="obs">No machine-readable warning feed is set up for ' + esc(C.name) + " yet. Check the national weather agency's own site.</p></div>";
-    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " + feeds.map(function (f) {
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min · " + feeds.map(function (f) {
         return esc(f.agency) + (f.ok ? " (" + f.n + ")" : ' <span class="badge stale">FEED FAILED</span>'); }).join(", ") + "</p>" +
       (list.length ? '<ul class="note">' + list.slice(0, 20).map(function (i) {
         var en = i.title_en || i.title, sen = i.summary_en || i.summary;
@@ -3891,7 +3891,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       }).join("") + "</ul>" : '<p class="obs">No warning in this period.</p>') + "</div>";
   }
 
-  /* ---------- local news: GDELT and national outlets (hourly snapshot, headlines machine-translated in the job) ----------
+  /* ---------- local news: GDELT and national outlets (15-minute snapshot, headlines machine-translated in the job) ----------
      Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
   LCOL.news = "--accent";
   var GAZ = null;
@@ -3925,7 +3925,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     (w.items[CC] || []).forEach(function (i) {
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
-        "F", layer === "news" ? "Read hourly from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read hourly. Posts are that account's claims.", i.link);
+        "F", layer === "news" ? "Read every 15 minutes from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read every 15 minutes. Posts are that account's claims.", i.link);
       var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary), pl = placeFor(en + " " + (sen || ""));
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
@@ -3940,7 +3940,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   LCOL.social = "--sat-flood";
   addNewsRecords("ASAP_NEWS", "news", "news");
   addNewsRecords("ASAP_SOCIAL", "social", "social");
-  /* ---------- Top stories: a fixed, rule-based score for each hour's headlines (no AI, no hidden weights) ----------
+  /* ---------- Top stories: a fixed, rule-based score for each refresh's headlines (no AI, no hidden weights) ----------
      Points: +3 when the headline matches one of this app's layer topics and +1 for each further topic (up to 2), or +1 when
      only the summary does; +2 when the headline names this area or a known place in it; +2 for each other outlet or official
      account carrying the same story (up to 3); +1 for a state outlet; +1 when published in the 12 hours before the snapshot.
@@ -4010,7 +4010,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var newsAll = false;
   function topHtml(recs) {
     var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs).slice(0, 12);
-    return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules each hour (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
+    return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules at each refresh (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
       routine + " sport, entertainment or advertising headline" + (routine === 1 ? "" : "s") + " left out.</p>" +
       (top.length ? '<div class="tllist">' + top.map(function (x) {
         return '<button type="button" class="tlrow" data-openrec="' + esc(x.r.id) + '"><span class="tlt">' + esc(fmtTs(x.r)) + ' · <b>' + x.score + " pts</b></span><span class=\"tln\">" + esc(x.r.title) + "</span>" +
@@ -4032,7 +4032,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
     var head = '<div class="sec"><div class="banner" style="margin:0"><b>Unverified reports.</b> ' + note + "</div></div>";
     if (!w) return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">NO DATA</span> ' + empty + "</p></div>";
-    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " +
+    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min · " +
       (srcs.length ? srcs.map(function (s) { return esc(s.source) + (s.ok ? " (" + s.n + ")" : ' <span class="badge stale">' + (s.skipped ? "NOT SET UP" : "FAILED") + "</span>"); }).join(", ") : "no source set up for this area") + "</p>" +
       '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name." +
       (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
@@ -4043,19 +4043,19 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
-    railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the hourly GitHub job once the app is hosted.",
+    railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the GitHub job every 15 minutes once the app is hosted.",
       "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky and Telegram. Every post is that account's claim.");
   }
   function showNews() {
-    railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
+    railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
       "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
     var b = document.getElementById("news-all");
     if (b) b.addEventListener("click", function () { newsAll = !newsAll; showNews(); });
   }
 
-  /* ---------- further free sources (hourly snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
+  /* ---------- further free sources (15-minute snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
      internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
-  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.'; }
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
   function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
   function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
   function advNow() {
@@ -4063,7 +4063,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!L) return { level: a.level, level_text: a.level_text, live: false };
     return { level: L.level, level_text: L.level_text, date: L.date, link: L.link, live: true, changed: a.level != null && a.level !== L.level, was: a.level };
   }
-  src("state-adv", "U.S. Department of State travel advisories (feed)", "U.S. government agency", "B", "Advisory levels are the State Department's assessments, read hourly.", "https://travel.state.gov/");
+  src("state-adv", "U.S. Department of State travel advisories (feed)", "U.S. government agency", "B", "Advisory levels are the State Department's assessments, read every 15 minutes.", "https://travel.state.gov/");
   src("ptwc", "NOAA Pacific Tsunami Warning Center", "U.S. government agency", "A", "Official tsunami bulletins. Information statements often say there is no threat.", "https://www.tsunami.gov/");
   src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
   src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
