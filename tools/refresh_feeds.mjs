@@ -136,7 +136,7 @@ try {
   const iso = [...new Set(Object.values(ISO3))];
   const body = { limit: 1000, sort: ["date.created:desc"], preset: "latest",
     filter: { operator: "AND", conditions: [{ field: "primary_country.iso3", value: iso.map((i) => i.toLowerCase()), operator: "OR" },
-      { field: "date.created", value: { from: new Date(Date.now() - 90 * 864e5).toISOString() } }] },
+      { field: "date.created", value: { from: new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 19) + "+00:00" } }] },
     fields: { include: ["title", "date.created", "primary_country.iso3", "source.shortname", "source.name", "url_alias", "url", "format.name", "disaster_type.name"] } };
   let j = null, fails = [];
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
@@ -160,7 +160,7 @@ try {
       } catch (e) { fails.push(cc + " RSS: " + e.message); if (fails.length > 4 && !data.length) break; }
       await new Promise((r) => setTimeout(r, 400));
     }
-    if (!data.length) throw new Error(fails.slice(0, 3).join("; "));
+    if (!data.length) throw new Error([fails[0]].concat(fails.slice(1, 3)).join("; "));
     j = { data };
     console.error("ReliefWeb API failed, used RSS:", fails[0]);
   }
