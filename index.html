@@ -106,6 +106,12 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .sofpin.inline{display:inline-block;vertical-align:-4px}.sofpin.inline span{width:16px;height:16px;font-size:9.5px;box-shadow:none}
 .cond td,.cond th{font-size:12px;padding:3px 4px;white-space:nowrap}.cond tr.today td{font-weight:600}
 #brief{position:fixed;inset:0;z-index:100000;overflow:auto;background:#d9dee3;padding:12px}
+#credits{position:fixed;inset:0;z-index:100000;overflow:auto;background:rgba(0,0,0,.45);padding:16px}
+#credits .cbox{max-width:760px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:8px;padding:14px 18px 18px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+#credits .chead{display:flex;align-items:center;gap:8px;position:sticky;top:-16px;background:var(--surface);padding:6px 0}#credits .chead h2{margin:0;font-size:18px;flex:1}
+#credits .chead .x{font-size:26px;min-width:44px;min-height:44px;background:none;border:none;color:var(--ink);cursor:pointer}
+#credits h3{font-size:13px;margin:12px 0 4px;text-transform:none;letter-spacing:0}#credits ul{margin:0;padding-left:18px}#credits li{margin:2px 0}#credits .obs{color:var(--muted)}
+#credits blockquote{margin:4px 0 4px 0;padding:4px 8px;border-left:3px solid var(--line);color:var(--ink)}
 .bbar{max-width:800px;margin:0 auto 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .bpage{max-width:800px;margin:0 auto;background:#fff;color:#111;padding:18px 22px;font-size:11px;line-height:1.35;box-shadow:0 1px 6px rgba(0,0,0,.2)}
 .bpage header{display:block;border-bottom:2px solid #12324a;padding-bottom:4px;margin-bottom:6px}.bpage h2{margin:2px 0;font-size:20px}
@@ -388,6 +394,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   <h1 id="hdr-title">Flood</h1>
   <div class="live" id="hdr-live"><span class="dot" id="hdr-dot"></span> Flood data as of <b id="hdr-asof">&mdash;</b> <span class="badge stale" id="hdr-state">SNAPSHOT</span> <span class="hdrchk" id="hdr-checked"></span> <button type="button" class="refresh" id="hdr-refresh">Refresh</button> <span class="rprog" id="hdr-prog" role="status" aria-live="polite"><span class="bar" role="progressbar" aria-label="Refresh progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="hdr-prog-bar"></i></span><span class="st" id="hdr-prog-st"></span></span></div>
   <div class="pseg" id="period-seg" role="group" aria-label="Reporting period" style="margin-left:auto"><span class="plbl">Period</span><button type="button" data-p="7">7 d</button><button type="button" data-p="30">30 d</button><button type="button" data-p="90">90 d</button><button type="button" data-p="all">All</button><button type="button" data-p="custom">Custom</button><span id="period-custom" hidden><input type="date" id="period-from" aria-label="Period from" class="mini"> to <input type="date" id="period-to" aria-label="Period to" class="mini"></span></div>
+  <button type="button" class="refresh" id="credits-btn" title="Where the data comes from, and the credits each source asks for">Credits</button>
   <button type="button" class="refresh" id="brief-btn" title="One-page country brief to print or save as PDF">Country brief</button>
   <div class="seg" id="theme-seg" role="group" aria-label="Map theme">
     <button type="button" data-theme-set="light" aria-pressed="true">Light</button>
@@ -397,6 +404,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   <div class="srcline" id="hdr-src" style="margin-left:0">thaiwater.net &middot; NASA MODIS &middot; GISTDA &middot; Esri</div>
 </header>
 <div id="brief" hidden></div>
+<div id="credits" hidden role="dialog" aria-modal="true" aria-labelledby="credits-h"></div>
 
 <div class="shell">
   <div id="map"></div>
@@ -818,6 +826,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
   var fitB = map.fitBounds; map.fitBounds = function (b, o) { map.__lastFit = [b, o]; return fitB.call(map, b, o); };
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+  /* OpenStreetMap data (borders, facilities) is used in several views; ODbL asks for this credit on the map */
+  map.attributionControl.addAttribution('&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · <a href="#" id="attr-credits">Credits</a>');
   [["provpane", 350], ["floodpane", 450], ["rainpane", 440], ["expopane", 460], ["infrapane", 620]].forEach(function (p) {
     map.createPane(p[0]);
     map.getPane(p[0]).style.zIndex = p[1];
@@ -835,7 +845,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function isDark() { return theme() === "dark"; }
   var baseLayer = new Hybrid(ESRI.replace("{v}", isDark() ? "Dark" : "Light"),
     { maxNativeZoom: 9, minNativeZoom: 6, maxZoom: 13, className: "basefilter",
-      attribution: "Esri, HERE, Garmin, FAO, NOAA, USGS" }).addTo(map);
+      attribution: "Powered by Esri · Esri, HERE, Garmin, FAO, NOAA, USGS" }).addTo(map);
   function syncBasemap() {
     var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
     if (baseLayer._url !== want) { baseLayer.setUrl(want); baseLayer.redraw(); }
@@ -3566,6 +3576,55 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function closeBrief() { briefEl.hidden = true; briefEl.innerHTML = ""; document.documentElement.classList.remove("briefing"); }
   document.getElementById("brief-btn").addEventListener("click", openBrief);
+
+  /* ---------- credits: every source the app draws on, with the wording each one asks for ---------- */
+  var CREDITS = [
+    ["Map", [
+      ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
+      ['Background map: Powered by <a href="https://www.esri.com/">Esri</a>. Sources: Esri, HERE, Garmin, FAO, NOAA, USGS.'],
+      ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
+      ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
+      ['Map software: <a href="https://leafletjs.com/">Leaflet</a> &copy; Volodymyr Agafonkin and contributors (BSD-2-Clause).']]],
+    ["Weather, hazards and forecasts", [
+      ['Source: Japan Meteorological Agency website (<a href="https://www.jma.go.jp/">https://www.jma.go.jp/</a>): typhoon positions and forecast tracks, earthquakes and warnings. Shown as received; OSAP is not a Japanese Government product.'],
+      ['Tropical cyclone warnings: U.S. Navy Joint Typhoon Warning Center (JTWC). Tsunami bulletins: NOAA Pacific Tsunami Warning Center.'],
+      ['Weather forecast, marine forecast and air quality: <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0). Air quality contains modified Copernicus Atmosphere Monitoring Service information.'],
+      ['Earthquakes: U.S. Geological Survey (USGS); Indonesia&rsquo;s <a href="https://www.bmkg.go.id/">BMKG</a>; Thai Meteorological Department.'],
+      ['Disaster alerts: <a href="https://www.gdacs.org/">GDACS</a> (European Commission JRC and UN OCHA). Natural events: NASA EONET.'],
+      ['Warnings: Hong Kong Observatory (DATA.GOV.HK); Taiwan NCDR (Open Government Data License, Taiwan 1.0); MET Malaysia via data.gov.my (CC BY 4.0); China National Meteorological Centre; India NDMA SACHET; Australian Bureau of Meteorology.'],
+      ['metservice'],
+      ['Thai river gauges and rain: ThaiWater, Hydro-Informatics Institute. Flood and boundary services: GISTDA. Volcanic activity: Smithsonian Global Volcanism Program weekly report.']]],
+    ["Security, health and travel", [
+      ['Conflict events: UCDP Candidate Events Dataset (CC BY 4.0). Hegre, H., Croicu, M., Eck, K. and H&ouml;gbladh, S. (2020) &ldquo;Introducing the UCDP Candidate Events Dataset&rdquo;, <i>Research &amp; Politics</i>. UCDP is part of and funded by DEMSCORE, national research infrastructure grant 2021-00162 from the Swedish Research Council.'],
+      ['Refugee and displacement figures: <a href="https://www.unhcr.org/refugee-statistics/">UNHCR Refugee Data Finder</a> (CC BY 4.0).'],
+      ['Travel advisories: U.S. Department of State. Sanctions: U.S. Treasury OFAC. Maritime warnings: NGA Maritime Safety Information and U.S. MARAD. Health notices: U.S. CDC (no endorsement implied) and WHO Disease Outbreak News.'],
+      ['Emergencies: IFRC GO. Internet outages: IODA (Georgia Tech). Piracy reports: ReCAAP ISC (titles and links only).']]],
+    ["News, posts and reference", [
+      ['Headlines and posts belong to the outlets and accounts named on each item; OSAP shows the headline, a short extract and a link.'],
+      ['Machine translation: MADLAD-400 (Google, Apache-2.0), run in OSAP&rsquo;s refresh job, and MyMemory. Every translation is marked and keeps the original.'],
+      ['Airports: <a href="https://ourairports.com/">OurAirports</a> (public domain). Seaports: UN/LOCODE (UNECE). Some facts and coordinates cite Wikipedia (CC BY-SA 4.0).'],
+      ['Fonts: IBM Plex (SIL Open Font License).']]]];
+  var METSERVICE = 'This information is made freely available by MetService. Despite this, MetService is not associated with, and does not endorse, AXIOM OSAP.';
+  var creditsEl = document.getElementById("credits");
+  function openCredits(e) {
+    if (e) e.preventDefault();
+    creditsEl.innerHTML = '<div class="cbox"><div class="chead"><h2 id="credits-h">Credits and data sources</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
+      '<p class="obs">AXIOM OSAP gathers public information. Each item keeps a link to where it came from. The sources below are credited as their terms ask.</p>' +
+      CREDITS.map(function (g) {
+        return "<h3>" + g[0] + "</h3><ul>" + g[1].map(function (x) {
+          return x[0] === "metservice" ? '<li>New Zealand weather warnings: MetService, under its <a href="https://about.metservice.com/our-data-access-policy">Open Access data policy</a>:<blockquote>' + esc(METSERVICE) + "</blockquote></li>" : "<li>" + x[0] + "</li>";
+        }).join("") + "</ul>";
+      }).join("") + "</div>";
+    Array.prototype.forEach.call(creditsEl.querySelectorAll("a[href^=http]"), function (a) { a.target = "_blank"; a.rel = "noopener"; });
+    creditsEl.hidden = false;
+    creditsEl.querySelector(".x").addEventListener("click", closeCredits);
+    creditsEl.querySelector(".x").focus();
+  }
+  function closeCredits() { creditsEl.hidden = true; creditsEl.innerHTML = ""; }
+  creditsEl.addEventListener("click", function (e) { if (e.target === creditsEl) closeCredits(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !creditsEl.hidden) closeCredits(); });
+  document.getElementById("credits-btn").addEventListener("click", openCredits);
+  document.getElementById("map").addEventListener("click", function (e) { if (e.target && e.target.id === "attr-credits") openCredits(e); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !briefEl.hidden) closeBrief(); });
 
   /* ---------- live hazards: USGS earthquakes (become Public safety records) and model air quality ----------
@@ -4592,7 +4651,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   html.phone #phone-nav label{position:absolute;left:-9999px}
   html.phone #hdr-title{font-size:17px}
   html.phone:not(.hdr-open) #hdr-checked,html.phone:not(.hdr-open) #hdr-refresh,html.phone:not(.hdr-open) #hdr-prog,
-  html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
+  html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #credits-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
   html.phone #ph-more{flex:0 0 auto;min-height:40px;min-width:44px;font:inherit;font-size:14px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
   html.phone.hdr-open #ph-more{background:var(--ink);color:var(--surface)}
   html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
