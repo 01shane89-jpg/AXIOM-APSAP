@@ -1,4 +1,4 @@
-"""Split the single-file ASAP page (as published to claude.ai) into the repo layout.
+"""Split the single-file OSAP page (as published to claude.ai) into the repo layout.
 
 Usage: python3 tools/split_page.py <published-index.html>
 Writes index.html plus data/*.js. Every embedded data block becomes its own script
@@ -53,7 +53,7 @@ page = page.replace('<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet
 PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a">'
             '<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">'
             '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">'
-            '<meta name="apple-mobile-web-app-title" content="ASAP"><meta name="apple-mobile-web-app-status-bar-style" content="default">')
+            '<meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default">')
 # A new deploy installs a new worker, which takes over at once (skipWaiting + clients.claim in sw.js); the page then
 # reloads once so no file from the old version stays in use. The worker is re-checked on every open and on return.
 PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () {'

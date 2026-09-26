@@ -1,8 +1,8 @@
-# AXIOM ASAP
+# AXIOM OSAP
 
-<p align="center"><img src="assets/logo.png" alt="AXIOM ASAP logo" width="320"></p>
+<p align="center"><img src="assets/logo-mark.png" alt="" width="96"><br><b>AXIOM OSAP</b></p>
 
-Asia Pacific Situational Awareness Platform. One map, one timeline and one set of alert rules for 28 areas, grouped as Mainland Southeast Asia (Thailand, Vietnam, Cambodia, Laos, Myanmar), Maritime Southeast Asia (Philippines, Malaysia, Singapore, Indonesia, Brunei, Timor-Leste), East Asia (China, Taiwan, North Korea, South Korea, Japan, Okinawa, Mongolia), Oceania (Australia, New Zealand, Papua New Guinea) and South Asia (India, Pakistan, Nepal, Bhutan, Bangladesh, Sri Lanka, Maldives). Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there.
+Open Source Awareness Platform. One map, one timeline and one set of alert rules for 28 areas, grouped as Mainland Southeast Asia (Thailand, Vietnam, Cambodia, Laos, Myanmar), Maritime Southeast Asia (Philippines, Malaysia, Singapore, Indonesia, Brunei, Timor-Leste), East Asia (China, Taiwan, North Korea, South Korea, Japan, Okinawa, Mongolia), Oceania (Australia, New Zealand, Papua New Guinea) and South Asia (India, Pakistan, Nepal, Bhutan, Bangladesh, Sri Lanka, Maldives). Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there.
 
 It is a separate build for now and is meant to fold into AXIOM later (see [Path into AXIOM](#path-into-axiom)).
 
@@ -16,7 +16,7 @@ Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) a
 
 ## Install on a computer, Android or iPhone
 
-When the site is hosted (for example on GitHub Pages), ASAP installs as an app:
+When the site is hosted (for example on GitHub Pages), OSAP installs as an app:
 
 - **Computer (Chrome or Edge):** open the site and click the install icon at the right of the address bar.
 - **Android (Chrome):** open the site, tap the menu, then **Install app** (or **Add to Home screen**).
