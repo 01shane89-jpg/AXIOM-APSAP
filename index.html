@@ -116,6 +116,10 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
+.bpage a.bl{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}.bpage a.bl:hover{color:#12324a;border-bottom-style:solid}.bpage h3 a.bl{color:#12324a}
+.bpage .po{display:none}.bpage sup.po{font-size:.75em;color:#555;margin-left:1px}.bpage .bsrcs{margin-top:4px;font-size:8px;line-height:1.25;color:#444;column-count:2;column-gap:12px;overflow-wrap:anywhere}.bpage .bsrcs b{font-weight:600}
+@media print{.bpage sup.po{display:inline}.bpage div.po{display:block}.bpage a.bl{border-bottom:0}}
+.bmeasure .bpage sup.po{display:inline}.bmeasure .bpage div.po{display:block}
 .bmeasure{position:absolute;left:-9999px;top:0;width:186mm;visibility:hidden}.bmeasure .bpage{max-width:none;padding:0;font-size:9.5px;box-shadow:none}.bmeasure .bpage h3{margin:5px 0 2px}.bmeasure .noprint{display:none}
 @media print{@page{margin:12mm}}
 .pseg{display:inline-flex;align-items:center;gap:0;flex-wrap:wrap;font-size:11.5px}.pseg .plbl{font-family:var(--mono,monospace);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;color:var(--muted);margin-right:6px}
@@ -3491,16 +3495,25 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         [st.bmnt, st.rise, st.set, st.eent, mr.rise, mr.set].map(function (t) { return condClock(t, tz); }).join("</td><td>") + "</td><td>" + Math.round(il.frac * 100) + "%</td></tr>";
     }
     condZulu = zSave;
+    /* every heading and item links to its source (new tab); in print each link gets a number and the sources are listed at the foot */
+    var SRCS = [];
+    function bl(url, html) {
+      if (!url || !/^https?:\/\//.test(url)) return html;
+      var n = SRCS.indexOf(url); if (n < 0) { SRCS.push(url); n = SRCS.length - 1; }
+      return '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener" title="Open the source">' + html + '</a><sup class="po">' + (n + 1) + "</sup>";
+    }
+    if (a) bl(a.src || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", "");
+    function common(arr) { var c = {}, best = null; arr.forEach(function (x) { if (x && x.src) { c[x.src] = (c[x.src] || 0) + 1; if (!best || c[x.src] > c[best]) best = x.src; } }); return best; }
     function g(i) { return i.lat != null ? '<span class="mg">' + esc(window.MGRS_OF(i.lat, i.lon, i.prec === "exact" ? 5 : 3)) + "</span>" : ""; }
-    function list(title, arr, fn, cls) { return arr.length ? "<h3>" + title + '</h3><table class="' + (cls || "bfac") + '">' + arr.map(fn).join("") + "</table>" : ""; }
+    function list(title, arr, fn, cls, url) { return arr.length ? "<h3>" + bl(url || common(arr), title) + '</h3><table class="' + (cls || "bfac") + '">' + arr.map(fn).join("") + "</table>" : ""; }
     var fac = "";
     if (S0) {
       var hosp = (S0.hospitals || []).slice().sort(function (p, q) { return (q.emergency_24h ? 1 : 0) - (p.emergency_24h ? 1 : 0); }).slice(0, lim.hosp);
       var air = (S0.airports || []).slice().sort(function (p, q) { return ((q.longest_runway || {}).length_m || 0) - ((p.longest_runway || {}).length_m || 0); }).slice(0, lim.air);
-      fac = list("U.S. posts", (S0.posts || []).slice(0, lim.post), function (p) { return "<tr><td class=\"w\">" + esc(p.name) + "</td><td>" + esc(p.city || "") + "</td><td>" + g(p) + "</td></tr>"; }) +
-        list("Hospitals", hosp, function (p) { return "<tr><td class=\"w\">" + esc(p.name) + "</td><td>" + esc([p.city, p.emergency_24h ? "24 h ED" : ""].filter(Boolean).join(" · ")) + "</td><td>" + g(p) + "</td></tr>"; }) +
-        list("Airports (longest runways)", air, function (p) { return "<tr><td class=\"w\">" + esc(p.name) + "</td><td>" + [p.icao, (p.longest_runway || {}).length_m ? p.longest_runway.length_m + " m rwy" : ""].filter(Boolean).map(esc).join("<br>") + "</td><td>" + g(p) + "</td></tr>"; }) +
-        list("Seaports", (S0.seaports || []).slice(0, lim.sea), function (p) { return "<tr><td class=\"w\">" + esc(p.name) + "</td><td>" + esc(p.unlocode || "") + "</td><td>" + g(p) + "</td></tr>"; });
+      fac = list("U.S. posts", (S0.posts || []).slice(0, lim.post), function (p) { return "<tr><td class=\"w\">" + bl(p.src, esc(p.name)) + "</td><td>" + esc(p.city || "") + "</td><td>" + g(p) + "</td></tr>"; }) +
+        list("Hospitals", hosp, function (p) { return "<tr><td class=\"w\">" + bl(p.src, esc(p.name)) + "</td><td>" + esc([p.city, p.emergency_24h ? "24 h ED" : ""].filter(Boolean).join(" · ")) + "</td><td>" + g(p) + "</td></tr>"; }) +
+        list("Airports (longest runways)", air, function (p) { return "<tr><td class=\"w\">" + bl(p.src, esc(p.name)) + "</td><td>" + [p.icao, (p.longest_runway || {}).length_m ? p.longest_runway.length_m + " m rwy" : ""].filter(Boolean).map(esc).join("<br>") + "</td><td>" + g(p) + "</td></tr>"; }, null, "https://ourairports.com/countries/" + (((S0.airports || [])[0] || {}).region || "").slice(0, 2) + "/") +
+        list("Seaports", (S0.seaports || []).slice(0, lim.sea), function (p) { return "<tr><td class=\"w\">" + bl(p.src, esc(p.name)) + "</td><td>" + esc(p.unlocode || "") + "</td><td>" + g(p) + "</td></tr>"; });
     }
     var recent = R.filter(inPeriod);
     var byL = {}; recent.forEach(function (r) { byL[r.layer] = (byL[r.layer] || 0) + 1; });
@@ -3509,7 +3522,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var rec = "<h3>" + (recent.length ? "Reporting, " + esc(periodLabel()) + ": " + recent.length + " records" : "Most recent reporting (nothing in " + esc(periodLabel()) + ")") + "</h3>" +
       (recent.length ? '<p class="bm">' + Object.keys(byL).map(function (l) { return esc((LBY[l] || { name: l }).name) + " " + byL[l]; }).join(" · ") + "</p>" : "") +
       '<table class="btwo">' + top.map(function (r) {
-        return "<tr><td>" + esc(String(r.ts).slice(5, 10)) + '</td><td class="w">' + esc(r.title) +
+        return "<tr><td>" + esc(String(r.ts).slice(5, 10)) + '</td><td class="w">' + bl(r.url || (r.src && r.src.url), esc(r.title)) +
           '<span class="bm"> · ' + esc((LBY[r.layer] || { name: r.layer }).name) + " · " + esc(STATE[r.type] ? STATE[r.type][0] : r.type) + (r.place ? " · " + esc(r.place) : "") + "</span>" +
           (r.lat != null ? ' <span class="mg">' + esc(mgrsFor(r)) + "</span>" : "") + "</td></tr>";
       }).join("") + "</table>";
@@ -3517,20 +3530,21 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (S0) {
       var xs = (S0.exercises || []).concat(((window.ASAP_SOF_OUT || {}).exercises || []).filter(function (x) { return (x.also_cc || []).indexOf(CC) >= 0; }))
         .filter(function (x) { var s = exStatus(x); return s !== "completed"; }).slice(0, lim.ex);
-      ex = list("Partner exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + esc(exName(x)) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
+      ex = list("Partner exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + bl(x.src, esc(exName(x))) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
     }
     return '<div class="bbar noprint"><button type="button" class="refresh primary" id="brief-print">Print</button> <button type="button" class="refresh" id="brief-close">Close</button>' +
       ' <span class="obs">Fits one page on A4 or Letter. Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
       '<article class="bpage"><header><div><b>AXIOM OSAP</b> · Country brief</div><h2>' + esc(C.name) + "</h2><div>Compiled " + esc(z) + " from public sources held in the app</div></header>" +
       '<p class="bwarn">Every item is a report or reference entry, not a finding. None has been confirmed by an analyst. Check locations and facilities before relying on them.</p>' +
-      (a ? '<h3>U.S. travel advisory: Level ' + esc(String(a.level)) + ", " + esc(a.level_text || "") + '</h3><p class="bm">State Department claim, issued ' + esc(a.issued || "") + (a.updated ? ", updated " + esc(a.updated) : "") +
+      (a ? "<h3>" + bl(a.src || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", "U.S. travel advisory: Level " + esc(String(a.level)) + ", " + esc(a.level_text || "")) + '</h3><p class="bm">State Department claim, issued ' + esc(a.issued || "") + (a.updated ? ", updated " + esc(a.updated) : "") +
         (a.indicator_names && a.indicator_names.length ? ". Indicators: " + esc(a.indicator_names.join(", ")) : "") + ".</p>" +
         (a.areas && a.areas.length ? '<table class="btwo">' + a.areas.slice(0, lim.area).map(function (x) { return "<tr><td>Level " + esc(String(x.level || "")) + '</td><td class="w">' + esc(x.area) + '<span class="bm"> · ' + esc(x.reason || "") + "</span></td></tr>"; }).join("") + "</table>" : "") : "") +
       "<h3>Light at " + esc(ref.what) + " (" + esc(window.MGRS_OF(ref.lat, ref.lon, 3)) + "), " + esc(tz) + " local time</h3>" +
       '<table class="blight"><tr><th>Day</th><th>BMNT</th><th>Sun rise</th><th>Sun set</th><th>EENT</th><th>Moon rise</th><th>Moon set</th><th>Moon lit</th></tr>' + light + "</table>" +
       '<div class="bcols"><div>' + fac + "</div><div>" + rec + ex + "</div></div>" +
       '<footer>Grid references are MGRS on WGS84: 1 m where the source gives an exact point, 1 km where the place is approximate. Every record in the app links to its source and carries a SHA-256 fingerprint. ' +
-      "Sun and moon times are computed, accurate to a minute or two.</footer></article>";
+      "Sun and moon times are computed, accurate to a minute or two. Headings and items link to their sources.</footer>" +
+      (SRCS.length ? '<div class="po bsrcs"><b>Sources.</b> ' + SRCS.map(function (u, i) { return (i + 1) + " " + esc(u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "").slice(0, 70)); }).join(" · ") + "</div>" : "") + "</article>";
   }
   /* fit one printed page: lay the brief out at printable width (A4 and Letter both fit 186 x 250 mm) and trim the longest lists until it fits */
   function fitBrief() {
