@@ -46,7 +46,7 @@ try {
     const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
     return { id: f.id, mag: p.mag, place: p.place || "", time: p.time, depth: c[2], lat: c[1], lon: c[0], url: p.url || "",
       tsunami: p.tsunami, alert: p.alert || null, status: p.status || "", type: p.type || "earthquake" };
-  }).filter((q) => q.type === "earthquake" && q.mag != null && q.lat >= -50 && q.lat <= 56 && q.lon >= 58 && q.lon <= 180);
+  }).filter((q) => q.type === "earthquake" && q.mag != null); // worldwide: every country in the picker filters by its own area
   write("data/live/quakes.js", "ASAP_QUAKES", { asof: stamp, src: USGS, features });
   console.log("quakes", features.length); ok++;
 } catch (e) { console.error("USGS failed:", e.message); }
@@ -109,14 +109,12 @@ async function gdacsFromRss() {
 try {
   let g, via = GDACS;
   try { g = await getJSON(GDACS); } catch (e) { console.error("GDACS API failed (" + e.message + "), using RSS"); g = await gdacsFromRss(); via = "https://www.gdacs.org/xml/rss.xml"; }
-  const wanted = new Set(Object.values(ISO3));
-  const inRegion = (lat, lon) => lat >= -50 && lat <= 56 && lon >= 58 && lon <= 180;
   const events = [];
   for (const f of g.features || []) {
     const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
     if (!p.eventtype || (f.geometry || {}).type !== "Point") continue;
     const iso = [...new Set([p.iso3, ...((p.affectedcountries || []).map((a) => a.iso3))].filter(Boolean))];
-    if (!iso.some((i) => wanted.has(i)) && !inRegion(c[1], c[0])) continue;
+    // worldwide: the picker covers every country, and each country's page filters by its ISO3 code and area
     const ev = { id: p.eventtype + "-" + p.eventid + "-" + (p.episodeid || ""), type: p.eventtype, name: p.name || p.eventname || "",
       desc: p.description || p.htmldescription || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "",
       lat: c[1], lon: c[0], iso3: iso, severity: (p.severitydata || {}).severitytext || "",
