@@ -68,22 +68,26 @@
   {
    "cc": "*",
    "handle": "Reuters",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "*",
    "handle": "AssociatedPress",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "*",
    "handle": "AlJazeeraEnglish",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "th",
    "handle": "ThaiPBSWorld",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "th",
@@ -94,7 +98,8 @@
   {
    "cc": "sg",
    "handle": "channelnewsasia",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "id",
@@ -123,47 +128,56 @@
   {
    "cc": "cn",
    "handle": "CGTN",
-   "kind": "state media"
+   "kind": "state media",
+   "lang": "en"
   },
   {
    "cc": "tw",
    "handle": "TaiwanPlusNews",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "jp",
    "handle": "NHKWORLDJAPAN",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "au",
    "handle": "abcnewsaustralia",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "au",
    "handle": "SBSNews",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "in",
    "handle": "NDTV",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "in",
    "handle": "WION",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "pk",
    "handle": "DawnNewsEnglish",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   },
   {
    "cc": "pg",
    "handle": "EMTVOnline",
-   "kind": "news desk"
+   "kind": "news desk",
+   "lang": "en"
   }
  ]
 }

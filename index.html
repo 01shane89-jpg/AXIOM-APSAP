@@ -4207,7 +4207,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
-        return '<button type="button" class="tlrow' + (r.thumb ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (r.thumb ? '<img class="ytthumb" src="' + esc(r.thumb) + '" alt="" loading="lazy" width="96" height="54">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
+        return '<button type="button" class="tlrow' + (r.thumb ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (r.thumb ? '<img class="ytthumb" src="' + esc(r.thumb) + '" alt="" loading="lazy" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
@@ -4596,7 +4596,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
