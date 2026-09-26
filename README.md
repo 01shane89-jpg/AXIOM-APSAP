@@ -36,6 +36,15 @@ After the first visit the service worker (`sw.js`) keeps the whole app and all p
 
 The claude.ai artifact viewer blocks all outside requests, so Refresh cannot work there; the header then shows **SNAPSHOT** with the build time. Opened from this repo in a normal browser, Refresh pulls live gauges and the header shows **LIVE** with the newest gauge time.
 
+## Crisis response, partners, conditions and the country brief
+
+- **Crisis response** (every area): the U.S. travel advisory with its area table, U.S. diplomatic posts, airports, seaports and hospitals on the map. It is reference data gathered from public sources on 26 Sept 2026 (airports from OurAirports), not verified; check the national AIP before any operational use.
+- **Light and sea conditions** (in Crisis response): seven days of BMNT, sunrise, sunset, EENT, moonrise, moonset and moon illumination at the map centre, computed in the page (local time or Zulu). A button fetches the Open-Meteo marine forecast (waves, swell, model tide highs and lows). Not for navigation.
+- **Partner engagement**: announced exercises, current, upcoming and completed, including ones held elsewhere that involve the area.
+- **MGRS**: every located record shows its grid reference (WGS84) in the evidence package: 1 m for exact points, 1 km for approximate places, 10 km for province centres.
+- **Country brief**: the header button opens a one-page brief (advisory, light, posts, hospitals, airports, seaports, recent reporting, exercises) sized to print on A4 or Letter or save as PDF.
+- The research files are in `source/sof/` (schema in `source/sof/SCHEMA.txt`); `python3 tools/embed_sof.py <page.html>` embeds them in a single-file page.
+
 ## Rules for records
 
 These come from the AXIOM doctrine and are enforced by review, not by code:
@@ -87,7 +96,6 @@ Set `LEAFLET_JS` to a local copy of Leaflet 1.9.4 if cdnjs is unreachable, and `
 
 ## Known gaps
 
-- North Korea has no records yet.
 - Several layers are thin because research ran out of search budget: Mongolia scam centers, Taiwan crime and scam, Philippines rail and aviation.
 - Historical playback replays event dates; "what was known at a past date" is not possible yet because every record was recorded at build time.
 - The Intelligence (analyst) layer from the original spec is deliberately left out: this is a public situational-awareness page.
