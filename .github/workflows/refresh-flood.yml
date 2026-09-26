@@ -67,11 +67,11 @@ jobs:
       - name: Commit if a snapshot changed
         if: ${{ inputs.only != 'probe' }}
         run: |
-          git add -N data/live
-          if git diff --quiet data/thailand/flood-live-snapshot.js data/live; then echo "no change"; exit 0; fi
+          git add -N data/live data/history
+          if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/thailand/flood-live-snapshot.js data/live
+          git add data/thailand/flood-live-snapshot.js data/live data/history
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
           git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
           git push
