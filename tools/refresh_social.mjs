@@ -3,6 +3,7 @@
 //   Bluesky  - the public read API.
 //   (Reddit was tried and dropped: it refuses requests from GitHub's servers.)
 //   Telegram - no secrets: reads each listed channel's public web preview (t.me/s/<channel>).
+//   YouTube  - each listed channel's public video feed (titles, dates, thumbnails and links only).
 // Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js.
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
@@ -94,6 +95,49 @@ if ((cfg.telegram || []).length) {
     await new Promise((r) => setTimeout(r, 1500));
   }
 } else status.push({ platform: "Telegram", source: "Telegram", ok: false, skipped: true, error: "no channels listed in tools/social_accounts.json" });
+
+// YouTube: each channel's public video feed (no account, key or Data API). The @handle is turned into the channel id
+// by reading the channel page once per run. Only titles, dates, thumbnails and links are kept; videos stay on YouTube.
+async function text(url) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (AXIOM-OSAP; 15-minute refresh)", "accept-language": "en" } });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return (await r.text()).slice(0, 4e6);
+  } finally { clearTimeout(t); }
+}
+export function parseYtFeed(xml) {
+  const out = [];
+  for (const e of xml.split("<entry>").slice(1)) {
+    const id = (e.match(/<yt:videoId>([\w-]{11})<\/yt:videoId>/) || [])[1];
+    const title = (e.match(/<title>([\s\S]*?)<\/title>/) || [])[1];
+    const when = (e.match(/<published>([^<]+)<\/published>/) || [])[1];
+    const desc = (e.match(/<media:description>([\s\S]*?)<\/media:description>/) || [])[1] || "";
+    if (id && title && when) out.push({ id, title: unhtml(title), date: new Date(when), summary: unhtml(desc).split("\n")[0].slice(0, 300) });
+  }
+  return out;
+}
+for (const ch of cfg.youtube || []) {
+  const src = "@" + ch.handle;
+  try {
+    let id = ch.channel_id;
+    if (!id) {
+      const page = await text("https://www.youtube.com/@" + encodeURIComponent(ch.handle));
+      id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
+      if (!id) throw new Error("channel id not found");
+    }
+    const vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id));
+    let n = 0;
+    for (const v of vids) {
+      if (isNaN(v.date) || v.date.getTime() < SINCE) continue;
+      push(ch.cc, v.title + " " + v.summary, { platform: "YouTube", account: src, kind: ch.kind, title: v.title.slice(0, 300), summary: v.summary,
+        date: v.date.toISOString().slice(0, 16), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
+      n++;
+    }
+    status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n });
+  } catch (e) { status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: false, error: err(e) }); }
+  await new Promise((r) => setTimeout(r, 800));
+}
 
 for (const cc of Object.keys(items)) {
   const seen = new Set();
