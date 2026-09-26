@@ -71,9 +71,8 @@ Add these under the repository's Settings, Secrets and variables, Actions. A pla
 | `GOOGLE_TRANSLATE_KEY` | Google Cloud Translation (recommended; otherwise MyMemory's small free quota) |
 | `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` | Bluesky (optional: public posts load without them) |
 | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | Reddit (a "script" app at reddit.com/prefs/apps) |
-| `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, `TELEGRAM_SESSION` | Telegram public channels |
 
-**Telegram session, one time:** get `api_id` and `api_hash` at my.telegram.org (API development tools). On any computer with Node.js, in this repository, run `npx -y -p telegram@2 -p input node tools/telegram_login.mjs`, enter the id, hash, phone number and the login code Telegram sends, and save the long string it prints as the `TELEGRAM_SESSION` secret. Then add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
+**Telegram** needs no account or phone number: the job reads each listed channel's public web page (`t.me/s/<channel>`). Channels that have turned that page off show as failed in the tab. Add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
 
 ## Rules for records
 
