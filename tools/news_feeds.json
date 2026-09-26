@@ -1,0 +1,29 @@
+{
+  "note": "National outlets' RSS feeds read hourly alongside GDELT. Each run records whether a feed worked, so the page shows which are live. Feed addresses are unverified until the first run; fix or drop the ones marked failed. State media is flagged so its items read as that government's statements.",
+  "feeds": [
+    { "cc": "th", "outlet": "Bangkok Post", "url": "https://www.bangkokpost.com/rss/data/most-recent.xml", "lang": "en" },
+    { "cc": "vn", "outlet": "VnExpress International", "url": "https://e.vnexpress.net/rss/news.rss", "lang": "en" },
+    { "cc": "kh", "outlet": "Khmer Times", "url": "https://www.khmertimeskh.com/feed/", "lang": "en" },
+    { "cc": "la", "outlet": "Laotian Times", "url": "https://laotiantimes.com/feed/", "lang": "en" },
+    { "cc": "mm", "outlet": "The Irrawaddy", "url": "https://www.irrawaddy.com/feed", "lang": "en" },
+    { "cc": "ph", "outlet": "Rappler", "url": "https://www.rappler.com/feed/", "lang": "en" },
+    { "cc": "ph", "outlet": "Philippine Daily Inquirer", "url": "https://newsinfo.inquirer.net/feed", "lang": "en" },
+    { "cc": "my", "outlet": "Malay Mail", "url": "https://www.malaymail.com/feed/rss/malaysia", "lang": "en" },
+    { "cc": "sg", "outlet": "CNA", "url": "https://www.channelnewsasia.com/rssfeeds/8395986", "lang": "en" },
+    { "cc": "id", "outlet": "ANTARA News (English)", "url": "https://en.antaranews.com/rss/news.xml", "lang": "en", "state": true },
+    { "cc": "bn", "outlet": "Borneo Bulletin", "url": "https://borneobulletin.com.bn/feed/", "lang": "en" },
+    { "cc": "tl", "outlet": "Tatoli", "url": "https://en.tatoli.tl/feed/", "lang": "en", "state": true },
+    { "cc": "tw", "outlet": "Taipei Times", "url": "https://www.taipeitimes.com/xml/index.rss", "lang": "en" },
+    { "cc": "kr", "outlet": "Yonhap News (English)", "url": "https://en.yna.co.kr/RSS/news.xml", "lang": "en" },
+    { "cc": "jp", "outlet": "The Japan Times", "url": "https://www.japantimes.co.jp/feed/", "lang": "en" },
+    { "cc": "au", "outlet": "ABC News (Australia)", "url": "https://www.abc.net.au/news/feed/51120/rss.xml", "lang": "en" },
+    { "cc": "nz", "outlet": "RNZ", "url": "https://www.rnz.co.nz/rss/national.xml", "lang": "en" },
+    { "cc": "in", "outlet": "The Hindu", "url": "https://www.thehindu.com/news/national/feeder/default.rss", "lang": "en" },
+    { "cc": "pk", "outlet": "Dawn", "url": "https://www.dawn.com/feeds/home", "lang": "en" },
+    { "cc": "np", "outlet": "The Kathmandu Post", "url": "https://kathmandupost.com/rss", "lang": "en" },
+    { "cc": "bt", "outlet": "Kuensel", "url": "https://kuenselonline.com/feed/", "lang": "en" },
+    { "cc": "bd", "outlet": "The Daily Star", "url": "https://www.thedailystar.net/frontpage/rss.xml", "lang": "en" },
+    { "cc": "lk", "outlet": "Daily Mirror", "url": "https://www.dailymirror.lk/rss", "lang": "en" },
+    { "cc": "mv", "outlet": "Sun Online", "url": "https://en.sun.mv/feed", "lang": "en" }
+  ]
+}
