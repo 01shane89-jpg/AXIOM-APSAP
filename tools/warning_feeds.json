@@ -1,0 +1,15 @@
+{
+  "note": "Official warning feeds the hourly job reads. Each run records whether a feed worked, so the page shows which ones are live. Add a feed here when an agency publishes RSS, Atom or CAP. match: optional regex an item must contain to be kept (for a feed that covers a wider area).",
+  "feeds": [
+    { "cc": "jp",  "agency": "Japan Meteorological Agency", "url": "https://www.data.jma.go.jp/developer/xml/feed/extra.xml", "lang": "ja" },
+    { "cc": "oki", "agency": "Japan Meteorological Agency", "url": "https://www.data.jma.go.jp/developer/xml/feed/extra.xml", "lang": "ja", "match": "沖縄|宮古|八重山|大東|奄美" },
+    { "cc": "au",  "agency": "Bureau of Meteorology (NSW)", "url": "http://www.bom.gov.au/fwo/IDZ00054.warnings_nsw.xml", "lang": "en" },
+    { "cc": "au",  "agency": "Bureau of Meteorology (Victoria)", "url": "http://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml", "lang": "en" },
+    { "cc": "au",  "agency": "Bureau of Meteorology (Queensland)", "url": "http://www.bom.gov.au/fwo/IDZ00056.warnings_qld.xml", "lang": "en" },
+    { "cc": "au",  "agency": "Bureau of Meteorology (Western Australia)", "url": "http://www.bom.gov.au/fwo/IDZ00060.warnings_wa.xml", "lang": "en" },
+    { "cc": "au",  "agency": "Bureau of Meteorology (Northern Territory)", "url": "http://www.bom.gov.au/fwo/IDZ00055.warnings_nt.xml", "lang": "en" },
+    { "cc": "nz",  "agency": "MetService", "url": "https://alerts.metservice.com/cap/rss", "lang": "en" },
+    { "cc": "id",  "agency": "BMKG", "url": "https://signature.bmkg.go.id/alert/public/en/rss.xml", "lang": "en" },
+    { "cc": "in",  "agency": "NDMA SACHET (IMD and state authorities)", "url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml", "lang": "en" }
+  ]
+}

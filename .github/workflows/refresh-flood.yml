@@ -1,6 +1,7 @@
 name: Refresh live snapshots
 
-# Hourly: pull ThaiWater gauges and rain, USGS earthquakes and Open-Meteo air quality, and commit
+# Hourly: pull ThaiWater gauges and rain, USGS earthquakes, Open-Meteo air quality, GDACS alerts,
+# ReliefWeb reports and official weather warnings (translated to English), and commit
 # the new snapshots, so the hosted app shows data at most about an hour old even where the browser
 # cannot reach those services. One feed failing does not stop the others.
 on:
@@ -18,7 +19,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,11 +28,17 @@ jobs:
       - name: Pull ThaiWater feeds
         run: node tools/refresh_flood.mjs
         continue-on-error: true
-      - name: Pull USGS earthquakes and air quality
+      - name: Pull USGS earthquakes, air quality, GDACS alerts and ReliefWeb reports
         run: node tools/refresh_feeds.mjs
         continue-on-error: true
+      - name: Pull official weather warnings and translate them
+        run: node tools/refresh_warnings.mjs
+        continue-on-error: true
+        env:
+          GOOGLE_TRANSLATE_KEY: ${{ secrets.GOOGLE_TRANSLATE_KEY }}
       - name: Commit if a snapshot changed
         run: |
+          git add -N data/live
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
