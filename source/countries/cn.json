@@ -149,8 +149,8 @@
   "place": "Myawaddy (KK Park), Myanmar",
   "district": null,
   "prov": "Overseas (Myanmar)",
-  "lat": 16.69,
-  "lon": 98.51,
+  "lat": 16.58,
+  "lon": 98.53,
   "prec": "approx",
   "killed": null,
   "injured": null,
@@ -386,7 +386,8 @@
   "agency": "Ministry of Public Security",
   "src": "https://cambodiainvestmentreview.com/2026/06/17/cambodia-repatriates-liu-ren-to-china-alleged-key-figure-in-chen-zhis-jinbei-group-as-scam-crackdown-intensifies/",
   "srcname": "Cambodia Investment Review",
-  "attribution": "Ministry of Public Security claim via Cambodia Investment Review"
+  "attribution": "Ministry of Public Security claim via Cambodia Investment Review",
+  "claim": true
  },
  {
   "layer": "aml",
@@ -431,7 +432,7 @@
  {
   "layer": "crime",
   "date": "2026-06-26",
-  "kind": "drugs",
+  "kind": "statistics",
   "title": "MPS: 12,000 drug cases and 10.7 tonnes seized in Jan-May",
   "detail": "The Ministry of Public Security said police cracked 12,000 drug cases, arrested 18,000 suspects and seized 10.7 tonnes of drugs in the first five months of 2026, and caught 49 overseas drug fugitives.",
   "place": "China",
@@ -701,7 +702,8 @@
   "agency": "China Coast Guard",
   "src": "https://www.scmp.com/news/china/diplomacy/article/3361523/after-latest-clash-sea-china-warns-philippines-bitter-consequences",
   "srcname": "South China Morning Post",
-  "attribution": "China Coast Guard claim via SCMP"
+  "attribution": "China Coast Guard claim via SCMP",
+  "claim": true
  },
  {
   "layer": "border",
@@ -992,6 +994,7 @@
   "agency": "China Coast Guard",
   "src": "https://www.globaltimes.cn/page/202609/1371326.shtml",
   "srcname": "Global Times",
-  "attribution": "Unnamed source via Global Times (state media); China Coast Guard account"
+  "attribution": "Unnamed source via Global Times (state media); China Coast Guard account",
+  "claim": true
  }
 ]

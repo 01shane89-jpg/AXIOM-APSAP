@@ -399,7 +399,8 @@
   "agency": "ACCC / National Anti-Scam Centre",
   "src": "https://www.accc.gov.au/media-release/continued-action-critical-to-combat-fraud-as-annual-scam-losses-exceed-2-billion",
   "srcname": "ACCC",
-  "attribution": "Figures as reported by the ACCC/National Anti-Scam Centre (Targeting Scams report)"
+  "attribution": "Figures as reported by the ACCC/National Anti-Scam Centre (Targeting Scams report)",
+  "claim": true
  },
  {
   "layer": "insurgency",
@@ -818,8 +819,8 @@
   "place": "Shunda Park compound",
   "district": null,
   "prov": "Karen State (Myanmar)",
-  "lat": 16.7,
-  "lon": 98.5,
+  "lat": 16.42,
+  "lon": 98.62,
   "prec": "approx",
   "killed": null,
   "injured": null,
@@ -1078,7 +1079,8 @@
   "src": "https://www.abc.net.au/news/2026-09-10/nsw-alleged-crime-syndicate-600-million-financial-fraud/107137362",
   "srcname": "ABC News",
   "attribution": "Allegations by NSW Police as reported by ABC News",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  },
  {
   "layer": "infra",

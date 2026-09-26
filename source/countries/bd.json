@@ -102,7 +102,8 @@
   "src": "https://www.thedailystar.net/opinion/views/news/dhaka-should-confront-the-arakan-armys-abduction-fishermen-4179026",
   "srcname": "The Daily Star (opinion)",
   "attribution": "Daily Star commentary citing BGB data via New Age",
-  "people": 13
+  "people": 13,
+  "claim": true
  },
  {
   "layer": "safety",
@@ -406,7 +407,7 @@
  {
   "layer": "border",
   "date": "2026-07-06",
-  "kind": "other",
+  "kind": "statistics",
   "title": "Rights group: 10 Bangladeshis killed by BSF in H1 2026",
   "detail": "Ain o Salish Kendra said, based on newspaper reports, that 10 Bangladeshis were killed in BSF border violence in January-June 2026 (7 shot, 3 after torture), with 10 injured and 1 abducted across 21 incidents.",
   "place": "Bangladesh-India border",

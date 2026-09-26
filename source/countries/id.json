@@ -427,7 +427,8 @@
   "agency": null,
   "src": "https://jubi.id/pacnews/2026/west-papuan-national-liberation-army-tpnpb-claims-one-indonesian-soldier-killed-in-retaliatory-attack-after-two-members-die/",
   "srcname": "Jubi Papua",
-  "attribution": "TPNPB claims via Jubi (unconfirmed by TNI/Polri)"
+  "attribution": "TPNPB claims via Jubi (unconfirmed by TNI/Polri)",
+  "claim": true
  },
  {
   "layer": "border",
@@ -534,7 +535,7 @@
  {
   "layer": "scam",
   "date": "2026-07-03",
-  "kind": "rescue_repatriation",
+  "kind": "statistics",
   "title": "Repatriation requests from Cambodia hit 11,986 in H1",
   "detail": "Kemlu's citizen-protection director said 11,986 Indonesians requested repatriation from Cambodia in Jan-Jun 2026, more than double the 5,088 in all of 2025, as Cambodia raided scam compounds.",
   "place": "Cambodia",
@@ -547,7 +548,7 @@
   "injured": null,
   "arrested": null,
   "agency": "Kemlu (Ministry of Foreign Affairs)",
-  "src": "http://www.thejakartapost.com/world/2026/07/03/indonesians-seeking-repatriation-surge-as-cambodia-cracks-down-on-scam-centers",
+  "src": "https://www.thejakartapost.com/world/2026/07/03/indonesians-seeking-repatriation-surge-as-cambodia-cracks-down-on-scam-centers",
   "srcname": "The Jakarta Post",
   "attribution": "Kemlu via Jakarta Post",
   "date_is_pub": true,
@@ -723,7 +724,7 @@
  {
   "layer": "crime",
   "date": "2026-08-20",
-  "kind": "environmental",
+  "kind": "statistics",
   "title": "Navy says 514 t of illegal minerals seized in 2026",
   "detail": "The Fleet Command said it seized 514.1 tons of illegally mined minerals (tin sand, coal) worth Rp10.25 trillion so far in 2026, incl. 75.7 t of tin sand off Bangka Belitung on Aug 2-13, and 1.3 t of drugs.",
   "place": "Nationwide",

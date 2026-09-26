@@ -33,7 +33,8 @@
   "agency": "Royal Thai Police / NACC",
   "src": "https://thethaiger.com/news/national/thai-politician-linked-to-gambling-and-money-laundering-scheme",
   "srcname": "Thaiger",
-  "attribution": "Thai police, as reported by Thaiger"
+  "attribution": "Thai police, as reported by Thaiger",
+  "claim": true
  },
  {
   "date": "2026-02-09",
@@ -51,7 +52,8 @@
   "agency": "Ministry of Digital Economy and Society",
   "src": "https://www.nationthailand.com/news/general/40062307",
   "srcname": "The Nation",
-  "attribution": "Digital Economy and Society Ministry"
+  "attribution": "Digital Economy and Society Ministry",
+  "claim": true
  },
  {
   "date": "2026-02-11",
@@ -177,7 +179,7 @@
  },
  {
   "date": "2026-04-08",
-  "kind": "asset_seizure",
+  "kind": "statistics",
   "title": "AMLO freezes further 8.27bn baht in Yim Leak-Ben Smith network probe",
   "detail": "AMLO froze an additional 8.27 billion baht in 34 items, including vehicles, loan receivables, deposits and securities, bringing the total in the case to 20.392 billion baht across 102 items, Khaosod English reported.",
   "place": null,
@@ -243,7 +245,8 @@
   "agency": "Department of Business Development",
   "src": "https://www.nationthailand.com/business/corporate/40065502",
   "srcname": "The Nation",
-  "attribution": "DBD"
+  "attribution": "DBD",
+  "claim": true
  },
  {
   "date": "2026-04-27",
@@ -260,7 +263,8 @@
   "agency": "Department of Special Investigation (DSI)",
   "src": "https://casinobeats.com/2026/05/03/thai-police-close-net-on-15-3m-online-casino-money-laundering-ring/",
   "srcname": "CasinoBeats",
-  "attribution": "DSI, as reported by CasinoBeats"
+  "attribution": "DSI, as reported by CasinoBeats",
+  "claim": true
  },
  {
   "date": "2026-05-02",
@@ -642,7 +646,8 @@
   "agency": "Central Investigation Bureau (CIB)",
   "src": "https://www.khaosodenglish.com/news/2026/09/10/ayutthaya-abbot-arrested-over-alleged-embezzlement-and-money-laundering/",
   "srcname": "Khaosod English",
-  "attribution": "CIB"
+  "attribution": "CIB",
+  "claim": true
  },
  {
   "date": "2026-09-11",
@@ -659,7 +664,8 @@
   "agency": "Prime Minister's Office / DBD / AMLO",
   "src": "https://www.thaiexaminer.com/thai-news-foreigners/2026/09/11/foreign-nominee-companies-down-by-81-77-as-government-seizes-or-freezes-assets-of-over-20-billion-baht/",
   "srcname": "Thai Examiner",
-  "attribution": "Thai government"
+  "attribution": "Thai government",
+  "claim": true
  },
  {
   "date": "2026-09-12",
@@ -710,7 +716,8 @@
   "agency": "Central Investigation Bureau (CIB)",
   "src": "https://thepattayanews.com/2026/09/19/alleged-chinese-mastermind-of-online-gambling-ring-arrested-in-pattaya-area/",
   "srcname": "The Pattaya News",
-  "attribution": "CIB"
+  "attribution": "CIB",
+  "claim": true
  },
  {
   "date": "2026-09-25",

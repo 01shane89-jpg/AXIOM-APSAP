@@ -364,8 +364,8 @@
   "place": "Norbugang Industrial Park",
   "district": "Samtse",
   "prov": "Samtse",
-  "lat": 26.9,
-  "lon": 88.9,
+  "lat": 26.88,
+  "lon": 89.05,
   "prec": "approx",
   "killed": null,
   "injured": null,
@@ -395,7 +395,8 @@
   "src": "https://thebhutanese.bt/traders-association-raises-concerns-over-tax-differences-and-illegal-movement-of-goods-from-sarpang/",
   "srcname": "The Bhutanese",
   "attribution": "Traders Association allegation; DRC response via The Bhutanese",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  },
  {
   "layer": "border",

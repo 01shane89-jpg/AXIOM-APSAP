@@ -116,7 +116,8 @@
   "people": 173,
   "src": "https://www.newsonair.gov.in/cambodia-govt-comes-down-heavily-on-200-suspected-scam-centres/",
   "srcname": "All India Radio News",
-  "attribution": "Cambodia Commission for Combating Online Scams (Chhay Sinarith)"
+  "attribution": "Cambodia Commission for Combating Online Scams (Chhay Sinarith)",
+  "claim": true
  },
  {
   "date": "2026-02-23",
@@ -371,7 +372,8 @@
   "people": null,
   "src": "https://www.nationthailand.com/news/asean/40065536",
   "srcname": "The Nation",
-  "attribution": "Thai military"
+  "attribution": "Thai military",
+  "claim": true
  },
  {
   "date": "2026-04-30",
@@ -592,7 +594,8 @@
   "people": 5300,
   "src": "https://www.aljazeera.com/news/2026/6/23/more-than-5300-people-still-held-in-myanmar-scam-centres-rights-group",
   "srcname": "Al Jazeera",
-  "attribution": "Civil Society Network for Human Trafficking Victim Assistance (CSNHTV)"
+  "attribution": "Civil Society Network for Human Trafficking Victim Assistance (CSNHTV)",
+  "claim": true
  },
  {
   "date": "2026-07-01",
@@ -644,7 +647,8 @@
   "people": null,
   "src": "https://www.bnionline.net/en/news/scam-operations-persist-myanmars-myawaddy-despite-juntas-staged-crackdowns",
   "srcname": "Burma News International",
-  "attribution": "Myanmar junta; residents via Mon News"
+  "attribution": "Myanmar junta; residents via Mon News",
+  "claim": true
  },
  {
   "date": "2026-07-15",
@@ -729,7 +733,8 @@
   "people": 58266,
   "src": "https://www.aljazeera.com/news/2026/8/28/cambodias-claim-to-have-ended-scam-compounds-met-with-scepticism",
   "srcname": "Al Jazeera",
-  "attribution": "Cambodia CCOS (Chhay Sinarith); Amnesty International"
+  "attribution": "Cambodia CCOS (Chhay Sinarith); Amnesty International",
+  "claim": true
  },
  {
   "date": "2026-09-02",
@@ -746,7 +751,8 @@
   "people": null,
   "src": "https://english.dvb.no/a-crackdown-under-scrutiny-myanmar-witness-examines-a-military-demolition-campaign-at-shwe-kokko/",
   "srcname": "DVB",
-  "attribution": "Myanmar Witness"
+  "attribution": "Myanmar Witness",
+  "claim": true
  },
  {
   "date": "2026-09-09",

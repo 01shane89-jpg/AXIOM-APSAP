@@ -741,24 +741,5 @@
   "srcname": "Khaosod English",
   "attribution": "Reported by Khaosod English",
   "magnitude": null
- },
- {
-  "date": "2026-09-19",
-  "kind": "landslide",
-  "title": "Landslide on Highway 12 in Phetchabun",
-  "detail": "DMR logged a landslide on Highway 12 among four landslides and two flash floods across Phetchabun, Surat Thani, Mae Hong Son and Chiang Mai; no casualties mentioned.",
-  "place": "Highway 12, Nam Phu subdistrict",
-  "district": "Chon Daen",
-  "prov": "Phetchabun",
-  "lat": 16.19,
-  "lon": 100.86,
-  "prec": "approx",
-  "killed": null,
-  "injured": null,
-  "agency": "Department of Mineral Resources",
-  "src": "https://www.nationthailand.com/news/general/40071263",
-  "srcname": "The Nation (Thailand)",
-  "attribution": "Reported by The Nation (Thailand)",
-  "magnitude": null
  }
 ]

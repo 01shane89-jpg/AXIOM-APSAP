@@ -490,7 +490,8 @@
   "agency": "Aichi Prefectural Police",
   "src": "https://www.nippon.com/en/news/yjj2026061600853/japanese-man-arrested-over-cambodia-based-fraud-ring.html",
   "srcname": "Nippon.com (Jiji Press)",
-  "attribution": "Jiji Press via Nippon.com citing Aichi police"
+  "attribution": "Jiji Press via Nippon.com citing Aichi police",
+  "claim": true
  },
  {
   "layer": "scam",
@@ -874,7 +875,7 @@
  {
   "layer": "scam",
   "date": "2026-09-10",
-  "kind": "other",
+  "kind": "statistics",
   "title": "Internet-enabled fraud losses hit record ¥176bn in H1 2026",
   "detail": "The NPA said internet-enabled fraud losses rose 45% year on year to ¥176 billion in January–June 2026, and flagged overseas-origin phishing, with China hosting 45% of identified phishing servers.",
   "place": "Japan",
@@ -895,7 +896,7 @@
   "layer": "scam",
   "date": "2026-09-14",
   "date_is_pub": true,
-  "kind": "other",
+  "kind": "statistics",
   "title": "Gold-bar scam losses reach ¥8.13bn in first half",
   "detail": "NPA data show scams demanding gold bars cost victims ¥8.13 billion in January–June 2026, above the ¥6.02 billion for all of 2025; about ¥5.3 billion came via police impersonation, and 90% of victims were 60 or older. NPA asked dealers to flag suspicious first-time purchases.",
   "place": "Japan",

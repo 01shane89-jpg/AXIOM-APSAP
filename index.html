@@ -70,6 +70,9 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .dot.on{background:#1F8A4C}
 .live{flex-wrap:wrap}
 .hdrchk{text-transform:none;letter-spacing:0}
+.fresh{font-size:11.5px;color:var(--muted);margin:6px 0 0}
+.fresh .badge{margin-left:4px}
+.badge.sparse{border-color:var(--muted);color:var(--muted)}
 .rprog{display:none;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted)}
 .rprog.on{display:inline-flex}
 .rprog .bar{width:84px;height:5px;border-radius:3px;background:var(--line,#d6dbe1);overflow:hidden;flex:none}
@@ -1212,6 +1215,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         LIVE.stations = stations; LIVE.rain = rain; LIVE.over = over;
         LIVE.asof = stations.reduce(function (m, s) { return s.t > m ? s.t : m; }, "");
         drawGauges(); drawRain(); fillRail();
+        try { if (window.TSAP_liveRefreshed) window.TSAP_liveRefreshed(); } catch (e) { /* timeline rebuild must not break the refresh */ }
         setBadge("live", "LIVE");
         var when = clockOf(new Date());
         hchk.textContent = "\u00b7 refreshed " + when;
@@ -1779,157 +1783,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/th/transport.js"></script>
 <script src="data/layers/th/infra.js"></script>
 <script src="data/layers/th/health.js"></script>
-<script src="data/layers/mn/aml.js"></script>
-<script src="data/layers/mn/safety.js"></script>
-<script src="data/layers/mn/weather.js"></script>
-<script src="data/layers/mn/crime.js"></script>
-<script src="data/layers/mn/border.js"></script>
-<script src="data/layers/mn/health.js"></script>
-<script src="data/layers/mn/transport.js"></script>
-<script src="data/layers/mn/infra.js"></script>
-<script src="data/layers/mn/scam.js"></script>
-<script src="data/layers/mn/flood.js"></script>
-<script src="data/layers/bt/safety.js"></script>
-<script src="data/layers/bt/infra.js"></script>
-<script src="data/layers/bt/transport.js"></script>
-<script src="data/layers/bt/flood.js"></script>
-<script src="data/layers/bt/weather.js"></script>
-<script src="data/layers/bt/crime.js"></script>
-<script src="data/layers/bt/scam.js"></script>
-<script src="data/layers/bt/health.js"></script>
-<script src="data/layers/bt/border.js"></script>
-<script src="data/layers/np/scam.js"></script>
-<script src="data/layers/np/transport.js"></script>
-<script src="data/layers/np/border.js"></script>
-<script src="data/layers/np/crime.js"></script>
-<script src="data/layers/np/health.js"></script>
-<script src="data/layers/np/aml.js"></script>
-<script src="data/layers/np/weather.js"></script>
-<script src="data/layers/np/flood.js"></script>
-<script src="data/layers/np/safety.js"></script>
-<script src="data/layers/np/infra.js"></script>
-<script src="data/layers/mv/health.js"></script>
-<script src="data/layers/mv/transport.js"></script>
-<script src="data/layers/mv/safety.js"></script>
-<script src="data/layers/mv/weather.js"></script>
-<script src="data/layers/mv/aml.js"></script>
-<script src="data/layers/mv/flood.js"></script>
-<script src="data/layers/mv/border.js"></script>
-<script src="data/layers/mv/infra.js"></script>
-<script src="data/layers/mv/crime.js"></script>
-<script src="data/layers/mv/scam.js"></script>
-<script src="data/layers/tl/health.js"></script>
-<script src="data/layers/tl/infra.js"></script>
-<script src="data/layers/tl/crime.js"></script>
-<script src="data/layers/tl/flood.js"></script>
-<script src="data/layers/tl/transport.js"></script>
-<script src="data/layers/tl/scam.js"></script>
-<script src="data/layers/tl/border.js"></script>
-<script src="data/layers/in/health.js"></script>
-<script src="data/layers/in/scam.js"></script>
-<script src="data/layers/in/transport.js"></script>
-<script src="data/layers/in/border.js"></script>
-<script src="data/layers/in/insurgency.js"></script>
-<script src="data/layers/in/aml.js"></script>
-<script src="data/layers/in/crime.js"></script>
-<script src="data/layers/in/safety.js"></script>
-<script src="data/layers/in/weather.js"></script>
-<script src="data/layers/in/infra.js"></script>
-<script src="data/layers/in/flood.js"></script>
-<script src="data/layers/pk/transport.js"></script>
-<script src="data/layers/pk/insurgency.js"></script>
-<script src="data/layers/pk/safety.js"></script>
-<script src="data/layers/pk/border.js"></script>
-<script src="data/layers/pk/crime.js"></script>
-<script src="data/layers/pk/infra.js"></script>
-<script src="data/layers/pk/aml.js"></script>
-<script src="data/layers/pk/health.js"></script>
-<script src="data/layers/pk/weather.js"></script>
-<script src="data/layers/pk/flood.js"></script>
-<script src="data/layers/pk/scam.js"></script>
-<script src="data/layers/id/flood.js"></script>
-<script src="data/layers/id/aml.js"></script>
-<script src="data/layers/id/crime.js"></script>
-<script src="data/layers/id/safety.js"></script>
-<script src="data/layers/id/insurgency.js"></script>
-<script src="data/layers/id/weather.js"></script>
-<script src="data/layers/id/scam.js"></script>
-<script src="data/layers/id/infra.js"></script>
-<script src="data/layers/id/health.js"></script>
-<script src="data/layers/id/border.js"></script>
-<script src="data/layers/id/transport.js"></script>
-<script src="data/layers/lk/aml.js"></script>
-<script src="data/layers/lk/border.js"></script>
-<script src="data/layers/lk/crime.js"></script>
-<script src="data/layers/lk/health.js"></script>
-<script src="data/layers/lk/scam.js"></script>
-<script src="data/layers/lk/infra.js"></script>
-<script src="data/layers/lk/weather.js"></script>
-<script src="data/layers/lk/transport.js"></script>
-<script src="data/layers/lk/safety.js"></script>
-<script src="data/layers/lk/flood.js"></script>
-<script src="data/layers/vn/health.js"></script>
-<script src="data/layers/vn/scam.js"></script>
-<script src="data/layers/vn/crime.js"></script>
-<script src="data/layers/vn/border.js"></script>
-<script src="data/layers/vn/aml.js"></script>
-<script src="data/layers/vn/weather.js"></script>
-<script src="data/layers/vn/infra.js"></script>
-<script src="data/layers/vn/transport.js"></script>
-<script src="data/layers/vn/safety.js"></script>
-<script src="data/layers/vn/flood.js"></script>
-<script src="data/layers/kh/border.js"></script>
-<script src="data/layers/kh/aml.js"></script>
-<script src="data/layers/kh/health.js"></script>
-<script src="data/layers/kh/safety.js"></script>
-<script src="data/layers/kh/transport.js"></script>
-<script src="data/layers/kh/flood.js"></script>
-<script src="data/layers/kh/scam.js"></script>
-<script src="data/layers/kh/infra.js"></script>
-<script src="data/layers/kh/weather.js"></script>
-<script src="data/layers/kh/crime.js"></script>
-<script src="data/layers/mm/crime.js"></script>
-<script src="data/layers/mm/insurgency.js"></script>
-<script src="data/layers/mm/aml.js"></script>
-<script src="data/layers/mm/infra.js"></script>
-<script src="data/layers/mm/weather.js"></script>
-<script src="data/layers/mm/health.js"></script>
-<script src="data/layers/mm/safety.js"></script>
-<script src="data/layers/mm/transport.js"></script>
-<script src="data/layers/mm/flood.js"></script>
-<script src="data/layers/mm/scam.js"></script>
-<script src="data/layers/mm/border.js"></script>
-<script src="data/layers/pg/aml.js"></script>
-<script src="data/layers/pg/insurgency.js"></script>
-<script src="data/layers/pg/border.js"></script>
-<script src="data/layers/pg/weather.js"></script>
-<script src="data/layers/pg/flood.js"></script>
-<script src="data/layers/pg/safety.js"></script>
-<script src="data/layers/pg/health.js"></script>
-<script src="data/layers/pg/infra.js"></script>
-<script src="data/layers/pg/transport.js"></script>
-<script src="data/layers/pg/crime.js"></script>
-<script src="data/layers/pg/scam.js"></script>
-<script src="data/layers/la/safety.js"></script>
-<script src="data/layers/la/transport.js"></script>
-<script src="data/layers/la/scam.js"></script>
-<script src="data/layers/la/aml.js"></script>
-<script src="data/layers/la/health.js"></script>
-<script src="data/layers/la/infra.js"></script>
-<script src="data/layers/la/crime.js"></script>
-<script src="data/layers/la/weather.js"></script>
-<script src="data/layers/la/flood.js"></script>
-<script src="data/layers/la/border.js"></script>
-<script src="data/layers/nz/crime.js"></script>
-<script src="data/layers/nz/safety.js"></script>
-<script src="data/layers/nz/flood.js"></script>
-<script src="data/layers/nz/weather.js"></script>
-<script src="data/layers/nz/scam.js"></script>
-<script src="data/layers/nz/infra.js"></script>
-<script src="data/layers/nz/transport.js"></script>
-<script src="data/layers/nz/health.js"></script>
-<script src="data/layers/nz/border.js"></script>
-<script src="data/layers/nz/aml.js"></script>
 <script src="data/layers/au/weather.js"></script>
 <script src="data/layers/au/flood.js"></script>
 <script src="data/layers/au/safety.js"></script>
@@ -1941,77 +1794,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/au/transport.js"></script>
 <script src="data/layers/au/scam.js"></script>
 <script src="data/layers/au/infra.js"></script>
-<script src="data/layers/oki/border.js"></script>
-<script src="data/layers/oki/crime.js"></script>
-<script src="data/layers/oki/infra.js"></script>
-<script src="data/layers/oki/scam.js"></script>
-<script src="data/layers/oki/aml.js"></script>
-<script src="data/layers/oki/transport.js"></script>
-<script src="data/layers/oki/safety.js"></script>
-<script src="data/layers/oki/health.js"></script>
-<script src="data/layers/oki/weather.js"></script>
-<script src="data/layers/oki/flood.js"></script>
-<script src="data/layers/ph/border.js"></script>
-<script src="data/layers/ph/transport.js"></script>
-<script src="data/layers/ph/insurgency.js"></script>
-<script src="data/layers/ph/flood.js"></script>
-<script src="data/layers/ph/scam.js"></script>
-<script src="data/layers/ph/aml.js"></script>
-<script src="data/layers/ph/safety.js"></script>
-<script src="data/layers/ph/crime.js"></script>
-<script src="data/layers/ph/health.js"></script>
-<script src="data/layers/ph/infra.js"></script>
-<script src="data/layers/ph/weather.js"></script>
-<script src="data/layers/kp/border.js"></script>
-<script src="data/layers/kp/weather.js"></script>
-<script src="data/layers/kp/health.js"></script>
-<script src="data/layers/kp/scam.js"></script>
-<script src="data/layers/kp/flood.js"></script>
-<script src="data/layers/kp/crime.js"></script>
-<script src="data/layers/kp/aml.js"></script>
-<script src="data/layers/kp/safety.js"></script>
-<script src="data/layers/kp/transport.js"></script>
-<script src="data/layers/kp/infra.js"></script>
-<script src="data/layers/kr/transport.js"></script>
-<script src="data/layers/kr/border.js"></script>
-<script src="data/layers/kr/safety.js"></script>
-<script src="data/layers/kr/aml.js"></script>
-<script src="data/layers/kr/scam.js"></script>
-<script src="data/layers/kr/crime.js"></script>
-<script src="data/layers/kr/health.js"></script>
-<script src="data/layers/kr/weather.js"></script>
-<script src="data/layers/kr/infra.js"></script>
-<script src="data/layers/kr/flood.js"></script>
-<script src="data/layers/cn/scam.js"></script>
-<script src="data/layers/cn/border.js"></script>
-<script src="data/layers/cn/aml.js"></script>
-<script src="data/layers/cn/crime.js"></script>
-<script src="data/layers/cn/safety.js"></script>
-<script src="data/layers/cn/weather.js"></script>
-<script src="data/layers/cn/flood.js"></script>
-<script src="data/layers/cn/infra.js"></script>
-<script src="data/layers/cn/health.js"></script>
-<script src="data/layers/cn/transport.js"></script>
-<script src="data/layers/tw/border.js"></script>
-<script src="data/layers/tw/safety.js"></script>
-<script src="data/layers/tw/health.js"></script>
-<script src="data/layers/tw/aml.js"></script>
-<script src="data/layers/tw/flood.js"></script>
-<script src="data/layers/tw/infra.js"></script>
-<script src="data/layers/tw/transport.js"></script>
-<script src="data/layers/tw/scam.js"></script>
-<script src="data/layers/tw/weather.js"></script>
-<script src="data/layers/tw/crime.js"></script>
-<script src="data/layers/jp/health.js"></script>
-<script src="data/layers/jp/border.js"></script>
-<script src="data/layers/jp/aml.js"></script>
-<script src="data/layers/jp/scam.js"></script>
-<script src="data/layers/jp/infra.js"></script>
-<script src="data/layers/jp/weather.js"></script>
-<script src="data/layers/jp/safety.js"></script>
-<script src="data/layers/jp/transport.js"></script>
-<script src="data/layers/jp/crime.js"></script>
-<script src="data/layers/jp/flood.js"></script>
 <script src="data/layers/bd/health.js"></script>
 <script src="data/layers/bd/insurgency.js"></script>
 <script src="data/layers/bd/transport.js"></script>
@@ -2033,6 +1815,211 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/bn/weather.js"></script>
 <script src="data/layers/bn/crime.js"></script>
 <script src="data/layers/bn/border.js"></script>
+<script src="data/layers/bt/safety.js"></script>
+<script src="data/layers/bt/infra.js"></script>
+<script src="data/layers/bt/transport.js"></script>
+<script src="data/layers/bt/flood.js"></script>
+<script src="data/layers/bt/weather.js"></script>
+<script src="data/layers/bt/crime.js"></script>
+<script src="data/layers/bt/scam.js"></script>
+<script src="data/layers/bt/health.js"></script>
+<script src="data/layers/bt/border.js"></script>
+<script src="data/layers/cn/scam.js"></script>
+<script src="data/layers/cn/border.js"></script>
+<script src="data/layers/cn/aml.js"></script>
+<script src="data/layers/cn/crime.js"></script>
+<script src="data/layers/cn/safety.js"></script>
+<script src="data/layers/cn/weather.js"></script>
+<script src="data/layers/cn/flood.js"></script>
+<script src="data/layers/cn/infra.js"></script>
+<script src="data/layers/cn/health.js"></script>
+<script src="data/layers/cn/transport.js"></script>
+<script src="data/layers/id/flood.js"></script>
+<script src="data/layers/id/aml.js"></script>
+<script src="data/layers/id/crime.js"></script>
+<script src="data/layers/id/safety.js"></script>
+<script src="data/layers/id/insurgency.js"></script>
+<script src="data/layers/id/weather.js"></script>
+<script src="data/layers/id/scam.js"></script>
+<script src="data/layers/id/infra.js"></script>
+<script src="data/layers/id/health.js"></script>
+<script src="data/layers/id/border.js"></script>
+<script src="data/layers/id/transport.js"></script>
+<script src="data/layers/in/health.js"></script>
+<script src="data/layers/in/scam.js"></script>
+<script src="data/layers/in/transport.js"></script>
+<script src="data/layers/in/border.js"></script>
+<script src="data/layers/in/insurgency.js"></script>
+<script src="data/layers/in/aml.js"></script>
+<script src="data/layers/in/crime.js"></script>
+<script src="data/layers/in/safety.js"></script>
+<script src="data/layers/in/weather.js"></script>
+<script src="data/layers/in/infra.js"></script>
+<script src="data/layers/in/flood.js"></script>
+<script src="data/layers/jp/health.js"></script>
+<script src="data/layers/jp/border.js"></script>
+<script src="data/layers/jp/aml.js"></script>
+<script src="data/layers/jp/scam.js"></script>
+<script src="data/layers/jp/infra.js"></script>
+<script src="data/layers/jp/weather.js"></script>
+<script src="data/layers/jp/safety.js"></script>
+<script src="data/layers/jp/transport.js"></script>
+<script src="data/layers/jp/crime.js"></script>
+<script src="data/layers/jp/flood.js"></script>
+<script src="data/layers/kh/border.js"></script>
+<script src="data/layers/kh/aml.js"></script>
+<script src="data/layers/kh/health.js"></script>
+<script src="data/layers/kh/safety.js"></script>
+<script src="data/layers/kh/transport.js"></script>
+<script src="data/layers/kh/flood.js"></script>
+<script src="data/layers/kh/scam.js"></script>
+<script src="data/layers/kh/infra.js"></script>
+<script src="data/layers/kh/weather.js"></script>
+<script src="data/layers/kh/crime.js"></script>
+<script src="data/layers/kp/border.js"></script>
+<script src="data/layers/kp/weather.js"></script>
+<script src="data/layers/kp/health.js"></script>
+<script src="data/layers/kp/scam.js"></script>
+<script src="data/layers/kp/flood.js"></script>
+<script src="data/layers/kp/crime.js"></script>
+<script src="data/layers/kp/aml.js"></script>
+<script src="data/layers/kp/safety.js"></script>
+<script src="data/layers/kp/transport.js"></script>
+<script src="data/layers/kp/infra.js"></script>
+<script src="data/layers/kr/transport.js"></script>
+<script src="data/layers/kr/border.js"></script>
+<script src="data/layers/kr/safety.js"></script>
+<script src="data/layers/kr/aml.js"></script>
+<script src="data/layers/kr/scam.js"></script>
+<script src="data/layers/kr/crime.js"></script>
+<script src="data/layers/kr/health.js"></script>
+<script src="data/layers/kr/weather.js"></script>
+<script src="data/layers/kr/infra.js"></script>
+<script src="data/layers/kr/flood.js"></script>
+<script src="data/layers/la/safety.js"></script>
+<script src="data/layers/la/transport.js"></script>
+<script src="data/layers/la/scam.js"></script>
+<script src="data/layers/la/aml.js"></script>
+<script src="data/layers/la/health.js"></script>
+<script src="data/layers/la/infra.js"></script>
+<script src="data/layers/la/crime.js"></script>
+<script src="data/layers/la/weather.js"></script>
+<script src="data/layers/la/flood.js"></script>
+<script src="data/layers/la/border.js"></script>
+<script src="data/layers/lk/aml.js"></script>
+<script src="data/layers/lk/border.js"></script>
+<script src="data/layers/lk/crime.js"></script>
+<script src="data/layers/lk/health.js"></script>
+<script src="data/layers/lk/scam.js"></script>
+<script src="data/layers/lk/infra.js"></script>
+<script src="data/layers/lk/weather.js"></script>
+<script src="data/layers/lk/transport.js"></script>
+<script src="data/layers/lk/safety.js"></script>
+<script src="data/layers/lk/flood.js"></script>
+<script src="data/layers/mm/crime.js"></script>
+<script src="data/layers/mm/insurgency.js"></script>
+<script src="data/layers/mm/aml.js"></script>
+<script src="data/layers/mm/infra.js"></script>
+<script src="data/layers/mm/weather.js"></script>
+<script src="data/layers/mm/health.js"></script>
+<script src="data/layers/mm/safety.js"></script>
+<script src="data/layers/mm/transport.js"></script>
+<script src="data/layers/mm/flood.js"></script>
+<script src="data/layers/mm/scam.js"></script>
+<script src="data/layers/mm/border.js"></script>
+<script src="data/layers/mn/aml.js"></script>
+<script src="data/layers/mn/safety.js"></script>
+<script src="data/layers/mn/weather.js"></script>
+<script src="data/layers/mn/crime.js"></script>
+<script src="data/layers/mn/border.js"></script>
+<script src="data/layers/mn/health.js"></script>
+<script src="data/layers/mn/transport.js"></script>
+<script src="data/layers/mn/infra.js"></script>
+<script src="data/layers/mn/scam.js"></script>
+<script src="data/layers/mn/flood.js"></script>
+<script src="data/layers/mv/health.js"></script>
+<script src="data/layers/mv/transport.js"></script>
+<script src="data/layers/mv/safety.js"></script>
+<script src="data/layers/mv/weather.js"></script>
+<script src="data/layers/mv/aml.js"></script>
+<script src="data/layers/mv/flood.js"></script>
+<script src="data/layers/mv/border.js"></script>
+<script src="data/layers/mv/infra.js"></script>
+<script src="data/layers/mv/crime.js"></script>
+<script src="data/layers/mv/scam.js"></script>
+<script src="data/layers/my/safety.js"></script>
+<script src="data/layers/my/infra.js"></script>
+<script src="data/layers/my/flood.js"></script>
+<script src="data/layers/my/weather.js"></script>
+<script src="data/layers/my/transport.js"></script>
+<script src="data/layers/my/aml.js"></script>
+<script src="data/layers/my/health.js"></script>
+<script src="data/layers/my/scam.js"></script>
+<script src="data/layers/my/crime.js"></script>
+<script src="data/layers/my/border.js"></script>
+<script src="data/layers/np/scam.js"></script>
+<script src="data/layers/np/transport.js"></script>
+<script src="data/layers/np/border.js"></script>
+<script src="data/layers/np/crime.js"></script>
+<script src="data/layers/np/health.js"></script>
+<script src="data/layers/np/aml.js"></script>
+<script src="data/layers/np/weather.js"></script>
+<script src="data/layers/np/flood.js"></script>
+<script src="data/layers/np/safety.js"></script>
+<script src="data/layers/np/infra.js"></script>
+<script src="data/layers/nz/crime.js"></script>
+<script src="data/layers/nz/safety.js"></script>
+<script src="data/layers/nz/flood.js"></script>
+<script src="data/layers/nz/weather.js"></script>
+<script src="data/layers/nz/scam.js"></script>
+<script src="data/layers/nz/infra.js"></script>
+<script src="data/layers/nz/transport.js"></script>
+<script src="data/layers/nz/health.js"></script>
+<script src="data/layers/nz/border.js"></script>
+<script src="data/layers/nz/aml.js"></script>
+<script src="data/layers/oki/border.js"></script>
+<script src="data/layers/oki/crime.js"></script>
+<script src="data/layers/oki/infra.js"></script>
+<script src="data/layers/oki/scam.js"></script>
+<script src="data/layers/oki/aml.js"></script>
+<script src="data/layers/oki/transport.js"></script>
+<script src="data/layers/oki/safety.js"></script>
+<script src="data/layers/oki/health.js"></script>
+<script src="data/layers/oki/weather.js"></script>
+<script src="data/layers/oki/flood.js"></script>
+<script src="data/layers/pg/aml.js"></script>
+<script src="data/layers/pg/insurgency.js"></script>
+<script src="data/layers/pg/border.js"></script>
+<script src="data/layers/pg/weather.js"></script>
+<script src="data/layers/pg/flood.js"></script>
+<script src="data/layers/pg/safety.js"></script>
+<script src="data/layers/pg/health.js"></script>
+<script src="data/layers/pg/infra.js"></script>
+<script src="data/layers/pg/transport.js"></script>
+<script src="data/layers/pg/crime.js"></script>
+<script src="data/layers/pg/scam.js"></script>
+<script src="data/layers/ph/border.js"></script>
+<script src="data/layers/ph/transport.js"></script>
+<script src="data/layers/ph/insurgency.js"></script>
+<script src="data/layers/ph/flood.js"></script>
+<script src="data/layers/ph/scam.js"></script>
+<script src="data/layers/ph/aml.js"></script>
+<script src="data/layers/ph/safety.js"></script>
+<script src="data/layers/ph/crime.js"></script>
+<script src="data/layers/ph/health.js"></script>
+<script src="data/layers/ph/infra.js"></script>
+<script src="data/layers/ph/weather.js"></script>
+<script src="data/layers/pk/transport.js"></script>
+<script src="data/layers/pk/insurgency.js"></script>
+<script src="data/layers/pk/safety.js"></script>
+<script src="data/layers/pk/border.js"></script>
+<script src="data/layers/pk/crime.js"></script>
+<script src="data/layers/pk/infra.js"></script>
+<script src="data/layers/pk/aml.js"></script>
+<script src="data/layers/pk/health.js"></script>
+<script src="data/layers/pk/weather.js"></script>
+<script src="data/layers/pk/flood.js"></script>
+<script src="data/layers/pk/scam.js"></script>
 <script src="data/layers/sg/weather.js"></script>
 <script src="data/layers/sg/safety.js"></script>
 <script src="data/layers/sg/insurgency.js"></script>
@@ -2044,16 +2031,33 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/layers/sg/border.js"></script>
 <script src="data/layers/sg/transport.js"></script>
 <script src="data/layers/sg/health.js"></script>
-<script src="data/layers/my/safety.js"></script>
-<script src="data/layers/my/infra.js"></script>
-<script src="data/layers/my/flood.js"></script>
-<script src="data/layers/my/weather.js"></script>
-<script src="data/layers/my/transport.js"></script>
-<script src="data/layers/my/aml.js"></script>
-<script src="data/layers/my/health.js"></script>
-<script src="data/layers/my/scam.js"></script>
-<script src="data/layers/my/crime.js"></script>
-<script src="data/layers/my/border.js"></script>
+<script src="data/layers/tl/health.js"></script>
+<script src="data/layers/tl/infra.js"></script>
+<script src="data/layers/tl/crime.js"></script>
+<script src="data/layers/tl/flood.js"></script>
+<script src="data/layers/tl/transport.js"></script>
+<script src="data/layers/tl/scam.js"></script>
+<script src="data/layers/tl/border.js"></script>
+<script src="data/layers/tw/border.js"></script>
+<script src="data/layers/tw/safety.js"></script>
+<script src="data/layers/tw/health.js"></script>
+<script src="data/layers/tw/aml.js"></script>
+<script src="data/layers/tw/flood.js"></script>
+<script src="data/layers/tw/infra.js"></script>
+<script src="data/layers/tw/transport.js"></script>
+<script src="data/layers/tw/scam.js"></script>
+<script src="data/layers/tw/weather.js"></script>
+<script src="data/layers/tw/crime.js"></script>
+<script src="data/layers/vn/health.js"></script>
+<script src="data/layers/vn/scam.js"></script>
+<script src="data/layers/vn/crime.js"></script>
+<script src="data/layers/vn/border.js"></script>
+<script src="data/layers/vn/aml.js"></script>
+<script src="data/layers/vn/weather.js"></script>
+<script src="data/layers/vn/infra.js"></script>
+<script src="data/layers/vn/transport.js"></script>
+<script src="data/layers/vn/safety.js"></script>
+<script src="data/layers/vn/flood.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2130,9 +2134,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
 
   /* ---------- records ---------- */
-  var R = [], byId = {};
+  var R = [], byId = {}, SEQ = 0;
+  function dot(x) { x = String(x || ""); return /\.$/.test(x) ? x : x + "."; }
   function add(r) {
-    r.id = r.layer + "-" + R.length;
+    r.id = r.layer + "-" + (SEQ++);
     r.src.n++;
     R.push(r); byId[r.id] = r;
   }
@@ -2150,23 +2155,27 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function fingerprint(r) { return sha256(canon(r)).then(function (h) { FP[r.id] = h; return h; }); }
 
+  /* live gauge and rain observations; rebuilt after every successful Refresh (QA-020) */
+  function addLiveFlood() {
   if (TH) LIVE.over.forEach(function (i) {
     var s = LIVE.stations[i];
     add({ layer: "flood", type: "observation", cat: "Water over the bank",
       title: (s.d || 0).toFixed(2) + " m over the bank at " + s.n,
       detail: "Telemetry reading " + (s.msl != null ? s.msl.toFixed(2) + " m MSL" : "") + (s.b ? ", " + s.b : "") +
-              (s.ag ? ". Gauge operated by " + s.ag + "." : "."),
-      ts: s.t, place: s.a, prov: s.p, lat: s.lat, lon: s.lon, prec: "exact",
+              (s.ag ? ". Gauge operated by " + dot(s.ag) : "."),
+      ts: s.t, place: s.a, prov: s.p, lat: s.lat, lon: s.lon, prec: "exact", live: true,
       val: s.d || 0, sev: s.d >= 2 ? 3 : (s.d >= 0.5 ? 2 : 1), src: SOURCES.hii, url: "https://www.thaiwater.net/",
       issued: s.t, recorded: BUILT, operator: s.ag });
   });
   if (TH) LIVE.rain.filter(function (r) { return r.mm >= 150; }).forEach(function (r) {
     add({ layer: "flood", type: "observation", cat: "Heavy rain (24 h)",
       title: Math.round(r.mm) + " mm of rain in 24 h" + (r.a ? ", " + r.a : ""),
-      detail: "Rain station " + (r.n || "") + ". Last hour " + (r.h1 || 0).toFixed(1) + " mm.",
-      ts: r.t, place: r.a, prov: r.p, lat: r.lat, lon: r.lon, prec: "exact",
+      detail: dot("Rain station " + (r.n || "")) + " Last hour " + (r.h1 || 0).toFixed(1) + " mm.",
+      ts: r.t, place: r.a, prov: r.p, lat: r.lat, lon: r.lon, prec: "exact", live: true,
       val: r.mm, sev: r.mm >= 250 ? 3 : 2, src: SOURCES.hii, url: "https://www.thaiwater.net/", issued: r.t, recorded: BUILT });
   });
+  }
+  addLiveFlood();
   if (TH) LIVE.warnings.forEach(function (w) {
     add({ layer: "flood", type: "claim", cat: "Official warning",
       title: w.en[0] + (w.en.length > 1 ? " (+" + (w.en.length - 1) + " more)" : ""),
@@ -2218,8 +2227,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var D = TD[lid];
     D.events.forEach(function (e) {
       var k = D.kinds[e.kind] || D.kinds.other;
-      var att = e.attribution && !/^outlet/i.test(e.attribution) ? " Attributed to " + e.attribution + "." : "";
-      add({ layer: lid, type: k.claim ? "claim" : "event", cat: k.label, kind: D.kinds[e.kind] ? e.kind : "other",
+      var att = e.attribution && !/^outlet/i.test(e.attribution) ? " Attributed to " + e.attribution + (/\.$/.test(e.attribution) ? "" : ".") : "";
+      add({ layer: lid, type: (e.claim || k.claim) ? "claim" : "event", cat: k.label, kind: D.kinds[e.kind] ? e.kind : "other",
         title: e.title, detail: (e.detail || "") + att, ts: e.date, datePub: !!e.date_is_pub,
         place: e.place || "", district: e.district || "", prov: e.prov || "", lat: e.lat, lon: e.lon, prec: e.prec || "none",
         sev: (e.killed > 0 ? 3 : (k.sev || 1)), killed: e.killed, injured: e.injured, victims: e.victims, target: e.target,
@@ -2629,8 +2638,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      notification about a record, never a change to it: firing a rule does not confirm anything.
      Each alert carries a dedupe key (rule@version:record), so re-running the rules or rebuilding
      the page cannot produce the same alert twice. Thresholds are this viewer's own setting. */
-  var AS_OF = dMax;   /* the newest record date: "recent" is measured from the data, not the clock */
-  var RULES = [
+  /* "recent" is measured from today (the viewer's clock), not from the newest record, so an old
+     record never reads as fresh on a tab whose data stopped weeks ago (QA-004). */
+  var AS_OF = Math.floor(Date.now() / DAY);
+  var RULES = [].concat(TH ? [
     { id: "flood-bank", v: 1, name: "River over its bank", layer: "flood", unit: "m", def: 1, min: 0, step: 0.1,
       desc: "A gauge reads at least this far above its bank.",
       test: function (r, t) { return r.cat === "Water over the bank" && r.val >= t; },
@@ -2644,42 +2655,46 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       test: function (r) { return r.cat === "Official warning"; }, sev: function (r) { return r.sev; } },
     { id: "flood-overflow", v: 1, name: "Overflow expected in a province", layer: "flood",
       desc: "A provincial bulletin says overflow is expected.",
-      test: function (r) { return r.cat === "Overflow expected"; }, sev: function () { return 3; } },
-    { id: "border-closure", v: 1, name: "Border crossing closed", layer: "border",
-      desc: "A land crossing is reported closed.",
-      test: function (r) { return r.cat === "Crossing closed"; }, sev: function () { return 2; } },
-    { id: "border-violence", v: 1, name: "Clash, strike or landmine", layer: "border", unit: "days", def: 30, min: 1, step: 1,
-      desc: "An armed clash, strike or landmine incident reported within this many days of the latest record.",
-      test: function (r, t) { return /^(Armed clash|Air or artillery strike|Landmine)$/.test(r.cat) && AS_OF - dnum(r.ts) < t; },
+      test: function (r) { return r.cat === "Overflow expected"; }, sev: function () { return 3; } }] : [
+    { id: "flood-reported", v: 1, name: "Flood, landslide or dam release", layer: "flood", unit: "days", def: 14, min: 1, step: 1,
+      desc: "A flood, flash flood, landslide, dam release or river warning reported within this many days.",
+      test: function (r, t) { return r.layer === "flood" && /^(flood_event|flash_flood|landslide|dam_release|river_warning)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+      sev: function (r) { return r.killed ? 3 : 2; } }], [
+    { id: "border-closure", v: 2, name: "Border crossing closed or restricted", layer: "border", unit: "days", def: 30, min: 1, step: 1,
+      desc: "A crossing is reported closed or restricted within this many days.",
+      test: function (r, t) { return (r.cat === "Crossing closed" || r.kind === "closure_or_restriction") && AS_OF - dnum(r.ts) < t; }, sev: function () { return 2; } },
+    { id: "border-violence", v: 2, name: TH ? "Clash, strike or landmine" : "Border incident, missile test or incursion", layer: "border", unit: "days", def: 30, min: 1, step: 1,
+      desc: TH ? "An armed clash, strike or landmine incident reported within this many days." : "A border or maritime incident, missile or weapons test, or airspace incursion reported within this many days.",
+      test: function (r, t) { return (/^(Armed clash|Air or artillery strike|Landmine)$/.test(r.cat) || /^(border_incident|missile_or_weapons_test|airspace_incursion|maritime_incident)$/.test(r.kind)) && AS_OF - dnum(r.ts) < t; },
       sev: function (r) { return r.sev; } },
-    { id: "border-activity", v: 1, name: "Any new border incident", layer: "border", unit: "days", def: 14, min: 1, step: 1,
-      desc: "Any border incident reported within this many days of the latest record.",
-      test: function (r, t) { return r.layer === "border" && r.cat !== "Crossing closed" && AS_OF - dnum(r.ts) < t; },
+    { id: "border-activity", v: 2, name: "Any new border incident", layer: "border", unit: "days", def: 14, min: 1, step: 1,
+      desc: "Any border record reported within this many days.",
+      test: function (r, t) { return r.layer === "border" && r.cat !== "Crossing closed" && r.kind !== "closure_or_restriction" && AS_OF - dnum(r.ts) < t; },
       sev: function (r) { return r.sev; } }
-  ];
+  ]);
   if (TD.insurgency) RULES.push({ id: "insurgency-attack", v: 1, name: "Insurgent attack", layer: "insurgency", unit: "days", def: 30, min: 1, step: 1,
-    desc: "An IED, shooting, ambush, arson or attack on a facility in the southern border provinces within this many days of the latest record.",
+    desc: "An IED, shooting, ambush, arson or attack on a facility " + (TH ? "in the southern border provinces " : "") + "within this many days.",
     test: function (r, t) { return r.layer === "insurgency" && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.sev; } });
   if (TD.scam) RULES.push({ id: "scam-compound", v: 1, name: "Scam compound reported", layer: "scam", unit: "days", def: 60, min: 1, step: 1,
-    desc: "A scam compound is reported (new, resumed or relocated) within this many days of the latest record.",
+    desc: "A scam compound is reported (new, resumed or relocated) within this many days.",
     test: function (r, t) { return r.layer === "scam" && r.kind === "compound" && AS_OF - dnum(r.ts) < t; },
     sev: function () { return 2; } });
   if (TD.aml) RULES.push({ id: "aml-arrest", v: 1, name: "Money laundering arrest or charge", layer: "aml", unit: "days", def: 60, min: 1, step: 1,
-    desc: "An arrest, charge or seizure in a money laundering case within this many days of the latest record.",
+    desc: "An arrest, charge or seizure in a money laundering case within this many days.",
     test: function (r, t) { return r.layer === "aml" && /^(arrest_charge|asset_seizure)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
     sev: function () { return 2; } });
   if (TD.weather) RULES.push({ id: "weather-warning", v: 1, name: "Weather warning issued", layer: "weather", unit: "days", def: 7, min: 1, step: 1,
-    desc: "A heavy rain, storm, heat or drought warning issued within this many days of the latest record.",
+    desc: "A heavy rain, storm, heat or drought warning issued within this many days.",
     test: function (r, t) { return r.layer === "weather" && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.kind === "storm" ? 3 : 2; } });
   if (TD.transport) RULES.push({ id: "road-closure", v: 1, name: "Road or bridge closed", layer: "transport", unit: "days", def: 14, min: 1, step: 1,
-    desc: "A road or bridge closure reported within this many days of the latest record.",
+    desc: "A road or bridge closure reported within this many days.",
     test: function (r, t) { return r.layer === "transport" && /^(road_closure|bridge_closure)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
     sev: function () { return 2; } });
   var HOSP = !!(TD.health && TD.health.events.some(function (e) { return e.kind === "hospital_strain"; }));
   if (HOSP) RULES.push({ id: "hospital-strain", v: 1, name: "Hospital under strain", layer: "health", unit: "days", def: 30, min: 1, step: 1,
-    desc: "A hospital reported as overwhelmed or under strain within this many days of the latest record.",
+    desc: "A hospital reported as overwhelmed or under strain within this many days.",
     test: function (r, t) { return r.layer === "health" && r.kind === "hospital_strain" && AS_OF - dnum(r.ts) < t; },
     sev: function () { return 3; } });
   if (TD.safety) RULES.push({ id: "fire-casualties", v: 1, name: "Fire with casualties", layer: "safety", unit: "people hurt", def: 1, min: 1, step: 1,
@@ -2747,7 +2762,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (i >= 150) return;
       var d = document.createElement("button");
       d.type = "button"; d.className = "tlrow alrow sev" + a.sev + (SEEN[a.key] ? "" : " new");
-      d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + (SEEN[a.key] ? "" : ' <b class="newtag">NEW</b>') + "</span>" +
+      var age = AS_OF - dnum(r.ts);
+      d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + " \u00b7 " + (age <= 0 ? "today" : age === 1 ? "1 day ago" : age + " days ago") + (SEEN[a.key] ? "" : ' <b class="newtag">NEW</b>') + "</span>" +
         '<span class="tln">' + esc(r.title) + "</span>" +
         '<span class="tlm">' + chip("sev" + a.sev, ["", "Low", "Medium", "High"][a.sev]) + chip("rule", a.rule.name) +
         '<span class="tls">' + esc(r.src.name) + "</span></span>";
@@ -2793,7 +2809,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
   document.getElementById("al-asof").textContent = "Recent means within the chosen days of " +
     new Date(AS_OF * DAY).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) +
-    ", the newest record in this build.";
+    ", today. Each alert shows how old its record is.";
 
   /* ---------- curated layers (sourced incident records packaged with the page) ---------- */
   var railC = document.getElementById("rail-curated"), curLayer = L.layerGroup(), CM = {}, curId = null, curOff = {};
@@ -2805,6 +2821,17 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function fmtBaht(v) { return v >= 1e9 ? (v / 1e9).toFixed(1) + " bn baht" : v >= 1e6 ? Math.round(v / 1e6) + " m baht" : Math.round(v).toLocaleString() + " baht"; }
   function monthKey(ts) { return String(ts).slice(0, 7); }
+  /* newest record date for the layer, with STALE (> 60 days) and SPARSE (< 3 records) flags (QA-016, QA-017) */
+  function freshness(recs, D) {
+    if (!recs.length) return "";
+    var newest = recs.reduce(function (m, r) { return r.ts > m ? r.ts : m; }, "");
+    var age = Math.floor(Date.now() / DAY) - dnum(newest);
+    var nd = new Date(newest.slice(0, 10) + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    var cd = new Date(D.asof + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+    return '<p class="fresh">Collected ' + esc(cd) + " \u00b7 newest record " + esc(nd) + " (" + age + (age === 1 ? " day" : " days") + " old)" +
+      (age > 60 ? ' <span class="badge stale" title="Newest record is more than 60 days old">STALE</span>' : "") +
+      (recs.length < 3 ? ' <span class="badge sparse" title="Fewer than 3 records: treat as a sample, not a picture">SPARSE</span>' : "") + "</p>";
+  }
   function showCurated(lid) {
     curId = lid;
     var D = TD[lid], recs = R.filter(function (r) { return r.layer === lid; });
@@ -2865,7 +2892,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           else if (typeof v === "number") v = v.toLocaleString();
           return '<div class="kpi"><div class="v' + (kp.hot ? " hot" : "") + '">' + v + '</div><div class="k">' + esc(kp.label) + "</div></div>";
         }).join("") +
-      "</div>" + (D.status ? '<div class="banner">' + D.status + "</div>" : "") + "</div>" +
+      "</div>" + (D.status ? '<div class="banner">' + D.status + "</div>" : "") + freshness(recs, D) + "</div>" +
       '<div class="sec"><h2>' + esc(D.chartTitle || "Incidents by month") + '</h2><p class="sub">' + esc(D.chartSub || "Violent incidents in this record. Hover a bar for deaths.") + '</p><div class="mbars">' + bars + "</div></div>" +
       '<div class="sec"><h2>Map layers</h2>' + kinds + "</div>" +
       (drows ? '<div class="sec"><h2>' + (D.byProvince ? "By place" : "By district") + '</h2><div class="tw"><table class="reg"><thead><tr><th>' + (D.byProvince ? "Province or area" : "District") + '</th><th>' + esc(D.unitShort || "Incidents") + '</th><th>' + esc(D.tableLabel || "Killed") + '</th></tr></thead><tbody>' + drows + "</tbody></table></div></div>" : "") +
@@ -2988,6 +3015,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   window.addEventListener("resize", sizeToHeader);
 
   renderRules(); evaluate(); badge();
+  window.TSAP_liveRefreshed = function () {
+    R = R.filter(function (r) { if (r.live) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    BUILT = LIVE.built || BUILT;
+    addLiveFlood();
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+    render(); renderAlerts();
+  };
 
   var want = WANT;
   if (!LBY[want]) { try { want = localStorage.getItem("tw-view"); } catch (e) { want = null; } }

@@ -210,7 +210,7 @@
  {
   "layer": "border",
   "date": "2026-04-08",
-  "kind": "maritime_incident",
+  "kind": "statistics",
   "title": "12 Indian fishermen held off Jaffna",
   "detail": "Navy arrested 12 Tamil Nadu fishermen and seized a trawler near Jaffna for alleged poaching; report said over 100 Indian fishermen had been detained so far in 2026.",
   "place": "Palk Strait off Jaffna",
@@ -313,7 +313,7 @@
  {
   "layer": "scam",
   "date": "2026-05-15",
-  "kind": "raid",
+  "kind": "statistics",
   "title": "14 Chinese and Malaysians arrested at Waskaduwa hotel",
   "detail": "Police arrested 12 Chinese and 2 Malaysian nationals without valid visas at a Waskaduwa hotel; Sunday Times said over 500 foreigners had been held for cybercrime in the first five months.",
   "place": "Waskaduwa",

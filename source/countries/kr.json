@@ -58,7 +58,8 @@
   "agency": "Ministry of National Defense / police",
   "src": "https://www.koreatimes.co.kr/southkorea/defense/20260111/s-korea-investigates-alleged-civilian-drone-incursion-into-nk",
   "srcname": "Korea Times",
-  "attribution": "Korea Times citing DPRK claims and ROK Ministry of National Defense"
+  "attribution": "Korea Times citing DPRK claims and ROK Ministry of National Defense",
+  "claim": true
  },
  {
   "layer": "transport",
@@ -230,7 +231,7 @@
  {
   "layer": "crime",
   "date": "2026-03-11",
-  "kind": "smuggling",
+  "kind": "smuggling_migration",
   "title": "Ring smuggled 900,000 cigarette packs to Australia, NZ and UK",
   "detail": "Incheon customs referred 11 suspects over about 70 shipments of 900,000 packs (570,000 counterfeit) mislabelled as goods such as rubber mats, earning about 10 billion won (~US$6.78 million), per Korea Herald.",
   "place": "Incheon",
@@ -1011,7 +1012,7 @@
  {
   "layer": "crime",
   "date": "2026-07-22",
-  "kind": "drugs",
+  "kind": "statistics",
   "title": "Customs seizes record 1,007 kg of drugs in first half",
   "detail": "Korea Customs Service caught 767 smuggling cases totaling 1,007 kg in H1 2026 (654 kg cannabis, 230 kg meth, 58 kg ketamine), with Thailand the top origin; 717 offenders were caught including 14 teenagers.",
   "place": null,
@@ -1032,7 +1033,7 @@
  {
   "layer": "aml",
   "date": "2026-07-27",
-  "kind": "underground_banking",
+  "kind": "statistics",
   "title": "Customs uncovers 7.2 trillion won in illegal FX dealings in H1",
   "detail": "Korea Customs Service said it uncovered 792 illegal foreign-exchange cases worth 7.2 trillion won (~US$4.9 billion) in H1 2026, including unauthorised transfers, hidden overseas assets and export proceeds received in crypto.",
   "place": null,
@@ -1186,7 +1187,7 @@
  {
   "layer": "health",
   "date": "2026-08-03",
-  "kind": "heat_health",
+  "kind": "statistics",
   "title": "Record 186 heat-illness cases in a day; two suspected deaths in Wanju",
   "detail": "KDCA logged 186 heat-related illness cases on Aug 3, the year's daily high, bringing the total to 2,221 with 19 suspected deaths; two elderly people with underlying conditions died in Wanju, per Korea Herald.",
   "place": "Wanju",
@@ -1856,7 +1857,7 @@
  {
   "layer": "scam",
   "date": "2026-09-16",
-  "kind": "other",
+  "kind": "statistics",
   "title": "462 Koreans arrested in six Southeast Asian countries in H1; rings shift to Malaysia",
   "detail": "Foreign ministry data showed 462 Koreans arrested for transnational crimes in six Southeast Asian countries in H1 2026, 4.6 times the prior year; rings have moved to Malaysia, Thailand, Vietnam and Kazakhstan, incl. a Bac Ninh ring that took about 24.3 billion won from 630+ small-business owners.",
   "place": null,

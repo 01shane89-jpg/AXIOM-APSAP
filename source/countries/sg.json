@@ -189,7 +189,7 @@
  {
   "layer": "aml",
   "date": "2026-03-03",
-  "kind": "asset_seizure",
+  "kind": "statistics",
   "title": "S$350m more seized in Prince Group laundering probe",
   "detail": "SPF said three Singaporeans were arrested (Nov 2025-Jan 2026) for suspected money laundering linked to Prince Holding Group, founded by sanctioned tycoon Chen Zhi, and that about S$350 million in properties, vehicles, cash, accounts and luxury goods were newly seized or prohibited, taking the total to over S$500 million.",
   "place": "Nationwide",
@@ -250,7 +250,7 @@
  {
   "layer": "border",
   "date": "2026-03-19",
-  "kind": "maritime_incident",
+  "kind": "statistics",
   "title": "Three sea robberies on bulk carriers in Phillip Channel",
   "detail": "ReCAAP ISC reported three robberies on bulk carriers in the eastbound lane of the Phillip Channel TSS on 18-19 March, within 0.7-1.7 nm of each other; one crew member was injured and engine spares were stolen from one ship. It said all 10 incidents in the Straits since January were in the Singapore Strait.",
   "place": "Phillip Channel, Singapore Strait",
@@ -644,7 +644,7 @@
  {
   "layer": "border",
   "date": "2026-07-20",
-  "kind": "other",
+  "kind": "statistics",
   "title": "Singapore Strait sea robberies down 74% in H1",
   "detail": "ReCAAP ISC counted 21 robbery incidents in the Singapore Strait in H1 2026 versus 80 a year earlier; its executive director credited industry preventive measures and law-enforcement responses by littoral states.",
   "place": "Singapore Strait",
@@ -791,7 +791,7 @@
  {
   "layer": "scam",
   "date": "2026-08-26",
-  "kind": "other",
+  "kind": "statistics",
   "title": "H1 scam cases fall 17.9%; losses S$410.6m",
   "detail": "SPF reported 18,391 scam and cybercrime cases in H1 2026 (down from 22,397) with losses of S$410.6 million (from S$500.2 million); investment scams caused the largest losses and the Anti-Scam Centre recovered over S$97.7 million.",
   "place": "Nationwide",

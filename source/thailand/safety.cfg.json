@@ -2,29 +2,114 @@
  "asof": "2026-09-26",
  "color": "--over",
  "srcline": "Sourced reporting · DDPM, TMD and DMR as carried by the press",
- "bounds": [[5.6, 97.3], [20.5, 105.7]],
- "unit": "incidents", "unitShort": "Incidents",
+ "bounds": [
+  [
+   5.6,
+   97.3
+  ],
+  [
+   20.5,
+   105.7
+  ]
+ ],
+ "unit": "incidents",
+ "unitShort": "Incidents",
  "chartTitle": "Incidents by month",
  "chartSub": "Fires, collapses, explosions, hazmat and other incidents by month. Hover a bar for deaths.",
- "tableAll": true, "byProvince": true,
+ "tableAll": true,
+ "byProvince": true,
  "status": "<b>A curated record, not a full count.</b> 40 records for Jan–Sep 2026 from English-language reporting. Small fires, road crashes and most of the Deep South and Northeast are missing.",
  "kpis": [
-  {"type": "count", "label": "Incidents recorded", "hot": true},
-  {"type": "sum", "field": "killed", "all": true, "label": "Killed, as reported", "hot": true},
-  {"type": "kind", "kind": "fire", "label": "Building and factory fires"},
-  {"type": "kind", "kind": "earthquake", "label": "Earthquakes felt"}
+  {
+   "type": "count",
+   "label": "Incidents recorded",
+   "hot": true
+  },
+  {
+   "type": "sum",
+   "field": "killed",
+   "all": true,
+   "label": "Killed, as reported",
+   "hot": true
+  },
+  {
+   "type": "kind",
+   "kind": "fire",
+   "label": "Building and factory fires"
+  },
+  {
+   "type": "kind",
+   "kind": "earthquake",
+   "label": "Earthquakes felt"
+  }
  ],
  "kinds": {
-  "fire": {"label": "Fire", "color": "--over", "sev": 2, "counted": true},
-  "wildfire": {"label": "Wildfire", "color": "--power", "sev": 2, "counted": true},
-  "industrial_explosion": {"label": "Explosion", "color": "--near", "sev": 2, "counted": true},
-  "chemical_hazmat": {"label": "Chemical or hazmat", "color": "--util", "sev": 2, "counted": true},
-  "collapse": {"label": "Structural collapse", "color": "--sat-recur", "sev": 2, "counted": true},
-  "mass_casualty": {"label": "Mass-casualty incident", "color": "--l3", "sev": 3, "counted": true},
-  "earthquake": {"label": "Earthquake", "color": "--care", "sev": 1, "counted": true},
-  "landslide": {"label": "Landslide", "color": "--sat-flood", "sev": 2, "counted": true},
-  "civil_disturbance": {"label": "Protest or civil disturbance", "color": "--calm", "sev": 1},
-  "other": {"label": "Other", "color": "--muted", "sev": 1, "counted": true}
+  "fire": {
+   "label": "Fire",
+   "color": "--over",
+   "sev": 2,
+   "counted": true
+  },
+  "wildfire": {
+   "label": "Wildfire",
+   "color": "--power",
+   "sev": 2,
+   "counted": true
+  },
+  "industrial_explosion": {
+   "label": "Explosion",
+   "color": "--near",
+   "sev": 2,
+   "counted": true
+  },
+  "chemical_hazmat": {
+   "label": "Chemical or hazmat",
+   "color": "--util",
+   "sev": 2,
+   "counted": true
+  },
+  "collapse": {
+   "label": "Structural collapse",
+   "color": "--sat-recur",
+   "sev": 2,
+   "counted": true
+  },
+  "mass_casualty": {
+   "label": "Mass-casualty incident",
+   "color": "--l3",
+   "sev": 3,
+   "counted": true
+  },
+  "earthquake": {
+   "label": "Earthquake",
+   "color": "--care",
+   "sev": 1,
+   "counted": true
+  },
+  "landslide": {
+   "label": "Landslide",
+   "color": "--sat-flood",
+   "sev": 2,
+   "counted": true
+  },
+  "civil_disturbance": {
+   "label": "Protest or civil disturbance",
+   "color": "--calm",
+   "sev": 1
+  },
+  "statistics": {
+   "label": "Statistics or period total",
+   "color": "--accent",
+   "sev": 1,
+   "claim": true,
+   "counted": false
+  },
+  "other": {
+   "label": "Other",
+   "color": "--muted",
+   "sev": 1,
+   "counted": true
+  }
  },
  "notes": [
   "<b>Every record is a report, not a finding.</b> Each links to its article and keeps who gave the figures. None has been confirmed by an analyst.",

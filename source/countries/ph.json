@@ -696,7 +696,7 @@
   "injured": null,
   "arrested": 1,
   "agency": "National Bureau of Investigation",
-  "src": "http://nbi.gov.ph/press_releases/2026/05142026/10008/",
+  "src": "https://nbi.gov.ph/press_releases/2026/05142026/10008/",
   "srcname": "NBI",
   "attribution": "NBI press release",
   "people": 25
@@ -961,7 +961,7 @@
  {
   "layer": "crime",
   "date": "2026-06-17",
-  "kind": "drugs",
+  "kind": "statistics",
   "title": "PDEA May 2026 tally: PHP1.95B drugs, 3,702 arrests",
   "detail": "PDEA reported PHP1.95 billion in drugs seized and 3,702 arrested in 2,941 May operations, incl. 5 elected officials.",
   "place": "Nationwide",
@@ -1002,7 +1002,7 @@
  {
   "layer": "aml",
   "date": "2026-06-26",
-  "kind": "shell_nominee",
+  "kind": "statistics",
   "title": "AMLC risk assessment rates tax crimes a high ML threat",
   "detail": "AMLC's third National Risk Assessment said tax evasion proceeds move via shell companies, false invoicing and real estate; drug-related STRs 2021-2024 totalled PHP25.09 billion.",
   "place": "Nationwide",

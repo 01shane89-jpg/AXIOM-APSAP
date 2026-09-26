@@ -297,7 +297,7 @@
  {
   "layer": "safety",
   "date": "2026-03-31",
-  "kind": "wildfire",
+  "kind": "statistics",
   "title": "14 forest and steppe fires burn 21,175 ha so far in 2026",
   "detail": "NEMA said 14 forest and steppe fires had been recorded since the start of the year, mainly in eastern Dornod, Sukhbaatar and Khentii provinces, affecting 21,175 hectares, with human negligence the main cause.",
   "place": "Eastern Mongolia",
@@ -502,7 +502,8 @@
   "agency": "Independent Authority Against Corruption",
   "src": "https://en.iaac.mn/3128/nitem",
   "srcname": "IAAC Mongolia",
-  "attribution": "Claim by IAAC chief commissioner (interview with Udriin Sonin)"
+  "attribution": "Claim by IAAC chief commissioner (interview with Udriin Sonin)",
+  "claim": true
  },
  {
   "layer": "aml",
@@ -901,7 +902,7 @@
  {
   "layer": "transport",
   "date": "2026-07-01",
-  "kind": "other",
+  "kind": "statistics",
   "title": "Under-18s banned from riding e-scooters, mopeds, e-bikes",
   "detail": "Amended traffic safety rules effective 1 July bar minors from light electric vehicles, with parents and rental operators liable; the trauma centre recorded 754 injuries in January-May, per the Ministry of Road and Transport.",
   "place": null,

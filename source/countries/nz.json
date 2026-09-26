@@ -142,7 +142,8 @@
   "src": "https://www.police.govt.nz/news/release/busted-woman-arrested-over-elaborate-18-year-scam",
   "srcname": "NZ Police",
   "attribution": "NZ Police",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  },
  {
   "layer": "infra",
@@ -899,7 +900,7 @@
  {
   "layer": "scam",
   "date": "2026-08-20",
-  "kind": "other",
+  "kind": "statistics",
   "title": "NCSC Q2: scams lead incident reports; losses fall to NZ$2.7m",
   "detail": "NCSC handled 1,129 reports in Apr-Jun 2026; scams and fraud were the top category (348 reports, about NZ$860,000 lost) and total direct loss fell 52% to NZ$2.7 million. It flagged QR-code phishing at Christchurch parking meters.",
   "place": "Nationwide",
@@ -998,7 +999,8 @@
   "src": "https://www.stuff.co.nz/world-news/361036356/nz-naval-ships-reportedly-tracked-chinese-military-transit-taiwan-strait",
   "srcname": "Stuff",
   "attribution": "NZDF confirmation via Stuff; tracking claim is reported",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  },
  {
   "layer": "aml",
@@ -1019,6 +1021,7 @@
   "src": "https://www.1news.co.nz/2026/09/24/meth-luxury-cars-and-first-class-flights-inside-operation-juneau/",
   "srcname": "1News",
   "attribution": "NZ Police (NOCG) prosecution summary via 1News",
-  "date_is_pub": true
+  "date_is_pub": true,
+  "claim": true
  }
 ]

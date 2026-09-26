@@ -24,7 +24,7 @@
  {
   "layer": "scam",
   "date": "2026-01-02",
-  "kind": "rescue_repatriation",
+  "kind": "statistics",
   "title": "Three Indians from Myawaddy scam centres repatriated via Yangon",
   "detail": "The Embassy of India in Yangon said three nationals held in Myawaddy scam centres were repatriated, taking the total since July 2022 to 2,171, and warned against unverified overseas job offers.",
   "place": "Myawaddy, Myanmar",
@@ -662,7 +662,7 @@
  {
   "layer": "aml",
   "date": "2026-07-10",
-  "kind": "gambling_laundering",
+  "kind": "statistics",
   "title": "ED attaches Rs 940.77 crore more in Mahadev betting probe",
   "detail": "ED provisionally attached property, land and securities worth Rs 940.77 crore of a businessman and associated entities in the Mahadev Online Book/Skyexchange case, taking the total attached, seized or frozen to about Rs 3,800 crore.",
   "place": "Raipur",
@@ -892,7 +892,7 @@
  {
   "layer": "scam",
   "date": "2026-09-04",
-  "kind": "raid",
+  "kind": "statistics",
   "title": "CBI Operation Chakra-VI hits 89 digital-arrest sites in 20 states",
   "detail": "CBI searched 89 locations across 20 states against digital-arrest syndicates and arrested three people accused of receiving and moving fraud proceeds through purpose-opened bank accounts; linked cases total about Rs 42.36 crore (Gujarat Rs 19.24 cr, Karnataka Rs 15.45 cr, Rajasthan Rs 7.67 cr).",
   "place": "Multiple states",
