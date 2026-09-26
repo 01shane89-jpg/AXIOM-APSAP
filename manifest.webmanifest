@@ -1,0 +1,16 @@
+{
+  "name": "AXIOM ASAP",
+  "short_name": "ASAP",
+  "description": "Asia Pacific Situational Awareness Platform: one map, timeline and alert set for 28 areas, from public sources.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#12324a",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

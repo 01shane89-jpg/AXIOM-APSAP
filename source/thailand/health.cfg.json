@@ -1,0 +1,117 @@
+{
+ "asof": "2026-09-26",
+ "color": "--l1",
+ "srcline": "Sourced reporting · DDC, PCD and provincial health offices as carried by the press",
+ "bounds": [
+  [
+   5.6,
+   97.3
+  ],
+  [
+   20.5,
+   105.7
+  ]
+ ],
+ "unit": "records",
+ "unitShort": "Records",
+ "chartTitle": "Health records by month",
+ "chartSub": "Disease reports, warnings, air quality and local incidents by month.",
+ "tableAll": true,
+ "byProvince": true,
+ "tableLabel": "Killed, local incidents",
+ "status": "<b>A curated record, not a surveillance feed.</b> 44 records for Jan–Sep 2026. Most are national year-to-date disease totals with no place on the map. There are no reports of hospital strain, livestock disease or mosquito surveillance.",
+ "kpis": [
+  {
+   "type": "all",
+   "label": "Health records",
+   "hot": true
+  },
+  {
+   "type": "kind",
+   "kind": "outbreak",
+   "label": "Disease reports"
+  },
+  {
+   "type": "kind",
+   "kind": "air_quality",
+   "label": "Air quality reports"
+  },
+  {
+   "type": "kind",
+   "kind": "hospital_strain",
+   "label": "Hospital strain reports"
+  }
+ ],
+ "kinds": {
+  "outbreak": {
+   "label": "Disease report",
+   "color": "--over",
+   "sev": 2,
+   "counted": true,
+   "claim": true
+  },
+  "ddc_warning": {
+   "label": "DDC warning or measure",
+   "color": "--rain",
+   "sev": 1,
+   "counted": true,
+   "claim": true
+  },
+  "hospital_strain": {
+   "label": "Hospital strain",
+   "color": "--l3",
+   "sev": 3,
+   "counted": true
+  },
+  "animal_disease": {
+   "label": "Animal disease",
+   "color": "--sat-recur",
+   "sev": 2,
+   "counted": true
+  },
+  "food_contamination": {
+   "label": "Food poisoning or contamination",
+   "color": "--near",
+   "sev": 2,
+   "counted": true
+  },
+  "vector_surveillance": {
+   "label": "Mosquito surveillance",
+   "color": "--care",
+   "sev": 1,
+   "counted": true
+  },
+  "air_quality": {
+   "label": "Air quality (PM2.5)",
+   "color": "--power",
+   "sev": 2,
+   "counted": true
+  },
+  "heat_health": {
+   "label": "Heat and health",
+   "color": "--sat-flood",
+   "sev": 2,
+   "counted": true
+  },
+  "statistics": {
+   "label": "Statistics or period total",
+   "color": "--accent",
+   "sev": 1,
+   "claim": true,
+   "counted": false
+  },
+  "other": {
+   "label": "Other",
+   "color": "--muted",
+   "sev": 1,
+   "counted": true
+  }
+ },
+ "notes": [
+  "<b>Disease totals are claims by the DDC.</b> Case and death counts are year-to-date figures as reported, not events. Later records supersede earlier ones for the same disease, so they must not be added together.",
+  "<b>Air quality units differ.</b> Most readings are PM2.5 in µg/m³ from the Pollution Control Department. IQAir readings are US AQI lower bounds. The two scales cannot be compared directly.",
+  "<b>Hospital strain has no records.</b> No 2026 report of an overwhelmed hospital could be found and opened, so the Hospital overwhelmed alert still waits for a feed.",
+  "<b>Figures to treat with care.</b> The Covid and flu totals in the 15 Sep record may be year-to-date. The mpox count of 139 is for 2026; another outlet's 1,074 is cumulative since 2022.",
+  "<b>Nationwide records have no marker.</b> Regional air readings without a named province are listed but not mapped."
+ ]
+}
