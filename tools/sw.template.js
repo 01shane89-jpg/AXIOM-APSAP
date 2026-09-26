@@ -9,7 +9,7 @@ const VERSION = "__VERSION__";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const PRECACHE = __PRECACHE__;
 const FRESH = [/\/index\.html$/, /\/$/, /data\/thailand\/flood-live-snapshot\.js$/];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/];
+const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
