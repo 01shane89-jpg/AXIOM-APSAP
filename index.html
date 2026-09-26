@@ -802,8 +802,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
 
   /* ---------- map ---------- */
-  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 5, maxZoom: 13, preferCanvas: true });
+  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
   window.__asapMap = map;
+  /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
+  var fitB = map.fitBounds; map.fitBounds = function (b, o) { map.__lastFit = [b, o]; return fitB.call(map, b, o); };
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
   [["provpane", 350], ["floodpane", 450], ["rainpane", 440], ["expopane", 460], ["infrapane", 620]].forEach(function (p) {
     map.createPane(p[0]);
@@ -4542,35 +4544,42 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 })();
 </script>
 <style>
-/* ---------- phone layout (up to 700 px wide): map on top, the side panel as a pull-up sheet, pickers as menus ---------- */
+/* ---------- phone layout (up to 700 px wide): full-screen map, the side panel as a bottom sheet (bar, half, full), pickers as menus ---------- */
 #phone-nav{display:none}
 @media (max-width:700px){
   html.phone,html.phone body{height:100%;overflow:hidden}
   html.phone header{gap:6px;row-gap:6px;padding:8px 10px}
   html.phone header .ctabs,html.phone header .viewtabs,html.phone #hdr-src{display:none!important}
-  html.phone #phone-nav{display:flex;order:9;flex:1 1 100%;gap:6px;min-width:0;max-width:100%}
+  html.phone #phone-nav{display:flex;order:9;flex:1 1 100%;gap:6px;min-width:0;max-width:100%;box-sizing:border-box}
   html.phone #phone-nav select{flex:1 1 0;width:0;min-width:0;min-height:40px;font:inherit;font-size:15px;font-weight:600;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
   html.phone #phone-nav label{position:absolute;left:-9999px}
   html.phone #hdr-title{font-size:17px}
-  html.phone #period-seg .plbl{display:none}
-  html.phone #period-seg,html.phone #theme-seg{margin-left:0!important}
-  html.phone #period-seg button,html.phone #theme-seg button,html.phone #brief-btn{min-height:32px}
-  html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--map-under,42svh))!important;min-height:0}
+  html.phone:not(.hdr-open) #hdr-checked,html.phone:not(.hdr-open) #hdr-refresh,html.phone:not(.hdr-open) #hdr-prog,
+  html.phone:not(.hdr-open) #period-seg,html.phone:not(.hdr-open) #brief-btn,html.phone:not(.hdr-open) #theme-seg{display:none!important}
+  html.phone #ph-more{flex:0 0 auto;min-height:40px;min-width:44px;font:inherit;font-size:14px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+  html.phone.hdr-open #ph-more{background:var(--ink);color:var(--surface)}
+  html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
+  html.phone{--bar-h:64px}
   html.phone .shell{display:block}
-  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,42svh);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
-    border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding-inline:14px;transition:height .2s ease}
+  html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
+    border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding:0 14px 16px;box-sizing:border-box;transition:height .2s ease}
+  html.phone .rail.dragging{transition:none}
+  html.phone[data-sheet="bar"] .rail{overflow:hidden}
   html.phone .rail .tlrow{min-height:44px;padding-block:8px}
   html.phone .rail .tln{font-size:14px;line-height:1.35}
   html.phone .rail .obs,html.phone .rail .note,html.phone .rail .tls{font-size:12.5px}
   html.phone .rail button.refresh,html.phone .rail select{min-height:36px}
-  html.phone[data-sheet="peek"]{--sheet-h:42svh;--map-under:42svh}
-  html.phone[data-sheet="min"]{--sheet-h:58px;--map-under:58px}
-  html.phone[data-sheet="full"]{--sheet-h:calc(100svh - var(--hdr-h,120px));--map-under:42svh}
+  html.phone[data-sheet="bar"]{--sheet-h:var(--bar-h)}
+  html.phone[data-sheet="half"]{--sheet-h:50svh}
+  html.phone[data-sheet="full"]{--sheet-h:calc(100svh - var(--hdr-h,120px))}
   #rail-handle{display:none}
-  html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;gap:8px;margin:0 -14px;padding:6px 14px 8px;background:var(--surface);border-bottom:1px solid var(--line-soft)}
-  html.phone #rail-handle .grab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:0;cursor:pointer;min-height:40px;justify-content:center}
-  html.phone #rail-handle .grab i{display:block;width:40px;height:5px;border-radius:3px;background:var(--line)}
-  html.phone #rail-handle .hide{background:none;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12.5px;color:var(--muted);padding:6px 10px;min-height:36px}
+  html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;margin:0 -14px;padding:0 14px;height:var(--bar-h);box-sizing:border-box;background:var(--surface);border-bottom:1px solid var(--line-soft);touch-action:none}
+  html.phone #rail-handle .grab{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;background:none;border:none;font:inherit;color:var(--ink);padding:6px 0 4px;cursor:pointer;height:100%;text-align:left;min-width:0}
+  html.phone #rail-handle .grab i{display:block;align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line);margin-bottom:3px}
+  html.phone #rail-handle .grab b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.phone #rail-handle .grab small{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.phone #rail-handle .chev{font-size:20px;color:var(--muted);padding-left:8px;transition:transform .2s}
+  html.phone[data-sheet="full"] #rail-handle .chev{transform:rotate(180deg)}
   html.phone .leaflet-popup-content{max-width:calc(100vw - 90px)!important;font-size:14px}
   html.phone .leaflet-container a.leaflet-popup-close-button{width:36px;height:36px;font-size:22px;line-height:36px}
   html.phone .pkgsheet{position:fixed!important;left:0;right:0;bottom:0;max-height:82svh;overflow-y:auto;overscroll-behavior:contain;z-index:3001;background:var(--surface);
@@ -4585,7 +4594,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script>
 /* Phone layout. Tapping something on the map opens a small info box right beside it (a map popup, closed by tapping
    elsewhere or its ×); "Full details" opens the evidence package as a sheet over the page, closed by tapping outside it or
-   its ×. The side panel becomes a pull-up sheet under the map, and the country and tab pickers become two menus. */
+   its ×. The map fills the screen; the side panel becomes a bottom sheet whose bar names the tab and its item count, and
+   which taps or drags up to half or full height. The country and tab pickers become two menus. */
 (function () {
   var mq = window.matchMedia("(max-width: 700px)"), root = document.documentElement;
   var map = window.__asapMap, rail = document.querySelector(".rail");
@@ -4593,9 +4603,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function on() { return mq.matches; }
   function apply() {
     root.classList.toggle("phone", on());
-    if (on() && !root.getAttribute("data-sheet")) root.setAttribute("data-sheet", "peek");
+    if (on() && !root.getAttribute("data-sheet")) root.setAttribute("data-sheet", "bar");
     window.dispatchEvent(new Event("resize"));
-    setTimeout(function () { map.invalidateSize(); }, 250);
+    setTimeout(function () { map.invalidateSize(); if (on() && map.__lastFit) map.fitBounds(map.__lastFit[0], map.__lastFit[1]); }, 250);
   }
   /* menus in place of the country and tab rows */
   var nav = document.createElement("div"); nav.id = "phone-nav";
@@ -4618,28 +4628,64 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   views();
   cs.addEventListener("change", function () { var b = document.querySelector('#country-seg button[data-cc="' + cs.value + '"]'); if (b) b.click(); });
-  vs.addEventListener("change", function () { var b = document.querySelector('#view-seg button[data-view="' + vs.value + '"]'); if (b) b.click(); if (root.getAttribute("data-sheet") === "min") root.setAttribute("data-sheet", "peek"); });
+  vs.addEventListener("change", function () { var b = document.querySelector('#view-seg button[data-view="' + vs.value + '"]'); if (b) b.click(); setTimeout(label, 50); });
   new MutationObserver(function () { var b = document.querySelector('#view-seg button[aria-selected="true"]'); if (b && vs.value !== b.getAttribute("data-view")) vs.value = b.getAttribute("data-view"); })
     .observe(document.getElementById("view-seg"), { attributes: true, subtree: true, attributeFilter: ["aria-selected"] });
-  nav.appendChild(cs); nav.appendChild(vs);
+  /* the period, map style, refresh and country brief controls fold away behind "More" so the map gets the screen */
+  var more = document.createElement("button"); more.type = "button"; more.id = "ph-more"; more.textContent = "More"; more.setAttribute("aria-expanded", "false");
+  more.addEventListener("click", function () {
+    var o = root.classList.toggle("hdr-open"); more.setAttribute("aria-expanded", o ? "true" : "false"); more.textContent = o ? "Less" : "More";
+    window.dispatchEvent(new Event("resize"));
+  });
+  nav.appendChild(cs); nav.appendChild(vs); nav.appendChild(more);
   var vt = document.getElementById("view-seg"); vt.parentNode.insertBefore(nav, vt.nextSibling);
-  /* the pull-up sheet's handle */
+  /* the bottom sheet: a bar naming the tab and how many items it lists; tap or drag it up to half or full height */
   var h = document.createElement("div"); h.id = "rail-handle";
-  h.innerHTML = '<button type="button" class="grab" aria-label="Show more or less of the panel"><i></i><span></span></button><button type="button" class="hide">Map only</button>';
+  h.innerHTML = '<button type="button" class="grab"><i></i><b></b><small></small></button><span class="chev" aria-hidden="true">&#9650;</span>';
   rail.insertBefore(h, rail.firstChild);
-  function label() {
-    var s = root.getAttribute("data-sheet");
-    h.querySelector(".grab span").textContent = s === "full" ? "Show the map" : s === "min" ? "Show the panel" : "Pull up for more";
-    h.querySelector(".hide").hidden = s === "min";
+  var STATES = ["bar", "half", "full"];
+  function panel() {
+    for (var i = 0; i < rail.children.length; i++) { var c = rail.children[i]; if (c !== h && !c.hidden && c.offsetParent !== null && c.textContent.trim()) return c; }
+    return null;
   }
-  function setSheet(s) { root.setAttribute("data-sheet", s); label(); window.dispatchEvent(new Event("resize")); setTimeout(function () { map.invalidateSize(); }, 230); }
-  h.querySelector(".grab").addEventListener("click", function () { var s = root.getAttribute("data-sheet"); setSheet(s === "full" ? "peek" : s === "min" ? "peek" : "full"); });
-  h.querySelector(".hide").addEventListener("click", function () { setSheet("min"); });
-  /* a list row that points at something on the map brings the map back into view first */
+  function label() {
+    var s = root.getAttribute("data-sheet"), b = document.querySelector('#view-seg button[aria-selected="true"]'), pn = panel();
+    var name = b ? b.childNodes[0].textContent.trim() : "Details";
+    var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof]").length : 0;
+    h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
+    h.querySelector(".grab small").textContent = s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
+    h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
+  }
+  function setSheet(s) { root.setAttribute("data-sheet", s); rail.style.removeProperty("--sheet-h"); if (s !== "full") rail.scrollTop = 0; label(); }
+  var lt = null; new MutationObserver(function () { clearTimeout(lt); lt = setTimeout(label, 120); }).observe(rail, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  /* drag: follow the finger, then settle on the nearest height; a tap without movement steps bar, half, full, back to bar */
+  var drag = null;
+  function heights() { var vh = window.innerHeight, hh = parseFloat(getComputedStyle(root).getPropertyValue("--hdr-h")) || 120; return { bar: 64, half: vh * 0.5, full: vh - hh }; }
+  h.addEventListener("pointerdown", function (e) { if (!on()) return; drag = { y: e.clientY, h0: rail.offsetHeight, moved: false }; try { h.setPointerCapture(e.pointerId); } catch (x) {} });
+  h.addEventListener("pointermove", function (e) {
+    if (!drag) return; var dy = drag.y - e.clientY;
+    if (!drag.moved && Math.abs(dy) < 6) return;
+    drag.moved = true; rail.classList.add("dragging");
+    var H = heights(); rail.style.setProperty("--sheet-h", Math.max(H.bar, Math.min(H.full, drag.h0 + dy)) + "px");
+  });
+  function endDrag(e) {
+    if (!drag) return; var d = drag; drag = null; rail.classList.remove("dragging");
+    if (!d.moved) return;
+    var H = heights(), cur = rail.offsetHeight, best = "bar";
+    STATES.forEach(function (s) { if (Math.abs(H[s] - cur) < Math.abs(H[best] - cur)) best = s; });
+    h.__dragged = true; setTimeout(function () { h.__dragged = false; }, 0); setSheet(best);
+  }
+  h.addEventListener("pointerup", endDrag); h.addEventListener("pointercancel", endDrag);
+  h.querySelector(".grab").addEventListener("click", function () {
+    if (h.__dragged) { h.__dragged = false; return; }
+    var s = root.getAttribute("data-sheet"); setSheet(s === "bar" ? "half" : s === "half" ? "full" : "bar");
+  });
+  /* a list row that points at something on the map drops the sheet to its bar so the map and the info box show */
   rail.addEventListener("click", function (e) {
-    if (!on() || root.getAttribute("data-sheet") !== "full") return;
-    if (e.target.closest && e.target.closest("[data-sof], tr[data-asset], tr[data-id]")) setSheet("peek");
+    if (!on() || root.getAttribute("data-sheet") === "bar") return;
+    if (e.target.closest && e.target.closest("[data-sof], tr[data-asset], tr[data-id], [data-openrec], .tlrow")) setSheet("bar");
   }, true);
+  map.on("popupopen", function () { if (on() && root.getAttribute("data-sheet") !== "bar") setSheet("bar"); });
   /* full details as a sheet with a backdrop */
   var back = document.createElement("div"); back.id = "pkg-back"; back.hidden = true; document.body.appendChild(back);
   var open = null;
@@ -4659,6 +4705,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
   mq.addEventListener ? mq.addEventListener("change", function () { if (!on()) close(); apply(); }) : mq.addListener(apply);
   apply(); label();
+  var vseg = document.getElementById("view-seg"); vseg.addEventListener("click", function () { setTimeout(label, 50); });
 })();
 </script>
 
