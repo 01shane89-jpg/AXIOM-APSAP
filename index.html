@@ -156,6 +156,10 @@ code.fp{font-family:var(--mono,ui-monospace,monospace);font-size:11px;word-break
 .kpi{background:var(--surface);padding:10px 11px}
 .kpi .v{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .kpi .v.hot{color:var(--over)}
+.reg tr.hot td{color:var(--over);font-weight:600}
+.stlbl{font-weight:700;font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--muted);box-shadow:none;padding:1px 5px}
+.stlbl:before{display:none}
+.stcard{border-left:3px solid var(--over);padding-left:8px;margin:6px 0}
 .kpi .u{font-size:11px;color:var(--muted);font-weight:500}
 .kpi .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;line-height:1.3}
 
@@ -2164,6 +2168,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/cdc.js"></script>
 <script src="data/live/navwarnings.js"></script>
 <script src="data/live/ucdp.js"></script>
+<script src="data/live/storms.js"></script>
+<script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2785,7 +2791,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* ---------- stub rail ---------- */
   var railS = document.getElementById("rail-stub");
   function fillStub(l) {
-    railS.innerHTML = '<div class="sec"><h2>' + esc(l.name) + '</h2>' +
+    railS.innerHTML = (l.id === "weather" ? wxTopHtml() : "") + '<div class="sec"><h2>' + esc(l.name) + '</h2>' +
       '<div class="banner" style="margin-top:4px;border-left-color:var(--muted)"><b>' + (TH ? "Not connected yet." : "Not collected yet for " + esc(C.name) + ".") + "</b> " +
       (l.analyst ? "This layer is for analysts only and needs sign-in and case access, which a public page cannot provide."
                  : "No feed is wired to this layer, so nothing is drawn on the map.") + "</div></div>" +
@@ -2795,6 +2801,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (l.now ? '<div class="sec"><h2>Available today</h2><p class="note">' + esc(l.now) + "</p></div>" : "") +
       (l.sensitive ? '<div class="sec"><h2>Handling</h2><p class="note">This layer will name people, phone numbers, companies and accounts. ' +
         "Those details belong inside an investigation with access control, not on a shared map. Only public incident reports (arrests, raids, sanctions) would appear here.</p></div>" : "");
+    if (l.id === "weather") wxWire(railS);
   }
 
   /* ---------- alert engine ----------
@@ -2858,7 +2865,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     sev: function () { return 2; } });
   if (TD.weather) RULES.push({ id: "weather-warning", v: 1, name: "Weather warning issued", layer: "weather", unit: "days", def: 7, min: 1, step: 1,
     desc: "A heavy rain, storm, heat or drought warning issued within this many days.",
-    test: function (r, t) { return r.layer === "weather" && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+    test: function (r, t) { return r.layer === "weather" && !r.storm && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.kind === "storm" ? 3 : 2; } });
   if (TD.transport) RULES.push({ id: "road-closure", v: 1, name: "Road or bridge closed", layer: "transport", unit: "days", def: 14, min: 1, step: 1,
     desc: "A road or bridge closure reported within this many days.",
@@ -2873,6 +2880,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     desc: "A fire, wildfire or explosion in the last 60 days where at least this many people were reported killed or injured.",
     test: function (r, t) { return r.layer === "safety" && /^(fire|wildfire|industrial_explosion)$/.test(r.kind) && AS_OF - dnum(r.ts) < 60 && (r.killed || 0) + (r.injured || 0) >= t; },
     sev: function (r) { return r.killed ? 3 : 2; } });
+  RULES.push({ id: "storm-near", v: 1, name: "Tropical cyclone forecast to pass near", layer: "weather", unit: "km", def: 300, min: 50, step: 50,
+    desc: "An agency's current forecast track (JMA or JTWC) passes within this distance of a place in this area.",
+    test: function (r, t) { return !!r.storm && r.closeKm != null && r.closeKm <= t; },
+    sev: function (r) { return r.closeKm <= 100 || r.sev >= 3 ? 3 : 2; } });
   var WAITING = [
     TD.transport ? null : ["Road closes", "Transportation"], ["Military exercise announced", "Border (official statements feed)"],
     TD.insurgency ? null : ["IED occurs", "Southern insurgency"], TD.scam ? null : ["New scam center identified", "Scam centers"],
@@ -3048,7 +3059,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var srcs = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; })
       .map(function (k) { return "<li>" + esc(k) + ' <span class="obs">' + sc[k] + "</span></li>"; }).join("");
     railC.innerHTML =
-      '<div class="sec" id="cl-pkg" hidden></div>' +
+      '<div class="sec" id="cl-pkg" hidden></div>' + (lid === "weather" ? wxTopHtml() : "") +
       '<div class="sec"><h2>Right now</h2><div class="kpis">' + (D.kpis || [
         { type: "count", label: "Violent incidents recorded", hot: true },
         { type: "sum", field: "killed", label: "Killed, as reported", hot: true },
@@ -3079,6 +3090,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
       '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
     var list = document.getElementById("cl-list");
+    if (lid === "weather") wxWire(railC);
     curLayer.clearLayers(); CM = {};
     var AM = [];
     (D.assets || []).forEach(function (a, i) {
@@ -3627,6 +3639,182 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<p class="note">Reports are documents published by agencies and NGOs. Each is that organisation\'s account, not a confirmed finding.</p></div>';
   }
 
+  /* ---------- tropical cyclones and the 7-day forecast (hourly snapshots from the GitHub job) ----------
+     Positions, forecast tracks and probability circles are the issuing agency's products (JMA, JTWC, GDACS), each kept with its
+     agency and issue time. The page only draws them and works out distances; it never merges or adjusts agencies' tracks. */
+  var STC = { JMA: "#d84315", JTWC: "#7b1fa2", GDACS: "#607d8b" };
+  src("storm-jma", "Japan Meteorological Agency (RSMC Tokyo) typhoon information", "Official regional meteorological centre", "A",
+      "The WMO-designated centre for western North Pacific typhoons. Forecast circles are its 70% probability circles.", "https://www.jma.go.jp/bosai/map.html#contents=typhoon&lang=en");
+  src("storm-jtwc", "Joint Typhoon Warning Center (U.S. Navy and Air Force)", "U.S. military warning centre", "A",
+      "Official U.S. warnings. Winds are one-minute averages, so they run higher than JMA's ten-minute winds.", "https://www.metoc.navy.mil/jtwc/jtwc.html");
+  function stKm(a, b, c, d) {
+    var R0 = 6371, p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dp = p2 - p1, dl = (d - b) * Math.PI / 180;
+    var h = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+    return 2 * R0 * Math.asin(Math.sqrt(h));
+  }
+  function stDir(c) { return /^[北南東西]+$/.test(c || "") ? c.replace(/北/g, "N").replace(/南/g, "S").replace(/東/g, "E").replace(/西/g, "W") : c; }
+  function stZ(t) { return t ? String(t).replace("T", " ").replace(/Z$/, "").slice(0, 16) + "Z" : ""; }
+  function stWind(p) { return p && p.wind_kt != null ? p.wind_kt + " kt (" + Math.round(p.wind_kt * 1.852) + " km/h)" + (p.gust_kt != null ? ", gusts " + p.gust_kt + " kt" : "") : ""; }
+  /* places to measure the forecast track against: this area's forecast points (U.S. posts, or the area centre) */
+  function stRefs() {
+    var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
+    if (pts.length) return pts;
+    var b = C.bounds; return [{ name: C.name + " (centre)", lat: (b[0][0] + b[1][0]) / 2, lon: (b[0][1] + b[1][1]) / 2 }];
+  }
+  /* closest point of one agency's forecast track (current position and forecast points, sampled between them) to the reference places */
+  function stClosest(p) {
+    var pts = [p.now].concat(p.fc || []).filter(function (x) { return x && x.lat != null; }), best = null, refs = stRefs();
+    for (var i = 0; i < pts.length; i++) {
+      var a = pts[i], b = pts[i + 1] || a, steps = b === a ? 1 : 12;
+      for (var s = 0; s < steps; s++) {
+        var f = s / steps, lat = a.lat + (b.lat - a.lat) * f, lon = a.lon + (b.lon - a.lon) * f;
+        var ta = new Date(a.t).getTime(), tb = new Date(b.t).getTime(), tt = isNaN(ta) ? null : new Date(ta + ((isNaN(tb) ? ta : tb) - ta) * f);
+        refs.forEach(function (r) {
+          var d = stKm(lat, lon, r.lat, r.lon);
+          if (!best || d < best.km) best = { km: d, place: r.name, t: tt ? tt.toISOString().slice(0, 16) + "Z" : "", lat: lat, lon: lon };
+        });
+      }
+    }
+    return best;
+  }
+  /* a storm matters here when any agency puts its centre, a forecast point or a 70% circle within 500 km of this area */
+  function stNear(lat, lon, rkm) {
+    var b = C.bounds, pad = (500 + (rkm || 0)) / 111;
+    return lat >= b[0][0] - pad && lat <= b[1][0] + pad && lon >= b[0][1] - pad && lon <= b[1][1] + pad;
+  }
+  function stormsHere() {
+    var s = window.ASAP_STORMS; if (!s || !s.storms) return [];
+    return s.storms.filter(function (st) {
+      return st.products.some(function (p) {
+        return [p.now].concat(p.fc || [], (p.past || []).slice(-4)).some(function (x) { return x && x.lat != null && stNear(x.lat, x.lon, x.r_km); });
+      });
+    });
+  }
+  function addStormRecords() {
+    R = R.filter(function (r) { if (r.storm) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    if (!LBY.weather) return;
+    var s = window.ASAP_STORMS;
+    stormsHere().forEach(function (st) {
+      st.products.forEach(function (p) {
+        if (!p.now || p.agency === "GDACS") return;
+        var c = stClosest(p), last = (p.fc || []).slice(-1)[0];
+        add({ layer: "weather", type: "claim", cat: "Tropical cyclone (" + p.agency + ")", kind: "storm", storm: true, live: true,
+          title: (p.cat ? p.cat.toUpperCase() + " " : "") + (st.name || "Tropical cyclone") + " (" + p.agency + "): " + stWind(p.now) +
+            (c ? ", forecast to pass about " + Math.round(c.km) + " km from " + c.place + (c.t ? " around " + stZ(c.t) : "") : ""),
+          detail: p.agencyName + " issued at " + stZ(p.issued) + ". Centre " + p.now.lat + ", " + p.now.lon + " at " + stZ(p.now.t) +
+            (p.now.pressure ? ", " + p.now.pressure + " hPa" : "") + (p.now.course ? ", moving " + stDir(p.now.course) : "") + ". " +
+            ((p.fc || []).length ? "Forecast track to " + stZ(last.t) + " (" + last.h + " h). " : "") + (p.note || "") +
+            (c ? " The closest-approach figure is worked out by this page from the agency's track, not stated by the agency." : ""),
+          ts: (p.issued || p.now.t || "").slice(0, 10), tsLabel: stZ(p.issued), place: st.name, prov: "", lat: p.now.lat, lon: p.now.lon, prec: "approx",
+          ongoing: true, closeKm: c ? Math.round(c.km) : null, closePlace: c ? c.place : "", sev: (p.now.wind_kt || 0) >= 64 ? 3 : 2, src: SOURCES["storm-" + p.agency.toLowerCase()], url: p.url, issued: p.issued, recorded: s ? s.asof : "" });
+      });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addStormRecords();
+  /* map drawing: its own layer group, shown on the Weather and Live hazards views */
+  var stormLayer = L.layerGroup(), stormM = {};
+  function drawStorms() {
+    stormLayer.clearLayers(); stormM = {};
+    stormsHere().forEach(function (st, si) {
+      var labelled = false;
+      st.products.forEach(function (p) {
+        var col = STC[p.agency] || "#555";
+        if (p.past && p.past.length > 1) {
+          stormLayer.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2, opacity: 0.8, interactive: false }));
+          p.past.forEach(function (x) {
+            var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 3, color: col, weight: 1, fillColor: col, fillOpacity: 0.8 });
+            m.bindPopup('<div class="pop"><div class="tier">Past position · ' + esc(p.agencyName) + "</div><h3>" + esc(st.name + " " + stZ(x.t)) + '</h3><p class="obs">' + esc([x.cat, stWind(x)].filter(Boolean).join(" · ")) + "</p></div>");
+            stormLayer.addLayer(m);
+          });
+        }
+        if (!p.now) return;
+        var track = [p.now].concat(p.fc || []);
+        /* JMA's cone: 70% probability circles joined by the tangent lines JMA publishes */
+        (p.fc || []).forEach(function (x) {
+          if (x.r_km) stormLayer.addLayer(L.circle([x.lat, x.lon], { pane: "tlpane", radius: x.r_km * 1000, color: col, weight: 1, opacity: 0.7, dashArray: "3 3", fillColor: col, fillOpacity: 0.06, interactive: false }));
+          (x.tangent || []).forEach(function (seg) { if (seg.length > 1) stormLayer.addLayer(L.polyline(seg, { pane: "tlpane", color: col, weight: 1, opacity: 0.7, interactive: false })); });
+        });
+        if (p.now.storm_km) stormLayer.addLayer(L.circle([p.now.lat, p.now.lon], { pane: "tlpane", radius: p.now.storm_km * 1000, color: col, weight: 1.5, fillColor: col, fillOpacity: 0.15, interactive: false }));
+        if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5", interactive: false }));
+        track.forEach(function (x, i) {
+          var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: i ? 5 : 10, color: "#fff", weight: i ? 1 : 2, fillColor: col, fillOpacity: i ? 0.9 : 1 });
+          m.bindPopup('<div class="pop"><div class="tier">' + (i ? "Forecast, +" + x.h + " h" : "Current position") + " · " + esc(p.agencyName) + "</div><h3>" +
+            esc((x.cat ? x.cat + " " : "") + st.name + " · " + stZ(x.t)) + '</h3><p class="obs">' + esc([stWind(x), x.pressure ? x.pressure + " hPa" : "", x.course ? "moving " + stDir(x.course) : "",
+              x.r_km ? "70% circle " + x.r_km + " km" : ""].filter(Boolean).join(" · ")) + "<br>" + esc(x.lat + ", " + x.lon) + (window.MGRS_OF ? " · MGRS " + esc(MGRS_OF(x.lat, x.lon, 3)) : "") +
+            '</p><p class="obs">Issued ' + esc(stZ(p.issued)) + ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a></p></div>", { maxWidth: 320 });
+          if (!i && !labelled) { labelled = true; m.bindTooltip(esc(st.name || "Tropical cyclone"), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }); }
+          stormLayer.addLayer(m); stormM["st:" + si + ":" + p.agency + ":" + i] = m;
+        });
+      });
+    });
+  }
+  drawStorms();
+  function stormHtml() {
+    var s = window.ASAP_STORMS, list = stormsHere();
+    var head = '<div class="sec"><h2>Tropical cyclones</h2>';
+    if (!s) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    var failed = (s.status || []).filter(function (x) { return !x.ok; });
+    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(s.asof) + " · hourly · " + (s.status || []).map(function (x) {
+      return esc(x.source) + (x.ok ? "" : ' <span class="badge stale">FAILED</span>'); }).join(", ") + "</p>";
+    if (!list.length) return out + '<p class="obs">No active tropical cyclone within 500 km of ' + esc(C.name) + " in the latest JMA, JTWC or GDACS products.</p></div>";
+    list.forEach(function (st, si) {
+      out += '<div class="stcard"><h3 style="margin:8px 0 2px">' + esc(st.name || "Tropical cyclone") + "</h3>";
+      st.products.forEach(function (p) {
+        var col = STC[p.agency] || "#555";
+        if (!p.now) {
+          out += '<p class="obs"><b style="color:' + col + '">●</b> ' + esc(p.agencyName) + ": past track, " + (p.past || []).length + ' positions to ' + esc(stZ(((p.past || []).slice(-1)[0] || {}).t)) +
+            (p.alert ? " · GDACS " + esc(p.alert) + " alert" : "") + ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">report</a></p>';
+          return;
+        }
+        var c = stClosest(p);
+        out += '<p style="margin:6px 0 2px"><b style="color:' + col + '">●</b> <b>' + esc(p.agency) + "</b> " + esc(p.cat || "") + ", issued " + esc(stZ(p.issued)) +
+          ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">source</a></p>' +
+          '<p class="obs">Now (' + esc(stZ(p.now.t)) + "): " + esc([p.now.lat + ", " + p.now.lon, stWind(p.now), p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + stDir(p.now.course) : ""].filter(Boolean).join(" · ")) + "</p>" +
+          (c ? '<p class="obs"><b>Closest forecast approach:</b> about ' + Math.round(c.km) + " km from " + esc(c.place) + (c.t ? " around " + esc(stZ(c.t)) : "") + " (worked out from this track, not an agency statement).</p>" : "") +
+          ((p.fc || []).length ? '<table class="reg cond"><tr><th>Valid (UTC)</th><th>Centre</th><th>Wind</th>' + (p.agency === "JMA" ? "<th>70% circle</th>" : "") + "</tr>" + [p.now].concat(p.fc).map(function (x, i) {
+            return '<tr data-sof="st:' + si + ":" + p.agency + ":" + i + '" style="cursor:pointer"><td>' + (i ? "+" + x.h + " h " : "now ") + esc(stZ(x.t).slice(5)) + "</td><td>" + esc(x.lat + ", " + x.lon) + '</td><td class="n">' +
+              (x.wind_kt != null ? x.wind_kt + " kt" : "–") + (x.pressure ? " · " + x.pressure + " hPa" : "") + "</td>" + (p.agency === "JMA" ? '<td class="n">' + (x.r_km ? x.r_km + " km" : "–") + "</td>" : "") + "</tr>";
+          }).join("") + "</table>" : "") + (p.note ? '<p class="note">' + esc(p.note) + "</p>" : "");
+      });
+      out += "</div>";
+    });
+    return out + '<p class="note" style="margin-top:6px">Solid line: past track. Dashed line: forecast track. Shaded circles: JMA\'s 70% probability circles joined into a cone; the inner solid circle is JMA\'s current storm-force wind area. ' +
+      "Agencies' tracks are shown side by side and never merged. Positions are the agencies' statements, not confirmed by this page." + (failed.length ? " A failed source means its storms may be missing." : "") + "</p></div>";
+  }
+  /* 7-day forecast (Open-Meteo, model output) at this area's reference points */
+  var WMO = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Freezing fog", 51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
+    56: "Freezing drizzle", 57: "Freezing drizzle", 61: "Light rain", 63: "Rain", 65: "Heavy rain", 66: "Freezing rain", 67: "Freezing rain", 71: "Light snow", 73: "Snow", 75: "Heavy snow",
+    77: "Snow grains", 80: "Light showers", 81: "Showers", 82: "Violent showers", 85: "Snow showers", 86: "Heavy snow showers", 95: "Thunderstorms", 96: "Thunderstorms with hail", 99: "Thunderstorms with heavy hail" };
+  var wxPick = 0;
+  function wxHtml() {
+    var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
+    var head = '<div class="sec" id="wx-fc"><h2>Weather forecast, next 7 days</h2>';
+    if (!f) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!pts.length) return head + '<p class="obs">No forecast point for ' + esc(C.name) + ".</p></div>";
+    var p = pts[Math.min(wxPick, pts.length - 1)];
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(f.asof) + " · hourly · Open-Meteo</p>" +
+      (pts.length > 1 ? '<p><label class="obs" for="wx-pt">Place </label><select id="wx-pt">' + pts.map(function (x, i) { return '<option value="' + i + '"' + (x === p ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></p>" : "") +
+      '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>°C</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
+        var hot = (d.g != null && d.g >= 90) || (d.p != null && d.p >= 50) || d.code >= 95;
+        return "<tr" + (hot ? ' class="hot"' : "") + "><td>" + esc(new Date(d.d + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })) + "</td><td>" + esc(WMO[d.code] || "") +
+          '</td><td class="n">' + (d.tmax != null ? Math.round(d.tmax) + " / " + Math.round(d.tmin) : "–") + '</td><td class="n">' + (d.p != null ? d.p.toFixed(d.p < 10 ? 1 : 0) + " mm" : "–") + (d.pp != null ? " · " + d.pp + "%" : "") +
+          '</td><td class="n">' + (d.w != null ? Math.round(d.w) + ", " + Math.round(d.g) + " km/h" : "–") + "</td></tr>";
+      }).join("") + "</table>" +
+      '<p class="note" style="margin-top:6px">Model output (Open-Meteo, blending national weather models), not an official forecast. Days with thunderstorms, 50 mm or more of rain, or gusts of 90 km/h or more are highlighted. ' +
+      "For warnings, the official agency statements above take precedence.</p></div>";
+  }
+  function wxWire(root) {
+    var s = root.querySelector("#wx-pt");
+    if (s) s.addEventListener("change", function () { wxPick = +s.value; var box = root.querySelector("#wx-fc"); if (box) { box.outerHTML = wxHtml(); wxWire(root); } });
+    Array.prototype.forEach.call(root.querySelectorAll("tr[data-sof^='st:']"), function (tr) {
+      tr.addEventListener("click", function () { var m = stormM[tr.getAttribute("data-sof")]; if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 6)); m.openPopup(); } });
+    });
+  }
+  /* top of the Weather view: storms first, then the official warnings, then the forecast */
+  function wxTopHtml() { return stormHtml() + warnHtml() + wxHtml(); }
+
   /* ---------- official weather warnings (hourly snapshot; non-English text machine-translated in the job, original kept) ---------- */
   var LANGN = { ja: "Japanese", th: "Thai", vi: "Vietnamese", km: "Khmer", lo: "Lao", my: "Burmese", id: "Indonesian", ms: "Malay", zh: "Chinese", ko: "Korean",
     mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum" };
@@ -4060,7 +4248,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           '<span class="tlm"><span class="tls">' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z · depth " + (q.depth != null ? Math.round(q.depth) + " km" : "?") +
           (q.tsunami ? " · tsunami flag" : "") + (q.alert ? " · PAGER " + esc(q.alert) : "") + "</span></span></button>";
       }).join("") + "</div>" : "") + "</div>";
-    var gh = gdacsHtml(), rh = reliefHtml(), wh = warnHtml();
+    var gh = gdacsHtml(), wh = warnHtml();
     var ah = '<div class="sec"><h2>Air quality now</h2><p class="obs">' + state(HZ.aqFrom, HZ.aqErr) + "</p>" +
       (HZ.aq ? '<table class="reg cond"><tr><th>Place</th><th>US AQI</th><th>PM2.5</th><th>PM10</th></tr>' + HZ.aq.map(function (p, i) {
         var band = p.us_aqi != null ? aqiBand(p.us_aqi) : null;
@@ -4076,8 +4264,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
     nh = satHtml() + nh;
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> GDACS alert levels and air quality are model estimates, warnings are the agencies\' statements, and USGS earthquake solutions can be revised. ' +
-      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + tsuHtml() + eonetHtml() + wh + qh + nqHtml() + volcHtml() + whoHtml() + cdcHtml() + ah + ifrcHtml() + rh + dispHtml() + nh;
-    satWire();
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + stormHtml() + gh + tsuHtml() + eonetHtml() + wh + wxHtml() + qh + nqHtml() + volcHtml() + whoHtml() + cdcHtml() + ah + ifrcHtml() + dispHtml() + nh;
+    satWire(); wxWire(railO);
     document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
   }
   useSnapshotQuakes(); useSnapshotAQ(); addQuakeRecords();
@@ -4122,7 +4310,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -4133,7 +4321,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     railO.hidden = !l.sof;
     rail.scrollTop = 0;
     if (v !== "timeline") pbStop();
-    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer);
+    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
       sofLayer.addTo(map); showSof(v); map.invalidateSize();
       map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
@@ -4152,6 +4340,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       map.invalidateSize();
       map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
     }
+    if (v === "weather" || v === "hazards") stormLayer.addTo(map);
     try { localStorage.setItem("tw-view", v); } catch (e) {}
     if (!fromLoad) { try { history.replaceState(null, "", "#" + (TH ? "" : CC + "/") + v); } catch (e) {} }
   }
