@@ -11,7 +11,15 @@ FIXED = {"POWER": "data/thailand/power.js", "LIVE": "data/thailand/flood-live-sn
          "EXPOSURE": "data/thailand/flood-exposure.js", "PROVINCES": "data/thailand/province-alerts.js",
          "BORDER": "data/thailand/border-geometry.js", "CONFLICT": "data/thailand/border-conflict.js",
          "COUNTRY_BASE": "data/basemap/country-outlines.js", "ASAP_SOF_OUT": "data/sof/exercises-outside.js",
-         "ASAP_QUAKES": "data/live/quakes.js", "ASAP_AQ": "data/live/air-quality.js"}
+         "ASAP_QUAKES": "data/live/quakes.js", "ASAP_AQ": "data/live/air-quality.js",
+         "ASAP_GDACS": "data/live/gdacs.js", "ASAP_RW": "data/live/reliefweb.js", "ASAP_WARN": "data/live/warnings.js",
+         "ASAP_NEWS": "data/live/news.js", "ASAP_SOCIAL": "data/live/social.js",
+         "ASAP_ADV": "data/live/advisories.js", "ASAP_TSU": "data/live/tsunami.js", "ASAP_VOLC": "data/live/volcano.js",
+         "ASAP_IODA": "data/live/outages.js", "ASAP_WHO": "data/live/outbreaks.js", "ASAP_MAR": "data/live/maritime.js",
+         "ASAP_SANC": "data/live/sanctions.js", "ASAP_UNHCR": "data/live/displacement.js",
+         "ASAP_NQ": "data/live/national-quakes.js", "ASAP_EONET": "data/live/eonet.js", "ASAP_IFRC": "data/live/ifrc.js",
+         "ASAP_CDC": "data/live/cdc.js", "ASAP_NAVW": "data/live/navwarnings.js", "ASAP_UCDP": "data/live/ucdp.js",
+         "ASAP_STORMS": "data/live/storms.js", "ASAP_WXF": "data/live/wx-forecast.js"}
 written = []
 
 def out(path, body):
@@ -49,7 +57,8 @@ PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-
 PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) '
             'window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):
-    page = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+    page = ('<!doctype html>\n<html lang="en" translate="no"><head><meta charset="utf-8">'
+            '<meta name="google" content="notranslate"><meta http-equiv="content-language" content="en">'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + PWA_HEAD + '</head><body>\n' + page + "\n" + PWA_TAIL + "\n</body></html>\n")
 open("index.html", "w", encoding="utf-8").write(page)
 

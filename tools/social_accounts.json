@@ -1,0 +1,66 @@
+{
+ "note": "Official and established accounts only: disaster agencies, police, militaries, ministries and news desks. Never private individuals. Handles are unverified until the first run, which records whether each one worked. 'cc': '*' means a regional or global account whose posts are assigned to an area only when they name the country.",
+ "bluesky": [
+  {
+   "cc": "*",
+   "handle": "reuters.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "apnews.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "afp.com",
+   "kind": "news desk"
+  }
+ ],
+ "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
+ "telegram": [
+  {
+   "cc": "sg",
+   "channel": "cnalatest",
+   "kind": "news desk"
+  },
+  {
+   "cc": "sg",
+   "channel": "TheStraitsTimes",
+   "kind": "news desk"
+  },
+  {
+   "cc": "sg",
+   "channel": "mothershipsg",
+   "kind": "news desk"
+  },
+  {
+   "cc": "mm",
+   "channel": "theirrawaddy",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "channel": "MyanmarNowNews",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "my",
+   "channel": "malaysiakini",
+   "kind": "news desk"
+  },
+  {
+   "cc": "kh",
+   "channel": "khmertimesbreakingnews",
+   "kind": "news desk"
+  },
+  {
+   "cc": "id",
+   "channel": "InaTEWS_BMKG",
+   "kind": "disaster agency",
+   "lang": "id"
+  }
+ ]
+}

@@ -1,6 +1,37 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ASAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
+<html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ASAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM ASAP</title>
+<script>
+/* The page is English. Mark it so browsers don't offer to translate it, and tag runs of non-Latin script
+   (Thai station names, original-language headlines) with their own language so detection and screen readers get them right. */
+(function () {
+  var de = document.documentElement; de.lang = "en"; de.setAttribute("translate", "no");
+  var SCRIPTS = [[/[\u0E00-\u0E7F]/, "th"], [/[\u1780-\u17FF]/, "km"], [/[\u0E80-\u0EFF]/, "lo"], [/[\u1000-\u109F]/, "my"], [/[\uAC00-\uD7AF]/, "ko"],
+    [/[\u3040-\u30FF]/, "ja"], [/[\u4E00-\u9FFF]/, "zh"], [/[\u0980-\u09FF]/, "bn"], [/[\u0D80-\u0DFF]/, "si"], [/[\u0780-\u07BF]/, "dv"], [/[\u0900-\u097F]/, "hi"], [/[\u0600-\u06FF]/, "ur"]];
+  function langOf(s) { for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
+  function tag(root) {
+    if (!root || root.nodeType !== 1) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, seen = [];
+    while ((n = w.nextNode())) {
+      var el = n.parentNode; if (!el || el.nodeType !== 1 || el.hasAttribute("lang") || /^(SCRIPT|STYLE)$/.test(el.tagName)) continue;
+      var l = langOf(n.nodeValue); if (!l) continue;
+      var latin = (el.textContent.match(/[A-Za-z]/g) || []).length, other = (el.textContent.match(/[^\u0000-\u024F\s\d\p{P}]/gu) || []).length;
+      if (other >= latin) seen.push([el, l]);
+    }
+    seen.forEach(function (x) { x[0].setAttribute("lang", x[1]); });
+  }
+  var pend = [], sched = false;
+  function flush() { sched = false; var list = pend; pend = []; list.forEach(tag); }
+  function start() {
+    tag(document.body);
+    if (window.MutationObserver) new MutationObserver(function (ms) {
+      ms.forEach(function (m) { for (var i = 0; i < m.addedNodes.length; i++) pend.push(m.addedNodes[i].nodeType === 3 ? m.target : m.addedNodes[i]); });
+      if (!sched && pend.length) { sched = true; (window.requestAnimationFrame || setTimeout)(flush); }
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
+})();
+</script>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>.leaflet-image-layer,.leaflet-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane,.leaflet-pane>canvas,.leaflet-pane>svg,.leaflet-tile,.leaflet-tile-container,.leaflet-zoom-box{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:0 0}.leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0}.leaflet-marker-icon,.leaflet-marker-shadow{display:block}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer{max-width:none!important;max-height:none!important;width:auto;padding:0}.leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none}.leaflet-container{-webkit-tap-highlight-color:transparent}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,.4)}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800}.leaflet-overlay-pane svg{-moz-user-select:none}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto}.leaflet-bottom,.leaflet-top{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0}svg.leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-pan-anim .leaflet-tile,.leaflet-zoom-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-control,.leaflet-popup-pane{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-image-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-image-layer.leaflet-interactive,.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-container{background:#ddd;outline-offset:1px}.leaflet-container a{color:#0078a8}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,.5)}.leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:.75rem;line-height:1.5}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:#000}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block}.leaflet-bar a:focus,.leaflet-bar a:hover{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-toggle{background-image:url(images/layers.png);width:36px;height:36px}.leaflet-retina .leaflet-control-layers-toggle{background-image:url(images/layers-2x.png);background-size:26px 26px}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-default-icon-path{background-image:url(images/marker-icon.png)}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.8);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4}.leaflet-control-attribution a{text-decoration:none}.leaflet-control-attribution a:focus,.leaflet-control-attribution a:hover{text-decoration:underline}.leaflet-attribution-flag{display:inline!important;vertical-align:baseline!important;width:1em;height:.6669em}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,.8);text-shadow:1px 1px #fff}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers{box-shadow:none}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-layers{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px}.leaflet-popup-content p{margin:17px 0;margin:1.3em 0}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:0 0}.leaflet-container a.leaflet-popup-close-button:focus,.leaflet-container a.leaflet-popup-close-button:hover{color:#585858}.leaflet-popup-scrolled{overflow:auto}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto}.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999}.leaflet-div-icon{background:#fff;border:1px solid #666}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before,.leaflet-tooltip-top:before{position:absolute;pointer-events:none;border:6px solid transparent;background:0 0;content:""}.leaflet-tooltip-bottom{margin-top:6px}.leaflet-tooltip-top{margin-top:-6px}.leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px}.leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff}.leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff}.leaflet-tooltip-left{margin-left:-6px}.leaflet-tooltip-right{margin-left:6px}.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px}.leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff}.leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff}@media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style>
@@ -125,6 +156,10 @@ code.fp{font-family:var(--mono,ui-monospace,monospace);font-size:11px;word-break
 .kpi{background:var(--surface);padding:10px 11px}
 .kpi .v{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .kpi .v.hot{color:var(--over)}
+.reg tr.hot td{color:var(--over);font-weight:600}
+.stlbl{font-weight:700;font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--muted);box-shadow:none;padding:1px 5px}
+.stlbl:before{display:none}
+.stcard{border-left:3px solid var(--over);padding-left:8px;margin:6px 0}
 .kpi .u{font-size:11px;color:var(--muted);font-weight:500}
 .kpi .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;line-height:1.3}
 
@@ -768,6 +803,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
   /* ---------- map ---------- */
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 5, maxZoom: 13, preferCanvas: true });
+  window.__asapMap = map;
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
   [["provpane", 350], ["floodpane", 450], ["rainpane", 440], ["expopane", 460], ["infrapane", 620]].forEach(function (p) {
     map.createPane(p[0]);
@@ -2113,6 +2149,27 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
+<script src="data/live/gdacs.js"></script>
+<script src="data/live/reliefweb.js"></script>
+<script src="data/live/warnings.js"></script>
+<script src="data/live/news.js"></script>
+<script src="data/live/social.js"></script>
+<script src="data/live/advisories.js"></script>
+<script src="data/live/tsunami.js"></script>
+<script src="data/live/volcano.js"></script>
+<script src="data/live/outages.js"></script>
+<script src="data/live/outbreaks.js"></script>
+<script src="data/live/maritime.js"></script>
+<script src="data/live/sanctions.js"></script>
+<script src="data/live/displacement.js"></script>
+<script src="data/live/national-quakes.js"></script>
+<script src="data/live/eonet.js"></script>
+<script src="data/live/ifrc.js"></script>
+<script src="data/live/cdc.js"></script>
+<script src="data/live/navwarnings.js"></script>
+<script src="data/live/ucdp.js"></script>
+<script src="data/live/storms.js"></script>
+<script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2393,7 +2450,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
-  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true });
+  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
+    { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
+    { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
+    { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -2603,6 +2663,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
       '<p class="pkgd">' + esc(r.detail) + "</p>" +
       (r.th ? '<details><summary>Thai original</summary><span class="th">' + esc(r.th) + "</span></details>" : "") +
+      (r.orig ? '<details><summary>' + esc(r.origLang || "Original") + ' original</summary><span class="th">' + esc(r.orig) + "</span></details>" : "") +
       '<dl class="pkgdl">' +
         "<dt>What</dt><dd>" + esc(r.cat) + (r.target ? '<span class="sub">Target: ' + esc(r.target) + "</span>" : "") + "</dd>" +
         (r.killed != null || r.injured != null ? "<dt>Casualties</dt><dd>" + (r.killed != null ? r.killed + " killed" : "Deaths not stated") +
@@ -2633,6 +2694,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         "<dt>Source reliability</dt><dd>Not rated<span class=\"sub\">Proposed " + esc(s.proposed) + " (Admiralty A–F), for an analyst to set</span></dd>" +
         "<dt>Information credibility</dt><dd>Not assessed<span class=\"sub\">Admiralty 1–6</span></dd>" +
         (r.derived ? "<dt>Derived text</dt><dd>" + esc(r.derived) + "</dd>" : "") +
+        (function () { var m = sancMatches(r); return m.length ? "<dt>Sanctions list</dt><dd>Possible name match on the U.S. OFAC SDN list: " + m.map(function (e) {
+          return '<a href="https://sanctionssearch.ofac.treas.gov/Details.aspx?id=' + encodeURIComponent(e.id) + '" target="_blank" rel="noopener">' + esc(e.n) + "</a> (" + esc(e.p) + ")"; }).join("; ") +
+          '. <span class="obs">A name match only, not an identity match.</span></dd>' : ""; })() +
       "</dl>" +
       '<h4 class="pkgh">Related records</h4>' +
       (rel.length ? '<div class="pkgrel">' + rel.map(function (o) {
@@ -2646,6 +2710,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
     document.querySelector(".rail").scrollTop = 0;
+    /* on a phone the rail sits below the map, so a tapped record's package opened off screen and the tap looked like it did nothing */
+    var rb = box.getBoundingClientRect();
+    if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" });
     var inCur = boxId === "cl-pkg", m = inCur ? CM[id] : markers[id];
     if (m) {
       if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
@@ -2724,7 +2791,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* ---------- stub rail ---------- */
   var railS = document.getElementById("rail-stub");
   function fillStub(l) {
-    railS.innerHTML = '<div class="sec"><h2>' + esc(l.name) + '</h2>' +
+    railS.innerHTML = (l.id === "weather" ? wxTopHtml() : "") + '<div class="sec"><h2>' + esc(l.name) + '</h2>' +
       '<div class="banner" style="margin-top:4px;border-left-color:var(--muted)"><b>' + (TH ? "Not connected yet." : "Not collected yet for " + esc(C.name) + ".") + "</b> " +
       (l.analyst ? "This layer is for analysts only and needs sign-in and case access, which a public page cannot provide."
                  : "No feed is wired to this layer, so nothing is drawn on the map.") + "</div></div>" +
@@ -2734,6 +2801,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (l.now ? '<div class="sec"><h2>Available today</h2><p class="note">' + esc(l.now) + "</p></div>" : "") +
       (l.sensitive ? '<div class="sec"><h2>Handling</h2><p class="note">This layer will name people, phone numbers, companies and accounts. ' +
         "Those details belong inside an investigation with access control, not on a shared map. Only public incident reports (arrests, raids, sanctions) would appear here.</p></div>" : "");
+    if (l.id === "weather") wxWire(railS);
   }
 
   /* ---------- alert engine ----------
@@ -2783,6 +2851,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     desc: "USGS reports an earthquake of at least this magnitude in or near the area in the last 7 days.",
     test: function (r, t) { return r.quake && r.magnitude >= t; },
     sev: function (r) { return r.magnitude >= 6.5 ? 3 : 2; } });
+  RULES.push({ id: "gdacs-alert", v: 1, name: "GDACS orange or red disaster alert", layer: "weather", unit: "level", def: 2, min: 1, step: 1,
+    desc: "GDACS issues an alert at this level or above (1 green, 2 orange, 3 red) for a cyclone, flood, drought, volcano or wildfire affecting the area.",
+    test: function (r, t) { return r.gdacs && r.sev >= t; },
+    sev: function (r) { return r.sev >= 3 ? 3 : 2; } });
   if (TD.scam) RULES.push({ id: "scam-compound", v: 1, name: "Scam compound reported", layer: "scam", unit: "days", def: 60, min: 1, step: 1,
     desc: "A scam compound is reported (new, resumed or relocated) within this many days.",
     test: function (r, t) { return r.layer === "scam" && r.kind === "compound" && AS_OF - dnum(r.ts) < t; },
@@ -2793,7 +2865,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     sev: function () { return 2; } });
   if (TD.weather) RULES.push({ id: "weather-warning", v: 1, name: "Weather warning issued", layer: "weather", unit: "days", def: 7, min: 1, step: 1,
     desc: "A heavy rain, storm, heat or drought warning issued within this many days.",
-    test: function (r, t) { return r.layer === "weather" && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
+    test: function (r, t) { return r.layer === "weather" && !r.storm && /^(heavy_rain_warning|storm|heat|drought)$/.test(r.kind) && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.kind === "storm" ? 3 : 2; } });
   if (TD.transport) RULES.push({ id: "road-closure", v: 1, name: "Road or bridge closed", layer: "transport", unit: "days", def: 14, min: 1, step: 1,
     desc: "A road or bridge closure reported within this many days.",
@@ -2808,6 +2880,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     desc: "A fire, wildfire or explosion in the last 60 days where at least this many people were reported killed or injured.",
     test: function (r, t) { return r.layer === "safety" && /^(fire|wildfire|industrial_explosion)$/.test(r.kind) && AS_OF - dnum(r.ts) < 60 && (r.killed || 0) + (r.injured || 0) >= t; },
     sev: function (r) { return r.killed ? 3 : 2; } });
+  RULES.push({ id: "storm-near", v: 1, name: "Tropical cyclone forecast to pass near", layer: "weather", unit: "km", def: 300, min: 50, step: 50,
+    desc: "An agency's current forecast track (JMA or JTWC) passes within this distance of a place in this area.",
+    test: function (r, t) { return !!r.storm && r.closeKm != null && r.closeKm <= t; },
+    sev: function (r) { return r.closeKm <= 100 || r.sev >= 3 ? 3 : 2; } });
   var WAITING = [
     TD.transport ? null : ["Road closes", "Transportation"], ["Military exercise announced", "Border (official statements feed)"],
     TD.insurgency ? null : ["IED occurs", "Southern insurgency"], TD.scam ? null : ["New scam center identified", "Scam centers"],
@@ -2983,7 +3059,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var srcs = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; })
       .map(function (k) { return "<li>" + esc(k) + ' <span class="obs">' + sc[k] + "</span></li>"; }).join("");
     railC.innerHTML =
-      '<div class="sec" id="cl-pkg" hidden></div>' +
+      '<div class="sec" id="cl-pkg" hidden></div>' + (lid === "weather" ? wxTopHtml() : "") +
       '<div class="sec"><h2>Right now</h2><div class="kpis">' + (D.kpis || [
         { type: "count", label: "Violent incidents recorded", hot: true },
         { type: "sum", field: "killed", label: "Killed, as reported", hot: true },
@@ -3014,6 +3090,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
       '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
     var list = document.getElementById("cl-list");
+    if (lid === "weather") wxWire(railC);
     curLayer.clearLayers(); CM = {};
     var AM = [];
     (D.assets || []).forEach(function (a, i) {
@@ -3124,9 +3201,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showCrisis() {
     var a = SOF.advisory || {}, kinds = ["posts", "airports", "seaports", "hospitals"];
-    var lvl = a.level || 0;
+    var an = advNow(), lvl = (an.live ? an.level : a.level) || 0, AV = window.ASAP_ADV;
     var adv = '<div class="sec"><h2>U.S. travel advisory</h2>' +
-      '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc(a.level_text || "") + "</div>" +
+      '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc((an.live ? an.level_text : a.level_text) || "") + "</div>" +
+      (an.live ? '<p class="obs"><span class="badge stale">SNAPSHOT</span> State Department feed ' + esc(AV.asof) + (an.date ? ", advisory dated " + esc(fmtD(an.date)) : "") +
+        (an.link ? ' · <a href="' + esc(an.link) + '" target="_blank" rel="noopener">current advisory</a>' : "") + "</p>" +
+        (an.changed ? '<p class="note"><b>The level has changed from ' + esc(String(an.was)) + " to " + esc(String(an.level)) + "</b> since the details below were compiled (" + esc(fmtD(SOF.asof)) + "). The area table and indicators may be out of date; read the current advisory.</p>" : "")
+        : '<p class="obs">' + (AV ? "Not in the hourly feed; " : "") + "compiled " + esc(fmtD(SOF.asof)) + ".</p>") +
       '<p class="obs">A U.S. Department of State claim, issued ' + esc(fmtD(a.issued)) + (a.updated ? ", updated " + esc(fmtD(a.updated)) : "") + ". " +
       (a.indicator_names && a.indicator_names.length ? "Risk indicators: " + esc(a.indicator_names.join(", ")) + "." : "") + "</p>" +
       (a.areas && a.areas.length ? '<table class="reg" style="margin-top:6px"><tr><th>Area</th><th>Level</th><th>Reason</th></tr>' + a.areas.map(function (x) {
@@ -3347,6 +3428,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     lim = lim || { post: 4, hosp: 4, air: 4, sea: 3, rec: 8, ex: 4, area: 5 };
     var now = new Date(), z = now.toISOString().slice(0, 16).replace("T", " ") + "Z";
     var S0 = (window.ASAP_SOF || {})[CC] || null, a = (S0 && S0.advisory) || null;
+    var an = advNow(); if (a && an.live) a = Object.assign({}, a, { level: an.level, level_text: an.level_text, updated: an.date || a.updated });
     var post = S0 && (S0.posts || []).filter(function (p) { return p.kind === "embassy" && p.lat != null; })[0];
     var ref = post ? { lat: post.lat, lon: post.lon, what: post.name } : { lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2, what: "the centre of the area" };
     var tz = tzAt(ref.lat, ref.lon), off = tzOffsetMin(tz, now.getTime()), loc = new Date(now.getTime() + off * 6e4);
@@ -3497,6 +3579,643 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   var AQI = [[50, "Good", "#3a9d4a"], [100, "Moderate", "#c9a800"], [150, "Unhealthy for sensitive groups", "#e07b00"], [200, "Unhealthy", "#c62828"], [300, "Very unhealthy", "#7b3fa0"], [1e9, "Hazardous", "#7a1e2c"]];
   function aqiBand(v) { for (var i = 0; i < AQI.length; i++) if (v <= AQI[i][0]) return AQI[i]; return AQI[AQI.length - 1]; }
+  /* ---------- GDACS disaster alerts and ReliefWeb reports (hourly snapshots from the GitHub job; no live request) ---------- */
+  var ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
+    cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
+    "in": "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+  var GD_TYPE = { TC: ["Tropical cyclone", "weather", "storm"], FL: ["Flood", "flood", "flood_event"], DR: ["Drought", "weather", "drought"],
+    VO: ["Volcano", "safety", "other"], WF: ["Wildfire", "safety", "other"] };
+  src("gdacs", "GDACS (Global Disaster Alert and Coordination System, UN and European Commission)", "International alert system", "B",
+      "Automated alerts: the alert level is a modelled estimate of impact, not a damage report.", "https://www.gdacs.org/");
+  function gdacsEvents() {
+    var g = window.ASAP_GDACS; if (!g || !g.events) return [];
+    return g.events.filter(function (e) {
+      var mine = (e.iso3 || []).indexOf(ISO3[CC]) >= 0 && (CC !== "oki" && CC !== "jp" || (CC === "oki") === (e.lat < 28 && e.lon < 131));
+      return mine || (e.type === "TC" && inArea(e.lat, e.lon));
+    });
+  }
+  function gdDate(s) { var d = new Date(s); return isNaN(d) ? String(s || "").slice(0, 10) : d.toISOString().slice(0, 10); }
+  function addGdacsRecords() {
+    R = R.filter(function (r) { if (r.gdacs) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var g = window.ASAP_GDACS;
+    gdacsEvents().forEach(function (e) {
+      var t = GD_TYPE[e.type]; if (!t || !LBY[t[1]]) return;
+      var d = gdDate(e.from);
+      add({ layer: t[1], type: "claim", cat: t[0] + " alert (GDACS)", kind: t[2], gdacs: true, live: true, gdAlert: e.alert,
+        title: (e.alert ? e.alert + " alert: " : "") + t[0] + (e.name ? " " + e.name : ""),
+        detail: (e.desc ? e.desc + ". " : "") + (e.severity ? e.severity + ". " : "") + "GDACS alert levels are modelled impact estimates, not damage reports." +
+          (e.to ? " Active " + gdDate(e.from) + " to " + gdDate(e.to) + "." : ""),
+        ts: d, place: e.name || "", prov: "", lat: e.lat, lon: e.lon, prec: "approx", ongoing: !!e.current,
+        sev: /red/i.test(e.alert) ? 3 : /orange/i.test(e.alert) ? 2 : 1, src: SOURCES.gdacs, url: e.url, issued: d, recorded: g ? g.asof : "" });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addGdacsRecords();
+  function gdacsHtml() {
+    var g = window.ASAP_GDACS, evs = gdacsEvents().filter(function (e) { return e.current || inPeriodDate(gdDate(e.to || e.from)); });
+    var col = { Red: "#c62828", Orange: "#e07b00", Green: "#3a9d4a" };
+    evs.forEach(function (e, i) {
+      var c = col[e.alert] || "#888";
+      (e.track || []).forEach(function (line) { if (line.length > 1) sofLayer.addLayer(L.polyline(line, { pane: "tlpane", color: c, weight: 2, opacity: 0.8, dashArray: "4 3" })); });
+      var m = L.circleMarker([e.lat, e.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: c, fillOpacity: 0.8 });
+      m.bindPopup('<div class="pop"><div class="tier">' + esc((GD_TYPE[e.type] || [e.type])[0]) + " · GDACS " + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + "</h3>" +
+        '<p class="obs">' + esc([e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "")].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["gd:" + i] = m;
+    });
+    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+      (g ? (evs.length ? '<div class="tllist">' + evs.map(function (e, i) {
+        return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : ""), e.current ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">No GDACS alert for ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note" style="margin-top:6px">Cyclone tracks are drawn as dashed lines. Alert levels (green, orange, red) are GDACS\'s modelled impact estimates, shown as claims.</p></div>';
+  }
+  function reliefHtml() {
+    var w = window.ASAP_RW, list = w && w.reports ? (w.reports[CC] || []).filter(function (x) { return inPeriodDate(x.date); }) : [];
+    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.') + "</p>" +
+      (w ? (list.length ? '<ul class="note">' + list.slice(0, 15).map(function (x) {
+        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc([x.date, x.source, x.type].filter(Boolean).join(" · ")) + "</span></li>";
+      }).join("") + "</ul>" : '<p class="obs">No ReliefWeb report for ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note">Reports are documents published by agencies and NGOs. Each is that organisation\'s account, not a confirmed finding.</p></div>';
+  }
+
+  /* ---------- tropical cyclones and the 7-day forecast (hourly snapshots from the GitHub job) ----------
+     Positions, forecast tracks and probability circles are the issuing agency's products (JMA, JTWC, GDACS), each kept with its
+     agency and issue time. The page only draws them and works out distances; it never merges or adjusts agencies' tracks. */
+  var STC = { JMA: "#d84315", JTWC: "#7b1fa2", GDACS: "#607d8b" };
+  src("storm-jma", "Japan Meteorological Agency (RSMC Tokyo) typhoon information", "Official regional meteorological centre", "A",
+      "The WMO-designated centre for western North Pacific typhoons. Forecast circles are its 70% probability circles.", "https://www.jma.go.jp/bosai/map.html#contents=typhoon&lang=en");
+  src("storm-jtwc", "Joint Typhoon Warning Center (U.S. Navy and Air Force)", "U.S. military warning centre", "A",
+      "Official U.S. warnings. Winds are one-minute averages, so they run higher than JMA's ten-minute winds.", "https://www.metoc.navy.mil/jtwc/jtwc.html");
+  function stKm(a, b, c, d) {
+    var R0 = 6371, p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dp = p2 - p1, dl = (d - b) * Math.PI / 180;
+    var h = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+    return 2 * R0 * Math.asin(Math.sqrt(h));
+  }
+  function stDir(c) { return /^[北南東西]+$/.test(c || "") ? c.replace(/北/g, "N").replace(/南/g, "S").replace(/東/g, "E").replace(/西/g, "W") : c; }
+  function stZ(t) { return t ? String(t).replace("T", " ").replace(/Z$/, "").slice(0, 16) + "Z" : ""; }
+  function stWind(p) { return p && p.wind_kt != null ? p.wind_kt + " kt (" + Math.round(p.wind_kt * 1.852) + " km/h)" + (p.gust_kt != null ? ", gusts " + p.gust_kt + " kt" : "") : ""; }
+  /* places to measure the forecast track against: this area's forecast points (U.S. posts, or the area centre) */
+  function stRefs() {
+    var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
+    if (pts.length) return pts;
+    var b = C.bounds; return [{ name: C.name + " (centre)", lat: (b[0][0] + b[1][0]) / 2, lon: (b[0][1] + b[1][1]) / 2 }];
+  }
+  /* closest point of one agency's forecast track (current position and forecast points, sampled between them) to the reference places */
+  function stClosest(p) {
+    var pts = [p.now].concat(p.fc || []).filter(function (x) { return x && x.lat != null; }), best = null, refs = stRefs();
+    for (var i = 0; i < pts.length; i++) {
+      var a = pts[i], b = pts[i + 1] || a, steps = b === a ? 1 : 12;
+      for (var s = 0; s < steps; s++) {
+        var f = s / steps, lat = a.lat + (b.lat - a.lat) * f, lon = a.lon + (b.lon - a.lon) * f;
+        var ta = new Date(a.t).getTime(), tb = new Date(b.t).getTime(), tt = isNaN(ta) ? null : new Date(ta + ((isNaN(tb) ? ta : tb) - ta) * f);
+        refs.forEach(function (r) {
+          var d = stKm(lat, lon, r.lat, r.lon);
+          if (!best || d < best.km) best = { km: d, place: r.name, t: tt ? tt.toISOString().slice(0, 16) + "Z" : "", lat: lat, lon: lon };
+        });
+      }
+    }
+    return best;
+  }
+  /* a storm matters here when any agency puts its centre, a forecast point or a 70% circle within 500 km of this area */
+  function stNear(lat, lon, rkm) {
+    var b = C.bounds, pad = (500 + (rkm || 0)) / 111;
+    return lat >= b[0][0] - pad && lat <= b[1][0] + pad && lon >= b[0][1] - pad && lon <= b[1][1] + pad;
+  }
+  function stormsHere() {
+    var s = window.ASAP_STORMS; if (!s || !s.storms) return [];
+    return s.storms.filter(function (st) {
+      return st.products.some(function (p) {
+        return [p.now].concat(p.fc || [], (p.past || []).slice(-4)).some(function (x) { return x && x.lat != null && stNear(x.lat, x.lon, x.r_km); });
+      });
+    });
+  }
+  function addStormRecords() {
+    R = R.filter(function (r) { if (r.storm) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    if (!LBY.weather) return;
+    var s = window.ASAP_STORMS;
+    stormsHere().forEach(function (st) {
+      st.products.forEach(function (p) {
+        if (!p.now || p.agency === "GDACS") return;
+        var c = stClosest(p), last = (p.fc || []).slice(-1)[0];
+        add({ layer: "weather", type: "claim", cat: "Tropical cyclone (" + p.agency + ")", kind: "storm", storm: true, live: true,
+          title: (p.cat ? p.cat.toUpperCase() + " " : "") + (st.name || "Tropical cyclone") + " (" + p.agency + "): " + stWind(p.now) +
+            (c ? ", forecast to pass about " + Math.round(c.km) + " km from " + c.place + (c.t ? " around " + stZ(c.t) : "") : ""),
+          detail: p.agencyName + " issued at " + stZ(p.issued) + ". Centre " + p.now.lat + ", " + p.now.lon + " at " + stZ(p.now.t) +
+            (p.now.pressure ? ", " + p.now.pressure + " hPa" : "") + (p.now.course ? ", moving " + stDir(p.now.course) : "") + ". " +
+            ((p.fc || []).length ? "Forecast track to " + stZ(last.t) + " (" + last.h + " h). " : "") + (p.note || "") +
+            (c ? " The closest-approach figure is worked out by this page from the agency's track, not stated by the agency." : ""),
+          ts: (p.issued || p.now.t || "").slice(0, 10), tsLabel: stZ(p.issued), place: st.name, prov: "", lat: p.now.lat, lon: p.now.lon, prec: "approx",
+          ongoing: true, closeKm: c ? Math.round(c.km) : null, closePlace: c ? c.place : "", sev: (p.now.wind_kt || 0) >= 64 ? 3 : 2, src: SOURCES["storm-" + p.agency.toLowerCase()], url: p.url, issued: p.issued, recorded: s ? s.asof : "" });
+      });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addStormRecords();
+  /* map drawing: its own layer group, shown on the Weather and Live hazards views */
+  var stormLayer = L.layerGroup(), stormM = {};
+  function drawStorms() {
+    stormLayer.clearLayers(); stormM = {};
+    stormsHere().forEach(function (st, si) {
+      var labelled = false;
+      st.products.forEach(function (p) {
+        var col = STC[p.agency] || "#555";
+        if (p.past && p.past.length > 1) {
+          stormLayer.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2, opacity: 0.8, interactive: false }));
+          p.past.forEach(function (x) {
+            var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 3, color: col, weight: 1, fillColor: col, fillOpacity: 0.8 });
+            m.bindPopup('<div class="pop"><div class="tier">Past position · ' + esc(p.agencyName) + "</div><h3>" + esc(st.name + " " + stZ(x.t)) + '</h3><p class="obs">' + esc([x.cat, stWind(x)].filter(Boolean).join(" · ")) + "</p></div>");
+            stormLayer.addLayer(m);
+          });
+        }
+        if (!p.now) return;
+        var track = [p.now].concat(p.fc || []);
+        /* JMA's cone: 70% probability circles joined by the tangent lines JMA publishes */
+        (p.fc || []).forEach(function (x) {
+          if (x.r_km) stormLayer.addLayer(L.circle([x.lat, x.lon], { pane: "tlpane", radius: x.r_km * 1000, color: col, weight: 1, opacity: 0.7, dashArray: "3 3", fillColor: col, fillOpacity: 0.06, interactive: false }));
+          (x.tangent || []).forEach(function (seg) { if (seg.length > 1) stormLayer.addLayer(L.polyline(seg, { pane: "tlpane", color: col, weight: 1, opacity: 0.7, interactive: false })); });
+        });
+        if (p.now.storm_km) stormLayer.addLayer(L.circle([p.now.lat, p.now.lon], { pane: "tlpane", radius: p.now.storm_km * 1000, color: col, weight: 1.5, fillColor: col, fillOpacity: 0.15, interactive: false }));
+        if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5", interactive: false }));
+        track.forEach(function (x, i) {
+          var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: i ? 5 : 10, color: "#fff", weight: i ? 1 : 2, fillColor: col, fillOpacity: i ? 0.9 : 1 });
+          m.bindPopup('<div class="pop"><div class="tier">' + (i ? "Forecast, +" + x.h + " h" : "Current position") + " · " + esc(p.agencyName) + "</div><h3>" +
+            esc((x.cat ? x.cat + " " : "") + st.name + " · " + stZ(x.t)) + '</h3><p class="obs">' + esc([stWind(x), x.pressure ? x.pressure + " hPa" : "", x.course ? "moving " + stDir(x.course) : "",
+              x.r_km ? "70% circle " + x.r_km + " km" : ""].filter(Boolean).join(" · ")) + "<br>" + esc(x.lat + ", " + x.lon) + (window.MGRS_OF ? " · MGRS " + esc(MGRS_OF(x.lat, x.lon, 3)) : "") +
+            '</p><p class="obs">Issued ' + esc(stZ(p.issued)) + ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a></p></div>", { maxWidth: 320 });
+          if (!i && !labelled) { labelled = true; m.bindTooltip(esc(st.name || "Tropical cyclone"), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }); }
+          stormLayer.addLayer(m); stormM["st:" + si + ":" + p.agency + ":" + i] = m;
+        });
+      });
+    });
+  }
+  drawStorms();
+  function stormHtml() {
+    var s = window.ASAP_STORMS, list = stormsHere();
+    var head = '<div class="sec"><h2>Tropical cyclones</h2>';
+    if (!s) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    var failed = (s.status || []).filter(function (x) { return !x.ok; });
+    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(s.asof) + " · hourly · " + (s.status || []).map(function (x) {
+      return esc(x.source) + (x.ok ? "" : ' <span class="badge stale">FAILED</span>'); }).join(", ") + "</p>";
+    if (!list.length) return out + '<p class="obs">No active tropical cyclone within 500 km of ' + esc(C.name) + " in the latest JMA, JTWC or GDACS products.</p></div>";
+    list.forEach(function (st, si) {
+      out += '<div class="stcard"><h3 style="margin:8px 0 2px">' + esc(st.name || "Tropical cyclone") + "</h3>";
+      st.products.forEach(function (p) {
+        var col = STC[p.agency] || "#555";
+        if (!p.now) {
+          out += '<p class="obs"><b style="color:' + col + '">●</b> ' + esc(p.agencyName) + ": past track, " + (p.past || []).length + ' positions to ' + esc(stZ(((p.past || []).slice(-1)[0] || {}).t)) +
+            (p.alert ? " · GDACS " + esc(p.alert) + " alert" : "") + ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">report</a></p>';
+          return;
+        }
+        var c = stClosest(p);
+        out += '<p style="margin:6px 0 2px"><b style="color:' + col + '">●</b> <b>' + esc(p.agency) + "</b> " + esc(p.cat || "") + ", issued " + esc(stZ(p.issued)) +
+          ' · <a href="' + esc(p.url) + '" target="_blank" rel="noopener">source</a></p>' +
+          '<p class="obs">Now (' + esc(stZ(p.now.t)) + "): " + esc([p.now.lat + ", " + p.now.lon, stWind(p.now), p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + stDir(p.now.course) : ""].filter(Boolean).join(" · ")) + "</p>" +
+          (c ? '<p class="obs"><b>Closest forecast approach:</b> about ' + Math.round(c.km) + " km from " + esc(c.place) + (c.t ? " around " + esc(stZ(c.t)) : "") + " (worked out from this track, not an agency statement).</p>" : "") +
+          ((p.fc || []).length ? '<table class="reg cond"><tr><th>Valid (UTC)</th><th>Centre</th><th>Wind</th>' + (p.agency === "JMA" ? "<th>70% circle</th>" : "") + "</tr>" + [p.now].concat(p.fc).map(function (x, i) {
+            return '<tr data-sof="st:' + si + ":" + p.agency + ":" + i + '" style="cursor:pointer"><td>' + (i ? "+" + x.h + " h " : "now ") + esc(stZ(x.t).slice(5)) + "</td><td>" + esc(x.lat + ", " + x.lon) + '</td><td class="n">' +
+              (x.wind_kt != null ? x.wind_kt + " kt" : "–") + (x.pressure ? " · " + x.pressure + " hPa" : "") + "</td>" + (p.agency === "JMA" ? '<td class="n">' + (x.r_km ? x.r_km + " km" : "–") + "</td>" : "") + "</tr>";
+          }).join("") + "</table>" : "") + (p.note ? '<p class="note">' + esc(p.note) + "</p>" : "");
+      });
+      out += "</div>";
+    });
+    return out + '<p class="note" style="margin-top:6px">Solid line: past track. Dashed line: forecast track. Shaded circles: JMA\'s 70% probability circles joined into a cone; the inner solid circle is JMA\'s current storm-force wind area. ' +
+      "Agencies' tracks are shown side by side and never merged. Positions are the agencies' statements, not confirmed by this page." + (failed.length ? " A failed source means its storms may be missing." : "") + "</p></div>";
+  }
+  /* 7-day forecast (Open-Meteo, model output) at this area's reference points */
+  var WMO = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Freezing fog", 51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
+    56: "Freezing drizzle", 57: "Freezing drizzle", 61: "Light rain", 63: "Rain", 65: "Heavy rain", 66: "Freezing rain", 67: "Freezing rain", 71: "Light snow", 73: "Snow", 75: "Heavy snow",
+    77: "Snow grains", 80: "Light showers", 81: "Showers", 82: "Violent showers", 85: "Snow showers", 86: "Heavy snow showers", 95: "Thunderstorms", 96: "Thunderstorms with hail", 99: "Thunderstorms with heavy hail" };
+  var wxPick = 0;
+  function wxHtml() {
+    var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
+    var head = '<div class="sec" id="wx-fc"><h2>Weather forecast, next 7 days</h2>';
+    if (!f) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!pts.length) return head + '<p class="obs">No forecast point for ' + esc(C.name) + ".</p></div>";
+    var p = pts[Math.min(wxPick, pts.length - 1)];
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(f.asof) + " · hourly · Open-Meteo</p>" +
+      (pts.length > 1 ? '<p><label class="obs" for="wx-pt">Place </label><select id="wx-pt">' + pts.map(function (x, i) { return '<option value="' + i + '"' + (x === p ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></p>" : "") +
+      '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>°C</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
+        var hot = (d.g != null && d.g >= 90) || (d.p != null && d.p >= 50) || d.code >= 95;
+        return "<tr" + (hot ? ' class="hot"' : "") + "><td>" + esc(new Date(d.d + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })) + "</td><td>" + esc(WMO[d.code] || "") +
+          '</td><td class="n">' + (d.tmax != null ? Math.round(d.tmax) + " / " + Math.round(d.tmin) : "–") + '</td><td class="n">' + (d.p != null ? d.p.toFixed(d.p < 10 ? 1 : 0) + " mm" : "–") + (d.pp != null ? " · " + d.pp + "%" : "") +
+          '</td><td class="n">' + (d.w != null ? Math.round(d.w) + ", " + Math.round(d.g) + " km/h" : "–") + "</td></tr>";
+      }).join("") + "</table>" +
+      '<p class="note" style="margin-top:6px">Model output (Open-Meteo, blending national weather models), not an official forecast. Days with thunderstorms, 50 mm or more of rain, or gusts of 90 km/h or more are highlighted. ' +
+      "For warnings, the official agency statements above take precedence.</p></div>";
+  }
+  function wxWire(root) {
+    var s = root.querySelector("#wx-pt");
+    if (s) s.addEventListener("change", function () { wxPick = +s.value; var box = root.querySelector("#wx-fc"); if (box) { box.outerHTML = wxHtml(); wxWire(root); } });
+    Array.prototype.forEach.call(root.querySelectorAll("tr[data-sof^='st:']"), function (tr) {
+      tr.addEventListener("click", function () { var m = stormM[tr.getAttribute("data-sof")]; if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 6)); m.openPopup(); } });
+    });
+  }
+  /* top of the Weather view: storms first, then the official warnings, then the forecast */
+  function wxTopHtml() { return stormHtml() + warnHtml() + wxHtml(); }
+
+  /* ---------- official weather warnings (hourly snapshot; non-English text machine-translated in the job, original kept) ---------- */
+  var LANGN = { ja: "Japanese", th: "Thai", vi: "Vietnamese", km: "Khmer", lo: "Lao", my: "Burmese", id: "Indonesian", ms: "Malay", zh: "Chinese", ko: "Korean",
+    mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum" };
+  function mtNote(i) {
+    if (!i.mt) return "";
+    var ln = LANGN[i.lang] || i.lang;
+    return i.mt === "untranslated" ? "Not translated yet (the free translation quota ran out); shown in the original " + ln + "."
+      : "English is a machine translation (" + i.mt + ") of the original " + ln + " text, which is kept. It may be wrong.";
+  }
+  function warnItems() { var w = window.ASAP_WARN; return w && w.items ? (w.items[CC] || []) : []; }
+  function addWarnRecords() {
+    R = R.filter(function (r) { if (r.warn) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    if (!LBY.weather) return;
+    var w = window.ASAP_WARN;
+    warnItems().forEach(function (i) {
+      var s = src("warn-" + i.agency.toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.agency, "National weather or disaster agency", "B",
+        "Official warning feed, read hourly. Warnings are the agency's statements.", i.feed);
+      var en = i.title_en || i.title, sen = i.summary_en || i.summary;
+      add({ layer: "weather", type: "claim", cat: "Official weather warning", kind: "other", warn: true, live: true,
+        title: en + (sen && sen !== en ? ": " + sen.slice(0, 140) : ""), detail: sen || "",
+        orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang, derived: mtNote(i) || undefined,
+        ts: i.date || (w ? w.asof.slice(0, 10) : ""), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: "", prov: "", lat: null, lon: null, prec: "none",
+        sev: /extreme|severe|特別警報/i.test(i.title + " " + i.severity) ? 3 : 2, src: s, url: i.link || i.feed, issued: i.date, recorded: w ? w.asof : "" });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addWarnRecords();
+  function warnHtml() {
+    var w = window.ASAP_WARN, feeds = w && w.feeds ? w.feeds.filter(function (f) { return f.cc === CC; }) : [];
+    var list = warnItems().filter(function (i) { return inPeriodDate(i.date); });
+    var head = '<div class="sec"><h2>Official weather warnings</h2>';
+    if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.</p></div>';
+    if (!feeds.length) return head + '<p class="obs">No machine-readable warning feed is set up for ' + esc(C.name) + " yet. Check the national weather agency's own site.</p></div>";
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " + feeds.map(function (f) {
+        return esc(f.agency) + (f.ok ? " (" + f.n + ")" : ' <span class="badge stale">FEED FAILED</span>'); }).join(", ") + "</p>" +
+      (list.length ? '<ul class="note">' + list.slice(0, 20).map(function (i) {
+        var en = i.title_en || i.title, sen = i.summary_en || i.summary;
+        return '<li><a href="' + esc(i.link || i.feed) + '" target="_blank" rel="noopener">' + esc(en) + "</a>" + (sen && sen !== en ? " " + esc(sen.slice(0, 200)) : "") +
+          ' <span class="obs">' + esc([i.date ? i.date.replace("T", " ") + "Z" : "", i.agency].filter(Boolean).join(" · ")) + "</span>" +
+          (i.mt ? '<details><summary class="obs">' + (i.mt === "untranslated" ? "Untranslated" : "Machine translation (" + esc(i.mt) + ")") + ", original " + esc(LANGN[i.lang] || i.lang) + '</summary><span class="th">' + esc(i.title + (i.summary ? " — " + i.summary : "")) + "</span></details>" : "") + "</li>";
+      }).join("") + "</ul>" : '<p class="obs">No warning in this period.</p>') + "</div>";
+  }
+
+  /* ---------- local news: GDELT and national outlets (hourly snapshot, headlines machine-translated in the job) ----------
+     Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
+  LCOL.news = "--accent";
+  var GAZ = null;
+  function gazetteer() {
+    if (GAZ) return GAZ;
+    var g = {};
+    function put(name, lat, lon) {
+      name = String(name || "").replace(/\s+(District|Province|City|Region|Prefecture|State|Division)$/i, "").trim();
+      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name)) return;
+      if (!g[name.toLowerCase()]) g[name.toLowerCase()] = { name: name, lat: lat, lon: lon };
+    }
+    R.forEach(function (r) { if (r.lat != null && !r.news && !r.social) { put(r.place, r.lat, r.lon); put(r.prov, r.lat, r.lon); } });
+    var S0 = (window.ASAP_SOF || {})[CC] || {};
+    ["posts", "hospitals", "airports"].forEach(function (k) { (S0[k] || []).forEach(function (i) { put(i.city || i.municipality, i.lat, i.lon); }); });
+    GAZ = Object.keys(g).sort(function (a, b) { return b.length - a.length; }).map(function (k) { return g[k]; });
+    return GAZ;
+  }
+  function placeFor(text) {
+    var t = " " + String(text || "").toLowerCase() + " ", gz = gazetteer();
+    for (var i = 0; i < gz.length; i++) {
+      var n = gz[i].name.toLowerCase(), at = t.indexOf(n);
+      if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return gz[i];
+    }
+    return null;
+  }
+  function addNewsRecords(key, layer, flag) {
+    R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var w = window[key]; if (!w || !w.items || !LBY[layer]) return;
+    (w.items[CC] || []).forEach(function (i) {
+      var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
+        layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
+        "F", layer === "news" ? "Read hourly from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read hourly. Posts are that account's claims.", i.link);
+      var en = i.title_en || i.title, sen = i.summary_en || i.summary, pl = placeFor(en + " " + (sen || ""));
+      var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
+        title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
+        derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
+        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof };
+      rec[flag] = true; add(rec);
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  LCOL.social = "--sat-flood";
+  addNewsRecords("ASAP_NEWS", "news", "news");
+  addNewsRecords("ASAP_SOCIAL", "social", "social");
+  function feedList(key, layer, flag, title, empty, note) {
+    var w = window[key], recs = R.filter(function (r) { return r[flag] && inPeriod(r); });
+    sofLayer.clearLayers(); sofM = {};
+    recs.forEach(function (r) {
+      if (r.lat == null) return;
+      var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
+      m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
+        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM[r.id] = m;
+    });
+    var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
+    var head = '<div class="sec"><div class="banner" style="margin:0"><b>Unverified reports.</b> ' + note + "</div></div>";
+    if (!w) return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">NO DATA</span> ' + empty + "</p></div>";
+    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · hourly · " +
+      (srcs.length ? srcs.map(function (s) { return esc(s.source) + (s.ok ? " (" + s.n + ")" : ' <span class="badge stale">' + (s.skipped ? "NOT SET UP" : "FAILED") + "</span>"); }).join(", ") : "no source set up for this area") + "</p>" +
+      '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name.</p>" +
+      (recs.length ? '<div class="tllist">' + recs.slice(0, 60).map(function (r) {
+        return '<button type="button" class="tlrow" data-openrec="' + esc(r.id) + '"><span class="tlt">' + esc(fmtTs(r)) + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div>";
+  }
+  function showSocial() {
+    railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the hourly GitHub job once the app is hosted.",
+      "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky and Telegram. Every post is that account's claim.");
+  }
+  function showNews() {
+    railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the hourly GitHub job once the app is hosted.",
+      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+  }
+
+  /* ---------- further free sources (hourly snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
+     internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.'; }
+  function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
+  function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
+  function advNow() {
+    var a = (SOF && SOF.advisory) || {}, L = window.ASAP_ADV && window.ASAP_ADV.items && window.ASAP_ADV.items[CC];
+    if (!L) return { level: a.level, level_text: a.level_text, live: false };
+    return { level: L.level, level_text: L.level_text, date: L.date, link: L.link, live: true, changed: a.level != null && a.level !== L.level, was: a.level };
+  }
+  src("state-adv", "U.S. Department of State travel advisories (feed)", "U.S. government agency", "B", "Advisory levels are the State Department's assessments, read hourly.", "https://travel.state.gov/");
+  src("ptwc", "NOAA Pacific Tsunami Warning Center", "U.S. government agency", "A", "Official tsunami bulletins. Information statements often say there is no threat.", "https://www.tsunami.gov/");
+  src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
+  src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
+  src("nga-asam", "NGA Anti-Shipping Activity Messages", "U.S. government agency", "B", "Reports of attacks and boardings compiled from ships, navies and ReCAAP/IMB; positions approximate.", "https://msi.nga.mil/Piracy");
+  function addMoreRecords() {
+    R = R.filter(function (r) { if (r.more) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var T = window.ASAP_TSU, V = window.ASAP_VOLC, W = window.ASAP_WHO, M = window.ASAP_MAR;
+    if (LBY.safety && T) (T.items || []).filter(hasCC).forEach(function (t) {
+      add({ layer: "safety", type: "claim", cat: "Tsunami bulletin (" + t.center + ")", kind: "other", more: true, live: true, title: t.title + (t.summary ? ": " + t.summary.slice(0, 120) : ""),
+        detail: t.summary || "", ts: t.date.slice(0, 10), tsLabel: t.date.replace("T", " ") + "Z", place: "", prov: "", lat: t.lat, lon: t.lon, prec: "approx",
+        sev: /warning/i.test(t.title) ? 3 : /advisory|watch/i.test(t.title) ? 2 : 1, src: SOURCES.ptwc, url: t.link || "https://www.tsunami.gov/", issued: t.date, recorded: T.asof });
+    });
+    if (LBY.safety && V) (V.items || []).filter(hasCC).forEach(function (v) {
+      add({ layer: "safety", type: "report", cat: "Volcanic activity (GVP weekly)", kind: "other", more: true, live: true, title: v.volcano + ": " + v.report,
+        detail: v.summary || "", ts: v.date, place: v.volcano, prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
+        sev: /new activity|unrest/i.test(v.report) ? 2 : 1, src: SOURCES.gvp, url: v.link || V.src, issued: v.date, recorded: V.asof });
+    });
+    if (LBY.health && W) (W.items || []).filter(hasCC).forEach(function (w) {
+      add({ layer: "health", type: "claim", cat: "WHO outbreak notice", kind: "other", more: true, live: true, title: w.title, detail: w.summary || "", ts: w.date, place: "", prov: "",
+        lat: null, lon: null, prec: "none", sev: 2, src: SOURCES["who-don"], url: w.link, issued: w.date, recorded: W.asof });
+    });
+    if (LBY.safety && M) (M.asam || []).filter(hasCC).forEach(function (a) {
+      add({ layer: "safety", type: "report", cat: "Maritime incident (NGA ASAM)", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
+        detail: a.text + (a.ref ? " (ASAM " + a.ref + ")" : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text) ? 3 : 2,
+        src: SOURCES["nga-asam"], url: "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addMoreRecords();
+
+  function tsuHtml() {
+    var T = window.ASAP_TSU, list = T ? (T.items || []).filter(function (t) { return hasCC(t) && inPeriodDate(t.date); }) : [];
+    list.forEach(function (t, i) {
+      if (t.lat == null) return;
+      var m = L.circleMarker([t.lat, t.lon], { pane: "tlpane", radius: 10, color: "#0d47a1", weight: 2, fillColor: "#42a5f5", fillOpacity: 0.5 });
+      m.bindPopup('<div class="pop"><div class="tier">Tsunami bulletin · ' + esc(t.center) + " · " + esc(t.date.replace("T", " ")) + "Z</div><h3>" + esc(t.title) + '</h3><p class="obs">' + esc(t.summary) +
+        '</p><p class="obs"><a href="' + esc(t.link || "https://www.tsunami.gov/") + '" target="_blank" rel="noopener">Bulletin</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["tsu:" + i] = m;
+    });
+    return '<div class="sec"><h2>Tsunami bulletins (NOAA PTWC)</h2><p class="obs">' + snapBadge(T) + "</p>" + (T ? (list.length ? '<div class="tllist">' + list.map(function (t, i) {
+      return '<button type="button" class="tlrow" data-sof="tsu:' + i + '"><span class="tln">' + esc(t.title) + '</span><span class="tlm"><span class="tls">' + esc(t.date.replace("T", " ") + "Z · " + t.summary.slice(0, 90)) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No tsunami bulletin near ' + esc(C.name) + " in this period (kept 30 days).</p>") : "") +
+      '<p class="note">Bulletins are the warning centre\'s statements. National agencies issue the local warnings.</p></div>';
+  }
+  function volcHtml() {
+    var V = window.ASAP_VOLC, list = V ? (V.items || []).filter(hasCC) : [];
+    list.forEach(function (v, i) {
+      if (v.lat == null) return;
+      var m = L.marker([v.lat, v.lon], { pane: "tlpane", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
+      m.bindPopup('<div class="pop"><div class="tier">Volcano · GVP weekly report · ' + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
+        '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">Weekly report</a></p></div>', { maxWidth: 340 });
+      sofLayer.addLayer(m); sofM["vo:" + i] = m;
+    });
+    return '<div class="sec"><h2>Volcanic activity (Smithsonian weekly report)</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
+      return '<button type="button" class="tlrow" data-sof="vo:' + i + '"><span class="tln">▲ ' + esc(v.volcano) + '</span><span class="tlm"><span class="tls">' + esc(v.report) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No volcano in ' + esc(C.name) + " is in this week's report.</p>") : "") +
+      '<p class="note">A weekly digest of observatories\' reports, not real time. Always shown, whatever the period.</p></div>';
+  }
+  function whoHtml() {
+    var W = window.ASAP_WHO, list = W ? (W.items || []).filter(function (w) { return hasCC(w) && inPeriodDate(w.date); }) : [];
+    return '<div class="sec"><h2>Disease outbreak notices (WHO)</h2><p class="obs">' + snapBadge(W) + "</p>" + (W ? (list.length ? '<ul class="note">' + list.map(function (w) {
+      return '<li><a href="' + esc(w.link) + '" target="_blank" rel="noopener">' + esc(w.title) + '</a> <span class="obs">' + esc(w.date) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No WHO outbreak notice naming ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note">WHO statements, usually based on the government\'s notification. ' + (LBY.health ? "Each is also a Public health record." : "") + "</p></div>";
+  }
+  function dispHtml() {
+    var U = window.ASAP_UNHCR, d = U && U.items ? U.items[CC] : null, h = d && d.hosted, o = d && d.origin;
+    return '<div class="sec"><h2>Displacement (UNHCR statistics)</h2><p class="obs">' + snapBadge(U) + "</p>" + (d ? '<table class="reg cond"><tr><th>' + esc(String(d.year || "")) + '</th><th>People</th></tr>' +
+      (h ? '<tr><td>Refugees hosted in ' + esc(C.name) + '</td><td class="n">' + fmtN(h.refugees) + '</td></tr><tr><td>Asylum seekers hosted</td><td class="n">' + fmtN(h.asylum_seekers) +
+        '</td></tr><tr><td>Internally displaced (UNHCR count)</td><td class="n">' + fmtN(h.idps) + '</td></tr><tr><td>Stateless</td><td class="n">' + fmtN(h.stateless) + "</td></tr>" : "") +
+      (o ? '<tr><td>Refugees from ' + esc(C.name) + ' abroad</td><td class="n">' + fmtN(o.refugees) + '</td></tr><tr><td>Asylum seekers from ' + esc(C.name) + '</td><td class="n">' + fmtN(o.asylum_seekers) + "</td></tr>" : "") +
+      "</table>" : (U ? '<p class="obs">No UNHCR figures for ' + esc(C.name) + ".</p>" : "")) +
+      '<p class="note" style="margin-top:6px">Mid-year or end-year figures reported to UNHCR, largely by governments; claims, and often out of date. "–" means not reported. <a href="https://www.unhcr.org/refugee-statistics/" target="_blank" rel="noopener">UNHCR Refugee Data Finder</a>.</p></div>';
+  }
+  /* NASA GIBS imagery on the main map: WMS image tiles, no key. The claude.ai viewer may block them; the hosted app loads them. */
+  var GIBS = "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi", satOn = { tc: false, fire: false };
+  if (!map.getPane("satpane")) { map.createPane("satpane"); map.getPane("satpane").style.zIndex = 390; map.getPane("satpane").style.pointerEvents = "none"; }
+  function satDay(n) { var d = new Date(Date.now() - n * 864e5); return d.toISOString().slice(0, 10); }
+  var satDate = satDay(1);
+  var satL = {
+    tc: L.tileLayer.wms(GIBS, { layers: "VIIRS_SNPP_CorrectedReflectance_TrueColor", format: "image/jpeg", version: "1.3.0", TIME: satDate, pane: "satpane", opacity: 0.85, maxZoom: 13, attribution: "NASA GIBS" }),
+    fire: L.tileLayer.wms(GIBS, { layers: "VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All", format: "image/png", transparent: true, version: "1.3.0", TIME: satDate, pane: "tlpane", maxZoom: 13, attribution: "NASA FIRMS / GIBS" })
+  };
+  function satHtml() {
+    var opts = ""; for (var i = 1; i <= 10; i++) { var d = satDay(i); opts += '<option value="' + d + '"' + (d === satDate ? " selected" : "") + ">" + esc(fmtD(d)) + "</option>"; }
+    return '<div class="sec"><h2>Satellite layers (NASA)</h2>' +
+      '<div class="ctl"><input type="checkbox" id="sat-tc"' + (satOn.tc ? " checked" : "") + '><label for="sat-tc">True-colour image (VIIRS, daily)</label></div>' +
+      '<div class="ctl"><input type="checkbox" id="sat-fire"' + (satOn.fire ? " checked" : "") + '><label for="sat-fire">Fire and heat detections (VIIRS 375 m)</label></div>' +
+      '<div class="ctl"><label for="sat-day" class="obs">Day</label> <select id="sat-day" class="mini">' + opts + "</select></div>" +
+      '<p class="note">NASA daily imagery, no key. Heat detections cannot tell a wildfire from field burning or industry. Cloud hides the ground in the image. Some viewers block the images; the installed app loads them.</p></div>';
+  }
+  function satWire() {
+    ["tc", "fire"].forEach(function (k) {
+      var el = document.getElementById("sat-" + k); if (!el) return;
+      el.addEventListener("change", function () { satOn[k] = el.checked; if (el.checked) satL[k].addTo(map); else map.removeLayer(satL[k]); });
+    });
+    var sd = document.getElementById("sat-day");
+    if (sd) sd.addEventListener("change", function () { satDate = sd.value; satL.tc.setParams({ TIME: satDate }); satL.fire.setParams({ TIME: satDate }); });
+  }
+
+  /* Security view: internet outages, maritime security, sanctions */
+  function sancFor() { var S1 = window.ASAP_SANC; return S1 && S1.entries ? S1.entries.filter(hasCC) : []; }
+  var sancPat = null, sancPatCC = null;
+  function sancPatterns() {
+    if (sancPatCC === CC && sancPat) return sancPat;
+    sancPat = []; sancPatCC = CC;
+    sancFor().forEach(function (e) {
+      var names = [];
+      if (e.t === "person" && e.n.indexOf(",") > 0) { var p = e.n.split(","), last = p[0].trim(), first = p.slice(1).join(" ").trim(); names.push(first + " " + last, last + " " + first); }
+      else names.push(e.n.replace(/[.,]+$/, ""));
+      names.forEach(function (n) {
+        n = n.replace(/\s+/g, " ").trim(); if (n.length < 8 || n.split(" ").length < 2) return;
+        sancPat.push({ e: e, re: new RegExp("(^|[^A-Za-z])" + n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^A-Za-z]|$)", "i") });
+      });
+    });
+    return sancPat;
+  }
+  function sancMatches(r) {
+    var t = [r.title, r.detail, r.place].join(" "), out = [];
+    sancPatterns().forEach(function (p) { if (p.re.test(t) && out.indexOf(p.e) < 0) out.push(p.e); });
+    return out;
+  }
+  /* ---------- batch 2 from the research catalogue: national quake catalogues, NASA EONET, IFRC GO, CDC notices,
+     NGA navigational warnings, UCDP conflict events ---------- */
+  src("cdc", "U.S. CDC travel health notices", "U.S. government agency", "B", "Travel health notices; CDC's assessments.", "https://wwwnc.cdc.gov/travel/notices");
+  src("ucdp", "Uppsala Conflict Data Program (candidate events)", "Research institution", "B",
+    "Events coded by UCDP from media and NGO reports, about a month behind. Fatality figures are UCDP's best estimates with low and high bounds.", "https://ucdp.uu.se/");
+  function addMoreRecords2() {
+    R = R.filter(function (r) { if (r.more2) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var D = window.ASAP_CDC, U = window.ASAP_UCDP, lay = LBY.insurgency ? "insurgency" : LBY.border ? "border" : LBY.safety ? "safety" : null;
+    if (LBY.health && D) (D.items || []).filter(hasCC).forEach(function (x) {
+      add({ layer: "health", type: "claim", cat: "CDC travel health notice", kind: "other", more2: true, live: true, title: x.title, detail: x.summary || "", ts: x.date, place: "", prov: "",
+        lat: null, lon: null, prec: "none", sev: x.level >= 3 ? 3 : x.level === 2 ? 2 : 1, src: SOURCES.cdc, url: x.link, issued: x.date, recorded: D.asof });
+    });
+    if (lay && U) (U.items || []).filter(hasCC).forEach(function (e) {
+      add({ layer: lay, type: "report", cat: "Conflict event (UCDP, " + e.type + ")", kind: "other", more2: true, live: true,
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + e.conflict + ". " : "") +
+          "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
+        prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province", sev: e.best >= 10 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES.ucdp, url: U.src, issued: e.date, recorded: U.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addMoreRecords2();
+  function nqHtml() {
+    var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
+    if (!N) return "";
+    list.forEach(function (q, i) {
+      var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3), color: "#5d4037", weight: 1.5, fillColor: "#8d6e63", fillOpacity: 0.35, dashArray: "2 2" });
+      m.bindPopup('<div class="pop"><div class="tier">Earthquake · ' + esc(q.agency) + " · " + esc(q.time.replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + '</h3><p class="obs">' +
+        esc([q.depth != null ? "depth " + Math.round(q.depth) + " km" : "", q.intensity ? "max intensity " + q.intensity : "", q.note].filter(Boolean).join(" · ")) +
+        '</p><p class="obs"><a href="' + esc(q.link) + '" target="_blank" rel="noopener">' + esc(q.agency) + "</a></p></div>", { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["nq:" + i] = m;
+    });
+    var bad = (N.status || []).filter(function (s) { return !s.ok; }).map(function (s) { return s.agency; });
+    return '<div class="sec"><h2>Earthquakes from national agencies</h2><p class="obs">' + snapBadge(N) + (bad.length ? " · failed: " + esc(bad.join(", ")) : "") + "</p>" +
+      (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (q, i) {
+        return '<button type="button" class="tlrow" data-sof="nq:' + i + '"><span class="tln">M' + q.mag.toFixed(1) + " · " + esc(q.place) + '</span><span class="tlm"><span class="tls">' + esc(q.agency + " · " + q.time.replace("T", " ") + "Z") + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">None from JMA, BMKG or TMD for ' + esc(C.name) + " in this period.</p>") +
+      '<p class="note">JMA, BMKG and TMD catalogues catch small local quakes USGS misses. Magnitudes use each agency\'s scale, so the same quake can differ from USGS.</p></div>';
+  }
+  function eonetHtml() {
+    var E = window.ASAP_EONET, list = E ? (E.items || []).filter(hasCC) : [];
+    if (!E) return "";
+    list.forEach(function (e, i) {
+      if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 }));
+      var m = L.circleMarker([e.last.lat, e.last.lon], { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7 });
+      m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(e.last.date.replace("T", " ")) + "Z</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
+        '</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["eo:" + i] = m;
+    });
+    return '<div class="sec"><h2>Open natural events (NASA EONET)</h2><p class="obs">' + snapBadge(E) + "</p>" + (list.length ? '<div class="tllist">' + list.map(function (e, i) {
+      return '<button type="button" class="tlrow" data-sof="eo:' + i + '"><span class="tln">' + esc(e.title) + '</span><span class="tlm"><span class="tls">' + esc([e.cat, e.last.mag, e.last.date.slice(0, 10)].filter(Boolean).join(" · ")) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No open event in or near ' + esc(C.name) + ".</p>") +
+      '<p class="note">Open storms, wildfires, volcanoes and floods catalogued by NASA from JTWC, fire and volcano sources. Storm tracks are solid teal lines. Observations, not warnings.</p></div>';
+  }
+  function ifrcHtml() {
+    var I = window.ASAP_IFRC, list = I ? (I.items || []).filter(function (e) { return hasCC(e) && inPeriodDate(e.start); }) : [];
+    if (!I) return "";
+    return '<div class="sec"><h2>Red Cross Red Crescent emergencies (IFRC GO)</h2><p class="obs">' + snapBadge(I) + "</p>" + (list.length ? '<ul class="note">' + list.slice(0, 12).map(function (e) {
+      return '<li><a href="' + esc(e.link) + '" target="_blank" rel="noopener">' + esc(e.name) + '</a> <span class="obs">' + esc([e.type, e.start, e.affected ? num0(e.affected) + " affected (IFRC figure)" : "",
+        e.appeals.map(function (a) { return a.type + " " + a.code; }).join(", ")].filter(Boolean).join(" · ")) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No IFRC emergency for ' + esc(C.name) + " in this period.</p>") +
+      '<p class="note">IFRC and national society figures are their claims, often early estimates.</p></div>';
+  }
+  function num0(v) { return Math.round(v).toLocaleString("en-GB"); }
+  function cdcHtml() {
+    var D = window.ASAP_CDC, list = D ? (D.items || []).filter(hasCC) : [];
+    if (!D) return "";
+    return '<div class="sec"><h2>Travel health notices (U.S. CDC)</h2><p class="obs">' + snapBadge(D) + "</p>" + (list.length ? '<ul class="note">' + list.map(function (x) {
+      return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc(x.date) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No current CDC notice names ' + esc(C.name) + ".</p>") + '<p class="note">Current notices, whatever the period. ' + (LBY.health ? "Each is also a Public health record." : "") + "</p></div>";
+  }
+  function navwHtml() {
+    var W = window.ASAP_NAVW, list = W ? (W.items || []).filter(hasCC) : [];
+    if (!W) return "";
+    var col = { "missile or rocket": "#c62828", "military exercise": "#e07b00", navigation: "#1565c0" };
+    list.forEach(function (w, i) {
+      if (!w.pos.length) return;
+      var c = col[w.kind] || "#1565c0";
+      var shape = w.pos.length >= 3 ? L.polygon(w.pos, { pane: "tlpane", color: c, weight: 1.5, fillOpacity: 0.15 }) : L.circleMarker(w.pos[0], { pane: "tlpane", radius: 7, color: c, weight: 2, fillOpacity: 0.3 });
+      shape.bindPopup('<div class="pop"><div class="tier">Navigational warning · ' + esc(w.id) + " · " + esc(w.kind) + "</div><p>" + esc(w.text) + '</p><p class="obs">Issued ' + esc(w.issued) + (w.authority ? " by " + esc(w.authority) : "") + "</p></div>", { maxWidth: 360 });
+      sofLayer.addLayer(shape); sofM["nw:" + i] = shape;
+    });
+    return '<div class="sec"><h2>Navigational warnings in force (NGA HYDROPAC)</h2><p class="obs">' + snapBadge(W) + "</p>" + (list.length ? '<div class="tllist">' + list.slice(0, 25).map(function (w, i) {
+      return '<button type="button" class="tlrow" data-sof="nw:' + i + '"><span class="tln"><b style="color:' + (col[w.kind] || "#1565c0") + '">●</b> ' + esc(w.id + " · " + w.kind) + '</span><span class="tlm"><span class="tls">' + esc(w.text.slice(0, 100)) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No HYDROPAC warning in force near ' + esc(C.name) + ".</p>") +
+      '<p class="note">Warnings as broadcast, including rocket-launch, missile and live-firing areas. Areas are drawn from the coordinates in the text; always read the text.</p></div>';
+  }
+  function ucdpHtml() {
+    var U = window.ASAP_UCDP, list = U ? (U.items || []).filter(function (e) { return hasCC(e) && inPeriodDate(e.date); }) : [];
+    if (!U) return "";
+    var deaths = list.reduce(function (s, e) { return s + e.best; }, 0);
+    return '<div class="sec"><h2>Conflict events (UCDP candidate data)</h2><p class="obs">' + snapBadge(U) + " · monthly, about a month behind</p>" +
+      '<p class="obs">' + list.length + (list.length === 1 ? " event" : " events") + " in this period, " + deaths + (deaths === 1 ? " death" : " deaths") + " (UCDP best estimates)." + (list.length ? " Each is a record in " + esc((LBY.insurgency || LBY.border || LBY.safety || {}).name || "the map") + "." : "") + "</p>" +
+      '<p class="note">Preliminary events coded from media and NGO reports; later releases revise them. <a href="https://ucdp.uu.se/" target="_blank" rel="noopener">UCDP</a>, CC BY 4.0.</p></div>';
+  }
+
+  LCOL.security = "--over";
+  function showSecurity() {
+    sofLayer.clearLayers(); sofM = {};
+    var I = window.ASAP_IODA, o = I && I.items ? I.items[CC] : null;
+    var ih = '<div class="sec"><h2>Internet outages (IODA)</h2><p class="obs">' + snapBadge(I) + "</p>" + (o ? '<p class="obs">' + (o.events ? "<b>" + o.events + " outage signal" + (o.events > 1 ? "s" : "") + "</b> for " + esc(C.name) : "No outage signal for " + esc(C.name)) +
+      " since " + esc(fmtD(I.from)) + (o.note ? " (" + esc(o.note) + ")" : "") + ".</p>" + (o.list && o.list.length ? '<table class="reg cond"><tr><th>Start (UTC)</th><th>Length</th><th>Signal</th></tr>' + o.list.map(function (x) {
+        return "<tr><td>" + esc(x.start.replace("T", " ")) + '</td><td class="n">' + (x.minutes != null ? x.minutes + " min" : "–") + "</td><td>" + esc([x.source, x.region].filter(Boolean).join(" · ")) + "</td></tr>"; }).join("") + "</table>" : "")
+      : (I ? '<p class="obs">No IODA signal recorded for ' + esc(C.name) + ".</p>" : "")) +
+      '<p class="note" style="margin-top:6px">Automated detection from routing, active probing and traffic telescopes. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + esc((CC === "oki" ? "JP" : CC.toUpperCase())) + '" target="_blank" rel="noopener">IODA dashboard</a>.</p></div>';
+    var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
+    asam.forEach(function (a, i) {
+      var m = L.circleMarker([a.lat, a.lon], { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85 });
+      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · NGA ASAM ' + esc(a.ref) + " · " + esc(a.date) + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
+        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)</p></div>", { maxWidth: 340 });
+      sofLayer.addLayer(m); sofM["as:" + i] = m;
+    });
+    var marad = M ? (M.marad || []).filter(function (x) { return !x.ccs.length || hasCC(x); }) : [];
+    var ms = M && M.status ? M.status.filter(function (s) { return !s.ok; }) : [];
+    var mh = '<div class="sec"><h2>Maritime security</h2><p class="obs">' + snapBadge(M) + (ms.length ? ' · <span class="obs">failed: ' + esc(ms.map(function (s) { return s.source; }).join(", ")) + "</span>" : "") + "</p>" +
+      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
+        return '<button type="button" class="tlrow" data-sof="as:' + i + '"><span class="tln">' + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + '</span><span class="tlm"><span class="tls">' + esc(a.date + " · " + a.text.slice(0, 90)) + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">None near ' + esc(C.name) + ".</p>") +
+      (marad.length ? '<h3 style="margin:8px 0 2px;font-size:13px">U.S. maritime advisories (MARAD)</h3><ul class="note">' + marad.slice(0, 8).map(function (x) {
+        return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") +
+      ((M.recaap || []).length ? '<h3 style="margin:8px 0 2px;font-size:13px">ReCAAP ISC alerts and reports</h3><ul class="note">' + M.recaap.slice(0, 8).map(function (x) {
+        return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") : "") +
+      '<p class="note" style="margin-top:6px">Reports from ships, navies and reporting centres; positions are approximate and events unverified.</p></div>';
+    var S1 = window.ASAP_SANC, se = sancFor(), hits = [];
+    R.forEach(function (r) { var m = sancMatches(r); if (m.length) hits.push([r, m]); });
+    var cnt = { person: 0, entity: 0, vessel: 0, aircraft: 0 }; se.forEach(function (e) { cnt[e.t] = (cnt[e.t] || 0) + 1; });
+    var sh = '<div class="sec"><h2>U.S. sanctions (OFAC SDN list)</h2><p class="obs">' + snapBadge(S1) + "</p>" + (S1 ? '<p class="obs">' + se.length + " listed with an address in " + esc(C.name) + ": " +
+      [["person", "person", "people"], ["entity", "entity", "entities"], ["vessel", "vessel", "vessels"], ["aircraft", "aircraft", "aircraft"]].map(function (k) {
+        return cnt[k[0]] + " " + (cnt[k[0]] === 1 ? k[1] : k[2]); }).join(", ") + ".</p>" +
+      '<h3 style="margin:8px 0 2px;font-size:13px">Name matches in this area\'s records</h3>' + (hits.length ? '<ul class="note">' + hits.slice(0, 20).map(function (h) {
+        return '<li><a href="#" data-openrec="' + esc(h[0].id) + '">' + esc(h[0].title.slice(0, 90)) + "</a>: " + esc(h[1].map(function (e) { return e.n + " (" + e.p + ")"; }).join("; ")) + "</li>"; }).join("") + "</ul>"
+        : '<p class="obs">No record names a listed person or company.</p>') +
+      '<input type="search" id="sanc-q" class="mini" placeholder="Search the list for ' + esc(C.name) + '" style="width:100%;margin-top:6px"><div id="sanc-r"></div>' : "") +
+      '<p class="note" style="margin-top:6px">A name match is not an identity match: different people and firms share names. Check the OFAC entry before relying on it.</p></div>';
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>' + ucdpHtml() + ih + navwHtml() + mh + sh;
+    var q = document.getElementById("sanc-q");
+    if (q) q.addEventListener("input", function () {
+      var v = q.value.trim().toLowerCase(), box = document.getElementById("sanc-r");
+      var res = v.length < 2 ? [] : se.filter(function (e) { return e.n.toLowerCase().indexOf(v) >= 0; }).slice(0, 25);
+      box.innerHTML = res.length ? '<ul class="note">' + res.map(function (e) {
+        return '<li><a href="https://sanctionssearch.ofac.treas.gov/Details.aspx?id=' + encodeURIComponent(e.id) + '" target="_blank" rel="noopener">' + esc(e.n) + '</a> <span class="obs">' + esc(e.t + " · " + e.p) + "</span></li>"; }).join("") + "</ul>"
+        : (v.length >= 2 ? '<p class="obs">No match.</p>' : "");
+    });
+  }
+
   function showHazards() {
     sofLayer.clearLayers(); sofM = {};
     var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon) && inPeriodDate(new Date(q.time).toISOString()); }).sort(function (a, b) { return b.time - a.time; });
@@ -3529,6 +4248,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           '<span class="tlm"><span class="tls">' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z · depth " + (q.depth != null ? Math.round(q.depth) + " km" : "?") +
           (q.tsunami ? " · tsunami flag" : "") + (q.alert ? " · PAGER " + esc(q.alert) : "") + "</span></span></button>";
       }).join("") + "</div>" : "") + "</div>";
+    var gh = gdacsHtml(), wh = warnHtml();
     var ah = '<div class="sec"><h2>Air quality now</h2><p class="obs">' + state(HZ.aqFrom, HZ.aqErr) + "</p>" +
       (HZ.aq ? '<table class="reg cond"><tr><th>Place</th><th>US AQI</th><th>PM2.5</th><th>PM10</th></tr>' + HZ.aq.map(function (p, i) {
         var band = p.us_aqi != null ? aqiBand(p.us_aqi) : null;
@@ -3542,8 +4262,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<li><a href="https://worldview.earthdata.nasa.gov/?v=' + [b[0][1], b[0][0], b[1][1], b[1][0]].join(",") +
         '&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All,VIIRS_SNPP_CorrectedReflectance_TrueColor" target="_blank" rel="noopener">NASA Worldview satellite imagery with fire detections</a></li>' +
       '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
-    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> Earthquakes are USGS network solutions and can be revised. Air quality is a model estimate. ' +
-      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + qh + ah + nh;
+    nh = satHtml() + nh;
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> GDACS alert levels and air quality are model estimates, warnings are the agencies\' statements, and USGS earthquake solutions can be revised. ' +
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + stormHtml() + gh + tsuHtml() + eonetHtml() + wh + wxHtml() + qh + nqHtml() + volcHtml() + whoHtml() + cdcHtml() + ah + ifrcHtml() + dispHtml() + nh;
+    satWire(); wxWire(railO);
     document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
   }
   useSnapshotQuakes(); useSnapshotAQ(); addQuakeRecords();
@@ -3576,7 +4298,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-period]"); if (b) setPeriod(b.getAttribute("data-period")); });
   periodUI();
 
-  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else showPartners(); }
+  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else showPartners(); }
 
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
@@ -3588,7 +4310,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "USGS · Open-Meteo (Copernicus CAMS) · NASA and GDACS links" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -3599,7 +4321,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     railO.hidden = !l.sof;
     rail.scrollTop = 0;
     if (v !== "timeline") pbStop();
-    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer);
+    window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
       sofLayer.addTo(map); showSof(v); map.invalidateSize();
       map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
@@ -3618,6 +4340,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       map.invalidateSize();
       map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
     }
+    if (v === "weather" || v === "hazards") stormLayer.addTo(map);
     try { localStorage.setItem("tw-view", v); } catch (e) {}
     if (!fromLoad) { try { history.replaceState(null, "", "#" + (TH ? "" : CC + "/") + v); } catch (e) {} }
   }
@@ -3661,6 +4384,53 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
 </script>
+<script>
+/* Map clicks. Leaflet draws each map pane's circles on its own full-size canvas, and a browser sends a click only to the
+   topmost canvas. Once a view had put markers in a higher pane (the Timeline does), that pane's canvas sat over every
+   other view's markers and swallowed their clicks, so tapping a point did nothing. Canvases here ignore the pointer, and
+   one listener finds the topmost clickable circle or shape under it across every pane and hands the event to it. */
+(function () {
+  var map = window.__asapMap;
+  if (!map || !map.getContainer || !window.L || !L.Canvas) return;
+  var st = document.createElement("style");
+  st.textContent = "#map .leaflet-pane > canvas{pointer-events:none!important}";
+  document.head.appendChild(st);
+  var box = map.getContainer();
+  function renderers() {
+    var out = [];
+    map.eachLayer(function (l) { if (l instanceof L.Canvas && l._container) out.push(l); });
+    out.sort(function (a, b) {
+      var za = +getComputedStyle(a._container.parentNode).zIndex || 0, zb = +getComputedStyle(b._container.parentNode).zIndex || 0; return zb - za; });
+    return out;
+  }
+  function hitAt(e) {
+    var pt = map.mouseEventToLayerPoint(e), rs = renderers();
+    for (var i = 0; i < rs.length; i++) {
+      var r = rs[i], pane = r._container.parentNode;
+      if (getComputedStyle(pane).display === "none" || getComputedStyle(pane).visibility === "hidden") continue;
+      for (var o = r._drawLast; o; o = o.prev) {
+        var l = o.layer;
+        if (l && l.options && l.options.interactive !== false && l._containsPoint && l._containsPoint(pt) && map.hasLayer(l)) return { r: r, l: l };
+      }
+    }
+    return null;
+  }
+  box.addEventListener("click", function (e) {
+    if (e.target && e.target.closest && e.target.closest(".leaflet-marker-icon, .leaflet-popup, .leaflet-control, .leaflet-interactive:not(canvas)")) return;
+    var h = hitAt(e); if (!h) return;
+    if (map._draggableMoved && map._draggableMoved(h.l)) return;
+    e.stopPropagation();
+    if (h.r._fireEvent) h.r._fireEvent([h.l], e);
+    else { var ll = map.mouseEventToLatLng(e); h.l.fire("click", { latlng: ll, layerPoint: map.latLngToLayerPoint(ll), containerPoint: map.latLngToContainerPoint(ll), originalEvent: e }, true); if (h.l._popup) h.l.openPopup(ll); }
+  }, true);
+  var raf = 0;
+  box.addEventListener("mousemove", function (e) {
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = 0; box.style.cursor = hitAt(e) ? "pointer" : ""; });
+  }, true);
+})();
+</script>
+
 
 
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>

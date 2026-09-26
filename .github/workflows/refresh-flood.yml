@@ -1,12 +1,19 @@
 name: Refresh live snapshots
 
-# Hourly: pull ThaiWater gauges and rain, USGS earthquakes and Open-Meteo air quality, and commit
+# Hourly: pull ThaiWater gauges and rain, USGS earthquakes, Open-Meteo air quality, GDACS alerts,
+# ReliefWeb reports, official weather warnings, local news and official social media accounts
+# (non-English text translated to English), and commit
 # the new snapshots, so the hosted app shows data at most about an hour old even where the browser
 # cannot reach those services. One feed failing does not stop the others.
 on:
   schedule:
     - cron: "23 * * * *"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, probe); empty runs all"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -18,23 +25,52 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Pull ThaiWater feeds
+        if: ${{ !inputs.only || inputs.only == 'flood' }}
         run: node tools/refresh_flood.mjs
         continue-on-error: true
-      - name: Pull USGS earthquakes and air quality
+      - name: Pull USGS earthquakes, air quality, GDACS alerts and ReliefWeb reports
+        if: ${{ !inputs.only || inputs.only == 'feeds' }}
         run: node tools/refresh_feeds.mjs
         continue-on-error: true
+      - name: Pull official weather warnings and translate them
+        if: ${{ !inputs.only || inputs.only == 'warnings' }}
+        run: node tools/refresh_warnings.mjs
+        continue-on-error: true
+      - name: Pull local news (GDELT and national outlets) and translate headlines
+        if: ${{ !inputs.only || inputs.only == 'news' }}
+        run: node tools/refresh_news.mjs
+        continue-on-error: true
+      - name: Pull official and established social media accounts
+        if: ${{ !inputs.only || inputs.only == 'social' }}
+        run: node tools/refresh_social.mjs
+        continue-on-error: true
+      - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
+        if: ${{ !inputs.only || inputs.only == 'more' }}
+        run: node tools/refresh_more.mjs
+        continue-on-error: true
+      - name: Pull tropical cyclone positions and forecast tracks (JMA, JTWC, GDACS) and the weather forecast
+        if: ${{ !inputs.only || inputs.only == 'storms' }}
+        run: node tools/refresh_storms.mjs
+        continue-on-error: true
+      - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
+        if: ${{ inputs.only == 'probe' }}
+        run: node tools/probe_storms.mjs
+        continue-on-error: true
       - name: Commit if a snapshot changed
+        if: ${{ inputs.only != 'probe' }}
         run: |
+          git add -N data/live
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/thailand/flood-live-snapshot.js data/live
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
+          git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
           git push
