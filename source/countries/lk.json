@@ -127,6 +127,26 @@
   "attribution": "Per Sri Lankan immigration officials via AFP"
  },
  {
+  "layer": "infra",
+  "date": "2026-03-24",
+  "kind": "other",
+  "title": "Government orders power-saving measures to avert grid collapse",
+  "detail": "Government spokesman Nalinda Jayatissa said consumption must fall at least 25% as the Middle East war pushed up fuel costs; streetlights and billboards were switched off, state air-conditioning cut, and a four-day week and work-from-home reinstated.",
+  "place": "Nationwide",
+  "prov": "Nationwide",
+  "lat": null,
+  "lon": null,
+  "agency": "Government of Sri Lanka",
+  "src": "https://www.malaymail.com/news/world/2026/03/24/sri-lanka-orders-nationwide-blackout-measures-to-avert-power-collapse/213725",
+  "srcname": "Malay Mail (AFP)",
+  "district": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "attribution": "Malay Mail (AFP)"
+ },
+ {
   "layer": "weather",
   "date": "2026-03-25",
   "kind": "heat",
@@ -351,26 +371,6 @@
   "srcname": "ABC News (Australia)",
   "attribution": "Figures per Sri Lanka Police via ABC",
   "date_is_pub": true
- },
- {
-  "layer": "infra",
-  "date": "2026-06-05",
-  "kind": "outage",
-  "title": "Island-wide power outage",
-  "detail": "An island-wide power failure hit multiple regions; the cause had not been officially explained at time of reporting and CEB was working on restoration.",
-  "place": "Sri Lanka",
-  "district": null,
-  "prov": "Nationwide",
-  "lat": null,
-  "lon": null,
-  "prec": "none",
-  "killed": null,
-  "injured": null,
-  "arrested": null,
-  "agency": "Ceylon Electricity Board",
-  "src": "https://www.lankanewspapers.com/2026/06/05/island-wide-power-outage-plunges-sri-lanka-into-darkness",
-  "srcname": "Lanka Newspapers",
-  "attribution": "Single aggregator report; not independently confirmed"
  },
  {
   "layer": "aml",
@@ -657,9 +657,9 @@
   "injured": null,
   "arrested": null,
   "agency": "National Building Research Organisation",
-  "src": "https://www.lankanewspapers.com/2026/09/20/nbro-issues-highest-level-landslide-warnings-for-kandy-kegalle-and-nuwara-eliya-districts",
-  "srcname": "Lanka Newspapers",
-  "attribution": "Warning issued by NBRO, as reported by Lanka Newspapers (aggregator)"
+  "src": "https://www.newswire.lk/2026/09/20/red-landslide-alerts-issued-for-areas-in-kandy-kegalle-and-nuwara-eliya/",
+  "srcname": "Newswire",
+  "attribution": "Warning issued by NBRO, as reported by Newswire"
  },
  {
   "layer": "aml",
@@ -705,5 +705,25 @@
   "attribution": "Daily Mirror live tracker (based on dengue surveillance data)",
   "cases": 82838,
   "deaths_reported": 63
+ },
+ {
+  "layer": "flood",
+  "date": "2026-09-25",
+  "kind": "landslide",
+  "title": "NBRO Level 3 (Red) landslide warnings for Galle, Kandy and Nuwara Eliya",
+  "detail": "NBRO issued evacuation-level Red warnings valid 16:00 on 25 September to 16:00 on 26 September for Neluwa, Nagoda, Niyagama and Thawalama (Galle), four Kandy divisions and Kothmale, Ambagamuwa and Norwood (Nuwara Eliya), with Amber and Yellow alerts for other districts.",
+  "place": "Galle, Kandy and Nuwara Eliya districts",
+  "prov": "Southern / Central",
+  "lat": 6.8,
+  "lon": 80.4,
+  "agency": "National Building Research Organisation",
+  "src": "https://www.newswire.lk/2026/09/25/red-alert-landslide-warnings-issued-for-parts-of-galle-kandy-and-nuwara-eliya/",
+  "srcname": "Newswire",
+  "district": null,
+  "prec": "approx",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "attribution": "Newswire"
  }
 ]
