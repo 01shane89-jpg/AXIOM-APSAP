@@ -1,4 +1,4 @@
-"""Split the single-file APSAP page (as published to claude.ai) into the repo layout.
+"""Split the single-file ASAP page (as published to claude.ai) into the repo layout.
 
 Usage: python3 tools/split_page.py <published-index.html>
 Writes index.html plus data/*.js. Every embedded data block becomes its own script

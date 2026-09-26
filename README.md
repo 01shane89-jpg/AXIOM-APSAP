@@ -1,6 +1,8 @@
-# AXIOM APSAP
+# AXIOM ASAP
 
-Asia-Pacific Situational Awareness Platform. One map, one timeline and one set of alert rules for Thailand, the Philippines, Taiwan, North Korea, South Korea, Mongolia and Okinawa. Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there.
+<p align="center"><img src="assets/logo.png" alt="AXIOM ASAP logo" width="320"></p>
+
+Asia Pacific Situational Awareness Platform. One map, one timeline and one set of alert rules for 28 areas, grouped as Mainland Southeast Asia (Thailand, Vietnam, Cambodia, Laos, Myanmar), Maritime Southeast Asia (Philippines, Malaysia, Singapore, Indonesia, Brunei, Timor-Leste), East Asia (China, Taiwan, North Korea, South Korea, Japan, Okinawa, Mongolia), Oceania (Australia, New Zealand, Papua New Guinea) and South Asia (India, Pakistan, Nepal, Bhutan, Bangladesh, Sri Lanka, Maldives). Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there.
 
 It is a separate build for now and is meant to fold into AXIOM later (see [Path into AXIOM](#path-into-axiom)).
 
@@ -78,4 +80,4 @@ Set `LEAFLET_JS` to a local copy of Leaflet 1.9.4 if cdnjs is unreachable, and `
 
 ## Path into AXIOM
 
-The record model here maps onto AXIOM's canonical classes: observations and source claims become `claim`/`observation` objects with provenance edges to a registered source, events become `event` objects, places become `location`. Layers are saved views over those objects, not their own storage. When APSAP moves into AXIOM, `source/` is the import input and this page becomes one view over AXIOM's records.
+The record model here maps onto AXIOM's canonical classes: observations and source claims become `claim`/`observation` objects with provenance edges to a registered source, events become `event` objects, places become `location`. Layers are saved views over those objects, not their own storage. When ASAP moves into AXIOM, `source/` is the import input and this page becomes one view over AXIOM's records.
