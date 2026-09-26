@@ -2118,6 +2118,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/warnings.js"></script>
 <script src="data/live/news.js"></script>
 <script src="data/live/social.js"></script>
+<script src="data/live/advisories.js"></script>
+<script src="data/live/tsunami.js"></script>
+<script src="data/live/volcano.js"></script>
+<script src="data/live/outages.js"></script>
+<script src="data/live/outbreaks.js"></script>
+<script src="data/live/maritime.js"></script>
+<script src="data/live/sanctions.js"></script>
+<script src="data/live/displacement.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -2400,7 +2408,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
   LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
-    { id: "social", name: "Social media", title: "Social media", sof: true, live: true });
+    { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
+    { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -2641,6 +2650,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         "<dt>Source reliability</dt><dd>Not rated<span class=\"sub\">Proposed " + esc(s.proposed) + " (Admiralty A–F), for an analyst to set</span></dd>" +
         "<dt>Information credibility</dt><dd>Not assessed<span class=\"sub\">Admiralty 1–6</span></dd>" +
         (r.derived ? "<dt>Derived text</dt><dd>" + esc(r.derived) + "</dd>" : "") +
+        (function () { var m = sancMatches(r); return m.length ? "<dt>Sanctions list</dt><dd>Possible name match on the U.S. OFAC SDN list: " + m.map(function (e) {
+          return '<a href="https://sanctionssearch.ofac.treas.gov/Details.aspx?id=' + encodeURIComponent(e.id) + '" target="_blank" rel="noopener">' + esc(e.n) + "</a> (" + esc(e.p) + ")"; }).join("; ") +
+          '. <span class="obs">A name match only, not an identity match.</span></dd>' : ""; })() +
       "</dl>" +
       '<h4 class="pkgh">Related records</h4>' +
       (rel.length ? '<div class="pkgrel">' + rel.map(function (o) {
@@ -3136,9 +3148,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showCrisis() {
     var a = SOF.advisory || {}, kinds = ["posts", "airports", "seaports", "hospitals"];
-    var lvl = a.level || 0;
+    var an = advNow(), lvl = (an.live ? an.level : a.level) || 0, AV = window.ASAP_ADV;
     var adv = '<div class="sec"><h2>U.S. travel advisory</h2>' +
-      '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc(a.level_text || "") + "</div>" +
+      '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc((an.live ? an.level_text : a.level_text) || "") + "</div>" +
+      (an.live ? '<p class="obs"><span class="badge stale">SNAPSHOT</span> State Department feed ' + esc(AV.asof) + (an.date ? ", advisory dated " + esc(fmtD(an.date)) : "") +
+        (an.link ? ' · <a href="' + esc(an.link) + '" target="_blank" rel="noopener">current advisory</a>' : "") + "</p>" +
+        (an.changed ? '<p class="note"><b>The level has changed from ' + esc(String(an.was)) + " to " + esc(String(an.level)) + "</b> since the details below were compiled (" + esc(fmtD(SOF.asof)) + "). The area table and indicators may be out of date; read the current advisory.</p>" : "")
+        : '<p class="obs">' + (AV ? "Not in the hourly feed; " : "") + "compiled " + esc(fmtD(SOF.asof)) + ".</p>") +
       '<p class="obs">A U.S. Department of State claim, issued ' + esc(fmtD(a.issued)) + (a.updated ? ", updated " + esc(fmtD(a.updated)) : "") + ". " +
       (a.indicator_names && a.indicator_names.length ? "Risk indicators: " + esc(a.indicator_names.join(", ")) + "." : "") + "</p>" +
       (a.areas && a.areas.length ? '<table class="reg" style="margin-top:6px"><tr><th>Area</th><th>Level</th><th>Reason</th></tr>' + a.areas.map(function (x) {
@@ -3359,6 +3375,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     lim = lim || { post: 4, hosp: 4, air: 4, sea: 3, rec: 8, ex: 4, area: 5 };
     var now = new Date(), z = now.toISOString().slice(0, 16).replace("T", " ") + "Z";
     var S0 = (window.ASAP_SOF || {})[CC] || null, a = (S0 && S0.advisory) || null;
+    var an = advNow(); if (a && an.live) a = Object.assign({}, a, { level: an.level, level_text: an.level_text, updated: an.date || a.updated });
     var post = S0 && (S0.posts || []).filter(function (p) { return p.kind === "embassy" && p.lat != null; })[0];
     var ref = post ? { lat: post.lat, lon: post.lon, what: post.name } : { lat: (C.bounds[0][0] + C.bounds[1][0]) / 2, lon: (C.bounds[0][1] + C.bounds[1][1]) / 2, what: "the centre of the area" };
     var tz = tzAt(ref.lat, ref.lon), off = tzOffsetMin(tz, now.getTime()), loc = new Date(now.getTime() + off * 6e4);
@@ -3690,6 +3707,189 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       "Headlines from GDELT (local-language news worldwide, filtered to security, disaster and unrest) and national outlets. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
   }
 
+  /* ---------- further free sources (hourly snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
+     internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · hourly" : '<span class="badge stale">NO DATA</span> Filled by the hourly GitHub job once the app is hosted.'; }
+  function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
+  function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
+  function advNow() {
+    var a = (SOF && SOF.advisory) || {}, L = window.ASAP_ADV && window.ASAP_ADV.items && window.ASAP_ADV.items[CC];
+    if (!L) return { level: a.level, level_text: a.level_text, live: false };
+    return { level: L.level, level_text: L.level_text, date: L.date, link: L.link, live: true, changed: a.level != null && a.level !== L.level, was: a.level };
+  }
+  src("state-adv", "U.S. Department of State travel advisories (feed)", "U.S. government agency", "B", "Advisory levels are the State Department's assessments, read hourly.", "https://travel.state.gov/");
+  src("ptwc", "NOAA Pacific Tsunami Warning Center", "U.S. government agency", "A", "Official tsunami bulletins. Information statements often say there is no threat.", "https://www.tsunami.gov/");
+  src("gvp", "Smithsonian Global Volcanism Program weekly report", "Research institution", "B", "Weekly summary of volcano observatories' reports; not real-time.", "https://volcano.si.edu/reports_weekly.cfm");
+  src("who-don", "WHO Disease Outbreak News", "UN agency", "B", "WHO statements, usually based on member-state notifications.", "https://www.who.int/emergencies/disease-outbreak-news");
+  src("nga-asam", "NGA Anti-Shipping Activity Messages", "U.S. government agency", "B", "Reports of attacks and boardings compiled from ships, navies and ReCAAP/IMB; positions approximate.", "https://msi.nga.mil/Piracy");
+  function addMoreRecords() {
+    R = R.filter(function (r) { if (r.more) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var T = window.ASAP_TSU, V = window.ASAP_VOLC, W = window.ASAP_WHO, M = window.ASAP_MAR;
+    if (LBY.safety && T) (T.items || []).filter(hasCC).forEach(function (t) {
+      add({ layer: "safety", type: "claim", cat: "Tsunami bulletin (" + t.center + ")", kind: "other", more: true, live: true, title: t.title + (t.summary ? ": " + t.summary.slice(0, 120) : ""),
+        detail: t.summary || "", ts: t.date.slice(0, 10), tsLabel: t.date.replace("T", " ") + "Z", place: "", prov: "", lat: t.lat, lon: t.lon, prec: "approx",
+        sev: /warning/i.test(t.title) ? 3 : /advisory|watch/i.test(t.title) ? 2 : 1, src: SOURCES.ptwc, url: t.link || "https://www.tsunami.gov/", issued: t.date, recorded: T.asof });
+    });
+    if (LBY.safety && V) (V.items || []).filter(hasCC).forEach(function (v) {
+      add({ layer: "safety", type: "report", cat: "Volcanic activity (GVP weekly)", kind: "other", more: true, live: true, title: v.volcano + ": " + v.report,
+        detail: v.summary || "", ts: v.date, place: v.volcano, prov: "", lat: v.lat, lon: v.lon, prec: v.lat != null ? "exact" : "none",
+        sev: /new activity|unrest/i.test(v.report) ? 2 : 1, src: SOURCES.gvp, url: v.link || V.src, issued: v.date, recorded: V.asof });
+    });
+    if (LBY.health && W) (W.items || []).filter(hasCC).forEach(function (w) {
+      add({ layer: "health", type: "claim", cat: "WHO outbreak notice", kind: "other", more: true, live: true, title: w.title, detail: w.summary || "", ts: w.date, place: "", prov: "",
+        lat: null, lon: null, prec: "none", sev: 2, src: SOURCES["who-don"], url: w.link, issued: w.date, recorded: W.asof });
+    });
+    if (LBY.safety && M) (M.asam || []).filter(hasCC).forEach(function (a) {
+      add({ layer: "safety", type: "report", cat: "Maritime incident (NGA ASAM)", kind: "other", more: true, live: true, title: (a.hostility ? a.hostility + " · " : "") + (a.victim || "vessel") + ": " + a.text.slice(0, 110),
+        detail: a.text + (a.ref ? " (ASAM " + a.ref + ")" : ""), ts: a.date, place: "", prov: "", lat: a.lat, lon: a.lon, prec: "approx", sev: /fired|hijack|kidnap|injur|kill/i.test(a.text) ? 3 : 2,
+        src: SOURCES["nga-asam"], url: "https://msi.nga.mil/Piracy", issued: a.date, recorded: M.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addMoreRecords();
+
+  function tsuHtml() {
+    var T = window.ASAP_TSU, list = T ? (T.items || []).filter(function (t) { return hasCC(t) && inPeriodDate(t.date); }) : [];
+    list.forEach(function (t, i) {
+      if (t.lat == null) return;
+      var m = L.circleMarker([t.lat, t.lon], { pane: "tlpane", radius: 10, color: "#0d47a1", weight: 2, fillColor: "#42a5f5", fillOpacity: 0.5 });
+      m.bindPopup('<div class="pop"><div class="tier">Tsunami bulletin · ' + esc(t.center) + " · " + esc(t.date.replace("T", " ")) + "Z</div><h3>" + esc(t.title) + '</h3><p class="obs">' + esc(t.summary) +
+        '</p><p class="obs"><a href="' + esc(t.link || "https://www.tsunami.gov/") + '" target="_blank" rel="noopener">Bulletin</a></p></div>', { maxWidth: 320 });
+      sofLayer.addLayer(m); sofM["tsu:" + i] = m;
+    });
+    return '<div class="sec"><h2>Tsunami bulletins (NOAA PTWC)</h2><p class="obs">' + snapBadge(T) + "</p>" + (T ? (list.length ? '<div class="tllist">' + list.map(function (t, i) {
+      return '<button type="button" class="tlrow" data-sof="tsu:' + i + '"><span class="tln">' + esc(t.title) + '</span><span class="tlm"><span class="tls">' + esc(t.date.replace("T", " ") + "Z · " + t.summary.slice(0, 90)) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No tsunami bulletin near ' + esc(C.name) + " in this period (kept 30 days).</p>") : "") +
+      '<p class="note">Bulletins are the warning centre\'s statements. National agencies issue the local warnings.</p></div>';
+  }
+  function volcHtml() {
+    var V = window.ASAP_VOLC, list = V ? (V.items || []).filter(hasCC) : [];
+    list.forEach(function (v, i) {
+      if (v.lat == null) return;
+      var m = L.marker([v.lat, v.lon], { pane: "tlpane", icon: L.divIcon({ className: "", html: '<div style="font-size:18px;line-height:18px">▲</div>', iconSize: [18, 18], iconAnchor: [9, 12] }) });
+      m.bindPopup('<div class="pop"><div class="tier">Volcano · GVP weekly report · ' + esc(v.date) + "</div><h3>" + esc(v.volcano) + '</h3><p class="obs">' + esc(v.report) + "</p><p>" + esc(v.summary.slice(0, 500)) +
+        '</p><p class="obs"><a href="' + esc(v.link) + '" target="_blank" rel="noopener">Weekly report</a></p></div>', { maxWidth: 340 });
+      sofLayer.addLayer(m); sofM["vo:" + i] = m;
+    });
+    return '<div class="sec"><h2>Volcanic activity (Smithsonian weekly report)</h2><p class="obs">' + snapBadge(V) + "</p>" + (V ? (list.length ? '<div class="tllist">' + list.map(function (v, i) {
+      return '<button type="button" class="tlrow" data-sof="vo:' + i + '"><span class="tln">▲ ' + esc(v.volcano) + '</span><span class="tlm"><span class="tls">' + esc(v.report) + "</span></span></button>";
+    }).join("") + "</div>" : '<p class="obs">No volcano in ' + esc(C.name) + " is in this week's report.</p>") : "") +
+      '<p class="note">A weekly digest of observatories\' reports, not real time. Always shown, whatever the period.</p></div>';
+  }
+  function whoHtml() {
+    var W = window.ASAP_WHO, list = W ? (W.items || []).filter(function (w) { return hasCC(w) && inPeriodDate(w.date); }) : [];
+    return '<div class="sec"><h2>Disease outbreak notices (WHO)</h2><p class="obs">' + snapBadge(W) + "</p>" + (W ? (list.length ? '<ul class="note">' + list.map(function (w) {
+      return '<li><a href="' + esc(w.link) + '" target="_blank" rel="noopener">' + esc(w.title) + '</a> <span class="obs">' + esc(w.date) + "</span></li>"; }).join("") + "</ul>"
+      : '<p class="obs">No WHO outbreak notice naming ' + esc(C.name) + " in this period.</p>") : "") +
+      '<p class="note">WHO statements, usually based on the government\'s notification. ' + (LBY.health ? "Each is also a Public health record." : "") + "</p></div>";
+  }
+  function dispHtml() {
+    var U = window.ASAP_UNHCR, d = U && U.items ? U.items[CC] : null, h = d && d.hosted, o = d && d.origin;
+    return '<div class="sec"><h2>Displacement (UNHCR statistics)</h2><p class="obs">' + snapBadge(U) + "</p>" + (d ? '<table class="reg cond"><tr><th>' + esc(String(d.year || "")) + '</th><th>People</th></tr>' +
+      (h ? '<tr><td>Refugees hosted in ' + esc(C.name) + '</td><td class="n">' + fmtN(h.refugees) + '</td></tr><tr><td>Asylum seekers hosted</td><td class="n">' + fmtN(h.asylum_seekers) +
+        '</td></tr><tr><td>Internally displaced (UNHCR count)</td><td class="n">' + fmtN(h.idps) + '</td></tr><tr><td>Stateless</td><td class="n">' + fmtN(h.stateless) + "</td></tr>" : "") +
+      (o ? '<tr><td>Refugees from ' + esc(C.name) + ' abroad</td><td class="n">' + fmtN(o.refugees) + '</td></tr><tr><td>Asylum seekers from ' + esc(C.name) + '</td><td class="n">' + fmtN(o.asylum_seekers) + "</td></tr>" : "") +
+      "</table>" : (U ? '<p class="obs">No UNHCR figures for ' + esc(C.name) + ".</p>" : "")) +
+      '<p class="note" style="margin-top:6px">Mid-year or end-year figures reported to UNHCR, largely by governments; claims, and often out of date. "–" means not reported. <a href="https://www.unhcr.org/refugee-statistics/" target="_blank" rel="noopener">UNHCR Refugee Data Finder</a>.</p></div>';
+  }
+  /* NASA GIBS imagery on the main map: WMS image tiles, no key. The claude.ai viewer may block them; the hosted app loads them. */
+  var GIBS = "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi", satOn = { tc: false, fire: false };
+  if (!map.getPane("satpane")) { map.createPane("satpane"); map.getPane("satpane").style.zIndex = 390; map.getPane("satpane").style.pointerEvents = "none"; }
+  function satDay(n) { var d = new Date(Date.now() - n * 864e5); return d.toISOString().slice(0, 10); }
+  var satDate = satDay(1);
+  var satL = {
+    tc: L.tileLayer.wms(GIBS, { layers: "VIIRS_SNPP_CorrectedReflectance_TrueColor", format: "image/jpeg", version: "1.3.0", TIME: satDate, pane: "satpane", opacity: 0.85, maxZoom: 13, attribution: "NASA GIBS" }),
+    fire: L.tileLayer.wms(GIBS, { layers: "VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All", format: "image/png", transparent: true, version: "1.3.0", TIME: satDate, pane: "tlpane", maxZoom: 13, attribution: "NASA FIRMS / GIBS" })
+  };
+  function satHtml() {
+    var opts = ""; for (var i = 1; i <= 10; i++) { var d = satDay(i); opts += '<option value="' + d + '"' + (d === satDate ? " selected" : "") + ">" + esc(fmtD(d)) + "</option>"; }
+    return '<div class="sec"><h2>Satellite layers (NASA)</h2>' +
+      '<div class="ctl"><input type="checkbox" id="sat-tc"' + (satOn.tc ? " checked" : "") + '><label for="sat-tc">True-colour image (VIIRS, daily)</label></div>' +
+      '<div class="ctl"><input type="checkbox" id="sat-fire"' + (satOn.fire ? " checked" : "") + '><label for="sat-fire">Fire and heat detections (VIIRS 375 m)</label></div>' +
+      '<div class="ctl"><label for="sat-day" class="obs">Day</label> <select id="sat-day" class="mini">' + opts + "</select></div>" +
+      '<p class="note">NASA daily imagery, no key. Heat detections cannot tell a wildfire from field burning or industry. Cloud hides the ground in the image. Some viewers block the images; the installed app loads them.</p></div>';
+  }
+  function satWire() {
+    ["tc", "fire"].forEach(function (k) {
+      var el = document.getElementById("sat-" + k); if (!el) return;
+      el.addEventListener("change", function () { satOn[k] = el.checked; if (el.checked) satL[k].addTo(map); else map.removeLayer(satL[k]); });
+    });
+    var sd = document.getElementById("sat-day");
+    if (sd) sd.addEventListener("change", function () { satDate = sd.value; satL.tc.setParams({ TIME: satDate }); satL.fire.setParams({ TIME: satDate }); });
+  }
+
+  /* Security view: internet outages, maritime security, sanctions */
+  function sancFor() { var S1 = window.ASAP_SANC; return S1 && S1.entries ? S1.entries.filter(hasCC) : []; }
+  var sancPat = null, sancPatCC = null;
+  function sancPatterns() {
+    if (sancPatCC === CC && sancPat) return sancPat;
+    sancPat = []; sancPatCC = CC;
+    sancFor().forEach(function (e) {
+      var names = [];
+      if (e.t === "person" && e.n.indexOf(",") > 0) { var p = e.n.split(","), last = p[0].trim(), first = p.slice(1).join(" ").trim(); names.push(first + " " + last, last + " " + first); }
+      else names.push(e.n.replace(/[.,]+$/, ""));
+      names.forEach(function (n) {
+        n = n.replace(/\s+/g, " ").trim(); if (n.length < 8 || n.split(" ").length < 2) return;
+        sancPat.push({ e: e, re: new RegExp("(^|[^A-Za-z])" + n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^A-Za-z]|$)", "i") });
+      });
+    });
+    return sancPat;
+  }
+  function sancMatches(r) {
+    var t = [r.title, r.detail, r.place].join(" "), out = [];
+    sancPatterns().forEach(function (p) { if (p.re.test(t) && out.indexOf(p.e) < 0) out.push(p.e); });
+    return out;
+  }
+  LCOL.security = "--over";
+  function showSecurity() {
+    sofLayer.clearLayers(); sofM = {};
+    var I = window.ASAP_IODA, o = I && I.items ? I.items[CC] : null;
+    var ih = '<div class="sec"><h2>Internet outages (IODA)</h2><p class="obs">' + snapBadge(I) + "</p>" + (o ? '<p class="obs">' + (o.events ? "<b>" + o.events + " outage signal" + (o.events > 1 ? "s" : "") + "</b> for " + esc(C.name) : "No outage signal for " + esc(C.name)) +
+      " since " + esc(fmtD(I.from)) + (o.note ? " (" + esc(o.note) + ")" : "") + ".</p>" + (o.list && o.list.length ? '<table class="reg cond"><tr><th>Start (UTC)</th><th>Length</th><th>Signal</th></tr>' + o.list.map(function (x) {
+        return "<tr><td>" + esc(x.start.replace("T", " ")) + '</td><td class="n">' + (x.minutes != null ? x.minutes + " min" : "–") + "</td><td>" + esc([x.source, x.region].filter(Boolean).join(" · ")) + "</td></tr>"; }).join("") + "</table>" : "")
+      : (I ? '<p class="obs">No IODA signal recorded for ' + esc(C.name) + ".</p>" : "")) +
+      '<p class="note" style="margin-top:6px">Automated detection from routing, active probing and traffic telescopes. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + esc((CC === "oki" ? "JP" : CC.toUpperCase())) + '" target="_blank" rel="noopener">IODA dashboard</a>.</p></div>';
+    var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
+    asam.forEach(function (a, i) {
+      var m = L.circleMarker([a.lat, a.lon], { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85 });
+      m.bindPopup('<div class="pop"><div class="tier">Maritime incident · NGA ASAM ' + esc(a.ref) + " · " + esc(a.date) + "</div><h3>" + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + "</h3><p>" + esc(a.text) +
+        '</p><p class="obs">MGRS ' + esc(window.MGRS_OF(a.lat, a.lon, 2)) + " (approximate)</p></div>", { maxWidth: 340 });
+      sofLayer.addLayer(m); sofM["as:" + i] = m;
+    });
+    var marad = M ? (M.marad || []).filter(function (x) { return !x.ccs.length || hasCC(x); }) : [];
+    var ms = M && M.status ? M.status.filter(function (s) { return !s.ok; }) : [];
+    var mh = '<div class="sec"><h2>Maritime security</h2><p class="obs">' + snapBadge(M) + (ms.length ? ' · <span class="obs">failed: ' + esc(ms.map(function (s) { return s.source; }).join(", ")) + "</span>" : "") + "</p>" +
+      (M ? '<h3 style="margin:8px 0 2px;font-size:13px">Incidents at sea (NGA ASAM), ' + asam.length + " in this period</h3>" + (asam.length ? '<div class="tllist">' + asam.slice(0, 30).map(function (a, i) {
+        return '<button type="button" class="tlrow" data-sof="as:' + i + '"><span class="tln">' + esc((a.hostility || "Incident") + (a.victim ? " · " + a.victim : "")) + '</span><span class="tlm"><span class="tls">' + esc(a.date + " · " + a.text.slice(0, 90)) + "</span></span></button>";
+      }).join("") + "</div>" : '<p class="obs">None near ' + esc(C.name) + ".</p>") +
+      (marad.length ? '<h3 style="margin:8px 0 2px;font-size:13px">U.S. maritime advisories (MARAD)</h3><ul class="note">' + marad.slice(0, 8).map(function (x) {
+        return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") +
+      ((M.recaap || []).length ? '<h3 style="margin:8px 0 2px;font-size:13px">ReCAAP ISC alerts and reports</h3><ul class="note">' + M.recaap.slice(0, 8).map(function (x) {
+        return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") : "") +
+      '<p class="note" style="margin-top:6px">Reports from ships, navies and reporting centres; positions are approximate and events unverified.</p></div>';
+    var S1 = window.ASAP_SANC, se = sancFor(), hits = [];
+    R.forEach(function (r) { var m = sancMatches(r); if (m.length) hits.push([r, m]); });
+    var cnt = { person: 0, entity: 0, vessel: 0, aircraft: 0 }; se.forEach(function (e) { cnt[e.t] = (cnt[e.t] || 0) + 1; });
+    var sh = '<div class="sec"><h2>U.S. sanctions (OFAC SDN list)</h2><p class="obs">' + snapBadge(S1) + "</p>" + (S1 ? '<p class="obs">' + se.length + " listed with an address in " + esc(C.name) + ": " +
+      [["person", "person", "people"], ["entity", "entity", "entities"], ["vessel", "vessel", "vessels"], ["aircraft", "aircraft", "aircraft"]].map(function (k) {
+        return cnt[k[0]] + " " + (cnt[k[0]] === 1 ? k[1] : k[2]); }).join(", ") + ".</p>" +
+      '<h3 style="margin:8px 0 2px;font-size:13px">Name matches in this area\'s records</h3>' + (hits.length ? '<ul class="note">' + hits.slice(0, 20).map(function (h) {
+        return '<li><a href="#" data-openrec="' + esc(h[0].id) + '">' + esc(h[0].title.slice(0, 90)) + "</a>: " + esc(h[1].map(function (e) { return e.n + " (" + e.p + ")"; }).join("; ")) + "</li>"; }).join("") + "</ul>"
+        : '<p class="obs">No record names a listed person or company.</p>') +
+      '<input type="search" id="sanc-q" class="mini" placeholder="Search the list for ' + esc(C.name) + '" style="width:100%;margin-top:6px"><div id="sanc-r"></div>' : "") +
+      '<p class="note" style="margin-top:6px">A name match is not an identity match: different people and firms share names. Check the OFAC entry before relying on it.</p></div>';
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>' + ih + mh + sh;
+    var q = document.getElementById("sanc-q");
+    if (q) q.addEventListener("input", function () {
+      var v = q.value.trim().toLowerCase(), box = document.getElementById("sanc-r");
+      var res = v.length < 2 ? [] : se.filter(function (e) { return e.n.toLowerCase().indexOf(v) >= 0; }).slice(0, 25);
+      box.innerHTML = res.length ? '<ul class="note">' + res.map(function (e) {
+        return '<li><a href="https://sanctionssearch.ofac.treas.gov/Details.aspx?id=' + encodeURIComponent(e.id) + '" target="_blank" rel="noopener">' + esc(e.n) + '</a> <span class="obs">' + esc(e.t + " · " + e.p) + "</span></li>"; }).join("") + "</ul>"
+        : (v.length >= 2 ? '<p class="obs">No match.</p>' : "");
+    });
+  }
+
   function showHazards() {
     sofLayer.clearLayers(); sofM = {};
     var qs = (HZ.q || []).filter(function (q) { return inArea(q.lat, q.lon) && inPeriodDate(new Date(q.time).toISOString()); }).sort(function (a, b) { return b.time - a.time; });
@@ -3736,8 +3936,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<li><a href="https://worldview.earthdata.nasa.gov/?v=' + [b[0][1], b[0][0], b[1][1], b[1][0]].join(",") +
         '&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All,VIIRS_SNPP_CorrectedReflectance_TrueColor" target="_blank" rel="noopener">NASA Worldview satellite imagery with fire detections</a></li>' +
       '<li><a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS global disaster alerts (floods, cyclones, earthquakes)</a></li></ul></div>';
+    nh = satHtml() + nh;
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Live feeds, not verified.</b> GDACS alert levels and air quality are model estimates, warnings are the agencies\' statements, and USGS earthquake solutions can be revised. ' +
-      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + wh + qh + ah + rh + nh;
+      '<button type="button" class="refresh" id="hz-go"' + (HZ.busy ? " disabled" : "") + ">" + (HZ.busy ? "Refreshing…" : "Refresh feeds") + "</button></div></div>" + gh + tsuHtml() + wh + qh + volcHtml() + whoHtml() + ah + rh + dispHtml() + nh;
+    satWire();
     document.getElementById("hz-go").addEventListener("click", function () { var bt = this; bt.disabled = true; bt.textContent = "Refreshing…"; pullHazards(); });
   }
   useSnapshotQuakes(); useSnapshotAQ(); addQuakeRecords();
@@ -3770,7 +3972,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-period]"); if (b) setPeriod(b.getAttribute("data-period")); });
   periodUI();
 
-  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else showPartners(); }
+  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else showPartners(); }
 
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
@@ -3782,7 +3984,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "GDACS · USGS · Open-Meteo (Copernicus CAMS) · ReliefWeb · national weather agencies", news: "GDELT · national outlets' RSS feeds", social: "Bluesky · Reddit · Telegram (official and established accounts)", security: "IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);

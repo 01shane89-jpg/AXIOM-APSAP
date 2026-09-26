@@ -56,6 +56,15 @@ The claude.ai artifact viewer blocks all outside requests, so Refresh cannot wor
 - GDACS, ReliefWeb and warnings come only from the hourly snapshots (`tools/refresh_feeds.mjs`, `tools/refresh_warnings.mjs`); the page does not call them directly.
 - NASA FIRMS fire data needs a personal NASA key, so the tab links to NASA FIRMS, NASA Worldview and GDACS at the area instead of loading them.
 
+## More free sources (hourly, no keys)
+
+`tools/refresh_more.mjs` writes one snapshot per source to `data/live/`. A source that fails keeps its last snapshot, and the tab shows its age.
+
+- **Crisis response**: the U.S. travel advisory level now comes from the State Department's own feed each hour. If it differs from the compiled details, the tab says the area table may be out of date.
+- **Live hazards**: NOAA Pacific Tsunami Warning Center bulletins (30 days), the Smithsonian weekly volcano report, WHO Disease Outbreak News naming the area, UNHCR displacement figures, and NASA GIBS satellite layers (true colour and VIIRS fire detections for a chosen day) drawn on the map. Tsunami bulletins, volcano reports and WHO notices also become Public safety or Public health records.
+- **Security signals** (new tab): IODA internet outage signals (automated; not a confirmed shutdown), maritime security (NGA anti-shipping activity messages on the map, MARAD advisories, ReCAAP ISC documents), and the U.S. OFAC SDN list entries with an address in the area, with a search box. Records whose text names a listed person or company show a *possible name match* in the evidence package; a name match is never treated as an identity match.
+- Only the SDN name, type, programme and area are kept; no identifiers, dates of birth or remarks.
+
 ## Local news and social media
 
 - **Local news** (every area): headlines from the last 24 hours from the GDELT news index (filtered to security, disaster, protest and political themes) and national outlets' RSS feeds listed in `tools/news_feeds.json`. Headlines are machine-translated to English in the hourly job and shown with the original and the translation service. Each is an unverified report with a link. State-owned outlets are labelled as such. Headlines that name a known place are placed on the map at approximate precision.
