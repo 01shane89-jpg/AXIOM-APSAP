@@ -812,6 +812,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     map.getPane(p[0]).style.zIndex = p[1];
     if (p[0] === "floodpane") map.getPane(p[0]).style.pointerEvents = "none";
   });
+  /* labels and hover tooltips sit above every marker pane (the timeline pane, made later at 650, shares Leaflet's tooltip level and was drawn over them);
+     info boxes stay above both */
+  map.createPane("lblpane"); map.getPane("lblpane").style.zIndex = 670; map.getPane("lblpane").style.pointerEvents = "none";
+  map.getPane("tooltipPane").style.zIndex = 680;
 
   /* Esri ships a purpose-built canvas for each theme. Inverting the light one
      produced a near-black map, so each theme gets its own tiles instead. */
@@ -1563,7 +1567,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       }).bindPopup(sitePopup(s));
       siteLayer.addLayer(m);
       if (!isX) {
-        siteLayer.addLayer(L.marker([s.lat, s.lon], { pane: "sitepane", interactive: false, keyboard: false,
+        siteLayer.addLayer(L.marker([s.lat, s.lon], { pane: "lblpane", interactive: false, keyboard: false,
           icon: L.divIcon({ className: "plabel sitelabel", iconSize: [160, 14], iconAnchor: [-8, 7],
             html: esc(s.name.split(/ \(| \/ |, /)[0]) }) }));
       }
