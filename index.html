@@ -2703,6 +2703,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
     document.querySelector(".rail").scrollTop = 0;
+    /* on a phone the rail sits below the map, so a tapped record's package opened off screen and the tap looked like it did nothing */
+    var rb = box.getBoundingClientRect();
+    if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" });
     var inCur = boxId === "cl-pkg", m = inCur ? CM[id] : markers[id];
     if (m) {
       if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
