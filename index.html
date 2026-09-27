@@ -1027,8 +1027,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   (function () {
     var TE = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
     var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : "th";
-    var ST = { ter: false, fp: false };
-    try { var sv = JSON.parse(localStorage.getItem("osap-terrain") || "{}"); ST.ter = !!sv.ter; ST.fp = !!sv.fp; } catch (e) {}
+    var ST = { ter: false, fp: false, pr: false }, HASPR = { ph: 1 };
+    try { var sv = JSON.parse(localStorage.getItem("osap-terrain") || "{}"); ST.ter = !!sv.ter; ST.fp = !!sv.fp; ST.pr = !!sv.pr; } catch (e) {}
     var LV = { active: ["Active", "#c62828"], elevated: ["Elevated", "#ef6c00"], latent: ["Latent", "#b8860b"] };
     var WATER = { river: 1, lake: 1, dam: 1, strait: 1, bay: 1, reef: 1, coast: 1 };
     var GLYPH = { range: "&#9650;", peak: "&#9650;", hill: "&#9650;", escarpment: "&#9650;", plateau: "&#9650;", glacier: "&#9650;", pass: "&#8745;",
@@ -1038,11 +1038,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     st.textContent = ".terpin{font:700 13px/18px sans-serif;width:18px;height:18px;text-align:center;border-radius:3px;color:#fff;background:#6d4c2f;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".terpin.w{background:#1f6fa8}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
       ".fpc{font:700 10px/1 sans-serif}.terdraft{background:#fff4d6;color:#5a4300;border:1px solid #e0b84d;padding:2px 5px;margin:4px 0;font-size:11px;font-weight:600}" +
-      ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}";
+      ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}" +
+      ".prpin{font:700 9px/16px sans-serif;width:20px;height:16px;text-align:center;border-radius:2px;color:#fff;background:#8e1b1b;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
+      ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
     document.head.appendChild(st);
     map.createPane("fpzone"); map.getPane("fpzone").style.zIndex = 420;
     map.createPane("terpane"); map.getPane("terpane").style.zIndex = 625;
-    var terLayer = L.layerGroup(), fpLayer = L.layerGroup(), lblLayer = L.layerGroup(), D = null, loading = false, failed = false;
+    var prLayer = L.layerGroup(), terLayer = L.layerGroup(), fpLayer = L.layerGroup(), lblLayer = L.layerGroup(), D = null, loading = false, failed = false;
     function data() { return (window.OSAP_TERRAIN || {})[cc] || null; }
     function load(cb) {
       if ((D = data()) || failed) return cb();
@@ -1071,7 +1073,23 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         }).join("") + "</ul>" +
         '<p class="obs" style="font-size:10.5px">Levels: ' + TE((D.levels || {})[f.level] || "") + ". Record fingerprint " + TE(f.fp.slice(0, 16)) + "&hellip;</p></div>";
     }
+    var PST = { current: "Current", past: "Past", cancelled: "Cancelled", proposed: "Proposed, not built", unclear: "Unclear" };
+    function prPop(p) {
+      return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
+        '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
+        '<div class="terdraft">Reported, not verified. Summary: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(p.why) + "</div>" +
+        '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + p.evidence.map(function (e) {
+          return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
+        }).join("") + "</ul>" +
+        '<p class="obs" style="font-size:10.5px">Position approximate. Record fingerprint ' + TE(p.fp.slice(0, 16)) + "&hellip;</p></div>";
+    }
     function draw() {
+      prLayer.clearLayers();
+      if (D && ST.pr) (D.presence || []).forEach(function (p) {
+        L.marker([p.lat, p.lon], { pane: "terpane", keyboard: false, title: p.name, icon: L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
+          html: '<div class="prpin' + (p.domain === "sea" ? " s" : "") + (p.state === "current" || p.state === "unclear" ? "" : " o") + '">CN</div>' }) })
+          .bindPopup(prPop(p), { maxWidth: 340 }).addTo(prLayer);
+      });
       terLayer.clearLayers(); fpLayer.clearLayers(); lblLayer.clearLayers();
       if (!D) return;
       if (ST.fp) D.flashpoints.forEach(function (f) {
@@ -1093,14 +1111,15 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     function lbl() { if (ST.ter && map.getZoom() >= 9) lblLayer.addTo(map); else map.removeLayer(lblLayer); }
     map.on("zoomend", lbl);
-    function note() {
+    function note(k) {
       if (!D) return failed ? "No terrain or flashpoint file for this country yet." : "Loads when switched on.";
       var n = { active: 0, elevated: 0, latent: 0 }; D.flashpoints.forEach(function (f) { n[f.level]++; });
+      if (k === "pr") { var P = D.presence || []; return P.length ? P.filter(function (p) { return p.domain === "sea"; }).length + " at sea, " + P.filter(function (p) { return p.domain === "land"; }).length + " on land. Faded pins are past, cancelled or proposed." : "None recorded for this country."; }
       return D.terrain.length + " terrain features, " + D.flashpoints.length + " flashpoints (" + n.active + " active, " + n.elevated + " elevated, " + n.latent + " latent), as of " + D.asof + ".";
     }
     function sync() {
       document.querySelectorAll("input[data-ter]").forEach(function (i) { i.checked = !!ST[i.getAttribute("data-ter")]; });
-      document.querySelectorAll(".ternote").forEach(function (e) { e.textContent = note(); });
+      document.querySelectorAll(".ternote").forEach(function (e) { e.textContent = note(e.getAttribute("data-k") || ""); });
     }
     function set(k, on) {
       ST[k] = !!on; try { localStorage.setItem("osap-terrain", JSON.stringify(ST)); } catch (e) {}
@@ -1108,6 +1127,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         draw(); sync();
         if (ST.ter) terLayer.addTo(map); else map.removeLayer(terLayer);
         if (ST.fp) fpLayer.addTo(map); else map.removeLayer(fpLayer);
+        if (ST.pr) prLayer.addTo(map); else map.removeLayer(prLayer);
       });
       sync();
     }
@@ -1115,7 +1135,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return '<label class="mlrow"><input type="checkbox" data-ter="ter"><span><b>Key terrain</b><i>Ranges, hills, passes, rivers and crossings that shape movement. Reference data; positions approximate.</i></span></label>' +
         '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i>Draft, AI-generated, not analyst-approved. Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
-        '<p class="mlkey ternote"></p>';
+        '<p class="mlkey ternote"></p>' +
+        (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
     }
     var ex = document.getElementById("ml-extra");
     if (ex) { var d = document.createElement("div"); d.innerHTML = '<div class="mlh">Terrain &amp; flashpoints</div>' + rows(); ex.appendChild(d); }
@@ -1128,7 +1149,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
     sync();
-    if (ST.ter || ST.fp) { set("ter", ST.ter); set("fp", ST.fp); }
+    if (!HASPR[cc]) ST.pr = false;
+    if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
   })();
 
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
