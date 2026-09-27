@@ -329,6 +329,13 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-height:32vh}
 @media print{.lgctl{display:none}}
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
+/* NATO-style (APP-6) map symbols from assets/osap-symbols.js */
+.msym svg{display:block;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}.msym.old{opacity:.7}
+.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-1px);font:700 10.5px/1.2 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
+.msw{display:inline-flex;width:26px;justify-content:center;flex:none}.msw svg{width:22px;height:auto;max-height:26px;display:block}
+.lgh{font-weight:600;font-size:11px;margin:6px 0 1px;color:var(--muted)}.msyfr{font-size:10.5px;line-height:1.35;margin:6px 0 2px;color:var(--muted)}
+.msykey .lg{align-items:center}
+.msym-zlo .msym.kh .msym-t{display:none}
 
 .rows{display:flex;flex-direction:column}
 .row{
@@ -813,17 +820,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
     <div class="sec maplg">
       <h2>Legend</h2>
-      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Armed clash</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--l3)"></span><div>Air or artillery strike</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Landmine</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--util)"></span><div>Standoff or fortification</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--power)"></span><div>Territorial control<span class="d">Positions taken or held, villages sealed off</span></div></div>
-      <div class="lg"><span class="sw round" style="background:var(--care)"></span><div>Civilian harm or displacement</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Maritime</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
-      <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
-      <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital, school (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
+      <div class="lg"><div>Incidents, crossings, disputed sites, schools, power and military sites use the map symbols listed below.<span class="d">Faded incident symbols are older than 45 days. Zoomed in, KH above a symbol means the Cambodian side.</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital or clinic in Thailand<span class="d">Hollow square: in Cambodia</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
@@ -1071,6 +1069,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      finger does not have to land exactly on a small dot: a 5 px dot becomes a target about 38 px across */
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
+  /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
+  function symZoom() { map.getContainer().classList.toggle("msym-zlo", map.getZoom() < 10); }
+  map.on("zoomend", symZoom); symZoom();
   window.__asapMap = map;
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
   var fitB = map.fitBounds; map.fitBounds = function (b, o) { map.__lastFit = [b, o]; return fitB.call(map, b, o); };
@@ -1273,6 +1274,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var ST = { ter: false, fp: false, pr: false }, HASPR = { ph: 1 };
     try { var sv = JSON.parse(localStorage.getItem("osap-terrain") || "{}"); ST.ter = !!sv.ter; ST.fp = !!sv.fp; ST.pr = !!sv.pr; } catch (e) {}
     var LV = { active: ["Active", "#c62828"], elevated: ["Elevated", "#ef6c00"], latent: ["Latent", "#b8860b"] };
+    /* reported presence kinds -> map symbol (assets/osap-symbols.js); all use the unknown frame */
+    var PRSYM = { occupied_feature: "pr_site", controlled_feature: "pr_site", patrol: "pr_patrol", militia_swarm: "pr_fishing", research_vessel: "pr_research",
+      drone_recovered: "pr_drone", espionage: "pr_spy", telecom: "pr_telecom", pogo: "pr_commerce", investment: "pr_commerce", loan_project: "pr_commerce",
+      infrastructure: "pr_commerce", state_ownership: "pr_commerce", land_near_base: "pr_commerce" };
     var WATER = { river: 1, lake: 1, dam: 1, strait: 1, bay: 1, reef: 1, coast: 1 };
     var GLYPH = { range: "&#9650;", peak: "&#9650;", hill: "&#9650;", escarpment: "&#9650;", plateau: "&#9650;", glacier: "&#9650;", pass: "&#8745;",
       river: "&#8776;", lake: "&#8776;", dam: "&#8776;", strait: "&#8776;", bay: "&#8776;", reef: "&#10033;", island: "&#9670;", coast: "&#9670;",
@@ -1332,7 +1337,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function draw() {
       prLayer.clearLayers();
       if (D && ST.pr) (D.presence || []).forEach(function (p) {
-        L.marker([p.lat, p.lon], { pane: "terpane", keyboard: false, title: p.name, icon: L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
+        L.marker([p.lat, p.lon], { pane: "terpane", keyboard: false, title: p.name, icon: osapSym(PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: "CN", cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
           html: '<div class="prpin' + (p.domain === "sea" ? " s" : "") + (p.state === "current" || p.state === "unclear" ? "" : " o") + '">CN</div>' }) })
           .bindPopup(prPop(p), { maxWidth: 340 }).addTo(prLayer);
       });
@@ -1342,12 +1347,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         var l = LV[f.level] || LV.latent;
         L.circle([f.lat, f.lon], { pane: "fpzone", radius: f.radius_km * 1000, color: l[1], weight: 2, dashArray: f.level === "latent" ? "5 5" : null,
           fillColor: l[1], fillOpacity: f.level === "active" ? 0.16 : 0.09, interactive: false }).addTo(fpLayer);
-        L.marker([f.lat, f.lon], { pane: "terpane", keyboard: false, icon: L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8],
+        L.marker([f.lat, f.lon], { pane: "terpane", keyboard: false, icon: osapSym("fp_" + (LV[f.level] ? f.level : "latent")) || L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8],
           html: '<svg width="16" height="16" viewBox="0 0 14 14"><path d="M7 1 13 12H1z" fill="' + l[1] + '" stroke="#fff" stroke-width="1.5"/></svg>' }) })
           .bindPopup(fpPop(f), { maxWidth: 340 }).addTo(fpLayer);
       });
       if (ST.ter) D.terrain.forEach(function (t) {
-        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
+        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: osapSym("keyterrain", t.hill_number ? { text: t.hill_number } : null) || L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
           html: t.hill_number ? '<div class="terpin hn">' + TE(t.hill_number) + "</div>" : '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
           .bindPopup(terPop(t), { maxWidth: 320 }).addTo(terLayer);
         L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [t.hill_number ? -17 : -12, 7],
@@ -2098,9 +2103,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (!s) return;
       var col = tok(s.css), px = Math.round(s.r * 2);
       /* squares, so places read differently from the round incident dots */
+      var sk = { mil: "milbase", school: "school", power: "power" }[a.g];
       var m = L.marker([a.lat, a.lon], {
         pane: "assetpane", keyboard: false,
-        icon: L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+        icon: (sk && osapSym(sk, a.side === "KH" ? { text: "KH", cls: "kh" } : null)) || L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
           html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
                 ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
       });
@@ -2132,7 +2138,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var isX = s.kind === "crossing";
       var m = L.marker([s.lat, s.lon], {
         pane: "sitepane",
-        icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
+        icon: osapSym(isX ? "crossing" : "keyterrain") || L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
           html: isX ? '<div class="xing"></div>' : '<div class="flash"></div>' }),
         keyboard: false
       }).bindPopup(sitePopup(s));
@@ -2183,10 +2189,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (!inPhase(e) || !isFinite(e.lat) || !isFinite(e.lon) || e.prec === "none") return;
       var k = KINDS[e.kind] || KINDS.clash;
       var age = daysSince(e.date);
-      evLayer.addLayer(L.circleMarker([e.lat, e.lon], {
+      var ic = osapSym(KINDS[e.kind] ? e.kind : "clash", { cls: age < 45 ? "" : "old" });
+      evLayer.addLayer((ic ? L.marker([e.lat, e.lon], { pane: "evpane", icon: ic, keyboard: false, title: e.title }) : L.circleMarker([e.lat, e.lon], {
         pane: "evpane", radius: age < 45 ? 8 : 6, color: tok("--surface"), weight: 1.5,
         fillColor: tok(k.css), fillOpacity: age < 45 ? 0.95 : 0.8
-      }).bindPopup(evPopup(e)));
+      })).bindPopup(evPopup(e)));
     });
   }
 
@@ -3676,15 +3683,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   var SOF = (window.ASAP_SOF || {})[CC] || null, SOF_OUT = window.ASAP_SOF_OUT || null;
   var railO = document.getElementById("rail-sof"), sofLayer = L.featureGroup(), sofOff = {}, sofM = {};
   var SOFK = {
-    posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent" },
-    airports: { label: "Airports", letter: "A", color: "--rain" },
-    seaports: { label: "Seaports", letter: "S", color: "--sat-water" },
+    posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent", sym: "govt" },
+    airports: { label: "Airports", letter: "A", color: "--rain", sym: "airport" },
+    seaports: { label: "Seaports", letter: "S", color: "--sat-water", sym: "seaport" },
     hospitals: { label: "Hospitals", letter: "H", color: "--over" }
   };
   var ADV_TONE = ["", "--calm", "--near", "--over", "--over"];
   function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
   function sofIcon(k) {
-    var c = tok(SOFK[k].color);
+    var c = tok(SOFK[k].color), sy = SOFK[k].sym && osapSym(SOFK[k].sym);
+    if (sy) return sy;
     return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
       html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
   }
@@ -3745,7 +3753,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
       var n = (SOF[k] || []).length, id = "sofk-" + k;
       return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
-        '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+        (SOFK[k].sym && window.OSAP_SYM ? '<span class="msw">' + OSAP_SYM.svg(SOFK[k].sym) + "</span>" : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> ") + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
     }).join("") + "</div>";
     var lists = kinds.map(function (k) {
       var arr = SOF[k] || [];
@@ -5732,6 +5740,24 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
       return box; } });
     new LgCtl().addTo(map);
     secs.forEach(function (x) { body.appendChild(x); });
+    /* symbol key: lists, in plain words, every NATO-style symbol that is on the map right now */
+    var key = document.createElement("div"), keyOn = false, keySig = "", keyT = 0;
+    key.className = "sec maplg msykey"; key.hidden = true; body.appendChild(key);
+    function keyUpdate() {
+      keyT = 0;
+      if (!window.OSAP_SYM) return;
+      var ks = [];
+      Array.prototype.forEach.call(document.querySelectorAll("#map .msym"), function (el) {
+        var m = / msk-([a-z_]+)/.exec(" " + el.className); if (m && ks.indexOf(m[1]) < 0) ks.push(m[1]);
+      });
+      ks.sort(function (a, b) { return Object.keys(OSAP_SYM.m).indexOf(a) - Object.keys(OSAP_SYM.m).indexOf(b); });
+      var sig = ks.join(",");
+      if (sig === keySig) return;
+      keySig = sig; keyOn = ks.length > 0;
+      key.innerHTML = keyOn ? OSAP_SYM.legend(ks) + OSAP_SYM.frames : "";
+      sync();
+    }
+    map.on("layeradd layerremove", function () { if (!keyT) keyT = setTimeout(keyUpdate, 250); });
     var shut = null; try { shut = localStorage.getItem(LG_KEY); } catch (e) {}
     function fold(on, keep) {
       box.classList.toggle("shut", on); btn.setAttribute("aria-expanded", String(!on));
@@ -5743,7 +5769,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     function sync() {
       var any = false;
       secs.forEach(function (x, i) { var on = !homes[i].hidden && !homes[i].closest("[hidden]"); x.hidden = !on; any = any || on; });
-      box.hidden = !any;
+      key.hidden = !keyOn;
+      box.hidden = !any && !keyOn;
     }
     var mo = new MutationObserver(sync);
     homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
@@ -6884,5 +6911,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
+<script src="assets/osap-evsum.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
