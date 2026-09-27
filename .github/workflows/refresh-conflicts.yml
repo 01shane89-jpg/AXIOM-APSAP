@@ -5,9 +5,6 @@ name: Refresh conflict tabs
 # the conflict extras (tools/conflict_extras/). Kept out of the 15-minute refresh (refresh-flood.yml) so that one stays short.
 # Large files (UCDP monthly files, the DeepStateMap file) are downloaded again only when the server says they changed.
 on:
-  # TEMPORARY: test runs of this branch before the workflow exists on main (removed before merge)
-  push:
-    branches: [claude/conflicts-own-workflow]
   schedule:
     # Off the hour and quarter-hour, when GitHub delays scheduled runs most. Free while the repository is public.
     - cron: "44 * * * *"
