@@ -480,6 +480,14 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 html.phone .rv{height:auto;max-height:none;border-left:none;border-bottom:1px solid var(--line)}
 html.phone .rvseg{display:none}
 html.phone .rvlist{overflow:visible;padding:8px 0 12px}
+.areactl{display:flex;gap:0;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25);clear:both;max-width:300px}
+.areactl button{font-family:inherit;font-size:13px;font-weight:600;line-height:1;background:none;border:none;color:var(--ink);padding:9px 12px;min-height:36px;cursor:pointer}
+.areactl button+button{border-left:1px solid var(--line)}
+.areactl button.on{background:var(--accent);color:#fff}
+.areactl button[disabled]{opacity:.45;cursor:default}
+.areahint{font-size:12px;padding:6px 10px;color:var(--muted);flex-basis:100%;border-bottom:1px solid var(--line)}
+.leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
+.shell.rv-list .areactl{display:none}
 .rvfresh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px}
 .rvfresh .refresh{padding:4px 9px;min-height:28px}
 html.switching .rail{opacity:.55;transition:opacity .1s}
@@ -5283,7 +5291,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function rvRender() {
     rvT = 0;
     if (!rvBox) return;
-    var phone = rvPhone(), all = rvRecords(), b = map.getBounds(), inArea = rvMode === "list" && !phone ? null : b;
+    areaMarkers();
+    /* a drawn area wins over the map view, in every layout */
+    var phone = rvPhone(), all = rvRecords(), b = map.getBounds(),
+      inArea = AREA ? { contains: function (p) { return inPoly(p[0], p[1], AREA); } } : (rvMode === "list" && !phone ? null : b);
     var located = all.filter(function (r) { return r.lat != null && isFinite(r.lat) && isFinite(r.lon); });
     var list = inArea ? located.filter(function (r) { return inArea.contains([r.lat, r.lon]); }) : all.slice();
     list.sort(function (a, c) { return a.ts < c.ts ? 1 : (a.ts > c.ts ? -1 : 0); });
@@ -5291,7 +5302,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var none = !all.length;
     rvBox.classList.toggle("rv-empty", none);
     var nn = all.length && all[0].sof ? "map item" : "report", pl = function (n) { return n + " " + nn + (n === 1 ? "" : "s"); };
-    rvN.textContent = none ? "Nothing in this tab" : pl(list.length) + (inArea ? " in this map area" : " in this tab");
+    rvN.textContent = none ? "Nothing in this tab" : pl(list.length) + (AREA ? " in the drawn area" : inArea ? " in this map area" : " in this tab");
     var more = inArea ? (all.length - located.length) : 0;
     if (rvFor !== current) { rvFor = current; rvAll = false; }
     /* on a phone the list opens short, so the tab's own panel stays in reach just below it */
@@ -5306,7 +5317,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }).join("") +
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
         '<p class="obs rvnote">Showing the newest ' + cap + " of " + list.length + ". Zoom in or narrow the period to see the rest.</p>") : "") +
-      (!list.length && !none ? '<p class="obs rvnote">Nothing in this map area. Zoom out or move the map.</p>' : "") +
+      (!list.length && !none ? '<p class="obs rvnote">' + (AREA ? "Nothing inside the drawn area." : "Nothing in this map area. Zoom out or move the map.") + "</p>" : "") +
+      (AREA ? '<p class="rvnote"><button type="button" class="refresh" data-rv-clear>Clear the drawn area</button></p>' : "") +
       (more > 0 ? '<p class="obs rvnote">' + more + " more have no map location. " + '<button type="button" class="refresh" data-rv-list>Show them in the list view</button></p>' : "");
     rvHook(list);
     var af = document.getElementById("rv-asof"); if (af) af.textContent = rvAsofTxt();
@@ -5356,6 +5368,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   rvBox.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-rv-list]")) { rvSet("list"); return; }
     if (e.target.closest && e.target.closest("[data-rv-more]")) { rvAll = true; rvRender(); return; }
+    if (e.target.closest && e.target.closest("[data-rv-clear]")) { areaSet(null); return; }
     if (e.target.closest && e.target.closest("#rv-refresh")) { rvRefresh(); return; }
     var c = e.target.closest && e.target.closest(".rvcard");
     if (!c) return;
@@ -5393,6 +5406,126 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     L.DomEvent.disableClickPropagation(d); return d; } });
   new RvCtl().addTo(map);
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-rv-mode]"); if (b) rvSet(b.getAttribute("data-rv-mode")); });
+  /* ---------- drawn area: lasso or polygon that isolates the reporting area ----------
+     The shape is the analyst's own filter, kept on this device per country. Map markers outside it are hidden and the report list
+     counts only what is inside. Nothing about the records changes. */
+  var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
+  try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
+  if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 640; map.getPane("areapane").style.pointerEvents = "none"; }
+  var areaSvg = L.svg({ pane: "areapane" });
+  function inPoly(lat, lon, P) {
+    var inside = false;
+    for (var i = 0, j = P.length - 1; i < P.length; j = i++) {
+      var yi = P[i][0], xi = P[i][1], yj = P[j][0], xj = P[j][1];
+      if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  function areaHas(lat, lon) { return !AREA || inPoly(lat, lon, AREA); }
+  function areaShow() {
+    if (areaLayer) { map.removeLayer(areaLayer); areaLayer = null; }
+    if (!AREA) return;
+    var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
+    areaLayer = L.layerGroup([
+      L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2.5, dashArray: "6 4", fill: false, interactive: false })
+    ]).addTo(map);
+  }
+  /* hide map items outside the area: canvas markers go transparent and stop taking taps; icon markers are hidden */
+  function areaMarkers() {
+    [tlLayer, alertLayer, curLayer, sofLayer].forEach(function (g) {
+      g.eachLayer(function (l) {
+        var ll = l.getLatLng ? l.getLatLng() : (l.getBounds ? l.getBounds().getCenter() : null);
+        if (!ll) return;
+        var out = !areaHas(ll.lat, ll.lng);
+        if (out === !!l.__areaOut) return;
+        l.__areaOut = out;
+        if (l._icon || l.setOpacity && !l.setStyle) { if (l._icon) l._icon.style.display = out ? "none" : ""; if (l._shadow) l._shadow.style.display = out ? "none" : ""; return; }
+        if (!l.setStyle) return;
+        if (out) { l.__areaWas = { opacity: l.options.opacity, fillOpacity: l.options.fillOpacity, interactive: l.options.interactive }; l.setStyle({ opacity: 0, fillOpacity: 0 }); l.options.interactive = false; }
+        else if (l.__areaWas) { l.setStyle({ opacity: l.__areaWas.opacity, fillOpacity: l.__areaWas.fillOpacity }); l.options.interactive = l.__areaWas.interactive !== false; }
+      });
+    });
+  }
+  function areaSet(P) {
+    AREA = P && P.length >= 3 ? P.map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }) : null;
+    try { if (AREA) localStorage.setItem(AREA_KEY, JSON.stringify(AREA)); else localStorage.removeItem(AREA_KEY); } catch (e) {}
+    areaShow(); areaUi(); rvSoon();
+  }
+  /* drawing: lasso follows the finger or mouse while held down; polygon adds a corner per tap and closes on the first corner,
+     a double-click, or Finish. Map panning is paused while drawing. */
+  var mapEl = map.getContainer();
+  function drawStart(mode) {
+    drawEnd(true);
+    areaDraw = { mode: mode, pts: [], line: L.polyline([], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2.5, interactive: false }).addTo(map), dots: L.layerGroup().addTo(map) };
+    map.dragging.disable(); map.doubleClickZoom.disable(); if (map.touchZoom) map.touchZoom.disable(); if (map.boxZoom) map.boxZoom.disable();
+    mapEl.classList.add("area-drawing");
+    areaUi();
+  }
+  function drawEnd(cancel) {
+    if (!areaDraw) return;
+    var P = areaDraw.pts;
+    map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.dots);
+    areaDraw = null;
+    map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
+    mapEl.classList.remove("area-drawing");
+    if (!cancel && P.length >= 3) areaSet(P); else areaUi();
+  }
+  function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
+  function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
+  var lassoDown = false;
+  mapEl.addEventListener("pointerdown", function (e) {
+    if (!areaDraw || inCtl(e)) return;
+    e.preventDefault(); e.stopPropagation();
+    if (areaDraw.mode === "lasso") { lassoDown = true; areaDraw.pts = [evLL(e)]; try { mapEl.setPointerCapture(e.pointerId); } catch (x) {} }
+    else {
+      var p = evLL(e), P = areaDraw.pts;
+      if (P.length >= 3) { var f = map.latLngToContainerPoint(P[0]), c = map.mouseEventToContainerPoint(e); if (f.distanceTo(c) < 16) { drawEnd(false); return; } }
+      P.push(p); L.circleMarker(p, { pane: "areapane", renderer: areaSvg, radius: P.length === 1 ? 6 : 4, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
+      if (P.length === 3) areaUi();
+    }
+    areaDraw.line.setLatLngs(areaDraw.pts);
+  }, true);
+  mapEl.addEventListener("pointermove", function (e) {
+    if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return;
+    e.preventDefault(); e.stopPropagation();
+    var p = evLL(e), P = areaDraw.pts, last = map.latLngToContainerPoint(P[P.length - 1]);
+    if (last.distanceTo(map.mouseEventToContainerPoint(e)) < 4) return;
+    P.push(p); areaDraw.line.setLatLngs(P);
+  }, true);
+  function lassoUp(e) { if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return; lassoDown = false; e.preventDefault(); e.stopPropagation(); drawEnd(false); }
+  mapEl.addEventListener("pointerup", lassoUp, true);
+  mapEl.addEventListener("pointercancel", lassoUp, true);
+  mapEl.addEventListener("dblclick", function (e) { if (areaDraw && areaDraw.mode === "poly") { e.preventDefault(); e.stopPropagation(); drawEnd(false); } }, true);
+  mapEl.addEventListener("click", function (e) { if (areaDraw && !inCtl(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && areaDraw) drawEnd(true); });
+  var AreaCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+    var d = L.DomUtil.create("div", "leaflet-control areactl"); d.id = "area-ctl";
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; } });
+  new AreaCtl().addTo(map);
+  var areaEl = document.getElementById("area-ctl");
+  function areaUi() {
+    if (!areaEl) return;
+    var h;
+    if (areaDraw) h = '<span class="areahint">' + (areaDraw.mode === "lasso" ? "Hold and draw round the area" : "Tap each corner, then tap the first corner or Finish") + "</span>" +
+      (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
+    else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
+      (AREA ? '<button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
+    else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>";
+    areaEl.innerHTML = h;
+  }
+  areaEl.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-area]"); if (!b) return;
+    var k = b.getAttribute("data-area");
+    if (k === "open") areaEl.classList.add("open");
+    else if (k === "close") areaEl.classList.remove("open");
+    else if (k === "lasso" || k === "poly") { areaEl.classList.remove("open"); drawStart(k); return; }
+    else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
+    else if (k === "finish") { drawEnd(false); return; }
+    else if (k === "cancel") { drawEnd(true); return; }
+    areaUi();
+  });
+  areaShow(); areaUi();
   map.on("moveend", rvSoon);
   sofLayer.on("layeradd", function () { if ((LBY[current] || {}).sof) rvSoon(); });
   if (rvMq.addEventListener) rvMq.addEventListener("change", rvPlace); else if (rvMq.addListener) rvMq.addListener(rvPlace);
