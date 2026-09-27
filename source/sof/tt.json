@@ -167,20 +167,6 @@
    "fp": "a0d920a14dbcaa91811ebfc9d06c0d424c7e8d6280d8110dc6b4b2485f8d2f61"
   },
   {
-   "id": "sof:tt:port:point-lisas-industrial-port",
-   "name": "Point Lisas Industrial Port",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 10.4,
-   "lon": -61.5,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q111386478",
-   "srcname": "Wikidata",
-   "fp": "c24ed5dd065407642e41b880a3bcf2d361c942a2fdacbe27abd779e5eb435789"
-  },
-  {
    "id": "sof:tt:port:pointe-a-pierre",
    "name": "Pointe A Pierre",
    "unlocode": null,
@@ -193,6 +179,20 @@
    "src": "https://www.wikidata.org/entity/Q111386734",
    "srcname": "Wikidata",
    "fp": "249a288bfcd067841544ea9787b125aad04b283d4e7aea9bfca821495b353b2b"
+  },
+  {
+   "id": "sof:tt:port:point-lisas-industrial-port",
+   "name": "Point Lisas Industrial Port",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 10.4,
+   "lon": -61.5,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q111386478",
+   "srcname": "Wikidata",
+   "fp": "c24ed5dd065407642e41b880a3bcf2d361c942a2fdacbe27abd779e5eb435789"
   }
  ],
  "hospitals": [

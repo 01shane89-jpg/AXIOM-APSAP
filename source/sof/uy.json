@@ -453,23 +453,6 @@
    "fp": "85c9531ec4eff3d3e70496d50f60ed2eeee319a498a2df5d7c3d4c38a4396d55"
   },
   {
-   "id": "sof:uy:hospital:sanatorio-del-banco-de-seguros-del-estado",
-   "name": "Sanatorio del Banco de Seguros del Estado",
-   "city": "Montevideo",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": null,
-   "lat": -34.8673,
-   "lon": -56.1595,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q111203401",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "27c9c2a0cdbaa76cf1e6d482e3055a0a6c9a58545308c5e83efa28346dc18b07"
-  },
-  {
    "id": "sof:uy:hospital:hospital-de-salto",
    "name": "Hospital de Salto",
    "city": "Salto",
@@ -485,6 +468,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "4e3ae75d53784cce2da1c978310bce478b739559342ef1c2668b0ec913df5c98"
+  },
+  {
+   "id": "sof:uy:hospital:sanatorio-del-banco-de-seguros-del-estado",
+   "name": "Sanatorio del Banco de Seguros del Estado",
+   "city": "Montevideo",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": null,
+   "lat": -34.8673,
+   "lon": -56.1595,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q111203401",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "27c9c2a0cdbaa76cf1e6d482e3055a0a6c9a58545308c5e83efa28346dc18b07"
   }
  ],
  "power": [

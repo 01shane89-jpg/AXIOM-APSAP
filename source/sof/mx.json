@@ -41,21 +41,6 @@
    "fp": "63b104f8b534a03870e20ff7b00ab825ccd5ecd8c7fc9d2d3b78ebf34f46e8b3"
   },
   {
-   "id": "sof:mx:post:consulate-general-of-the-united-states-nogales",
-   "name": "Consulate General of the United States, Nogales",
-   "kind": "consulate",
-   "city": "Nogales Municipality",
-   "address": "Calle Kalamata 99Colonia Jardines de Kalitea Nogales, Sonora 84066",
-   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 31.2928,
-   "lon": -110.9407,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q130349394",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "0349d5ee192d36454739dbce968ef272bdc66fdb9b82ec1d80c04e47dc254231"
-  },
-  {
    "id": "sof:mx:post:consulate-general-of-the-united-states-in-tijuana",
    "name": "Consulate General of the United States in Tijuana",
    "kind": "consulate",
@@ -69,6 +54,21 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "b8f3946f265ad7a40d0601841416416dda2b914cd77f167c1e3b87ba43d7d408"
+  },
+  {
+   "id": "sof:mx:post:consulate-general-of-the-united-states-nogales",
+   "name": "Consulate General of the United States, Nogales",
+   "kind": "consulate",
+   "city": "Nogales Municipality",
+   "address": "Calle Kalamata 99Colonia Jardines de Kalitea Nogales, Sonora 84066",
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 31.2928,
+   "lon": -110.9407,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q130349394",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "0349d5ee192d36454739dbce968ef272bdc66fdb9b82ec1d80c04e47dc254231"
   },
   {
    "id": "sof:mx:post:consulate-general-of-the-united-states-in-guadalajara",

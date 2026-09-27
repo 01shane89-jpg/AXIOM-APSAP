@@ -394,23 +394,6 @@
    "fp": "88776946cb0b8b6fec3991f1d2e17fb1da7ec9787d5cef9f483868f842e29adb"
   },
   {
-   "id": "sof:cr:hospital:hospital-enrique-baltodano",
-   "name": "Hospital Enrique Baltodano",
-   "city": "Liberia",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": null,
-   "lat": 10.6383,
-   "lon": -85.4314,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q21534576",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "2fbd7d96e4d8c690ec3637b16e39c9c36b93aa4bf2ffd21dc673a09b047a9497"
-  },
-  {
    "id": "sof:cr:hospital:hospital-monsenor-sanabria",
    "name": "Hospital Monseñor Sanabria",
    "city": "El Roble",
@@ -426,6 +409,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "ef816edba73031005f30f56a74b9edcdd7ead9bf42808e370ebb4c66f687fdd9"
+  },
+  {
+   "id": "sof:cr:hospital:hospital-enrique-baltodano",
+   "name": "Hospital Enrique Baltodano",
+   "city": "Liberia",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": null,
+   "lat": 10.6383,
+   "lon": -85.4314,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q21534576",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "2fbd7d96e4d8c690ec3637b16e39c9c36b93aa4bf2ffd21dc673a09b047a9497"
   },
   {
    "id": "sof:cr:hospital:san-rafael-of-alajuela-hospital",

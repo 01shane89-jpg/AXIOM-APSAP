@@ -327,20 +327,6 @@
    "fp": "edc7bc79c5feb3a0249578c391afa08dbfa0378cbb783eec89eb834ea24ab93d"
   },
   {
-   "id": "sof:cu:port:port-of-casilda",
-   "name": "Port of Casilda",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 21.75,
-   "lon": -79.9833,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q111386688",
-   "srcname": "Wikidata",
-   "fp": "ebd8883527808f4e937f1af3f5d17018ce7cf27c91dffd05986ea945980681eb"
-  },
-  {
    "id": "sof:cu:port:darsena-de-buenavista",
    "name": "Dársena de Buenavista",
    "unlocode": null,
@@ -353,6 +339,20 @@
    "src": "https://www.wikidata.org/entity/Q23806304",
    "srcname": "Wikidata",
    "fp": "454e704c41a7cb1f8e8861769b0ff896cec353344379d1d5f20684d10729c7c5"
+  },
+  {
+   "id": "sof:cu:port:port-of-casilda",
+   "name": "Port of Casilda",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 21.75,
+   "lon": -79.9833,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q111386688",
+   "srcname": "Wikidata",
+   "fp": "ebd8883527808f4e937f1af3f5d17018ce7cf27c91dffd05986ea945980681eb"
   },
   {
    "id": "sof:cu:port:bahai-de-la-habana",

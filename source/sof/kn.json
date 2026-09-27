@@ -76,23 +76,6 @@
  "seaports": [],
  "hospitals": [
   {
-   "id": "sof:kn:hospital:pogson-hospital",
-   "name": "Pogson Hospital",
-   "city": "Sandy Point Town",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": null,
-   "lat": 17.3591,
-   "lon": -62.8486,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q63968460",
-   "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the hospital's own position is not in Wikidata",
-   "fp": "98451f608819a9df42aaaf376d189025ff8853756a036077a6871b7d13ca685e"
-  },
-  {
    "id": "sof:kn:hospital:alexandria-hospital",
    "name": "Alexandria Hospital",
    "city": "Charlestown",
@@ -108,6 +91,23 @@
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the hospital's own position is not in Wikidata",
    "fp": "11a3a51499a71e667515ea9d785e5655791d1f3524a21008836ab200050fcca8"
+  },
+  {
+   "id": "sof:kn:hospital:pogson-hospital",
+   "name": "Pogson Hospital",
+   "city": "Sandy Point Town",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": null,
+   "lat": 17.3591,
+   "lon": -62.8486,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q63968460",
+   "srcname": "Wikidata",
+   "coord_basis": "city centre (GeoNames); the hospital's own position is not in Wikidata",
+   "fp": "98451f608819a9df42aaaf376d189025ff8853756a036077a6871b7d13ca685e"
   },
   {
    "id": "sof:kn:hospital:joseph-n-france-general-hospital",

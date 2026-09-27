@@ -564,20 +564,6 @@
    "fp": "c8e315af46131623763f00db7bea75da1474e93f50704fd1bf19205963469683"
   },
   {
-   "id": "sof:ve:port:puerto-nuevo",
-   "name": "Puerto Nuevo",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 9.155,
-   "lon": -71.2239,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q31999884",
-   "srcname": "Wikidata",
-   "fp": "7f67d9ff5919f43cf9d5ae27d31636ca66cfecf8fbe04fcc12ff18f44d8e8f9b"
-  },
-  {
    "id": "sof:ve:port:puerto-frances",
    "name": "Puerto Frances",
    "unlocode": null,
@@ -590,6 +576,20 @@
    "src": "https://www.wikidata.org/entity/Q31999881",
    "srcname": "Wikidata",
    "fp": "232e4a1d25bafebf20ed5ecea2dd8f7c0cff8e945b8bfdfa291c9629e9d930bb"
+  },
+  {
+   "id": "sof:ve:port:puerto-nuevo",
+   "name": "Puerto Nuevo",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 9.155,
+   "lon": -71.2239,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q31999884",
+   "srcname": "Wikidata",
+   "fp": "7f67d9ff5919f43cf9d5ae27d31636ca66cfecf8fbe04fcc12ff18f44d8e8f9b"
   },
   {
    "id": "sof:ve:port:puerto-la-viejo",
@@ -606,18 +606,18 @@
    "fp": "d65d4257346fa8ee1ed4b19f458a385bbabc1d7ed58772223caf34fd5e384785"
   },
   {
-   "id": "sof:ve:port:soro",
-   "name": "Soro",
+   "id": "sof:ve:port:muelle-puerto-concha",
+   "name": "Muelle Puerto Concha",
    "unlocode": null,
    "locode_function": null,
-   "lat": 10.4856,
-   "lon": -63.3156,
+   "lat": 9.0339,
+   "lon": -71.7456,
    "prec": "approx",
    "coord_basis": "Wikidata coordinate (P625)",
    "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q32022859",
+   "src": "https://www.wikidata.org/entity/Q31960422",
    "srcname": "Wikidata",
-   "fp": "dd35cf1d80db61e52a7c12d54030db31d7a4a4bb7a118f7da4c8591f8ae6998f"
+   "fp": "2fadbe2b6b3adda42b3c022a2b7dea37588531d0d8d2501bf2ba4aeafb8cf9cd"
   }
  ],
  "hospitals": [

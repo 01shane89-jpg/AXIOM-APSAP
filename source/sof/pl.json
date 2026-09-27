@@ -695,23 +695,6 @@
    "fp": "569eb933060fb68a5171e1a18f81bd76ecc0a924eab8fdb54b9054a5e02a24c8"
   },
   {
-   "id": "sof:pl:hospital:praski-hospital-in-warsaw",
-   "name": "Praski Hospital in Warsaw",
-   "city": "Warsaw",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": "Website: http://www.szpitalpraski.pl/",
-   "lat": 52.2515,
-   "lon": 21.0292,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q9352133",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "412a8450705e0c966e110a4907c18b586b46ed9c5ddb24ab378efa408ab4414b"
-  },
-  {
    "id": "sof:pl:hospital:psychiatric-hospital-in-gniezno",
    "name": "Psychiatric hospital in Gniezno",
    "city": "Gniezno",
@@ -727,6 +710,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "2a43d79de80d6d0cc30f0919b99a28e78dfd54b79167892238fcfbcdb415ecc1"
+  },
+  {
+   "id": "sof:pl:hospital:praski-hospital-in-warsaw",
+   "name": "Praski Hospital in Warsaw",
+   "city": "Warsaw",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: http://www.szpitalpraski.pl/",
+   "lat": 52.2515,
+   "lon": 21.0292,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q9352133",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "412a8450705e0c966e110a4907c18b586b46ed9c5ddb24ab378efa408ab4414b"
   },
   {
    "id": "sof:pl:hospital:institute-of-psychiatry-and-neurology-in-warsaw",

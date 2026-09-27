@@ -237,23 +237,6 @@
    "fp": "cccee9a29c9587d80173280cf300bb43905e596ceb799bca0850d9f630f37f28"
   },
   {
-   "id": "sof:ba:hospital:general-hospital-prim-dr-abdulah-nakas",
-   "name": "General Hospital \"Prim. dr Abdulah Nakaš\"",
-   "city": "Sarajevo",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": "Website: https://www.obs.ba/",
-   "lat": 43.8583,
-   "lon": 18.4081,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q56765085",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "ecb9b938933ce3b2106da9207060e0978665aa0619d0e22686ee84de5b0df692"
-  },
-  {
    "id": "sof:ba:hospital:clinic-for-pulmonary-diseases",
    "name": "Clinic for Pulmonary Diseases",
    "city": null,
@@ -269,6 +252,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "f6a839e2ab4352a51b739db272d4230ba21bfe1e1e1ba4fc93d83196ac5f1ed4"
+  },
+  {
+   "id": "sof:ba:hospital:general-hospital-prim-dr-abdulah-nakas",
+   "name": "General Hospital \"Prim. dr Abdulah Nakaš\"",
+   "city": "Sarajevo",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: https://www.obs.ba/",
+   "lat": 43.8583,
+   "lon": 18.4081,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q56765085",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "ecb9b938933ce3b2106da9207060e0978665aa0619d0e22686ee84de5b0df692"
   },
   {
    "id": "sof:ba:hospital:tesanj-county-hospital",

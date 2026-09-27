@@ -352,18 +352,18 @@
    "fp": "c9606634000d676f7821a7bb09b945c13b22cc745826f96d6f5272cca3d2db38"
   },
   {
-   "id": "sof:gr:port:port-of-milos",
-   "name": "Port of Milos",
-   "unlocode": "GR MLO",
-   "locode_function": "---4----",
-   "lat": 36.7243,
-   "lon": 24.445,
+   "id": "sof:gr:port:port-of-kythnos",
+   "name": "Port of Kythnos",
+   "unlocode": "GR KYT",
+   "locode_function": "1-------",
+   "lat": 37.3903,
+   "lon": 24.3976,
    "prec": "approx",
    "coord_basis": "Wikidata coordinate (P625)",
    "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q25166568",
+   "src": "https://www.wikidata.org/entity/Q25166569",
    "srcname": "Wikidata",
-   "fp": "aee6dff924fd27919bac61f67191449736c70182915370e88bed7f3e55a3198f"
+   "fp": "89fb35e35f08639515b0bbfc8caf305b4085bbd3a31107a1c90a63997eb0d3ce"
   },
   {
    "id": "sof:gr:port:zea-harbor",
