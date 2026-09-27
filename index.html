@@ -2,6 +2,66 @@
 <html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM OSAP</title>
 <script>
+/* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
+   Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
+(function () {
+  var TZW = {"af":"Asia/Kabul\n","al":"Europe/Tirane\n","dz":"Africa/Algiers\n","ad":"Europe/Andorra\n","ao":"Africa/Luanda\n","ag":"America/Antigua\n","ar":"America/Argentina/Buenos_Aires","am":"Asia/Yerevan\n","at":"Europe/Vienna\n","az":"Asia/Baku\n","bs":"America/Nassau\n","bh":"Asia/Bahrain\n","bb":"America/Barbados\n","by":"Europe/Minsk\n","be":"Europe/Brussels\n","bz":"America/Belize\n","bj":"Africa/Porto-Novo\n","bo":"America/La_Paz\n","ba":"Europe/Sarajevo\n","bw":"Africa/Gaborone\n","br":"America/Sao_Paulo","bg":"Europe/Sofia\n","bf":"Africa/Ouagadougou\n","bi":"Africa/Bujumbura\n","cv":"Atlantic/Cape_Verde\n","cm":"Africa/Douala\n","ca":"America/Toronto","cf":"Africa/Bangui\n","td":"Africa/Ndjamena\n","cl":"America/Santiago","co":"America/Bogota\n","km":"Indian/Comoro\n","cr":"America/Costa_Rica\n","hr":"Europe/Zagreb\n","cu":"America/Havana\n","cy":"Asia/Nicosia","cz":"Europe/Prague\n","ci":"Africa/Abidjan\n","cd":"Africa/Kinshasa","dk":"Europe/Copenhagen\n","dj":"Africa/Djibouti\n","dm":"America/Dominica\n","do":"America/Santo_Domingo\n","ec":"America/Guayaquil","eg":"Africa/Cairo\n","sv":"America/El_Salvador\n","gq":"Africa/Malabo\n","er":"Africa/Asmara\n","ee":"Europe/Tallinn\n","sz":"Africa/Mbabane\n","et":"Africa/Addis_Ababa\n","fj":"Pacific/Fiji\n","fi":"Europe/Helsinki\n","fr":"Europe/Paris\n","ga":"Africa/Libreville\n","gm":"Africa/Banjul\n","ge":"Asia/Tbilisi\n","de":"Europe/Berlin","gh":"Africa/Accra\n","gr":"Europe/Athens\n","gd":"America/Grenada\n","gt":"America/Guatemala\n","gn":"Africa/Conakry\n","gw":"Africa/Bissau\n","gy":"America/Guyana\n","ht":"America/Port-au-Prince\n","hn":"America/Tegucigalpa\n","hu":"Europe/Budapest\n","is":"Atlantic/Reykjavik\n","ir":"Asia/Tehran\n","iq":"Asia/Baghdad\n","ie":"Europe/Dublin\n","il":"Asia/Jerusalem\n","it":"Europe/Rome\n","jm":"America/Jamaica\n","jo":"Asia/Amman\n","kz":"Asia/Almaty","ke":"Africa/Nairobi\n","ki":"Pacific/Tarawa","xk":"Europe/Belgrade","kw":"Asia/Kuwait\n","kg":"Asia/Bishkek\n","lv":"Europe/Riga\n","lb":"Asia/Beirut\n","ls":"Africa/Maseru\n","lr":"Africa/Monrovia\n","ly":"Africa/Tripoli\n","li":"Europe/Vaduz\n","lt":"Europe/Vilnius\n","lu":"Europe/Luxembourg\n","mg":"Indian/Antananarivo\n","mw":"Africa/Blantyre\n","ml":"Africa/Bamako\n","mt":"Europe/Malta\n","mh":"Pacific/Majuro","mr":"Africa/Nouakchott\n","mu":"Indian/Mauritius\n","mx":"America/Mexico_City","fm":"Pacific/Pohnpei","md":"Europe/Chisinau\n","mc":"Europe/Monaco\n","me":"Europe/Podgorica\n","ma":"Africa/Casablanca\n","mz":"Africa/Maputo\n","na":"Africa/Windhoek\n","nr":"Pacific/Nauru\n","nl":"Europe/Amsterdam\n","ni":"America/Managua\n","ne":"Africa/Niamey\n","ng":"Africa/Lagos\n","mk":"Europe/Skopje\n","no":"Europe/Oslo\n","om":"Asia/Muscat\n","pw":"Pacific/Palau\n","ps":"Asia/Hebron","pa":"America/Panama\n","py":"America/Asuncion\n","pe":"America/Lima\n","pl":"Europe/Warsaw\n","pt":"Europe/Lisbon","qa":"Asia/Qatar\n","cg":"Africa/Brazzaville\n","ro":"Europe/Bucharest\n","ru":"Europe/Moscow","rw":"Africa/Kigali\n","kn":"America/St_Kitts\n","lc":"America/St_Lucia\n","vc":"America/St_Vincent\n","ws":"Pacific/Apia\n","sm":"Europe/San_Marino\n","sa":"Asia/Riyadh\n","sn":"Africa/Dakar\n","rs":"Europe/Belgrade\n","sc":"Indian/Mahe\n","sl":"Africa/Freetown\n","sk":"Europe/Bratislava\n","si":"Europe/Ljubljana\n","sb":"Pacific/Guadalcanal\n","so":"Africa/Mogadishu\n","za":"Africa/Johannesburg\n","ss":"Africa/Juba\n","es":"Europe/Madrid","sd":"Africa/Khartoum\n","sr":"America/Paramaribo\n","se":"Europe/Stockholm\n","ch":"Europe/Zurich\n","sy":"Asia/Damascus\n","st":"Africa/Sao_Tome\n","tj":"Asia/Dushanbe\n","tz":"Africa/Dar_es_Salaam\n","tg":"Africa/Lome\n","to":"Pacific/Tongatapu\n","tt":"America/Port_of_Spain\n","tn":"Africa/Tunis\n","tm":"Asia/Ashgabat\n","tv":"Pacific/Funafuti\n","tr":"Europe/Istanbul\n","ug":"Africa/Kampala\n","ua":"Europe/Kiev","ae":"Asia/Dubai\n","gb":"Europe/London\n","us":"America/New_York","uy":"America/Montevideo\n","uz":"Asia/Tashkent","vu":"Pacific/Efate\n","ve":"America/Caracas\n","eh":"Africa/El_Aaiun\n","ye":"Asia/Aden\n","zm":"Africa/Lusaka\n","zw":"Africa/Harare\n"};
+  var TZ28 = { th: "Asia/Bangkok", vn: "Asia/Ho_Chi_Minh", kh: "Asia/Phnom_Penh", la: "Asia/Vientiane", mm: "Asia/Yangon", ph: "Asia/Manila",
+    my: "Asia/Kuala_Lumpur", sg: "Asia/Singapore", bn: "Asia/Brunei", tl: "Asia/Dili", cn: "Asia/Shanghai", tw: "Asia/Taipei", kp: "Asia/Pyongyang",
+    kr: "Asia/Seoul", jp: "Asia/Tokyo", oki: "Asia/Tokyo", nz: "Pacific/Auckland", pg: "Pacific/Port_Moresby", "in": "Asia/Kolkata", pk: "Asia/Karachi",
+    np: "Asia/Kathmandu", bt: "Asia/Thimphu", bd: "Asia/Dhaka", lk: "Asia/Colombo", mv: "Indian/Maldives", id: "Asia/Jakarta", au: "Australia/Sydney", mn: "Asia/Ulaanbaatar" };
+  /* short names people recognise; zones not listed show their offset, e.g. UTC+6 */
+  var ABBR = { "Asia/Bangkok": "ICT", "Asia/Ho_Chi_Minh": "ICT", "Asia/Phnom_Penh": "ICT", "Asia/Vientiane": "ICT", "Asia/Yangon": "MMT", "Asia/Manila": "PHT",
+    "Asia/Kuala_Lumpur": "MYT", "Asia/Singapore": "SGT", "Asia/Brunei": "BNT", "Asia/Dili": "TLT", "Asia/Shanghai": "CST", "Asia/Hong_Kong": "HKT",
+    "Asia/Tokyo": "JST", "Asia/Seoul": "KST", "Asia/Pyongyang": "KST", "Pacific/Port_Moresby": "PGT", "Asia/Kolkata": "IST", "Asia/Karachi": "PKT",
+    "Asia/Kathmandu": "NPT", "Asia/Thimphu": "BTT", "Indian/Maldives": "MVT", "Asia/Jakarta": "WIB", "Asia/Makassar": "WITA", "Asia/Jayapura": "WIT", "Asia/Ulaanbaatar": "ULAT" };
+  function cc() { var h = (location.hash || "").replace("#", "").split("/"); return h.length > 1 || (h[0] && (TZ28[h[0]] || TZW[h[0]])) ? h[0] : "th"; }
+  var okZ = {};
+  function valid(tz) { if (!(tz in okZ)) { try { new Intl.DateTimeFormat("en-GB", { timeZone: tz }); okZ[tz] = true; } catch (e) { okZ[tz] = false; } } return okZ[tz]; }
+  /* a zone this browser does not know falls back to Zulu only, never to a wrong local time */
+  function zone(tz) { tz = tz || window.OSAP_ZONE || TZ28[cc()] || TZW[cc()] || "UTC"; return valid(tz) ? tz : "UTC"; }
+  function parts(ms, tz, num) {
+    var p = {}, o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: num ? "numeric" : "short", day: "numeric", hour: "2-digit", minute: "2-digit" }, f;
+    try { f = new Intl.DateTimeFormat("en-GB", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-GB", o); }
+    f.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
+    return p;
+  }
+  function abbr(tz, ms) {
+    if (ABBR[tz]) return ABBR[tz];
+    var loc = /^Australia\//.test(tz) ? "en-AU" : tz === "Pacific/Auckland" ? "en-NZ" : /^America\//.test(tz) ? "en-US" : tz === "Europe/London" ? "en-GB" : "en-US";
+    try {
+      var n = new Intl.DateTimeFormat(loc, { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date(ms)).filter(function (x) { return x.type === "timeZoneName"; })[0];
+      return n ? n.value.replace(/^GMT/, "UTC").replace(/^UTC$/, "UTC+0") : tz;
+    } catch (e) { return tz; }
+  }
+  /* ms -> "0340Z / 10:40 ICT"; opt.date adds the UTC date in front; the local date is added when it differs */
+  function dualT(ms, opt) {
+    opt = opt || {};
+    if (ms == null || !isFinite(ms)) return "";
+    var tz = zone(opt.tz), z = parts(ms, "UTC"), l = parts(ms, tz), zd = z.day + " " + z.month + " " + z.year;
+    var s = (opt.date ? zd + " " : "") + z.hour + z.minute + "Z";
+    if (tz === "UTC" || tz === "Etc/UTC") return s;
+    var ld = l.day + " " + l.month + " " + l.year;
+    return s + " / " + l.hour + ":" + l.minute + " " + abbr(tz, ms) + (opt.date && ld !== zd ? " (" + l.day + " " + l.month + ")" : "");
+  }
+  /* "2026-09-27 03:40Z", "2026-09-27T03:40:00Z", "2026-09-27T03:40" (read as UTC unless fromTz is given) -> ms; NaN when there is no time */
+  function parseT(s, fromTz) {
+    var m = /^(\d{4}-\d\d-\d\d)[ T](\d\d:\d\d)(:\d\d(?:\.\d+)?)?\s*(Z|[+-]\d\d:?\d\d)?$/.exec(String(s || "").trim());
+    if (!m) return NaN;
+    if (m[4]) return Date.parse(m[1] + "T" + m[2] + (m[3] || "") + (m[4] === "Z" ? "Z" : m[4].replace(/^([+-]\d\d)(\d\d)$/, "$1:$2")));
+    var u = Date.parse(m[1] + "T" + m[2] + (m[3] || "") + "Z");
+    if (!fromTz) return u;
+    /* wall-clock time in fromTz: subtract that zone's offset at that moment */
+    var p = parts(u, fromTz, true), off = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute) - Math.floor(u / 6e4) * 6e4;
+    return u - off;
+  }
+  /* a feed or record time string shown both ways; anything that is not a date-time is returned as it is */
+  function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
+  window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
+  window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
+})();
+</script>
+<script>
 /* The page is English. Mark it so browsers don't offer to translate it, and tag runs of non-Latin script
    (Thai station names, original-language headlines) with their own language so detection and screen readers get them right. */
 (function () {
@@ -980,7 +1040,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function roadEsc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function roadNote() {
     var cc = roadCountry(), w = window.ASAP_ROADS, st = w && (w.status || []).filter(function (s) { return s.cc === cc; })[0];
-    if (st) return st.ok ? st.source + ": " + st.n + " notices (" + st.closures + " closures), " + st.area + ". Snapshot " + w.asof + "."
+    if (st) return st.ok ? st.source + ": " + st.n + " notices (" + st.closures + " closures), " + st.area + ". Snapshot " + window.OSAP_TIME.asofT(w.asof) + "."
       : st.source + " did not answer at the last refresh (" + st.area + ").";
     return ROADCC[cc] ? "Official feed not loaded yet (first refresh after this change is merged)." :
       "No open official road feed for this country. Only roads reported shut, cut or flooded in this area's news, warnings and records are shown, as unverified reports.";
@@ -1414,7 +1474,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
   /* ---------- rail ---------- */
   function fillRail() {
-    document.getElementById("hdr-asof").textContent = LIVE.asof + " ICT";
+    document.getElementById("hdr-asof").textContent = window.OSAP_TIME.asofT(LIVE.asof, "Asia/Bangkok");
     var over = LIVE.over.map(function (i) { return LIVE.stations[i]; });
     var maxd = over.length ? Math.max.apply(null, over.map(function (s) { return s.d || 0; })) : 0;
     document.getElementById("k-over").textContent = over.length;
@@ -1556,7 +1616,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     hdot.className = "dot" + (state === "live" ? " on" : "");
   }
   function clockOf(d) {
-    return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone: "Asia/Bangkok" }) + " ICT";
+    return window.OSAP_TIME.dualT(d.getTime(), { tz: "Asia/Bangkok" });
   }
   function period() { return parseInt(everyEl.value, 10) * 60 * 1000; }
   function schedule() {
@@ -3013,8 +3073,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     return true;
   }
   function fmtTs(r) {
-    if (r.tsLabel) return r.tsLabel;
-    var t = String(r.ts);
+    var T = window.OSAP_TIME, t = String(r.ts);
+    /* a time with a clock shows as Zulu / local; ThaiWater gauge times ("2026-09-27 07:20", no zone) are Thai time */
+    var ms = r.tsLabel && T.parseT(r.tsLabel) || (/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(t) ? T.parseT(t) : /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(t) && !r.tsLabel ? T.parseT(t, "Asia/Bangkok") : NaN);
+    if (isFinite(ms)) return T.dualT(ms, { date: true }) + (r.datePub ? " (report date)" : "");
+    if (r.tsLabel && !/\d\d:\d\dZ$/.test(r.tsLabel)) return r.tsLabel;
     var d = new Date(t.slice(0, 10) + "T00:00:00Z");
     var day = isNaN(d) ? t.slice(0, 10) : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
     return day + (t.length > 10 ? " " + t.slice(11, 16) + " ICT" : "") + (r.datePub ? " (report date)" : "");
@@ -3169,12 +3232,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       "</dl>" +
       '<h4 class="pkgh">Source traceability</h4><dl class="pkgdl">' +
         "<dt>Issuing source</dt><dd>" + esc(s.name) + "</dd>" +
-        "<dt>Published</dt><dd>" + esc(r.issued || "Unknown") + "</dd>" +
+        "<dt>Published</dt><dd>" + esc(r.issued ? window.OSAP_TIME.asofT(r.issued, /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(r.issued) ? "Asia/Bangkok" : "") : "Unknown") + "</dd>" +
         "<dt>Last update</dt><dd>" + (r.ongoing ? "Status as of " + esc(CF_ASOF) : "Not tracked yet") + "</dd>" +
         "<dt>Original</dt><dd>" + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.url.replace(/^https?:\/\/(www\.)?/, "").slice(0, 60)) + "</a>" : "No bulletin link archived") + "</dd>" +
         '<dt>Record fingerprint</dt><dd><code class="fp" data-fp="' + r.id + '">' + esc(FP[r.id] || "computing\u2026") + "</code>" +
           '<span class="sub">SHA-256 of this record as packaged in the build. It changes if any field changes. It does not cover the source page.</span></dd>' +
-        "<dt>Recorded in OSAP</dt><dd>" + esc(r.recorded || "") + "</dd>" +
+        "<dt>Recorded in OSAP</dt><dd>" + esc(window.OSAP_TIME.asofT(r.recorded || "")) + "</dd>" +
         "<dt>Validation</dt><dd>Not validated</dd>" +
         "<dt>Source reliability</dt><dd>Not rated<span class=\"sub\">Proposed " + esc(s.proposed) + " (Admiralty A–F), for an analyst to set</span></dd>" +
         "<dt>Information credibility</dt><dd>Not assessed<span class=\"sub\">Admiralty 1–6</span></dd>" +
@@ -3691,7 +3754,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var an = advNow(), lvl = (an.live ? an.level : a.level) || 0, AV = window.ASAP_ADV;
     var adv = '<div class="sec"><h2>U.S. travel advisory</h2>' +
       '<div class="advlvl" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + lvl + "</b> " + esc((an.live ? an.level_text : a.level_text) || "") + "</div>" +
-      (an.live ? '<p class="obs"><span class="badge stale">SNAPSHOT</span> State Department feed ' + esc(AV.asof) + (an.date ? ", advisory dated " + esc(fmtD(an.date)) : "") +
+      (an.live ? '<p class="obs"><span class="badge stale">SNAPSHOT</span> State Department feed ' + esc(window.OSAP_TIME.asofT(AV.asof)) + (an.date ? ", advisory dated " + esc(fmtD(an.date)) : "") +
         (an.link ? ' · <a href="' + esc(an.link) + '" target="_blank" rel="noopener">current advisory</a>' : "") + "</p>" +
         (an.changed ? '<p class="note"><b>The level has changed from ' + esc(String(an.was)) + " to " + esc(String(an.level)) + "</b> since the details below were compiled (" + esc(fmtD(SOF.asof)) + "). The area table and indicators may be out of date; read the current advisory.</p>" : "")
         : '<p class="obs">' + (AV ? "Not in the 15-minute feed; " : "") + "compiled " + esc(fmtD(SOF.asof)) + ".</p>") +
@@ -3782,7 +3845,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (CC === "mn") return lon < 99 ? "Asia/Hovd" : "Asia/Ulaanbaatar";
     if (CC === "au") return lon < 129 ? "Australia/Perth" : lon < 138 ? (lat > -26 ? "Australia/Darwin" : "Australia/Adelaide")
       : lat > -29 ? "Australia/Brisbane" : lat < -39.6 ? "Australia/Hobart" : "Australia/Sydney";
-    return TZ[CC] || "UTC";
+    return TZ[CC] || (window.OSAP_TZMAP || {})[CC] || "UTC";
   }
   var AR = Math.PI / 180, DMS = 864e5, J2000 = 2451545, OBL = AR * 23.4397;
   function jd(ms) { return ms / DMS - 0.5 + 2440588 - J2000; }
@@ -3839,7 +3902,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var condZulu = false, condPt = null, SEA_TIMEOUT = 20000;
   function condClock(ms, tz) {
     if (ms == null || isNaN(ms)) return "none";
-    return new Date(ms).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: condZulu ? "UTC" : tz }) + (condZulu ? "Z" : "");
+    return window.OSAP_TIME.dualT(ms, { tz: tz }).replace(/ \S+$/, "");
   }
   function condPoint() {
     var c = map.getCenter(), b = C.bounds;
@@ -3860,8 +3923,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var tzName = condZulu ? "UTC (Z)" : tz.replace(/^.*\//, "").replace(/_/g, " ") + " time, UTC" + (off >= 0 ? "+" : "−") + Math.floor(Math.abs(off) / 60) + (Math.abs(off) % 60 ? ":" + ("0" + Math.abs(off) % 60).slice(-2) : "");
     var ll = pt.lat.toFixed(3) + ", " + pt.lon.toFixed(3);
     return '<div class="sec"><h2>Light and sea conditions</h2>' +
-      '<p class="obs">At the map centre, ' + ll + (window.MGRS_OF ? " (" + esc(window.MGRS_OF(pt.lat, pt.lon)) + ")" : "") + ". Pan the map to move it. Times are " + esc(tzName) +
-      '. <a href="#" id="cond-z">' + (condZulu ? "Show local time" : "Show Zulu") + "</a></p>" +
+      '<p class="obs">At the map centre, ' + ll + (window.MGRS_OF ? " (" + esc(window.MGRS_OF(pt.lat, pt.lon)) + ")" : "") + ". Pan the map to move it. Times are Zulu / local (" + esc(tzName) + ").</p>" +
       '<table class="reg cond"><tr><th>Sun</th><th>BMNT</th><th>Rise</th><th>Set</th><th>EENT</th></tr>' + sun + "</table>" +
       '<table class="reg cond" style="margin-top:8px"><tr><th>Moon</th><th>Rise</th><th>Set</th><th>Lit at 24:00</th></tr>' + moon + "</table>" +
       '<p class="note" style="margin-top:6px">Computed in the page from standard formulas, accurate to a minute or two at sea level. BMNT and EENT are nautical twilight (sun 12° below the horizon). "none" means the event does not happen that day.</p>' +
@@ -3891,7 +3953,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         return "<tr><td>" + esc(new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })) + '</td><td class="n">' + f(dy.wave_height_max[i], "m") + '</td><td class="n">' + f((dy.swell_wave_height_max || [])[i], "m") + '</td><td class="n">' + f((dy.wave_period_max || [])[i], "s") + "</td></tr>" +
           (tides[d] ? '<tr><td></td><td colspan="3" class="obs">Tide ' + esc(tides[d].join(" · ")) + "</td></tr>" : "");
       }).join("") + "</table>" +
-        '<p class="note" style="margin-top:6px">A model forecast from Open-Meteo, fetched ' + esc(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })) +
+        '<p class="note" style="margin-top:6px">A model forecast from Open-Meteo, fetched ' + esc(window.OSAP_TIME.dualT(Date.now(), { tz: tz })) +
         ', in local time (' + esc(tz) + '). Tide highs and lows come from a coarse global model at hourly steps, not port tables. Not for navigation. ' +
         '<a href="' + esc(url) + '" target="_blank" rel="noopener">Raw data</a></p>';
     }).catch(function (e) {
@@ -3903,7 +3965,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function drawCond() {
     var el = document.getElementById("sof-cond"); if (!el) return;
     el.innerHTML = condHtml();
-    document.getElementById("cond-z").addEventListener("click", function (e) { e.preventDefault(); condZulu = !condZulu; drawCond(); });
+    var cz = document.getElementById("cond-z"); if (cz) cz.addEventListener("click", function (e) { e.preventDefault(); condZulu = !condZulu; drawCond(); });
     document.getElementById("cond-sea-go").addEventListener("click", seaState);
   }
   map.on("moveend", function () { if (current === "crisis") drawCond(); });
@@ -3913,7 +3975,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var briefEl = document.getElementById("brief");
   function briefHtml(lim) {
     lim = lim || { post: 4, hosp: 4, air: 4, sea: 3, rec: 8, ex: 4, area: 5 };
-    var now = new Date(), z = now.toISOString().slice(0, 16).replace("T", " ") + "Z";
+    var now = new Date(), z = window.OSAP_TIME.dualT(now.getTime(), { date: true });
     var S0 = (window.ASAP_SOF || {})[CC] || null, a = (S0 && S0.advisory) || null;
     var an = advNow(); if (a && an.live) a = Object.assign({}, a, { level: an.level, level_text: an.level_text, updated: an.date || a.updated });
     var post = S0 && (S0.posts || []).filter(function (p) { return p.kind === "embassy" && p.lat != null; })[0];
@@ -4112,7 +4174,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function useSnapshotQuakes() {
     var s = window.ASAP_QUAKES;
-    if (s && s.features) { HZ.q = s.features; HZ.qFrom = "snapshot " + s.asof; } else { HZ.q = null; HZ.qFrom = ""; }
+    if (s && s.features) { HZ.q = s.features; HZ.qFrom = "snapshot " + window.OSAP_TIME.asofT(s.asof); } else { HZ.q = null; HZ.qFrom = ""; }
   }
   /* earthquakes in this area become Public safety observations, so they reach Timeline and Alerts */
   function addQuakeRecords() {
@@ -4137,7 +4199,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function useSnapshotAQ() {
     var s = window.ASAP_AQ;
-    if (s && s.points && s.points[CC]) { HZ.aq = s.points[CC]; HZ.aqFrom = "snapshot " + s.asof; } else { HZ.aq = null; HZ.aqFrom = ""; }
+    if (s && s.points && s.points[CC]) { HZ.aq = s.points[CC]; HZ.aqFrom = "snapshot " + window.OSAP_TIME.asofT(s.asof); } else { HZ.aq = null; HZ.aqFrom = ""; }
   }
   function pullHazards(done) {
     if (HZ.busy) return; HZ.busy = true;
@@ -4145,12 +4207,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var aqUrl = AQAPI + "?latitude=" + pts.map(function (p) { return p.lat.toFixed(3); }).join(",") + "&longitude=" + pts.map(function (p) { return p.lon.toFixed(3); }).join(",") +
       "&current=us_aqi,pm2_5,pm10&timezone=GMT";
     Promise.all([
-      hzFetch(USGS).then(function (g) { HZ.q = quakesFromGeo(g); HZ.qFrom = "live " + new Date().toISOString().slice(0, 16).replace("T", " ") + "Z"; HZ.qErr = ""; },
+      hzFetch(USGS).then(function (g) { HZ.q = quakesFromGeo(g); HZ.qFrom = "live " + window.OSAP_TIME.dualT(Date.now(), { date: true }); HZ.qErr = ""; },
         function (e) { HZ.qErr = e.message; useSnapshotQuakes(); }),
       hzFetch(aqUrl).then(function (j) {
         var arr = Array.isArray(j) ? j : [j];
         HZ.aq = pts.map(function (p, i) { var c = (arr[i] || {}).current || {}; return { name: p.name, lat: p.lat, lon: p.lon, time: c.time || "", us_aqi: c.us_aqi, pm2_5: c.pm2_5, pm10: c.pm10 }; });
-        HZ.aqFrom = "live " + new Date().toISOString().slice(0, 16).replace("T", " ") + "Z"; HZ.aqErr = "";
+        HZ.aqFrom = "live " + window.OSAP_TIME.dualT(Date.now(), { date: true }); HZ.aqErr = "";
       }, function (e) { HZ.aqErr = e.message; useSnapshotAQ(); })
     ]).then(function () {
       HZ.busy = false; addQuakeRecords(); render(); renderAlerts();
@@ -4205,7 +4267,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         '<p class="obs">' + esc([e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "")].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["gd:" + i] = m;
     });
-    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
+    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
       (g ? (evs.length ? '<div class="tllist">' + evs.map(function (e, i) {
         return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : ""), e.current ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
@@ -4214,7 +4276,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function reliefHtml() {
     var w = window.ASAP_RW, list = w && w.reports ? (w.reports[CC] || []).filter(function (x) { return inPeriodDate(x.date); }) : [];
-    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
+    return '<div class="sec"><h2>Humanitarian reports (ReliefWeb)</h2><p class="obs">' + (w ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(w.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
       (w ? (list.length ? '<ul class="note">' + list.slice(0, 15).map(function (x) {
         return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a> <span class="obs">' + esc([x.date, x.source, x.type].filter(Boolean).join(" · ")) + "</span></li>";
       }).join("") + "</ul>" : '<p class="obs">No ReliefWeb report for ' + esc(C.name) + " in this period.</p>") : "") +
@@ -4235,7 +4297,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     return 2 * R0 * Math.asin(Math.sqrt(h));
   }
   function stDir(c) { return /^[北南東西]+$/.test(c || "") ? c.replace(/北/g, "N").replace(/南/g, "S").replace(/東/g, "E").replace(/西/g, "W") : c; }
-  function stZ(t) { return t ? String(t).replace("T", " ").replace(/Z$/, "").slice(0, 16) + "Z" : ""; }
+  function stZ(t, short) { var s = t ? window.OSAP_TIME.asofT(/Z$|[+-]\d\d:?\d\d$/.test(t) ? t : t + "Z") : ""; return short ? s.replace(/^\d+ \w+ \d{4} /, "") : s; }
   function stWind(p) { return p && p.wind_kt != null ? p.wind_kt + " kt (" + Math.round(p.wind_kt * 1.852) + " km/h)" + (p.gust_kt != null ? ", gusts " + p.gust_kt + " kt" : "") : ""; }
   /* places to measure the forecast track against: this area's forecast points (U.S. posts, or the area centre) */
   function stRefs() {
@@ -4338,7 +4400,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var head = '<div class="sec"><h2>Tropical cyclones</h2>';
     if (!s) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     var failed = (s.status || []).filter(function (x) { return !x.ok; });
-    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(s.asof) + " · every 15 min · " + (s.status || []).map(function (x) {
+    var out = head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(s.asof)) + " · every 15 min · " + (s.status || []).map(function (x) {
       return esc(x.source) + (x.ok ? "" : ' <span class="badge stale">FAILED</span>'); }).join(", ") + "</p>";
     if (!list.length) return out + '<p class="obs">No active tropical cyclone within 500 km of ' + esc(C.name) + " in the latest JMA, JTWC or GDACS products.</p></div>";
     list.forEach(function (st, si) {
@@ -4356,7 +4418,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           '<p class="obs">Now (' + esc(stZ(p.now.t)) + "): " + esc([p.now.lat + ", " + p.now.lon, stWind(p.now), p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + stDir(p.now.course) : ""].filter(Boolean).join(" · ")) + "</p>" +
           (c ? '<p class="obs"><b>Closest forecast approach:</b> about ' + Math.round(c.km) + " km from " + esc(c.place) + (c.t ? " around " + esc(stZ(c.t)) : "") + " (worked out from this track, not an agency statement).</p>" : "") +
           ((p.fc || []).length ? '<table class="reg cond"><tr><th>Valid (UTC)</th><th>Centre</th><th>Wind</th>' + (p.agency === "JMA" ? "<th>70% circle</th>" : "") + "</tr>" + [p.now].concat(p.fc).map(function (x, i) {
-            return '<tr data-sof="st:' + si + ":" + p.agency + ":" + i + '" style="cursor:pointer"><td>' + (i ? "+" + x.h + " h " : "now ") + esc(stZ(x.t).slice(5)) + "</td><td>" + esc(x.lat + ", " + x.lon) + '</td><td class="n">' +
+            return '<tr data-sof="st:' + si + ":" + p.agency + ":" + i + '" style="cursor:pointer"><td>' + (i ? "+" + x.h + " h " : "now ") + esc(stZ(x.t, true)) + "</td><td>" + esc(x.lat + ", " + x.lon) + '</td><td class="n">' +
               (x.wind_kt != null ? x.wind_kt + " kt" : "–") + (x.pressure ? " · " + x.pressure + " hPa" : "") + "</td>" + (p.agency === "JMA" ? '<td class="n">' + (x.r_km ? x.r_km + " km" : "–") + "</td>" : "") + "</tr>";
           }).join("") + "</table>" : "") + (p.note ? '<p class="note">' + esc(p.note) + "</p>" : "");
       });
@@ -4376,7 +4438,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!f) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     if (!pts.length) return head + '<p class="obs">No forecast point for ' + esc(C.name) + ".</p></div>";
     var p = pts[Math.min(wxPick, pts.length - 1)];
-    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(f.asof) + " · every 15 min · Open-Meteo</p>" +
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(f.asof)) + " · every 15 min · Open-Meteo</p>" +
       (pts.length > 1 ? '<p><label class="obs" for="wx-pt">Place </label><select id="wx-pt">' + pts.map(function (x, i) { return '<option value="' + i + '"' + (x === p ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></p>" : "") +
       '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>°C</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
         var hot = (d.g != null && d.g >= 90) || (d.p != null && d.p >= 50) || d.code >= 95;
@@ -4431,12 +4493,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var head = '<div class="sec"><h2>Official weather warnings</h2>';
     if (!w) return head + '<p class="obs"><span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.</p></div>';
     if (!feeds.length) return head + '<p class="obs">No machine-readable warning feed is set up for ' + esc(C.name) + " yet. Check the national weather agency's own site.</p></div>";
-    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min · " + feeds.map(function (f) {
+    return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(w.asof)) + " · every 15 min · " + feeds.map(function (f) {
         return esc(f.agency) + (f.ok ? " (" + f.n + ")" : ' <span class="badge stale">FEED FAILED</span>'); }).join(", ") + "</p>" +
       (list.length ? '<ul class="note">' + list.slice(0, 20).map(function (i) {
         var en = i.title_en || i.title, sen = i.summary_en || i.summary;
         return '<li><a href="' + esc(i.link || i.feed) + '" target="_blank" rel="noopener">' + esc(en) + "</a>" + (sen && sen !== en ? " " + esc(sen.slice(0, 200)) : "") +
-          ' <span class="obs">' + esc([i.date ? i.date.replace("T", " ") + "Z" : "", i.agency].filter(Boolean).join(" · ")) + "</span>" +
+          ' <span class="obs">' + esc([i.date ? window.OSAP_TIME.asofT(i.date) : "", i.agency].filter(Boolean).join(" · ")) + "</span>" +
           (i.mt ? '<details><summary class="obs">' + (i.mt === "untranslated" ? "Untranslated" : "Machine translation (" + esc(i.mt) + ")") + ", original " + esc(LANGN[i.lang] || i.lang) + '</summary><span class="th">' + esc(i.title + (i.summary ? " — " + i.summary : "")) + "</span></details>" : "") + "</li>";
       }).join("") + "</ul>" : '<p class="obs">No warning in this period.</p>') + "</div>";
   }
@@ -4601,7 +4663,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
     var head = '<div class="sec"><div class="banner" style="margin:0"><b>Unverified reports.</b> ' + note + "</div></div>";
     if (!w) return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">NO DATA</span> ' + empty + "</p></div>";
-    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(w.asof) + " · every 15 min · " +
+    return head + '<div class="sec"><h2>' + title + '</h2><p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(w.asof)) + " · every 15 min · " +
       (srcs.length ? srcs.map(function (s) { return esc(s.source) + (s.ok ? " (" + s.n + ")" : ' <span class="badge stale">' + (s.skipped ? "NOT SET UP" : "FAILED") + "</span>"); }).join(", ") : "no source set up for this area") + "</p>" +
       '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name." +
       (histN[layer] ? " Includes " + histN[layer] + " earlier item" + (histN[layer] === 1 ? "" : "s") + " kept from past refreshes (up to 12 months)." : "") +
@@ -4625,7 +4687,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
   /* ---------- further free sources (15-minute snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
      internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
-  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(g.asof) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
+  function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
   function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
   function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
   function advNow() {
@@ -4670,7 +4732,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     list.forEach(function (t, i) {
       if (t.lat == null) return;
       var m = L.circleMarker([t.lat, t.lon], { pane: "tlpane", radius: 10, color: "#0d47a1", weight: 2, fillColor: "#42a5f5", fillOpacity: 0.5 });
-      m.bindPopup('<div class="pop"><div class="tier">Tsunami bulletin · ' + esc(t.center) + " · " + esc(t.date.replace("T", " ")) + "Z</div><h3>" + esc(t.title) + '</h3><p class="obs">' + esc(t.summary) +
+      m.bindPopup('<div class="pop"><div class="tier">Tsunami bulletin · ' + esc(t.center) + " · " + esc(window.OSAP_TIME.asofT(t.date)) + "</div><h3>" + esc(t.title) + '</h3><p class="obs">' + esc(t.summary) +
         '</p><p class="obs"><a href="' + esc(t.link || "https://www.tsunami.gov/") + '" target="_blank" rel="noopener">Bulletin</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["tsu:" + i] = m;
     });
@@ -4785,7 +4847,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!N) return "";
     list.forEach(function (q, i) {
       var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3), color: "#5d4037", weight: 1.5, fillColor: "#8d6e63", fillOpacity: 0.35, dashArray: "2 2" });
-      m.bindPopup('<div class="pop"><div class="tier">Earthquake · ' + esc(q.agency) + " · " + esc(q.time.replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + '</h3><p class="obs">' +
+      m.bindPopup('<div class="pop"><div class="tier">Earthquake · ' + esc(q.agency) + " · " + esc(window.OSAP_TIME.asofT(q.time)) + "</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + '</h3><p class="obs">' +
         esc([q.depth != null ? "depth " + Math.round(q.depth) + " km" : "", q.intensity ? "max intensity " + q.intensity : "", q.note].filter(Boolean).join(" · ")) +
         '</p><p class="obs"><a href="' + esc(q.link) + '" target="_blank" rel="noopener">' + esc(q.agency) + "</a></p></div>", { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["nq:" + i] = m;
@@ -4803,7 +4865,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     list.forEach(function (e, i) {
       if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 }));
       var m = L.circleMarker([e.last.lat, e.last.lon], { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7 });
-      m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(e.last.date.replace("T", " ")) + "Z</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
+      m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(window.OSAP_TIME.asofT(e.last.date)) + "</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
         '</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["eo:" + i] = m;
     });
@@ -4909,7 +4971,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     qs.forEach(function (q) {
       var r = R.filter(function (x) { return x.quake && x.url === q.url; })[0];
       var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25 });
-      m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
+      m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(window.OSAP_TIME.dualT(new Date(q.time).getTime(), { date: true })) + "</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
         '<p class="obs">Depth ' + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + " · " + esc(q.lat.toFixed(3) + ", " + q.lon.toFixed(3)) + " · MGRS " + esc(window.MGRS_OF(q.lat, q.lon, 3)) + "</p>" +
         '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Report</a>' : "") + "</p></div>", { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["q:" + q.id] = m;
@@ -5030,7 +5092,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '</table><p class="note" style="margin-top:6px">Figures as published by the World Bank, IMF, WHO and the other sources named in Feed status; many are government-reported and years differ. IMF figures for the current year are estimates or projections.</p></div>';
   }
   function xPop(i, f) {
-    return '<div class="pop"><div class="tier">' + esc((i.k || f.name) + " · " + (i.d ? i.d.replace("T", " ") + (i.d.length > 10 ? "Z" : "") : "undated")) + "</div><h3>" + esc(i.t) + "</h3>" + (i.x ? '<p class="obs">' + esc(i.x) + "</p>" : "") +
+    return '<div class="pop"><div class="tier">' + esc((i.k || f.name) + " · " + (i.d ? (i.d.length > 10 ? window.OSAP_TIME.asofT(i.d) : i.d) : "undated")) + "</div><h3>" + esc(i.t) + "</h3>" + (i.x ? '<p class="obs">' + esc(i.x) + "</p>" : "") +
       '<p class="obs">' + esc(f.org || "") + (f.nc ? " · non-commercial licence" : "") + (i.la != null ? " · MGRS " + esc(window.MGRS_OF ? window.MGRS_OF(i.la, i.lo, 2) : "") : "") + "</p>" +
       (i.u ? '<p class="obs"><a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source</a></p>' : "") + "</div>";
   }
@@ -5070,9 +5132,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(FD[k].name) + '</h3><ul class="note">' + G[k].slice(0, 10).map(function (i) {
         return "<li>" + (i.url ? '<a href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title) + "</a>" : esc(i.title)) + ' <span class="obs">' + esc(String(i.date || "").slice(0, 16).replace("T", " ")) + "</span></li>"; }).join("") + "</ul>"; }).join("");
     var ids = Object.keys(FD), okN = ids.filter(function (k) { return FD[k].ok; }).length;
-    var st = '<div class="sec"><details><summary><b>Feed status</b>: ' + okN + " of " + ids.length + " feeds current · updated " + esc(XF.asof) + '</summary><table class="reg cond"><tr><th>Feed</th><th>Items here</th><th>Licence</th></tr>' + ids.map(function (k) {
+    var st = '<div class="sec"><details><summary><b>Feed status</b>: ' + okN + " of " + ids.length + " feeds current · updated " + esc(window.OSAP_TIME.asofT(XF.asof)) + '</summary><table class="reg cond"><tr><th>Feed</th><th>Items here</th><th>Licence</th></tr>' + ids.map(function (k) {
       var f = FD[k], n = X.items.filter(function (i) { return i.f === k; }).length;
-      return "<tr><td>" + (f.url ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + esc(f.name) + "</a>" : esc(f.name)) + '<br><span class="obs">' + esc(f.org) + " · " + (f.ok ? "read " + esc(f.asof) : "<b>not current</b>: " + esc(f.error || "")) +
+      return "<tr><td>" + (f.url ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + esc(f.name) + "</a>" : esc(f.name)) + '<br><span class="obs">' + esc(f.org) + " · " + (f.ok ? "read " + esc(window.OSAP_TIME.asofT(f.asof)) : "<b>not current</b>: " + esc(f.error || "")) +
         '</span></td><td class="n">' + n + '</td><td class="obs">' + esc(f.lic) + (f.nc ? " <b>(NC)</b>" : "") + "</td></tr>"; }).join("") +
       '</table><p class="note">NC marks a non-commercial or restricted licence: fine for this free app, to be removed before any paid use.</p></details></div>';
     railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>' + X.items.length + " items from " + okN + " public feeds, read automatically.</b> Claims, signals and published lists; nothing here is verified or a finding.</div></div>" +
@@ -5259,7 +5321,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     });
     if (!best) return "";
     var m = Math.max(0, Math.round((Date.now() - best) / 6e4)), ago = m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago";
-    return "Data " + new Date(best).toISOString().slice(11, 16) + "Z, " + ago;
+    return "Data " + window.OSAP_TIME.dualT(best) + ", " + ago;
   }
   function rvRefresh() {
     var b = document.getElementById("rv-refresh"); if (b) { b.disabled = true; b.textContent = "Refreshing…"; }
