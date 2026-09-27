@@ -5747,7 +5747,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var EV_SHOW = /\b(part \d+|playback|full episode|episode \d+|livestream|live stream|live:|highlights|replay|webcast|newscast|bulletin \d+|24 oras|tv patrol|news patrol)\b/i;
   function evPair(a, b) {
     /* one source's own reports are separate issues (bulletins, catalogue rows, an account's posts), never one event */
-    if (a.src === b.src) return false;
+    if (a.src === b.src || a.src.name === b.src.name) return false;
     var ta = a.__t, tb = b.__t, dt = Math.abs(ta.ms - tb.ms) / 36e5;
     if (dt > (ta.day || tb.day ? 60 : 48)) return false;
     var la = hasLL(a), lb = hasLL(b), near = false, samePlace = a.place && b.place && a.place === b.place;
@@ -5762,13 +5762,56 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!words) return false;
     return samePlace || dt <= 36;
   }
+  /* CROSS-BORDER. Neighbouring countries' reports come from the same hidden page copies the watches use: each copy sends back
+     its own records (last 30 days), kept in this browser for 30 minutes. They join events and "across the border" lists here as
+     read-only references; opening one goes to that country's page. */
+  var XB_KEY = "asap-xrecs-", XB_AGE = 30 * 60 * 1000, XB_DAYS = 30, XR = [], XBV = 0, XB_AT = {};
+  function flagOf(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
+  function cName(cc) { return (CBY[cc] || {}).name || cc.toUpperCase(); }
+  /* countries whose outline box touches this one's (with half a degree to spare), nearest first; fewer on a phone */
+  var NB = (function () {
+    var b = C.bounds, pad = 0.5, out = [];
+    if (!b) return out;
+    var cx = (b[0][0] + b[1][0]) / 2, cy = (b[0][1] + b[1][1]) / 2;
+    COUNTRIES.forEach(function (c) {
+      var o = c.bounds; if (c.id === CC || !o) return;
+      if (CC === "oki" && c.id === "jp" || CC === "jp" && c.id === "oki") { out.push({ id: c.id, d: 0 }); return; }
+      if (o[0][0] <= b[1][0] + pad && o[1][0] >= b[0][0] - pad && o[0][1] <= b[1][1] + pad && o[1][1] >= b[0][1] - pad)
+        out.push({ id: c.id, d: Math.hypot((o[0][0] + o[1][0]) / 2 - cx, (o[0][1] + o[1][1]) / 2 - cy) });
+    });
+    return out.sort(function (a, c) { return a.d - c.d; }).slice(0, window.matchMedia && matchMedia("(max-width: 700px)").matches ? 3 : 5).map(function (x) { return x.id; });
+  })();
+  function xbRec(x, cc) {
+    return { id: "x:" + cc + ":" + x.k, xcc: cc, __rk: x.k, title: x.t, ts: x.ts, issued: x.is, lat: x.la, lon: x.lo, prec: x.p, place: x.pl || "", prov: "",
+      src: { name: x.s, kind: x.sk || "" }, url: x.u || "", type: x.ty, layer: x.l, sev: x.sv || 1, magnitude: x.m, quake: !!x.q, news: !!x.n, social: !!x.so };
+  }
+  function xbLoad() {
+    XR = [];
+    NB.forEach(function (cc) {
+      var o = lsGet(XB_KEY + cc, null);
+      if (!o || !o.recs) return;
+      XB_AT[cc] = o.at;
+      o.recs.forEach(function (x) { XR.push(xbRec(x, cc)); });
+    });
+    XBV++;
+  }
+  function xbStale() { return NB.filter(function (cc) { var o = lsGet(XB_KEY + cc, null); return !o || !o.recs || Date.now() - o.at > XB_AGE; }); }
+  /* what a scan copy sends back: its recent records, trimmed to the fields grouping and the lists need */
+  function xbExport() {
+    var cut = Date.now() - XB_DAYS * 864e5;
+    return R.filter(function (r) { var t = evMs(r).ms; return !r.ongoing && isFinite(t) && t >= cut; }).slice(0, 900).map(function (r) {
+      return { k: rk(r), t: String(r.title || "").slice(0, 240), ts: r.ts, is: r.issued, la: r.lat, lo: r.lon, p: r.prec, pl: r.place, s: r.src ? r.src.name : "", sk: r.src ? r.src.kind : "",
+        u: r.url, ty: r.type, l: r.layer, sv: r.sev, m: r.magnitude, q: r.quake ? 1 : 0, n: r.news ? 1 : 0, so: r.social ? 1 : 0 };
+    });
+  }
+  xbLoad();
   var EVC = { sig: "", byRec: {}, list: [] };
-  function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length; }
+  function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length + ":" + XBV; }
   /* clusters: records in time order, each joins the open event it matches best (an event stays open for 48 h after its first
      report and holds at most 40 reports), or starts its own */
   function evBuild() {
     var sig = evSig(); if (sig === EVC.sig) return EVC;
-    var recs = R.filter(function (r) {
+    var recs = R.concat(XR).filter(function (r) {
       if (EV_SPLIT[rk(r)] || r.ongoing) return false;
       if (r.type === "observation" && r.magnitude == null) return false;
       /* sport, entertainment and advertising headlines are not incidents */
@@ -5790,7 +5833,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     });
     var byRec = {}, list = [];
     all.forEach(function (e) {
-      if (e.m.length < 2) return;
+      /* an event needs two reports, at least one of them from this country */
+      if (e.m.length < 2 || !e.m.some(function (r) { return !r.xcc; })) return;
+      var loc0 = e.m.filter(function (r) { return !r.xcc; })[0];
+      if (loc0 !== e.m[0]) { e.m.splice(e.m.indexOf(loc0), 1); e.m.unshift(loc0); }
       var ev = { id: "ev-" + rk(e.m[0]), m: e.m };
       list.push(ev); e.m.forEach(function (r) { byRec[r.id] = ev; });
     });
@@ -5805,20 +5851,23 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     /* the headline: an official claim or an instrument reading first, then the report with the most words shared with the rest */
     var head = members.slice().sort(function (a, b) {
       var oa = a.type === "claim" || a.type === "observation" ? 1 : 0, ob = b.type === "claim" || b.type === "observation" ? 1 : 0;
+      if (!!a.xcc !== !!b.xcc) return a.xcc ? 1 : -1;
       if (oa !== ob) return ob - oa;
       return (b.news || b.social ? 0 : 1) - (a.news || a.social ? 0 : 1) || b.sev - a.sev;
     })[0];
     var srcs = []; members.forEach(function (r) { if (r.src && srcs.indexOf(r.src.name) < 0) srcs.push(r.src.name); });
+    var xcc = []; members.forEach(function (r) { if (r.xcc && xcc.indexOf(r.xcc) < 0) xcc.push(r.xcc); });
     return { id: ev.id, ev: ev, m: sorted, head: head, loc: loc, srcs: srcs, sev: Math.max.apply(null, members.map(function (r) { return r.sev || 1; })),
-      t0: sorted[sorted.length - 1].__t, t1: sorted[0].__t, rep: sorted[0], layer: head.layer };
+      t0: sorted[sorted.length - 1].__t, t1: sorted[0].__t, rep: sorted.filter(function (r) { return !r.xcc; })[0] || sorted[0], layer: head.layer, xcc: xcc };
   }
   function evView(list) {
     var out = {}; if (!EV_ON || !list || !list.length) return out;
     var E = evBuild(), per = {};
     list.forEach(function (r) { var ev = E.byRec[r.id]; if (ev) (per[ev.id] = per[ev.id] || { ev: ev, m: [] }).m.push(r); });
     Object.keys(per).forEach(function (k) {
-      if (per[k].m.length < 2) return;
-      var v = evMake(per[k].ev, per[k].m);
+      var fx = per[k].ev.m.filter(function (r) { return r.xcc; });
+      if (per[k].m.length + fx.length < 2) return;
+      var v = evMake(per[k].ev, per[k].m.concat(fx));
       v.m.forEach(function (r) { out[r.id] = v; });
     });
     return out;
@@ -5833,7 +5882,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function evSrcTxt(v) { return v.srcs.slice(0, 2).join(", ") + (v.srcs.length > 2 ? " +" + (v.srcs.length - 2) + " more" : ""); }
   function evChips(v) {
     var ln = LBY[v.layer] ? LBY[v.layer].name : v.layer;
-    return chip("evc", v.m.length + " reports") + chip("evauto", "Grouped automatically") + chip("l-" + v.layer, ln);
+    return chip("evc", v.m.length + " reports") + (v.xcc.length ? chip("evxb", "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ")) : "") +
+      chip("evauto", "Grouped automatically") + chip("l-" + v.layer, ln);
   }
   function evStyle(v) {
     var c = tok(LCOL[v.layer] || "--muted");
@@ -5845,7 +5895,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!v.loc) return null;
     var m = L.circleMarker([v.loc.lat, v.loc.lon], L.extend({ pane: "tlpane" }, evStyle(v)));
     m.__evStyle = evStyle(v);
-    m.bindTooltip(esc(v.m.length + " reports, grouped automatically: " + v.head.title), { direction: "top" });
+    m.bindTooltip(esc((v.xcc.length ? "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ") + " · " : "") + v.m.length + " reports, grouped automatically: " + v.head.title), { direction: "top" });
     m.on("click", function () { evOpen(v, "tl-pkg"); });
     tlLayer.addLayer(m);
     tlLayer.addLayer(L.marker([v.loc.lat, v.loc.lon], { pane: "evlbl", interactive: false, keyboard: false,
@@ -5869,17 +5919,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<h3 class="pkgt">' + esc(v.head.title) + "</h3>" +
       '<div class="pkgchips">' + evChips(v) + chip("sev" + v.sev, ["", "Low", "Medium", "High"][v.sev] + " severity (highest report)") + "</div>" +
       '<p class="banner evnote"><b>Grouped automatically.</b> These ' + v.m.length + " reports from " + v.srcs.length + " source" + (v.srcs.length === 1 ? "" : "s") +
-        " are close in time and place and share wording, so OSAP shows them as one event. That is a guess by fixed rules, not a finding: every report below is unchanged and keeps its own source, time and status. Split out any that does not belong.</p>" +
+        " are close in time and place and share wording, so OSAP shows them as one event. That is a guess by fixed rules, not a finding: every report below is unchanged and keeps its own source, time and status. Split out any that does not belong." +
+        (v.xcc.length ? " <b>Cross-border:</b> it includes reports from " + v.xcc.map(function (c) { return flagOf(c) + " " + esc(cName(c)); }).join(", ") + ", read from " + (v.xcc.length === 1 ? "that country's" : "those countries'") + " page." : "") + "</p>" +
       '<dl class="pkgdl"><dt>When</dt><dd>' + esc(evWhen(v)) + '<span class="sub">First to latest report</span></dd>' +
         "<dt>Where</dt><dd>" + (v.loc ? esc([v.loc.place, v.loc.prov].filter(Boolean).join(", ") || (v.loc.lat.toFixed(3) + ", " + v.loc.lon.toFixed(3))) +
           '<span class="sub">Pin at the most precisely placed report (' + esc(v.loc.src.name) + "; " + esc((PREC[v.loc.prec] || v.loc.prec).toLowerCase()) + ")" +
           (dist >= 1 ? ". Reports are up to " + Math.round(dist) + " km apart" : "") + '</span><span class="sub">MGRS <b class="mgrs">' + esc(mgrsFor(v.loc)) + "</b></span>" : "No report in it has a map location") + "</dd></dl>" +
       '<h4 class="pkgh">Reports in this event</h4><div class="evlist">' + v.m.map(function (r) {
         var st = STATE[r.type] || [r.type, ""];
-        return '<div class="evm"><span class="tlt">' + esc(fmtTs(r)) + '</span><span class="tln">' + esc(r.title) + "</span>" +
+        return '<div class="evm"><span class="tlt">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(fmtTs(r)) + '</span><span class="tln">' + esc(r.title) + "</span>" +
           '<span class="tlm">' + chip("t-" + r.type, st[0]) + chip("l-" + r.layer, LBY[r.layer] ? LBY[r.layer].name : r.layer) + '<span class="tls">' + esc(r.src.name) + (r.src.kind ? " · " + esc(r.src.kind) : "") + "</span></span>" +
           '<span class="evbtns">' + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Original</a>' : '<span class="obs">No link</span>') +
-          '<button type="button" class="refresh" data-ev-rec="' + esc(r.id) + '">Open report</button>' +
+          (r.xcc ? '<a class="refresh" href="' + esc(xbHref(r)) + '">Open in ' + esc(cName(r.xcc)) + "</a>" : '<button type="button" class="refresh" data-ev-rec="' + esc(r.id) + '">Open report</button>') +
           '<button type="button" class="refresh" data-ev-split="' + esc(r.id) + '" title="Show this report on its own; OSAP will not group it again on this device">Split out</button></span></div>';
       }).join("") + "</div>" +
       (nSplit ? '<p class="obs" style="margin-top:6px">' + nSplit + " report" + (nSplit === 1 ? " was" : "s were") + ' split out of this event. <button type="button" class="refresh" data-ev-regroup="' + esc(v.id) + '">Group again</button></p>' : "");
@@ -5888,7 +5939,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.addEventListener("click", function () { EVOPEN = null; select(b.getAttribute("data-ev-rec"), boxId === "tl-pkg", boxId); });
     });
     Array.prototype.forEach.call(box.querySelectorAll("[data-ev-split]"), function (b) {
-      b.addEventListener("click", function () { evSplit(byId[b.getAttribute("data-ev-split")], v, boxId); });
+      b.addEventListener("click", function () { var id = b.getAttribute("data-ev-split"); evSplit(v.m.filter(function (x) { return x.id === id; })[0], v, boxId); });
     });
     var rg = box.querySelector("[data-ev-regroup]");
     if (rg) rg.addEventListener("click", function () {
@@ -5944,11 +5995,33 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<span class="rvs">' + esc(evSrcTxt(v)) + (v.loc && v.loc.place ? " · " + esc(v.loc.place) : (v.loc ? "" : " · no map location")) + "</span></button>";
   }
   /* the note in a single report's package when it belongs to an event */
+  function xbHref(r) { return "./?wopen=" + encodeURIComponent(r.__rk) + "#" + (r.xcc === "th" ? "" : r.xcc + "/") + "timeline"; }
+  /* neighbouring countries' reports close to this one: within 25 km and 30 days, or the same wording within 3 days */
+  function xbRelated(r, skip) {
+    if (!XR.length || r.xcc) return [];
+    var t = evMs(r).ms, w = nWords(r.title), ll = hasLL(r);
+    return XR.filter(function (o) {
+      if (skip && skip[o.id]) return false;
+      var ot = evMs(o).ms, dd = Math.abs(ot - t) / 864e5;
+      if (!isFinite(dd)) return false;
+      if (ll && hasLL(o) && dd <= 30 && km(r, o) <= 25) return true;
+      return dd <= 3 && nSame(w, nWords(o.title));
+    }).sort(function (a, b) { return Math.abs(evMs(a).ms - t) - Math.abs(evMs(b).ms - t); }).slice(0, 5);
+  }
   function evNote(r) {
     if (!EV_ON) return "";
-    var v = evOfRec(r); if (!v) return "";
-    return '<p class="banner evnote" style="margin-top:8px">Part of an event grouped automatically with ' + (v.m.length - 1) + " other report" + (v.m.length === 2 ? "" : "s") +
-      ' (' + esc(evSrcTxt(v)) + '). <button type="button" class="refresh" data-ev-show="' + esc(r.id) + '">Show the event</button></p>';
+    var v = evOfRec(r), out = "", skip = {};
+    if (v) {
+      v.m.forEach(function (x) { skip[x.id] = 1; });
+      out = '<p class="banner evnote" style="margin-top:8px">Part of an event grouped automatically with ' + (v.m.length - 1) + " other report" + (v.m.length === 2 ? "" : "s") +
+        ' (' + esc(evSrcTxt(v)) + ')' + (v.xcc.length ? ", across the border in " + v.xcc.map(function (c) { return flagOf(c) + " " + esc(cName(c)); }).join(", ") : "") +
+        '. <button type="button" class="refresh" data-ev-show="' + esc(r.id) + '">Show the event</button></p>';
+    }
+    var xr = xbRelated(r, skip);
+    if (xr.length) out += '<h4 class="pkgh">Across the border</h4><div class="pkgrel">' + xr.map(function (o) {
+      return '<a class="tlrow" href="' + esc(xbHref(o)) + '"><span class="tlt">' + flagOf(o.xcc) + " " + esc(cName(o.xcc)) + " · " + esc(fmtTs(o)) + '</span><span class="tln">' + esc(o.title) + '</span><span class="tls">' + esc(o.src.name) + "</span></a>";
+    }).join("") + '</div><p class="obs" style="margin-top:6px">Reports from neighbouring countries close in place and time, or with the same wording. Not a claim that they are connected.</p>';
+    return out;
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-ev-show]"); if (!b) return;
@@ -6151,6 +6224,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function wScanAll() {
     if (wScanBusy) return;
     var ccs = []; wLoad().forEach(function (w) { if (w.on !== false && ccs.indexOf(w.cc) < 0) ccs.push(w.cc); });
+    if (EV_ON) xbStale().forEach(function (cc) { if (ccs.indexOf(cc) < 0) ccs.push(cc); });
     if (!ccs.length || !/^https?:$/.test(location.protocol)) return;
     wScanBusy = true;
     var keepView = null; try { keepView = localStorage.getItem("tw-view"); } catch (e) {}
@@ -6167,7 +6241,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         if (fresh && fresh.length) { wNotify(fresh); wToast(fresh); }
         setTimeout(next, 500);
       }
-      function onMsg(e) { if (e.source === f.contentWindow && e.data && e.data.osapWatchScan === cc) fin(e.data.fresh || []); }
+      function onMsg(e) {
+        if (e.source !== f.contentWindow || !e.data || e.data.osapWatchScan !== cc) return;
+        if (e.data.recs) { lsSet(XB_KEY + cc, { at: Date.now(), recs: e.data.recs }); if (NB.indexOf(cc) >= 0) { xbLoad(); evRefresh(); } }
+        fin(e.data.fresh || []);
+      }
       window.addEventListener("message", onMsg);
       var to = setTimeout(function () { fin([]); }, 45000);
       f.src = location.pathname + "?watchscan=1#" + (cc === "th" ? "" : cc + "/") + "timeline";
@@ -6183,7 +6261,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function wStart() {
     if (SCAN) {
       var fresh = wRun();
-      try { if (window.parent && window.parent !== window) window.parent.postMessage({ osapWatchScan: CC, fresh: fresh }, location.origin === "null" ? "*" : location.origin); } catch (e) {}
+      try { if (window.parent && window.parent !== window) window.parent.postMessage({ osapWatchScan: CC, fresh: fresh, recs: xbExport() }, location.origin === "null" ? "*" : location.origin); } catch (e) {}
       return;
     }
     var fresh = wRun(); if (fresh.length) { wNotify(fresh); wToast(fresh); }
@@ -6195,14 +6273,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (ws) wShowArea(wLoad().filter(function (w) { return w.id === ws; })[0]);
     }
     /* the page's own country was just checked with what it loaded; the other watched countries are checked shortly after */
-    if (wLoad().some(function (w) { return w.cc !== CC && w.on !== false; })) setTimeout(function () { wScanAll(); }, 8000);
+    if (wLoad().some(function (w) { return w.cc !== CC && w.on !== false; }) || (EV_ON && xbStale().length)) setTimeout(function () { wScanAll(); }, 8000);
     wSchedule();
   }
   window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
   if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
   (function () {
     var st = document.createElement("style");
-    st.textContent = ".chip.evc{color:var(--ink);border-color:var(--ink)}.chip.evauto{color:var(--accent);border-color:var(--accent);text-transform:none;letter-spacing:0}" +
+    st.textContent = ".chip.evxb{color:var(--near);border-color:var(--near);text-transform:none;letter-spacing:0}.pkgrel a.tlrow{text-decoration:none;color:inherit}.chip.evc{color:var(--ink);border-color:var(--ink)}.chip.evauto{color:var(--accent);border-color:var(--accent);text-transform:none;letter-spacing:0}" +
       ".evnum{color:#fff;font:700 10.5px/18px 'IBM Plex Mono',monospace;text-align:center;text-shadow:0 0 2px #000,0 0 2px #000}" +
       ".evtog{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:6px;flex-wrap:wrap}.evnote{margin:8px 0;font-size:12.5px}" +
       ".evlist{display:flex;flex-direction:column}.evm{display:grid;gap:2px;padding:7px 2px;border-top:1px solid var(--line-soft)}" +
@@ -6222,6 +6300,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       "#wtoast .x{background:none;border:none;color:var(--ink);font-size:20px;cursor:pointer;float:right;margin:-6px -4px 0 6px}.wlbl{font-size:11px;font-weight:600}";
     document.head.appendChild(st);
   })();
+  /* read-only list for other views (for example a multi-country map): every event with its countries and reports */
+  window.OSAP_EVENTS = { country: CC, neighbours: NB, list: function () {
+    return evBuild().list.map(function (ev) { var v = evMake(ev, ev.m);
+      return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
+        from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
+  } };
   evRefresh();
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
