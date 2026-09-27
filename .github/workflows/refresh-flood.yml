@@ -182,7 +182,7 @@ jobs:
       - name: Gather dated headline leads for the researched country layers (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-leads' }}
         timeout-minutes: 24
-        run: CCS="us gb ca de fr mx br it es ru ua pl nl ar co ve ht cu ie se no ch at be pt gr ro cz hu fi dk cl pe ec bo py uy gt hn sv ni cr pa do jm tt bs bb rs ba hr si sk bg md by al mk me xk lt lv ee is lu mt cy ad li mc sm bz gy sr ag dm gd kn lc vc" node tools/probe_leads.mjs
+        run: CCS="us gb ca de fr mx br it es ru ua pl nl ar co ve ht cu ie se no ch at be pt gr ro cz hu fi dk cl pe ec bo py uy gt hn sv ni cr pa do jm tt bs bb rs ba hr si sk bg md by al mk me xk lt lv ee is lu mt cy ad li mc sm bz gy sr ag dm gd kn lc vc" SET=${{ vars.LEADS_SET || '2' }} node tools/probe_leads.mjs
         continue-on-error: true
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
