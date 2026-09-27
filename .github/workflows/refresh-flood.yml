@@ -99,9 +99,22 @@ jobs:
         if: ${{ inputs.only == 'probe' }}
         run: node tools/probe_storms.mjs
         continue-on-error: true
+      - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
+        if: ${{ inputs.only == 'probe-dense' }}
+        run: node tools/probe_dense.mjs
+        continue-on-error: true
+      - name: Keep the probe output as a run artifact
+        if: ${{ inputs.only == 'probe-dense' || inputs.only == 'dense' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-dense
+          path: |
+            probe-out/
+            data/live/x-*.js
+          if-no-files-found: ignore
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-dense' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
