@@ -5,8 +5,8 @@
 //   { name, lat, lon, prec: "approx" (a city or town centre) | "province" (a region's rough centre), kind, basis }
 // It never guesses across borders, and returns null rather than a weak match. Okinawa (oki) is its own area: only places in
 // Okinawa Prefecture pin there, so an Okinawa story that names Tokyo is not pinned in Tokyo on the Okinawa map.
-// When unsure it leaves the story unplaced: a town whose name is also a larger place in another country (Paris, Texas) or
-// a foreign country's capital counts only when the text also names the town's own region, a town outside a region the
+// When unsure it leaves the story unplaced: a town whose name is also a much larger city in another country or a foreign
+// country's capital (Paris, Texas) counts only when the text also names the town's own region, a town outside a region the
 // text names is not used (a Hawaii story that says "Hurricane" is not pinned in Hurricane, Utah), and a text that names
 // two or more regions and no usable town is not pinned at all.
 import { spawnSync } from "node:child_process";
@@ -80,9 +80,11 @@ export function loadGazetteer(get = fetchBuf) {
     const idx = {};
     for (const [cc, m] of Object.entries(byCc)) {
       const names = [...m.keys()].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-      // a town is ambiguous when a town of the same name elsewhere is bigger, or is another country's capital
+      // a town is ambiguous when a place of the same name elsewhere is another country's capital, or a city of a million
+      // or more at least three times its size (Paris, Texas; Athens, Georgia; San Antonio, Chile). A capital is ambiguous
+      // only against another capital.
       for (const p of m.values()) if (p.kind === "city" && !p.amb)
-        p.amb = (world.get(p.name.toLowerCase()) || []).some((o) => o.cc !== cc && (o.pop > p.pop || o.cap));
+        p.amb = (world.get(p.name.toLowerCase()) || []).some((o) => o.cc !== cc && (o.cap || (!p.cap && o.pop >= 1e6 && o.pop >= 3 * p.pop)));
       idx[cc] = { m, re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
     }
     return idx;
