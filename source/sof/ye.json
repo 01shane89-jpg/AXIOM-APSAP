@@ -293,7 +293,59 @@
    "fp": "be106070168aea236a1e932fde4156f6bd03f4a7e703a6148e47ccf97175e8d4"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:ye:hospital:revolution-al-thawra-hospital",
+   "name": "Revolution (Al-Thawra) Hospital",
+   "city": "Sanaa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 15.3545,
+   "lon": 44.2065,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Revolution_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "9957a47d2e23c8088c210dcf6b137cd5b31e98fb3bb7d499691ac64e2a6cdf2f"
+  },
+  {
+   "id": "sof:ye:hospital:yemen-german-hospital",
+   "name": "Yemen German Hospital",
+   "city": "Sanaa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "private",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 15.3545,
+   "lon": 44.2065,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Yemen_German_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "71180d4d8ef1dd2440cf0319fa6e5cfffa861ad3cd56c241c1b5a4875ef7053f"
+  },
+  {
+   "id": "sof:ye:hospital:al-sabeen-maternal-hospital",
+   "name": "Al Sabeen Maternal Hospital",
+   "city": "Sanaa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 15.3545,
+   "lon": 44.2065,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Al_Sabeen_Maternal_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "cc290bbedd56150523dc96908cbc8251850406f08cd9797f132805e6abfd87a6"
+  }
+ ],
  "power": [
   {
    "id": "sof:ye:power:wri1022447",
@@ -412,6 +464,6 @@
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated."
  ]
 }

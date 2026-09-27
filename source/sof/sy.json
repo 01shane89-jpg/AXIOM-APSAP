@@ -291,7 +291,76 @@
    "fp": "aa51d6342b4252c0907c1cdf06de28108212b6ce3fcf2d7b505a7515eae6cd3a"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:sy:hospital:damascus-hospital",
+   "name": "Damascus Hospital",
+   "city": "Damascus",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.5102,
+   "lon": 36.2913,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Damascus_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "d6b737041e9281fe2aa4848b7280eca2908cf0a3aaf406952482641fd25d8b50"
+  },
+  {
+   "id": "sof:sy:hospital:al-mouwasat-university-hospital",
+   "name": "Al Mouwasat University Hospital",
+   "city": "Damascus",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.5102,
+   "lon": 36.2913,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Al_Mouwasat_University_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "ba7cad13a364336fceead0bfe12493f0bbcee9bf4885351d39cacf0dc7a2494c"
+  },
+  {
+   "id": "sof:sy:hospital:national-university-hospital",
+   "name": "National University Hospital",
+   "city": "Damascus",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.5102,
+   "lon": 36.2913,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/National_University_Hospital_(Damascus)",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "0e20377e5fb441557b61cece4901dc1c114411de5b9429833290dbe96d60bc5e"
+  },
+  {
+   "id": "sof:sy:hospital:children-s-university-hospital",
+   "name": "Children's University Hospital",
+   "city": "Damascus",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.5102,
+   "lon": 36.2913,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Children's_University_Hospital_-_Damascus",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "3e66ca973b78e43a18b33d7492fe571c27f91524a9bdf373708b5938ae3baff7"
+  }
+ ],
  "power": [
   {
    "id": "sof:sy:power:geodb0041658",
@@ -490,6 +559,6 @@
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated."
  ]
 }

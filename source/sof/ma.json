@@ -20,7 +20,38 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "295c86c4cb37830cea73fe3f5b4519e7b4ffcc161ab485365419d67c02ee41e6"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ma:post:u-s-embassy-rabat",
+   "name": "U.S. Embassy Rabat",
+   "kind": "embassy",
+   "city": "Rabat",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 34.0132,
+   "lon": -6.8326,
+   "prec": "approx",
+   "src": "https://ma.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "684554960fac07e792255ac5877c43d62edbfb4023b81d64278bafa67184b015"
+  },
+  {
+   "id": "sof:ma:post:u-s-consulate-general-casablanca",
+   "name": "U.S. Consulate General Casablanca",
+   "kind": "consulate_general",
+   "city": "Casablanca",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 33.5883,
+   "lon": -7.6114,
+   "prec": "approx",
+   "src": "https://ma.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "19aa7c1c88c4cca7b5a7a550d46aa4f8a98e67d228c8f20fdf12b118fb1f9cff"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ma:airport:gmmn",
@@ -523,7 +554,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

@@ -28,7 +28,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "53bcf24ee5e869a912fc3edf313ef514e039e4946159083731ac5981851e8055"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:lb:post:u-s-embassy-beirut",
+   "name": "U.S. Embassy Beirut",
+   "kind": "embassy",
+   "city": "Beirut",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 33.8933,
+   "lon": 35.5016,
+   "prec": "approx",
+   "src": "https://lb.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "f0be8315d6a2a25f5527bdf9f7648afa99a16b44847d8b24a5d72fe04f0dedb6"
+  }
+ ],
  "airports": [
   {
    "id": "sof:lb:airport:olba",
@@ -169,7 +185,42 @@
    "fp": "b771704d7962e76c1b89bb9a8aa01ba26ae1833135f14044abaa34491274dfe7"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:lb:hospital:h-tel-dieu-de-france",
+   "name": "Hôtel-Dieu de France",
+   "city": "Beirut",
+   "address": null,
+   "emergency_24h": null,
+   "type": "private",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.8933,
+   "lon": 35.5016,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/H%C3%B4tel-Dieu_de_France",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "b1b685e06deb954d7122c71630688a34c40bcc6e6ae91dce9994abb67771ba1f"
+  },
+  {
+   "id": "sof:lb:hospital:lau-medical-center-rizk-hospital",
+   "name": "LAU Medical Center-Rizk Hospital",
+   "city": "Beirut",
+   "address": null,
+   "emergency_24h": null,
+   "type": "private",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 33.8933,
+   "lon": 35.5016,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/LAU_Medical_Center-Rizk_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "d76da3363b19ab7839d126e7c78bb2b2b585430b64906c9fc900c1070ab2c705"
+  }
+ ],
  "power": [
   {
    "id": "sof:lb:power:wri1023663",
@@ -287,7 +338,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

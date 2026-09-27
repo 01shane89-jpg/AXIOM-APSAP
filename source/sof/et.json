@@ -30,7 +30,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "815d808243024e4c0d08bd39ca962b6f3e93c5884218ab9e014413cd1c927c34"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:et:post:u-s-embassy-addis-ababa",
+   "name": "U.S. Embassy Addis Ababa",
+   "kind": "embassy",
+   "city": "Addis Ababa",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 9.025,
+   "lon": 38.7469,
+   "prec": "approx",
+   "src": "https://et.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "f7c8cae71491a701ff59d033016f971cede1e3800068e92eecc6f66c27f0931a"
+  }
+ ],
  "airports": [
   {
    "id": "sof:et:airport:haab",
@@ -250,7 +266,59 @@
   }
  ],
  "seaports": [],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:et:hospital:black-lion-hospital-tikur-anbessa",
+   "name": "Black Lion Hospital (Tikur Anbessa)",
+   "city": "Addis Ababa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Addis Ababa University teaching hospital",
+   "lat": 9.025,
+   "lon": 38.7469,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Black_Lion_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "6295fb886673d833ad8a302bcb6a004e265a901da3e152b7aba10cee9e7354a2"
+  },
+  {
+   "id": "sof:et:hospital:tirunesh-beijing-general-hospital",
+   "name": "Tirunesh Beijing General Hospital",
+   "city": "Addis Ababa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 9.025,
+   "lon": 38.7469,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Tirunesh_Beijing_General_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "32cc6340d55ebc53d8a091966f0d372bf14bbe78a599ae06486443672f35dc68"
+  },
+  {
+   "id": "sof:et:hospital:alert-hospital",
+   "name": "ALERT hospital",
+   "city": "Addis Ababa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 9.025,
+   "lon": 38.7469,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/ALERT_(medical_facility)",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "e93bb4e7601f11d9c84e14bdf96f9753bb09cba8e29b8930a550ae72a7a614ae"
+  }
+ ],
  "power": [
   {
    "id": "sof:et:power:wri1022986",
@@ -448,8 +516,8 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country.",
-  "Auto: landlocked, no seaports."
+  "Auto: landlocked, no seaports.",
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }
