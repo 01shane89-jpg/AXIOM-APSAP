@@ -81,6 +81,12 @@ Every feed here is free and needs no login. Bluesky uses its public read API and
 
 **Telegram** needs no account or phone number: the job reads each listed channel's public web page (`t.me/s/<channel>`). Channels that have turned that page off show as failed in the tab. Add official channel usernames to the `telegram` list in `tools/social_accounts.json`.
 
+## Watches and grouped events
+
+- **Grouped events** (Timeline and the report list beside the map): reports that seem to describe the same incident are shown as one event with one pin and a count. Two reports join when they come from different sources, are within 48 hours of each other, are within 25 km (60 km when one is placed only by province, or they name the same place) and share wording (the Top stories test), or are earthquakes of nearly the same size and time. The event lists every report with its own time, source, status and link. It is labelled *Grouped automatically*; nothing in any record changes. **Split out** keeps a report apart on this device, **Group again** undoes that, and the switch under the Timeline filters turns grouping off.
+- **Watch** (button on the map): save an area (the drawn area, or a whole country), optionally narrowed to categories and a minimum severity. OSAP checks every watch when it opens and every 15 minutes while it stays open, by rebuilding each watched country in a hidden copy of the page (`index.html?watchscan=1`), so a watch sees exactly the records the page would show. The first check of a new watch only notes what is already there; later arrivals (dated in the last 7 days) are hits, one per grouped event. Hits show on the Watch button, in a notice at the bottom of the screen and, with permission, as a system notification; tapping it opens the report (`?wopen=<record key>`). Watches, hits and splits are kept in this browser only.
+- **Limits.** Nothing checks while OSAP is closed. Android and computers get notifications while OSAP is open, including in a background tab. iPhone and iPad get them only from the Home Screen app while it is open on screen. A hit is only as new as the last data refresh.
+
 ## Rules for records
 
 These come from the AXIOM doctrine and are enforced by review, not by code:
