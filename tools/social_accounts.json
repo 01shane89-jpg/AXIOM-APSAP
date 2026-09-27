@@ -62,5 +62,122 @@
    "kind": "disaster agency",
    "lang": "id"
   }
+ ],
+ "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed.",
+ "youtube": [
+  {
+   "cc": "*",
+   "handle": "Reuters",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "AssociatedPress",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "*",
+   "handle": "AlJazeeraEnglish",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "th",
+   "handle": "ThaiPBSWorld",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "th",
+   "handle": "ThaiPBS",
+   "kind": "news desk",
+   "lang": "th"
+  },
+  {
+   "cc": "sg",
+   "handle": "channelnewsasia",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "id",
+   "handle": "kompastv",
+   "kind": "news desk",
+   "lang": "id"
+  },
+  {
+   "cc": "ph",
+   "handle": "gmanews",
+   "kind": "news desk",
+   "lang": "tl"
+  },
+  {
+   "cc": "ph",
+   "handle": "ABSCBNNews",
+   "kind": "news desk",
+   "lang": "tl"
+  },
+  {
+   "cc": "vn",
+   "handle": "VTV24",
+   "kind": "news desk",
+   "lang": "vi"
+  },
+  {
+   "cc": "cn",
+   "handle": "CGTN",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "tw",
+   "handle": "TaiwanPlusNews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jp",
+   "handle": "NHKWORLDJAPAN",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "handle": "abcnewsaustralia",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "au",
+   "handle": "SBSNews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "handle": "NDTV",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "in",
+   "handle": "WION",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "pk",
+   "handle": "DawnNewsEnglish",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "pg",
+   "handle": "EMTVOnline",
+   "kind": "news desk",
+   "lang": "en"
+  }
  ]
 }
