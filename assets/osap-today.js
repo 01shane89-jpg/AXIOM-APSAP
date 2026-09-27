@@ -328,7 +328,7 @@
   function render() {
     if (!box) return;
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
-    box.innerHTML = '<div class="tdwrap"><div class="tdtop"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
+    box.innerHTML = '<div class="tdwrap"><div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>' +
@@ -353,6 +353,7 @@
     open = true; box.hidden = false; document.documentElement.classList.add("td-on"); ssSet(OPEN_KEY, "1");
     render(); box.scrollTop = 0;
     if (ctl) ctl.hidden = true;
+    if (window.OSAP_BOOT_DONE) window.OSAP_BOOT_DONE();
     clearInterval(tick);
     /* the page keeps adding records after load (feed history, open data, live refresh); the screen follows them */
     var lastN = -1, lastX = null;
@@ -370,6 +371,8 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;opacity:.1;pointer-events:none;z-index:0}" +
+    ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:1080px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
     ".tdbrand{display:flex;flex-direction:column;flex:1;min-width:150px}.tdbrand b{font-size:22px;line-height:1.1}" +
@@ -379,7 +382,7 @@
     ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}" +
     ".tdcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}.tdcol{display:flex;flex-direction:column;gap:12px;min-width:0}" +
     "@media (max-width:760px){.tdcols{grid-template-columns:1fr}}" +
-    ".tdcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
+    ".tdcard{background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
     ".tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
