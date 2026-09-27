@@ -2717,7 +2717,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
   if ((window.ASAP_SOF || {})[CC]) LAYERS.push(
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
-    { id: "partners", name: "Partner engagement", title: "Partner engagement", sof: true, live: true });
+    { id: "partners", name: "Military exercises", title: "Military exercises", sof: true, live: true });
   LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
@@ -3791,7 +3791,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (S0) {
       var xs = (S0.exercises || []).concat(((window.ASAP_SOF_OUT || {}).exercises || []).filter(function (x) { return (x.also_cc || []).indexOf(CC) >= 0; }))
         .filter(function (x) { var s = exStatus(x); return s !== "completed"; }).slice(0, lim.ex);
-      ex = list("Partner exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + bl(x.src, esc(exName(x))) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
+      ex = list("Military exercises, current and upcoming", xs, function (x) { return "<tr><td>" + esc(x.start ? x.start.slice(5) + (x.end && x.end !== x.start ? " to " + x.end.slice(5) : "") : "Dates TBC") + '</td><td class="w">' + bl(x.src, esc(exName(x))) + '<span class="bm"> · ' + (x.us_participation ? "U.S. taking part" : "no U.S. role stated") + "</span></td></tr>"; }, "btwo");
     }
     return '<div class="bbar noprint"><button type="button" class="refresh primary" id="brief-print">Print</button> <button type="button" class="refresh" id="brief-close">Close</button>' +
       ' <a class="refresh" href="#report" onclick="document.getElementById(\'report\').scrollIntoView();return false">Country report</a> <span class="obs">The brief fits one page on A4 or Letter; the country report prints after it on its own pages. Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>' +
