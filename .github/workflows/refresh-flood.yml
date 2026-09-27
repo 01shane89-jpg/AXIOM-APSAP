@@ -19,8 +19,10 @@ on:
 permissions:
   contents: write
 
+# One queue per branch: main's refreshes never overlap (each commits snapshots), and test runs on feature branches
+# (which never commit) neither wait for nor replace main's.
 concurrency:
-  group: refresh-flood
+  group: refresh-flood-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
