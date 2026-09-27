@@ -64,7 +64,7 @@
   }
   var STATUS = { observation: ["Instrument reading", "obs"], claim: ["Official statement", "claim"], event: ["Unverified report", "unv"], report: ["Source report", "claim"] };
   /* headlines that are sport, entertainment or advertising are left off the home screen (they stay in Local news) */
-  var ROUTINE = /\b(football|soccer|cricket|tennis|golf|basketball|baseball|badminton|boxing|olympic\w*|world cup|league|premier league|fifa|nba|f1|formula (one|1)|motogp|grand prix|race ban|striker|coach|athletes?|celebrit\w*|actors?|actress|singers?|k-?pop|concerts?|album|movies?|films?|cinemas?|drama|fashion|beauty|recipes?|restaurants?|horoscope|lifestyle|sponsored|advertis\w*|promotion|giveaway|lottery|app you need|asian games|ufc|man city|manchester|fixtures?|transfer window)\b/i;
+  var ROUTINE = /\b(football|soccer|cricket|tennis|golf|basketball|baseball|badminton|boxing|olympic\w*|world cup|league|premier league|fifa|nba|f1|formula (one|1)|motogp|grand prix|race ban|striker|coach|athletes?|celebrit\w*|actors?|actress|singers?|k-?pop|concerts?|album|movies?|films?|cinemas?|drama|fashion|beauty|recipes?|restaurants?|horoscope|lifestyle|sponsored|advertis\w*|promotion|giveaway|lottery|app you need|asian games|ufc|man city|manchester|fixtures?|transfer window|cycling|cyclists?|road race|rugby|marathon|tour de france|title fight|heavyweight)\b/i;
   /* a headline leads when it is about something that affects people here. The same kind of fixed rule as the page's
      Top stories (no AI, no hidden weights): +3 for a safety, disaster, crime, health, infrastructure or public-order topic,
      +2 when it names this area, +1 when under 12 hours old. Ties go to the newest. */
@@ -255,19 +255,67 @@
     try { return window.OSAP_EVENTS && window.OSAP_EVENTS.list ? window.OSAP_EVENTS.list() : []; } catch (e) { return []; }
   }
   function recByUrl(u) { if (!u) return null; var R = recs(); for (var i = 0; i < R.length; i++) if (R[i].url === u) return R[i]; return null; }
+  /* Top stories keep to the selected country. National outlets also carry world news (Bangkok Post's /world/ section, for
+     example), so a headline is left out when it comes from a world section or names another country, unless the headline or
+     its summary also names this country, its capital or its people. */
+  var DEMS = { th: "Thai|Thais", us: "Americans?|US|U\\.S\\.|Trump|White House|Pentagon|Washington", gb: "British|Britons?|UK|U\\.K\\.|Labour party|Downing Street",
+    cn: "Chinese|Xi Jinping", ru: "Russians?|Kremlin|Putin", ua: "Ukrainians?|Zelensky\\w*", il: "Israelis?|Netanyahu|Gaza", ps: "Palestinians?|Gaza|West Bank",
+    ir: "Iranians?|Tehran", mx: "Mexicans?", ch: "Swiss", fr: "French", de: "Germans?", it: "Italians?", es: "Spanish|Spaniards?", gr: "Greeks?",
+    tr: "Turkish|Turks", jp: "Japanese", kr: "South Koreans?|Korean", kp: "North Koreans?|Pyongyang", in: "Indians?|Modi", pk: "Pakistanis?",
+    au: "Australians?", ca: "Canadians?", br: "Brazilians?", ar: "Argentines?|Argentinians?", ng: "Nigerians?", eg: "Egyptians?",
+    sa: "Saudis?", sy: "Syrians?", iq: "Iraqis?", af: "Afghans?|Taliban", tw: "Taiwanese", ph: "Filipinos?|Philippine", id: "Indonesians?",
+    my: "Malaysians?", vn: "Vietnamese", kh: "Cambodians?|Khmer", mm: "Burmese|Myanmar", la: "Lao|Laotians?", sg: "Singaporeans?",
+    ve: "Venezuelans?", cu: "Cubans?", co: "Colombians?", bd: "Bangladeshis?", lk: "Sri Lankans?", np: "Nepalis?|Nepalese", nz: "New Zealanders?",
+    pl: "Poles|Polish", nl: "Dutch", se: "Swedish|Swedes", no: "Norwegians?", ie: "Irish", pt: "Portuguese", za: "South Africans?" };
+  /* country and capital names that are also everyday words or common names */
+  var AMBIG = /^(chad|jordan|georgia|turkey|niger|guinea|dominica|victoria|kingston|male|hamilton|nice|mali|oman|india|china)$/i;
+  /* the original 28 areas are not in the world list or the capitals table, so their names and capitals are here (regex parts) */
+  var A28 = { th: ["Thailand", "Bangkok"], vn: ["Vietnam|Viet Nam", "Hanoi|Ho Chi Minh City"], kh: ["Cambodia", "Phnom Penh"], la: ["Laos", "Vientiane"],
+    mm: ["Myanmar", "Naypyidaw|Yangon"], ph: ["Philippines", "Manila"], my: ["Malaysia", "Kuala Lumpur"], sg: ["Singapore", "Singapore"],
+    bn: ["Brunei", "Bandar Seri Begawan"], tl: ["Timor-Leste|East Timor", "Dili"], cn: ["China", "Beijing"], tw: ["Taiwan", "Taipei"],
+    kp: ["North Korea", "Pyongyang"], kr: ["South Korea", "Seoul"], jp: ["Japan", "Tokyo"], oki: ["Okinawa", "Naha"], nz: ["New Zealand", "Wellington"],
+    pg: ["Papua New Guinea", "Port Moresby"], pk: ["Pakistan", "Islamabad|Karachi|Lahore"], np: ["Nepal", "Kathmandu"], bt: ["Bhutan", "Thimphu"],
+    bd: ["Bangladesh", "Dhaka"], lk: ["Sri Lanka", "Colombo"], mv: ["Maldives", "Mal[eé]"], id: ["Indonesia", "Jakarta"], au: ["Australia", "Canberra|Sydney|Melbourne"],
+    mn: ["Mongolia", "Ulaanbaatar"] };
+  /* Japan and Okinawa count as the same place for each other */
+  function same(k) { return k === CC || (CC === "oki" && k === "jp") || (CC === "jp" && k === "oki"); }
+  var placeRe = null, placeCc = null;
+  function placeFilters() {
+    if (placeCc === CC && placeRe) return placeRe;
+    function q(x) { return String(x).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+    var own = [q(countryName())], other = [];
+    if (CAPS[CC]) own.push(q(CAPS[CC][0]));
+    Object.keys(A28).forEach(function (k) { if (same(k)) own.push(A28[k][0], A28[k][1]); else other.push(A28[k][0], A28[k][1]); });
+    (window.ASAP_WORLD || []).forEach(function (w) { if (w && w.name && !same(w.id) && !AMBIG.test(w.name)) other.push(q(w.name)); });
+    Object.keys(CAPS).forEach(function (k) { var c = CAPS[k][0]; if (!same(k) && c && c.length > 3 && !AMBIG.test(c)) other.push(q(c)); });
+    Object.keys(DEMS).forEach(function (k) { if (same(k)) own.push(DEMS[k]); else other.push(DEMS[k]); });
+    var mine = own.join("|");
+    try { placeRe = { here: new RegExp("\\b(" + mine + ")\\b", "i"), away: new RegExp("\\b(" + other.join("|") + ")\\b") }; } catch (e) { placeRe = { here: /$^/, away: /$^/ }; }
+    placeCc = CC; return placeRe;
+  }
+  var WORLD_PATH = /\/(world|world-?news|international|global|foreign|abroad|overseas)(\/|$)/i;
+  function aboutHere(r) {
+    var P = placeFilters(), t = r.title || "", all = t + " " + (r.detail || "") + " " + (r.place || "");
+    if (P.here.test(t)) return true;
+    if (P.here.test(all)) return true;
+    var path = ""; try { path = new URL(r.url).pathname; } catch (e) {}
+    if (WORLD_PATH.test(path)) return false;
+    return !P.away.test(t);
+  }
   function stories() {
     var now = Date.now(), out = [], used = {};
     events().forEach(function (ev) {
       if (!ev.reports || ev.reports.length < 2 || !isFinite(ev.to) || now - ev.to > 7 * 864e5) return;
-      var srcs = {}; ev.reports.forEach(function (r) { srcs[r.source] = 1; used[r.url] = 1; });
       var r0 = null; for (var i = 0; i < ev.reports.length && !r0; i++) r0 = recByUrl(ev.reports[i].url);
+      if (!aboutHere(r0 || { title: ev.title, url: ev.reports[0].url })) return;
+      var srcs = {}; ev.reports.forEach(function (r) { srcs[r.source] = 1; used[r.url] = 1; });
       out.push({ ev: true, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
         status: ev.reports.every(function (r) { return r.status === "Observed"; }) ? "observation" : "event", sev: ev.sev || 1 });
     });
     out.sort(function (a, b) { return b.n - a.n || b.ms - a.ms; });
     out = out.slice(0, 3);
     var here = null; try { here = new RegExp("\\b(" + countryName().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + (CAPS[CC] ? "|" + CAPS[CC][0] : "") + ")\\b", "i"); } catch (e) {}
-    var news = recs().filter(function (r) { return r.news && !used[r.url] && !ROUTINE.test(r.title || ""); })
+    var news = recs().filter(function (r) { return r.news && !used[r.url] && !ROUTINE.test(r.title || "") && aboutHere(r); })
       .map(function (r) { var ms = recMs(r), t = r.title || "";
         return { r: r, ms: ms, sc: (TOPIC.test(t) ? 3 : 0) + (here && here.test(t) ? 2 : 0) + (now - ms < 12 * 36e5 ? 1 : 0) }; })
       .filter(function (x) { return isFinite(x.ms); });
@@ -343,7 +391,7 @@
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>' +
-      '<div class="tdcols"><div class="tdcol">' + weatherHtml() + alertsHtml() + "</div><div class=\"tdcol\">" + storiesHtml() + newHtml() + "</div></div>" + shortcutsHtml() +
+      '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div><div class=\"tdcol tdc4\">" + shortcutsHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
@@ -384,15 +432,19 @@
     "html.td-on body{overflow:hidden}" +
     "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
-    ".tdwrap{max-width:1080px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
+    ".tdwrap{max-width:2200px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) clamp(10px,1.6vw,24px) calc(20px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
     ".tdbrand{display:flex;flex-direction:column;flex:1;min-width:150px}.tdbrand b{font-size:22px;line-height:1.1}" +
     ".tdcc select{font:inherit;font-size:15px;min-height:40px;max-width:60vw;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}" +
     ".tdvh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}" +
     ".tdmap,.tdlink,.tdgrid button,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
     ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}" +
-    ".tdcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}.tdcol{display:flex;flex-direction:column;gap:12px;min-width:0}" +
-    "@media (max-width:760px){.tdcols{grid-template-columns:1fr}}" +
+    /* the screen fills the window: three columns on a wide screen (weather | warnings | stories), two on a tablet or small
+       laptop (weather above warnings, stories beside them), one on a phone */
+    ".tdcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;grid-template-areas:'a b c' 'd b c';gap:12px;align-items:start}" +
+    ".tdc1{grid-area:a}.tdc2{grid-area:b}.tdc3{grid-area:c}.tdc4{grid-area:d}.tdcol{display:flex;flex-direction:column;gap:12px;min-width:0}" +
+    "@media (max-width:1199px){.tdcols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto;grid-template-areas:'a c' 'b c' 'd d'}}" +
+    "@media (max-width:760px){.tdcols{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-template-areas:'a' 'b' 'c' 'd'}}" +
     ".tdcard{background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
@@ -417,7 +469,7 @@
     ".tdst img{width:96px;height:72px;object-fit:cover;border-radius:6px;flex:none;background:var(--surface2,var(--line))}.tdstb{display:flex;flex-direction:column;gap:3px;min-width:0}" +
     ".tdsth{background:none;border:0;padding:0;text-align:left;font:inherit;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;text-decoration:none;overflow-wrap:anywhere}" +
     ".tdtags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.tdsrcl{font-size:12px}" +
-    ".tdgo{margin-top:12px}.tdgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}.tdgrid button{text-align:left;font-weight:600}" +
+    ".tdgo{margin:0}.tdgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}.tdgrid button{text-align:left;font-weight:600}" +
     ".tdfoot{margin-top:14px;font-size:12px;color:var(--muted)}.tdhome{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--ink);font-size:13px}.tdhome button{min-height:34px;padding:3px 12px}" +
     ".tdctl button{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 9px;min-height:32px;font:600 13px/1.2 inherit;font-family:inherit;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25)}";
 
