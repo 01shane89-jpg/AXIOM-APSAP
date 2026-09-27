@@ -8,7 +8,7 @@
    country outlines (assets/world-watermark.svg). */
 #osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
   background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
-#osap-boot::before{content:"";position:absolute;inset:-5%;background:url(assets/world-watermark.svg) center/min(170vw,1500px) auto no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
+#osap-boot::before{content:"";position:absolute;inset:0 -3%;background:url(assets/world-watermark.svg) center/cover no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
 #osap-boot>*{position:relative}
 #osap-boot.gone{opacity:0;pointer-events:none}
 :root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
@@ -22,23 +22,24 @@
 @keyframes osap-rev{from{transform:rotateX(10deg) rotateY(0)}to{transform:rotateX(10deg) rotateY(360deg)}}
 @keyframes osap-sh{from{transform:scaleX(1);opacity:.9}to{transform:scaleX(.25);opacity:.35}}
 @keyframes osap-drift{from{transform:translateX(-2%)}to{transform:translateX(2%)}}
+@media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
   /* the saved map theme, applied now so the loading screen matches it */
   var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
   if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
-  function flag(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
-  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + flag(cc) + " " + (name || cc.toUpperCase()) : ""); }
-  var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
+  /* the cover always reads the app's name, whichever country is opening (Shane, 2026-09-27) */
+  function label() { t.textContent = "Loading AXIOM OSAP"; }
+  label();
   function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
   window.OSAP_BOOT = {
     done: done,
     /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(cc, what, name); clearTimeout(timer); timer = setTimeout(done, 20000); }
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); clearTimeout(timer); timer = setTimeout(done, 20000); }
   };
   /* never leave the page covered if something fails while it builds */
   timer = setTimeout(done, 15000);
@@ -530,7 +531,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .brand .logo{width:36px;height:36px;flex:none;border-radius:50%}
 .brand{display:inline-flex;align-items:center;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
 #map{height:calc(100svh - var(--hdr-h,64px))}
-.rail{max-height:calc(100svh - var(--hdr-h,64px))}
+.rail{max-height:calc(100svh - var(--hdr-h,64px))}html:not(.phone) .rail{box-sizing:border-box}
 @media (max-width:920px){#map{height:60svh}.rail{max-height:none}}
 .tlf{display:grid;grid-template-columns:auto 1fr;gap:5px 9px;align-items:center;font-size:11.5px;color:var(--muted)}
 .tlf .mini{width:100%;min-width:0;box-sizing:border-box}
