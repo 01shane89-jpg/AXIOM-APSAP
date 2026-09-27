@@ -5,6 +5,7 @@
 // Writes data/live/news.js. Exit codes: 0 = at least one source worked, 1 = all failed (old file left untouched).
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
+import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
@@ -84,4 +85,5 @@ saveCache();
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
+try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
