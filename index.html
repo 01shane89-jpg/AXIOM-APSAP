@@ -3140,7 +3140,23 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     list.textContent = "";
     tlLayer.clearLayers(); markers = {};
     var located = 0;
+    /* reports of the same incident show as one event (grouped-events block below) */
+    var EVV = evView(shown), evDone = {}, evN = 0;
     shown.forEach(function (r, i) {
+      var ev = EVV[r.id];
+      if (ev) {
+        if (evDone[ev.id]) return;
+        evDone[ev.id] = 1; evN++;
+        located += ev.m.filter(function (x) { return x.lat != null && isFinite(x.lat); }).length;
+        evPin(ev);
+        if (i >= 250) return;
+        var de = document.createElement("button");
+        de.type = "button"; de.className = "tlrow evrow"; de.setAttribute("data-ev", ev.id);
+        de.innerHTML = evRowHtml(ev);
+        de.addEventListener("click", function () { evOpen(ev, "tl-pkg"); if (ev.loc) map.setView([ev.loc.lat, ev.loc.lon], Math.max(map.getZoom(), 9)); });
+        list.appendChild(de);
+        return;
+      }
       if (isFinite(r.lat) && isFinite(r.lon) && r.lat != null) {
         located++;
         var st0 = markerStyle(r);
@@ -3164,7 +3180,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       list.appendChild(d);
     });
     document.getElementById("tl-count").textContent = shown.length + " of " + R.length + " records" +
-      (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map · period: " + periodLabel();
+      (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map" + (evN ? " · " + evN + " grouped events" : "") + " · period: " + periodLabel();
     if (!shown.length && R.length) list.innerHTML = '<p class="obs">Nothing in this reporting period (' + esc(periodLabel()) + '). <button type="button" class="refresh" data-period="all">Show all dates</button></p>';
     else if (PERIOD.p !== "all") { var hid = R.filter(function (r) { return !inPeriod(r); }).length; if (hid) list.insertAdjacentHTML("afterbegin", hiddenNote(hid)); }
     if (PB.on) {
@@ -3346,6 +3362,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           return '<a href="https://sanctionssearch.ofac.treas.gov/Details.aspx?id=' + encodeURIComponent(e.id) + '" target="_blank" rel="noopener">' + esc(e.n) + "</a> (" + esc(e.p) + ")"; }).join("; ") +
           '. <span class="obs">A name match only, not an identity match.</span></dd>' : ""; })() +
       "</dl>" +
+      evNote(r) +
       '<h4 class="pkgh">Related records</h4>' +
       (rel.length ? '<div class="pkgrel">' + rel.map(function (o) {
         return '<button type="button" class="tlrow" data-id="' + o.id + '"><span class="tlt">' + esc(fmtTs(o)) +
@@ -3374,7 +3391,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (m) {
       if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
       m.setStyle({ weight: 3, color: tok("--ink") });
-      setTimeout(function () { var mm = inCur ? CM[id] : markers[id]; if (mm) mm.setStyle(inCur ? cStyle(r) : markerStyle(r)); }, 2500);
+      setTimeout(function () { var mm = inCur ? CM[id] : markers[id]; if (mm) mm.setStyle(mm.__evStyle || (inCur ? cStyle(r) : markerStyle(r))); }, 2500);
     }
   }
 
@@ -5410,6 +5427,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var l = LBY[current] || {};
     if (r.sof || l.sof) return sofM[r.id] || null;
     if (l.curated) return (CM && CM[r.id]) || null;
+    if (r.evv) return (markers && markers[r.evv.m[0].id]) || null;
     return (markers && markers[r.id]) || null;
   }
   function rvRender() {
@@ -5422,6 +5440,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var located = all.filter(function (r) { return r.lat != null && isFinite(r.lat) && isFinite(r.lon); });
     var list = inArea ? located.filter(function (r) { return inArea.contains([r.lat, r.lon]); }) : all.slice();
     list.sort(function (a, c) { return a.ts < c.ts ? 1 : (a.ts > c.ts ? -1 : 0); });
+    if (current === "timeline") list = evCollapse(list);
     rvShown = list;
     var none = !all.length;
     rvBox.classList.toggle("rv-empty", none);
@@ -5432,6 +5451,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     /* on a phone the list opens short, so the tab's own panel stays in reach just below it */
     var cap = phone && !rvAll ? 3 : 200;
     rvList.innerHTML = list.slice(0, cap).map(function (r) {
+      if (r.evv) return evCard(r);
       if (r.sof) return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(r.tier) + '</span><span class="rvh">' + esc(r.title) + "</span></button>";
       var st = STATE[r.type] ? STATE[r.type][0] : r.type, ln = LBY[r.layer] ? LBY[r.layer].name : r.layer;
       var pic = r.img || r.thumb;
@@ -5502,6 +5522,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     rvRingAt(r);
     Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
     c.classList.add("on");
+    if (r && r.evv) { evOpen(r.evv, "rv-pkg"); var pe = document.getElementById("rv-pkg"); if (pe && !rvPhone()) pe.scrollTop = 0; return; }
     if (r && r.sof) { var sm = sofM[id]; if (sm) { map.panTo([r.lat, r.lon]); sm.openPopup(); } return; }
     select(id, undefined, "rv-pkg");
     var pk = document.getElementById("rv-pkg"); if (pk && !rvPhone()) pk.scrollTop = 0;
@@ -5720,6 +5741,595 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.getElementById("hdr-live").hidden = !TH;
   if (!TH) document.title = "AXIOM OSAP \u00b7 " + C.name;
   setView(want || "flood", true);
+  /* ---------- grouped events and area watches (watch thread; self-contained block) ----------
+     EVENTS. Reports that seem to describe the same incident (news, social posts, warnings, catalogue records) are shown as one
+     event with one pin. Grouping is a view worked out in this browser by fixed rules; it never merges or edits a record. Two
+     reports join when they are close in time (48 h), close in place (25 km, or 60 km when one is only placed by province, or the
+     same named place) and either share wording (the Top stories test) or are the same kind of hazard (an earthquake of nearly the
+     same size and time). Each event lists every report under it with its own source, time, link and status, and any report can
+     be split out; splits are kept on this device.
+     WATCHES. A watch is an area (a drawn area or a whole country), optionally narrowed to categories and a minimum severity. Each
+     time OSAP opens, and every 15 minutes while it stays open, it rebuilds each watched country's reports (a hidden copy of the
+     page, so the same rules make the same records) and lists anything new inside a watch. With permission it also shows a system
+     notification. A watch hit is a notice about a report, never a finding. Watches, hits and splits live in this browser only. */
+  var EV_KEY = "asap-ev-on", EV_SPLIT_KEY = "asap-ev-split", W_KEY = "asap-watches", WH_KEY = "asap-watch-hits", WS_KEY = "asap-watch-seen";
+  var SCAN = /[?&]watchscan=1(&|$)/.test(location.search);
+  var EV_ON = lsGet(EV_KEY, true) !== false, EV_SPLIT = lsGet(EV_SPLIT_KEY, {}) || {};
+  /* a record's lasting key: survives a rebuild or refresh (the page's own record ids are only a counter) */
+  function recKey(r) {
+    var s = r.url ? [r.layer, r.url, r.kind, r.cat, String(r.ts).slice(0, 10), r.place].join("|") : [r.layer, r.title, String(r.ts).slice(0, 16), r.lat, r.lon].join("|");
+    var h1 = 0x811c9dc5, h2 = 0x01000193;
+    for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822519); }
+    return (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
+  }
+  function rk(r) { return r.__rk || (r.__rk = recKey(r)); }
+  function evMs(r) { var m = recMs(r); if (m != null) return { ms: m, day: false }; var d = Date.parse(String(r.ts).slice(0, 10) + "T12:00:00Z"); return { ms: d, day: true }; }
+  function hasLL(r) { return r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon); }
+  var PRANK = { exact: 3, approx: 2, province: 1 };
+  /* broadcast programme posts (episodes, replays, live streams) carry a show's name, not an incident */
+  var EV_SHOW = /\b(part \d+|playback|full episode|episode \d+|livestream|live stream|live:|highlights|replay|webcast|newscast|bulletin \d+|24 oras|tv patrol|news patrol)\b/i;
+  function evPair(a, b) {
+    /* one source's own reports are separate issues (bulletins, catalogue rows, an account's posts), never one event */
+    if (a.src === b.src || a.src.name === b.src.name) return false;
+    var ta = a.__t, tb = b.__t, dt = Math.abs(ta.ms - tb.ms) / 36e5;
+    if (dt > (ta.day || tb.day ? 60 : 48)) return false;
+    var la = hasLL(a), lb = hasLL(b), near = false, samePlace = a.place && b.place && a.place === b.place;
+    if (la && lb) { var d = km(a, b), lim = a.prec === "province" || b.prec === "province" ? 60 : 25; near = d <= lim; if (!near && !samePlace) return false; }
+    if (a.magnitude != null && b.magnitude != null) return (near || samePlace) && dt <= 1 && Math.abs(a.magnitude - b.magnitude) <= 0.6;
+    if (a.magnitude != null || b.magnitude != null) {
+      if (!(a.quake || b.quake || /quake/i.test(a.title + " " + b.title))) return false;
+    }
+    var words = nSame(a.__w, b.__w);
+    if (la && lb) return words;
+    /* one or both have no map point: wording alone, tighter in time */
+    if (!words) return false;
+    return samePlace || dt <= 36;
+  }
+  /* CROSS-BORDER. Neighbouring countries' reports come from the same hidden page copies the watches use: each copy sends back
+     its own records (last 30 days), kept in this browser for 30 minutes. They join events and "across the border" lists here as
+     read-only references; opening one goes to that country's page. */
+  var XB_KEY = "asap-xrecs-", XB_AGE = 30 * 60 * 1000, XB_DAYS = 30, XR = [], XBV = 0, XB_AT = {};
+  function flagOf(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
+  function cName(cc) { return (CBY[cc] || {}).name || cc.toUpperCase(); }
+  /* countries whose outline box touches this one's (with half a degree to spare), nearest first; fewer on a phone */
+  var NB = (function () {
+    var b = C.bounds, pad = 0.5, out = [];
+    if (!b) return out;
+    var cx = (b[0][0] + b[1][0]) / 2, cy = (b[0][1] + b[1][1]) / 2;
+    COUNTRIES.forEach(function (c) {
+      var o = c.bounds; if (c.id === CC || !o) return;
+      if (CC === "oki" && c.id === "jp" || CC === "jp" && c.id === "oki") { out.push({ id: c.id, d: 0 }); return; }
+      if (o[0][0] <= b[1][0] + pad && o[1][0] >= b[0][0] - pad && o[0][1] <= b[1][1] + pad && o[1][1] >= b[0][1] - pad)
+        out.push({ id: c.id, d: Math.hypot((o[0][0] + o[1][0]) / 2 - cx, (o[0][1] + o[1][1]) / 2 - cy) });
+    });
+    return out.sort(function (a, c) { return a.d - c.d; }).slice(0, window.matchMedia && matchMedia("(max-width: 700px)").matches ? 3 : 5).map(function (x) { return x.id; });
+  })();
+  function xbRec(x, cc) {
+    return { id: "x:" + cc + ":" + x.k, xcc: cc, __rk: x.k, title: x.t, ts: x.ts, issued: x.is, lat: x.la, lon: x.lo, prec: x.p, place: x.pl || "", prov: "",
+      src: { name: x.s, kind: x.sk || "" }, url: x.u || "", type: x.ty, layer: x.l, sev: x.sv || 1, magnitude: x.m, quake: !!x.q, news: !!x.n, social: !!x.so };
+  }
+  function xbLoad() {
+    XR = [];
+    NB.forEach(function (cc) {
+      var o = lsGet(XB_KEY + cc, null);
+      if (!o || !o.recs) return;
+      XB_AT[cc] = o.at;
+      o.recs.forEach(function (x) { XR.push(xbRec(x, cc)); });
+    });
+    XBV++;
+  }
+  function xbStale() { return NB.filter(function (cc) { var o = lsGet(XB_KEY + cc, null); return !o || !o.recs || Date.now() - o.at > XB_AGE; }); }
+  /* what a scan copy sends back: its recent records, trimmed to the fields grouping and the lists need */
+  function xbExport() {
+    var cut = Date.now() - XB_DAYS * 864e5;
+    return R.filter(function (r) { var t = evMs(r).ms; return !r.ongoing && isFinite(t) && t >= cut; }).slice(0, 900).map(function (r) {
+      return { k: rk(r), t: String(r.title || "").slice(0, 240), ts: r.ts, is: r.issued, la: r.lat, lo: r.lon, p: r.prec, pl: r.place, s: r.src ? r.src.name : "", sk: r.src ? r.src.kind : "",
+        u: r.url, ty: r.type, l: r.layer, sv: r.sev, m: r.magnitude, q: r.quake ? 1 : 0, n: r.news ? 1 : 0, so: r.social ? 1 : 0 };
+    });
+  }
+  xbLoad();
+  var EVC = { sig: "", byRec: {}, list: [] };
+  function evSig() { return R.length + ":" + (R[0] ? R[0].id : "") + ":" + (R.length ? R[R.length - 1].id : "") + ":" + Object.keys(EV_SPLIT).length + ":" + XBV; }
+  /* clusters: records in time order, each joins the open event it matches best (an event stays open for 48 h after its first
+     report and holds at most 40 reports), or starts its own */
+  function evBuild() {
+    var sig = evSig(); if (sig === EVC.sig) return EVC;
+    var recs = R.concat(XR).filter(function (r) {
+      if (EV_SPLIT[rk(r)] || r.ongoing) return false;
+      if (r.type === "observation" && r.magnitude == null) return false;
+      /* sport, entertainment and advertising headlines are not incidents */
+      if ((r.news || r.social) && (NROUTINE.test(r.title) || EV_SHOW.test(r.title))) return false;
+      r.__t = evMs(r); r.__w = nWords(r.title);
+      return isFinite(r.__t.ms);
+    }).sort(function (a, b) { return a.__t.ms - b.__t.ms; });
+    var open = [], all = [];
+    recs.forEach(function (r) {
+      open = open.filter(function (e) { return r.__t.ms - e.t0 <= 48 * 36e5; });
+      var best = null, bestN = 0;
+      open.forEach(function (e) {
+        if (e.m.length >= 40) return;
+        var n = 0; e.m.forEach(function (o) { if (evPair(r, o)) n++; });
+        if (n > bestN) { best = e; bestN = n; }
+      });
+      if (best) best.m.push(r);
+      else { var e = { t0: r.__t.ms, m: [r] }; open.push(e); all.push(e); }
+    });
+    var byRec = {}, list = [];
+    all.forEach(function (e) {
+      /* an event needs two reports, at least one of them from this country */
+      if (e.m.length < 2 || !e.m.some(function (r) { return !r.xcc; })) return;
+      var loc0 = e.m.filter(function (r) { return !r.xcc; })[0];
+      if (loc0 !== e.m[0]) { e.m.splice(e.m.indexOf(loc0), 1); e.m.unshift(loc0); }
+      var ev = { id: "ev-" + rk(e.m[0]), m: e.m };
+      list.push(ev); e.m.forEach(function (r) { byRec[r.id] = ev; });
+    });
+    EVC = { sig: sig, byRec: byRec, list: list };
+    return EVC;
+  }
+  /* the view of one event for the records a tab shows: at least two of its reports must be showing */
+  function evMake(ev, members) {
+    var sorted = members.slice().sort(function (a, b) { return b.__t.ms - a.__t.ms; });
+    var pr = function (r) { return PRANK[r.prec] != null ? PRANK[r.prec] : 2; };
+    var loc = members.filter(hasLL).sort(function (a, b) { return pr(b) - pr(a) || a.__t.ms - b.__t.ms; })[0] || null;
+    /* the headline: an official claim or an instrument reading first, then the report with the most words shared with the rest */
+    var head = members.slice().sort(function (a, b) {
+      var oa = a.type === "claim" || a.type === "observation" ? 1 : 0, ob = b.type === "claim" || b.type === "observation" ? 1 : 0;
+      if (!!a.xcc !== !!b.xcc) return a.xcc ? 1 : -1;
+      if (oa !== ob) return ob - oa;
+      return (b.news || b.social ? 0 : 1) - (a.news || a.social ? 0 : 1) || b.sev - a.sev;
+    })[0];
+    var srcs = []; members.forEach(function (r) { if (r.src && srcs.indexOf(r.src.name) < 0) srcs.push(r.src.name); });
+    var xcc = []; members.forEach(function (r) { if (r.xcc && xcc.indexOf(r.xcc) < 0) xcc.push(r.xcc); });
+    return { id: ev.id, ev: ev, m: sorted, head: head, loc: loc, srcs: srcs, sev: Math.max.apply(null, members.map(function (r) { return r.sev || 1; })),
+      t0: sorted[sorted.length - 1].__t, t1: sorted[0].__t, rep: sorted.filter(function (r) { return !r.xcc; })[0] || sorted[0], layer: head.layer, xcc: xcc };
+  }
+  function evView(list) {
+    var out = {}; if (!EV_ON || !list || !list.length) return out;
+    var E = evBuild(), per = {};
+    list.forEach(function (r) { var ev = E.byRec[r.id]; if (ev) (per[ev.id] = per[ev.id] || { ev: ev, m: [] }).m.push(r); });
+    Object.keys(per).forEach(function (k) {
+      var fx = per[k].ev.m.filter(function (r) { return r.xcc; });
+      if (per[k].m.length + fx.length < 2) return;
+      var v = evMake(per[k].ev, per[k].m.concat(fx));
+      v.m.forEach(function (r) { out[r.id] = v; });
+    });
+    return out;
+  }
+  /* the event a record belongs to, over every record, for the note in its report */
+  function evOfRec(r) { var ev = evBuild().byRec[r.id]; return ev ? evMake(ev, ev.m) : null; }
+  function evWhen(v) {
+    var a = v.t0, b = v.t1, tz = { date: true };
+    if (a.day || b.day) return fmtTs(v.m[v.m.length - 1]) + (v.m[0] !== v.m[v.m.length - 1] ? " to " + fmtTs(v.m[0]) : "");
+    return window.OSAP_TIME.dualT(a.ms, tz) + (b.ms - a.ms >= 6e4 ? " to " + window.OSAP_TIME.dualT(b.ms, tz) : "");
+  }
+  function evSrcTxt(v) { return v.srcs.slice(0, 2).join(", ") + (v.srcs.length > 2 ? " +" + (v.srcs.length - 2) + " more" : ""); }
+  function evChips(v) {
+    var ln = LBY[v.layer] ? LBY[v.layer].name : v.layer;
+    return chip("evc", v.m.length + " reports") + (v.xcc.length ? chip("evxb", "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ")) : "") +
+      chip("evauto", "Grouped automatically") + chip("l-" + v.layer, ln);
+  }
+  function evStyle(v) {
+    var c = tok(LCOL[v.layer] || "--muted");
+    return { radius: 8 + Math.min(6, v.m.length), color: tok("--ink"), weight: 2.5, fillColor: c, fillOpacity: 0.9, dashArray: null, opacity: 1 };
+  }
+  if (!map.getPane("evlbl")) { map.createPane("evlbl"); map.getPane("evlbl").style.zIndex = 655; map.getPane("evlbl").style.pointerEvents = "none"; }
+  /* one pin per event on the Timeline map; each member's id points at it, so selecting a report rings the event pin */
+  function evPin(v) {
+    if (!v.loc) return null;
+    var m = L.circleMarker([v.loc.lat, v.loc.lon], L.extend({ pane: "tlpane" }, evStyle(v)));
+    m.__evStyle = evStyle(v);
+    m.bindTooltip(esc((v.xcc.length ? "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ") + " · " : "") + v.m.length + " reports, grouped automatically: " + v.head.title), { direction: "top" });
+    m.on("click", function () { evOpen(v, "tl-pkg"); });
+    tlLayer.addLayer(m);
+    tlLayer.addLayer(L.marker([v.loc.lat, v.loc.lon], { pane: "evlbl", interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "evnum", html: String(v.m.length), iconSize: [18, 18], iconAnchor: [9, 9] }) }));
+    v.m.forEach(function (r) { markers[r.id] = m; });
+    return m;
+  }
+  function evRowHtml(v) {
+    return '<span class="tlt">' + esc(evWhen(v)) + "</span>" +
+      '<span class="tln">' + esc(v.head.title) + "</span>" +
+      '<span class="tlm">' + evChips(v) + '<span class="tls">' + esc(evSrcTxt(v)) + "</span></span>";
+  }
+  var EVOPEN = null;
+  function evOpen(v, boxId) {
+    EVOPEN = { id: v.id, box: boxId || "tl-pkg" };
+    var box = document.getElementById(boxId || "tl-pkg"); if (!box) return;
+    box.hidden = false;
+    var dist = v.loc ? v.m.filter(hasLL).reduce(function (mx, r) { return Math.max(mx, km(v.loc, r)); }, 0) : 0;
+    var nSplit = Object.keys(EV_SPLIT).filter(function (k) { return EV_SPLIT[k] && EV_SPLIT[k].ev === v.id; }).length;
+    box.innerHTML = '<div class="pkghead"><h2>Event</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<h3 class="pkgt">' + esc(v.head.title) + "</h3>" +
+      '<div class="pkgchips">' + evChips(v) + chip("sev" + v.sev, ["", "Low", "Medium", "High"][v.sev] + " severity (highest report)") + "</div>" +
+      '<p class="banner evnote"><b>Grouped automatically.</b> These ' + v.m.length + " reports from " + v.srcs.length + " source" + (v.srcs.length === 1 ? "" : "s") +
+        " are close in time and place and share wording, so OSAP shows them as one event. That is a guess by fixed rules, not a finding: every report below is unchanged and keeps its own source, time and status. Split out any that does not belong." +
+        (v.xcc.length ? " <b>Cross-border:</b> it includes reports from " + v.xcc.map(function (c) { return flagOf(c) + " " + esc(cName(c)); }).join(", ") + ", read from " + (v.xcc.length === 1 ? "that country's" : "those countries'") + " page." : "") + "</p>" +
+      '<dl class="pkgdl"><dt>When</dt><dd>' + esc(evWhen(v)) + '<span class="sub">First to latest report</span></dd>' +
+        "<dt>Where</dt><dd>" + (v.loc ? esc([v.loc.place, v.loc.prov].filter(Boolean).join(", ") || (v.loc.lat.toFixed(3) + ", " + v.loc.lon.toFixed(3))) +
+          '<span class="sub">Pin at the most precisely placed report (' + esc(v.loc.src.name) + "; " + esc((PREC[v.loc.prec] || v.loc.prec).toLowerCase()) + ")" +
+          (dist >= 1 ? ". Reports are up to " + Math.round(dist) + " km apart" : "") + '</span><span class="sub">MGRS <b class="mgrs">' + esc(mgrsFor(v.loc)) + "</b></span>" : "No report in it has a map location") + "</dd></dl>" +
+      '<h4 class="pkgh">Reports in this event</h4><div class="evlist">' + v.m.map(function (r) {
+        var st = STATE[r.type] || [r.type, ""];
+        return '<div class="evm"><span class="tlt">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(fmtTs(r)) + '</span><span class="tln">' + esc(r.title) + "</span>" +
+          '<span class="tlm">' + chip("t-" + r.type, st[0]) + chip("l-" + r.layer, LBY[r.layer] ? LBY[r.layer].name : r.layer) + '<span class="tls">' + esc(r.src.name) + (r.src.kind ? " · " + esc(r.src.kind) : "") + "</span></span>" +
+          '<span class="evbtns">' + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Original</a>' : '<span class="obs">No link</span>') +
+          (r.xcc ? '<a class="refresh" href="' + esc(xbHref(r)) + '">Open in ' + esc(cName(r.xcc)) + "</a>" : '<button type="button" class="refresh" data-ev-rec="' + esc(r.id) + '">Open report</button>') +
+          '<button type="button" class="refresh" data-ev-split="' + esc(r.id) + '" title="Show this report on its own; OSAP will not group it again on this device">Split out</button></span></div>';
+      }).join("") + "</div>" +
+      (nSplit ? '<p class="obs" style="margin-top:6px">' + nSplit + " report" + (nSplit === 1 ? " was" : "s were") + ' split out of this event. <button type="button" class="refresh" data-ev-regroup="' + esc(v.id) + '">Group again</button></p>' : "");
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; EVOPEN = null; });
+    Array.prototype.forEach.call(box.querySelectorAll("[data-ev-rec]"), function (b) {
+      b.addEventListener("click", function () { EVOPEN = null; select(b.getAttribute("data-ev-rec"), boxId === "tl-pkg", boxId); });
+    });
+    Array.prototype.forEach.call(box.querySelectorAll("[data-ev-split]"), function (b) {
+      b.addEventListener("click", function () { var id = b.getAttribute("data-ev-split"); evSplit(v.m.filter(function (x) { return x.id === id; })[0], v, boxId); });
+    });
+    var rg = box.querySelector("[data-ev-regroup]");
+    if (rg) rg.addEventListener("click", function () {
+      Object.keys(EV_SPLIT).forEach(function (k) { if (EV_SPLIT[k] && EV_SPLIT[k].ev === v.id) delete EV_SPLIT[k]; });
+      lsSet(EV_SPLIT_KEY, EV_SPLIT); evRefresh(); var nv = evFind(v); if (nv) evOpen(nv, boxId);
+    });
+    if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) {
+      var rb = box.getBoundingClientRect();
+      if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    var m = v.loc ? markers[v.m[0].id] : null;
+    if (m && m.setStyle && boxId === "tl-pkg") { m.setStyle({ weight: 4 }); setTimeout(function () { if (m.__evStyle) m.setStyle(m.__evStyle); }, 2000); }
+  }
+  /* after a split or regroup: the event again, from any of its remaining reports */
+  function evFind(v) {
+    for (var i = 0; i < v.m.length; i++) { var n = evOfRec(v.m[i]); if (n) return n; }
+    return null;
+  }
+  function evSplit(r, v, boxId) {
+    if (!r) return;
+    EV_SPLIT[rk(r)] = { ev: v.id, at: Date.now() };
+    lsSet(EV_SPLIT_KEY, EV_SPLIT); evRefresh();
+    var nv = evFind({ m: v.m.filter(function (o) { return o !== r; }) });
+    if (nv) evOpen(nv, boxId); else select(r.id, false, boxId);
+  }
+  function evRefresh() { EVC.sig = ""; if (current === "timeline") render(); rvSoon(); }
+  /* the switch sits under the Timeline filters; it also groups the report list beside the map */
+  (function () {
+    var cnt = document.getElementById("tl-count"); if (!cnt || document.getElementById("ev-on")) return;
+    var lab = document.createElement("label"); lab.className = "evtog";
+    lab.innerHTML = '<input type="checkbox" id="ev-on"' + (EV_ON ? " checked" : "") + "> Group reports of the same incident" +
+      ' <span class="obs">(automatic; each report is kept)</span>';
+    cnt.parentNode.parentNode.insertBefore(lab, cnt.parentNode.nextSibling);
+    lab.querySelector("input").addEventListener("change", function () { EV_ON = this.checked; lsSet(EV_KEY, EV_ON); evRefresh(); });
+  })();
+  /* the report list beside the map: members of one event become one card */
+  function evCollapse(list) {
+    var V = evView(list), done = {}, out = [];
+    list.forEach(function (r) {
+      var v = V[r.id];
+      if (!v) { out.push(r); return; }
+      if (done[v.id]) return;
+      done[v.id] = 1;
+      out.push({ id: v.id, evv: v, ts: v.rep.ts, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null });
+    });
+    return out;
+  }
+  function evCard(x) {
+    var v = x.evv;
+    return '<button type="button" class="rvcard evcard" data-rv="' + esc(x.id) + '"><span class="rvt">' + esc(evWhen(v)) + "</span>" +
+      '<span class="rvh">' + esc(v.head.title) + "</span>" +
+      '<span class="rvm">' + evChips(v) + "</span>" +
+      '<span class="rvs">' + esc(evSrcTxt(v)) + (v.loc && v.loc.place ? " · " + esc(v.loc.place) : (v.loc ? "" : " · no map location")) + "</span></button>";
+  }
+  /* the note in a single report's package when it belongs to an event */
+  function xbHref(r) { return "./?wopen=" + encodeURIComponent(r.__rk) + "#" + (r.xcc === "th" ? "" : r.xcc + "/") + "timeline"; }
+  /* neighbouring countries' reports close to this one: within 25 km and 30 days, or the same wording within 3 days */
+  function xbRelated(r, skip) {
+    if (!XR.length || r.xcc) return [];
+    var t = evMs(r).ms, w = nWords(r.title), ll = hasLL(r);
+    return XR.filter(function (o) {
+      if (skip && skip[o.id]) return false;
+      var ot = evMs(o).ms, dd = Math.abs(ot - t) / 864e5;
+      if (!isFinite(dd)) return false;
+      if (ll && hasLL(o) && dd <= 30 && km(r, o) <= 25) return true;
+      return dd <= 3 && nSame(w, nWords(o.title));
+    }).sort(function (a, b) { return Math.abs(evMs(a).ms - t) - Math.abs(evMs(b).ms - t); }).slice(0, 5);
+  }
+  function evNote(r) {
+    if (!EV_ON) return "";
+    var v = evOfRec(r), out = "", skip = {};
+    if (v) {
+      v.m.forEach(function (x) { skip[x.id] = 1; });
+      out = '<p class="banner evnote" style="margin-top:8px">Part of an event grouped automatically with ' + (v.m.length - 1) + " other report" + (v.m.length === 2 ? "" : "s") +
+        ' (' + esc(evSrcTxt(v)) + ')' + (v.xcc.length ? ", across the border in " + v.xcc.map(function (c) { return flagOf(c) + " " + esc(cName(c)); }).join(", ") : "") +
+        '. <button type="button" class="refresh" data-ev-show="' + esc(r.id) + '">Show the event</button></p>';
+    }
+    var xr = xbRelated(r, skip);
+    if (xr.length) out += '<h4 class="pkgh">Across the border</h4><div class="pkgrel">' + xr.map(function (o) {
+      return '<a class="tlrow" href="' + esc(xbHref(o)) + '"><span class="tlt">' + flagOf(o.xcc) + " " + esc(cName(o.xcc)) + " · " + esc(fmtTs(o)) + '</span><span class="tln">' + esc(o.title) + '</span><span class="tls">' + esc(o.src.name) + "</span></a>";
+    }).join("") + '</div><p class="obs" style="margin-top:6px">Reports from neighbouring countries close in place and time, or with the same wording. Not a claim that they are connected.</p>';
+    return out;
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-ev-show]"); if (!b) return;
+    var r = byId[b.getAttribute("data-ev-show")], v = r && evOfRec(r), box = b.closest(".sec, #rv-pkg, [id$='-pkg']");
+    if (v) evOpen(v, box && box.id ? box.id : "tl-pkg");
+  });
+
+  /* ---------- watches ---------- */
+  var WATCHES = lsGet(W_KEY, []) || [];
+  function wLoad() { WATCHES = lsGet(W_KEY, []) || []; return WATCHES; }
+  function wSave() { lsSet(W_KEY, WATCHES); }
+  function hitsLoad() { return lsGet(WH_KEY, []) || []; }
+  var W_RECENT_DAYS = 7;
+  function wMatch(w, r) {
+    if (w.layers && w.layers.length && w.layers.indexOf(r.layer) < 0) return false;
+    if ((r.sev || 1) < (w.minSev || 1)) return false;
+    if (w.area) { if (!hasLL(r) || !inPoly(r.lat, r.lon, w.area)) return false; }
+    var t = evMs(r).ms;
+    return isFinite(t) && Date.now() - t <= W_RECENT_DAYS * 864e5 && t <= Date.now() + 36e5;
+  }
+  /* checks this page's own country; returns the new hits. The first check of a new watch only notes what is already there. */
+  function wRun() {
+    wLoad();
+    var mine = WATCHES.filter(function (w) { return w.cc === CC && w.on !== false; });
+    if (!mine.length) return [];
+    var seenAll = lsGet(WS_KEY, {}) || {}, hits = hitsLoad(), fresh = [], now = Date.now();
+    mine.forEach(function (w) {
+      var seen = seenAll[w.id] || {}, first = !w.base, grp = {};
+      R.forEach(function (r) {
+        if (!wMatch(w, r)) return;
+        var k = rk(r); if (seen[k]) return;
+        seen[k] = now;
+        if (first) return;
+        var v = EV_ON ? evOfRec(r) : null, gk = v ? v.id : k;
+        if (grp[gk]) { grp[gk].n++; return; }
+        var h = { w: w.id, wn: w.name, cc: CC, k: k, t: (v ? v.head.title : r.title).slice(0, 200), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
+          src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", n: 1, grp: v ? v.m.length : 0, at: now };
+        grp[gk] = h; fresh.push(h);
+      });
+      var keys = Object.keys(seen);
+      if (keys.length > 4000) keys.sort(function (a, b) { return seen[a] - seen[b]; }).slice(0, keys.length - 4000).forEach(function (k) { delete seen[k]; });
+      seenAll[w.id] = seen;
+      w.checked = now; if (first) { w.base = now; w.baseN = keys.length; }
+    });
+    /* re-read and write back only this country's watches, so a scan running beside this page keeps its own results */
+    var cur = lsGet(W_KEY, []) || [];
+    cur.forEach(function (w, i) { mine.forEach(function (m) { if (m.id === w.id) cur[i] = L.extend({}, w, { checked: m.checked, base: m.base, baseN: m.baseN }); }); });
+    lsSet(W_KEY, cur); WATCHES = cur;
+    lsSet(WS_KEY, L.extend(lsGet(WS_KEY, {}) || {}, (function () { var o = {}; mine.forEach(function (w) { o[w.id] = seenAll[w.id]; }); return o; })()));
+    if (fresh.length) { hits = hitsLoad().concat(fresh).slice(-300); lsSet(WH_KEY, hits); }
+    return fresh;
+  }
+  /* system notification: one per watch per check, naming the newest hit */
+  function wNotify(fresh) {
+    if (!fresh.length || !("Notification" in window) || Notification.permission !== "granted") return;
+    var by = {}; fresh.forEach(function (h) { (by[h.w] = by[h.w] || []).push(h); });
+    Object.keys(by).forEach(function (wid) {
+      var hs = by[wid], h = wNewest(hs), cn = (CBY[h.cc] || {}).name || h.cc;
+      var title = "OSAP watch: " + h.wn + " (" + cn + ")", body = (hs.length > 1 ? hs.length + " new. Latest: " : "") + h.t + (h.grp ? " (" + h.grp + " reports, grouped)" : "") + " · " + h.src;
+      var url = "./?wopen=" + encodeURIComponent(h.k) + "#" + (h.cc === "th" ? "" : h.cc + "/") + "timeline";
+      var opt = { body: body, tag: "osap-watch-" + wid, renotify: true, icon: "assets/icons/icon-192.png", badge: "assets/icons/icon-192.png", data: { url: url } };
+      var sw = navigator.serviceWorker;
+      (sw && sw.controller ? sw.ready.then(function (reg) { return reg.showNotification(title, opt); }) : Promise.reject())
+        .catch(function () { try { var n = new Notification(title, opt); n.onclick = function () { window.focus(); location.href = url; }; } catch (e) {} });
+    });
+  }
+  function wNewest(hs) { return hs.slice().sort(function (a, b) { return String(b.ts) > String(a.ts) ? 1 : String(b.ts) < String(a.ts) ? -1 : 0; })[0]; }
+  function hitsUnread() { return hitsLoad().filter(function (h) { return !h.read; }).length; }
+  var wBtn = null;
+  function wBadge() {
+    if (!wBtn) return;
+    var n = hitsUnread();
+    wBtn.innerHTML = "Watch" + (n ? ' <span class="abadge new">' + n + " new</span>" : "");
+    wBtn.classList.toggle("on", wLoad().length > 0);
+  }
+  /* toast for hits found while the page is open */
+  var wToastEl = null;
+  function wToast(fresh) {
+    if (!fresh.length) return;
+    if (!wToastEl) { wToastEl = document.createElement("div"); wToastEl.id = "wtoast"; wToastEl.setAttribute("role", "status"); document.body.appendChild(wToastEl); }
+    var h = wNewest(fresh), cn = (CBY[h.cc] || {}).name || h.cc;
+    wToastEl.innerHTML = '<b>' + fresh.length + " new in your watch" + (fresh.length === 1 ? "" : "es") + "</b> " + esc(h.wn + " (" + cn + "): " + h.t) +
+      ' <button type="button" class="refresh" data-w-openhit="' + esc(h.k) + '" data-w-cc="' + esc(h.cc) + '">Open</button> <button type="button" class="refresh" data-w-panel>All hits</button>' +
+      ' <button type="button" class="x" aria-label="Dismiss">×</button>';
+    wToastEl.hidden = false;
+  }
+  function wOpenHit(k, cc) {
+    var hs = hitsLoad(); hs.forEach(function (h) { if (h.k === k) h.read = true; }); lsSet(WH_KEY, hs); wBadge();
+    if (cc === CC) {
+      var r = R.filter(function (x) { return rk(x) === k; })[0];
+      wClose();
+      if (r) { setView("timeline"); var v = EV_ON ? evView(shown)[r.id] : null; if (v) evOpen(v, "tl-pkg"); else select(r.id, true); return; }
+      alert("That report is no longer in this build (it may have dropped out of the feed). The watch hit is kept in the list.");
+      return;
+    }
+    location.href = "./?wopen=" + encodeURIComponent(k) + "#" + (cc === "th" ? "" : cc + "/") + "timeline";
+  }
+  /* watch dialog */
+  var wEl = document.createElement("div"); wEl.id = "watchdlg"; wEl.hidden = true; wEl.setAttribute("role", "dialog"); wEl.setAttribute("aria-modal", "true"); wEl.setAttribute("aria-labelledby", "watch-h");
+  document.body.appendChild(wEl);
+  function wClose() { wEl.hidden = true; wEl.innerHTML = ""; }
+  function notifState() {
+    if (!("Notification" in window)) return ["none", /iPhone|iPad/.test(navigator.userAgent) ? "Not available here. On iPhone and iPad, add OSAP to the Home Screen first (Share, then Add to Home Screen) and open it from there." : "This browser cannot show notifications."];
+    if (Notification.permission === "granted") return ["on", "On. OSAP shows a system notification when a check finds something new."];
+    if (Notification.permission === "denied") return ["off", "Blocked for this site in the browser settings. Allow notifications for this site there to turn them on."];
+    return ["ask", "Off. New hits are listed here and in the Watch button only."];
+  }
+  function lvlName(n) { return ["", "Any severity", "Medium or high", "High only"][n || 1]; }
+  function wOpen(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    wLoad();
+    var ns = notifState(), hs = hitsLoad().slice().reverse().slice(0, 60);
+    var cats = LAYERS.filter(function (l) { return (l.curated || l.id === "news" || l.id === "social" || TD[l.id]) && l.id !== "timeline" && l.id !== "alerts"; });
+    var seenCat = {}; cats = cats.filter(function (l) { if (seenCat[l.id]) return false; seenCat[l.id] = 1; return true; });
+    wEl.innerHTML = '<div class="cbox"><div class="chead"><h2 id="watch-h">Watch an area</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
+      '<p class="obs">Get told when new reports land inside an area. A hit is a notice about a report, not a finding. Watches and hits are kept in this browser only.</p>' +
+      '<div class="wnotif"><b>System notifications:</b> ' + esc(ns[1]) + (ns[0] === "ask" ? ' <button type="button" class="refresh primary" data-w-perm>Turn on</button>' : "") + "</div>" +
+      '<details class="wlimits"><summary>When OSAP can tell you</summary><ul>' +
+        "<li>OSAP checks every watch when it opens and every 15 minutes while it stays open, including in a background browser tab on a computer.</li>" +
+        "<li>Android and computers: notifications appear while OSAP is open, even in the background. Once it is closed, nothing checks until you open it again.</li>" +
+        "<li>iPhone and iPad: only from the Home Screen app, and only while it is open on screen. iOS stops web apps in the background, so a locked phone gets nothing.</li>" +
+        "<li>The data itself refreshes about every 3 hours now, so a hit can only be as new as the last refresh.</li>" +
+        "<li>Alerts to a closed app or a locked phone would need a push relay; that is a separate choice and is not switched on.</li></ul></details>" +
+      '<h3>New watch in ' + esc(C.name) + "</h3>" +
+      '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
+        '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? " checked" : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(use Draw area on the map first)</span>') + "</span></label>" +
+        '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
+        '<fieldset><legend>Categories</legend><label><input type="checkbox" id="w-anycat" checked> Any category</label><div class="wcats">' + cats.map(function (l) {
+          return '<label><input type="checkbox" name="w-cat" value="' + esc(l.id) + '"> ' + esc(l.name) + "</label>"; }).join("") + "</div></fieldset>" +
+        '<label>Severity <select id="w-sev" class="mini"><option value="1">Any severity</option><option value="2">Medium or high</option><option value="3">High only</option></select></label>' +
+        '<p class="obs">Counts reports dated in the last ' + W_RECENT_DAYS + " days. What is already there when you save is noted, not announced; only later arrivals are hits.</p>" +
+        '<button type="submit" class="refresh primary">Save watch</button></form>' +
+      "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
+        var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
+        return '<div class="wrow"><div><b>' + esc(w.name) + "</b>" + (w.on === false ? ' <span class="chip">paused</span>' : "") + (nNew ? ' <span class="abadge new">' + nNew + " new</span>" : "") +
+          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev)) +
+          "<br>" + (w.checked ? "Last checked " + esc(window.OSAP_TIME.dualT(w.checked, { date: true })) : "Not checked yet") + "</div></div>" +
+          '<div class="wbtns">' + (w.area ? '<button type="button" class="refresh" data-w-show="' + esc(w.id) + '">Show</button>' : "") +
+          '<button type="button" class="refresh" data-w-pause="' + esc(w.id) + '">' + (w.on === false ? "Resume" : "Pause") + "</button>" +
+          '<button type="button" class="refresh" data-w-del="' + esc(w.id) + '">Delete</button></div></div>';
+      }).join("") + "</div>" : '<p class="obs">No watches yet.</p>') +
+      '<h3>Recent hits</h3>' + (hs.length ? '<div class="whits">' + hs.map(function (h) {
+        var cn = (CBY[h.cc] || {}).name || h.cc, t = window.OSAP_TIME.parseT(h.ts), when = isFinite(t) ? window.OSAP_TIME.dualT(t, { date: true, tz: window.OSAP_TZMAP[h.cc] }) : String(h.ts || "").slice(0, 10);
+        return '<button type="button" class="tlrow' + (h.read ? "" : " new") + '" data-w-openhit="' + esc(h.k) + '" data-w-cc="' + esc(h.cc) + '"><span class="tlt">' + esc(when) + (h.read ? "" : ' <b class="newtag">NEW</b>') + "</span>" +
+          '<span class="tln">' + esc(h.t) + "</span>" +
+          '<span class="tlm">' + chip("rule", h.wn + " · " + cn) + chip("sev" + (h.sev || 1), ["", "Low", "Medium", "High"][h.sev || 1]) + (h.grp ? chip("evauto", h.grp + " reports, grouped") : chip("t-x", h.st || "")) + '<span class="tls">' + esc(h.src) + "</span></span></button>";
+      }).join("") + '</div><p><button type="button" class="refresh" data-w-read>Mark all read</button> <button type="button" class="refresh" data-w-clear>Clear the list</button></p>' : '<p class="obs">Nothing new yet.</p>') +
+      "</div>";
+    wEl.hidden = false;
+    var any = wEl.querySelector("#w-anycat");
+    any.addEventListener("change", function () { if (any.checked) Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.checked = false; }); });
+    Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.addEventListener("change", function () { if (c.checked) any.checked = false; }); });
+    wEl.querySelector("#wform").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
+      var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wEl.querySelector("#w-name").value || C.name).trim().slice(0, 60), cc: CC,
+        area: a && a.value === "drawn" && AREA ? AREA.slice() : null, layers: any.checked ? [] : cats2, minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
+      wLoad(); WATCHES.push(w); wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
+    });
+    wEl.querySelector(".chead .x").addEventListener("click", wClose);
+    wEl.querySelector(".chead .x").focus();
+  }
+  wEl.addEventListener("click", function (e) {
+    if (e.target === wEl) { wClose(); return; }
+    var t = e.target.closest && e.target.closest("button"); if (!t) return;
+    var id;
+    if (t.hasAttribute("data-w-perm")) { Notification.requestPermission().then(function () { wOpen(); }); return; }
+    if ((id = t.getAttribute("data-w-del"))) { if (!confirm("Delete this watch and its hits?")) return; wLoad(); WATCHES = WATCHES.filter(function (w) { return w.id !== id; }); wSave();
+      lsSet(WH_KEY, hitsLoad().filter(function (h) { return h.w !== id; })); var s = lsGet(WS_KEY, {}) || {}; delete s[id]; lsSet(WS_KEY, s); wBadge(); wShowArea(null); wOpen(); return; }
+    if ((id = t.getAttribute("data-w-pause"))) { wLoad(); WATCHES.forEach(function (w) { if (w.id === id) w.on = w.on === false; }); wSave(); wOpen(); return; }
+    if ((id = t.getAttribute("data-w-show"))) { var w0 = wLoad().filter(function (w) { return w.id === id; })[0]; if (!w0) return;
+      if (w0.cc !== CC) { location.href = "./?wshow=" + encodeURIComponent(id) + "#" + (w0.cc === "th" ? "" : w0.cc + "/") + "timeline"; return; }
+      wClose(); wShowArea(w0); return; }
+    if (t.hasAttribute("data-w-read")) { var hs = hitsLoad(); hs.forEach(function (h) { h.read = true; }); lsSet(WH_KEY, hs); wBadge(); wOpen(); return; }
+    if (t.hasAttribute("data-w-clear")) { lsSet(WH_KEY, []); wBadge(); wOpen(); return; }
+  });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-w-openhit]");
+    if (b) { if (wToastEl) wToastEl.hidden = true; wOpenHit(b.getAttribute("data-w-openhit"), b.getAttribute("data-w-cc")); return; }
+    if (e.target.closest && e.target.closest("[data-w-panel]")) { if (wToastEl) wToastEl.hidden = true; wOpen(); return; }
+    if (wToastEl && e.target.closest && e.target.closest("#wtoast .x")) wToastEl.hidden = true;
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !wEl.hidden) wClose(); });
+  /* a watch's area outlined on the map (not a filter; Draw area stays the filter) */
+  var wAreaLayer = null;
+  function wShowArea(w) {
+    if (wAreaLayer) { map.removeLayer(wAreaLayer); wAreaLayer = null; }
+    if (!w || !w.area) return;
+    wAreaLayer = L.polygon(w.area, { pane: "areapane", color: tok("--near"), weight: 2.5, dashArray: "2 6", fill: false, interactive: false }).addTo(map);
+    wAreaLayer.bindTooltip("Watch: " + w.name, { permanent: true, direction: "center", className: "wlbl" });
+    map.fitBounds(wAreaLayer.getBounds(), { padding: [30, 30] });
+  }
+  var WatchCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+    var d = L.DomUtil.create("div", "leaflet-control areactl wctl");
+    d.innerHTML = '<button type="button" id="watch-btn" title="Watch an area and get told about new reports inside it">Watch</button>';
+    L.DomEvent.disableClickPropagation(d); return d; } });
+  if (!SCAN) { new WatchCtl().addTo(map); wBtn = document.getElementById("watch-btn"); wBtn.addEventListener("click", wOpen); }
+  /* scans: each watched country rebuilt in a hidden copy of this page (index.html?watchscan=1), one at a time */
+  var wScanBusy = false, wTimer = 0, W_EVERY = 15 * 60 * 1000;
+  function wScanAll() {
+    if (wScanBusy) return;
+    var ccs = []; wLoad().forEach(function (w) { if (w.on !== false && ccs.indexOf(w.cc) < 0) ccs.push(w.cc); });
+    if (EV_ON) xbStale().forEach(function (cc) { if (ccs.indexOf(cc) < 0) ccs.push(cc); });
+    if (!ccs.length || !/^https?:$/.test(location.protocol)) return;
+    wScanBusy = true;
+    var keepView = null; try { keepView = localStorage.getItem("tw-view"); } catch (e) {}
+    (function next() {
+      var cc = ccs.shift();
+      if (!cc) { wScanBusy = false; try { if (keepView != null) localStorage.setItem("tw-view", keepView); } catch (e) {} wBadge(); return; }
+      var f = document.createElement("iframe"), done = false;
+      f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "watch check";
+      f.style.cssText = "position:fixed;left:-10000px;top:0;width:1100px;height:700px;border:0;visibility:hidden";
+      function fin(fresh) {
+        if (done) return; done = true;
+        clearTimeout(to); window.removeEventListener("message", onMsg);
+        if (f.parentNode) f.parentNode.removeChild(f);
+        if (fresh && fresh.length) { wNotify(fresh); wToast(fresh); }
+        setTimeout(next, 500);
+      }
+      function onMsg(e) {
+        if (e.source !== f.contentWindow || !e.data || e.data.osapWatchScan !== cc) return;
+        if (e.data.recs) { lsSet(XB_KEY + cc, { at: Date.now(), recs: e.data.recs }); if (NB.indexOf(cc) >= 0) { xbLoad(); evRefresh(); } }
+        fin(e.data.fresh || []);
+      }
+      window.addEventListener("message", onMsg);
+      var to = setTimeout(function () { fin([]); }, 45000);
+      f.src = location.pathname + "?watchscan=1#" + (cc === "th" ? "" : cc + "/") + "timeline";
+      document.body.appendChild(f);
+    })();
+  }
+  function wSchedule(soon) {
+    if (SCAN) return;
+    clearTimeout(wTimer);
+    wTimer = setTimeout(function () { wScanAll(); wSchedule(); }, soon ? 3000 : W_EVERY);
+  }
+  /* a scan copy checks its country once the page has settled, reports back and does nothing else */
+  function wStart() {
+    if (SCAN) {
+      var fresh = wRun();
+      try { if (window.parent && window.parent !== window) window.parent.postMessage({ osapWatchScan: CC, fresh: fresh, recs: xbExport() }, location.origin === "null" ? "*" : location.origin); } catch (e) {}
+      return;
+    }
+    var fresh = wRun(); if (fresh.length) { wNotify(fresh); wToast(fresh); }
+    wBadge();
+    var q = new URLSearchParams(location.search), ok = q.get("wopen"), ws = q.get("wshow");
+    if (ok || ws) {
+      try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
+      if (ok) wOpenHit(ok, CC);
+      if (ws) wShowArea(wLoad().filter(function (w) { return w.id === ws; })[0]);
+    }
+    /* the page's own country was just checked with what it loaded; the other watched countries are checked shortly after */
+    if (wLoad().some(function (w) { return w.cc !== CC && w.on !== false; }) || (EV_ON && xbStale().length)) setTimeout(function () { wScanAll(); }, 8000);
+    wSchedule();
+  }
+  window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
+  if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
+  (function () {
+    var st = document.createElement("style");
+    st.textContent = ".chip.evxb{color:var(--near);border-color:var(--near);text-transform:none;letter-spacing:0}.pkgrel a.tlrow{text-decoration:none;color:inherit}.chip.evc{color:var(--ink);border-color:var(--ink)}.chip.evauto{color:var(--accent);border-color:var(--accent);text-transform:none;letter-spacing:0}" +
+      ".evnum{color:#fff;font:700 10.5px/18px 'IBM Plex Mono',monospace;text-align:center;text-shadow:0 0 2px #000,0 0 2px #000}" +
+      ".evtog{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:6px;flex-wrap:wrap}.evnote{margin:8px 0;font-size:12.5px}" +
+      ".evlist{display:flex;flex-direction:column}.evm{display:grid;gap:2px;padding:7px 2px;border-top:1px solid var(--line-soft)}" +
+      ".evbtns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px;font-size:12px}.rvcard.evcard{border-left:3px solid var(--ink)}" +
+      "#watchdlg{position:fixed;inset:0;z-index:100000;overflow:auto;background:rgba(0,0,0,.45);padding:16px}" +
+      "#watchdlg .cbox{max-width:680px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:8px;padding:14px 18px 18px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.3)}" +
+      "#watchdlg .chead{display:flex;align-items:center;gap:8px;position:sticky;top:-16px;background:var(--surface);padding:6px 0;z-index:1}#watchdlg .chead h2{margin:0;font-size:18px;flex:1}" +
+      "#watchdlg .chead .x{font-size:26px;min-width:44px;min-height:44px;background:none;border:none;color:var(--ink);cursor:pointer}" +
+      "#watchdlg h3{font-size:13px;margin:14px 0 6px}#watchdlg .obs{color:var(--muted)}#watchdlg ul{margin:4px 0;padding-left:18px}" +
+      ".wnotif{padding:8px 10px;border:1px solid var(--line);border-radius:6px;margin:8px 0}.wlimits summary{cursor:pointer;font-weight:600}" +
+      ".wform{display:flex;flex-direction:column;gap:8px}.wform fieldset{border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column;gap:4px}" +
+      ".wform legend{font-weight:600;font-size:12px}.wcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px 10px}.wform label{display:flex;gap:6px;align-items:center}" +
+      ".wform button[type=submit]{align-self:flex-start}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
+      ".wbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.whits{display:flex;flex-direction:column}.tlrow.new .tln{font-weight:600}" +
+      ".wctl button .abadge{margin-left:4px}#wtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:99999;max-width:min(560px,calc(100vw - 32px));" +
+      "background:var(--surface);color:var(--ink);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:13px;line-height:1.4}" +
+      "#wtoast .x{background:none;border:none;color:var(--ink);font-size:20px;cursor:pointer;float:right;margin:-6px -4px 0 6px}.wlbl{font-size:11px;font-weight:600}";
+    document.head.appendChild(st);
+  })();
+  /* read-only list for other views (for example a multi-country map): every event with its countries and reports */
+  window.OSAP_EVENTS = { country: CC, neighbours: NB, list: function () {
+    return evBuild().list.map(function (ev) { var v = evMake(ev, ev.m);
+      return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
+        from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
+  } };
+  evRefresh();
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
 </script>
@@ -5960,5 +6570,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
 
 
+<script src="assets/osap-work.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
