@@ -39,9 +39,19 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
   const base = "https://public.api.bsky.app", auth = {};
   for (const a of cfg.bluesky || []) {
     try {
-      const j = await req(base + "/xrpc/app.bsky.feed.getAuthorFeed?filter=posts_no_replies&limit=40&actor=" + encodeURIComponent(a.handle), { headers: auth });
+      /* regional and global accounts ("*") post about many countries, so up to 300 posts from the past week are read (3 pages);
+         national accounts need only their latest 40. (Bluesky's public search needs a login, so it is not used.) */
+      const feed = [];
+      let cursor = "";
+      for (let pg = 0; pg < (a.cc === "*" ? 3 : 1); pg++) {
+        const j = await req(base + "/xrpc/app.bsky.feed.getAuthorFeed?filter=posts_no_replies&limit=" + (a.cc === "*" ? 100 : 40) + "&actor=" + encodeURIComponent(a.handle) + (cursor ? "&cursor=" + encodeURIComponent(cursor) : ""), { headers: auth });
+        feed.push(...(j.feed || []));
+        cursor = j.cursor;
+        const last = (j.feed || []).slice(-1)[0];
+        if (!cursor || !last || Date.parse(((last.post || {}).record || {}).createdAt) < SINCE) break;
+      }
       let n = 0;
-      for (const f of j.feed || []) {
+      for (const f of feed) {
         const p = f.post || {}, r = p.record || {};
         if (f.reason || !r.text || Date.parse(r.createdAt) < SINCE) continue;
         const rkey = String(p.uri || "").split("/").pop();
@@ -52,35 +62,6 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
       status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: true, n });
     } catch (e) { status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: false, error: err(e) }); }
   }
-}
-
-// Bluesky search: the regional and global accounts above post about many countries, and their latest 40 posts rarely reach a
-// given one. So each area is also searched by name, limited to posts by those same listed accounts (author=), through the public
-// read API with no login. Private people's posts are never read: every search names one listed account as the author.
-{
-  const base = "https://public.api.bsky.app", since = new Date(SINCE).toISOString();
-  const wide = (cfg.bluesky || []).filter((a) => a.cc === "*" && status.some((s) => s.platform === "Bluesky" && s.source === "@" + a.handle && s.ok));
-  let n = 0, fails = 0, lastErr = "";
-  for (const a of wide) {
-    for (const cc of Object.keys(NAMES)) {
-      const q = NAMES[cc].split("|")[0];
-      try {
-        const j = await req(base + "/xrpc/app.bsky.feed.searchPosts?limit=25&sort=latest&q=" + encodeURIComponent(q) + "&author=" + encodeURIComponent(a.handle) + "&since=" + encodeURIComponent(since));
-        for (const p of j.posts || []) {
-          const r = p.record || {};
-          if ((p.author || {}).handle !== a.handle || !r.text || Date.parse(r.createdAt) < SINCE || !new RegExp("\\b(" + NAMES[cc] + ")\\b").test(r.text)) continue;
-          const rkey = String(p.uri || "").split("/").pop();
-          (items[cc] = items[cc] || []).push({ platform: "Bluesky", account: a.handle, kind: a.kind, title: r.text.slice(0, 300), summary: "", date: new Date(r.createdAt).toISOString().slice(0, 16),
-            link: "https://bsky.app/profile/" + a.handle + "/post/" + rkey, lang: ((r.langs || [])[0] || "en").slice(0, 3) });
-          n++;
-        }
-      } catch (e) { fails++; lastErr = err(e); if (fails >= 5 && !n) break; }
-      await new Promise((r) => setTimeout(r, 250));
-    }
-    if (fails >= 5 && !n) break;
-  }
-  if (wide.length) status.push(fails >= 5 && !n ? { platform: "Bluesky", source: "search of listed accounts by country", cc: "*", ok: false, error: lastErr }
-    : { platform: "Bluesky", source: "search of listed accounts by country", cc: "*", ok: true, n });
 }
 
 // Telegram: public channel web previews (t.me/s/<channel>), no login, account or phone number.
@@ -152,11 +133,17 @@ for (const ch of cfg.youtube || []) {
   try {
     let id = ch.channel_id;
     if (!id) {
-      const page = await text("https://www.youtube.com/@" + encodeURIComponent(ch.handle));
+      const page = await text("https://www.youtube.com/@" + encodeURIComponent(ch.handle)).catch((e) => { throw new Error("channel page " + err(e)); });
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
-    const vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id));
+    let xml;
+    try { xml = await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id); }
+    catch (e) {
+      try { xml = await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2)); }
+      catch (e2) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + " (channel " + id + ")"); }
+    }
+    const vids = parseYtFeed(xml);
     let n = 0;
     for (const v of vids) {
       if (isNaN(v.date) || v.date.getTime() < SINCE) continue;

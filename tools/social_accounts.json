@@ -18,27 +18,12 @@
   },
   {
    "cc": "*",
-   "handle": "scmp.com",
-   "kind": "news desk"
-  },
-  {
-   "cc": "*",
    "handle": "thediplomat.com",
    "kind": "news desk"
   },
   {
    "cc": "*",
    "handle": "theguardian.com",
-   "kind": "news desk"
-  },
-  {
-   "cc": "au",
-   "handle": "abc.net.au",
-   "kind": "news desk"
-  },
-  {
-   "cc": "nz",
-   "handle": "rnz.co.nz",
    "kind": "news desk"
   }
  ],
