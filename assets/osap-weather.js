@@ -1035,19 +1035,29 @@
       var j = GRID.data[n]; if (!j || !j.hourly) return;
       var ix = gridIdx(j), i = ix.i, h = j.hourly; tt = ix.t;
       var b = [[p.lat - p.dlat / 2, p.x - p.dlon / 2], [p.lat + p.dlat / 2, p.x + p.dlon / 2]], c = [p.lat, p.x];
-      if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100, interactive: false }));
+      // every grid cell opens the model's values for that cell, the valid time and where they came from
+      var aqv = GRID.aq && GRID.aq[n] && GRID.aq[n].hourly ? GRID.aq[n].hourly.us_aqi[gridIdx(GRID.aq[n]).i] : null;
+      var pop = '<div class="pop"><div class="tier">Model forecast grid cell</div><h3>' + esc(p.lat.toFixed(2) + ", " + p.x.toFixed(2)) + '</h3><p class="obs">' +
+        esc([h.temperature_2m[i] != null ? "Temperature " + Math.round(h.temperature_2m[i]) + " °C" : "",
+          h.wind_speed_10m[i] != null ? "wind " + Math.round(h.wind_speed_10m[i]) + " kt from " + Math.round(h.wind_direction_10m[i]) + "°" + (h.wind_gusts_10m[i] != null ? ", gusts " + Math.round(h.wind_gusts_10m[i]) + " kt" : "") : "",
+          h.cloud_cover[i] != null ? "cloud " + Math.round(h.cloud_cover[i]) + "%" : "", aqv != null ? "US AQI " + Math.round(aqv) : ""].filter(Boolean).join(" · ")) +
+        "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> weather' + (aqv != null ? " and air-quality" : "") +
+        " model, averaged over this cell. A forecast, not a measurement.</p></div>";
+      function cell(style) { return L.rectangle(b, L.extend({ pane: "wxpane", stroke: false }, style)).bindPopup(pop, { maxWidth: 300 }); }
+      if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(cell({ fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100 }));
       if (ON.temp && h.temperature_2m[i] != null) {
-        LYR.temp.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: tempCol(h.temperature_2m[i]), fillOpacity: opOf("temp", 0.55), interactive: false }));
+        LYR.temp.addLayer(cell({ fillColor: tempCol(h.temperature_2m[i]), fillOpacity: opOf("temp", 0.55) }));
         LYR.temp.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: Math.round(h.temperature_2m[i]) + "°", iconSize: [34, 16], iconAnchor: [17, -6] }) }));
       }
       if (ON.wind && h.wind_speed_10m[i] != null) {
+        LYR.wind.addLayer(cell({ fillColor: "#000", fillOpacity: 0 }));
         LYR.wind.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, opacity: opOf("wind", 0.95),
           icon: L.divIcon({ className: "wxbarbi", html: barb(h.wind_direction_10m[i], h.wind_speed_10m[i]) + '<span class="wxbv">' + Math.round(h.wind_speed_10m[i]) + (h.wind_gusts_10m[i] >= h.wind_speed_10m[i] + 10 ? "G" + Math.round(h.wind_gusts_10m[i]) : "") + "</span>", iconSize: [34, 34], iconAnchor: [17, 17] }) }));
       }
       if (ON.aq && GRID.aq && GRID.aq[n] && GRID.aq[n].hourly) {
         var ai = gridIdx(GRID.aq[n]).i, v = GRID.aq[n].hourly.us_aqi[ai];
         if (v != null) {
-          LYR.aq.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: aqCol(v), fillOpacity: opOf("aq", 0.55), interactive: false }));
+          LYR.aq.addLayer(cell({ fillColor: aqCol(v), fillOpacity: opOf("aq", 0.55) }));
           LYR.aq.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: String(Math.round(v)), iconSize: [34, 16], iconAnchor: [17, 8] }) }));
         }
       }
