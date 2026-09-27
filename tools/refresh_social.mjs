@@ -117,6 +117,19 @@ async function text(url) {
     return (await r.text()).slice(0, 4e6);
   } finally { clearTimeout(t); }
 }
+// A channel's Videos page carries its latest uploads in the embedded page data: id, title and a relative time ("3 hours ago").
+export function parseYtVideosPage(html, now = Date.now()) {
+  const out = [], seen = new Set(), U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  const str = (x) => { try { return JSON.parse('"' + x + '"'); } catch (e) { return x; } };
+  for (const chunk of html.split('"videoRenderer":{"videoId":"').slice(1, 40)) {
+    const id = chunk.slice(0, 11), title = (chunk.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/) || [])[1];
+    const ago = (chunk.match(/"publishedTimeText":\{"simpleText":"(?:Streamed )?(\d+) (second|minute|hour|day|week|month|year)s? ago"/) || []);
+    if (!/^[\w-]{11}$/.test(id) || !title || !ago[1] || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+  }
+  return out;
+}
 export function parseYtFeed(xml) {
   const out = [];
   for (const e of xml.split("<entry>").slice(1)) {
@@ -137,13 +150,18 @@ for (const ch of cfg.youtube || []) {
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
-    let xml;
-    try { xml = await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id); }
+    /* the channel's video feed; when YouTube refuses it (every feed returned HTTP 404 from 05:40Z on 27 Sept 2026), its uploads
+       feed; and when both are refused, the channel's public Videos page, whose times are YouTube's "3 hours ago" (to the hour or day) */
+    let vids, via = "feed";
+    try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
     catch (e) {
-      try { xml = await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2)); }
-      catch (e2) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + " (channel " + id + ")"); }
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed"; }
+      catch (e2) {
+        try { vids = parseYtVideosPage(await text("https://www.youtube.com/channel/" + id + "/videos")); via = "videos page"; }
+        catch (e3) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + ", videos page " + err(e3) + " (channel " + id + ")"); }
+        if (!vids.length) throw new Error("video feed " + err(e) + "; videos page had no videos (channel " + id + ")");
+      }
     }
-    const vids = parseYtFeed(xml);
     let n = 0;
     for (const v of vids) {
       if (isNaN(v.date) || v.date.getTime() < SINCE) continue;
@@ -151,7 +169,7 @@ for (const ch of cfg.youtube || []) {
         date: v.date.toISOString().slice(0, 16), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
       n++;
     }
-    status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n });
+    status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n, ...(via !== "feed" ? { via } : {}) });
   } catch (e) { status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: false, error: err(e) }); }
   await new Promise((r) => setTimeout(r, 800));
 }
