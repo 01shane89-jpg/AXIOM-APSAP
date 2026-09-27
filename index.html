@@ -53,9 +53,15 @@
   function valid(tz) { if (!(tz in okZ)) { try { new Intl.DateTimeFormat("en-GB", { timeZone: tz }); okZ[tz] = true; } catch (e) { okZ[tz] = false; } } return okZ[tz]; }
   /* a zone this browser does not know falls back to Zulu only, never to a wrong local time */
   function zone(tz) { tz = tz || window.OSAP_ZONE || TZ28[cc()] || TZW[cc()] || "UTC"; return valid(tz) ? tz : "UTC"; }
+  /* building a formatter is slow (it was most of the start-up time on a phone), so each zone's formatter is made once */
+  var FMT = {};
   function parts(ms, tz, num) {
-    var p = {}, o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: num ? "numeric" : "short", day: "numeric", hour: "2-digit", minute: "2-digit" }, f;
-    try { f = new Intl.DateTimeFormat("en-GB", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-GB", o); }
+    var p = {}, k = tz + (num ? "|n" : ""), f = FMT[k];
+    if (!f) {
+      var o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: num ? "numeric" : "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      try { f = new Intl.DateTimeFormat("en-GB", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-GB", o); }
+      FMT[k] = f;
+    }
     f.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
     return p;
   }
@@ -63,7 +69,7 @@
     if (ABBR[tz]) return ABBR[tz];
     var loc = /^Australia\//.test(tz) ? "en-AU" : tz === "Pacific/Auckland" ? "en-NZ" : /^America\//.test(tz) ? "en-US" : tz === "Europe/London" ? "en-GB" : "en-US";
     try {
-      var n = new Intl.DateTimeFormat(loc, { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date(ms)).filter(function (x) { return x.type === "timeZoneName"; })[0];
+      var fk = loc + "|" + tz + "|z", n = (FMT[fk] = FMT[fk] || new Intl.DateTimeFormat(loc, { timeZone: tz, timeZoneName: "short" })).formatToParts(new Date(ms)).filter(function (x) { return x.type === "timeZoneName"; })[0];
       return n ? n.value.replace(/^GMT/, "UTC").replace(/^UTC$/, "UTC+0") : tz;
     } catch (e) { return tz; }
   }
@@ -92,6 +98,12 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
+  window.OSAP_LATER = function (src, done) {
+    /* start a big, non-urgent script once the page has shown and the browser is idle, so it never delays the first screen */
+    function go() { var s = document.createElement("script"); s.src = src; s.async = true; if (done) s.onload = done; document.body.appendChild(s); }
+    function idle() { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 500); }
+    if (document.readyState !== "loading") setTimeout(idle, 400); else document.addEventListener("DOMContentLoaded", function () { setTimeout(idle, 400); });
+  };
 })();
 </script>
 <script>
@@ -101,7 +113,8 @@
   var de = document.documentElement; de.lang = "en"; de.setAttribute("translate", "no");
   var SCRIPTS = [[/[\u0E00-\u0E7F]/, "th"], [/[\u1780-\u17FF]/, "km"], [/[\u0E80-\u0EFF]/, "lo"], [/[\u1000-\u109F]/, "my"], [/[\uAC00-\uD7AF]/, "ko"],
     [/[\u3040-\u30FF]/, "ja"], [/[\u4E00-\u9FFF]/, "zh"], [/[\u0980-\u09FF]/, "bn"], [/[\u0D80-\u0DFF]/, "si"], [/[\u0780-\u07BF]/, "dv"], [/[\u0900-\u097F]/, "hi"], [/[\u0600-\u06FF]/, "ur"]];
-  function langOf(s) { for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
+  var ANY = new RegExp(SCRIPTS.map(function (x) { return x[0].source; }).join("|"));
+  function langOf(s) { if (!ANY.test(s)) return ""; for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
   function tag(root) {
     if (!root || root.nodeType !== 1) return;
     var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, seen = [];
@@ -116,10 +129,10 @@
   var pend = [], sched = false;
   function flush() { sched = false; var list = pend; pend = []; list.forEach(tag); }
   function start() {
-    tag(document.body);
+    (window.requestIdleCallback || setTimeout)(function () { tag(document.body); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
       ms.forEach(function (m) { for (var i = 0; i < m.addedNodes.length; i++) pend.push(m.addedNodes[i].nodeType === 3 ? m.target : m.addedNodes[i]); });
-      if (!sched && pend.length) { sched = true; (window.requestAnimationFrame || setTimeout)(flush); }
+      if (!sched && pend.length) { sched = true; (window.requestIdleCallback || setTimeout)(flush); }
     }).observe(document.body, { childList: true, subtree: true });
   }
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
@@ -975,7 +988,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 </div>
 
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
-<script src="assets/tiles-flood.js"></script>
 <script src="data/thailand/power.js"></script>
 <script src="data/thailand/flood-live-snapshot.js"></script>
 <script src="data/thailand/flood-exposure.js"></script>
@@ -1192,6 +1204,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     ML.roads = !!on; mlSet();
     if (on) { drawRoads(); roadLayer.addTo(map); } else map.removeLayer(roadLayer);
   }
+  /* the agency notices (several hundred KB, for a handful of countries) load after the page is up */
+  window.OSAP_LATER("data/live/roads.js", function () { if (ML.roads) drawRoads(); });
   window.addEventListener("hashchange", function () { if (ML.roads) setTimeout(drawRoads, 300); });
   var LayersCtl = L.Control.extend({
     options: { position: "topright" },
@@ -1382,6 +1396,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
   var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, minZoom: 5, maxZoom: 13,
     opacity: 1, pane: "floodpane", attribution: "NASA LANCE MCDWD" }).addTo(map);
+  /* the packed tiles (about 1.4 MB) load after the page is up, so they never hold up the start; tiles are blank until then */
+  window.OSAP_LATER("assets/tiles-flood.js", function () { floodLayer.redraw(); });
 
   var d24 = document.getElementById("d24"), d25 = document.getElementById("d25");
   function setDate(which) {
@@ -2382,363 +2398,29 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   };
 })();
 </script>
-<script src="data/layers/th/insurgency.js"></script>
-<script src="data/layers/th/crime.js"></script>
-<script src="data/layers/th/scam.js"></script>
-<script src="data/layers/th/aml.js"></script>
-<script src="data/layers/th/weather.js"></script>
-<script src="data/layers/th/safety.js"></script>
-<script src="data/layers/th/transport.js"></script>
-<script src="data/layers/th/infra.js"></script>
-<script src="data/layers/th/health.js"></script>
-<script src="data/layers/au/weather.js"></script>
-<script src="data/layers/au/flood.js"></script>
-<script src="data/layers/au/safety.js"></script>
-<script src="data/layers/au/health.js"></script>
-<script src="data/layers/au/crime.js"></script>
-<script src="data/layers/au/insurgency.js"></script>
-<script src="data/layers/au/aml.js"></script>
-<script src="data/layers/au/border.js"></script>
-<script src="data/layers/au/transport.js"></script>
-<script src="data/layers/au/scam.js"></script>
-<script src="data/layers/au/infra.js"></script>
-<script src="data/layers/bd/health.js"></script>
-<script src="data/layers/bd/insurgency.js"></script>
-<script src="data/layers/bd/transport.js"></script>
-<script src="data/layers/bd/border.js"></script>
-<script src="data/layers/bd/safety.js"></script>
-<script src="data/layers/bd/crime.js"></script>
-<script src="data/layers/bd/infra.js"></script>
-<script src="data/layers/bd/weather.js"></script>
-<script src="data/layers/bd/aml.js"></script>
-<script src="data/layers/bd/flood.js"></script>
-<script src="data/layers/bd/scam.js"></script>
-<script src="data/layers/bn/flood.js"></script>
-<script src="data/layers/bn/transport.js"></script>
-<script src="data/layers/bn/infra.js"></script>
-<script src="data/layers/bn/aml.js"></script>
-<script src="data/layers/bn/scam.js"></script>
-<script src="data/layers/bn/safety.js"></script>
-<script src="data/layers/bn/health.js"></script>
-<script src="data/layers/bn/weather.js"></script>
-<script src="data/layers/bn/crime.js"></script>
-<script src="data/layers/bn/border.js"></script>
-<script src="data/layers/bt/safety.js"></script>
-<script src="data/layers/bt/infra.js"></script>
-<script src="data/layers/bt/transport.js"></script>
-<script src="data/layers/bt/flood.js"></script>
-<script src="data/layers/bt/weather.js"></script>
-<script src="data/layers/bt/crime.js"></script>
-<script src="data/layers/bt/scam.js"></script>
-<script src="data/layers/bt/health.js"></script>
-<script src="data/layers/bt/border.js"></script>
-<script src="data/layers/cn/scam.js"></script>
-<script src="data/layers/cn/border.js"></script>
-<script src="data/layers/cn/aml.js"></script>
-<script src="data/layers/cn/crime.js"></script>
-<script src="data/layers/cn/safety.js"></script>
-<script src="data/layers/cn/weather.js"></script>
-<script src="data/layers/cn/flood.js"></script>
-<script src="data/layers/cn/infra.js"></script>
-<script src="data/layers/cn/health.js"></script>
-<script src="data/layers/cn/transport.js"></script>
-<script src="data/layers/id/flood.js"></script>
-<script src="data/layers/id/aml.js"></script>
-<script src="data/layers/id/crime.js"></script>
-<script src="data/layers/id/safety.js"></script>
-<script src="data/layers/id/insurgency.js"></script>
-<script src="data/layers/id/weather.js"></script>
-<script src="data/layers/id/scam.js"></script>
-<script src="data/layers/id/infra.js"></script>
-<script src="data/layers/id/health.js"></script>
-<script src="data/layers/id/border.js"></script>
-<script src="data/layers/id/transport.js"></script>
-<script src="data/layers/in/health.js"></script>
-<script src="data/layers/in/scam.js"></script>
-<script src="data/layers/in/transport.js"></script>
-<script src="data/layers/in/border.js"></script>
-<script src="data/layers/in/insurgency.js"></script>
-<script src="data/layers/in/aml.js"></script>
-<script src="data/layers/in/crime.js"></script>
-<script src="data/layers/in/safety.js"></script>
-<script src="data/layers/in/weather.js"></script>
-<script src="data/layers/in/infra.js"></script>
-<script src="data/layers/in/flood.js"></script>
-<script src="data/layers/jp/health.js"></script>
-<script src="data/layers/jp/border.js"></script>
-<script src="data/layers/jp/aml.js"></script>
-<script src="data/layers/jp/scam.js"></script>
-<script src="data/layers/jp/infra.js"></script>
-<script src="data/layers/jp/weather.js"></script>
-<script src="data/layers/jp/safety.js"></script>
-<script src="data/layers/jp/transport.js"></script>
-<script src="data/layers/jp/crime.js"></script>
-<script src="data/layers/jp/flood.js"></script>
-<script src="data/layers/kh/border.js"></script>
-<script src="data/layers/kh/aml.js"></script>
-<script src="data/layers/kh/health.js"></script>
-<script src="data/layers/kh/safety.js"></script>
-<script src="data/layers/kh/transport.js"></script>
-<script src="data/layers/kh/flood.js"></script>
-<script src="data/layers/kh/scam.js"></script>
-<script src="data/layers/kh/infra.js"></script>
-<script src="data/layers/kh/weather.js"></script>
-<script src="data/layers/kh/crime.js"></script>
-<script src="data/layers/kp/border.js"></script>
-<script src="data/layers/kp/weather.js"></script>
-<script src="data/layers/kp/health.js"></script>
-<script src="data/layers/kp/scam.js"></script>
-<script src="data/layers/kp/flood.js"></script>
-<script src="data/layers/kp/crime.js"></script>
-<script src="data/layers/kp/aml.js"></script>
-<script src="data/layers/kp/safety.js"></script>
-<script src="data/layers/kp/transport.js"></script>
-<script src="data/layers/kp/infra.js"></script>
-<script src="data/layers/kr/transport.js"></script>
-<script src="data/layers/kr/border.js"></script>
-<script src="data/layers/kr/safety.js"></script>
-<script src="data/layers/kr/aml.js"></script>
-<script src="data/layers/kr/scam.js"></script>
-<script src="data/layers/kr/crime.js"></script>
-<script src="data/layers/kr/health.js"></script>
-<script src="data/layers/kr/weather.js"></script>
-<script src="data/layers/kr/infra.js"></script>
-<script src="data/layers/kr/flood.js"></script>
-<script src="data/layers/la/safety.js"></script>
-<script src="data/layers/la/transport.js"></script>
-<script src="data/layers/la/scam.js"></script>
-<script src="data/layers/la/aml.js"></script>
-<script src="data/layers/la/health.js"></script>
-<script src="data/layers/la/infra.js"></script>
-<script src="data/layers/la/crime.js"></script>
-<script src="data/layers/la/weather.js"></script>
-<script src="data/layers/la/flood.js"></script>
-<script src="data/layers/la/border.js"></script>
-<script src="data/layers/lk/aml.js"></script>
-<script src="data/layers/lk/border.js"></script>
-<script src="data/layers/lk/crime.js"></script>
-<script src="data/layers/lk/health.js"></script>
-<script src="data/layers/lk/scam.js"></script>
-<script src="data/layers/lk/infra.js"></script>
-<script src="data/layers/lk/weather.js"></script>
-<script src="data/layers/lk/transport.js"></script>
-<script src="data/layers/lk/safety.js"></script>
-<script src="data/layers/lk/flood.js"></script>
-<script src="data/layers/lk/insurgency.js"></script>
-<script src="data/layers/mm/crime.js"></script>
-<script src="data/layers/mm/insurgency.js"></script>
-<script src="data/layers/mm/aml.js"></script>
-<script src="data/layers/mm/infra.js"></script>
-<script src="data/layers/mm/weather.js"></script>
-<script src="data/layers/mm/health.js"></script>
-<script src="data/layers/mm/safety.js"></script>
-<script src="data/layers/mm/transport.js"></script>
-<script src="data/layers/mm/flood.js"></script>
-<script src="data/layers/mm/scam.js"></script>
-<script src="data/layers/mm/border.js"></script>
-<script src="data/layers/mn/aml.js"></script>
-<script src="data/layers/mn/safety.js"></script>
-<script src="data/layers/mn/weather.js"></script>
-<script src="data/layers/mn/crime.js"></script>
-<script src="data/layers/mn/border.js"></script>
-<script src="data/layers/mn/health.js"></script>
-<script src="data/layers/mn/transport.js"></script>
-<script src="data/layers/mn/infra.js"></script>
-<script src="data/layers/mn/scam.js"></script>
-<script src="data/layers/mn/flood.js"></script>
-<script src="data/layers/mv/health.js"></script>
-<script src="data/layers/mv/transport.js"></script>
-<script src="data/layers/mv/safety.js"></script>
-<script src="data/layers/mv/weather.js"></script>
-<script src="data/layers/mv/aml.js"></script>
-<script src="data/layers/mv/flood.js"></script>
-<script src="data/layers/mv/border.js"></script>
-<script src="data/layers/mv/infra.js"></script>
-<script src="data/layers/mv/crime.js"></script>
-<script src="data/layers/mv/scam.js"></script>
-<script src="data/layers/mv/insurgency.js"></script>
-<script src="data/layers/my/safety.js"></script>
-<script src="data/layers/my/infra.js"></script>
-<script src="data/layers/my/flood.js"></script>
-<script src="data/layers/my/weather.js"></script>
-<script src="data/layers/my/transport.js"></script>
-<script src="data/layers/my/aml.js"></script>
-<script src="data/layers/my/health.js"></script>
-<script src="data/layers/my/scam.js"></script>
-<script src="data/layers/my/crime.js"></script>
-<script src="data/layers/my/border.js"></script>
-<script src="data/layers/my/insurgency.js"></script>
-<script src="data/layers/np/scam.js"></script>
-<script src="data/layers/np/transport.js"></script>
-<script src="data/layers/np/border.js"></script>
-<script src="data/layers/np/crime.js"></script>
-<script src="data/layers/np/health.js"></script>
-<script src="data/layers/np/aml.js"></script>
-<script src="data/layers/np/weather.js"></script>
-<script src="data/layers/np/flood.js"></script>
-<script src="data/layers/np/safety.js"></script>
-<script src="data/layers/np/infra.js"></script>
-<script src="data/layers/np/insurgency.js"></script>
-<script src="data/layers/nz/crime.js"></script>
-<script src="data/layers/nz/safety.js"></script>
-<script src="data/layers/nz/flood.js"></script>
-<script src="data/layers/nz/weather.js"></script>
-<script src="data/layers/nz/scam.js"></script>
-<script src="data/layers/nz/infra.js"></script>
-<script src="data/layers/nz/transport.js"></script>
-<script src="data/layers/nz/health.js"></script>
-<script src="data/layers/nz/border.js"></script>
-<script src="data/layers/nz/aml.js"></script>
-<script src="data/layers/nz/insurgency.js"></script>
-<script src="data/layers/oki/border.js"></script>
-<script src="data/layers/oki/crime.js"></script>
-<script src="data/layers/oki/infra.js"></script>
-<script src="data/layers/oki/scam.js"></script>
-<script src="data/layers/oki/aml.js"></script>
-<script src="data/layers/oki/transport.js"></script>
-<script src="data/layers/oki/safety.js"></script>
-<script src="data/layers/oki/health.js"></script>
-<script src="data/layers/oki/weather.js"></script>
-<script src="data/layers/oki/flood.js"></script>
-<script src="data/layers/pg/aml.js"></script>
-<script src="data/layers/pg/insurgency.js"></script>
-<script src="data/layers/pg/border.js"></script>
-<script src="data/layers/pg/weather.js"></script>
-<script src="data/layers/pg/flood.js"></script>
-<script src="data/layers/pg/safety.js"></script>
-<script src="data/layers/pg/health.js"></script>
-<script src="data/layers/pg/infra.js"></script>
-<script src="data/layers/pg/transport.js"></script>
-<script src="data/layers/pg/crime.js"></script>
-<script src="data/layers/pg/scam.js"></script>
-<script src="data/layers/ph/border.js"></script>
-<script src="data/layers/ph/transport.js"></script>
-<script src="data/layers/ph/insurgency.js"></script>
-<script src="data/layers/ph/flood.js"></script>
-<script src="data/layers/ph/scam.js"></script>
-<script src="data/layers/ph/aml.js"></script>
-<script src="data/layers/ph/safety.js"></script>
-<script src="data/layers/ph/crime.js"></script>
-<script src="data/layers/ph/health.js"></script>
-<script src="data/layers/ph/infra.js"></script>
-<script src="data/layers/ph/weather.js"></script>
-<script src="data/layers/pk/transport.js"></script>
-<script src="data/layers/pk/insurgency.js"></script>
-<script src="data/layers/pk/safety.js"></script>
-<script src="data/layers/pk/border.js"></script>
-<script src="data/layers/pk/crime.js"></script>
-<script src="data/layers/pk/infra.js"></script>
-<script src="data/layers/pk/aml.js"></script>
-<script src="data/layers/pk/health.js"></script>
-<script src="data/layers/pk/weather.js"></script>
-<script src="data/layers/pk/flood.js"></script>
-<script src="data/layers/pk/scam.js"></script>
-<script src="data/layers/sg/weather.js"></script>
-<script src="data/layers/sg/safety.js"></script>
-<script src="data/layers/sg/insurgency.js"></script>
-<script src="data/layers/sg/scam.js"></script>
-<script src="data/layers/sg/infra.js"></script>
-<script src="data/layers/sg/flood.js"></script>
-<script src="data/layers/sg/crime.js"></script>
-<script src="data/layers/sg/aml.js"></script>
-<script src="data/layers/sg/border.js"></script>
-<script src="data/layers/sg/transport.js"></script>
-<script src="data/layers/sg/health.js"></script>
-<script src="data/layers/tl/health.js"></script>
-<script src="data/layers/tl/infra.js"></script>
-<script src="data/layers/tl/crime.js"></script>
-<script src="data/layers/tl/flood.js"></script>
-<script src="data/layers/tl/transport.js"></script>
-<script src="data/layers/tl/scam.js"></script>
-<script src="data/layers/tl/border.js"></script>
-<script src="data/layers/tl/weather.js"></script>
-<script src="data/layers/tl/aml.js"></script>
-<script src="data/layers/tl/safety.js"></script>
-<script src="data/layers/tl/insurgency.js"></script>
-<script src="data/layers/tw/border.js"></script>
-<script src="data/layers/tw/safety.js"></script>
-<script src="data/layers/tw/health.js"></script>
-<script src="data/layers/tw/aml.js"></script>
-<script src="data/layers/tw/flood.js"></script>
-<script src="data/layers/tw/infra.js"></script>
-<script src="data/layers/tw/transport.js"></script>
-<script src="data/layers/tw/scam.js"></script>
-<script src="data/layers/tw/weather.js"></script>
-<script src="data/layers/tw/crime.js"></script>
-<script src="data/layers/vn/health.js"></script>
-<script src="data/layers/vn/scam.js"></script>
-<script src="data/layers/vn/crime.js"></script>
-<script src="data/layers/vn/border.js"></script>
-<script src="data/layers/vn/aml.js"></script>
-<script src="data/layers/vn/weather.js"></script>
-<script src="data/layers/vn/infra.js"></script>
-<script src="data/layers/vn/transport.js"></script>
-<script src="data/layers/vn/safety.js"></script>
-<script src="data/layers/vn/flood.js"></script>
-<script src="data/sof/au.js"></script>
-<script src="data/sof/bd.js"></script>
-<script src="data/sof/bn.js"></script>
-<script src="data/sof/bt.js"></script>
-<script src="data/sof/cn.js"></script>
-<script src="data/sof/id.js"></script>
-<script src="data/sof/in.js"></script>
-<script src="data/sof/jp.js"></script>
-<script src="data/sof/kh.js"></script>
-<script src="data/sof/kp.js"></script>
-<script src="data/sof/kr.js"></script>
-<script src="data/sof/la.js"></script>
-<script src="data/sof/lk.js"></script>
-<script src="data/sof/mm.js"></script>
-<script src="data/sof/mn.js"></script>
-<script src="data/sof/mv.js"></script>
-<script src="data/sof/my.js"></script>
-<script src="data/sof/np.js"></script>
-<script src="data/sof/nz.js"></script>
-<script src="data/sof/oki.js"></script>
-<script src="data/sof/pg.js"></script>
-<script src="data/sof/ph.js"></script>
-<script src="data/sof/pk.js"></script>
-<script src="data/sof/sg.js"></script>
-<script src="data/sof/th.js"></script>
-<script src="data/sof/tl.js"></script>
-<script src="data/sof/tw.js"></script>
-<script src="data/sof/vn.js"></script>
-<script src="data/brief/au.js"></script>
-<script src="data/brief/bd.js"></script>
-<script src="data/brief/bn.js"></script>
-<script src="data/brief/bt.js"></script>
-<script src="data/brief/cn.js"></script>
-<script src="data/brief/id.js"></script>
-<script src="data/brief/in.js"></script>
-<script src="data/brief/jp.js"></script>
-<script src="data/brief/kh.js"></script>
-<script src="data/brief/kp.js"></script>
-<script src="data/brief/kr.js"></script>
-<script src="data/brief/la.js"></script>
-<script src="data/brief/lk.js"></script>
-<script src="data/brief/mm.js"></script>
-<script src="data/brief/mn.js"></script>
-<script src="data/brief/mv.js"></script>
-<script src="data/brief/my.js"></script>
-<script src="data/brief/np.js"></script>
-<script src="data/brief/nz.js"></script>
-<script src="data/brief/oki.js"></script>
-<script src="data/brief/pg.js"></script>
-<script src="data/brief/ph.js"></script>
-<script src="data/brief/pk.js"></script>
-<script src="data/brief/sg.js"></script>
-<script src="data/brief/th.js"></script>
-<script src="data/brief/tl.js"></script>
-<script src="data/brief/tw.js"></script>
-<script src="data/brief/vn.js"></script>
+<!-- country-data:start -->
+<script>
+/* Per-country data. Only the country being opened is loaded (switching country reloads the page), which keeps
+   startup from fetching every country's layers. Written by tools/country_loader.py; do not edit by hand. */
+window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood":3,"health":5,"infra":7,"insurgency":6,"safety":1,"scam":6,"transport":6,"weather":4},"bd":{"aml":4,"border":8,"crime":6,"flood":4,"health":11,"infra":4,"insurgency":3,"safety":7,"scam":5,"transport":5,"weather":3},"bn":{"aml":5,"border":4,"crime":16,"flood":3,"health":11,"infra":7,"safety":7,"scam":5,"transport":7,"weather":6},"bt":{"border":1,"crime":2,"flood":5,"health":2,"infra":2,"safety":4,"scam":1,"transport":2,"weather":3},"cn":{"aml":6,"border":9,"crime":6,"flood":5,"health":1,"infra":5,"safety":5,"scam":7,"transport":1,"weather":3},"id":{"aml":5,"border":3,"crime":6,"flood":4,"health":2,"infra":2,"insurgency":5,"safety":4,"scam":7,"transport":3,"weather":2},"in":{"aml":5,"border":7,"crime":2,"flood":4,"health":3,"infra":2,"insurgency":5,"safety":4,"scam":7,"transport":3,"weather":4},"jp":{"aml":4,"border":8,"crime":1,"flood":2,"health":6,"infra":2,"safety":6,"scam":9,"transport":2,"weather":6},"kh":{"aml":3,"border":11,"crime":7,"flood":3,"health":5,"infra":1,"safety":5,"scam":16,"transport":5,"weather":4},"kp":{"aml":7,"border":28,"crime":8,"flood":5,"health":4,"infra":3,"safety":3,"scam":3,"transport":3,"weather":5},"kr":{"aml":7,"border":11,"crime":7,"flood":8,"health":9,"infra":12,"safety":9,"scam":8,"transport":17,"weather":7},"la":{"aml":4,"border":3,"crime":6,"flood":10,"health":5,"infra":5,"safety":3,"scam":13,"transport":8,"weather":3},"lk":{"aml":4,"border":5,"crime":13,"flood":7,"health":6,"infra":1,"insurgency":1,"safety":5,"scam":8,"transport":4,"weather":7},"mm":{"aml":2,"border":6,"crime":6,"flood":5,"health":5,"infra":2,"insurgency":21,"safety":4,"scam":3,"transport":5,"weather":3},"mn":{"aml":7,"border":8,"crime":7,"flood":5,"health":8,"infra":3,"safety":10,"scam":3,"transport":5,"weather":8},"mv":{"aml":5,"border":3,"crime":5,"flood":2,"health":3,"infra":4,"insurgency":1,"safety":9,"scam":1,"transport":10,"weather":1},"my":{"aml":19,"border":12,"crime":21,"flood":8,"health":11,"infra":9,"insurgency":6,"safety":15,"scam":15,"transport":11,"weather":10},"np":{"aml":5,"border":9,"crime":7,"flood":13,"health":4,"infra":3,"insurgency":1,"safety":4,"scam":5,"transport":8,"weather":4},"nz":{"aml":3,"border":7,"crime":14,"flood":9,"health":6,"infra":6,"insurgency":2,"safety":9,"scam":6,"transport":10,"weather":9},"oki":{"aml":6,"border":15,"crime":18,"flood":4,"health":10,"infra":3,"safety":9,"scam":11,"transport":4,"weather":6},"pg":{"aml":5,"border":7,"crime":11,"flood":1,"health":5,"infra":5,"insurgency":11,"safety":11,"scam":4,"transport":1,"weather":7},"ph":{"aml":7,"border":9,"crime":7,"flood":6,"health":14,"infra":6,"insurgency":10,"safety":7,"scam":7,"transport":7,"weather":6},"pk":{"aml":4,"border":7,"crime":4,"flood":4,"health":4,"infra":3,"insurgency":10,"safety":3,"scam":5,"transport":3,"weather":2},"sg":{"aml":12,"border":8,"crime":15,"flood":3,"health":8,"infra":3,"insurgency":4,"safety":11,"scam":14,"transport":13,"weather":8},"th":{"aml":42,"crime":42,"health":44,"infra":15,"insurgency":67,"safety":39,"scam":48,"transport":42,"weather":42},"tl":{"aml":3,"border":10,"crime":8,"flood":8,"health":10,"infra":6,"insurgency":4,"safety":7,"scam":11,"transport":12,"weather":5},"tw":{"aml":5,"border":16,"crime":6,"flood":8,"health":7,"infra":5,"safety":6,"scam":6,"transport":7,"weather":7},"vn":{"aml":3,"border":5,"crime":12,"flood":7,"health":6,"infra":3,"safety":6,"scam":8,"transport":6,"weather":5}},"sof":["au","bd","bn","bt","cn","id","in","jp","kh","kp","kr","la","lk","mm","mn","mv","my","np","nz","oki","pg","ph","pk","sg","th","tl","tw","vn"],"brief":["au","bd","bn","bt","cn","id","in","jp","kh","kp","kr","la","lk","mm","mn","mv","my","np","nz","oki","pg","ph","pk","sg","th","tl","tw","vn"]};
+(function () {
+  var M = window.OSAP_COUNTRY_FILES, h = (location.hash || "").replace("#", "").split("/");
+  var cc = h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : "th", src = [];
+  Object.keys(M.layers[cc] || {}).forEach(function (l) { src.push("data/layers/" + cc + "/" + l + ".js"); });
+  if (M.sof.indexOf(cc) >= 0) src.push("data/sof/" + cc + ".js");
+  if (M.brief.indexOf(cc) >= 0) src.push("data/brief/" + cc + ".js");
+  /* news and social posts: the refresh job writes one file per country (tools/split_country.mjs) */
+  src.push("data/live/news/" + cc + ".js", "data/live/social/" + cc + ".js");
+  document.write(src.map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(""));
+})();
+</script>
+<!-- country-data:end -->
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
 <script src="data/live/gdacs.js"></script>
 <script src="data/live/reliefweb.js"></script>
 <script src="data/live/warnings.js"></script>
-<script src="data/live/news.js"></script>
-<script src="data/live/social.js"></script>
 <script src="data/live/advisories.js"></script>
 <script src="data/live/tsunami.js"></script>
 <script src="data/live/volcano.js"></script>
@@ -2756,7 +2438,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
-<script src="data/live/roads.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script src="data/basemap/world-countries.js"></script>
 <script src="data/basemap/world-outlines.js"></script>
@@ -3004,7 +2685,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       r.cases != null ? r.cases.toLocaleString() + " cases" : "", r.deaths_reported != null ? r.deaths_reported.toLocaleString() + " deaths reported" : "",
       r.mode ? r.mode : "", r.route ? r.route : "", r.asset_type ? r.asset_type : ""].filter(Boolean);
   }
-  var TD = {}, TDALL = window.TSAP_DATA || {}, CN = {};
+  var TD = {}, TDALL = window.TSAP_DATA || {}, CN = {}, CF0 = (window.OSAP_COUNTRY_FILES || {}).layers || {};
+  /* Only this country's layer files are loaded; the picker's counts for the others come from the loader's list. */
+  Object.keys(CF0).forEach(function (cc) { Object.keys(CF0[cc]).forEach(function (l) { if (!TDALL[cc === "th" ? l : cc + "/" + l]) CN[cc] = (CN[cc] || 0) + CF0[cc][l]; }); });
   Object.keys(TDALL).forEach(function (k) {
     var p = k.split("/"), cc = p.length > 1 ? p[0] : "th", lid = p.length > 1 ? p[1] : k;
     CN[cc] = (CN[cc] || 0) + TDALL[k].events.length;
