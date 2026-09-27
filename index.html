@@ -1437,6 +1437,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
     function sync() {
       document.querySelectorAll("input[data-ter]").forEach(function (i) { i.checked = !!ST[i.getAttribute("data-ter")]; });
+      var pb = document.getElementById("pr-btn"); if (pb) { pb.classList.toggle("on", !!ST.pr); pb.setAttribute("aria-pressed", ST.pr ? "true" : "false"); }
       document.querySelectorAll(".ternote").forEach(function (e) { e.textContent = note(e.getAttribute("data-k") || ""); });
     }
     function set(k, on) {
@@ -1466,6 +1467,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
+    /* countries with a presence layer get their own map button, so it is not buried in the Layers menu, and the layer
+       comes on by itself in the maritime data set (the data-set switch turns extra layers off first, then this runs) */
+    if (HASPR[cc]) {
+      var PrCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+        var d = L.DomUtil.create("div", "leaflet-control areactl prctl");
+        d.innerHTML = '<button type="button" id="pr-btn" aria-pressed="false" title="Chinese state presence and reported influence: held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.">Chinese presence</button>';
+        L.DomEvent.disableClickPropagation(d); return d; } });
+      new PrCtl().addTo(map);
+      document.getElementById("pr-btn").addEventListener("click", function () { set("pr", !ST.pr); });
+      var PRVIEW = { border: 1 };
+      new MutationObserver(function () { if (PRVIEW[document.documentElement.getAttribute("data-view")] && !ST.pr) set("pr", true); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["data-view"] });
+    }
     sync();
     if (!HASPR[cc]) ST.pr = false;
     if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
