@@ -14,6 +14,9 @@ const cities = [
   row("Hilo", 19.73, -155.09, "PPL", "US", "HI", 45000),
   row("Salt Lake City", 40.76, -111.89, "PPLA", "US", "UT", 200000),
   row("Paris", 33.66, -95.55, "PPL", "US", "TX", 25000),
+  row("Hamilton", -37.78, 175.28, "PPL", "NZ", "E7", 170000),
+  row("Hamilton", 43.25, -79.84, "PPL", "CA", "08", 570000),
+  row("Victoria", -4.62, 55.45, "PPLC", "SC", "17", 26000),
   row("Houston", 29.76, -95.36, "PPL", "US", "TX", 2300000),
   row("Paris", 48.85, 2.35, "PPLC", "FR", "11", 2100000),
   row("Chicago", 41.85, -87.65, "PPL", "US", "IL", 2700000),
@@ -38,6 +41,8 @@ const cases = [
   ["Record heat in Houston", "us", "Houston"],
   ["Protest in Paris", "fr", "Paris"],
   ["Floods hit Bangkok", "th", "Bangkok"],
+  ["More disruption on SH1 near Hamilton after motorcycle crash", "nz", "Hamilton"],   // a bigger Hamilton elsewhere, but under a million
+  ["Rerun election count begins in Victoria", "sc", "Victoria"],                       // a capital is not ambiguous against a smaller town
 ];
 let bad = 0;
 for (const [t, cc, want] of cases) {

@@ -7,7 +7,7 @@ import { ccsAt } from "./geo_cc.mjs";
 
 const gz = await loadGazetteer();
 const files = fs.readdirSync("data/live/news").filter((f) => /^[a-z]{2,3}\.js$/.test(f));
-const tot = { items: 0, before: 0, after: 0, changed: 0, dropped: 0, moved: 0, added: 0, outBefore: 0, outAfter: 0 }, why = {}, per = [], lines = [];
+const tot = { items: 0, before: 0, after: 0, changed: 0, dropped: 0, moved: 0, added: 0, outBefore: 0, outAfter: 0 }, why = {}, per = [], lines = [], outs = [];
 function inside(cc, g) { if (!g) return true; const c = ccsAt(g.la, g.lo, 0.3); return c.includes(cc) || (cc === "oki" && c.includes("jp")); }
 for (const f of files) {
   const cc = f.slice(0, -3), t = fs.readFileSync("data/live/news/" + f, "utf8");
@@ -20,7 +20,8 @@ for (const f of files) {
     for (const x of texts) { const r = placeIn(gz, x, [cc]); if (r && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
     const a = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null, b = i.geo || null;
     tot.items++; if (b) { pc.before++; tot.before++; } if (a) { pc.after++; tot.after++; }
-    if (!inside(cc, b)) tot.outBefore++; if (!inside(cc, a)) tot.outAfter++;
+    if (!inside(cc, b)) tot.outBefore++;
+    if (!inside(cc, a)) { tot.outAfter++; outs.push(`${cc}\t${a.n} (${a.la}, ${a.lo}) in ${ccsAt(a.la, a.lo, 1).join("/") || "sea"}\t${String(i.title_en || i.title).slice(0, 90)}`); }
     const same = (!a && !b) || (a && b && a.n === b.n && Math.abs(a.la - b.la) < 0.01 && Math.abs(a.lo - b.lo) < 0.01);
     if (same) continue;
     pc.changed++; tot.changed++;
@@ -41,3 +42,5 @@ console.log("WHY old pins changed", JSON.stringify(why));
 console.log("PER COUNTRY (changed > 0):", per.filter((p) => p.changed).map((p) => `${p.cc} ${p.changed}/${p.items}`).join(", "));
 console.log("CHANGES (cc, kind, reason, before -> after, headline):");
 lines.forEach((l) => console.log(l));
+console.log("PINS OUTSIDE THEIR COUNTRY'S OUTLINE AFTER (cc, place, where, headline):");
+outs.forEach((l) => console.log(l));
