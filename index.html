@@ -105,6 +105,13 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
+  /* hospitals always show as a red cross on a white tile, in every layer and legend, so they read on light, dark and
+     satellite maps alike. hollow: the cross in outline only (used for the Cambodian side of the border layer). */
+  window.OSAP_REDCROSS = function (px, hollow) {
+    return '<span class="hospx" style="width:' + px + 'px;height:' + px + 'px"><svg viewBox="0 0 16 16" width="' + px + '" height="' + px + '" aria-hidden="true">' +
+      '<rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/>' +
+      '<path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="' + (hollow ? "#fff" : "#D7141A") + '" stroke="#D7141A" stroke-width="' + (hollow ? 1.3 : 0) + '"/></svg></span>';
+  };
 })();
 </script>
 <script>
@@ -304,6 +311,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 
 .lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
 .sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
+.hospx{display:inline-block;line-height:0;flex:none;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.45)}.hospx svg{display:block}.lg .hospx{margin-top:2px}.sofpin.inline .hospx{vertical-align:0}
 .sw.round{border-radius:50%}
 /* the legend sits on the map, lower left, and folds to one button; compact and folded by default on a phone */
 .lgctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:min(300px,calc(100vw - 90px));font:inherit}
@@ -737,7 +745,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
       <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Rain station, 24 h total<span class="d">Circle grows from 60 mm up</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--power);border-radius:3px"></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);border-radius:3px"></span><div>Hospital in the flood footprint</div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--util);border-radius:3px"></span><div>Water works in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--over);opacity:.45"></span><div>Subdistrict by an overflowing gauge</div></div>
       <div class="lg"><span class="sw" style="background:var(--sat-water);opacity:.45"></span><div>Subdistrict with satellite-seen water</div></div>
@@ -852,7 +860,8 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
       <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
       <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital, school (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital or clinic in Thailand<span class="d">Outlined cross: the same in Cambodia</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--rain);width:11px;height:11px;margin:4px 2px 0"></span><div>School (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
@@ -1578,10 +1587,13 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     infraLayer.clearLayers();
     POWER.forEach(function (o) {
       var col = tok(o.g === "power" ? "--power" : (o.g === "water" ? "--util" : "--care"));
-      var m = L.circleMarker([o.lat, o.lon], {
-        pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
-        color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
-      });
+      var m = o.g === "care"
+        ? L.marker([o.lat, o.lon], { pane: "infrapane", keyboard: false, title: o.n,
+            icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7], html: OSAP_REDCROSS(14) }) })
+        : L.circleMarker([o.lat, o.lon], {
+            pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
+            color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
+          });
       m.bindPopup('<div class="pop"><h3>' + esc(o.n) + "</h3>" +
         '<div class="tier" style="color:' + col + '">' + esc(o.k) + "</div>" +
         '<div class="why">Inside <b>' + esc(o.t) + "</b>, " + esc(o.a) + ", " + esc(o.p) +
@@ -2126,7 +2138,9 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       /* squares, so places read differently from the round incident dots */
       var m = L.marker([a.lat, a.lon], {
         pane: "assetpane", keyboard: false,
-        icon: L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+        icon: a.g === "care" || a.g === "clinic"
+          ? L.divIcon({ className: "", iconSize: [px + 6, px + 6], iconAnchor: [(px + 6) / 2, (px + 6) / 2], html: OSAP_REDCROSS(px + 6, a.side === "KH") })
+          : L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
           html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
                 ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
       });
@@ -4044,6 +4058,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
   function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
   function sofIcon(k) {
     var c = tok(SOFK[k].color);
+    if (k === "hospitals") return L.divIcon({ className: "", iconSize: [18, 18], iconAnchor: [9, 9], html: OSAP_REDCROSS(18) });
     return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
       html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
   }
@@ -4104,7 +4119,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
       var n = (SOF[k] || []).length, id = "sofk-" + k;
       return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
-        '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+        (k === "hospitals" ? OSAP_REDCROSS(15) : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span>") + " " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
     }).join("") + "</div>";
     var lists = kinds.map(function (k) {
       var arr = SOF[k] || [];
