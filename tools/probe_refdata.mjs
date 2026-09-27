@@ -35,37 +35,52 @@ for (const u of ["https://travel.state.gov/_res/rss/TAsTWs.xml", "https://travel
   if (t) { fs.writeFileSync(`${OUT}/advisories-${u.endsWith(".xml") ? "rss.xml" : "index.html"}`, t); log.push(`ok ${t.length} ${u}`); }
 }
 
-// 2. Per country: hospitals, U.S. posts, seaports (Wikidata, ranked by number of Wikipedia articles). Grouped per item so
-// multi-valued properties do not repeat rows; several countries run at once (Wikidata allows 5 parallel queries), and no new
-// country starts after DEADLINE so the park step always runs.
-const T0 = Date.now(), DEADLINE = +(process.env.DEADLINE_MIN || 17) * 60000;
+// 2. Per country: hospitals, U.S. posts, seaports from Wikidata's search API (haswbstatement, sorted by incoming links) and
+// wbgetentities; SPARQL times out on large countries. Items are written in the same shape the research thread reads.
+const T0 = Date.now(), DEADLINE = +(process.env.DEADLINE_MIN || 17) * 60000, API = "https://www.wikidata.org/w/api.php?format=json&";
+const QC = {};
+for (const b of (await sparql(`SELECT ?c ?cc WHERE { ?c wdt:P297 ?cc; wdt:P31 wd:Q6256 }`)) || []) QC[b.cc] = b.c.split("/").pop();
+for (const b of (await sparql(`SELECT ?c ?cc WHERE { ?c wdt:P297 ?cc }`)) || []) QC[b.cc] = QC[b.cc] || b.c.split("/").pop();
+async function search(q, n) {
+  const t = await get(API + "action=query&list=search&srnamespace=0&srlimit=" + n + "&srsort=incoming_links_desc&srsearch=" + encodeURIComponent(q));
+  try { return JSON.parse(t).query.search.map((x) => x.title); } catch (e) { return null; }
+}
+async function ents(ids) {
+  const out = [];
+  for (let i = 0; i < ids.length; i += 50) {
+    const t = await get(API + "action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=" + ids.slice(i, i + 50).join("|"));
+    try { out.push(...Object.values(JSON.parse(t).entities)); } catch (e) {}
+  }
+  return out;
+}
+const claim = (e, p) => ((e.claims || {})[p] || []).map((c) => c.mainsnak && c.mainsnak.datavalue && c.mainsnak.datavalue.value).filter(Boolean);
+const lab = (e) => (e.labels && e.labels.en && e.labels.en.value) || null;
+const coord = (e) => { const c = claim(e, "P625")[0]; return c ? `Point(${c.longitude} ${c.latitude})` : null; };
+const wd = (e) => "http://www.wikidata.org/entity/" + e.id;
 async function one(cc) {
-  const C = `?c wdt:P297 "${cc}".`, t = Date.now();
-  const hosp = await sparql(`SELECT ?h ?sl (SAMPLE(?en) AS ?hLabel) (SAMPLE(?any) AS ?hLabelAny) (SAMPLE(?coord) AS ?coord)
-    (SAMPLE(?admL) AS ?admLabel) (SAMPLE(?web) AS ?web) WHERE { ${C}
-    ?h wdt:P17 ?c; wdt:P31/wdt:P279* wd:Q16917; wdt:P625 ?coord; wikibase:sitelinks ?sl.
-    FILTER NOT EXISTS { ?h wdt:P576 ?end } FILTER NOT EXISTS { ?h wdt:P3999 ?closed }
-    OPTIONAL { ?h rdfs:label ?en FILTER(LANG(?en) = "en") } OPTIONAL { ?h rdfs:label ?any }
-    OPTIONAL { ?h wdt:P131 ?adm. ?adm rdfs:label ?admL FILTER(LANG(?admL) = "en") } OPTIONAL { ?h wdt:P856 ?web } }
-    GROUP BY ?h ?sl ORDER BY DESC(?sl) LIMIT 40`);
-  const all = await sparql(`SELECT ?m ?mLabel ?coord ?admLabel ?addr ?op ?c2 WHERE {
-    ?m wdt:P31 ?type. VALUES ?root { wd:Q3917681 wd:Q7843791 } ?type wdt:P279* ?root. ?m wdt:P17 ?c2. ?c2 wdt:P297 "${cc}".
-    FILTER NOT EXISTS { ?m wdt:P576 ?end }
-    OPTIONAL { ?m wdt:P137 ?op } OPTIONAL { ?m wdt:P625 ?coord } OPTIONAL { ?m wdt:P131 ?adm } OPTIONAL { ?m wdt:P6375 ?addr }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`);
-  const posts = all && all.filter((m) => /Q30$|Q789915$/.test(m.op || "") || /United States|\bU\.S\.|\bUS (Embassy|Consulate)|American (Embassy|Consulate)/.test(m.mLabel || ""));
-  const ports = await sparql(`SELECT ?p ?sl (SAMPLE(?en) AS ?pLabel) (SAMPLE(?coord) AS ?coord) (SAMPLE(?lc) AS ?locode) WHERE { ${C}
-    ?p wdt:P31 ?type. VALUES ?type { wd:Q44782 wd:Q283202 wd:Q2143825 wd:Q721207 }
-    ?p wdt:P17 ?c; wdt:P625 ?coord; wikibase:sitelinks ?sl. OPTIONAL { ?p wdt:P1937 ?lc }
-    FILTER NOT EXISTS { ?p wdt:P576 ?end } OPTIONAL { ?p rdfs:label ?en FILTER(LANG(?en) = "en") } }
-    GROUP BY ?p ?sl ORDER BY DESC(?sl) LIMIT 30`);
+  const q = QC[cc], t = Date.now();
+  if (!q) { log.push(`${cc} no QID`); return; }
+  const C = `haswbstatement:P17=${q}`;
+  const hIds = await search(`haswbstatement:P31=Q16917 ${C} -haswbstatement:P576`, 50);
+  const pIds = await search(`haswbstatement:P31=Q44782 ${C} -haswbstatement:P576`, 30);
+  const mIds = [...new Set([...((await search(`${C} haswbstatement:P137=Q30`, 20)) || []),
+    ...((await search(`haswbstatement:P31=Q3917681 ${C} "United States"`, 20)) || []), ...((await search(`haswbstatement:P31=Q7843791 ${C} "United States"`, 20)) || [])])];
+  const E = await ents([...(hIds || []), ...(pIds || []), ...mIds]), byId = Object.fromEntries(E.map((e) => [e.id, e]));
+  const adm = await ents([...new Set(E.map((e) => (claim(e, "P131")[0] || {}).id).filter(Boolean))]), admL = Object.fromEntries(adm.map((e) => [e.id, lab(e)]));
+  const row = (e) => ({ lab: lab(e), coord: coord(e), sl: String(Object.keys(e.sitelinks || {}).length), adm: admL[(claim(e, "P131")[0] || {}).id] || null });
+  const hosp = hIds && hIds.map((i) => byId[i]).filter(Boolean).map((e) => { const r = row(e); return { h: wd(e), hLabel: r.lab, coord: r.coord, sl: r.sl, admLabel: r.adm, web: claim(e, "P856")[0] || null }; })
+    .sort((x, y) => y.sl - x.sl);
+  const ports = pIds && pIds.map((i) => byId[i]).filter(Boolean).map((e) => { const r = row(e); return { p: wd(e), pLabel: r.lab, coord: r.coord, sl: r.sl, locode: claim(e, "P1937")[0] || null }; })
+    .sort((x, y) => y.sl - x.sl);
+  const posts = mIds.map((i) => byId[i]).filter(Boolean).filter((e) => claim(e, "P137").some((v) => v.id === "Q30" || v.id === "Q789915") || /United States|\bU\.S\.|American (Embassy|Consulate)/.test(lab(e) || ""))
+    .filter((e) => !claim(e, "P576").length).map((e) => { const r = row(e); return { m: wd(e), mLabel: r.lab, coord: r.coord, admLabel: r.adm, addr: claim(e, "P6375").map((v) => v.text)[0] || null }; });
   fs.writeFileSync(`${OUT}/${cc.toLowerCase()}.json`, JSON.stringify({ cc, hosp, posts, ports }));
-  log.push(`${cc} ${Math.round((Date.now() - t) / 1000)}s hospitals ${hosp ? hosp.length : "fail"} posts ${posts ? posts.length : "fail"} ports ${ports ? ports.length : "fail"}`);
+  log.push(`${cc} ${Math.round((Date.now() - t) / 1000)}s hospitals ${hosp ? hosp.length : "fail"} posts ${posts.length} ports ${ports ? ports.length : "fail"}`);
   console.log(log[log.length - 1]);
   fs.writeFileSync(`${OUT}/log.txt`, log.join("\n") + "\n");
 }
 const queue = [...CCS];
-await Promise.all([0, 1, 2, 3].map(async () => {
+await Promise.all([0, 1].map(async () => {
   while (queue.length) {
     if (Date.now() - T0 > DEADLINE) { log.push("deadline: skipped " + queue.splice(0).join(" ")); break; }
     await one(queue.shift());
