@@ -1,0 +1,49 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "li",
+ "country": "Liechtenstein",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 1,
+  "level_text": "Exercise normal precautions",
+  "issued": "2025-05-22",
+  "updated": null,
+  "indicators": [],
+  "indicator_names": [],
+  "areas": [],
+  "notes": "From the State Department advisory feed (Liechtenstein  - Level 1: Exercise Normal Precautions). Indicators are the risks the advisory text names, not its indicator icons; area-specific levels are not captured here, so read the advisory.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/Liechtenstein-Travel-Advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "28c7acdb98fde4dfe05f477881f9533896114ca16d29d94c39c47b3b4bb00b47"
+ },
+ "posts": [],
+ "airports": [],
+ "seaports": [],
+ "hospitals": [
+  {
+   "id": "sof:li:hospital:landesspital-liechtenstein",
+   "name": "Landesspital Liechtenstein",
+   "city": "Vaduz",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: http://www.landesspital.li/",
+   "lat": 47.1348,
+   "lon": 9.5228,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q15825831",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "7a2afa665725d4a5941c0dfd11ccf1151b4546da076bd52e4cdd978a378a9fc7"
+  }
+ ],
+ "power": [],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none.",
+  "No U.S. embassy or consulate found in Wikidata for this country; check travel.state.gov for the post that covers it.",
+  "No airport with scheduled service in the country; access is through neighbouring countries."
+ ]
+}

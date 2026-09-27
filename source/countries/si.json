@@ -1,0 +1,24 @@
+[
+ {
+  "layer": "weather",
+  "date": "2026-09-17",
+  "kind": "drought",
+  "title": "Drought cuts potato yields",
+  "detail": "Drought left its mark on Slovenian harvests, cutting potato yields (Al Jazeera).",
+  "place": "Nationwide",
+  "district": null,
+  "prov": "Nationwide",
+  "lat": null,
+  "lon": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": null,
+  "src": "https://www.aljazeera.com/news/2026/9/17/the-drought-has-left-its-mark-slovenias-potato-lovers-lament-low-yields",
+  "srcname": "Al Jazeera",
+  "attribution": "Headline and search summary only (article body not retrieved)",
+  "date_is_pub": true,
+  "fp": "5cd502f20080ef4fe2fc2c5339dfff0a1ded47e119e349ad953eb53122200778"
+ }
+]
