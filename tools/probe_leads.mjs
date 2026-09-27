@@ -49,14 +49,39 @@ async function robotsAllow(path) {
 }
 if (!(await robotsAllow("/news/search?q=x&format=rss"))) { console.log("robots.txt does not allow /news/search; stopping"); process.exit(0); }
 function unwrap(link) { try { const u = new URL(link); if (/bing\.com$/.test(u.hostname) && u.searchParams.get("url")) return u.searchParams.get("url"); } catch (e) {} return link; }
+// Second pass (SET=2): the common short names ("UK", "U.S.") and searches in the country's own language, since national
+// outlets rarely write the formal English name.
+const LQ = {
+  es: { flood: "inundación OR inundaciones OR deslave", border: "frontera OR militares OR fuerzas armadas", insurgency: "atentado OR ataque armado OR guerrilla OR explosivo",
+    crime: "narcotráfico OR decomiso OR cártel OR trata", scam: "estafa OR fraude", aml: "lavado de dinero OR blanqueo", weather: "tormenta OR huracán OR ola de calor OR alerta meteorológica",
+    infra: "apagón OR corte de luz OR agua potable", transport: "accidente OR choque OR aeropuerto OR puerto", safety: "incendio OR explosión OR sismo OR protesta", health: "brote OR dengue OR sarampión OR alerta sanitaria" },
+  pt: { flood: "enchente OR inundação OR deslizamento", border: "fronteira OR militares", insurgency: "ataque armado OR facção OR explosivo", crime: "tráfico OR apreensão OR contrabando",
+    scam: "golpe OR fraude", aml: "lavagem de dinheiro", weather: "temporal OR onda de calor OR alerta", infra: "apagão OR falta de energia OR abastecimento de água",
+    transport: "acidente OR aeroporto OR porto", safety: "incêndio OR explosão OR protesto", health: "surto OR dengue OR sarampo OR alerta sanitário" },
+  fr: { flood: "inondation OR crue", border: "frontière OR drone OR militaire", insurgency: "attentat OR terroriste", crime: "trafic de drogue OR saisie OR passeurs", scam: "arnaque OR escroquerie",
+    aml: "blanchiment", weather: "tempête OR canicule OR vigilance", infra: "panne OR coupure de courant OR eau potable", transport: "accident OR aéroport OR grève SNCF",
+    safety: "incendie OR explosion OR séisme OR manifestation", health: "épidémie OR rougeole OR alerte sanitaire" },
+  de: { flood: "Hochwasser OR Überschwemmung", border: "Grenze OR Drohne OR Bundeswehr", insurgency: "Anschlag OR Terror", crime: "Drogen OR Razzia OR Schleuser", scam: "Betrug OR Betrüger",
+    aml: "Geldwäsche", weather: "Unwetter OR Hitzewelle OR Sturm", infra: "Stromausfall OR Wasserversorgung", transport: "Unfall OR Flughafen OR Bahn Störung", safety: "Brand OR Explosion OR Demonstration", health: "Ausbruch OR Masern OR Gesundheitswarnung" },
+  it: { flood: "alluvione OR frana OR esondazione", border: "confine OR drone OR militari", insurgency: "attentato OR terrorismo", crime: "droga OR sequestro OR mafia OR 'ndrangheta", scam: "truffa OR frode",
+    aml: "riciclaggio", weather: "maltempo OR ondata di calore OR allerta meteo", infra: "blackout OR crisi idrica", transport: "incidente OR aeroporto OR sciopero trasporti", safety: "incendio OR esplosione OR terremoto OR protesta", health: "focolaio OR epidemia OR allerta sanitaria" },
+};
+const SET2 = { us: [["en", "U.S."]], gb: [["en", "UK"], ["en", "Britain"]], mx: [["es", "México"]], ar: [["es", "Argentina"]], co: [["es", "Colombia"]], ve: [["es", "Venezuela"]], cu: [["es", "Cuba"]],
+  cl: [["es", "Chile"]], pe: [["es", "Perú"]], ec: [["es", "Ecuador"]], bo: [["es", "Bolivia"]], py: [["es", "Paraguay"]], uy: [["es", "Uruguay"]], gt: [["es", "Guatemala"]], hn: [["es", "Honduras"]],
+  sv: [["es", "El Salvador"]], ni: [["es", "Nicaragua"]], cr: [["es", "Costa Rica"]], pa: [["es", "Panamá"]], do: [["es", "República Dominicana"]], es: [["es", "España"]],
+  br: [["pt", "Brasil"]], pt: [["pt", "Portugal"]], ht: [["fr", "Haïti"]], fr: [["fr", "France"]], be: [["fr", "Belgique"]], de: [["de", "Deutschland"]], at: [["de", "Österreich"]], ch: [["de", "Schweiz"]],
+  it: [["it", "Italia"]], ca: [["en", "Canada"], ["fr", "Québec"]] };
 const log = [];
 for (const cc of CCS) {
   const out = {};
-  for (const [layer, q] of Object.entries(Q)) {
-    const url = "https://www.bing.com/news/search?q=" + encodeURIComponent(`"${NAME[cc]}" (${q})`) + "&format=rss&count=50";
+  const jobs = process.env.SET === "2" ? (SET2[cc] || []).flatMap(([lang, nm]) => Object.entries(lang === "en" ? Q : LQ[lang]).map(([layer, q]) => [layer, nm, q]))
+    : Object.entries(Q).map(([layer, q]) => [layer, NAME[cc], q]);
+  if (!jobs.length) continue;
+  for (const [layer, nm, q] of jobs) {
+    const url = "https://www.bing.com/news/search?q=" + encodeURIComponent(`"${nm}" (${q})`) + "&format=rss&count=50";
     try {
-      out[layer] = parseFeed(await get(url)).map((i) => ({ t: i.title, s: (i.summary || "").slice(0, 400), d: Date.parse(i.date) ? new Date(Date.parse(i.date)).toISOString().slice(0, 10) : null, u: unwrap(i.link), o: i.source || null }));
-    } catch (e) { out[layer] = []; log.push(`${cc} ${layer} ${e.message}`); }
+      out[layer] = (out[layer] || []).concat(parseFeed(await get(url)).map((i) => ({ t: i.title, s: (i.summary || "").slice(0, 400), d: Date.parse(i.date) ? new Date(Date.parse(i.date)).toISOString().slice(0, 10) : null, u: unwrap(i.link), o: i.source || null })));
+    } catch (e) { out[layer] = out[layer] || []; log.push(`${cc} ${layer} ${e.message}`); }
     await sleep(1100);
   }
   fs.writeFileSync(`${OUT}/${cc}.json`, JSON.stringify(out));
