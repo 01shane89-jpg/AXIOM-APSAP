@@ -2696,7 +2696,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       : { from: new Date((today - (+PERIOD.p) + 1) * 864e5).toISOString().slice(0, 10), to: "" };
   }
   periodCalc();
-  function inPeriodDate(d) { d = String(d || "").slice(0, 10); return !d || ((!PR.from || d >= PR.from) && (!PR.to || d <= PR.to)); }
+  // for "last 24 hours", an item with a full time is compared by that time; one with only a date counts when the date is in the window
+  function inPeriodDate(d) {
+    var s = String(d || "");
+    if (PR.since && /^\d{4}-\d\d-\d\d[T ]\d\d:\d\d/.test(s)) { var t = s.replace(" ", "T"); if (!/[+-]\d\d:?\d\d$|Z$/.test(t)) t += "Z"; var ms = Date.parse(t); if (!isNaN(ms)) return ms >= PR.since; }
+    d = s.slice(0, 10); return !d || ((!PR.from || d >= PR.from) && (!PR.to || d <= PR.to));
+  }
   /* "Last 24 hours" compares the full time where a record has one (issue or post time, UTC unless marked);
      a record that only carries a date counts when that date falls inside the window */
   function recMs(r) {
@@ -3127,7 +3132,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     return true;
   }
-  function fmtTs(r) {
+  /* a status still in force (a closed crossing, an active alert, a storm being tracked) is kept in every period; its date is when
+     it began, so it reads "Ongoing since ..." rather than looking like an old report */
+  function fmtTs(r) { var s = fmtTs0(r); return r.ongoing ? "Ongoing since " + s : s; }
+  function fmtTs0(r) {
     var T = window.OSAP_TIME, t = String(r.ts);
     /* a time with a clock shows as Zulu / local; ThaiWater gauge times ("2026-09-27 07:20", no zone) are Thai time */
     var ms = r.tsLabel && T.parseT(r.tsLabel) || (/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(t) ? T.parseT(t) : /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(t) && !r.tsLabel ? T.parseT(t, "Asia/Bangkok") : NaN);
@@ -7136,6 +7144,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
+<script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
