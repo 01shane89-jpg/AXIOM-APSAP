@@ -62,8 +62,8 @@
    ],
    "ucdp": {"countries": "Ukraine|Russia", "match": "Ukrain|Russia|DPR|LPR|Donetsk|Luhansk"},
    "front": [
-    {"type": "geojson", "id": "deepstate-mirror", "name": "DeepStateMap (daily GeoJSON mirror by cyterat on GitHub)", "url": "https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/data/deepstatemap_data_{YYYYMMDD}.geojson", "dated": true, "home": "https://deepstatemap.live/", "licence": "DeepStateMap terms; mirror repository licence applies", "nc": true, "control": "Russian-occupied (DeepState)"},
-    {"type": "wikimap", "id": "wikipedia", "page": "Module:Russo-Ukrainian_war_detailed_map"}
+    { "type": "geojson", "id": "deepstate-mirror", "name": "DeepStateMap (daily GeoJSON mirror by cyterat on GitHub)", "url": "https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/data/deepstatemap_data_{YYYYMMDD}.geojson", "dated": true, "home": "https://deepstatemap.live/", "licence": "DeepStateMap terms; mirror repository licence applies", "nc": true, "control": "Russian-occupied (DeepState)" },
+    { "type": "wikimap", "id": "wikipedia", "page": "Module:Russo-Ukrainian_war_detailed_map", "legend": { "blue": "Held by Ukraine", "red": "Held by Russia" } }
    ],
    "extras": "tools/conflict_extras/russia-ukraine.mjs",
    "note_data": "Ukraine's and Russia's official statements (General Staff, Air Force, regional administrations, Ministry of Defence, state news agencies) are each side's own claims; pro-Kremlin military channels Rybar and WarGonzo are sanctioned entities and their posts are claims. Front line: DeepStateMap, a Ukrainian volunteer project, as mirrored daily; it is one side's reported depiction."
@@ -85,7 +85,6 @@
    "terms": ["Sudan\\w*", "RSF", "Rapid Support", "SAF", "Darfur", "Kordofan", "El Fasher", "Al-Fashir", "El Obeid", "Khartoum", "Omdurman", "Babanusa", "Kadugli", "Dilling", "Port Sudan", "Hemedti", "Burhan", "Janjaweed", "الدعم السريع", "السودان", "الفاشر", "دارفور", "كردفان", "الأبيض"],
    "searches": [{ "q": "Sudan RSF attack", "lang": "en" }, { "q": "Darfur Kordofan fighting", "lang": "en" }, { "q": "الدعم السريع هجوم", "lang": "ar" }],
    "feeds": [
-    { "id": "sudantribune", "outlet": "Sudan Tribune", "url": "https://sudantribune.com/feed/", "lang": "en", "all": true },
     { "id": "dabanga", "outlet": "Radio Dabanga", "url": "https://www.dabangasudan.org/en/feed", "lang": "en", "all": true },
     { "id": "sudanwarmonitor", "outlet": "Sudan War Monitor", "url": "https://sudanwarmonitor.com/feed", "lang": "en", "all": true }
    ],
@@ -99,7 +98,7 @@
    "terms": ["Gaza", "Hamas", "Rafah", "Khan Yunis", "Khan Younis", "Jabalia", "Deir al-Balah", "West Bank", "Jenin", "Tulkarm", "Nablus", "Hebron", "yellow line", "غزة", "حماس", "رفح", "خان يونس", "الضفة", "עזה", "חמאס"],
    "searches": [{ "q": "Gaza strike killed", "lang": "en" }, { "q": "West Bank raid", "lang": "en" }, { "q": "غزة قصف", "lang": "ar" }],
    "ucdp": { "countries": "Israel|Palestin", "match": "Hamas|PIJ|Palestin|Gaza|Fatah|Israel" , "exclude": "Hezbollah|Iran|Ansarallah" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Gaza_war_detailed_map" }]
+   "front": []
   },
   {
    "id": "israel-lebanon", "name": "Israel–Hezbollah conflict (Lebanon)", "short": "Israel–Hezbollah", "countries": ["lb", "il", "sy"], "since": "2023-10-08", "kind": "war", "tier": 1,
@@ -107,9 +106,8 @@
    "bounds": [[32.7, 34.9], [34.8, 36.7]],
    "terms": ["Lebanon", "Lebanese", "Hezbollah", "Hizbollah", "Beirut", "Dahiyeh", "Tyre", "Nabatieh", "Litani", "Bekaa", "UNIFIL", "Qiryat Shmona", "Kiryat Shmona", "لبنان", "حزب الله", "الضاحية", "النبطية", "صور", "חיזבאללה", "לבנון"],
    "searches": [{ "q": "Hezbollah Israel strike Lebanon", "lang": "en" }, { "q": "جنوب لبنان غارة", "lang": "ar" }],
-   "feeds": [{ "id": "naharnet", "outlet": "Naharnet", "url": "https://www.naharnet.com/stories/en/rss", "lang": "en" }],
    "ucdp": { "countries": "Lebanon|Israel|Syria", "match": "Hezbollah|Lebanon" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:2024_Israeli_invasion_of_Lebanon_detailed_map" }]
+   "front": []
   },
   {
    "id": "yemen-red-sea", "name": "Yemen war and Red Sea attacks", "short": "Yemen and Red Sea", "countries": ["ye", "sa", "er", "dj"], "since": "2014-09-21", "kind": "civil war and maritime attacks", "tier": 1,
@@ -117,8 +115,8 @@
    "bounds": [[11.5, 38.5], [19.5, 54.0]],
    "terms": ["Yemen\\w*", "Houthi\\w*", "Ansar Allah", "Ansarallah", "Hodeidah", "Hudaydah", "Marib", "Taiz", "Aden", "Sanaa", "Sana'a", "Red Sea", "Bab el-Mandeb", "Bab al-Mandab", "Kamaran", "Zubair island\\w*", "Hanish", "AQAP", "اليمن", "الحوثي\\w*", "أنصار الله", "الحديدة", "مأرب", "تعز", "عدن", "البحر الأحمر"],
    "searches": [{ "q": "Houthi attack Red Sea", "lang": "en" }, { "q": "Yemen fighting Marib Taiz", "lang": "en" }, { "q": "الحوثيين هجوم", "lang": "ar" }],
-   "ucdp": { "countries": "Yemen|Saudi", "match": "Ansarallah|Yemen|AQAP|Southern Transitional|Houthi|Saudi" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Yemeni_Civil_War_detailed_map" }]
+   "ucdp": { "countries": "Yemen|Saudi", "match": "Ansarallah|Yemen|AQAP|Southern Transitional|STC|Presidential Leadership|HTA|Hadram|Houthi|Saudi|XXX678" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Yemeni_Civil_War_detailed_map" }]
   },
   {
    "id": "myanmar", "name": "Myanmar civil war", "short": "Myanmar war", "countries": ["mm"], "since": "2021-02-01", "kind": "civil war", "tier": 1,
@@ -127,12 +125,10 @@
    "terms": ["Myanmar", "Burma", "Tatmadaw", "junta", "PDF", "People's Defence Force", "NUG", "Arakan Army", "KIA", "Kachin", "Karen", "KNU", "Karenni", "TNLA", "MNDAA", "Chin", "Rakhine", "Sagaing", "Magway", "Mandalay", "Shan", "Bhamo", "Kyaukphyu", "Sittwe", "Myawaddy", "Lashio", "Naypyitaw", "Naypyidaw", "စစ်ကောင်စီ", "တပ်မတော်", "ပကဖ", "ဗုံး", "တိုက်ပွဲ"],
    "searches": [{ "q": "Myanmar junta airstrike", "lang": "en" }, { "q": "Myanmar resistance fighting", "lang": "en" }],
    "feeds": [
-    { "id": "irrawaddy", "outlet": "The Irrawaddy", "url": "https://www.irrawaddy.com/feed", "lang": "en", "all": true },
-    { "id": "myanmarnow", "outlet": "Myanmar Now", "url": "https://myanmar-now.org/en/feed/", "lang": "en", "all": true },
-    { "id": "bcrn", "outlet": "Burma Coup Resistance Notes", "url": "https://burmacoupresistancenotes.substack.com/feed", "lang": "en", "all": true }
+    { "id": "myanmarnow", "outlet": "Myanmar Now", "url": "https://myanmar-now.org/en/feed/", "lang": "en", "all": true }
    ],
    "ucdp": { "countries": "Myanmar" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Myanmar_Civil_War_detailed_map" }]
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Myanmar_Civil_War_detailed_map" }]
   },
   {
    "id": "afghanistan-pakistan", "name": "Afghanistan–Pakistan war", "short": "Afghanistan–Pakistan", "countries": ["pk", "af"], "since": "2025-10-11", "kind": "interstate border war", "tier": 1,
@@ -140,7 +136,7 @@
    "bounds": [[29.0, 66.0], [37.2, 74.0]],
    "terms": ["Afghan\\w*", "Taliban", "Durand Line", "Torkham", "Chaman", "Spin Boldak", "Kurram", "Bajaur", "Khyber", "Paktika", "Khost", "Kunar", "Nangarhar", "border clash\\w*", "افغان", "طالبان", "ډیورنډ", "طورخم"],
    "searches": [{ "q": "Pakistan Afghanistan border clash", "lang": "en" }, { "q": "Pakistan airstrike Afghanistan", "lang": "en" }],
-   "ucdp": { "countries": "Afghanistan|Pakistan", "match": "Government of Afghanistan|Taleban|Taliban|Afghanistan - Pakistan|Pakistan - Afghanistan" , "exclude": "IS|Islamic State" },
+   "ucdp": { "countries": "Afghanistan|Pakistan", "match": "Afghanistan|Taleban|Taliban", "exclude": "\\bIS\\b|Islamic State" },
    "front": []
   },
   {
@@ -149,7 +145,7 @@
    "bounds": [[24.0, 60.8], [37.1, 75.5]],
    "terms": ["TTP", "Tehreek-e-Taliban", "Tehrik-i-Taliban", "BLA", "Baloch\\w*", "Khyber Pakhtunkhwa", "KP", "Waziristan", "Bannu", "Lakki Marwat", "Dera Ismail Khan", "Quetta", "Turbat", "Gwadar", "Kalat", "Mastung", "Khwarij", "Fitna al-Khawarij", "Fitna al-Hindustan", "دہشت", "خوارج"],
    "searches": [{ "q": "Khyber Pakhtunkhwa attack militants", "lang": "en" }, { "q": "Balochistan attack", "lang": "en" }],
-   "ucdp": { "countries": "Pakistan", "exclude": "Government of Afghanistan|Afghanistan - Pakistan|India" },
+   "ucdp": { "countries": "Pakistan|Afghanistan", "match": "Pakistan", "exclude": "Afghanistan - Pakistan|Pakistan - Afghanistan|Government of Afghanistan|India" },
    "front": []
   },
   {
@@ -159,8 +155,8 @@
    "terms": ["Congo\\w*", "DRC", "M23", "AFC/M23", "Kivu", "Goma", "Bukavu", "Uvira", "Walikale", "Masisi", "Rutshuru", "Beni", "Butembo", "Lubero", "Ituri", "Bunia", "Djugu", "ADF", "Wazalendo", "FARDC", "CODECO", "Kinshasa", "Kigali"],
    "searches": [{ "q": "M23 Congo fighting", "lang": "en" }, { "q": "ADF attack Ituri Beni", "lang": "en" }, { "q": "M23 combats Kivu", "lang": "fr" }],
    "feeds": [{ "id": "actualite-cd", "outlet": "Actualite.cd", "url": "https://actualite.cd/feed", "lang": "fr" }],
-   "ucdp": { "countries": "DR Congo|Congo, Democratic|Rwanda|Burundi|Uganda", "match": "M23|ADF|CODECO|Congo|Wazalendo|Mai-Mai|Rwanda|Islamic State" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:M23_offensive_detailed_map" }]
+   "ucdp": { "countries": "DR Congo|Congo, Democratic" },
+   "front": []
   },
   {
    "id": "sahel", "name": "Sahel war (Mali, Burkina Faso, Niger)", "short": "Sahel war", "countries": ["ml", "bf", "ne", "bj", "tg"], "since": "2012-01-16", "kind": "insurgency", "tier": 1,
@@ -169,7 +165,7 @@
    "terms": ["Mali\\b", "Malian", "Burkina", "Niger\\b", "Nigerien", "Sahel", "JNIM", "Jama'at Nusrat", "GSIM", "Islamic State Sahel", "EIGS", "Wagner", "Africa Corps", "FAMa", "Bamako", "Kayes", "Timbuktu", "Tombouctou", "Gao", "Kidal", "Mopti", "Menaka", "Ménaka", "Djibo", "Ouagadougou", "Dori", "Fada N'Gourma", "Tillaberi", "Tillabéri", "Tahoua", "Diffa", "blockade", "blocus", "djihadiste\\w*", "jihadist\\w*"],
    "searches": [{ "q": "JNIM attack Mali", "lang": "en" }, { "q": "Burkina Faso attack soldiers", "lang": "en" }, { "q": "attaque jihadiste Mali Burkina", "lang": "fr" }],
    "ucdp": { "countries": "Mali|Burkina|Niger|Benin|Togo", "exclude": "Nigeria" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Mali_War_detailed_map" }]
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Mali_War_detailed_map" }]
   },
   {
    "id": "somalia", "name": "Somalia: al-Shabaab insurgency", "short": "Somalia war", "countries": ["so", "ke", "et"], "since": "2006-12-20", "kind": "insurgency", "tier": 2,
@@ -177,9 +173,8 @@
    "bounds": [[-2.0, 40.5], [12.0, 51.5]],
    "terms": ["Somali\\w*", "al-Shabaab", "Al Shabaab", "Shabab", "AUSSOM", "AMISOM", "ATMIS", "Mogadishu", "Puntland", "Jubaland", "Hiraan", "Middle Shabelle", "Lower Shabelle", "Galmudug", "Mandera", "Lamu", "Garissa"],
    "searches": [{ "q": "al-Shabaab attack Somalia", "lang": "en" }],
-   "feeds": [{ "id": "hiiraan", "outlet": "Hiiraan Online", "url": "https://www.hiiraan.com/rss/news.xml", "lang": "en" }, { "id": "garowe", "outlet": "Garowe Online", "url": "https://www.garoweonline.com/rss.xml", "lang": "en" }],
    "ucdp": { "countries": "Somalia|Kenya", "match": "Shabaab|Somalia|Islamic State" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Somali_Civil_War_detailed_map" }]
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Somali_Civil_War_detailed_map" }]
   },
   {
    "id": "lake-chad-nigeria", "name": "Nigeria and Lake Chad: jihadist and bandit violence", "short": "Nigeria and Lake Chad", "countries": ["ng", "cm", "td", "ne"], "since": "2009-07-26", "kind": "insurgency", "tier": 2,
@@ -187,7 +182,7 @@
    "bounds": [[4.0, 2.5], [15.5, 16.0]],
    "terms": ["Boko Haram", "ISWAP", "JAS", "Lakurawa", "bandit\\w*", "Borno", "Maiduguri", "Yobe", "Adamawa", "Zamfara", "Katsina", "Sokoto", "Kebbi", "Niger State", "Kaduna", "Plateau", "Benue", "Lake Chad", "Far North", "Extrême-Nord", "MNJTF", "herders"],
    "searches": [{ "q": "Borno attack ISWAP", "lang": "en" }, { "q": "bandits attack Zamfara Katsina", "lang": "en" }],
-   "ucdp": { "countries": "Nigeria|Cameroon|Chad", "match": "Boko|ISWAP|Islamic State|Jama'atu|Nigeria|bandit|Lakurawa|Fulani|Cameroon|Chad" , "exclude": "Ambazonia" },
+   "ucdp": { "countries": "Nigeria|Cameroon|Chad", "match": "Boko|ISWAP|Islamic State|\\bIS\\b|JAS|Jama'atu|Nigeria|bandit|Lakurawa|Fulani|Comités|Cameroon|Chad|XXX471" , "exclude": "Ambazonia" },
    "front": []
   },
   {
@@ -206,7 +201,7 @@
    "terms": ["Syria\\w*", "Damascus", "Aleppo", "Idlib", "Homs", "Hama", "Latakia", "Tartus", "Deir ez-Zor", "Deir al-Zour", "Raqqa", "Hasakah", "Qamishli", "Suwayda", "Sweida", "Daraa", "Quneitra", "SDF", "Kurdish-led", "سوريا", "السويداء", "دير الزور", "قسد"],
    "searches": [{ "q": "Syria clashes SDF government", "lang": "en" }, { "q": "Suwayda clashes", "lang": "en" }],
    "ucdp": { "countries": "Syria" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Syrian_Civil_War_detailed_map" }]
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Syrian_Civil_War_detailed_map" }]
   },
   {
    "id": "haiti", "name": "Haiti gang war", "short": "Haiti gang war", "countries": ["ht"], "since": "2021-07-07", "kind": "armed gang conflict", "tier": 2,
@@ -261,7 +256,7 @@
    "terms": ["Central African", "Centrafrique", "centrafricain\\w*", "Bangui", "CPC", "3R", "MINUSCA", "Haut-Mbomou", "Zemio", "Zémio", "Azande", "Wagner"],
    "searches": [{ "q": "Centrafrique attaque rebelles", "lang": "fr" }],
    "ucdp": { "countries": "Central African" },
-   "front": []
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Central_African_Republic_Civil_War_detailed_map" }]
   },
   {
    "id": "mexico-cartels", "name": "Mexico cartel violence", "short": "Mexico cartels", "countries": ["mx"], "since": "2006-12-11", "kind": "armed criminal conflict", "tier": 2,
@@ -279,6 +274,15 @@
    "terms": ["Kashmir\\w*", "Line of Control", "LoC", "Jammu", "Poonch", "Rajouri", "Kupwara", "Uri", "Muzaffarabad", "Operation Sindoor", "ceasefire violation\\w*", "infiltrat\\w*", "कश्मीर", "कश्मीर", "کشمیر"],
    "searches": [{ "q": "Line of Control firing Kashmir", "lang": "en" }, { "q": "Jammu Kashmir encounter militants", "lang": "en" }],
    "ucdp": { "countries": "India|Pakistan", "match": "Kashmir|India - Pakistan|Pakistan - India" },
+   "front": []
+  },
+  {
+   "id": "india-internal", "name": "India: Manipur, Maoist and north-east violence", "short": "India internal conflicts", "countries": ["in"], "since": "2023-05-03", "kind": "insurgency and ethnic violence", "tier": 2,
+   "parties": ["India", "Kuki-Zo and Meitei armed groups (Manipur)", "Naga groups (NSCN factions)", "CPI (Maoist)"],
+   "bounds": [[17.0, 78.0], [28.5, 97.5]],
+   "terms": ["Manipur", "Kuki", "Meitei", "Imphal", "Churachandpur", "Jiribam", "Naga", "NSCN", "Maoist\\w*", "Naxal\\w*", "Bastar", "Bijapur", "Sukma", "Dantewada", "Narayanpur", "Gadchiroli", "ULFA", "मुठभेड़", "नक्सली"],
+   "searches": [{ "q": "Manipur violence firing", "lang": "en" }, { "q": "Maoists encounter Chhattisgarh", "lang": "en" }],
+   "ucdp": { "countries": "India", "exclude": "Pakistan|Kashmir" },
    "front": []
   },
   {
@@ -324,7 +328,7 @@
    "terms": ["Libya\\w*", "Tripoli", "Benghazi", "Misrata", "Haftar", "LNA", "GNU", "Dbeibah", "Radaa", "Rada", "ليبيا", "طرابلس"],
    "searches": [{ "q": "Tripoli clashes armed groups", "lang": "en" }],
    "ucdp": { "countries": "Libya" },
-   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Libyan_Civil_War_detailed_map" }]
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Libyan_Civil_War_detailed_map" }]
   },
   {
    "id": "iraq-is", "name": "Iraq: Islamic State insurgency and armed groups", "short": "Iraq", "countries": ["iq"], "since": "2017-12-09", "kind": "insurgency", "tier": 2,
@@ -333,7 +337,7 @@
    "terms": ["Iraq\\w*", "Baghdad", "Anbar", "Kirkuk", "Diyala", "Salahuddin", "Nineveh", "Mosul", "Erbil", "Sulaymaniyah", "PMF", "Hashd", "Kataib Hezbollah", "Islamic Resistance in Iraq", "العراق", "الحشد"],
    "searches": [{ "q": "Iraq attack Islamic State Kirkuk Diyala", "lang": "en" }],
    "ucdp": { "countries": "Iraq", "exclude": "Iran" },
-   "front": []
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Syrian,_Iraqi,_and_Lebanese_insurgencies_detailed_map" }]
   }
  ]
 }

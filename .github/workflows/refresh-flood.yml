@@ -101,7 +101,7 @@ jobs:
         continue-on-error: true
       - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-conflicts' }}
-        run: PROBE=1 node tools/refresh_conflicts.mjs
+        run: PROBE=1 node tools/refresh_conflicts.mjs; node tools/probe_wikimaps.mjs
         continue-on-error: true
       - name: Probe the Deep South feeds (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-deepsouth' }}
