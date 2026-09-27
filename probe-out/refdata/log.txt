@@ -1,0 +1,103 @@
+ok 1031401 https://travel.state.gov/_res/rss/TAsTWs.xml
+403 https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html
+GB 3s hospitals 50 posts 5 ports 30
+US 5s hospitals 50 posts 21 ports 30
+CA 2s hospitals 50 posts 10 ports 30
+FR 3s hospitals 50 posts 9 ports 30
+DE 5s hospitals 50 posts 10 ports 30
+MX 3s hospitals 50 posts 11 ports 30
+BR 2s hospitals 50 posts 8 ports 30
+IT 3s hospitals 50 posts 8 ports 30
+ES 4s hospitals 50 posts 3 ports 30
+RU 3s hospitals 50 posts 5 ports 30
+UA 2s hospitals 50 posts 3 ports 30
+PL 2s hospitals 50 posts 3 ports 27
+AR 2s hospitals 50 posts 2 ports 30
+NL 3s hospitals 50 posts 3 ports 30
+CO 1s hospitals 34 posts 2 ports 16
+VE 1s hospitals 35 posts 2 ports 30
+HT 1s hospitals 7 posts 3 ports 4
+CU 1s hospitals 12 posts 3 ports 26
+IE 2s hospitals 50 posts 2 ports 13
+SE 3s hospitals 50 posts 2 ports 30
+NO 3s hospitals 50 posts 3 ports 30
+CH 2s hospitals 50 posts 3 ports 4
+AT 2s hospitals 50 posts 4 ports 2
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ391
+BE 2s hospitals 50 posts 5 ports 6
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=50&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ169
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ391
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=50&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ169
+PT 17s hospitals 50 posts 4 ports 30
+GR 17s hospitals 50 posts 3 ports 30
+RO 1s hospitals 50 posts 3 ports 8
+HU 2s hospitals 50 posts 2 ports 4
+CZ 3s hospitals 50 posts 3 ports 8
+DK 2s hospitals 50 posts 1 ports 30
+CL 1s hospitals 50 posts 2 ports 30
+FI 3s hospitals 50 posts 2 ports 30
+EC 1s hospitals 38 posts 3 ports 11
+PE 2s hospitals 50 posts 3 ports 30
+BO 1s hospitals 14 posts 2 ports 0
+PY 1s hospitals 4 posts 3 ports 5
+UY 1s hospitals 28 posts 2 ports 14
+GT 1s hospitals 8 posts 3 ports 5
+HN 1s hospitals 7 posts 2 ports 8
+SV 1s hospitals 13 posts 2 ports 3
+CR 1s hospitals 20 posts 2 ports 9
+NI 1s hospitals 9 posts 2 ports 10
+PA 1s hospitals 11 posts 3 ports 12
+DO 1s hospitals 4 posts 2 ports 22
+JM 1s hospitals 8 posts 2 ports 8
+TT 1s hospitals 3 posts 2 ports 8
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ784
+429 https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=Q2467|Q867573|Q3339000|Q304371
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ784
+429 https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=Q2467|Q867573|Q3339000|Q304371
+BS 16s hospitals 4 posts 4 ports 8
+BB 16s hospitals 2 posts 2 ports 1
+BA 1s hospitals 11 posts 3 ports 1
+RS 1s hospitals 50 posts 2 ports 0
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ215
+429 https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=Q1647|Q1435|Q1275247|Q1663|Q1640|Q1285592|Q37
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ215
+429 https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=Q1647|Q1435|Q1275247|Q1663|Q1640|Q1285592|Q37
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ215
+429 https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&props=labels|claims|sitelinks&languages=en&ids=Q1647|Q1435|Q1275247|Q1663|Q1640|Q1285592|Q37
+HR 31s hospitals 20 posts 2 ports 9
+SI 31s hospitals 40 posts 0 ports 1
+SK 1s hospitals 38 posts 2 ports 2
+MD 1s hospitals 4 posts 2 ports 23
+BG 2s hospitals 50 posts 3 ports 20
+AL 1s hospitals 7 posts 3 ports 4
+BY 1s hospitals 49 posts 1 ports 0
+MK 1s hospitals 20 posts 2 ports 0
+ME 1s hospitals 1 posts 2 ports 5
+XK 1s hospitals 3 posts 2 ports 0
+LT 1s hospitals 39 posts 2 ports 16
+LV 1s hospitals 48 posts 3 ports 16
+EE 1s hospitals 28 posts 2 ports 30
+IS 1s hospitals 13 posts 2 ports 4
+LU 1s hospitals 8 posts 3 ports 0
+MT 1s hospitals 12 posts 2 ports 5
+AD 1s hospitals 1 posts 0 ports 0
+CY 1s hospitals 11 posts 2 ports 9
+LI 1s hospitals 1 posts 0 ports 0
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ235
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ391
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ235
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP31%3DQ391
+SM 16s hospitals 1 posts 1 ports 0
+MC 16s hospitals 2 posts 1 ports 2
+BZ 1s hospitals 8 posts 2 ports 2
+GY 1s hospitals 3 posts 2 ports 3
+SR 1s hospitals 13 posts 2 ports 5
+AG 1s hospitals 3 posts 1 ports 1
+DM 1s hospitals 1 posts 1 ports 0
+GD 1s hospitals 1 posts 3 ports 1
+LC 1s hospitals 2 posts 1 ports 3
+KN 1s hospitals 4 posts 1 ports 2
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ757
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ757
+429 https://www.wikidata.org/w/api.php?format=json&action=query&list=search&srnamespace=0&srlimit=20&srsort=incoming_links_desc&srsearch=haswbstatement%3AP17%3DQ757
+VC 31s hospitals 4 posts 0 ports 1
