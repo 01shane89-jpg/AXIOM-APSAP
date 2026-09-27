@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, probe); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, probe, probe-roads); empty runs all"
         required: false
         default: ""
 
@@ -87,6 +87,10 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'more' }}
         run: node tools/refresh_more.mjs
         continue-on-error: true
+      - name: Pull road closures and road events from open road-agency feeds (NZ, France, Western Australia, British Columbia, Finland)
+        if: ${{ !inputs.only || inputs.only == 'roads' }}
+        run: node tools/refresh_roads.mjs
+        continue-on-error: true
       - name: Pull tropical cyclone positions and forecast tracks (JMA, JTWC, GDACS) and the weather forecast
         if: ${{ !inputs.only || inputs.only == 'storms' }}
         run: node tools/refresh_storms.mjs
@@ -99,9 +103,20 @@ jobs:
         if: ${{ inputs.only == 'probe' }}
         run: node tools/probe_storms.mjs
         continue-on-error: true
+      - name: Probe road feeds (test only, writes probe-out/, never data/)
+        if: ${{ inputs.only == 'probe-roads' }}
+        run: PROBE=1 node tools/refresh_roads.mjs
+        continue-on-error: true
+      - name: Keep the probe output as a run artifact (test only)
+        if: ${{ inputs.only == 'probe-roads' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-roads
+          path: probe-out/
+          retention-days: 3
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
