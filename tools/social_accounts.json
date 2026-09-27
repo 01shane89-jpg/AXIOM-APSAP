@@ -188,6 +188,402 @@
    "handle": "EMTVOnline",
    "kind": "news desk",
    "lang": "en"
+  },
+  {
+   "cc": "kh",
+   "handle": "CNCCambodia",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "HangMeasNews",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "TVKCambodia",
+   "kind": "state media",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "FreshNewsAsia",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "VOAKhmer",
+   "kind": "state-funded (US)",
+   "lang": "km"
+  },
+  {
+   "cc": "la",
+   "handle": "LaoStarTV",
+   "kind": "news desk",
+   "lang": "lo"
+  },
+  {
+   "cc": "la",
+   "handle": "LNTVLaos",
+   "kind": "state media",
+   "lang": "lo"
+  },
+  {
+   "cc": "la",
+   "handle": "LaotianTimes",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "la",
+   "handle": "RFALao",
+   "kind": "state-funded (US)",
+   "lang": "lo"
+  },
+  {
+   "cc": "mm",
+   "handle": "DVBTVNews",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "MizzimaTV",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "BBCBurmese",
+   "kind": "state-funded (UK)",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "MRTVMyanmar",
+   "kind": "state media",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "KhitThitMedia",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "my",
+   "handle": "AstroAWANI",
+   "kind": "news desk",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "BeritaRTM",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "BernamaTV",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "thestartv",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "my",
+   "handle": "MalaysiakiniTV",
+   "kind": "news desk",
+   "lang": "ms"
+  },
+  {
+   "cc": "bn",
+   "handle": "RTBBrunei",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "bn",
+   "handle": "rtbnews",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "bn",
+   "handle": "BorneoBulletin",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tl",
+   "handle": "RTTLTimorLeste",
+   "kind": "state media",
+   "lang": "tet"
+  },
+  {
+   "cc": "tl",
+   "handle": "GMNTVTimorLeste",
+   "kind": "news desk",
+   "lang": "tet"
+  },
+  {
+   "cc": "tl",
+   "handle": "TatoliTL",
+   "kind": "state media",
+   "lang": "tet"
+  },
+  {
+   "cc": "kp",
+   "handle": "NKNewsorg",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kp",
+   "handle": "VOAKorea",
+   "kind": "state-funded (US)",
+   "lang": "ko"
+  },
+  {
+   "cc": "kp",
+   "handle": "DailyNKEnglish",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "ArirangNews",
+   "kind": "state-funded (KR)",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "yonhapnewstv",
+   "kind": "news desk",
+   "lang": "ko"
+  },
+  {
+   "cc": "kr",
+   "handle": "KBSnews",
+   "kind": "public broadcaster",
+   "lang": "ko"
+  },
+  {
+   "cc": "kr",
+   "handle": "ytnnews24",
+   "kind": "news desk",
+   "lang": "ko"
+  },
+  {
+   "cc": "oki",
+   "handle": "QABchannel",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "handle": "rbc_ryukyuhoso",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "handle": "ryukyushimpo",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "handle": "okinawatimes",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "handle": "OTVokinawa",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "mn",
+   "handle": "MNBMongolia",
+   "kind": "public broadcaster",
+   "lang": "mn"
+  },
+  {
+   "cc": "mn",
+   "handle": "mnbnews",
+   "kind": "public broadcaster",
+   "lang": "mn"
+  },
+  {
+   "cc": "mn",
+   "handle": "EagleNewsMongolia",
+   "kind": "news desk",
+   "lang": "mn"
+  },
+  {
+   "cc": "mn",
+   "handle": "NTVMongolia",
+   "kind": "news desk",
+   "lang": "mn"
+  },
+  {
+   "cc": "nz",
+   "handle": "RNZ",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "1NewsNZ",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "nzherald",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "np",
+   "handle": "KantipurTV",
+   "kind": "news desk",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "handle": "KantipurTVHD",
+   "kind": "news desk",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "handle": "NepalTelevision",
+   "kind": "state media",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "handle": "KathmanduPost",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "np",
+   "handle": "ImageNewsNepal",
+   "kind": "news desk",
+   "lang": "ne"
+  },
+  {
+   "cc": "bt",
+   "handle": "BBSBhutan",
+   "kind": "state media",
+   "lang": "dz"
+  },
+  {
+   "cc": "bt",
+   "handle": "BhutanBroadcastingService",
+   "kind": "state media",
+   "lang": "dz"
+  },
+  {
+   "cc": "bt",
+   "handle": "KuenselOnline",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "handle": "SomoyTV",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "handle": "JamunaTVbd",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "handle": "Channel24Digital",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "handle": "thedailystarnews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "handle": "btvnewsbd",
+   "kind": "state media",
+   "lang": "bn"
+  },
+  {
+   "cc": "lk",
+   "handle": "AdaDerana",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "adaderanaenglish",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lk",
+   "handle": "NewsfirstSriLanka",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "HiruNews",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "RupavahiniNews",
+   "kind": "state media",
+   "lang": "si"
+  },
+  {
+   "cc": "mv",
+   "handle": "PSMNewsMV",
+   "kind": "state media",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "handle": "psmnews",
+   "kind": "state media",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "handle": "RaajjeTV",
+   "kind": "news desk",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "handle": "SunOnlineMV",
+   "kind": "news desk",
+   "lang": "dv"
   }
  ]
 }
