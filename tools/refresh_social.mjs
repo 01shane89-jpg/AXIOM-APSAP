@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
+import { splitByCountry, newsCodes } from "./split_country.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -211,5 +212,6 @@ saveCache();
 if (!status.some((s) => s.ok)) { console.error("no social source worked"); status.forEach((s) => console.error(" ", s.platform, s.source, s.error)); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items }).replace(/<\//g, "<\\/") + ";\n");
+splitByCountry("data/live/social.js", "ASAP_SOCIAL", newsCodes()); // one small file per country for the page (tools/split_country.mjs)
 try { updateHistory("social", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : s.skipped ? "skip" : "FAIL", s.platform, s.source, s.ok ? s.n + " posts" : s.error));
