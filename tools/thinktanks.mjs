@@ -152,6 +152,14 @@ async function fromSitemap(g, home) {
   throw new Error("no recent pages in sitemap");
 }
 
+// Some feeds write European zone names ("22 Sep 2026 10:00:00 CEST") that Date.parse does not read.
+function fixDate(d) {
+  if (!d) return "";
+  let t = Date.parse(d);
+  if (isNaN(t)) t = Date.parse(d.replace(/\bCEST\b/, "+0200").replace(/\bCET\b/, "+0100").replace(/\bBST\b/, "+0100").replace(/\bIST\b/, "+0530").replace(/\bAEST\b/, "+1000").replace(/\bAEDT\b/, "+1100"));
+  return isNaN(t) ? "" : new Date(t).toISOString();
+}
+
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
@@ -163,7 +171,7 @@ for (const [id, org, home, urls] of TT) {
       try {
         const t = await g(u, "text", { headers: UA_FEED, timeout: 20e3 });
         if (!/<(item|entry)[\s>]/.test(t)) { why.push(u + ": not a feed"); return false; }
-        const es = rssItems(t).filter((x) => x.title && x.link && (!x.date || ageDays(x.date) <= 60));
+        const es = rssItems(t).map((x) => ({ ...x, date: fixDate(x.date) })).filter((x) => x.title && x.link && (!x.date || ageDays(x.date) <= 60));
         if (!es.length) { why.push(u + ": nothing recent"); return false; }
         entries = es; used = u; return true;
       } catch (e) { why.push(u + ": " + e.message); } return false;
@@ -187,17 +195,20 @@ for (const [id, org, home, urls] of TT) {
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
     const kind = org + " assessment";
     const items = [], globals = [];
+    let used_n = 0;
     for (const x of entries.slice(0, 60)) {
       const summary = x.summary.replace(/The post .* appeared first on .*$/i, "").trim();
       const short = summary.length > 280 ? summary.slice(0, 277).replace(/\s+\S*$/, "") + "..." : summary;
       const text = x.title + " " + summary.slice(0, 800);
-      const ccs = withOki(countriesIn(text));
+      const ccs = countriesIn(text);
       const it = { title: x.title, detail: short, date: x.date, url: x.link, sev: 1, kind };
       if (!ccs.length) { globals.push(it); continue; }
-      const p = gz && placeIn(gz, text, ccs);
-      if (p) { it.lat = p.lat; it.lon = p.lon; }
-      items.push({ ...it, ccs });
-      if (items.length >= 40) break;
+      // One copy per country, so each country's map pins only a city inside that country.
+      for (const cc of ccs) {
+        const p = gz && placeIn(gz, text, [cc]);
+        items.push({ ...it, ccs: withOki([cc]), ...(p ? { lat: p.lat, lon: p.lon } : {}) });
+      }
+      if (++used_n >= 40) break;
     }
     return { items, globals: globals.slice(0, 10), note: "via " + used };
   });
