@@ -5,6 +5,7 @@
 // Rules kept: no accounts or keys; no private individuals' names (sanctions lists name only sanctioned people and bodies);
 // sequential requests to any one host; slow-changing sources fetched at most every few hours or once a day.
 import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep } from "./dense_lib.mjs";
+import "./thinktanks.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
 const IDS = COUNTRIES.map((c) => c.id);
