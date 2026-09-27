@@ -22,7 +22,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "b084d6b8c0eaa07a76aeeef708e2411318e964368f151f5aa0e123eaa234f5c4"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:bh:post:u-s-embassy-manama",
+   "name": "U.S. Embassy Manama",
+   "kind": "embassy",
+   "city": "Manama",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 26.2279,
+   "lon": 50.5857,
+   "prec": "approx",
+   "src": "https://bh.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "f3471f8a46492f9c45859fee2b32f20fb0bfff5cc4005451bdf3baa97c4dafe4"
+  }
+ ],
  "airports": [
   {
    "id": "sof:bh:airport:obbi",
@@ -229,7 +245,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

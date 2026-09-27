@@ -28,7 +28,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "18078072e8f7c9834d399efe2becf4de5e3eb545f3b86832ca9c04c91dd37ea3"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ss:post:u-s-embassy-juba",
+   "name": "U.S. Embassy Juba",
+   "kind": "embassy",
+   "city": "Juba",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 4.8517,
+   "lon": 31.5825,
+   "prec": "approx",
+   "src": "https://ss.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "bbf0f083027658aca4a1adbba9f9193781eb3c853e9022668d020ee867ea5632"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ss:airport:hjjj",
@@ -140,13 +156,31 @@
   }
  ],
  "seaports": [],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:ss:hospital:juba-teaching-hospital",
+   "name": "Juba Teaching Hospital",
+   "city": "Juba",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 4.8517,
+   "lon": 31.5825,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Juba_Teaching_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "fc9c97fe271856a3e38876090984deb3c4bfa6a1b3ebd43900316736b5918fd6"
+  }
+ ],
  "power": [],
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country.",
-  "Auto: landlocked, no seaports."
+  "Auto: landlocked, no seaports.",
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

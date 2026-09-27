@@ -28,7 +28,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "bf44e48cce65216498e10037cd314a306ef19a1f0f3f5aa4fe1a2481fadae60e"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:cd:post:u-s-embassy-kinshasa",
+   "name": "U.S. Embassy Kinshasa",
+   "kind": "embassy",
+   "city": "Kinshasa",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": -4.3276,
+   "lon": 15.3136,
+   "prec": "approx",
+   "src": "https://cd.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "54ec2ec3002647f53f71c0da92c67cb0f4c88a017838d96b9864e6b776e0ff86"
+  }
+ ],
  "airports": [
   {
    "id": "sof:cd:airport:fzaa",
@@ -291,7 +307,59 @@
    "fp": "3dc13c1a9642d8f073c01d1f212cb29799d95db5a5d8d5cfa27658c11910206c"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:cd:hospital:kinshasa-general-hospital",
+   "name": "Kinshasa General Hospital",
+   "city": "Kinshasa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": -4.3276,
+   "lon": 15.3136,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Kinshasa_General_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "bfce3a866f8969868646f7efe8ea17a918c8ea1672bae8de396c2d86bc482877"
+  },
+  {
+   "id": "sof:cd:hospital:h-pital-du-cinquantenaire",
+   "name": "Hôpital du Cinquantenaire",
+   "city": "Kinshasa",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": -4.3276,
+   "lon": 15.3136,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/L%27h%C3%B4pital_du_Cinquantenaire_de_Kinshasa",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "a5749c8a63d5e0c8b84993cb562ebc906c36fe571080278007a3442db04931dc"
+  },
+  {
+   "id": "sof:cd:hospital:panzi-hospital",
+   "name": "Panzi Hospital",
+   "city": "Bukavu",
+   "address": null,
+   "emergency_24h": null,
+   "type": "private",
+   "trauma_level": null,
+   "notes": "South Kivu",
+   "lat": -2.4908,
+   "lon": 28.8428,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Panzi_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "3d452f273d8083e6a3922e8ad428315ee974457f0718a1adca962d8d323c64bb"
+  }
+ ],
  "power": [
   {
    "id": "sof:cd:power:wri1000003",
@@ -489,7 +557,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

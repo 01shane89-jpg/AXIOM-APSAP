@@ -22,7 +22,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "8d9ca30fb5e7ec560669ff7d8428ccb7f4daa82fbb544ee198312b36da2c8f80"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:kw:post:u-s-embassy-kuwait-city",
+   "name": "U.S. Embassy Kuwait City",
+   "kind": "embassy",
+   "city": "Kuwait City",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 29.367,
+   "lon": 47.9743,
+   "prec": "approx",
+   "src": "https://kw.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "24cadcfa6b49f9b188ef3bc6ee41604c04bb722ad83158ebb73e1353eb3808d6"
+  }
+ ],
  "airports": [
   {
    "id": "sof:kw:airport:okkk",
@@ -294,7 +310,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

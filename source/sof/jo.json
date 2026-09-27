@@ -26,7 +26,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "39055e0ff6ac92640a9b7b2c0f4047054060e846172be4370b18c702568e6e9a"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:jo:post:u-s-embassy-amman",
+   "name": "U.S. Embassy Amman",
+   "kind": "embassy",
+   "city": "Amman",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 31.9552,
+   "lon": 35.945,
+   "prec": "approx",
+   "src": "https://jo.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "d3f97825f4a56fd5489701f3d7c7abd6f144330d927b7546f5defb8c2b9bd350"
+  }
+ ],
  "airports": [
   {
    "id": "sof:jo:airport:ojai",
@@ -174,7 +190,25 @@
    "fp": "ede1dfca1ae76a75a95017acc801508490aecb529745509c51440e65a8bf5e3b"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:jo:hospital:king-hussein-medical-center",
+   "name": "King Hussein Medical Center",
+   "city": "Amman",
+   "address": null,
+   "emergency_24h": null,
+   "type": "military",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 31.9552,
+   "lon": 35.945,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/King_Hussein_Medical_Center",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "92809a86f86667a73999377618f50121270f1b6f38bae677d2e86e6dc8a185c0"
+  }
+ ],
  "power": [
   {
    "id": "sof:jo:power:geodb0005246",
@@ -372,7 +406,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }
