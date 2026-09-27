@@ -88,7 +88,10 @@ async function scan() {
   const browser = await chromium.launch(opts);
   const ctx = await browser.newContext({ serviceWorkers: "block" });
   // only the repo's own files: no map tiles, no live calls, nothing leaves the runner
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  // (a single-file build loads Leaflet from cdnjs: it is served from the repo's own copy instead)
+  const LEAFLET = "assets/vendor/leaflet-1.9.4.js";
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => (/leaflet(\.min)?\.js$/.test(r.request().url()) && fs.existsSync(LEAFLET)
+    ? r.fulfill({ status: 200, contentType: "text/javascript", body: fs.readFileSync(LEAFLET, "utf8") }) : r.abort()));
   const out = [], failed = [], t0 = Date.now(), recent = {};
   async function one(cc) {
     const p = await ctx.newPage();
@@ -366,7 +369,7 @@ for (const cc of due) {
 }
 // Plain lists (no AI) for every conflict country without an AI list: the curated flashpoints that recent reports mention, with
 // those reports, and the latest conflict-related reports. Nothing is inferred; rebuilt on every run because it costs nothing.
-const GENERIC = new Set("around near along with from temples temple checkpoint villages village fishing grounds posts post camps bank scam scams sector sectors tribal phnom hill hills hub hubs park parks dry state states zone old new great little black white yellow three four five first second shoal shoals reef reefs trade shipping targets target strike deep fortress front islands border borders front frontline zone zones river rivers island islands strait straits line area areas region regions north south east west northern southern eastern western central upper lower corridor crossing crossings point points pass mountains mountain hills coast coastal waters province state district city town camp base disputed dispute tensions maritime conflict civil war insurgency armed group groups spillover route routes sea gulf bay valley plateau lake desert".split(" "));
+const GENERIC = new Set("chong ban phu khao doi mae nong wat around near along with from temples temple checkpoint villages village fishing grounds posts post camps bank scam scams sector sectors tribal phnom hill hills hub hubs park parks dry state states zone old new great little black white yellow three four five first second shoal shoals reef reefs trade shipping targets target strike deep fortress front islands border borders front frontline zone zones river rivers island islands strait straits line area areas region regions north south east west northern southern eastern western central upper lower corridor crossing crossings point points pass mountains mountain hills coast coastal waters province state district city town camp base disputed dispute tensions maritime conflict civil war insurgency armed group groups spillover route routes sea gulf bay valley plateau lake desert".split(" "));
 // country names and their demonyms say nothing about which flashpoint a report is about ("Thai", "Myanmar", "Sudanese")
 const CWORDS = (() => {
   const out = new Set(["burmese", "filipino", "dutch", "swiss", "british", "korean", "emirati", "saudi", "kiwi", "okinawa"]);

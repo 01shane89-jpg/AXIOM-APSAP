@@ -79,7 +79,7 @@
       var s = m.s, refs = s.refs || [], total = keys.length;
       var list = function (a) { return "<ul>" + a.map(function (p) { return "<li>" + cite(p.text + " " + refTags(p, refs), refs) + "</li>"; }).join("") + "</ul>"; };
       var ai = s.method !== "extract";
-      sec.innerHTML = '<h4 class="pkgh">Summary <span class="evsdraft' + (ai ? "" : " plain") + '">' + (ai ? "Draft, AI-generated, not analyst-approved" : "Automatic extract, no AI, not analyst-approved") + "</span></h4>" +
+      sec.innerHTML = '<h4 class="pkgh">Summary <span class="evsdraft" title="' + (ai ? "Draft, AI-generated, not analyst-approved" : "Automatic extract by fixed rules (no AI), not analyst-approved") + '">' + (ai ? "AI generated" : "Automatic") + "</span></h4>" +
         '<p class="evstext">' + cite(s.summary, refs) + "</p>" +
         (s.points && s.points.length ? list(s.points) : "") +
         (s.differ && s.differ.length ? '<h5 class="evsh">' + (ai ? "Where reports differ" : "Figures that differ") + "</h5>" + list(s.differ) : "") +
@@ -116,10 +116,10 @@
     .observe(document.body, { childList: true, subtree: true });
 
   var st = document.createElement("style");
-  st.textContent = ".evsum{margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line,#c9d1d9);border-left:3px solid #7048e8;border-radius:4px}" +
-    ".evsum .pkgh{margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.evsdraft{font-size:10.5px;letter-spacing:.02em;text-transform:none;background:#7048e8;color:#fff;padding:1px 6px;border-radius:3px}" +
+  st.textContent = ".evsum{margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line,#c9d1d9);border-radius:4px}" +
+    ".evsum .pkgh{margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.evsdraft{font-size:10px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted,#667);border:1px solid currentColor;padding:0 5px;border-radius:8px;cursor:help;opacity:.85}" +
     ".evstext{margin:4px 0;font-size:13px;line-height:1.45}.evsum ul{margin:4px 0;padding-left:18px;font-size:12.5px}.evsum li{margin:2px 0}" +
-    ".evsdraft.plain{background:#495057}.evsh{font-size:12px;margin:8px 0 2px}.evsref{font-size:10.5px;vertical-align:super;text-decoration:none;margin-left:1px}" +
+    ".evsh{font-size:12px;margin:8px 0 2px}.evsref{font-size:10.5px;vertical-align:super;text-decoration:none;margin-left:1px}" +
     ".evsfrom{font-size:12px;margin:6px 0}.evsfrom ol{margin:4px 0;padding-left:20px}.evsfrom li{margin:2px 0}";
   document.head.appendChild(st);
 
@@ -163,7 +163,7 @@
       else if (a.empty) body = '<p class="obs">' + esc(a.note || "Too little recent reporting to draft a list.") + "</p>";
       else {
         var wai = a.method === "ai";
-        body = '<p class="evsdraft' + (wai ? "" : " plain") + '" style="display:inline-block">' + (wai ? "Draft, AI-generated, not analyst-approved" : "Automatic list, no AI, not analyst-approved") + "</p>" +
+        body = '<p><span class="evsdraft" title="' + (wai ? "Draft, AI-generated, not analyst-approved" : "Automatic list by fixed rules (no AI), not analyst-approved") + '">' + (wai ? "AI generated" : "Automatic") + "</span></p>" +
           (wai ? "" : '<p class="obs">Curated flashpoints for ' + esc(a.name) + " that recent reports mention by name, most-mentioned first.</p>") +
           a.items.map(function (it, i) {
             var f0 = (it.flashpoints || []).map(function (n) { return a.fps[n - 1]; }).filter(function (f) { return f && f.lat != null; })[0];
@@ -208,9 +208,9 @@
     at.parentNode.insertBefore(p, at.nextSibling);
     p.querySelector("button").addEventListener("click", wopen);
   }
-  try {
-    fetch("data/terrain/" + CC + ".js", { method: "HEAD" }).then(function (r) { if (r.ok) { wbutton(); if (!document.querySelector(".aiwbtn")) setTimeout(wbutton, 1500); } }).catch(function () {});
-  } catch (e) {}
+  function wshow() { wbutton(); if (!document.querySelector(".aiwbtn")) setTimeout(wbutton, 1500); }
+  if (window.OSAP_TERRAIN && window.OSAP_TERRAIN[CC]) wshow();
+  else try { fetch("data/terrain/" + CC + ".js", { method: "HEAD" }).then(function (r) { if (r.ok) wshow(); }).catch(function () {}); } catch (e) {}
   var st2 = document.createElement("style");
   st2.textContent = "#aiwdlg{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.45);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}" +
     ".aiwbox{background:var(--bg,#fff);color:var(--ink,#111);max-width:720px;width:100%;border-radius:6px;padding:12px 16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}" +
