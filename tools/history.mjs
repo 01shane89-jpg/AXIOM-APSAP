@@ -5,7 +5,8 @@
 import fs from "node:fs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
-const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb"];
+// geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
+const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb"];
 
 function read(cc) {
   try {
