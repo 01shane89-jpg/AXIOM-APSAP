@@ -104,7 +104,9 @@ async function readFeed(f) {
       const link = f.search ? unwrap(i.link) : i.link;
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
-      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS", state: !!f.state };
+      // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
+      const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
+      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang, via: f.search ? "search" : "RSS", state: !!f.state };
       if (f.nc) o.nc = true;
       return o;
     });
