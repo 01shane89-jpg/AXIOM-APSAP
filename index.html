@@ -499,6 +499,8 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areahint{font-size:12px;padding:6px 10px;color:var(--muted);flex-basis:100%;border-bottom:1px solid var(--line)}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
+/* the hidden attribute always wins over a panel's own display rule (.rv is display:flex), so the report list really goes in Map view */
+[hidden]{display:none!important}
 .shell{--rvw:380px;--railw:372px}
 .shell.rv-col{--rvw:34px}
 .shell.rail-col{--railw:34px}
