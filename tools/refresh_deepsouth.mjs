@@ -179,14 +179,30 @@ if (todo.length) {
   // dropped from what it is given (the original stays as published).
   const clean = (t) => String(t || "").replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim();
   const tr = await translateAll([...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))]);
-  todo.forEach((i, n) => { i.title_en = tr[n].en || null; i.summary_en = tr[todo.length + n].en || null; i.mt = tr[n].tool || "untranslated"; });
+  // The open model sometimes invents text or loops ("police, police, ..."). A translation is kept only when it carries every number in
+  // the original and repeats no word run; otherwise the original Thai is shown. A failed headline borrows the summary's first sentence.
+  const sane = (orig, en) => {
+    if (!en) return false;
+    const nums = (clean(orig).match(/\d+/g) || []).filter((x) => x.length < 5);
+    if (nums.some((x) => !new RegExp("(^|\\D)" + x + "(\\D|$)").test(en))) return false;
+    if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return false;
+    return en.length < 4 * clean(orig).length + 40;
+  };
+  todo.forEach((i, n) => {
+    const t = tr[n].en, sm = tr[todo.length + n].en;
+    i.mt = tr[n].tool || tr[todo.length + n].tool || "untranslated";
+    i.summary_en = sane(i.summary, sm) ? sm.slice(0, 400) : null;
+    if (sane(i.title, t)) i.title_en = t;
+    else if (i.summary_en) { i.title_en = i.summary_en.split(/(?<=[.!?])\s/)[0].slice(0, 160); i.title_from_summary = true; }
+    else { i.title_en = null; if (t) i.mt_rejected = true; }
+  });
   saveCache();
 }
 for (const i of items) {
   const en = [i.title_en || (/^en\b/i.test(i.lang || "") ? i.title : ""), i.summary_en || (/^en\b/i.test(i.lang || "") ? i.summary : "")].join(" ");
   const all = en + " " + i.title + " " + (i.summary || "");
-  { const h = classify(i.title_en || i.title); i.kind = h !== "other" ? h : classify(all); }
-  i.killed = figure(i.title_en || i.title, KILLED); i.injured = figure(i.title_en || i.title, INJURED);
+  { const th = !/^en\b/i.test(i.lang || ""), h = classify(th ? i.title : i.title_en || i.title); i.kind = h !== "other" ? h : classify(th ? i.title + " " + (i.summary || "") : all); }
+  i.killed = figure(i.title_en || i.title, KILLED); i.injured = figure(i.title_en || i.title, INJURED);   // English wording only; Thai figures stay in the text
   i.geo = place([i.title, i.title_en, i.summary, i.summary_en]);
 }
 const ok = status.some((s) => s.ok && s.id !== "ucdp") || ucdpStatus.ok;
