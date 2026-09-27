@@ -197,8 +197,19 @@
     if (f && f.current && F.show.front) {
       if (f.current.kind === "areas") {
         if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", interactive: false, style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } }).addTo(map);
-        lyr.area = L.geoJSON(f.current.areas, { pane: "cfarea", style: function () { return { color: "#9E3118", weight: 1.4, fillColor: "#C0392B", fillOpacity: 0.22 }; } })
-          .bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true }).addTo(map);
+        // a feature may carry its own colour, name and claim (zones drawn from reports); otherwise one style and tooltip for the layer
+        var zoned = (f.current.areas.features || []).some(function (x) { return x.properties && x.properties.name; });
+        lyr.area = L.geoJSON(f.current.areas, { pane: "cfarea", style: function (x) {
+          var p = x.properties || {}, col = /^#[0-9a-f]{3,8}$/i.test(p.col || "") ? p.col : null, th = p.ctl === "threat";
+          return col ? { color: col, weight: 1.4, dashArray: th ? "6 4" : null, fillColor: col, fillOpacity: th ? 0.06 : 0.16 } : { color: "#9E3118", weight: 1.4, fillColor: "#C0392B", fillOpacity: 0.22 };
+        }, onEachFeature: zoned ? function (x, l) {
+          var p = x.properties || {};
+          l.bindPopup("<b>" + esc(p.name || "Area") + "</b><br>" + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
+            (p.claimed_by ? "Claimed by " + esc(p.claimed_by) + "<br>" : "") + (p.basis ? esc(p.basis) + "<br>" : "") +
+            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : ""));
+        } : null });
+        if (!zoned) lyr.area.bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true });
+        lyr.area.addTo(map);
       } else if (f.current.kind === "places") {
         lyr.places = L.layerGroup(f.current.places.map(function (p) {
           var con = /^contested/.test(p.ctl);
@@ -335,7 +346,9 @@
       var cu = f.current, s = (f.sources || []).filter(function (x) { return x.id === cu.source; })[0] || {}, v = (f.versions || [])[0];
       h.push('<p class="cfm"><b>Reported, not verified.</b> Source: <a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || cu.source) + "</a>" + (s.licence ? " (" + esc(s.licence) + ")" : "") +
         (s.nc ? ' <span class="tag">nc</span>' : "") + ". Last changed " + when(v ? v.taken : cu.taken) + "; checked " + when(f.asof) + ".</p>");
-      if (cu.kind === "areas") {
+      if (cu.kind === "areas" && cu.no_front) {
+        // zones are not territory held, so their areas are not added up
+      } else if (cu.kind === "areas") {
         var k = Object.keys(cu.km2 || {})[0], dk = v && v.delta_km2 ? v.delta_km2[k] : null;
         h.push('<div class="cfk" style="grid-template-columns:1fr 1fr"><div><b>' + num(cu.km2[k]) + " km²</b><span>" + esc(k) + "</span></div><div><b>" + (dk == null ? "—" : (dk > 0 ? "+" : "") + num(dk) + " km²") +
           "</b><span>change at the last version</span></div></div>");
