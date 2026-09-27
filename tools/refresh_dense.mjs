@@ -695,3 +695,4 @@ run("rainviewer", async (g) => {
 
 await runAll(6);
 writeAll(IDS);
+process.exit(0);   // abandoned feeds may still hold open requests
