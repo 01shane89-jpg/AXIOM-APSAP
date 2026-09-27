@@ -6052,6 +6052,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var mo = new MutationObserver(sync);
     homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
     sync();
+    /* On a narrow map the credits line runs the full width along the bottom and would cover the Legend button, so lift the
+       legend above it whenever the two would overlap. */
+    var attr = map.getContainer().querySelector(".leaflet-control-attribution");
+    function lift() {
+      if (!attr) return; box.style.marginBottom = "";
+      var a = attr.getBoundingClientRect(), b = box.getBoundingClientRect();
+      if (a.width && a.left < b.right && a.top < b.bottom) box.style.marginBottom = Math.ceil(a.height + 6) + "px";
+    }
+    if (attr && window.ResizeObserver) new ResizeObserver(lift).observe(attr);
+    map.on("resize", lift); window.addEventListener("resize", lift); lift();
   })();
   var FsCtl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-bar leaflet-control fsctl");
