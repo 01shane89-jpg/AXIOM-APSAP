@@ -12,12 +12,14 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
         required: false
         default: ""
 
 permissions:
   contents: write
+  # GitHub Models, for the event summaries (the workflow's own token; no personal key)
+  models: read
 
 # One queue per branch: main's refreshes never overlap (each commits snapshots), and test runs on feature branches
 # (which never commit) neither wait for nor replace main's.
@@ -125,6 +127,19 @@ jobs:
           SAMPLES=${{ inputs.only == 'dense' && '1' || '' }} node tools/refresh_dense.mjs
         timeout-minutes: 14
         continue-on-error: true
+      # Event summaries: grouped events with two or more sources, found by opening each country's page headless (the repo's own
+      # data only), drafted through GitHub Models with this workflow's token. At most once an hour and 140 drafts a day; the rest
+      # of the time the step ends at once. Labelled in the app as a draft, AI-generated, not analyst-approved.
+      - name: Draft summaries of events reported by several sources
+        if: ${{ !inputs.only || inputs.only == 'evsum' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVSUM_FORCE: ${{ inputs.only == 'evsum' && '1' || '' }}
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/refresh_evsum.mjs
+        timeout-minutes: 10
+        continue-on-error: true
       - name: Report translation coverage
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
         run: node tools/mt/coverage.mjs
@@ -164,13 +179,13 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'deepsouth') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'deepsouth' || inputs.only == 'evsum') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/social.js data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/social.js data/live/warnings.js data/live/deepsouth.js data/live/evsum.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
         continue-on-error: true
