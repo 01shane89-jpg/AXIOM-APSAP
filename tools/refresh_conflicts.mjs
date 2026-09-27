@@ -226,13 +226,38 @@ function parseWikimap(txt) {
   }
   return out;
 }
-// marker colour word from the image name ("Red pog.svg", "Map-circle-green.svg", "80x80-red-blue-anim.gif" = contested)
+// marker colour word from the image name ("Red pog.svg", "Map-circle-green.svg"; "80x80-red-blue-anim.gif" and "Map-ctl2-red+blue.svg" = contested)
+const COLS = ["red", "green", "yellow", "blue", "black", "white", "grey", "gray", "orange", "purple", "pink", "brown", "lime", "cyan", "teal", "olive", "maroon", "navy", "gold", "magenta", "violet", "ochre"];
 function markColour(mark) {
-  const m = mark.toLowerCase().replace(/[_-]/g, " ");
-  const cols = ["red", "green", "yellow", "blue", "black", "white", "grey", "gray", "orange", "purple", "pink", "brown", "lime", "cyan", "teal", "olive", "maroon", "navy", "gold", "magenta", "violet"];
-  const hit = cols.filter((c) => new RegExp("\\b" + c + "\\b").test(m) || new RegExp(c).test(m.split(".")[0]));
-  const uniq = [...new Set(hit.map((c) => (c === "gray" ? "grey" : c)))];
+  const m = mark.toLowerCase().replace(/\.(svg|png|gif)$/, "").replace(/[_-]/g, " ");
+  const hit = []; for (const w of m.split(/[\s+]+/)) for (const c of COLS) if (w === c || (w.startsWith(c) && /^\d/.test(w.slice(c.length)))) hit.push(c === "gray" ? "grey" : c);
+  const uniq = [...new Set(hit)];
   return uniq.length > 1 ? "contested:" + uniq.join("+") : uniq[0] || "other";
+}
+// what a marker image stands for besides control: a town, or a base, airfield, port, hill and so on (the colour still gives the side)
+function markType(mark) {
+  const m = mark.toLowerCase();
+  return /fighter|jet|airport/.test(m) ? "airfield" : /helicopter/.test(m) ? "heliport" : /abm/.test(m) ? "base" : /anchor/.test(m) ? "port" : /peak/.test(m) ? "hill" :
+    /nuclear|industrial/.test(m) ? "industrial" : /gota|oil/.test(m) ? "oil_gas" : /dam\b|bsicon str/.test(m) ? "dam" : /pass/.test(m) ? "border_post" : /anim|ctl2/.test(m) ? "contested" :
+    /arc|circle/.test(m) ? "besieged" : /\dx\ddot/.test(m) ? "rural" : "town";
+}
+const SKIP_MARK = /roadmap|overlay|situation in|cursor|pointing hand|location map|transparen/i;
+// The legend a map page shows: "[[File:Location dot red.svg|8px]] Under control of the [[Houthis]]" -> { "Location dot red.svg": "Under control of the Houthis" }
+function legendOf(txt) {
+  const out = {};
+  for (const m of txt.matchAll(/\[\[(?:File|Image):([^|\]]+)[^\]]*\]\]((?:[^\n<;{\[]|\[\[[^\]]*\]\]|\{\{[^}]*\}\})*)/g)) {
+    const file = m[1].trim().replace(/_/g, " ");
+    const lbl = m[2].replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g, "$1").replace(/\{\{[^}]*\}\}/g, "").replace(/'{2,3}|&nbsp;|\]=\]|-->/g, " ")
+      .replace(/\s+/g, " ").replace(/^[\s:\-\u2013,]+|[\s:;,(]+$/g, "").trim();
+    if (lbl.length < 3 || /^(if not|\)\.)/i.test(lbl)) continue;
+    if (!out[file]) out[file] = lbl.slice(0, 90);
+  }
+  return out;
+}
+async function wikiRaw(page) {
+  const url = "https://en.wikipedia.org/wiki/" + encodeURIComponent(page.replace(/ /g, "_")).replace(/%3A/g, ":").replace(/%2F/g, "/") + "?action=raw";
+  if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow the raw page");
+  return get(url, "text/plain");
 }
 async function readFront(c, prev) {
   const res = { sources: [], current: null };
@@ -241,24 +266,34 @@ async function readFront(c, prev) {
       ...(s.nc ? { nc: true } : {}), home: s.home || (s.type === "wikimap" ? "https://en.wikipedia.org/wiki/" + s.page : s.url), ok: false };
     try {
       if (s.type === "wikimap") {
-        const url = "https://en.wikipedia.org/wiki/" + s.page + "?action=raw";
-        if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow the raw page");
-        let txt = await get(url, "text/plain");
-        let places = parseWikimap(txt);
-        // a template that only invokes a module: read the module it names
-        if (places.length < 5) {
-          const m = txt.match(/#invoke:\s*([^|}\n]+)/i);
-          if (m) { const mod = "Module:" + m[1].trim().replace(/ /g, "_"); txt = await get("https://en.wikipedia.org/wiki/" + mod + "?action=raw", "text/plain"); places = parseWikimap(txt); st.module = mod; }
+        // a template names the data module it draws ({{#invoke:Location map/multi|load|Module:...}}); read that module and any module it builds on
+        let txt = await wikiRaw(s.page), all = txt, module = s.page;
+        const load = txt.match(/#invoke:\s*Location map\/multi\s*\|\s*load\s*\|\s*(Module:[^|}\n]+)/i);
+        if (load) { module = load[1].trim().replace(/_/g, " "); txt = await wikiRaw(module); all += "\n" + txt; }
+        for (const r of [...txt.matchAll(/require\(\s*['"](Module:[^'"]+)['"]\s*\)/g)].map((m) => m[1]).filter((m) => !/Arguments|Location map|Yesno|String/i.test(m)).slice(0, 2)) {
+          try { all += "\n" + (await wikiRaw(r)); } catch (e) {}
         }
-        if (PROBE) { const cnt = {}; places.forEach((p) => { cnt[p.mark] = (cnt[p.mark] || 0) + 1; });
-          (probe.conflicts[c.id] = probe.conflicts[c.id] || {}).front = (probe.conflicts[c.id].front || []).concat([{ id: s.id, len: txt.length, places: places.length,
-            marks: Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 25), head: txt.slice(0, 600), sample: places.slice(0, 5) }]); }
+        // short names for marker images ("ukr = 'Location dot blue.svg'"), used as mk.ukr in the marker list
+        const alias = {}; for (const m of all.matchAll(/\b([A-Za-z]\w{1,7})\s*=\s*["']([^"'\n]+\.(?:svg|png|gif))["']/g)) if (!/^(mark|image|file)$/i.test(m[1])) alias[m[1]] = m[2];
+        const legendFiles = legendOf(all);
+        const places = parseWikimap(txt).map((p) => { const a = p.mark.match(/^\w+\.(\w+)$/); if (a && alias[a[1]]) p.mark = alias[a[1]]; return p; })
+          .filter((p) => !SKIP_MARK.test(p.mark) && /\.(svg|png|gif)$/i.test(p.mark));
+        places.forEach((p) => { p.ctl = markColour(p.mark); p.t = markType(p.mark); });
+        // the side each colour stands for, in the source's own legend words (town-marker lines, then contested pairs); config can override
+        const legend = {};
+        for (const [file, lbl] of Object.entries(legendFiles)) {
+          const col = markColour(file), t = markType(file); if (col === "other") continue;
+          if ((t === "town" || t === "contested") && !legend[col]) legend[col] = lbl;
+        }
+        Object.assign(legend, s.legend || {});
+        if (PROBE) { const cnt = {}; places.forEach((p) => { cnt[p.ctl + " " + p.t] = (cnt[p.ctl + " " + p.t] || 0) + 1; });
+          (probe.conflicts[c.id] = probe.conflicts[c.id] || {}).front = (probe.conflicts[c.id].front || []).concat([{ id: s.id, module, len: txt.length, places: places.length,
+            marks: Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 25), aliases: Object.keys(alias).length, legend }]); }
         if (places.length < 5) throw new Error("no town markers found (" + places.length + ")");
-        places.forEach((p) => { p.ctl = markColour(p.mark); });
         places.sort((a, b) => (a.n + a.la + a.lo < b.n + b.la + b.lo ? -1 : 1));
-        const legend = s.legend || {};
-        res.current = res.current || { kind: "places", source: s.id, places, legend, taken: stamp, sha256: sha256(places.map((p) => [p.n, p.la, p.lo, p.ctl])) };
-        Object.assign(st, { ok: true, n: places.length });
+        places.forEach((p) => { delete p.mark; });
+        res.current = res.current || { kind: "places", source: s.id, module, places, legend, taken: stamp, sha256: sha256(places.map((p) => [p.n, p.la, p.lo, p.ctl, p.t])) };
+        Object.assign(st, { ok: true, n: places.length, home: "https://en.wikipedia.org/wiki/" + module.replace(/ /g, "_") });
       } else if (s.type === "geojson") {
         let txt = "", used = "";
         const urls = s.dated ? [0, 1, 2, 3, 4].map((d) => { const t = new Date(NOW - d * 864e5); return s.url.replace("{YYYYMMDD}", t.toISOString().slice(0, 10).replace(/-/g, "")); }) : [s.url];
