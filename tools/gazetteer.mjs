@@ -118,6 +118,6 @@ export function placeIn(gz, text, ccs) {
   let best = towns.find((t) => (named.size ? named.has(t.a1) : !t.amb)) || null;
   if (!best && named.size === 1) best = regs.sort((a, b) => a.at - b.at)[0];
   if (!best) return null;
-  return { name: best.name, lat: +best.lat.toFixed(3), lon: +best.lon.toFixed(3), prec: best.kind === "city" ? "approx" : "province", kind: best.kind,
+  return { name: best.name, lat: +best.lat.toFixed(3), lon: +best.lon.toFixed(3), prec: best.kind === "city" ? "approx" : "province", kind: best.kind, a1: best.a1,
     basis: best.kind === "city" ? "GeoNames town or city centre, named in the text" : "rough centre of a GeoNames region named in the text" };
 }
