@@ -93,6 +93,25 @@ try {
   status.push({ id: "news", source: "Thailand's national outlets (from the news step)", ok: true, n: th.length, kept: kept.length });
 } catch (e) { status.push({ id: "news", source: "Thailand's national outlets (from the news step)", ok: false, error: "news.js unreadable: " + e.message }); }
 
+// Deep South Watch's own statistics posts (its RSS stopped in 2022): the site's newest-post listing, kept only for posts whose title
+// names statistics or its DSID incident database. Figures stay in DSW's words, as its claims; nothing is computed from them.
+const dswStatus = { id: "dsw-stats", source: "Deep South Watch statistics posts", ok: false, n: 0 }, dsw = [];
+try {
+  for (const u of ["https://deepsouthwatch.org/th/node", "https://deepsouthwatch.org/th/node?page=1"]) {
+    const h = await get(u, "text/html");
+    for (const m of h.matchAll(/<a[^>]+href="(\/th\/node\/\d+)"[^>]*>([^<]{8,300})<\/a>/g)) {
+      const title = m[2].replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+      if (!/สถิติ|DSID|ฐานข้อมูล|statistic/i.test(title)) continue;
+      const link = "https://deepsouthwatch.org" + m[1];
+      if (!dsw.some((x) => x.link === link)) dsw.push({ title, link, outlet: "Deep South Watch", lang: "th", via: "site listing", kind: "statistics", claim: true, date: "", feed: "dsw-stats" });
+    }
+    dswStatus.pages = (dswStatus.pages || 0) + 1;
+  }
+  Object.assign(dswStatus, { ok: true, n: dsw.length });
+  if (PROBE) console.log("DSW listing:", dsw.length, "statistics posts;", dsw.slice(0, 8).map((x) => x.title + " <" + x.link + ">").join(" | "));
+} catch (e) { dswStatus.error = e.name === "AbortError" ? "timed out" : e.message; if (PROBE) console.log("DSW listing FAIL", dswStatus.error); }
+status.push(dswStatus);
+
 // UCDP candidate events for the Patani conflict, one file per month, the past 13 months. Files already read are not re-read.
 let prev = {};
 try { const t = fs.readFileSync(OUT, "utf8"); prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) {}
