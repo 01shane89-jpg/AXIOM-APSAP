@@ -338,12 +338,14 @@ html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-hei
 @media print{.lgctl{display:none}}
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
 /* NATO-style (APP-6) map symbols from assets/osap-symbols.js */
-.msym svg{display:block;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}.msym.old{opacity:.7}
-.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-1px);font:700 10.5px/1.2 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
-.msw{display:inline-flex;width:26px;justify-content:center;flex:none}.msw svg{width:22px;height:auto;max-height:26px;display:block}
+.msb{position:absolute}.msb>svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6)) drop-shadow(0 1px 2px rgba(0,0,0,.35))}.msym.old .msb{opacity:.8}
+.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-2px);font:700 11.5px/1.25 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
+.msw{display:inline-flex;width:30px;justify-content:center;flex:none}.msw svg{width:26px;height:auto;max-height:30px;display:block}
 .lgh{font-weight:600;font-size:11px;margin:6px 0 1px;color:var(--muted)}.msyfr{font-size:10.5px;line-height:1.35;margin:6px 0 2px;color:var(--muted)}
 .msykey .lg{align-items:center}
 .msym-zlo .msym.kh .msym-t{display:none}
+/* terrain names sit just right of the (zoom-scaled) key-terrain symbol */
+.msyon .terlbl{padding-left:calc(16px * var(--msk, 1));font-size:12px!important}
 
 .rows{display:flex;flex-direction:column}
 .row{
@@ -1123,7 +1125,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
-  function symZoom() { map.getContainer().classList.toggle("msym-zlo", map.getZoom() < 10); }
+  /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
+  function symZoom() {
+    var z = map.getZoom(), el = map.getContainer();
+    el.classList.toggle("msym-zlo", z < 10); el.classList.toggle("msyon", !!window.OSAP_SYM);
+    el.style.setProperty("--msk", z <= 6 ? 0.65 : z <= 8 ? 0.8 : z <= 10 ? 1 : z <= 12 ? 1.15 : 1.3);
+  }
   map.on("zoomend", symZoom); symZoom();
   window.__asapMap = map;
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
@@ -1408,7 +1415,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: osapSym("keyterrain", t.hill_number ? { text: t.hill_number } : null) || L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
           html: t.hill_number ? '<div class="terpin hn">' + TE(t.hill_number) + "</div>" : '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
           .bindPopup(terPop(t), { maxWidth: 320 }).addTo(terLayer);
-        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [t.hill_number ? -17 : -12, 7],
+        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [window.OSAP_SYM ? 0 : t.hill_number ? -17 : -12, 7],
           html: TE(t.name.split(/ \(/)[0]) }) }).addTo(lblLayer);
       });
       lbl();
