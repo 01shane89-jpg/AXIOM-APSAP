@@ -10,7 +10,39 @@ import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { splitByCountry, newsCodes } from "./split_country.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
+const TIMEOUT = 15000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
+/* Speed (2026-09-27): accounts are read several at a time, each request is time-boxed, and no new YouTube channel is
+   started once BUDGET has passed. An account that fails or is not reached keeps its posts from the last snapshot
+   (marked stale), so a slow or blocked run never empties the page. */
+const T0 = Date.now(), BUDGET = +(process.env.SOCIAL_BUDGET_MS || 6 * 6e4);
+async function pool(list, n, fn) {
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(n, list.length) }, async () => { while (i < list.length) { const k = i++; await fn(list[k], k); } }));
+}
+const lap = (what, t) => console.log(`${what}: ${((Date.now() - t) / 1000).toFixed(1)} s`);
+// the last snapshot's posts, by platform and account, to carry over for accounts that fail or are not reached this run
+const prev = new Map();
+try {
+  const old = fs.readFileSync("data/live/social.js", "utf8");
+  const j = JSON.parse(old.slice(old.indexOf("{"), old.lastIndexOf("}") + 1));
+  for (const [cc, list] of Object.entries(j.items || {})) for (const it of list) {
+    const k = it.platform + " " + it.account;
+    if (!prev.has(k)) prev.set(k, []);
+    prev.get(k).push([cc, it]);
+  }
+} catch (e) {}
+function carry(platform, account) {
+  let n = 0;
+  for (const [cc, it] of prev.get(platform + " " + account) || []) {
+    if (Date.parse(it.date + ":00Z") < Date.now() - 30 * 864e5) continue;
+    (items[cc] = items[cc] || []).push(it); n++;
+  }
+  return n;
+}
+function failed(platform, source, cc, e) {
+  const n = carry(platform, source);
+  status.push({ platform, source, cc, ok: false, error: typeof e === "string" ? e : err(e), ...(n ? { kept: n } : {}) });
+}
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const cfg = JSON.parse(fs.readFileSync("tools/social_accounts.json", "utf8"));
 const env = process.env;
@@ -42,8 +74,8 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
 
 // Bluesky
 {
-  const base = "https://public.api.bsky.app", auth = {};
-  for (const a of cfg.bluesky || []) {
+  const base = "https://public.api.bsky.app", auth = {}, t = Date.now();
+  await pool(cfg.bluesky || [], 5, async (a) => {
     try {
       /* regional and global accounts ("*") post about many countries, so up to 300 posts from the past week are read (3 pages);
          national accounts need only their latest 40. (Bluesky's public search needs a login, so it is not used.) */
@@ -66,8 +98,9 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
         n++;
       }
       status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: true, n });
-    } catch (e) { status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: false, error: err(e) }); }
-  }
+    } catch (e) { failed("Bluesky", a.handle, a.cc, e); status[status.length - 1].source = "@" + a.handle; }
+  });
+  lap("Bluesky", t);
 }
 
 // Telegram: public channel web previews (t.me/s/<channel>), no login, account or phone number.
@@ -88,7 +121,8 @@ export function parseTgPreview(html, channel) {
   return out;
 }
 if ((cfg.telegram || []).length) {
-  for (const ch of cfg.telegram) {
+  const t0 = Date.now();
+  await pool(cfg.telegram, 4, async (ch) => {
     const src = "@" + ch.channel;
     try {
       const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
@@ -108,9 +142,9 @@ if ((cfg.telegram || []).length) {
         n++;
       }
       status.push({ platform: "Telegram", source: src, cc: ch.cc, ok: true, n });
-    } catch (e) { status.push({ platform: "Telegram", source: src, cc: ch.cc, ok: false, error: err(e) }); }
-    await new Promise((r) => setTimeout(r, 1500));
-  }
+    } catch (e) { failed("Telegram", src, ch.cc, e); }
+  });
+  lap("Telegram", t0);
 } else status.push({ platform: "Telegram", source: "Telegram", ok: false, skipped: true, error: "no channels listed in tools/social_accounts.json" });
 
 // YouTube: each channel's public video feed (no account, key or Data API). The @handle is turned into the channel id
@@ -162,8 +196,14 @@ export function parseYtPage(html, now = Date.now()) {
   })(data);
   return out;
 }
-for (const ch of cfg.youtube || []) {
+/* YouTube's feeds have answered 404 from GitHub for whole runs; once the first dozen feed reads in a run have all
+   failed, the rest go straight to the videos page instead of spending three feed tries and two waits on each. */
+let feedOk = 0, feedBad = 0, late = 0;
+const feedDead = () => feedOk === 0 && feedBad >= 12;
+const tYt = Date.now();
+await pool(cfg.youtube || [], 8, async (ch) => {
   const src = ch.name || "@" + ch.handle;
+  if (Date.now() - T0 > BUDGET) { late++; failed("YouTube", src, ch.cc, "not reached within the time budget"); return; }
   try {
     let id = ch.channel_id;
     if (!id) {
@@ -173,13 +213,16 @@ for (const ch of cfg.youtube || []) {
     }
     let vids, via = "feed";
     // YouTube's feed answers 404 now and then for channels that exist; a short retry usually gets it
-    let feedErr = "";
-    for (let k = 0; k < 3 && !vids; k++) {
-      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
-      catch (e) { feedErr = err(e); if (k < 2) await new Promise((r) => setTimeout(r, 2500)); }
+    let feedErr = feedDead() ? "skipped (feeds failing this run)" : "";
+    for (let k = 0; k < 2 && !vids && !feedDead(); k++) {
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); feedOk++; }
+      catch (e) { feedErr = err(e); feedBad++; if (k < 1) await new Promise((r) => setTimeout(r, 1000)); }
     }
     if (!vids) {
-      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed"; }
+      try {
+        if (feedDead()) throw new Error("feeds failing");
+        vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed";
+      }
       catch (e2) {
         const page = await text("https://www.youtube.com/channel/" + id + "/videos");
         vids = parseYtPage(page); via = "videos page";
@@ -197,21 +240,24 @@ for (const ch of cfg.youtube || []) {
       n++;
     }
     status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n, ...(via !== "feed" ? { via } : {}) });
-  } catch (e) { status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: false, error: err(e) }); }
-  await new Promise((r) => setTimeout(r, 800));
-}
+  } catch (e) { failed("YouTube", src, ch.cc, e); }
+});
+lap(`YouTube (${(cfg.youtube || []).length} channels, ${late} not reached, feeds ${feedOk} ok / ${feedBad} failed)`, tYt);
 
 for (const cc of Object.keys(items)) {
   const seen = new Set();
   items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
 }
 const all = [...new Set(Object.values(items).flat())];
+const tTr = Date.now();
 const tr = await translateAll(all.map((i) => ({ text: i.title, lang: i.lang || "" })));
 all.forEach((i, n) => { i.title_en = tr[n].en; i.mt = /^en\b/i.test(i.lang || "") ? null : (tr[n].tool || "untranslated"); if (i.mt && tr[n].en === i.title) i.mt = null; });
 saveCache();
+lap("Translation", tTr);
 if (!status.some((s) => s.ok)) { console.error("no social source worked"); status.forEach((s) => console.error(" ", s.platform, s.source, s.error)); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/social.js", "ASAP_SOCIAL", newsCodes()); // one small file per country for the page (tools/split_country.mjs)
 try { updateHistory("social", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
-status.forEach((s) => console.log(s.ok ? "ok  " : s.skipped ? "skip" : "FAIL", s.platform, s.source, s.ok ? s.n + " posts" : s.error));
+status.forEach((s) => console.log(s.ok ? "ok  " : s.skipped ? "skip" : "FAIL", s.platform, s.source, s.ok ? s.n + " posts" : s.error + (s.kept ? ` (kept ${s.kept} earlier posts)` : "")));
+lap("Social refresh total", T0);

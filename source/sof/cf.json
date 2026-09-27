@@ -1,0 +1,133 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "cf",
+ "country": "Central African Republic",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 4,
+  "level_text": "Do not travel",
+  "issued": "2025-11-10",
+  "updated": null,
+  "indicators": [
+   "C",
+   "T",
+   "U",
+   "H",
+   "K",
+   "O"
+  ],
+  "indicator_names": [
+   "crime",
+   "terrorism",
+   "civil unrest",
+   "health",
+   "kidnapping or hostage taking",
+   "other"
+  ],
+  "areas": [],
+  "notes": "From the State Department advisory feed (Central African Republic - Level 4: Do Not Travel). Indicators are the risks the advisory text names, not its indicator icons; area-specific levels are not captured here, so read the advisory.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/central-african-republic-travel-advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "01e446c161f9592595bb92c6dc73eb80a74c7e7cd45699dcceeb48ecdb2c291f"
+ },
+ "posts": [],
+ "airports": [
+  {
+   "id": "sof:cf:airport:feff",
+   "name": "Bangui M'Poko International Airport",
+   "icao": "FEFF",
+   "ident": "FEFF",
+   "iata": "BGF",
+   "type": "large_airport",
+   "municipality": "Bangui",
+   "region": "CF-MP",
+   "scheduled_service": true,
+   "lat": 4.39848,
+   "lon": 18.5188,
+   "prec": "exact",
+   "elevation_ft": 1208,
+   "longest_runway": {
+    "ident": "16/34",
+    "length_ft": 8530,
+    "length_m": 2600,
+    "width_ft": 148,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/FEFF/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "ff854a19ba9df05ca56218df7f1517cb8779da558c26e9b1a38083afce4e643b"
+  },
+  {
+   "id": "sof:cf:airport:feft",
+   "name": "Berbérati Airport",
+   "icao": "FEFT",
+   "ident": "FEFT",
+   "iata": "BBT",
+   "type": "medium_airport",
+   "municipality": "Berbérati",
+   "region": "CF-HS",
+   "scheduled_service": false,
+   "lat": 4.22158,
+   "lon": 15.7864,
+   "prec": "exact",
+   "elevation_ft": 1929,
+   "longest_runway": {
+    "ident": "17/35",
+    "length_ft": 5446,
+    "length_m": 1660,
+    "width_ft": 98,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/FEFT/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "ffbcf246e60db055b266e4e439549404bfd0c71417f5a58b73b6197041db0e70"
+  }
+ ],
+ "seaports": [],
+ "hospitals": [],
+ "power": [
+  {
+   "id": "sof:cf:power:wri1023052",
+   "name": "Boali",
+   "fuel": "Hydro",
+   "capacity_mw": 19.3,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 4.8811,
+   "lon": 18.0341,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "a731055e42337649670e94cf00aa7adc22f1a152396da495dd214c07841f8781"
+  },
+  {
+   "id": "sof:cf:power:wri1023051",
+   "name": "Bangui Enerca",
+   "fuel": "Oil",
+   "capacity_mw": 14.364,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 4.3833,
+   "lon": 18.6167,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "f007fc251ad8944950f2b2d19c9c784a143e79d611eeb533a794039092081f34"
+  }
+ ],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Auto: U.S. diplomatic posts not yet researched for this country.",
+  "Auto: hospitals not yet researched for this country.",
+  "Auto: landlocked, no seaports."
+ ]
+}

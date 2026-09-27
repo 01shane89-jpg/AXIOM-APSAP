@@ -55,6 +55,10 @@ BOUNDS = {
   "lk": [[5.8,79.5],[9.9,82.0]],
   "mv": [[-0.8,72.5],[7.2,73.8]],
 }
+# every other country: the box from data/basemap/world-countries.js, so new countries need no entry here
+if cc not in BOUNDS:
+  _w = open("data/basemap/world-countries.js", encoding="utf-8").read()
+  BOUNDS.update({w["id"]: w["bounds"] for w in json.loads(_w[_w.index("=") + 1:].strip().rstrip(";"))})
 by = collections.defaultdict(list)
 for e in ev:
   for k in ("date","title","src","srcname","kind","layer"): assert e.get(k), (k, e.get("title"))
