@@ -3764,6 +3764,118 @@
    "name": "VBTC News",
    "kind": "state media",
    "lang": "en"
+  },
+  {
+   "cc": "uy",
+   "handle": "Canal5UY",
+   "channel_id": "UCMHQqhtbpxfcnPPYpryapHA",
+   "name": "Canal 5 (Television Nacional Uruguay)",
+   "kind": "public broadcaster",
+   "lang": "es"
+  },
+  {
+   "cc": "uy",
+   "handle": "Canal10UruguayOficial",
+   "channel_id": "UCJI9kSwvvHX2CJeF8iZ6x8Q",
+   "name": "Canal 10 Uruguay",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "uy",
+   "handle": "ObservaUY",
+   "channel_id": "UCLvbVJDsVX4-qoyladIiVaQ",
+   "name": "El Observador",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "nl",
+   "handle": "NOS",
+   "channel_id": "UC5xziMuoFAOpX9mwUVhe2Jw",
+   "name": "NOS",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "nl",
+   "handle": "NUnl",
+   "channel_id": "UCCw1aOc9x3sEjrUzT-qmMGw",
+   "name": "NU.nl",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "st",
+   "handle": "TVSTelevisãoNacional",
+   "channel_id": "UCUIV4BM7gf9m9hQ1EW5kSvw",
+   "name": "TVS Televisao Nacional",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "st",
+   "handle": "radiosomostodosprimos",
+   "channel_id": "UC_F2sKyFK8C_kckbFZ2GYVg",
+   "name": "RSTP (Radio Nacional)",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "pw",
+   "handle": "TMCPalau",
+   "channel_id": "UCGL9wXuD9vumSNflQ0IzgjQ",
+   "name": "TMC Palau",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "pw",
+   "handle": "TheSenatePalauNationalCongress",
+   "channel_id": "UCc7VufcUmUXMkZutIR7H9Jg",
+   "name": "Senate, Palau National Congress",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "to",
+   "handle": "TBCTECH-t8e",
+   "channel_id": "UCanaUoPnbgGMNc_bMmGF2Rg",
+   "name": "Tonga Broadcasting Commission",
+   "kind": "state media",
+   "lang": "to"
+  },
+  {
+   "cc": "sb",
+   "handle": "sibc-TV",
+   "channel_id": "UCh2O5Ch_QE2M7mS_yR5O7XQ",
+   "name": "SIBC News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "sb",
+   "handle": "SIParliament",
+   "channel_id": "UCqGCc68Oy5I19akSiXsm5Ow",
+   "name": "National Parliament of Solomon Islands",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "ls",
+   "handle": "LesothoPR",
+   "channel_id": "UCgg4nU-oBMUakcABO2fKciA",
+   "name": "Lesotho Government Public Relations",
+   "kind": "government",
+   "lang": "st"
+  },
+  {
+   "cc": "is",
+   "handle": "frettir",
+   "channel_id": "UCLo2BIGJUE3ewygUF7K7W5Q",
+   "name": "RUV frettir",
+   "kind": "public broadcaster",
+   "lang": "is"
   }
  ]
 }
