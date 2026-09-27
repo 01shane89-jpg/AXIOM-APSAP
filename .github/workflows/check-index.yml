@@ -1,4 +1,5 @@
-# Guards against merges that silently drop script tags or feature code from index.html.
+# Guards against merges that silently drop script tags or feature code from index.html,
+# and checks headless that the map still draws its objects and military symbols.
 # The list of required lines is tools/required-in-index.txt.
 name: Check index.html
 on:
@@ -14,3 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: node tools/check_index.mjs
+  map-smoke:
+    # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/smoke_map.mjs
