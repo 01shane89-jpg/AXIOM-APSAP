@@ -1094,7 +1094,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function lbl() { if (ST.ter && map.getZoom() >= 9) lblLayer.addTo(map); else map.removeLayer(lblLayer); }
     map.on("zoomend", lbl);
     function note() {
-      if (!D) return failed ? "Not researched yet for this country." : "Loads when switched on.";
+      if (!D) return failed ? "No terrain or flashpoint file for this country yet." : "Loads when switched on.";
       var n = { active: 0, elevated: 0, latent: 0 }; D.flashpoints.forEach(function (f) { n[f.level]++; });
       return D.terrain.length + " terrain features, " + D.flashpoints.length + " flashpoints (" + n.active + " active, " + n.elevated + " elevated, " + n.latent + " latent), as of " + D.asof + ".";
     }
