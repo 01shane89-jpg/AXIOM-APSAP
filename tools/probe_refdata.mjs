@@ -35,34 +35,41 @@ for (const u of ["https://travel.state.gov/_res/rss/TAsTWs.xml", "https://travel
   if (t) { fs.writeFileSync(`${OUT}/advisories-${u.endsWith(".xml") ? "rss.xml" : "index.html"}`, t); log.push(`ok ${t.length} ${u}`); }
 }
 
-// 2. Per country: hospitals, U.S. posts, seaports (Wikidata, ranked by number of Wikipedia articles)
-for (const cc of CCS) {
-  const C = `?c wdt:P297 "${cc}".`;
-  const hosp = await sparql(`SELECT ?h ?hLabel ?coord ?sl ?admLabel ?web ?typeLabel WHERE { ${C}
-    ?h wdt:P31 ?type. ?type wdt:P279* wd:Q16917. ?h wdt:P17 ?c; wdt:P625 ?coord; wikibase:sitelinks ?sl.
+// 2. Per country: hospitals, U.S. posts, seaports (Wikidata, ranked by number of Wikipedia articles). Grouped per item so
+// multi-valued properties do not repeat rows; several countries run at once (Wikidata allows 5 parallel queries), and no new
+// country starts after DEADLINE so the park step always runs.
+const T0 = Date.now(), DEADLINE = +(process.env.DEADLINE_MIN || 17) * 60000;
+async function one(cc) {
+  const C = `?c wdt:P297 "${cc}".`, t = Date.now();
+  const hosp = await sparql(`SELECT ?h ?sl (SAMPLE(?en) AS ?hLabel) (SAMPLE(?any) AS ?hLabelAny) (SAMPLE(?coord) AS ?coord)
+    (SAMPLE(?admL) AS ?admLabel) (SAMPLE(?web) AS ?web) WHERE { ${C}
+    ?h wdt:P17 ?c; wdt:P31/wdt:P279* wd:Q16917; wdt:P625 ?coord; wikibase:sitelinks ?sl.
     FILTER NOT EXISTS { ?h wdt:P576 ?end } FILTER NOT EXISTS { ?h wdt:P3999 ?closed }
-    OPTIONAL { ?h wdt:P131 ?adm } OPTIONAL { ?h wdt:P856 ?web }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE],fr,es,de,pt,it,ru". } }
-    ORDER BY DESC(?sl) LIMIT 60`);
-  await sleep(1500);
-  // every embassy or consulate in the country; the U.S. ones are picked out by operator or name below (a label search inside
-  // the query is far too slow)
-  const all = await sparql(`SELECT ?m ?mLabel ?coord ?typeLabel ?admLabel ?addr ?op WHERE { ${C}
-    ?m wdt:P17 ?c; wdt:P31 ?type. VALUES ?root { wd:Q3917681 wd:Q7843791 } ?type wdt:P279* ?root.
+    OPTIONAL { ?h rdfs:label ?en FILTER(LANG(?en) = "en") } OPTIONAL { ?h rdfs:label ?any }
+    OPTIONAL { ?h wdt:P131 ?adm. ?adm rdfs:label ?admL FILTER(LANG(?admL) = "en") } OPTIONAL { ?h wdt:P856 ?web } }
+    GROUP BY ?h ?sl ORDER BY DESC(?sl) LIMIT 40`);
+  const all = await sparql(`SELECT ?m ?mLabel ?coord ?admLabel ?addr ?op ?c2 WHERE {
+    ?m wdt:P31 ?type. VALUES ?root { wd:Q3917681 wd:Q7843791 } ?type wdt:P279* ?root. ?m wdt:P17 ?c2. ?c2 wdt:P297 "${cc}".
     FILTER NOT EXISTS { ?m wdt:P576 ?end }
     OPTIONAL { ?m wdt:P137 ?op } OPTIONAL { ?m wdt:P625 ?coord } OPTIONAL { ?m wdt:P131 ?adm } OPTIONAL { ?m wdt:P6375 ?addr }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`);
   const posts = all && all.filter((m) => /Q30$|Q789915$/.test(m.op || "") || /United States|\bU\.S\.|\bUS (Embassy|Consulate)|American (Embassy|Consulate)/.test(m.mLabel || ""));
-  await sleep(1500);
-  const ports = await sparql(`SELECT ?p ?pLabel ?coord ?sl ?locode ?typeLabel WHERE { ${C}
-    ?p wdt:P31 ?type. VALUES ?type { wd:Q44782 wd:Q1248784 wd:Q283202 wd:Q2143825 wd:Q721207 }
-    ?p wdt:P17 ?c; wdt:P625 ?coord; wikibase:sitelinks ?sl. OPTIONAL { ?p wdt:P1937 ?locode }
-    FILTER NOT EXISTS { ?p wdt:P576 ?end }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } ORDER BY DESC(?sl) LIMIT 30`);
-  await sleep(1500);
+  const ports = await sparql(`SELECT ?p ?sl (SAMPLE(?en) AS ?pLabel) (SAMPLE(?coord) AS ?coord) (SAMPLE(?lc) AS ?locode) WHERE { ${C}
+    ?p wdt:P31 ?type. VALUES ?type { wd:Q44782 wd:Q283202 wd:Q2143825 wd:Q721207 }
+    ?p wdt:P17 ?c; wdt:P625 ?coord; wikibase:sitelinks ?sl. OPTIONAL { ?p wdt:P1937 ?lc }
+    FILTER NOT EXISTS { ?p wdt:P576 ?end } OPTIONAL { ?p rdfs:label ?en FILTER(LANG(?en) = "en") } }
+    GROUP BY ?p ?sl ORDER BY DESC(?sl) LIMIT 30`);
   fs.writeFileSync(`${OUT}/${cc.toLowerCase()}.json`, JSON.stringify({ cc, hosp, posts, ports }));
-  log.push(`${cc} hospitals ${hosp ? hosp.length : "fail"} posts ${posts ? posts.length : "fail"} ports ${ports ? ports.length : "fail"}`);
+  log.push(`${cc} ${Math.round((Date.now() - t) / 1000)}s hospitals ${hosp ? hosp.length : "fail"} posts ${posts ? posts.length : "fail"} ports ${ports ? ports.length : "fail"}`);
   console.log(log[log.length - 1]);
+  fs.writeFileSync(`${OUT}/log.txt`, log.join("\n") + "\n");
 }
+const queue = [...CCS];
+await Promise.all([0, 1, 2, 3].map(async () => {
+  while (queue.length) {
+    if (Date.now() - T0 > DEADLINE) { log.push("deadline: skipped " + queue.splice(0).join(" ")); break; }
+    await one(queue.shift());
+  }
+}));
 fs.writeFileSync(`${OUT}/log.txt`, log.join("\n") + "\n");
 console.log(log.join("\n"));
