@@ -87,6 +87,15 @@ await job("adv", "advisories.js", "ASAP_ADV", async () => {
     } catch (e) { fails.push(url.split("/")[2] + ": " + err(e)); }
   }
   if (!rows || !rows.length) throw new Error(fails.join("; ") || "empty");
+  if (process.env.GITHUB_REF_NAME && process.env.GITHUB_REF_NAME !== "main") { // PROBE (feature branches only; removed before merge)
+    const raw = await get(used, used.endsWith(".xml") ? "text" : "json");
+    const r0 = Array.isArray(raw) ? raw : raw.data || raw.items || raw;
+    console.log("PROBE rows", rows.length, "keys", JSON.stringify(Object.keys((Array.isArray(r0) ? r0[0] : r0) || {})));
+    console.log("PROBE row0", JSON.stringify(Array.isArray(r0) ? r0.find((x) => /Thailand/.test(x.Title || "")) : "").slice(0, 3000));
+    console.log("PROBE titles", JSON.stringify(rows.map((r) => r.title)).slice(0, 12000));
+    const th = rows.find((r) => /Thailand/.test(r.title || ""));
+    if (th) { const h = await get(th.link, "text"); const i = h.search(/\((C|T|U|H|N|E|K|D|O)\)/); console.log("PROBE page", h.length, JSON.stringify(h.slice(Math.max(0, i - 2500), i + 2500))); }
+  }
   const items = {};
   for (const r of rows) {
     const m = String(r.title || "").match(/^(.*?)\s*[-–—]\s*Level\s*(\d)\s*[:\-–]\s*(.+)$/i);
