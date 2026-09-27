@@ -1,0 +1,155 @@
+// Diagnostic: fetch each candidate open-data feed once and record status, size, type and a short sample.
+// Writes probe-out/dense.json (uploaded as a run artifact); commits nothing. Run: only=probe-dense.
+import fs from "node:fs";
+const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; probe)";
+const today = new Date().toISOString().slice(0, 10), yday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+const C = [
+  // weather and hazards
+  ["nws-alerts", "https://api.weather.gov/alerts/active?status=actual&message_type=alert"],
+  ["nhc-storms", "https://www.nhc.noaa.gov/CurrentStorms.json"],
+  ["swpc-scales", "https://services.swpc.noaa.gov/products/noaa-scales.json"],
+  ["swpc-alerts", "https://services.swpc.noaa.gov/products/alerts.json"],
+  ["swpc-kp", "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"],
+  ["usgs-hans", "https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes"],
+  ["ea-flood", "https://environment.data.gov.uk/flood-monitoring/id/floods"],
+  ["emsc", "https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=500&minmag=2.5&start=" + yday],
+  ["geofon", "https://geofon.gfz.de/fdsnws/event/1/query?format=text&minmag=3&start=" + yday],
+  ["geonet-quake", "https://api.geonet.org.nz/quake?MMI=3"],
+  ["geonet-volc", "https://api.geonet.org.nz/volcano/val"],
+  ["ga-quake", "https://earthquakes.ga.gov.au/geoserver/earthquakes/wfs?service=WFS&request=getfeature&typeNames=earthquakes:earthquakes_seven_days&outputFormat=application/json"],
+  ["dea-hotspots", "https://hotspots.dea.ga.gov.au/data/recent-hotspots.json"],
+  ["firms-viirs-24h", "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv"],
+  ["firms-modis-24h", "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_24h.csv"],
+  ["nsw-rfs", "https://www.rfs.nsw.gov.au/feeds/majorIncidents.json"],
+  ["vic-emergency", "https://emergency.vic.gov.au/public/events-geojson.json"],
+  ["qld-fire", "https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.json"],
+  ["wa-dfes", "https://api.emergency.wa.gov.au/v1/incidents"],
+  ["cal-fire", "https://www.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false"],
+  ["nifc-perimeters", "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query?where=1%3D1&outFields=poly_IncidentName,poly_GISAcres&f=json&resultRecordCount=5"],
+  ["cwfis-fires", "https://cwfis.cfs.nrcan.gc.ca/downloads/activefires/activefires.csv"],
+  ["effis-fires", "https://api.effis.emergency.copernicus.eu/rest/2/burntareas/current/?limit=5"],
+  ["jma-quake", "https://www.jma.go.jp/bosai/quake/data/list.json"],
+  ["jma-volcano", "https://www.jma.go.jp/bosai/volcano/data/warning.json"],
+  ["jma-tsunami", "https://www.jma.go.jp/bosai/tsunami/data/list.json"],
+  ["hko-warn", "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en"],
+  ["hko-quake", "https://data.weather.gov.hk/weatherAPI/opendata/earthquake.php?dataType=qem&lang=en"],
+  ["cenc-quake", "https://www.ceic.ac.cn/ajax/speedsearch?num=1&page=1"],
+  ["bmkg-nowcast", "https://www.bmkg.go.id/alerts/nowcast/en/rss.xml"],
+  ["phivolcs", "https://earthquake.phivolcs.dost.gov.ph/"],
+  ["bipad-incident", "https://bipadportal.gov.np/api/v1/incident/?ordering=-incident_on&limit=50"],
+  ["bipad-river", "https://bipadportal.gov.np/api/v1/river/?limit=50"],
+  ["sg-psi", "https://api-open.data.gov.sg/v2/real-time/api/psi"],
+  ["sg-2hr", "https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast"],
+  ["sg-rain", "https://api-open.data.gov.sg/v2/real-time/api/rainfall"],
+  ["datagovmy-flood", "https://api.data.gov.my/flood-warning?limit=50"],
+  ["datagovmy-warn", "https://api.data.gov.my/weather/warning?limit=50"],
+  ["cems-rapid", "https://rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/?limit=50"],
+  ["glide", "https://glidenumber.net/glide/jsonglideset.jsp?level1=&fromyear=2026&toyear=2026"],
+  ["pdc-hazards", "https://hpxml.pdc.org/public.xml"],
+  ["meteoalarm-feed", "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france"],
+  ["dwd-warn", "https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json"],
+  ["ec-canada-alerts", "https://weather.gc.ca/rss/battleboard/on61_e.xml"],
+  ["safecast", "https://api.safecast.org/measurements.json?order=created_at%20desc&per_page=5"],
+  ["sensor-community", "https://data.sensor.community/static/v2/data.1h.json"],
+  ["blitzortung", "https://map.blitzortung.org/GEOjson/getjson.php?f=s&n=00"],
+  ["lightningmaps", "https://www.lightningmaps.org/live/"],
+  ["rainviewer", "https://api.rainviewer.com/public/weather-maps.json"],
+  ["ndbc-latest", "https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt"],
+  ["coralreefwatch", "https://coralreefwatch.noaa.gov/product/vs/vs_polygons.json"],
+  ["usdm", "https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=total&startdate=9/1/2026&enddate=9/27/2026&statisticsType=1"],
+  // aviation, space, maritime
+  ["adsb-lol-mil", "https://api.adsb.lol/v2/mil"],
+  ["airplanes-live-mil", "https://api.airplanes.live/v2/mil"],
+  ["adsbfi-mil", "https://opendata.adsb.fi/api/v2/mil"],
+  ["opensky-states", "https://opensky-network.org/api/states/all?lamin=-10&lomin=95&lamax=25&lomax=130"],
+  ["faa-nas", "https://nasstatus.faa.gov/api/airport-status-information"],
+  ["launches", "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=20&mode=list"],
+  ["celestrak-stations", "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json"],
+  ["aerospace-reentry", "https://aerospace.org/reentries/grid"],
+  ["ukmto", "https://www.ukmto.org/ukmto-products/warnings"],
+  ["nga-wpi", "https://msi.nga.mil/api/publications/world-port-index?output=json"],
+  ["gpsjam", "https://gpsjam.org/data/" + yday + "-h3_4.csv"],
+  ["submarine-cables", "https://www.submarinecablemap.com/api/v3/cable/cable-geo.json"],
+  ["submarine-landing", "https://www.submarinecablemap.com/api/v3/landing-point/landing-point-geo.json"],
+  // cyber and internet
+  ["cisa-kev", "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"],
+  ["cisa-adv", "https://www.cisa.gov/cybersecurity-advisories/all.xml"],
+  ["ncsc-uk", "https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml"],
+  ["ransomware-live", "https://api.ransomware.live/v2/recentvictims"],
+  ["urlhaus-recent", "https://urlhaus.abuse.ch/downloads/csv_recent/"],
+  ["feodo", "https://feodotracker.abuse.ch/downloads/ipblocklist.json"],
+  ["ripestat", "https://stat.ripe.net/data/country-routing-stats/data.json?resource=MM"],
+  ["ioda-alerts", "https://api.ioda.inetintel.cc.gatech.edu/v2/outages/alerts?from=" + Math.floor(Date.now() / 1000 - 86400) + "&until=" + Math.floor(Date.now() / 1000)],
+  ["ooni", "https://api.ooni.io/api/v1/incidents/search?only_mine=false"],
+  ["ooni-agg", "https://api.ooni.io/api/v1/aggregation?probe_cc=MM&since=" + yday + "&until=" + today + "&axis_x=test_name"],
+  // sanctions and governance
+  ["un-sc-sanctions", "https://scsanctions.un.org/resources/xml/en/consolidated.xml"],
+  ["uk-sanctions", "https://ofsistorage.blob.core.windows.net/publishlive/2022format/ConList.csv"],
+  ["ca-sanctions", "https://www.international.gc.ca/world-monde/assets/office_docs/international_relations-relations_internationales/sanctions/sema-lmes.xml"],
+  ["opensanctions-index", "https://data.opensanctions.org/datasets/latest/sanctions/index.json"],
+  ["opensanctions-stats", "https://data.opensanctions.org/datasets/latest/default/statistics.json"],
+  ["wikidata", "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fe%20WHERE%20%7B%3Fe%20wdt%3AP31%20wd%3AQ40231%7D%20LIMIT%201"],
+  ["fcdo-index", "https://www.gov.uk/api/content/foreign-travel-advice"],
+  ["fcdo-country", "https://www.gov.uk/api/content/foreign-travel-advice/myanmar"],
+  ["ca-travel", "https://data.international.gc.ca/travel-voyage/index-updated.json"],
+  ["de-aa", "https://www.auswaertiges-amt.de/opendata/travelwarning"],
+  ["au-smartraveller", "https://www.smartraveller.gov.au/countries/documents/index.rss"],
+  ["nz-safetravel", "https://www.safetravel.govt.nz/news/feed"],
+  ["ie-dfa", "https://www.ireland.ie/en/dfa/overseas-travel/advice/rss/"],
+  // health
+  ["who-gho", "https://ghoapi.azureedge.net/api/WHOSIS_000001?$filter=TimeDim%20eq%202021&$top=5"],
+  ["ecdc-cdtr", "https://www.ecdc.europa.eu/en/taxonomy/term/1307/feed"],
+  ["wahis", "https://wahis.woah.org/api/v1/pi/event/filtered-list?language=en"],
+  ["promed", "https://promedmail.org/feed/"],
+  ["beacon", "https://beaconbio.org/api/events"],
+  ["cdc-han", "https://tools.cdc.gov/api/v2/resources/media/413690.rss"],
+  // economy and development
+  ["wb-wdi", "https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&mrv=1&per_page=300"],
+  ["imf-dm", "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH?periods=2026"],
+  ["er-api", "https://open.er-api.com/v6/latest/USD"],
+  ["ecb-fx", "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"],
+  ["fao-food-price", "https://www.fao.org/worldfoodsituation/foodpricesindex/en/"],
+  ["wfp-hunger", "https://api.hungermapdata.org/v2/adm0data.json"],
+  ["fews-net", "https://fdw.fews.net/api/ipcphase/?format=json&country_code=SO&limit=5"],
+  ["ocha-fts", "https://api.hpc.tools/v1/public/fts/flow?countryISO3=MMR&year=2026"],
+  ["hdx-ckan", "https://data.humdata.org/api/3/action/package_search?fq=groups:mmr&rows=5&sort=metadata_modified%20desc"],
+  ["iati", "https://d-portal.org/q.json?from=act&limit=5&country_code=KH"],
+  ["wb-projects", "https://search.worldbank.org/api/v2/projects?format=json&countrycode_exact=KH&rows=5"],
+  ["openfema", "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$top=5&$orderby=declarationDate%20desc"],
+  ["eia-intl", "https://api.eia.gov/v2/international/"],
+  ["reliefweb-rss", "https://reliefweb.int/updates/rss.xml"],
+  ["reliefweb-disasters-rss", "https://reliefweb.int/disasters/rss.xml"],
+  ["unosat", "https://unosat.org/products/rss"],
+  // news and events
+  ["gdelt-geo", "https://api.gdeltproject.org/api/v2/geo/geo?query=protest&format=geojson&timespan=24h"],
+  ["gdelt-gkg-last", "http://data.gdeltproject.org/gdeltv2/lastupdate.txt"],
+  ["wiki-current", "https://en.wikipedia.org/w/api.php?action=parse&page=Portal:Current_events&prop=text&format=json&formatversion=2"],
+  ["wiki-onthisday", "https://api.wikimedia.org/feed/v1/wikipedia/en/featured/" + today.replace(/-/g, "/")],
+  ["un-news", "https://news.un.org/feed/subscribe/en/news/all/rss.xml"],
+  ["ohchr", "https://www.ohchr.org/en/rss.xml"],
+  ["icc", "https://www.icc-cpi.int/rss/news"],
+  ["iaea", "https://www.iaea.org/feeds/topnews"],
+  ["mastodon-trends", "https://mastodon.social/api/v1/trends/links"],
+  ["crisis24", "https://crisis24.garda.com/alerts/rss"],
+  ["gov-uk-news", "https://www.gov.uk/search/news-and-communications.atom"],
+  ["osm-notes", "https://api.openstreetmap.org/api/0.6/notes/search.json?q=flood&limit=5"],
+  ["wri-powerplants", "https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv"],
+  ["gem-plants", "https://globalenergymonitor.org/"],
+  ["election-wikidata", "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fe%20%3Fd%20WHERE%20%7B%3Fe%20wdt%3AP31%2Fwdt%3AP279*%20wd%3AQ40231%3B%20wdt%3AP585%20%3Fd.%20FILTER(%3Fd%20%3E%20%222026-09-01%22%5E%5Exsd%3AdateTime)%7D%20LIMIT%205"],
+];
+const out = [];
+async function one([id, url]) {
+  const t0 = Date.now(), ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 40000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": UA, accept: "*/*" } });
+    const buf = Buffer.from(await r.arrayBuffer());
+    const txt = buf.slice(0, 400).toString("utf8").replace(/\s+/g, " ");
+    out.push({ id, url, status: r.status, type: r.headers.get("content-type"), bytes: buf.length, ms: Date.now() - t0, sample: txt });
+  } catch (e) { out.push({ id, url, error: String(e.name === "AbortError" ? "timeout" : e.cause?.code || e.message).slice(0, 160), ms: Date.now() - t0 }); }
+  finally { clearTimeout(to); }
+}
+// Different hosts in parallel, a few at a time, so no single service sees more than one request.
+for (let i = 0; i < C.length; i += 8) await Promise.all(C.slice(i, i + 8).map(one));
+fs.mkdirSync("probe-out", { recursive: true });
+fs.writeFileSync("probe-out/dense.json", JSON.stringify(out, null, 1));
+for (const o of out) console.log((o.status || "ERR").toString().padEnd(4), String(o.bytes ?? "").padStart(9), o.id.padEnd(22), o.error || (o.type || "").slice(0, 30), (o.sample || "").slice(0, 90));
