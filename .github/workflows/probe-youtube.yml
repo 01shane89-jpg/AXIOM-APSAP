@@ -1,0 +1,26 @@
+# Test only: searches YouTube's public channel search for the broadcasters in tools/youtube_candidates.json and prints
+# each channel's owner, subscribers and latest upload. Writes nothing to the repo.
+name: Probe YouTube channels
+on:
+  push:
+    branches: [claude/youtube-channels]
+    paths: [tools/youtube_candidates.json, tools/probe_youtube.mjs, .github/workflows/probe-youtube.yml]
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated area ids to probe; empty probes all"
+        required: false
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/probe_youtube.mjs
+        env:
+          ONLY: ${{ inputs.only }}
