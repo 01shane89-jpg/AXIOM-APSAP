@@ -139,7 +139,7 @@ function csvRows(t) {
   return rows;
 }
 const UF = LIST.map((c) => ({ id: c.id, cfg: c.ucdp || null, key: sha256(JSON.stringify(c.ucdp || null)).slice(0, 12),
-  cre: c.ucdp && new RegExp(c.ucdp.countries, "i"), mre: c.ucdp && c.ucdp.match && new RegExp(c.ucdp.match, "i"), xre: c.ucdp && c.ucdp.exclude && new RegExp(c.ucdp.exclude, "i") }));
+  cre: c.ucdp && new RegExp(c.ucdp.countries, "i"), mre: c.ucdp && c.ucdp.match && new RegExp(c.ucdp.match), xre: c.ucdp && c.ucdp.exclude && new RegExp(c.ucdp.exclude) }));   // side names as UCDP writes them: case matters ("IS" is not "is")
 const prevUcdp = {}, ucdpFilesDone = {};
 for (const u of UF) {
   const p = readJs(OUT + "/" + u.id + ".js");
@@ -190,7 +190,7 @@ try {
       }
       // every configured conflict counts, even those left out by CONFLICTS=..., so a partial run never invents automatic tabs
       if (!hit && !ONLY.length && CFG.conflicts.every((c) => !c.ucdp || !new RegExp(c.ucdp.countries, "i").test(country) ||
-          (c.ucdp.match && !new RegExp(c.ucdp.match, "i").test(names3)) || (c.ucdp.exclude && new RegExp(c.ucdp.exclude, "i").test(names3)))) {
+          (c.ucdp.match && !new RegExp(c.ucdp.match).test(names3)) || (c.ucdp.exclude && new RegExp(c.ucdp.exclude).test(names3)))) {
         if (autoNeed) prevAuto.set(ev.id, ev);
       }
     }
