@@ -6,7 +6,10 @@
    Reports are unverified; statements by any party are claims; kinds are machine-sorted. Front lines and control markers are the
    named source's own depiction, shown as "Reported, not verified". Nothing here is an analyst judgement.
    Per-conflict extras can be added by other files: window.OSAP_CF_PANELS[id] = function (box, data, front) { ... } is called
-   after the tab renders, with an empty element placed under the headline figures. */
+   after the tab renders, with an empty element placed under the headline figures.
+   A conflict may take over a country's own layer tab that covers the same fighting (merge_tabs in tools/conflicts.json, e.g. Thailand's
+   Border and Southern insurgency layers): that tab's button is hidden, its records (the page's own, not copies) are listed and mapped
+   here with the conflict's reports, and a link to that layer opens this tab instead. The period chosen in the page header applies. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -52,7 +55,25 @@
   D.head.appendChild(css);
 
   /* ---------- state ---------- */
-  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, show: { front: true, ucdp: true, rep: true, prev: false } };
+  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", show: { front: true, ucdp: true, rep: true, prev: false } };
+  /* ---------- period: follows the page header (24 h, 7/30/90 days, all, custom); the tab's own list can narrow it ---------- */
+  var ALL = 36500;
+  function headerPeriod() {
+    var p = null; try { p = JSON.parse(localStorage.getItem("asap-period")); } catch (e) {}
+    p = p && p.p ? p : { p: "all" };
+    F.from = ""; F.to = "";
+    if (p.p === "24h") F.days = 1; else if (p.p === "all") F.days = ALL;
+    else if (p.p === "custom") { F.days = ALL; F.from = p.from || ""; F.to = p.to || ""; }
+    else if (+p.p > 0) F.days = +p.p;
+  }
+  // a report counts when its date (UTC) falls inside the window; for 24 hours the full time is compared where there is one
+  function inWin(s) {
+    s = String(s || ""); if (!s) return false;
+    if (F.from && s.slice(0, 10) < F.from) return false;
+    if (F.to && s.slice(0, 10) > F.to) return false;
+    if (F.days >= ALL) return true;
+    var ms = parseT(s); return isFinite(ms) && ms >= Date.now() - F.days * 864e5;
+  }
   function conflictsHere() {
     if (!IDX) return [];
     var c = cc(), out = IDX.conflicts.filter(function (x) { return x.countries.indexOf(c) >= 0; });
@@ -61,6 +82,52 @@
     return out;
   }
   function byId(id) { return conflictsHere().filter(function (x) { return x.id === id; })[0] || (IDX && IDX.conflicts.filter(function (x) { return x.id === id; })[0]); }
+  // this country's layer tabs that a conflict tab has taken over: { layer id: conflict id }
+  function absorbed() {
+    var m = {}, c = cc();
+    conflictsHere().forEach(function (x) { ((x.merge_tabs || {})[c] || []).forEach(function (l) { m[l] = x.id; }); });
+    return m;
+  }
+  function hideAbsorbed() {
+    var m = absorbed();
+    Object.keys(m).forEach(function (l) {
+      var b = D.querySelector('#view-seg button[data-view="' + l + '"]'); if (b) { b.hidden = true; b.style.display = "none"; }
+      var o = D.querySelector('#ph-view option[value="' + l + '"]'); if (o) o.remove();
+    });
+  }
+  // the layer's records, shaped like the conflict's reports. They stay the page's records (same fingerprint); UCDP events the
+  // conflict already lists (same day and place) are left out so each appears once.
+  function tabItems(c, d) {
+    var m = absorbed(), layers = Object.keys(m).filter(function (l) { return m[l] === c.id; });
+    if (!layers.length || !W.TSAP || !W.TSAP.records) return [];
+    var links = {}; (d.items || []).forEach(function (i) { if (i.link) links[i.link] = 1; });
+    var ev = {}; (d.ucdp || []).forEach(function (e) { ev[String(e.date).slice(0, 10) + "|" + (+e.lat).toFixed(2) + "|" + (+e.lon).toFixed(2)] = 1; });
+    var FP = W.TSAP.fingerprints || {}, names = {};
+    layers.forEach(function (l) { var b = D.querySelector('#view-seg button[data-view="' + l + '"]'); names[l] = b ? b.textContent.trim() : l; });
+    return W.TSAP.records.filter(function (r) {
+      if (layers.indexOf(r.layer) < 0 || (r.url && links[r.url])) return false;
+      if (/UCDP/.test(r.cat || "") && r.lat != null && ev[String(r.ts).slice(0, 10) + "|" + (+r.lat).toFixed(2) + "|" + (+r.lon).toFixed(2)]) return false;
+      return true;
+    }).map(function (r) {
+      var src = r.src || {}, fp = FP[r.id];
+      return { title: r.title, summary: r.detail || "", date: String(r.issued && /T|\d \d/.test(r.issued) ? r.issued : r.ts || "").replace(" ", "T").slice(0, 16),
+        link: r.url || src.url || "", outlet: src.name || "", kind: String(r.cat || "Other").replace(/^Live report · /, ""), cc: cc(),
+        state: r.type === "claim", killed: r.killed || null, injured: r.injured || null, fp: typeof fp === "string" ? fp : (fp && fp.hex) || "",
+        geo: r.lat != null && r.lon != null ? { la: r.lat, lo: r.lon, n: r.place || r.prov || "", p: r.prec === "province" ? "province" : "" } : null,
+        tab: names[r.layer], ongoing: !!r.ongoing, rid: r.id, _r: r };
+    });
+  }
+  // the conflict's reports and the taken-over tab's records in one list, newest first; fingerprints the page has not yet
+  // computed are filled in as they arrive
+  function mergeTabs(c, d) {
+    if (d._tabFor === c.id && d._tabN === (d.items || []).length) return;
+    var t = d._tab = tabItems(c, d); d._tabFor = c.id; d._tabN = (d.items || []).length;
+    d._all = t.length ? (d.items || []).concat(t).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }) : null;
+    var todo = t.filter(function (i) { return !i.fp && W.TSAP.fingerprint; });
+    if (todo.length) Promise.all(todo.map(function (i) { return W.TSAP.fingerprint(i._r).then(function (h) { i.fp = h; }, function () {}); }))
+      .then(function () { if (active === c.id && cur.data === d) list(); });
+  }
+  function allItems(d) { return d._all || (d.items || []); }
 
   /* ---------- tab buttons (desktop row and phone menu) and the Conflicts menu ---------- */
   function addTabs() {
@@ -77,6 +144,7 @@
       var ph = D.getElementById("ph-view");
       if (ph && !ph.querySelector('option[value="cf-' + c.id + '"]')) { var o = D.createElement("option"); o.value = "cf-" + c.id; o.textContent = c.short || c.name; ph.insertBefore(o, ph.options[2] || null); }
     });
+    hideAbsorbed();
   }
   function addMenu() {
     var cseg = D.getElementById("country-seg"); if (!cseg || cseg.querySelector(".cdrop.cfdrop") || !IDX) return;
@@ -135,7 +203,7 @@
       var sel = seg.querySelector('button[aria-selected="true"]');
       saved = { view: sel ? sel.getAttribute("data-view") : "", h1: h1 ? h1.textContent : "", src: src ? src.textContent : "", view0: D.documentElement.getAttribute("data-view") };
     }
-    active = id;
+    active = id; headerPeriod();
     D.documentElement.setAttribute("data-cf", id);
     Array.prototype.forEach.call(seg.querySelectorAll("button"), function (x) { x.setAttribute("aria-selected", x.getAttribute("data-view") === "cf-" + id ? "true" : "false"); });
     var ph = D.getElementById("ph-view"); if (ph) ph.value = "cf-" + id;
@@ -193,7 +261,7 @@
   var TYPEC = { 1: "#9E3118", 2: "#C2792B", 3: "#6B3FA0" }, TYPEN = { 1: "State-based fighting", 2: "Fighting between non-state groups", 3: "Violence against civilians" };
   function drawMap() {
     if (!map || !W.L) return; clearMap();
-    var d = cur.data, f = cur.front, L = W.L, days = F.days, since = Date.now() - days * 864e5;
+    var d = cur.data, f = cur.front, L = W.L;
     if (f && f.current && F.show.front) {
       if (f.current.kind === "areas") {
         if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", interactive: false, style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } }).addTo(map);
@@ -219,7 +287,7 @@
       }
     }
     if (d && F.show.ucdp) {
-      lyr.ucdp = L.layerGroup((d.ucdp || []).filter(function (e) { return parseT(e.date) >= since && (!F.cc || e.cc === F.cc); }).map(function (e) {
+      lyr.ucdp = L.layerGroup((d.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); }).map(function (e) {
         return L.circleMarker([e.lat, e.lon], { pane: "cfpane", radius: Math.min(3 + Math.sqrt(e.best || 0) * 1.4, 16), color: "#fff", weight: 1, fillColor: TYPEC[e.type] || "#9E3118", fillOpacity: 0.75 })
           .bindPopup(ucdpHtml(e), { maxWidth: 320 });
       })).addTo(map);
@@ -242,9 +310,9 @@
   /* ---------- rail ---------- */
   function filtered() {
     var d = cur.data; if (!d) return [];
-    var since = new Date(Date.now() - F.days * 864e5).toISOString().slice(0, 16), q = F.q.toLowerCase();
-    return (d.items || []).filter(function (i) {
-      return i.date >= since && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc) &&
+    var q = F.q.toLowerCase();
+    return allItems(d).filter(function (i) {
+      return inWin(i.date) && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc) &&
         (!q || ((i.title_en || "") + " " + i.title + " " + (i.summary_en || i.summary || "") + " " + i.outlet).toLowerCase().indexOf(q) >= 0);
     });
   }
@@ -253,13 +321,16 @@
     var t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
     return (pop ? "" : "") + '<a class="cft" href="' + url(i.link) + '" target="_blank" rel="noopener">' + esc(t) + "</a>" +
       (orig ? '<div class="cfm" lang="' + esc(i.lang || "") + '">' + esc(orig) + "</div>" : "") +
-      '<div class="cfm"><span class="tag" title="Sorted by a machine from the headline’s words">' + esc(kindName(i.kind)) + "</span>" +
+      '<div class="cfm">' + (i.tab ? '<span class="tag" title="A record of the country’s own ' + esc(i.tab) + ' layer, merged into this tab">' + esc(i.tab) + "</span>" +
+        (i.ongoing ? '<span class="tag" title="A status that still holds; the date is when it began">Ongoing</span>' : "") : "") +
+      '<span class="tag" title="' + (i.tab ? "As the layer records it" : "Sorted by a machine from the headline’s words") + '">' + esc(kindName(i.kind)) + "</span>" +
       (i.state ? '<span class="tag claim" title="A government’s or a party’s own statement">Claim</span>' : "") +
       (i.mt ? '<span class="tag" title="' + esc(i.mt) + '">Machine translated</span>' : "") +
       (i.killed ? '<span class="tag" title="As the headline states it; unverified">' + i.killed + " killed (reported)</span>" : "") +
       (i.injured ? '<span class="tag" title="As the headline states it; unverified">' + i.injured + " injured (reported)</span>" : "") +
       esc(i.outlet || "") + (i.via === "search" ? "" : "") + " · " + when(i.date) + (i.geo ? " · " + esc(i.geo.n) + (i.geo.p === "province" ? " (region)" : "") : "") +
       (i.nc ? ' · <span title="Found through a service whose terms are non-commercial">nc</span>' : "") + "</div>" +
+      (i.tab && i.summary ? '<div class="cfm">' + esc(i.summary.length > 280 ? i.summary.slice(0, 277) + "…" : i.summary) + "</div>" : "") +
       '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(i.fp || "") + '">SHA-256 ' + esc((i.fp || "").slice(0, 16)) + "…</div>";
   }
   function ucdpHtml(e) {
@@ -281,6 +352,7 @@
   function render(c) {
     var d = cur.data = (W.OSAP_CF || {})[c.id], f = cur.front = (W.OSAP_FRONT || {})[c.id] || null, r = rail();
     if (!d) { r.innerHTML = '<div class="sec"><h2>' + esc(c.name) + '</h2><p class="cfbad">No data yet for this conflict.</p></div>'; return; }
+    mergeTabs(c, d);
     var st = d.stats || {}, u30 = st.ucdp30 || {}, h = [];
     h.push('<div class="sec"><h2>' + esc(c.name) + "</h2>");
     if (d.auto) h.push('<p class="cfsub">Automatic tab: UCDP recorded deadly violence in ' + esc(cname(c.auto.cc)) + " over the past year that fits none of the conflicts AXIOM OSAP lists. Only UCDP’s events are shown; news for this country is under Local news.</p>");
@@ -291,12 +363,14 @@
     else h.push('<div class="cfk"><div><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
     h.push('<p class="cfnote">Updated ' + when(d.asof) + ". Reports are unverified and statements by any party are claims. UCDP figures are provisional candidate data" +
       (st.ucdp_latest ? ", latest event coded " + day(st.ucdp_latest) : "") + ".</p>");
+    if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
+      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed and mapped with the reports below; the counts and charts above are the conflict feed’s own.</p>");
     if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
     h.push('<div id="cf-extra"></div></div>');
     h.push(frontHtml(c, d, f));
     // filters and layer switches
     var kinds = {}, ccs = {};
-    (d.items || []).forEach(function (i) { kinds[i.kind] = (kinds[i.kind] || 0) + 1; if (i.cc) ccs[i.cc] = 1; });
+    allItems(d).forEach(function (i) { kinds[i.kind] = (kinds[i.kind] || 0) + 1; if (i.cc) ccs[i.cc] = 1; });
     h.push('<div class="sec"><h3 style="margin-top:0">On the map</h3><div class="cfctl">' +
       '<label><input type="checkbox" data-cfshow="front"' + (F.show.front ? " checked" : "") + "> Front line or control</label>" +
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
@@ -304,13 +378,13 @@
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
       '<div class="cfm"><span class="lg" style="background:' + TYPEC[1] + '"></span>state-based <span class="lg" style="background:' + TYPEC[2] + '"></span>non-state <span class="lg" style="background:' + TYPEC[3] +
       '"></span>against civilians (UCDP; size = deaths) <span class="lg" style="background:#1D5A86"></span>report placed by the place it names</div>' +
-      '<div class="cfctl"><select data-cff="days" aria-label="Period">' + [[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"]].map(function (p) {
+      '<div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
         return '<option value="' + p[0] + '"' + (F.days === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select>" +
-      (d.items && d.items.length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
+      (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.kind === k ? " selected" : "") + ">" + esc(kindName(k)) + " (" + kinds[k] + ")</option>"; }).join("") + "</select>" : "") +
       (Object.keys(ccs).length > 1 ? '<select data-cff="cc" aria-label="Country"><option value="">All countries</option>' + Object.keys(ccs).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.cc === k ? " selected" : "") + ">" + esc(cname(k)) + "</option>"; }).join("") + "</select>" : "") +
-      (d.items && d.items.length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + "</div></div>");
+      (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + "</div></div>");
     h.push('<div class="sec" id="cf-list"></div>');
     h.push(sourcesHtml(d, f));
     r.innerHTML = h.join("");
@@ -319,9 +393,10 @@
     var ex = D.getElementById("cf-extra"), P = W.OSAP_CF_PANELS || {};
     if (ex && typeof P[c.id] === "function") try { P[c.id](ex, d, f); } catch (e) { ex.textContent = ""; }
   }
+  function uniq(a) { return a.filter(function (x, k) { return a.indexOf(x) === k; }); }
   function list() {
     var box = D.getElementById("cf-list"); if (!box || !cur.data) return;
-    var it = filtered(), since = Date.now() - F.days * 864e5, ev = (cur.data.ucdp || []).filter(function (e) { return parseT(e.date) >= since && (!F.cc || e.cc === F.cc); });
+    var it = filtered(), ev = (cur.data.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
     var lim = +(box.getAttribute("data-lim") || 60), h = [];
     if (!cur.data.auto) {
       h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(it.length) + ")</h3>");
@@ -399,6 +474,7 @@
     d._olderP = load("data/live/conflicts/" + id + ".older.js").then(function () {
       var o = (W.OSAP_CF_OLDER || {})[id] || {};
       d.items = (d.items || []).concat(o.items || []); d.ucdp = (d.ucdp || []).concat(o.ucdp || []); d._older = true;
+      var c = byId(id); if (c) mergeTabs(c, d);
       if (active === id && cur.data === d) { drawMap(); list(); }
     }, function () { d._olderP = null; d._olderFail = true; if (active === id && cur.data === d) list(); });
     list();
@@ -408,7 +484,7 @@
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
     if (t.hasAttribute("data-cfshow")) { F.show[t.getAttribute("data-cfshow")] = t.checked; drawMap(); return; }
     var k = t.getAttribute("data-cff"); if (!k) return;
-    F[k] = k === "days" ? +t.value : t.value; if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
+    F[k] = k === "days" ? +t.value : t.value; if (k === "days") { F.from = ""; F.to = ""; } if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
     if (k === "days" && F.days > 90 && needOlder()) loadOlder();
     var b = D.getElementById("cf-list"); if (b) b.removeAttribute("data-lim"); list();
   });
@@ -425,6 +501,19 @@
     }
   });
 
+  // the page header's period buttons and dates: re-read once the page has stored the choice
+  D.addEventListener("click", function (e) {
+    if (!active || !e.target.closest || !e.target.closest("#period-seg button[data-p]")) return;
+    setTimeout(periodChanged, 0);
+  });
+  D.addEventListener("change", function (e) { if (active && e.target && /^period-(from|to)$/.test(e.target.id)) setTimeout(periodChanged, 0); });
+  function periodChanged() {
+    if (!active || !cur.data) return;
+    headerPeriod(); var s = D.querySelector('#cf-rail select[data-cff="days"]'); if (s) { var c = byId(active); if (c) { render(c); } }
+    else { drawMap(); list(); }
+    if (F.days > 90 && needOlder()) loadOlder();
+  }
+
   /* ---------- start ---------- */
   function start() {
     var seg = D.getElementById("view-seg"); if (!seg) return;
@@ -434,12 +523,16 @@
     (W.OSAP_CONFLICTS ? Promise.resolve() : load("data/live/conflicts/index.js")).then(function () {
       IDX = W.OSAP_CONFLICTS; if (!IDX) return;
       addTabs(); addMenu();
-      var v = hashView(); if (/^cf-/.test(v) && byId(v.slice(3))) activate(v.slice(3));
+      var v = hashView(), m = absorbed(); if (/^cf-/.test(v) && byId(v.slice(3))) activate(v.slice(3)); else if (m[v] || m[D.documentElement.getAttribute("data-view")]) activate(m[v] || m[D.documentElement.getAttribute("data-view")]);
+      // anything that still opens a taken-over layer (an alert, a saved link, the timeline) opens its conflict tab instead
+      new MutationObserver(function () { var l = D.documentElement.getAttribute("data-view"), mm = absorbed(); if (mm[l] && active !== mm[l]) activate(mm[l]); })
+        .observe(D.documentElement, { attributes: true, attributeFilter: ["data-view"] });
     }, function () {});
     // the phone menus are built after this file runs on some loads: add the tabs to them once they exist
     var n = 0, t = setInterval(function () { if (++n > 20) clearInterval(t); if (IDX && D.getElementById("ph-view")) { addTabs(); addMenu(); clearInterval(t); } }, 500);
   }
   function whenReady() { if (W.TSAP && D.getElementById("view-seg") && D.getElementById("view-seg").children.length) start(); else setTimeout(whenReady, 150); }
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", whenReady); else whenReady();
-  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; } };
+  // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
+  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin };
 })();
