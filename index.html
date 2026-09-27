@@ -284,6 +284,14 @@ select.mini{
 .leaflet-control-zoom a{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
 .leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 88%,transparent)!important;color:var(--muted)!important;font-size:10px!important}
 .leaflet-control-attribution a{color:var(--muted)!important}
+.mlctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);font:13px/1.35 var(--sans,inherit);max-width:min(300px,calc(100vw - 70px))}
+.mlbtn{font:inherit;font-weight:600;background:none;border:none;color:inherit;padding:7px 10px;cursor:pointer;min-height:36px;width:100%;text-align:left}
+.mlpanel{padding:0 10px 10px;max-height:520px;overflow-y:auto;overscroll-behavior:contain}
+.mlh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+.mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
+.mlrow input{margin-top:3px;flex:none}
+.mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
   font-family:"IBM Plex Sans Condensed",sans-serif;font-size:10.5px;font-weight:600;color:var(--ink);
@@ -871,6 +879,87 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
     if (baseLayer._url !== want) { baseLayer.setUrl(want); baseLayer.redraw(); }
   }
+
+  /* ---------- map layers: base map choice, flood overlays with one opacity slider, road closures ----------
+     Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
+     The choice is remembered on this device. */
+  var BASES = {
+    grey: { name: "Grey", note: "Esri canvas, follows the light or dark theme" },
+    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
+    topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
+      attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
+    sat: { name: "Satellite", note: "NASA Blue Marble, cloud-free, low detail (about 1 km)",
+      url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg", max: 8,
+      attr: "NASA Blue Marble via GIBS" }
+  };
+  function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
+  function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
+  var ML = mlGet();
+  if (!BASES[ML.base]) ML.base = "grey";
+  if (!(ML.op > 0)) ML.op = 0.6;
+  var altBase = null;
+  function setBase(k) {
+    ML.base = k; mlSet();
+    if (altBase) { map.removeLayer(altBase); altBase = null; }
+    var b = BASES[k];
+    if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
+    else {
+      if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
+      altBase = L.tileLayer(b.url, { maxNativeZoom: b.max, maxZoom: 13, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
+      altBase.bringToBack();
+    }
+  }
+  map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
+  var FLOODX = {
+    now: { name: "Flooding now", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Satellite-derived and approximate (about 250 m); cloud can hide water.",
+      layer: function () { return L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
+        { pane: "fldpane", maxNativeZoom: 9, maxZoom: 13, opacity: ML.op, attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
+    hist: { name: "Flood history", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Includes rivers and lakes: pale = rarely wet, deep = always wet.",
+      layer: function () { return L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
+        { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } }
+  };
+  var fldOn = {};
+  function setFlood(k, on) {
+    ML[k] = !!on; mlSet();
+    if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
+    if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
+  }
+  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  var LayersCtl = L.Control.extend({
+    options: { position: "topright" },
+    onAdd: function () {
+      var box = L.DomUtil.create("div", "leaflet-control mlctl");
+      box.innerHTML = '<button type="button" class="mlbtn" aria-expanded="false" aria-controls="ml-panel" title="Map layers">&#9776; Layers</button>' +
+        '<div class="mlpanel" id="ml-panel" hidden><div class="mlh">Base map</div>' +
+        Object.keys(BASES).map(function (k) {
+          return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
+        }).join("") +
+        '<div class="mlh">Flooding</div>' +
+        Object.keys(FLOODX).map(function (k) {
+          return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
+        }).join("") +
+        '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
+        '<div id="ml-extra"></div></div>';
+      L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
+      var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
+      btn.addEventListener("click", function () {
+        pan.hidden = !pan.hidden; btn.setAttribute("aria-expanded", String(!pan.hidden));
+        /* keep the open panel inside the map, above the credits line, on a short phone map too */
+        pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
+      });
+      box.addEventListener("change", function (e) {
+        var t = e.target;
+        if (t.name === "ml-base") setBase(t.value);
+        else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
+      });
+      box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
+      return box;
+    }
+  });
+  new LayersCtl().addTo(map);
+  window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
+  if (ML.base !== "grey") setBase(ML.base);
+  Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
 
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
   var floodStore = function () { return window.TILES_FLOOD; };
@@ -3712,6 +3801,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
       ['Background map: Powered by <a href="https://www.esri.com/">Esri</a>. Sources: Esri, HERE, Garmin, FAO, NOAA, USGS.'],
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
+      ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
+      ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
+      ['Satellite base map: NASA Blue Marble (public domain), via NASA GIBS.'],
+      ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
       ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
       ['Map software: <a href="https://leafletjs.com/">Leaflet</a> &copy; Volodymyr Agafonkin and contributors (BSD-2-Clause).']]],
     ["Weather, hazards and forecasts", [
