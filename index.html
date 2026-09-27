@@ -929,7 +929,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* ---------- road closures: official road-agency notices (data/live/roads.js) plus closures named in this area's reports ----------
      Agency notices are shown as the agency published them. "Reported" markers are news or warning records whose text says a
      road is closed; they are unverified and sit where the record was placed, which may be approximate. */
-  map.createPane("roadpane"); map.getPane("roadpane").style.zIndex = 640;
+  /* above the record markers (650) so a switched-on road layer answers taps first; below labels (670) */
+  map.createPane("roadpane"); map.getPane("roadpane").style.zIndex = 655;
   var roadLayer = L.layerGroup(), ROADCC = { nz: 1, fr: 1, au: 1, ca: 1, fi: 1 };
   var ROADK = { closure: ["Road closed", "#c62828"], roadworks: ["Roadworks", "#ef6c00"], incident: ["Incident or hazard", "#f9a825"] };
   /* a report counts when it names a road, highway, street or bridge AND a word for it being shut, cut, flooded or destroyed; "reopens" does not */
