@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, dense, probe, probe-roads, probe-dense); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news, probe-cap); empty runs all"
         required: false
         default: ""
 
@@ -124,6 +124,10 @@ jobs:
           name: probe-roads
           path: probe-out/
           retention-days: 3
+      - name: Probe candidate national news feeds (diagnostic, writes nothing to the repo)
+        if: ${{ inputs.only == 'probe-news' || inputs.only == 'probe-cap' }}
+        run: CAP_ONLY=${{ inputs.only == 'probe-cap' && '1' || '' }} node tools/probe_news.mjs
+        continue-on-error: true
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
         run: node tools/probe_dense.mjs
@@ -140,17 +144,19 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ inputs.only == 'dense' && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
-          git rm -rq --cached . && git add -f data/live/x && (git add -f probe-out/samples 2>/dev/null || true) && git commit -qm "Dense feed test output $(date -u +'%Y-%m-%d %H:%MZ')"
-          git push -qf origin HEAD:refs/heads/claude/dense-preview-data
+          git rm -rqf --cached .
+          for p in data/live/x data/live/news.js data/live/social.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi

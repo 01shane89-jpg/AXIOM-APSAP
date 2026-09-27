@@ -23,6 +23,6 @@ export function parseFeed(xml) {
     const href = (b.match(/<link\b[^>]*href="([^"]+)"/i) || [])[1];
     return { title: tag(b, ["title", "headline"]), summary: tag(b, ["description", "summary", "content", "areaDesc"]).slice(0, 400),
       date: tag(b, ["pubDate", "updated", "published", "sent", "effective", "date"]), link: href || tag(b, ["link", "guid", "id"]),
-      severity: tag(b, ["severity"]), image: image(b) };
+      severity: tag(b, ["severity"]), source: tag(b, ["source"]) };
   }).filter((i) => i.title);
 }
