@@ -178,6 +178,34 @@
    "handle": "EMTVOnline",
    "kind": "news desk",
    "lang": "en"
+  },
+  {
+   "cc": "oki",
+   "handle": "otv-official",
+   "name": "OTV Okinawa Television",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "channel_id": "UCjPVLguFrd6DTfHl2McrPjw",
+   "name": "OTV Okinawa News",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "channel_id": "UCl27leged0PT2kIrRtrFYKA",
+   "name": "RBC News (Ryukyu Broadcasting)",
+   "kind": "news desk",
+   "lang": "ja"
+  },
+  {
+   "cc": "oki",
+   "handle": "qab4524",
+   "name": "QAB Ryukyu Asahi Broadcasting",
+   "kind": "news desk",
+   "lang": "ja"
   }
  ]
 }

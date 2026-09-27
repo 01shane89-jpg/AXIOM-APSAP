@@ -116,7 +116,7 @@ for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } cat
 const hosts = Object.values(byHost);
 await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) await readFeed(f); }));
 // Okinawa shares Japan's outlets: keep the Japanese items that name the islands
-if (items.jp) items.oki = items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary));
+if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
 for (const cc of Object.keys(items)) {
   const seen = new Set();
   items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
