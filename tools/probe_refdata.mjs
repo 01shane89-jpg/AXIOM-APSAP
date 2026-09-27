@@ -41,6 +41,8 @@ const T0 = Date.now(), DEADLINE = +(process.env.DEADLINE_MIN || 17) * 60000, API
 const QC = {};
 for (const b of (await sparql(`SELECT ?c ?cc WHERE { ?c wdt:P297 ?cc; wdt:P31 wd:Q6256 }`)) || []) QC[b.cc] = b.c.split("/").pop();
 for (const b of (await sparql(`SELECT ?c ?cc WHERE { ?c wdt:P297 ?cc }`)) || []) QC[b.cc] = QC[b.cc] || b.c.split("/").pop();
+// the Kingdom of the Netherlands (Q29999) also carries "NL"; items use the Netherlands (Q55) as their country
+QC.NL = "Q55";
 async function search(q, n) {
   const t = await get(API + "action=query&list=search&srnamespace=0&srlimit=" + n + "&srsort=incoming_links_desc&srsearch=" + encodeURIComponent(q));
   try { return JSON.parse(t).query.search.map((x) => x.title); } catch (e) { return null; }
