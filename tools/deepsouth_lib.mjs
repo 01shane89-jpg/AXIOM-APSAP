@@ -49,8 +49,11 @@ const REGION = /\b(?:deep south|southern border provinces|restive south|southern
 const SONGKHLA = /\b(?:Songkhla|Hat Yai)\b|สงขลา|หาดใหญ่/i;
 const SECURITY = /\b(?:bomb\w*|blast|explo\w+|IED|gunm[ae]n|shot|shoot\w*|gunfire|killed|kill\w*|dead|murder\w*|attack\w*|ambush\w*|arson|torch\w*|set (?:on )?fire|burn\w*|insurgen\w*|militant\w*|separatist\w*|rebel\w*|raid\w*|arrest\w*|clash\w*|firefight|siege|surround\w*|ranger\w*|paramilitary|defen[cs]e volunteer\w*|checkpoint|peace (?:talk|dialogue|process)\w*|martial law|emergency decree|security forces?|ISOC|curfew|violen\w*|unrest|hostage|grenade|landmine|mortar)\b|ระเบิด|ยิง|คนร้าย|ลอบ|วางเพลิง|เผา|ปะทะ|ปิดล้อม|ตรวจค้น|ทหารพราน|อส\.|ชรบ\.|ผู้ก่อความไม่สงบ|ก่อเหตุ|ความไม่สงบ|พูดคุยสันติสุข|สันติสุข|เสียชีวิต|บาดเจ็บ|จับกุม|หมายจับ|กฎอัยการศึก|พ\.ร\.ก\.ฉุกเฉิน|ป่วนใต้|ไฟใต้/i;
 
+// Football and other sport ("shot", "ยิง" = to score) are not security news
+const SPORT = /\b(?:football|soccer|league|FC|goal\w*|match|tournament|striker|futsal)\b|ฟุตบอล|ไทยลีก|ลีก|ยิงประตู|บุกชนะ|บุกแพ้|เสมอ|ทดเจ็บ|นักเตะ|ฟุตซอล/i;
 // Kind from headline words, most specific first. Only a sorting aid: the page labels it as machine-sorted.
 const KINDS = [
+  ["legal", /\b(?:sentenc\w*|court|verdict|convict\w*|jail\w*|acquit\w*|indict\w*|prosecut\w*)\b|ประหารชีวิต|จำคุก|ศาล|พิพากษา|ยกฟ้อง|อัยการ/i],
   ["peace_talks", /\bpeace (?:talk|dialogue|process|panel|negotiat)\w*|\bJCPP\b|พูดคุยสันติสุข|โต๊ะพูดคุย|เจรจา/i],
   ["ambush", /\bambush\w*|ซุ่มยิง|ซุ่มโจมตี/i],
   ["ied", /\b(?:bomb\w*|IED|explo\w+|blast|detonat\w*|grenade|landmine|mortar)\b|ระเบิด/i],
@@ -78,7 +81,7 @@ export function place(texts) {
   return null;
 }
 export function relevant(f, text) {
-  if (!SECURITY.test(text)) return false;
+  if (!SECURITY.test(text) || SPORT.test(text)) return false;
   if (f.all) return true;
   if (DIST.some((d) => d.en.test(text) || d.th.test(text)) || PROVS.some((p) => p.en.test(text) || p.th.test(text))) return true;
   return REGION.test(text) || false;
