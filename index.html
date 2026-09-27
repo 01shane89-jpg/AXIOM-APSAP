@@ -7129,6 +7129,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
 <script src="assets/osap-evsum.js"></script>
 <script src="assets/osap-share.js"></script>
 <script src="assets/osap-conflicts.js"></script>
+<script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>

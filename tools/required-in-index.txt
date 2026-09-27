@@ -1,0 +1,30 @@
+# Lines that index.html must contain. The "Check index.html" workflow fails any PR
+# (and any push to main) whose index.html has lost one of them, which is how GitHub
+# merge-conflict edits have silently dropped features before.
+# One exact text per line; "#" lines and blank lines are ignored.
+# Adding a new assets/*.js script tag or a feature marker? Append it here in the same PR.
+
+# script tags
+<script src="assets/osap-start.js"></script>
+<script src="assets/vendor/leaflet-1.9.4.js"></script>
+<script src="assets/osap-symbols.js"></script>
+<script src="assets/osap-work.js"></script>
+<script src="assets/osap-today.js"></script>
+<script src="assets/osap-weather.js"></script>
+<script src="assets/osap-evsum.js"></script>
+<script src="assets/osap-share.js"></script>
+<script src="assets/osap-conflicts.js"></script>
+<script src="assets/osap-cf-iran.js"></script>
+<script src="assets/osap-cf-russia-ukraine.js"></script>
+<script src="assets/osap-tlreport.js"></script>
+
+# loading cover and the per-country data loader
+<div id="osap-boot"
+country-data:start
+
+# helpers other features call
+window.OSAP_LATER
+function osapSym(
+window.OSAP_REDCROSS
+function extrasOff(
+function recMsK(
