@@ -73,7 +73,7 @@
    "lang": "id"
   }
  ],
- "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed.",
+ "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets.",
  "youtube": [
   {
    "cc": "*",
@@ -187,6 +187,3582 @@
    "cc": "pg",
    "handle": "EMTVOnline",
    "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kh",
+   "handle": "cnctvcambodia",
+   "channel_id": "UCjD0Dhs3o7UiUQdZpSBADAA",
+   "name": "CNC TV",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "tvkcambodia",
+   "channel_id": "UCupDvu26QCG36ORfsCXRq6A",
+   "name": "TVK (National Television of Cambodia)",
+   "kind": "state media",
+   "lang": "km"
+  },
+  {
+   "cc": "kh",
+   "handle": "freshnewsvideo",
+   "channel_id": "UCm-Y70KQzuZz6kd0isAqPkw",
+   "name": "Fresh News",
+   "kind": "news desk",
+   "lang": "km"
+  },
+  {
+   "cc": "la",
+   "handle": "LNTVEnglishNEWS",
+   "channel_id": "UC5h9jgxulCm6-tiQ0tdQplQ",
+   "name": "LNTV English News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "la",
+   "handle": "rfalao",
+   "channel_id": "UCTNz516FyVn1iAo4kWnbE6w",
+   "name": "RFA Lao",
+   "kind": "state-funded (US)",
+   "lang": "lo"
+  },
+  {
+   "cc": "mm",
+   "handle": "DVBdigital",
+   "channel_id": "UCuaRmKJLYaVMDHrnjhWUcHw",
+   "name": "DVB TV News",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "mizzimanewsTV",
+   "channel_id": "UCk9f0cLiMmtchQySOogzoig",
+   "name": "Mizzima TV",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "myanmarnownews",
+   "channel_id": "UCKud809KUMIyNhqwuy5JeFw",
+   "name": "Myanmar Now",
+   "kind": "news desk",
+   "lang": "my"
+  },
+  {
+   "cc": "mm",
+   "handle": "BBCNewsBurmese",
+   "channel_id": "UCd9maKo3B6jX8pCPzLa2hvA",
+   "name": "BBC News Burmese",
+   "kind": "public broadcaster (UK)",
+   "lang": "my"
+  },
+  {
+   "cc": "my",
+   "handle": "astroawani",
+   "channel_id": "UC5dYmq91e5_g54krpO06NJw",
+   "name": "Astro AWANI",
+   "kind": "news desk",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "BeritaRTMBES",
+   "channel_id": "UCjUxj4cyy_F0tVCT8WfmdZQ",
+   "name": "Berita RTM",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "bernamatv502",
+   "channel_id": "UCcZg5r9hBqK_VPUT2I7eYVw",
+   "name": "Bernama TV",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "my",
+   "handle": "thestaronline",
+   "channel_id": "UCpWvshQVx1d7BqCsPnVuNIw",
+   "name": "The Star",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bn",
+   "handle": "rtbnews",
+   "channel_id": "UCxLGkXE1W1GKTZNh6QJL1QA",
+   "name": "RTB News",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "bn",
+   "handle": "RTBBN",
+   "channel_id": "UClGuLDuraHQvUnUYIdW1j-w",
+   "name": "Radio Televisyen Brunei",
+   "kind": "state media",
+   "lang": "ms"
+  },
+  {
+   "cc": "bn",
+   "handle": "BorneoBulletinTV",
+   "channel_id": "UCp_nW0vhOcxb-i8Yxmq4lOA",
+   "name": "Borneo Bulletin",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tl",
+   "handle": "RTTLNotiçia",
+   "channel_id": "UCk9QwGa_TxipSWamWtuFUIA",
+   "name": "RTTL News",
+   "kind": "state media",
+   "lang": "tet"
+  },
+  {
+   "cc": "tl",
+   "handle": "TATOLI-TL",
+   "channel_id": "UCPqfplWuivbsIC0n5ZGronQ",
+   "name": "Tatoli (news agency)",
+   "kind": "state media",
+   "lang": "tet"
+  },
+  {
+   "cc": "kp",
+   "handle": "nknewsorg",
+   "channel_id": "UCz5Nf5Eb7EQul1mLqrRwliw",
+   "name": "NK News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "kp",
+   "handle": "VOAKorea",
+   "channel_id": "UC8d0ZgFEl4AUdyAKGE8O3yg",
+   "name": "VOA Korean",
+   "kind": "state-funded (US)",
+   "lang": "ko"
+  },
+  {
+   "cc": "kr",
+   "handle": "ArirangCoKrArirangNEWS",
+   "channel_id": "UCzznO4xSV8BKnUBPyswtCUw",
+   "name": "Arirang News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "kr",
+   "handle": "yonhapnewstv23",
+   "channel_id": "UCTHCOPwqNfZ0uiKOvFyhGwg",
+   "name": "Yonhap News TV",
+   "kind": "news desk",
+   "lang": "ko"
+  },
+  {
+   "cc": "kr",
+   "handle": "newskbs",
+   "channel_id": "UCcQTRi69dsVYHN3exePtZ1A",
+   "name": "KBS News",
+   "kind": "public broadcaster",
+   "lang": "ko"
+  },
+  {
+   "cc": "kr",
+   "handle": "ytnnews24",
+   "channel_id": "UChlgI3UHCOnwUGzWzbJ3H5w",
+   "name": "YTN",
+   "kind": "news desk",
+   "lang": "ko"
+  },
+  {
+   "cc": "mn",
+   "handle": "MongolianNationalBroadcaster",
+   "channel_id": "UCwtT_d7LZ8BJpiDXHV5RaAw",
+   "name": "Mongolian National Broadcaster",
+   "kind": "public broadcaster",
+   "lang": "mn"
+  },
+  {
+   "cc": "mn",
+   "handle": "eaglenews_mn",
+   "channel_id": "UCPoVy9RE7OvlX8AkksLHsyA",
+   "name": "Eagle News",
+   "kind": "news desk",
+   "lang": "mn"
+  },
+  {
+   "cc": "mn",
+   "handle": "montsame_mn",
+   "channel_id": "UCS8NBLF9OXDJxiswG1faMZA",
+   "name": "Montsame (news agency)",
+   "kind": "state media",
+   "lang": "mn"
+  },
+  {
+   "cc": "nz",
+   "handle": "rnznewzealand",
+   "channel_id": "UCp4OXwfZE1SaCQ4jRAuaoXQ",
+   "name": "RNZ",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "1NewsNZ",
+   "channel_id": "UCxPAYgO8OpFev3PUTKbsxNw",
+   "name": "1News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "nz",
+   "handle": "nzheraldtv",
+   "channel_id": "UCG0xyRVgb5Yf1lvQxkRrYYQ",
+   "name": "NZ Herald",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "np",
+   "handle": "KantipurTVHD",
+   "channel_id": "UC3yDoaqQzOd1bNP74ZrGPTA",
+   "name": "Kantipur TV",
+   "kind": "news desk",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "handle": "NepalTelevision",
+   "channel_id": "UCTGVQIvtPu5kqNI5ABmN8Fw",
+   "name": "Nepal Television",
+   "kind": "state media",
+   "lang": "ne"
+  },
+  {
+   "cc": "np",
+   "handle": "Imagekhabarchannel",
+   "channel_id": "UC-bvMga0aykve2JDkH0KL4A",
+   "name": "ImageKhabar",
+   "kind": "news desk",
+   "lang": "ne"
+  },
+  {
+   "cc": "bt",
+   "handle": "bbsbhutan",
+   "channel_id": "UCzZIEQX2fWAmsvztJjIb7eA",
+   "name": "Bhutan Broadcasting Service",
+   "kind": "state media",
+   "lang": "dz"
+  },
+  {
+   "cc": "bd",
+   "handle": "somoynews360",
+   "channel_id": "UCxHoBXkY88Tb8z1Ssj6CWsQ",
+   "name": "Somoy TV",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "handle": "JamunaTVbd",
+   "channel_id": "UCN6sm8iHiPd0cnoUardDAnw",
+   "name": "Jamuna TV",
+   "kind": "news desk",
+   "lang": "bn"
+  },
+  {
+   "cc": "bd",
+   "handle": "TheDailyStarNews",
+   "channel_id": "UCKSJ5rTXq-pYgAmAOhVS_zQ",
+   "name": "The Daily Star",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bd",
+   "handle": "BangladeshTelevision-BTV",
+   "channel_id": "UClzwimpLoZu9us9MwalLbtA",
+   "name": "Bangladesh Television (BTV)",
+   "kind": "state media",
+   "lang": "bn"
+  },
+  {
+   "cc": "lk",
+   "handle": "AdaDeranaNews",
+   "channel_id": "UCCK3OZi788Ok44K97WAhLKQ",
+   "name": "Ada Derana",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "newsfirstsrilanka",
+   "channel_id": "UCgnFSj7jQffD5V5m05j4dPw",
+   "name": "Newsfirst Sri Lanka",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "HiruNewsOfficial",
+   "channel_id": "UCckltLEhFLv8Xz_lQhYfwmg",
+   "name": "Hiru News",
+   "kind": "news desk",
+   "lang": "si"
+  },
+  {
+   "cc": "lk",
+   "handle": "Rupavahini_News",
+   "channel_id": "UCPXSUKHTNc1_hnHuj-UiQWQ",
+   "name": "Rupavahini News",
+   "kind": "state media",
+   "lang": "si"
+  },
+  {
+   "cc": "mv",
+   "handle": "televisionmaldives",
+   "channel_id": "UCbWfrfQHUQGfKZwE42P22mQ",
+   "name": "Television Maldives (PSM)",
+   "kind": "state media",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "handle": "psmnewslive",
+   "channel_id": "UCPbslqG3viZRaA8ARsk6yBg",
+   "name": "PSM News Live",
+   "kind": "state media",
+   "lang": "dv"
+  },
+  {
+   "cc": "mv",
+   "handle": "sunmvlive",
+   "channel_id": "UCV33UaV3yU34HyNJBk5KcoQ",
+   "name": "Sun Online",
+   "kind": "news desk",
+   "lang": "dv"
+  },
+  {
+   "cc": "ua",
+   "handle": "kyivindependent",
+   "channel_id": "UCGAC5yzlYgjKoJABDZ7zEyw",
+   "name": "Kyiv Independent",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "handle": "SuspilneNews",
+   "channel_id": "UCPY6gj8G7dqwPxg9KwHrj5Q",
+   "name": "Suspilne News",
+   "kind": "public broadcaster",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
+   "handle": "UATVEnglish",
+   "channel_id": "UCOmfcmDrWs7iJrXx7V5Cnwg",
+   "name": "UATV English",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ua",
+   "handle": "УкраїнськаПравда",
+   "channel_id": "UChparf_xrUZ_CJGQY5g4aEg",
+   "name": "Ukrainska Pravda",
+   "kind": "news desk",
+   "lang": "uk"
+  },
+  {
+   "cc": "ru",
+   "handle": "tvrain",
+   "channel_id": "UCdubelOloxR3wzwJG9x8YqQ",
+   "name": "TV Rain (in exile)",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "handle": "bbcnewsrussian",
+   "channel_id": "UC8zQiuT0m1TELequJ5sp5zw",
+   "name": "BBC News Russian",
+   "kind": "public broadcaster (UK)",
+   "lang": "ru"
+  },
+  {
+   "cc": "ru",
+   "handle": "novayagazeta_eu",
+   "channel_id": "UCO1lJlI3gjuOMrKppvPlDww",
+   "name": "Novaya Gazeta Europe",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "il",
+   "handle": "i24NEWS_EN",
+   "channel_id": "UCvHDpsWKADrDia0c99X37vg",
+   "name": "i24NEWS English",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "handle": "IsraelDefenseForces",
+   "channel_id": "UCawNWlihdgaycQpO3zi-jYg",
+   "name": "Israel Defense Forces",
+   "kind": "government (military)",
+   "lang": "en"
+  },
+  {
+   "cc": "il",
+   "handle": "KAN11NEWS",
+   "channel_id": "UC_HwfTAcjBESKZRJq6BTCpg",
+   "name": "Kan News",
+   "kind": "public broadcaster",
+   "lang": "he"
+  },
+  {
+   "cc": "il",
+   "handle": "TimesofIsrael",
+   "channel_id": "UCKM3VQFIITaRegPDkLlLeKA",
+   "name": "The Times of Israel",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ps",
+   "handle": "palestinetvchannel",
+   "channel_id": "UC1xAKR0vwwrHeorDesok6vw",
+   "name": "Palestine TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ps",
+   "handle": "WafaAgency",
+   "channel_id": "UCYvCdX-RomwcpzCsb8hpiFA",
+   "name": "WAFA (news agency)",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ps",
+   "handle": "AlQudsTV1",
+   "channel_id": "UCtSew14-kE_3r-op-CyrAWw",
+   "name": "Al Quds TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "handle": "LBCILebanonOfficial",
+   "channel_id": "UCpE6gpKewomi17XDyPfpFjA",
+   "name": "LBCI Lebanon",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "handle": "ALJadeedNewslb",
+   "channel_id": "UC4JCsTLFcHGk10qpiNMh0Ww",
+   "name": "Al Jadeed News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "lb",
+   "handle": "MTVLebanonNews",
+   "channel_id": "UC9_XmAwE5szLHF76FjMylaw",
+   "name": "MTV Lebanon News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "handle": "SyriaTelevision",
+   "channel_id": "UCJsZ22yL1IW0R2u0jnnyYog",
+   "name": "Syria TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "handle": "AlekhbariahSY",
+   "channel_id": "UClm30t2F4FHzzkN9Irtr-8A",
+   "name": "Al Ikhbariya Syria",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "handle": "EnabBaladiNewspaper",
+   "channel_id": "UCfqSMELWF9cQPbiB74gYuWA",
+   "name": "Enab Baladi",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sy",
+   "handle": "Syrianarabnewsagency-SANA",
+   "channel_id": "UCOdpeidso85hQh1fvxcVwjw",
+   "name": "SANA (news agency)",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ye",
+   "handle": "BelqeesTV",
+   "channel_id": "UCxA_zZwALQMmVMSZyLKC-Nw",
+   "name": "Belqees TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ye",
+   "handle": "TVyemenshabab",
+   "channel_id": "UC0tSaXfJ_YIXshmvFlEsUcg",
+   "name": "Yemen Shabab",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ye",
+   "handle": "yementvyem",
+   "channel_id": "UCmdgAcBW7sMCOFUoRDpclmQ",
+   "name": "Yemen TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sd",
+   "handle": "Sudan_TV",
+   "channel_id": "UCC1p77YoxrTnb7huxFoIYQw",
+   "name": "Sudan National TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sd",
+   "handle": "RadioDabanga",
+   "channel_id": "UCSZQBxxdURbqd_CXVbNnBYA",
+   "name": "Radio Dabanga",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ss",
+   "handle": "eyeradiosouthsudan98",
+   "channel_id": "UCz9FeninztesUBKUDajuDmA",
+   "name": "Eye Radio South Sudan",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ss",
+   "handle": "ssbcofficial",
+   "channel_id": "UCXG4tODjjS58Rd-zkdRUGzg",
+   "name": "SSBC",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "so",
+   "handle": "univsomalitv",
+   "channel_id": "UC4Wc1pJ0hV3zLMegTXeIJeQ",
+   "name": "Universal TV",
+   "kind": "news desk",
+   "lang": "so"
+  },
+  {
+   "cc": "so",
+   "handle": "SNTVNEWS",
+   "channel_id": "UCi5fZhV7tPitSjnhEHJirGA",
+   "name": "Somali National Television",
+   "kind": "state media",
+   "lang": "so"
+  },
+  {
+   "cc": "so",
+   "handle": "HornCableTV1",
+   "channel_id": "UCHoq0l91NIxYZ4d97aHDnbQ",
+   "name": "Horn Cable TV",
+   "kind": "news desk",
+   "lang": "so"
+  },
+  {
+   "cc": "cd",
+   "handle": "radio_okapi",
+   "channel_id": "UCRzMgvnlD31OyEVFnhv64pg",
+   "name": "Radio Okapi (UN mission)",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "handle": "TOPCONGOFM",
+   "channel_id": "UC-kOE_QUhdbGGlJB_CExIHw",
+   "name": "Top Congo FM",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cd",
+   "handle": "RTNCInfosOfficiel",
+   "channel_id": "UC8NdeZIM9fPdRw9Q5whGodw",
+   "name": "RTNC Infos",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "et",
+   "handle": "EBCworld",
+   "channel_id": "UCOhrz3uRCOHmK6ueUstw7_Q",
+   "name": "EBC",
+   "kind": "state media",
+   "lang": "am"
+  },
+  {
+   "cc": "et",
+   "handle": "fanamediacorporation",
+   "channel_id": "UCZtXd8pSeqURf5MT2fqE51g",
+   "name": "Fana Television",
+   "kind": "state media",
+   "lang": "am"
+  },
+  {
+   "cc": "et",
+   "handle": "AddisStandard",
+   "channel_id": "UCtZO4SgKqaEFsVOIAkz366A",
+   "name": "Addis Standard",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ml",
+   "handle": "ORTMRN1957",
+   "channel_id": "UCQhdHZkL2eOBu66gNMCawag",
+   "name": "ORTM",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ml",
+   "handle": "StudiotamaniOrg",
+   "channel_id": "UCi-znHYhxozo9tX6sgt6TdA",
+   "name": "Studio Tamani",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bf",
+   "handle": "rtburkina",
+   "channel_id": "UCZl9utbYlPMssMhgrGUqXZA",
+   "name": "RTB Burkina",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "bf",
+   "handle": "bf1burkina",
+   "channel_id": "UChRequgPB84zMsniErOnTTg",
+   "name": "BF1 TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bf",
+   "handle": "burkina24tv",
+   "channel_id": "UCJtaDORHQO20XA-tFwpJysQ",
+   "name": "Burkina24 TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "handle": "RTN-Niger",
+   "channel_id": "UCgWzoWsF7GFUIE7tiBK9xug",
+   "name": "RTN Niger",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ne",
+   "handle": "ORTN-TV",
+   "channel_id": "UCBwDhr3eihC9nv0OJoQhNXw",
+   "name": "ORTN Tele Sahel",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ng",
+   "handle": "ChannelsTelevision",
+   "channel_id": "UCEXGDNclvmg6RW0vipJYsTQ",
+   "name": "Channels Television",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "handle": "AriseNewsChannel",
+   "channel_id": "UCyEJX-kSj0kOOCS7Qlq2G7g",
+   "name": "Arise News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "handle": "tvcnewsnigeria",
+   "channel_id": "UCgp4A6I8LCWrhUzn-5SbKvA",
+   "name": "TVC News Nigeria",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ng",
+   "handle": "NTANetworks",
+   "channel_id": "UCLLWAXn5F415g2kNAcE_T1g",
+   "name": "NTA",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ht",
+   "handle": "lenouvelliste",
+   "channel_id": "UC9x9wWy3aDfUeEk88_1rhww",
+   "name": "Le Nouvelliste",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ht",
+   "handle": "rtvchaiti94.5-22",
+   "channel_id": "UCWwP6VfG61i7BWSV0H3Jn9A",
+   "name": "Radio Television Caraibes",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ht",
+   "handle": "radiotelevisionnationaledh3597",
+   "channel_id": "UCsrshxT_qpz5TAiBLZwyUOw",
+   "name": "Television Nationale d'Haiti",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "af",
+   "handle": "TOLOnews",
+   "channel_id": "UCknKEREcKsqhB9DFvT61LZQ",
+   "name": "TOLOnews",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "af",
+   "handle": "afintltv",
+   "channel_id": "UCI66K57kW6e9erEkY_n_JRA",
+   "name": "Afghanistan International",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "af",
+   "handle": "ArianaNewsTV",
+   "channel_id": "UC1yDKupSUpifv3CtgLqRMAg",
+   "name": "Ariana News",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "af",
+   "handle": "AmuTelevision",
+   "channel_id": "UCSvJ4Tkd-RqFry7stR1Jjmw",
+   "name": "Amu TV",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "iq",
+   "handle": "Rudaw-English",
+   "channel_id": "UCgpfoWnAUbz-z0A7XRhYtNw",
+   "name": "Rudaw English",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "iq",
+   "handle": "alsumaria",
+   "channel_id": "UCWhdSvXarykqCL4fqS3rm1Q",
+   "name": "Alsumaria",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "iq",
+   "handle": "IraqiaNews",
+   "channel_id": "UC5h9SokuzgNiebEOzU2BHoA",
+   "name": "Al Iraqiya News",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ir",
+   "handle": "IRANINTL",
+   "channel_id": "UCat6bC0Wrqq9Bcq7EkH_yQw",
+   "name": "Iran International",
+   "kind": "news desk",
+   "lang": "fa"
+  },
+  {
+   "cc": "ir",
+   "handle": "IranIntlEnglish",
+   "channel_id": "UCWUREZPvqB6L1MuDV5ngiiw",
+   "name": "Iran International English",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ir",
+   "handle": "BBCNewsPersian",
+   "channel_id": "UCHZk9MrT3DGWmVqdsj5y0EA",
+   "name": "BBC Persian",
+   "kind": "public broadcaster (UK)",
+   "lang": "fa"
+  },
+  {
+   "cc": "ly",
+   "handle": "LibyaAlAhrartv",
+   "channel_id": "UCVSdMOzC-V1baALMe5HaKiQ",
+   "name": "Libya Al-Ahrar",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ly",
+   "handle": "TheLibyaObserver",
+   "channel_id": "UCnO6Dv9kDNegNLHTO0OZU1w",
+   "name": "The Libya Observer",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ly",
+   "handle": "libyaalhadath",
+   "channel_id": "UCm0dWiQIYWpWu13Q2qrQQzw",
+   "name": "Libya Alhadath TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "mz",
+   "handle": "STVNotícias",
+   "channel_id": "UCP-jzGnBEonfeizxP9It6EA",
+   "name": "STV Noticias",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "mz",
+   "handle": "tvm.mocambique",
+   "channel_id": "UCP96oGcCyOlgLTMD07cmv6A",
+   "name": "Televisao de Mocambique (TVM)",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "mz",
+   "handle": "TVMiramar",
+   "channel_id": "UCQpKsyAtBqsFb-TPdQl4VYg",
+   "name": "Miramar TV",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "cm",
+   "handle": "EQUINOXETV",
+   "channel_id": "UCXriNfPc0bkHIp0G9YTwYEw",
+   "name": "Equinoxe TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cm",
+   "handle": "Canal2InternationalOfficiel",
+   "channel_id": "UCli7mxfNrS0BBtlo5DwCt8Q",
+   "name": "Canal2 International",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cf",
+   "handle": "radiondekeluka9232",
+   "channel_id": "UCLurXoVzND8Fdv97z7f7INA",
+   "name": "Radio Ndeke Luka",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "co",
+   "handle": "noticiascaracol",
+   "channel_id": "UC2Xq2PK-got3Rtz9ZJ32hLQ",
+   "name": "Noticias Caracol",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "co",
+   "handle": "NoticiasRCN",
+   "channel_id": "UCnr6pbeXJmkNQJ9PSYle7QQ",
+   "name": "Noticias RCN",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "co",
+   "handle": "ElTiempo",
+   "channel_id": "UCe5-b0fCK3eQCpwS6MT0aNw",
+   "name": "El Tiempo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "co",
+   "handle": "RTVCNoticias",
+   "channel_id": "UCykAfJIwT4VSQDFdRrZ1DXA",
+   "name": "RTVC Noticias",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "handle": "VPITVENVIVO",
+   "channel_id": "UCVFiIRuxJ2GmJLUkHmlmj4w",
+   "name": "VPItv",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "handle": "EfectoCocuyo",
+   "channel_id": "UCL1TMK6T2MpnLUk9mpvMdKQ",
+   "name": "Efecto Cocuyo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ve",
+   "handle": "VTV-canal8",
+   "channel_id": "UC_8sCVycu3FXidPNoZwOHqA",
+   "name": "Venezolana de Television (VTV)",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "handle": "milenio",
+   "channel_id": "UCFxHplbcoJK9m70c4VyTIxg",
+   "name": "Milenio",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "handle": "nmas",
+   "channel_id": "UCUsm-fannqOY02PNN67C0KA",
+   "name": "N+",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "handle": "ElUniversalMex",
+   "channel_id": "UC2SEk1w7DgoHs_G3w1biz-w",
+   "name": "El Universal",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "mx",
+   "handle": "gobiernodemexico",
+   "channel_id": "UCvzHrtf9by1-UY67SfZse8w",
+   "name": "Gobierno de Mexico",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "am",
+   "handle": "azatutyunradio",
+   "channel_id": "UCcQXtTeOtC67KKuPJFUqtPg",
+   "name": "Azatutyun (RFE/RL Armenian)",
+   "kind": "state-funded (US)",
+   "lang": "hy"
+  },
+  {
+   "cc": "am",
+   "handle": "ArmPublicTvLurer",
+   "channel_id": "UCqi9r70a6DuOrXnOra4VLQQ",
+   "name": "Armenian Public TV News (Lurer)",
+   "kind": "public broadcaster",
+   "lang": "hy"
+  },
+  {
+   "cc": "am",
+   "handle": "CivilNetTV",
+   "channel_id": "UCxPJyX0oQWmqZ5akbuN5DTg",
+   "name": "CivilNet",
+   "kind": "news desk",
+   "lang": "hy"
+  },
+  {
+   "cc": "az",
+   "handle": "aztvresmi",
+   "channel_id": "UCVf7OL0jKiO1OMHN_qaNf0w",
+   "name": "AzTV",
+   "kind": "state media",
+   "lang": "az"
+  },
+  {
+   "cc": "az",
+   "handle": "MeydanTelevision",
+   "channel_id": "UC372QkR3fwJS1exiI1NTUvw",
+   "name": "Meydan TV",
+   "kind": "news desk",
+   "lang": "az"
+  },
+  {
+   "cc": "az",
+   "handle": "APATVOfficial",
+   "channel_id": "UCbYNK1dyyhYATJfQ2UIuobw",
+   "name": "APA TV",
+   "kind": "news desk",
+   "lang": "az"
+  },
+  {
+   "cc": "bh",
+   "handle": "Bahraintvnews",
+   "channel_id": "UCmcNIsbGWepCfuAhk_T0xfA",
+   "name": "Bahrain TV News Center",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ge",
+   "handle": "FormulaNews",
+   "channel_id": "UCkG71vWzNWVt7RTXTYy-oow",
+   "name": "Formula News",
+   "kind": "news desk",
+   "lang": "ka"
+  },
+  {
+   "cc": "ge",
+   "handle": "mtavariarkhi",
+   "channel_id": "UC-Xcne5H7h188Aihrc_jt0w",
+   "name": "Mtavari Arkhi",
+   "kind": "news desk",
+   "lang": "ka"
+  },
+  {
+   "cc": "ge",
+   "handle": "GeorgianBroadcaster",
+   "channel_id": "UCNFAwk1As-qyvbbm2almNpQ",
+   "name": "Georgian Public Broadcaster",
+   "kind": "public broadcaster",
+   "lang": "ka"
+  },
+  {
+   "cc": "jo",
+   "handle": "RoyaNews",
+   "channel_id": "UCsDQbVxQjBuFOa98vxRlbVQ",
+   "name": "Roya News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "handle": "AlMamlakaTV",
+   "channel_id": "UC0jiFAzTgl17k7awGbuoYew",
+   "name": "Al Mamlaka TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "jo",
+   "handle": "JordanTVCH1",
+   "channel_id": "UC4Zl5EaAGG_JHKyxmMpzigw",
+   "name": "Jordan TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "kz",
+   "handle": "tv24kz",
+   "channel_id": "UCnAFKvDuqBGkIfV8Vn0J_CQ",
+   "name": "24KZ",
+   "kind": "state media",
+   "lang": "kk"
+  },
+  {
+   "cc": "kz",
+   "handle": "TengrinewsTVKZ",
+   "channel_id": "UCaVwOq2dw-_pghudWqMdalA",
+   "name": "Tengri TV",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kz",
+   "handle": "azattyqradio",
+   "channel_id": "UCiJ6RBthQvEPI4UsSNtM8jw",
+   "name": "Azattyq (RFE/RL Kazakh)",
+   "kind": "state-funded (US)",
+   "lang": "kk"
+  },
+  {
+   "cc": "kw",
+   "handle": "NewsKTV1",
+   "channel_id": "UCMU5LZUMoX09dP_h3lVx27Q",
+   "name": "KTV News",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "kw",
+   "handle": "ktv2news",
+   "channel_id": "UCkKznHZN1yvjIq4OUoKS5Gw",
+   "name": "KTV Foreign News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "kg",
+   "handle": "azattykradiosu",
+   "channel_id": "UCs_xNajKMU60fbeIhcxStoA",
+   "name": "Azattyk (RFE/RL Kyrgyz)",
+   "kind": "state-funded (US)",
+   "lang": "ky"
+  },
+  {
+   "cc": "kg",
+   "handle": "Kaktus__Media",
+   "channel_id": "UCzJdIIIJLJtCOQ53vCcRVaQ",
+   "name": "Kaktus Media",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "kg",
+   "handle": "kloopkg",
+   "channel_id": "UCN7nzoFpbe4yuoVC7lfZkKQ",
+   "name": "Kloop",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "om",
+   "handle": "OmanTVGeneral",
+   "channel_id": "UC2BdhpyHKRs9vLeuogWQ6mw",
+   "name": "Oman TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "om",
+   "handle": "TimesofOmanTV",
+   "channel_id": "UC-PQsP0qU8ICNOeijXxdJJg",
+   "name": "Times of Oman",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "qa",
+   "handle": "aljazeera",
+   "channel_id": "UCfiwzLy-8yKzIbsmZTzxDgw",
+   "name": "Al Jazeera Arabic",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "handle": "QatarTelevision",
+   "channel_id": "UC2EJXBsWR_5BTCy6R4kIO3A",
+   "name": "Qatar Television",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "qa",
+   "handle": "AlarabyTv_News",
+   "channel_id": "UC65i3Fyq91uiUkIS0i5GLNQ",
+   "name": "Al Araby News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "handle": "AlArabiyaEnglish",
+   "channel_id": "UCIZJ9a6P_nxCFJTmL0gh_IQ",
+   "name": "Al Arabiya English",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sa",
+   "handle": "SaudiNewsTV",
+   "channel_id": "UCV01ajGl6nt09h40iDoHDNg",
+   "name": "Al Ekhbariya",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "sa",
+   "handle": "arabnews",
+   "channel_id": "UCI8DegIWgK51cGakXcf1dOQ",
+   "name": "Arab News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tj",
+   "handle": "asiaplustj",
+   "channel_id": "UCxaPn-OJIG6FY2oM1TB0ZSw",
+   "name": "Asia-Plus TV",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tj",
+   "handle": "Radio-Ozodi",
+   "channel_id": "UCyTDJHSzuKZ2JZO41c5Do1A",
+   "name": "Radio Ozodi (RFE/RL Tajik)",
+   "kind": "state-funded (US)",
+   "lang": "tg"
+  },
+  {
+   "cc": "tj",
+   "handle": "TVTOJIKISTON",
+   "channel_id": "UC0NDr4nXx-c4cto_RLz9UPA",
+   "name": "TV Tajikistan (TVT)",
+   "kind": "state media",
+   "lang": "tg"
+  },
+  {
+   "cc": "tm",
+   "handle": "turkmenportalcom",
+   "channel_id": "UCaVOiK81-Z30BGDnM2Udslw",
+   "name": "Turkmenportal",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "tm",
+   "handle": "azatlyk-radiosy",
+   "channel_id": "UCLlKqPIrgg7hMZwvah77lhg",
+   "name": "Azatlyk (RFE/RL Turkmen)",
+   "kind": "state-funded (US)",
+   "lang": "tk"
+  },
+  {
+   "cc": "tr",
+   "handle": "trtworld",
+   "channel_id": "UC7fWeaHhqgM4Ry-RMpM2YYw",
+   "name": "TRT World",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "tr",
+   "handle": "cnnturk",
+   "channel_id": "UCV6zcRug6Hqp1UX_FdyUeBg",
+   "name": "CNN TURK",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "handle": "haberturktv",
+   "channel_id": "UCn6dNfiRE_Xunu7iMyvD7AA",
+   "name": "Haberturk TV",
+   "kind": "news desk",
+   "lang": "tr"
+  },
+  {
+   "cc": "tr",
+   "handle": "anadoluagency",
+   "channel_id": "UCph-M7aQqpi1fW0BQwn7XUA",
+   "name": "Anadolu Agency English",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ae",
+   "handle": "TheNationalUAEchannel",
+   "channel_id": "UCGYf0VFdlSTzcJghW9z1DAA",
+   "name": "The National",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ae",
+   "handle": "GulfNewsVideo",
+   "channel_id": "UCXTuTQZarVcFR_fgQXvsLpw",
+   "name": "Gulf News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ae",
+   "handle": "khaleejtimes",
+   "channel_id": "UCaeG9NIqdx-xcZGt7ETfkpA",
+   "name": "Khaleej Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "uz",
+   "handle": "kunuz_official",
+   "channel_id": "UCVPst_iSyaVYpuOP4ogRhlw",
+   "name": "Kun.uz",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "handle": "Daryo_yangiliklari",
+   "channel_id": "UC08XD1ERziLJyPER39tPQDw",
+   "name": "Daryo",
+   "kind": "news desk",
+   "lang": "uz"
+  },
+  {
+   "cc": "uz",
+   "handle": "ozodlik-radiosi",
+   "channel_id": "UCv9n8Z9zQ8luNEOnro9D_Cg",
+   "name": "Ozodlik (RFE/RL Uzbek)",
+   "kind": "state-funded (US)",
+   "lang": "uz"
+  },
+  {
+   "cc": "al",
+   "handle": "TopChannelAlbania",
+   "channel_id": "UCyny-dfYPbE-CjAkzkZqF8A",
+   "name": "Top Channel",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "al",
+   "handle": "RadioTelevizioniShqiptar",
+   "channel_id": "UCpiewjt_Bvzkebn6l1hwWOg",
+   "name": "RTSH",
+   "kind": "public broadcaster",
+   "lang": "sq"
+  },
+  {
+   "cc": "al",
+   "handle": "ReportTVAlbania",
+   "channel_id": "UCk_fYBSdzmwhZEDPG5L4ShQ",
+   "name": "Report TV",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "ad",
+   "handle": "TVAndorra",
+   "channel_id": "UCu1-KQRkvDTqg_ZWjp8UXcA",
+   "name": "Andorra Television",
+   "kind": "public broadcaster",
+   "lang": "ca"
+  },
+  {
+   "cc": "at",
+   "handle": "ORFZeitimBild",
+   "channel_id": "UCp02Io-l9Y7_Gd-MApFhnhA",
+   "name": "ORF Zeit im Bild",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "at",
+   "handle": "kronetv",
+   "channel_id": "UC4qhj5cnX0MkbwXQ5vlI1NQ",
+   "name": "Kronen Zeitung",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "by",
+   "handle": "belsat_news",
+   "channel_id": "UCRokSp8CGOuQO4R0F1RxRGg",
+   "name": "Belsat News (in exile)",
+   "kind": "news desk",
+   "lang": "be"
+  },
+  {
+   "cc": "by",
+   "handle": "ZERKALOIO",
+   "channel_id": "UC34JNOAjkpx4WLXKSRnUIwA",
+   "name": "Zerkalo",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "by",
+   "handle": "NashaNivaNews",
+   "channel_id": "UCeLhDmZkX4vObMSOpewXJBA",
+   "name": "Nasha Niva",
+   "kind": "news desk",
+   "lang": "be"
+  },
+  {
+   "cc": "be",
+   "handle": "vrtnws",
+   "channel_id": "UC59gT3bFTFNSqafRcluDIsQ",
+   "name": "VRT NWS",
+   "kind": "public broadcaster",
+   "lang": "nl"
+  },
+  {
+   "cc": "be",
+   "handle": "rtbf_info",
+   "channel_id": "UC4f0qvPJLqGTuLyy2iHOd-g",
+   "name": "RTBF Info",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "ba",
+   "handle": "N1BiHTV",
+   "channel_id": "UCODAM3o_dqNpQrXLP3y3e2w",
+   "name": "N1 BiH",
+   "kind": "news desk",
+   "lang": "bs"
+  },
+  {
+   "cc": "ba",
+   "handle": "BHRT",
+   "channel_id": "UCsoLIkULxkv8Ovd33tONdBQ",
+   "name": "BHRT",
+   "kind": "public broadcaster",
+   "lang": "bs"
+  },
+  {
+   "cc": "bg",
+   "handle": "BNT1",
+   "channel_id": "UC8jnuRbBzMICRHsC0qqVd9Q",
+   "name": "BNT",
+   "kind": "public broadcaster",
+   "lang": "bg"
+  },
+  {
+   "cc": "bg",
+   "handle": "novinitenanova_official",
+   "channel_id": "UCspzCJuJ-n2frc9o-rXXZBg",
+   "name": "NOVA News",
+   "kind": "news desk",
+   "lang": "bg"
+  },
+  {
+   "cc": "hr",
+   "handle": "HRT_vijesti",
+   "channel_id": "UCSI1vb6CELskEFQpRceUj0g",
+   "name": "HRT Vijesti",
+   "kind": "public broadcaster",
+   "lang": "hr"
+  },
+  {
+   "cc": "hr",
+   "handle": "N1_Hrvatska",
+   "channel_id": "UC1T9Sd-3fv64j_6X7pkvMCg",
+   "name": "N1 Hrvatska",
+   "kind": "news desk",
+   "lang": "hr"
+  },
+  {
+   "cc": "cy",
+   "handle": "rikcybc",
+   "channel_id": "UCkvm5aDEB3eVufw9Qnk6qow",
+   "name": "RIK (CyBC)",
+   "kind": "public broadcaster",
+   "lang": "el"
+  },
+  {
+   "cc": "cy",
+   "handle": "cyprusmail1",
+   "channel_id": "UCuFNhV-eJyzwRLcj1Z4-_lw",
+   "name": "Cyprus Mail",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "cz",
+   "handle": "CT24zive",
+   "channel_id": "UC0HQLHvU5_MMUJxLz6yl0GA",
+   "name": "CT24",
+   "kind": "public broadcaster",
+   "lang": "cs"
+  },
+  {
+   "cc": "cz",
+   "handle": "DVTVvideo",
+   "channel_id": "UCFb-u3ISt99gxZ9TxIQW7UA",
+   "name": "DVTV",
+   "kind": "news desk",
+   "lang": "cs"
+  },
+  {
+   "cc": "ee",
+   "handle": "Rahvusringhaaling",
+   "channel_id": "UCYal7J64EbvvlygsfiFriIw",
+   "name": "ERR (Estonian Public Broadcasting)",
+   "kind": "public broadcaster",
+   "lang": "et"
+  },
+  {
+   "cc": "fi",
+   "handle": "Yle_Uutiset",
+   "channel_id": "UC_mdoC_BWTfTj7eT3XGA23A",
+   "name": "Yle Uutiset",
+   "kind": "public broadcaster",
+   "lang": "fi"
+  },
+  {
+   "cc": "fi",
+   "handle": "yle_news",
+   "channel_id": "UCkz4a732LtZ3w2yC5vKLBcQ",
+   "name": "Yle News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "fi",
+   "handle": "mtv_uutiset",
+   "channel_id": "UC0xLcPMTCWZecR2WUV7nD_Q",
+   "name": "MTV Uutiset",
+   "kind": "news desk",
+   "lang": "fi"
+  },
+  {
+   "cc": "fr",
+   "handle": "France24_en",
+   "channel_id": "UCQfwfsi5VrQ8yKZ-UWmAEFg",
+   "name": "FRANCE 24 English",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "fr",
+   "handle": "franceinfo",
+   "channel_id": "UCO6K_kkdP-lnSCiO3tPx7WA",
+   "name": "franceinfo",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "BFMTV",
+   "channel_id": "UCXwDLMDV86ldKoFVc_g8P0g",
+   "name": "BFMTV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "fr",
+   "handle": "lemondefr",
+   "channel_id": "UCYpRDnhk5H8h16jpS84uqsA",
+   "name": "Le Monde",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "de",
+   "handle": "dwnews",
+   "channel_id": "UCknLrEdhRCp1aegoMqRaCZg",
+   "name": "DW News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "de",
+   "handle": "tagesschau",
+   "channel_id": "UC5NOEUbkLheQcaaRldYW5GA",
+   "name": "tagesschau",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "handle": "ZDFheute",
+   "channel_id": "UCeqKIgPQfNInOswGRWt48kQ",
+   "name": "ZDFheute Nachrichten",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "de",
+   "handle": "WELTVideoTV",
+   "channel_id": "UCZMsvbAhhRblVGXmEXW8TSA",
+   "name": "WELT",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "gr",
+   "handle": "ert",
+   "channel_id": "UC0jVU-mK53vDQZcSZB5mVHg",
+   "name": "ERT",
+   "kind": "public broadcaster",
+   "lang": "el"
+  },
+  {
+   "cc": "gr",
+   "handle": "SKAIgr",
+   "channel_id": "UCmHgxU394HiIAsN1fMegqzw",
+   "name": "SKAI",
+   "kind": "news desk",
+   "lang": "el"
+  },
+  {
+   "cc": "hu",
+   "handle": "Telexponthu",
+   "channel_id": "UCM-1sd-cXSuCsfWp8QMY_OQ",
+   "name": "Telex",
+   "kind": "news desk",
+   "lang": "hu"
+  },
+  {
+   "cc": "hu",
+   "handle": "Partizánmédia",
+   "channel_id": "UCEFpEvuosfPGlV1VyUF6QOA",
+   "name": "Partizan",
+   "kind": "news desk",
+   "lang": "hu"
+  },
+  {
+   "cc": "hu",
+   "handle": "HIRTVvideok",
+   "channel_id": "UCAvx9uxtvhnxNpnjutUei5A",
+   "name": "Hir TV",
+   "kind": "news desk",
+   "lang": "hu"
+  },
+  {
+   "cc": "is",
+   "handle": "RUV-explore",
+   "channel_id": "UCMaI-wbQk3LGCY1kDRHfjAA",
+   "name": "RUV",
+   "kind": "public broadcaster",
+   "lang": "is"
+  },
+  {
+   "cc": "ie",
+   "handle": "rtenews",
+   "channel_id": "UC8urSFTmQDxaPDEIZ2Fd63Q",
+   "name": "RTE News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "handle": "IrishTimes",
+   "channel_id": "UCNNnna72yOMxXU4n9Fg1Agg",
+   "name": "The Irish Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ie",
+   "handle": "TheJournalVideo",
+   "channel_id": "UCDg5Dpx6BCf_4ogh3xMqIkg",
+   "name": "The Journal",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "it",
+   "handle": "RaiNews",
+   "channel_id": "UCxqR9g_1XlnfrqwHK9viwCw",
+   "name": "RaiNews",
+   "kind": "public broadcaster",
+   "lang": "it"
+  },
+  {
+   "cc": "it",
+   "handle": "CorrieredellaSera",
+   "channel_id": "UC2lCxEqj8bfRfYbK1FNNNkQ",
+   "name": "Corriere della Sera",
+   "kind": "news desk",
+   "lang": "it"
+  },
+  {
+   "cc": "xk",
+   "handle": "KlanKosovaOfficial",
+   "channel_id": "UC_SXHVF21a9FqvEbtsyNcPg",
+   "name": "Klan Kosova",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "xk",
+   "handle": "RTKOfficial",
+   "channel_id": "UCLKm461v_m6OcgJOQDlXuuw",
+   "name": "RTK",
+   "kind": "public broadcaster",
+   "lang": "sq"
+  },
+  {
+   "cc": "xk",
+   "handle": "Kanal10Live",
+   "channel_id": "UCw72VwqUWpNDlO9caRyLGNQ",
+   "name": "Kanal10",
+   "kind": "news desk",
+   "lang": "sq"
+  },
+  {
+   "cc": "lv",
+   "handle": "lsminfo",
+   "channel_id": "UCvgudu0FJJ8a93qjHhYdV0g",
+   "name": "LSM info",
+   "kind": "public broadcaster",
+   "lang": "lv"
+  },
+  {
+   "cc": "lv",
+   "handle": "DelfiLatvia",
+   "channel_id": "UCw5foWtcJvAbUm64rv7jwUQ",
+   "name": "Delfi.lv",
+   "kind": "news desk",
+   "lang": "lv"
+  },
+  {
+   "cc": "li",
+   "handle": "vaterlandnews",
+   "channel_id": "UCemq6QiN8wRqGp2J252Txpg",
+   "name": "Vaterland TV",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "li",
+   "handle": "FuerstentumLiechtenstein",
+   "channel_id": "UCsGssFDt-RXcxbeoz9UU5og",
+   "name": "Principality of Liechtenstein",
+   "kind": "government",
+   "lang": "de"
+  },
+  {
+   "cc": "lt",
+   "handle": "LRTinklas",
+   "channel_id": "UC4KnMZaxcv1KZDAJsgHXcOA",
+   "name": "LRT",
+   "kind": "public broadcaster",
+   "lang": "lt"
+  },
+  {
+   "cc": "lt",
+   "handle": "NaujienųPortalas",
+   "channel_id": "UC54OBiaV7RctGSFJb9EEdbw",
+   "name": "15min",
+   "kind": "news desk",
+   "lang": "lt"
+  },
+  {
+   "cc": "lu",
+   "handle": "rtl.luxembourg",
+   "channel_id": "UCWWn73x0JSlI1xLA9DViW4w",
+   "name": "RTL Luxembourg",
+   "kind": "news desk",
+   "lang": "lb"
+  },
+  {
+   "cc": "mt",
+   "handle": "WatchTVM",
+   "channel_id": "UChlf9r1rzhJ_SVM_WCKFL1g",
+   "name": "TVM",
+   "kind": "public broadcaster",
+   "lang": "mt"
+  },
+  {
+   "cc": "mt",
+   "handle": "timesofmalta",
+   "channel_id": "UCSuzswNAnqhch7GxCCj3FOA",
+   "name": "Times of Malta",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mt",
+   "handle": "MaltaTodayVideo",
+   "channel_id": "UCUC80_fFXf6Cy3tDVe37p8g",
+   "name": "MaltaToday",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "md",
+   "handle": "TV8Moldova",
+   "channel_id": "UCREEwAZUeexzfEW8lh8dmbA",
+   "name": "TV8",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "handle": "jurnaltv",
+   "channel_id": "UCJYCClZe1UppC6q3XJ4Mp2A",
+   "name": "Jurnal TV",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "handle": "TRMMDChannel",
+   "channel_id": "UCQYCldP17ZV5q1IaM3ICCLw",
+   "name": "Teleradio Moldova",
+   "kind": "public broadcaster",
+   "lang": "ro"
+  },
+  {
+   "cc": "md",
+   "handle": "NewsMakerOriginal",
+   "channel_id": "UC-Ue6r6tO5ascxBlMjFEzvg",
+   "name": "NewsMaker Moldova",
+   "kind": "news desk",
+   "lang": "ru"
+  },
+  {
+   "cc": "mc",
+   "handle": "MonacoInfo",
+   "channel_id": "UCe14KNyzBAYaYxnz-TD9pyg",
+   "name": "Monaco Info",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "me",
+   "handle": "tvvijestionline",
+   "channel_id": "UCGGDfpTbmFVcvtd4iwHk_WQ",
+   "name": "Vijesti",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "me",
+   "handle": "rtcgYT",
+   "channel_id": "UC-wb2t0TEiMtfmdiB169MPw",
+   "name": "RTCG",
+   "kind": "public broadcaster",
+   "lang": "sr"
+  },
+  {
+   "cc": "nl",
+   "handle": "rtlnieuws",
+   "channel_id": "UCv4NUJ5BGSpJz_leIfayDzQ",
+   "name": "RTL Nieuws",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "mk",
+   "handle": "SitelTV",
+   "channel_id": "UC9S_l5vmdGRDV3GuhvbF8Mg",
+   "name": "Sitel TV",
+   "kind": "news desk",
+   "lang": "mk"
+  },
+  {
+   "cc": "mk",
+   "handle": "telmatv4603",
+   "channel_id": "UCJRei7E8Nxp80zhh24Cwmqg",
+   "name": "Telma TV",
+   "kind": "news desk",
+   "lang": "mk"
+  },
+  {
+   "cc": "no",
+   "handle": "nrk",
+   "channel_id": "UCBevtY7fDYVEVkgWez2tAgA",
+   "name": "NRK",
+   "kind": "public broadcaster",
+   "lang": "no"
+  },
+  {
+   "cc": "no",
+   "handle": "TV2Nyheter",
+   "channel_id": "UCfM7PPUlNYqK8br0sukNJIA",
+   "name": "TV 2 Nyheter",
+   "kind": "news desk",
+   "lang": "no"
+  },
+  {
+   "cc": "pl",
+   "handle": "TVN24",
+   "channel_id": "UC3R8278fJUWn2ysrOCJrmAQ",
+   "name": "TVN24",
+   "kind": "news desk",
+   "lang": "pl"
+  },
+  {
+   "cc": "pl",
+   "handle": "polsatnewsplofc",
+   "channel_id": "UCb7O4-iI4pEO5UZPlOBr0Ug",
+   "name": "Polsat News",
+   "kind": "news desk",
+   "lang": "pl"
+  },
+  {
+   "cc": "pl",
+   "handle": "tvpinfo",
+   "channel_id": "UCzQZbOb86WvhOPoR7jgAfsA",
+   "name": "TVP Info",
+   "kind": "public broadcaster",
+   "lang": "pl"
+  },
+  {
+   "cc": "pt",
+   "handle": "SICNotíciasTV",
+   "channel_id": "UCimBp0frQrASSsIFERs8vsw",
+   "name": "SIC Noticias",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "pt",
+   "handle": "RTPNoticias",
+   "channel_id": "UCIM-wfyv9hg2oEiA81mQc2A",
+   "name": "RTP Noticias",
+   "kind": "public broadcaster",
+   "lang": "pt"
+  },
+  {
+   "cc": "pt",
+   "handle": "ObservadorPt",
+   "channel_id": "UC35F6ktZodINwjQZjuwLcjg",
+   "name": "Observador",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "ro",
+   "handle": "digi24hd56",
+   "channel_id": "UCbvKamSrJkwT6ed2BMMZXwg",
+   "name": "Digi24",
+   "kind": "news desk",
+   "lang": "ro"
+  },
+  {
+   "cc": "ro",
+   "handle": "InfoTVR",
+   "channel_id": "UCfH7r-E65QAbNCthar7d7xA",
+   "name": "TVR Info",
+   "kind": "public broadcaster",
+   "lang": "ro"
+  },
+  {
+   "cc": "sm",
+   "handle": "SanMarinoRTVOfficial",
+   "channel_id": "UCUpQzPghB8Rjk5D82UXqq-g",
+   "name": "San Marino RTV",
+   "kind": "public broadcaster",
+   "lang": "it"
+  },
+  {
+   "cc": "rs",
+   "handle": "n1srbija2025",
+   "channel_id": "UC9OsYup10FogUwX2-f-3wWw",
+   "name": "N1 Srbija",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "rs",
+   "handle": "RTSSajtZvanicniKanal",
+   "channel_id": "UCF6U1KDm7BLHWBBUwsZzKtQ",
+   "name": "RTS",
+   "kind": "public broadcaster",
+   "lang": "sr"
+  },
+  {
+   "cc": "rs",
+   "handle": "NOVAStv",
+   "channel_id": "UCloa3CgQMtGSeqjLkpQlEFg",
+   "name": "NOVA S",
+   "kind": "news desk",
+   "lang": "sr"
+  },
+  {
+   "cc": "sk",
+   "handle": "televiziata3788",
+   "channel_id": "UCRdWsx3iLG7vwq1cWK26gzA",
+   "name": "TA3",
+   "kind": "news desk",
+   "lang": "sk"
+  },
+  {
+   "cc": "sk",
+   "handle": "DenniknSk",
+   "channel_id": "UCe_VgLz1y99hUF1q5ppQesA",
+   "name": "Dennik N",
+   "kind": "news desk",
+   "lang": "sk"
+  },
+  {
+   "cc": "sk",
+   "handle": "Aktuality_sk",
+   "channel_id": "UC2lCFhJIC4adt_oP1dwSOVg",
+   "name": "Aktuality.sk",
+   "kind": "news desk",
+   "lang": "sk"
+  },
+  {
+   "cc": "si",
+   "handle": "rtvsloinfo",
+   "channel_id": "UCoG4aNBAp08Xbt_mTPTOdOA",
+   "name": "RTV Slovenija (RTVSLOinfo)",
+   "kind": "public broadcaster",
+   "lang": "sl"
+  },
+  {
+   "cc": "si",
+   "handle": "n1slovenija",
+   "channel_id": "UCRfy6DgbC4cMl5MH_-Dqllw",
+   "name": "N1 Slovenija",
+   "kind": "news desk",
+   "lang": "sl"
+  },
+  {
+   "cc": "es",
+   "handle": "rtvenoticias",
+   "channel_id": "UC7QZIf0dta-XPXsp9Hv4dTw",
+   "name": "RTVE Noticias",
+   "kind": "public broadcaster",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "elpais",
+   "channel_id": "UCnsvJeZO4RigQ898WdDNoBw",
+   "name": "EL PAIS",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "laSextaNoticias",
+   "channel_id": "UCCJs5mITIqxqJGeFjt9N1Mg",
+   "name": "laSexta Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "es",
+   "handle": "Antena3Noticias",
+   "channel_id": "UC_Oni82GyYcabEr3rd-eJkg",
+   "name": "Antena 3 Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "se",
+   "handle": "svt",
+   "channel_id": "UCG-Et3jfinzlQql4uEYjAVw",
+   "name": "SVT",
+   "kind": "public broadcaster",
+   "lang": "sv"
+  },
+  {
+   "cc": "se",
+   "handle": "Expressen",
+   "channel_id": "UCfCk_ylzLy6nz2NpW25DY5w",
+   "name": "Expressen",
+   "kind": "news desk",
+   "lang": "sv"
+  },
+  {
+   "cc": "se",
+   "handle": "aftonbladettv",
+   "channel_id": "UC7QxZdogxV1gloaOBO02wiw",
+   "name": "Aftonbladet",
+   "kind": "news desk",
+   "lang": "sv"
+  },
+  {
+   "cc": "ch",
+   "handle": "srfnews",
+   "channel_id": "UCqdXpIZSamBceDmH8uOoTHA",
+   "name": "SRF News",
+   "kind": "public broadcaster",
+   "lang": "de"
+  },
+  {
+   "cc": "ch",
+   "handle": "RTSinfo",
+   "channel_id": "UClTOqr6qe-BmwwXDrcmuEhg",
+   "name": "RTS Info",
+   "kind": "public broadcaster",
+   "lang": "fr"
+  },
+  {
+   "cc": "ch",
+   "handle": "swissinfo",
+   "channel_id": "UCveNXE52LrCUmzelRMYS7NQ",
+   "name": "SWI swissinfo.ch",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "ch",
+   "handle": "BlickTube",
+   "channel_id": "UCQNjg0-yEA8LoyCcWI-j8mA",
+   "name": "Blick",
+   "kind": "news desk",
+   "lang": "de"
+  },
+  {
+   "cc": "gb",
+   "handle": "BBCNews",
+   "channel_id": "UC16niRr50-MSBwiO3YDb3RA",
+   "name": "BBC News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "SkyNews",
+   "channel_id": "UCoMdktPbSTixAyNGwb-UYkQ",
+   "name": "Sky News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "Channel4News",
+   "channel_id": "UCTrQ7HXWRRxr7OsOtodr2_w",
+   "name": "Channel 4 News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gb",
+   "handle": "ITVNews",
+   "channel_id": "UCFQgi22Ht00CpaOQLtvZx2A",
+   "name": "ITV News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "dz",
+   "handle": "Ennahartvonline",
+   "channel_id": "UC57OCoLoU6zAtBdJOmwg2vA",
+   "name": "Ennahar TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "dz",
+   "handle": "Echourouk_news",
+   "channel_id": "UCI1x-9TX2eCgrBzZGJLeyNQ",
+   "name": "Echorouk News",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "dz",
+   "handle": "AL24newschannel",
+   "channel_id": "UC2TJu-b6OCHIxW-TvoF5NSQ",
+   "name": "AL24 News",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ao",
+   "handle": "TPA_OFICIAL",
+   "channel_id": "UCwUbvKFF26CT4otwrEeLHtw",
+   "name": "TPA (Televisao Publica de Angola)",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "ao",
+   "handle": "NovoJornal_",
+   "channel_id": "UCaEVfqwx1mFdc_-Lo9tpixQ",
+   "name": "Novo Jornal",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "bj",
+   "handle": "benintvsrtb",
+   "channel_id": "UCmPXzeJaO7nrA87GIz3N6wQ",
+   "name": "Benin TV (ORTB)",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "bj",
+   "handle": "Canal3TVBénin",
+   "channel_id": "UClyYu5rWTaXYxlt4bYo_Rgg",
+   "name": "Canal 3 TV Benin",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bj",
+   "handle": "beninweb-tv",
+   "channel_id": "UCVq3IlladzCtFlwfMNmzEuw",
+   "name": "Benin Web TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "bw",
+   "handle": "Mmegionline",
+   "channel_id": "UCX7UunnhLPVR-7MAhW4of0Q",
+   "name": "Mmegi",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bi",
+   "handle": "tvrtnb",
+   "channel_id": "UCIezoDoTPTETVTc9HRC05xg",
+   "name": "RTNB",
+   "kind": "state media",
+   "lang": "rn"
+  },
+  {
+   "cc": "bi",
+   "handle": "iwacuwebtv",
+   "channel_id": "UCK_I7WyIFWpmniOnk6hHmLg",
+   "name": "Iwacu",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cv",
+   "handle": "rtc.caboverde",
+   "channel_id": "UCE8NLIaNMwDy-LKUTcCU-5g",
+   "name": "RTC Cabo Verde",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "cv",
+   "handle": "TIVER24",
+   "channel_id": "UCDukUbJJvxpvLnHxH6WPCcQ",
+   "name": "Tiver 24",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "td",
+   "handle": "Alwihdainfo",
+   "channel_id": "UCoAABXmLIVaOH6D7twXLSTQ",
+   "name": "Alwihda Info",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "td",
+   "handle": "onamatchad",
+   "channel_id": "UCkBbxR5jbO6qXHkswmdKKJg",
+   "name": "ONAMA Tchad",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "td",
+   "handle": "TchadinfosTV",
+   "channel_id": "UCk4XIvicudloWCSrknPHLBQ",
+   "name": "Tchadinfos",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "km",
+   "handle": "comores_infos",
+   "channel_id": "UCsDJUoECVMtYxBpY0B7yGCw",
+   "name": "Comoresinfos TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "handle": "RTIinfo225",
+   "channel_id": "UCxeb7KlVQpmMzQ0sPyk4GGQ",
+   "name": "RTI",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "handle": "LaNouvelleChaîneIvoirienne",
+   "channel_id": "UCvAPtgrGuzGy9tCpJViQwhQ",
+   "name": "NCI (La Nouvelle Chaine Ivoirienne)",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ci",
+   "handle": "abidjannetTV",
+   "channel_id": "UCLLwppOML5BQRseKUxe9Z4Q",
+   "name": "Abidjan.net TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "dj",
+   "handle": "RTDTELEDJIBOUTI",
+   "channel_id": "UCB0NxICFmGabAalD46J2i4A",
+   "name": "RTD Djibouti",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "eg",
+   "handle": "eXtranews",
+   "channel_id": "UCGyS7uRX_tmdfAgf-4tsUlg",
+   "name": "eXtra news",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "eg",
+   "handle": "CBCEgypt",
+   "channel_id": "UCB6sc84dcg6VQGB_d89sx2g",
+   "name": "CBC Egypt",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "eg",
+   "handle": "baladtv",
+   "channel_id": "UCJWuV-EkLmRrGZ4afwUBenw",
+   "name": "Sada Elbalad",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "gq",
+   "handle": "ASONGATELEVISION",
+   "channel_id": "UCCvYPmt-_icq1zIMrAfhSsA",
+   "name": "Asonga Radio y Television",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "er",
+   "handle": "EriTVEritreaOfficial",
+   "channel_id": "UCpPhzhCfud9ctQSJJv4Kqlw",
+   "name": "Eri-TV",
+   "kind": "state media",
+   "lang": "ti"
+  },
+  {
+   "cc": "sz",
+   "handle": "eswatini_tv",
+   "channel_id": "UClDOmbCeOYJ10g-D0K-aADA",
+   "name": "Eswatini TV",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ga",
+   "handle": "GABON1ère",
+   "channel_id": "UCaquwJdQ-Ud6f7upWUQjDPQ",
+   "name": "Gabon Televisions",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "ga",
+   "handle": "tvgabon24",
+   "channel_id": "UC7E__Dp9FSIgt6iMa5_uvlw",
+   "name": "Gabon 24",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "gm",
+   "handle": "qtvgambia1051",
+   "channel_id": "UCgxFuxIi9EwZlPL4iZ-g0Ww",
+   "name": "QTV Gambia",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gm",
+   "handle": "GRTSTV",
+   "channel_id": "UCYwjVaOlm2D8SeQMokIAjhw",
+   "name": "GRTS TV",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "gm",
+   "handle": "kerrfatoumedia",
+   "channel_id": "UCDwzcLnvmhk1Xx1j17Z-1Fw",
+   "name": "Kerr Fatou Media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "handle": "myjoyonline",
+   "channel_id": "UChd1DEecCRlxaa0-hvPACCw",
+   "name": "JoyNews",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "handle": "TV3Ghana",
+   "channel_id": "UC9VSDs4ZXo3sjOoPkmW2iRQ",
+   "name": "TV3 Ghana",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gh",
+   "handle": "thegbcghana",
+   "channel_id": "UCOoTT8sV0M1st6gVt2cKmGQ",
+   "name": "Ghana Broadcasting Corporation",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "gn",
+   "handle": "DJOMATVGN",
+   "channel_id": "UC2vtjGPB2VndmlME61XaRUw",
+   "name": "Djoma TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "gn",
+   "handle": "EDITIONSGUINEE224",
+   "channel_id": "UCkfRIySF8Iy6eCDGDvkcksA",
+   "name": "Editions Guinee 224",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "gw",
+   "handle": "RádioCapitalFmGuiné-Bissau",
+   "channel_id": "UCAd1NdvLEeCB44A9h3ug5gA",
+   "name": "Radio Capital FM Guine-Bissau",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "ke",
+   "handle": "kenyacitizentv",
+   "channel_id": "UChBQgieUidXV1CmDxSdRm3g",
+   "name": "Citizen TV Kenya",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ke",
+   "handle": "ntvkenyaonline",
+   "channel_id": "UCqBJ47FjJcl61fmSbcadAVg",
+   "name": "NTV Kenya",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ke",
+   "handle": "ktnnews_kenya",
+   "channel_id": "UCKVsdeoHExltrWMuK0hOWmg",
+   "name": "KTN News Kenya",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ke",
+   "handle": "KBCChannel1News",
+   "channel_id": "UCypNjM5hP1qcUqQZe57jNfg",
+   "name": "KBC Channel 1",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ls",
+   "handle": "moafrikaradiotelevision-mr801",
+   "channel_id": "UC3gCM0UKGGQ4qW5yWhcdKAQ",
+   "name": "MoAfrika Radio Television",
+   "kind": "news desk",
+   "lang": "st"
+  },
+  {
+   "cc": "mg",
+   "handle": "kolotv527.25",
+   "channel_id": "UCWbhyz-p3enI2UJjD1yyePg",
+   "name": "Kolo TV",
+   "kind": "news desk",
+   "lang": "mg"
+  },
+  {
+   "cc": "mg",
+   "handle": "televisionaNasionaly",
+   "channel_id": "UCY4OPgqs3SGZ9m-lUaPHHfA",
+   "name": "Televiziona Malagasy (TVM)",
+   "kind": "state media",
+   "lang": "mg"
+  },
+  {
+   "cc": "mw",
+   "handle": "times360malawi",
+   "channel_id": "UCaGzZVnp299iLv127j0pSeQ",
+   "name": "Times 360 Malawi",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mw",
+   "handle": "ZodiakMalawitv",
+   "channel_id": "UCxvDNLWvMKUwYc8q8sl3DAA",
+   "name": "Zodiak Malawi",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "mr",
+   "handle": "mauritaniantv",
+   "channel_id": "UCK3909NQ9meg2KDYKF51Kmg",
+   "name": "Television de Mauritanie",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "mr",
+   "handle": "sahara.24",
+   "channel_id": "UCuaLs5R2zY6QMzT6Nndgjag",
+   "name": "Sahara 24",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "mu",
+   "handle": "MBCOnlineMauritius",
+   "channel_id": "UCahkGh2kwtpnZQTtcJECxOQ",
+   "name": "MBC Mauritius",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "mu",
+   "handle": "defimediateleofficiel",
+   "channel_id": "UCHiezt61r_1g608xwehxr5A",
+   "name": "Defi Media Tele",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "mu",
+   "handle": "toptvmauritius1",
+   "channel_id": "UCui343-hEA3I-b-4zO5Bzlw",
+   "name": "Top TV Mauritius",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "ma",
+   "handle": "2mtv",
+   "channel_id": "UClozwh5URilIQpDFeXch8qw",
+   "name": "2M",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ma",
+   "handle": "medi1tv",
+   "channel_id": "UCfXlL8avQjg74WbRyksr9bQ",
+   "name": "Medi1 TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ma",
+   "handle": "SNRTNews",
+   "channel_id": "UCvtQeUIfmelyvCDMbEPw9vw",
+   "name": "SNRT News",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "ma",
+   "handle": "hespress",
+   "channel_id": "UCvyivffb2WwNKonKiLwVAEQ",
+   "name": "Hespress",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "na",
+   "handle": "nbcdigitalnews",
+   "channel_id": "UCvQbrQHNdcofvya0aG7jEjA",
+   "name": "NBC Digital News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "na",
+   "handle": "OneAfricaTelevision",
+   "channel_id": "UCpEz1isDX2co1Tmw0jTC6mA",
+   "name": "One Africa TV",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "cg",
+   "handle": "VOXTVCongo",
+   "channel_id": "UCBbuZ1gepwtpj3PGZaFqrHg",
+   "name": "Vox TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "cg",
+   "handle": "drtvinternationalhd1817",
+   "channel_id": "UCuQOP0dkqN9Ihnu8vc4Hhaw",
+   "name": "DRTV International",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "rw",
+   "handle": "RwandanTVRBAHafiYawe",
+   "channel_id": "UCyRvjnhiC0MOXWS-7COPtyQ",
+   "name": "Rwanda TV (RBA)",
+   "kind": "state media",
+   "lang": "rw"
+  },
+  {
+   "cc": "rw",
+   "handle": "RwandaTNT",
+   "channel_id": "UCuZbZj6DF9zWXpdZVceDZkg",
+   "name": "The New Times Rwanda",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "sn",
+   "handle": "rts-radiotelevisionsenegalaise",
+   "channel_id": "UC3Pwur55-OPFYDN_xg6JR_w",
+   "name": "RTS Senegal",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "sn",
+   "handle": "SenewebTV",
+   "channel_id": "UCUotxi5bHZo2hVxyn6Ss6RQ",
+   "name": "Seneweb TV",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "sn",
+   "handle": "iTvSenegal",
+   "channel_id": "UCIdNAY1QlzXahhX6lsZv2kg",
+   "name": "iTV Senegal",
+   "kind": "news desk",
+   "lang": "fr"
+  },
+  {
+   "cc": "sc",
+   "handle": "SBCSeychelles",
+   "channel_id": "UCLvNYrmd889CSKCRTJ6upmw",
+   "name": "SBC Seychelles",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "handle": "slbc.sl1",
+   "channel_id": "UCEtHh4-TrhA-4BYgoGyCONQ",
+   "name": "SLBC News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "sl",
+   "handle": "ayvmedia",
+   "channel_id": "UCAAeZ5UM1LURZSWPGhteWpw",
+   "name": "AYV Media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "handle": "sabcdigitalnews",
+   "channel_id": "UC8yH-uI81UUtEMDsowQyx1g",
+   "name": "SABC News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "handle": "encanews",
+   "channel_id": "UCI3RT5PGmdi1KVp9FG_CneA",
+   "name": "eNCA",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "handle": "newzroomafrika405",
+   "channel_id": "UCQMML3hAsx-Mz9j9ZN0tThQ",
+   "name": "Newzroom Afrika",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "za",
+   "handle": "News24Video",
+   "channel_id": "UC_vRepQuzI527GtEP1pGYZw",
+   "name": "News24",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tz",
+   "handle": "azamtvtz",
+   "channel_id": "UCpHiA0taMn231yDiUeqoANw",
+   "name": "Azam TV",
+   "kind": "news desk",
+   "lang": "sw"
+  },
+  {
+   "cc": "tz",
+   "handle": "ITVTanzaniaTz",
+   "channel_id": "UCRmReUqNqc-GSZeD48QKjhQ",
+   "name": "ITV Tanzania",
+   "kind": "news desk",
+   "lang": "sw"
+  },
+  {
+   "cc": "tz",
+   "handle": "TBC_Online",
+   "channel_id": "UCEz71zXmApKBYiH1fReemeA",
+   "name": "TBC Tanzania",
+   "kind": "state media",
+   "lang": "sw"
+  },
+  {
+   "cc": "tz",
+   "handle": "Mwananchidigital",
+   "channel_id": "UCXeAcVaSVNHA5ujOMBHuxGw",
+   "name": "Mwananchi Digital",
+   "kind": "news desk",
+   "lang": "sw"
+  },
+  {
+   "cc": "tg",
+   "handle": "TelevisionTogolaise",
+   "channel_id": "UCHRTO7BRAb3GGwQEUxpOUfg",
+   "name": "Television Togolaise",
+   "kind": "state media",
+   "lang": "fr"
+  },
+  {
+   "cc": "tn",
+   "handle": "MosaiqueFm",
+   "channel_id": "UC6y8T-vG9SeQ-FKOCt_o8MA",
+   "name": "Mosaique FM",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "tn",
+   "handle": "ElwataniaTV",
+   "channel_id": "UCrlNcuh-u3CLh_0xIVLz90A",
+   "name": "Elwatania TV",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "tn",
+   "handle": "TheHannibalTV",
+   "channel_id": "UCcpWZrbYzye7-FY4i1ALfVw",
+   "name": "Hannibal TV",
+   "kind": "news desk",
+   "lang": "ar"
+  },
+  {
+   "cc": "ug",
+   "handle": "ntvuganda",
+   "channel_id": "UCwga1dPCqBddbtq5KYRii2g",
+   "name": "NTV Uganda",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "handle": "NBSalways",
+   "channel_id": "UCzv3kGHEZ0fD404GVaW-GPg",
+   "name": "NBS TV Uganda",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "handle": "ubctvuganda",
+   "channel_id": "UCvTflPL_YBQdrHcKFI5xdYg",
+   "name": "UBC Television",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "ug",
+   "handle": "dailymonitor",
+   "channel_id": "UCIa1SldcW7F0oAVzX7Z5DYA",
+   "name": "Daily Monitor",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "eh",
+   "handle": "rasdtv-Elaaiun",
+   "channel_id": "UCQfm0h2FC7Ym49AOstiCH2Q",
+   "name": "RASD TV (Polisario)",
+   "kind": "state media",
+   "lang": "ar"
+  },
+  {
+   "cc": "zm",
+   "handle": "znbcnewsroom",
+   "channel_id": "UCedU3xizcSfv3F_nAysLXTQ",
+   "name": "ZNBC Newsroom",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "zm",
+   "handle": "diamondtvzambia",
+   "channel_id": "UCQbCnOIxLOSNV1ZFdQnPWxg",
+   "name": "Diamond TV Zambia",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "zw",
+   "handle": "zbcnews_official",
+   "channel_id": "UCxiW1iTMYgjyh7Qgkiyj2PQ",
+   "name": "ZBC News",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "zw",
+   "handle": "HStvLiveZim",
+   "channel_id": "UCw5si4wyaiAIh2fsVDEetaA",
+   "name": "Heart and Soul TV",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ag",
+   "handle": "ABSTVANTIGUA",
+   "channel_id": "UCzjrwYEm05BM2Tdg1yVZ3yA",
+   "name": "ABS TV Antigua",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "bs",
+   "handle": "ZNSDigital",
+   "channel_id": "UCPCeBf3Uyx_uSaBZehylzPg",
+   "name": "ZNS Network",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "bs",
+   "handle": "OURNEWSBahamas",
+   "channel_id": "UCmKypNsPUqQ-3UWb1cyDs4Q",
+   "name": "Our News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bb",
+   "handle": "cbcbarbados246",
+   "channel_id": "UCkXtBMk1R5zazFlA52LcGQg",
+   "name": "Caribbean Broadcasting Corporation",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "bb",
+   "handle": "NationNewsBarbados",
+   "channel_id": "UCPFmI32wmgKkmQZGFYB86Og",
+   "name": "The Nation Barbados",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bb",
+   "handle": "barbadostodaynews",
+   "channel_id": "UCj6BG79Aj1HFj_EAoZeptzA",
+   "name": "Barbados Today",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bz",
+   "handle": "greaterbelizemedia",
+   "channel_id": "UC0xLyicoeOd6KsNbl1Qst1g",
+   "name": "Greater Belize Media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "bz",
+   "handle": "belizelovetv",
+   "channel_id": "UCyUI6nR0c8xPmQlQ3v-E5AA",
+   "name": "Love FM Belize",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ca",
+   "handle": "CBCNews",
+   "channel_id": "UCuFFtHWoLl5fauMMD5Ww2jA",
+   "name": "CBC News",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "ca",
+   "handle": "CTVNews",
+   "channel_id": "UCi7Zk9baY1tvdlgxIML8MXg",
+   "name": "CTV News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ca",
+   "handle": "globalnews",
+   "channel_id": "UChLtXXpo4Ge1ReTEboVvTDg",
+   "name": "Global News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "cr",
+   "handle": "Teleticacom",
+   "channel_id": "UCOC6n5gbktagxIUrQrp42yw",
+   "name": "Teletica",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "handle": "NoticiasGrupoRepretelCR",
+   "channel_id": "UCr6TeVofbyCvtCdxV_niQKQ",
+   "name": "Noticias Repretel",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cr",
+   "handle": "crhoy_com",
+   "channel_id": "UC2Sz9G97ZkgL8FGRqhwJ5bw",
+   "name": "CR Hoy",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "handle": "canalcaribecuba",
+   "channel_id": "UCG4OI7ugDOnfo2tgWJFyvMw",
+   "name": "Canal Caribe",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "handle": "CiberCuba",
+   "channel_id": "UCqGlb5Fn0eIETquat0NGyLQ",
+   "name": "CiberCuba",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cu",
+   "handle": "14ymedioCuba",
+   "channel_id": "UCknIh8AmcLJAhfDycFyddHg",
+   "name": "14ymedio",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "dm",
+   "handle": "gisdominica",
+   "channel_id": "UC8jefAmSQs7LI61cRK1VflA",
+   "name": "GIS Dominica",
+   "kind": "government",
+   "lang": "en"
+  },
+  {
+   "cc": "dm",
+   "handle": "EmoNews",
+   "channel_id": "UCxwP8k3FKfweOg_SbKG3HRQ",
+   "name": "Emo News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "do",
+   "handle": "NoticiasSIN",
+   "channel_id": "UCbBIwG4LJfQyM4ZdoiujBxg",
+   "name": "Noticias SIN",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "handle": "cdn37rd",
+   "channel_id": "UCpFfLf9o4wJr-yr7dG8gYug",
+   "name": "CDN 37",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "do",
+   "handle": "ListínDiario-j3r",
+   "channel_id": "UCV0KuVz5hALGHG_xbC-fZHA",
+   "name": "Listin Diario",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "handle": "Canal12ElSalvador",
+   "channel_id": "UC4rvyYYuqGGti3-u6VjN4SA",
+   "name": "Canal 12 El Salvador",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "handle": "tcsnoticias246",
+   "channel_id": "UCUd3i3w8AKinobDEeEmjmWA",
+   "name": "TCS Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "handle": "laprensagraficavideo",
+   "channel_id": "UCNz2y0qMguce8wyxl0oFXUw",
+   "name": "La Prensa Grafica",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "sv",
+   "handle": "secprensasv",
+   "channel_id": "UCJULDVOPlj2L38jG9Sj3D5g",
+   "name": "Secretaria de Prensa El Salvador",
+   "kind": "government",
+   "lang": "es"
+  },
+  {
+   "cc": "gd",
+   "handle": "grenadabroadcastingnetwork9673",
+   "channel_id": "UC_xvFuli4SHj4Ja9HhDp-kA",
+   "name": "Grenada Broadcasting Network",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gt",
+   "handle": "PrensaLibreOficial",
+   "channel_id": "UCEepOY2svuxbsJ-zsAPT9Fg",
+   "name": "Prensa Libre",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "handle": "GuatevisionNoticiero",
+   "channel_id": "UCdSVqHGHzyMTXSafUHY-e-w",
+   "name": "Noticiero Guatevision",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "gt",
+   "handle": "miracanalantigua",
+   "channel_id": "UC-GLagjBhWAZ3IOWFgzqIAw",
+   "name": "Canal Antigua",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "handle": "HCHTelevisiónDigital",
+   "channel_id": "UCppc3_tXl_5542nU3wFki4w",
+   "name": "HCH Television Digital",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "handle": "televicentronoticias",
+   "channel_id": "UC4wqQp9kiRRIT7yOKtg11hg",
+   "name": "Televicentro Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "hn",
+   "handle": "diariolaprensahn",
+   "channel_id": "UCPmer9XlwEE3QaoRyL-XBpQ",
+   "name": "Diario La Prensa",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "jm",
+   "handle": "JamaicaGleaner",
+   "channel_id": "UCV2EtSzQ09E656SR4zcRvSA",
+   "name": "Jamaica Gleaner",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jm",
+   "handle": "TelevisionJamaica",
+   "channel_id": "UC1Ga-Hv1-dLz9zoAz81d9tA",
+   "name": "Television Jamaica",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jm",
+   "handle": "cvmtvnews",
+   "channel_id": "UC9QJIVS4jdLCzLUw4UQ5cWw",
+   "name": "CVM TV News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "jm",
+   "handle": "JamaicaObserverJa",
+   "channel_id": "UCeCv4yMwEj4axO4c_0Nr6ng",
+   "name": "Jamaica Observer",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ni",
+   "handle": "100NOTICIASNICARAGUA",
+   "channel_id": "UCOsDpCQ9uCIEsejWDWOP-Hg",
+   "name": "100% Noticias (in exile)",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "handle": "ConfidencialNica",
+   "channel_id": "UCMBDmj_hrxj8CV-bpa8nSCQ",
+   "name": "Confidencial",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ni",
+   "handle": "accion10nicaragua",
+   "channel_id": "UC9JT_t5m3dq-uUyb5hfG17w",
+   "name": "Canal 10 Nicaragua",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "handle": "TVNNoticiasYT",
+   "channel_id": "UC_r4iEfF8Nx6IAIZydux7yg",
+   "name": "TVN Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "handle": "Telemetro13",
+   "channel_id": "UCeFTJ001tE38wOXKgPvK1XQ",
+   "name": "Telemetro Reporta",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pa",
+   "handle": "prensacom1",
+   "channel_id": "UCp_WBuHEvoEaqzqXKOGpcuw",
+   "name": "La Prensa Panama",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "kn",
+   "handle": "ZIZRadioTV",
+   "channel_id": "UCMM3pFsfN2CYHpUa-xMbKQg",
+   "name": "ZIZ Broadcasting",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "handle": "HTSNewsforceStLucia",
+   "channel_id": "UCnyL2A3t8Q-_Qs1NusOPy2Q",
+   "name": "HTS News4orce",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "handle": "DBSTELEVISION",
+   "channel_id": "UCbzxshvXVewK8mQBINdlZ1g",
+   "name": "DBS Television",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "lc",
+   "handle": "ChoiceTVSaintLucia",
+   "channel_id": "UC_lrM2bRz7sFG9eeWSY-Fvg",
+   "name": "Choice TV",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "vc",
+   "handle": "iWNSVG1",
+   "channel_id": "UC0hNcQdsdst3gYb3BjHTRkA",
+   "name": "iWitness News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tt",
+   "handle": "CNC3TelevisionPrime",
+   "channel_id": "UC4aMlN15zu2pX3fMB4HAsNA",
+   "name": "CNC3",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "tt",
+   "handle": "trinidadexpress76",
+   "channel_id": "UC8D0eh_AtAa-XO0_Md1aC3Q",
+   "name": "Trinidad Express",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "NBCNews",
+   "channel_id": "UCeY0bbntWzzVIaj2z3QigXg",
+   "name": "NBC News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "CBSNews",
+   "channel_id": "UC8p1vwvWtl6T73JiExfWs1g",
+   "name": "CBS News",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "PBSNewsHour",
+   "channel_id": "UC6ZFN9Tx6xh-skXCuRHCDpQ",
+   "name": "PBS NewsHour",
+   "kind": "public broadcaster",
+   "lang": "en"
+  },
+  {
+   "cc": "us",
+   "handle": "CSPAN",
+   "channel_id": "UCb--64Gl51jIEVE-GLDAVTg",
+   "name": "C-SPAN",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ar",
+   "handle": "todonoticias",
+   "channel_id": "UCj6PcyLvpnIRT_2W_mwa9Aw",
+   "name": "TN Todo Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "handle": "lanacion",
+   "channel_id": "UCba3hpU7EFBSk817y9qZkiA",
+   "name": "LA NACION",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ar",
+   "handle": "TVPublicaArgentina",
+   "channel_id": "UCs231K71Bnu5295_x0MB5Pg",
+   "name": "Television Publica",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "bo",
+   "handle": "unitel-bolivia",
+   "channel_id": "UCBTuUY99I5plMaC_ZcmXIYw",
+   "name": "Unitel Bolivia",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "bo",
+   "handle": "redunotv",
+   "channel_id": "UCaIoV23UMZNifJ3G-djMU-Q",
+   "name": "Red Uno",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "bo",
+   "handle": "REDPATBolivia",
+   "channel_id": "UCsMf5c21zNPsR28vjHWgYRA",
+   "name": "PAT Bolivia",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "br",
+   "handle": "globonews",
+   "channel_id": "UCp6RRaz93Pt2xYZoEye_rLA",
+   "name": "GloboNews",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "g1globo",
+   "channel_id": "UCaGmdJSSiR7fkh2A-c6emsA",
+   "name": "g1",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "CNNbrasil",
+   "channel_id": "UCvdwhh_fDyWccR42-rReZLw",
+   "name": "CNN Brasil",
+   "kind": "news desk",
+   "lang": "pt"
+  },
+  {
+   "cc": "br",
+   "handle": "tvbrasil",
+   "channel_id": "UCSv9d0kQegylHWpP83jWSQg",
+   "name": "TV Brasil",
+   "kind": "state media",
+   "lang": "pt"
+  },
+  {
+   "cc": "cl",
+   "handle": "T13_cl",
+   "channel_id": "UCsRnhjcUCR78Q3Ud6OXCTNg",
+   "name": "Teletrece (T13)",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "handle": "24Horas_TVNChile",
+   "channel_id": "UCTXNz3gjAypWp3EhlIATEJQ",
+   "name": "24 Horas TVN",
+   "kind": "public broadcaster",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "handle": "Meganoticiasoficial",
+   "channel_id": "UCkccyEbqhhM3uKOI6Shm-4Q",
+   "name": "Meganoticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "cl",
+   "handle": "CHVNoticiasTV",
+   "channel_id": "UCRsUoZYC1ULUspipMRnMhwg",
+   "name": "CHV Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ec",
+   "handle": "Ecuavisa",
+   "channel_id": "UCRUV3nUNSc-xpBrTwQOCQQg",
+   "name": "Ecuavisa",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ec",
+   "handle": "TeleamazonasEcuadorOficial",
+   "channel_id": "UCCwRtme3lumNRQXMO2EvCvw",
+   "name": "Teleamazonas",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "ec",
+   "handle": "eluniversocom",
+   "channel_id": "UCLwBAR1YA6bQRNVCLYOM6Sg",
+   "name": "El Universo",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "gy",
+   "handle": "NewsRoomGuyana",
+   "channel_id": "UCfQPeIIXEXyyVFLo0bmlmlw",
+   "name": "News Room Guyana",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "gy",
+   "handle": "ncn.guyana",
+   "channel_id": "UCYrjVcpEHS7Y2CehF7uuUOg",
+   "name": "NCN Guyana",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "py",
+   "handle": "ABCParaguay",
+   "channel_id": "UCEklbFbPoMaV1ciEb-0mAxg",
+   "name": "ABC TV Paraguay",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "py",
+   "handle": "NPYoficial",
+   "channel_id": "UCXm5UbX1eXIFmFE0lz1etiA",
+   "name": "NPY",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "py",
+   "handle": "TelefuturoPrensa",
+   "channel_id": "UC05nHifnRWxoJkzgAP-sffg",
+   "name": "Telefuturo Prensa",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "latinanoticias",
+   "channel_id": "UCpSJ5fGhmAME9Kx2D3ZvN3Q",
+   "name": "Latina Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "americanoticiaspe",
+   "channel_id": "UCPhm2I2wk4vqjENwhn3px8A",
+   "name": "America Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "RPPNoticias",
+   "channel_id": "UC5j8-2FT0ZMMBkmK72R4aeA",
+   "name": "RPP Noticias",
+   "kind": "news desk",
+   "lang": "es"
+  },
+  {
+   "cc": "pe",
+   "handle": "tvperunoticias",
+   "channel_id": "UCkZCoc42IipR1ucqJmIehsA",
+   "name": "TVPeru Noticias",
+   "kind": "state media",
+   "lang": "es"
+  },
+  {
+   "cc": "sr",
+   "handle": "ABC-Suriname",
+   "channel_id": "UCz39f4fYNzXYbqAlyclTvWQ",
+   "name": "ABC Suriname",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "sr",
+   "handle": "starnieuwssuriname5812",
+   "channel_id": "UCBXcFSOZE5aN4nPGqJZYD3Q",
+   "name": "StarNieuws Suriname",
+   "kind": "news desk",
+   "lang": "nl"
+  },
+  {
+   "cc": "fj",
+   "handle": "fijivillage",
+   "channel_id": "UCysqAUCNB_Xqk7GaadCdCVw",
+   "name": "Fiji Village",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "handle": "FBCTV2011",
+   "channel_id": "UCeqMyMYK7P-nURWHPjlkjxw",
+   "name": "FBC TV",
+   "kind": "state media",
+   "lang": "en"
+  },
+  {
+   "cc": "fj",
+   "handle": "fijitimes",
+   "channel_id": "UCNwJNAPKqYgLVFov7QQPj5Q",
+   "name": "The Fiji Times",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "ws",
+   "handle": "TalamuaMedia",
+   "channel_id": "UCp04E-_kOdaYpMA7CsGFJ-w",
+   "name": "Talamua Media",
+   "kind": "news desk",
+   "lang": "en"
+  },
+  {
+   "cc": "vu",
+   "handle": "vbtcnews3482",
+   "channel_id": "UC_vbZMXxht-JlfypSW6vBsQ",
+   "name": "VBTC News",
+   "kind": "state media",
    "lang": "en"
   }
  ]
