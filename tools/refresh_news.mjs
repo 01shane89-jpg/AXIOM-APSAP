@@ -215,8 +215,9 @@ try {
   }
   console.log("placed", placed, "of", all.length, "items by name");
   function stateCentre(gz, st) {
-    for (const p of (gz.us ? gz.us.m.values() : [])) if (p.kind === "region" && p.a1 === "US." + st) return { name: p.name, lat: +p.lat.toFixed(3), lon: +p.lon.toFixed(3), prec: "province" };
-    return null;
+    // by admin-1 code, not name: a city can hold the name (Washington, D.C.; Georgia, the country)
+    const p = gz.us && gz.us.regs.get("US." + st);
+    return p ? { name: p.name, lat: +p.lat.toFixed(3), lon: +p.lon.toFixed(3), prec: "province" } : null;
   }
 } catch (e) { console.error("gazetteer unavailable, items left unplaced:", e.message); }
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }

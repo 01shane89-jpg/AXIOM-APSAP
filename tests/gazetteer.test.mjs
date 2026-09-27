@@ -50,4 +50,7 @@ for (const [t, cc, want] of cases) {
   const ok = got === want; if (!ok) bad++;
   console.log(ok ? "ok  " : "FAIL", JSON.stringify(t), "->", got, ok ? "" : "(wanted " + want + ")");
 }
+// a state's centre is found by its admin-1 code even where a city holds the state's name
+const hi = gz.us.regs.get("US.HI"); if (!hi || hi.kind !== "region") bad++;
+console.log(hi && hi.kind === "region" ? "ok  " : "FAIL", "state centre by code US.HI ->", hi ? hi.name : null);
 process.exit(bad ? 1 : 0);

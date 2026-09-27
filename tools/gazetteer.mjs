@@ -48,7 +48,7 @@ export function loadGazetteer(get = fetchBuf) {
     if (!txt) throw new Error("gazetteer unzip failed");
     let adm = "";
     try { adm = (await get("https://download.geonames.org/export/dump/admin1CodesASCII.txt")).toString("utf8"); } catch (e) {}
-    const byCc = {}, regions = {};   // cc -> Map(lower name -> place)
+    const byCc = {}, regions = {}, regsBy = {};   // cc -> Map(lower name -> place); regsBy: cc -> Map(admin-1 code -> region)
     const world = new Map();          // lower name -> every town of that name, in any country (to spot ambiguous names)
     const put = (cc, name, p) => {
       const k = name.toLowerCase();
@@ -73,6 +73,7 @@ export function loadGazetteer(get = fetchBuf) {
       const f = line.split("\t"); if (f.length < 3) continue;
       const g = regions[f[0]], cc = ccFromA2(f[0].split(".")[0]); if (!g || !cc) continue;
       const p = { name: f[2] || f[1], lat: g.la / g.w, lon: g.lo / g.w, pop: 0, kind: "region", a1: f[0] };
+      (regsBy[cc] = regsBy[cc] || new Map()).set(f[0], p);
       // both "Kharkiv Oblast" (always the region) and the bare "Kharkiv" (the region unless a town of that name is its seat)
       const suf = /\s+(Province|Region|Governorate|State|Oblast|District|Division|Prefecture|Department)$/i;
       for (const n of new Set([f[1], f[2], f[1].replace(suf, ""), f[2].replace(suf, "")])) put(f[0] === "JP.47" ? "oki" : cc, n, p);
@@ -85,7 +86,7 @@ export function loadGazetteer(get = fetchBuf) {
       // only against another capital.
       for (const p of m.values()) if (p.kind === "city" && !p.amb)
         p.amb = (world.get(p.name.toLowerCase()) || []).some((o) => o.cc !== cc && (o.cap || (!p.cap && o.pop >= 1e6 && o.pop >= 3 * p.pop)));
-      idx[cc] = { m, re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
+      idx[cc] = { m, regs: regsBy[cc] || new Map(), re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
     }
     return idx;
   })();
