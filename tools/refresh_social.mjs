@@ -128,8 +128,17 @@ export function parseYtVideosPage(html, now = Date.now()) {
     seen.add(id);
     out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
   }
+  // newer page layout: "lockupViewModel" blocks with contentId, title.content and a "3 hours ago" metadata part
+  for (const chunk of html.split('"lockupViewModel":{').slice(1, 40)) {
+    const id = (chunk.match(/"contentId":"([\w-]{11})"/) || [])[1], title = (chunk.match(/"title":\{"content":"((?:[^"\\]|\\.)*)"/) || [])[1];
+    const ago = (chunk.match(/"content":"(?:Streamed )?(\d+) (second|minute|hour|day|week|month|year)s? ago"/) || []);
+    if (!id || !title || !ago[1] || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+  }
   return out;
 }
+const ytPageHint = (h) => h.length + " bytes" + ["videoRenderer", "lockupViewModel", "richItemRenderer", "consent.youtube", "ytInitialData"].map((k) => (h.includes(k) ? ", has " : ", no ") + k).join("");
 export function parseYtFeed(xml) {
   const out = [];
   for (const e of xml.split("<entry>").slice(1)) {
@@ -157,9 +166,10 @@ for (const ch of cfg.youtube || []) {
     catch (e) {
       try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed"; }
       catch (e2) {
-        try { vids = parseYtVideosPage(await text("https://www.youtube.com/channel/" + id + "/videos")); via = "videos page"; }
+        let vp;
+        try { vp = await text("https://www.youtube.com/channel/" + id + "/videos"); vids = parseYtVideosPage(vp); via = "videos page"; }
         catch (e3) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + ", videos page " + err(e3) + " (channel " + id + ")"); }
-        if (!vids.length) throw new Error("video feed " + err(e) + "; videos page had no videos (channel " + id + ")");
+        if (!vids.length) throw new Error("video feed " + err(e) + "; videos page had no videos (" + ytPageHint(vp) + ")");
       }
     }
     let n = 0;
