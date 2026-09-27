@@ -77,7 +77,11 @@ export async function run({ conflict, prev, get, sha256, stamp, tgItems, readJs,
         for (const r of csvObjs(await get(url, "text/csv"))) {
           const la = +r.latitude, lo = +r.longitude;
           if (!(la >= south && la <= north && lo >= west && lo <= east) || /^l/i.test(r.confidence || "")) continue;
-          const cc = ccsAt(la, lo, 0)[0]; if (cc !== "ua" && cc !== "ru") continue;
+          // the world outlines have no Russia and miss Crimea: an unmatched point inside the occupied area counts as Ukraine (occupied),
+          // an unmatched point on land east/north of Ukraine as Russia's border regions (keeps out most Black Sea points)
+          let cc = ccsAt(la, lo, 0)[0];
+          if (!cc) cc = occ && inPoly(lo, la, occ) ? "ua" : (la >= 47.3 && lo >= 31.2) || (lo >= 37.5 && la >= 45) ? "ru" : "";
+          if (cc !== "ua" && cc !== "ru") continue;
           const t = (r.acq_date || "") + " " + String(r.acq_time || "").padStart(4, "0").replace(/(\d\d)(\d\d)/, "$1:$2") + "Z";
           pts.push([+la.toFixed(4), +lo.toFixed(4), +(+r.frp || 0).toFixed(1), t, sat, r.daynight === "D" ? "D" : "N", cc, occ && cc === "ua" && inPoly(lo, la, occ) ? 1 : 0]);
         }
