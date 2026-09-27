@@ -1,0 +1,1167 @@
+[
+ {
+  "t": "Template:Russo-Ukrainian war detailed map",
+  "ok": true,
+  "len": 397,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{pp-30-500|small=yes}}\n{{Navbar|Module:Russo-Ukrainian war detailed map}}\n{{Purge page}}\n{{See also|Template:Russo-Ukrainian War detailed relief map|Template:Russo-Ukrainian War detailed map (oblasts)|l1=relief map|l2=oblast maps}}\n{{dark mode problems|date=September 2024}}\n<onlyinclude>\n{{#invoke:"
+ },
+ {
+  "t": "Module:Russo-Ukrainian war overview map",
+  "ok": true,
+  "len": 29135,
+  "invokes": [],
+  "marks": [
+   [
+    "mk.ukr",
+    74
+   ],
+   [
+    "mk.rus",
+    69
+   ],
+   [
+    "mk.con",
+    4
+   ],
+   [
+    "Ukraine Roadmap Overlay.png",
+    1
+   ]
+  ],
+  "legend": [
+   "Pointing hand cursor vector.svg => ; if not, it will show as",
+   "Cursor.svg => ).",
+   "80x80-red-blue-anim.gif => Contested;",
+   "Map-ctl2-red+blue.svg => Stable mixed control",
+   "LACMTA Circle Purple Line.svg => Truce;",
+   "Location dot grey.svg => Uncontrolled-->",
+   "map-circle-blue.svg => Inner controls, outer sieges (or strong enemy pressure);",
+   "map-arcNE-blue.svg => Enemy pressure from one side; small icon within a larger icon: The situation in individual",
+   "Fighter-jet-blue-icon.svg => Airport/air base;",
+   "Helicopter-blue-icon.svg => Heliport/helicopter base;",
+   "Abm-blue-icon.png => Military base;",
+   "Map-peak-blue.svg => Strategic hill;",
+   "Gota03.svg => Oil/gas;",
+   "Icon NuclearPowerPlant-blue.svg => Industrial complex;",
+   "Mountain pass 12x12 n.svg => Border post;",
+   "Anchor pictogram blue.svg => Major port or naval base;",
+   "Arch dam 12x12 w.svg => Dam;",
+   "4x4dot-blue.svg => Rural presence]=]"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "con=80x80-red-blue-anim.gif",
+   "grz=Location dot grey.svg",
+   "rus=Location dot red.svg",
+   "shr=Map-ctl2-red+blue.svg",
+   "ukr=Location dot blue.svg",
+   "mark=Ukraine Roadmap Overlay.png"
+  ],
+  "alias": [
+   "mk = {",
+   "marks = {"
+  ],
+  "head": "-- Marker shortcuts\nmk = {\n\tcon = \"80x80-red-blue-anim.gif\",\n\tgrz = \"Location dot grey.svg\",\n\trus = \"Location dot red.svg\",\n\tshr = \"Map-ctl2-red+blue.svg\",\n\tukr = \"Location dot blue.svg\",\n\n\trNN = \"Map-arcNN-red.svg\",\n\trNE = \"Map-arcNE-red.svg\",\n\trEE = \"Map-arcEE-red.svg\",\n\trSE = \"Map-arcSE-red.svg\","
+ },
+ {
+  "t": "Module:Russo-Ukrainian war detailed map",
+  "ok": true,
+  "len": 184203,
+  "invokes": [],
+  "marks": [
+   [
+    "mk.ukr",
+    459
+   ],
+   [
+    "mk.rus",
+    435
+   ],
+   [
+    "Fighter-jet-blue-icon.svg",
+    53
+   ],
+   [
+    "Fighter-jet-red-icon.svg",
+    12
+   ],
+   [
+    "mk.con",
+    8
+   ],
+   [
+    "Anchor pictogram red.svg",
+    7
+   ],
+   [
+    "Anchor pictogram blue.svg",
+    7
+   ],
+   [
+    "Icon NuclearPowerPlant-red.svg",
+    6
+   ],
+   [
+    "Icon NuclearPowerPlant-blue.svg",
+    4
+   ],
+   [
+    "Abm-blue-icon.png",
+    3
+   ],
+   [
+    "Map-arcSE-red.svg",
+    2
+   ],
+   [
+    "mk.rEE",
+    2
+   ],
+   [
+    "BSicon STR+l blue.svg",
+    1
+   ],
+   [
+    "mk.uSW",
+    1
+   ]
+  ],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=BSicon STR+l blue.svg",
+   "mark=Abm-blue-icon.png",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Icon NuclearPowerPlant-red.svg",
+   "mark=Fighter-jet-red-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-red-icon.svg",
+   "mark=Anchor pictogram red.svg",
+   "mark=Icon NuclearPowerPlant-red.svg",
+   "mark=Map-arcSE-red.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg",
+   "mark=Fighter-jet-blue-icon.svg"
+  ],
+  "alias": [
+   "mark.label_size = sizes[mark.marksize]",
+   "local marks = {"
+  ],
+  "head": "local m = require('Module:Russo-Ukrainian war overview map')\n\nm.marks[1].marksize = 4000\nm.containerArgs.width = 4000\n\nsizes = {[14]=90, [12]=80, [10]=70, [8]=60, [6]=50, [5]=50, [4]=50}\n\nlocal label\nfor i, mark in ipairs(m.marks) do\n\tlabel = mark.label\n\tif label and mark.label_size then\n\t\tlabel = m"
+ },
+ {
+  "t": "Template:2023 Sudan war detailed map",
+  "ok": true,
+  "len": 216,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:2023 Sudanese Clashes detailed map}}\n{{#invoke:Location map/multi|load|Module:2023 Sudanese Clashes detailed map}}<noinclude>\n{{Documentation}}\n<!-- Add categories to the /doc subpage -->\n</noinclude>"
+ },
+ {
+  "t": "Template:Sudanese civil war (2023–present) detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Module:Sudanese civil war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Gaza war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Israel–Hamas war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Gaza Strip detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Module:Gaza war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:2024 Israeli invasion of Lebanon detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Israeli invasion of Lebanon detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:2026 Lebanon war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Israel–Hezbollah conflict detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Yemeni Civil War detailed map",
+  "ok": true,
+  "len": 174,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Yemeni Civil War detailed map}}{{Purge_page}}\n{{#invoke:Location map/multi|load|Module:Yemeni Civil War detailed map}}<noinclude>{{documentation}}</noinclude>"
+ },
+ {
+  "t": "Module:Yemeni Civil War detailed map",
+  "ok": true,
+  "len": 190322,
+  "invokes": [],
+  "marks": [
+   [
+    "Location dot red.svg",
+    449
+   ],
+   [
+    "Dot green 0d0.svg",
+    418
+   ],
+   [
+    "Map-peak-red.svg",
+    132
+   ],
+   [
+    "Map-peak-lime.svg",
+    131
+   ],
+   [
+    "Abm-lime-icon.png",
+    40
+   ],
+   [
+    "Abm-red-icon.png",
+    40
+   ],
+   [
+    "Fighter-jet-red-icon.svg",
+    16
+   ],
+   [
+    "Fighter-jet-lime-icon.svg",
+    7
+   ],
+   [
+    "Anchor pictogram green.svg",
+    5
+   ],
+   [
+    "anchor pictogram red.svg",
+    5
+   ],
+   [
+    "Mountain pass 12x12 n.svg",
+    4
+   ],
+   [
+    "Anchor pictogram red.svg",
+    4
+   ],
+   [
+    "80x80-red-lime-anim.gif",
+    4
+   ],
+   [
+    "gota01.svg",
+    4
+   ]
+  ],
+  "legend": [
+   "Pointing hand cursor vector.svg => ; if not, it will show as",
+   "Cursor.svg => ).",
+   "Location dot red.svg => Internationally recognized",
+   "Map-dot-grey-68a.svg => Sunni jihadists, including",
+   "Location dot black.svg => Under control of",
+   "Location dot blue.svg => Under control of Tribal forces",
+   "4x4dot-red.svg => &nbsp;",
+   "4x4dot-red.svg => &nbsp;",
+   "4x4dot-lime.svg => &nbsp;",
+   "4x4dot-grey.svg => &nbsp;",
+   "4x4dot-blue.svg => &nbsp;",
+   "80x80-red-lime-anim.gif => Pro-Government – Houthis",
+   "80x80-red-black-anim.gif => Pro-Government –",
+   "80x80-red-grey-anim.gif => Pro-Government – Jihadist",
+   "80x80-red-blue-anim.gif => Pro-Government – Tribal forces",
+   "80x80-lime-grey-anim.gif => Houthis – Jihadist",
+   "80x80-lime-black-anim.gif => Houthis –",
+   "80x80-lime-blue-anim.gif => Houthis – Tribal forces",
+   "Map-ctl2-red+yellow.svg => Enemy pressure from one side",
+   "map-arcNW-grey.svg => Inner controls, outer sieges (or strong enemy pressure) ''':'''",
+   "map-circle-grey.svg => Other",
+   "Abm-grey-icon.png => Military base",
+   "Fighter-jet-grey-icon.svg => Airport/Air base (jet)",
+   "Helicopter-grey-icon.svg => Airport/Air base (helicopter)",
+   "Anchor_pictogram.svg => Major port or naval base",
+   "Mountain pass 12x12 n.svg => Border Post",
+   "Arch dam 12x12 w.svg => Dam",
+   "Icon NuclearPowerPlant-grey.svg => Industrial complex",
+   "Gota08.svg => Oil/gas",
+   "Map-peak-grey.svg => Strategic peak/hill"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Dot green 0d0.svg",
+   "mark=Situation in Taizz.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Abm-lime-icon.png",
+   "mark=Abm-lime-icon.png",
+   "mark=Dot green 0d0.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Dot green 0d0.svg",
+   "mark=Location dot red.svg",
+   "mark=Map-peak-lime.svg",
+   "mark=Map-peak-lime.svg",
+   "mark=Map-peak-red.svg",
+   "mark=Map-peak-red.svg",
+   "mark=Map-peak-red.svg",
+   "mark=Map-peak-red.svg",
+   "mark=Map-peak-red.svg",
+   "mark=Map-peak-red.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\n\tmarks = {\n        { lat = \"14.799\", long = \"42.949\", mark = \"Dot green 0d0.svg\", marksize = \"23\", label = \"[[Battle of Al Hudaydah|Al Hudaydah]]\", link = \"Battle of Al Hudaydah\", label_size = \"110\", position = \"left\" },\n\t\t{ lat = \"13.568\", long = \"44\", mark= \"Situation in Taizz.svg\", marks"
+ },
+ {
+  "t": "Template:Myanmar Civil War detailed map",
+  "ok": true,
+  "len": 222,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Myanmar Civil War detailed map}}{{Purge page}}\n{{#invoke:Location map/multi|load|Module:Myanmar Civil War detailed map}}<noinclude>\n{{Documentation}}\n<!-- Add categories to the /doc subpage -->\n</noinclude>"
+ },
+ {
+  "t": "Module:Myanmar Civil War detailed map",
+  "ok": true,
+  "len": 79328,
+  "invokes": [],
+  "marks": [
+   [
+    "Location dot red.svg",
+    219
+   ],
+   [
+    "80x80-red-lime-anim.gif",
+    22
+   ],
+   [
+    "Location dot blue.svg",
+    18
+   ],
+   [
+    "Location dot green.svg",
+    16
+   ],
+   [
+    "Dot green 0d0.svg",
+    11
+   ],
+   [
+    "Dot yellow ff4.svg",
+    8
+   ],
+   [
+    "Location dot ochre200.svg",
+    8
+   ],
+   [
+    "Map-dot-grey-68a.svg",
+    8
+   ],
+   [
+    "Location dot orange.svg",
+    7
+   ],
+   [
+    "Location dot magenta.svg",
+    5
+   ],
+   [
+    "Mountain pass 12x12 se.svg",
+    5
+   ],
+   [
+    "Location dot cyan.svg",
+    5
+   ],
+   [
+    "Mountain pass 12x12 e.svg",
+    3
+   ],
+   [
+    "80x80-red-cyan-anim.gif",
+    3
+   ]
+  ],
+  "legend": [
+   "Pointing hand cursor vector.svg => ; if not, it will show as",
+   "Cursor.svg => ).",
+   "location dot cyan.svg => Karenni Rebels (",
+   "80x80-grey-black-anim.gif => Contested ;",
+   "Map-ctl2-grey+black.svg => Stable mixed control",
+   "map-circle-black.svg => Inner controls, outer sieges (or strong enemy pressure) ;",
+   "map-arcNE-black.svg => Enemy pressure from one side; Small icon within a larger icon: The situation in individual",
+   "Fighter-jet-black-icon.svg => Airport/Air base ;",
+   "Helicopter-black-icon.svg => Heliport/Helicopter base ;",
+   "Abm-black-icon.png => Military base ;",
+   "Map-peak-black.svg => Strategic hill ;",
+   "Gota07.svg => Oil/gas ;",
+   "Icon NuclearPowerPlant-black.svg => Industrial complex ;",
+   "Mountain pass 12x12 n.svg => Border Post ;",
+   "Anchor_pictogram.svg => Major port or naval base ;",
+   "Arch dam 12x12 w.svg => Dam ;",
+   "4x4dot-black.svg => Rural presence]=]"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Myanmar Roadmap.png",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\n\tsecondaryModules = {\n\t},\n\n\t\t\t-- Towns & Villages, for standardization of icon and label sizing\n\t\t\t\t-- dotsize vs population\n\t\t\t\t-- population > 3M\t\t\t\t\t\t\t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t\t-- population < 1M & population > 3M\t\t\t\t\t\t\tsize: 28  \t-- label size: 130\n\t\t\t\t-- population < 1M & po"
+ },
+ {
+  "t": "Template:Syrian Civil War detailed map",
+  "ok": true,
+  "len": 320,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{| style=\" text-align:center; width: 85%;\"\n|-\n! '''Module:Syrian Civil War detailed map'''\n|-\n| {{navbar|Module:Syrian Civil War detailed map}}\n|}\n{{Purge page}}\n{{#invoke:Location map/multi|load|Module:Syrian Civil War detailed map}}<noinclude>\n{{Documentation}}\n<!-- Add categories to the /doc subp"
+ },
+ {
+  "t": "Module:Syrian Civil War detailed map",
+  "ok": true,
+  "len": 956825,
+  "invokes": [],
+  "marks": [
+   [
+    "Map-dot-grey-68a.svg",
+    5660
+   ],
+   [
+    "Map-peak-grey.svg",
+    682
+   ],
+   [
+    "Dot yellow ff4.svg",
+    496
+   ],
+   [
+    "Abm-grey-icon.png",
+    398
+   ],
+   [
+    "Gota08.svg",
+    132
+   ],
+   [
+    "Location dot lime.svg",
+    95
+   ],
+   [
+    "Icon_NuclearPowerPlant-grey.svg",
+    56
+   ],
+   [
+    "Fighter-jet-grey-icon.svg",
+    38
+   ],
+   [
+    "Map-peak-yellow.svg",
+    22
+   ],
+   [
+    "Location dot blue.svg",
+    19
+   ],
+   [
+    "Abm-yellow-icon.png",
+    18
+   ],
+   [
+    "Mountain pass 12x12 se.svg",
+    14
+   ],
+   [
+    "BSicon STRl grey.svg",
+    14
+   ],
+   [
+    "Mountain pass 12x12 n.svg",
+    12
+   ]
+  ],
+  "legend": [
+   "Pointing hand cursor vector.svg => ; if not, it will show as",
+   "Cursor.svg => ).",
+   "80x80-grey-black-anim.gif => Contested;",
+   "Map-ctl2-grey+black.svg => Stable mixed control",
+   "map-circle-black.svg => Inner controls, outer sieges (or strong enemy pressure);",
+   "map-arcNE-black.svg => Enemy pressure from one side; Small icon within a larger icon: The situation in individual",
+   "Fighter-jet-black-icon.svg => Airport/Air base;",
+   "Helicopter-black-icon.svg => Heliport/Helicopter base;",
+   "Abm-black-icon.png => Military base;",
+   "Map-peak-black.svg => Strategic hill;",
+   "Gota07.svg => Oil/gas;",
+   "Icon_NuclearPowerPlant-black.svg => Industrial complex;",
+   "Mountain pass 12x12 n.svg => Border Post;",
+   "Anchor_pictogram.svg => Major port or naval base;",
+   "BSicon STRl black.svg => Dam;",
+   "4x4dot-black.svg => Rural presence"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Syria location map road overlay.svg",
+   "mark=Map-peak-grey.svg",
+   "mark=Map-peak-grey.svg",
+   "mark=Map-peak-grey.svg",
+   "mark=Map-peak-grey.svg",
+   "mark=Map-peak-grey.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Map-dot-grey-68a.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\nmarks = {\n\n-- Detailed minimaps\n{lat= 34.212, long= 38.8, mark= \"Syria location map road overlay.svg\", marksize= 2600}, -- Syria road map\n\n-- Exceptionally important and frontline-marking heights\n{lat= 35.721, long= 36.218, mark= \"Map-peak-grey.svg\", marksize=4, label= \"[[Tal Malik (Heights"
+ },
+ {
+  "t": "Template:Somali Civil War detailed map",
+  "ok": true,
+  "len": 174,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Somali_Civil_War_detailed_map}}{{Purge_page}}\n{{#invoke:Location map/multi|load|Module:Somali Civil War detailed map}}<noinclude>{{documentation}}</noinclude>"
+ },
+ {
+  "t": "Module:Somali Civil War detailed map",
+  "ok": true,
+  "len": 30171,
+  "invokes": [],
+  "marks": [
+   [
+    "Location dot red.svg",
+    50
+   ],
+   [
+    "Map-dot-grey-68a.svg",
+    40
+   ],
+   [
+    "Location dot purple.svg",
+    16
+   ],
+   [
+    "Dot yellow ff4.svg",
+    15
+   ],
+   [
+    "Location dot green.svg",
+    13
+   ],
+   [
+    "Fighter-jet-yellow-icon.svg",
+    4
+   ],
+   [
+    "Location dot black.svg",
+    3
+   ],
+   [
+    "Fighter-jet-red-icon.svg",
+    3
+   ],
+   [
+    "Mountain pass 12x12 se.svg",
+    3
+   ],
+   [
+    "BSicon FIGHTER.svg",
+    2
+   ],
+   [
+    "80x80-red-black-anim.gif",
+    1
+   ],
+   [
+    "Location dot yellow.svg",
+    1
+   ],
+   [
+    "80x80-red-grey-anim.gif",
+    1
+   ],
+   [
+    "Abm-red-icon.png",
+    1
+   ]
+  ],
+  "legend": [
+   "Pointing hand cursor vector.svg => ; if not, it will show as",
+   "Cursor.svg => ).",
+   "Location dot red.svg => Under control of the",
+   "Location dot green.svg => Under control of the",
+   "Location dot purple.svg => Under control of the",
+   "Map-dot-grey-68a.svg => Under control of the",
+   "Dot yellow ff4.svg => Under control of",
+   "Location dot black.svg => Under control of",
+   "Location dot blue.svg => Under control of local forces and unaligned tribes",
+   "80x80-red-grey-anim.gif => Government & Allies - Al-Shabaab",
+   "80x80-red-black-anim.gif => Government & Allies - ISIL",
+   "80x80-grey-black-anim.gif => Al-Shabaab - ISIL",
+   "80x80-red-yellow-anim.gif => Government (Puntland) - Somaliland",
+   "80x80-yellow-black-anim.gif => Somaliland - ISIL",
+   "80x80-yellow-grey-anim.gif => Somaliland - Al-Shabaab",
+   "80x80-blue-black-anim.gif => Local forces - ISIL",
+   "80x80-yellow-blue-anim.gif => Local forces - Somaliland",
+   "80x80-grey-blue-anim.gif => Local forces - Al-Shabaab",
+   "80x80-red-blue-anim.gif => Government & Allies - Local forces",
+   "Abm-blue-icon.png => Army base",
+   "BSicon FIGHTER.svg => Airport or air base (jet)",
+   "Helicopter-blue-icon.svg => Airport or air base (helicopter)",
+   "Anchor_pictogram.svg => Major port, naval base, or oil terminal",
+   "Mountain pass 12x12 n.svg => Border post",
+   "Arch dam 12x12 w.svg => Dam",
+   "Icon NuclearPowerPlant-black.svg => Industrial complex or oilfield",
+   "map-circle-grey.svg => Besieged_one_side"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Dot yellow ff4.svg",
+   "mark=Dot yellow ff4.svg",
+   "mark=Fighter-jet-yellow-icon.svg",
+   "mark=Dot yellow ff4.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Map-dot-grey-68a.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot purple.svg",
+   "mark=Location dot purple.svg",
+   "mark=BSicon FIGHTER.svg",
+   "mark=Location dot black.svg",
+   "mark=Location dot purple.svg",
+   "mark=Location dot black.svg",
+   "mark=Location dot purple.svg",
+   "mark=80x80-red-black-anim.gif",
+   "mark=Location dot purple.svg",
+   "mark=Location dot purple.svg",
+   "mark=Location dot black.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\n\tsecondaryModules = {\n\t},\n\tmarks = {\n\t\t--Towns & Villages\n\t\t\t-- Dotsize vs. Population\n\t\t\t-- Capital          \t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t-- Population 1M +  \t\t\t\t\t\tSize: 28\t-- label size: 130\n\t\t\t-- Population 500K +\t\t\t\t\t\tSize: 24\t-- label size: 120\n\t\t\t-- Population 200K +\t\t\t\t\t\tSize"
+ },
+ {
+  "t": "Template:Libyan Civil War detailed map",
+  "ok": true,
+  "len": 174,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Libyan Civil War detailed map}}{{Purge_page}}\n{{#invoke:Location map/multi|load|Module:Libyan Civil War detailed map}}<noinclude>{{documentation}}</noinclude>"
+ },
+ {
+  "t": "Module:Libyan Civil War detailed map",
+  "ok": true,
+  "len": 72713,
+  "invokes": [],
+  "marks": [
+   [
+    "Dot green ff4.svg",
+    130
+   ],
+   [
+    "Location dot red.svg",
+    128
+   ],
+   [
+    "Gota01.svg",
+    54
+   ],
+   [
+    "Abm-lime-icon.png",
+    26
+   ],
+   [
+    "Fighter-jet-red-icon.svg",
+    19
+   ],
+   [
+    "Fighter-jet-lime-icon.svg",
+    15
+   ],
+   [
+    "4x4dot-green.svg",
+    12
+   ],
+   [
+    "Dot_green_ff4.svg",
+    9
+   ],
+   [
+    "Abm-red-icon.png",
+    8
+   ],
+   [
+    "Icon NuclearPowerPlant-green.svg",
+    6
+   ],
+   [
+    "Gota02.svg",
+    6
+   ],
+   [
+    "Anchor pictogram red.svg",
+    5
+   ],
+   [
+    "Map-peak-lime.svg",
+    4
+   ],
+   [
+    "BSicon STRrf red.svg",
+    3
+   ]
+  ],
+  "legend": [
+   "Location dot red.svg => Under the control of the",
+   "Dot green ff4.svg => Under the control of the",
+   "Location dot blue.svg => Under the control of local tribal forces",
+   "80x80-red-lime-anim.gif => Tobruk Government–Government of National Accord",
+   "80x80-red-black-anim.gif => Tobruk Government–Islamic State of Iraq and the Levant",
+   "80x80-red-blue-anim.gif => Tobruk Government–Local Tribal Forces",
+   "80x80-lime-black-anim.gif => Government of National Accord–Islamic State of Iraq and the Levant",
+   "80x80-lime-blue-anim.gif => Government of National Accord–Local Tribal Forces",
+   "80x80-blue-black-anim.gif => Islamic State of Iraq and the Levant–Local Tribal Forces",
+   "map-ctl2-black+blue.svg => Besieged to one side",
+   "map-arcNW-blue.svg => Besieged",
+   "map-circle-blue.svg => Other",
+   "Abm-red-icon.png => Military base",
+   "Fighter-jet-red-icon.svg => Airport/Airbase (jet)",
+   "Helicopter-red-icon.svg => Airport/Airbase (helicopter)",
+   "Abm-lime-icon.png => Military base",
+   "Fighter-jet-lime-icon.svg => Airport/Airbase (jet)",
+   "Helicopter-lime-icon.svg => Airport/Airbase (helicopter)",
+   "Anchor_pictogram.svg => Major port or naval base",
+   "Mountain pass 12x12 n.svg => Border Post",
+   "Arch dam 12x12 w.svg => Dam",
+   "Gota07.svg => Oil fields",
+   "Icon NuclearPowerPlant-black.svg => Industrial complex",
+   "Map-peak-blue.svg => Strategic peak/hill",
+   "4x4dot-red.svg => Presence of the",
+   "4x4dot-lime.svg => Presence of the",
+   "4x4dot-black.svg => Presence of the",
+   "4x4dot-blue.svg => Presence of local tribal forces"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Mountain pass 12x12 se.svg",
+   "mark=Mountain pass 12x12 ne.svg",
+   "mark=Mountain pass 12x12 se.svg",
+   "mark=Mountain pass 12x12 n.svg",
+   "mark=Mountain pass 12x12 e.svg",
+   "mark=Mountain pass 12x12 n.svg",
+   "mark=Location dot red.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg",
+   "mark=Dot green ff4.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\n\tmarks = {\n\t\t--Border crossings\n\t\t{ lat = \"30.133\", long = \"9.400\", mark = \"Mountain pass 12x12 se.svg\", marksize = \"18\", label = \"[[Ghadames|Ghadames Border Crossing]]\", link = \"Ghadames\", label_size = \"0\" },\n\t\t{ lat = \"24.713\", long = \"10.206\", mark = \"Mountain pass 12x12 ne.svg\", marksiz"
+ },
+ {
+  "t": "Template:Mali War detailed map",
+  "ok": true,
+  "len": 158,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Mali War detailed map}}{{Purge_page}}\n{{#invoke:Location map/multi|load|Module:Mali War detailed map}}<noinclude>{{documentation}}</noinclude>"
+ },
+ {
+  "t": "Module:Mali War detailed map",
+  "ok": true,
+  "len": 23453,
+  "invokes": [],
+  "marks": [
+   [
+    "Location dot red.svg",
+    69
+   ],
+   [
+    "Map-dot-grey-68a.svg",
+    8
+   ],
+   [
+    "Dot green 0d0.svg",
+    7
+   ],
+   [
+    "Location dot black.svg",
+    5
+   ],
+   [
+    "Dot yellow ff4.svg",
+    4
+   ],
+   [
+    "3x3dot-grey.svg",
+    3
+   ],
+   [
+    "4x4dot-grey.svg",
+    3
+   ],
+   [
+    "4x4dot-black.svg",
+    2
+   ],
+   [
+    "Map-circle-grey.svg",
+    2
+   ],
+   [
+    "Mali Roadmap Transparency.png",
+    1
+   ],
+   [
+    "80x80-red-green-anim.gif",
+    1
+   ],
+   [
+    "Icon NuclearPowerPlant-red.svg",
+    1
+   ],
+   [
+    "Map-ctl2-red+yellow.svg",
+    1
+   ],
+   [
+    "Map-circle-black.svg",
+    1
+   ]
+  ],
+  "legend": [
+   "Location dot red.svg => Under control of the",
+   "Dot yellow ff4.svg => Under control of the Plateforme (",
+   "Dot green 0d0.svg => Under control of",
+   "Map-dot-grey-68a.svg => Under control of",
+   "Location dot black.svg => Under control of",
+   "Abm-yellow-icon.png => Army base",
+   "Fighter-jet-yellow-icon.svg => Airport or air base (jet)",
+   "Helicopter-yellow-icon.svg => Airport or air base (helicopter)",
+   "Anchor_pictogram.svg => Major port, naval base, or oil terminal",
+   "Mountain pass 12x12 n.svg => Border post",
+   "Arch dam 12x12 w.svg => Dam",
+   "Icon NuclearPowerPlant-black.svg => Industrial complex",
+   "3x3dot-red.svg => &nbsp;",
+   "3x3dot-yellow.svg => &nbsp;",
+   "3x3dot-lime.svg => &nbsp;",
+   "3x3dot-grey.svg => &nbsp;",
+   "3x3dot-black.svg => Rural presence",
+   "map-circle-yellow.svg => Besieged one side"
+  ],
+  "leg2": [],
+  "aliasDefs": [
+   "mark=Mali Roadmap Transparency.png",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=3x3dot-grey.svg",
+   "mark=80x80-red-green-anim.gif",
+   "mark=4x4dot-grey.svg",
+   "mark=Location dot red.svg",
+   "mark=Location dot red.svg",
+   "mark=Dot yellow ff4.svg",
+   "mark=Dot yellow ff4.svg",
+   "mark=Icon NuclearPowerPlant-red.svg",
+   "mark=4x4dot-black.svg",
+   "mark=4x4dot-black.svg",
+   "mark=Location dot red.svg"
+  ],
+  "alias": [
+   "marks = {"
+  ],
+  "head": "return {\n\tsecondaryModules = {\n\t},\n\tmarks = {\n\t\t\t--Towns & Villages\n\t\t\t-- Dotsize vs. Population\n\t\t\t-- Capital          \t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t-- Population 1M +  \t\t\t\t\t\tSize: 28\t-- label size: 130\n\t\t\t-- Population 500K +\t\t\t\t\t\tSize: 24\t-- label size: 120\n\t\t\t-- Population 200K +\t\t\t\t\t\tSiz"
+ },
+ {
+  "t": "Template:Burkina Faso insurgency detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Jihadist insurgency in Burkina Faso detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:M23 offensive detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:M23 campaign (2022–present) detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Kivu conflict detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Eastern Congo detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Afghanistan–Pakistan war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:2026 Afghanistan–Pakistan war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Insurgency in Khyber Pakhtunkhwa detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Insurgency in Balochistan detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Boko Haram insurgency detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Islamist insurgency in Nigeria detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:War in Amhara detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Ethiopian civil conflict (2018–present) detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Haitian gang war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Insurgency in Cabo Delgado detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Anglophone Crisis detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Central African Republic Civil War detailed map",
+  "ok": true,
+  "len": 213,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{navbar|Module:Central_African_Republic_Civil_War_detailed_map}}{{Purge_page}}\n{{#invoke:Location map/multi|load|Module:Central African Republic Civil War detailed map}}\n<noinclude>\n{{documentation}}\n</noinclude>"
+ },
+ {
+  "t": "Template:South Sudanese conflict detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Colombian conflict detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Mexican drug war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:2026 Iran war detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Cambodian–Thai border crisis detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:2025 Cambodia–Thailand border conflict detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Manipur violence detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Naxalite–Maoist insurgency detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Iraqi insurgency (2017–present) detailed map",
+  "ok": false,
+  "error": "HTTP 404"
+ },
+ {
+  "t": "Template:Syrian, Iraqi, and Lebanese insurgencies detailed map",
+  "ok": true,
+  "len": 169,
+  "invokes": [
+   "Location map/multi"
+  ],
+  "marks": [],
+  "legend": [],
+  "leg2": [],
+  "aliasDefs": [],
+  "alias": [],
+  "head": "{{Purge_page}}{{#invoke:Location map/multi|load|Module:Syrian,_Iraqi,_and_Lebanese_insurgencies_detailed_map}}<noinclude>{{documentation}}</noinclude>\n{{Convert to SVG}}"
+ }
+]
