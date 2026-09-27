@@ -164,13 +164,13 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'deepsouth') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'deepsouth') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/social.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/social.js data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
         continue-on-error: true
