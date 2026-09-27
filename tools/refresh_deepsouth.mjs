@@ -110,12 +110,20 @@ try {
   const h = await get("https://ucdp.uu.se/downloads/", "text/html");
   const since = new Date(Date.now() - 400 * 864e5), names = [...new Set([...h.matchAll(/candidateged\/(GEDEvent_v(\d+)_0_(\d+)\.csv)/g)].map((m) => m[1]))]
     .map((n) => { const m = n.match(/v(\d+)_0_(\d+)/); return { n, d: new Date(Date.UTC(2000 + +m[1], +m[2] - 1, 28)) }; }).filter((x) => x.d >= since).sort((a, b) => a.d - b.d);
-  const newest = names.length ? names[names.length - 1].n : "";
+  // The downloads page links only the newest months; earlier monthly files keep the same name pattern, so ask for those too.
+  for (let t = new Date(since); t < new Date(); t.setUTCMonth(t.getUTCMonth() + 1)) {
+    const n = "GEDEvent_v" + String(t.getUTCFullYear()).slice(2) + "_0_" + (t.getUTCMonth() + 1) + ".csv";
+    if (!names.some((x) => x.n === n)) names.push({ n, d: new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), 28)), guess: true });
+  }
+  names.sort((a, b) => a.d - b.d);
+  const listed = names.filter((x) => !x.guess), newest = listed.length ? listed[listed.length - 1].n : "", missing = [];
   let read = 0;
   for (const { n } of names) {
     if (ucdpFiles.has(n) && n !== newest) continue;   // the newest file is re-read each run: UCDP revises it
     const url = "https://ucdp.uu.se/downloads/candidateged/" + n;
-    const rows = csvRows(await get(url, "text/csv")), head = rows.shift().map((x) => x.trim()), ix = (k) => head.indexOf(k);
+    let csv = "";
+    try { csv = await get(url, "text/csv"); } catch (e) { missing.push(n + " (" + e.message + ")"); continue; }
+    const rows = csvRows(csv), head = rows.shift().map((x) => x.trim()), ix = (k) => head.indexOf(k);
     if (["latitude", "longitude", "date_start", "best", "country"].some((k) => ix(k) < 0)) throw new Error("unexpected columns in " + n);
     for (const r of rows) {
       if (!/thailand/i.test(r[ix("country")] || "")) continue;
@@ -127,14 +135,14 @@ try {
     }
     ucdpFiles.add(n); read++;
   }
-  Object.assign(ucdpStatus, { ok: true, files: names.map((x) => x.n), read, n: ucdp.size });
+  Object.assign(ucdpStatus, { ok: true, files: [...ucdpFiles], read, missing, n: ucdp.size });
 } catch (e) { ucdpStatus.error = e.name === "AbortError" ? "timed out" : e.message; }
 status.push(ucdpStatus);
 
 if (PROBE) {
   fs.mkdirSync("probe-out", { recursive: true });
   fs.writeFileSync("probe-out/deepsouth.json", JSON.stringify({ at: stamp, feeds: probe, ucdp: ucdpStatus, ucdp_sample: [...ucdp.values()].slice(-5) }, null, 1));
-  probe.forEach((p) => console.log(p.ok ? "ok  " : "FAIL", p.id, p.ok ? p.items + " items, " + p.kept + " Deep South, newest " + p.newest : p.error));
+  probe.forEach((p) => { console.log(p.ok ? "ok  " : "FAIL", p.id, p.ok ? p.items + " items, " + p.kept + " Deep South, newest " + p.newest : p.error); if (p.ok) p.kept_sample.forEach((t) => console.log("      kept:", t.slice(0, 110))); });
   console.log("UCDP:", JSON.stringify(ucdpStatus));
   process.exit(0);
 }
