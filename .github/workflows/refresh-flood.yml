@@ -26,12 +26,43 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # Translation runs on the job's own CPU with Google's open MADLAD-400 model (tools/mt/madlad.py, Apache-2.0): no key,
+      # no quota. The converted model (about 3 GB) is kept in the Actions cache, so the conversion only runs when that is empty.
+      - uses: actions/setup-python@v5
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        with:
+          python-version: "3.11"
+      - name: Restore the translation model
+        id: mt-cache
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/osap-mt
+          key: madlad400-3b-mt-ct2-int8-v1
+      - name: Install the translation runtime
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
+        continue-on-error: true
+      - name: Convert the translation model (only when the cache is empty)
+        if: ${{ (!inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social') && steps.mt-cache.outputs.cache-hit != 'true' }}
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo mkdir -p /mnt/hf && sudo chown "$USER" /mnt/hf && export HF_HOME=/mnt/hf
+          # the source weights are one 11.7 GB float32 file: add swap so the runner can map it
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 >/dev/null && sudo swapon /swapfile2
+          sudo sysctl -q vm.overcommit_memory=1
+          df -h / /mnt | tail -2; free -g
+          python -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --quiet "transformers>=4.40,<5" huggingface_hub protobuf sentencepiece
+          python tools/mt/setup_madlad.py
+          rm -rf /mnt/hf
+        continue-on-error: true
       - name: Pull ThaiWater feeds
         if: ${{ !inputs.only || inputs.only == 'flood' }}
         run: node tools/refresh_flood.mjs
@@ -60,12 +91,17 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'storms' }}
         run: node tools/refresh_storms.mjs
         continue-on-error: true
+      - name: Report translation coverage
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        run: node tools/mt/coverage.mjs
+        continue-on-error: true
       - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
         if: ${{ inputs.only == 'probe' }}
         run: node tools/probe_storms.mjs
         continue-on-error: true
+      # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' }}
+        if: ${{ inputs.only != 'probe' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live; then echo "no change"; exit 0; fi
