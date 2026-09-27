@@ -42,6 +42,27 @@
   "attribution": "Headline only (article body not retrieved)"
  },
  {
+  "layer": "infra",
+  "date": "2026-01-29",
+  "date_is_pub": true,
+  "kind": "other",
+  "title": "TotalEnergies restarts its $20bn LNG project after a 5-year freeze",
+  "detail": "Headline only: the article body was not retrieved. Figures are as reported in the headline.",
+  "place": "Nationwide",
+  "district": null,
+  "prov": "Cabo Delgado",
+  "lat": null,
+  "lon": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": null,
+  "src": "https://www.aljazeera.com/news/2026/1/29/total-restarts-20bn-lng-project-in-mozambique-after-five-year-freeze",
+  "srcname": "Al Jazeera",
+  "attribution": "Headline only (article body not retrieved)"
+ },
+ {
   "layer": "weather",
   "date": "2026-02-15",
   "date_is_pub": true,
@@ -104,5 +125,26 @@
   "srcname": "Xinhua",
   "attribution": "Headline only (article body not retrieved)",
   "people": 1000000
+ },
+ {
+  "layer": "insurgency",
+  "date": "2026-08-26",
+  "date_is_pub": true,
+  "kind": "other",
+  "title": "Surging violence in northern Mozambique worsens the displacement crisis",
+  "detail": "Headline only: the article body was not retrieved. Figures are as reported in the headline.",
+  "place": "Nationwide",
+  "district": null,
+  "prov": "Cabo Delgado",
+  "lat": null,
+  "lon": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": null,
+  "src": "https://www.aljazeera.com/news/2026/8/26/why-northern-mozambiques-surging-violence-is-worsening-displacement-crisis",
+  "srcname": "Al Jazeera",
+  "attribution": "Headline only (article body not retrieved)"
  }
 ]
