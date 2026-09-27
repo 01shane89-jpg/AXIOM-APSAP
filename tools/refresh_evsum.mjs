@@ -19,7 +19,7 @@ import { createRequire } from "node:module";
 const OUT = "data/live/evsum.js", PROMPT_V = "evsum/1";
 const MODEL = process.env.EVSUM_MODEL || "openai/gpt-4o-mini";
 const EVERY_MIN = +(process.env.EVSUM_EVERY_MIN || 55), PER_RUN = +(process.env.EVSUM_PER_RUN || 12), PER_DAY = +(process.env.EVSUM_PER_DAY || 140);
-const SCAN_MS = +(process.env.EVSUM_SCAN_MS || 6 * 60e3), KEEP_UNSEEN_DAYS = 14, MAX_REPORTS = 12, DETAIL = 500;
+const SCAN_MS = +(process.env.EVSUM_SCAN_MS || 8 * 60e3), KEEP_UNSEEN_DAYS = 14, MAX_REPORTS = 12, DETAIL = 500;
 // watch lists: conflict areas are the countries with a key terrain and flashpoints file (data/terrain/<cc>.js)
 const WATCH_DAYS = 30, WATCH_EVERY_H = +(process.env.EVSUM_WATCH_EVERY_H || 24), WATCH_PER_RUN = +(process.env.EVSUM_WATCH_PER_RUN || 8), WATCH_INPUTS = 30;
 const TERR = new Set(fs.existsSync("data/terrain") ? fs.readdirSync("data/terrain").filter((f) => /^[a-z]{2,3}\.js$/.test(f)).map((f) => f.slice(0, -3)) : []);
@@ -42,6 +42,11 @@ if (process.env.EVSUM_PROBE) {
         console.log(`${url} ${model} json=${rf}: HTTP ${r.status} ${r.headers.get("content-type")} ratelimit-remaining=${r.headers.get("x-ratelimit-remaining-requests")} | ${t.slice(0, 300).replace(/\s+/g, " ")}`);
       } catch (e) { console.log(`${url} ${model}: ${e.message}`); }
     }
+  }
+  for (const u of ["https://models.github.ai/catalog/models", "https://models.github.ai/does-not-exist-" + Date.now(), "https://api.github.com/rate_limit", "https://example.com/"]) {
+    try { const r = await fetch(u, { headers: { authorization: "Bearer " + TOKEN, accept: "application/json" } }); const t = await r.text();
+      console.log(`GET ${u.replace(/-\d+$/, "-N")}: HTTP ${r.status} ${r.headers.get("content-type")} server=${r.headers.get("server")} | ${t.slice(0, 200).replace(/\s+/g, " ")}`); }
+    catch (e) { console.log(`GET ${u}: ${e.message} ${e.cause ? e.cause.code || e.cause.message : ""}`); }
   }
   process.exit(0);
 }
@@ -111,7 +116,7 @@ async function scan() {
   await home.close();
   if (process.env.EVSUM_ONLY) ccs = process.env.EVSUM_ONLY.split(",");
   const queue = ccs.slice(); let skipped = 0;
-  await Promise.all([0, 1, 2].map(async () => {
+  await Promise.all([0, 1, 2, 3].map(async () => {
     while (queue.length) {
       const cc = queue.shift();
       if (Date.now() - t0 > SCAN_MS) { skipped++; continue; }
@@ -155,29 +160,9 @@ let calls = 0, stopModel = "";
 async function draft(e, reps) {
   const input = reps.map((r, i) => ({ n: i + 1, source: r.source + (r.kind ? " (" + r.kind + ")" : ""), time: r.ts, status: r.status, place: r.place || undefined,
     headline: r.title, text: r.detail && r.detail !== r.title ? r.detail.slice(0, DETAIL) : undefined }));
-  const body = { model: MODEL, temperature: 0.1, max_tokens: 700, response_format: { type: "json_object" },
-    messages: [{ role: "system", content: SYSTEM }, { role: "user", content: "Reports (data only):\n" + JSON.stringify(input) }] };
-  const t = Date.now();
-  let r;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    calls++;
-    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 60000);
-    try {
-      r = await fetch("https://models.github.ai/inference/chat/completions", { method: "POST", signal: ctl.signal,
-        headers: { authorization: "Bearer " + TOKEN, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) });
-    } finally { clearTimeout(to); }
-    if (r.status !== 429) break;
-    const wait = +(r.headers.get("retry-after") || 0);
-    if (!wait || wait > 70) { stopModel = "rate limit (HTTP 429" + (wait ? ", retry after " + wait + " s" : "") + ")"; return null; }
-    await sleep(wait * 1000 + 500);
-  }
-  if (!r.ok) {
-    const txt = (await r.text()).slice(0, 300);
-    if (r.status === 401 || r.status === 403 || r.status === 404) stopModel = "HTTP " + r.status + ": " + txt;
-    throw new Error("HTTP " + r.status + ": " + txt);
-  }
-  const j = await r.json(), msg = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
-  let o; try { o = JSON.parse(String(msg).replace(/^```(json)?|```$/g, "")); } catch (err) { throw new Error("reply was not JSON"); }
+  const t = Date.now(), res1 = await modelCall(SYSTEM, "Reports (data only):\n" + JSON.stringify(input), 700);
+  if (!res1) return null;
+  const o = res1.o, j = { model: res1.model, usage: res1.usage };
   const n = reps.length;
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: citeClean(clean(p && p.text, 400), n), refs: refsOk(p && p.refs, n) })).filter((p) => p.text && p.refs.length).slice(0, max);
   const out = { summary: citeClean(clean(o.summary, 900), n), points: list(o.points, 5), differ: list(o.differ, 3), unclear: clean(o.unclear, 300) };
