@@ -31,7 +31,7 @@
   /* ---------- styles: while a conflict tab is open, the other tabs' rails, report list and map marks are hidden, not removed ---------- */
   var css = D.createElement("style");
   css.textContent = [
-    "html[data-cf] .rail>:not(#cf-rail):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg,html[data-cf] #map .lgctl{display:none!important}",
+    "html[data-cf] .rail>:not(#cf-rail):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane){visibility:hidden}",
@@ -308,6 +308,7 @@
         return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: 5, color: "#fff", weight: 1.5, fillColor: "#1D5A86", fillOpacity: 0.9 }).bindPopup(repHtml(i, true), { maxWidth: 340 });
       })).addTo(map);
     }
+    mapLegend();
   }
   // a place name from a map module can carry layout padding (&nbsp;)
   function pname(p) { return String(p.n || "").replace(/&nbsp;|\u00a0/g, " ").trim() || "Unnamed place"; }
@@ -318,6 +319,31 @@
     var c = f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
     return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
       (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
+  }
+  // the key to what drawMap put on the map; shown in the map's own legend while this tab's panel is open
+  function mapLegend() {
+    if (!W.OSAP_LEGEND) return;
+    var f = cur.front, d = cur.data, h = [];
+    function row(col, txt, sub, ring) { return '<div class="lg"><span class="sw round" style="background:' + (ring ? "transparent;border:2.5px solid " + col : col) + '"></span><div>' + esc(txt) + (sub ? '<span class="d">' + esc(sub) + "</span>" : "") + "</div></div>"; }
+    function sq(col, txt, sub, dash) { return '<div class="lg"><span class="sw" style="background:' + col + ';opacity:.55' + (dash ? ";border:1.5px dashed " + col : "") + '"></span><div>' + esc(txt) + (sub ? '<span class="d">' + esc(sub) + "</span>" : "") + "</div></div>"; }
+    if (f && f.current && F.show.front) {
+      var cu = f.current;
+      if (cu.kind === "areas") {
+        var seen = {}, feats = (cu.areas && cu.areas.features) || [];
+        if (feats.some(function (x) { return x.properties && x.properties.name; })) {
+          h.push("<h3>Zones (reported, not verified)</h3>");
+          feats.forEach(function (x) { var p = x.properties || {}, k = p.ctl + "|" + p.col; if (seen[k]) return; seen[k] = 1; h.push(sq(/^#[0-9a-f]{3,8}$/i.test(p.col || "") ? p.col : "#C0392B", AREAN[p.ctl] || p.ctl || "Area", "", p.ctl === "threat")); });
+        } else h.push("<h3>Front line</h3>" + sq("#C0392B", Object.keys(cu.km2 || {})[0] || "Area of control", "As " + srcName(f, cu.source) + " shows it; reported, not verified"));
+        if (F.show.prev && f.previous) h.push('<div class="lg"><span class="sw" style="background:transparent;border:1.5px dashed #555"></span><div>Previous version</div></div>');
+      } else if (cu.kind === "places") {
+        var cnt = {}; (cu.places || []).forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
+        h.push("<h3>Towns, by who holds them (as the source shows)</h3>" + Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (k) {
+          return row(ctlColour(k), legendName(f, k) + " (" + num(cnt[k]) + ")", "", /^contested/.test(k)); }).join(""));
+      }
+    }
+    if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
+    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified"));
+    W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }
   var TNAME = { airfield: "airfield", heliport: "heliport", base: "military base", port: "port", hill: "strategic hill", industrial: "industrial site", oil_gas: "oil or gas site", dam: "dam", border_post: "border post", contested: "contested", besieged: "besieged or under pressure", rural: "rural presence" };
   function srcName(f, id) { var s = (f.sources || []).filter(function (x) { return x.id === id; })[0]; return s ? s.name : id; }
@@ -397,8 +423,7 @@
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
       '<label><input type="checkbox" data-cfshow="ucdp"' + (F.show.ucdp ? " checked" : "") + "> UCDP events</label>" +
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
-      '<div class="cfm"><span class="lg" style="background:' + TYPEC[1] + '"></span>state-based <span class="lg" style="background:' + TYPEC[2] + '"></span>non-state <span class="lg" style="background:' + TYPEC[3] +
-      '"></span>against civilians (UCDP; size = deaths) <span class="lg" style="background:#1D5A86"></span>report placed by the place it names</div>' +
+      '<div class="cfm">What each colour means is in the legend on the map.</div>' +
       '<div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
         return '<option value="' + p[0] + '"' + (F.days === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select>" +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
@@ -453,9 +478,7 @@
           "</b><span>change at the last version</span></div></div>");
       } else {
         var cnt = {}; cu.places.forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
-        h.push('<div class="cfm">' + Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (k) {
-          return '<span style="white-space:nowrap"><span class="lg" style="background:' + ctlColour(k) + '"></span>' + esc(legendName(f, k)) + " " + cnt[k] + "</span>"; }).join(" · ") + "</div>" +
-          '<p class="cfnote">Towns as marked on the source’s map; the colour stands for the side that holds each town as the source shows it.</p>');
+        h.push('<p class="cfnote">Towns as marked on the source’s map; the colour stands for the side that holds each town as the source shows it (legend on the map).</p>');
       }
       var changes = (f.versions || []).filter(function (x) { return x.changes && x.changes.length; }).slice(0, 5);
       if (changes.length) h.push("<details><summary>Towns that changed hands (as the source shows)</summary><table><tbody>" + changes.map(function (x) {

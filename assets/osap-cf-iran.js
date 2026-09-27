@@ -118,9 +118,7 @@
       h += '<h3>More on the map</h3><div class="cfi-tog">' +
         tog("places", "Bases, facilities and chokepoints (" + X.places.length + ")", "#2F6FB5", true) +
         tog("navw", "Navigational warnings in the area (live, NGA)", "#1D5A86", false) +
-        tog("hist", "Earlier reports in the chosen period (web search)", "#B3261E", false) + "</div>" +
-        '<p><small><span class="cfi-dot" style="background:' + SIDE.us.col + '"></span>' + SIDE.us.name + ' &nbsp; <span class="cfi-dot" style="background:' + SIDE.ir.col + '"></span>' + SIDE.ir.name +
-        ' &nbsp; <span class="cfi-dot" style="background:' + SIDE.neutral.col + '"></span>' + SIDE.neutral.name + "</small></p>";
+        tog("hist", "Earlier reports in the chosen period (web search)", "#B3261E", false) + "</div>";
 
       var ph = X.phases || [];
       if (ph.length) {
@@ -195,6 +193,17 @@
       function set(k, on) {
         if (on && !layers[k]) layers[k] = BUILD[k]();
         if (layers[k]) { if (on) layers[k].addTo(map); else map.removeLayer(layers[k]); }
+        legend();
+      }
+      // the key to these extra layers goes in the map's legend, under the tab's own, while this panel is shown
+      function legend() {
+        if (!W.OSAP_LEGEND) return;
+        var on = function (k) { return layers[k] && map.hasLayer(layers[k]); }, h = "";
+        function row(col, txt, ring) { return '<div class="lg"><span class="sw round" style="background:' + (ring ? "transparent;border:2px solid " + col : col) + '"></span><div>' + esc(txt) + "</div></div>"; }
+        if (on("places") || on("hist")) h += "<h3>" + (on("places") ? "Bases, facilities" + (on("hist") ? " and earlier reports" : "") : "Earlier reports") + ", by side</h3>" +
+          row(SIDE.us.col, SIDE.us.name) + row(SIDE.ir.col, SIDE.ir.name) + row(SIDE.neutral.col, SIDE.neutral.name);
+        if (on("navw")) h += "<h3>Navigational warnings</h3>" + '<div class="lg"><span class="sw" style="background:rgba(29,90,134,.12);border:1px solid #1D5A86"></span><div>Warning area (NGA)</div></div>';
+        W.OSAP_LEGEND.set("cf-iran", h, box);
       }
       Array.prototype.forEach.call(box.querySelectorAll("input[data-cfi]"), function (i) {
         set(i.getAttribute("data-cfi"), i.checked);
@@ -205,6 +214,7 @@
         if (D.body.contains(box) && box.querySelector(".cfi") && !box.closest("[hidden]")) return;
         clearInterval(watch); gone = true;
         Object.keys(layers).forEach(function (k) { map.removeLayer(layers[k]); }); layers = {};
+        if (W.OSAP_LEGEND) W.OSAP_LEGEND.set("cf-iran", "");
       }, 800);
     }
     function tog(k, label, col, on) {
