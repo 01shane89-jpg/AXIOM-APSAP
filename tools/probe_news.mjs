@@ -56,6 +56,7 @@ try {
   const pick = Object.entries(byAgency).map(([a, langs]) => a + "-" + (langs.includes("en") ? "en" : langs[0]));
   cap.feeds = await pool(pick, 8, (k) => check({ cc: k.slice(0, 2), key: k, url: cap.url + k + "/rss.xml" }));
 } catch (e) { cap.error = e.message; }
+fs.mkdirSync("probe-out", { recursive: true });
 fs.writeFileSync("probe-out/news-probe.json", JSON.stringify({ at: new Date().toISOString(), results, agg, cap }, null, 1));
 const ok = results.filter((r) => r.n > 0);
 console.log("feeds answering with items:", ok.length, "/", results.length, "; countries:", new Set(ok.map((r) => r.cc)).size);

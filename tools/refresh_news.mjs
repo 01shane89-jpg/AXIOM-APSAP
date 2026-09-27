@@ -8,6 +8,7 @@ import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
+import { COUNTRIES } from "./geo_cc.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -104,7 +105,9 @@ async function readFeed(f) {
       const link = f.search ? unwrap(i.link) : i.link;
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
-      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS", state: !!f.state };
+      // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
+      const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
+      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang, via: f.search ? "search" : "RSS", state: !!f.state };
       if (f.nc) o.nc = true;
       return o;
     });
@@ -115,6 +118,24 @@ const byHost = {};
 for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
 const hosts = Object.values(byHost);
 await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) { await readFeed(f); if (f.search) await sleep(1000); } }));   // a second between searches on the same engine
+// Every country in the picker must have news. Any country left with no working source this run (its outlets down,
+// or an empty search) gets a Bing News search for its name, tried quoted and then plain; marked as a search like the others.
+const working = () => new Set(status.filter((s) => s.ok && s.n > 0).map((s) => s.cc));
+for (const c of COUNTRIES) {
+  if (c.id === "oki" || working().has(c.id)) continue;
+  for (const q of ['"' + c.name + '"', c.name]) {
+    const url = "https://www.bing.com/news/search?q=" + encodeURIComponent(q) + "&format=rss";
+    if (feeds.some((f) => f.url === url)) continue;
+    await readFeed({ cc: c.id, outlet: "Bing News search (fallback)", url, lang: "en", search: true, nc: true });
+    await sleep(1000);
+    if (working().has(c.id)) break;
+  }
+}
+// Coverage: how many countries have at least one working news source this run, and which have none.
+const ok = working(), ids = COUNTRIES.map((c) => c.id);
+const coverage = { countries: ids.length, with: ids.filter((i) => ok.has(i)).length, none: ids.filter((i) => !ok.has(i)) };
+console.log("news coverage: " + coverage.with + " of " + coverage.countries + " countries have a working source" + (coverage.none.length ? "; none for " + coverage.none.join(" ") : ""));
+if (coverage.none.length) console.log("::warning::No working news source this run for " + coverage.none.join(", "));
 // Okinawa shares Japan's outlets: keep the Japanese items that name the islands
 if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
 for (const cc of Object.keys(items)) {
@@ -181,7 +202,7 @@ try {
 } catch (e) { console.error("gazetteer unavailable, items left unplaced:", e.message); }
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
-fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
+fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, coverage, items }).replace(/<\//g, "<\\/") + ";\n");
 try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
 console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));
