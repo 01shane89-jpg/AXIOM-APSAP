@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement); empty runs all"
         required: false
         default: ""
 
@@ -155,6 +155,9 @@ jobs:
         if: ${{ inputs.only == 'probe-news' || inputs.only == 'probe-cap' }}
         run: CAP_ONLY=${{ inputs.only == 'probe-cap' && '1' || '' }} node tools/probe_news.mjs
         continue-on-error: true
+      - name: Re-place current news with the place rules and compare (diagnostic, writes nothing to the repo)
+        if: ${{ inputs.only == 'probe-placement' }}
+        run: node tools/probe_placement.mjs
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
         run: node tools/probe_dense.mjs
@@ -183,7 +186,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
