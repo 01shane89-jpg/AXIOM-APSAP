@@ -1,0 +1,108 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "dj",
+ "country": "Djibouti",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 2,
+  "level_text": "Exercise increased caution",
+  "issued": "2025-03-06",
+  "updated": null,
+  "indicators": [
+   "T"
+  ],
+  "indicator_names": [
+   "terrorism"
+  ],
+  "areas": [],
+  "notes": "From the State Department advisory feed (Djibouti - Level 2: Exercise Increased Caution). Indicators are the risks the advisory text names, not its indicator icons; area-specific levels are not captured here, so read the advisory.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/djibouti-travel-advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "ff63fc4834ea2e50e7c22f44a32be227bd98e3aea8f7d9f1c04a50b148114bc6"
+ },
+ "posts": [],
+ "airports": [
+  {
+   "id": "sof:dj:airport:hdam",
+   "name": "Djibouti-Ambouli Airport",
+   "icao": "HDAM",
+   "ident": "HDAM",
+   "iata": "JIB",
+   "type": "large_airport",
+   "municipality": "Djibouti City",
+   "region": "DJ-DJ",
+   "scheduled_service": true,
+   "lat": 11.5473,
+   "lon": 43.1595,
+   "prec": "exact",
+   "elevation_ft": 49,
+   "longest_runway": {
+    "ident": "09/27",
+    "length_ft": 10335,
+    "length_m": 3150,
+    "width_ft": 148,
+    "surface": "PEM"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/HDAM/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "fe30f9176839f80336caa80bb3a0e8cd65d4b3cd96560c74960bd48475b911bb"
+  }
+ ],
+ "seaports": [
+  {
+   "id": "sof:dj:port:dj-jib",
+   "name": "Djibouti",
+   "unlocode": "DJ JIB",
+   "locode_function": "1--45---",
+   "lat": 11.58901,
+   "lon": 43.14503,
+   "prec": "approx",
+   "coord_basis": "GeoNames town centre (the UN/LOCODE entry has no coordinates)",
+   "coord_flag": null,
+   "src": "https://service.unece.org/trade/locode/dj.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "4b199ba65dfd7297d2c83885adf75eb09ea899f5d89eb582fb360001a515f1a1"
+  },
+  {
+   "id": "sof:dj:port:dj-dct",
+   "name": "Doraleh Container Terminal",
+   "unlocode": "DJ DCT",
+   "locode_function": "1-3-----",
+   "lat": 11.6,
+   "lon": 44.6,
+   "prec": "approx",
+   "coord_basis": "UN/LOCODE (UNECE) published coordinates, arc-minute precision",
+   "coord_flag": null,
+   "src": "https://service.unece.org/trade/locode/dj.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "83143b4318a9fed670b9afcaa470da3e50c36775dcf2f8f1775ffc7cdffaba71"
+  }
+ ],
+ "hospitals": [],
+ "power": [
+  {
+   "id": "sof:dj:power:wri1023066",
+   "name": "Boulaos",
+   "fuel": "Oil",
+   "capacity_mw": 107.332,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 11.5759,
+   "lon": 43.1569,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: WRI)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "57959ccaa5cc3d71cdf367feb7fffcff065205ead8e398787c908f45b529b623"
+  }
+ ],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Auto: U.S. diplomatic posts not yet researched for this country.",
+  "Auto: hospitals not yet researched for this country."
+ ]
+}
