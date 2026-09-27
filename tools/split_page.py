@@ -36,6 +36,9 @@ def repl(m):
     s = re.match(r'\s*window\.ASAP_SOF=window\.ASAP_SOF\|\|\{\};window\.ASAP_SOF\["([a-z]+)"\]', body)
     if s:
         return out("data/sof/%s.js" % s.group(1), body)
+    b = re.match(r'\s*window\.ASAP_BRIEF=window\.ASAP_BRIEF\|\|\{\};window\.ASAP_BRIEF\["([a-z]+)"\]', body)
+    if b:
+        return out("data/brief/%s.js" % b.group(1), body)
     k = re.match(r'\s*window\.TSAP_DATA=window\.TSAP_DATA\|\|\{\};window\.TSAP_DATA\["([a-z]+)(?:/([a-z]+))?"\]', body)
     if k:
         cc, lid = (k.group(1), k.group(2)) if k.group(2) else ("th", k.group(1))
