@@ -23,7 +23,12 @@ function areasFor(cc, text) {
   if (cc !== "*") return [cc];
   return Object.keys(NAMES).filter((k) => new RegExp("\\b(" + NAMES[k] + ")\\b").test(text));
 }
-function push(cc, text, it) { for (const a of areasFor(cc, text)) (items[a] = items[a] || []).push(it); }
+const OKI = /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i;
+function push(cc, text, it) {
+  const to = areasFor(cc, text);
+  if (cc === "jp" && OKI.test(text)) to.push("oki");   // national Japanese channels' Okinawa stories also belong to Okinawa
+  for (const a of to) (items[a] = items[a] || []).push(it);
+}
 async function req(url, opt = {}) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
@@ -119,7 +124,7 @@ export function parseYtFeed(xml) {
   return out;
 }
 for (const ch of cfg.youtube || []) {
-  const src = "@" + ch.handle;
+  const src = ch.name || "@" + ch.handle;
   try {
     let id = ch.channel_id;
     if (!id) {
@@ -130,7 +135,7 @@ for (const ch of cfg.youtube || []) {
     const vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id));
     let n = 0;
     for (const v of vids) {
-      if (isNaN(v.date) || v.date.getTime() < SINCE) continue;
+      if (isNaN(v.date) || v.date.getTime() < Date.now() - 30 * 864e5) continue;   // a channel feed lists only its last 15 videos, so keep a month of them
       push(ch.cc, v.title + " " + v.summary, { platform: "YouTube", account: src, kind: ch.kind, title: v.title.slice(0, 300), summary: v.summary,
         date: v.date.toISOString().slice(0, 16), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
       n++;
