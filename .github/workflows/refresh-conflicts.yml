@@ -72,7 +72,7 @@ jobs:
           git commit -qm "Test output (${{ inputs.only || 'conflicts' }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data-${{ inputs.only || 'conflicts' }}
         continue-on-error: true
-      # Only main commits snapshots. The 15-minute refresh commits to main too, so rebase onto it and retry.
+      # Only main commits snapshots, and only data/live/conflicts. The 15-minute refresh commits to main too, so rebase onto it and retry.
       - name: Commit if the conflict data changed
         if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-conflicts' }}
         run: |
@@ -82,5 +82,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/live/conflicts
           git commit -m "Refresh conflict tabs $(date -u +'%Y-%m-%d %H:%MZ')"
+          # Drop other changed files (the shared translation cache, which the 15-minute refresh commits) so the rebase can run.
+          git checkout -- .
           for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 7; done
           exit 1
