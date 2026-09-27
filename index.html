@@ -183,7 +183,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
-.bpage.breport{margin-top:14px}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
+.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
 .breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
 .breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
@@ -4002,8 +4002,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     return { rise: rise, set: set, up: prev >= 0 };
   }
   function tzOffsetMin(tz, ms) {
-    var p = {}; new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" })
-      .formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
+    /* a browser without this zone's data counts from Zulu rather than failing the brief */
+    var p = {}, o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" }, f;
+    try { f = new Intl.DateTimeFormat("en-US", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-US", o); }
+    f.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
     return (Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute) - Math.floor(ms / 6e4) * 6e4) / 6e4;
   }
   var condZulu = false, condPt = null, SEA_TIMEOUT = 20000;
@@ -4164,9 +4166,29 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* Country report: PMESII summary and threat assessment, drafted by AI from cited public sources (data/brief/<cc>.js).
      Everything in it is shown as a draft: the ratings and watch points are AI judgements, not analyst assessments. */
   var RLEVEL = { Low: 1, Moderate: 1, High: 1, Critical: 1 };
+  /* the official U.S. State Department travel advisory, shown above the AI draft: level 1 to 4 and its risk indicator letters,
+     from the feed the refresh job reads (data/live/advisories.js), else the researched copy (data/sof/<cc>.js). A government claim. */
+  var ADV_IND = { C: "Crime", T: "Terrorism", U: "Civil unrest", H: "Health", N: "Natural disaster", E: "Time-limited event", K: "Kidnapping or hostage-taking", D: "Wrongful detention", O: "Other" };
+  function advOfficialHtml() {
+    var L = window.ASAP_ADV && window.ASAP_ADV.items && window.ASAP_ADV.items[CC], a = (SOF && SOF.advisory) || null;
+    if (!L && !(a && a.level)) return '<div class="radv"><h3>Official travel advisory: U.S. State Department</h3><p class="bm">' + (window.ASAP_ADV ? "The State Department feed has no advisory for this country." : "The State Department feed has not loaded.") + "</p></div>";
+    var lvl = L ? L.level : a.level, txt = L ? L.level_text : a.level_text, date = L ? L.date : (a.updated || a.issued);
+    var link = (L && L.link) || (a && a.src) || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html";
+    /* the indicator letters: the researched copy of the official icons when its level still matches the feed, else the risks the advisory text names */
+    var official = a && a.indicators && a.indicators.length && (!L || a.level === L.level), tags = official ? a.indicators : (L && L.themes) || [];
+    function tagHtml(k) { return '<span class="radvi" title="' + esc(ADV_IND[k] || k) + '"><b>' + esc(k) + "</b> " + esc(ADV_IND[k] || "") + "</span>"; }
+    return '<div class="radv" style="border-color:' + tok(ADV_TONE[lvl] || "--muted") + '"><h3>Official travel advisory: U.S. State Department</h3>' +
+      '<div class="radvl"><b style="color:' + tok(ADV_TONE[lvl] || "--muted") + '">Level ' + esc(String(lvl)) + "</b> " + esc(txt || "") + "</div>" +
+      (tags.length ? '<div class="radvt">' + tags.map(tagHtml).join("") + "</div>" : "") +
+      '<p class="bm">' + (tags.length ? (official ? "Risk indicators as listed on the advisory (copy researched " + esc(fmtD(SOF.asof)) + "). " : "Risks the advisory text names, shown with the State Department's letters; the official indicator icons are on the advisory page. ")
+        : "No risk named in the advisory text; see the advisory for its indicators. ") +
+      "A U.S. government claim, dated " + esc(date ? fmtD(date) : "unknown") + (L ? ", read " + esc(window.OSAP_TIME.asofT(window.ASAP_ADV.asof)) : ", researched copy") +
+      (L && L.also ? ". Also: " + esc(L.also) : "") + ' · <a href="' + esc(link) + '" target="_blank" rel="noopener">Read the advisory</a>' +
+      ". Levels: 1 normal precautions, 2 increased caution, 3 reconsider travel, 4 do not travel.</p></div>";
+  }
   function reportHtml() {
     var B = (window.ASAP_BRIEF || {})[CC];
-    if (!B) return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(C.name) + '</h2></header><p class="bwarn">No country report has been researched for this area yet.</p></article>';
+    if (!B) return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(C.name) + '</h2></header>' + advOfficialHtml() + '<p class="bwarn">No country report has been researched for this area yet.</p></article>';
     var src = (B.sources || []).filter(function (x) { return x && /^https?:\/\//.test(x.url || ""); }), idx = {};
     (B.sources || []).forEach(function (x, i) { var k = src.indexOf(x); if (k >= 0) idx[i] = k + 1; });
     function cite(arr) {
@@ -4179,7 +4201,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
       '<p class="rdraft">Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports.</p>' +
       "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
-      "<h3>Threat assessment: " + rt(ov.rating) + "</h3>" + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      advOfficialHtml() +
+      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="bm">(AI draft)</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
       '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
         return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
       }).join("") + "</table>" +
