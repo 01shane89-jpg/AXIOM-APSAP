@@ -1,6 +1,36 @@
 <!doctype html>
 <html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM OSAP</title>
+<style>
+/* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first */
+#osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
+#osap-boot img{width:84px;height:84px;border-radius:50%;animation:osap-spin 1.4s linear infinite}
+#osap-boot.gone{opacity:0;pointer-events:none}
+:root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
+@keyframes osap-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#osap-boot img{animation:osap-pulse 1.6s ease-in-out infinite}@keyframes osap-pulse{50%{opacity:.45}}}
+</style>
+<div id="osap-boot" role="status" aria-live="polite"><img src="assets/logo-mark.png" alt=""><div id="osap-boot-t">Loading</div></div>
+<script>
+(function () {
+  var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
+  /* the saved map theme, applied now so the loading screen matches it */
+  var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
+  if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
+  function flag(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
+  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + flag(cc) + " " + (name || cc.toUpperCase()) : ""); }
+  var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
+  function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
+  window.OSAP_BOOT = {
+    done: done,
+    /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(cc, what, name); clearTimeout(timer); timer = setTimeout(done, 20000); }
+  };
+  /* never leave the page covered if something fails while it builds */
+  timer = setTimeout(done, 15000);
+})();
+</script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
@@ -3059,12 +3089,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || b.getAttribute("data-cc") === CC) return;
     var cc = b.getAttribute("data-cc");
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc));
     location.hash = (cc === "th" ? "" : cc + "/") + (current || "timeline");
     location.reload();
   });
   window.addEventListener("hashchange", function () {
     var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 && CBY[h[0]] ? h[0] : "th";
-    if (cc !== CC) location.reload();
+    if (cc !== CC) { if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc)); location.reload(); }
   });
   var seg = document.getElementById("view-seg");
   seg.innerHTML = LAYERS.map(function (l) {
@@ -5600,7 +5631,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function rvRefresh() {
     var b = document.getElementById("rv-refresh"); if (b) { b.disabled = true; b.textContent = "Fetching…"; }
     var files = Array.prototype.map.call(document.querySelectorAll('script[src^="data/live/"], script[src^="data/history/"]'), function (x) { return x.getAttribute("src").split("?")[0]; });
-    var go = function () { try { sessionStorage.setItem("osap-refreshed", String(Date.now())); } catch (e) {} location.reload(); };
+    var go = function () { try { sessionStorage.setItem("osap-refreshed", String(Date.now())); } catch (e) {} if (window.OSAP_BOOT) window.OSAP_BOOT.show(CC, "Refreshing", C.name); location.reload(); };
     var t = setTimeout(go, 15000);
     Promise.all(files.map(function (f) { return fetch(f + "?fresh=" + Date.now(), { cache: "no-store" }).catch(function () {}); })).then(function () { clearTimeout(t); go(); });
   }
@@ -6291,6 +6322,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       alert("That report is no longer in this build (it may have dropped out of the feed). The watch hit is kept in the list.");
       return;
     }
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc));
     location.href = "./?wopen=" + encodeURIComponent(k) + "#" + (cc === "th" ? "" : cc + "/") + "timeline";
   }
   /* watch dialog */
@@ -6370,7 +6402,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       lsSet(WH_KEY, hitsLoad().filter(function (h) { return h.w !== id; })); var s = lsGet(WS_KEY, {}) || {}; delete s[id]; lsSet(WS_KEY, s); wBadge(); wShowArea(null); wOpen(); return; }
     if ((id = t.getAttribute("data-w-pause"))) { wLoad(); WATCHES.forEach(function (w) { if (w.id === id) w.on = w.on === false; }); wSave(); wOpen(); return; }
     if ((id = t.getAttribute("data-w-show"))) { var w0 = wLoad().filter(function (w) { return w.id === id; })[0]; if (!w0) return;
-      if (w0.cc !== CC) { location.href = "./?wshow=" + encodeURIComponent(id) + "#" + (w0.cc === "th" ? "" : w0.cc + "/") + "timeline"; return; }
+      if (w0.cc !== CC) { if (window.OSAP_BOOT) window.OSAP_BOOT.show(w0.cc, "", cName(w0.cc)); location.href = "./?wshow=" + encodeURIComponent(id) + "#" + (w0.cc === "th" ? "" : w0.cc + "/") + "timeline"; return; }
       wClose(); wShowArea(w0); return; }
     if (t.hasAttribute("data-w-read")) { var hs = hitsLoad(); hs.forEach(function (h) { h.read = true; }); lsSet(WH_KEY, hs); wBadge(); wOpen(); return; }
     if (t.hasAttribute("data-w-clear")) { lsSet(WH_KEY, []); wBadge(); wOpen(); return; }
@@ -6645,6 +6677,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (areaDraw) return;
     var ll = e.latlng.wrap(), c = xaCountryAt(ll.lat, ll.lng);
     if (!c || c.id === CC || (CC === "oki" && c.id === "jp")) return;
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(c.id, "", c.name);
     location.hash = (c.id === "th" ? "" : c.id + "/") + (current || "timeline");
     location.reload();
   });
@@ -6655,6 +6688,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
   } };
   evRefresh();
+  /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
+  requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
 </script>
