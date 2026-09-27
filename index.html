@@ -2,16 +2,29 @@
 <html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM OSAP</title>
 <style>
-/* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first */
-#osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+/* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first.
+   The official logo (unaltered, only animated) spins as a 3D coin: the logo on both faces, thin darker copies between them
+   as the coin's edge, and a shadow that narrows as it turns edge-on. Behind it, a faint world map drawn from the app's own
+   country outlines (assets/world-watermark.svg). */
+#osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
   background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
-#osap-boot img{width:84px;height:84px;border-radius:50%;animation:osap-spin 1.4s linear infinite}
+#osap-boot::before{content:"";position:absolute;inset:-5%;background:url(assets/world-watermark.svg) center/min(170vw,1500px) auto no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
+#osap-boot>*{position:relative}
 #osap-boot.gone{opacity:0;pointer-events:none}
 :root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
-@keyframes osap-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){#osap-boot img{animation:osap-pulse 1.6s ease-in-out infinite}@keyframes osap-pulse{50%{opacity:.45}}}
+:root[data-map="grey"] #osap-boot::before,:root[data-map="dark"] #osap-boot::before{opacity:.22}
+.ob-stage{width:min(40vw,170px);aspect-ratio:1;perspective:900px}
+.ob-coin{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:osap-rev 2.8s linear infinite}
+.ob-coin img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;backface-visibility:hidden}
+.ob-coin .ob-e{backface-visibility:visible;filter:brightness(.35) saturate(1.3)}
+.ob-coin .ob-f{transform:translateZ(5px)}.ob-coin .ob-b{transform:rotateY(180deg) translateZ(5px)}
+.ob-shadow{width:min(30vw,130px);height:12px;margin-top:-4px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(18,50,74,.45),transparent 70%);animation:osap-sh 1.4s ease-in-out infinite alternate}
+@keyframes osap-rev{from{transform:rotateX(10deg) rotateY(0)}to{transform:rotateX(10deg) rotateY(360deg)}}
+@keyframes osap-sh{from{transform:scaleX(1);opacity:.9}to{transform:scaleX(.25);opacity:.35}}
+@keyframes osap-drift{from{transform:translateX(-2%)}to{transform:translateX(2%)}}
+@media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><img src="assets/logo-mark.png" alt=""><div id="osap-boot-t">Loading</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
