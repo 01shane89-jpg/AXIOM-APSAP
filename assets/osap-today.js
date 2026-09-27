@@ -353,7 +353,7 @@
     open = true; box.hidden = false; document.documentElement.classList.add("td-on"); ssSet(OPEN_KEY, "1");
     render(); box.scrollTop = 0;
     if (ctl) ctl.hidden = true;
-    if (window.OSAP_BOOT_DONE) window.OSAP_BOOT_DONE();
+    if (window.OSAP_BOOT && window.OSAP_BOOT.done) window.OSAP_BOOT.done();
     clearInterval(tick);
     /* the page keeps adding records after load (feed history, open data, live refresh); the screen follows them */
     var lastN = -1, lastX = null;
