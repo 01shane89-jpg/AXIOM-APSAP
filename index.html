@@ -1416,7 +1416,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       if (ST.fp) D.flashpoints.forEach(function (f) {
         var l = LV[f.level] || LV.latent;
         L.circle([f.lat, f.lon], { pane: "fpzone", radius: f.radius_km * 1000, color: l[1], weight: 2, dashArray: f.level === "latent" ? "5 5" : null,
-          fillColor: l[1], fillOpacity: f.level === "active" ? 0.16 : 0.09, interactive: false }).addTo(fpLayer);
+          fillColor: l[1], fillOpacity: f.level === "active" ? 0.16 : 0.09 }).bindPopup(fpPop(f), { maxWidth: 340 }).addTo(fpLayer);
         L.marker([f.lat, f.lon], { pane: "terpane", keyboard: false, icon: osapSym("fp_" + (LV[f.level] ? f.level : "latent")) || L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8],
           html: '<svg width="16" height="16" viewBox="0 0 14 14"><path d="M7 1 13 12H1z" fill="' + l[1] + '" stroke="#fff" stroke-width="1.5"/></svg>' }) })
           .bindPopup(fpPop(f), { maxWidth: 340 }).addTo(fpLayer);
@@ -2131,10 +2131,34 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   /* ---------- boundary and range bands ---------- */
   var borderLayer = L.layerGroup();
   var borderLines = BD.border.map(function (l) { return l.map(function (p) { return [p[1], p[0]]; }); });
+  /* pop-ups for the line and the bands: what it is, where it came from, a SHA-256 of the geometry drawn */
+  var geoFp = {};
+  function geoSha(key, obj) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return;
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(obj))).then(function (b) {
+      geoFp[key] = Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      if (key === "border") drawBorder(); else drawBands();
+    });
+  }
+  var OSM_SRC = '<a href="https://download.geofabrik.de/asia.html" target="_blank" rel="noopener">OpenStreetMap Thailand and Cambodia extracts (Geofabrik)</a>';
+  function geoFpLine(key) {
+    return '<p class="obs" style="font-size:10.5px">' + (geoFp[key] ? 'Fingerprint (SHA-256 of the drawn geometry) <span title="' + geoFp[key] + '">' + geoFp[key].slice(0, 16) + "&hellip;</span>" : "Fingerprint not available in this browser") + "</p>";
+  }
+  function borderPop() {
+    return '<div class="pop"><div class="tier">Boundary line</div><h3>Thailand&ndash;Cambodia border line</h3>' +
+      '<p class="obs">The border as mapped in OpenStreetMap. Where the line actually runs is itself the dispute: both governments claim ground on the other side of it in several places, so treat it as a reference line, not an agreed boundary.</p>' +
+      '<p class="obs">Source: ' + OSM_SRC + "</p>" + geoFpLine("border") + "</div>";
+  }
+  function bandPop(km) {
+    return '<div class="pop"><div class="tier">Distance band</div><h3>Within ' + km + " km of the border line</h3>" +
+      '<p class="obs">' + (km === 20 ? "Roughly the reach of the BM-21 rockets used in both rounds of fighting." : "The US Embassy's no-travel zone along the border.") +
+      " Measured by AXIOM OSAP from the OpenStreetMap line, so it inherits that line's accuracy.</p>" +
+      '<p class="obs">Line source: ' + OSM_SRC + "</p>" + geoFpLine("band" + km) + "</div>";
+  }
   function drawBorder() {
     borderLayer.clearLayers();
-    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--surface"), weight: 5, opacity: 0.9, interactive: false }));
-    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--ink"), weight: 1.8, opacity: 0.95, dashArray: "7 4", interactive: false }));
+    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--surface"), weight: 5, opacity: 0.9 }).bindPopup(borderPop(), { maxWidth: 320 }));
+    borderLayer.addLayer(L.polyline(borderLines, { pane: "borderpane", color: tok("--ink"), weight: 1.8, opacity: 0.95, dashArray: "7 4" }).bindPopup(borderPop(), { maxWidth: 320 }));
   }
 
   function polys(coords) {
@@ -2144,10 +2168,11 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   function drawBands() {
     bandLayer.clearLayers();
     bandLayer.addLayer(L.polygon(polys(BD.bands["50"]), { pane: "bandpane", color: tok("--near"), weight: 1, opacity: 0.6,
-      dashArray: "2 4", fillColor: tok("--near"), fillOpacity: 0.05, interactive: false }));
+      dashArray: "2 4", fillColor: tok("--near"), fillOpacity: 0.05 }).bindPopup(bandPop(50), { maxWidth: 320 }));
     bandLayer.addLayer(L.polygon(polys(BD.bands["20"]), { pane: "bandpane", color: tok("--over"), weight: 1, opacity: 0.7,
-      dashArray: "2 4", fillColor: tok("--over"), fillOpacity: 0.07, interactive: false }));
+      dashArray: "2 4", fillColor: tok("--over"), fillOpacity: 0.07 }).bindPopup(bandPop(20), { maxWidth: 320 }));
   }
+  geoSha("border", BD.border); geoSha("band20", BD.bands["20"]); geoSha("band50", BD.bands["50"]);
 
   /* ---------- Thai subdistricts near the line ---------- */
   function tambTier(km) { return km < 10 ? 3 : (km < 20 ? 2 : 1); }
@@ -4518,7 +4543,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var col = { Red: "#c62828", Orange: "#e07b00", Green: "#3a9d4a" };
     evs.forEach(function (e, i) {
       var c = col[e.alert] || "#888";
-      (e.track || []).forEach(function (line) { if (line.length > 1) sofLayer.addLayer(L.polyline(line, { pane: "tlpane", color: c, weight: 2, opacity: 0.8, dashArray: "4 3" })); });
+      (e.track || []).forEach(function (line) { if (line.length > 1) sofLayer.addLayer(L.polyline(line, { pane: "tlpane", color: c, weight: 2, opacity: 0.8, dashArray: "4 3" })
+        .bindPopup('<div class="pop"><div class="tier">Track · GDACS ' + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + '</h3><p class="obs">Path of this event as GDACS reported it' + (gdWhen(e) ? ", " + esc(gdWhen(e)) : "") +
+          '.</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 })); });
       var m = L.circleMarker([e.lat, e.lon], { pane: "tlpane", radius: 9, color: "#222", weight: 1, fillColor: c, fillOpacity: 0.8, lgk: "gd:" + (col[e.alert] ? e.alert : "Other") });
       m.bindPopup('<div class="pop"><div class="tier">' + esc((GD_TYPE[e.type] || [e.type])[0]) + " · GDACS " + esc(e.alert || "") + " alert</div><h3>" + esc(e.name || e.desc || "") + "</h3>" +
         '<p class="obs">' + esc([e.severity, gdWhen(e)].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
@@ -4622,8 +4649,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var labelled = false;
       st.products.forEach(function (p) {
         var col = STC[p.agency] || "#555";
+        /* the track lines, cone circles and wind circle each open a pop-up saying which part it is and whose product */
+        function part(what) {
+          return '<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat.toUpperCase() + " " : "") + st.name) + '</h3><p class="obs">' + what +
+            '</p><p class="obs">' + (p.issued ? "Issued " + esc(stZ(p.issued)) + " · " : "") + '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
+        }
         if (p.past && p.past.length > 1) {
-          stormLayer.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2, opacity: 0.8, interactive: false }));
+          stormLayer.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2, opacity: 0.8 }).bindPopup(part("Track so far, as the agency reported it."), { maxWidth: 320 }));
           p.past.forEach(function (x) {
             var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: 3, color: col, weight: 1, fillColor: col, fillOpacity: 0.8 });
             m.bindPopup('<div class="pop"><div class="tier">Past position · ' + esc(p.agencyName) + "</div><h3>" + esc(st.name + " " + stZ(x.t)) + '</h3><p class="obs">' + esc([x.cat, stWind(x)].filter(Boolean).join(" · ")) + "</p></div>");
@@ -4634,11 +4666,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         var track = [p.now].concat(p.fc || []);
         /* JMA's cone: 70% probability circles joined by the tangent lines JMA publishes */
         (p.fc || []).forEach(function (x) {
-          if (x.r_km) stormLayer.addLayer(L.circle([x.lat, x.lon], { pane: "tlpane", radius: x.r_km * 1000, color: col, weight: 1, opacity: 0.7, dashArray: "3 3", fillColor: col, fillOpacity: 0.06, interactive: false }));
-          (x.tangent || []).forEach(function (seg) { if (seg.length > 1) stormLayer.addLayer(L.polyline(seg, { pane: "tlpane", color: col, weight: 1, opacity: 0.7, interactive: false })); });
+          if (x.r_km) stormLayer.addLayer(L.circle([x.lat, x.lon], { pane: "tlpane", radius: x.r_km * 1000, color: col, weight: 1, opacity: 0.7, dashArray: "3 3", fillColor: col, fillOpacity: 0.06 })
+            .bindPopup(part("Forecast position for " + esc(stZ(x.t)) + " (+" + esc(x.h) + " h): the centre has a 70% chance of being inside this " + esc(x.r_km) + " km circle."), { maxWidth: 320 }));
+          (x.tangent || []).forEach(function (seg) { if (seg.length > 1) stormLayer.addLayer(L.polyline(seg, { pane: "tlpane", color: col, weight: 1, opacity: 0.7 }).bindPopup(part("Edge of the forecast cone, joining the 70% circles as the agency publishes it."), { maxWidth: 320 })); });
         });
-        if (p.now.storm_km) stormLayer.addLayer(L.circle([p.now.lat, p.now.lon], { pane: "tlpane", radius: p.now.storm_km * 1000, color: col, weight: 1.5, fillColor: col, fillOpacity: 0.15, interactive: false }));
-        if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5", interactive: false }));
+        if (p.now.storm_km) stormLayer.addLayer(L.circle([p.now.lat, p.now.lon], { pane: "tlpane", radius: p.now.storm_km * 1000, color: col, weight: 1.5, fillColor: col, fillOpacity: 0.15 })
+          .bindPopup(part("Area of storm-force winds (50 kt or more), about " + esc(p.now.storm_km) + " km from the centre at " + esc(stZ(p.now.t)) + "."), { maxWidth: 320 }));
+        if (track.length > 1) stormLayer.addLayer(L.polyline(track.map(function (x) { return [x.lat, x.lon]; }), { pane: "tlpane", color: col, weight: 2.5, opacity: 0.9, dashArray: "6 5" })
+          .bindPopup(part("Forecast track to " + esc(stZ(track[track.length - 1].t)) + "."), { maxWidth: 320 }));
         track.forEach(function (x, i) {
           var m = L.circleMarker([x.lat, x.lon], { pane: "tlpane", radius: i ? 5 : 10, color: "#fff", weight: i ? 1 : 2, fillColor: col, fillOpacity: i ? 0.9 : 1, lgk: "st:" + (STC[p.agency] ? p.agency : "other") });
           m.bindPopup('<div class="pop"><div class="tier">' + (i ? "Forecast, +" + x.h + " h" : "Current position") + " · " + esc(p.agencyName) + "</div><h3>" +
@@ -5167,7 +5202,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var E = window.ASAP_EONET, list = E ? (E.items || []).filter(hasCC) : [];
     if (!E) return "";
     list.forEach(function (e, i) {
-      if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 }));
+      if (e.track) sofLayer.addLayer(L.polyline(e.track, { pane: "tlpane", color: "#00838f", weight: 2, opacity: 0.8 })
+        .bindPopup('<div class="pop"><div class="tier">Track · ' + esc(e.cat) + " · NASA EONET</div><h3>" + esc(e.title) + '</h3><p class="obs">Positions NASA EONET logged for this event, latest ' + esc(window.OSAP_TIME.asofT(e.last.date)) +
+          '.</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 }));
       var m = L.circleMarker([e.last.lat, e.last.lon], { pane: "tlpane", radius: 8, color: "#004d40", weight: 1.5, fillColor: "#26a69a", fillOpacity: 0.7, lgk: "eonet" });
       m.bindPopup('<div class="pop"><div class="tier">' + esc(e.cat) + " · NASA EONET · " + esc(window.OSAP_TIME.asofT(e.last.date)) + "</div><h3>" + esc(e.title) + '</h3><p class="obs">' + esc([e.last.mag, "source " + e.srcs].filter(Boolean).join(" · ")) +
         '</p><p class="obs"><a href="' + esc(e.link) + '" target="_blank" rel="noopener">Source</a></p></div>', { maxWidth: 320 });
