@@ -126,8 +126,11 @@
   /* ---------- weather: the page's forecast snapshot, topped up with a live read ---------- */
   function wxPlaces() {
     var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
-    if (pts.length) return pts.map(function (p) { return { name: p.name, lat: p.lat, lon: p.lon, days: p.days || [], snap: f.asof }; });
-    var c = CAPS[CC]; return c ? [{ name: c[0], lat: c[1], lon: c[2], days: [], snap: "" }] : [];
+    var c = CAPS[CC], out = pts.length ? pts.map(function (p) { return { name: p.name, lat: p.lat, lon: p.lon, days: p.days || [], snap: f.asof }; }) : c ? [{ name: c[0], lat: c[1], lon: c[2], days: [], snap: "" }] : [];
+    /* the province or spot chosen here or in the Weather tab comes first */
+    var X = window.OSAP_WX, pl = X && X.placePoint ? X.placePoint(CC) : null;
+    if (pl && !out.some(function (p) { return p.name === pl.name; })) out.unshift({ name: pl.name, lat: pl.lat, lon: pl.lon, days: [], snap: "" });
+    return out;
   }
   var wxLive = {}, wxBusy = {}, wxErr = {};
   function wxKey(p) { return "osap-today-wx-" + p.lat.toFixed(2) + "," + p.lon.toFixed(2); }
@@ -157,12 +160,15 @@
   function num(v, d) { return v == null || !isFinite(v) ? "–" : (+v).toFixed(d || 0); }
   function weatherHtml() {
     var P = wxPlaces();
-    if (!P.length) return '<section class="tdcard"><h2>Weather</h2><p class="tdobs">No forecast point is set up for this area yet.</p></section>';
+    var X = window.OSAP_WX, RL = X && X.regions ? X.regions(CC, function () { if (open) render(); }) : null;
+    var rsel = RL && RL.length ? '<select class="tdreg" data-tdreg aria-label="Choose a region"><option value="">Other region…</option>' +
+      RL.map(function (n, i) { return '<option value="' + i + '">' + esc(n) + "</option>"; }).join("") + "</select>" : "";
+    if (!P.length) return '<section class="tdcard"><div class="tdh"><h2>Weather</h2>' + rsel + '</div><p class="tdobs">No forecast point is set up for this area yet.</p></section>';
     if (wxSel >= P.length) wxSel = 0;
     var p = P[wxSel], L = wxLive[wxKey(p)], cur = L && L.cur, days = (L && L.days && L.days.length ? L.days : p.days).slice(0, 6);
     var h = '<section class="tdcard tdwx"><div class="tdh"><h2>Weather</h2>' +
       (P.length > 1 ? '<span class="tdplaces" role="group" aria-label="Place">' + P.map(function (x, i) {
-        return '<button type="button" data-wx="' + i + '" aria-pressed="' + (i === wxSel) + '">' + esc(x.name) + "</button>"; }).join("") + "</span>" : '<span class="tdplace">' + esc(p.name) + "</span>") + "</div>";
+        return '<button type="button" data-wx="' + i + '" aria-pressed="' + (i === wxSel) + '">' + esc(x.name) + "</button>"; }).join("") + "</span>" : '<span class="tdplace">' + esc(p.name) + "</span>") + rsel + "</div>";
     if (cur && cur.t != null) {
       var ct = cur.time ? Date.parse(cur.time + "Z") - (cur.off || 0) * 1000 : L.at;
       h += '<div class="tdnow"><span class="tdbig" aria-hidden="true">' + wxIcon(cur.code) + '</span><span class="tdtemp">' + num(cur.t) + '°C</span><span class="tdnowd"><b>' +
@@ -385,7 +391,7 @@
     ".tdcard{background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
-    ".tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
+    ".tdreg{min-height:32px;max-width:100%;font-size:12px;padding:3px 6px}.tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
     ".tdnow{display:flex;align-items:center;gap:12px}.tdbig{font-size:44px;line-height:1}.tdtemp{font-size:40px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}.tdnowd{font-size:13px}" +
     ".tddays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:10px}@media (max-width:420px){.tddays{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
     ".tdday{display:flex;flex-direction:column;align-items:center;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:12px;font-variant-numeric:tabular-nums}" +
@@ -426,6 +432,7 @@
       b = t.closest("[data-home]"); if (b) { lsSet(HOME_KEY, b.getAttribute("data-home")); render(); }
     });
     box.addEventListener("change", function (e) {
+      if (e.target.hasAttribute("data-tdreg")) { var X = window.OSAP_WX; if (e.target.value !== "" && X && X.chooseRegion && X.chooseRegion(CC, +e.target.value)) { wxSel = 0; render(); } return; }
       if (e.target.id !== "td-cc") return;
       var cc = e.target.value; if (!cc || cc === CC) return;
       ssSet(OPEN_KEY, "1");

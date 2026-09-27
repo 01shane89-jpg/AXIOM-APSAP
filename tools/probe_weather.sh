@@ -11,8 +11,6 @@ probe() {
   echo "bytes: $(wc -c < /tmp/p.bin 2>/dev/null)"
   head -c ${2:-400} /tmp/p.bin | tr '\n' ' '; echo
 }
-probe "https://geocoding-api.open-meteo.com/v1/search?name=Khon%20Kaen&count=5&language=en&format=json&countryCode=TH" 600
-exit 0
 curl -sS -m 60 "https://nowcoast.noaa.gov/geoserver/ows?service=WMS&request=GetCapabilities" -o /tmp/nc.xml
 python3 - <<'PY'
 import re
