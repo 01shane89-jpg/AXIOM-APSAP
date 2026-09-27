@@ -1240,7 +1240,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       corridor: "&#8660;", crossing: "&#8660;", chokepoint: "&#10006;", valley: "&#8744;", forest: "&#9827;", plain: "&#9644;" };
     var st = document.createElement("style");
     st.textContent = ".terpin{font:700 13px/18px sans-serif;width:18px;height:18px;text-align:center;border-radius:3px;color:#fff;background:#6d4c2f;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
-      ".terpin.w{background:#1f6fa8}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
+      ".terpin.w{background:#1f6fa8}.terpin.hn{width:28px;padding:0;font-size:10.5px;box-sizing:border-box}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
       ".fpc{font:700 10px/1 sans-serif}.terdraft{background:#fff4d6;color:#5a4300;border:1px solid #e0b84d;padding:2px 5px;margin:4px 0;font-size:11px;font-weight:600}" +
       ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}" +
       ".prpin{font:700 9px/16px sans-serif;width:20px;height:16px;text-align:center;border-radius:2px;color:#fff;background:#8e1b1b;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
@@ -1263,6 +1263,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return '<div class="pop"><div class="tier">Key terrain · ' + TE(t.kind) + " · " + TE(t.zone) + "</div><h3>" + TE(t.name) + "</h3>" +
         (t.elev_m ? '<p class="obs">About ' + TE(t.elev_m.toLocaleString()) + " m</p>" : "") +
         '<div class="terdraft">Why it matters: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(t.why) + "</div>" +
+        (t.control_claim ? '<p class="obs"><b>Control:</b> ' + TE(t.control_claim) + ' <i>' + TE(t.control_status || "") + "</i></p>" : "") +
+        (t.reports && t.reports.length > 1 ? '<p class="obs" style="margin-bottom:0">Reporting:</p><ul class="terev">' + t.reports.map(function (e) {
+          return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>"; }).join("") + "</ul>" : "") +
         (t.note ? '<p class="obs">' + TE(t.note) + "</p>" : "") +
         '<p class="obs">' + (t.prec === "exact" ? "Published position." : "Position approximate, placed for orientation, not surveyed.") + " Reference: " + src(t.src, t.srcname) + "</p>" +
         '<p class="obs" style="font-size:10.5px">Record fingerprint ' + TE(t.fp.slice(0, 16)) + "&hellip;</p></div>";
@@ -1305,10 +1308,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           .bindPopup(fpPop(f), { maxWidth: 340 }).addTo(fpLayer);
       });
       if (ST.ter) D.terrain.forEach(function (t) {
-        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: L.divIcon({ className: "", iconSize: [18, 18], iconAnchor: [9, 9],
-          html: '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
+        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
+          html: t.hill_number ? '<div class="terpin hn">' + TE(t.hill_number) + "</div>" : '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
           .bindPopup(terPop(t), { maxWidth: 320 }).addTo(terLayer);
-        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [-12, 7],
+        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [t.hill_number ? -17 : -12, 7],
           html: TE(t.name.split(/ \(/)[0]) }) }).addTo(lblLayer);
       });
       lbl();
@@ -1347,7 +1350,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var site = document.getElementById("bl-site");
     if (site && site.parentNode) {
       var b = document.createElement("div");
-      b.innerHTML = '<div class="ctl"><input type="checkbox" id="bl-ter" data-ter="ter"><label for="bl-ter">Key terrain<span class="hint">Escarpment, hills, passes and rivers on all of Thailand’s borders. Reference data</span></label></div>' +
+      b.innerHTML = '<div class="ctl"><input type="checkbox" id="bl-ter" data-ter="ter"><label for="bl-ter">Key terrain<span class="hint">Escarpment, numbered hills, passes and rivers on all of Thailand’s borders. Reference data</span></label></div>' +
         '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint">Draft, AI-generated, not analyst-approved. Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
