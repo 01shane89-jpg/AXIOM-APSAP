@@ -52,7 +52,8 @@ export async function run({ conflict, prev, get, sha256, stamp, tgItems, readJs,
     const log = ((prev.alerts && prev.alerts.log) || []).filter((e) => e.at >= iso(now - 7 * 864e5));
     const old = Object.fromEntries(((prev.alerts && prev.alerts.regions) || []).map((r) => [r.key, r]));
     const regions = Object.entries(j.states || {}).map(([k, v]) => {
-      const g = region(k), since = kyivToUtc(v.changed), on = !!v.alertnow;
+      // the source gives 1970 when it has no change time: kept as "time not given", never read as a standing alert
+      const g = region(k), t0 = kyivToUtc(v.changed), since = t0 && t0 >= "2022" ? t0 : "", on = !!v.alertnow;
       const o = old[k];
       if (!o || o.on !== on || o.since !== since) if (since && since >= iso(now - 7 * 864e5)) log.push({ key: k, en: g ? g.en : k, on, at: since });
       // an alert that has stood for more than 30 days (occupied Crimea and Luhansk) is a standing state, not an event
@@ -108,36 +109,43 @@ export async function run({ conflict, prev, get, sha256, stamp, tgItems, readJs,
   } catch (e) { sources.push({ id: "losses-ua", name: "Ukraine General Staff loss claims (russianwarship.rip)", ok: false, error: errMsg(e) }); }
 
   /* ---- each side's territorial claims and the Russian MoD daily summary ---- */
-  const claims = new Map(((prev.claims && prev.claims.items) || []).filter((c) => c.date >= iso(now - 60 * 864e5)).map((c) => [c.key, c]));
+  const claims = new Map(((prev.claims && prev.claims.items) || []).filter((c) => c.date >= iso(now - 60 * 864e5) && c.v === 2).map((c) => [c.key, c]));
   let summary = prev.moc_summary || null;
   const addClaim = (side, claimant, place, verb, post) => {
     const p = String(place || "").replace(/[\s,.;:]+$/, "").trim(); if (!p || p.length > 60) return;
     const key = side + "|" + p.toLowerCase() + "|" + post.date.slice(0, 10);
-    if (!claims.has(key)) claims.set(key, { key, side, claimant, place: p, verb, date: iso(post.date), link: post.link, fp: sha256({ side, place: p, date: post.date, link: post.link }) });
+    if (!claims.has(key)) claims.set(key, { v: 2, key, side, claimant, place: p, verb, date: iso(post.date), link: post.link, fp: sha256({ side, place: p, date: post.date, link: post.link }) });
   };
+  // place lists as the posts write them: "A, B and C" / "А, Б та В"
+  const split = (t) => String(t).split(/,\s*|\s+(?:and|та|і|й)\s+/).map((x) => x.trim()).filter(Boolean);
   try {
     const posts = tgItems(await get("https://t.me/s/mod_russia_en", "text/html"), "mod_russia_en");
     for (const po of posts) {
       const text = po.title + " " + po.summary;
-      if (/in total,? since the (?:beginning|start) of the special military operation/i.test(text) && (!summary || iso(po.date) > summary.date))
-        summary = { claimant: "Russian Ministry of Defence", date: iso(po.date), link: po.link, text: text.slice(0, 1400), claim: "Russia's claim, as posted. Not verified.", fp: sha256({ link: po.link, text }) };
-      for (const m of text.matchAll(/liberated (?:the )?(?:settlements?|villages?|towns?|cit(?:y|ies)) of ([^.;]+?)(?:\s+in the\s|\s+\(|\.|;|$)/gi))
-        for (const pl of m[1].split(/,\s*|\s+and\s+/)) addClaim("ru", "Russian Ministry of Defence", pl, "says liberated (captured)", po);
+      if (/progress of (?:the )?special military operation/i.test(text) && (!summary || iso(po.date) > summary.date))
+        summary = { claimant: "Russian Ministry of Defence", date: iso(po.date), link: po.link, text: text.slice(0, 3000), claim: "Russia's claim, as posted. Not verified.", fp: sha256({ link: po.link, text }) };
+      // "control has been established over the settlement of Khripuny (Kharkov region)", "liberated the settlements of A and B"
+      for (const m of text.matchAll(/(?:control (?:has been|was) established over|liberated) (?:the )?(?:settlements?|villages?|towns?|cit(?:y|ies)) of ([^.;!]+)/gi))
+        for (const pl of split(m[1].replace(/\s*\(([^)]*)\)/g, (x, r) => " (" + r + ")"))) addClaim("ru", "Russian Ministry of Defence", pl, "says Russian forces took", po);
     }
     sources.push({ id: "moc", name: "Russian Ministry of Defence (Telegram, English)", ok: true, n: posts.length });
   } catch (e) { sources.push({ id: "moc", name: "Russian Ministry of Defence (Telegram, English)", ok: false, error: errMsg(e) }); }
   try {
-    const posts = tgItems(await get("https://t.me/s/DeepStateUA", "text/html"), "DeepStateUA");
+    // only DeepState's "map updated" posts, whose wording is fixed: "Ворог окупував A та просунувся поблизу B та C."
+    const posts = tgItems(await get("https://t.me/s/DeepStateUA", "text/html"), "DeepStateUA").filter((po) => /Мапу оновлено/.test(po.title + " " + po.summary));
     for (const po of posts) {
-      const text = po.title + " " + po.summary;
-      for (const m of text.matchAll(/(?:окупував|окупували|окупованим|окупований)\s+(?:населений пункт |село |селище |місто )?([А-ЯІЇЄҐ][\wʼ'’\-А-Яа-яІіЇїЄєҐґ]+(?:\s[А-ЯІЇЄҐ][\wʼ'’\-А-Яа-яІіЇїЄєҐґ]+)?)/g)) addClaim("ua-osint", "DeepState", m[1], "reports occupied by Russia", po);
-      for (const m of text.matchAll(/(?:просунувся|просунулися|просунулись)\s+(?:в|у|біля|поблизу|в районі)\s+([А-ЯІЇЄҐ][\wʼ'’\-А-Яа-яІіЇїЄєҐґ]+)/g)) addClaim("ua-osint", "DeepState", m[1], "reports Russian advance near", po);
-      for (const m of text.matchAll(/(?:звільнили|звільнено|деокупува\w*)\s+(?:населений пункт |село |селище |місто )?([А-ЯІЇЄҐ][\wʼ'’\-А-Яа-яІіЇїЄєҐґ]+)/g)) addClaim("ua-osint", "DeepState", m[1], "reports liberated by Ukraine", po);
+      const text = (po.title + " " + po.summary).replace(/💬[\s\S]*$/, "");
+      const occ = text.match(/(?:Ворог|противник|росіяни)\s+окупува(?:в|ли)\s+([^.]+?)(?:,?\s+(?:а також|та|і)\s+просуну|\.|$)/i);
+      if (occ) for (const pl of split(occ[1])) addClaim("ua-osint", "DeepState", pl, "says Russia occupied", po);
+      const adv = text.match(/просуну(?:вся|лися|лись)\s+(?:поблизу|біля|в районі|у районі|в|у)\s+([^.]+)/i);
+      if (adv) for (const pl of split(adv[1])) addClaim("ua-osint", "DeepState", pl, "says Russia advanced near", po);
+      const lib = text.match(/(?:ЗСУ|Сили оборони|українські військові)\s+(?:звільнили|деокупували|відновили контроль над)\s+([^.]+)/i);
+      if (lib) for (const pl of split(lib[1])) addClaim("ua-osint", "DeepState", pl, "says Ukraine retook", po);
     }
-    sources.push({ id: "deepstate-tg", name: "DeepState (Telegram)", ok: true, n: posts.length });
-  } catch (e) { sources.push({ id: "deepstate-tg", name: "DeepState (Telegram)", ok: false, error: errMsg(e) }); }
+    sources.push({ id: "deepstate-tg", name: "DeepState map updates (Telegram)", ok: true, n: posts.length });
+  } catch (e) { sources.push({ id: "deepstate-tg", name: "DeepState map updates (Telegram)", ok: false, error: errMsg(e) }); }
 
   return { sources, alerts, heat, losses, moc_summary: summary,
-    claims: { note: "Each side's own statements about places taken or lost, as posted; names as written by the source. Not verified, and never used to draw or move the front line.",
+    claims: { note: "Each side's own statements about places taken or lost, as posted; place names as the source writes them (DeepState in Ukrainian, grammatical case included). Not verified, and never used to draw or move the front line.",
       items: [...claims.values()].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 300) } };
 }
