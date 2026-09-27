@@ -101,9 +101,16 @@ jobs:
             data/live/deepsouth.js
           if-no-files-found: ignore
           retention-days: 3
+      # The social pull takes about 20 minutes (hundreds of YouTube channels, paced to stay polite), longer than the 15-minute
+      # cycle, so a full run only repeats it when the last social snapshot is 40 minutes old or more. The other feeds keep
+      # their 15-minute cadence; social posts refresh about every 45 minutes. Running "social" on its own always pulls.
       - name: Pull official and established social media accounts
         if: ${{ !inputs.only || inputs.only == 'social' }}
-        run: node tools/refresh_social.mjs
+        run: |
+          if [ -z "${{ inputs.only }}" ] && node -e 'const m=/"asof":"([^"]+)"/.exec(require("fs").readFileSync("data/live/social.js","utf8"));const t=m&&Date.parse(m[1].replace(" ","T"));process.exit(t&&Date.now()-t<40*60e3?0:1)' 2>/dev/null; then
+            echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
+          fi
+          node tools/refresh_social.mjs
         continue-on-error: true
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
         if: ${{ !inputs.only || inputs.only == 'more' }}
