@@ -696,7 +696,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     </div>
     <div class="sec">
       <h2>Master timeline</h2>
-      <p class="sub">Every record from the working layers, newest first. Click one to open its evidence package.</p>
+      <p class="sub">Every record from the working layers, newest first. Click one to open its report.</p>
       <div class="tlf">
         <label for="tl-layer">Layer</label>
         <select id="tl-layer" class="mini"><option value="">All working layers</option><option value="flood">Flood</option><option value="border">Border</option></select>
@@ -766,7 +766,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     <div class="sec">
       <h2>How alerts work</h2>
       <div class="note">
-        <p><b>An alert is a notice, not a finding.</b> Firing a rule does not confirm a record or change it. Open the alert to see the record&rsquo;s evidence package.</p>
+        <p><b>An alert is a notice, not a finding.</b> Firing a rule does not confirm a record or change it. Open the alert to see the record&rsquo;s report.</p>
         <p><b>Each alert fires once.</b> It is keyed to the rule, the rule&rsquo;s version and the record, so a rebuild or refresh cannot create duplicates.</p>
         <p><b>Alerts show inside this page.</b> An artifact page cannot send phone or email notifications. &ldquo;New&rdquo; means new since you last opened this tab in this browser.</p>
       </div>
@@ -966,7 +966,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       rep++;
       L.circleMarker([r.lat, r.lon], { pane: "roadpane", radius: 7, color: "#c62828", weight: 2, dashArray: "3 3", fillColor: "#c62828", fillOpacity: 0.15 })
         .bindPopup('<div class="pop"><div class="tier">Reported road disruption · unverified</div><h3>' + roadEsc(r.title) + '</h3><p class="obs">From ' +
-          roadEsc(r.src && r.src.name) + (r.place ? ", placed at " + roadEsc(r.place) + " (approximate)" : "") + '. <a href="#" data-openrec="' + roadEsc(r.id) + '">Evidence package</a></p></div>', { maxWidth: 320 })
+          roadEsc(r.src && r.src.name) + (r.place ? ", placed at " + roadEsc(r.place) + " (approximate)" : "") + '. <a href="#" data-openrec="' + roadEsc(r.id) + '">Report</a></p></div>', { maxWidth: 320 })
         .addTo(roadLayer);
     });
     var el = document.getElementById("ml-roadnote");
@@ -2969,7 +2969,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var box = document.getElementById(boxId || "tl-pkg");
     box.hidden = false;
     box.innerHTML =
-      '<div class="pkghead"><h2>Evidence package</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
       '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
       '<div class="pkgchips">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
@@ -3400,7 +3400,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         '<div class="tw"><table class="reg"><thead><tr><th>Asset</th><th>Type</th></tr></thead><tbody>' +
         D.assets.map(function (a, i) { return '<tr data-asset="' + i + '"><td>' + esc(a.title) + '<span class="sub">' + esc(a.prov || "") + "</span></td><td>" + esc(a.asset_type || "") + "</td></tr>"; }).join("") +
         "</tbody></table></div></div>" : "") +
-      '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its evidence package.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
+      '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its report.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
       '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
       '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
     var list = document.getElementById("cl-list");
@@ -4422,7 +4422,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (r.lat == null) return;
       var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
-        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
     });
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
@@ -4445,7 +4445,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
-      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each report. State media is marked as its government's statements.");
     var b = document.getElementById("news-all");
     if (b) b.addEventListener("click", function () { newsAll = !newsAll; showNews(); });
   }
@@ -4738,7 +4738,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25 });
       m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
         '<p class="obs">Depth ' + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + " · " + esc(q.lat.toFixed(3) + ", " + q.lon.toFixed(3)) + " · MGRS " + esc(window.MGRS_OF(q.lat, q.lon, 3)) + "</p>" +
-        '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a>' : "") + "</p></div>", { maxWidth: 320 });
+        '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Report</a>' : "") + "</p></div>", { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["q:" + q.id] = m;
     });
     (HZ.aq || []).forEach(function (p, i) {
