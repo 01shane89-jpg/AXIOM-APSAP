@@ -16,6 +16,7 @@ import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES } from "./conflict_lib.mjs";
 import { ccsAt } from "./geo_cc.mjs";
+import { zonesFront } from "./front_zones.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -259,7 +260,7 @@ async function wikiRaw(page) {
   if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow the raw page");
   return get(url, "text/plain");
 }
-async function readFront(c, prev) {
+async function readFront(c, prev, items) {
   const res = { sources: [], current: null };
   for (const s of c.front || []) {
     const st = { id: s.id, type: s.type, name: s.name || (s.type === "wikimap" ? "Wikipedia: " + s.page.replace(/_/g, " ") : s.id), licence: s.licence || (s.type === "wikimap" ? "CC BY-SA 4.0" : ""),
@@ -294,6 +295,12 @@ async function readFront(c, prev) {
         places.forEach((p) => { delete p.mark; });
         res.current = res.current || { kind: "places", source: s.id, module, places, legend, taken: stamp, sha256: sha256(places.map((p) => [p.n, p.la, p.lo, p.ctl, p.t])) };
         Object.assign(st, { ok: true, n: places.length, home: "https://en.wikipedia.org/wiki/" + module.replace(/ /g, "_") });
+      } else if (s.type === "zones") {
+        // no ground front: reported strike zones from this conflict's own placed reports, plus announced or reported areas (tools/front_zones.mjs)
+        const z = zonesFront(c, s, items, stamp);
+        if (!z.areas.features.length) throw new Error("no strike reports placed and no areas listed");
+        res.current = res.current || z;
+        Object.assign(st, { ok: true, n: z.areas.features.length, zones: z.zones, curated: z.curated, licence: "AXIOM OSAP, drawn from the reports and sources linked on each zone" });
       } else if (s.type === "geojson") {
         let txt = "", used = "";
         const urls = s.dated ? [0, 1, 2, 3, 4].map((d) => { const t = new Date(NOW - d * 864e5); return s.url.replace("{YYYYMMDD}", t.toISOString().slice(0, 10).replace(/-/g, "")); }) : [s.url];
@@ -361,7 +368,7 @@ for (const c of LIST) {
   ucdp.forEach((e) => { e.fp = e.fp || sha256({ ucdp: e.id, date: e.date, lat: e.lat, lon: e.lon, best: e.best, file: e.file }); });
   // front line / control: keep a version only when it changed
   const fprev = readJs(OUT + "/front/" + c.id + ".js") || {};
-  const fr = (c.front || []).length ? await readFront(c, fprev) : { sources: [], current: null };
+  const fr = (c.front || []).length ? await readFront(c, fprev, items) : { sources: [], current: null };
   let versions = fprev.versions || [], current = fprev.current || null, previous = fprev.previous || null;
   if (fr.current) {
     const last = versions[0];
