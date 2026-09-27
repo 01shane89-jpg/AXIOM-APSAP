@@ -31,8 +31,13 @@
   /* the saved map theme, applied now so the loading screen matches it */
   var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
   if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
-  function flag(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
-  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + flag(cc) + " " + (name || cc.toUpperCase()) : ""); }
+  /* the country's English name, without a flag emoji: Windows has no flag glyphs and draws the two letters instead ("Loading TH TH") */
+  function cname(cc) {
+    if (cc === "oki") return "Okinawa";
+    try { var n = new Intl.DisplayNames(["en"], { type: "region" }).of(cc.toUpperCase()); if (n && n.toUpperCase() !== cc.toUpperCase()) return n; } catch (e) {}
+    return cc.toUpperCase();
+  }
+  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + (name || cname(cc)) : ""); }
   var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
   function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
   window.OSAP_BOOT = {
