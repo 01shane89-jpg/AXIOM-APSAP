@@ -63,6 +63,12 @@
     });
     if (ST.alerts) layers.alerts.addTo(map); else map.removeLayer(layers.alerts);
     if (ST.heat) layers.heat.addTo(map); else map.removeLayer(layers.heat);
+    // their key goes in the map's legend with the tab's own
+    if (window.OSAP_LEGEND) window.OSAP_LEGEND.set("cf-ua", (ST.alerts && X && X.alerts ? "<h3>Air-raid alerts</h3>" +
+        '<div class="lg"><span class="sw round" style="background:rgba(198,40,40,.35);border:2px solid #c62828"></span><div>Region under alert now<span class="d">A declared threat, not a strike</span></div></div>' +
+        '<div class="lg"><span class="sw round" style="background:rgba(138,138,138,.15);border:2px solid #8a8a8a"></span><div>Standing alert<span class="d">Unchanged for over 30 days</span></div></div>' : "") +
+      (ST.heat && X && X.heat ? "<h3>Satellite heat</h3>" + '<div class="lg"><span class="sw round" style="background:rgba(255,152,0,.6);border:1px solid #e65100"></span><div>Heat detection, past 24 hours<span class="d">Cause unknown; larger means hotter</span></div></div>' : ""),
+      document.getElementById("cf-rail"));
   }
 
   function html(api) {
@@ -130,7 +136,7 @@
   /* the tab is closed (another view or conflict chosen): take the markers off the map */
   new MutationObserver(function () { if (document.documentElement.getAttribute("data-cf") !== ID) clear(); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
-  function clear() { if (layers && api0 && api0.map) { api0.map.removeLayer(layers.alerts); api0.map.removeLayer(layers.heat); } }
+  function clear() { if (layers && api0 && api0.map) { api0.map.removeLayer(layers.alerts); api0.map.removeLayer(layers.heat); } if (window.OSAP_LEGEND) window.OSAP_LEGEND.set("cf-ua", ""); }
   /* the conflict tab calls OSAP_CF_PANELS[id](box, data, front); the extras file is fetched on the first call */
   var FILE = "data/live/conflicts/extras/" + ID + ".js", loaded = 0, waiting = [];
   function load(cb) {
