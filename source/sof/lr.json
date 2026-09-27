@@ -1,0 +1,176 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "lr",
+ "country": "Liberia",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 2,
+  "level_text": "Exercise increased caution",
+  "issued": "2025-12-11",
+  "updated": null,
+  "indicators": [
+   "C",
+   "U",
+   "H"
+  ],
+  "indicator_names": [
+   "crime",
+   "civil unrest",
+   "health"
+  ],
+  "areas": [],
+  "notes": "From the State Department advisory feed (Liberia - Level 2: Exercise Increased Caution). Indicators are the risks the advisory text names, not its indicator icons; area-specific levels are not captured here, so read the advisory.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/liberia-travel-advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "7c525d4b06e89cfbd86de10e76f323041ee3dc9041b76bd42ea87223e03f74b7"
+ },
+ "posts": [],
+ "airports": [
+  {
+   "id": "sof:lr:airport:glrb",
+   "name": "Roberts International Airport",
+   "icao": "GLRB",
+   "ident": "GLRB",
+   "iata": "ROB",
+   "type": "large_airport",
+   "municipality": "Monrovia",
+   "region": "LR-MG",
+   "scheduled_service": true,
+   "lat": 6.23379,
+   "lon": -10.3623,
+   "prec": "exact",
+   "elevation_ft": 31,
+   "longest_runway": {
+    "ident": "04/22",
+    "length_ft": 11000,
+    "length_m": 3353,
+    "width_ft": 150,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/GLRB/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "b18c6735d239fa9f556fef2d50be185c95e373323fd22d4c2761d02bb4832da0"
+  },
+  {
+   "id": "sof:lr:airport:glmr",
+   "name": "Spriggs Payne Airport",
+   "icao": "GLMR",
+   "ident": "GLMR",
+   "iata": "MLW",
+   "type": "medium_airport",
+   "municipality": "Monrovia",
+   "region": "LR-MO",
+   "scheduled_service": true,
+   "lat": 6.28906,
+   "lon": -10.7587,
+   "prec": "exact",
+   "elevation_ft": 25,
+   "longest_runway": {
+    "ident": "05/23",
+    "length_ft": 6000,
+    "length_m": 1829,
+    "width_ft": 100,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/GLMR/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "2dd11c93ab3a5b1839209a884ac76c1cf654a1796c55cc43e8ce91a84ad1341e"
+  },
+  {
+   "id": "sof:lr:airport:glge",
+   "name": "Greenville/Sinoe Airport",
+   "icao": "GLGE",
+   "ident": "GLGE",
+   "iata": "SNI",
+   "type": "medium_airport",
+   "municipality": "Greenville",
+   "region": "LR-SI",
+   "scheduled_service": false,
+   "lat": 5.03212,
+   "lon": -9.06424,
+   "prec": "exact",
+   "elevation_ft": 10,
+   "longest_runway": null,
+   "runway_count": 0,
+   "src": "https://ourairports.com/airports/GLGE/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "19ef9229dae99048fda05cdd45c76311756aaf8e0281d20f426f459a0a1e040a"
+  }
+ ],
+ "seaports": [
+  {
+   "id": "sof:lr:port:lr-mlw",
+   "name": "Monrovia",
+   "unlocode": "LR MLW",
+   "locode_function": "1-345---",
+   "lat": 6.3,
+   "lon": -10.8,
+   "prec": "approx",
+   "coord_basis": "UN/LOCODE (UNECE) published coordinates, arc-minute precision",
+   "coord_flag": null,
+   "src": "https://service.unece.org/trade/locode/lr.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "44e090d9c261029eceff1051e1b944db86824e251cc317ffc07c3e14f4ac41a3"
+  },
+  {
+   "id": "sof:lr:port:lr-ucn",
+   "name": "Buchanan",
+   "unlocode": "LR UCN",
+   "locode_function": "1--4----",
+   "lat": 5.87693,
+   "lon": -10.04964,
+   "prec": "approx",
+   "coord_basis": "GeoNames town centre (the UN/LOCODE entry has no coordinates)",
+   "coord_flag": null,
+   "src": "https://service.unece.org/trade/locode/lr.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "4f116e299eaca6424cb46c726512516c182882ffa2109c3c4bccf9f5dbecf54c"
+  }
+ ],
+ "hospitals": [],
+ "power": [
+  {
+   "id": "sof:lr:power:wri1023090",
+   "name": "Mount Coffee",
+   "fuel": "Hydro",
+   "capacity_mw": 60.0,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 6.5119,
+   "lon": -10.6767,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "a977a145773217ca6ac64a874cf28695eb494831d6788e82bedcb8d192d23ca5"
+  },
+  {
+   "id": "sof:lr:power:wri1023089",
+   "name": "Luke Lec",
+   "fuel": "Oil",
+   "capacity_mw": 13.3,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 6.35,
+   "lon": -10.7833,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "2279362540b58d224aca32b65d4789d1ca32641598832b2d135f5e71d14ecbf1"
+  }
+ ],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Auto: U.S. diplomatic posts not yet researched for this country.",
+  "Auto: hospitals not yet researched for this country."
+ ]
+}
