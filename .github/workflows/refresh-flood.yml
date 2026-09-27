@@ -176,6 +176,7 @@ jobs:
         run: node tools/probe_placement.mjs
       - name: Fetch reference data for the researched country layers (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-refdata' }}
+        timeout-minutes: 22
         run: CCS="${{ vars.REFDATA_CCS || 'al ad at by be ba bg hr cy cz dk ee fi fr de gr hu is ie it xk lv li lt lu mt md mc me nl mk no pl pt ro ru sm rs sk si es se ch ua gb ag bs bb bz ca cr cu dm do sv gd gt ht hn jm mx ni pa kn lc vc tt us ar bo br cl co ec gy py pe sr uy ve' }}" node tools/probe_refdata.mjs
         continue-on-error: true
       - name: Gather dated headline leads for the researched country layers (diagnostic, writes probe-out/ only)
