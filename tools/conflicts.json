@@ -43,7 +43,6 @@
     {"id": "bbc-europe", "outlet": "BBC News (Europe)", "url": "https://feeds.bbci.co.uk/news/world/europe/rss.xml", "lang": "en", "side": "neutral"},
     {"id": "dw", "outlet": "DW (Europe)", "url": "https://rss.dw.com/rdf/rss-en-eu", "lang": "en", "side": "neutral"},
     {"id": "france24", "outlet": "France 24 (Europe)", "url": "https://www.france24.com/en/europe/rss", "lang": "en", "side": "neutral"},
-    {"id": "euronews", "outlet": "Euronews", "url": "https://www.euronews.com/rss?level=theme&name=news", "lang": "en", "side": "neutral"},
     {"id": "aljazeera", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "lang": "en", "side": "neutral"},
     {"type": "telegram", "channel": "GeneralStaffZSU", "id": "tg-generalstaffzsu", "outlet": "General Staff of the Armed Forces of Ukraine (Telegram)", "lang": "uk", "side": "ua", "state": true, "all": true},
     {"type": "telegram", "channel": "kpszsu", "id": "tg-kpszsu", "outlet": "Ukrainian Air Force (Telegram)", "lang": "uk", "side": "ua", "state": true, "all": true},
@@ -74,7 +73,7 @@
    "bounds": [[12.0, 32.0], [40.0, 64.0]],
    "terms": ["Iran\\w*", "Tehran", "Hormuz", "IRGC", "Revolutionary Guard\\w*", "Isfahan", "Natanz", "Fordow", "Bandar Abbas", "Kharg", "Qeshm", "Larak", "Jask", "Bushehr", "Sirik", "Fifth Fleet", "Al Udeid", "Muwaffaq Salti", "Project Freedom", "Araghchi", "Pezeshkian", "ایران", "تهران", "سپاه", "هرمز", "איראן"],
    "exclude": ["\\bIran(?:ian)? (?:film|cuisine|football|volleyball|wrestl\\w*|chess)\\b"],
-   "strong": ["Hormuz", "IRGC", "Revolutionary Guard\\w*", "Natanz", "Fordow", "Kharg", "Araghchi", "Pezeshkian", "Project Freedom", "Iran war", "war with Iran", "war on Iran", "Iran(?:ian)? (?:ceasefire|truce|blockade|talks|proposal|deal)", "blockade of Iran\\w*", "تنگه هرمز"],
+   "strong": ["Hormuz", "IRGC", "Revolutionary Guard\\w*", "Natanz", "Fordow", "Kharg", "Project Freedom", "Iran war", "war with Iran", "war on Iran", "Iran(?:ian)? (?:ceasefire|truce|blockade|talks|proposal|deal)", "blockade of Iran\\w*", "تنگه هرمز"],
    "searches": [{ "q": "Iran strike Hormuz", "lang": "en" }, { "q": "Iran missile attack", "lang": "en" }, { "q": "CENTCOM Iran strikes", "lang": "en" }, { "q": "IRGC claims attack", "lang": "en" }, { "q": "UKMTO vessel Strait of Hormuz", "lang": "en" }, { "q": "Iran blockade tanker", "lang": "en" }, { "q": "Iran drone attack Gulf base", "lang": "en" }, { "q": "Israel Iran strike", "lang": "en" }, { "q": "Hormuz shipping tanker", "lang": "en" }, { "q": "Iran US talks Hormuz", "lang": "en" }, { "q": "حمله موشکی سپاه", "lang": "fa" }, { "q": "هجوم إيراني قاعدة", "lang": "ar" }],
    "feeds": [
     { "id": "centcom", "outlet": "US Central Command", "url": "https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=808&max=20", "lang": "en", "state": true },
