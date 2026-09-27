@@ -2903,7 +2903,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      with the open country's zone when that lands it in the past), or a bad date (the record is dated when AXIOM read it).
      Each correction is said on the record (dateNote), with the source's original date. */
   var FUT_SLACK = 10 * 60e3;
-  function recMs(r, k) {
+  function recMsK(r, k) {
     var T = window.OSAP_TIME, t = String(r[k] == null ? "" : r[k]);
     if (k === "ts" && r.tsLabel && isFinite(T.parseT(r.tsLabel))) return T.parseT(r.tsLabel);
     if (/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(t)) return T.parseT(t);
@@ -2914,10 +2914,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function isoZ(ms) { return new Date(ms).toISOString().slice(0, 16) + "Z"; }
   function notFuture(r) {
-    var now = Date.now(), lim = now + FUT_SLACK, t = recMs(r, "ts"), i = recMs(r, "issued"), orig = r.tsLabel || r.ts;
+    var now = Date.now(), lim = now + FUT_SLACK, t = recMsK(r, "ts"), i = recMsK(r, "issued"), orig = r.tsLabel || r.ts;
     if (i > lim) {
       var li = window.OSAP_TIME.parseT(String(r.issued), window.OSAP_TIME.zone());
-      r.issued = li <= lim && li > now - 2 * 864e5 ? isoZ(li) : r.recorded || isoZ(now); i = recMs(r, "issued");
+      r.issued = li <= lim && li > now - 2 * 864e5 ? isoZ(li) : r.recorded || isoZ(now); i = recMsK(r, "issued");
     }
     if (!(t > lim)) return;
     var shown = isFinite(t) && String(orig).length > 10 ? window.OSAP_TIME.dualT(t, { date: true }) : String(orig).slice(0, 10);
@@ -2930,7 +2930,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         r.ts = isoZ(loc);
         r.dateNote = "The source gave " + String(orig).replace("T", " ").slice(0, 16) + " as UTC, which is still in the future; read as " + C.name + " local time.";
       } else {
-        r.ts = r.recorded && recMs(r, "recorded") <= lim ? r.recorded : isoZ(now);
+        r.ts = r.recorded && recMsK(r, "recorded") <= lim ? r.recorded : isoZ(now);
         r.dateNote = "The source dated this " + shown + ", which is in the future; dated here when AXIOM read it.";
       }
     }
