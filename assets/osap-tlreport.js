@@ -102,50 +102,97 @@
     "html.phone:not(.hdr-open) #tlrep-btn{display:none!important}#tlrep-btn[hidden],#tlrep-rail[hidden]{display:none!important}";
   document.head.appendChild(css);
 
-  /* ---------- small map: Natural Earth outlines already on the page, the records as dots, key events numbered ---------- */
+  /* ---------- small map: Natural Earth outlines already on the page, the records as dots, key events numbered.
+     When the records sit in one part of the area, the map zooms to them and a small overview in a corner shows where
+     that part lies. Numbered markers that would overlap are moved apart, with a thin line back to their place. ---------- */
+  function bbox(g) { var b = null; eachPt(g, function (lon, lat) { if (!b) b = [lon, lat, lon, lat]; else { b[0] = Math.min(b[0], lon); b[1] = Math.min(b[1], lat); b[2] = Math.max(b[2], lon); b[3] = Math.max(b[3], lat); } }); return b; }
+  function view(bb, size) {
+    var k = Math.cos(((bb[1] + bb[3]) / 2) * Math.PI / 180), W = (bb[2] - bb[0]) * k, H = bb[3] - bb[1], S = size / Math.max(W, H);
+    return { bb: bb, w: W * S, h: H * S, x: function (lon) { return (lon - bb[0]) * k * S; }, y: function (lat) { return (bb[3] - lat) * S; },
+      has: function (lon, lat) { return lon >= bb[0] && lon <= bb[2] && lat >= bb[1] && lat <= bb[3]; } };
+  }
+  function outlines(feats, me, v, thin) {
+    var out = "";
+    feats.forEach(function (f) {
+      var fb = f.__bb || (f.__bb = bbox(f.geometry)), bb = v.bb;
+      if (!fb || fb[2] < bb[0] || fb[0] > bb[2] || fb[3] < bb[1] || fb[1] > bb[3]) return;
+      var d = "", polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [];
+      polys.forEach(function (p) { p.forEach(function (ring) { d += "M" + ring.map(function (c) { return v.x(c[0]).toFixed(1) + " " + v.y(c[1]).toFixed(1); }).join("L") + "Z"; }); });
+      var mine = f === me;
+      out += '<path d="' + d + '" fill="' + (mine ? "#ffffff" : "#e3e8ec") + '" stroke="' + (mine ? "#12324a" : "#9aa6b0") + '" stroke-width="' + (mine ? (thin ? 0.8 : 1.3) : (thin ? 0.4 : 0.6)) + '" stroke-linejoin="round"/>';
+    });
+    return out;
+  }
+  function pctl(a, p) { var s = a.slice().sort(function (x, y) { return x - y; }); return s[Math.min(s.length - 1, Math.max(0, Math.round(p * (s.length - 1))))]; }
   function mapSvg(recs, evs) {
     var feats = [].concat(((window.COUNTRY_BASE || {}).features) || [], ((window.WORLD_BASE || {}).features) || []);
     var ne = neName(), me = feats.filter(function (f) { return f.properties && f.properties.n === ne; })[0];
     var pts = recs.filter(function (r) { return r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon); });
-    var bb = null;
-    function ext(lon, lat) { if (!bb) bb = [lon, lat, lon, lat]; else { if (lon < bb[0]) bb[0] = lon; if (lat < bb[1]) bb[1] = lat; if (lon > bb[2]) bb[2] = lon; if (lat > bb[3]) bb[3] = lat; } }
-    var wb = world() && world().bounds;
-    if (cc() === "oki") ext(122.9, 24.0), ext(128.4, 27.9);
-    else if (me) eachPt(me.geometry, ext);
-    else if (wb) ext(wb[0][1], wb[0][0]), ext(wb[1][1], wb[1][0]);
-    else pts.forEach(function (r) { ext(+r.lon, +r.lat); });
-    if (!bb) return "";
-    var padX = Math.max(0.3, (bb[2] - bb[0]) * 0.06), padY = Math.max(0.3, (bb[3] - bb[1]) * 0.06);
-    bb = [bb[0] - padX, bb[1] - padY, bb[2] + padX, bb[3] + padY];
-    var k = Math.cos(((bb[1] + bb[3]) / 2) * Math.PI / 180), W = (bb[2] - bb[0]) * k, H = bb[3] - bb[1];
-    var S = 600 / Math.max(W, H);
-    function X(lon) { return ((lon - bb[0]) * k * S).toFixed(1); }
-    function Y(lat) { return ((bb[3] - lat) * S).toFixed(1); }
-    function inView(lon, lat) { return lon >= bb[0] && lon <= bb[2] && lat >= bb[1] && lat <= bb[3]; }
-    var paths = "";
-    feats.forEach(function (f) {
-      var fb = null; eachPt(f.geometry, function (lon, lat) { if (!fb) fb = [lon, lat, lon, lat]; else { fb[0] = Math.min(fb[0], lon); fb[1] = Math.min(fb[1], lat); fb[2] = Math.max(fb[2], lon); fb[3] = Math.max(fb[3], lat); } });
-      if (!fb || fb[2] < bb[0] || fb[0] > bb[2] || fb[3] < bb[1] || fb[1] > bb[3]) return;
-      var d = "", polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [];
-      polys.forEach(function (p) { p.forEach(function (ring) { d += "M" + ring.map(function (c) { return X(c[0]) + " " + Y(c[1]); }).join("L") + "Z"; }); });
-      var mine = f === me;
-      paths += '<path d="' + d + '" fill="' + (mine ? "#ffffff" : "#e3e8ec") + '" stroke="' + (mine ? "#12324a" : "#9aa6b0") + '" stroke-width="' + (mine ? 1.3 : 0.6) + '" stroke-linejoin="round"/>';
-    });
+    var cb = null, wb = world() && world().bounds;
+    if (cc() === "oki") cb = [122.9, 24.0, 128.4, 27.9];
+    else if (me) cb = bbox(me.geometry);
+    else if (wb) cb = [wb[0][1], wb[0][0], wb[1][1], wb[1][0]];
+    if (!cb && pts.length) cb = [pctl(pts.map(function (r) { return +r.lon; }), 0), pctl(pts.map(function (r) { return +r.lat; }), 0), pctl(pts.map(function (r) { return +r.lon; }), 1), pctl(pts.map(function (r) { return +r.lat; }), 1)];
+    if (!cb) return { svg: "", mapped: 0, outside: 0, unmapped: recs.length, zoomed: false };
+    function pad(b, f, min) {
+      var px = Math.max(min, (b[2] - b[0]) * f), py = Math.max(min, (b[3] - b[1]) * f);
+      return [b[0] - px, b[1] - py, b[2] + px, b[3] + py];
+    }
+    var cbp = pad(cb, 0.06, 0.3), bb = cbp, zoomed = false;
+    /* the records' own extent, leaving out the few furthest ones (3% each side) once there are enough of them */
+    var lls = pts.map(function (r) { return [+r.lon, +r.lat]; }).concat(evs.filter(function (e) { return e.lat != null && e.lon != null; }).map(function (e) { return [e.lon, e.lat]; }));
+    if (lls.length >= 3) {
+      var q = lls.length >= 20 ? 0.03 : 0, xs = lls.map(function (p) { return p[0]; }), ys = lls.map(function (p) { return p[1]; });
+      var rb = pad([pctl(xs, q), pctl(ys, q), pctl(xs, 1 - q), pctl(ys, 1 - q)], 0.2, 0.25);
+      /* keep the zoomed view from being a sliver: at least 60% as tall as wide and the other way round */
+      var km = Math.cos(((rb[1] + rb[3]) / 2) * Math.PI / 180), rw = (rb[2] - rb[0]) * km, rh = rb[3] - rb[1];
+      if (rh < rw * 0.6) { var dy = (rw * 0.6 - rh) / 2; rb[1] -= dy; rb[3] += dy; }
+      else if (rw < rh * 0.6) { var dx = (rh * 0.6 - rw) / 2 / km; rb[0] -= dx; rb[2] += dx; }
+      var ck = Math.cos(((cbp[1] + cbp[3]) / 2) * Math.PI / 180);
+      var area = function (b, k2) { return (b[2] - b[0]) * k2 * (b[3] - b[1]); };
+      if (area(rb, km) < 0.3 * area(cbp, ck)) { bb = rb; zoomed = true; }
+    }
+    var v = view(bb, 600), W = v.w, H = v.h;
+    var paths = outlines(feats, me, v, false);
     var r0 = 3.2, dots = "", out = 0;
     pts.forEach(function (r) {
-      if (!inView(+r.lon, +r.lat)) { out++; return; }
+      if (!v.has(+r.lon, +r.lat)) { out++; return; }
       var col = r.type === "observation" ? "#1f5f8b" : r.type === "claim" ? "#8a5a00" : "#b3261e";
-      dots += '<circle cx="' + X(+r.lon) + '" cy="' + Y(+r.lat) + '" r="' + (r0 + Math.min(2, (r.sev || 1) - 1) * 0.9) + '" fill="' + (r.type === "observation" ? "none" : col) +
+      dots += '<circle cx="' + v.x(+r.lon).toFixed(1) + '" cy="' + v.y(+r.lat).toFixed(1) + '" r="' + (r0 + Math.min(2, (r.sev || 1) - 1) * 0.9) + '" fill="' + (r.type === "observation" ? "none" : col) +
         '" fill-opacity=".55" stroke="' + col + '" stroke-width="1"' + (r.type === "claim" ? ' stroke-dasharray="2 1.5"' : "") + "/>";
     });
-    var nums = "";
+    /* overview inset: the whole area, with the zoomed part outlined, in the corner holding the fewest records */
+    var inset = "";
+    if (zoomed) {
+      var iv = view(cbp, 150), corners = [[W - iv.w - 8, 8], [8, 8], [W - iv.w - 8, H - iv.h - 8], [8, H - iv.h - 8]], best = null, bestN = 1e9;
+      corners.forEach(function (c) {
+        var n = pts.filter(function (r) { var x = v.x(+r.lon), y = v.y(+r.lat); return x >= c[0] - 10 && x <= c[0] + iv.w + 10 && y >= c[1] - 10 && y <= c[1] + iv.h + 10; }).length;
+        if (n < bestN) { bestN = n; best = c; }
+      });
+      var zx = iv.x(bb[0]), zy = iv.y(bb[3]), zw = iv.x(bb[2]) - zx, zh = iv.y(bb[1]) - zy;
+      inset = '<g transform="translate(' + best[0].toFixed(1) + " " + best[1].toFixed(1) + ')"><rect x="-3" y="-3" width="' + (iv.w + 6).toFixed(1) + '" height="' + (iv.h + 6).toFixed(1) + '" fill="#f4f8fb" stroke="#12324a" stroke-width="1"/>' +
+        '<svg width="' + iv.w.toFixed(1) + '" height="' + iv.h.toFixed(1) + '" overflow="hidden">' + outlines(feats, me, iv, true) +
+        '<rect x="' + zx.toFixed(1) + '" y="' + zy.toFixed(1) + '" width="' + Math.max(3, zw).toFixed(1) + '" height="' + Math.max(3, zh).toFixed(1) + '" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.6"/></svg>' +
+        '<text x="3" y="' + (iv.h - 4).toFixed(1) + '" font-size="10" font-family="system-ui,sans-serif" fill="#12324a" font-weight="600">' + esc(cname()) + "</text></g>";
+    }
+    /* numbered key events: badges that would overlap are moved to the nearest free spot, with a line back */
+    var nums = "", placed = [];
     evs.forEach(function (e, i) {
-      if (e.lat == null || e.lon == null || !inView(e.lon, e.lat)) return;
-      var x = X(e.lon), y = Y(e.lat);
-      nums += '<g><circle cx="' + x + '" cy="' + y + '" r="8" fill="#12324a" stroke="#fff" stroke-width="1.5"/><text x="' + x + '" y="' + (+y + 3.4).toFixed(1) + '" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">' + (i + 1) + "</text></g>";
+      if (e.lat == null || e.lon == null || !v.has(e.lon, e.lat)) return;
+      var x0 = v.x(e.lon), y0 = v.y(e.lat), x = x0, y = y0, R = 11;
+      function free(px, py) { return px > R && px < W - R && py > R && py < H - R && placed.every(function (p) { return (p[0] - px) * (p[0] - px) + (p[1] - py) * (p[1] - py) >= (2 * R + 2) * (2 * R + 2); }); }
+      if (!free(x, y)) {
+        found: for (var rad = 2 * R + 4; rad <= 8 * R; rad += R) for (var a = 0; a < 12; a++) {
+          var ang = -Math.PI / 2 + a * Math.PI / 6, px = x0 + rad * Math.cos(ang), py = y0 + rad * Math.sin(ang);
+          if (free(px, py)) { x = px; y = py; break found; }
+        }
+      }
+      placed.push([x, y]);
+      nums += (x !== x0 || y !== y0 ? '<line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#12324a" stroke-width="1.2"/><circle cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="2.2" fill="#12324a"/>' : "") +
+        '<g><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="#12324a" stroke="#fff" stroke-width="1.8"/><text x="' + x.toFixed(1) + '" y="' + (y + 4.3).toFixed(1) + '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">' + (i + 1) + "</text></g>";
     });
-    return { svg: '<svg class="tlrmap" viewBox="0 0 ' + (W * S).toFixed(0) + " " + (H * S).toFixed(0) + '" role="img" aria-label="Map of ' + esc(cname()) + ' with the report\'s records">' + paths + dots + nums + "</svg>",
-      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length };
+    return { svg: '<svg class="tlrmap" viewBox="0 0 ' + W.toFixed(0) + " " + H.toFixed(0) + '" role="img" aria-label="Map of ' + esc(cname()) + (zoomed ? ", zoomed to where the records are," : "") + ' with the report\'s records">' + paths + dots + nums + inset + "</svg>",
+      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length, zoomed: zoomed };
   }
   function eachPt(g, fn) {
     if (!g) return;
@@ -348,7 +395,7 @@
       '<div class="tlrmapw"><div><h3>Where</h3>' + m.svg +
       '<div class="tlrkey"><span><i style="background:#b3261e;opacity:.7"></i>Sourced report</span><span><i style="background:#8a5a00;opacity:.7;border:1px dashed #8a5a00"></i>Official statement</span><span><i style="border:1.5px solid #1f5f8b"></i>Instrument reading</span>' +
       (keyEv.length ? "<span><i style=\"background:#12324a\"></i>Numbered: key events</span>" : "") + "</div>" +
-      '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". Positions are as precise as each source allows.</p></div>" +
+      '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") + "Positions are as precise as each source allows.</p></div>" +
       "<div><h3>Key events " + '<span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
       (evs.length ? (nts.length ? '<h4 class="tlrsub">Reported by two or more sources</h4>' : "") + evs.map(evHtml).join("") : "") +
       (nts.length ? (evs.length ? '<h4 class="tlrsub">Other notable records</h4>' : '<p class="bm">No two sources reported the same incident in these dates, so these are single reports picked by fixed rules.</p>') +
