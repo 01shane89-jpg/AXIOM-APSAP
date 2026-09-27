@@ -8,7 +8,7 @@
 // both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for 365 days (merged by link).
 // Writes data/live/deepsouth.js. PROBE=1 writes probe-out/deepsouth.json instead (per-feed result and sample headlines), never data/.
 import fs from "node:fs";
-import { translateAll, saveCache } from "./translate.mjs";
+import { translateAll, saveCache, decodeEntities, forget } from "./translate.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
 const PROBE = process.env.PROBE === "1", TIMEOUT = 20000, KEEP_DAYS = 365, CAP = 1500, OUT = "data/live/deepsouth.js";
@@ -177,21 +177,40 @@ const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en);
 if (todo.length) {
   // Search results cut headlines off with "..." and open with "ด่วน!" ("urgent"); the model invents text for such fragments, so both are
   // dropped from what it is given (the original stays as published).
-  const clean = (t) => String(t || "").replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim();
-  const tr = await translateAll([...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))]);
+  const clean = (t) => decodeEntities(t).replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim();
   // The open model sometimes invents text or loops ("police, police, ..."). A translation is kept only when it carries every number in
-  // the original and repeats no word run; otherwise the original Thai is shown. A failed headline borrows the summary's first sentence.
+  // the original (as digits or, up to twenty, as a word), brings in no year the original does not have (Thai years are Buddhist Era:
+  // 2569 or "ปี 69" is 2026), and repeats no word run. A rejected model translation is asked once more of the fallback service;
+  // if that fails too the original Thai is shown and the item is retried on the next run.
+  const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
+    "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+  const has = (en, x) => new RegExp("(^|\\D)" + x + "(\\D|$)").test(en) || (+x <= 20 && new RegExp("\\b" + WORDS[+x] + "\\b", "i").test(en));
+  // the forms a number in the Thai may take in English: itself, a word, or a Buddhist Era year as a Common Era one
+  const forms = (x) => [x, ...(+x >= 2400 && +x <= 2700 ? [String(+x - 543)] : []), ...(x.length === 2 ? [String(1957 + +x)] : [])];
   const sane = (orig, en) => {
     if (!en) return false;
-    const nums = (clean(orig).match(/\d+/g) || []).filter((x) => x.length < 5);
-    if (nums.some((x) => !new RegExp("(^|\\D)" + x + "(\\D|$)").test(en))) return false;
+    const o = clean(orig), nums = (o.match(/\d+/g) || []).filter((x) => x.length < 5);
+    if (nums.some((x) => !forms(x).some((f) => has(en, f)))) return false;
+    const ys = new Set(nums.flatMap(forms).map(Number));
+    if ((en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).some((y) => !ys.has(+y))) return false;
     if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return false;
-    return en.length < 4 * clean(orig).length + 40;
+    return en.length < 4 * o.length + 40;
   };
+  const texts = [...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))];
+  const tr = await translateAll(texts);
+  const origOf = (k) => (k < todo.length ? todo[k].title : todo[k - todo.length].summary);
+  const bad = tr.map((r, k) => (r.en && r.tool && !sane(origOf(k), r.en) ? k : -1)).filter((k) => k >= 0);
+  if (bad.length) {
+    bad.forEach((k) => forget(texts[k].text, texts[k].lang));
+    const again = await translateAll(bad.map((k) => texts[k]), { model: false });
+    bad.forEach((k, j) => { tr[k] = again[j].en ? again[j] : { en: null, tool: tr[k].tool }; });
+    console.log("Deep South: " + bad.length + " model translations failed the check; " + again.filter((r) => r.en).length + " redone by the fallback service");
+  }
   todo.forEach((i, n) => {
     const t = tr[n].en, sm = tr[todo.length + n].en;
     i.mt = tr[n].tool || tr[todo.length + n].tool || "untranslated";
     i.summary_en = sane(i.summary, sm) ? sm.slice(0, 400) : null;
+    delete i.mt_rejected; delete i.title_from_summary;
     if (sane(i.title, t)) i.title_en = t;
     else if (i.summary_en) { i.title_en = i.summary_en.split(/(?<=[.!?])\s/)[0].slice(0, 160); i.title_from_summary = true; }
     else { i.title_en = null; if (t) i.mt_rejected = true; }

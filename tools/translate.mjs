@@ -18,6 +18,20 @@ let cache = {};
 try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (e) {}
 const key = (s, lang) => crypto.createHash("sha1").update((lang || "") + "|" + s).digest("hex").slice(0, 20);
 let myMemoryUsed = 0;
+// Feeds often carry HTML character codes ("&#8216;", "&amp;"). The model reads them as text and invents around them, so they are
+// turned back into the characters they stand for before anything is translated or cached.
+// "<" and ">" stay encoded, so decoding can never turn feed text into markup.
+const NAMED = { amp: "&", quot: '"', apos: "'", nbsp: " ", hellip: "\u2026", ndash: "\u2013", mdash: "\u2014",
+  lsquo: "\u2018", rsquo: "\u2019", ldquo: "\u201c", rdquo: "\u201d" };
+export function decodeEntities(s) {
+  return String(s || "").replace(/&(?:#(\d{1,7})|#x([0-9a-f]{1,6})|([a-z]+));/gi, (m, d, h, n) => {
+    const cp = d ? +d : h ? parseInt(h, 16) : null;
+    if (cp !== null) return cp > 0 && cp <= 0x10ffff && cp !== 60 && cp !== 62 ? String.fromCodePoint(cp) : m;
+    return Object.prototype.hasOwnProperty.call(NAMED, n.toLowerCase()) ? NAMED[n.toLowerCase()] : m;
+  });
+}
+// Drop a cached translation that a caller found to be wrong, so it is not served again.
+export function forget(text, lang) { delete cache[key(decodeEntities(text), lang)]; }
 
 async function get(url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
@@ -26,16 +40,19 @@ async function get(url) {
 }
 
 // items: [{ text, lang }] -> [{ en, tool }] (en null when not translated). English and empty texts pass through.
-export async function translateAll(items) {
-  const out = items.map((it) => {
-    if (!it.text || /^en\b/i.test(it.lang || "")) return { en: it.text || "", tool: null };
+// opts.model === false skips the local model and asks only the fallback service (used to retry a rejected model translation).
+export async function translateAll(items, opts = {}) {
+  const orig = items;   // English passes through exactly as given
+  items = items.map((it) => ({ ...it, text: it.text ? decodeEntities(it.text) : it.text }));
+  const out = items.map((it, i) => {
+    if (!it.text || /^en\b/i.test(it.lang || "")) return { en: orig[i].text || "", tool: null };
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
-    if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: it.text, tool: null };
+    if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
     const c = cache[key(it.text, it.lang)];
     return c ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
-  if (todo.length) localModel(items, todo, out);
+  if (todo.length && opts.model !== false) localModel(items, todo, out);
   for (const k of todo) {
     if (out[k] || myMemoryUsed >= MYMEMORY_LIMIT) continue;
     const it = items[k], src = (it.lang || "").split("-")[0] || "autodetect";

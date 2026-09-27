@@ -34,9 +34,12 @@ def main():
     # Translate in slices and stop at the time budget (MT_BUDGET seconds), so a long queue returns what is done
     # instead of being killed with nothing; the caller orders the queue by priority and the rest waits for the next run.
     budget, t0, res = float(os.environ.get("MT_BUDGET", "300")), time.time(), []
+    # The penalty and the no-repeat rule stop the greedy decoder looping ("single-track, single-track, ..."), which it did on
+    # short Thai headlines.
     for k in range(0, len(jobs), 32):
         if res and time.time() - t0 > budget: break
-        res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=1, max_batch_size=16, max_decoding_length=256)
+        res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=1, max_batch_size=16, max_decoding_length=256,
+                                repetition_penalty=1.2, no_repeat_ngram_size=4)
     done = set(i for (i, _), _r in zip(jobs, res))
     out = [None] * len(items)
     for (i, _), r in zip(jobs, res):
