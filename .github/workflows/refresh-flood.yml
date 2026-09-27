@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news, probe-cap); empty runs all"
         required: false
         default: ""
 
@@ -123,8 +123,8 @@ jobs:
           path: probe-out/
           retention-days: 3
       - name: Probe candidate national news feeds (diagnostic, writes nothing to the repo)
-        if: ${{ inputs.only == 'probe-news' }}
-        run: node tools/probe_news.mjs
+        if: ${{ inputs.only == 'probe-news' || inputs.only == 'probe-cap' }}
+        run: CAP_ONLY=${{ inputs.only == 'probe-cap' && '1' || '' }} node tools/probe_news.mjs
         continue-on-error: true
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
@@ -142,7 +142,7 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'probe-news') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -154,7 +154,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi

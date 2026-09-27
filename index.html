@@ -4573,12 +4573,15 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
         "F", layer === "news" ? "Read every 15 minutes from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read every 15 minutes. Posts are that account's claims.", i.link);
-      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary), pl = placeFor(en + " " + (sen || ""));
+      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary),
+        /* i.geo: placed by the refresh job from GeoNames (p "approx" = a town centre, "province" = a region's rough centre); otherwise matched here against places already on the map */
+        g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? { name: i.geo.n, lat: i.geo.la, lon: i.geo.lo, prec: i.geo.p === "province" ? "province" : "approx", gn: 1 } : null,
+        pl = g || placeFor(en + " " + (sen || ""));
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
-        derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
-        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
+        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
         thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
       rec[flag] = true; add(rec);
     });
@@ -4686,7 +4689,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (r.lat == null) return;
       var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
-        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+        (r.prec === "province" ? " by name, at the rough centre of that region." : " by name, approximately.") + ' <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
     });
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
