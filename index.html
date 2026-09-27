@@ -118,6 +118,12 @@
       '<rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/>' +
       '<path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="' + (hollow ? "#fff" : "#D7141A") + '" stroke="#D7141A" stroke-width="' + (hollow ? 1.3 : 0) + '"/></svg></span>';
   };
+  window.OSAP_LATER = function (src, done) {
+    /* start a big, non-urgent script once the page has shown and the browser is idle, so it never delays the first screen */
+    function go() { var s = document.createElement("script"); s.src = src; s.async = true; if (done) s.onload = done; document.body.appendChild(s); }
+    function idle() { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 500); }
+    if (document.readyState !== "loading") setTimeout(idle, 400); else document.addEventListener("DOMContentLoaded", function () { setTimeout(idle, 400); });
+  };
 })();
 </script>
 <script>
@@ -870,18 +876,8 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 
     <div class="sec maplg">
       <h2>Legend</h2>
-      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Armed clash</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--l3)"></span><div>Air or artillery strike</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Landmine</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--util)"></span><div>Standoff or fortification</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--power)"></span><div>Territorial control<span class="d">Positions taken or held, villages sealed off</span></div></div>
-      <div class="lg"><span class="sw round" style="background:var(--care)"></span><div>Civilian harm or displacement</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Maritime</div></div>
-      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
-      <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
-      <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
+      <div class="lg"><div>Incidents, crossings, disputed sites, schools, power and military sites use the map symbols listed below.<span class="d">Faded incident symbols are older than 45 days. Zoomed in, KH above a symbol means the Cambodian side.</span></div></div>
       <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital or clinic in Thailand<span class="d">Outlined cross: the same in Cambodia</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--rain);width:11px;height:11px;margin:4px 2px 0"></span><div>School (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
@@ -1059,6 +1055,9 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 </div>
 
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
+<script src="assets/osap-symbols.js"></script>
+<script>/* NATO-style symbol icon; null if assets/osap-symbols.js failed to load, so callers keep their old pin */
+function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon(k, o) : null; }</script>
 <script src="data/thailand/power.js"></script>
 <script src="data/thailand/flood-live-snapshot.js"></script>
 <script src="data/thailand/flood-exposure.js"></script>
@@ -2171,7 +2170,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
         pane: "assetpane", keyboard: false,
         icon: a.g === "care" || a.g === "clinic"
           ? L.divIcon({ className: "", iconSize: [px + 6, px + 6], iconAnchor: [(px + 6) / 2, (px + 6) / 2], html: OSAP_REDCROSS(px + 6, a.side === "KH") })
-          : L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+          : (sk && osapSym(sk, a.side === "KH" ? { text: "KH", cls: "kh" } : null)) || L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
           html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
                 ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
       });
@@ -3831,7 +3830,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   var ADV_TONE = ["", "--calm", "--near", "--over", "--over"];
   function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
   function sofIcon(k) {
-    var c = tok(SOFK[k].color);
+    var c = tok(SOFK[k].color), sy = SOFK[k].sym && osapSym(SOFK[k].sym);
+    if (sy) return sy;
     if (k === "hospitals") return L.divIcon({ className: "", iconSize: [18, 18], iconAnchor: [9, 9], html: OSAP_REDCROSS(18) });
     return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
       html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
@@ -3893,7 +3893,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
       var n = (SOF[k] || []).length, id = "sofk-" + k;
       return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
-        (k === "hospitals" ? OSAP_REDCROSS(15) : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span>") + " " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+        (k === "hospitals" ? OSAP_REDCROSS(15) : SOFK[k].sym && window.OSAP_SYM ? '<span class="msw">' + OSAP_SYM.svg(SOFK[k].sym) + "</span>" : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> ") + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
     }).join("") + "</div>";
     var lists = kinds.map(function (k) {
       var arr = SOF[k] || [];
