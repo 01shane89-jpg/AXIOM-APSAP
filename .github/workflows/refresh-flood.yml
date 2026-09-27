@@ -117,9 +117,9 @@ jobs:
             data/live/deepsouth.js
           if-no-files-found: ignore
           retention-days: 3
-      # The social pull takes about 20 minutes (hundreds of YouTube channels, paced to stay polite), longer than the 15-minute
-      # cycle, so a full run only repeats it when the last social snapshot is 40 minutes old or more. The other feeds keep
-      # their 15-minute cadence; social posts refresh about every 45 minutes. Running "social" on its own always pulls.
+      # The social pull reads its accounts several at a time and stops starting new YouTube channels after 6 minutes
+      # (tools/refresh_social.mjs); accounts it misses keep their earlier posts. A full run still repeats it only when the
+      # last social snapshot is 40 minutes old or more. Running "social" on its own always pulls.
       - name: Pull official and established social media accounts
         if: ${{ !inputs.only || inputs.only == 'social' }}
         run: |
