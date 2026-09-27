@@ -63,6 +63,9 @@ const TT = [
   ["bellingcat", "Bellingcat", "https://www.bellingcat.com/", ["https://www.bellingcat.com/feed/"]],
 ];
 
+// Pages that list an institute's feeds, searched when none of the candidate addresses answers.
+const PAGES = { carnegie: ["https://carnegieendowment.org/rss/"], chatham: ["https://www.chathamhouse.org/rss-feeds"], sipri: ["https://www.sipri.org/rss"] };
+
 // Adjectives that headlines use in place of country names ("Russian drones", "Iranian proxies").
 const DEMONYMS = { russian: "Russia", ukrainian: "Ukraine", chinese: "China", iranian: "Iran", israeli: "Israel", palestinian: "Palestine", syrian: "Syria", iraqi: "Iraq",
   afghan: "Afghanistan", pakistani: "Pakistan", indian: "India", japanese: "Japan", "south korean": "South Korea", "north korean": "North Korea", taiwanese: "Taiwan",
@@ -125,12 +128,18 @@ for (const [id, org, home, urls] of TT) {
     let xml = "", used = "", why = [];
     const tryUrl = async (u) => { try { const t = await g(u, "text", { headers: UA_FEED, timeout: 20e3 }); if (/<(item|entry)[\s>]/.test(t)) { xml = t; used = u; return true; } why.push(u + ": not a feed"); } catch (e) { why.push(u + ": " + e.message); } return false; };
     for (const u of urls) if (await tryUrl(u)) break;
-    if (!xml) { // fall back to the feed the home page advertises
-      try {
-        const page = await g(home, "text", { timeout: 20e3 });
-        const links = [...page.matchAll(/<link[^>]+type="application\/(?:rss|atom)\+xml"[^>]*>/gi)].map((m) => (m[0].match(/href="([^"]+)"/) || [])[1]).filter(Boolean);
-        for (const l of links.slice(0, 2)) if (await tryUrl(new URL(l.replace(/&amp;/g, "&"), home).href)) break;
-      } catch (e) { why.push(home + ": " + e.message); }
+    if (!xml) { // fall back to feeds the home page (or the institute's feed list page) links to
+      for (const pg of [home, ...(PAGES[id] || [])]) {
+        try {
+          const page = await g(pg, "text", { timeout: 20e3 });
+          const alt = [...page.matchAll(/<link[^>]+type="application\/(?:rss|atom)\+xml"[^>]*>/gi)].map((m) => (m[0].match(/href="([^"]+)"/) || [])[1]);
+          const anchors = [...page.matchAll(/href="([^"]*(?:rss|feed|atom)[^"]*)"/gi)].map((m) => m[1]).filter((h) => !/feedback|feedburner\.google|\.(css|js|png|svg)(\?|$)/i.test(h));
+          const links = [...new Set([...alt, ...anchors].filter(Boolean).map((l) => { try { return new URL(l.replace(/&amp;/g, "&"), pg).href; } catch { return null; } }).filter(Boolean))].filter((l) => !urls.includes(l) && l !== pg);
+          let hit = false;
+          for (const l of links.slice(0, 4)) if ((hit = await tryUrl(l))) break;
+          if (hit) break;
+        } catch (e) { why.push(pg + ": " + e.message); }
+      }
     }
     if (!xml) throw new Error("no feed: " + why.join("; ").slice(0, 300));
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
