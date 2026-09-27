@@ -56,19 +56,25 @@ const DEFS = {
 const out = {}, meta = {};
 for (const [k, d] of Object.entries(DEFS)) {
   const code = sidc(d[0], d[1], d[2]);
-  const s = new ms.Symbol(code, Object.assign({ size: 18, outlineWidth: 2.5, outlineColor: "#ffffff", simpleStatusModifier: true }, d[5] || {}));
+  // drawn at a base of 24 px; the page scales it with the map zoom (CSS --msk), and SVG stays sharp at any size
+  const s = new ms.Symbol(code, Object.assign({ size: 24, outlineWidth: 4, outlineColor: "#ffffff", strokeWidth: 4, simpleStatusModifier: true }, d[5] || {}));
   if (!s.isValid()) throw new Error("invalid symbol " + k + " " + code);
   const sz = s.getSize(), an = s.getAnchor();
-  out[k] = [s.asSVG().replace(/\s+/g, " "), Math.ceil(sz.width), Math.ceil(sz.height), Math.round(an.x), Math.round(an.y)];
+  // no fixed width/height on the <svg>: it fills the box the page sizes
+  const svg = s.asSVG().replace(/\s+/g, " ").replace(/ width="[\d.]+" height="[\d.]+"/, "");
+  out[k] = [svg, +sz.width.toFixed(1), +sz.height.toFixed(1), +an.x.toFixed(1), +an.y.toFixed(1)];
   meta[k] = [d[3], code, d[4]];
 }
 
 const RUNTIME = `
   var S = window.OSAP_SYM;
-  /* map icon: L.divIcon anchored on the symbol's own centre point; opts.text adds a small label (a hill number) */
+  /* map icon: a zero-size L.divIcon on the point; the symbol box inside is sized from the base size times --msk
+     (set on the map by zoom), and offset so the symbol's own anchor sits on the point. opts.text adds a label (hill number). */
+  function px(v) { return "calc(" + v + "px * var(--msk, 1))"; }
   S.icon = function (k, opts) {
     var d = S.d[k] || S.d.pr_site, o = opts || {}, lab = o.text ? '<span class="msym-t">' + String(o.text).replace(/[<>&"]/g, "") + "</span>" : "";
-    return L.divIcon({ className: "msym msk-" + k + (o.cls ? " " + o.cls : ""), iconSize: [d[1], d[2]], iconAnchor: [d[3], d[4]], html: d[0] + lab });
+    return L.divIcon({ className: "msym msk-" + k + (o.cls ? " " + o.cls : ""), iconSize: [0, 0], iconAnchor: [0, 0],
+      html: '<div class="msb" style="width:' + px(d[1]) + ";height:" + px(d[2]) + ";left:" + px(-d[3]) + ";top:" + px(-d[4]) + '">' + d[0] + lab + "</div>" });
   };
   S.svg = function (k) { return (S.d[k] || S.d.pr_site)[0]; };
   /* legend rows for the given keys, in plain words, grouped; the frame key comes first */

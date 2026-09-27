@@ -339,12 +339,14 @@ html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-hei
 @media print{.lgctl{display:none}}
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
 /* NATO-style (APP-6) map symbols from assets/osap-symbols.js */
-.msym svg{display:block;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}.msym.old{opacity:.7}
-.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-1px);font:700 10.5px/1.2 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
-.msw{display:inline-flex;width:26px;justify-content:center;flex:none}.msw svg{width:22px;height:auto;max-height:26px;display:block}
+.msb{position:absolute}.msb>svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 1px rgba(0,0,0,.6)) drop-shadow(0 1px 2px rgba(0,0,0,.35))}.msym.old .msb{opacity:.8}
+.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-2px);font:700 11.5px/1.25 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
+.msw{display:inline-flex;width:30px;justify-content:center;flex:none}.msw svg{width:26px;height:auto;max-height:30px;display:block}
 .lgh{font-weight:600;font-size:11px;margin:6px 0 1px;color:var(--muted)}.msyfr{font-size:10.5px;line-height:1.35;margin:6px 0 2px;color:var(--muted)}
 .msykey .lg{align-items:center}
 .msym-zlo .msym.kh .msym-t{display:none}
+/* terrain names sit just right of the (zoom-scaled) key-terrain symbol */
+.msyon .terlbl{padding-left:calc(16px * var(--msk, 1));font-size:12px!important}
 
 .rows{display:flex;flex-direction:column}
 .row{
@@ -1130,7 +1132,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
-  function symZoom() { map.getContainer().classList.toggle("msym-zlo", map.getZoom() < 10); }
+  /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
+  function symZoom() {
+    var z = map.getZoom(), el = map.getContainer();
+    el.classList.toggle("msym-zlo", z < 10); el.classList.toggle("msyon", !!window.OSAP_SYM);
+    el.style.setProperty("--msk", z <= 6 ? 0.65 : z <= 8 ? 0.8 : z <= 10 ? 1 : z <= 12 ? 1.15 : 1.3);
+  }
   map.on("zoomend", symZoom); symZoom();
   window.__asapMap = map;
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
@@ -1415,7 +1422,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: osapSym("keyterrain", t.hill_number ? { text: t.hill_number } : null) || L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
           html: t.hill_number ? '<div class="terpin hn">' + TE(t.hill_number) + "</div>" : '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
           .bindPopup(terPop(t), { maxWidth: 320 }).addTo(terLayer);
-        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [t.hill_number ? -17 : -12, 7],
+        L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [window.OSAP_SYM ? 0 : t.hill_number ? -17 : -12, 7],
           html: TE(t.name.split(/ \(/)[0]) }) }).addTo(lblLayer);
       });
       lbl();
@@ -1430,6 +1437,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
     function sync() {
       document.querySelectorAll("input[data-ter]").forEach(function (i) { i.checked = !!ST[i.getAttribute("data-ter")]; });
+      var pb = document.getElementById("pr-btn"); if (pb) { pb.classList.toggle("on", !!ST.pr); pb.setAttribute("aria-pressed", ST.pr ? "true" : "false"); }
       document.querySelectorAll(".ternote").forEach(function (e) { e.textContent = note(e.getAttribute("data-k") || ""); });
     }
     function set(k, on) {
@@ -1459,6 +1467,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
+    /* countries with a presence layer get their own map button, so it is not buried in the Layers menu, and the layer
+       comes on by itself in the maritime data set (the data-set switch turns extra layers off first, then this runs) */
+    if (HASPR[cc]) {
+      var PrCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+        var d = L.DomUtil.create("div", "leaflet-control areactl prctl");
+        d.innerHTML = '<button type="button" id="pr-btn" aria-pressed="false" title="Chinese state presence and reported influence: held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.">Chinese presence</button>';
+        L.DomEvent.disableClickPropagation(d); return d; } });
+      new PrCtl().addTo(map);
+      document.getElementById("pr-btn").addEventListener("click", function () { set("pr", !ST.pr); });
+      var PRVIEW = { border: 1 };
+      new MutationObserver(function () { if (PRVIEW[document.documentElement.getAttribute("data-view")] && !ST.pr) set("pr", true); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["data-view"] });
+    }
     sync();
     if (!HASPR[cc]) ST.pr = false;
     if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
@@ -2520,7 +2541,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   if (!hit) return;
   window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
   window.OSAP_ZONE = hit[2];
-  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+  /* the state's outline, and its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) */
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
 <script src="data/sof/exercises-outside.js"></script>
@@ -2607,6 +2629,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
   var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
+  /* a state's own outlets join the national news for this view, marked with the state */
+  (function () {
+    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS;
+    if (!SUB || !S || S.st !== SUB.code || !(S.items || []).length) return;
+    if (!N || !N.items) N = window.ASAP_NEWS = { asof: S.asof, sources: [], items: {} };
+    N.items[CC] = S.items.map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
+    N.sources = (N.sources || []).concat(S.sources || []);
+  })();
   function subRing(ring, x, y) {
     for (var i = 0, j = ring.length - 1, a = false; i < ring.length; j = i++)
       if ((ring[i][1] > y) !== (ring[j][1] > y) && x < (ring[j][0] - ring[i][0]) * (y - ring[i][1]) / (ring[j][1] - ring[i][1]) + ring[i][0]) a = !a;
@@ -2730,6 +2760,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   function add(r) {
     /* a record placed outside the open US state belongs to another state's view */
     if (SUB && r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon) && !inSub(+r.lat, +r.lon)) return;
+    /* ...and national news or posts that say nowhere in particular stay on the whole-USA view; the state's own outlets stay */
+    if (SUB && (r.news || r.social) && !(r.lat != null && isFinite(r.lat)) && r.st !== SUB.code) return;
     notFuture(r);
     r.id = r.layer + "-" + (SEQ++);
     r.src.n++;
@@ -3008,6 +3040,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || b.getAttribute("data-cc") === CC && !SUB) return;
     goPlace(b.getAttribute("data-cc"), "");
+  });
+  /* the whole-USA map is sectioned by state: thin state lines (assets/regions/USA.json, loaded after the page is up); tap a
+     state to open its own view */
+  if (CC === "us" && !SUB && STATES.length && window.fetch) window.addEventListener("load", function () {
+    fetch("assets/regions/USA.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j || !j.r) return;
+      var byName = {}; STATES.forEach(function (s) { byName[s.name] = s; });
+      map.createPane("stlines"); map.getPane("stlines").style.zIndex = 380;
+      var rend = L.svg({ pane: "stlines" });
+      j.r.forEach(function (r) {
+        var s = r[1] === "Federal District" ? byName["Washington, D.C."] : byName[r[0]]; if (!s) return;
+        L.polygon(r[5].map(function (ring) { return ring.map(function (p) { return [p[1], p[0]]; }); }),
+          { pane: "stlines", renderer: rend, color: tok("--muted"), weight: 0.9, opacity: 0.7, fill: true, fillOpacity: 0, className: "stline" })
+          .bindTooltip(esc(s.name) + ": open this state", { sticky: true })
+          .on("click", function () { goPlace("us", s.code); }).addTo(map);
+      });
+    }).catch(function () {});
   });
   cseg.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-st]"); if (!b) return;
@@ -4735,7 +4784,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
         derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
-        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -7078,5 +7127,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
+<script src="assets/osap-conflicts.js"></script>
+<script src="assets/osap-tlreport.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
