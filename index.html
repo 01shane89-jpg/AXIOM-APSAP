@@ -291,6 +291,7 @@ select.mini{
 .mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
@@ -925,6 +926,56 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
   }
   function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  /* ---------- road closures: official road-agency notices (data/live/roads.js) plus closures named in this area's reports ----------
+     Agency notices are shown as the agency published them. "Reported" markers are news or warning records whose text says a
+     road is closed; they are unverified and sit where the record was placed, which may be approximate. */
+  map.createPane("roadpane"); map.getPane("roadpane").style.zIndex = 640;
+  var roadLayer = L.layerGroup(), ROADCC = { nz: 1, fr: 1, au: 1, ca: 1, fi: 1 };
+  var ROADK = { closure: ["Road closed", "#c62828"], roadworks: ["Roadworks", "#ef6c00"], incident: ["Incident or hazard", "#f9a825"] };
+  /* a report counts when it names a road, highway, street or bridge AND a word for it being shut, cut, flooded or destroyed; "reopens" does not */
+  var ROAD_RE = { road: /\b(roads?|highways?|streets?|expressways?|motorways?|bridges?|route \d+|rural road|tunnel)\b/i,
+    hit: /\b(clos(ed|es|ure|ing)|shut[s]?|block(ed|s|age)|cut off|sever(ed|s)|impassable|submerged|flood(ed|s)|under water|washed (out|away)|collaps(ed|es)|landslides?|mudslides?|damag(ed|es))\b/i,
+    not: /\breopen/i, test: function (t) { return this.road.test(t) && this.hit.test(t) && !this.not.test(t); } };
+  function roadCountry() { return (window.TSAP && window.TSAP.country) || (location.hash.replace(/^#/, "").split("/")[0]) || "th"; }
+  function roadEsc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function roadNote() {
+    var cc = roadCountry(), w = window.ASAP_ROADS, st = w && (w.status || []).filter(function (s) { return s.cc === cc; })[0];
+    if (st) return st.ok ? st.source + ": " + st.n + " notices (" + st.closures + " closures), " + st.area + ". Snapshot " + w.asof + "."
+      : st.source + " did not answer at the last refresh (" + st.area + ").";
+    return ROADCC[cc] ? "Official feed not loaded yet (first refresh after this change is merged)." :
+      "No open official road feed for this country. Only roads reported shut, cut or flooded in this area's news, warnings and records are shown, as unverified reports.";
+  }
+  function drawRoads() {
+    roadLayer.clearLayers();
+    var cc = roadCountry(), w = window.ASAP_ROADS, n = 0, rep = 0;
+    ((w && w.items) || []).forEach(function (i) {
+      if (i.cc !== cc || i.lat == null) return;
+      var k = ROADK[i.kind] || ROADK.incident; n++;
+      /* agencies that publish local clock time without an offset are shown in that local time, labelled */
+      var tm = function (t) { return roadEsc(t.replace("T", " ")) + (i.tz ? " " + roadEsc(i.tz) : "Z"); };
+      L.circleMarker([i.lat, i.lon], { pane: "roadpane", radius: i.kind === "closure" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: k[1], fillOpacity: 0.95 })
+        .bindPopup('<div class="pop"><div class="tier">' + roadEsc(k[0]) + " · agency notice</div><h3>" + roadEsc(i.title) + "</h3>" +
+          (i.detail ? "<p>" + roadEsc(i.detail) + "</p>" : "") + '<p class="obs">' + [i.start ? "From " + tm(i.start) : "", i.end ? "until " + tm(i.end) : (i.until ? roadEsc(i.until.toLowerCase()) : ""),
+          i.updated ? "updated " + tm(i.updated) : ""].filter(Boolean).join(", ") + (i.lang ? " · in " + ({ fr: "French", fi: "Finnish" }[i.lang] || i.lang) + ", as published" : "") + '</p><p class="obs">Source: ' +
+          roadEsc(((w.status || []).filter(function (s) { return s.cc === i.cc; })[0] || {}).source || "road agency") + ', shown as published. <a href="' + roadEsc(i.link) + '" target="_blank" rel="noopener">Agency map</a></p></div>', { maxWidth: 320 })
+        .addTo(roadLayer);
+    });
+    ((window.TSAP && window.TSAP.records) || []).forEach(function (r) {
+      if (r.lat == null || !isFinite(r.lat) || !ROAD_RE.test((r.title || "") + " " + (r.detail || ""))) return;
+      rep++;
+      L.circleMarker([r.lat, r.lon], { pane: "roadpane", radius: 7, color: "#c62828", weight: 2, dashArray: "3 3", fillColor: "#c62828", fillOpacity: 0.15 })
+        .bindPopup('<div class="pop"><div class="tier">Reported road disruption · unverified</div><h3>' + roadEsc(r.title) + '</h3><p class="obs">From ' +
+          roadEsc(r.src && r.src.name) + (r.place ? ", placed at " + roadEsc(r.place) + " (approximate)" : "") + '. <a href="#" data-openrec="' + roadEsc(r.id) + '">Evidence package</a></p></div>', { maxWidth: 320 })
+        .addTo(roadLayer);
+    });
+    var el = document.getElementById("ml-roadnote");
+    if (el) el.textContent = roadNote() + " On the map: " + n + " agency notices, " + rep + " reported disruptions.";
+  }
+  function setRoads(on) {
+    ML.roads = !!on; mlSet();
+    if (on) { drawRoads(); roadLayer.addTo(map); } else map.removeLayer(roadLayer);
+  }
+  window.addEventListener("hashchange", function () { if (ML.roads) setTimeout(drawRoads, 300); });
   var LayersCtl = L.Control.extend({
     options: { position: "topright" },
     onAdd: function () {
@@ -939,6 +990,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
         }).join("") +
         '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
+        '<div class="mlh">Roads</div>' +
+        '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
+        '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
+        '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
         '<div id="ml-extra"></div></div>';
       L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
       var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
@@ -946,11 +1001,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         pan.hidden = !pan.hidden; btn.setAttribute("aria-expanded", String(!pan.hidden));
         /* keep the open panel inside the map, above the credits line, on a short phone map too */
         pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
+        if (!pan.hidden && ML.roads) drawRoads();
       });
       box.addEventListener("change", function (e) {
         var t = e.target;
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
+        else if (t.dataset.roads) setRoads(t.checked);
       });
       box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
       return box;
@@ -960,6 +1017,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
   if (ML.base !== "grey") setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
+  /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
+  if (ML.roads) (function wait(n) { if (window.TSAP || n > 40) setRoads(true); else setTimeout(function () { wait(n + 1); }, 250); })(0);
 
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
   var floodStore = function () { return window.TILES_FLOOD; };
@@ -2344,6 +2403,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/ucdp.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
+<script src="data/live/roads.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script src="data/basemap/world-countries.js"></script>
 <script src="data/basemap/world-outlines.js"></script>
@@ -3805,6 +3865,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Satellite base map: NASA Blue Marble (public domain), via NASA GIBS.'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
+      ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],
       ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
       ['Map software: <a href="https://leafletjs.com/">Leaflet</a> &copy; Volodymyr Agafonkin and contributors (BSD-2-Clause).']]],
     ["Weather, hazards and forecasts", [

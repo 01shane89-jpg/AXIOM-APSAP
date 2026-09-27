@@ -103,10 +103,17 @@ jobs:
         if: ${{ inputs.only == 'probe' }}
         run: node tools/probe_storms.mjs
         continue-on-error: true
-      - name: Probe road feeds (test only, writes nothing)
+      - name: Probe road feeds (test only, writes probe-out/, never data/)
         if: ${{ inputs.only == 'probe-roads' }}
         run: PROBE=1 node tools/refresh_roads.mjs
         continue-on-error: true
+      - name: Keep the probe output as a run artifact (test only)
+        if: ${{ inputs.only == 'probe-roads' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-roads
+          path: probe-out/
+          retention-days: 3
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
         if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && github.ref == 'refs/heads/main' }}
