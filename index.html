@@ -4677,10 +4677,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     ["wdi", "remittances_pct_gdp", "Remittances, % of GDP", 1], ["wdi", "forest_pct", "Forest, % of land", 1],
     ["who-gho", "life_expectancy_years", "Life expectancy (years)", 1], ["who-gho", "under5_mortality_per_1000", "Under-5 deaths per 1,000", 1], ["who-gho", "maternal_mortality_per_100k", "Maternal deaths per 100,000", 0],
     ["who-gho", "uhc_service_coverage_index", "Health service coverage index", 0], ["who-gho", "dtp3_immunisation_pct", "DTP3 immunisation %", 0]];
-  function xNum(v, d) { return v == null || isNaN(v) ? "–" : Number(v).toLocaleString("en-GB", { maximumFractionDigits: d }); }
+  function xNum(v, d) {
+    if (v == null || isNaN(v)) return "–";
+    var a = Math.abs(v); if (a >= 1e12) return (v / 1e12).toFixed(2) + " trillion"; if (a >= 1e9) return (v / 1e9).toFixed(1) + " billion"; if (a >= 1e7) return (v / 1e6).toFixed(1) + " million";
+    return Number(v).toLocaleString("en-GB", { maximumFractionDigits: d });
+  }
   function xFigures(X) {
     var F = X.figures || {}, rows = [];
-    XFIG.forEach(function (f) { var v = (F[f[0]] || {})[f[1]]; if (v && v.value != null) rows.push([f[2], xNum(v.value, f[3]), v.year, f[0]]); });
+    XFIG.forEach(function (f) { var v = (F[f[0]] || {})[f[1]]; if (v && v.value != null) rows.push([f[2], xNum(v.value, f[3]), String(v.year).replace(/ \(IMF estimate\/projection\)/, " est."), f[0]]); });
     var fx = F.fx; if (fx) rows.push(["1 US$ in " + fx.currency, xNum(fx.per_usd, fx.per_usd < 10 ? 3 : 1), String(fx.at || "").slice(5, 16), "fx"]);
     var fi = F.firms; rows.push(["Fire and heat detections, last 24 h", fi ? xNum(fi.detections) + " (" + xNum(fi.frp_mw) + " MW)" : "0", "NASA FIRMS", "firms"]);
     var sc = F["sensor-community"]; if (sc) rows.push(["PM2.5 median of " + sc.sensors + " volunteer sensors", sc.pm25_median + " µg/m³ (90th pct " + sc.pm25_p90 + ")", "last hour", "sensor-community"]);
@@ -4689,6 +4693,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var pw = F.power; if (pw) rows.push(["Power plants listed", xNum(pw.plants) + " (" + xNum(pw.total_mw) + " MW)", "WRI 2021", "power"]);
     var sa = F.opensanctions; if (sa) rows.push(["Sanctioned or watch-listed people and entities linked to it", xNum(sa.entities), "OpenSanctions", "opensanctions"]);
     var c2 = F.c2; if (c2) rows.push(["Botnet command servers hosted", xNum(c2.servers) + " (" + c2.online + " online)", "abuse.ch", "c2"]);
+    var dm = F.usdm; if (dm) rows.push(["Area in drought (D1 or worse)", dm.drought_pct + "%", String(dm.week), "usdm"]);
     var sg = F["sg-now"]; if (sg) rows.push(["PSI (24 h) / PM2.5 (1 h)", xNum(sg.psi_24h) + " / " + xNum(sg.pm25_1h), String(sg.at || "").slice(11, 16), "sg-now"]);
     var my = F["my-flood"]; if (my) rows.push(["River stations above normal", xNum((my.ALERT || 0) + (my.WARNING || 0) + (my.DANGER || 0)) + " of " + xNum(my.river_stations), "JPS", "my-flood"]);
     if (!rows.length) return "";
