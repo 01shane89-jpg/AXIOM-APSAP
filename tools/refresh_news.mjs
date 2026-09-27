@@ -55,7 +55,7 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   const n = {};
   if (j) for (const a of j.articles || []) {
     const cc = SCN[a.sourcecountry]; if (!cc || !a.url || !a.title || !part.some((x) => x[0] === cc)) continue;
-    push(cc, [{ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate), link: a.url, outlet: a.domain || "",
+    push(cc, [{ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate), link: a.url, outlet: a.domain || "", ...(/^https:\/\//.test(a.socialimage || "") ? { img: a.socialimage } : {}),
       lang: LANG[a.language] || (a.language || "").slice(0, 2).toLowerCase(), via: "GDELT" }]);
     n[cc] = (n[cc] || 0) + 1;
   }
@@ -65,7 +65,7 @@ const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
 for (const f of feeds) {
   try {
     const list = parseFeed(await get(f.url, true)).slice(0, 25).map((i) => ({ title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date),
-      link: i.link, outlet: f.outlet, lang: f.lang, via: "RSS", state: !!f.state }));
+      link: i.link, outlet: f.outlet, lang: f.lang, via: "RSS", state: !!f.state, ...(i.image ? { img: i.image } : {}) }));
     push(f.cc, list); status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: true, n: list.length });
   } catch (e) { status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
@@ -74,6 +74,31 @@ if (items.jp) items.oki = items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ish
 for (const cc of Object.keys(items)) {
   const seen = new Set();
   items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
+}
+// Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
+const OG_MAX = Number(process.env.OG_MAX || 400);
+async function ogImage(url) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (AXIOM-ASAP hourly refresh)", accept: "text/html" } });
+    if (!r.ok || !r.body) return "";
+    const rd = r.body.getReader(); let html = "", n = 0;
+    while (n < 98304) { const { done, value } = await rd.read(); if (done) break; n += value.length; html += new TextDecoder().decode(value); if (/<\/head>/i.test(html)) break; }
+    try { await rd.cancel(); } catch (e) {}
+    const m = html.match(/<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)(?::src)?["'][^>]*content=["']([^"']+)["']/i) ||
+      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image|twitter:image)["']/i);
+    const u = m ? m[1].replace(/&amp;/g, "&").trim() : "";
+    return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 ? u : "";
+  } catch (e) { return ""; } finally { clearTimeout(t); }
+}
+{
+  const need = Object.values(items).flat().filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
+  let got = 0;
+  for (let k = 0; k < need.length; k += 8) {
+    const res = await Promise.all(need.slice(k, k + 8).map((i) => ogImage(i.link)));
+    res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
+  }
+  console.log("article-page pictures:", got, "of", need.length, "items without a feed picture");
 }
 const all = [...new Set(Object.values(items).flat())];
 const tr = await translateAll(all.flatMap((i) => [{ text: i.title, lang: i.lang }, { text: i.summary, lang: i.lang }]));
@@ -87,3 +112,4 @@ fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
 try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
+console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));
