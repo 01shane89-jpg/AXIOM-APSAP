@@ -42,6 +42,9 @@ for (const f of feeds) {
     const body = await getText(f.url);
     let list = f.type ? ADAPT[f.type](JSON.parse(body)) : parseFeed(body);
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
+    // exclude: drop matching items (agencies' test alerts); max_age_days: a feed that keeps old alerts listed shows only recent ones
+    if (f.exclude) { const re = new RegExp(f.exclude, "i"); list = list.filter((i) => !re.test(i.title + " " + i.summary)); }
+    if (f.max_age_days) { const since = Date.now() - f.max_age_days * 864e5; list = list.filter((i) => Date.parse(i.date) >= since); }
     list = list.map((i) => ({ ...i, date: iso(i.date) })).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
     (items[f.cc] = items[f.cc] || []).push(...list.map((i) => ({ ...i, agency: f.agency, lang: f.lang, feed: f.url })));
     status.push({ cc: f.cc, agency: f.agency, url: f.url, ok: true, n: list.length });
