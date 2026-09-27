@@ -999,6 +999,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 </div>
 
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
+<script src="assets/osap-symbols.js"></script>
+<script>/* NATO-style symbol icon; null if assets/osap-symbols.js failed to load, so callers keep their old pin */
+function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon(k, o) : null; }</script>
 <script src="data/thailand/power.js"></script>
 <script src="data/thailand/flood-live-snapshot.js"></script>
 <script src="data/thailand/flood-exposure.js"></script>
