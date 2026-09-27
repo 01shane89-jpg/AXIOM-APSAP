@@ -1,0 +1,285 @@
+{
+ "schema": "osap-conflicts/1",
+ "note": "One entry per armed conflict. tools/refresh_conflicts.mjs reads this list and writes data/live/conflicts/ (index.js, <id>.js, front/<id>.js); assets/osap-conflicts.js adds one tab per conflict on the page of every country in 'countries' and a Conflicts menu. Adding a conflict is an entry here, no new code. Fields: id (a-z0-9-), name, short (tab label), countries (page ids; the first is where the Conflicts menu opens it), since (start of the current phase, as widely reported), kind, parties (names as the parties use them in reporting; listing them is not a judgement), bounds [[south,west],[north,east]], terms (words that tie a report to this conflict, any language; matched with the security words in tools/conflict_lib.mjs), exclude (optional words that rule a report out), searches (Bing News RSS queries, read only where robots.txt allows; nc), feeds (RSS read for this conflict only; 'all' = every item is about this conflict, still security-word filtered; 'state' = a party's or government's own statements, shown as claims; 'nc' = non-commercial terms), ucdp (UCDP candidate events: 'countries' regex on the UCDP country field, optional 'match' and 'exclude' regex on conflict name and side names), front (front-line or control sources, tried in order; see data/live/conflicts/SCHEMA.txt), tier (1 = researched first, 2 = later), auto (added from UCDP counts, not researched).",
+ "conflicts": [
+  {
+   "id": "russia-ukraine", "name": "Russia–Ukraine war", "short": "Russia–Ukraine war", "countries": ["ua", "ru"], "since": "2022-02-24", "kind": "interstate war", "tier": 1,
+   "parties": ["Ukraine", "Russia"],
+   "bounds": [[44.0, 29.5], [53.0, 41.5]],
+   "terms": ["Ukrain\\w*", "Russia\\w*", "Kyiv", "Kiev", "Donetsk", "Donbas", "Luhansk", "Zaporizh\\w*", "Kherson", "Kharkiv", "Sumy", "Pokrovsk", "Kursk", "Belgorod", "Bryansk", "Crimea\\w*", "Kremlin", "Zelensky\\w*", "Україн\\w*", "Украин\\w*", "ВСУ", "ЗСУ", "СВО"],
+   "searches": [{ "q": "Ukraine front line attack", "lang": "en" }, { "q": "Ukraine Russia drone strike", "lang": "en" }, { "q": "фронт обстріл", "lang": "uk" }],
+   "ucdp": { "countries": "Ukraine|Russia", "match": "Ukrain|Russia|DPR|LPR|Donetsk|Luhansk" },
+   "front": [
+    { "type": "geojson", "id": "deepstate-mirror", "name": "DeepStateMap (daily GeoJSON mirror by cyterat on GitHub)", "url": "https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/data/deepstatemap_data_{YYYYMMDD}.geojson", "dated": true, "home": "https://deepstatemap.live/", "licence": "DeepStateMap terms; mirror repository licence applies", "nc": true, "control": "Russian-occupied (DeepState)" },
+    { "type": "wikimap", "id": "wikipedia", "page": "Module:Russo-Ukrainian_war_detailed_map" }
+   ]
+  },
+  {
+   "id": "iran-war", "name": "Iran war (US and Israel against Iran)", "short": "Iran war", "countries": ["ir", "il", "us", "iq", "ae", "sa", "qa", "bh", "kw", "om"], "since": "2026-02-28", "kind": "interstate war", "tier": 1,
+   "parties": ["Iran", "United States", "Israel"],
+   "bounds": [[12.0, 32.0], [40.0, 64.0]],
+   "terms": ["Iran\\w*", "Tehran", "Hormuz", "IRGC", "Revolutionary Guard\\w*", "Isfahan", "Natanz", "Fordow", "Bandar Abbas", "Kharg", "ایران", "تهران", "سپاه", "هرمز", "איראן"],
+   "exclude": ["\\bIran(?:ian)? (?:film|cuisine|football|volleyball)\\b"],
+   "searches": [{ "q": "Iran strike Hormuz", "lang": "en" }, { "q": "Iran missile attack", "lang": "en" }],
+   "ucdp": { "countries": "Iran|Israel|United States|Iraq|Saudi|Emirates|Qatar|Bahrain|Kuwait|Oman", "match": "Iran" },
+   "front": []
+  },
+  {
+   "id": "sudan", "name": "Sudan civil war", "short": "Sudan war", "countries": ["sd", "td", "ss"], "since": "2023-04-15", "kind": "civil war", "tier": 1,
+   "parties": ["Sudanese Armed Forces (SAF)", "Rapid Support Forces (RSF)", "allied militias"],
+   "bounds": [[8.5, 21.5], [22.5, 38.8]],
+   "terms": ["Sudan\\w*", "RSF", "Rapid Support", "SAF", "Darfur", "Kordofan", "El Fasher", "Al-Fashir", "El Obeid", "Khartoum", "Omdurman", "Babanusa", "Kadugli", "Dilling", "Port Sudan", "Hemedti", "Burhan", "Janjaweed", "الدعم السريع", "السودان", "الفاشر", "دارفور", "كردفان", "الأبيض"],
+   "searches": [{ "q": "Sudan RSF attack", "lang": "en" }, { "q": "Darfur Kordofan fighting", "lang": "en" }, { "q": "الدعم السريع هجوم", "lang": "ar" }],
+   "feeds": [
+    { "id": "sudantribune", "outlet": "Sudan Tribune", "url": "https://sudantribune.com/feed/", "lang": "en", "all": true },
+    { "id": "dabanga", "outlet": "Radio Dabanga", "url": "https://www.dabangasudan.org/en/feed", "lang": "en", "all": true },
+    { "id": "sudanwarmonitor", "outlet": "Sudan War Monitor", "url": "https://sudanwarmonitor.com/feed", "lang": "en", "all": true }
+   ],
+   "ucdp": { "countries": "Sudan", "exclude": "South Sudan" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:2023_Sudan_war_detailed_map" }]
+  },
+  {
+   "id": "israel-gaza", "name": "Israel–Gaza war", "short": "Gaza war", "countries": ["ps", "il"], "since": "2023-10-07", "kind": "war", "tier": 1,
+   "parties": ["Israel", "Hamas", "Palestinian Islamic Jihad", "other Palestinian armed groups"],
+   "bounds": [[31.2, 34.2], [32.6, 35.6]],
+   "terms": ["Gaza", "Hamas", "Rafah", "Khan Yunis", "Khan Younis", "Jabalia", "Deir al-Balah", "West Bank", "Jenin", "Tulkarm", "Nablus", "Hebron", "yellow line", "غزة", "حماس", "رفح", "خان يونس", "الضفة", "עזה", "חמאס"],
+   "searches": [{ "q": "Gaza strike killed", "lang": "en" }, { "q": "West Bank raid", "lang": "en" }, { "q": "غزة قصف", "lang": "ar" }],
+   "ucdp": { "countries": "Israel|Palestin", "match": "Hamas|PIJ|Palestin|Gaza|Fatah|Israel" , "exclude": "Hezbollah|Iran|Ansarallah" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:Gaza_war_detailed_map" }]
+  },
+  {
+   "id": "israel-lebanon", "name": "Israel–Hezbollah conflict (Lebanon)", "short": "Israel–Hezbollah", "countries": ["lb", "il", "sy"], "since": "2023-10-08", "kind": "war", "tier": 1,
+   "parties": ["Israel", "Hezbollah", "Lebanese Armed Forces", "UNIFIL (peacekeepers)"],
+   "bounds": [[32.7, 34.9], [34.8, 36.7]],
+   "terms": ["Lebanon", "Lebanese", "Hezbollah", "Hizbollah", "Beirut", "Dahiyeh", "Tyre", "Nabatieh", "Litani", "Bekaa", "UNIFIL", "Qiryat Shmona", "Kiryat Shmona", "لبنان", "حزب الله", "الضاحية", "النبطية", "صور", "חיזבאללה", "לבנון"],
+   "searches": [{ "q": "Hezbollah Israel strike Lebanon", "lang": "en" }, { "q": "جنوب لبنان غارة", "lang": "ar" }],
+   "feeds": [{ "id": "naharnet", "outlet": "Naharnet", "url": "https://www.naharnet.com/stories/en/rss", "lang": "en" }],
+   "ucdp": { "countries": "Lebanon|Israel|Syria", "match": "Hezbollah|Lebanon" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:2024_Israeli_invasion_of_Lebanon_detailed_map" }]
+  },
+  {
+   "id": "yemen-red-sea", "name": "Yemen war and Red Sea attacks", "short": "Yemen and Red Sea", "countries": ["ye", "sa", "er", "dj"], "since": "2014-09-21", "kind": "civil war and maritime attacks", "tier": 1,
+   "parties": ["Houthis (Ansar Allah)", "Presidential Leadership Council and allied forces", "Southern Transitional Council", "Saudi-led coalition", "AQAP", "US and Israel (strikes)"],
+   "bounds": [[11.5, 38.5], [19.5, 54.0]],
+   "terms": ["Yemen\\w*", "Houthi\\w*", "Ansar Allah", "Ansarallah", "Hodeidah", "Hudaydah", "Marib", "Taiz", "Aden", "Sanaa", "Sana'a", "Red Sea", "Bab el-Mandeb", "Bab al-Mandab", "Kamaran", "Zubair island\\w*", "Hanish", "AQAP", "اليمن", "الحوثي\\w*", "أنصار الله", "الحديدة", "مأرب", "تعز", "عدن", "البحر الأحمر"],
+   "searches": [{ "q": "Houthi attack Red Sea", "lang": "en" }, { "q": "Yemen fighting Marib Taiz", "lang": "en" }, { "q": "الحوثيين هجوم", "lang": "ar" }],
+   "ucdp": { "countries": "Yemen|Saudi", "match": "Ansarallah|Yemen|AQAP|Southern Transitional|Houthi|Saudi" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Yemeni_Civil_War_detailed_map" }]
+  },
+  {
+   "id": "myanmar", "name": "Myanmar civil war", "short": "Myanmar war", "countries": ["mm"], "since": "2021-02-01", "kind": "civil war", "tier": 1,
+   "parties": ["Myanmar military (Tatmadaw) and allies", "National Unity Government and People's Defence Forces", "Arakan Army", "Kachin Independence Army", "Three Brotherhood Alliance", "other ethnic armed organisations"],
+   "bounds": [[9.6, 92.0], [28.6, 101.2]],
+   "terms": ["Myanmar", "Burma", "Tatmadaw", "junta", "PDF", "People's Defence Force", "NUG", "Arakan Army", "KIA", "Kachin", "Karen", "KNU", "Karenni", "TNLA", "MNDAA", "Chin", "Rakhine", "Sagaing", "Magway", "Mandalay", "Shan", "Bhamo", "Kyaukphyu", "Sittwe", "Myawaddy", "Lashio", "Naypyitaw", "Naypyidaw", "စစ်ကောင်စီ", "တပ်မတော်", "ပကဖ", "ဗုံး", "တိုက်ပွဲ"],
+   "searches": [{ "q": "Myanmar junta airstrike", "lang": "en" }, { "q": "Myanmar resistance fighting", "lang": "en" }],
+   "feeds": [
+    { "id": "irrawaddy", "outlet": "The Irrawaddy", "url": "https://www.irrawaddy.com/feed", "lang": "en", "all": true },
+    { "id": "myanmarnow", "outlet": "Myanmar Now", "url": "https://myanmar-now.org/en/feed/", "lang": "en", "all": true },
+    { "id": "bcrn", "outlet": "Burma Coup Resistance Notes", "url": "https://burmacoupresistancenotes.substack.com/feed", "lang": "en", "all": true }
+   ],
+   "ucdp": { "countries": "Myanmar" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Myanmar_Civil_War_detailed_map" }]
+  },
+  {
+   "id": "afghanistan-pakistan", "name": "Afghanistan–Pakistan war", "short": "Afghanistan–Pakistan", "countries": ["pk", "af"], "since": "2025-10-11", "kind": "interstate border war", "tier": 1,
+   "parties": ["Pakistan", "Afghanistan (Taliban government)", "Tehrik-i-Taliban Pakistan (TTP)"],
+   "bounds": [[29.0, 66.0], [37.2, 74.0]],
+   "terms": ["Afghan\\w*", "Taliban", "Durand Line", "Torkham", "Chaman", "Spin Boldak", "Kurram", "Bajaur", "Khyber", "Paktika", "Khost", "Kunar", "Nangarhar", "border clash\\w*", "افغان", "طالبان", "ډیورنډ", "طورخم"],
+   "searches": [{ "q": "Pakistan Afghanistan border clash", "lang": "en" }, { "q": "Pakistan airstrike Afghanistan", "lang": "en" }],
+   "ucdp": { "countries": "Afghanistan|Pakistan", "match": "Government of Afghanistan|Taleban|Taliban|Afghanistan - Pakistan|Pakistan - Afghanistan" , "exclude": "IS|Islamic State" },
+   "front": []
+  },
+  {
+   "id": "pakistan-insurgency", "name": "Pakistan: TTP and Baloch insurgencies", "short": "Pakistan insurgency", "countries": ["pk"], "since": "2007-12-14", "kind": "insurgency", "tier": 1,
+   "parties": ["Pakistan", "Tehrik-i-Taliban Pakistan (TTP)", "Balochistan Liberation Army (BLA)", "Islamic State Khorasan"],
+   "bounds": [[24.0, 60.8], [37.1, 75.5]],
+   "terms": ["TTP", "Tehreek-e-Taliban", "Tehrik-i-Taliban", "BLA", "Baloch\\w*", "Khyber Pakhtunkhwa", "KP", "Waziristan", "Bannu", "Lakki Marwat", "Dera Ismail Khan", "Quetta", "Turbat", "Gwadar", "Kalat", "Mastung", "Khwarij", "Fitna al-Khawarij", "Fitna al-Hindustan", "دہشت", "خوارج"],
+   "searches": [{ "q": "Khyber Pakhtunkhwa attack militants", "lang": "en" }, { "q": "Balochistan attack", "lang": "en" }],
+   "ucdp": { "countries": "Pakistan", "exclude": "Government of Afghanistan|Afghanistan - Pakistan|India" },
+   "front": []
+  },
+  {
+   "id": "drc-east", "name": "Eastern Congo war (M23, ADF and others)", "short": "Eastern Congo", "countries": ["cd", "rw", "ug", "bi"], "since": "2021-11-07", "kind": "war", "tier": 1,
+   "parties": ["DR Congo armed forces (FARDC) and allies (Wazalendo, Burundi)", "AFC/M23", "Rwanda (per UN experts)", "ADF (Islamic State Central Africa)", "CODECO and other militias"],
+   "bounds": [[-8.0, 26.5], [3.8, 31.5]],
+   "terms": ["Congo\\w*", "DRC", "M23", "AFC/M23", "Kivu", "Goma", "Bukavu", "Uvira", "Walikale", "Masisi", "Rutshuru", "Beni", "Butembo", "Lubero", "Ituri", "Bunia", "Djugu", "ADF", "Wazalendo", "FARDC", "CODECO", "Kinshasa", "Kigali"],
+   "searches": [{ "q": "M23 Congo fighting", "lang": "en" }, { "q": "ADF attack Ituri Beni", "lang": "en" }, { "q": "M23 combats Kivu", "lang": "fr" }],
+   "feeds": [{ "id": "actualite-cd", "outlet": "Actualite.cd", "url": "https://actualite.cd/feed", "lang": "fr" }],
+   "ucdp": { "countries": "DR Congo|Congo, Democratic|Rwanda|Burundi|Uganda", "match": "M23|ADF|CODECO|Congo|Wazalendo|Mai-Mai|Rwanda|Islamic State" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:M23_offensive_detailed_map" }]
+  },
+  {
+   "id": "sahel", "name": "Sahel war (Mali, Burkina Faso, Niger)", "short": "Sahel war", "countries": ["ml", "bf", "ne", "bj", "tg"], "since": "2012-01-16", "kind": "insurgency", "tier": 1,
+   "parties": ["Mali, Burkina Faso and Niger (Alliance of Sahel States) and Russian Africa Corps", "JNIM (al-Qaeda affiliate)", "Islamic State Sahel Province", "Tuareg separatists (FLA)"],
+   "bounds": [[9.0, -12.5], [25.0, 16.0]],
+   "terms": ["Mali\\b", "Malian", "Burkina", "Niger\\b", "Nigerien", "Sahel", "JNIM", "Jama'at Nusrat", "GSIM", "Islamic State Sahel", "EIGS", "Wagner", "Africa Corps", "FAMa", "Bamako", "Kayes", "Timbuktu", "Tombouctou", "Gao", "Kidal", "Mopti", "Menaka", "Ménaka", "Djibo", "Ouagadougou", "Dori", "Fada N'Gourma", "Tillaberi", "Tillabéri", "Tahoua", "Diffa", "blockade", "blocus", "djihadiste\\w*", "jihadist\\w*"],
+   "searches": [{ "q": "JNIM attack Mali", "lang": "en" }, { "q": "Burkina Faso attack soldiers", "lang": "en" }, { "q": "attaque jihadiste Mali Burkina", "lang": "fr" }],
+   "ucdp": { "countries": "Mali|Burkina|Niger|Benin|Togo", "exclude": "Nigeria" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Mali_War_detailed_map" }]
+  },
+  {
+   "id": "somalia", "name": "Somalia: al-Shabaab insurgency", "short": "Somalia war", "countries": ["so", "ke", "et"], "since": "2006-12-20", "kind": "insurgency", "tier": 2,
+   "parties": ["Federal Government of Somalia and AUSSOM", "al-Shabaab", "Islamic State Somalia", "regional forces"],
+   "bounds": [[-2.0, 40.5], [12.0, 51.5]],
+   "terms": ["Somali\\w*", "al-Shabaab", "Al Shabaab", "Shabab", "AUSSOM", "AMISOM", "ATMIS", "Mogadishu", "Puntland", "Jubaland", "Hiraan", "Middle Shabelle", "Lower Shabelle", "Galmudug", "Mandera", "Lamu", "Garissa"],
+   "searches": [{ "q": "al-Shabaab attack Somalia", "lang": "en" }],
+   "feeds": [{ "id": "hiiraan", "outlet": "Hiiraan Online", "url": "https://www.hiiraan.com/rss/news.xml", "lang": "en" }, { "id": "garowe", "outlet": "Garowe Online", "url": "https://www.garoweonline.com/rss.xml", "lang": "en" }],
+   "ucdp": { "countries": "Somalia|Kenya", "match": "Shabaab|Somalia|Islamic State" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Somali_Civil_War_detailed_map" }]
+  },
+  {
+   "id": "lake-chad-nigeria", "name": "Nigeria and Lake Chad: jihadist and bandit violence", "short": "Nigeria and Lake Chad", "countries": ["ng", "cm", "td", "ne"], "since": "2009-07-26", "kind": "insurgency", "tier": 2,
+   "parties": ["Nigeria, Cameroon, Chad and Niger forces (MNJTF)", "ISWAP", "Boko Haram (JAS)", "Lakurawa", "armed bandit groups"],
+   "bounds": [[4.0, 2.5], [15.5, 16.0]],
+   "terms": ["Boko Haram", "ISWAP", "JAS", "Lakurawa", "bandit\\w*", "Borno", "Maiduguri", "Yobe", "Adamawa", "Zamfara", "Katsina", "Sokoto", "Kebbi", "Niger State", "Kaduna", "Plateau", "Benue", "Lake Chad", "Far North", "Extrême-Nord", "MNJTF", "herders"],
+   "searches": [{ "q": "Borno attack ISWAP", "lang": "en" }, { "q": "bandits attack Zamfara Katsina", "lang": "en" }],
+   "ucdp": { "countries": "Nigeria|Cameroon|Chad", "match": "Boko|ISWAP|Islamic State|Jama'atu|Nigeria|bandit|Lakurawa|Fulani|Cameroon|Chad" , "exclude": "Ambazonia" },
+   "front": []
+  },
+  {
+   "id": "ethiopia", "name": "Ethiopia: Amhara and Oromia conflicts", "short": "Ethiopia conflicts", "countries": ["et", "er"], "since": "2023-08-04", "kind": "insurgency", "tier": 2,
+   "parties": ["Ethiopian National Defense Force", "Fano militias (Amhara)", "Oromo Liberation Army", "Tigray forces (TPLF factions)"],
+   "bounds": [[3.3, 33.0], [15.0, 48.0]],
+   "terms": ["Ethiopia\\w*", "Fano", "Amhara", "Oromia", "OLA", "Oromo Liberation Army", "Tigray", "TPLF", "ENDF", "Gondar", "Bahir Dar", "Gojjam", "Wollo", "Addis Ababa", "Eritrea\\w*"],
+   "searches": [{ "q": "Fano Amhara fighting", "lang": "en" }, { "q": "Ethiopia Tigray Eritrea tension", "lang": "en" }],
+   "ucdp": { "countries": "Ethiopia|Eritrea" },
+   "front": []
+  },
+  {
+   "id": "syria", "name": "Syria conflict", "short": "Syria conflict", "countries": ["sy", "tr", "iq"], "since": "2011-03-15", "kind": "civil war (post-2024 transition)", "tier": 2,
+   "parties": ["Syrian government", "Syrian Democratic Forces (SDF)", "Druze factions (Suwayda)", "Islamic State", "Israel (strikes and southern presence)", "Turkey and allied factions"],
+   "bounds": [[32.2, 35.5], [37.4, 42.5]],
+   "terms": ["Syria\\w*", "Damascus", "Aleppo", "Idlib", "Homs", "Hama", "Latakia", "Tartus", "Deir ez-Zor", "Deir al-Zour", "Raqqa", "Hasakah", "Qamishli", "Suwayda", "Sweida", "Daraa", "Quneitra", "SDF", "Kurdish-led", "سوريا", "السويداء", "دير الزور", "قسد"],
+   "searches": [{ "q": "Syria clashes SDF government", "lang": "en" }, { "q": "Suwayda clashes", "lang": "en" }],
+   "ucdp": { "countries": "Syria" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Syrian_Civil_War_detailed_map" }]
+  },
+  {
+   "id": "haiti", "name": "Haiti gang war", "short": "Haiti gang war", "countries": ["ht"], "since": "2021-07-07", "kind": "armed gang conflict", "tier": 2,
+   "parties": ["Haitian National Police and Gang Suppression Force", "Viv Ansanm gang coalition", "self-defence groups"],
+   "bounds": [[17.9, -74.6], [20.2, -71.6]],
+   "terms": ["Haiti\\w*", "Port-au-Prince", "Viv Ansanm", "gang\\w*", "Artibonite", "Mirebalais", "Kenscoff", "Cite Soleil", "Cité Soleil", "Gang Suppression Force", "Kenya\\w* police", "PNH", "bandits armés", "gangs"],
+   "searches": [{ "q": "Haiti gangs attack", "lang": "en" }, { "q": "Haïti gangs attaque", "lang": "fr" }],
+   "ucdp": { "countries": "Haiti" },
+   "front": []
+  },
+  {
+   "id": "south-sudan", "name": "South Sudan conflict", "short": "South Sudan", "countries": ["ss"], "since": "2013-12-15", "kind": "civil conflict", "tier": 2,
+   "parties": ["South Sudan People's Defence Forces", "SPLA-IO", "White Army", "National Salvation Front"],
+   "bounds": [[3.4, 23.4], [12.3, 36.0]],
+   "terms": ["South Sudan\\w*", "Juba", "SPLA-IO", "SSPDF", "White Army", "Upper Nile", "Nasir", "Jonglei", "Unity State", "Machar", "Kiir", "NAS"],
+   "searches": [{ "q": "South Sudan fighting SPLA-IO", "lang": "en" }],
+   "feeds": [{ "id": "tamazuj", "outlet": "Radio Tamazuj", "url": "https://www.radiotamazuj.org/en/rss", "lang": "en" }],
+   "ucdp": { "countries": "South Sudan" },
+   "front": []
+  },
+  {
+   "id": "colombia", "name": "Colombia armed conflict", "short": "Colombia conflict", "countries": ["co", "ve"], "since": "1964-05-27", "kind": "insurgency", "tier": 2,
+   "parties": ["Colombia", "ELN", "FARC dissident factions (EMC, Segunda Marquetalia)", "Clan del Golfo (EGC)"],
+   "bounds": [[-4.3, -79.1], [12.6, -66.8]],
+   "terms": ["ELN", "FARC", "disidencia\\w*", "dissident\\w*", "Clan del Golfo", "Catatumbo", "Cauca", "Arauca", "Guaviare", "Nariño", "Antioquia", "grupo armado", "armed group\\w*", "guerrilla\\w*"],
+   "searches": [{ "q": "Colombia ataque ELN disidencias", "lang": "es" }, { "q": "Colombia armed group attack", "lang": "en" }],
+   "ucdp": { "countries": "Colombia" },
+   "front": []
+  },
+  {
+   "id": "mozambique", "name": "Mozambique: Cabo Delgado insurgency", "short": "Cabo Delgado", "countries": ["mz"], "since": "2017-10-05", "kind": "insurgency", "tier": 2,
+   "parties": ["Mozambique and Rwandan forces", "Islamic State Mozambique Province"],
+   "bounds": [[-15.5, 37.5], [-10.4, 41.0]],
+   "terms": ["Cabo Delgado", "Mocimboa", "Mocímboa", "Palma", "Macomia", "Muidumbe", "Ancuabe", "Chiure", "Niassa", "insurgent\\w*", "insurgentes", "Islamic State Mozambique"],
+   "searches": [{ "q": "Cabo Delgado insurgents attack", "lang": "en" }, { "q": "Cabo Delgado ataque insurgentes", "lang": "pt" }],
+   "ucdp": { "countries": "Mozambique" },
+   "front": []
+  },
+  {
+   "id": "cameroon-anglophone", "name": "Cameroon: Anglophone conflict", "short": "Anglophone Cameroon", "countries": ["cm"], "since": "2017-09-09", "kind": "separatist insurgency", "tier": 2,
+   "parties": ["Cameroon", "Ambazonian separatist groups"],
+   "bounds": [[4.0, 8.5], [7.2, 11.2]],
+   "terms": ["Ambazoni\\w*", "Anglophone", "separatist\\w*", "Amba", "Bamenda", "Buea", "North-West", "South-West", "Nord-Ouest", "Sud-Ouest"],
+   "searches": [{ "q": "Bamenda separatists attack", "lang": "en" }],
+   "ucdp": { "countries": "Cameroon", "match": "Ambazon|Cameroon" , "exclude": "Boko|Islamic State|ISWAP" },
+   "front": []
+  },
+  {
+   "id": "car", "name": "Central African Republic conflict", "short": "CAR conflict", "countries": ["cf"], "since": "2012-12-10", "kind": "civil conflict", "tier": 2,
+   "parties": ["Central African Republic, Russian Africa Corps and Rwandan forces", "CPC rebel coalition", "3R", "Azande Ani Kpi Gbe", "MINUSCA (peacekeepers)"],
+   "bounds": [[2.2, 14.4], [11.0, 27.5]],
+   "terms": ["Central African", "Centrafrique", "centrafricain\\w*", "Bangui", "CPC", "3R", "MINUSCA", "Haut-Mbomou", "Zemio", "Zémio", "Azande", "Wagner"],
+   "searches": [{ "q": "Centrafrique attaque rebelles", "lang": "fr" }],
+   "ucdp": { "countries": "Central African" },
+   "front": []
+  },
+  {
+   "id": "mexico-cartels", "name": "Mexico cartel violence", "short": "Mexico cartels", "countries": ["mx"], "since": "2006-12-11", "kind": "armed criminal conflict", "tier": 2,
+   "parties": ["Mexican security forces", "Sinaloa Cartel factions (Chapitos, Mayos)", "CJNG", "other criminal groups"],
+   "bounds": [[14.5, -117.2], [32.8, -86.7]],
+   "terms": ["cartel\\w*", "CJNG", "Sinaloa", "Chapitos", "Mayiza", "Culiacán", "Culiacan", "Michoacán", "Michoacan", "Guerrero", "Tamaulipas", "Zacatecas", "sicario\\w*", "narco\\w*", "enfrentamiento\\w*"],
+   "searches": [{ "q": "Sinaloa enfrentamiento cartel", "lang": "es" }, { "q": "Mexico cartel violence killed", "lang": "en" }],
+   "ucdp": { "countries": "Mexico" },
+   "front": []
+  },
+  {
+   "id": "india-pakistan", "name": "India–Pakistan (Kashmir)", "short": "India–Pakistan", "countries": ["in", "pk"], "since": "1947-10-22", "kind": "interstate dispute", "tier": 2,
+   "parties": ["India", "Pakistan", "militant groups in Jammu and Kashmir"],
+   "bounds": [[32.2, 72.5], [37.1, 80.3]],
+   "terms": ["Kashmir\\w*", "Line of Control", "LoC", "Jammu", "Poonch", "Rajouri", "Kupwara", "Uri", "Muzaffarabad", "Operation Sindoor", "ceasefire violation\\w*", "infiltrat\\w*", "कश्मीर", "कश्मीर", "کشمیر"],
+   "searches": [{ "q": "Line of Control firing Kashmir", "lang": "en" }, { "q": "Jammu Kashmir encounter militants", "lang": "en" }],
+   "ucdp": { "countries": "India|Pakistan", "match": "Kashmir|India - Pakistan|Pakistan - India" },
+   "front": []
+  },
+  {
+   "id": "thailand-cambodia", "name": "Thailand–Cambodia border conflict", "short": "Thai–Cambodian border", "countries": ["th", "kh"], "since": "2025-05-28", "kind": "interstate border conflict", "tier": 2,
+   "parties": ["Thailand", "Cambodia"],
+   "bounds": [[12.0, 101.8], [15.0, 105.0]],
+   "terms": ["Thai-Cambodia\\w*", "Thailand-Cambodia", "Cambodia-Thailand", "Cambodian border", "Thai border", "Preah Vihear", "Ta Muen", "Ta Moan", "Ta Krabey", "Chong Bok", "Chong An Ma", "Sisaket", "Surin", "Oddar Meanchey", "Banteay Meanchey", "Sa Kaeo", "Trat", "ชายแดนไทย-กัมพูชา", "กัมพูชา", "ព្រំដែន"],
+   "searches": [{ "q": "Thailand Cambodia border clash", "lang": "en" }, { "q": "ชายแดนกัมพูชา ปะทะ", "lang": "th" }],
+   "ucdp": { "countries": "Thailand|Cambodia", "match": "Cambodia" },
+   "front": []
+  },
+  {
+   "id": "philippines", "name": "Philippines: communist and Moro insurgencies", "short": "Philippine insurgencies", "countries": ["ph"], "since": "1969-03-29", "kind": "insurgency", "tier": 2,
+   "parties": ["Armed Forces of the Philippines", "New People's Army", "Dawlah Islamiyah and BIFF factions", "Abu Sayyaf remnants"],
+   "bounds": [[4.5, 116.8], [21.2, 127.0]],
+   "terms": ["NPA", "New People's Army", "CPP-NPA", "communist rebel\\w*", "Dawlah Islamiyah", "BIFF", "Abu Sayyaf", "Maguindanao", "Lanao", "Sulu", "Basilan", "Mindanao", "encounter"],
+   "searches": [{ "q": "NPA encounter soldiers", "lang": "en" }, { "q": "Mindanao clash BIFF Dawlah", "lang": "en" }],
+   "ucdp": { "countries": "Philippines" },
+   "front": []
+  },
+  {
+   "id": "papua", "name": "Indonesia: Papua conflict", "short": "Papua conflict", "countries": ["id"], "since": "1965-07-28", "kind": "separatist insurgency", "tier": 2,
+   "parties": ["Indonesian military and police", "West Papua National Liberation Army (TPNPB)"],
+   "bounds": [[-9.2, 129.0], [0.5, 141.1]],
+   "terms": ["Papua", "TPNPB", "OPM", "KKB", "Intan Jaya", "Puncak", "Nduga", "Yahukimo", "Mimika", "Jayapura", "Wamena", "separatis", "separatist\\w*"],
+   "searches": [{ "q": "Papua KKB tembak", "lang": "id" }, { "q": "Papua rebels attack", "lang": "en" }],
+   "ucdp": { "countries": "Indonesia", "match": "Papua|OPM|TPNPB|West Papua" },
+   "front": []
+  },
+  {
+   "id": "thailand-deep-south", "name": "Thailand: Deep South insurgency", "short": "Deep South", "countries": ["th"], "since": "2004-01-04", "kind": "separatist insurgency", "tier": 2,
+   "parties": ["Thailand", "Barisan Revolusi Nasional (BRN) and other Patani groups"],
+   "bounds": [[5.6, 100.4], [7.1, 102.2]],
+   "terms": ["Deep South", "southern border provinces", "Pattani", "Yala", "Narathiwat", "BRN", "Patani", "ชายแดนใต้", "ปัตตานี", "ยะลา", "นราธิวาส"],
+   "note_data": "The Southern insurgency tab already carries the full Deep South feed (tools/refresh_deepsouth.mjs); this entry adds the conflict view.",
+   "ucdp": { "countries": "Thailand", "match": "Patani|Thailand", "exclude": "Cambodia" },
+   "front": []
+  },
+  {
+   "id": "libya", "name": "Libya conflict", "short": "Libya conflict", "countries": ["ly"], "since": "2014-05-16", "kind": "civil conflict", "tier": 2,
+   "parties": ["Government of National Unity and allied armed groups (Tripoli)", "Libyan National Army (Haftar)", "Tripoli militias"],
+   "bounds": [[19.5, 9.3], [33.2, 25.2]],
+   "terms": ["Libya\\w*", "Tripoli", "Benghazi", "Misrata", "Haftar", "LNA", "GNU", "Dbeibah", "Radaa", "Rada", "ليبيا", "طرابلس"],
+   "searches": [{ "q": "Tripoli clashes armed groups", "lang": "en" }],
+   "ucdp": { "countries": "Libya" },
+   "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Libyan_Civil_War_detailed_map" }]
+  },
+  {
+   "id": "iraq-is", "name": "Iraq: Islamic State insurgency and armed groups", "short": "Iraq", "countries": ["iq"], "since": "2017-12-09", "kind": "insurgency", "tier": 2,
+   "parties": ["Iraq", "Popular Mobilization Forces", "Islamic State", "Kurdistan Regional Government"],
+   "bounds": [[29.0, 38.8], [37.4, 48.6]],
+   "terms": ["Iraq\\w*", "Baghdad", "Anbar", "Kirkuk", "Diyala", "Salahuddin", "Nineveh", "Mosul", "Erbil", "Sulaymaniyah", "PMF", "Hashd", "Kataib Hezbollah", "Islamic Resistance in Iraq", "العراق", "الحشد"],
+   "searches": [{ "q": "Iraq attack Islamic State Kirkuk Diyala", "lang": "en" }],
+   "ucdp": { "countries": "Iraq", "exclude": "Iran" },
+   "front": []
+  }
+ ]
+}
