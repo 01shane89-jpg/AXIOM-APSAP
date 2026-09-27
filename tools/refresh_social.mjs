@@ -123,6 +123,22 @@ export function parseYtFeed(xml) {
   }
   return out;
 }
+// The channel's videos page, used when YouTube's feed answers 404 (it did for every channel from GitHub on 2026-09-27).
+// The page gives only a relative age ("3 days ago"), so those dates are approximate to that unit and marked so.
+export function parseYtPage(html, now = Date.now()) {
+  const out = [], U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  const re = /"videoId":"([\w-]{11})"[\s\S]{0,1500}?"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"\}[\s\S]{0,1500}?"publishedTimeText":\{"simpleText":"([^"]+)"/g;
+  const seen = new Set();
+  for (const m of html.matchAll(re)) {
+    if (seen.has(m[1])) continue; seen.add(m[1]);
+    const J = { 秒: "second", 分: "minute", 時間: "hour", 日: "day", 週間: "week", か月: "month", ヶ月: "month", 年: "year" };
+    const a = m[3].match(/(\d+)\s*(second|minute|hour|day|week|month|year|秒|分|時間|日|週間|か月|ヶ月|年)/i); if (!a) continue;
+    a[2] = J[a[2]] || a[2];
+    let title = m[2]; try { title = JSON.parse('"' + m[2] + '"'); } catch (e) {}
+    out.push({ id: m[1], title: unhtml(title), date: new Date(now - +a[1] * U[a[2].toLowerCase()]), summary: "", approx: m[3] });
+  }
+  return out;
+}
 for (const ch of cfg.youtube || []) {
   const src = ch.name || "@" + ch.handle;
   try {
@@ -132,12 +148,17 @@ for (const ch of cfg.youtube || []) {
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
-    const vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id));
+    let vids;
+    try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
+    catch (e) {
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); }
+      catch (e2) { vids = parseYtPage(await text("https://www.youtube.com/channel/" + id + "/videos")); if (!vids.length) throw new Error("feed " + e.message + ", videos page had no videos"); }
+    }
     let n = 0;
     for (const v of vids) {
       if (isNaN(v.date) || v.date.getTime() < Date.now() - 30 * 864e5) continue;   // a channel feed lists only its last 15 videos, so keep a month of them
       push(ch.cc, v.title + " " + v.summary, { platform: "YouTube", account: src, kind: ch.kind, title: v.title.slice(0, 300), summary: v.summary,
-        date: v.date.toISOString().slice(0, 16), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
+        date: v.date.toISOString().slice(0, 16), ...(v.approx ? { date_note: "YouTube shows only \"" + v.approx + "\"" } : {}), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
       n++;
     }
     status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n });

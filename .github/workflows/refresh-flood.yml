@@ -147,7 +147,7 @@ jobs:
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
-          git rm -rq --cached .
+          git rm -rqf --cached .
           for p in data/live/x data/live/news.js data/live/social.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
