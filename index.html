@@ -395,6 +395,35 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .chip.sev3{color:var(--over)}
 .pkghead{display:flex;align-items:center}
 .pkghead h2{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:0}
+/* reports beside the map */
+.shell.rv-split{grid-template-columns:1fr 380px 372px}
+.shell.rv-list{grid-template-columns:1fr 372px}
+.shell.rv-list #map{position:absolute!important;left:-99999px;width:900px!important}
+.rvpkg{max-height:55%;overflow-y:auto;border-bottom:1px solid var(--line);margin:0;padding:10px 14px}
+.rv{border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;min-height:0;max-height:calc(100svh - var(--hdr-h,64px));height:calc(100svh - var(--hdr-h,64px))}
+.rvhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px 8px;border-bottom:1px solid var(--line)}
+.rvhead b{font-size:13px;font-weight:600;margin-right:auto}
+.rvseg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25);clear:both}
+.rvseg button{font-family:inherit;font-size:13px;line-height:1;font-weight:600;background:none;border:none;color:var(--ink);padding:9px 12px;cursor:pointer;min-height:36px}
+.rvseg button+button{border-left:1px solid var(--line)}
+.rvseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.rvlist{overflow-y:auto;padding:8px 10px 16px;display:grid;grid-template-columns:1fr;gap:8px;align-content:start;overscroll-behavior:contain}
+.shell.rv-list .rvlist{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.rvcard{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:9px 11px;cursor:pointer}
+.rvcard:hover,.rvcard.hot,.rvcard:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.rvt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.rvh{font-weight:600;font-size:13.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rvm{display:flex;gap:4px;flex-wrap:wrap}
+.rvs{font-size:11.5px;color:var(--muted)}
+.rvnote{grid-column:1/-1;margin:6px 2px}
+@media (max-width:1279px){.shell.rv-split{grid-template-columns:1fr 360px}.shell.rv-split .rail{display:none}}
+html.phone .rv{height:auto;max-height:none;border-left:none;border-bottom:1px solid var(--line)}
+html.phone .rvseg{display:none}
+html.phone .rvlist{overflow:visible;padding:8px 0 12px}
+html.phone .rvpkg{max-height:none}
+.shell.rv-list .leaflet-control-container{display:none}
+.rvhead .rvseg{display:none;box-shadow:none}
+.shell.rv-list .rvhead .rvseg{display:flex}
 .pkghead .x{margin-left:auto;font:inherit;font-size:18px;line-height:1;background:none;border:none;color:var(--muted);cursor:pointer;padding:0 4px}
 .pkgt{font-size:16px;font-weight:700;margin:6px 0 6px}
 .pkgchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
@@ -433,6 +462,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
 <div class="shell">
   <div id="map"></div>
+  <section id="rv" class="rv" aria-label="Reports beside the map" hidden>
+    <div class="rvhead"><b id="rv-n">Reports</b><span class="rvseg" role="group" aria-label="Layout"><button type="button" data-rv-mode="map">Map</button><button type="button" data-rv-mode="split">Split</button><button type="button" data-rv-mode="list">List</button></span></div>
+    <div class="sec rvpkg" id="rv-pkg" hidden></div>
+    <div class="rvlist" id="rv-list"></div>
+  </section>
   <aside class="rail">
   <div id="rail-flood">
 
@@ -2862,6 +2896,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var shown = [];
   function render() {
     shown = R.filter(match);
+    if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
     list.textContent = "";
     tlLayer.clearLayers(); markers = {};
@@ -3461,7 +3496,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      Reference data from public sources (schema apsap-sof/1), packaged per country. These are
      reference points and announced plans, not events: they never enter the Timeline or Alerts. */
   var SOF = (window.ASAP_SOF || {})[CC] || null, SOF_OUT = window.ASAP_SOF_OUT || null;
-  var railO = document.getElementById("rail-sof"), sofLayer = L.layerGroup(), sofOff = {}, sofM = {};
+  var railO = document.getElementById("rail-sof"), sofLayer = L.featureGroup(), sofOff = {}, sofM = {};
   var SOFK = {
     posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent" },
     airports: { label: "Airports", letter: "A", color: "--rain" },
@@ -4806,6 +4841,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var l = LBY[current];
     if (l && l.curated && curId) showCurated(curId);
     else if (l && l.sof) showSof(current);
+    rvSoon();
   }
   pseg.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-p]"); if (b) setPeriod(b.getAttribute("data-p")); });
   pfrom.addEventListener("change", function () { setPeriod("custom", pfrom.value, pto.value); });
@@ -4973,6 +5009,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (v === "weather" || v === "hazards") stormLayer.addTo(map);
     try { localStorage.setItem("tw-view", v); } catch (e) {}
     if (!fromLoad) { try { history.replaceState(null, "", "#" + (TH ? "" : CC + "/") + v); } catch (e) {} }
+    rvSoon();
   }
   seg.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-view]");
@@ -4985,6 +5022,148 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     setView(n);
     seg.querySelector('[data-view="' + n + '"]').focus();
   });
+
+  /* ---------- reports beside the map (Map / Split / List), like a property-search layout ----------
+     Split: the map stays in view and a scrolling card list beside it shows the open tab's reports inside the map area,
+     following every pan and zoom. List: the same reports as cards across the width, not limited to the map area.
+     Map: the map alone (the old layout). Hovering a card rings its marker; hovering a marker lights its card; a card opens
+     the report. On a phone the list sits at the top of the bottom sheet. The list only re-reads records the tab already
+     shows (same period and filters); nothing is added or changed. */
+  var rvBox = document.getElementById("rv"), rvList = document.getElementById("rv-list"), rvN = document.getElementById("rv-n");
+  var shell = document.querySelector(".shell"), rvMq = window.matchMedia("(max-width: 700px)");
+  var RV_MODES = ["map", "split", "list"], rvMode = "split";
+  try { var m0 = localStorage.getItem("asap-rv-mode"); if (RV_MODES.indexOf(m0) >= 0) rvMode = m0; } catch (e) {}
+  var rvRing = null, rvT = 0, rvShown = [];
+  if (!map.getPane("rvpane")) { map.createPane("rvpane"); map.getPane("rvpane").style.zIndex = 665; map.getPane("rvpane").style.pointerEvents = "none"; }
+  function rvPhone() { return rvMq.matches; }
+  /* the records the open tab is showing, in the current period and filters */
+  function rvRecords() {
+    var l = LBY[current] || {};
+    if (current === "timeline") return shown || [];
+    if (current === "alerts") return (ALERTS || []).map(function (a) { return a.rec; });
+    if (current === "news" || current === "social") return R.filter(function (r) { return r[current] && inPeriod(r); });
+    if (l.sof) return rvSofItems();
+    return R.filter(function (r) { return r.layer === current && inPeriod(r); });
+  }
+  /* tabs built from published lists and signals (exercises, hazards, security, open data, reference) are not reports: their
+     cards are read from what is on the map, each marker's own popup heading, and open that popup */
+  var rvTpl = document.createElement("template");
+  function rvSofItems() {
+    var out = [];
+    Object.keys(sofM || {}).forEach(function (k) {
+      var m = sofM[k];
+      if (!m.__rvItem) {
+        var ll = m.getLatLng ? m.getLatLng() : (m.getBounds ? m.getBounds().getCenter() : null), pc = m.getPopup && m.getPopup() ? m.getPopup().getContent() : "";
+        if (!ll) return;
+        rvTpl.innerHTML = typeof pc === "string" ? pc : "";
+        var h = rvTpl.content.querySelector("h3") || rvTpl.content.querySelector("p"), t = rvTpl.content.querySelector(".tier");
+        m.__rvItem = { id: k, sof: true, lat: ll.lat, lon: ll.lng, ts: "", title: h ? h.textContent.slice(0, 160) : "Map item", tier: t ? t.textContent : "" };
+      }
+      out.push(m.__rvItem);
+    });
+    return out;
+  }
+  function rvMarker(r) {
+    var l = LBY[current] || {};
+    if (r.sof || l.sof) return sofM[r.id] || null;
+    if (l.curated) return (CM && CM[r.id]) || null;
+    return (markers && markers[r.id]) || null;
+  }
+  function rvRender() {
+    rvT = 0;
+    if (!rvBox) return;
+    var phone = rvPhone(), all = rvRecords(), b = map.getBounds(), inArea = rvMode === "list" && !phone ? null : b;
+    var located = all.filter(function (r) { return r.lat != null && isFinite(r.lat) && isFinite(r.lon); });
+    var list = inArea ? located.filter(function (r) { return inArea.contains([r.lat, r.lon]); }) : all.slice();
+    list.sort(function (a, c) { return a.ts < c.ts ? 1 : (a.ts > c.ts ? -1 : 0); });
+    rvShown = list;
+    var none = !all.length;
+    rvBox.classList.toggle("rv-empty", none);
+    var nn = all.length && all[0].sof ? "map item" : "report", pl = function (n) { return n + " " + nn + (n === 1 ? "" : "s"); };
+    rvN.textContent = none ? "Nothing in this tab" : pl(list.length) + (inArea ? " in this map area" : " in this tab");
+    var more = inArea ? (all.length - located.length) : 0;
+    var cap = 200;
+    rvList.innerHTML = list.slice(0, cap).map(function (r) {
+      if (r.sof) return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(r.tier) + '</span><span class="rvh">' + esc(r.title) + "</span></button>";
+      var st = STATE[r.type] ? STATE[r.type][0] : r.type, ln = LBY[r.layer] ? LBY[r.layer].name : r.layer;
+      return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(fmtTs(r)) + "</span>" +
+        '<span class="rvh">' + esc(r.title) + "</span>" +
+        '<span class="rvm">' + chip("l-" + r.layer, ln) + chip("t-" + r.type, st) + "</span>" +
+        '<span class="rvs">' + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";
+    }).join("") +
+      (list.length > cap ? '<p class="obs rvnote">Showing the newest ' + cap + " of " + list.length + ". Zoom in or narrow the period to see the rest.</p>" : "") +
+      (!list.length && !none ? '<p class="obs rvnote">Nothing in this map area. Zoom out or move the map.</p>' : "") +
+      (more > 0 ? '<p class="obs rvnote">' + more + " more have no map location. " + '<button type="button" class="refresh" data-rv-list>Show them in the list view</button></p>' : "");
+    rvHook(list);
+  }
+  function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
+  /* marker hover lights its card; hooks are added once per marker */
+  function rvHook(list) {
+    list.slice(0, 200).forEach(function (r) {
+      var m = rvMarker(r);
+      if (!m || m.__rv) return;
+      m.__rv = r.id;
+      m.on("mouseover", function () { rvLight(r.id, true); });
+      m.on("mouseout", function () { rvLight(r.id, false); });
+    });
+  }
+  function rvLight(id, on) {
+    var c = rvList.querySelector('[data-rv="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+    if (!c) return;
+    c.classList.toggle("hot", on);
+    if (on && rvMode !== "map") c.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+  function rvRingAt(r) {
+    if (rvRing) { map.removeLayer(rvRing); rvRing = null; }
+    if (!r || r.lat == null || !isFinite(r.lat)) return;
+    rvRing = L.circleMarker([r.lat, r.lon], { pane: "rvpane", radius: 13, color: tok("--accent"), weight: 3, fill: false, interactive: false }).addTo(map);
+  }
+  function rvById(id) { for (var i = 0; i < rvShown.length; i++) if (rvShown[i].id === id) return rvShown[i]; return null; }
+  rvList.addEventListener("mouseover", function (e) { var c = e.target.closest && e.target.closest(".rvcard"); if (c) rvRingAt(rvById(c.getAttribute("data-rv"))); });
+  rvList.addEventListener("mouseleave", function () { rvRingAt(null); });
+  rvList.addEventListener("focusin", function (e) { var c = e.target.closest && e.target.closest(".rvcard"); if (c) rvRingAt(rvById(c.getAttribute("data-rv"))); });
+  rvBox.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-rv-list]")) { rvSet("list"); return; }
+    var c = e.target.closest && e.target.closest(".rvcard");
+    if (!c) return;
+    var id = c.getAttribute("data-rv"), r = rvById(id);
+    /* the report opens above the list, without leaving the tab or moving the map; the ring shows where it is */
+    rvRingAt(r);
+    Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
+    c.classList.add("on");
+    if (r && r.sof) { var sm = sofM[id]; if (sm) { map.panTo([r.lat, r.lon]); sm.openPopup(); } return; }
+    select(id, undefined, "rv-pkg");
+    var pk = document.getElementById("rv-pkg"); if (pk && !rvPhone()) pk.scrollTop = 0;
+  });
+  function rvPlace() {
+    var phone = rvPhone(), rail = document.querySelector(".rail");
+    if (phone) { if (rvBox.parentNode !== rail) rail.insertBefore(rvBox, rail.firstChild); }
+    else if (rvBox.parentNode !== shell) shell.insertBefore(rvBox, rail);
+    /* the phone keeps its own map-and-sheet layout; the list sits at the top of the sheet */
+    var m = phone ? "" : rvMode;
+    RV_MODES.forEach(function (k) { shell.classList.toggle("rv-" + k, m === k); });
+    rvBox.hidden = !phone && m === "map";
+    Array.prototype.forEach.call(document.querySelectorAll(".rvseg button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-rv-mode") === rvMode)); });
+    setTimeout(function () { map.invalidateSize(); rvSoon(); }, 60);
+  }
+  function rvSet(m) {
+    if (RV_MODES.indexOf(m) < 0) return;
+    rvMode = m;
+    try { localStorage.setItem("asap-rv-mode", m); } catch (e) {}
+    rvPlace();
+  }
+  /* the layout switch sits on the map, so it stays reachable in every mode */
+  var RvCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+    var d = L.DomUtil.create("div", "leaflet-control");
+    d.className += " rvseg"; d.id = "rv-seg"; d.setAttribute("role", "group"); d.setAttribute("aria-label", "Layout");
+    d.innerHTML = '<button type="button" data-rv-mode="map" title="Map only">Map</button><button type="button" data-rv-mode="split" title="Map with the reports in this map area beside it">Split</button><button type="button" data-rv-mode="list" title="All reports in this tab as cards">List</button>';
+    L.DomEvent.disableClickPropagation(d); return d; } });
+  new RvCtl().addTo(map);
+  document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-rv-mode]"); if (b) rvSet(b.getAttribute("data-rv-mode")); });
+  map.on("moveend", rvSoon);
+  sofLayer.on("layeradd", function () { if ((LBY[current] || {}).sof) rvSoon(); });
+  if (rvMq.addEventListener) rvMq.addEventListener("change", rvPlace); else if (rvMq.addListener) rvMq.addListener(rvPlace);
+  rvPlace();
 
   /* the header wraps onto two rows now, so the map is sized from its real height */
   var hdr = document.querySelector("header");
