@@ -24,6 +24,14 @@ const C = [
   ["tiles", "OpenTopoMap tile", "https://a.tile.opentopomap.org/5/25/14.png"],
   ["tiles", "OSM tile", "https://tile.openstreetmap.org/5/25/14.png"],
   ["tiles", "OpenFreeMap style", "https://tiles.openfreemap.org/styles/liberty"],
+  ["flood", "JRC GSW occurrence tile", "https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/6/50/29.png"],
+  ["flood", "JRC GSW recurrence tile", "https://storage.googleapis.com/global-surface-water/tiles2021/recurrence/6/50/29.png"],
+  ["flood", "GIBS MODIS flood 3-day tile", "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/2026-09-25/GoogleMapsCompatible_Level9/6/29/50.png"],
+  ["flood", "GIBS MODIS flood 2-day tile", "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_2-Day/default/2026-09-25/GoogleMapsCompatible_Level9/6/29/50.png"],
+  ["flood", "GFM WMS capabilities", "https://geoserver.gfm.eodc.eu/geoserver/gfm/wms?service=WMS&request=GetCapabilities"],
+  ["flood", "GFM ows capabilities", "https://geoserver.gfm.eodc.eu/geoserver/ows?service=WMS&request=GetCapabilities"],
+  ["flood", "JRC flood hazard catalogue", "https://data.jrc.ec.europa.eu/api/3/action/package_show?id=jrc-floods-floodmapgl_rp100y-tif"],
+  ["tiles", "GIBS Blue Marble tile", "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08-01/GoogleMapsCompatible_Level8/5/14/25.jpeg"],
 ];
 for (const [cc, name, url] of C) {
   const t0 = Date.now();
@@ -34,3 +42,9 @@ for (const [cc, name, url] of C) {
     console.log(`${cc} | ${name} | ${r.status} | ${r.headers.get("content-type")} | ${buf.length} B | ${Date.now() - t0} ms | ${txt}`);
   } catch (e) { console.log(`${cc} | ${name} | ERR ${e.name}: ${String(e.message).slice(0, 120)}`); }
 }
+
+try {
+  const t = await (await fetch("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml", { signal: AbortSignal.timeout(30000) })).text();
+  const ids = [...t.matchAll(/<ows:Identifier>([^<]*(Flood|Water|Relief|Blue)[^<]*)<\/ows:Identifier>/gi)].map(m => m[1]);
+  console.log("GIBS layers:", [...new Set(ids)].join(", "));
+} catch (e) { console.log("GIBS caps ERR", e.message); }
