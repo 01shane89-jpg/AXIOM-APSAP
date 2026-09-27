@@ -10,7 +10,7 @@ import { ccsInText, ccFromA2, withOki } from "./geo_cc.mjs";
 
 const TT = [
   // id, institute, home page, candidate feed addresses
-  ["rand", "RAND", "https://www.rand.org/", ["https://www.rand.org/pubs.xml", "https://www.rand.org/news/press.xml", "https://www.rand.org/pubs/commentary.xml"]],
+  ["rand", "RAND", "https://www.rand.org/", ["https://www.rand.org/pubs/commentary.xml", "https://www.rand.org/pubs.xml", "https://www.rand.org/news/press.xml"]],
   ["csis", "CSIS", "https://www.csis.org/", ["https://www.csis.org/analysis/feed", "https://www.csis.org/rss.xml", "https://www.csis.org/analysis/rss.xml"]],
   ["crisisgroup", "International Crisis Group", "https://www.crisisgroup.org/", ["https://www.crisisgroup.org/rss", "https://www.crisisgroup.org/rss.xml", "https://www.crisisgroup.org/rss/0"]],
   ["lowy", "Lowy Institute", "https://www.lowyinstitute.org/the-interpreter", ["https://www.lowyinstitute.org/the-interpreter/rss.xml", "https://www.lowyinstitute.org/rss.xml"]],
@@ -120,20 +120,57 @@ function placeIn(gz, text, ccs) {
   return null;
 }
 
+// Institutes that switched their feeds off still publish a sitemap. Headlines then come from the page address, and the date is
+// when the page last changed (not necessarily when it was first published); both are said so on each item.
+const NOT_ARTICLE = /\/(events?|experts?|people|person|staff|author|authors|about|careers?|jobs|tags?|topics?|regions?|programs?|projects?|category|categories|search|donate|contact|press-releases?|podcasts?|video|videos|media|newsletters?)(\/|$)/i;
+async function fromSitemap(g, home) {
+  const origin = new URL(home).origin;
+  let maps = [];
+  try { const r = await g(origin + "/robots.txt", "text", { timeout: 15e3 }); maps = [...r.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map((m) => m[1]); } catch (e) {}
+  if (!maps.length) maps = [origin + "/sitemap_index.xml", origin + "/sitemap.xml"];
+  const locs = (x, tag) => [...x.matchAll(new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">", "g"))].map((m) => ({ loc: ((m[1].match(/<loc>\s*(?:<!\[CDATA\[)?([^<\]]+)/) || [])[1] || "").trim(), mod: ((m[1].match(/<lastmod>([^<]+)/) || [])[1] || "").trim() }));
+  for (const sm of maps.slice(0, 2)) {
+    let x; try { x = await g(sm, "text", { timeout: 20e3 }); } catch (e) { continue; }
+    let urls = locs(x, "url");
+    if (!urls.length) { // a sitemap index: read the one or two article sitemaps changed most recently
+      const kids = locs(x, "sitemap").filter((k) => k.loc && !/(page|event|person|people|expert|author|staff|tag|categor|image|video|attachment|topic|region|program|project|taxonom)/i.test(k.loc))
+        .sort((a, b) => (b.mod || "").localeCompare(a.mod || "")).slice(0, 2);
+      for (const k of kids) { try { urls = urls.concat(locs(await g(k.loc, "text", { timeout: 20e3 }), "url")); } catch (e) {} }
+    }
+    const out = urls.filter((u) => u.loc && u.mod && ageDays(u.mod) <= 30 && !NOT_ARTICLE.test(new URL(u.loc).pathname) && new URL(u.loc).pathname.split("/").filter(Boolean).length >= 1)
+      .sort((a, b) => b.mod.localeCompare(a.mod)).slice(0, 60).map((u) => {
+        const slug = decodeURIComponent(new URL(u.loc).pathname.split("/").filter(Boolean).pop()).replace(/\.(html?|aspx?|php)$/i, "");
+        const title = slug.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+        return { title: title.charAt(0).toUpperCase() + title.slice(1), link: u.loc, date: u.mod, summary: "Headline taken from the page address; the date is when the page last changed." };
+      }).filter((e) => e.title.split(" ").length >= 3);
+    if (out.length) return out;
+  }
+  throw new Error("no recent pages in sitemap");
+}
+
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
   feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: "Publisher copyright; headline, short summary and link only", nc: true, url: home, everyHours: 1 });
   run(fid, async (g) => {
-    let xml = "", used = "", why = [];
-    const tryUrl = async (u) => { try { const t = await g(u, "text", { headers: UA_FEED, timeout: 20e3 }); if (/<(item|entry)[\s>]/.test(t)) { xml = t; used = u; return true; } why.push(u + ": not a feed"); } catch (e) { why.push(u + ": " + e.message); } return false; };
+    let entries = null, used = "", why = [];
+    // A feed counts only if it holds something from the last 60 days (several institutes left a dead feed behind).
+    const tryUrl = async (u) => {
+      try {
+        const t = await g(u, "text", { headers: UA_FEED, timeout: 20e3 });
+        if (!/<(item|entry)[\s>]/.test(t)) { why.push(u + ": not a feed"); return false; }
+        const es = rssItems(t).filter((x) => x.title && x.link && (!x.date || ageDays(x.date) <= 60));
+        if (!es.length) { why.push(u + ": nothing recent"); return false; }
+        entries = es; used = u; return true;
+      } catch (e) { why.push(u + ": " + e.message); } return false;
+    };
     for (const u of urls) if (await tryUrl(u)) break;
-    if (!xml) { // fall back to feeds the home page (or the institute's feed list page) links to
+    if (!entries) { // fall back to feeds the home page (or the institute's feed list page) links to
       for (const pg of [home, ...(PAGES[id] || [])]) {
         try {
           const page = await g(pg, "text", { timeout: 20e3 });
           const alt = [...page.matchAll(/<link[^>]+type="application\/(?:rss|atom)\+xml"[^>]*>/gi)].map((m) => (m[0].match(/href="([^"]+)"/) || [])[1]);
-          const anchors = [...page.matchAll(/href="([^"]*(?:rss|feed|atom)[^"]*)"/gi)].map((m) => m[1]).filter((h) => !/feedback|feedburner\.google|\.(css|js|png|svg)(\?|$)/i.test(h));
+          const anchors = [...page.matchAll(/href="([^"]*(?:rss|feed|atom)[^"]*)"/gi)].map((m) => m[1]).filter((h) => !/feedback|feedburner\.google|comments\/feed|\.(css|js|png|svg)(\?|$)/i.test(h));
           const links = [...new Set([...alt, ...anchors].filter(Boolean).map((l) => { try { return new URL(l.replace(/&amp;/g, "&"), pg).href; } catch { return null; } }).filter(Boolean))].filter((l) => !urls.includes(l) && l !== pg);
           let hit = false;
           for (const l of links.slice(0, 4)) if ((hit = await tryUrl(l))) break;
@@ -141,12 +178,12 @@ for (const [id, org, home, urls] of TT) {
         } catch (e) { why.push(pg + ": " + e.message); }
       }
     }
-    if (!xml) throw new Error("no feed: " + why.join("; ").slice(0, 300));
+    if (!entries) { try { entries = await fromSitemap(g, home); used = "sitemap (headline from page address)"; } catch (e) { why.push("sitemap: " + e.message); } }
+    if (!entries || !entries.length) throw new Error("no feed: " + why.join("; ").slice(0, 300));
     let gz = null; try { gz = await gazetteer(g); } catch (e) {}
     const kind = org + " assessment";
     const items = [], globals = [];
-    for (const x of rssItems(xml).slice(0, 60)) {
-      if (!x.title || !x.link || (x.date && ageDays(x.date) > 60)) continue;
+    for (const x of entries.slice(0, 60)) {
       const summary = x.summary.replace(/The post .* appeared first on .*$/i, "").trim();
       const short = summary.length > 280 ? summary.slice(0, 277).replace(/\s+\S*$/, "") + "..." : summary;
       const text = x.title + " " + summary.slice(0, 800);
