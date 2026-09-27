@@ -1,0 +1,25 @@
+# Test only: checks the free, no-key sources for the Russia-Ukraine conflict tab from GitHub's runners.
+# Prints to the log and uploads probe-out/ukraine.json as an artifact; writes nothing to the repo.
+name: Probe Ukraine conflict sources
+on:
+  push:
+    branches: [claude/ukraine-conflict]
+    paths: [tools/probe_ukraine.mjs, tools/probe_ukraine.json, .github/workflows/probe-conflict-ua.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/probe_ukraine.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-ukraine
+          path: probe-out/
