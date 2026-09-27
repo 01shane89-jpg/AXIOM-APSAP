@@ -533,5 +533,6 @@
   }
   function whenReady() { if (W.TSAP && D.getElementById("view-seg") && D.getElementById("view-seg").children.length) start(); else setTimeout(whenReady, 150); }
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", whenReady); else whenReady();
-  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; } };
+  // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
+  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin };
 })();
