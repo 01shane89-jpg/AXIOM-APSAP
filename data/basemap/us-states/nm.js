@@ -1,0 +1,2 @@
+/* written by tools/build_us_states.py; do not edit by hand */
+window.OSAP_SUBAREA = {"cc":"us","code":"NM","name":"New Mexico","tz":"America/Denver","b":[[31.33,-109.05],[37.0,-103.0]],"p":[[[-106.51,31.77],[-108.22,31.78],[-108.21,31.33],[-109.05,31.33],[-109.05,37.0],[-103.0,37.0],[-103.0,36.5],[-103.04,36.5],[-103.07,32.0],[-106.66,32.0],[-106.6,31.84],[-106.51,31.77]]],"src":"Natural Earth admin-1 (public domain), via assets/regions/USA.json"};
