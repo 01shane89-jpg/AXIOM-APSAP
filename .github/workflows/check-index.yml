@@ -1,0 +1,16 @@
+# Guards against merges that silently drop script tags or feature code from index.html.
+# The list of required lines is tools/required-in-index.txt.
+name: Check index.html
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  required-lines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: node tools/check_index.mjs
