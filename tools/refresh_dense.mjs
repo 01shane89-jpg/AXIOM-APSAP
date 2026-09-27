@@ -448,7 +448,7 @@ for (const [id, name, org, url, lic, home] of [
 
 feed("ransomware", { name: "Ransomware leak-site claims (ransomware.live)", org: "ransomware.live (Julien Mousqueton)", cat: "Cyber", lic: "Free public API; terms: attribution, non-commercial", nc: true, url: "https://www.ransomware.live/" });
 run("ransomware", async (g) => {
-  const j = await g("https://api.ransomware.live/v2/recentvictims");
+  const j = await g("https://api.ransomware.live/v2/recentvictims", "json", { timeout: 90000 });
   // Victims are organisations; a name that could be a person's (no company marker, no domain) is withheld.
   const ORG = /\b(inc|ltd|llc|plc|corp|co\.|company|group|gmbh|ag|s\.?a\.?|s\.?r\.?l|b\.?v|pty|bhd|tbk|limited|holdings?|bank|university|college|school|hospital|clinic|council|county|city|municipal|ministry|government|department|authority|agency|association|foundation|services|systems|solutions|technolog|industr|logistics|energy|pharma|health|hotel|airport|port)\b/i;
   return { items: j.map((v) => ({ title: v.group + " claims an attack on " + (ORG.test(v.victim || "") || v.domain ? v.victim : "an organisation") + (v.activity && v.activity !== "Not Found" ? " (" + v.activity + ")" : ""),
@@ -583,7 +583,7 @@ for (const [id, name, org, url, lic, home] of [
   ["iaea", "IAEA top news", "International Atomic Energy Agency", "https://www.iaea.org/feeds/topnews", "IAEA terms (attribution)", "https://www.iaea.org/"]]) {
   feed(id, { name, org, cat: /ecdc|cdc/.test(id) ? "Health" : "Events", lic, url: home });
   run(id, async (g) => {
-    const items = rssItems(await g(url, "text")).filter((x) => within(x.date, 45)).map((x) => ({ title: x.title, detail: x.summary.slice(0, 500), date: x.date, url: x.link, sev: 1, kind: name, ccs: withOki(ccsInText(x.title + " " + x.summary.slice(0, 600))) }));
+    const items = rssItems(await g(url, "text")).filter((x) => within(x.date, 120)).map((x) => ({ title: x.title, detail: x.summary.slice(0, 500), date: x.date, url: x.link, sev: 1, kind: name, ccs: withOki(ccsInText(x.title + " " + x.summary.slice(0, 600))) }));
     return { items, globals: items.filter((x) => !x.ccs.length).slice(0, 20).map((x) => ({ ...x, ccs: undefined })) };
   });
 }
@@ -652,7 +652,7 @@ run("wb-projects", async (g) => {
 
 feed("hdx", { name: "Humanitarian datasets updated (HDX)", org: "OCHA Humanitarian Data Exchange", cat: "Events", lic: "Per dataset (shown); catalogue metadata open", url: "https://data.humdata.org/", everyHours: 6 });
 run("hdx", async (g) => {
-  const j = await g("https://data.humdata.org/api/3/action/package_search?rows=1000&sort=metadata_modified%20desc&fl=name,title,groups,metadata_modified,organization,license_title");
+  const j = await g("https://data.humdata.org/api/3/action/package_search?rows=500&sort=metadata_modified%20desc", "json", { timeout: 90000 });
   return { items: ((j.result || {}).results || []).map((d) => ({ title: "Dataset: " + d.title, detail: [d.organization && d.organization.title, d.license_title].filter(Boolean).join(" · "), date: d.metadata_modified,
     url: "https://data.humdata.org/dataset/" + d.name, sev: 1, kind: "Humanitarian dataset", ccs: withOki((d.groups || []).map((x) => ccFromA3(x.name)).filter(Boolean)) })).filter((x) => x.ccs.length && x.ccs.length <= 3) };
 });
@@ -700,10 +700,12 @@ run("wiki-events", async (g) => {
 feed("elections", { name: "Elections and referendums (Wikidata)", org: "Wikidata contributors", cat: "Politics", lic: "CC0", url: "https://www.wikidata.org/", everyHours: 24 });
 run("elections", async (g) => {
   const from = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10), to = new Date(Date.now() + 400 * 864e5).toISOString().slice(0, 10);
-  const q = `SELECT DISTINCT ?e ?eLabel ?d ?iso WHERE { ?e wdt:P585 ?d; wdt:P31/wdt:P279? wd:Q40231; wdt:P17 ?c. ?c wdt:P297 ?iso.
-    FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime) SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`;
-  const j = await g("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), "json", { timeout: 90000, headers: { accept: "application/sparql-results+json" } });
-  return { items: j.results.bindings.map((b) => ({ title: b.eLabel.value, detail: Date.parse(b.d.value) > Date.now() ? "Scheduled" : "Held", date: b.d.value, url: b.e.value, sev: 1, kind: "Election", ccs: one(ccFromA2(b.iso.value)) })) };
+  const q = `SELECT ?e ?l ?d ?iso WHERE { ?e wdt:P585 ?d. FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime)
+    ?e wdt:P31/wdt:P279* wd:Q40231. ?e wdt:P17/wdt:P297 ?iso. ?e rdfs:label ?l. FILTER(lang(?l) = "en") } LIMIT 4000`;
+  let j = null, last = null;
+  for (let t = 0; t < 2 && !j; t++) { try { j = await g("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), "json", { timeout: 90000, headers: { accept: "application/sparql-results+json" } }); } catch (e) { last = e; await sleep(5000); } }
+  if (!j) throw last;
+  return { items: j.results.bindings.map((b) => ({ title: b.l.value, detail: Date.parse(b.d.value) > Date.now() ? "Scheduled" : "Held", date: b.d.value, url: b.e.value, sev: 1, kind: "Election", ccs: one(ccFromA2(b.iso.value)) })) };
 });
 
 feed("rainviewer", { name: "RainViewer global radar mosaic (map overlay)", org: "RainViewer", cat: "Hazards", lic: "Free public API, attribution; personal/non-commercial use", nc: true, url: "https://www.rainviewer.com/" });

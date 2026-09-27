@@ -120,6 +120,17 @@ jobs:
             probe-out/
             data/live/x/
           if-no-files-found: ignore
+      # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
+      # so the result can be previewed without committing data to the branch under review.
+      - name: Park dense test output on a preview-data branch
+        if: ${{ inputs.only == 'dense' && github.ref != 'refs/heads/main' }}
+        run: |
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan dense-preview-data
+          git rm -rq --cached . && git add -f data/live/x && git commit -qm "Dense feed test output $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/dense-preview-data
+        continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
         if: ${{ inputs.only != 'probe' && inputs.only != 'probe-dense' && github.ref == 'refs/heads/main' }}
