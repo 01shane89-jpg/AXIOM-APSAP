@@ -129,7 +129,9 @@ export function parseYtPage(html, now = Date.now()) {
   const out = [], U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
   const re = /"videoId":"([\w-]{11})"[\s\S]{0,1500}?"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"\}[\s\S]{0,1500}?"publishedTimeText":\{"simpleText":"([^"]+)"/g;
   const seen = new Set();
-  for (const m of html.matchAll(re)) {
+  // newer page layout: lockupViewModel with contentId, title.content and a metadata part such as "3 days ago"
+  const re2 = /"contentId":"([\w-]{11})"[\s\S]{0,4000}?"title":\{"content":"((?:[^"\\]|\\.)*)"[\s\S]{0,2500}?"content":"([^"]*?\d+\s*(?:second|minute|hour|day|week|month|year)s?\s+ago|[^"]*?\d+\s*(?:秒|分|時間|日|週間|か月|ヶ月|年)前)"/g;
+  for (const m of [...html.matchAll(re), ...html.matchAll(re2)]) {
     if (seen.has(m[1])) continue; seen.add(m[1]);
     const J = { 秒: "second", 分: "minute", 時間: "hour", 日: "day", 週間: "week", か月: "month", ヶ月: "month", 年: "year" };
     const a = m[3].match(/(\d+)\s*(second|minute|hour|day|week|month|year|秒|分|時間|日|週間|か月|ヶ月|年)/i); if (!a) continue;
@@ -149,10 +151,22 @@ for (const ch of cfg.youtube || []) {
       if (!id) throw new Error("channel id not found");
     }
     let vids;
-    try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
-    catch (e) {
+    // YouTube's feed answers 404 now and then for channels that exist; a short retry usually gets it
+    let feedErr = "";
+    for (let k = 0; k < 3 && !vids; k++) {
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
+      catch (e) { feedErr = err(e); if (k < 2) await new Promise((r) => setTimeout(r, 2500)); }
+    }
+    if (!vids) {
       try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); }
-      catch (e2) { vids = parseYtPage(await text("https://www.youtube.com/channel/" + id + "/videos")); if (!vids.length) throw new Error("feed " + e.message + ", videos page had no videos"); }
+      catch (e2) {
+        const page = await text("https://www.youtube.com/channel/" + id + "/videos");
+        vids = parseYtPage(page);
+        if (!vids.length) {
+          try { fs.mkdirSync("probe-out", { recursive: true }); const i = page.indexOf("videoId"); fs.writeFileSync("probe-out/yt-" + id + ".txt", page.length + " bytes\n" + page.slice(Math.max(0, i - 3000), i + 6000)); } catch (e3) {}
+          throw new Error("feed " + feedErr + ", videos page had no videos");
+        }
+      }
     }
     let n = 0;
     for (const v of vids) {
