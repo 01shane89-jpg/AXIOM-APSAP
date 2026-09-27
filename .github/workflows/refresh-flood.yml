@@ -99,9 +99,13 @@ jobs:
         if: ${{ inputs.only == 'probe' }}
         run: node tools/probe_storms.mjs
         continue-on-error: true
+      - name: Probe road feeds (test only)
+        if: ${{ inputs.only == 'probe-roads' }}
+        run: node tools/probe_roads.mjs
+        continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
