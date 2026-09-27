@@ -1,0 +1,2442 @@
+[
+{
+"cc": "oki",
+"q": "琉球放送 RBC"
+},
+{
+"cc": "oki",
+"q": "沖縄テレビ OTV"
+},
+{
+"cc": "oki",
+"q": "琉球朝日放送 QAB"
+},
+{
+"cc": "oki",
+"q": "琉球新報"
+},
+{
+"cc": "oki",
+"q": "沖縄タイムス"
+},
+{
+"cc": "oki",
+"q": "NHK沖縄"
+},
+{
+"cc": "kh",
+"q": "CNC Cambodia news"
+},
+{
+"cc": "kh",
+"q": "Hang Meas HDTV news"
+},
+{
+"cc": "kh",
+"q": "TVK Cambodia"
+},
+{
+"cc": "kh",
+"q": "Fresh News Cambodia"
+},
+{
+"cc": "kh",
+"q": "VOA Khmer"
+},
+{
+"cc": "la",
+"q": "Lao National Television LNTV"
+},
+{
+"cc": "la",
+"q": "Lao Star TV"
+},
+{
+"cc": "la",
+"q": "Laotian Times"
+},
+{
+"cc": "la",
+"q": "RFA Lao"
+},
+{
+"cc": "mm",
+"q": "DVB TV News Burmese"
+},
+{
+"cc": "mm",
+"q": "Mizzima TV"
+},
+{
+"cc": "mm",
+"q": "BBC News Burmese"
+},
+{
+"cc": "mm",
+"q": "MRTV Myanmar"
+},
+{
+"cc": "mm",
+"q": "Khit Thit Media"
+},
+{
+"cc": "mm",
+"q": "Myanmar Now"
+},
+{
+"cc": "my",
+"q": "Astro AWANI"
+},
+{
+"cc": "my",
+"q": "Berita RTM"
+},
+{
+"cc": "my",
+"q": "Bernama TV"
+},
+{
+"cc": "my",
+"q": "The Star Malaysia"
+},
+{
+"cc": "my",
+"q": "Malaysiakini"
+},
+{
+"cc": "bn",
+"q": "RTB Brunei"
+},
+{
+"cc": "bn",
+"q": "Radio Televisyen Brunei berita"
+},
+{
+"cc": "bn",
+"q": "Borneo Bulletin"
+},
+{
+"cc": "tl",
+"q": "RTTL Timor-Leste"
+},
+{
+"cc": "tl",
+"q": "GMN TV Timor"
+},
+{
+"cc": "tl",
+"q": "Tatoli Timor-Leste"
+},
+{
+"cc": "tl",
+"q": "TVE Timor-Leste"
+},
+{
+"cc": "kp",
+"q": "NK News"
+},
+{
+"cc": "kp",
+"q": "VOA Korea"
+},
+{
+"cc": "kp",
+"q": "Daily NK"
+},
+{
+"cc": "kr",
+"q": "Arirang News"
+},
+{
+"cc": "kr",
+"q": "Yonhap News TV"
+},
+{
+"cc": "kr",
+"q": "KBS News"
+},
+{
+"cc": "kr",
+"q": "YTN"
+},
+{
+"cc": "mn",
+"q": "MNB Mongolia news"
+},
+{
+"cc": "mn",
+"q": "Mongolian National Broadcaster"
+},
+{
+"cc": "mn",
+"q": "Eagle News Mongolia"
+},
+{
+"cc": "mn",
+"q": "Montsame"
+},
+{
+"cc": "nz",
+"q": "RNZ"
+},
+{
+"cc": "nz",
+"q": "1News New Zealand"
+},
+{
+"cc": "nz",
+"q": "NZ Herald"
+},
+{
+"cc": "np",
+"q": "Kantipur TV HD"
+},
+{
+"cc": "np",
+"q": "Nepal Television"
+},
+{
+"cc": "np",
+"q": "Kathmandu Post"
+},
+{
+"cc": "np",
+"q": "Image News Nepal"
+},
+{
+"cc": "bt",
+"q": "BBS Bhutan Broadcasting Service"
+},
+{
+"cc": "bt",
+"q": "Kuensel"
+},
+{
+"cc": "bd",
+"q": "Somoy TV"
+},
+{
+"cc": "bd",
+"q": "Jamuna TV"
+},
+{
+"cc": "bd",
+"q": "Channel 24 Bangladesh"
+},
+{
+"cc": "bd",
+"q": "The Daily Star Bangladesh"
+},
+{
+"cc": "bd",
+"q": "BTV News Bangladesh"
+},
+{
+"cc": "lk",
+"q": "Ada Derana"
+},
+{
+"cc": "lk",
+"q": "Ada Derana English"
+},
+{
+"cc": "lk",
+"q": "Newsfirst Sri Lanka"
+},
+{
+"cc": "lk",
+"q": "Hiru News"
+},
+{
+"cc": "lk",
+"q": "Rupavahini news"
+},
+{
+"cc": "mv",
+"q": "PSM News Maldives"
+},
+{
+"cc": "mv",
+"q": "Raajje TV"
+},
+{
+"cc": "mv",
+"q": "Sun Online Maldives"
+},
+{
+"cc": "mv",
+"q": "Atoll Times"
+},
+{
+"cc": "ua",
+"q": "Kyiv Independent"
+},
+{
+"cc": "ua",
+"q": "Suspilne News"
+},
+{
+"cc": "ua",
+"q": "UATV English"
+},
+{
+"cc": "ua",
+"q": "Ukrainska Pravda"
+},
+{
+"cc": "ru",
+"q": "TV Rain Dozhd"
+},
+{
+"cc": "ru",
+"q": "BBC News Russian"
+},
+{
+"cc": "ru",
+"q": "Meduza"
+},
+{
+"cc": "ru",
+"q": "Novaya Gazeta Europe"
+},
+{
+"cc": "il",
+"q": "i24NEWS English"
+},
+{
+"cc": "il",
+"q": "Israel Defense Forces"
+},
+{
+"cc": "il",
+"q": "Kan News Israel"
+},
+{
+"cc": "il",
+"q": "Times of Israel"
+},
+{
+"cc": "ps",
+"q": "Palestine TV"
+},
+{
+"cc": "ps",
+"q": "WAFA news agency"
+},
+{
+"cc": "ps",
+"q": "Al Quds TV"
+},
+{
+"cc": "ps",
+"q": "Middle East Eye"
+},
+{
+"cc": "lb",
+"q": "LBCI Lebanon"
+},
+{
+"cc": "lb",
+"q": "Al Jadeed"
+},
+{
+"cc": "lb",
+"q": "MTV Lebanon News"
+},
+{
+"cc": "lb",
+"q": "L'Orient Today"
+},
+{
+"cc": "sy",
+"q": "Syria TV"
+},
+{
+"cc": "sy",
+"q": "Enab Baladi"
+},
+{
+"cc": "sy",
+"q": "Alikhbaria Syria"
+},
+{
+"cc": "sy",
+"q": "SANA Syria"
+},
+{
+"cc": "ye",
+"q": "Belqees TV"
+},
+{
+"cc": "ye",
+"q": "Yemen Shabab"
+},
+{
+"cc": "ye",
+"q": "Yemen TV"
+},
+{
+"cc": "sd",
+"q": "Sudan TV"
+},
+{
+"cc": "sd",
+"q": "Sudan Tribune"
+},
+{
+"cc": "sd",
+"q": "Alhadath Sudan"
+},
+{
+"cc": "sd",
+"q": "Radio Dabanga"
+},
+{
+"cc": "ss",
+"q": "Radio Tamazuj"
+},
+{
+"cc": "ss",
+"q": "Eye Radio South Sudan"
+},
+{
+"cc": "ss",
+"q": "SSBC South Sudan"
+},
+{
+"cc": "so",
+"q": "Universal TV Somali"
+},
+{
+"cc": "so",
+"q": "SNTV Somali National Television"
+},
+{
+"cc": "so",
+"q": "Garowe Online"
+},
+{
+"cc": "so",
+"q": "Horn Cable TV"
+},
+{
+"cc": "cd",
+"q": "Radio Okapi"
+},
+{
+"cc": "cd",
+"q": "Top Congo FM"
+},
+{
+"cc": "cd",
+"q": "RTNC Congo"
+},
+{
+"cc": "cd",
+"q": "Actualite.cd"
+},
+{
+"cc": "et",
+"q": "EBC Ethiopian Broadcasting Corporation"
+},
+{
+"cc": "et",
+"q": "Fana Television"
+},
+{
+"cc": "et",
+"q": "Addis Standard"
+},
+{
+"cc": "et",
+"q": "Addis Media Network"
+},
+{
+"cc": "ml",
+"q": "ORTM Mali"
+},
+{
+"cc": "ml",
+"q": "Studio Tamani"
+},
+{
+"cc": "ml",
+"q": "Joliba TV News"
+},
+{
+"cc": "bf",
+"q": "RTB Burkina Faso"
+},
+{
+"cc": "bf",
+"q": "Burkina 24"
+},
+{
+"cc": "bf",
+"q": "BF1 TV"
+},
+{
+"cc": "ne",
+"q": "RTN Tele Sahel Niger"
+},
+{
+"cc": "ne",
+"q": "Canal 3 Niger"
+},
+{
+"cc": "ne",
+"q": "ActuNiger"
+},
+{
+"cc": "ng",
+"q": "Channels Television"
+},
+{
+"cc": "ng",
+"q": "Arise News"
+},
+{
+"cc": "ng",
+"q": "TVC News Nigeria"
+},
+{
+"cc": "ng",
+"q": "NTA News"
+},
+{
+"cc": "ht",
+"q": "Le Nouvelliste Haiti"
+},
+{
+"cc": "ht",
+"q": "Radio Television Caraibes"
+},
+{
+"cc": "ht",
+"q": "Haiti Press Network"
+},
+{
+"cc": "ht",
+"q": "Radio Television Nationale d'Haiti"
+},
+{
+"cc": "af",
+"q": "TOLOnews"
+},
+{
+"cc": "af",
+"q": "Afghanistan International"
+},
+{
+"cc": "af",
+"q": "Ariana News"
+},
+{
+"cc": "af",
+"q": "Amu TV"
+},
+{
+"cc": "iq",
+"q": "Rudaw English"
+},
+{
+"cc": "iq",
+"q": "Kurdistan24 English"
+},
+{
+"cc": "iq",
+"q": "Al Sumaria TV"
+},
+{
+"cc": "iq",
+"q": "Al Iraqiya TV"
+},
+{
+"cc": "ir",
+"q": "Iran International"
+},
+{
+"cc": "ir",
+"q": "BBC News Persian"
+},
+{
+"cc": "ir",
+"q": "IRNA"
+},
+{
+"cc": "ir",
+"q": "Manoto"
+},
+{
+"cc": "ly",
+"q": "Libya Al Ahrar TV"
+},
+{
+"cc": "ly",
+"q": "218 TV Libya"
+},
+{
+"cc": "ly",
+"q": "Libya Observer"
+},
+{
+"cc": "ly",
+"q": "Libya Alhadath"
+},
+{
+"cc": "mz",
+"q": "STV Mocambique"
+},
+{
+"cc": "mz",
+"q": "TVM Mocambique"
+},
+{
+"cc": "mz",
+"q": "O Pais Mocambique"
+},
+{
+"cc": "cm",
+"q": "CRTV Cameroon"
+},
+{
+"cc": "cm",
+"q": "Equinoxe TV"
+},
+{
+"cc": "cm",
+"q": "Canal 2 International"
+},
+{
+"cc": "cf",
+"q": "Radio Ndeke Luka"
+},
+{
+"cc": "cf",
+"q": "Oubangui Medias"
+},
+{
+"cc": "cf",
+"q": "TVCA Centrafrique"
+},
+{
+"cc": "co",
+"q": "Noticias Caracol"
+},
+{
+"cc": "co",
+"q": "Noticias RCN"
+},
+{
+"cc": "co",
+"q": "El Tiempo"
+},
+{
+"cc": "co",
+"q": "RTVC Noticias"
+},
+{
+"cc": "ve",
+"q": "VPItv"
+},
+{
+"cc": "ve",
+"q": "Efecto Cocuyo"
+},
+{
+"cc": "ve",
+"q": "Globovision"
+},
+{
+"cc": "ve",
+"q": "VTV Venezuela"
+},
+{
+"cc": "mx",
+"q": "Milenio"
+},
+{
+"cc": "mx",
+"q": "N+"
+},
+{
+"cc": "mx",
+"q": "El Universal Mexico"
+},
+{
+"cc": "mx",
+"q": "Gobierno de Mexico"
+},
+{
+"cc": "am",
+"q": "Azatutyun"
+},
+{
+"cc": "am",
+"q": "Armenia Public TV news"
+},
+{
+"cc": "am",
+"q": "CivilNet"
+},
+{
+"cc": "az",
+"q": "AzTV"
+},
+{
+"cc": "az",
+"q": "Meydan TV"
+},
+{
+"cc": "az",
+"q": "Report News Agency Azerbaijan"
+},
+{
+"cc": "az",
+"q": "APA TV"
+},
+{
+"cc": "bh",
+"q": "Bahrain TV"
+},
+{
+"cc": "bh",
+"q": "Bahrain News Agency"
+},
+{
+"cc": "ge",
+"q": "Formula TV Georgia"
+},
+{
+"cc": "ge",
+"q": "Mtavari"
+},
+{
+"cc": "ge",
+"q": "1TV Georgia"
+},
+{
+"cc": "ge",
+"q": "TV Pirveli"
+},
+{
+"cc": "jo",
+"q": "Roya News"
+},
+{
+"cc": "jo",
+"q": "Al Mamlaka TV"
+},
+{
+"cc": "jo",
+"q": "Jordan TV"
+},
+{
+"cc": "kz",
+"q": "Khabar 24"
+},
+{
+"cc": "kz",
+"q": "Tengrinews"
+},
+{
+"cc": "kz",
+"q": "Orda.kz"
+},
+{
+"cc": "kz",
+"q": "Vlast.kz"
+},
+{
+"cc": "kw",
+"q": "KTV Kuwait"
+},
+{
+"cc": "kw",
+"q": "Kuwait News Agency KUNA"
+},
+{
+"cc": "kw",
+"q": "Al Rai TV Kuwait"
+},
+{
+"cc": "kg",
+"q": "Azattyk Media"
+},
+{
+"cc": "kg",
+"q": "Kaktus Media"
+},
+{
+"cc": "kg",
+"q": "Kloop"
+},
+{
+"cc": "om",
+"q": "Oman TV"
+},
+{
+"cc": "om",
+"q": "Times of Oman"
+},
+{
+"cc": "om",
+"q": "Oman Observer"
+},
+{
+"cc": "qa",
+"q": "Al Jazeera Arabic"
+},
+{
+"cc": "qa",
+"q": "Al Araby TV"
+},
+{
+"cc": "qa",
+"q": "Qatar TV"
+},
+{
+"cc": "sa",
+"q": "Al Arabiya"
+},
+{
+"cc": "sa",
+"q": "Al Ekhbariya"
+},
+{
+"cc": "sa",
+"q": "Arab News"
+},
+{
+"cc": "tj",
+"q": "Asia-Plus Tajikistan"
+},
+{
+"cc": "tj",
+"q": "Radio Ozodi"
+},
+{
+"cc": "tj",
+"q": "TV Tojikiston"
+},
+{
+"cc": "tm",
+"q": "Turkmenportal"
+},
+{
+"cc": "tm",
+"q": "Azatlyk Radio"
+},
+{
+"cc": "tm",
+"q": "Turkmen news"
+},
+{
+"cc": "tr",
+"q": "TRT World"
+},
+{
+"cc": "tr",
+"q": "CNN TURK"
+},
+{
+"cc": "tr",
+"q": "Haberturk"
+},
+{
+"cc": "tr",
+"q": "Anadolu Agency"
+},
+{
+"cc": "ae",
+"q": "Sky News Arabia"
+},
+{
+"cc": "ae",
+"q": "Gulf News"
+},
+{
+"cc": "ae",
+"q": "Khaleej Times"
+},
+{
+"cc": "ae",
+"q": "The National News"
+},
+{
+"cc": "uz",
+"q": "Kun.uz"
+},
+{
+"cc": "uz",
+"q": "Ozodlik"
+},
+{
+"cc": "uz",
+"q": "Daryo"
+},
+{
+"cc": "uz",
+"q": "Gazeta.uz"
+},
+{
+"cc": "al",
+"q": "Top Channel Albania"
+},
+{
+"cc": "al",
+"q": "RTSH"
+},
+{
+"cc": "al",
+"q": "Report TV Albania"
+},
+{
+"cc": "ad",
+"q": "Andorra Televisio"
+},
+{
+"cc": "at",
+"q": "ZIB ORF"
+},
+{
+"cc": "at",
+"q": "krone.tv"
+},
+{
+"cc": "at",
+"q": "PULS 24"
+},
+{
+"cc": "by",
+"q": "Belsat TV"
+},
+{
+"cc": "by",
+"q": "Zerkalo"
+},
+{
+"cc": "by",
+"q": "Nasha Niva"
+},
+{
+"cc": "be",
+"q": "VRT NWS"
+},
+{
+"cc": "be",
+"q": "RTBF Info"
+},
+{
+"cc": "ba",
+"q": "N1 BiH"
+},
+{
+"cc": "ba",
+"q": "BHRT"
+},
+{
+"cc": "ba",
+"q": "Al Jazeera Balkans"
+},
+{
+"cc": "bg",
+"q": "BNT Bulgaria"
+},
+{
+"cc": "bg",
+"q": "bTV Novinite"
+},
+{
+"cc": "bg",
+"q": "NOVA News Bulgaria"
+},
+{
+"cc": "hr",
+"q": "HRT Vijesti"
+},
+{
+"cc": "hr",
+"q": "N1 Hrvatska"
+},
+{
+"cc": "hr",
+"q": "Index.hr"
+},
+{
+"cc": "cy",
+"q": "CyBC"
+},
+{
+"cc": "cy",
+"q": "Philenews"
+},
+{
+"cc": "cy",
+"q": "Cyprus Mail"
+},
+{
+"cc": "cz",
+"q": "CT24"
+},
+{
+"cc": "cz",
+"q": "Seznam Zpravy"
+},
+{
+"cc": "cz",
+"q": "DVTV"
+},
+{
+"cc": "dk",
+"q": "TV 2 Nyheder"
+},
+{
+"cc": "dk",
+"q": "DR Nyheder"
+},
+{
+"cc": "ee",
+"q": "ERR News Estonia"
+},
+{
+"cc": "ee",
+"q": "Delfi Estonia"
+},
+{
+"cc": "fi",
+"q": "Yle Uutiset"
+},
+{
+"cc": "fi",
+"q": "Yle News"
+},
+{
+"cc": "fi",
+"q": "MTV Uutiset"
+},
+{
+"cc": "fr",
+"q": "FRANCE 24 English"
+},
+{
+"cc": "fr",
+"q": "franceinfo"
+},
+{
+"cc": "fr",
+"q": "BFMTV"
+},
+{
+"cc": "fr",
+"q": "Le Monde"
+},
+{
+"cc": "de",
+"q": "DW News"
+},
+{
+"cc": "de",
+"q": "tagesschau"
+},
+{
+"cc": "de",
+"q": "ZDFheute Nachrichten"
+},
+{
+"cc": "de",
+"q": "WELT Nachrichtensender"
+},
+{
+"cc": "gr",
+"q": "ERTNEWS"
+},
+{
+"cc": "gr",
+"q": "SKAI"
+},
+{
+"cc": "gr",
+"q": "ANT1 News"
+},
+{
+"cc": "hu",
+"q": "Telex"
+},
+{
+"cc": "hu",
+"q": "Partizan"
+},
+{
+"cc": "hu",
+"q": "HirTV"
+},
+{
+"cc": "is",
+"q": "RUV"
+},
+{
+"cc": "is",
+"q": "Iceland Review"
+},
+{
+"cc": "ie",
+"q": "RTE News"
+},
+{
+"cc": "ie",
+"q": "The Irish Times"
+},
+{
+"cc": "ie",
+"q": "TheJournal.ie"
+},
+{
+"cc": "it",
+"q": "Sky TG24"
+},
+{
+"cc": "it",
+"q": "Rai News"
+},
+{
+"cc": "it",
+"q": "Corriere della Sera"
+},
+{
+"cc": "xk",
+"q": "Klan Kosova"
+},
+{
+"cc": "xk",
+"q": "RTK Live"
+},
+{
+"cc": "xk",
+"q": "Kanal 10"
+},
+{
+"cc": "lv",
+"q": "LSM Latvia"
+},
+{
+"cc": "lv",
+"q": "Delfi Latvia"
+},
+{
+"cc": "lv",
+"q": "TV3 Latvija"
+},
+{
+"cc": "li",
+"q": "1FLTV Liechtenstein"
+},
+{
+"cc": "li",
+"q": "Liechtensteiner Vaterland"
+},
+{
+"cc": "lt",
+"q": "LRT"
+},
+{
+"cc": "lt",
+"q": "Delfi TV Lithuania"
+},
+{
+"cc": "lt",
+"q": "15min"
+},
+{
+"cc": "lu",
+"q": "RTL Letzebuerg"
+},
+{
+"cc": "lu",
+"q": "RTL Today Luxembourg"
+},
+{
+"cc": "mt",
+"q": "TVM News Malta"
+},
+{
+"cc": "mt",
+"q": "Times of Malta"
+},
+{
+"cc": "mt",
+"q": "Lovin Malta"
+},
+{
+"cc": "md",
+"q": "TV8 Moldova"
+},
+{
+"cc": "md",
+"q": "Jurnal TV"
+},
+{
+"cc": "md",
+"q": "Moldova 1"
+},
+{
+"cc": "md",
+"q": "NewsMaker"
+},
+{
+"cc": "mc",
+"q": "Monaco Info"
+},
+{
+"cc": "mc",
+"q": "Monaco Matin"
+},
+{
+"cc": "me",
+"q": "Vijesti Montenegro"
+},
+{
+"cc": "me",
+"q": "RTCG"
+},
+{
+"cc": "nl",
+"q": "NOS"
+},
+{
+"cc": "nl",
+"q": "RTL Nieuws"
+},
+{
+"cc": "mk",
+"q": "Sitel TV"
+},
+{
+"cc": "mk",
+"q": "MRT Macedonian Radio Television"
+},
+{
+"cc": "mk",
+"q": "Telma TV"
+},
+{
+"cc": "no",
+"q": "NRK"
+},
+{
+"cc": "no",
+"q": "TV 2 Norge"
+},
+{
+"cc": "no",
+"q": "VG"
+},
+{
+"cc": "pl",
+"q": "TVN24"
+},
+{
+"cc": "pl",
+"q": "Polsat News"
+},
+{
+"cc": "pl",
+"q": "TVP Info"
+},
+{
+"cc": "pt",
+"q": "SIC Noticias"
+},
+{
+"cc": "pt",
+"q": "RTP Noticias"
+},
+{
+"cc": "pt",
+"q": "CNN Portugal"
+},
+{
+"cc": "pt",
+"q": "Observador"
+},
+{
+"cc": "ro",
+"q": "Digi24"
+},
+{
+"cc": "ro",
+"q": "TVR Info"
+},
+{
+"cc": "ro",
+"q": "Recorder"
+},
+{
+"cc": "sm",
+"q": "San Marino RTV"
+},
+{
+"cc": "rs",
+"q": "N1 Srbija"
+},
+{
+"cc": "rs",
+"q": "RTS Srbija"
+},
+{
+"cc": "rs",
+"q": "Nova S"
+},
+{
+"cc": "sk",
+"q": "TA3"
+},
+{
+"cc": "sk",
+"q": "Dennik N"
+},
+{
+"cc": "sk",
+"q": "Aktuality.sk"
+},
+{
+"cc": "sk",
+"q": "Markiza Televizne noviny"
+},
+{
+"cc": "si",
+"q": "RTV Slovenija"
+},
+{
+"cc": "si",
+"q": "24ur"
+},
+{
+"cc": "si",
+"q": "N1 Slovenija"
+},
+{
+"cc": "es",
+"q": "RTVE Noticias"
+},
+{
+"cc": "es",
+"q": "EL PAIS"
+},
+{
+"cc": "es",
+"q": "Antena 3 Noticias"
+},
+{
+"cc": "es",
+"q": "laSexta"
+},
+{
+"cc": "se",
+"q": "SVT Nyheter"
+},
+{
+"cc": "se",
+"q": "Aftonbladet"
+},
+{
+"cc": "se",
+"q": "Expressen"
+},
+{
+"cc": "ch",
+"q": "SRF News"
+},
+{
+"cc": "ch",
+"q": "RTS info Suisse"
+},
+{
+"cc": "ch",
+"q": "swissinfo"
+},
+{
+"cc": "ch",
+"q": "Blick"
+},
+{
+"cc": "gb",
+"q": "BBC News"
+},
+{
+"cc": "gb",
+"q": "Sky News"
+},
+{
+"cc": "gb",
+"q": "Channel 4 News"
+},
+{
+"cc": "gb",
+"q": "ITV News"
+},
+{
+"cc": "dz",
+"q": "Ennahar TV"
+},
+{
+"cc": "dz",
+"q": "Echorouk News"
+},
+{
+"cc": "dz",
+"q": "AL24 News"
+},
+{
+"cc": "ao",
+"q": "TPA Angola"
+},
+{
+"cc": "ao",
+"q": "TV Zimbo"
+},
+{
+"cc": "ao",
+"q": "Novo Jornal Angola"
+},
+{
+"cc": "bj",
+"q": "ORTB Benin"
+},
+{
+"cc": "bj",
+"q": "Canal 3 Benin"
+},
+{
+"cc": "bj",
+"q": "Benin Web TV"
+},
+{
+"cc": "bw",
+"q": "BTV Botswana"
+},
+{
+"cc": "bw",
+"q": "Mmegi"
+},
+{
+"cc": "bw",
+"q": "Duma FM"
+},
+{
+"cc": "bi",
+"q": "RTNB Burundi"
+},
+{
+"cc": "bi",
+"q": "Iwacu Burundi"
+},
+{
+"cc": "bi",
+"q": "SOS Medias Burundi"
+},
+{
+"cc": "cv",
+"q": "RTC Cabo Verde"
+},
+{
+"cc": "cv",
+"q": "TCV Cabo Verde"
+},
+{
+"cc": "cv",
+"q": "Tiver Cabo Verde"
+},
+{
+"cc": "td",
+"q": "Alwihda Info"
+},
+{
+"cc": "td",
+"q": "Tele Tchad"
+},
+{
+"cc": "td",
+"q": "Tchad Infos"
+},
+{
+"cc": "km",
+"q": "ORTC Comores"
+},
+{
+"cc": "km",
+"q": "Al-Watwan Comores"
+},
+{
+"cc": "km",
+"q": "Comores Infos"
+},
+{
+"cc": "ci",
+"q": "RTI Info Cote d'Ivoire"
+},
+{
+"cc": "ci",
+"q": "NCI Cote d'Ivoire"
+},
+{
+"cc": "ci",
+"q": "Abidjan.net TV"
+},
+{
+"cc": "dj",
+"q": "RTD Djibouti"
+},
+{
+"cc": "dj",
+"q": "La Nation Djibouti"
+},
+{
+"cc": "eg",
+"q": "Extra News Egypt"
+},
+{
+"cc": "eg",
+"q": "CBC Egypt"
+},
+{
+"cc": "eg",
+"q": "Ahram Online"
+},
+{
+"cc": "eg",
+"q": "Sada El Balad"
+},
+{
+"cc": "gq",
+"q": "TVGE Guinea Ecuatorial"
+},
+{
+"cc": "gq",
+"q": "Asonga TV"
+},
+{
+"cc": "er",
+"q": "Eri-TV"
+},
+{
+"cc": "er",
+"q": "Shabait Eritrea"
+},
+{
+"cc": "sz",
+"q": "Eswatini TV"
+},
+{
+"cc": "sz",
+"q": "Times of Eswatini"
+},
+{
+"cc": "sz",
+"q": "Eswatini News"
+},
+{
+"cc": "ga",
+"q": "Gabon 1ere"
+},
+{
+"cc": "ga",
+"q": "Gabonreview"
+},
+{
+"cc": "ga",
+"q": "Gabon 24"
+},
+{
+"cc": "gm",
+"q": "QTV Gambia"
+},
+{
+"cc": "gm",
+"q": "GRTS Gambia"
+},
+{
+"cc": "gm",
+"q": "Kerr Fatou"
+},
+{
+"cc": "gm",
+"q": "Foroyaa"
+},
+{
+"cc": "gh",
+"q": "JoyNews"
+},
+{
+"cc": "gh",
+"q": "TV3 Ghana"
+},
+{
+"cc": "gh",
+"q": "Citi TV Ghana"
+},
+{
+"cc": "gh",
+"q": "GBC Ghana Online"
+},
+{
+"cc": "gn",
+"q": "Espace TV Guinee"
+},
+{
+"cc": "gn",
+"q": "RTG Guinee"
+},
+{
+"cc": "gn",
+"q": "Djoma Media"
+},
+{
+"cc": "gn",
+"q": "Guineenews"
+},
+{
+"cc": "gw",
+"q": "TGB Guine-Bissau"
+},
+{
+"cc": "gw",
+"q": "O Democrata Guine-Bissau"
+},
+{
+"cc": "gw",
+"q": "Radio Capital FM Guine-Bissau"
+},
+{
+"cc": "ke",
+"q": "Citizen TV Kenya"
+},
+{
+"cc": "ke",
+"q": "NTV Kenya"
+},
+{
+"cc": "ke",
+"q": "KTN News Kenya"
+},
+{
+"cc": "ke",
+"q": "KBC Channel 1"
+},
+{
+"cc": "ls",
+"q": "Lesotho TV"
+},
+{
+"cc": "ls",
+"q": "MoAfrika"
+},
+{
+"cc": "ls",
+"q": "Lesotho News Agency"
+},
+{
+"cc": "lr",
+"q": "ELBC Liberia"
+},
+{
+"cc": "lr",
+"q": "FrontPage Africa"
+},
+{
+"cc": "lr",
+"q": "Spoon TV Liberia"
+},
+{
+"cc": "lr",
+"q": "OK FM Liberia"
+},
+{
+"cc": "mg",
+"q": "Kolo TV Madagascar"
+},
+{
+"cc": "mg",
+"q": "TVM Madagascar"
+},
+{
+"cc": "mg",
+"q": "Real TV Madagascar"
+},
+{
+"cc": "mw",
+"q": "MBC Malawi"
+},
+{
+"cc": "mw",
+"q": "Times 360 Malawi"
+},
+{
+"cc": "mw",
+"q": "Zodiak Malawi"
+},
+{
+"cc": "mr",
+"q": "Al Wataniya Mauritanie"
+},
+{
+"cc": "mr",
+"q": "Sahara Medias"
+},
+{
+"cc": "mr",
+"q": "Al Mouritania TV"
+},
+{
+"cc": "mu",
+"q": "Defimedia"
+},
+{
+"cc": "mu",
+"q": "MBC Mauritius"
+},
+{
+"cc": "mu",
+"q": "Top FM Mauritius"
+},
+{
+"cc": "ma",
+"q": "2M Maroc"
+},
+{
+"cc": "ma",
+"q": "Medi1 TV"
+},
+{
+"cc": "ma",
+"q": "Hespress"
+},
+{
+"cc": "ma",
+"q": "SNRT News"
+},
+{
+"cc": "na",
+"q": "NBC Namibia"
+},
+{
+"cc": "na",
+"q": "The Namibian"
+},
+{
+"cc": "na",
+"q": "One Africa TV Namibia"
+},
+{
+"cc": "cg",
+"q": "Tele Congo"
+},
+{
+"cc": "cg",
+"q": "DRTV Congo Brazzaville"
+},
+{
+"cc": "cg",
+"q": "Vox TV Congo"
+},
+{
+"cc": "rw",
+"q": "Rwanda Broadcasting Agency"
+},
+{
+"cc": "rw",
+"q": "The New Times Rwanda"
+},
+{
+"cc": "rw",
+"q": "KT Press"
+},
+{
+"cc": "sn",
+"q": "RTS Senegal"
+},
+{
+"cc": "sn",
+"q": "2STV"
+},
+{
+"cc": "sn",
+"q": "Seneweb"
+},
+{
+"cc": "sn",
+"q": "iTV Senegal"
+},
+{
+"cc": "sc",
+"q": "SBC Seychelles"
+},
+{
+"cc": "sc",
+"q": "Seychelles Nation"
+},
+{
+"cc": "sl",
+"q": "SLBC Sierra Leone"
+},
+{
+"cc": "sl",
+"q": "AYV News"
+},
+{
+"cc": "sl",
+"q": "Politico SL"
+},
+{
+"cc": "za",
+"q": "SABC News"
+},
+{
+"cc": "za",
+"q": "eNCA"
+},
+{
+"cc": "za",
+"q": "Newzroom Afrika"
+},
+{
+"cc": "za",
+"q": "News24"
+},
+{
+"cc": "st",
+"q": "TVS Sao Tome"
+},
+{
+"cc": "st",
+"q": "Tela Non"
+},
+{
+"cc": "tz",
+"q": "Azam TV"
+},
+{
+"cc": "tz",
+"q": "ITV Tanzania"
+},
+{
+"cc": "tz",
+"q": "TBC Tanzania"
+},
+{
+"cc": "tz",
+"q": "Mwananchi Digital"
+},
+{
+"cc": "tg",
+"q": "TVT Togo"
+},
+{
+"cc": "tg",
+"q": "Togo Breaking News"
+},
+{
+"cc": "tg",
+"q": "Republique Togolaise"
+},
+{
+"cc": "tn",
+"q": "Mosaique FM"
+},
+{
+"cc": "tn",
+"q": "Watania 1"
+},
+{
+"cc": "tn",
+"q": "Nessma TV"
+},
+{
+"cc": "tn",
+"q": "Hannibal TV"
+},
+{
+"cc": "ug",
+"q": "NTV Uganda"
+},
+{
+"cc": "ug",
+"q": "NBS Television"
+},
+{
+"cc": "ug",
+"q": "UBC Uganda"
+},
+{
+"cc": "ug",
+"q": "Daily Monitor Uganda"
+},
+{
+"cc": "eh",
+"q": "RASD TV"
+},
+{
+"cc": "eh",
+"q": "Sahara Press Service"
+},
+{
+"cc": "zm",
+"q": "ZNBC"
+},
+{
+"cc": "zm",
+"q": "Diamond TV Zambia"
+},
+{
+"cc": "zm",
+"q": "KBN TV Zambia"
+},
+{
+"cc": "zw",
+"q": "ZBC News"
+},
+{
+"cc": "zw",
+"q": "ZimLive"
+},
+{
+"cc": "zw",
+"q": "NewsDay Zimbabwe"
+},
+{
+"cc": "zw",
+"q": "Heart and Soul TV"
+},
+{
+"cc": "ag",
+"q": "ABS TV Radio Antigua"
+},
+{
+"cc": "ag",
+"q": "Antigua Observer"
+},
+{
+"cc": "ag",
+"q": "Antigua Newsroom"
+},
+{
+"cc": "bs",
+"q": "ZNS Bahamas"
+},
+{
+"cc": "bs",
+"q": "Our News Bahamas"
+},
+{
+"cc": "bs",
+"q": "Eyewitness News Bahamas"
+},
+{
+"cc": "bb",
+"q": "CBC Barbados"
+},
+{
+"cc": "bb",
+"q": "Nation News Barbados"
+},
+{
+"cc": "bb",
+"q": "Barbados Today"
+},
+{
+"cc": "bz",
+"q": "Channel 5 Belize"
+},
+{
+"cc": "bz",
+"q": "7 News Belize"
+},
+{
+"cc": "bz",
+"q": "PlusTV Belize"
+},
+{
+"cc": "bz",
+"q": "Love FM Belize"
+},
+{
+"cc": "ca",
+"q": "CBC News"
+},
+{
+"cc": "ca",
+"q": "CTV News"
+},
+{
+"cc": "ca",
+"q": "Global News"
+},
+{
+"cc": "cr",
+"q": "Teletica"
+},
+{
+"cc": "cr",
+"q": "Noticias Repretel"
+},
+{
+"cc": "cr",
+"q": "CRHoy"
+},
+{
+"cc": "cu",
+"q": "Canal Caribe"
+},
+{
+"cc": "cu",
+"q": "CiberCuba"
+},
+{
+"cc": "cu",
+"q": "Cubadebate"
+},
+{
+"cc": "cu",
+"q": "14ymedio"
+},
+{
+"cc": "dm",
+"q": "GIS Dominica"
+},
+{
+"cc": "dm",
+"q": "Dominica News Online"
+},
+{
+"cc": "dm",
+"q": "Emo News Dominica"
+},
+{
+"cc": "do",
+"q": "Noticias SIN"
+},
+{
+"cc": "do",
+"q": "CDN 37"
+},
+{
+"cc": "do",
+"q": "Listin Diario"
+},
+{
+"cc": "sv",
+"q": "Canal 12 El Salvador"
+},
+{
+"cc": "sv",
+"q": "TCS Noticias"
+},
+{
+"cc": "sv",
+"q": "El Faro"
+},
+{
+"cc": "sv",
+"q": "La Prensa Grafica"
+},
+{
+"cc": "gd",
+"q": "GIS Grenada"
+},
+{
+"cc": "gd",
+"q": "GBN Grenada"
+},
+{
+"cc": "gd",
+"q": "Now Grenada"
+},
+{
+"cc": "gt",
+"q": "Prensa Libre"
+},
+{
+"cc": "gt",
+"q": "Guatevision"
+},
+{
+"cc": "gt",
+"q": "Canal Antigua"
+},
+{
+"cc": "gt",
+"q": "Emisoras Unidas"
+},
+{
+"cc": "hn",
+"q": "HCH Noticias"
+},
+{
+"cc": "hn",
+"q": "Televicentro Honduras"
+},
+{
+"cc": "hn",
+"q": "La Prensa Honduras"
+},
+{
+"cc": "jm",
+"q": "Jamaica Gleaner"
+},
+{
+"cc": "jm",
+"q": "TVJ News"
+},
+{
+"cc": "jm",
+"q": "CVM TV"
+},
+{
+"cc": "jm",
+"q": "Jamaica Observer"
+},
+{
+"cc": "ni",
+"q": "100% Noticias"
+},
+{
+"cc": "ni",
+"q": "Confidencial Nicaragua"
+},
+{
+"cc": "ni",
+"q": "Canal 10 Nicaragua"
+},
+{
+"cc": "pa",
+"q": "TVN Noticias Panama"
+},
+{
+"cc": "pa",
+"q": "Telemetro"
+},
+{
+"cc": "pa",
+"q": "La Prensa Panama"
+},
+{
+"cc": "kn",
+"q": "ZIZ Broadcasting"
+},
+{
+"cc": "kn",
+"q": "SKN Choice TV"
+},
+{
+"cc": "kn",
+"q": "Freedom FM St Kitts"
+},
+{
+"cc": "lc",
+"q": "HTS St Lucia"
+},
+{
+"cc": "lc",
+"q": "St Lucia Times"
+},
+{
+"cc": "lc",
+"q": "Choice TV St Lucia"
+},
+{
+"cc": "vc",
+"q": "API SVG"
+},
+{
+"cc": "vc",
+"q": "NBC Radio SVG"
+},
+{
+"cc": "vc",
+"q": "iWitness News SVG"
+},
+{
+"cc": "tt",
+"q": "CNC3"
+},
+{
+"cc": "tt",
+"q": "TV6 Trinidad"
+},
+{
+"cc": "tt",
+"q": "Trinidad Express"
+},
+{
+"cc": "us",
+"q": "NBC News"
+},
+{
+"cc": "us",
+"q": "CBS News"
+},
+{
+"cc": "us",
+"q": "PBS NewsHour"
+},
+{
+"cc": "us",
+"q": "C-SPAN"
+},
+{
+"cc": "ar",
+"q": "TN Todo Noticias"
+},
+{
+"cc": "ar",
+"q": "C5N"
+},
+{
+"cc": "ar",
+"q": "Television Publica Argentina"
+},
+{
+"cc": "ar",
+"q": "LN+"
+},
+{
+"cc": "bo",
+"q": "Unitel Bolivia"
+},
+{
+"cc": "bo",
+"q": "Red Uno Bolivia"
+},
+{
+"cc": "bo",
+"q": "Bolivia TV"
+},
+{
+"cc": "br",
+"q": "GloboNews"
+},
+{
+"cc": "br",
+"q": "CNN Brasil"
+},
+{
+"cc": "br",
+"q": "Band Jornalismo"
+},
+{
+"cc": "br",
+"q": "TV Brasil"
+},
+{
+"cc": "cl",
+"q": "T13"
+},
+{
+"cc": "cl",
+"q": "24 Horas TVN"
+},
+{
+"cc": "cl",
+"q": "Meganoticias"
+},
+{
+"cc": "cl",
+"q": "CHV Noticias"
+},
+{
+"cc": "ec",
+"q": "Ecuavisa"
+},
+{
+"cc": "ec",
+"q": "Teleamazonas"
+},
+{
+"cc": "ec",
+"q": "El Universo"
+},
+{
+"cc": "ec",
+"q": "Primicias"
+},
+{
+"cc": "gy",
+"q": "News Room Guyana"
+},
+{
+"cc": "gy",
+"q": "NCN Guyana"
+},
+{
+"cc": "gy",
+"q": "Kaieteur News"
+},
+{
+"cc": "py",
+"q": "ABC TV Paraguay"
+},
+{
+"cc": "py",
+"q": "NPY Paraguay"
+},
+{
+"cc": "py",
+"q": "Telefuturo"
+},
+{
+"cc": "py",
+"q": "Unicanal"
+},
+{
+"cc": "pe",
+"q": "Latina Noticias"
+},
+{
+"cc": "pe",
+"q": "America Noticias"
+},
+{
+"cc": "pe",
+"q": "RPP Noticias"
+},
+{
+"cc": "pe",
+"q": "TV Peru Noticias"
+},
+{
+"cc": "sr",
+"q": "ABC Suriname"
+},
+{
+"cc": "sr",
+"q": "STVS Suriname"
+},
+{
+"cc": "sr",
+"q": "Starnieuws"
+},
+{
+"cc": "uy",
+"q": "Subrayado"
+},
+{
+"cc": "uy",
+"q": "Telenoche"
+},
+{
+"cc": "uy",
+"q": "Teledoce"
+},
+{
+"cc": "uy",
+"q": "Montevideo Portal"
+},
+{
+"cc": "fj",
+"q": "FBC News Fiji"
+},
+{
+"cc": "fj",
+"q": "Fiji Village"
+},
+{
+"cc": "fj",
+"q": "Fiji Times"
+},
+{
+"cc": "fj",
+"q": "Fiji One"
+},
+{
+"cc": "ki",
+"q": "Kiribati Broadcasting"
+},
+{
+"cc": "ki",
+"q": "Kiribati government"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands Journal"
+},
+{
+"cc": "mh",
+"q": "Marshall Islands government"
+},
+{
+"cc": "fm",
+"q": "FSM Information Services"
+},
+{
+"cc": "fm",
+"q": "Micronesia government"
+},
+{
+"cc": "nr",
+"q": "Nauru Government Information Office"
+},
+{
+"cc": "nr",
+"q": "Nauru Bulletin"
+},
+{
+"cc": "pw",
+"q": "Island Times Palau"
+},
+{
+"cc": "pw",
+"q": "Oceania Television Network Palau"
+},
+{
+"cc": "ws",
+"q": "Samoa Observer"
+},
+{
+"cc": "ws",
+"q": "TV1 Samoa"
+},
+{
+"cc": "ws",
+"q": "Talamua Media"
+},
+{
+"cc": "sb",
+"q": "SIBC Solomon Islands"
+},
+{
+"cc": "sb",
+"q": "Solomon Star"
+},
+{
+"cc": "sb",
+"q": "Tavuli News"
+},
+{
+"cc": "to",
+"q": "Kaniva Tonga"
+},
+{
+"cc": "to",
+"q": "Tonga Broadcasting Commission"
+},
+{
+"cc": "to",
+"q": "Matangi Tonga"
+},
+{
+"cc": "tv",
+"q": "Tuvalu government"
+},
+{
+"cc": "tv",
+"q": "Tuvalu news"
+},
+{
+"cc": "vu",
+"q": "VBTC Vanuatu"
+},
+{
+"cc": "vu",
+"q": "Vanuatu Daily Post"
+}
+]
