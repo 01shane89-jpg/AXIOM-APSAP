@@ -497,7 +497,6 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .rvm{display:flex;gap:4px;flex-wrap:wrap}
 .rvs{font-size:11.5px;color:var(--muted)}
 .rvnote{grid-column:1/-1;margin:6px 2px}
-@media (max-width:1279px){.shell.rv-split .rail{display:none}}
 html.phone .rv{height:auto;max-height:none;border-left:none;border-bottom:1px solid var(--line)}
 html.phone .rvseg{display:none}
 html.phone .rvlist{overflow:visible;padding:8px 0 12px}
@@ -527,7 +526,8 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .shell.rv-col .pcol-x,.shell.rail-col .rail .pcol-x{transform:rotate(180deg)}
 .shell.rv-col .pcol-t,.shell.rail-col .rail .pcol-t{writing-mode:vertical-rl;letter-spacing:.04em}
 .shell.rv-list .rv>.pcol{display:none}
-@media (max-width:1279px){.shell.rv-split{grid-template-columns:1fr var(--rvw)}}
+/* narrower desktops keep both panels beside the map, a little narrower; Details starts folded to its strip in Split view */
+@media (max-width:1279px){.shell{--rvw:330px;--railw:330px}}
 @media (max-width:920px){.shell:not(.rv-split):not(.rv-list),.shell.rv-split,.shell.rv-list{grid-template-columns:1fr}.pcol{display:none!important}.shell.rv-col .rv>:not(.pcol),.shell.rail-col .rail>:not(.pcol){display:revert!important}}
 html.phone .pcol{display:none!important}
 .fsctl a{font-size:17px;line-height:30px;text-decoration:none;color:var(--ink);background:var(--surface)}
@@ -5546,6 +5546,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var rvBox = document.getElementById("rv"), rvList = document.getElementById("rv-list"), rvN = document.getElementById("rv-n");
   var shell = document.querySelector(".shell"), rvMq = window.matchMedia("(max-width: 700px)");
   var RV_MODES = ["map", "split", "list"], rvMode = "split";
+  var railByHand = false, railAuto = false;   /* true once Details has been folded or opened by hand, or a choice was kept from before */
   try { var m0 = localStorage.getItem("asap-rv-mode"); if (RV_MODES.indexOf(m0) >= 0) rvMode = m0; } catch (e) {}
   var rvRing = null, rvT = 0, rvShown = [], rvAll = false, rvFor = null;
   if (!map.getPane("rvpane")) { map.createPane("rvpane"); map.getPane("rvpane").style.zIndex = 665; map.getPane("rvpane").style.pointerEvents = "none"; }
@@ -5769,6 +5770,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var m = phone ? "" : rvMode;
     RV_MODES.forEach(function (k) { shell.classList.toggle("rv-" + k, m === k); });
     rvBox.hidden = !phone && m === "map";
+    /* Split on a narrower desktop: fold Details to its strip (not remembered) unless it was opened by hand, so the map keeps its room */
+    if (!railByHand && window.OSAP_COL) {
+      var fold = !phone && m === "split" && window.innerWidth < 1280;
+      if (fold !== railAuto) { railAuto = fold; window.OSAP_COL("rail", fold, true); }
+    }
     Array.prototype.forEach.call(document.querySelectorAll(".rvseg button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-rv-mode") === rvMode)); });
     setTimeout(function () { map.invalidateSize(); rvSoon(); }, 60);
   }
@@ -5924,10 +5930,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-label", (on ? "Show the " : "Hide the ") + (which === "rv" ? "report list" : "side panel"));
       b.title = b.getAttribute("aria-label");
     });
-    if (!keep) try { localStorage.setItem(COLS[which], on ? "1" : "0"); } catch (e) {}
+    if (!keep) { try { localStorage.setItem(COLS[which], on ? "1" : "0"); } catch (e) {} if (which === "rail") railByHand = true; }
     setTimeout(function () { map.invalidateSize(); }, 220);
   }
-  ["rv", "rail"].forEach(function (k) { var v = null; try { v = localStorage.getItem(COLS[k]); } catch (e) {} colSet(k, v === "1", true); });
+  ["rv", "rail"].forEach(function (k) { var v = null; try { v = localStorage.getItem(COLS[k]); } catch (e) {} colSet(k, v === "1", true); if (k === "rail" && v != null) railByHand = true; });
+  window.OSAP_COL = colSet;
+  if (rvMode === "split" && window.innerWidth < 1280 && !railByHand && !rvPhone()) { railAuto = true; colSet("rail", true, true); }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest(".pcol[data-col]"); if (!b) return;
     var k = b.getAttribute("data-col"); colSet(k, !shell.classList.contains(k + "-col"));
