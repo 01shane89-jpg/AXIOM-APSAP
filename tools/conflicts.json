@@ -91,7 +91,7 @@
    "bounds": [[24.0, 60.8], [37.1, 75.5]],
    "terms": ["TTP", "Tehreek-e-Taliban", "Tehrik-i-Taliban", "BLA", "Baloch\\w*", "Khyber Pakhtunkhwa", "KP", "Waziristan", "Bannu", "Lakki Marwat", "Dera Ismail Khan", "Quetta", "Turbat", "Gwadar", "Kalat", "Mastung", "Khwarij", "Fitna al-Khawarij", "Fitna al-Hindustan", "دہشت", "خوارج"],
    "searches": [{ "q": "Khyber Pakhtunkhwa attack militants", "lang": "en" }, { "q": "Balochistan attack", "lang": "en" }],
-   "ucdp": { "countries": "Pakistan|Afghanistan", "match": "Pakistan", "exclude": "Afghanistan - Pakistan|Pakistan - Afghanistan|Government of Afghanistan|India" },
+   "ucdp": { "countries": "Pakistan|Afghanistan", "match": "Pakistan|TTP|Tehrik|BLA|BLF|BRAS|Baloch|XXX770", "exclude": "Afghanistan - Pakistan|Pakistan - Afghanistan|Government of Afghanistan|India" },
    "front": []
   },
   {
