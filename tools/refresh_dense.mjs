@@ -4,7 +4,7 @@
 // non-commercial or otherwise restricted, so they can be stripped in one pass if the app is ever sold.
 // Rules kept: no accounts or keys; no private individuals' names (sanctions lists name only sanctioned people and bodies);
 // sequential requests to any one host; slow-changing sources fetched at most every few hours or once a day.
-import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, writeAll, sleep, oldGlobals } from "./dense_lib.mjs";
+import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep } from "./dense_lib.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
 const IDS = COUNTRIES.map((c) => c.id);
@@ -25,7 +25,7 @@ const G = "Global";
 
 // ---------------------------------------------------------------- hazards
 feed("emsc", { name: "EMSC earthquakes (M2.5+, 2 days)", org: "European-Mediterranean Seismological Centre", cat: "Hazards", lic: "CC BY 4.0", url: "https://www.seismicportal.eu/" });
-await run("emsc", async (g) => {
+run("emsc", async (g) => {
   const since = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
   const j = await g("https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=2000&minmag=2.5&start=" + since);
   return { items: j.features.map((f) => { const p = f.properties; return { title: "M" + p.mag + " " + (p.magtype || "") + " · " + (p.flynn_region || "").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -34,7 +34,7 @@ await run("emsc", async (g) => {
 });
 
 feed("nws", { name: "US National Weather Service alerts", org: "NOAA NWS", cat: "Hazards", lic: "US Government public domain", url: "https://www.weather.gov/alerts" });
-await run("nws", async (g) => {
+run("nws", async (g) => {
   const j = await g("https://api.weather.gov/alerts/active?status=actual&message_type=alert,update", "json", { headers: { accept: "application/geo+json" } });
   const sev = { Extreme: 3, Severe: 3, Moderate: 2, Minor: 1 };
   return { items: j.features.map((f) => { const p = f.properties, [la, lo] = pt(f.geometry);
@@ -43,7 +43,7 @@ await run("nws", async (g) => {
 });
 
 feed("nhc", { name: "NOAA National Hurricane Center active storms", org: "NOAA NHC", cat: "Hazards", lic: "US Government public domain", url: "https://www.nhc.noaa.gov/" });
-await run("nhc", async (g) => {
+run("nhc", async (g) => {
   const j = await g("https://www.nhc.noaa.gov/CurrentStorms.json");
   const items = (j.activeStorms || []).map((s) => ({ title: s.classification + " " + s.name + " · " + s.intensity + " kt, " + s.pressure + " hPa",
     detail: "Moving " + (s.movementDir != null ? s.movementDir + "° " : "") + (s.movementSpeed != null ? "at " + s.movementSpeed + " kt" : ""), date: s.lastUpdate,
@@ -53,7 +53,7 @@ await run("nhc", async (g) => {
 });
 
 feed("pdc", { name: "Pacific Disaster Center active hazards", org: "Pacific Disaster Center (University of Hawaii)", cat: "Hazards", lic: "Public feed; PDC terms, attribution", nc: true, url: "https://www.pdc.org/" });
-await run("pdc", async (g) => {
+run("pdc", async (g) => {
   const xml = await g("https://hpxml.pdc.org/public.xml", "text");
   const items = xml.split("<hazardBean>").slice(1).map((b) => {
     const t = (k) => { const m = b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")); return m ? unhtml(m[1]) : ""; };
@@ -66,7 +66,7 @@ await run("pdc", async (g) => {
 });
 
 feed("firms", { name: "NASA FIRMS fire detections (VIIRS NOAA-20, 24 h)", org: "NASA LANCE FIRMS", cat: "Hazards", lic: "NASA open data, no restrictions (attribution requested)", url: "https://firms.modaps.eosdis.nasa.gov/" });
-await run("firms", async (g) => {
+run("firms", async (g) => {
   const txt = await get("https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv", "text", { timeout: 120000 });
   const lines = txt.split("\n"), h = lines[0].split(","), ix = (k) => h.indexOf(k);
   const iLa = ix("latitude"), iLo = ix("longitude"), iF = ix("frp"), iD = ix("acq_date"), iT = ix("acq_time"), iC = ix("confidence");
@@ -91,7 +91,7 @@ await run("firms", async (g) => {
 });
 
 feed("gdacs-x", { name: "Copernicus EMS rapid mapping activations", org: "European Commission, Copernicus Emergency Management Service", cat: "Hazards", lic: "Copernicus free and open (attribution)", url: "https://rapidmapping.emergency.copernicus.eu/" });
-await run("gdacs-x", async (g) => {
+run("gdacs-x", async (g) => {
   const j = await g("https://rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/?limit=100");
   return { items: (j.results || []).map((a) => {
     const names = [].concat(a.countries || a.country || []).map((c) => (typeof c === "string" ? c : c.name || c.short_name || "")).join(", ");
@@ -103,7 +103,7 @@ await run("gdacs-x", async (g) => {
 });
 
 feed("meteoalarm", { name: "Meteoalarm European weather warnings", org: "EUMETNET (national weather services)", cat: "Hazards", lic: "Public feed; redistribution normally needs an EUMETNET agreement", nc: true, url: "https://meteoalarm.org/" });
-await run("meteoalarm", async (g) => {
+run("meteoalarm", async (g) => {
   const C = ["austria", "belgium", "bosnia-herzegovina", "bulgaria", "croatia", "cyprus", "czechia", "denmark", "estonia", "finland", "france", "germany", "greece", "hungary", "iceland", "ireland",
     "israel", "italy", "latvia", "lithuania", "luxembourg", "malta", "moldova", "montenegro", "netherlands", "north-macedonia", "norway", "poland", "portugal", "romania", "serbia", "slovakia",
     "slovenia", "spain", "sweden", "switzerland", "ukraine", "united-kingdom"];
@@ -112,7 +112,8 @@ await run("meteoalarm", async (g) => {
   for (const c of C) {
     const cc = alias[c] || ccFromName(c.replace(/-/g, " ")); if (!cc) continue;
     try {
-      const xml = await g("https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-" + c, "text");
+      if (fails.length >= 4 && !items.length) break;
+      const xml = await g("https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-" + c, "text", { timeout: 15000 });
       for (const e of xml.split("<entry>").slice(1)) {
         const t = (k) => { const m = e.match(new RegExp("<" + k + "[^>]*>([\\s\\S]*?)</" + k + ">")); return m ? unhtml(m[1]) : ""; };
         const sevT = t("cap:severity"); if (/minor/i.test(sevT) && !/red|orange/i.test(t("title"))) continue;
@@ -127,7 +128,7 @@ await run("meteoalarm", async (g) => {
 });
 
 feed("dwd", { name: "Deutscher Wetterdienst warnings", org: "Deutscher Wetterdienst", cat: "Hazards", lic: "DWD open data (GeoNutzV), attribution", url: "https://www.dwd.de/DE/wetter/warnungen/warnWetter_node.html" });
-await run("dwd", async (g) => {
+run("dwd", async (g) => {
   const t = await g("https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json", "text");
   const j = JSON.parse(t.replace(/^[^(]*\(/, "").replace(/\);?\s*$/, ""));
   const items = []; for (const arr of Object.values(j.warnings || {})) for (const w of arr) if (w.level >= 2)
@@ -137,14 +138,14 @@ await run("dwd", async (g) => {
 });
 
 feed("ea-flood", { name: "UK Environment Agency flood warnings (England)", org: "Environment Agency", cat: "Hazards", lic: "Open Government Licence v3", url: "https://check-for-flooding.service.gov.uk/" });
-await run("ea-flood", async (g) => {
+run("ea-flood", async (g) => {
   const j = await g("https://environment.data.gov.uk/flood-monitoring/id/floods");
   return { items: (j.items || []).filter((f) => f.severityLevel < 4).map((f) => ({ title: f.severity + " · " + f.description, detail: (f.message || "").slice(0, 400) + (f.floodArea ? " (" + [f.floodArea.county, f.floodArea.riverOrSea].filter(Boolean).join(", ") + ")" : ""),
     date: f.timeMessageChanged || f.timeRaised, url: "https://check-for-flooding.service.gov.uk/target-area/" + (f.floodAreaID || ""), sev: f.severityLevel === 1 ? 3 : f.severityLevel === 2 ? 2 : 1, kind: "Flood warning", ccs: ["gb"] })) };
 });
 
 feed("geonet", { name: "GeoNet earthquakes and volcano alert levels", org: "GNS Science / GeoNet", cat: "Hazards", lic: "CC BY 4.0", url: "https://www.geonet.org.nz/" });
-await run("geonet", async (g) => {
+run("geonet", async (g) => {
   const q = await g("https://api.geonet.org.nz/quake?MMI=3", "json", { headers: { accept: "application/vnd.geo+json;version=2" } });
   const v = await g("https://api.geonet.org.nz/volcano/val", "json", { headers: { accept: "application/vnd.geo+json;version=2" } });
   const items = (q.features || []).map((f) => { const p = f.properties, [la, lo] = pt(f.geometry);
@@ -157,7 +158,7 @@ await run("geonet", async (g) => {
 });
 
 feed("ga-quake", { name: "Geoscience Australia earthquakes (7 days)", org: "Geoscience Australia", cat: "Hazards", lic: "CC BY 4.0", url: "https://earthquakes.ga.gov.au/" });
-await run("ga-quake", async (g) => {
+run("ga-quake", async (g) => {
   const j = await g("https://earthquakes.ga.gov.au/geoserver/earthquakes/wfs?service=WFS&request=getfeature&typeNames=earthquakes:earthquakes_seven_days&outputFormat=application/json");
   return { items: (j.features || []).map((f) => { const p = f.properties, [la, lo] = pt(f.geometry), m = num(pick(p, ["preferred_magnitude", "magnitude", "mag"]));
     return { title: "M" + (m != null ? m.toFixed(1) : "?") + " · " + (pick(p, ["description", "located_in", "region"]) || ""), detail: "Depth " + pick(p, ["depth", "preferred_depth"]) + " km",
@@ -166,7 +167,7 @@ await run("ga-quake", async (g) => {
 });
 
 feed("au-fire", { name: "Australian state fire and emergency incidents (NSW, Victoria, Queensland, WA)", org: "NSW RFS, Emergency Management Victoria, QFD, WA DFES", cat: "Hazards", lic: "State government open data (CC BY 4.0 where stated)", url: "https://www.rfs.nsw.gov.au/fire-information/fires-near-me" });
-await run("au-fire", async (g) => {
+run("au-fire", async (g) => {
   const items = [], fails = [];
   const push = (title, detail, date, [la, lo], url, sev, kind) => items.push({ title, detail, date, lat: la, lon: lo, url, sev, kind, ccs: ["au"] });
   try { const j = await g("https://www.rfs.nsw.gov.au/feeds/majorIncidents.json");
@@ -189,7 +190,7 @@ await run("au-fire", async (g) => {
 });
 
 feed("us-fire", { name: "US wildfires (CAL FIRE and NIFC)", org: "CAL FIRE; National Interagency Fire Center", cat: "Hazards", lic: "US/State government public data", url: "https://www.nifc.gov/" });
-await run("us-fire", async (g) => {
+run("us-fire", async (g) => {
   const items = [], fails = [];
   try { const j = await g("https://www.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false");
     for (const f of j) items.push({ title: f.Name.trim() + " · " + (f.AcresBurned != null ? Math.round(f.AcresBurned).toLocaleString("en") + " acres" : "") + (f.PercentContained != null ? ", " + f.PercentContained + "% contained" : ""),
@@ -203,7 +204,7 @@ await run("us-fire", async (g) => {
 });
 
 feed("jma-quake", { name: "Japan Meteorological Agency earthquake reports", org: "Japan Meteorological Agency", cat: "Hazards", lic: "JMA website terms (compatible with CC BY 4.0)", url: "https://www.jma.go.jp/bosai/map.html#contents=earthquake_map" });
-await run("jma-quake", async (g) => {
+run("jma-quake", async (g) => {
   const j = await g("https://www.jma.go.jp/bosai/quake/data/list.json"), seen = new Set(), items = [];
   for (const q of j) {
     if (seen.has(q.eid) || !q.mag || q.mag === "Ｍ不明") continue; seen.add(q.eid);
@@ -216,20 +217,20 @@ await run("jma-quake", async (g) => {
 });
 
 feed("hko", { name: "Hong Kong Observatory warnings in force", org: "Hong Kong Observatory", cat: "Hazards", lic: "HK Government open data terms (attribution)", url: "https://www.hko.gov.hk/en/wxinfo/dailywx/wxwarntoday.htm" });
-await run("hko", async (g) => {
+run("hko", async (g) => {
   const j = await g("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en");
   return { items: Object.values(j || {}).map((w) => ({ title: "Hong Kong: " + w.name + (w.type ? " (" + w.type + ")" : ""), detail: "Action " + w.actionCode, date: w.updateTime || w.issueTime, lat: 22.3, lon: 114.17,
     url: "https://www.hko.gov.hk/en/wxinfo/dailywx/wxwarntoday.htm", sev: /black|red|typhoon signal no\. ?[89]|10/i.test(w.name + (w.type || "")) ? 3 : 2, kind: "Weather warning", ccs: ["cn"] })) };
 });
 
 feed("bmkg-nowcast", { name: "BMKG weather nowcasts (Indonesia)", org: "BMKG", cat: "Hazards", lic: "Indonesian government open data (attribution)", url: "https://www.bmkg.go.id/" });
-await run("bmkg-nowcast", async (g) => {
+run("bmkg-nowcast", async (g) => {
   const xml = await g("https://www.bmkg.go.id/alerts/nowcast/en/rss.xml", "text");
   return { items: rssItems(xml).map((x) => ({ title: x.title, detail: x.summary.slice(0, 400), date: x.date, url: x.link, sev: 2, kind: "Weather nowcast", ccs: ["id"] })) };
 });
 
 feed("bipad", { name: "Nepal BIPAD disaster incidents and river levels", org: "Government of Nepal, NDRRMA (BIPAD portal)", cat: "Hazards", lic: "Government of Nepal open data", url: "https://bipadportal.gov.np/" });
-await run("bipad", async (g) => {
+run("bipad", async (g) => {
   const j = await g("https://bipadportal.gov.np/api/v1/incident/?ordering=-incident_on&limit=150&expand=loss"), items = [];
   for (const x of j.results || []) { const [la, lo] = pt(x.point), l = x.loss || {};
     const hurt = [l.peopleDeathCount ? l.peopleDeathCount + " dead" : "", l.peopleMissingCount ? l.peopleMissingCount + " missing" : "", l.peopleInjuredCount ? l.peopleInjuredCount + " injured" : ""].filter(Boolean).join(", ");
@@ -243,7 +244,7 @@ await run("bipad", async (g) => {
 });
 
 feed("my-flood", { name: "Malaysia river levels and weather warnings (data.gov.my)", org: "JPS / MetMalaysia via data.gov.my", cat: "Hazards", lic: "CC BY 4.0 (data.gov.my)", url: "https://data.gov.my/" });
-await run("my-flood", async (g) => {
+run("my-flood", async (g) => {
   const items = [], figures = {};
   const st = await g("https://api.data.gov.my/flood-warning?limit=3000"), cnt = {};
   for (const s of st) { const lv = String(s.water_level_indicator || "").toUpperCase(); cnt[lv] = (cnt[lv] || 0) + 1;
@@ -258,7 +259,7 @@ await run("my-flood", async (g) => {
 });
 
 feed("sg-now", { name: "Singapore air quality (PSI) and rainfall now", org: "NEA via data.gov.sg", cat: "Environment", lic: "Singapore Open Data Licence", url: "https://data.gov.sg/" });
-await run("sg-now", async (g) => {
+run("sg-now", async (g) => {
   const p = await g("https://api-open.data.gov.sg/v2/real-time/api/psi"), r = await g("https://api-open.data.gov.sg/v2/real-time/api/rainfall");
   const it = (p.data.items || [])[0] || {}, rd = it.readings || {};
   const rr = ((r.data.readings || [])[0] || {}).data || [], wet = rr.filter((x) => x.value > 0).length, max = Math.max(0, ...rr.map((x) => x.value));
@@ -266,14 +267,14 @@ await run("sg-now", async (g) => {
 });
 
 feed("usgs-volc", { name: "USGS elevated volcano alert levels", org: "US Geological Survey Volcano Hazards Program", cat: "Hazards", lic: "US Government public domain", url: "https://www.usgs.gov/programs/VHP" });
-await run("usgs-volc", async (g) => {
+run("usgs-volc", async (g) => {
   const j = await g("https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes");
   return { items: j.map((v) => ({ title: v.volcano_name + ": " + v.alert_level + " / aviation " + v.color_code, detail: v.obs_fullname, date: pick(v, ["sent_utc", "sent_unixtime"]) || new Date().toISOString(),
     lat: num(pick(v, ["latitude", "lat"])), lon: num(pick(v, ["longitude", "long", "lon"])), url: v.notice_url || "https://volcanoes.usgs.gov/", sev: /WARNING|RED/.test(v.alert_level + v.color_code) ? 3 : 2, kind: "Volcano alert level", ccs: ["us"] })) };
 });
 
 feed("safecast", { name: "Safecast radiation measurements (latest)", org: "Safecast (volunteer network)", cat: "Environment", lic: "CC0", url: "https://map.safecast.org/" });
-await run("safecast", async (g) => {
+run("safecast", async (g) => {
   const since = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
   const j = await g("https://api.safecast.org/measurements.json?order=created_at%20desc&per_page=1000&unit=cpm&since=" + since);
   const cells = new Map();
@@ -285,7 +286,7 @@ await run("safecast", async (g) => {
 });
 
 feed("sensor-community", { name: "Sensor.Community air sensors (PM2.5, last hour)", org: "Sensor.Community (volunteer network)", cat: "Environment", lic: "ODbL 1.0", url: "https://maps.sensor.community/" });
-await run("sensor-community", async (g) => {
+run("sensor-community", async (g) => {
   const j = await get("https://data.sensor.community/static/v2/data.1h.json", "json", { timeout: 120000 });
   const by = {}, hot = new Map();
   for (const s of j) { const v = (s.sensordatavalues || []).find((x) => x.value_type === "P2"); if (!v) continue; const pm = +v.value; if (!(pm >= 0 && pm < 1000)) continue;
@@ -299,7 +300,7 @@ await run("sensor-community", async (g) => {
 });
 
 feed("ndbc", { name: "NOAA NDBC buoys: high seas and strong wind", org: "NOAA National Data Buoy Center", cat: "Maritime", lic: "US Government public domain", url: "https://www.ndbc.noaa.gov/" });
-await run("ndbc", async (g) => {
+run("ndbc", async (g) => {
   const t = await g("https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt", "text"), items = [];
   for (const l of t.split("\n")) { if (l.startsWith("#") || !l.trim()) continue; const c = l.trim().split(/\s+/);
     const [stn, la, lo, Y, M, D, hh, mm, , wspd, gst, wvht] = c, w = num(wvht), s = num(wspd);
@@ -310,7 +311,7 @@ await run("ndbc", async (g) => {
 });
 
 feed("coral", { name: "NOAA Coral Reef Watch heat-stress alerts", org: "NOAA Coral Reef Watch", cat: "Environment", lic: "US Government public domain", url: "https://coralreefwatch.noaa.gov/", everyHours: 12 });
-await run("coral", async (g) => {
+run("coral", async (g) => {
   const j = await get("https://coralreefwatch.noaa.gov/product/vs/vs_polygons.json", "json", { timeout: 90000 });
   const lv = ["No stress", "Watch", "Warning", "Alert level 1", "Alert level 2", "Alert level 3", "Alert level 4", "Alert level 5"];
   return { items: (j.features || []).map((f) => { const p = f.properties || {}, a = num(pick(p, ["alert", "alert_level", "AlertLevel", "level"])), [la, lo] = pt(f.geometry);
@@ -320,7 +321,7 @@ await run("coral", async (g) => {
 
 // ---------------------------------------------------------------- space weather, aviation, space
 feed("swpc", { name: "NOAA space weather scales and alerts", org: "NOAA Space Weather Prediction Center", cat: "Space", lic: "US Government public domain", url: "https://www.swpc.noaa.gov/" });
-await run("swpc", async (g) => {
+run("swpc", async (g) => {
   const s = await g("https://services.swpc.noaa.gov/products/noaa-scales.json"), a = await g("https://services.swpc.noaa.gov/products/alerts.json");
   const now = s["0"] || {}, globals = [{ title: "Space weather now: radio blackout R" + now.R.Scale + ", solar radiation S" + now.S.Scale + ", geomagnetic storm G" + now.G.Scale,
     detail: "Scales 0 (none) to 5 (extreme). G3+ can disturb HF radio, GNSS accuracy and power grids.", date: now.DateStamp + "T" + now.TimeStamp + "Z", url: "https://www.swpc.noaa.gov/noaa-scales-explanation",
@@ -332,7 +333,7 @@ await run("swpc", async (g) => {
 });
 
 feed("mil-air", { name: "Military aircraft broadcasting ADS-B (adsb.lol, adsb.fi)", org: "adsb.lol; adsb.fi (volunteer receivers)", cat: "Aviation", lic: "adsb.lol ODbL 1.0; adsb.fi open data, non-commercial", nc: true, url: "https://adsb.lol/" });
-await run("mil-air", async (g) => {
+run("mil-air", async (g) => {
   const seen = new Map(), fails = [];
   for (const u of ["https://api.adsb.lol/v2/mil", "https://opendata.adsb.fi/api/v2/mil"]) {
     try { const j = await g(u); for (const a of j.ac || []) if (a.lat != null && !seen.has(a.hex)) seen.set(a.hex, a); } catch (e) { fails.push(u.split("/")[2]); }
@@ -347,7 +348,7 @@ await run("mil-air", async (g) => {
 });
 
 feed("opensky", { name: "Air traffic over each country (OpenSky Network)", org: "OpenSky Network", cat: "Aviation", lic: "OpenSky terms: non-commercial research use, anonymous access", nc: true, url: "https://opensky-network.org/" });
-await run("opensky", async (g) => {
+run("opensky", async (g) => {
   const j = await get("https://opensky-network.org/api/states/all", "json", { timeout: 90000 }), figures = {};
   for (const s of j.states || []) { const lo = s[5], la = s[6]; if (la == null || s[8]) continue;
     const [cc] = ccsAt(la, lo, 0); if (!cc) continue; const f = (figures[cc] = figures[cc] || { airborne: 0, by_registration: {} }); f.airborne++;
@@ -358,7 +359,7 @@ await run("opensky", async (g) => {
 });
 
 feed("faa", { name: "US airport delays and closures (FAA)", org: "Federal Aviation Administration", cat: "Aviation", lic: "US Government public domain", url: "https://nasstatus.faa.gov/" });
-await run("faa", async (g) => {
+run("faa", async (g) => {
   const x = await g("https://nasstatus.faa.gov/api/airport-status-information", "text"), items = [];
   for (const b of x.split(/<(?:Ground_Delay|Ground_Stop|Delay|Airport|Program)>/).slice(1)) {
     const t = (k) => (b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")) || [])[1] || "";
@@ -370,7 +371,7 @@ await run("faa", async (g) => {
 });
 
 feed("launches", { name: "Upcoming rocket launches", org: "The Space Devs (Launch Library 2)", cat: "Space", lic: "Launch Library 2 free tier (attribution)", url: "https://thespacedevs.com/", everyHours: 3 });
-await run("launches", async (g) => {
+run("launches", async (g) => {
   const j = await g("https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=40&mode=normal");
   const items = (j.results || []).map((l) => { const p = l.pad || {}, loc = p.location || {}, la = num(p.latitude), lo = num(p.longitude);
     const cc = ccFromA3(loc.country_code || (loc.country && loc.country.alpha_3_code)) || ccFromA2(loc.country && loc.country.alpha_2_code);
@@ -380,7 +381,7 @@ await run("launches", async (g) => {
 });
 
 feed("gpsjam", { name: "GNSS interference seen by aircraft (gpsjam.org, yesterday)", org: "gpsjam.org, from ADS-B Exchange data", cat: "Aviation", lic: "gpsjam.org public daily files; terms not stated", nc: true, url: "https://gpsjam.org/", everyHours: 6 });
-await run("gpsjam", async (g) => {
+run("gpsjam", async (g) => {
   const h3 = await import("h3-js");
   const day = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
   const t = await g("https://gpsjam.org/data/" + day + "-h3_4.csv", "text"), items = [], figures = {};
@@ -394,7 +395,7 @@ await run("gpsjam", async (g) => {
 
 // ---------------------------------------------------------------- maritime and infrastructure (slow-changing reference layers)
 feed("ports", { name: "World Port Index", org: "US National Geospatial-Intelligence Agency", cat: "Infrastructure", lic: "US Government public domain", url: "https://msi.nga.mil/Publications/WPI", everyHours: 168, cap: 120 });
-await run("ports", async (g) => {
+run("ports", async (g) => {
   const j = await get("https://msi.nga.mil/api/publications/world-port-index?output=json", "json", { timeout: 120000 }), size = { L: 4, M: 3, S: 2, V: 1 };
   return { items: (j.ports || []).map((p) => { const la = num(pick(p, ["ycoord", "latitude"])), lo = num(pick(p, ["xcoord", "longitude"]));
     return { title: "Port: " + p.portName + (p.harborSize ? " (" + ({ L: "large", M: "medium", S: "small", V: "very small" }[p.harborSize] || p.harborSize) + ")" : ""),
@@ -403,7 +404,7 @@ await run("ports", async (g) => {
 });
 
 feed("cables", { name: "Submarine cable landing points", org: "TeleGeography Submarine Cable Map", cat: "Infrastructure", lic: "CC BY-NC-SA 3.0", nc: true, url: "https://www.submarinecablemap.com/", everyHours: 168 });
-await run("cables", async (g) => {
+run("cables", async (g) => {
   const j = await g("https://www.submarinecablemap.com/api/v3/landing-point/landing-point-geo.json");
   return { items: j.features.map((f) => { const p = f.properties, [la, lo] = pt(f.geometry), cname = String(p.name).split(",").pop().trim();
     return { title: "Cable landing: " + p.name, detail: "Submarine telecom cable landing station", lat: la, lon: lo, url: "https://www.submarinecablemap.com/landing-point/" + p.id, sev: 1, kind: "Cable landing",
@@ -411,7 +412,7 @@ await run("cables", async (g) => {
 });
 
 feed("power", { name: "Power plants (WRI Global Power Plant Database)", org: "World Resources Institute", cat: "Infrastructure", lic: "CC BY 4.0", url: "https://datasets.wri.org/dataset/globalpowerplantdatabase", everyHours: 168, cap: 120 });
-await run("power", async (g) => {
+run("power", async (g) => {
   const t = await get("https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv", "text", { timeout: 120000 });
   const rows = csvObjects(t), figures = {}, items = [];
   for (const r of rows) { const cc = ccFromA3(r.country); if (!cc) continue; const mw = +r.capacity_mw || 0;
@@ -424,7 +425,7 @@ await run("power", async (g) => {
 
 // ---------------------------------------------------------------- cyber and internet
 feed("kev", { name: "CISA Known Exploited Vulnerabilities (latest)", org: "US Cybersecurity and Infrastructure Security Agency", cat: "Cyber", lic: "CC0 1.0", url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" });
-await run("kev", async (g) => {
+run("kev", async (g) => {
   const j = await get("https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json");
   const v = j.vulnerabilities.sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 60);
   return { items: [], globals: v.map((x) => ({ title: x.cveID + " · " + x.vendorProject + " " + x.product + ": " + x.vulnerabilityName, detail: x.shortDescription + (x.knownRansomwareCampaignUse === "Known" ? " Used in ransomware campaigns." : ""),
@@ -435,14 +436,14 @@ for (const [id, name, org, url, lic, home] of [
   ["cisa-adv", "CISA cybersecurity advisories", "US Cybersecurity and Infrastructure Security Agency", "https://www.cisa.gov/cybersecurity-advisories/all.xml", "US Government public domain", "https://www.cisa.gov/news-events/cybersecurity-advisories"],
   ["ncsc", "UK NCSC news and advisories", "UK National Cyber Security Centre", "https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml", "Open Government Licence v3", "https://www.ncsc.gov.uk/"]]) {
   feed(id, { name, org, cat: "Cyber", lic, url: home });
-  await run(id, async (g) => {
+  run(id, async (g) => {
     const items = rssItems(await g(url, "text")).filter((x) => within(x.date, 60)).slice(0, 60).map((x) => ({ title: x.title, detail: x.summary.slice(0, 400), date: x.date, url: x.link, sev: /critical|actively exploited|state-sponsored/i.test(x.title + x.summary) ? 3 : 2, kind: "Cyber advisory", ccs: withOki(ccsInText(x.title + " " + x.summary)) }));
     return { items, globals: items.slice(0, 30).map((x) => ({ ...x, ccs: undefined })) };
   });
 }
 
 feed("ransomware", { name: "Ransomware leak-site claims (ransomware.live)", org: "ransomware.live (Julien Mousqueton)", cat: "Cyber", lic: "Free public API; terms: attribution, non-commercial", nc: true, url: "https://www.ransomware.live/" });
-await run("ransomware", async (g) => {
+run("ransomware", async (g) => {
   const j = await g("https://api.ransomware.live/v2/recentvictims");
   // Victims are organisations; a name that could be a person's (no company marker, no domain) is withheld.
   const ORG = /\b(inc|ltd|llc|plc|corp|co\.|company|group|gmbh|ag|s\.?a\.?|s\.?r\.?l|b\.?v|pty|bhd|tbk|limited|holdings?|bank|university|college|school|hospital|clinic|council|county|city|municipal|ministry|government|department|authority|agency|association|foundation|services|systems|solutions|technolog|industr|logistics|energy|pharma|health|hotel|airport|port)\b/i;
@@ -452,7 +453,7 @@ await run("ransomware", async (g) => {
 });
 
 feed("c2", { name: "Botnet command servers (abuse.ch Feodo Tracker)", org: "abuse.ch", cat: "Cyber", lic: "CC0", url: "https://feodotracker.abuse.ch/" });
-await run("c2", async (g) => {
+run("c2", async (g) => {
   const j = await g("https://feodotracker.abuse.ch/downloads/ipblocklist.json"), figures = {};
   const items = j.map((x) => { const cc = ccFromA2(x.country); if (cc) { const f = (figures[cc] = figures[cc] || { servers: 0, online: 0 }); f.servers++; if (x.status === "online") f.online++; }
     return { title: x.malware + " command server " + x.ip_address + ":" + x.port + " (" + x.status + ")", detail: [x.as_name, "AS" + x.as_number, "first seen " + x.first_seen, "last online " + x.last_online].filter(Boolean).join(", "),
@@ -461,7 +462,7 @@ await run("c2", async (g) => {
 });
 
 feed("ioda-all", { name: "Internet outage alerts, all countries (IODA)", org: "Georgia Tech IODA", cat: "Cyber", lic: "IODA terms: free, attribution", url: "https://ioda.inetintel.cc.gatech.edu/" });
-await run("ioda-all", async (g) => {
+run("ioda-all", async (g) => {
   const now = Math.floor(Date.now() / 1000), j = await g("https://api.ioda.inetintel.cc.gatech.edu/v2/outages/alerts?from=" + (now - 3 * 86400) + "&until=" + now + "&limit=2000");
   const items = []; for (const a of j.data || []) { if (a.level === "normal") continue; const e = a.entity || {};
     const cc = e.type === "country" ? ccFromA2(e.code) : ccFromA2((e.attrs || {}).country_code || (e.attrs && e.attrs.fqid && e.attrs.fqid.split(".")[1]));
@@ -473,7 +474,7 @@ await run("ioda-all", async (g) => {
 });
 
 feed("ooni", { name: "Internet censorship findings (OONI)", org: "Open Observatory of Network Interference", cat: "Cyber", lic: "CC BY 4.0", url: "https://explorer.ooni.org/findings" });
-await run("ooni", async (g) => {
+run("ooni", async (g) => {
   const j = await g("https://api.ooni.io/api/v1/incidents/search?only_mine=false");
   const items = []; for (const x of j.incidents || []) for (const c of x.CCs || []) { const cc = ccFromA2(c); if (!cc) continue;
     items.push({ title: x.title, detail: (x.short_description || "") + (x.end_time ? "" : " (ongoing)"), date: x.start_time || x.create_time, url: "https://explorer.ooni.org/findings/" + x.id, sev: x.end_time ? 1 : 2, kind: "Censorship finding", ccs: withOki([cc]) }); }
@@ -482,7 +483,7 @@ await run("ooni", async (g) => {
 
 // ---------------------------------------------------------------- sanctions (names allowed: sanctioned people and bodies only)
 feed("un-sanctions", { name: "UN Security Council consolidated sanctions list", org: "United Nations Security Council", cat: "Sanctions", lic: "UN public information", url: "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list", everyHours: 12 });
-await run("un-sanctions", async (g) => {
+run("un-sanctions", async (g) => {
   const x = await g("https://scsanctions.un.org/resources/xml/en/consolidated.xml", "text"), items = [];
   for (const [tag, kind] of [["INDIVIDUAL", "person"], ["ENTITY", "entity"]]) for (const b of x.split("<" + tag + ">").slice(1)) {
     const t = (k) => (b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")) || [])[1] || "";
@@ -495,7 +496,7 @@ await run("un-sanctions", async (g) => {
 });
 
 feed("uk-sanctions", { name: "UK consolidated sanctions list (OFSI)", org: "HM Treasury, Office of Financial Sanctions Implementation", cat: "Sanctions", lic: "Open Government Licence v3", url: "https://www.gov.uk/government/publications/financial-sanctions-consolidated-list-of-targets", everyHours: 12 });
-await run("uk-sanctions", async (g) => {
+run("uk-sanctions", async (g) => {
   const t = await get("https://ofsistorage.blob.core.windows.net/publishlive/2022format/ConList.csv", "text", { timeout: 120000 });
   const rows = csvRows(t), h = rows[1], ix = (k) => h.indexOf(k), by = new Map();
   for (const r of rows.slice(2)) { const id = r[ix("Group ID")]; if (!id) continue; const e = by.get(id) || { names: [], places: new Set() };
@@ -510,7 +511,7 @@ await run("uk-sanctions", async (g) => {
 });
 
 feed("ca-sanctions", { name: "Canada consolidated autonomous sanctions list", org: "Global Affairs Canada", cat: "Sanctions", lic: "Open Government Licence - Canada", url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", everyHours: 12 });
-await run("ca-sanctions", async (g) => {
+run("ca-sanctions", async (g) => {
   const x = await g("https://www.international.gc.ca/world-monde/assets/office_docs/international_relations-relations_internationales/sanctions/sema-lmes.xml", "text");
   return { items: x.split("<record>").slice(1).map((b) => { const t = (k) => unhtml((b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")) || [])[1] || "");
     const name = t("EntityOrShip") || [t("GivenName"), t("LastName")].filter(Boolean).join(" "), country = t("Country");
@@ -519,7 +520,7 @@ await run("ca-sanctions", async (g) => {
 });
 
 feed("opensanctions", { name: "Sanctioned and watch-listed entities per country (OpenSanctions totals)", org: "OpenSanctions", cat: "Sanctions", lic: "CC BY-NC 4.0 (non-commercial)", nc: true, url: "https://www.opensanctions.org/", everyHours: 24 });
-await run("opensanctions", async (g) => {
+run("opensanctions", async (g) => {
   const j = await g("https://data.opensanctions.org/datasets/latest/default/statistics.json"), figures = {};
   for (const c of (j.things && j.things.countries) || []) { const cc = ccFromA2(c.code); if (cc) figures[cc] = { entities: c.count }; }
   if (figures.jp) figures.oki = figures.jp;
@@ -528,7 +529,7 @@ await run("opensanctions", async (g) => {
 
 // ---------------------------------------------------------------- travel advisories (claims by foreign governments)
 feed("ca-travel", { name: "Canada travel advisories", org: "Government of Canada", cat: "Advisories", lic: "Open Government Licence - Canada", url: "https://travel.gc.ca/travelling/advisories", everyHours: 3 });
-await run("ca-travel", async (g) => {
+run("ca-travel", async (g) => {
   const j = await g("https://data.international.gc.ca/travel-voyage/index-updated.json"), L = ["Take normal security precautions", "Exercise a high degree of caution", "Avoid non-essential travel", "Avoid all travel"];
   return { items: Object.entries(j.data || {}).map(([a2, c]) => { const lv = +c["advisory-state"], e = c.eng || {};
     return { title: "Canada: " + (L[lv] || "level " + lv) + (c["has-regional-advisory"] ? " (regional advisories too)" : ""), detail: unhtml(e["advisory-text"] || e["recent-updates"] || "").slice(0, 400),
@@ -536,7 +537,7 @@ await run("ca-travel", async (g) => {
 });
 
 feed("de-travel", { name: "German Foreign Office travel warnings", org: "Auswärtiges Amt", cat: "Advisories", lic: "German government open data (dl-de/by-2-0)", url: "https://www.auswaertiges-amt.de/de/ReiseUndSicherheit/reise-und-sicherheitshinweise", everyHours: 3 });
-await run("de-travel", async (g) => {
+run("de-travel", async (g) => {
   const j = await g("https://www.auswaertiges-amt.de/opendata/travelwarning");
   return { items: Object.values(j.response || {}).filter((c) => c && typeof c === "object" && c.countryCode).map((c) => {
     const lv = c.warning ? "Travel warning (whole country)" : c.partialWarning ? "Partial travel warning" : c.situationWarning ? "Advice against travel" : c.situationPartWarning ? "Advice against travel to parts" : "No warning";
@@ -545,20 +546,21 @@ await run("de-travel", async (g) => {
 });
 
 feed("au-travel", { name: "Australian Smartraveller advice levels", org: "Australian Government DFAT", cat: "Advisories", lic: "CC BY 4.0", url: "https://www.smartraveller.gov.au/", everyHours: 3 });
-await run("au-travel", async (g) => {
+run("au-travel", async (g) => {
   const xml = await g("https://www.smartraveller.gov.au/countries/documents/index.rss", "text");
   return { items: rssItems(xml).map((x) => { const lvl = (x.summary.match(/(Exercise normal safety precautions|Exercise a high degree of caution|Reconsider your need to travel|Do not travel)/i) || [])[1] || "";
     return { title: "Australia: " + (lvl || x.title), detail: x.summary.slice(0, 400), date: x.date, url: x.link, sev: /do not travel|reconsider/i.test(lvl) ? 3 : /high degree/i.test(lvl) ? 2 : 1, kind: "Travel advisory", ccs: withOki(ccsInText(x.title)) }; }) };
 });
 
 feed("uk-travel", { name: "UK FCDO travel advice", org: "UK Foreign, Commonwealth & Development Office", cat: "Advisories", lic: "Open Government Licence v3", url: "https://www.gov.uk/foreign-travel-advice", everyHours: 24 });
-await run("uk-travel", async (g) => {
+run("uk-travel", async (g) => {
   const idx = await g("https://www.gov.uk/api/content/foreign-travel-advice"), kids = (idx.links && idx.links.children) || [], items = [];
   const A = { avoid_all_travel_to_whole_country: ["Advises against all travel", 3], avoid_all_travel_to_parts: ["Advises against all travel to parts", 3],
     avoid_all_but_essential_travel_to_whole_country: ["Advises against all but essential travel", 3], avoid_all_but_essential_travel_to_parts: ["Advises against all but essential travel to parts", 2] };
   for (const k of kids) {
     const nm = (k.details && k.details.country && k.details.country.name) || k.title, cc = ccFromName(nm); if (!cc) continue;
-    try { const c = await get("https://www.gov.uk/api/content" + k.base_path), st = (c.details && c.details.alert_status) || [];
+    if (items.length < 3 && kids.indexOf(k) > 10) break;
+    try { const c = await get("https://www.gov.uk/api/content" + k.base_path, "json", { timeout: 15000 }), st = (c.details && c.details.alert_status) || [];
       const best = st.map((s) => A[s]).filter(Boolean).sort((a, b) => b[1] - a[1])[0] || ["No FCDO advice against travel", 1];
       items.push({ title: "UK: " + best[0], detail: (c.details && c.details.change_description) || "", date: c.public_updated_at, url: "https://www.gov.uk" + k.base_path, sev: best[1], kind: "Travel advisory", ccs: withOki([cc]) });
     } catch (e) {}
@@ -576,14 +578,14 @@ for (const [id, name, org, url, lic, home] of [
   ["ohchr", "UN Human Rights Office news", "OHCHR", "https://www.ohchr.org/en/rss.xml", "UN terms of use (attribution)", "https://www.ohchr.org/"],
   ["iaea", "IAEA top news", "International Atomic Energy Agency", "https://www.iaea.org/feeds/topnews", "IAEA terms (attribution)", "https://www.iaea.org/"]]) {
   feed(id, { name, org, cat: /ecdc|cdc/.test(id) ? "Health" : "Events", lic, url: home });
-  await run(id, async (g) => {
+  run(id, async (g) => {
     const items = rssItems(await g(url, "text")).filter((x) => within(x.date, 45)).map((x) => ({ title: x.title, detail: x.summary.slice(0, 500), date: x.date, url: x.link, sev: 1, kind: name, ccs: withOki(ccsInText(x.title + " " + x.summary.slice(0, 600))) }));
     return { items, globals: items.filter((x) => !x.ccs.length).slice(0, 20).map((x) => ({ ...x, ccs: undefined })) };
   });
 }
 
 feed("who-gho", { name: "WHO Global Health Observatory indicators", org: "World Health Organization", cat: "Health", lic: "CC BY-NC-SA 3.0 IGO (non-commercial)", nc: true, url: "https://www.who.int/data/gho", everyHours: 168 });
-await run("who-gho", async (g) => {
+run("who-gho", async (g) => {
   const figures = {}, IND = [["WHOSIS_000001", "life_expectancy_years", "Dim1 eq 'SEX_BTSX'"], ["MDG_0000000007", "under5_mortality_per_1000", "Dim1 eq 'SEX_BTSX'"],
     ["MDG_0000000026", "maternal_mortality_per_100k", ""], ["UHC_INDEX_REPORTED", "uhc_service_coverage_index", ""], ["WHS4_100", "dtp3_immunisation_pct", ""]];
   for (const [code, key, flt] of IND) {
@@ -599,7 +601,7 @@ await run("who-gho", async (g) => {
 
 // ---------------------------------------------------------------- economy and development
 feed("wdi", { name: "World Bank development indicators", org: "World Bank", cat: "Economy", lic: "CC BY 4.0", url: "https://data.worldbank.org/", everyHours: 168 });
-await run("wdi", async (g) => {
+run("wdi", async (g) => {
   const IND = [["SP.POP.TOTL", "population"], ["NY.GDP.MKTP.CD", "gdp_usd"], ["NY.GDP.PCAP.CD", "gdp_per_capita_usd"], ["FP.CPI.TOTL.ZG", "inflation_pct"], ["SL.UEM.TOTL.ZS", "unemployment_pct"],
     ["MS.MIL.XPND.GD.ZS", "military_spending_pct_gdp"], ["IT.NET.USER.ZS", "internet_users_pct"], ["EG.ELC.ACCS.ZS", "electricity_access_pct"], ["SI.POV.DDAY", "extreme_poverty_pct"],
     ["SP.URB.TOTL.IN.ZS", "urban_pct"], ["NE.EXP.GNFS.ZS", "exports_pct_gdp"], ["BX.TRF.PWKR.DT.GD.ZS", "remittances_pct_gdp"], ["SP.POP.0014.TO.ZS", "age_0_14_pct"], ["AG.LND.FRST.ZS", "forest_pct"]];
@@ -615,7 +617,7 @@ await run("wdi", async (g) => {
 });
 
 feed("imf", { name: "IMF World Economic Outlook figures (current year)", org: "International Monetary Fund (DataMapper)", cat: "Economy", lic: "IMF copyright; free reuse with attribution", url: "https://www.imf.org/external/datamapper/", everyHours: 168 });
-await run("imf", async (g) => {
+run("imf", async (g) => {
   const yr = new Date().getUTCFullYear(), IND = [["NGDP_RPCH", "gdp_growth_pct"], ["PCPIPCH", "inflation_pct"], ["GGXWDG_NGDP", "govt_debt_pct_gdp"], ["LUR", "unemployment_pct"], ["BCA_NGDPD", "current_account_pct_gdp"]];
   const figures = {};
   for (const [code, key] of IND) {
@@ -629,7 +631,7 @@ await run("imf", async (g) => {
 });
 
 feed("fx", { name: "Exchange rate against the US dollar", org: "ExchangeRate-API open access; currencies from REST Countries", cat: "Economy", lic: "ExchangeRate-API open access terms (attribution)", url: "https://www.exchangerate-api.com/", everyHours: 12 });
-await run("fx", async (g) => {
+run("fx", async (g) => {
   const r = await g("https://open.er-api.com/v6/latest/USD"), c = await g("https://restcountries.com/v3.1/all?fields=cca2,currencies"), figures = {};
   for (const x of c) { const cc = ccFromA2(x.cca2); if (!cc) continue; const cur = Object.keys(x.currencies || {})[0]; if (!cur || !r.rates[cur]) continue;
     figures[cc] = { currency: cur, per_usd: r.rates[cur], at: r.time_last_update_utc }; }
@@ -638,14 +640,14 @@ await run("fx", async (g) => {
 });
 
 feed("wb-projects", { name: "World Bank projects (latest approvals)", org: "World Bank", cat: "Economy", lic: "CC BY 4.0", url: "https://projects.worldbank.org/", everyHours: 24 });
-await run("wb-projects", async (g) => {
+run("wb-projects", async (g) => {
   const j = await g("https://search.worldbank.org/api/v2/projects?format=json&rows=1000&os=0&fl=id,project_name,countryshortname,countrycode,boardapprovaldate,totalamt,status,url&strdate=" + new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10));
   return { items: Object.values(j.projects || {}).map((p) => ({ title: "World Bank: " + p.project_name + (p.totalamt ? " · US$" + String(p.totalamt).replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""), detail: [p.status, p.countryshortname].filter(Boolean).join(" · "),
     date: p.boardapprovaldate, url: p.url || "https://projects.worldbank.org/en/projects-operations/project-detail/" + p.id, sev: 1, kind: "Development project", ccs: withOki([].concat(p.countrycode || []).map(ccFromA2).filter(Boolean)) })) };
 });
 
 feed("fema", { name: "US federal disaster declarations (OpenFEMA)", org: "Federal Emergency Management Agency", cat: "Hazards", lic: "US Government public domain", url: "https://www.fema.gov/disaster/declarations", everyHours: 3 });
-await run("fema", async (g) => {
+run("fema", async (g) => {
   const since = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10);
   const j = await g("https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$filter=declarationDate%20ge%20'" + since + "'&$orderby=declarationDate%20desc&$top=1000"), by = new Map();
   for (const d of j.DisasterDeclarationsSummaries || []) { const e = by.get(d.disasterNumber) || { ...d, areas: [] }; e.areas.push(d.designatedArea); by.set(d.disasterNumber, e); }
@@ -655,7 +657,7 @@ await run("fema", async (g) => {
 
 // ---------------------------------------------------------------- events, politics
 feed("wiki-events", { name: "Wikipedia Current events portal", org: "Wikipedia contributors", cat: "Events", lic: "CC BY-SA 4.0", url: "https://en.wikipedia.org/wiki/Portal:Current_events", everyHours: 1 });
-await run("wiki-events", async (g) => {
+run("wiki-events", async (g) => {
   const j = await g("https://en.wikipedia.org/w/api.php?action=parse&page=Portal:Current_events&prop=text&format=json&formatversion=2");
   const html = j.parse.text, items = [];
   for (const day of html.split(/<div class="current-events-main[^"]*"[^>]*id="/).slice(1)) {
@@ -677,7 +679,7 @@ await run("wiki-events", async (g) => {
 });
 
 feed("elections", { name: "Elections and referendums (Wikidata)", org: "Wikidata contributors", cat: "Politics", lic: "CC0", url: "https://www.wikidata.org/", everyHours: 24 });
-await run("elections", async (g) => {
+run("elections", async (g) => {
   const from = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10), to = new Date(Date.now() + 400 * 864e5).toISOString().slice(0, 10);
   const q = `SELECT DISTINCT ?e ?eLabel ?d ?iso WHERE { ?e wdt:P31/wdt:P279* wd:Q40231; wdt:P585 ?d; wdt:P17 ?c. ?c wdt:P297 ?iso.
     FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime) SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`;
@@ -686,9 +688,10 @@ await run("elections", async (g) => {
 });
 
 feed("rainviewer", { name: "RainViewer global radar mosaic (map overlay)", org: "RainViewer", cat: "Hazards", lic: "Free public API, attribution; personal/non-commercial use", nc: true, url: "https://www.rainviewer.com/" });
-await run("rainviewer", async (g) => {
+run("rainviewer", async (g) => {
   const j = await g("https://api.rainviewer.com/public/weather-maps.json"), last = (j.radar.past || []).slice(-1)[0];
   return { items: [], globals: [{ title: "Radar frame " + new Date(last.time * 1000).toISOString().slice(11, 16) + "Z", date: new Date(last.time * 1000).toISOString(), url: j.host + last.path, kind: "tiles" }] };
 });
 
+await runAll(6);
 writeAll(IDS);
