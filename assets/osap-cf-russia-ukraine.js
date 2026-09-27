@@ -34,15 +34,17 @@
   function draw(api) {
     var X = (window.OSAP_CF_EXTRA || {})[ID], map = api.map, L = api.L || window.L;
     if (!map || !L) return;
-    if (!layers) { map.createPane("cfuaheat"); map.getPane("cfuaheat").style.zIndex = 430; layers = { alerts: L.layerGroup(), heat: L.layerGroup() }; }
+    /* drawn in the conflict tab's own pane: while a conflict tab is open the page hides every other overlay pane */
+    var pane = map.getPane("cfpane") ? "cfpane" : "overlayPane";
+    if (!layers) layers = { alerts: L.layerGroup(), heat: L.layerGroup() };
     layers.alerts.clearLayers(); layers.heat.clearLayers();
     if (X && X.alerts && ST.alerts) X.alerts.regions.forEach(function (r) {
       if (!r.on || r.la == null) return;
-      L.circleMarker([r.la, r.lo], { radius: r.standing ? 7 : 11, color: r.standing ? "#8a8a8a" : "#c62828", weight: 2, fillColor: r.standing ? "#8a8a8a" : "#c62828", fillOpacity: r.standing ? 0.15 : 0.35 })
-        .bindTooltip(E(r.en + ": air-raid alert" + (r.standing ? " (standing since " + r.since.slice(0, 10) + ")" : " since " + ago(r.since) + " ago")), { direction: "top" }).addTo(layers.alerts);
+      L.circleMarker([r.la, r.lo], { pane: pane, radius: r.standing ? 7 : 11, color: r.standing ? "#8a8a8a" : "#c62828", weight: 2, fillColor: r.standing ? "#8a8a8a" : "#c62828", fillOpacity: r.standing ? 0.15 : 0.35 })
+        .bindTooltip(E(r.en + ": air-raid alert" + (r.standing ? " (standing since " + r.since.slice(0, 10) + ")" : r.since ? " since " + ago(r.since) + " ago" : " (start time not given by the source)")), { direction: "top" }).addTo(layers.alerts);
     });
     if (X && X.heat && ST.heat) X.heat.points.forEach(function (p) {
-      L.circleMarker([p[0], p[1]], { pane: "cfuaheat", radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 })
+      L.circleMarker([p[0], p[1]], { pane: pane, radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 })
         .bindTooltip(E("Heat detection " + p[3] + " (" + p[4] + ", " + (p[5] === "D" ? "day" : "night") + " pass), " + p[2] + " MW" + (p[7] ? ", in occupied area" : p[6] === "ru" ? ", in Russia" : "") + ". Cause unknown."), { direction: "top" })
         .addTo(layers.heat);
     });
@@ -60,7 +62,7 @@
       var day = al.log.filter(function (e) { return e.on && (Date.now() - new Date(e.at + "Z")) < 864e5; }).length;
       h += "<h3>Air-raid alerts now</h3><div class=\"kpis\"><div class=\"kpi\"><div class=\"v" + (on.length ? " hot" : "") + '">' + on.length + '</div><div class="k">Regions under alert now</div></div>' +
         '<div class="kpi"><div class="v">' + day + '</div><div class="k">Alerts declared, past 24 h</div></div></div>' +
-        (on.length ? "<table>" + on.map(function (r) { return "<tr><td>" + E(r.en) + '</td><td class="n">since ' + T(r.since) + "</td></tr>"; }).join("") + "</table>" : '<p class="note">No region is under an air-raid alert.</p>') +
+        (on.length ? "<table>" + on.map(function (r) { return "<tr><td>" + E(r.en) + '</td><td class="n">' + (r.since ? "since " + T(r.since) : "start time not given") + "</td></tr>"; }).join("") + "</table>" : '<p class="note">No region is under an air-raid alert.</p>') +
         (stand.length ? '<p class="src">Standing alerts (unchanged for over 30 days, occupied areas): ' + E(stand.map(function (r) { return r.en; }).join(", ")) + ".</p>" : "") +
         '<div class="ctl"><input type="checkbox" id="cfua-al" data-cfua="alerts"' + (ST.alerts ? " checked" : "") + '><label for="cfua-al">Show alerts on the map</label></div>' +
         '<p class="src">' + A(al.home, al.source) + ". " + E(al.claim) + " The job reads it every 15 minutes, so short alerts can be missed.</p>";
@@ -110,6 +112,9 @@
       });
     });
   }
+  /* the tab is closed (another view or conflict chosen): take the markers off the map */
+  new MutationObserver(function () { if (document.documentElement.getAttribute("data-cf") !== ID) clear(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
   function clear() { if (layers && api0 && api0.map) { api0.map.removeLayer(layers.alerts); api0.map.removeLayer(layers.heat); } }
   /* the conflict tab calls OSAP_CF_PANELS[id](box, data, front); the extras file is fetched on the first call */
   var FILE = "data/live/conflicts/extras/" + ID + ".js", loaded = 0, waiting = [];
