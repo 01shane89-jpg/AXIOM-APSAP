@@ -10,7 +10,7 @@ const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const DATA_WAIT = 4000;
 const PRECACHE = __PRECACHE__;
 const FRESH = [/\/index\.html$/, /\/$/, /data\/thailand\/flood-live-snapshot\.js$/, /data\/live\/[a-z-]+\.js$/, /data\/history\/[a-z]+\.js$/];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/];
+const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/];
 
 self.addEventListener("install", (e) => {
   // cache: "reload" skips the browser's HTTP cache (GitHub Pages lets it keep files for 10 minutes),
