@@ -24,7 +24,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "6d874eb65a070c658ee116de9087feaa8e037e2aea974c879d1632bad5c65c12"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:dz:post:u-s-embassy-algiers",
+   "name": "U.S. Embassy Algiers",
+   "kind": "embassy",
+   "city": "Algiers",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 36.7323,
+   "lon": 3.0875,
+   "prec": "approx",
+   "src": "https://dz.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "23f53830fbd957c676a403a4825620b14b9fc45dddf8adc4212597b70e9283c0"
+  }
+ ],
  "airports": [
   {
    "id": "sof:dz:airport:daat",
@@ -343,7 +359,25 @@
    "fp": "2efcc13be861d47d0d0fd9be58b8faa04c8d150a0d24bfedfc37c555460d3da0"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:dz:hospital:mustapha-pacha-hospital",
+   "name": "Mustapha Pacha Hospital",
+   "city": "Algiers",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "University hospital",
+   "lat": 36.7323,
+   "lon": 3.0875,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Mustapha_Pacha_hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "35fa725d68908cc8bfabd6dc804d120650f05918522426c73d0ae213c853d293"
+  }
+ ],
  "power": [
   {
    "id": "sof:dz:power:wri1023768",
@@ -541,7 +575,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

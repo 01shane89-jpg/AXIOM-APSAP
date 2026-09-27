@@ -16,7 +16,38 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "22220c0091b8d8b7a21d63824823ccb9d0c609313cbe2faf4dd9eb999c726672"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:kz:post:u-s-embassy-astana",
+   "name": "U.S. Embassy Astana",
+   "kind": "embassy",
+   "city": "Astana",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 51.1801,
+   "lon": 71.446,
+   "prec": "approx",
+   "src": "https://kz.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "54aed997e607c88facad002ae8402459b0ef2b184513c206f25d4c373c4dfbd8"
+  },
+  {
+   "id": "sof:kz:post:u-s-consulate-general-almaty",
+   "name": "U.S. Consulate General Almaty",
+   "kind": "consulate_general",
+   "city": "Almaty",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 43.2525,
+   "lon": 76.9115,
+   "prec": "approx",
+   "src": "https://kz.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "1150a171c895114e6309c8fdd734724c5cde139975a9f6f6914ee70ebf27680f"
+  }
+ ],
  "airports": [
   {
    "id": "sof:kz:airport:uaaa",
@@ -449,7 +480,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }
