@@ -1,0 +1,161 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "tg",
+ "country": "Togo",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 2,
+  "level_text": "Exercise increased caution",
+  "issued": "2026-03-09",
+  "updated": null,
+  "indicators": [
+   "C",
+   "T",
+   "U",
+   "H",
+   "K"
+  ],
+  "indicator_names": [
+   "crime",
+   "terrorism",
+   "civil unrest",
+   "health",
+   "kidnapping or hostage taking"
+  ],
+  "areas": [],
+  "notes": "From the State Department advisory feed (Togo - Level 2: Exercise Increased Caution). Indicators are the risks the advisory text names, not its indicator icons; area-specific levels are not captured here, so read the advisory.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/togo-travel-advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "8d54825ef9f4b47a74cf8a385da479c9d595c9edd08844d0ffb7906fac02b1c3"
+ },
+ "posts": [],
+ "airports": [
+  {
+   "id": "sof:tg:airport:dxxx",
+   "name": "Lomé–Tokoin International Airport",
+   "icao": "DXXX",
+   "ident": "DXXX",
+   "iata": "LFW",
+   "type": "large_airport",
+   "municipality": "Lomé",
+   "region": "TG-M",
+   "scheduled_service": true,
+   "lat": 6.16561,
+   "lon": 1.25451,
+   "prec": "exact",
+   "elevation_ft": 72,
+   "longest_runway": {
+    "ident": "04/22",
+    "length_ft": 9847,
+    "length_m": 3001,
+    "width_ft": 148,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/DXXX/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "ad571237ccaafbf89011d42285d8038d427cbc8d7dbba9b3aa43a3f03c981866"
+  },
+  {
+   "id": "sof:tg:airport:dxng",
+   "name": "Niamtougou International Airport",
+   "icao": "DXNG",
+   "ident": "DXNG",
+   "iata": "LRL",
+   "type": "large_airport",
+   "municipality": "Niamtougou",
+   "region": "TG-K",
+   "scheduled_service": false,
+   "lat": 9.76667,
+   "lon": 1.09094,
+   "prec": "exact",
+   "elevation_ft": 1515,
+   "longest_runway": {
+    "ident": "03/21",
+    "length_ft": 8202,
+    "length_m": 2500,
+    "width_ft": 148,
+    "surface": "CON"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/DXNG/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "6959b62b9888ef01fd878c045a91581c25ba22f9b9ae20ba04a1e23525480c3b"
+  }
+ ],
+ "seaports": [
+  {
+   "id": "sof:tg:port:tg-lfw",
+   "name": "Lome",
+   "unlocode": "TG LFW",
+   "locode_function": "1--45---",
+   "lat": 6.12874,
+   "lon": 1.22154,
+   "prec": "approx",
+   "coord_basis": "GeoNames town centre (the UN/LOCODE entry has no coordinates)",
+   "coord_flag": null,
+   "src": "https://service.unece.org/trade/locode/tg.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "18fcfee1cdc1163e74839879f3723ad96d4e6c72e0f99c29b0788da91bcd2fcd"
+  }
+ ],
+ "hospitals": [],
+ "power": [
+  {
+   "id": "sof:tg:power:wri1023196",
+   "name": "Lome",
+   "fuel": "Oil",
+   "capacity_mw": 101.214,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 6.17,
+   "lon": 1.35,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "666510811cd9fc8acf037e1e4689f3787f731c1cfcb8c50fa63eabfb1571521c"
+  },
+  {
+   "id": "sof:tg:power:wri1023197",
+   "name": "Nangbeto",
+   "fuel": "Hydro",
+   "capacity_mw": 65.6,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 7.424,
+   "lon": 1.435,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "0178a45e1a8d8903d6cb6967e48b7f5bb82f70a6063e871f9cb4d4e6b7fea3df"
+  },
+  {
+   "id": "sof:tg:power:wri1023198",
+   "name": "Tag-Lpo",
+   "fuel": "Gas",
+   "capacity_mw": 28.3,
+   "commissioning_year": null,
+   "owner": null,
+   "lat": 6.1699,
+   "lon": 1.3496,
+   "prec": "approx",
+   "coord_basis": "WRI Global Power Plant Database plant coordinates (geolocation source: Power Africa)",
+   "plant_src": "http://powerafrica.opendataforafrica.org",
+   "src": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
+   "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
+   "fp": "bf8120d9a6f8f1636d388fcb74e0b2d40f18821a49060f6f9147fb911a82affc"
+  }
+ ],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Auto: U.S. diplomatic posts not yet researched for this country.",
+  "Auto: hospitals not yet researched for this country."
+ ]
+}
