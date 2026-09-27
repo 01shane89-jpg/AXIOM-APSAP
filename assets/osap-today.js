@@ -126,16 +126,21 @@
   /* ---------- weather: the page's forecast snapshot, topped up with a live read ---------- */
   function wxPlaces() {
     var f = window.ASAP_WXF, pts = f && f.points ? (f.points[CC] || []) : [];
-    if (pts.length) return pts.map(function (p) { return { name: p.name, lat: p.lat, lon: p.lon, days: p.days || [], snap: f.asof }; });
-    var c = CAPS[CC]; return c ? [{ name: c[0], lat: c[1], lon: c[2], days: [], snap: "" }] : [];
+    var c = CAPS[CC], out = pts.length ? pts.map(function (p) { return { name: p.name, lat: p.lat, lon: p.lon, days: p.days || [], snap: f.asof }; }) : c ? [{ name: c[0], lat: c[1], lon: c[2], days: [], snap: "" }] : [];
+    /* the province or spot chosen here or in the Weather tab comes first */
+    var X = window.OSAP_WX, pl = X && X.placePoint ? X.placePoint(CC) : null;
+    if (pl && !out.some(function (p) { return p.name === pl.name; })) out.unshift({ name: pl.name, lat: pl.lat, lon: pl.lon, days: [], snap: "" });
+    return out;
   }
   var wxLive = {}, wxBusy = {}, wxErr = {};
   function wxKey(p) { return "osap-today-wx-" + p.lat.toFixed(2) + "," + p.lon.toFixed(2); }
   function wxFetch(p, cb) {
     var k = wxKey(p), c = lsGet(k);
-    if (c && c.at && Date.now() - c.at < WX_TTL) { wxLive[k] = c; return cb(); }
+    /* cb runs only when a network read finishes, never straight away: render() calls this, so an immediate cb would redraw
+       the screen in a loop and swallow every tap */
+    if (c && c.at && Date.now() - c.at < WX_TTL) { wxLive[k] = c; return; }
     if (c) wxLive[k] = c; /* an older copy shows while the new one loads, marked with its time */
-    if (wxBusy[k] || !navigator.onLine && c) return cb();
+    if (wxBusy[k] || !navigator.onLine && c) return;
     wxBusy[k] = 1;
     var u = "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon +
       "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,precipitation" +
@@ -157,12 +162,15 @@
   function num(v, d) { return v == null || !isFinite(v) ? "–" : (+v).toFixed(d || 0); }
   function weatherHtml() {
     var P = wxPlaces();
-    if (!P.length) return '<section class="tdcard"><h2>Weather</h2><p class="tdobs">No forecast point is set up for this area yet.</p></section>';
+    var X = window.OSAP_WX, RL = X && X.regions ? X.regions(CC, function () { if (open) render(); }) : null;
+    var rsel = RL && RL.length ? '<select class="tdreg" data-tdreg aria-label="Choose a region"><option value="">Other region…</option>' +
+      RL.map(function (n, i) { return '<option value="' + i + '">' + esc(n) + "</option>"; }).join("") + "</select>" : "";
+    if (!P.length) return '<section class="tdcard"><div class="tdh"><h2>Weather</h2>' + rsel + '</div><p class="tdobs">No forecast point is set up for this area yet.</p></section>';
     if (wxSel >= P.length) wxSel = 0;
     var p = P[wxSel], L = wxLive[wxKey(p)], cur = L && L.cur, days = (L && L.days && L.days.length ? L.days : p.days).slice(0, 6);
     var h = '<section class="tdcard tdwx"><div class="tdh"><h2>Weather</h2>' +
       (P.length > 1 ? '<span class="tdplaces" role="group" aria-label="Place">' + P.map(function (x, i) {
-        return '<button type="button" data-wx="' + i + '" aria-pressed="' + (i === wxSel) + '">' + esc(x.name) + "</button>"; }).join("") + "</span>" : '<span class="tdplace">' + esc(p.name) + "</span>") + "</div>";
+        return '<button type="button" data-wx="' + i + '" aria-pressed="' + (i === wxSel) + '">' + esc(x.name) + "</button>"; }).join("") + "</span>" : '<span class="tdplace">' + esc(p.name) + "</span>") + rsel + "</div>";
     if (cur && cur.t != null) {
       var ct = cur.time ? Date.parse(cur.time + "Z") - (cur.off || 0) * 1000 : L.at;
       h += '<div class="tdnow"><span class="tdbig" aria-hidden="true">' + wxIcon(cur.code) + '</span><span class="tdtemp">' + num(cur.t) + '°C</span><span class="tdnowd"><b>' +
@@ -325,8 +333,11 @@
       return '<button type="button" data-go="' + x[0] + '">' + esc(have[x[0]] || x[1]) + "</button>"; }).join("") +
       (document.getElementById("brief-btn") ? '<button type="button" data-go="@brief">Country brief</button>' : "") + "</div></section>";
   }
+  var wxAsked = {}; /* one weather read per place each time Today opens */
   function render() {
     if (!box) return;
+    var P = wxPlaces(), wp = P[wxSel];
+    if (wp && !wxAsked[wxKey(wp)]) { wxAsked[wxKey(wp)] = 1; wxFetch(wp, function () { if (open) renderSoon(); }); }
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
     box.innerHTML = '<div class="tdwrap"><div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
@@ -338,7 +349,6 @@
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
       "Times are Zulu, then local.</p></footer></div>";
     box.scrollTop = y;
-    var P = wxPlaces(); if (P[wxSel]) wxFetch(P[wxSel], function () { if (open) renderSoon(); });
   }
   var rs = 0;
   function renderSoon() { clearTimeout(rs); rs = setTimeout(render, 60); }
@@ -350,10 +360,11 @@
   }
   function show() {
     if (!box) return;
+    wxAsked = {};
     open = true; box.hidden = false; document.documentElement.classList.add("td-on"); ssSet(OPEN_KEY, "1");
     render(); box.scrollTop = 0;
     if (ctl) ctl.hidden = true;
-    if (window.OSAP_BOOT_DONE) window.OSAP_BOOT_DONE();
+    if (window.OSAP_BOOT && window.OSAP_BOOT.done) window.OSAP_BOOT.done();
     clearInterval(tick);
     /* the page keeps adding records after load (feed history, open data, live refresh); the screen follows them */
     var lastN = -1, lastX = null;
@@ -371,7 +382,7 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
-    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;opacity:.1;pointer-events:none;z-index:0}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:1080px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
@@ -385,7 +396,7 @@
     ".tdcard{background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
-    ".tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
+    ".tdreg{min-height:32px;max-width:100%;font-size:12px;padding:3px 6px}.tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
     ".tdnow{display:flex;align-items:center;gap:12px}.tdbig{font-size:44px;line-height:1}.tdtemp{font-size:40px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}.tdnowd{font-size:13px}" +
     ".tddays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:10px}@media (max-width:420px){.tddays{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
     ".tdday{display:flex;flex-direction:column;align-items:center;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:12px;font-variant-numeric:tabular-nums}" +
@@ -426,6 +437,7 @@
       b = t.closest("[data-home]"); if (b) { lsSet(HOME_KEY, b.getAttribute("data-home")); render(); }
     });
     box.addEventListener("change", function (e) {
+      if (e.target.hasAttribute("data-tdreg")) { var X = window.OSAP_WX; if (e.target.value !== "" && X && X.chooseRegion && X.chooseRegion(CC, +e.target.value)) { wxSel = 0; render(); } return; }
       if (e.target.id !== "td-cc") return;
       var cc = e.target.value; if (!cc || cc === CC) return;
       ssSet(OPEN_KEY, "1");
