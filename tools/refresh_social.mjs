@@ -23,7 +23,12 @@ function areasFor(cc, text) {
   if (cc !== "*") return [cc];
   return Object.keys(NAMES).filter((k) => new RegExp("\\b(" + NAMES[k] + ")\\b").test(text));
 }
-function push(cc, text, it) { for (const a of areasFor(cc, text)) (items[a] = items[a] || []).push(it); }
+const OKI = /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i;
+function push(cc, text, it) {
+  const to = areasFor(cc, text);
+  if (cc === "jp" && OKI.test(text)) to.push("oki");   // national Japanese channels' Okinawa stories also belong to Okinawa
+  for (const a of to) (items[a] = items[a] || []).push(it);
+}
 async function req(url, opt = {}) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
@@ -157,8 +162,36 @@ export function parseYtFeed(xml) {
   }
   return out;
 }
+// The channel's videos page, used when YouTube's feed answers 404 (it did for every channel from GitHub on 2026-09-27).
+// The page gives only a relative age ("3 days ago"), so those dates are approximate to that unit and marked so.
+export function parseYtPage(html, now = Date.now()) {
+  const U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  const J = { 秒: "second", 分: "minute", 時間: "hour", 日: "day", 週間: "week", か月: "month", ヶ月: "month", 年: "year" };
+  const age = (t) => { const a = String(t || "").match(/(\d+)\s*(second|minute|hour|day|week|month|year|秒|分|時間|日|週間|か月|ヶ月|年)/i); return a ? +a[1] * U[J[a[2]] || a[2].toLowerCase()] : null; };
+  let data = null;
+  const m = html.match(/var ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/);
+  try { data = m && JSON.parse(m[1]); } catch (e) {}
+  const out = [], seen = new Set();
+  (function walk(o) {
+    if (!o || typeof o !== "object") return;
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    const L = o.lockupViewModel, V = o.videoRenderer || o.gridVideoRenderer;
+    if (L && L.contentId && !seen.has(L.contentId)) {
+      const md = (L.metadata || {}).lockupMetadataViewModel || {};
+      const parts = (((md.metadata || {}).contentMetadataViewModel || {}).metadataRows || []).flatMap((r) => r.metadataParts || []);
+      const when = parts.map((p) => p.accessibilityLabel || (p.text || {}).content).find((t) => / ago|前/.test(t || ""));
+      const ms = age(when);
+      if (md.title && md.title.content && ms != null) { seen.add(L.contentId); out.push({ id: L.contentId, title: unhtml(md.title.content), date: new Date(now - ms), summary: "", approx: when }); }
+    } else if (V && V.videoId && !seen.has(V.videoId)) {
+      const when = (V.publishedTimeText || {}).simpleText, ms = age(when), t = ((V.title || {}).runs || [])[0];
+      if (t && ms != null) { seen.add(V.videoId); out.push({ id: V.videoId, title: unhtml(t.text), date: new Date(now - ms), summary: "", approx: when }); }
+    }
+    for (const k in o) walk(o[k]);
+  })(data);
+  return out;
+}
 for (const ch of cfg.youtube || []) {
-  const src = "@" + ch.handle;
+  const src = ch.name || "@" + ch.handle;
   try {
     let id = ch.channel_id;
     if (!id) {
@@ -166,24 +199,29 @@ for (const ch of cfg.youtube || []) {
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
-    /* the channel's video feed; when YouTube refuses it (every feed returned HTTP 404 from 05:40Z on 27 Sept 2026), its uploads
-       feed; and when both are refused, the channel's public Videos page, whose times are YouTube's "3 hours ago" (to the hour or day) */
-    let vids, via = "feed";
-    try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
-    catch (e) {
-      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed"; }
+    let vids;
+    // YouTube's feed answers 404 now and then for channels that exist; a short retry usually gets it
+    let feedErr = "";
+    for (let k = 0; k < 3 && !vids; k++) {
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?channel_id=" + id)); }
+      catch (e) { feedErr = err(e); if (k < 2) await new Promise((r) => setTimeout(r, 2500)); }
+    }
+    if (!vids) {
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); }
       catch (e2) {
-        let vp;
-        try { vp = await text("https://www.youtube.com/channel/" + id + "/videos"); vids = parseYtVideosPage(vp); via = "videos page"; }
-        catch (e3) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + ", videos page " + err(e3) + " (channel " + id + ")"); }
-        if (!vids.length) { if (ytSample) { console.log("YouTube Videos page sample (first unparsed lockupViewModel):", ytSample); ytSample = ""; } throw new Error("video feed " + err(e) + "; videos page had no videos (" + ytPageHint(vp) + ")"); }
+        const page = await text("https://www.youtube.com/channel/" + id + "/videos");
+        vids = parseYtPage(page);
+        if (!vids.length) {
+          try { fs.mkdirSync("probe-out", { recursive: true }); const i = page.indexOf("videoId"); fs.writeFileSync("probe-out/yt-" + id + ".txt", page.length + " bytes\n" + page.slice(Math.max(0, i - 3000), i + 6000)); } catch (e3) {}
+          throw new Error("feed " + feedErr + ", videos page had no videos");
+        }
       }
     }
     let n = 0;
     for (const v of vids) {
-      if (isNaN(v.date) || v.date.getTime() < SINCE) continue;
+      if (isNaN(v.date) || v.date.getTime() < Date.now() - 30 * 864e5) continue;   // a channel feed lists only its last 15 videos, so keep a month of them
       push(ch.cc, v.title + " " + v.summary, { platform: "YouTube", account: src, kind: ch.kind, title: v.title.slice(0, 300), summary: v.summary,
-        date: v.date.toISOString().slice(0, 16), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
+        date: v.date.toISOString().slice(0, 16), ...(v.approx ? { date_note: "YouTube shows only \"" + v.approx + "\"" } : {}), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
       n++;
     }
     status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n, ...(via !== "feed" ? { via } : {}) });
