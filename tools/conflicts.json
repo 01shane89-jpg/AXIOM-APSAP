@@ -31,7 +31,6 @@
    "terms": ["Sudan\\w*", "RSF", "Rapid Support", "SAF", "Darfur", "Kordofan", "El Fasher", "Al-Fashir", "El Obeid", "Khartoum", "Omdurman", "Babanusa", "Kadugli", "Dilling", "Port Sudan", "Hemedti", "Burhan", "Janjaweed", "الدعم السريع", "السودان", "الفاشر", "دارفور", "كردفان", "الأبيض"],
    "searches": [{ "q": "Sudan RSF attack", "lang": "en" }, { "q": "Darfur Kordofan fighting", "lang": "en" }, { "q": "الدعم السريع هجوم", "lang": "ar" }],
    "feeds": [
-    { "id": "sudantribune", "outlet": "Sudan Tribune", "url": "https://sudantribune.com/feed/", "lang": "en", "all": true },
     { "id": "dabanga", "outlet": "Radio Dabanga", "url": "https://www.dabangasudan.org/en/feed", "lang": "en", "all": true },
     { "id": "sudanwarmonitor", "outlet": "Sudan War Monitor", "url": "https://sudanwarmonitor.com/feed", "lang": "en", "all": true }
    ],
@@ -53,7 +52,6 @@
    "bounds": [[32.7, 34.9], [34.8, 36.7]],
    "terms": ["Lebanon", "Lebanese", "Hezbollah", "Hizbollah", "Beirut", "Dahiyeh", "Tyre", "Nabatieh", "Litani", "Bekaa", "UNIFIL", "Qiryat Shmona", "Kiryat Shmona", "لبنان", "حزب الله", "الضاحية", "النبطية", "صور", "חיזבאללה", "לבנון"],
    "searches": [{ "q": "Hezbollah Israel strike Lebanon", "lang": "en" }, { "q": "جنوب لبنان غارة", "lang": "ar" }],
-   "feeds": [{ "id": "naharnet", "outlet": "Naharnet", "url": "https://www.naharnet.com/stories/en/rss", "lang": "en" }],
    "ucdp": { "countries": "Lebanon|Israel|Syria", "match": "Hezbollah|Lebanon" },
    "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:2024_Israeli_invasion_of_Lebanon_detailed_map" }]
   },
@@ -63,7 +61,7 @@
    "bounds": [[11.5, 38.5], [19.5, 54.0]],
    "terms": ["Yemen\\w*", "Houthi\\w*", "Ansar Allah", "Ansarallah", "Hodeidah", "Hudaydah", "Marib", "Taiz", "Aden", "Sanaa", "Sana'a", "Red Sea", "Bab el-Mandeb", "Bab al-Mandab", "Kamaran", "Zubair island\\w*", "Hanish", "AQAP", "اليمن", "الحوثي\\w*", "أنصار الله", "الحديدة", "مأرب", "تعز", "عدن", "البحر الأحمر"],
    "searches": [{ "q": "Houthi attack Red Sea", "lang": "en" }, { "q": "Yemen fighting Marib Taiz", "lang": "en" }, { "q": "الحوثيين هجوم", "lang": "ar" }],
-   "ucdp": { "countries": "Yemen|Saudi", "match": "Ansarallah|Yemen|AQAP|Southern Transitional|Houthi|Saudi" },
+   "ucdp": { "countries": "Yemen|Saudi", "match": "Ansarallah|Yemen|AQAP|Southern Transitional|STC|Presidential Leadership|HTA|Hadram|Houthi|Saudi|XXX678" },
    "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Yemeni_Civil_War_detailed_map" }]
   },
   {
@@ -73,9 +71,7 @@
    "terms": ["Myanmar", "Burma", "Tatmadaw", "junta", "PDF", "People's Defence Force", "NUG", "Arakan Army", "KIA", "Kachin", "Karen", "KNU", "Karenni", "TNLA", "MNDAA", "Chin", "Rakhine", "Sagaing", "Magway", "Mandalay", "Shan", "Bhamo", "Kyaukphyu", "Sittwe", "Myawaddy", "Lashio", "Naypyitaw", "Naypyidaw", "စစ်ကောင်စီ", "တပ်မတော်", "ပကဖ", "ဗုံး", "တိုက်ပွဲ"],
    "searches": [{ "q": "Myanmar junta airstrike", "lang": "en" }, { "q": "Myanmar resistance fighting", "lang": "en" }],
    "feeds": [
-    { "id": "irrawaddy", "outlet": "The Irrawaddy", "url": "https://www.irrawaddy.com/feed", "lang": "en", "all": true },
-    { "id": "myanmarnow", "outlet": "Myanmar Now", "url": "https://myanmar-now.org/en/feed/", "lang": "en", "all": true },
-    { "id": "bcrn", "outlet": "Burma Coup Resistance Notes", "url": "https://burmacoupresistancenotes.substack.com/feed", "lang": "en", "all": true }
+    { "id": "myanmarnow", "outlet": "Myanmar Now", "url": "https://myanmar-now.org/en/feed/", "lang": "en", "all": true }
    ],
    "ucdp": { "countries": "Myanmar" },
    "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Myanmar_Civil_War_detailed_map" }]
@@ -86,7 +82,7 @@
    "bounds": [[29.0, 66.0], [37.2, 74.0]],
    "terms": ["Afghan\\w*", "Taliban", "Durand Line", "Torkham", "Chaman", "Spin Boldak", "Kurram", "Bajaur", "Khyber", "Paktika", "Khost", "Kunar", "Nangarhar", "border clash\\w*", "افغان", "طالبان", "ډیورنډ", "طورخم"],
    "searches": [{ "q": "Pakistan Afghanistan border clash", "lang": "en" }, { "q": "Pakistan airstrike Afghanistan", "lang": "en" }],
-   "ucdp": { "countries": "Afghanistan|Pakistan", "match": "Government of Afghanistan|Taleban|Taliban|Afghanistan - Pakistan|Pakistan - Afghanistan" , "exclude": "IS|Islamic State" },
+   "ucdp": { "countries": "Afghanistan|Pakistan", "match": "Afghanistan|Taleban|Taliban", "exclude": "\\bIS\\b|Islamic State" },
    "front": []
   },
   {
@@ -95,7 +91,7 @@
    "bounds": [[24.0, 60.8], [37.1, 75.5]],
    "terms": ["TTP", "Tehreek-e-Taliban", "Tehrik-i-Taliban", "BLA", "Baloch\\w*", "Khyber Pakhtunkhwa", "KP", "Waziristan", "Bannu", "Lakki Marwat", "Dera Ismail Khan", "Quetta", "Turbat", "Gwadar", "Kalat", "Mastung", "Khwarij", "Fitna al-Khawarij", "Fitna al-Hindustan", "دہشت", "خوارج"],
    "searches": [{ "q": "Khyber Pakhtunkhwa attack militants", "lang": "en" }, { "q": "Balochistan attack", "lang": "en" }],
-   "ucdp": { "countries": "Pakistan", "exclude": "Government of Afghanistan|Afghanistan - Pakistan|India" },
+   "ucdp": { "countries": "Pakistan|Afghanistan", "match": "Pakistan", "exclude": "Afghanistan - Pakistan|Pakistan - Afghanistan|Government of Afghanistan|India" },
    "front": []
   },
   {
@@ -105,7 +101,7 @@
    "terms": ["Congo\\w*", "DRC", "M23", "AFC/M23", "Kivu", "Goma", "Bukavu", "Uvira", "Walikale", "Masisi", "Rutshuru", "Beni", "Butembo", "Lubero", "Ituri", "Bunia", "Djugu", "ADF", "Wazalendo", "FARDC", "CODECO", "Kinshasa", "Kigali"],
    "searches": [{ "q": "M23 Congo fighting", "lang": "en" }, { "q": "ADF attack Ituri Beni", "lang": "en" }, { "q": "M23 combats Kivu", "lang": "fr" }],
    "feeds": [{ "id": "actualite-cd", "outlet": "Actualite.cd", "url": "https://actualite.cd/feed", "lang": "fr" }],
-   "ucdp": { "countries": "DR Congo|Congo, Democratic|Rwanda|Burundi|Uganda", "match": "M23|ADF|CODECO|Congo|Wazalendo|Mai-Mai|Rwanda|Islamic State" },
+   "ucdp": { "countries": "DR Congo|Congo, Democratic" },
    "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Template:M23_offensive_detailed_map" }]
   },
   {
@@ -123,7 +119,6 @@
    "bounds": [[-2.0, 40.5], [12.0, 51.5]],
    "terms": ["Somali\\w*", "al-Shabaab", "Al Shabaab", "Shabab", "AUSSOM", "AMISOM", "ATMIS", "Mogadishu", "Puntland", "Jubaland", "Hiraan", "Middle Shabelle", "Lower Shabelle", "Galmudug", "Mandera", "Lamu", "Garissa"],
    "searches": [{ "q": "al-Shabaab attack Somalia", "lang": "en" }],
-   "feeds": [{ "id": "hiiraan", "outlet": "Hiiraan Online", "url": "https://www.hiiraan.com/rss/news.xml", "lang": "en" }, { "id": "garowe", "outlet": "Garowe Online", "url": "https://www.garoweonline.com/rss.xml", "lang": "en" }],
    "ucdp": { "countries": "Somalia|Kenya", "match": "Shabaab|Somalia|Islamic State" },
    "front": [{ "type": "wikimap", "id": "wikipedia", "page": "Module:Somali_Civil_War_detailed_map" }]
   },
@@ -133,7 +128,7 @@
    "bounds": [[4.0, 2.5], [15.5, 16.0]],
    "terms": ["Boko Haram", "ISWAP", "JAS", "Lakurawa", "bandit\\w*", "Borno", "Maiduguri", "Yobe", "Adamawa", "Zamfara", "Katsina", "Sokoto", "Kebbi", "Niger State", "Kaduna", "Plateau", "Benue", "Lake Chad", "Far North", "Extrême-Nord", "MNJTF", "herders"],
    "searches": [{ "q": "Borno attack ISWAP", "lang": "en" }, { "q": "bandits attack Zamfara Katsina", "lang": "en" }],
-   "ucdp": { "countries": "Nigeria|Cameroon|Chad", "match": "Boko|ISWAP|Islamic State|Jama'atu|Nigeria|bandit|Lakurawa|Fulani|Cameroon|Chad" , "exclude": "Ambazonia" },
+   "ucdp": { "countries": "Nigeria|Cameroon|Chad", "match": "Boko|ISWAP|Islamic State|\\bIS\\b|JAS|Jama'atu|Nigeria|bandit|Lakurawa|Fulani|Comités|Cameroon|Chad|XXX471" , "exclude": "Ambazonia" },
    "front": []
   },
   {
@@ -225,6 +220,15 @@
    "terms": ["Kashmir\\w*", "Line of Control", "LoC", "Jammu", "Poonch", "Rajouri", "Kupwara", "Uri", "Muzaffarabad", "Operation Sindoor", "ceasefire violation\\w*", "infiltrat\\w*", "कश्मीर", "कश्मीर", "کشمیر"],
    "searches": [{ "q": "Line of Control firing Kashmir", "lang": "en" }, { "q": "Jammu Kashmir encounter militants", "lang": "en" }],
    "ucdp": { "countries": "India|Pakistan", "match": "Kashmir|India - Pakistan|Pakistan - India" },
+   "front": []
+  },
+  {
+   "id": "india-internal", "name": "India: Manipur, Maoist and north-east violence", "short": "India internal conflicts", "countries": ["in"], "since": "2023-05-03", "kind": "insurgency and ethnic violence", "tier": 2,
+   "parties": ["India", "Kuki-Zo and Meitei armed groups (Manipur)", "Naga groups (NSCN factions)", "CPI (Maoist)"],
+   "bounds": [[17.0, 78.0], [28.5, 97.5]],
+   "terms": ["Manipur", "Kuki", "Meitei", "Imphal", "Churachandpur", "Jiribam", "Naga", "NSCN", "Maoist\\w*", "Naxal\\w*", "Bastar", "Bijapur", "Sukma", "Dantewada", "Narayanpur", "Gadchiroli", "ULFA", "मुठभेड़", "नक्सली"],
+   "searches": [{ "q": "Manipur violence firing", "lang": "en" }, { "q": "Maoists encounter Chhattisgarh", "lang": "en" }],
+   "ucdp": { "countries": "India", "exclude": "Pakistan|Kashmir" },
    "front": []
   },
   {
