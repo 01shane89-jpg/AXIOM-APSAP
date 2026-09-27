@@ -1,0 +1,97 @@
+{
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows).",
+ "feeds": [
+  {
+   "id": "prachatai-en",
+   "outlet": "Prachatai English",
+   "url": "https://prachataienglish.com/rss.xml",
+   "lang": "en"
+  },
+  {
+   "id": "prachatai-th",
+   "outlet": "Prachatai",
+   "url": "https://prachatai.com/rss.xml",
+   "lang": "th"
+  },
+  {
+   "id": "khaosod-en",
+   "outlet": "Khaosod English",
+   "url": "https://www.khaosodenglish.com/feed/",
+   "lang": "en"
+  },
+  {
+   "id": "thaiexaminer",
+   "outlet": "Thai Examiner",
+   "url": "https://www.thaiexaminer.com/feed/",
+   "lang": "en"
+  },
+  {
+   "id": "bing-th",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "matichon",
+   "outlet": "Matichon",
+   "url": "https://www.matichon.co.th/feed",
+   "lang": "th"
+  },
+  {
+   "id": "khaosod-th",
+   "outlet": "Khaosod",
+   "url": "https://www.khaosod.co.th/feed",
+   "lang": "th"
+  },
+  {
+   "id": "bing-nara-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Narathiwat&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-patt-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Pattani&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-yala-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Yala%20Thailand&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-nara-th",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-patt-th",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-yala-th",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2%20%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  }
+ ]
+}

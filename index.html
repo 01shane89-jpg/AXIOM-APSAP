@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM OSAP</title>
+<script src="assets/osap-start.js"></script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
@@ -166,7 +167,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .sofpin span{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;color:#fff;font:700 11px/1 "IBM Plex Mono",monospace;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.35)}
 .sofpin.inline{display:inline-block;vertical-align:-4px}.sofpin.inline span{width:16px;height:16px;font-size:9.5px;box-shadow:none}
 .cond td,.cond th{font-size:12px;padding:3px 4px;white-space:nowrap}.cond tr.today td{font-weight:600}
-#brief{position:fixed;inset:0;z-index:100000;overflow:auto;background:#d9dee3;padding:12px}
+#brief{position:fixed;inset:0;z-index:100000;overflow:auto;background:#d9dee3;padding:12px}#brief{color:#111}#brief .noprint .obs{color:#3a4550}#brief .noprint a.refresh{color:#12324a}
 #credits{position:fixed;inset:0;z-index:100000;overflow:auto;background:rgba(0,0,0,.45);padding:16px}
 #credits .cbox{max-width:760px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:8px;padding:14px 18px 18px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.3)}
 #credits .chead{display:flex;align-items:center;gap:8px;position:sticky;top:-16px;background:var(--surface);padding:6px 0}#credits .chead h2{margin:0;font-size:18px;flex:1}
@@ -175,7 +176,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 #credits blockquote{margin:4px 0 4px 0;padding:4px 8px;border-left:3px solid var(--line);color:var(--ink)}
 .bbar{max-width:800px;margin:0 auto 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .bpage{max-width:800px;margin:0 auto;background:#fff;color:#111;padding:18px 22px;font-size:11px;line-height:1.35;box-shadow:0 1px 6px rgba(0,0,0,.2)}
-.bpage header{display:block;border-bottom:2px solid #12324a;padding-bottom:4px;margin-bottom:6px}.bpage h2{margin:2px 0;font-size:20px}
+.bpage header{display:block;position:static;z-index:auto;background:none;color:#111;border:0;border-bottom:2px solid #12324a;padding:0 0 4px;margin-bottom:6px}.bpage header h2,.bpage header b{color:#111}.bpage header div{color:#333}.bpage tbody tr{cursor:default}.bpage tbody tr:hover{background:#eef3f7}.bpage h2{margin:2px 0;font-size:20px}
 .bpage h3{font-size:11.5px;margin:8px 0 3px;color:#12324a;text-transform:none}.bpage table{width:100%;border-collapse:collapse;table-layout:fixed}.bpage table,.bpage td,.bpage th{font-size:inherit}.bpage th{text-transform:none;letter-spacing:0;color:#333;white-space:normal}.bpage table.blight td:first-child{width:22%}.bpage table.bfac td:nth-child(1){width:40%}.bpage table.bfac td:nth-child(2){width:23%}.bpage table.bfac td:nth-child(3){width:37%}.bpage table.btwo td:first-child{width:62px}.bpage .mg{font-size:.92em}.bpage table,.bpage td{border-left:0;border-right:0;border-top:0}
 .bpage td,.bpage th{border-bottom:1px solid #ddd;padding:2px 4px;vertical-align:top;text-align:left}.bpage th{font-weight:600}
 .bpage .bm{color:#555}.bpage .mg{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}.bpage .bwarn{background:#eef3f7;padding:4px 6px;margin:4px 0}
@@ -415,6 +416,14 @@ header .ctoggle b{color:var(--ink);font-weight:700}
 header .ctoggle .chev{transition:transform .15s}
 header .ctoggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
 header .ctoggle + .ctabs{order:9}
+header .xabar{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12.5px}
+.xachip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:3px;padding:1px 2px 1px 7px;background:var(--surface)}
+.xachip button{border:0;background:none;color:var(--muted);font:inherit;font-size:15px;line-height:1;padding:2px 6px;cursor:pointer}.xachip button:hover{color:var(--ink)}
+.xadot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+header .xabar select{min-width:17em;max-width:19em}
+html.phone:not(.hdr-open) header .xabar select,html.phone:not(.hdr-open) header .xabar.xaempty{display:none}
+header .ctabs button[data-cc].xaon{box-shadow:inset 0 -3px 0 var(--xac)}
+.xahd{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin:2px 0 4px}
 header .ctoggle[aria-expanded="false"] + .ctabs{display:none}
 html.phone header .ctoggle{display:none!important}
 @media (max-width:700px){header .ctabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
@@ -457,7 +466,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .pkghead h2{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:0}
 /* reports beside the map */
 .shell.rv-list #map{position:absolute!important;left:-99999px;width:900px!important}
-.rvpkg{max-height:55%;overflow-y:auto;border-bottom:1px solid var(--line);margin:0;padding:10px 14px}
+.rvpkg{max-height:55%;flex-shrink:0;overflow-y:auto;border-bottom:1px solid var(--line);margin:0;padding:10px 14px}
 .rv{border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;min-height:0;max-height:calc(100svh - var(--hdr-h,64px));height:calc(100svh - var(--hdr-h,64px))}
 .rvhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px 8px;border-bottom:1px solid var(--line)}
 .rvhead b{font-size:13px;font-weight:600;margin-right:auto}
@@ -538,7 +547,7 @@ html.phone .rvpkg{max-height:none}
 .pkgh{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
 .pkgdl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px}
 .pkgdl dt{color:var(--muted)}
-.pkgdl dd{margin:0}
+.pkgdl dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .sub{display:block;font-size:11px;color:var(--muted);line-height:1.35}
 #tl-pkg{border:1px solid var(--accent);border-radius:3px;padding:12px;margin-top:12px;background:var(--surface)}
 table.reg td{white-space:normal;text-align:left;vertical-align:top}
@@ -1030,25 +1039,45 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
     topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
-    sat: { name: "Satellite", note: "NASA Blue Marble, cloud-free, low detail (about 1 km)",
-      url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg", max: 8,
-      attr: "NASA Blue Marble via GIBS" }
+    /* sharp imagery. Licences are tagged so restricted ones can be dropped before any commercial use:
+       Esri World Imagery is under Esri's terms of use (restricted), EOX Sentinel-2 cloudless 2021 is CC BY-NC-SA 4.0 (non-commercial) */
+    sat: { name: "Satellite", note: "Esri World Imagery: sharp aerial and satellite photos, down to street level in most towns (image dates vary by place)",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
+    hybrid: { name: "Hybrid", note: "The same imagery with borders, place names and roads on top",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      labels: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}",
+               "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"],
+      attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
+    s2: { name: "Sentinel-2 cloudless", note: "EOX: a cloud-free mosaic of 2021 Sentinel-2 images, one look for the whole world (10 m)",
+      url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 15, zmax: 16, lic: "CC BY-NC-SA 4.0",
+      attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' },
+    daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
+      url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
+      attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" }
   };
   function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
   function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
   var ML = mlGet();
   if (!BASES[ML.base]) ML.base = "grey";
+  var hybLabels = null;
+  map.createPane("hybpane"); map.getPane("hybpane").style.zIndex = 450; map.getPane("hybpane").style.pointerEvents = "none";
   if (!(ML.op > 0)) ML.op = 0.6;
   var altBase = null;
   function setBase(k) {
     ML.base = k; mlSet();
     if (altBase) { map.removeLayer(altBase); altBase = null; }
+    if (hybLabels) { map.removeLayer(hybLabels); hybLabels = null; }
     var b = BASES[k];
+    /* imagery can be zoomed closer than the other maps */
+    var zmax = b.zmax || 13; map.setMaxZoom(zmax); if (map.getZoom() > zmax) map.setZoom(zmax);
     if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      altBase = L.tileLayer(b.url, { maxNativeZoom: b.max, maxZoom: 13, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
+      var url = b.url.replace("{date}", new Date(Date.now() - 864e5).toISOString().slice(0, 10));
+      altBase = L.tileLayer(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
       altBase.bringToBack();
+      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: b.max, maxZoom: zmax }); })).addTo(map);
     }
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
@@ -2675,6 +2704,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/cdc.js"></script>
 <script src="data/live/navwarnings.js"></script>
 <script src="data/live/ucdp.js"></script>
+<script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/live/roads.js"></script>
@@ -2916,7 +2946,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     { id: "alerts", name: "Alerts", title: "Alerts" },
     { id: "flood", name: "Flood", title: "Flood", live: true },
     { id: "border", name: "Border", title: "Border security", live: true },
-    { id: "insurgency", name: "Southern insurgency", sources: "Royal Thai Police, ISOC public releases, SBPAC, provincial authorities",
+    { id: "insurgency", name: "Southern insurgency", sources: "Royal Thai Police, ISOC public releases, SBPAC, provincial authorities; live: Deep South outlets, Thai news searches, UCDP",
       shows: "IEDs, small-arms attacks, ambushes, arson; weekly and monthly trends; district heat maps; casualties by type." },
     { id: "crime", name: "Organized crime", sources: "Royal Thai Police, Department of Special Investigation, AMLO",
       shows: "Drug and human trafficking, illegal gambling, cybercrime, extortion, wildlife trafficking.",
@@ -3050,12 +3080,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || b.getAttribute("data-cc") === CC) return;
     var cc = b.getAttribute("data-cc");
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc));
     location.hash = (cc === "th" ? "" : cc + "/") + (current || "timeline");
     location.reload();
   });
   window.addEventListener("hashchange", function () {
     var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 && CBY[h[0]] ? h[0] : "th";
-    if (cc !== CC) location.reload();
+    if (cc !== CC) { if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc)); location.reload(); }
   });
   var seg = document.getElementById("view-seg");
   seg.innerHTML = LAYERS.map(function (l) {
@@ -3129,6 +3160,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function chip(cls, text) { return '<span class="chip ' + cls + '">' + esc(text) + "</span>"; }
 
   function markerStyle(r) {
+    if (r.xcc) { var xc = xaCol(r.xcc); return { radius: 3.5 + (r.sev || 1) * 1.6, color: xc, weight: 2.4, fillColor: xc, fillOpacity: 0.3 }; }
     var c = tok(LCOL[r.layer] || "--muted");
     var rad = 3.5 + r.sev * 1.6;
     if (r.type === "observation") return { radius: rad, color: c, weight: 2, fillColor: c, fillOpacity: 0.12 };
@@ -3137,7 +3169,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   var shown = [];
   function render() {
-    shown = R.filter(match);
+    shown = R.concat(xaRecs()).filter(match);
     if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
     list.textContent = "";
@@ -3168,7 +3200,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
           st0.fillOpacity *= fade; st0.opacity = Math.max(0.35, fade);
         }
         var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, st0));
-        m.bindTooltip(esc(r.title), { direction: "top" });
+        m.bindTooltip((r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.title), { direction: "top" });
         m.on("click", function () { select(r.id, false); });
         tlLayer.addLayer(m); markers[r.id] = m;
       }
@@ -3177,12 +3209,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       d.type = "button"; d.className = "tlrow"; d.setAttribute("data-id", r.id);
       d.innerHTML = '<span class="tlt">' + esc(fmtTs(r)) + '</span>' +
         '<span class="tln">' + esc(r.title) + "</span>" +
-        '<span class="tlm">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
-        '<span class="tls">' + esc(r.src.name) + (r.prov ? " · " + esc(r.prov) : "") + "</span></span>";
+        '<span class="tlm">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + chip("t-" + r.type, r.type) +
+        '<span class="tls">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src.name) + (r.prov ? " · " + esc(r.prov) : "") + "</span></span>";
       d.addEventListener("click", function () { select(r.id, true); });
       list.appendChild(d);
     });
-    document.getElementById("tl-count").textContent = shown.length + " of " + R.length + " records" +
+    var xan = xaRecs().length;
+    document.getElementById("tl-count").textContent = shown.length + " of " + (R.length + xan) + " records" + (xan ? " (" + xan + " from added countries)" : "") +
       (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map" + (evN ? " · " + evN + " grouped events" : "") + " · period: " + periodLabel();
     if (!shown.length && R.length) list.innerHTML = '<p class="obs">Nothing in this reporting period (' + esc(periodLabel()) + '). <button type="button" class="refresh" data-period="all">Show all dates</button></p>';
     else if (PERIOD.p !== "all") { var hid = R.filter(function (r) { return !inPeriod(r); }).length; if (hid) list.insertAdjacentHTML("afterbegin", hiddenNote(hid)); }
@@ -3341,7 +3374,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (list.length ? relRows(list) : '<p class="obs">No other story shares enough words, place or time with this one.</p>');
   }
   function select(id, fly, boxId) {
-    var r = byId[id]; if (!r) return;
+    var r = byId[id]; if (!r) { if (/^x:/.test(String(id))) xaOpen(id, boxId); return; }
     if (fly === false && !fullNext && window.ASAP_PHONE && window.ASAP_PHONE.on()) {
       var qm = boxId === "cl-pkg" ? CM[id] : markers[id];
       if (qm) { quickCard(r, qm, boxId); return; }
@@ -3555,7 +3588,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   ]);
   if (TD.insurgency) RULES.push({ id: "insurgency-attack", v: 1, name: "Insurgent attack", layer: "insurgency", unit: "days", def: 30, min: 1, step: 1,
     desc: "An IED, shooting, ambush, arson or attack on a facility " + (TH ? "in the southern border provinces " : "") + "within this many days.",
-    test: function (r, t) { return r.layer === "insurgency" && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
+    test: function (r, t) { return r.layer === "insurgency" && !r.ds && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.sev; } });
   if (LBY.safety) RULES.push({ id: "quake-strong", v: 1, name: "Strong earthquake", layer: "safety", unit: "magnitude", def: 5.5, min: 2.5, step: 0.5,
     desc: "USGS reports an earthquake of at least this magnitude in or near the area in the last 7 days.",
@@ -3729,13 +3762,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     curId = lid;
     var D = TD[lid], recsAll = R.filter(function (r) { return r.layer === lid; }), recs = recsAll.filter(inPeriod);
     var vis = recs.filter(function (r) { return !curOff[lid + ":" + r.kind]; });
-    var viol = recs.filter(function (r) { return kindOf(r).violent || kindOf(r).counted; });
+    /* live Deep South reports (r.ds) are machine-sorted leads: shown, never counted */
+    var viol = recs.filter(function (r) { return !r.ds && (kindOf(r).violent || kindOf(r).counted); });
     var sum = function (a, k) { return a.reduce(function (n, r) { return n + (r[k] || 0); }, 0); };
     var lastV = viol.length ? viol.reduce(function (m, r) { return r.ts > m ? r.ts : m; }, "") : "";
     var since = lastV ? dnum(D.asof) - dnum(lastV) : null;
     /* month buckets */
     var months = {}, mk = [];
-    recs.forEach(function (r) { var k = monthKey(r.ts); if (!months[k]) months[k] = { n: 0, k: 0 }; if (kindOf(r).violent || kindOf(r).counted) { months[k].n++; months[k].k += r[D.tableField || "killed"] || 0; } });
+    recs.forEach(function (r) { var k = monthKey(r.ts); if (!months[k]) months[k] = { n: 0, k: 0 }; if (!r.ds && (kindOf(r).violent || kindOf(r).counted)) { months[k].n++; months[k].k += r[D.tableField || "killed"] || 0; } });
     if (recs.length) {
       var y = +D.from.slice(0, 4), m = +D.from.slice(5, 7), ey = +D.asof.slice(0, 4), em = +D.asof.slice(5, 7);
       while (y < ey || (y === ey && m <= em)) { mk.push(y + "-" + ("0" + m).slice(-2)); m++; if (m > 12) { m = 1; y++; } }
@@ -4282,7 +4316,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
       ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
-      ['Satellite base map: NASA Blue Marble (public domain), via NASA GIBS.'],
+      ['Satellite and Hybrid base maps: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> and Esri reference labels, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
+      ['Sentinel-2 cloudless base map: <a href="https://s2maps.eu">Sentinel-2 cloudless 2021</a> by EOX IT Services GmbH, contains modified Copernicus Sentinel data 2021. Licence: CC BY-NC-SA 4.0, <b>non-commercial</b>.'],
+      ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
       ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],
       ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
@@ -5050,6 +5086,49 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (window.TSAP) window.TSAP.records = R;
   }
   addMoreRecords2();
+  /* ---------- Thailand's Deep South: live reporting and UCDP's Patani-conflict events for the past year (tools/refresh_deepsouth.mjs).
+     Live items are unverified reports, not curated records: their kind and district are sorted by machine from the headline's words,
+     casualty figures stay in the text (never added to the layer's totals), and a link already used by a curated record is skipped. ---------- */
+  src("ds-ucdp", "Uppsala Conflict Data Program (candidate events, monthly files)", "Research institution", "B",
+    "Patani-conflict events coded by UCDP from media reports for the past 13 months. Fatality figures are UCDP's best estimates; candidate data is revised later.", "https://ucdp.uu.se/");
+  function addDeepSouth() {
+    R = R.filter(function (r) { if (r.ds) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var W = window.ASAP_DS, D = TD.insurgency;
+    if (CC !== "th" || !LBY.insurgency || !W || !D) return;
+    var curated = {}; D.events.forEach(function (e) { curated[e.src] = 1; });
+    var ucdpNow = {}; ((window.ASAP_UCDP || {}).items || []).forEach(function (e) { ucdpNow[e.id] = 1; });
+    (W.items || []).forEach(function (i) {
+      if (!i.link || curated[i.link]) return;
+      var k = D.kinds[i.kind] ? i.kind : "other", kk = D.kinds[k] || {};
+      var s = src("ds-" + String(i.outlet || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || "Unknown outlet",
+        i.state ? "Thai government body (its own statements)" : "News outlet, via " + (i.via || "feed"), "F",
+        "Deep South reporting read every 15 minutes. Not assessed." + (i.nc ? " Search-aggregator result (non-commercial terms)." : ""), i.link);
+      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary || ""), g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? i.geo : null;
+      var fig = [i.killed ? i.killed + " killed" : "", i.injured ? i.injured + " injured" : ""].filter(Boolean).join(", ");
+      var rec = { layer: "insurgency", type: i.state ? "claim" : "event", cat: "Live report · " + (kk.label || "Other or summary"), kind: k, live: true, ds: true,
+        title: en, detail: (sen && sen !== en ? sen : "") + (fig ? (sen && sen !== en ? " " : "") + "Headline states " + fig + " (not counted in the layer's totals)." : ""),
+        orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
+        derived: [i.mt_rejected ? "The machine translation failed a check (a missing number or repeated words), so the original " + (LANGN[i.lang] || i.lang) + " is shown." : mtNote(i),
+          i.title_from_summary ? "The English headline is the first sentence of the translated summary." : "", "Kind sorted by machine from the headline's words" + (k === "other" ? " (no match)" : "") + ".",
+          g ? "Placed at " + g.n + (g.p === "province" ? " (the rough centre of the province)" : " (the district centre, approximate)") + " because the text names it." : "Not placed: the text names no Deep South district."].filter(Boolean).join(" "),
+        ts: i.date || W.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: g ? g.n : "", prov: g ? g.prov : "",
+        lat: g ? g.la : null, lon: g ? g.lo : null, prec: g ? (g.p === "province" ? "province" : "approx") : "none", sev: kk.violent ? 2 : 1,
+        src: s, url: i.link, issued: i.date, recorded: W.asof };
+      add(rec);
+    });
+    (W.ucdp || []).forEach(function (e) {
+      if (ucdpNow[e.id]) return;   /* the newest month is already on the layer from data/live/ucdp.js */
+      add({ layer: "insurgency", type: "report", cat: "Conflict event (UCDP, past year)", kind: "other", live: true, ds: true,
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + ")" +
+          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". UCDP candidate data is preliminary and can be revised.",
+        ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon, prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province",
+        sev: e.best >= 3 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES["ds-ucdp"], url: "https://ucdp.uu.se/downloads/candidateged/" + e.file, issued: e.date, recorded: W.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addDeepSouth();
   function nqHtml() {
     var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
     if (!N) return "";
@@ -5397,12 +5476,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
       sofLayer.addTo(map); showSof(v); map.invalidateSize();
-      map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
+      map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
     else if (l.curated) {
       curLayer.addTo(map); showCurated(v);
       map.invalidateSize();
-      map.fitBounds(TH && TD[v].bounds ? TD[v].bounds : C.bounds, { padding: [10, 10], animate: false });
+      map.fitBounds(TH && TD[v].bounds && !(ADDED && ADDED.length) ? TD[v].bounds : cBounds(), { padding: [10, 10], animate: false });
     }
     else if (v === "flood" && TH) window.FW.show();
     else if (v === "border" && TH) window.TBW.show();
@@ -5411,7 +5490,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       else if (v === "alerts") { alertLayer.addTo(map); renderAlerts(); }
       else fillStub(l);
       map.invalidateSize();
-      map.fitBounds(L.latLngBounds(C.bounds), { padding: [8, 8], animate: false });
+      map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
     if (v === "weather" || v === "hazards") stormLayer.addTo(map);
     try { localStorage.setItem("tw-view", v); } catch (e) {}
@@ -5460,9 +5539,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var l = LBY[current] || {};
     if (current === "timeline") return shown || [];
     if (current === "alerts") return (ALERTS || []).map(function (a) { return a.rec; });
-    if (current === "news" || current === "social") return R.filter(function (r) { return r[current] && inPeriod(r); });
+    if (current === "news" || current === "social") return R.filter(function (r) { return r[current] && inPeriod(r); }).concat(xaFor());
     if (l.sof) return rvSofItems();
-    return R.filter(function (r) { return r.layer === current && inPeriod(r); });
+    return R.filter(function (r) { return r.layer === current && inPeriod(r); }).concat(xaFor());
   }
   /* tabs built from published lists and signals (exercises, hazards, security, open data, reference) are not reports: their
      cards are read from what is on the map, each marker's own popup heading, and open that popup */
@@ -5484,6 +5563,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function rvMarker(r) {
     var l = LBY[current] || {};
+    if (r.xcc && current !== "timeline") return XAM[r.id] || null;
     if (r.sof || l.sof) return sofM[r.id] || null;
     if (l.curated) return (CM && CM[r.id]) || null;
     if (r.evv) return (markers && markers[r.evv.m[0].id]) || null;
@@ -5492,7 +5572,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function rvRender() {
     rvT = 0;
     if (!rvBox) return;
-    areaMarkers();
+    areaMarkers(); xaDraw();
     /* a drawn area wins over the map view, in every layout */
     var phone = rvPhone(), all = rvRecords(), b = map.getBounds(),
       inArea = AREA ? { contains: function (p) { return inPoly(p[0], p[1], AREA); } } : (rvMode === "list" && !phone ? null : b);
@@ -5517,7 +5597,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return '<button type="button" class="rvcard' + (pic ? " haspic" : "") + '" data-rv="' + esc(r.id) + '">' + (pic ? '<img class="rvpic" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") + '<span class="rvt">' + esc(fmtTs(r)) + "</span>" +
         '<span class="rvh">' + esc(r.title) + "</span>" +
         '<span class="rvm">' + chip("l-" + r.layer, ln) + chip("t-" + r.type, st) + "</span>" +
-        '<span class="rvs">' + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";
+        '<span class="rvs">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";
     }).join("") +
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
         '<p class="obs rvnote">Showing the newest ' + cap + " of " + list.length + ". Zoom in or narrow the period to see the rest.</p>") : "") +
@@ -5545,7 +5625,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function rvRefresh() {
     var b = document.getElementById("rv-refresh"); if (b) { b.disabled = true; b.textContent = "Fetching…"; }
     var files = Array.prototype.map.call(document.querySelectorAll('script[src^="data/live/"], script[src^="data/history/"]'), function (x) { return x.getAttribute("src").split("?")[0]; });
-    var go = function () { try { sessionStorage.setItem("osap-refreshed", String(Date.now())); } catch (e) {} location.reload(); };
+    var go = function () { try { sessionStorage.setItem("osap-refreshed", String(Date.now())); } catch (e) {} if (window.OSAP_BOOT) window.OSAP_BOOT.show(CC, "Refreshing", C.name); location.reload(); };
     var t = setTimeout(go, 15000);
     Promise.all(files.map(function (f) { return fetch(f + "?fresh=" + Date.now(), { cache: "no-store" }).catch(function () {}); })).then(function () { clearTimeout(t); go(); });
   }
@@ -5553,7 +5633,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var FEEDN = { ASAP_NEWS: "Local news", ASAP_SOCIAL: "Social media", ASAP_WARN: "Weather warnings", ASAP_STORMS: "Tropical cyclones", ASAP_WXF: "Weather forecast",
     ASAP_ADV: "U.S. travel advisory", ASAP_RW: "ReliefWeb reports", ASAP_TSU: "Tsunami bulletins", ASAP_VOLC: "Volcanoes", ASAP_IODA: "Internet outages",
     ASAP_WHO: "WHO outbreak news", ASAP_MAR: "Maritime security", ASAP_ROADS: "Road closures", ASAP_NQ: "National quake catalogues", ASAP_EONET: "NASA EONET events",
-    ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
+    ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_DS: "Deep South reporting (Thailand)", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
   function feedAgo(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 6e4)); return m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
   function feedsHtml() {
     var T = window.OSAP_TIME, rows = [];
@@ -5576,6 +5656,52 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (open) box.innerHTML = feedsHtml();
   }
   function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
+  /* MAP ITEMS WITH A POPUP. Reference points, hazards, quakes, storms, road closures, terrain, flashpoints, Open data, gauges and
+     the like carry their details in a small popup. Opening one shows those details in the Report panel instead (on a phone, the
+     full sheet), with the item's source links, its place and grid reference, and a SHA-256 fingerprint of exactly what is shown,
+     the way a report opens. The item is shown as its publisher gives it; nothing is added or confirmed. */
+  /* items whose popup has no link of their own: the publisher's site, matched on what the popup says */
+  var POPSRC = [[/above the bank|below the bank|m MSL|mm in 24 h|Level unavailable/, "Hydro-Informatics Institute (ThaiWater)", "https://www.thaiwater.net/"],
+    [/GISTDA/, "GISTDA", "https://www.gistda.or.th/"], [/Air quality · model estimate/, "Open-Meteo air quality model (CAMS)", "https://open-meteo.com/en/docs/air-quality-api"],
+    [/GDACS/, "GDACS", "https://www.gdacs.org/"], [/USGS/, "USGS", "https://earthquake.usgs.gov/"], [/NASA EONET/, "NASA EONET", "https://eonet.gsfc.nasa.gov/"]];
+  function popHost(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
+  function popPkg(body, ll) {
+    var phone = rvPhone(), box = document.getElementById("rv-pkg");
+    if (!box || (!phone && rvBox.hidden)) return false;
+    var links = [], seen = {};
+    Array.prototype.forEach.call(body.querySelectorAll("a[href]"), function (a) {
+      var u = a.getAttribute("href"); if (!/^https?:\/\//.test(u) || seen[u]) return; seen[u] = 1;
+      links.push({ u: u, t: (a.textContent || "").trim() });
+    });
+    var tier = body.querySelector(".tier"), text = (body.textContent || "").replace(/\s+/g, " ").trim();
+    var pub = null; if (!links.length) POPSRC.some(function (x) { if (x[0].test(text)) { pub = x; return true; } return false; });
+    box.hidden = false;
+    box.innerHTML = '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div><div class="pkgpop"></div>' +
+      '<dl class="pkgdl">' +
+        (ll ? "<dt>Where</dt><dd>" + esc(ll.lat.toFixed(4) + ", " + ll.lng.toFixed(4)) + ' · MGRS <b class="mgrs">' + esc(window.MGRS_OF(ll.lat, ll.lng)) + '</b><span class="sub">Where the map item sits</span></dd>' : "") +
+        "<dt>Source</dt><dd>" + (links.length ? links.map(function (l) {
+          return '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">' + esc(l.t && l.t.length < 90 ? l.t : popHost(l.u)) + '</a><span class="sub">' + esc(popHost(l.u)) + "</span>"; }).join("") :
+          (pub ? '<a href="' + esc(pub[2]) + '" target="_blank" rel="noopener noreferrer">' + esc(pub[1]) + '</a><span class="sub">The publisher\'s site; this item has no page of its own</span>' :
+          esc(tier ? tier.textContent : "Named in the item") + '<span class="sub">This item carries no link of its own; its publisher is listed in Credits</span>')) + "</dd>" +
+        '<dt>Fingerprint</dt><dd><span class="mono popfp">computing…</span><span class="sub">SHA-256 of the text and links shown here</span></dd>' +
+      "</dl>" +
+      '<p class="note">Shown as its publisher gives it. A reference, reading or report, not a finding: nothing here has been confirmed by an analyst.</p>';
+    var pane = box.querySelector(".pkgpop"), c = body.cloneNode(true);
+    c.className = "pop"; pane.appendChild(c);
+    sha256(text + "\n" + links.map(function (l) { return l.u; }).join("\n")).then(function (h) { var f = box.querySelector(".popfp"); if (f) f.textContent = h; }).catch(function () {});
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; rvRingAt(null); });
+    Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
+    if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) { box.scrollTop = 0; if (ll) rvRingAt({ lat: ll.lat, lon: ll.lng }); }
+    return true;
+  }
+  if (!/[?&]watchscan=1(&|$)/.test(location.search)) map.on("popupopen", function (e) {
+    var el = e.popup.getElement && e.popup.getElement(), body = el && el.querySelector(".leaflet-popup-content");
+    if (!body || !body.textContent.trim()) return;
+    /* a pin drawn for one of this page's own reports (road disruptions) opens that report itself */
+    var orec = body.querySelector("[data-openrec]"), rid = orec && orec.getAttribute("data-openrec");
+    if (rid && byId[rid]) { if (rvPhone() || !rvBox.hidden) { fullNext = true; select(rid, undefined, "rv-pkg"); setTimeout(function () { map.closePopup(e.popup); }, 0); } return; }
+    if (popPkg(body, e.popup.getLatLng())) setTimeout(function () { map.closePopup(e.popup); }, 0);
+  });
   /* marker hover lights its card; hooks are added once per marker */
   function rvHook(list) {
     list.slice(0, 200).forEach(function (r) {
@@ -5881,6 +6007,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      its own records (last 30 days), kept in this browser for 30 minutes. They join events and "across the border" lists here as
      read-only references; opening one goes to that country's page. */
   var XB_KEY = "asap-xrecs-", XB_AGE = 30 * 60 * 1000, XB_DAYS = 30, XR = [], XBV = 0, XB_AT = {};
+  /* countries the viewer added to this map (see MORE COUNTRIES ON THIS MAP below); a scan copy never adds any */
+  var XA_KEY = "asap-multi-" + CC, XA_MAX = 6, XA_COL = ["#e8590c", "#0c8599", "#ae3ec9", "#5c940d", "#d6336c", "#1c7ed6"], XA_FAIL = {}, XA_PEND = false;
+  var ADDED = SCAN ? [] : (lsGet(XA_KEY, []) || []).filter(function (cc, i, a) { return CBY[cc] && cc !== CC && a.indexOf(cc) === i; }).slice(0, XA_MAX);
+  function xbCcs() { return NB.concat(ADDED.filter(function (cc) { return NB.indexOf(cc) < 0; })); }
   function flagOf(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
   function cName(cc) { return (CBY[cc] || {}).name || cc.toUpperCase(); }
   /* countries whose outline box touches this one's (with half a degree to spare), nearest first; fewer on a phone */
@@ -5902,7 +6032,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function xbLoad() {
     XR = [];
-    NB.forEach(function (cc) {
+    xbCcs().forEach(function (cc) {
       var o = lsGet(XB_KEY + cc, null);
       if (!o || !o.recs) return;
       XB_AT[cc] = o.at;
@@ -6232,6 +6362,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       alert("That report is no longer in this build (it may have dropped out of the feed). The watch hit is kept in the list.");
       return;
     }
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc));
     location.href = "./?wopen=" + encodeURIComponent(k) + "#" + (cc === "th" ? "" : cc + "/") + "timeline";
   }
   /* watch dialog */
@@ -6261,6 +6392,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         "<li>The data itself refreshes about every 3 hours now, so a hit can only be as new as the last refresh.</li>" +
         "<li>Alerts to a closed app or a locked phone would need a push relay; that is a separate choice and is not switched on.</li></ul></details>" +
       '<h3>New watch in ' + esc(C.name) + "</h3>" +
+      (ADDED.length ? '<p class="note">Also watches ' + ADDED.map(function (cc) { return flagOf(cc) + " " + esc(cName(cc)); }).join(", ") + ", the countries added to this map, each as its own watch.</p>" : "") +
       '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
         '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? " checked" : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(use Draw area on the map first)</span>') + "</span></label>" +
         '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
@@ -6294,7 +6426,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
       var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wEl.querySelector("#w-name").value || C.name).trim().slice(0, 60), cc: CC,
         area: a && a.value === "drawn" && AREA ? AREA.slice() : null, layers: any.checked ? [] : cats2, minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
-      wLoad(); WATCHES.push(w); wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
+      wLoad(); WATCHES.push(w);
+      ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); WATCHES.push(w2); });
+      wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
     });
     wEl.querySelector(".chead .x").addEventListener("click", wClose);
     wEl.querySelector(".chead .x").focus();
@@ -6308,7 +6442,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       lsSet(WH_KEY, hitsLoad().filter(function (h) { return h.w !== id; })); var s = lsGet(WS_KEY, {}) || {}; delete s[id]; lsSet(WS_KEY, s); wBadge(); wShowArea(null); wOpen(); return; }
     if ((id = t.getAttribute("data-w-pause"))) { wLoad(); WATCHES.forEach(function (w) { if (w.id === id) w.on = w.on === false; }); wSave(); wOpen(); return; }
     if ((id = t.getAttribute("data-w-show"))) { var w0 = wLoad().filter(function (w) { return w.id === id; })[0]; if (!w0) return;
-      if (w0.cc !== CC) { location.href = "./?wshow=" + encodeURIComponent(id) + "#" + (w0.cc === "th" ? "" : w0.cc + "/") + "timeline"; return; }
+      if (w0.cc !== CC) { if (window.OSAP_BOOT) window.OSAP_BOOT.show(w0.cc, "", cName(w0.cc)); location.href = "./?wshow=" + encodeURIComponent(id) + "#" + (w0.cc === "th" ? "" : w0.cc + "/") + "timeline"; return; }
       wClose(); wShowArea(w0); return; }
     if (t.hasAttribute("data-w-read")) { var hs = hitsLoad(); hs.forEach(function (h) { h.read = true; }); lsSet(WH_KEY, hs); wBadge(); wOpen(); return; }
     if (t.hasAttribute("data-w-clear")) { lsSet(WH_KEY, []); wBadge(); wOpen(); return; }
@@ -6337,16 +6471,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   /* scans: each watched country rebuilt in a hidden copy of this page (index.html?watchscan=1), one at a time */
   var wScanBusy = false, wTimer = 0, W_EVERY = 15 * 60 * 1000;
   function wScanAll() {
-    if (wScanBusy) return;
+    if (wScanBusy) { XA_PEND = true; return; }
+    XA_PEND = false;
     var ccs = []; wLoad().forEach(function (w) { if (w.on !== false && ccs.indexOf(w.cc) < 0) ccs.push(w.cc); });
     if (EV_ON) xbStale().forEach(function (cc) { if (ccs.indexOf(cc) < 0) ccs.push(cc); });
+    xaStale().forEach(function (cc) { if (ccs.indexOf(cc) < 0) ccs.unshift(cc); });
     if (!ccs.length || !/^https?:$/.test(location.protocol)) return;
     wScanBusy = true;
     var keepView = null; try { keepView = localStorage.getItem("tw-view"); } catch (e) {}
     (function next() {
       var cc = ccs.shift();
-      if (!cc) { wScanBusy = false; try { if (keepView != null) localStorage.setItem("tw-view", keepView); } catch (e) {} wBadge(); return; }
-      var f = document.createElement("iframe"), done = false;
+      if (!cc) { wScanBusy = false; try { if (keepView != null) localStorage.setItem("tw-view", keepView); } catch (e) {} wBadge(); if (XA_PEND) setTimeout(wScanAll, 300); return; }
+      var f = document.createElement("iframe"), done = false, gotRecs = false;
       f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "watch check";
       f.style.cssText = "position:fixed;left:-10000px;top:0;width:1100px;height:700px;border:0;visibility:hidden";
       function fin(fresh) {
@@ -6354,11 +6490,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         clearTimeout(to); window.removeEventListener("message", onMsg);
         if (f.parentNode) f.parentNode.removeChild(f);
         if (fresh && fresh.length) { wNotify(fresh); wToast(fresh); }
+        if (ADDED.indexOf(cc) >= 0 && !gotRecs) { XA_FAIL[cc] = true; xaBarDraw(); }
         setTimeout(next, 500);
       }
       function onMsg(e) {
         if (e.source !== f.contentWindow || !e.data || e.data.osapWatchScan !== cc) return;
-        if (e.data.recs) { lsSet(XB_KEY + cc, { at: Date.now(), recs: e.data.recs }); if (NB.indexOf(cc) >= 0) { xbLoad(); evRefresh(); } }
+        if (e.data.recs) { gotRecs = true; delete XA_FAIL[cc]; lsSet(XB_KEY + cc, { at: Date.now(), recs: e.data.recs }); if (NB.indexOf(cc) >= 0 || ADDED.indexOf(cc) >= 0) { xbLoad(); evRefresh(); if (ADDED.indexOf(cc) >= 0) xaChanged(false); } }
         fin(e.data.fresh || []);
       }
       window.addEventListener("message", onMsg);
@@ -6388,7 +6525,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (ws) wShowArea(wLoad().filter(function (w) { return w.id === ws; })[0]);
     }
     /* the page's own country was just checked with what it loaded; the other watched countries are checked shortly after */
-    if (wLoad().some(function (w) { return w.cc !== CC && w.on !== false; }) || (EV_ON && xbStale().length)) setTimeout(function () { wScanAll(); }, 8000);
+    if (xaStale().length) setTimeout(function () { wScanAll(); }, 1000);
+    else if (wLoad().some(function (w) { return w.cc !== CC && w.on !== false; }) || (EV_ON && xbStale().length)) setTimeout(function () { wScanAll(); }, 8000);
     wSchedule();
   }
   window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
@@ -6416,12 +6554,182 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     document.head.appendChild(st);
   })();
   /* read-only list for other views (for example a multi-country map): every event with its countries and reports */
+  /* MORE COUNTRIES ON THIS MAP. The viewer can add up to six other countries to this page (Shift-click them in the country list,
+     or tick "Add countries to this map"). Their reports come from the same hidden page copies the cross-border lists use, each
+     country loaded only when added and kept in this browser for 30 minutes, then refreshed. They join the list, the map, the
+     period and search filters, the drawn area and new watches, tagged with the country's flag and colour. They stay read-only
+     references: opening one shows its summary and a link to that country's own page, which holds the full report. Hand-researched
+     tabs (reference, exercises, security, open data) stay this country's own. Double-click another country on the map to open it. */
+  function xaCol(cc) { var i = (ADDED || []).indexOf(cc); return i < 0 ? tok("--muted") : XA_COL[i % XA_COL.length]; }
+  function xaRecs() { return ADDED && ADDED.length && XR ? XR.filter(function (r) { return ADDED.indexOf(r.xcc) >= 0; }) : []; }
+  function xaStale() { return (ADDED || []).filter(function (cc) { var o = lsGet(XB_KEY + cc, null); return !o || !o.recs || Date.now() - o.at > XB_AGE; }); }
+  /* the added countries' reports that belong on the open tab (the timeline takes them through its own filters) */
+  function xaFor() {
+    var xs = xaRecs(), l = LBY[current] || {};
+    if (!xs.length || current === "timeline" || current === "alerts" || l.sof) return [];
+    if (current === "news" || current === "social") return xs.filter(function (r) { return r[current] && inPeriod(r); });
+    return xs.filter(function (r) { return r.layer === current && inPeriod(r); });
+  }
+  function cBounds() {
+    var b = L.latLngBounds(C.bounds);
+    (ADDED || []).forEach(function (cc) { if (CBY[cc] && CBY[cc].bounds) b.extend(L.latLngBounds(CBY[cc].bounds)); });
+    return b;
+  }
+  var xaLayer = L.layerGroup(), XAM = {}, xaSig = "", xaOut = null;
+  if (!map.getPane("xapane")) { map.createPane("xapane"); map.getPane("xapane").style.zIndex = 390; map.getPane("xapane").style.pointerEvents = "none"; }
+  /* pins for tabs other than the timeline */
+  function xaDraw() {
+    if (!xaLayer) return;
+    var list = xaFor(), sig = current + ":" + XBV + ":" + list.length + ":" + (list[0] ? list[0].id : "") + ":" + ADDED.join(",") + ":" + PERIOD.p;
+    if (sig === xaSig) return; xaSig = sig;
+    xaLayer.clearLayers(); XAM = {};
+    list.forEach(function (r) {
+      if (!hasLL(r)) return;
+      var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
+      m.bindTooltip(flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " + esc(r.title), { direction: "top" });
+      m.on("click", function () { select(r.id, false); });
+      xaLayer.addLayer(m); XAM[r.id] = m;
+    });
+    if (!map.hasLayer(xaLayer)) xaLayer.addTo(map);
+  }
+  /* each added country's outline, in its colour */
+  var XA_NE = {};
+  function xaFeat(ne) {
+    if (!XA_NE.__done) { XA_NE.__done = 1; [window.COUNTRY_BASE, window.WORLD_BASE].forEach(function (fc) { ((fc || {}).features || []).forEach(function (f) { if (!XA_NE[f.properties.n]) XA_NE[f.properties.n] = f; }); }); }
+    return ne ? XA_NE[ne] || null : null;
+  }
+  function xaOutlines() {
+    if (xaOut) { map.removeLayer(xaOut); xaOut = null; }
+    var fs = ADDED.map(function (cc) { var f = xaFeat((CBY[cc] || {}).ne); return f ? { type: "Feature", properties: { cc: cc }, geometry: f.geometry } : null; }).filter(Boolean);
+    if (!fs.length) return;
+    xaOut = L.geoJSON({ type: "FeatureCollection", features: fs }, { pane: "xapane", interactive: false, style: function (f) {
+      var c = xaCol(f.properties.cc); return { color: c, weight: 1.8, opacity: 0.9, fillColor: c, fillOpacity: 0.06 }; } }).addTo(map);
+  }
+  var xaBar = document.createElement("div");
+  xaBar.className = "xabar"; xaBar.id = "xa-bar"; xaBar.hidden = true;
+  cseg.parentNode.insertBefore(xaBar, cseg.nextSibling);
+  var xaOpts = (function () {
+    var out = "", reg = "";
+    COUNTRIES.forEach(function (c) {
+      if (c.id === CC) return;
+      if (c.region !== reg) { out += (reg ? "</optgroup>" : "") + '<optgroup label="' + esc(c.region) + '">'; reg = c.region; }
+      out += '<option value="' + esc(c.id) + '">' + esc(c.name) + "</option>";
+    });
+    return out + (reg ? "</optgroup>" : "");
+  })();
+  function xaBarDraw() {
+    xaBar.hidden = false; xaBar.classList.toggle("xaempty", !ADDED.length);
+    xaBar.innerHTML = '<select id="xa-add" class="mini" aria-label="Add a country to this map" title="Add another country\'s reports to this map. Shift-click in the country list does the same; double-click a country on the map to open it">' +
+      '<option value="">+ Add a country to this map</option>' + xaOpts + "</select>" +
+      ADDED.map(function (cc) {
+      var o = lsGet(XB_KEY + cc, null), n = XR.filter(function (r) { return r.xcc === cc; }).length;
+      var st = o && o.recs ? n + " reports, last 30 days" : XA_FAIL[cc] ? "could not load, will retry" : "loading…";
+      return '<span class="xachip"><span class="xadot" style="background:' + xaCol(cc) + '"></span>' + flagOf(cc) + " " + esc(cName(cc)) +
+        ' <span class="obs">' + esc(st) + '</span><button type="button" data-xa-rm="' + esc(cc) + '" title="Take ' + esc(cName(cc)) + ' off this map" aria-label="Take ' + esc(cName(cc)) + ' off this map">×</button></span>';
+    }).join("") + (ADDED.length > 1 ? '<button type="button" class="refresh" data-xa-clear>Clear</button>' : "");
+    var sel = xaBar.querySelector("#xa-add");
+    Array.prototype.forEach.call(sel.options, function (o) { if (o.value && ADDED.indexOf(o.value) >= 0) o.textContent = "\u2713 " + o.textContent; });
+    sel.addEventListener("change", function () { var v = sel.value; sel.value = ""; if (v) xaToggle(v); });
+  }
+  xaBar.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button"); if (!b) return;
+    if (b.hasAttribute("data-xa-clear")) { ADDED = []; xaChanged(true); return; }
+    var cc = b.getAttribute("data-xa-rm"); if (cc) xaToggle(cc);
+  });
+  /* an added country's report: its summary here, the full report on that country's page */
+  function xaOpen(id, boxId) {
+    var r = null;
+    (XR || []).some(function (x) { if (x.id === id) { r = x; return true; } return false; });
+    if (!r) return;
+    var box = document.getElementById(boxId || "tl-pkg"), st = STATE[r.type] ? STATE[r.type][0] : r.type;
+    box.hidden = false;
+    box.innerHTML = '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<p class="xahd"><span class="xadot" style="background:' + xaCol(r.xcc) + '"></span>' + flagOf(r.xcc) + " " + esc(cName(r.xcc)) + ", added to this map</p>" +
+      '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
+      '<div class="pkgchips">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + chip("t-" + r.type, r.type) + chip("st", st) + "</div>" +
+      '<dl class="pkgdl"><dt>Where</dt><dd>' + esc(r.place || "Not stated") +
+        (hasLL(r) ? '<span class="sub">' + esc(r.lat.toFixed(4) + ", " + r.lon.toFixed(4)) + ' · MGRS <b class="mgrs">' + esc(window.MGRS_OF(r.lat, r.lon)) + "</b></span>" : "") + "</dd>" +
+        "<dt>When</dt><dd>" + esc(fmtTs(r)) + "</dd>" +
+        "<dt>Reported by</dt><dd>" + esc(r.src.name) + (r.src.kind ? '<span class="sub">' + esc(r.src.kind) + "</span>" : "") + "</dd></dl>" +
+      '<p class="note">A reference copy from ' + esc(cName(r.xcc)) + "'s page. It is what the source reports, not confirmed. The full report, its fingerprint and related stories are on that page.</p>" +
+      '<p class="xalinks">' + (/^https?:\/\//.test(r.url || "") ? '<a class="refresh" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Open the source</a> ' : "") +
+        '<a class="refresh" href="' + esc(xbHref(r)) + '">Open in ' + esc(cName(r.xcc)) + "</a></p>";
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; });
+    if (hasLL(r) && boxId !== "rv-pkg") map.panTo([r.lat, r.lon]);
+  }
+  /* Shift-click in the country list adds a country instead of opening it */
+  cseg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-cc]");
+    if (!b || !e.shiftKey) return;
+    e.preventDefault(); e.stopPropagation();
+    try { localStorage.setItem("asap-countries-open", "1"); } catch (x) {}
+    xaToggle(b.getAttribute("data-cc"));
+  }, true);
+  function xaMarks() {
+    Array.prototype.forEach.call(cseg.querySelectorAll("button[data-cc]"), function (b) {
+      var on = ADDED.indexOf(b.getAttribute("data-cc")) >= 0;
+      b.classList.toggle("xaon", on);
+      if (on) { b.style.setProperty("--xac", xaCol(b.getAttribute("data-cc"))); b.title = "On this map. Shift-click to take it off"; } else b.style.removeProperty("--xac");
+    });
+  }
+  function xaToggle(cc) {
+    if (!CBY[cc] || cc === CC) return;
+    var i = ADDED.indexOf(cc);
+    if (i >= 0) ADDED.splice(i, 1);
+    else { if (ADDED.length >= XA_MAX) { alert("Up to " + XA_MAX + " countries can be added to one map. Take one off first."); return; } ADDED.push(cc); }
+    xaChanged(true);
+  }
+  function xaChanged(user) {
+    if (user) lsSet(XA_KEY, ADDED);
+    xbLoad(); EVC.sig = ""; xaSig = "";
+    xaOutlines(); xaBarDraw(); xaMarks();
+    if (current === "timeline") render();
+    rvSoon();
+    if (user) {
+      if (ADDED.length) map.fitBounds(cBounds(), { padding: [8, 8] });
+      if (xaStale().length) wScanAll();
+    }
+  }
+  /* double-click (or double-tap) another country on the map to open it; on this country it zooms as before */
+  function xaRing(ring, x, y) {
+    var inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  function xaInFeat(f, lat, lon) {
+    var g = f.geometry, polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    return polys.some(function (p) { return xaRing(p[0], lon, lat) && !p.slice(1).some(function (h) { return xaRing(h, lon, lat); }); });
+  }
+  function xaCountryAt(lat, lon) {
+    var hits = COUNTRIES.filter(function (c) {
+      var b = c.bounds; if (!b || !c.ne) return false;
+      if (b[0][1] <= b[1][1] && (lon < b[0][1] - 0.5 || lon > b[1][1] + 0.5)) return false;
+      return lat >= b[0][0] - 0.5 && lat <= b[1][0] + 0.5;
+    });
+    hits.sort(function (a, b) { return (a.bounds[1][0] - a.bounds[0][0]) * Math.abs(a.bounds[1][1] - a.bounds[0][1]) - (b.bounds[1][0] - b.bounds[0][0]) * Math.abs(b.bounds[1][1] - b.bounds[0][1]); });
+    for (var i = 0; i < hits.length; i++) { var f = xaFeat(hits[i].ne); if (f && xaInFeat(f, lat, lon)) return hits[i]; }
+    return null;
+  }
+  if (!SCAN) map.on("dblclick", function (e) {
+    if (areaDraw) return;
+    var ll = e.latlng.wrap(), c = xaCountryAt(ll.lat, ll.lng);
+    if (!c || c.id === CC || (CC === "oki" && c.id === "jp")) return;
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(c.id, "", c.name);
+    location.hash = (c.id === "th" ? "" : c.id + "/") + (current || "timeline");
+    location.reload();
+  });
+  if (SCAN) xaBar.hidden = true; else if (ADDED.length) xaChanged(false); else xaBarDraw();
   window.OSAP_EVENTS = { country: CC, neighbours: NB, list: function () {
     return evBuild().list.map(function (ev) { var v = evMake(ev, ev.m);
       return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
         from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
   } };
   evRefresh();
+  /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
+  requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
 })();
 </script>
