@@ -2,6 +2,9 @@
 # each channel's owner, subscribers and latest upload. Writes nothing to the repo.
 name: Probe YouTube channels
 on:
+  push:
+    branches: [claude/youtube-channels]
+    paths: [tools/youtube_candidates.json, tools/probe_youtube.mjs, .github/workflows/probe-youtube.yml]
   workflow_dispatch:
     inputs:
       only:
