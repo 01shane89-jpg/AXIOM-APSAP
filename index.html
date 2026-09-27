@@ -229,7 +229,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
-.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
+.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
 .breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
 .breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
@@ -649,6 +649,13 @@ html.phone #map .leaflet-top.leaflet-right>.wkctlmap{gap:5px}
 html.phone #hdr-live{letter-spacing:0;text-transform:none}
 html.phone #hdr-live .badge{font-size:9.5px;padding:1px 5px}
 html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
+</style>
+<style>
+/* the small "AI generated" tag: a muted pill; the full draft wording is its tooltip (hover, or tap to show) */
+.aitag{display:inline-block;vertical-align:1px;font:500 10.5px/1.5 var(--sans,system-ui,sans-serif);letter-spacing:.02em;text-transform:none;color:var(--muted,#56626F);background:var(--accent-soft,#D6E3EE);border-radius:999px;padding:0 7px;white-space:nowrap;cursor:help;font-style:normal}
+.aitag.open{white-space:normal;border-radius:6px}.aitag.open::after{content:" · " attr(title)}
+.bpage .aitag{color:#444;background:#e9edf1}
+@media print{.aitag{border:1px solid #bbb;background:none;white-space:normal}.aitag::after{content:" · " attr(title)}}
 </style>
 <header>
   <nav class="ctabs" id="country-seg" aria-label="Country"></nav>
@@ -1301,7 +1308,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     var st = document.createElement("style");
     st.textContent = ".terpin{font:700 13px/18px sans-serif;width:18px;height:18px;text-align:center;border-radius:3px;color:#fff;background:#6d4c2f;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".terpin.w{background:#1f6fa8}.terpin.hn{width:28px;padding:0;font-size:10.5px;box-sizing:border-box}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
-      ".fpc{font:700 10px/1 sans-serif}.terdraft{background:#fff4d6;color:#5a4300;border:1px solid #e0b84d;padding:2px 5px;margin:4px 0;font-size:11px;font-weight:600}" +
+      ".fpc{font:700 10px/1 sans-serif}.terdraft{margin:4px 0 2px;font-size:11px;color:#56626F;display:flex;align-items:center;gap:6px;flex-wrap:wrap}" +
       ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}" +
       ".prpin{font:700 9px/16px sans-serif;width:20px;height:16px;text-align:center;border-radius:2px;color:#fff;background:#8e1b1b;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
@@ -1322,7 +1329,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     function terPop(t) {
       return '<div class="pop"><div class="tier">Key terrain · ' + TE(t.kind) + " · " + TE(t.zone) + "</div><h3>" + TE(t.name) + "</h3>" +
         (t.elev_m ? '<p class="obs">About ' + TE(t.elev_m.toLocaleString()) + " m</p>" : "") +
-        '<div class="terdraft">Why it matters: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(t.why) + "</div>" +
+        '<div class="terdraft">Why it matters <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(t.why) + "</div>" +
         (t.control_claim ? '<p class="obs"><b>Control:</b> ' + TE(t.control_claim) + ' <i>' + TE(t.control_status || "") + "</i></p>" : "") +
         (t.reports && t.reports.length > 1 ? '<p class="obs" style="margin-bottom:0">Reporting:</p><ul class="terev">' + t.reports.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>"; }).join("") + "</ul>" : "") +
@@ -1333,7 +1340,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     function fpPop(f) {
       var l = LV[f.level] || LV.latent;
       return '<div class="pop"><div class="tier" style="color:' + l[1] + '">Possible flashpoint · ' + l[0] + " · " + TE(f.zone) + "</div><h3>" + TE(f.name) + "</h3>" +
-        '<div class="terdraft">Assessment: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(f.why) + "</div>" +
+        '<div class="terdraft">Assessment <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(f.why) + "</div>" +
         '<p class="obs">' + (f.last_reported ? "Latest dated report: " + TE(f.last_reported) + ". " : "") + "Zone about " + TE(f.radius_km) + " km across the centre; drawn for orientation only.</p>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + f.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
@@ -1344,7 +1351,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     function prPop(p) {
       return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
-        '<div class="terdraft">Reported, not verified. Summary: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(p.why) + "</div>" +
+        '<div class="terdraft">Reported, not verified. Summary <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(p.why) + "</div>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + p.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
         }).join("") + "</ul>" +
@@ -1400,7 +1407,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     }
     function rows() {
       return '<label class="mlrow"><input type="checkbox" data-ter="ter"><span><b>Key terrain</b><i>Ranges, hills, passes, rivers and crossings that shape movement. Reference data; positions approximate.</i></span></label>' +
-        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i>Draft, AI-generated, not analyst-approved. Each zone lists the reporting behind it.</i></span></label>' +
+        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
         '<p class="mlkey ternote"></p>' +
         (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
@@ -1411,7 +1418,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     if (site && site.parentNode) {
       var b = document.createElement("div");
       b.innerHTML = '<div class="ctl"><input type="checkbox" id="bl-ter" data-ter="ter"><label for="bl-ter">Key terrain<span class="hint">Escarpment, numbered hills, passes and rivers on all of Thailand’s borders. Reference data</span></label></div>' +
-        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint">Draft, AI-generated, not analyst-approved. Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
+        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint"><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
@@ -4422,10 +4429,10 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
     var T = B.threat || {}, ov = T.overall || {};
     return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
-      '<p class="rdraft">Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports.</p>' +
+      '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
       "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
       advOfficialHtml() +
-      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="bm">(AI draft)</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
       '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
         return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
       }).join("") + "</table>" +
@@ -6138,6 +6145,9 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
   sizeToHeader();
   window.addEventListener("resize", sizeToHeader);
   /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
+  // "AI generated" tags: tap (or Enter) shows the full draft wording, since phones have no hover
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
+  document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
   if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
   renderRules(); evaluate(); badge();
