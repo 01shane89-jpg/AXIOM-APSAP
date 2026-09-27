@@ -2675,6 +2675,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/cdc.js"></script>
 <script src="data/live/navwarnings.js"></script>
 <script src="data/live/ucdp.js"></script>
+<script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/live/roads.js"></script>
@@ -2916,7 +2917,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     { id: "alerts", name: "Alerts", title: "Alerts" },
     { id: "flood", name: "Flood", title: "Flood", live: true },
     { id: "border", name: "Border", title: "Border security", live: true },
-    { id: "insurgency", name: "Southern insurgency", sources: "Royal Thai Police, ISOC public releases, SBPAC, provincial authorities",
+    { id: "insurgency", name: "Southern insurgency", sources: "Royal Thai Police, ISOC public releases, SBPAC, provincial authorities; live: Deep South outlets, Thai news searches, UCDP",
       shows: "IEDs, small-arms attacks, ambushes, arson; weekly and monthly trends; district heat maps; casualties by type." },
     { id: "crime", name: "Organized crime", sources: "Royal Thai Police, Department of Special Investigation, AMLO",
       shows: "Drug and human trafficking, illegal gambling, cybercrime, extortion, wildlife trafficking.",
@@ -3555,7 +3556,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   ]);
   if (TD.insurgency) RULES.push({ id: "insurgency-attack", v: 1, name: "Insurgent attack", layer: "insurgency", unit: "days", def: 30, min: 1, step: 1,
     desc: "An IED, shooting, ambush, arson or attack on a facility " + (TH ? "in the southern border provinces " : "") + "within this many days.",
-    test: function (r, t) { return r.layer === "insurgency" && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
+    test: function (r, t) { return r.layer === "insurgency" && !r.ds && kindOf(r).violent && AS_OF - dnum(r.ts) < t; },
     sev: function (r) { return r.sev; } });
   if (LBY.safety) RULES.push({ id: "quake-strong", v: 1, name: "Strong earthquake", layer: "safety", unit: "magnitude", def: 5.5, min: 2.5, step: 0.5,
     desc: "USGS reports an earthquake of at least this magnitude in or near the area in the last 7 days.",
@@ -3729,13 +3730,14 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     curId = lid;
     var D = TD[lid], recsAll = R.filter(function (r) { return r.layer === lid; }), recs = recsAll.filter(inPeriod);
     var vis = recs.filter(function (r) { return !curOff[lid + ":" + r.kind]; });
-    var viol = recs.filter(function (r) { return kindOf(r).violent || kindOf(r).counted; });
+    /* live Deep South reports (r.ds) are machine-sorted leads: shown, never counted */
+    var viol = recs.filter(function (r) { return !r.ds && (kindOf(r).violent || kindOf(r).counted); });
     var sum = function (a, k) { return a.reduce(function (n, r) { return n + (r[k] || 0); }, 0); };
     var lastV = viol.length ? viol.reduce(function (m, r) { return r.ts > m ? r.ts : m; }, "") : "";
     var since = lastV ? dnum(D.asof) - dnum(lastV) : null;
     /* month buckets */
     var months = {}, mk = [];
-    recs.forEach(function (r) { var k = monthKey(r.ts); if (!months[k]) months[k] = { n: 0, k: 0 }; if (kindOf(r).violent || kindOf(r).counted) { months[k].n++; months[k].k += r[D.tableField || "killed"] || 0; } });
+    recs.forEach(function (r) { var k = monthKey(r.ts); if (!months[k]) months[k] = { n: 0, k: 0 }; if (!r.ds && (kindOf(r).violent || kindOf(r).counted)) { months[k].n++; months[k].k += r[D.tableField || "killed"] || 0; } });
     if (recs.length) {
       var y = +D.from.slice(0, 4), m = +D.from.slice(5, 7), ey = +D.asof.slice(0, 4), em = +D.asof.slice(5, 7);
       while (y < ey || (y === ey && m <= em)) { mk.push(y + "-" + ("0" + m).slice(-2)); m++; if (m > 12) { m = 1; y++; } }
@@ -5050,6 +5052,48 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (window.TSAP) window.TSAP.records = R;
   }
   addMoreRecords2();
+  /* ---------- Thailand's Deep South: live reporting and UCDP's Patani-conflict events for the past year (tools/refresh_deepsouth.mjs).
+     Live items are unverified reports, not curated records: their kind and district are sorted by machine from the headline's words,
+     casualty figures stay in the text (never added to the layer's totals), and a link already used by a curated record is skipped. ---------- */
+  src("ds-ucdp", "Uppsala Conflict Data Program (candidate events, monthly files)", "Research institution", "B",
+    "Patani-conflict events coded by UCDP from media reports for the past 13 months. Fatality figures are UCDP's best estimates; candidate data is revised later.", "https://ucdp.uu.se/");
+  function addDeepSouth() {
+    R = R.filter(function (r) { if (r.ds) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var W = window.ASAP_DS, D = TD.insurgency;
+    if (CC !== "th" || !LBY.insurgency || !W || !D) return;
+    var curated = {}; D.events.forEach(function (e) { curated[e.src] = 1; });
+    var ucdpNow = {}; ((window.ASAP_UCDP || {}).items || []).forEach(function (e) { ucdpNow[e.id] = 1; });
+    (W.items || []).forEach(function (i) {
+      if (!i.link || curated[i.link]) return;
+      var k = D.kinds[i.kind] ? i.kind : "other", kk = D.kinds[k] || {};
+      var s = src("ds-" + String(i.outlet || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || "Unknown outlet",
+        i.state ? "Thai government body (its own statements)" : "News outlet, via " + (i.via || "feed"), "F",
+        "Deep South reporting read every 15 minutes. Not assessed." + (i.nc ? " Search-aggregator result (non-commercial terms)." : ""), i.link);
+      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary || ""), g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? i.geo : null;
+      var fig = [i.killed ? i.killed + " killed" : "", i.injured ? i.injured + " injured" : ""].filter(Boolean).join(", ");
+      var rec = { layer: "insurgency", type: i.state ? "claim" : "event", cat: "Live report · " + (kk.label || "Other or summary"), kind: k, live: true, ds: true,
+        title: en, detail: (sen && sen !== en ? sen : "") + (fig ? (sen && sen !== en ? " " : "") + "Headline states " + fig + " (not counted in the layer's totals)." : ""),
+        orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
+        derived: [mtNote(i), "Kind sorted by machine from the headline's words" + (k === "other" ? " (no match)" : "") + ".",
+          g ? "Placed at " + g.n + (g.p === "province" ? " (the rough centre of the province)" : " (the district centre, approximate)") + " because the text names it." : "Not placed: the text names no Deep South district."].filter(Boolean).join(" "),
+        ts: i.date || W.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: g ? g.n : "", prov: g ? g.prov : "",
+        lat: g ? g.la : null, lon: g ? g.lo : null, prec: g ? (g.p === "province" ? "province" : "approx") : "none", sev: kk.violent ? 2 : 1,
+        src: s, url: i.link, issued: i.date, recorded: W.asof };
+      add(rec);
+    });
+    (W.ucdp || []).forEach(function (e) {
+      if (ucdpNow[e.id]) return;   /* the newest month is already on the layer from data/live/ucdp.js */
+      add({ layer: "insurgency", type: "report", cat: "Conflict event (UCDP, past year)", kind: "other", live: true, ds: true,
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + ")" +
+          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". UCDP candidate data is preliminary and can be revised.",
+        ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon, prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province",
+        sev: e.best >= 3 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES["ds-ucdp"], url: "https://ucdp.uu.se/downloads/candidateged/" + e.file, issued: e.date, recorded: W.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addDeepSouth();
   function nqHtml() {
     var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
     if (!N) return "";
@@ -5553,7 +5597,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var FEEDN = { ASAP_NEWS: "Local news", ASAP_SOCIAL: "Social media", ASAP_WARN: "Weather warnings", ASAP_STORMS: "Tropical cyclones", ASAP_WXF: "Weather forecast",
     ASAP_ADV: "U.S. travel advisory", ASAP_RW: "ReliefWeb reports", ASAP_TSU: "Tsunami bulletins", ASAP_VOLC: "Volcanoes", ASAP_IODA: "Internet outages",
     ASAP_WHO: "WHO outbreak news", ASAP_MAR: "Maritime security", ASAP_ROADS: "Road closures", ASAP_NQ: "National quake catalogues", ASAP_EONET: "NASA EONET events",
-    ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
+    ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_DS: "Deep South reporting (Thailand)", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
   function feedAgo(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 6e4)); return m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
   function feedsHtml() {
     var T = window.OSAP_TIME, rows = [];
