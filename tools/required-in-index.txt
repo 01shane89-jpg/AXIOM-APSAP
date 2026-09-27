@@ -15,6 +15,7 @@
 <script src="assets/osap-share.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
+<script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 
 # loading cover and the per-country data loader
