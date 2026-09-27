@@ -337,20 +337,6 @@
    "fp": "d4e3ce83a796600b6be28413b5d026933820fadeceda7b103863feb5ad408eaa"
   },
   {
-   "id": "sof:ie:port:dun-laoghaire-port",
-   "name": "Dun Laoghaire Port",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 53.2955,
-   "lon": -6.1342,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q26719004",
-   "srcname": "Wikidata",
-   "fp": "295a6bc30bde5397946b1872d548bec5fc52a8f2a6992fbcf5e09d1ec15c4c1a"
-  },
-  {
    "id": "sof:ie:port:portnalaghta",
    "name": "Portnalaghta",
    "unlocode": null,
@@ -363,6 +349,20 @@
    "src": "https://www.wikidata.org/entity/Q26718996",
    "srcname": "Wikidata",
    "fp": "ca6ef7cff7c538627fd3199b79531d663db21fcf46d162df12323e81baa750c4"
+  },
+  {
+   "id": "sof:ie:port:dun-laoghaire-port",
+   "name": "Dun Laoghaire Port",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 53.2955,
+   "lon": -6.1342,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q26719004",
+   "srcname": "Wikidata",
+   "fp": "295a6bc30bde5397946b1872d548bec5fc52a8f2a6992fbcf5e09d1ec15c4c1a"
   }
  ],
  "hospitals": [

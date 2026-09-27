@@ -571,20 +571,6 @@
    "fp": "d9c2ff277649daf94f8c8549c5479dafbf732c512bafb79c2bc4f94489f6fdea"
   },
   {
-   "id": "sof:ca:port:port-of-trois-rivieres",
-   "name": "port of Trois-Rivières",
-   "unlocode": "CA TRR",
-   "locode_function": "1--4----",
-   "lat": 46.3405,
-   "lon": -72.5394,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q19951229",
-   "srcname": "Wikidata",
-   "fp": "a74e0cd301891ddbc96ae813e2b3e5071f0965a0b59fac524e1be6f310338662"
-  },
-  {
    "id": "sof:ca:port:canaport",
    "name": "Canaport",
    "unlocode": "CA CPT",
@@ -597,6 +583,20 @@
    "src": "https://www.wikidata.org/entity/Q15207100",
    "srcname": "Wikidata",
    "fp": "e5eb9ff07516d6d246561924c9a83b1752de6d492de6d6a2eecf2d73f9089bed"
+  },
+  {
+   "id": "sof:ca:port:port-of-trois-rivieres",
+   "name": "port of Trois-Rivières",
+   "unlocode": "CA TRR",
+   "locode_function": "1--4----",
+   "lat": 46.3405,
+   "lon": -72.5394,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q19951229",
+   "srcname": "Wikidata",
+   "fp": "a74e0cd301891ddbc96ae813e2b3e5071f0965a0b59fac524e1be6f310338662"
   },
   {
    "id": "sof:ca:port:port-de-sorel",

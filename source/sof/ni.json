@@ -291,23 +291,6 @@
    "fp": "ce3dc3589465bfb13ec425499a399219caf5034fd2f36bf64fad973580696f21"
   },
   {
-   "id": "sof:ni:hospital:hospital-jose-nieborowski",
-   "name": "Hospital José Nieborowski",
-   "city": "Boaco Department",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": null,
-   "lat": 12.4956,
-   "lon": -85.6392,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q139547959",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "6429b933d51857739def53567bea8343c738651d2029fcb26a95c8b9b160004e"
-  },
-  {
    "id": "sof:ni:hospital:hospital-primario-tomas-borge-martinez",
    "name": "Hospital Primario Tomás Borge Martínez",
    "city": "Chinandega Department",
@@ -323,6 +306,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "08b034b0473e31fa7e8ab500c4f959af043110fbcc2b831dfc1d9b4e5ca9354a"
+  },
+  {
+   "id": "sof:ni:hospital:hospital-jose-nieborowski",
+   "name": "Hospital José Nieborowski",
+   "city": "Boaco Department",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": null,
+   "lat": 12.4956,
+   "lon": -85.6392,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q139547959",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "6429b933d51857739def53567bea8343c738651d2029fcb26a95c8b9b160004e"
   },
   {
    "id": "sof:ni:hospital:hospital-carlos-roberto-huembes",

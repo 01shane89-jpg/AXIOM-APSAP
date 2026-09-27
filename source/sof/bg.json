@@ -295,20 +295,6 @@
    "fp": "9e39b1149f07bd8a84ef9b4c404f725d8c195bdce98aa0f76385520652c8eb44"
   },
   {
-   "id": "sof:bg:port:port-of-svishtov",
-   "name": "Port of Svishtov",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 43.6233,
-   "lon": 25.3458,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q28058958",
-   "srcname": "Wikidata",
-   "fp": "7824d07ccae1af01d028c6bf05e3adf0618eacbc054457db9b1c291bcb9a28ef"
-  },
-  {
    "id": "sof:bg:port:port-of-sozopol",
    "name": "Port of Sozopol",
    "unlocode": null,
@@ -321,6 +307,20 @@
    "src": "https://www.wikidata.org/entity/Q28056176",
    "srcname": "Wikidata",
    "fp": "0f1205404924336e73138f45a44089eea57bfa994d966a7b085fcb71ff71b7f7"
+  },
+  {
+   "id": "sof:bg:port:port-of-svishtov",
+   "name": "Port of Svishtov",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 43.6233,
+   "lon": 25.3458,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q28058958",
+   "srcname": "Wikidata",
+   "fp": "7824d07ccae1af01d028c6bf05e3adf0618eacbc054457db9b1c291bcb9a28ef"
   },
   {
    "id": "sof:bg:port:nesebar-port",

@@ -765,23 +765,6 @@
    "fp": "416b9f11123697153e6bb0c457ab2e5a4cc1fea2dfa753029b01a3868981e8c4"
   },
   {
-   "id": "sof:ar:hospital:hospital-argerich",
-   "name": "Hospital Argerich",
-   "city": "Buenos Aires",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": "Website: https://buenosaires.gob.ar/hospitalargerich",
-   "lat": -34.6283,
-   "lon": -58.366,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q10966594",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "eab942db047f50ccea4f52a3dad604f0543c3b78bfa9457ca360bc2868c2bc09"
-  },
-  {
    "id": "sof:ar:hospital:hospital-pirovano",
    "name": "Hospital Pirovano",
    "city": "Buenos Aires",
@@ -797,6 +780,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "cd89a5b44e5ff8dbf5e81934a01e645b23d55511a2512c7ae6331217b94f0715"
+  },
+  {
+   "id": "sof:ar:hospital:hospital-argerich",
+   "name": "Hospital Argerich",
+   "city": "Buenos Aires",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: https://buenosaires.gob.ar/hospitalargerich",
+   "lat": -34.6283,
+   "lon": -58.366,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q10966594",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "eab942db047f50ccea4f52a3dad604f0543c3b78bfa9457ca360bc2868c2bc09"
   },
   {
    "id": "sof:ar:hospital:pedro-de-elizalde-hospital",

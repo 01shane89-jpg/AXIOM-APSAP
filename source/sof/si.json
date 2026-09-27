@@ -16,23 +16,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "b9bd97aca8eceb7309f23c1c1c203897e05f0451be5e35cb6ebed752e35c1abe"
  },
- "posts": [
-  {
-   "id": "sof:si:post:embassy-of-the-united-states-ljubljana",
-   "name": "Embassy of the United States, Ljubljana",
-   "kind": "embassy",
-   "city": "Ljubljana",
-   "address": "Prešernova 31",
-   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 46.0511,
-   "lon": 14.5051,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q67115259",
-   "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "6551cd05ae36851179ec5c06792207716ab955c0b408136f392ec5b0a2930bde"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:si:airport:ljlj",
@@ -280,23 +264,6 @@
    "fp": "0ad0c93aaa6f63fc41d53321af713f0cc3db5f34e3bd1618d9b0015101922841"
   },
   {
-   "id": "sof:si:hospital:izola-general-hospital",
-   "name": "Izola General Hospital",
-   "city": "Izola",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": "Website: https://sb-izola.si/",
-   "lat": 45.5444,
-   "lon": 13.6864,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q49150129",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "c654d0e29a5e4b2141a18dad51955d498b8f52329f0aa40e12eac7e97cffa820"
-  },
-  {
    "id": "sof:si:hospital:university-psychiatric-clinic-ljubljana",
    "name": "University Psychiatric Clinic Ljubljana",
    "city": "Ljubljana",
@@ -312,6 +279,23 @@
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the hospital's own position is not in Wikidata",
    "fp": "0a7ae7cf5e5ab94bc71bb280ecdb333a8696814ec280e49b8c75e8cf70167e64"
+  },
+  {
+   "id": "sof:si:hospital:izola-general-hospital",
+   "name": "Izola General Hospital",
+   "city": "Izola",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: https://sb-izola.si/",
+   "lat": 45.5444,
+   "lon": 13.6864,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q49150129",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "c654d0e29a5e4b2141a18dad51955d498b8f52329f0aa40e12eac7e97cffa820"
   },
   {
    "id": "sof:si:hospital:sezana-hospital",
@@ -464,6 +448,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
+  "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none.",
+  "No U.S. embassy or consulate found in Wikidata for this country; check travel.state.gov for the post that covers it."
  ]
 }

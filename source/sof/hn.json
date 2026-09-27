@@ -217,20 +217,6 @@
    "fp": "25697b893637abde256e118bc1207d34be662fe5fdf6be16f9987b6baa2289ae"
   },
   {
-   "id": "sof:hn:port:coxen-hole",
-   "name": "Coxen Hole",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 16.3167,
-   "lon": -86.55,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q111386633",
-   "srcname": "Wikidata",
-   "fp": "f7b5ad8abc24fc42a401f77d90a089e006cbb0dcd1cf9bccacdae85bb9ace2ef"
-  },
-  {
    "id": "sof:hn:port:puerto-de-hencan",
    "name": "Puerto de Hencan",
    "unlocode": null,
@@ -243,6 +229,20 @@
    "src": "https://www.wikidata.org/entity/Q111387023",
    "srcname": "Wikidata",
    "fp": "ad007a8bec43d15febca0816bbc9076477e78301e0300aae91f21ebeb9e22b12"
+  },
+  {
+   "id": "sof:hn:port:coxen-hole",
+   "name": "Coxen Hole",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 16.3167,
+   "lon": -86.55,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q111386633",
+   "srcname": "Wikidata",
+   "fp": "f7b5ad8abc24fc42a401f77d90a089e006cbb0dcd1cf9bccacdae85bb9ace2ef"
   },
   {
    "id": "sof:hn:port:la-ceiba",

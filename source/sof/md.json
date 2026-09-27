@@ -206,20 +206,6 @@
    "fp": "43dd3ec37452ed7573699ae28371ad4b3a6bca539fa18670e85cab2eba8931bb"
   },
   {
-   "id": "sof:md:port:port-soloncheny",
-   "name": "Port Soloncheny",
-   "unlocode": null,
-   "locode_function": null,
-   "lat": 47.8239,
-   "lon": 29.0092,
-   "prec": "approx",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q27558071",
-   "srcname": "Wikidata",
-   "fp": "4730b804bcaff22e34d1c9af72ee9ab5b32d5ab4839db08129f5ff3a8befb310"
-  },
-  {
    "id": "sof:md:port:port-pugacheny",
    "name": "Port Pugacheny",
    "unlocode": null,
@@ -234,18 +220,18 @@
    "fp": "79ad15b0c01ecbe05078ec9a747fc97811347d02ddae9c5112ab2996a046baeb"
   },
   {
-   "id": "sof:md:port:port-sherpeny",
-   "name": "Port Sherpeny",
+   "id": "sof:md:port:port-soloncheny",
+   "name": "Port Soloncheny",
    "unlocode": null,
    "locode_function": null,
-   "lat": 47.0242,
-   "lon": 29.36,
+   "lat": 47.8239,
+   "lon": 29.0092,
    "prec": "approx",
    "coord_basis": "Wikidata coordinate (P625)",
    "coord_flag": null,
-   "src": "https://www.wikidata.org/entity/Q27558053",
+   "src": "https://www.wikidata.org/entity/Q27558071",
    "srcname": "Wikidata",
-   "fp": "047568333929f6d788cb4c96065e757240d6231ce04645671e20698998903066"
+   "fp": "4730b804bcaff22e34d1c9af72ee9ab5b32d5ab4839db08129f5ff3a8befb310"
   },
   {
    "id": "sof:md:port:port-popenki",
@@ -260,6 +246,20 @@
    "src": "https://www.wikidata.org/entity/Q27558070",
    "srcname": "Wikidata",
    "fp": "32e4af0414e6895618fe54b8c7fdb60233d26c76fa562c0bbacb6175583d45cf"
+  },
+  {
+   "id": "sof:md:port:port-sherpeny",
+   "name": "Port Sherpeny",
+   "unlocode": null,
+   "locode_function": null,
+   "lat": 47.0242,
+   "lon": 29.36,
+   "prec": "approx",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "coord_flag": null,
+   "src": "https://www.wikidata.org/entity/Q27558053",
+   "srcname": "Wikidata",
+   "fp": "047568333929f6d788cb4c96065e757240d6231ce04645671e20698998903066"
   },
   {
    "id": "sof:md:port:port-slobodzeya",

@@ -424,23 +424,6 @@
    "fp": "6aefe80f98a1695ae303cd76348bb737b91fbc30b98537f73e2af44198e2e5c9"
   },
   {
-   "id": "sof:ro:hospital:institutul-clinic-fundeni",
-   "name": "Institutul Clinic Fundeni",
-   "city": "Bucharest",
-   "address": null,
-   "emergency_24h": null,
-   "type": null,
-   "trauma_level": null,
-   "notes": "Website: https://icfundeni.ro/",
-   "lat": 44.4656,
-   "lon": 26.156,
-   "prec": "approx",
-   "src": "https://www.wikidata.org/entity/Q12730478",
-   "srcname": "Wikidata",
-   "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "d5ff1e7814d329be09db73e8c70fd3cb3b83eefa38d29dfeeca405ebe19e04b0"
-  },
-  {
    "id": "sof:ro:hospital:emergency-university-hospital-elias",
    "name": "Emergency University Hospital Elias",
    "city": "Bucharest",
@@ -456,6 +439,23 @@
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
    "fp": "9e79a60c1c0049607fe0cc7026ceb2cfb87ecc225d7f299c2046112a302552e8"
+  },
+  {
+   "id": "sof:ro:hospital:institutul-clinic-fundeni",
+   "name": "Institutul Clinic Fundeni",
+   "city": "Bucharest",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: https://icfundeni.ro/",
+   "lat": 44.4656,
+   "lon": 26.156,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q12730478",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "d5ff1e7814d329be09db73e8c70fd3cb3b83eefa38d29dfeeca405ebe19e04b0"
   },
   {
    "id": "sof:ro:hospital:victor-babes-national-institute-for-research-and-development",
