@@ -128,16 +128,23 @@ export function parseYtVideosPage(html, now = Date.now()) {
     seen.add(id);
     out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
   }
-  // newer page layout: "lockupViewModel" blocks with contentId, title.content and a "3 hours ago" metadata part
-  for (const chunk of html.split('"lockupViewModel":{').slice(1, 40)) {
-    const id = (chunk.match(/"contentId":"([\w-]{11})"/) || [])[1], title = (chunk.match(/"title":\{"content":"((?:[^"\\]|\\.)*)"/) || [])[1];
-    const ago = (chunk.match(/"content":"(?:Streamed )?(\d+) (second|minute|hour|day|week|month|year)s? ago"/) || []);
-    if (!id || !title || !ago[1] || seen.has(id)) continue;
+  // newer page layout: "lockupViewModel" objects in the page's ytInitialData, read as JSON
+  let data = null;
+  try { const m = html.match(/var ytInitialData = (\{[\s\S]*?\});<\/script>/) || html.match(/ytInitialData"?\]? = (\{[\s\S]*?\});/); data = m ? JSON.parse(m[1]) : null; } catch (e) {}
+  const walk = function* (o, key) { if (!o || typeof o !== "object") return; if (o[key]) yield o[key]; for (const v of Object.values(o)) yield* walk(v, key); };
+  for (const v of walk(data, "lockupViewModel")) {
+    const j = JSON.stringify(v), id = v.contentId || (j.match(/"videoId":"([\w-]{11})"/) || [])[1];
+    const title = (((v.metadata || {}).lockupMetadataViewModel || {}).title || {}).content || (j.match(/"title":\{"content":"((?:[^"\\]|\\.)*)"/) || [])[1];
+    const ago = j.match(/"content":"(?:Streamed |Premiered )?(\d+)\s(second|minute|hour|day|week|month|year)s?\sago"/) || [];
+    if (!/^[\w-]{11}$/.test(id || "") || !title || !ago[1] || seen.has(id)) continue;
     seen.add(id);
-    out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+    out.push({ id, title: v.contentId ? title : str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+    if (out.length >= 40) break;
   }
+  if (!out.length) { for (const v of walk(data, "lockupViewModel")) { ytSample = JSON.stringify(v).replace(/"url":"[^"]*"/g, '"url":""').slice(0, 1500); break; } }
   return out;
 }
+let ytSample = "";
 const ytPageHint = (h) => h.length + " bytes" + ["videoRenderer", "lockupViewModel", "richItemRenderer", "consent.youtube", "ytInitialData"].map((k) => (h.includes(k) ? ", has " : ", no ") + k).join("");
 export function parseYtFeed(xml) {
   const out = [];
@@ -169,7 +176,7 @@ for (const ch of cfg.youtube || []) {
         let vp;
         try { vp = await text("https://www.youtube.com/channel/" + id + "/videos"); vids = parseYtVideosPage(vp); via = "videos page"; }
         catch (e3) { throw new Error("video feed " + err(e) + ", uploads feed " + err(e2) + ", videos page " + err(e3) + " (channel " + id + ")"); }
-        if (!vids.length) throw new Error("video feed " + err(e) + "; videos page had no videos (" + ytPageHint(vp) + ")");
+        if (!vids.length) { if (ytSample) { console.log("YouTube Videos page sample (first unparsed lockupViewModel):", ytSample); ytSample = ""; } throw new Error("video feed " + err(e) + "; videos page had no videos (" + ytPageHint(vp) + ")"); }
       }
     }
     let n = 0;
