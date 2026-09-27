@@ -4988,8 +4988,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
   /* ---------- Open data: every other free, no-login feed (tools/refresh_dense.mjs). data/live/x/feeds.js lists the feeds and their
      status; data/live/x/<cc>.js holds this country's items and figures and is loaded only when the country is opened. ---------- */
-  var XCAT = ["Hazards", "Advisories", "Events", "Politics", "Cyber", "Sanctions", "Aviation", "Maritime", "Space", "Health", "Environment", "Economy", "Infrastructure"];
-  var XCOL = { Hazards: "#d84315", Advisories: "#6a1b9a", Events: "#1565c0", Politics: "#283593", Cyber: "#00838f", Sanctions: "#4e342e", Aviation: "#2e7d32", Maritime: "#0277bd",
+  var XCAT = ["Hazards", "Advisories", "Events", "Analysis", "Politics", "Cyber", "Sanctions", "Aviation", "Maritime", "Space", "Health", "Environment", "Economy", "Infrastructure"];
+  var XCOL = { Hazards: "#d84315", Advisories: "#6a1b9a", Events: "#1565c0", Analysis: "#ad8a00", Politics: "#283593", Cyber: "#00838f", Sanctions: "#4e342e", Aviation: "#2e7d32", Maritime: "#0277bd",
     Space: "#5e35b1", Health: "#c2185b", Environment: "#558b2f", Economy: "#546e7a", Infrastructure: "#757575" };
   /* standing lists (advice levels, sanctions listings, elections, reference layers) ignore the period; dated events follow it */
   var XSTANDING = { Advisories: 1, Sanctions: 1, Politics: 1, Infrastructure: 1, Economy: 1 };
@@ -5057,7 +5057,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (RainViewer, global mosaic)</label></div>' +
       '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
-      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + Object.keys(byCat[c]).map(function (fid) {
+      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
         var f = FD[fid], arr = byCat[c][fid], open = xOpen[fid], show = open ? arr : arr.slice(0, 8);
         return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted licence: ' + esc(f.lic) + '">NC</span>' : "") +
           (f.ok ? "" : ' · <span title="' + esc(f.error || "") + '">stale</span>') + '</span></h3><div class="tllist">' + show.map(function (p) {
