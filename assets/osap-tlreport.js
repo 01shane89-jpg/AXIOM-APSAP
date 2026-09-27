@@ -89,7 +89,7 @@
     ".tlr .st.ob{border-color:#7fa3bf;background:#eaf2f8;color:#1f4f73}.tlr .st.cl{border-style:dashed}" +
     ".tlr .tlrev{border:1px solid #d4dbe1;border-left:4px solid #12324a;border-radius:3px;padding:4px 8px;margin:5px 0;break-inside:avoid;page-break-inside:avoid}" +
     ".tlr .tlrev .n{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#12324a;color:#fff;font-size:.85em;font-weight:700;margin-right:5px}" +
-    ".tlr .tlrev p{margin:2px 0}.tlr .tlrev ul{margin:1px 0 1px 16px;padding:0}.tlr .tlrev.sv2{border-left-color:#c47a00}" +
+    ".tlr h4.tlrsub{margin:6px 0 2px;font-size:1em;color:#12324a}.tlr .tlrev p{margin:2px 0}.tlr .tlrev ul{margin:1px 0 1px 16px;padding:0}.tlr .tlrev.sv2{border-left-color:#c47a00}" +
     ".tlr .tlrev.sv3{border-left-color:#b3261e}" +
     ".tlr ol.tlrsrc{margin:2px 0 0 18px;padding:0;column-count:2;column-gap:16px;font-size:.92em;color:#333}.tlr ol.tlrsrc li{break-inside:avoid;overflow-wrap:anywhere}.tlr ol.tlrsrc a{color:inherit}" +
     ".tlr .tlrnote{background:#eef3f7;padding:5px 8px;margin:6px 0;border-radius:3px}.tlr .tlrnote p{margin:2px 0}" +
@@ -165,6 +165,92 @@
       .slice(0, KEY_EVENTS)
       .sort(function (a, b) { return a.from - b.from; });
   }
+  /* ---------- notable records: when too few incidents were reported by two sources, key events are filled with single
+     records picked by fixed, stated rules (no AI). Each rule adds points; a record needs 4 to qualify; the best go in:
+     ceasefire or agreement 5, strike 4, clash 4, closure or suspension 3, deaths reported +3, injuries reported +1,
+     escalation wording +2, highest severity +1, three or more of one kind the same day +2, first strong record of a surge week +2 (at least 3 records and twice the
+     weekly average of the 4 weeks before). Several records of one kind on one day (e.g. many crossings closed) count once.
+     Turning points (a headline that is an agreement, or a mass closure) are taken first, then the best record in each equal slice of the period, then the rest by score. */
+  var RULES = [
+    ["ceasefire or agreement", 5, /\b(cease-?fires?|truce|armistice|peace (accord|deal|agreement|talks|plan)|accords?|agreements?|mou|signed|deal reached)\b/],
+    ["strike", 4, /\b(air or artillery strike|air ?strikes?|bomb(s|ed|ing)?|shell(s|ed|ing)?|artillery|rockets?|mortars?|missiles?|drone strikes?)\b/],
+    ["clash", 4, /\b(armed clash|clash(es)?|firefights?|exchange of fire|skirmish(es)?|gunfights?|ambush(ed)?|grenades?|attack(s|ed)?)\b/],
+    ["closure or suspension", 3, /\b(crossing closed|closes?|closed|closure|shut|suspend(s|ed)?|cancel(s|led)?|sever(s|ed)?)\b/],
+    ["escalation", 2, /\b(war|launch(es|ed)?|opens?|captur(e|es|ed)|seiz(e|es|ed)|downgrad\w*|state of emergency|martial law|evacuat\w*|displac\w*|mobilis\w*|mobiliz\w*)\b/]
+  ];
+  function notable(recs, grouped, room) {
+    if (room <= 0) return [];
+    var used = {};
+    grouped.forEach(function (e) { e.reports.forEach(function (p) { used[p.key] = 1; }); });
+    /* one candidate per record, or per kind and day when three or more of one kind fall on one day */
+    var byKD = {}, cands = [];
+    recs.forEach(function (r) { if (r.type === "observation" || (r.__rk && used[r.__rk])) return; var k = (r.cat || "") + "|" + r.__tlw.day; (byKD[k] = byKD[k] || []).push(r); });
+    Object.keys(byKD).forEach(function (k) {
+      var g = byKD[k];
+      if (g.length >= 3 && g[0].cat) cands.push({ recs: g, r: g[0], title: g[0].cat + " (" + g.length + " records the same day)", many: true });
+      else g.forEach(function (r) { cands.push({ recs: [r], r: r, title: r.title }); });
+    });
+    /* weekly counts, for surges */
+    /* news and social feeds keep only recent items, so they would make every recent week look like a surge: not counted */
+    var wk = {}; recs.forEach(function (r) { if (r.news || r.social) return; var w = Math.floor(r.__tlw.ms / 6048e5); wk[w] = (wk[w] || 0) + 1; });
+    function surge(ms) {
+      var w = Math.floor(ms / 6048e5), c = wk[w] || 0, prev = 0;
+      for (var i = 1; i <= 4; i++) prev += wk[w - i] || 0;
+      prev /= 4;
+      return c >= 3 && c >= 2 * prev ? { c: c, prev: prev } : null;
+    }
+    cands.forEach(function (c) {
+      var r = c.r, txt = ((r.cat || "") + " " + c.title + " " + (c.many ? "" : (r.detail || ""))).toLowerCase(), why = [], sc = 0;
+      RULES.forEach(function (x) { if (x[2].test(txt)) { sc += x[1]; why.push(x[0]); } });
+      var killed = c.recs.reduce(function (a, x) { return a + (+x.killed || 0); }, 0), hurt = c.recs.reduce(function (a, x) { return a + (+x.injured || 0); }, 0);
+      if (killed > 0 || /\b(kill(s|ed|ing)?|dead|deaths?|died|fatal\w*)\b/.test(txt)) { sc += 3; why.push(killed > 0 ? killed + " reported killed" : "deaths reported"); }
+      else if (hurt > 0 || /\b(wound(s|ed)?|injur\w*|hurt)\b/.test(txt)) { sc += 1; why.push(hurt > 0 ? hurt + " reported injured" : "injuries reported"); }
+      if ((r.sev || 1) >= 3) { sc += 1; why.push("highest severity"); }
+      if (c.many) { sc += 2; why.push(c.recs.length + " records of this kind the same day"); }
+      /* a turning point: the headline itself is an agreement (not a strike or clash that mentions one), or a mass closure */
+      var tl = String(c.title).toLowerCase();
+      c.turn = (RULES[0][2].test(tl) && !RULES[1][2].test(tl) && !RULES[2][2].test(tl)) || (c.many && RULES[3][2].test(txt));
+      c.sc = sc; c.why = why;
+    });
+    /* the strongest record of each surge week gets the surge point */
+    var bestInWeek = {};
+    cands.forEach(function (c) { var w = Math.floor(c.r.__tlw.ms / 6048e5); if (!bestInWeek[w] || c.sc > bestInWeek[w].sc) bestInWeek[w] = c; });
+    Object.keys(bestInWeek).forEach(function (w) {
+      var c = bestInWeek[w], s = surge(c.r.__tlw.ms);
+      if (s && c.sc >= 2 && !c.r.news && !c.r.social) { c.sc += 2; c.why.push("start of a surge: " + s.c + " records that week against " + (Math.round(s.prev * 10) / 10) + " a week before"); }
+    });
+    /* choose for coverage, not only for score: turning points (agreements) first, then the best record in each equal
+       slice of the period, then the rest by score; at most two from one day */
+    var ok = cands.filter(function (c) { return c.sc >= 4; })
+      .sort(function (a, b) { return b.sc - a.sc || (b.r.sev || 1) - (a.r.sev || 1) || a.r.__tlw.ms - b.r.__tlw.ms; });
+    var pickd = [], perDay = {};
+    function take(c) {
+      if (pickd.length >= room || pickd.indexOf(c) >= 0 || (perDay[c.r.__tlw.day] || 0) >= 2) return;
+      pickd.push(c); perDay[c.r.__tlw.day] = (perDay[c.r.__tlw.day] || 0) + 1;
+    }
+    ok.filter(function (c) { return c.turn; }).slice(0, Math.ceil(room / 2)).forEach(take);
+    if (ok.length) {
+      var t0 = recs[0].__tlw.ms, t1 = recs[recs.length - 1].__tlw.ms + 1, n = Math.max(1, room - pickd.length), w = (t1 - t0) / n;
+      for (var i = 0; i < n; i++) { var inS = ok.filter(function (c) { return c.r.__tlw.ms >= t0 + i * w && c.r.__tlw.ms < t0 + (i + 1) * w; })[0]; if (inS) take(inS); }
+    }
+    ok.forEach(take);
+    return pickd
+      .map(function (c) {
+        var ll = c.recs.filter(function (x) { return x.lat != null && x.lon != null && isFinite(x.lat) && isFinite(x.lon); })[0];
+        return { rule: true, c: c, title: c.title, from: c.r.__tlw.ms, lat: ll ? +ll.lat : null, lon: ll ? +ll.lon : null, sev: c.r.sev || 1 };
+      })
+      .sort(function (a, b) { return a.from - b.from; });
+  }
+  function noteHtml(e, i) {
+    var c = e.c, r = c.r, u = safeUrl(r.url), st = STATUS[r.type] || ["Reported", "not verified"];
+    var srcs = []; c.recs.forEach(function (x) { if (srcs.indexOf(x.src.name) < 0) srcs.push(x.src.name); });
+    return '<div class="tlrev sv' + (e.sev || 1) + '"><p><span class="n">' + (i + 1) + "</span><b>" +
+      (u && !c.many ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" style="color:inherit">' + esc(e.title) + "</a>" : esc(e.title)) + "</b></p>" +
+      '<p class="bm">' + esc(stamp(r.__tlw)) + " · " + (c.many ? c.recs.length + " records from " : "one report from ") + esc(srcs.slice(0, 4).join(", ")) + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "") +
+      ' · <span class="st' + (r.type === "claim" ? " cl" : "") + '">' + esc(st[0]) + "</span>" + esc(st[1]) + "</p>" +
+      (c.many ? '<p class="bm">' + esc(c.recs.slice(0, 4).map(function (x) { return x.title; }).join("; ")) + (c.recs.length > 4 ? "; and " + (c.recs.length - 4) + " more" : "") + "</p>" : "") +
+      '<p class="bm"><b>Why listed:</b> ' + esc(c.why.join(" · ")) + "</p></div>";
+  }
   var sumState = 0, sumWait = [];
   function loadSummaries(cb) {
     if (window.OSAP_EVSUM || sumState === 2) return cb();
@@ -232,7 +318,8 @@
   function build() {
     LN = layerNames();
     var o = OPT, all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
-    var now = Date.now(), evs = recs.length ? eventsFor(recs) : [], m = recs.length ? mapSvg(recs, evs) : null;
+    var now = Date.now(), evs = recs.length ? eventsFor(recs) : [], nts = recs.length ? notable(recs, evs, KEY_EVENTS - evs.length) : [];
+    var keyEv = evs.concat(nts), m = recs.length ? mapSvg(recs, keyEv) : null;
     /* sources, numbered in order of first appearance */
     var srcs = [], sno = {};
     recs.forEach(function (r) { var k = r.src.id || r.src.name; if (!sno[k]) { srcs.push({ s: r.src, n: 0, urls: {} }); sno[k] = srcs.length; } var x = srcs[sno[k] - 1]; x.n++; var h = host(safeUrl(r.url)); if (h) x.urls[h] = 1; });
@@ -254,16 +341,19 @@
       '<div class="tlrmeta"><div><b>' + recs.length + "</b><span>records" + (all.length > recs.length ? " (latest " + MAX_ROWS + " of " + all.length + ")" : "") + "</span></div>" +
       "<div><b>" + order.length + "</b><span>day" + (order.length === 1 ? "" : "s") + " with reporting</span></div>" +
       "<div><b>" + srcs.length + "</b><span>source" + (srcs.length === 1 ? "" : "s") + "</span></div>" +
-      "<div><b>" + evs.length + "</b><span>grouped event" + (evs.length === 1 ? "" : "s") + " shown</span></div></div>" +
+      "<div><b>" + keyEv.length + "</b><span>key event" + (keyEv.length === 1 ? "" : "s") + " shown</span></div></div>" +
       '<p class="bm">First record ' + esc(stamp(first)) + "; last " + esc(stamp(last)) + ". " +
       kinds.event + " sourced reports, " + kinds.claim + " official statements, " + kinds.observation + " instrument readings.</p>" +
       '<div class="tlrnote"><p><b>Nothing in this report is confirmed.</b> "Reported" means a named source said it; "Observed" means an instrument reading. A credible source can still be wrong. Every entry links to its source and carries a SHA-256 fingerprint of the record as OSAP holds it.</p></div>' +
       '<div class="tlrmapw"><div><h3>Where</h3>' + m.svg +
       '<div class="tlrkey"><span><i style="background:#b3261e;opacity:.7"></i>Sourced report</span><span><i style="background:#8a5a00;opacity:.7;border:1px dashed #8a5a00"></i>Official statement</span><span><i style="border:1.5px solid #1f5f8b"></i>Instrument reading</span>' +
-      (evs.length ? "<span><i style=\"background:#12324a\"></i>Numbered: key events</span>" : "") + "</div>" +
+      (keyEv.length ? "<span><i style=\"background:#12324a\"></i>Numbered: key events</span>" : "") + "</div>" +
       '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". Positions are as precise as each source allows.</p></div>" +
-      "<div><h3>Key events " + '<span class="aitag" tabindex="0" title="Reports grouped into events automatically by fixed rules (time, place and shared wording), not reviewed by an analyst.">Automatic</span></h3>' +
-      (evs.length ? evs.map(evHtml).join("") : '<p class="bm">No two sources reported the same incident in these dates, so no events are grouped.</p>') + "</div></div>" +
+      "<div><h3>Key events " + '<span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
+      (evs.length ? (nts.length ? '<h4 class="tlrsub">Reported by two or more sources</h4>' : "") + evs.map(evHtml).join("") : "") +
+      (nts.length ? (evs.length ? '<h4 class="tlrsub">Other notable records</h4>' : '<p class="bm">No two sources reported the same incident in these dates, so these are single reports picked by fixed rules.</p>') +
+        nts.map(function (e, i) { return noteHtml(e, evs.length + i); }).join("") : "") +
+      (keyEv.length ? "" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') + "</div></div>" +
       "<h3>Chronology</h3>" + '<p class="bm">Oldest first. Days are UTC (Zulu) dates; each time is shown in Zulu and local time.</p>' +
       order.map(function (d) {
         return '<section class="tlrday"><h3 class="tlrd">' + esc(fmtDay(d)) + " <span>" + days[d].length + " record" + (days[d].length === 1 ? "" : "s") + "</span></h3>" +
