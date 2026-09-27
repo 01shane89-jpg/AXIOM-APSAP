@@ -5,6 +5,9 @@
 // Each institute is its own feed. Candidate addresses are tried in order, then the feed link advertised on the home page.
 // Licence: publisher copyright; headline and link only. Marked nc so these can be stripped in one pass before any paid use.
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { rssItems, feed, run, ageDays } from "./dense_lib.mjs";
 import { ccsInText, ccFromA2, withOki } from "./geo_cc.mjs";
 
@@ -27,7 +30,7 @@ const TT = [
   ["atlantic", "Atlantic Council", "https://www.atlanticcouncil.org/", ["https://www.atlanticcouncil.org/feed/"]],
   ["wotr", "War on the Rocks", "https://warontherocks.com/", ["https://warontherocks.com/feed/"]],
   ["ecfr", "ECFR", "https://ecfr.eu/", ["https://ecfr.eu/feed/"]],
-  ["sipri", "SIPRI", "https://www.sipri.org/", ["https://www.sipri.org/rss.xml", "https://www.sipri.org/rss/news", "https://www.sipri.org/commentary/rss.xml"]],
+  ["sipri", "SIPRI", "https://www.sipri.org/", ["https://www.sipri.org/rss/combined.xml", "https://www.sipri.org/rss.xml"]],
   ["wilson", "Wilson Center", "https://www.wilsoncenter.org/", ["https://www.wilsoncenter.org/rss.xml", "https://www.wilsoncenter.org/feed"]],
   ["usip", "US Institute of Peace", "https://www.usip.org/", ["https://www.usip.org/rss.xml", "https://www.usip.org/publications/rss.xml"]],
   ["rusi", "RUSI", "https://www.rusi.org/", ["https://www.rusi.org/rss.xml", "https://www.rusi.org/explore-our-research/rss.xml"]],
@@ -94,7 +97,8 @@ async function gazetteer(g) {
   if (GAZ) return GAZ;
   GAZ = (async () => {
     const zip = await g("https://download.geonames.org/export/dump/cities15000.zip", "buf", { timeout: 60e3 });
-    const r = spawnSync("unzip", ["-p", "-", "cities15000.txt"], { input: zip, maxBuffer: 64e6 });
+    const tmp = path.join(os.tmpdir(), "osap-cities15000.zip"); fs.writeFileSync(tmp, zip);   // unzip cannot read an archive from stdin
+    const r = spawnSync("unzip", ["-p", tmp, "cities15000.txt"], { maxBuffer: 64e6 });
     const txt = r.stdout && r.stdout.length ? r.stdout.toString("utf8") : "";
     if (!txt) throw new Error("gazetteer unzip failed");
     const byName = new Map();
@@ -140,7 +144,7 @@ async function fromSitemap(g, home) {
     const out = urls.filter((u) => u.loc && u.mod && ageDays(u.mod) <= 30 && !NOT_ARTICLE.test(new URL(u.loc).pathname) && new URL(u.loc).pathname.split("/").filter(Boolean).length >= 1)
       .sort((a, b) => b.mod.localeCompare(a.mod)).slice(0, 60).map((u) => {
         const slug = decodeURIComponent(new URL(u.loc).pathname.split("/").filter(Boolean).pop()).replace(/\.(html?|aspx?|php)$/i, "");
-        const title = slug.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+        const title = slug.replace(/[-_]+/g, " ").replace(/\s+/g, " ").replace(/\b([a-z]+) s\b/gi, "$1's").trim();
         return { title: title.charAt(0).toUpperCase() + title.slice(1), link: u.loc, date: u.mod, summary: "Headline taken from the page address; the date is when the page last changed." };
       }).filter((e) => e.title.split(" ").length >= 3);
     if (out.length) return out;
@@ -171,7 +175,7 @@ for (const [id, org, home, urls] of TT) {
           const page = await g(pg, "text", { timeout: 20e3 });
           const alt = [...page.matchAll(/<link[^>]+type="application\/(?:rss|atom)\+xml"[^>]*>/gi)].map((m) => (m[0].match(/href="([^"]+)"/) || [])[1]);
           const anchors = [...page.matchAll(/href="([^"]*(?:rss|feed|atom)[^"]*)"/gi)].map((m) => m[1]).filter((h) => !/feedback|feedburner\.google|comments\/feed|\.(css|js|png|svg)(\?|$)/i.test(h));
-          const links = [...new Set([...alt, ...anchors].filter(Boolean).map((l) => { try { return new URL(l.replace(/&amp;/g, "&"), pg).href; } catch { return null; } }).filter(Boolean))].filter((l) => !urls.includes(l) && l !== pg);
+          const links = [...new Set([...alt, ...anchors].filter(Boolean).map((l) => { try { return new URL(l.replace(/&amp;/g, "&"), pg).href; } catch { return null; } }).filter(Boolean))].filter((l) => !urls.includes(l) && l !== pg && !/comments\/feed/i.test(l));
           let hit = false;
           for (const l of links.slice(0, 4)) if ((hit = await tryUrl(l))) break;
           if (hit) break;
