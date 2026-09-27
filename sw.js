@@ -405,12 +405,14 @@
 ] are filled in there.
    - App shell and packaged data: cached on install, served cache-first, replaced when VERSION changes.
    - index.html and the feed files: network-first, so a connected device always sees the newest published
-     data and an offline one falls back to the last copy it saw. Feed files wait at most DATA_WAIT for the network.
+     data and an offline one falls back to the last copy it saw. Feed files wait at most DATA_WAIT and the page PAGE_WAIT for the network.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "d597e0c14a7e";
+const VERSION = "dbe62866d799";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
-const DATA_WAIT = 4000;
+// A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
+// page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
+const DATA_WAIT = 1200, PAGE_WAIT = 2500;
 const PRECACHE = [
 "./",
 "index.html",
@@ -776,8 +778,6 @@ const PRECACHE = [
 "data/live/gdacs.js",
 "data/live/reliefweb.js",
 "data/live/warnings.js",
-"data/live/news.js",
-"data/live/social.js",
 "data/live/advisories.js",
 "data/live/tsunami.js",
 "data/live/volcano.js",
@@ -815,7 +815,7 @@ const PRECACHE = [
 "assets/tiles-flood25.js",
 "assets/vendor/leaflet-1.9.4.js"
 ];
-const FRESH = [/\/index\.html$/, /\/$/, /data\/thailand\/flood-live-snapshot\.js$/, /data\/live\/[a-z-]+\.js$/, /data\/history\/[a-z]+\.js$/];
+const FRESH = [/\/index\.html$/, /\/$/, /data\/thailand\/flood-live-snapshot\.js$/, /data\/live\/[a-z-]+\.js$/, /data\/live\/(news|social)\/[a-z]+\.js$/, /data\/history\/[a-z]+\.js$/];
 const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/];
 
 self.addEventListener("install", (e) => {
@@ -858,7 +858,9 @@ self.addEventListener("fetch", (e) => {
         .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback));
       return;
     }
-    e.respondWith(net.catch(fallback));
+    // The page itself: the newest deploy when the network answers within PAGE_WAIT, else the saved copy (a new deploy shows next time).
+    e.respondWith(Promise.race([net.catch(() => null), new Promise((r) => setTimeout(() => r(null), PAGE_WAIT))])
+      .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback));
     return;
   }
   e.respondWith(caches.match(req, { ignoreSearch: url.origin === location.origin }).then((hit) => hit || fetch(req).then((res) => {
