@@ -538,7 +538,7 @@ html.phone .rvpkg{max-height:none}
 .pkgh{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
 .pkgdl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px}
 .pkgdl dt{color:var(--muted)}
-.pkgdl dd{margin:0}
+.pkgdl dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .sub{display:block;font-size:11px;color:var(--muted);line-height:1.35}
 #tl-pkg{border:1px solid var(--accent);border-radius:3px;padding:12px;margin-top:12px;background:var(--surface)}
 table.reg td{white-space:normal;text-align:left;vertical-align:top}
@@ -5576,6 +5576,52 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (open) box.innerHTML = feedsHtml();
   }
   function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
+  /* MAP ITEMS WITH A POPUP. Reference points, hazards, quakes, storms, road closures, terrain, flashpoints, Open data, gauges and
+     the like carry their details in a small popup. Opening one shows those details in the Report panel instead (on a phone, the
+     full sheet), with the item's source links, its place and grid reference, and a SHA-256 fingerprint of exactly what is shown,
+     the way a report opens. The item is shown as its publisher gives it; nothing is added or confirmed. */
+  /* items whose popup has no link of their own: the publisher's site, matched on what the popup says */
+  var POPSRC = [[/above the bank|below the bank|m MSL|mm in 24 h|Level unavailable/, "Hydro-Informatics Institute (ThaiWater)", "https://www.thaiwater.net/"],
+    [/GISTDA/, "GISTDA", "https://www.gistda.or.th/"], [/Air quality · model estimate/, "Open-Meteo air quality model (CAMS)", "https://open-meteo.com/en/docs/air-quality-api"],
+    [/GDACS/, "GDACS", "https://www.gdacs.org/"], [/USGS/, "USGS", "https://earthquake.usgs.gov/"], [/NASA EONET/, "NASA EONET", "https://eonet.gsfc.nasa.gov/"]];
+  function popHost(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
+  function popPkg(body, ll) {
+    var phone = rvPhone(), box = document.getElementById("rv-pkg");
+    if (!box || (!phone && rvBox.hidden)) return false;
+    var links = [], seen = {};
+    Array.prototype.forEach.call(body.querySelectorAll("a[href]"), function (a) {
+      var u = a.getAttribute("href"); if (!/^https?:\/\//.test(u) || seen[u]) return; seen[u] = 1;
+      links.push({ u: u, t: (a.textContent || "").trim() });
+    });
+    var tier = body.querySelector(".tier"), text = (body.textContent || "").replace(/\s+/g, " ").trim();
+    var pub = null; if (!links.length) POPSRC.some(function (x) { if (x[0].test(text)) { pub = x; return true; } return false; });
+    box.hidden = false;
+    box.innerHTML = '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div><div class="pkgpop"></div>' +
+      '<dl class="pkgdl">' +
+        (ll ? "<dt>Where</dt><dd>" + esc(ll.lat.toFixed(4) + ", " + ll.lng.toFixed(4)) + ' · MGRS <b class="mgrs">' + esc(window.MGRS_OF(ll.lat, ll.lng)) + '</b><span class="sub">Where the map item sits</span></dd>' : "") +
+        "<dt>Source</dt><dd>" + (links.length ? links.map(function (l) {
+          return '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">' + esc(l.t && l.t.length < 90 ? l.t : popHost(l.u)) + '</a><span class="sub">' + esc(popHost(l.u)) + "</span>"; }).join("") :
+          (pub ? '<a href="' + esc(pub[2]) + '" target="_blank" rel="noopener noreferrer">' + esc(pub[1]) + '</a><span class="sub">The publisher\'s site; this item has no page of its own</span>' :
+          esc(tier ? tier.textContent : "Named in the item") + '<span class="sub">This item carries no link of its own; its publisher is listed in Credits</span>')) + "</dd>" +
+        '<dt>Fingerprint</dt><dd><span class="mono popfp">computing…</span><span class="sub">SHA-256 of the text and links shown here</span></dd>' +
+      "</dl>" +
+      '<p class="note">Shown as its publisher gives it. A reference, reading or report, not a finding: nothing here has been confirmed by an analyst.</p>';
+    var pane = box.querySelector(".pkgpop"), c = body.cloneNode(true);
+    c.className = "pop"; pane.appendChild(c);
+    sha256(text + "\n" + links.map(function (l) { return l.u; }).join("\n")).then(function (h) { var f = box.querySelector(".popfp"); if (f) f.textContent = h; }).catch(function () {});
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; rvRingAt(null); });
+    Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
+    if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) { box.scrollTop = 0; if (ll) rvRingAt({ lat: ll.lat, lon: ll.lng }); }
+    return true;
+  }
+  if (!/[?&]watchscan=1(&|$)/.test(location.search)) map.on("popupopen", function (e) {
+    var el = e.popup.getElement && e.popup.getElement(), body = el && el.querySelector(".leaflet-popup-content");
+    if (!body || !body.textContent.trim()) return;
+    /* a pin drawn for one of this page's own reports (road disruptions) opens that report itself */
+    var orec = body.querySelector("[data-openrec]"), rid = orec && orec.getAttribute("data-openrec");
+    if (rid && byId[rid]) { if (rvPhone() || !rvBox.hidden) { fullNext = true; select(rid, undefined, "rv-pkg"); setTimeout(function () { map.closePopup(e.popup); }, 0); } return; }
+    if (popPkg(body, e.popup.getLatLng())) setTimeout(function () { map.closePopup(e.popup); }, 0);
+  });
   /* marker hover lights its card; hooks are added once per marker */
   function rvHook(list) {
     list.slice(0, 200).forEach(function (r) {
