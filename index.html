@@ -8,7 +8,7 @@
    country outlines (assets/world-watermark.svg). */
 #osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
   background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
-#osap-boot::before{content:"";position:absolute;inset:-5%;background:url(assets/world-watermark.svg) center/min(170vw,1500px) auto no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
+#osap-boot::before{content:"";position:absolute;inset:0 -3%;background:url(assets/world-watermark.svg) center/cover no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
 #osap-boot>*{position:relative}
 #osap-boot.gone{opacity:0;pointer-events:none}
 :root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
@@ -22,23 +22,24 @@
 @keyframes osap-rev{from{transform:rotateX(10deg) rotateY(0)}to{transform:rotateX(10deg) rotateY(360deg)}}
 @keyframes osap-sh{from{transform:scaleX(1);opacity:.9}to{transform:scaleX(.25);opacity:.35}}
 @keyframes osap-drift{from{transform:translateX(-2%)}to{transform:translateX(2%)}}
+@media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
   /* the saved map theme, applied now so the loading screen matches it */
   var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
   if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
-  function flag(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
-  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + flag(cc) + " " + (name || cc.toUpperCase()) : ""); }
-  var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
+  /* the cover always reads the app's name, whichever country is opening (Shane, 2026-09-27) */
+  function label() { t.textContent = "Loading AXIOM OSAP"; }
+  label();
   function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
   window.OSAP_BOOT = {
     done: done,
     /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(cc, what, name); clearTimeout(timer); timer = setTimeout(done, 20000); }
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); clearTimeout(timer); timer = setTimeout(done, 20000); }
   };
   /* never leave the page covered if something fails while it builds */
   timer = setTimeout(done, 15000);
@@ -496,11 +497,6 @@ select.mini{
 .chip.k{color:var(--ink)}
 /* ---------- AXIOM TSAP additions ---------- */
 header .ctabs{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;row-gap:4px}
-header .ctoggle{order:9;flex:0 1 auto;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12.5px;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;max-width:100%}
-header .ctoggle b{color:var(--ink);font-weight:700}
-header .ctoggle .chev{transition:transform .15s}
-header .ctoggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
-header .ctoggle + .ctabs{order:9}
 header .xabar{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12.5px}
 .xachip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:3px;padding:1px 2px 1px 7px;background:var(--surface)}
 .xachip button{border:0;background:none;color:var(--muted);font:inherit;font-size:15px;line-height:1;padding:2px 6px;cursor:pointer}.xachip button:hover{color:var(--ink)}
@@ -511,18 +507,29 @@ header .xabar select{min-width:17em;max-width:19em}
 html.phone:not(.hdr-open) header .xabar select,html.phone:not(.hdr-open) header .xabar.xaempty{display:none}
 header .ctabs button[data-cc].xaon{box-shadow:inset 0 -3px 0 var(--xac)}
 .xahd{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin:2px 0 4px}
-header .ctoggle[aria-expanded="false"] + .ctabs{display:none}
-html.phone header .ctoggle{display:none!important}
 @media (max-width:700px){header .ctabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
 .ctabs button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--muted);cursor:pointer;white-space:nowrap;flex:none}
 .ctabs button:hover{color:var(--ink)}
-.ctabs .creg{flex:none;align-self:center;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 2px 0 10px;white-space:nowrap}
-.ctabs .creg:first-child{margin-left:0}
-.ctabs button.creg{border:0;background:none;padding:4px 2px;cursor:pointer;font-size:10px;letter-spacing:.08em;color:var(--muted)}
-.ctabs button.creg::after{content:" \25B8";letter-spacing:0}
-.ctabs button.creg[aria-expanded="true"]::after{content:" \25BE"}
-.ctabs button[hidden]{display:none}
 .ctabs button.cworld{font-weight:500}
+/* country picker: one drop-down per region (see COUNTRY PICKER) */
+header .ctabs{align-items:center}
+.cdrop{position:relative;flex:none}
+.ctabs button.creg{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--ink)}
+.ctabs button.creg .crl{color:var(--muted);font-weight:600}
+.ctabs .cdrop.cur button.creg{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ctabs .cdrop.cur button.creg b{color:var(--accent);font-weight:700}
+.ctabs button.creg .chev{font-size:10px;color:var(--muted);transition:transform .15s}
+.ctabs button.creg[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.ctabs button.creg .actdot{margin-left:0}
+.cmenu{position:absolute;top:calc(100% + 4px);left:0;z-index:2000;width:max-content;max-width:min(720px,calc(100vw - 16px));max-height:min(60vh,520px);overflow:auto;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.cmenu[hidden]{display:none}
+header:has(.cdrop.open){z-index:1100}
+.cmenu button{text-align:left;overflow:hidden;text-overflow:ellipsis}
+.cmenu:has(> :nth-child(9)){min-width:min(480px,calc(100vw - 16px))}
+.cmenu:has(> :nth-child(24)){min-width:min(720px,calc(100vw - 16px))}
+.cmenu button.call{grid-column:1/-1;font-style:italic}
+header .ctabs .actkey{flex:1 1 auto;margin:0 0 0 6px;font-size:11px}
 .ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .ctabs button .n{font-weight:500;opacity:.75;margin-left:5px;font-size:11px}
 header .viewtabs{order:10;flex:1 1 100%;display:flex;overflow-x:auto;scrollbar-width:thin}
@@ -532,7 +539,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .brand .logo{width:36px;height:36px;flex:none;border-radius:50%}
 .brand{display:inline-flex;align-items:center;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
 #map{height:calc(100svh - var(--hdr-h,64px))}
-.rail{max-height:calc(100svh - var(--hdr-h,64px))}
+.rail{max-height:calc(100svh - var(--hdr-h,64px))}html:not(.phone) .rail{box-sizing:border-box}
 @media (max-width:920px){#map{height:60svh}.rail{max-height:none}}
 .tlf{display:grid;grid-template-columns:auto 1fr;gap:5px 9px;align-items:center;font-size:11.5px;color:var(--muted)}
 .tlf .mini{width:100%;min-width:0;box-sizing:border-box}
@@ -2500,6 +2507,29 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
 })();
 </script>
 <!-- country-data:end -->
+<script>
+/* SUB-AREAS. The United States' 50 states and Washington, D.C. open as sub-areas of the United States, the way Okinawa is a
+   sub-area of Japan: the page loads the United States' data and narrows the map, the records with a location, and local
+   time to the state. The state is carried as ?st=TX in the address (the #country/tab part is unchanged), and its outline
+   file (data/basemap/us-states/<code>.js, tools/build_us_states.py) is loaded only when a state is open. Records with no
+   location stay, because they are about the whole country. The table matches tools/build_us_states.py. */
+(function () {
+  var US = [["AL","Alabama","America/Chicago"],["AK","Alaska","America/Anchorage"],["AZ","Arizona","America/Phoenix"],["AR","Arkansas","America/Chicago"],["CA","California","America/Los_Angeles"],["CO","Colorado","America/Denver"],["CT","Connecticut","America/New_York"],["DE","Delaware","America/New_York"],["DC","Washington, D.C.","America/New_York"],["FL","Florida","America/New_York"],["GA","Georgia","America/New_York"],["HI","Hawaii","Pacific/Honolulu"],["ID","Idaho","America/Boise"],["IL","Illinois","America/Chicago"],["IN","Indiana","America/Indiana/Indianapolis"],["IA","Iowa","America/Chicago"],["KS","Kansas","America/Chicago"],["KY","Kentucky","America/New_York"],["LA","Louisiana","America/Chicago"],["ME","Maine","America/New_York"],["MD","Maryland","America/New_York"],["MA","Massachusetts","America/New_York"],["MI","Michigan","America/Detroit"],["MN","Minnesota","America/Chicago"],["MS","Mississippi","America/Chicago"],["MO","Missouri","America/Chicago"],["MT","Montana","America/Denver"],["NE","Nebraska","America/Chicago"],["NV","Nevada","America/Los_Angeles"],["NH","New Hampshire","America/New_York"],["NJ","New Jersey","America/New_York"],["NM","New Mexico","America/Denver"],["NY","New York","America/New_York"],["NC","North Carolina","America/New_York"],["ND","North Dakota","America/Chicago"],["OH","Ohio","America/New_York"],["OK","Oklahoma","America/Chicago"],["OR","Oregon","America/Los_Angeles"],["PA","Pennsylvania","America/New_York"],["RI","Rhode Island","America/New_York"],["SC","South Carolina","America/New_York"],["SD","South Dakota","America/Chicago"],["TN","Tennessee","America/Chicago"],["TX","Texas","America/Chicago"],["UT","Utah","America/Denver"],["VT","Vermont","America/New_York"],["VA","Virginia","America/New_York"],["WA","Washington","America/Los_Angeles"],["WV","West Virginia","America/New_York"],["WI","Wisconsin","America/Chicago"],["WY","Wyoming","America/Denver"]];
+  window.OSAP_SUBS = { us: US.map(function (s) { return { code: s[0], name: s[1], tz: s[2] }; }) };
+  var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 ? h[0] : "th";
+  var q = new URLSearchParams(location.search), st = String(q.get("st") || "").toUpperCase(), hit = null;
+  US.forEach(function (s) { if (s[0] === st) hit = s; });
+  if (st && (cc !== "us" || !hit)) {
+    /* a state code left over from an earlier visit, on another country's page: drop it from the address */
+    q.delete("st"); try { history.replaceState(null, "", location.pathname + (String(q) ? "?" + q : "") + location.hash); } catch (e) {}
+    return;
+  }
+  if (!hit) return;
+  window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
+  window.OSAP_ZONE = hit[2];
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+})();
+</script>
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
@@ -2581,6 +2611,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
+  /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
+  var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
+  if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
+  function subRing(ring, x, y) {
+    for (var i = 0, j = ring.length - 1, a = false; i < ring.length; j = i++)
+      if ((ring[i][1] > y) !== (ring[j][1] > y) && x < (ring[j][0] - ring[i][0]) * (y - ring[i][1]) / (ring[j][1] - ring[i][1]) + ring[i][0]) a = !a;
+    return a;
+  }
+  /* inside the open state, with about 10 km to spare at its edge so a town on the border line is not lost */
+  function inSub(lat, lon) {
+    if (!SUB) return true;
+    if (SUB.p.some(function (r) { return subRing(r, lon, lat); })) return true;
+    var d = 0.09;
+    return [[d, 0], [-d, 0], [0, d], [0, -d]].some(function (o) { return SUB.p.some(function (r) { return subRing(r, lon + o[1], lat + o[0]); }); });
+  }
   var WANT = HASH.length > 1 ? HASH[1] : HASH[0];
 
   /* ---------- source registry ----------
@@ -2690,6 +2735,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     delete r.tsLabel;
   }
   function add(r) {
+    /* a record placed outside the open US state belongs to another state's view */
+    if (SUB && r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon) && !inSub(+r.lat, +r.lon)) return;
     notFuture(r);
     r.id = r.layer + "-" + (SEQ++);
     r.src.n++;
@@ -2900,45 +2947,80 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     } }).addTo(map);
   }
   var cseg = document.getElementById("country-seg");
-  var lastReg = "";
-  /* regions fold open and shut; the researched regions and the current country's region start open, and choices are remembered */
-  var REGS = [], regOpen = {};
+  /* the open US state's outline, over the country outline */
+  if (SUB) L.geoJSON({ type: "Feature", geometry: { type: "MultiPolygon", coordinates: SUB.p.map(function (r) { return [r]; }) } },
+    { interactive: false, style: function () { return { color: tok("--accent"), weight: 2.2, opacity: 0.95, fill: false }; } }).addTo(map);
+  /* COUNTRY PICKER: one drop-down per region. A region button opens a menu of its countries; the region holding the open
+     country is highlighted and names it. The United States' states have their own "US states" menu, placed after North
+     America (sub-areas: see SUB-AREAS). Only one menu is open at a time; a click elsewhere or Escape closes it. */
+  var REGS = [], STREG = "US states", STATES = (window.OSAP_SUBS || {}).us || [];
   COUNTRIES.forEach(function (c) { if (REGS.indexOf(c.region) < 0) REGS.push(c.region); });
-  try { regOpen = JSON.parse(localStorage.getItem("asap-regions-open") || "{}") || {}; } catch (e) { regOpen = {}; }
-  function rOpen(r) { return r === C.region || (r in regOpen ? !!regOpen[r] : COUNTRIES.some(function (c) { return c.region === r && !c.world; })); }
-  cseg.innerHTML = COUNTRIES.map(function (c) {
-    var ri = REGS.indexOf(c.region), head = c.region !== lastReg ? '<button type="button" class="creg" data-reg="' + ri + '" aria-expanded="' + rOpen(c.region) + '">' + esc(c.region) + "</button>" : "";
-    lastReg = c.region;
-    return head + '<button type="button" data-cc="' + c.id + '" data-reg="' + ri + '"' + (c.id === CC ? ' aria-current="true"' : "") +
-      (rOpen(c.region) ? "" : " hidden") + (c.world ? ' class="cworld" title="Automatic global feeds only; not yet researched"' : "") + ">" + esc(c.name) +
+  function cBtn(c, ri) {
+    return '<button type="button" data-cc="' + c.id + '" data-reg="' + ri + '"' + (c.id === CC ? ' aria-current="true"' : "") +
+      (c.world ? ' class="cworld" title="Automatic global feeds only; not yet researched"' : "") + ">" + esc(c.name) +
       (c.id === CC || c.id === "th" || c.world ? "" : '<span class="n">' + (CN[c.id] ? CN[c.id] : "empty") + "</span>") + "</button>";
+  }
+  function cDrop(ri, label, cur, items) {
+    return '<div class="cdrop' + (cur ? " cur" : "") + '"><button type="button" class="creg" data-reg="' + ri + '" data-label="' + esc(label) + '" aria-haspopup="true" aria-expanded="false">' +
+      '<span class="crl">' + esc(label) + "</span>" + (cur ? "<b>" + esc(cur) + "</b>" : "") + '<span class="chev" aria-hidden="true">&#9662;</span></button>' +
+      '<div class="cmenu" role="menu" hidden>' + items + "</div></div>";
+  }
+  var cHtml = REGS.map(function (r, ri) {
+    var items = COUNTRIES.filter(function (c) { return c.region === r; }).map(function (c) { return cBtn(c, ri); }).join("");
+    var d = cDrop(ri, r, r === C.region && !SUB ? C.name : "", items);
+    if (STATES.length && r === (CBY.us || {}).region) {
+      var si = REGS.length;
+      d += cDrop(si, STREG, SUB ? C.name : "", '<button type="button" data-st="" data-reg="' + si + '" class="call">All of the United States</button>' +
+        STATES.map(function (s) {
+          return '<button type="button" data-st="' + s.code + '" data-reg="' + si + '"' + (SUB && SUB.code === s.code ? ' aria-current="true"' : "") +
+            ' title="A sub-area of the United States: its global feeds, narrowed to this state">' + esc(s.name) + "</button>";
+        }).join(""));
+    }
+    return d;
   }).join("");
+  cseg.innerHTML = cHtml;
+  function cClose(keep) {
+    Array.prototype.forEach.call(cseg.querySelectorAll(".cdrop.open"), function (d) {
+      if (d === keep) return;
+      d.classList.remove("open"); d.querySelector(".creg").setAttribute("aria-expanded", "false"); d.querySelector(".cmenu").hidden = true;
+    });
+  }
   cseg.addEventListener("click", function (e) {
     var h = e.target.closest && e.target.closest("button.creg"); if (!h) return;
-    var o = h.getAttribute("aria-expanded") !== "true", ri = h.getAttribute("data-reg");
-    h.setAttribute("aria-expanded", o ? "true" : "false"); regOpen[REGS[+ri]] = o;
-    try { localStorage.setItem("asap-regions-open", JSON.stringify(regOpen)); } catch (x) {}
-    Array.prototype.forEach.call(cseg.querySelectorAll('button[data-cc][data-reg="' + ri + '"]'), function (b) { b.hidden = !o; });
-    window.dispatchEvent(new Event("resize"));
+    var d = h.parentNode, m = d.querySelector(".cmenu"), o = !d.classList.contains("open");
+    cClose(d); d.classList.toggle("open", o); h.setAttribute("aria-expanded", o ? "true" : "false"); m.hidden = !o;
+    if (o) {
+      /* keep the menu on screen */
+      m.style.left = "0px";
+      var r = m.getBoundingClientRect(), over = r.right - (document.documentElement.clientWidth - 8);
+      if (over > 0) m.style.left = Math.max(-r.left + 8, -over) + "px";
+      var f = m.querySelector('[aria-current="true"]') || m.querySelector("button"); if (f && e.detail === 0) f.focus();
+    }
   });
-  /* the country row folds into one bar naming the current country and its region; opening it is remembered in this browser,
-     and picking a country folds it again */
-  var cme = COUNTRIES.filter(function (c) { return c.id === CC; })[0] || {}, ctog = document.createElement("button");
-  ctog.type = "button"; ctog.className = "ctoggle"; ctog.setAttribute("aria-controls", "country-seg");
-  ctog.innerHTML = 'Country <b>' + esc(cme.name || CC) + "</b>" + (cme.region ? ' · ' + esc(cme.region) : "") + (cme.world ? ' · <i>global feeds only</i>' : "") + ' <span class="chev" aria-hidden="true">&#9662;</span>';
-  var cOpen = false; try { cOpen = localStorage.getItem("asap-countries-open") === "1"; } catch (e) {}
-  function setCOpen(o) { cOpen = o; ctog.setAttribute("aria-expanded", o ? "true" : "false"); ctog.title = o ? "Hide the country list" : "Show every country, by region";
-    try { localStorage.setItem("asap-countries-open", o ? "1" : "0"); } catch (e) {} window.dispatchEvent(new Event("resize")); }
-  cseg.parentNode.insertBefore(ctog, cseg); setCOpen(cOpen);
-  ctog.addEventListener("click", function () { setCOpen(!cOpen); });
-  cseg.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("button[data-cc]")) { try { localStorage.setItem("asap-countries-open", "0"); } catch (x) {} } }, true);
+  document.addEventListener("click", function (e) { if (!cseg.contains(e.target)) cClose(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !cseg.querySelector(".cdrop.open")) return;
+    var h = cseg.querySelector(".cdrop.open .creg"); cClose(); if (h) h.focus();
+  });
+  /* opening another country (or state) drops any state from the address */
+  function goPlace(cc, st) {
+    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", st ? (STATES.filter(function (s) { return s.code === st; })[0] || {}).name : cName(cc));
+    var q = new URLSearchParams(location.search); q.delete("st"); if (st) q.set("st", st);
+    var search = String(q) ? "?" + q : "", hash = "#" + (cc === "th" ? "" : cc + "/") + (current || "timeline");
+    /* a new query loads a new page by itself; a new hash alone needs the reload */
+    if (search !== location.search) { location.href = location.pathname + search + hash; return; }
+    location.hash = hash; location.reload();
+  }
   cseg.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-cc]");
-    if (!b || b.getAttribute("data-cc") === CC) return;
-    var cc = b.getAttribute("data-cc");
-    if (window.OSAP_BOOT) window.OSAP_BOOT.show(cc, "", cName(cc));
-    location.hash = (cc === "th" ? "" : cc + "/") + (current || "timeline");
-    location.reload();
+    if (!b || b.getAttribute("data-cc") === CC && !SUB) return;
+    goPlace(b.getAttribute("data-cc"), "");
+  });
+  cseg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-st]"); if (!b) return;
+    var st = b.getAttribute("data-st");
+    if (CC === "us" && (SUB ? SUB.code : "") === st) { cClose(); return; }
+    goPlace("us", st);
   });
   window.addEventListener("hashchange", function () {
     var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 && CBY[h[0]] ? h[0] : "th";
@@ -6613,7 +6695,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || !e.shiftKey) return;
     e.preventDefault(); e.stopPropagation();
-    try { localStorage.setItem("asap-countries-open", "1"); } catch (x) {}
     xaToggle(b.getAttribute("data-cc"));
   }, true);
   function xaMarks() {
@@ -6742,9 +6823,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     Array.prototype.forEach.call(cseg.querySelectorAll("button.creg"), function (h) {
       var ds = cseg.querySelectorAll('button[data-cc][data-reg="' + h.getAttribute("data-reg") + '"] .actdot'); if (!ds.length) return;
       var hi = Array.prototype.some.call(ds, function (d) { return d.classList.contains("act2"); }), d = document.createElement("span");
-      d.className = "actdot act" + (hi ? 2 : 1); d.title = ds.length + (ds.length === 1 ? " country" : " countries") + " in this region with recent activity"; h.appendChild(d);
+      d.className = "actdot act" + (hi ? 2 : 1); d.title = ds.length + (ds.length === 1 ? " country" : " countries") + " in this region with recent activity"; h.insertBefore(d, h.querySelector(".chev"));
     });
-    if (ACT[CC]) { var d0 = document.createElement("span"); d0.className = "actdot act" + ACT[CC].lvl; d0.title = actTip(CC); ctog.insertBefore(d0, ctog.querySelector(".chev")); }
     var key = document.createElement("p"); key.className = "actkey";
     key.innerHTML = '<span class="actdot act2"></span> high and <span class="actdot act1"></span> raised recent activity: an automatic count from worldwide feeds (disaster alerts, conflict events, emergencies, strong quakes, cyclones, warnings), not a threat rating. Point at a dot for the reasons.';
     cseg.appendChild(key);
@@ -6878,10 +6958,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   var cs = document.createElement("select"), vs = document.createElement("select");
   cs.id = "ph-country"; vs.id = "ph-view"; cs.setAttribute("aria-label", "Country"); vs.setAttribute("aria-label", "Tab");
   var grp = null;
-  Array.prototype.forEach.call(document.querySelectorAll("#country-seg > *"), function (el) {
-    if (!el.classList.contains("creg") && !el.hasAttribute("data-cc")) return;
-    if (el.classList.contains("creg")) { grp = document.createElement("optgroup"); grp.label = el.textContent; cs.appendChild(grp); return; }
-    var o = document.createElement("option"); o.value = el.getAttribute("data-cc"); o.textContent = el.childNodes[0].textContent;
+  Array.prototype.forEach.call(document.querySelectorAll("#country-seg button.creg, #country-seg button[data-cc], #country-seg button[data-st]"), function (el) {
+    if (el.classList.contains("creg")) { grp = document.createElement("optgroup"); grp.label = el.getAttribute("data-label") || el.textContent; cs.appendChild(grp); return; }
+    var o = document.createElement("option"), st = el.getAttribute("data-st");
+    o.value = st != null ? "st:" + st : el.getAttribute("data-cc"); o.textContent = el.childNodes[0].textContent;
     var ad = el.querySelector(".actdot"); if (ad) o.textContent = (ad.classList.contains("act2") ? "\uD83D\uDD34 " : "\uD83D\uDFE0 ") + o.textContent;
     if (el.getAttribute("aria-current") === "true") o.selected = true;
     (grp || cs).appendChild(o);
@@ -6895,7 +6975,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     });
   }
   views();
-  cs.addEventListener("change", function () { var b = document.querySelector('#country-seg button[data-cc="' + cs.value + '"]'); if (b) b.click(); });
+  cs.addEventListener("change", function () {
+    var v = cs.value, b = document.querySelector(/^st:/.test(v) ? '#country-seg button[data-st="' + v.slice(3) + '"]' : '#country-seg button[data-cc="' + v + '"]'); if (b) b.click();
+  });
   vs.addEventListener("change", function () { var b = document.querySelector('#view-seg button[data-view="' + vs.value + '"]'); if (b) b.click(); setTimeout(label, 50); });
   new MutationObserver(function () { var b = document.querySelector('#view-seg button[aria-selected="true"]'); if (b && vs.value !== b.getAttribute("data-view")) vs.value = b.getAttribute("data-view"); })
     .observe(document.getElementById("view-seg"), { attributes: true, subtree: true, attributeFilter: ["aria-selected"] });
