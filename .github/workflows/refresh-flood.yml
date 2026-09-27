@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
         required: false
         default: ""
 
@@ -28,7 +28,9 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A full run takes about 35 minutes since the conflict tabs step was added (news ~8, social ~14, conflict ~6). At 30 the job
+    # was cancelled before "Commit if a snapshot changed", so nothing was saved; a slow run only delays the next queued one.
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -159,6 +161,16 @@ jobs:
       - name: Re-place current news with the place rules and compare (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-placement' }}
         run: node tools/probe_placement.mjs
+      - name: Fetch reference data for the researched country layers (diagnostic, writes probe-out/ only)
+        if: ${{ inputs.only == 'probe-refdata' }}
+        timeout-minutes: 22
+        run: CCS="${{ vars.REFDATA_CCS || 'us gb ca de fr mx br it es ru ua pl nl ar co ve ht cu ie se no ch at be pt gr ro cz hu fi dk cl pe ec bo py uy gt hn sv ni cr pa do jm tt bs bb rs ba hr si sk bg md by al mk me xk lt lv ee is lu mt cy ad li mc sm bz gy sr ag dm gd kn lc vc' }}" node tools/probe_refdata.mjs
+        continue-on-error: true
+      - name: Gather dated headline leads for the researched country layers (diagnostic, writes probe-out/ only)
+        if: ${{ inputs.only == 'probe-leads' }}
+        timeout-minutes: 24
+        run: CCS="us gb ca de fr mx br it es ru ua pl nl ar co ve ht cu ie se no ch at be pt gr ro cz hu fi dk cl pe ec bo py uy gt hn sv ni cr pa do jm tt bs bb rs ba hr si sk bg md by al mk me xk lt lv ee is lu mt cy ad li mc sm bz gy sr ag dm gd kn lc vc" SET=${{ vars.LEADS_SET || '2' }} node tools/probe_leads.mjs
+        continue-on-error: true
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
         run: node tools/probe_dense.mjs
@@ -175,7 +187,7 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'probe-refdata' || inputs.only == 'probe-leads') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -187,7 +199,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && inputs.only != 'probe-refdata' && inputs.only != 'probe-leads' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
