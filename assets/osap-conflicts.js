@@ -265,7 +265,8 @@
     var d = cur.data, f = cur.front, L = W.L;
     if (f && f.current && F.show.front) {
       if (f.current.kind === "areas") {
-        if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", interactive: false, style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } }).addTo(map);
+        if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } })
+          .bindPopup("<b>Previous version of the front line</b><div>The outline as the source drew it in the version before the current one, so you can see what changed.</div>" + frontSrc(f, f.previous), { maxWidth: 320 }).addTo(map);
         // a feature may carry its own colour, name and claim (zones drawn from reports); otherwise one style and tooltip for the layer
         var zoned = (f.current.areas.features || []).some(function (x) { return x.properties && x.properties.name; });
         lyr.area = L.geoJSON(f.current.areas, { pane: "cfarea", style: function (x) {
@@ -315,8 +316,8 @@
   var AREAN = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
   function fpDiv(fp, of) { return fp ? '<div class="fp" title="SHA-256 fingerprint of ' + esc(of) + ": " + esc(fp) + '">SHA-256 ' + esc(String(fp).slice(0, 16)) + "… <small>(" + esc(of) + ")</small></div>" : ""; }
   // where a front-line or control marker comes from: the named source, when it was taken, and that version's fingerprint
-  function frontSrc(f) {
-    var c = f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
+  function frontSrc(f, v) {
+    var c = v || f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
     return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
       (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
   }

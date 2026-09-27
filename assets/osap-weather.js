@@ -726,9 +726,11 @@
     if (OUT.lyr) { map.removeLayer(OUT.lyr); OUT.lyr = null; }
     OUT.key = want;
     if (!want) return;
-    var st = { pane: "wxvec", color: "#0b6bcb", weight: 2, dashArray: "6 4", fill: false, interactive: false };
+    var st = { pane: "wxvec", color: "#0b6bcb", weight: 2, dashArray: "6 4", fill: false };
     OUT.lyr = R.kind === "spot" ? L.circle([R.center.lat, R.center.lon], L.extend({ radius: R.km * 1000 }, st)) :
       L.polygon(R.poly.map(function (p) { return p[0].map(function (x) { return [x[1], x[0]]; }); }), st);
+    OUT.lyr.bindPopup('<div class="pop"><div class="tier">Weather area</div><h3>' + esc(R.name) + '</h3><p class="obs">The ' + (R.kind === "spot" ? "spot and radius" : "province") +
+      " you chose for the operational weather forecast. The forecast is Open-Meteo's model for this area, not an observation.</p></div>");
     OUT.lyr.addTo(map);
   }
   function sectionHtml() {
@@ -1061,15 +1063,17 @@
     ((W.ASAP_STORMS || {}).storms || []).forEach(function (st) {
       st.products.forEach(function (p) {
         var c = col[p.agency] || "#c62828";
-        if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op, interactive: false }));
+        // the storm's past track, forecast track and forecast circles open the same pop-up as its position, each saying which part it is
+        var src = '<p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
+        function part(what) { return '<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' + what + "</p>" + src; }
+        if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op }).bindPopup(part("Track so far, as the agency reported it")));
         if (!p.now) return;
         var tr = [p.now].concat(p.fc || []);
-        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op, interactive: false })); });
-        if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op, interactive: false }));
+        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op })
+          .bindPopup(part("Forecast position" + (x.t ? " for " + esc(String(x.t).replace("T", " ")) : "") + ", within about " + Math.round(x.r_km) + " km (the agency's uncertainty circle)"))); });
+        if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op }).bindPopup(part("Forecast track")));
         g.addLayer(L.circleMarker([p.now.lat, p.now.lon], { pane: "wxvec", radius: 9, color: "#fff", weight: 2, fillColor: c, fillOpacity: 1 })
-          .bindPopup('<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' +
-            esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · ")) +
-            '</p><p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>")
+          .bindPopup(part(esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · "))))
           .bindTooltip(esc(st.name), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }));
       });
     });
