@@ -8,6 +8,15 @@ function tag(block, names) {
   }
   return "";
 }
+// The picture the feed itself offers for an item (media:thumbnail, media:content, an image enclosure, or the first <img> in the
+// description): a link to the outlet's own copy, never downloaded. Only https addresses, so the page never loads a mixed-content image.
+function image(b) {
+  const raw = b.match(/<media:thumbnail\b[^>]*\burl="([^"]+)"/i) || b.match(/<media:content\b[^>]*\burl="([^"]+)"[^>]*(?:medium="image"|type="image\/)/i) ||
+    b.match(/<media:content\b[^>]*(?:medium="image"|type="image\/)[^>]*\burl="([^"]+)"/i) || b.match(/<enclosure\b[^>]*\btype="image\/[^"]*"[^>]*\burl="([^"]+)"/i) ||
+    b.match(/<enclosure\b[^>]*\burl="([^"]+)"[^>]*\btype="image\//i) || b.match(/(?:<|&lt;)img\b[^>]{0,300}?\bsrc=(?:"|'|&quot;)([^"'&]+)/i);
+  const u = raw ? raw[1].replace(/&amp;/g, "&").trim() : "";
+  return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 && !/(pixel|spacer|1x1|blank|feedburner\.com\/~r|doubleclick)/i.test(u) ? u : "";
+}
 export function parseFeed(xml) {
   const blocks = xml.match(/<(item|entry)\b[\s\S]*?<\/\1>/gi) || [];
   return blocks.map((b) => {
