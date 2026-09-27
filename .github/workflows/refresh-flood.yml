@@ -93,6 +93,12 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'conflicts' }}
         run: node tools/refresh_conflicts.mjs
         continue-on-error: true
+      # Conflict extras (tools/conflict_extras/<id>.mjs, named by a conflict's "extras"): data that is not a report, such as
+      # air-raid alert states, satellite heat detections and each side's running claims. Reads the front file written above.
+      - name: Refresh the conflict extras
+        if: ${{ !inputs.only || inputs.only == 'conflicts' }}
+        run: node tools/conflict_extras.mjs
+        continue-on-error: true
       - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-conflicts' }}
         run: PROBE=1 node tools/refresh_conflicts.mjs

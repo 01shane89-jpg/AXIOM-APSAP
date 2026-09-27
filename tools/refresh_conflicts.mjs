@@ -16,6 +16,7 @@ import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES } from "./conflict_lib.mjs";
 import { ccsAt } from "./geo_cc.mjs";
+import { tgItems } from "./tg_preview.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -75,9 +76,10 @@ function news(cc) {
   return newsByCc[cc];
 }
 const feedCache = {};
-async function feedItems(url, search) {
+async function feedItems(url, search, tg) {
   if (!(url in feedCache)) feedCache[url] = (async () => {
-    if (search && !(await robotsAllow(url))) throw new Error("robots.txt does not allow this search");
+    if ((search || tg) && !(await robotsAllow(url))) throw new Error("robots.txt does not allow " + (tg ? "this channel preview" : "this search"));
+    if (tg) { const h = await get(url, "text/html"), x = tgItems(h, tg); if (!x.length && !/tgme_widget_message/.test(h)) throw new Error("no public preview"); await sleep(1200); return x; }
     const x = parseFeed(await get(url)); if (search) await sleep(1200); return x;
   })();
   return feedCache[url];
@@ -97,12 +99,13 @@ for (const c of LIST) {
     fresh.push(...kept);
     status.push({ id: "news:" + cc, source: "National outlets of " + cc.toUpperCase() + " (news step)", ok: true, n: items.length, kept: kept.length });
   }
-  const srcs = [...(c.feeds || []).map((f) => ({ ...f, search: false })),
+  // a Telegram channel (type "telegram", channel name only) is read through its public web preview
+  const srcs = [...(c.feeds || []).map((f) => f.type === "telegram" ? { ...f, id: f.id || "tg-" + f.channel, outlet: f.outlet || "@" + f.channel, url: "https://t.me/s/" + f.channel, search: false, tg: f.channel } : { ...f, search: false }),
     ...(c.searches || []).map((s, k) => ({ id: "bing-" + (s.lang || "en") + "-" + k, outlet: "Bing News search", lang: s.lang || "en", q: s.q, search: true, nc: true,
       url: "https://www.bing.com/news/search?q=" + encodeURIComponent(s.q) + "&format=rss" + (s.lang && s.lang !== "en" ? "&setlang=" + s.lang : "") }))];
   for (const f of srcs) {
     try {
-      const raw = await feedItems(f.url, f.search), kept = [];
+      const raw = await feedItems(f.url, f.search, f.tg), kept = [];
       for (const i of raw.slice(0, 60)) {
         if (!fits(i.title + " " + i.summary, f.all)) continue;
         const link = f.search ? unwrap(i.link) : i.link;
@@ -110,7 +113,8 @@ for (const c of LIST) {
         if (!iso(i.date)) continue;   // an undated item cannot be placed in time
         let outlet = f.outlet;
         if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News)"; } catch (e) {} }
-        kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS",
+        kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : f.tg ? "Telegram" : "RSS",
+          ...(f.side ? { side: f.side } : {}),
           ...(f.state ? { state: true } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
       }
       fresh.push(...kept);
@@ -297,7 +301,7 @@ for (const c of LIST) {
   for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
   for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
   let items = [...byLink.values()].filter((i) => i.date && i.date >= cutoff && i.date <= new Date(NOW + 36e5).toISOString().slice(0, 16))
-    .sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, CAP);
+    .sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, c.cap || CAP);
   if (!PROBE && translateAll) {
     const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
     if (todo.length) {
