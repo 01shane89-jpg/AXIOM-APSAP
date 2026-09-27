@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, probe); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, dense, probe, probe-dense); empty runs all"
         required: false
         default: ""
 
@@ -91,6 +91,13 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'storms' }}
         run: node tools/refresh_storms.mjs
         continue-on-error: true
+      # Every other free, no-login feed (tools/refresh_dense.mjs): writes data/live/x/feeds.js and one file per country.
+      - name: Pull the dense open-data feeds (hazards, aviation, cyber, sanctions, travel advice, health, economy, elections)
+        if: ${{ !inputs.only || inputs.only == 'dense' }}
+        run: |
+          npm install --no-save --no-audit --no-fund h3-js@4 >/dev/null 2>&1 || true
+          SAMPLES=${{ inputs.only == 'dense' && '1' || '' }} node tools/refresh_dense.mjs
+        continue-on-error: true
       - name: Report translation coverage
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
         run: node tools/mt/coverage.mjs
@@ -110,7 +117,7 @@ jobs:
           name: probe-dense
           path: |
             probe-out/
-            data/live/x-*.js
+            data/live/x/
           if-no-files-found: ignore
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
