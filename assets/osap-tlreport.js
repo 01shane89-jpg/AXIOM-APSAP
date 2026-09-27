@@ -76,8 +76,12 @@
     ".tlr header.tlrh .tlrt{flex:1;min-width:0}.tlr header.tlrh .tlrg{text-align:right;font-size:.95em;flex:none}.tlr header.tlrh h2{margin:0;font-size:21px}.tlr .tlrk{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#12324a;font-weight:700}" +
     ".tlr .tlrmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;margin:6px 0;padding:6px 8px;background:#eef3f7;border-radius:4px}" +
     ".tlr .tlrmeta b{display:block;font-size:1.35em;color:#12324a}.tlr .tlrmeta span{color:#444}" +
-    ".tlr .tlrmapw{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px;align-items:start}" +
-    ".tlr svg.tlrmap{width:100%;height:auto;max-height:95mm;border:1px solid #ccd5dd;background:#f4f8fb;display:block}" +
+    ".tlr .tlrfig{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:10px;align-items:start}" +
+    ".tlr svg.tlrmap{width:100%;height:auto;border:1px solid #ccd5dd;background:#cfe1ee;display:block}" +
+    ".tlr .tlrside{border:1px solid #ccd5dd;background:#f7f9fb;padding:6px 8px;font-size:.92em;min-width:0}.tlr .tlrside h4{margin:0 0 3px;font-size:1em;color:#12324a}.tlr .tlrside h4+ol{margin-top:0}" +
+    ".tlr ul.tlrleg{list-style:none;margin:0 0 4px;padding:0}.tlr ul.tlrleg li{display:flex;align-items:center;gap:6px;margin:1px 0}.tlr ul.tlrleg svg{flex:none}" +
+    ".tlr ol.tlrki{margin:0;padding:0;list-style:none}.tlr ol.tlrki li{margin:1px 0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tlr ol.tlrki .n{display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;border-radius:7px;background:#12324a;color:#fff;font-size:.8em;font-weight:700;margin-right:4px;vertical-align:1px}.tlr ol.tlrki b{font-weight:600;color:#444;margin-right:2px}" +
+    ".tlr .tlrcols{column-count:2;column-gap:14px}.tlr .tlrcols .tlrev{margin:0 0 6px;display:inline-block;width:100%;box-sizing:border-box}.tlr .tlrcols h4.tlrsub{column-span:all;break-after:avoid}" +
     ".tlr .tlrkey{display:flex;flex-wrap:wrap;gap:3px 12px;margin:3px 0 0;color:#444;font-size:.92em}.tlr .tlrkey i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}" +
     ".tlr .tlrday{break-inside:auto}.tlr h3.tlrd{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid #12324a;padding-bottom:1px;margin-top:10px;break-after:avoid;page-break-after:avoid}" +
     ".tlr h3.tlrd span{font-weight:400;color:#555;font-size:.9em}" +
@@ -94,11 +98,11 @@
     ".tlr ol.tlrsrc{margin:2px 0 0 18px;padding:0;column-count:2;column-gap:16px;font-size:.92em;color:#333}.tlr ol.tlrsrc li{break-inside:avoid;overflow-wrap:anywhere}.tlr ol.tlrsrc a{color:inherit}" +
     ".tlr .tlrnote{background:#eef3f7;padding:5px 8px;margin:6px 0;border-radius:3px}.tlr .tlrnote p{margin:2px 0}" +
     ".tlrbar label{font-size:12.5px;color:#26323c}.tlrbar select,.tlrbar input{font-size:12.5px}" +
-    "@media (max-width:640px){.tlr header.tlrh{flex-wrap:wrap}.tlr header.tlrh .tlrg{flex-basis:100%;text-align:left}.tlr header.tlrh .tlrg br{display:none}.tlr .tlrmeta{grid-template-columns:1fr 1fr}.tlr .tlrmapw{grid-template-columns:1fr}.tlr .tlre{grid-template-columns:70px minmax(0,1fr)}.tlr ol.tlrsrc{column-count:1}}" +
+    "@media (max-width:640px){.tlr header.tlrh{flex-wrap:wrap}.tlr header.tlrh .tlrg{flex-basis:100%;text-align:left}.tlr header.tlrh .tlrg br{display:none}.tlr .tlrmeta{grid-template-columns:1fr 1fr}.tlr .tlrfig{grid-template-columns:1fr}.tlr .tlrcols{column-count:1}.tlr .tlre{grid-template-columns:70px minmax(0,1fr)}.tlr ol.tlrsrc{column-count:1}}" +
     "@media print{html.briefing .tlr{font-size:8.8px;line-height:1.3}html.briefing .tlr .tlre{grid-template-columns:78px minmax(0,1fr);padding:2px 0}" +
-    "html.briefing .tlr svg.tlrmap{max-height:80mm}html.briefing .tlr .tlrsrcs{break-before:page;page-break-before:always}" +
+    "html.briefing .tlr .tlrfig{grid-template-columns:minmax(0,1fr) 46mm}html.briefing .tlr .tlrsrcs{break-before:page;page-break-before:always}" +
     "html.briefing .tlr .tlre .hd a{border-bottom:0}.tlr .aitag{border-radius:3px}html.briefing .tlr ol.tlrsrc{column-count:3;font-size:7.6px}" +
-    ".tlr .tlrmeta,.tlr .tlrnote,.tlr .tlrev .n,.tlr svg.tlrmap,.tlr .st{-webkit-print-color-adjust:exact;print-color-adjust:exact}}" +
+    ".tlr .tlrmeta,.tlr .tlrnote,.tlr .tlrev .n,.tlr ol.tlrki .n,.tlr svg.tlrmap,.tlr .tlrside,.tlr .st{-webkit-print-color-adjust:exact;print-color-adjust:exact}}" +
     "html.phone:not(.hdr-open) #tlrep-btn{display:none!important}#tlrep-btn[hidden],#tlrep-rail[hidden]{display:none!important}";
   document.head.appendChild(css);
 
@@ -108,7 +112,7 @@
   function bbox(g) { var b = null; eachPt(g, function (lon, lat) { if (!b) b = [lon, lat, lon, lat]; else { b[0] = Math.min(b[0], lon); b[1] = Math.min(b[1], lat); b[2] = Math.max(b[2], lon); b[3] = Math.max(b[3], lat); } }); return b; }
   function view(bb, size) {
     var k = Math.cos(((bb[1] + bb[3]) / 2) * Math.PI / 180), W = (bb[2] - bb[0]) * k, H = bb[3] - bb[1], S = size / Math.max(W, H);
-    return { bb: bb, w: W * S, h: H * S, x: function (lon) { return (lon - bb[0]) * k * S; }, y: function (lat) { return (bb[3] - lat) * S; },
+    return { bb: bb, k: k, s: S, w: W * S, h: H * S, x: function (lon) { return (lon - bb[0]) * k * S; }, y: function (lat) { return (bb[3] - lat) * S; },
       has: function (lon, lat) { return lon >= bb[0] && lon <= bb[2] && lat >= bb[1] && lat <= bb[3]; } };
   }
   function outlines(feats, me, v, thin) {
@@ -124,6 +128,42 @@
     return out;
   }
   function pctl(a, p) { var s = a.slice().sort(function (x, y) { return x - y; }); return s[Math.min(s.length - 1, Math.max(0, Math.round(p * (s.length - 1))))]; }
+  /* provinces/states of the open country (assets/regions/<ISO3>.json, Natural Earth admin-1, the file the Weather section
+     uses): thin borders and names on the report map. Loaded once per country when a report opens; the map simply goes
+     without them if the file cannot be read. */
+  var A3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS", cn: "CHN",
+    tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG", "in": "IND", pk: "PAK", np: "NPL",
+    bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
+  var REG = {};
+  function a3() { var w = world(); return A3[cc()] || (w && w.a3) || ""; }
+  function regions() { var l = REG[a3()] || []; return cc() === "oki" ? l.filter(function (r) { return /okinawa/i.test(r[0]); }) : l; }
+  function loadRegions(cb) {
+    var k = a3();
+    if (!k || REG[k] || !window.fetch) return cb();
+    fetch("assets/regions/" + k + ".json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { REG[k] = (j && j.r) || []; }, function () { REG[k] = []; }).then(cb);
+  }
+  function inRing(lon, lat, ring) {
+    var inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+      if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  function inGeom(lon, lat, g) {
+    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    return polys.some(function (p) { return p[0] && inRing(lon, lat, p[0]) && !p.slice(1).some(function (h) { return inRing(lon, lat, h); }); });
+  }
+  /* a place name from a record's "place" field, or "" when it is not a named place (distances, regions, borders, seas) */
+  function placeName(p) {
+    p = String(p || "").split(/[,(\/;]| - /)[0].trim().replace(/\s+(district|province|city|town|municipality|sub-?district|amphoe)$/i, "");
+    if (p.length < 3 || p.length > 26 || /\d|[^\x00-ɏ\s'.-]/.test(p) ||
+      /\b(region|state|border|area|basin|islands?|coast|sea|gulf|off|near|north(ern)?|south(ern)?|east(ern)?|west(ern)?|central|nationwide|alert|division|zone)\b/i.test(p)) return "";
+    return p;
+  }
+  function niceKm(km) { var n = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000], b = 1; n.forEach(function (x) { if (x <= km) b = x; }); return b; }
+  var ASPECT = 1.3;
   function mapSvg(recs, evs) {
     var feats = [].concat(((window.COUNTRY_BASE || {}).features) || [], ((window.WORLD_BASE || {}).features) || []);
     var ne = neName(), me = feats.filter(function (f) { return f.properties && f.properties.n === ne; })[0];
@@ -138,22 +178,36 @@
       var px = Math.max(min, (b[2] - b[0]) * f), py = Math.max(min, (b[3] - b[1]) * f);
       return [b[0] - px, b[1] - py, b[2] + px, b[3] + py];
     }
+    /* widen or heighten a box to the map's shape, so the frame is filled with the surrounding land and sea, not left blank */
+    function fit(b, asp) {
+      b = b.slice();
+      var km = Math.cos(((b[1] + b[3]) / 2) * Math.PI / 180), rw = (b[2] - b[0]) * km, rh = b[3] - b[1];
+      if (rw < rh * asp) { var dx = (rh * asp - rw) / 2 / km; b[0] -= dx; b[2] += dx; }
+      else { var dy = (rw / asp - rh) / 2; b[1] = Math.max(-84, b[1] - dy); b[3] = Math.min(84, b[3] + dy); }
+      return b;
+    }
     var cbp = pad(cb, 0.06, 0.3), bb = cbp, zoomed = false;
     /* the records' own extent, leaving out the few furthest ones (3% each side) once there are enough of them */
     var lls = pts.map(function (r) { return [+r.lon, +r.lat]; }).concat(evs.filter(function (e) { return e.lat != null && e.lon != null; }).map(function (e) { return [e.lon, e.lat]; }));
     if (lls.length >= 3) {
       var q = lls.length >= 20 ? 0.03 : 0, xs = lls.map(function (p) { return p[0]; }), ys = lls.map(function (p) { return p[1]; });
       var rb = pad([pctl(xs, q), pctl(ys, q), pctl(xs, 1 - q), pctl(ys, 1 - q)], 0.2, 0.25);
-      /* keep the zoomed view from being a sliver: at least 60% as tall as wide and the other way round */
-      var km = Math.cos(((rb[1] + rb[3]) / 2) * Math.PI / 180), rw = (rb[2] - rb[0]) * km, rh = rb[3] - rb[1];
-      if (rh < rw * 0.6) { var dy = (rw * 0.6 - rh) / 2; rb[1] -= dy; rb[3] += dy; }
-      else if (rw < rh * 0.6) { var dx = (rh * 0.6 - rw) / 2 / km; rb[0] -= dx; rb[2] += dx; }
-      var ck = Math.cos(((cbp[1] + cbp[3]) / 2) * Math.PI / 180);
+      var km0 = Math.cos(((rb[1] + rb[3]) / 2) * Math.PI / 180), ck = Math.cos(((cbp[1] + cbp[3]) / 2) * Math.PI / 180);
       var area = function (b, k2) { return (b[2] - b[0]) * k2 * (b[3] - b[1]); };
-      if (area(rb, km) < 0.3 * area(cbp, ck)) { bb = rb; zoomed = true; }
+      rb = fit(rb, ASPECT);
+      if (area(rb, km0) < 0.3 * area(fit(cbp, ASPECT), ck)) { bb = rb; zoomed = true; }
     }
-    var v = view(bb, 600), W = v.w, H = v.h;
+    bb = fit(bb, ASPECT);
+    var v = view(bb, 760), W = v.w, H = v.h;
     var paths = outlines(feats, me, v, false);
+    /* provinces: thin dashed lines inside the country, then the national border again on top so it stays crisp */
+    var regs = regions(), rlines = "";
+    regs.forEach(function (r) {
+      var b = r[4]; if (!b || b[3] < bb[0] || b[1] > bb[2] || b[2] < bb[1] || b[0] > bb[3] || !r[5]) return;
+      rlines += '<path d="' + r[5].map(function (ring) { return "M" + ring.map(function (c) { return v.x(c[0]).toFixed(1) + " " + v.y(c[1]).toFixed(1); }).join("L") + "Z"; }).join("") + '"/>';
+    });
+    if (rlines) rlines = '<g fill="none" stroke="#9fb0bf" stroke-width=".6" stroke-dasharray="3 2" stroke-linejoin="round">' + rlines + "</g>";
+    var border = me ? outlines([me], me, v, false).replace(/fill="#ffffff"/, 'fill="none"') : "";
     var r0 = 3.2, dots = "", out = 0;
     pts.forEach(function (r) {
       if (!v.has(+r.lon, +r.lat)) { out++; return; }
@@ -161,20 +215,36 @@
       dots += '<circle cx="' + v.x(+r.lon).toFixed(1) + '" cy="' + v.y(+r.lat).toFixed(1) + '" r="' + (r0 + Math.min(2, (r.sev || 1) - 1) * 0.9) + '" fill="' + (r.type === "observation" ? "none" : col) +
         '" fill-opacity=".55" stroke="' + col + '" stroke-width="1"' + (r.type === "claim" ? ' stroke-dasharray="2 1.5"' : "") + "/>";
     });
-    /* overview inset: the whole area, with the zoomed part outlined, in the corner holding the fewest records */
+    function cnt(c, w, h) { return pts.filter(function (r) { var x = v.x(+r.lon), y = v.y(+r.lat); return x >= c[0] - 10 && x <= c[0] + w + 10 && y >= c[1] - 10 && y <= c[1] + h + 10; }).length; }
+    /* furniture goes in the emptiest corners: the overview inset first, then the scale bar at the bottom, the north arrow at the top */
+    var taken = {}, boxes = [];
+    function corner(names, w, h) {
+      var best = null, bn = 1e9;
+      names.forEach(function (n) {
+        if (taken[n]) return;
+        var c = [n.charAt(1) === "r" ? W - w - 8 : 8, n.charAt(0) === "b" ? H - h - 8 : 8], k = cnt(c, w, h);
+        if (k < bn) { bn = k; best = { n: n, x: c[0], y: c[1] }; }
+      });
+      taken[best.n] = 1; boxes.push([best.x - 4, best.y - 4, best.x + w + 4, best.y + h + 4]); return best;
+    }
     var inset = "";
     if (zoomed) {
-      var iv = view(cbp, 150), corners = [[W - iv.w - 8, 8], [8, 8], [W - iv.w - 8, H - iv.h - 8], [8, H - iv.h - 8]], best = null, bestN = 1e9;
-      corners.forEach(function (c) {
-        var n = pts.filter(function (r) { var x = v.x(+r.lon), y = v.y(+r.lat); return x >= c[0] - 10 && x <= c[0] + iv.w + 10 && y >= c[1] - 10 && y <= c[1] + iv.h + 10; }).length;
-        if (n < bestN) { bestN = n; best = c; }
-      });
+      var iv = view(fit(cbp, 1.2), 170), ic = corner(["tr", "tl", "br", "bl"], iv.w, iv.h);
       var zx = iv.x(bb[0]), zy = iv.y(bb[3]), zw = iv.x(bb[2]) - zx, zh = iv.y(bb[1]) - zy;
-      inset = '<g transform="translate(' + best[0].toFixed(1) + " " + best[1].toFixed(1) + ')"><rect x="-3" y="-3" width="' + (iv.w + 6).toFixed(1) + '" height="' + (iv.h + 6).toFixed(1) + '" fill="#f4f8fb" stroke="#12324a" stroke-width="1"/>' +
+      inset = '<g transform="translate(' + ic.x.toFixed(1) + " " + ic.y.toFixed(1) + ')"><rect x="-3" y="-3" width="' + (iv.w + 6).toFixed(1) + '" height="' + (iv.h + 6).toFixed(1) + '" fill="#f4f8fb" stroke="#12324a" stroke-width="1"/>' +
         '<svg width="' + iv.w.toFixed(1) + '" height="' + iv.h.toFixed(1) + '" overflow="hidden">' + outlines(feats, me, iv, true) +
         '<rect x="' + zx.toFixed(1) + '" y="' + zy.toFixed(1) + '" width="' + Math.max(3, zw).toFixed(1) + '" height="' + Math.max(3, zh).toFixed(1) + '" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.6"/></svg>' +
         '<text x="3" y="' + (iv.h - 4).toFixed(1) + '" font-size="10" font-family="system-ui,sans-serif" fill="#12324a" font-weight="600">' + esc(cname()) + "</text></g>";
     }
+    /* scale bar (distances true at the map's middle latitude) and north arrow */
+    var pxKm = v.s / 111.32, sk = niceKm(W * 0.2 / pxKm), sw = sk * pxKm, sc = corner(["bl", "br"], sw + 16, 30);
+    var scale = '<g transform="translate(' + sc.x.toFixed(1) + " " + sc.y.toFixed(1) + ')" font-family="system-ui,sans-serif" font-size="10" fill="#12324a">' +
+      '<rect x="0" y="0" width="' + (sw + 16).toFixed(1) + '" height="30" rx="3" fill="#fff" fill-opacity=".85"/>' +
+      '<rect x="8" y="17" width="' + (sw / 2).toFixed(1) + '" height="5" fill="#12324a"/><rect x="' + (8 + sw / 2).toFixed(1) + '" y="17" width="' + (sw / 2).toFixed(1) + '" height="5" fill="#fff" stroke="#12324a" stroke-width=".8"/>' +
+      '<text x="8" y="12">0</text><text x="' + (8 + sw).toFixed(1) + '" y="12" text-anchor="end">' + sk + " km</text></g>";
+    var nc = corner(["tl", "tr", "bl", "br"], 26, 38);
+    var north = '<g transform="translate(' + (nc.x + 13).toFixed(1) + " " + nc.y.toFixed(1) + ')" font-family="system-ui,sans-serif"><circle cx="0" cy="22" r="13" fill="#fff" fill-opacity=".85" stroke="#12324a" stroke-width=".8"/>' +
+      '<path d="M0 12 L6 28 L0 24 L-6 28 Z" fill="#12324a"/><text x="0" y="9" text-anchor="middle" font-size="11" font-weight="700" fill="#12324a">N</text></g>';
     /* numbered key events: badges that would overlap are moved to the nearest free spot, with a line back */
     var nums = "", placed = [];
     evs.forEach(function (e, i) {
@@ -187,12 +257,71 @@
           if (free(px, py)) { x = px; y = py; break found; }
         }
       }
-      placed.push([x, y]);
+      placed.push([x, y]); boxes.push([x - R, y - R, x + R, y + R]);
       nums += (x !== x0 || y !== y0 ? '<line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#12324a" stroke-width="1.2"/><circle cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="2.2" fill="#12324a"/>' : "") +
         '<g><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="#12324a" stroke="#fff" stroke-width="1.8"/><text x="' + x.toFixed(1) + '" y="' + (y + 4.3).toFixed(1) + '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">' + (i + 1) + "</text></g>";
     });
-    return { svg: '<svg class="tlrmap" viewBox="0 0 ' + W.toFixed(0) + " " + H.toFixed(0) + '" role="img" aria-label="Map of ' + esc(cname()) + (zoomed ? ", zoomed to where the records are," : "") + ' with the report\'s records">' + paths + dots + nums + inset + "</svg>",
-      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length, zoomed: zoomed };
+    /* labels, most useful first, each only where it does not cover another label, a number or the map furniture:
+       places named in the records, then provinces (those with records first), then neighbouring countries */
+    function tw(s, fs) { return s.length * fs * 0.55; }
+    function fits(b) {
+      if (b[0] < 3 || b[1] < 3 || b[2] > W - 3 || b[3] > H - 3) return false;
+      return boxes.every(function (o) { return b[2] < o[0] || b[0] > o[2] || b[3] < o[1] || b[1] > o[3]; });
+    }
+    function label(s, x, y, fs, anchor) {
+      var w = tw(s, fs), x0 = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x, b = [x0 - 1, y - fs * 0.8, x0 + w + 1, y + fs * 0.25];
+      if (!fits(b)) return false; boxes.push(b); return true;
+    }
+    var halo = ' stroke="#fff" stroke-width="3" stroke-linejoin="round" paint-order="stroke"';
+    var towns = "", tn = {}, provNames = {};
+    regs.forEach(function (r) { provNames[r[0].toLowerCase()] = 1; });
+    pts.forEach(function (r) {
+      var n = placeName(r.place); if (!n || provNames[n.toLowerCase()] || n.toLowerCase() === cname().toLowerCase() || !v.has(+r.lon, +r.lat)) return;
+      var k = n.toLowerCase(); (tn[k] = tn[k] || { n: n, la: [], lo: [] }); tn[k].la.push(+r.lat); tn[k].lo.push(+r.lon);
+    });
+    Object.keys(tn).map(function (k) { return tn[k]; }).sort(function (a, b) { return b.la.length - a.la.length; }).slice(0, 14).forEach(function (t) {
+      var x = v.x(pctl(t.lo, 0.5)), y = v.y(pctl(t.la, 0.5)), fs = 10.5;
+      var tries = [[x + 6, y + 4, "start"], [x - 6, y + 4, "end"], [x, y - 7, "middle"], [x, y + 15, "middle"]];
+      for (var i = 0; i < tries.length; i++) if (label(t.n, tries[i][0], tries[i][1], fs, tries[i][2])) {
+        towns += '<rect x="' + (x - 2.2).toFixed(1) + '" y="' + (y - 2.2).toFixed(1) + '" width="4.4" height="4.4" fill="#1d2a35" stroke="#fff" stroke-width=".8"/>' +
+          '<text x="' + tries[i][0].toFixed(1) + '" y="' + tries[i][1].toFixed(1) + '" text-anchor="' + tries[i][2] + '" font-size="' + fs + '" font-weight="600" fill="#1d2a35"' + halo + ">" + esc(t.n) + "</text>";
+        break;
+      }
+    });
+    var provs = "", perProv = {};
+    pts.forEach(function (r) { var p = String(r.prov || "").split(/[,(\/]/)[0].replace(/\s+(province|state|region|division)$/i, "").trim().toLowerCase(); if (p) perProv[p] = (perProv[p] || 0) + 1; });
+    regs.filter(function (r) { return r[2] != null && v.has(r[3], r[2]); }).map(function (r) {
+      var b = r[4], pw = b ? (v.x(b[3]) - v.x(b[1])) : 0;
+      return { r: r, n: perProv[r[0].toLowerCase()] || 0, pw: pw };
+    }).filter(function (p) { return p.n || p.pw > tw(p.r[0], 9.5) * 0.9; })
+      .sort(function (a, b) { return b.n - a.n || b.pw - a.pw; }).forEach(function (p) {
+        var x = v.x(p.r[3]), y = v.y(p.r[2]) + 3;
+        if (label(p.r[0], x, y, 9.5, "middle")) provs += '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" text-anchor="middle" font-size="9.5" fill="#4f6272"' + halo + ">" + esc(p.r[0]) + "</text>";
+      });
+    var nbrs = "";
+    feats.forEach(function (f) {
+      if (f === me || !f.properties || !f.properties.n || !f.__bb) return;
+      var fb = f.__bb; if (fb[2] < bb[0] || fb[0] > bb[2] || fb[3] < bb[1] || fb[1] > bb[3]) return;
+      var c = [Math.max(fb[0], bb[0]), Math.max(fb[1], bb[1]), Math.min(fb[2], bb[2]), Math.min(fb[3], bb[3])];
+      var name = f.properties.n.toUpperCase(), fs = 10.5, w = tw(name, fs) * 1.15;
+      if (v.x(c[2]) - v.x(c[0]) < w * 0.8 || v.y(c[1]) - v.y(c[3]) < 14) return;
+      /* the visible part's middle, or the nearest point to it that is on this country's land and clear of the report country */
+      var best = null, bd = 1e9, mx = (c[0] + c[2]) / 2, my = (c[1] + c[3]) / 2;
+      for (var i = 0; i <= 6; i++) for (var j = 0; j <= 6; j++) {
+        var lon = c[0] + (c[2] - c[0]) * (0.1 + 0.8 * i / 6), lat = c[1] + (c[3] - c[1]) * (0.1 + 0.8 * j / 6);
+        var d = Math.pow((lon - mx) * v.k, 2) + Math.pow(lat - my, 2);
+        if (d < bd && inGeom(lon, lat, f.geometry) && !(me && inGeom(lon, lat, me.geometry))) { bd = d; best = [lon, lat]; }
+      }
+      if (!best) return;
+      var x = v.x(best[0]), y = v.y(best[1]) + 4;
+      for (var o = 0; o < 3; o++) {
+        var yy = y + [0, -14, 14][o];
+        if (label(name, x, yy, fs, "middle")) { nbrs += '<text x="' + x.toFixed(1) + '" y="' + yy.toFixed(1) + '" text-anchor="middle" font-size="' + fs + '" letter-spacing="1.2" fill="#7b8894"' + halo + ">" + esc(name) + "</text>"; break; }
+      }
+    });
+    return { svg: '<svg class="tlrmap" viewBox="0 0 ' + W.toFixed(0) + " " + H.toFixed(0) + '" role="img" aria-label="Map of ' + esc(cname()) + (zoomed ? ", zoomed to where the records are," : "") + ' with the report\'s records">' +
+      '<g font-family="system-ui,sans-serif">' + paths + rlines + border + nbrs + dots + provs + towns + nums + "</g>" + inset + scale + north + "</svg>",
+      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length, zoomed: zoomed, provinces: !!rlines, towns: !!towns, scaleKm: sk };
   }
   function eachPt(g, fn) {
     if (!g) return;
@@ -360,6 +489,34 @@
       '<div class="mt">' + esc(st[0] + ", " + st[1]) + " · Source [" + srcNo + "] " + esc(r.src.name) + (u ? " · " + esc(host(u)) : "") + "</div>" +
       '<div class="fp">SHA-256 <span data-tlfp="' + esc(r.id) + '">' + esc(fp || "computing…") + "</span></div></div></div>";
   }
+  /* the map's key, beside it: what each mark means, drawn with the same marks */
+  function legendHtml(m, keyEv) {
+    function ic(svg) { return '<svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true">' + svg + "</svg>"; }
+    var rows = [
+      [ic('<circle cx="8" cy="7" r="4" fill="#b3261e" fill-opacity=".55" stroke="#b3261e"/>'), "Sourced report"],
+      [ic('<circle cx="8" cy="7" r="4" fill="#8a5a00" fill-opacity=".55" stroke="#8a5a00" stroke-dasharray="2 1.5"/>'), "Official statement"],
+      [ic('<circle cx="8" cy="7" r="4" fill="none" stroke="#1f5f8b"/>'), "Instrument reading"],
+      [ic('<circle cx="2.6" cy="8" r="2" fill="#777"/><circle cx="7.4" cy="8" r="2.7" fill="#777"/><circle cx="12.8" cy="8" r="3.3" fill="#777"/>'), "Larger dot: higher severity"]
+    ];
+    if (keyEv.length) rows.push([ic('<circle cx="8" cy="7" r="6.4" fill="#12324a"/><text x="8" y="10" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">1</text>'), "Key event, numbered as below"]);
+    if (m.towns) rows.push([ic('<rect x="5.8" y="4.8" width="4.4" height="4.4" fill="#1d2a35"/>'), "Place named in the records"]);
+    rows.push([ic('<path d="M1 7H15" stroke="#12324a" stroke-width="1.4"/>'), "National border"]);
+    if (m.provinces) rows.push([ic('<path d="M1 7H15" stroke="#9fb0bf" stroke-width="1" stroke-dasharray="3 2"/>'), "Province or state border"]);
+    rows.push([ic('<rect x="1" y="2" width="14" height="10" fill="#e3e8ec" stroke="#9aa6b0" stroke-width=".6"/>'), "Neighbouring country"]);
+    if (m.zoomed) rows.push([ic('<rect x="2" y="2.5" width="12" height="9" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.4"/>'), "Inset: area this map shows"]);
+    return '<h4>Legend</h4><ul class="tlrleg">' + rows.map(function (r) { return "<li>" + r[0] + "<span>" + r[1] + "</span></li>"; }).join("") + "</ul>" +
+      '<p class="bm">Scale bar and north arrow are on the map.</p>';
+  }
+  /* a short index of the numbered markers, so the map can be read on its own */
+  function keyIndex(evs, nts) {
+    var items = evs.map(function (e) { return [fmtShort(new Date(e.from).toISOString().slice(0, 10)), e.title]; })
+      .concat(nts.map(function (e) { return [fmtShort(e.c.r.__tlw.day), e.title]; }));
+    if (!items.length) return "";
+    return '<h4>Key events on the map</h4><ol class="tlrki">' + items.map(function (x, i) {
+      var t = String(x[1] || ""); if (t.length > 90) t = t.slice(0, 88).replace(/\s+\S*$/, "") + "…";
+      return '<li><span class="n">' + (i + 1) + "</span><b>" + esc(x[0]) + "</b> " + esc(t) + "</li>";
+    }).join("") + "</ol>";
+  }
   var LN = {};
   function stamp(w) { return w.timed ? T().dualT(w.ms, { date: true }) : fmtShort(w.day) + " (date only)"; }
   function build() {
@@ -392,15 +549,15 @@
       '<p class="bm">First record ' + esc(stamp(first)) + "; last " + esc(stamp(last)) + ". " +
       kinds.event + " sourced reports, " + kinds.claim + " official statements, " + kinds.observation + " instrument readings.</p>" +
       '<div class="tlrnote"><p><b>Nothing in this report is confirmed.</b> "Reported" means a named source said it; "Observed" means an instrument reading. A credible source can still be wrong. Every entry links to its source and carries a SHA-256 fingerprint of the record as OSAP holds it.</p></div>' +
-      '<div class="tlrmapw"><div><h3>Where</h3>' + m.svg +
-      '<div class="tlrkey"><span><i style="background:#b3261e;opacity:.7"></i>Sourced report</span><span><i style="background:#8a5a00;opacity:.7;border:1px dashed #8a5a00"></i>Official statement</span><span><i style="border:1.5px solid #1f5f8b"></i>Instrument reading</span>' +
-      (keyEv.length ? "<span><i style=\"background:#12324a\"></i>Numbered: key events</span>" : "") + "</div>" +
-      '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") + "Positions are as precise as each source allows.</p></div>" +
-      "<div><h3>Key events " + '<span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
-      (evs.length ? (nts.length ? '<h4 class="tlrsub">Reported by two or more sources</h4>' : "") + evs.map(evHtml).join("") : "") +
-      (nts.length ? (evs.length ? '<h4 class="tlrsub">Other notable records</h4>' : '<p class="bm">No two sources reported the same incident in these dates, so these are single reports picked by fixed rules.</p>') +
-        nts.map(function (e, i) { return noteHtml(e, evs.length + i); }).join("") : "") +
-      (keyEv.length ? "" : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') + "</div></div>" +
+      '<section class="tlrmapw"><h3>Where</h3><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + legendHtml(m, keyEv) + keyIndex(evs, nts) + "</aside></div>" +
+      '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") +
+      "Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p></section>" +
+      '<section class="tlrkev"><h3>Key events ' + '<span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
+      (evs.length || !nts.length ? "" : '<p class="bm">No two sources reported the same incident in these dates, so these are single reports picked by fixed rules.</p>') +
+      (keyEv.length ? '<div class="tlrcols">' +
+        (evs.length ? (nts.length ? '<h4 class="tlrsub">Reported by two or more sources</h4>' : "") + evs.map(evHtml).join("") : "") +
+        (nts.length ? (evs.length ? '<h4 class="tlrsub">Other notable records</h4>' : "") + nts.map(function (e, i) { return noteHtml(e, evs.length + i); }).join("") : "") + "</div>"
+        : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') + "</section>" +
       "<h3>Chronology</h3>" + '<p class="bm">Oldest first. Days are UTC (Zulu) dates; each time is shown in Zulu and local time.</p>' +
       order.map(function (d) {
         return '<section class="tlrday"><h3 class="tlrd">' + esc(fmtDay(d)) + " <span>" + days[d].length + " record" + (days[d].length === 1 ? "" : "s") + "</span></h3>" +
@@ -452,7 +609,7 @@
     if (v && v !== "timeline" && v !== "alerts" && pick({ layer: v, from: p.from, to: p.to, since: p.since }).length >= MIN_RECS) OPT.layer = v;
     el.hidden = false; document.documentElement.classList.add("briefing");
     el.innerHTML = '<div class="bbar noprint"><span class="obs">Building the timeline report…</span></div>';
-    loadSummaries(function () { if (!el.hidden) { render(); el.scrollTop = 0; } });
+    loadSummaries(function () { loadRegions(function () { if (!el.hidden) { render(); el.scrollTop = 0; } }); });
   }
   function close() { el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("briefing"); }
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && el && !el.hidden && el.querySelector(".tlr")) close(); });
