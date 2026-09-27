@@ -25,6 +25,15 @@ const { chromium } = require(process.env.PW || 'playwright');
     console.log(cc.padEnd(4), String(n).padStart(4), 'records,', views.length, 'tabs', errs.length ? '| ERRORS: ' + errs.join('; ') : '');
     if (n < 0 || errs.length) failed = true; errs.length = 0;
   }
+  // the United States, a state opened as a sub-area, and the region drop-downs
+  for (const u of ['#us/timeline', '?st=TX#us/timeline', '?st=AK#us/timeline']) {
+    await p.goto('about:blank'); await p.goto(url + u); await p.waitForTimeout(1200);
+    const r = await p.evaluate(() => ({ n: window.TSAP ? TSAP.records.length : -1, states: document.querySelectorAll('#country-seg button[data-st]').length,
+      menus: document.querySelectorAll('#country-seg .cdrop').length, cur: (document.querySelector('#country-seg .cdrop.cur b') || {}).textContent || '' }));
+    const bad = r.n < 0 || r.states !== 52 || r.menus < 10 || !r.cur || (/st=/.test(u) && !/Texas|Alaska/.test(r.cur));
+    console.log(u.padEnd(20), String(r.n).padStart(4), 'records,', r.menus, 'region menus,', r.states - 1, 'states, open:', r.cur, errs.length ? '| ERRORS: ' + errs.join('; ') : '');
+    if (bad || errs.length) failed = true; errs.length = 0;
+  }
   await b.close();
   process.exit(failed ? 1 : 0);
 })();
