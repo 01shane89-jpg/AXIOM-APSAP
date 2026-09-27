@@ -1,0 +1,524 @@
+{
+ "phases": [
+  {
+   "from": "2026-02-28",
+   "to": "2026-04-08",
+   "label": "Phase I: US-Israeli air campaign on Iran; Khamenei killed; Iran strikes Israel and Gulf states; Hormuz closed",
+   "url": "https://en.wikipedia.org/wiki/2026_Iran_war"
+  },
+  {
+   "from": "2026-04-08",
+   "to": "2026-06-17",
+   "label": "Two-week ceasefire (extended); Islamabad talks fail 12 Apr; US blockade from 13 Apr; Project Freedom 4-6 May; strikes 7 May",
+   "url": "https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire"
+  },
+  {
+   "from": "2026-06-17",
+   "to": "2026-08-17",
+   "label": "60-day US-Iran MoU (blockade lifted 18 Jun); fighting resumes 7-8 Jul, blockade reimposed 14 Jul; MoU expires 17 Aug",
+   "url": "https://www.aljazeera.com/news/2026/8/17/us-iran-memorandum-of-understanding-expires-how-and-why-it-fell-apart"
+  },
+  {
+   "from": "2026-07-26",
+   "to": "2026-08-30",
+   "label": "Mutual pause in strikes from 26 Jul (with violations 29-31 Jul); Oman-mediated Hormuz talks; sanctions escalation",
+   "url": "https://www.cnn.com/2026/07/27/world/live-news/iran-war-trump"
+  },
+  {
+   "from": "2026-08-30",
+   "to": "2026-09-27",
+   "label": "Renewed hostilities: Larak strikes, tanker war, Iranian strikes on Jordan/Bahrain; Houthis take Mocha and Bab al-Mandeb islands; UNGA contacts; 7-day plan rejected 26 Sep",
+   "url": "https://www.aljazeera.com/news/2026/9/26/trump-rejects-irans-seven-day-roadmap-to-reopen-strait-of-hormuz"
+  }
+ ],
+ "figures": [
+  {
+   "label": "Killed in Iran (early war)",
+   "value": 1255,
+   "unit": "people",
+   "asof": "2026-03-09",
+   "claimed_by": "Iran",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/3/9/iran-says-1255-killed-in-us-israeli-attacks-mostly-civilians"
+  },
+  {
+   "label": "Civilians killed in Iran, first three weeks",
+   "value": 1400,
+   "unit": "people (over)",
+   "asof": "2026-03-23",
+   "claimed_by": "rights group (via Iran International)",
+   "source": "Iran International",
+   "url": "https://www.iranintl.com/en/202603234569"
+  },
+  {
+   "label": "Internally displaced in Iran",
+   "value": 3200000,
+   "unit": "people (up to)",
+   "asof": "2026-03-12",
+   "claimed_by": "UNHCR",
+   "source": "UNHCR",
+   "url": "https://www.unhcr.org/news/press-releases/unhcr-3-2-million-iranians-temporarily-displaced-iran-conflict-intensifies"
+  },
+  {
+   "label": "US service members wounded",
+   "value": 140,
+   "unit": "people (around)",
+   "asof": "2026-03-10",
+   "claimed_by": "Pentagon",
+   "source": "Al Jazeera",
+   "url": "https://aljazeera.com/news/2026/3/10/around-140-us-service-members-wounded-in-iran-war-pentagon-says"
+  },
+  {
+   "label": "US troops killed in Jordan base attack",
+   "value": 2,
+   "unit": "people (1 missing)",
+   "asof": "2026-07-18",
+   "claimed_by": "CENTCOM",
+   "source": "Military Times",
+   "url": "https://www.militarytimes.com/flashpoints/2026/07/18/2-us-troops-killed-1-missing-after-iranian-missile-drone-attack-in-jordan/"
+  },
+  {
+   "label": "US cost of war",
+   "value": 37.5,
+   "unit": "USD billion",
+   "asof": "2026-07-22",
+   "claimed_by": "US Defense Secretary Hegseth",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/liveblog/2026/7/22/iran-war-live-us-launches-new-attacks-hegseth-says-war-has-cost-37-5bn"
+  },
+  {
+   "label": "Drop in Hormuz traffic",
+   "value": 95,
+   "unit": "percent",
+   "asof": "2026-08-27",
+   "claimed_by": "Al Jazeera analysis",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/8/27/how-a-95-percent-drop-in-hormuz-traffic-changed-global-shipping"
+  },
+  {
+   "label": "Brent crude",
+   "value": 100,
+   "unit": "USD/bbl (above)",
+   "asof": "2026-09-09",
+   "claimed_by": "market data",
+   "source": "CNBC",
+   "url": "https://www.cnbc.com/2026/09/09/oil-prices-today-wti-brent-us-iran-hormuz-attacks.html"
+  },
+  {
+   "label": "Entities in 24 Aug US sanctions wave",
+   "value": 60,
+   "unit": "entities",
+   "asof": "2026-08-25",
+   "claimed_by": "US Treasury",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/features/2026/8/25/trumps-latest-wave-of-iran-sanctions-which-60-entities-are-targeted"
+  },
+  {
+   "label": "Killed at Sirik wedding strike",
+   "value": 4,
+   "unit": "people (at least; Iranian claims up to 5)",
+   "asof": "2026-09-02",
+   "claimed_by": "Iran",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/9/2/iran-says-us-strikes-hit-a-wedding-party-in-sirik-killing-five"
+  },
+  {
+   "label": "Killed in US strikes 1 Sep",
+   "value": 11,
+   "unit": "people",
+   "asof": "2026-09-01",
+   "claimed_by": "Iran",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/9/1/us-military-says-launching-new-attacks-on-iran"
+  },
+  {
+   "label": "Iranian oil tankers struck by US (5 Sep + 9 Sep)",
+   "value": 8,
+   "unit": "tankers",
+   "asof": "2026-09-09",
+   "claimed_by": "CENTCOM",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/9/9/us-destroys-five-iranian-tankers-iran-retaliates-with-attacks-on-jordan-base"
+  },
+  {
+   "label": "Ships attacked by Iran 9 Sep",
+   "value": 10,
+   "unit": "ships",
+   "asof": "2026-09-09",
+   "claimed_by": "Iran/IRGC",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/9/9/us-destroys-five-iranian-tankers-iran-retaliates-with-attacks-on-jordan-base"
+  },
+  {
+   "label": "Houthi ballistic missiles shot down 24 Sep",
+   "value": 6,
+   "unit": "missiles",
+   "asof": "2026-09-24",
+   "claimed_by": "Saudi-led coalition",
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/news/2026/9/24/saudi-led-coalition-says-shot-down-6-ballistic-missiles-launched-by-houthis"
+  }
+ ],
+ "areas": [
+  {
+   "name": "Iranian restricted/prohibited zone near Strait of Hormuz",
+   "kind": "exclusion",
+   "description": "Iran's top security official said Tehran would declare a restricted zone outside/near Hormuz for merchant ships. No coordinates were published in the reporting found.",
+   "from": "2026-09-07",
+   "claimed_by": "Iran",
+   "url": "https://www.globalsecurity.org/wmd/library/news/iran/2026/09/iran-260907-sputnik03.htm",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       55.9,
+       26.25
+      ],
+      [
+       56.8,
+       26.1
+      ],
+      [
+       56.95,
+       26.6
+      ],
+      [
+       56.5,
+       27.1
+      ],
+      [
+       55.9,
+       26.95
+      ],
+      [
+       55.9,
+       26.25
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "US naval blockade of Iranian ports",
+   "kind": "blockade",
+   "description": "Blockade on ships entering/leaving Iranian ports; began 13 Apr, ended 18 Jun under MoU, reimposed 14 Jul; US says it can be maintained indefinitely",
+   "from": "2026-07-14",
+   "claimed_by": "US/CENTCOM",
+   "url": "https://en.wikipedia.org/wiki/2026_United_States_naval_blockade_of_Iran",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       56.9,
+       25.3
+      ],
+      [
+       57.8,
+       24.2
+      ],
+      [
+       61.6,
+       23.4
+      ],
+      [
+       61.6,
+       25.1
+      ],
+      [
+       57.8,
+       25.7
+      ],
+      [
+       56.9,
+       25.3
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "Iran-Oman temporary Hormuz route",
+   "kind": "threat",
+   "description": "Temporary transit route agreed by Iran and Oman (coordinates agreed 5 Aug, route 26 Aug); Iran says strait still closed",
+   "from": "2026-08-26",
+   "claimed_by": "Iran/Oman",
+   "url": "https://www.aljazeera.com/news/2026/8/26/iran-oman-agree-on-temporary-hormuz-route-what-we-know",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       56.2,
+       26.35
+      ],
+      [
+       56.55,
+       26.55
+      ],
+      [
+       56.75,
+       26.4
+      ],
+      [
+       56.45,
+       26.15
+      ],
+      [
+       56.2,
+       26.35
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "JMIC Strait of Hormuz / Gulf of Oman threat area",
+   "kind": "threat",
+   "description": "JMIC raised maritime threat level for Strait of Hormuz to severe",
+   "from": "2026-03-06",
+   "claimed_by": "JMIC/UKMTO",
+   "url": "https://www.seatrade-maritime.com/security/jmic-raises-strait-of-hormuz-threat-level-to-severe",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       48.0,
+       29.9
+      ],
+      [
+       50.3,
+       26.5
+      ],
+      [
+       52.0,
+       24.3
+      ],
+      [
+       56.3,
+       24.2
+      ],
+      [
+       57.2,
+       24.9
+      ],
+      [
+       59.8,
+       22.4
+      ],
+      [
+       61.6,
+       24.6
+      ],
+      [
+       57.3,
+       26.7
+      ],
+      [
+       56.0,
+       27.1
+      ],
+      [
+       52.5,
+       27.9
+      ],
+      [
+       50.2,
+       30.2
+      ],
+      [
+       48.0,
+       29.9
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "MARAD advisory 2026-0001B: Hormuz, Persian Gulf, Gulf of Oman, Arabian Sea",
+   "kind": "threat",
+   "description": "US Maritime Administration advisory on military operations and potential retaliatory strikes by Iranian and proxy forces",
+   "from": "2026-03-01",
+   "claimed_by": "US MARAD",
+   "url": "https://www.maritime.dot.gov/msci/2026-0001b-strait-hormuz-persian-gulf-gulf-oman-and-arabian-sea-military-operations-and",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       48.0,
+       29.9
+      ],
+      [
+       51.0,
+       24.0
+      ],
+      [
+       56.0,
+       24.0
+      ],
+      [
+       58.0,
+       20.0
+      ],
+      [
+       66.0,
+       20.0
+      ],
+      [
+       66.0,
+       25.3
+      ],
+      [
+       57.3,
+       26.7
+      ],
+      [
+       50.2,
+       30.2
+      ],
+      [
+       48.0,
+       29.9
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "Bab al-Mandeb / southern Red Sea (Houthi-held coast and islands)",
+   "kind": "threat",
+   "description": "Houthis seized Mocha (10 Sep), the western Yemeni coast and Bab al-Mandeb islands incl. Perim (11-14 Sep)",
+   "from": "2026-09-10",
+   "claimed_by": "Houthis",
+   "url": "https://www.fdd.org/analysis/2026/09/14/houthis-take-yemens-red-sea-coast-and-key-bab-al-mandeb-islands/",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       42.6,
+       15.2
+      ],
+      [
+       43.0,
+       15.0
+      ],
+      [
+       43.6,
+       12.8
+      ],
+      [
+       43.5,
+       12.4
+      ],
+      [
+       43.1,
+       12.6
+      ],
+      [
+       42.6,
+       13.6
+      ],
+      [
+       42.4,
+       14.6
+      ],
+      [
+       42.6,
+       15.2
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "Mocha 'kill box'",
+   "kind": "strike-zone",
+   "description": "Yemeni government says it is bombing a 'kill box' near Mocha",
+   "from": "2026-09-11",
+   "claimed_by": "Yemeni government",
+   "url": "https://www.aljazeera.com/news/liveblog/2026/9/11/iran-war-live-irgc-attacks-us-unmanned-vessel-in-hormuz-two-ships-hit",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       43.15,
+       13.2
+      ],
+      [
+       43.45,
+       13.2
+      ],
+      [
+       43.45,
+       13.5
+      ],
+      [
+       43.15,
+       13.5
+      ],
+      [
+       43.15,
+       13.2
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  },
+  {
+   "name": "Hormuz islands strike zone (Larak, Qeshm, Sirik, Bandar Abbas)",
+   "kind": "strike-zone",
+   "description": "Repeated US strikes on missile, mine-launcher and air-defence sites around the strait (8 Jul, 30 Aug, 1 Sep, 10 Sep)",
+   "from": "2026-07-08",
+   "claimed_by": "US/CENTCOM",
+   "url": "https://www.washingtonpost.com/national-security/2026/08/30/us-strikes-iran-missile-sites-larak-island/",
+   "geom": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       55.7,
+       26.6
+      ],
+      [
+       56.5,
+       26.55
+      ],
+      [
+       57.3,
+       25.75
+      ],
+      [
+       57.5,
+       26.2
+      ],
+      [
+       56.6,
+       27.35
+      ],
+      [
+       55.7,
+       27.1
+      ],
+      [
+       55.7,
+       26.6
+      ]
+     ]
+    ]
+   },
+   "basis": "Drawn by hand to show the reported area; not official coordinates (none were found in public reporting)."
+  }
+ ]
+}
