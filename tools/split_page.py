@@ -10,7 +10,8 @@ src = open(sys.argv[1], encoding="utf-8").read()
 FIXED = {"POWER": "data/thailand/power.js", "LIVE": "data/thailand/flood-live-snapshot.js",
          "EXPOSURE": "data/thailand/flood-exposure.js", "PROVINCES": "data/thailand/province-alerts.js",
          "BORDER": "data/thailand/border-geometry.js", "CONFLICT": "data/thailand/border-conflict.js",
-         "COUNTRY_BASE": "data/basemap/country-outlines.js", "ASAP_SOF_OUT": "data/sof/exercises-outside.js",
+         "COUNTRY_BASE": "data/basemap/country-outlines.js", "ASAP_WORLD": "data/basemap/world-countries.js",
+         "WORLD_BASE": "data/basemap/world-outlines.js", "ASAP_SOF_OUT": "data/sof/exercises-outside.js",
          "ASAP_QUAKES": "data/live/quakes.js", "ASAP_AQ": "data/live/air-quality.js",
          "ASAP_GDACS": "data/live/gdacs.js", "ASAP_RW": "data/live/reliefweb.js", "ASAP_WARN": "data/live/warnings.js",
          "ASAP_NEWS": "data/live/news.js", "ASAP_SOCIAL": "data/live/social.js",
@@ -36,6 +37,9 @@ def repl(m):
     s = re.match(r'\s*window\.ASAP_SOF=window\.ASAP_SOF\|\|\{\};window\.ASAP_SOF\["([a-z]+)"\]', body)
     if s:
         return out("data/sof/%s.js" % s.group(1), body)
+    b = re.match(r'\s*window\.ASAP_BRIEF=window\.ASAP_BRIEF\|\|\{\};window\.ASAP_BRIEF\["([a-z]+)"\]', body)
+    if b:
+        return out("data/brief/%s.js" % b.group(1), body)
     k = re.match(r'\s*window\.TSAP_DATA=window\.TSAP_DATA\|\|\{\};window\.TSAP_DATA\["([a-z]+)(?:/([a-z]+))?"\]', body)
     if k:
         cc, lid = (k.group(1), k.group(2)) if k.group(2) else ("th", k.group(1))
