@@ -126,19 +126,29 @@ export function parseYtFeed(xml) {
 // The channel's videos page, used when YouTube's feed answers 404 (it did for every channel from GitHub on 2026-09-27).
 // The page gives only a relative age ("3 days ago"), so those dates are approximate to that unit and marked so.
 export function parseYtPage(html, now = Date.now()) {
-  const out = [], U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
-  const re = /"videoId":"([\w-]{11})"[\s\S]{0,1500}?"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"\}[\s\S]{0,1500}?"publishedTimeText":\{"simpleText":"([^"]+)"/g;
-  const seen = new Set();
-  // newer page layout: lockupViewModel with contentId, title.content and a metadata part such as "3 days ago"
-  const re2 = /"contentId":"([\w-]{11})"[\s\S]{0,4000}?"title":\{"content":"((?:[^"\\]|\\.)*)"[\s\S]{0,2500}?"content":"([^"]*?\d+\s*(?:second|minute|hour|day|week|month|year)s?\s+ago|[^"]*?\d+\s*(?:秒|分|時間|日|週間|か月|ヶ月|年)前)"/g;
-  for (const m of [...html.matchAll(re), ...html.matchAll(re2)]) {
-    if (seen.has(m[1])) continue; seen.add(m[1]);
-    const J = { 秒: "second", 分: "minute", 時間: "hour", 日: "day", 週間: "week", か月: "month", ヶ月: "month", 年: "year" };
-    const a = m[3].match(/(\d+)\s*(second|minute|hour|day|week|month|year|秒|分|時間|日|週間|か月|ヶ月|年)/i); if (!a) continue;
-    a[2] = J[a[2]] || a[2];
-    let title = m[2]; try { title = JSON.parse('"' + m[2] + '"'); } catch (e) {}
-    out.push({ id: m[1], title: unhtml(title), date: new Date(now - +a[1] * U[a[2].toLowerCase()]), summary: "", approx: m[3] });
-  }
+  const U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  const J = { 秒: "second", 分: "minute", 時間: "hour", 日: "day", 週間: "week", か月: "month", ヶ月: "month", 年: "year" };
+  const age = (t) => { const a = String(t || "").match(/(\d+)\s*(second|minute|hour|day|week|month|year|秒|分|時間|日|週間|か月|ヶ月|年)/i); return a ? +a[1] * U[J[a[2]] || a[2].toLowerCase()] : null; };
+  let data = null;
+  const m = html.match(/var ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/);
+  try { data = m && JSON.parse(m[1]); } catch (e) {}
+  const out = [], seen = new Set();
+  (function walk(o) {
+    if (!o || typeof o !== "object") return;
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    const L = o.lockupViewModel, V = o.videoRenderer || o.gridVideoRenderer;
+    if (L && L.contentId && !seen.has(L.contentId)) {
+      const md = (L.metadata || {}).lockupMetadataViewModel || {};
+      const parts = (((md.metadata || {}).contentMetadataViewModel || {}).metadataRows || []).flatMap((r) => r.metadataParts || []);
+      const when = parts.map((p) => p.accessibilityLabel || (p.text || {}).content).find((t) => / ago|前/.test(t || ""));
+      const ms = age(when);
+      if (md.title && md.title.content && ms != null) { seen.add(L.contentId); out.push({ id: L.contentId, title: unhtml(md.title.content), date: new Date(now - ms), summary: "", approx: when }); }
+    } else if (V && V.videoId && !seen.has(V.videoId)) {
+      const when = (V.publishedTimeText || {}).simpleText, ms = age(when), t = ((V.title || {}).runs || [])[0];
+      if (t && ms != null) { seen.add(V.videoId); out.push({ id: V.videoId, title: unhtml(t.text), date: new Date(now - ms), summary: "", approx: when }); }
+    }
+    for (const k in o) walk(o[k]);
+  })(data);
   return out;
 }
 for (const ch of cfg.youtube || []) {
