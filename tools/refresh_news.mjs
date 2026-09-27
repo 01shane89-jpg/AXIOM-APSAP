@@ -10,8 +10,9 @@ import { parseFeed } from "./feedparse.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
+import { US_STATES, stateQuery } from "./us_states.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
+const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 25, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 // GDELT uses FIPS country codes for the outlet's country
 const FIPS = { th: "TH", vn: "VM", kh: "CB", la: "LA", mm: "BM", ph: "RP", my: "MY", sg: "SN", id: "ID", bn: "BX", tl: "TT",
@@ -112,8 +113,9 @@ async function readFeed(f) {
       if (f.nc) o.nc = true;
       return o;
     });
-    push(f.cc, list); status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: true, n: list.length });
-  } catch (e) { status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
+    // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
+    push(f.st ? "us:" + f.st : f.cc, list); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: list.length });
+  } catch (e) { status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
 const byHost = {};
 for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
@@ -121,7 +123,7 @@ const hosts = Object.values(byHost);
 await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) { await readFeed(f); if (f.search) await sleep(1000); } }));   // a second between searches on the same engine
 // Every country in the picker must have news. Any country left with no working source this run (its outlets down,
 // or an empty search) gets a Bing News search for its name, tried quoted and then plain; marked as a search like the others.
-const working = () => new Set(status.filter((s) => s.ok && s.n > 0).map((s) => s.cc));
+const working = () => new Set(status.filter((s) => s.ok && s.n > 0 && !s.st).map((s) => s.cc));
 for (const c of COUNTRIES) {
   if (c.id === "oki" || working().has(c.id)) continue;
   for (const q of ['"' + c.name + '"', c.name]) {
@@ -132,6 +134,15 @@ for (const c of COUNTRIES) {
     if (working().has(c.id)) break;
   }
 }
+// Every US state gets news too: a state whose outlets all failed this run gets a Bing News search for its name.
+const stOk = () => new Set(status.filter((s) => s.ok && s.n > 0 && s.st).map((s) => s.st));
+for (const [code, name] of US_STATES) {
+  if (stOk().has(code)) continue;
+  await readFeed({ cc: "us", st: code, outlet: "Bing News search (fallback)", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(stateQuery(code, name)) + "&format=rss",
+    lang: "en", search: true, nc: true });
+  await sleep(1000);
+}
+console.log("US states with news: " + stOk().size + " of " + US_STATES.length);
 // Coverage: how many countries have at least one working news source this run, and which have none.
 const ok = working(), ids = COUNTRIES.map((c) => c.id);
 const coverage = { countries: ids.length, with: ids.filter((i) => ok.has(i)).length, none: ids.filter((i) => !ok.has(i)) };
@@ -141,7 +152,7 @@ if (coverage.none.length) console.log("::warning::No working news source this ru
 if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
 for (const cc of Object.keys(items)) {
   const seen = new Set();
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, cc === "oki" ? 2 * PER_AREA : PER_AREA);   // Okinawa reads more searches than any other area
+  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
 const OG_MAX = Number(process.env.OG_MAX || 400);
@@ -160,7 +171,7 @@ async function ogImage(url) {
   } catch (e) { return ""; } finally { clearTimeout(t); }
 }
 {
-  const need = Object.values(items).flat().filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
+  const need = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
   let got = 0;
   for (let k = 0; k < need.length; k += 8) {
     const res = await Promise.all(need.slice(k, k + 8).map((i) => ogImage(i.link)));
@@ -195,15 +206,32 @@ try {
     if (i.geo !== undefined) continue;
     const texts = [[i.title_en, i.summary_en].filter(Boolean).join(" \n "), i.title];
     let g = null;
-    for (const t of texts) { const r = placeIn(gz, t, [cc]); if (r && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
+    // a US state's own outlet: only a place inside that state, else the state's rough centre
+    const st = cc.startsWith("us:") ? cc.slice(3) : "", ok = (r) => r && (!st || r.a1 === "US." + st);
+    for (const t of texts) { const r = placeIn(gz, t, [st ? "us" : cc]); if (ok(r) && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
+    if (!g && st) g = stateCentre(gz, st);
     i.geo = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null;
     if (g) placed++;
   }
   console.log("placed", placed, "of", all.length, "items by name");
+  function stateCentre(gz, st) {
+    // by admin-1 code, not name: a city can hold the name (Washington, D.C.; Georgia, the country)
+    const p = gz.us && gz.us.regs.get("US." + st);
+    return p ? { name: p.name, lat: +p.lat.toFixed(3), lon: +p.lon.toFixed(3), prec: "province" } : null;
+  }
 } catch (e) { console.error("gazetteer unavailable, items left unplaced:", e.message); }
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
-fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, coverage, items }).replace(/<\//g, "<\\/") + ";\n");
+// US state news: one file per state (the page loads only the open state's), taken out of the national snapshot
+{
+  fs.mkdirSync("data/live/news/us-states", { recursive: true });
+  for (const [code] of US_STATES) {
+    const k = "us:" + code, part = { asof: stamp, st: code, sources: status.filter((s) => s.st === code), items: items[k] || [] };
+    fs.writeFileSync("data/live/news/us-states/" + code.toLowerCase() + ".js", "window.ASAP_NEWS_ST=" + JSON.stringify(part).replace(/<\//g, "<\\/") + ";\n");
+    delete items[k];
+  }
+}
+fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status.filter((s) => !s.st), coverage, items }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/news.js", "ASAP_NEWS"); // one small file per country for the page (tools/split_country.mjs)
 try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
