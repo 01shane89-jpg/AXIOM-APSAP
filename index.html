@@ -1,36 +1,7 @@
 <!doctype html>
 <html lang="en" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <title>AXIOM OSAP</title>
-<style>
-/* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first */
-#osap-boot{position:fixed;inset:0;z-index:300000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  background:#DEE3E9;color:#56626F;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.04em;transition:opacity .25s}
-#osap-boot img{width:84px;height:84px;border-radius:50%;animation:osap-spin 1.4s linear infinite}
-#osap-boot.gone{opacity:0;pointer-events:none}
-:root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
-@keyframes osap-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){#osap-boot img{animation:osap-pulse 1.6s ease-in-out infinite}@keyframes osap-pulse{50%{opacity:.45}}}
-</style>
-<div id="osap-boot" role="status" aria-live="polite"><img src="assets/logo-mark.png" alt=""><div id="osap-boot-t">Loading</div></div>
-<script>
-(function () {
-  var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
-  /* the saved map theme, applied now so the loading screen matches it */
-  var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
-  if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
-  function flag(cc) { cc = cc === "oki" ? "jp" : cc; return /^[a-z]{2}$/.test(cc) ? String.fromCodePoint(0x1f1e6 + cc.charCodeAt(0) - 97, 0x1f1e6 + cc.charCodeAt(1) - 97) : ""; }
-  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + flag(cc) + " " + (name || cc.toUpperCase()) : ""); }
-  var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
-  function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
-  window.OSAP_BOOT = {
-    done: done,
-    /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(cc, what, name); clearTimeout(timer); timer = setTimeout(done, 20000); }
-  };
-  /* never leave the page covered if something fails while it builds */
-  timer = setTimeout(done, 15000);
-})();
-</script>
+<script src="assets/osap-start.js"></script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
@@ -580,7 +551,7 @@ html.phone .rvpkg{max-height:none}
 .pkgh{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
 .pkgdl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px}
 .pkgdl dt{color:var(--muted)}
-.pkgdl dd{margin:0}
+.pkgdl dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .sub{display:block;font-size:11px;color:var(--muted);line-height:1.35}
 #tl-pkg{border:1px solid var(--accent);border-radius:3px;padding:12px;margin-top:12px;background:var(--surface)}
 table.reg td{white-space:normal;text-align:left;vertical-align:top}
@@ -5689,6 +5660,52 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (open) box.innerHTML = feedsHtml();
   }
   function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
+  /* MAP ITEMS WITH A POPUP. Reference points, hazards, quakes, storms, road closures, terrain, flashpoints, Open data, gauges and
+     the like carry their details in a small popup. Opening one shows those details in the Report panel instead (on a phone, the
+     full sheet), with the item's source links, its place and grid reference, and a SHA-256 fingerprint of exactly what is shown,
+     the way a report opens. The item is shown as its publisher gives it; nothing is added or confirmed. */
+  /* items whose popup has no link of their own: the publisher's site, matched on what the popup says */
+  var POPSRC = [[/above the bank|below the bank|m MSL|mm in 24 h|Level unavailable/, "Hydro-Informatics Institute (ThaiWater)", "https://www.thaiwater.net/"],
+    [/GISTDA/, "GISTDA", "https://www.gistda.or.th/"], [/Air quality · model estimate/, "Open-Meteo air quality model (CAMS)", "https://open-meteo.com/en/docs/air-quality-api"],
+    [/GDACS/, "GDACS", "https://www.gdacs.org/"], [/USGS/, "USGS", "https://earthquake.usgs.gov/"], [/NASA EONET/, "NASA EONET", "https://eonet.gsfc.nasa.gov/"]];
+  function popHost(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
+  function popPkg(body, ll) {
+    var phone = rvPhone(), box = document.getElementById("rv-pkg");
+    if (!box || (!phone && rvBox.hidden)) return false;
+    var links = [], seen = {};
+    Array.prototype.forEach.call(body.querySelectorAll("a[href]"), function (a) {
+      var u = a.getAttribute("href"); if (!/^https?:\/\//.test(u) || seen[u]) return; seen[u] = 1;
+      links.push({ u: u, t: (a.textContent || "").trim() });
+    });
+    var tier = body.querySelector(".tier"), text = (body.textContent || "").replace(/\s+/g, " ").trim();
+    var pub = null; if (!links.length) POPSRC.some(function (x) { if (x[0].test(text)) { pub = x; return true; } return false; });
+    box.hidden = false;
+    box.innerHTML = '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div><div class="pkgpop"></div>' +
+      '<dl class="pkgdl">' +
+        (ll ? "<dt>Where</dt><dd>" + esc(ll.lat.toFixed(4) + ", " + ll.lng.toFixed(4)) + ' · MGRS <b class="mgrs">' + esc(window.MGRS_OF(ll.lat, ll.lng)) + '</b><span class="sub">Where the map item sits</span></dd>' : "") +
+        "<dt>Source</dt><dd>" + (links.length ? links.map(function (l) {
+          return '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">' + esc(l.t && l.t.length < 90 ? l.t : popHost(l.u)) + '</a><span class="sub">' + esc(popHost(l.u)) + "</span>"; }).join("") :
+          (pub ? '<a href="' + esc(pub[2]) + '" target="_blank" rel="noopener noreferrer">' + esc(pub[1]) + '</a><span class="sub">The publisher\'s site; this item has no page of its own</span>' :
+          esc(tier ? tier.textContent : "Named in the item") + '<span class="sub">This item carries no link of its own; its publisher is listed in Credits</span>')) + "</dd>" +
+        '<dt>Fingerprint</dt><dd><span class="mono popfp">computing…</span><span class="sub">SHA-256 of the text and links shown here</span></dd>' +
+      "</dl>" +
+      '<p class="note">Shown as its publisher gives it. A reference, reading or report, not a finding: nothing here has been confirmed by an analyst.</p>';
+    var pane = box.querySelector(".pkgpop"), c = body.cloneNode(true);
+    c.className = "pop"; pane.appendChild(c);
+    sha256(text + "\n" + links.map(function (l) { return l.u; }).join("\n")).then(function (h) { var f = box.querySelector(".popfp"); if (f) f.textContent = h; }).catch(function () {});
+    box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; rvRingAt(null); });
+    Array.prototype.forEach.call(rvList.querySelectorAll(".rvcard.on"), function (x) { x.classList.remove("on"); });
+    if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) { box.scrollTop = 0; if (ll) rvRingAt({ lat: ll.lat, lon: ll.lng }); }
+    return true;
+  }
+  if (!/[?&]watchscan=1(&|$)/.test(location.search)) map.on("popupopen", function (e) {
+    var el = e.popup.getElement && e.popup.getElement(), body = el && el.querySelector(".leaflet-popup-content");
+    if (!body || !body.textContent.trim()) return;
+    /* a pin drawn for one of this page's own reports (road disruptions) opens that report itself */
+    var orec = body.querySelector("[data-openrec]"), rid = orec && orec.getAttribute("data-openrec");
+    if (rid && byId[rid]) { if (rvPhone() || !rvBox.hidden) { fullNext = true; select(rid, undefined, "rv-pkg"); setTimeout(function () { map.closePopup(e.popup); }, 0); } return; }
+    if (popPkg(body, e.popup.getLatLng())) setTimeout(function () { map.closePopup(e.popup); }, 0);
+  });
   /* marker hover lights its card; hooks are added once per marker */
   function rvHook(list) {
     list.slice(0, 200).forEach(function (r) {
@@ -7036,6 +7053,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
 
 <script src="assets/osap-work.js"></script>
-<script src="assets/osap-today.js"></script>
+<script src="assets/osap-weather.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

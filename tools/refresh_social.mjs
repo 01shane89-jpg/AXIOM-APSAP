@@ -122,35 +122,6 @@ async function text(url) {
     return (await r.text()).slice(0, 4e6);
   } finally { clearTimeout(t); }
 }
-// A channel's Videos page carries its latest uploads in the embedded page data: id, title and a relative time ("3 hours ago").
-export function parseYtVideosPage(html, now = Date.now()) {
-  const out = [], seen = new Set(), U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
-  const str = (x) => { try { return JSON.parse('"' + x + '"'); } catch (e) { return x; } };
-  for (const chunk of html.split('"videoRenderer":{"videoId":"').slice(1, 40)) {
-    const id = chunk.slice(0, 11), title = (chunk.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/) || [])[1];
-    const ago = (chunk.match(/"publishedTimeText":\{"simpleText":"(?:Streamed )?(\d+) (second|minute|hour|day|week|month|year)s? ago"/) || []);
-    if (!/^[\w-]{11}$/.test(id) || !title || !ago[1] || seen.has(id)) continue;
-    seen.add(id);
-    out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
-  }
-  // newer page layout: "lockupViewModel" objects in the page's ytInitialData, read as JSON
-  let data = null;
-  try { const m = html.match(/var ytInitialData = (\{[\s\S]*?\});<\/script>/) || html.match(/ytInitialData"?\]? = (\{[\s\S]*?\});/); data = m ? JSON.parse(m[1]) : null; } catch (e) {}
-  const walk = function* (o, key) { if (!o || typeof o !== "object") return; if (o[key]) yield o[key]; for (const v of Object.values(o)) yield* walk(v, key); };
-  for (const v of walk(data, "lockupViewModel")) {
-    const j = JSON.stringify(v), id = v.contentId || (j.match(/"videoId":"([\w-]{11})"/) || [])[1];
-    const title = (((v.metadata || {}).lockupMetadataViewModel || {}).title || {}).content || (j.match(/"title":\{"content":"((?:[^"\\]|\\.)*)"/) || [])[1];
-    const ago = j.match(/"content":"(?:Streamed |Premiered )?(\d+)\s(second|minute|hour|day|week|month|year)s?\sago"/) || [];
-    if (!/^[\w-]{11}$/.test(id || "") || !title || !ago[1] || seen.has(id)) continue;
-    seen.add(id);
-    out.push({ id, title: v.contentId ? title : str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
-    if (out.length >= 40) break;
-  }
-  if (!out.length) { for (const v of walk(data, "lockupViewModel")) { ytSample = JSON.stringify(v).replace(/"url":"[^"]*"/g, '"url":""').slice(0, 1500); break; } }
-  return out;
-}
-let ytSample = "";
-const ytPageHint = (h) => h.length + " bytes" + ["videoRenderer", "lockupViewModel", "richItemRenderer", "consent.youtube", "ytInitialData"].map((k) => (h.includes(k) ? ", has " : ", no ") + k).join("");
 export function parseYtFeed(xml) {
   const out = [];
   for (const e of xml.split("<entry>").slice(1)) {
@@ -199,7 +170,7 @@ for (const ch of cfg.youtube || []) {
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
-    let vids;
+    let vids, via = "feed";
     // YouTube's feed answers 404 now and then for channels that exist; a short retry usually gets it
     let feedErr = "";
     for (let k = 0; k < 3 && !vids; k++) {
@@ -207,10 +178,10 @@ for (const ch of cfg.youtube || []) {
       catch (e) { feedErr = err(e); if (k < 2) await new Promise((r) => setTimeout(r, 2500)); }
     }
     if (!vids) {
-      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); }
+      try { vids = parseYtFeed(await text("https://www.youtube.com/feeds/videos.xml?playlist_id=UU" + id.slice(2))); via = "uploads feed"; }
       catch (e2) {
         const page = await text("https://www.youtube.com/channel/" + id + "/videos");
-        vids = parseYtPage(page);
+        vids = parseYtPage(page); via = "videos page";
         if (!vids.length) {
           try { fs.mkdirSync("probe-out", { recursive: true }); const i = page.indexOf("videoId"); fs.writeFileSync("probe-out/yt-" + id + ".txt", page.length + " bytes\n" + page.slice(Math.max(0, i - 3000), i + 6000)); } catch (e3) {}
           throw new Error("feed " + feedErr + ", videos page had no videos");
