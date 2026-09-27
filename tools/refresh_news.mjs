@@ -114,7 +114,7 @@ async function readFeed(f) {
 const byHost = {};
 for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
 const hosts = Object.values(byHost);
-await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) await readFeed(f); }));
+await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) { await readFeed(f); if (f.search) await sleep(1000); } }));   // a second between searches on the same engine
 // Okinawa shares Japan's outlets: keep the Japanese items that name the islands
 if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
 for (const cc of Object.keys(items)) {
@@ -147,10 +147,20 @@ async function ogImage(url) {
   console.log("article-page pictures:", got, "of", need.length, "items without a feed picture");
 }
 const all = [...new Set(Object.values(items).flat())];
-const tr = await translateAll(all.flatMap((i) => [{ text: i.title, lang: i.lang }, { text: i.summary, lang: i.lang }]));
-all.forEach((i, n) => {
-  const a = tr[2 * n], b = tr[2 * n + 1];
-  i.title_en = a.en; i.summary_en = b.en; i.mt = /^en\b/i.test(i.lang || "") ? null : (a.tool || b.tool || "untranslated");
+// The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:
+// headlines of the original 28 areas first, then every other headline (newest first), then only the original areas' summaries.
+// Other countries' summaries stay in the original language.
+const FIRST = new Set([...Object.keys(FIPS), "oki"]), areaOf = new Map();
+for (const [cc, list] of Object.entries(items)) for (const i of list) if (!areaOf.has(i) || FIRST.has(cc)) areaOf.set(i, cc);
+const ord = [...all].sort((a, b) => (FIRST.has(areaOf.get(b)) - FIRST.has(areaOf.get(a))) || (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+const sums = ord.filter((i) => FIRST.has(areaOf.get(i)));
+const tr = await translateAll([...ord.map((i) => ({ text: i.title, lang: i.lang })), ...sums.map((i) => ({ text: i.summary, lang: i.lang }))]);
+ord.forEach((i, n) => { i.title_en = tr[n].en; i._t = tr[n].tool; });
+sums.forEach((i, n) => { const b = tr[ord.length + n]; i.summary_en = b.en; i._s = b.tool; });
+all.forEach((i) => {
+  i.mt = /^en\b/i.test(i.lang || "") ? null : (i._t || i._s || "untranslated");
+  if (i.summary_en === undefined) i.summary_en = /^en\b/i.test(i.lang || "") ? i.summary : null;
+  delete i._t; delete i._s;
 });
 saveCache();
 // Pin each item to the first town or region its headline or summary names inside its own country (GeoNames, tools/gazetteer.mjs).

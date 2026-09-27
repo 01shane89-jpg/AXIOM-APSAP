@@ -6,7 +6,7 @@ No network use at translation time. MADLAD-400 needs no source language: each te
 This file is the only place that knows the model, so another one can replace it behind the same stdin/stdout contract.
 Untrusted text is only ever data here: it is tokenised and translated, never interpreted.
 """
-import json, os, re, sys
+import json, os, re, sys, time
 
 MODEL_DIR = os.environ.get("MT_DIR", os.path.expanduser("~/.cache/osap-mt/madlad400-3b-mt-ct2-int8"))
 MAX_CHARS, CHUNK = 1200, 350
@@ -31,11 +31,20 @@ def main():
     for i, it in enumerate(items):
         if not (it.get("text") or "").strip(): continue
         for c in chunks(it["text"]): jobs.append((i, sp.encode("<2en> " + c, out_type=str) + ["</s>"]))
-    res = tr.translate_batch([j[1] for j in jobs], beam_size=1, max_batch_size=16, max_decoding_length=256) if jobs else []
+    # Translate in slices and stop at the time budget (MT_BUDGET seconds), so a long queue returns what is done
+    # instead of being killed with nothing; the caller orders the queue by priority and the rest waits for the next run.
+    budget, t0, res = float(os.environ.get("MT_BUDGET", "300")), time.time(), []
+    for k in range(0, len(jobs), 32):
+        if res and time.time() - t0 > budget: break
+        res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=1, max_batch_size=16, max_decoding_length=256)
+    done = set(i for (i, _), _r in zip(jobs, res))
     out = [None] * len(items)
     for (i, _), r in zip(jobs, res):
         en = sp.decode(r.hypotheses[0]).strip()
         if en: out[i] = (out[i] + " " + en).strip() if out[i] else en
+    # an item whose chunks were only partly translated is left for the next run
+    for i in done:
+        if any(j[0] == i for j in jobs[len(res):]): out[i] = None
     json.dump({"out": out}, sys.stdout, ensure_ascii=False)
 
 if __name__ == "__main__":
