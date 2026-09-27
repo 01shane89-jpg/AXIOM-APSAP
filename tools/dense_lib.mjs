@@ -35,12 +35,15 @@ export function csvRows(text) {
   return rows;
 }
 export function csvObjects(text) { const [h, ...rs] = csvRows(text); return rs.filter((r) => r.length > 1).map((r) => Object.fromEntries(h.map((k, i) => [k.trim(), r[i]]))); }
+const unhtml1 = (h) => String(h || "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"');
 export function rssItems(xml) {
   const parts = xml.split(/<item[\s>]|<entry[\s>]/).slice(1);
   return parts.map((e) => {
-    const tag = (t) => { const m = e.match(new RegExp("<" + t + "(?:\\s[^>]*)?>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(m[1]) : ""; };
+    const tag = (t) => { const m = e.match(new RegExp("<" + t + "(?:\\s[^>]*)?>([\\s\\S]*?)</" + t + ">")); return m ? unhtml(unhtml(m[1])) : ""; };   // twice: many feeds escape their HTML
     const link = tag("link") || (e.match(/<link[^>]*href="([^"]+)"/) || [])[1] || tag("guid");
-    return { title: tag("title"), link, date: tag("pubDate") || tag("updated") || tag("published") || tag("dc:date"), summary: tag("description") || tag("summary") || tag("content"),
+    let date = tag("pubDate") || tag("updated") || tag("published") || tag("dc:date") || (unhtml1(e).match(/datetime="([^"]+)"/) || [])[1] || "";
+    const yy = date.match(/^\s*(\d\d)-(\d\d)-(\d\d)\s+(\d\d:\d\d)/); if (yy) date = "20" + yy[1] + "-" + yy[2] + "-" + yy[3] + "T" + yy[4];   // IAEA writes YY-MM-DD
+    return { title: tag("title"), link, date, summary: tag("description") || tag("summary") || tag("content"),
       cats: [...e.matchAll(/<category[^>]*>([\s\S]*?)<\/category>|<category[^>]*term="([^"]+)"/g)].map((m) => unhtml(m[1] || m[2])),
       lat: parseFloat(tag("geo:lat")), lon: parseFloat(tag("geo:long")), point: tag("georss:point") };
   });

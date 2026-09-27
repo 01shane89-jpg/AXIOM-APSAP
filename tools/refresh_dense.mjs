@@ -67,7 +67,11 @@ run("pdc", async (g) => {
 
 feed("firms", { name: "NASA FIRMS fire detections (VIIRS NOAA-20, 24 h)", org: "NASA LANCE FIRMS", cat: "Hazards", lic: "NASA open data, no restrictions (attribution requested)", url: "https://firms.modaps.eosdis.nasa.gov/" });
 run("firms", async (g) => {
-  const txt = await get("https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv", "text", { timeout: 120000 });
+  let txt = null, fails = [];
+  for (const u of ["https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv", "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv",
+    "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv"]) {
+    try { txt = await get(u, "text", { timeout: 150000 }); break; } catch (e) { fails.push(e.message); await sleep(5000); } }
+  if (!txt) throw new Error(fails.join("; "));
   const lines = txt.split("\n"), h = lines[0].split(","), ix = (k) => h.indexOf(k);
   const iLa = ix("latitude"), iLo = ix("longitude"), iF = ix("frp"), iD = ix("acq_date"), iT = ix("acq_time"), iC = ix("confidence");
   const cells = new Map();   // 0.2° cells: sum of fire radiative power and count
@@ -90,8 +94,8 @@ run("firms", async (g) => {
   return { items, figures, note: lines.length - 1 + " detections in " + cells.size + " cells" };
 });
 
-feed("gdacs-x", { name: "Copernicus EMS rapid mapping activations", org: "European Commission, Copernicus Emergency Management Service", cat: "Hazards", lic: "Copernicus free and open (attribution)", url: "https://rapidmapping.emergency.copernicus.eu/" });
-run("gdacs-x", async (g) => {
+feed("cems", { name: "Copernicus EMS rapid mapping activations", org: "European Commission, Copernicus Emergency Management Service", cat: "Hazards", lic: "Copernicus free and open (attribution)", url: "https://rapidmapping.emergency.copernicus.eu/" });
+run("cems", async (g) => {
   const j = await g("https://rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/?limit=100");
   return { items: (j.results || []).map((a) => {
     const names = [].concat(a.countries || a.country || []).map((c) => (typeof c === "string" ? c : c.name || c.short_name || "")).join(", ");
@@ -161,8 +165,8 @@ feed("ga-quake", { name: "Geoscience Australia earthquakes (7 days)", org: "Geos
 run("ga-quake", async (g) => {
   const j = await g("https://earthquakes.ga.gov.au/geoserver/earthquakes/wfs?service=WFS&request=getfeature&typeNames=earthquakes:earthquakes_seven_days&outputFormat=application/json");
   return { items: (j.features || []).map((f) => { const p = f.properties, [la, lo] = pt(f.geometry), m = num(pick(p, ["preferred_magnitude", "magnitude", "mag"]));
-    return { title: "M" + (m != null ? m.toFixed(1) : "?") + " · " + (pick(p, ["description", "located_in", "region"]) || ""), detail: "Depth " + pick(p, ["depth", "preferred_depth"]) + " km",
-      date: pick(p, ["origin_time", "epicentral_time", "time"]), lat: la, lon: lo, url: "https://earthquakes.ga.gov.au/event/" + pick(p, ["event_id", "id"]), sev: m >= 5 ? 3 : m >= 3.5 ? 2 : 1, kind: "Earthquake", value: m,
+    return { title: "M" + (m != null ? m.toFixed(1) : "?") + " · " + (pick(p, ["description", "located_in", "region"]) || ""), detail: "Depth " + Math.round(num(pick(p, ["depth", "preferred_depth"])) || 0) + " km",
+      date: pick(p, ["origin_time", "epicentral_time", "time"]), lat: la, lon: lo, url: "https://earthquakes.ga.gov.au/event/" + pick(p, ["event_id", "id"]), sev: m >= 5 ? 3 : m >= 3.5 ? 2 : 1, kind: "Earthquake", value: round(m),
       ccs: ccsAt(la, lo, 1) }; }) };
 });
 
@@ -171,7 +175,7 @@ run("au-fire", async (g) => {
   const items = [], fails = [];
   const push = (title, detail, date, [la, lo], url, sev, kind) => items.push({ title, detail, date, lat: la, lon: lo, url, sev, kind, ccs: ["au"] });
   try { const j = await g("https://www.rfs.nsw.gov.au/feeds/majorIncidents.json");
-    for (const f of j.features || []) { const p = f.properties, d = unhtml(p.description || ""), lvl = (d.match(/ALERT LEVEL:\s*([^:]+?)\s+[A-Z]{3,}:/) || [])[1] || "";
+    for (const f of j.features || []) { const p = f.properties, d = unhtml(p.description || ""); if (/TYPE: (Planned|Hazard Reduction)/i.test(d)) continue; const lvl = (d.match(/ALERT LEVEL:\s*([^:]+?)\s+[A-Z]{3,}:/) || [])[1] || "";
       push(p.title + (lvl ? " · " + lvl : ""), d.slice(0, 400), p.pubDate, pt(f.geometry), p.link || "https://www.rfs.nsw.gov.au/fire-information/fires-near-me", /emergency/i.test(lvl) ? 3 : /watch/i.test(lvl) ? 2 : 1, "Fire / incident (NSW)"); } } catch (e) { fails.push("NSW"); }
   try { const j = await g("https://emergency.vic.gov.au/public/events-geojson.json");
     for (const f of j.features || []) { const p = f.properties; if (p.feedType === "burn-area") continue;
@@ -488,9 +492,10 @@ run("un-sanctions", async (g) => {
   for (const [tag, kind] of [["INDIVIDUAL", "person"], ["ENTITY", "entity"]]) for (const b of x.split("<" + tag + ">").slice(1)) {
     const t = (k) => (b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")) || [])[1] || "";
     const name = [t("FIRST_NAME"), t("SECOND_NAME"), t("THIRD_NAME"), t("FOURTH_NAME")].filter(Boolean).join(" ");
-    const places = [...b.matchAll(/<(?:NATIONALITY|COUNTRY|COUNTRY_OF_ISSUE)>[\s\S]*?(?:<VALUE>([^<]+)<\/VALUE>|)|<COUNTRY>([^<]+)<\/COUNTRY>/g)].map((m) => m[1] || m[2]).filter(Boolean);
+    const places = [...b.matchAll(/<NATIONALITY>\s*<VALUE>([^<]+)<\/VALUE>|<COUNTRY>([^<]+)<\/COUNTRY>|<COUNTRY_OF_BIRTH>([^<]+)<\/COUNTRY_OF_BIRTH>/g)].map((m) => (m[1] || m[2] || m[3]).trim()).filter(Boolean);
     const ccs = [...new Set(places.map(ccFromName).filter(Boolean))];
-    items.push({ title: (kind === "person" ? "Sanctioned person: " : "Sanctioned entity: ") + name, detail: [t("UN_LIST_TYPE") + " list", t("REFERENCE_NUMBER"), places.length ? "linked to " + [...new Set(places)].join(", ") : ""].filter(Boolean).join(" · "),
+    const nice = kind === "person" ? name.toLowerCase().replace(/(^|[\s'-])\p{L}/gu, (c) => c.toUpperCase()) : name;
+    items.push({ title: (kind === "person" ? "Sanctioned person: " : "Sanctioned entity: ") + nice, detail: [t("UN_LIST_TYPE") + " list", t("REFERENCE_NUMBER"), places.length ? "linked to " + [...new Set(places)].join(", ") : ""].filter(Boolean).join(" · "),
       date: t("LISTED_ON"), url: "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list", sev: 1, kind: "UN sanctions listing", ccs: withOki(ccs) }); }
   return { items };
 });
@@ -513,8 +518,8 @@ run("uk-sanctions", async (g) => {
 feed("ca-sanctions", { name: "Canada consolidated autonomous sanctions list", org: "Global Affairs Canada", cat: "Sanctions", lic: "Open Government Licence - Canada", url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", everyHours: 12 });
 run("ca-sanctions", async (g) => {
   const x = await g("https://www.international.gc.ca/world-monde/assets/office_docs/international_relations-relations_internationales/sanctions/sema-lmes.xml", "text");
-  return { items: x.split("<record>").slice(1).map((b) => { const t = (k) => unhtml((b.match(new RegExp("<" + k + ">([^<]*)</" + k + ">")) || [])[1] || "");
-    const name = t("EntityOrShip") || [t("GivenName"), t("LastName")].filter(Boolean).join(" "), country = t("Country");
+  return { items: x.split("<record>").slice(1).map((b) => { const t = (k) => unhtml((b.match(new RegExp("<" + k + "(?:-[A-Za-z]+)?>([^<]*)</" + k + "(?:-[A-Za-z]+)?>")) || [])[1] || "");
+    const name = t("EntityOrShip") || [t("GivenName"), t("LastName")].filter(Boolean).join(" "), country = t("Country").split(" / ")[0].trim();
     return { title: "Canada-sanctioned " + (t("EntityOrShip") ? "entity/ship" : "person") + ": " + name, detail: [country, t("Schedule") && "schedule " + t("Schedule"), t("Item") && "item " + t("Item")].filter(Boolean).join(" · "),
       date: t("DateOfListing"), url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", sev: 1, kind: "Canada sanctions listing", ccs: withOki([ccFromName(country)].filter(Boolean)) }; }) };
 });
@@ -547,7 +552,7 @@ run("de-travel", async (g) => {
 
 feed("au-travel", { name: "Australian Smartraveller advice levels", org: "Australian Government DFAT", cat: "Advisories", lic: "CC BY 4.0", url: "https://www.smartraveller.gov.au/", everyHours: 3 });
 run("au-travel", async (g) => {
-  const xml = await g("https://www.smartraveller.gov.au/countries/documents/index.rss", "text");
+  const xml = await g("https://www.smartraveller.gov.au/countries/documents/index.rss", "text", { timeout: 120000 });
   return { items: rssItems(xml).map((x) => { const lvl = (x.summary.match(/(Exercise normal safety precautions|Exercise a high degree of caution|Reconsider your need to travel|Do not travel)/i) || [])[1] || "";
     return { title: "Australia: " + (lvl || x.title), detail: x.summary.slice(0, 400), date: x.date, url: x.link, sev: /do not travel|reconsider/i.test(lvl) ? 3 : /high degree/i.test(lvl) ? 2 : 1, kind: "Travel advisory", ccs: withOki(ccsInText(x.title)) }; }) };
 });
@@ -573,7 +578,6 @@ run("uk-travel", async (g) => {
 // ---------------------------------------------------------------- health
 for (const [id, name, org, url, lic, home] of [
   ["ecdc", "ECDC weekly communicable disease threats", "European Centre for Disease Prevention and Control", "https://www.ecdc.europa.eu/en/taxonomy/term/1307/feed", "ECDC copyright, reuse with attribution", "https://www.ecdc.europa.eu/"],
-  ["cdc-han", "CDC Health Alert Network", "US Centers for Disease Control and Prevention", "https://tools.cdc.gov/api/v2/resources/media/413690.rss", "US Government public domain", "https://emergency.cdc.gov/han/"],
   ["un-news", "UN News", "United Nations", "https://news.un.org/feed/subscribe/en/news/all/rss.xml", "UN terms of use (attribution)", "https://news.un.org/"],
   ["ohchr", "UN Human Rights Office news", "OHCHR", "https://www.ohchr.org/en/rss.xml", "UN terms of use (attribution)", "https://www.ohchr.org/"],
   ["iaea", "IAEA top news", "International Atomic Energy Agency", "https://www.iaea.org/feeds/topnews", "IAEA terms (attribution)", "https://www.iaea.org/"]]) {
@@ -630,10 +634,10 @@ run("imf", async (g) => {
   return { figures };
 });
 
-feed("fx", { name: "Exchange rate against the US dollar", org: "ExchangeRate-API open access; currencies from REST Countries", cat: "Economy", lic: "ExchangeRate-API open access terms (attribution)", url: "https://www.exchangerate-api.com/", everyHours: 12 });
+feed("fx", { name: "Exchange rate against the US dollar", org: "ExchangeRate-API open access; currency codes from GeoNames", cat: "Economy", lic: "ExchangeRate-API open access terms (attribution)", url: "https://www.exchangerate-api.com/", everyHours: 12 });
 run("fx", async (g) => {
-  const r = await g("https://open.er-api.com/v6/latest/USD"), c = await g("https://restcountries.com/v3.1/all?fields=cca2,currencies"), figures = {};
-  for (const x of c) { const cc = ccFromA2(x.cca2); if (!cc) continue; const cur = Object.keys(x.currencies || {})[0]; if (!cur || !r.rates[cur]) continue;
+  const r = await g("https://open.er-api.com/v6/latest/USD"), info = await g("https://download.geonames.org/export/dump/countryInfo.txt", "text"), figures = {};
+  for (const l of info.split("\n")) { if (l.startsWith("#")) continue; const c = l.split("\t"), cc = ccFromA2(c[0]), cur = c[10]; if (!cc || !cur || !r.rates[cur]) continue;
     figures[cc] = { currency: cur, per_usd: r.rates[cur], at: r.time_last_update_utc }; }
   if (figures.jp) figures.oki = figures.jp;
   return { figures };
@@ -641,9 +645,9 @@ run("fx", async (g) => {
 
 feed("wb-projects", { name: "World Bank projects (latest approvals)", org: "World Bank", cat: "Economy", lic: "CC BY 4.0", url: "https://projects.worldbank.org/", everyHours: 24 });
 run("wb-projects", async (g) => {
-  const j = await g("https://search.worldbank.org/api/v2/projects?format=json&rows=1000&os=0&fl=id,project_name,countryshortname,countrycode,boardapprovaldate,totalamt,status,url&strdate=" + new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10));
+  const j = await g("https://search.worldbank.org/api/v2/projects?format=json&rows=1500&os=0&srt=boardapprovaldate&order=desc&fl=id,project_name,countryshortname,countrycode,boardapprovaldate,totalamt,status,url");
   return { items: Object.values(j.projects || {}).map((p) => ({ title: "World Bank: " + p.project_name + (p.totalamt ? " · US$" + String(p.totalamt).replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""), detail: [p.status, p.countryshortname].filter(Boolean).join(" · "),
-    date: p.boardapprovaldate, url: p.url || "https://projects.worldbank.org/en/projects-operations/project-detail/" + p.id, sev: 1, kind: "Development project", ccs: withOki([].concat(p.countrycode || []).map(ccFromA2).filter(Boolean)) })) };
+    date: p.boardapprovaldate, url: p.url || "https://projects.worldbank.org/en/projects-operations/project-detail/" + p.id, sev: 1, kind: "Development project", ccs: withOki([].concat(p.countrycode || []).map(ccFromA2).filter(Boolean)) })).filter((x) => within(x.date, 800)) };
 });
 
 feed("fema", { name: "US federal disaster declarations (OpenFEMA)", org: "Federal Emergency Management Agency", cat: "Hazards", lic: "US Government public domain", url: "https://www.fema.gov/disaster/declarations", everyHours: 3 });
@@ -658,30 +662,30 @@ run("fema", async (g) => {
 // ---------------------------------------------------------------- events, politics
 feed("wiki-events", { name: "Wikipedia Current events portal", org: "Wikipedia contributors", cat: "Events", lic: "CC BY-SA 4.0", url: "https://en.wikipedia.org/wiki/Portal:Current_events", everyHours: 1 });
 run("wiki-events", async (g) => {
-  const j = await g("https://en.wikipedia.org/w/api.php?action=parse&page=Portal:Current_events&prop=text&format=json&formatversion=2");
-  const html = j.parse.text, items = [];
-  for (const day of html.split(/<div class="current-events-main[^"]*"[^>]*id="/).slice(1)) {
-    const id = day.slice(0, 40).match(/^(\d{4})_([A-Za-z]+)_(\d{1,2})/); if (!id) continue;
-    const date = new Date(id[2] + " " + id[3] + ", " + id[1] + " 12:00 UTC").toISOString();
-    const body = day.split('<div class="current-events-content')[1] || "";
+  const M = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], items = [];
+  for (let k = 0; k < 4; k++) {
+    const d = new Date(Date.now() - k * 864e5), page = "Portal:Current_events/" + d.getUTCFullYear() + "_" + M[d.getUTCMonth()] + "_" + d.getUTCDate(), date = d.toISOString().slice(0, 10) + "T12:00";
+    let html; try { html = (await g("https://en.wikipedia.org/w/api.php?action=parse&page=" + encodeURIComponent(page) + "&prop=text&format=json&formatversion=2&redirects=1")).parse.text; } catch (e) { continue; }
     let cat = "";
-    for (const part of body.split(/(<p><b>[^<]*<\/b><\/p>|<div role="heading"[^>]*>[\s\S]*?<\/div>)/)) {
+    for (const part of html.split(/(<p><b>[^<]*<\/b><\/p>|<div role="heading"[^>]*>[\s\S]*?<\/div>)/)) {
       const hm = part.match(/^<p><b>([^<]*)<\/b>|^<div role="heading"[^>]*>([\s\S]*?)<\/div>/); if (hm) { cat = unhtml(hm[1] || hm[2]); continue; }
-      // leaf list items (no nested list) are the event lines
+      // leaf list items (no nested list) are the event lines; their parents are topic headings
       for (const li of part.match(/<li>(?:(?!<li>|<ul>)[\s\S])*?<\/li>/g) || []) {
-        const txt = unhtml(li).replace(/\s*\([^)]*\)\s*$/, ""); if (txt.length < 30) continue;
-        const src = (li.match(/<a[^>]*class="external[^"]*"[^>]*href="([^"]+)"/) || [])[1] || "https://en.wikipedia.org/wiki/Portal:Current_events";
+        const txt = unhtml(li).replace(/\s*\((?:[^()]*)\)\s*$/, ""); if (txt.length < 30) continue;
+        const src = (li.match(/<a[^>]*class="external[^"]*"[^>]*href="([^"]+)"/) || li.match(/<a[^>]*href="(https?:\/\/[^"]+)"[^>]*class="external/) || [])[1] || "https://en.wikipedia.org/wiki/" + page;
         items.push({ title: txt.slice(0, 220), detail: cat ? "Wikipedia section: " + cat : "", date, url: src, sev: /killed|attack|war|explosion|earthquake|coup|missile/i.test(txt) ? 2 : 1, kind: "Current event (Wikipedia)", ccs: withOki(ccsInText(txt)) });
       }
     }
+    await sleep(300);
   }
+  if (!items.length) throw new Error("no event lines read");
   return { items, globals: items.filter((x) => !x.ccs.length).slice(0, 30).map((x) => ({ ...x, ccs: undefined })) };
 });
 
 feed("elections", { name: "Elections and referendums (Wikidata)", org: "Wikidata contributors", cat: "Politics", lic: "CC0", url: "https://www.wikidata.org/", everyHours: 24 });
 run("elections", async (g) => {
   const from = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10), to = new Date(Date.now() + 400 * 864e5).toISOString().slice(0, 10);
-  const q = `SELECT DISTINCT ?e ?eLabel ?d ?iso WHERE { ?e wdt:P31/wdt:P279* wd:Q40231; wdt:P585 ?d; wdt:P17 ?c. ?c wdt:P297 ?iso.
+  const q = `SELECT DISTINCT ?e ?eLabel ?d ?iso WHERE { ?e wdt:P585 ?d; wdt:P31/wdt:P279? wd:Q40231; wdt:P17 ?c. ?c wdt:P297 ?iso.
     FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime) SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`;
   const j = await g("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), "json", { timeout: 90000, headers: { accept: "application/sparql-results+json" } });
   return { items: j.results.bindings.map((b) => ({ title: b.eLabel.value, detail: Date.parse(b.d.value) > Date.now() ? "Scheduled" : "Held", date: b.d.value, url: b.e.value, sev: 1, kind: "Election", ccs: one(ccFromA2(b.iso.value)) })) };
