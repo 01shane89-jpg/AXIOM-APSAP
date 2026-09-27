@@ -5682,7 +5682,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function popHost(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
   function popPkg(body, ll) {
     var phone = rvPhone(), box = document.getElementById("rv-pkg");
-    if (!box || (!phone && rvBox.hidden)) return false;
+    /* only when the Details panel can be seen: a conflict tab (and the Map layout) hides it with CSS, and a pop-up moved into
+       a hidden panel closed at once, so tapping a map item there looked like it did nothing. The pop-up stays open instead. */
+    if (!box || document.documentElement.hasAttribute("data-cf") || (!phone && (rvBox.hidden || !rvBox.getClientRects().length))) return false;
     var links = [], seen = {};
     Array.prototype.forEach.call(body.querySelectorAll("a[href]"), function (a) {
       var u = a.getAttribute("href"); if (!/^https?:\/\//.test(u) || seen[u]) return; seen[u] = 1;

@@ -29,6 +29,10 @@
   function ms(t) { if (!t) return 0; var s = String(t).replace(" ", "T"); if (!/Z$|[+-]\d\d:?\d\d$/.test(s)) s += s.length <= 10 ? "T00:00:00Z" : "Z"; var d = Date.parse(s); return isNaN(d) ? 0 : d; }
   function day(t) { var d = ms(t); return d ? new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : esc(t || ""); }
   function link(u, txt) { u = safeUrl(u); return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt) + "</a>" : esc(txt); }
+  function sha(t) {
+    if (!(W.crypto && W.crypto.subtle && W.TextEncoder)) return Promise.reject(new Error("no crypto"));
+    return W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? "0" : "") + x.toString(16); }).join(""); });
+  }
   function fpShort(fp) { return fp ? ' <span class="cfi-fp" title="SHA-256 fingerprint of this record: ' + esc(fp) + '">SHA-256 ' + esc(String(fp).slice(0, 12)) + "…</span>" : ""; }
 
   function load(cb) {
@@ -175,7 +179,9 @@
             var pos = w.pos || []; if (!pos.length) return;
             if (!pos.some(function (p) { return p[0] > 10 && p[0] < 32 && p[1] > 32 && p[1] < 66; })) return;
             var txt = "<b>" + esc(w.id) + "</b> · issued " + esc(w.issued) + "<br><small>" + esc(String(w.text || "").slice(0, 400)) + "</small><br><small>" + link(W.ASAP_NAVW.src, "NGA navigational warnings") + "</small>";
-            (pos.length > 2 ? L.polygon(pos, { pane: "cfarea", color: "#1D5A86", weight: 1, fillOpacity: 0.08 }) : L.circleMarker(pos[0], { pane: "cfpane", radius: 5, color: "#1D5A86" })).bindPopup(txt, { maxWidth: 320 }).addTo(g);
+            var m = (pos.length > 2 ? L.polygon(pos, { pane: "cfarea", color: "#1D5A86", weight: 1, fillOpacity: 0.08 }) : L.circleMarker(pos[0], { pane: "cfpane", radius: 5, color: "#1D5A86" })).bindPopup(txt, { maxWidth: 320 }).addTo(g);
+            // the warning file carries no fingerprint: one is made here from the warning as NGA published it (number, time, text)
+            sha(w.id + "\n" + w.issued + "\n" + (w.text || "")).then(function (h) { m.setPopupContent(txt + "<br><small>" + fpShort(h) + "</small>"); }, function () {});
           });
           return g;
         },

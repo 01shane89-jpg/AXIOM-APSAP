@@ -45,6 +45,7 @@
     "#cf-rail ol.cfl{list-style:none;margin:0;padding:0}#cf-rail ol.cfl li{padding:7px 0;border-top:1px solid var(--line-soft);font-size:12.5px;line-height:1.4}#cf-rail ol.cfl li.on{background:var(--accent-soft)}",
     "#cf-rail .cft{font-weight:600;color:var(--ink);text-decoration:none}#cf-rail .cft:hover{text-decoration:underline}#cf-rail .cfm{font-size:11.5px;color:var(--muted)}#cf-rail .cfm button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer}",
     "#cf-rail .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}#cf-rail .tag.claim{border-color:var(--near);color:var(--ink)}",
+    "html[data-cf] .leaflet-popup-content .cfm{font-size:12px;color:var(--muted);margin:3px 0}html[data-cf] .leaflet-popup-content .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted);margin-top:4px}",
     "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}",
     "#cf-rail .lg{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}#cf-rail .more{margin-top:6px}",
     "#view-seg button.cftab::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--l3);margin-right:5px;vertical-align:1px}",
@@ -272,17 +273,27 @@
           return col ? { color: col, weight: 1.4, dashArray: th ? "6 4" : null, fillColor: col, fillOpacity: th ? 0.06 : 0.16 } : { color: "#9E3118", weight: 1.4, fillColor: "#C0392B", fillOpacity: 0.22 };
         }, onEachFeature: zoned ? function (x, l) {
           var p = x.properties || {};
-          l.bindPopup("<b>" + esc(p.name || "Area") + "</b><br>" + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
+          var rs = (p.reports || []).slice(0, 5);
+          l.bindPopup("<b>" + esc(p.name || "Area") + "</b>" + (AREAN[p.ctl] ? '<div class="cfm">' + esc(AREAN[p.ctl]) + "</div>" : "") +
+            (p.description ? "<div>" + esc(p.description) + "</div>" : "") +
+            '<div class="cfm">' + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
             (p.claimed_by ? "Claimed by " + esc(p.claimed_by) + "<br>" : "") + (p.basis ? esc(p.basis) + "<br>" : "") +
-            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : ""));
+            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+            (rs.length ? '<div class="cfm">Reports behind it:' + rs.map(function (r) {
+              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
+              ((p.reports || []).length > rs.length ? "<br>and " + ((p.reports || []).length - rs.length) + " more" : "") + "</div>" : "") +
+            fpDiv(p.fp, "this area") + (p.fp ? "" : fpDiv(f.current.sha256, "the map version it comes from")), { maxWidth: 340 });
         } : null });
-        if (!zoned) lyr.area.bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true });
+        if (!zoned) lyr.area.bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true })
+          .bindPopup(function (l) { var p = (l.feature && l.feature.properties) || {}; return "<b>" + esc(p.ctl || Object.keys(f.current.km2 || {})[0] || "Area of control") + "</b>" + frontSrc(f); }, { maxWidth: 320 });
         lyr.area.addTo(map);
       } else if (f.current.kind === "places") {
         lyr.places = L.layerGroup(f.current.places.map(function (p) {
           var con = /^contested/.test(p.ctl);
           return L.circleMarker([p.la, p.lo], { pane: "cfpane", radius: con ? 5 : 4, color: con ? "#000" : "#fff", weight: con ? 1.5 : 1, fillColor: ctlColour(p.ctl), fillOpacity: 0.95 })
-            .bindTooltip(esc(p.n || "Place") + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified");
+            .bindTooltip(esc(pname(p)) + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified")
+            .bindPopup("<b>" + esc(pname(p)) + "</b>" + '<div class="cfm">' + esc(TNAME[p.t] || p.t || "place") + "</div><div>" + esc(legendName(f, p.ctl)) + ", as the source shows it.</div>" +
+              frontSrc(f), { maxWidth: 320 });
         })).addTo(map);
       }
     }
@@ -297,6 +308,16 @@
         return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: 5, color: "#fff", weight: 1.5, fillColor: "#1D5A86", fillOpacity: 0.9 }).bindPopup(repHtml(i, true), { maxWidth: 340 });
       })).addTo(map);
     }
+  }
+  // a place name from a map module can carry layout padding (&nbsp;)
+  function pname(p) { return String(p.n || "").replace(/&nbsp;|\u00a0/g, " ").trim() || "Unnamed place"; }
+  var AREAN = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
+  function fpDiv(fp, of) { return fp ? '<div class="fp" title="SHA-256 fingerprint of ' + esc(of) + ": " + esc(fp) + '">SHA-256 ' + esc(String(fp).slice(0, 16)) + "… <small>(" + esc(of) + ")</small></div>" : ""; }
+  // where a front-line or control marker comes from: the named source, when it was taken, and that version's fingerprint
+  function frontSrc(f) {
+    var c = f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
+    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
+      (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
   }
   var TNAME = { airfield: "airfield", heliport: "heliport", base: "military base", port: "port", hill: "strategic hill", industrial: "industrial site", oil_gas: "oil or gas site", dam: "dam", border_post: "border post", contested: "contested", besieged: "besieged or under pressure", rural: "rural presence" };
   function srcName(f, id) { var s = (f.sources || []).filter(function (x) { return x.id === id; })[0]; return s ? s.name : id; }
