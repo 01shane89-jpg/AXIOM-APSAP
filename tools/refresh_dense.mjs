@@ -626,7 +626,7 @@ run("imf", async (g) => {
   const figures = {};
   for (const [code, key] of IND) {
     try { const j = await g("https://www.imf.org/external/datamapper/api/v1/" + code + "?periods=" + yr);
-      for (const [a3, v] of Object.entries((j.values || {})[code] || {})) { const cc = ccFromA3(a3); if (cc && v[yr] != null) (figures[cc] = figures[cc] || {})[key] = { value: round(v[yr]), year: yr + " (IMF estimate/projection)" }; } } catch (e) {}
+      for (const [a3, v] of Object.entries((j.values || {})[code] || {})) { const cc = ccFromA3(a3); if (cc && v[yr] != null) (figures[cc] = figures[cc] || {})[key] = { value: round(v[yr]), year: yr + " est." }; } } catch (e) {}
     await sleep(300);
   }
   if (!Object.keys(figures).length) throw new Error("no indicator read");
@@ -648,6 +648,21 @@ run("wb-projects", async (g) => {
   const j = await g("https://search.worldbank.org/api/v2/projects?format=json&rows=1500&os=0&srt=boardapprovaldate&order=desc&fl=id,project_name,countryshortname,countrycode,boardapprovaldate,totalamt,status,url");
   return { items: Object.values(j.projects || {}).map((p) => ({ title: "World Bank: " + p.project_name + (p.totalamt ? " · US$" + String(p.totalamt).replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""), detail: [p.status, p.countryshortname].filter(Boolean).join(" · "),
     date: p.boardapprovaldate, url: p.url || "https://projects.worldbank.org/en/projects-operations/project-detail/" + p.id, sev: 1, kind: "Development project", ccs: withOki([].concat(p.countrycode || []).map(ccFromA2).filter(Boolean)) })).filter((x) => within(x.date, 800)) };
+});
+
+feed("hdx", { name: "Humanitarian datasets updated (HDX)", org: "OCHA Humanitarian Data Exchange", cat: "Events", lic: "Per dataset (shown); catalogue metadata open", url: "https://data.humdata.org/", everyHours: 6 });
+run("hdx", async (g) => {
+  const j = await g("https://data.humdata.org/api/3/action/package_search?rows=1000&sort=metadata_modified%20desc&fl=name,title,groups,metadata_modified,organization,license_title");
+  return { items: ((j.result || {}).results || []).map((d) => ({ title: "Dataset: " + d.title, detail: [d.organization && d.organization.title, d.license_title].filter(Boolean).join(" · "), date: d.metadata_modified,
+    url: "https://data.humdata.org/dataset/" + d.name, sev: 1, kind: "Humanitarian dataset", ccs: withOki((d.groups || []).map((x) => ccFromA3(x.name)).filter(Boolean)) })).filter((x) => x.ccs.length && x.ccs.length <= 3) };
+});
+
+feed("usdm", { name: "US Drought Monitor (share of the country in drought)", org: "National Drought Mitigation Center, USDA, NOAA", cat: "Environment", lic: "Public domain (attribution requested)", url: "https://droughtmonitor.unl.edu/", everyHours: 24 });
+run("usdm", async (g) => {
+  const end = new Date(), start = new Date(Date.now() - 21 * 864e5), f = (d) => d.getUTCMonth() + 1 + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
+  const rows = csvObjects(await g("https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=total&startdate=" + f(start) + "&enddate=" + f(end) + "&statisticsType=1", "text"));
+  const r = rows.sort((a, b) => String(b.MapDate).localeCompare(String(a.MapDate)))[0]; if (!r) throw new Error("no rows");
+  return { figures: { us: { abnormally_dry_or_worse_pct: +r.D0, drought_pct: +r.D1, severe_pct: +r.D2, extreme_pct: +r.D3, exceptional_pct: +r.D4, week: r.MapDate } } };
 });
 
 feed("fema", { name: "US federal disaster declarations (OpenFEMA)", org: "Federal Emergency Management Agency", cat: "Hazards", lic: "US Government public domain", url: "https://www.fema.gov/disaster/declarations", everyHours: 3 });
