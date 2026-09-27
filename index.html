@@ -284,6 +284,15 @@ select.mini{
 .leaflet-control-zoom a{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
 .leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 88%,transparent)!important;color:var(--muted)!important;font-size:10px!important}
 .leaflet-control-attribution a{color:var(--muted)!important}
+.mlctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);font:13px/1.35 var(--sans,inherit);max-width:min(300px,calc(100vw - 70px))}
+.mlbtn{font:inherit;font-weight:600;background:none;border:none;color:inherit;padding:7px 10px;cursor:pointer;min-height:36px;width:100%;text-align:left}
+.mlpanel{padding:0 10px 10px;max-height:520px;overflow-y:auto;overscroll-behavior:contain}
+.mlh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+.mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
+.mlrow input{margin-top:3px;flex:none}
+.mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
+.mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
   font-family:"IBM Plex Sans Condensed",sans-serif;font-size:10.5px;font-weight:600;color:var(--ink);
@@ -687,7 +696,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     </div>
     <div class="sec">
       <h2>Master timeline</h2>
-      <p class="sub">Every record from the working layers, newest first. Click one to open its evidence package.</p>
+      <p class="sub">Every record from the working layers, newest first. Click one to open its report.</p>
       <div class="tlf">
         <label for="tl-layer">Layer</label>
         <select id="tl-layer" class="mini"><option value="">All working layers</option><option value="flood">Flood</option><option value="border">Border</option></select>
@@ -757,7 +766,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     <div class="sec">
       <h2>How alerts work</h2>
       <div class="note">
-        <p><b>An alert is a notice, not a finding.</b> Firing a rule does not confirm a record or change it. Open the alert to see the record&rsquo;s evidence package.</p>
+        <p><b>An alert is a notice, not a finding.</b> Firing a rule does not confirm a record or change it. Open the alert to see the record&rsquo;s report.</p>
         <p><b>Each alert fires once.</b> It is keyed to the rule, the rule&rsquo;s version and the record, so a rebuild or refresh cannot create duplicates.</p>
         <p><b>Alerts show inside this page.</b> An artifact page cannot send phone or email notifications. &ldquo;New&rdquo; means new since you last opened this tab in this browser.</p>
       </div>
@@ -871,6 +880,146 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var want = ESRI.replace("{v}", isDark() ? "Dark" : "Light");
     if (baseLayer._url !== want) { baseLayer.setUrl(want); baseLayer.redraw(); }
   }
+
+  /* ---------- map layers: base map choice, flood overlays with one opacity slider, road closures ----------
+     Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
+     The choice is remembered on this device. */
+  var BASES = {
+    grey: { name: "Grey", note: "Esri canvas, follows the light or dark theme" },
+    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
+    topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
+      attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
+    sat: { name: "Satellite", note: "NASA Blue Marble, cloud-free, low detail (about 1 km)",
+      url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg", max: 8,
+      attr: "NASA Blue Marble via GIBS" }
+  };
+  function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
+  function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
+  var ML = mlGet();
+  if (!BASES[ML.base]) ML.base = "grey";
+  if (!(ML.op > 0)) ML.op = 0.6;
+  var altBase = null;
+  function setBase(k) {
+    ML.base = k; mlSet();
+    if (altBase) { map.removeLayer(altBase); altBase = null; }
+    var b = BASES[k];
+    if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
+    else {
+      if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
+      altBase = L.tileLayer(b.url, { maxNativeZoom: b.max, maxZoom: 13, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
+      altBase.bringToBack();
+    }
+  }
+  map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
+  var FLOODX = {
+    now: { name: "Flooding now", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Satellite-derived and approximate (about 250 m); cloud can hide water.",
+      layer: function () { return L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
+        { pane: "fldpane", maxNativeZoom: 9, maxZoom: 13, opacity: ML.op, attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
+    hist: { name: "Flood history", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Includes rivers and lakes: pale = rarely wet, deep = always wet.",
+      layer: function () { return L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
+        { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } }
+  };
+  var fldOn = {};
+  function setFlood(k, on) {
+    ML[k] = !!on; mlSet();
+    if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
+    if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
+  }
+  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  /* ---------- road closures: official road-agency notices (data/live/roads.js) plus closures named in this area's reports ----------
+     Agency notices are shown as the agency published them. "Reported" markers are news or warning records whose text says a
+     road is closed; they are unverified and sit where the record was placed, which may be approximate. */
+  /* above the record markers (650) so a switched-on road layer answers taps first; below labels (670) */
+  map.createPane("roadpane"); map.getPane("roadpane").style.zIndex = 655;
+  var roadLayer = L.layerGroup(), ROADCC = { nz: 1, fr: 1, au: 1, ca: 1, fi: 1 };
+  var ROADK = { closure: ["Road closed", "#c62828"], roadworks: ["Roadworks", "#ef6c00"], incident: ["Incident or hazard", "#f9a825"] };
+  /* a report counts when it names a road, highway, street or bridge AND a word for it being shut, cut, flooded or destroyed; "reopens" does not */
+  var ROAD_RE = { road: /\b(roads?|highways?|streets?|expressways?|motorways?|bridges?|route \d+|rural road|tunnel)\b/i,
+    hit: /\b(clos(ed|es|ure|ing)|shut[s]?|block(ed|s|age)|cut off|sever(ed|s)|impassable|submerged|flood(ed|s)|under water|washed (out|away)|collaps(ed|es)|landslides?|mudslides?|damag(ed|es))\b/i,
+    not: /\breopen/i, test: function (t) { return this.road.test(t) && this.hit.test(t) && !this.not.test(t); } };
+  function roadCountry() { return (window.TSAP && window.TSAP.country) || (location.hash.replace(/^#/, "").split("/")[0]) || "th"; }
+  function roadEsc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function roadNote() {
+    var cc = roadCountry(), w = window.ASAP_ROADS, st = w && (w.status || []).filter(function (s) { return s.cc === cc; })[0];
+    if (st) return st.ok ? st.source + ": " + st.n + " notices (" + st.closures + " closures), " + st.area + ". Snapshot " + w.asof + "."
+      : st.source + " did not answer at the last refresh (" + st.area + ").";
+    return ROADCC[cc] ? "Official feed not loaded yet (first refresh after this change is merged)." :
+      "No open official road feed for this country. Only roads reported shut, cut or flooded in this area's news, warnings and records are shown, as unverified reports.";
+  }
+  function drawRoads() {
+    roadLayer.clearLayers();
+    var cc = roadCountry(), w = window.ASAP_ROADS, n = 0, rep = 0;
+    ((w && w.items) || []).forEach(function (i) {
+      if (i.cc !== cc || i.lat == null) return;
+      var k = ROADK[i.kind] || ROADK.incident; n++;
+      /* agencies that publish local clock time without an offset are shown in that local time, labelled */
+      var tm = function (t) { return roadEsc(t.replace("T", " ")) + (i.tz ? " " + roadEsc(i.tz) : "Z"); };
+      L.circleMarker([i.lat, i.lon], { pane: "roadpane", radius: i.kind === "closure" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: k[1], fillOpacity: 0.95 })
+        .bindPopup('<div class="pop"><div class="tier">' + roadEsc(k[0]) + " · agency notice</div><h3>" + roadEsc(i.title) + "</h3>" +
+          (i.detail ? "<p>" + roadEsc(i.detail) + "</p>" : "") + '<p class="obs">' + [i.start ? "From " + tm(i.start) : "", i.end ? "until " + tm(i.end) : (i.until ? roadEsc(i.until.toLowerCase()) : ""),
+          i.updated ? "updated " + tm(i.updated) : ""].filter(Boolean).join(", ") + (i.lang ? " · in " + ({ fr: "French", fi: "Finnish" }[i.lang] || i.lang) + ", as published" : "") + '</p><p class="obs">Source: ' +
+          roadEsc(((w.status || []).filter(function (s) { return s.cc === i.cc; })[0] || {}).source || "road agency") + ', shown as published. <a href="' + roadEsc(i.link) + '" target="_blank" rel="noopener">Agency map</a></p></div>', { maxWidth: 320 })
+        .addTo(roadLayer);
+    });
+    ((window.TSAP && window.TSAP.records) || []).forEach(function (r) {
+      if (r.lat == null || !isFinite(r.lat) || !ROAD_RE.test((r.title || "") + " " + (r.detail || ""))) return;
+      rep++;
+      L.circleMarker([r.lat, r.lon], { pane: "roadpane", radius: 7, color: "#c62828", weight: 2, dashArray: "3 3", fillColor: "#c62828", fillOpacity: 0.15 })
+        .bindPopup('<div class="pop"><div class="tier">Reported road disruption · unverified</div><h3>' + roadEsc(r.title) + '</h3><p class="obs">From ' +
+          roadEsc(r.src && r.src.name) + (r.place ? ", placed at " + roadEsc(r.place) + " (approximate)" : "") + '. <a href="#" data-openrec="' + roadEsc(r.id) + '">Report</a></p></div>', { maxWidth: 320 })
+        .addTo(roadLayer);
+    });
+    var el = document.getElementById("ml-roadnote");
+    if (el) el.textContent = roadNote() + " On the map: " + n + " agency notices, " + rep + " reported disruptions.";
+  }
+  function setRoads(on) {
+    ML.roads = !!on; mlSet();
+    if (on) { drawRoads(); roadLayer.addTo(map); } else map.removeLayer(roadLayer);
+  }
+  window.addEventListener("hashchange", function () { if (ML.roads) setTimeout(drawRoads, 300); });
+  var LayersCtl = L.Control.extend({
+    options: { position: "topright" },
+    onAdd: function () {
+      var box = L.DomUtil.create("div", "leaflet-control mlctl");
+      box.innerHTML = '<button type="button" class="mlbtn" aria-expanded="false" aria-controls="ml-panel" title="Map layers">&#9776; Layers</button>' +
+        '<div class="mlpanel" id="ml-panel" hidden><div class="mlh">Base map</div>' +
+        Object.keys(BASES).map(function (k) {
+          return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
+        }).join("") +
+        '<div class="mlh">Flooding</div>' +
+        Object.keys(FLOODX).map(function (k) {
+          return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
+        }).join("") +
+        '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
+        '<div class="mlh">Roads</div>' +
+        '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
+        '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
+        '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
+        '<div id="ml-extra"></div></div>';
+      L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
+      var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
+      btn.addEventListener("click", function () {
+        pan.hidden = !pan.hidden; btn.setAttribute("aria-expanded", String(!pan.hidden));
+        /* keep the open panel inside the map, above the credits line, on a short phone map too */
+        pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
+        if (!pan.hidden && ML.roads) drawRoads();
+      });
+      box.addEventListener("change", function (e) {
+        var t = e.target;
+        if (t.name === "ml-base") setBase(t.value);
+        else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
+        else if (t.dataset.roads) setRoads(t.checked);
+      });
+      box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
+      return box;
+    }
+  });
+  new LayersCtl().addTo(map);
+  window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
+  if (ML.base !== "grey") setBase(ML.base);
+  Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
+  /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
+  if (ML.roads) (function wait(n) { if (window.TSAP || n > 40) setRoads(true); else setTimeout(function () { wait(n + 1); }, 250); })(0);
 
   /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
   var floodStore = function () { return window.TILES_FLOOD; };
@@ -2255,6 +2404,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/ucdp.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
+<script src="data/live/roads.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script src="data/basemap/world-countries.js"></script>
 <script src="data/basemap/world-outlines.js"></script>
@@ -2820,7 +2970,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var box = document.getElementById(boxId || "tl-pkg");
     box.hidden = false;
     box.innerHTML =
-      '<div class="pkghead"><h2>Evidence package</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
       '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
       '<div class="pkgchips">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
@@ -3251,7 +3401,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         '<div class="tw"><table class="reg"><thead><tr><th>Asset</th><th>Type</th></tr></thead><tbody>' +
         D.assets.map(function (a, i) { return '<tr data-asset="' + i + '"><td>' + esc(a.title) + '<span class="sub">' + esc(a.prov || "") + "</span></td><td>" + esc(a.asset_type || "") + "</td></tr>"; }).join("") +
         "</tbody></table></div></div>" : "") +
-      '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its evidence package.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
+      '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its report.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
       '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
       '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
     var list = document.getElementById("cl-list");
@@ -3713,6 +3863,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
       ['Background map: Powered by <a href="https://www.esri.com/">Esri</a>. Sources: Esri, HERE, Garmin, FAO, NOAA, USGS.'],
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
+      ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
+      ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
+      ['Satellite base map: NASA Blue Marble (public domain), via NASA GIBS.'],
+      ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
+      ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],
       ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
       ['Map software: <a href="https://leafletjs.com/">Leaflet</a> &copy; Volodymyr Agafonkin and contributors (BSD-2-Clause).']]],
     ["Weather, hazards and forecasts", [
@@ -4268,7 +4423,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (r.lat == null) return;
       var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
-        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
     });
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
@@ -4291,7 +4446,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
-      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each evidence package. State media is marked as its government's statements.");
+      "Headlines from national outlets' news feeds. Non-English headlines are machine translations; the original is in each report. State media is marked as its government's statements.");
     var b = document.getElementById("news-all");
     if (b) b.addEventListener("click", function () { newsAll = !newsAll; showNews(); });
   }
@@ -4584,7 +4739,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var m = L.circleMarker([q.lat, q.lon], { pane: "tlpane", radius: Math.max(4, (q.mag - 1.5) * 3.2), color: tok("--over"), weight: 1.5, fillColor: tok("--over"), fillOpacity: 0.25 });
       m.bindPopup('<div class="pop"><div class="tier">Earthquake · USGS · ' + esc(new Date(q.time).toISOString().slice(0, 16).replace("T", " ")) + "Z</div><h3>M" + q.mag.toFixed(1) + " " + esc(q.place) + "</h3>" +
         '<p class="obs">Depth ' + (q.depth != null ? Math.round(q.depth) + " km" : "not given") + " · " + esc(q.lat.toFixed(3) + ", " + q.lon.toFixed(3)) + " · MGRS " + esc(window.MGRS_OF(q.lat, q.lon, 3)) + "</p>" +
-        '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Evidence package</a>' : "") + "</p></div>", { maxWidth: 320 });
+        '<p class="obs"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS event page</a>' + (r ? ' · <a href="#" data-openrec="' + esc(r.id) + '">Report</a>' : "") + "</p></div>", { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["q:" + q.id] = m;
     });
     (HZ.aq || []).forEach(function (p, i) {
