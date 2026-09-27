@@ -1,0 +1,2 @@
+/* written by tools/build_us_states.py; do not edit by hand */
+window.OSAP_SUBAREA = {"cc":"us","code":"KS","name":"Kansas","tz":"America/Chicago","b":[[37.0,-102.05],[40.0,-94.61]],"p":[[[-102.04,37.0],[-102.05,40.0],[-95.32,40.0],[-95.09,39.86],[-94.95,39.9],[-94.95,39.87],[-94.88,39.82],[-94.87,39.74],[-94.97,39.74],[-95.11,39.55],[-95.03,39.45],[-94.9,39.39],[-94.9,39.33],[-94.83,39.22],[-94.61,39.15],[-94.62,37.0],[-102.04,37.0]]],"src":"Natural Earth admin-1 (public domain), via assets/regions/USA.json"};
