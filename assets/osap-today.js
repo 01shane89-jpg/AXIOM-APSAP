@@ -10,12 +10,13 @@
    - Shortcuts into the full map tabs. Everything here is a summary: every line opens the full report or its source.
    Status words follow the page: an event is a report that is not verified, a claim is an official statement, an observation
    is an instrument reading. Nothing here is an assessment.
-   The app opens on Today unless "Open the app on: Map" is chosen (localStorage "osap-home"); links into a tab still open that tab. */
+   Every fresh open of the app lands here (assets/osap-start.js), and so does coming back after 30 minutes away, unless
+   "start on: Map" is chosen (localStorage "osap-home"). Alert links (?wopen=) still open their report. */
 (function () {
   "use strict";
   /* the hidden scan frames (watches, cross-border) never show it */
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
-  var HOME_KEY = "osap-home", OPEN_KEY = "osap-today", WX_TTL = 30 * 60e3, RECENT = 3 * 864e5, NEWS_RECENT = 3 * 864e5;
+  var HOME_KEY = "osap-home", OPEN_KEY = "osap-today", WX_TTL = 30 * 60e3, RECENT = 3 * 864e5, AWAY = 30 * 60e3, NEWS_RECENT = 3 * 864e5;
   /* capital (or seat of government) for the areas without a researched forecast point; used only to ask for the weather */
   var CAPS = {
   af:["Kabul",34.53,69.17], al:["Tirana",41.33,19.82], dz:["Algiers",36.75,3.06], ad:["Andorra la Vella",42.51,1.52], ao:["Luanda",-8.84,13.23],
@@ -332,7 +333,7 @@
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>' +
       '<div class="tdcols"><div class="tdcol">' + weatherHtml() + alertsHtml() + "</div><div class=\"tdcol\">" + storiesHtml() + newHtml() + "</div></div>" + shortcutsHtml() +
-      '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Open the app on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
+      '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
       "Times are Zulu, then local.</p></footer></div>";
@@ -440,10 +441,18 @@
       ctl = new Ctl().addTo(map).getContainer();
     }
     window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; } };
-    /* open on Today: when this tab had it open (a country change reloads the page), or on a fresh start unless the user chose
-       the map or followed a link into a tab */
-    var was = ssGet(OPEN_KEY), h = (location.hash || "").replace("#", "").split("/"), deep = h.length > 1 ? !!h[1] : !!h[0] && !/^[a-z]{2,3}$/.test(h[0]);
-    if (was === "1" || (was == null && lsGet(HOME_KEY) !== "map" && !deep)) show();
+    /* open on Today: assets/osap-start.js marks every fresh open of the app ("osap-today" = "1") before the page reads the
+       address; a country change reloads with it still set. Coming back after 30 minutes or more away also counts as opening
+       the app. Without the start script (an older cached page) a fresh tab still opens here unless Map was chosen. */
+    var was = ssGet(OPEN_KEY);
+    if (was === "1" || (was == null && lsGet(HOME_KEY) !== "map")) show();
+    lsSet("osap-last-cc", CC);
+    var awayAt = 0;
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") { awayAt = Date.now(); return; }
+      if (awayAt && Date.now() - awayAt >= AWAY && !open && lsGet(HOME_KEY) !== "map" && !document.querySelector("#wk:not([hidden]),#watchdlg:not([hidden])")) show();
+      awayAt = 0;
+    });
   }
   (function wait(n) { if (window.TSAP && window.TSAP.records) start(); else if (n < 200) setTimeout(function () { wait(n + 1); }, 50); })(0);
 })();

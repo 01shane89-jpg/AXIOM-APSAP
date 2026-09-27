@@ -8,6 +8,8 @@ const { chromium } = require(process.env.PW || 'playwright');
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   const p = await b.newPage({ viewport: { width: 1400, height: 900 } });
   const errs = []; p.on('pageerror', e => errs.push(e.message));
+  // start on the map, not the Today home screen, so the tab buttons can be clicked
+  await p.addInitScript(() => { try { localStorage.setItem('osap-home', '"map"'); } catch (e) {} });
   await p.route(/^https?:\/\//, r => {
     if (process.env.LEAFLET_JS && /leaflet\.js$/.test(r.request().url()))
       return r.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(process.env.LEAFLET_JS, 'utf8') });
