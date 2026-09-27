@@ -2721,7 +2721,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
-    { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true });
+    { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
+    { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -4812,7 +4813,122 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-period]"); if (b) setPeriod(b.getAttribute("data-period")); });
   periodUI();
 
-  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else showPartners(); }
+  /* ---------- Open data: every other free, no-login feed (tools/refresh_dense.mjs). data/live/x/feeds.js lists the feeds and their
+     status; data/live/x/<cc>.js holds this country's items and figures and is loaded only when the country is opened. ---------- */
+  var XCAT = ["Hazards", "Advisories", "Events", "Politics", "Cyber", "Sanctions", "Aviation", "Maritime", "Space", "Health", "Environment", "Economy", "Infrastructure"];
+  var XCOL = { Hazards: "#d84315", Advisories: "#6a1b9a", Events: "#1565c0", Politics: "#283593", Cyber: "#00838f", Sanctions: "#4e342e", Aviation: "#2e7d32", Maritime: "#0277bd",
+    Space: "#5e35b1", Health: "#c2185b", Environment: "#558b2f", Economy: "#546e7a", Infrastructure: "#757575" };
+  /* standing lists (advice levels, sanctions listings, elections, reference layers) ignore the period; dated events follow it */
+  var XSTANDING = { Advisories: 1, Sanctions: 1, Politics: 1, Infrastructure: 1, Economy: 1 };
+  var XOFF = { Infrastructure: true, Sanctions: true }, xQ = "", xOpen = {}, xRadar = null;
+  try { var xo = JSON.parse(localStorage.getItem("osap-x-off") || "null"); if (xo) XOFF = xo; } catch (e) {}
+  function xFeeds() { return (window.OSAP_XF || {}).feeds || {}; }
+  function xMine() { return (window.OSAP_XC || {})[CC] || null; }
+  var XFIG = [
+    ["wdi", "population", "Population", 0], ["wdi", "gdp_usd", "GDP (US$)", 0], ["wdi", "gdp_per_capita_usd", "GDP per person (US$)", 0], ["imf", "gdp_growth_pct", "GDP growth %", 1],
+    ["imf", "inflation_pct", "Inflation %", 1], ["imf", "govt_debt_pct_gdp", "Government debt, % of GDP", 1], ["imf", "unemployment_pct", "Unemployment %", 1],
+    ["wdi", "military_spending_pct_gdp", "Military spending, % of GDP", 2], ["wdi", "extreme_poverty_pct", "Extreme poverty %", 1], ["wdi", "internet_users_pct", "Internet users %", 1],
+    ["wdi", "electricity_access_pct", "Electricity access %", 1], ["wdi", "urban_pct", "Urban population %", 1], ["wdi", "age_0_14_pct", "Aged 0 to 14 %", 1],
+    ["wdi", "remittances_pct_gdp", "Remittances, % of GDP", 1], ["wdi", "forest_pct", "Forest, % of land", 1],
+    ["who-gho", "life_expectancy_years", "Life expectancy (years)", 1], ["who-gho", "under5_mortality_per_1000", "Under-5 deaths per 1,000", 1], ["who-gho", "maternal_mortality_per_100k", "Maternal deaths per 100,000", 0],
+    ["who-gho", "uhc_service_coverage_index", "Health service coverage index", 0], ["who-gho", "dtp3_immunisation_pct", "DTP3 immunisation %", 0]];
+  function xNum(v, d) {
+    if (v == null || isNaN(v)) return "–";
+    var a = Math.abs(v); if (a >= 1e12) return (v / 1e12).toFixed(2) + " trillion"; if (a >= 1e9) return (v / 1e9).toFixed(1) + " billion"; if (a >= 1e7) return (v / 1e6).toFixed(1) + " million";
+    return Number(v).toLocaleString("en-GB", { maximumFractionDigits: d });
+  }
+  function xFigures(X) {
+    var F = X.figures || {}, rows = [];
+    XFIG.forEach(function (f) { var v = (F[f[0]] || {})[f[1]]; if (v && v.value != null) rows.push([f[2], xNum(v.value, f[3]), String(v.year).replace(/ \(IMF estimate\/projection\)/, " est."), f[0]]); });
+    var fx = F.fx; if (fx) rows.push(["1 US$ in " + fx.currency, xNum(fx.per_usd, fx.per_usd < 10 ? 3 : 1), String(fx.at || "").slice(5, 16), "fx"]);
+    var fi = F.firms; rows.push(["Fire and heat detections, last 24 h", fi ? xNum(fi.detections) + " (" + xNum(fi.frp_mw) + " MW)" : "0", "NASA FIRMS", "firms"]);
+    var sc = F["sensor-community"]; if (sc) rows.push(["PM2.5 median of " + sc.sensors + " volunteer sensors", sc.pm25_median + " µg/m³ (90th pct " + sc.pm25_p90 + ")", "last hour", "sensor-community"]);
+    var os = F.opensky; if (os) rows.push(["Aircraft airborne over the country", xNum(os.airborne), "snapshot", "opensky"]);
+    var gj = F.gpsjam; if (gj) rows.push(["Cells with GPS interference", xNum(gj.cells), gj.date, "gpsjam"]);
+    var pw = F.power; if (pw) rows.push(["Power plants listed", xNum(pw.plants) + " (" + xNum(pw.total_mw) + " MW)", "WRI 2021", "power"]);
+    var sa = F.opensanctions; if (sa) rows.push(["Sanctioned or watch-listed people and entities linked to it", xNum(sa.entities), "OpenSanctions", "opensanctions"]);
+    var c2 = F.c2; if (c2) rows.push(["Botnet command servers hosted", xNum(c2.servers) + " (" + c2.online + " online)", "abuse.ch", "c2"]);
+    var dm = F.usdm; if (dm) rows.push(["Area in drought (D1 or worse)", dm.drought_pct + "%", String(dm.week), "usdm"]);
+    var sg = F["sg-now"]; if (sg) rows.push(["PSI (24 h) / PM2.5 (1 h)", xNum(sg.psi_24h) + " / " + xNum(sg.pm25_1h), String(sg.at || "").slice(11, 16), "sg-now"]);
+    var my = F["my-flood"]; if (my) rows.push(["River stations above normal", xNum((my.ALERT || 0) + (my.WARNING || 0) + (my.DANGER || 0)) + " of " + xNum(my.river_stations), "JPS", "my-flood"]);
+    if (!rows.length) return "";
+    return '<div class="sec"><h2>Key figures</h2><table class="reg cond"><tr><th>Figure</th><th>Value</th><th>Year / time</th></tr>' + rows.map(function (r) {
+      var f = xFeeds()[r[3]]; return "<tr><td>" + esc(r[0]) + '</td><td class="n">' + esc(r[1]) + '</td><td class="obs" title="' + esc(f ? f.org : "") + '">' + esc(String(r[2] == null ? "" : r[2])) + "</td></tr>"; }).join("") +
+      '</table><p class="note" style="margin-top:6px">Figures as published by the World Bank, IMF, WHO and the other sources named in Feed status; many are government-reported and years differ. IMF figures for the current year are estimates or projections.</p></div>';
+  }
+  function xPop(i, f) {
+    return '<div class="pop"><div class="tier">' + esc((i.k || f.name) + " · " + (i.d ? i.d.replace("T", " ") + (i.d.length > 10 ? "Z" : "") : "undated")) + "</div><h3>" + esc(i.t) + "</h3>" + (i.x ? '<p class="obs">' + esc(i.x) + "</p>" : "") +
+      '<p class="obs">' + esc(f.org || "") + (f.nc ? " · non-commercial licence" : "") + (i.la != null ? " · MGRS " + esc(window.MGRS_OF ? window.MGRS_OF(i.la, i.lo, 2) : "") : "") + "</p>" +
+      (i.u ? '<p class="obs"><a href="' + esc(i.u) + '" target="_blank" rel="noopener noreferrer">Source</a></p>' : "") + "</div>";
+  }
+  function showOpenData() {
+    sofLayer.clearLayers(); sofM = {};
+    var XF = window.OSAP_XF, X = xMine(), FD = xFeeds();
+    if (!XF || !X) { railO.innerHTML = '<div class="sec"><h2>Open data</h2><p class="obs">' + (xLoadFailed ? "The open-data files are not available here yet. They are written by the refresh job every 15 minutes once merged." : "Loading this country's open-data feeds…") + "</p></div>"; return; }
+    var q = xQ.toLowerCase(), byCat = {}, cnt = {};
+    X.items.forEach(function (i, n) {
+      var f = FD[i.f]; if (!f) return;
+      if (!XSTANDING[f.cat] && i.d && !inPeriodDate(i.d)) return;
+      if (q && (i.t + " " + (i.x || "") + " " + f.name).toLowerCase().indexOf(q) < 0) return;
+      cnt[f.cat] = (cnt[f.cat] || 0) + 1;
+      if (XOFF[f.cat]) return;
+      ((byCat[f.cat] = byCat[f.cat] || {})[i.f] = byCat[f.cat][i.f] || []).push([i, n]);
+      if (i.la != null) {
+        var m = L.circleMarker([i.la, i.lo], { pane: "tlpane", radius: i.s >= 3 ? 7 : i.s === 2 ? 5 : 4, color: "#111", weight: 0.6, fillColor: XCOL[f.cat] || "#888", fillOpacity: 0.8 });
+        m.bindPopup(xPop(i, f), { maxWidth: 340 }); sofLayer.addLayer(m); sofM["x:" + n] = m;
+      }
+    });
+    var chips = '<div class="sec"><div class="ctl" style="flex-wrap:wrap;gap:4px">' + XCAT.map(function (c) {
+      return '<label style="display:inline-flex;align-items:center;gap:3px;margin:2px 8px 2px 0;font-size:12px"><input type="checkbox" data-xcat="' + esc(c) + '"' + (XOFF[c] ? "" : " checked") + '><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + XCOL[c] + '"></span>' +
+        esc(c) + ' <span class="obs">' + (cnt[c] || 0) + "</span></label>"; }).join("") + '</div><input type="search" id="x-q" class="mini" placeholder="Search every feed for ' + esc(C.name) + '" value="' + esc(xQ) + '" style="width:100%;margin-top:6px">' +
+      '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (RainViewer, global mosaic)</label></div>' +
+      '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
+    var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
+      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + Object.keys(byCat[c]).map(function (fid) {
+        var f = FD[fid], arr = byCat[c][fid], open = xOpen[fid], show = open ? arr : arr.slice(0, 8);
+        return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted licence: ' + esc(f.lic) + '">NC</span>' : "") +
+          (f.ok ? "" : ' · <span title="' + esc(f.error || "") + '">stale</span>') + '</span></h3><div class="tllist">' + show.map(function (p) {
+          var i = p[0]; return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
+            esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span></span></button>"; }).join("") + "</div>" +
+          (arr.length > show.length ? '<button type="button" class="mini" data-xmore="' + esc(fid) + '">Show all ' + arr.length + "</button>" : "");
+      }).join("") + "</div>";
+    }).join("");
+    var G = XF.globals || {}, gl = ["swpc", "kev", "launches", "cisa-adv", "ncsc", "nhc", "wiki-events", "un-news"].filter(function (k) { return (G[k] || []).length && FD[k]; }).map(function (k) {
+      return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(FD[k].name) + '</h3><ul class="note">' + G[k].slice(0, 10).map(function (i) {
+        return "<li>" + (i.url ? '<a href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + esc(i.title) + "</a>" : esc(i.title)) + ' <span class="obs">' + esc(String(i.date || "").slice(0, 16).replace("T", " ")) + "</span></li>"; }).join("") + "</ul>"; }).join("");
+    var ids = Object.keys(FD), okN = ids.filter(function (k) { return FD[k].ok; }).length;
+    var st = '<div class="sec"><details><summary><b>Feed status</b>: ' + okN + " of " + ids.length + " feeds current · updated " + esc(XF.asof) + '</summary><table class="reg cond"><tr><th>Feed</th><th>Items here</th><th>Licence</th></tr>' + ids.map(function (k) {
+      var f = FD[k], n = X.items.filter(function (i) { return i.f === k; }).length;
+      return "<tr><td>" + (f.url ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + esc(f.name) + "</a>" : esc(f.name)) + '<br><span class="obs">' + esc(f.org) + " · " + (f.ok ? "read " + esc(f.asof) : "<b>not current</b>: " + esc(f.error || "")) +
+        '</span></td><td class="n">' + n + '</td><td class="obs">' + esc(f.lic) + (f.nc ? " <b>(NC)</b>" : "") + "</td></tr>"; }).join("") +
+      '</table><p class="note">NC marks a non-commercial or restricted licence: fine for this free app, to be removed before any paid use.</p></details></div>';
+    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>' + X.items.length + " items from " + okN + " public feeds, read automatically.</b> Claims, signals and published lists; nothing here is verified or a finding.</div></div>" +
+      xFigures(X) + chips + (lists || '<div class="sec"><p class="obs">No item matches for ' + esc(C.name) + " in this period.</p></div>") +
+      (gl ? '<div class="sec"><details><summary><b>Worldwide</b>: space weather, exploited vulnerabilities, launches, advisories</summary>' + gl + "</details></div>" : "") + st;
+  }
+  var xLoadFailed = false;
+  if (railO) railO.addEventListener("change", function (e) {
+    var t = e.target; if (!t) return;
+    if (t.getAttribute && t.getAttribute("data-xcat")) { XOFF[t.getAttribute("data-xcat")] = !t.checked; try { localStorage.setItem("osap-x-off", JSON.stringify(XOFF)); } catch (er) {} showOpenData(); }
+    else if (t.id === "x-radar") {
+      var rv = ((window.OSAP_XF || {}).globals || {}).rainviewer || [];
+      if (!xRadar && rv[0]) xRadar = L.tileLayer(rv[0].url + "/256/{z}/{x}/{y}/2/1_1.png", { pane: "satpane", opacity: 0.7, maxNativeZoom: 7, maxZoom: 18, attribution: "RainViewer" });
+      if (xRadar) { if (t.checked) xRadar.addTo(map); else map.removeLayer(xRadar); }
+    }
+  });
+  if (railO) railO.addEventListener("input", function (e) { if (e.target && e.target.id === "x-q") { xQ = e.target.value; clearTimeout(railO._xq); railO._xq = setTimeout(function () { showOpenData(); var b = document.getElementById("x-q"); if (b) { b.focus(); b.setSelectionRange(xQ.length, xQ.length); } }, 250); } });
+  if (railO) railO.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-xmore]"); if (b) { xOpen[b.getAttribute("data-xmore")] = 1; showOpenData(); return; }
+    var u = e.target.closest && e.target.closest("[data-xurl]"); if (u && u.getAttribute("data-xurl")) window.open(u.getAttribute("data-xurl"), "_blank", "noopener");
+  });
+  function xLoad() {
+    var n = 0, done = function () { if (++n === 2 && current === "opendata") showOpenData(); };
+    ["data/live/x/feeds.js", "data/live/x/" + CC + ".js"].forEach(function (p) {
+      var s = document.createElement("script"); s.src = p; s.onload = done; s.onerror = function () { xLoadFailed = true; n++; if (current === "opendata") showOpenData(); }; document.body.appendChild(s);
+    });
+  }
+  if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
+  function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else showPartners(); }
 
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
@@ -4824,7 +4940,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC" }[v]) ||
+    srcline.textContent = (l.sof && { crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
