@@ -85,8 +85,9 @@ async function feedItems(url, search) {
 }
 const collected = {};   // id -> { fresh, status }
 for (const c of LIST) {
-  const terms = termRe(c.terms), excl = termRe(c.exclude), status = [], fresh = [];
-  const fits = (text, all) => !!text && isSecurity(text) && (all || (terms && terms.test(text))) && !(excl && excl.test(text));
+  const terms = termRe(c.terms), excl = termRe(c.exclude), strong = termRe(c.strong), status = [], fresh = [];
+  // "strong" terms (optional) name the conflict so plainly that a report is kept without a violence word (a strait, a blockade, the war's own talks)
+  const fits = (text, all) => !!text && (isSecurity(text) || !!(strong && strong.test(text))) && (all || (terms && terms.test(text))) && !(excl && excl.test(text));
   // the news step's items for each country of the conflict
   for (const cc of c.countries) {
     const items = news(cc);
