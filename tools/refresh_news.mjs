@@ -9,6 +9,7 @@ import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
+import { splitByCountry } from "./split_country.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -203,6 +204,7 @@ try {
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, coverage, items }).replace(/<\//g, "<\\/") + ";\n");
+splitByCountry("data/live/news.js", "ASAP_NEWS"); // one small file per country for the page (tools/split_country.mjs)
 try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
 console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));

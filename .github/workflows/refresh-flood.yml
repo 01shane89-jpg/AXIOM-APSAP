@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
         required: false
         default: ""
 
@@ -171,13 +171,13 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'deepsouth') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/social.js data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
         continue-on-error: true
@@ -193,3 +193,62 @@ jobs:
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
           git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
           git push
+
+  # Event summaries and conflict watch lists (tools/refresh_evsum.mjs), in their own job after the refresh so they never slow it
+  # down or make it time out. Grouped events reported by two or more different sources, found by opening each country's page
+  # headless on the repo's own data, and "flashpoints and events to watch" for the countries with a key terrain and flashpoints
+  # file, drafted through GitHub Models with this job's own token (models: read; no personal key). At most once an hour, 140
+  # drafts a day; other runs end at once. Shown in the app as a draft, AI-generated, not analyst-approved.
+  evsum:
+    needs: refresh
+    if: ${{ always() && (!inputs.only || inputs.only == 'evsum' || inputs.only == 'probe-models') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # on main, the commit the refresh job has just pushed
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check that GitHub Models answers (diagnostic, writes nothing)
+        if: ${{ inputs.only == 'probe-models' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: EVSUM_PROBE=1 node tools/refresh_evsum.mjs
+      - name: Draft event summaries and conflict watch lists
+        if: ${{ inputs.only != 'probe-models' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVSUM_FORCE: ${{ inputs.only == 'evsum' && '1' || '' }}
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/refresh_evsum.mjs
+        timeout-minutes: 12
+        continue-on-error: true
+      - name: Park test output on a preview-data branch
+        if: ${{ inputs.only == 'evsum' && github.ref != 'refs/heads/main' }}
+        run: |
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan evsum-preview-data
+          git rm -rqf --cached .
+          for p in data/live/evsum.js data/live/aiwatch.js; do git add -f "$p" 2>/dev/null || true; done
+          git commit -qm "Test output (evsum) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/dense-preview-data-evsum
+        continue-on-error: true
+      - name: Commit the summaries if they changed
+        if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-models' }}
+        run: |
+          git add -N data/live/evsum.js data/live/aiwatch.js 2>/dev/null || true
+          if git diff --quiet -- data/live/evsum.js data/live/aiwatch.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/evsum.js data/live/aiwatch.js
+          git commit -m "Refresh event summaries $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1
