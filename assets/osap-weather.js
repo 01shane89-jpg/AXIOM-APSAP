@@ -726,9 +726,11 @@
     if (OUT.lyr) { map.removeLayer(OUT.lyr); OUT.lyr = null; }
     OUT.key = want;
     if (!want) return;
-    var st = { pane: "wxvec", color: "#0b6bcb", weight: 2, dashArray: "6 4", fill: false, interactive: false };
+    var st = { pane: "wxvec", color: "#0b6bcb", weight: 2, dashArray: "6 4", fill: false };
     OUT.lyr = R.kind === "spot" ? L.circle([R.center.lat, R.center.lon], L.extend({ radius: R.km * 1000 }, st)) :
       L.polygon(R.poly.map(function (p) { return p[0].map(function (x) { return [x[1], x[0]]; }); }), st);
+    OUT.lyr.bindPopup('<div class="pop"><div class="tier">Weather area</div><h3>' + esc(R.name) + '</h3><p class="obs">The ' + (R.kind === "spot" ? "spot and radius" : "province") +
+      " you chose for the operational weather forecast. The forecast is Open-Meteo's model for this area, not an observation.</p></div>");
     OUT.lyr.addTo(map);
   }
   function sectionHtml() {
@@ -1033,19 +1035,29 @@
       var j = GRID.data[n]; if (!j || !j.hourly) return;
       var ix = gridIdx(j), i = ix.i, h = j.hourly; tt = ix.t;
       var b = [[p.lat - p.dlat / 2, p.x - p.dlon / 2], [p.lat + p.dlat / 2, p.x + p.dlon / 2]], c = [p.lat, p.x];
-      if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100, interactive: false }));
+      // every grid cell opens the model's values for that cell, the valid time and where they came from
+      var aqv = GRID.aq && GRID.aq[n] && GRID.aq[n].hourly ? GRID.aq[n].hourly.us_aqi[gridIdx(GRID.aq[n]).i] : null;
+      var pop = '<div class="pop"><div class="tier">Model forecast grid cell</div><h3>' + esc(p.lat.toFixed(2) + ", " + p.x.toFixed(2)) + '</h3><p class="obs">' +
+        esc([h.temperature_2m[i] != null ? "Temperature " + Math.round(h.temperature_2m[i]) + " °C" : "",
+          h.wind_speed_10m[i] != null ? "wind " + Math.round(h.wind_speed_10m[i]) + " kt from " + Math.round(h.wind_direction_10m[i]) + "°" + (h.wind_gusts_10m[i] != null ? ", gusts " + Math.round(h.wind_gusts_10m[i]) + " kt" : "") : "",
+          h.cloud_cover[i] != null ? "cloud " + Math.round(h.cloud_cover[i]) + "%" : "", aqv != null ? "US AQI " + Math.round(aqv) : ""].filter(Boolean).join(" · ")) +
+        "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> weather' + (aqv != null ? " and air-quality" : "") +
+        " model, averaged over this cell. A forecast, not a measurement.</p></div>";
+      function cell(style) { return L.rectangle(b, L.extend({ pane: "wxpane", stroke: false }, style)).bindPopup(pop, { maxWidth: 300 }); }
+      if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(cell({ fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100 }));
       if (ON.temp && h.temperature_2m[i] != null) {
-        LYR.temp.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: tempCol(h.temperature_2m[i]), fillOpacity: opOf("temp", 0.55), interactive: false }));
+        LYR.temp.addLayer(cell({ fillColor: tempCol(h.temperature_2m[i]), fillOpacity: opOf("temp", 0.55) }));
         LYR.temp.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: Math.round(h.temperature_2m[i]) + "°", iconSize: [34, 16], iconAnchor: [17, -6] }) }));
       }
       if (ON.wind && h.wind_speed_10m[i] != null) {
+        LYR.wind.addLayer(cell({ fillColor: "#000", fillOpacity: 0 }));
         LYR.wind.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, opacity: opOf("wind", 0.95),
           icon: L.divIcon({ className: "wxbarbi", html: barb(h.wind_direction_10m[i], h.wind_speed_10m[i]) + '<span class="wxbv">' + Math.round(h.wind_speed_10m[i]) + (h.wind_gusts_10m[i] >= h.wind_speed_10m[i] + 10 ? "G" + Math.round(h.wind_gusts_10m[i]) : "") + "</span>", iconSize: [34, 34], iconAnchor: [17, 17] }) }));
       }
       if (ON.aq && GRID.aq && GRID.aq[n] && GRID.aq[n].hourly) {
         var ai = gridIdx(GRID.aq[n]).i, v = GRID.aq[n].hourly.us_aqi[ai];
         if (v != null) {
-          LYR.aq.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: aqCol(v), fillOpacity: opOf("aq", 0.55), interactive: false }));
+          LYR.aq.addLayer(cell({ fillColor: aqCol(v), fillOpacity: opOf("aq", 0.55) }));
           LYR.aq.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: String(Math.round(v)), iconSize: [34, 16], iconAnchor: [17, 8] }) }));
         }
       }
@@ -1061,15 +1073,17 @@
     ((W.ASAP_STORMS || {}).storms || []).forEach(function (st) {
       st.products.forEach(function (p) {
         var c = col[p.agency] || "#c62828";
-        if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op, interactive: false }));
+        // the storm's past track, forecast track and forecast circles open the same pop-up as its position, each saying which part it is
+        var src = '<p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
+        function part(what) { return '<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' + what + "</p>" + src; }
+        if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op }).bindPopup(part("Track so far, as the agency reported it")));
         if (!p.now) return;
         var tr = [p.now].concat(p.fc || []);
-        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op, interactive: false })); });
-        if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op, interactive: false }));
+        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op })
+          .bindPopup(part("Forecast position" + (x.t ? " for " + esc(String(x.t).replace("T", " ")) : "") + ", within about " + Math.round(x.r_km) + " km (the agency's uncertainty circle)"))); });
+        if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op }).bindPopup(part("Forecast track")));
         g.addLayer(L.circleMarker([p.now.lat, p.now.lon], { pane: "wxvec", radius: 9, color: "#fff", weight: 2, fillColor: c, fillOpacity: 1 })
-          .bindPopup('<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' +
-            esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · ")) +
-            '</p><p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>")
+          .bindPopup(part(esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · "))))
           .bindTooltip(esc(st.name), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }));
       });
     });
