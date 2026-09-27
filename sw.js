@@ -394,6 +394,7 @@
 "assets/logo-mark.png",
 "assets/logo.png",
 "assets/osap-start.js",
+"assets/osap-evsum.js",
 "assets/osap-today.js",
 "assets/osap-work.js",
 "assets/osap-weather.js",
@@ -408,7 +409,7 @@
      data and an offline one falls back to the last copy it saw. Feed files wait at most DATA_WAIT for the network.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "038fe0fbd361";
+const VERSION = "3cd699a079b5";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const DATA_WAIT = 4000;
 const PRECACHE = [
@@ -806,6 +807,7 @@ const PRECACHE = [
 "assets/logo-mark.png",
 "assets/logo.png",
 "assets/osap-start.js",
+"assets/osap-evsum.js",
 "assets/osap-today.js",
 "assets/osap-work.js",
 "assets/osap-weather.js",

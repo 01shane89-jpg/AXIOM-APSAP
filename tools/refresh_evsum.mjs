@@ -99,7 +99,7 @@ async function scan() {
         const byKey = {}; (window.TSAP.records || []).forEach((r) => { if (r.__rk) byKey[r.__rk] = r; });
         return window.OSAP_EVENTS.list().map((e) => ({ id: e.id, title: e.title, lat: e.lat, lon: e.lon, from: e.from, to: e.to, sev: e.sev, layer: e.layer,
           reports: e.reports.map((x) => { const r = byKey[x.key] || {}; return { key: x.key, cc: x.cc, title: x.title, source: x.source, kind: r.src ? r.src.kind || "" : "",
-            url: x.url || "", ts: x.ts, status: x.status, place: [r.place, r.prov].filter(Boolean).join(", "), detail: String(r.detail || "").replace(/\s+/g, " ").slice(0, 700) }; }) }));
+            url: x.url || "", ts: x.ts, status: x.status, place: [...new Set([r.place, r.prov].filter(Boolean).flatMap((x) => String(x).split(/,\s*/)))].join(", "), detail: String(r.detail || "").replace(/\s+/g, " ").slice(0, 700) }; }) }));
       });
       evs.forEach((e) => { e.cc = cc; out.push(e); });
       if (TERR.has(cc)) recent[cc] = await p.evaluate((cut) => (window.TSAP.records || []).filter((r) => {
@@ -167,9 +167,48 @@ async function draft(e, reps) {
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: citeClean(clean(p && p.text, 400), n), refs: refsOk(p && p.refs, n) })).filter((p) => p.text && p.refs.length).slice(0, max);
   const out = { summary: citeClean(clean(o.summary, 900), n), points: list(o.points, 5), differ: list(o.differ, 3), unclear: clean(o.unclear, 300) };
   if (!out.summary || !/\[\d+\]/.test(out.summary)) throw new Error("summary without citations");
-  out.model = j.model || MODEL; out.ms = Date.now() - t;
+  out.method = "ai"; out.model = j.model || MODEL; out.ms = Date.now() - t;
   if (j.usage) out.tokens = { in: j.usage.prompt_tokens, out: j.usage.completion_tokens };
   return out;
+}
+
+// ---------- 2b. plain extract (no AI) ----------
+// Sentences and figures copied from the reports, each with its source; nothing is inferred or merged.
+const FIG = /\b(\d[\d,]*|one|two|three|four|five|six|seven|eight|nine|ten|dozens|hundreds|thousands)\s+(?:people\s+|persons\s+|civilians\s+|soldiers\s+|residents\s+|households\s+|families\s+)?(?:were\s+|have been\s+|had been\s+)?(killed|dead|died|deaths?|injured|wounded|hurt|missing|evacuated|displaced|arrested|detained|affected)\b/gi;
+const FKIND = { killed: "killed", dead: "killed", died: "killed", death: "killed", deaths: "killed", injured: "injured", wounded: "injured", hurt: "injured",
+  missing: "missing", evacuated: "evacuated", displaced: "displaced", arrested: "arrested", detained: "arrested", affected: "affected" };
+const WORDN = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+function firstSentence(t) { const m = String(t || "").match(/^(.{20,260}?[.!?])(\s|$)/); return (m ? m[1] : String(t || "").slice(0, 220)).trim(); }
+function extract(reps) {
+  const bySrc = new Map();
+  reps.forEach((r, i) => { if (!bySrc.has(r.source)) bySrc.set(r.source, []); bySrc.get(r.source).push(i + 1); });
+  const points = [...bySrc.entries()].slice(0, 5).map(([src, ns]) => {
+    const r = reps[ns[0] - 1], lead = r.detail && r.detail !== r.title ? firstSentence(clean(r.detail, 400)) : clean(r.title, 240);
+    return { text: `${src}${r.status ? " (" + r.status.toLowerCase() + ")" : ""}: "${lead}"`, refs: ns.slice(0, 6) };
+  });
+  // figures per kind per source; a kind reported with different numbers is listed as a difference
+  const figs = {};
+  reps.forEach((r, i) => {
+    const txt = r.title + ". " + (r.detail || "");
+    for (const m of txt.matchAll(FIG)) {
+      const raw = m[1].toLowerCase(), n = WORDN[raw] || (/^\d/.test(raw) ? +raw.replace(/,/g, "") : null), k = FKIND[m[2].toLowerCase()];
+      if (!k) continue;
+      ((figs[k] = figs[k] || {})[r.source] = figs[k][r.source] || { v: n != null ? String(n) : raw, refs: [] }).refs.push(i + 1);
+    }
+  });
+  const differ = [];
+  Object.entries(figs).forEach(([k, per]) => {
+    const vals = new Set(Object.values(per).map((x) => x.v));
+    if (vals.size > 1) differ.push({ text: `Reported ${k}: ` + Object.entries(per).map(([src, x]) => `${x.v} (${src})`).join(", "), refs: [...new Set(Object.values(per).flatMap((x) => x.refs))].slice(0, 6) });
+  });
+  const same = Object.entries(figs).filter(([k, per]) => new Set(Object.values(per).map((x) => x.v)).size === 1 && Object.keys(per).length >= 2)
+    .map(([k, per]) => `${Object.values(per)[0].v} ${k} (${Object.keys(per).length} sources agree)`);
+  const ts = reps.map((r) => String(r.ts)).sort(), srcs = [...bySrc.keys()];
+  const place = reps.map((r) => r.place).find(Boolean);
+  const t0 = ts[0].replace("T", " "), t1 = ts[ts.length - 1].replace("T", " ");
+  const summary = `${reps.length} reports from ${srcs.length} sources` + (place ? ` about ${place}` : "") + (t0 === t1 || t1.startsWith(t0) ? `, ${t1}. ` : `, ${t0} to ${t1}. `) +
+    (same.length ? "Figures given alike: " + same.join("; ") + ". " : "") + (differ.length ? "Some figures differ between sources (below)." : "");
+  return { method: "extract", summary: summary.trim(), points, differ: differ.slice(0, 3), unclear: "" };
 }
 
 // ---------- 3. keep, reuse, prioritise, write ----------
@@ -185,7 +224,8 @@ for (const e of events) {
   if (srcs.size < 2) continue;
   multi++;
   const reps = pickReports(e), keys = reps.map((r) => r.key), id = keysId(keys);
-  if (oldItems[id]) { items[id] = { ...oldItems[id], seen: stamp, cc: oldItems[id].cc }; continue; }
+  if (oldItems[id] && oldItems[id].method !== "extract") { items[id] = { ...oldItems[id], seen: stamp, cc: oldItems[id].cc }; continue; }
+  if (oldItems[id]) items[id] = { ...oldItems[id], seen: stamp };
   // an older draft of the same event (it shares reports) is kept until the new one is written
   const prior = [...new Set(keys.flatMap((k) => byKey[k] || []))].filter((pid) => oldItems[pid] && oldItems[pid].keys.filter((k) => keys.includes(k)).length >= 2);
   prior.forEach((pid) => { items[pid] = { ...oldItems[pid], seen: stamp }; });
@@ -207,14 +247,25 @@ for (const t of todo) {
     await sleep(4500); // stay under 15 requests a minute
   } catch (err) { day.n++; errors.push(t.e.cc + ": " + err.message); if (errors.length >= 4) { stopModel = "too many errors"; } }
 }
+// every event still without a summary gets a plain extract (no AI): who reported what, the figures each source gave, and where
+// they differ. It is replaced by an AI draft once one can be written.
+let extracted = 0;
+for (const t of todo) {
+  if (items[t.id] && items[t.id].method !== "extract") continue;
+  if (t.prior.some((pid) => items[pid] && items[pid].method !== "extract")) continue; // an older AI draft of this event stays
+  t.prior.forEach((pid) => { if (items[pid]) { delete items[pid]; replaced.add(pid); } });
+  items[t.id] = { cc: t.e.cc, title: clean(t.e.title, 240), keys: t.keys, made: stamp, seen: stamp, prompt: "extract/1", ...extract(t.reps),
+    refs: t.reps.map((r, i) => ({ n: i + 1, source: r.source, title: clean(r.title, 240), url: /^https?:\/\//.test(r.url) ? r.url : "", ts: r.ts, status: r.status })) };
+  extracted++;
+}
 // drafts of events not seen in this scan are kept for a while (a country can be skipped or fail in one run)
 const cut = now - KEEP_UNSEEN_DAYS * 864e5;
 Object.entries(oldItems).forEach(([id, s]) => { if (!items[id] && !replaced.has(id) && Date.parse(String(s.seen).replace(" ", "T")) >= cut) items[id] = s; });
 const waiting = todo.filter((t) => !items[t.id]).length;
 const res = { asof: stamp, ran: stamp, prompt: PROMPT_V, model: MODEL, label: "Draft, AI-generated, not analyst-approved", day,
-  scan: { countries, failed, events: events.length, multiSource: multi, drafted: made, waiting, stopped: stopModel || "", errors: errors.slice(0, 4) },
+  scan: { countries, failed, events: events.length, multiSource: multi, drafted: made, extracted, waiting, stopped: stopModel || "", errors: errors.slice(0, 4) },
   items };
-console.log(`evsum: ${made} drafted this run (${day.n}/${PER_DAY} today), ${waiting} waiting, ${Object.keys(items).length} kept` + (stopModel ? `; stopped: ${stopModel}` : ""));
+console.log(`evsum: ${made} drafted by AI, ${extracted} plain extracts this run (${day.n}/${PER_DAY} today), ${waiting} waiting, ${Object.keys(items).length} kept` + (stopModel ? `; stopped: ${stopModel}` : ""));
 errors.forEach((e) => console.log("  error: " + e));
 if (process.env.EVSUM_LIST) todo.slice(0, 40).forEach((t) => console.log(`  ${t.e.cc} ${t.srcN} src  ${new Date(t.recent).toISOString().slice(0, 10)}  ${t.e.title}`));
 fs.writeFileSync(OUT, "window.OSAP_EVSUM=" + JSON.stringify(res) + ";\n");
@@ -231,17 +282,23 @@ function loadWin(file, name) {
 }
 const oldW = (() => { try { const t = fs.readFileSync(WOUT, "utf8"); return JSON.parse(t.slice(t.indexOf("=") + 1).replace(/;\s*$/, "")); } catch (e) { return null; } })() || { areas: {} };
 const ucdp = loadWin("data/live/ucdp.js", "ASAP_UCDP");
+const STRONG = /\b(attack\w*|clash\w*|fighting|militar\w*|troops?|soldiers?|army|armed|militants?|insurgen\w*|rebels?|separatists?|jihadi\w*|missiles?|drone strikes?|airstrikes?|air strikes?|shelling|artillery|bomb\w*|explosions?|ied|ambush\w*|gunmen|gunfire|shot dead|killed|ceasefire|truce|offensive|warships?|coast guard|incursions?|hostages?|kidnap\w*|displaced|refugees?|coup|junta|curfew|martial law|border (clash|dispute|tension|closure)\w*)\b/i;
+const SEC_LAYERS = /^(insurgency|border|conflict|security|military|maritime|terror|unrest)/;
 function watchInputs(cc) {
   const cut = Date.now() - WATCH_DAYS * 864e5, seen = new Set(), out = [];
-  const add = (r) => { const k = (r.url || r.title).toLowerCase(); if (!r.title || seen.has(k)) return; seen.add(k); out.push(r); };
-  (recent[cc] || []).filter((r) => CONFLICT.test(r.title + " " + r.detail)).forEach((r) => add({ source: r.source + (r.kind ? " (" + r.kind + ")" : ""), title: r.title, text: r.detail, url: r.url, ts: String(r.ts) }));
+  const add = (r, score) => { const k = (r.url || r.title).toLowerCase(); if (!r.title || seen.has(k)) return; seen.add(k); r.score = score; out.push(r); };
+  (recent[cc] || []).forEach((r) => {
+    const sec = SEC_LAYERS.test(r.layer || ""), strong = STRONG.test(r.title + " " + r.detail);
+    if (sec || strong) add({ source: r.source + (r.kind ? " (" + r.kind + ")" : ""), title: r.title, text: r.detail, url: r.url, ts: String(r.ts) }, sec ? 3 : 1);
+  });
   const x = loadWin(`data/live/x/${cc}.js`, "OSAP_XC"), xc = x && x[cc];
   const XF = loadWin("data/live/x/feeds.js", "OSAP_XF"), fmeta = (XF && XF.feeds) || {};
-  ((xc && xc.items) || []).filter((i) => Date.parse(i.d) >= cut && !/sanctions$|^power$|^ports$|^cables$|^meteoalarm$|^firms$/.test(i.f) && CONFLICT.test(i.t + " " + (i.x || "")))
-    .forEach((i) => add({ source: (fmeta[i.f] && fmeta[i.f].name) || i.k || i.f, title: i.t, text: i.x || "", url: i.u || "", ts: i.d }));
+  ((xc && xc.items) || []).filter((i) => Date.parse(i.d) >= cut && /^(tt-|wiki-events|un-news|hdx|acled|crisis)/.test(i.f) && STRONG.test(i.t + " " + (i.x || "")))
+    .forEach((i) => add({ source: (fmeta[i.f] && fmeta[i.f].name) || i.k || i.f, title: i.t, text: i.x || "", url: i.u || "", ts: i.d }, 2));
   ((ucdp && ucdp.items) || []).filter((u) => (u.ccs || []).includes(cc) && Date.parse(u.date) >= cut).slice(-8)
-    .forEach((u) => add({ source: "UCDP candidate events (Uppsala)", title: `${u.type} violence ${u.where}${u.adm1 ? ", " + u.adm1 : ""}: ${u.best} deaths (best estimate)`, text: u.headline || "", url: ucdp.src || "", ts: u.date }));
-  return out.sort((a, b) => String(b.ts).localeCompare(String(a.ts))).slice(0, WATCH_INPUTS);
+    .forEach((u) => add({ source: "UCDP candidate events (Uppsala)", title: `${u.type} violence ${u.where}${u.adm1 ? ", " + u.adm1 : ""}: ${u.best} deaths (best estimate)`, text: u.headline || "", url: ucdp.src || "", ts: u.date }, 3));
+  return out.sort((a, b) => b.score - a.score || String(b.ts).localeCompare(String(a.ts))).slice(0, WATCH_INPUTS)
+    .sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
 }
 const WSYSTEM = [
   "You help a situational-awareness app list what to watch in one country's conflict areas over the coming weeks.",
@@ -267,14 +324,16 @@ async function modelCall(system, user, maxTok) {
       headers: { authorization: "Bearer " + TOKEN, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body) }); } finally { clearTimeout(to); }
     if (r.status === 429) { const w = +(r.headers.get("retry-after") || 0); if (!w || w > 70) { stopModel = "rate limit (HTTP 429)"; return null; } await sleep(w * 1000 + 500); continue; }
     if (!r.ok) { const t = (await r.text()).slice(0, 300); if ([401, 403, 404].includes(r.status)) stopModel = "HTTP " + r.status + ": " + t; throw new Error("HTTP " + r.status + ": " + t); }
-    const j = await r.json(); const c = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
+    const raw = await r.text();
+    if (!/^\s*\{/.test(raw)) { stopModel = "GitHub Models answered without a model reply (" + (r.headers.get("content-type") || "no type") + ": " + raw.slice(0, 40).trim() + ")"; return null; }
+    const j = JSON.parse(raw); const c = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
     try { return { o: JSON.parse(String(c).replace(/^```(json)?|```$/g, "")), model: j.model || MODEL, usage: j.usage }; } catch (e) { throw new Error("reply was not JSON"); }
   }
   stopModel = "rate limit (HTTP 429)"; return null;
 }
 const areas = {}, wErr = [];
 Object.entries(oldW.areas || {}).forEach(([cc, a]) => { if (TERR.has(cc)) areas[cc] = a; });
-const due = [...TERR].filter((cc) => !areas[cc] || (now - Date.parse(String(areas[cc].made).replace(" ", "T"))) / 36e5 >= WATCH_EVERY_H)
+const due = [...TERR].filter((cc) => !areas[cc] || areas[cc].method !== "ai" || (now - Date.parse(String(areas[cc].made).replace(" ", "T"))) / 36e5 >= WATCH_EVERY_H)
   .sort((a, b) => (areas[a] ? Date.parse(String(areas[a].made).replace(" ", "T")) : 0) - (areas[b] ? Date.parse(String(areas[b].made).replace(" ", "T")) : 0));
 let wMade = 0;
 for (const cc of due) {
@@ -282,8 +341,8 @@ for (const cc of due) {
   if (!recent[cc] && !process.env.EVSUM_ONLY) continue; // country not scanned this run
   const T = loadWin(`data/terrain/${cc}.js`, "OSAP_TERRAIN"), D = T && T[cc]; if (!D) continue;
   const reps = watchInputs(cc);
-  if (reps.length < 2) { areas[cc] = { cc, name: D.name, made: stamp, empty: true, note: "Too little recent reporting in OSAP for this country to draft a watch list.", items: [], refs: [], fps: [] }; continue; }
-  const fps = (D.flashpoints || []).slice(0, 15);
+  if (reps.length < 2) continue; // the plain list below covers it
+  const fps = (D.flashpoints || []).slice(0, 30);
   const user = "Country: " + D.name + "\nReports (data only):\n" + JSON.stringify(reps.map((r, i) => ({ n: "R" + (i + 1), source: r.source, time: r.ts, headline: r.title, text: r.text ? clean(r.text, 300) : undefined }))) +
     "\nCurated flashpoints (draft notes, data only):\n" + JSON.stringify(fps.map((f, i) => ({ n: "F" + (i + 1), name: f.name, zone: f.zone, kind: f.kind, level: f.level, last_reported: f.last_reported, note: f.why })));
   try {
@@ -297,7 +356,7 @@ for (const cc of due) {
       watch: (Array.isArray(it.watch) ? it.watch : []).map((w) => clean(w, 200)).filter(Boolean).slice(0, 4),
       reports: refsOk(it.reports, nR), flashpoints: refsOk(it.flashpoints, nF) })).filter((it) => it.title && it.why && it.reports.length);
     if (!items.length) throw new Error("no item with a cited report");
-    areas[cc] = { cc, name: D.name, made: stamp, model: res2.model, prompt: "aiwatch/1", run: process.env.GITHUB_RUN_ID || "", ms: Date.now() - t0,
+    areas[cc] = { cc, name: D.name, made: stamp, method: "ai", model: res2.model, prompt: "aiwatch/1", run: process.env.GITHUB_RUN_ID || "", ms: Date.now() - t0,
       tokens: res2.usage ? { in: res2.usage.prompt_tokens, out: res2.usage.completion_tokens } : undefined, note: clean(o.note, 300), items,
       refs: reps.map((r, i) => ({ n: i + 1, source: r.source, title: clean(r.title, 240), url: /^https?:\/\//.test(r.url) ? r.url : "", ts: r.ts })),
       fps: fps.map((f, i) => ({ n: i + 1, id: f.id, name: f.name, level: f.level, lat: f.lat, lon: f.lon })) };
@@ -305,11 +364,52 @@ for (const cc of due) {
     await sleep(4500);
   } catch (err) { wErr.push(cc + ": " + err.message); if (wErr.length >= 4) stopModel = stopModel || "too many errors"; }
 }
+// Plain lists (no AI) for every conflict country without an AI list: the curated flashpoints that recent reports mention, with
+// those reports, and the latest conflict-related reports. Nothing is inferred; rebuilt on every run because it costs nothing.
+const GENERIC = new Set("around near along with from temples temple checkpoint villages village fishing grounds posts post camps bank scam scams sector sectors tribal phnom hill hills hub hubs park parks dry state states zone old new great little black white yellow three four five first second shoal shoals reef reefs trade shipping targets target strike deep fortress front islands border borders front frontline zone zones river rivers island islands strait straits line area areas region regions north south east west northern southern eastern western central upper lower corridor crossing crossings point points pass mountains mountain hills coast coastal waters province state district city town camp base disputed dispute tensions maritime conflict civil war insurgency armed group groups spillover route routes sea gulf bay valley plateau lake desert".split(" "));
+// country names and their demonyms say nothing about which flashpoint a report is about ("Thai", "Myanmar", "Sudanese")
+const CWORDS = (() => {
+  const out = new Set(["burmese", "filipino", "dutch", "swiss", "british", "korean", "emirati", "saudi", "kiwi", "okinawa"]);
+  try {
+    const dn = new Intl.DisplayNames(["en"], { type: "region" }), A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (const a of A) for (const b of A) { const n = dn.of(a + b); if (n && n !== a + b) n.toLowerCase().split(/[^a-z]+/).filter((w) => w.length >= 4).forEach((w) => out.add(w)); }
+  } catch (e) {}
+  return [...out];
+})();
+function countryWord(w) { const l = w.toLowerCase(), k = Math.min(5, l.length); return CWORDS.some((c) => c.slice(0, k) === l.slice(0, k) && Math.abs(c.length - l.length) <= 6); }
+function termsOf(f) {
+  return [...new Set(String(f.name).split(/[^A-Za-zÀ-ɏ'’-]+/).map((w) => w.replace(/['’]s$/, ""))
+    .filter((w) => w.length >= 4 && !GENERIC.has(w.toLowerCase()) && !countryWord(w)))].slice(0, 8);
+}
+function plainWatch(cc, D, reps) {
+  const fps = (D.flashpoints || []).slice(0, 30), LV = { active: 3, elevated: 2, latent: 1 };
+  const items = fps.map((f, fi) => {
+    const terms = termsOf(f), re = terms.length ? new RegExp("\\b(" + terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")\\b", "i") : null;
+    const hits = re ? reps.map((r, i) => (re.test(r.title + " " + (r.text || "")) ? i + 1 : 0)).filter(Boolean) : [];
+    const found = re ? [...new Set(reps.flatMap((r) => (String(r.title + " " + (r.text || "")).match(new RegExp(re.source, "gi")) || []).map((x) => x.toLowerCase())))] : [];
+    return { f, fi, hits, found };
+  }).filter((x) => x.hits.length).sort((a, b) => b.hits.length - a.hits.length || (LV[b.f.level] || 0) - (LV[a.f.level] || 0)).slice(0, 6)
+    .map((x) => ({ title: clean(x.f.name, 120), where: clean(x.f.zone, 160), kind: "flashpoint", method: "extract",
+      why: `${x.hits.length} report${x.hits.length === 1 ? "" : "s"} in the past ${WATCH_DAYS} days ${x.hits.length === 1 ? "mentions" : "mention"} ${x.found.slice(0, 4).map((w) => "“" + w + "”").join(", ")}. Curated level: ${x.f.level}` +
+        (x.f.last_reported ? `, last reported ${x.f.last_reported}` : "") + ".", watch: [], reports: x.hits.slice(0, 8), flashpoints: [x.fi + 1] }));
+  return { cc, name: D.name, made: stamp, method: "extract", prompt: "plainwatch/1", empty: !reps.length,
+    note: reps.length ? "Matched by place and name words only, so a report may mention a place for another reason." : "Too little recent reporting in OSAP for this country.",
+    items, latest: reps.map((r, i) => ({ i, s: r.score || 0, ts: String(r.ts) })).sort((a, b) => b.s - a.s || b.ts.localeCompare(a.ts)).slice(0, 6).map((x) => x.i + 1),
+    refs: reps.map((r, i) => ({ n: i + 1, source: r.source, title: clean(r.title, 240), url: /^https?:\/\//.test(r.url) ? r.url : "", ts: r.ts })),
+    fps: fps.map((f, i) => ({ n: i + 1, id: f.id, name: f.name, level: f.level, lat: f.lat, lon: f.lon })) };
+}
+let wPlain = 0;
+for (const cc of TERR) {
+  if (areas[cc] && areas[cc].method !== "extract" && !areas[cc].empty) continue;
+  if (!recent[cc] && areas[cc]) continue; // not scanned this run: keep the last list
+  const T = loadWin(`data/terrain/${cc}.js`, "OSAP_TERRAIN"), D = T && T[cc]; if (!D) continue;
+  areas[cc] = plainWatch(cc, D, watchInputs(cc)); wPlain++;
+}
 res.day = day;
 fs.writeFileSync(OUT, "window.OSAP_EVSUM=" + JSON.stringify(res) + ";\n");
 fs.writeFileSync(WOUT, "window.OSAP_AIWATCH=" + JSON.stringify({ asof: stamp, prompt: "aiwatch/1", model: MODEL, label: "Draft, AI-generated, not analyst-approved",
-  days: WATCH_DAYS, everyHours: WATCH_EVERY_H, drafted: wMade, due: due.length - wMade, stopped: stopModel || "", errors: wErr.slice(0, 4), areas }) + ";\n");
-console.log(`aiwatch: ${wMade} watch lists drafted, ${Math.max(0, due.length - wMade)} still due, ${Object.keys(areas).length} kept` + (stopModel ? `; stopped: ${stopModel}` : ""));
+  days: WATCH_DAYS, everyHours: WATCH_EVERY_H, drafted: wMade, plain: wPlain, due: due.length - wMade, stopped: stopModel || "", errors: wErr.slice(0, 4), areas }) + ";\n");
+console.log(`aiwatch: ${wMade} watch lists drafted by AI, ${wPlain} plain lists, ${Math.max(0, due.length - wMade)} still due, ${Object.keys(areas).length} kept` + (stopModel ? `; stopped: ${stopModel}` : ""));
 wErr.forEach((e) => console.log("  error: " + e));
 if (process.env.EVSUM_LIST) [...TERR].slice(0, 80).forEach((cc) => console.log(`  watch ${cc}: ${watchInputs(cc).length} inputs`));
 
