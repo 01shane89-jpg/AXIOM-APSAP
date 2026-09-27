@@ -75,6 +75,31 @@ for (const cc of Object.keys(items)) {
   const seen = new Set();
   items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
 }
+// Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
+const OG_MAX = Number(process.env.OG_MAX || 400);
+async function ogImage(url) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (AXIOM-ASAP hourly refresh)", accept: "text/html" } });
+    if (!r.ok || !r.body) return "";
+    const rd = r.body.getReader(); let html = "", n = 0;
+    while (n < 98304) { const { done, value } = await rd.read(); if (done) break; n += value.length; html += new TextDecoder().decode(value); if (/<\/head>/i.test(html)) break; }
+    try { await rd.cancel(); } catch (e) {}
+    const m = html.match(/<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)(?::src)?["'][^>]*content=["']([^"']+)["']/i) ||
+      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image|twitter:image)["']/i);
+    const u = m ? m[1].replace(/&amp;/g, "&").trim() : "";
+    return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 ? u : "";
+  } catch (e) { return ""; } finally { clearTimeout(t); }
+}
+{
+  const need = Object.values(items).flat().filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
+  let got = 0;
+  for (let k = 0; k < need.length; k += 8) {
+    const res = await Promise.all(need.slice(k, k + 8).map((i) => ogImage(i.link)));
+    res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
+  }
+  console.log("article-page pictures:", got, "of", need.length, "items without a feed picture");
+}
 const all = [...new Set(Object.values(items).flat())];
 const tr = await translateAll(all.flatMap((i) => [{ text: i.title, lang: i.lang }, { text: i.summary, lang: i.lang }]));
 all.forEach((i, n) => {
