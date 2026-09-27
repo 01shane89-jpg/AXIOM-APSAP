@@ -181,7 +181,7 @@
 
   /* ---------- map ---------- */
   var CTLCOL = { red: "#C0392B", green: "#1E8C45", yellow: "#D4AC0D", blue: "#2471A3", black: "#222", white: "#F4F4F4", grey: "#7F8C8D", orange: "#E67E22", purple: "#7D3C98",
-    pink: "#E86FA6", brown: "#8E5B34", lime: "#7DCE13", cyan: "#17A5B8", teal: "#138D75", olive: "#808000", maroon: "#7B241C", navy: "#1B2A6B", gold: "#C9A227", magenta: "#C2185B", violet: "#8E44AD", other: "#95A5A6" };
+    pink: "#E86FA6", brown: "#8E5B34", lime: "#7DCE13", cyan: "#17A5B8", teal: "#138D75", olive: "#808000", maroon: "#7B241C", navy: "#1B2A6B", gold: "#C9A227", magenta: "#C2185B", violet: "#8E44AD", ochre: "#CC7722", other: "#95A5A6" };
   function ctlColour(ctl) { return CTLCOL[String(ctl).replace(/^contested:/, "").split("+")[0]] || CTLCOL.other; }
   function ensureMap() {
     map = W.__asapMap; if (!map || !W.L || panes) return;
@@ -203,7 +203,7 @@
         lyr.places = L.layerGroup(f.current.places.map(function (p) {
           var con = /^contested/.test(p.ctl);
           return L.circleMarker([p.la, p.lo], { pane: "cfpane", radius: con ? 5 : 4, color: con ? "#000" : "#fff", weight: con ? 1.5 : 1, fillColor: ctlColour(p.ctl), fillOpacity: 0.95 })
-            .bindTooltip(esc(p.n || "Place") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified");
+            .bindTooltip(esc(p.n || "Place") + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified");
         })).addTo(map);
       }
     }
@@ -219,9 +219,11 @@
       })).addTo(map);
     }
   }
+  var TNAME = { airfield: "airfield", heliport: "heliport", base: "military base", port: "port", hill: "strategic hill", industrial: "industrial site", oil_gas: "oil or gas site", dam: "dam", border_post: "border post", contested: "contested", besieged: "besieged or under pressure", rural: "rural presence" };
   function srcName(f, id) { var s = (f.sources || []).filter(function (x) { return x.id === id; })[0]; return s ? s.name : id; }
   function legendName(f, ctl) {
     var lg = (f && f.current && f.current.legend) || {}, k = String(ctl).replace(/^contested:/, "");
+    if (lg[ctl]) return /^contested:/.test(ctl) ? "Contested: " + lg[ctl] : lg[ctl];
     if (/^contested:/.test(ctl)) return "Contested (" + k.split("+").map(function (x) { return lg[x] || x; }).join(" / ") + ")";
     return lg[ctl] || (ctl === "other" ? "Other marker" : "Held by the side the source colours " + ctl);
   }
