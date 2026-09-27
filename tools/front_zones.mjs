@@ -39,7 +39,12 @@ export function zonesFront(c, s, items, stamp, now = Date.now()) {
   for (const i of pool) {
     if (seen.has(i.link)) continue; seen.add(i.link);
     // a live report counts only when its headline names the place it was pinned to (a dateline such as "TEHRAN, Sep. 27" is not where a strike was)
-    if (!i.backfill && i.geo && i.geo.n && ((i.title_en || "") + " " + (i.title || "")).toLowerCase().indexOf(String(i.geo.n).toLowerCase().split(",")[0]) < 0) continue;
+    if (!i.backfill && i.geo && i.geo.n) {
+      const head = (i.title_en || "") + " " + (i.title || ""), pl = String(i.geo.n).split(",")[0];
+      if (head.toLowerCase().indexOf(pl.toLowerCase()) < 0) continue;
+      // a capital used for its government ("Tehran warns", "Riyadh says") is not a place something happened
+      if (new RegExp("\\b" + pl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?:'s|\u2019s)?\\s+(?:says?|said|warns?|vows?|rejects?|claims?|threatens?|offers?|denies|accuses|tells|responds?|awaits|wants|seeks|calls|urges|condemns|insists|signals|plans|proposes)\\b", "i").test(head)) continue;
+    }
     if (!STRIKE.has(i.kind) || !i.geo || i.geo.la == null || !(i.date >= since)) continue;
     const la = i.geo.la, lo = i.geo.lo;
     if (la < south || la > north || lo < west || lo > east) continue;
