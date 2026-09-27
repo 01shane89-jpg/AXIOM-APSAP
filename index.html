@@ -1437,6 +1437,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
     function sync() {
       document.querySelectorAll("input[data-ter]").forEach(function (i) { i.checked = !!ST[i.getAttribute("data-ter")]; });
+      var pb = document.getElementById("pr-btn"); if (pb) { pb.classList.toggle("on", !!ST.pr); pb.setAttribute("aria-pressed", ST.pr ? "true" : "false"); }
       document.querySelectorAll(".ternote").forEach(function (e) { e.textContent = note(e.getAttribute("data-k") || ""); });
     }
     function set(k, on) {
@@ -1466,6 +1467,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
+    /* countries with a presence layer get their own map button, so it is not buried in the Layers menu, and the layer
+       comes on by itself in the maritime data set (the data-set switch turns extra layers off first, then this runs) */
+    if (HASPR[cc]) {
+      var PrCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
+        var d = L.DomUtil.create("div", "leaflet-control areactl prctl");
+        d.innerHTML = '<button type="button" id="pr-btn" aria-pressed="false" title="Chinese state presence and reported influence: held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.">Chinese presence</button>';
+        L.DomEvent.disableClickPropagation(d); return d; } });
+      new PrCtl().addTo(map);
+      document.getElementById("pr-btn").addEventListener("click", function () { set("pr", !ST.pr); });
+      var PRVIEW = { border: 1 };
+      new MutationObserver(function () { if (PRVIEW[document.documentElement.getAttribute("data-view")] && !ST.pr) set("pr", true); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["data-view"] });
+    }
     sync();
     if (!HASPR[cc]) ST.pr = false;
     if (ST.ter || ST.fp || ST.pr) { set("ter", ST.ter); set("fp", ST.fp); set("pr", ST.pr); }
@@ -2527,7 +2541,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   if (!hit) return;
   window.OSAP_SUB = { cc: "us", code: hit[0], name: hit[1], tz: hit[2] };
   window.OSAP_ZONE = hit[2];
-  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
+  /* the state's outline, and its own outlets' news (data/live/news/us-states/<code>.js, tools/refresh_news.mjs) */
+  document.write('<script src="data/basemap/us-states/' + hit[0].toLowerCase() + '.js"><\/script><script src="data/live/news/us-states/' + hit[0].toLowerCase() + '.js"><\/script>');
 })();
 </script>
 <script src="data/sof/exercises-outside.js"></script>
@@ -2614,6 +2629,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
   var SUB = window.OSAP_SUB && window.OSAP_SUBAREA && window.OSAP_SUB.cc === CC && window.OSAP_SUBAREA.code === window.OSAP_SUB.code ? window.OSAP_SUBAREA : null;
   if (SUB) C = { id: C.id, name: SUB.name, parent: C.name, region: C.region, ne: C.ne, a3: C.a3, bounds: SUB.b, world: C.world, sub: SUB.code };
+  /* a state's own outlets join the national news for this view, marked with the state */
+  (function () {
+    var S = window.ASAP_NEWS_ST, N = window.ASAP_NEWS;
+    if (!SUB || !S || S.st !== SUB.code || !(S.items || []).length) return;
+    if (!N || !N.items) N = window.ASAP_NEWS = { asof: S.asof, sources: [], items: {} };
+    N.items[CC] = S.items.map(function (i) { i.st = S.st; return i; }).concat(N.items[CC] || []);
+    N.sources = (N.sources || []).concat(S.sources || []);
+  })();
   function subRing(ring, x, y) {
     for (var i = 0, j = ring.length - 1, a = false; i < ring.length; j = i++)
       if ((ring[i][1] > y) !== (ring[j][1] > y) && x < (ring[j][0] - ring[i][0]) * (y - ring[i][1]) / (ring[j][1] - ring[i][1]) + ring[i][0]) a = !a;
@@ -2737,6 +2760,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   function add(r) {
     /* a record placed outside the open US state belongs to another state's view */
     if (SUB && r.lat != null && r.lon != null && isFinite(r.lat) && isFinite(r.lon) && !inSub(+r.lat, +r.lon)) return;
+    /* ...and national news or posts that say nowhere in particular stay on the whole-USA view; the state's own outlets stay */
+    if (SUB && (r.news || r.social) && !(r.lat != null && isFinite(r.lat)) && r.st !== SUB.code) return;
     notFuture(r);
     r.id = r.layer + "-" + (SEQ++);
     r.src.n++;
@@ -3015,6 +3040,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var b = e.target.closest && e.target.closest("button[data-cc]");
     if (!b || b.getAttribute("data-cc") === CC && !SUB) return;
     goPlace(b.getAttribute("data-cc"), "");
+  });
+  /* the whole-USA map is sectioned by state: thin state lines (assets/regions/USA.json, loaded after the page is up); tap a
+     state to open its own view */
+  if (CC === "us" && !SUB && STATES.length && window.fetch) window.addEventListener("load", function () {
+    fetch("assets/regions/USA.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j || !j.r) return;
+      var byName = {}; STATES.forEach(function (s) { byName[s.name] = s; });
+      map.createPane("stlines"); map.getPane("stlines").style.zIndex = 380;
+      var rend = L.svg({ pane: "stlines" });
+      j.r.forEach(function (r) {
+        var s = r[1] === "Federal District" ? byName["Washington, D.C."] : byName[r[0]]; if (!s) return;
+        L.polygon(r[5].map(function (ring) { return ring.map(function (p) { return [p[1], p[0]]; }); }),
+          { pane: "stlines", renderer: rend, color: tok("--muted"), weight: 0.9, opacity: 0.7, fill: true, fillOpacity: 0, className: "stline" })
+          .bindTooltip(esc(s.name) + ": open this state", { sticky: true })
+          .on("click", function () { goPlace("us", s.code); }).addTo(map);
+      });
+    }).catch(function () {});
   });
   cseg.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-st]"); if (!b) return;
@@ -4742,7 +4784,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
         derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
-        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
