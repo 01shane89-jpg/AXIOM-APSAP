@@ -79,7 +79,7 @@
       var s = m.s, refs = s.refs || [], total = keys.length;
       var list = function (a) { return "<ul>" + a.map(function (p) { return "<li>" + cite(p.text + " " + refTags(p, refs), refs) + "</li>"; }).join("") + "</ul>"; };
       var ai = s.method !== "extract";
-      sec.innerHTML = '<h4 class="pkgh">Summary <span class="evsdraft" title="' + (ai ? "Draft, AI-generated, not analyst-approved" : "Automatic extract by fixed rules (no AI), not analyst-approved") + '">' + (ai ? "AI generated" : "Automatic") + "</span></h4>" +
+      sec.innerHTML = '<h4 class="pkgh">Summary <span class="evsdraft aitag" tabindex="0" title="' + (ai ? "Draft, AI-generated, not analyst-approved." : "Automatic extract by fixed rules (no AI), not analyst-approved") + '">' + (ai ? "AI generated" : "Automatic") + "</span></h4>" +
         '<p class="evstext">' + cite(s.summary, refs) + "</p>" +
         (s.points && s.points.length ? list(s.points) : "") +
         (s.differ && s.differ.length ? '<h5 class="evsh">' + (ai ? "Where reports differ" : "Figures that differ") + "</h5>" + list(s.differ) : "") +
@@ -163,7 +163,7 @@
       else if (a.empty) body = '<p class="obs">' + esc(a.note || "Too little recent reporting to draft a list.") + "</p>";
       else {
         var wai = a.method === "ai";
-        body = '<p><span class="evsdraft" title="' + (wai ? "Draft, AI-generated, not analyst-approved" : "Automatic list by fixed rules (no AI), not analyst-approved") + '">' + (wai ? "AI generated" : "Automatic") + "</span></p>" +
+        body = '<p><span class="evsdraft aitag" tabindex="0" title="' + (wai ? "Draft, AI-generated, not analyst-approved." : "Automatic list by fixed rules (no AI), not analyst-approved") + '">' + (wai ? "AI generated" : "Automatic") + "</span></p>" +
           (wai ? "" : '<p class="obs">Curated flashpoints for ' + esc(a.name) + " that recent reports mention by name, most-mentioned first.</p>") +
           a.items.map(function (it, i) {
             var f0 = (it.flashpoints || []).map(function (n) { return a.fps[n - 1]; }).filter(function (f) { return f && f.lat != null; })[0];
