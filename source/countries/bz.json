@@ -1,0 +1,24 @@
+[
+ {
+  "layer": "border",
+  "date": "2026-09-25",
+  "kind": "airspace_incursion",
+  "title": "Guatemalan military aircraft near Belize prompts airspace probe",
+  "detail": "Belize is investigating a Guatemalan military aircraft detected near its airspace (WIC News).",
+  "place": "Nationwide",
+  "district": null,
+  "prov": "Nationwide",
+  "lat": null,
+  "lon": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": "Belize Defence Force",
+  "src": "https://wicnews.com/belize/guatemalan-military-aircraft-detected-near-belize-airspace-breach-probe-launched",
+  "srcname": "WIC News",
+  "attribution": "Headline and search summary only (article body not retrieved)",
+  "date_is_pub": true,
+  "fp": "354e817362ec5ec3e1bded5ccee034afaca1708ff31b5fcdd93bfb1462ba3e53"
+ }
+]
