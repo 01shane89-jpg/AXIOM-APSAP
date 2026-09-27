@@ -74,6 +74,28 @@ async function job(key, file, global, fn) {
 }
 
 // 1. U.S. travel advisories. The State Department publishes the same list as JSON (cadataapi) and as RSS; either will do.
+// Every country in the picker (the original areas plus data/basemap/world-countries.js) is matched by name. The feed carries the
+// level, date and text but not the risk-indicator icons, and travel.state.gov refuses the refresh job's page requests (HTTP 403),
+// so "themes" are the risks the advisory text names ("due to crime and terrorism"), mapped to the State Department's letters.
+const WORLD = (() => { try { const w = {}; new Function("window", fs.readFileSync("data/basemap/world-countries.js", "utf8"))(w); return w.ASAP_WORLD || []; } catch (e) { return []; } })();
+const fold = (x) => String(x || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/&/g, " and ").replace(/\btravel advisory\b/g, "")
+  .replace(/[^a-z ]+/g, " ").replace(/^\s*(the|kingdom of)\s+/, "").replace(/\s+/g, " ").trim();
+const ADV_ALIAS = { burma: "mm", "democratic republic of the congo": "cd", "republic of the congo": "cg", "cote d ivoire": "ci", "kyrgyz republic": "kg",
+  gambia: "gm", czechia: "cz", turkey: "tr", turkiye: "tr", "federated states of micronesia": "fm", micronesia: "fm", denmark: "dk", "west bank": "ps", gaza: "ps",
+  "south korea": "kr", "north korea": "kp", laos: "la", "cabo verde": "cv", eswatini: "sz", "north macedonia": "mk", "sao tome and principe": "st", taiwan: "tw",
+  vietnam: "vn", brunei: "bn", russia: "ru", syria: "sy", iran: "ir", "timor leste": "tl", bahamas: "bs", "vatican city": "va", "holy see": "va" };
+const ADV_CC = {};
+for (const w of WORLD) for (const n of [w.name, w.ne]) if (n) ADV_CC[fold(n)] = w.id;
+for (const [cc, ns] of Object.entries(NAMES)) for (const n of ns) if (!/hong kong|macau|macao/i.test(n)) ADV_CC[fold(n)] = cc;
+Object.assign(ADV_CC, ADV_ALIAS);
+const THEMES = [["C", /\bcrime|criminal|robber|carjack|gang/i], ["T", /terror/i], ["U", /unrest|demonstration|protest|civil disorder/i],
+  ["H", /\bhealth|disease|outbreak|epidemic|medical (care|facilities)/i], ["N", /natural disaster|earthquake|hurricane|typhoon|cyclone|volcan|flood/i],
+  ["K", /kidnap|hostage/i], ["D", /wrongful detention|wrongfully detain|arbitrar\w* (detention|detain|enforcement)|unjust arrest|exit ban|detention/i],
+  ["E", /time-limited event|elections?\b/i], ["O", /armed conflict|landmine|unexploded|military conflict|piracy|maritime/i]];
+function themesOf(text) {
+  const why = [...String(text).matchAll(/\bdue to ([^.;]{3,220})/gi)].map((m) => m[1]).join(" | ");
+  return THEMES.filter(([, re]) => re.test(why)).map(([k]) => k);
+}
 await job("adv", "advisories.js", "ASAP_ADV", async () => {
   const tries = [["https://cadataapi.state.gov/api/TravelAdvisories", "json"], ["https://travel.state.gov/_res/rss/TAsTWs.xml", "text"]];
   let rows = null, used = "", fails = [];
@@ -81,25 +103,33 @@ await job("adv", "advisories.js", "ASAP_ADV", async () => {
     try {
       const b = await get(url, as);
       rows = as === "json" ? (Array.isArray(b) ? b : b.data || b.items || []).map((x) => ({ title: x.Title || x.title, link: x.Link || x.link, date: x.Updated || x.Published || x.date,
-          summary: unhtml(x.Summary || x.summary || "").slice(0, 600) }))
-        : parseFeed(b).map((x) => ({ title: x.title, link: x.link, date: x.date, summary: unhtml(x.summary).slice(0, 600) }));
+          full: unhtml(x.Summary || x.summary || "") }))
+        : parseFeed(b).map((x) => ({ title: x.title, link: x.link, date: x.date, full: unhtml(x.summary) }));
       if (rows.length) { used = url; break; }
     } catch (e) { fails.push(url.split("/")[2] + ": " + err(e)); }
   }
   if (!rows || !rows.length) throw new Error(fails.join("; ") || "empty");
-  const items = {};
+  // newest first, so a country listed twice keeps its latest advisory
+  rows.sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
+  const items = {}, unmatched = [];
   for (const r of rows) {
-    const m = String(r.title || "").match(/^(.*?)\s*[-–—]\s*Level\s*(\d)\s*[:\-–]\s*(.+)$/i);
+    const m = String(r.title || "").match(/^(.*?)\s*[-–—]\s*Level\s*(\d)\s*[:\-–]\s*(.+?)(\s*[-–—]\s*Level\s*\d.*)?$/i);
     if (!m) continue;
-    const place = m[1].trim(), cands = [place, place.replace(/\s*\(.*\)\s*/g, " ").trim(), ...[...place.matchAll(/\(([^)]+)\)/g)].map((x) => x[1].trim())].map((x) => x.toLowerCase());
-    for (const cc of Object.keys(NAMES)) {
-      if (!NAMES[cc].some((n) => cands.includes(n.toLowerCase())) && !(cc === "cn" && cands.some((c) => /^(mainland )?china$/.test(c)))) continue;
-      items[cc] = { level: +m[2], level_text: m[3].trim(), place, title: r.title, link: r.link, date: isoDay(r.date), summary: r.summary };
+    let place = m[1].replace(/\s*[-–—]\s*See Summaries\s*$/i, "").trim(), level = +m[2], level_text = m[3].trim(), cc = ADV_CC[fold(place)];
+    if (!cc && /^mainland china/i.test(place)) {
+      cc = "cn"; // one advisory for mainland China, Hong Kong and Macau: take mainland China's own level from the text
+      const mm = r.full.match(/Level (\d):\s*([A-Za-z ]+?) in mainland China/i);
+      if (mm) { level = +mm[1]; level_text = mm[2].trim(); }
     }
+    if (!cc) { if (!/hong kong|macau/i.test(place)) unmatched.push(place); continue; }
+    if (items[cc] && !(cc === "ps" && level > items[cc].level)) { if (cc === "ps") items[cc].also = place + " Level " + level; continue; }
+    items[cc] = { level, level_text, place, title: r.title, link: r.link, date: isoDay(r.date), summary: r.full.slice(0, 600), themes: themesOf(r.full),
+      ...(cc === "ps" && items.ps ? { also: items.ps.place + " Level " + items.ps.level } : {}) };
   }
   if (items.jp) items.oki = { ...items.jp, note: "Japan's advisory covers Okinawa" };
   if (!Object.keys(items).length) throw new Error("no advisory for a covered area in " + rows.length + " rows");
-  return { src: used, items, note: Object.keys(items).length + " areas" };
+  return { src: used, items, themes_note: "Risk themes named in the advisory text, mapped to the State Department's indicator letters; not its indicator icons.",
+    note: Object.keys(items).length + " countries" + (unmatched.length ? "; not in the picker: " + unmatched.slice(0, 40).join(", ") : "") };
 });
 
 // 2. Tsunami bulletins from the Pacific Tsunami Warning Center (Atom). Kept 30 days.
