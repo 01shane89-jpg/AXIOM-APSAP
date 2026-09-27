@@ -6928,9 +6928,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     return null;
   }
+  function paneZ(el) { var p = el && el.closest && el.closest(".leaflet-pane"); return p ? +getComputedStyle(p).zIndex || 0 : 0; }
   box.addEventListener("click", function (e) {
-    if (e.target && e.target.closest && e.target.closest(".leaflet-marker-icon, .leaflet-popup, .leaflet-control, .leaflet-interactive:not(canvas)")) return;
+    var t = e.target;
+    if (t && t.closest && t.closest(".leaflet-popup, .leaflet-control")) return;
+    /* a shape or icon drawn as its own element takes the click, unless a circle in a higher pane lies over it: an area drawn
+       under a conflict tab's dots (the border tab's subdistricts) used to answer for every dot on top of it */
+    var own = t && t.closest && t.closest(".leaflet-marker-icon, .leaflet-interactive:not(canvas)");
     var h = hitAt(e); if (!h) return;
+    if (own && paneZ(h.r._container) <= paneZ(own)) return;
+    // Leaflet hands the click on to the element under the pointer after the circle: stop there, so the shape below keeps quiet
+    if (own) h.l.once("click", function (ev) { if (ev.originalEvent) L.DomEvent.stopPropagation(ev.originalEvent); });
     if (map._draggableMoved && map._draggableMoved(h.l)) return;
     e.stopPropagation();
     if (h.r._fireEvent) h.r._fireEvent([h.l], e);
