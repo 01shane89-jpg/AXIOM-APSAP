@@ -7,7 +7,7 @@
 //   ca  DriveBC Open511 events (British Columbia only; Open Government Licence - British Columbia)
 //   fi  Fintraffic Digitraffic traffic announcements (CC BY 4.0)
 // One source failing keeps its previous items and is reported in the status list.
-// PROBE=1 prints one raw item per source and writes nothing.
+// PROBE=1 prints one raw item per source and writes probe-out/roads.js instead of data/live (a test run commits nothing).
 import fs from "node:fs";
 
 const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (situational awareness; github.com/01shane89-jpg/AXIOM-APSAP)";
@@ -27,6 +27,9 @@ async function get(url, as = "json") {
 const clean = (s) => String(s == null ? "" : s).replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<")
   .replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().slice(0, 400);
 const isoMin = (d) => { if (!d) return ""; const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
+const cap = (t) => t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+const localMin = (d) => { const m = String(d || "").match(/^(\d{4}-\d\d-\d\d)[ T](\d\d:\d\d)/); return m ? m[1] + "T" + m[2] : ""; };
+const awst = (d) => { const m = String(d || "").match(/^(\d\d)\/(\d\d)\/(\d{4}) (\d\d:\d\d)/); return m ? isoMin(m[3] + "-" + m[2] + "-" + m[1] + "T" + m[4] + ":00+08:00") : ""; };
 // first lon/lat pair anywhere in a GeoJSON geometry; null unless it is a plausible WGS84 position
 function firstPos(g) {
   let c = g && g.coordinates;
@@ -52,9 +55,11 @@ const SOURCES = {
       return (j.features || []).map((f) => {
         const p = f.properties || {}, pos = firstPos(f.geometry);
         const what = clean(p.EventType || p.Impact || "");
-        return { cc: "nz", id: "nz-" + (p.ID || p.Id || p.EventId || p.LocationArea + p.StartDate), title: clean([what, p.LocationArea].filter(Boolean).join(": ")),
-          detail: clean(p.EventDescription || p.EventComments || p.Description || ""), kind: kindOf(what + " " + (p.Impact || "")),
-          start: isoMin(p.StartDate || p.Created), end: isoMin(p.ExpectedResolution || p.EndDate), updated: isoMin(p.LastEdited),
+        return { cc: "nz", id: "nz-" + (p.id || p.ExternalId || p.uniq), title: clean([p.EventType || what, p.LocationArea].filter(Boolean).join(": ")),
+          detail: clean([p.EventComments, p.AlternativeRoute].filter(Boolean).join(" ")), kind: kindOf(what + " " + (p.Impact || "") + " " + (p.EventType || "")),
+          // NZTA gives New Zealand local clock times without an offset; they are kept as local time, not converted
+          start: localMin(p.StartDate), end: /^\d{4}-/.test(p.ExpectedResolution || "") ? localMin(p.ExpectedResolution) : "", until: clean(p.ExpectedResolutionText || ""),
+          updated: localMin(p.LastEdited), tz: "NZ time",
           lat: pos && pos[0], lon: pos && pos[1], link: "https://www.journeys.nzta.govt.nz/highway-conditions" };
       });
     } },
@@ -69,8 +74,8 @@ const SOURCES = {
         const mgmt = tag(r, "roadOrCarriagewayOrLaneManagementType") || tag(r, "roadMaintenanceType") || tag(r, "accidentType") || tag(r, "obstructionType") || "";
         const road = tag(r, "roadNumber"), comment = clean((r.match(/<(?:\w+:)?generalPublicComment\b[\s\S]*?<(?:\w+:)?value\b[^>]*>([^<]*)</) || [])[1] || "");
         const lat = parseFloat(tag(r, "latitude")), lon = parseFloat(tag(r, "longitude"));
-        const what = mgmt || type.replace(/([a-z])([A-Z])/g, "$1 $2");
-        return { cc: "fr", id: "fr-" + ((r.match(/^[^>]*\bid="([^"]+)"/) || [])[1] || road + lat + lon), title: clean([what, road].filter(Boolean).join(": ")), detail: comment,
+        const what = cap((mgmt || type).replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase());
+        return { cc: "fr", lang: "fr", id: "fr-" + ((r.match(/^[^>]*\bid="([^"]+)"/) || [])[1] || road + lat + lon), title: clean([what, road].filter(Boolean).join(": ")), detail: comment,
           kind: kindOf(type + " " + mgmt + " " + comment), start: isoMin(tag(r, "overallStartTime")), end: isoMin(tag(r, "overallEndTime")),
           updated: isoMin(tag(r, "situationRecordVersionTime")), lat: isFinite(lat) ? lat : null, lon: isFinite(lon) ? lon : null,
           link: "https://www.bison-fute.gouv.fr/" };
@@ -81,12 +86,13 @@ const SOURCES = {
       const j = await get("https://services2.arcgis.com/cHGEnmsJ165IBJRM/arcgis/rest/services/WebEoc_RoadIncidents/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson");
       probe("au", j.features && j.features[0]);
       return (j.features || []).map((f) => {
-        const p = f.properties || {}, pos = firstPos(f.geometry), keys = Object.keys(p);
-        const pick = (re) => { const k = keys.find((k) => re.test(k)); return k ? p[k] : ""; };
-        const what = clean(pick(/type|category|status/i)), where = clean(pick(/road|location|name/i));
-        return { cc: "au", id: "au-" + (p.FID || p.OBJECTID || where + what), title: clean([what, where].filter(Boolean).join(": ")) || "Road incident",
-          detail: clean(pick(/desc|comment|detail/i)), kind: kindOf(what + " " + pick(/desc|comment|detail/i)),
-          start: isoMin(pick(/start|created|date/i)), end: isoMin(pick(/end|expire|resol/i)), updated: isoMin(pick(/edit|update/i)),
+        const p = f.properties || {}, pos = firstPos(f.geometry);
+        const shut = /closed/i.test((p.ClosureTyp || "") + " " + (p.TrafficCon || ""));
+        return { cc: "au", id: "au-" + (p.Id || p.FID), title: clean([p.IncidentTy, p.Location].filter(Boolean).join(": ")) || "Road incident",
+          detail: clean([p.TrafficCon, p.ClosureTyp, p.TrafficImp, p.Region].filter(Boolean).join(". ")),
+          kind: shut ? "closure" : kindOf((p.IncidentTy || "") + " " + (p.ClosureTyp || "")),
+          // Main Roads gives Perth clock time (AWST, UTC+8, no daylight saving) as dd/mm/yyyy
+          start: awst(p.EntryDate), end: "", updated: awst(p.UpdateDate),
           lat: pos && pos[0], lon: pos && pos[1], link: "https://travelmap.mainroads.wa.gov.au/" };
       });
     } },
@@ -97,7 +103,7 @@ const SOURCES = {
       return (j.events || []).map((e) => {
         const pos = firstPos(e.geography), roads = (e.roads || []).map((r) => r.name).filter(Boolean).join(", ");
         const closed = (e.roads || []).some((r) => /CLOSED/i.test(r.state || ""));
-        return { cc: "ca", id: "ca-" + e.id, title: clean([e.event_type && String(e.event_type).replace(/_/g, " ").toLowerCase(), roads].filter(Boolean).join(": ")),
+        return { cc: "ca", id: "ca-" + e.id, title: clean((closed ? "Closed: " : cap(String(e.event_type || "Event").replace(/_/g, " ").toLowerCase()) + ": ") + (String(e.description || "").split(/\. /)[0] || roads)).slice(0, 160),
           detail: clean(e.description), kind: closed ? "closure" : kindOf((e.event_type || "") + " " + (e.headline || "")),
           start: isoMin(e.schedule && e.schedule.intervals && String(e.schedule.intervals[0] || "").split("/")[0] || e.created), end: "",
           updated: isoMin(e.updated), lat: pos && pos[0], lon: pos && pos[1], link: "https://www.drivebc.ca/" };
@@ -114,7 +120,7 @@ const SOURCES = {
           const feats = (a.features || []).map((x) => x.name).join(", ");
           out.push({ cc: "fi", id: "fi-" + p.situationId, title: clean(a.title || t.replace(/_/g, " ").toLowerCase()), detail: clean([a.location && a.location.description, feats].filter(Boolean).join(". ")),
             kind: t === "ROAD_WORK" ? (/closed|suljettu/i.test(feats) ? "closure" : "roadworks") : kindOf((a.title || "") + " " + feats),
-            start: isoMin(a.timeAndDuration && a.timeAndDuration.startTime), end: isoMin(a.timeAndDuration && a.timeAndDuration.endTime),
+            lang: "fi", start: isoMin(a.timeAndDuration && a.timeAndDuration.startTime), end: isoMin(a.timeAndDuration && a.timeAndDuration.endTime),
             updated: isoMin(p.releaseTime || p.versionTime), lat: pos && pos[0], lon: pos && pos[1], link: "https://liikennetilanne.fintraffic.fi/" });
         }
       }
@@ -140,8 +146,7 @@ for (const [cc, s] of Object.entries(SOURCES)) {
     console.log(cc, s.name, "FAILED", err(e), "- kept", old.length);
   }
 }
-if (!PROBE) {
-  fs.mkdirSync("data/live", { recursive: true });
-  fs.writeFileSync(FILE, "window.ASAP_ROADS=" + JSON.stringify({ asof: stamp, status, items }).replace(/<\//g, "<\\/") + ";\n");
-  console.log("wrote", FILE, items.length, "items");
-}
+const OUT = PROBE ? "probe-out/roads.js" : FILE;
+fs.mkdirSync(OUT.replace(/\/[^/]+$/, ""), { recursive: true });
+fs.writeFileSync(OUT, "window.ASAP_ROADS=" + JSON.stringify({ asof: stamp, status, items }).replace(/<\//g, "<\\/") + ";\n");
+console.log("wrote", OUT, items.length, "items");
