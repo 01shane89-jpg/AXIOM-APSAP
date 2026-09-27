@@ -53,7 +53,16 @@ export function feed(id, meta) { FEEDS[id] = { id, ...meta }; }
 const ONLY = (process.env.ONLY || "").split(",").filter(Boolean);
 const SAMPLES = !!process.env.SAMPLES;
 const OLD = (() => { try { const w = {}; new Function("window", fs.readFileSync("data/live/x/feeds.js", "utf8"))(w); return w.OSAP_XF || null; } catch { return null; } })();
-export async function run(id, fn) {
+const QUEUE = [];
+// Feeds are queued, then run a few at a time (different publishers in parallel; each feed's own requests stay sequential).
+export function run(id, fn) { QUEUE.push([id, fn]); }
+export async function runAll(conc = 6) {
+  let i = 0;
+  await Promise.all(Array.from({ length: conc }, async () => { while (i < QUEUE.length) { const [id, fn] = QUEUE[i++]; await runOne(id, fn); } }));
+}
+const T_START = Date.now(), BUDGET = +(process.env.DENSE_BUDGET_MS || 12 * 60e3);
+async function runOne(id, fn) {
+  if (Date.now() - T_START > BUDGET) { RESULTS[id] = { ok: false, error: "skipped: run out of time" }; return; }
   if (ONLY.length && !ONLY.includes(id)) return;
   const every = FEEDS[id] && FEEDS[id].everyHours, o = OLD && OLD.feeds[id];
   if (every && o && o.ok && o.asof && (Date.now() - Date.parse(o.asof.replace(" ", "T"))) / 36e5 < every) { RESULTS[id] = { reuse: true }; console.log("keep", id.padEnd(20), "fetched", o.asof); return; }
@@ -66,7 +75,8 @@ export async function run(id, fn) {
     return as === "json" ? JSON.parse(body) : body;
   };
   try {
-    const r = await fn(g);
+    const left = BUDGET - (Date.now() - T_START);
+    const r = await Promise.race([fn(g), new Promise((_, rej) => setTimeout(() => rej(new Error("took too long, abandoned")), Math.max(5000, left)).unref())]);
     const items = (r.items || []).filter((x) => x && x.ccs && x.ccs.length);
     RESULTS[id] = { ok: true, items, globals: r.globals || [], figures: r.figures || {}, note: r.note || "" };
     console.log("ok  ", id.padEnd(20), String(items.length).padStart(6), "items", r.globals ? r.globals.length + " global" : "", r.note || "", ((Date.now() - t0) / 1000).toFixed(1) + "s");

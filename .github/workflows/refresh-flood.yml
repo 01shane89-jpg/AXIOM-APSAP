@@ -97,6 +97,7 @@ jobs:
         run: |
           npm install --no-save --no-audit --no-fund h3-js@4 >/dev/null 2>&1 || true
           SAMPLES=${{ inputs.only == 'dense' && '1' || '' }} node tools/refresh_dense.mjs
+        timeout-minutes: 14
         continue-on-error: true
       - name: Report translation coverage
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
@@ -111,7 +112,7 @@ jobs:
         run: node tools/probe_dense.mjs
         continue-on-error: true
       - name: Keep the probe output as a run artifact
-        if: ${{ inputs.only == 'probe-dense' || inputs.only == 'dense' }}
+        if: ${{ always() && (inputs.only == 'probe-dense' || inputs.only == 'dense') }}
         uses: actions/upload-artifact@v4
         with:
           name: probe-dense
