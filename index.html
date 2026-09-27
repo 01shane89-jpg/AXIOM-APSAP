@@ -4738,6 +4738,20 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var o = root.classList.toggle("hdr-open"); more.setAttribute("aria-expanded", o ? "true" : "false"); more.textContent = o ? "Less" : "More";
     window.dispatchEvent(new Event("resize"));
   });
+  /* picking a period folds the header away again, so the map and its new set of points are in view at once (with the
+     header open the map was a thin strip and the change looked as if nothing had happened); the sheet bar then names the
+     period for a few seconds */
+  var perTimer = 0, perNote = "", perUntil = 0;
+  document.getElementById("period-seg").addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-p]");
+    if (!on() || !b || b.getAttribute("data-p") === "custom") return;
+    setTimeout(function () {
+      map.closePopup();
+      if (root.classList.contains("hdr-open")) more.click();
+      perNote = document.getElementById("period-seg").title || ""; perUntil = Date.now() + 4000;
+      label(); clearTimeout(perTimer); perTimer = setTimeout(label, 4100);
+    }, 0);
+  });
   nav.appendChild(cs); nav.appendChild(vs); nav.appendChild(more);
   var vt = document.getElementById("view-seg"); vt.parentNode.insertBefore(nav, vt.nextSibling);
   /* the bottom sheet: a bar naming the tab and how many items it lists; tap or drag it up to half or full height */
@@ -4754,7 +4768,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var name = b ? b.childNodes[0].textContent.trim() : "Details";
     var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof]").length : 0;
     h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
-    h.querySelector(".grab small").textContent = s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
+    h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
     h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
   }
   function setSheet(s) { root.setAttribute("data-sheet", s); rail.style.removeProperty("--sheet-h"); if (s !== "full") rail.scrollTop = 0; label(); }
