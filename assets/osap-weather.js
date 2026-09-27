@@ -68,14 +68,39 @@
   function inPolys(lat, lon, P) {
     return P.some(function (p) { return inRing(lat, lon, p[0]) && !p.slice(1).some(function (h) { return inRing(lat, lon, h); }); });
   }
+  /* the analyst's choice of place for the brief, per country (localStorage osap-wx-place-<cc>):
+     {k:"country"} | {k:"area"} | {k:"reg", n, t, la, lo, b:[s,w,n,e], r:[rings]} | {k:"spot", lat, lon, name, km}.
+     ak records the drawn area at the time of the choice, so drawing a new area switches the brief to it. */
+  function areaKey(a) { return Array.isArray(a) && a.length >= 3 ? a.map(function (p) { return p.join(","); }).join(";") : ""; }
+  function place(c, area) {
+    var pl = lsGet("osap-wx-place-" + c), ak = areaKey(area);
+    if (pl && pl.k === "area" && !ak) pl = null;
+    if (pl && ak && pl.ak !== ak) pl = null;
+    return pl || { k: ak ? "area" : "country" };
+  }
+  function setPlace(pl) { var c = cc(); pl.ak = areaKey(lsGet("asap-area-" + c)); lsSet("osap-wx-place-" + c, pl); }
   function region() {
-    var c = cc(), k = country(c), area = lsGet("asap-area-" + c), R = { cc: c, country: k };
-    if (Array.isArray(area) && area.length >= 3) {
+    var c = cc(), k = country(c), area = lsGet("asap-area-" + c), R = { cc: c, country: k }, pl = place(c, area);
+    if (pl.k === "area") {
       var ring = area.map(function (p) { return [p[1], p[0]]; });
       var la = area.map(function (p) { return p[0]; }), lo = area.map(function (p) { return p[1]; });
       R.kind = "area"; R.name = "Drawn area, " + k.name; R.bbox = [[Math.min.apply(0, la), Math.min.apply(0, lo)], [Math.max.apply(0, la), Math.max.apply(0, lo)]];
       R.test = function (lat, lon) { return inRing(lat, lon, ring); };
-      R.key = c + ":" + area.map(function (p) { return p.join(","); }).join(";");
+      R.key = c + ":" + areaKey(area);
+    } else if (pl.k === "reg" && pl.b && pl.r) {
+      var rb = [[pl.b[0], pl.b[1]], [pl.b[2], pl.b[3]]], RP = pl.r.map(function (x) { return [x]; });
+      R.kind = "region"; R.pname = pl.n; R.name = pl.n + " (" + pl.t + "), " + k.name; R.bbox = rb; R.poly = RP; R.label = { lat: pl.la, lon: pl.lo };
+      R.test = function (lat, lon) {
+        if (lat < rb[0][0] || lat > rb[1][0] || lon < rb[0][1] || lon > rb[1][1]) return false;
+        return inPolys(lat, lon, RP);
+      };
+      R.key = c + ":reg:" + pl.n;
+    } else if (pl.k === "spot" && isFinite(pl.lat) && isFinite(pl.lon)) {
+      var km = pl.km || 25, dy = km / 111, dx = km / (111 * Math.max(0.1, Math.cos(pl.lat * Math.PI / 180)));
+      R.kind = "spot"; R.center = { lat: pl.lat, lon: pl.lon, name: pl.name || ll(pl.lat, pl.lon) }; R.km = km;
+      R.name = R.center.name + ", " + km + " km around"; R.bbox = [[pl.lat - dy, pl.lon - dx], [pl.lat + dy, pl.lon + dx]];
+      R.test = function (lat, lon) { return hav(lat, lon, pl.lat, pl.lon) <= km; };
+      R.key = c + ":pt:" + pl.lat.toFixed(3) + "," + pl.lon.toFixed(3);
     } else {
       var b = k.bounds || (map ? [[map.getBounds().getSouth(), map.getBounds().getWest()], [map.getBounds().getNorth(), map.getBounds().getEast()]] : [[-10, -10], [10, 10]]);
       var P = outline(k.ne);
@@ -87,6 +112,25 @@
       R.key = c;
     }
     return R;
+  }
+  /* provinces/states of a country (assets/regions/<ISO3>.json, from Natural Earth admin-1), loaded once when the Weather section shows */
+  var REG = {}, regLoading = {};
+  function regsFor(c) {
+    var k = country(c), a3 = k.a3, list = a3 && REG[a3];
+    if (!list) return null;
+    if (c === "oki") list = list.filter(function (r) { return /okinawa/i.test(r[0]); });
+    return list;
+  }
+  var regWait = {};
+  function loadRegs(c, cb) {
+    var a3 = country(c).a3;
+    if (!a3 || REG[a3]) return;
+    if (cb) (regWait[a3] = regWait[a3] || []).push(cb);
+    if (regLoading[a3]) return;
+    regLoading[a3] = 1;
+    fetch("assets/regions/" + a3 + ".json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { REG[a3] = j.r || []; }, function () { REG[a3] = []; })
+      .then(function () { regLoading[a3] = 0; redraw(); (regWait[a3] || []).splice(0).forEach(function (f) { try { f(); } catch (e) {} }); });
   }
   /* reference point plus up to 8 spread points inside the region; up to 3 extra points at sea just off it, for sea state */
   function samplePoints(R) {
@@ -106,12 +150,15 @@
       ref = { lat: la / a.length, lon: lo / a.length };
       if (!R.test(ref.lat, ref.lon)) ref = nearest(inside, ref.lat, ref.lon) || { lat: a[0][0], lon: a[0][1] };
       ref = { lat: ref.lat, lon: ref.lon, name: "Centre of the drawn area" };
+    } else if (R.kind === "spot") {
+      ref = { lat: R.center.lat, lon: R.center.lon, name: R.center.name };
     } else {
       var cap = wx.filter(function (p) { return R.test(p.lat, p.lon) || !R.poly; })[0];
       if (cap) ref = { lat: cap.lat, lon: cap.lon, name: cap.name };
+      else if (R.label && R.test(R.label.lat, R.label.lon)) ref = { lat: R.label.lat, lon: R.label.lon, name: "Centre of " + R.pname };
       else {
         var cy = (b[0][0] + b[1][0]) / 2, cx = (b[0][1] + b[1][1]) / 2, n = nearest(inside, cy, cx) || { lat: cy, lon: cx };
-        ref = { lat: n.lat, lon: n.lon, name: "Centre of " + R.name };
+        ref = { lat: n.lat, lon: n.lon, name: "Centre of " + (R.pname || R.name) };
       }
     }
     ref.ref = true; pts.push(ref);
@@ -128,8 +175,10 @@
       var g = cand.splice(bi, 1)[0]; pts.push({ lat: +g.lat.toFixed(3), lon: +g.lon.toFixed(3), name: "Grid " + ll(g.lat, g.lon) });
     }
     var sea = [];
-    if (R.kind === "country") {
-      var off = grid(9, 0.08).filter(function (p) { return !R.test(p.lat, p.lon); });
+    if (R.kind !== "area") {
+      /* for a province or spot, only points that are also outside the country's land outline count as offshore */
+      var CP = R.kind === "country" ? null : outline(R.country.ne);
+      var off = grid(9, 0.08).filter(function (p) { return !R.test(p.lat, p.lon) && !(CP && inPolys(p.lat, p.lon, CP)); });
       off.forEach(function (p) { p.d = Math.min.apply(0, inside.concat(pts).map(function (q) { return hav(p.lat, p.lon, q.lat, q.lon); })); });
       off.sort(function (x, y) { return x.d - y.d; });
       off.slice(0, 12).forEach(function (p) {
@@ -549,7 +598,7 @@
     var X = W.OSAP_XC && W.OSAP_XC[R.cc];
     if (X && X.items) X.items.forEach(function (i) {
       if (i.f !== "pdc" || !/severeweather|flood|storm|cyclone|landslide|drought|winter|heat|wind|fog/i.test(i.k + " " + i.x)) return;
-      if (R.kind === "area" && !near(i.la, i.lo, 25)) return;
+      if (R.kind !== "country" && !near(i.la, i.lo, 25)) return;
       out.pdc.push(i);
     });
     return out;
@@ -612,10 +661,80 @@
         "</td><td>" + esc(vis(a.vis)) + "</td><td>" + wxCell(a) + ' <span class="wxl">' + esc(prStr(a)) + (a.ts === 1 ? ", TS possible" : "") + '</span></td><td class="n">' + esc(windStr(a)) + '</td><td class="n">' + tempStr(a) + "</td></tr>";
     }).join("") + "</table></div>";
   }
+  /* the place chooser: whole country, drawn area, any province or state, a town by name, or a spot tapped on the map */
+  function placeHtml(R) {
+    var c = R.cc, list = regsFor(c), area = areaKey(lsGet("asap-area-" + c)), cur = R.kind === "region" ? "reg:" + R.pname : R.kind;
+    if (!list) loadRegs(c);
+    var o = '<option value="country"' + (cur === "country" ? " selected" : "") + ">Whole country: " + esc(R.country.name) + "</option>";
+    if (area) o += '<option value="area"' + (cur === "area" ? " selected" : "") + ">Drawn area</option>";
+    if (R.kind === "spot") o += '<option value="spot" selected>' + esc(R.center.name) + "</option>";
+    if (!list) o += "<option disabled>Loading provinces…</option>";
+    else if (list.length) {
+      var ty = {}; list.forEach(function (r) { ty[r[1]] = (ty[r[1]] || 0) + 1; });
+      var top = Object.keys(ty).sort(function (x, y) { return ty[y] - ty[x]; })[0];
+      o += '<optgroup label="' + esc(list.length + " " + (Object.keys(ty).length > 1 ? "provinces, states and regions" : /y$/i.test(top) ? top.slice(0, -1).toLowerCase() + "ies" : top.toLowerCase() + "s")) + '">' +
+        list.map(function (r, i) { return '<option value="reg:' + i + '"' + (cur === "reg:" + r[0] ? " selected" : "") + ">" + esc(r[0]) + (Object.keys(ty).length > 1 ? " (" + esc(r[1]) + ")" : "") + "</option>"; }).join("") + "</optgroup>";
+    }
+    var found = ST.found ? (ST.found.busy ? '<p class="obs">Searching for &ldquo;' + esc(ST.found.q) + "&rdquo;…</p>" : ST.found.err ? '<p class="obs"><span class="badge stale">FAILED</span> ' + esc(ST.found.err) + "</p>" :
+      !ST.found.list.length ? '<p class="obs">No place called &ldquo;' + esc(ST.found.q) + "&rdquo; in " + esc(R.country.name) + ".</p>" :
+      '<p class="wxfound">' + ST.found.list.map(function (g, i) { return '<button type="button" class="refresh" data-wxfound="' + i + '">' + esc(g.name + (g.admin1 && g.admin1 !== g.name ? ", " + g.admin1 : "")) + "</button>"; }).join(" ") + "</p>") : "";
+    return '<div class="wxplace"><label>Region <select data-wxplace aria-label="Region for the weather brief">' + o + "</select></label>" +
+      '<form data-wxfind><input type="search" name="q" placeholder="Find a town" aria-label="Find a town" value="' + esc(ST.found ? ST.found.q : "") + '"><button type="submit" class="refresh">Find</button></form>' +
+      '<button type="button" class="refresh' + (ST.picking ? " primary" : "") + '" data-wxpick="1" aria-pressed="' + !!ST.picking + '">' + (ST.picking ? "Tap the map… (Esc to cancel)" : "Tap a spot on the map") + "</button></div>" + found +
+      (ST.picking ? "" : R.kind === "country" ? '<p class="note">Pick a province, find a town, tap the map, or draw an area to brief just that place.</p>' : "");
+  }
+  function chooseRegion(r) {
+    setPlace({ k: "reg", n: r[0], t: r[1], la: r[2], lo: r[3], b: r[4], r: r[5] });
+    if (map) try { map.fitBounds([[r[4][0], r[4][1]], [r[4][2], r[4][3]]], { maxZoom: 10, padding: [20, 20] }); } catch (e) {}
+    placeChanged();
+  }
+  function chooseSpot(lat, lon, name) {
+    setPlace({ k: "spot", lat: +lat.toFixed(4), lon: +lon.toFixed(4), name: name || ll(lat, lon), km: 25 });
+    if (map) try { map.setView([lat, lon], Math.max(map.getZoom(), 9)); } catch (e) {}
+    placeChanged();
+  }
+  function placeChanged() { ST.found = null; ST.data = null; ST.err = ""; go().catch(function () {}); }
+  /* town search: Open-Meteo geocoding (GeoNames places), limited to the open country */
+  function findTown(q) {
+    var c = cc(), iso2 = c === "oki" ? "JP" : c.toUpperCase();
+    q = String(q || "").trim().slice(0, 80);
+    if (q.length < 2) return;
+    ST.found = { q: q, list: [], busy: true }; redraw();
+    getJSON("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=10&language=en&format=json&countryCode=" + iso2)
+      .then(function (j) { ST.found = { q: q, list: (j.results || []).filter(function (g) { return isFinite(g.latitude) && isFinite(g.longitude); }).map(function (g) { return { name: g.name, admin1: g.admin1 || "", lat: g.latitude, lon: g.longitude }; }) }; },
+        function (e) { ST.found = { q: q, list: [], err: "Town search did not answer (" + (e.message || e) + ")." }; })
+      .then(redraw);
+  }
+  /* tap the map: the next click on the map (not on a marker) becomes the spot */
+  function pickStart() {
+    if (!map) return;
+    if (ST.picking) return pickStop();
+    ST.picking = true; map.getContainer().classList.add("wxpicking"); redraw();
+    ST.pickFn = function (e) { pickStop(); chooseSpot(e.latlng.lat, e.latlng.lng, "Spot " + ll(e.latlng.lat, e.latlng.lng)); };
+    map.once("click", ST.pickFn);
+  }
+  function pickStop() {
+    if (map && ST.pickFn) map.off("click", ST.pickFn);
+    ST.picking = false; ST.pickFn = null; if (map) map.getContainer().classList.remove("wxpicking"); redraw();
+  }
+  /* the chosen province or spot is outlined on the map while the weather section is showing */
+  var OUT = { key: "", lyr: null };
+  function outlineSync() {
+    if (!map || !L) return;
+    var R = ST.R, want = document.getElementById("wx-ops") && R && (R.kind === "region" || R.kind === "spot") ? R.key : "";
+    if (want === OUT.key) return;
+    if (OUT.lyr) { map.removeLayer(OUT.lyr); OUT.lyr = null; }
+    OUT.key = want;
+    if (!want) return;
+    var st = { pane: "wxvec", color: "#0b6bcb", weight: 2, dashArray: "6 4", fill: false, interactive: false };
+    OUT.lyr = R.kind === "spot" ? L.circle([R.center.lat, R.center.lon], L.extend({ radius: R.km * 1000 }, st)) :
+      L.polygon(R.poly.map(function (p) { return p[0].map(function (x) { return [x[1], x[0]]; }); }), st);
+    OUT.lyr.addTo(map);
+  }
   function sectionHtml() {
     var R = ST.R || region(), D = ST.data;
     var btns = Object.keys(PERIODS).map(function (k) { return '<button type="button" class="refresh' + (k === ST.per ? " primary" : "") + '" data-wxper="' + k + '" aria-pressed="' + (k === ST.per) + '">' + PERIODS[k].name + "</button>"; }).join(" ");
-    var head = '<div class="sec" id="wx-ops"><h2>Operational weather</h2><p class="obs"><b>' + esc(R.name) + "</b>" + (R.kind === "area" ? "" : ' · draw an area on the map to brief just that area') + "</p>" +
+    var head = '<div class="sec" id="wx-ops"><h2>Operational weather</h2>' + placeHtml(R) + '<p class="obs"><b>' + esc(R.name) + "</b></p>" +
       '<p class="wxbtns">' + btns + "</p>";
     if (ST.busy && !D) return head + '<p class="obs">Asking Open-Meteo for the model forecast…</p></div>';
     if (ST.err && !D) return head + '<p class="obs"><span class="badge stale">FAILED</span> The forecast could not be loaded (' + esc(ST.err) + '). <button type="button" class="refresh" data-wxgo="1">Try again</button></p></div>';
@@ -651,10 +770,12 @@
     var el = document.getElementById("wx-ops");
     if (!el) return;
     var box = document.createElement("div"); box.innerHTML = sectionHtml(); el.parentNode.replaceChild(box.firstChild, el);
+    outlineSync();
   }
   function go(force) {
     var R = region();
     if (ST.R && ST.R.key !== R.key) { ST.data = null; }
+    if (ST.R && ST.R.cc !== R.cc) { ST.found = null; if (ST.picking) { ST.picking = false; if (map) { map.off("click", ST.pickFn); map.getContainer().classList.remove("wxpicking"); } } }
     ST.R = R; ST.busy = true; ST.err = "";
     if (force) Object.keys(CACHE).forEach(function (k) { if (k.indexOf(R.key + "|") === 0) delete CACHE[k]; });
     redraw();
@@ -663,17 +784,32 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxb]");
+    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxb],[data-wxpick],[data-wxfound]");
     if (!t) return;
+    if (t.hasAttribute("data-wxpick")) return pickStart();
+    if (t.hasAttribute("data-wxfound")) { var g = ST.found && ST.found.list[+t.getAttribute("data-wxfound")]; if (g) chooseSpot(g.lat, g.lon, g.name + (g.admin1 && g.admin1 !== g.name ? ", " + g.admin1 : "")); return; }
     if (t.hasAttribute("data-wxper")) { ST.per = t.getAttribute("data-wxper"); lsSet("osap-wx-per", ST.per); if (document.getElementById("wxb-page")) openBrief(); redraw(); }
     else if (t.hasAttribute("data-wxgo")) go(true).catch(function () {});
     else if (t.hasAttribute("data-wxbrief")) openBrief();
     else if (t.getAttribute("data-wxb") === "print") window.print();
     else if (t.getAttribute("data-wxb") === "close") closeBrief();
   });
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t.hasAttribute || !t.hasAttribute("data-wxplace")) return;
+    var v = t.value, list = regsFor(cc());
+    if (v === "country" || v === "area") { setPlace({ k: v }); placeChanged(); }
+    else if (/^reg:\d+$/.test(v) && list && list[+v.slice(4)]) chooseRegion(list[+v.slice(4)]);
+  });
+  document.addEventListener("submit", function (e) {
+    var f = e.target;
+    if (!f.hasAttribute || !f.hasAttribute("data-wxfind")) return;
+    e.preventDefault(); findTown(f.elements.q.value);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ST.picking) pickStop(); });
   /* a new drawn area or a new country resets the brief */
   W.addEventListener("storage", function () { var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; redraw(); } });
-  setInterval(function () { if (!document.getElementById("wx-ops")) return; var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; go().catch(function () {}); } }, 2000);
+  setInterval(function () { outlineSync(); if (!document.getElementById("wx-ops")) return; var R = region(); if (ST.R && R.key !== ST.R.key) { ST.data = null; ST.R = R; go().catch(function () {}); } }, 2000);
 
   /* ---------- the printable one-page weather brief (uses the page's #brief overlay and its print rules) ---------- */
   function briefHtml(D, lim) {
@@ -1066,6 +1202,7 @@
 
   /* ---------- credits: add the new weather sources, with their licences, to the Credits box ---------- */
   var CRED = ['Operational weather brief and model map layers: <a href="https://open-meteo.com/">Open-Meteo.com</a> forecast, marine and air-quality APIs (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information).',
+    'Weather region list (provinces and states): <a href="https://www.naturalearthdata.com/">Natural Earth</a> admin-1 boundaries (public domain). Town search: <a href="https://open-meteo.com/en/docs/geocoding-api">Open-Meteo geocoding</a> with <a href="https://www.geonames.org/">GeoNames</a> places (CC BY 4.0).',
     'Rain radar: <a href="https://www.rainviewer.com/api.html">RainViewer</a> free public API, with attribution (terms may restrict commercial use; tagged for review before any sale).',
     'Satellite rain estimate: NASA GPM IMERG via <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">NASA GIBS</a> (public domain).',
     'Satellite infrared mosaic, tropical cyclone cones and tracks: NOAA <a href="https://nowcoast.noaa.gov/">nowCOAST</a> (U.S. Government work, public domain).',
@@ -1084,6 +1221,8 @@
   function css() {
     var s = document.createElement("style");
     s.textContent = [
+      "#wx-ops .wxplace{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#wx-ops .wxplace select{max-width:100%;font:inherit}#wx-ops .wxplace label{display:flex;gap:4px;align-items:center;max-width:100%}",
+      "#wx-ops .wxplace form{display:flex;gap:4px}#wx-ops .wxplace input{width:10em;font:inherit}#wx-ops .wxfound{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.wxpicking,.wxpicking .leaflet-interactive{cursor:crosshair!important}",
       "#wx-ops .wxbtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}#wx-ops .wxsyn{margin:6px 0;line-height:1.4}",
       ".wxl{color:var(--muted,#667);font-size:.88em;font-weight:400}",
       ".wxscroll{overflow-x:auto;max-width:100%}#wx-ops table.wxsm{font-size:11px}#wx-ops table.wxsm th{font-size:10px;padding:1px 2px}#wx-ops table.wxsm td{padding:1px 2px}#wx-ops table.wxf{font-size:12px}",
@@ -1125,7 +1264,11 @@
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief, refresh: function () { return go(true); }, layers: function () { return Object.keys(ON).filter(function (k) { return ON[k]; }); },
+    W.OSAP_WX = { region: region, brief: openBrief,
+      /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
+      placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
+      regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
+      chooseRegion: function (c, i) { var l = regsFor(c), r = l && l[i]; if (!r || c !== cc()) return false; setPlace({ k: "reg", n: r[0], t: r[1], la: r[2], lo: r[3], b: r[4], r: r[5] }); return true; }, refresh: function () { return go(true); }, layers: function () { return Object.keys(ON).filter(function (k) { return ON[k]; }); },
       _test: { analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
   }
   function boot() { map = W.__asapMap; if (!map || !W.L || !W.TSAP || !W.OSAP_TIME) return setTimeout(boot, 300); init(); }
