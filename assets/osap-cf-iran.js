@@ -13,6 +13,8 @@
 (function () {
   "use strict";
   var W = window, D = document, ID = "iran-war", FILE = "data/conflicts/extra/iran-war.js", state = 0, cbs = [];
+  // the period chosen in the page header (shared with the conflict tab); everything passes if that file is older
+  function inP(t) { var f = W.OSAP_CONFLICT_TABS && W.OSAP_CONFLICT_TABS.inPeriod; return f ? f(t) : true; }
   var SIDE = { us: { name: "US, Israel and partners", col: "#2F6FB5" }, ir: { name: "Iran and aligned groups", col: "#B3261E" }, neutral: { name: "Neutral, other or not stated", col: "#6B7785" } };
   var AREA_COL = { exclusion: "#B3261E", blockade: "#2F6FB5", threat: "#C2792B", "strike-zone": "#8A1C7C" };
   var AREA_LBL = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
@@ -112,7 +114,7 @@
       h += '<h3>More on the map</h3><div class="cfi-tog">' +
         tog("places", "Bases, facilities and chokepoints (" + X.places.length + ")", "#2F6FB5", true) +
         tog("navw", "Navigational warnings in the area (live, NGA)", "#1D5A86", false) +
-        tog("hist", "Earlier reports, last 30 days (web search)", "#B3261E", false) + "</div>" +
+        tog("hist", "Earlier reports in the chosen period (web search)", "#B3261E", false) + "</div>" +
         '<p><small><span class="cfi-dot" style="background:' + SIDE.us.col + '"></span>' + SIDE.us.name + ' &nbsp; <span class="cfi-dot" style="background:' + SIDE.ir.col + '"></span>' + SIDE.ir.name +
         ' &nbsp; <span class="cfi-dot" style="background:' + SIDE.neutral.col + '"></span>' + SIDE.neutral.name + "</small></p>";
 
@@ -141,11 +143,11 @@
 
       var kind = "", shown = 40, list = box.querySelector("#cfi-list"), more = box.querySelector(".cfi-more");
       function fill() {
-        var rs = recs.filter(function (r) { return !kind || r.kind === kind; });
+        var rs = recs.filter(function (r) { return (!kind || r.kind === kind) && inP(r.t); });
         list.innerHTML = rs.slice(0, shown).map(function (r) {
           return '<li><span class="cfi-dot" style="background:' + (SIDE[r.side] || SIDE.neutral).col + '"></span><small>' + day(r.t) + (r.place ? " · " + esc(r.place) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" +
             link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" + (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
-        }).join("") || "<li><small>No reports of this kind.</small></li>";
+        }).join("") || "<li><small>No reports of this kind in the chosen period.</small></li>";
         more.hidden = rs.length <= shown;
       }
       box.querySelector(".cfi-filt").addEventListener("click", function (e) {
@@ -178,8 +180,7 @@
           return g;
         },
         hist: function () {
-          var since = Date.now() - 30 * 864e5;
-          return L.layerGroup(recs.filter(function (r) { return !r.live && ms(r.t) >= since && isFinite(r.lat) && isFinite(r.lon); }).map(function (r) {
+          return L.layerGroup(recs.filter(function (r) { return !r.live && inP(r.t) && isFinite(r.lat) && isFinite(r.lon); }).map(function (r) {
             return L.circleMarker([r.lat, r.lon], { pane: "cfpane", radius: 5, color: "#fff", weight: 1, fillColor: (SIDE[r.side] || SIDE.neutral).col, fillOpacity: 0.8 })
               .bindPopup("<small>" + day(r.t) + " · " + esc(r.place) + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ") · reported, not verified" + fpShort(r.fp) + "</small>", { maxWidth: 320 });
           }));
