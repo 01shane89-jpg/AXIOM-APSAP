@@ -403,7 +403,7 @@
      data and an offline one falls back to the last copy it saw. Feed files wait at most DATA_WAIT for the network.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "a701e0d59f5d";
+const VERSION = "c45b7006801d";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const DATA_WAIT = 4000;
 const PRECACHE = [
@@ -850,4 +850,14 @@ self.addEventListener("fetch", (e) => {
     }
     return res;
   })));
+});
+// Watch notifications (shown by the page): a tap focuses an open OSAP window on the hit, or opens one.
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
+    const c = cs.find((x) => x.url.startsWith(self.registration.scope) && !/[?&]watchscan=1/.test(x.url));
+    if (c) return c.focus().then((w) => (w && w.navigate ? w.navigate(url) : null)).catch(() => self.clients.openWindow(url));
+    return self.clients.openWindow(url);
+  }));
 });
