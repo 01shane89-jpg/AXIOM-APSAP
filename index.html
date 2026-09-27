@@ -111,11 +111,12 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
-  window.OSAP_LATER = function (src, done) {
-    /* start a big, non-urgent script once the page has shown and the browser is idle, so it never delays the first screen */
-    function go() { var s = document.createElement("script"); s.src = src; s.async = true; if (done) s.onload = done; document.body.appendChild(s); }
-    function idle() { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 500); }
-    if (document.readyState !== "loading") setTimeout(idle, 400); else document.addEventListener("DOMContentLoaded", function () { setTimeout(idle, 400); });
+  /* hospitals always show as a red cross on a white tile, in every layer and legend, so they read on light, dark and
+     satellite maps alike. hollow: the cross in outline only (used for the Cambodian side of the border layer). */
+  window.OSAP_REDCROSS = function (px, hollow) {
+    return '<span class="hospx" style="width:' + px + 'px;height:' + px + 'px"><svg viewBox="0 0 16 16" width="' + px + '" height="' + px + '" aria-hidden="true">' +
+      '<rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/>' +
+      '<path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="' + (hollow ? "#fff" : "#D7141A") + '" stroke="#D7141A" stroke-width="' + (hollow ? 1.3 : 0) + '"/></svg></span>';
   };
 })();
 </script>
@@ -242,7 +243,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
-.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
+.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
 .breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
 .breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
@@ -317,6 +318,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 
 .lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
 .sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
+.hospx{display:inline-block;line-height:0;flex:none;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.45)}.hospx svg{display:block}.lg .hospx{margin-top:2px}.sofpin.inline .hospx{vertical-align:0}
 .sw.round{border-radius:50%}
 /* the legend sits on the map, lower left, and folds to one button; compact and folded by default on a phone */
 .lgctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:min(300px,calc(100vw - 90px));font:inherit}
@@ -635,6 +637,48 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
+<style>
+/* ---------- screen space: a shorter header and one tidy column of map buttons ----------
+   The header items line up on one centre line, the country picker and "Add a country" share a row, and a long source list
+   is cut short (the full list is in its tooltip). The buttons down the map's right edge share one width and spacing,
+   and are smaller on a phone so they cover less of the map. */
+header{align-items:center;gap:6px 12px;padding-block:8px}
+header .xabar{flex:0 1 auto}
+#hdr-src{max-width:34em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#map{--ctlw:150px}
+#map .leaflet-top.leaflet-right{display:flex;flex-direction:column;align-items:flex-end}
+#map .leaflet-top.leaflet-right>.leaflet-control{float:none;clear:none;margin:6px 10px 0 0}
+#map .leaflet-top.leaflet-right>.leaflet-control:first-child{margin-top:10px}
+#map .leaflet-top.leaflet-right>.rvseg,#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.wkctlmap,#map .leaflet-top.leaflet-right>.tdctl{width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.tdctl{display:flex}
+#map .leaflet-top.leaflet-right>.rvseg button,#map .leaflet-top.leaflet-right>.areactl button,#map .leaflet-top.leaflet-right>.wkctlmap button,#map .leaflet-top.leaflet-right>.tdctl button{
+  flex:1 1 0;width:100%;min-height:34px;padding:7px 8px;font-size:13px;font-weight:600;line-height:1.1;text-align:center;box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.wkctlmap{gap:6px}
+#map .leaflet-top.leaflet-right>.mlctl{min-width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{text-align:center;font-size:13px;min-height:34px}
+#map .leaflet-top.leaflet-right>.tdctl button{border:0;box-shadow:none;background:none}
+#map .leaflet-top.leaflet-right>.tdctl{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden}
+html.phone .brand{font-size:0;gap:0}
+html.phone .brand .logo{width:30px;height:30px}
+html.phone #hdr-title{font-size:16px}
+html.phone #hdr-live{flex:1 1 100%;font-size:10.5px;gap:4px}
+html.phone #hdr-live b{font-size:11.5px}
+html.phone #map{--ctlw:104px}
+html.phone #map .leaflet-top.leaflet-right>.leaflet-control{margin:5px 8px 0 0}
+html.phone #map .leaflet-top.leaflet-right>.rvseg button,html.phone #map .leaflet-top.leaflet-right>.areactl button,html.phone #map .leaflet-top.leaflet-right>.wkctlmap button,
+html.phone #map .leaflet-top.leaflet-right>.tdctl button,html.phone #map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{min-height:32px;padding:5px 6px;font-size:12.5px}
+html.phone #map .leaflet-top.leaflet-right>.wkctlmap{gap:5px}
+html.phone #hdr-live{letter-spacing:0;text-transform:none}
+html.phone #hdr-live .badge{font-size:9.5px;padding:1px 5px}
+html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
+</style>
+<style>
+/* the small "AI generated" tag: a muted pill; the full draft wording is its tooltip (hover, or tap to show) */
+.aitag{display:inline-block;vertical-align:1px;font:500 10.5px/1.5 var(--sans,system-ui,sans-serif);letter-spacing:.02em;text-transform:none;color:var(--muted,#56626F);background:var(--accent-soft,#D6E3EE);border-radius:999px;padding:0 7px;white-space:nowrap;cursor:help;font-style:normal}
+.aitag.open{white-space:normal;border-radius:6px}.aitag.open::after{content:" · " attr(title)}
+.bpage .aitag{color:#444;background:#e9edf1}
+@media print{.aitag{border:1px solid #bbb;background:none;white-space:normal}.aitag::after{content:" · " attr(title)}}
+</style>
 <header>
   <nav class="ctabs" id="country-seg" aria-label="Country"></nav>
   <nav class="viewtabs" id="view-seg" role="tablist" aria-label="Layer"></nav>
@@ -715,7 +759,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
       <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Rain station, 24 h total<span class="d">Circle grows from 60 mm up</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--power);border-radius:3px"></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);border-radius:3px"></span><div>Hospital in the flood footprint</div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--util);border-radius:3px"></span><div>Water works in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--over);opacity:.45"></span><div>Subdistrict by an overflowing gauge</div></div>
       <div class="lg"><span class="sw" style="background:var(--sat-water);opacity:.45"></span><div>Subdistrict with satellite-seen water</div></div>
@@ -820,8 +864,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 
     <div class="sec maplg">
       <h2>Legend</h2>
-      <div class="lg"><div>Incidents, crossings, disputed sites, schools, power and military sites use the map symbols listed below.<span class="d">Faded incident symbols are older than 45 days. Zoomed in, KH above a symbol means the Cambodian side.</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital or clinic in Thailand<span class="d">Hollow square: in Cambodia</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Armed clash</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--l3)"></span><div>Air or artillery strike</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Landmine</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--util)"></span><div>Standoff or fortification</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--power)"></span><div>Territorial control<span class="d">Positions taken or held, villages sealed off</span></div></div>
+      <div class="lg"><span class="sw round" style="background:var(--care)"></span><div>Civilian harm or displacement</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Maritime</div></div>
+      <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
+      <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
+      <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital or clinic in Thailand<span class="d">Outlined cross: the same in Cambodia</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--rain);width:11px;height:11px;margin:4px 2px 0"></span><div>School (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
@@ -1285,7 +1339,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var st = document.createElement("style");
     st.textContent = ".terpin{font:700 13px/18px sans-serif;width:18px;height:18px;text-align:center;border-radius:3px;color:#fff;background:#6d4c2f;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".terpin.w{background:#1f6fa8}.terpin.hn{width:28px;padding:0;font-size:10.5px;box-sizing:border-box}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
-      ".fpc{font:700 10px/1 sans-serif}.terdraft{background:#fff4d6;color:#5a4300;border:1px solid #e0b84d;padding:2px 5px;margin:4px 0;font-size:11px;font-weight:600}" +
+      ".fpc{font:700 10px/1 sans-serif}.terdraft{margin:4px 0 2px;font-size:11px;color:#56626F;display:flex;align-items:center;gap:6px;flex-wrap:wrap}" +
       ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}" +
       ".prpin{font:700 9px/16px sans-serif;width:20px;height:16px;text-align:center;border-radius:2px;color:#fff;background:#8e1b1b;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
@@ -1306,7 +1360,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function terPop(t) {
       return '<div class="pop"><div class="tier">Key terrain · ' + TE(t.kind) + " · " + TE(t.zone) + "</div><h3>" + TE(t.name) + "</h3>" +
         (t.elev_m ? '<p class="obs">About ' + TE(t.elev_m.toLocaleString()) + " m</p>" : "") +
-        '<div class="terdraft">Why it matters: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(t.why) + "</div>" +
+        '<div class="terdraft">Why it matters <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(t.why) + "</div>" +
         (t.control_claim ? '<p class="obs"><b>Control:</b> ' + TE(t.control_claim) + ' <i>' + TE(t.control_status || "") + "</i></p>" : "") +
         (t.reports && t.reports.length > 1 ? '<p class="obs" style="margin-bottom:0">Reporting:</p><ul class="terev">' + t.reports.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>"; }).join("") + "</ul>" : "") +
@@ -1317,7 +1371,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function fpPop(f) {
       var l = LV[f.level] || LV.latent;
       return '<div class="pop"><div class="tier" style="color:' + l[1] + '">Possible flashpoint · ' + l[0] + " · " + TE(f.zone) + "</div><h3>" + TE(f.name) + "</h3>" +
-        '<div class="terdraft">Assessment: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(f.why) + "</div>" +
+        '<div class="terdraft">Assessment <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(f.why) + "</div>" +
         '<p class="obs">' + (f.last_reported ? "Latest dated report: " + TE(f.last_reported) + ". " : "") + "Zone about " + TE(f.radius_km) + " km across the centre; drawn for orientation only.</p>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + f.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
@@ -1328,7 +1382,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function prPop(p) {
       return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
-        '<div class="terdraft">Reported, not verified. Summary: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(p.why) + "</div>" +
+        '<div class="terdraft">Reported, not verified. Summary <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(p.why) + "</div>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + p.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
         }).join("") + "</ul>" +
@@ -1384,7 +1438,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     function rows() {
       return '<label class="mlrow"><input type="checkbox" data-ter="ter"><span><b>Key terrain</b><i>Ranges, hills, passes, rivers and crossings that shape movement. Reference data; positions approximate.</i></span></label>' +
-        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i>Draft, AI-generated, not analyst-approved. Each zone lists the reporting behind it.</i></span></label>' +
+        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
         '<p class="mlkey ternote"></p>' +
         (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
@@ -1395,7 +1449,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (site && site.parentNode) {
       var b = document.createElement("div");
       b.innerHTML = '<div class="ctl"><input type="checkbox" id="bl-ter" data-ter="ter"><label for="bl-ter">Key terrain<span class="hint">Escarpment, numbered hills, passes and rivers on all of Thailand’s borders. Reference data</span></label></div>' +
-        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint">Draft, AI-generated, not analyst-approved. Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
+        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint"><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
@@ -1557,10 +1611,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     infraLayer.clearLayers();
     POWER.forEach(function (o) {
       var col = tok(o.g === "power" ? "--power" : (o.g === "water" ? "--util" : "--care"));
-      var m = L.circleMarker([o.lat, o.lon], {
-        pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
-        color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
-      });
+      var m = o.g === "care"
+        ? L.marker([o.lat, o.lon], { pane: "infrapane", keyboard: false, title: o.n,
+            icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7], html: OSAP_REDCROSS(14) }) })
+        : L.circleMarker([o.lat, o.lon], {
+            pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
+            color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
+          });
       m.bindPopup('<div class="pop"><h3>' + esc(o.n) + "</h3>" +
         '<div class="tier" style="color:' + col + '">' + esc(o.k) + "</div>" +
         '<div class="why">Inside <b>' + esc(o.t) + "</b>, " + esc(o.a) + ", " + esc(o.p) +
@@ -2106,7 +2163,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var sk = { mil: "milbase", school: "school", power: "power" }[a.g];
       var m = L.marker([a.lat, a.lon], {
         pane: "assetpane", keyboard: false,
-        icon: (sk && osapSym(sk, a.side === "KH" ? { text: "KH", cls: "kh" } : null)) || L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+        icon: a.g === "care" || a.g === "clinic"
+          ? L.divIcon({ className: "", iconSize: [px + 6, px + 6], iconAnchor: [(px + 6) / 2, (px + 6) / 2], html: OSAP_REDCROSS(px + 6, a.side === "KH") })
+          : L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
           html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
                 ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
       });
@@ -3691,8 +3750,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   var ADV_TONE = ["", "--calm", "--near", "--over", "--over"];
   function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
   function sofIcon(k) {
-    var c = tok(SOFK[k].color), sy = SOFK[k].sym && osapSym(SOFK[k].sym);
-    if (sy) return sy;
+    var c = tok(SOFK[k].color);
+    if (k === "hospitals") return L.divIcon({ className: "", iconSize: [18, 18], iconAnchor: [9, 9], html: OSAP_REDCROSS(18) });
     return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
       html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
   }
@@ -3753,7 +3812,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
       var n = (SOF[k] || []).length, id = "sofk-" + k;
       return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
-        (SOFK[k].sym && window.OSAP_SYM ? '<span class="msw">' + OSAP_SYM.svg(SOFK[k].sym) + "</span>" : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> ") + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+        (k === "hospitals" ? OSAP_REDCROSS(15) : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span>") + " " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
     }).join("") + "</div>";
     var lists = kinds.map(function (k) {
       var arr = SOF[k] || [];
@@ -4078,10 +4137,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
     var T = B.threat || {}, ov = T.overall || {};
     return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
-      '<p class="rdraft">Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports.</p>' +
+      '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
       "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
       advOfficialHtml() +
-      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="bm">(AI draft)</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
       '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
         return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
       }).join("") + "</table>" +
@@ -5253,6 +5312,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
   function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else showPartners(); }
 
+  /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
+     flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
+     whenever the data set changes, and on start. The base map choice stays. */
+  function extrasOff() {
+    document.querySelectorAll(".mlpanel input[type=checkbox], input[data-ter]").forEach(function (i) {
+      if (!i.checked) return;
+      i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
@@ -5274,6 +5342,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     railO.hidden = !l.sof;
     rail.scrollTop = 0;
     if (v !== "timeline") pbStop();
+    extrasOff();
     window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
       sofLayer.addTo(map); showSof(v); map.invalidateSize();
@@ -5775,6 +5844,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
     var mo = new MutationObserver(sync);
     homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
     sync();
+    /* On a narrow map the credits line runs the full width along the bottom and would cover the Legend button, so lift the
+       legend above it whenever the two would overlap. */
+    var attr = map.getContainer().querySelector(".leaflet-control-attribution");
+    function lift() {
+      if (!attr) return; box.style.marginBottom = "";
+      var a = attr.getBoundingClientRect(), b = box.getBoundingClientRect();
+      if (a.width && a.left < b.right && a.top < b.bottom) box.style.marginBottom = Math.ceil(a.height + 6) + "px";
+    }
+    if (attr && window.ResizeObserver) new ResizeObserver(lift).observe(attr);
+    map.on("resize", lift); window.addEventListener("resize", lift); lift();
   })();
   var FsCtl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-bar leaflet-control fsctl");
@@ -5802,6 +5881,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood
   }
   sizeToHeader();
   window.addEventListener("resize", sizeToHeader);
+  /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
+  // "AI generated" tags: tap (or Enter) shows the full draft wording, since phones have no hover
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
+  document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
+  if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
   renderRules(); evaluate(); badge();
   window.TSAP_liveRefreshed = function () {
