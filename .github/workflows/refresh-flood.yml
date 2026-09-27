@@ -28,7 +28,9 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A full run takes about 35 minutes since the conflict tabs step was added (news ~8, social ~14, conflict ~6). At 30 the job
+    # was cancelled before "Commit if a snapshot changed", so nothing was saved; a slow run only delays the next queued one.
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
