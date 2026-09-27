@@ -837,6 +837,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
 
   /* ---------- map ---------- */
+  /* on touch screens every canvas marker answers a tap up to 14 px beyond its edge (Leaflet's hit tolerance), so a
+     finger does not have to land exactly on a small dot: a 5 px dot becomes a target about 38 px across */
+  if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
   window.__asapMap = map;
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
@@ -4831,6 +4834,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   html.phone .pkgsheet .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;z-index:2}
   html.phone .pkgsheet .pkghead .x{font-size:28px;min-width:44px;min-height:44px}
   #pkg-back{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:3000}
+  /* icon markers (pins, volcano triangles) get an invisible 12 px ring around them on touch screens */
+  @media (pointer:coarse){.leaflet-marker-icon.leaflet-interactive::after{content:"";position:absolute;inset:-12px}}
   .qcard h3{font-size:15px;margin:4px 0 6px;line-height:1.3}
   .qcard .full{display:block;width:100%;margin-top:8px;min-height:40px;font:inherit;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff}
 }
@@ -4881,6 +4886,20 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var o = root.classList.toggle("hdr-open"); more.setAttribute("aria-expanded", o ? "true" : "false"); more.textContent = o ? "Less" : "More";
     window.dispatchEvent(new Event("resize"));
   });
+  /* picking a period folds the header away again, so the map and its new set of points are in view at once (with the
+     header open the map was a thin strip and the change looked as if nothing had happened); the sheet bar then names the
+     period for a few seconds */
+  var perTimer = 0, perNote = "", perUntil = 0;
+  document.getElementById("period-seg").addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-p]");
+    if (!on() || !b || b.getAttribute("data-p") === "custom") return;
+    setTimeout(function () {
+      map.closePopup();
+      if (root.classList.contains("hdr-open")) more.click();
+      perNote = document.getElementById("period-seg").title || ""; perUntil = Date.now() + 4000;
+      label(); clearTimeout(perTimer); perTimer = setTimeout(label, 4100);
+    }, 0);
+  });
   nav.appendChild(cs); nav.appendChild(vs); nav.appendChild(more);
   var vt = document.getElementById("view-seg"); vt.parentNode.insertBefore(nav, vt.nextSibling);
   /* the bottom sheet: a bar naming the tab and how many items it lists; tap or drag it up to half or full height */
@@ -4897,7 +4916,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var name = b ? b.childNodes[0].textContent.trim() : "Details";
     var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof]").length : 0;
     h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
-    h.querySelector(".grab small").textContent = s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
+    h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
     h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
   }
   function setSheet(s) { root.setAttribute("data-sheet", s); rail.style.removeProperty("--sheet-h"); if (s !== "full") rail.scrollTop = 0; label(); }
@@ -4932,14 +4951,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   map.on("popupopen", function () { if (on() && root.getAttribute("data-sheet") !== "bar") setSheet("bar"); });
   /* full details as a sheet with a backdrop */
   var back = document.createElement("div"); back.id = "pkg-back"; back.hidden = true; document.body.appendChild(back);
-  var open = null;
-  function close() { if (open) { open.hidden = true; open.classList.remove("pkgsheet"); open = null; } back.hidden = true; }
+  /* the sheet moves to <body> while it is open: inside the side panel it shared the panel's stacking level, so the
+     backdrop covered it and swallowed every tap (the sheet looked greyed out and frozen) */
+  var open = null, home = null;
+  function unmount() { if (open) { open.classList.remove("pkgsheet"); if (home && home.parentNode) home.parentNode.replaceChild(open, home); home = null; } }
+  function close() { if (open) { open.hidden = true; unmount(); open = null; } back.hidden = true; }
   back.addEventListener("click", close);
   window.ASAP_PHONE = {
     on: on,
     sheet: function (box) {
       if (!on()) return false;
-      if (open && open !== box) open.classList.remove("pkgsheet");
+      if (open && open !== box) unmount();
+      if (box.parentNode !== document.body) { home = document.createComment("pkg"); box.parentNode.replaceChild(home, box); document.body.appendChild(box); }
       open = box; box.classList.add("pkgsheet"); box.scrollTop = 0; back.hidden = false;
       var x = box.querySelector(".pkghead .x"); if (x) x.addEventListener("click", close);
       return true;
