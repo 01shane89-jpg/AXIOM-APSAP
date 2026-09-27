@@ -37,18 +37,18 @@ jobs:
       # Translation runs on the job's own CPU with Google's open MADLAD-400 model (tools/mt/madlad.py, Apache-2.0): no key,
       # no quota. The converted model (about 3 GB) is kept in the Actions cache, so the conversion only runs when that is empty.
       - uses: actions/setup-python@v5
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'conflicts' || inputs.only == 'social' }}
         with:
           python-version: "3.11"
       - name: Restore the translation model
         id: mt-cache
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'conflicts' || inputs.only == 'social' }}
         uses: actions/cache@v4
         with:
           path: ~/.cache/osap-mt
           key: madlad400-3b-mt-ct2-int8-v1
       - name: Install the translation runtime
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'conflicts' || inputs.only == 'social' }}
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
       - name: Convert the translation model (only when the cache is empty)
@@ -86,6 +86,16 @@ jobs:
       - name: Pull Deep South insurgency reporting and translate Thai headlines
         if: ${{ !inputs.only || inputs.only == 'deepsouth' }}
         run: node tools/refresh_deepsouth.mjs
+        continue-on-error: true
+      # Conflict tabs (tools/conflicts.json): every listed conflict's reports (the news step's items plus the conflict's own feeds and
+      # news searches), UCDP events, and front-line or control layers, versioned when they change. One job for all conflicts.
+      - name: Refresh the conflict tabs
+        if: ${{ !inputs.only || inputs.only == 'conflicts' }}
+        run: node tools/refresh_conflicts.mjs
+        continue-on-error: true
+      - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
+        if: ${{ inputs.only == 'probe-conflicts' }}
+        run: PROBE=1 node tools/refresh_conflicts.mjs; node tools/probe_wikimaps.mjs
         continue-on-error: true
       - name: Probe the Deep South feeds (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-deepsouth' }}
@@ -133,7 +143,7 @@ jobs:
         timeout-minutes: 14
         continue-on-error: true
       - name: Report translation coverage
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'conflicts' || inputs.only == 'social' }}
         run: node tools/mt/coverage.mjs
         continue-on-error: true
       - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
@@ -174,13 +184,13 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'conflicts' || inputs.only == 'probe-conflicts' || inputs.only == 'probe-news' || inputs.only == 'probe-cap') && github.ref != 'refs/heads/main' }}
         run: |
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js data/live/conflicts probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output (${{ inputs.only }}) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin HEAD:refs/heads/claude/dense-preview-data${{ inputs.only != 'dense' && format('-{0}', inputs.only) || '' }}
         continue-on-error: true
