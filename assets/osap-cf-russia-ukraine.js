@@ -88,13 +88,15 @@
     var mo = X.moc_summary;
     if (mo) h += '<details><summary><span class="claimt">Claim</span>Russian Ministry of Defence, latest daily summary (' + T(mo.date) + ')</summary><div class="post side-ru">' + E(mo.text) + "</div>" +
       '<p class="src">' + E(mo.claim) + " " + A(mo.link, "Original post") + "</p></details>";
-    var cl = X.claims && X.claims.items || [];
+    // the period chosen in the page header applies here too
+    var inP = (window.OSAP_CONFLICT_TABS && window.OSAP_CONFLICT_TABS.inPeriod) || function () { return true; };
+    var cl = (X.claims && X.claims.items || []).filter(function (c) { return inP(c.date); });
     if (cl.length) {
       var SIDE = { ru: ["side-ru", "Russia MoD"], "ua-osint": ["side-ua", "DeepState (UA)"] };
       h += '<h3><span class="claimt">Claims</span>Places each side says were taken or lost</h3><table>' + cl.slice(0, 25).map(function (c) {
         var s = SIDE[c.side] || ["side-n", c.claimant];
         return '<tr><td><b class="' + s[0] + '">' + E(s[1]) + "</b> " + E(c.verb) + " <b>" + E(c.place) + '</b></td><td class="n">' + A(c.link, c.date.slice(5, 10).replace("-", "/")) + "</td></tr>";
-      }).join("") + '</table><p class="src">' + E(X.claims.note) + (cl.length > 25 ? " Newest 25 of " + cl.length + " in the past 60 days." : "") + "</p>";
+      }).join("") + '</table><p class="src">' + E(X.claims.note) + (cl.length > 25 ? " Newest 25 of " + cl.length + " in the chosen period." : "") + "</p>";
     }
     var bad = (X.sources || []).filter(function (s) { return !s.ok; });
     if (bad.length) h += '<p class="src">Not read this time: ' + E(bad.map(function (s) { return s.name + " (" + s.error + ")"; }).join("; ")) + ".</p>";
