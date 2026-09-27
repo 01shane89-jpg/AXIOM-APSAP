@@ -25,26 +25,21 @@
 @media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
-<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading</div></div>
+<div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo.png" alt=""><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo.png" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo.png" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
   var el = document.getElementById("osap-boot"), t = document.getElementById("osap-boot-t"), timer = 0;
   /* the saved map theme, applied now so the loading screen matches it */
   var th = "light"; try { th = localStorage.getItem("tfw-theme") || "light"; } catch (e) {}
   if (th === "grey" || th === "dark") document.documentElement.setAttribute("data-map", th);
-  /* the country's English name, without a flag emoji: Windows has no flag glyphs and draws the two letters instead ("Loading TH TH") */
-  function cname(cc) {
-    if (cc === "oki") return "Okinawa";
-    try { var n = new Intl.DisplayNames(["en"], { type: "region" }).of(cc.toUpperCase()); if (n && n.toUpperCase() !== cc.toUpperCase()) return n; } catch (e) {}
-    return cc.toUpperCase();
-  }
-  function label(cc, what, name) { t.textContent = (what || "Loading") + (cc ? " " + (name || cname(cc)) : ""); }
-  var h = (location.hash || "").replace("#", "").split("/"); label(h.length > 1 ? h[0] : "th");
+  /* the cover always reads the app's name, whichever country is opening (Shane, 2026-09-27) */
+  function label() { t.textContent = "Loading AXIOM OSAP"; }
+  label();
   function done() { clearTimeout(timer); el.classList.add("gone"); setTimeout(function () { if (el.classList.contains("gone")) el.hidden = true; }, 300); }
   window.OSAP_BOOT = {
     done: done,
     /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(cc, what, name); clearTimeout(timer); timer = setTimeout(done, 20000); }
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); clearTimeout(timer); timer = setTimeout(done, 20000); }
   };
   /* never leave the page covered if something fails while it builds */
   timer = setTimeout(done, 15000);
