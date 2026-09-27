@@ -579,7 +579,6 @@ run("uk-travel", async (g) => {
 for (const [id, name, org, url, lic, home] of [
   ["ecdc", "ECDC weekly communicable disease threats", "European Centre for Disease Prevention and Control", "https://www.ecdc.europa.eu/en/taxonomy/term/1307/feed", "ECDC copyright, reuse with attribution", "https://www.ecdc.europa.eu/"],
   ["un-news", "UN News", "United Nations", "https://news.un.org/feed/subscribe/en/news/all/rss.xml", "UN terms of use (attribution)", "https://news.un.org/"],
-  ["ohchr", "UN Human Rights Office news", "OHCHR", "https://www.ohchr.org/en/rss.xml", "UN terms of use (attribution)", "https://www.ohchr.org/"],
   ["iaea", "IAEA top news", "International Atomic Energy Agency", "https://www.iaea.org/feeds/topnews", "IAEA terms (attribution)", "https://www.iaea.org/"]]) {
   feed(id, { name, org, cat: /ecdc|cdc/.test(id) ? "Health" : "Events", lic, url: home });
   run(id, async (g) => {
@@ -700,8 +699,9 @@ run("wiki-events", async (g) => {
 feed("elections", { name: "Elections and referendums (Wikidata)", org: "Wikidata contributors", cat: "Politics", lic: "CC0", url: "https://www.wikidata.org/", everyHours: 24 });
 run("elections", async (g) => {
   const from = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10), to = new Date(Date.now() + 400 * 864e5).toISOString().slice(0, 10);
-  const q = `SELECT ?e ?l ?d ?iso WHERE { ?e wdt:P585 ?d. FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime)
-    ?e wdt:P31/wdt:P279* wd:Q40231. ?e wdt:P17/wdt:P297 ?iso. ?e rdfs:label ?l. FILTER(lang(?l) = "en") } LIMIT 4000`;
+  // class tree first, then the dated items: the reverse order times out on the public endpoint
+  const q = `SELECT ?e ?l ?d ?iso WHERE { hint:Query hint:optimizer "None". ?type wdt:P279* wd:Q40231. ?e wdt:P31 ?type. ?e wdt:P585 ?d.
+    FILTER(?d >= "${from}T00:00:00Z"^^xsd:dateTime && ?d <= "${to}T00:00:00Z"^^xsd:dateTime) ?e wdt:P17/wdt:P297 ?iso. ?e rdfs:label ?l. FILTER(lang(?l) = "en") } LIMIT 4000`;
   let j = null, last = null;
   for (let t = 0; t < 2 && !j; t++) { try { j = await g("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), "json", { timeout: 90000, headers: { accept: "application/sparql-results+json" } }); } catch (e) { last = e; await sleep(5000); } }
   if (!j) throw last;
