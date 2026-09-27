@@ -6938,8 +6938,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var h = hitAt(e); if (!h) return;
     if (own && paneZ(h.r._container) <= paneZ(own)) return;
     // Leaflet hands the click on to the element under the pointer after the circle: stop there, so the shape below keeps quiet
-    if (own) h.l.once("click", function (ev) { if (ev.originalEvent) L.DomEvent.stopPropagation(ev.originalEvent); });
     if (map._draggableMoved && map._draggableMoved(h.l)) return;
+    if (own) h.l.once("click", function (ev) { if (ev.originalEvent) L.DomEvent.stopPropagation(ev.originalEvent); });
     e.stopPropagation();
     if (h.r._fireEvent) h.r._fireEvent([h.l], e);
     else { var ll = map.mouseEventToLatLng(e); h.l.fire("click", { latlng: ll, layerPoint: map.latLngToLayerPoint(ll), containerPoint: map.latLngToContainerPoint(ll), originalEvent: e }, true); if (h.l._popup) h.l.openPopup(ll); }
