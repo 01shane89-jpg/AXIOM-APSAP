@@ -31,24 +31,34 @@ const { feeds } = JSON.parse(fs.readFileSync("tools/news_candidates.json", "utf8
 // different hosts in parallel; each host's candidates stay sequential
 const byHost = {}; for (const f of feeds) { const h = new URL(f.url).host; (byHost[h] = byHost[h] || []).push(f); }
 const groups = Object.values(byHost);
-const results = (await pool(groups, 10, async (g) => { const r = []; for (const f of g) r.push(await check(f)); return r; })).flat();
+const CAP_ONLY = process.env.CAP_ONLY === "1";
+const results = CAP_ONLY ? [] : (await pool(groups, 10, async (g) => { const r = []; for (const f of g) r.push(await check(f)); return r; })).flat();
 // aggregators: a handful of countries only
 const agg = [];
-for (const [cc, q] of [["ml", "Mali"], ["so", "Somalia"], ["ht", "Haiti"], ["mn", "Mongolia"], ["bt", "Bhutan"]]) {
+for (const [cc, q] of CAP_ONLY ? [] : [["ml", "Mali"], ["so", "Somalia"], ["ht", "Haiti"], ["mn", "Mongolia"], ["bt", "Bhutan"]]) {
   agg.push(await check({ cc, outlet: "Google News search", url: "https://news.google.com/rss/search?q=" + encodeURIComponent(q) + "&hl=en&gl=US&ceid=US:en" }));
   agg.push(await check({ cc, outlet: "Bing News search", url: "https://www.bing.com/news/search?q=" + encodeURIComponent(q) + "&format=rss" }));
   await new Promise((r) => setTimeout(r, 1500));
 }
 // national met services' CAP feeds collected by the WMO/IFRC alert hub
-let cap = null;
-for (const u of ["https://cap-sources.s3.amazonaws.com/", "https://alert-hub-sources.s3.amazonaws.com/"]) {
-  try { const r = await get(u, 20000); cap = { url: u, status: r.status, keys: [...r.body.matchAll(/<Key>([^<]+)<\/Key>/g)].map((m) => m[1]).filter((k) => /rss\.xml$/.test(k)).slice(0, 800), head: r.body.slice(0, 200) }; if (cap.keys.length) break; }
-  catch (e) { cap = { url: u, error: e.message }; }
-}
-fs.mkdirSync("probe-out", { recursive: true });
+// Every source folder in the bucket (one per agency and language, paged 1,000 at a time), then each English
+// folder's rss.xml (or the only language an agency publishes in) checked for items and their age.
+let cap = { url: "https://cap-sources.s3.amazonaws.com/", prefixes: [], feeds: [] };
+try {
+  for (let tok = "", n = 0; n < 20; n++) {
+    const r = await get(cap.url + "?list-type=2&delimiter=/" + (tok ? "&continuation-token=" + encodeURIComponent(tok) : ""), 20000);
+    cap.prefixes.push(...[...r.body.matchAll(/<Prefix>([^<]+)\/<\/Prefix>/g)].map((m) => m[1]));
+    const nt = r.body.match(/<NextContinuationToken>([^<]+)</);
+    if (!nt) break; tok = nt[1];
+  }
+  const byAgency = {};
+  for (const p of cap.prefixes) { const m = p.match(/^(.+)-([a-z]{2,3})$/); if (m) (byAgency[m[1]] = byAgency[m[1]] || []).push(m[2]); }
+  const pick = Object.entries(byAgency).map(([a, langs]) => a + "-" + (langs.includes("en") ? "en" : langs[0]));
+  cap.feeds = await pool(pick, 8, (k) => check({ cc: k.slice(0, 2), key: k, url: cap.url + k + "/rss.xml" }));
+} catch (e) { cap.error = e.message; }
 fs.writeFileSync("probe-out/news-probe.json", JSON.stringify({ at: new Date().toISOString(), results, agg, cap }, null, 1));
 const ok = results.filter((r) => r.n > 0);
 console.log("feeds answering with items:", ok.length, "/", results.length, "; countries:", new Set(ok.map((r) => r.cc)).size);
 console.log("aggregators:", agg.map((a) => a.outlet[0] + ":" + a.cc + "=" + (a.n || a.error || a.status)).join(" "));
-console.log("CAP sources:", cap && (cap.keys ? cap.keys.length : cap.error));
+console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f) => f.n > 0).length, "feeds with items", cap.error || "");
 process.exit(0);

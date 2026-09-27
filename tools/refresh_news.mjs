@@ -1,12 +1,13 @@
 // Hourly local-news refresh (run by .github/workflows/refresh-flood.yml, or by hand with Node 18+).
 // Two sources per area: GDELT (local-language news worldwide, filtered to security, disaster and unrest themes)
-// and national outlets' RSS feeds (tools/news_feeds.json). Headlines are machine-translated to English
+// and national outlets' RSS feeds (tools/news_feeds.json), with a news search where a country has no working outlet. Headlines are machine-translated to English
 // (tools/translate.mjs) with the original kept. Items are unverified reports: a link, an outlet and a date.
 // Writes data/live/news.js. Exit codes: 0 = at least one source worked, 1 = all failed (old file left untouched).
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
+import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -62,13 +63,58 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   for (const [cc] of part) status.push(j ? { cc, source: "GDELT", ok: true, n: n[cc] || 0 } : { cc, source: "GDELT", ok: false, error });
 }
 const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
-for (const f of feeds) {
+// About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
+const FEED_TIMEOUT = 20000, LANES = 8;
+async function getFeed(url) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), FEED_TIMEOUT);
   try {
-    const list = parseFeed(await get(f.url, true)).slice(0, 25).map((i) => ({ title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date),
-      link: i.link, outlet: f.outlet, lang: f.lang, via: "RSS", state: !!f.state }));
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)", accept: "application/rss+xml, application/xml, text/xml, */*" } });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+// Search-engine fallbacks are read only when the site's robots.txt allows the path for every user agent.
+const robotsCache = {};
+async function robotsAllow(url) {
+  const u = new URL(url);
+  if (!(u.origin in robotsCache)) robotsCache[u.origin] = getFeed(u.origin + "/robots.txt").catch((e) => (/HTTP 4/.test(e.message) ? "" : null));
+  const txt = await robotsCache[u.origin];
+  if (txt === null) return false;                       // robots.txt unreachable: do not assume permission
+  let on = false, best = { len: -1, allow: true };
+  const path = u.pathname + u.search;
+  for (const raw of txt.split(/\r?\n/)) {
+    const line = raw.replace(/#.*/, "").trim(), m = line.match(/^([a-z-]+)\s*:\s*(.*)$/i); if (!m) continue;
+    const k = m[1].toLowerCase(), v = m[2].trim();
+    if (k === "user-agent") { on = v === "*"; continue; }
+    if (!on || (k !== "allow" && k !== "disallow") || !v) continue;
+    const re = new RegExp("^" + v.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\\\$$/, "$"));
+    if (re.test(path) && v.length > best.len) best = { len: v.length, allow: k === "allow" };
+  }
+  return best.allow;
+}
+// Bing wraps each result in a click-through link; keep the publisher's own address and name instead.
+function unwrap(link) {
+  try { const u = new URL(link); if (/bing\.com$/.test(u.hostname) && u.searchParams.get("url")) return u.searchParams.get("url"); } catch (e) {}
+  return link;
+}
+async function readFeed(f) {
+  try {
+    if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
+    const list = parseFeed(await getFeed(f.url)).slice(0, 25).map((i) => {
+      const link = f.search ? unwrap(i.link) : i.link;
+      let outlet = f.outlet;
+      if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
+      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS", state: !!f.state };
+      if (f.nc) o.nc = true;
+      return o;
+    });
     push(f.cc, list); status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: true, n: list.length });
   } catch (e) { status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
+const byHost = {};
+for (const f of feeds) { let h = f.url; try { h = new URL(f.url).hostname; } catch (e) {} (byHost[h] = byHost[h] || []).push(f); }
+const hosts = Object.values(byHost);
+await Promise.all(Array.from({ length: LANES }, async () => { for (let q; (q = hosts.shift()); ) for (const f of q) await readFeed(f); }));
 // Okinawa shares Japan's outlets: keep the Japanese items that name the islands
 if (items.jp) items.oki = items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary));
 for (const cc of Object.keys(items)) {
@@ -82,6 +128,22 @@ all.forEach((i, n) => {
   i.title_en = a.en; i.summary_en = b.en; i.mt = /^en\b/i.test(i.lang || "") ? null : (a.tool || b.tool || "untranslated");
 });
 saveCache();
+// Pin each item to the first town or region its headline or summary names inside its own country (GeoNames, tools/gazetteer.mjs).
+// geo.p is the honest precision: "approx" = a town or city centre, "province" = the rough centre of a named region.
+// Items that name no place carry no geo and are not pinned.
+try {
+  const gz = await loadGazetteer();
+  let placed = 0;
+  for (const [cc, list] of Object.entries(items)) for (const i of list) {
+    if (i.geo !== undefined) continue;
+    const texts = [[i.title_en, i.summary_en].filter(Boolean).join(" \n "), i.title];
+    let g = null;
+    for (const t of texts) { const r = placeIn(gz, t, [cc]); if (r && (!g || (r.prec === "approx" && g.prec !== "approx"))) g = r; if (g && g.prec === "approx") break; }
+    i.geo = g ? { n: g.name, la: g.lat, lo: g.lon, p: g.prec } : null;
+    if (g) placed++;
+  }
+  console.log("placed", placed, "of", all.length, "items by name");
+} catch (e) { console.error("gazetteer unavailable, items left unplaced:", e.message); }
 if (!status.some((s) => s.ok)) { console.error("every news source failed"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
