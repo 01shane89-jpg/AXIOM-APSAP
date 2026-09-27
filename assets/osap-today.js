@@ -133,9 +133,11 @@
   function wxKey(p) { return "osap-today-wx-" + p.lat.toFixed(2) + "," + p.lon.toFixed(2); }
   function wxFetch(p, cb) {
     var k = wxKey(p), c = lsGet(k);
-    if (c && c.at && Date.now() - c.at < WX_TTL) { wxLive[k] = c; return cb(); }
+    /* cb runs only when a network read finishes, never straight away: render() calls this, so an immediate cb would redraw
+       the screen in a loop and swallow every tap */
+    if (c && c.at && Date.now() - c.at < WX_TTL) { wxLive[k] = c; return; }
     if (c) wxLive[k] = c; /* an older copy shows while the new one loads, marked with its time */
-    if (wxBusy[k] || !navigator.onLine && c) return cb();
+    if (wxBusy[k] || !navigator.onLine && c) return;
     wxBusy[k] = 1;
     var u = "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon +
       "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,precipitation" +
@@ -325,8 +327,11 @@
       return '<button type="button" data-go="' + x[0] + '">' + esc(have[x[0]] || x[1]) + "</button>"; }).join("") +
       (document.getElementById("brief-btn") ? '<button type="button" data-go="@brief">Country brief</button>' : "") + "</div></section>";
   }
+  var wxAsked = {}; /* one weather read per place each time Today opens */
   function render() {
     if (!box) return;
+    var P = wxPlaces(), wp = P[wxSel];
+    if (wp && !wxAsked[wxKey(wp)]) { wxAsked[wxKey(wp)] = 1; wxFetch(wp, function () { if (open) renderSoon(); }); }
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
     box.innerHTML = '<div class="tdwrap"><div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
@@ -338,7 +343,6 @@
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
       "Times are Zulu, then local.</p></footer></div>";
     box.scrollTop = y;
-    var P = wxPlaces(); if (P[wxSel]) wxFetch(P[wxSel], function () { if (open) renderSoon(); });
   }
   var rs = 0;
   function renderSoon() { clearTimeout(rs); rs = setTimeout(render, 60); }
@@ -350,10 +354,11 @@
   }
   function show() {
     if (!box) return;
+    wxAsked = {};
     open = true; box.hidden = false; document.documentElement.classList.add("td-on"); ssSet(OPEN_KEY, "1");
     render(); box.scrollTop = 0;
     if (ctl) ctl.hidden = true;
-    if (window.OSAP_BOOT_DONE) window.OSAP_BOOT_DONE();
+    if (window.OSAP_BOOT && window.OSAP_BOOT.done) window.OSAP_BOOT.done();
     clearInterval(tick);
     /* the page keeps adding records after load (feed history, open data, live refresh); the screen follows them */
     var lastN = -1, lastX = null;
@@ -371,7 +376,7 @@
 
   var CSS = "#today{position:fixed;inset:0;z-index:5000;overflow:auto;background:var(--bg,var(--surface));color:var(--ink);-webkit-overflow-scrolling:touch;outline:none}" +
     "html.td-on body{overflow:hidden}" +
-    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;opacity:.1;pointer-events:none;z-index:0}" +
+    "#today::before{content:'';position:fixed;left:50%;top:55%;width:min(80vw,560px);height:min(80vw,560px);transform:translate(-50%,-50%);background:url(assets/logo.png) center/contain no-repeat;border-radius:50%;opacity:.1;pointer-events:none;z-index:0}" +
     ".tdwrap{position:relative;z-index:1}.tdmark{width:44px;height:44px;border-radius:50%;flex:none}" +
     ".tdwrap{max-width:1080px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));font-size:14px;line-height:1.45}" +
     ".tdtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:2;background:var(--bg,var(--surface));padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px}" +
