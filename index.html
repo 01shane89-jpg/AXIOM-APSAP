@@ -348,6 +348,7 @@ select.mini{
 .mlbtn{font:inherit;font-weight:600;background:none;border:none;color:inherit;padding:7px 10px;cursor:pointer;min-height:36px;width:100%;text-align:left}
 .mlpanel{padding:0 10px 10px;max-height:520px;overflow-y:auto;overscroll-behavior:contain}
 .mlh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+.mlsub{font-size:11.5px;font-weight:600;color:var(--ink);margin:8px 0 2px}
 .mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
@@ -1034,24 +1035,41 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      Every choice here is a display layer only (tiles drawn by their publishers); nothing is added to the record list.
      The choice is remembered on this device. */
   var BASES = {
-    grey: { name: "Grey", note: "Esri canvas, follows the light or dark theme" },
-    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
-    topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
+    grey: { grp: "Plain", name: "Grey", note: "Esri canvas, follows the light or dark theme" },
+    streets: { grp: "Streets and roads", name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
+    topo: { grp: "Terrain", name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
+    esridark: { grp: "Plain", name: "Dark grey (Esri)", note: "Esri dark grey canvas with place names, whatever the page theme", lic: "restricted",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", max: 16, zmax: 16,
+      labels: ["https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"], attr: "&copy; Esri, HERE, Garmin, FAO, NOAA, USGS" },
+    positron: { grp: "Plain", name: "Positron (CARTO)", note: "CARTO light map: pale, clean, with place names", url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", max: 19, zmax: 18, lic: "CC BY 3.0 (CARTO) / ODbL (OSM)",
+      attr: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>' },
+    darkmatter: { grp: "Plain", name: "Dark Matter (CARTO)", note: "CARTO dark map: black background, grey roads and names", url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", max: 19, zmax: 18, lic: "CC BY 3.0 (CARTO) / ODbL (OSM)",
+      attr: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>' },
+    esristreet: { grp: "Streets and roads", name: "Streets (Esri)", note: "Esri street map: roads by class, towns, parks and airports", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      attr: "&copy; Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, METI, NGCC, OpenStreetMap contributors" },
+    hot: { grp: "Streets and roads", name: "Humanitarian (HOT)", note: "Humanitarian OpenStreetMap: hospitals, schools, water points, tracks and small roads stand out", url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", max: 19, zmax: 18, lic: "CC0 style / ODbL (OSM)",
+      attr: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, style by the Humanitarian OpenStreetMap Team, hosted by OpenStreetMap France' },
+    cyclosm: { grp: "Streets and roads", name: "CyclOSM", note: "OpenStreetMap with track surfaces, paths, bridges, fords and shelters", url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png", max: 19, zmax: 18, lic: "CC BY-SA 2.0 style / ODbL (OSM)",
+      attr: '<a href="https://www.cyclosm.org" target="_blank" rel="noopener">CyclOSM</a> hosted by OpenStreetMap France &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' },
+    esritopo: { grp: "Terrain", name: "Topographic (Esri)", note: "Esri topographic map: shaded relief, contours, roads and names", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      attr: "&copy; Esri, HERE, Garmin, Intermap, INCREMENT P, GEBCO, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), OpenStreetMap contributors" },
+    natgeo: { grp: "Terrain", name: "National Geographic", note: "National Geographic style map by Esri: relief, parks and names (no longer updated by Esri)", url: "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}", max: 16, zmax: 16, lic: "restricted",
+      attr: "&copy; National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, increment P Corp." },
     /* sharp imagery. Licences are tagged so restricted ones can be dropped before any commercial use:
        Esri World Imagery is under Esri's terms of use (restricted), EOX Sentinel-2 cloudless 2021 is CC BY-NC-SA 4.0 (non-commercial) */
-    sat: { name: "Satellite", note: "Esri World Imagery: sharp aerial and satellite photos, down to street level in most towns (image dates vary by place)",
+    sat: { grp: "Satellite", name: "Satellite", note: "Esri World Imagery: sharp aerial and satellite photos, down to street level in most towns (image dates vary by place)",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
       attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
-    hybrid: { name: "Hybrid", note: "The same imagery with borders, place names and roads on top",
+    hybrid: { grp: "Satellite", name: "Hybrid", note: "The same imagery with borders, place names and roads on top",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
       labels: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}",
                "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"],
       attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
-    s2: { name: "Sentinel-2 cloudless", note: "EOX: a cloud-free mosaic of 2021 Sentinel-2 images, one look for the whole world (10 m)",
+    s2: { grp: "Satellite", name: "Sentinel-2 cloudless", note: "EOX: a cloud-free mosaic of 2021 Sentinel-2 images, one look for the whole world (10 m)",
       url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 15, zmax: 16, lic: "CC BY-NC-SA 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' },
-    daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
+    daily: { grp: "Satellite", name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
       url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
       attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" }
   };
@@ -1088,7 +1106,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       layer: function () { return L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
         { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } }
   };
-  var fldOn = {};
+  var fldOn = {}, seaLayer = null;
+  function setSea(on) {
+    ML.sea = !!on; mlSet();
+    if (on && !seaLayer) seaLayer = L.tileLayer("https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png", { pane: "hybpane", maxNativeZoom: 18, maxZoom: 18,
+      attribution: '<a href="https://www.openseamap.org" target="_blank" rel="noopener">OpenSeaMap</a> (CC BY-SA 2.0)' }).addTo(map);
+    if (!on && seaLayer) { map.removeLayer(seaLayer); seaLayer = null; }
+  }
   function setFlood(k, on) {
     ML[k] = !!on; mlSet();
     if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
@@ -1152,9 +1176,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var box = L.DomUtil.create("div", "leaflet-control mlctl");
       box.innerHTML = '<button type="button" class="mlbtn" aria-expanded="false" aria-controls="ml-panel" title="Map layers">&#9776; Layers</button>' +
         '<div class="mlpanel" id="ml-panel" hidden><div class="mlh">Base map</div>' +
-        Object.keys(BASES).map(function (k) {
-          return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
+        ["Plain", "Streets and roads", "Terrain", "Satellite"].map(function (g) {
+          return '<div class="mlsub">' + g + "</div>" + Object.keys(BASES).filter(function (k) { return BASES[k].grp === g; }).map(function (k) {
+            return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
+          }).join("");
         }).join("") +
+        '<div class="mlh">Sea</div>' +
+        '<label class="mlrow"><input type="checkbox" data-sea="1"' + (ML.sea ? " checked" : "") + '><span><b>Nautical marks (OpenSeaMap)</b><i>Buoys, lights, harbours, anchorages and hazards to shipping, over any base map</i></span></label>' +
         '<div class="mlh">Flooding</div>' +
         Object.keys(FLOODX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
@@ -1178,6 +1206,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
         else if (t.dataset.roads) setRoads(t.checked);
+        else if (t.dataset.sea) setSea(t.checked);
       });
       box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
       return box;
@@ -1187,6 +1216,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
   if (ML.base !== "grey") setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
+  if (ML.sea) setSea(true);
   /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
   if (ML.roads) (function wait(n) { if (window.TSAP || n > 40) setRoads(true); else setTimeout(function () { wait(n + 1); }, 250); })(0);
 
@@ -4316,6 +4346,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Satellite and Hybrid base maps: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> and Esri reference labels, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
       ['Sentinel-2 cloudless base map: <a href="https://s2maps.eu">Sentinel-2 cloudless 2021</a> by EOX IT Services GmbH, contains modified Copernicus Sentinel data 2021. Licence: CC BY-NC-SA 4.0, <b>non-commercial</b>.'],
+      ['Esri Streets, Topographic, National Geographic and Dark grey base maps: &copy; Esri and its data partners (named on the map). Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
+      ['Positron and Dark Matter base maps: &copy; <a href="https://carto.com/attributions">CARTO</a> (CC BY 3.0), map data &copy; OpenStreetMap contributors (ODbL). Free-use tier; <b>check CARTO terms before commercial use</b>.'],
+      ['Humanitarian and CyclOSM base maps: map data &copy; OpenStreetMap contributors (ODbL); tiles by the <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a> and <a href="https://www.cyclosm.org/">CyclOSM</a>, hosted by OpenStreetMap France (fair-use tile servers, <b>not for heavy commercial traffic</b>).'],
+      ['Nautical marks: <a href="https://www.openseamap.org/">OpenSeaMap</a> (CC BY-SA 2.0), data &copy; OpenStreetMap contributors.'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
       ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],
