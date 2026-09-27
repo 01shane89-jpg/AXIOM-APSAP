@@ -1,0 +1,27 @@
+{
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). 'probe': a candidate URL, tested with PROBE=1 and dropped if it fails from GitHub's runners.",
+ "feeds": [
+  {"id": "benar-en", "outlet": "BenarNews", "url": "https://www.benarnews.org/english/news/thai/rss.xml", "lang": "en", "probe": true},
+  {"id": "benar-en2", "outlet": "BenarNews", "url": "https://www.benarnews.org/english/rss", "lang": "en", "probe": true},
+  {"id": "benar-th", "outlet": "BenarNews Thai", "url": "https://www.benarnews.org/thai/news/rss.xml", "lang": "th", "probe": true},
+  {"id": "benar-th2", "outlet": "BenarNews Thai", "url": "https://www.benarnews.org/thai/rss", "lang": "th", "probe": true},
+  {"id": "prachatai-en", "outlet": "Prachatai English", "url": "https://prachataienglish.com/rss.xml", "lang": "en", "probe": true},
+  {"id": "prachatai-th", "outlet": "Prachatai", "url": "https://prachatai.com/rss.xml", "lang": "th", "probe": true},
+  {"id": "isranews", "outlet": "Isranews", "url": "https://www.isranews.org/feed", "lang": "th", "probe": true},
+  {"id": "isranews-south", "outlet": "Isranews", "url": "https://www.isranews.org/article/south-news.feed?type=rss", "lang": "th", "all": true, "probe": true},
+  {"id": "dsw-th", "outlet": "Deep South Watch", "url": "https://deepsouthwatch.org/th/rss.xml", "lang": "th", "all": true, "probe": true},
+  {"id": "dsw-en", "outlet": "Deep South Watch", "url": "https://deepsouthwatch.org/en/rss.xml", "lang": "en", "all": true, "probe": true},
+  {"id": "dsw-root", "outlet": "Deep South Watch", "url": "https://deepsouthwatch.org/rss.xml", "lang": "th", "all": true, "probe": true},
+  {"id": "thaipbs-world", "outlet": "Thai PBS World", "url": "https://www.thaipbsworld.com/feed/", "lang": "en", "probe": true},
+  {"id": "thaipbs-th", "outlet": "Thai PBS", "url": "https://www.thaipbs.or.th/rss/news", "lang": "th", "probe": true},
+  {"id": "nation", "outlet": "The Nation", "url": "https://www.nationthailand.com/rss", "lang": "en", "probe": true},
+  {"id": "khaosod-en", "outlet": "Khaosod English", "url": "https://www.khaosodenglish.com/feed/", "lang": "en", "probe": true},
+  {"id": "thaiexaminer", "outlet": "Thai Examiner", "url": "https://www.thaiexaminer.com/feed/", "lang": "en", "probe": true},
+  {"id": "isoc4", "outlet": "ISOC Region 4 Forward Command", "url": "https://www.isoc4.go.th/feed/", "lang": "th", "state": true, "all": true, "probe": true},
+  {"id": "sbpac", "outlet": "SBPAC", "url": "https://www.sbpac.go.th/feed/", "lang": "th", "state": true, "all": true, "probe": true},
+  {"id": "gn-en", "outlet": "Google News search", "url": "https://news.google.com/rss/search?q=Pattani+OR+Yala+OR+Narathiwat+OR+%22Deep+South%22+Thailand+when:7d&hl=en-TH&gl=TH&ceid=TH:en", "lang": "en", "search": true, "nc": true, "probe": true},
+  {"id": "gn-th", "outlet": "Google News search", "url": "https://news.google.com/rss/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5+OR+%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2+OR+%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA+when:7d&hl=th&gl=TH&ceid=TH:th", "lang": "th", "search": true, "nc": true, "probe": true},
+  {"id": "bing-en", "outlet": "Bing News search", "url": "https://www.bing.com/news/search?q=Pattani+OR+Yala+OR+Narathiwat+insurgency&format=rss", "lang": "en", "search": true, "nc": true, "probe": true},
+  {"id": "bing-th", "outlet": "Bing News search", "url": "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss", "lang": "th", "search": true, "nc": true, "probe": true}
+ ]
+}
