@@ -262,6 +262,16 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 .lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
 .sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
 .sw.round{border-radius:50%}
+/* the legend sits on the map, lower left, and folds to one button; compact and folded by default on a phone */
+.lgctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:min(300px,calc(100vw - 90px));font:inherit}
+.lgctl .lgbtn{display:flex;align-items:center;gap:6px;width:100%;font:inherit;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--ink);background:none;border:none;padding:7px 10px;cursor:pointer;min-height:32px}
+.lgctl .lgbtn::after{content:"\25BE";margin-left:auto;transition:transform .15s}.lgctl.shut .lgbtn::after{transform:rotate(180deg)}
+.lgctl .lgbody{max-height:min(42vh,340px);overflow-y:auto;padding:0 10px 8px;border-top:1px solid var(--line)}
+.lgctl.shut .lgbody{display:none}
+.lgctl .maplg{padding:0;margin:0;border:0}.lgctl .maplg>h2{display:none}
+.lgctl .lg{font-size:11.5px;padding:2px 0}.lgctl .lg .d{font-size:10.5px}
+html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-height:32vh}
+@media print{.lgctl{display:none}}
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
 
 .rows{display:flex;flex-direction:column}
@@ -636,7 +646,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <div class="ctl"><input type="checkbox" id="lyr-prov"><label for="lyr-prov">Provincial alert level<span class="hint">DDPM, RID, ONWR and GISTDA bulletins, 21&ndash;25 Sep</span></label></div>
     </div>
 
-    <div class="sec">
+    <div class="sec maplg">
       <h2>Legend</h2>
       <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Gauge above its bank<span class="d">Circle grows with the depth over the bank</span></div></div>
       <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
@@ -745,7 +755,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <p class="obs" style="margin:6px 0 0">Basemap, theme and brightness are shared with the flood view.</p>
     </div>
 
-    <div class="sec">
+    <div class="sec maplg">
       <h2>Legend</h2>
       <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Armed clash</div></div>
       <div class="lg"><span class="sw round" style="background:var(--l3)"></span><div>Air or artillery strike</div></div>
@@ -874,7 +884,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <p class="obs" id="tl-nomap" style="margin:4px 0 0"></p>
       <div class="tllist" id="tl-list"></div>
     </div>
-    <div class="sec">
+    <div class="sec maplg">
       <h2>On the map</h2>
       <div class="lg"><span class="sw round" style="background:var(--over)"></span><div>Border record</div></div>
       <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Flood record</div></div>
@@ -5922,6 +5932,38 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var b = e.target.closest && e.target.closest(".pcol[data-col]"); if (!b) return;
     var k = b.getAttribute("data-col"); colSet(k, !shell.classList.contains(k + "-col"));
   });
+  /* ---------- the legend on the map ----------
+     Each view's legend (flood, border, timeline) is moved out of the side panel into one control in the map's lower-left corner.
+     It shows the legend of the view that is open and hides on views without one. It folds to a single "Legend" button; the choice
+     is kept on this device, and a phone starts folded so the key never covers the markers. */
+  (function () {
+    var secs = Array.prototype.slice.call(document.querySelectorAll(".rail .sec.maplg")); if (!secs.length) return;
+    var homes = secs.map(function (x) { return x.parentNode; }), LG_KEY = "asap-legend-shut", box, body, btn;
+    var LgCtl = L.Control.extend({ options: { position: "bottomleft" }, onAdd: function () {
+      box = L.DomUtil.create("div", "leaflet-control lgctl");
+      box.innerHTML = '<button type="button" class="lgbtn" aria-expanded="true" aria-controls="lg-body">Legend</button><div class="lgbody" id="lg-body"></div>';
+      body = box.lastChild; btn = box.firstChild;
+      L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
+      return box; } });
+    new LgCtl().addTo(map);
+    secs.forEach(function (x) { body.appendChild(x); });
+    var shut = null; try { shut = localStorage.getItem(LG_KEY); } catch (e) {}
+    function fold(on, keep) {
+      box.classList.toggle("shut", on); btn.setAttribute("aria-expanded", String(!on));
+      btn.title = on ? "Show the map legend" : "Hide the map legend";
+      if (!keep) try { localStorage.setItem(LG_KEY, on ? "1" : "0"); } catch (e) {}
+    }
+    fold(shut == null ? document.documentElement.classList.contains("phone") || window.matchMedia("(max-width: 920px), (pointer: coarse)").matches : shut === "1", true);
+    btn.addEventListener("click", function () { fold(!box.classList.contains("shut")); });
+    function sync() {
+      var any = false;
+      secs.forEach(function (x, i) { var on = !homes[i].hidden && !homes[i].closest("[hidden]"); x.hidden = !on; any = any || on; });
+      box.hidden = !any;
+    }
+    var mo = new MutationObserver(sync);
+    homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
+    sync();
+  })();
   var FsCtl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-bar leaflet-control fsctl");
     d.innerHTML = '<a href="#" role="button" id="fs-btn" title="Full-screen map" aria-label="Full-screen map" aria-pressed="false">⛶</a>';
