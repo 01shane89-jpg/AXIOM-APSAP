@@ -147,7 +147,7 @@
     ensureMap(); clearMap();
     if (c.bounds && map) { map.invalidateSize(); map.fitBounds(c.bounds, { padding: [8, 8], animate: false }); }
     var p = c.auto ? loadAuto(c) : Promise.all([load("data/live/conflicts/" + id + ".js"), load("data/live/conflicts/front/" + id + ".js").catch(function () {})]);
-    p.then(function () { if (active !== id) return; render(c); }, function (e) {
+    p.then(function () { if (active !== id) return; render(c); if (F.days > 90 && needOlder()) loadOlder(); }, function (e) {
       if (active !== id) return;
       rail().innerHTML = '<div class="sec"><h2>' + esc(c.name) + '</h2><p class="cfbad">This conflict’s data could not be loaded (' + esc(e.message) + "). It is written by the refresh job; try again after the next refresh.</p></div>";
     });
@@ -328,6 +328,9 @@
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + it.slice(0, lim).map(function (i, k) { return '<li data-k="' + k + '">' + repHtml(i) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
       if (it.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, it.length - lim) + " more</button>");
+      else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
+        (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
+        '<button type="button" class="refresh more" data-cfolder="1">Load ' + num(cur.data.older.items) + " reports from before " + day(cur.data.older.from) + "</button>");
     }
     h.push("<details" + (cur.data.auto ? " open" : "") + '><summary>UCDP events in this period (' + num(ev.length) + ")</summary><table><tbody>" + ev.slice(0, 200).map(function (e) {
       return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</div></td><td>" + num(e.best) + "</td></tr>";
@@ -386,18 +389,34 @@
       "nc marks sources whose terms are non-commercial. Every record carries a SHA-256 fingerprint of its content.</p><table><tbody>" + s + fs + "</tbody></table></details></div>";
   }
 
+  /* ---------- older records ---------- */
+  // A conflict's file holds the past 90 days; older reports and UCDP events are in <id>.older.js, loaded only when a
+  // longer period or more reports are asked for, so a tab opens fast on a phone.
+  function needOlder() { var d = cur.data, o = d && d.older; return !!(o && (o.items || o.ucdp) && !d._older); }
+  function loadOlder() {
+    var d = cur.data, id = d.id; if (d._olderP) return;
+    d._olderFail = false;
+    d._olderP = load("data/live/conflicts/" + id + ".older.js").then(function () {
+      var o = (W.OSAP_CF_OLDER || {})[id] || {};
+      d.items = (d.items || []).concat(o.items || []); d.ucdp = (d.ucdp || []).concat(o.ucdp || []); d._older = true;
+      if (active === id && cur.data === d) { drawMap(); list(); }
+    }, function () { d._olderP = null; d._olderFail = true; if (active === id && cur.data === d) list(); });
+    list();
+  }
   /* ---------- rail events ---------- */
   D.addEventListener("change", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
     if (t.hasAttribute("data-cfshow")) { F.show[t.getAttribute("data-cfshow")] = t.checked; drawMap(); return; }
     var k = t.getAttribute("data-cff"); if (!k) return;
     F[k] = k === "days" ? +t.value : t.value; if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
+    if (k === "days" && F.days > 90 && needOlder()) loadOlder();
     var b = D.getElementById("cf-list"); if (b) b.removeAttribute("data-lim"); list();
   });
   var qT = 0;
   D.addEventListener("input", function (e) { var t = e.target; if (!t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return; clearTimeout(qT); qT = setTimeout(function () { F.q = t.value; list(); drawMap(); }, 250); });
   D.addEventListener("click", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
+    if (t.closest("[data-cfolder]")) { loadOlder(); return; }
     var m = t.closest("[data-cfmore]"); if (m) { var b = D.getElementById("cf-list"); b.setAttribute("data-lim", (+(b.getAttribute("data-lim") || 60)) + 60); list(); return; }
     var g = t.closest("[data-cfgo]"); if (g && map) {
       var i = (D.getElementById("cf-list")._items || [])[+g.getAttribute("data-cfgo")]; if (!i || !i.geo) return;

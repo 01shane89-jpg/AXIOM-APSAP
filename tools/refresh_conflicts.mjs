@@ -30,6 +30,15 @@ const readJs = (f) => { try { const t = fs.readFileSync(f, "utf8"), i = t.indexO
 const ENT = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", hellip: "\u2026", ndash: "\u2013", mdash: "\u2014", lsquo: "\u2018", rsquo: "\u2019", ldquo: "\u201c", rdquo: "\u201d", laquo: "\u00ab", raquo: "\u00bb" };
 const unent = (s) => { let t = String(s || ""); for (let k = 0; k < 2; k++) t = t.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => e[0] === "#" ? String.fromCodePoint(e[1].toLowerCase() === "x" ? parseInt(e.slice(2), 16) : +e.slice(1)) : ENT[e.toLowerCase()] ?? m); return t; };
 const writeJs = (f, name, o) => fs.writeFileSync(f, name + "=" + JSON.stringify(o).replace(/<\//g, "<\\/") + ";\n");
+// A conflict's own file holds what its tab shows first: the past 90 days (at most 300 reports). Older reports and UCDP
+// events go to <id>.older.js, which the page loads only when a longer period or more reports are asked for.
+const RECENT_DAYS = 90, RECENT_ITEMS = 300;
+const readCf = (id) => {
+  const p = readJs(OUT + "/" + id + ".js"); if (!p) return p;
+  const o = readJs(OUT + "/" + id + ".older.js");
+  if (o) { p.items = (p.items || []).concat(o.items || []); p.ucdp = (p.ucdp || []).concat(o.ucdp || []); }
+  return p;
+};
 
 async function get(url, accept, asBuf) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
@@ -147,7 +156,7 @@ const UF = LIST.map((c) => ({ id: c.id, cfg: c.ucdp || null, key: sha256(JSON.st
   cre: c.ucdp && new RegExp(c.ucdp.countries, "i"), mre: c.ucdp && c.ucdp.match && new RegExp(c.ucdp.match), xre: c.ucdp && c.ucdp.exclude && new RegExp(c.ucdp.exclude) }));   // side names as UCDP writes them: case matters ("IS" is not "is")
 const prevUcdp = {}, ucdpFilesDone = {};
 for (const u of UF) {
-  const p = readJs(OUT + "/" + u.id + ".js");
+  const p = readCf(u.id);
   const same = p && p.ucdp_key === u.key;
   prevUcdp[u.id] = new Map(same ? (p.ucdp || []).map((e) => [e.id, e]) : []);
   ucdpFilesDone[u.id] = new Set(same ? p.ucdp_files || [] : []);
@@ -183,10 +192,10 @@ try {
       const country = r[ix("country")] || "", names3 = [r[ix("conflict_name")], r[ix("side_a")], r[ix("side_b")], r[ix("dyad_name")]].filter(Boolean).join(" | ");
       const lat = +r[ix("latitude")], lon = +r[ix("longitude")];
       const ev = { id: r[ix("id")], date: (r[ix("date_start")] || "").slice(0, 10), end: (r[ix("date_end")] || "").slice(0, 10), lat, lon,
-        where: (r[ix("where_description")] || "").slice(0, 160), adm1: r[ix("adm_1")] || "", country, conflict: r[ix("conflict_name")] || "",
+        where: (r[ix("where_description")] || "").slice(0, 120), adm1: r[ix("adm_1")] || "", country, conflict: r[ix("conflict_name")] || "",
         sideA: r[ix("side_a")] || "", sideB: r[ix("side_b")] || "", type: +r[ix("type_of_violence")] || null,
         best: +r[ix("best")] || 0, low: +r[ix("low")] || 0, high: +r[ix("high")] || 0, civ: +r[ix("deaths_civilians")] || 0,
-        prec: +r[ix("where_prec")] || null, headline: (r[ix("source_headline")] || "").slice(0, 200), file: n };
+        prec: +r[ix("where_prec")] || null, headline: (r[ix("source_headline")] || "").slice(0, 140), file: n };
       let hit = false;
       for (const u of UF) {
         if (!u.cfg || !u.cre.test(country) || (u.mre && !u.mre.test(names3)) || (u.xre && u.xre.test(names3))) continue;
@@ -338,7 +347,7 @@ const index = [], autoTabs = [];
 fs.mkdirSync(OUT + "/front", { recursive: true });
 for (const c of LIST) {
   const { fresh, status } = collected[c.id];
-  const prev = readJs(OUT + "/" + c.id + ".js") || {};
+  const prev = readCf(c.id) || {};
   const byLink = new Map();
   for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
   for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
@@ -369,7 +378,12 @@ for (const c of LIST) {
   // UCDP events for this conflict, the past 13 months, newest first
   const ucdp = [...(prevUcdp[c.id] || new Map()).values()].filter((e) => e.date >= new Date(NOW - UCDP_DAYS * 864e5).toISOString().slice(0, 10))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
-  ucdp.forEach((e) => { e.fp = e.fp || sha256({ ucdp: e.id, date: e.date, lat: e.lat, lon: e.lon, best: e.best, file: e.file }); });
+  ucdp.forEach((e) => {
+    e.fp = e.fp || sha256({ ucdp: e.id, date: e.date, lat: e.lat, lon: e.lon, best: e.best, file: e.file });
+    // descriptive text only (not part of the fingerprint): one line, shortened
+    e.where = String(e.where || "").replace(/\s+/g, " ").trim().slice(0, 120); e.headline = String(e.headline || "").replace(/\s+/g, " ").trim().slice(0, 140);
+    if (e.end === e.date) delete e.end;
+  });
   // front line / control: keep a version only when it changed
   const fprev = readJs(OUT + "/front/" + c.id + ".js") || {};
   const fr = (c.front || []).length ? await readFront(c, fprev, items) : { sources: [], current: null };
@@ -417,7 +431,14 @@ for (const c of LIST) {
   const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}) };
   const data = { ...pub, asof: stamp, keep_days: KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };
-  if (!PROBE) { writeJs(OUT + "/" + c.id + ".js", "(window.OSAP_CF=window.OSAP_CF||{})[" + JSON.stringify(c.id) + "]", data); writeJs(OUT + "/front/" + c.id + ".js", "(window.OSAP_FRONT=window.OSAP_FRONT||{})[" + JSON.stringify(c.id) + "]", front); }
+  if (!PROBE) {
+    const edge = new Date(NOW - RECENT_DAYS * 864e5).toISOString().slice(0, 16);
+    const recentItems = items.filter((i, k) => k < RECENT_ITEMS && i.date >= edge), recentUcdp = ucdp.filter((e) => e.date >= edge.slice(0, 10));
+    const older = { items: items.slice(recentItems.length), ucdp: ucdp.slice(recentUcdp.length) };
+    data.items = recentItems; data.ucdp = recentUcdp;
+    data.older = { from: edge.slice(0, 10), items: older.items.length, ucdp: older.ucdp.length };
+    writeJs(OUT + "/" + c.id + ".older.js", "(window.OSAP_CF_OLDER=window.OSAP_CF_OLDER||{})[" + JSON.stringify(c.id) + "]", { id: c.id, asof: stamp, ...older });
+    writeJs(OUT + "/" + c.id + ".js", "(window.OSAP_CF=window.OSAP_CF||{})[" + JSON.stringify(c.id) + "]", data); writeJs(OUT + "/front/" + c.id + ".js", "(window.OSAP_FRONT=window.OSAP_FRONT||{})[" + JSON.stringify(c.id) + "]", front); }
   index.push({ ...pub, reports7: st.reports.d7, reports1: st.reports.d1, ucdp30: st.ucdp30, ucdp365: st.ucdp365.best, ucdp_latest: st.ucdp_latest,
     front: front.status, front_taken: current ? current.taken : null, front_changed: versions[0] ? versions[0].taken : null, sources_ok: status.filter((s) => s.ok).length, sources_n: status.length });
   console.log((current ? "front ok " : "front -- ") + c.id.padEnd(22), "reports", items.length, "(new " + fresh.length + ", 7d " + st.reports.d7 + ")", "UCDP", ucdp.length, "events,", st.ucdp365.best, "deaths/yr",
