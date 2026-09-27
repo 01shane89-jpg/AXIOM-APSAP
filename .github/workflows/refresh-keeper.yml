@@ -38,6 +38,12 @@ jobs:
             else
               echo "$(date -u +%H:%MZ) a refresh is still queued; skipping this round"
             fi
+            # the conflict tabs (refresh-conflicts.yml) every fourth round, about once an hour, unless one is still waiting
+            round=$(( ${round:-0} + 1 ))
+            if [ $(( round % 4 )) = 1 ]; then
+              cw=$(( $(gh run list --workflow refresh-conflicts.yml --branch main --status queued --json databaseId --jq length || echo 0) + $(gh run list --workflow refresh-conflicts.yml --branch main --status in_progress --json databaseId --jq length || echo 0) ))
+              if [ "$cw" = "0" ]; then gh workflow run refresh-conflicts.yml --ref main && echo "$(date -u +%H:%MZ) started the conflict refresh" || true; fi
+            fi
             [ $(( $(date +%s) + 900 )) -lt "$end" ] || break
             sleep 900
           done
