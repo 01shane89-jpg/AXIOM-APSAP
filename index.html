@@ -4784,14 +4784,18 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   map.on("popupopen", function () { if (on() && root.getAttribute("data-sheet") !== "bar") setSheet("bar"); });
   /* full details as a sheet with a backdrop */
   var back = document.createElement("div"); back.id = "pkg-back"; back.hidden = true; document.body.appendChild(back);
-  var open = null;
-  function close() { if (open) { open.hidden = true; open.classList.remove("pkgsheet"); open = null; } back.hidden = true; }
+  /* the sheet moves to <body> while it is open: inside the side panel it shared the panel's stacking level, so the
+     backdrop covered it and swallowed every tap (the sheet looked greyed out and frozen) */
+  var open = null, home = null;
+  function unmount() { if (open) { open.classList.remove("pkgsheet"); if (home && home.parentNode) home.parentNode.replaceChild(open, home); home = null; } }
+  function close() { if (open) { open.hidden = true; unmount(); open = null; } back.hidden = true; }
   back.addEventListener("click", close);
   window.ASAP_PHONE = {
     on: on,
     sheet: function (box) {
       if (!on()) return false;
-      if (open && open !== box) open.classList.remove("pkgsheet");
+      if (open && open !== box) unmount();
+      if (box.parentNode !== document.body) { home = document.createComment("pkg"); box.parentNode.replaceChild(home, box); document.body.appendChild(box); }
       open = box; box.classList.add("pkgsheet"); box.scrollTop = 0; back.hidden = false;
       var x = box.querySelector(".pkghead .x"); if (x) x.addEventListener("click", close);
       return true;
