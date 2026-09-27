@@ -89,7 +89,7 @@ const SOURCES = {
         const p = f.properties || {}, pos = firstPos(f.geometry);
         const shut = /closed/i.test((p.ClosureTyp || "") + " " + (p.TrafficCon || ""));
         return { cc: "au", id: "au-" + (p.Id || p.FID), title: clean([p.IncidentTy, p.Location].filter(Boolean).join(": ")) || "Road incident",
-          detail: clean([p.TrafficCon, p.ClosureTyp, p.TrafficImp, p.Region].filter(Boolean).join(". ")),
+          detail: clean([...new Set([p.TrafficCon, p.ClosureTyp, p.TrafficImp, p.Region].map((x) => clean(x).replace(/\.+$/, "")).filter(Boolean))].join(". ")),
           kind: shut ? "closure" : kindOf((p.IncidentTy || "") + " " + (p.ClosureTyp || "")),
           // Main Roads gives Perth clock time (AWST, UTC+8, no daylight saving) as dd/mm/yyyy
           start: awst(p.EntryDate), end: "", updated: awst(p.UpdateDate),
