@@ -218,23 +218,25 @@
     function cnt(c, w, h) { return pts.filter(function (r) { var x = v.x(+r.lon), y = v.y(+r.lat); return x >= c[0] - 10 && x <= c[0] + w + 10 && y >= c[1] - 10 && y <= c[1] + h + 10; }).length; }
     /* furniture goes in the emptiest corners: the overview inset first, then the scale bar at the bottom, the north arrow at the top */
     var taken = {}, boxes = [];
-    function corner(names, w, h) {
-      var best = null, bn = 1e9;
+    function corner(names, w, h, m) {
+      var best = null, bn = 1e9; m = m == null ? 8 : m;
       names.forEach(function (n) {
         if (taken[n]) return;
-        var c = [n.charAt(1) === "r" ? W - w - 8 : 8, n.charAt(0) === "b" ? H - h - 8 : 8], k = cnt(c, w, h);
+        var c = [n.charAt(1) === "r" ? W - w - m : m, n.charAt(0) === "b" ? H - h - m : m], k = cnt(c, w, h);
         if (k < bn) { bn = k; best = { n: n, x: c[0], y: c[1] }; }
       });
       taken[best.n] = 1; boxes.push([best.x - 4, best.y - 4, best.x + w + 4, best.y + h + 4]); return best;
     }
     var inset = "";
     if (zoomed) {
-      var iv = view(fit(cbp, 1.2), 170), ic = corner(["tr", "tl", "br", "bl"], iv.w, iv.h);
+      /* flush into the corner holding the fewest records: its frame meets the map's own edges */
+      var iv = view(fit(cbp, 1.2), 170), ic = corner(["tr", "tl", "br", "bl"], iv.w, iv.h, 0);
       var zx = iv.x(bb[0]), zy = iv.y(bb[3]), zw = iv.x(bb[2]) - zx, zh = iv.y(bb[1]) - zy;
-      inset = '<g transform="translate(' + ic.x.toFixed(1) + " " + ic.y.toFixed(1) + ')"><rect x="-3" y="-3" width="' + (iv.w + 6).toFixed(1) + '" height="' + (iv.h + 6).toFixed(1) + '" fill="#f4f8fb" stroke="#12324a" stroke-width="1"/>' +
+      inset = '<g transform="translate(' + ic.x.toFixed(1) + " " + ic.y.toFixed(1) + ')"><rect x="0" y="0" width="' + iv.w.toFixed(1) + '" height="' + iv.h.toFixed(1) + '" fill="#cfe1ee"/>' +
         '<svg width="' + iv.w.toFixed(1) + '" height="' + iv.h.toFixed(1) + '" overflow="hidden">' + outlines(feats, me, iv, true) +
         '<rect x="' + zx.toFixed(1) + '" y="' + zy.toFixed(1) + '" width="' + Math.max(3, zw).toFixed(1) + '" height="' + Math.max(3, zh).toFixed(1) + '" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.6"/></svg>' +
-        '<text x="3" y="' + (iv.h - 4).toFixed(1) + '" font-size="10" font-family="system-ui,sans-serif" fill="#12324a" font-weight="600">' + esc(cname()) + "</text></g>";
+        '<text x="3" y="' + (iv.h - 4).toFixed(1) + '" font-size="10" font-family="system-ui,sans-serif" fill="#12324a" font-weight="600">' + esc(cname()) + "</text>" +
+        '<rect x="0" y="0" width="' + iv.w.toFixed(1) + '" height="' + iv.h.toFixed(1) + '" fill="none" stroke="#12324a" stroke-width="2"/></g>';
     }
     /* scale bar (distances true at the map's middle latitude) and north arrow */
     var pxKm = v.s / 111.32, sk = niceKm(W * 0.2 / pxKm), sw = sk * pxKm, sc = corner(["bl", "br"], sw + 16, 30);
