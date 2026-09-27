@@ -1,0 +1,422 @@
+[
+ {
+  "id": "kyivindependent",
+  "url": "https://kyivindependent.com/news-archive/rss/",
+  "kind": "rss"
+ },
+ {
+  "id": "kyivindependent2",
+  "url": "https://kyivindependent.com/rss/",
+  "kind": "rss"
+ },
+ {
+  "id": "upravda-en",
+  "url": "https://www.pravda.com.ua/eng/rss/",
+  "kind": "rss"
+ },
+ {
+  "id": "upravda-uk",
+  "url": "https://www.pravda.com.ua/rss/view_news/",
+  "kind": "rss"
+ },
+ {
+  "id": "ukrinform-war",
+  "url": "https://www.ukrinform.net/rss/block-lastnews",
+  "kind": "rss"
+ },
+ {
+  "id": "unian-en",
+  "url": "https://rss.unian.net/site/news_eng.rss",
+  "kind": "rss"
+ },
+ {
+  "id": "euromaidan",
+  "url": "https://euromaidanpress.com/feed/",
+  "kind": "rss"
+ },
+ {
+  "id": "kyivpost",
+  "url": "https://www.kyivpost.com/feed",
+  "kind": "rss"
+ },
+ {
+  "id": "militarnyi",
+  "url": "https://mil.in.ua/en/feed/",
+  "kind": "rss"
+ },
+ {
+  "id": "defence-ua",
+  "url": "https://en.defence-ua.com/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "suspilne",
+  "url": "https://suspilne.media/rss/all.rss",
+  "kind": "rss"
+ },
+ {
+  "id": "rbc-ua",
+  "url": "https://www.rbc.ua/static/rss/all.eng.rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "nv-en",
+  "url": "https://english.nv.ua/rss/all.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "hromadske",
+  "url": "https://hromadske.ua/en/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "mod-ua",
+  "url": "https://www.mil.gov.ua/en/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "tass",
+  "url": "https://tass.com/rss/v2.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "ria",
+  "url": "https://ria.ru/export/rss2/archive/index.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "rt",
+  "url": "https://www.rt.com/rss/russia/",
+  "kind": "rss"
+ },
+ {
+  "id": "interfax-ru",
+  "url": "https://www.interfax.ru/rss.asp",
+  "kind": "rss"
+ },
+ {
+  "id": "mil-ru",
+  "url": "https://function.mil.ru/rss_feeds/reference_to_general.htm?contenttype=xml",
+  "kind": "rss"
+ },
+ {
+  "id": "mil-ru-en",
+  "url": "https://eng.mil.ru/en/news_page/country/rss.htm",
+  "kind": "rss"
+ },
+ {
+  "id": "kommersant",
+  "url": "https://www.kommersant.ru/RSS/news.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "rbc-ru",
+  "url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss",
+  "kind": "rss"
+ },
+ {
+  "id": "meduza",
+  "url": "https://meduza.io/rss/en/all",
+  "kind": "rss"
+ },
+ {
+  "id": "moscowtimes",
+  "url": "https://www.themoscowtimes.com/rss/news",
+  "kind": "rss"
+ },
+ {
+  "id": "novayagazeta",
+  "url": "https://novayagazeta.eu/feed/rss/en",
+  "kind": "rss"
+ },
+ {
+  "id": "mediazona",
+  "url": "https://en.zona.media/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "istories",
+  "url": "https://istories.media/en/rss/",
+  "kind": "rss"
+ },
+ {
+  "id": "guardian-ua",
+  "url": "https://www.theguardian.com/world/ukraine/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "bbc-europe",
+  "url": "https://feeds.bbci.co.uk/news/world/europe/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "aljazeera",
+  "url": "https://www.aljazeera.com/xml/rss/all.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "dw",
+  "url": "https://rss.dw.com/rdf/rss-en-eu",
+  "kind": "rss"
+ },
+ {
+  "id": "france24",
+  "url": "https://www.france24.com/en/europe/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "rferl-ua",
+  "url": "https://www.rferl.org/api/zrqiteuuir",
+  "kind": "rss"
+ },
+ {
+  "id": "rferl-all",
+  "url": "https://www.rferl.org/api/",
+  "kind": "rss"
+ },
+ {
+  "id": "npr-world",
+  "url": "https://feeds.npr.org/1004/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "euronews",
+  "url": "https://www.euronews.com/rss?level=theme&name=news",
+  "kind": "rss"
+ },
+ {
+  "id": "isw-feed",
+  "url": "https://understandingwar.org/feed/",
+  "kind": "rss"
+ },
+ {
+  "id": "isw-rss",
+  "url": "https://understandingwar.org/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "ct-feed",
+  "url": "https://www.criticalthreats.org/feed",
+  "kind": "rss"
+ },
+ {
+  "id": "iaea-press",
+  "url": "https://www.iaea.org/feeds/topnews",
+  "kind": "rss"
+ },
+ {
+  "id": "iaea-press2",
+  "url": "https://www.iaea.org/newscenter/pressreleases/rss",
+  "kind": "rss"
+ },
+ {
+  "id": "un-news-europe",
+  "url": "https://news.un.org/feed/subscribe/en/news/region/europe/feed/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "ohchr",
+  "url": "https://www.ohchr.org/en/rss.xml",
+  "kind": "rss"
+ },
+ {
+  "id": "osce",
+  "url": "https://www.osce.org/rss/press-releases",
+  "kind": "rss"
+ },
+ {
+  "id": "reliefweb-ua",
+  "url": "https://reliefweb.int/updates/rss.xml?search=country.exact:%22Ukraine%22",
+  "kind": "rss"
+ },
+ {
+  "id": "bing-ua-war",
+  "url": "https://www.bing.com/news/search?q=Ukraine+Russia+attack&format=rss",
+  "kind": "rss"
+ },
+ {
+  "id": "bing-ua-front",
+  "url": "https://www.bing.com/news/search?q=%22front+line%22+Ukraine&format=rss",
+  "kind": "rss"
+ },
+ {
+  "id": "tg-GeneralStaffZSU",
+  "url": "https://t.me/s/GeneralStaffZSU",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-air_alert_ua",
+  "url": "https://t.me/s/air_alert_ua",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-mod_russia",
+  "url": "https://t.me/s/mod_russia",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-mod_russia_en",
+  "url": "https://t.me/s/mod_russia_en",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-kpszsu",
+  "url": "https://t.me/s/kpszsu",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-DeepStateUA",
+  "url": "https://t.me/s/DeepStateUA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-ukrinform_news",
+  "url": "https://t.me/s/ukrinform_news",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-V_Zelenskiy_official",
+  "url": "https://t.me/s/V_Zelenskiy_official",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-ssternenko",
+  "url": "https://t.me/s/ssternenko",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-rybar",
+  "url": "https://t.me/s/rybar",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-wargonzo",
+  "url": "https://t.me/s/wargonzo",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-synegubov",
+  "url": "https://t.me/s/synegubov",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-kharkivoda",
+  "url": "https://t.me/s/kharkivoda",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-zoda_gov_ua",
+  "url": "https://t.me/s/zoda_gov_ua",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-dnipropetrovskaODA",
+  "url": "https://t.me/s/dnipropetrovskaODA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-khersonskaODA",
+  "url": "https://t.me/s/khersonskaODA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-odeskaODA",
+  "url": "https://t.me/s/odeskaODA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-mykolaivskaODA",
+  "url": "https://t.me/s/mykolaivskaODA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-sumskaODA",
+  "url": "https://t.me/s/sumskaODA",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-Donetsk_Oblast_Military_Administration",
+  "url": "https://t.me/s/Donetsk_Oblast_Military_Administration",
+  "kind": "tg"
+ },
+ {
+  "id": "tg-vadimfilashkin",
+  "url": "https://t.me/s/vadimfilashkin",
+  "kind": "tg"
+ },
+ {
+  "id": "ubilling",
+  "url": "https://ubilling.net.ua/aerialalerts/",
+  "kind": "raw"
+ },
+ {
+  "id": "raid-fly",
+  "url": "https://raid.fly.dev/api/states",
+  "kind": "raw"
+ },
+ {
+  "id": "rwrip",
+  "url": "https://russianwarship.rip/api/v2/statistics/latest",
+  "kind": "raw"
+ },
+ {
+  "id": "firms-snpp",
+  "url": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Europe_24h.csv",
+  "kind": "raw"
+ },
+ {
+  "id": "firms-noaa20",
+  "url": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Europe_24h.csv",
+  "kind": "raw"
+ },
+ {
+  "id": "firms-modis",
+  "url": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Europe_24h.csv",
+  "kind": "raw"
+ },
+ {
+  "id": "deepstate-api",
+  "url": "https://deepstatemap.live/api/history/last",
+  "kind": "raw"
+ },
+ {
+  "id": "deepstate-cyterat",
+  "url": "https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/README.md",
+  "kind": "raw"
+ },
+ {
+  "id": "petroivaniuk",
+  "url": "https://raw.githubusercontent.com/PetroIvaniuk/2022-Ukraine-Russia-War-Dataset/main/data/russia_losses_personnel.json",
+  "kind": "raw"
+ },
+ {
+  "id": "oryx-leedrake",
+  "url": "https://raw.githubusercontent.com/leedrake5/Russia-Ukraine/main/data/bySystem/Raw/Russia/totals_by_system.csv",
+  "kind": "raw"
+ },
+ {
+  "id": "ucdp-dl",
+  "url": "https://ucdp.uu.se/downloads/",
+  "kind": "raw"
+ },
+ {
+  "id": "gdelt",
+  "url": "https://api.gdeltproject.org/api/v2/doc/doc?query=Ukraine%20Russia%20strike&mode=artlist&format=json&maxrecords=20&timespan=1d",
+  "kind": "raw"
+ },
+ {
+  "id": "hdx-acled-ua",
+  "url": "https://data.humdata.org/api/3/action/package_show?id=ukraine-acled-conflict-data",
+  "kind": "raw"
+ },
+ {
+  "id": "iaea-znpp",
+  "url": "https://www.iaea.org/newscenter/focus/ukraine",
+  "kind": "raw"
+ },
+ {
+  "id": "alerts-in-ua-page",
+  "url": "https://alerts.in.ua/en",
+  "kind": "raw"
+ }
+]
