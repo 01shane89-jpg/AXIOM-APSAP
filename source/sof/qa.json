@@ -20,7 +20,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "ce00f3a73759ca3fc755424a3e40c5efcab4b5c3884292e69a3a632e698c406e"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:qa:post:u-s-embassy-doha",
+   "name": "U.S. Embassy Doha",
+   "kind": "embassy",
+   "city": "Doha",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 25.2855,
+   "lon": 51.531,
+   "prec": "approx",
+   "src": "https://qa.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "8129e25ef009d285b2a17f13b28974ea5e419b8b4de872e6fc22825237b690ee"
+  }
+ ],
  "airports": [
   {
    "id": "sof:qa:airport:othh",
@@ -360,7 +376,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

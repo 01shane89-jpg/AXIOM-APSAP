@@ -30,7 +30,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "64b9d464140aaef47a9f6fa8587a4565efaeb74a694f4a46a8b09b7f7358d327"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:so:post:u-s-embassy-mogadishu",
+   "name": "U.S. Embassy Mogadishu",
+   "kind": "embassy",
+   "city": "Mogadishu",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 2.0371,
+   "lon": 45.3438,
+   "prec": "approx",
+   "src": "https://so.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "33d1cd8bc888a8d991d72b6dfec29f52943fbe80488bed92163d8ab600585551"
+  }
+ ],
  "airports": [
   {
    "id": "sof:so:airport:hcmh",
@@ -198,12 +214,30 @@
    "fp": "be5bc24c7ed63620cae1c0306e7b24d0dee00b9bf4d105c9b0016a99e7d509d2"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:so:hospital:erdo-an-hospital",
+   "name": "Erdoğan Hospital",
+   "city": "Mogadishu",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Turkish-built referral hospital",
+   "lat": 2.0371,
+   "lon": 45.3438,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Erdo%C4%9Fan_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "ddc527da92b6f5734d5a5c407844c426db9651e3c748b106a08058841211ff25"
+  }
+ ],
  "power": [],
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }

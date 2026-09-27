@@ -319,7 +319,42 @@
    "fp": "15bb7fa8f310fa06daaf572bee08aa9cc62c0e5a60ccaa57455ba0d63a9286b2"
   }
  ],
- "hospitals": [],
+ "hospitals": [
+  {
+   "id": "sof:ly:hospital:tripoli-central-hospital",
+   "name": "Tripoli Central Hospital",
+   "city": "Tripoli",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 32.8874,
+   "lon": 13.1873,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Tripoli_central_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "4482b822dbf9600c395f4417ebfac59c0e5db1c9d855e967ee0ac65cebd7f440"
+  },
+  {
+   "id": "sof:ly:hospital:al-jalah-hospital",
+   "name": "Al-Jalah Hospital",
+   "city": "Benghazi",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": null,
+   "lat": 32.1149,
+   "lon": 20.0686,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Al-Jalah_Hospital",
+   "srcname": "English Wikipedia",
+   "coord_basis": "city centre (GeoNames); the hospital's own position was not retrieved",
+   "fp": "3cc49377ab2c0e44ce348e44a4bb57bfde5841f07f71bfafdb96e69ac94c3b57"
+  }
+ ],
  "power": [
   {
    "id": "sof:ly:power:wri1023835",
@@ -518,6 +553,6 @@
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated."
  ]
 }

@@ -24,7 +24,23 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "f0653b33c9f361ce36f054ab814f1cde10679bdd369424bea2c0e14c5bfae4bb"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:tn:post:u-s-embassy-tunis",
+   "name": "U.S. Embassy Tunis",
+   "kind": "embassy",
+   "city": "Tunis",
+   "address": null,
+   "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
+   "lat": 36.819,
+   "lon": 10.1658,
+   "prec": "approx",
+   "src": "https://tn.usembassy.gov/",
+   "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
+   "coord_basis": "city centre (GeoNames); address not retrieved",
+   "fp": "b9105ed41a59c256aed22ad3696caf6c4ddff638f11d0c847db856e632276174"
+  }
+ ],
  "airports": [
   {
    "id": "sof:tn:airport:dtta",
@@ -527,7 +543,7 @@
  "exercises": [],
  "gaps": [
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
-  "Auto: U.S. diplomatic posts not yet researched for this country.",
-  "Auto: hospitals not yet researched for this country."
+  "Auto: hospitals not yet researched for this country.",
+  "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
  ]
 }
