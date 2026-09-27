@@ -124,5 +124,26 @@
   "src": "https://english.news.cn/africa/20260830/7da04ae453e94ff68900b9198a20d9b0/c.html",
   "srcname": "Xinhua",
   "attribution": "Headline only (article body not retrieved)"
+ },
+ {
+  "layer": "border",
+  "date": "2026-09-10",
+  "date_is_pub": true,
+  "kind": "diplomatic_statement",
+  "title": "Algeria cuts diplomatic ties with the UAE",
+  "detail": "Headline only: the article body was not retrieved. Figures are as reported in the headline.",
+  "place": "Nationwide",
+  "district": null,
+  "prov": "Nationwide",
+  "lat": null,
+  "lon": null,
+  "prec": "none",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": "Algerian government",
+  "src": "https://www.aljazeera.com/news/2026/9/10/algeria-says-cutting-diplomatic-ties-with-uae",
+  "srcname": "Al Jazeera",
+  "attribution": "Headline only (article body not retrieved); figures and claims as attributed by Algerian government"
  }
 ]
