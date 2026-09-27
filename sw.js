@@ -363,7 +363,7 @@
      newest published data and an offline one falls back to the last copy it saw.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "b6977bc3584d";
+const VERSION = "a179c6d3e344";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 const PRECACHE = [
 "./",
