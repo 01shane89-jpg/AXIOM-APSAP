@@ -48,6 +48,24 @@ async function get(url, accept, asBuf) {
     return asBuf ? Buffer.from(await r.arrayBuffer()) : await r.text();
   } finally { clearTimeout(t); }
 }
+// Conditional download: the ETag / Last-Modified of each large file read before are kept in _http.json, and a file the server
+// says is unchanged (HTTP 304) is not downloaded again. Returns null when unchanged.
+const HTTP_CACHE_FILE = OUT + "/_http.json";
+let httpCache = {};
+try { httpCache = JSON.parse(fs.readFileSync(HTTP_CACHE_FILE, "utf8")); } catch (e) {}
+async function getIfChanged(url, accept) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT), v = httpCache[url] || {}, h = { "user-agent": UA, accept: accept || "*/*" };
+  if (v.etag) h["if-none-match"] = v.etag;
+  if (v.lm) h["if-modified-since"] = v.lm;
+  try {
+    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: h });
+    if (r.status === 304) return null;
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const txt = await r.text();
+    httpCache[url] = { etag: r.headers.get("etag") || undefined, lm: r.headers.get("last-modified") || undefined, seen: new Date().toISOString().slice(0, 16) + "Z" };
+    return txt;
+  } finally { clearTimeout(t); }
+}
 // robots.txt: a path is read only when the rules for every agent ("*") allow it (longest match wins; unreachable robots = no)
 const robotsCache = {};
 async function robotsAllow(url) {
@@ -179,12 +197,18 @@ try {
   names.sort((a, b) => a.d - b.d);
   const listed = names.filter((x) => !x.guess), newest = listed.length ? listed[listed.length - 1].n : "", missing = [];
   const autoDone = new Set(prevIndex.auto_files || []);
-  let read = 0;
+  let read = 0, unchanged = 0;
   for (const { n } of names) {
     const need = UF.filter((u) => u.cfg && (!ucdpFilesDone[u.id].has(n) || n === newest)), autoNeed = !autoDone.has(n) || n === newest;
     if (!need.length && !autoNeed) continue;
     let csv = "";
-    try { csv = await get("https://ucdp.uu.se/downloads/candidateged/" + n, "text/csv"); } catch (e) { missing.push(n + " (" + e.message + ")"); continue; }
+    try { csv = await getIfChanged("https://ucdp.uu.se/downloads/candidateged/" + n, "text/csv"); } catch (e) { missing.push(n + " (" + e.message + ")"); continue; }
+    // unchanged since it was last read: every conflict that has read it keeps its events; one that has not must download it in full
+    if (csv === null) {
+      if (need.every((u) => ucdpFilesDone[u.id].has(n)) && (!autoNeed || autoDone.has(n))) { unchanged++; continue; }
+      delete httpCache["https://ucdp.uu.se/downloads/candidateged/" + n];
+      try { csv = await getIfChanged("https://ucdp.uu.se/downloads/candidateged/" + n, "text/csv"); } catch (e) { missing.push(n + " (" + e.message + ")"); continue; }
+    }
     const rows = csvRows(csv), head = rows.shift().map((x) => x.trim()), ix = (k) => head.indexOf(k);
     if (["latitude", "longitude", "date_start", "best", "country"].some((k) => ix(k) < 0)) throw new Error("unexpected columns in " + n);
     for (const r of rows) {
@@ -214,7 +238,7 @@ try {
   }
   prevIndex.auto_files = [...autoDone];
   ucdpFileList = names.map((x) => x.n);
-  Object.assign(ucdpStatus, { ok: true, read, missing, newest });
+  Object.assign(ucdpStatus, { ok: true, read, unchanged, missing, newest });
 } catch (e) { ucdpStatus.error = errMsg(e); }
 const cutoffDay = new Date(NOW - 365 * 864e5).toISOString().slice(0, 10);
 for (const [id, e] of prevAuto) if (e.date < cutoffDay) prevAuto.delete(id); else unassigned.set(id, e);
@@ -317,7 +341,17 @@ async function readFront(c, prev, items) {
       } else if (s.type === "geojson") {
         let txt = "", used = "";
         const urls = s.dated ? [0, 1, 2, 3, 4].map((d) => { const t = new Date(NOW - d * 864e5); return s.url.replace("{YYYYMMDD}", t.toISOString().slice(0, 10).replace(/-/g, "")); }) : [s.url];
-        for (const u of urls) { try { txt = await get(u, "application/geo+json, application/json, */*"); used = u; break; } catch (e) { st.error = errMsg(e); } }
+        let same = false;
+        for (const u of urls) {
+          try {
+            // the file the current version was drawn from, unchanged on the server: keep that version without downloading it again
+            const pc = prev && prev.current && prev.current.source === s.id && prev.current.file === u ? prev.current : null;
+            txt = await getIfChanged(pc ? u : (delete httpCache[u], u), "application/geo+json, application/json, */*"); used = u;
+            if (txt === null && pc) { same = true; res.current = res.current || pc; Object.assign(st, { ok: true, n: pc.areas.features.length, file: u, km2: Object.values(pc.km2 || {})[0], unchanged: true }); }
+            break;
+          } catch (e) { st.error = errMsg(e); }
+        }
+        if (same) { res.sources.push(Object.assign(st, { error: undefined })); continue; }
         if (!txt) throw new Error(st.error || "no file");
         const fc = JSON.parse(txt), small = shrink(fc.type === "FeatureCollection" ? fc : { type: "FeatureCollection", features: [fc.type === "Feature" ? fc : { type: "Feature", geometry: fc }] });
         small.features.forEach((f) => { f.properties = { ctl: s.control || "control" }; });
@@ -428,7 +462,7 @@ for (const c of LIST) {
   items.forEach((i) => { const k = wk(i.date.slice(0, 10)); if (W[k]) W[k].reports++; });
   st.weeks = W.reverse();
   st.ucdp_latest = ucdp.length ? ucdp[0].date : null;
-  const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}) };
+  const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}), ...(c.merge_tabs ? { merge_tabs: c.merge_tabs } : {}) };
   const data = { ...pub, asof: stamp, keep_days: KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };
   if (!PROBE) {
@@ -473,6 +507,7 @@ if (PROBE) {
 const merged = ONLY.length ? [...(prevIndex.conflicts || []).filter((x) => !ONLY.includes(x.id)), ...index] : index;
 const order = CFG.conflicts.map((c) => c.id);
 merged.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+if (!PROBE) fs.writeFileSync(HTTP_CACHE_FILE, JSON.stringify(httpCache, null, 0) + "\n");
 writeJs(OUT + "/index.js", "window.OSAP_CONFLICTS", { schema: "osap-conflicts/1", asof: stamp, conflicts: merged,
   auto: ONLY.length ? prevIndex.auto || [] : autoTabs, auto_files: prevIndex.auto_files || [], ucdp: ucdpStatus, kind_names: KIND_NAMES });
 // the automatic tabs' UCDP events, loaded only when one of those tabs is opened
