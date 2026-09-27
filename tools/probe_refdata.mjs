@@ -45,13 +45,14 @@ for (const cc of CCS) {
     SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE],fr,es,de,pt,it,ru". } }
     ORDER BY DESC(?sl) LIMIT 60`);
   await sleep(1500);
-  const posts = await sparql(`SELECT ?m ?mLabel ?coord ?typeLabel ?admLabel ?addr WHERE { ${C}
-    ?m wdt:P17 ?c; wdt:P31 ?type. ?type wdt:P279* wd:Q7843791.
-    { ?m wdt:P137 wd:Q30 } UNION { ?m wdt:P127 wd:Q30 } UNION { ?m wdt:P749 wd:Q789915 } UNION { ?m wdt:P137 wd:Q789915 }
-    UNION { ?m rdfs:label ?l FILTER(lang(?l)="en" && (CONTAINS(?l, "United States") || CONTAINS(?l, "U.S.") || CONTAINS(?l, "American Embassy"))) }
+  // every embassy or consulate in the country; the U.S. ones are picked out by operator or name below (a label search inside
+  // the query is far too slow)
+  const all = await sparql(`SELECT ?m ?mLabel ?coord ?typeLabel ?admLabel ?addr ?op WHERE { ${C}
+    ?m wdt:P17 ?c; wdt:P31 ?type. VALUES ?root { wd:Q3917681 wd:Q7843791 } ?type wdt:P279* ?root.
     FILTER NOT EXISTS { ?m wdt:P576 ?end }
-    OPTIONAL { ?m wdt:P625 ?coord } OPTIONAL { ?m wdt:P131 ?adm } OPTIONAL { ?m wdt:P6375 ?addr }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 40`);
+    OPTIONAL { ?m wdt:P137 ?op } OPTIONAL { ?m wdt:P625 ?coord } OPTIONAL { ?m wdt:P131 ?adm } OPTIONAL { ?m wdt:P6375 ?addr }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } LIMIT 3000`);
+  const posts = all && all.filter((m) => /Q30$|Q789915$/.test(m.op || "") || /United States|\bU\.S\.|\bUS (Embassy|Consulate)|American (Embassy|Consulate)/.test(m.mLabel || ""));
   await sleep(1500);
   const ports = await sparql(`SELECT ?p ?pLabel ?coord ?sl ?locode ?typeLabel WHERE { ${C}
     ?p wdt:P31 ?type. VALUES ?type { wd:Q44782 wd:Q1248784 wd:Q283202 wd:Q2143825 wd:Q721207 }
