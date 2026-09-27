@@ -3,7 +3,8 @@
 // population-weighted centre of its listed towns; items placed that way say so and carry precision "province".
 // placeIn(text, ccs) finds the first place a text names inside one of the given countries:
 //   { name, lat, lon, prec: "approx" (a city or town centre) | "province" (a region's rough centre), kind, basis }
-// It never guesses across borders, and returns null rather than a weak match.
+// It never guesses across borders, and returns null rather than a weak match. Okinawa (oki) is its own area: only places in
+// Okinawa Prefecture pin there, so an Okinawa story that names Tokyo is not pinned in Tokyo on the Okinawa map.
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -40,27 +41,32 @@ export function loadGazetteer(get = fetchBuf) {
       const k = name.toLowerCase();
       if (name.length < 4 || STOP.has(k) || COUNTRY_NAMES.has(k) || !/^\p{Lu}/u.test(name)) return;
       const m = (byCc[cc] = byCc[cc] || new Map()), prev = m.get(k);
-      if (!prev || (p.kind === "city" && (prev.kind !== "city" || p.pop > prev.pop))) m.set(k, p);
+      // A name that is both a region and a town (Okinawa, Kharkiv) means the town only when the town is that region's seat;
+      // otherwise the region wins, with its coarser precision, because the text cannot say which is meant.
+      if (!prev || (p.kind === "city" && prev.kind === "city" && p.pop > prev.pop)) m.set(k, p);
+      else if (p.kind === "region" && prev.kind === "city" && !prev.seat) m.set(k, p);
+      else if (p.kind === "city" && prev.kind === "region" && p.seat) m.set(k, p);
     };
     for (const line of txt.split("\n")) {
       const f = line.split("\t"); if (f.length < 15) continue;
       const cc = ccFromA2(f[8]); if (!cc) continue;
-      const p = { name: f[1], lat: +f[4], lon: +f[5], pop: +f[14] || 0, kind: "city", cap: f[7] === "PPLC" };
-      for (const n of new Set([f[1], f[2]])) put(cc, n, p);
+      const p = { name: f[1], lat: +f[4], lon: +f[5], pop: +f[14] || 0, kind: "city", cap: f[7] === "PPLC", seat: f[7] === "PPLA" || f[7] === "PPLC" };
+      for (const n of new Set([f[1], f[2]])) { put(cc, n, p); if (f[8] === "JP" && f[10] === "47") put("oki", n, p); }   // Okinawa Prefecture is JP.47
       if (f[10]) { const k = f[8] + "." + f[10], g = (regions[k] = regions[k] || { w: 0, la: 0, lo: 0 }), w = Math.max(p.pop, 1); g.w += w; g.la += p.lat * w; g.lo += p.lon * w; }
     }
     for (const line of adm.split("\n")) {
       const f = line.split("\t"); if (f.length < 3) continue;
       const g = regions[f[0]], cc = ccFromA2(f[0].split(".")[0]); if (!g || !cc) continue;
-      const p = { name: f[1], lat: g.la / g.w, lon: g.lo / g.w, pop: 0, kind: "region" };
-      for (const n of new Set([f[1], f[2]])) put(cc, n.replace(/\s+(Province|Region|Governorate|State|Oblast|District|Division|Prefecture|Department)$/i, ""), p);
+      const p = { name: f[2] || f[1], lat: g.la / g.w, lon: g.lo / g.w, pop: 0, kind: "region" };
+      // both "Kharkiv Oblast" (always the region) and the bare "Kharkiv" (the region unless a town of that name is its seat)
+      const suf = /\s+(Province|Region|Governorate|State|Oblast|District|Division|Prefecture|Department)$/i;
+      for (const n of new Set([f[1], f[2], f[1].replace(suf, ""), f[2].replace(suf, "")])) put(f[0] === "JP.47" ? "oki" : cc, n, p);
     }
     const idx = {};
     for (const [cc, m] of Object.entries(byCc)) {
       const names = [...m.keys()].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
       idx[cc] = { m, re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
     }
-    if (idx.jp) idx.oki = idx.jp;
     return idx;
   })();
   return LOADED;
