@@ -9,7 +9,7 @@ import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 30, SINCE = Date.now() - 7 * 864e5;
+const TIMEOUT = 30000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const cfg = JSON.parse(fs.readFileSync("tools/social_accounts.json", "utf8"));
 const env = process.env;
@@ -52,6 +52,35 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
       status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: true, n });
     } catch (e) { status.push({ platform: "Bluesky", source: "@" + a.handle, cc: a.cc, ok: false, error: err(e) }); }
   }
+}
+
+// Bluesky search: the regional and global accounts above post about many countries, and their latest 40 posts rarely reach a
+// given one. So each area is also searched by name, limited to posts by those same listed accounts (author=), through the public
+// read API with no login. Private people's posts are never read: every search names one listed account as the author.
+{
+  const base = "https://public.api.bsky.app", since = new Date(SINCE).toISOString();
+  const wide = (cfg.bluesky || []).filter((a) => a.cc === "*" && status.some((s) => s.platform === "Bluesky" && s.source === "@" + a.handle && s.ok));
+  let n = 0, fails = 0, lastErr = "";
+  for (const a of wide) {
+    for (const cc of Object.keys(NAMES)) {
+      const q = NAMES[cc].split("|")[0];
+      try {
+        const j = await req(base + "/xrpc/app.bsky.feed.searchPosts?limit=25&sort=latest&q=" + encodeURIComponent(q) + "&author=" + encodeURIComponent(a.handle) + "&since=" + encodeURIComponent(since));
+        for (const p of j.posts || []) {
+          const r = p.record || {};
+          if ((p.author || {}).handle !== a.handle || !r.text || Date.parse(r.createdAt) < SINCE || !new RegExp("\\b(" + NAMES[cc] + ")\\b").test(r.text)) continue;
+          const rkey = String(p.uri || "").split("/").pop();
+          (items[cc] = items[cc] || []).push({ platform: "Bluesky", account: a.handle, kind: a.kind, title: r.text.slice(0, 300), summary: "", date: new Date(r.createdAt).toISOString().slice(0, 16),
+            link: "https://bsky.app/profile/" + a.handle + "/post/" + rkey, lang: ((r.langs || [])[0] || "en").slice(0, 3) });
+          n++;
+        }
+      } catch (e) { fails++; lastErr = err(e); if (fails >= 5 && !n) break; }
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    if (fails >= 5 && !n) break;
+  }
+  if (wide.length) status.push(fails >= 5 && !n ? { platform: "Bluesky", source: "search of listed accounts by country", cc: "*", ok: false, error: lastErr }
+    : { platform: "Bluesky", source: "search of listed accounts by country", cc: "*", ok: true, n });
 }
 
 // Telegram: public channel web previews (t.me/s/<channel>), no login, account or phone number.

@@ -15,6 +15,31 @@
    "cc": "*",
    "handle": "afp.com",
    "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "scmp.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "thediplomat.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "theguardian.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "au",
+   "handle": "abc.net.au",
+   "kind": "news desk"
+  },
+  {
+   "cc": "nz",
+   "handle": "rnz.co.nz",
+   "kind": "news desk"
   }
  ],
  "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
