@@ -69,8 +69,8 @@ feed("firms", { name: "NASA FIRMS fire detections (VIIRS NOAA-20, 24 h)", org: "
 run("firms", async (g) => {
   let txt = null, fails = [];
   for (const u of ["https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv", "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv",
-    "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv"]) {
-    try { txt = await get(u, "text", { timeout: 150000 }); break; } catch (e) { fails.push(e.message); await sleep(5000); } }
+    "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_24h.csv"]) {
+    try { txt = await get(u, "text", { timeout: 150000 }); break; } catch (e) { fails.push(u.split("/").pop() + ": " + (e.cause && e.cause.code || e.message)); await sleep(15000); } }
   if (!txt) throw new Error(fails.join("; "));
   const lines = txt.split("\n"), h = lines[0].split(","), ix = (k) => h.indexOf(k);
   const iLa = ix("latitude"), iLo = ix("longitude"), iF = ix("frp"), iD = ix("acq_date"), iT = ix("acq_time"), iC = ix("confidence");
