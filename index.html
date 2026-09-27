@@ -602,6 +602,41 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
+<style>
+/* ---------- screen space: a shorter header and one tidy column of map buttons ----------
+   The header items line up on one centre line, the country picker and "Add a country" share a row, and a long source list
+   is cut short (the full list is in its tooltip). The buttons down the map's right edge share one width and spacing,
+   and are smaller on a phone so they cover less of the map. */
+header{align-items:center;gap:6px 12px;padding-block:8px}
+header .xabar{flex:0 1 auto}
+#hdr-src{max-width:34em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#map{--ctlw:150px}
+#map .leaflet-top.leaflet-right{display:flex;flex-direction:column;align-items:flex-end}
+#map .leaflet-top.leaflet-right>.leaflet-control{float:none;clear:none;margin:6px 10px 0 0}
+#map .leaflet-top.leaflet-right>.leaflet-control:first-child{margin-top:10px}
+#map .leaflet-top.leaflet-right>.rvseg,#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.wkctlmap,#map .leaflet-top.leaflet-right>.tdctl{width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.tdctl{display:flex}
+#map .leaflet-top.leaflet-right>.rvseg button,#map .leaflet-top.leaflet-right>.areactl button,#map .leaflet-top.leaflet-right>.wkctlmap button,#map .leaflet-top.leaflet-right>.tdctl button{
+  flex:1 1 0;width:100%;min-height:34px;padding:7px 8px;font-size:13px;font-weight:600;line-height:1.1;text-align:center;box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.wkctlmap{gap:6px}
+#map .leaflet-top.leaflet-right>.mlctl{min-width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{text-align:center;font-size:13px;min-height:34px}
+#map .leaflet-top.leaflet-right>.tdctl button{border:0;box-shadow:none;background:none}
+#map .leaflet-top.leaflet-right>.tdctl{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden}
+html.phone .brand{font-size:0;gap:0}
+html.phone .brand .logo{width:30px;height:30px}
+html.phone #hdr-title{font-size:16px}
+html.phone #hdr-live{flex:1 1 100%;font-size:10.5px;gap:4px}
+html.phone #hdr-live b{font-size:11.5px}
+html.phone #map{--ctlw:104px}
+html.phone #map .leaflet-top.leaflet-right>.leaflet-control{margin:5px 8px 0 0}
+html.phone #map .leaflet-top.leaflet-right>.rvseg button,html.phone #map .leaflet-top.leaflet-right>.areactl button,html.phone #map .leaflet-top.leaflet-right>.wkctlmap button,
+html.phone #map .leaflet-top.leaflet-right>.tdctl button,html.phone #map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{min-height:32px;padding:5px 6px;font-size:12.5px}
+html.phone #map .leaflet-top.leaflet-right>.wkctlmap{gap:5px}
+html.phone #hdr-live{letter-spacing:0;text-transform:none}
+html.phone #hdr-live .badge{font-size:9.5px;padding:1px 5px}
+html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
+</style>
 <header>
   <nav class="ctabs" id="country-seg" aria-label="Country"></nav>
   <nav class="viewtabs" id="view-seg" role="tablist" aria-label="Layer"></nav>
@@ -6052,6 +6087,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var mo = new MutationObserver(sync);
     homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
     sync();
+    /* On a narrow map the credits line runs the full width along the bottom and would cover the Legend button, so lift the
+       legend above it whenever the two would overlap. */
+    var attr = map.getContainer().querySelector(".leaflet-control-attribution");
+    function lift() {
+      if (!attr) return; box.style.marginBottom = "";
+      var a = attr.getBoundingClientRect(), b = box.getBoundingClientRect();
+      if (a.width && a.left < b.right && a.top < b.bottom) box.style.marginBottom = Math.ceil(a.height + 6) + "px";
+    }
+    if (attr && window.ResizeObserver) new ResizeObserver(lift).observe(attr);
+    map.on("resize", lift); window.addEventListener("resize", lift); lift();
   })();
   var FsCtl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-bar leaflet-control fsctl");
@@ -6079,6 +6124,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   sizeToHeader();
   window.addEventListener("resize", sizeToHeader);
+  /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
+  if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
   renderRules(); evaluate(); badge();
   window.TSAP_liveRefreshed = function () {
