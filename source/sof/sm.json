@@ -1,0 +1,38 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "sm",
+ "country": "San Marino",
+ "asof": "2026-09-27",
+ "advisory": null,
+ "posts": [],
+ "airports": [],
+ "seaports": [],
+ "hospitals": [
+  {
+   "id": "sof:sm:hospital:republic-of-san-marino-state-hospital",
+   "name": "Republic of San Marino State Hospital",
+   "city": "San Marino",
+   "address": null,
+   "emergency_24h": null,
+   "type": null,
+   "trauma_level": null,
+   "notes": "Website: http://www.iss.sm/",
+   "lat": 43.9502,
+   "lon": 12.4555,
+   "prec": "approx",
+   "src": "https://www.wikidata.org/entity/Q3886678",
+   "srcname": "Wikidata",
+   "coord_basis": "Wikidata coordinate (P625)",
+   "fp": "ea46d4d49dde76e94ce764304e246dae42b468043e8c580db275f0d9d96a24ce"
+  }
+ ],
+ "power": [],
+ "exercises": [],
+ "gaps": [
+  "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
+  "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none.",
+  "No U.S. embassy or consulate found in Wikidata for this country; check travel.state.gov for the post that covers it.",
+  "No airport with scheduled service in the country; access is through neighbouring countries.",
+  "No separate U.S. advisory; the Italy advisory applies."
+ ]
+}

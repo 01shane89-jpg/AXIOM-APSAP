@@ -1,0 +1,24 @@
+[
+ {
+  "layer": "aml",
+  "date": "2026-03-17",
+  "kind": "other",
+  "title": "Surinamese banks settle with Dutch prosecutors",
+  "detail": "Three Surinamese banks reached a settlement with the Dutch Public Prosecution Service (CMC).",
+  "place": "Paramaribo",
+  "district": null,
+  "prov": "Paramaribo",
+  "lat": 5.852,
+  "lon": -55.2038,
+  "prec": "approx",
+  "killed": null,
+  "injured": null,
+  "arrested": null,
+  "agency": "Openbaar Ministerie",
+  "src": "https://www.jamaicaobserver.com/2026/03/18/suriname-banks-reach-settlement-dutch-public-prosecution-service/",
+  "srcname": "The Jamaica Observer",
+  "attribution": "Headline and search summary only (article body not retrieved)",
+  "date_is_pub": true,
+  "fp": "f81046a8905d0b3d5cf175286094e24c720ec290b3bb40266baa49537aa389ee"
+ }
+]
