@@ -69,40 +69,63 @@
     }).sort(function (a, b) { return a.__tlw.ms - b.__tlw.ms || String(a.title).localeCompare(String(b.title)); });
   }
 
-  /* ---------- styles: own class prefix; layout on screen, compact on paper ---------- */
+  /* ---------- styles: own class prefix. Set like a short research paper: serif headings, numbered sections, a captioned
+     figure, one table of key events, annexes for the chronology and sources. Compact on paper. ---------- */
   var css = document.createElement("style");
   css.textContent =
-    ".tlr header.tlrh{display:flex!important;align-items:center;gap:12px}.tlr header.tlrh img{width:46px;height:46px;border-radius:50%;flex:none}" +
-    ".tlr header.tlrh .tlrt{flex:1;min-width:0}.tlr header.tlrh .tlrg{text-align:right;font-size:.95em;flex:none}.tlr header.tlrh h2{margin:0;font-size:21px}.tlr .tlrk{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#12324a;font-weight:700}" +
-    ".tlr .tlrmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;margin:6px 0;padding:6px 8px;background:#eef3f7;border-radius:4px}" +
-    ".tlr .tlrmeta b{display:block;font-size:1.35em;color:#12324a}.tlr .tlrmeta span{color:#444}" +
-    ".tlr .tlrfig{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:10px;align-items:start}" +
-    ".tlr svg.tlrmap{width:100%;height:auto;border:1px solid #ccd5dd;background:#cfe1ee;display:block}" +
-    ".tlr .tlrside{border:1px solid #ccd5dd;background:#f7f9fb;padding:6px 8px;font-size:.92em;min-width:0}.tlr .tlrside h4{margin:0 0 3px;font-size:1em;color:#12324a}.tlr .tlrside h4+ol{margin-top:0}" +
-    ".tlr ul.tlrleg{list-style:none;margin:0 0 4px;padding:0}.tlr ul.tlrleg li{display:flex;align-items:center;gap:6px;margin:1px 0}.tlr ul.tlrleg svg{flex:none}" +
-    ".tlr ol.tlrki{margin:0;padding:0;list-style:none}.tlr ol.tlrki li{margin:1px 0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tlr ol.tlrki .n{display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;border-radius:7px;background:#12324a;color:#fff;font-size:.8em;font-weight:700;margin-right:4px;vertical-align:1px}.tlr ol.tlrki b{font-weight:600;color:#444;margin-right:2px}" +
-    ".tlr .tlrcols{column-count:2;column-gap:14px}.tlr .tlrcols .tlrev{margin:0 0 6px;display:inline-block;width:100%;box-sizing:border-box}.tlr .tlrcols h4.tlrsub{column-span:all;break-after:avoid}" +
-    ".tlr .tlrkey{display:flex;flex-wrap:wrap;gap:3px 12px;margin:3px 0 0;color:#444;font-size:.92em}.tlr .tlrkey i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}" +
-    ".tlr .tlrday{break-inside:auto}.tlr h3.tlrd{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid #12324a;padding-bottom:1px;margin-top:10px;break-after:avoid;page-break-after:avoid}" +
-    ".tlr h3.tlrd span{font-weight:400;color:#555;font-size:.9em}" +
-    ".tlr .tlre{display:grid;grid-template-columns:92px minmax(0,1fr);gap:0 10px;padding:3px 0;border-bottom:1px solid #e3e7eb;break-inside:avoid;page-break-inside:avoid}" +
-    ".tlr .tlre .tm{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;color:#333;white-space:nowrap}.tlr .tlre .tm small{display:block;color:#666;white-space:normal}" +
-    ".tlr .tlre .hd{font-weight:600;color:#111}.tlr .tlre .hd a{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}" +
-    ".tlr .tlre .mt{color:#444}.tlr .tlre .fp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78em;color:#777;overflow-wrap:anywhere}" +
-    ".tlr .st{display:inline-block;font-size:.82em;font-weight:600;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin-right:4px;color:#333;background:#f5f5f5;vertical-align:1px}" +
+    ".bpage.tlr{max-width:900px;padding:26px 34px 22px;font-size:11.5px;line-height:1.45;color:#1b232b}" +
+    ".tlr .tlrser,.tlr h2,.tlr h3.tls,.tlr .tlrfigc b,.tlr .tlrglance b{font-family:Georgia,'Times New Roman',serif}" +
+    ".tlr header.tlrh{display:flex!important;align-items:flex-end;gap:14px;border-bottom:0!important;padding:0 0 10px!important;margin:0!important}" +
+    ".tlr header.tlrh img{width:44px;height:44px;border-radius:50%;flex:none;align-self:center}" +
+    ".tlr header.tlrh .tlrt{flex:1;min-width:0}.tlr header.tlrh h2{margin:2px 0 1px;font-size:25px;font-weight:700;color:#12324a!important;letter-spacing:-.01em}" +
+    ".tlr header.tlrh .tlrsubt{font-size:13px;color:#3d4b57!important}.tlr header.tlrh .tlrg{text-align:right;font-size:10.5px;color:#55616b!important;flex:none;line-height:1.35}" +
+    ".tlr header.tlrh .tlrg b{color:#1b232b!important;font-weight:600}" +
+    ".tlr .tlrk{font-size:.82em;letter-spacing:.14em;text-transform:uppercase;color:#8a2a22;font-weight:700}" +
+    ".tlr .tlrrule{height:0;border-top:3px solid #12324a;border-bottom:1px solid #12324a;padding-top:2px;margin:0 0 12px}" +
+    ".tlr h3.tls{font-size:15px;font-weight:700;color:#12324a;margin:18px 0 6px;padding:0;display:flex;align-items:baseline;gap:8px;break-after:avoid;page-break-after:avoid}" +
+    ".tlr h3.tls .no{color:#8a2a22;font-size:.9em;min-width:1.2em}.tlr h3.tls .aitag{font-family:system-ui,sans-serif;font-size:9.5px;font-weight:600}" +
+    ".tlr .tlrglance{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #c8d1d8;border-bottom:1px solid #c8d1d8;margin:0 0 10px}" +
+    ".tlr .tlrglance div{padding:7px 10px;border-left:1px solid #e1e6ea}.tlr .tlrglance div:first-child{border-left:0;padding-left:0}" +
+    ".tlr .tlrglance b{display:block;font-size:22px;line-height:1.1;color:#12324a;font-weight:700}.tlr .tlrglance span{color:#55616b;font-size:.92em}" +
+    ".tlr ul.tlrpts{margin:4px 0 8px;padding:0 0 0 16px}.tlr ul.tlrpts li{margin:2px 0;padding-left:2px}.tlr ul.tlrpts li::marker{color:#8a2a22}" +
+    ".tlr .tlrcav{border-left:3px solid #8a2a22;padding:3px 0 3px 10px;margin:8px 0 2px;color:#3d4b57;font-size:.92em}.tlr .tlrcav b{color:#1b232b}" +
+    ".tlr .tlrfigc{margin:0 0 5px;color:#3d4b57}.tlr .tlrfigc b{color:#12324a;font-size:1.05em}" +
+    ".tlr .tlrfig{display:grid;grid-template-columns:minmax(0,1fr) 196px;gap:12px;align-items:stretch}" +
+    ".tlr svg.tlrmap{width:100%;height:auto;border:1px solid #9fb0bf;background:#d6e5f0;display:block}" +
+    ".tlr .tlrside{font-size:.92em;min-width:0;display:flex;flex-direction:column;gap:10px}.tlr .tlrside h4{margin:0 0 4px;font-size:.88em;letter-spacing:.1em;text-transform:uppercase;color:#12324a;border-bottom:1px solid #c8d1d8;padding-bottom:2px}" +
+    ".tlr ul.tlrleg{list-style:none;margin:0;padding:0}.tlr ul.tlrleg li{display:flex;align-items:center;gap:7px;margin:2px 0;line-height:1.25}.tlr ul.tlrleg svg{flex:none}" +
+    ".tlr svg.tlrbars{width:100%;height:auto;display:block}" +
+    ".tlr .tlrsrcn{margin:5px 0 0;color:#55616b;font-size:.85em}" +
+    ".tlr table.tlrkt{width:100%;border-collapse:collapse;table-layout:fixed;margin:2px 0 0}" +
+    ".tlr table.tlrkt caption{text-align:left;caption-side:top;margin:0 0 5px;color:#3d4b57}.tlr table.tlrkt caption b{font-family:Georgia,'Times New Roman',serif;color:#12324a;font-size:1.05em}" +
+    ".tlr table.tlrkt th{font-size:.82em;letter-spacing:.08em;text-transform:uppercase;color:#12324a;border-top:2px solid #12324a;border-bottom:1px solid #12324a;padding:4px 6px;text-align:left;font-weight:700}" +
+    ".tlr table.tlrkt td{border-bottom:1px solid #dde3e8;padding:6px 6px;vertical-align:top;white-space:normal!important;overflow-wrap:anywhere}" +
+    ".tlr table.tlrkt tr{break-inside:avoid;page-break-inside:avoid}.tlr table.tlrkt tbody tr:hover{background:none}" +
+    ".tlr table.tlrkt col.ckn{width:34px}.tlr table.tlrkt col.ckd{width:104px}.tlr table.tlrkt td.kn{padding-left:0}.tlr table.tlrkt td.kd{white-space:normal!important;color:#3d4b57;font-variant-numeric:tabular-nums}.tlr table.tlrkt th:first-child{padding-left:0}" +
+    ".tlr table.tlrkt .kt{font-weight:700;color:#1b232b}.tlr table.tlrkt .kt a{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}" +
+    ".tlr table.tlrkt .km{color:#55616b;margin-top:1px}.tlr table.tlrkt .ks{margin-top:3px;color:#26323c}.tlr table.tlrkt .kw{margin-top:2px;color:#55616b;font-size:.9em}" +
+    ".tlr .kb{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#12324a;color:#fff;font-size:10.5px;font-weight:700;box-sizing:border-box;font-family:system-ui,sans-serif}" +
+    ".tlr .kb.ap{box-shadow:0 0 0 1.5px #fff,0 0 0 2.6px #12324a}.tlr .kb.no{background:#fff;color:#12324a;border:1.6px dashed #12324a}" +
+    ".tlr .st{display:inline-block;white-space:nowrap;font-size:.82em;font-weight:600;border:1px solid #b9c3cb;border-radius:3px;padding:0 5px;color:#3d4b57;background:#f4f6f8;vertical-align:1px;line-height:1.5}" +
     ".tlr .st.ob{border-color:#7fa3bf;background:#eaf2f8;color:#1f4f73}.tlr .st.cl{border-style:dashed}" +
-    ".tlr .tlrev{border:1px solid #d4dbe1;border-left:4px solid #12324a;border-radius:3px;padding:4px 8px;margin:5px 0;break-inside:avoid;page-break-inside:avoid}" +
-    ".tlr .tlrev .n{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#12324a;color:#fff;font-size:.85em;font-weight:700;margin-right:5px}" +
-    ".tlr h4.tlrsub{margin:6px 0 2px;font-size:1em;color:#12324a}.tlr .tlrev p{margin:2px 0}.tlr .tlrev ul{margin:1px 0 1px 16px;padding:0}.tlr .tlrev.sv2{border-left-color:#c47a00}" +
-    ".tlr .tlrev.sv3{border-left-color:#b3261e}" +
-    ".tlr ol.tlrsrc{margin:2px 0 0 18px;padding:0;column-count:2;column-gap:16px;font-size:.92em;color:#333}.tlr ol.tlrsrc li{break-inside:avoid;overflow-wrap:anywhere}.tlr ol.tlrsrc a{color:inherit}" +
-    ".tlr .tlrnote{background:#eef3f7;padding:5px 8px;margin:6px 0;border-radius:3px}.tlr .tlrnote p{margin:2px 0}" +
+    ".tlr .tlrday{break-inside:auto}.tlr h4.tlrd{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid #9fb0bf;padding-bottom:1px;margin:10px 0 0;font-size:11px;color:#12324a;break-after:avoid;page-break-after:avoid}" +
+    ".tlr h4.tlrd span{font-weight:400;color:#55616b;font-size:.92em}" +
+    ".tlr .tlre{display:grid;grid-template-columns:84px minmax(0,1fr);gap:0 10px;padding:4px 0;border-bottom:1px solid #eef1f3;break-inside:avoid;page-break-inside:avoid}" +
+    ".tlr .tlre .tm{font-variant-numeric:tabular-nums;font-size:.95em;color:#3d4b57;white-space:nowrap}.tlr .tlre .tm small{display:block;color:#7b8894;white-space:normal}" +
+    ".tlr .tlre .hd{font-weight:600;color:#1b232b}.tlr .tlre .hd a{color:inherit;text-decoration:none;border-bottom:1px dotted #8aa}" +
+    ".tlr .tlre .mt{color:#55616b}.tlr .tlre .fp,.tlr .fpx{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78em;color:#8a96a0;overflow-wrap:anywhere}" +
+    ".tlr ol.tlrsrc{margin:2px 0 0 18px;padding:0;column-count:2;column-gap:18px;font-size:.95em;color:#26323c}.tlr ol.tlrsrc li{break-inside:avoid;overflow-wrap:anywhere;margin:1px 0}.tlr ol.tlrsrc a{color:inherit}" +
+    ".tlr footer.tlrf{margin-top:14px;border-top:1px solid #c8d1d8;padding-top:6px;color:#55616b;font-size:.85em}" +
     ".tlrbar label{font-size:12.5px;color:#26323c}.tlrbar select,.tlrbar input{font-size:12.5px}" +
-    "@media (max-width:640px){.tlr header.tlrh{flex-wrap:wrap}.tlr header.tlrh .tlrg{flex-basis:100%;text-align:left}.tlr header.tlrh .tlrg br{display:none}.tlr .tlrmeta{grid-template-columns:1fr 1fr}.tlr .tlrfig{grid-template-columns:1fr}.tlr .tlrcols{column-count:1}.tlr .tlre{grid-template-columns:70px minmax(0,1fr)}.tlr ol.tlrsrc{column-count:1}}" +
-    "@media print{html.briefing .tlr{font-size:8.8px;line-height:1.3}html.briefing .tlr .tlre{grid-template-columns:78px minmax(0,1fr);padding:2px 0}" +
-    "html.briefing .tlr .tlrfig{grid-template-columns:minmax(0,1fr) 46mm}html.briefing .tlr .tlrsrcs{break-before:page;page-break-before:always}" +
-    "html.briefing .tlr .tlre .hd a{border-bottom:0}.tlr .aitag{border-radius:3px}html.briefing .tlr ol.tlrsrc{column-count:3;font-size:7.6px}" +
-    ".tlr .tlrmeta,.tlr .tlrnote,.tlr .tlrev .n,.tlr ol.tlrki .n,.tlr svg.tlrmap,.tlr .tlrside,.tlr .st{-webkit-print-color-adjust:exact;print-color-adjust:exact}}" +
+    "@media (max-width:640px){.bpage.tlr{padding:14px 12px}.tlr header.tlrh{flex-wrap:wrap}.tlr header.tlrh .tlrg{flex-basis:100%;text-align:left}.tlr header.tlrh .tlrg br{display:none}" +
+    ".tlr .tlrglance{grid-template-columns:1fr 1fr}.tlr .tlrglance div:nth-child(3){border-left:0;padding-left:0}.tlr .tlrfig{grid-template-columns:1fr}.tlr .tlre{grid-template-columns:66px minmax(0,1fr)}.tlr ol.tlrsrc{column-count:1}.tlr table.tlrkt col.ckd{width:70px}}" +
+    "@media print{html.briefing .bpage.tlr{font-size:8.8px;line-height:1.35;padding:0}html.briefing .tlr header.tlrh h2{font-size:19px}html.briefing .tlr h3.tls{font-size:11.5px;margin:10px 0 4px}" +
+    "html.briefing .tlr .tlrglance b{font-size:16px}html.briefing .tlr .tlre{grid-template-columns:70px minmax(0,1fr);padding:2px 0}" +
+    "html.briefing .tlr .tlrfig{grid-template-columns:minmax(0,1fr) 44mm}html.briefing .tlr .tlrann{break-before:page;page-break-before:always}" +
+    "html.briefing .tlr .tlre .hd a,html.briefing .tlr table.tlrkt .kt a{border-bottom:0}.tlr .aitag{border-radius:3px}html.briefing .tlr ol.tlrsrc{column-count:3;font-size:7.6px}" +
+    "html.briefing .tlr table.tlrkt td{padding:3px 4px}html.briefing .tlr table.tlrkt col.ckd{width:72px}html.briefing .tlr table.tlrkt col.ckn{width:26px}" +
+    ".tlr .tlrrule,.tlr .kb,.tlr svg.tlrmap,.tlr svg.tlrbars,.tlr .st,.tlr table.tlrkt th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}" +
+    "@media print{.tlr h3.tls .aitag::after{content:none}html.briefing .tlr .aitag{font-size:.82em}}@media (max-width:640px){.tlr svg.tlrbars{max-width:260px}}" +
     "html.phone:not(.hdr-open) #tlrep-btn{display:none!important}#tlrep-btn[hidden],#tlrep-rail[hidden]{display:none!important}";
   document.head.appendChild(css);
 
@@ -158,7 +181,9 @@
   /* a place name from a record's "place" field, or "" when it is not a named place (distances, regions, borders, seas) */
   function placeName(p) {
     p = String(p || "").split(/[,(\/;]| - /)[0].trim().replace(/\s+(district|province|city|town|municipality|sub-?district|amphoe)$/i, "");
-    if (p.length < 3 || p.length > 26 || /\d|[^\x00-ɏ\s'.-]/.test(p) ||
+    /* a proper name only: starts with a capital, and is not a kind of spot ("outside a school", "tea shop", "Phetkasem Road") */
+    if (p.length < 3 || p.length > 26 || /\d|[^\x00-ɏ\s'.-]/.test(p) || !/^[A-Z]/.test(p) ||
+      /\b(road|street|highway|bridge|school|shop|market|mosque|temple|station|checkpoint|outpost|post|camp|base|office|house|home|village|junction|intersection|sites?|multiple|several|various|outside|inside|between)\b/i.test(p) ||
       /\b(region|state|border|area|basin|islands?|coast|sea|gulf|off|near|north(ern)?|south(ern)?|east(ern)?|west(ern)?|central|nationwide|alert|division|zone)\b/i.test(p)) return "";
     return p;
   }
@@ -188,15 +213,20 @@
     }
     var cbp = pad(cb, 0.06, 0.3), bb = cbp, zoomed = false;
     /* the records' own extent, leaving out the few furthest ones (3% each side) once there are enough of them */
-    var lls = pts.map(function (r) { return [+r.lon, +r.lat]; }).concat(evs.filter(function (e) { return e.lat != null && e.lon != null; }).map(function (e) { return [e.lon, e.lat]; }));
-    if (lls.length >= 3) {
+    var lls = pts.map(function (r) { return [+r.lon, +r.lat]; }), kll = evs.filter(function (e) { return e.lat != null && e.lon != null; }).map(function (e) { return [e.lon, e.lat]; });
+    if (lls.length + kll.length >= 3) {
+      /* key events are never trimmed away: every one that has a position must be on the map */
       var q = lls.length >= 20 ? 0.03 : 0, xs = lls.map(function (p) { return p[0]; }), ys = lls.map(function (p) { return p[1]; });
-      var rb = pad([pctl(xs, q), pctl(ys, q), pctl(xs, 1 - q), pctl(ys, 1 - q)], 0.2, 0.25);
+      var xk = kll.map(function (p) { return p[0]; }), yk = kll.map(function (p) { return p[1]; });
+      var rb = pad([Math.min.apply(null, xk.concat(xs.length ? [pctl(xs, q)] : [])), Math.min.apply(null, yk.concat(ys.length ? [pctl(ys, q)] : [])),
+        Math.max.apply(null, xk.concat(xs.length ? [pctl(xs, 1 - q)] : [])), Math.max.apply(null, yk.concat(ys.length ? [pctl(ys, 1 - q)] : []))], 0.2, 0.25);
       var km0 = Math.cos(((rb[1] + rb[3]) / 2) * Math.PI / 180), ck = Math.cos(((cbp[1] + cbp[3]) / 2) * Math.PI / 180);
       var area = function (b, k2) { return (b[2] - b[0]) * k2 * (b[3] - b[1]); };
       rb = fit(rb, ASPECT);
       if (area(rb, km0) < 0.3 * area(fit(cbp, ASPECT), ck)) { bb = rb; zoomed = true; }
     }
+    /* a key event placed outside the chosen frame (a meeting abroad, say) widens the frame to take it in */
+    kll.forEach(function (p) { if (p[0] < bb[0] || p[0] > bb[2] || p[1] < bb[1] || p[1] > bb[3]) bb = pad([Math.min(bb[0], p[0]), Math.min(bb[1], p[1]), Math.max(bb[2], p[0]), Math.max(bb[3], p[1])], 0.02, 0.1); });
     bb = fit(bb, ASPECT);
     var v = view(bb, 760), W = v.w, H = v.h;
     var paths = outlines(feats, me, v, false);
@@ -225,6 +255,7 @@
         var c = [n.charAt(1) === "r" ? W - w - m : m, n.charAt(0) === "b" ? H - h - m : m], k = cnt(c, w, h);
         if (k < bn) { bn = k; best = { n: n, x: c[0], y: c[1] }; }
       });
+      if (!best) best = { n: "x", x: m, y: H - h - m };
       taken[best.n] = 1; boxes.push([best.x - 4, best.y - 4, best.x + w + 4, best.y + h + 4]); return best;
     }
     var inset = "";
@@ -247,25 +278,41 @@
     var nc = corner(["tl", "tr", "bl", "br"], 26, 38);
     var north = '<g transform="translate(' + (nc.x + 13).toFixed(1) + " " + nc.y.toFixed(1) + ')" font-family="system-ui,sans-serif"><circle cx="0" cy="22" r="13" fill="#fff" fill-opacity=".85" stroke="#12324a" stroke-width=".8"/>' +
       '<path d="M0 12 L6 28 L0 24 L-6 28 Z" fill="#12324a"/><text x="0" y="9" text-anchor="middle" font-size="11" font-weight="700" fill="#12324a">N</text></g>';
-    /* numbered key events: badges that would overlap are moved to the nearest free spot, with a line back */
-    var nums = "", placed = [];
-    evs.forEach(function (e, i) {
-      if (e.lat == null || e.lon == null || !v.has(e.lon, e.lat)) return;
-      var x0 = v.x(e.lon), y0 = v.y(e.lat), x = x0, y = y0, R = 11;
-      function free(px, py) { return px > R && px < W - R && py > R && py < H - R && placed.every(function (p) { return (p[0] - px) * (p[0] - px) + (p[1] - py) * (p[1] - py) >= (2 * R + 2) * (2 * R + 2); }); }
+    /* numbered key events. A solid badge is where the source puts it; a badge with an outer ring is placed at the centre of
+       the province(s) the source names (approximate). Badges that would overlap move to the nearest free spot, with a line
+       back. Key events tied to no one place are listed in a box on the map, so no number is missing from it. */
+    var nums = "", lines = "", placed = [], none = evs.filter(function (e) { return e.how === "none"; }), R = 11;
+    function badge(x, y, n, how) {
+      return (how === "area" ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (R + 3.2) + '" fill="#fff" stroke="#12324a" stroke-width="1.3"/>' : "") +
+        '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="' + (how === "none" ? "#fff" : "#12324a") + '" stroke="' + (how === "none" ? "#12324a" : "#fff") + '" stroke-width="' + (how === "none" ? 1.6 : 1.8) + '"' + (how === "none" ? ' stroke-dasharray="3 2"' : "") + "/>" +
+        '<text x="' + x.toFixed(1) + '" y="' + (y + 4.3).toFixed(1) + '" text-anchor="middle" font-size="12.5" font-weight="700" fill="' + (how === "none" ? "#12324a" : "#fff") + '" font-family="system-ui,sans-serif">' + n + "</text>";
+    }
+    var nbox = "";
+    if (none.length) {
+      var perRow = Math.min(none.length, 6), bw = Math.max(150, perRow * 26 + 16), bh = 38 + Math.ceil(none.length / perRow) * 26, nb = corner(["bl", "br", "tl", "tr"], bw, bh);
+      nbox = '<g transform="translate(' + nb.x.toFixed(1) + " " + nb.y.toFixed(1) + ')"><rect width="' + bw + '" height="' + bh + '" rx="3" fill="#fff" fill-opacity=".93" stroke="#12324a" stroke-width=".8"/>' +
+        '<text x="8" y="15" font-size="10" font-weight="700" fill="#12324a" font-family="system-ui,sans-serif">Not tied to one place</text>' +
+        '<text x="8" y="27" font-size="9" fill="#55616b" font-family="system-ui,sans-serif">national, or several areas</text>' +
+        none.map(function (e, i) { return badge(8 + R + (i % perRow) * 26, 38 + R + Math.floor(i / perRow) * 26 - 4, e.n, "none"); }).join("") + "</g>";
+    }
+    evs.forEach(function (e) {
+      if (e.how === "none" || e.lat == null || e.lon == null) return;
+      var x0 = v.x(e.lon), y0 = v.y(e.lat), x = x0, y = y0, RR = e.how === "area" ? R + 3 : R;
+      function free(px, py) { return px > RR && px < W - RR && py > RR && py < H - RR && placed.every(function (p) { return (p[0] - px) * (p[0] - px) + (p[1] - py) * (p[1] - py) >= (RR + p[2] + 3) * (RR + p[2] + 3); }) &&
+        boxes.every(function (o) { return px + RR < o[0] || px - RR > o[2] || py + RR < o[1] || py - RR > o[3]; }); }
       if (!free(x, y)) {
-        found: for (var rad = 2 * R + 4; rad <= 8 * R; rad += R) for (var a = 0; a < 12; a++) {
-          var ang = -Math.PI / 2 + a * Math.PI / 6, px = x0 + rad * Math.cos(ang), py = y0 + rad * Math.sin(ang);
+        found: for (var rad = 2 * R + 4; rad <= 16 * R; rad += R) for (var a = 0; a < 16; a++) {
+          var ang = -Math.PI / 2 + a * Math.PI / 8, px = x0 + rad * Math.cos(ang), py = y0 + rad * Math.sin(ang);
           if (free(px, py)) { x = px; y = py; break found; }
         }
       }
-      placed.push([x, y]); boxes.push([x - R, y - R, x + R, y + R]);
-      nums += (x !== x0 || y !== y0 ? '<line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#12324a" stroke-width="1.2"/><circle cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="2.2" fill="#12324a"/>' : "") +
-        '<g><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="#12324a" stroke="#fff" stroke-width="1.8"/><text x="' + x.toFixed(1) + '" y="' + (y + 4.3).toFixed(1) + '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">' + (i + 1) + "</text></g>";
+      placed.push([x, y, RR]); boxes.push([x - RR, y - RR, x + RR, y + RR]);
+      lines += (x !== x0 || y !== y0 ? '<line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#12324a" stroke-width="1.1"/><circle cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="2.2" fill="#12324a"/>' : "");
+      nums += "<g>" + badge(x, y, e.n, e.how) + "</g>";
     });
     /* labels, most useful first, each only where it does not cover another label, a number or the map furniture:
        places named in the records, then provinces (those with records first), then neighbouring countries */
-    function tw(s, fs) { return s.length * fs * 0.55; }
+    function tw(s, fs) { return s.length * fs * 0.6; }
     function fits(b) {
       if (b[0] < 3 || b[1] < 3 || b[2] > W - 3 || b[3] > H - 3) return false;
       return boxes.every(function (o) { return b[2] < o[0] || b[0] > o[2] || b[3] < o[1] || b[1] > o[3]; });
@@ -322,8 +369,8 @@
       }
     });
     return { svg: '<svg class="tlrmap" viewBox="0 0 ' + W.toFixed(0) + " " + H.toFixed(0) + '" role="img" aria-label="Map of ' + esc(cname()) + (zoomed ? ", zoomed to where the records are," : "") + ' with the report\'s records">' +
-      '<g font-family="system-ui,sans-serif">' + paths + rlines + border + nbrs + dots + provs + towns + nums + "</g>" + inset + scale + north + "</svg>",
-      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length, zoomed: zoomed, provinces: !!rlines, towns: !!towns, scaleKm: sk };
+      '<g font-family="system-ui,sans-serif">' + paths + rlines + border + nbrs + dots + provs + towns + lines + nums + "</g>" + inset + scale + north + nbox + "</svg>",
+      mapped: pts.length - out, outside: out, unmapped: recs.length - pts.length, zoomed: zoomed, provinces: !!rlines, towns: !!towns, scaleKm: sk, obs: pts.some(function (r) { return r.type === "observation"; }) };
   }
   function eachPt(g, fn) {
     if (!g) return;
@@ -419,16 +466,6 @@
       })
       .sort(function (a, b) { return a.from - b.from; });
   }
-  function noteHtml(e, i) {
-    var c = e.c, r = c.r, u = safeUrl(r.url), st = STATUS[r.type] || ["Reported", "not verified"];
-    var srcs = []; c.recs.forEach(function (x) { if (srcs.indexOf(x.src.name) < 0) srcs.push(x.src.name); });
-    return '<div class="tlrev sv' + (e.sev || 1) + '"><p><span class="n">' + (i + 1) + "</span><b>" +
-      (u && !c.many ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" style="color:inherit">' + esc(e.title) + "</a>" : esc(e.title)) + "</b></p>" +
-      '<p class="bm">' + esc(stamp(r.__tlw)) + " · " + (c.many ? c.recs.length + " records from " : "one report from ") + esc(srcs.slice(0, 4).join(", ")) + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "") +
-      ' · <span class="st' + (r.type === "claim" ? " cl" : "") + '">' + esc(st[0]) + "</span>" + esc(st[1]) + "</p>" +
-      (c.many ? '<p class="bm">' + esc(c.recs.slice(0, 4).map(function (x) { return x.title; }).join("; ")) + (c.recs.length > 4 ? "; and " + (c.recs.length - 4) + " more" : "") + "</p>" : "") +
-      '<p class="bm"><b>Why listed:</b> ' + esc(c.why.join(" · ")) + "</p></div>";
-  }
   var sumState = 0, sumWait = [];
   function loadSummaries(cb) {
     if (window.OSAP_EVSUM || sumState === 2) return cb();
@@ -453,21 +490,6 @@
     return ' <span class="aitag" tabindex="0" title="' + (ai ? "Draft, AI-generated from the reports' headlines and summaries, not analyst-approved. Statements are what the sources said, not confirmed facts." :
       "Automatic extract by fixed rules (no AI), not analyst-approved.") + '">' + (ai ? "AI generated" : "Automatic") + "</span>";
   }
-  function evHtml(e, i) {
-    var s = summaryFor(e), srcs = [];
-    e.reports.forEach(function (p) { if (srcs.indexOf(p.source) < 0) srcs.push(p.source); });
-    /* a report with only a date is placed at 1200Z by the page; show those ends as the date alone */
-    var at = function (ms) { return ms % 864e5 === 432e5 ? fmtShort(new Date(ms).toISOString().slice(0, 10)) : T().dualT(ms, { date: true }); };
-    var span = at(e.from) + (e.to - e.from > 36e5 ? " to " + at(e.to) : "");
-    var obs = e.reports.every(function (p) { return p.status === "Observed"; });
-    var body = s ? "<p>" + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</p>" +
-      (s.differ && s.differ.length ? '<p class="bm"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return esc(String(p.text || "").replace(/\s*\[\d+\]/g, "")); }).join(" ") + "</p>" : "")
-      : "";
-    return '<div class="tlrev sv' + (e.sev || 1) + '"><p><span class="n">' + (i + 1) + "</span><b>" + esc(e.title) + "</b></p>" +
-      '<p class="bm">' + esc(span) + " · " + e.reports.length + " reports from " + srcs.length + " source" + (srcs.length === 1 ? "" : "s") + ": " + esc(srcs.slice(0, 6).join(", ")) + (srcs.length > 6 ? " and " + (srcs.length - 6) + " more" : "") +
-      (e.crossBorder ? " · also reported across the border" : "") + ' · <span class="st' + (obs ? " ob" : "") + '">' + (obs ? "Observed" : "Reported") + "</span>" + (obs ? "not reviewed" : "not verified") + "</p>" + body + "</div>";
-  }
-
   /* ---------- the report ---------- */
   var OPT = null, el = null, fpJobs = [];
   function logoSrc() { var i = document.querySelector(".brand .logo"); return i ? i.getAttribute("src") : "assets/logo.png"; }
@@ -478,54 +500,151 @@
     var a = o.from || (recs[0] && recs[0].__tlw.day), b = o.to || (recs.length && recs[recs.length - 1].__tlw.day);
     return a && b ? (a === b ? fmtShort(a) : fmtShort(a) + " to " + fmtShort(b)) : "No dated records";
   }
+  function stChip(type) { var st = STATUS[type] || ["Reported", "not verified"]; return '<span class="st' + (type === "observation" ? " ob" : type === "claim" ? " cl" : "") + '">' + esc(st[0] + ", " + st[1]) + "</span>"; }
   function entry(r, srcNo) {
-    var w = r.__tlw, st = STATUS[r.type] || ["Reported", "not verified"], u = safeUrl(r.url);
+    var w = r.__tlw, u = safeUrl(r.url);
     var tm = w.timed ? T().dualT(w.ms) : "Date only";
     var tmHtml = w.timed ? esc(tm.split(" / ")[0]) + (tm.indexOf(" / ") > 0 ? "<small>" + esc(tm.split(" / ")[1]) + "</small>" : "") : "<small>Date only</small>";
     var meta = [LN[r.layer] || r.layer, r.cat, [r.place, r.prov].filter(Boolean).filter(function (x, i, a) { return a.indexOf(x) === i; }).join(", ")].filter(Boolean).join(" · ");
     var fp = window.TSAP.fingerprints[r.id];
     return '<div class="tlre"><div class="tm">' + tmHtml + "</div><div>" +
-      '<div class="hd"><span class="st' + (r.type === "observation" ? " ob" : r.type === "claim" ? " cl" : "") + '" title="' + esc(st[0] + ", " + st[1]) + '">' + esc(st[0]) + "</span>" +
-      (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(r.title) + "</a>" : esc(r.title)) + "</div>" +
+      '<div class="hd">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(r.title) + "</a>" : esc(r.title)) + "</div>" +
       (meta ? '<div class="mt">' + esc(meta) + "</div>" : "") +
-      '<div class="mt">' + esc(st[0] + ", " + st[1]) + " · Source [" + srcNo + "] " + esc(r.src.name) + (u ? " · " + esc(host(u)) : "") + "</div>" +
+      '<div class="mt">' + stChip(r.type) + " Source [" + srcNo + "] " + esc(r.src.name) + (u ? " · " + esc(host(u)) : "") + "</div>" +
       '<div class="fp">SHA-256 <span data-tlfp="' + esc(r.id) + '">' + esc(fp || "computing…") + "</span></div></div></div>";
+  }
+
+  /* ---------- key events, one list in date order: those reported by two or more sources and the rule-picked single
+     records together, numbered 1, 2, 3 … as on the map. Each gets a map position:
+     "exact"  the source's own coordinates;
+     "area"   no coordinates, but the records name provinces (or a place mapped elsewhere in the report): placed at the
+              centre of those provinces and drawn with a ring, marked approximate;
+     "none"   national or unplaced (talks, statements, meetings abroad): listed in a box on the map instead. ---------- */
+  function reEsc(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function locate(e, recs) {
+    var r0 = e.recs[0] || {};
+    function short(x) { return String(x || "").split(/[;(]/)[0].replace(/\s+/g, " ").trim(); }
+    if (e.lat != null && e.lon != null && isFinite(e.lat) && isFinite(e.lon)) {
+      var lr = e.recs.filter(function (x) { return x.lat != null; })[0] || r0;
+      e.how = "exact"; e.where = [short(lr.place), short(lr.prov)].filter(Boolean).filter(function (x, i, a) { return a.indexOf(x) === i; }).join(", ");
+      return;
+    }
+    var regs = regions().filter(function (r) { return r[2] != null && r[0]; });
+    function match(txt) {
+      if (!txt) return [];
+      return regs.filter(function (r) { return new RegExp("(^|[^A-Za-z])" + reEsc(r[0]) + "([^A-Za-z]|$)", "i").test(txt); });
+    }
+    /* the province field first, then the place, then the headline: "arrested in Bangkok (case: Pattani)" stays in Pattani */
+    var fields = [e.recs.map(function (x) { return x.prov || ""; }).join(" , "), e.recs.map(function (x) { return x.place || ""; }).join(" , "), e.title], hit = [];
+    for (var i = 0; i < fields.length && !hit.length; i++) hit = match(fields[i]);
+    if (hit.length && hit.length <= 4) {
+      e.lat = hit.reduce(function (a, r) { return a + r[2]; }, 0) / hit.length; e.lon = hit.reduce(function (a, r) { return a + r[3]; }, 0) / hit.length;
+      e.how = "area"; e.where = hit.map(function (r) { return r[0]; }).join(", "); return;
+    }
+    /* a town another record in the report has coordinates for, named in this headline */
+    var tl = String(e.title || ""), town = null;
+    recs.forEach(function (r) {
+      if (town || r.lat == null) return;
+      var n = placeName(r.place);
+      if (n && n.length >= 5 && new RegExp("(^|[^A-Za-z])" + reEsc(n) + "([^A-Za-z]|$)", "i").test(tl)) town = { n: n, lat: +r.lat, lon: +r.lon };
+    });
+    if (town) { e.lat = town.lat; e.lon = town.lon; e.how = "area"; e.where = town.n; return; }
+    e.how = "none"; e.lat = e.lon = null; e.where = short(r0.place) || "";
+  }
+  function keyEvents(recs, evs, nts) {
+    var byKey = {}; recs.forEach(function (r) { if (r.__rk) byKey[r.__rk] = r; });
+    var list = evs.map(function (e) {
+      return { g: e, title: e.title, from: e.from, to: e.to, sev: e.sev || 1, lat: e.lat, lon: e.lon, recs: e.reports.map(function (p) { return byKey[p.key]; }).filter(Boolean) };
+    }).concat(nts.map(function (e) { return { c: e.c, title: e.title, from: e.from, to: e.from, sev: e.sev || 1, lat: e.lat, lon: e.lon, recs: e.c.recs }; }));
+    list.sort(function (a, b) { return a.from - b.from; });
+    list.forEach(function (e, i) { e.n = i + 1; locate(e, recs); });
+    return list;
+  }
+  function kbHtml(e) { return '<span class="kb' + (e.how === "area" ? " ap" : e.how === "none" ? " no" : "") + '" title="' + (e.how === "area" ? "Placed at the province centre (approximate)" : e.how === "none" ? "Not tied to one place: listed in the box on the map" : "Placed where the source puts it") + '">' + e.n + "</span>"; }
+  function whenCell(e) {
+    var lead = e.c ? e.c.r : e.recs[0], w = lead && lead.__tlw;
+    var ms = e.from, dateOnly = e.c ? !(w && w.timed) : ms % 864e5 === 432e5;
+    var day = new Date(ms).toISOString().slice(0, 10), tm = dateOnly ? "" : T().dualT(ms);
+    var html = esc(fmtShort(day)) + (tm ? '<br><small>' + esc(tm.split(" / ")[0]) + (tm.indexOf(" / ") > 0 ? " · " + esc(tm.split(" / ")[1]) : "") + "</small>" : "");
+    if (e.g && e.to - e.from > 864e5) html += '<br><small>to ' + esc(fmtShort(new Date(e.to).toISOString().slice(0, 10))) + "</small>";
+    return html;
+  }
+  function rowHtml(e) {
+    var lead = e.c ? e.c.r : e.recs[0], u = lead ? safeUrl(lead.url) : "", many = e.c && e.c.many, srcs = [], meta, extra = "", why;
+    if (e.g) {
+      e.g.reports.forEach(function (p) { if (srcs.indexOf(p.source) < 0) srcs.push(p.source); });
+      if (!u && e.g.reports[0]) u = safeUrl(e.g.reports[0].url);
+      meta = e.g.reports.length + " reports from " + srcs.length + " source" + (srcs.length === 1 ? "" : "s") + ": " + srcs.slice(0, 4).join(", ") + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "") + (e.g.crossBorder ? "; also reported across the border" : "");
+      var s = summaryFor(e.g);
+      if (s) extra = '<div class="ks">' + esc(String(s.summary || "").replace(/\s*\[\d+\]/g, "")) + aiTag(s) + "</div>" +
+        (s.differ && s.differ.length ? '<div class="kw"><b>Where reports differ:</b> ' + s.differ.map(function (p) { return esc(String(p.text || "").replace(/\s*\[\d+\]/g, "")); }).join(" ") + "</div>" : "");
+      why = "reported by " + srcs.length + " sources";
+    } else {
+      e.c.recs.forEach(function (x) { if (srcs.indexOf(x.src.name) < 0) srcs.push(x.src.name); });
+      meta = (many ? e.c.recs.length + " records from " : "One report: ") + srcs.slice(0, 4).join(", ") + (srcs.length > 4 ? " and " + (srcs.length - 4) + " more" : "");
+      if (many) extra = '<div class="ks">' + esc(e.c.recs.slice(0, 4).map(function (x) { return x.title; }).join("; ")) + (e.c.recs.length > 4 ? "; and " + (e.c.recs.length - 4) + " more" : "") + "</div>";
+      why = e.c.why.join(", ");
+    }
+    var where = e.how === "exact" ? (e.where || "") : e.how === "area" ? e.where + " (shown at the centre, approximate)" : "not tied to one place" + (e.where ? " (" + e.where + ")" : "");
+    var fp = lead && !many ? '<div class="fpx">SHA-256 <span data-tlfp="' + esc(lead.id) + '">' + esc(window.TSAP.fingerprints[lead.id] || "computing…") + "</span></div>" : "";
+    var obs = e.g ? e.g.reports.every(function (p) { return p.status === "Observed"; }) : lead && lead.type === "observation";
+    return "<tr><td class=\"kn\">" + kbHtml(e) + '</td><td class="kd">' + whenCell(e) + "</td><td>" +
+      '<div class="kt">' + (u && !many ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(e.title) + "</a>" : esc(e.title)) + "</div>" +
+      '<div class="km">' + stChip(obs ? "observation" : e.c ? lead.type : "event") + " " + esc(meta) + (where ? " · <b>Where:</b> " + esc(where) : "") + "</div>" + extra +
+      '<div class="kw"><b>Why listed:</b> ' + esc(why) + "</div>" + fp + "</td></tr>";
+  }
+  /* records per month, as a small column chart; the busiest month stands out */
+  function barsSvg(recs) {
+    if (!recs.length) return "";
+    var a = recs[0].__tlw.day.slice(0, 7), b = recs[recs.length - 1].__tlw.day.slice(0, 7), months = [], c = {};
+    for (var y = +a.slice(0, 4), m = +a.slice(5, 7); ; ) { var k = y + "-" + ("0" + m).slice(-2); months.push(k); if (k >= b || months.length > 60) break; if (++m > 12) { m = 1; y++; } }
+    recs.forEach(function (r) { var k = r.__tlw.day.slice(0, 7); c[k] = (c[k] || 0) + 1; });
+    var mx = Math.max.apply(null, months.map(function (k) { return c[k] || 0; })), W = 196, H = 92, top = 14, bot = 16, ch = H - top - bot, bw = (W - 2) / months.length;
+    var peak = months.filter(function (k) { return (c[k] || 0) === mx; })[0];
+    function mname(k, yr) { return new Date(k + "-01T00:00:00Z").toLocaleDateString("en-GB", yr ? { month: "short", year: "2-digit", timeZone: "UTC" } : { month: "short", timeZone: "UTC" }); }
+    var bars = months.map(function (k, i) {
+      var h = mx ? (c[k] || 0) / mx * ch : 0;
+      return '<rect x="' + (1 + i * bw + bw * 0.12).toFixed(1) + '" y="' + (top + ch - h).toFixed(1) + '" width="' + Math.max(1, bw * 0.76).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + (k === peak ? "#8a2a22" : "#12324a") + '"><title>' + esc(mname(k, true) + ": " + (c[k] || 0)) + "</title></rect>";
+    }).join("");
+    var px = 1 + months.indexOf(peak) * bw + bw / 2;
+    return { svg: '<svg class="tlrbars" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Records per month" font-family="system-ui,sans-serif" font-size="9" fill="#55616b">' +
+      '<line x1="0" x2="' + W + '" y1="' + (top + ch + 0.5) + '" y2="' + (top + ch + 0.5) + '" stroke="#9fb0bf"/>' + bars +
+      '<text x="' + Math.min(W - 2, Math.max(2, px)).toFixed(1) + '" y="' + (top + ch - (mx ? ch : 0) - 3).toFixed(1) + '" text-anchor="' + (px < 20 ? "start" : px > W - 20 ? "end" : "middle") + '" fill="#8a2a22" font-weight="700">' + mx + "</text>" +
+      '<text x="1" y="' + (H - 3) + '">' + esc(mname(months[0], true)) + "</text>" + (months.length > 1 ? '<text x="' + (W - 1) + '" y="' + (H - 3) + '" text-anchor="end">' + esc(mname(months[months.length - 1], true)) + "</text>" : "") + "</svg>",
+      peak: peak, peakN: mx, mean: recs.length / months.length, label: mname(peak, true) };
   }
   /* the map's key, beside it: what each mark means, drawn with the same marks */
   function legendHtml(m, keyEv) {
-    function ic(svg) { return '<svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true">' + svg + "</svg>"; }
-    var rows = [
-      [ic('<circle cx="8" cy="7" r="4" fill="#b3261e" fill-opacity=".55" stroke="#b3261e"/>'), "Sourced report"],
-      [ic('<circle cx="8" cy="7" r="4" fill="#8a5a00" fill-opacity=".55" stroke="#8a5a00" stroke-dasharray="2 1.5"/>'), "Official statement"],
-      [ic('<circle cx="8" cy="7" r="4" fill="none" stroke="#1f5f8b"/>'), "Instrument reading"],
-      [ic('<circle cx="2.6" cy="8" r="2" fill="#777"/><circle cx="7.4" cy="8" r="2.7" fill="#777"/><circle cx="12.8" cy="8" r="3.3" fill="#777"/>'), "Larger dot: higher severity"]
-    ];
-    if (keyEv.length) rows.push([ic('<circle cx="8" cy="7" r="6.4" fill="#12324a"/><text x="8" y="10" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">1</text>'), "Key event, numbered as below"]);
-    if (m.towns) rows.push([ic('<rect x="5.8" y="4.8" width="4.4" height="4.4" fill="#1d2a35"/>'), "Place named in the records"]);
-    rows.push([ic('<path d="M1 7H15" stroke="#12324a" stroke-width="1.4"/>'), "National border"]);
-    if (m.provinces) rows.push([ic('<path d="M1 7H15" stroke="#9fb0bf" stroke-width="1" stroke-dasharray="3 2"/>'), "Province or state border"]);
-    rows.push([ic('<rect x="1" y="2" width="14" height="10" fill="#e3e8ec" stroke="#9aa6b0" stroke-width=".6"/>'), "Neighbouring country"]);
-    if (m.zoomed) rows.push([ic('<rect x="2" y="2.5" width="12" height="9" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.4"/>'), "Inset: area this map shows"]);
-    return '<h4>Legend</h4><ul class="tlrleg">' + rows.map(function (r) { return "<li>" + r[0] + "<span>" + r[1] + "</span></li>"; }).join("") + "</ul>" +
-      '<p class="bm">Scale bar and north arrow are on the map.</p>';
+    function ic(svg) { return '<svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true">' + svg + "</svg>"; }
+    function kb(how) {
+      return (how === "area" ? '<circle cx="9" cy="8" r="7.4" fill="#fff" stroke="#12324a" stroke-width="1.1"/>' : "") +
+        '<circle cx="9" cy="8" r="5.6" fill="' + (how === "none" ? "#fff" : "#12324a") + '" stroke="#12324a" stroke-width="1.1"' + (how === "none" ? ' stroke-dasharray="2 1.4"' : "") + "/>" +
+        '<text x="9" y="11" text-anchor="middle" font-size="7.5" font-weight="700" fill="' + (how === "none" ? "#12324a" : "#fff") + '" font-family="system-ui,sans-serif">1</text>';
+    }
+    var hows = {}; keyEv.forEach(function (e) { hows[e.how] = 1; });
+    var rows = [];
+    if (hows.exact) rows.push([ic(kb("exact")), "Key event (Table 1)"]);
+    if (hows.area) rows.push([ic(kb("area")), "Key event at province centre, approximate"]);
+    if (hows.none) rows.push([ic(kb("none")), "Key event not tied to one place"]);
+    rows.push([ic('<circle cx="9" cy="8" r="4" fill="#b3261e" fill-opacity=".55" stroke="#b3261e"/>'), "Sourced report"]);
+    rows.push([ic('<circle cx="9" cy="8" r="4" fill="#8a5a00" fill-opacity=".55" stroke="#8a5a00" stroke-dasharray="2 1.5"/>'), "Official statement"]);
+    if (m.obs) rows.push([ic('<circle cx="9" cy="8" r="4" fill="none" stroke="#1f5f8b"/>'), "Instrument reading"]);
+    rows.push([ic('<circle cx="3.4" cy="9" r="2" fill="#8a96a0"/><circle cx="8.4" cy="9" r="2.7" fill="#8a96a0"/><circle cx="14" cy="9" r="3.3" fill="#8a96a0"/>'), "Larger dot, higher severity"]);
+    if (m.towns) rows.push([ic('<rect x="6.8" y="5.8" width="4.4" height="4.4" fill="#1d2a35"/>'), "Place named in the records"]);
+    rows.push([ic('<path d="M1 8H17" stroke="#12324a" stroke-width="1.4"/>'), "National border"]);
+    if (m.provinces) rows.push([ic('<path d="M1 8H17" stroke="#9fb0bf" stroke-width="1" stroke-dasharray="3 2"/>'), "Province border"]);
+    if (m.zoomed) rows.push([ic('<rect x="2" y="3" width="14" height="10" fill="#b3261e" fill-opacity=".15" stroke="#b3261e" stroke-width="1.4"/>'), "Inset: area shown"]);
+    return '<div><h4>Legend</h4><ul class="tlrleg">' + rows.map(function (r) { return "<li>" + r[0] + "<span>" + r[1] + "</span></li>"; }).join("") + "</ul></div>";
   }
-  /* a short index of the numbered markers, so the map can be read on its own */
-  function keyIndex(evs, nts) {
-    var items = evs.map(function (e) { return [fmtShort(new Date(e.from).toISOString().slice(0, 10)), e.title]; })
-      .concat(nts.map(function (e) { return [fmtShort(e.c.r.__tlw.day), e.title]; }));
-    if (!items.length) return "";
-    return '<h4>Key events on the map</h4><ol class="tlrki">' + items.map(function (x, i) {
-      var t = String(x[1] || ""); if (t.length > 90) t = t.slice(0, 88).replace(/\s+\S*$/, "") + "…";
-      return '<li><span class="n">' + (i + 1) + "</span><b>" + esc(x[0]) + "</b> " + esc(t) + "</li>";
-    }).join("") + "</ol>";
-  }
+  function topN(o, n) { return Object.keys(o).sort(function (a, b) { return o[b] - o[a] || a.localeCompare(b); }).slice(0, n).map(function (k) { return [k, o[k]]; }); }
+  function list3(t) { return t.map(function (x, i) { return (i && i === t.length - 1 ? "and " : "") + x[0] + " (" + x[1] + ")"; }).join(t.length > 2 ? ", " : " "); }
   var LN = {};
   function stamp(w) { return w.timed ? T().dualT(w.ms, { date: true }) : fmtShort(w.day) + " (date only)"; }
   function build() {
     LN = layerNames();
     var o = OPT, all = pick(o), recs = all.length > MAX_ROWS ? all.slice(all.length - MAX_ROWS) : all;
     var now = Date.now(), evs = recs.length ? eventsFor(recs) : [], nts = recs.length ? notable(recs, evs, KEY_EVENTS - evs.length) : [];
-    var keyEv = evs.concat(nts), m = recs.length ? mapSvg(recs, keyEv) : null;
+    var keyEv = recs.length ? keyEvents(recs, evs, nts) : [], m = recs.length ? mapSvg(recs, keyEv) : null;
     /* sources, numbered in order of first appearance */
     var srcs = [], sno = {};
     recs.forEach(function (r) { var k = r.src.id || r.src.name; if (!sno[k]) { srcs.push({ s: r.src, n: 0, urls: {} }); sno[k] = srcs.length; } var x = srcs[sno[k] - 1]; x.n++; var h = host(safeUrl(r.url)); if (h) x.urls[h] = 1; });
@@ -538,41 +657,59 @@
       '<label for="tlr-layer">Layer</label> <select id="tlr-layer" class="mini">' + layerOpts + "</select> " +
       '<label for="tlr-from">From</label> <input id="tlr-from" class="mini" type="date" value="' + esc(o.from || "") + '"> <label for="tlr-to">To</label> <input id="tlr-to" class="mini" type="date" value="' + esc(o.to || "") + '">' +
       ' <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>';
-    var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Timeline report</div><h2>' + esc(cname()) +
-      (o.layer && LN[o.layer] ? " · " + esc(LN[o.layer]) : "") + "</h2><div>" + esc(periodText(recs, o)) + "</div></div>" +
-      '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header>";
+    var subject = esc(cname()) + (o.layer && LN[o.layer] ? ": " + esc(LN[o.layer]) : "");
+    var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Timeline report</div><h2>' + subject + "</h2>" +
+      '<div class="tlrsubt">' + esc(periodText(recs, o)) + "</div></div>" +
+      '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header><div class=\"tlrrule\"></div>";
     if (!recs.length) return bar + '<article class="bpage tlr">' + head + '<p class="bwarn">There are no dated records for this area in the chosen dates. Widen the dates or pick another layer.</p></article>';
-    var first = recs[0].__tlw, last = recs[recs.length - 1].__tlw;
+    var first = recs[0].__tlw, last = recs[recs.length - 1].__tlw, bars = barsSvg(recs);
+    /* summary points: counts by fixed rules, no AI */
+    var perProv = {}, perCat = {};
+    recs.forEach(function (r) {
+      String(r.prov || "").split(/,|\band\b/).forEach(function (p) { p = p.replace(/\(.*$/, "").replace(/\s+(province|state|region|division)$/i, "").trim(); if (p && p.length < 30) perProv[p] = (perProv[p] || 0) + 1; });
+      if (r.cat) perCat[r.cat] = (perCat[r.cat] || 0) + 1;
+    });
+    var nArea = keyEv.filter(function (e) { return e.how === "area"; }).length, nNone = keyEv.filter(function (e) { return e.how === "none"; }).length;
+    var pts = [
+      recs.length + " dated record" + (recs.length === 1 ? "" : "s") + " from " + srcs.length + " source" + (srcs.length === 1 ? "" : "s") + ", " + fmtShort(first.day) + " to " + fmtShort(last.day) + ": " +
+        kinds.event + " sourced report" + (kinds.event === 1 ? "" : "s") + ", " + kinds.claim + " official statement" + (kinds.claim === 1 ? "" : "s") + (kinds.observation ? ", " + kinds.observation + " instrument reading" + (kinds.observation === 1 ? "" : "s") : "") + "."
+    ];
+    if (bars && bars.peakN > 1) pts.push("Busiest month: " + new Date(bars.peak + "-01T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + ", with " + bars.peakN + " records (the monthly average is " + (Math.round(bars.mean * 10) / 10) + ").");
+    var tp = topN(perProv, 3); if (tp.length) pts.push("Most often named province" + (tp.length > 1 ? "s" : "") + ": " + list3(tp) + ".");
+    var tc = topN(perCat, 3); if (tc.length) pts.push("Commonest kind" + (tc.length > 1 ? "s" : "") + " of record: " + list3(tc) + ".");
+    if (keyEv.length) pts.push(keyEv.length + " key event" + (keyEv.length === 1 ? " is" : "s are") + " set out in Table 1" + (evs.length ? ", " + evs.length + " of them reported by two or more sources" : ", each a single report picked by fixed rules (no two sources reported the same incident)") + "." +
+      (nArea || nNone ? " On the map, " + [nArea ? nArea + " " + (nArea === 1 ? "is" : "are") + " placed at a province centre" : "", nNone ? nNone + " " + (nNone === 1 ? "is" : "are") + " not tied to one place and listed in a box" : ""].filter(Boolean).join(" and ") + "." : ""));
     var html = bar + '<article class="bpage tlr">' + head +
-      '<div class="tlrmeta"><div><b>' + recs.length + "</b><span>records" + (all.length > recs.length ? " (latest " + MAX_ROWS + " of " + all.length + ")" : "") + "</span></div>" +
+      '<h3 class="tls" style="margin-top:4px"><span class="no">1</span>Summary <span class="aitag" tabindex="0" title="Counts by fixed rules from the records below (no AI), not analyst-approved.">Automatic</span></h3>' +
+      '<div class="tlrglance"><div><b>' + recs.length + "</b><span>records" + (all.length > recs.length ? " (latest " + MAX_ROWS + " of " + all.length + ")" : "") + "</span></div>" +
       "<div><b>" + order.length + "</b><span>day" + (order.length === 1 ? "" : "s") + " with reporting</span></div>" +
       "<div><b>" + srcs.length + "</b><span>source" + (srcs.length === 1 ? "" : "s") + "</span></div>" +
-      "<div><b>" + keyEv.length + "</b><span>key event" + (keyEv.length === 1 ? "" : "s") + " shown</span></div></div>" +
-      '<p class="bm">First record ' + esc(stamp(first)) + "; last " + esc(stamp(last)) + ". " +
-      kinds.event + " sourced reports, " + kinds.claim + " official statements, " + kinds.observation + " instrument readings.</p>" +
-      '<div class="tlrnote"><p><b>Nothing in this report is confirmed.</b> "Reported" means a named source said it; "Observed" means an instrument reading. A credible source can still be wrong. Every entry links to its source and carries a SHA-256 fingerprint of the record as OSAP holds it.</p></div>' +
-      '<section class="tlrmapw"><h3>Where</h3><div class="tlrfig">' + m.svg + '<aside class="tlrside">' + legendHtml(m, keyEv) + keyIndex(evs, nts) + "</aside></div>" +
-      '<p class="bm">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") +
+      "<div><b>" + keyEv.length + "</b><span>key event" + (keyEv.length === 1 ? "" : "s") + "</span></div></div>" +
+      '<ul class="tlrpts">' + pts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
+      '<p class="tlrcav"><b>Nothing in this report is confirmed.</b> "Reported" means a named source said it; "Observed" means an instrument reading. A credible source can still be wrong. Every entry links to its source and carries a SHA-256 fingerprint of the record as OSAP holds it.</p>' +
+      '<section class="tlrmapw"><h3 class="tls"><span class="no">2</span>Where</h3>' +
+      '<p class="tlrfigc"><b>Figure 1.</b> Records and key events, ' + esc(periodText(recs, o)) + "</p>" +
+      '<div class="tlrfig">' + m.svg + '<aside class="tlrside">' + legendHtml(m, keyEv) +
+      (bars ? '<div><h4>Figure 2. Records per month</h4>' + bars.svg + "</div>" : "") + "</aside></div>" +
+      '<p class="tlrsrcn">' + m.mapped + " records mapped" + (m.unmapped ? "; " + m.unmapped + " have no map position" : "") + (m.outside ? "; " + m.outside + " fall outside this map" : "") + ". " + (m.zoomed ? "Zoomed to where the records are; the inset shows where that is in " + esc(cname()) + ". " : "") +
       "Positions are as precise as each source allows. Borders and names: Natural Earth (public domain).</p></section>" +
-      '<section class="tlrkev"><h3>Key events ' + '<span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
-      (evs.length || !nts.length ? "" : '<p class="bm">No two sources reported the same incident in these dates, so these are single reports picked by fixed rules.</p>') +
-      (keyEv.length ? '<div class="tlrcols">' +
-        (evs.length ? (nts.length ? '<h4 class="tlrsub">Reported by two or more sources</h4>' : "") + evs.map(evHtml).join("") : "") +
-        (nts.length ? (evs.length ? '<h4 class="tlrsub">Other notable records</h4>' : "") + nts.map(function (e, i) { return noteHtml(e, evs.length + i); }).join("") : "") + "</div>"
+      '<section class="tlrkev"><h3 class="tls"><span class="no">3</span>Key events <span class="aitag" tabindex="0" title="Picked automatically by fixed rules, not reviewed by an analyst: first incidents reported by two or more sources (grouped by time, place and shared wording), then single records scored by kind (ceasefire or agreement, strike, clash, closure), reported deaths or injuries, escalation wording, severity and surges in the weekly count. Turning points come first, then the strongest record in each part of the period.">Automatic</span></h3>' +
+      (keyEv.length ? '<p class="bm">Picked by fixed rules, not by AI or an analyst: incidents reported by two or more sources first, then single records scored by kind (agreement, strike, clash, closure), casualties, escalation wording and surges in reporting.</p>' : "") +
+      (keyEv.length ? '<table class="tlrkt"><caption><b>Table 1.</b> Key events in date order; numbers match Figure 1</caption><colgroup><col class="ckn"><col class="ckd"><col></colgroup><thead><tr><th>No.</th><th>Date</th><th>Event</th></tr></thead><tbody>' + keyEv.map(rowHtml).join("") + "</tbody></table>"
         : '<p class="bm">No record in these dates meets the rules for a key event (a clash, strike, closure, agreement, casualties or a surge in reporting).</p>') + "</section>" +
-      "<h3>Chronology</h3>" + '<p class="bm">Oldest first. Days are UTC (Zulu) dates; each time is shown in Zulu and local time.</p>' +
+      '<section class="tlrann"><h3 class="tls"><span class="no">A</span>Annex A. Chronology</h3>' + '<p class="bm">Every record, oldest first. Days are UTC (Zulu) dates; each time is shown in Zulu and local time.</p>' +
       order.map(function (d) {
-        return '<section class="tlrday"><h3 class="tlrd">' + esc(fmtDay(d)) + " <span>" + days[d].length + " record" + (days[d].length === 1 ? "" : "s") + "</span></h3>" +
+        return '<section class="tlrday"><h4 class="tlrd">' + esc(fmtDay(d)) + " <span>" + days[d].length + " record" + (days[d].length === 1 ? "" : "s") + "</span></h4>" +
           days[d].map(function (r) { return entry(r, sno[r.src.id || r.src.name]); }).join("") + "</section>";
-      }).join("") +
-      '<section class="tlrsrcs"><h3>Sources</h3><ol class="tlrsrc">' + srcs.map(function (x) {
+      }).join("") + "</section>" +
+      '<section class="tlrsrcs"><h3 class="tls"><span class="no">B</span>Annex B. Sources</h3><ol class="tlrsrc">' + srcs.map(function (x) {
         var u = safeUrl(x.s.url), hs = Object.keys(x.urls).slice(0, 3);
         return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.s.name) + "</a>" : esc(x.s.name)) +
           (x.s.kind ? ", " + esc(x.s.kind) : "") + " · " + x.n + " record" + (x.n === 1 ? "" : "s") + (hs.length ? " · " + esc(hs.join(", ")) : "") +
           (x.s.proposed ? " · reliability " + esc(x.s.proposed) + "?" : "") + "</li>";
       }).join("") + "</ol>" +
       '<p class="bm">Reliability letters with a question mark are proposed by the build from the kind of source; none has been set by an analyst, and a reliable source can still be wrong.</p>' +
-      '<footer>Report fingerprint (SHA-256 over the ' + recs.length + ' record fingerprints above, in order): <span class="mg" id="tlr-fp">computing…</span><br>' +
+      '<footer class="tlrf">Report fingerprint (SHA-256 over the ' + recs.length + ' record fingerprints in Annex A, in order): <span class="mg" id="tlr-fp">computing…</span><br>' +
       "Built in the browser from what OSAP holds for " + esc(cname()) + "; nothing was changed. Sources are linked, not stored. Event summaries and groupings are marked AI generated or Automatic and are drafts, not analyst-approved.</footer></section>" +
       "</article>";
     /* fingerprints: fill in as they are computed, then the report fingerprint over all of them */
@@ -582,7 +719,7 @@
     });
     Promise.all(fpJobs).then(function (hs) {
       if (!el || el.hidden) return;
-      recs.forEach(function (r, i) { var s = el.querySelector('[data-tlfp="' + r.id + '"]'); if (s) s.textContent = hs[i]; });
+      recs.forEach(function (r, i) { Array.prototype.forEach.call(el.querySelectorAll('[data-tlfp="' + r.id + '"]'), function (s) { s.textContent = hs[i]; }); });
       if (!(window.crypto && crypto.subtle)) return;
       return crypto.subtle.digest("SHA-256", new TextEncoder().encode(hs.join("\n"))).then(function (b) {
         var f = document.getElementById("tlr-fp"); if (f) f.textContent = Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
