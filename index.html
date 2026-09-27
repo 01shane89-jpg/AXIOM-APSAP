@@ -521,6 +521,8 @@ html.mapfull body{overflow:hidden}
 .rellink{font-size:12px;white-space:nowrap;padding-top:8px}
 .rvfresh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px}
 .rvfresh .refresh{padding:4px 9px;min-height:28px}
+.rvasof{background:none;border:0;padding:0;font:inherit;cursor:pointer;text-decoration:underline dotted;color:var(--muted)}
+.rvfeeds{flex-basis:100%;min-width:0;font-size:12px;max-height:40vh;overflow-y:auto;overflow-x:hidden;white-space:normal}.rvft td{white-space:normal;overflow-wrap:anywhere}.rvft{width:100%}.rvft tr{display:block;padding:3px 0;border-bottom:1px solid var(--line)}.rvft td{display:inline;padding:0 6px 0 0}.rvft td:first-child{font-weight:600}
 html.switching .rail{opacity:.55;transition:opacity .1s}
 html.switching #map::after{content:"";position:absolute;left:0;top:0;height:3px;width:40%;background:var(--accent);z-index:1000;animation:swbar .8s linear infinite}
 @keyframes swbar{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
@@ -567,7 +569,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <div class="shell">
   <div id="map"></div>
   <section id="rv" class="rv" aria-label="Reports beside the map" hidden>
-    <div class="rvhead"><b id="rv-n">Reports</b><span class="rvfresh"><span id="rv-asof" class="obs"></span><button type="button" class="refresh" id="rv-refresh" title="Load the newest published data">Refresh</button></span><span class="rvseg" role="group" aria-label="Layout"><button type="button" data-rv-mode="map">Map</button><button type="button" data-rv-mode="split">Split</button><button type="button" data-rv-mode="list">List</button></span></div>
+    <div class="rvhead"><b id="rv-n">Reports</b><span class="rvfresh"><button type="button" id="rv-asof" class="obs rvasof" aria-expanded="false" title="Show each feed and when it was read"></button><button type="button" class="refresh" id="rv-refresh" title="Fetch every feed fresh: live from the sources that allow it, the newest snapshot for the rest">Refresh now</button></span><div id="rv-feeds" class="rvfeeds" hidden></div><span class="rvseg" role="group" aria-label="Layout"><button type="button" data-rv-mode="map">Map</button><button type="button" data-rv-mode="split">Split</button><button type="button" data-rv-mode="list">List</button></span></div>
     <div class="sec rvpkg" id="rv-pkg" hidden></div>
     <div class="rvlist" id="rv-list"></div>
   </section>
@@ -4361,8 +4363,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         HZ.aq = pts.map(function (p, i) { var c = (arr[i] || {}).current || {}; return { name: p.name, lat: p.lat, lon: p.lon, time: c.time || "", us_aqi: c.us_aqi, pm2_5: c.pm2_5, pm10: c.pm10 }; });
         HZ.aqFrom = "live " + window.OSAP_TIME.dualT(Date.now(), { date: true }); HZ.aqErr = "";
       }, function (e) { HZ.aqErr = e.message; useSnapshotAQ(); })
+      , pullGdacs()
     ]).then(function () {
-      HZ.busy = false; addQuakeRecords(); render(); renderAlerts();
+      HZ.busy = false; addQuakeRecords(); addGdacsRecords(); render(); renderAlerts();
+      /* after Refresh now, show which feeds came live and which from the snapshot */
+      var fb = document.getElementById("rv-feeds"), rf = 0; try { rf = +sessionStorage.getItem("osap-refreshed") || 0; sessionStorage.removeItem("osap-refreshed"); } catch (e) {}
+      if (fb && (!fb.hidden || Date.now() - rf < 120000) && typeof feedsToggle === "function") feedsToggle(true);
       if (current === "hazards") showHazards();
       if (done) done();
     });
@@ -4403,6 +4409,23 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (window.TSAP) window.TSAP.records = R;
   }
   addGdacsRecords();
+  /* GDACS live: the event list straight from GDACS when the browser is allowed to read it; otherwise the 15-minute snapshot stays.
+     Cyclone tracks come only with the snapshot, so a live event keeps the snapshot's track for the same event. */
+  var GDACS_API = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF", GD_SNAP = window.ASAP_GDACS, GD_ERR = "";
+  function pullGdacs() {
+    return hzFetch(GDACS_API).then(function (g) {
+      var old = {}; ((GD_SNAP || {}).events || []).forEach(function (e) { old[e.id] = e; });
+      var events = (g.features || []).filter(function (f) { return (f.properties || {}).eventtype && (f.geometry || {}).type === "Point"; }).map(function (f) {
+        var p = f.properties, c = f.geometry.coordinates, id = p.eventtype + "-" + p.eventid + "-" + (p.episodeid || "");
+        var iso = [p.iso3].concat((p.affectedcountries || []).map(function (a) { return a.iso3; })).filter(function (x, i, a) { return x && a.indexOf(x) === i; });
+        return { id: id, type: p.eventtype, name: p.name || p.eventname || "", desc: p.description || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "",
+          lat: c[1], lon: c[0], iso3: iso, severity: (p.severitydata || {}).severitytext || "", url: (p.url || {}).report || "https://www.gdacs.org/",
+          current: p.iscurrent !== "false" && p.iscurrent !== false, track: (old[id] || {}).track || [] };
+      });
+      if (!events.length) throw new Error("empty list");
+      window.ASAP_GDACS = { asof: new Date().toISOString().slice(0, 16).replace("T", " ") + "Z", src: GDACS_API, events: events, live: true }; GD_ERR = "";
+    }, function (e) { GD_ERR = e.message; window.ASAP_GDACS = GD_SNAP; }).catch(function (e) { GD_ERR = e.message; window.ASAP_GDACS = GD_SNAP; });
+  }
   function gdacsHtml() {
     var g = window.ASAP_GDACS, evs = gdacsEvents().filter(function (e) { return e.current || inPeriodDate(gdDate(e.to || e.from)); });
     var col = { Red: "#c62828", Orange: "#e07b00", Green: "#3a9d4a" };
@@ -4414,7 +4437,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         '<p class="obs">' + esc([e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : "")].filter(Boolean).join(" · ")) + '</p><p class="obs"><a href="' + esc(e.url) + '" target="_blank" rel="noopener">GDACS report</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM["gd:" + i] = m;
     });
-    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
+    return '<div class="sec"><h2>Disaster alerts (GDACS)</h2><p class="obs">' + (g ? (g.live ? '<span class="badge live">LIVE</span> read from GDACS ' : '<span class="badge stale">SNAPSHOT</span> ') + esc(window.OSAP_TIME.asofT(g.asof)) + (g.live ? "" : " · every 15 min" + (GD_ERR ? " (live request " + GD_ERR + ")" : "")) : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.') + "</p>" +
       (g ? (evs.length ? '<div class="tllist">' + evs.map(function (e, i) {
         return '<button type="button" class="tlrow" data-sof="gd:' + i + '"><span class="tln"><b style="color:' + (col[e.alert] || "#888") + '">●</b> ' + esc((GD_TYPE[e.type] || [e.type])[0] + (e.name ? " " + e.name : "")) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc([e.alert ? e.alert + " alert" : "", e.severity, gdDate(e.from) + (e.to ? " to " + gdDate(e.to) : ""), e.current ? "current" : ""].filter(Boolean).join(" · ")) + "</span></span></button>";
@@ -5472,7 +5495,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   function rvAsofTxt() {
     var best = 0;
     Object.keys(window).forEach(function (k) {
-      if (!/^ASAP_/.test(k) || !window[k] || typeof window[k].asof !== "string") return;
+      if (!/^ASAP_/.test(k) || !window[k] || typeof window[k].asof !== "string" || window[k].live) return;
       var t = Date.parse(window[k].asof.replace(" ", "T").replace(/Z$/, ":00Z"));
       if (isFinite(t) && t > best && t < Date.now() + 36e5) best = t;
     });
@@ -5480,9 +5503,41 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var m = Math.max(0, Math.round((Date.now() - best) / 6e4)), ago = m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago";
     return "Data " + window.OSAP_TIME.dualT(best) + ", " + ago;
   }
+  /* Refresh now: fetch every feed file fresh (past the browser cache and the offline copy), then reload, which also asks
+     USGS, Open-Meteo and GDACS live. Feeds whose publishers do not let a browser read them come from the refresh job's
+     newest snapshot. (Starting that job from the page would need a GitHub key in the page, which a public page cannot hold.) */
   function rvRefresh() {
-    var b = document.getElementById("rv-refresh"); if (b) { b.disabled = true; b.textContent = "Refreshing…"; }
-    location.reload();
+    var b = document.getElementById("rv-refresh"); if (b) { b.disabled = true; b.textContent = "Fetching…"; }
+    var files = Array.prototype.map.call(document.querySelectorAll('script[src^="data/live/"], script[src^="data/history/"]'), function (x) { return x.getAttribute("src").split("?")[0]; });
+    var go = function () { try { sessionStorage.setItem("osap-refreshed", String(Date.now())); } catch (e) {} location.reload(); };
+    var t = setTimeout(go, 15000);
+    Promise.all(files.map(function (f) { return fetch(f + "?fresh=" + Date.now(), { cache: "no-store" }).catch(function () {}); })).then(function () { clearTimeout(t); go(); });
+  }
+  /* each feed, where it came from and when */
+  var FEEDN = { ASAP_NEWS: "Local news", ASAP_SOCIAL: "Social media", ASAP_WARN: "Weather warnings", ASAP_STORMS: "Tropical cyclones", ASAP_WXF: "Weather forecast",
+    ASAP_ADV: "U.S. travel advisory", ASAP_RW: "ReliefWeb reports", ASAP_TSU: "Tsunami bulletins", ASAP_VOLC: "Volcanoes", ASAP_IODA: "Internet outages",
+    ASAP_WHO: "WHO outbreak news", ASAP_MAR: "Maritime security", ASAP_ROADS: "Road closures", ASAP_NQ: "National quake catalogues", ASAP_EONET: "NASA EONET events",
+    ASAP_IFRC: "IFRC emergencies", ASAP_CDC: "CDC health notices", ASAP_NAVW: "Navigational warnings", ASAP_UCDP: "UCDP conflict events", ASAP_SANC: "Sanctions lists", ASAP_UNHCR: "Displacement" };
+  function feedAgo(ms) { var m = Math.max(0, Math.round((Date.now() - ms) / 6e4)); return m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; }
+  function feedsHtml() {
+    var T = window.OSAP_TIME, rows = [];
+    function row(name, live, when, note) {
+      rows.push('<tr><td>' + esc(name) + '</td><td><span class="badge ' + (live ? "live" : "stale") + '">' + (live ? "LIVE" : "SNAPSHOT") + "</span></td><td>" + esc(when) + (note ? '<span class="obs"> · ' + esc(note) + "</span>" : "") + "</td></tr>");
+    }
+    function hz(name, from, errTxt) { if (from) row(name, /^live/.test(from), from.replace(/^(live|snapshot) /, ""), errTxt && !/^live/.test(from) ? "live request " + errTxt : ""); }
+    hz("Earthquakes (USGS)", HZ.qFrom, HZ.qErr); hz("Air quality (Open-Meteo)", HZ.aqFrom, HZ.aqErr);
+    var g = window.ASAP_GDACS; if (g) row("Disaster alerts (GDACS)", !!g.live, T.asofT(g.asof), g.live ? "" : (GD_ERR ? "live request " + GD_ERR : ""));
+    Object.keys(FEEDN).forEach(function (k) {
+      var w = window[k]; if (!w || typeof w.asof !== "string") return;
+      var t = Date.parse(w.asof.replace(" ", "T").replace(/Z$/, ":00Z"));
+      row(FEEDN[k], false, T.asofT(w.asof), isFinite(t) ? feedAgo(t) : "");
+    });
+    return '<p class="obs">LIVE: read by this browser straight from the publisher just now. SNAPSHOT: the newest copy saved by the refresh job, for publishers that do not let a browser read them; the time is when the job read it.</p><table class="rvft">' + rows.join("") + "</table>";
+  }
+  function feedsToggle(open) {
+    var box = document.getElementById("rv-feeds"), a = document.getElementById("rv-asof"); if (!box) return;
+    box.hidden = !open; if (a) a.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) box.innerHTML = feedsHtml();
   }
   function rvSoon() { if (!rvT) rvT = setTimeout(rvRender, 120); }
   /* marker hover lights its card; hooks are added once per marker */
@@ -5515,6 +5570,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (e.target.closest && e.target.closest("[data-rv-more]")) { rvAll = true; rvRender(); return; }
     if (e.target.closest && e.target.closest("[data-rv-clear]")) { areaSet(null); return; }
     if (e.target.closest && e.target.closest("#rv-refresh")) { rvRefresh(); return; }
+    if (e.target.closest && e.target.closest("#rv-asof")) { feedsToggle(document.getElementById("rv-feeds").hidden); return; }
     var c = e.target.closest && e.target.closest(".rvcard");
     if (!c) return;
     var id = c.getAttribute("data-rv"), r = rvById(id);

@@ -31,6 +31,14 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (NEVER.some((r) => r.test(url.href))) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
+    if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
+      // Refresh now: wait for the network copy however long it takes, and save it as the copy for the plain address
+      e.respondWith(fetch(req.url, { cache: "no-store", credentials: "same-origin" }).then((res) => {
+        if (res.ok) { const copy = res.clone(); caches.open(SHELL).then((c) => c.put(url.origin + url.pathname, copy)); }
+        return res;
+      }).catch(() => caches.match(req, { ignoreSearch: true })));
+      return;
+    }
     // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
     const net = fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then((res) => {
       if (res.ok) { const copy = res.clone(); caches.open(SHELL).then((c) => c.put(req, copy)); }
@@ -39,7 +47,7 @@ self.addEventListener("fetch", (e) => {
     const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"));
     if (/\/data\//.test(url.pathname)) {
       // Feed files: on a slow connection, wait at most DATA_WAIT ms, then use the last saved copy so the page still opens;
-      // the network copy keeps downloading and is saved for the next open (or the Refresh button).
+      // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
       e.respondWith(Promise.race([net.catch(() => null), new Promise((r) => setTimeout(() => r(null), DATA_WAIT))])
         .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback));
       return;
