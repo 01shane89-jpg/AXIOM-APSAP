@@ -36,6 +36,8 @@
    Local means the open country's main time zone (tzAt picks the right one inside Indonesia, Australia and Mongolia). */
 (function () {
   var TZW = {"af":"Asia/Kabul\n","al":"Europe/Tirane\n","dz":"Africa/Algiers\n","ad":"Europe/Andorra\n","ao":"Africa/Luanda\n","ag":"America/Antigua\n","ar":"America/Argentina/Buenos_Aires","am":"Asia/Yerevan\n","at":"Europe/Vienna\n","az":"Asia/Baku\n","bs":"America/Nassau\n","bh":"Asia/Bahrain\n","bb":"America/Barbados\n","by":"Europe/Minsk\n","be":"Europe/Brussels\n","bz":"America/Belize\n","bj":"Africa/Porto-Novo\n","bo":"America/La_Paz\n","ba":"Europe/Sarajevo\n","bw":"Africa/Gaborone\n","br":"America/Sao_Paulo","bg":"Europe/Sofia\n","bf":"Africa/Ouagadougou\n","bi":"Africa/Bujumbura\n","cv":"Atlantic/Cape_Verde\n","cm":"Africa/Douala\n","ca":"America/Toronto","cf":"Africa/Bangui\n","td":"Africa/Ndjamena\n","cl":"America/Santiago","co":"America/Bogota\n","km":"Indian/Comoro\n","cr":"America/Costa_Rica\n","hr":"Europe/Zagreb\n","cu":"America/Havana\n","cy":"Asia/Nicosia","cz":"Europe/Prague\n","ci":"Africa/Abidjan\n","cd":"Africa/Kinshasa","dk":"Europe/Copenhagen\n","dj":"Africa/Djibouti\n","dm":"America/Dominica\n","do":"America/Santo_Domingo\n","ec":"America/Guayaquil","eg":"Africa/Cairo\n","sv":"America/El_Salvador\n","gq":"Africa/Malabo\n","er":"Africa/Asmara\n","ee":"Europe/Tallinn\n","sz":"Africa/Mbabane\n","et":"Africa/Addis_Ababa\n","fj":"Pacific/Fiji\n","fi":"Europe/Helsinki\n","fr":"Europe/Paris\n","ga":"Africa/Libreville\n","gm":"Africa/Banjul\n","ge":"Asia/Tbilisi\n","de":"Europe/Berlin","gh":"Africa/Accra\n","gr":"Europe/Athens\n","gd":"America/Grenada\n","gt":"America/Guatemala\n","gn":"Africa/Conakry\n","gw":"Africa/Bissau\n","gy":"America/Guyana\n","ht":"America/Port-au-Prince\n","hn":"America/Tegucigalpa\n","hu":"Europe/Budapest\n","is":"Atlantic/Reykjavik\n","ir":"Asia/Tehran\n","iq":"Asia/Baghdad\n","ie":"Europe/Dublin\n","il":"Asia/Jerusalem\n","it":"Europe/Rome\n","jm":"America/Jamaica\n","jo":"Asia/Amman\n","kz":"Asia/Almaty","ke":"Africa/Nairobi\n","ki":"Pacific/Tarawa","xk":"Europe/Belgrade","kw":"Asia/Kuwait\n","kg":"Asia/Bishkek\n","lv":"Europe/Riga\n","lb":"Asia/Beirut\n","ls":"Africa/Maseru\n","lr":"Africa/Monrovia\n","ly":"Africa/Tripoli\n","li":"Europe/Vaduz\n","lt":"Europe/Vilnius\n","lu":"Europe/Luxembourg\n","mg":"Indian/Antananarivo\n","mw":"Africa/Blantyre\n","ml":"Africa/Bamako\n","mt":"Europe/Malta\n","mh":"Pacific/Majuro","mr":"Africa/Nouakchott\n","mu":"Indian/Mauritius\n","mx":"America/Mexico_City","fm":"Pacific/Pohnpei","md":"Europe/Chisinau\n","mc":"Europe/Monaco\n","me":"Europe/Podgorica\n","ma":"Africa/Casablanca\n","mz":"Africa/Maputo\n","na":"Africa/Windhoek\n","nr":"Pacific/Nauru\n","nl":"Europe/Amsterdam\n","ni":"America/Managua\n","ne":"Africa/Niamey\n","ng":"Africa/Lagos\n","mk":"Europe/Skopje\n","no":"Europe/Oslo\n","om":"Asia/Muscat\n","pw":"Pacific/Palau\n","ps":"Asia/Hebron","pa":"America/Panama\n","py":"America/Asuncion\n","pe":"America/Lima\n","pl":"Europe/Warsaw\n","pt":"Europe/Lisbon","qa":"Asia/Qatar\n","cg":"Africa/Brazzaville\n","ro":"Europe/Bucharest\n","ru":"Europe/Moscow","rw":"Africa/Kigali\n","kn":"America/St_Kitts\n","lc":"America/St_Lucia\n","vc":"America/St_Vincent\n","ws":"Pacific/Apia\n","sm":"Europe/San_Marino\n","sa":"Asia/Riyadh\n","sn":"Africa/Dakar\n","rs":"Europe/Belgrade\n","sc":"Indian/Mahe\n","sl":"Africa/Freetown\n","sk":"Europe/Bratislava\n","si":"Europe/Ljubljana\n","sb":"Pacific/Guadalcanal\n","so":"Africa/Mogadishu\n","za":"Africa/Johannesburg\n","ss":"Africa/Juba\n","es":"Europe/Madrid","sd":"Africa/Khartoum\n","sr":"America/Paramaribo\n","se":"Europe/Stockholm\n","ch":"Europe/Zurich\n","sy":"Asia/Damascus\n","st":"Africa/Sao_Tome\n","tj":"Asia/Dushanbe\n","tz":"Africa/Dar_es_Salaam\n","tg":"Africa/Lome\n","to":"Pacific/Tongatapu\n","tt":"America/Port_of_Spain\n","tn":"Africa/Tunis\n","tm":"Asia/Ashgabat\n","tv":"Pacific/Funafuti\n","tr":"Europe/Istanbul\n","ug":"Africa/Kampala\n","ua":"Europe/Kiev","ae":"Asia/Dubai\n","gb":"Europe/London\n","us":"America/New_York","uy":"America/Montevideo\n","uz":"Asia/Tashkent","vu":"Pacific/Efate\n","ve":"America/Caracas\n","eh":"Africa/El_Aaiun\n","ye":"Asia/Aden\n","zm":"Africa/Lusaka\n","zw":"Africa/Harare\n"};
+  /* some zone names arrived with a trailing newline, which failed the zone check and left those countries on Zulu only */
+  Object.keys(TZW).forEach(function (k) { TZW[k] = String(TZW[k]).trim(); });
   var TZ28 = { th: "Asia/Bangkok", vn: "Asia/Ho_Chi_Minh", kh: "Asia/Phnom_Penh", la: "Asia/Vientiane", mm: "Asia/Yangon", ph: "Asia/Manila",
     my: "Asia/Kuala_Lumpur", sg: "Asia/Singapore", bn: "Asia/Brunei", tl: "Asia/Dili", cn: "Asia/Shanghai", tw: "Asia/Taipei", kp: "Asia/Pyongyang",
     kr: "Asia/Seoul", jp: "Asia/Tokyo", oki: "Asia/Tokyo", nz: "Pacific/Auckland", pg: "Pacific/Port_Moresby", "in": "Asia/Kolkata", pk: "Asia/Karachi",
@@ -450,6 +452,8 @@ header .xabar{order:9;flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:cent
 .xachip button{border:0;background:none;color:var(--muted);font:inherit;font-size:15px;line-height:1;padding:2px 6px;cursor:pointer}.xachip button:hover{color:var(--ink)}
 .xadot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 header .xabar select{min-width:17em;max-width:19em}
+.actdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px;vertical-align:middle;flex:none}.actdot.act2{background:#d32f2f;box-shadow:0 0 0 2px rgba(211,47,47,.25)}.actdot.act1{background:#f0a020}
+.actkey{flex:1 1 100%;font-size:11.5px;color:var(--muted);margin:4px 0 0}
 html.phone:not(.hdr-open) header .xabar select,html.phone:not(.hdr-open) header .xabar.xaempty{display:none}
 header .ctabs button[data-cc].xaon{box-shadow:inset 0 -3px 0 var(--xac)}
 .xahd{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin:2px 0 4px}
@@ -6705,6 +6709,82 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     location.reload();
   });
   if (SCAN) xaBar.hidden = true; else if (ADDED.length) xaChanged(false); else xaBarDraw();
+  /* ACTIVITY DOTS in the country list. An automatic activity indicator, not a threat rating: it counts what the worldwide
+     feeds this page already loads say happened recently in each country (GDACS alerts, UCDP conflict events, IFRC emergencies,
+     strong earthquakes, tsunami bulletins, tropical cyclones, orange or red weather warnings, WHO outbreak notices). Red means at
+     least one crisis-level signal or three or more elevated ones; amber means at least one elevated signal. The dot's tooltip
+     names each signal. Nothing here changes any record. */
+  var ACT = (function () {
+    var now = Date.now(), D = 864e5, out = {}, A3 = {};
+    COUNTRIES.forEach(function (c) { var a = c.a3 || ISO3[c.id]; if (a && !A3[a]) A3[a] = c.id; });
+    function ms(t) { if (typeof t === "number") return t; var x = Date.parse(String(t || "").replace(" ", "T")); return isFinite(x) ? x : NaN; }
+    function add(cc, lvl, why) { if (!cc || !CBY[cc]) return; var o = out[cc] || (out[cc] = { c: 0, e: 0, why: [] }); if (lvl === 2) o.c++; else o.e++; if (o.why.length < 6) o.why.push(why); }
+    function ccsOf(x) { return (x.ccs || []).filter(function (c) { return CBY[c]; }); }
+    function at(lat, lon, pad) {
+      var hit = null, area = 1e9;
+      COUNTRIES.forEach(function (c) {
+        var b = c.bounds; if (!b) return;
+        if (lat < b[0][0] - pad || lat > b[1][0] + pad || lon < b[0][1] - pad || lon > b[1][1] + pad) return;
+        var a = (b[1][0] - b[0][0]) * Math.abs(b[1][1] - b[0][1]); if (a < area) { area = a; hit = c.id; }
+      });
+      return hit;
+    }
+    try {
+      ((window.ASAP_GDACS || {}).events || []).forEach(function (e) {
+        var a = String(e.alert || "").toLowerCase(); if (a !== "red" && a !== "orange") return;
+        /* droughts run for months over whole regions: not recent events */
+        if (/^DR$/i.test(e.type || "")) return;
+        if (!(e.current || ms(e.to) >= now - 7 * D)) return;
+        (e.iso3 || []).forEach(function (i3) { add(A3[i3], a === "red" ? 2 : 1, "GDACS " + a + " alert: " + (e.name || e.type)); });
+      });
+      var U = {}; ((window.ASAP_UCDP || {}).items || []).forEach(function (u) {
+        if (!(ms(u.date) >= now - 14 * D)) return;
+        ccsOf(u).forEach(function (c) { var o = U[c] || (U[c] = { n: 0, k: 0 }); o.n++; o.k += +u.best || 0; });
+      });
+      Object.keys(U).forEach(function (c) { var o = U[c]; if (o.k >= 25) add(c, 2, o.n + " conflict events, " + o.k + " deaths reported in 14 days (UCDP)"); else if (o.n >= 3 || o.k >= 5) add(c, 1, o.n + " conflict events, " + o.k + " deaths reported in 14 days (UCDP)"); });
+      ((window.ASAP_IFRC || {}).items || []).forEach(function (x) { if (ms(x.start) >= now - 30 * D) ccsOf(x).forEach(function (c) { add(c, 1, "IFRC emergency: " + x.name); }); });
+      var qs = ((window.ASAP_QUAKES || {}).features || []).map(function (q) { return { m: q.mag, t: q.time, lat: q.lat, lon: q.lon, p: q.place } })
+        .concat(((window.ASAP_NQ || {}).items || []).map(function (q) { return { m: q.mag, t: ms(q.time), lat: q.lat, lon: q.lon, p: q.place, ccs: q.ccs }; })), qseen = {};
+      qs.forEach(function (q) {
+        if (!(q.m >= 6) || !(ms(q.t) >= now - 7 * D)) return;
+        var k = Math.round(q.m * 10) + ":" + Math.round(q.lat) + ":" + Math.round(q.lon); if (qseen[k]) return; qseen[k] = 1;
+        var cs = q.ccs && q.ccs.length ? q.ccs : [at(q.lat, q.lon, 1)];
+        cs.forEach(function (c) { add(c, q.m >= 7 ? 2 : 1, "M" + q.m.toFixed(1) + " earthquake: " + (q.p || "")); });
+      });
+      ((window.ASAP_TSU || {}).items || []).forEach(function (x) { if (ms(x.date) >= now - 3 * D) ccsOf(x).forEach(function (c) { add(c, 1, "Tsunami bulletin: " + x.title); }); });
+      ((window.ASAP_WHO || {}).items || []).forEach(function (x) { if (ms(x.date) >= now - 30 * D) ccsOf(x).forEach(function (c) { add(c, 1, "WHO outbreak notice: " + x.title); }); });
+      ((window.ASAP_STORMS || {}).storms || []).forEach(function (st) {
+        var p = (st.products || [])[0], n = p && p.now; if (!n) return;
+        var c = at(n.lat, n.lon, 2); add(c, n.wind_kt >= 96 ? 2 : 1, "Tropical cyclone " + st.name + ", " + n.wind_kt + " kt, nearby");
+      });
+      var W = (window.ASAP_WARN || {}).items || {};
+      Object.keys(W).forEach(function (c) {
+        var n = (W[c] || []).filter(function (w) { return /orange|red/i.test(w.severity || "") && ms(w.date) >= now - D; }).length;
+        if (n >= 3) add(c, 1, n + " orange or red weather warnings in 24 hours");
+      });
+    } catch (e) { /* a missing or changed feed leaves the dots out rather than breaking the page */ }
+    Object.keys(out).forEach(function (c) { var o = out[c]; o.lvl = o.c || o.e >= 3 ? 2 : 1; });
+    return out;
+  })();
+  function actTip(cc) { var o = ACT[cc]; return o ? (o.lvl === 2 ? "High recent activity" : "Raised recent activity") + " (automatic, not a threat rating): " + o.why.join("; ") : ""; }
+  (function actMark() {
+    if (SCAN) return;
+    Array.prototype.forEach.call(cseg.querySelectorAll("button[data-cc]"), function (b) {
+      var o = ACT[b.getAttribute("data-cc")]; if (!o) return;
+      var d = document.createElement("span"); d.className = "actdot act" + o.lvl; d.title = actTip(b.getAttribute("data-cc")); d.setAttribute("aria-label", d.title);
+      b.appendChild(d);
+    });
+    /* folded regions still show that something inside them is active */
+    Array.prototype.forEach.call(cseg.querySelectorAll("button.creg"), function (h) {
+      var ds = cseg.querySelectorAll('button[data-cc][data-reg="' + h.getAttribute("data-reg") + '"] .actdot'); if (!ds.length) return;
+      var hi = Array.prototype.some.call(ds, function (d) { return d.classList.contains("act2"); }), d = document.createElement("span");
+      d.className = "actdot act" + (hi ? 2 : 1); d.title = ds.length + (ds.length === 1 ? " country" : " countries") + " in this region with recent activity"; h.appendChild(d);
+    });
+    if (ACT[CC]) { var d0 = document.createElement("span"); d0.className = "actdot act" + ACT[CC].lvl; d0.title = actTip(CC); ctog.insertBefore(d0, ctog.querySelector(".chev")); }
+    var key = document.createElement("p"); key.className = "actkey";
+    key.innerHTML = '<span class="actdot act2"></span> high and <span class="actdot act1"></span> raised recent activity: an automatic count from worldwide feeds (disaster alerts, conflict events, emergencies, strong quakes, cyclones, warnings), not a threat rating. Point at a dot for the reasons.';
+    cseg.appendChild(key);
+  })();
   window.OSAP_EVENTS = { country: CC, neighbours: NB, list: function () {
     return evBuild().list.map(function (ev) { var v = evMake(ev, ev.m);
       return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
@@ -6835,8 +6915,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   cs.id = "ph-country"; vs.id = "ph-view"; cs.setAttribute("aria-label", "Country"); vs.setAttribute("aria-label", "Tab");
   var grp = null;
   Array.prototype.forEach.call(document.querySelectorAll("#country-seg > *"), function (el) {
+    if (!el.classList.contains("creg") && !el.hasAttribute("data-cc")) return;
     if (el.classList.contains("creg")) { grp = document.createElement("optgroup"); grp.label = el.textContent; cs.appendChild(grp); return; }
     var o = document.createElement("option"); o.value = el.getAttribute("data-cc"); o.textContent = el.childNodes[0].textContent;
+    var ad = el.querySelector(".actdot"); if (ad) o.textContent = (ad.classList.contains("act2") ? "\uD83D\uDD34 " : "\uD83D\uDFE0 ") + o.textContent;
     if (el.getAttribute("aria-current") === "true") o.selected = true;
     (grp || cs).appendChild(o);
   });
