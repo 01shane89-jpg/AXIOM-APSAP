@@ -66,9 +66,15 @@
   function valid(tz) { if (!(tz in okZ)) { try { new Intl.DateTimeFormat("en-GB", { timeZone: tz }); okZ[tz] = true; } catch (e) { okZ[tz] = false; } } return okZ[tz]; }
   /* a zone this browser does not know falls back to Zulu only, never to a wrong local time */
   function zone(tz) { tz = tz || window.OSAP_ZONE || TZ28[cc()] || TZW[cc()] || "UTC"; return valid(tz) ? tz : "UTC"; }
+  /* building a formatter is slow (it was most of the start-up time on a phone), so each zone's formatter is made once */
+  var FMT = {};
   function parts(ms, tz, num) {
-    var p = {}, o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: num ? "numeric" : "short", day: "numeric", hour: "2-digit", minute: "2-digit" }, f;
-    try { f = new Intl.DateTimeFormat("en-GB", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-GB", o); }
+    var p = {}, k = tz + (num ? "|n" : ""), f = FMT[k];
+    if (!f) {
+      var o = { timeZone: tz, hourCycle: "h23", year: "numeric", month: num ? "numeric" : "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      try { f = new Intl.DateTimeFormat("en-GB", o); } catch (e) { o.timeZone = "UTC"; f = new Intl.DateTimeFormat("en-GB", o); }
+      FMT[k] = f;
+    }
     f.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
     return p;
   }
@@ -76,7 +82,7 @@
     if (ABBR[tz]) return ABBR[tz];
     var loc = /^Australia\//.test(tz) ? "en-AU" : tz === "Pacific/Auckland" ? "en-NZ" : /^America\//.test(tz) ? "en-US" : tz === "Europe/London" ? "en-GB" : "en-US";
     try {
-      var n = new Intl.DateTimeFormat(loc, { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date(ms)).filter(function (x) { return x.type === "timeZoneName"; })[0];
+      var fk = loc + "|" + tz + "|z", n = (FMT[fk] = FMT[fk] || new Intl.DateTimeFormat(loc, { timeZone: tz, timeZoneName: "short" })).formatToParts(new Date(ms)).filter(function (x) { return x.type === "timeZoneName"; })[0];
       return n ? n.value.replace(/^GMT/, "UTC").replace(/^UTC$/, "UTC+0") : tz;
     } catch (e) { return tz; }
   }
@@ -105,6 +111,13 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
+  /* hospitals always show as a red cross on a white tile, in every layer and legend, so they read on light, dark and
+     satellite maps alike. hollow: the cross in outline only (used for the Cambodian side of the border layer). */
+  window.OSAP_REDCROSS = function (px, hollow) {
+    return '<span class="hospx" style="width:' + px + 'px;height:' + px + 'px"><svg viewBox="0 0 16 16" width="' + px + '" height="' + px + '" aria-hidden="true">' +
+      '<rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/>' +
+      '<path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="' + (hollow ? "#fff" : "#D7141A") + '" stroke="#D7141A" stroke-width="' + (hollow ? 1.3 : 0) + '"/></svg></span>';
+  };
 })();
 </script>
 <script>
@@ -114,7 +127,8 @@
   var de = document.documentElement; de.lang = "en"; de.setAttribute("translate", "no");
   var SCRIPTS = [[/[\u0E00-\u0E7F]/, "th"], [/[\u1780-\u17FF]/, "km"], [/[\u0E80-\u0EFF]/, "lo"], [/[\u1000-\u109F]/, "my"], [/[\uAC00-\uD7AF]/, "ko"],
     [/[\u3040-\u30FF]/, "ja"], [/[\u4E00-\u9FFF]/, "zh"], [/[\u0980-\u09FF]/, "bn"], [/[\u0D80-\u0DFF]/, "si"], [/[\u0780-\u07BF]/, "dv"], [/[\u0900-\u097F]/, "hi"], [/[\u0600-\u06FF]/, "ur"]];
-  function langOf(s) { for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
+  var ANY = new RegExp(SCRIPTS.map(function (x) { return x[0].source; }).join("|"));
+  function langOf(s) { if (!ANY.test(s)) return ""; for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
   function tag(root) {
     if (!root || root.nodeType !== 1) return;
     var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, seen = [];
@@ -129,10 +143,10 @@
   var pend = [], sched = false;
   function flush() { sched = false; var list = pend; pend = []; list.forEach(tag); }
   function start() {
-    tag(document.body);
+    (window.requestIdleCallback || setTimeout)(function () { tag(document.body); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
       ms.forEach(function (m) { for (var i = 0; i < m.addedNodes.length; i++) pend.push(m.addedNodes[i].nodeType === 3 ? m.target : m.addedNodes[i]); });
-      if (!sched && pend.length) { sched = true; (window.requestAnimationFrame || setTimeout)(flush); }
+      if (!sched && pend.length) { sched = true; (window.requestIdleCallback || setTimeout)(flush); }
     }).observe(document.body, { childList: true, subtree: true });
   }
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
@@ -229,7 +243,7 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
-.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{background:#fff4d6;border:1px solid #e0b84d;padding:4px 6px;margin:4px 0;font-weight:600}
+.bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
 .breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
 .breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
@@ -304,6 +318,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 
 .lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
 .sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
+.hospx{display:inline-block;line-height:0;flex:none;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.45)}.hospx svg{display:block}.lg .hospx{margin-top:2px}.sofpin.inline .hospx{vertical-align:0}
 .sw.round{border-radius:50%}
 /* the legend sits on the map, lower left, and folds to one button; compact and folded by default on a phone */
 .lgctl{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:min(300px,calc(100vw - 90px));font:inherit}
@@ -316,6 +331,13 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
 html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-height:32vh}
 @media print{.lgctl{display:none}}
 .lg .d{color:var(--muted);font-size:11px;display:block;line-height:1.35}
+/* NATO-style (APP-6) map symbols from assets/osap-symbols.js */
+.msym svg{display:block;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}.msym.old{opacity:.7}
+.msym-t{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-1px);font:700 10.5px/1.2 sans-serif;background:#fff;color:#3a2a1a;padding:0 3px;border-radius:3px;box-shadow:0 0 0 1px #6d4c2f;white-space:nowrap;pointer-events:none}
+.msw{display:inline-flex;width:26px;justify-content:center;flex:none}.msw svg{width:22px;height:auto;max-height:26px;display:block}
+.lgh{font-weight:600;font-size:11px;margin:6px 0 1px;color:var(--muted)}.msyfr{font-size:10.5px;line-height:1.35;margin:6px 0 2px;color:var(--muted)}
+.msykey .lg{align-items:center}
+.msym-zlo .msym.kh .msym-t{display:none}
 
 .rows{display:flex;flex-direction:column}
 .row{
@@ -615,6 +637,48 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
+<style>
+/* ---------- screen space: a shorter header and one tidy column of map buttons ----------
+   The header items line up on one centre line, the country picker and "Add a country" share a row, and a long source list
+   is cut short (the full list is in its tooltip). The buttons down the map's right edge share one width and spacing,
+   and are smaller on a phone so they cover less of the map. */
+header{align-items:center;gap:6px 12px;padding-block:8px}
+header .xabar{flex:0 1 auto}
+#hdr-src{max-width:34em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#map{--ctlw:150px}
+#map .leaflet-top.leaflet-right{display:flex;flex-direction:column;align-items:flex-end}
+#map .leaflet-top.leaflet-right>.leaflet-control{float:none;clear:none;margin:6px 10px 0 0}
+#map .leaflet-top.leaflet-right>.leaflet-control:first-child{margin-top:10px}
+#map .leaflet-top.leaflet-right>.rvseg,#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.wkctlmap,#map .leaflet-top.leaflet-right>.tdctl{width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.areactl,#map .leaflet-top.leaflet-right>.tdctl{display:flex}
+#map .leaflet-top.leaflet-right>.rvseg button,#map .leaflet-top.leaflet-right>.areactl button,#map .leaflet-top.leaflet-right>.wkctlmap button,#map .leaflet-top.leaflet-right>.tdctl button{
+  flex:1 1 0;width:100%;min-height:34px;padding:7px 8px;font-size:13px;font-weight:600;line-height:1.1;text-align:center;box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.wkctlmap{gap:6px}
+#map .leaflet-top.leaflet-right>.mlctl{min-width:var(--ctlw);box-sizing:border-box}
+#map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{text-align:center;font-size:13px;min-height:34px}
+#map .leaflet-top.leaflet-right>.tdctl button{border:0;box-shadow:none;background:none}
+#map .leaflet-top.leaflet-right>.tdctl{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden}
+html.phone .brand{font-size:0;gap:0}
+html.phone .brand .logo{width:30px;height:30px}
+html.phone #hdr-title{font-size:16px}
+html.phone #hdr-live{flex:1 1 100%;font-size:10.5px;gap:4px}
+html.phone #hdr-live b{font-size:11.5px}
+html.phone #map{--ctlw:104px}
+html.phone #map .leaflet-top.leaflet-right>.leaflet-control{margin:5px 8px 0 0}
+html.phone #map .leaflet-top.leaflet-right>.rvseg button,html.phone #map .leaflet-top.leaflet-right>.areactl button,html.phone #map .leaflet-top.leaflet-right>.wkctlmap button,
+html.phone #map .leaflet-top.leaflet-right>.tdctl button,html.phone #map .leaflet-top.leaflet-right>.mlctl .mlbtn[aria-expanded="false"]{min-height:32px;padding:5px 6px;font-size:12.5px}
+html.phone #map .leaflet-top.leaflet-right>.wkctlmap{gap:5px}
+html.phone #hdr-live{letter-spacing:0;text-transform:none}
+html.phone #hdr-live .badge{font-size:9.5px;padding:1px 5px}
+html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
+</style>
+<style>
+/* the small "AI generated" tag: a muted pill; the full draft wording is its tooltip (hover, or tap to show) */
+.aitag{display:inline-block;vertical-align:1px;font:500 10.5px/1.5 var(--sans,system-ui,sans-serif);letter-spacing:.02em;text-transform:none;color:var(--muted,#56626F);background:var(--accent-soft,#D6E3EE);border-radius:999px;padding:0 7px;white-space:nowrap;cursor:help;font-style:normal}
+.aitag.open{white-space:normal;border-radius:6px}.aitag.open::after{content:" · " attr(title)}
+.bpage .aitag{color:#444;background:#e9edf1}
+@media print{.aitag{border:1px solid #bbb;background:none;white-space:normal}.aitag::after{content:" · " attr(title)}}
+</style>
 <header>
   <nav class="ctabs" id="country-seg" aria-label="Country"></nav>
   <nav class="viewtabs" id="view-seg" role="tablist" aria-label="Layer"></nav>
@@ -695,7 +759,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <div class="lg"><span class="sw round" style="background:var(--near)"></span><div>Within 1 m of the bank</div></div>
       <div class="lg"><span class="sw round" style="background:var(--rain)"></span><div>Rain station, 24 h total<span class="d">Circle grows from 60 mm up</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--power);border-radius:3px"></span><div>Power asset in the flood footprint<span class="d">Substation, plant or generator</span></div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);border-radius:3px"></span><div>Hospital in the flood footprint</div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--util);border-radius:3px"></span><div>Water works in the flood footprint</div></div>
       <div class="lg"><span class="sw" style="background:var(--over);opacity:.45"></span><div>Subdistrict by an overflowing gauge</div></div>
       <div class="lg"><span class="sw" style="background:var(--sat-water);opacity:.45"></span><div>Subdistrict with satellite-seen water</div></div>
@@ -810,7 +874,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       <div class="lg"><span class="sw round" style="background:var(--muted)"></span><div>Diplomatic<span class="d">Larger dots are from the last 45 days</span></div></div>
       <div class="lg" style="margin-top:8px"><span class="sw" style="background:var(--ink);transform:rotate(45deg) scale(.75)"></span><div>Disputed temple or hill</div></div>
       <div class="lg"><span class="sw" style="background:var(--surface);border:2px solid var(--over)"></span><div>Border crossing</div></div>
-      <div class="lg"><span class="sw" style="background:var(--care);width:11px;height:11px;margin:4px 2px 0"></span><div>Hospital, school (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
+      <div class="lg"><span class="hospx" style="width:15px;height:15px"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="3" fill="#fff" stroke="#8a0f14" stroke-width="1.2"/><path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="#D7141A" stroke="#D7141A" stroke-width="0"/></svg></span><div>Hospital or clinic in Thailand<span class="d">Outlined cross: the same in Cambodia</span></div></div>
+      <div class="lg"><span class="sw" style="background:var(--rain);width:11px;height:11px;margin:4px 2px 0"></span><div>School (blue) or power site (violet) in Thailand<span class="d">Hollow square: the same kind in Cambodia</span></div></div>
       <div class="lg"><span class="sw" style="background:var(--l3-fill);opacity:.5"></span><div>Thai subdistrict centred under 10 km from the line</div></div>
       <div class="lg"><span class="sw" style="background:var(--l2-fill);opacity:.45"></span><div>10&ndash;20 km</div></div>
       <div class="lg"><span class="sw" style="background:var(--l1-fill);opacity:.35"></span><div>20&ndash;50 km</div></div>
@@ -988,7 +1053,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 </div>
 
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
-<script src="assets/tiles-flood.js"></script>
 <script src="data/thailand/power.js"></script>
 <script src="data/thailand/flood-live-snapshot.js"></script>
 <script src="data/thailand/flood-exposure.js"></script>
@@ -1059,6 +1123,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
      finger does not have to land exactly on a small dot: a 5 px dot becomes a target about 38 px across */
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
+  /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
+  function symZoom() { map.getContainer().classList.toggle("msym-zlo", map.getZoom() < 10); }
+  map.on("zoomend", symZoom); symZoom();
   window.__asapMap = map;
   /* remember the last whole-area fit so the phone layout can redo it once the map has its phone size */
   var fitB = map.fitBounds; map.fitBounds = function (b, o) { map.__lastFit = [b, o]; return fitB.call(map, b, o); };
@@ -1205,6 +1272,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     ML.roads = !!on; mlSet();
     if (on) { drawRoads(); roadLayer.addTo(map); } else map.removeLayer(roadLayer);
   }
+  /* the agency notices (several hundred KB, for a handful of countries) load after the page is up */
+  window.OSAP_LATER("data/live/roads.js", function () { if (ML.roads) drawRoads(); });
   window.addEventListener("hashchange", function () { if (ML.roads) setTimeout(drawRoads, 300); });
   var LayersCtl = L.Control.extend({
     options: { position: "topright" },
@@ -1259,6 +1328,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var ST = { ter: false, fp: false, pr: false }, HASPR = { ph: 1 };
     try { var sv = JSON.parse(localStorage.getItem("osap-terrain") || "{}"); ST.ter = !!sv.ter; ST.fp = !!sv.fp; ST.pr = !!sv.pr; } catch (e) {}
     var LV = { active: ["Active", "#c62828"], elevated: ["Elevated", "#ef6c00"], latent: ["Latent", "#b8860b"] };
+    /* reported presence kinds -> map symbol (assets/osap-symbols.js); all use the unknown frame */
+    var PRSYM = { occupied_feature: "pr_site", controlled_feature: "pr_site", patrol: "pr_patrol", militia_swarm: "pr_fishing", research_vessel: "pr_research",
+      drone_recovered: "pr_drone", espionage: "pr_spy", telecom: "pr_telecom", pogo: "pr_commerce", investment: "pr_commerce", loan_project: "pr_commerce",
+      infrastructure: "pr_commerce", state_ownership: "pr_commerce", land_near_base: "pr_commerce" };
     var WATER = { river: 1, lake: 1, dam: 1, strait: 1, bay: 1, reef: 1, coast: 1 };
     var GLYPH = { range: "&#9650;", peak: "&#9650;", hill: "&#9650;", escarpment: "&#9650;", plateau: "&#9650;", glacier: "&#9650;", pass: "&#8745;",
       river: "&#8776;", lake: "&#8776;", dam: "&#8776;", strait: "&#8776;", bay: "&#8776;", reef: "&#10033;", island: "&#9670;", coast: "&#9670;",
@@ -1266,7 +1339,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var st = document.createElement("style");
     st.textContent = ".terpin{font:700 13px/18px sans-serif;width:18px;height:18px;text-align:center;border-radius:3px;color:#fff;background:#6d4c2f;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".terpin.w{background:#1f6fa8}.terpin.hn{width:28px;padding:0;font-size:10.5px;box-sizing:border-box}.terlbl{font:600 11px/14px var(--sans,sans-serif);color:#4a3320;text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap}" +
-      ".fpc{font:700 10px/1 sans-serif}.terdraft{background:#fff4d6;color:#5a4300;border:1px solid #e0b84d;padding:2px 5px;margin:4px 0;font-size:11px;font-weight:600}" +
+      ".fpc{font:700 10px/1 sans-serif}.terdraft{margin:4px 0 2px;font-size:11px;color:#56626F;display:flex;align-items:center;gap:6px;flex-wrap:wrap}" +
       ".terev{margin:4px 0 0;padding-left:16px;font-size:11.5px}.terev li{margin:2px 0}" +
       ".prpin{font:700 9px/16px sans-serif;width:20px;height:16px;text-align:center;border-radius:2px;color:#fff;background:#8e1b1b;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.4)}" +
       ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
@@ -1287,7 +1360,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function terPop(t) {
       return '<div class="pop"><div class="tier">Key terrain · ' + TE(t.kind) + " · " + TE(t.zone) + "</div><h3>" + TE(t.name) + "</h3>" +
         (t.elev_m ? '<p class="obs">About ' + TE(t.elev_m.toLocaleString()) + " m</p>" : "") +
-        '<div class="terdraft">Why it matters: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(t.why) + "</div>" +
+        '<div class="terdraft">Why it matters <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(t.why) + "</div>" +
         (t.control_claim ? '<p class="obs"><b>Control:</b> ' + TE(t.control_claim) + ' <i>' + TE(t.control_status || "") + "</i></p>" : "") +
         (t.reports && t.reports.length > 1 ? '<p class="obs" style="margin-bottom:0">Reporting:</p><ul class="terev">' + t.reports.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>"; }).join("") + "</ul>" : "") +
@@ -1298,7 +1371,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function fpPop(f) {
       var l = LV[f.level] || LV.latent;
       return '<div class="pop"><div class="tier" style="color:' + l[1] + '">Possible flashpoint · ' + l[0] + " · " + TE(f.zone) + "</div><h3>" + TE(f.name) + "</h3>" +
-        '<div class="terdraft">Assessment: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(f.why) + "</div>" +
+        '<div class="terdraft">Assessment <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(f.why) + "</div>" +
         '<p class="obs">' + (f.last_reported ? "Latest dated report: " + TE(f.last_reported) + ". " : "") + "Zone about " + TE(f.radius_km) + " km across the centre; drawn for orientation only.</p>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + f.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
@@ -1309,7 +1382,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function prPop(p) {
       return '<div class="pop"><div class="tier" style="color:#8e1b1b">Chinese presence · ' + (p.domain === "sea" ? "Sea" : "Land") + " · " + TE(p.kind.replace(/_/g, " ")) + " · " + TE(PST[p.state] || p.state) + "</div><h3>" + TE(p.name) + "</h3>" +
         '<p class="obs">Actor: ' + TE(p.actor) + "</p>" +
-        '<div class="terdraft">Reported, not verified. Summary: draft, AI-generated, not analyst-approved</div><div class="why">' + TE(p.why) + "</div>" +
+        '<div class="terdraft">Reported, not verified. Summary <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></div><div class="why">' + TE(p.why) + "</div>" +
         '<p class="obs" style="margin-bottom:0">Reporting behind it:</p><ul class="terev">' + p.evidence.map(function (e) {
           return "<li>" + (e.date ? TE(e.date) + " · " : "") + src(e.src, e.t) + " (" + TE(e.srcname) + ")</li>";
         }).join("") + "</ul>" +
@@ -1318,7 +1391,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function draw() {
       prLayer.clearLayers();
       if (D && ST.pr) (D.presence || []).forEach(function (p) {
-        L.marker([p.lat, p.lon], { pane: "terpane", keyboard: false, title: p.name, icon: L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
+        L.marker([p.lat, p.lon], { pane: "terpane", keyboard: false, title: p.name, icon: osapSym(PRSYM[p.kind] || (p.domain === "sea" ? "pr_site" : "pr_commerce"), { text: "CN", cls: p.state === "current" || p.state === "unclear" ? "" : "old" }) || L.divIcon({ className: "", iconSize: [20, 16], iconAnchor: [10, 8],
           html: '<div class="prpin' + (p.domain === "sea" ? " s" : "") + (p.state === "current" || p.state === "unclear" ? "" : " o") + '">CN</div>' }) })
           .bindPopup(prPop(p), { maxWidth: 340 }).addTo(prLayer);
       });
@@ -1328,12 +1401,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         var l = LV[f.level] || LV.latent;
         L.circle([f.lat, f.lon], { pane: "fpzone", radius: f.radius_km * 1000, color: l[1], weight: 2, dashArray: f.level === "latent" ? "5 5" : null,
           fillColor: l[1], fillOpacity: f.level === "active" ? 0.16 : 0.09, interactive: false }).addTo(fpLayer);
-        L.marker([f.lat, f.lon], { pane: "terpane", keyboard: false, icon: L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8],
+        L.marker([f.lat, f.lon], { pane: "terpane", keyboard: false, icon: osapSym("fp_" + (LV[f.level] ? f.level : "latent")) || L.divIcon({ className: "", iconSize: [16, 16], iconAnchor: [8, 8],
           html: '<svg width="16" height="16" viewBox="0 0 14 14"><path d="M7 1 13 12H1z" fill="' + l[1] + '" stroke="#fff" stroke-width="1.5"/></svg>' }) })
           .bindPopup(fpPop(f), { maxWidth: 340 }).addTo(fpLayer);
       });
       if (ST.ter) D.terrain.forEach(function (t) {
-        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
+        L.marker([t.lat, t.lon], { pane: "terpane", keyboard: false, title: t.name, icon: osapSym("keyterrain", t.hill_number ? { text: t.hill_number } : null) || L.divIcon({ className: "", iconSize: t.hill_number ? [28, 18] : [18, 18], iconAnchor: t.hill_number ? [14, 9] : [9, 9],
           html: t.hill_number ? '<div class="terpin hn">' + TE(t.hill_number) + "</div>" : '<div class="terpin' + (WATER[t.kind] ? " w" : "") + '">' + (GLYPH[t.kind] || "&#9650;") + "</div>" }) })
           .bindPopup(terPop(t), { maxWidth: 320 }).addTo(terLayer);
         L.marker([t.lat, t.lon], { pane: "lblpane", interactive: false, keyboard: false, icon: L.divIcon({ className: "terlbl", iconSize: [200, 14], iconAnchor: [t.hill_number ? -17 : -12, 7],
@@ -1365,7 +1438,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     function rows() {
       return '<label class="mlrow"><input type="checkbox" data-ter="ter"><span><b>Key terrain</b><i>Ranges, hills, passes, rivers and crossings that shape movement. Reference data; positions approximate.</i></span></label>' +
-        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i>Draft, AI-generated, not analyst-approved. Each zone lists the reporting behind it.</i></span></label>' +
+        '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
         '<p class="mlkey ternote"></p>' +
         (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
@@ -1376,7 +1449,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     if (site && site.parentNode) {
       var b = document.createElement("div");
       b.innerHTML = '<div class="ctl"><input type="checkbox" id="bl-ter" data-ter="ter"><label for="bl-ter">Key terrain<span class="hint">Escarpment, numbered hills, passes and rivers on all of Thailand’s borders. Reference data</span></label></div>' +
-        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint">Draft, AI-generated, not analyst-approved. Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
+        '<div class="ctl"><input type="checkbox" id="bl-fp" data-ter="fp"><label for="bl-fp">Possible flashpoints<span class="hint"><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Cambodia, Myanmar, Laos and Deep South. <span class="ternote"></span></span></label></div>';
       site.parentNode.parentNode.insertBefore(b, site.parentNode.nextSibling);
     }
     document.addEventListener("change", function (e) { var k = e.target.getAttribute && e.target.getAttribute("data-ter"); if (k) set(k, e.target.checked); });
@@ -1395,6 +1468,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   });
   var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, minZoom: 5, maxZoom: 13,
     opacity: 1, pane: "floodpane", attribution: "NASA LANCE MCDWD" }).addTo(map);
+  /* the packed tiles (about 1.4 MB) load after the page is up, so they never hold up the start; tiles are blank until then */
+  window.OSAP_LATER("assets/tiles-flood.js", function () { floodLayer.redraw(); });
 
   var d24 = document.getElementById("d24"), d25 = document.getElementById("d25");
   function setDate(which) {
@@ -1536,10 +1611,13 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     infraLayer.clearLayers();
     POWER.forEach(function (o) {
       var col = tok(o.g === "power" ? "--power" : (o.g === "water" ? "--util" : "--care"));
-      var m = L.circleMarker([o.lat, o.lon], {
-        pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
-        color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
-      });
+      var m = o.g === "care"
+        ? L.marker([o.lat, o.lon], { pane: "infrapane", keyboard: false, title: o.n,
+            icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7], html: OSAP_REDCROSS(14) }) })
+        : L.circleMarker([o.lat, o.lon], {
+            pane: "infrapane", radius: o.g === "power" ? 5 : 4.5,
+            color: tok("--surface"), weight: 1.4, fillColor: col, fillOpacity: 1
+          });
       m.bindPopup('<div class="pop"><h3>' + esc(o.n) + "</h3>" +
         '<div class="tier" style="color:' + col + '">' + esc(o.k) + "</div>" +
         '<div class="why">Inside <b>' + esc(o.t) + "</b>, " + esc(o.a) + ", " + esc(o.p) +
@@ -2082,9 +2160,12 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (!s) return;
       var col = tok(s.css), px = Math.round(s.r * 2);
       /* squares, so places read differently from the round incident dots */
+      var sk = { mil: "milbase", school: "school", power: "power" }[a.g];
       var m = L.marker([a.lat, a.lon], {
         pane: "assetpane", keyboard: false,
-        icon: L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
+        icon: a.g === "care" || a.g === "clinic"
+          ? L.divIcon({ className: "", iconSize: [px + 6, px + 6], iconAnchor: [(px + 6) / 2, (px + 6) / 2], html: OSAP_REDCROSS(px + 6, a.side === "KH") })
+          : L.divIcon({ className: "", iconSize: [px + 4, px + 4], iconAnchor: [(px + 4) / 2, (px + 4) / 2],
           html: '<div class="fac" style="width:' + px + "px;height:" + px + "px;border-color:" + col +
                 ";background:" + (a.side === "KH" ? "var(--surface)" : col) + '"></div>' })
       });
@@ -2116,7 +2197,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var isX = s.kind === "crossing";
       var m = L.marker([s.lat, s.lon], {
         pane: "sitepane",
-        icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
+        icon: osapSym(isX ? "crossing" : "keyterrain") || L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
           html: isX ? '<div class="xing"></div>' : '<div class="flash"></div>' }),
         keyboard: false
       }).bindPopup(sitePopup(s));
@@ -2167,10 +2248,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (!inPhase(e) || !isFinite(e.lat) || !isFinite(e.lon) || e.prec === "none") return;
       var k = KINDS[e.kind] || KINDS.clash;
       var age = daysSince(e.date);
-      evLayer.addLayer(L.circleMarker([e.lat, e.lon], {
+      var ic = osapSym(KINDS[e.kind] ? e.kind : "clash", { cls: age < 45 ? "" : "old" });
+      evLayer.addLayer((ic ? L.marker([e.lat, e.lon], { pane: "evpane", icon: ic, keyboard: false, title: e.title }) : L.circleMarker([e.lat, e.lon], {
         pane: "evpane", radius: age < 45 ? 8 : 6, color: tok("--surface"), weight: 1.5,
         fillColor: tok(k.css), fillOpacity: age < 45 ? 0.95 : 0.8
-      }).bindPopup(evPopup(e)));
+      })).bindPopup(evPopup(e)));
     });
   }
 
@@ -2395,363 +2477,29 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   };
 })();
 </script>
-<script src="data/layers/th/insurgency.js"></script>
-<script src="data/layers/th/crime.js"></script>
-<script src="data/layers/th/scam.js"></script>
-<script src="data/layers/th/aml.js"></script>
-<script src="data/layers/th/weather.js"></script>
-<script src="data/layers/th/safety.js"></script>
-<script src="data/layers/th/transport.js"></script>
-<script src="data/layers/th/infra.js"></script>
-<script src="data/layers/th/health.js"></script>
-<script src="data/layers/au/weather.js"></script>
-<script src="data/layers/au/flood.js"></script>
-<script src="data/layers/au/safety.js"></script>
-<script src="data/layers/au/health.js"></script>
-<script src="data/layers/au/crime.js"></script>
-<script src="data/layers/au/insurgency.js"></script>
-<script src="data/layers/au/aml.js"></script>
-<script src="data/layers/au/border.js"></script>
-<script src="data/layers/au/transport.js"></script>
-<script src="data/layers/au/scam.js"></script>
-<script src="data/layers/au/infra.js"></script>
-<script src="data/layers/bd/health.js"></script>
-<script src="data/layers/bd/insurgency.js"></script>
-<script src="data/layers/bd/transport.js"></script>
-<script src="data/layers/bd/border.js"></script>
-<script src="data/layers/bd/safety.js"></script>
-<script src="data/layers/bd/crime.js"></script>
-<script src="data/layers/bd/infra.js"></script>
-<script src="data/layers/bd/weather.js"></script>
-<script src="data/layers/bd/aml.js"></script>
-<script src="data/layers/bd/flood.js"></script>
-<script src="data/layers/bd/scam.js"></script>
-<script src="data/layers/bn/flood.js"></script>
-<script src="data/layers/bn/transport.js"></script>
-<script src="data/layers/bn/infra.js"></script>
-<script src="data/layers/bn/aml.js"></script>
-<script src="data/layers/bn/scam.js"></script>
-<script src="data/layers/bn/safety.js"></script>
-<script src="data/layers/bn/health.js"></script>
-<script src="data/layers/bn/weather.js"></script>
-<script src="data/layers/bn/crime.js"></script>
-<script src="data/layers/bn/border.js"></script>
-<script src="data/layers/bt/safety.js"></script>
-<script src="data/layers/bt/infra.js"></script>
-<script src="data/layers/bt/transport.js"></script>
-<script src="data/layers/bt/flood.js"></script>
-<script src="data/layers/bt/weather.js"></script>
-<script src="data/layers/bt/crime.js"></script>
-<script src="data/layers/bt/scam.js"></script>
-<script src="data/layers/bt/health.js"></script>
-<script src="data/layers/bt/border.js"></script>
-<script src="data/layers/cn/scam.js"></script>
-<script src="data/layers/cn/border.js"></script>
-<script src="data/layers/cn/aml.js"></script>
-<script src="data/layers/cn/crime.js"></script>
-<script src="data/layers/cn/safety.js"></script>
-<script src="data/layers/cn/weather.js"></script>
-<script src="data/layers/cn/flood.js"></script>
-<script src="data/layers/cn/infra.js"></script>
-<script src="data/layers/cn/health.js"></script>
-<script src="data/layers/cn/transport.js"></script>
-<script src="data/layers/id/flood.js"></script>
-<script src="data/layers/id/aml.js"></script>
-<script src="data/layers/id/crime.js"></script>
-<script src="data/layers/id/safety.js"></script>
-<script src="data/layers/id/insurgency.js"></script>
-<script src="data/layers/id/weather.js"></script>
-<script src="data/layers/id/scam.js"></script>
-<script src="data/layers/id/infra.js"></script>
-<script src="data/layers/id/health.js"></script>
-<script src="data/layers/id/border.js"></script>
-<script src="data/layers/id/transport.js"></script>
-<script src="data/layers/in/health.js"></script>
-<script src="data/layers/in/scam.js"></script>
-<script src="data/layers/in/transport.js"></script>
-<script src="data/layers/in/border.js"></script>
-<script src="data/layers/in/insurgency.js"></script>
-<script src="data/layers/in/aml.js"></script>
-<script src="data/layers/in/crime.js"></script>
-<script src="data/layers/in/safety.js"></script>
-<script src="data/layers/in/weather.js"></script>
-<script src="data/layers/in/infra.js"></script>
-<script src="data/layers/in/flood.js"></script>
-<script src="data/layers/jp/health.js"></script>
-<script src="data/layers/jp/border.js"></script>
-<script src="data/layers/jp/aml.js"></script>
-<script src="data/layers/jp/scam.js"></script>
-<script src="data/layers/jp/infra.js"></script>
-<script src="data/layers/jp/weather.js"></script>
-<script src="data/layers/jp/safety.js"></script>
-<script src="data/layers/jp/transport.js"></script>
-<script src="data/layers/jp/crime.js"></script>
-<script src="data/layers/jp/flood.js"></script>
-<script src="data/layers/kh/border.js"></script>
-<script src="data/layers/kh/aml.js"></script>
-<script src="data/layers/kh/health.js"></script>
-<script src="data/layers/kh/safety.js"></script>
-<script src="data/layers/kh/transport.js"></script>
-<script src="data/layers/kh/flood.js"></script>
-<script src="data/layers/kh/scam.js"></script>
-<script src="data/layers/kh/infra.js"></script>
-<script src="data/layers/kh/weather.js"></script>
-<script src="data/layers/kh/crime.js"></script>
-<script src="data/layers/kp/border.js"></script>
-<script src="data/layers/kp/weather.js"></script>
-<script src="data/layers/kp/health.js"></script>
-<script src="data/layers/kp/scam.js"></script>
-<script src="data/layers/kp/flood.js"></script>
-<script src="data/layers/kp/crime.js"></script>
-<script src="data/layers/kp/aml.js"></script>
-<script src="data/layers/kp/safety.js"></script>
-<script src="data/layers/kp/transport.js"></script>
-<script src="data/layers/kp/infra.js"></script>
-<script src="data/layers/kr/transport.js"></script>
-<script src="data/layers/kr/border.js"></script>
-<script src="data/layers/kr/safety.js"></script>
-<script src="data/layers/kr/aml.js"></script>
-<script src="data/layers/kr/scam.js"></script>
-<script src="data/layers/kr/crime.js"></script>
-<script src="data/layers/kr/health.js"></script>
-<script src="data/layers/kr/weather.js"></script>
-<script src="data/layers/kr/infra.js"></script>
-<script src="data/layers/kr/flood.js"></script>
-<script src="data/layers/la/safety.js"></script>
-<script src="data/layers/la/transport.js"></script>
-<script src="data/layers/la/scam.js"></script>
-<script src="data/layers/la/aml.js"></script>
-<script src="data/layers/la/health.js"></script>
-<script src="data/layers/la/infra.js"></script>
-<script src="data/layers/la/crime.js"></script>
-<script src="data/layers/la/weather.js"></script>
-<script src="data/layers/la/flood.js"></script>
-<script src="data/layers/la/border.js"></script>
-<script src="data/layers/lk/aml.js"></script>
-<script src="data/layers/lk/border.js"></script>
-<script src="data/layers/lk/crime.js"></script>
-<script src="data/layers/lk/health.js"></script>
-<script src="data/layers/lk/scam.js"></script>
-<script src="data/layers/lk/infra.js"></script>
-<script src="data/layers/lk/weather.js"></script>
-<script src="data/layers/lk/transport.js"></script>
-<script src="data/layers/lk/safety.js"></script>
-<script src="data/layers/lk/flood.js"></script>
-<script src="data/layers/lk/insurgency.js"></script>
-<script src="data/layers/mm/crime.js"></script>
-<script src="data/layers/mm/insurgency.js"></script>
-<script src="data/layers/mm/aml.js"></script>
-<script src="data/layers/mm/infra.js"></script>
-<script src="data/layers/mm/weather.js"></script>
-<script src="data/layers/mm/health.js"></script>
-<script src="data/layers/mm/safety.js"></script>
-<script src="data/layers/mm/transport.js"></script>
-<script src="data/layers/mm/flood.js"></script>
-<script src="data/layers/mm/scam.js"></script>
-<script src="data/layers/mm/border.js"></script>
-<script src="data/layers/mn/aml.js"></script>
-<script src="data/layers/mn/safety.js"></script>
-<script src="data/layers/mn/weather.js"></script>
-<script src="data/layers/mn/crime.js"></script>
-<script src="data/layers/mn/border.js"></script>
-<script src="data/layers/mn/health.js"></script>
-<script src="data/layers/mn/transport.js"></script>
-<script src="data/layers/mn/infra.js"></script>
-<script src="data/layers/mn/scam.js"></script>
-<script src="data/layers/mn/flood.js"></script>
-<script src="data/layers/mv/health.js"></script>
-<script src="data/layers/mv/transport.js"></script>
-<script src="data/layers/mv/safety.js"></script>
-<script src="data/layers/mv/weather.js"></script>
-<script src="data/layers/mv/aml.js"></script>
-<script src="data/layers/mv/flood.js"></script>
-<script src="data/layers/mv/border.js"></script>
-<script src="data/layers/mv/infra.js"></script>
-<script src="data/layers/mv/crime.js"></script>
-<script src="data/layers/mv/scam.js"></script>
-<script src="data/layers/mv/insurgency.js"></script>
-<script src="data/layers/my/safety.js"></script>
-<script src="data/layers/my/infra.js"></script>
-<script src="data/layers/my/flood.js"></script>
-<script src="data/layers/my/weather.js"></script>
-<script src="data/layers/my/transport.js"></script>
-<script src="data/layers/my/aml.js"></script>
-<script src="data/layers/my/health.js"></script>
-<script src="data/layers/my/scam.js"></script>
-<script src="data/layers/my/crime.js"></script>
-<script src="data/layers/my/border.js"></script>
-<script src="data/layers/my/insurgency.js"></script>
-<script src="data/layers/np/scam.js"></script>
-<script src="data/layers/np/transport.js"></script>
-<script src="data/layers/np/border.js"></script>
-<script src="data/layers/np/crime.js"></script>
-<script src="data/layers/np/health.js"></script>
-<script src="data/layers/np/aml.js"></script>
-<script src="data/layers/np/weather.js"></script>
-<script src="data/layers/np/flood.js"></script>
-<script src="data/layers/np/safety.js"></script>
-<script src="data/layers/np/infra.js"></script>
-<script src="data/layers/np/insurgency.js"></script>
-<script src="data/layers/nz/crime.js"></script>
-<script src="data/layers/nz/safety.js"></script>
-<script src="data/layers/nz/flood.js"></script>
-<script src="data/layers/nz/weather.js"></script>
-<script src="data/layers/nz/scam.js"></script>
-<script src="data/layers/nz/infra.js"></script>
-<script src="data/layers/nz/transport.js"></script>
-<script src="data/layers/nz/health.js"></script>
-<script src="data/layers/nz/border.js"></script>
-<script src="data/layers/nz/aml.js"></script>
-<script src="data/layers/nz/insurgency.js"></script>
-<script src="data/layers/oki/border.js"></script>
-<script src="data/layers/oki/crime.js"></script>
-<script src="data/layers/oki/infra.js"></script>
-<script src="data/layers/oki/scam.js"></script>
-<script src="data/layers/oki/aml.js"></script>
-<script src="data/layers/oki/transport.js"></script>
-<script src="data/layers/oki/safety.js"></script>
-<script src="data/layers/oki/health.js"></script>
-<script src="data/layers/oki/weather.js"></script>
-<script src="data/layers/oki/flood.js"></script>
-<script src="data/layers/pg/aml.js"></script>
-<script src="data/layers/pg/insurgency.js"></script>
-<script src="data/layers/pg/border.js"></script>
-<script src="data/layers/pg/weather.js"></script>
-<script src="data/layers/pg/flood.js"></script>
-<script src="data/layers/pg/safety.js"></script>
-<script src="data/layers/pg/health.js"></script>
-<script src="data/layers/pg/infra.js"></script>
-<script src="data/layers/pg/transport.js"></script>
-<script src="data/layers/pg/crime.js"></script>
-<script src="data/layers/pg/scam.js"></script>
-<script src="data/layers/ph/border.js"></script>
-<script src="data/layers/ph/transport.js"></script>
-<script src="data/layers/ph/insurgency.js"></script>
-<script src="data/layers/ph/flood.js"></script>
-<script src="data/layers/ph/scam.js"></script>
-<script src="data/layers/ph/aml.js"></script>
-<script src="data/layers/ph/safety.js"></script>
-<script src="data/layers/ph/crime.js"></script>
-<script src="data/layers/ph/health.js"></script>
-<script src="data/layers/ph/infra.js"></script>
-<script src="data/layers/ph/weather.js"></script>
-<script src="data/layers/pk/transport.js"></script>
-<script src="data/layers/pk/insurgency.js"></script>
-<script src="data/layers/pk/safety.js"></script>
-<script src="data/layers/pk/border.js"></script>
-<script src="data/layers/pk/crime.js"></script>
-<script src="data/layers/pk/infra.js"></script>
-<script src="data/layers/pk/aml.js"></script>
-<script src="data/layers/pk/health.js"></script>
-<script src="data/layers/pk/weather.js"></script>
-<script src="data/layers/pk/flood.js"></script>
-<script src="data/layers/pk/scam.js"></script>
-<script src="data/layers/sg/weather.js"></script>
-<script src="data/layers/sg/safety.js"></script>
-<script src="data/layers/sg/insurgency.js"></script>
-<script src="data/layers/sg/scam.js"></script>
-<script src="data/layers/sg/infra.js"></script>
-<script src="data/layers/sg/flood.js"></script>
-<script src="data/layers/sg/crime.js"></script>
-<script src="data/layers/sg/aml.js"></script>
-<script src="data/layers/sg/border.js"></script>
-<script src="data/layers/sg/transport.js"></script>
-<script src="data/layers/sg/health.js"></script>
-<script src="data/layers/tl/health.js"></script>
-<script src="data/layers/tl/infra.js"></script>
-<script src="data/layers/tl/crime.js"></script>
-<script src="data/layers/tl/flood.js"></script>
-<script src="data/layers/tl/transport.js"></script>
-<script src="data/layers/tl/scam.js"></script>
-<script src="data/layers/tl/border.js"></script>
-<script src="data/layers/tl/weather.js"></script>
-<script src="data/layers/tl/aml.js"></script>
-<script src="data/layers/tl/safety.js"></script>
-<script src="data/layers/tl/insurgency.js"></script>
-<script src="data/layers/tw/border.js"></script>
-<script src="data/layers/tw/safety.js"></script>
-<script src="data/layers/tw/health.js"></script>
-<script src="data/layers/tw/aml.js"></script>
-<script src="data/layers/tw/flood.js"></script>
-<script src="data/layers/tw/infra.js"></script>
-<script src="data/layers/tw/transport.js"></script>
-<script src="data/layers/tw/scam.js"></script>
-<script src="data/layers/tw/weather.js"></script>
-<script src="data/layers/tw/crime.js"></script>
-<script src="data/layers/vn/health.js"></script>
-<script src="data/layers/vn/scam.js"></script>
-<script src="data/layers/vn/crime.js"></script>
-<script src="data/layers/vn/border.js"></script>
-<script src="data/layers/vn/aml.js"></script>
-<script src="data/layers/vn/weather.js"></script>
-<script src="data/layers/vn/infra.js"></script>
-<script src="data/layers/vn/transport.js"></script>
-<script src="data/layers/vn/safety.js"></script>
-<script src="data/layers/vn/flood.js"></script>
-<script src="data/sof/au.js"></script>
-<script src="data/sof/bd.js"></script>
-<script src="data/sof/bn.js"></script>
-<script src="data/sof/bt.js"></script>
-<script src="data/sof/cn.js"></script>
-<script src="data/sof/id.js"></script>
-<script src="data/sof/in.js"></script>
-<script src="data/sof/jp.js"></script>
-<script src="data/sof/kh.js"></script>
-<script src="data/sof/kp.js"></script>
-<script src="data/sof/kr.js"></script>
-<script src="data/sof/la.js"></script>
-<script src="data/sof/lk.js"></script>
-<script src="data/sof/mm.js"></script>
-<script src="data/sof/mn.js"></script>
-<script src="data/sof/mv.js"></script>
-<script src="data/sof/my.js"></script>
-<script src="data/sof/np.js"></script>
-<script src="data/sof/nz.js"></script>
-<script src="data/sof/oki.js"></script>
-<script src="data/sof/pg.js"></script>
-<script src="data/sof/ph.js"></script>
-<script src="data/sof/pk.js"></script>
-<script src="data/sof/sg.js"></script>
-<script src="data/sof/th.js"></script>
-<script src="data/sof/tl.js"></script>
-<script src="data/sof/tw.js"></script>
-<script src="data/sof/vn.js"></script>
-<script src="data/brief/au.js"></script>
-<script src="data/brief/bd.js"></script>
-<script src="data/brief/bn.js"></script>
-<script src="data/brief/bt.js"></script>
-<script src="data/brief/cn.js"></script>
-<script src="data/brief/id.js"></script>
-<script src="data/brief/in.js"></script>
-<script src="data/brief/jp.js"></script>
-<script src="data/brief/kh.js"></script>
-<script src="data/brief/kp.js"></script>
-<script src="data/brief/kr.js"></script>
-<script src="data/brief/la.js"></script>
-<script src="data/brief/lk.js"></script>
-<script src="data/brief/mm.js"></script>
-<script src="data/brief/mn.js"></script>
-<script src="data/brief/mv.js"></script>
-<script src="data/brief/my.js"></script>
-<script src="data/brief/np.js"></script>
-<script src="data/brief/nz.js"></script>
-<script src="data/brief/oki.js"></script>
-<script src="data/brief/pg.js"></script>
-<script src="data/brief/ph.js"></script>
-<script src="data/brief/pk.js"></script>
-<script src="data/brief/sg.js"></script>
-<script src="data/brief/th.js"></script>
-<script src="data/brief/tl.js"></script>
-<script src="data/brief/tw.js"></script>
-<script src="data/brief/vn.js"></script>
+<!-- country-data:start -->
+<script>
+/* Per-country data. Only the country being opened is loaded (switching country reloads the page), which keeps
+   startup from fetching every country's layers. Written by tools/country_loader.py; do not edit by hand. */
+window.OSAP_COUNTRY_FILES = {"layers":{"au":{"aml":6,"border":5,"crime":8,"flood":3,"health":5,"infra":7,"insurgency":6,"safety":1,"scam":6,"transport":6,"weather":4},"bd":{"aml":4,"border":8,"crime":6,"flood":4,"health":11,"infra":4,"insurgency":3,"safety":7,"scam":5,"transport":5,"weather":3},"bn":{"aml":5,"border":4,"crime":16,"flood":3,"health":11,"infra":7,"safety":7,"scam":5,"transport":7,"weather":6},"bt":{"border":1,"crime":2,"flood":5,"health":2,"infra":2,"safety":4,"scam":1,"transport":2,"weather":3},"cn":{"aml":6,"border":9,"crime":6,"flood":5,"health":1,"infra":5,"safety":5,"scam":7,"transport":1,"weather":3},"id":{"aml":5,"border":3,"crime":6,"flood":4,"health":2,"infra":2,"insurgency":5,"safety":4,"scam":7,"transport":3,"weather":2},"in":{"aml":5,"border":7,"crime":2,"flood":4,"health":3,"infra":2,"insurgency":5,"safety":4,"scam":7,"transport":3,"weather":4},"jp":{"aml":4,"border":8,"crime":1,"flood":2,"health":6,"infra":2,"safety":6,"scam":9,"transport":2,"weather":6},"kh":{"aml":3,"border":11,"crime":7,"flood":3,"health":5,"infra":1,"safety":5,"scam":16,"transport":5,"weather":4},"kp":{"aml":7,"border":28,"crime":8,"flood":5,"health":4,"infra":3,"safety":3,"scam":3,"transport":3,"weather":5},"kr":{"aml":7,"border":11,"crime":7,"flood":8,"health":9,"infra":12,"safety":9,"scam":8,"transport":17,"weather":7},"la":{"aml":4,"border":3,"crime":6,"flood":10,"health":5,"infra":5,"safety":3,"scam":13,"transport":8,"weather":3},"lk":{"aml":4,"border":5,"crime":13,"flood":7,"health":6,"infra":1,"insurgency":1,"safety":5,"scam":8,"transport":4,"weather":7},"mm":{"aml":2,"border":6,"crime":6,"flood":5,"health":5,"infra":2,"insurgency":21,"safety":4,"scam":3,"transport":5,"weather":3},"mn":{"aml":7,"border":8,"crime":7,"flood":5,"health":8,"infra":3,"safety":10,"scam":3,"transport":5,"weather":8},"mv":{"aml":5,"border":3,"crime":5,"flood":2,"health":3,"infra":4,"insurgency":1,"safety":9,"scam":1,"transport":10,"weather":1},"my":{"aml":19,"border":12,"crime":21,"flood":8,"health":11,"infra":9,"insurgency":6,"safety":15,"scam":15,"transport":11,"weather":10},"np":{"aml":5,"border":9,"crime":7,"flood":13,"health":4,"infra":3,"insurgency":1,"safety":4,"scam":5,"transport":8,"weather":4},"nz":{"aml":3,"border":7,"crime":14,"flood":9,"health":6,"infra":6,"insurgency":2,"safety":9,"scam":6,"transport":10,"weather":9},"oki":{"aml":6,"border":15,"crime":18,"flood":4,"health":10,"infra":3,"safety":9,"scam":11,"transport":4,"weather":6},"pg":{"aml":5,"border":7,"crime":11,"flood":1,"health":5,"infra":5,"insurgency":11,"safety":11,"scam":4,"transport":1,"weather":7},"ph":{"aml":7,"border":9,"crime":7,"flood":6,"health":14,"infra":6,"insurgency":10,"safety":7,"scam":7,"transport":7,"weather":6},"pk":{"aml":4,"border":7,"crime":4,"flood":4,"health":4,"infra":3,"insurgency":10,"safety":3,"scam":5,"transport":3,"weather":2},"sg":{"aml":12,"border":8,"crime":15,"flood":3,"health":8,"infra":3,"insurgency":4,"safety":11,"scam":14,"transport":13,"weather":8},"th":{"aml":42,"crime":42,"health":44,"infra":15,"insurgency":67,"safety":39,"scam":48,"transport":42,"weather":42},"tl":{"aml":3,"border":10,"crime":8,"flood":8,"health":10,"infra":6,"insurgency":4,"safety":7,"scam":11,"transport":12,"weather":5},"tw":{"aml":5,"border":16,"crime":6,"flood":8,"health":7,"infra":5,"safety":6,"scam":6,"transport":7,"weather":7},"vn":{"aml":3,"border":5,"crime":12,"flood":7,"health":6,"infra":3,"safety":6,"scam":8,"transport":6,"weather":5}},"sof":["au","bd","bn","bt","cn","id","in","jp","kh","kp","kr","la","lk","mm","mn","mv","my","np","nz","oki","pg","ph","pk","sg","th","tl","tw","vn"],"brief":["au","bd","bn","bt","cn","id","in","jp","kh","kp","kr","la","lk","mm","mn","mv","my","np","nz","oki","pg","ph","pk","sg","th","tl","tw","vn"]};
+(function () {
+  var M = window.OSAP_COUNTRY_FILES, h = (location.hash || "").replace("#", "").split("/");
+  var cc = h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : "th", src = [];
+  Object.keys(M.layers[cc] || {}).forEach(function (l) { src.push("data/layers/" + cc + "/" + l + ".js"); });
+  if (M.sof.indexOf(cc) >= 0) src.push("data/sof/" + cc + ".js");
+  if (M.brief.indexOf(cc) >= 0) src.push("data/brief/" + cc + ".js");
+  /* news and social posts: the refresh job writes one file per country (tools/split_country.mjs) */
+  src.push("data/live/news/" + cc + ".js", "data/live/social/" + cc + ".js");
+  document.write(src.map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(""));
+})();
+</script>
+<!-- country-data:end -->
 <script src="data/sof/exercises-outside.js"></script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/air-quality.js"></script>
 <script src="data/live/gdacs.js"></script>
 <script src="data/live/reliefweb.js"></script>
 <script src="data/live/warnings.js"></script>
-<script src="data/live/news.js"></script>
-<script src="data/live/social.js"></script>
 <script src="data/live/advisories.js"></script>
 <script src="data/live/tsunami.js"></script>
 <script src="data/live/volcano.js"></script>
@@ -2769,7 +2517,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="data/live/deepsouth.js"></script>
 <script src="data/live/storms.js"></script>
 <script src="data/live/wx-forecast.js"></script>
-<script src="data/live/roads.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script src="data/basemap/world-countries.js"></script>
 <script src="data/basemap/world-outlines.js"></script>
@@ -3017,7 +2764,9 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       r.cases != null ? r.cases.toLocaleString() + " cases" : "", r.deaths_reported != null ? r.deaths_reported.toLocaleString() + " deaths reported" : "",
       r.mode ? r.mode : "", r.route ? r.route : "", r.asset_type ? r.asset_type : ""].filter(Boolean);
   }
-  var TD = {}, TDALL = window.TSAP_DATA || {}, CN = {};
+  var TD = {}, TDALL = window.TSAP_DATA || {}, CN = {}, CF0 = (window.OSAP_COUNTRY_FILES || {}).layers || {};
+  /* Only this country's layer files are loaded; the picker's counts for the others come from the loader's list. */
+  Object.keys(CF0).forEach(function (cc) { Object.keys(CF0[cc]).forEach(function (l) { if (!TDALL[cc === "th" ? l : cc + "/" + l]) CN[cc] = (CN[cc] || 0) + CF0[cc][l]; }); });
   Object.keys(TDALL).forEach(function (k) {
     var p = k.split("/"), cc = p.length > 1 ? p[0] : "th", lid = p.length > 1 ? p[1] : k;
     CN[cc] = (CN[cc] || 0) + TDALL[k].events.length;
@@ -3993,15 +3742,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   var SOF = (window.ASAP_SOF || {})[CC] || null, SOF_OUT = window.ASAP_SOF_OUT || null;
   var railO = document.getElementById("rail-sof"), sofLayer = L.featureGroup(), sofOff = {}, sofM = {};
   var SOFK = {
-    posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent" },
-    airports: { label: "Airports", letter: "A", color: "--rain" },
-    seaports: { label: "Seaports", letter: "S", color: "--sat-water" },
+    posts: { label: "U.S. diplomatic posts", letter: "E", color: "--accent", sym: "govt" },
+    airports: { label: "Airports", letter: "A", color: "--rain", sym: "airport" },
+    seaports: { label: "Seaports", letter: "S", color: "--sat-water", sym: "seaport" },
     hospitals: { label: "Hospitals", letter: "H", color: "--over" }
   };
   var ADV_TONE = ["", "--calm", "--near", "--over", "--over"];
   function fmtD(d) { return d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : ""; }
   function sofIcon(k) {
     var c = tok(SOFK[k].color);
+    if (k === "hospitals") return L.divIcon({ className: "", iconSize: [18, 18], iconAnchor: [9, 9], html: OSAP_REDCROSS(18) });
     return L.divIcon({ className: "sofpin", iconSize: [20, 20], iconAnchor: [10, 10],
       html: '<span style="background:' + c + '">' + SOFK[k].letter + "</span>" });
   }
@@ -4062,7 +3812,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var filt = '<div class="sec"><h2>On the map</h2>' + kinds.map(function (k) {
       var n = (SOF[k] || []).length, id = "sofk-" + k;
       return '<div class="ctl"><input type="checkbox" id="' + id + '" data-k="' + k + '"' + (sofOff[k] ? "" : " checked") + '><label for="' + id + '">' +
-        '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span> " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
+        (k === "hospitals" ? OSAP_REDCROSS(15) : '<span class="sofpin inline"><span style="background:' + tok(SOFK[k].color) + '">' + SOFK[k].letter + "</span></span>") + " " + esc(SOFK[k].label) + ' <span class="obs">' + n + "</span></label></div>";
     }).join("") + "</div>";
     var lists = kinds.map(function (k) {
       var arr = SOF[k] || [];
@@ -4387,10 +4137,10 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
     var T = B.threat || {}, ov = T.overall || {};
     return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
-      '<p class="rdraft">Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports.</p>' +
+      '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgements, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
       "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
       advOfficialHtml() +
-      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="bm">(AI draft)</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
       '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
         return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
       }).join("") + "</table>" +
@@ -5562,6 +5312,15 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
   function showSof(v) { if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else showPartners(); }
 
+  /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
+     flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
+     whenever the data set changes, and on start. The base map choice stays. */
+  function extrasOff() {
+    document.querySelectorAll(".mlpanel input[type=checkbox], input[data-ter]").forEach(function (i) {
+      if (!i.checked) return;
+      i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
@@ -5583,6 +5342,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     railO.hidden = !l.sof;
     rail.scrollTop = 0;
     if (v !== "timeline") pbStop();
+    extrasOff();
     window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
       sofLayer.addTo(map); showSof(v); map.invalidateSize();
@@ -6049,6 +5809,24 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       return box; } });
     new LgCtl().addTo(map);
     secs.forEach(function (x) { body.appendChild(x); });
+    /* symbol key: lists, in plain words, every NATO-style symbol that is on the map right now */
+    var key = document.createElement("div"), keyOn = false, keySig = "", keyT = 0;
+    key.className = "sec maplg msykey"; key.hidden = true; body.appendChild(key);
+    function keyUpdate() {
+      keyT = 0;
+      if (!window.OSAP_SYM) return;
+      var ks = [];
+      Array.prototype.forEach.call(document.querySelectorAll("#map .msym"), function (el) {
+        var m = / msk-([a-z_]+)/.exec(" " + el.className); if (m && ks.indexOf(m[1]) < 0) ks.push(m[1]);
+      });
+      ks.sort(function (a, b) { return Object.keys(OSAP_SYM.m).indexOf(a) - Object.keys(OSAP_SYM.m).indexOf(b); });
+      var sig = ks.join(",");
+      if (sig === keySig) return;
+      keySig = sig; keyOn = ks.length > 0;
+      key.innerHTML = keyOn ? OSAP_SYM.legend(ks) + OSAP_SYM.frames : "";
+      sync();
+    }
+    map.on("layeradd layerremove", function () { if (!keyT) keyT = setTimeout(keyUpdate, 250); });
     var shut = null; try { shut = localStorage.getItem(LG_KEY); } catch (e) {}
     function fold(on, keep) {
       box.classList.toggle("shut", on); btn.setAttribute("aria-expanded", String(!on));
@@ -6060,11 +5838,22 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     function sync() {
       var any = false;
       secs.forEach(function (x, i) { var on = !homes[i].hidden && !homes[i].closest("[hidden]"); x.hidden = !on; any = any || on; });
-      box.hidden = !any;
+      key.hidden = !keyOn;
+      box.hidden = !any && !keyOn;
     }
     var mo = new MutationObserver(sync);
     homes.forEach(function (h) { mo.observe(h, { attributes: true, attributeFilter: ["hidden"] }); });
     sync();
+    /* On a narrow map the credits line runs the full width along the bottom and would cover the Legend button, so lift the
+       legend above it whenever the two would overlap. */
+    var attr = map.getContainer().querySelector(".leaflet-control-attribution");
+    function lift() {
+      if (!attr) return; box.style.marginBottom = "";
+      var a = attr.getBoundingClientRect(), b = box.getBoundingClientRect();
+      if (a.width && a.left < b.right && a.top < b.bottom) box.style.marginBottom = Math.ceil(a.height + 6) + "px";
+    }
+    if (attr && window.ResizeObserver) new ResizeObserver(lift).observe(attr);
+    map.on("resize", lift); window.addEventListener("resize", lift); lift();
   })();
   var FsCtl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-bar leaflet-control fsctl");
@@ -6092,6 +5881,11 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
   }
   sizeToHeader();
   window.addEventListener("resize", sizeToHeader);
+  /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
+  // "AI generated" tags: tap (or Enter) shows the full draft wording, since phones have no hover
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
+  document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
+  if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
   renderRules(); evaluate(); badge();
   window.TSAP_liveRefreshed = function () {
@@ -7201,5 +6995,6 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
+<script src="assets/osap-evsum.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
