@@ -93,9 +93,10 @@ export function loadGazetteer(get = fetchBuf) {
 // (first by position wins), a town counts only if it lies in a region the text also names, or the text names no region and
 // the town's name is not ambiguous (see loadGazetteer). With no usable town, a single named region is used; two or more
 // named regions, or none, leave the text unplaced.
-export function placeIn(gz, text, ccs) {
-  if (!gz || !text) return null;
+// Every town and region a text names in those countries (for placeIn and tools/probe_placement.mjs).
+export function namesIn(gz, text, ccs) {
   const towns = [], regs = [];
+  if (!gz || !text) return { towns, regs };
   for (const cc of ccs) {
     const g = gz[cc]; if (!g) continue;
     g.re.lastIndex = 0;
@@ -105,6 +106,11 @@ export function placeIn(gz, text, ccs) {
       (p.kind === "city" ? towns : regs).push({ ...p, cc, at: m.index });
     }
   }
+  return { towns, regs };
+}
+export function placeIn(gz, text, ccs) {
+  if (!gz || !text) return null;
+  const { towns, regs } = namesIn(gz, text, ccs);
   const named = new Set(regs.map((r) => r.a1));
   towns.sort((a, b) => a.at - b.at);
   let best = towns.find((t) => (named.size ? named.has(t.a1) : !t.amb)) || null;
