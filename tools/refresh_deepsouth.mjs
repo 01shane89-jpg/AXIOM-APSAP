@@ -175,7 +175,10 @@ const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 1
 let items = [...byLink.values()].filter((i) => !i.date || i.date >= cutoff).sort((a, b) => ((b.date || "") > (a.date || "") ? 1 : -1)).slice(0, CAP);
 const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en);
 if (todo.length) {
-  const tr = await translateAll([...todo.map((i) => ({ text: i.title, lang: i.lang })), ...todo.map((i) => ({ text: i.summary, lang: i.lang }))]);
+  // Search results cut headlines off with "..." and open with "ด่วน!" ("urgent"); the model invents text for such fragments, so both are
+  // dropped from what it is given (the original stays as published).
+  const clean = (t) => String(t || "").replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim();
+  const tr = await translateAll([...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))]);
   todo.forEach((i, n) => { i.title_en = tr[n].en || null; i.summary_en = tr[todo.length + n].en || null; i.mt = tr[n].tool || "untranslated"; });
   saveCache();
 }
