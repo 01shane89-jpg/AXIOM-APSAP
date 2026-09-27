@@ -1,0 +1,46 @@
+name: Keep the 15-minute refresh running
+
+# GitHub runs scheduled workflows late or skips them when it is busy (the 15-minute cron in refresh-flood.yml has been firing
+# only about every 3 hours). This job starts "Refresh live snapshots" on main every 15 minutes itself, for about 5 h 30 min (under
+# GitHub's 6-hour job limit), then starts a fresh copy of itself so the chain carries on. The hourly schedule below restarts
+# the chain if it ever breaks. Only one keeper runs at a time: a new copy waits in the queue until the current one ends
+# (GitHub keeps at most one waiting), so the hand-over and the hourly restart never double up.
+# Free while the repository is public (standard GitHub-hosted runners cost nothing for public repositories).
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: refresh-keeper
+  cancel-in-progress: false
+
+jobs:
+  keep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Start the refresh every 15 minutes for about 5 h 30 min
+        run: |
+          end=$(( $(date +%s) + 330*60 ))
+          while :; do
+            # skip a round while a main refresh is still waiting, so rounds never pile up
+            waiting=$(( $(gh run list --workflow refresh-flood.yml --branch main --status queued --json databaseId --jq length || echo 0) + $(gh run list --workflow refresh-flood.yml --branch main --status pending --json databaseId --jq length || echo 0) ))
+            if [ "$waiting" = "0" ]; then
+              gh workflow run refresh-flood.yml --ref main && echo "$(date -u +%H:%MZ) started a refresh" || echo "$(date -u +%H:%MZ) could not start a refresh"
+            else
+              echo "$(date -u +%H:%MZ) a refresh is still queued; skipping this round"
+            fi
+            [ $(( $(date +%s) + 900 )) -lt "$end" ] || break
+            sleep 900
+          done
+      - name: Hand over to a fresh keeper
+        if: ${{ !cancelled() }}
+        run: gh workflow run refresh-keeper.yml --ref main

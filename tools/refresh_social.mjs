@@ -9,7 +9,7 @@ import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 
-const TIMEOUT = 30000, PER_AREA = 30, SINCE = Date.now() - 7 * 864e5;
+const TIMEOUT = 30000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const cfg = JSON.parse(fs.readFileSync("tools/social_accounts.json", "utf8"));
 const env = process.env;
@@ -44,9 +44,19 @@ const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || 
   const base = "https://public.api.bsky.app", auth = {};
   for (const a of cfg.bluesky || []) {
     try {
-      const j = await req(base + "/xrpc/app.bsky.feed.getAuthorFeed?filter=posts_no_replies&limit=40&actor=" + encodeURIComponent(a.handle), { headers: auth });
+      /* regional and global accounts ("*") post about many countries, so up to 300 posts from the past week are read (3 pages);
+         national accounts need only their latest 40. (Bluesky's public search needs a login, so it is not used.) */
+      const feed = [];
+      let cursor = "";
+      for (let pg = 0; pg < (a.cc === "*" ? 3 : 1); pg++) {
+        const j = await req(base + "/xrpc/app.bsky.feed.getAuthorFeed?filter=posts_no_replies&limit=" + (a.cc === "*" ? 100 : 40) + "&actor=" + encodeURIComponent(a.handle) + (cursor ? "&cursor=" + encodeURIComponent(cursor) : ""), { headers: auth });
+        feed.push(...(j.feed || []));
+        cursor = j.cursor;
+        const last = (j.feed || []).slice(-1)[0];
+        if (!cursor || !last || Date.parse(((last.post || {}).record || {}).createdAt) < SINCE) break;
+      }
       let n = 0;
-      for (const f of j.feed || []) {
+      for (const f of feed) {
         const p = f.post || {}, r = p.record || {};
         if (f.reason || !r.text || Date.parse(r.createdAt) < SINCE) continue;
         const rkey = String(p.uri || "").split("/").pop();
@@ -112,6 +122,35 @@ async function text(url) {
     return (await r.text()).slice(0, 4e6);
   } finally { clearTimeout(t); }
 }
+// A channel's Videos page carries its latest uploads in the embedded page data: id, title and a relative time ("3 hours ago").
+export function parseYtVideosPage(html, now = Date.now()) {
+  const out = [], seen = new Set(), U = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  const str = (x) => { try { return JSON.parse('"' + x + '"'); } catch (e) { return x; } };
+  for (const chunk of html.split('"videoRenderer":{"videoId":"').slice(1, 40)) {
+    const id = chunk.slice(0, 11), title = (chunk.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/) || [])[1];
+    const ago = (chunk.match(/"publishedTimeText":\{"simpleText":"(?:Streamed )?(\d+) (second|minute|hour|day|week|month|year)s? ago"/) || []);
+    if (!/^[\w-]{11}$/.test(id) || !title || !ago[1] || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, title: str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+  }
+  // newer page layout: "lockupViewModel" objects in the page's ytInitialData, read as JSON
+  let data = null;
+  try { const m = html.match(/var ytInitialData = (\{[\s\S]*?\});<\/script>/) || html.match(/ytInitialData"?\]? = (\{[\s\S]*?\});/); data = m ? JSON.parse(m[1]) : null; } catch (e) {}
+  const walk = function* (o, key) { if (!o || typeof o !== "object") return; if (o[key]) yield o[key]; for (const v of Object.values(o)) yield* walk(v, key); };
+  for (const v of walk(data, "lockupViewModel")) {
+    const j = JSON.stringify(v), id = v.contentId || (j.match(/"videoId":"([\w-]{11})"/) || [])[1];
+    const title = (((v.metadata || {}).lockupMetadataViewModel || {}).title || {}).content || (j.match(/"title":\{"content":"((?:[^"\\]|\\.)*)"/) || [])[1];
+    const ago = j.match(/"content":"(?:Streamed |Premiered )?(\d+)\s(second|minute|hour|day|week|month|year)s?\sago"/) || [];
+    if (!/^[\w-]{11}$/.test(id || "") || !title || !ago[1] || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, title: v.contentId ? title : str(title), date: new Date(now - +ago[1] * U[ago[2]]), summary: "" });
+    if (out.length >= 40) break;
+  }
+  if (!out.length) { for (const v of walk(data, "lockupViewModel")) { ytSample = JSON.stringify(v).replace(/"url":"[^"]*"/g, '"url":""').slice(0, 1500); break; } }
+  return out;
+}
+let ytSample = "";
+const ytPageHint = (h) => h.length + " bytes" + ["videoRenderer", "lockupViewModel", "richItemRenderer", "consent.youtube", "ytInitialData"].map((k) => (h.includes(k) ? ", has " : ", no ") + k).join("");
 export function parseYtFeed(xml) {
   const out = [];
   for (const e of xml.split("<entry>").slice(1)) {
@@ -156,7 +195,7 @@ for (const ch of cfg.youtube || []) {
   try {
     let id = ch.channel_id;
     if (!id) {
-      const page = await text("https://www.youtube.com/@" + encodeURIComponent(ch.handle));
+      const page = await text("https://www.youtube.com/@" + encodeURIComponent(ch.handle)).catch((e) => { throw new Error("channel page " + err(e)); });
       id = (page.match(/feeds\/videos\.xml\?channel_id=(UC[\w-]{22})/) || page.match(/"externalId":"(UC[\w-]{22})"/) || page.match(/<meta itemprop="identifier" content="(UC[\w-]{22})"/) || [])[1];
       if (!id) throw new Error("channel id not found");
     }
@@ -185,7 +224,7 @@ for (const ch of cfg.youtube || []) {
         date: v.date.toISOString().slice(0, 16), ...(v.approx ? { date_note: "YouTube shows only \"" + v.approx + "\"" } : {}), link: "https://www.youtube.com/watch?v=" + v.id, thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg", lang: ch.lang || "" });
       n++;
     }
-    status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n });
+    status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: true, n, ...(via !== "feed" ? { via } : {}) });
   } catch (e) { status.push({ platform: "YouTube", source: src, cc: ch.cc, ok: false, error: err(e) }); }
   await new Promise((r) => setTimeout(r, 800));
 }

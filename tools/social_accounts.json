@@ -15,6 +15,16 @@
    "cc": "*",
    "handle": "afp.com",
    "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "thediplomat.com",
+   "kind": "news desk"
+  },
+  {
+   "cc": "*",
+   "handle": "theguardian.com",
+   "kind": "news desk"
   }
  ],
  "telegram_note": "Read through each channel's public web preview (t.me/s/<channel>); no login. Channels were found by web search on 2026-09-26 and are unverified until the first run.",
@@ -63,7 +73,7 @@
    "lang": "id"
   }
  ],
- "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed.",
+ "youtube_note": "Each channel's public feed (youtube.com/feeds/videos.xml?channel_id=...), which needs no account or key. A channel is given by its @handle; the job looks up its channel id on the channel page. Titles, dates, thumbnails and links only: no downloading, transcripts or YouTube Data API. News desks and official channels only. Each channel below was checked on 2026-09-26 (the handle resolved to the right channel and its feed returned recent videos); handles that did not resolve were removed. Channels added on 2026-09-27 for the remaining areas were found by searching YouTube's public channel search for each area's national broadcaster, public or state broadcaster, main news desks and government agencies (tools/probe_youtube.mjs); each was kept only if its owner matched and it had uploaded within the last 31 days. 'kind' says whose voice it is: state media (government-run or -controlled), public broadcaster (publicly funded, editorially independent by charter), state-funded (US/UK) for foreign-government-funded services such as VOA, RFA, RFE/RL and BBC language services, government for a government's own channel, news desk for private outlets.",
  "youtube": [
   {
    "cc": "*",
