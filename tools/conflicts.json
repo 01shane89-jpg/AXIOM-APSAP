@@ -43,7 +43,6 @@
     {"id": "bbc-europe", "outlet": "BBC News (Europe)", "url": "https://feeds.bbci.co.uk/news/world/europe/rss.xml", "lang": "en", "side": "neutral"},
     {"id": "dw", "outlet": "DW (Europe)", "url": "https://rss.dw.com/rdf/rss-en-eu", "lang": "en", "side": "neutral"},
     {"id": "france24", "outlet": "France 24 (Europe)", "url": "https://www.france24.com/en/europe/rss", "lang": "en", "side": "neutral"},
-    {"id": "euronews", "outlet": "Euronews", "url": "https://www.euronews.com/rss?level=theme&name=news", "lang": "en", "side": "neutral"},
     {"id": "aljazeera", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "lang": "en", "side": "neutral"},
     {"type": "telegram", "channel": "GeneralStaffZSU", "id": "tg-generalstaffzsu", "outlet": "General Staff of the Armed Forces of Ukraine (Telegram)", "lang": "uk", "side": "ua", "state": true, "all": true},
     {"type": "telegram", "channel": "kpszsu", "id": "tg-kpszsu", "outlet": "Ukrainian Air Force (Telegram)", "lang": "uk", "side": "ua", "state": true, "all": true},
