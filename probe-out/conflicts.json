@@ -1,0 +1,2846 @@
+{
+ "at": "2026-09-27 10:41Z",
+ "conflicts": {
+  "russia-ukraine": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 2,
+     "kept": 2,
+     "newest": "2026-09-17T03:05",
+     "kept_sample": [
+      "Ukraine war latest: Kyiv-Warsaw train struck by Russian drone near Polish border as mass attack targets western Ukraine",
+      "EU ambassador on overnight attack: \"Kyiv has become a frontline city\""
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 2,
+     "kept": 2,
+     "newest": "2026-09-26T23:36",
+     "kept_sample": [
+      "Russia's strike near Poland put Ukraine's railway lifeline in focus. But the bigger threat lies elsewhere",
+      "Ukraine bomber drones drop ground robots behind Russian lines to kill or injure 3,000 enemy troops"
+     ]
+    },
+    {
+     "id": "bing-uk-2",
+     "ok": true,
+     "n": 2,
+     "kept": 0,
+     "newest": "2026-05-22T01:15",
+     "kept_sample": []
+    }
+   ],
+   "news_kept": [
+    "news:ua 35/40",
+    "news:ru 7/40"
+   ],
+   "fresh": 46,
+   "fresh_sample": [
+    "Ukraine's General Staff: Strike drone launch site hit in occupied Donetsk",
+    "Swimming in Dangerous Waters",
+    "Madyar: 95% of drones are used on battlefield, while rest strike Russia",
+    "Lavrov Says War Warnings Could Become EU’s ‘Self-Fulfilling Prophecy’",
+    "Russians destroy Zammler logistic company's warehouse in Kyiv Oblast",
+    "Drone debris falls on educational institution in Kyiv's Solomianskyi district"
+   ],
+   "front": [
+    {
+     "id": "deepstate-mirror",
+     "url": "https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/data/deepstatemap_data_20260927.geojson",
+     "bytes": 77218,
+     "features": 1,
+     "km2": 116791
+    },
+    {
+     "id": "wikipedia",
+     "len": 184203,
+     "places": 1011,
+     "marks": [
+      [
+       "mk.ukr",
+       459
+      ],
+      [
+       "mk.rus",
+       435
+      ],
+      [
+       "Fighter-jet-blue-icon.svg",
+       53
+      ],
+      [
+       "Fighter-jet-red-icon.svg",
+       12
+      ],
+      [
+       "mk.con",
+       8
+      ],
+      [
+       "Anchor pictogram red.svg",
+       7
+      ],
+      [
+       "Anchor pictogram blue.svg",
+       7
+      ],
+      [
+       "Icon NuclearPowerPlant-red.svg",
+       6
+      ],
+      [
+       "Icon NuclearPowerPlant-blue.svg",
+       4
+      ],
+      [
+       "Abm-blue-icon.png",
+       3
+      ],
+      [
+       "Map-arcSE-red.svg",
+       2
+      ],
+      [
+       "mk.rEE",
+       2
+      ],
+      [
+       "BSicon STR+l blue.svg",
+       1
+      ],
+      [
+       "mk.uSW",
+       1
+      ],
+      [
+       "mk.rNW",
+       1
+      ],
+      [
+       "Map-arcEE-red.svg",
+       1
+      ],
+      [
+       "mk.rSE",
+       1
+      ],
+      [
+       "BSicon STR+r red.svg",
+       1
+      ],
+      [
+       "3x3dot-blue.svg",
+       1
+      ],
+      [
+       "BSicon STRq blue.svg",
+       1
+      ],
+      [
+       "BSicon STR blue.svg",
+       1
+      ],
+      [
+       "Map-arcSW-blue.svg",
+       1
+      ],
+      [
+       "Map-arcWW-blue.svg",
+       1
+      ],
+      [
+       "mk.grz",
+       1
+      ],
+      [
+       "BSicon STR+r blue.svg",
+       1
+      ]
+     ],
+     "head": "local m = require('Module:Russo-Ukrainian war overview map')\n\nm.marks[1].marksize = 4000\nm.containerArgs.width = 4000\n\nsizes = {[14]=90, [12]=80, [10]=70, [8]=60, [6]=50, [5]=50, [4]=50}\n\nlocal label\nfor i, mark in ipairs(m.marks) do\n\tlabel = mark.label\n\tif label and mark.label_size then\n\t\tlabel = mw.text.trim(label, '%[%]')\n\t\tlabel = mw.text.split(label, '[,|]')[1]\n\t\tm.marks[label] = mark\n\n\t\tif mark.label_size == 0 then\n\t\t\tmark.label_size = sizes[mark.marksize]\n\t\tend\n\tend\n\tm.marks.old_len = i\nend\n\n-- Arranged by oblasts, then settlement type, in alphabetical order. Crimea is at the bottom.\nlo",
+     "sample": [
+      {
+       "n": "",
+       "la": 49.416,
+       "lo": 31.995,
+       "mark": "Fighter-jet-blue-icon.svg",
+       "ctl": "blue"
+      },
+      {
+       "n": "",
+       "la": 49.767,
+       "lo": 31.472,
+       "mark": "BSicon STR+l blue.svg",
+       "ctl": "blue"
+      },
+      {
+       "n": "",
+       "la": 50.926,
+       "lo": 30.757,
+       "mark": "Abm-blue-icon.png",
+       "ctl": "blue"
+      },
+      {
+       "n": "",
+       "la": 51.55,
+       "lo": 31.317,
+       "mark": "Fighter-jet-blue-icon.svg",
+       "ctl": "blue"
+      },
+      {
+       "n": "",
+       "la": 51.883,
+       "lo": 31.65,
+       "mark": "Fighter-jet-blue-icon.svg",
+       "ctl": "blue"
+      }
+     ]
+    }
+   ]
+  },
+  "iran-war": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 5,
+     "newest": "2026-09-27T02:39",
+     "kept_sample": [
+      "US-Israel-Iran war latest live news: Tehran warns of attacks on US bases if conflict escalates; what happens to Iran's 7",
+      "Iran's army voices readiness for potential renewed US attack",
+      "Iran Claims Strike On U.S. Ship In Strait Of Hormuz As Fighting Escalates",
+      "Iran ready for renewed US attack, says army spokesperson"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-27T02:12",
+     "kept_sample": [
+      "Game Over For US Navy? Iran Fires 6 Anti-Ship Missiles & Deploys Hard-To-Detect Sea Mines In Hormuz",
+      "Is Iran Building A More Sophisticated Missile Arsenal Under Fire?",
+      "Iran attacks Jordan, UAE after US bombs Larak Island: What’s the latest?",
+      "Men arrested in major incident at UK base used by US to attack Iranian missile sites"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ir 5/40",
+    "news:il 5/40",
+    "news:us 1/40",
+    "news:iq 0/10",
+    "news:ae 0/25",
+    "news:sa 0/25",
+    "news:qa 0/12",
+    "news:bh 3/11",
+    "news:kw 1/12",
+    "news:om 0/25"
+   ],
+   "fresh": 32,
+   "fresh_sample": [
+    "Iran’s Army Force fully prepared to confront enemy: spox",
+    "Families of slain protesters challenge Pezeshkian over UN remarks",
+    "Iran to respond to any aggression with new military technologies: Armed Forces",
+    "Iranian photographer awarded at Canada’s Fine Shot Festival",
+    "Iran: NATO chief’s remarks confirm Europe’s ‘indispensable role’ in US-Israeli war",
+    "Iran Army spokesperson claims United States could attack again due to bad regional situation"
+   ]
+  },
+  "sudan": {
+   "feeds": [
+    {
+     "id": "dabanga",
+     "ok": true,
+     "n": 12,
+     "kept": 3,
+     "newest": "2026-09-25T14:56",
+     "kept_sample": [
+      "Somoud anti-war forces call on UN Security Council for immediate truce in Sudan",
+      "Civilians flee North Kordofan as fighting escalates",
+      "Sudan: Six killed, dozens injured in Red Sea mine collapse"
+     ]
+    },
+    {
+     "id": "sudanwarmonitor",
+     "ok": true,
+     "n": 20,
+     "kept": 3,
+     "newest": "2026-09-26T19:33",
+     "kept_sample": [
+      "مقتل وجرح اكثر من 80 شخص فى صراع أهلي بين المساليت والفلاتة بمنطقة قريضة",
+      "Large-Scale Army Offensive Targets RSF Strongholds in North Kordofan",
+      "تحالف السودان التأسيسي يتهم الجيش السوداني باستهداف خط نقل بترول دولة جنوب السودان"
+     ]
+    },
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-26T17:00",
+     "kept_sample": [
+      "Sudan's RSF Steps up Deadly Drone Attacks on Frontline Cities",
+      "RSF drone strike hits strategic fuel depot in central Sudan",
+      "RSF attack on UN aid convoy in Sudan's South Kordofan kills one, injures two",
+      "Saudi Arabia accuses Sudan’s RSF of drone strike on aid convoy"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 12,
+     "kept": 9,
+     "newest": "2026-09-25T16:56",
+     "kept_sample": [
+      "EXPLAINER - From Ethiopia border to Darfur: Where are Sudan’s war fronts heating up?",
+      "Sudan War 2026: What Is Happening, Who Is Fighting, and What Comes Next",
+      "Over 200,000 people newly displaced in Sudan’s Kordofan as fighting rages",
+      "Sudanese army says it captured strategic North Kordofan city of Sodiri"
+     ]
+    },
+    {
+     "id": "bing-ar-2",
+     "ok": true,
+     "n": 12,
+     "kept": 11,
+     "newest": "2026-09-26T14:17",
+     "kept_sample": [
+      "هجوم جديد بالمسيّرات في السودان.. استهداف مستودعات بترول شرق ود مدني (صور)",
+      "الجيش السوداني يعلن سيطرته على مواقع مهمة وسط الخرطوم، وقتلى في هجوم لقوات الدعم السريع في دارفور",
+      "\"اعتداء خطير\".. السعودية تشكو \"الدعم السريع\" لمجلس الأمن",
+      "&#171;الدعم السريع&#187; يستهدف معسكراً للنازحين في كردفان.. قتيلان و20 مصاباً"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:sd 8/40",
+    "news:td 0/10",
+    "news:ss 2/20"
+   ],
+   "fresh": 48,
+   "fresh_sample": [
+    "Sudan army announces capture of Sodari, North Kordofan",
+    "17 civilians killed in drone strike on North Kordofan market",
+    "Opinion&#124; SPLM’s liberation legacy faces its hardest test",
+    "Somoud anti-war forces call on UN Security Council for immediate truce in Sudan",
+    "Civilians flee North Kordofan as fighting escalates",
+    "Large-Scale Army Offensive Targets RSF Strongholds in North Kordofan"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 8047,
+     "places": 2,
+     "marks": [
+      [
+       "fullArgs.mark1 or fullArgs.mark",
+       1
+      ],
+      [
+       "fullArgs['mark' .. n]",
+       1
+      ]
+     ],
+     "head": "require('strict')\n\nlocal p = {}\n\nlocal getArgs = require('Module:Arguments').getArgs\nlocal locmap = require('Module:Location map')\n\nlocal function switcherSeparate(s)\n\tif s == nil then return {} end\n\tlocal retval = {}\n\tfor i in string.gmatch(s .. '#', '([^#]*)#') do\n\t\ti = mw.text.trim(i)\n\t\tretval[#retval + 1] = (i ~= '' and i)\n\tend\n\treturn retval\nend\n\nfunction p.container(frame, args, map)\n\tlocal caption_list = {}\n\tif not args then\n\t\targs = getArgs(frame, {wrappers = 'Template:Location map+', valueFunc = locmap.valueFunc})\n\tend\n\tif not map then\n\t\tif args[1] then\n\t\t\tmap = {}\n\t\t\tfor mapname in s",
+     "sample": [
+      {
+       "n": "fullArgs.label1 or fullArgs.label",
+       "la": 0,
+       "lo": 0,
+       "mark": "fullArgs.mark1 or fullArgs.mark"
+      },
+      {
+       "n": "fullArgs['label' .. n]",
+       "la": 0,
+       "lo": 0,
+       "mark": "fullArgs['mark' .. n]"
+      }
+     ]
+    }
+   ]
+  },
+  "israel-gaza": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-27T03:37",
+     "kept_sample": [
+      "Terrorist who kidnapped Noa Argamani into Gaza on Oct. 7 killed in weekend strikes",
+      "Israel kills alleged October 7 kidnapper in Gaza airstrike",
+      "IDF says Gaza strikes killed Hamas commander and another terror operative",
+      "Terrorist who kidnapped Noa Argamani to Gaza killed"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 11,
+     "kept": 10,
+     "newest": "2026-09-26T15:32",
+     "kept_sample": [
+      "Israeli forces arrest dozens of Palestinians in occupied West Bank raid",
+      "Police seize millions of shekels worth of drugs in separate West Bank, Jerusalem area raids",
+      "West Bank: Illegal Israeli Outpost Established as Army Raids Birzeit, Detains Farmers",
+      "Tense scenes as Israeli military vehicles enter downtown Ramallah in latest raid on West Bank"
+     ]
+    },
+    {
+     "id": "bing-ar-2",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-27T02:58",
+     "kept_sample": [
+      "إصابات في قصف إسرائيلي استهدف مواطنين غرب مدينة غزة",
+      "حرب غزة بيومها الـ431 |",
+      "تصعيد إسرائيلي جديد في غزة.. قصف مدفعي وغارات وإطلاق نار بعدة مناطق (صور)",
+      "شهداء وجرحى في غزة مع تصاعد الخروقات الإسرائيلية"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ps 1/10",
+    "news:il 9/40"
+   ],
+   "fresh": 44,
+   "fresh_sample": [
+    "Palestinians in Masafer Yatta are surviving without water after Israeli settlers cut off a lifeline",
+    "WATCH: IDF shares footage of terrorist using child to transfer weapons into civilian home in Gaza",
+    "IDF reinforces West Bank troop deployment amid concern of terror attacks over holidays",
+    "IDF kills terrorist who abducted Noa Argamani into Gaza on October 7",
+    "Israel security forces kill terrorist who kidnapped Noa Argamani on Oct. 7 in weekend strikes",
+    "Ismail Haniyeh's ex-bodyguard arrested for planning terror attack against European Jews - report"
+   ]
+  },
+  "israel-lebanon": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 10,
+     "newest": "2026-09-27T02:44",
+     "kept_sample": [
+      "Israel says Hezbollah launched drone at its forces overnight",
+      "IDF destroys Hezbollah weapons depot in southern Lebanon – explosives targeting soldiers in security zone",
+      "LEBANON STRIKE: IDF Hits Hezbollah Weapons Depot In Southern Lebanon",
+      "IDF strikes Hezbollah weapons storage site in Southern Lebanon"
+     ]
+    },
+    {
+     "id": "bing-ar-1",
+     "ok": true,
+     "n": 11,
+     "kept": 9,
+     "newest": "2026-09-27T03:00",
+     "kept_sample": [
+      "إسرائيل تقصف عدة بلدات بالطائرات والمدفعية في جنوب لبنان",
+      "غارتان إسرائيليتان على ميفدون وسط تصعيد متواصل في جنوب لبنان",
+      "مقتل شخص في غارة إسرائيلية على جنوب لبنان",
+      "جنوب لبنان.. غارة إسرائيلية والعثور على منصة صواريخ"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:lb 5/9",
+    "news:il 1/40",
+    "news:sy 1/40"
+   ],
+   "fresh": 26,
+   "fresh_sample": [
+    "IDF strikes Hezbollah weapons storage site in Southern Lebanon",
+    "LEBANON STRIKE: IDF Hits Hezbollah Weapons Depot In Southern Lebanon",
+    "Lebanon PM demands Israeli withdrawal in UN address",
+    "How Israel’s destruction of south Lebanon is making displacement permanent",
+    "Lebanon’s president makes a rare visit to southern city as fears of Israeli attacks grow",
+    "IDF strikes Hezbollah in Lebanon after explosive drone fired at Israeli troops overnight"
+   ]
+  },
+  "yemen-red-sea": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 10,
+     "newest": "2026-09-27T02:59",
+     "kept_sample": [
+      "Yemen government forces widen attacks against Houthis: What we know",
+      "'Please stop Houthis!': Saudi FM demands global action as Iran ally hits Riyadh, Mecca, Red Sea",
+      "Trump said Houthis quit, but gas spikes as rebels seize Red Sea outlet",
+      "The Houthis have further tightened their grip on the Red Sea. Here’s what it could mean for the world"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 12,
+     "kept": 10,
+     "newest": "2026-09-24T02:26",
+     "kept_sample": [
+      "Yemeni forces say they repel Houthi attacks in Taiz as fighting rages",
+      "Heavy fighting continues across Taiz, Marib and al-Jawf in Yemen",
+      "‘If they fall, it’s game over’: Houthis target Taiz and Marib in push for control of Yemen",
+      "Yemen conflict intensifies as Houthi rebels advance on Marib, Taiz"
+     ]
+    },
+    {
+     "id": "bing-ar-2",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-26T19:19",
+     "kept_sample": [
+      "غارات تضرب الحوثيين في تعز.. استهداف تعزيزات ومعسكرات (خاص)",
+      "إسرائيل تؤكد استهداف كبار قيادات الحوثيين في اليمن",
+      "منشآت الإمارات بيد الحوثيين.. موانئ ومطارات ومعسكرات سقطت في هجوم الساحل الغربي",
+      "انهيار مفاجئ للقوات اليمنية.. فايننشال تايم: \"هجوم الحوثيين هز السعودية\""
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ye 9/12",
+    "news:sa 3/25",
+    "news:er 0/10",
+    "news:dj 0/10"
+   ],
+   "fresh": 44,
+   "fresh_sample": [
+    "Yemen's Government and Houthis Battle for Mountains Overlooking Bab al-Mandab",
+    "Why has the Yemen government called for a general mobilisation?",
+    "Yemen's Vice President at UNGA: Protecting the Sea 'Begins with Ending the Threat of the Militia on Land'",
+    "Yemen fighting displaces 71,000 children, worsens malnutrition: UNICEF",
+    "As Houthis capitalize on US.-led war with Iran, fighting engulfs Yemen",
+    "Yemen tells UN that Houthi rebels' moves on key strait threaten global economy"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 190322,
+     "places": 1286,
+     "marks": [
+      [
+       "Location dot red.svg",
+       449
+      ],
+      [
+       "Dot green 0d0.svg",
+       418
+      ],
+      [
+       "Map-peak-red.svg",
+       132
+      ],
+      [
+       "Map-peak-lime.svg",
+       131
+      ],
+      [
+       "Abm-lime-icon.png",
+       40
+      ],
+      [
+       "Abm-red-icon.png",
+       40
+      ],
+      [
+       "Fighter-jet-red-icon.svg",
+       16
+      ],
+      [
+       "Fighter-jet-lime-icon.svg",
+       7
+      ],
+      [
+       "Anchor pictogram green.svg",
+       5
+      ],
+      [
+       "anchor pictogram red.svg",
+       5
+      ],
+      [
+       "Mountain pass 12x12 n.svg",
+       4
+      ],
+      [
+       "Anchor pictogram red.svg",
+       4
+      ],
+      [
+       "80x80-red-lime-anim.gif",
+       4
+      ],
+      [
+       "gota01.svg",
+       4
+      ],
+      [
+       "4x4dot-lime.svg",
+       4
+      ],
+      [
+       "Gota01.svg",
+       4
+      ],
+      [
+       "BSicon STRlf red.svg",
+       3
+      ],
+      [
+       "Location dot blue.svg",
+       2
+      ],
+      [
+       "4x4dot-red.svg",
+       2
+      ],
+      [
+       "Mountain pass 12x12 e.svg",
+       2
+      ],
+      [
+       "4x4dot-blue.svg",
+       2
+      ],
+      [
+       "Situation in Taizz.svg",
+       1
+      ],
+      [
+       "80x80-red-grey-anim.gif",
+       1
+      ],
+      [
+       "Gota02.svg",
+       1
+      ],
+      [
+       "4x4dot-grey.svg",
+       1
+      ]
+     ],
+     "head": "return {\n\tmarks = {\n        { lat = \"14.799\", long = \"42.949\", mark = \"Dot green 0d0.svg\", marksize = \"23\", label = \"[[Battle of Al Hudaydah|Al Hudaydah]]\", link = \"Battle of Al Hudaydah\", label_size = \"110\", position = \"left\" },\n\t\t{ lat = \"13.568\", long = \"44\", mark= \"Situation in Taizz.svg\", marksize= \"45\", label = \"[[Taiz campaign|Taiz]]\", link = \"Taiz campaign\", label_size= \"110\", position=\"right\" },\n\t\t{ lat = \"15.380\", long = \"44.209\", mark = \"Dot green 0d0.svg\", marksize = \"32\", label = \"[[Sanaa#Contemporary era|Sanaa]]\", link = \"Sanaa#Contemporary era\", label_size = \"120\", position = \"r",
+     "sample": [
+      {
+       "n": "Al Hudaydah",
+       "la": 14.799,
+       "lo": 42.949,
+       "mark": "Dot green 0d0.svg",
+       "ctl": "green"
+      },
+      {
+       "n": "Taiz",
+       "la": 13.568,
+       "lo": 44,
+       "mark": "Situation in Taizz.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Sanaa",
+       "la": 15.38,
+       "lo": 44.209,
+       "mark": "Dot green 0d0.svg",
+       "ctl": "green"
+      },
+      {
+       "n": "Attan",
+       "la": 15.28,
+       "lo": 44.109,
+       "mark": "Dot green 0d0.svg",
+       "ctl": "green"
+      },
+      {
+       "n": "Attan Missile Base",
+       "la": 15.23,
+       "lo": 44.059,
+       "mark": "Abm-lime-icon.png",
+       "ctl": "lime"
+      }
+     ]
+    }
+   ]
+  },
+  "myanmar": {
+   "feeds": [
+    {
+     "id": "myanmarnow",
+     "ok": true,
+     "n": 10,
+     "kept": 6,
+     "newest": "2026-09-25T11:50",
+     "kept_sample": [
+      "Six Killed in Myanmar junta attack on NUG regional command",
+      "Myanmar junta attacks Bago villages near the 115-Mile Rest Stop",
+      "Myanmar coup leader claims ‘lenient’ on Suu Kyi: report",
+      "Myanmar junta torches oil-producing village in new Magway offensive"
+     ]
+    },
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 7,
+     "kept": 6,
+     "newest": "2026-09-21T17:00",
+     "kept_sample": [
+      "Myanmar: Junta airstrike on hospital kills dozens",
+      "At least 30 killed in Myanmar after junta airstrike hits hospital, witnesses report",
+      "Myanmar junta air strike kills 28, including children: ethnic armed group",
+      "Myanmar junta air strike on hospital kills 31, dozens wounded"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 8,
+     "kept": 5,
+     "newest": "2026-05-25T00:16",
+     "kept_sample": [
+      "Fighting flares at Myanmar-Thai border as rebels target stranded junta troops",
+      "Civilian casualties rise in Myanmar’s civil war as resistance forces tighten noose around military",
+      "Myanmar military steps up fight for rare earth area and border routes",
+      "Who is fighting in Myanmar’s multi-front civil war?"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:mm 7/20"
+   ],
+   "fresh": 24,
+   "fresh_sample": [
+    "Myanmar Air Force defector among 6 killed in targeted airstrike on NUG regional headquarters",
+    "Six Killed in Myanmar junta attack on NUG regional command",
+    "Myanmar junta attacks Bago villages near the 115-Mile Rest Stop",
+    "Myanmar coup leader claims ‘lenient’ on Suu Kyi: report",
+    "Myanmar junta torches oil-producing village in new Magway offensive",
+    "Battle for Sittwe flares up as AA advances from Ponnagyun"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 79328,
+     "places": 369,
+     "marks": [
+      [
+       "Location dot red.svg",
+       219
+      ],
+      [
+       "80x80-red-lime-anim.gif",
+       22
+      ],
+      [
+       "Location dot blue.svg",
+       18
+      ],
+      [
+       "Location dot green.svg",
+       16
+      ],
+      [
+       "Dot green 0d0.svg",
+       11
+      ],
+      [
+       "Dot yellow ff4.svg",
+       8
+      ],
+      [
+       "Location dot ochre200.svg",
+       8
+      ],
+      [
+       "Map-dot-grey-68a.svg",
+       8
+      ],
+      [
+       "Location dot orange.svg",
+       7
+      ],
+      [
+       "Location dot magenta.svg",
+       5
+      ],
+      [
+       "Mountain pass 12x12 se.svg",
+       5
+      ],
+      [
+       "Location dot cyan.svg",
+       5
+      ],
+      [
+       "Mountain pass 12x12 e.svg",
+       3
+      ],
+      [
+       "80x80-red-cyan-anim.gif",
+       3
+      ],
+      [
+       "Location dot lightgrey.svg",
+       3
+      ],
+      [
+       "80x80-red-blue-anim.gif",
+       2
+      ],
+      [
+       "Location dot black.svg",
+       2
+      ],
+      [
+       "Fighter-jet-green-icon.svg",
+       2
+      ],
+      [
+       "Mountain pass 12x12 ne.svg",
+       2
+      ],
+      [
+       "Mountain pass 12x12 nw.svg",
+       2
+      ],
+      [
+       "Location dot limegreen.svg",
+       2
+      ],
+      [
+       "Myanmar Roadmap.png",
+       1
+      ],
+      [
+       "80x80-red-black-anim.gif",
+       1
+      ],
+      [
+       "80x80-red-magenta-anim.gif",
+       1
+      ],
+      [
+       "WhiteDot.svg",
+       1
+      ]
+     ],
+     "head": "return {\n\tsecondaryModules = {\n\t},\n\n\t\t\t-- Towns & Villages, for standardization of icon and label sizing\n\t\t\t\t-- dotsize vs population\n\t\t\t\t-- population > 3M\t\t\t\t\t\t\t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t\t-- population < 1M & population > 3M\t\t\t\t\t\t\tsize: 28  \t-- label size: 130\n\t\t\t\t-- population < 1M & population > 500k\t  \t\t\t\t\t\tSize: 20  \t-- label size: 120\n\t\t\t\t-- population < 500k & population > 100k\t\t\t\t\t\tSize: 18 \t-- label size: 100\n\t\t\t\t-- population < 100k & population > 50k\t\t\t\t\t\t\tSize: 14 \t-- label size: 90\n\t\t\t\t-- population < 50k\t& population > 10k\t\t\t\t\t\t\tSize: 8\t    -- label size: 80\n\t\t\t\t-- pop",
+     "sample": [
+      {
+       "n": "",
+       "la": 19.397,
+       "lo": 102.096,
+       "mark": "Myanmar Roadmap.png",
+       "ctl": "other"
+      },
+      {
+       "n": "Hinthada",
+       "la": 17.646,
+       "lo": 95.46,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Lemyethna",
+       "la": 17.594,
+       "lo": 95.183,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Zalun",
+       "la": 17.472,
+       "lo": 95.552,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Kyonpyaw",
+       "la": 17.3,
+       "lo": 95.2,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      }
+     ]
+    }
+   ]
+  },
+  "afghanistan-pakistan": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 11,
+     "kept": 10,
+     "newest": "2026-09-25T23:45",
+     "kept_sample": [
+      "13 Afghan Taliban personnel killed in overnight border clash, Pakistan says. Kabul denies the claim",
+      "Pakistan-Taliban forces clash after 3 months of calm; 17 Afghan fighters reported dead",
+      "Pakistan kills Afghan Taliban fighters after Gulistan border clash",
+      "Pakistan reports Taliban fighters killed after clash along Afghanistan border"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-27T03:38",
+     "kept_sample": [
+      "Afghanistan says 28 fighters killed after crossing from Pakistan",
+      "Pakistan launches airstrikes into Afghanistan overnight, killing three",
+      "28 fighters killed after crossing from Pakistan: Afghanistan",
+      "Pakistan Says Airstrikes in Afghanistan Kill 28 Militants; Kabul Reports 3 Civilians Killed"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:pk 1/25",
+    "news:af 9/32"
+   ],
+   "fresh": 32,
+   "fresh_sample": [
+    "KP CM Afridi open to dialogue with govt but warns against 'misadventure'",
+    "Afghanistan&#8217;s National Resistance Front Condemns Taliban Treatment of Prisoners of War and Political Prisoners",
+    "12 Killed, 35 Injured in Suicide Blast at Police Checkpost in Northwestern Pakistan",
+    "Pakistan PM tells UN Afghanistan’s soil is being used for attacks against his country",
+    "Unidentified Gunmen Shoot and Kill Man in Northeastern Afghanistan",
+    "At UN, Pakistan PM Says Afghan Territory Is Being Used for Attacks Against Pakistan"
+   ]
+  },
+  "pakistan-insurgency": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 9,
+     "kept": 5,
+     "newest": "2026-09-26T08:24",
+     "kept_sample": [
+      "Pakistan blast toll crosses 100 since February following latest Khyber Pakhtunkhwa bombing",
+      "Suicide attack in Pakistan kills 12, injures 30 amid rising militant violence: Pakistani Taliban claims responsibility",
+      "Pakistan: 31 killed in suspected militant attack at police headquarters in Khyber Pakhtunkhwa",
+      "Pakistan suicide attack: Bomber strikes anti-militant rally in Khyber Pakhtunkhwa, leaving 14 dead"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 8,
+     "kept": 8,
+     "newest": "2026-09-27T01:33",
+     "kept_sample": [
+      "BLF claims killing of nine Pakistani soldiers in recent attacks",
+      "Attack On Security Checkpoint In Pakistan Kills 13, Injures Dozens More",
+      "Drone strike in Balochistan claims lives of four young men on picnic",
+      "How Balochistan attacks threaten Pakistan’s promises to China, Trump"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:pk 3/25"
+   ],
+   "fresh": 16,
+   "fresh_sample": [
+    "Terrorists take 13 people hostage in Bannu",
+    "Suicide blast targeting DI Khan checkpost claims 12 lives, injures 30",
+    "KP CM Afridi open to dialogue with govt but warns against 'misadventure'",
+    "Pakistan blast toll crosses 100 since February following latest Khyber Pakhtunkhwa bombing",
+    "Suicide attack in Pakistan kills 12, injures 30 amid rising militant violence: Pakistani Taliban claims responsibility",
+    "Pakistan: 31 killed in suspected militant attack at police headquarters in Khyber Pakhtunkhwa"
+   ]
+  },
+  "drc-east": {
+   "feeds": [
+    {
+     "id": "actualite-cd",
+     "ok": true,
+     "n": 10,
+     "kept": 0,
+     "newest": "2026-09-27T09:14",
+     "kept_sample": []
+    },
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 8,
+     "kept": 7,
+     "newest": "2026-09-24T11:51",
+     "kept_sample": [
+      "DR Congo and M23 rebels agree roadmap for peace talks",
+      "M23 senior rebel official killed by drone strike in eastern Congo",
+      "Hundreds return from Burundi to DRC as border shut by M23 fighting reopens",
+      "How Rwanda-backed M23 rebels finance their war in DR Congo"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 4,
+     "kept": 4,
+     "newest": "2026-07-16T22:13",
+     "kept_sample": [
+      "Dozen dead in suspected ADF machete attack on two villages in DRC’s Beni",
+      "More than 40 dead in five days from ADF attacks in DRC",
+      "Ugandan and Congolese forces rescue 200 people from ISIL-linked ADF",
+      "At least 20 killed in jihadist attacks in eastern DRC"
+     ]
+    },
+    {
+     "id": "bing-fr-2",
+     "ok": true,
+     "n": 12,
+     "kept": 11,
+     "newest": "2026-09-27T03:14",
+     "kept_sample": [
+      "Walikale : reprise des combats entre l'AFC/M23 et l'arm&#233;e sur les collines de Kazumba, Kasumba et Tchad, pr&#232;s ",
+      "Sud-Kivu : FARDC/Wazalendo et Twirhaneho/AFC s’affrontent dans plusieurs villages &#224; Itombwe",
+      "Combats FARDC-M23 : le trafic routier de nouveau suspendu entre Masisi et Walikale",
+      "Attention, cette vid&#233;o de civils en fuite dans l’est de la RDC n’est pas r&#233;cente"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:cd 4/10",
+    "news:rw 0/10",
+    "news:ug 0/25",
+    "news:bi 0/10"
+   ],
+   "fresh": 26,
+   "fresh_sample": [
+    "South Kivu: FARDC/Wazalendo and Twirhaneho/AFC clashes in several villages in Itombwe",
+    "Walikale: two Raiya Mutomboki factions clashed in Karete, population fleeing to the bush",
+    "DRC: at least 165 dead in floods in 2025, third consecutive year of severe floods",
+    "Kenge plane crash: OHCHR pays tribute to “partners committed to fighting impunity and promoting justice in the DRC”",
+    "DR Congo and M23 rebels agree roadmap for peace talks",
+    "M23 senior rebel official killed by drone strike in eastern Congo"
+   ]
+  },
+  "sahel": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-23T17:23",
+     "kept_sample": [
+      "Attack on Mali Army Camp at Dioura Kills at Least 100 Soldiers",
+      "Mali marks independence amid a worsening security crisis",
+      "Al-Qaida-linked JNIM claims a deadly Mali army camp attack",
+      "Death Toll Passes 100 in Mali Attack"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 3,
+     "kept": 3,
+     "newest": "2024-08-26T10:40",
+     "kept_sample": [
+      "At least 100 killed in central Burkina Faso in latest Al Qaeda attack",
+      "Dozens killed in attack in Burkina Faso: sources",
+      "Suspected militants target local volunteers supporting Burkina Faso army"
+     ]
+    },
+    {
+     "id": "bing-fr-2",
+     "ok": true,
+     "n": 9,
+     "kept": 8,
+     "newest": "2026-09-25T13:42",
+     "kept_sample": [
+      "ONU : le Burkina Faso d&#233;nonce le silence international apr&#232;s l'attaque du 25 avril au Mali",
+      "Nouveau bilan d'une attaque jihadiste au Mali: au moins 100 militaires tu&#233;s (sources concordantes)",
+      "AES : au moins 14 morts dans une attaque djihadiste au Burkina",
+      "Mali : le JNIM revendique une attaque djihadiste dans la r&#233;gion de S&#233;gou"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ml 1/35",
+    "news:bf 1/40",
+    "news:ne 0/20",
+    "news:bj 0/40",
+    "news:tg 0/25"
+   ],
+   "fresh": 25,
+   "fresh_sample": [
+    "FAMa Offensive: War Materials Destroyed and Terrorist Leaders Precisely Targeted",
+    "&#171; Night of the RPP &#187;: A stop of tributes to the fighting forces and celebrations of victories and gains, accor",
+    "Attack on Mali Army Camp at Dioura Kills at Least 100 Soldiers",
+    "Mali marks independence amid a worsening security crisis",
+    "Al-Qaida-linked JNIM claims a deadly Mali army camp attack",
+    "Death Toll Passes 100 in Mali Attack"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 23453,
+     "places": 111,
+     "marks": [
+      [
+       "Location dot red.svg",
+       69
+      ],
+      [
+       "Map-dot-grey-68a.svg",
+       8
+      ],
+      [
+       "Dot green 0d0.svg",
+       7
+      ],
+      [
+       "Location dot black.svg",
+       5
+      ],
+      [
+       "Dot yellow ff4.svg",
+       4
+      ],
+      [
+       "3x3dot-grey.svg",
+       3
+      ],
+      [
+       "4x4dot-grey.svg",
+       3
+      ],
+      [
+       "4x4dot-black.svg",
+       2
+      ],
+      [
+       "Map-circle-grey.svg",
+       2
+      ],
+      [
+       "Mali Roadmap Transparency.png",
+       1
+      ],
+      [
+       "80x80-red-green-anim.gif",
+       1
+      ],
+      [
+       "Icon NuclearPowerPlant-red.svg",
+       1
+      ],
+      [
+       "Map-ctl2-red+yellow.svg",
+       1
+      ],
+      [
+       "Map-circle-black.svg",
+       1
+      ],
+      [
+       "80x80-red-grey-anim.gif",
+       1
+      ],
+      [
+       "80x80-yellow-grey-anim.gif",
+       1
+      ],
+      [
+       "Map-ctl2-lime+grey.svg",
+       1
+      ]
+     ],
+     "head": "return {\n\tsecondaryModules = {\n\t},\n\tmarks = {\n\t\t\t--Towns & Villages\n\t\t\t-- Dotsize vs. Population\n\t\t\t-- Capital          \t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t-- Population 1M +  \t\t\t\t\t\tSize: 28\t-- label size: 130\n\t\t\t-- Population 500K +\t\t\t\t\t\tSize: 24\t-- label size: 120\n\t\t\t-- Population 200K +\t\t\t\t\t\tSize: 20\t-- label size: 110\n\t\t\t-- Population 100K +\t\t\t\t\t\tSize: 16\t-- label size: 100\n\t\t\t-- Population 50K + \t\t\t\t\t\tSize: 14\t-- label size: 90\n\t\t\t-- Population 20K + \t\t\t\t\t\tSize: 12\t-- label size: 80\n\t\t\t-- Population 10K +   \t\t\t\t\t\tSize: 10\t-- label size: 70\n\t\t\t-- Population 5K +  \t\t\t\t\t\tSize: 8  \t-- label ",
+     "sample": [
+      {
+       "n": "",
+       "la": 17.224,
+       "lo": -3.902,
+       "mark": "Mali Roadmap Transparency.png",
+       "ctl": "other"
+      },
+      {
+       "n": "Bamako",
+       "la": 12.643,
+       "lo": -7.997,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Banamba",
+       "la": 13.55,
+       "lo": -7.45,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Banko",
+       "la": 12.4833,
+       "lo": -6.8,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      },
+      {
+       "n": "Kangaba",
+       "la": 11.9333,
+       "lo": -8.4167,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      }
+     ]
+    }
+   ]
+  },
+  "somalia": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 9,
+     "kept": 8,
+     "newest": "2026-09-20T11:19",
+     "kept_sample": [
+      "US Launches Airstrike in Northern Somalia as It Continues Record-Breaking Bombing Campaign",
+      "Al-Shabaab attack on hotel in Somali capital ongoing",
+      "Al Shabaab leader among 24 terrorists killed in Somalia: statement",
+      "US Bombs Somalia For 81st Time This Year"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:so 7/40",
+    "news:ke 0/40",
+    "news:et 0/10"
+   ],
+   "fresh": 15,
+   "fresh_sample": [
+    "Somalia: Former South West Leader Calls for International Probe Into Alleged Abuses",
+    "Ethiopia: Tigray forces seize Mekelle airport",
+    "Somali journalists’ Facebook pages hit amid China, Türkiye partnerships",
+    "Uganda and Turkey clash over military presence in Somalia",
+    "Somalia: Puntland forces intercept more than 100 federal military recruits in Galkayo",
+    "Somali general says he survived F-16 strike on his home"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 30171,
+     "places": 156,
+     "marks": [
+      [
+       "Location dot red.svg",
+       50
+      ],
+      [
+       "Map-dot-grey-68a.svg",
+       40
+      ],
+      [
+       "Location dot purple.svg",
+       16
+      ],
+      [
+       "Dot yellow ff4.svg",
+       15
+      ],
+      [
+       "Location dot green.svg",
+       13
+      ],
+      [
+       "Fighter-jet-yellow-icon.svg",
+       4
+      ],
+      [
+       "Location dot black.svg",
+       3
+      ],
+      [
+       "Fighter-jet-red-icon.svg",
+       3
+      ],
+      [
+       "Mountain pass 12x12 se.svg",
+       3
+      ],
+      [
+       "BSicon FIGHTER.svg",
+       2
+      ],
+      [
+       "80x80-red-black-anim.gif",
+       1
+      ],
+      [
+       "Location dot yellow.svg",
+       1
+      ],
+      [
+       "80x80-red-grey-anim.gif",
+       1
+      ],
+      [
+       "Abm-red-icon.png",
+       1
+      ],
+      [
+       "Fighter-jet-green-icon.svg",
+       1
+      ],
+      [
+       "Abm-grey-icon.png",
+       1
+      ],
+      [
+       "Mountain pass 12x12 n.svg",
+       1
+      ]
+     ],
+     "head": "return {\n\tsecondaryModules = {\n\t},\n\tmarks = {\n\t\t--Towns & Villages\n\t\t\t-- Dotsize vs. Population\n\t\t\t-- Capital          \t\t\t\t\t\tSize: 35\t-- label size: 140\n\t\t\t-- Population 1M +  \t\t\t\t\t\tSize: 28\t-- label size: 130\n\t\t\t-- Population 500K +\t\t\t\t\t\tSize: 24\t-- label size: 120\n\t\t\t-- Population 200K +\t\t\t\t\t\tSize: 20\t-- label size: 110\n\t\t\t-- Population 100K +\t\t\t\t\t\tSize: 16\t-- label size: 100\n\t\t\t-- Population 50K + \t\t\t\t\t\tSize: 14\t-- label size: 90\n\t\t\t-- Population 20K + \t\t\t\t\t\tSize: 12\t-- label size: 80\n\t\t\t-- Population 10K +   \t\t\t\t\t\tSize: 10\t-- label size: 70\n\t\t\t-- Population 5K +  \t\t\t\t\t\tSize: 8  \t-- label s",
+     "sample": [
+      {
+       "n": "Baki",
+       "la": 10.0069,
+       "lo": 43.363,
+       "mark": "Dot yellow ff4.svg",
+       "ctl": "yellow"
+      },
+      {
+       "n": "Borama",
+       "la": 9.9331,
+       "lo": 43.1817,
+       "mark": "Dot yellow ff4.svg",
+       "ctl": "yellow"
+      },
+      {
+       "n": "Borama Airport",
+       "la": 9.9456,
+       "lo": 43.1508,
+       "mark": "Fighter-jet-yellow-icon.svg",
+       "ctl": "yellow"
+      },
+      {
+       "n": "Zeila",
+       "la": 11.3539,
+       "lo": 43.4739,
+       "mark": "Dot yellow ff4.svg",
+       "ctl": "yellow"
+      },
+      {
+       "n": "Hudur",
+       "la": 4.12,
+       "lo": 43.8878,
+       "mark": "Location dot red.svg",
+       "ctl": "red"
+      }
+     ]
+    }
+   ]
+  },
+  "lake-chad-nigeria": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 10,
+     "kept": 9,
+     "newest": "2026-09-25T20:28",
+     "kept_sample": [
+      "Boko Haram/ISWAP attack kills vigilante commander, four others in Borno",
+      "Boko Haram/ISWAP kill vigilante commander, 4 others in Borno",
+      "Troops crush ISWAP attack on Borno military base, recover AK-47s, RPGs",
+      "Troops Repel Boko Haram/Iswap Attack On Base in Borno Community"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 4,
+     "kept": 4,
+     "newest": "2026-09-25T02:55",
+     "kept_sample": [
+      "Bandits continue attacks in Sokoto, Katsina despite local peace deals, military operations",
+      "271 children among 484 displaced in fresh Zamfara bandit attack — IOM",
+      "Katsina security outfit kills over 40 bandits, repels attack",
+      "Behind the Ransom Headlines: How NGOs Are Helping Girls Avoid Pregnancy After Bandit Captivity in Northwest Nigeria ‎"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ng 0/40",
+    "news:cm 1/40",
+    "news:td 0/10",
+    "news:ne 0/20"
+   ],
+   "fresh": 14,
+   "fresh_sample": [
+    "Violence in Far North Displaces Over 1,600 People, Mostly Women and Children",
+    "Boko Haram/ISWAP attack kills vigilante commander, four others in Borno",
+    "Boko Haram/ISWAP kill vigilante commander, 4 others in Borno",
+    "Troops crush ISWAP attack on Borno military base, recover AK-47s, RPGs",
+    "Troops Repel Boko Haram/Iswap Attack On Base in Borno Community",
+    "Troops ‌‌Intercept 43 ISWAP Family Members, Rescue 9 Kidnap Victims"
+   ]
+  },
+  "ethiopia": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 11,
+     "kept": 11,
+     "newest": "2026-09-26T10:14",
+     "kept_sample": [
+      "Is Ethiopia on the verge of another civil war as fighting erupts in Tigray?",
+      "Ethiopia’s Fano fighters claim capture of army vehicles and weapons",
+      "Tigray says defensive war as Mekelle airport falls and fighting spreads into Amhara with Fano",
+      "Internet cuts hit northern Ethiopia as North Wollo fighting pulls Fano deeper into Abiy Ahmed’s war"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 12,
+     "kept": 10,
+     "newest": "2026-09-26T18:11",
+     "kept_sample": [
+      "Why Eritrea matters as fighting returns to Tigray",
+      "Could renewed fighting in Ethiopia's Tigray trigger a wider war in Africa?",
+      "Why the surging conflict in northern Ethiopia could spill across borders",
+      "Ethiopia: Where does the Tigray conflict go from here?"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:et 2/10",
+    "news:er 0/10"
+   ],
+   "fresh": 23,
+   "fresh_sample": [
+    "Escalating Fights in Northern Ethiopia Risk Severe Human Rights Violations: EHRC",
+    "Stepping Back from the Looming Abyss",
+    "Is Ethiopia on the verge of another civil war as fighting erupts in Tigray?",
+    "Ethiopia’s Fano fighters claim capture of army vehicles and weapons",
+    "Tigray says defensive war as Mekelle airport falls and fighting spreads into Amhara with Fano",
+    "Internet cuts hit northern Ethiopia as North Wollo fighting pulls Fano deeper into Abiy Ahmed’s war"
+   ]
+  },
+  "syria": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 4,
+     "newest": "2026-09-14T09:51",
+     "kept_sample": [
+      "Kurdish-led SDF announces dissolution after deal to join Syrian army",
+      "Kurdish-led SDF and Syrian government reach new agreement to stabilise ceasefire",
+      "SDF drone strike kills Syrian soldier, two women in Aleppo",
+      "Kurdish-led Syrian Democratic Forces group says it has dissolved after merging with the Syrian army"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 11,
+     "kept": 9,
+     "newest": "2026-08-28T06:05",
+     "kept_sample": [
+      "Second aid convoy heads to Suwayda after clashes between Bedouins and Druze",
+      "Syria announces ceasefire in Suwayda amid local clashes",
+      "Clashes erupt in Syria’s Suwayda following US-brokered ceasefire",
+      "Clashes erupt between Druze and Syrian government forces in Suwayda"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:sy 5/40",
+    "news:tr 0/40",
+    "news:iq 0/10"
+   ],
+   "fresh": 18,
+   "fresh_sample": [
+    "Lavrov accuses Europe of blocking Ukraine peace talks",
+    "Trump rejects Iran plan to reopen Strait of Hormuz",
+    "Sere Kaniye IDPs face mine threats in Syria&#8217;s Hasakah",
+    "Deadly Myths: How False Beliefs Are Driving Syria’s Striped Hyena Towards Extinction",
+    "Israel Shells Daraa Countryside, Enters Quneitra",
+    "Kurdish-led SDF announces dissolution after deal to join Syrian army"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 956825,
+     "places": 7752,
+     "marks": [
+      [
+       "Map-dot-grey-68a.svg",
+       5660
+      ],
+      [
+       "Map-peak-grey.svg",
+       682
+      ],
+      [
+       "Dot yellow ff4.svg",
+       496
+      ],
+      [
+       "Abm-grey-icon.png",
+       398
+      ],
+      [
+       "Gota08.svg",
+       132
+      ],
+      [
+       "Location dot lime.svg",
+       95
+      ],
+      [
+       "Icon_NuclearPowerPlant-grey.svg",
+       56
+      ],
+      [
+       "Fighter-jet-grey-icon.svg",
+       38
+      ],
+      [
+       "Map-peak-yellow.svg",
+       22
+      ],
+      [
+       "Location dot blue.svg",
+       19
+      ],
+      [
+       "Abm-yellow-icon.png",
+       18
+      ],
+      [
+       "Mountain pass 12x12 se.svg",
+       14
+      ],
+      [
+       "BSicon STRl grey.svg",
+       14
+      ],
+      [
+       "Mountain pass 12x12 n.svg",
+       12
+      ],
+      [
+       "BSicon STRr grey.svg",
+       12
+      ],
+      [
+       "Helicopter-grey-icon.svg",
+       11
+      ],
+      [
+       "Map-peak-lime.svg",
+       11
+      ],
+      [
+       "Gota04.svg",
+       9
+      ],
+      [
+       "Map-peak-blue.svg",
+       8
+      ],
+      [
+       "BSicon STR+r grey.svg",
+       6
+      ],
+      [
+       "Map-ctl2-yellow+grey.svg",
+       6
+      ],
+      [
+       "Abm-lime-icon.png",
+       5
+      ],
+      [
+       "Mountain pass 12x12 e.svg",
+       3
+      ],
+      [
+       "Mountain pass 12x12 ne.svg",
+       3
+      ],
+      [
+       "Fighter-jet-yellow-icon.svg",
+       3
+      ]
+     ],
+     "head": "return {\nmarks = {\n\n-- Detailed minimaps\n{lat= 34.212, long= 38.8, mark= \"Syria location map road overlay.svg\", marksize= 2600}, -- Syria road map\n\n-- Exceptionally important and frontline-marking heights\n{lat= 35.721, long= 36.218, mark= \"Map-peak-grey.svg\", marksize=4, label= \"[[Tal Malik (Heights 1146)]]\", label_size=0},\n{lat= 35.7078, long= 36.2346, mark= \"Map-peak-grey.svg\", marksize=7, label= \"[[Jabal Zuwayqat (Heights 1154)]]\", label_size=0},\n{lat= 33.689, long= 36.032, mark= \"Map-peak-grey.svg\", marksize=9, label= \"[[Jabal ash Shaykh Mansur]]\", label_size=0},\n{lat= 35.753, long= 36.176",
+     "sample": [
+      {
+       "n": "",
+       "la": 34.212,
+       "lo": 38.8,
+       "mark": "Syria location map road overlay.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Tal Malik (Heights 1146)",
+       "la": 35.721,
+       "lo": 36.218,
+       "mark": "Map-peak-grey.svg",
+       "ctl": "grey"
+      },
+      {
+       "n": "Jabal Zuwayqat (Heights 1154)",
+       "la": 35.7078,
+       "lo": 36.2346,
+       "mark": "Map-peak-grey.svg",
+       "ctl": "grey"
+      },
+      {
+       "n": "Jabal ash Shaykh Mansur",
+       "la": 33.689,
+       "lo": 36.032,
+       "mark": "Map-peak-grey.svg",
+       "ctl": "grey"
+      },
+      {
+       "n": "Dahr Abu Sa'd",
+       "la": 35.753,
+       "lo": 36.176,
+       "mark": "Map-peak-grey.svg",
+       "ctl": "grey"
+      }
+     ]
+    }
+   ]
+  },
+  "haiti": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 12,
+     "newest": "2026-09-18T08:07",
+     "kept_sample": [
+      "Mourners file into a church in Haiti where gangs killed dozens of people in latest rampage",
+      "25 or 47? Death toll in Haiti gang massacre remains unclear as U.N. condemns attacks",
+      "More than 50 kidnapped after violent gang attack in Haiti leaves 47 dead",
+      "Haiti Gang Attack Leaves 47 Dead, Over 50 Kidnapped In Kenscoff As Police Face Mounting Questions Over Security Failure "
+     ]
+    },
+    {
+     "id": "bing-fr-1",
+     "ok": true,
+     "n": 11,
+     "kept": 11,
+     "newest": "2026-09-05T05:00",
+     "kept_sample": [
+      "\"Nuit de terreur\" en Ha&#239;ti : une quarantaine de personnes tu&#233;es dans une attaque de gangs",
+      "A Ha&#239;ti, une attaque de gangs pr&#232;s de la capitale fait au moins 40 morts",
+      "Ha&#239;ti Pr&#232;s de 50 morts apr&#232;s une attaque de gang",
+      "&#171;Une nuit de terreur&#187;: en Ha&#239;ti, une attaque de gangs au sud de Port-au-Prince fait plus de 40 morts"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ht 1/35"
+   ],
+   "fresh": 24,
+   "fresh_sample": [
+    "Haiti CSPJ says Moïse suspects transfer to US violates judicial independence",
+    "Mourners file into a church in Haiti where gangs killed dozens of people in latest rampage",
+    "25 or 47? Death toll in Haiti gang massacre remains unclear as U.N. condemns attacks",
+    "More than 50 kidnapped after violent gang attack in Haiti leaves 47 dead",
+    "Haiti Gang Attack Leaves 47 Dead, Over 50 Kidnapped In Kenscoff As Police Face Mounting Questions Over Security Failure ",
+    "At least 47 killed and dozens kidnapped in gang attack near Haiti capital"
+   ]
+  },
+  "south-sudan": {
+   "feeds": [
+    {
+     "id": "tamazuj",
+     "ok": true,
+     "n": 12,
+     "kept": 0,
+     "newest": "2026-09-27T10:27",
+     "kept_sample": []
+    },
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 4,
+     "kept": 4,
+     "newest": "2026-05-17T02:00",
+     "kept_sample": [
+      "Aid agencies in South Sudan decry restricted access as government and opposition troops fight",
+      "South Sudan marks SPLA Day for first time since 2013 civil war",
+      "Aid agencies in South Sudan decry restricted access as government and opposition troops fight",
+      "Aid agencies in South Sudan decry restricted access as government and opposition troops fight"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ss 2/20"
+   ],
+   "fresh": 6,
+   "fresh_sample": [
+    "Civil society calls for urgent government action over renewed Duk, Twic East fighting",
+    "Unity State launches cholera drive targeting 100,000 IDPs",
+    "Aid agencies in South Sudan decry restricted access as government and opposition troops fight",
+    "South Sudan marks SPLA Day for first time since 2013 civil war",
+    "Aid agencies in South Sudan decry restricted access as government and opposition troops fight",
+    "Aid agencies in South Sudan decry restricted access as government and opposition troops fight"
+   ]
+  },
+  "colombia": {
+   "feeds": [
+    {
+     "id": "bing-es-0",
+     "ok": true,
+     "n": 10,
+     "kept": 9,
+     "newest": "2026-09-26T20:35",
+     "kept_sample": [
+      "El ELN y disidencias de las FARC se infiltraron en diez universidades de Colombia",
+      "Ataque ELN Colombia: De La Espriella promete mano dura tras morir dos militares en Oca&#241;a",
+      "Colombia: Gobierno de la Espriella defiende bombardeo a disidencias de las FARC en el que murieron menores",
+      "Ante m&#225;xima presi&#243;n de De la Espriella criminales responden con terror: brutales ataques con drones del ELN y "
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 10,
+     "kept": 6,
+     "newest": "2026-09-23T17:39",
+     "kept_sample": [
+      "Drone attacks by Colombian armed groups more than double in early 2026",
+      "Colombian government reports three killed in rebel attack on military post",
+      "Colombia drone attack by suspected guerrillas kills at least 3 soldiers, army says",
+      "Threats from armed group bring Colombia's Santa Marta to standstill"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:co 1/30",
+    "news:ve 0/31"
+   ],
+   "fresh": 16,
+   "fresh_sample": [
+    "Court imposes strict conditions on Colombia&#8217;s military air strikes if minors are present",
+    "El ELN y disidencias de las FARC se infiltraron en diez universidades de Colombia",
+    "Ataque ELN Colombia: De La Espriella promete mano dura tras morir dos militares en Oca&#241;a",
+    "Colombia: Gobierno de la Espriella defiende bombardeo a disidencias de las FARC en el que murieron menores",
+    "Ante m&#225;xima presi&#243;n de De la Espriella criminales responden con terror: brutales ataques con drones del ELN y ",
+    "Colombia anuncia fuertes medidas tras el ataque \"terrorista\" con enjambre de drones"
+   ]
+  },
+  "mozambique": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 8,
+     "kept": 7,
+     "newest": "2026-09-07T13:06",
+     "kept_sample": [
+      "Americans evacuated after suspected insurgents attack Mozambique wildlife reserve camp",
+      "South African among workers abducted after attack on hunting camp in Mozambique",
+      "Mozambique forces killed 16 fishermen: conflict monitor",
+      "Mozambique insurgents kill four in town near military base"
+     ]
+    },
+    {
+     "id": "bing-pt-1",
+     "ok": true,
+     "n": 10,
+     "kept": 10,
+     "newest": "2026-09-07T16:09",
+     "kept_sample": [
+      "Um morto em ataque a acampamento tur&#237;stico de Queiroz",
+      "Cabo Delgado. Quatro mortos em ataque em Muidumbe",
+      "CORRE&#199;&#195;O: Mo&#231;ambique/Ataques: EUA desaconselham viagens ao Niassa ap&#243;s ataque a acampamento",
+      "Macomia: Mortos em confronto entre insurgentes e militares"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:mz 3/25"
+   ],
+   "fresh": 20,
+   "fresh_sample": [
+    "Insurgents accused of killing three and abducting 12 in Muidumbe and Macomia",
+    "Insurgents kill local force member near Nangade-Palma border",
+    "Islamic State claims Niassa camp attack a week after the raid",
+    "Americans evacuated after suspected insurgents attack Mozambique wildlife reserve camp",
+    "South African among workers abducted after attack on hunting camp in Mozambique",
+    "Mozambique forces killed 16 fishermen: conflict monitor"
+   ]
+  },
+  "cameroon-anglophone": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 4,
+     "kept": 3,
+     "newest": "2026-09-14T09:57",
+     "kept_sample": [
+      "Cameroon separatists kill at least two gendarmes as Anglophone dispute escalates",
+      "Why is separatist violence escalating again in Cameroon",
+      "Suspected separatist attack shocks Cameroon"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:cm 0/40"
+   ],
+   "fresh": 3,
+   "fresh_sample": [
+    "Cameroon separatists kill at least two gendarmes as Anglophone dispute escalates",
+    "Why is separatist violence escalating again in Cameroon",
+    "Suspected separatist attack shocks Cameroon"
+   ]
+  },
+  "car": {
+   "feeds": [
+    {
+     "id": "bing-fr-0",
+     "ok": true,
+     "n": 4,
+     "kept": 3,
+     "newest": "2026-09-16T18:47",
+     "kept_sample": [
+      "Centrafrique: 13 enfants port&#233;s disparus, de nouvelles attaques font craindre un retour de la LRA dans le sud-est",
+      "&#171;Am Dafock est sous menace&#187;: dans cette ville du nord-est de la Centrafrique, la peur de nouvelles attaques",
+      "Centrafrique : F&#233;lix Moloua se rend &#224; Birao, dans le Nord, apr&#232;s l’attaque d’Am-Dafock"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:cf 1/35"
+   ],
+   "fresh": 4,
+   "fresh_sample": [
+    "Dossier du jour : la Minusca interrogée sur les prises d’otage et la suite des élections",
+    "Centrafrique: 13 enfants port&#233;s disparus, de nouvelles attaques font craindre un retour de la LRA dans le sud-est",
+    "&#171;Am Dafock est sous menace&#187;: dans cette ville du nord-est de la Centrafrique, la peur de nouvelles attaques",
+    "Centrafrique : F&#233;lix Moloua se rend &#224; Birao, dans le Nord, apr&#232;s l’attaque d’Am-Dafock"
+   ]
+  },
+  "mexico-cartels": {
+   "feeds": [
+    {
+     "id": "bing-es-0",
+     "ok": true,
+     "n": 12,
+     "kept": 7,
+     "newest": "2026-09-26T11:00",
+     "kept_sample": [
+      "Detienen a 9 integrantes del C&#225;rtel de Sinaloa tras enfrentamiento con autoridades",
+      "Caen 9 del C&#225;rtel de Sinaloa tras enfrentamiento con la Marina en la sierra l&#237;mites con Durango",
+      "Detienen a nueve presuntos integrantes del C&#225;rtel de Sinaloa tras enfrentamiento",
+      "Guerra del C&#225;rtel de Sinaloa deja 3 mil 800 muertos"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 11,
+     "kept": 7,
+     "newest": "2026-09-26T04:09",
+     "kept_sample": [
+      "Cesar Gastelum update: Was Mexican influencer killed in cartel-related violence in Sinaloa? What we know so far",
+      "Photos show burned-out cars, empty streets, and airport chaos in Mexico after a major cartel leader was killed",
+      "Watch: BBC on streets of Mexican city gripped by deadly cartel violence",
+      "Deadly violence in Mexico spreads after cartel boss is killed — as Americans warned to shelter in place"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:mx 0/35"
+   ],
+   "fresh": 14,
+   "fresh_sample": [
+    "Detienen a 9 integrantes del C&#225;rtel de Sinaloa tras enfrentamiento con autoridades",
+    "Caen 9 del C&#225;rtel de Sinaloa tras enfrentamiento con la Marina en la sierra l&#237;mites con Durango",
+    "Detienen a nueve presuntos integrantes del C&#225;rtel de Sinaloa tras enfrentamiento",
+    "Guerra del C&#225;rtel de Sinaloa deja 3 mil 800 muertos",
+    "Enfrentamientos en Sinaloa dejan 20 muertos, incluidos cuatro cuerpos decapitados",
+    "Habitantes de Sinaloa grabaron enfrentamiento entre sicarios a plena luz del d&#237;a"
+   ]
+  },
+  "india-pakistan": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 12,
+     "kept": 5,
+     "newest": "2026-09-26T21:39",
+     "kept_sample": [
+      "Line of Control (LoC): News",
+      "Suspected Pakistan drone spotted near LoC in Poonch; Jammu and Kashmir on high alert",
+      "Indian army says new exchange of gunfire with Pakistan",
+      "Terror recruitment down in J&K, zero stone pelting incidents in 2025: Defence ministry"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 11,
+     "kept": 8,
+     "newest": "2026-09-20T15:38",
+     "kept_sample": [
+      "Jammu and Kashmir: 2 Militants Killed in Encounter in Shopian district",
+      "Jammu and Kashmir: Encounter in Udhampur, One Soldier Martyred; Search Operation Intensified",
+      "Encounter Between Security Forces and Militants Erupts in Kishtwar, Jammu and Kashmir",
+      "In Pir Panjal, new strategy to keep terrorists from slipping between Jammu and Kashmir"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:in 1/25",
+    "news:pk 0/25"
+   ],
+   "fresh": 14,
+   "fresh_sample": [
+    "Surgical strikes presented bold example of India's counter-terrorism policy: PM Modi",
+    "Line of Control (LoC): News",
+    "Suspected Pakistan drone spotted near LoC in Poonch; Jammu and Kashmir on high alert",
+    "Indian army says new exchange of gunfire with Pakistan",
+    "Terror recruitment down in J&K, zero stone pelting incidents in 2025: Defence ministry",
+    "Suspected PAK drones sighted along LoC in Rajouri, search operation launched"
+   ]
+  },
+  "india-internal": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 11,
+     "kept": 8,
+     "newest": "2026-09-27T00:09",
+     "kept_sample": [
+      "2 Naga civilians shot dead in Manipur, 2nd such incident in 3 days",
+      "Toll in militant firing in Manipur's Senapati rises to three with death of injured man in hospital",
+      "Manipur violence: Two brothers arrested with AK-47, pistol; fresh attack reported in Kangpokpi",
+      "Manipur violence: Naga village attacked, two houses burnt as CRPF trades fire with militants"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 9,
+     "kept": 8,
+     "newest": "2026-09-16T17:28",
+     "kept_sample": [
+      "22 Maoists killed in massive encounter in Chhattisgarh under 'Operation Sankalp'",
+      "India: Aggressive Consolidation In Chhattisgarh – Analysis",
+      "Over 10 Maoists killed in encounter in Chhattisgarh's Sukma",
+      "18 Maoists Killed In Encounter In Chhattisgarh’s Kanker Ahead Of Lok Sabha Polls; Two Security Personnel Wounded"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:in 1/25"
+   ],
+   "fresh": 17,
+   "fresh_sample": [
+    "Toll in militant firing in Manipur's Senapati rises to 3 with death of injured man in hospital",
+    "2 Naga civilians shot dead in Manipur, 2nd such incident in 3 days",
+    "Toll in militant firing in Manipur's Senapati rises to three with death of injured man in hospital",
+    "Manipur violence: Two brothers arrested with AK-47, pistol; fresh attack reported in Kangpokpi",
+    "Manipur violence: Naga village attacked, two houses burnt as CRPF trades fire with militants",
+    "Electric lineman killed in Manipur's Kangpokpi firing, attacks reported in Noney"
+   ]
+  },
+  "thailand-cambodia": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 11,
+     "kept": 4,
+     "newest": "2026-09-25T06:53",
+     "kept_sample": [
+      "Thailand, Cambodia clash with jets and rockets in deadly border row, 12 dead",
+      "Thailand F-16 jet bombs Cambodian targets as border clash escalates",
+      "Thailand-Cambodia clash: Is it safe to travel to these countries now?",
+      "China Seeks to Mediate Thai-Cambodia Border Clash"
+     ]
+    },
+    {
+     "id": "bing-th-1",
+     "ok": true,
+     "n": 12,
+     "kept": 7,
+     "newest": "2026-09-23T07:36",
+     "kept_sample": [
+      "รัฐบาลเผยเหตุปะทะชายแดน คนไทยเสียชีวิต 12 ราย ด้านกัมพูชาขอ ...",
+      "ประมวลความสูญเสียไทย-กัมพูชา หลังครบรอบ 1 สัปดาห์เหตุปะทะชายแดน",
+      "'กลาโหม' กำหนด 5 สี ประเมินความเสี่ยงชายแดนไทย-กัมพูชา ชี้ ...",
+      "เช็กที่นี่! เปิดสถานการณ์ทุกจุดปะทะชายแดนไทย-กัมพูชา หลัง ..."
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:th 0/10",
+    "news:kh 0/10"
+   ],
+   "fresh": 11,
+   "fresh_sample": [
+    "Thailand, Cambodia clash with jets and rockets in deadly border row, 12 dead",
+    "Thailand F-16 jet bombs Cambodian targets as border clash escalates",
+    "Thailand-Cambodia clash: Is it safe to travel to these countries now?",
+    "China Seeks to Mediate Thai-Cambodia Border Clash",
+    "รัฐบาลเผยเหตุปะทะชายแดน คนไทยเสียชีวิต 12 ราย ด้านกัมพูชาขอ ...",
+    "ประมวลความสูญเสียไทย-กัมพูชา หลังครบรอบ 1 สัปดาห์เหตุปะทะชายแดน"
+   ]
+  },
+  "philippines": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 5,
+     "kept": 5,
+     "newest": "2026-09-15T01:20",
+     "kept_sample": [
+      "Troops clash with NPA in South Cotabato, recover weapons",
+      "Army soldier dies in NPA encounter in Negros Occidental town",
+      "NPA leader killed in clash with Army troops in Leyte",
+      "NPA commander with P5.3-million bounty killed in Agusan del Sur"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 3,
+     "kept": 3,
+     "newest": "2026-08-07T22:08",
+     "kept_sample": [
+      "Terror group leader, 4 others killed in Cotabato clash",
+      "End Near for Mindanao’s Islamist Militants?",
+      "16 more Dawlah Islamiya, BIFF terrorists surrender"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ph 0/35"
+   ],
+   "fresh": 8,
+   "fresh_sample": [
+    "Troops clash with NPA in South Cotabato, recover weapons",
+    "Army soldier dies in NPA encounter in Negros Occidental town",
+    "NPA leader killed in clash with Army troops in Leyte",
+    "NPA commander with P5.3-million bounty killed in Agusan del Sur",
+    "Troops kill four Reds, capture 3 in Esperanza, Agusan skirmish",
+    "Terror group leader, 4 others killed in Cotabato clash"
+   ]
+  },
+  "papua": {
+   "feeds": [
+    {
+     "id": "bing-id-0",
+     "ok": true,
+     "n": 11,
+     "kept": 9,
+     "newest": "2026-09-26T16:33",
+     "kept_sample": [
+      "Kontak Tembak dengan TNI, 4 Anggota KKB di Intan Jaya Tewas | KOMPAS SIANG",
+      "Tokoh Adat Papua: Aksi KKB Tembak Warga Sipil Tak Manusiawi",
+      "Kontak Tembak! Serangan Satgas Koops TNI Habema Tewaskan 4 Anggota KKB | KOMPAS PETANG",
+      "Video Detik-detik Pemakaman Prada Ginanjar Arianda, Prajurit TNI yang Tewas Ditembak KKB di Papua"
+     ]
+    },
+    {
+     "id": "bing-en-1",
+     "ok": true,
+     "n": 5,
+     "kept": 5,
+     "newest": "2026-08-21T04:54",
+     "kept_sample": [
+      "American pilot shot dead and his plane set on fire by Papua rebels",
+      "American pilot killed as Papua rebels burn small aircraft in Yahukimo",
+      "On Camera, Indonesian Troops Recover Body Of US Pilot Killed By Papua Rebels",
+      "Nine women, children allegedly held hostage by Free Papua Movement in Central Papua"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:id 0/25"
+   ],
+   "fresh": 14,
+   "fresh_sample": [
+    "Kontak Tembak dengan TNI, 4 Anggota KKB di Intan Jaya Tewas | KOMPAS SIANG",
+    "Tokoh Adat Papua: Aksi KKB Tembak Warga Sipil Tak Manusiawi",
+    "Kontak Tembak! Serangan Satgas Koops TNI Habema Tewaskan 4 Anggota KKB | KOMPAS PETANG",
+    "Video Detik-detik Pemakaman Prada Ginanjar Arianda, Prajurit TNI yang Tewas Ditembak KKB di Papua",
+    "KKB Tembak Mati Sopir Asal Toraja di Wamena Papua",
+    "Breaking News! 4 Anggota KKB Tewas saat Baku Tembak dengan TNI, 2 Ditemukan di Jurang"
+   ]
+  },
+  "thailand-deep-south": {
+   "feeds": [],
+   "news_kept": [
+    "news:th 0/10"
+   ],
+   "fresh": 0,
+   "fresh_sample": []
+  },
+  "libya": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 8,
+     "kept": 8,
+     "newest": "2026-09-25T17:01",
+     "kept_sample": [
+      "Security restored in Tripoli after armed clashes, Libyan prime minister says",
+      "Libya’s latest clashes explained: What this round of violence could signal",
+      "Casualties reported as armed groups clash in western Libya",
+      "Between chaos and democracy: Libya at crossroads again"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:ly 2/40"
+   ],
+   "fresh": 10,
+   "fresh_sample": [
+    "International Criminal Court’s Office of the Prosecutor confirms receiving Libya's request for assistance in drone attac",
+    "Libya Mobilises Emergency Teams After Deadly Flash Floods",
+    "Security restored in Tripoli after armed clashes, Libyan prime minister says",
+    "Libya’s latest clashes explained: What this round of violence could signal",
+    "Casualties reported as armed groups clash in western Libya",
+    "Between chaos and democracy: Libya at crossroads again"
+   ],
+   "front": [
+    {
+     "id": "wikipedia",
+     "len": 72713,
+     "places": 441,
+     "marks": [
+      [
+       "Dot green ff4.svg",
+       130
+      ],
+      [
+       "Location dot red.svg",
+       127
+      ],
+      [
+       "Gota01.svg",
+       54
+      ],
+      [
+       "Abm-lime-icon.png",
+       26
+      ],
+      [
+       "Fighter-jet-red-icon.svg",
+       19
+      ],
+      [
+       "Fighter-jet-lime-icon.svg",
+       15
+      ],
+      [
+       "4x4dot-green.svg",
+       12
+      ],
+      [
+       "Dot_green_ff4.svg",
+       9
+      ],
+      [
+       "Abm-red-icon.png",
+       8
+      ],
+      [
+       "Icon NuclearPowerPlant-green.svg",
+       6
+      ],
+      [
+       "Gota02.svg",
+       6
+      ],
+      [
+       "Anchor pictogram red.svg",
+       5
+      ],
+      [
+       "Map-peak-lime.svg",
+       4
+      ],
+      [
+       "BSicon STRrf red.svg",
+       3
+      ],
+      [
+       "Anchor pictogram green.svg",
+       3
+      ],
+      [
+       "Mountain pass 12x12 se.svg",
+       2
+      ],
+      [
+       "Mountain pass 12x12 n.svg",
+       2
+      ],
+      [
+       "BSicon STRrf green.svg",
+       2
+      ],
+      [
+       "Icon NuclearPowerPlant-red.svg",
+       2
+      ],
+      [
+       "4x4dot-black.svg",
+       2
+      ],
+      [
+       "Mountain pass 12x12 ne.svg",
+       1
+      ],
+      [
+       "Mountain pass 12x12 e.svg",
+       1
+      ],
+      [
+       "Map-ctl2-red+lime.svg",
+       1
+      ],
+      [
+       "4x4dot-red.svg",
+       1
+      ]
+     ],
+     "head": "return {\n\tmarks = {\n\t\t--Border crossings\n\t\t{ lat = \"30.133\", long = \"9.400\", mark = \"Mountain pass 12x12 se.svg\", marksize = \"18\", label = \"[[Ghadames|Ghadames Border Crossing]]\", link = \"Ghadames\", label_size = \"0\" },\n\t\t{ lat = \"24.713\", long = \"10.206\", mark = \"Mountain pass 12x12 ne.svg\", marksize = \"18\", label = \"[[Tin El Koum|Aysayn border crossing]]\", link = \"Tin El Koum\", label_size = \"0\" },\n\t\t{ lat = \"31.578\", long = \"25.064\", mark = \"Mountain pass 12x12 se.svg\", marksize = \"18\", label = \"[[Musaid|Musaid Border Crossing]]\", link = \"Musaid\", label_size = \"0\" },\n\t\t{ lat = \"22.647\", long ",
+     "sample": [
+      {
+       "n": "Ghadames Border Crossing",
+       "la": 30.133,
+       "lo": 9.4,
+       "mark": "Mountain pass 12x12 se.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Aysayn border crossing",
+       "la": 24.713,
+       "lo": 10.206,
+       "mark": "Mountain pass 12x12 ne.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Musaid Border Crossing",
+       "la": 31.578,
+       "lo": 25.064,
+       "mark": "Mountain pass 12x12 se.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Tumu Border Crossing",
+       "la": 22.647,
+       "lo": 14.2,
+       "mark": "Mountain pass 12x12 n.svg",
+       "ctl": "other"
+      },
+      {
+       "n": "Ras Ajdir border crossing",
+       "la": 33.148,
+       "lo": 11.563,
+       "mark": "Mountain pass 12x12 e.svg",
+       "ctl": "other"
+      }
+     ]
+    }
+   ]
+  },
+  "iraq-is": {
+   "feeds": [
+    {
+     "id": "bing-en-0",
+     "ok": true,
+     "n": 1,
+     "kept": 1,
+     "newest": "2015-04-14T01:01",
+     "kept_sample": [
+      "Kurdish Infighting Threatens Kirkuk, Gains Against Islamic State"
+     ]
+    }
+   ],
+   "news_kept": [
+    "news:iq 0/10"
+   ],
+   "fresh": 1,
+   "fresh_sample": [
+    "Kurdish Infighting Threatens Kirkuk, Gains Against Islamic State"
+   ]
+  }
+ },
+ "ucdp": {
+  "id": "ucdp",
+  "source": "UCDP candidate events (monthly files)",
+  "ok": true,
+  "n": 0,
+  "read": 13,
+  "missing": [
+   "GEDEvent_v26_0_9.csv (HTTP 404)"
+  ],
+  "newest": "GEDEvent_v26_0_8.csv"
+ },
+ "ucdp_by_conflict": {
+  "russia-ukraine": 109158,
+  "iran-war": 23735,
+  "sudan": 11035,
+  "israel-gaza": 5818,
+  "israel-lebanon": 4529,
+  "yemen-red-sea": 2486,
+  "myanmar": 2099,
+  "afghanistan-pakistan": 744,
+  "pakistan-insurgency": 4335,
+  "drc-east": 4291,
+  "sahel": 16838,
+  "somalia": 3872,
+  "lake-chad-nigeria": 4433,
+  "ethiopia": 4623,
+  "syria": 1207,
+  "haiti": 671,
+  "south-sudan": 752,
+  "colombia": 2164,
+  "mozambique": 459,
+  "cameroon-anglophone": 280,
+  "car": 288,
+  "mexico-cartels": 3667,
+  "india-pakistan": 59,
+  "india-internal": 335,
+  "thailand-cambodia": 101,
+  "philippines": 169,
+  "papua": 129,
+  "thailand-deep-south": 40,
+  "libya": 40,
+  "iraq-is": 207
+ },
+ "auto": [
+  {
+   "id": "auto-pk",
+   "cc": "pk",
+   "events": 292,
+   "best": 677,
+   "top": [
+    {
+     "n": "XXX770",
+     "best": 314
+    },
+    {
+     "n": "BRAS - Civilians",
+     "best": 98
+    },
+    {
+     "n": "IS - Civilians",
+     "best": 70
+    },
+    {
+     "n": "TTP - Civilians",
+     "best": 48
+    }
+   ],
+   "latest": "2026-08-30"
+  },
+  {
+   "id": "auto-br",
+   "cc": "br",
+   "events": 257,
+   "best": 276,
+   "top": [
+    {
+     "n": "XXX140 - XXX140",
+     "best": 190
+    },
+    {
+     "n": "Comando Vermelho - Família Terror Amapá",
+     "best": 48
+    },
+    {
+     "n": "XXX140 - Civilians",
+     "best": 19
+    },
+    {
+     "n": "Comando Vermelho - PCC",
+     "best": 10
+    }
+   ],
+   "latest": "2026-08-31"
+  },
+  {
+   "id": "auto-za",
+   "cc": "za",
+   "events": 140,
+   "best": 238,
+   "top": [
+    {
+     "n": "XXX560 - XXX560",
+     "best": 184
+    },
+    {
+     "n": "XXX560 - Civilians",
+     "best": 22
+    },
+    {
+     "n": "March and March, Operation Dudula - Civilians",
+     "best": 13
+    },
+    {
+     "n": "XXX560",
+     "best": 7
+    }
+   ],
+   "latest": "2026-08-25"
+  },
+  {
+   "id": "auto-tz",
+   "cc": "tz",
+   "events": 3,
+   "best": 202,
+   "top": [
+    {
+     "n": "Government of Tanzania - Civilians",
+     "best": 202
+    }
+   ],
+   "latest": "2026-02-12"
+  },
+  {
+   "id": "auto-ec",
+   "cc": "ec",
+   "events": 70,
+   "best": 192,
+   "top": [
+    {
+     "n": "XXX130 - XXX130",
+     "best": 85
+    },
+    {
+     "n": "Los Lobos  - Los Lobos Box",
+     "best": 31
+    },
+    {
+     "n": "XXX130 - Civilians",
+     "best": 30
+    },
+    {
+     "n": "Los Choneros - Los Lobos",
+     "best": 13
+    }
+   ],
+   "latest": "2026-07-12"
+  },
+  {
+   "id": "auto-ve",
+   "cc": "ve",
+   "events": 39,
+   "best": 170,
+   "top": [
+    {
+     "n": "XXX2",
+     "best": 115
+    },
+    {
+     "n": "XXX101",
+     "best": 31
+    },
+    {
+     "n": "Venezuela: Government",
+     "best": 8
+    },
+    {
+     "n": "XXX101 - Civilians",
+     "best": 6
+    }
+   ],
+   "latest": "2026-08-31"
+  },
+  {
+   "id": "auto-td",
+   "cc": "td",
+   "events": 8,
+   "best": 104,
+   "top": [
+    {
+     "n": "Tama - Zaghawa",
+     "best": 42
+    },
+    {
+     "n": "Bulala - Kreda",
+     "best": 33
+    },
+    {
+     "n": "XXX483 - XXX483",
+     "best": 19
+    },
+    {
+     "n": "XXX483",
+     "best": 6
+    }
+   ],
+   "latest": "2026-08-21"
+  },
+  {
+   "id": "auto-bd",
+   "cc": "bd",
+   "events": 71,
+   "best": 86,
+   "top": [
+    {
+     "n": "XXX771 - XXX771",
+     "best": 45
+    },
+    {
+     "n": "Supporters of BNP - Supporters of Jamaat-e-Islami",
+     "best": 10
+    },
+    {
+     "n": "Supporters of Awami League - Supporters of BNP",
+     "best": 7
+    },
+    {
+     "n": "XXX771 - Civilians",
+     "best": 4
+    }
+   ],
+   "latest": "2026-08-27"
+  },
+  {
+   "id": "auto-bi",
+   "cc": "bi",
+   "events": 62,
+   "best": 80,
+   "top": [
+    {
+     "n": "XXX516 - Civilians",
+     "best": 31
+    },
+    {
+     "n": "Government of Burundi - Civilians",
+     "best": 25
+    },
+    {
+     "n": "XXX516",
+     "best": 18
+    },
+    {
+     "n": "XXX516 - XXX516",
+     "best": 4
+    }
+   ],
+   "latest": "2026-08-25"
+  },
+  {
+   "id": "auto-af",
+   "cc": "af",
+   "events": 15,
+   "best": 61,
+   "top": [
+    {
+     "n": "Afghanistan: Islamic State",
+     "best": 40
+    },
+    {
+     "n": "IS - Civilians",
+     "best": 11
+    },
+    {
+     "n": "XXX700",
+     "best": 3
+    },
+    {
+     "n": "XXX700 - Civilians",
+     "best": 3
+    }
+   ],
+   "latest": "2026-08-28"
+  },
+  {
+   "id": "auto-gh",
+   "cc": "gh",
+   "events": 27,
+   "best": 60,
+   "top": [
+    {
+     "n": "XXX452 - XXX452",
+     "best": 16
+    },
+    {
+     "n": "XXX452",
+     "best": 14
+    },
+    {
+     "n": "Kusasi - Mamprusi",
+     "best": 14
+    },
+    {
+     "n": "Adele, Challa  - Akyode",
+     "best": 8
+    }
+   ],
+   "latest": "2026-08-14"
+  },
+  {
+   "id": "auto-ug",
+   "cc": "ug",
+   "events": 11,
+   "best": 43,
+   "top": [
+    {
+     "n": "XXX500",
+     "best": 35
+    },
+    {
+     "n": "Acholi - Madi",
+     "best": 4
+    },
+    {
+     "n": "XXX500 - XXX500",
+     "best": 1
+    },
+    {
+     "n": "XXX500 - Civilians",
+     "best": 1
+    }
+   ],
+   "latest": "2026-08-29"
+  },
+  {
+   "id": "auto-ir",
+   "cc": "ir",
+   "events": 24,
+   "best": 42,
+   "top": [
+    {
+     "n": "XXX630",
+     "best": 32
+    },
+    {
+     "n": "XXX630 - Civilians",
+     "best": 6
+    },
+    {
+     "n": "Government of Afghanistan - Civilians",
+     "best": 2
+    },
+    {
+     "n": "PJAK - Civilians",
+     "best": 2
+    }
+   ],
+   "latest": "2026-08-20"
+  },
+  {
+   "id": "auto-pg",
+   "cc": "pg",
+   "events": 14,
+   "best": 42,
+   "top": [
+    {
+     "n": "XXX910 - XXX910",
+     "best": 13
+    },
+    {
+     "n": "Mirupa - Wambea",
+     "best": 13
+    },
+    {
+     "n": "I don't care - Civilians",
+     "best": 5
+    },
+    {
+     "n": "Government of Papua New Guinea - Civilians",
+     "best": 3
+    }
+   ],
+   "latest": "2026-08-01"
+  },
+  {
+   "id": "auto-ke",
+   "cc": "ke",
+   "events": 15,
+   "best": 41,
+   "top": [
+    {
+     "n": "XXX501",
+     "best": 15
+    },
+    {
+     "n": "Kipsigis - Maasai",
+     "best": 7
+    },
+    {
+     "n": "Kamba - Somali",
+     "best": 7
+    },
+    {
+     "n": "XXX501 - Civilians",
+     "best": 6
+    }
+   ],
+   "latest": "2026-06-21"
+  },
+  {
+   "id": "auto-id",
+   "cc": "id",
+   "events": 20,
+   "best": 39,
+   "top": [
+    {
+     "n": "Government of Indonesia - Civilians",
+     "best": 24
+    },
+    {
+     "n": "Lany Jaya - Wouma Kurima",
+     "best": 13
+    },
+    {
+     "n": "XXX850",
+     "best": 1
+    },
+    {
+     "n": "XXX850 - Civilians",
+     "best": 1
+    }
+   ],
+   "latest": "2026-08-27"
+  },
+  {
+   "id": "auto-ar",
+   "cc": "ar",
+   "events": 33,
+   "best": 38,
+   "top": [
+    {
+     "n": "XXX160 - Civilians",
+     "best": 32
+    },
+    {
+     "n": "Los Monos - Civilians",
+     "best": 6
+    }
+   ],
+   "latest": "2026-01-18"
+  },
+  {
+   "id": "auto-ye",
+   "cc": "ye",
+   "events": 21,
+   "best": 38,
+   "top": [
+    {
+     "n": "Bani Hilal - Dhu Mohammed",
+     "best": 6
+    },
+    {
+     "n": "Naseeb - Shabwan",
+     "best": 6
+    },
+    {
+     "n": "Islah - NRF",
+     "best": 3
+    },
+    {
+     "n": "Harash - Shabira",
+     "best": 3
+    }
+   ],
+   "latest": "2026-08-16"
+  },
+  {
+   "id": "auto-lb",
+   "cc": "lb",
+   "events": 17,
+   "best": 36,
+   "top": [
+    {
+     "n": "Israel: Palestine",
+     "best": 18
+    },
+    {
+     "n": "Iran - Israel, United States of America",
+     "best": 13
+    },
+    {
+     "n": "Iran - Israel",
+     "best": 5
+    }
+   ],
+   "latest": "2026-05-28"
+  },
+  {
+   "id": "auto-lk",
+   "cc": "lk",
+   "events": 2,
+   "best": 30,
+   "top": [
+    {
+     "n": "XXX780 - XXX780",
+     "best": 30
+    }
+   ],
+   "latest": "2026-08-06"
+  },
+  {
+   "id": "auto-sd",
+   "cc": "sd",
+   "events": 2,
+   "best": 27,
+   "top": [
+    {
+     "n": "Sudan: Government",
+     "best": 24
+    },
+    {
+     "n": "Tama - Zaghawa",
+     "best": 3
+    }
+   ],
+   "latest": "2026-04-27"
+  },
+  {
+   "id": "auto-gt",
+   "cc": "gt",
+   "events": 14,
+   "best": 25,
+   "top": [
+    {
+     "n": "M18 - MS-13",
+     "best": 14
+    },
+    {
+     "n": "MS-13 - Civilians",
+     "best": 5
+    },
+    {
+     "n": "XXX90 - XXX90",
+     "best": 5
+    },
+    {
+     "n": "M18 - Civilians",
+     "best": 1
+    }
+   ],
+   "latest": "2026-08-17"
+  }
+ ]
+}
