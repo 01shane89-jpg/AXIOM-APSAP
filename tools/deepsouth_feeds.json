@@ -1,92 +1,29 @@
 {
- "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). 'probe': a candidate URL, tested with PROBE=1 and dropped if it fails from GitHub's runners.",
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows).",
  "feeds": [
-  {
-   "id": "benar-en2",
-   "outlet": "BenarNews",
-   "url": "https://www.benarnews.org/english/rss",
-   "lang": "en",
-   "probe": true
-  },
-  {
-   "id": "benar-th2",
-   "outlet": "BenarNews Thai",
-   "url": "https://www.benarnews.org/thai/rss",
-   "lang": "th",
-   "probe": true
-  },
   {
    "id": "prachatai-en",
    "outlet": "Prachatai English",
    "url": "https://prachataienglish.com/rss.xml",
-   "lang": "en",
-   "probe": true
+   "lang": "en"
   },
   {
    "id": "prachatai-th",
    "outlet": "Prachatai",
    "url": "https://prachatai.com/rss.xml",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "isranews",
-   "outlet": "Isranews",
-   "url": "https://www.isranews.org/feed",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "isranews-south",
-   "outlet": "Isranews",
-   "url": "https://www.isranews.org/article/south-news.feed?type=rss",
-   "lang": "th",
-   "all": true,
-   "probe": true
-  },
-  {
-   "id": "dsw-th",
-   "outlet": "Deep South Watch",
-   "url": "https://deepsouthwatch.org/th/rss.xml",
-   "lang": "th",
-   "all": true,
-   "probe": true
-  },
-  {
-   "id": "dsw-en",
-   "outlet": "Deep South Watch",
-   "url": "https://deepsouthwatch.org/en/rss.xml",
-   "lang": "en",
-   "all": true,
-   "probe": true
-  },
-  {
-   "id": "thaipbs-world",
-   "outlet": "Thai PBS World",
-   "url": "https://www.thaipbsworld.com/feed/",
-   "lang": "en",
-   "probe": true
-  },
-  {
-   "id": "nation",
-   "outlet": "The Nation",
-   "url": "https://www.nationthailand.com/rss",
-   "lang": "en",
-   "probe": true
+   "lang": "th"
   },
   {
    "id": "khaosod-en",
    "outlet": "Khaosod English",
    "url": "https://www.khaosodenglish.com/feed/",
-   "lang": "en",
-   "probe": true
+   "lang": "en"
   },
   {
    "id": "thaiexaminer",
    "outlet": "Thai Examiner",
    "url": "https://www.thaiexaminer.com/feed/",
-   "lang": "en",
-   "probe": true
+   "lang": "en"
   },
   {
    "id": "bing-th",
@@ -94,94 +31,19 @@
    "url": "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
    "lang": "th",
    "search": true,
-   "nc": true,
-   "probe": true
-  },
-  {
-   "id": "isranews2",
-   "outlet": "Isranews",
-   "url": "https://www.isranews.org/rss.xml",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "isranews3",
-   "outlet": "Isranews",
-   "url": "https://www.isranews.org/isranews/rss",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "thaipbs-world2",
-   "outlet": "Thai PBS World",
-   "url": "https://world.thaipbs.or.th/rss",
-   "lang": "en",
-   "probe": true
-  },
-  {
-   "id": "thaipbs-th2",
-   "outlet": "Thai PBS",
-   "url": "https://www.thaipbs.or.th/rss/news.xml",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "nation2",
-   "outlet": "The Nation",
-   "url": "https://www.nationthailand.com/rss/news",
-   "lang": "en",
-   "probe": true
-  },
-  {
-   "id": "thairath",
-   "outlet": "Thairath",
-   "url": "https://www.thairath.co.th/rss/news",
-   "lang": "th",
-   "probe": true
+   "nc": true
   },
   {
    "id": "matichon",
    "outlet": "Matichon",
    "url": "https://www.matichon.co.th/feed",
-   "lang": "th",
-   "probe": true
+   "lang": "th"
   },
   {
    "id": "khaosod-th",
    "outlet": "Khaosod",
    "url": "https://www.khaosod.co.th/feed",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "dailynews",
-   "outlet": "Daily News",
-   "url": "https://www.dailynews.co.th/feed/",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "mgr-south",
-   "outlet": "MGR Online (South)",
-   "url": "https://mgronline.com/rss/south",
-   "lang": "th",
-   "probe": true
-  },
-  {
-   "id": "thaigov",
-   "outlet": "Royal Thai Government",
-   "url": "https://www.thaigov.go.th/rss/news",
-   "lang": "th",
-   "state": true,
-   "probe": true
-  },
-  {
-   "id": "dsw-feed",
-   "outlet": "Deep South Watch",
-   "url": "https://deepsouthwatch.org/th/feed",
-   "lang": "th",
-   "all": true,
-   "probe": true
+   "lang": "th"
   },
   {
    "id": "bing-nara-en",
@@ -189,8 +51,7 @@
    "url": "https://www.bing.com/news/search?q=Narathiwat&format=rss",
    "lang": "en",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   },
   {
    "id": "bing-patt-en",
@@ -198,8 +59,7 @@
    "url": "https://www.bing.com/news/search?q=Pattani&format=rss",
    "lang": "en",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   },
   {
    "id": "bing-yala-en",
@@ -207,8 +67,7 @@
    "url": "https://www.bing.com/news/search?q=Yala%20Thailand&format=rss",
    "lang": "en",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   },
   {
    "id": "bing-nara-th",
@@ -216,8 +75,7 @@
    "url": "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
    "lang": "th",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   },
   {
    "id": "bing-patt-th",
@@ -225,8 +83,7 @@
    "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
    "lang": "th",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   },
   {
    "id": "bing-yala-th",
@@ -234,8 +91,7 @@
    "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2%20%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2&format=rss",
    "lang": "th",
    "search": true,
-   "nc": true,
-   "probe": true
+   "nc": true
   }
  ]
 }

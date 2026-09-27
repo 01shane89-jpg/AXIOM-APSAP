@@ -64,6 +64,7 @@ for (const f of feeds) {
       if (!relevant(f, text)) continue;
       const link = f.search ? unwrap(i.link) : i.link;
       if (!/^https?:\/\//.test(link || "")) continue;
+      if (f.search && !iso(i.date)) continue;   // an undated search result cannot be placed in time
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via " + f.outlet + ")"; } catch (e) {} }
       kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS",
@@ -162,7 +163,7 @@ if (todo.length) {
 for (const i of items) {
   const en = [i.title_en || (/^en\b/i.test(i.lang || "") ? i.title : ""), i.summary_en || (/^en\b/i.test(i.lang || "") ? i.summary : "")].join(" ");
   const all = en + " " + i.title + " " + (i.summary || "");
-  i.kind = classify(i.title_en || i.title) !== "other" ? classify(i.title_en || i.title) : classify(all);
+  { const h = classify(i.title_en || i.title); i.kind = h !== "other" ? h : classify(all); }
   i.killed = figure(i.title_en || i.title, KILLED); i.injured = figure(i.title_en || i.title, INJURED);
   i.geo = place([i.title, i.title_en, i.summary, i.summary_en]);
 }
