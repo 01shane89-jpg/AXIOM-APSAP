@@ -55,3 +55,13 @@ self.addEventListener("fetch", (e) => {
     return res;
   })));
 });
+// Watch notifications (shown by the page): a tap focuses an open OSAP window on the hit, or opens one.
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
+    const c = cs.find((x) => x.url.startsWith(self.registration.scope) && !/[?&]watchscan=1/.test(x.url));
+    if (c) return c.focus().then((w) => (w && w.navigate ? w.navigate(url) : null)).catch(() => self.clients.openWindow(url));
+    return self.clients.openWindow(url);
+  }));
+});
