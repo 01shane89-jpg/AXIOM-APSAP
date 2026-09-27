@@ -519,6 +519,7 @@ html.mapfull body{overflow:hidden}
 .pkgpic figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
 .relrow{display:flex;align-items:flex-start;gap:6px}.relrow>.tlrow{flex:1;min-width:0}
 .rellink{font-size:12px;white-space:nowrap;padding-top:8px}
+.relh{margin:10px 0 4px;font-size:13px}.relsoc{margin:0 0 6px}
 .rvfresh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px}
 .rvfresh .refresh{padding:4px 9px;min-height:28px}
 .rvasof{background:none;border:0;padding:0;font:inherit;cursor:pointer;text-decoration:underline dotted;color:var(--muted)}
@@ -3285,8 +3286,25 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var why = [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
       return { s: s, why: why };
     }
+    /* social posts: official and news accounts only (tools/social_accounts.json). Posts are short and fast, so one shared word within
+       three days (or nearby) is enough, and the list shows how long before or after this report each was posted */
+    var h0 = rMs(r), soc = [];
+    function scoreSoc(o) {
+      var tk = rTok(o.title + " " + String(o.detail || "").slice(0, 240)), shared = Object.keys(tk).filter(function (w) { return mine[w]; });
+      var h = rMs(o), dh = isFinite(h0) && isFinite(h) ? (h - h0) / 36e5 : null, dd = dh == null ? null : Math.abs(dh) / 24;
+      var d = hasLL && o.lat != null && isFinite(o.lat) ? km(r, { lat: o.lat, lon: o.lon }) : null, near = d != null ? d <= 50 : !!(r.place && o.place && o.place === r.place);
+      if (dd == null || dd > 14) return null;
+      if (!(shared.length >= 2 || (shared.length >= 1 && (dd <= 3 || near)))) return null;
+      var s = shared.length * 2 + (near ? 2 : 0) + (dd <= 1 ? 3 : dd <= 3 ? 1.5 : dd <= 7 ? 0.5 : 0);
+      var ago = Math.abs(dh) < 1 ? "within the hour of this report" : Math.abs(dh) < 48 ? Math.round(Math.abs(dh)) + " h " + (dh > 0 ? "after" : "before") + " this report" : Math.round(dd) + " days " + (dh > 0 ? "after" : "before") + " this report";
+      return { s: s, h: h, why: [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", ago].filter(Boolean).join(" · ") };
+    }
     R.forEach(function (o) {
       if (o === r || o.id === r.id) return;
+      if (o.social) {
+        var ms = scoreSoc(o); if (ms) soc.push({ s: ms.s, h: ms.h, why: ms.why, rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: "Social media, unverified" });
+        return;
+      }
       var m = score(o.title, o.detail, o.ts, o.lat, o.lon, o.place); if (!m) return;
       out.push({ s: m.s, why: m.why, rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
     });
@@ -3295,16 +3313,32 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var f = FD[i.f] || {}; var m = score(i.t, i.x, i.d, i.la, i.lo, ""); if (!m) return;
       out.push({ s: m.s, why: m.why, t: i.t, when: i.d ? (i.d.length > 10 ? window.OSAP_TIME.asofT(i.d) : fmtD(i.d.slice(0, 10))) : "", src: f.name || "", url: i.u, kind: f.cat || "Open data" });
     });
-    return out.sort(function (a, b) { return b.s - a.s; }).slice(0, 12);
+    var res = out.sort(function (a, b) { return b.s - a.s; }).slice(0, 12);
+    res.social = soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; }).slice(0, 8);
+    return res;
   }
-  function relatedHtml(list) {
-    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time. A match is not a confirmed link between the stories; read each one.</p>' +
-      (list.length ? '<div class="pkgrel">' + list.map(function (m) {
+  /* a record's time in ms: feed times without a zone are UTC ("2026-09-26T17:59"); date-only times count from midnight UTC */
+  function rMs(o) {
+    var t = String(o.issued || o.ts || "");
+    if (/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(t)) return Date.parse(/(Z|[+-]\d\d:?\d\d)$/.test(t) ? t : t.slice(0, 16) + "Z");
+    return Date.parse(t.slice(0, 10) + "T00:00:00Z");
+  }
+  function relRows(list) {
+    return '<div class="pkgrel">' + list.map(function (m) {
         return '<div class="relrow">' + (m.rec ? '<button type="button" class="tlrow" data-id="' + esc(m.rec.id) + '">' : '<div class="tlrow">') +
           '<span class="tlt">' + esc([m.kind, m.when].filter(Boolean).join(" · ")) + '</span><span class="tln">' + esc(m.t) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc([m.src, m.why].filter(Boolean).join(" · ")) + "</span></span>" + (m.rec ? "</button>" : "</div>") +
-          (m.url && /^https?:\/\//.test(m.url) ? '<a class="rellink" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">Source</a>' : "") + "</div>";
-      }).join("") + "</div>" : '<p class="obs">No other story shares enough words, place or time with this one.</p>');
+          (m.url && /^https?:\/\//.test(m.url) ? '<a class="rellink" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + (m.rec && m.rec.social ? "Post" : "Source") + "</a>" : "") + "</div>";
+      }).join("") + "</div>";
+  }
+  function relatedHtml(list) {
+    var soc = list.social || [];
+    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time. A match is not a confirmed link between the stories; read each one.</p>' +
+      '<h4 class="relh">Social media posts (' + soc.length + ")</h4>" +
+      (soc.length ? '<p class="note relsoc">Unverified. Posts from official agencies and news accounts only, never private people. A post is that account\'s claim and is often ahead of confirmed reporting.</p>' + relRows(soc)
+        : '<p class="obs">No post from the official and news accounts OSAP reads matches this report yet.</p>') +
+      '<h4 class="relh">Stories and records (' + list.length + ")</h4>" +
+      (list.length ? relRows(list) : '<p class="obs">No other story shares enough words, place or time with this one.</p>');
   }
   function select(id, fly, boxId) {
     var r = byId[id]; if (!r) return;
@@ -3319,7 +3353,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     box.hidden = false;
     box.innerHTML =
       '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
-      '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related stories (' + rs.length + ")</button></div>" +
+      '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related stories (' + (rs.length + rs.social.length) + ")</button></div>" +
       '<div class="pkgpane" data-pane="rel" hidden>' + relatedHtml(rs) + "</div>" +
       '<div class="pkgpane" data-pane="rep">' +
       (pic ? '<figure class="pkgpic"><a href="' + esc(r.url || pic) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()"></a>' +
@@ -4714,14 +4748,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
         "F", layer === "news" ? "Read every 15 minutes from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read every 15 minutes. Posts are that account's claims.", i.link);
-      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary), pl = placeFor(en + " " + (sen || ""));
+      var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary),
+        /* i.geo: placed by the refresh job from GeoNames (p "approx" = a town centre, "province" = a region's rough centre); otherwise matched here against places already on the map */
+        g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? { name: i.geo.n, lat: i.geo.la, lon: i.geo.lo, prec: i.geo.p === "province" ? "province" : "approx", gn: 1 } : null,
+        pl = g || placeFor(en + " " + (sen || ""));
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
-        derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
-        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
-        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined,
-        img: /^https:\/\/[^\s"<>]+$/.test(i.img || "") && i.img.length < 600 ? i.img : undefined };
+        lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -4828,7 +4864,7 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       if (r.lat == null) return;
       var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, markerStyle(r)));
       m.bindPopup('<div class="pop"><div class="tier">' + esc(r.src.name) + " · " + esc(fmtTs(r)) + "</div><h3>" + esc(r.title) + '</h3><p class="obs">Placed at ' + esc(r.place) +
-        ' by name, approximately. <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
+        (r.prec === "province" ? " by name, at the rough centre of that region." : " by name, approximately.") + ' <a href="#" data-openrec="' + esc(r.id) + '">Report</a> · <a href="' + esc(r.url) + '" target="_blank" rel="noopener">Article</a></p></div>', { maxWidth: 320 });
       sofLayer.addLayer(m); sofM[r.id] = m;
     });
     var srcs = w && (w.sources || []).filter(function (s) { return s.cc === CC || s.cc === "*"; });
