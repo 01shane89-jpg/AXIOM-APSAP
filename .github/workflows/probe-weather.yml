@@ -1,0 +1,16 @@
+# Test only: checks the free, no-key weather hosts the Weather tab uses. Prints to the log; writes nothing to the repo.
+name: Probe weather hosts
+on:
+  push:
+    branches: [claude/weather-ops]
+    paths: [tools/probe_weather.sh, .github/workflows/probe-weather.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tools/probe_weather.sh

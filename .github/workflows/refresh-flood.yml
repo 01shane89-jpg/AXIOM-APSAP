@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, social, more, storms, roads, dense, probe, probe-roads, probe-dense, probe-news, probe-cap); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth); empty runs all"
         required: false
         default: ""
 
@@ -37,18 +37,18 @@ jobs:
       # Translation runs on the job's own CPU with Google's open MADLAD-400 model (tools/mt/madlad.py, Apache-2.0): no key,
       # no quota. The converted model (about 3 GB) is kept in the Actions cache, so the conversion only runs when that is empty.
       - uses: actions/setup-python@v5
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
         with:
           python-version: "3.11"
       - name: Restore the translation model
         id: mt-cache
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
         uses: actions/cache@v4
         with:
           path: ~/.cache/osap-mt
           key: madlad400-3b-mt-ct2-int8-v1
       - name: Install the translation runtime
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
       - name: Convert the translation model (only when the cache is empty)
@@ -81,9 +81,36 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'news' }}
         run: node tools/refresh_news.mjs
         continue-on-error: true
+      # Thailand's Deep South (insurgency layer only): Deep South outlets and searches, the news step's Deep South items, and UCDP's
+      # Patani-conflict events for the past 13 months. Runs after the news step because it reads data/live/news.js.
+      - name: Pull Deep South insurgency reporting and translate Thai headlines
+        if: ${{ !inputs.only || inputs.only == 'deepsouth' }}
+        run: node tools/refresh_deepsouth.mjs
+        continue-on-error: true
+      - name: Probe the Deep South feeds (diagnostic, writes probe-out/ only)
+        if: ${{ inputs.only == 'probe-deepsouth' }}
+        run: PROBE=1 node tools/refresh_deepsouth.mjs
+        continue-on-error: true
+      - name: Keep the Deep South probe output as a run artifact
+        if: ${{ always() && (inputs.only == 'probe-deepsouth' || inputs.only == 'deepsouth') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-deepsouth
+          path: |
+            probe-out/
+            data/live/deepsouth.js
+          if-no-files-found: ignore
+          retention-days: 3
+      # The social pull takes about 20 minutes (hundreds of YouTube channels, paced to stay polite), longer than the 15-minute
+      # cycle, so a full run only repeats it when the last social snapshot is 40 minutes old or more. The other feeds keep
+      # their 15-minute cadence; social posts refresh about every 45 minutes. Running "social" on its own always pulls.
       - name: Pull official and established social media accounts
         if: ${{ !inputs.only || inputs.only == 'social' }}
-        run: node tools/refresh_social.mjs
+        run: |
+          if [ -z "${{ inputs.only }}" ] && node -e 'const m=/"asof":"([^"]+)"/.exec(require("fs").readFileSync("data/live/social.js","utf8"));const t=m&&Date.parse(m[1].replace(" ","T"));process.exit(t&&Date.now()-t<40*60e3?0:1)' 2>/dev/null; then
+            echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
+          fi
+          node tools/refresh_social.mjs
         continue-on-error: true
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
         if: ${{ !inputs.only || inputs.only == 'more' }}
@@ -106,7 +133,7 @@ jobs:
         timeout-minutes: 14
         continue-on-error: true
       - name: Report translation coverage
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
         run: node tools/mt/coverage.mjs
         continue-on-error: true
       - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
@@ -156,7 +183,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && github.ref == 'refs/heads/main' }}
         run: |
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
@@ -166,3 +193,62 @@ jobs:
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
           git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
           git push
+
+  # Event summaries and conflict watch lists (tools/refresh_evsum.mjs), in their own job after the refresh so they never slow it
+  # down or make it time out. Grouped events reported by two or more different sources, found by opening each country's page
+  # headless on the repo's own data, and "flashpoints and events to watch" for the countries with a key terrain and flashpoints
+  # file, drafted through GitHub Models with this job's own token (models: read; no personal key). At most once an hour, 140
+  # drafts a day; other runs end at once. Shown in the app as a draft, AI-generated, not analyst-approved.
+  evsum:
+    needs: refresh
+    if: ${{ always() && (!inputs.only || inputs.only == 'evsum' || inputs.only == 'probe-models') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # on main, the commit the refresh job has just pushed
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check that GitHub Models answers (diagnostic, writes nothing)
+        if: ${{ inputs.only == 'probe-models' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: EVSUM_PROBE=1 node tools/refresh_evsum.mjs
+      - name: Draft event summaries and conflict watch lists
+        if: ${{ inputs.only != 'probe-models' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVSUM_FORCE: ${{ inputs.only == 'evsum' && '1' || '' }}
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/refresh_evsum.mjs
+        timeout-minutes: 12
+        continue-on-error: true
+      - name: Park test output on a preview-data branch
+        if: ${{ inputs.only == 'evsum' && github.ref != 'refs/heads/main' }}
+        run: |
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan evsum-preview-data
+          git rm -rqf --cached .
+          for p in data/live/evsum.js data/live/aiwatch.js; do git add -f "$p" 2>/dev/null || true; done
+          git commit -qm "Test output (evsum) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/dense-preview-data-evsum
+        continue-on-error: true
+      - name: Commit the summaries if they changed
+        if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-models' }}
+        run: |
+          git add -N data/live/evsum.js data/live/aiwatch.js 2>/dev/null || true
+          if git diff --quiet -- data/live/evsum.js data/live/aiwatch.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/evsum.js data/live/aiwatch.js
+          git commit -m "Refresh event summaries $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1

@@ -101,7 +101,7 @@ async function gdacsFromRss() {
     const isoTags = [...it.matchAll(/<gdacs:iso3>([A-Z]{3})<\/gdacs:iso3>/g)].map((m) => m[1]);
     features.push({ geometry: { type: "Point", coordinates: [lon, lat] }, properties: { eventtype: tag(it, "gdacs:eventtype"), eventid: tag(it, "gdacs:eventid"),
       episodeid: tag(it, "gdacs:episodeid"), name: tag(it, "gdacs:eventname") || tag(it, "title"), description: tag(it, "title"), alertlevel: tag(it, "gdacs:alertlevel"),
-      fromdate: isoOr(tag(it, "gdacs:fromdate")), todate: isoOr(tag(it, "gdacs:todate")), iso3: isoTags[0] || "", affectedcountries: isoTags.map((i) => ({ iso3: i })),
+      fromdate: isoOr(tag(it, "gdacs:fromdate")), todate: isoOr(tag(it, "gdacs:todate")), datemodified: isoOr(tag(it, "gdacs:datemodified") || tag(it, "pubDate")), iso3: isoTags[0] || "", affectedcountries: isoTags.map((i) => ({ iso3: i })),
       severitydata: { severitytext: tag(it, "gdacs:severity").replace(/<[^>]+>/g, "") }, url: { report: tag(it, "link").replace(/&amp;/g, "&") }, iscurrent: tag(it, "gdacs:iscurrent") || "true" } });
   }
   return { features: features.filter((f) => /^(TC|FL|DR|VO|WF)$/.test(f.properties.eventtype)) };
@@ -116,7 +116,7 @@ try {
     const iso = [...new Set([p.iso3, ...((p.affectedcountries || []).map((a) => a.iso3))].filter(Boolean))];
     // worldwide: the picker covers every country, and each country's page filters by its ISO3 code and area
     const ev = { id: p.eventtype + "-" + p.eventid + "-" + (p.episodeid || ""), type: p.eventtype, name: p.name || p.eventname || "",
-      desc: p.description || p.htmldescription || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "",
+      desc: p.description || p.htmldescription || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "", mod: p.datemodified || "",
       lat: c[1], lon: c[0], iso3: iso, severity: (p.severitydata || {}).severitytext || "",
       url: (p.url || {}).report || "https://www.gdacs.org/", current: p.iscurrent !== "false" && p.iscurrent !== false };
     if (ev.type === "TC" && (p.url || {}).geometry) {

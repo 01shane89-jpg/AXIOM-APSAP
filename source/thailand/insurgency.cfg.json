@@ -1,7 +1,7 @@
 {
- "asof": "2026-09-26",
+ "asof": "2026-09-27",
  "color": "--l3",
- "srcline": "Sourced reporting · SBPAC statistics",
+ "srcline": "Sourced reporting · SBPAC statistics · live Deep South feeds · UCDP",
  "bounds": [
   [
    5.6,
@@ -12,7 +12,7 @@
    102.1
   ]
  ],
- "status": "<b>A curated record, not a full count.</b> 45 records from English-language reporting for Jan–Sep 2026, 34 of them attacks. SBPAC counted 103 incidents through July alone, so most events are missing here.",
+ "status": "<b>A curated record, not a full count.</b> 67 curated records from reporting for Oct 2025 to Sep 2026, 43 of them attacks or clashes. SBPAC counted 103 incidents in Jan–Jul 2026 alone, so many events are still missing. Live reports from Deep South outlets and news searches (Thai headlines machine-translated) and UCDP's coded Patani-conflict events for the past year are added on top and marked as such.",
  "kinds": {
   "ied": {
    "label": "IED or bombing",
@@ -44,6 +44,11 @@
    "sev": 2,
    "violent": true
   },
+  "clash": {
+   "label": "Armed clash",
+   "color": "--near",
+   "sev": 2
+  },
   "raid_or_arrest": {
    "label": "Security raid or arrest",
    "color": "--care",
@@ -66,6 +71,11 @@
    "sev": 1,
    "claim": true
   },
+  "legal": {
+   "label": "Court case or charge",
+   "color": "--calm",
+   "sev": 1
+  },
   "other": {
    "label": "Other or summary",
    "color": "--muted",
@@ -74,9 +84,11 @@
  },
  "notes": [
   "<b>Every record is a report, not a finding.</b> Each one links to the article it came from and keeps who made the claim, such as police or the army. None has been confirmed by an analyst.",
-  "<b>Counts are floors.</b> Only reporting that could be opened and read was used. Bangkok Post and several other outlets were blocked, and Songkhla's four border districts have no records.",
-  "<b>Totals cover attacks only.</b> Deaths during security raids and arrests are shown on each record but not added to the killed total. The one-night waves of 11 Jan and 22 Aug have a summary record plus a few site records, so treat the incident count as approximate.",
+  "<b>Counts are floors.</b> Only reporting that could be read and dated was used. Oct–Dec 2025 is thin (4 records): coverage then was dominated by the southern floods and the Cambodian border fighting. Deep South Watch's monthly statistics could not be found in a readable, dated form, so none are shown yet.",
+  "<b>Totals cover attacks only.</b> Deaths during security raids, arrests and armed clashes are shown on each record but not added to the killed total. The one-night waves of 11 Jan and 22 Aug have a summary record plus a few site records, so treat the incident count as approximate.",
   "<b>Places are approximate.</b> Markers sit at the district centre unless the article gave more. Some records may not be insurgent violence; the record's detail says so where the police or rights groups suggested another motive.",
-  "<b>Figures disagree between sources.</b> For 22 Aug the army counted 51 incidents, The Nation 34 and Thai Examiner 78. The record uses one figure and names the others."
+  "<b>Figures disagree between sources.</b> For 22 Aug the army counted 51 incidents, The Nation 34 and Thai Examiner 78. The record uses one figure and names the others.",
+  "<b>Live reports are sorted by machine.</b> Items from the Deep South feed job carry the outlet's own headline (names as the outlet printed them), a kind and district read from the headline's words, and are never added to the totals. They are unverified leads; a curated record replaces one when it is checked.",
+  "<b>UCDP events are coded, not curated.</b> Uppsala Conflict Data Program candidate events for the Patani conflict are shown with UCDP's best, low and high death estimates. They are preliminary and UCDP revises them."
  ]
 }

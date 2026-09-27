@@ -140,7 +140,7 @@ if (coverage.none.length) console.log("::warning::No working news source this ru
 if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
 for (const cc of Object.keys(items)) {
   const seen = new Set();
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
+  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, cc === "oki" ? 2 * PER_AREA : PER_AREA);   // Okinawa reads more searches than any other area
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
 const OG_MAX = Number(process.env.OG_MAX || 400);
