@@ -509,6 +509,16 @@ html.phone .pcol{display:none!important}
 html.mapfull header,html.mapfull .rail,html.mapfull #rv,html.mapfull #rail-handle{display:none!important}
 html.mapfull #map,html.phone.mapfull #map{position:fixed!important;left:0!important;top:0!important;width:100vw!important;height:100svh!important;z-index:1500}
 html.mapfull body{overflow:hidden}
+.rvcard.haspic{display:grid;grid-template-columns:1fr 92px;column-gap:10px}
+.rvcard.haspic>:not(.rvpic){grid-column:1}
+.rvpic{grid-column:2;grid-row:1/5;width:92px;height:70px;object-fit:cover;border-radius:4px;background:var(--surface)}
+.pkgtabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:4px 0 10px}
+.pkgtabs button{font:inherit;font-size:13px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:7px 10px;cursor:pointer}
+.pkgtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.pkgpic{margin:0 0 10px}.pkgpic img{display:block;width:100%;max-height:240px;object-fit:cover;border-radius:4px;background:var(--surface2)}
+.pkgpic figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
+.relrow{display:flex;align-items:flex-start;gap:6px}.relrow>.tlrow{flex:1;min-width:0}
+.rellink{font-size:12px;white-space:nowrap;padding-top:8px}
 .rvfresh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px}
 .rvfresh .refresh{padding:4px 9px;min-height:28px}
 html.switching .rail{opacity:.55;transition:opacity .1s}
@@ -3222,6 +3232,62 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     var b = e.target.closest && e.target.closest("button[data-full]"); if (!b) return;
     map.closePopup(); fullNext = true; select(b.getAttribute("data-full"), false, b.getAttribute("data-box") || undefined);
   });
+  /* ---------- related stories: automatic matching by shared words, place and time ----------
+     Candidates are every record the page holds for this country (news, social, warnings, official records) and the open-data items
+     (including think-tank analysis). Each match shows why it matched. A match is not a confirmed link between the stories. */
+  var RSTOP = {}; ("that this with from have been were will would their there they them than then what when where which while about after before over under into onto upon more most some such also said says just only other into your ours ours very much many made make makes like near says told news report reports reported update updates live today yesterday week year years month months people police government official officials country countries thailand local national following during amid against between says" +
+    " three four five seven eight nine first second third group groups world ของ และ ที่ ใน การ เป็น ได้ ให้ จาก ว่า").split(" ").forEach(function (w) { RSTOP[w] = 1; });
+  function rTok(s) {
+    var o = {}; String(s || "").toLowerCase().split(/[^0-9a-zÀ-ɏ฀-๿぀-ヿ一-鿿가-힯]+/).forEach(function (w) {
+      if (w.length >= 4 && !RSTOP[w] && !/^\d+$/.test(w)) o[w] = 1; });
+    return o;
+  }
+  /* words that appear in many records ("bank" in every gauge reading) say nothing about a link, so they are ignored */
+  var rDF = null, rDFn = -1;
+  function rCommon() {
+    if (rDFn === R.length) return rDF;
+    rDF = {}; rDFn = R.length;
+    R.forEach(function (o) { Object.keys(rTok(o.title + " " + String(o.detail || "").slice(0, 240))).forEach(function (w) { rDF[w] = (rDF[w] || 0) + 1; }); });
+    var cut = Math.max(8, R.length * 0.02);
+    Object.keys(rDF).forEach(function (w) { if (rDF[w] <= cut) delete rDF[w]; });
+    return rDF;
+  }
+  function relatedStories(r) {
+    var common = rCommon(), mine = rTok(r.title + " " + String(r.detail || "").slice(0, 240) + " " + (r.place || "") + " " + (r.prov || ""));
+    Object.keys(common).forEach(function (w) { delete mine[w]; });
+    var t0 = Date.parse(String(r.ts).slice(0, 10)), hasLL = r.lat != null && isFinite(r.lat), out = [];
+    function score(title, text, ts, lat, lon, place) {
+      var tk = rTok(title + " " + String(text || "").slice(0, 240) + " " + (place || "")), shared = Object.keys(tk).filter(function (w) { return mine[w]; });
+      var dt = isFinite(t0) && ts ? Math.abs(Date.parse(String(ts).slice(0, 10)) - t0) / 864e5 : null;
+      var d = hasLL && lat != null && isFinite(lat) ? km(r, { lat: lat, lon: lon }) : null;
+      var near = d != null ? d <= 50 : !!(r.place && place && place === r.place);
+      if (dt != null && dt > (shared.length >= 3 ? 90 : 30)) return null;
+      if (!(shared.length >= 2 || (shared.length >= 1 && near) || (near && dt != null && dt <= 3))) return null;
+      var s = shared.length * 2 + (d != null ? (d <= 25 ? 3 : d <= 50 ? 1.5 : 0) : near ? 2 : 0) + (dt == null ? 0 : dt <= 2 ? 2 : dt <= 7 ? 1 : dt <= 30 ? 0.3 : -1);
+      var why = [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
+      return { s: s, why: why };
+    }
+    R.forEach(function (o) {
+      if (o === r || o.id === r.id) return;
+      var m = score(o.title, o.detail, o.ts, o.lat, o.lon, o.place); if (!m) return;
+      out.push({ s: m.s, why: m.why, rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
+    });
+    var X = typeof xMine === "function" ? xMine() : null, FD = typeof xFeeds === "function" ? xFeeds() : {};
+    if (X) X.items.forEach(function (i) {
+      var f = FD[i.f] || {}; var m = score(i.t, i.x, i.d, i.la, i.lo, ""); if (!m) return;
+      out.push({ s: m.s, why: m.why, t: i.t, when: i.d ? (i.d.length > 10 ? window.OSAP_TIME.asofT(i.d) : fmtD(i.d.slice(0, 10))) : "", src: f.name || "", url: i.u, kind: f.cat || "Open data" });
+    });
+    return out.sort(function (a, b) { return b.s - a.s; }).slice(0, 12);
+  }
+  function relatedHtml(list) {
+    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time. A match is not a confirmed link between the stories; read each one.</p>' +
+      (list.length ? '<div class="pkgrel">' + list.map(function (m) {
+        return '<div class="relrow">' + (m.rec ? '<button type="button" class="tlrow" data-id="' + esc(m.rec.id) + '">' : '<div class="tlrow">') +
+          '<span class="tlt">' + esc([m.kind, m.when].filter(Boolean).join(" · ")) + '</span><span class="tln">' + esc(m.t) + "</span>" +
+          '<span class="tlm"><span class="tls">' + esc([m.src, m.why].filter(Boolean).join(" · ")) + "</span></span>" + (m.rec ? "</button>" : "</div>") +
+          (m.url && /^https?:\/\//.test(m.url) ? '<a class="rellink" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">Source</a>' : "") + "</div>";
+      }).join("") + "</div>" : '<p class="obs">No other story shares enough words, place or time with this one.</p>');
+  }
   function select(id, fly, boxId) {
     var r = byId[id]; if (!r) return;
     if (fly === false && !fullNext && window.ASAP_PHONE && window.ASAP_PHONE.on()) {
@@ -3230,11 +3296,16 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     }
     fullNext = false;
     var st = STATE[r.type], s = r.src;
-    var rel = related(r);
+    var rel = related(r), rs = relatedStories(r), pic = r.img || r.thumb;
     var box = document.getElementById(boxId || "tl-pkg");
     box.hidden = false;
     box.innerHTML =
       '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related stories (' + rs.length + ")</button></div>" +
+      '<div class="pkgpane" data-pane="rel" hidden>' + relatedHtml(rs) + "</div>" +
+      '<div class="pkgpane" data-pane="rep">' +
+      (pic ? '<figure class="pkgpic"><a href="' + esc(r.url || pic) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()"></a>' +
+        "<figcaption>Picture: " + esc(s.name) + ", linked from its " + (r.thumb ? "video" : "news feed") + ", not stored by OSAP. It may not show this exact event.</figcaption></figure>" : "") +
       '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
       '<div class="pkgchips">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
@@ -3280,10 +3351,17 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         return '<button type="button" class="tlrow" data-id="' + o.id + '"><span class="tlt">' + esc(fmtTs(o)) +
           '</span><span class="tln">' + esc(o.title) + "</span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing within 25 km and 30 days.</p>') +
-      '<p class="obs" style="margin-top:6px">Related means close in place and time. It is not a claim that the records are connected.</p>';
+      '<p class="obs" style="margin-top:6px">Related means close in place and time. It is not a claim that the records are connected.</p></div>';
     if (!FP[r.id]) fingerprint(r).then(function (h) { Array.prototype.forEach.call(box.querySelectorAll('code[data-fp="' + r.id + '"]'), function (c) { c.textContent = h; }); });
     box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; });
-    Array.prototype.forEach.call(box.querySelectorAll(".pkgrel .tlrow"), function (b) {
+    Array.prototype.forEach.call(box.querySelectorAll("[data-pkgtab]"), function (t) {
+      t.addEventListener("click", function () {
+        var k = t.getAttribute("data-pkgtab");
+        Array.prototype.forEach.call(box.querySelectorAll("[data-pkgtab]"), function (x) { x.setAttribute("aria-selected", String(x === t)); });
+        Array.prototype.forEach.call(box.querySelectorAll(".pkgpane"), function (p) { p.hidden = p.getAttribute("data-pane") !== k; });
+      });
+    });
+    Array.prototype.forEach.call(box.querySelectorAll(".pkgrel button.tlrow"), function (b) {
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
     document.querySelector(".rail").scrollTop = 0;
@@ -4579,7 +4657,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
         derived: [mtNote(i), pl ? "Placed at " + pl.name + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
-        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined };
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined,
+        img: /^https:\/\/[^\s"<>]+$/.test(i.img || "") && i.img.length < 600 ? i.img : undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -4699,7 +4778,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
       (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
-        return '<button type="button" class="tlrow' + (r.thumb ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (r.thumb ? '<img class="ytthumb" src="' + esc(r.thumb) + '" alt="" loading="lazy" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
+        var pic = r.thumb || r.img;
+        return '<button type="button" class="tlrow' + (pic ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (pic ? '<img class="ytthumb" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
@@ -5331,7 +5411,8 @@ table.reg th:nth-child(2),table.reg th:nth-child(1){text-align:left}
     rvList.innerHTML = list.slice(0, cap).map(function (r) {
       if (r.sof) return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(r.tier) + '</span><span class="rvh">' + esc(r.title) + "</span></button>";
       var st = STATE[r.type] ? STATE[r.type][0] : r.type, ln = LBY[r.layer] ? LBY[r.layer].name : r.layer;
-      return '<button type="button" class="rvcard" data-rv="' + esc(r.id) + '"><span class="rvt">' + esc(fmtTs(r)) + "</span>" +
+      var pic = r.img || r.thumb;
+      return '<button type="button" class="rvcard' + (pic ? " haspic" : "") + '" data-rv="' + esc(r.id) + '">' + (pic ? '<img class="rvpic" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") + '<span class="rvt">' + esc(fmtTs(r)) + "</span>" +
         '<span class="rvh">' + esc(r.title) + "</span>" +
         '<span class="rvm">' + chip("l-" + r.layer, ln) + chip("t-" + r.type, st) + "</span>" +
         '<span class="rvs">' + esc(r.src ? r.src.name : "") + (r.place ? " · " + esc(r.place) : (r.lat == null ? " · no map location" : "")) + "</span></button>";

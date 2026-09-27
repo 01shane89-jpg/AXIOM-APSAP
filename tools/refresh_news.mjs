@@ -55,7 +55,7 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   const n = {};
   if (j) for (const a of j.articles || []) {
     const cc = SCN[a.sourcecountry]; if (!cc || !a.url || !a.title || !part.some((x) => x[0] === cc)) continue;
-    push(cc, [{ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate), link: a.url, outlet: a.domain || "",
+    push(cc, [{ title: a.title.trim(), summary: "", date: gdeltDate(a.seendate), link: a.url, outlet: a.domain || "", ...(/^https:\/\//.test(a.socialimage || "") ? { img: a.socialimage } : {}),
       lang: LANG[a.language] || (a.language || "").slice(0, 2).toLowerCase(), via: "GDELT" }]);
     n[cc] = (n[cc] || 0) + 1;
   }
@@ -65,7 +65,7 @@ const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
 for (const f of feeds) {
   try {
     const list = parseFeed(await get(f.url, true)).slice(0, 25).map((i) => ({ title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date),
-      link: i.link, outlet: f.outlet, lang: f.lang, via: "RSS", state: !!f.state }));
+      link: i.link, outlet: f.outlet, lang: f.lang, via: "RSS", state: !!f.state, ...(i.image ? { img: i.image } : {}) }));
     push(f.cc, list); status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: true, n: list.length });
   } catch (e) { status.push({ cc: f.cc, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
@@ -87,3 +87,4 @@ fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
 try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
+console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));
