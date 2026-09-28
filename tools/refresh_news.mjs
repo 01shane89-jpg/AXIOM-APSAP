@@ -7,6 +7,7 @@ import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
+import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
@@ -67,39 +68,7 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
 }
 const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
-const FEED_TIMEOUT = 20000, LANES = 8;
-async function getFeed(url) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), FEED_TIMEOUT);
-  try {
-    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)", accept: "application/rss+xml, application/xml, text/xml, */*" } });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.text();
-  } finally { clearTimeout(t); }
-}
-// Search-engine fallbacks are read only when the site's robots.txt allows the path for every user agent.
-const robotsCache = {};
-async function robotsAllow(url) {
-  const u = new URL(url);
-  if (!(u.origin in robotsCache)) robotsCache[u.origin] = getFeed(u.origin + "/robots.txt").catch((e) => (/HTTP 4/.test(e.message) ? "" : null));
-  const txt = await robotsCache[u.origin];
-  if (txt === null) return false;                       // robots.txt unreachable: do not assume permission
-  let on = false, best = { len: -1, allow: true };
-  const path = u.pathname + u.search;
-  for (const raw of txt.split(/\r?\n/)) {
-    const line = raw.replace(/#.*/, "").trim(), m = line.match(/^([a-z-]+)\s*:\s*(.*)$/i); if (!m) continue;
-    const k = m[1].toLowerCase(), v = m[2].trim();
-    if (k === "user-agent") { on = v === "*"; continue; }
-    if (!on || (k !== "allow" && k !== "disallow") || !v) continue;
-    const re = new RegExp("^" + v.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\\\$$/, "$"));
-    if (re.test(path) && v.length > best.len) best = { len: v.length, allow: k === "allow" };
-  }
-  return best.allow;
-}
-// Bing wraps each result in a click-through link; keep the publisher's own address and name instead.
-function unwrap(link) {
-  try { const u = new URL(link); if (/bing\.com$/.test(u.hostname) && u.searchParams.get("url")) return u.searchParams.get("url"); } catch (e) {}
-  return link;
-}
+const LANES = 8;
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
