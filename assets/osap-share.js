@@ -333,7 +333,7 @@
     });
     return out;
   }
-  /* the Report's own "Related stories" tab and its "Related records" list, in that order, social posts last */
+  /* the Report's own "Related reports" tab and its "Related records" list, in that order, social posts last */
   function relItems(box) {
     var out = [], soc = [], seen = {};
     function add(o, list) { var k = o.rec ? "r" + o.rec.id : o.url || o.title; if (!k || seen[k]) return; seen[k] = 1; list.push(o); }
