@@ -39,13 +39,17 @@ export function countriesNamed(countries, text) {
 
 // The relevance check (tools/relevance.json): what an analyst or a special operations team in the country would want.
 // 1. a strong word keeps it; 2. a drop word leaves it out; 3. a keep word keeps it; 4. anything else is left out.
-export function compileRelevance(cfg) {
+// topics: the data sets (tools/topics.json); one marked "relevance": "exempt" is kept whatever the lists say, because its
+// subject is not a security word (the ET tab's UFO and UAP reports), still minus its own exclude words.
+export function compileRelevance(cfg, topics) {
   const flat = (o) => Object.values(o || {}).flat();
-  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)) };
+  const exempt = compileTopics((topics || []).filter((t) => t && t.relevance === "exempt").map((t) => ({ ...t, countries: [] })));
+  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)), exempt };
 }
 // returns "strong" | "keep" (kept) or "drop" | "none" (left out)
 export function relevance(R, text) {
   const f = fold(text);
+  if (R.exempt && R.exempt.length && topicsOf(R.exempt, f, []).length) return "strong";
   if (R.strong && R.strong.test(f)) return "strong";
   if (R.drop && R.drop.test(f)) return "drop";
   if (R.keep && R.keep.test(f)) return "keep";
@@ -65,6 +69,9 @@ export const kept = (rel) => rel === "strong" || rel === "keep" || rel === "unch
 let _rel = null;
 // tools/relevance.json, read once (the jobs run from the repository root)
 export async function loadRelevance() {
-  if (!_rel) { const fs = await import("node:fs"); _rel = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8"))); }
+  if (!_rel) {
+    const fs = await import("node:fs");
+    _rel = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), JSON.parse(fs.readFileSync("tools/topics.json", "utf8")).topics);
+  }
   return _rel;
 }
