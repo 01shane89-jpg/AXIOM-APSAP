@@ -92,7 +92,7 @@ jobs:
       # The conflict tabs and their extras run hourly in their own workflow (refresh-conflicts.yml), so this one stays short.
       - name: Probe the Deep South feeds (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-deepsouth' }}
-        run: PROBE=1 node tools/refresh_deepsouth.mjs; node tools/probe_dsources.mjs
+        run: PROBE_SET=coverage node tools/probe_dsources.mjs  # TEMP coverage probe, revert before PR
         continue-on-error: true
       - name: Keep the Deep South probe output as a run artifact
         if: ${{ always() && (inputs.only == 'probe-deepsouth' || inputs.only == 'deepsouth') }}

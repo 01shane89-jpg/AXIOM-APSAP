@@ -60,8 +60,63 @@ const C = [
   ["15 MGR Online south", "https://mgronline.com/rss/south"],
   ["15 Matichon (current)", "https://www.matichon.co.th/feed"],
 ];
+// PROBE_SET=coverage: candidate searches and feeds for wider Deep South and Thai–Cambodian coverage (2026-09-28)
+const COV = [
+  ["DS search: ระเบิด ชายแดนใต้", "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: ระเบิด นราธิวาส", "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss"],
+  ["DS search: ระเบิด ปัตตานี", "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss"],
+  ["DS search: ระเบิด ยะลา", "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss"],
+  ["DS search: คนร้ายยิง นราธิวาส", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss"],
+  ["DS search: คนร้ายยิง ปัตตานี", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss"],
+  ["DS search: ทหารพราน ถูกยิง", "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss"],
+  ["DS search: อส. ถูกยิง", "https://www.bing.com/news/search?q=%E0%B8%AD%E0%B8%AA.%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss"],
+  ["DS search: วางเพลิง ชายแดนใต้", "https://www.bing.com/news/search?q=%E0%B8%A7%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%B4%E0%B8%87%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: ปิดล้อมตรวจค้น ชายแดนใต้", "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B4%E0%B8%94%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%84%E0%B9%89%E0%B8%99%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: ไฟใต้", "https://www.bing.com/news/search?q=%E0%B9%84%E0%B8%9F%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: คนร้าย จะนะ OR เทพา OR นาทวี OR สะบ้าย้อย", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%88%E0%B8%B0%E0%B8%99%E0%B8%B0%20OR%20%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%B2%20OR%20%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B8%A7%E0%B8%B5%20OR%20%E0%B8%AA%E0%B8%B0%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%A2&format=rss"],
+  ["DS search: southern Thailand insurgents", "https://www.bing.com/news/search?q=southern%20Thailand%20insurgents&format=rss"],
+  ["DS search: Deep South Thailand bomb", "https://www.bing.com/news/search?q=Deep%20South%20Thailand%20bomb&format=rss"],
+  ["DS search: Narathiwat ranger", "https://www.bing.com/news/search?q=Narathiwat%20ranger&format=rss"],
+  ["DS search: site:thairath.co.th ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Athairath.co.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: site:dailynews.co.th ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Adailynews.co.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: site:mgronline.com ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Amgronline.com%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: site:thaipbs.or.th ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["DS search: site:bangkokpost.com (Narathiwat OR Pattani OR Yala)", "https://www.bing.com/news/search?q=site%3Abangkokpost.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss"],
+  ["DS search: นราธิวาส &qft=sortbydate%3d%221%22", "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss&qft=sortbydate%3d%221%22"],
+  ["DS search: ไฟใต้ &count=50", "https://www.bing.com/news/search?q=%E0%B9%84%E0%B8%9F%E0%B9%83%E0%B8%95%E0%B9%89&format=rss&count=50"],
+  ["TK search: Thai Cambodian border", "https://www.bing.com/news/search?q=Thai%20Cambodian%20border&format=rss"],
+  ["TK search: Cambodia Thailand ceasefire", "https://www.bing.com/news/search?q=Cambodia%20Thailand%20ceasefire&format=rss"],
+  ["TK search: Thai army Cambodian troops", "https://www.bing.com/news/search?q=Thai%20army%20Cambodian%20troops&format=rss"],
+  ["TK search: ชายแดนไทย-กัมพูชา", "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%84%E0%B8%97%E0%B8%A2-%E0%B8%81%E0%B8%B1%E0%B8%A1%E0%B8%9E%E0%B8%B9%E0%B8%8A%E0%B8%B2&format=rss"],
+  ["TK search: ทหารกัมพูชา", "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%81%E0%B8%B1%E0%B8%A1%E0%B8%9E%E0%B8%B9%E0%B8%8A%E0%B8%B2&format=rss"],
+  ["TK search: กองกำลังบูรพา", "https://www.bing.com/news/search?q=%E0%B8%81%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B3%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%9A%E0%B8%B9%E0%B8%A3%E0%B8%9E%E0%B8%B2&format=rss"],
+  ["TK search: กองกำลังสุรนารี", "https://www.bing.com/news/search?q=%E0%B8%81%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B3%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%B8%E0%B8%A3%E0%B8%99%E0%B8%B2%E0%B8%A3%E0%B8%B5&format=rss"],
+  ["TK search: ทุ่นระเบิด ชายแดน", "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%B8%E0%B9%88%E0%B8%99%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99&format=rss"],
+  ["TK search: ព្រំដែនកម្ពុជា ថៃ", "https://www.bing.com/news/search?q=%E1%9E%96%E1%9F%92%E1%9E%9A%E1%9F%86%E1%9E%8A%E1%9F%82%E1%9E%93%E1%9E%80%E1%9E%98%E1%9F%92%E1%9E%96%E1%9E%BB%E1%9E%87%E1%9E%B6%20%E1%9E%90%E1%9F%83&format=rss"],
+  ["TK search: landmine Cambodia Thailand", "https://www.bing.com/news/search?q=landmine%20Cambodia%20Thailand&format=rss"],
+  ["TK search: site:khmertimeskh.com Thai border", "https://www.bing.com/news/search?q=site%3Akhmertimeskh.com%20Thai%20border&format=rss"],
+  ["TK search: site:phnompenhpost.com Thai", "https://www.bing.com/news/search?q=site%3Aphnompenhpost.com%20Thai&format=rss"],
+  ["TK search: JBC Cambodia Thailand", "https://www.bing.com/news/search?q=JBC%20Cambodia%20Thailand&format=rss"],
+  ["TK search: ASEAN observer team border", "https://www.bing.com/news/search?q=ASEAN%20observer%20team%20border&format=rss"],
+  ["TK Khmer Times", "https://www.khmertimeskh.com/feed/"],
+  ["TK Phnom Penh Post", "https://phnompenhpost.com/rss"],
+  ["TK Phnom Penh Post", "https://www.phnompenhpost.com/rss.xml"],
+  ["TK CamboJA", "https://cambojanews.com/feed/"],
+  ["TK Kiripost", "https://kiripost.com/feed"],
+  ["TK Cambodianess", "https://cambodianess.com/rss"],
+  ["TK AKP", "https://www.akp.gov.kh/rss"],
+  ["TK Fresh News EN", "https://en.freshnewsasia.com/index.php/en/?format=feed&type=rss"],
+  ["TK VOD", "https://vodenglish.news/feed/"],
+  ["TK Khmer Times TH border tag", "https://www.khmertimeskh.com/tag/thai-border/feed/"],
+  ["DS Wartani", "https://www.wartani.com/feed"],
+  ["DS DSJ", "https://dsj.co.th/feed"],
+  ["DS Bangkok Post thailand", "https://www.bangkokpost.com/rss/data/thailand.xml"],
+  ["DS Nation south", "https://www.nationthailand.com/rss/thailand"],
+  ["DS Thai PBS south", "https://www.thaipbs.or.th/rss/news/south.xml"],
+];
+const LIST = process.env.PROBE_SET === "coverage" ? COV : C;
 const out = [];
-for (const [src, url] of C) {
+for (const [src, url] of LIST) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000), r0 = { src, url };
   try {
     const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": UA, accept: "application/rss+xml, application/xml, text/xml, text/html, application/json, */*" } });
@@ -69,7 +124,7 @@ for (const [src, url] of C) {
     Object.assign(r0, { status: r.status, type: (r.headers.get("content-type") || "").split(";")[0], bytes: body.length, final: r.url !== url ? r.url : "" });
     const items = parseFeed(body);
     if (items.length) {
-      const ds = items.filter((i) => relevant({}, i.title + " " + i.summary));
+      const ds = items.filter((i) => /^TK/.test(src) ? /Cambodia|Thai|กัมพูชา|ชายแดน|កម្ពុជា|ថៃ/i.test(i.title + " " + i.summary) : relevant({}, i.title + " " + i.summary));
       Object.assign(r0, { items: items.length, newest: items.map((i) => { const d = new Date(i.date); return isNaN(d) ? "" : d.toISOString().slice(0, 16); }).sort().pop(), ds: ds.length, sample: (ds.length ? ds : items).slice(0, 3).map((i) => i.title.slice(0, 100)) });
     } else if (/json/.test(r0.type)) {
       try { const j = JSON.parse(body); if (Array.isArray(j)) Object.assign(r0, { items: j.length, newest: (j[0] || {}).date || "", sample: j.slice(0, 3).map((x) => ((x.title || {}).rendered || "").slice(0, 100)) }); } catch (e) {}
