@@ -289,6 +289,57 @@ jobs:
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
 
+  # Daily country summaries (tools/refresh_daily.mjs): once a UTC day, the first run after 0000Z writes one summary per country from
+  # what the refresh has just committed (the filtered news pool, conflict tabs, warnings, advisories, watch lists, country briefs):
+  # top lines, key events with every source link, and what to watch. Built by rules, so it works with no AI. Where GitHub Models
+  # answers (this job's own token, models: read; no personal key), the top lines of the priority countries are redrafted from the
+  # same numbered sources and shown as AI generated. Other runs of the day end at once (an AI retry at most every 3 hours).
+  daily:
+    needs: refresh
+    if: ${{ always() && (!inputs.only || inputs.only == 'daily') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      models: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # on main, the commit the refresh job has just pushed
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Build the daily country summaries
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DAILY_FORCE: ${{ inputs.only == 'daily' && '1' || '' }}
+        run: node tools/refresh_daily.mjs
+        timeout-minutes: 8
+        continue-on-error: true
+      - name: Park test output on a preview-data branch
+        if: ${{ inputs.only == 'daily' && github.ref != 'refs/heads/main' }}
+        run: |
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan daily-preview-data
+          git rm -rqf --cached .
+          for p in data/live/daily.js data/live/daily; do git add -f "$p" 2>/dev/null || true; done
+          git commit -qm "Test output (daily) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/dense-preview-data-daily
+        continue-on-error: true
+      - name: Commit the summaries if they changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          git add -N data/live/daily.js data/live/daily 2>/dev/null || true
+          if git diff --quiet -- data/live/daily.js data/live/daily; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/daily.js data/live/daily
+          git commit -m "Refresh daily summaries $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1
+
   # Push watches (tools/push_watches.mjs): after each refresh, every watch in data/push/watches.json (added from the app's Push to
   # phone button) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
   # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
