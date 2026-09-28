@@ -1,0 +1,1097 @@
+{
+  "head" : {
+    "vars" : [ "i", "iLabel", "d", "c", "cc", "art" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q112206043"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Airship_of_Clonmacnoise"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "0740-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Airship of Clonmacnoise"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q112648411"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/1994_Michigan_UFO_event"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1994-03-08T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1994 Michigan UFO event"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q112957853"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/September_1,_1969,_Berkshire_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1969-09-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Labor Day 1969 UFO Incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q117416952"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Arequipa_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1980-04-11T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Arequipa UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "PE"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-71.886666666 -16.791388888)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q120824095"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/1984_Hudson_Valley_UFO_sightings"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1984-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1984 Hudson Valley UFO Sightings"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q130749215"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Calvine_UFO_photograph"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "The Calvine UFO"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-3.958 56.768)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q129848"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Phoenix_Lights"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1997-03-13T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Phoenix Lights"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q560372"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/1976_Tehran_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1976-09-19T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1976 Tehran UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q815525"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Belgian_UFO_wave"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1990-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Belgian UFO wave"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BE"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1571248"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Bonilla_observation"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1883-08-12T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Bonilla observation"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "MX"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2271637"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Rendlesham_Forest_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1980-12-28T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rendlesham Forest incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "GB"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(1.455138888 52.088)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2280708"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Kecksburg_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1965-12-09T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Kecksburg UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-79.461388888 40.184722222)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2377371"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Cash%E2%80%93Landrum_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1980-12-29T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Cash-Landrum incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-95.18583333 30.15722222)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2420196"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Aurora,_Texas,_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1897-04-17T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Aurora, Texas, UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-97.500277777 33.052777777)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2656375"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/1952_Washington,_D.C.,_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1952-07-19T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1952 Washington, D.C. UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2656375"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/1952_Washington,_D.C.,_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1952-07-26T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1952 Washington, D.C. UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2791513"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Chiles-Whitted_UFO_encounter"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1948-07-24T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Chiles-Whitted UFO encounter"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2891775"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Japan_Air_Lines_Cargo_Flight_1628"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1986-11-17T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Japan Air Lines flight 1628 incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-145.975 65.48388889)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2985541"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Shag_Harbour_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1967-10-04T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Shag Harbour UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "CA"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-65.7 43.5)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3149883"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Lakenheath-Bentwaters_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1956-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Lakenheath-Bentwaters incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "GB"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3149880"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Falcon_Lake_Incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1967-05-20T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Falcon Lake incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "CA"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3149884"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Val_Johnson_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1979-08-27T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Val Johnson incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-97.1075 48.4369)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3149892"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Maury_Island_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1947-06-21T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Maury Island incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3313678"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Varginha_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1996-01-26T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Varginha UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BR"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-45.4344913 -21.5663609)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3797653"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Robert_Taylor_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1979-11-09T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Robert Taylor incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "GB"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4424090"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Kenneth_Arnold_UFO_sighting"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1947-06-24T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Kenneth Arnold UFO sighting"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4607864"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/2007_Alderney_UFO_sighting"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "2007-04-23T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "2007 Alderney UFO sighting"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "GG"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-2.36667 49.7)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q5420149"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Exeter_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1965-09-03T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Exeter incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-70.956371 42.946917)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q5617395"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Gulf_Breeze_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1980-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Gulf Breeze UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q6477655"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Westall_UFO"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1966-04-06T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Westall UFO"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "AU"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(145.134 -37.9411)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q6762072"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Mariana_UFO_film"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Mariana UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-111.26 47.42)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q16850258"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Jimmy_Carter_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1969-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Jimmy Carter UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q18662539"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/UFOs_of_Pudasj%C3%A4rvi"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1967-11-13T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "UFOs of Pudasjärvi"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FI"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(27.715277777 65.642222222)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q48805044"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/USS_Nimitz_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "2004-11-14T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "USS Nimitz UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-118.26 28.91)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q48805044"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/USS_Nimitz_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "2004-11-14T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "USS Nimitz UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-117.166666666 31.333333333)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q59921931"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Finnish_Air_Force_UFO_sighting"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1969-04-12T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Finnish Air Force UFO sighting"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FI"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q99472391"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Zanfretta_UFO_Incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1978-12-06T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Zanfretta UFO Incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "IT"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(9.139652 44.505601)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q108803795"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Ariel_School_UFO_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1994-09-16T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ruwa UFO incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "ZW"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(31.29114 -17.86352)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q110127847"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Ilkley_Moor_UFO_incident"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ilkley Moor UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q111467273"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Flight_105_UFO_sighting"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1947-07-04T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Flight 105 UFO sighting"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q111467367"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://en.wikipedia.org/wiki/Lonnie_Zamora_incident"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1964-04-24T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Lonnie Zamora incident"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-106.897777777 34.0425)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3631265"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1954-10-27T00:00:00Z"
+      },
+      "iLabel" : {
+        "type" : "literal",
+        "value" : "Q3631265"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "IT"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q3631268"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1958-01-16T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "The Trindade Island's UFO"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BR"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q11870765"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1952-07-02T00:00:00Z"
+      },
+      "iLabel" : {
+        "type" : "literal",
+        "value" : "Q11870765"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q18659343"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1970-01-07T00:00:00Z"
+      },
+      "iLabel" : {
+        "type" : "literal",
+        "value" : "Q18659343"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FI"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q18661805"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1971-01-03T00:00:00Z"
+      },
+      "iLabel" : {
+        "type" : "literal",
+        "value" : "Q18661805"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FI"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q98522453"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1987-07-12T00:00:00Z"
+      },
+      "iLabel" : {
+        "type" : "literal",
+        "value" : "Q98522453"
+      }
+    } ]
+  }
+}

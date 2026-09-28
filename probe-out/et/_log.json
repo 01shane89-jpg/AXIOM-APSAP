@@ -1,0 +1,101 @@
+[
+ {
+  "id": "wikidata-sightings2",
+  "url": "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fi%20%3FiLabel%20%3Fd%20%3Fc%20%3Fcc%20%3Fart%20WHERE%20%7B%20%3Fi%20wdt%3AP31%2Fwdt%3AP279*%20wd%3AQ40728071%20.%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP585%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP580%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP625%20%3Fc%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP17%2Fwdt%3AP297%20%3Fcc%20%7D%20OPTIONAL%20%7B%20%3Fart%20schema%3Aabout%20%3Fi%20%3B%20schema%3AisPartOf%20%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E%20%7D%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22%20%7D%20%7D",
+  "status": 200,
+  "type": "application/sparql-results+json;charset=utf-8",
+  "bytes": 29393,
+  "ms": 355,
+  "final": "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fi%20%3FiLabel%20%3Fd%20%3Fc%20%3Fcc%20%3Fart%20WHERE%20%7B%20%3Fi%20wdt%3AP31%2Fwdt%3AP279*%20wd%3AQ40728071%20.%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP585%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP580%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP625%20%3Fc%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP17%2Fwdt%3AP297%20%3Fcc%20%7D%20OPTIONAL%20%7B%20%3Fart%20schema%3Aabout%20%3Fi%20%3B%20schema%3AisPartOf%20%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E%20%7D%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22%20%7D%20%7D"
+ },
+ {
+  "id": "wikidata-q421",
+  "url": "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fi%20%3FiLabel%20%3Fd%20%3Fc%20%3Fcc%20WHERE%20%7B%20%3Fi%20wdt%3AP31%20wd%3AQ421%20.%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP585%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP625%20%3Fc%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP17%2Fwdt%3AP297%20%3Fcc%20%7D%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22%20%7D%20%7D",
+  "status": 200,
+  "type": "application/sparql-results+json;charset=utf-8",
+  "bytes": 15261,
+  "ms": 189,
+  "final": "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fi%20%3FiLabel%20%3Fd%20%3Fc%20%3Fcc%20WHERE%20%7B%20%3Fi%20wdt%3AP31%20wd%3AQ421%20.%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP585%20%3Fd%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP625%20%3Fc%20%7D%20OPTIONAL%20%7B%20%3Fi%20wdt%3AP17%2Fwdt%3AP297%20%3Fcc%20%7D%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22%20%7D%20%7D"
+ },
+ {
+  "id": "dvids-unit-page",
+  "url": "https://www.dvidshub.net/unit/AARO",
+  "status": 200,
+  "type": "text/html; charset=UTF-8",
+  "bytes": 65728,
+  "ms": 249,
+  "final": "https://www.dvidshub.net/unit/AARO"
+ },
+ {
+  "id": "govuk-uap",
+  "url": "https://www.gov.uk/search/news-and-communications.atom?keywords=UAP",
+  "status": 200,
+  "type": "application/atom+xml; charset=utf-8",
+  "bytes": 1033,
+  "ms": 681,
+  "final": "https://www.gov.uk/search/news-and-communications.atom?keywords=UAP"
+ },
+ {
+  "id": "govuk-ufo",
+  "url": "https://www.gov.uk/search/all.atom?keywords=unidentified+aerial+phenomena",
+  "status": 200,
+  "type": "application/atom+xml; charset=utf-8",
+  "bytes": 6451,
+  "ms": 747,
+  "final": "https://www.gov.uk/search/all.atom?keywords=unidentified+aerial+phenomena"
+ },
+ {
+  "id": "nasa-news",
+  "url": "https://www.nasa.gov/news-release/feed/",
+  "status": 429,
+  "type": "text/html",
+  "bytes": 162,
+  "ms": 11,
+  "final": "https://www.nasa.gov/news-release/feed/"
+ },
+ {
+  "id": "blackvault-feed",
+  "url": "https://www.theblackvault.com/documentarchive/feed/",
+  "status": 200,
+  "type": "text/xml;charset=UTF-8",
+  "bytes": 753436,
+  "ms": 43,
+  "final": "https://www.theblackvault.com/documentarchive/feed/"
+ },
+ {
+  "id": "bing-aaro",
+  "url": "https://www.bing.com/news/search?q=AARO+UAP&format=rss",
+  "status": 200,
+  "type": "application/xml; charset=utf-8",
+  "bytes": 9955,
+  "ms": 203,
+  "final": "https://www.bing.com/news/search?q=AARO+UAP&format=rss"
+ },
+ {
+  "id": "geipan-home",
+  "url": "https://www.cnes-geipan.fr/",
+  "status": 429,
+  "type": "text/html; charset=UTF-8",
+  "bytes": 142,
+  "ms": 461,
+  "final": "https://www.cnes-geipan.fr/"
+ },
+ {
+  "id": "geipan-search",
+  "url": "https://www.cnes-geipan.fr/fr/recherche/cas",
+  "status": 429,
+  "type": "text/html; charset=UTF-8",
+  "bytes": 142,
+  "ms": 521,
+  "final": "https://www.cnes-geipan.fr/fr/recherche/cas"
+ },
+ {
+  "id": "geipan-csv-page",
+  "url": "https://www.cnes-geipan.fr/fr/actualites/publication-csv",
+  "status": 429,
+  "type": "text/html; charset=UTF-8",
+  "bytes": 142,
+  "ms": 569,
+  "final": "https://www.cnes-geipan.fr/fr/actualites/publication-csv"
+ }
+]
