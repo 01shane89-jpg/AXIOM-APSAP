@@ -3,6 +3,7 @@
 // replaces the older copy), older than MAX_DAYS are dropped, and each area keeps at most CAP[kind] items.
 // The page loads only the open area's file. Writes nothing when run outside the repository root.
 import fs from "node:fs";
+import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
@@ -14,11 +15,13 @@ function read(cc) {
     return JSON.parse(t.slice(t.indexOf("=", t.indexOf("]")) + 1).trim().replace(/;$/, ""));
   } catch (e) { return {}; }
 }
-export function updateHistory(kind, items, stamp) {
+export async function updateHistory(kind, items, stamp) {
   if (!CAP[kind]) throw new Error("unknown history kind " + kind);
   const cutoff = new Date(Date.now() - MAX_DAYS * 864e5).toISOString().slice(0, 16);
   fs.mkdirSync(DIR, { recursive: true });
   let added = 0;
+  // news keeps only what tools/relevance.json keeps, old items included, so the history follows the word lists when they change
+  const R = kind === "news" ? await loadRelevance() : null;
   for (const cc of Object.keys(items)) {
     if (!/^[a-z]{2,3}$/.test(cc)) continue;
     const h = read(cc), byLink = new Map();
@@ -30,7 +33,7 @@ export function updateHistory(kind, items, stamp) {
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
       byLink.set(i.link, o);
     }
-    h[kind] = [...byLink.values()].filter((i) => !i.date || i.date >= cutoff).sort((a, b) => (b.date || "") > (a.date || "") ? 1 : -1).slice(0, CAP[kind]);
+    h[kind] = [...byLink.values()].filter((i) => (!i.date || i.date >= cutoff) && (!R || kept(itemRelevance(R, i)))).sort((a, b) => (b.date || "") > (a.date || "") ? 1 : -1).slice(0, CAP[kind]);
     h.updated = stamp;
     fs.writeFileSync(`${DIR}/${cc}.js`, `window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST[${JSON.stringify(cc)}]=` + JSON.stringify(h).replace(/<\//g, "<\\/") + ";\n");
   }

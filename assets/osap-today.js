@@ -388,15 +388,20 @@
     var P = wxPlaces(), wp = P[wxSel];
     if (wp && !wxAsked[wxKey(wp)]) { wxAsked[wxKey(wp)] = 1; wxFetch(wp, function () { if (open) renderSoon(); }); }
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
-    box.innerHTML = '<div class="tdwrap"><div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
+    /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
+    if (!box.querySelector("#td-body")) {
+      box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section><div id="td-body"></div></div>';
+      if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
+    }
+    box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
-      '<button type="button" class="tdmap" data-go="map">Open map</button></div>' +
-      '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div><div class=\"tdcol tdc4\">" + shortcutsHtml() + "</div></div>" +
+      '<button type="button" class="tdmap" data-go="map">Open map</button></div>';
+    box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div><div class=\"tdcol tdc4\">" + shortcutsHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
       '<button type="button" data-home="map" aria-pressed="' + (home === "map") + '">Map</button></div>' +
       "<p>A summary of public sources held in the app. Reports are the sources' claims and are not verified unless marked; tap any line for the full report with its source link and SHA-256 record fingerprint. " +
-      "Times are Zulu, then local.</p></footer></div>";
+      "Times are Zulu, then local.</p></footer>";
     box.scrollTop = y;
   }
   var rs = 0;
@@ -440,12 +445,12 @@
     ".tdvh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}" +
     ".tdmap,.tdlink,.tdgrid button,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
     ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}" +
-    /* the screen fills the window: three columns on a wide screen (weather | warnings | stories), two on a tablet or small
-       laptop (weather above warnings, stories beside them), one on a phone */
-    ".tdcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;grid-template-areas:'a b c' 'd b c';gap:12px;align-items:start}" +
+    /* the screen fills the window, news first: three columns on a wide screen (stories | weather | warnings), two on a tablet or
+       small laptop (stories beside weather and warnings), one on a phone (stories on top) */
+    ".tdcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;grid-template-areas:'c a b' 'c d b';gap:12px;align-items:start}" +
     ".tdc1{grid-area:a}.tdc2{grid-area:b}.tdc3{grid-area:c}.tdc4{grid-area:d}.tdcol{display:flex;flex-direction:column;gap:12px;min-width:0}" +
-    "@media (max-width:1199px){.tdcols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto;grid-template-areas:'a c' 'b c' 'd d'}}" +
-    "@media (max-width:760px){.tdcols{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-template-areas:'a' 'b' 'c' 'd'}}" +
+    "@media (max-width:1199px){.tdcols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto;grid-template-areas:'c a' 'c b' 'd d'}}" +
+    "@media (max-width:760px){.tdcols{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-template-areas:'c' 'a' 'b' 'd'}}" +
     ".tdcard{background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}" +
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
@@ -497,7 +502,7 @@
       location.hash = (cc === "th" ? "" : cc + "/") + "timeline";
       location.reload();
     });
-    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape" && !document.querySelector("#wk:not([hidden]),#watchdlg:not([hidden])")) go("map"); });
+    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape" && !(e.target && e.target.id === "nq-q") && !document.querySelector("#wk:not([hidden]),#watchdlg:not([hidden])")) go("map"); });
     var map = window.__asapMap;
     if (map && window.L) {
       var Ctl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
