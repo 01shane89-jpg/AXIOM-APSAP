@@ -2,7 +2,7 @@
 // Usage: node tests/topics.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { compileTopics, topicsOf, countriesNamed, fold } from "../tools/topics_lib.mjs";
+import { compileTopics, topicsOf, countriesNamed, fold, compileRelevance, relevance } from "../tools/topics_lib.mjs";
 
 const T = compileTopics([
   { id: "floods", words: ["flood", "landslide"], exclude: ["flood of tourists"] },
@@ -33,4 +33,18 @@ for (const t of cfg.topics) {
   assert.ok(!t.searches || t.searches.length <= 4, t.id + " has more than 4 searches");
 }
 assert.equal(compileTopics(cfg.topics).length, cfg.topics.length);
+
+// the relevance check (tools/relevance.json): what an analyst or a special operations team in the country would want
+const R = compileRelevance(JSON.parse(fs.readFileSync(new URL("../tools/relevance.json", import.meta.url), "utf8")));
+const kept = (t) => ["strong", "keep"].includes(relevance(R, t));
+for (const t of ["Bomb blast kills two rangers in Narathiwat", "Footballer killed in bombing at stadium", "Coup attempt foiled in capital",
+  "Typhoon forces 20,000 to evacuate", "Police seize 2 tonnes of meth at border", "Parliament votes to impeach president",
+  "Central bank raises interest rate to defend currency", "Man shot in the head during robbery", "Russia and Iran hold talks on Strait of Hormuz",
+  "Iran threats leave Kurdish region exposed", "Airlines threaten shutdown over union disruptions"]) assert.ok(kept(t), "should keep: " + t);
+for (const t of ["Nene Royal's AGT win drives 105m social engagements", "Thai shuttler Kunlavut into men's singles final at Asian Games",
+  "Libra horoscope for today", "Grandma's quick apple donuts recipe and the perfect Netflix series", "Egypt vs Angola lineups, where to watch",
+  "Madonna beats Taylor Swift in MTV VMAs showdown", "The sky's the limit"]) assert.ok(!kept(t), "should leave out: " + t);
+assert.equal(relevance(R, "Warning issued for heavy rain"), "keep");          // "war$" does not match "warning"
+assert.equal(relevance(R, "Songkhla district office reopens"), "none");       // "song$" (entertainment) does not match "Songkhla"
+assert.equal(relevance(R, "Two wars on the border"), "strong");               // plural allowed on a $ word
 console.log("topics tests passed:", cfg.topics.length, "data sets");

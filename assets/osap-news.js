@@ -9,6 +9,7 @@
    - Where: this country (headlines filed under it: its own outlets, or a search result that names it) or every country.
    - Data sets: saved keyword filters from tools/topics.json; pick one to see its latest headlines, or combine with words.
    - More: a link to the same words in Bing News, for reporting the pool does not hold. It leaves the app.
+   Only news that matters to an analyst or a special operations team is in the pool (tools/relevance.json).
    Every line is a source's headline with its outlet, time and link, not a verified report. */
 (function () {
   "use strict";
@@ -133,6 +134,8 @@
     h += '<div class="nqstat"><span><b>' + R.length.toLocaleString() + "</b> " + (R.length === 1 ? "headline" : "headlines") +
       (S.where === "here" ? " filed under " + esc(S.name) : " from every country") + "</span><span class=\"nqobs\">" + esc(status) + "</span></div>";
     if (S.err) h += '<p class="nqnote">' + esc(S.err) + "</p>";
+    if (S.man && S.man.relevance && S.man.relevance.left_out) h += '<p class="nqnote">Only security, politics, crime, disaster, health and economic news is searched: ' +
+      S.man.relevance.left_out.toLocaleString() + " sport, celebrity and lifestyle headlines of the last " + total + " days are left out (they stay in Local news).</p>";
     R.slice(0, S.shown).forEach(function (x) {
       var r = x.r, url = safeUrl(r[5]), w = when(r[1]), fl = r[7] || "";
       /* the countries it is filed under: all of them when searching every country, else only the others it names */
