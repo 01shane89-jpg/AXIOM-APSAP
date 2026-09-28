@@ -54,7 +54,7 @@
     ".cfi-claim{display:inline-block;font-size:10.5px;color:var(--muted);background:var(--accent-soft);border-radius:999px;padding:0 6px;margin-left:4px;font-weight:400}" +
     ".cfi-fp{font:10.5px ui-monospace,monospace;color:var(--muted)}.cfi-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}" +
     ".cfi-filt{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}.cfi-filt button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:1px 8px;cursor:pointer}" +
-    ".cfi-filt button[aria-pressed=true]{background:var(--accent);color:var(--surface);border-color:var(--accent)}.cfi-more{font:inherit;margin-top:6px;cursor:pointer}";
+    ".cfi-filt button[aria-pressed=true]{background:var(--accent);color:var(--on-accent,var(--surface));border-color:var(--accent)}.cfi-more{font:inherit;margin-top:6px;cursor:pointer}";
   function css() { if (D.getElementById("cfi-css")) return; var st = D.createElement("style"); st.id = "cfi-css"; st.textContent = CSS; D.head.appendChild(st); }
 
   /* the live reports plus the earlier ones, one list, newest first, no duplicate links */
