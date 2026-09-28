@@ -6245,7 +6245,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.addEventListener("resize", sizeToHeader);
   /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
   // "AI generated" tags: tap (or Enter) shows the full draft wording, since phones have no hover
-  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
+  /* a tag inside a switch's label (Possible flashpoints) leaves the tap to the label, so the switch still turns on and off;
+     the tag's note still shows on hover and focus */
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t && !t.closest("label")) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
   if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
