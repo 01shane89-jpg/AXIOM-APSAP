@@ -1,0 +1,250 @@
+{
+ "schema": "osap-cf-history-state/1",
+ "release": "ged261-csv.zip",
+ "version": "26.1",
+ "zip_sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
+ "ged_last": "2025-12-31",
+ "built": "2026-09-28 15:35Z",
+ "conflicts": {
+  "russia-ukraine": {
+   "key": "9ce04ba12add",
+   "n": 40293,
+   "best": 431815,
+   "chunks": 5,
+   "first": "2022-02-24",
+   "last": "2026-08-31"
+  },
+  "iran-war": {
+   "key": "fb69864ec4d7",
+   "n": 117,
+   "best": 3686,
+   "chunks": 1,
+   "first": "2026-02-28",
+   "last": "2026-08-30"
+  },
+  "sudan": {
+   "key": "9e0d3cfd000f",
+   "n": 2237,
+   "best": 102110,
+   "chunks": 1,
+   "first": "2023-04-15",
+   "last": "2026-08-31"
+  },
+  "israel-gaza": {
+   "key": "6f9db2479b7b",
+   "n": 8212,
+   "best": 64513,
+   "chunks": 2,
+   "first": "2023-10-07",
+   "last": "2026-08-31"
+  },
+  "israel-lebanon": {
+   "key": "072c0b0fa99c",
+   "n": 1901,
+   "best": 9202,
+   "chunks": 1,
+   "first": "2023-10-09",
+   "last": "2026-08-27"
+  },
+  "yemen-red-sea": {
+   "key": "f84dbce4e130",
+   "n": 5378,
+   "best": 64231,
+   "chunks": 2,
+   "first": "2014-09-25",
+   "last": "2026-08-31"
+  },
+  "myanmar": {
+   "key": "bbe0aabac9fd",
+   "n": 6659,
+   "best": 14024,
+   "chunks": 2,
+   "first": "2021-02-09",
+   "last": "2026-08-30"
+  },
+  "afghanistan-pakistan": {
+   "key": "5ddcd99bafaf",
+   "n": 168,
+   "best": 728,
+   "chunks": 1,
+   "first": "2025-10-11",
+   "last": "2026-08-31"
+  },
+  "pakistan-insurgency": {
+   "key": "a4242d132674",
+   "n": 8213,
+   "best": 44205,
+   "chunks": 2,
+   "first": "2007-12-15",
+   "last": "2026-08-31"
+  },
+  "drc-east": {
+   "key": "3044412cc293",
+   "n": 4395,
+   "best": 27693,
+   "chunks": 1,
+   "first": "2021-11-07",
+   "last": "2026-08-31"
+  },
+  "sahel": {
+   "key": "3a16c7d093d1",
+   "n": 17178,
+   "best": 120482,
+   "chunks": 4,
+   "first": "2012-01-16",
+   "last": "2026-08-31"
+  },
+  "somalia": {
+   "key": "054539e10159",
+   "n": 7075,
+   "best": 47041,
+   "chunks": 2,
+   "first": "2006-12-20",
+   "last": "2026-08-31"
+  },
+  "lake-chad-nigeria": {
+   "key": "3a669c550fc0",
+   "n": 8716,
+   "best": 68511,
+   "chunks": 2,
+   "first": "2009-07-26",
+   "last": "2026-08-31"
+  },
+  "ethiopia": {
+   "key": "3f77cf490d81",
+   "n": 3049,
+   "best": 13888,
+   "chunks": 1,
+   "first": "2023-08-04",
+   "last": "2026-08-29"
+  },
+  "syria": {
+   "key": "69db2f1d2400",
+   "n": 88681,
+   "best": 417434,
+   "chunks": 10,
+   "first": "2011-03-18",
+   "last": "2026-08-30"
+  },
+  "haiti": {
+   "key": "c47dab7ee500",
+   "n": 493,
+   "best": 4927,
+   "chunks": 1,
+   "first": "2021-09-09",
+   "last": "2026-08-23"
+  },
+  "south-sudan": {
+   "key": "1fca76c0993a",
+   "n": 969,
+   "best": 14110,
+   "chunks": 1,
+   "first": "2013-12-15",
+   "last": "2026-08-27"
+  },
+  "colombia": {
+   "key": "626e1f4f161f",
+   "n": 17681,
+   "best": 50630,
+   "chunks": 5,
+   "first": "1989-01-01",
+   "last": "2026-08-31"
+  },
+  "mozambique": {
+   "key": "b806f435775b",
+   "n": 1413,
+   "best": 6667,
+   "chunks": 1,
+   "first": "2017-11-27",
+   "last": "2026-08-11"
+  },
+  "cameroon-anglophone": {
+   "key": "983ea2f8af1e",
+   "n": 1568,
+   "best": 4666,
+   "chunks": 1,
+   "first": "2017-09-15",
+   "last": "2026-08-29"
+  },
+  "car": {
+   "key": "545728d91151",
+   "n": 1863,
+   "best": 14997,
+   "chunks": 1,
+   "first": "2012-12-10",
+   "last": "2026-08-20"
+  },
+  "mexico-cartels": {
+   "key": "73994f97c62a",
+   "n": 27056,
+   "best": 149430,
+   "chunks": 8,
+   "first": "2007-01-01",
+   "last": "2026-08-31"
+  },
+  "india-pakistan": {
+   "key": "092bdcf0d301",
+   "n": 10239,
+   "best": 27271,
+   "chunks": 3,
+   "first": "1989-01-01",
+   "last": "2026-08-08"
+  },
+  "india-internal": {
+   "key": "138ebd076240",
+   "n": 510,
+   "best": 1280,
+   "chunks": 1,
+   "first": "2023-05-03",
+   "last": "2026-08-31"
+  },
+  "thailand-cambodia": {
+   "key": "5d423c17b885",
+   "n": 55,
+   "best": 252,
+   "chunks": 1,
+   "first": "2025-05-28",
+   "last": "2025-12-23"
+  },
+  "philippines": {
+   "key": "6ab08c41d8d4",
+   "n": 4478,
+   "best": 21826,
+   "chunks": 1,
+   "first": "1989-01-01",
+   "last": "2026-08-29"
+  },
+  "papua": {
+   "key": "37a910eb4754",
+   "n": 332,
+   "best": 636,
+   "chunks": 1,
+   "first": "1989-07-26",
+   "last": "2026-08-17"
+  },
+  "thailand-deep-south": {
+   "key": "2604e9fde1b8",
+   "n": 2835,
+   "best": 4014,
+   "chunks": 1,
+   "first": "2004-01-04",
+   "last": "2026-08-05"
+  },
+  "libya": {
+   "key": "11d21b06db88",
+   "n": 994,
+   "best": 9654,
+   "chunks": 1,
+   "first": "2014-05-16",
+   "last": "2026-08-10"
+  },
+  "iraq-is": {
+   "key": "ab0d8a32c82a",
+   "n": 2273,
+   "best": 6810,
+   "chunks": 1,
+   "first": "2017-12-09",
+   "last": "2026-08-27"
+  }
+ }
+}
