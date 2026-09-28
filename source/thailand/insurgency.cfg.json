@@ -1,5 +1,5 @@
 {
- "asof": "2026-09-27",
+ "asof": "2026-09-28",
  "color": "--l3",
  "srcline": "Sourced reporting · SBPAC statistics · live Deep South feeds · UCDP",
  "bounds": [
@@ -12,7 +12,7 @@
    102.1
   ]
  ],
- "status": "<b>A curated record, not a full count.</b> 67 curated records from reporting for Oct 2025 to Sep 2026, 43 of them attacks or clashes. SBPAC counted 103 incidents in Jan–Jul 2026 alone, so many events are still missing. Live reports from Deep South outlets and news searches (Thai headlines machine-translated) and UCDP's coded Patani-conflict events for the past year are added on top and marked as such.",
+ "status": "<b>A curated record, not a full count.</b> 74 curated records from reporting for Oct 2025 to Sep 2026, 49 of them attacks or clashes. SBPAC counted 103 incidents in Jan–Jul 2026 alone, so many events are still missing. Live reports from Deep South outlets and news searches (Thai headlines machine-translated) and UCDP's coded Patani-conflict events for the past year are added on top and marked as such.",
  "kinds": {
   "ied": {
    "label": "IED or bombing",
