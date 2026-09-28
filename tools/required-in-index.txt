@@ -32,6 +32,6 @@ window.OSAP_REDCROSS
 function extrasOff(
 function recMsK(
 window.OSAP_WATCH
-
-# drawn-area summary (assets/osap-areasum.js reads it)
-window.TSAP.areaApi
+# phone fixes (claude/phone-glitches): no reload under a finger after a deploy; reports from a list keep the phone on its tab
+if (!used && Date.now() - t0 < 8000) reload();
+function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setView("timeline"); select(id, true); }
