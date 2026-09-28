@@ -13,6 +13,7 @@
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
 <script src="assets/osap-share.js"></script>
+<script src="assets/osap-push.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
@@ -29,3 +30,4 @@ function osapSym(
 window.OSAP_REDCROSS
 function extrasOff(
 function recMsK(
+window.OSAP_WATCH
