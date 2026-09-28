@@ -5449,6 +5449,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (l && l.curated && curId) showCurated(curId);
     else if (l && l.sof) showSof(current);
     rvSoon();
+    document.dispatchEvent(new Event("osap:period"));
   }
   pseg.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-p]"); if (b) setPeriod(b.getAttribute("data-p")); });
   pfrom.addEventListener("change", function () { setPeriod("custom", pfrom.value, pto.value); });
@@ -7163,6 +7164,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
+    /* the open tab, for its Reports section and summary (assets/osap-viewrep.js) */
+    cc: CC, ccName: function () { return SUB ? SUB.name : cName(CC); }, view: function () { return current; },
+    viewName: function (v) { var l = LBY[v || current]; return l ? l.title || l.name : ""; }, viewRecords: function () { return rvRecords(); },
     events: function () { return EV_ON ? evBuild().list.map(function (ev) { return evMake(ev, ev.m); }) : []; },
     openData: function () { var X = xMine(), FD = xFeeds(); return X ? X.items.map(function (i) { var f = FD[i.f] || {};
       return { t: i.t, x: i.x, d: i.d, la: i.la, lo: i.lo, u: i.u, src: f.name || "", cat: f.cat || "Open data" }; }) : []; } };
@@ -7443,6 +7447,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
+<script src="assets/osap-viewrep.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
