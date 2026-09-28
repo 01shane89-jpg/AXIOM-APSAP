@@ -44,5 +44,6 @@ export function validate(w) {
   const layers = Array.isArray(w.layers) ? w.layers.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,30}$/.test(x)).slice(0, MAX_LAYERS) : [];
   const kw = Array.isArray(w.kw) ? [...new Set(w.kw.map((x) => cleanText(x, 60)).filter(Boolean))].slice(0, MAX_WORDS) : [];
   const minSev = [1, 2, 3].includes(+w.minSev) ? +w.minSev : 1;
-  return { watch: { id, name, cc: w.cc, area, layers, kw, minSev, topic } };
+  const conf = w.conf === "ied" ? "ied" : undefined;   // Deep South IED watch: only reports confirmed by an official source or corroborated
+  return { watch: { id, name, cc: w.cc, area, layers, kw, minSev, ...(conf ? { conf } : {}), topic } };
 }
