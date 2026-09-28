@@ -35,7 +35,7 @@
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane){visibility:hidden}",
-    "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}}",
+    "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
     "#cf-rail .cfk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0 2px}#cf-rail .cfk div{background:var(--surface2);border-radius:4px;padding:5px 6px}#cf-rail .cfk b{display:block;font:600 17px/1.2 'IBM Plex Mono',monospace}#cf-rail .cfk span{font-size:11px;color:var(--muted);line-height:1.25;display:block}",
@@ -44,7 +44,7 @@
     "#cf-rail .cfctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}#cf-rail .cfctl select,#cf-rail .cfctl input[type=search]{font:inherit;font-size:12.5px;padding:3px 5px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);max-width:100%}",
     "#cf-rail .cfctl label{font-size:12.5px;display:inline-flex;gap:4px;align-items:center}",
     "#cf-rail ol.cfl{list-style:none;margin:0;padding:0}#cf-rail ol.cfl li{padding:7px 0;border-top:1px solid var(--line-soft);font-size:12.5px;line-height:1.4}#cf-rail ol.cfl li.on{background:var(--accent-soft)}",
-    "#cf-rail .cft{font-weight:600;color:var(--ink);text-decoration:none}#cf-rail .cft:hover{text-decoration:underline}#cf-rail .cfm{font-size:11.5px;color:var(--muted)}#cf-rail .cfm button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer}",
+    "#cf-rail .cfalso a{color:var(--accent)}#cf-rail .cft{font-weight:600;color:var(--ink);text-decoration:none}#cf-rail .cft:hover{text-decoration:underline}#cf-rail .cfm{font-size:11.5px;color:var(--muted)}#cf-rail .cfm button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer}",
     "#cf-rail .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}#cf-rail .tag.claim{border-color:var(--near);color:var(--ink)}",
     "html[data-cf] .leaflet-popup-content .cfm{font-size:12px;color:var(--muted);margin:3px 0}html[data-cf] .leaflet-popup-content .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted);margin-top:4px}",
     "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}",
@@ -130,6 +130,56 @@
       .then(function () { if (active === c.id && cur.data === d) list(); });
   }
   function allItems(d) { return d._all || (d.items || []); }
+  /* ---------- one incident, many reports: reports of the same incident are shown once, with every outlet that carried it ----------
+     Two reports are taken as one incident when they are of the same broad kind, placed at the same spot (a district centre or an
+     exact point, not a whole province) and dated within 36 hours of each other, or when their headlines share most of their
+     words within three days. Court and talks stories also group by province. This is a machine grouping for reading only: every
+     report keeps its own link and fingerprint, and nothing is merged in the data. */
+  function family(i) {
+    var k = String(i.kind || "") + " " + kindName(i.kind);
+    if (/UCDP/.test(k)) return "ucdp";
+    if (/legal|court|charge/i.test(k)) return "legal";
+    if (/talk|peace|dialogue|diplomatic/i.test(k)) return "talks";
+    if (/ied|bomb|explos|landmine|mine\b/i.test(k)) return "ied";
+    if (/shoot|ambush|clash|ground|attack/i.test(k)) return "gun";
+    if (/arson/i.test(k)) return "arson";
+    if (/raid|arrest/i.test(k)) return "raid";
+    return "other";
+  }
+  function words(i) {
+    var t = String(i.title_en || i.title || "").toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(function (w) { return w.length > 3; });
+    return uniq(t);
+  }
+  function alike(a, b) {
+    var wa = a._w || (a._w = words(a)), wb = b._w || (b._w = words(b)); if (wa.length < 3 || wb.length < 3) return false;
+    var n = wa.filter(function (w) { return wb.indexOf(w) >= 0; }).length;
+    return n / (wa.length + wb.length - n) >= 0.5;
+  }
+  function spot(i) { return i.geo && i.geo.la != null && i.geo.p !== "province" ? (+i.geo.la).toFixed(2) + "," + (+i.geo.lo).toFixed(2) : ""; }
+  // the province (or, where none is known, the place) a report is about: a curated record's own province first
+  function prov(i) { var n = (i._r && i._r.prov) || (i.geo && i.geo.n) || i.place || ""; var m = String(n).match(/(Pattani|Yala|Narathiwat|Songkhla)/); return m ? m[1] : String(n).replace(/\s*\(.*\)$/, "").replace(/ district, .*/, ""); }
+  // the report a group is shown by: a curated record first, then an official or established outlet in English, then the earliest
+  function leadScore(i) { return (i.tab && !(i._r && i._r.live) ? 8 : 0) + (i.title_en || /^en/.test(i.lang || "") || i.tab ? 2 : 0) + (i._r && /official|independent|international/.test(i._r.dsTier || "") ? 1 : 0); }
+  function grouped(items) {
+    var out = [];
+    items.forEach(function (i) {
+      var f = family(i), t = parseT(i.date), sp = spot(i);
+      var g = f === "ucdp" ? null : out.filter(function (g) {
+        return g.some(function (o) {
+          var dt = Math.abs(parseT(o.date) - t); if (!(dt <= 72 * 36e5)) return false;
+          if (alike(i, o)) return true;
+          if (dt > 36 * 36e5 || f !== family(o) || f === "other") return false;
+          if (sp && sp === spot(o)) return true;
+          return (f === "legal" || f === "talks") && prov(i) && prov(i) === prov(o);
+        });
+      })[0];
+      if (g) g.push(i); else out.push([i]);
+    });
+    return out.map(function (g) {
+      var lead = g.slice().sort(function (a, b) { return leadScore(b) - leadScore(a); })[0];
+      return { lead: lead, all: g, date: g[0].date, outlets: uniq(g.map(function (x) { return x.outlet || ""; }).filter(Boolean)) };
+    });
+  }
 
   /* ---------- tab buttons (desktop row and phone menu) and the Conflicts menu ---------- */
   function addTabs() {
@@ -310,8 +360,9 @@
       })).addTo(map);
     }
     if (d && F.show.rep) {
-      lyr.rep = L.layerGroup(filtered().filter(function (i) { return i.geo && i.geo.la != null; }).map(function (i) {
-        return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: 5, color: "#fff", weight: 1.5, fillColor: "#1D5A86", fillOpacity: 0.9 }).bindPopup(repHtml(i, true), { maxWidth: 340 });
+      lyr.rep = L.layerGroup(grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }).map(function (g) {
+        var i = g.lead;
+        return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: "#fff", weight: 1.5, fillColor: "#1D5A86", fillOpacity: 0.9 }).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
       })).addTo(map);
     }
     mapLegend();
@@ -393,6 +444,14 @@
       (i.tab && i.summary ? '<div class="cfm">' + esc(i.summary.length > 280 ? i.summary.slice(0, 277) + "…" : i.summary) + "</div>" : "") +
       '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(i.fp || "") + '">SHA-256 ' + esc((i.fp || "").slice(0, 16)) + "…</div>";
   }
+  // the other reports of the same incident: each keeps its own link
+  function alsoHtml(g) {
+    if (!g || g.all.length < 2) return "";
+    var o = g.all.filter(function (x) { return x !== g.lead; });
+    return '<div class="cfm cfalso"><span class="tag claim" title="Reports grouped by machine as one incident: same kind, same place, within 36 hours, or near-identical headlines">' +
+      (g.outlets.length > 1 ? "Reported by " + g.outlets.length + " outlets" : g.all.length + " reports") + "</span>Also: " + o.map(function (x) {
+        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(x.outlet || "report") + "</a>"; }).join(" · ") + "</div>";
+  }
   function ucdpHtml(e) {
     return "<b>" + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
       (e.end && e.end !== e.date ? " to " + day(e.end) : "") + "</div><div>" + esc(TYPEN[e.type] || "") + ". Deaths, UCDP best estimate: <b>" + num(e.best) + "</b> (range " + num(e.low) + " to " + num(e.high) + ")" +
@@ -418,13 +477,17 @@
     if (d.auto) h.push('<p class="cfsub">Automatic tab: UCDP recorded deadly violence in ' + esc(cname(c.auto.cc)) + " over the past year that fits none of the conflicts AXIOM OSAP lists. Only UCDP’s events are shown; news for this country is under Local news.</p>");
     else h.push('<p class="cfsub">' + esc(d.kind || "") + (d.since ? " · current phase since " + day(d.since) : "") + " · " + esc((d.countries || []).map(cname).join(", ")) + "</p>" +
       '<div class="cfm">Parties named in reporting (listing is not a judgement):</div><div class="cfpart">' + (d.parties || []).map(function (p) { return "<span>" + esc(p) + "</span>"; }).join("") + "</div>");
-    if (st.reports) h.push('<div class="cfk"><div><b>' + num(st.reports.d1) + "</b><span>reports, 24 h</span></div><div><b>" + num(st.reports.d7) + "</b><span>reports, 7 days</span></div>" +
+    // with a taken-over layer, the figures and the weekly chart count everything this tab lists (the layer's records too), and the
+    // headline figures count incidents (reports of one incident counted once)
+    var cnt = d._all ? tabCounts(d) : null;
+    if (cnt) st = Object.assign({}, st, { weeks: cnt.weeks });
+    if (st.reports) h.push('<div class="cfk"><div><b>' + num(cnt ? cnt.d1 : st.reports.d1) + "</b><span>" + (cnt ? "incidents reported" : "reports") + ", 24 h</span></div><div><b>" + num(cnt ? cnt.d7 : st.reports.d7) + "</b><span>" + (cnt ? "incidents reported" : "reports") + ", 7 days</span></div>" +
       "<div><b>" + num(u30.events) + '</b><span>UCDP events, 30 days</span></div><div><b>' + num(u30.best) + '</b><span>deaths, 30 days (UCDP best estimate)</span></div></div>');
     else h.push('<div class="cfk"><div><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
     h.push('<p class="cfnote">Updated ' + when(d.asof) + ". Reports are unverified and statements by any party are claims. UCDP figures are provisional candidate data" +
       (st.ucdp_latest ? ", latest event coded " + day(st.ucdp_latest) : "") + ".</p>");
     if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
-      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed and mapped with the reports below; the counts and charts above are the conflict feed’s own.</p>");
+      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed, mapped and counted with the reports below.</p>");
     if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
     h.push('<div id="cf-extra"></div></div>');
     h.push(frontHtml(c, d, f));
@@ -453,16 +516,24 @@
     if (ex && typeof P[c.id] === "function") try { P[c.id](ex, d, f); } catch (e) { ex.textContent = ""; }
   }
   function uniq(a) { return a.filter(function (x, k) { return a.indexOf(x) === k; }); }
+  function tabCounts(d) {
+    var now = Date.now(), all = allItems(d).filter(function (i) { return family(i) !== "ucdp"; });
+    var wk = all.filter(function (i) { return now - parseT(i.date) <= 7 * 864e5 && parseT(i.date) <= now + 36e5; });
+    var g7 = grouped(wk), n = {};
+    all.forEach(function (i) { var w = Math.floor((now - parseT(i.date)) / (7 * 864e5)); if (w >= 0 && w <= 52) n[w] = (n[w] || 0) + 1; });
+    var weeks = ((d.stats || {}).weeks || []).map(function (x) { return Object.assign({}, x, { reports: n[x.w] || 0 }); });
+    return { d1: g7.filter(function (g) { return now - parseT(g.date) <= 864e5; }).length, d7: g7.length, weeks: weeks };
+  }
   function list() {
     var box = D.getElementById("cf-list"); if (!box || !cur.data) return;
-    var it = filtered(), ev = (cur.data.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
+    var it = filtered(), gs = grouped(it), ev = (cur.data.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
     var lim = +(box.getAttribute("data-lim") || 60), h = [];
     if (!cur.data.auto) {
-      h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(it.length) + ")</h3>");
-      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(it.length) + ")</button></p>");
+      h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : "") + ")</h3>");
+      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button></p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
-      h.push('<ol class="cfl">' + it.slice(0, lim).map(function (i, k) { return '<li data-k="' + k + '">' + repHtml(i) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
-      if (it.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, it.length - lim) + " more</button>");
+      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
+      if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");
       else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
         '<button type="button" class="refresh more" data-cfolder="1">Load ' + num(cur.data.older.items) + " reports from before " + day(cur.data.older.from) + "</button>");
@@ -471,7 +542,7 @@
       return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</div></td><td>" + num(e.best) + "</td></tr>";
     }).join("") + "</tbody></table>" + (ev.length > 200 ? '<p class="cfm">The newest 200 are listed; all are on the map.</p>' : "") + "</details>");
     box.innerHTML = h.join("");
-    box._items = it;
+    box._items = gs.map(function (g) { return g.lead; }); box._groups = gs;
   }
   function frontHtml(c, d, f) {
     if (d.auto) return "";
@@ -541,19 +612,32 @@
      dialog also saves it as a PDF. Each entry keeps its source link and fingerprint. ---------- */
   function printList() {
     var c = byId(active), it = filtered(); if (!c || !cur.data) return;
-    var ksel = F.kind ? kindName(F.kind) : "all kinds", psel = (D.querySelector('#cf-rail select[data-cff="days"]') || {}).selectedOptions;
+    var gs = grouped(it), ksel = F.kind ? kindName(F.kind) : "all kinds", psel = (D.querySelector('#cf-rail select[data-cff="days"]') || {}).selectedOptions;
     var per = psel && psel[0] ? psel[0].textContent : "", now = Date.now();
     var el = D.getElementById("cf-print"); if (!el) { el = D.createElement("div"); el.id = "cf-print"; D.body.appendChild(el); }
+    // summary first: what the list holds, by kind and by place, and its date range
+    function tally(f) { var n = {}; gs.forEach(function (g) { var k = f(g.lead); if (k) n[k] = (n[k] || 0) + 1; }); return Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).map(function (k) { return [k, n[k]]; }); }
+    var byKind = tally(function (i) { return kindName(i.kind); }), byPlace = tally(function (i) { return prov(i) || ""; });
+    var dates = it.map(function (i) { return String(i.date || "").slice(0, 10); }).filter(Boolean).sort();
+    var multi = gs.filter(function (g) { return g.outlets.length > 1; }).length, mt = it.filter(function (i) { return i.mt; }).length;
+    function tbl(rows, head) { return rows.length ? '<table class="cfpt"><thead><tr><th>' + esc(head) + "</th><th>Incidents</th></tr></thead><tbody>" + rows.slice(0, 10).map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td>" + num(r[1]) + "</td></tr>"; }).join("") + "</tbody></table>" : ""; }
     el.innerHTML = "<h1>" + esc(c.name) + "</h1>" +
       '<p class="cfpm">AXIOM OSAP · printed ' + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(now, { date: true }) : new Date(now).toISOString()) + " · " + esc(per) + " · " + esc(ksel) +
-      (F.q ? " · search “" + esc(F.q) + "”" : "") + " · " + num(it.length) + " reports</p>" +
+      (F.q ? " · search “" + esc(F.q) + "”" : "") + "</p>" +
+      "<h2>Summary</h2><p>" + num(gs.length) + " incidents from " + num(it.length) + " reports" + (dates.length ? ", " + esc(day(dates[0])) + " to " + esc(day(dates[dates.length - 1])) : "") + ". " +
+      num(multi) + " incidents were carried by more than one outlet. " + (mt ? num(mt) + " reports are machine translated and marked so. " : "") +
+      "Reports of one incident are grouped by machine (same kind and place within 36 hours, or near-identical headlines); each keeps its own link.</p>" +
+      '<div class="cfpcols">' + tbl(byKind, "Kind") + tbl(byPlace, "Place") + "</div>" +
       '<p class="cfpm">Situational awareness only. Reports are unverified; statements by any party, including government and security bodies, are their claims; kinds are machine-sorted unless the record is curated. Each entry lists its source link and SHA-256 record fingerprint.</p>' +
-      "<ol>" + it.map(function (i) {
-        var t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
+      "<h2>Incidents, newest first</h2><ol>" + gs.map(function (g) {
+        var i = g.lead, t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
+        var others = g.all.filter(function (x) { return x !== i; });
         return "<li><b>" + esc(t) + "</b>" + (orig ? '<div class="cfpm">' + esc(orig) + "</div>" : "") +
-          '<div class="cfpm">' + esc(when(i.date)) + " · " + esc(kindName(i.kind)) + (i.place ? " · " + esc(i.place) : "") + " · " + esc(i.outlet || "") + (i.tab ? " · curated record" : "") + "</div>" +
+          '<div class="cfpm">' + esc(when(i.date)) + " · " + esc(kindName(i.kind)) + (i.geo && i.geo.n ? " · " + esc(i.geo.n) : i.place ? " · " + esc(i.place) : "") + " · " + esc(i.outlet || "") +
+          (i.tab && !(i._r && i._r.live) ? " · curated record" : "") + (i.mt ? " · machine translated" : "") + (g.outlets.length > 1 ? " · reported by " + g.outlets.length + " outlets" : "") + "</div>" +
           (i.summary_en || i.summary ? "<div>" + esc(String(i.summary_en || i.summary).slice(0, 600)) + "</div>" : "") +
-          '<div class="cfpm">' + (i.link ? esc(i.link) : "no link") + (i.fp ? " · SHA-256 " + esc(i.fp) : "") + "</div></li>";
+          '<div class="cfpm">' + (i.link ? esc(i.link) : "no link") + (i.fp ? " · SHA-256 " + esc(i.fp) : "") + "</div>" +
+          (others.length ? '<div class="cfpm">Also reported: ' + others.map(function (x) { return esc(x.outlet || "report") + " (" + esc(when(x.date)) + ") " + esc(x.link || "") + (x.fp ? " · SHA-256 " + esc(String(x.fp).slice(0, 16)) + "…" : ""); }).join("; ") + "</div>" : "") + "</li>";
       }).join("") + "</ol>";
     D.documentElement.classList.add("cfprinting");
     var done = function () { D.documentElement.classList.remove("cfprinting"); W.removeEventListener("afterprint", done); };
@@ -582,7 +666,7 @@
     var g = t.closest("[data-cfgo]"); if (g && map) {
       var i = (D.getElementById("cf-list")._items || [])[+g.getAttribute("data-cfgo")]; if (!i || !i.geo) return;
       map.setView([i.geo.la, i.geo.lo], Math.max(map.getZoom(), 8));
-      W.L.popup({ maxWidth: 340 }).setLatLng([i.geo.la, i.geo.lo]).setContent(repHtml(i, true)).openOn(map);
+      W.L.popup({ maxWidth: 340 }).setLatLng([i.geo.la, i.geo.lo]).setContent(repHtml(i, true) + alsoHtml((D.getElementById("cf-list")._groups || [])[+g.getAttribute("data-cfgo")])).openOn(map);
     }
   });
 

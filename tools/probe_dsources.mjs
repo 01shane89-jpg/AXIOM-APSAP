@@ -59,6 +59,12 @@ const C = [
   ["15 Daily News", "https://www.dailynews.co.th/feed/"],
   ["15 MGR Online south", "https://mgronline.com/rss/south"],
   ["15 Matichon (current)", "https://www.matichon.co.th/feed"],
+  ["15 77 Kaoded", "https://77kaoded.news/feed"],
+  ["15 77 Kaoded", "https://77kaoded.news/feed/"],
+  ["15 77 Kaoded border", "https://77kaoded.news/border"],
+  ["15 The Reporters", "https://www.thereporters.co/feed/"],
+  ["15 The Reporters Deep South", "https://www.thereporters.co/deepsouth/"],
+  ["15 The Reporters Deep South", "https://www.thereporters.co/category/deepsouth/feed/"],
 ];
 // PROBE_SET=coverage: candidate searches and feeds for wider Deep South and Thai–Cambodian coverage (2026-09-28)
 const COV = [
