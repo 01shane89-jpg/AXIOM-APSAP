@@ -160,6 +160,7 @@
   }
   var wxSel = 0;
   function num(v, d) { return v == null || !isFinite(v) ? "–" : (+v).toFixed(d || 0); }
+  function fah(c) { return c == null || !isFinite(c) ? "–" : Math.round(c * 9 / 5 + 32) + ""; }
   function weatherHtml() {
     var P = wxPlaces();
     var X = window.OSAP_WX, RL = X && X.regions ? X.regions(CC, function () { if (open) render(); }) : null;
@@ -173,8 +174,8 @@
         return '<button type="button" data-wx="' + i + '" aria-pressed="' + (i === wxSel) + '">' + esc(x.name) + "</button>"; }).join("") + "</span>" : '<span class="tdplace">' + esc(p.name) + "</span>") + rsel + "</div>";
     if (cur && cur.t != null) {
       var ct = cur.time ? Date.parse(cur.time + "Z") - (cur.off || 0) * 1000 : L.at;
-      h += '<div class="tdnow"><span class="tdbig" aria-hidden="true">' + wxIcon(cur.code) + '</span><span class="tdtemp">' + num(cur.t) + '°C</span><span class="tdnowd"><b>' +
-        esc(WMO[cur.code] || "") + "</b><br>Feels like " + num(cur.feel) + "°C · humidity " + num(cur.rh) + "%<br>Wind " + num(cur.w) + " km/h, gusts " + num(cur.g) + " km/h</span></div>" +
+      h += '<div class="tdnow"><span class="tdbig" aria-hidden="true">' + wxIcon(cur.code) + '</span><span class="tdtemp">' + num(cur.t) + '°C<span class="tdf"> / ' + fah(cur.t) + '°F</span></span><span class="tdnowd"><b>' +
+        esc(WMO[cur.code] || "") + "</b><br>Feels like " + num(cur.feel) + "°C / " + fah(cur.feel) + "°F · humidity " + num(cur.rh) + "%<br>Wind " + num(cur.w) + " km/h, gusts " + num(cur.g) + " km/h</span></div>" +
         '<p class="tdsrc">Now at ' + esc(p.name) + ": model reading for " + esc(when(ct)) + (Date.now() - L.at > WX_TTL ? " (older copy, " + esc(wxErr[wxKey(p)] || "updating") + ")" : "") + "</p>";
     } else if (wxErr[wxKey(p)]) h += '<p class="tdobs">Current conditions ' + esc(wxErr[wxKey(p)]) + (days.length ? "; the forecast below is the last snapshot." : ".") + "</p>";
     else if (!days.length) h += '<p class="tdobs">Loading the weather…</p>';
@@ -184,7 +185,7 @@
       h += '<div class="tddays">' + days.map(function (d, i) {
         var dt = new Date(d.d + "T00:00:00Z"), nm = i === 0 ? "Today" : dt.toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
         return '<div class="tdday' + ((d.g || 0) >= 60 || (d.p || 0) >= 50 ? " tdwarn" : "") + '" title="' + esc(WMO[d.code] || "") + (d.p != null ? ", " + num(d.p, 1) + " mm" : "") + (d.g != null ? ", gusts " + num(d.g) + " km/h" : "") + '">' +
-          '<span class="tddn">' + esc(nm) + '</span><span class="tddi" aria-hidden="true">' + wxIcon(d.code) + '</span><span class="tddt"><b>' + num(d.tmax) + "°</b> " + num(d.tmin) + "°</span>" +
+          '<span class="tddn">' + esc(nm) + '</span><span class="tddi" aria-hidden="true">' + wxIcon(d.code) + '</span><span class="tddt"><b>' + num(d.tmax) + "°</b> " + num(d.tmin) + '°C</span><span class="tddf">' + fah(d.tmax) + "° " + fah(d.tmin) + "°F</span>" +
           '<span class="tddr">' + (d.pp != null ? num(d.pp) + "%" : "") + (d.p ? " · " + num(d.p, d.p < 10 ? 1 : 0) + " mm" : "") + "</span></div>";
       }).join("") + "</div>" +
         (rain || hot || wind ? '<p class="tdwxnote">' + [rain ? rain + " wet day" + (rain > 1 ? "s" : "") + " ahead" : "", hot ? hot + " very hot day" + (hot > 1 ? "s" : "") : "", wind ? "strong gusts on " + wind + " day" + (wind > 1 ? "s" : "") : ""].filter(Boolean).join(" · ") + "</p>" : "");
@@ -449,7 +450,7 @@
     ".tdcard h2{font-size:16px;margin:0}.tdh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.tdh h2{flex:1}" +
     ".tdcount,.tdsub,.tdt,.tdsrc,.tdobs,.tdplace{font-size:12px;color:var(--muted)}.tdsub{display:block}.tdsrc{margin:8px 0 0}.tdobs{margin:4px 0}" +
     ".tdreg{min-height:32px;max-width:100%;font-size:12px;padding:3px 6px}.tdplaces{display:flex;gap:4px;flex-wrap:wrap}.tdplaces button{min-height:32px;padding:3px 9px;font-size:12px}.tdplaces button[aria-pressed=true],.tdhome button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
-    ".tdnow{display:flex;align-items:center;gap:12px}.tdbig{font-size:44px;line-height:1}.tdtemp{font-size:40px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}.tdnowd{font-size:13px}" +
+    ".tdnow{display:flex;align-items:center;gap:12px}.tdbig{font-size:44px;line-height:1}.tdtemp{font-size:40px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}.tdtemp .tdf{font-size:.5em;font-weight:500;color:var(--muted,#667)}.tddf{font-size:11px;color:var(--muted,#667)}.tdnowd{font-size:13px}" +
     ".tddays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:10px}@media (max-width:420px){.tddays{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
     ".tdday{display:flex;flex-direction:column;align-items:center;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:12px;font-variant-numeric:tabular-nums}" +
     ".tdday.tdwarn{border-color:var(--near,#c80);box-shadow:inset 0 -3px 0 var(--near,#c80)}.tddn{font-weight:600}.tddi{font-size:20px}.tddr{color:var(--muted);font-size:11px}" +

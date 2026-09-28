@@ -4773,10 +4773,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var p = pts[Math.min(wxPick, pts.length - 1)];
     return head + '<p class="obs"><span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(f.asof)) + " · every 15 min · Open-Meteo</p>" +
       (pts.length > 1 ? '<p><label class="obs" for="wx-pt">Place </label><select id="wx-pt">' + pts.map(function (x, i) { return '<option value="' + i + '"' + (x === p ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></p>" : "") +
-      '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>°C</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
+      '<table class="reg cond"><tr><th>Day</th><th>Sky</th><th>Temp</th><th>Rain</th><th>Wind, gusts</th></tr>' + (p.days || []).map(function (d) {
         var hot = (d.g != null && d.g >= 90) || (d.p != null && d.p >= 50) || d.code >= 95;
         return "<tr" + (hot ? ' class="hot"' : "") + "><td>" + esc(new Date(d.d + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })) + "</td><td>" + esc(WMO[d.code] || "") +
-          '</td><td class="n">' + (d.tmax != null ? Math.round(d.tmax) + " / " + Math.round(d.tmin) : "–") + '</td><td class="n">' + (d.p != null ? d.p.toFixed(d.p < 10 ? 1 : 0) + " mm" : "–") + (d.pp != null ? " · " + d.pp + "%" : "") +
+          '</td><td class="n">' + (d.tmax != null ? Math.round(d.tmax) + "/" + Math.round(d.tmin) + "°C · " + Math.round(d.tmax * 9 / 5 + 32) + "/" + Math.round(d.tmin * 9 / 5 + 32) + "°F" : "–") + '</td><td class="n">' + (d.p != null ? d.p.toFixed(d.p < 10 ? 1 : 0) + " mm" : "–") + (d.pp != null ? " · " + d.pp + "%" : "") +
           '</td><td class="n">' + (d.w != null ? Math.round(d.w) + ", " + Math.round(d.g) + " km/h" : "–") + "</td></tr>";
       }).join("") + "</table>" +
       '<p class="note" style="margin-top:6px">Model output (Open-Meteo, blending national weather models), not an official forecast. Days with thunderstorms, 50 mm or more of rain, or gusts of 90 km/h or more are highlighted. ' +
