@@ -6245,7 +6245,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.addEventListener("resize", sizeToHeader);
   /* the header's height also changes with the view (title, source line) and when its rows wrap differently */
   // "AI generated" tags: tap (or Enter) shows the full draft wording, since phones have no hover
-  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
+  /* a tag inside a switch's label (Possible flashpoints) leaves the tap to the label, so the switch still turns on and off;
+     the tag's note still shows on hover and focus */
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t && !t.closest("label")) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
   if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
 
@@ -6744,6 +6746,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (CC === "th" && LBY.insurgency ? '<p class="wpreset"><b>Ready-made:</b> <button type="button" class="refresh" data-w-preset="ds-ied">Deep South IED watch</button> <span class="obs">Bombs, found devices, EOD work and bomb warnings in the Deep South, only when an official source reports them or two outlets agree. Lone local posts are not sent.</span></p>' : "") +
       '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
         '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? " checked" : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(use Draw area on the map first)</span>') + "</span></label>" +
+        (window.OSAP_AOI ? window.OSAP_AOI.list(CC).map(function (a) { return '<label><input type="radio" name="w-area" value="aoi:' + esc(a.id) + '" data-w-aname="' + esc(window.OSAP_AOI.label(a)) + '"> <span><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + ' <span class="obs">(saved area)</span></span></label>'; }).join("") : "") +
         '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
         '<fieldset><legend>Categories</legend><label><input type="checkbox" id="w-anycat" checked> Any category</label><div class="wcats">' + cats.map(function (l) {
           return '<label><input type="checkbox" name="w-cat" value="' + esc(l.id) + '"> ' + esc(l.name) + "</label>"; }).join("") + "</div></fieldset>" +
@@ -6754,7 +6757,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
         var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
         return '<div class="wrow"><div><b>' + esc(w.name) + "</b>" + (w.on === false ? ' <span class="chip">paused</span>' : "") + (nNew ? ' <span class="abadge new">' + nNew + " new</span>" : "") +
-          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "") + (w.conf === "ied" ? " · confirmed IED reports only" : "")) +
+          '<div class="obs">' + esc(cn + " · " + (w.aoi ? w.aoi.label : w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "") + (w.conf === "ied" ? " · confirmed IED reports only" : "")) +
           "<br>" + (w.checked ? "Last checked " + esc(window.OSAP_TIME.dualT(w.checked, { date: true })) : "Not checked yet") + "</div></div>" +
           '<div class="wbtns">' + (w.area ? '<button type="button" class="refresh" data-w-show="' + esc(w.id) + '">Show</button>' : "") +
           '<button type="button" class="refresh" data-w-pause="' + esc(w.id) + '">' + (w.on === false ? "Resume" : "Pause") + "</button>" +
@@ -6771,11 +6774,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var any = wEl.querySelector("#w-anycat");
     any.addEventListener("change", function () { if (any.checked) Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.checked = false; }); });
     Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.addEventListener("change", function () { if (c.checked) any.checked = false; }); });
+    /* picking a saved NAI or TAI names the watch after it, unless a name was typed */
+    var wName = wEl.querySelector("#w-name"), wNameTyped = false;
+    wName.addEventListener("input", function () { wNameTyped = true; });
+    Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-area"]'), function (r) { r.addEventListener("change", function () {
+      if (wNameTyped || !r.checked) return;
+      wName.value = r.hasAttribute("data-w-aname") ? C.name + " " + r.getAttribute("data-w-aname") : r.value === "drawn" ? C.name + " drawn area" : C.name; }); });
     wEl.querySelector("#wform").addEventListener("submit", function (ev) {
       ev.preventDefault();
       var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
-      var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wEl.querySelector("#w-name").value || C.name).trim().slice(0, 60), cc: CC,
-        area: a && a.value === "drawn" && AREA ? AREA.slice() : null, layers: any.checked ? [] : cats2, kw: wKwList(wEl.querySelector("#w-kw").value), minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
+      /* a saved area: the watch keeps its own copy of the shape, so editing or deleting the area later leaves the watch as it was */
+      var ao = a && a.value.indexOf("aoi:") === 0 && window.OSAP_AOI ? window.OSAP_AOI.get(a.value.slice(4)) : null;
+      var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wName.value || C.name).trim().slice(0, 60), cc: CC,
+        area: ao ? ao.pts.slice() : a && a.value === "drawn" && AREA ? AREA.slice() : null, aoi: ao ? { id: ao.id, type: ao.type, label: window.OSAP_AOI.label(ao) } : undefined,
+        layers: any.checked ? [] : cats2, kw: wKwList(wEl.querySelector("#w-kw").value), minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
       wLoad(); WATCHES.push(w);
       ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); w2.kw = w.kw.slice(); WATCHES.push(w2); });
       wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
@@ -7176,8 +7188,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
-  /* what the area summary (assets/osap-areasum.js) reads; it never writes back */
-  window.TSAP.areaApi = { area: function () { return AREA; }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+  /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
+     (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
+  window.TSAP.areaApi = { area: function () { return AREA; }, setArea: function (P) { areaSet(P); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
@@ -7465,6 +7478,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cf-history.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
+<script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
