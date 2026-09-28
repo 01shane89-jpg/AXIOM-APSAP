@@ -31,7 +31,7 @@
   /* ---------- styles: while a conflict tab is open, the other tabs' rails, report list and map marks are hidden, not removed ---------- */
   var css = D.createElement("style");
   css.textContent = [
-    "html[data-cf] .rail>:not(#cf-rail):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
+    "html[data-cf] .rail>:not(#cf-rail):not(#rail-handle):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane){visibility:hidden}",
@@ -235,7 +235,11 @@
   }
   function rail() {
     var r = D.getElementById("cf-rail");
-    if (!r) { r = D.createElement("div"); r.id = "cf-rail"; r.hidden = true; var a = D.querySelector("aside.rail"); if (a) a.insertBefore(r, a.firstChild); else D.body.appendChild(r); }
+    if (!r) {
+      /* after the phone list bar (#rail-handle) when there is one, so the bar stays on top of the list and can open it */
+      r = D.createElement("div"); r.id = "cf-rail"; r.hidden = true; var a = D.querySelector("aside.rail"), hd = D.getElementById("rail-handle");
+      if (a) a.insertBefore(r, hd && hd.parentNode === a ? hd.nextSibling : a.firstChild); else D.body.appendChild(r);
+    }
     return r;
   }
   function loadAuto(c) {
