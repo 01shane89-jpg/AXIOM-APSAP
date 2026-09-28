@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
         required: false
         default: ""
 
@@ -268,3 +268,47 @@ jobs:
           git commit -m "Refresh event summaries $(date -u +'%Y-%m-%d %H:%MZ')"
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
           exit 1
+
+  # Push watches (tools/push_watches.mjs): after each refresh, every watch in data/push/watches.json (added from the app's Push to
+  # phone button) is checked by opening its country's page headless on the new data, and new matching reports are sent to the
+  # watch's ntfy.sh channel. No key or account: ntfy.sh takes anonymous posts. What was already seen is kept in the Actions cache,
+  # not in the repo. "push-test" (any branch) sends the newest match of each watch once, marked [test], and keeps nothing.
+  push:
+    needs: refresh
+    if: ${{ always() && ((!inputs.only && github.ref == 'refs/heads/main') || inputs.only == 'push' || inputs.only == 'push-test') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - name: Any push watches?
+        id: any
+        run: echo "n=$(node -e 'try{console.log(JSON.parse(require("fs").readFileSync("data/push/watches.json","utf8")).watches.length)}catch(e){console.log(0)}')" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: ${{ steps.any.outputs.n != '0' }}
+        with:
+          node-version: 20
+      - name: Restore what the push check has already seen
+        if: ${{ steps.any.outputs.n != '0' && inputs.only != 'push-test' }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .push-state
+          key: push-state-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: push-state-${{ github.ref_name }}-
+      - name: Check the watches and send new matches
+        if: ${{ steps.any.outputs.n != '0' }}
+        env:
+          PUSH_TEST: ${{ inputs.only == 'push-test' && '1' || '' }}
+        run: |
+          npm install --no-save --no-audit --no-fund playwright-core@1 >/dev/null 2>&1 || true
+          node tools/push_watches.mjs
+        timeout-minutes: 8
+      - name: Keep what was seen for the next check
+        if: ${{ always() && steps.any.outputs.n != '0' && inputs.only != 'push-test' && hashFiles('.push-state/state.json') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: .push-state
+          key: push-state-${{ github.ref_name }}-${{ github.run_id }}
