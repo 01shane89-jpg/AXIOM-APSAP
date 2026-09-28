@@ -129,3 +129,28 @@ export function fcKm2(fc) {
   for (const f of fc.features || []) for (const p of f.geometry.coordinates) { t += ringKm2(p[0]); for (const h of p.slice(1)) t -= ringKm2(h); }
   return Math.round(t);
 }
+
+// Search engines sometimes list an old story with a fresh date (a July 2025 article shown as September 2026). A search result is
+// treated as old when every calendar date its own text states (English "July 24, 2025" / "24 July 2025", or Thai Buddhist Era
+// "24 ก.ค. 2568") is more than `days` before the date the search gave it. Text with no stated date is left alone.
+const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+const TMON = ["มกราคม|ม\\.ค\\.", "กุมภาพันธ์|ก\\.พ\\.", "มีนาคม|มี\\.ค\\.", "เมษายน|เม\\.ย\\.", "พฤษภาคม|พ\\.ค\\.", "มิถุนายน|มิ\\.ย\\.", "กรกฎาคม|ก\\.ค\\.", "สิงหาคม|ส\\.ค\\.", "กันยายน|ก\\.ย\\.", "ตุลาคม|ต\\.ค\\.", "พฤศจิกายน|พ\\.ย\\.", "ธันวาคม|ธ\\.ค\\."];
+const MNAME = "(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?";
+const EN1 = new RegExp("\\b" + MNAME + "\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(20\\d\\d)\\b", "gi"), EN2 = new RegExp("\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+" + MNAME + ",?\\s+(20\\d\\d)\\b", "gi");
+const TH = new RegExp("(\\d{1,2})\\s*(" + TMON.join("|") + ")\\s*(25\\d\\d)", "g");
+export function statedDates(text) {
+  const t = String(text || ""), out = [];
+  const add = (y, m, d) => { if (y >= 2000 && m >= 1 && m <= 12 && d >= 1 && d <= 31) out.push(Date.UTC(y, m - 1, d)); };
+  for (const m of t.matchAll(EN1)) add(+m[3], MON[m[1].slice(0, 3).toLowerCase()], +m[2]);
+  for (const m of t.matchAll(EN2)) add(+m[3], MON[m[2].slice(0, 3).toLowerCase()], +m[1]);
+  for (const m of t.matchAll(TH)) add(+m[3] - 543, TMON.findIndex((x) => new RegExp("^(?:" + x + ")$").test(m[2])) + 1, +m[1]);
+  return out;
+}
+// A story that looks back on purpose (a verdict, an anniversary, "since 2004") names old dates and is still news: never treated as old.
+const LOOKBACK = /\b(?:court|sentenc\w*|verdict|convict\w*|trial|appeal|anniversary|ago|since|years? after|months? after|recalls?|remember\w*)\b|ศาล|พิพากษา|ครบรอบ|ย้อนรอย|รำลึก/i;
+export function staleSearchResult(text, date, days = 60) {
+  if (LOOKBACK.test(String(text || ""))) return false;
+  const ds = statedDates(text), t = Date.parse(String(date || "").slice(0, 10) + "T00:00:00Z");
+  if (!ds.length || !isFinite(t)) return false;
+  return Math.max(...ds) < t - days * 864e5;
+}

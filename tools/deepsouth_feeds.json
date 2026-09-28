@@ -1,5 +1,5 @@
 {
- "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows). Re-probed 2026-09-28 against Shane's IED-watch source list (tools/probe_dsources.mjs): ISOC Region 4's own RSS (southpeace.go.th/?feed=rss2) and the Pattani and Yala provincial PR office home pages now answer; Isranews answers only as a page (its feeds are empty or error). Still unreachable from GitHub: Fourth Army (army4.rta.mi.th, timeout), Police Region 9 (timeout), Royal Thai Police and Police Region 9 investigations (403), the Narathiwat and Songkhla PR offices and province sites (empty pages), Yala province (403), SBPAC (page without links), Thai PBS, Thai PBS World and The Nation (bot-check pages), Thairath (403), MGR Online (404), Daily News (empty feed), State Railway (timeout), Royal Malaysia Police and Malaysia's foreign ministry (certificate errors). Their reporting is picked up through site-restricted and Thai/Malay news searches instead. 'tier' sets the IED-watch source tier (tools/deepsouth_lib.mjs markAlerts); 'html' reads a page's links (no dates: dated by first sighting, and the first sighting of a page is a baseline that never alerts).",
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows). Re-probed 2026-09-28 against Shane's IED-watch source list (tools/probe_dsources.mjs): ISOC Region 4's own RSS (southpeace.go.th/?feed=rss2) and the Pattani and Yala provincial PR office home pages now answer; Isranews answers only as a page (its feeds are empty or error). Still unreachable from GitHub: Fourth Army (army4.rta.mi.th, timeout), Police Region 9 (timeout), Royal Thai Police and Police Region 9 investigations (403), the Narathiwat and Songkhla PR offices and province sites (empty pages), Yala province (403), SBPAC (page without links), Thai PBS, Thai PBS World and The Nation (bot-check pages), Thairath (403), MGR Online (404), Daily News (empty feed), State Railway (timeout), Royal Malaysia Police and Malaysia's foreign ministry (certificate errors). Their reporting is picked up through site-restricted and Thai/Malay news searches instead. 'tier' sets the IED-watch source tier (tools/deepsouth_lib.mjs markAlerts); 'html' reads a page's links (no dates: dated by first sighting, and the first sighting of a page is a baseline that never alerts). Added 2026-09-28 (Shane: missing incidents), each tested from GitHub's runners first: 18 more searches by incident type and province (Thai bombs, shootings of rangers and volunteers, arson, raids; English insurgency and bomb searches) and site searches for Daily News, MGR Online, Thai PBS and the Bangkok Post, whose own feeds cannot be read. Bing sometimes answers a burst of searches with an empty page, so a search that returns no feed is tried once more after a pause.",
  "feeds": [
   {
    "id": "isoc4",
@@ -208,6 +208,150 @@
    "outlet": "Bing News search",
    "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%9F%E0%B8%97.%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
    "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bomb-south",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bomb-nara",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bomb-patt",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bomb-yala",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-shot-nara",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-shot-patt",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-ranger",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-volunteer",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%AD%E0%B8%AA.%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-arson",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A7%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%B4%E0%B8%87%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-raid",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B4%E0%B8%94%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%84%E0%B9%89%E0%B8%99%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-faitai",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%84%E0%B8%9F%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-insurg-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=southern%20Thailand%20insurgents&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bomb-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Deep%20South%20Thailand%20bomb&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-ranger-en",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Narathiwat%20ranger&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-dailynews",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Adailynews.co.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-mgr",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Amgronline.com%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-thaipbs",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bkp",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Abangkokpost.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "lang": "en",
    "search": true,
    "nc": true
   }
