@@ -112,8 +112,15 @@ async function test() {
   const res = await fetch(NTFY, { method: "POST", headers: { "content-type": "application/json" }, signal: AbortSignal.timeout(20000),
     body: JSON.stringify({ topic: TOPIC, title: "[test] OSAP data health", message: msg, tags: ["test_tube"], priority: 3, click: SITE }) });
   if (!res.ok) throw new Error("ntfy post failed: HTTP " + res.status);
-  const back = await (await get(NTFY + encodeURIComponent(TOPIC) + "/json?poll=1&since=5m")).text();
-  const seen = back.split("\n").some((l) => { try { const m = JSON.parse(l); return m.title === "[test] OSAP data health"; } catch (e) { return false; } });
+  const id = (await res.json().catch(() => ({}))).id;
+  console.log("posted, message id " + id);
+  // read it back by its id (ntfy can take a moment to list a new message)
+  let seen = false;
+  for (let i = 0; i < 5 && !seen; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const back = await (await get(NTFY + encodeURIComponent(TOPIC) + "/json?poll=1&since=10m")).text();
+    seen = back.split("\n").some((l) => { try { return JSON.parse(l).id === id; } catch (e) { return false; } });
+  }
   console.log(seen ? "test message read back from the channel" : "::error::test message was not found in the channel");
   if (!seen) process.exit(1);
 }
