@@ -7,13 +7,14 @@ import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
-import { countriesNamed, compileTopics, topicsOf } from "./topics_lib.mjs";
+import { countriesNamed, compileTopics, topicsOf, compileRelevance, relevance } from "./topics_lib.mjs";
 
 const OUT = "data/live/topics.js", KEEP_DAYS = 30, PER_TOPIC = 300, MAX_SEARCHES = 4;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const iso = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
+const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 
 let prev = { items: [] };
 try { const t = fs.readFileSync(OUT, "utf8"); prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) {}
@@ -36,6 +37,7 @@ for (const t of topics || []) {
         // a search engine also returns loosely related stories: keep only those that contain one of the data set's own words
         if (!topicsOf(own, text, countriesNamed(COUNTRIES, text)).length && !(t.countries || []).length) { off++; continue; }
         if ((t.countries || []).length && !topicsOf(own, text, t.countries).length) { off++; continue; }
+        if (!["strong", "keep"].includes(relevance(REL, text))) { off++; continue; }   // sport, celebrity, lifestyle (tools/relevance.json)
         const o = { title: i.title, summary: String(i.summary || "").slice(0, 280), date: iso(i.date), link, outlet, via: "search", nc: true,
           // a non-Latin headline from an English query is left without a language rather than mislabelled
           lang: /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : "en",
@@ -52,5 +54,5 @@ const items = [...byLink.values()].filter((i) => (i.date || i.first_seen) >= cut
   .filter((i) => i.topics.some((id) => (count[id] = (count[id] || 0) + 1) <= PER_TOPIC));
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_TOPICS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");
-status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.topic, JSON.stringify(s.q), s.ok ? s.n + " items" + (s.off ? ", " + s.off + " without the data set's words left out" : "") : s.error));
+status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.topic, JSON.stringify(s.q), s.ok ? s.n + " items" + (s.off ? ", " + s.off + " off-topic or not relevant left out" : "") : s.error));
 console.log("data-set search results kept:", items.length);
