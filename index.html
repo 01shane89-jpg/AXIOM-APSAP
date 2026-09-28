@@ -638,6 +638,7 @@ html.phone .rvpkg{max-height:none}
 .shell.rv-list .leaflet-control-container{display:none}
 .rvhead .rvseg{display:none;box-shadow:none}
 .shell.rv-list .rvhead .rvseg{display:flex}
+#cf-asum{position:fixed;right:calc(var(--railw,372px) + 16px);width:min(420px,calc(100vw - var(--railw,372px) - 80px));overflow-y:auto;z-index:1500;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.3);padding:0 14px 14px}#cf-asum[hidden],html:not([data-cf]) #cf-asum{display:none}#cf-asum .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;display:flex;align-items:center}
 .pkghead .x{margin-left:auto;font:inherit;font-size:18px;line-height:1;background:none;border:none;color:var(--muted);cursor:pointer;padding:0 4px}
 .pkgt{font-size:16px;font-weight:700;margin:6px 0 6px}
 .pkgchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
@@ -1362,7 +1363,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
     document.head.appendChild(st);
     map.createPane("fpzone"); map.getPane("fpzone").style.zIndex = 420;
-    map.createPane("terpane"); map.getPane("terpane").style.zIndex = 625;
+    /* terrain, flashpoint and presence pins sit above the report dots (up to 660) and below place labels (670): they show only
+       when switched on, and they share spots with the crossings and incidents reported there, which the pop-ups list */
+    map.createPane("terpane"); map.getPane("terpane").style.zIndex = 662;
     var prLayer = L.layerGroup(), terLayer = L.layerGroup(), fpLayer = L.layerGroup(), lblLayer = L.layerGroup(), D = null, loading = false, failed = false;
     function data() { return (window.OSAP_TERRAIN || {})[cc] || null; }
     var waiting = [];
@@ -5447,6 +5450,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (l && l.curated && curId) showCurated(curId);
     else if (l && l.sof) showSof(current);
     rvSoon();
+    document.dispatchEvent(new Event("osap:period"));
   }
   pseg.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-p]"); if (b) setPeriod(b.getAttribute("data-p")); });
   pfrom.addEventListener("change", function () { setPeriod("custom", pfrom.value, pto.value); });
@@ -5977,14 +5981,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaDraw) return;
     var P = areaDraw.pts;
     map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.dots);
-    areaDraw = null;
+    areaDraw = null; drawEndT = Date.now();
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
     if (!cancel && P.length >= 3) areaSet(P); else areaUi();
   }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
   function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
-  var lassoDown = false;
+  var lassoDown = false, drawEndT = 0;
   mapEl.addEventListener("pointerdown", function (e) {
     if (!areaDraw || inCtl(e)) return;
     e.preventDefault(); e.stopPropagation();
@@ -6008,7 +6012,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   mapEl.addEventListener("pointerup", lassoUp, true);
   mapEl.addEventListener("pointercancel", lassoUp, true);
   mapEl.addEventListener("dblclick", function (e) { if (areaDraw && areaDraw.mode === "poly") { e.preventDefault(); e.stopPropagation(); drawEnd(false); } }, true);
-  mapEl.addEventListener("click", function (e) { if (areaDraw && !inCtl(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
+  /* stopImmediatePropagation: the map-click dispatcher further down listens on this same element, and a tap on a corner that
+     lands on a report dot used to open that report and pan the map, so the next corner or the closing tap missed. The click that
+     follows the closing tap or the end of a lasso is swallowed too, or it opened whatever report sat under the finger */
+  mapEl.addEventListener("click", function (e) { if ((areaDraw || Date.now() - drawEndT < 600) && !inCtl(e)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && areaDraw) drawEnd(true); });
   var AreaCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-control areactl"); d.id = "area-ctl";
@@ -6041,6 +6048,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the area summary (assets/osap-areasum.js) opens in the Details panel beside the list, which it shows if the map is on its own */
   function areaSum() {
     if (!AREA || !window.OSAP_AREASUM) return;
+    /* a conflict tab hides the list and Details panel on a wide screen: the summary floats over the map's right side there */
+    if (!rvPhone() && document.documentElement.hasAttribute("data-cf")) {
+      var fl = document.getElementById("cf-asum");
+      if (!fl) { fl = document.createElement("div"); fl.id = "cf-asum"; fl.hidden = true; document.body.appendChild(fl); }
+      var mt = Math.max(8, Math.round(mapEl.getBoundingClientRect().top) + 10);
+      fl.style.top = mt + "px"; fl.style.maxHeight = "calc(100vh - " + (mt + 16) + "px)";
+      window.OSAP_AREASUM.open("cf-asum");
+      return;
+    }
     if (!rvPhone() && rvMode === "map") rvSet("split");
     window.OSAP_AREASUM.open("rv-pkg");
   }
@@ -7156,6 +7172,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
+    /* the open tab, for its Reports section and summary (assets/osap-viewrep.js) */
+    cc: CC, ccName: function () { return SUB ? SUB.name : cName(CC); }, view: function () { return current; },
+    viewName: function (v) { var l = LBY[v || current]; return l ? l.title || l.name : ""; }, viewRecords: function () { return rvRecords(); },
     events: function () { return EV_ON ? evBuild().list.map(function (ev) { return evMake(ev, ev.m); }) : []; },
     openData: function () { var X = xMine(), FD = xFeeds(); return X ? X.items.map(function (i) { var f = FD[i.f] || {};
       return { t: i.t, x: i.x, d: i.d, la: i.la, lo: i.lo, u: i.u, src: f.name || "", cat: f.cat || "Open data" }; }) : []; } };
@@ -7423,6 +7442,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
+<script src="assets/osap-daily.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -7435,7 +7455,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
-<script src="assets/osap-et.js"></script>
+<script src="assets/osap-viewrep.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

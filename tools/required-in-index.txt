@@ -10,6 +10,7 @@
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
+<script src="assets/osap-daily.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
@@ -22,7 +23,7 @@
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
-<script src="assets/osap-et.js"></script>
+<script src="assets/osap-viewrep.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"

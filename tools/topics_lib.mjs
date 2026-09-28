@@ -5,7 +5,7 @@ export const fold = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u0
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const NOSPACE = /[\u0E00-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u9FFF]/;
 // a word ending in "$" must also end there, plural s or es allowed ("war$" matches "war" and "wars", not "warning")
-function wordRe(words) {
+export function wordRe(words) {
   const parts = (words || []).map((w) => fold(w).trim()).filter((w) => w && w !== "$").map((w) => {
     const whole = w.endsWith("$"), b = whole ? w.slice(0, -1) : w, tail = whole ? "(?:e?s)?(?![\\p{L}\\p{N}])" : "";
     return (NOSPACE.test(b) ? esc(b) : "(?<![\\p{L}\\p{N}])" + esc(b)) + tail;
