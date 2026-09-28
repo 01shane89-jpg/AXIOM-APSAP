@@ -5,13 +5,13 @@
 //   2. Thailand's general outlets are not fetched again: their Deep South items are taken from data/live/news.js (the news step).
 //   3. UCDP candidate events for the Patani conflict over the past 13 months (the monthly files; refresh_more.mjs keeps only the newest).
 // Each item gets a kind (ied, shooting, arson, raid_or_arrest, clash ...) from words in its headline, and the district it names;
-// both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for 365 days (merged by link).
+// both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for three years (merged by link).
 // Writes data/live/deepsouth.js. PROBE=1 writes probe-out/deepsouth.json instead (per-feed result and sample headlines), never data/.
 import fs from "node:fs";
 import { translateAll, saveCache, decodeEntities, forget } from "./translate.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
-const PROBE = process.env.PROBE === "1", TIMEOUT = 20000, KEEP_DAYS = 365, CAP = 1500, OUT = "data/live/deepsouth.js";
+const PROBE = process.env.PROBE === "1", TIMEOUT = 20000, KEEP_DAYS = 1095, CAP = 4000, OUT = "data/live/deepsouth.js";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP Deep South refresh)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -26,7 +26,8 @@ async function get(url, accept) {
   } finally { clearTimeout(t); }
 }
 
-import { classify, figure, place, relevant, markAlerts, KILLED, INJURED } from "./deepsouth_lib.mjs";
+import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
+import { staleSearchResult } from "./conflict_lib.mjs";
 
 // Kept from refresh_news.mjs: a search engine's result list is read only where its robots.txt allows the path for every agent.
 const robotsCache = {};
@@ -70,7 +71,10 @@ const status = [], fresh = [], probe = [];
 for (const f of feeds) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
-    const raw = f.html ? pageLinks(await get(f.url, "text/html"), f.url) : parseFeed(await get(f.url));
+    // Bing sometimes answers a quick run of searches with a short empty page instead of the feed: one more try after a pause
+    let body = await get(f.url, f.html ? "text/html" : undefined);
+    if (f.search && !/<item[\s>]/.test(body)) { await sleep(4000); body = await get(f.url); }
+    const raw = f.html ? pageLinks(body, f.url) : parseFeed(body);
     const kept = [];
     for (const i of raw.slice(0, 60)) {
       const text = i.title + " " + i.summary;
@@ -192,11 +196,20 @@ for (const i of byLink.values()) if (i.undated) {
 }
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16);
 let items = [...byLink.values()].filter((i) => !i.date || i.date >= cutoff).sort((a, b) => ((b.date || "") > (a.date || "") ? 1 : -1)).slice(0, CAP);
+// an old story that a search listed with a fresh date (its own text states only older dates) is left out
+{ const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date));
+  if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log("Deep South: " + stale.length + " search results dropped as old stories re-dated"); } }
+// A translation that lost or changed a Deep South place name ("Ra-ngae, Narathiwat" came out as "Ranah, Narayanganj") is done again,
+// this time with the place names already in English in the text the model is given.
+for (const i of items) if (i.mt && i.title_en && !/^en\b/i.test(i.lang || "") && (placeMismatch(i.title, i.title_en) || (i.summary_en && placeMismatch(i.summary, i.summary_en)))) {
+  delete i.title_en; delete i.summary_en; delete i.title_from_summary; i.mt_redo = "place";
+}
 const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en);
 if (todo.length) {
   // Search results cut headlines off with "..." and open with "ด่วน!" ("urgent"); the model invents text for such fragments, so both are
   // dropped from what it is given (the original stays as published).
-  const clean = (t) => decodeEntities(t).replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim();
+  // Deep South place names go to the model already in English, so it cannot turn "ระแงะ" into a place in another country.
+  const clean = (t) => placeSubst(decodeEntities(t).replace(/^\s*(?:ข่าวด่วน|ด่วน|ด่วนที่สุด)\s*!+\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "").trim());
   // The open model sometimes invents text or loops ("police, police, ..."). A translation is kept only when it carries every number in
   // the original (as digits or, up to twenty, as a word), brings in no year the original does not have (Thai years are Buddhist Era:
   // 2569 or "ปี 69" is 2026), and repeats no word run. A rejected model translation is asked once more of the fallback service;
@@ -213,6 +226,7 @@ if (todo.length) {
     const ys = new Set(nums.flatMap(forms).map(Number));
     if ((en.match(/\b(1[0-9]|2[0-9])\d\d\b/g) || []).some((y) => !ys.has(+y))) return false;
     if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return false;
+    if (placeMismatch(orig, en)) return false;
     return en.length < 4 * o.length + 40;
   };
   const texts = [...todo.map((i) => ({ text: clean(i.title), lang: i.lang })), ...todo.map((i) => ({ text: clean(i.summary), lang: i.lang }))];
@@ -229,7 +243,7 @@ if (todo.length) {
     const t = tr[n].en, sm = tr[todo.length + n].en;
     i.mt = tr[n].tool || tr[todo.length + n].tool || "untranslated";
     i.summary_en = sane(i.summary, sm) ? sm.slice(0, 400) : null;
-    delete i.mt_rejected; delete i.title_from_summary;
+    delete i.mt_rejected; delete i.title_from_summary; delete i.mt_redo;
     if (sane(i.title, t)) i.title_en = t;
     else if (i.summary_en) { i.title_en = i.summary_en.split(/(?<=[.!?])\s/)[0].slice(0, 160); i.title_from_summary = true; }
     else { i.title_en = null; if (t) i.mt_rejected = true; }

@@ -189,7 +189,7 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'probe-refdata' || inputs.only == 'probe-leads') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'deepsouth' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'probe-refdata' || inputs.only == 'probe-leads') && github.ref != 'refs/heads/main' }}
         env:
           ONLY: ${{ inputs.only }}
         run: |
