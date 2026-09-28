@@ -41,7 +41,10 @@ const clip = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return
 const count = {};
 const rows = [...pool.values()].sort((a, b) => (b.i.date > a.i.date ? 1 : b.i.date < a.i.date ? -1 : 0)).map(({ i, ccs, tp }) => {
   const en = i.title_en || i.title, orig = i.title && i.title !== en ? i.title : "", full = clip(i.summary_en || i.summary, 400), sum = SUM ? clip(full, SUM) : "";
-  const rel = relevance(REL, en + " \n " + orig + " \n " + full);
+  let rel = relevance(REL, en + " \n " + orig + " \n " + full);
+  // a headline the translation step left in its own language cannot be checked against English words: kept unless a drop word matched
+  const latin = (en.match(/[A-Za-z]/g) || []).length, other = (en.match(/\p{L}/gu) || []).length - latin;
+  if (rel === "none" && (i.mt === "untranslated" || other > latin)) rel = "unchecked";
   relN[rel] = (relN[rel] || 0) + 1;
   if (rel === "drop" || rel === "none") { dropped.push({ cc: [...ccs].join(","), why: rel === "drop" ? "sport, celebrity or lifestyle" : "no security, politics or public-safety word", title: en, outlet: i.outlet, date: i.date }); return null; }
   const ids = [...new Set([...tp, ...topicsOf(T, en + " \n " + orig + " \n " + full, [...ccs])])].filter((id) => T.some((t) => t.id === id));
@@ -49,7 +52,7 @@ const rows = [...pool.values()].sort((a, b) => (b.i.date > a.i.date ? 1 : b.i.da
   const flags = (i.via === "search" ? "s" : "") + (i.nc ? "n" : "") + (i.state ? "g" : "") + (i.mt && i.mt !== "untranslated" ? "m" : "");
   return [[...ccs].join(","), i.date, clip(en, 300), clip(orig, 300), clip(i.outlet, 80), i.link, sum, flags, ids.join(",")];
 }).filter(Boolean);
-console.log(`relevance: kept ${(relN.strong || 0) + (relN.keep || 0)} (${relN.strong || 0} on a security or disaster word), left out ${(relN.drop || 0) + (relN.none || 0)} ` +
+console.log(`relevance: kept ${(relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0)} (${relN.strong || 0} on a security or disaster word, ${relN.unchecked || 0} untranslated and unchecked), left out ${(relN.drop || 0) + (relN.none || 0)} ` +
   `(${relN.drop || 0} sport, celebrity or lifestyle; ${relN.none || 0} with no relevant word)`);
 dropped.slice(0, 20).forEach((d) => console.log("  left out:", d.cc, "|", d.why, "|", String(d.title).slice(0, 100)));
 // NEWSIX_DROPPED=<file>: write every left-out headline there for review (a diagnostic; not part of the app's data)
@@ -67,7 +70,7 @@ for (const f of fs.readdirSync(DIR)) if (/\.js$/.test(f) && !byDay[f.slice(0, -3
 const out = { asof: stamp, days: days.map((d) => ({ d, n: byDay[d].length })), fields: ["cc", "date", "title", "orig", "outlet", "link", "summary", "flags", "topics"],
   flags: { s: "news search result", n: "non-commercial terms", g: "state media", m: "machine translated" },
   topics: T.map((t) => ({ id: t.id, name: t.name, words: (topics.find((x) => x.id === t.id) || {}).words || [], n: count[t.id] || 0 })),
-  relevance: { kept: (relN.strong || 0) + (relN.keep || 0), left_out: (relN.drop || 0) + (relN.none || 0) } };
+  relevance: { kept: (relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0), left_out: (relN.drop || 0) + (relN.none || 0) } };
 fs.writeFileSync(OUT, "window.OSAP_NEWSIX=" + JSON.stringify(out).replace(/<\//g, "<\\/") + ";\n");
 const total = days.reduce((s, d) => s + fs.statSync(DIR + "/" + d + ".js").size, 0);
 console.log(`news index: ${rows.length} headlines from ${files} country histories and ${tn} data-set search results, ${days.length} days, ` + (total / 1e6).toFixed(1) + " MB");
