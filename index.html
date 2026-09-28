@@ -1136,7 +1136,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   /* views drawn before the map legend exists queue their key here; the legend control takes the queue over (see "the legend on the map") */
   if (!window.OSAP_LEGEND) window.OSAP_LEGEND = { q: {}, set: function (id, html, home) { this.q[id] = [html, home]; } };
-  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
+  /* sideways panning stops about 60 degrees past the dateline on each side, so the world does not scroll forever but Fiji, Kiribati and the Pacific can still be seen across it */
+  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true, maxBounds: [[-85, -240], [85, 240]], maxBoundsViscosity: 1 });
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
   /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
   function symZoom() {
