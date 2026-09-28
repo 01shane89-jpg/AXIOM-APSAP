@@ -26,7 +26,7 @@ async function get(url, accept) {
   } finally { clearTimeout(t); }
 }
 
-import { classify, figure, place, relevant, KILLED, INJURED } from "./deepsouth_lib.mjs";
+import { classify, figure, place, relevant, markAlerts, KILLED, INJURED } from "./deepsouth_lib.mjs";
 
 // Kept from refresh_news.mjs: a search engine's result list is read only where its robots.txt allows the path for every agent.
 const robotsCache = {};
@@ -68,7 +68,7 @@ for (const f of feeds) {
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via " + f.outlet + ")"; } catch (e) {} }
       kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS",
-        ...(f.state ? { state: true } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
+        ...(f.state ? { state: true } : {}), ...(f.tier ? { ftier: f.tier } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
     }
     fresh.push(...kept);
     status.push({ id: f.id, source: f.outlet, url: f.url, ok: true, n: raw.length, kept: kept.length });
@@ -205,10 +205,12 @@ for (const i of items) {
   i.killed = figure(i.title_en || i.title, KILLED); i.injured = figure(i.title_en || i.title, INJURED);   // English wording only; Thai figures stay in the text
   i.geo = place([i.title, i.title_en, i.summary, i.summary_en]);
 }
+// IED watch: which items are confirmed enough to push (official source, or corroborated); the rest stay on the map only
+markAlerts(items, (i) => [i.title, i.title_en, i.summary, i.summary_en].filter(Boolean).join(" "));
 const ok = status.some((s) => s.ok && s.id !== "ucdp") || ucdpStatus.ok;
 if (!ok) { console.error("every Deep South source failed; old file left untouched"); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.ASAP_DS=" + JSON.stringify({ asof: stamp, keep_days: KEEP_DAYS, sources: status, items,
   ucdp: [...ucdp.values()].filter((e) => e.date >= cutoff.slice(0, 10)).sort((a, b) => (a.date < b.date ? 1 : -1)), ucdp_files: [...ucdpFiles] }).replace(/<\//g, "<\\/") + ";\n");
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.id, s.ok ? (s.kept != null ? s.kept + " of " + s.n + " kept" : s.n + " events") : s.error));
-console.log("Deep South items kept:", items.length, "(placed:", items.filter((i) => i.geo).length + ")", "UCDP events:", ucdp.size);
+console.log("Deep South items kept:", items.length, "(placed:", items.filter((i) => i.geo).length + ")", "IED alerts:", items.filter((i) => i.alert).length, "UCDP events:", ucdp.size);

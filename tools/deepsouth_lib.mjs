@@ -86,3 +86,45 @@ export function relevant(f, text) {
   if (DIST.some((d) => d.en.test(text) || d.th.test(text)) || PROVS.some((p) => p.en.test(text) || p.th.test(text))) return true;
   return REGION.test(text) || false;
 }
+
+// ---- IED watch: source tiers and the alert rule (Shane, 2026-09-28) ----
+// Tier of the outlet behind an item: "official" (Thai security, police or provincial bodies; Malaysian police or foreign ministry),
+// "independent" (established Thai outlets), "international" (wire services, Malaysian and regional outlets) or "discovery"
+// (anything else, incl. search results from unknown sites: tip-offs only). A feed may set its tier; otherwise the link's domain decides.
+const TIER_DOMAINS = [
+  ["official", /(^|\.)(southpeace|isoc|police9|p9\.police|royalthaipolice|prd|sbpac|narathiwat|pattani|yala|songkhla|railway)\.(go|co|or)\.th$|(^|\.)rta\.mi\.th$|(^|\.)(rmp|kln)\.gov\.my$/],
+  ["independent", /(^|\.)(isranews\.org|thaipbs\.or\.th|thaipbsworld\.com|nationthailand\.com|bangkokpost\.com|khaosodenglish\.com|khaosod\.co\.th|thaiexaminer\.com|prachatai(english)?\.com|matichon\.co\.th|thairath\.co\.th|dailynews\.co\.th|mgronline\.com|thethaiger\.com|thainewsroom\.com|deepsouthwatch\.org)$/],
+  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
+];
+export function tierOf(i) {
+  if (i.ftier) return i.ftier;
+  if (i.state) return "official";
+  let h = ""; try { h = new URL(i.link).hostname.replace(/^www\./, ""); } catch (e) {}
+  for (const [t, re] of TIER_DOMAINS) if (re.test(h)) return t;
+  return "discovery";
+}
+// Explosive-threat wording: a detonation, a found or rendered-safe device, a vehicle bomb, EOD work, or a bomb warning.
+// Generic "heightened security" language alone never qualifies.
+export const EXPLOSIVE = /\b(?:bomb\w*|IED|explo\w+|blast\w*|detonat\w*|grenade|landmine|EOD|bomb disposal|suspicious (?:object|device|package|item)|device)\b|ระเบิด|วัตถุต้องสงสัย|อีโอดี|EOD|เก็บกู้/i;
+const DOMAIN = (link) => { try { return new URL(link).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+// Marks each Deep South item that qualifies for an IED alert:
+//   alert "official"      an official source reports an explosive incident, device, EOD response or bomb warning;
+//   alert "corroborated"  an independent or international outlet's report, backed by at least one other outlet (any tier) reporting an
+//                          explosive incident in the same province within 48 hours;
+//   no alert              a single unofficial report or a tip-off: listed on the map, never pushed.
+// Attribution (BRN or any group) plays no part in this.
+export function markAlerts(items, textOf) {
+  const cand = items.filter((i) => i.date && EXPLOSIVE.test(textOf(i)) && !/^(legal|peace_talks|statistics)$/.test(i.kind || ""));
+  for (const i of items) { delete i.alert; delete i.corrob; i.tier = tierOf(i); }
+  for (const i of cand) {
+    if (i.tier === "official") { i.alert = "official"; continue; }
+    if (i.tier === "discovery") continue;   // a tip-off never alerts by itself, even when something else backs it up
+    const t = Date.parse(i.date + "Z"), prov = i.geo && i.geo.prov;
+    if (!prov || !isFinite(t)) continue;
+    const near = cand.filter((o) => o !== i && o.geo && o.geo.prov === prov && Math.abs(Date.parse(o.date + "Z") - t) <= 48 * 36e5);
+    const outlets = new Set([DOMAIN(i.link), ...near.map((o) => DOMAIN(o.link))].filter(Boolean));
+    const strong = [i, ...near].some((o) => o.tier === "independent" || o.tier === "international" || o.tier === "official");
+    if (outlets.size >= 2 && strong) { i.alert = "corroborated"; i.corrob = outlets.size; }
+  }
+  return items;
+}
