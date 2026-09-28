@@ -14,7 +14,7 @@
 // under data/ (probe-out/conflicts.json instead).
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
-import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES } from "./conflict_lib.mjs";
+import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES, staleSearchResult } from "./conflict_lib.mjs";
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
 
@@ -107,7 +107,10 @@ async function feedItems(url, search, tg) {
   if (!(url in feedCache)) feedCache[url] = (async () => {
     if ((search || tg) && !(await robotsAllow(url))) throw new Error("robots.txt does not allow " + (tg ? "this channel preview" : "this search"));
     if (tg) { const h = await get(url, "text/html"), x = tgItems(h, tg); if (!x.length && !/tgme_widget_message/.test(h)) throw new Error("no public preview"); await sleep(1200); return x; }
-    const x = parseFeed(await get(url)); if (search) await sleep(1200); return x;
+    // Bing sometimes answers a quick run of searches with a short empty page instead of the feed: one more try after a pause
+    let body = await get(url);
+    if (search && !/<item[\s>]/.test(body)) { await sleep(4000); body = await get(url); }
+    const x = parseFeed(body); if (search) await sleep(1200); return x;
   })();
   return feedCache[url];
 }
@@ -387,6 +390,9 @@ for (const c of LIST) {
   for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
   let items = [...byLink.values()].filter((i) => i.date && i.date >= cutoff && i.date <= new Date(NOW + 36e5).toISOString().slice(0, 16))
     .sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, c.cap || CAP);
+  // an old story that a search listed with a fresh date (its own text states only older dates) is left out
+  const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date));
+  if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log(c.id + ": " + stale.length + " search results dropped as old stories re-dated: " + stale.map((i) => i.link).join(" ")); }
   if (!PROBE && translateAll) {
     const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
     if (todo.length) {
