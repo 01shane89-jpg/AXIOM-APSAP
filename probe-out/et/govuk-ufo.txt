@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:www.gov.uk,2005:/search/all</id>
+  <link rel="alternate" type="text/html" href="https://www.gov.uk"/>
+  <link rel="self" type="application/atom+xml" href="https://www.gov.uk/search/all.atom?keywords=unidentified+aerial+phenomena"/>
+  <title>Search</title>
+  <updated>2026-09-28T14:31:50+01:00</updated>
+  <author>
+    <name>HM Government</name>
+  </author>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/publications/unlocking-space-one-stop-shop-for-information</id>
+    <updated>2026-09-28T14:31:50+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/publications/unlocking-space-one-stop-shop-for-information"/>
+    <title>Unlocking Space One Stop Shop for Information</title>
+    <summary type="html">Content designed to support organisations already working, or aiming to work, across civil and defence space with relevant information about a range of topics.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/guidance/nationally-significant-infrastructure-projects-advice-on-preparing-applications-for-linear-projects</id>
+    <updated>2026-09-28T08:21:51+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/guidance/nationally-significant-infrastructure-projects-advice-on-preparing-applications-for-linear-projects"/>
+    <title>Nationally Significant Infrastructure Projects:
+Advice on Preparing Applications for Linear Projects</title>
+    <summary type="html">This advice is for applications for Development Consent Orders (DCO) for linear Nationally Significant Infrastructure Projects (NSIP). It is for applicants, all interested parties (IP) and persons with rights over land (affe…</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/publications/project-panoptes-protecting-the-force-enabling-manoeuvre</id>
+    <updated>2026-09-25T13:20:25+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/publications/project-panoptes-protecting-the-force-enabling-manoeuvre"/>
+    <title>Project PANOPTES: Protecting the Force. Enabling Manoeuvre.</title>
+    <summary type="html">A new UKDI competition seeking to enhance capability to defeat mass and low-cost threats in a cost-effective manner.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/publications/pakistan-country-policy-and-information-notes</id>
+    <updated>2026-09-25T10:49:21+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/publications/pakistan-country-policy-and-information-notes"/>
+    <title>Pakistan: country policy and information notes</title>
+    <summary type="html">Guidance used by UK Visas and Immigration to make decisions in asylum and human rights applications.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/news/british-companies-to-access-prized-ukraine-data-to-develop-ai-drone-swarms</id>
+    <updated>2026-09-25T10:07:00+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/news/british-companies-to-access-prized-ukraine-data-to-develop-ai-drone-swarms"/>
+    <title>British companies to access prized Ukraine data to develop AI drone swarms</title>
+    <summary type="html">British companies will gain access to extensive battlefield data from Ukraine for the first time to develop new AI models for advanced drone swarms.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/maib-reports/foundering-of-the-fishing-vessel-argos-georgia-with-the-loss-of-13-lives</id>
+    <updated>2026-09-25T10:00:01+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/maib-reports/foundering-of-the-fishing-vessel-argos-georgia-with-the-loss-of-13-lives"/>
+    <title>Foundering of the fishing vessel Argos Georgia with the loss of 13 lives</title>
+    <summary type="html">Location: approximately 190 nautical miles east of Port Stanley, Falkland Islands.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/publications/tf-raid-avengers-ai-swarming-competition</id>
+    <updated>2026-09-25T09:50:00+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/publications/tf-raid-avengers-ai-swarming-competition"/>
+    <title>TF RAID Avengers: AI swarming competition</title>
+    <summary type="html">The Rapid AI Delivery Taskforce (TF RAID) is running a competition to access Ukraine’s Avengers Labs platform to enhance autonomous drone swarming and collaborative drone operations.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/guidance/mooring-northampton-marina</id>
+    <updated>2026-09-24T16:19:30+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/guidance/mooring-northampton-marina"/>
+    <title>Mooring - Northampton Marina</title>
+    <summary type="html">Information on mooring at Northampton Marina including how to find us and mooring costs.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/guidance/river-great-ouse-bridge-heights-locks-and-facilities</id>
+    <updated>2026-09-24T16:16:48+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/guidance/river-great-ouse-bridge-heights-locks-and-facilities"/>
+    <title>Information for boaters - River Great Ouse</title>
+    <summary type="html">Information about the River Great Ouse including navigation notices, bridge heights, lock dimensions, overhead power lines and facilities.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/publications/ssac-occasional-paper-27-the-influence-of-the-social-security-system-on-educational-and-vocational-decision-making-at-age-16</id>
+    <updated>2026-09-24T16:10:27+01:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/publications/ssac-occasional-paper-27-the-influence-of-the-social-security-system-on-educational-and-vocational-decision-making-at-age-16"/>
+    <title>SSAC Occasional Paper 27: The influence of the social security system on educational and vocational decision-making at age 16</title>
+    <summary type="html">This report looks at how the social security system interacts with the decision to remain in full-time education or pursue an alternative pathway post-age 16.</summary>
+  </entry>
+</feed>

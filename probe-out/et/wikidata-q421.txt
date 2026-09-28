@@ -1,0 +1,618 @@
+{
+  "head" : {
+    "vars" : [ "i", "iLabel", "d", "c", "cc" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q129848"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1997-03-13T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Phoenix Lights"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q375409"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FR"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1981-01-08T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Trans-en-Provence Case"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1112256"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "NZ"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Kaikoura lights"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1521925"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1948-10-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Gorman dogfight"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2009778"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "GB"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Berwyn Mountain UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2037682"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "FI"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1946-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ghost rockets"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2037682"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "SE"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1946-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ghost rockets"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2280708"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1965-12-09T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Kecksburg UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-79.461388888 40.184722222)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2420196"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1897-04-17T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Aurora, Texas, UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-97.500277777 33.052777777)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2485665"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Green fireballs"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2791513"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1948-07-24T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Chiles-Whitted UFO encounter"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2919920"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "ES"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "1976 Canary Island UFO sighting"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2940740"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1952-07-24T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Carson Sink UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-118.6275 39.75)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4115189"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wikidata Sandbox"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4115189"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "MT"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wikidata Sandbox"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4115189"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "IN"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wikidata Sandbox"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4327279"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "NO"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "2009-12-09T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "2009 Norwegian spiral anomaly"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4327279"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "SE"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "2009-12-09T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "2009 Norwegian spiral anomaly"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4606742"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "2006 O'Hare International Airport UFO sighting"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4891378"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "ES"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1979-11-11T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Manises UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-0.45 39.4833)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q4999929"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BR"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1957-11-04T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Burning on Fort Itaipu Sentinels"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q5366170"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ellsworth UFO sighting"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q5617395"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1980-01-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Gulf Breeze UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q6872910"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BR"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1979-07-28T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Mirassol UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q11875660"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Levelland UFO Case"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q16999638"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Nash-Fortenberry UFO sighting"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q17032043"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "RU"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1989-09-27T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Voronezh UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q25402017"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1967-03-16T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Malmstrom UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-109.349166666 47.483611111)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q114290452"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "US"
+      },
+      "d" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1945-08-01T00:00:00Z"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Trinity UFO Case"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q130551608"
+      },
+      "cc" : {
+        "type" : "literal",
+        "value" : "BR"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Discoporto de Barra do Garças"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-52.269444444 -15.854166666)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2733023"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Height 611 UFO incident"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(135.566111111 44.553888888)"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q5141911"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Colares UFO flap"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q7576422"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Sperry UFO case"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q25350281"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Little Rissington UFO incident"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q108749720"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Jetpack man"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q130749215"
+      },
+      "iLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "The Calvine UFO"
+      },
+      "c" : {
+        "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+        "type" : "literal",
+        "value" : "Point(-3.958 56.768)"
+      }
+    } ]
+  }
+}
