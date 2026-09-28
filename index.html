@@ -1362,7 +1362,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       ".prpin.s{background:#fff;color:#8e1b1b;box-shadow:0 0 0 2px #8e1b1b,0 1px 3px rgba(0,0,0,.4)}.prpin.o{opacity:.55}";
     document.head.appendChild(st);
     map.createPane("fpzone"); map.getPane("fpzone").style.zIndex = 420;
-    map.createPane("terpane"); map.getPane("terpane").style.zIndex = 625;
+    /* terrain, flashpoint and presence pins sit above the report dots (up to 660) and below place labels (670): they show only
+       when switched on, and they share spots with the crossings and incidents reported there, which the pop-ups list */
+    map.createPane("terpane"); map.getPane("terpane").style.zIndex = 662;
     var prLayer = L.layerGroup(), terLayer = L.layerGroup(), fpLayer = L.layerGroup(), lblLayer = L.layerGroup(), D = null, loading = false, failed = false;
     function data() { return (window.OSAP_TERRAIN || {})[cc] || null; }
     var waiting = [];
