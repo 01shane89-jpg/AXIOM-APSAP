@@ -5926,7 +5926,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      counts only what is inside. Nothing about the records changes. */
   var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
   try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
-  if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 640; map.getPane("areapane").style.pointerEvents = "none"; }
+  /* above the report dots and pins (up to 662) so the drawn area and the line being drawn are never hidden under them; below
+     place labels (670). It takes no taps, so the dots under it still answer */
+  if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 668; map.getPane("areapane").style.pointerEvents = "none"; }
   var areaSvg = L.svg({ pane: "areapane" });
   function inPoly(lat, lon, P) {
     var inside = false;
@@ -5943,7 +5945,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2.5, dashArray: "6 4", fill: false, interactive: false })
+      /* the drawn area itself: a light tint inside, and a solid edge with a white halo so it shows on any base map */
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 6, opacity: 0.9, fillColor: tok("--accent"), fillOpacity: 0.12, interactive: false }),
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 3, fill: false, interactive: false })
     ]).addTo(map);
   }
   /* hide map items outside the area: canvas markers go transparent and stop taking taps; icon markers are hidden */
@@ -5972,7 +5976,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var mapEl = map.getContainer();
   function drawStart(mode) {
     drawEnd(true);
-    areaDraw = { mode: mode, pts: [], line: L.polyline([], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2.5, interactive: false }).addTo(map), dots: L.layerGroup().addTo(map) };
+    /* while drawing: the shape so far, closed back to the start and lightly tinted, under a thick line with a white halo */
+    areaDraw = { mode: mode, pts: [],
+      fill: L.polygon([], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: tok("--accent"), fillOpacity: 0.15, interactive: false }).addTo(map),
+      halo: L.polyline([], { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 7, opacity: 0.9, lineCap: "round", lineJoin: "round", interactive: false }).addTo(map),
+      line: L.polyline([], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 3.5, lineCap: "round", lineJoin: "round", interactive: false }).addTo(map), dots: L.layerGroup().addTo(map) };
     map.dragging.disable(); map.doubleClickZoom.disable(); if (map.touchZoom) map.touchZoom.disable(); if (map.boxZoom) map.boxZoom.disable();
     mapEl.classList.add("area-drawing");
     areaUi();
@@ -5980,12 +5988,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function drawEnd(cancel) {
     if (!areaDraw) return;
     var P = areaDraw.pts;
-    map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.dots);
+    map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.halo); map.removeLayer(areaDraw.fill); map.removeLayer(areaDraw.dots);
     areaDraw = null; drawEndT = Date.now();
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
     if (!cancel && P.length >= 3) areaSet(P); else areaUi();
   }
+  function drawShow() { var P = areaDraw.pts; areaDraw.line.setLatLngs(P); areaDraw.halo.setLatLngs(P); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []); }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
   function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
   var lassoDown = false, drawEndT = 0;
@@ -5999,14 +6008,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       P.push(p); L.circleMarker(p, { pane: "areapane", renderer: areaSvg, radius: P.length === 1 ? 6 : 4, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
       if (P.length === 3) areaUi();
     }
-    areaDraw.line.setLatLngs(areaDraw.pts);
+    drawShow();
   }, true);
   mapEl.addEventListener("pointermove", function (e) {
     if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return;
     e.preventDefault(); e.stopPropagation();
     var p = evLL(e), P = areaDraw.pts, last = map.latLngToContainerPoint(P[P.length - 1]);
     if (last.distanceTo(map.mouseEventToContainerPoint(e)) < 4) return;
-    P.push(p); areaDraw.line.setLatLngs(P);
+    P.push(p); drawShow();
   }, true);
   function lassoUp(e) { if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return; lassoDown = false; e.preventDefault(); e.stopPropagation(); drawEnd(false); }
   mapEl.addEventListener("pointerup", lassoUp, true);
