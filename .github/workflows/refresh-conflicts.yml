@@ -27,17 +27,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
       # Headline translation with the same MADLAD-400 model as the 15-minute refresh, from the same Actions cache. If the
       # cache is empty (the 15-minute refresh fills it), reports keep their original-language titles until the next run.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.11"
       - name: Restore the translation model
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/osap-mt
           key: madlad400-3b-mt-ct2-int8-v1
@@ -63,14 +63,18 @@ jobs:
       # A test run on a feature branch parks its output on a throwaway branch (never on the feature branch or main).
       - name: Park test output on a preview-data branch
         if: ${{ github.ref != 'refs/heads/main' }}
+        # The run input goes through the environment and is checked, never pasted into the script.
+        env:
+          ONLY: ${{ inputs.only }}
         run: |
+          case "${ONLY:-conflicts}" in conflicts|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan conflicts-preview-data
           git rm -rqf --cached .
           for p in data/live/conflicts probe-out; do git add -f "$p" 2>/dev/null || true; done
-          git commit -qm "Test output (${{ inputs.only || 'conflicts' }}) $(date -u +'%Y-%m-%d %H:%MZ')"
-          git push -qf origin HEAD:refs/heads/claude/dense-preview-data-${{ inputs.only || 'conflicts' }}
+          git commit -qm "Test output (${ONLY:-conflicts}) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin "HEAD:refs/heads/claude/dense-preview-data-${ONLY:-conflicts}"
         continue-on-error: true
       # Only main commits snapshots, and only data/live/conflicts. The 15-minute refresh commits to main too, so rebase onto it and retry.
       - name: Commit if the conflict data changed
