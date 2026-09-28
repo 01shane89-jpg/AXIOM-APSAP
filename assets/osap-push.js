@@ -71,7 +71,7 @@
   /* the Push to phone panel, drawn inside the Watch dialog */
   function panel(id, note) {
     var w = byId(id), el = dlg(); if (!w || !el) return;
-    var st = status(w), t = topic(), where = (w.area ? "a drawn area in " : "all of ") + cName(w.cc);
+    var st = status(w), t = topic(), where = (w.aoi && w.aoi.label ? w.aoi.label + " in " : w.area ? "a drawn area in " : "all of ") + cName(w.cc);
     var what = [where, w.layers && w.layers.length ? w.layers.join(", ") : "any category", ["", "any severity", "medium or high", "high only"][w.minSev || 1]]
       .concat(w.kw && w.kw.length ? ["words: " + w.kw.join(", ")] : []).join(" · ");
     el.innerHTML = '<div class="cbox pushbox" data-id="' + esc(id) + '"><div class="chead"><button type="button" class="refresh" data-push-back>Back</button><h2 id="watch-h">Push to phone</h2>' +
