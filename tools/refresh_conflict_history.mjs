@@ -1,5 +1,5 @@
 // History of violence for every conflict tab (run by .github/workflows/refresh-conflicts.yml, the weekly slot or only=history;
-// or by hand with Node 20+ and `unzip`).
+// or by hand with Node 20+ and Python 3).
 // Source: UCDP Georeferenced Event Dataset (GED), the yearly release (1989 to the end of the year before it), CC BY 4.0, no key.
 // Events after the release ends come from the UCDP candidate events the hourly conflict job already keeps (<id>.js / .older.js).
 // For each conflict in tools/conflicts.json with a "ucdp" filter: the events that fit the same filter (countries, match, exclude)
@@ -10,9 +10,11 @@
 // history/<id>.<from>-<to>.js (the events, in chunks of years, each with the SHA-256 of its rows). The page loads a conflict's
 // index only when its History of violence layer is switched on, and a chunk only when its years are shown as pins.
 // Skips the work when nothing changed: same GED release, same filters, built within the past 6 days (FORCE=1 rebuilds).
+// The CSV is read by tools/ged_extract.py (Python standard library) and handed over as one line per event.
 // Env: UCDP_CACHE (default .cache/ucdp) holds the downloaded release zip; CONFLICTS=a,b limits the run.
 import fs from "node:fs";
 import { spawn } from "node:child_process";
+import readline from "node:readline";
 import { sha256 } from "./conflict_lib.mjs";
 
 const OUT = "data/live/conflicts", HOUT = OUT + "/history", CACHE = process.env.UCDP_CACHE || ".cache/ucdp";
@@ -59,54 +61,11 @@ async function findRelease() {
   throw new Error("no GED release found (tried " + names.join(", ") + ")");
 }
 
-/* ---------- streaming CSV (quoted cells may hold commas, doubled quotes and line breaks) ---------- */
-// Cells are cut out with indexOf and slice rather than built a character at a time, which keeps memory flat on a file of
-// several hundred MB; a row cut by the end of a chunk is parsed again with the next one.
-function csvStream(stream, onRow) {
-  return new Promise((ok, bad) => {
-    let buf = "", nrow = 0;
-    function parse(final) {
-      let i = 0, rowStart = 0;
-      const n = buf.length;
-      outer: while (i < n) {
-        const row = [];
-        rowStart = i;
-        for (;;) {
-          let cell;
-          if (buf[i] === '"') {
-            let j = i + 1, parts = "";
-            for (;;) {
-              const k = buf.indexOf('"', j);
-              if (k < 0 || (k + 1 >= n && !final)) { if (final && k < 0) { cell = parts + buf.slice(j); i = n; break; } break outer; }
-              if (buf[k + 1] === '"') { parts += buf.slice(j, k + 1); j = k + 2; continue; }
-              cell = parts + buf.slice(j, k); i = k + 1; break;
-            }
-            while (i < n && buf[i] !== "," && buf[i] !== "\n") i++;   // anything after the closing quote is ignored
-          } else {
-            let c = buf.indexOf(",", i), l = buf.indexOf("\n", i);
-            if (c < 0) c = n; if (l < 0) l = n;
-            const e = Math.min(c, l);
-            if (e === n && !final) break outer;
-            cell = buf.slice(i, e); i = e;
-          }
-          if (cell.length > 2e6) throw new Error("a CSV cell over 2 MB near row " + nrow + ": the file is not the expected CSV");
-          row.push(cell.endsWith("\r") ? cell.slice(0, -1) : cell);
-          if (i >= n) { if (!final) break outer; nrow++; onRow(row); rowStart = n; break outer; }
-          if (buf[i] === ",") { i++; continue; }
-          i++; nrow++; onRow(row); rowStart = i; break;   // end of line
-        }
-      }
-      buf = buf.slice(rowStart);
-      if (!final && buf.length > 2e7) throw new Error("a CSV row over 20 MB near row " + nrow + ": the file is not the expected CSV");
-    }
-    stream.setEncoding("utf8");
-    stream.on("data", (t) => { buf += t; try { parse(false); } catch (e) { stream.destroy(); bad(e); } });
-    stream.on("end", () => { try { if (buf.length) parse(true); ok(nrow); } catch (e) { bad(e); } });
-    stream.on("error", bad);
-  });
+/* ---------- the release's events, one JSON array per line from tools/ged_extract.py (Python's csv reader, streamed) ---------- */
+async function readLines(stream, onRow) {
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+  for await (const line of rl) if (line) onRow(JSON.parse(line));
 }
-// a stored text of its own, not a slice that would keep the whole chunk it came from in memory
-const own = (s) => (s ? Buffer.from(String(s), "utf8").toString("utf8") : "");
 
 /* ---------- main ---------- */
 fs.mkdirSync(HOUT, { recursive: true }); fs.mkdirSync(CACHE, { recursive: true });
@@ -138,24 +97,25 @@ const zipSha = sha256(fs.readFileSync(zip));
 const F = LIST.map((c) => ({ c, since: (c.since && c.since > FIRST_UCDP ? c.since : FIRST_UCDP), cre: new RegExp(c.ucdp.countries, "i"),
   mre: c.ucdp.match && new RegExp(c.ucdp.match), xre: c.ucdp.exclude && new RegExp(c.ucdp.exclude), ev: [] }));
 let head = null, ix = {}, rows = 0, gedLast = "";
-const unz = spawn("unzip", ["-p", zip, "*.csv"], { stdio: ["ignore", "pipe", "inherit"] });
-await csvStream(unz.stdout, (r) => {
-  if (!head) { head = r.map((x) => x.trim().replace(/^﻿/, "")); head.forEach((k, i) => { ix[k] = i; });
+const unz = spawn("python3", ["tools/ged_extract.py", zip], { stdio: ["ignore", "pipe", "inherit"] });
+const unzDone = new Promise((ok) => unz.on("close", (code) => ok(code)));
+await readLines(unz.stdout, (r) => {
+  if (!head) { head = r; head.forEach((k, i) => { ix[k] = i; });
     const need = ["id", "latitude", "longitude", "date_start", "type_of_violence", "best", "country", "side_a", "side_b"];
     const miss = need.filter((k) => ix[k] == null); if (miss.length) throw new Error("GED columns missing: " + miss.join(", ")); return; }
-  if (r.length < head.length - 2) return;
   rows++;
-  const date = (r[ix.date_start] || "").slice(0, 10); if (date > gedLast) gedLast = own(date);
+  if (rows % 100000 === 0) console.log("  ", rows, "rows,", Math.round(process.memoryUsage().heapUsed / 1e6), "MB heap");
+  const date = (r[ix.date_start] || "").slice(0, 10); if (date > gedLast) gedLast = date;
   const country = r[ix.country] || "", names = [r[ix.conflict_name], r[ix.side_a], r[ix.side_b], r[ix.dyad_name]].filter(Boolean).join(" | ");
   for (const f of F) {
     if (date < f.since || !f.cre.test(country) || (f.mre && !f.mre.test(names)) || (f.xre && f.xre.test(names))) continue;
-    f.ev.push({ id: own(r[ix.id]), date: own(date), end: own((r[ix.date_end] || "").slice(0, 10)), lat: +r[ix.latitude], lon: +r[ix.longitude], type: +r[ix.type_of_violence] || 0,
-      best: +r[ix.best] || 0, low: +r[ix.low] || 0, high: +r[ix.high] || 0, civ: +r[ix.deaths_civilians] || 0, a: own(r[ix.side_a]), b: own(r[ix.side_b]),
-      where: own(String(r[ix.where_description] || "").replace(/\s+/g, " ").trim().slice(0, 80)), adm1: own(r[ix.adm_1]), prec: +r[ix.where_prec] || 0, country: own(country), s: 0 });
+    f.ev.push({ id: r[ix.id], date: date, end: (r[ix.date_end] || "").slice(0, 10), lat: +r[ix.latitude], lon: +r[ix.longitude], type: +r[ix.type_of_violence] || 0,
+      best: +r[ix.best] || 0, low: +r[ix.low] || 0, high: +r[ix.high] || 0, civ: +r[ix.deaths_civilians] || 0, a: r[ix.side_a] || "", b: r[ix.side_b] || "",
+      where: String(r[ix.where_description] || "").replace(/\s+/g, " ").trim().slice(0, 80), adm1: r[ix.adm_1] || "", prec: +r[ix.where_prec] || 0, country: country, s: 0 });
   }
 });
-await new Promise((ok) => (unz.exitCode != null ? ok() : unz.on("close", ok)));
-if (!rows) throw new Error("no rows read from " + rel.name);
+const code = await unzDone;
+if (code || !rows) throw new Error("reading " + rel.name + " failed (exit " + code + ", " + rows + " rows)");
 console.log("GED", rel.version, rows, "events, last", gedLast);
 
 // after the release: the candidate events the hourly job keeps for each conflict (provisional; UCDP revises them)
