@@ -78,7 +78,7 @@ jobs:
       - name: Refresh the violence history
         id: hist
         if: ${{ steps.histdue.outputs.due == '1' }}
-        run: node tools/refresh_conflict_history.mjs
+        run: node --max-old-space-size=6144 tools/refresh_conflict_history.mjs
         timeout-minutes: 12
         continue-on-error: true
       - name: Keep the UCDP release
