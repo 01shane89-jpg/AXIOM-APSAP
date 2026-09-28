@@ -59,10 +59,13 @@ PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest"><meta name="theme-
             '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">'
             '<meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default">')
 # A new deploy installs a new worker, which takes over at once (skipWaiting + clients.claim in sw.js); the page then
-# reloads once so no file from the old version stays in use. The worker is re-checked on every open and on return.
+# reloads once so no file from the old version stays in use: at once if it has not been touched yet, else when it is next put away. The worker is re-checked on every open and on return.
 PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () {'
-            ' var had = !!navigator.serviceWorker.controller, reloaded = false;'
-            ' navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } });'
+            ' var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now();'
+            ' ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); });'
+            ' function reload() { if (!reloaded) { reloaded = true; location.reload(); } }'
+            ' navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return;'
+            ' if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); });'
             ' navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {'
             ' reg.update().catch(function () {});'
             ' document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); });'
