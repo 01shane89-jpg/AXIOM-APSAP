@@ -278,6 +278,7 @@ html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:no
 .rprog.fail .bar i{background:#b3261e}
 .rprog.fail .st{color:#b3261e}
 .rprog.ok .st{color:var(--accent)}
+.rprog.warn .bar i{background:var(--muted)}
 #hdr-refresh{padding:3px 10px;font-size:11.5px;text-transform:none;letter-spacing:0}
 .live b{color:var(--ink);font-weight:600;letter-spacing:0;text-transform:none;font-size:12.5px}
 .srcline{margin-left:auto;font-size:11.5px;color:var(--muted)}
@@ -1834,7 +1835,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
 
   var hbtn = document.getElementById("hdr-refresh"), hstate = document.getElementById("hdr-state"),
       hchk = document.getElementById("hdr-checked"), hdot = document.getElementById("hdr-dot");
-  var FEED_TIMEOUT = 20000, FOOTPRINT_TIMEOUT = 30000, progHide = null;
+  /* waterlevel_load is a large file and thaiwater.net is often slow to send it, so allow 45 s */
+  var FEED_TIMEOUT = 45000, FOOTPRINT_TIMEOUT = 30000, progHide = null;
   function prog(pct, text, state) {
     var box = document.getElementById("hdr-prog"), bar = document.getElementById("hdr-prog-bar");
     if (!box) return;
@@ -1843,7 +1845,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     bar.style.width = pct + "%";
     bar.parentNode.setAttribute("aria-valuenow", String(pct));
     document.getElementById("hdr-prog-st").textContent = text;
-    if (state === "ok") progHide = setTimeout(function () { box.className = "rprog"; }, 8000);
+    if (state === "ok" || state === "warn") progHide = setTimeout(function () { box.className = "rprog"; }, 8000);
   }
   function withTimeout(promise, ms, what) {
     return new Promise(function (resolve, reject) {
@@ -1971,13 +1973,16 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
           });
       })
       .catch(function (err) {
-        var why = String(err.message || err); prog(100, "Failed: " + (/failed to fetch|networkerror|load failed/i.test(why) ? "feed unreachable (outside requests blocked or offline)" : why), "fail");
+        /* a slow or unreachable thaiwater.net is routine: the saved snapshot (refreshed by the server every 15 minutes) stays on
+           screen, so this is a quiet note that fades, not a red failure; anything else (a changed feed) is still shown as a failure */
+        var why = String(err.message || err), blocked = /failed to fetch|networkerror|load failed/i.test(why), slow = /timed out/i.test(why);
+        if (blocked || slow) prog(100, "Live gauges did not answer; showing the saved snapshot", "warn");
+        else prog(100, "Failed: " + why, "fail");
         setBadge("stale", "SNAPSHOT");
-        hchk.textContent = "\u00b7 live feed unreachable, tried " + clockOf(new Date());
-        msg.innerHTML = "Could not reach thaiwater.net (" + esc(String(err.message || err)) +
-          "). Still showing the snapshot built at " + esc(LIVE.built || "") +
-          '. <b>This viewer blocks outside requests, so it cannot refresh.</b> ' +
-          'Download the page and open the file in a browser; there, Refresh pulls live gauges and rain. ' +
+        hchk.textContent = "\u00b7 live gauges did not answer, tried " + clockOf(new Date());
+        msg.innerHTML = (slow ? "thaiwater.net was too slow to answer" : "Could not reach thaiwater.net (" + esc(why) + ")") +
+          ". Still showing the snapshot built at " + esc(LIVE.built || "") + ". " +
+          (blocked ? '<b>This viewer may block outside requests.</b> Download the page and open the file in a browser; there, Refresh pulls live gauges and rain. ' : "") +
           '<span id="next-in"></span>';
         if (!auto) schedule();
       })
