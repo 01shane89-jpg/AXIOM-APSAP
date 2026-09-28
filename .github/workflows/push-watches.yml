@@ -1,0 +1,51 @@
+name: Push watches
+
+# Adds, updates or stops a push watch when the repository owner opens an issue made by the app's Push to phone button
+# (title "OSAP push watch: ..."). tools/push_admin.mjs reads the issue from the event file, checks the watch and writes
+# data/push/watches.json; this job commits it, answers on the issue and closes it. Issues from anyone else are ignored.
+# The watch list is public (this repository is public): the app says so before the issue is opened.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: push-watches
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'OSAP push watch') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Read the watch from the issue
+        run: node tools/push_admin.mjs
+      - name: Commit the watch list if it changed
+        run: |
+          if git diff --quiet -- data/push; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/push/watches.json
+          git commit -m "Push watches: issue #${{ github.event.issue.number }}"
+          for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1
+      - name: Answer on the issue and close it
+        if: ${{ always() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          N: ${{ github.event.issue.number }}
+        run: |
+          [ -f push-admin-result.txt ] || echo "The push watch could not be read; nothing changed." > push-admin-result.txt
+          gh issue comment "$N" --body-file push-admin-result.txt
+          gh issue close "$N"
