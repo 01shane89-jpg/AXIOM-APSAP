@@ -31,7 +31,7 @@
   /* ---------- styles: while a conflict tab is open, the other tabs' rails, report list and map marks are hidden, not removed ---------- */
   var css = D.createElement("style");
   css.textContent = [
-    "html[data-cf] .rail>:not(#cf-rail):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg,html[data-cf] #map .lgctl{display:none!important}",
+    "html[data-cf] .rail>:not(#cf-rail):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane){visibility:hidden}",
@@ -45,6 +45,7 @@
     "#cf-rail ol.cfl{list-style:none;margin:0;padding:0}#cf-rail ol.cfl li{padding:7px 0;border-top:1px solid var(--line-soft);font-size:12.5px;line-height:1.4}#cf-rail ol.cfl li.on{background:var(--accent-soft)}",
     "#cf-rail .cft{font-weight:600;color:var(--ink);text-decoration:none}#cf-rail .cft:hover{text-decoration:underline}#cf-rail .cfm{font-size:11.5px;color:var(--muted)}#cf-rail .cfm button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer}",
     "#cf-rail .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}#cf-rail .tag.claim{border-color:var(--near);color:var(--ink)}",
+    "html[data-cf] .leaflet-popup-content .cfm{font-size:12px;color:var(--muted);margin:3px 0}html[data-cf] .leaflet-popup-content .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted);margin-top:4px}",
     "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}",
     "#cf-rail .lg{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}#cf-rail .more{margin-top:6px}",
     "#view-seg button.cftab::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--l3);margin-right:5px;vertical-align:1px}",
@@ -264,7 +265,8 @@
     var d = cur.data, f = cur.front, L = W.L;
     if (f && f.current && F.show.front) {
       if (f.current.kind === "areas") {
-        if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", interactive: false, style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } }).addTo(map);
+        if (F.show.prev && f.previous) lyr.prev = L.geoJSON(f.previous.areas, { pane: "cfarea", style: function () { return { color: "#555", weight: 1.2, dashArray: "4 3", fill: false }; } })
+          .bindPopup("<b>Previous version of the front line</b><div>The outline as the source drew it in the version before the current one, so you can see what changed.</div>" + frontSrc(f, f.previous), { maxWidth: 320 }).addTo(map);
         // a feature may carry its own colour, name and claim (zones drawn from reports); otherwise one style and tooltip for the layer
         var zoned = (f.current.areas.features || []).some(function (x) { return x.properties && x.properties.name; });
         lyr.area = L.geoJSON(f.current.areas, { pane: "cfarea", style: function (x) {
@@ -272,17 +274,27 @@
           return col ? { color: col, weight: 1.4, dashArray: th ? "6 4" : null, fillColor: col, fillOpacity: th ? 0.06 : 0.16 } : { color: "#9E3118", weight: 1.4, fillColor: "#C0392B", fillOpacity: 0.22 };
         }, onEachFeature: zoned ? function (x, l) {
           var p = x.properties || {};
-          l.bindPopup("<b>" + esc(p.name || "Area") + "</b><br>" + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
+          var rs = (p.reports || []).slice(0, 5);
+          l.bindPopup("<b>" + esc(p.name || "Area") + "</b>" + (AREAN[p.ctl] ? '<div class="cfm">' + esc(AREAN[p.ctl]) + "</div>" : "") +
+            (p.description ? "<div>" + esc(p.description) + "</div>" : "") +
+            '<div class="cfm">' + (p.from || p.to ? esc(p.from || "?") + " to " + esc(p.to || "now") + "<br>" : "") +
             (p.claimed_by ? "Claimed by " + esc(p.claimed_by) + "<br>" : "") + (p.basis ? esc(p.basis) + "<br>" : "") +
-            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : ""));
+            "<i>Reported, not verified</i>" + (p.src ? ' · <a href="' + url(p.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+            (rs.length ? '<div class="cfm">Reports behind it:' + rs.map(function (r) {
+              return '<br><a href="' + url(r.link) + '" target="_blank" rel="noopener">' + esc(r.t) + "</a> (" + esc(r.outlet || "") + (r.date ? ", " + day(r.date) : "") + ")"; }).join("") +
+              ((p.reports || []).length > rs.length ? "<br>and " + ((p.reports || []).length - rs.length) + " more" : "") + "</div>" : "") +
+            fpDiv(p.fp, "this area") + (p.fp ? "" : fpDiv(f.current.sha256, "the map version it comes from")), { maxWidth: 340 });
         } : null });
-        if (!zoned) lyr.area.bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true });
+        if (!zoned) lyr.area.bindTooltip(esc(Object.keys(f.current.km2 || {})[0] || "Control") + " · reported, not verified · " + esc(srcName(f, f.current.source)), { sticky: true })
+          .bindPopup(function (l) { var p = (l.feature && l.feature.properties) || {}; return "<b>" + esc(p.ctl || Object.keys(f.current.km2 || {})[0] || "Area of control") + "</b>" + frontSrc(f); }, { maxWidth: 320 });
         lyr.area.addTo(map);
       } else if (f.current.kind === "places") {
         lyr.places = L.layerGroup(f.current.places.map(function (p) {
           var con = /^contested/.test(p.ctl);
           return L.circleMarker([p.la, p.lo], { pane: "cfpane", radius: con ? 5 : 4, color: con ? "#000" : "#fff", weight: con ? 1.5 : 1, fillColor: ctlColour(p.ctl), fillOpacity: 0.95 })
-            .bindTooltip(esc(p.n || "Place") + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified");
+            .bindTooltip(esc(pname(p)) + (p.t && p.t !== "town" ? " (" + esc(TNAME[p.t] || p.t) + ")" : "") + " · " + esc(legendName(f, p.ctl)) + " · reported, not verified")
+            .bindPopup("<b>" + esc(pname(p)) + "</b>" + '<div class="cfm">' + esc(TNAME[p.t] || p.t || "place") + "</div><div>" + esc(legendName(f, p.ctl)) + ", as the source shows it.</div>" +
+              frontSrc(f), { maxWidth: 320 });
         })).addTo(map);
       }
     }
@@ -297,6 +309,42 @@
         return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: 5, color: "#fff", weight: 1.5, fillColor: "#1D5A86", fillOpacity: 0.9 }).bindPopup(repHtml(i, true), { maxWidth: 340 });
       })).addTo(map);
     }
+    mapLegend();
+  }
+  // a place name from a map module can carry layout padding (&nbsp;)
+  function pname(p) { return String(p.n || "").replace(/&nbsp;|\u00a0/g, " ").trim() || "Unnamed place"; }
+  var AREAN = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
+  function fpDiv(fp, of) { return fp ? '<div class="fp" title="SHA-256 fingerprint of ' + esc(of) + ": " + esc(fp) + '">SHA-256 ' + esc(String(fp).slice(0, 16)) + "… <small>(" + esc(of) + ")</small></div>" : ""; }
+  // where a front-line or control marker comes from: the named source, when it was taken, and that version's fingerprint
+  function frontSrc(f, v) {
+    var c = v || f.current || {}, s = (f.sources || []).filter(function (x) { return x.id === c.source; })[0] || {};
+    return '<div class="cfm"><i>Reported, not verified.</i> The source\u2019s own depiction: ' + (s.home ? '<a href="' + url(s.home) + '" target="_blank" rel="noopener">' + esc(s.name || c.source) + "</a>" : esc(s.name || c.source || "")) +
+      (c.taken ? ", read " + when(c.taken) : "") + "</div>" + fpDiv(c.sha256, "the map version this comes from");
+  }
+  // the key to what drawMap put on the map; shown in the map's own legend while this tab's panel is open
+  function mapLegend() {
+    if (!W.OSAP_LEGEND) return;
+    var f = cur.front, d = cur.data, h = [];
+    function row(col, txt, sub, ring) { return '<div class="lg"><span class="sw round" style="background:' + (ring ? "transparent;border:2.5px solid " + col : col) + '"></span><div>' + esc(txt) + (sub ? '<span class="d">' + esc(sub) + "</span>" : "") + "</div></div>"; }
+    function sq(col, txt, sub, dash) { return '<div class="lg"><span class="sw" style="background:' + col + ';opacity:.55' + (dash ? ";border:1.5px dashed " + col : "") + '"></span><div>' + esc(txt) + (sub ? '<span class="d">' + esc(sub) + "</span>" : "") + "</div></div>"; }
+    if (f && f.current && F.show.front) {
+      var cu = f.current;
+      if (cu.kind === "areas") {
+        var seen = {}, feats = (cu.areas && cu.areas.features) || [];
+        if (feats.some(function (x) { return x.properties && x.properties.name; })) {
+          h.push("<h3>Zones (reported, not verified)</h3>");
+          feats.forEach(function (x) { var p = x.properties || {}, k = p.ctl + "|" + p.col; if (seen[k]) return; seen[k] = 1; h.push(sq(/^#[0-9a-f]{3,8}$/i.test(p.col || "") ? p.col : "#C0392B", AREAN[p.ctl] || p.ctl || "Area", "", p.ctl === "threat")); });
+        } else h.push("<h3>Front line</h3>" + sq("#C0392B", Object.keys(cu.km2 || {})[0] || "Area of control", "As " + srcName(f, cu.source) + " shows it; reported, not verified"));
+        if (F.show.prev && f.previous) h.push('<div class="lg"><span class="sw" style="background:transparent;border:1.5px dashed #555"></span><div>Previous version</div></div>');
+      } else if (cu.kind === "places") {
+        var cnt = {}; (cu.places || []).forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
+        h.push("<h3>Towns, by who holds them (as the source shows)</h3>" + Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (k) {
+          return row(ctlColour(k), legendName(f, k) + " (" + num(cnt[k]) + ")", "", /^contested/.test(k)); }).join(""));
+      }
+    }
+    if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
+    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified"));
+    W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }
   var TNAME = { airfield: "airfield", heliport: "heliport", base: "military base", port: "port", hill: "strategic hill", industrial: "industrial site", oil_gas: "oil or gas site", dam: "dam", border_post: "border post", contested: "contested", besieged: "besieged or under pressure", rural: "rural presence" };
   function srcName(f, id) { var s = (f.sources || []).filter(function (x) { return x.id === id; })[0]; return s ? s.name : id; }
@@ -376,8 +424,7 @@
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
       '<label><input type="checkbox" data-cfshow="ucdp"' + (F.show.ucdp ? " checked" : "") + "> UCDP events</label>" +
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
-      '<div class="cfm"><span class="lg" style="background:' + TYPEC[1] + '"></span>state-based <span class="lg" style="background:' + TYPEC[2] + '"></span>non-state <span class="lg" style="background:' + TYPEC[3] +
-      '"></span>against civilians (UCDP; size = deaths) <span class="lg" style="background:#1D5A86"></span>report placed by the place it names</div>' +
+      '<div class="cfm">What each colour means is in the legend on the map.</div>' +
       '<div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
         return '<option value="' + p[0] + '"' + (F.days === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select>" +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
@@ -432,9 +479,7 @@
           "</b><span>change at the last version</span></div></div>");
       } else {
         var cnt = {}; cu.places.forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
-        h.push('<div class="cfm">' + Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (k) {
-          return '<span style="white-space:nowrap"><span class="lg" style="background:' + ctlColour(k) + '"></span>' + esc(legendName(f, k)) + " " + cnt[k] + "</span>"; }).join(" · ") + "</div>" +
-          '<p class="cfnote">Towns as marked on the source’s map; the colour stands for the side that holds each town as the source shows it.</p>');
+        h.push('<p class="cfnote">Towns as marked on the source’s map; the colour stands for the side that holds each town as the source shows it (legend on the map).</p>');
       }
       var changes = (f.versions || []).filter(function (x) { return x.changes && x.changes.length; }).slice(0, 5);
       if (changes.length) h.push("<details><summary>Towns that changed hands (as the source shows)</summary><table><tbody>" + changes.map(function (x) {

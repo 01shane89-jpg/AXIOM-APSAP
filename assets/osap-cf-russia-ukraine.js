@@ -14,6 +14,11 @@
   function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function U(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function A(u, t) { var x = U(u); return x ? '<a href="' + E(x) + '" target="_blank" rel="noopener noreferrer">' + E(t) + "</a>" : E(t); }
+  function FP(h, of) { return h ? '<br><small style="font-family:IBM Plex Mono,monospace" title="SHA-256 fingerprint of ' + E(of) + ": " + E(h) + '">SHA-256 ' + E(h.slice(0, 16)) + "… (" + E(of) + ")</small>" : ""; }
+  function sha(t) {
+    if (!(window.crypto && window.crypto.subtle && window.TextEncoder)) return Promise.reject(new Error("no crypto"));
+    return window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? "0" : "") + x.toString(16); }).join(""); });
+  }
   function N(n) { return n == null || !isFinite(n) ? "—" : Number(n).toLocaleString("en-GB"); }
   /* a UTC time "2026-09-27T10:29" as "27 Sep 1029Z / 13:29 Kyiv": always Zulu and local */
   function T(s) {
@@ -38,18 +43,32 @@
     var pane = map.getPane("cfpane") ? "cfpane" : "overlayPane";
     if (!layers) layers = { alerts: L.layerGroup(), heat: L.layerGroup() };
     layers.alerts.clearLayers(); layers.heat.clearLayers();
+    // a tap opens what the dot is, its source and a fingerprint; hovering still shows the one-line label
     if (X && X.alerts && ST.alerts) X.alerts.regions.forEach(function (r) {
       if (!r.on || r.la == null) return;
+      var al = X.alerts, what = E(r.en + ": air-raid alert" + (r.standing ? " (standing since " + r.since.slice(0, 10) + ")" : r.since ? " since " + ago(r.since) + " ago" : " (start time not given by the source)"));
       L.circleMarker([r.la, r.lo], { pane: pane, radius: r.standing ? 7 : 11, color: r.standing ? "#8a8a8a" : "#c62828", weight: 2, fillColor: r.standing ? "#8a8a8a" : "#c62828", fillOpacity: r.standing ? 0.15 : 0.35 })
-        .bindTooltip(E(r.en + ": air-raid alert" + (r.standing ? " (standing since " + r.since.slice(0, 10) + ")" : r.since ? " since " + ago(r.since) + " ago" : " (start time not given by the source)")), { direction: "top" }).addTo(layers.alerts);
+        .bindTooltip(what, { direction: "top" })
+        .bindPopup("<b>" + what + "</b><br><small>" + E(al.claim) + "<br>" + A(al.home, al.source) + (al.read ? ", read " + T(al.read) : "") + FP(al.sha256, "this alert reading") + "</small>", { maxWidth: 320 })
+        .addTo(layers.alerts);
     });
     if (X && X.heat && ST.heat) X.heat.points.forEach(function (p) {
-      L.circleMarker([p[0], p[1]], { pane: pane, radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 })
-        .bindTooltip(E("Heat detection " + p[3] + " (" + p[4] + ", " + (p[5] === "D" ? "day" : "night") + " pass), " + p[2] + " MW" + (p[7] ? ", in occupied area" : p[6] === "ru" ? ", in Russia" : "") + ". Cause unknown."), { direction: "top" })
+      var he = X.heat, what = E("Heat detection " + p[3] + " (" + p[4] + ", " + (p[5] === "D" ? "day" : "night") + " pass), " + p[2] + " MW" + (p[7] ? ", in occupied area" : p[6] === "ru" ? ", in Russia" : "") + ". Cause unknown."),
+        body = "<b>" + what + "</b><br><small>" + E(he.claim) + "<br>" + A(he.home, he.source) + (he.read ? ", read " + T(he.read) : "") + "</small>";
+      var m = L.circleMarker([p[0], p[1]], { pane: pane, radius: Math.min(7, 2 + Math.sqrt(p[2]) / 2), color: "#e65100", weight: 1, fillColor: "#ff9800", fillOpacity: 0.6 })
+        .bindTooltip(what, { direction: "top" }).bindPopup(body, { maxWidth: 320 })
         .addTo(layers.heat);
+      // the detection file carries no per-point fingerprint: one is made from the detection as read (position, power, time, satellite, pass)
+      m.once("popupopen", function () { sha(JSON.stringify(p)).then(function (h) { m.setPopupContent(body + FP(h, "this detection")); }, function () {}); });
     });
     if (ST.alerts) layers.alerts.addTo(map); else map.removeLayer(layers.alerts);
     if (ST.heat) layers.heat.addTo(map); else map.removeLayer(layers.heat);
+    // their key goes in the map's legend with the tab's own
+    if (window.OSAP_LEGEND) window.OSAP_LEGEND.set("cf-ua", (ST.alerts && X && X.alerts ? "<h3>Air-raid alerts</h3>" +
+        '<div class="lg"><span class="sw round" style="background:rgba(198,40,40,.35);border:2px solid #c62828"></span><div>Region under alert now<span class="d">A declared threat, not a strike</span></div></div>' +
+        '<div class="lg"><span class="sw round" style="background:rgba(138,138,138,.15);border:2px solid #8a8a8a"></span><div>Standing alert<span class="d">Unchanged for over 30 days</span></div></div>' : "") +
+      (ST.heat && X && X.heat ? "<h3>Satellite heat</h3>" + '<div class="lg"><span class="sw round" style="background:rgba(255,152,0,.6);border:1px solid #e65100"></span><div>Heat detection, past 24 hours<span class="d">Cause unknown; larger means hotter</span></div></div>' : ""),
+      document.getElementById("cf-rail"));
   }
 
   function html(api) {
@@ -117,7 +136,7 @@
   /* the tab is closed (another view or conflict chosen): take the markers off the map */
   new MutationObserver(function () { if (document.documentElement.getAttribute("data-cf") !== ID) clear(); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
-  function clear() { if (layers && api0 && api0.map) { api0.map.removeLayer(layers.alerts); api0.map.removeLayer(layers.heat); } }
+  function clear() { if (layers && api0 && api0.map) { api0.map.removeLayer(layers.alerts); api0.map.removeLayer(layers.heat); } if (window.OSAP_LEGEND) window.OSAP_LEGEND.set("cf-ua", ""); }
   /* the conflict tab calls OSAP_CF_PANELS[id](box, data, front); the extras file is fetched on the first call */
   var FILE = "data/live/conflicts/extras/" + ID + ".js", loaded = 0, waiting = [];
   function load(cb) {
