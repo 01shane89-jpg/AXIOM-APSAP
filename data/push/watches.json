@@ -1,0 +1,4 @@
+{"v":1,"watches":[
+{"id":"wtestflood","name":"Test: Thailand floods","cc":"th","area":null,"layers":[],"kw":["flood"],"minSev":1,"topic":"osap-31sze2uldqmlxy"},
+{"id":"wtestau","name":"Test: Australia fire","cc":"au","area":null,"layers":[],"kw":["fire","bushfire"],"minSev":1,"topic":"osap-31sze2uldqmlxy"}
+]}

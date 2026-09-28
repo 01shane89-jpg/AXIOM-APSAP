@@ -6484,12 +6484,36 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function wSave() { lsSet(W_KEY, WATCHES); }
   function hitsLoad() { return lsGet(WH_KEY, []) || []; }
   var W_RECENT_DAYS = 7;
+  /* watch words: any one of them, matched at the start of a word in the report's title, text, original-language text or place */
+  function wKwList(s) { return String(s || "").split(/[,;\n]+/).map(function (x) { return x.trim().replace(/\s+/g, " ").slice(0, 60); }).filter(Boolean).slice(0, 20); }
+  var wKwRe = {};
+  function wKwHit(kw, r) { return !kw || !kw.length || !!wKwWhich(kw, r); }
+  function wKwWhich(kw, r) {
+    var txt = r.__kwt || (r.__kwt = [r.title, r.detail, r.orig, r.place, r.prov, r.cat].join(" \n "));
+    return (kw || []).filter(function (k) {
+      var re = wKwRe[k];
+      if (!re) { try { re = new RegExp("(^|[^\\p{L}\\p{N}])" + k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "iu"); } catch (e) { re = { test: function (t) { return t.toLowerCase().indexOf(k.toLowerCase()) >= 0; } }; } wKwRe[k] = re; }
+      return re.test(txt);
+    })[0] || "";
+  }
   function wMatch(w, r) {
     if (w.layers && w.layers.length && w.layers.indexOf(r.layer) < 0) return false;
     if ((r.sev || 1) < (w.minSev || 1)) return false;
     if (w.area) { if (!hasLL(r) || !inPoly(r.lat, r.lon, w.area)) return false; }
+    if (!wKwHit(w.kw, r)) return false;
     var t = evMs(r).ms;
     return isFinite(t) && Date.now() - t <= W_RECENT_DAYS * 864e5 && t <= Date.now() + 36e5;
+  }
+  /* every report a watch matches on this page now, with its event (the same list the push check reads through OSAP_WATCH) */
+  function wMatches(w) {
+    var out = [];
+    R.forEach(function (r) {
+      if (!wMatch(w, r)) return;
+      var k = rk(r), v = EV_ON ? evOfRec(r) : null;
+      out.push({ k: k, gk: v ? v.id : k, t: (v ? v.head.title : r.title).slice(0, 200), rt: String(r.title || "").slice(0, 200), rsrc: r.src ? r.src.name : "", word: wKwWhich(w.kw, r), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
+        src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", grp: v ? v.m.length : 0, place: r.place || "" });
+    });
+    return out;
   }
   /* checks this page's own country; returns the new hits. The first check of a new watch only notes what is already there. */
   function wRun() {
@@ -6499,16 +6523,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var seenAll = lsGet(WS_KEY, {}) || {}, hits = hitsLoad(), fresh = [], now = Date.now();
     mine.forEach(function (w) {
       var seen = seenAll[w.id] || {}, first = !w.base, grp = {};
-      R.forEach(function (r) {
-        if (!wMatch(w, r)) return;
-        var k = rk(r); if (seen[k]) return;
+      wMatches(w).forEach(function (m) {
+        var k = m.k; if (seen[k]) return;
         seen[k] = now;
         if (first) return;
-        var v = EV_ON ? evOfRec(r) : null, gk = v ? v.id : k;
-        if (grp[gk]) { grp[gk].n++; return; }
-        var h = { w: w.id, wn: w.name, cc: CC, k: k, t: (v ? v.head.title : r.title).slice(0, 200), ts: r.issued || r.ts, sev: v ? v.sev : r.sev, layer: r.layer,
-          src: v ? evSrcTxt(v) : r.src.name, st: (STATE[r.type] || [r.type])[0], url: r.url || "", n: 1, grp: v ? v.m.length : 0, at: now };
-        grp[gk] = h; fresh.push(h);
+        if (grp[m.gk]) { grp[m.gk].n++; return; }
+        var h = { w: w.id, wn: w.name, cc: CC, k: k, t: m.t, ts: m.ts, sev: m.sev, layer: m.layer, src: m.src, st: m.st, url: m.url, n: 1, grp: m.grp, at: now };
+        grp[m.gk] = h; fresh.push(h);
       });
       var keys = Object.keys(seen);
       if (keys.length > 4000) keys.sort(function (a, b) { return seen[a] - seen[b]; }).slice(0, keys.length - 4000).forEach(function (k) { delete seen[k]; });
@@ -6587,14 +6608,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cats = LAYERS.filter(function (l) { return (l.curated || l.id === "news" || l.id === "social" || TD[l.id]) && l.id !== "timeline" && l.id !== "alerts"; });
     var seenCat = {}; cats = cats.filter(function (l) { if (seenCat[l.id]) return false; seenCat[l.id] = 1; return true; });
     wEl.innerHTML = '<div class="cbox"><div class="chead"><h2 id="watch-h">Watch an area</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
-      '<p class="obs">Get told when new reports land inside an area. A hit is a notice about a report, not a finding. Watches and hits are kept in this browser only.</p>' +
+      '<p class="obs">Get told when new reports land inside an area, or mention words you choose. A hit is a notice about a report, not a finding. Watches and hits are kept in this browser only.</p>' +
       '<div class="wnotif"><b>System notifications:</b> ' + esc(ns[1]) + (ns[0] === "ask" ? ' <button type="button" class="refresh primary" data-w-perm>Turn on</button>' : "") + "</div>" +
       '<details class="wlimits"><summary>When OSAP can tell you</summary><ul>' +
         "<li>OSAP checks every watch when it opens and every 15 minutes while it stays open, including in a background browser tab on a computer.</li>" +
         "<li>Android and computers: notifications appear while OSAP is open, even in the background. Once it is closed, nothing checks until you open it again.</li>" +
         "<li>iPhone and iPad: only from the Home Screen app, and only while it is open on screen. iOS stops web apps in the background, so a locked phone gets nothing.</li>" +
         "<li>The data itself refreshes about every 3 hours now, so a hit can only be as new as the last refresh.</li>" +
-        "<li>Alerts to a closed app or a locked phone would need a push relay; that is a separate choice and is not switched on.</li></ul></details>" +
+        "<li>For alerts to a closed app or a locked phone, use Push to phone on a saved watch: OSAP's own refresh job then checks it after every refresh and sends new matches through the free ntfy app.</li></ul></details>" +
       '<h3>New watch in ' + esc(C.name) + "</h3>" +
       (ADDED.length ? '<p class="note">Also watches ' + ADDED.map(function (cc) { return flagOf(cc) + " " + esc(cName(cc)); }).join(", ") + ", the countries added to this map, each as its own watch.</p>" : "") +
       '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
@@ -6602,13 +6623,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
         '<fieldset><legend>Categories</legend><label><input type="checkbox" id="w-anycat" checked> Any category</label><div class="wcats">' + cats.map(function (l) {
           return '<label><input type="checkbox" name="w-cat" value="' + esc(l.id) + '"> ' + esc(l.name) + "</label>"; }).join("") + "</div></fieldset>" +
+        '<label>Words <span class="obs">(optional; any one of them, separated by commas)</span> <input type="text" id="w-kw" class="mini" maxlength="400" placeholder="e.g. ferry, landslide, Hat Yai"></label>' +
         '<label>Severity <select id="w-sev" class="mini"><option value="1">Any severity</option><option value="2">Medium or high</option><option value="3">High only</option></select></label>' +
         '<p class="obs">Counts reports dated in the last ' + W_RECENT_DAYS + " days. What is already there when you save is noted, not announced; only later arrivals are hits.</p>" +
         '<button type="submit" class="refresh primary">Save watch</button></form>' +
       "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
         var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
         return '<div class="wrow"><div><b>' + esc(w.name) + "</b>" + (w.on === false ? ' <span class="chip">paused</span>' : "") + (nNew ? ' <span class="abadge new">' + nNew + " new</span>" : "") +
-          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev)) +
+          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "")) +
           "<br>" + (w.checked ? "Last checked " + esc(window.OSAP_TIME.dualT(w.checked, { date: true })) : "Not checked yet") + "</div></div>" +
           '<div class="wbtns">' + (w.area ? '<button type="button" class="refresh" data-w-show="' + esc(w.id) + '">Show</button>' : "") +
           '<button type="button" class="refresh" data-w-pause="' + esc(w.id) + '">' + (w.on === false ? "Resume" : "Pause") + "</button>" +
@@ -6629,9 +6651,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ev.preventDefault();
       var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
       var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wEl.querySelector("#w-name").value || C.name).trim().slice(0, 60), cc: CC,
-        area: a && a.value === "drawn" && AREA ? AREA.slice() : null, layers: any.checked ? [] : cats2, minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
+        area: a && a.value === "drawn" && AREA ? AREA.slice() : null, layers: any.checked ? [] : cats2, kw: wKwList(wEl.querySelector("#w-kw").value), minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
       wLoad(); WATCHES.push(w);
-      ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); WATCHES.push(w2); });
+      ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); w2.kw = w.kw.slice(); WATCHES.push(w2); });
       wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
     });
     wEl.querySelector(".chead .x").addEventListener("click", wClose);
@@ -6734,6 +6756,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     wSchedule();
   }
   window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
+  /* the push check (tools/push_watches.mjs) opens this page headless and asks it which reports a watch matches, so pushes and the
+     in-app Watch follow the same rules; assets/osap-push.js adds Push to phone to the Watch dialog */
+  window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1 }); }, words: wKwList,
+    open: function () { wOpen(); }, list: function () { return wLoad(); }, countryName: cName };
   if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
   (function () {
     var st = document.createElement("style");
@@ -7265,6 +7291,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
 <script src="assets/osap-share.js"></script>
+<script src="assets/osap-push.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
