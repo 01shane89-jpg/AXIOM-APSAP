@@ -36,7 +36,8 @@ await page.click(".tdmap").catch(() => {});
 await page.waitForTimeout(1500);
 let failed = 0;
 for (const [tab, need] of Object.entries(CHECKS)) {
-  await page.click(`button[role=tab][data-view="${tab}"]`);
+  // a tab a conflict tab has taken over (merge_tabs in tools/conflicts.json) is hidden but still works; click it in the page
+  await page.evaluate((t) => document.querySelector(`button[role=tab][data-view="${t}"]`).click(), tab);
   await page.waitForTimeout(2500);
   const got = await page.evaluate(() => {
     const L = window.L, n = { markers: 0, dots: 0, sym: document.querySelectorAll("#map .msym").length };
