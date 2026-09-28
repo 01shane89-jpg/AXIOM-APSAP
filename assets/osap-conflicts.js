@@ -142,7 +142,7 @@
     if (/legal|court|charge/i.test(k)) return "legal";
     if (/talk|peace|dialogue|diplomatic/i.test(k)) return "talks";
     if (/ied|bomb|explos|landmine|mine\b/i.test(k)) return "ied";
-    if (/shoot|ambush|clash|ground|attack/i.test(k)) return "gun";
+    if (/shoot|ambush|clash|ground|attack|strike|shell|artillery|missile|drone/i.test(k)) return "gun";
     if (/arson/i.test(k)) return "arson";
     if (/raid|arrest/i.test(k)) return "raid";
     return "other";
@@ -178,7 +178,7 @@
     });
     return out.map(function (g) {
       var lead = g.slice().sort(function (a, b) { return leadScore(b) - leadScore(a); })[0];
-      return { lead: lead, all: g, date: g[0].date, outlets: uniq(g.map(function (x) { return x.outlet || ""; }).filter(Boolean)) };
+      return { lead: lead, all: g, date: g[0].date, outlets: uniq(g.map(oname).filter(Boolean)) };
     });
   }
 
@@ -448,12 +448,15 @@
       '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(i.fp || "") + '">SHA-256 ' + esc((i.fp || "").slice(0, 16)) + "…</div>";
   }
   // the other reports of the same incident: each keeps its own link
+  function oname(x) { return String(x.outlet || "").replace(/\s*\(via [^)]*\)$/, ""); }
   function alsoHtml(g) {
     if (!g || g.all.length < 2) return "";
-    var o = g.all.filter(function (x) { return x !== g.lead; });
+    // one link per other outlet; more reports from the lead's own outlet add nothing to read
+    var o = g.all.filter(function (x) { return x !== g.lead; }), seen = {}; seen[oname(g.lead)] = 1;
+    o = o.filter(function (x) { var n = oname(x); if (seen[n]) return false; seen[n] = 1; return true; });
     return '<div class="cfm cfalso"><span class="tag claim" title="Reports grouped by machine as one incident: same kind, same place, within 36 hours, or near-identical headlines">' +
-      (g.outlets.length > 1 ? "Reported by " + g.outlets.length + " outlets" : g.all.length + " reports") + "</span>Also: " + o.map(function (x) {
-        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(x.outlet || "report") + "</a>"; }).join(" · ") + "</div>";
+      (g.outlets.length > 1 ? "Reported by " + g.outlets.length + " outlets" : g.all.length + " reports") + "</span>" + (o.length ? "Also: " + o.map(function (x) {
+        return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
   }
   function ucdpHtml(e) {
     return "<b>" + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
@@ -484,7 +487,7 @@
     // headline figures count incidents (reports of one incident counted once)
     var cnt = d._all ? tabCounts(d) : null;
     if (cnt) st = Object.assign({}, st, { weeks: cnt.weeks });
-    if (st.reports) h.push('<div class="cfk"><div><b>' + num(cnt ? cnt.d1 : st.reports.d1) + "</b><span>" + (cnt ? "incidents reported" : "reports") + ", 24 h</span></div><div><b>" + num(cnt ? cnt.d7 : st.reports.d7) + "</b><span>" + (cnt ? "incidents reported" : "reports") + ", 7 days</span></div>" +
+    if (st.reports) h.push('<div class="cfk"><div><b>' + num(cnt ? cnt.d1 : st.reports.d1) + "</b><span" + (cnt ? ' title="Bombings, shootings, strikes, clashes and arson; several reports of one incident count once"' : "") + ">" + (cnt ? "attacks reported" : "reports") + ", 24 h</span></div><div><b>" + num(cnt ? cnt.d7 : st.reports.d7) + "</b><span>" + (cnt ? "attacks reported" : "reports") + ", 7 days</span></div>" +
       "<div><b>" + num(u30.events) + '</b><span>UCDP events, 30 days</span></div><div><b>' + num(u30.best) + '</b><span>deaths, 30 days (UCDP best estimate)</span></div></div>');
     else h.push('<div class="cfk"><div><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
     h.push('<p class="cfnote">Updated ' + when(d.asof) + ". Reports are unverified and statements by any party are claims. UCDP figures are provisional candidate data" +
@@ -519,9 +522,11 @@
     if (ex && typeof P[c.id] === "function") try { P[c.id](ex, d, f); } catch (e) { ex.textContent = ""; }
   }
   function uniq(a) { return a.filter(function (x, k) { return a.indexOf(x) === k; }); }
+  var VIOLENT = { ied: 1, gun: 1, arson: 1 };
   function tabCounts(d) {
     var now = Date.now(), all = allItems(d).filter(function (i) { return family(i) !== "ucdp"; });
-    var wk = all.filter(function (i) { return now - parseT(i.date) <= 7 * 864e5 && parseT(i.date) <= now + 36e5; });
+    // the headline counts are attacks only (bombs, gunfire, strikes, arson): official activity, court news and comment stay in the list
+    var wk = all.filter(function (i) { return VIOLENT[family(i)] && now - parseT(i.date) <= 7 * 864e5 && parseT(i.date) <= now + 36e5; });
     var g7 = grouped(wk), n = {};
     all.forEach(function (i) { var w = Math.floor((now - parseT(i.date)) / (7 * 864e5)); if (w >= 0 && w <= 52) n[w] = (n[w] || 0) + 1; });
     var weeks = ((d.stats || {}).weeks || []).map(function (x) { return Object.assign({}, x, { reports: n[x.w] || 0 }); });
