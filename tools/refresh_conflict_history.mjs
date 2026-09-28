@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import { spawn } from "node:child_process";
 import readline from "node:readline";
+import { createHash } from "node:crypto";
 import { sha256 } from "./conflict_lib.mjs";
 
 const OUT = "data/live/conflicts", HOUT = OUT + "/history", CACHE = process.env.UCDP_CACHE || ".cache/ucdp";
@@ -92,7 +93,8 @@ if (!fs.existsSync(zip) || (rel.size && fs.statSync(zip).size !== rel.size)) {
   fs.writeFileSync(zip, await get(rel.url, true, 300000)); fresh = true;
 }
 out("fresh", fresh ? "1" : "0");
-const zipSha = sha256(fs.readFileSync(zip));
+// the release file itself (a Buffer: hashed as bytes, not through sha256(), which would treat it as an object)
+const zipSha = createHash("sha256").update(fs.readFileSync(zip)).digest("hex");
 
 const F = LIST.map((c) => ({ c, since: (c.since && c.since > FIRST_UCDP ? c.since : FIRST_UCDP), cre: new RegExp(c.ucdp.countries, "i"),
   mre: c.ucdp.match && new RegExp(c.ucdp.match), xre: c.ucdp.exclude && new RegExp(c.ucdp.exclude), ev: [] }));
