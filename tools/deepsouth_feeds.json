@@ -1,6 +1,15 @@
 {
- "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows).",
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows). Re-probed 2026-09-28 against Shane's IED-watch source list (tools/probe_dsources.mjs): ISOC Region 4's own RSS (southpeace.go.th/?feed=rss2) and the Pattani and Yala provincial PR office home pages now answer; Isranews answers only as a page (its feeds are empty or error). Still unreachable from GitHub: Fourth Army (army4.rta.mi.th, timeout), Police Region 9 (timeout), Royal Thai Police and Police Region 9 investigations (403), the Narathiwat and Songkhla PR offices and province sites (empty pages), Yala province (403), SBPAC (page without links), Thai PBS, Thai PBS World and The Nation (bot-check pages), Thairath (403), MGR Online (404), Daily News (empty feed), State Railway (timeout), Royal Malaysia Police and Malaysia's foreign ministry (certificate errors). Their reporting is picked up through site-restricted and Thai/Malay news searches instead. 'tier' sets the IED-watch source tier (tools/deepsouth_lib.mjs markAlerts); 'html' reads a page's links (no dates: dated by first sighting, and the first sighting of a page is a baseline that never alerts).",
  "feeds": [
+  {
+   "id": "isoc4",
+   "outlet": "ISOC Region 4 Forward Command (southpeace.go.th)",
+   "url": "https://www.southpeace.go.th/?feed=rss2",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "all": true
+  },
   {
    "id": "prachatai-en",
    "outlet": "Prachatai English",
@@ -89,6 +98,115 @@
    "id": "bing-yala-th",
    "outlet": "Bing News search",
    "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2%20%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "prd-pattani",
+   "outlet": "Pattani Provincial Public Relations Office",
+   "url": "https://pattani.prd.go.th/",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "all": true,
+   "html": true
+  },
+  {
+   "id": "prd-yala",
+   "outlet": "Yala Provincial Public Relations Office",
+   "url": "https://yala.prd.go.th/",
+   "lang": "th",
+   "state": true,
+   "tier": "official",
+   "all": true,
+   "html": true
+  },
+  {
+   "id": "isranews-south",
+   "outlet": "Isranews Southern News Center",
+   "url": "https://www.isranews.org/article/south-news.html",
+   "lang": "th",
+   "tier": "independent",
+   "all": true,
+   "html": true
+  },
+  {
+   "id": "bing-thaipbsworld",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbsworld.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-nation",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Anationthailand.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-isranews",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Aisranews.org%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-bernama",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Abernama.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%20OR%20%22southern%20Thailand%22%29&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-wires",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%28site%3Areuters.com%20OR%20site%3Aapnews.com%29%20%22southern%20Thailand%22&format=rss",
+   "lang": "en",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-malay",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=letupan%20selatan%20Thailand&format=rss",
+   "lang": "ms",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-army4",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%97%E0%B8%B1%E0%B8%9E%E0%B8%A0%E0%B8%B2%E0%B8%84%E0%B8%97%E0%B8%B5%E0%B9%88%204%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-police9",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%A0%E0%B8%B9%E0%B8%98%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%84%209%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-eod",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%9A%E0%B8%81%E0%B8%B9%E0%B9%89%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-srt",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%9F%E0%B8%97.%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
    "lang": "th",
    "search": true,
    "nc": true
