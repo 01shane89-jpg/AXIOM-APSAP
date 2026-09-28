@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, topics, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, topics, health-test, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
         required: false
         default: ""
 
@@ -206,6 +206,16 @@ jobs:
           for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
+        continue-on-error: true
+      # Test of the outage alerts (any branch): reads the published data health and posts one [test] message to the channel.
+      - name: Send a test message to the data health channel
+        if: ${{ inputs.only == 'health-test' }}
+        run: node tools/health.mjs build && node tools/health.mjs watch && node tools/health.mjs test
+      # Data health (tools/health.mjs): each feed file's own time stamp and failed sources, into data/live/health.json, which the
+      # app's data badge reads and the keeper checks every 15 minutes to send outage alerts. Main only, so it is committed below.
+      - name: Write the data health file
+        if: ${{ github.ref == 'refs/heads/main' && !startsWith(inputs.only, 'probe') }}
+        run: node tools/health.mjs build
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
