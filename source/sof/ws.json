@@ -1,0 +1,166 @@
+{
+ "schema": "apsap-sof/1",
+ "cc": "ws",
+ "country": "Samoa",
+ "asof": "2026-09-27",
+ "advisory": {
+  "level": 1,
+  "level_text": "Exercise normal precautions",
+  "issued": "2026-07-07",
+  "updated": null,
+  "indicators": [],
+  "indicator_names": [],
+  "areas": [],
+  "notes": "From the State Department advisory feed (cadataapi.state.gov), read 2026-09-27 11:16Z.",
+  "src": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/samoa-travel-advisory.html",
+  "srcname": "U.S. Department of State, travel.state.gov",
+  "fp": "2fb9e7ee15705c9b8a98965dc5f845a43db75fce7d5a21d60a0bf53ad9dd7ef0"
+ },
+ "posts": [
+  {
+   "id": "sof:ws:post:u-s-embassy-apia",
+   "name": "U.S. Embassy Apia",
+   "kind": "embassy",
+   "city": "Apia",
+   "address": null,
+   "services_note": "Provides U.S. citizen services; address not retrieved",
+   "lat": -13.833,
+   "lon": -171.765,
+   "prec": "approx",
+   "src": "https://ws.usembassy.gov/services/",
+   "srcname": "U.S. Embassy in Samoa",
+   "coord_basis": "Apia centre estimate; verify",
+   "fp": "4d36e62853e7b53e0e10b3ba330fde5a3144c9383aa6e3b91369f0758582a9da"
+  }
+ ],
+ "airports": [
+  {
+   "id": "sof:ws:airport:nsfa",
+   "name": "Faleolo International Airport",
+   "icao": "NSFA",
+   "ident": "NSFA",
+   "iata": "APW",
+   "type": "large_airport",
+   "municipality": "Apia",
+   "region": "WS-AA",
+   "scheduled_service": true,
+   "lat": -13.83,
+   "lon": -172.008,
+   "prec": "exact",
+   "elevation_ft": 58,
+   "longest_runway": {
+    "ident": "08/26",
+    "length_ft": 9843,
+    "length_m": 3000,
+    "width_ft": 148,
+    "surface": "ASP"
+   },
+   "runway_count": 1,
+   "src": "https://ourairports.com/airports/NSFA/",
+   "srcname": "OurAirports open data",
+   "coord_basis": "OurAirports airport reference point",
+   "fp": "5eb5be268da514e1d9989cf21878579736fad7cdc2b13477f0969b8550e8dacd"
+  }
+ ],
+ "seaports": [
+  {
+   "id": "sof:ws:port:ws-aau",
+   "name": "Asau",
+   "unlocode": "WS AAU",
+   "locode_function": "1--4----",
+   "lat": -13.5196,
+   "lon": -172.6378,
+   "prec": "approx",
+   "coord_basis": "GeoNames town centre (Asau) via lutangar/cities.json; UN/LOCODE lists no coordinates",
+   "coord_flag": "town centre, not the port",
+   "src": "https://service.unece.org/trade/locode/ws.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "e70119b7f764aacd90cd5c102ef853efba309d8751d0c3542b35146a82ac1710"
+  },
+  {
+   "id": "sof:ws:port:ws-apw",
+   "name": "Apia",
+   "unlocode": "WS APW",
+   "locode_function": "1--45---",
+   "lat": -13.8333,
+   "lon": -171.7667,
+   "prec": "approx",
+   "coord_basis": "GeoNames town centre (Apia) via lutangar/cities.json; UN/LOCODE lists no coordinates",
+   "coord_flag": "town centre, not the port",
+   "src": "https://service.unece.org/trade/locode/ws.htm",
+   "srcname": "UN/LOCODE (UNECE), via datasets/un-locode mirror",
+   "fp": "5eb1e6ca369cbb5aea9ee0e270979d7139823407264c0ca1972ef5651aa76e43"
+  }
+ ],
+ "hospitals": [
+  {
+   "id": "sof:ws:hospital:tupua-tamasese-meaole-hospital",
+   "name": "Tupua Tamasese Meaole (TTM) Hospital",
+   "city": "Motoʻotua, Apia",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "National referral hospital of Samoa",
+   "lat": -13.85,
+   "lon": -171.77,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Moto%CA%BBotua",
+   "srcname": "Wikipedia",
+   "coord_basis": "suburb estimate; verify",
+   "fp": "e19129513ec34f8b12bd8a4c2b56af50cb4802fce658c5984561c005ffc762a5"
+  },
+  {
+   "id": "sof:ws:hospital:malietoa-tanumafili-ii-hospital",
+   "name": "Malietoa Tanumafili II Hospital",
+   "city": "Tuasivi, Savai'i",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Main hospital on Savai'i; not confirmed by a retrieved page",
+   "lat": -13.67,
+   "lon": -172.12,
+   "prec": "approx",
+   "src": "https://en.wikipedia.org/wiki/Health_in_Samoa",
+   "srcname": "Wikipedia",
+   "coord_basis": "village estimate; verify",
+   "fp": "3ce96b91b7830049238a980fb47f3f1204b8b8c574b0d725d0881cd28eaaf247"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "sof:ws:exercise:tui-moana-2026",
+   "also_cc": [
+    "to",
+    "tv"
+   ],
+   "name": "Operation Tui Moana",
+   "iteration": "Tui Moana 2026",
+   "start": null,
+   "end": null,
+   "dates_text": "Reported by FFA in May 2026",
+   "status": "announced",
+   "type": "regional fisheries/maritime surveillance operation (FFA)",
+   "participants": [
+    "Pacific Islands Forum Fisheries Agency members (list not retrieved)",
+    "Quad/partner surveillance assets (not confirmed)"
+   ],
+   "us_participation": null,
+   "scale": null,
+   "src": "https://www.ffa.int/2026/05/pacific-nations-unite-to-strengthen-fisheries-surveillance-through-operation-tui-moana-2026/",
+   "srcname": "Pacific Islands FFA",
+   "src_date": "2026-05",
+   "summary": "FFA-coordinated regional fisheries surveillance operation. Tui Moana has historically covered Polynesian FFA members; the 2026 participant list was not retrieved, so inclusion of this country is an assumption to verify. Status likely completed but not confirmed.",
+   "location": "Polynesian EEZs (assumed)",
+   "lat": -13.83,
+   "lon": -171.76,
+   "prec": "approx",
+   "coord_basis": "plotted at Apia as placeholder",
+   "fp": "19fb891df31eef4d4263a788efd7d971171620207ce736395535d14efb1906aa"
+  }
+ ],
+ "gaps": [
+  "U.S. Coast Guard tabletop exercises with Samoan maritime officers found (ws.usembassy.gov) but undated, so not listed. Samoa has no military. Hospital facts not verified beyond search titles."
+ ]
+}
