@@ -400,6 +400,7 @@
 "assets/osap-push.js",
 "assets/osap-start.js",
 "assets/osap-tlreport.js",
+"assets/osap-areasum.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
@@ -415,7 +416,7 @@
      data and an offline one falls back to the last copy it saw. Feed files wait at most DATA_WAIT and the page PAGE_WAIT for the network.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "abd92e49606f";
+const VERSION = "75570fbb4632";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -822,6 +823,7 @@ const PRECACHE = [
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
+"assets/osap-areasum.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",

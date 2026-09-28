@@ -19,6 +19,7 @@
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
+<script src="assets/osap-areasum.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"
@@ -31,3 +32,6 @@ window.OSAP_REDCROSS
 function extrasOff(
 function recMsK(
 window.OSAP_WATCH
+
+# drawn-area summary (assets/osap-areasum.js reads it)
+window.TSAP.areaApi
