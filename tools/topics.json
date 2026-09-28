@@ -11,7 +11,7 @@
   {"id": "unrest", "name": "Protests and unrest", "words": ["protest", "protester", "riot", "demonstrator", "curfew", "unrest", "tear gas", "general strike"], "searches": ["protesters police", "curfew imposed"]},
   {"id": "elections", "name": "Elections and coups", "words": ["election", "referendum", "ballot", "polling station", "coup", "junta", "martial law"], "searches": ["election results", "coup attempt"]},
   {"id": "south-china-sea", "name": "South China Sea", "words": ["South China Sea", "West Philippine Sea", "Scarborough", "Spratly", "Paracel", "Second Thomas Shoal", "Ayungin", "Sabina Shoal", "China Coast Guard", "Nine-dash"], "searches": ["South China Sea"]},
-  {"id": "shipping", "name": "Shipping and piracy", "words": ["piracy", "pirates", "hijacked ship", "tanker", "cargo ship", "vessel seized", "shipwreck", "ferry capsized", "capsized", "Red Sea shipping", "Strait of Hormuz", "Malacca Strait"], "searches": ["piracy ship", "vessel seized"]},
+  {"id": "shipping", "name": "Shipping and piracy", "words": ["piracy", "pirates", "hijacked ship", "tanker", "cargo ship", "vessel seized", "seizes ship", "seized ship", "seizes vessel", "seized vessel", "shipwreck", "ferry capsized", "capsized", "Red Sea shipping", "Strait of Hormuz", "Malacca Strait"], "searches": ["piracy ship", "vessel seized"]},
   {"id": "air-crashes", "name": "Air crashes and incidents", "words": ["plane crash", "air crash", "helicopter crash", "emergency landing", "airliner", "aircraft crashed", "jet crashed"], "searches": ["plane crash"]},
   {"id": "cyber", "name": "Cyber attacks", "words": ["cyberattack", "cyber attack", "ransomware", "data breach", "hackers", "DDoS", "hacked"], "searches": ["cyberattack", "ransomware"]}
  ]

@@ -18,9 +18,9 @@
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
-  function fold(s) { s = String(s || ""); try { s = s.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {} return s.toLowerCase(); }
+  function fold(s) { s = String(s || ""); try { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {} return s.toLowerCase(); }
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-  var NOSPACE = /[฀-໿က-႟ក-៿぀-ヿ㐀-鿿]/, LB = true;
+  var NOSPACE = /[\u0E00-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u9FFF]/, LB = true;
   try { new RegExp("(?<!a)b", "u"); } catch (e) { LB = false; }
   function termRe(t) {
     t = fold(t).trim(); if (!t) return null;
@@ -80,12 +80,14 @@
     if (S.loaded >= Math.min(S.want, S.man.days.length)) { draw(); return; }
     var day = S.man.days[S.loaded].d;
     S.busy = true; draw();
-    script("data/live/news-index/" + encodeURIComponent(day) + ".js" + bust(), function () {
+    var have = function (ok) { if (window.OSAP_NEWSIX_DAY && window.OSAP_NEWSIX_DAY[day]) ok(); else script("data/live/news-index/" + encodeURIComponent(day) + ".js" + bust(), ok, bad); };
+    var bad = function () { S.loaded++; S.busy = false; S.err = "One day of the index (" + day + ") could not be read; the others are searched."; ensure(); };
+    have(function () {
       var rows = ((window.OSAP_NEWSIX_DAY || {})[day]) || [];
       if (window.OSAP_NEWSIX_DAY) delete window.OSAP_NEWSIX_DAY[day];
       rows.forEach(function (r) { S.rows.push({ r: r, ccs: String(r[0] || "").split(",").filter(Boolean), f: fold(r[2] + " \n " + r[3] + " \n " + r[4]), tp: String(r[8] || "").split(",") }); });
       S.loaded++; S.busy = false; draw(); ensure();
-    }, function () { S.loaded++; S.busy = false; S.err = "One day of the index (" + day + ") could not be read; the others are searched."; ensure(); });
+    });
   }
 
   /* ---------- search ---------- */
