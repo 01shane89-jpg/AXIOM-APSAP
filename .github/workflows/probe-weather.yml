@@ -2,7 +2,7 @@
 name: Probe weather hosts
 on:
   push:
-    branches: [claude/weather-ops, claude/weather-depth]
+    branches: [claude/weather-ops]
     paths: [tools/probe_weather.sh, .github/workflows/probe-weather.yml]
   workflow_dispatch:
 permissions:
