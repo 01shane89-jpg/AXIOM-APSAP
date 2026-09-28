@@ -18,8 +18,8 @@ async function check(f) {
     const r = await get(f.url);
     const items = r.status < 400 ? parseFeed(r.body) : [];
     const dates = items.map((i) => Date.parse(i.date)).filter((d) => !isNaN(d)).sort((a, b) => b - a);
-    return { ...f, status: r.status, final: r.final !== f.url ? r.final : undefined, n: items.length, newest: dates[0] ? new Date(dates[0]).toISOString().slice(0, 16) : null,
-      undated: items.length - dates.length, sample: items.slice(0, 2).map((i) => i.title.slice(0, 90)), ms: Date.now() - t0, head: items.length ? undefined : r.body.slice(0, 160) };
+    return { ...f, status: r.status, final: r.final !== f.url ? r.final : undefined, n: items.length, newest: dates[0] ? new Date(dates[0]).toISOString().slice(0, 16) : null, last7: dates.filter((d) => d > Date.now() - 7 * 864e5).length, oldest: dates.length ? new Date(dates[dates.length - 1]).toISOString().slice(0, 16) : null,
+      undated: items.length - dates.length, sample: items.slice(0, 5).map((i) => i.title.slice(0, 90)), ms: Date.now() - t0, head: items.length ? undefined : r.body.slice(0, 160) };
   } catch (e) { return { ...f, error: e.name === "AbortError" ? "timed out" : e.message, ms: Date.now() - t0 }; }
 }
 async function pool(list, conc, fn) {
@@ -32,7 +32,7 @@ const { feeds } = JSON.parse(fs.readFileSync("tools/news_candidates.json", "utf8
 const byHost = {}; for (const f of feeds) { const h = new URL(f.url).host; (byHost[h] = byHost[h] || []).push(f); }
 const groups = Object.values(byHost);
 const CAP_ONLY = process.env.CAP_ONLY === "1";
-const results = CAP_ONLY ? [] : (await pool(groups, 10, async (g) => { const r = []; for (const f of g) r.push(await check(f)); return r; })).flat();
+const results = CAP_ONLY ? [] : (await pool(groups, 10, async (g) => { const r = []; for (const f of g) { r.push(await check(f)); if (/bing\.com/.test(f.url)) await new Promise((z) => setTimeout(z, 2000)); } return r; })).flat();
 // aggregators: a handful of countries only
 const agg = [];
 for (const [cc, q] of CAP_ONLY ? [] : [["ml", "Mali"], ["so", "Somalia"], ["ht", "Haiti"], ["mn", "Mongolia"], ["bt", "Bhutan"]]) {
