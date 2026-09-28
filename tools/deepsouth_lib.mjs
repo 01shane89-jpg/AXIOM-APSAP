@@ -128,3 +128,23 @@ export function markAlerts(items, textOf) {
   }
   return items;
 }
+
+// ---- machine translation guard: Deep South place names ----
+// The open translation model mangles district names it has not seen ("ระแงะ" came out as "Ranah", "นราธิวาส" as "Narayanganj").
+// placeSubst puts each Thai place name into English before the text goes to the model; placeMismatch tells whether an English
+// translation has lost a place the Thai names (then the translation is not used). Mueang districts only need the province name.
+const PLACES = [
+  ...D.map(([prov, name, , , en, th]) => ({ th, name: /^Mueang /.test(name) ? prov : name, re: /^Mueang /.test(name) ? wordRe([prov]) : wordRe(en.concat(name === "Chana" ? ["Chana"] : [])) })),
+  ...Object.entries(PROV).map(([name, [, , en, th]]) => ({ th, name, re: wordRe(en) })),
+].flatMap((p) => p.th.map((t) => ({ t, name: p.name, re: p.re }))).sort((a, b) => b.t.length - a.t.length);
+const TH_PLACE = new RegExp(PLACES.map((p) => esc(p.t)).join("|"), "g");
+const BY_TH = Object.fromEntries(PLACES.map((p) => [p.t, p]));
+export function placeSubst(text) {
+  return String(text || "").replace(TH_PLACE, (m) => " " + BY_TH[m].name + " ").replace(/ {2,}/g, " ").trim();
+}
+export function placeMismatch(orig, en) {
+  if (!orig || !en) return false;
+  const seen = new Set(String(orig).match(TH_PLACE) || []);
+  for (const t of seen) if (!BY_TH[t].re.test(en)) return true;
+  return false;
+}

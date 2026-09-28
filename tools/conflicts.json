@@ -306,7 +306,9 @@
    "parties": ["Thailand", "Cambodia"],
    "bounds": [[12.0, 101.8], [15.0, 105.0]],
    "terms": ["Thai-Cambodia\\w*", "Thailand-Cambodia", "Cambodia-Thailand", "Cambodian border", "Thai border", "Preah Vihear", "Ta Muen", "Ta Moan", "Ta Krabey", "Chong Bok", "Chong An Ma", "Sisaket", "Surin", "Oddar Meanchey", "Banteay Meanchey", "Sa Kaeo", "Trat", "ชายแดนไทย-กัมพูชา", "กัมพูชา", "ព្រំដែន"],
-   "searches": [{ "q": "Thailand Cambodia border clash", "lang": "en" }, { "q": "ชายแดนกัมพูชา ปะทะ", "lang": "th" }],
+   "strong": ["Thai-Cambodian border", "Thai–Cambodian border", "Cambodia-Thailand border", "Cambodian-Thai border", "Thailand-Cambodia border", "ชายแดนไทย-กัมพูชา", "ชายแดนไทยกัมพูชา", "ชายแดนกัมพูชา", "ทหารกัมพูชา", "ทุ่นระเบิด", "Joint Boundary Commission", "JBC", "General Border Committee", "ASEAN observer\\w*", "[Bb]oundary [Pp]illar\\w*", "[Bb]order [Pp]illar\\w*", "Ta Muen", "Ta Moan", "Chong Bok", "Chong An Ma", "Preah Vihear", "An Ses", "Phnom Beng", "Hill 450"],
+   "feeds": [{ "id": "freshnews-en", "outlet": "Fresh News (Cambodia)", "url": "https://en.freshnewsasia.com/index.php/en/?format=feed&type=rss", "lang": "en", "side": "kh" }, { "id": "camboja", "outlet": "CamboJA News", "url": "https://cambojanews.com/feed/", "lang": "en" }],
+   "searches": [{ "q": "Thailand Cambodia border clash", "lang": "en" }, { "q": "Thai Cambodian border", "lang": "en" }, { "q": "Cambodia Thailand ceasefire", "lang": "en" }, { "q": "landmine Cambodia Thailand", "lang": "en" }, { "q": "JBC Cambodia Thailand", "lang": "en" }, { "q": "ASEAN observer team border", "lang": "en" }, { "q": "site:phnompenhpost.com Thai", "lang": "en" }, { "q": "ชายแดนกัมพูชา ปะทะ", "lang": "th" }, { "q": "ชายแดนไทย-กัมพูชา", "lang": "th" }, { "q": "ทหารกัมพูชา", "lang": "th" }, { "q": "กองกำลังบูรพา", "lang": "th" }, { "q": "กองกำลังสุรนารี", "lang": "th" }, { "q": "ทุ่นระเบิด ชายแดน", "lang": "th" }],
    "ucdp": { "countries": "Thailand|Cambodia", "match": "Cambodia" },
    "front": []
   },
