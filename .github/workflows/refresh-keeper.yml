@@ -5,6 +5,8 @@ name: Keep the 15-minute refresh running
 # GitHub's 6-hour job limit), then starts a fresh copy of itself so the chain carries on. The hourly schedule below restarts
 # the chain if it ever breaks. Only one keeper runs at a time: a new copy waits in the queue until the current one ends
 # (GitHub keeps at most one waiting), so the hand-over and the hourly restart never double up.
+# Each round also checks the published data's health (tools/health.mjs watch) and posts to the OSAP health channel on ntfy.sh
+# when data has stopped arriving or a key feed has died, and once more when it recovers.
 # Free while the repository is public (standard GitHub-hosted runners cost nothing for public repositories).
 on:
   schedule:
@@ -27,6 +29,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: main
       - name: Start the refresh every 15 minutes for about 5 h 30 min
         run: |
           end=$(( $(date +%s) + 330*60 ))
@@ -44,6 +49,8 @@ jobs:
               cw=$(( $(gh run list --workflow refresh-conflicts.yml --branch main --status queued --json databaseId --jq length || echo 0) + $(gh run list --workflow refresh-conflicts.yml --branch main --status in_progress --json databaseId --jq length || echo 0) ))
               if [ "$cw" = "0" ]; then gh workflow run refresh-conflicts.yml --ref main && echo "$(date -u +%H:%MZ) started the conflict refresh" || true; fi
             fi
+            # data health: alert on the ntfy health channel when the published data has stopped (never fails the keeper)
+            timeout 90 node tools/health.mjs watch || echo "$(date -u +%H:%MZ) health check did not finish"
             [ $(( $(date +%s) + 900 )) -lt "$end" ] || break
             sleep 900
           done
