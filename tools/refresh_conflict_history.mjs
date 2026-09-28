@@ -59,23 +59,54 @@ async function findRelease() {
   throw new Error("no GED release found (tried " + names.join(", ") + ")");
 }
 
-/* ---------- streaming CSV (quoted cells may hold commas and line breaks) ---------- */
+/* ---------- streaming CSV (quoted cells may hold commas, doubled quotes and line breaks) ---------- */
+// Cells are cut out with indexOf and slice rather than built a character at a time, which keeps memory flat on a file of
+// several hundred MB; a row cut by the end of a chunk is parsed again with the next one.
 function csvStream(stream, onRow) {
   return new Promise((ok, bad) => {
-    let row = [], cell = "", q = false, pendingQuote = false;
-    stream.setEncoding("utf8");
-    stream.on("data", (t) => {
-      for (let i = 0; i < t.length; i++) {
-        const ch = t[i];
-        if (pendingQuote) { pendingQuote = false; if (ch === '"') { cell += '"'; continue; } q = false; }
-        if (q) { if (ch === '"') pendingQuote = true; else cell += ch; continue; }
-        if (ch === '"') q = true; else if (ch === ",") { row.push(cell); cell = ""; } else if (ch === "\n") { row.push(cell); onRow(row); row = []; cell = ""; } else if (ch !== "\r") cell += ch;
+    let buf = "", nrow = 0;
+    function parse(final) {
+      let i = 0, rowStart = 0;
+      const n = buf.length;
+      outer: while (i < n) {
+        const row = [];
+        rowStart = i;
+        for (;;) {
+          let cell;
+          if (buf[i] === '"') {
+            let j = i + 1, parts = "";
+            for (;;) {
+              const k = buf.indexOf('"', j);
+              if (k < 0 || (k + 1 >= n && !final)) { if (final && k < 0) { cell = parts + buf.slice(j); i = n; break; } break outer; }
+              if (buf[k + 1] === '"') { parts += buf.slice(j, k + 1); j = k + 2; continue; }
+              cell = parts + buf.slice(j, k); i = k + 1; break;
+            }
+            while (i < n && buf[i] !== "," && buf[i] !== "\n") i++;   // anything after the closing quote is ignored
+          } else {
+            let c = buf.indexOf(",", i), l = buf.indexOf("\n", i);
+            if (c < 0) c = n; if (l < 0) l = n;
+            const e = Math.min(c, l);
+            if (e === n && !final) break outer;
+            cell = buf.slice(i, e); i = e;
+          }
+          if (cell.length > 2e6) throw new Error("a CSV cell over 2 MB near row " + nrow + ": the file is not the expected CSV");
+          row.push(cell.endsWith("\r") ? cell.slice(0, -1) : cell);
+          if (i >= n) { if (!final) break outer; nrow++; onRow(row); rowStart = n; break outer; }
+          if (buf[i] === ",") { i++; continue; }
+          i++; nrow++; onRow(row); rowStart = i; break;   // end of line
+        }
       }
-    });
-    stream.on("end", () => { if (pendingQuote) q = false; if (cell || row.length) { row.push(cell); onRow(row); } ok(); });
+      buf = buf.slice(rowStart);
+      if (!final && buf.length > 2e7) throw new Error("a CSV row over 20 MB near row " + nrow + ": the file is not the expected CSV");
+    }
+    stream.setEncoding("utf8");
+    stream.on("data", (t) => { buf += t; try { parse(false); } catch (e) { stream.destroy(); bad(e); } });
+    stream.on("end", () => { try { if (buf.length) parse(true); ok(nrow); } catch (e) { bad(e); } });
     stream.on("error", bad);
   });
 }
+// a stored text of its own, not a slice that would keep the whole chunk it came from in memory
+const own = (s) => (s ? Buffer.from(String(s), "utf8").toString("utf8") : "");
 
 /* ---------- main ---------- */
 fs.mkdirSync(HOUT, { recursive: true }); fs.mkdirSync(CACHE, { recursive: true });
@@ -114,13 +145,13 @@ await csvStream(unz.stdout, (r) => {
     const miss = need.filter((k) => ix[k] == null); if (miss.length) throw new Error("GED columns missing: " + miss.join(", ")); return; }
   if (r.length < head.length - 2) return;
   rows++;
-  const date = (r[ix.date_start] || "").slice(0, 10); if (date > gedLast) gedLast = date;
+  const date = (r[ix.date_start] || "").slice(0, 10); if (date > gedLast) gedLast = own(date);
   const country = r[ix.country] || "", names = [r[ix.conflict_name], r[ix.side_a], r[ix.side_b], r[ix.dyad_name]].filter(Boolean).join(" | ");
   for (const f of F) {
     if (date < f.since || !f.cre.test(country) || (f.mre && !f.mre.test(names)) || (f.xre && f.xre.test(names))) continue;
-    f.ev.push({ id: r[ix.id], date, end: (r[ix.date_end] || "").slice(0, 10), lat: +r[ix.latitude], lon: +r[ix.longitude], type: +r[ix.type_of_violence] || 0,
-      best: +r[ix.best] || 0, low: +r[ix.low] || 0, high: +r[ix.high] || 0, civ: +r[ix.deaths_civilians] || 0, a: r[ix.side_a] || "", b: r[ix.side_b] || "",
-      where: String(r[ix.where_description] || "").replace(/\s+/g, " ").trim().slice(0, 80), adm1: r[ix.adm_1] || "", prec: +r[ix.where_prec] || 0, country, s: 0 });
+    f.ev.push({ id: own(r[ix.id]), date: own(date), end: own((r[ix.date_end] || "").slice(0, 10)), lat: +r[ix.latitude], lon: +r[ix.longitude], type: +r[ix.type_of_violence] || 0,
+      best: +r[ix.best] || 0, low: +r[ix.low] || 0, high: +r[ix.high] || 0, civ: +r[ix.deaths_civilians] || 0, a: own(r[ix.side_a]), b: own(r[ix.side_b]),
+      where: own(String(r[ix.where_description] || "").replace(/\s+/g, " ").trim().slice(0, 80)), adm1: own(r[ix.adm_1]), prec: +r[ix.where_prec] || 0, country: own(country), s: 0 });
   }
 });
 await new Promise((ok) => (unz.exitCode != null ? ok() : unz.on("close", ok)));

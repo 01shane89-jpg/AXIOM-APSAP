@@ -75,8 +75,16 @@
   function ensure() {
     map = W.__asapMap; if (!map || !W.L) return false;
     if (!rend) rend = W.L.canvas({ pane: "cfpane", padding: 0.3 });
-    if (!bound) { bound = true; map.on("moveend", function () { if (on && id && ctab() && ctab().active() === id) draw(); }); }
+    if (!bound) { bound = true; map.on("moveend", function () { if (on && id && ctab() && ctab().active() === id && moved()) draw(); }); }
     return true;
+  }
+  // a pan that stays inside what was drawn (a pop-up nudging the map, say) needs no redraw: redrawing would close the pop-up
+  var drawn = null;
+  function moved() {
+    if (!drawn || !lyr) return true;
+    var z = map.getZoom();
+    if (drawn.pins ? z < PINZ && !drawn.last12 : z >= PINZ || (z <= 4 ? 4 : z <= 5 ? 2 : 1) !== drawn.f) return true;
+    return drawn.pins && !drawn.b.contains(map.getBounds());
   }
   function clear() { if (lyr && map) map.removeLayer(lyr); lyr = null; if (W.OSAP_LEGEND) W.OSAP_LEGEND.set("cf-hist", ""); }
   // density: cells of 0.5, 1 or 2 degrees by zoom, from the loaded events when there are any, else from the per-year grid
@@ -110,7 +118,7 @@
       ev.forEach(function (e) {
         var r = e[0];
         g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: "cfpane", radius: Math.min(3 + Math.sqrt(r[6]) * 1.1, 13), color: "#222", weight: r[15] ? 1.2 : 0.8, dashArray: r[15] ? "2 2" : null,
-          fillColor: TYPEC[r[5]] || TYPEC[1], fillOpacity: 0.72 }).bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function (p) { fp(r, e[1], p.popup); }));
+          fillColor: TYPEC[r[5]] || TYPEC[1], fillOpacity: 0.72 }).bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
       });
     } else {
       var cs = cells(), max = Math.max.apply(null, cs.map(function (c) { return c.n; }).concat([1]));
@@ -124,6 +132,7 @@
       });
     }
     lyr = L.layerGroup(g).addTo(map);
+    drawn = { pins: pins, last12: sel.last12, b: pins ? map.getBounds().pad(0.2) : null, f: z <= 4 ? 4 : z <= 5 ? 2 : 1 };
     legend(pins);
     var nb = D.getElementById("cfh-note"); if (nb) nb.textContent = note || (pins ? "" : "Zoomed out: circles show how many events happened in each area. Zoom in to see each event.");
   }
@@ -145,16 +154,17 @@
       (r[14] > 2 ? '<div class="cfm">Placed only roughly by UCDP (' + (r[14] >= 4 ? "province or wider" : "district") + " level), not at an exact spot.</div>" : "") +
       '<div class="cfm">' + (r[15] ? "UCDP candidate event " + esc(r[0]) + ", provisional (UCDP revises these in its next yearly release)." : "UCDP GED " + esc(k.release || rel.version) + ", event " + esc(r[0]) + ".") +
       ' <a href="https://ucdp.uu.se/downloads/" target="_blank" rel="noopener">UCDP</a>, CC BY 4.0. UCDP codes events from media and NGO reports.</div>' +
-      '<div class="fp" data-cfhfp="1">SHA-256 …</div>';
+      '<div class="fp" data-cfhfp="' + esc(r[0]) + '">SHA-256 …</div>';
   }
   // the event's fingerprint, from its UCDP record (ucdp|release|id|date|lat|lon|type|best|low|high)
-  function fp(r, k, popup) {
+  function fp(r, k) {
     if (!W.crypto || !W.crypto.subtle) return;
     var s = ["ucdp", r[15] ? "candidate" : k.release, r[0], r[1], r[3], r[4], r[5], r[6], r[7], r[8]].join("|");
     W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (b) {
       var h = Array.prototype.map.call(new Uint8Array(b), function (v) { return ("0" + v.toString(16)).slice(-2); }).join("");
-      var el = popup.getElement && popup.getElement(), f = el && el.querySelector("[data-cfhfp]");
-      if (f) { f.textContent = "SHA-256 " + h.slice(0, 16) + "…"; f.title = "SHA-256 fingerprint of this UCDP record (" + s + "): " + h + ". Its year file: " + k.sha256; }
+      // the page shows a pop-up's content in its Details box, so every copy on the page is filled in
+      Array.prototype.forEach.call(D.querySelectorAll('[data-cfhfp="' + String(r[0]).replace(/["\\]/g, "") + '"]'), function (f) {
+        f.textContent = "SHA-256 " + h.slice(0, 16) + "…"; f.title = "SHA-256 fingerprint of this UCDP record (" + s + "): " + h + ". Its year file: " + k.sha256; });
     }, function () {});
   }
 
