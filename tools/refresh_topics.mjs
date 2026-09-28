@@ -14,7 +14,7 @@ const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const iso = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
-const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
+const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), topics);
 
 let prev = { items: [] };
 try { const t = fs.readFileSync(OUT, "utf8"); prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) {}

@@ -20,7 +20,7 @@ const T = compileTopics(topics);
 const V = compileViews(JSON.parse(fs.readFileSync("tools/view_reports.json", "utf8"))), vcount = {};
 // Only news that matters to an analyst or a special operations team in the country goes into the pool (tools/relevance.json);
 // sport, celebrity, entertainment and lifestyle stay in each country's Local news tab and are not searched.
-const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8"))), relN = {}, dropped = [];
+const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), topics), relN = {}, dropped = [];
 
 const pool = new Map();   // link -> { item, ccs:Set }
 function add(i, ccs) {
