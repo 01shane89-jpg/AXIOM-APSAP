@@ -146,3 +146,7 @@ Set `LEAFLET_JS` to a local copy of Leaflet 1.9.4 if cdnjs is unreachable, and `
 ## Path into AXIOM
 
 The record model here maps onto AXIOM's canonical classes: observations and source claims become `claim`/`observation` objects with provenance edges to a registered source, events become `event` objects, places become `location`. Layers are saved views over those objects, not their own storage. When ASAP moves into AXIOM, `source/` is the import input and this page becomes one view over AXIOM's records.
+
+## Licence
+
+All rights reserved. The repository is public so that it can be viewed and its GitHub Actions and Pages site can run, but no part of it may be reused without written permission: see [LICENSE](LICENSE). Third-party data, map material and libraries keep their own terms: see [NOTICE.md](NOTICE.md). To report a security problem, see [SECURITY.md](SECURITY.md).
