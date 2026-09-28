@@ -11,6 +11,14 @@ probe() {
   echo "bytes: $(wc -c < /tmp/p.bin 2>/dev/null)"
   head -c ${2:-400} /tmp/p.bin | tr '\n' ' '; echo
 }
+F="https://api.open-meteo.com/v1/forecast?latitude=13.75&longitude=100.5&timeformat=unixtime&timezone=auto"
+probe "$F&hourly=temperature_2m,precipitation_probability,uv_index,is_day&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=1" 1500
+probe "$F&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,precipitation_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max,sunshine_duration,shortwave_radiation_sum&wind_speed_unit=kn&forecast_days=16" 3000
+probe "$F&daily=temperature_2m_max,precipitation_sum,wind_gusts_10m_max&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=7" 1500
+probe "https://ensemble-api.open-meteo.com/v1/ensemble?latitude=13.75&longitude=100.5&hourly=temperature_2m&models=ecmwf_ifs025&forecast_days=1" 300
+probe "https://marine-api.open-meteo.com/v1/marine?latitude=18.8&longitude=98.98&hourly=wave_height&forecast_days=1" 400
+probe "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=13.75&longitude=100.5&hourly=pm10,pm2_5,us_aqi,uv_index,dust,ozone&forecast_days=1" 400
+exit 0
 curl -sS -m 60 "https://nowcoast.noaa.gov/geoserver/ows?service=WMS&request=GetCapabilities" -o /tmp/nc.xml
 python3 - <<'PY'
 import re
