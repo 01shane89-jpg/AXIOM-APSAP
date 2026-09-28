@@ -3732,7 +3732,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     if (!ALERTS.length) list.innerHTML = '<p class="obs">No rule is firing with the current settings.</p>';
   }
-  function openRec(id) { setView("timeline"); select(id, true); }
+  /* on a phone the report opens as a sheet over the current tab, so closing it goes back to the same list */
+  function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setView("timeline"); select(id, true); }
   function renderRules() {
     var box = document.getElementById("al-rules");
     box.innerHTML = RULES.map(function (ru) {
@@ -5808,6 +5809,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (!/[?&]watchscan=1(&|$)/.test(location.search)) map.on("popupopen", function (e) {
     var el = e.popup.getElement && e.popup.getElement(), body = el && el.querySelector(".leaflet-popup-content");
     if (!body || !body.textContent.trim()) return;
+    /* a small question box (data-keep-pop), such as "Open Laos" after a double tap, stays a pop-up with its working button */
+    if (body.querySelector("[data-keep-pop]")) return;
     /* a pin drawn for one of this page's own reports (road disruptions) opens that report itself */
     var orec = body.querySelector("[data-openrec]"), rid = orec && orec.getAttribute("data-openrec");
     if (rid && byId[rid]) { if (rvPhone() || !rvBox.hidden) { fullNext = true; select(rid, undefined, "rv-pkg"); setTimeout(function () { map.closePopup(e.popup); }, 0); } return; }
@@ -7002,9 +7005,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (areaDraw) return;
     var ll = e.latlng.wrap(), c = xaCountryAt(ll.lat, ll.lng);
     if (!c || c.id === CC || (CC === "oki" && c.id === "jp")) return;
-    if (window.OSAP_BOOT) window.OSAP_BOOT.show(c.id, "", c.name);
-    location.hash = (c.id === "th" ? "" : c.id + "/") + (current || "timeline");
-    location.reload();
+    function go() {
+      if (window.OSAP_BOOT) window.OSAP_BOOT.show(c.id, "", c.name);
+      location.hash = (c.id === "th" ? "" : c.id + "/") + (current || "timeline");
+      location.reload();
+    }
+    /* on a touch screen a double tap is also the zoom gesture, so it asks first instead of leaving the country at once */
+    if (window.matchMedia && matchMedia("(pointer: coarse)").matches) {
+      var box = document.createElement("div"), b = document.createElement("button"); box.setAttribute("data-keep-pop", "1");
+      b.type = "button"; b.className = "xa-go"; b.textContent = "Open " + c.name; b.addEventListener("click", function () { map.closePopup(); go(); });
+      box.appendChild(b);
+      L.popup({ className: "xa-ask", autoPan: false, closeButton: false }).setLatLng(e.latlng).setContent(box).openOn(map);
+      return;
+    }
+    go();
   });
   if (SCAN) xaBar.hidden = true; else if (ADDED.length) xaChanged(false); else xaBarDraw();
   /* ACTIVITY DOTS in the country list. An automatic activity indicator, not a threat rating: it counts what the worldwide
@@ -7148,6 +7162,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 })();
 </script>
 <style>
+/* iPhone Safari zooms the whole page in when a text box or menu under 16 px gets focus, and an installed app stays zoomed
+   afterwards (the map and panels then sit off screen); 16 px on touch phones stops that */
+@media (pointer:coarse) and (max-width:700px){
+  select,textarea,input:not([type]),input[type=text],input[type=search],input[type=number],input[type=date],input[type=datetime-local],input[type=time],input[type=email],input[type=url],input[type=tel],input[type=password]{font-size:16px!important}
+}
 /* ---------- phone layout (up to 700 px wide): full-screen map, the side panel as a bottom sheet (bar, half, full), pickers as menus ---------- */
 #phone-nav{display:none}
 #rail-handle{display:none}
@@ -7164,7 +7183,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone #ph-more{flex:0 0 auto;min-height:40px;min-width:44px;font:inherit;font-size:14px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
   html.phone.hdr-open #ph-more{background:var(--ink);color:var(--surface)}
   html.phone #map{height:calc(100svh - var(--hdr-h,120px) - var(--bar-h))!important;min-height:0}
-  html.phone{--bar-h:64px}
+  html.phone{--sab:env(safe-area-inset-bottom,0px);--bar-h:calc(64px + var(--sab))}
   html.phone .shell{display:block}
   html.phone .rail{position:fixed;left:0;right:0;bottom:0;height:var(--sheet-h,64px);max-height:none!important;z-index:1200;overflow-y:auto;overscroll-behavior:contain;
     border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.18);font-size:14px;padding:0 14px 16px;box-sizing:border-box;transition:height .2s ease}
@@ -7178,7 +7197,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone[data-sheet="half"]{--sheet-h:50svh}
   html.phone[data-sheet="full"]{--sheet-h:calc(100svh - var(--hdr-h,120px))}
   #rail-handle{display:none}
-  html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;margin:0 -14px;padding:0 14px;height:var(--bar-h);box-sizing:border-box;background:var(--surface);border-bottom:1px solid var(--line-soft);touch-action:none}
+  html.phone #rail-handle{display:flex;position:sticky;top:0;z-index:5;align-items:center;margin:0 -14px;padding:0 14px;height:var(--bar-h);box-sizing:border-box;background:var(--surface);border-bottom:1px solid var(--line-soft);touch-action:none;padding-bottom:var(--sab)}
   html.phone #rail-handle .grab{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;background:none;border:none;font:inherit;color:var(--ink);padding:6px 0 4px;cursor:pointer;height:100%;text-align:left;min-width:0}
   html.phone #rail-handle .grab i{display:block;align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line);margin-bottom:3px}
   html.phone #rail-handle .grab b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -7188,10 +7207,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone .leaflet-popup-content{max-width:calc(100vw - 90px)!important;font-size:14px}
   html.phone .leaflet-container a.leaflet-popup-close-button{width:36px;height:36px;font-size:22px;line-height:36px}
   html.phone .pkgsheet{position:fixed!important;left:0;right:0;bottom:0;max-height:82svh;overflow-y:auto;overscroll-behavior:contain;z-index:3001;background:var(--surface);
-    border-radius:14px 14px 0 0;padding:0 16px 28px;box-shadow:0 -6px 24px rgba(0,0,0,.35);font-size:14px}
+    border-radius:14px 14px 0 0;padding:0 16px calc(28px + var(--sab));box-shadow:0 -6px 24px rgba(0,0,0,.35);font-size:14px}
   html.phone .pkgsheet .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;z-index:2}
   html.phone .pkgsheet .pkghead .x{font-size:28px;min-width:44px;min-height:44px}
   #pkg-back{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:3000}
+  /* the right-hand map buttons scroll when the map is short (header open) instead of running under the list; while Layers
+     is open it has the corner to itself, so the buttons below it are not pushed down over the credits and the list */
+  html.phone #map .leaflet-top.leaflet-right{max-height:calc(100% - 44px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none}
+  html.phone #map .leaflet-top.leaflet-right:has(.mlbtn[aria-expanded="true"])>.leaflet-control:not(.mlctl){display:none}
+  .xa-ask .leaflet-popup-content{margin:8px;min-width:0}
+  .xa-go{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff}
   /* icon markers (pins, volcano triangles) get an invisible 12 px ring around them on touch screens */
   @media (pointer:coarse){.leaflet-marker-icon.leaflet-interactive::after{content:"";position:absolute;inset:-12px}}
   .qcard h3{font-size:15px;margin:4px 0 6px;line-height:1.3}
@@ -7276,7 +7301,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function label() {
     var s = root.getAttribute("data-sheet"), b = document.querySelector('#view-seg button[aria-selected="true"]'), pn = panel();
     var name = b ? b.childNodes[0].textContent.trim() : "Details";
-    var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof]").length : 0;
+    var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof], ol.cfl>li").length : 0;
     h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
     h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
     h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
@@ -7285,7 +7310,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var lt = null; new MutationObserver(function () { clearTimeout(lt); lt = setTimeout(label, 120); }).observe(rail, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   /* drag: follow the finger, then settle on the nearest height; a tap without movement steps bar, half, full, back to bar */
   var drag = null;
-  function heights() { var vh = window.innerHeight, hh = parseFloat(getComputedStyle(root).getPropertyValue("--hdr-h")) || 120; return { bar: 64, half: vh * 0.5, full: vh - hh }; }
+  function heights() { var vh = window.innerHeight, hh = parseFloat(getComputedStyle(root).getPropertyValue("--hdr-h")) || 120; return { bar: h.offsetHeight || 64, half: vh * 0.5, full: vh - hh }; }
   h.addEventListener("pointerdown", function (e) { if (!on()) return; drag = { y: e.clientY, h0: rail.offsetHeight, moved: false }; try { h.setPointerCapture(e.pointerId); } catch (x) {} });
   h.addEventListener("pointermove", function (e) {
     if (!drag) return; var dy = drag.y - e.clientY;
@@ -7353,5 +7378,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
+<!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
