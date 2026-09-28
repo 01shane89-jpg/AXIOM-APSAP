@@ -19,6 +19,7 @@
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
+<script src="assets/osap-areasum.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"
@@ -34,3 +35,6 @@ window.OSAP_WATCH
 # phone fixes (claude/phone-glitches): no reload under a finger after a deploy; reports from a list keep the phone on its tab
 if (!used && Date.now() - t0 < 8000) reload();
 function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setView("timeline"); select(id, true); }
+
+# drawn-area summary (assets/osap-areasum.js reads it)
+window.TSAP.areaApi
