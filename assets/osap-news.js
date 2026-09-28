@@ -135,10 +135,11 @@
     if (S.err) h += '<p class="nqnote">' + esc(S.err) + "</p>";
     R.slice(0, S.shown).forEach(function (x) {
       var r = x.r, url = safeUrl(r[5]), w = when(r[1]), fl = r[7] || "";
-      var others = x.ccs.filter(function (c) { return c !== S.cc; }).slice(0, 3).map(cName);
+      /* the countries it is filed under: all of them when searching every country, else only the others it names */
+      var where = (S.where === "all" ? x.ccs : x.ccs.filter(function (c) { return c !== S.cc; })).slice(0, 3).map(cName);
       h += '<article class="nqrow"><a class="nqh" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(r[2]) + "</a>" +
         (r[3] ? '<span class="nqorig" lang="">' + esc(r[3]) + "</span>" : "") +
-        '<span class="nqsub">' + esc(r[4]) + (S.where === "all" || others.length ? " · " + esc((S.where === "all" ? x.ccs.slice(0, 3).map(cName) : others).join(", ")) : "") + " · " + esc(w.txt) + "</span>" +
+        '<span class="nqsub">' + esc(r[4]) + (where.length ? " · " + esc(where.join(", ")) : "") + " · " + esc(w.txt) + "</span>" +
         '<span class="nqtags"><span class="tdtag unv">' + (fl.indexOf("s") >= 0 ? "News search result" : "Unverified report") + "</span>" +
         (fl.indexOf("g") >= 0 ? '<span class="tdtag claim">State media</span>' : "") + (fl.indexOf("m") >= 0 ? '<span class="tdtag mt">Machine translated</span>' : "") + "</span></article>";
     });
