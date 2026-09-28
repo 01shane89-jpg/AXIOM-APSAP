@@ -48,3 +48,22 @@ assert.equal(relevance(R, "Warning issued for heavy rain"), "keep");          //
 assert.equal(relevance(R, "Songkhla district office reopens"), "none");       // "song$" (entertainment) does not match "Songkhla"
 assert.equal(relevance(R, "Two wars on the border"), "strong");               // plural allowed on a $ word
 console.log("topics tests passed:", cfg.topics.length, "data sets");
+
+// a data set marked "relevance": "exempt" (the ET tab's UFO and UAP reports) is kept whatever the word lists say,
+// minus its own exclude words; everything else is unchanged
+{
+  const RX = compileRelevance(JSON.parse(fs.readFileSync(new URL("../tools/relevance.json", import.meta.url), "utf8")), cfg.topics);
+  assert.equal(relevance(R, "Pilots report UFO over lake"), "none");                  // without the exemption it was left out
+  assert.equal(relevance(RX, "Pilots report UFO over lake"), "strong");
+  assert.equal(relevance(RX, "AARO releases new UAP case resolutions"), "strong");
+  assert.equal(relevance(RX, "Avistamiento de un OVNI en Chile"), "strong");
+  assert.equal(relevance(RX, "Жители сообщили об НЛО над городом"), "strong");
+  assert.equal(relevance(RX, "Celebrity chef opens UFO catcher arcade"), "drop");       // exclude word: not a sighting
+  assert.equal(relevance(RX, "Ufone launches new package"), "none");                    // "ufo$" is a whole word
+  assert.equal(relevance(RX, "Court upholds UAPA charges"), relevance(R, "Court upholds UAPA charges")); // India's UAPA law is not "UAP"
+  assert.equal(relevance(RX, "Footballer scores twice"), relevance(R, "Footballer scores twice"));
+  const U = compileTopics(cfg.topics.filter((t) => t.id === "uap"));
+  assert.deepEqual(topicsOf(U, "UFO-Sichtung über Berlin", ["de"]), ["uap"]);
+  assert.deepEqual(topicsOf(U, "未確認飛行物体の目撃情報", ["jp"]), ["uap"]);
+}
+console.log("uap exemption ok");
