@@ -45,7 +45,7 @@ for (const [cc, q] of CAP_ONLY ? [] : [["ml", "Mali"], ["so", "Somalia"], ["ht",
 // folder's rss.xml (or the only language an agency publishes in) checked for items and their age.
 let cap = { url: "https://cap-sources.s3.amazonaws.com/", prefixes: [], feeds: [] };
 try {
-  for (let tok = "", n = 0; n < 20; n++) {
+  for (let tok = "", n = 0; n < (process.env.SKIP_CAP === "0" ? 20 : 0); n++) {
     const r = await get(cap.url + "?list-type=2&delimiter=/" + (tok ? "&continuation-token=" + encodeURIComponent(tok) : ""), 20000);
     cap.prefixes.push(...[...r.body.matchAll(/<Prefix>([^<]+)\/<\/Prefix>/g)].map((m) => m[1]));
     const nt = r.body.match(/<NextContinuationToken>([^<]+)</);
@@ -62,7 +62,6 @@ const ok = results.filter((r) => r.n > 0);
 console.log("feeds answering with items:", ok.length, "/", results.length, "; countries:", new Set(ok.map((r) => r.cc)).size);
 console.log("aggregators:", agg.map((a) => a.outlet[0] + ":" + a.cc + "=" + (a.n || a.error || a.status)).join(" "));
 console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f) => f.n > 0).length, "feeds with items", cap.error || "");
-process.exit(0);
 
 // PROBE BRANCH ONLY: feed discovery for outlets whose guessed feed failed. Reads the home page, collects
 // <link rel="alternate"> feed links and a few common feed paths, checks each, and notes the page's size and link count.
@@ -89,3 +88,4 @@ process.exit(0);
   });
   fs.writeFileSync("probe-out/discover.json", JSON.stringify(out, null, 1));
 }
+process.exit(0);
