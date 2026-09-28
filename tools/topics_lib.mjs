@@ -51,3 +51,20 @@ export function relevance(R, text) {
   if (R.keep && R.keep.test(f)) return "keep";
   return "none";
 }
+// One news item checked the way every news surface uses it (news pool and search, Local news, Top stories, history):
+// its English headline, original headline and summary. A headline the translation step left in its own script cannot be
+// checked against English words, so it is kept ("unchecked") unless a drop word matched.
+export function itemRelevance(R, i) {
+  const en = String(i.title_en || i.title || ""), orig = i.title && i.title !== en ? i.title : "";
+  const rel = relevance(R, en + " \n " + orig + " \n " + String(i.summary_en || i.summary || "").slice(0, 400));
+  if (rel !== "none") return rel;
+  const latin = (en.match(/[A-Za-z]/g) || []).length, other = (en.match(/\p{L}/gu) || []).length - latin;
+  return i.mt === "untranslated" || other > latin ? "unchecked" : "none";
+}
+export const kept = (rel) => rel === "strong" || rel === "keep" || rel === "unchecked";
+let _rel = null;
+// tools/relevance.json, read once (the jobs run from the repository root)
+export async function loadRelevance() {
+  if (!_rel) { const fs = await import("node:fs"); _rel = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8"))); }
+  return _rel;
+}
