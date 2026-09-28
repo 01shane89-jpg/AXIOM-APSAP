@@ -1,9 +1,9 @@
 // Data-set matching shared by the refresh jobs and the tests (tools/topics.json). No network.
 // A word matches at the start of a word, case- and accent-insensitively, so "flood" matches "floods" and "Flooding";
 // a word is also matched inside scripts that do not separate words with spaces (Thai, Chinese, Japanese, Lao, Khmer, Burmese).
-export const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+export const fold = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const NOSPACE = /[฀-໿က-႟ក-៿぀-ヿ㐀-鿿]/;
+const NOSPACE = /[\u0E00-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u9FFF]/;
 function wordRe(words) {
   const parts = (words || []).map((w) => fold(w).trim()).filter(Boolean).map((w) => (NOSPACE.test(w) ? esc(w) : "(?<![\\p{L}\\p{N}])" + esc(w)));
   return parts.length ? new RegExp(parts.join("|"), "u") : null;
