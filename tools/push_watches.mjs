@@ -105,7 +105,7 @@ async function send(w, msg) {
   for (let a = 0; a < 3; a++) {
     try {
       const r = await fetch(NTFY, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) });
-      if (r.ok) return true;
+      if (r.ok) { if (TEST) { const j = await r.json().catch(() => ({})); console.log(`push: ${w.id}: ntfy accepted, message id ${j.id || "?"}, event ${j.event || "?"}`); } return true; }
       console.log(`push: ${w.id}: ntfy HTTP ${r.status}`);
       if (r.status !== 429 && r.status < 500) return false;
     } catch (e) { console.log(`push: ${w.id}: ntfy ${e.name || "error"}`); }
@@ -169,9 +169,10 @@ console.log(`push: ${list.length} watch(es), ${sentTotal} alert(s) sent, ${faile
 if (TEST && !DRY) {
   for (const t of [...new Set(list.map((w) => w.topic))]) {
     try {
-      const r = await fetch(`${NTFY}/${t}/json?poll=1&since=10m`, { signal: AbortSignal.timeout(15000) });
+      await new Promise((res) => setTimeout(res, 3000));
+      const r = await fetch(`${NTFY}/${t}/json?poll=1&since=all`, { signal: AbortSignal.timeout(15000) });
       const lines = (await r.text()).split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l); } catch (e) { return {}; } }).filter((m) => m.event === "message");
-      console.log(`push: test read-back: HTTP ${r.status}, ${lines.length} message(s) on the channel in the last 10 minutes` + (lines.length ? `, newest titled "${one(lines[lines.length - 1].title, 80)}"` : ""));
+      console.log(`push: test read-back: HTTP ${r.status}, ${lines.length} message(s) held on the channel` + (lines.length ? `, newest titled "${one(lines[lines.length - 1].title, 80)}"` : ""));
     } catch (e) { console.log("push: test read-back failed: " + (e.name || "error")); }
   }
 }
