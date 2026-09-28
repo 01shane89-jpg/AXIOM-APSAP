@@ -10,6 +10,7 @@
     { "id": "gdacs", "file": "data/live/gdacs.js", "name": "Disaster alerts (GDACS)", "maxMin": 90, "key": true },
     { "id": "warnings", "file": "data/live/warnings.js", "name": "Weather warnings", "maxMin": 90, "key": true },
     { "id": "news", "file": "data/live/news.js", "name": "Local news", "maxMin": 90, "key": true },
+    { "id": "et", "file": "data/live/et.js", "name": "ET: UFO and UAP reports", "maxMin": 150 },
     { "id": "social", "file": "data/live/social.js", "name": "Official social accounts", "maxMin": 150, "key": true },
     { "id": "advisories", "file": "data/live/advisories.js", "name": "Travel advisories", "maxMin": 90, "key": true },
     { "id": "storms", "file": "data/live/storms.js", "name": "Tropical cyclones", "maxMin": 90, "key": true },
