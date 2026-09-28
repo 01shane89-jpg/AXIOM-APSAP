@@ -301,7 +301,7 @@
    "front": []
   },
   {
-   "id": "thailand-cambodia", "name": "Thailand–Cambodia border conflict", "short": "Thai–Cambodian border", "countries": ["th", "kh"], "since": "2025-05-28", "kind": "interstate border conflict", "tier": 2,
+   "id": "thailand-cambodia", "name": "Thailand–Cambodia border conflict", "short": "Thai–Cambodian border", "countries": ["th", "kh"], "since": "2025-05-28", "kind": "interstate border conflict", "tier": 2, "keep_days": 1095,
    "merge_tabs": {"th": ["border"], "kh": ["border"]},
    "parties": ["Thailand", "Cambodia"],
    "bounds": [[12.0, 101.8], [15.0, 105.0]],
@@ -332,7 +332,7 @@
    "front": []
   },
   {
-   "id": "thailand-deep-south", "name": "Thailand: Deep South insurgency", "short": "Deep South", "countries": ["th"], "since": "2004-01-04", "kind": "separatist insurgency", "tier": 2,
+   "id": "thailand-deep-south", "name": "Thailand: Deep South insurgency", "short": "Deep South", "countries": ["th"], "since": "2004-01-04", "kind": "separatist insurgency", "tier": 2, "keep_days": 1095,
    "merge_tabs": {"th": ["insurgency"]},
    "parties": ["Thailand", "Barisan Revolusi Nasional (BRN) and other Patani groups"],
    "bounds": [[5.6, 100.4], [7.1, 102.2]],
