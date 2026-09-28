@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-09-28 23:03Z","sources":[{"cc":"ad","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Andorra%22&format=rss","ok":true,"n":9}],"coverage":{"countries":198,"with":192,"none":["ki","fm","qa","ws","tg","ye"]},"items":{"ad":[]}};
+window.ASAP_NEWS={"asof":"2026-09-28 23:36Z","sources":[{"cc":"ad","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Andorra%22&format=rss","ok":true,"n":9}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"ad":[]}};
