@@ -7,7 +7,7 @@
 // news search is used, then the days newest first, showing matches as each day arrives. Rebuildable at any time from those
 // files: it holds nothing of its own. Unchanged days are rewritten byte-identical, so a refresh only changes the recent ones.
 import fs from "node:fs";
-import { compileTopics, topicsOf, compileRelevance, relevance } from "./topics_lib.mjs";
+import { compileTopics, topicsOf, compileRelevance, itemRelevance } from "./topics_lib.mjs";
 
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -41,10 +41,7 @@ const clip = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return
 const count = {};
 const rows = [...pool.values()].sort((a, b) => (b.i.date > a.i.date ? 1 : b.i.date < a.i.date ? -1 : 0)).map(({ i, ccs, tp }) => {
   const en = i.title_en || i.title, orig = i.title && i.title !== en ? i.title : "", full = clip(i.summary_en || i.summary, 400), sum = SUM ? clip(full, SUM) : "";
-  let rel = relevance(REL, en + " \n " + orig + " \n " + full);
-  // a headline the translation step left in its own language cannot be checked against English words: kept unless a drop word matched
-  const latin = (en.match(/[A-Za-z]/g) || []).length, other = (en.match(/\p{L}/gu) || []).length - latin;
-  if (rel === "none" && (i.mt === "untranslated" || other > latin)) rel = "unchecked";
+  const rel = itemRelevance(REL, i);
   relN[rel] = (relN[rel] || 0) + 1;
   if (rel === "drop" || rel === "none") { dropped.push({ cc: [...ccs].join(","), why: rel === "drop" ? "sport, celebrity or lifestyle" : "no security, politics or public-safety word", title: en, outlet: i.outlet, date: i.date }); return null; }
   const ids = [...new Set([...tp, ...topicsOf(T, en + " \n " + orig + " \n " + full, [...ccs])])].filter((id) => T.some((t) => t.id === id));

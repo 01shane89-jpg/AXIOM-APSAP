@@ -258,6 +258,6 @@ if (!status.some((s) => s.ok)) { console.error("no social source worked"); statu
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/social.js", "ASAP_SOCIAL", newsCodes()); // one small file per country for the page (tools/split_country.mjs)
-try { updateHistory("social", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
+try { await updateHistory("social", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : s.skipped ? "skip" : "FAIL", s.platform, s.source, s.ok ? s.n + " posts" : s.error + (s.kept ? ` (kept ${s.kept} earlier posts)` : "")));
 lap("Social refresh total", T0);

@@ -8,6 +8,7 @@ import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { parseFeed } from "./feedparse.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
+import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
@@ -165,6 +166,14 @@ all.forEach((i) => {
   delete i._t; delete i._s;
 });
 saveCache();
+// Only news that matters to an analyst or a special operations team in the country is kept (tools/relevance.json, checked on
+// the English headline once it is translated): sport, celebrity, entertainment and lifestyle never reach Local news, Top stories
+// or the history. The outlets still count as working sources.
+{
+  const R = await loadRelevance(); let out = 0;
+  for (const cc of Object.keys(items)) { const n = items[cc].length; items[cc] = items[cc].filter((i) => kept(itemRelevance(R, i))); out += n - items[cc].length; }
+  console.log("relevance: left out", out, "headlines (sport, celebrity, lifestyle or no relevant word)");
+}
 // Pin each item to the first town or region its headline or summary names inside its own country (GeoNames, tools/gazetteer.mjs).
 // geo.p is the honest precision: "approx" = a town or city centre, "province" = the rough centre of a named region.
 // Items that name no place carry no geo and are not pinned.
@@ -202,6 +211,6 @@ fs.mkdirSync("data/live", { recursive: true });
 }
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status.filter((s) => !s.st), coverage, items }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/news.js", "ASAP_NEWS"); // one small file per country for the page (tools/split_country.mjs)
-try { updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
+try { await updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
 console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));
