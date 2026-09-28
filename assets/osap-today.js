@@ -390,8 +390,11 @@
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
     /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
     if (!box.querySelector("#td-body")) {
-      box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section><div id="td-body"></div></div>';
+      box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section>' +
+        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><div id="td-body"></div></div>';
       if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
+      /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
+      if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
     }
     box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
