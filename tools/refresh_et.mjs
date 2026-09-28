@@ -14,12 +14,13 @@ import crypto from "node:crypto";
 import { parseFeed } from "./feedparse.mjs";
 import { getFeed } from "./news_fetch.mjs";
 import { compileTopics, topicsOf } from "./topics_lib.mjs";
+import { unent, areaOf } from "./et_lib.mjs";
 
 const OUT = "data/live/et.js", DIR = "data/live/news-index", NEWS_DAYS = 30, OFFICIAL_DAYS = 366, MAX_NEWS = 600, MAX_OFFICIAL = 200;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const iso = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
 const fp = (s) => crypto.createHash("sha256").update(s).digest("hex");
-const clip = (s, n) => { s = String(s || "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+const clip = (s, n) => { s = unent(String(s || "").replace(/<[^>]+>/g, " ")).replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
 const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.indexOf("=", t.lastIndexOf("window.")) + 1).trim().replace(/;$/, "")); };
 const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
 const UAP = compileTopics(topics.filter((t) => t.id === "uap"));
@@ -47,7 +48,7 @@ if (rows.length) {
 const seen = new Set();
 const newsOk = sources[0].ok;
 const news = newsOk ? rows.slice(0, MAX_NEWS).map((r) => {
-  const [cc, date, title, orig, outlet, link, , flags] = r;
+  const [cc, date, t0, o0, outlet, link, , flags] = r, title = unent(t0), orig = unent(o0);
   if (seen.has(link)) return null; seen.add(link);
   const ccs = String(cc || "").split(",").filter(Boolean);
   const o = { cc: ccs, date, title, orig: orig || undefined, outlet, link, flags: flags || undefined, fp: fp(link + "\n" + title).slice(0, 16) };
@@ -63,6 +64,7 @@ const FEEDS = [
   { id: "dvids-aaro", name: "AARO on DVIDS", url: "https://www.dvidshub.net/rss/unit/8597", kind: "official", agency: "AARO", all: true },
   { id: "blackvault", name: "The Black Vault (FOIA document reporting)", url: "https://www.theblackvault.com/documentarchive/feed/", kind: "foia", agency: "The Black Vault" },
 ];
+if ((!gz || !placeIn)) { try { const g = await import("./gazetteer.mjs"); placeIn = g.placeIn; gz = await g.loadGazetteer(); } catch (e) { console.error("gazetteer unavailable:", e.message); } }
 const offBy = new Map((prev.official || []).map((i) => [i.link, i]));
 for (const F of FEEDS) {
   try {
@@ -71,8 +73,8 @@ for (const F of FEEDS) {
     for (const i of list) {
       const text = i.title + " " + (i.summary || "");
       if (!/^https?:\/\//.test(i.link || "") || !(F.all || isUap(text))) continue;
-      const old = offBy.get(i.link);
-      offBy.set(i.link, { src: F.id, kind: F.kind, agency: F.agency, date: iso(i.date) || (old && old.date) || stamp.replace(" ", "T").slice(0, 16),
+      const old = offBy.get(i.link), geo = F.id === "dvids-aaro" ? areaOf(i.title, gz, placeIn) : null;
+      offBy.set(i.link, { src: F.id, cc: geo ? geo.cc : undefined, geo: geo ? { name: geo.name, lat: geo.lat, lon: geo.lon, prec: geo.prec, basis: geo.basis } : undefined, kind: F.kind, agency: F.agency, date: iso(i.date) || (old && old.date) || stamp.replace(" ", "T").slice(0, 16),
         title: clip(i.title, 220), summary: clip(i.summary, 300), link: i.link, fp: fp(i.link + "\n" + i.title).slice(0, 16) });
       n++;
     }
