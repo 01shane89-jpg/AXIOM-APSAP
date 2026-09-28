@@ -35,6 +35,7 @@
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane){visibility:hidden}",
+    "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
     "#cf-rail .cfk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0 2px}#cf-rail .cfk div{background:var(--surface2);border-radius:4px;padding:5px 6px}#cf-rail .cfk b{display:block;font:600 17px/1.2 'IBM Plex Mono',monospace}#cf-rail .cfk span{font-size:11px;color:var(--muted);line-height:1.25;display:block}",
@@ -362,10 +363,17 @@
   /* ---------- rail ---------- */
   function filtered() {
     var d = cur.data; if (!d) return [];
-    var q = F.q.toLowerCase();
+    /* search filters as you type: every word must start a word in the report (so "IED" finds IEDs, not "died"), and the report's
+       kind counts too ("IED" or "bomb" finds the "IED or bombing" reports). Thai and other unspaced scripts match anywhere. */
+    var qs = F.q.trim().toLowerCase().split(/\s+/).filter(Boolean).map(function (w) {
+      var e = w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return /^[\u0000-\u024f]+$/.test(w) ? new RegExp("(^|[^\\p{L}\\p{N}])" + e, "u") : new RegExp(e, "u");
+    });
     return allItems(d).filter(function (i) {
-      return inWin(i.date) && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc) &&
-        (!q || ((i.title_en || "") + " " + i.title + " " + (i.summary_en || i.summary || "") + " " + i.outlet).toLowerCase().indexOf(q) >= 0);
+      if (!(inWin(i.date) && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc))) return false;
+      if (!qs.length) return true;
+      var txt = ((i.title_en || "") + " " + i.title + " " + (i.summary_en || i.summary || "") + " " + i.outlet + " " + kindName(i.kind) + " " + (i.place || "")).toLowerCase();
+      return qs.every(function (re) { return re.test(txt); });
     });
   }
   function kindName(k) { var n = (cur.data && cur.data.kind_names) || (IDX && IDX.kind_names) || {}; return n[k] || k; }
@@ -451,6 +459,7 @@
     var lim = +(box.getAttribute("data-lim") || 60), h = [];
     if (!cur.data.auto) {
       h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(it.length) + ")</h3>");
+      if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(it.length) + ")</button></p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + it.slice(0, lim).map(function (i, k) { return '<li data-k="' + k + '">' + repHtml(i) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
       if (it.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, it.length - lim) + " more</button>");
@@ -528,16 +537,43 @@
     }, function () { d._olderP = null; d._olderFail = true; if (active === id && cur.data === d) list(); });
     list();
   }
+  /* ---------- print: the whole filtered list (not just what is shown), one printable page set; the browser's own print
+     dialog also saves it as a PDF. Each entry keeps its source link and fingerprint. ---------- */
+  function printList() {
+    var c = byId(active), it = filtered(); if (!c || !cur.data) return;
+    var ksel = F.kind ? kindName(F.kind) : "all kinds", psel = (D.querySelector('#cf-rail select[data-cff="days"]') || {}).selectedOptions;
+    var per = psel && psel[0] ? psel[0].textContent : "", now = Date.now();
+    var el = D.getElementById("cf-print"); if (!el) { el = D.createElement("div"); el.id = "cf-print"; D.body.appendChild(el); }
+    el.innerHTML = "<h1>" + esc(c.name) + "</h1>" +
+      '<p class="cfpm">AXIOM OSAP · printed ' + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(now, { date: true }) : new Date(now).toISOString()) + " · " + esc(per) + " · " + esc(ksel) +
+      (F.q ? " · search “" + esc(F.q) + "”" : "") + " · " + num(it.length) + " reports</p>" +
+      '<p class="cfpm">Situational awareness only. Reports are unverified; statements by any party, including government and security bodies, are their claims; kinds are machine-sorted unless the record is curated. Each entry lists its source link and SHA-256 record fingerprint.</p>' +
+      "<ol>" + it.map(function (i) {
+        var t = i.title_en || i.title, orig = i.title_en && i.title_en !== i.title ? i.title : "";
+        return "<li><b>" + esc(t) + "</b>" + (orig ? '<div class="cfpm">' + esc(orig) + "</div>" : "") +
+          '<div class="cfpm">' + esc(when(i.date)) + " · " + esc(kindName(i.kind)) + (i.place ? " · " + esc(i.place) : "") + " · " + esc(i.outlet || "") + (i.tab ? " · curated record" : "") + "</div>" +
+          (i.summary_en || i.summary ? "<div>" + esc(String(i.summary_en || i.summary).slice(0, 600)) + "</div>" : "") +
+          '<div class="cfpm">' + (i.link ? esc(i.link) : "no link") + (i.fp ? " · SHA-256 " + esc(i.fp) : "") + "</div></li>";
+      }).join("") + "</ol>";
+    D.documentElement.classList.add("cfprinting");
+    var done = function () { D.documentElement.classList.remove("cfprinting"); W.removeEventListener("afterprint", done); };
+    W.addEventListener("afterprint", done);
+    setTimeout(function () { W.print(); setTimeout(done, 1000); }, 50);
+  }
+  D.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-cfprint]"); if (b) { e.preventDefault(); printList(); } });
   /* ---------- rail events ---------- */
   D.addEventListener("change", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
     if (t.hasAttribute("data-cfshow")) { F.show[t.getAttribute("data-cfshow")] = t.checked; drawMap(); return; }
-    var k = t.getAttribute("data-cff"); if (!k) return;
+    var k = t.getAttribute("data-cff"); if (!k || k === "q") return;   // the search box filters as you type (input event); its "change" on blur must not rebuild the list under a click
     F[k] = k === "days" ? +t.value : t.value; if (k === "days") { F.from = ""; F.to = ""; } if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
     if (k === "days" && F.days > 90 && needOlder()) loadOlder();
     var b = D.getElementById("cf-list"); if (b) b.removeAttribute("data-lim"); list();
   });
   var qT = 0;
+  // Enter in the search box applies it at once and closes the phone keyboard (the list already filters as you type)
+  D.addEventListener("keydown", function (e) { var t = e.target; if (e.key !== "Enter" || !t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return;
+    e.preventDefault(); clearTimeout(qT); F.q = t.value; list(); drawMap(); t.blur(); });
   D.addEventListener("input", function (e) { var t = e.target; if (!t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return; clearTimeout(qT); qT = setTimeout(function () { F.q = t.value; list(); drawMap(); }, 250); });
   D.addEventListener("click", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
