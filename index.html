@@ -11,7 +11,7 @@
 #osap-boot::before{content:"";position:absolute;inset:0 -3%;background:url(assets/world-watermark.svg) center/cover no-repeat;opacity:.16;pointer-events:none;animation:osap-drift 40s linear infinite alternate}
 #osap-boot>*{position:relative}
 #osap-boot.gone{opacity:0;pointer-events:none}
-:root[data-map="grey"] #osap-boot{background:#474F5A;color:#E0E5EB}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
+:root[data-map="grey"] #osap-boot{background:#2E3640;color:#C3CCD6}:root[data-map="dark"] #osap-boot{background:#1A1F26;color:#A8B2BE}
 :root[data-map="grey"] #osap-boot::before,:root[data-map="dark"] #osap-boot::before{opacity:.22}
 .ob-stage{width:min(40vw,170px);aspect-ratio:1;perspective:900px}
 .ob-coin{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:osap-rev 2.8s linear infinite}
@@ -166,7 +166,7 @@
 :root{
   --paper:#DEE3E9; --surface:#F1F4F7; --surface2:#E7EBF0;
   --ink:#141B23; --muted:#56626F; --line:#C5CED8; --line-soft:#D8DFE6;
-  --accent:#1D5A86; --accent-soft:#D6E3EE;
+  --accent:#1D5A86; --accent-soft:#D6E3EE; --on-accent:#FFFFFF; --bad:#B3261E;
   --l3:#9E3118; --l2:#C2792B; --l1:#95A0AC;
   --l3-fill:#9E3118; --l2-fill:#C2792B; --l1-fill:#909BA8;
   --over:#A32617; --near:#C2792B; --calm:#8B96A3;
@@ -180,22 +180,23 @@
    the artifact host owns that one and re-stamps it, which silently reverted
    any choice made here. Three explicit steps, no OS following. */
 :root[data-map="grey"]{
-  --paper:#474F5A; --surface:#555E69; --surface2:#4E5762;
-  --ink:#F8FAFC; --muted:#E0E5EB; --line:#737D89; --line-soft:#646D78;
-  --accent:#BCE3FA; --accent-soft:#415163;
-  --l3:#FF9F84; --l2:#F5C877; --l1:#B7C0CA;
-  --l3-fill:#FF9F84; --l2-fill:#F5C877; --l1-fill:#BDC6D0;
-  --over:#FF8A66; --near:#F5C877; --calm:#C4CCD5;
+  color-scheme:dark;
+  --paper:#2E3640; --surface:#38414C; --surface2:#333C46;
+  --ink:#F3F6F9; --muted:#C3CCD6; --line:#58636F; --line-soft:#48525D;
+  --accent:#8FCBF0; --accent-soft:#3D5870; --on-accent:#0E1A24; --bad:#FF9F8A;
+  --l3:#FF9F84; --l2:#F5C877; --l1:#AEB8C3;
+  --l3-fill:#FF9F84; --l2-fill:#F5C877; --l1-fill:#B7C1CB;
+  --over:#FF9272; --near:#F5C877; --calm:#B9C2CC;
   --rain:#A6E6F7; --power:#C9A9FF; --care:#7FE3D0; --util:#FFC489;
   --sat-flood:#FF8A8E; --sat-recur:#FFF07A; --sat-water:#9DEEFF;
-  --shadow:0 1px 2px rgba(0,0,0,.22),0 6px 18px rgba(0,0,0,.18);
-  --base-filter:grayscale(.35) brightness(.94) contrast(1.04);
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 6px 18px rgba(0,0,0,.2);
+  --base-filter:brightness(1.9) saturate(.85);
 }
 :root[data-map="dark"]{
   color-scheme:dark;
   --paper:#1A1F26; --surface:#232932; --surface2:#2B323C;
   --ink:#EEF2F6; --muted:#A8B2BE; --line:#3B444F; --line-soft:#303842;
-  --accent:#7CC3EE; --accent-soft:#1D3850;
+  --accent:#7CC3EE; --accent-soft:#1D3850; --on-accent:#0B1620; --bad:#FF8F78;
   --l3:#F0866A; --l2:#EDB863; --l1:#7D8997;
   --l3-fill:#F0866A; --l2-fill:#EDB863; --l1-fill:#8793A1;
   --over:#FF7D60; --near:#EDB863; --calm:#7E8A98;
@@ -266,7 +267,7 @@ html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:no
 .bmeasure{position:absolute;left:-9999px;top:0;width:186mm;visibility:hidden}.bmeasure .bpage{max-width:none;padding:0;font-size:9.5px;box-shadow:none}.bmeasure .bpage h3{margin:5px 0 2px}.bmeasure .noprint{display:none}
 @media print{@page{margin:12mm}}
 .pseg{display:inline-flex;align-items:center;gap:0;flex-wrap:wrap;font-size:11.5px}.pseg .plbl{font-family:var(--mono,monospace);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;color:var(--muted);margin-right:6px}
-.pseg button{border:1px solid var(--line,#ccc);background:var(--surface);color:var(--ink);padding:3px 8px;font:inherit;cursor:pointer;margin-left:-1px}.pseg button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pseg button{border:1px solid var(--line,#ccc);background:var(--surface);color:var(--ink);padding:3px 8px;font:inherit;cursor:pointer;margin-left:-1px}.pseg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .pseg #period-custom{margin-left:6px}.pseg input.mini{font-size:11.5px;padding:2px 4px}
 .advlvl{border-left:4px solid;padding:6px 10px;margin:4px 0 6px;font-size:14px;background:var(--surface)}
 .fresh .badge{margin-left:4px}
@@ -275,8 +276,8 @@ html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:no
 .rprog.on{display:inline-flex}
 .rprog .bar{width:84px;height:5px;border-radius:3px;background:var(--line,#d6dbe1);overflow:hidden;flex:none}
 .rprog .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s ease}
-.rprog.fail .bar i{background:#b3261e}
-.rprog.fail .st{color:#b3261e}
+.rprog.fail .bar i{background:var(--bad)}
+.rprog.fail .st{color:var(--bad)}
 .rprog.ok .st{color:var(--accent)}
 .rprog.warn .bar i{background:var(--muted)}
 #hdr-refresh{padding:3px 10px;font-size:11.5px;text-transform:none;letter-spacing:0}
@@ -322,7 +323,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 0}
   font:inherit;font-size:11.5px;padding:3px 9px;border:none;cursor:pointer;
   background:var(--surface);color:var(--muted);font-family:"IBM Plex Mono",monospace;
 }
-.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 
 .lg{display:flex;align-items:flex-start;gap:9px;padding:3px 0;font-size:12.5px}
 .sw{width:15px;height:15px;border-radius:2px;flex:none;margin-top:2px;border:1px solid rgba(0,0,0,.22)}
@@ -411,7 +412,7 @@ button.refresh{
 button.refresh:hover{background:var(--surface2)}
 button.refresh[disabled]{opacity:.55;cursor:default}
 button.refresh.primary{
-  background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;
+  background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600;
   font-size:12.5px;padding:6px 14px;
 }
 button.refresh.primary:hover{filter:brightness(1.08)}
@@ -532,7 +533,7 @@ header:has(.cdrop.open){z-index:1100}
 .cmenu:has(> :nth-child(24)){min-width:min(720px,calc(100vw - 16px))}
 .cmenu button.call{grid-column:1/-1;font-style:italic}
 header .ctabs .actkey{flex:1 1 auto;margin:0 0 0 6px;font-size:11px}
-.ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctabs button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .ctabs button .n{font-weight:500;opacity:.75;margin-left:5px;font-size:11px}
 header .viewtabs{order:10;flex:1 1 100%;display:flex;overflow-x:auto;scrollbar-width:thin}
 header .viewtabs button{white-space:nowrap;flex:none}
@@ -569,7 +570,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .rvseg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25);clear:both}
 .rvseg button{font-family:inherit;font-size:13px;line-height:1;font-weight:600;background:none;border:none;color:var(--ink);padding:9px 12px;cursor:pointer;min-height:36px}
 .rvseg button+button{border-left:1px solid var(--line)}
-.rvseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.rvseg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 .rvlist{overflow-y:auto;padding:8px 10px 16px;display:grid;grid-template-columns:1fr;gap:8px;align-content:start;overscroll-behavior:contain}
 .shell.rv-list .rvlist{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 .rvcard{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:9px 11px;cursor:pointer}
@@ -585,7 +586,7 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl{display:flex;gap:0;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25);clear:both;max-width:300px}
 .areactl button{font-family:inherit;font-size:13px;font-weight:600;line-height:1;background:none;border:none;color:var(--ink);padding:9px 12px;min-height:36px;cursor:pointer}
 .areactl button+button{border-left:1px solid var(--line)}
-.areactl button.on{background:var(--accent);color:#fff}
+.areactl button.on{background:var(--accent);color:var(--on-accent)}
 .areactl button[disabled]{opacity:.45;cursor:default}
 .areahint{font-size:12px;padding:6px 10px;color:var(--muted);flex-basis:100%;border-bottom:1px solid var(--line)}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
@@ -1164,7 +1165,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
      produced a near-black map, so each theme gets its own tiles instead. */
   var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_{v}_Gray_Base/MapServer/tile/{z}/{y}/{x}";
   function theme() { return document.documentElement.getAttribute("data-map") || "light"; }
-  function isDark() { return theme() === "dark"; }
+  function isDark() { return theme() !== "light"; } /* Grey and Dark both use the dark canvas; Grey lifts it to slate with --base-filter */
   /* Esri serves every zoom; only the packaged offline copy starts at zoom 6. Forcing zoom-6 tiles on a zoomed-out
      world view asked for thousands of tiles at once and froze the page (Russia, Canada) */
   var baseLayer = new Hybrid(ESRI.replace("{v}", isDark() ? "Dark" : "Light"),
@@ -7311,11 +7312,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   html.phone #map .leaflet-top.leaflet-right{max-height:calc(100% - 44px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none}
   html.phone #map .leaflet-top.leaflet-right:has(.mlbtn[aria-expanded="true"])>.leaflet-control:not(.mlctl){display:none}
   .xa-ask .leaflet-popup-content{margin:8px;min-width:0}
-  .xa-go{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff}
+  .xa-go{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent)}
   /* icon markers (pins, volcano triangles) get an invisible 12 px ring around them on touch screens */
   @media (pointer:coarse){.leaflet-marker-icon.leaflet-interactive::after{content:"";position:absolute;inset:-12px}}
   .qcard h3{font-size:15px;margin:4px 0 6px;line-height:1.3}
-  .qcard .full{display:block;width:100%;margin-top:8px;min-height:40px;font:inherit;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff}
+  .qcard .full{display:block;width:100%;margin-top:8px;min-height:40px;font:inherit;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent)}
 }
 </style>
 <script>

@@ -142,7 +142,7 @@
     var st = document.createElement("style");
     st.textContent = "#watchdlg .pushbox h3{margin-top:16px}#watchdlg .pushbox code.pushtopic{font-size:14px;padding:2px 6px;border:1px solid var(--line);border-radius:4px;user-select:all;word-break:break-all}" +
       "#watchdlg .pushbox a.refresh{display:inline-block;text-decoration:none;font-size:12px;padding:7px 12px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink);min-height:20px}" +
-      "#watchdlg .pushbox a.refresh.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;font-size:13px;padding:8px 16px}#watchdlg .wbtns button.on{border-color:var(--accent);color:var(--accent)}";
+      "#watchdlg .pushbox a.refresh.primary{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent);font-weight:600;font-size:13px;padding:8px 16px}#watchdlg .wbtns button.on{border-color:var(--accent);color:var(--accent)}";
     document.head.appendChild(st);
   }
   if (!/[?&]watchscan=1(&|$)/.test(location.search)) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hook); else hook(); }

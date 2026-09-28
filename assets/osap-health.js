@@ -11,11 +11,11 @@
     ".ohb{display:inline-flex;align-items:center;gap:5px;font:600 11px/1 'IBM Plex Sans',system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;" +
     "color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:4px 8px;cursor:pointer;min-height:24px;white-space:nowrap}" +
     ".ohb i{width:8px;height:8px;border-radius:50%;background:#8A94A0;flex:none}" +
-    ".ohb.ok i{background:#1F8A4C}.ohb.amber i{background:#C98A12}.ohb.down i{background:#C0392B}.ohb.down{color:#C0392B;border-color:#C0392B}" +
+    ".ohb.ok i{background:#1F8A4C}.ohb.amber i{background:#C98A12}.ohb.down i{background:#C0392B}.ohb.down{color:var(--bad,#C0392B);border-color:var(--bad,#C0392B)}" +
     ".ohp{position:absolute;z-index:1200;top:calc(100% + 6px);left:0;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);" +
     "border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px 12px;font:400 12.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal}" +
     ".ohp strong{font:inherit;font-weight:600;color:inherit}.ohp ul{margin:6px 0;padding-left:18px}.ohp li{margin:2px 0}" +
-    ".ohp .hk{color:#C0392B}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}";
+    ".ohp .hk{color:var(--bad,#C0392B)}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}";
   document.head.appendChild(css);
 
   /* one badge in the map header (after the OSAP name) and one on the Today screen (after its date line); Today is drawn by
