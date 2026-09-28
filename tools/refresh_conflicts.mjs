@@ -379,7 +379,8 @@ if (!PROBE) {
   try { ({ translateAll, saveCache } = await import("./translate.mjs")); } catch (e) { console.error("translation unavailable:", e.message); }
   try { const g = await import("./gazetteer.mjs"); placeIn = g.placeIn; gz = await g.loadGazetteer(); } catch (e) { console.error("gazetteer unavailable:", errMsg(e)); }
 }
-const cutoff = new Date(NOW - KEEP_DAYS * 864e5).toISOString().slice(0, 16);
+// a conflict may keep its reports longer than the default (keep_days in tools/conflicts.json); older ones load only on request
+const cutoffOf = (c) => new Date(NOW - (c.keep_days || KEEP_DAYS) * 864e5).toISOString().slice(0, 16);
 const index = [], autoTabs = [];
 fs.mkdirSync(OUT + "/front", { recursive: true });
 for (const c of LIST) {
@@ -388,7 +389,7 @@ for (const c of LIST) {
   const byLink = new Map();
   for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
   for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
-  let items = [...byLink.values()].filter((i) => i.date && i.date >= cutoff && i.date <= new Date(NOW + 36e5).toISOString().slice(0, 16))
+  let items = [...byLink.values()].filter((i) => i.date && i.date >= cutoffOf(c) && i.date <= new Date(NOW + 36e5).toISOString().slice(0, 16))
     .sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, c.cap || CAP);
   // an old story that a search listed with a fresh date (its own text states only older dates) is left out
   const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date));
@@ -469,7 +470,7 @@ for (const c of LIST) {
   st.weeks = W.reverse();
   st.ucdp_latest = ucdp.length ? ucdp[0].date : null;
   const pub = { id: c.id, name: c.name, short: c.short, countries: c.countries, since: c.since, kind: c.kind, parties: c.parties, bounds: c.bounds, tier: c.tier || 2, ...(c.note_data ? { note_data: c.note_data } : {}), ...(c.merge_tabs ? { merge_tabs: c.merge_tabs } : {}) };
-  const data = { ...pub, asof: stamp, keep_days: KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
+  const data = { ...pub, asof: stamp, keep_days: c.keep_days || KEEP_DAYS, sources: [...status, { ...ucdpStatus, n: ucdp.length }], stats: st, items, ucdp,
     ucdp_key: UF.find((u) => u.id === c.id).key, ucdp_files: [...(ucdpFilesDone[c.id] || [])], kind_names: KIND_NAMES };
   if (!PROBE) {
     const edge = new Date(NOW - RECENT_DAYS * 864e5).toISOString().slice(0, 16);

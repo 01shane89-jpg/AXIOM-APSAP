@@ -5,13 +5,13 @@
 //   2. Thailand's general outlets are not fetched again: their Deep South items are taken from data/live/news.js (the news step).
 //   3. UCDP candidate events for the Patani conflict over the past 13 months (the monthly files; refresh_more.mjs keeps only the newest).
 // Each item gets a kind (ied, shooting, arson, raid_or_arrest, clash ...) from words in its headline, and the district it names;
-// both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for 365 days (merged by link).
+// both are marked as machine-sorted. Items are unverified reports, never evidence. Items are kept for three years (merged by link).
 // Writes data/live/deepsouth.js. PROBE=1 writes probe-out/deepsouth.json instead (per-feed result and sample headlines), never data/.
 import fs from "node:fs";
 import { translateAll, saveCache, decodeEntities, forget } from "./translate.mjs";
 import { parseFeed } from "./feedparse.mjs";
 
-const PROBE = process.env.PROBE === "1", TIMEOUT = 20000, KEEP_DAYS = 365, CAP = 1500, OUT = "data/live/deepsouth.js";
+const PROBE = process.env.PROBE === "1", TIMEOUT = 20000, KEEP_DAYS = 1095, CAP = 4000, OUT = "data/live/deepsouth.js";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP Deep South refresh)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
