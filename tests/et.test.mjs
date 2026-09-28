@@ -8,7 +8,7 @@ assert.equal(unent("La B&#243;veda &amp; &#191;OVNI?"), "La Bóveda & ¿OVNI?");
 assert.equal(unent("Gallaudet&#8217;s"), "Gallaudet’s");
 // AARO case release titles: a sea area, a country, a U.S. state (through the gazetteer), or nothing
 let a = areaOf("DOW-UAP-PR144, Unresolved UAP Report, Yellow Sea, 2023");
-assert.equal(a.name, "Yellow Sea"); assert.equal(a.prec, "area"); assert.ok(a.lat > 30 && a.lon > 120);
+assert.equal(a.name, "Yellow Sea"); assert.equal(a.prec, "area"); assert.deepEqual(a.cc, ["cn", "kr", "kp"]); assert.ok(a.lat > 30 && a.lon > 120);
 a = areaOf("DOW-UAP-PR010, Unresolved UAP Report, Syria, March 2024");
 assert.deepEqual(a.cc, ["sy"]); assert.equal(a.prec, "country");
 const fakeGz = {}, fakePlace = (gz, text, ccs) => (/Colorado/.test(text) && ccs[0] === "us" ? { lat: 39, lon: -105.5, prec: "province", basis: "rough centre of a GeoNames region named in the text" } : null);
