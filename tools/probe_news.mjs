@@ -63,3 +63,29 @@ console.log("feeds answering with items:", ok.length, "/", results.length, "; co
 console.log("aggregators:", agg.map((a) => a.outlet[0] + ":" + a.cc + "=" + (a.n || a.error || a.status)).join(" "));
 console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f) => f.n > 0).length, "feeds with items", cap.error || "");
 process.exit(0);
+
+// PROBE BRANCH ONLY: feed discovery for outlets whose guessed feed failed. Reads the home page, collects
+// <link rel="alternate"> feed links and a few common feed paths, checks each, and notes the page's size and link count.
+{
+  const { discover = [] } = JSON.parse(fs.readFileSync("tools/news_candidates.json", "utf8"));
+  const COMMON = ["/feed", "/feed/", "/rss", "/rss.xml", "/rss/", "/index.xml", "/feed.xml", "/atom.xml", "/rss/all.xml", "/rss/news.xml"];
+  const out = await pool(discover, 8, async (d) => {
+    const r = { ...d, tried: [] };
+    try {
+      const h = await get(d.home, 20000);
+      r.status = h.status; r.final = h.final; r.bytes = h.body.length; r.links = (h.body.match(/<a\s/gi) || []).length;
+      r.title = (h.body.match(/<title[^>]*>([^<]{0,120})/i) || [])[1];
+      const alts = [...h.body.matchAll(/<link[^>]+>/gi)].map((m) => m[0]).filter((t) => /application\/(rss|atom)\+xml/i.test(t))
+        .map((t) => (t.match(/href=["']([^"']+)/i) || [])[1]).filter(Boolean);
+      const anchors = [...h.body.matchAll(/href=["']([^"']*(?:rss|feed)[^"']*)["']/gi)].map((m) => m[1]).slice(0, 12);
+      const base = h.final || d.home, urls = new Set();
+      for (const u of [...alts, ...anchors, ...COMMON]) { try { urls.add(new URL(u.replace(/&amp;/g, "&"), base).href); } catch (e) {} }
+      for (const u of [...urls].slice(0, 16)) {
+        const c = await check({ url: u });
+        r.tried.push({ url: u, status: c.status || c.error, n: c.n, last7: c.last7, newest: c.newest, sample: (c.sample || []).slice(0, 2) });
+      }
+    } catch (e) { r.error = e.name === "AbortError" ? "timed out" : e.message; }
+    return r;
+  });
+  fs.writeFileSync("probe-out/discover.json", JSON.stringify(out, null, 1));
+}
