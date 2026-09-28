@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, topics, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads); empty runs all"
         required: false
         default: ""
 
@@ -82,6 +82,12 @@ jobs:
       - name: Pull local news (GDELT and national outlets) and translate headlines
         if: ${{ !inputs.only || inputs.only == 'news' }}
         run: node tools/refresh_news.mjs
+        continue-on-error: true
+      # Data sets (tools/topics.json): each one's news searches, then the one search index over every country's news and those
+      # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads.
+      - name: Pull data-set searches and build the news search index
+        if: ${{ !inputs.only || inputs.only == 'news' || inputs.only == 'topics' }}
+        run: node tools/refresh_topics.mjs; node tools/news_index.mjs
         continue-on-error: true
       # Thailand's Deep South (insurgency layer only): Deep South outlets and searches, the news step's Deep South items, and UCDP's
       # Patani-conflict events for the past 13 months. Runs after the news step because it reads data/live/news.js.
@@ -189,7 +195,7 @@ jobs:
       # A test run of the dense feeds on a feature branch parks its output on a throwaway branch (never on the feature branch or main),
       # so the result (and raw feed samples) can be checked without committing data to the branch under review.
       - name: Park dense test output on a preview-data branch
-        if: ${{ (inputs.only == 'dense' || inputs.only == 'deepsouth' || inputs.only == 'news' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'probe-refdata' || inputs.only == 'probe-leads') && github.ref != 'refs/heads/main' }}
+        if: ${{ (inputs.only == 'dense' || inputs.only == 'deepsouth' || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'social' || inputs.only == 'warnings' || inputs.only == 'probe-news' || inputs.only == 'probe-cap' || inputs.only == 'probe-refdata' || inputs.only == 'probe-leads') && github.ref != 'refs/heads/main' }}
         env:
           ONLY: ${{ inputs.only }}
         run: |
@@ -197,7 +203,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
