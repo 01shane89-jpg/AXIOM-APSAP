@@ -46,6 +46,7 @@
       S.busy = true; draw();
       var got = function () {
         S.busy = false; S.man = window.OSAP_NEWSIX || null;
+        try { Object.keys(window.OSAP_NEWSIX_DAY || {}).forEach(function (d) { PRE[d] = window.OSAP_NEWSIX_DAY[d]; }); } catch (e) {}
         if (!S.man || !S.man.days) { S.err = "The reports index has not been built yet. It is made by the next refresh."; S.man = null; draw(); return; }
         ensure();
       };
