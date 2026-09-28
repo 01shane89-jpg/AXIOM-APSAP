@@ -1,6 +1,6 @@
 # Guards against merges that silently drop script tags or feature code from index.html,
 # and checks headless that the map still draws its objects and military symbols.
-# The list of required lines is tools/required-in-index.txt.
+# The list of required lines is tools/required-in-index.txt. Also fails when sw.js VERSION is out of date.
 name: Check index.html
 on:
   pull_request:
@@ -15,6 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: node tools/check_index.mjs
+      # sw.js VERSION must match index.html + assets/, or installed phones keep the old scripts (tools/sw_version.mjs)
+      - run: node tools/sw_version.mjs --check
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
