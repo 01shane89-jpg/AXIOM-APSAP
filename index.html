@@ -3378,8 +3378,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var f = FD[i.f] || {}; var m = score(i.t, i.x, i.d, i.la, i.lo, ""); if (!m) return;
       out.push({ s: m.s, why: m.why, t: i.t, when: i.d ? (i.d.length > 10 ? window.OSAP_TIME.asofT(i.d) : fmtD(i.d.slice(0, 10))) : "", src: f.name || "", url: i.u, kind: f.cat || "Open data" });
     });
-    var res = out.sort(function (a, b) { return b.s - a.s; }).slice(0, 12);
-    res.social = soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; }).slice(0, 8);
+    /* reports and posts from the neighbouring countries' pages that this device has read */
+    (typeof XR !== "undefined" ? XR : []).forEach(function (o) {
+      var kc = flagOf(o.xcc) + " " + cName(o.xcc), src = o.src ? o.src.name : "";
+      if (o.social) { var ms = scoreSoc(o); if (ms) soc.push({ s: ms.s, h: ms.h, why: ms.why, t: o.title, when: fmtTs(o), src: src, url: o.url, kind: "Social media, unverified", xcc: o.xcc, xhref: xbHref(o) }); return; }
+      var m = score(o.title, "", o.ts, o.lat, o.lon, o.place); if (!m) return;
+      out.push({ s: m.s, why: m.why, t: o.title, when: fmtTs(o), src: src, url: o.url, kind: kc + (LBY[o.layer] ? " · " + LBY[o.layer].name : ""), xcc: o.xcc, xhref: xbHref(o) });
+    });
+    /* anything close in place and time counts too (the Report's own "Related records" rule), even with no shared words */
+    var have = {}; out.forEach(function (m) { if (m.rec) have[m.rec.id] = 1; });
+    related(r).forEach(function (o) {
+      if (have[o.id] || o.social) return;
+      var d = r.lat != null && o.lat != null && isFinite(r.lat) && isFinite(o.lat) ? Math.round(km(r, o)) + " km away" : "same place";
+      var dd = Math.round(Math.abs(Date.parse(String(o.ts).slice(0, 10)) - Date.parse(String(r.ts).slice(0, 10))) / 864e5);
+      out.push({ s: 0.5, why: d + " · " + (dd < 1 ? "same day" : dd + " days apart"), rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
+    });
+    var res = out.sort(function (a, b) { return b.s - a.s; }).slice(0, 40);
+    res.social = soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; }).slice(0, 20);
     return res;
   }
   /* a record's time in ms: feed times without a zone are UTC ("2026-09-26T17:59"); date-only times count from midnight UTC */
@@ -3390,20 +3405,24 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function relRows(list) {
     return '<div class="pkgrel">' + list.map(function (m) {
-        return '<div class="relrow">' + (m.rec ? '<button type="button" class="tlrow" data-id="' + esc(m.rec.id) + '">' : '<div class="tlrow">') +
+        var open = m.rec ? '<button type="button" class="tlrow" data-id="' + esc(m.rec.id) + '">' : m.xhref ? '<a class="tlrow" href="' + esc(m.xhref) + '">' : '<div class="tlrow">';
+        return '<div class="relrow">' + open +
           '<span class="tlt">' + esc([m.kind, m.when].filter(Boolean).join(" · ")) + '</span><span class="tln">' + esc(m.t) + "</span>" +
-          '<span class="tlm"><span class="tls">' + esc([m.src, m.why].filter(Boolean).join(" · ")) + "</span></span>" + (m.rec ? "</button>" : "</div>") +
-          (m.url && /^https?:\/\//.test(m.url) ? '<a class="rellink" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + (m.rec && m.rec.social ? "Post" : "Source") + "</a>" : "") + "</div>";
+          '<span class="tlm"><span class="tls">' + esc([m.src, m.why].filter(Boolean).join(" · ")) + "</span></span>" + (m.rec ? "</button>" : m.xhref ? "</a>" : "</div>") +
+          (m.url && /^https?:\/\//.test(m.url) ? '<a class="rellink" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + ((m.rec && m.rec.social) || /^Social/.test(m.kind) ? "Post" : "Source") + "</a>" : "") + "</div>";
       }).join("") + "</div>";
   }
+  /* every source in one list, grouped by where it came from: social posts first, then news, official and other records,
+     open data and analysis, and the neighbouring countries' pages */
   function relatedHtml(list) {
-    var soc = list.social || [];
-    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time. A match is not a confirmed link between the stories; read each one.</p>' +
+    var soc = list.social || [], G = [["news", "News reports", []], ["rec", "Official and other records", []], ["open", "Open data and analysis", []], ["xb", "Neighbouring countries", []]];
+    list.forEach(function (m) { G[m.xhref ? 3 : !m.rec ? 2 : m.rec.news ? 0 : 1][2].push(m); });
+    return '<p class="note" style="margin:0 0 8px"><b>Matched automatically</b> by shared words, place and time, from every source OSAP reads for this country and its neighbours. A match is not a confirmed link between the reports; read each one.</p>' +
       '<h4 class="relh">Social media posts (' + soc.length + ")</h4>" +
       (soc.length ? '<p class="note relsoc">Unverified. Posts from official agencies and news accounts only, never private people. A post is that account\'s claim and is often ahead of confirmed reporting.</p>' + relRows(soc)
         : '<p class="obs">No post from the official and news accounts OSAP reads matches this report yet.</p>') +
-      '<h4 class="relh">Stories and records (' + list.length + ")</h4>" +
-      (list.length ? relRows(list) : '<p class="obs">No other story shares enough words, place or time with this one.</p>');
+      (list.length ? G.filter(function (g) { return g[2].length; }).map(function (g) { return '<h4 class="relh" data-relg="' + g[0] + '">' + g[1] + " (" + g[2].length + ")</h4>" + relRows(g[2]); }).join("")
+        : '<h4 class="relh">Other reports (0)</h4><p class="obs">No other report shares enough words, place or time with this one.</p>');
   }
   function select(id, fly, boxId) {
     var r = byId[id]; if (!r) { if (/^x:/.test(String(id))) xaOpen(id, boxId); return; }
@@ -3418,7 +3437,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     box.hidden = false;
     box.innerHTML =
       '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
-      '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related stories (' + (rs.length + rs.social.length) + ")</button></div>" +
+      '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related reports (' + (rs.length + rs.social.length) + ")</button></div>" +
       '<div class="pkgpane" data-pane="rel" hidden>' + relatedHtml(rs) + "</div>" +
       '<div class="pkgpane" data-pane="rep">' +
       (pic ? '<figure class="pkgpic"><a href="' + esc(r.url || pic) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()"></a>' +
@@ -5711,7 +5730,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (list.length > cap ? (cap < 200 ? '<p class="rvnote"><button type="button" class="refresh" data-rv-more>Show all ' + list.length + "</button></p>" :
         '<p class="obs rvnote">Showing the newest ' + cap + " of " + list.length + ". Zoom in or narrow the period to see the rest.</p>") : "") +
       (!list.length && !none ? '<p class="obs rvnote">' + (AREA ? "Nothing inside the drawn area." : "Nothing in this map area. Zoom out or move the map.") + "</p>" : "") +
-      (AREA ? '<p class="rvnote"><button type="button" class="refresh" data-rv-clear>Clear the drawn area</button></p>' : "") +
+      (AREA ? '<p class="rvnote"><button type="button" class="refresh" data-rv-sum>Summarise this area</button> <button type="button" class="refresh" data-rv-clear>Clear the drawn area</button></p>' : "") +
       (more > 0 ? '<p class="obs rvnote">' + more + " more have no map location. " + '<button type="button" class="refresh" data-rv-list>Show them in the list view</button></p>' : "");
     rvHook(list);
     var af = document.getElementById("rv-asof"); if (af) af.textContent = rvAsofTxt();
@@ -5842,6 +5861,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (e.target.closest && e.target.closest("[data-rv-list]")) { rvSet("list"); return; }
     if (e.target.closest && e.target.closest("[data-rv-more]")) { rvAll = true; rvRender(); return; }
     if (e.target.closest && e.target.closest("[data-rv-clear]")) { areaSet(null); return; }
+    if (e.target.closest && e.target.closest("[data-rv-sum]")) { areaSum(); return; }
     if (e.target.closest && e.target.closest("#rv-refresh")) { rvRefresh(); return; }
     if (e.target.closest && e.target.closest("#rv-asof")) { feedsToggle(document.getElementById("rv-feeds").hidden); return; }
     var c = e.target.closest && e.target.closest(".rvcard");
@@ -5991,7 +6011,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
       (AREA ? '<button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
-    else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>";
+    else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
+      (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' : "");
     areaEl.innerHTML = h;
   }
   areaEl.addEventListener("click", function (e) {
@@ -6003,8 +6024,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
+    else if (k === "sum") { areaSum(); return; }
     areaUi();
   });
+  /* the area summary (assets/osap-areasum.js) opens in the Details panel beside the list, which it shows if the map is on its own */
+  function areaSum() {
+    if (!AREA || !window.OSAP_AREASUM) return;
+    if (!rvPhone() && rvMode === "map") rvSet("split");
+    window.OSAP_AREASUM.open("rv-pkg");
+  }
   areaShow(); areaUi();
   /* ---------- collapsible side panels and a full-screen map ----------
      Each side panel (the report list and the main panel on the right) folds to a thin strip with its own button; the choice is
@@ -6395,6 +6423,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<span class="tln">' + esc(v.head.title) + "</span>" +
       '<span class="tlm">' + evChips(v) + '<span class="tls">' + esc(evSrcTxt(v)) + "</span></span>";
   }
+  /* related reports from every source for the whole event: matched on its lead report, leaving out the event's own members */
+  function evRelHtml(v) {
+    var head = v.m.filter(function (r) { return !r.xcc; })[0]; if (!head) return "";
+    var mine = {}, rs = relatedStories(head);
+    v.m.forEach(function (r) { mine[r.id] = 1; if (r.__rk) mine["k:" + r.xcc + ":" + r.__rk] = 1; });
+    function keep(m) { return !(m.rec && mine[m.rec.id]) && !(m.xhref && v.m.some(function (r) { return r.xcc && xbHref(r) === m.xhref; })); }
+    var list = rs.filter(keep); list.social = rs.social.filter(keep);
+    return '<h4 class="pkgh">Related reports (' + (list.length + list.social.length) + ")</h4>" + '<div class="pkgpane evrel" data-pane="rel">' + relatedHtml(list) + "</div>";
+  }
   var EVOPEN = null;
   function evOpen(v, boxId) {
     EVOPEN = { id: v.id, box: boxId || "tl-pkg" };
@@ -6420,7 +6457,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           (r.xcc ? '<a class="refresh" href="' + esc(xbHref(r)) + '">Open in ' + esc(cName(r.xcc)) + "</a>" : '<button type="button" class="refresh" data-ev-rec="' + esc(r.id) + '">Open report</button>') +
           '<button type="button" class="refresh" data-ev-split="' + esc(r.id) + '" title="Show this report on its own; OSAP will not group it again on this device">Split out</button></span></div>';
       }).join("") + "</div>" +
-      (nSplit ? '<p class="obs" style="margin-top:6px">' + nSplit + " report" + (nSplit === 1 ? " was" : "s were") + ' split out of this event. <button type="button" class="refresh" data-ev-regroup="' + esc(v.id) + '">Group again</button></p>' : "");
+      (nSplit ? '<p class="obs" style="margin-top:6px">' + nSplit + " report" + (nSplit === 1 ? " was" : "s were") + ' split out of this event. <button type="button" class="refresh" data-ev-regroup="' + esc(v.id) + '">Group again</button></p>' : "") +
+      evRelHtml(v);
     box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; EVOPEN = null; });
     Array.prototype.forEach.call(box.querySelectorAll("[data-ev-rec]"), function (b) {
       b.addEventListener("click", function () { EVOPEN = null; select(b.getAttribute("data-ev-rec"), boxId === "tl-pkg", boxId); });
@@ -7091,6 +7129,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
+  /* what the area summary (assets/osap-areasum.js) reads; it never writes back */
+  window.TSAP.areaApi = { area: function () { return AREA; }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+    records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
+    fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
+    countryName: function (c) { return flagOf(c) + " " + cName(c); },
+    events: function () { return EV_ON ? evBuild().list.map(function (ev) { return evMake(ev, ev.m); }) : []; },
+    openData: function () { var X = xMine(), FD = xFeeds(); return X ? X.items.map(function (i) { var f = FD[i.f] || {};
+      return { t: i.t, x: i.x, d: i.d, la: i.la, lo: i.lo, u: i.u, src: f.name || "", cat: f.cat || "Open data" }; }) : []; } };
 })();
 </script>
 <script>
@@ -7353,5 +7399,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
 <script src="assets/osap-tlreport.js"></script>
+<script src="assets/osap-areasum.js"></script>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (had && !reloaded) { reloaded = true; location.reload(); } }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
