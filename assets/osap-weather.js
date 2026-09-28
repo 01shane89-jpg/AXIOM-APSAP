@@ -193,7 +193,7 @@
   var LEV = [1000, 950, 900, 850, 800, 700, 600, 500];
   var HV = ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation", "rain", "showers", "snowfall", "weather_code",
     "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "cape", "lifted_index",
-    "freezing_level_height", "pressure_msl", "wind_speed_850hPa", "wind_direction_850hPa", "wind_speed_700hPa", "wind_direction_700hPa", "wind_speed_500hPa",
+    "freezing_level_height", "pressure_msl", "precipitation_probability", "uv_index", "wind_speed_850hPa", "wind_direction_850hPa", "wind_speed_700hPa", "wind_direction_700hPa", "wind_speed_500hPa",
     "wind_direction_500hPa", "wind_speed_300hPa", "wind_direction_300hPa"]
     .concat(LEV.map(function (l) { return "cloud_cover_" + l + "hPa"; })).concat(LEV.map(function (l) { return "geopotential_height_" + l + "hPa"; }));
   var MV = ["wave_height", "wave_direction", "wave_period", "swell_wave_height", "wind_wave_height", "sea_surface_temperature"];
@@ -246,6 +246,17 @@
     else if (best == null && low != null && low >= 60 && t != null && td != null) best = Math.max(60, 125 * (t - td));
     return best == null ? null : best * M2FT;
   }
+  /* temperatures are shown in both units, as "31°C / 88°F" */
+  function cToF(c) { return c * 9 / 5 + 32; }
+  function degCF(c) { return c == null || isNaN(c) ? "–" : Math.round(c) + "°C / " + Math.round(cToF(c)) + "°F"; }
+  function pairCF(c) { return c == null || isNaN(c) ? "–" : Math.round(c) + "/" + Math.round(cToF(c)); }
+  /* a low/high pair in both units: "24/33°C · 75/91°F" (one number when they round the same) */
+  function mmCF(a, b) {
+    if (a == null || b == null) return "–";
+    var c1 = Math.round(a), c2 = Math.round(b), f1 = Math.round(cToF(a)), f2 = Math.round(cToF(b));
+    return (c1 === c2 ? c2 : c1 + "/" + c2) + "°C · " + (f1 === f2 ? f2 : f1 + "/" + f2) + "°F";
+  }
+  function rangeCF(a, b) { return Math.round(a) + " to " + Math.round(b) + "°C (" + Math.round(cToF(a)) + " to " + Math.round(cToF(b)) + "°F)"; }
   /* heat index (NOAA Rothfusz regression) and wind chill (Environment Canada / NWS 2001), both in °C */
   function heatIndex(t, rh) {
     if (t == null || rh == null || t < 26.7) return null;
@@ -404,7 +415,7 @@
         if (ge(w.pr24, 50) || ge(w.sn, 15)) return [2, why(w, ["pr24>=50", "sn>=15"])];
         if (ge(w.pr24, 25) || ge(w.sn, 5)) return [1, why(w, ["pr24>=25", "sn>=5"])];
         return [0, ""]; } },
-    { id: "per", grp: "Ground", name: "Troops in the open (heat, cold)", short: "Heat, cold", red: "heat index 41 °C or more, or wind chill −28 °C or below", amber: "heat index 32 °C or more, or wind chill −10 °C or below",
+    { id: "per", grp: "Ground", name: "Troops in the open (heat, cold)", short: "Heat, cold", red: "heat index 41°C / 106°F or more, or wind chill −28°C / −18°F or below", amber: "heat index 32°C / 90°F or more, or wind chill −10°C / 14°F or below",
       f: function (w) {
         if (ge(w.hi, 41) || le(w.wc, -28)) return [2, why(w, ["hi>=41", "wc<=-28"])];
         if (ge(w.hi, 32) || le(w.wc, -10)) return [1, why(w, ["hi>=32", "wc<=-10"])];
@@ -447,7 +458,7 @@
   function at_(w, k) { var p = w.where && w.where[k]; return p ? " (" + p + ")" : ""; }
   function fmtWhy(k, v) {
     return { ceil: "ceiling about " + ft(v), vis: "visibility " + vis(v), gust: "gusts " + Math.round(v) + " kt", wind: "wind " + Math.round(v) + " kt", prh: "rain " + v.toFixed(1) + " mm/h",
-      pr24: Math.round(v) + " mm of rain in 24 h", sn: Math.round(v) + " cm of snow", hi: "heat index " + Math.round(v) + " °C", wc: "wind chill " + Math.round(v) + " °C",
+      pr24: Math.round(v) + " mm of rain in 24 h", sn: Math.round(v) + " cm of snow", hi: "heat index " + degCF(v), wc: "wind chill " + degCF(v),
       wave: "waves " + v.toFixed(1) + " m" }[k] || k;
   }
   function ft(v) { if (v == null) return "none"; if (v < 1000) return Math.max(100, Math.round(v / 100) * 100) + " ft"; return (Math.round(v / 500) * 500).toLocaleString("en-GB") + " ft"; }
@@ -483,15 +494,15 @@
     if (gust >= 25) s.push("Gusts up to " + Math.round(gust) + " kt.");
     if (lowc != null && lowc < 1500) s.push("Lowest ceiling about " + ft(lowc) + ".");
     if (lowv != null && lowv < 5000) s.push("Visibility down to " + vis(lowv) + ".");
-    if (hi != null && hi >= 32) s.push("Heat index up to " + Math.round(hi) + " °C.");
-    if (wc != null && wc <= -10) s.push("Wind chill down to " + Math.round(wc) + " °C.");
+    if (hi != null && hi >= 32) s.push("Heat index up to " + degCF(hi) + ".");
+    if (wc != null && wc <= -10) s.push("Wind chill down to " + degCF(wc) + ".");
     var wv = rs.reduce(function (m, r) { return r.w.wave != null && (m == null || r.w.wave > m) ? r.w.wave : m; }, null);
     if (wv != null) { var dg = douglas(wv); s.push("Seas up to " + wv.toFixed(1) + " m (sea state " + dg.n + ", " + dg.name.toLowerCase() + ")."); }
     return s.join(" ");
   }
   function tRange(rs) {
     var a = null, b = null; rs.forEach(function (r) { if (r.ref.tmin != null && (a == null || r.ref.tmin < a)) a = r.ref.tmin; if (r.ref.tmax != null && (b == null || r.ref.tmax > b)) b = r.ref.tmax; });
-    return a == null ? "temperature not available" : Math.round(a) + " to " + Math.round(b) + " °C";
+    return a == null ? "temperature not available" : rangeCF(a, b);
   }
   function blkLbl(b, tz) {
     if (b.lbl) return b.lbl;
@@ -644,9 +655,9 @@
   function windStr(a) { return a && a.wind != null ? dir3(a.dir) + "/" + ("0" + Math.round(a.wind)).slice(-2) + (a.gust != null && a.gust >= a.wind + 10 ? "G" + Math.round(a.gust) : "") + "KT" : "–"; }
   function tempStr(a) {
     if (!a || a.tmin == null) return "–";
-    var s = Math.round(a.tmin) === Math.round(a.tmax) ? Math.round(a.tmax) + "" : Math.round(a.tmin) + "/" + Math.round(a.tmax);
-    if (a.hi != null && a.hi >= 32) s += ' <span class="wxl">HI ' + Math.round(a.hi) + "</span>";
-    if (a.wc != null && a.wc <= -5) s += ' <span class="wxl">WC ' + Math.round(a.wc) + "</span>";
+    var s = mmCF(a.tmin, a.tmax);
+    if (a.hi != null && a.hi >= 32) s += ' <span class="wxl">HI ' + esc(degCF(a.hi)) + "</span>";
+    if (a.wc != null && a.wc <= -5) s += ' <span class="wxl">WC ' + esc(degCF(a.wc)) + "</span>";
     return s;
   }
   function prStr(a) {
@@ -655,7 +666,7 @@
     return a.pr >= 0.1 ? a.pr.toFixed(a.pr < 10 ? 1 : 0) + " mm" : "nil";
   }
   function fcTable(A, D, compact) {
-    return '<div class="wxscroll"><table class="reg cond wxf"><tr><th>Valid</th><th>Sky, ceiling</th><th>Vis</th><th>Weather, precip</th><th>Wind</th><th>°C</th></tr>' + A.blocks.map(function (r) {
+    return '<div class="wxscroll"><table class="reg cond wxf"><tr><th>Valid</th><th>Sky, ceiling</th><th>Vis</th><th>Weather, precip</th><th>Wind</th><th>Temp</th></tr>' + A.blocks.map(function (r) {
       var a = r.ref;
       return "<tr" + (r.w.ts ? ' class="hot"' : "") + "><td>" + (compact ? blkLine(r.b, D.tz) : blkHead(r.b, D.tz)) + "</td><td>" + (a.cloud != null ? cloudOkta(a.cloud) : "–") + " " + (a.ceil != null ? esc(ft(a.ceil)) : '<span class="wxl">no ceiling</span>') +
         "</td><td>" + esc(vis(a.vis)) + "</td><td>" + wxCell(a) + ' <span class="wxl">' + esc(prStr(a)) + (a.ts === 1 ? ", TS possible" : "") + '</span></td><td class="n">' + esc(windStr(a)) + '</td><td class="n">' + tempStr(a) + "</td></tr>";
@@ -746,11 +757,13 @@
     return head + '<p class="obs"><span class="badge stale">MODEL</span> Open-Meteo forecast, fetched ' + esc(zt(D.at, D.tz, true)) + ". Worst case over " + D.pts.length + " points in the region" +
       (D.sea.length ? " and " + D.sea.filter(function (p) { return p.m; }).length + " offshore" : "") + ". Reference point: " + esc(ref.name) + (mgrs(ref.lat, ref.lon) ? " (" + esc(mgrs(ref.lat, ref.lon)) + ")" : "") + ".</p>" +
       '<p class="wxsyn">' + esc(synopsis(A, D)) + "</p>" +
+      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <span class="obs">Hour by hour, 16 days, model agreement, sea, air, light; four printed pages.</span></p>' +
+      "<h3>Next 7 days at " + esc(ref.name) + "</h3>" + meteogram(D, 7) +
       "<h3>Impacts, worst case in the region</h3>" + matrixHtml(A, D, "wxsm") +
       '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason. G green, A amber, R red.</p>' +
       "<h3>Forecast at " + esc(ref.name) + "</h3>" + fcTable(A, D) +
       '<p class="note">Ceiling is estimated from the model&rsquo;s cloud layers (lowest layer at 60% cover or more), not observed. Wind in knots (direction from, true); G = gusts. HI heat index, WC wind chill. Official warnings take precedence over this model output.</p>' +
-      '<p><button type="button" class="refresh primary" data-wxbrief="1">Full brief and print</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
+      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
   }
   /* where the section goes: above the storms, warnings and forecast of the Weather view; for countries that have no Weather view
      (those with automatic global feeds only), at the top of the Live hazards view */
@@ -786,13 +799,14 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxb],[data-wxpick],[data-wxfound]");
+    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxb],[data-wxpick],[data-wxfound]");
     if (!t) return;
     if (t.hasAttribute("data-wxpick")) return pickStart();
     if (t.hasAttribute("data-wxfound")) { var g = ST.found && ST.found.list[+t.getAttribute("data-wxfound")]; if (g) chooseSpot(g.lat, g.lon, g.name + (g.admin1 && g.admin1 !== g.name ? ", " + g.admin1 : "")); return; }
     if (t.hasAttribute("data-wxper")) { ST.per = t.getAttribute("data-wxper"); lsSet("osap-wx-per", ST.per); if (document.getElementById("wxb-page")) openBrief(); redraw(); }
     else if (t.hasAttribute("data-wxgo")) go(true).catch(function () {});
     else if (t.hasAttribute("data-wxbrief")) openBrief();
+    else if (t.hasAttribute("data-wxreport")) openReport();
     else if (t.getAttribute("data-wxb") === "print") window.print();
     else if (t.getAttribute("data-wxb") === "close") closeBrief();
   });
@@ -857,14 +871,14 @@
         clk(x.mr.rise, tz) + "</td><td>" + clk(x.mr.set, tz) + "</td><td>" + Math.round(x.il.frac * 100) + "% " + (x.il.waxing ? "waxing" : "waning") + "</td></tr>"; }).join("") + "</table>";
     /* region spread */
     var agAll = D.pts.map(function (p) { return { p: p, a: agg(p, { t0: t0, t1: t1 }) }; }).filter(function (x) { return x.a; }).slice(0, lim.pts);
-    var spread = '<h3>Across the region, whole period</h3><table class="wxbt"><tr><th>Place</th><th>Lowest ceiling</th><th>Lowest vis</th><th>Max gust</th><th>Rain</th><th>°C</th></tr>' +
+    var spread = '<h3>Across the region, whole period</h3><table class="wxbt"><tr><th>Place</th><th>Lowest ceiling</th><th>Lowest vis</th><th>Max gust</th><th>Rain</th><th>Temp</th></tr>' +
       agAll.map(function (x) { var a = x.a; return "<tr><td>" + esc(x.p.name) + (x.p.ref ? " (ref)" : "") + "</td><td>" + esc(a.ceil != null ? ft(a.ceil) : "none") + "</td><td>" + esc(vis(a.vis)) + "</td><td>" +
-        (a.gust != null ? Math.round(a.gust) + " kt" : "–") + "</td><td>" + esc(prStr(a)) + (a.ts ? " TS" : "") + "</td><td>" + (a.tmin != null ? Math.round(a.tmin) + "/" + Math.round(a.tmax) : "–") + "</td></tr>"; }).join("") + "</table>";
+        (a.gust != null ? Math.round(a.gust) + " kt" : "–") + "</td><td>" + esc(prStr(a)) + (a.ts ? " TS" : "") + "</td><td>" + mmCF(a.tmin, a.tmax) + "</td></tr>"; }).join("") + "</table>";
     /* sea state */
     var seaP = D.pts.concat(D.sea).filter(function (p) { return p.m && aggSea(p, { t0: t0, t1: t1 }); }).slice(0, lim.sea);
-    var sea = "<h3>" + bl("https://open-meteo.com/en/docs/marine-weather-api", "Sea state") + "</h3>" + (seaP.length ? '<table class="wxbt"><tr><th>Place</th><th>Max wave</th><th>Sea state</th><th>Period</th><th>Swell</th><th>Sea °C</th></tr>' +
+    var sea = "<h3>" + bl("https://open-meteo.com/en/docs/marine-weather-api", "Sea state") + "</h3>" + (seaP.length ? '<table class="wxbt"><tr><th>Place</th><th>Max wave</th><th>Sea state</th><th>Period</th><th>Swell</th><th>Sea temp</th></tr>' +
       seaP.map(function (p) { var sa = aggSea(p, { t0: t0, t1: t1 }), dg = douglas(sa.wave); return "<tr><td>" + esc(p.name) + "</td><td>" + sa.wave.toFixed(1) + " m " + esc(compass(sa.dir)) + "</td><td>" + dg.n + " " + esc(dg.name) + "</td><td>" +
-        (sa.per != null ? Math.round(sa.per) + " s" : "–") + "</td><td>" + (sa.swell != null ? sa.swell.toFixed(1) + " m" : "–") + "</td><td>" + (sa.sst != null ? Math.round(sa.sst) : "–") + "</td></tr>"; }).join("") + "</table>"
+        (sa.per != null ? Math.round(sa.per) + " s" : "–") + "</td><td>" + (sa.swell != null ? sa.swell.toFixed(1) + " m" : "–") + "</td><td>" + degCF(sa.sst) + "</td></tr>"; }).join("") + "</table>"
       : '<p class="bm">' + (D.marErr ? "Marine forecast unavailable (" + esc(D.marErr) + ")." : "No sea in or next to the region.") + "</p>");
     /* air quality at the reference point */
     var aqh = "";
@@ -906,10 +920,233 @@
   }
   function closeBrief() {
     var el = document.getElementById("brief");
-    if (!el || !document.getElementById("wxb-page")) return;
+    if (!el || !el.querySelector("#wxb-page,#wxr-page,[data-wxb]")) return;
     el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("briefing");
   }
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeBrief(); });
+
+  /* ---------- the detailed weather report: several printed pages, opened from the Weather section ----------
+     Extra requests at the reference point only: a 16-day daily outlook, three weather models side by side (to show how far they
+     agree) and a longer air-quality run. Everything else comes from the brief's own data (D). */
+  var DV = ["weather_code", "temperature_2m_max", "temperature_2m_min", "apparent_temperature_max", "apparent_temperature_min", "precipitation_sum", "precipitation_hours",
+    "precipitation_probability_max", "wind_speed_10m_max", "wind_gusts_10m_max", "wind_direction_10m_dominant", "uv_index_max", "sunshine_duration"];
+  var MODELS = [["ecmwf_ifs025", "ECMWF IFS"], ["gfs_seamless", "NOAA GFS"], ["icon_seamless", "DWD ICON"]];
+  var MDV = ["temperature_2m_max", "temperature_2m_min", "precipitation_sum", "wind_gusts_10m_max"];
+  var AQV = ["us_aqi", "pm2_5", "pm10", "dust", "ozone", "uv_index"];
+  var XCACHE = {};
+  function daily(j, vars, suffix) {
+    var d = j && j.daily || {}, out = { t: (d.time || []).map(function (s) { return s * 1000; }), v: {} };
+    vars.forEach(function (k) { out.v[k] = d[k + (suffix || "")] || []; });
+    return out;
+  }
+  function loadExtras(D) {
+    var ref = D.pts[0], key = D.R.key, c = XCACHE[key];
+    if (c && c.at === D.at) return Promise.resolve(c);
+    var q = coords([ref]) + "&timeformat=unixtime&timezone=auto&wind_speed_unit=kn";
+    function soft(p) { return p.then(function (j) { return { ok: true, j: j }; }, function (e) { return { ok: false, err: e.message || String(e) }; }); }
+    return Promise.all([
+      soft(getJSON(OM + "?" + q + "&daily=" + DV.join(",") + "&forecast_days=16")),
+      soft(getJSON(OM + "?" + q + "&daily=" + MDV.join(",") + "&models=" + MODELS.map(function (m) { return m[0]; }).join(",") + "&forecast_days=7")),
+      soft(getJSON(OMA + "?" + coords([ref]) + "&hourly=" + AQV.join(",") + "&timeformat=unixtime&timezone=GMT&forecast_days=5"))
+    ]).then(function (r) {
+      var X = { at: D.at };
+      X.d16 = r[0].ok ? daily(r[0].j, DV) : null; X.d16Err = r[0].ok ? "" : r[0].err;
+      X.models = r[1].ok ? MODELS.map(function (m) { return { id: m[0], name: m[1], d: daily(r[1].j, MDV, "_" + m[0]) }; }).filter(function (m) { return m.d.v.temperature_2m_max.some(function (v) { return v != null; }); }) : [];
+      X.modErr = r[1].ok ? "" : r[1].err;
+      X.aq = r[2].ok ? series(asList(r[2].j)[0] || {}, AQV) : null; X.aqErr = r[2].ok ? "" : r[2].err;
+      XCACHE[key] = X;
+      return X;
+    });
+  }
+  function num(v, d) { return v == null || !isFinite(v) ? "–" : (+v).toFixed(d || 0); }
+  function hrsFrom(p, t0, t1) { var o = []; if (!p.h) return o; p.h.t.forEach(function (t, i) { if (t >= t0 && t < t1) o.push(i); }); return o; }
+  function hourNow() { var n = Date.now(); return n - n % 36e5; }
+
+  /* meteogram: 7 days at the reference point. Top: temperature, dew point, rain per hour. Bottom: wind, gusts, cloud cover. Plain SVG. */
+  function meteogram(D, days, w) {
+    var p = D.pts[0], t0 = hourNow(), t1 = t0 + days * DMS, ix = hrsFrom(p, t0, t1);
+    if (ix.length < 6) return "";
+    w = w || 760; var h1 = 150, h2 = 90, gap = 22, L0 = 34, R0 = 34, H = h1 + gap + h2 + 18, pw = w - L0 - R0;
+    function X(t) { return L0 + (t - t0) / (t1 - t0) * pw; }
+    function vals(k) { return ix.map(function (i) { return at(p, k, i); }); }
+    var T = vals("temperature_2m"), Td = vals("dew_point_2m"), Pr = vals("precipitation"), Pp = vals("precipitation_probability"), Ws = vals("wind_speed_10m"), Wg = vals("wind_gusts_10m"),
+      Wd = vals("wind_direction_10m"), Cc = vals("cloud_cover"), tt = ix.map(function (i) { return p.h.t[i]; });
+    var tv = T.concat(Td).filter(function (v) { return v != null; }), tmn = Math.floor(Math.min.apply(0, tv) - 1), tmx = Math.ceil(Math.max.apply(0, tv) + 1);
+    var pmx = Math.max(2, Math.ceil(Math.max.apply(0, Pr.map(function (v) { return v || 0; })))), wmx = Math.max(20, Math.ceil(Math.max.apply(0, Wg.concat(Ws).map(function (v) { return v || 0; })) / 10) * 10);
+    function Yt(v) { return h1 - (v - tmn) / (tmx - tmn) * (h1 - 8) - 2; }
+    function Yp(v) { return h1 - v / pmx * (h1 * 0.6); }
+    function Yw(v) { return h1 + gap + h2 - v / wmx * (h2 - 6); }
+    function line(a, Y, cls) {
+      var d = "", pen = false;
+      a.forEach(function (v, k) { if (v == null) { pen = false; return; } d += (pen ? "L" : "M") + X(tt[k]).toFixed(1) + "," + Y(v).toFixed(1); pen = true; });
+      return '<path class="' + cls + '" d="' + d + '"/>';
+    }
+    var s = '<svg class="wxmg" viewBox="0 0 ' + w + " " + H + '" role="img" aria-label="' + days + '-day meteogram at ' + esc(p.name) + '">';
+    /* day bands and labels (local days) */
+    var mid = nextLocalMidnight(t0, D.tz);
+    for (var dm = mid - DMS; dm < t1; dm += DMS) {
+      var a = Math.max(t0, dm), b = Math.min(t1, dm + DMS);
+      if (b <= a) continue;
+      if (Math.round((dm - mid) / DMS) % 2 === 0) s += '<rect class="mgday" x="' + X(a).toFixed(1) + '" y="0" width="' + (X(b) - X(a)).toFixed(1) + '" height="' + (h1 + gap + h2) + '"/>';
+      if (b - a > 6 * 36e5) s += '<text class="mglbl" x="' + ((X(a) + X(b)) / 2).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + esc(dayLbl(a + (b - a) / 2, D.tz)) + "</text>";
+    }
+    /* cloud cover as a grey band along the top of the wind panel */
+    Cc.forEach(function (v, k) { if (v == null || v < 5) return; s += '<rect class="mgcloud" x="' + X(tt[k]).toFixed(1) + '" y="' + (h1 + gap - 10) + '" width="' + (pw / ix.length + 0.4).toFixed(2) + '" height="8" style="opacity:' + (v / 100 * 0.85).toFixed(2) + '"/>'; });
+    /* rain bars, darker when the chance of rain is higher */
+    Pr.forEach(function (v, k) { if (!v || v < 0.05) return; var y = Yp(v), pp = Pp[k]; s += '<rect class="mgrain" x="' + X(tt[k]).toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(1, pw / ix.length - 0.3).toFixed(2) + '" height="' + (h1 - y).toFixed(1) + '"' + (pp != null ? ' style="opacity:' + (0.35 + pp / 100 * 0.65).toFixed(2) + '"' : "") + "/>"; });
+    /* grid lines and axes */
+    for (var g = Math.ceil(tmn / 5) * 5; g <= tmx; g += 5) s += '<line class="mggrid" x1="' + L0 + '" x2="' + (w - R0) + '" y1="' + Yt(g).toFixed(1) + '" y2="' + Yt(g).toFixed(1) + '"/><text class="mgax" x="' + (L0 - 3) + '" y="' + (Yt(g) + 3).toFixed(1) + '" text-anchor="end">' + g + '°</text><text class="mgax" x="' + (w - R0 + 3) + '" y="' + (Yt(g) + 3).toFixed(1) + '">' + Math.round(cToF(g)) + "°</text>";
+    s += '<text class="mgax mgr" x="' + (w - R0 - 3) + '" y="' + (Yp(pmx) - 2).toFixed(1) + '" text-anchor="end">' + pmx + " mm</text>";
+    for (var gw = 0; gw <= wmx; gw += wmx / 2) s += '<line class="mggrid" x1="' + L0 + '" x2="' + (w - R0) + '" y1="' + Yw(gw).toFixed(1) + '" y2="' + Yw(gw).toFixed(1) + '"/><text class="mgax" x="' + (L0 - 3) + '" y="' + (Yw(gw) + 3).toFixed(1) + '" text-anchor="end">' + gw + "</text>";
+    s += line(Td, Yt, "mgdew") + line(T, Yt, "mgtemp") + line(Wg, Yw, "mggust") + line(Ws, Yw, "mgwind");
+    /* wind direction arrows every 6 hours (arrow points where the wind blows to) */
+    ix.forEach(function (i, k) {
+      if (k % 6 || Wd[k] == null || Ws[k] == null) return;
+      var x = X(tt[k]), y = Yw(Ws[k]) - 9;
+      s += '<g transform="translate(' + x.toFixed(1) + "," + Math.max(h1 + gap + 4, y).toFixed(1) + ") rotate(" + Math.round(Wd[k] + 180) + ')"><path class="mgarrow" d="M0,-5 L0,5 M-3,1 L0,5 L3,1"/></g>';
+    });
+    var nowX = X(Date.now()); if (nowX >= L0) s += '<line class="mgnow" x1="' + nowX.toFixed(1) + '" x2="' + nowX.toFixed(1) + '" y1="0" y2="' + (h1 + gap + h2) + '"/>';
+    s += '<text class="mgax" x="' + L0 + '" y="10">°C</text><text class="mgax" x="' + (w - R0 + 3) + '" y="10">°F</text><text class="mgax" x="' + L0 + '" y="' + (h1 + gap - 12) + '">kt · cloud</text></svg>';
+    s += '<div class="mgkey"><span class="k kt"></span>Temperature <span class="k kd"></span>Dew point <span class="k kr"></span>Rain per hour (darker = likelier) <span class="k kw"></span>Wind <span class="k kg"></span>Gusts <span class="k kc"></span>Cloud cover</div>';
+    return s;
+  }
+
+  /* model agreement per day: spread between the three models, turned into a confidence word by fixed rules */
+  function agreement(X, tz) {
+    if (!X.models || X.models.length < 2) return null;
+    var days = X.models[0].d.t.length, out = [];
+    for (var i = 0; i < days; i++) {
+      var row = { t: X.models[0].d.t[i], m: X.models.map(function (m) { return { name: m.name, tx: m.d.v.temperature_2m_max[i], tn: m.d.v.temperature_2m_min[i], pr: m.d.v.precipitation_sum[i], g: m.d.v.wind_gusts_10m_max[i] }; }) };
+      function spread(k) { var v = row.m.map(function (x) { return x[k]; }).filter(function (x) { return x != null; }); return v.length > 1 ? Math.max.apply(0, v) - Math.min.apply(0, v) : null; }
+      var st = spread("tx"), sg = spread("g"), prs = row.m.map(function (x) { return x.pr; }).filter(function (x) { return x != null; });
+      var wet = prs.filter(function (v) { return v >= 1; }).length, rainSplit = wet > 0 && wet < prs.length, bigSplit = prs.some(function (v) { return v >= 10; }) && prs.some(function (v) { return v < 1; });
+      var score = 0;
+      if (st != null) score += st > 4 ? 2 : st > 2 ? 1 : 0;
+      if (sg != null) score += sg > 20 ? 2 : sg > 10 ? 1 : 0;
+      score += bigSplit ? 2 : rainSplit ? 1 : 0;
+      row.st = st; row.sg = sg; row.rain = !prs.length ? "–" : wet === prs.length ? "all wet" : wet === 0 ? "all dry" : wet + " of " + prs.length + " wet";
+      row.conf = score >= 3 ? "Low" : score >= 1 ? "Medium" : "High";
+      out.push(row);
+    }
+    return out;
+  }
+
+  function reportHtml(D, X) {
+    var R = D.R, ref = D.pts[0], tz = D.tz, now = Date.now(), H = hazards(R), A72 = analyse(D, "h72"), A7 = analyse(D, "d7");
+    var SRC = [];
+    function src(url) { var n = SRC.indexOf(url); if (n < 0) { SRC.push(url); n = SRC.length - 1; } return '<sup class="po">' + (n + 1) + "</sup>"; }
+    function bl(url, html) { return url ? '<a class="bl" href="' + esc(url) + '" target="_blank" rel="noopener">' + html + "</a>" + src(url) : html; }
+    function page(n, title, body) {
+      return '<article class="bpage wxbp wxrp"' + (n === 1 ? ' id="wxr-page"' : "") + "><header><div><b>AXIOM OSAP</b> · Detailed weather report · page " + n + "</div>" +
+        (n === 1 ? "<h2>" + esc(R.name) + "</h2><div>Compiled " + esc(zt(now, tz, true)) + ". Reference point " + esc(ref.name) + " " + esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) +
+          ". Times Zulu / local (" + esc(tz) + ", " + esc(offLbl(D)) + ").</div>" : "<h2>" + esc(title) + "</h2><div>" + esc(R.name) + "</div>") + "</header>" + body + "</article>";
+    }
+    var o = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
+      '<button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <span class="obs">Four pages on A4 or Letter. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
+
+    /* page 1: summary, warnings, meteogram, 72 h impacts */
+    var hz = [];
+    H.storms.forEach(function (s) { var b = s.best; hz.push("<tr><td>Tropical cyclone</td><td class=\"w\">" + bl(b.url, esc((b.cat ? b.cat + " " : "") + s.name)) + ' <span class="bm">' + esc(b.agency) + (b.km ? ", forecast track within about " + Math.round(b.km) + " km" : ", forecast track crosses the region") + "</span></td></tr>"); });
+    H.gdacs.forEach(function (e) { hz.push("<tr><td>GDACS " + esc(e.alert || "") + "</td><td class=\"w\">" + bl(e.url, esc(e.name)) + ' <span class="bm">' + esc([e.from ? e.from.slice(0, 10) : "", e.to ? "to " + e.to.slice(0, 10) : ""].join(" ")) + "</span></td></tr>"); });
+    H.pdc.forEach(function (i) { hz.push("<tr><td>PDC hazard</td><td class=\"w\">" + bl(i.u, esc(i.t)) + ' <span class="bm">' + esc(i.d ? i.d.replace("T", " ") + " (as published)" : "") + "</span></td></tr>"); });
+    H.warn.forEach(function (i) { hz.push("<tr><td>" + esc(i.agency) + "</td><td class=\"w\">" + bl(i.link || i.feed, esc(i.title_en || i.title)) + ' <span class="bm">' + esc(i.date && W.OSAP_TIME ? W.OSAP_TIME.asofT(i.date) : "") + (i.mt ? ", machine translated" : "") + "</span></td></tr>"); });
+    var p1 = '<p class="bwarn">Model forecast (Open-Meteo), not an official forecast and not observed. Official warnings take precedence. Summary and confidence words are made by fixed rules from the numbers, not by a forecaster or AI. Impact colours use generic planning thresholds, not doctrine. Not analyst-approved.</p>' +
+      "<h3>Next 72 hours</h3><p class=\"wxsum\">" + esc(synopsis(A72, D)) + "</p>" +
+      "<h3>Next 7 days</h3><p class=\"wxsum\">" + esc(synopsis(A7, D).replace(/^At [^,]+, /, "")) + "</p>" +
+      "<h3>Warnings, cyclones and floods (" + hz.length + ")</h3>" + (hz.length ? '<table class="btwo wxhz">' + hz.join("") + "</table>" : '<p class="bm">None in the app&rsquo;s feeds for this region' + (H.warnFeeds && !H.warnFeeds.length ? " (no machine-readable national warning feed is set up for this country; check its weather agency)" : "") + ".</p>") +
+      "<h3>" + bl("https://open-meteo.com/", "7-day meteogram at " + esc(ref.name)) + "</h3>" + meteogram(D, 7) +
+      "<h3>Impacts, worst case in the region, next 72 hours</h3>" + matrixHtml(A72, D, "wxbm");
+
+    /* page 2: hour by hour, next 48 hours, at the reference point */
+    var t0 = hourNow(), ix = hrsFrom(ref, t0, t0 + 48 * 36e5);
+    var hr = '<table class="wxbt wxhr"><tr><th>Z</th><th>Local</th><th>Weather</th><th>Cloud L/M/H %</th><th>Ceiling</th><th>Vis</th><th>°C/°F</th><th>Dew °C/°F</th><th>RH</th><th>Feels °C/°F</th><th>Rain mm</th><th>Chance</th><th>Wind kt</th><th>850 hPa</th><th>CAPE</th><th>hPa</th></tr>' +
+      ix.map(function (i) {
+        var t = ref.h.t[i], code = at(ref, "weather_code", i), T = at(ref, "temperature_2m", i), rh = at(ref, "relative_humidity_2m", i), ws = at(ref, "wind_speed_10m", i), wg = at(ref, "wind_gusts_10m", i);
+        var hi = heatIndex(T, rh), wc = windChill(T, ws), feel = hi != null ? hi : wc != null ? wc : at(ref, "apparent_temperature", i), c = ceilingFt(ref, i), ts = tsState(ref, i);
+        var loc = (zt(t, tz).split(" / ")[1] || "").replace(/ \S+$/, "");
+        var cl = (ts ? "hot " : "") + (loc === "00:00" ? "wxday" : "");
+        return "<tr" + (cl ? ' class="' + cl.trim() + '"' : "") + "><td>" + esc(zOnly(t)) + "</td><td>" + esc(loc) + "</td><td>" + esc(WMOA[code] || (WMO[code] || "")) + (/TS/.test(WMOA[code] || "") ? "" : ts === 1 ? " TS?" : ts === 2 ? " TS" : "") + "</td><td>" +
+          num(at(ref, "cloud_cover_low", i)) + "/" + num(at(ref, "cloud_cover_mid", i)) + "/" + num(at(ref, "cloud_cover_high", i)) + "</td><td>" + esc(c != null ? ft(c) : "–") + "</td><td>" + esc(vis(at(ref, "visibility", i))) + "</td><td>" +
+          pairCF(T) + "</td><td>" + pairCF(at(ref, "dew_point_2m", i)) + "</td><td>" + num(rh) + "</td><td>" + pairCF(feel) + "</td><td>" + num(at(ref, "precipitation", i), 1) + "</td><td>" + (at(ref, "precipitation_probability", i) != null ? num(at(ref, "precipitation_probability", i)) + "%" : "–") + "</td><td>" +
+          esc(dir3(at(ref, "wind_direction_10m", i)) + "/" + num(ws)) + (wg != null && ws != null && wg >= ws + 10 ? "G" + num(wg) : "") + "</td><td>" + esc(dir3(at(ref, "wind_direction_850hPa", i)) + "/" + num(at(ref, "wind_speed_850hPa", i))) + "</td><td>" + num(at(ref, "cape", i)) + "</td><td>" + num(at(ref, "pressure_msl", i)) + "</td></tr>";
+      }).join("") + "</table>";
+    var p2 = (ix.length ? hr : '<p class="bm">No hourly forecast returned.</p>') +
+      '<p class="bm">Ceiling is estimated from the model&rsquo;s cloud layers (lowest at 60% cover or more), not observed. Feels is the heat index above 27°C / 81°F, wind chill below 10°C / 50°F, otherwise the model&rsquo;s apparent temperature. TS thunderstorm (TS? possible), from model weather code, CAPE and lifted index. 850 hPa is about 5,000 ft. Rows shaded: thunderstorm risk.</p>';
+
+    /* page 3: 16-day outlook and model agreement */
+    var d16 = X.d16, rows16 = "";
+    if (d16 && d16.t.length) {
+      rows16 = '<table class="wxbt"><tr><th>Day (local)</th><th>Weather</th><th>Max / min</th><th>Feels max</th><th>Rain mm</th><th>Rain hours</th><th>Chance</th><th>Wind / gust kt</th><th>From</th><th>UV</th><th>Sun h</th></tr>' +
+        d16.t.map(function (t, i) {
+          var v = function (k) { return d16.v[k][i]; }, g = v("wind_gusts_10m_max"), wet = (v("precipitation_sum") || 0) >= 10 || (v("precipitation_probability_max") || 0) >= 80;
+          return "<tr" + (g != null && g >= 34 || wet ? ' class="hot"' : "") + "><td>" + esc(dayLbl(t + DMS / 2, tz)) + (i >= 10 ? " *" : "") + "</td><td>" + esc(WMO[v("weather_code")] || "–") + "</td><td>" + mmCF(v("temperature_2m_max"), v("temperature_2m_min")) +
+            "</td><td>" + esc(degCF(v("apparent_temperature_max"))) + "</td><td>" + num(v("precipitation_sum"), 1) + "</td><td>" + num(v("precipitation_hours")) + "</td><td>" + (v("precipitation_probability_max") != null ? num(v("precipitation_probability_max")) + "%" : "–") +
+            "</td><td>" + num(v("wind_speed_10m_max")) + " / " + num(g) + "</td><td>" + esc(compass(v("wind_direction_10m_dominant"))) + "</td><td>" + num(v("uv_index_max")) + "</td><td>" + (v("sunshine_duration") != null ? num(v("sunshine_duration") / 3600, 1) : "–") + "</td></tr>";
+        }).join("") + "</table>" + '<p class="bm">* Days 11 to 16 have low skill; use them for trends only. Shaded: gusts 34 kt or more, or 10 mm of rain or an 80% chance.</p>';
+    } else rows16 = '<p class="bm">16-day outlook unavailable' + (X.d16Err ? " (" + esc(X.d16Err) + ")" : "") + ".</p>";
+    var AG = agreement(X, tz), agh;
+    if (AG) {
+      agh = '<table class="wxbt"><tr><th>Day</th>' + X.models.map(function (m) { return "<th>" + esc(m.name) + "<br>max/min · rain · gust</th>"; }).join("") + "<th>Spread</th><th>Confidence</th></tr>" +
+        AG.map(function (r) {
+          return "<tr><td>" + esc(dayLbl(r.t + DMS / 2, tz)) + "</td>" + r.m.map(function (x) { return "<td>" + mmCF(x.tx, x.tn) + " · " + num(x.pr, 1) + " · " + num(x.g) + "</td>"; }).join("") +
+            "<td>" + (r.st != null ? num(r.st, 1) + "°C / " + num(r.st * 9 / 5, 1) + "°F" : "–") + ", " + (r.sg != null ? num(r.sg) + " kt" : "–") + ", " + esc(r.rain) + '</td><td class="wxconf wxc' + r.conf.charAt(0) + '">' + r.conf + "</td></tr>";
+        }).join("") + "</table>" +
+        '<p class="bm">Confidence by fixed rules: High when the models are within 2°C (4°F) on the day&rsquo;s maximum and 10 kt on gusts and agree on wet or dry; Low when they differ by more than 4°C (7°F) or 20 kt, or one model has 10 mm or more where another is dry; Medium otherwise.</p>';
+    } else agh = '<p class="bm">Model comparison unavailable' + (X.modErr ? " (" + esc(X.modErr) + ")" : "") + ".</p>";
+    var p3 = "<h3>" + bl("https://open-meteo.com/en/docs", "16-day outlook at " + esc(ref.name)) + "</h3>" + rows16 +
+      "<h3>" + bl("https://open-meteo.com/en/docs", "How far the weather models agree, next 7 days") + "</h3>" + agh;
+
+    /* page 4: across the region by day, sea, air, light, upper winds */
+    var mid0 = nextLocalMidnight(now, tz) - DMS, dayB = [0, 1, 2].map(function (k) { var a = Math.max(now, mid0 + k * DMS); return { t0: a, t1: mid0 + (k + 1) * DMS }; });
+    var reg = '<table class="wxbt"><tr><th>Place</th>' + dayB.map(function (b) { return "<th>" + esc(dayLbl(b.t0 + 36e5, tz)) + "<br>temp<br>rain · gust · vis</th>"; }).join("") + "</tr>" +
+      D.pts.map(function (p) {
+        return "<tr><td>" + esc(p.name) + (p.ref ? " (ref)" : "") + "</td>" + dayB.map(function (b) {
+          var a = agg(p, b); if (!a) return "<td>–</td>";
+          return "<td" + (a.ts ? ' class="hot"' : "") + ">" + mmCF(a.tmin, a.tmax) + "<br>" + esc(prStr(a)) + " · " + (a.gust != null ? Math.round(a.gust) : "–") + " · " + esc(vis(a.vis)) + (a.ts ? " · TS" : "") + "</td>";
+        }).join("") + "</tr>";
+      }).join("") + "</table>";
+    var seaP = D.pts.concat(D.sea).filter(function (p) { return p.m && p.m.v.wave_height.some(function (v) { return v != null; }); }).slice(0, 4), seaH;
+    if (seaP.length) {
+      var sd = []; for (var k = 0; k < 7; k++) sd.push({ t0: Math.max(now, mid0 + k * DMS), t1: mid0 + (k + 1) * DMS });
+      seaH = '<table class="wxbt"><tr><th>Place</th>' + sd.map(function (b) { return "<th>" + esc(dayLbl(b.t0 + 36e5, tz)) + "</th>"; }).join("") + "</tr>" +
+        seaP.map(function (p) {
+          return "<tr><td>" + esc(p.name) + "</td>" + sd.map(function (b) { var s = aggSea(p, b); if (!s) return "<td>–</td>"; var dg = douglas(s.wave); return "<td" + (dg.n >= 5 ? ' class="hot"' : "") + ">" + s.wave.toFixed(1) + " m SS" + dg.n + "<br>" + esc(compass(s.dir)) + (s.per != null ? " " + Math.round(s.per) + " s" : "") + (s.sst != null ? "<br>" + degCF(s.sst) : "") + "</td>"; }).join("") + "</tr>";
+        }).join("") + "</table><p class=\"bm\">Highest wave of the day (significant height), direction it comes from, period, Douglas sea state, sea surface temperature. Shaded: sea state 5 (rough) or more.</p>";
+    } else seaH = '<p class="bm">' + (D.marErr ? "Marine forecast unavailable (" + esc(D.marErr) + ")." : "No sea in or next to the region.") + "</p>";
+    var aqH = "";
+    if (X.aq && X.aq.t.length) {
+      var ad = []; for (var k2 = 0; k2 < 5; k2++) ad.push({ t0: Math.max(now, mid0 + k2 * DMS), t1: mid0 + (k2 + 1) * DMS });
+      var mx = function (b, key) { var m = null; X.aq.t.forEach(function (t, i) { if (t < b.t0 || t >= b.t1) return; var v = X.aq.v[key][i]; if (v != null && (m == null || v > m)) m = v; }); return m; };
+      aqH = '<table class="wxbt"><tr><th>Day</th><th>US AQI</th><th>PM2.5</th><th>PM10</th><th>Dust</th><th>Ozone</th><th>UV max</th></tr>' + ad.map(function (b) {
+        var aqi = mx(b, "us_aqi");
+        return "<tr" + (aqi != null && aqi > 150 ? ' class="hot"' : "") + "><td>" + esc(dayLbl(b.t0 + 36e5, tz)) + "</td><td>" + (aqi != null ? Math.round(aqi) + " " + esc(aqiName(aqi)) : "–") + "</td><td>" + num(mx(b, "pm2_5")) + "</td><td>" + num(mx(b, "pm10")) + "</td><td>" + num(mx(b, "dust")) + "</td><td>" + num(mx(b, "ozone")) + "</td><td>" + num(mx(b, "uv_index"), 1) + "</td></tr>";
+      }).join("") + '</table><p class="bm">Daily highest at the reference point; particles and ozone in µg/m³. CAMS model, not measured.</p>';
+    } else aqH = '<p class="bm">Air-quality forecast unavailable' + (X.aqErr ? " (" + esc(X.aqErr) + ")" : "") + ".</p>";
+    var lr = lightRows(ref, tz, 7);
+    var lit = '<table class="wxbt"><tr><th>Day (local)</th><th>BMNT</th><th>Sunrise</th><th>Sunset</th><th>EENT</th><th>Moonrise</th><th>Moonset</th><th>Moon lit</th></tr>' +
+      lr.map(function (x) { return "<tr><td>" + esc(x.day) + "</td><td>" + clk(x.st.bmnt, tz) + "</td><td>" + clk(x.st.rise, tz) + "</td><td>" + clk(x.st.set, tz) + "</td><td>" + clk(x.st.eent, tz) + "</td><td>" + clk(x.mr.rise, tz) + "</td><td>" + clk(x.mr.set, tz) + "</td><td>" + Math.round(x.il.frac * 100) + "% " + (x.il.waxing ? "waxing" : "waning") + "</td></tr>"; }).join("") + "</table>";
+    var ub = A72.blocks;
+    var upw = '<table class="wxbt"><tr><th>Level</th>' + ub.map(function (r) { return "<th>" + blkHead(r.b, tz, true) + "</th>"; }).join("") + "</tr>" +
+      [["850 hPa, 5,000 ft", 0], ["700 hPa, 10,000 ft", 1], ["500 hPa, 18,000 ft", 2], ["300 hPa, 30,000 ft", 3]].map(function (L2) {
+        return "<tr><td>" + L2[0] + "</td>" + ub.map(function (r) { var u = r.ref.up[L2[1]]; return "<td>" + (u.s != null ? dir3(u.d) + "/" + Math.round(u.s) : "–") + "</td>"; }).join("") + "</tr>";
+      }).join("") + "<tr><td>Freezing level MSL</td>" + ub.map(function (r) { return "<td>" + (r.ref.fzl != null ? esc(ft(r.ref.fzl * M2FT)) : "–") + "</td>"; }).join("") + "</tr></table>";
+    var p4 = "<h3>Across the region, next 3 days</h3>" + reg + "<h3>" + bl("https://open-meteo.com/en/docs/marine-weather-api", "Sea, next 7 days") + "</h3>" + seaH +
+      "<h3>" + bl("https://open-meteo.com/en/docs/air-quality-api", "Air quality and UV") + "</h3>" + aqH + "<h3>Light at the reference point</h3>" + lit +
+      "<h3>Upper winds (°/kt) and freezing level, next 72 hours</h3>" + upw +
+      '<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models; model comparison: ECMWF IFS, NOAA GFS and DWD ICON through Open-Meteo; marine and air quality: Open-Meteo (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information). Sun and moon computed. BMNT and EENT are nautical twilight. Warnings are the agencies&rsquo; statements as the app last read them.</footer>' +
+      (SRC.length ? '<div class="po bsrcs"><b>Sources.</b> ' + SRC.map(function (u, i) { return (i + 1) + " " + esc(u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 70)); }).join(" · ") + "</div>" : "");
+    return o + page(1, "", p1) + page(2, "Hour by hour, next 48 hours at " + ref.name, p2) + page(3, "16-day outlook and model agreement", p3) + page(4, "Region, sea, air, light and upper winds", p4);
+  }
+  function openReport() {
+    var el = document.getElementById("brief");
+    if (!el) return;
+    function show(D) {
+      el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh" data-wxb="close">Close</button> <span class="obs">Building the detailed report…</span></div>';
+      el.hidden = false; document.documentElement.classList.add("briefing"); el.scrollTop = 0;
+      loadExtras(D).then(function (X) { if (!el.hidden) { el.innerHTML = reportHtml(D, X); el.scrollTop = 0; } });
+    }
+    if (ST.data) show(ST.data); else go().then(show, function () {});
+  }
 
   /* ---------- weather map layers ---------- */
   var LSK = "osap-wx-layers", LS = lsGet(LSK) || {};
@@ -929,7 +1166,7 @@
   /* legend swatches: [colour, label] */
   var LEG = {
     radar: { ramp: ["#88ddee", "#0099cc", "#0077aa", "#005588", "#ffee00", "#ffaa00", "#ff4400", "#c10000", "#ffaaff"], lo: "light", hi: "heavy, hail" },
-    temp: { ramp: ["#6e40aa", "#3b5bd6", "#1ea6d6", "#2fcf9a", "#9bd44b", "#f2c230", "#f6862b", "#d93a2b", "#8e1a2a"], lo: "−20 °C", hi: "40 °C" },
+    temp: { ramp: ["#6e40aa", "#3b5bd6", "#1ea6d6", "#2fcf9a", "#9bd44b", "#f2c230", "#f6862b", "#d93a2b", "#8e1a2a"], lo: "−20°C / −4°F", hi: "40°C / 104°F" },
     aq: { cats: [["#00e400", "0–50 good"], ["#ffff00", "51–100 moderate"], ["#ff7e00", "101–150 sensitive"], ["#ff0000", "151–200 unhealthy"], ["#8f3f97", "201–300 very"], ["#7e0023", "301+ hazardous"]] }
   };
   function tempCol(t) {
@@ -960,7 +1197,7 @@
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(90,90,90,0),rgba(90,90,90,.85))"></span><span class="wxrl"><span>0%</span><span>100%</span></span>'; } },
     { k: "wind", name: "Wind barbs, 10 m", grp: "Wind", grid: true, note: "Open-Meteo model wind at the chosen time, knots. Barbs point into the wind: half barb 5 kt, full 10 kt, flag 50 kt.", op: 0.95,
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return barb(0, 15, 26) + " 15 kt from the north " + barb(270, 55, 26) + " 55 kt from the west"; } },
-    { k: "temp", name: "Temperature, 2 m", grp: "Temperature", grid: true, note: "Open-Meteo model air temperature at the chosen time, °C.", op: 0.55,
+    { k: "temp", name: "Temperature, 2 m", grp: "Temperature", grid: true, note: "Open-Meteo model air temperature at the chosen time, °C and °F.", op: 0.55,
       lic: "Open-Meteo, CC BY 4.0", legend: function () { return ramp(LEG.temp); } },
     { k: "aq", name: "Air quality (US AQI)", grp: "Air", grid: true, note: "Open-Meteo / Copernicus CAMS model air quality at the chosen time. A model, not sensor readings.", op: 0.55,
       lic: "Open-Meteo, CC BY 4.0; contains modified Copernicus CAMS information", legend: function () { return cats(LEG.aq.cats); } },
@@ -1038,7 +1275,7 @@
       // every grid cell opens the model's values for that cell, the valid time and where they came from
       var aqv = GRID.aq && GRID.aq[n] && GRID.aq[n].hourly ? GRID.aq[n].hourly.us_aqi[gridIdx(GRID.aq[n]).i] : null;
       var pop = '<div class="pop"><div class="tier">Model forecast grid cell</div><h3>' + esc(p.lat.toFixed(2) + ", " + p.x.toFixed(2)) + '</h3><p class="obs">' +
-        esc([h.temperature_2m[i] != null ? "Temperature " + Math.round(h.temperature_2m[i]) + " °C" : "",
+        esc([h.temperature_2m[i] != null ? "Temperature " + degCF(h.temperature_2m[i]) : "",
           h.wind_speed_10m[i] != null ? "wind " + Math.round(h.wind_speed_10m[i]) + " kt from " + Math.round(h.wind_direction_10m[i]) + "°" + (h.wind_gusts_10m[i] != null ? ", gusts " + Math.round(h.wind_gusts_10m[i]) + " kt" : "") : "",
           h.cloud_cover[i] != null ? "cloud " + Math.round(h.cloud_cover[i]) + "%" : "", aqv != null ? "US AQI " + Math.round(aqv) : ""].filter(Boolean).join(" · ")) +
         "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> weather' + (aqv != null ? " and air-quality" : "") +
@@ -1047,7 +1284,7 @@
       if (ON.cloud && h.cloud_cover[i] != null) LYR.cloud.addLayer(cell({ fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * h.cloud_cover[i] / 100 }));
       if (ON.temp && h.temperature_2m[i] != null) {
         LYR.temp.addLayer(cell({ fillColor: tempCol(h.temperature_2m[i]), fillOpacity: opOf("temp", 0.55) }));
-        LYR.temp.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: Math.round(h.temperature_2m[i]) + "°", iconSize: [34, 16], iconAnchor: [17, -6] }) }));
+        LYR.temp.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: Math.round(h.temperature_2m[i]) + "°C " + Math.round(cToF(h.temperature_2m[i])) + "°F", iconSize: [64, 16], iconAnchor: [32, -6] }) }));
       }
       if (ON.wind && h.wind_speed_10m[i] != null) {
         LYR.wind.addLayer(cell({ fillColor: "#000", fillOpacity: 0 }));
@@ -1237,6 +1474,15 @@
     s.textContent = [
       "#wx-ops .wxplace{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#wx-ops .wxplace select{max-width:100%;font:inherit}#wx-ops .wxplace label{display:flex;gap:4px;align-items:center;max-width:100%}",
       "#wx-ops .wxplace form{display:flex;gap:4px}#wx-ops .wxplace input{width:10em;font:inherit}#wx-ops .wxfound{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.wxpicking,.wxpicking .leaflet-interactive{cursor:crosshair!important}",
+      "svg.wxmg{display:block;width:100%;height:auto;max-width:800px;font:10px system-ui,sans-serif}.wxmg .mgday{fill:rgba(120,140,160,.08)}.wxmg .mggrid{stroke:rgba(128,128,128,.3);stroke-width:.6}",
+      ".wxmg .mgax,.wxmg .mglbl{fill:currentColor;opacity:.75}.wxmg .mgtemp{fill:none;stroke:#c62828;stroke-width:1.8}.wxmg .mgdew{fill:none;stroke:#2e7d32;stroke-width:1.2;stroke-dasharray:4 3}",
+      ".wxmg .mgrain{fill:#1565c0}.wxmg .mgcloud{fill:#78909c}.wxmg .mgwind{fill:none;stroke:#37474f;stroke-width:1.6}.wxmg .mggust{fill:none;stroke:#8d6e63;stroke-width:1;stroke-dasharray:2 2}",
+      ".wxmg .mgarrow{fill:none;stroke:#37474f;stroke-width:1.3}.wxmg .mgnow{stroke:#f9a825;stroke-width:1.2}html.dark .wxmg .mgwind,html.dark .wxmg .mgarrow{stroke:#cfd8dc}",
+      ".mgkey{font-size:10.5px;display:flex;flex-wrap:wrap;gap:3px 10px;align-items:center;margin:2px 0 6px}.mgkey .k{display:inline-block;width:14px;height:3px;margin-right:3px;vertical-align:middle}",
+      ".mgkey .kt{background:#c62828}.mgkey .kd{background:#2e7d32}.mgkey .kr{background:#1565c0;height:8px}.mgkey .kw{background:#37474f}.mgkey .kg{background:#8d6e63}.mgkey .kc{background:#78909c;height:8px}",
+      ".wxrp{margin-bottom:18px}.wxrp table.wxhr{font-size:.9em}.wxrp table.wxhr td,.wxrp table.wxhr th{padding:1px 2px;white-space:nowrap}.wxrp tr.wxday td{border-top:1.5px solid #12324a}.wxrp tr.hot td,.wxrp td.hot{background:#fff3e0}",
+      ".wxrp td.wxconf{font-weight:700}.wxrp td.wxcH{color:#2e7d32}.wxrp td.wxcM{color:#b26a00}.wxrp td.wxcL{color:#c62828}.wxrp table.wxbt{table-layout:auto}.wxrp table.wxbt td:first-child{white-space:nowrap}",
+      "@media print{html.briefing .wxrp{margin:0}html.briefing .wxrp+.wxrp{break-before:page;page-break-before:always}html.briefing .wxrp tr{break-inside:avoid}html.briefing .wxrp{font-size:8.6px}html.briefing .wxrp table.wxhr{font-size:7.8px}}",
       "#wx-ops .wxbtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}#wx-ops .wxsyn{margin:6px 0;line-height:1.4}",
       ".wxl{color:var(--muted,#667);font-size:.88em;font-weight:400}",
       ".wxscroll{overflow-x:auto;max-width:100%}#wx-ops table.wxsm{font-size:11px}#wx-ops table.wxsm th{font-size:10px;padding:1px 2px}#wx-ops table.wxsm td{padding:1px 2px}#wx-ops table.wxf{font-size:12px}",
@@ -1278,12 +1524,12 @@
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief,
+    W.OSAP_WX = { region: region, brief: openBrief, report: openReport,
       /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
       placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
       chooseRegion: function (c, i) { var l = regsFor(c), r = l && l[i]; if (!r || c !== cc()) return false; setPlace({ k: "reg", n: r[0], t: r[1], la: r[2], lo: r[3], b: r[4], r: r[5] }); return true; }, refresh: function () { return go(true); }, layers: function () { return Object.keys(ON).filter(function (k) { return ON[k]; }); },
-      _test: { analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
+      _test: { agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
   }
   function boot() { map = W.__asapMap; if (!map || !W.L || !W.TSAP || !W.OSAP_TIME) return setTimeout(boot, 300); init(); }
   boot();
