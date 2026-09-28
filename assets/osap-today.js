@@ -447,7 +447,7 @@
     ".tdcc select{font:inherit;font-size:15px;min-height:40px;max-width:60vw;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}" +
     ".tdvh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}" +
     ".tdmap,.tdlink,.tdgrid button,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
-    ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}" +
+    ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--on-accent,var(--surface));font-weight:600}" +
     /* the screen fills the window, news first: three columns on a wide screen (stories | weather | warnings), two on a tablet or
        small laptop (stories beside weather and warnings), one on a phone (stories on top) */
     ".tdcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;grid-template-areas:'c a b' 'c d b';gap:12px;align-items:start}" +
