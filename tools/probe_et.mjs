@@ -35,6 +35,23 @@ const C = [
   ["bing-ovni", "https://www.bing.com/news/search?q=ovni&format=rss"],
   ["bing-nlo", "https://www.bing.com/news/search?q=%D0%9D%D0%9B%D0%9E&format=rss"],
 ];
+// second round: follow-ups after the first run (NUFORC and aaro.mil refuse runners; GEIPAN answered 429 to quick requests)
+const WD2 = "SELECT ?i ?iLabel ?d ?c ?cc ?art WHERE { ?i wdt:P31/wdt:P279* wd:Q40728071 . OPTIONAL { ?i wdt:P585 ?d } OPTIONAL { ?i wdt:P580 ?d } OPTIONAL { ?i wdt:P625 ?c } OPTIONAL { ?i wdt:P17/wdt:P297 ?cc } OPTIONAL { ?art schema:about ?i ; schema:isPartOf <https://en.wikipedia.org/> } SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" } }";
+const WD3 = "SELECT ?i ?iLabel ?d ?c ?cc WHERE { ?i wdt:P31 wd:Q421 . OPTIONAL { ?i wdt:P585 ?d } OPTIONAL { ?i wdt:P625 ?c } OPTIONAL { ?i wdt:P17/wdt:P297 ?cc } SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" } }";
+const C2 = [
+  ["wikidata-sightings2", "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(WD2)],
+  ["wikidata-q421", "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(WD3)],
+  ["dvids-unit-page", "https://www.dvidshub.net/unit/AARO"],
+  ["govuk-uap", "https://www.gov.uk/search/news-and-communications.atom?keywords=UAP"],
+  ["govuk-ufo", "https://www.gov.uk/search/all.atom?keywords=unidentified+aerial+phenomena"],
+  ["nasa-news", "https://www.nasa.gov/news-release/feed/"],
+  ["blackvault-feed", "https://www.theblackvault.com/documentarchive/feed/"],
+  ["bing-aaro", "https://www.bing.com/news/search?q=AARO+UAP&format=rss"],
+  ["geipan-home", "https://www.cnes-geipan.fr/"],
+  ["geipan-search", "https://www.cnes-geipan.fr/fr/recherche/cas"],
+  ["geipan-csv-page", "https://www.cnes-geipan.fr/fr/actualites/publication-csv"],
+];
+if (process.env.SET === "2") { C.length = 0; C.push(...C2); }
 const robots = {}, log = [];
 for (const [id, url] of C) {
   const host = new URL(url).origin;
@@ -49,7 +66,7 @@ for (const [id, url] of C) {
     fs.writeFileSync(`${OUT}/${id}.txt`, body.slice(0, 200000));
     log.push({ id, url, status: r.status, type: r.headers.get("content-type"), bytes: body.length, ms: Date.now() - t0, final: r.url });
   } catch (e) { log.push({ id, url, error: e.name === "TimeoutError" ? "timed out" : e.message }); }
-  await sleep(1200);
+  await sleep(/geipan/.test(id) ? 15000 : 1200);
 }
 fs.writeFileSync(`${OUT}/_robots.json`, JSON.stringify(robots, null, 1));
 fs.writeFileSync(`${OUT}/_log.json`, JSON.stringify(log, null, 1));

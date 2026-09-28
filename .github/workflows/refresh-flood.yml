@@ -182,7 +182,7 @@ jobs:
       - name: Probe candidate UFO/UAP sighting sources for the ET tab (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-et' }}
         timeout-minutes: 10
-        run: node tools/probe_et.mjs
+        run: SET=${{ vars.ET_SET || '2' }} node tools/probe_et.mjs
         continue-on-error: true
       - name: Probe candidate open-data feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-dense' }}
