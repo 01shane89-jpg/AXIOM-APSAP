@@ -52,12 +52,25 @@ function unwrap(link) {
   return link;
 }
 
+// A page's own story links (for official and outlet pages whose feeds are gone): link text of 15-200 characters, same site only.
+// Such items carry no date; they are dated by first sighting further down.
+function pageLinks(html, base) {
+  const host = new URL(base).hostname, seen = new Set(), out = [];
+  for (const m of html.matchAll(/<a\b[^>]*\bhref="([^"#]+)"[^>]*>([\s\S]{15,400}?)<\/a>/g)) {
+    const title = m[2].replace(/<[^>]+>/g, " ").replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&#0?39;|&#8217;|&#8216;/g, "'").replace(/\s+/g, " ").trim();
+    if (title.length < 15 || title.length > 200) continue;
+    let link; try { link = new URL(m[1].replace(/&amp;/g, "&"), base).href; } catch (e) { continue; }
+    if (new URL(link).hostname !== host || seen.has(link)) continue;
+    seen.add(link); out.push({ title, summary: "", date: "", link });
+  }
+  return out.slice(0, 120);
+}
 const { feeds } = JSON.parse(fs.readFileSync("tools/deepsouth_feeds.json", "utf8"));
 const status = [], fresh = [], probe = [];
 for (const f of feeds) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
-    const raw = parseFeed(await get(f.url));
+    const raw = f.html ? pageLinks(await get(f.url, "text/html"), f.url) : parseFeed(await get(f.url));
     const kept = [];
     for (const i of raw.slice(0, 60)) {
       const text = i.title + " " + i.summary;
@@ -65,10 +78,11 @@ for (const f of feeds) {
       const link = f.search ? unwrap(i.link) : i.link;
       if (!/^https?:\/\//.test(link || "")) continue;
       if (f.search && !iso(i.date)) continue;   // an undated search result cannot be placed in time
+      if (!f.html && !f.search && !iso(i.date) && f.state) continue;   // an official feed item without a date cannot be placed in time
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via " + f.outlet + ")"; } catch (e) {} }
       kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : "RSS",
-        ...(f.state ? { state: true } : {}), ...(f.tier ? { ftier: f.tier } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
+        ...(f.state ? { state: true } : {}), ...(f.tier ? { ftier: f.tier } : {}), ...(f.html ? { undated: true } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
     }
     fresh.push(...kept);
     status.push({ id: f.id, source: f.outlet, url: f.url, ok: true, n: raw.length, kept: kept.length });
@@ -171,6 +185,11 @@ if (PROBE) {
 const byLink = new Map();
 for (const i of prev.items || []) if (i && i.link) byLink.set(i.link, i);
 for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
+// Page links have no date: dated by first sighting. A page's first run is a baseline (old stories) and never alerts.
+const hadFeed = new Set((prev.items || []).map((i) => i.feed));
+for (const i of byLink.values()) if (i.undated) {
+  if (!i.date) { i.date = i.first_seen.replace(" ", "T").replace(/Z$/, ""); i.date_seen = true; if (!hadFeed.has(i.feed)) i.seed = true; }
+}
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16);
 let items = [...byLink.values()].filter((i) => !i.date || i.date >= cutoff).sort((a, b) => ((b.date || "") > (a.date || "") ? 1 : -1)).slice(0, CAP);
 const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en);
