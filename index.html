@@ -5197,11 +5197,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "Deep South reporting read every 15 minutes. Not assessed." + (i.nc ? " Search-aggregator result (non-commercial terms)." : ""), i.link);
       var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary || ""), g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? i.geo : null;
       var fig = [i.killed ? i.killed + " killed" : "", i.injured ? i.injured + " injured" : ""].filter(Boolean).join(", ");
-      var rec = { layer: "insurgency", type: i.state ? "claim" : "event", cat: "Live report · " + (kk.label || "Other or summary"), kind: k, live: true, ds: true,
+      var TIERN = { official: "official source", independent: "established outlet", international: "international or Malaysian outlet", discovery: "unvetted source (tip-off)" };
+      var rec = { layer: "insurgency", type: i.state ? "claim" : "event", cat: "Live report · " + (kk.label || "Other or summary"), kind: k, live: true, ds: true, dsAlert: i.alert || "", dsTier: i.tier || "",
         title: en, detail: (sen && sen !== en ? sen : "") + (fig ? (sen && sen !== en ? " " : "") + "Headline states " + fig + " (not counted in the layer's totals)." : ""),
         orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
         derived: [i.mt_rejected ? "The machine translation failed a check (a missing number or repeated words), so the original " + (LANGN[i.lang] || i.lang) + " is shown." : mtNote(i),
           i.title_from_summary ? "The English headline is the first sentence of the translated summary." : "", "Kind sorted by machine from the headline's words" + (k === "other" ? " (no match)" : "") + ".",
+          i.tier ? "Source tier: " + TIERN[i.tier] + "." : "",
+          i.alert === "official" ? "IED watch: an official source reports an explosive incident, device or warning (its own account, shown as a claim)." :
+            i.alert === "corroborated" ? "IED watch: " + i.corrob + " different outlets report an explosive incident in " + ((g && g.prov) || "the same province") + " within 48 hours." : "",
           g ? "Placed at " + g.n + (g.p === "province" ? " (the rough centre of the province)" : " (the district centre, approximate)") + " because the text names it." : "Not placed: the text names no Deep South district."].filter(Boolean).join(" "),
         ts: i.date || W.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: g ? g.n : "", prov: g ? g.prov : "",
         lat: g ? g.la : null, lon: g ? g.lo : null, prec: g ? (g.p === "province" ? "province" : "approx") : "none", sev: kk.violent ? 2 : 1,
@@ -6518,6 +6522,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function wSave() { lsSet(W_KEY, WATCHES); }
   function hitsLoad() { return lsGet(WH_KEY, []) || []; }
   var W_RECENT_DAYS = 7;
+  /* ready-made Thailand watch: Deep South (insurgency layer) reports of bombs, IEDs or official warnings */
+  /* The Deep South IED watch pushes only what Shane's rules call confirmed: a live report the refresh job marked (an official source,
+     or an established outlet backed by a second outlet within 48 h, tools/deepsouth_lib.mjs markAlerts), or a curated record about an
+     explosive incident. Lone unofficial reports and tip-offs stay on the map only. Generic "heightened security" never qualifies. */
+  var W_IED_RE = /(^|[^\p{L}])(bomb|ied|explo|blast|detonat|grenade|landmine|eod|bomb disposal|suspicious (object|device|package|item))|ระเบิด|วัตถุต้องสงสัย/iu;
+  function wIedOk(r) {
+    if (r.layer !== "insurgency") return false;
+    if (r.ds) return !!r.dsAlert;
+    return !r.live && ["legal", "peace_talks", "statistics"].indexOf(r.kind) < 0 && W_IED_RE.test([r.title, r.detail].join(" "));
+  }
   /* watch words: any one of them, matched at the start of a word in the report's title, text, original-language text or place */
   function wKwList(s) { return String(s || "").split(/[,;\n]+/).map(function (x) { return x.trim().replace(/\s+/g, " ").slice(0, 60); }).filter(Boolean).slice(0, 20); }
   var wKwRe = {};
@@ -6535,6 +6549,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if ((r.sev || 1) < (w.minSev || 1)) return false;
     if (w.area) { if (!hasLL(r) || !inPoly(r.lat, r.lon, w.area)) return false; }
     if (!wKwHit(w.kw, r)) return false;
+    if (w.conf === "ied" && !wIedOk(r)) return false;
     var t = evMs(r).ms;
     return isFinite(t) && Date.now() - t <= W_RECENT_DAYS * 864e5 && t <= Date.now() + 36e5;
   }
@@ -6652,6 +6667,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "<li>For alerts to a closed app or a locked phone, use Push to phone on a saved watch: OSAP's own refresh job then checks it after every refresh and sends new matches through the free ntfy app.</li></ul></details>" +
       '<h3>New watch in ' + esc(C.name) + "</h3>" +
       (ADDED.length ? '<p class="note">Also watches ' + ADDED.map(function (cc) { return flagOf(cc) + " " + esc(cName(cc)); }).join(", ") + ", the countries added to this map, each as its own watch.</p>" : "") +
+      (CC === "th" && LBY.insurgency ? '<p class="wpreset"><b>Ready-made:</b> <button type="button" class="refresh" data-w-preset="ds-ied">Deep South IED watch</button> <span class="obs">Bombs, found devices, EOD work and bomb warnings in the Deep South, only when an official source reports them or two outlets agree. Lone local posts are not sent.</span></p>' : "") +
       '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
         '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? " checked" : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(use Draw area on the map first)</span>') + "</span></label>" +
         '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
@@ -6664,7 +6680,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
         var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
         return '<div class="wrow"><div><b>' + esc(w.name) + "</b>" + (w.on === false ? ' <span class="chip">paused</span>' : "") + (nNew ? ' <span class="abadge new">' + nNew + " new</span>" : "") +
-          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "")) +
+          '<div class="obs">' + esc(cn + " · " + (w.area ? "drawn area" : "whole country") + " · " + (w.layers && w.layers.length ? w.layers.map(function (id) { return LBY[id] ? LBY[id].name : id; }).join(", ") : "any category") + " · " + lvlName(w.minSev) + (w.kw && w.kw.length ? " · words: " + w.kw.join(", ") : "") + (w.conf === "ied" ? " · confirmed IED reports only" : "")) +
           "<br>" + (w.checked ? "Last checked " + esc(window.OSAP_TIME.dualT(w.checked, { date: true })) : "Not checked yet") + "</div></div>" +
           '<div class="wbtns">' + (w.area ? '<button type="button" class="refresh" data-w-show="' + esc(w.id) + '">Show</button>' : "") +
           '<button type="button" class="refresh" data-w-pause="' + esc(w.id) + '">' + (w.on === false ? "Resume" : "Pause") + "</button>" +
@@ -6697,6 +6713,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (e.target === wEl) { wClose(); return; }
     var t = e.target.closest && e.target.closest("button"); if (!t) return;
     var id;
+    if (t.getAttribute("data-w-preset") === "ds-ied") { wLoad();
+      if (!WATCHES.some(function (w) { return w.preset === "ds-ied"; })) {
+        WATCHES.push({ id: "w" + Date.now().toString(36) + "ds", preset: "ds-ied", name: "Deep South IED watch", cc: "th", area: null, layers: ["insurgency"], kw: [], conf: "ied", minSev: 1, on: true, created: Date.now() });
+        wSave(); wRun(); wBadge(); wSchedule(true);
+      }
+      wOpen(); return; }
     if (t.hasAttribute("data-w-perm")) { Notification.requestPermission().then(function () { wOpen(); }); return; }
     if ((id = t.getAttribute("data-w-del"))) { if (!confirm("Delete this watch and its hits?")) return; wLoad(); WATCHES = WATCHES.filter(function (w) { return w.id !== id; }); wSave();
       lsSet(WH_KEY, hitsLoad().filter(function (h) { return h.w !== id; })); var s = lsGet(WS_KEY, {}) || {}; delete s[id]; lsSet(WS_KEY, s); wBadge(); wShowArea(null); wOpen(); return; }
@@ -6792,7 +6814,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.addEventListener("storage", function (e) { if (e.key === WH_KEY || e.key === W_KEY) wBadge(); });
   /* the push check (tools/push_watches.mjs) opens this page headless and asks it which reports a watch matches, so pushes and the
      in-app Watch follow the same rules; assets/osap-push.js adds Push to phone to the Watch dialog */
-  window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1 }); }, words: wKwList,
+  window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1, conf: w.conf || null }); }, words: wKwList,
     open: function () { wOpen(); }, list: function () { return wLoad(); }, countryName: cName };
   if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
   (function () {
@@ -6810,7 +6832,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ".wnotif{padding:8px 10px;border:1px solid var(--line);border-radius:6px;margin:8px 0}.wlimits summary{cursor:pointer;font-weight:600}" +
       ".wform{display:flex;flex-direction:column;gap:8px}.wform fieldset{border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column;gap:4px}" +
       ".wform legend{font-weight:600;font-size:12px}.wcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px 10px}.wform label{display:flex;gap:6px;align-items:center}" +
-      ".wform button[type=submit]{align-self:flex-start}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
+      ".wform button[type=submit]{align-self:flex-start}.wpreset{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
       ".wbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.whits{display:flex;flex-direction:column}.tlrow.new .tln{font-weight:600}" +
       ".wctl button .abadge{margin-left:4px}#wtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:99999;max-width:min(560px,calc(100vw - 32px));" +
       "background:var(--surface);color:var(--ink);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:13px;line-height:1.4}" +

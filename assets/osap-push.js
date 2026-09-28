@@ -55,7 +55,7 @@
     var a = w.area;
     if (a && a.length > MAX_PTS) { var step = a.length / MAX_PTS, o = []; for (var i = 0; i < MAX_PTS; i++) o.push(a[Math.floor(i * step)]); a = o; }
     return { v: 1, id: w.id, name: w.name, cc: w.cc, area: a ? a.map(function (p) { return [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; }) : null,
-      layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1, topic: topic() };
+      layers: w.layers || [], kw: w.kw || [], minSev: w.minSev || 1, conf: w.conf || undefined, topic: topic() };
   }
   function issueUrl(title, body) { return REPO + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body); }
   function addUrl(w) {

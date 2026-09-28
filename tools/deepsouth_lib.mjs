@@ -44,10 +44,10 @@ const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const wordRe = (names) => new RegExp("\\b(?:" + names.map(esc).join("|") + ")\\b", "i");
 const DIST = D.map(([prov, name, lat, lon, en, th]) => ({ prov, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
 const PROVS = Object.entries(PROV).map(([name, [lat, lon, en, th]]) => ({ name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
-const REGION = /\b(?:deep south|southern border provinces|restive south|southern insurgen\w*|BRN|Barisan Revolusi Nasional|Patani)\b|ชายแดนภาคใต้|ชายแดนใต้|จังหวัดชายแดนใต้|สามจังหวัดภาคใต้|บีอาร์เอ็น|ปาตานี|ศอ\.บต\.|กอ\.รมน\.ภาค 4|กอ\.รมน\. ภาค 4/i;
+const REGION = /\b(?:deep south|southern border provinces|restive south|southern insurgen\w*|BRN|Barisan Revolusi Nasional|Patani)\b|\bselatan Thailand\b|ชายแดนภาคใต้|ชายแดนใต้|จังหวัดชายแดนใต้|สามจังหวัดภาคใต้|บีอาร์เอ็น|ปาตานี|ศอ\.บต\.|กอ\.รมน\.ภาค 4|กอ\.รมน\. ภาค 4/i;
 // Hat Yai and Songkhla alone are outside the conflict area unless the text is about the insurgency
 const SONGKHLA = /\b(?:Songkhla|Hat Yai)\b|สงขลา|หาดใหญ่/i;
-const SECURITY = /\b(?:bomb\w*|blast|explo\w+|IED|gunm[ae]n|shot|shoot\w*|gunfire|killed|kill\w*|dead|murder\w*|attack\w*|ambush\w*|arson|torch\w*|set (?:on )?fire|burn\w*|insurgen\w*|militant\w*|separatist\w*|rebel\w*|raid\w*|arrest\w*|clash\w*|firefight|siege|surround\w*|ranger\w*|paramilitary|defen[cs]e volunteer\w*|checkpoint|peace (?:talk|dialogue|process)\w*|martial law|emergency decree|security forces?|ISOC|curfew|violen\w*|unrest|hostage|grenade|landmine|mortar)\b|ระเบิด|ยิง|คนร้าย|ลอบ|วางเพลิง|เผา|ปะทะ|ปิดล้อม|ตรวจค้น|ทหารพราน|อส\.|ชรบ\.|ผู้ก่อความไม่สงบ|ก่อเหตุ|ความไม่สงบ|พูดคุยสันติสุข|สันติสุข|เสียชีวิต|บาดเจ็บ|จับกุม|หมายจับ|กฎอัยการศึก|พ\.ร\.ก\.ฉุกเฉิน|ป่วนใต้|ไฟใต้/i;
+const SECURITY = /\b(?:bomb\w*|blast|explo\w+|IED|gunm[ae]n|shot|shoot\w*|gunfire|killed|kill\w*|dead|murder\w*|attack\w*|ambush\w*|arson|torch\w*|set (?:on )?fire|burn\w*|insurgen\w*|militant\w*|separatist\w*|rebel\w*|raid\w*|arrest\w*|clash\w*|firefight|siege|surround\w*|ranger\w*|paramilitary|defen[cs]e volunteer\w*|checkpoint|peace (?:talk|dialogue|process)\w*|martial law|emergency decree|security forces?|ISOC|curfew|violen\w*|unrest|hostage|grenade|landmine|mortar)\b|ระเบิด|ยิง|คนร้าย|ลอบ|วางเพลิง|เผา|ปะทะ|ปิดล้อม|ตรวจค้น|ทหารพราน|อส\.|ชรบ\.|ผู้ก่อความไม่สงบ|ก่อเหตุ|ความไม่สงบ|พูดคุยสันติสุข|สันติสุข|เสียชีวิต|บาดเจ็บ|จับกุม|หมายจับ|กฎอัยการศึก|พ\.ร\.ก\.ฉุกเฉิน|ป่วนใต้|ไฟใต้|\b(?:letupan|bom|serangan|tembak\w*|pengganas|militan)\b/i;
 
 // Football and other sport ("shot", "ยิง" = to score) are not security news
 const SPORT = /\b(?:football|soccer|league|FC|goal\w*|match|tournament|striker|futsal)\b|ฟุตบอล|ไทยลีก|ลีก|ยิงประตู|บุกชนะ|บุกแพ้|เสมอ|ทดเจ็บ|นักเตะ|ฟุตซอล/i;
@@ -85,4 +85,46 @@ export function relevant(f, text) {
   if (f.all) return true;
   if (DIST.some((d) => d.en.test(text) || d.th.test(text)) || PROVS.some((p) => p.en.test(text) || p.th.test(text))) return true;
   return REGION.test(text) || false;
+}
+
+// ---- IED watch: source tiers and the alert rule (Shane, 2026-09-28) ----
+// Tier of the outlet behind an item: "official" (Thai security, police or provincial bodies; Malaysian police or foreign ministry),
+// "independent" (established Thai outlets), "international" (wire services, Malaysian and regional outlets) or "discovery"
+// (anything else, incl. search results from unknown sites: tip-offs only). A feed may set its tier; otherwise the link's domain decides.
+const TIER_DOMAINS = [
+  ["official", /(^|\.)(southpeace|isoc|police9|p9\.police|royalthaipolice|prd|sbpac|narathiwat|pattani|yala|songkhla|railway)\.(go|co|or)\.th$|(^|\.)rta\.mi\.th$|(^|\.)(rmp|kln)\.gov\.my$/],
+  ["independent", /(^|\.)(isranews\.org|thaipbs\.or\.th|thaipbsworld\.com|nationthailand\.com|bangkokpost\.com|khaosodenglish\.com|khaosod\.co\.th|thaiexaminer\.com|prachatai(english)?\.com|matichon\.co\.th|thairath\.co\.th|dailynews\.co\.th|mgronline\.com|thethaiger\.com|thainewsroom\.com|deepsouthwatch\.org)$/],
+  ["international", /(^|\.)(reuters\.com|apnews\.com|bernama\.com|aljazeera\.com|thestar\.com\.my|malaymail\.com|nst\.com\.my|freemalaysiatoday\.com|scmp\.com|bbc\.(com|co\.uk)|afp\.com|france24\.com|channelnewsasia\.com|straitstimes\.com)$/],
+];
+export function tierOf(i) {
+  if (i.ftier) return i.ftier;
+  if (i.state) return "official";
+  let h = ""; try { h = new URL(i.link).hostname.replace(/^www\./, ""); } catch (e) {}
+  for (const [t, re] of TIER_DOMAINS) if (re.test(h)) return t;
+  return "discovery";
+}
+// Explosive-threat wording: a detonation, a found or rendered-safe device, a vehicle bomb, EOD work, or a bomb warning.
+// Generic "heightened security" language alone never qualifies.
+export const EXPLOSIVE = /\b(?:bomb\w*|IED|explo\w+|blast\w*|detonat\w*|grenade|landmine|EOD|bomb disposal|suspicious (?:object|device|package|item)|device)\b|ระเบิด|วัตถุต้องสงสัย|อีโอดี|เก็บกู้|\b(?:letupan|bom)\b/i;
+const DOMAIN = (link) => { try { return new URL(link).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+// Marks each Deep South item that qualifies for an IED alert:
+//   alert "official"      an official source reports an explosive incident, device, EOD response or bomb warning;
+//   alert "corroborated"  an independent or international outlet's report, backed by at least one other outlet (any tier) reporting an
+//                          explosive incident in the same province within 48 hours;
+//   no alert              a single unofficial report or a tip-off: listed on the map, never pushed.
+// Attribution (BRN or any group) plays no part in this.
+export function markAlerts(items, textOf) {
+  const cand = items.filter((i) => i.date && !i.seed && EXPLOSIVE.test(textOf(i)) && !/^(legal|peace_talks|statistics)$/.test(i.kind || ""));
+  for (const i of items) { delete i.alert; delete i.corrob; i.tier = tierOf(i); }
+  for (const i of cand) {
+    if (i.tier === "official") { i.alert = "official"; continue; }
+    if (i.tier === "discovery") continue;   // a tip-off never alerts by itself, even when something else backs it up
+    const t = Date.parse(i.date + "Z"), prov = i.geo && i.geo.prov;
+    if (!prov || !isFinite(t)) continue;
+    const near = cand.filter((o) => o !== i && o.geo && o.geo.prov === prov && Math.abs(Date.parse(o.date + "Z") - t) <= 48 * 36e5);
+    const outlets = new Set([DOMAIN(i.link), ...near.map((o) => DOMAIN(o.link))].filter(Boolean));
+    const strong = [i, ...near].some((o) => o.tier === "independent" || o.tier === "international" || o.tier === "official");
+    if (outlets.size >= 2 && strong) { i.alert = "corroborated"; i.corrob = outlets.size; }
+  }
+  return items;
 }
