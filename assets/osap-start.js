@@ -14,11 +14,27 @@
   cover();
   var was = null;
   try { was = sessionStorage.getItem("osap-today"); if (was == null) sessionStorage.setItem("osap-today", ls("osap-home") === "map" ? "0" : "1"); } catch (e) { return; }
+  /* 3. "Use my location" (assets/osap-locate.js): when it is on, a fresh open with no country in the link starts on the
+        person's own country (and US state), remembered as codes only in localStorage "osap-loc"; osap-locate.js then checks
+        the live position once ("osap-loc-go") and moves the app if they have crossed a border since. */
+  var loc = was == null ? ls("osap-loc") : null, h0 = (location.hash || "").replace("#", "").split("/");
+  var mine = loc && loc.on && typeof loc.cc === "string" && /^[a-z]{2,3}$/.test(loc.cc) && !(h0.length > 1 && /^[a-z]{2,3}$/.test(h0[0])) ? loc.cc : "";
+  if (mine) try { sessionStorage.setItem("osap-loc-go", "1"); } catch (e) {}
   if (was == null && ls("osap-home") !== "map") {
-    var h = (location.hash || "").replace("#", "").split("/"), last = ls("osap-last-cc");
+    var h = h0, last = ls("osap-last-cc");
     /* the page reads a country only from "cc/tab"; a bare "#tab" is Thailand */
-    var cc = h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : h[0] ? "th" : typeof last === "string" && /^[a-z]{2,3}$/.test(last) ? last : "th";
-    try { history.replaceState(null, "", location.pathname + location.search + "#" + (cc === "th" ? "" : cc + "/") + "timeline"); } catch (e) {}
+    var cc = mine || (h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : h[0] ? "th" : typeof last === "string" && /^[a-z]{2,3}$/.test(last) ? last : "th");
+    try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"); } catch (e) {}
+  } else if (mine) {
+    /* "Map" start screen: keep the tab, change only the country */
+    var tab = h0.length > 1 ? h0[1] : h0[0] || "timeline";
+    try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (mine === "th" ? "" : mine + "/") + tab); } catch (e) {}
+  }
+  /* the address's query with the remembered US state, when the start country is the person's own */
+  function stq(mine) {
+    var q = new URLSearchParams(location.search);
+    if (mine) { q.delete("st"); if (mine === "us" && loc.st && /^[A-Z]{2}$/.test(loc.st)) q.set("st", loc.st); }
+    return String(q) ? "?" + q : "";
   }
 
   function cover() {
