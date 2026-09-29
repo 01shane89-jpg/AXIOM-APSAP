@@ -1,6 +1,7 @@
 # Guards against merges that silently drop script tags or feature code from index.html,
 # and checks headless that the map still draws its objects and military symbols.
-# The list of required lines is tools/required-in-index.txt. Also fails when sw.js VERSION is out of date.
+# The list of required lines is tools/required-in-index.txt. On a PR it also fails when the PR changes sw.js VERSION
+# (main sets it after merge: .github/workflows/sw-version.yml).
 name: Check index.html
 on:
   pull_request:
@@ -14,9 +15,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 2
       - run: node tools/check_index.mjs
-      # sw.js VERSION must match index.html + assets/, or installed phones keep the old scripts (tools/sw_version.mjs)
-      - run: node tools/sw_version.mjs --check
+      # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
+      - if: github.event_name == 'pull_request'
+        run: node tools/sw_version.mjs --same-as HEAD^1
       # data health rules and tools/health.json (outage alerts and the app's data badge)
       - run: node tests/health.test.mjs
       - run: node tests/view_reports.test.mjs
