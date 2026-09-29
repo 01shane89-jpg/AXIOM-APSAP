@@ -1,0 +1,27 @@
+# Test only: map speed on a phone profile with the real network (tools/probe_speed.mjs): this branch against main
+# before the 3D speed change (#168), and the live site. Prints the timings to the log; writes nothing to the repo.
+name: Probe map speed
+on:
+  push:
+    branches: [claude/3d-sat-fix]
+    paths: [tools/probe_speed.mjs, .github/workflows/probe-speed.yml, assets/**, index.html]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  speed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium webkit
+      - run: git worktree add ../before 13f5d2d38^1
+      - run: node tools/probe_speed.mjs
+        env:
+          SITES: before=../before,now=.,live=https://01shane89-jpg.github.io/AXIOM-APSAP/
