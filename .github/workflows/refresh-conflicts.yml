@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "conflicts (default) or probe-conflicts (diagnostic, writes probe-out/ only)"
+        description: "conflicts (default), history (the History of violence layer only) or probe-conflicts (diagnostic, writes probe-out/ only)"
         required: false
         default: ""
 
@@ -45,16 +45,48 @@ jobs:
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
       - name: Refresh the conflict tabs
-        if: ${{ inputs.only != 'probe-conflicts' }}
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' }}
         run: node tools/refresh_conflicts.mjs
         timeout-minutes: 18
         continue-on-error: true
       # Data that is not a report, such as air-raid alert states, satellite heat detections and each side's running claims.
       # Reads the front files written above.
       - name: Refresh the conflict extras
-        if: ${{ inputs.only != 'probe-conflicts' }}
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' }}
         run: node tools/conflict_extras.mjs
         timeout-minutes: 4
+        continue-on-error: true
+      # History of violence (tools/refresh_conflict_history.mjs): every UCDP event of each conflict since its start, from the UCDP
+      # GED yearly release plus the candidate events written above. Weekly: runs when the last build is 6 days old, or with only=history.
+      # The release zip (tens of MB, changes once a year) is kept in the Actions cache under its release name.
+      - name: Is the violence history due
+        id: histdue
+        if: ${{ inputs.only != 'probe-conflicts' }}
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          due=$(node -e 'try{const s=JSON.parse(require("fs").readFileSync("data/live/conflicts/history/_state.json","utf8"));console.log((Date.now()-Date.parse(s.built.replace(" ","T")))/864e5>=6?1:0)}catch(e){console.log(1)}')
+          if [ "$ONLY" = "history" ]; then due=1; fi
+          echo "due=$due" >> "$GITHUB_OUTPUT"; echo "history due: $due"
+      - name: Restore the UCDP release
+        if: ${{ steps.histdue.outputs.due == '1' }}
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/ucdp
+          key: ucdp-ged-none
+          restore-keys: ucdp-ged-
+      - name: Refresh the violence history
+        id: hist
+        if: ${{ steps.histdue.outputs.due == '1' }}
+        run: node tools/refresh_conflict_history.mjs
+        timeout-minutes: 12
+        continue-on-error: true
+      - name: Keep the UCDP release
+        if: ${{ steps.hist.outputs.fresh == '1' && steps.hist.outputs.release != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/ucdp
+          key: ucdp-ged-${{ steps.hist.outputs.release }}
         continue-on-error: true
       - name: Probe the conflict sources (diagnostic, writes probe-out/ only)
         if: ${{ inputs.only == 'probe-conflicts' }}
@@ -67,7 +99,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
-          case "${ONLY:-conflicts}" in conflicts|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
+          case "${ONLY:-conflicts}" in conflicts|history|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan conflicts-preview-data
