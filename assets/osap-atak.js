@@ -10,6 +10,7 @@
    The Today and news screens are untouched. "Classic controls" in the Overlay Manager puts the old buttons back.
    Dropped points are the analyst's own marks, kept in this browser only (localStorage "osap-atak-pts"), never records.
    assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
+   The magnifying glass loads assets/osap-search.js (Search places) on its first press.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -44,7 +45,8 @@
     copy: ic('<rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
     lock: ic('<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>'),
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
-    pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>')
+    pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
+    search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>')
   };
 
   /* ---------- the page's own controls, pressed on the analyst's behalf ---------- */
@@ -61,6 +63,7 @@
 
   /* ---------- the toolbar ---------- */
   var TOOLS = [
+    ["search", "Search", I.search, "Search places, or go to an MGRS, UTM or lat/long"],
     ["overlays", "Overlays", I.layers, "Overlay Manager: data sets, map layers, your marks"],
     ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
@@ -114,7 +117,8 @@
     if (k === "fold") { fold(!bar.classList.contains("folded")); return; }
     if (pop._for === k) { popClose(); return; }
     popClose();
-    if (k === "overlays") omOpen();
+    if (k === "search") search();
+    else if (k === "overlays") omOpen();
     else if (k === "basemap") {
       var BM = W.OSAP_BASEMAP; if (!BM) return;
       var cur = BM.get();
@@ -155,6 +159,17 @@
       else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
     }
   });
+  /* Search places lives in assets/osap-search.js, fetched the first time the magnifying glass is pressed */
+  var srchLoading = false;
+  function search() {
+    var S = W.OSAP_SEARCH;
+    if (S) { if (S.isOpen()) S.close(); else S.open(); return; }
+    if (srchLoading) return; srchLoading = true;
+    var sc = D.createElement("script"); sc.src = "assets/osap-search.js";
+    sc.onload = function () { srchLoading = false; if (W.OSAP_SEARCH) W.OSAP_SEARCH.open(); };
+    sc.onerror = function () { srchLoading = false; sc.remove(); toast("Search could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
   /* "Tap the map to place it": the next tap on the map (within 30 s) is the point, not a report under the finger */
   var armTap = 0;
   mapEl.addEventListener("click", function (e) {
@@ -257,12 +272,13 @@
       m.addTo(ptLayer);
     });
   }
-  function ptAdd(ll) {
+  function ptAdd(ll, name) {
     var a = ptsAll(), c = cc(), n = 1;
     a.forEach(function (p) { var m = /^P(\d+)$/.exec(p.n || ""); if (p.cc === c && m) n = Math.max(n, +m[1] + 1); });
-    a.push({ id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), cc: c, lat: +ll.lat.toFixed(6), lon: +L.Util.wrapNum(ll.lng, [-180, 180], true).toFixed(6), n: "P" + n, t: Date.now() });
+    name = String(name || "").trim().slice(0, 80) || "P" + n;
+    a.push({ id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), cc: c, lat: +ll.lat.toFixed(6), lon: +L.Util.wrapNum(ll.lng, [-180, 180], true).toFixed(6), n: name, t: Date.now() });
     var pt = a[a.length - 1];
-    ptsSave(a); ptDraw(); omPaint(); toast("Dropped P" + n);
+    ptsSave(a); ptDraw(); omPaint(); toast("Dropped " + name);
     if (W.OSAP_POINTS) W.OSAP_POINTS.edit(pt.id);
     return pt;
   }
@@ -513,5 +529,5 @@
   if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
   W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
-    pts: { all: ptsAll, save: ptsSave, draw: ptDraw, del: ptDel, paint: omPaint } };
+    pts: { all: ptsAll, save: ptsSave, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };
 })();
