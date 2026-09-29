@@ -38,7 +38,8 @@ const inOverlays = await page.evaluate(() => [...document.querySelectorAll('#atk
 console.log("base maps visible in Overlays:", inOverlays); if (inOverlays) bad("Overlays still lists base maps");
 await page.click('#atk-om [data-om="x"]');
 const ids = await page.evaluate(() => window.OSAP_BASEMAP.list().map((x) => x.id));
-for (const k of ids.concat(["grey"])) {
+// start away from grey (already showing, so picking it again loads nothing new) and come back to it at the end
+for (const k of ids.filter((x) => x !== "grey").concat(["grey"])) {
   await page.click('#atk-tools [data-atk="basemap"]');
   await page.waitForSelector("#atk-pop:not([hidden])");
   const item = page.locator('#atk-pop [data-pk="' + k + '"]');
@@ -58,9 +59,8 @@ const onItem = await page.evaluate(() => (document.querySelector("#atk-pop .on")
 console.log("menu marks current:", onItem); if (onItem !== "grey") bad("menu does not mark the current base map");
 await page.keyboard.press("Escape");
 // classic controls: base maps are back in Layers
-await page.evaluate(() => { localStorage.setItem("osap-ui", "classic"); });
 const page2 = await browser.newPage({ viewport: { width: 1200, height: 800 }, serviceWorkers: "block" });
-await page2.addInitScript(() => { localStorage.setItem("osap-home", JSON.stringify("map")); });
+await page2.addInitScript(() => { localStorage.setItem("osap-home", JSON.stringify("map")); localStorage.setItem("osap-ui", "classic"); });
 await page2.goto(base + "#th");
 await page2.waitForFunction(() => window.__asapMap && window.OSAP_BASEMAP, null, { timeout: 30000 });
 const classic = await page2.evaluate(() => !document.documentElement.classList.contains("atak"));
@@ -68,7 +68,7 @@ if (classic) {
   await page2.click(".mlbtn"); await page2.waitForTimeout(300);
   const vis = await page2.evaluate(() => [...document.querySelectorAll('#ml-panel input[name="ml-base"]')].filter((i) => i.offsetParent !== null).length);
   console.log("classic controls: base maps in Layers:", vis); if (!vis) bad("classic Layers lost the base maps");
-} else console.log("classic controls: toolbar key is not osap-ui here; skipped");
+} else bad("classic controls did not switch on");
 console.log("page errors:", JSON.stringify(errors));
 if (errors.length) failed++;
 await browser.close(); if (server) server.close();
