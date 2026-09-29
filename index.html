@@ -598,6 +598,14 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl button.on{background:var(--accent);color:var(--on-accent)}
 .areactl button[disabled]{opacity:.45;cursor:default}
 .areahint{font-size:12px;padding:6px 10px;color:var(--muted);flex-basis:100%;border-bottom:1px solid var(--line)}
+.areast{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-basis:100%;font-size:12px;font-weight:600;padding:4px 10px;box-sizing:border-box}
+.areast input[type=color]{width:34px;height:24px;padding:0;border:1px solid var(--line);border-radius:4px;background:none;cursor:pointer}
+.areaop{flex-wrap:wrap}.areaop input{flex:1 1 100%;margin:2px 0;min-width:0}.areaop output{font-weight:400;color:var(--muted)}
+#map .leaflet-top.leaflet-right>.areactl.editing{width:190px;flex-wrap:wrap}
+.areactl.editing button{border-top:1px solid var(--line)}
+.areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
+.areah.areah-c{border-radius:4px;cursor:nwse-resize}
+#map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
 /* the hidden attribute always wins over a panel's own display rule (.rv is display:flex), so the report list really goes in Map view */
@@ -1358,7 +1366,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
         if (!pan.hidden && ML.roads) drawRoads();
       });
-      box.addEventListener("change", function (e) {
+      /* listen on the panel, not the button box: the tactical toolbar's Overlays sheet moves this panel out of the box
+         (osap-atak.js), and a listener on the box then never heard a base map, flood or road choice */
+      pan.addEventListener("change", function (e) {
         var t = e.target;
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
@@ -6145,11 +6155,18 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     L.DomEvent.disableClickPropagation(d); return d; } });
   new RvCtl().addTo(map);
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-rv-mode]"); if (b) rvSet(b.getAttribute("data-rv-mode")); });
-  /* ---------- drawn area: lasso or polygon that isolates the reporting area ----------
+  /* ---------- drawn area: lasso, polygon, circle or square that isolates the reporting area ----------
      The shape is the analyst's own filter, kept on this device per country. Map markers outside it are hidden and the report list
      counts only what is inside. Nothing about the records changes. */
   var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
   try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
+  /* the analyst's look for the drawn area (fill colour, fill opacity, outline colour) and what the shape was drawn as (kind) and
+     how far it has been turned (rot, radians on screen), so resizing a turned square keeps it square. Kept on this device */
+  var AREA_ST = { kind: "", rot: 0, fill: "", op: 0.12, line: "" };
+  try { var s0 = JSON.parse(localStorage.getItem(AREA_KEY + "-st") || "null"); if (s0 && typeof s0 === "object") Object.keys(AREA_ST).forEach(function (k) { if (typeof s0[k] === typeof AREA_ST[k]) AREA_ST[k] = s0[k]; }); } catch (e) {}
+  function areaStSave() { try { localStorage.setItem(AREA_KEY + "-st", JSON.stringify(AREA_ST)); } catch (e) {} }
+  function stFill() { return AREA_ST.fill || tok("--accent"); }
+  function stLine() { return AREA_ST.line || tok("--accent"); }
   /* above the report dots and pins (up to 662) so the drawn area and the line being drawn are never hidden under them; below
      place labels (670). It takes no taps, so the dots under it still answer */
   if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 668; map.getPane("areapane").style.pointerEvents = "none"; }
@@ -6169,10 +6186,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
-      /* the drawn area itself: a light tint inside, and a solid edge with a white halo so it shows on any base map */
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 6, opacity: 0.9, fillColor: tok("--accent"), fillOpacity: 0.12, interactive: false }),
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 3, fill: false, interactive: false })
+      /* the drawn area itself: a tint inside, and a solid edge with a white halo so it shows on any base map */
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 6, opacity: 0.9, fillColor: stFill(), fillOpacity: AREA_ST.op, interactive: false }),
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: 3, fill: false, interactive: false })
     ]).addTo(map);
+    areaLayer.__world = world;
+  }
+  /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
+  function areaShowPts(P) {
+    if (!areaLayer) return;
+    var ls = areaLayer.getLayers();
+    ls[0].setLatLngs([areaLayer.__world, P]); ls[1].setLatLngs(P); ls[2].setLatLngs(P);
   }
   /* hide map items outside the area: canvas markers go transparent and stop taking taps; icon markers are hidden */
   function areaMarkers() {
@@ -6190,16 +6214,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       });
     });
   }
-  function areaSet(P) {
+  function areaSet(P, kind) {
+    if (kind !== undefined) { AREA_ST.kind = kind || ""; AREA_ST.rot = 0; areaStSave(); }
     AREA = P && P.length >= 3 ? P.map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }) : null;
     try { if (AREA) localStorage.setItem(AREA_KEY, JSON.stringify(AREA)); else localStorage.removeItem(AREA_KEY); } catch (e) {}
+    if (!AREA) editEnd();
     areaShow(); areaUi(); rvSoon();
+    if (areaEdit) editHandles();
   }
   /* drawing: lasso follows the finger or mouse while held down; polygon adds a corner per tap and closes on the first corner,
-     a double-click, or Finish. Map panning is paused while drawing. */
+     a double-click, or Finish; circle drags out from its centre and square from one corner to the opposite one. Circle and
+     square are handed on as ordinary polygons, so everything that reads the drawn area works on them unchanged.
+     Map panning is paused while drawing. */
   var mapEl = map.getContainer();
   function drawStart(mode) {
-    drawEnd(true);
+    drawEnd(true); editEnd();
     /* while drawing: the shape so far, closed back to the start and lightly tinted, under a thick line with a white halo */
     areaDraw = { mode: mode, pts: [],
       fill: L.polygon([], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: tok("--accent"), fillOpacity: 0.15, interactive: false }).addTo(map),
@@ -6211,14 +6240,48 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function drawEnd(cancel) {
     if (!areaDraw) return;
-    var P = areaDraw.pts;
+    var P = areaDraw.pts, mode = areaDraw.mode;
     map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.halo); map.removeLayer(areaDraw.fill); map.removeLayer(areaDraw.dots);
     areaDraw = null; drawEndT = Date.now();
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
-    if (!cancel && P.length >= 3) areaSet(P); else areaUi();
+    if (!cancel && P.length >= 3) areaSet(P, mode === "circle" || mode === "rect" ? mode : ""); else areaUi();
   }
-  function drawShow() { var P = areaDraw.pts; areaDraw.line.setLatLngs(P); areaDraw.halo.setLatLngs(P); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []); }
+  function drawShow() {
+    var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
+    areaDraw.line.setLatLngs(E); areaDraw.halo.setLatLngs(E); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []);
+  }
+  /* circle and square: the shape from the press point to where the finger or mouse is now */
+  var SHAPE_N = 64;
+  function kmTxt(m) { var k = m / 1000; return (k < 10 ? k.toFixed(2) : k < 100 ? k.toFixed(1) : Math.round(k)) + " km"; }
+  function nmTxt(m) { var n = m / 1852; return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.round(n)) + " nm"; }
+  function circlePts(c, r) {
+    /* true distance on the earth's surface: each point is r metres from the centre (great-circle destination) */
+    var R = 6371008.8, d = r / R, la = c[0] * Math.PI / 180, lo = c[1] * Math.PI / 180, P = [];
+    for (var i = 0; i < SHAPE_N; i++) {
+      var b = 2 * Math.PI * i / SHAPE_N, la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(b));
+      var lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+      P.push([la2 * 180 / Math.PI, lo2 * 180 / Math.PI]);
+    }
+    return P;
+  }
+  function shapeMove(e) {
+    var a = areaDraw.anchor, b = evLL(e), hint = areaEl.querySelector(".areahint"), t;
+    areaDraw.dots.clearLayers();
+    if (areaDraw.mode === "circle") {
+      var r = map.distance(a, b);
+      areaDraw.pts = r > 0 ? circlePts(a, r) : [];
+      L.polyline([a, b], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2, dashArray: "5 5", interactive: false }).addTo(areaDraw.dots);
+      L.circleMarker(a, { pane: "areapane", renderer: areaSvg, radius: 5, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
+      t = "Radius " + kmTxt(r) + " (" + nmTxt(r) + ")";
+    } else {
+      areaDraw.pts = [a, [a[0], b[1]], b, [b[0], a[1]]];
+      var w = map.distance([(a[0] + b[0]) / 2, a[1]], [(a[0] + b[0]) / 2, b[1]]), h = map.distance([a[0], a[1]], [b[0], a[1]]);
+      t = kmTxt(w) + " × " + kmTxt(h);
+    }
+    if (hint) hint.textContent = t;
+    drawShow();
+  }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
   function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
   var lassoDown = false, drawEndT = 0;
@@ -6226,6 +6289,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaDraw || inCtl(e)) return;
     e.preventDefault(); e.stopPropagation();
     if (areaDraw.mode === "lasso") { lassoDown = true; areaDraw.pts = [evLL(e)]; try { mapEl.setPointerCapture(e.pointerId); } catch (x) {} }
+    else if (areaDraw.mode === "circle" || areaDraw.mode === "rect") {
+      lassoDown = true; areaDraw.anchor = evLL(e); areaDraw.down = map.mouseEventToContainerPoint(e); areaDraw.pts = [];
+      try { mapEl.setPointerCapture(e.pointerId); } catch (x) {}
+      return;
+    }
     else {
       var p = evLL(e), P = areaDraw.pts;
       if (P.length >= 3) { var f = map.latLngToContainerPoint(P[0]), c = map.mouseEventToContainerPoint(e); if (f.distanceTo(c) < 16) { drawEnd(false); return; } }
@@ -6235,13 +6303,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     drawShow();
   }, true);
   mapEl.addEventListener("pointermove", function (e) {
-    if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return;
+    if (!areaDraw || !lassoDown) return;
     e.preventDefault(); e.stopPropagation();
+    if (areaDraw.mode !== "lasso") { shapeMove(e); return; }
     var p = evLL(e), P = areaDraw.pts, last = map.latLngToContainerPoint(P[P.length - 1]);
     if (last.distanceTo(map.mouseEventToContainerPoint(e)) < 4) return;
     P.push(p); drawShow();
   }, true);
-  function lassoUp(e) { if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return; lassoDown = false; e.preventDefault(); e.stopPropagation(); drawEnd(false); }
+  function lassoUp(e) {
+    if (!areaDraw || !lassoDown) return;
+    lassoDown = false; e.preventDefault(); e.stopPropagation();
+    /* a tap or a tiny drag is not a circle or square: stay in drawing mode for a proper drag */
+    if (areaDraw.mode !== "lasso" && (e.type === "pointercancel" || areaDraw.down.distanceTo(map.mouseEventToContainerPoint(e)) < 10)) {
+      areaDraw.pts = []; areaDraw.dots.clearLayers(); drawShow(); areaUi(); return;
+    }
+    drawEnd(false);
+  }
   mapEl.addEventListener("pointerup", lassoUp, true);
   mapEl.addEventListener("pointercancel", lassoUp, true);
   mapEl.addEventListener("dblclick", function (e) { if (areaDraw && areaDraw.mode === "poly") { e.preventDefault(); e.stopPropagation(); drawEnd(false); } }, true);
@@ -6249,7 +6326,80 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      lands on a report dot used to open that report and pan the map, so the next corner or the closing tap missed. The click that
      follows the closing tap or the end of a lasso is swallowed too, or it opened whatever report sat under the finger */
   mapEl.addEventListener("click", function (e) { if ((areaDraw || Date.now() - drawEndT < 600) && !inCtl(e)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && areaDraw) drawEnd(true); });
+  document.addEventListener("keydown", function (e) { if (e.key !== "Escape") return; if (areaDraw) drawEnd(true); else if (areaEdit) { editEnd(); areaUi(); } });
+  /* editing a drawn area: corner handles resize it (the opposite corner stays put; a circle stays round), the round handle above
+     turns it, the centre handle moves it. The work is done on screen pixels at the current zoom and handed back as the same
+     kind of polygon through areaSet, so everything that reads the drawn area sees an ordinary new area */
+  var areaEdit = null;
+  function rotP(p, a) { var c = Math.cos(a), s = Math.sin(a); return L.point(p.x * c - p.y * s, p.x * s + p.y * c); }
+  function editFrame() {
+    var z = map.getZoom(), a = AREA_ST.rot, px = AREA.map(function (q) { return map.project(q, z); });
+    var mnx = Infinity, mny = Infinity, mxx = -Infinity, mxy = -Infinity, o = px[0];
+    px.forEach(function (p) { var f = rotP(p.subtract(o), -a); mnx = Math.min(mnx, f.x); mny = Math.min(mny, f.y); mxx = Math.max(mxx, f.x); mxy = Math.max(mxy, f.y); });
+    var toS = function (x, y) { return rotP(L.point(x, y), a).add(o); };
+    return { z: z, a: a, o: o, px: px, box: [mnx, mny, mxx, mxy], toS: toS, toF: function (p) { return rotP(p.subtract(o), -a); },
+      c: toS((mnx + mxx) / 2, (mny + mxy) / 2) };
+  }
+  function editHandles() {
+    if (!areaEdit || !AREA) return;
+    areaEdit.lay.clearLayers();
+    var F = editFrame(), b = F.box, zu = function (p) { var l = map.unproject(p, F.z); return [l.lat, l.lng]; };
+    var ic = function (cls, txt) { return L.divIcon({ className: "areah " + cls, html: txt || "", iconSize: [26, 26], iconAnchor: [13, 13] }); };
+    var add = function (k, p, cls, txt, lbl) {
+      var m = L.marker(zu(p), { pane: "areapane", icon: ic(cls, txt), keyboard: false, interactive: true, zIndexOffset: 1000 }).addTo(areaEdit.lay);
+      var el = m.getElement(); el.setAttribute("data-ah", k); el.setAttribute("aria-label", lbl); el.title = lbl;
+      el.addEventListener("pointerdown", editDown);
+    };
+    [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]].forEach(function (xy, i) { add("c" + i, F.toS(xy[0], xy[1]), "areah-c", "", "Drag to resize"); });
+    var top = F.toS((b[0] + b[2]) / 2, b[1] - 34);
+    L.polyline([zu(F.toS((b[0] + b[2]) / 2, b[1])), zu(top)], { pane: "areapane", renderer: areaSvg, color: stLine(), weight: 2, interactive: false }).addTo(areaEdit.lay);
+    add("rot", top, "areah-r", "\u21bb", "Drag to turn");
+    add("mv", F.c, "areah-m", "\u2725", "Drag to move");
+  }
+  function editDown(e) {
+    var k = this.getAttribute("data-ah"); if (!k || !AREA) return;
+    e.preventDefault(); e.stopPropagation();
+    try { this.setPointerCapture(e.pointerId); } catch (x) {}
+    var F = editFrame(), b = F.box, i = k.charAt(0) === "c" ? +k.charAt(1) : -1;
+    var cs = [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]];
+    areaEdit.drag = { k: k, F: F, p0: map.mouseEventToLayerPoint(e).add(map.getPixelOrigin()), fx: i >= 0 ? L.point(cs[(i + 2) % 4][0], cs[(i + 2) % 4][1]) : null,
+      hx: i >= 0 ? L.point(cs[i][0], cs[i][1]) : null, P: AREA, rot: AREA_ST.rot };
+    map.dragging.disable();
+  }
+  function editMove(e) {
+    var d = areaEdit && areaEdit.drag; if (!d) return;
+    e.preventDefault(); e.stopPropagation();
+    var F = d.F, p = map.mouseEventToLayerPoint(e).add(map.getPixelOrigin()), out;
+    if (d.k === "mv") { var dv = p.subtract(d.p0); out = F.px.map(function (q) { return q.add(dv); }); }
+    else if (d.k === "rot") {
+      var da = Math.atan2(p.y - F.c.y, p.x - F.c.x) - Math.atan2(d.p0.y - F.c.y, d.p0.x - F.c.x);
+      out = F.px.map(function (q) { return rotP(q.subtract(F.c), da).add(F.c); }); d.rot = F.a + da;
+    } else {
+      var f = F.toF(p), w = d.hx.x - d.fx.x, h = d.hx.y - d.fx.y;
+      var sx = Math.max(0.05, (f.x - d.fx.x) / (w || 1)), sy = Math.max(0.05, (f.y - d.fx.y) / (h || 1));
+      if (AREA_ST.kind === "circle") sx = sy = Math.max(0.05, (sx + sy) / 2);
+      out = F.px.map(function (q) { var g = F.toF(q); return F.toS(d.fx.x + (g.x - d.fx.x) * sx, d.fx.y + (g.y - d.fx.y) * sy); });
+    }
+    d.P = out.map(function (q) { var l = map.unproject(q, F.z); return [l.lat, l.lng]; });
+    areaShowPts(d.P);
+  }
+  function editUp(e) {
+    var d = areaEdit && areaEdit.drag; if (!d) return;
+    e.preventDefault(); e.stopPropagation();
+    areaEdit.drag = null; drawEndT = Date.now(); map.dragging.enable();
+    AREA_ST.rot = d.rot; areaStSave();
+    areaSet(d.P);
+  }
+  map.on("zoomend", function () { if (areaEdit && !areaEdit.drag) editHandles(); });
+  mapEl.addEventListener("pointermove", editMove, true);
+  mapEl.addEventListener("pointerup", editUp, true);
+  mapEl.addEventListener("pointercancel", editUp, true);
+  /* a tap on a handle must not reach the map-click dispatcher (it would open the report under it) */
+  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  function editStart() { if (!AREA) return; drawEnd(true); areaEdit = { lay: L.layerGroup().addTo(map), drag: null }; mapEl.classList.add("area-editing"); editHandles(); areaUi(); }
+  function editEnd() { if (!areaEdit) return; if (areaEdit.drag) map.dragging.enable(); map.removeLayer(areaEdit.lay); areaEdit = null; mapEl.classList.remove("area-editing"); }
+  function hexOk(v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }
+  function hexOf(v) { if (hexOk(v)) return v; var c = document.createElement("canvas").getContext("2d"); c.fillStyle = v; return hexOk(c.fillStyle) || "#1f5f8b"; }
   var AreaCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-control areactl"); d.id = "area-ctl";
     L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; } });
@@ -6258,10 +6408,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaUi() {
     if (!areaEl) return;
     var h;
-    if (areaDraw) h = '<span class="areahint">' + (areaDraw.mode === "lasso" ? "Hold and draw round the area" : "Tap each corner, then tap the first corner or Finish") + "</span>" +
+    areaEl.classList.toggle("editing", !!areaEdit);
+    if (areaEdit) h = '<span class="areahint">Drag a corner to resize, \u21bb to turn, \u2725 to move</span>' +
+      '<label class="areast">Fill <input type="color" data-ast="fill" value="' + hexOf(stFill()) + '"></label>' +
+      '<label class="areast">Outline <input type="color" data-ast="line" value="' + hexOf(stLine()) + '"></label>' +
+      '<label class="areast areaop">Fill opacity <input type="range" min="0" max="80" step="1" data-ast="op" value="' + Math.round(AREA_ST.op * 100) + '"><output>' + Math.round(AREA_ST.op * 100) + '%</output></label>' +
+      '<button type="button" data-area="reset" title="Back to the standard colours">Reset colours</button><button type="button" data-area="done">Done</button>';
+    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + "</span>" +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
-      (AREA ? '<button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
+      '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
+      (AREA ? '<button type="button" data-area="edit">Edit shape</button><button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
     else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
       (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' : "");
     areaEl.innerHTML = h;
@@ -6271,12 +6428,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var k = b.getAttribute("data-area");
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
-    else if (k === "lasso" || k === "poly") { areaEl.classList.remove("open"); drawStart(k); return; }
+    else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
     else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
+    else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
+    else if (k === "done") { editEnd(); }
+    else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
     else if (k === "sum") { areaSum(); return; }
     areaUi();
+  });
+  areaEl.addEventListener("input", function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute("data-ast"); if (!k) return;
+    if (k === "op") { AREA_ST.op = Math.max(0, Math.min(0.8, +e.target.value / 100)); var o = e.target.parentNode.querySelector("output"); if (o) o.textContent = Math.round(AREA_ST.op * 100) + "%"; }
+    else AREA_ST[k] = hexOk(e.target.value);
+    areaStSave();
+    if (areaLayer) { var ls = areaLayer.getLayers(); ls[1].setStyle({ fillColor: stFill(), fillOpacity: AREA_ST.op }); ls[2].setStyle({ color: stLine() }); }
   });
   /* the area summary (assets/osap-areasum.js) opens in the Details panel beside the list, which it shows if the map is on its own */
   function areaSum() {
@@ -7415,7 +7582,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
   /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
      (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
-  window.TSAP.areaApi = { area: function () { return AREA; }, setArea: function (P) { areaSet(P); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine() }; }, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
