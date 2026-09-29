@@ -25,6 +25,7 @@
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
 <script src="assets/osap-aoi.js"></script>
+<script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
 <script src="assets/osap-drones.js"></script>
