@@ -164,7 +164,7 @@ jobs:
           retention-days: 3
       - name: Probe candidate national news feeds (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-news' || inputs.only == 'probe-cap' }}
-        run: CAP_ONLY=${{ inputs.only == 'probe-cap' && '1' || '' }} node tools/probe_news.mjs
+        run: node tools/probe_samples.mjs
         continue-on-error: true
       - name: Re-place current news with the place rules and compare (diagnostic, writes nothing to the repo)
         if: ${{ inputs.only == 'probe-placement' }}
