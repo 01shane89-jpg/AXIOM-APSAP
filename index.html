@@ -6085,7 +6085,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     L.DomEvent.disableClickPropagation(d); return d; } });
   new RvCtl().addTo(map);
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-rv-mode]"); if (b) rvSet(b.getAttribute("data-rv-mode")); });
-  /* ---------- drawn area: lasso or polygon that isolates the reporting area ----------
+  /* ---------- drawn area: lasso, polygon, circle or square that isolates the reporting area ----------
      The shape is the analyst's own filter, kept on this device per country. Map markers outside it are hidden and the report list
      counts only what is inside. Nothing about the records changes. */
   var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
@@ -6136,7 +6136,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     areaShow(); areaUi(); rvSoon();
   }
   /* drawing: lasso follows the finger or mouse while held down; polygon adds a corner per tap and closes on the first corner,
-     a double-click, or Finish. Map panning is paused while drawing. */
+     a double-click, or Finish; circle drags out from its centre and square from one corner to the opposite one. Circle and
+     square are handed on as ordinary polygons, so everything that reads the drawn area works on them unchanged.
+     Map panning is paused while drawing. */
   var mapEl = map.getContainer();
   function drawStart(mode) {
     drawEnd(true);
@@ -6158,7 +6160,41 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     mapEl.classList.remove("area-drawing");
     if (!cancel && P.length >= 3) areaSet(P); else areaUi();
   }
-  function drawShow() { var P = areaDraw.pts; areaDraw.line.setLatLngs(P); areaDraw.halo.setLatLngs(P); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []); }
+  function drawShow() {
+    var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
+    areaDraw.line.setLatLngs(E); areaDraw.halo.setLatLngs(E); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []);
+  }
+  /* circle and square: the shape from the press point to where the finger or mouse is now */
+  var SHAPE_N = 64;
+  function kmTxt(m) { var k = m / 1000; return (k < 10 ? k.toFixed(2) : k < 100 ? k.toFixed(1) : Math.round(k)) + " km"; }
+  function nmTxt(m) { var n = m / 1852; return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.round(n)) + " nm"; }
+  function circlePts(c, r) {
+    /* true distance on the earth's surface: each point is r metres from the centre (great-circle destination) */
+    var R = 6371008.8, d = r / R, la = c[0] * Math.PI / 180, lo = c[1] * Math.PI / 180, P = [];
+    for (var i = 0; i < SHAPE_N; i++) {
+      var b = 2 * Math.PI * i / SHAPE_N, la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(b));
+      var lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+      P.push([la2 * 180 / Math.PI, lo2 * 180 / Math.PI]);
+    }
+    return P;
+  }
+  function shapeMove(e) {
+    var a = areaDraw.anchor, b = evLL(e), hint = areaEl.querySelector(".areahint"), t;
+    areaDraw.dots.clearLayers();
+    if (areaDraw.mode === "circle") {
+      var r = map.distance(a, b);
+      areaDraw.pts = r > 0 ? circlePts(a, r) : [];
+      L.polyline([a, b], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2, dashArray: "5 5", interactive: false }).addTo(areaDraw.dots);
+      L.circleMarker(a, { pane: "areapane", renderer: areaSvg, radius: 5, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
+      t = "Radius " + kmTxt(r) + " (" + nmTxt(r) + ")";
+    } else {
+      areaDraw.pts = [a, [a[0], b[1]], b, [b[0], a[1]]];
+      var w = map.distance([(a[0] + b[0]) / 2, a[1]], [(a[0] + b[0]) / 2, b[1]]), h = map.distance([a[0], a[1]], [b[0], a[1]]);
+      t = kmTxt(w) + " × " + kmTxt(h);
+    }
+    if (hint) hint.textContent = t;
+    drawShow();
+  }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
   function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
   var lassoDown = false, drawEndT = 0;
@@ -6166,6 +6202,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaDraw || inCtl(e)) return;
     e.preventDefault(); e.stopPropagation();
     if (areaDraw.mode === "lasso") { lassoDown = true; areaDraw.pts = [evLL(e)]; try { mapEl.setPointerCapture(e.pointerId); } catch (x) {} }
+    else if (areaDraw.mode === "circle" || areaDraw.mode === "rect") {
+      lassoDown = true; areaDraw.anchor = evLL(e); areaDraw.down = map.mouseEventToContainerPoint(e); areaDraw.pts = [];
+      try { mapEl.setPointerCapture(e.pointerId); } catch (x) {}
+      return;
+    }
     else {
       var p = evLL(e), P = areaDraw.pts;
       if (P.length >= 3) { var f = map.latLngToContainerPoint(P[0]), c = map.mouseEventToContainerPoint(e); if (f.distanceTo(c) < 16) { drawEnd(false); return; } }
@@ -6175,13 +6216,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     drawShow();
   }, true);
   mapEl.addEventListener("pointermove", function (e) {
-    if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return;
+    if (!areaDraw || !lassoDown) return;
     e.preventDefault(); e.stopPropagation();
+    if (areaDraw.mode !== "lasso") { shapeMove(e); return; }
     var p = evLL(e), P = areaDraw.pts, last = map.latLngToContainerPoint(P[P.length - 1]);
     if (last.distanceTo(map.mouseEventToContainerPoint(e)) < 4) return;
     P.push(p); drawShow();
   }, true);
-  function lassoUp(e) { if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return; lassoDown = false; e.preventDefault(); e.stopPropagation(); drawEnd(false); }
+  function lassoUp(e) {
+    if (!areaDraw || !lassoDown) return;
+    lassoDown = false; e.preventDefault(); e.stopPropagation();
+    /* a tap or a tiny drag is not a circle or square: stay in drawing mode for a proper drag */
+    if (areaDraw.mode !== "lasso" && (e.type === "pointercancel" || areaDraw.down.distanceTo(map.mouseEventToContainerPoint(e)) < 10)) {
+      areaDraw.pts = []; areaDraw.dots.clearLayers(); drawShow(); areaUi(); return;
+    }
+    drawEnd(false);
+  }
   mapEl.addEventListener("pointerup", lassoUp, true);
   mapEl.addEventListener("pointercancel", lassoUp, true);
   mapEl.addEventListener("dblclick", function (e) { if (areaDraw && areaDraw.mode === "poly") { e.preventDefault(); e.stopPropagation(); drawEnd(false); } }, true);
@@ -6198,9 +6248,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaUi() {
     if (!areaEl) return;
     var h;
-    if (areaDraw) h = '<span class="areahint">' + (areaDraw.mode === "lasso" ? "Hold and draw round the area" : "Tap each corner, then tap the first corner or Finish") + "</span>" +
+    if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + "</span>" +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
+      '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
       (AREA ? '<button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
     else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
       (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' : "");
@@ -6211,7 +6262,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var k = b.getAttribute("data-area");
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
-    else if (k === "lasso" || k === "poly") { areaEl.classList.remove("open"); drawStart(k); return; }
+    else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
     else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
