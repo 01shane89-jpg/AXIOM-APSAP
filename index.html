@@ -556,6 +556,8 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 @media (max-width:920px){#map{height:60svh}.rail{max-height:none}}
 .tlf{display:grid;grid-template-columns:auto 1fr;gap:5px 9px;align-items:center;font-size:11.5px;color:var(--muted)}
 .tlf .mini{width:100%;min-width:0;box-sizing:border-box}
+.tlscope{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.tlscope[hidden]{display:none}.tlscope .obs{font-size:11.5px}
+.tlscope button{border-radius:999px;padding:3px 12px;font-weight:600}.tlscope button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .tllist{display:flex;flex-direction:column;margin-top:8px}
 .tlrow{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr;gap:1px;padding:7px 4px;border-top:1px solid var(--line-soft);cursor:pointer;width:100%}
 .tlrow:hover{background:var(--surface2)}
@@ -1000,6 +1002,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
     <div class="sec">
       <h2>Master timeline</h2>
       <p class="sub">Every record from the working layers, newest first. Click one to open its report.</p>
+      <div class="tlscope" id="tl-scope" role="group" aria-label="What the timeline covers" hidden><span class="obs">Covers</span><button type="button" class="refresh" data-scope="topic" aria-pressed="true"></button><button type="button" class="refresh" data-scope="all" aria-pressed="false"></button></div>
       <div class="tlf">
         <label for="tl-layer">Layer</label>
         <select id="tl-layer" class="mini"><option value="">All working layers</option><option value="flood">Flood</option><option value="border">Border</option></select>
@@ -3234,6 +3237,18 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* ---------- timeline rail ---------- */
   var railT = document.getElementById("rail-timeline");
   var F = { layer: "", type: "", prov: "", from: "", to: "", src: "", q: "" };
+  /* the topic the reader came from (a conflict tab such as Deep South, or a data set's own tab): the Master timeline then covers
+     only that topic's records, with a switch back to the whole country. A conflict tab's records are those of the layers it has
+     taken over (merge_tabs); a conflict with none has no records here, so it sets no topic. */
+  var TOPIC = null, SCOPED = false;
+  function scoped() { return SCOPED && TOPIC ? TOPIC : null; }
+  function topicNow() {
+    var cf = document.documentElement.getAttribute("data-cf"), T = window.OSAP_CONFLICT_TABS;
+    if (cf) { var ls = T && T.layers ? T.layers(cf) : []; return ls.length ? { id: "cf-" + cf, label: T.name(cf) || cf, layers: ls } : null; }
+    if (!current || current === "timeline" || current === "alerts" || !LBY[current]) return null;
+    for (var i = 0; i < R.length; i++) if (R[i].layer === current) return { id: current, label: LBY[current].name, layers: [current] };
+    return null;
+  }
   var provs = {}; R.forEach(function (r) { if (r.prov) provs[r.prov] = 1; });
   var srcIds = Object.keys(SOURCES).filter(function (k) { return SOURCES[k].n; })
     .sort(function (a, b) { return SOURCES[b].n - SOURCES[a].n; });
@@ -3264,6 +3279,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function match(r) {
     if (!inPlayback(r)) return false;
+    var sc = scoped();
+    if (sc && (r.xcc || sc.layers.indexOf(r.layer) < 0)) return false;
     if (F.layer && r.layer !== F.layer) return false;
     if (F.type && r.type !== F.type) return false;
     if (F.src && r.src.id !== F.src) return false;
@@ -3306,7 +3323,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var shown = [];
   function render() {
     var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
-    shown = R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || DS[r.layer]); });
+    /* a topic scope shows the topic's records on the map and in the list whatever the data set ticks */
+    var sc = scoped(), mapped = function (r) { return DS[r.layer] || (sc && sc.layers.indexOf(r.layer) >= 0); };
+    shown = R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || mapped(r)); });
+    scopeUi();
     if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
     list.textContent = "";
@@ -3320,7 +3340,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         if (evDone[ev.id]) return;
         evDone[ev.id] = 1; evN++;
         located += ev.m.filter(function (x) { return x.lat != null && isFinite(x.lat); }).length;
-        if (ev.m.some(function (x) { return DS[x.layer]; })) evPin(ev);
+        if (ev.m.some(mapped)) evPin(ev);
         if (i >= 250) return;
         var de = document.createElement("button");
         de.type = "button"; de.className = "tlrow evrow"; de.setAttribute("data-ev", ev.id);
@@ -3339,7 +3359,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, st0));
         m.bindTooltip((r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.title), { direction: "top" });
         m.on("click", function () { select(r.id, false); });
-        if (DS[r.layer]) tlLayer.addLayer(m); markers[r.id] = m;
+        if (mapped(r)) tlLayer.addLayer(m); markers[r.id] = m;
       }
       if (i >= 250) return;
       var d = document.createElement("button");
@@ -3631,6 +3651,32 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   bindF("tl-layer", "layer"); bindF("tl-type", "type"); bindF("tl-src", "src");
   bindF("tl-from", "from"); bindF("tl-to", "to");
   bindF("tl-prov", "prov", "input"); bindF("tl-q", "q", "input");
+  /* the topic switch: "Deep South" (the topic the reader came from) or "All Thailand" */
+  var scopeBox = document.getElementById("tl-scope");
+  function scopeUi() {
+    scopeBox.hidden = !TOPIC;
+    if (!TOPIC) return;
+    var bt = scopeBox.querySelector('[data-scope="topic"]'), ba = scopeBox.querySelector('[data-scope="all"]');
+    bt.textContent = TOPIC.label; bt.setAttribute("aria-pressed", SCOPED ? "true" : "false");
+    bt.title = "Only the records of " + TOPIC.label + (TOPIC.id.indexOf("cf-") === 0 ? " (the " + TOPIC.layers.map(function (l) { return (LBY[l] || { name: l }).name; }).join(" and ") + " records its tab lists)" : "");
+    ba.textContent = "All " + cName(CC); ba.setAttribute("aria-pressed", SCOPED ? "false" : "true");
+    ba.title = "Every record for " + cName(CC);
+  }
+  scopeBox.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-scope]"); if (!b) return;
+    var on = b.getAttribute("data-scope") === "topic";
+    if (on === SCOPED) return;
+    SCOPED = on; render();
+  });
+  /* opening a topic (a conflict tab or a data set's tab) makes it the timeline's scope; the Master timeline itself, Alerts and
+     tabs with no records here leave the last topic as it was. Closing a conflict tab onto the Master timeline redraws it. */
+  var cfWas = null;
+  new MutationObserver(function () {
+    var cf = document.documentElement.getAttribute("data-cf"), t = topicNow();
+    if (t) { TOPIC = t; SCOPED = true; }
+    var back = cfWas && !cf; cfWas = cf;
+    if (back && current === "timeline") render(); else scopeUi();
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf", "data-view"] });
   var pbOn = document.getElementById("pb-on"), pbBody = document.getElementById("pb-body");
   var pbDay = document.getElementById("pb-day"), pbPlay = document.getElementById("pb-play");
   var pbWin = document.getElementById("pb-win");
@@ -5834,9 +5880,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var rows = list.filter(function (x) { return g[1].indexOf(x.id) >= 0; }); rows.forEach(function (x) { seen[x.id] = 1; }); return [g[0], rows];
     });
     grp.push(["More", list.filter(function (x) { return !seen[x.id]; })]);
+    /* while a conflict tab is open the page still holds its previous tab as current: the conflict tab is the one shown as chosen */
+    var cfOpen = document.documentElement.getAttribute("data-cf");
     dsBox.innerHTML = (tabs.length ? '<div class="mlh">Views</div><div class="dstabs" role="group" aria-label="Views">' + tabs.map(function (b) {
         var v = b.getAttribute("data-view");
-        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === current) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
+        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === (cfOpen ? "cf-" + cfOpen : current)) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
       }).join("") + "</div>" : "") +
       '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
       '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ". Open shows a data set's own list and details.</p>" +
@@ -5852,7 +5900,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var o = e.target.closest && e.target.closest("[data-dsopen]");
     if (o) {
       var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
-      if (ob && ov !== current) ob.click();
+      if (ob && (ov !== current || document.documentElement.getAttribute("data-cf"))) ob.click();
       document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: ov }));
       return;
     }
@@ -6938,6 +6986,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "<dt>Where</dt><dd>" + (v.loc ? esc([v.loc.place, v.loc.prov].filter(Boolean).join(", ") || (v.loc.lat.toFixed(3) + ", " + v.loc.lon.toFixed(3))) +
           '<span class="sub">Pin at the most precisely placed report (' + esc(v.loc.src.name) + "; " + esc((PREC[v.loc.prec] || v.loc.prec).toLowerCase()) + ")" +
           (dist >= 1 ? ". Reports are up to " + Math.round(dist) + " km apart" : "") + '</span><span class="sub">MGRS <b class="mgrs">' + esc(mgrsFor(v.loc)) + "</b></span>" : "No report in it has a map location") + "</dd></dl>" +
+      (window.OSAP_TLREPORT && v.m.some(function (r) { return !r.xcc; }) ? '<p style="margin:6px 0 0"><button type="button" class="refresh" data-ev-tlr="1" title="Printable report of this event alone: its reports in order, map and sources">Timeline report of this event</button></p>' : "") +
       '<h4 class="pkgh">Reports in this event</h4><div class="evlist">' + v.m.map(function (r) {
         var st = STATE[r.type] || [r.type, ""];
         return '<div class="evm"><span class="tlt">' + (r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(fmtTs(r)) + '</span><span class="tln">' + esc(r.title) + "</span>" +
@@ -6949,6 +6998,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (nSplit ? '<p class="obs" style="margin-top:6px">' + nSplit + " report" + (nSplit === 1 ? " was" : "s were") + ' split out of this event. <button type="button" class="refresh" data-ev-regroup="' + esc(v.id) + '">Group again</button></p>' : "") +
       evRelHtml(v);
     box.querySelector(".pkghead .x").addEventListener("click", function () { box.hidden = true; EVOPEN = null; });
+    var tlr = box.querySelector("[data-ev-tlr]");
+    if (tlr) tlr.addEventListener("click", function () {
+      window.OSAP_TLREPORT.open({ ids: v.m.filter(function (r) { return !r.xcc; }).map(function (r) { return r.id; }), label: v.head.title, event: true });
+    });
     Array.prototype.forEach.call(box.querySelectorAll("[data-ev-rec]"), function (b) {
       b.addEventListener("click", function () { EVOPEN = null; select(b.getAttribute("data-ev-rec"), boxId === "tl-pkg", boxId); });
     });
@@ -7638,7 +7691,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   evRefresh();
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
-  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
+  window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP,
+    /* the Master timeline as the reader sees it: its topic scope (null for the whole country), the view open now, the records it lists and
+       the filters in force; read by the Timeline report */
+    timeline: function () {
+      var sc = scoped(), f = [];
+      if (F.layer) f.push((LBY[F.layer] || { name: F.layer }).name); if (F.type) f.push(F.type + "s");
+      if (F.src && SOURCES[F.src]) f.push(SOURCES[F.src].name); if (F.prov) f.push("“" + F.prov + "”"); if (F.q) f.push("“" + F.q + "”");
+      if (F.from || F.to) f.push((F.from || "…") + " to " + (F.to || "…"));
+      return { view: current, cf: document.documentElement.getAttribute("data-cf") || "", topic: TOPIC, scope: sc, filters: f,
+        ids: shown.filter(function (r) { return !r.xcc; }).map(function (r) { return r.id; }) };
+    } };
   /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
      (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
   window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine(), w: AREA_ST.w }; }, zoomW: zoomW, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
@@ -7846,7 +7909,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function label() {
     var s = root.getAttribute("data-sheet"), b = document.querySelector('#view-seg button[aria-selected="true"]'), pn = panel();
-    var name = b ? b.childNodes[0].textContent.trim() : "Details";
+    var name = b ? b.childNodes[0].textContent.trim() : "Details", tl = window.TSAP && window.TSAP.timeline && b && b.getAttribute("data-view") === "timeline" ? window.TSAP.timeline() : null;
+    if (tl && tl.scope) name = tl.scope.label + " timeline";
     var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof], ol.cfl>li").length : 0;
     h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
     var sn = pn && pn.querySelector("[data-sheet-note]"), snt = sn && sn.getAttribute("data-sheet-note");
@@ -7948,6 +8012,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-3d.js"></script>
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
+<script src="assets/osap-grid.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

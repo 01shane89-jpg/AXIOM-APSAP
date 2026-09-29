@@ -39,7 +39,7 @@
     // flood maps, road closures, weather, ground mobility, live aircraft) and the area drawn with Draw area: those draw only when switched on, and each data set
     // change switches the overlays off again
     "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
-      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane){visibility:hidden}",
+      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane){visibility:hidden}",
     "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
@@ -704,7 +704,11 @@
     var seg = D.getElementById("view-seg"); if (!seg) return;
     seg.addEventListener("click", onSeg, true);
     var ph = D.getElementById("ph-view");
-    if (ph) ph.addEventListener("change", function (e) { if (/^cf-/.test(ph.value)) { e.stopImmediatePropagation(); activate(ph.value.slice(3)); } else if (active) { var b = D.querySelector('#view-seg button[data-view="' + ph.value + '"]'); deactivate(); if (b) b.click(); e.stopImmediatePropagation(); } }, true);
+    if (ph) ph.addEventListener("change", function (e) { if (/^cf-/.test(ph.value)) { e.stopImmediatePropagation(); activate(ph.value.slice(3)); } else if (active) {
+      var b = D.querySelector('#view-seg button[data-view="' + ph.value + '"]'); deactivate(); e.stopImmediatePropagation();
+      // the page ignores a click on the tab it still holds as open (often the Master timeline): mark it chosen here, as onSeg does
+      if (b) { b.click(); Array.prototype.forEach.call(D.querySelectorAll("#view-seg button"), function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); }); }
+    } }, true);
     (W.OSAP_CONFLICTS ? Promise.resolve() : load("data/live/conflicts/index.js")).then(function () {
       IDX = W.OSAP_CONFLICTS; if (!IDX) return;
       addTabs(); addMenu();
@@ -719,5 +723,9 @@
   function whenReady() { if (W.TSAP && D.getElementById("view-seg") && D.getElementById("view-seg").children.length) start(); else setTimeout(whenReady, 150); }
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", whenReady); else whenReady();
   // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
-  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin };
+  // layers(id): this country's layer tabs the conflict has taken over (their records are the page's own, so the Master timeline and
+  // the Timeline report can cover just this conflict); name(id): its short name
+  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin,
+    layers: function (id) { var m = absorbed(); return Object.keys(m).filter(function (l) { return m[l] === id; }); },
+    name: function (id) { var c = byId(id); return c ? c.short || c.name : ""; } };
 })();
