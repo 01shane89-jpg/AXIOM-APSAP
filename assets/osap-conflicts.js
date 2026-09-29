@@ -38,7 +38,7 @@
     // every other map pane is hidden, except the overlays a person switches on in the Layers menu (terrain, possible flashpoints,
     // flood maps, road closures, weather, ground mobility, live aircraft) and the area drawn with Draw area: those draw only when switched on, and each data set
     // change switches the overlays off again
-    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
+    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
       ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane){visibility:hidden}",
     "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
@@ -55,6 +55,8 @@
     "html[data-cf] .leaflet-popup-content .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}html[data-cf] .leaflet-popup-content .tag.claim{border-color:var(--near);color:var(--ink)}html[data-cf] .leaflet-popup-content .cfalso a{color:var(--accent)}",
     "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}",
     "#cf-rail .lg{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}#cf-rail .more{margin-top:6px}",
+    ".leaflet-marker-icon.cfrepn,.cfrepn{display:flex!important;align-items:center;justify-content:center;border-radius:50%;background:#1D5A86;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);box-sizing:border-box;color:#fff;font:700 12px/1 system-ui,-apple-system,sans-serif;cursor:pointer}.cfrepn span{display:block;width:100%;text-align:center;line-height:1}" +
+    "html[data-cf] .leaflet-popup-content .cfrepi{border-top:1px solid var(--line);padding-top:5px;margin-top:5px}",
     "#view-seg button.cftab::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--l3);margin-right:5px;vertical-align:1px}",
     ".cmenu.cfmenu{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.cmenu.cfmenu h4{grid-column:1/-1;margin:4px 2px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}",
     ".cmenu.cfmenu button span.n{margin-left:6px;font-size:11px;color:var(--muted)}",
@@ -317,9 +319,15 @@
     map = W.__asapMap; if (!map || !W.L || panes) return;
     map.createPane("cfarea"); map.getPane("cfarea").style.zIndex = 420;
     map.createPane("cfpane"); map.getPane("cfpane").style.zIndex = 660;
+    // numbered report badges sit above every dot and ring of the tab, so their numbers stay readable
+    map.createPane("cfrep"); map.getPane("cfrep").style.zIndex = 670;
     panes = true;
     // crossing the heat-map zoom redraws the events as heat or as dots
-    map.on("zoomend", function () { if (active && cur.data && F.show.ucdp && heatWanted(ucdpHeat.cnt) !== ucdpHeat.on) drawMap(); });
+    map.on("zoomend", function () {
+      if (!active || !cur.data) return;
+      if (F.show.ucdp && heatWanted(ucdpHeat.cnt) !== ucdpHeat.on) drawMap();
+      else if (F.show.rep && lyr.rep && repZ !== map.getZoom()) drawRep();
+    });
     if (W.OSAP_HEAT) W.OSAP_HEAT.onChange(function () { if (active && cur.data) drawMap(); });
   }
   // conflict events turn into a heat map below zoom HEATZ when DENSE or more are in the period (switch: Layers, Dense points)
@@ -383,16 +391,40 @@
         })).addTo(map);
       }
     }
-    if (d && F.show.rep) {
-      lyr.rep = L.layerGroup(grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }).map(function (g) {
-        var i = g.lead;
-        // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
-        var rough = i.geo.p === "province";
-        return L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 }).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
-      })).addTo(map);
-    }
+    if (d && F.show.rep) drawRep();
     mapLegend();
   }
+  /* Reports: one dot per incident. Dots that would overlap on screen at this zoom become one numbered badge (tap: zoom in
+     to them, or list them when they share a spot), so a zoomed-out map shows a few clear badges, not a pile of circles.
+     Grouping is by screen distance at the current zoom only; each report keeps its own position. */
+  var REPGAP = 26;
+  function repDot(g) {
+    var i = g.lead, rough = i.geo.p === "province";   // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
+    return W.L.circleMarker([i.geo.la, i.geo.lo], { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 }).bindPopup(repHtml(i, true) + alsoHtml(g), { maxWidth: 340 });
+  }
+  function drawRep() {
+    if (lyr.rep) map.removeLayer(lyr.rep);
+    var L = W.L, z = map.getZoom(), gs = grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }), bins = [];
+    gs.forEach(function (g) {
+      var pt = map.project([g.lead.geo.la, g.lead.geo.lo], z), b = null;
+      for (var k = 0; k < bins.length; k++) if (bins[k].pt.distanceTo(pt) < REPGAP) { b = bins[k]; break; }
+      if (b) b.gs.push(g); else bins.push({ pt: pt, gs: [g] });
+    });
+    lyr.rep = L.layerGroup(bins.map(function (b) {
+      if (b.gs.length === 1) return repDot(b.gs[0]);
+      var n = b.gs.length, sz = n < 10 ? 24 : n < 100 ? 28 : 32, ll = L.latLngBounds(b.gs.map(function (g) { return [g.lead.geo.la, g.lead.geo.lo]; }));
+      var m = L.marker(map.unproject(b.pt, z), { pane: "cfrep", keyboard: true, title: n + " reports here",
+        icon: L.divIcon({ className: "cfrepn", html: "<span>" + n + "</span>", iconSize: [sz, sz] }) });
+      // spread out: zoom to them; on one spot (the same town or region centre): list them
+      var same = map.project(ll.getNorthWest(), map.getMaxZoom()).distanceTo(map.project(ll.getSouthEast(), map.getMaxZoom())) < REPGAP;
+      if (same) m.bindPopup('<b>' + n + " reports at " + esc(b.gs[0].lead.geo.n || "this place") + "</b>" + b.gs.slice(0, 12).map(function (g) { return '<div class="cfrepi">' + repHtml(g.lead, true) + "</div>"; }).join("") +
+        (n > 12 ? '<div class="cfm">and ' + (n - 12) + " more in the list</div>" : ""), { maxWidth: 340, maxHeight: 360 });
+      else m.on("click", function () { map.fitBounds(ll.pad(0.3), { maxZoom: Math.max(z + 2, map.getBoundsZoom(ll.pad(0.3))) }); });
+      return m;
+    })).addTo(map);
+    repZ = z;
+  }
+  var repZ = null;
   // a place name from a map module can carry layout padding (&nbsp;)
   function pname(p) { return String(p.n || "").replace(/&nbsp;|\u00a0/g, " ").trim() || "Unnamed place"; }
   var AREAN = { exclusion: "Announced exclusion zone", blockade: "Blockade", threat: "Shipping threat area", "strike-zone": "Reported strike zone" };
@@ -427,7 +459,8 @@
     if (ucdpHeat.on) h.push(W.OSAP_HEAT.legend("UCDP events", "Heat map of " + num(ucdpHeat.n) + " events, each where UCDP placed it; deadlier events weigh more." +
       (ucdpHeat.left ? " " + num(ucdpHeat.left) + " placed only to a province or wider are left out here." : "") + " Zoom in or tap a hot area for each event."));
     else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
-    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true));
+    if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true) +
+      '<div class="lg"><span class="sw round cfrepn" style="position:static;display:inline-flex;width:18px;height:18px"><span style="font-size:10px">3</span></span><div>Reports close together<span class="d">Tap to zoom in or list them</span></div></div>');
     W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }
   var TNAME = { airfield: "airfield", heliport: "heliport", base: "military base", port: "port", hill: "strategic hill", industrial: "industrial site", oil_gas: "oil or gas site", dam: "dam", border_post: "border post", contested: "contested", besieged: "besieged or under pressure", rural: "rural presence" };
