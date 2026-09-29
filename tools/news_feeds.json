@@ -397,7 +397,7 @@
     {"cc":"tw","outlet":"ETtoday","url":"https://feeds.feedburner.com/ettoday/realtime","lang":"zh","tier":"local-language","max":40},
     {"cc":"tw","outlet":"Coast Guard Administration","url":"https://www.cga.gov.tw/GipOpen/wSite/rss?ctNode=650&mp=999","lang":"zh","tier":"official","state":true},
     {"cc":"tw","outlet":"Ministry of National Defense","url":"https://www.mnd.gov.tw/rss","lang":"zh","tier":"official","state":true},
-    {"cc":"tw","outlet":"Ministry of National Defense (PLA activities)","url":"https://www.mnd.gov.tw/en/news/PlaactList","lang":"en","tier":"official","state":true,"html":true,"match":"/en/News/PLAAct/\\d+"},
+    {"cc":"tw","outlet":"Ministry of National Defense (PLA activities)","url":"https://www.mnd.gov.tw/en/news/PlaactList","lang":"en","tier":"official","state":true,"html":true,"match":"/en/News/PLAAct/\\d+","detail":"mnd-pla","max":10},
     {"cc":"tw","outlet":"Taiwan CDC","url":"https://www.cdc.gov.tw/RSS/RssXml/Hh094B49-DRwe2RR4eFfrQ?type=1","lang":"zh","tier":"official","state":true},
     {"cc":"tw","outlet":"Bing News search: 共機 擾台","url":"https://www.bing.com/news/search?q=%E5%85%B1%E6%A9%9F%20%E6%93%BE%E5%8F%B0&format=rss&setlang=zh","lang":"zh","search":true,"nc":true,"tier":"specialist"},
     {"cc":"tw","outlet":"Bing News search: 海巡署","url":"https://www.bing.com/news/search?q=%E6%B5%B7%E5%B7%A1%E7%BD%B2&format=rss&setlang=zh","lang":"zh","search":true,"nc":true,"tier":"specialist"},

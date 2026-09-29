@@ -7,7 +7,7 @@ import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
-const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region"];
+const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail"];
 
 function read(cc) {
   try {
