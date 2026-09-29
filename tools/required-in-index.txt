@@ -76,3 +76,6 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+
+# MGRS grid lines and centre crosshair (claude/map-grid-crosshair)
+<script src="assets/osap-grid.js"></script>
