@@ -7554,11 +7554,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var name = b ? b.childNodes[0].textContent.trim() : "Details";
     var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof], ol.cfl>li").length : 0;
     h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
-    h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
+    var sn = pn && pn.querySelector("[data-sheet-note]"), snt = sn && sn.getAttribute("data-sheet-note");
+    h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : snt ? snt : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
     h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
   }
   function setSheet(s) { root.setAttribute("data-sheet", s); rail.style.removeProperty("--sheet-h"); if (s !== "full") rail.scrollTop = 0; label(); }
-  var lt = null; new MutationObserver(function () { clearTimeout(lt); lt = setTimeout(label, 120); }).observe(rail, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  var lt = null; new MutationObserver(function () { clearTimeout(lt); lt = setTimeout(label, 120); }).observe(rail, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "data-sheet-note"] });
   /* drag: follow the finger, then settle on the nearest height; a tap without movement steps bar, half, full, back to bar */
   var drag = null;
   function heights() { var vh = window.innerHeight, hh = parseFloat(getComputedStyle(root).getPropertyValue("--hdr-h")) || 120; return { bar: h.offsetHeight || 64, half: vh * 0.5, full: vh - hh }; }
@@ -7641,6 +7642,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-et.js"></script>
 <script src="assets/osap-geo.js"></script>
 <script src="assets/osap-measure.js"></script>
+<script src="assets/osap-tools.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

@@ -30,6 +30,16 @@
     L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; } });
   new BtnCtl().addTo(map); new CardCtl().addTo(map);
   var btn = document.getElementById("meas-btn"), card = document.getElementById("meas-card");
+  /* on a phone the card is a slim bar docked at the bottom of the map, above the Legend, so it never covers the line being
+     drawn; tap its arrow to open the full card (legs, points, formats) */
+  function place() {
+    var phone = phoneMq.matches, corner = map._controlCorners && map._controlCorners[phone ? "bottomleft" : "topleft"];
+    if (corner && card.parentNode !== corner) { if (phone) corner.insertBefore(card, corner.firstChild); else corner.appendChild(card); }
+    card.classList.toggle("mdock", phone);
+  }
+  place();
+  function onMq() { S.more = !phoneMq.matches; place(); if (S.on) ui(); }
+  if (phoneMq.addEventListener) phoneMq.addEventListener("change", onMq); else if (phoneMq.addListener) phoneMq.addListener(onMq);
 
   /* ---------- sums ---------- */
   function legs() {
@@ -87,7 +97,20 @@
     if (!S.on) { card.hidden = true; return; }
     card.hidden = false;
     var P = S.pts, L0 = legs(), tot = 0; L0.forEach(function (g) { tot += g.m; });
-    var h = '<div class="mhd"><b>Measure</b><button type="button" class="mx" data-m="off" aria-label="Close measure">×</button></div>';
+    var phone = phoneMq.matches, h;
+    if (phone && !S.more) {
+      var sum = !P.length ? '<span class="mtip">Tap the map to add points</span>' :
+        esc(G.fmtDist(tot, S.unit)) + (L0.length === 1 ? " · " + esc(brg(L0[0].t)) + (S.mils ? "" : "T") : "") +
+        (S.closed ? " · " + esc(G.fmtArea(G.area(P), S.unit)) : "") + (P.length > 2 ? ' <span class="mtip">· ' + P.length + " pts</span>" : "");
+      card.innerHTML = '<div class="mbar"><div class="msum" aria-live="polite">' + sum + "</div>" +
+        '<button type="button" data-mcu="1" title="Change units">' + (S.mils ? S.unit + "·mil" : S.unit) + "</button>" +
+        '<button type="button" data-m="undo" aria-label="Undo last point"' + (P.length ? "" : " disabled") + ">↶</button>" +
+        '<button type="button" data-mo="1" aria-expanded="false" aria-label="Show details">▴</button>' +
+        '<button type="button" class="mx" data-m="off" aria-label="Close measure">×</button></div>';
+      fit(); return;
+    }
+    h = '<div class="mhd"><b>Measure</b><span>' + (phone ? '<button type="button" class="mx" data-mo="1" aria-expanded="true" aria-label="Fold to a bar">▾</button>' : "") +
+      '<button type="button" class="mx" data-m="off" aria-label="Close measure">×</button></span></div>';
     h += '<div class="mrow" role="group" aria-label="Units">' + ["km", "mi", "nm"].map(function (u) { return '<button type="button" data-mu="' + u + '" aria-pressed="' + (S.unit === u) + '">' + u + "</button>"; }).join("") +
       '<button type="button" data-mm="1" aria-pressed="' + S.mils + '" title="Bearings in NATO mils (6400 to a circle)">mils</button></div>';
     if (!P.length) h += '<p class="mhint">Tap the map to add points. Drag a point to move it. Tap point 1 again to close a shape and get its area.</p>';
@@ -95,7 +118,7 @@
       h += '<div class="mtot"><div><span>' + (S.closed ? "Perimeter" : "Distance") + "</span><b>" + esc(G.fmtDist(tot, S.unit)) + "</b></div>" +
         (S.closed ? "<div><span>Area</span><b>" + esc(G.fmtArea(G.area(P), S.unit)) + "</b></div>" : "") +
         (L0.length === 1 ? "<div><span>Bearing</span><b>" + esc(brg(L0[0].t)) + (S.mils ? "" : "T") + "</b></div>" : "") + "</div>";
-      h += '<button type="button" class="mmore" data-mo="1" aria-expanded="' + S.more + '">' + (S.more ? "Hide legs and points" : "Show legs and points (" + P.length + ")") + "</button>";
+      if (!phone) h += '<button type="button" class="mmore" data-mo="1" aria-expanded="' + S.more + '">' + (S.more ? "Hide legs and points" : "Show legs and points (" + P.length + ")") + "</button>";
       if (S.more) {
       if (L0.length) h += '<table class="mlegs"><thead><tr><th>Leg</th><th>Distance</th><th>True</th><th>Mag</th><th>Back</th></tr></thead><tbody>' +
         L0.map(function (g) { return "<tr><td>" + (g.i + 1) + "–" + (g.j + 1) + "</td><td>" + esc(G.fmtDist(g.m, S.unit)) + "</td><td>" + esc(brg(g.t)) + "</td><td>" + esc(brg(g.mag)) + "</td><td>" + esc(brg(g.back)) + "</td></tr>"; }).join("") + "</tbody></table>";
@@ -106,18 +129,23 @@
       }
     }
     h += '<p class="mptr" aria-live="off"></p>';
-    h += '<div class="mbtns">' +
+    var bt = '<div class="mbtns">' +
       '<button type="button" data-m="undo"' + (P.length ? "" : " disabled") + ">Undo</button>" +
       '<button type="button" data-m="clear"' + (P.length ? "" : " disabled") + ">Clear</button>" +
       (P.length >= 3 ? '<button type="button" data-m="close">' + (S.closed ? "Open shape" : "Close shape") + "</button>" : "") +
       (P.length ? '<button type="button" data-m="copy">Copy all</button>' : "") +
       (P.length >= 2 && window.OSAP_ROUTE_SEED ? '<button type="button" data-m="route" class="pri">Plan route</button>' : "") + "</div>";
+    /* on a phone the buttons sit above the legs and points, so they are reachable without scrolling the card */
+    if (phone && h.indexOf('<table class="mlegs"') > 0) h = h.replace('<table class="mlegs"', bt + '<table class="mlegs"');
+    else if (phone && h.indexOf('<div class="mrow mfmt"') > 0) h = h.replace('<div class="mrow mfmt"', bt + '<div class="mrow mfmt"');
+    else h += bt;
     card.innerHTML = h;
     fit();
     hoverUi();
   }
   /* the card stops above the map's Legend (bottom left) so neither covers the other */
   function fit() {
+    if (phoneMq.matches) { card.style.maxHeight = S.more ? Math.max(160, Math.floor(map.getSize().y * 0.5)) + "px" : ""; return; }
     var mr = map.getContainer().getBoundingClientRect(), cr = card.getBoundingClientRect(), lg = map.getContainer().querySelector(".leaflet-bottom.leaflet-left");
     var bottom = mr.bottom - 8; if (lg) { var lr = lg.getBoundingClientRect(); if (lr.height && lr.left < cr.right) bottom = Math.min(bottom, lr.top - 6); }
     card.style.maxHeight = Math.max(140, Math.floor(bottom - cr.top)) + "px";
@@ -154,6 +182,7 @@
     var b = e.target.closest && e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-m");
     if (b.hasAttribute("data-mu")) { S.unit = b.getAttribute("data-mu"); keep(); }
+    else if (b.hasAttribute("data-mcu")) { var us = ["km", "mi", "nm"]; S.unit = us[(us.indexOf(S.unit) + 1) % 3]; keep(); }
     else if (b.hasAttribute("data-mm")) { S.mils = !S.mils; keep(); }
     else if (b.hasAttribute("data-mo")) S.more = !S.more;
     else if (b.hasAttribute("data-mf")) { S.fmt = b.getAttribute("data-mf"); keep(); }
@@ -197,8 +226,14 @@
     S.pts.push([ll.lat, G.wrap(ll.lng)]);
     /* keep the new point on the same side of the dateline as the one before, so the line and labels follow it */
     if (S.pts.length > 1) { var a = S.pts[S.pts.length - 2], b = S.pts[S.pts.length - 1]; while (b[1] - a[1] > 180) b[1] -= 360; while (a[1] - b[1] > 180) b[1] += 360; }
-    draw(); ui();
+    draw(); ui(); clear();
   }, true);
+  /* on a phone, a point tapped close to the docked bar is moved up into view */
+  function clear() {
+    if (!phoneMq.matches || !S.pts.length) return;
+    var p = map.latLngToContainerPoint(S.pts[S.pts.length - 1]), top = card.getBoundingClientRect().top - mapEl.getBoundingClientRect().top;
+    if (top > 0 && p.y > top - 30) map.panBy([0, Math.round(p.y - top + 70)]);
+  }
   window.addEventListener("dblclick", function (e) { if (mine(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
   var hovT = 0;
   mapEl.addEventListener("pointermove", function (e) {
@@ -231,7 +266,10 @@
     ".meascard .mnote,.meascard .mhint,.meascard .mptr{font-size:11px;color:var(--muted);margin:4px 0 0}.meascard .mptr{font-family:'IBM Plex Mono',monospace;color:var(--ink)}" +
     ".measv{background:none;border:0}.measv span{display:block;width:20px;height:20px;border-radius:50%;background:#e8590c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);color:#fff;font:700 10px/20px system-ui,sans-serif;text-align:center;box-sizing:content-box;margin:-1px;cursor:grab}" +
     ".measv.first span{background:#1f1f1f}.leaflet-tooltip.measlbl{font:600 11px/1.2 'IBM Plex Mono',monospace;padding:1px 5px;background:rgba(255,255,255,.92);color:#111;border:1px solid #e8590c;box-shadow:none}.leaflet-tooltip.measlbl::before{display:none}" +
-    "@media (max-width:700px){.meascard{width:auto;max-width:calc(100vw - 132px)}}@media (pointer:coarse){.meascard input,.meascard select{font-size:16px}}";
+    ".meascard .mhd .mx{margin-left:2px}.meascard .mbar{display:flex;align-items:center;gap:5px}.meascard .msum{flex:1;min-width:0;font:600 15px/1.2 'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
+    ".meascard .mtip{font:12px system-ui,sans-serif;color:var(--muted)}.meascard .mbar button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface2,var(--surface));color:var(--ink);border-radius:4px;min-width:38px;min-height:36px;padding:0 6px;cursor:pointer}" +
+    ".meascard .mbar button[disabled]{opacity:.45}.meascard .mbar .mx{border:0;background:none;font-size:20px}" +
+    "@media (max-width:700px){.leaflet-control.meascard.mdock{width:calc(100vw - 20px);max-width:none;box-sizing:border-box;padding:5px 6px 5px 10px;margin-bottom:6px}}@media (pointer:coarse){.meascard input,.meascard select{font-size:16px}}";
   document.head.appendChild(st);
 
   window.OSAP_MEASURE = { on: function (v) { setOn(v !== false); }, state: function () { return { pts: S.pts.slice(), closed: S.closed, unit: S.unit }; },
