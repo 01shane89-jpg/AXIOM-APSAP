@@ -28,6 +28,7 @@
   function ic(d, extra) { return '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + d + (extra || "") + "</svg>"; }
   var I = {
     fold: ic('<path d="M9 6l6 6-6 6"/>'), unfold: ic('<path d="M15 6l-6 6 6 6"/>'),
+    globe: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/>'),
     layers: ic('<path d="M12 3 2 8l10 5 10-5z"/><path d="M2 13l10 5 10-5"/><path d="M2 17.5l10 5 10-5" opacity=".55"/>'),
     ruler: ic('<path d="M3 16.5 16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l1.8 1.8M9.5 10l1.2 1.2M12 7.5l1.8 1.8M14.5 5l1.2 1.2"/>'),
     area: ic('<path d="M5 7l6-3 8 4-2 9-9 2-4-6z" stroke-dasharray="3 2.4"/><circle cx="5" cy="7" r="1.4" fill="currentColor"/><circle cx="19" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="19" r="1.4" fill="currentColor"/>'),
@@ -61,6 +62,7 @@
   /* ---------- the toolbar ---------- */
   var TOOLS = [
     ["overlays", "Overlays", I.layers, "Overlay Manager: data sets, map layers, your marks"],
+    ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
@@ -113,6 +115,11 @@
     if (pop._for === k) { popClose(); return; }
     popClose();
     if (k === "overlays") omOpen();
+    else if (k === "basemap") {
+      var BM = W.OSAP_BASEMAP; if (!BM) return;
+      var cur = BM.get();
+      popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
+    }
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "area") {
       var has = areaOn();
@@ -137,7 +144,8 @@
   pop.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
-    if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
+    if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
+    else if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
     else if (f === "mine") press('[data-wk-btn="' + k + '"]');
     else if (f === "point") {
@@ -225,12 +233,15 @@
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
+      /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
+      var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
-        icon: L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
+        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
+          : L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
-        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
+        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
           '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
@@ -427,6 +438,8 @@
     "html.atak #map .leaflet-top.leaflet-right>#area-ctl:has(.areahint){display:flex!important;position:absolute;right:52px;top:0;margin:8px 0 0!important;z-index:5}" +
     /* on a phone that corner is a zero-size scroll box, which clipped the drawing and editing panel out of sight */
     "html.atak #map .leaflet-top.leaflet-right:has(>#area-ctl .areahint){overflow:visible!important}" +
+    /* the toolbar has its own Base map button, so Overlays does not repeat the list */
+    "html.atak #ml-panel .mlbase{display:none}" +
     "html.atak #map #atk-tools,html.atak #map #atk-bar{display:flex}#atk-tools,#atk-bar,#atk-cross,#atk-ring[hidden],#atk-om[hidden],#atk-pop[hidden]{display:none}" +
     "@media (pointer:coarse){html.atak #map .leaflet-control-zoom{display:none}}" +
     "html.atak #map .leaflet-bottom{bottom:30px}html.atak #map{-webkit-touch-callout:none}" +
