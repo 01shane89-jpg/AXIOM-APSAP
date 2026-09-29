@@ -21,6 +21,7 @@
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
+<script src="assets/osap-cf-history.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
 <script src="assets/osap-aoi.js"></script>
