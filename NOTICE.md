@@ -15,6 +15,8 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 ## Libraries, fonts and map material
 
 - **Leaflet 1.9.4** (`assets/vendor/leaflet-1.9.4.js`): Copyright (c) 2010-2023 Volodymyr Agafonkin, (c) 2010-2011 CloudMade. BSD 2-Clause licence, reproduced below.
+- **milsymbol 3.0.4** (`assets/vendor/milsymbol-3.0.4.js`, draws military symbols for map points): Copyright (c) 2017 Måns Beckman, spatialillusions.com. MIT licence, kept in the file header.
+- **mil-std-2525 0.2.8** tables (symbol function names in `assets/osap-milsym-cat.js`): Copyright (c) Måns Beckman, spatialillusions.com. MIT licence.
 
 ## Services and data
 
