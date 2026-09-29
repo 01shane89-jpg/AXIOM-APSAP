@@ -46,5 +46,6 @@ jobs:
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
+      - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/speed_budget.mjs
