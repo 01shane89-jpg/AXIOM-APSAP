@@ -26,6 +26,7 @@
 <script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
+<script src="assets/osap-drones.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"

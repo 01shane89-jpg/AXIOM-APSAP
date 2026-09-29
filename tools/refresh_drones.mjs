@@ -29,12 +29,15 @@ const UAS_DESC = /unmanned|\bUAV\b|\bUAS\b|\bRPA\b|global hawk|triton|reaper|pre
 // call sign families publicly reported as drone flights (kept short on purpose; each hit says which rule matched)
 const UAS_CALLS = [[/^FORTE\d/, "call sign FORTE (RQ-4 flights)"], [/^REAPR/, "call sign REAPR"]];
 const ROTOR = /^(H60|H64|H47|H53|H53S|H1|UH1|AS65|EC45|EC35|EC30|EC25|A109|A119|A139|B212|B412|B407|B06|NH90|TIGR|MI8|MI17|MI24|MI35|KA52|V22|LYNX|WILD|AS32|AS50|S70|S76|H145|H135)/;
+const GAP = 4000; // between adsb.lol requests; it limits bursts well below one a second
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function get(src, path) {
+async function get(src, path, retry = true) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 25000);
   try {
     const r = await fetch(src.api + path, { headers: { "User-Agent": UA, Accept: "application/json" }, signal: ctl.signal });
+    // adsb.lol answers 429 after a short burst: wait and ask once more
+    if (r.status === 429 && retry) { clearTimeout(t); await sleep(12000); return get(src, path, false); }
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     if (!Array.isArray(j.ac)) throw new Error("no aircraft list");
@@ -58,7 +61,7 @@ function row(a, src, now, w) {
     hex: String(a.hex || "").toLowerCase(), cs: (a.flight || "").trim() || null, reg: a.r || null, t: a.t || null, desc: a.desc || null,
     lat: num(a.lat, 4), lon: num(a.lon, 4), alt: a.alt_baro === "ground" ? "ground" : num(a.alt_baro, 0), gs: num(a.gs, 0), trk: num(a.track, 0),
     sqk: a.squawk || null, mlat: Array.isArray(a.mlat) && a.mlat.length > 0, pos_ms: Math.round(now - (posAge || 0) * 1000),
-    src: src === SRC.lol ? "lol" : "fi", why: w, rotor: !w && ROTOR.test((a.t || "").toUpperCase()) ? true : undefined,
+    src: src === SRC.lol ? "lol" : "fi", why: w,
   };
 }
 
@@ -81,7 +84,11 @@ async function main() {
         const prev = seen.get(hex);
         const r = row(a, src, t0, w.length ? w : null);
         if (!prev) seen.set(hex, r);
-        else if (w.length && !prev.why) prev.why = w; // a drone reason found by a later query
+        else {
+          // the first source keeps the position; a later one fills what it left out (adsb.fi sends type descriptions)
+          for (const f of ["cs", "reg", "t", "desc"]) if (prev[f] == null && r[f] != null) prev[f] = r[f];
+          if (w.length) prev.why = [...new Set([...(prev.why || []), ...w])];
+        }
         nopos.delete(hex);
       }
       status.push({ src: src.name, q: label, ok: true, n });
@@ -93,9 +100,9 @@ async function main() {
   }
   // military list first, then each drone type (catches drones not flagged military, e.g. border or test flights)
   let primary = await pull(SRC.lol, "/mil", "military", false);
-  for (const t of Object.keys(UAS_TYPES)) { await sleep(1300); await pull(SRC.lol, "/type/" + t, "type " + t, true); }
+  for (const t of Object.keys(UAS_TYPES)) { await sleep(GAP); await pull(SRC.lol, "/type/" + t, "type " + t, true); }
   // adsb.fi adds type descriptions and aircraft adsb.lol's receivers miss; when adsb.lol fails it is the fallback
-  await sleep(1300);
+  await sleep(1500);
   await pull(SRC.fi, "/mil", "military", false);
 
   // short trails: this snapshot plus up to 60 minutes of earlier positions from the previous file
@@ -110,7 +117,7 @@ async function main() {
     if (!last || last[0] !== r.lat || last[1] !== r.lon) tr.push([r.lat, r.lon, r.pos_ms]);
     r.tr = tr.slice(-40);
     if (!r.why) delete r.why;
-    if (r.rotor === undefined) delete r.rotor;
+    if (!r.why && ROTOR.test((r.t || "").toUpperCase())) r.rotor = true; else delete r.rotor;
     ac.push(r);
   }
   ac.sort((a, b) => (b.why ? 1 : 0) - (a.why ? 1 : 0) || String(a.hex).localeCompare(String(b.hex)));
