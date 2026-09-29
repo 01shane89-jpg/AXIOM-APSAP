@@ -53,7 +53,7 @@
   function areaPress(k) {
     if (!areaEl) return;
     var b = areaEl.querySelector('[data-area="' + k + '"]');
-    if (!b && (k === "lasso" || k === "poly")) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
+    if (!b && /^(lasso|poly|circle|rect|edit)$/.test(k)) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
     if (b) b.click();
   }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
@@ -116,7 +116,7 @@
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"]].concat(has ? [null, ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -425,6 +425,8 @@
     /* the old controls stay in the page but out of sight; Draw area comes back while a shape is being drawn */
     "html.atak #map .leaflet-top.leaflet-right>.leaflet-control:not(#atk-tools):not(.meascard):not(.leaflet-control-attribution):not(:has(.areahint)),html.atak #map .fsctl,html.atak #map .measctl,html.atak #map .locctl{display:none!important}" +
     "html.atak #map .leaflet-top.leaflet-right>#area-ctl:has(.areahint){display:flex!important;position:absolute;right:52px;top:0;margin:8px 0 0!important;z-index:5}" +
+    /* on a phone that corner is a zero-size scroll box, which clipped the drawing and editing panel out of sight */
+    "html.atak #map .leaflet-top.leaflet-right:has(>#area-ctl .areahint){overflow:visible!important}" +
     "html.atak #map #atk-tools,html.atak #map #atk-bar{display:flex}#atk-tools,#atk-bar,#atk-cross,#atk-ring[hidden],#atk-om[hidden],#atk-pop[hidden]{display:none}" +
     "@media (pointer:coarse){html.atak #map .leaflet-control-zoom{display:none}}" +
     "html.atak #map .leaflet-bottom{bottom:30px}html.atak #map{-webkit-touch-callout:none}" +
