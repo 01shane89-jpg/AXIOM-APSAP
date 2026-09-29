@@ -56,11 +56,28 @@
     var o = {}; Array.prototype.forEach.call(document.querySelectorAll("#view-seg [data-view]"), function (b) { o[b.getAttribute("data-view")] = b.textContent.trim(); });
     return o;
   }
-  /* the records a report covers: this country's own dated records in the range, oldest first */
+  /* ---------- what a report covers (its scope): one event, the Master timeline as filtered, a topic such as Deep South (a conflict
+     tab: the layers it has taken over), the whole country, or one layer ---------- */
+  var CTX = { ev: null, tl: null };
+  function cfTabs() {
+    var T = window.OSAP_CONFLICT_TABS; if (!T || !T.layers) return [];
+    return Array.prototype.map.call(document.querySelectorAll('#view-seg [data-view^="cf-"]'), function (b) {
+      var id = b.getAttribute("data-view").slice(3); return { v: "cf-" + id, label: T.name(id) || b.textContent.trim(), layers: T.layers(id) };
+    }).filter(function (x) { return x.layers.length; });
+  }
+  function scopeOf(v) {
+    if (v === "ev" && CTX.ev) return { ids: CTX.ev.ids, label: CTX.ev.label };
+    if (v === "tl" && CTX.tl) return { ids: CTX.tl.ids, label: CTX.tl.label };
+    var cf = cfTabs().filter(function (x) { return x.v === v; })[0];
+    if (cf) return { layers: cf.layers, label: cf.label };
+    return v ? { layers: [v], label: LN[v] || layerNames()[v] || v } : { label: "" };
+  }
+  /* the records a report covers: this country's own dated records in the scope and range, oldest first */
   function pick(opt) {
-    var R = (window.TSAP && window.TSAP.records) || [];
+    var R = (window.TSAP && window.TSAP.records) || [], sc = opt.scope != null ? scopeOf(opt.scope) : { layers: opt.layer ? [opt.layer] : null };
+    var ids = sc.ids ? sc.ids.reduce(function (o, id) { o[id] = 1; return o; }, {}) : null;
     return R.filter(function (r) {
-      if (r.xcc || !r.src || (opt.layer && r.layer !== opt.layer)) return false;
+      if (r.xcc || !r.src || (sc.layers && sc.layers.indexOf(r.layer) < 0) || (ids && !ids[r.id])) return false;
       var w = when(r); if (!w) return false;
       if (opt.since) { if (w.timed ? w.ms < opt.since : w.day < new Date(opt.since).toISOString().slice(0, 10)) return false; }
       if (opt.from && w.day < opt.from) return false;
@@ -651,13 +668,20 @@
     var days = {}, order = [];
     recs.forEach(function (r) { var d = r.__tlw.day; if (!days[d]) { days[d] = []; order.push(d); } days[d].push(r); });
     var kinds = { observation: 0, claim: 0, event: 0 }; recs.forEach(function (r) { kinds[r.type] = (kinds[r.type] || 0) + 1; });
-    var layerOpts = '<option value="">All layers</option>' + Object.keys(LN).filter(function (k) { return k !== "timeline" && k !== "alerts" && pick({ layer: k, from: o.from, to: o.to, since: o.since }).length; })
-      .map(function (k) { return '<option value="' + esc(k) + '"' + (k === o.layer ? " selected" : "") + ">" + esc(LN[k]) + "</option>"; }).join("");
+    /* the scope list: this event, the timeline as filtered, each topic, the whole country, then each layer a topic has not taken over */
+    var cfs = cfTabs(), taken = {}, sc = scopeOf(o.scope);
+    cfs.forEach(function (x) { x.layers.forEach(function (l) { taken[l] = 1; }); });
+    function opt(v, label) { return '<option value="' + esc(v) + '"' + (v === o.scope ? " selected" : "") + ">" + esc(label) + "</option>"; }
+    var layerOpts = (CTX.ev ? opt("ev", "This event") : "") + (CTX.tl ? opt("tl", "The timeline as filtered: " + CTX.tl.label) : "") +
+      cfs.map(function (x) { return opt(x.v, x.label); }).join("") + opt("", "All " + cname()) +
+      Object.keys(LN).filter(function (k) { return k !== "timeline" && k !== "alerts" && !taken[k] && !/^cf-/.test(k) && pick({ layer: k, from: o.from, to: o.to, since: o.since }).length; })
+        .map(function (k) { return opt(k, LN[k]); }).join("");
     var bar = '<div class="bbar noprint tlrbar"><button type="button" class="refresh primary" id="tlr-print">Print</button> <button type="button" class="refresh" id="tlr-close">Close</button> ' +
-      '<label for="tlr-layer">Layer</label> <select id="tlr-layer" class="mini">' + layerOpts + "</select> " +
+      '<label for="tlr-layer">Covers</label> <select id="tlr-layer" class="mini">' + layerOpts + "</select> " +
       '<label for="tlr-from">From</label> <input id="tlr-from" class="mini" type="date" value="' + esc(o.from || "") + '"> <label for="tlr-to">To</label> <input id="tlr-to" class="mini" type="date" value="' + esc(o.to || "") + '">' +
       ' <span class="obs">Use the print dialog\'s "Save as PDF" to keep a copy.</span></div>';
-    var subject = esc(cname()) + (o.layer && LN[o.layer] ? ": " + esc(LN[o.layer]) : "");
+    var subject = esc(cname()) + (o.scope === "ev" ? ": event report" : sc.label ? ": " + esc(sc.label) : "") +
+      (o.scope === "ev" ? '<div class="tlrsubt" style="font-size:14px;margin-top:3px">' + esc(sc.label.length > 140 ? sc.label.slice(0, 137) + "…" : sc.label) + "</div>" : "");
     var head = '<header class="tlrh"><img src="' + esc(logoSrc()) + '" alt="AXIOM OSAP"><div class="tlrt"><div class="tlrk">AXIOM OSAP · Timeline report</div><h2>' + subject + "</h2>" +
       '<div class="tlrsubt">' + esc(periodText(recs, o)) + "</div></div>" +
       '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header><div class=\"tlrrule\"></div>";
@@ -736,16 +760,26 @@
     });
     ["tlr-layer", "tlr-from", "tlr-to"].forEach(function (id) {
       document.getElementById(id).addEventListener("change", function () {
-        OPT = { layer: document.getElementById("tlr-layer").value, from: document.getElementById("tlr-from").value, to: document.getElementById("tlr-to").value };
+        OPT = { scope: document.getElementById("tlr-layer").value, from: document.getElementById("tlr-from").value, to: document.getElementById("tlr-to").value };
         render();
       });
     });
   }
-  function open() {
+  /* open(): the report for what is on screen. From a topic (Deep South, a data set's tab) it covers that topic; from the Master
+     timeline it covers the timeline as it is scoped and filtered; the Covers list switches to the whole country or anything else.
+     open({ ids, label }): the report of those records alone (one event), over all their dates. */
+  function open(arg) {
     el = document.getElementById("brief"); if (!el || !window.TSAP) return;
-    var p = appPeriod(), v = (location.hash || "").replace("#", "").split("/").pop();
-    OPT = { from: p.from, to: p.to, since: p.since, layer: "" };
-    if (v && v !== "timeline" && v !== "alerts" && pick({ layer: v, from: p.from, to: p.to, since: p.since }).length >= MIN_RECS) OPT.layer = v;
+    var p = appPeriod(), v = (location.hash || "").replace("#", "").split("/").pop(), tl = window.TSAP.timeline ? window.TSAP.timeline() : null;
+    LN = layerNames(); CTX = { ev: null, tl: null };
+    OPT = { from: p.from, to: p.to, since: p.since, scope: "" };
+    if (arg && arg.ids && arg.ids.length) { CTX.ev = { ids: arg.ids.slice(), label: String(arg.label || "Event") }; OPT = { from: "", to: "", scope: "ev" }; }
+    else if (tl && tl.cf && cfTabs().some(function (x) { return x.v === "cf-" + tl.cf; })) OPT.scope = "cf-" + tl.cf;
+    else if (tl && tl.view === "timeline") {
+      if (tl.filters.length) { CTX.tl = { ids: tl.ids, label: [tl.scope ? tl.scope.label : "All " + cname()].concat(tl.filters).join(", ") }; OPT.scope = "tl"; }
+      else if (tl.scope) OPT.scope = tl.scope.id;
+    }
+    else if (v && v !== "timeline" && v !== "alerts" && pick({ layer: v, from: p.from, to: p.to, since: p.since }).length >= MIN_RECS) OPT.scope = v;
     el.hidden = false; document.documentElement.classList.add("briefing");
     el.innerHTML = '<div class="bbar noprint"><span class="obs">Building the timeline report…</span></div>';
     loadSummaries(function () { loadRegions(function () { if (!el.hidden) { render(); el.scrollTop = 0; } }); });
