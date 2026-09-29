@@ -442,6 +442,10 @@ select.mini{
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
+.mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
+#ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
+.dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
+.dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
@@ -2530,10 +2534,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
 
   var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]);
   window.TBW = {
-    show: function () {
+    show: function (noFit) {
       active = true;
       LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
-      map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
+      if (!noFit) map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
     },
     hide: function () {
       active = false;
@@ -3011,6 +3015,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     LBY[lid].live = true; LBY[lid].curated = true; LCOL[lid] = TD[lid].color || "--muted";
     LBY[lid].title = LBY[lid].name;
   });
+  /* data sets ticked for the map (Layers menu, "Data sets on the map"), kept per country; none is a valid choice and
+     nothing is ticked until the user ticks it */
+  var DS_KEY = "osap-mapsets-" + CC, DS = {};
+  try { var ds0 = JSON.parse(localStorage.getItem(DS_KEY) || "null"); if (Array.isArray(ds0)) ds0.forEach(function (k) { DS[k] = 1; }); } catch (e) {}
 
   /* outline basemap (Natural Earth 1:50m, public domain) so countries outside the packaged Thai tiles still have land and borders */
   if (!TH && window.COUNTRY_BASE) {
@@ -3206,7 +3214,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   var shown = [];
   function render() {
-    shown = R.concat(xaRecs()).filter(match);
+    var dsRecOn = Object.keys(DS).some(function (k) { return LBY[k] && !LBY[k].sof && k !== "alerts"; });
+    shown = R.concat(xaRecs()).filter(function (r) { return match(r) && (!dsRecOn || DS[r.layer]); });
     if (typeof rvSoon === "function") rvSoon();
     var list = document.getElementById("tl-list");
     list.textContent = "";
@@ -3220,7 +3229,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         if (evDone[ev.id]) return;
         evDone[ev.id] = 1; evN++;
         located += ev.m.filter(function (x) { return x.lat != null && isFinite(x.lat); }).length;
-        evPin(ev);
+        if (ev.m.some(function (x) { return DS[x.layer]; })) evPin(ev);
         if (i >= 250) return;
         var de = document.createElement("button");
         de.type = "button"; de.className = "tlrow evrow"; de.setAttribute("data-ev", ev.id);
@@ -3239,7 +3248,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         var m = L.circleMarker([r.lat, r.lon], L.extend({ pane: "tlpane" }, st0));
         m.bindTooltip((r.xcc ? flagOf(r.xcc) + " " + esc(cName(r.xcc)) + " · " : "") + esc(r.title), { direction: "top" });
         m.on("click", function () { select(r.id, false); });
-        tlLayer.addLayer(m); markers[r.id] = m;
+        if (DS[r.layer]) tlLayer.addLayer(m); markers[r.id] = m;
       }
       if (i >= 250) return;
       var d = document.createElement("button");
@@ -3253,7 +3262,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     var xan = xaRecs().length;
     document.getElementById("tl-count").textContent = shown.length + " of " + (R.length + xan) + " records" + (xan ? " (" + xan + " from added countries)" : "") +
-      (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " on the map" + (evN ? " · " + evN + " grouped events" : "") + " · period: " + periodLabel();
+      (shown.length > 250 ? " (first 250 listed)" : "") + " · " + located + " with a map location" + (evN ? " · " + evN + " grouped events" : "") + " · period: " + periodLabel();
     if (!shown.length && R.length) list.innerHTML = '<p class="obs">Nothing in this reporting period (' + esc(periodLabel()) + '). <button type="button" class="refresh" data-period="all">Show all dates</button></p>';
     else if (PERIOD.p !== "all") { var hid = R.filter(function (r) { return !inPeriod(r); }).length; if (hid) list.insertAdjacentHTML("afterbegin", hiddenNote(hid)); }
     if (PB.on) {
@@ -3896,7 +3905,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="sec"><h2>Records</h2><p class="sub">' + vis.length + " shown, newest first. Click one for its report.</p>" + '<div class="tllist" id="cl-list"></div></div>' +
       '<div class="sec"><h2>How to read this</h2><div class="note">' + (D.notes || []).map(function (n) { return "<p>" + n + "</p>"; }).join("") + "</div></div>" +
       '<div class="sec"><h2>Sources</h2><ul class="alwait">' + srcs + "</ul></div>";
-    var list = document.getElementById("cl-list");
+    var list = railC.querySelector("#cl-list");
     if (lid === "weather") wxWire(railC);
     curLayer.clearLayers(); CM = {};
     /* the map key for this layer sits on the map (the checkboxes in the panel stay as filters) */
@@ -5610,11 +5619,139 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
      whenever the data set changes, and on start. The base map choice stays. */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox], input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
+  /* ---------- data sets on the map ----------
+     The map shows the objects of every data set ticked under "Data sets on the map" in the Layers menu: any number of them,
+     or none. The open tab only decides what the side panel reads; opening a tab never ticks its set. A ticked set that is not
+     the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
+     Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
+  var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
+  /* a tab that is not in the list (Route, Timeline, one merged into a conflict tab) draws as it always has */
+  function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
+  function dsList() {
+    return LAYERS.filter(function (l) {
+      if (l.id === "timeline" || l.id === "route") return false;
+      var b = seg.querySelector('[data-view="' + l.id + '"]'); if (b && b.hidden) return false;   /* merged into a conflict tab */
+      return l.id === "alerts" || l.curated || l.sof || (TH && (l.id === "flood" || l.id === "border"));
+    });
+  }
+  /* a marker without a pop-up opens its report in the panel, so its own tab is opened first */
+  function dsWrap(g, v) {
+    g.eachLayer(function (m) {
+      if (m.__dsw || (m.getPopup && m.getPopup())) return;
+      var fns = ((m._events && m._events.click) || []).slice(); if (!fns.length) return;
+      m.__dsw = 1; m.off("click");
+      m.on("click", function (e) {
+        if (current !== v) { setView(v); document.dispatchEvent(new Event("osap:view")); }
+        fns.forEach(function (f) { f.fn.call(f.ctx || m, e); });
+      });
+    });
+  }
+  function dsPaint(v) {
+    var l = LBY[v], g = DSG[v] || (DSG[v] = L.featureGroup()), leg = window.OSAP_LEGEND, legSet = leg && leg.set, box = document.createElement("div");
+    var s = { cur: current, cl: curLayer, rc: railC, ci: curId, cm: CM, sl: sofLayer, ro: railO, sm: sofM };
+    g.clearLayers(); g.__stamp = dsStamp;
+    /* its map key sits on the map under its own name, shown while the set is ticked */
+    if (leg) leg.set = function (id, html) { var k = "ds-" + v + "-" + id; (dsLg[v] = dsLg[v] || {})[k] = 1; legSet.call(leg, k, html, map.getContainer()); };
+    /* first in the page while it is drawn, so the tab's own lookups by id find this copy, not the open panel's */
+    box.hidden = true; document.body.insertBefore(box, document.body.firstChild);
+    try {
+      current = v;
+      if (l.curated) { curLayer = g; railC = box; CM = {}; showCurated(v); }
+      else { sofLayer = g; railO = box; sofM = {}; showSof(v); }
+    } catch (e) { if (window.console) console.warn("Map data set " + v + " could not be drawn:", e); }
+    finally { current = s.cur; curLayer = s.cl; railC = s.rc; curId = s.ci; CM = s.cm; sofLayer = s.sl; railO = s.ro; sofM = s.sm; if (leg) leg.set = legSet; box.remove(); }
+    dsWrap(g, v);
+    /* a set whose data is still loading draws nothing yet: try again a few times */
+    if (!g.getLayers().length && (dsTry[v] || 0) < 3) {
+      var n = dsTry[v] = (dsTry[v] || 0) + 1;
+      setTimeout(function () { if (DS[v] && current !== v && DSG[v] && !DSG[v].getLayers().length) { dsPaint(v); } }, [0, 2000, 5000, 12000][n]);
+    }
+  }
+  function dsLegendOff(v) { var leg = window.OSAP_LEGEND; Object.keys(dsLg[v] || {}).forEach(function (k) { if (leg) leg.set(k, ""); }); dsLg[v] = {}; }
+  function dsSync() {
+    if (dsPrev && dsPrev !== current && DSG[dsPrev]) DSG[dsPrev].__stamp = -1;   /* its filters may have changed while it was the open tab */
+    dsPrev = current;
+    var list = dsList(), onIds = {};
+    list.forEach(function (l) {
+      var v = l.id, on = !!DS[v];
+      if (on) onIds[v] = 1;
+      if (v === "alerts") { if (on) { if (current !== v) renderAlerts(); dsWrap(alertLayer, v); alertLayer.addTo(map); } else map.removeLayer(alertLayer); return; }
+      if (TH && v === "flood") { if (on) window.FW.show(); else window.FW.hide(); return; }
+      if (TH && v === "border") { if (on) window.TBW.show(true); else window.TBW.hide(); return; }
+      /* the open tab draws into its own layer; on the Timeline its dots stand for the record sets */
+      var own = v === current || (current === "timeline" && l.curated);
+      if (on && !own) { if (!DSG[v] || DSG[v].__stamp !== dsStamp) { dsTry[v] = 0; dsPaint(v); } DSG[v].addTo(map); }
+      else { if (DSG[v]) map.removeLayer(DSG[v]); dsLegendOff(v); }
+    });
+    if (onIds.weather || onIds.hazards) stormLayer.addTo(map); else map.removeLayer(stormLayer);
+    dsUi();
+  }
+  function dsSet(v, on) {
+    if (on) DS[v] = 1; else delete DS[v];
+    try { localStorage.setItem(DS_KEY, JSON.stringify(Object.keys(DS))); } catch (e) {}
+    var l = LBY[current] || {};
+    if (v === current && l.sof) { if (on) sofLayer.addTo(map); else map.removeLayer(sofLayer); }
+    else if (v === current && l.curated) { if (on) curLayer.addTo(map); else map.removeLayer(curLayer); }
+    if (current === "timeline") render();
+    dsSync();
+    dsFns.forEach(function (f) { try { f(); } catch (e) {} });
+  }
+  /* for other modules (the map controls' Overlay Manager): read and set the same choice */
+  var dsFns = [];
+  window.OSAP_DATASETS = {
+    list: function () { return dsList().map(function (l) { return { id: l.id, name: l.name, on: !!DS[l.id], open: l.id === current }; }); },
+    set: function (id, on) { if (dsList().some(function (l) { return l.id === id; })) { dsSet(id, !!on); dsUi(); } },
+    onChange: function (f) { if (typeof f === "function") dsFns.push(f); }
+  };
+  /* the checklist at the top of the Layers menu, and a note on the map when the open tab's own set is not on it */
+  var dsBox = document.createElement("div"), dsHint = document.createElement("div");
+  dsBox.id = "ml-ds";
+  dsHint.className = "dshint"; dsHint.hidden = true;
+  L.DomEvent.disableClickPropagation(dsHint);
+  map.getContainer().appendChild(dsHint);
+  window.OSAP_DS_OFF = function (h) {
+    var own = railF.contains(h) ? "flood" : railA.contains(h) ? "alerts" : railC.contains(h) || railO.contains(h) ? current : "";
+    return !!own && !DS[own] && dsList().some(function (x) { return x.id === own; });
+  };
+  function dsUi() {
+    if (window.OSAP_LEGEND && window.OSAP_LEGEND.refresh) window.OSAP_LEGEND.refresh();
+    var list = dsList(), l = LBY[current];
+    var mine = l && list.some(function (x) { return x.id === current; });
+    if (mine && !DS[current]) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
+    else if (current === "timeline" && !list.some(function (x) { return DS[x.id]; })) dsHint.innerHTML = '<span>No data sets on the map</span><button type="button" data-dspick="1">Choose</button>';
+    else dsHint.innerHTML = "";
+    dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
+    var pan = document.getElementById("ml-panel"); if (!pan) return;
+    if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
+    var n = list.filter(function (x) { return DS[x.id]; }).length;
+    dsBox.innerHTML = '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
+      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ".</p>" +
+      list.map(function (x) {
+        return '<label class="mlrow"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b>" + (x.id === current ? "<i>Open tab</i>" : "") + "</span></label>";
+      }).join("");
+  }
+  dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
+  dsBox.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
+    var on = b.getAttribute("data-dsall") === "1";
+    dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
+    dsSet(current, !!DS[current]);
+  });
+  dsHint.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button"); if (!b) return;
+    if (b.getAttribute("data-dsshow")) dsSet(b.getAttribute("data-dsshow"), true);
+    else { var mb = document.querySelector(".mlctl .mlbtn"); if (mb && mb.getAttribute("aria-expanded") !== "true") mb.click(); }
+  });
+  document.addEventListener("osap:period", function () { dsStamp++; dsSync(); });
+  /* conflict tabs hide the note; tabs merged into a conflict tab drop out of the list once the conflicts code has run */
+  new MutationObserver(function () { dsUi(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-cf"] });
+  setTimeout(dsUi, 1500);
+
   function setView(v, fromLoad) {
     if (!LBY[v]) v = "flood";
     if (v === current) return;
@@ -5639,24 +5776,26 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     extrasOff();
     window.FW.hide(); window.TBW.hide(); map.removeLayer(tlLayer); map.removeLayer(alertLayer); map.removeLayer(curLayer); map.removeLayer(sofLayer); map.removeLayer(stormLayer);
     if (l.sof) {
-      sofLayer.addTo(map); showSof(v); map.invalidateSize();
+      if (dsShown(v)) sofLayer.addTo(map);
+      showSof(v); map.invalidateSize();
       map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
     else if (l.curated) {
-      curLayer.addTo(map); showCurated(v);
+      if (dsShown(v)) curLayer.addTo(map);
+      showCurated(v);
       map.invalidateSize();
       map.fitBounds(TH && TD[v].bounds && !(ADDED && ADDED.length) ? TD[v].bounds : cBounds(), { padding: [10, 10], animate: false });
     }
-    else if (v === "flood" && TH) window.FW.show();
-    else if (v === "border" && TH) window.TBW.show();
+    else if (v === "flood" && TH) { if (dsShown(v)) window.FW.show(); }
+    else if (v === "border" && TH) { if (dsShown(v)) window.TBW.show(); else window.TBW.fit(); }
     else {
       if (v === "timeline") { tlLayer.addTo(map); render(); }
-      else if (v === "alerts") { alertLayer.addTo(map); renderAlerts(); }
+      else if (v === "alerts") { if (dsShown(v)) alertLayer.addTo(map); renderAlerts(); }
       else fillStub(l);
       map.invalidateSize();
       map.fitBounds(cBounds(), { padding: [8, 8], animate: false });
     }
-    if (v === "weather" || v === "hazards") stormLayer.addTo(map);
+    dsSync();
     try { localStorage.setItem("tw-view", v); } catch (e) {}
     if (!fromLoad) { try { history.replaceState(null, "", "#" + (TH ? "" : CC + "/") + v); } catch (e) {} }
     rvSoon();
@@ -6199,6 +6338,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     // a view's panel counts as open when nothing above it is hidden; a conflict tab shows only its own panel
     function homeOn(h) {
       if (!h || !document.body.contains(h) || h.hidden || h.closest("[hidden]")) return false;
+      if (window.OSAP_DS_OFF && window.OSAP_DS_OFF(h)) return false;   /* the open tab's set is not ticked for the map */
       return !document.documentElement.hasAttribute("data-cf") || !!h.closest("#cf-rail");
     }
     var queued = (window.OSAP_LEGEND && window.OSAP_LEGEND.q) || {};
@@ -6207,7 +6347,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (!html) { if (d) { d.el.remove(); delete dyn[id]; sync(); } return; }
       if (!d) { d = dyn[id] = { el: document.createElement("div") }; d.el.className = "sec maplg lgdyn"; d.el.setAttribute("data-lg", id); body.insertBefore(d.el, key); }
       d.home = home || null; d.el.innerHTML = html; sync();
-    } };
+    }, refresh: function () { sync(); } };
     var shut = null; try { shut = localStorage.getItem(LG_KEY); } catch (e) {}
     function fold(on, keep) {
       box.classList.toggle("shut", on); btn.setAttribute("aria-expanded", String(!on));
