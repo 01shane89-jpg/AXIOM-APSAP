@@ -1326,7 +1326,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
         if (!pan.hidden && ML.roads) drawRoads();
       });
-      box.addEventListener("change", function (e) {
+      /* listen on the panel, not the button box: the tactical toolbar's Overlays sheet moves this panel out of the box
+         (osap-atak.js), and a listener on the box then never heard a base map, flood or road choice */
+      pan.addEventListener("change", function (e) {
         var t = e.target;
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
