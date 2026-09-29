@@ -34,30 +34,34 @@ const browser = await chromium.launch(process.env.CHROME ? { executablePath: pro
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1500, height: 950 } });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
 await ctx.route(/conflicts\/sites\/russia-ukraine\.js/, (r) => r.fulfill({ contentType: "text/javascript", body: '(window.OSAP_CF_SITES=window.OSAP_CF_SITES||{})["russia-ukraine"]=' + JSON.stringify(FIX) + ";" }));
+// a report placed at a town that names an airfield, added to the tab's own data: must show as a reported strike on a military target
+const STRIKE = { title: "Missile strike on airfield near Testville", date: iso(2), link: "https://example.org/s", outlet: "Outlet S", kind: "missile", state: false, geo: { la: 48.0, lo: 36.0, n: "Testville" }, fp: "cd".repeat(32) };
+await ctx.route(/conflicts\/russia-ukraine\.js$/, async (r) => {
+  const body = await readFile(join(root, "data/live/conflicts/russia-ukraine.js"), "utf8");
+  r.fulfill({ contentType: "text/javascript", body: body + '\nwindow.OSAP_CF["russia-ukraine"].items.unshift(' + JSON.stringify(STRIKE) + ");" });
+});
 // the period in the page header: past 30 days; one placed report that names a military target is added to the tab's data
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "30" })); localStorage.removeItem("osap-cf-sites"); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
-p.on("pageerror", (e) => errors.push(e.message));
-await p.goto(base + "#ua", { waitUntil: "domcontentloaded" });
-await p.waitForFunction(() => window.OSAP_CONFLICT_TABS && document.querySelector('#view-seg [data-view="cf-russia-ukraine"]'), null, { timeout: 60000 });
-await p.waitForTimeout(2500);
-await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
-await p.evaluate((d) => {
-  // a report placed at a town that names an air base: must show as a reported strike on a military target
-  const add = () => { const x = (window.OSAP_CF || {})["russia-ukraine"]; if (x && !x._test) { x._test = 1; x.items.unshift({ title: "Missile strike on airfield near Testville", date: d, link: "https://example.org/s", outlet: "Outlet S", kind: "missile", state: false, geo: { la: 48.0, lo: 36.0, n: "Testville" }, fp: "cd".repeat(32) }); } };
-  window.__addStrike = add;
-}, iso(2));
-await p.click('#view-seg [data-view="cf-russia-ukraine"]');
-await p.waitForFunction(() => window.OSAP_CF && window.OSAP_CF["russia-ukraine"], null, { timeout: 30000 });
-await p.evaluate(() => { window.__addStrike(); document.querySelector('#view-seg [data-view="cf-russia-ukraine"]').click(); });
-await p.waitForFunction(() => document.querySelector("#cfs .cfk"), null, { timeout: 20000 });
-await p.evaluate(() => window.__asapMap.setView([48, 34], 7));
+p.on("pageerror", (e) => errors.push(e.message)); p.on("crash", () => console.log("PAGE CRASHED")); if (process.env.DBG) p.on("framenavigated", (f) => { if (f === p.mainFrame()) console.log("nav", f.url()); });
+// the country's first load reloads the page once (for its files); then the conflict tab is opened
+await p.goto(base + "#ua/timeline", { waitUntil: "domcontentloaded" });
+await p.waitForTimeout(6000);
+await p.waitForFunction(() => window.TSAP && window.TSAP.country === "ua" && document.querySelector('#view-seg [data-view="cf-russia-ukraine"]'), null, { timeout: 60000 });
+await p.waitForTimeout(1500);
+if (process.env.DBG) { p.on("console", (m) => /UNLOAD/.test(m.text()) && console.log(m.text())); await p.evaluate(() => window.addEventListener("beforeunload", () => console.log("UNLOAD " + new Error().stack))); }
+await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); document.querySelector('#view-seg [data-view="cf-russia-ukraine"]').click(); });
+await p.waitForFunction(() => document.querySelector("#cfs .cfk"), null, { timeout: 30000 });
+await p.waitForTimeout(1500);
+await p.evaluate(() => { setTimeout(() => window.__asapMap.setView([48, 34], 7), 50); });
+await p.waitForTimeout(2000);
 await p.waitForTimeout(1200);
 const st = await p.evaluate(() => ({
   panel: !!document.getElementById("cfs"),
   sites: document.querySelectorAll("#map .leaflet-cfpane-pane .msym.cfs").length,
   hit: document.querySelectorAll("#map .leaflet-cfpane-pane .msym.cfs-hit").length,
   strike: document.querySelectorAll("#map .leaflet-cfpane-pane .msym.cfs-strike").length,
+  strikeT: (() => { let f = false; window.__asapMap.eachLayer((m) => { if (m.getLatLng && m.getLatLng().lat === 48 && m.getLatLng().lng === 36 && /Testville/.test(String(m.getPopup() && m.getPopup().getContent()))) f = true; }); return f; })(),
   hostile: [...document.querySelectorAll("#map .msym.cfs svg path")].some((e) => /rgb\(255, ?128, ?128\)|#ff8080/i.test(e.getAttribute("fill") || "")),
   named: (document.querySelector("#cfs details summary") || {}).textContent || "",
   bad: document.querySelector("#cfs .cfbad") ? document.querySelector("#cfs .cfbad").textContent : "",
@@ -67,7 +71,7 @@ const st = await p.evaluate(() => ({
 ok(st.panel, "the Military sites panel is on the conflict tab");
 ok(st.sites === 4, "four sites draw as symbols in pane cfpane (" + st.sites + ")");
 ok(st.hit === 1, "only the site named in a report in the period has the red ring (" + st.hit + ")");
-ok(st.strike === 1, "the placed report naming an airfield draws as a reported strike (" + st.strike + ")");
+ok(st.strike >= 1 && st.strikeT, "the placed report naming an airfield draws as a reported strike (" + st.strike + " in the past 30 days)");
 ok(!st.hostile, "no symbol uses the hostile frame");
 ok(/\(1\)/.test(st.named), "the list of sites named in reports holds one site: " + st.named);
 ok(/osm:ua/.test(st.bad), "a source that failed is named: " + st.bad);

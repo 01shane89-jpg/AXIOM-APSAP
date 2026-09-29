@@ -43,6 +43,7 @@ jobs:
       - run: node tests/points_smoke.mjs
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
+      - run: node tests/milsites_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
