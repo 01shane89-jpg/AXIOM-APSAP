@@ -45,6 +45,7 @@ async function once(engine, dev, url, warm) {
     await p.waitForTimeout(15000);
   }
   const t0 = Date.now();
+  if (warm) await p.goto("about:blank");   /* the same address again would only be a jump within the open page */
   await p.goto(url + "#th", { waitUntil: "domcontentloaded" });
   const r = await p.evaluate(async () => {
     const T = (h) => new Promise((res) => { const s = performance.now(); (function tick() { const v = h(); if (v || performance.now() - s > 60000) res(v ? performance.now() : null); else setTimeout(tick, 50); })(); });
