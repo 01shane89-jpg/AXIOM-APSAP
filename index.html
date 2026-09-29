@@ -2664,6 +2664,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     COUNTRIES.sort(function (a, b) { var ra = ORDER.indexOf(a.region), rb = ORDER.indexOf(b.region); return ra - rb || (a.world ? 1 : 0) - (b.world ? 1 : 0) || (a.world && b.world ? a.name.localeCompare(b.name) : pos[a.id] - pos[b.id]); });
   })();
   var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
+  /* the country list for assets/osap-locate.js ("Use my location" finds the country from the outlines) */
+  window.OSAP_COUNTRIES = COUNTRIES;
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
   /* an open US state (see SUB-AREAS above): the same country, shown under the state's name and box */
@@ -7487,6 +7489,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
+<script src="assets/osap-locate.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>

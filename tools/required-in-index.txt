@@ -11,6 +11,7 @@
 <script src="assets/osap-work.js"></script>
 <script src="assets/osap-news.js"></script>
 <script src="assets/osap-daily.js"></script>
+<script src="assets/osap-locate.js"></script>
 <script src="assets/osap-today.js"></script>
 <script src="assets/osap-weather.js"></script>
 <script src="assets/osap-evsum.js"></script>
