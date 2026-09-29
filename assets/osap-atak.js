@@ -1,6 +1,6 @@
 /* AXIOM OSAP: ATAK-style map controls.
    - one slim icon toolbar down the right side of the map, folding away to a single button (remembered on this device);
-     its buttons press the page's own controls (Layers, Measure, Draw area, Watch, What's new, My work, Layout, Today,
+     its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
      here, Drop a point, Save as NAI/TAI, Watch this area, Copy the grid;
@@ -9,6 +9,7 @@
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
    The Today and news screens are untouched. "Classic controls" in the Overlay Manager puts the old buttons back.
    Dropped points are the analyst's own marks, kept in this browser only (localStorage "osap-atak-pts"), never records.
+   assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -27,6 +28,7 @@
   function ic(d, extra) { return '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + d + (extra || "") + "</svg>"; }
   var I = {
     fold: ic('<path d="M9 6l6 6-6 6"/>'), unfold: ic('<path d="M15 6l-6 6 6 6"/>'),
+    globe: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/>'),
     layers: ic('<path d="M12 3 2 8l10 5 10-5z"/><path d="M2 13l10 5 10-5"/><path d="M2 17.5l10 5 10-5" opacity=".55"/>'),
     ruler: ic('<path d="M3 16.5 16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l1.8 1.8M9.5 10l1.2 1.2M12 7.5l1.8 1.8M14.5 5l1.2 1.2"/>'),
     area: ic('<path d="M5 7l6-3 8 4-2 9-9 2-4-6z" stroke-dasharray="3 2.4"/><circle cx="5" cy="7" r="1.4" fill="currentColor"/><circle cx="19" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="19" r="1.4" fill="currentColor"/>'),
@@ -41,7 +43,8 @@
     nai: ic('<rect x="3.5" y="5.5" width="17" height="13" rx="1" stroke-dasharray="3.2 2.2"/><path d="M8 15V9l4 6V9M15 9v6"/>'),
     copy: ic('<rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
     lock: ic('<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>'),
-    x: ic('<path d="M6 6l12 12M18 6 6 18"/>')
+    x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
+    pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>')
   };
 
   /* ---------- the page's own controls, pressed on the analyst's behalf ---------- */
@@ -51,7 +54,7 @@
   function areaPress(k) {
     if (!areaEl) return;
     var b = areaEl.querySelector('[data-area="' + k + '"]');
-    if (!b && (k === "lasso" || k === "poly")) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
+    if (!b && /^(lasso|poly|circle|rect|edit)$/.test(k)) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
     if (b) b.click();
   }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
@@ -59,13 +62,13 @@
   /* ---------- the toolbar ---------- */
   var TOOLS = [
     ["overlays", "Overlays", I.layers, "Overlay Manager: data sets, map layers, your marks"],
+    ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
+    ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
-    ["new", "New", I.bell, "What's new since your last visit"],
-    ["mine", "My work", I.work, "Your saved work"],
+    ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
     ["layout", "Layout", I.layout, "Map only, map with list, or list"],
-    ["today", "Today", I.today, "Weather, alerts and top stories for this country"],
     ["full", "Full", I.full, "Full-screen map"]
   ];
   var bar = D.createElement("div");
@@ -98,13 +101,12 @@
     var mb = q("#meas-btn"), m = bar.querySelector('[data-atk="measure"]');
     if (m) m.setAttribute("aria-pressed", mb && mb.getAttribute("aria-pressed") === "true" ? "true" : "false");
     var a = bar.querySelector('[data-atk="area"]'); if (a) a.classList.toggle("on", areaOn());
-    var nb = q('[data-wk-btn="new"] .wkn'), n = bar.querySelector('[data-atk="new"]');
-    if (n) { var bd = n.querySelector(".atk-n"); if (nb) { if (!bd) { bd = D.createElement("span"); bd.className = "atk-n"; n.appendChild(bd); } bd.textContent = nb.textContent; } else if (bd) bd.remove(); }
-    var mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
-    if (mm) { var b2 = mm.querySelector(".atk-n"); if (mw) { if (!b2) { b2 = D.createElement("span"); b2.className = "atk-n n2"; mm.appendChild(b2); } b2.textContent = mw.textContent; } else if (b2) b2.remove(); }
+    /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
+    var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
+    if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
-    if (lay) lay.hidden = !seg;
+    if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
   }
   bar.addEventListener("click", function (e) {
     var b = e.target.closest("[data-atk]"); if (!b) return;
@@ -113,27 +115,53 @@
     if (pop._for === k) { popClose(); return; }
     popClose();
     if (k === "overlays") omOpen();
+    else if (k === "basemap") {
+      var BM = W.OSAP_BASEMAP; if (!BM) return;
+      var cur = BM.get();
+      popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
+    }
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"]].concat(has ? [null, ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
-    else if (k === "new") press('[data-wk-btn="new"]');
-    else if (k === "mine") press('[data-wk-btn="mine"]');
+    else if (k === "mine") {
+      var nn = q('[data-wk-btn="new"] .wkn'), mn = q('[data-wk-btn="mine"] .wkn');
+      if (!q('[data-wk-btn="new"]')) press('[data-wk-btn="mine"]');
+      else popOpen(b, [["new", "What's new" + (nn ? " (" + nn.textContent + ")" : "")], ["mine", "Saved work" + (mn ? " (" + mn.textContent + ")" : "")]]);
+    }
     else if (k === "layout") {
       var cur = q("#rv-seg [aria-pressed=true]") || q("#rv-seg .on"), mode = cur ? cur.getAttribute("data-rv-mode") : "";
       popOpen(b, [["map", "Map only", mode === "map"], ["split", "Map and list", mode === "split"], ["list", "List", mode === "list"]]);
     }
-    else if (k === "today") press(".tdctl button");
+    else if (k === "point") {
+      var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
+      popOpen(b, [["centre", "At the map centre"], ["tap", "Tap the map to place it"]].concat(hm ? [["me", "At my position"]] : []));
+    }
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
   pop.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
-    if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
+    if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
+    else if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
+    else if (f === "mine") press('[data-wk-btn="' + k + '"]');
+    else if (f === "point") {
+      var hm = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
+      if (k === "centre") ptAdd(map.getCenter());
+      else if (k === "me" && hm) ptAdd(L.latLng(hm.lat, hm.lon));
+      else if (k === "tap") { armTap = Date.now(); toast("Tap the map where the point goes"); }
+    }
   });
+  /* "Tap the map to place it": the next tap on the map (within 30 s) is the point, not a report under the finger */
+  var armTap = 0;
+  mapEl.addEventListener("click", function (e) {
+    if (!armTap || Date.now() - armTap > 30000 || e.target.closest(".leaflet-control, .leaflet-popup")) return;
+    armTap = 0; e.stopPropagation(); e.preventDefault();
+    var r = mapEl.getBoundingClientRect(); ptAdd(map.containerPointToLatLng([e.clientX - r.left, e.clientY - r.top]));
+  }, true);
   D.addEventListener("pointerdown", function (e) { if (!pop.hidden && !pop.contains(e.target) && !bar.contains(e.target)) popClose(); }, true);
 
   /* ---------- the readout strip ---------- */
@@ -198,25 +226,32 @@
   /* ---------- dropped points: the analyst's own marks, this browser only ---------- */
   if (!map.getPane("atakpane")) { map.createPane("atakpane"); map.getPane("atakpane").style.zIndex = 670; }
   var ptLayer = L.layerGroup().addTo(map);
+  var CAM = ' <svg class="atk-cam" viewBox="0 0 24 24" width="11" height="11" aria-label="photos" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>';
   function ptsAll() { try { var a = JSON.parse(lsGet(K_PTS) || "[]"); return Array.isArray(a) ? a.filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }) : []; } catch (e) { return []; } }
   function ptsSave(a) { lsSet(K_PTS, JSON.stringify(a.slice(-500))); }
   function ptsHere() { var c = cc(); return ptsAll().filter(function (p) { return p.cc === c; }); }
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
+      /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
+      var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
-        icon: L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
+        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
+          : L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
-        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span><code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
+        var PX = W.OSAP_POINTS;
+        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb"><button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
-          if (k === "del") { ptsSave(ptsAll().filter(function (x) { return x.id !== p.id; })); ptDraw(); omPaint(); }
+          if (k === "del") ptDel(p.id);
+          else if (k === "edit") PX.edit(p.id);
           else act(k, L.latLng(p.lat, p.lon));
         });
+        if (PX && p.ph) PX.thumbs(d.querySelector(".atk-pph"), p.id);
         return d;
       }, { maxWidth: 280 });
       m.addTo(ptLayer);
@@ -226,8 +261,13 @@
     var a = ptsAll(), c = cc(), n = 1;
     a.forEach(function (p) { var m = /^P(\d+)$/.exec(p.n || ""); if (p.cc === c && m) n = Math.max(n, +m[1] + 1); });
     a.push({ id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), cc: c, lat: +ll.lat.toFixed(6), lon: +L.Util.wrapNum(ll.lng, [-180, 180], true).toFixed(6), n: "P" + n, t: Date.now() });
+    var pt = a[a.length - 1];
     ptsSave(a); ptDraw(); omPaint(); toast("Dropped P" + n);
+    if (W.OSAP_POINTS) W.OSAP_POINTS.edit(pt.id);
+    return pt;
   }
+  /* removing a point also removes its photos from this device */
+  function ptDel(id) { ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); if (W.OSAP_POINTS) W.OSAP_POINTS.forget(id); }
 
   /* ---------- the radial menu ---------- */
   var RAD = [
@@ -310,7 +350,7 @@
   ["pointermove", "pointerup", "pointercancel"].forEach(function (k) { mapEl.addEventListener(k, lpCancel, true); });
   map.on("movestart zoomstart", function () { lpCancel(); });
   /* the tap that ends a long-press must not also select a report under the finger */
-  mapEl.addEventListener("click", function (e) { if (swallow && e.isTrusted && !e.target.closest("#atk-ring")) { swallow = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  mapEl.addEventListener("click", function (e) { if (swallow && e.isTrusted && !e.target.closest("#atk-ring, #pt-ed")) { swallow = false; e.stopPropagation(); e.preventDefault(); } }, true);
   mapEl.addEventListener("contextmenu", function (e) {
     if (!root.classList.contains("atak")) return;
     if (e.target.closest(".leaflet-control, #atk-ring, #atk-bar, #atk-tools")) return;
@@ -323,7 +363,7 @@
   var om = D.createElement("aside"); om.id = "atk-om"; om.className = "leaflet-control"; om.hidden = true; om.setAttribute("aria-label", "Overlay Manager");
   om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
     '<div class="atk-omb"><section><h3>Data sets</h3><div id="atk-ds"></div></section>' +
-    '<section><h3>Map layers</h3><div id="atk-ml"></div></section>' +
+    '<section><h3>What to show</h3><div id="atk-ml"></div></section>' +
     '<section><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
     '<section><h3>Controls</h3><label class="atk-sw"><input type="checkbox" id="atk-classic"> <span>Classic controls (the old buttons instead of this toolbar)</span></label></section></div>';
   L.DomEvent.disableClickPropagation(om); L.DomEvent.disableScrollPropagation(om);
@@ -333,14 +373,15 @@
     /* data sets: once the page has its own on/off checklist (window.OSAP_DATASETS, #ml-ds inside the Layers panel that this
        sheet holds), that is the one list; until then the page's own tabs, pressed as before */
     var dsSec = om.querySelector("#atk-ds").parentNode; dsSec.hidden = !!(W.OSAP_DATASETS && q("#ml-ds"));
+    if (dsSec.hidden && W.OSAP_DATASETS.refresh) W.OSAP_DATASETS.refresh();
     var ds = om.querySelector("#atk-ds"), btns = D.querySelectorAll("#view-seg button[data-view]");
     ds.innerHTML = Array.prototype.map.call(btns, function (b) {
       var v = b.getAttribute("data-view"), sel = b.getAttribute("aria-selected") === "true";
       return '<button type="button" class="atk-dsb' + (sel ? " on" : "") + (b.classList.contains("stub") ? " stub" : "") + '" data-ds="' + esc(v) + '" aria-pressed="' + sel + '">' + esc(b.textContent) + "</button>";
     }).join("") || '<p class="obs">No data sets on this tab.</p>';
     var mk = om.querySelector("#atk-marks"), P = ptsHere(), A = W.OSAP_AOI ? W.OSAP_AOI.list(cc()) : [];
-    mk.innerHTML = (P.length || A.length ? "" : '<p class="obs">Long-press the map to drop a point or save an NAI/TAI.</p>') +
-      P.map(function (p) { return '<div class="atk-mk"><button type="button" data-mk-go="' + esc(p.id) + '"><i class="atk-dot"></i>' + esc(p.n) + ' <code>' + esc(fmtPt(p.lat, p.lon, "mgrs")) + '</code></button><button type="button" class="atk-ic" data-mk-del="' + esc(p.id) + '" aria-label="Remove ' + esc(p.n) + '">' + I.x + "</button></div>"; }).join("") +
+    mk.innerHTML = (P.length || A.length ? "" : '<p class="obs">Use Point on the toolbar, or long-press the map, to add a point. Long-press to save an NAI/TAI.</p>') +
+      P.map(function (p) { return '<div class="atk-mk"><button type="button" data-mk-go="' + esc(p.id) + '"><i class="atk-dot"></i>' + esc(p.n) + (p.ph ? " <span class=\"obs\">" + CAM + p.ph + "</span>" : "") + ' <code>' + esc(fmtPt(p.lat, p.lon, "mgrs")) + '</code></button>' + (W.OSAP_POINTS ? '<button type="button" class="atk-ic" data-mk-ed="' + esc(p.id) + '" aria-label="Edit ' + esc(p.n) + '" title="Name, note and photos">' + I.pen + "</button>" : "") + '<button type="button" class="atk-ic" data-mk-del="' + esc(p.id) + '" aria-label="Remove ' + esc(p.n) + '">' + I.x + "</button></div>"; }).join("") +
       A.map(function (a) { return '<div class="atk-mk"><button type="button" data-aoi-go="' + esc(a.id) + '"><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + "</button></div>"; }).join("");
     om.querySelector("#atk-classic").checked = !on();
   }
@@ -359,9 +400,15 @@
     var t = e.target, b;
     if (t.closest("[data-om=x]")) { omClose(); return; }
     if ((b = t.closest(".atk-dsb[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
-    if ((b = t.closest("[data-mk-del]"))) { var id = b.getAttribute("data-mk-del"); ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); return; }
+    if ((b = t.closest("[data-mk-del]"))) { ptDel(b.getAttribute("data-mk-del")); return; }
+    if ((b = t.closest("[data-mk-ed]"))) { if (phone()) omClose(); if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-mk-ed")); return; }
     if ((b = t.closest("[data-mk-go]"))) { var p = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-go"); })[0]; if (p) { if (phone()) omClose(); map.setView([p.lat, p.lon], Math.max(map.getZoom(), 12)); } return; }
     if ((b = t.closest("[data-aoi-go]"))) { if (W.OSAP_AOI) { omClose(); W.OSAP_AOI.open(b.getAttribute("data-aoi-go")); } return; }
+  });
+  /* Open on a data set or view in the list: on a phone the sheet closes and the list comes up half way, so the choice shows */
+  D.addEventListener("osap:dsopen", function () {
+    if (!phone() || om.hidden) return;
+    omClose(); if (W.ASAP_PHONE && W.ASAP_PHONE.setSheet) setTimeout(function () { W.ASAP_PHONE.setSheet("half"); }, 80);
   });
   om.addEventListener("change", function (e) { if (e.target.id === "atk-classic") { setMode(!e.target.checked); if (!e.target.checked) omPaint(); } });
   function phone() { return root.classList.contains("phone") || W.innerWidth <= 700; }
@@ -389,6 +436,10 @@
     /* the old controls stay in the page but out of sight; Draw area comes back while a shape is being drawn */
     "html.atak #map .leaflet-top.leaflet-right>.leaflet-control:not(#atk-tools):not(.meascard):not(.leaflet-control-attribution):not(:has(.areahint)),html.atak #map .fsctl,html.atak #map .measctl,html.atak #map .locctl{display:none!important}" +
     "html.atak #map .leaflet-top.leaflet-right>#area-ctl:has(.areahint){display:flex!important;position:absolute;right:52px;top:0;margin:8px 0 0!important;z-index:5}" +
+    /* on a phone that corner is a zero-size scroll box, which clipped the drawing and editing panel out of sight */
+    "html.atak #map .leaflet-top.leaflet-right:has(>#area-ctl .areahint){overflow:visible!important}" +
+    /* the toolbar has its own Base map button, so Overlays does not repeat the list */
+    "html.atak #ml-panel .mlbase{display:none}" +
     "html.atak #map #atk-tools,html.atak #map #atk-bar{display:flex}#atk-tools,#atk-bar,#atk-cross,#atk-ring[hidden],#atk-om[hidden],#atk-pop[hidden]{display:none}" +
     "@media (pointer:coarse){html.atak #map .leaflet-control-zoom{display:none}}" +
     "html.atak #map .leaflet-bottom{bottom:30px}html.atak #map{-webkit-touch-callout:none}" +
@@ -425,6 +476,7 @@
     /* dropped points */
     ".atk-pt{background:none;border:0}.atk-pt i{position:absolute;left:3px;top:3px;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5);box-sizing:border-box}" +
     ".atk-pt span{position:absolute;left:19px;top:1px;padding:0 4px;border-radius:3px;background:rgba(20,24,28,.85);color:#fff;font:700 10.5px/15px 'IBM Plex Mono',monospace;white-space:nowrap}" +
+    ".atk-ptpop .atk-note{white-space:pre-wrap;word-break:break-word;margin:4px 0}" +
     ".atk-ptpop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:3px 0 0}.atk-ptpop .obs{color:var(--muted);font-size:11.5px}.atk-ptpop p{margin:6px 0}" +
     ".atk-pb{display:flex;flex-wrap:wrap;gap:4px}.atk-pb button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:4px 8px;min-height:30px;cursor:pointer}" +
     /* Overlay Manager: a side sheet on wide screens, a bottom sheet on phones */
@@ -460,5 +512,6 @@
   }, true);
   if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
-  W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt };
+  W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
+    pts: { all: ptsAll, save: ptsSave, draw: ptDraw, del: ptDel, paint: omPaint } };
 })();

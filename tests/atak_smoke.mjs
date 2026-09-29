@@ -68,6 +68,8 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
+  ok(await shown(p, "#pt-ed"), "phone: a dropped point opens its name, note and photos sheet");
+  await p.click('#pt-ed .pt-foot [data-pe="x"]');
   // measure from here
   await longPress(p, 20, 20); await ringBtn(p, "measure"); await p.waitForTimeout(300);
   ok(await p.evaluate(() => window.OSAP_MEASURE.state().pts.length === 1), "phone: Measure from here starts a measurement at the point");
@@ -95,8 +97,8 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await p.click('#atk-om [data-om="x"]');
   ok(await p.evaluate(() => !document.querySelector("#atk-om #ml-panel") && !!document.querySelector(".mlctl #ml-panel")), "phone: closing puts the Layers panel back");
   // toolbar buttons press the old controls
-  await p.click('#atk-tools [data-atk="today"]'); await p.waitForTimeout(400);
-  ok(await p.evaluate(() => window.OSAP_TODAY && window.OSAP_TODAY.isOpen()), "phone: Today button opens Today");
+  await p.click("header .brand"); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => window.OSAP_TODAY && window.OSAP_TODAY.isOpen()), "phone: the OSAP logo opens Today");
   await p.evaluate(() => { const b = document.querySelector(".tdmap"); if (b) b.click(); }); await p.waitForTimeout(300);
   // conflict tabs keep the points pane
   ok(await p.evaluate(() => { document.documentElement.setAttribute("data-cf", "x"); const v = getComputedStyle(document.querySelector(".leaflet-atakpane-pane")).visibility; document.documentElement.removeAttribute("data-cf"); return v; }) !== "hidden", "phone: points pane stays on conflict tabs");

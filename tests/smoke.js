@@ -21,7 +21,7 @@ const { chromium } = require(process.env.PW || 'playwright');
     await p.goto('about:blank'); await p.goto(url + '#' + (cc === 'th' ? '' : cc + '/') + 'timeline'); await p.waitForTimeout(1200);
     const n = await p.evaluate(() => window.TSAP ? TSAP.records.length : -1);
     const views = await p.$$eval('#view-seg button', bs => bs.map(x => x.dataset.view));
-    for (const v of views) { await p.click(`button[data-view="${v}"]`); await p.waitForTimeout(120); }
+    for (const v of views) { await p.evaluate((v) => document.querySelector(`button[data-view="${v}"]`).click(), v); /* the tab row is out of sight: views open from Overlays */ await p.waitForTimeout(120); }
     console.log(cc.padEnd(4), String(n).padStart(4), 'records,', views.length, 'tabs', errs.length ? '| ERRORS: ' + errs.join('; ') : '');
     if (n < 0 || errs.length) failed = true; errs.length = 0;
   }

@@ -444,8 +444,14 @@ select.mini{
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
+#ml-ds .dstabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}#ml-ds .dstabs button,#ml-ds .dsopen{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
+#ml-ds .dstabs button[aria-pressed=true],#ml-ds .dsopen[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+#ml-ds .dsrow{display:flex;align-items:center;gap:8px}#ml-ds .dsrow label{flex:1;display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer}#ml-ds .dsopen{flex:none;font-weight:500;min-height:32px;padding:2px 10px}
+html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
+.osap-hs{mix-blend-mode:multiply}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
@@ -593,6 +599,16 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl button.on{background:var(--accent);color:var(--on-accent)}
 .areactl button[disabled]{opacity:.45;cursor:default}
 .areahint{font-size:12px;padding:6px 10px;color:var(--muted);flex-basis:100%;border-bottom:1px solid var(--line)}
+.areast{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-basis:100%;font-size:12px;font-weight:600;padding:4px 10px;box-sizing:border-box}
+.areast input[type=color]{width:34px;height:24px;padding:0;border:1px solid var(--line);border-radius:4px;background:none;cursor:pointer}
+.areaop{flex-wrap:wrap}.areaop input{flex:1 1 100%;margin:2px 0;min-width:0}.areaop output{font-weight:400;color:var(--muted)}
+#map .leaflet-top.leaflet-right>.areactl.editing{width:190px;flex-wrap:wrap}
+.areactl.editing button{border-top:1px solid var(--line);flex:1 1 40%!important}
+.areactl.editing button.areawide{flex-basis:100%!important;border-left:0}
+.areactl.editing button[aria-expanded=true]{background:var(--accent);color:var(--on-accent)}
+.areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
+.areah.areah-c{border-radius:4px;cursor:nwse-resize}
+#map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
 /* the hidden attribute always wins over a panel's own display rule (.rv is display:flex), so the report list really goes in Map view */
@@ -1134,6 +1150,28 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
   });
 
+  /* Imagery tiles that go closer than the source has pictures for. The host is asked with blankTile=false, so a missing
+     close-up comes back as 404 instead of a grey "Map data not yet available" square; the tile then shows the nearest
+     wider tile that does exist (up to 3 levels up), enlarged and cropped to fit. Zooming in past the sharpest picture
+     therefore stays on imagery, as Apple and Google maps do, instead of going blank. */
+  var DeepTiles = L.TileLayer.extend({
+    createTile: function (c, done) {
+      var self = this, sz = this.getTileSize(), k = 0, tile = document.createElement("div"), img = document.createElement("img");
+      tile.style.overflow = "hidden";
+      img.alt = ""; img.setAttribute("role", "presentation"); img.style.position = "absolute"; img.style.maxWidth = "none";
+      function load() {
+        var f = 1 << k, p = { x: Math.floor(c.x / f), y: Math.floor(c.y / f), z: c.z - k };
+        img.style.width = sz.x * f + "px"; img.style.height = sz.y * f + "px";
+        img.style.left = -(c.x - p.x * f) * sz.x + "px"; img.style.top = -(c.y - p.y * f) * sz.y + "px";
+        img.src = L.Util.template(self._url, L.extend({ s: self._getSubdomain(p), x: p.x, y: p.y, z: p.z, r: "" }, self.options));
+      }
+      img.onload = function () { done(null, tile); };
+      img.onerror = function () { if (k < 3 && c.z - k > 3) { k++; load(); } else done(new Error("no imagery here"), tile); };
+      tile.appendChild(img); load();
+      return tile;
+    }
+  });
+
   /* ---------- map ---------- */
   /* on touch screens every canvas marker answers a tap up to 14 px beyond its edge (Leaflet's hit tolerance), so a
      finger does not have to land exactly on a small dot: a 5 px dot becomes a target about 38 px across */
@@ -1142,6 +1180,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (!window.OSAP_LEGEND) window.OSAP_LEGEND = { q: {}, set: function (id, html, home) { this.q[id] = [html, home]; } };
   /* sideways panning stops about 60 degrees past the dateline on each side, so the world does not scroll forever but Fiji, Kiribati and the Pacific can still be seen across it */
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true, maxBounds: [[-85, -240], [85, 240]], maxBoundsViscosity: 1 });
+  /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
+  if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
   /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
   function symZoom() {
@@ -1191,14 +1231,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
     /* sharp imagery. Licences are tagged so restricted ones can be dropped before any commercial use:
        Esri World Imagery is under Esri's terms of use (restricted), EOX Sentinel-2 cloudless 2021 is CC BY-NC-SA 4.0 (non-commercial) */
-    sat: { name: "Satellite", note: "Esri World Imagery: sharp aerial and satellite photos, down to street level in most towns (image dates vary by place)",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+    sat: { name: "Satellite", note: "Esri World Imagery (Maxar and others): sharp aerial and satellite photos, about 30 to 60 cm in most cities and towns. Zooms in as far as the pictures go, then enlarges the closest one (image dates vary by place)",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
       attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
     hybrid: { name: "Hybrid", note: "The same imagery with borders, place names and roads on top",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
       labels: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}",
                "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"],
       attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
+    /* Esri World Imagery (Clarity): the same providers with less colour processing, and often a different capture date.
+       A second look when the main picture is old, cloudy or blurred; it can be hazier and stops a level sooner in some places */
+    clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less colour-processed. Can look hazier",
+      url: "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
+      attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community (World Imagery Clarity)' },
     s2: { name: "Sentinel-2 cloudless", note: "EOX: a cloud-free mosaic of 2021 Sentinel-2 images, one look for the whole world (10 m)",
       url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 15, zmax: 16, lic: "CC BY-NC-SA 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' },
@@ -1225,9 +1270,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
       var url = b.url.replace("{date}", new Date(Date.now() - 864e5).toISOString().slice(0, 10));
-      altBase = L.tileLayer(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
+      altBase = new (b.deep ? DeepTiles : L.TileLayer)(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
       altBase.bringToBack();
-      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: b.max, maxZoom: zmax }); })).addTo(map);
+      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: Math.min(b.max, 19), maxZoom: zmax }); })).addTo(map);
     }
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
@@ -1246,6 +1291,27 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
   }
   function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
+     Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
+     Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
+  var HSX = {
+    world: { name: "Hillshade, LiDAR where published", note: "Esri World Hillshade, worldwide. Uses 1 m LiDAR where governments publish it (much of the US and Europe, and more added each year), about 30 m satellite elevation elsewhere, including most of South-East Asia",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", max: 16, lic: "restricted",
+      attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener">coverage</a>)' },
+    jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
+      url: "https://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png", max: 16, min: 2, bounds: [[20, 122], [46, 154]], lic: "GSI terms (credit)",
+      attr: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> hillshade' }
+  };
+  if (!(ML.hsop > 0)) ML.hsop = 0.55;
+  var hsOn = {};
+  function setShade(k, on) {
+    ML["hs_" + k] = !!on; mlSet();
+    var h = HSX[k];
+    if (on && !hsOn[k]) hsOn[k] = L.tileLayer(h.url, { maxNativeZoom: h.max, minNativeZoom: h.min || 0, maxZoom: 20, bounds: h.bounds, zIndex: 5,
+      className: "osap-hs", opacity: ML.hsop, attribution: h.attr }).addTo(map);
+    if (!on && hsOn[k]) { map.removeLayer(hsOn[k]); delete hsOn[k]; }
+  }
+  function setShadeOp(v) { ML.hsop = v; mlSet(); Object.keys(hsOn).forEach(function (k) { hsOn[k].setOpacity(v); }); }
   /* ---------- road closures: official road-agency notices (data/live/roads.js) plus closures named in this area's reports ----------
      Agency notices are shown as the agency published them. "Reported" markers are news or warning records whose text says a
      road is closed; they are unverified and sit where the record was placed, which may be approximate. */
@@ -1304,15 +1370,22 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     onAdd: function () {
       var box = L.DomUtil.create("div", "leaflet-control mlctl");
       box.innerHTML = '<button type="button" class="mlbtn" aria-expanded="false" aria-controls="ml-panel" title="Map layers">&#9776; Layers</button>' +
-        '<div class="mlpanel" id="ml-panel" hidden><div class="mlh">Base map</div>' +
+        /* the base map list sits in its own block: with the tactical toolbar on it is hidden here, because the toolbar has its
+           own Base map button (osap-atak.js, through window.OSAP_BASEMAP below); classic controls keep it in Layers */
+        '<div class="mlpanel" id="ml-panel" hidden><div class="mlbase"><div class="mlh">Base map</div>' +
         Object.keys(BASES).map(function (k) {
           return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
-        }).join("") +
+        }).join("") + "</div>" +
         '<div class="mlh">Flooding</div>' +
         Object.keys(FLOODX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
         }).join("") +
         '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
+        '<div class="mlh">Elevation and LiDAR</div>' +
+        Object.keys(HSX).map(function (k) {
+          return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
+        }).join("") +
+        '<label class="mlop">Shading <input type="range" min="0.2" max="1" step="0.05" value="' + ML.hsop + '" id="ml-hsop"><output id="ml-hsopv">' + Math.round(ML.hsop * 100) + "%</output></label>" +
         '<div class="mlh">Roads</div>' +
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
@@ -1326,20 +1399,36 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         pan.style.maxHeight = Math.max(160, map.getSize().y - 110) + "px";
         if (!pan.hidden && ML.roads) drawRoads();
       });
-      box.addEventListener("change", function (e) {
+      /* listen on the panel, not the button box: the tactical toolbar's Overlays sheet moves this panel out of the box
+         (osap-atak.js), and a listener on the box then never heard a base map, flood or road choice */
+      pan.addEventListener("change", function (e) {
         var t = e.target;
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
         else if (t.dataset.roads) setRoads(t.checked);
+        else if (t.dataset.hs) setShade(t.dataset.hs, t.checked);
       });
+      box.querySelector("#ml-hsop").addEventListener("input", function () { setShadeOp(parseFloat(this.value)); box.querySelector("#ml-hsopv").textContent = Math.round(this.value * 100) + "%"; });
       box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
       return box;
     }
   });
   new LayersCtl().addTo(map);
   window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
+  /* the base map choice for other controls (the toolbar's Base map button): list, current, set; setting also ticks the
+     matching radio in Layers so both stay in step */
+  window.OSAP_BASEMAP = {
+    list: function () { return Object.keys(BASES).map(function (k) { return { id: k, name: BASES[k].name, note: BASES[k].note }; }); },
+    get: function () { return ML.base; },
+    set: function (k) {
+      if (!BASES[k]) return;
+      setBase(k);
+      var r = document.querySelector('input[name="ml-base"][value="' + k + '"]'); if (r) r.checked = true;
+    }
+  };
   if (ML.base !== "grey") setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
+  Object.keys(HSX).forEach(function (k) { if (ML["hs_" + k]) setShade(k, true); });
   /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
   /* the start switches extras off (extrasOff) while this waits, so check again before drawing */
   if (ML.roads) (function wait(n) { if (window.TSAP || n > 40) { if (ML.roads) setRoads(true); } else setTimeout(function () { wait(n + 1); }, 250); })(0);
@@ -1471,7 +1560,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
         '<p class="mlkey ternote"></p>' +
-        (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
+        /* the row stays (hidden) so a data set switch still turns the layer off; it is chosen as the "Chinese presence" data set */
+        (HASPR[cc] ? '<div hidden><label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p></div>' : "");
     }
     var ex = document.getElementById("ml-extra");
     if (ex) { var d = document.createElement("div"); d.innerHTML = '<div class="mlh">Terrain &amp; flashpoints</div>' + rows(); ex.appendChild(d); }
@@ -4429,6 +4519,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Satellite and Hybrid base maps: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> and Esri reference labels, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
+      ['Satellite, second look base map: Esri World Imagery (Clarity), &copy; Esri, Maxar, Earthstar Geographics and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
       ['Sentinel-2 cloudless base map: <a href="https://s2maps.eu">Sentinel-2 cloudless 2021</a> by EOX IT Services GmbH, contains modified Copernicus Sentinel data 2021. Licence: CC BY-NC-SA 4.0, <b>non-commercial</b>.'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
@@ -5619,8 +5710,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
      whenever the data set changes, and on start. The base map choice stays. */
+  /* elevation shading (data-hs) belongs with the base map, so it stays on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -5631,6 +5723,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
+  /* the headings the data set list is grouped under; a set in none of them goes under "More" */
+  var DS_GROUPS = [["Alerts", ["alerts"]], ["Security", ["border", "insurgency", "security", "safety", "partners", "presence"]], ["Crime", ["crime", "scam", "aml"]],
+    ["Weather and hazards", ["weather", "hazards", "flood"]], ["Infrastructure and services", ["infra", "transport", "health", "crisis"]], ["News and social media", ["news", "social"]]];
   /* a tab that is not in the list (Route, Timeline, one merged into a conflict tab) draws as it always has */
   function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
   function dsList() {
@@ -5707,7 +5802,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.OSAP_DATASETS = {
     list: function () { return dsList().map(function (l) { return { id: l.id, name: l.name, on: !!DS[l.id], open: l.id === current }; }); },
     set: function (id, on) { if (dsList().some(function (l) { return l.id === id; })) { dsSet(id, !!on); dsUi(); } },
-    onChange: function (f) { if (typeof f === "function") dsFns.push(f); }
+    onChange: function (f) { if (typeof f === "function") dsFns.push(f); },
+    refresh: function () { dsUi(); }
   };
   /* the checklist at the top of the Layers menu, and a note on the map when the open tab's own set is not on it */
   var dsBox = document.createElement("div"), dsHint = document.createElement("div");
@@ -5724,20 +5820,42 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var list = dsList(), l = LBY[current];
     var mine = l && list.some(function (x) { return x.id === current; });
     if (mine && !DS[current]) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
-    else if (current === "timeline" && !list.some(function (x) { return DS[x.id]; })) dsHint.innerHTML = '<span>No data sets on the map</span><button type="button" data-dspick="1">Choose</button>';
     else dsHint.innerHTML = "";
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
-    var n = list.filter(function (x) { return DS[x.id]; }).length;
-    dsBox.innerHTML = '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
-      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ".</p>" +
-      list.map(function (x) {
-        return '<label class="mlrow"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b>" + (x.id === current ? "<i>Open tab</i>" : "") + "</span></label>";
+    var n = list.filter(function (x) { return DS[x.id]; }).length, seen = {};
+    /* this panel is the one place to choose what to see: the tabs that are not data sets (Timeline, the conflict tabs, Route)
+       open from the row on top; each data set has its map tick and an Open button for its own panel, grouped by subject */
+    var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
+      return !b.hidden && !list.some(function (x) { return x.id === b.getAttribute("data-view"); });
+    });
+    var grp = DS_GROUPS.map(function (g) {
+      var rows = list.filter(function (x) { return g[1].indexOf(x.id) >= 0; }); rows.forEach(function (x) { seen[x.id] = 1; }); return [g[0], rows];
+    });
+    grp.push(["More", list.filter(function (x) { return !seen[x.id]; })]);
+    dsBox.innerHTML = (tabs.length ? '<div class="mlh">Views</div><div class="dstabs" role="group" aria-label="Views">' + tabs.map(function (b) {
+        var v = b.getAttribute("data-view");
+        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === current) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
+      }).join("") + "</div>" : "") +
+      '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
+      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ". Open shows a data set's own list and details.</p>" +
+      grp.filter(function (g) { return g[1].length; }).map(function (g) {
+        return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x) {
+          return '<div class="mlrow dsrow"><label><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b></span></label>" +
+            '<button type="button" class="dsopen" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === current) + '" title="Open the ' + esc(x.name) + ' list and details">' + (x.id === current ? "Open now" : "Open") + "</button></div>";
+        }).join("");
       }).join("");
   }
   dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
   dsBox.addEventListener("click", function (e) {
+    var o = e.target.closest && e.target.closest("[data-dsopen]");
+    if (o) {
+      var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
+      if (ob && ov !== current) ob.click();
+      document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: ov }));
+      return;
+    }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
@@ -6085,11 +6203,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     L.DomEvent.disableClickPropagation(d); return d; } });
   new RvCtl().addTo(map);
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button[data-rv-mode]"); if (b) rvSet(b.getAttribute("data-rv-mode")); });
-  /* ---------- drawn area: lasso or polygon that isolates the reporting area ----------
+  /* ---------- drawn area: lasso, polygon, circle or square that isolates the reporting area ----------
      The shape is the analyst's own filter, kept on this device per country. Map markers outside it are hidden and the report list
      counts only what is inside. Nothing about the records changes. */
   var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
   try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
+  /* the analyst's look for the drawn area (fill colour, fill opacity, outline colour) and what the shape was drawn as (kind) and
+     how far it has been turned (rot, radians on screen), so resizing a turned square keeps it square. Kept on this device */
+  var AREA_ST = { kind: "", rot: 0, fill: "", op: 0.12, line: "", w: 2 };
+  try { var s0 = JSON.parse(localStorage.getItem(AREA_KEY + "-st") || "null"); if (s0 && typeof s0 === "object") Object.keys(AREA_ST).forEach(function (k) { if (typeof s0[k] === typeof AREA_ST[k]) AREA_ST[k] = s0[k]; }); } catch (e) {}
+  function areaStSave() { try { localStorage.setItem(AREA_KEY + "-st", JSON.stringify(AREA_ST)); } catch (e) {} }
+  function stFill() { return AREA_ST.fill || tok("--accent"); }
+  function stLine() { return AREA_ST.line || tok("--accent"); }
+  /* outline width in pixels at close zoom; thinner as the map zooms out (down to 40% at country zoom and wider), never under 1 */
+  function zoomW(w) { var z = map.getZoom(); return Math.max(1, Math.round(w * (z >= 10 ? 1 : Math.max(0.4, 1 - 0.1 * (10 - z))) * 2) / 2); }
+  function stW() { return zoomW(Math.max(1, Math.min(8, +AREA_ST.w || 2))); }
+  function areaWeights() { if (!areaLayer) return; var ls = areaLayer.getLayers(), w = stW(); ls[1].setStyle({ weight: w + 2 }); ls[2].setStyle({ weight: w }); }
   /* above the report dots and pins (up to 662) so the drawn area and the line being drawn are never hidden under them; below
      place labels (670). It takes no taps, so the dots under it still answer */
   if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 668; map.getPane("areapane").style.pointerEvents = "none"; }
@@ -6109,10 +6238,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
-      /* the drawn area itself: a light tint inside, and a solid edge with a white halo so it shows on any base map */
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 6, opacity: 0.9, fillColor: tok("--accent"), fillOpacity: 0.12, interactive: false }),
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 3, fill: false, interactive: false })
+      /* the drawn area itself: a tint inside, and a solid edge with a white halo so it shows on any base map */
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: stW() + 2, opacity: 0.9, fillColor: stFill(), fillOpacity: AREA_ST.op, interactive: false }),
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
+    areaLayer.__world = world;
+  }
+  /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
+  function areaShowPts(P) {
+    if (!areaLayer) return;
+    var ls = areaLayer.getLayers();
+    ls[0].setLatLngs([areaLayer.__world, P]); ls[1].setLatLngs(P); ls[2].setLatLngs(P);
   }
   /* hide map items outside the area: canvas markers go transparent and stop taking taps; icon markers are hidden */
   function areaMarkers() {
@@ -6130,16 +6266,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       });
     });
   }
-  function areaSet(P) {
+  function areaSet(P, kind) {
+    if (kind !== undefined) { AREA_ST.kind = kind || ""; AREA_ST.rot = 0; areaStSave(); }
     AREA = P && P.length >= 3 ? P.map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }) : null;
     try { if (AREA) localStorage.setItem(AREA_KEY, JSON.stringify(AREA)); else localStorage.removeItem(AREA_KEY); } catch (e) {}
+    if (!AREA) editEnd();
     areaShow(); areaUi(); rvSoon();
+    if (areaEdit) editHandles();
   }
   /* drawing: lasso follows the finger or mouse while held down; polygon adds a corner per tap and closes on the first corner,
-     a double-click, or Finish. Map panning is paused while drawing. */
+     a double-click, or Finish; circle drags out from its centre and square from one corner to the opposite one. Circle and
+     square are handed on as ordinary polygons, so everything that reads the drawn area works on them unchanged.
+     Map panning is paused while drawing. */
   var mapEl = map.getContainer();
   function drawStart(mode) {
-    drawEnd(true);
+    drawEnd(true); editEnd();
     /* while drawing: the shape so far, closed back to the start and lightly tinted, under a thick line with a white halo */
     areaDraw = { mode: mode, pts: [],
       fill: L.polygon([], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: tok("--accent"), fillOpacity: 0.15, interactive: false }).addTo(map),
@@ -6151,14 +6292,48 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   function drawEnd(cancel) {
     if (!areaDraw) return;
-    var P = areaDraw.pts;
+    var P = areaDraw.pts, mode = areaDraw.mode;
     map.removeLayer(areaDraw.line); map.removeLayer(areaDraw.halo); map.removeLayer(areaDraw.fill); map.removeLayer(areaDraw.dots);
     areaDraw = null; drawEndT = Date.now();
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
-    if (!cancel && P.length >= 3) areaSet(P); else areaUi();
+    if (!cancel && P.length >= 3) { areaSet(P, mode === "circle" || mode === "rect" ? mode : ""); editStart(); } else areaUi();
   }
-  function drawShow() { var P = areaDraw.pts; areaDraw.line.setLatLngs(P); areaDraw.halo.setLatLngs(P); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []); }
+  function drawShow() {
+    var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
+    areaDraw.line.setLatLngs(E); areaDraw.halo.setLatLngs(E); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []);
+  }
+  /* circle and square: the shape from the press point to where the finger or mouse is now */
+  var SHAPE_N = 64;
+  function kmTxt(m) { var k = m / 1000; return (k < 10 ? k.toFixed(2) : k < 100 ? k.toFixed(1) : Math.round(k)) + " km"; }
+  function nmTxt(m) { var n = m / 1852; return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.round(n)) + " nm"; }
+  function circlePts(c, r) {
+    /* true distance on the earth's surface: each point is r metres from the centre (great-circle destination) */
+    var R = 6371008.8, d = r / R, la = c[0] * Math.PI / 180, lo = c[1] * Math.PI / 180, P = [];
+    for (var i = 0; i < SHAPE_N; i++) {
+      var b = 2 * Math.PI * i / SHAPE_N, la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(b));
+      var lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+      P.push([la2 * 180 / Math.PI, lo2 * 180 / Math.PI]);
+    }
+    return P;
+  }
+  function shapeMove(e) {
+    var a = areaDraw.anchor, b = evLL(e), hint = areaEl.querySelector(".areahint"), t;
+    areaDraw.dots.clearLayers();
+    if (areaDraw.mode === "circle") {
+      var r = map.distance(a, b);
+      areaDraw.pts = r > 0 ? circlePts(a, r) : [];
+      L.polyline([a, b], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2, dashArray: "5 5", interactive: false }).addTo(areaDraw.dots);
+      L.circleMarker(a, { pane: "areapane", renderer: areaSvg, radius: 5, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
+      t = "Radius " + kmTxt(r) + " (" + nmTxt(r) + ")";
+    } else {
+      areaDraw.pts = [a, [a[0], b[1]], b, [b[0], a[1]]];
+      var w = map.distance([(a[0] + b[0]) / 2, a[1]], [(a[0] + b[0]) / 2, b[1]]), h = map.distance([a[0], a[1]], [b[0], a[1]]);
+      t = kmTxt(w) + " × " + kmTxt(h);
+    }
+    if (hint) hint.textContent = t;
+    drawShow();
+  }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
   function inCtl(e) { return e.target.closest && e.target.closest(".leaflet-control"); }
   var lassoDown = false, drawEndT = 0;
@@ -6166,6 +6341,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaDraw || inCtl(e)) return;
     e.preventDefault(); e.stopPropagation();
     if (areaDraw.mode === "lasso") { lassoDown = true; areaDraw.pts = [evLL(e)]; try { mapEl.setPointerCapture(e.pointerId); } catch (x) {} }
+    else if (areaDraw.mode === "circle" || areaDraw.mode === "rect") {
+      lassoDown = true; areaDraw.anchor = evLL(e); areaDraw.down = map.mouseEventToContainerPoint(e); areaDraw.pts = [];
+      try { mapEl.setPointerCapture(e.pointerId); } catch (x) {}
+      return;
+    }
     else {
       var p = evLL(e), P = areaDraw.pts;
       if (P.length >= 3) { var f = map.latLngToContainerPoint(P[0]), c = map.mouseEventToContainerPoint(e); if (f.distanceTo(c) < 16) { drawEnd(false); return; } }
@@ -6175,13 +6355,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     drawShow();
   }, true);
   mapEl.addEventListener("pointermove", function (e) {
-    if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return;
+    if (!areaDraw || !lassoDown) return;
     e.preventDefault(); e.stopPropagation();
+    if (areaDraw.mode !== "lasso") { shapeMove(e); return; }
     var p = evLL(e), P = areaDraw.pts, last = map.latLngToContainerPoint(P[P.length - 1]);
     if (last.distanceTo(map.mouseEventToContainerPoint(e)) < 4) return;
     P.push(p); drawShow();
   }, true);
-  function lassoUp(e) { if (!areaDraw || areaDraw.mode !== "lasso" || !lassoDown) return; lassoDown = false; e.preventDefault(); e.stopPropagation(); drawEnd(false); }
+  function lassoUp(e) {
+    if (!areaDraw || !lassoDown) return;
+    lassoDown = false; e.preventDefault(); e.stopPropagation();
+    /* a tap or a tiny drag is not a circle or square: stay in drawing mode for a proper drag */
+    if (areaDraw.mode !== "lasso" && (e.type === "pointercancel" || areaDraw.down.distanceTo(map.mouseEventToContainerPoint(e)) < 10)) {
+      areaDraw.pts = []; areaDraw.dots.clearLayers(); drawShow(); areaUi(); return;
+    }
+    drawEnd(false);
+  }
   mapEl.addEventListener("pointerup", lassoUp, true);
   mapEl.addEventListener("pointercancel", lassoUp, true);
   mapEl.addEventListener("dblclick", function (e) { if (areaDraw && areaDraw.mode === "poly") { e.preventDefault(); e.stopPropagation(); drawEnd(false); } }, true);
@@ -6189,7 +6378,80 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      lands on a report dot used to open that report and pan the map, so the next corner or the closing tap missed. The click that
      follows the closing tap or the end of a lasso is swallowed too, or it opened whatever report sat under the finger */
   mapEl.addEventListener("click", function (e) { if ((areaDraw || Date.now() - drawEndT < 600) && !inCtl(e)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && areaDraw) drawEnd(true); });
+  document.addEventListener("keydown", function (e) { if (e.key !== "Escape") return; if (areaDraw) drawEnd(true); else if (areaEdit) { editEnd(); areaUi(); } });
+  /* editing a drawn area: corner handles resize it (the opposite corner stays put; a circle stays round), the round handle above
+     turns it, the centre handle moves it. The work is done on screen pixels at the current zoom and handed back as the same
+     kind of polygon through areaSet, so everything that reads the drawn area sees an ordinary new area */
+  var areaEdit = null;
+  function rotP(p, a) { var c = Math.cos(a), s = Math.sin(a); return L.point(p.x * c - p.y * s, p.x * s + p.y * c); }
+  function editFrame() {
+    var z = map.getZoom(), a = AREA_ST.rot, px = AREA.map(function (q) { return map.project(q, z); });
+    var mnx = Infinity, mny = Infinity, mxx = -Infinity, mxy = -Infinity, o = px[0];
+    px.forEach(function (p) { var f = rotP(p.subtract(o), -a); mnx = Math.min(mnx, f.x); mny = Math.min(mny, f.y); mxx = Math.max(mxx, f.x); mxy = Math.max(mxy, f.y); });
+    var toS = function (x, y) { return rotP(L.point(x, y), a).add(o); };
+    return { z: z, a: a, o: o, px: px, box: [mnx, mny, mxx, mxy], toS: toS, toF: function (p) { return rotP(p.subtract(o), -a); },
+      c: toS((mnx + mxx) / 2, (mny + mxy) / 2) };
+  }
+  function editHandles() {
+    if (!areaEdit || !AREA) return;
+    areaEdit.lay.clearLayers();
+    var F = editFrame(), b = F.box, zu = function (p) { var l = map.unproject(p, F.z); return [l.lat, l.lng]; };
+    var ic = function (cls, txt) { return L.divIcon({ className: "areah " + cls, html: txt || "", iconSize: [26, 26], iconAnchor: [13, 13] }); };
+    var add = function (k, p, cls, txt, lbl) {
+      var m = L.marker(zu(p), { pane: "areapane", icon: ic(cls, txt), keyboard: false, interactive: true, zIndexOffset: 1000 }).addTo(areaEdit.lay);
+      var el = m.getElement(); el.setAttribute("data-ah", k); el.setAttribute("aria-label", lbl); el.title = lbl;
+      el.addEventListener("pointerdown", editDown);
+    };
+    [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]].forEach(function (xy, i) { add("c" + i, F.toS(xy[0], xy[1]), "areah-c", "", "Drag to resize"); });
+    var top = F.toS((b[0] + b[2]) / 2, b[1] - 34);
+    L.polyline([zu(F.toS((b[0] + b[2]) / 2, b[1])), zu(top)], { pane: "areapane", renderer: areaSvg, color: stLine(), weight: 2, interactive: false }).addTo(areaEdit.lay);
+    add("rot", top, "areah-r", "\u21bb", "Drag to turn");
+    add("mv", F.c, "areah-m", "\u2725", "Drag to move");
+  }
+  function editDown(e) {
+    var k = this.getAttribute("data-ah"); if (!k || !AREA) return;
+    e.preventDefault(); e.stopPropagation();
+    try { this.setPointerCapture(e.pointerId); } catch (x) {}
+    var F = editFrame(), b = F.box, i = k.charAt(0) === "c" ? +k.charAt(1) : -1;
+    var cs = [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]];
+    areaEdit.drag = { k: k, F: F, p0: map.mouseEventToLayerPoint(e).add(map.getPixelOrigin()), fx: i >= 0 ? L.point(cs[(i + 2) % 4][0], cs[(i + 2) % 4][1]) : null,
+      hx: i >= 0 ? L.point(cs[i][0], cs[i][1]) : null, P: AREA, rot: AREA_ST.rot };
+    map.dragging.disable();
+  }
+  function editMove(e) {
+    var d = areaEdit && areaEdit.drag; if (!d) return;
+    e.preventDefault(); e.stopPropagation();
+    var F = d.F, p = map.mouseEventToLayerPoint(e).add(map.getPixelOrigin()), out;
+    if (d.k === "mv") { var dv = p.subtract(d.p0); out = F.px.map(function (q) { return q.add(dv); }); }
+    else if (d.k === "rot") {
+      var da = Math.atan2(p.y - F.c.y, p.x - F.c.x) - Math.atan2(d.p0.y - F.c.y, d.p0.x - F.c.x);
+      out = F.px.map(function (q) { return rotP(q.subtract(F.c), da).add(F.c); }); d.rot = F.a + da;
+    } else {
+      var f = F.toF(p), w = d.hx.x - d.fx.x, h = d.hx.y - d.fx.y;
+      var sx = Math.max(0.05, (f.x - d.fx.x) / (w || 1)), sy = Math.max(0.05, (f.y - d.fx.y) / (h || 1));
+      if (AREA_ST.kind === "circle") sx = sy = Math.max(0.05, (sx + sy) / 2);
+      out = F.px.map(function (q) { var g = F.toF(q); return F.toS(d.fx.x + (g.x - d.fx.x) * sx, d.fx.y + (g.y - d.fx.y) * sy); });
+    }
+    d.P = out.map(function (q) { var l = map.unproject(q, F.z); return [l.lat, l.lng]; });
+    areaShowPts(d.P);
+  }
+  function editUp(e) {
+    var d = areaEdit && areaEdit.drag; if (!d) return;
+    e.preventDefault(); e.stopPropagation();
+    areaEdit.drag = null; drawEndT = Date.now(); map.dragging.enable();
+    AREA_ST.rot = d.rot; areaStSave();
+    areaSet(d.P);
+  }
+  map.on("zoomend", function () { areaWeights(); if (areaEdit && !areaEdit.drag) editHandles(); });
+  mapEl.addEventListener("pointermove", editMove, true);
+  mapEl.addEventListener("pointerup", editUp, true);
+  mapEl.addEventListener("pointercancel", editUp, true);
+  /* a tap on a handle must not reach the map-click dispatcher (it would open the report under it) */
+  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  function editStart() { if (!AREA) return; drawEnd(true); areaEdit = { lay: L.layerGroup().addTo(map), drag: null }; mapEl.classList.add("area-editing"); editHandles(); areaUi(); }
+  function editEnd() { if (!areaEdit) return; if (areaEdit.drag) map.dragging.enable(); map.removeLayer(areaEdit.lay); areaEdit = null; mapEl.classList.remove("area-editing"); }
+  function hexOk(v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }
+  function hexOf(v) { if (hexOk(v)) return v; var c = document.createElement("canvas").getContext("2d"); c.fillStyle = v; return hexOk(c.fillStyle) || "#1f5f8b"; }
   var AreaCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-control areactl"); d.id = "area-ctl";
     L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; } });
@@ -6198,10 +6460,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaUi() {
     if (!areaEl) return;
     var h;
-    if (areaDraw) h = '<span class="areahint">' + (areaDraw.mode === "lasso" ? "Hold and draw round the area" : "Tap each corner, then tap the first corner or Finish") + "</span>" +
+    areaEl.classList.toggle("editing", !!areaEdit);
+    if (areaEdit) h = '<span class="areahint">Drag a corner to resize, \u21bb to turn, \u2725 to move</span>' +
+      (areaEdit.look ? '<label class="areast">Fill <input type="color" data-ast="fill" value="' + hexOf(stFill()) + '"></label>' +
+      '<label class="areast">Outline <input type="color" data-ast="line" value="' + hexOf(stLine()) + '"></label>' +
+      '<label class="areast areaop">Fill opacity <input type="range" min="0" max="80" step="1" data-ast="op" value="' + Math.round(AREA_ST.op * 100) + '"><output>' + Math.round(AREA_ST.op * 100) + '%</output></label>' +
+      '<label class="areast areaop">Outline width <input type="range" min="1" max="8" step="0.5" data-ast="w" value="' + AREA_ST.w + '"><output>' + AREA_ST.w + ' px</output></label>' +
+      '<button type="button" data-area="reset" class="areawide" title="Back to the standard look">Reset look</button>' : "") +
+      '<button type="button" data-area="save" title="Save it with a name (as an NAI or TAI); saved areas stay on the map">Save</button><button type="button" data-area="clear" title="Remove the drawn shape">Delete</button>' +
+      '<button type="button" data-area="look" aria-expanded="' + !!areaEdit.look + '" title="Fill colour, fill opacity, outline colour and width">Style</button><button type="button" data-area="done">Done</button>';
+    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + "</span>" +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
-      (AREA ? '<button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
+      '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
+      (AREA ? '<button type="button" data-area="edit">Edit shape</button><button type="button" data-area="clear">Clear area</button>' : "") + '<button type="button" data-area="close" aria-label="Close">×</button>';
     else h = '<button type="button" data-area="open"' + (AREA ? ' class="on"' : "") + ">" + (AREA ? "Area on" : "Draw area") + "</button>" +
       (AREA ? '<button type="button" data-area="sum" title="A short summary of everything inside the drawn area, with its sources">Summarise area</button>' : "");
     areaEl.innerHTML = h;
@@ -6211,12 +6483,26 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var k = b.getAttribute("data-area");
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
-    else if (k === "lasso" || k === "poly") { areaEl.classList.remove("open"); drawStart(k); return; }
+    else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
     else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
+    else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
+    else if (k === "done") { editEnd(); }
+    else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; AREA_ST.w = 2; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
+    else if (k === "look") { if (areaEdit) areaEdit.look = !areaEdit.look; }
+    else if (k === "save") { editEnd(); areaUi(); if (window.OSAP_AOI && window.OSAP_AOI.saveDrawn) window.OSAP_AOI.saveDrawn(); return; }
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
     else if (k === "sum") { areaSum(); return; }
     areaUi();
+  });
+  areaEl.addEventListener("input", function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute("data-ast"); if (!k) return;
+    var o = e.target.parentNode.querySelector("output");
+    if (k === "op") { AREA_ST.op = Math.max(0, Math.min(0.8, +e.target.value / 100)); if (o) o.textContent = Math.round(AREA_ST.op * 100) + "%"; }
+    else if (k === "w") { AREA_ST.w = Math.max(1, Math.min(8, +e.target.value || 2)); if (o) o.textContent = AREA_ST.w + " px"; }
+    else AREA_ST[k] = hexOk(e.target.value);
+    areaStSave();
+    if (areaLayer) { var ls = areaLayer.getLayers(); ls[1].setStyle({ fillColor: stFill(), fillOpacity: AREA_ST.op }); ls[2].setStyle({ color: stLine() }); areaWeights(); }
   });
   /* the area summary (assets/osap-areasum.js) opens in the Details panel beside the list, which it shows if the map is on its own */
   function areaSum() {
@@ -6355,7 +6641,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       btn.title = on ? "Show the map legend" : "Hide the map legend";
       if (!keep) try { localStorage.setItem(LG_KEY, on ? "1" : "0"); } catch (e) {}
     }
-    fold(shut == null ? document.documentElement.classList.contains("phone") || window.matchMedia("(max-width: 920px), (pointer: coarse)").matches : shut === "1", true);
+    fold(shut == null || shut === "1", true);   /* starts folded everywhere; opening it by hand is remembered */
     btn.addEventListener("click", function () { fold(!box.classList.contains("shut")); });
     function sync() {
       var any = false;
@@ -7355,7 +7641,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
   /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
      (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
-  window.TSAP.areaApi = { area: function () { return AREA; }, setArea: function (P) { areaSet(P); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine(), w: AREA_ST.w }; }, zoomW: zoomW, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
@@ -7615,7 +7901,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var x = box.querySelector(".pkghead .x"); if (x) x.addEventListener("click", close);
       return true;
     },
-    close: close
+    close: close,
+    setSheet: function (s) { if (on() && STATES.indexOf(s) >= 0) setSheet(s); }
   };
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
   mq.addEventListener ? mq.addEventListener("change", function () { if (!on()) close(); apply(); }) : mq.addListener(apply);
@@ -7654,6 +7941,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-atak.js"></script>
+<script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-milsym.js"></script>
+<script src="assets/osap-points.js"></script>
+<script src="assets/osap-3d.js"></script>
+<script src="assets/osap-maploading.js"></script>
+<script src="assets/osap-ws.js"></script>
 <script src="assets/osap-grid.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
