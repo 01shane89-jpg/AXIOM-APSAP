@@ -1,0 +1,16 @@
+# Test only: checks the free, no-key routing and elevation hosts the Route tab uses. Prints to the log; writes nothing to the repo.
+name: Probe route hosts
+on:
+  push:
+    branches: [claude/route-planning]
+    paths: [tools/probe_route.sh, .github/workflows/probe-route.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_route.sh
