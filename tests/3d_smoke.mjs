@@ -39,10 +39,13 @@ async function run3d(name, p, errors, libs, openSel) {
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.loaded && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   ok(await shown(p, "#o3d .o3-map canvas"), name + ": 3D view opened with a WebGL canvas");
   ok(libs.some((u) => /maplibre-gl-5\.24\.0\.js$/.test(u)), name + ": 3D engine loaded from assets/vendor on demand");
+  const flat0 = await p.evaluate(() => window.OSAP_3D.gl.getPitch());
+  ok(flat0 < 30, name + ": opens looking straight down first, where the 2D pictures are already loaded (" + flat0.toFixed(0) + "°)");
+  await p.waitForFunction(() => window.OSAP_3D.gl.getPitch() > 55 && !window.OSAP_3D.gl.isMoving(), null, { timeout: 15000 }).catch(() => {});
   const g = await p.evaluate(() => { const gl = window.OSAP_3D.gl; const c = gl.getCenter(); return { lat: c.lat, lng: c.lng, z: gl.getZoom(), pitch: gl.getPitch(), terrain: !!gl.getTerrain(), sky: !!gl.getStyle().sky, hill: !!gl.getLayer("hill"),
     rasters: gl.getStyle().layers.filter((l) => l.type === "raster").length, pts: (gl.getSource("vp").serialize().data.features || []).length }; });
   ok(Math.abs(g.lat - 18.79) < 0.01 && Math.abs(g.lng - 98.98) < 0.01 && Math.abs(g.z - 9) < 0.01, name + ": 3D opens at the 2D centre and scale " + JSON.stringify(g));
-  ok(g.pitch > 30, name + ": view is tilted on open (" + g.pitch + "°)");
+  ok(g.pitch > 55, name + ": then tilts to the saved angle (" + g.pitch.toFixed(0) + "°)");
   ok(g.terrain && g.hill && g.sky, name + ": terrain, hill shading and sky are on");
   ok(g.rasters >= 1, name + ": the 2D base map is draped over the ground (" + g.rasters + " tile layers)");
   ok(g.pts > 0, name + ": map points copied into 3D (" + g.pts + ")");
