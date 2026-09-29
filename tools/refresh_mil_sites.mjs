@@ -109,16 +109,19 @@ async function wdClassNames(ids) {
 // One query per conflict over its map area (a bounding box; a query by country outline times out for large countries).
 // A feature is kept when it lies in one of the conflict's countries, or where the country outlines here do not cover it.
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+const OP_TRY = 3;
 async function overpass(q) {
   let last;
-  for (const u of OVERPASS.slice(0, 2)) {
+  for (const u of OVERPASS.slice(0, OP_TRY)) {
     if (Date.now() - NOW > BUDGET_MS) throw new Error("out of time");
+    const t0 = Date.now();
     try {
       const j = await post(u, "data=" + encodeURIComponent(q), "application/json", 75000);
+      if (process.env.SITES_DEBUG) console.log("  overpass", new URL(u).host, Date.now() - t0, "ms", (j.elements || []).length, j.remark || "");
       // Overpass answers 200 with a "remark" when the query ran out of time or memory: that is a failure, not "none found"
       if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error(String(j.remark).slice(0, 120));
       return j;
-    } catch (e) { last = e; await sleep(3000); }
+    } catch (e) { last = e; if (process.env.SITES_DEBUG) console.log("  overpass", new URL(u).host, Date.now() - t0, "ms", errMsg(e)); await sleep(3000); }
   }
   throw last;
 }
