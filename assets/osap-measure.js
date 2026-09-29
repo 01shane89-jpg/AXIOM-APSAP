@@ -164,7 +164,7 @@
     else if (k === "clear") { S.pts = []; S.closed = false; }
     else if (k === "close") S.closed = !S.closed;
     else if (k === "copy") return copy(text(), b);
-    else if (k === "route") { if (window.OSAP_ROUTE_SEED) window.OSAP_ROUTE_SEED(S.pts.slice()); return; }
+    else if (k === "route") { if (window.OSAP_ROUTE_SEED) { var pts = S.pts.slice(); setOn(false); window.OSAP_ROUTE_SEED(pts); } return; }
     draw(); ui();
   });
 
