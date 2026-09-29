@@ -117,7 +117,8 @@
   /* ---------- drawing ---------- */
   function drawChips() {
     var c = S.el && S.el.querySelector(".nqchips"); if (!c) return;
-    var T = (S.man && S.man.topics) || [];
+    /* a country's own data sets (countries in tools/topics.json) show only on that country, and in every-country search */
+    var T = ((S.man && S.man.topics) || []).filter(function (t) { return !t.countries || S.where === "all" || t.countries.indexOf(S.cc) >= 0 || S.topic === t.id; });
     c.innerHTML = T.length ? '<span class="nqlbl">Data sets</span>' + T.map(function (t) {
       return '<button type="button" data-nqt="' + esc(t.id) + '" aria-pressed="' + (S.topic === t.id) + '" title="' + esc((t.words || []).join(", ")) + '">' + esc(t.name) + "</button>"; }).join("") : "";
   }
@@ -172,7 +173,7 @@
       if (e.target.id !== "nq-q") return;
       clearTimeout(deb); deb = setTimeout(function () { S.q = e.target.value; S.shown = PAGE; if (S.q.trim()) ensure(); draw(); }, 250);
     });
-    el.addEventListener("change", function (e) { if (e.target.id === "nq-where") { S.where = e.target.value; S.shown = PAGE; draw(); } });
+    el.addEventListener("change", function (e) { if (e.target.id === "nq-where") { S.where = e.target.value; S.shown = PAGE; drawChips(); draw(); } });
     el.addEventListener("click", function (e) {
       var b = e.target.closest && e.target.closest("[data-nqt],[data-nq]"); if (!b) return;
       var t = b.getAttribute("data-nqt"), a = b.getAttribute("data-nq");
@@ -180,7 +181,7 @@
       if (a === "load") { ensure(); return; }
       if (a === "more") { S.shown += PAGE; draw(); return; }
       if (a === "older") { S.want = Math.min(S.want + MORE_DAYS, S.man.days.length); ensure(); return; }
-      if (a === "all") { S.where = "all"; var w = el.querySelector("#nq-where"); if (w) w.value = "all"; S.shown = PAGE; draw(); }
+      if (a === "all") { S.where = "all"; var w = el.querySelector("#nq-where"); if (w) w.value = "all"; S.shown = PAGE; drawChips(); draw(); }
     });
     draw();
   }
