@@ -1294,7 +1294,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     world: { name: "Hillshade, LiDAR where published", note: "Esri World Hillshade, worldwide. Uses 1 m LiDAR where governments publish it (much of the US and Europe, and more added each year), about 30 m satellite elevation elsewhere, including most of South-East Asia",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", max: 16, lic: "restricted",
       attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener">coverage</a>)' },
-    jp: { name: "Japan LiDAR relief", note: "GSI hillshade of Japan and Okinawa from its 5 m airborne laser survey elevation model (10 m in mountains). Draws only inside Japan",
+    jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
       url: "https://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png", max: 16, min: 2, bounds: [[20, 122], [46, 154]], lic: "GSI terms (credit)",
       attr: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> hillshade' }
   };

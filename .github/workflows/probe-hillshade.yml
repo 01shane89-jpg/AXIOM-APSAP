@@ -1,19 +1,28 @@
-# Test only: fetches sample elevation shading tiles with the real network (tools/probe_hillshade.mjs). Writes nothing to the repo.
+# Test only: fetches sample elevation shading tiles with the real network (tools/probe_hillshade.mjs), then opens 3D over
+# Japan and reads ground heights (tools/probe_3d_japan.mjs). Writes nothing to the repo; screenshots are a run artifact.
 name: Probe hillshade tiles
 on:
   push:
     branches: [claude/lidar-hillshade]
-    paths: [tools/probe_hillshade.mjs, .github/workflows/probe-hillshade.yml]
+    paths: [tools/probe_hillshade.mjs, tools/probe_3d_japan.mjs, assets/osap-3d.js, .github/workflows/probe-hillshade.yml]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
       - run: node tools/probe_hillshade.mjs
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/probe_3d_japan.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: probe-3d-japan
+          path: probe-out/
