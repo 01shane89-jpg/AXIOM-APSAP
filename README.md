@@ -22,7 +22,7 @@ When the site is hosted (for example on GitHub Pages), OSAP installs as an app:
 - **Android (Chrome):** open the site, tap the menu, then **Install app** (or **Add to Home screen**).
 - **iPhone or iPad (Safari):** open the site, tap **Share**, then **Add to Home Screen**.
 
-After the first visit the service worker (`sw.js`) keeps the whole app and all packaged data on the device, so it opens and works offline. When online it always fetches the newest `index.html` and flood snapshot first. Map tiles are cached as you view them (up to 1,500). `tools/split_page.py` regenerates `sw.js` with a new version whenever any packaged file changes, which replaces the old cache.
+After the first visit the service worker (`sw.js`) keeps the whole app and all packaged data on the device, so it opens and works offline. When online it always fetches the newest `index.html` and flood snapshot first. Map tiles are cached as you view them (up to 1,500). A new `sw.js` VERSION replaces the old cache; the "Set sw.js VERSION" workflow sets it on main after every change to `index.html`, the manifest or `assets/`, and PR branches keep main's VERSION (`node tools/sw_version.mjs` after merging main).
 
 ## Flood and hazard data every 15 minutes
 

@@ -3000,7 +3000,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
     { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
-    { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true });
+    { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
+    { id: "route", name: "Route", title: "Route planning", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -5575,7 +5576,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
-  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else showPartners(); }
+  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else showPartners(); }
   /* ET: UFO and UAP reports (assets/osap-et.js, data/live/et.js); reported claims, never verified events */
   function showEt() {
     sofLayer.clearLayers(); sofM = {};
@@ -5583,6 +5584,25 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     window.OSAP_ETTAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, inPeriod: inPeriodDate, periodLabel: periodLabel,
       put: function (k, m) { sofM[k] = m; } });
   }
+  /* Route: route planning (assets/osap-route.js, loaded the first time the tab opens). The analyst's own plan, kept in this
+     browser; never a record. The Measure tool's "Plan route" hands its points over through OSAP_ROUTE_SEED. */
+  var routeSeed = null, routeLoading = false;
+  function showRoute() {
+    sofLayer.clearLayers(); sofM = {};
+    if (!window.OSAP_ROUTETAB) {
+      window.OSAP_ROUTE_WAIT = showRoute; railO.innerHTML = '<div class="sec"><p class="obs">Loading the route planner…</p></div>';
+      if (!routeLoading) {
+        routeLoading = true;
+        var s = document.createElement("script"); s.src = "assets/osap-route.js";
+        s.onerror = function () { routeLoading = false; if (current === "route") railO.innerHTML = '<div class="sec"><p class="obs">The route planner could not be loaded. Check the connection and open the tab again.</p></div>'; };
+        document.body.appendChild(s);
+      }
+      return;
+    }
+    var seed = routeSeed; routeSeed = null;
+    window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
+  }
+  window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
@@ -5603,7 +5623,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
