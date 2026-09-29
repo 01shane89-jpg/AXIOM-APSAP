@@ -127,7 +127,7 @@
   function sitePop(s, ix) {
     var nm = named(s), all = (s.m || []).length;
     return "<b>" + esc(s.n) + "</b>" + (s.n2 ? '<div class="cfm">' + esc(s.n2) + "</div>" : "") +
-      '<div class="cfm">' + esc(KN[s.k] || "Military site") + (s.cls ? " (" + esc(s.cls) + ")" : "") + " · " + esc((s.cc || "").toUpperCase()) + (s.op ? " · operator: " + esc(s.op) : "") + "</div>" +
+      '<div class="cfm">' + esc(KN[s.k] || "Military site") + (s.cls ? " (" + esc(s.cls) + ")" : "") + (s.cc ? " · " + esc(s.cc.toUpperCase()) : "") + (s.op ? " · operator: " + esc(s.op) : "") + "</div>" +
       "<div>Recorded by " + srcLinks(s) + '. <span class="tag">Reported, not verified</span></div>' +
       '<div class="cfm">Position as the source gives it: ' + (+s.la).toFixed(4) + ", " + (+s.lo).toFixed(4) + ".</div>" +
       (nm.length ? '<div style="margin-top:6px"><b>Named in ' + nm.length + " report" + (nm.length > 1 ? "s" : "") + " in this period</b>" +

@@ -13,9 +13,10 @@
 // No keys, no accounts. PROBE=1 prints what each source returns and writes nothing. CONFLICTS=id,id limits the run.
 import fs from "node:fs";
 import { ccsAt } from "./geo_cc.mjs";
+import { mentions } from "./mil_sites_lib.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean), FORCE = process.env.SITES_FORCE === "1";
-const OUT = "data/live/conflicts/sites", CF = "data/live/conflicts", TIMEOUT = 150000, REFETCH_DAYS = 6.5, CAP = 2500, BUDGET_MS = 9 * 60000;
+const OUT = "data/live/conflicts/sites", CF = "data/live/conflicts", TIMEOUT = 100000, REFETCH_DAYS = 6.5, CAP = 2500, BUDGET_MS = 8 * 60000;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z", NOW = Date.now();
 const UA = "AXIOM-OSAP/1.0 (conflict map military sites; +https://01shane89-jpg.github.io/AXIOM-APSAP/) node-fetch";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -62,15 +63,21 @@ async function wdClassList() {
   wdClasses = j.results.bindings.map((b) => b.c.value.split("/").pop()).filter((x) => /^Q\d+$/.test(x));
   return wdClasses;
 }
-async function wikidata(c) {
+// One query for the countries of every conflict at once (clipped to each conflict's area afterwards). The query planner is
+// switched off so Wikidata walks the listed classes first and never scans every item of a large country (that timed out).
+let wdAll = null;
+async function wikidataAll(ccs) {
+  if (wdAll) return wdAll;
   const cls = await wdClassList();
-  const isos = c.countries.map((x) => '"' + x.toUpperCase() + '"').join(" ");
-  const q = `SELECT ?s ?sLabel ?c ?iso ?cls ?art WHERE {
-  VALUES ?iso { ${isos} } VALUES ?cls { ${cls.map((x) => "wd:" + x).join(" ")} }
-  ?ctry wdt:P297 ?iso. ?s wdt:P31 ?cls; wdt:P17 ?ctry; wdt:P625 ?c.
+  const q = `SELECT ?s ?c ?iso ?cls ?en ?lab ?art WHERE {
+  hint:Query hint:optimizer "None".
+  VALUES ?cls { ${cls.map((x) => "wd:" + x).join(" ")} }
+  ?s wdt:P31 ?cls. ?s wdt:P625 ?c. ?s wdt:P17 ?ctry. ?ctry wdt:P297 ?iso.
+  FILTER(?iso IN (${ccs.map((x) => '"' + x.toUpperCase() + '"').join(",")}))
   FILTER NOT EXISTS { ?s wdt:P576 [] } FILTER NOT EXISTS { ?s wdt:P3999 [] } FILTER NOT EXISTS { ?s wdt:P582 [] }
+  OPTIONAL { ?s rdfs:label ?en. FILTER(LANG(?en) = "en") }
+  OPTIONAL { ?s rdfs:label ?lab. FILTER(LANG(?lab) IN ("mul", "fr", "es", "ar", "ru", "uk", "fa", "my", "th", "id", "he", "tr", "ur", "hi")) }
   OPTIONAL { ?art schema:about ?s; schema:isPartOf <https://en.wikipedia.org/>. }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul,fr,es,ar,ru,uk,fa,my,th,id,he". }
 }`;
   const j = await post(WDQ, "query=" + encodeURIComponent(q), "application/sparql-results+json");
   const clsName = await wdClassNames(j.results.bindings.map((b) => b.cls.value.split("/").pop()));
@@ -78,14 +85,15 @@ async function wikidata(c) {
   for (const b of j.results.bindings) {
     const qid = b.s.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.c.value), cn = clsName[b.cls.value.split("/").pop()];
     if (!m) continue;
-    const lo = +m[1], la = +m[2], name = b.sLabel?.value || qid;
-    if (/^Q\d+$/.test(name)) continue;   // no label in any listed language
+    const name = b.en?.value || b.lab?.value || "", local = b.lab?.value || "";
     const prev = seen.get(qid);
-    if (prev) { if (cn && !prev.cls.includes(cn)) prev.cls.push(cn); continue; }
-    seen.set(qid, { qid, n: name, la: +la.toFixed(5), lo: +lo.toFixed(5), cc: b.iso.value.toLowerCase(), cls: cn ? [cn] : [], w: b.art?.value || "" });
+    if (prev) { if (cn && !prev.cls.includes(cn)) prev.cls.push(cn); if (!prev.n && name) prev.n = name; if (!prev.n2 && local && local !== prev.n) prev.n2 = local; continue; }
+    seen.set(qid, { qid, n: name, n2: local && local !== name ? local : "", la: +(+m[2]).toFixed(5), lo: +(+m[1]).toFixed(5), cc: b.iso.value.toLowerCase(), cls: cn ? [cn] : [], w: b.art?.value || "" });
   }
-  return [...seen.values()].map((s) => ({ ...s, k: kindOf(s.cls.join(" ") + " " + s.n) }));
+  wdAll = [...seen.values()].filter((s) => s.n).map((s) => ({ ...s, k: kindOf(s.cls.join(" ") + " " + s.n) }));
+  return wdAll;
 }
+async function wikidata(c, ccs) { return (await wikidataAll(ccs)).filter((s) => c.countries.includes(s.cc)); }
 const clsNames = {};
 async function wdClassNames(ids) {
   const need = [...new Set(ids)].filter((x) => !(x in clsNames));
@@ -103,16 +111,33 @@ async function wdClassNames(ids) {
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
 async function overpass(q) {
   let last;
-  for (const u of OVERPASS) {
-    try { return await post(u, "data=" + encodeURIComponent(q), "application/json"); } catch (e) { last = e; await sleep(3000); }
+  for (const u of OVERPASS.slice(0, 2)) {
+    if (Date.now() - NOW > BUDGET_MS) throw new Error("out of time");
+    try {
+      const j = await post(u, "data=" + encodeURIComponent(q), "application/json");
+      // Overpass answers 200 with a "remark" when the query ran out of time or memory: that is a failure, not "none found"
+      if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error(String(j.remark).slice(0, 120));
+      return j;
+    } catch (e) { last = e; await sleep(3000); }
   }
   throw last;
 }
+// a large map area is asked for in tiles of at most 8 by 8 degrees
+function tiles(bounds) {
+  const [[s, w], [n, e]] = bounds, out = [], st = 8;
+  for (let a = s; a < n; a += st) for (let b = w; b < e; b += st) out.push([a, b, Math.min(a + st, n), Math.min(b + st, e)]);
+  return out;
+}
 async function osm(c) {
-  const [[s, w], [n, e]] = c.bounds;
-  const q = `[out:json][timeout:120];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
-  const j = await overpass(q), out = [];
-  for (const el of j.elements || []) {
+  const els = [];
+  for (const [s, w, n, e] of tiles(c.bounds)) {
+    const q = `[out:json][timeout:90];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
+    els.push(...((await overpass(q)).elements || []));
+    await sleep(1500);
+  }
+  const out = [], seenEl = new Set();
+  for (const el of els) {
+    if (seenEl.has(el.type + el.id)) continue; seenEl.add(el.type + el.id);
     const t = el.tags || {}, la = el.lat ?? el.center?.lat, lo = el.lon ?? el.center?.lon;
     if (la == null || lo == null) continue;
     if (t.disused || t.abandoned || /^(yes|abandoned|disused)$/.test(t["disused:military"] || "") || t.historic || t["abandoned:military"]) continue;
@@ -121,7 +146,7 @@ async function osm(c) {
     const here = ccsAt(+la, +lo, 0);
     if (here.length && !here.some((x) => c.countries.includes(x))) continue;
     out.push({ osm: el.type + "/" + el.id, n: t["name:en"] || t["int_name"] || t.name, n2: t["name:en"] && t.name !== t["name:en"] ? t.name : "",
-      la: +(+la).toFixed(5), lo: +(+lo).toFixed(5), cc: here.find((x) => c.countries.includes(x)) || "", k: OSM_KIND[t.military] || "base", op: t.operator || "", wd: t.wikidata || "" });
+      la: +(+la).toFixed(5), lo: +(+lo).toFixed(5), cc: here.find((x) => c.countries.includes(x)) || (c.countries.length === 1 ? c.countries[0] : ""), k: OSM_KIND[t.military] || "base", op: t.operator || "", wd: t.wikidata || "" });
   }
   return out;
 }
@@ -148,47 +173,6 @@ function merge(c, wd, om) {
   return out.slice(0, CAP);
 }
 
-/* ---------- reports that name a site ---------- */
-const GENERIC = /\b(air ?base|air force base|air station|airbase|airfield|air field|aerodrome|airport|international|military|naval|navy|base|station|barracks|garrison|cantonment|camp|depot|arsenal|headquarters|hq|command|the|of|and|de|du|la|el|al|army|force|forces|air|field|fort|port|nas|afb|raf|range|training|centre|center|school|academy|complex|facility|installation|site|area|brigade|division|regiment|battalion|unit|no\.?|\d+(st|nd|rd|th)?)\b/gi;
-const SITE_WORD = /\b(?:air ?base|airbase|airfield|air field|aerodrome|air station|airport|naval base|base|barracks|garrison|depot|arsenal|headquarters|hq|command post|ammunition|munitions?)\b|аеродром|аэродром|авиабаз|арсенал|склад|база|казарм/i;
-function coreName(n) {
-  const c = String(n || "").replace(/\(.*?\)/g, " ").replace(GENERIC, " ").replace(/[^\p{L}\p{N}' -]/gu, " ").replace(/\s+/g, " ").trim();
-  return c.length >= 4 ? c : "";
-}
-function reText(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-const VAGUE = /^(?:(?:north|south|east|west|northern|southern|eastern|western|central|new|old|upper|lower|great|little|main|joint|national|royal|federal|state|city)\s*)+$/i;
-function mentions(c, sites, items) {
-  const hits = {}, terms = (c.terms || []).map((t) => { try { return new RegExp("^(?:" + t + ")$", "iu"); } catch (e) { return null; } }).filter(Boolean);
-  // a name that is vague, that two sites share, or that is one of the conflict's own place terms (Kyiv, Donetsk ...) says
-  // nothing about which site a report means, so it is not matched
-  const count = {};
-  const coresOf = (s) => {
-    const out = new Set();
-    for (const n of [s.n, s.n2]) { const c = coreName(n); if (!c) continue; out.add(c); const d = c.replace(/[- ]\d+$/, ""); if (d !== c && d.length >= 4) out.add(d); }
-    return [...out].filter((x) => !VAGUE.test(x) && !terms.some((r) => r.test(x)));
-  };
-  const all = sites.map(coresOf);
-  all.forEach((cs) => cs.forEach((x) => (count[x.toLowerCase()] = (count[x.toLowerCase()] || 0) + 1)));
-  const cores = all.map((cs, i) => [i, cs.filter((x) => count[x.toLowerCase()] === 1)]).filter((x) => x[1].length);
-  const res = cores.map(([i, cs]) => [i, cs.map((c) => new RegExp("(?<![\\p{L}\\p{N}])" + reText(c) + "(?![\\p{L}\\p{N}])", "iu"))]);
-  for (const it of items) {
-    const text = [it.title_en, it.title, it.summary_en, it.summary].filter(Boolean).join(" • ");
-    if (!SITE_WORD.test(text)) continue;
-    for (const [i, rs] of res) {
-      for (const r of rs) {
-        const m = r.exec(text); if (!m) continue;
-        // the site word must stand within 60 characters of the name ("strike on Engels airfield", "Hmeimim air base")
-        const win = text.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60);
-        if (!SITE_WORD.test(win)) continue;
-        (hits[i] = hits[i] || []).push({ t: it.title_en || it.title, d: it.date, u: it.link || "", o: it.outlet || "", k: it.kind || "", fp: it.fp || "", st: it.state ? 1 : 0 });
-        break;
-      }
-    }
-  }
-  for (const i of Object.keys(hits)) hits[i] = hits[i].sort((a, b) => (a.d < b.d ? 1 : -1)).slice(0, 12);
-  return hits;
-}
-
 /* ---------- run ---------- */
 const CFG = JSON.parse(fs.readFileSync("tools/conflicts.json", "utf8"));
 if (!PROBE) fs.mkdirSync(OUT, { recursive: true });
@@ -196,15 +180,17 @@ const STATE_F = OUT + "/_state.json";
 let state = {}; try { state = JSON.parse(fs.readFileSync(STATE_F, "utf8")); } catch (e) {}
 const probe = {};
 // the conflicts whose lists are oldest go first, so a run that runs out of time picks up where the last one stopped
+const ALLCC = [...new Set(CFG.conflicts.flatMap((c) => c.countries))];
 const order = CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.includes(c.id)))
   .sort((a, b) => String((state[a.id] || {}).built || "").localeCompare(String((state[b.id] || {}).built || "")));
 for (const c of order) {
   const file = OUT + "/" + c.id + ".js", prev = readJs(file), st = state[c.id] || {};
   const due = Date.now() - NOW < BUDGET_MS && (FORCE || PROBE || !prev || !st.built || (NOW - Date.parse(st.built.replace(" ", "T"))) / 864e5 >= REFETCH_DAYS);
-  let sites = prev?.sites || [], sources = prev?.sources || [];
+  // the last list without its report matches (worked out again below)
+  let sites = (prev?.sites || []).map(({ m, ...s }) => s), sources = (prev?.sources || []).filter((s) => s.id !== "kept");
   if (due) {
     const src = [], wd = [], om = [];
-    try { const r = await wikidata(c); wd.push(...r); src.push({ id: "wikidata", ok: true, n: r.length }); }
+    try { const r = await wikidata(c, ALLCC); wd.push(...r); src.push({ id: "wikidata", ok: true, n: r.length }); }
     catch (e) { src.push({ id: "wikidata", ok: false, error: errMsg(e) }); }
     await sleep(1500);
     try { const r = await osm(c); om.push(...r); src.push({ id: "osm", ok: true, n: r.length }); }
@@ -235,7 +221,7 @@ for (const c of order) {
     sources, sites: sites.map((s, i) => (hits[i] ? { ...s, m: hits[i] } : s))
   };
   fs.writeFileSync(file, "(window.OSAP_CF_SITES=window.OSAP_CF_SITES||{})[" + JSON.stringify(c.id) + "]=" + JSON.stringify(data).replace(/<\//g, "<\\/") + ";\n");
-  console.log("sites", c.id.padEnd(22), String(sites.length).padStart(5), "named in reports:", Object.keys(hits).length, due ? "(lists re-read: " + sources.map((s) => s.id + ":" + (s.ok ? s.n : s.error)).join(" ") + ")" : "");
+  console.log("sites", c.id.padEnd(22), String(sites.length).padStart(5), "named in reports:", Object.keys(hits).length, due ? "(lists re-read: " + sources.map((s) => s.id + ":" + (s.ok ? s.n ?? "ok" : s.error)).join(" ") + ")" : "");
 }
 if (PROBE) { fs.mkdirSync("probe-out", { recursive: true }); fs.writeFileSync("probe-out/mil_sites.json", JSON.stringify(probe, null, 1)); }
 else fs.writeFileSync(STATE_F, JSON.stringify(state, null, 1) + "\n");
