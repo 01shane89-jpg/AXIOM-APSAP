@@ -603,7 +603,9 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areast input[type=color]{width:34px;height:24px;padding:0;border:1px solid var(--line);border-radius:4px;background:none;cursor:pointer}
 .areaop{flex-wrap:wrap}.areaop input{flex:1 1 100%;margin:2px 0;min-width:0}.areaop output{font-weight:400;color:var(--muted)}
 #map .leaflet-top.leaflet-right>.areactl.editing{width:190px;flex-wrap:wrap}
-.areactl.editing button{border-top:1px solid var(--line)}
+.areactl.editing button{border-top:1px solid var(--line);flex:1 1 40%!important}
+.areactl.editing button.areawide{flex-basis:100%!important;border-left:0}
+.areactl.editing button[aria-expanded=true]{background:var(--accent);color:var(--on-accent)}
 .areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
 .areah.areah-c{border-radius:4px;cursor:nwse-resize}
 #map.area-drawing .dshint,#map.area-editing .dshint{display:none}
@@ -6206,11 +6208,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
   /* the analyst's look for the drawn area (fill colour, fill opacity, outline colour) and what the shape was drawn as (kind) and
      how far it has been turned (rot, radians on screen), so resizing a turned square keeps it square. Kept on this device */
-  var AREA_ST = { kind: "", rot: 0, fill: "", op: 0.12, line: "" };
+  var AREA_ST = { kind: "", rot: 0, fill: "", op: 0.12, line: "", w: 2 };
   try { var s0 = JSON.parse(localStorage.getItem(AREA_KEY + "-st") || "null"); if (s0 && typeof s0 === "object") Object.keys(AREA_ST).forEach(function (k) { if (typeof s0[k] === typeof AREA_ST[k]) AREA_ST[k] = s0[k]; }); } catch (e) {}
   function areaStSave() { try { localStorage.setItem(AREA_KEY + "-st", JSON.stringify(AREA_ST)); } catch (e) {} }
   function stFill() { return AREA_ST.fill || tok("--accent"); }
   function stLine() { return AREA_ST.line || tok("--accent"); }
+  /* outline width in pixels at close zoom; thinner as the map zooms out (down to 40% at country zoom and wider), never under 1 */
+  function zoomW(w) { var z = map.getZoom(); return Math.max(1, Math.round(w * (z >= 10 ? 1 : Math.max(0.4, 1 - 0.1 * (10 - z))) * 2) / 2); }
+  function stW() { return zoomW(Math.max(1, Math.min(8, +AREA_ST.w || 2))); }
+  function areaWeights() { if (!areaLayer) return; var ls = areaLayer.getLayers(), w = stW(); ls[1].setStyle({ weight: w + 2 }); ls[2].setStyle({ weight: w }); }
   /* above the report dots and pins (up to 662) so the drawn area and the line being drawn are never hidden under them; below
      place labels (670). It takes no taps, so the dots under it still answer */
   if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 668; map.getPane("areapane").style.pointerEvents = "none"; }
@@ -6231,8 +6237,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
       /* the drawn area itself: a tint inside, and a solid edge with a white halo so it shows on any base map */
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: 6, opacity: 0.9, fillColor: stFill(), fillOpacity: AREA_ST.op, interactive: false }),
-      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: 3, fill: false, interactive: false })
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: "#fff", weight: stW() + 2, opacity: 0.9, fillColor: stFill(), fillOpacity: AREA_ST.op, interactive: false }),
+      L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
     areaLayer.__world = world;
   }
@@ -6289,7 +6295,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     areaDraw = null; drawEndT = Date.now();
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
-    if (!cancel && P.length >= 3) areaSet(P, mode === "circle" || mode === "rect" ? mode : ""); else areaUi();
+    if (!cancel && P.length >= 3) { areaSet(P, mode === "circle" || mode === "rect" ? mode : ""); editStart(); } else areaUi();
   }
   function drawShow() {
     var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
@@ -6434,7 +6440,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     AREA_ST.rot = d.rot; areaStSave();
     areaSet(d.P);
   }
-  map.on("zoomend", function () { if (areaEdit && !areaEdit.drag) editHandles(); });
+  map.on("zoomend", function () { areaWeights(); if (areaEdit && !areaEdit.drag) editHandles(); });
   mapEl.addEventListener("pointermove", editMove, true);
   mapEl.addEventListener("pointerup", editUp, true);
   mapEl.addEventListener("pointercancel", editUp, true);
@@ -6454,10 +6460,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var h;
     areaEl.classList.toggle("editing", !!areaEdit);
     if (areaEdit) h = '<span class="areahint">Drag a corner to resize, \u21bb to turn, \u2725 to move</span>' +
-      '<label class="areast">Fill <input type="color" data-ast="fill" value="' + hexOf(stFill()) + '"></label>' +
+      (areaEdit.look ? '<label class="areast">Fill <input type="color" data-ast="fill" value="' + hexOf(stFill()) + '"></label>' +
       '<label class="areast">Outline <input type="color" data-ast="line" value="' + hexOf(stLine()) + '"></label>' +
       '<label class="areast areaop">Fill opacity <input type="range" min="0" max="80" step="1" data-ast="op" value="' + Math.round(AREA_ST.op * 100) + '"><output>' + Math.round(AREA_ST.op * 100) + '%</output></label>' +
-      '<button type="button" data-area="reset" title="Back to the standard colours">Reset colours</button><button type="button" data-area="done">Done</button>';
+      '<label class="areast areaop">Outline width <input type="range" min="1" max="8" step="0.5" data-ast="w" value="' + AREA_ST.w + '"><output>' + AREA_ST.w + ' px</output></label>' +
+      '<button type="button" data-area="reset" class="areawide" title="Back to the standard look">Reset look</button>' : "") +
+      '<button type="button" data-area="save" title="Save it with a name (as an NAI or TAI); saved areas stay on the map">Save</button><button type="button" data-area="clear" title="Remove the drawn shape">Delete</button>' +
+      '<button type="button" data-area="look" aria-expanded="' + !!areaEdit.look + '" title="Fill colour, fill opacity, outline colour and width">Style</button><button type="button" data-area="done">Done</button>';
     else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + "</span>" +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
@@ -6476,7 +6485,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
     else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
     else if (k === "done") { editEnd(); }
-    else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
+    else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; AREA_ST.w = 2; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
+    else if (k === "look") { if (areaEdit) areaEdit.look = !areaEdit.look; }
+    else if (k === "save") { editEnd(); areaUi(); if (window.OSAP_AOI && window.OSAP_AOI.saveDrawn) window.OSAP_AOI.saveDrawn(); return; }
     else if (k === "finish") { drawEnd(false); return; }
     else if (k === "cancel") { drawEnd(true); return; }
     else if (k === "sum") { areaSum(); return; }
@@ -6484,10 +6495,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   });
   areaEl.addEventListener("input", function (e) {
     var k = e.target.getAttribute && e.target.getAttribute("data-ast"); if (!k) return;
-    if (k === "op") { AREA_ST.op = Math.max(0, Math.min(0.8, +e.target.value / 100)); var o = e.target.parentNode.querySelector("output"); if (o) o.textContent = Math.round(AREA_ST.op * 100) + "%"; }
+    var o = e.target.parentNode.querySelector("output");
+    if (k === "op") { AREA_ST.op = Math.max(0, Math.min(0.8, +e.target.value / 100)); if (o) o.textContent = Math.round(AREA_ST.op * 100) + "%"; }
+    else if (k === "w") { AREA_ST.w = Math.max(1, Math.min(8, +e.target.value || 2)); if (o) o.textContent = AREA_ST.w + " px"; }
     else AREA_ST[k] = hexOk(e.target.value);
     areaStSave();
-    if (areaLayer) { var ls = areaLayer.getLayers(); ls[1].setStyle({ fillColor: stFill(), fillOpacity: AREA_ST.op }); ls[2].setStyle({ color: stLine() }); }
+    if (areaLayer) { var ls = areaLayer.getLayers(); ls[1].setStyle({ fillColor: stFill(), fillOpacity: AREA_ST.op }); ls[2].setStyle({ color: stLine() }); areaWeights(); }
   });
   /* the area summary (assets/osap-areasum.js) opens in the Details panel beside the list, which it shows if the map is on its own */
   function areaSum() {
@@ -7626,7 +7639,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP };
   /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
      (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
-  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine() }; }, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine(), w: AREA_ST.w }; }, zoomW: zoomW, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
