@@ -78,6 +78,8 @@ try {
 } catch (e) {}
 const nowIso = new Date().toISOString().slice(0, 16);
 // a date with no time zone is the outlet's local time: tz in tools/news_feeds.json, e.g. "+08:00"
+// clock: the feed writes local wall-clock time but labels it UTC (or gives no zone); read it as local time at that offset.
+const onClock = (d, tz) => { const m = /^([+-])(\d\d):(\d\d)$/.exec(tz || ""); if (!m || !d) return d; const off = (m[1] === "-" ? -1 : 1) * (+m[2] * 60 + +m[3]); return new Date(Date.parse(d + "Z") - off * 60000).toISOString().slice(0, 16); };
 const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
 const LANES = 8;
@@ -92,7 +94,7 @@ async function readFeed(f) {
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
       // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
       const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
-      let date = iso(zoned(i.date, f.tz)), seen = false;
+      let date = onClock(iso(zoned(i.date, f.tz)), f.clock), seen = false;
       if (!date) { date = seenAt.get(link) || nowIso; seen = true; }
       const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
       if (seen) o.date_seen = true;          // the outlet gives no date: this is when OSAP first saw it
@@ -159,10 +161,15 @@ if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ish
   console.log("relevance before translation: left out", pre, "headlines");
 }
 // Focus countries (tools/news_feeds.json "focus") read many more outlets, so they keep more items a run.
+const OFFICIAL_EXTRA = 20;
 const share = (cc) => (focus[cc] && focus[cc].per_run) || (cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
 for (const cc of Object.keys(items)) {
   const seen = new Set();
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, share(cc));
+  // official sources (tier "official": a ministry, coast guard, disaster agency) post a few items a day, often dated by day only,
+  // so busy outlets must not push them out: up to OFFICIAL_EXTRA of theirs are kept beyond the country's share.
+  let extra = 0;
+  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1))
+    .filter((i, k) => k < share(cc) || (i.tier === "official" && extra++ < OFFICIAL_EXTRA));
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
 const OG_MAX = Number(process.env.OG_MAX || 400);
