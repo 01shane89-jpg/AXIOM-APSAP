@@ -50,7 +50,11 @@ const DEFS = {
   pr_patrol:  [U, "30", "120500", "Reported patrol vessel", "Reported presence"],
   pr_fishing: [U, "30", "140200", "Reported militia or fishing fleet", "Reported presence"],
   pr_research:[U, "30", "130105", "Reported research ship", "Reported presence"],
-  pr_drone:   [U, "30", "120700", "Drone recovered at sea", "Reported presence"]
+  pr_drone:   [U, "30", "120700", "Drone recovered at sea", "Reported presence"],
+  // live aircraft (ADS-B positions the aircraft broadcast; unknown frame: a position report, not an identification)
+  air_uav:    [U, "01", "110300", "Drone (unmanned aircraft), live ADS-B position", "Live aircraft"],
+  air_fw:     [U, "01", "110100", "Military aircraft (fixed wing), live ADS-B position", "Live aircraft"],
+  air_rw:     [U, "01", "110200", "Military helicopter, live ADS-B position", "Live aircraft"]
 };
 
 const out = {}, meta = {};
