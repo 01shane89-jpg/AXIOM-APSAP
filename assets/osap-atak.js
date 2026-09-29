@@ -225,12 +225,15 @@
   function ptDraw() {
     ptLayer.clearLayers();
     ptsHere().forEach(function (p) {
+      /* the point's own icon (assets/osap-milsym.js: a military symbol, a shape or a pin); the teal diamond otherwise */
+      var sy = p.sym && W.OSAP_MSYM ? W.OSAP_MSYM.draw(p.sym) : null;
       var m = L.marker([p.lat, p.lon], { pane: "atakpane", keyboard: false, title: p.n,
-        icon: L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
+        icon: sy ? L.divIcon({ className: "atk-pt atk-sym", html: sy.html + '<span style="left:' + (sy.w + 2) + "px;top:" + Math.max(0, Math.round(sy.cy - 8)) + 'px">' + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [sy.w, sy.h], iconAnchor: [sy.ax, sy.ay] })
+          : L.divIcon({ className: "atk-pt", html: "<i></i><span>" + esc(p.n) + (p.ph ? CAM + p.ph : "") + "</span>", iconSize: [18, 18], iconAnchor: [9, 9] }) });
       m.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "atk-ptpop";
         var PX = W.OSAP_POINTS;
-        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
+        d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
           '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {

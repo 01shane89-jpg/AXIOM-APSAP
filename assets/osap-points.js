@@ -144,6 +144,7 @@
   ed.setAttribute("role", "dialog"); ed.setAttribute("aria-label", "Point: name, note and photos");
   ed.innerHTML = '<div class="pt-h"><h2>Point</h2><button type="button" class="pt-ic" data-pe="x" aria-label="Close">\u00d7</button></div>' +
     '<div class="pt-b"><label class="pt-f"><span>Name</span><input id="pt-n" maxlength="60" autocomplete="off"></label>' +
+    '<div class="pt-f"><span>Icon</span><button type="button" class="pt-icb" data-pe="icon" aria-label="Change icon"><span class="pt-icp"></span><span class="pt-icl"></span><span class="pt-icc">Change</span></button></div>' +
     '<div class="pt-grid"></div>' +
     '<label class="pt-f"><span>Note</span><textarea id="pt-note" rows="3" maxlength="2000" placeholder="What is here, what you saw"></textarea></label>' +
     '<h3>Photos <span class="obs pt-cnt"></span></h3><div class="pt-phs"></div>' +
@@ -158,6 +159,7 @@
     ed.querySelector("h2").textContent = p.n;
     ed.querySelector(".pt-grid").innerHTML = "<code>" + esc(A.fmt(p.lat, p.lon, "mgrs")) + "</code> <code>" + esc(A.fmt(p.lat, p.lon, "dd")) + "</code>";
     ed.querySelector(".pt-cnt").textContent = p.ph ? "(" + p.ph + ")" : "";
+    icPaint(p);
     thumbs(ed.querySelector(".pt-phs"), p.id, true);
   }
   function edit(id) {
@@ -166,12 +168,20 @@
     ed.querySelector("#pt-n").value = p.n || ""; ed.querySelector("#pt-note").value = p.note || "";
     ed.hidden = false; edPaint();
   }
+  /* the point's icon: a military symbol, a shape or a pin (assets/osap-milsym.js); none = the teal diamond */
+  function icPaint(p) {
+    var M = W.OSAP_MSYM, r = M && p.sym ? M.draw(p.sym, 22) : null;
+    ed.querySelector(".pt-icp").innerHTML = r ? r.html : '<i class="pt-icd"></i>';
+    ed.querySelector(".pt-icl").textContent = M ? M.label(p.sym) : "Default marker";
+    ed.querySelector(".pt-icb").hidden = !M;
+    if (M && p.sym && !r) M.load().then(function () { if (cur === p.id) icPaint(find(p.id) || p); }, function () {});
+  }
   function flush() {
     if (!cur || !saveT) return; clearTimeout(saveT); saveT = 0;
     var n = ed.querySelector("#pt-n").value.trim().slice(0, 60), note = ed.querySelector("#pt-note").value.slice(0, 2000), p = find(cur);
     if (p) setPt(cur, { n: n || p.n, note: note.trim() ? note : "" });
   }
-  function edClose() { flush(); ed.hidden = true; cur = null; revoke(ed.querySelector(".pt-phs")); ed.querySelector(".pt-phs").innerHTML = ""; }
+  function edClose() { flush(); if (W.OSAP_MSYM) W.OSAP_MSYM.close(); ed.hidden = true; cur = null; revoke(ed.querySelector(".pt-phs")); ed.querySelector(".pt-phs").innerHTML = ""; }
   ed.addEventListener("input", function (e) {
     if (e.target.id !== "pt-n" && e.target.id !== "pt-note") return;
     clearTimeout(saveT); saveT = setTimeout(function () { flush(); if (cur) ed.querySelector("h2").textContent = (find(cur) || {}).n || ""; }, 400);
@@ -188,6 +198,7 @@
     if ((b = t.closest("[data-pe]"))) {
       var k = b.getAttribute("data-pe");
       if (k === "x") edClose();
+      else if (k === "icon" && W.OSAP_MSYM) { flush(); var ip = find(cur), id = cur; if (ip) W.OSAP_MSYM.pick(ip.sym, ip.n, function (sym) { setPt(id, { sym: sym || "" }); if (cur === id) edPaint(); }); }
       else if (k === "del") { var p = find(cur); if (p && W.confirm("Delete " + p.n + (p.ph ? " and its " + p.ph + " photo" + (p.ph > 1 ? "s" : "") : "") + " from this device?")) { var pid = cur; saveT = 0; edClose(); P.del(pid); } }
     }
   });
@@ -250,6 +261,9 @@
     "#pt-view .pt-vmeta{padding:6px 14px;word-break:break-all}#pt-view code{font:11.5px 'IBM Plex Mono',monospace;color:#8fd3e0}#pt-view .obs{color:#aaa}" +
     "#pt-view .pt-vbar{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px calc(8px + env(safe-area-inset-bottom))}#pt-view .pt-btn{background:#222;color:#eee;border-color:#555}#pt-view .pt-btn.pri{background:#0b7285;border-color:#0b7285}#pt-view .pt-btn.dng{color:#ff8787;border-color:#ff8787}" +
     ".atk-pt .atk-cam{vertical-align:-1px}" +
+    ".pt-icb{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:inherit;font:13px system-ui,-apple-system,sans-serif;text-align:left;cursor:pointer}" +
+    ".pt-icb[hidden]{display:none}.pt-icp{flex:0 0 44px;display:flex;align-items:center;justify-content:center}.pt-icp svg{max-width:44px;max-height:40px}.pt-icl{flex:1;min-width:0}.pt-icc{color:#0b7285;font-weight:600}" +
+    ".pt-icd{display:block;width:12px;height:12px;background:#15aabf;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,.5)}" +
     "@media (max-width:700px){#pt-ed{left:0;right:0;top:auto;width:auto;max-height:80%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}}";
   D.head.appendChild(st);
   mapEl.appendChild(ed); D.body.appendChild(vw);

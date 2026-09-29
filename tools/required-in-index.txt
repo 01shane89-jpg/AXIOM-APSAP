@@ -63,3 +63,6 @@ refresh: function () { dsUi(); }
 
 # map points with a name, a note and photos on this device (claude/map-point-photos)
 <script src="assets/osap-points.js"></script>
+
+# map point icons: military symbols (2525D via milsymbol), shapes and pins (claude/mil-symbol-picker)
+<script src="assets/osap-milsym.js"></script>
