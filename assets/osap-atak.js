@@ -123,7 +123,7 @@
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
