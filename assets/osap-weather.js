@@ -389,55 +389,69 @@
   }
 
   /* ---------- impacts: generic planning thresholds (illustrative, not doctrine) ---------- */
+  /* Each row lists its red and amber limits as numbers; the colour, the reason shown on a cell and the legend text all come from the
+     same numbers. Keys: ceil and vis are "below", wc is "at or below", the rest are "at or above"; ts is thunderstorms (forecast in
+     red, possible in amber); frz is freezing precipitation or icing. Sizes follow common classes (US DoD drone groups 1 to 5). */
+  var LIM_ORDER = ["ts", "frz", "ceil", "vis", "wind", "gust", "prh", "pr24", "sn", "wave", "hi", "wc", "tmax"];
   var THR = [
-    { id: "rw", grp: "Air", name: "Rotary-wing", short: "Rotary", red: "ceiling below 500 ft, visibility below 1,600 m, gusts 40 kt or more, or thunderstorms", amber: "ceiling below 1,000 ft, visibility below 4,800 m, gusts 30 kt or more, or freezing precipitation",
-      f: function (w) {
-        if (w.ts === 2 || lt(w.ceil, 500) || lt(w.vis, 1600) || ge(w.gust, 40)) return [2, why(w, ["ts", "ceil<500", "vis<1600", "gust>=40"])];
-        if (w.ts || lt(w.ceil, 1000) || lt(w.vis, 4800) || ge(w.gust, 30) || frz(w.code)) return [1, why(w, ["ts1", "ceil<1000", "vis<4800", "gust>=30", "frz"])];
-        return [0, ""]; } },
-    { id: "fw", grp: "Air", name: "Fixed-wing", short: "Fixed-wing", red: "ceiling below 200 ft, visibility below 800 m, gusts 45 kt or more, or thunderstorms", amber: "ceiling below 1,000 ft, visibility below 4,800 m, gusts 35 kt or more, or freezing precipitation",
-      f: function (w) {
-        if (w.ts === 2 || lt(w.ceil, 200) || lt(w.vis, 800) || ge(w.gust, 45)) return [2, why(w, ["ts", "ceil<200", "vis<800", "gust>=45"])];
-        if (w.ts || lt(w.ceil, 1000) || lt(w.vis, 4800) || ge(w.gust, 35) || frz(w.code)) return [1, why(w, ["ts1", "ceil<1000", "vis<4800", "gust>=35", "frz"])];
-        return [0, ""]; } },
-    { id: "uas", grp: "Air", name: "Small drones (UAS)", short: "Drones", red: "wind 25 kt or more, gusts 30 kt or more, rain 2.5 mm/h or more, or thunderstorms", amber: "wind 15 kt or more, gusts 20 kt or more, any rain or snow, or visibility below 1,600 m",
-      f: function (w) {
-        if (w.ts === 2 || ge(w.wind, 25) || ge(w.gust, 30) || ge(w.prh, 2.5)) return [2, why(w, ["ts", "wind>=25", "gust>=30", "prh>=2.5"])];
-        if (w.ts || ge(w.wind, 15) || ge(w.gust, 20) || ge(w.prh, 0.2) || lt(w.vis, 1600)) return [1, why(w, ["ts1", "wind>=15", "gust>=20", "prh>=0.2", "vis<1600"])];
-        return [0, ""]; } },
-    { id: "isr", grp: "Air", name: "Air observation (EO sensors)", short: "Air ISR", red: "ceiling below 500 ft or visibility below 1,000 m", amber: "ceiling below 1,500 ft or visibility below 5,000 m",
-      f: function (w) {
-        if (lt(w.ceil, 500) || lt(w.vis, 1000)) return [2, why(w, ["ceil<500", "vis<1000"])];
-        if (lt(w.ceil, 1500) || lt(w.vis, 5000)) return [1, why(w, ["ceil<1500", "vis<5000"])];
-        return [0, ""]; } },
-    { id: "mob", grp: "Ground", name: "Off-road movement", short: "Off-road", red: "50 mm or more of rain in 24 h, or 15 cm or more of snow", amber: "25 mm or more of rain in 24 h, or 5 cm or more of snow",
-      f: function (w) {
-        if (ge(w.pr24, 50) || ge(w.sn, 15)) return [2, why(w, ["pr24>=50", "sn>=15"])];
-        if (ge(w.pr24, 25) || ge(w.sn, 5)) return [1, why(w, ["pr24>=25", "sn>=5"])];
-        return [0, ""]; } },
-    { id: "per", grp: "Ground", name: "Troops in the open (heat, cold)", short: "Heat, cold", red: "heat index 41°C / 106°F or more, or wind chill −28°C / −18°F or below", amber: "heat index 32°C / 90°F or more, or wind chill −10°C / 14°F or below",
-      f: function (w) {
-        if (ge(w.hi, 41) || le(w.wc, -28)) return [2, why(w, ["hi>=41", "wc<=-28"])];
-        if (ge(w.hi, 32) || le(w.wc, -10)) return [1, why(w, ["hi>=32", "wc<=-10"])];
-        return [0, ""]; } },
-    { id: "obs", grp: "Ground", name: "Ground observation", short: "Ground obs", red: "visibility below 500 m", amber: "visibility below 2,000 m or thunderstorms (lightning)",
-      f: function (w) {
-        if (lt(w.vis, 500)) return [2, why(w, ["vis<500"])];
-        if (lt(w.vis, 2000) || w.ts) return [1, why(w, ["vis<2000", "ts1"])];
-        return [0, ""]; } },
-    { id: "sb", grp: "Maritime", name: "Small boats", short: "Small boats", sea: true, red: "waves 2.5 m or more (sea state 5+) or wind 34 kt or more", amber: "waves 1.25 m or more (sea state 4) or wind 22 kt or more, or thunderstorms",
-      f: function (w) {
-        if (w.wave == null) return [-1, "no sea in the region"];
-        if (ge(w.wave, 2.5) || ge(w.wind, 34)) return [2, why(w, ["wave>=2.5", "wind>=34"])];
-        if (ge(w.wave, 1.25) || ge(w.wind, 22) || w.ts) return [1, why(w, ["wave>=1.25", "wind>=22", "ts1"])];
-        return [0, ""]; } },
-    { id: "sh", grp: "Maritime", name: "Ships and landings", short: "Ships", sea: true, red: "waves 4 m or more (sea state 6+) or wind 48 kt or more", amber: "waves 2.5 m or more (sea state 5) or wind 34 kt or more",
-      f: function (w) {
-        if (w.wave == null) return [-1, "no sea in the region"];
-        if (ge(w.wave, 4) || ge(w.wind, 48)) return [2, why(w, ["wave>=4", "wind>=48"])];
-        if (ge(w.wave, 2.5) || ge(w.wind, 34)) return [1, why(w, ["wave>=2.5", "wind>=34"])];
-        return [0, ""]; } }
-  ];
+    ["fwl", "Air", "Fixed-wing, light (single or twin prop)", "FW light", { ceil: 500, vis: 1600, gust: 30, ts: 1, frz: 1 }, { ceil: 1000, vis: 5000, gust: 20, ts: 1 }],
+    ["fwm", "Air", "Fixed-wing, medium transport (C-130 class)", "FW medium", { ceil: 200, vis: 800, gust: 40, ts: 1 }, { ceil: 500, vis: 1600, gust: 30, ts: 1, frz: 1 }],
+    ["fwh", "Air", "Fixed-wing, large or heavy jet", "FW heavy", { ceil: 200, vis: 550, gust: 45, ts: 1 }, { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }],
+    ["rwl", "Air", "Rotary-wing, light (under about 5 t)", "RW light", { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, tmax: 35 }],
+    ["rwm", "Air", "Rotary-wing, medium (Black Hawk class)", "RW medium", { ceil: 500, vis: 800, gust: 40, ts: 1, frz: 1 }, { ceil: 1000, vis: 3000, gust: 30, ts: 1, tmax: 35 }],
+    ["rwh", "Air", "Rotary-wing, heavy lift (Chinook class)", "RW heavy", { ceil: 300, vis: 800, gust: 45, ts: 1, frz: 1 }, { ceil: 700, vis: 3000, gust: 35, ts: 1, tmax: 35 }],
+    ["uas1", "Air", "Drones, small (Group 1–2, quadcopters, hand-launched)", "Drone small", { wind: 20, gust: 25, prh: 1, ts: 1 }, { wind: 12, gust: 18, prh: 0.2, vis: 1600 }],
+    ["uas3", "Air", "Drones, medium (Group 3, ScanEagle or Shadow class)", "Drone medium", { wind: 30, gust: 35, prh: 4, ts: 1, frz: 1 }, { wind: 20, gust: 25, prh: 1, vis: 3000, ts: 1 }],
+    ["uas4", "Air", "Drones, large (Group 4–5, MQ-9 class)", "Drone large", { gust: 40, ts: 1, frz: 1 }, { gust: 30, ceil: 500, vis: 1600, ts: 1 }],
+    ["isr", "Air", "Air observation (EO sensors)", "Air ISR", { ceil: 500, vis: 1000 }, { ceil: 1500, vis: 5000 }],
+    ["gwl", "Ground", "Wheeled, light (4x4s, light trucks), off-road", "Wheeled light", { pr24: 40, sn: 15 }, { pr24: 20, sn: 5, vis: 200 }],
+    ["gwh", "Ground", "Wheeled, heavy (MRAPs, heavy trucks), off-road", "Wheeled heavy", { pr24: 30, sn: 20 }, { pr24: 15, sn: 10, gust: 45, vis: 200 }],
+    ["trk", "Ground", "Tracked (tanks, armoured carriers), off-road", "Tracked", { pr24: 75, sn: 40 }, { pr24: 40, sn: 20, vis: 200 }],
+    ["per", "Ground", "Dismounted troops (heat, cold)", "Dismounted", { hi: 41, wc: -28 }, { hi: 32, wc: -10, ts: 1 }],
+    ["obs", "Ground", "Ground observation", "Ground obs", { vis: 500 }, { vis: 2000, ts: 1 }],
+    ["sb", "Maritime", "Small boats and RHIBs", "Small boats", { wave: 2, wind: 28 }, { wave: 1, wind: 20, ts: 1 }],
+    ["pc", "Maritime", "Patrol craft (about 20 to 60 m)", "Patrol craft", { wave: 3.5, wind: 40 }, { wave: 2, wind: 28, ts: 1 }],
+    ["sh", "Maritime", "Ships (frigates, landing ships, cargo)", "Ships", { wave: 5, wind: 48 }, { wave: 3, wind: 34 }]
+  ].map(function (r) {
+    var t = { id: r[0], grp: r[1], name: r[2], short: r[3], sea: r[1] === "Maritime" };
+    t.red = limText(r[4], true); t.amber = limText(r[5], false);
+    var cR = limConds(r[4], true), cA = limConds(r[5], false);
+    t.f = function (w) {
+      if (t.sea && w.wave == null) return [-1, "no sea in the region"];
+      if (limHit(w, r[4], true)) return [2, why(w, cR)];
+      if (limHit(w, r[5], false)) return [1, why(w, cA)];
+      return [0, ""];
+    };
+    return t;
+  });
+  function limOp(k) { return k === "ceil" || k === "vis" ? "<" : k === "wc" ? "<=" : ">="; }
+  function limConds(L, red) {
+    return LIM_ORDER.filter(function (k) { return L[k] != null; }).map(function (k) {
+      return k === "ts" ? (red ? "ts" : "ts1") : k === "frz" ? "frz" : k + limOp(k) + L[k];
+    });
+  }
+  function limHit(w, L, red) {
+    return LIM_ORDER.some(function (k) {
+      var x = L[k]; if (x == null) return false;
+      if (k === "ts") return red ? w.ts === 2 : !!w.ts;
+      if (k === "frz") return frz(w.code);
+      var op = limOp(k); return op === "<" ? lt(w[k], x) : op === "<=" ? le(w[k], x) : ge(w[k], x);
+    });
+  }
+  function limText(L, red) {
+    var n = function (v) { return v.toLocaleString("en-GB"); }, T = {
+      ts: function () { return red ? "thunderstorms" : "thunderstorms possible"; }, frz: function () { return "freezing precipitation or icing"; },
+      ceil: function (v) { return "ceiling below " + n(v) + " ft"; }, vis: function (v) { return "visibility below " + n(v) + " m"; },
+      wind: function (v) { return "wind " + v + " kt or more"; }, gust: function (v) { return "gusts " + v + " kt or more"; },
+      prh: function (v) { return "rain " + v + " mm/h or more"; }, pr24: function (v) { return v + " mm or more of rain in 24 h"; },
+      sn: function (v) { return v + " cm or more of snow"; }, wave: function (v) { return "waves " + v + " m or more (sea state " + douglas(v).n + "+)"; },
+      hi: function (v) { return "heat index " + degCF(v) + " or more"; }, wc: function (v) { return "wind chill " + degCF(v) + " or below"; },
+      tmax: function (v) { return "temperature " + degCF(v) + " or more (less lift)"; }
+    };
+    var parts = LIM_ORDER.filter(function (k) { return L[k] != null; }).map(function (k) { return T[k](L[k]); });
+    return parts.length > 1 ? parts.slice(0, -1).join(", ") + ", or " + parts[parts.length - 1] : parts[0] || "";
+  }
+
   function lt(v, x) { return v != null && v < x; }
   function le(v, x) { return v != null && v <= x; }
   function ge(v, x) { return v != null && v >= x; }
@@ -459,7 +473,7 @@
   function fmtWhy(k, v) {
     return { ceil: "ceiling about " + ft(v), vis: "visibility " + vis(v), gust: "gusts " + Math.round(v) + " kt", wind: "wind " + Math.round(v) + " kt", prh: "rain " + v.toFixed(1) + " mm/h",
       pr24: Math.round(v) + " mm of rain in 24 h", sn: Math.round(v) + " cm of snow", hi: "heat index " + degCF(v), wc: "wind chill " + degCF(v),
-      wave: "waves " + v.toFixed(1) + " m" }[k] || k;
+      wave: "waves " + v.toFixed(1) + " m", tmax: "temperature " + degCF(v) }[k] || k;
   }
   function ft(v) { if (v == null) return "none"; if (v < 1000) return Math.max(100, Math.round(v / 100) * 100) + " ft"; return (Math.round(v / 500) * 500).toLocaleString("en-GB") + " ft"; }
   function vis(v) { if (v == null) return "–"; if (v >= 9999) return "10 km+"; if (v >= 5000) return Math.round(v / 1000) + " km"; if (v >= 1000) return (v / 1000).toFixed(1) + " km"; return Math.round(v / 50) * 50 + " m"; }
@@ -1480,9 +1494,12 @@
       ".wxmg .mgarrow{fill:none;stroke:#37474f;stroke-width:1.3}.wxmg .mgnow{stroke:#f9a825;stroke-width:1.2}html.dark .wxmg .mgwind,html.dark .wxmg .mgarrow{stroke:#cfd8dc}",
       ".mgkey{font-size:10.5px;display:flex;flex-wrap:wrap;gap:3px 10px;align-items:center;margin:2px 0 6px}.mgkey .k{display:inline-block;width:14px;height:3px;margin-right:3px;vertical-align:middle}",
       ".mgkey .kt{background:#c62828}.mgkey .kd{background:#2e7d32}.mgkey .kr{background:#1565c0;height:8px}.mgkey .kw{background:#37474f}.mgkey .kg{background:#8d6e63}.mgkey .kc{background:#78909c;height:8px}",
+      /* on screen, wide report tables scroll sideways inside their own box so the page never runs past a phone's edge; print is unchanged */
+      "@media screen and (max-width:860px){.wxrp{overflow-wrap:anywhere}.wxrp table.wxbt{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.wxrp table.wxbt th,.wxrp table.wxbt td{overflow-wrap:normal}}",
+      "#brief .wxrp table.wxbt td:first-child{white-space:nowrap}table.wxm td.wxt{overflow-wrap:normal;word-break:normal}@media screen{#brief table.wxm td.wxt{white-space:nowrap}}",
       ".wxrp{margin-bottom:18px}.wxrp table.wxhr{font-size:.9em}.wxrp table.wxhr td,.wxrp table.wxhr th{padding:1px 2px;white-space:nowrap}.wxrp tr.wxday td{border-top:1.5px solid #12324a}.wxrp tr.hot td,.wxrp td.hot{background:#fff3e0}",
       ".wxrp td.wxconf{font-weight:700}.wxrp td.wxcH{color:#2e7d32}.wxrp td.wxcM{color:#b26a00}.wxrp td.wxcL{color:#c62828}.wxrp table.wxbt{table-layout:auto}.wxrp table.wxbt td:first-child{white-space:nowrap}",
-      "@media print{html.briefing .wxrp{margin:0}html.briefing .wxrp+.wxrp{break-before:page;page-break-before:always}html.briefing .wxrp tr{break-inside:avoid}html.briefing .wxrp{font-size:8.6px}html.briefing .wxrp table.wxhr{font-size:7.8px}}",
+      "@media print{html.briefing .wxbp p.wxthr{column-count:2;column-gap:12px;font-size:.8em}html.briefing table.wxm th:first-child{width:84px}html.briefing table.wxm td{padding:0 2px;line-height:1.2}html.briefing .wxrp{margin:0}html.briefing .wxrp+.wxrp{break-before:page;page-break-before:always}html.briefing .wxrp tr{break-inside:avoid}html.briefing .wxrp{font-size:8.6px}html.briefing .wxrp table.wxhr{font-size:7.8px}}",
       "#wx-ops .wxbtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}#wx-ops .wxsyn{margin:6px 0;line-height:1.4}",
       ".wxl{color:var(--muted,#667);font-size:.88em;font-weight:400}",
       ".wxscroll{overflow-x:auto;max-width:100%}#wx-ops table.wxsm{font-size:11px}#wx-ops table.wxsm th{font-size:10px;padding:1px 2px}#wx-ops table.wxsm td{padding:1px 2px}#wx-ops table.wxf{font-size:12px}",
