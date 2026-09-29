@@ -108,11 +108,11 @@ async function wdClassNames(ids) {
 /* ---------- OpenStreetMap (Overpass) ---------- */
 // One query per conflict over its map area (a bounding box; a query by country outline times out for large countries).
 // A feature is kept when it lies in one of the conflict's countries, or where the country outlines here do not cover it.
-const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
-const OP_TRY = 3;
+// overpass.private.coffee timed out on every request from GitHub runners (2026-09-29), so it is not asked
+const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
 async function overpass(q) {
   let last;
-  for (const u of OVERPASS.slice(0, OP_TRY)) {
+  for (const u of OVERPASS) {
     if (Date.now() - NOW > BUDGET_MS) throw new Error("out of time");
     const t0 = Date.now();
     try {
@@ -131,12 +131,20 @@ function tiles(bounds) {
   for (let a = s; a < n; a += st) for (let b = w; b < e; b += st) out.push([a, b, Math.min(a + st, n), Math.min(b + st, e)]);
   return out;
 }
-async function osm(c) {
-  const els = [];
-  for (const [s, w, n, e] of tiles(c.bounds)) {
+// Returns the features found and the tiles that could not be read (their part of the last list is kept by the caller).
+let tileFails = 0;
+// Tiles read least recently go first (st.tiles: tile -> when read), so a large area is completed over several runs.
+async function osm(c, st, force) {
+  let tried = 0, ok = 0;
+  const els = [], missed = [], seen = st.tiles || (st.tiles = {}), key = (t) => t.join(",");
+  const todo = tiles(c.bounds).sort((a, b) => String(seen[key(a)] || "").localeCompare(String(seen[key(b)] || "")));
+  for (const t of todo) {
+    const [s, w, n, e] = t;
+    if ((!force && age(seen[key(t)]) < REFETCH_DAYS) || tileFails >= 3 || Date.now() - NOW > BUDGET_MS) { missed.push(t); continue; }
     const q = `[out:json][timeout:60];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
-    els.push(...((await overpass(q)).elements || []));
-    await sleep(1500);
+    tried++;
+    try { els.push(...((await overpass(q)).elements || [])); seen[key(t)] = stamp; ok++; } catch (e) { tileFails++; missed.push(t); }
+    await sleep(3000);
   }
   const out = [], seenEl = new Set();
   for (const el of els) {
@@ -151,7 +159,9 @@ async function osm(c) {
     out.push({ osm: el.type + "/" + el.id, n: t["name:en"] || t["int_name"] || t.name, n2: t["name:en"] && t.name !== t["name:en"] ? t.name : "",
       la: +(+la).toFixed(5), lo: +(+lo).toFixed(5), cc: here.find((x) => c.countries.includes(x)) || (c.countries.length === 1 ? c.countries[0] : ""), k: OSM_KIND[t.military] || "base", op: t.operator || "", wd: t.wikidata || "" });
   }
-  return out;
+  if (!tried) return null;   // out of time: nothing asked, the last list stands
+  if (!ok) throw new Error(tileFails >= 3 ? "Overpass unavailable this run" : "no map tile could be read");
+  return { sites: out, missed };
 }
 
 /* ---------- merge ---------- */
@@ -190,7 +200,6 @@ const saveState = () => { if (!PROBE) fs.writeFileSync(STATE_F, JSON.stringify(s
 // next run, and each conflict keeps its last OpenStreetMap list meanwhile.
 const order = CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.includes(c.id)))
   .sort((a, b) => String((state[a.id] || {}).osm || "").localeCompare(String((state[b.id] || {}).osm || "")));
-let osmDown = "";
 for (const c of order) {
   const file = OUT + "/" + c.id + ".js", prev = readJs(file), st = state[c.id] || (state[c.id] = {});
   // the last list without its report matches (worked out again below)
@@ -201,9 +210,17 @@ for (const c of order) {
     try { wd = await wikidata(c, ALLCC); src.wikidata = { id: "wikidata", ok: true, n: wd.length, at: stamp }; st.wd = stamp; }
     catch (e) { src.wikidata = { id: "wikidata", ok: false, error: errMsg(e), at: stamp }; }
   }
-  if ((FORCE || PROBE || age(st.osm) >= REFETCH_DAYS) && !osmDown && Date.now() - NOW < BUDGET_MS) {
-    try { om = await osm(c); src.osm = { id: "osm", ok: true, n: om.length, at: stamp }; st.osm = stamp; }
-    catch (e) { osmDown = errMsg(e); src.osm = { id: "osm", ok: false, error: osmDown, at: stamp }; }
+  let missed = [];
+  if ((FORCE || PROBE || age(st.osm) >= REFETCH_DAYS) && tileFails < 3 && Date.now() - NOW < BUDGET_MS) {
+    try {
+      const r = await osm(c, st, FORCE || PROBE);
+      if (r) {
+        om = r.sites; missed = r.missed;
+        const left = tiles(c.bounds).filter((t) => age(st.tiles[t.join(",")]) >= REFETCH_DAYS).length;
+        src.osm = { id: "osm", ok: true, n: om.length, at: stamp, ...(left ? { note: left + " of " + tiles(c.bounds).length + " map tiles not read yet; read in the next runs" } : {}) };
+        if (!left) st.osm = stamp;   // until every tile is read, the conflict stays first in line
+      }
+    } catch (e) { src.osm = { id: "osm", ok: false, error: errMsg(e), at: stamp }; }
   }
   if (PROBE) {
     const cls = {}; (wd || []).forEach((x) => x.cls.forEach((k) => (cls[k] = (cls[k] || 0) + 1)));
@@ -213,7 +230,9 @@ for (const c of order) {
   }
   // a part not re-read (or that failed) is taken from the last list
   if (!wd) wd = old.filter((x) => x.wd).map((x) => ({ qid: x.wd, n: x.n, n2: x.n2, la: x.la, lo: x.lo, cc: x.cc, cls: x.cls ? x.cls.split(", ") : [], w: x.w || "", k: x.k }));
-  if (!om) om = old.filter((x) => x.osm).map((x) => ({ osm: x.osm, n: x.n, n2: x.n2, la: x.la, lo: x.lo, cc: x.cc, k: x.k, op: x.op || "", wd: x.wd || "" }));
+  const oldOsm = old.filter((x) => x.osm).map((x) => ({ osm: x.osm, n: x.n, n2: x.n2, la: x.la, lo: x.lo, cc: x.cc, k: x.k, op: x.op || "", wd: x.wd || "" }));
+  const inTile = (x, t) => x.la >= t[0] && x.la < t[2] && x.lo >= t[1] && x.lo < t[3];
+  if (!om) om = oldOsm; else if (missed.length) om = om.concat(oldOsm.filter((x) => missed.some((t) => inTile(x, t))));
   const sites = merge(c, wd, om);
   if (!sites.length && !prev && !src.wikidata?.ok && !src.osm?.ok) { saveState(); continue; }   // nothing yet: next run
   st.n = sites.length; st.built = [st.wd, st.osm].filter(Boolean).sort().pop() || "";
@@ -229,4 +248,4 @@ for (const c of order) {
   console.log("sites", c.id.padEnd(22), String(sites.length).padStart(5), "named in reports:", String(Object.keys(hits).length).padStart(3), " ", Object.values(src).map((x) => x.id + ":" + (x.ok ? x.n : x.error) + (x.at === stamp ? "" : " (kept)")).join(" "));
 }
 if (PROBE) { fs.mkdirSync("probe-out", { recursive: true }); fs.writeFileSync("probe-out/mil_sites.json", JSON.stringify(probe, null, 1)); }
-if (osmDown) console.log("Overpass failed this run (" + osmDown + "); the conflicts not reached keep their last OpenStreetMap list and are tried next run.");
+if (tileFails >= 3) console.log("Overpass failed 3 times this run; the conflicts not reached keep their last OpenStreetMap list and are tried next run.");

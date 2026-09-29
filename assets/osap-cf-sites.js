@@ -173,7 +173,8 @@
       h += '<p class="cfnote">Sites: <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a> (CC0) and <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL, © OpenStreetMap contributors), as recorded there; not every site is mapped and some listed sites may be closed or moved. ' +
         "A red ring means a report in this period names the site next to a word such as base or airfield: a machine match, not a finding that it was struck. " +
         "Strike markers are this tab’s own reports whose headline names a military target, placed where the report says, often the town. Reported, not verified; statements by a party are claims. " +
-        "Site lists re-read " + day(f.built) + "; reports matched " + esc(f.asof) + "." + (bad.length ? ' <span class="cfbad">Not reached last time: ' + bad.map(function (s) { return esc(s.id); }).join(", ") + " (the earlier list is kept).</span>" : "") + "</p>";
+        "Site lists re-read " + day(f.built) + "; reports matched " + esc(f.asof) + "." + (bad.length ? ' <span class="cfbad">Not reached last time: ' + bad.map(function (s) { return esc(s.id); }).join(", ") + " (the earlier list is kept).</span>" : "") +
+        (f.sources || []).filter(function (s) { return s.ok && s.note; }).map(function (s) { return " " + esc(s.id === "osm" ? "OpenStreetMap" : s.id) + ": " + esc(s.note) + "."; }).join("") + "</p>";
     }
     box.innerHTML = h;
   }
