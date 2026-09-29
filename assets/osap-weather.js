@@ -1417,7 +1417,8 @@
     return '<div id="ml-wx"><div class="mlh">Weather</div>' +
       '<label class="mlop">Model time <select id="wx-hour">' + hrs.map(function (h) { return '<option value="' + h + '"' + (h === HOUR ? " selected" : "") + ">" + (h ? "+" + h + " h" : "Now") + "</option>"; }).join("") +
       '</select><output id="wxn-grid" class="wxl"></output></label>' +
-      LAY.map(function (l) {
+      /* the flood rows mirror the Flooding rows higher up the same panel: listed once, up there */
+      LAY.filter(function (l) { return !l.mirror || !document.querySelector('#ml-panel input[data-fx="' + l.mirror + '"]'); }).map(function (l) {
         var g = l.grp !== grp ? (grp = l.grp, "") : "";
         var chk = l.mirror ? !!(document.querySelector('#ml-panel input[data-fx="' + l.mirror + '"]') || {}).checked : !!ON[l.k];
         return g + '<div class="wxrow' + (chk ? " on" : "") + '" data-wxrow="' + l.k + '"><label class="mlrow"><input type="checkbox" data-wxl="' + l.k + '"' + (chk ? " checked" : "") + "><span><b>" + esc(l.name) + "</b><i>" + esc(l.note) + '</i><i class="wxlic">' + esc(l.lic) + "</i>" +
