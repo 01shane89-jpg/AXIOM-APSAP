@@ -1,0 +1,56 @@
+name: Refresh live drones
+
+# Live drones and military aircraft (tools/refresh_drones.mjs): every two minutes while a run lasts, the ADS-B positions from
+# adsb.lol (adsb.fi as fallback) are written to drones.json on the live-drones branch, one commit replaced each time so the
+# branch never grows. The page reads it from raw.githubusercontent.com, which lets any site read it (the aggregators do not).
+# raw.githubusercontent.com serves each file for up to five minutes, so a position is typically two to seven minutes old on the
+# map; the pop-up shows its age. Nothing is committed to main, so this does not rebuild GitHub Pages.
+on:
+  schedule:
+    # each run polls for about 14 minutes; GitHub starts scheduled runs late when busy, so gaps of a few minutes are normal
+    - cron: "4,19,34,49 * * * *"
+  workflow_dispatch:
+    inputs:
+      rounds:
+        description: "Polls in this run (two minutes apart)"
+        required: false
+        default: "7"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-drones-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  drones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Poll and publish
+        env:
+          ROUNDS: ${{ inputs.rounds || '7' }}
+          # main publishes to live-drones, the page's source; a test run on any other branch publishes to live-drones-test
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'live-drones' || 'live-drones-test' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/ld
+          # carry the trails on from the last published file
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git show FETCH_HEAD:drones.json > /tmp/ld/drones.json 2>/dev/null || true
+          git worktree add -q --detach /tmp/ldwt
+          for i in $(seq 1 "$ROUNDS"); do
+            start=$(date +%s)
+            if node tools/refresh_drones.mjs /tmp/ld/new.json /tmp/ld/drones.json; then
+              mv /tmp/ld/new.json /tmp/ld/drones.json
+              ( cd /tmp/ldwt && git checkout -q --orphan "ld-$i" && git rm -rfq . && cp /tmp/ld/drones.json . && git add drones.json &&
+                git commit -qm "Live drones $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET" ) || echo "publish failed"
+            fi
+            [ "$i" -lt "$ROUNDS" ] || break
+            left=$(( 120 - ($(date +%s) - start) )); [ "$left" -gt 0 ] && sleep "$left"
+          done

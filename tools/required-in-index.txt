@@ -32,6 +32,7 @@
 <script src="assets/osap-geo.js"></script>
 <script src="assets/osap-measure.js"></script>
 <script src="assets/osap-tools.js"></script>
+<script src="assets/osap-drones.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"
@@ -51,3 +52,6 @@ function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setVi
 
 # drawn-area summary (assets/osap-areasum.js reads it)
 window.TSAP.areaApi
+
+# ATAK-style map controls (claude/atak-controls)
+<script src="assets/osap-atak.js"></script>
