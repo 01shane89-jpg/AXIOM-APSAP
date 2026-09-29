@@ -55,3 +55,6 @@ window.TSAP.areaApi
 
 # ATAK-style map controls (claude/atak-controls)
 <script src="assets/osap-atak.js"></script>
+
+# MGRS grid lines and centre crosshair (claude/map-grid-crosshair)
+<script src="assets/osap-grid.js"></script>
