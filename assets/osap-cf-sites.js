@@ -6,7 +6,7 @@
      reports names in the period chosen gets a red ring and lists those reports. That is a machine match of the site's name in
      the report text, not a finding that it was struck.
    - Reported strikes on military targets: the conflict's own placed reports (already on the tab) whose kind is an attack, strike,
-     missile, drone or shelling and whose words name a military target (base, airfield, depot, radar, air defence ...). Drawn at
+     missile, drone or shelling and whose headline names a military target (base, airfield, depot, radar, air defence ...). Drawn at
      the place the report names, which is often the town, not the target.
    Every item is "Reported, not verified", with its source link and SHA-256 fingerprint. Statements by any party are claims. All
    symbols use the UNKNOWN frame: OSAP never marks a side as hostile or friendly. Markers go in pane "cfpane".
@@ -29,7 +29,7 @@
   var GROUPS = [["air", "Air bases and airfields", ["air"]], ["naval", "Naval bases", ["naval"]], ["base", "Bases, barracks and HQs", ["base", "barracks", "hq"]], ["depot", "Depots and arsenals", ["depot"]]];
   // a strike on a military target: the kind says it was an attack of some sort, and the words name a military target
   var HIT_KIND = /attack|airstrike|air_strike|strike|missile|drone|shell|artillery|ground|clash/i;
-  var TARGET = /\b(?:air ?bases?|airbases?|airfields?|air fields?|aerodromes?|military (?:base|airport|airfield|facility|facilities|site|target|installation|headquarters|depot|warehouse|camp|position)s?|naval (?:base|port|facility)|bases? (?:used|housing|hosting)|barracks|garrisons?|(?:ammunition|ammo|arms|weapons?|munitions?|fuel|oil) (?:depot|dump|store|storage|warehouse|facility)s?|depots?|arsenals?|headquarters|command (?:post|centre|center)s?|\bhq\b|radars?|air defen[cs]e (?:system|battery|site|position)s?|s-[34]00|patriot (?:battery|system)|missile (?:launcher|site|base|battery)s?|launch (?:site|pad)s?|drone (?:base|launch site|factory|workshop)s?|training (?:camp|ground|range)s?|military (?:plant|factory)|defen[cs]e (?:plant|factory)|warships?|frigates?|corvettes?|landing ship|submarines?)\b|аеродром|аэродром|авиабаз|арсенал|склад боєприпас|склад боеприпас|РЛС|ППО|ПВО/i;
+  var TARGET = /\b(?:air ?bases?|airbases?|airfields?|air fields?|aerodromes?|military (?:base|airport|airfield|facility|site|target|installation|headquarters|depot|warehouse|camp|position|unit|plant|factory)s?|naval (?:base|port|facility)|barracks|garrisons?|(?:ammunition|ammo|arms|weapons?|munitions?|missile|military) (?:depot|dump|store|storage|warehouse)s?|arsenals?|(?:military|army|brigade|command) headquarters|command (?:post|centre|center)s?|radar (?:station|site)s?|radars?|air defen[cs]e (?:system|battery|site|position)s?|(?:s-[34]00|patriot|buk|pantsir|tor|iris-t|nasams) (?:system|battery|launcher|complex)s?|missile (?:launcher|site|base|battery)s?|launch (?:site|pad)s?|drone (?:base|launch site|factory|workshop)s?|training (?:camp|ground|range)s?|defen[cs]e (?:plant|factory)|warships?|frigates?|corvettes?|landing ship|submarines?)\b|аеродром|аэродром|авиабаз|арсенал|склад (?:боєприпас|боеприпас|ракет)|военн\w+ (?:баз|част|объект)|військов\w+ (?:баз|частин|об.єкт)/i;
   var on = true, strikesOn = true, grp = { air: true, naval: true, base: true, depot: true }, onlyNamed = false;
   try { var st = JSON.parse(localStorage.getItem("osap-cf-sites") || "null"); if (st) { on = st.on !== false; strikesOn = st.s !== false; onlyNamed = !!st.n; if (st.g) grp = Object.assign(grp, st.g); } } catch (e) {}
   function save() { try { localStorage.setItem("osap-cf-sites", JSON.stringify({ on: on, s: strikesOn, n: onlyNamed, g: grp })); } catch (e) {} }
@@ -45,7 +45,8 @@
     return data.items.filter(function (i) {
       if (!i.geo || i.geo.la == null || i.geo.p === "province" || !inP(i.date)) return false;
       if (!HIT_KIND.test(String(i.kind || ""))) return false;
-      return TARGET.test([i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" "));
+      // the headline must name the target: a summary often lists air defence or depots in passing
+      return TARGET.test([i.title_en, i.title].filter(Boolean).join(" "));
     });
   }
 
@@ -171,7 +172,7 @@
       var bad = (f.sources || []).filter(function (s) { return s.ok === false; });
       h += '<p class="cfnote">Sites: <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a> (CC0) and <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL, © OpenStreetMap contributors), as recorded there; not every site is mapped and some listed sites may be closed or moved. ' +
         "A red ring means a report in this period names the site next to a word such as base or airfield: a machine match, not a finding that it was struck. " +
-        "Strike markers are this tab’s own reports whose words name a military target, placed where the report says, often the town. Reported, not verified; statements by a party are claims. " +
+        "Strike markers are this tab’s own reports whose headline names a military target, placed where the report says, often the town. Reported, not verified; statements by a party are claims. " +
         "Site lists re-read " + day(f.built) + "; reports matched " + esc(f.asof) + "." + (bad.length ? ' <span class="cfbad">Not reached last time: ' + bad.map(function (s) { return esc(s.id); }).join(", ") + " (the earlier list is kept).</span>" : "") + "</p>";
     }
     box.innerHTML = h;
@@ -179,7 +180,7 @@
   function open(cid, d) {
     if (id !== cid) { clear(); id = cid; }
     data = d; panel();
-    if (!on && !strikesOn) return;
+    if (!on && !strikesOn) { clear(); return; }
     if (file()) { panel(); draw(); return; }
     var p = pending[cid] || (pending[cid] = load(BASE + cid + ".js").then(null, function (e) { delete pending[cid]; throw e; }));
     draw();
