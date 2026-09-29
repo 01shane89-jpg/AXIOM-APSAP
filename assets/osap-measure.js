@@ -154,12 +154,11 @@
      behind the credits, so lift the bar above them whenever the two would overlap */
   var attr = map.getContainer().querySelector(".leaflet-control-attribution");
   function lift() {
-    card.style.marginBottom = "";
+    card.style.marginBottom = ""; card.style.width = "";
     if (!attr || !phoneMq.matches || card.hidden) return;
     var a = attr.getBoundingClientRect(), c = card.getBoundingClientRect();
     if (a.width && c.width && a.left < c.right && a.right > c.left && a.top < c.bottom && a.bottom > c.top) card.style.marginBottom = Math.ceil(c.bottom - a.top + 12) + "px";
     /* a short phone's side toolbar (osap-atak.js) can reach down beside the bar: stop the bar short of it so × stays tappable */
-    card.style.width = "";
     var tb = document.getElementById("atk-tools"), t = tb && tb.offsetParent ? tb.getBoundingClientRect() : null;
     c = card.getBoundingClientRect();
     if (tb && ro && !tb._measRo) { tb._measRo = 1; ro.observe(tb); }
