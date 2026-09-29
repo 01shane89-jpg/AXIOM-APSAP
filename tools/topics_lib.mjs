@@ -44,7 +44,7 @@ export function countriesNamed(countries, text) {
 export function compileRelevance(cfg, topics) {
   const flat = (o) => Object.values(o || {}).flat();
   const exempt = compileTopics((topics || []).filter((t) => t && t.relevance === "exempt").map((t) => ({ ...t, countries: [] })));
-  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)), exempt };
+  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)), exempt, native: new Set(cfg.native_langs || []) };
 }
 // returns "strong" | "keep" (kept) or "drop" | "none" (left out)
 export function relevance(R, text) {
@@ -62,8 +62,20 @@ export function itemRelevance(R, i) {
   const en = String(i.title_en || i.title || ""), orig = i.title && i.title !== en ? i.title : "";
   const rel = relevance(R, en + " \n " + orig + " \n " + String(i.summary_en || i.summary || "").slice(0, 400));
   if (rel !== "none") return rel;
+  // a language with its own word lists was already checked in its own words: nothing matched, so it is left out
+  if (R.native && R.native.has(baseLang(i.lang))) return "none";
   const latin = (en.match(/[A-Za-z]/g) || []).length, other = (en.match(/\p{L}/gu) || []).length - latin;
   return i.mt === "untranslated" || other > latin ? "unchecked" : "none";
+}
+const baseLang = (l) => String(l || "").toLowerCase().split(/[-_]/)[0];
+// Before translation (tools/refresh_news.mjs): true = keep the headline for now. An English headline, or one in a language with
+// its own word lists (relevance.json native_langs), is checked now on its own words; any other language waits for translation.
+export function preTranslation(R, i) {
+  const l = baseLang(i.lang);
+  if (l !== "en" && !(R.native && R.native.has(l))) return true;
+  if (l === "en" && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title || "")) return true;   // an "English" search result in another script
+  const rel = relevance(R, String(i.title || "") + " \n " + String(i.summary || "").slice(0, 400));
+  return rel === "strong" || rel === "keep";
 }
 export const kept = (rel) => rel === "strong" || rel === "keep" || rel === "unchecked";
 let _rel = null;
