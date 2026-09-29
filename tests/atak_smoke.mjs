@@ -89,7 +89,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // right side toolbar opens the Overlay Manager with the Layers panel inside
   await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#atk-om") && await p.evaluate(() => !!document.querySelector("#atk-om #ml-panel")), "phone: Overlay Manager opens holding the map layers");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ds [data-ds]").length > 3), "phone: Overlay Manager lists the data sets");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-om #ml-ds input, #atk-ds [data-ds]").length > 3), "phone: Overlay Manager lists the data sets");
   ok(/P1/.test(await p.textContent("#atk-marks")) && /NAI/.test(await p.textContent("#atk-marks")), "phone: Overlay Manager lists your point and NAI");
   if (OUT) await p.screenshot({ path: OUT + "/phone-overlays.png" });
   await p.click('#atk-om [data-om="x"]');

@@ -330,7 +330,9 @@
   var mlHome = null;
   function omPaint() {
     if (om.hidden) return;
-    /* data sets: the page's own tabs, pressed as before. The "Data sets as on/off toggles" change replaces this list. */
+    /* data sets: once the page has its own on/off checklist (window.OSAP_DATASETS, #ml-ds inside the Layers panel that this
+       sheet holds), that is the one list; until then the page's own tabs, pressed as before */
+    var dsSec = om.querySelector("#atk-ds").parentNode; dsSec.hidden = !!(W.OSAP_DATASETS && q("#ml-ds"));
     var ds = om.querySelector("#atk-ds"), btns = D.querySelectorAll("#view-seg button[data-view]");
     ds.innerHTML = Array.prototype.map.call(btns, function (b) {
       var v = b.getAttribute("data-view"), sel = b.getAttribute("aria-selected") === "true";
@@ -452,6 +454,11 @@
     paintTools(); syncBack(); }).observe(mapEl.querySelector(".leaflet-control-container") || mapEl, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class", "hidden"] });
   W.addEventListener("hashchange", function () { setTimeout(function () { ptDraw(); omPaint(); }, 300); });
   D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); });
+  /* the page's "No data sets on the map: Choose" note opens the Layers menu, which this toolbar holds in the Overlay Manager */
+  D.addEventListener("click", function (e) {
+    if (root.classList.contains("atak") && e.target.closest && e.target.closest("[data-dspick]")) { e.stopPropagation(); e.preventDefault(); omOpen(); }
+  }, true);
+  if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
   W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt };
 })();
