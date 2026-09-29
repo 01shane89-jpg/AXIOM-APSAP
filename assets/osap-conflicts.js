@@ -318,7 +318,13 @@
     map.createPane("cfarea"); map.getPane("cfarea").style.zIndex = 420;
     map.createPane("cfpane"); map.getPane("cfpane").style.zIndex = 660;
     panes = true;
+    // crossing the heat-map zoom redraws the events as heat or as dots
+    map.on("zoomend", function () { if (active && cur.data && F.show.ucdp && heatWanted(ucdpHeat.cnt) !== ucdpHeat.on) drawMap(); });
+    if (W.OSAP_HEAT) W.OSAP_HEAT.onChange(function () { if (active && cur.data) drawMap(); });
   }
+  // conflict events turn into a heat map below zoom HEATZ when DENSE or more are in the period (switch: Layers, Dense points)
+  var HEATZ = 8, DENSE = 150, ucdpHeat = { on: false, n: 0, left: 0, cnt: 0 };
+  function heatWanted(n) { return !!(W.OSAP_HEAT && W.OSAP_HEAT.on() && map && map.getZoom() < HEATZ && n >= DENSE); }
   function clearMap() { Object.keys(lyr).forEach(function (k) { if (map && lyr[k]) map.removeLayer(lyr[k]); }); lyr = {}; }
   var TYPEC = { 1: "#9E3118", 2: "#C2792B", 3: "#6B3FA0" }, TYPEN = { 1: "State-based fighting", 2: "Fighting between non-state groups", 3: "Violence against civilians" };
   function drawMap() {
@@ -359,11 +365,23 @@
         })).addTo(map);
       }
     }
+    ucdpHeat = { on: false, n: 0, left: 0, cnt: 0 };
     if (d && F.show.ucdp) {
-      lyr.ucdp = L.layerGroup((d.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); }).map(function (e) {
-        return L.circleMarker([e.lat, e.lon], { pane: "cfpane", radius: Math.min(3 + Math.sqrt(e.best || 0) * 1.4, 16), color: "#fff", weight: 1, fillColor: TYPEC[e.type] || "#9E3118", fillOpacity: 0.75 })
-          .bindPopup(ucdpHtml(e), { maxWidth: 320 });
-      })).addTo(map);
+      var uev = (d.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
+      // many events zoomed out: a heat map from each event's own position (assets/osap-heat.js); UCDP events placed only to a
+      // province or wider (precision 4+) are left out of it and come back as dots when zoomed in
+      if (heatWanted(uev.length)) {
+        var hp = [], left = 0;
+        uev.forEach(function (e) { if (e.prec >= 4) { left++; return; } hp.push([e.lat, e.lon, 1 + Math.log(1 + (e.best || 0)) / Math.LN10]); });
+        ucdpHeat = { on: true, n: hp.length, left: left, cnt: uev.length };
+        lyr.ucdp = W.OSAP_HEAT.layer({ pane: "cfpane", onTap: function (ll) { map.closePopup(); map.setView(ll, Math.min(map.getZoom() + 2, HEATZ)); } }).setData(hp).addTo(map);
+      } else {
+        ucdpHeat.cnt = uev.length;
+        lyr.ucdp = L.layerGroup(uev.map(function (e) {
+          return L.circleMarker([e.lat, e.lon], { pane: "cfpane", radius: Math.min(3 + Math.sqrt(e.best || 0) * 1.4, 16), color: "#fff", weight: 1, fillColor: TYPEC[e.type] || "#9E3118", fillOpacity: 0.75 })
+            .bindPopup(ucdpHtml(e), { maxWidth: 320 });
+        })).addTo(map);
+      }
     }
     if (d && F.show.rep) {
       lyr.rep = L.layerGroup(grouped(filtered()).filter(function (g) { return g.lead.geo && g.lead.geo.la != null; }).map(function (g) {
@@ -406,7 +424,9 @@
           return row(ctlColour(k), legendName(f, k) + " (" + num(cnt[k]) + ")", "", /^contested/.test(k)); }).join(""));
       }
     }
-    if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
+    if (ucdpHeat.on) h.push(W.OSAP_HEAT.legend("UCDP events", "Heat map of " + num(ucdpHeat.n) + " events, each where UCDP placed it; deadlier events weigh more." +
+      (ucdpHeat.left ? " " + num(ucdpHeat.left) + " placed only to a province or wider are left out here." : "") + " Zoom in or tap a hot area for each event."));
+    else if (d && F.show.ucdp && (d.ucdp || []).length) h.push("<h3>UCDP events</h3>" + [1, 2, 3].map(function (t) { return row(TYPEC[t], TYPEN[t]); }).join("") + '<div class="lg"><div><span class="d">Larger dot: more deaths (UCDP best estimate)</span></div></div>');
     if (d && F.show.rep && !d.auto) h.push("<h3>Reports</h3>" + row("#1D5A86", "News report", "Placed at the place it names; unverified") + row("#1D5A86", "News report, region only", "Pinned at the centre of the province it names", true));
     W.OSAP_LEGEND.set("cf", h.join(""), rail());
   }
