@@ -1,0 +1,35 @@
+# Sets sw.js VERSION on main after every push that changes the shell files (index.html, the manifest, assets/).
+# PRs keep main's VERSION (Check index.html enforces it), so open PRs no longer conflict with each other on that line.
+# The commit is pushed with the workflow token, so it does not start other workflows (and cannot loop).
+name: Set sw.js VERSION
+on:
+  push:
+    branches: [main]
+    paths: [index.html, manifest.webmanifest, "assets/**", sw.js]
+  workflow_dispatch:
+concurrency:
+  group: sw-version
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  set-version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: main
+      - name: Write VERSION and push (retries when a refresh job pushed first)
+        run: |
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            node tools/sw_version.mjs --hash
+            if git diff --quiet -- sw.js; then echo "sw.js VERSION already current"; exit 0; fi
+            git commit -q -m "Set sw.js VERSION" -- sw.js
+            git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
