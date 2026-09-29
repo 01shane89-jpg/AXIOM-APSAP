@@ -1,5 +1,5 @@
 {
- "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows). Re-probed 2026-09-28 against Shane's IED-watch source list (tools/probe_dsources.mjs): ISOC Region 4's own RSS (southpeace.go.th/?feed=rss2) and the Pattani and Yala provincial PR office home pages now answer; Isranews answers only as a page (its feeds are empty or error). Still unreachable from GitHub: Fourth Army (army4.rta.mi.th, timeout), Police Region 9 (timeout), Royal Thai Police and Police Region 9 investigations (403), the Narathiwat and Songkhla PR offices and province sites (empty pages), Yala province (403), SBPAC (page without links), Thai PBS, Thai PBS World and The Nation (bot-check pages), Thairath (403), MGR Online (404), Daily News (empty feed), State Railway (timeout), Royal Malaysia Police and Malaysia's foreign ministry (certificate errors). Their reporting is picked up through site-restricted and Thai/Malay news searches instead. 'tier' sets the IED-watch source tier (tools/deepsouth_lib.mjs markAlerts); 'html' reads a page's links (no dates: dated by first sighting, and the first sighting of a page is a baseline that never alerts). Added 2026-09-28 (Shane: missing incidents), each tested from GitHub's runners first: 18 more searches by incident type and province (Thai bombs, shootings of rangers and volunteers, arson, raids; English insurgency and bomb searches) and site searches for Daily News, MGR Online, Thai PBS and the Bangkok Post, whose own feeds cannot be read. Bing sometimes answers a burst of searches with an empty page, so a search that returns no feed is tried once more after a pause.",
+ "note": "Feeds for Thailand's Deep South (Pattani, Yala, Narathiwat and Songkhla's Chana, Thepha, Na Thawi and Saba Yoi districts), read by tools/refresh_deepsouth.mjs into the insurgency layer only. General national outlets (Bangkok Post and the rest of tools/news_feeds.json) are not fetched again: their Deep South items are taken from data/live/news.js. 'all': every item is about the Deep South (no place filter, still a security-word filter). 'search': a news search, read only if robots.txt allows it (aggregator results, nc). 'state': a government body's own statements (shown as claims). Tested from GitHub's runners on 2026-09-27 (PROBE=1). Dropped then: BenarNews (feeds empty; the outlet closed in 2025), Deep South Watch (RSS last updated 2022), Isranews, Thai PBS, The Nation, Thairath, Daily News, MGR Online, ISOC Region 4, SBPAC and thaigov.go.th (404, 403, empty or unreachable), and Google News (robots.txt disallows). Re-probed 2026-09-28 against Shane's IED-watch source list (tools/probe_dsources.mjs): ISOC Region 4's own RSS (southpeace.go.th/?feed=rss2) and the Pattani and Yala provincial PR office home pages now answer; Isranews answers only as a page (its feeds are empty or error). Still unreachable from GitHub: Fourth Army (army4.rta.mi.th, timeout), Police Region 9 (timeout), Royal Thai Police and Police Region 9 investigations (403), the Narathiwat and Songkhla PR offices and province sites (empty pages), Yala province (403), SBPAC (page without links), Thai PBS, Thai PBS World and The Nation (bot-check pages), Thairath (403), MGR Online (404), Daily News (empty feed), State Railway (timeout), Royal Malaysia Police and Malaysia's foreign ministry (certificate errors). Their reporting is picked up through site-restricted and Thai/Malay news searches instead. 'tier' sets the IED-watch source tier (tools/deepsouth_lib.mjs markAlerts); 'html' reads a page's links (no dates: dated by first sighting, and the first sighting of a page is a baseline that never alerts). Added 2026-09-28 (Shane: missing incidents), each tested from GitHub's runners first: 18 more searches by incident type and province (Thai bombs, shootings of rangers and volunteers, arson, raids; English insurgency and bomb searches) and site searches for Daily News, MGR Online, Thai PBS and the Bangkok Post, whose own feeds cannot be read. Bing sometimes answers a burst of searches with an empty page, so a search that returns no feed is tried once more after a pause. Added 2026-09-29 after Shane found recent incidents missing (probe run 36504907239): Bing's news search returns only about 12 results per query, ranked by relevance, so the province searches missed smaller incidents. Now also date-sorted province searches, one search per district ('คนร้าย' + district name, 26 districts; Mae Lan, Chana and Na Thawi returned nothing relevant), The Reporters' Deep South section feed and 77 Kaoded's border section feed.",
  "feeds": [
   {
    "id": "isoc4",
@@ -354,6 +354,277 @@
    "lang": "en",
    "search": true,
    "nc": true
+  },
+  {
+   "id": "bing-new-nara",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss&qft=sortbydate%3d%221%22",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-new-patt",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss&qft=sortbydate%3d%221%22",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-new-yala",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss&qft=sortbydate%3d%221%22",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-new-shot",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss&qft=sortbydate%3d%221%22",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-new-ranger",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99&format=rss&qft=sortbydate%3d%221%22",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-rueso",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B9%80%E0%B8%AA%E0%B8%B2%E0%B8%B0&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-rangae",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B0%E0%B9%81%E0%B8%87%E0%B8%B0&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-bacho",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B2%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-takbai",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%95%E0%B8%B2%E0%B8%81%E0%B9%83%E0%B8%9A&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-kolok",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B9%84%E0%B8%AB%E0%B8%87%E0%B9%82%E0%B8%81-%E0%B8%A5%E0%B8%81&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-choairong",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0%E0%B9%84%E0%B8%AD%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-sisakhon",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%A3&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-sukhirin",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B8%84%E0%B8%B4%E0%B8%A3%E0%B8%B4%E0%B8%99&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-chanae",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%88%E0%B8%B0%E0%B9%81%E0%B8%99%E0%B8%B0&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-yingo",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B5%E0%B9%88%E0%B8%87%E0%B8%AD&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-raman",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%B1%E0%B8%99&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-bannang",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%99%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%95%E0%B8%B2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-thanto",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B9%82%E0%B8%95&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-krongpinang",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%B4%E0%B8%99%E0%B8%B1%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-nongchik",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AB%E0%B8%99%E0%B8%AD%E0%B8%87%E0%B8%88%E0%B8%B4%E0%B8%81&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-yaring",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%AB%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-saiburi",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B2%E0%B8%A2%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-khokpho",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%82%E0%B8%84%E0%B8%81%E0%B9%82%E0%B8%9E%E0%B8%98%E0%B8%B4%E0%B9%8C&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-mayo",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A1%E0%B8%B2%E0%B8%A2%E0%B8%AD&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-yarang",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%A3%E0%B8%B1%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-panare",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9B%E0%B8%B0%E0%B8%99%E0%B8%B2%E0%B9%80%E0%B8%A3%E0%B8%B0&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-tyd",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%97%E0%B8%B8%E0%B9%88%E0%B8%87%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B9%81%E0%B8%94%E0%B8%87&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-kapho",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%B0%E0%B8%9E%E0%B9%89%E0%B8%AD&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-maikaen",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%84%E0%B8%A1%E0%B9%89%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-saba",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B0%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%A2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-d-thepha",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%B2&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "bing-thaipbs-nara",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "lang": "th",
+   "search": true,
+   "nc": true
+  },
+  {
+   "id": "kaoded-border",
+   "outlet": "77 Kaoded (border section)",
+   "url": "https://77kaoded.news/category/border/feed/",
+   "lang": "th",
+   "tier": "discovery"
+  },
+  {
+   "id": "reporters-ds",
+   "outlet": "The Reporters (Deep South section)",
+   "url": "https://www.thereporters.co/category/deepsouth/feed/",
+   "lang": "th",
+   "tier": "independent",
+   "all": true
   }
  ]
 }
