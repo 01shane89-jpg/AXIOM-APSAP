@@ -63,7 +63,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
-          if [ "$ONLY" = "sites" ]; then export SITES_FORCE=1; fi
+          if [ "$ONLY" = "sites" ]; then export SITES_FORCE=1 SITES_DEBUG=1; fi
           node tools/refresh_mil_sites.mjs
         timeout-minutes: 12
         continue-on-error: true
