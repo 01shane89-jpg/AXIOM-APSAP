@@ -5699,7 +5699,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     else if (v === current && l.curated) { if (on) curLayer.addTo(map); else map.removeLayer(curLayer); }
     if (current === "timeline") render();
     dsSync();
+    dsFns.forEach(function (f) { try { f(); } catch (e) {} });
   }
+  /* for other modules (the map controls' Overlay Manager): read and set the same choice */
+  var dsFns = [];
+  window.OSAP_DATASETS = {
+    list: function () { return dsList().map(function (l) { return { id: l.id, name: l.name, on: !!DS[l.id], open: l.id === current }; }); },
+    set: function (id, on) { if (dsList().some(function (l) { return l.id === id; })) { dsSet(id, !!on); dsUi(); } },
+    onChange: function (f) { if (typeof f === "function") dsFns.push(f); }
+  };
   /* the checklist at the top of the Layers menu, and a note on the map when the open tab's own set is not on it */
   var dsBox = document.createElement("div"), dsHint = document.createElement("div");
   dsBox.id = "ml-ds";
