@@ -120,7 +120,67 @@ const COV = [
   ["DS Nation south", "https://www.nationthailand.com/rss/thailand"],
   ["DS Thai PBS south", "https://www.thaipbs.or.th/rss/news/south.xml"],
 ];
-const LIST = process.env.PROBE_SET === "coverage" ? COV : C;
+// default probe also tries these candidates for recent Deep South incidents (2026-09-29): date-sorted searches, one search per district, Malay-language and outlet searches, section feeds
+const RECENT = [
+  ["R sorted: ชายแดนใต้", "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: นราธิวาส", "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: ปัตตานี", "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: ยะลา", "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: คนร้ายยิง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: ลอบวางระเบิด", "https://www.bing.com/news/search?q=%E0%B8%A5%E0%B8%AD%E0%B8%9A%E0%B8%A7%E0%B8%B2%E0%B8%87%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: ทหารพราน", "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99&format=rss&qft=sortbydate%3d%221%22"],
+  ["R sorted: ไฟใต้", "https://www.bing.com/news/search?q=%E0%B9%84%E0%B8%9F%E0%B9%83%E0%B8%95%E0%B9%89&format=rss&qft=sortbydate%3d%221%22"],
+  ["R district: คนร้าย รือเสาะ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B9%80%E0%B8%AA%E0%B8%B2%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย ระแงะ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B0%E0%B9%81%E0%B8%87%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย บาเจาะ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B2%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย ตากใบ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%95%E0%B8%B2%E0%B8%81%E0%B9%83%E0%B8%9A&format=rss"],
+  ["R district: คนร้าย สุไหงโก-ลก", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B9%84%E0%B8%AB%E0%B8%87%E0%B9%82%E0%B8%81-%E0%B8%A5%E0%B8%81&format=rss"],
+  ["R district: คนร้าย เจาะไอร้อง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0%E0%B9%84%E0%B8%AD%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%87&format=rss"],
+  ["R district: คนร้าย ศรีสาคร", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%A3&format=rss"],
+  ["R district: คนร้าย สุคิริน", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B8%84%E0%B8%B4%E0%B8%A3%E0%B8%B4%E0%B8%99&format=rss"],
+  ["R district: คนร้าย จะแนะ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%88%E0%B8%B0%E0%B9%81%E0%B8%99%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย ยี่งอ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B5%E0%B9%88%E0%B8%87%E0%B8%AD&format=rss"],
+  ["R district: คนร้าย รามัน", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%B1%E0%B8%99&format=rss"],
+  ["R district: คนร้าย บันนังสตา", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%99%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%95%E0%B8%B2&format=rss"],
+  ["R district: คนร้าย ธารโต", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B9%82%E0%B8%95&format=rss"],
+  ["R district: คนร้าย กรงปินัง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%B4%E0%B8%99%E0%B8%B1%E0%B8%87&format=rss"],
+  ["R district: คนร้าย หนองจิก", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AB%E0%B8%99%E0%B8%AD%E0%B8%87%E0%B8%88%E0%B8%B4%E0%B8%81&format=rss"],
+  ["R district: คนร้าย ยะหริ่ง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%AB%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%87&format=rss"],
+  ["R district: คนร้าย สายบุรี", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B2%E0%B8%A2%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5&format=rss"],
+  ["R district: คนร้าย โคกโพธิ์", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%82%E0%B8%84%E0%B8%81%E0%B9%82%E0%B8%9E%E0%B8%98%E0%B8%B4%E0%B9%8C&format=rss"],
+  ["R district: คนร้าย มายอ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A1%E0%B8%B2%E0%B8%A2%E0%B8%AD&format=rss"],
+  ["R district: คนร้าย ยะรัง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%A3%E0%B8%B1%E0%B8%87&format=rss"],
+  ["R district: คนร้าย ปะนาเระ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9B%E0%B8%B0%E0%B8%99%E0%B8%B2%E0%B9%80%E0%B8%A3%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย ทุ่งยางแดง", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%97%E0%B8%B8%E0%B9%88%E0%B8%87%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B9%81%E0%B8%94%E0%B8%87&format=rss"],
+  ["R district: คนร้าย กะพ้อ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%B0%E0%B8%9E%E0%B9%89%E0%B8%AD&format=rss"],
+  ["R district: คนร้าย ไม้แก่น", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%84%E0%B8%A1%E0%B9%89%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99&format=rss"],
+  ["R district: คนร้าย แม่ลาน", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%A5%E0%B8%B2%E0%B8%99&format=rss"],
+  ["R district: คนร้าย จะนะ", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%88%E0%B8%B0%E0%B8%99%E0%B8%B0&format=rss"],
+  ["R district: คนร้าย เทพา", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%B2&format=rss"],
+  ["R district: คนร้าย สะบ้าย้อย", "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B0%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%A2&format=rss"],
+  ["R malay: selatan Thailand tembak", "https://www.bing.com/news/search?q=selatan%20Thailand%20tembak&format=rss"],
+  ["R malay: wilayah selatan Thailand letupan", "https://www.bing.com/news/search?q=wilayah%20selatan%20Thailand%20letupan&format=rss"],
+  ["R malay: Narathiwat serangan", "https://www.bing.com/news/search?q=Narathiwat%20serangan&format=rss"],
+  ["R malay: site:bernama.com selatan Thailand", "https://www.bing.com/news/search?q=site%3Abernama.com%20selatan%20Thailand&format=rss"],
+  ["R malay: site:hmetro.com.my selatan Thailand", "https://www.bing.com/news/search?q=site%3Ahmetro.com.my%20selatan%20Thailand&format=rss"],
+  ["R malay: site:utusan.com.my selatan Thailand", "https://www.bing.com/news/search?q=site%3Autusan.com.my%20selatan%20Thailand&format=rss"],
+  ["R malay: site:bharian.com.my selatan Thailand", "https://www.bing.com/news/search?q=site%3Abharian.com.my%20selatan%20Thailand&format=rss"],
+  ["R site: site:isranews.org ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Aisranews.org%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["R site: site:thaipbs.or.th นราธิวาส", "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss"],
+  ["R site: site:thereporters.co deepsouth", "https://www.bing.com/news/search?q=site%3Athereporters.co%20deepsouth&format=rss"],
+  ["R site: site:77kaoded.news border", "https://www.bing.com/news/search?q=site%3A77kaoded.news%20border&format=rss"],
+  ["R site: site:hatyaifocus.com ชายแดนใต้", "https://www.bing.com/news/search?q=site%3Ahatyaifocus.com%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss"],
+  ["R site: site:nationthailand.com Narathiwat", "https://www.bing.com/news/search?q=site%3Anationthailand.com%20Narathiwat&format=rss"],
+  ["R site: site:benarnews.org Thailand south", "https://www.bing.com/news/search?q=site%3Abenarnews.org%20Thailand%20south&format=rss"],
+  ["R 77 Kaoded border feed", "https://77kaoded.news/border/feed/"],
+  ["R 77 Kaoded category border feed", "https://77kaoded.news/category/border/feed/"],
+  ["R 77 Kaoded crime feed", "https://77kaoded.news/crime/feed/"],
+  ["R The Reporters deepsouth feed", "https://www.thereporters.co/category/deepsouth/feed/"],
+  ["R Hatyai Focus feed", "https://www.hatyaifocus.com/feed/"],
+  ["R Thai PBS south page", "https://www.thaipbs.or.th/news/categories/south"],
+  ["R Isranews south page", "https://www.isranews.org/article/south-news.html"],
+];
+const LIST = process.env.PROBE_SET === "coverage" ? COV : C.concat(RECENT);
 const out = [];
 for (const [src, url] of LIST) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000), r0 = { src, url };
@@ -131,7 +191,7 @@ for (const [src, url] of LIST) {
     const items = parseFeed(body);
     if (items.length) {
       const ds = items.filter((i) => /^TK/.test(src) ? /Cambodia|Thai|กัมพูชา|ชายแดน|កម្ពុជា|ថៃ/i.test(i.title + " " + i.summary) : relevant({}, i.title + " " + i.summary));
-      Object.assign(r0, { items: items.length, newest: items.map((i) => { const d = new Date(i.date); return isNaN(d) ? "" : d.toISOString().slice(0, 16); }).sort().pop(), ds: ds.length, sample: (ds.length ? ds : items).slice(0, 3).map((i) => i.title.slice(0, 100)) });
+      Object.assign(r0, { d7: items.filter((i) => Date.now() - new Date(i.date) < 7 * 864e5).length, items: items.length, newest: items.map((i) => { const d = new Date(i.date); return isNaN(d) ? "" : d.toISOString().slice(0, 16); }).sort().pop(), ds: ds.length, sample: (ds.length ? ds : items).slice(0, 3).map((i) => i.title.slice(0, 100)) });
     } else if (/json/.test(r0.type)) {
       try { const j = JSON.parse(body); if (Array.isArray(j)) Object.assign(r0, { items: j.length, newest: (j[0] || {}).date || "", sample: j.slice(0, 3).map((x) => ((x.title || {}).rendered || "").slice(0, 100)) }); } catch (e) {}
     } else {
@@ -142,7 +202,7 @@ for (const [src, url] of LIST) {
   } catch (e) { r0.error = e.name === "AbortError" ? "timed out" : (e.cause && e.cause.code) || e.message; }
   clearTimeout(t);
   out.push(r0);
-  console.log((r0.error || r0.status >= 400 ? "FAIL " : "ok   ") + src.padEnd(26) + " " + (r0.error || r0.status + " " + r0.type + " " + r0.bytes + "b" + (r0.items ? " items " + r0.items + " newest " + r0.newest + " ds " + r0.ds : "") + (r0.ds_links != null ? " page ds-links " + r0.ds_links : "")) + "  " + url);
+  console.log((r0.error || r0.status >= 400 ? "FAIL " : "ok   ") + src.padEnd(26) + " " + (r0.error || r0.status + " " + r0.type + " " + r0.bytes + "b" + (r0.items ? " items " + r0.items + " (7d " + r0.d7 + ") newest " + r0.newest + " ds " + r0.ds : "") + (r0.ds_links != null ? " page ds-links " + r0.ds_links : "")) + "  " + url);
   (r0.sample || []).forEach((s) => console.log("        " + s));
   if (/bing\.com/.test(url)) await new Promise((r) => setTimeout(r, 1000));
 }
