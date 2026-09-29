@@ -151,7 +151,7 @@
       } else if (l instanceof L.Marker) {
         var m = l.getLatLng(); L2.push(l);
         if ((o.pane || "") === "atakpane") marks.push({ id: id, ll: m, n: o.title || "" });
-        else if (l._icon && icons.length < 400) icons.push({ id: id, ll: m, el: l._icon, z: paneZ(p) });
+        else if (l._icon && icons.length < 1500) icons.push({ id: id, ll: m, el: l._icon, z: paneZ(p) });
         else if (pts.length <= 20000) pts.push({ type: "Feature", id: id, properties: { c: "#0b7285", s: "#fff", w: 1.5, r: 6, fo: 1, i: 1, z: paneZ(p) }, geometry: { type: "Point", coordinates: [m.lng, m.lat] } });
       } else if (l instanceof L.Polyline) {
         var g = l.getLatLngs(); if (!g || !g.length) return;
@@ -191,6 +191,14 @@
     return libP;
   }
 
+  /* fetch the engine into this browser's cache while the app is idle, so the first press of 3D only has to start it
+     (skipped when the phone asks to save data) */
+  function preload() {
+    var c = navigator.connection; if (W.maplibregl || libP || (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || "")))) return;
+    [LIB + ".js", LIB + ".css"].forEach(function (u) { try { fetch(u, { credentials: "same-origin", priority: "low" }).catch(function () {}); } catch (e) {} });
+  }
+  W.addEventListener("load", function () { setTimeout(function () { (W.requestIdleCallback || setTimeout)(preload, { timeout: 8000 }); }, 5000); });
+
   /* ---------- the 3D view ---------- */
   var view3 = null;
   function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5 }; }
@@ -198,11 +206,39 @@
   var COMPASS = '<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="rgba(20,24,28,.86)" stroke="rgba(255,255,255,.35)"/>' +
     '<g class="o3-needle"><path d="M20 5l5 15h-10z" fill="#e03131"/><path d="M20 35l-5-15h10z" fill="#dee2e6"/><text x="20" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">N</text></g></svg>';
 
+  /* a thin bar over the 3D map while its tiles load, with how far along it is; when pictures keep failing it says so and
+     offers Try again (the same tiles asked for once more) */
+  function progress(gl, bar, gone) {
+    var want = {}, got = {}, bad = {}, nW = 0, nG = 0, nB = 0, t = 0;
+    function key(e) { return e.sourceId + "/" + (e.tile && e.tile.tileID ? e.tile.tileID.key : ""); }
+    gl.on("dataloading", function (e) { if (e.tile && e.sourceId && !want[key(e)]) { want[key(e)] = 1; nW++; kick(); } });
+    gl.on("data", function (e) { if (e.tile && e.sourceId && e.dataType === "source" && want[key(e)] && !got[key(e)]) { got[key(e)] = 1; nG++; kick(); } });
+    gl.on("error", function (e) { if (e && e.sourceId && e.tile && !bad[key(e)]) { bad[key(e)] = 1; nB++; kick(); } });
+    function kick() { if (!t) t = setTimeout(draw, 200); }
+    function draw() {
+      t = 0; if (gone()) return;
+      var done = gl.areTilesLoaded(), pct = nW ? Math.min(100, Math.round((nG + nB) / nW * 100)) : 0;
+      if (done && !nB) { bar.hidden = true; want = {}; got = {}; bad = {}; nW = nG = nB = 0; return; }
+      bar.hidden = false; bar.classList.toggle("err", nB > 2 && done);
+      bar.setAttribute("aria-valuenow", String(pct));
+      bar.firstChild.style.width = (done ? 100 : pct) + "%";
+      bar.lastChild.innerHTML = nB > 2 && done ? esc(nB + " map pictures did not load. ") + '<button type="button">Try again</button>' : esc("Loading 3D map " + pct + "%");
+      if (!done) kick();
+    }
+    bar.addEventListener("click", function (e) {
+      if (!e.target.closest("button")) return;
+      want = {}; got = {}; bad = {}; nW = nG = nB = 0; bar.classList.remove("err");
+      Object.keys(gl.getStyle().sources).forEach(function (id) { var s = gl.getSource(id); if (s && s.type !== "geojson" && gl.refreshTiles) try { gl.refreshTiles(id); } catch (x) {} });
+      kick();
+    });
+  }
+
   function open3d() {
     if (view3) return;
     var box = D.createElement("div");
     box.id = "o3d"; box.className = "leaflet-control"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "3D terrain view");
     box.innerHTML = '<div class="o3-map"></div><div class="o3-msg" role="status">Loading 3D…</div>' +
+      '<div class="o3-load" role="progressbar" aria-label="Loading the 3D map" aria-valuemin="0" aria-valuemax="100" hidden><i></i><span></span></div>' +
       '<div class="o3-side"><button type="button" class="o3-b o3-2d" title="Back to the flat map at this place" aria-label="Back to 2D">2D</button>' +
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + "</button>" +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
@@ -235,17 +271,23 @@
       if (dead) return;
       var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR];
       var style = { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#d9d4c7" } }],
-        sky: { "sky-color": "#6fa8dc", "horizon-color": "#dbe8f4", "fog-color": "#e8eef2", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.35, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
+        /* a deep blue sky fading to a pale horizon, and a light haze over distant ground, as the eye sees it */
+        sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
       var hillAt = 0;
       R.forEach(function (r, i) {
         style.sources["r" + i] = { type: "raster", tiles: r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
-        style.layers.push({ id: "r" + i, type: "raster", source: "r" + i, paint: { "raster-opacity": r.op, "raster-fade-duration": 150 } });
+        style.layers.push({ id: "r" + i, type: "raster", source: "r" + i, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } });
         if (r.base) hillAt = style.layers.length;
         if (r.attr && attrs.indexOf(r.attr) < 0) attrs.push(r.attr);
       });
-      style.sources.dem = { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 15, encoding: "terrarium" };
-      style.sources.hill = { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 15, encoding: "terrarium" };
-      style.layers.splice(hillAt || 1, 0, { id: "hill", type: "hillshade", source: "hill", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": "#3b3226", "hillshade-highlight-color": "#fffdf5" } });
+      /* the ground's shape needs far fewer elevation tiles than the shading does: the terrain source asks for each 256 px
+         tile as if it covered 512 px (a quarter of the downloads, a mesh still finer than the eye can tell at a tilt),
+         and the shading keeps full detail */
+      style.sources.dem = { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 14, encoding: "terrarium" };
+      var photo = R.some(function (r) { return r.base && /imagery|sentinel|s2cloudless|gibs|clarity/i.test(r.urls[0]); });
+      style.layers.splice(hillAt || 1, 0, { id: "hill", type: "hillshade", source: "dem", paint: { "hillshade-method": "multidirectional",
+        "hillshade-exaggeration": photo ? 0.3 : 0.55, "hillshade-shadow-color": photo ? "rgba(20,16,10,.55)" : "#473b2c", "hillshade-highlight-color": photo ? "rgba(255,250,235,.25)" : "#fffdf3",
+        "hillshade-accent-color": photo ? "rgba(0,0,0,0)" : "#5c4d3a" } });
       style.terrain = { source: "dem", exaggeration: P.ex };
       style.sources.vf = { type: "geojson", data: { type: "FeatureCollection", features: V.fills } };
       style.sources.vl = { type: "geojson", data: { type: "FeatureCollection", features: V.lines } };
@@ -257,7 +299,9 @@
         "circle-stroke-color": ["get", "s"], "circle-stroke-width": ["get", "w"], "circle-pitch-alignment": "viewport" } });
       try {
         gl = new ml.Map({ container: box.querySelector(".o3-map"), style: style, center: [c.lng, c.lat], zoom: Math.max(0, map.getZoom() - 1),
-          pitch: P.pitch, bearing: 0, maxPitch: 85, maxZoom: 19, attributionControl: false, canvasContextAttributes: { antialias: true } });
+          pitch: 0, bearing: 0, maxPitch: 85, maxZoom: 19, attributionControl: false, canvasContextAttributes: { antialias: true },
+          /* 2x is as sharp as a phone screen shows at arm's length; 3x screens would draw over twice the pixels for nothing */
+          pixelRatio: Math.min(W.devicePixelRatio || 1, 2), fadeDuration: 150 });
       } catch (e) {
         say("3D needs WebGL, which this browser or device has turned off. The flat map still works."); gl = null; return;
       }
@@ -296,6 +340,12 @@
       });
       gl.once("style.load", function () { if (!demErr) say(""); });
       gl.on("load", function () { paint(); drawSc(); });
+      /* it opens looking straight down, where the flat map's pictures are already in this browser, so something shows at
+         once; then it tilts to your angle and the ground rises while the rest loads */
+      var tilted = false;
+      function tiltIn() { if (tilted || dead) return; tilted = true; if (P.pitch > 0 && gl.getPitch() < 1) gl.easeTo({ pitch: P.pitch, duration: 1400 }); }
+      gl.once("idle", tiltIn); setTimeout(tiltIn, 2500);
+      progress(gl, box.querySelector(".o3-load"), function () { return dead; });
       /* credits sit behind an (i) button, so they never cover the scale bar and tilt slider */
       var cr = box.querySelector(".o3-cr"), crb = box.querySelector(".o3-crb");
       cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener\">MapLibre</a>";
@@ -303,7 +353,9 @@
       paint(); drawSc();
 
       /* symbols drawn as their own element in 2D (military symbols, Red Cross posts and the like): the same picture, standing on the ground */
-      V.icons.sort(function (a, b) { return a.z - b.z; }).forEach(function (m) {
+      /* only those around the view (an HTML element each is costly to move with the camera) */
+      var near = map.getBounds().pad(1.5);
+      V.icons.filter(function (m) { return near.contains(m.ll); }).slice(0, 150).sort(function (a, b) { return a.z - b.z; }).forEach(function (m) {
         var w = D.createElement("div"), k = m.el.cloneNode(true);
         w.className = "o3-ic"; k.style.transform = ""; k.style.left = "0"; k.style.top = "0"; k.style.position = "absolute"; k.removeAttribute("tabindex");
         w.appendChild(k);
@@ -363,6 +415,10 @@
     ".o3dctl a{font:700 13px/30px system-ui,sans-serif!important;color:#212529}html.atak #map .o3dctl{display:none}" +
     "#o3d{position:absolute!important;inset:0;z-index:1200;margin:0!important;float:none;background:#1b1f24;cursor:auto}" +
     "#o3d .o3-map{position:absolute;inset:0}" +
+    "#o3d .o3-load{position:absolute;left:0;right:0;top:0;z-index:3;height:22px;pointer-events:none}#o3d .o3-load[hidden]{display:none}" +
+    "#o3d .o3-load i{display:block;height:3px;width:0;background:#15aabf;transition:width .25s}" +
+    "#o3d .o3-load span{position:absolute;left:8px;top:6px;font:600 11.5px/1 system-ui,sans-serif;color:#fff;background:rgba(20,24,28,.78);padding:3px 7px;border-radius:9px;pointer-events:auto}" +
+    "#o3d .o3-load.err i{background:#e8590c}#o3d .o3-load span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer}" +
     "#o3d .o3-msg{position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
     "#o3d .o3-msg[hidden]{display:none}" +
     "#o3d .o3-side{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:6px;z-index:2;align-items:center}" +
