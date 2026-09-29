@@ -1144,7 +1144,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
           tile.src = (store && store[k]) || BLANK;
         });
       };
-      tile.alt = ""; tile.setAttribute("role", "presentation");
+      tile.alt = ""; tile.setAttribute("role", "presentation"); tile.fetchPriority = "high";   /* the base map before the data downloads */
       tile.src = this.getTileUrl(coords);
       return tile;
     }
@@ -1158,7 +1158,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     createTile: function (c, done) {
       var self = this, sz = this.getTileSize(), k = 0, tile = document.createElement("div"), img = document.createElement("img");
       tile.style.overflow = "hidden";
-      img.alt = ""; img.setAttribute("role", "presentation"); img.style.position = "absolute"; img.style.maxWidth = "none";
+      img.alt = ""; img.setAttribute("role", "presentation"); img.fetchPriority = "high"; img.style.position = "absolute"; img.style.maxWidth = "none";
       function load() {
         var f = 1 << k, p = { x: Math.floor(c.x / f), y: Math.floor(c.y / f), z: c.z - k };
         img.style.width = sz.x * f + "px"; img.style.height = sz.y * f + "px";

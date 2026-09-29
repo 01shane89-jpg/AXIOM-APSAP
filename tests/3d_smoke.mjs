@@ -36,10 +36,10 @@ async function run3d(name, p, errors, libs, openSel) {
   const before = await p.evaluate(() => { const m = window.__asapMap; m.setView([18.79, 98.98], 10, { animate: false }); return { c: m.getCenter(), z: m.getZoom() }; });
   await p.waitForTimeout(300);
   await p.click(openSel);
+  const flat0 = await p.waitForFunction(() => window.OSAP_3D.gl && { p: window.OSAP_3D.gl.getPitch() }, null, { timeout: 30000, polling: "raf" }).then((h) => h.jsonValue()).then((v) => v.p).catch(() => 99);
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.loaded && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
   ok(await shown(p, "#o3d .o3-map canvas"), name + ": 3D view opened with a WebGL canvas");
   ok(libs.some((u) => /maplibre-gl-5\.24\.0\.js$/.test(u)), name + ": 3D engine loaded from assets/vendor on demand");
-  const flat0 = await p.evaluate(() => window.OSAP_3D.gl.getPitch());
   ok(flat0 < 30, name + ": opens looking straight down first, where the 2D pictures are already loaded (" + flat0.toFixed(0) + "°)");
   await p.waitForFunction(() => window.OSAP_3D.gl.getPitch() > 55 && !window.OSAP_3D.gl.isMoving(), null, { timeout: 15000 }).catch(() => {});
   const g = await p.evaluate(() => { const gl = window.OSAP_3D.gl; const c = gl.getCenter(); return { lat: c.lat, lng: c.lng, z: gl.getZoom(), pitch: gl.getPitch(), terrain: !!gl.getTerrain(), sky: !!gl.getStyle().sky, hill: !!gl.getLayer("hill"),
@@ -106,6 +106,37 @@ async function run3d(name, p, errors, libs, openSel) {
   const { ctx, p, errors, libs } = await open({ viewport: { width: 1400, height: 900 } }, true);
   ok(await shown(p, ".o3dctl a"), "desktop classic: 3D button on the map");
   await run3d("desktop", p, errors, libs, ".o3dctl a");
+  await ctx.close();
+}
+// ---------- a busy imagery host: every picture is refused once (429), and there are no close-ups past zoom 9 (404) ----------
+{
+  const png = await readFile(join(root, "assets/icons/icon-192.png"));
+  const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
+  const seen = new Set(); let busy = 0, missing = 0;
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
+    const u = r.request().url(), m = /World_Imagery\/MapServer\/tile\/(\d+)\//.exec(u);
+    if (/elevation-tiles|terrarium/.test(u)) return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "image/png" }, body: png });
+    if (!m) return r.abort();
+    if (!seen.has(u)) { seen.add(u); busy++; return r.fulfill({ status: 429, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }
+    if (+m[1] > 9) { missing++; return r.fulfill({ status: 404, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }
+    return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "image/png" }, body: png });
+  });
+  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: "sat" })); localStorage.setItem("osap-mapsets-th", "[]"); } catch (e) {} });
+  const p = await ctx.newPage(), errors = []; p.on("pageerror", (e) => errors.push(e.message));
+  await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(2500);
+  await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([18.79, 98.98], 12, { animate: false }); });
+  await p.waitForTimeout(500);
+  await p.evaluate(() => { window.__t = { ok: 0, err: 0 }; window.OSAP_3D.open(); });
+  await p.waitForFunction(() => window.OSAP_3D.gl, null, { timeout: 30000 });
+  await p.evaluate(() => { const gl = window.OSAP_3D.gl; gl.on("data", (e) => { if (e.sourceId === "r0" && e.tile && e.dataType === "source") window.__t.ok++; }); gl.on("error", (e) => { if (e.sourceId === "r0") { window.__t.err++; window.__t.msg = String(e.error && e.error.message); } }); });
+  await p.waitForFunction(() => { const gl = window.OSAP_3D.gl; return gl.loaded() && gl.areTilesLoaded() && !gl.isMoving(); }, null, { timeout: 40000 }).catch(() => {});
+  await p.waitForTimeout(800);
+  const r = await p.evaluate(() => ({ t: window.__t, bar: document.querySelector("#o3d .o3-load").hidden, text: document.querySelector("#o3d .o3-load").textContent }));
+  ok(busy > 0 && missing > 0, "busy host: pictures were refused once (" + busy + ") and close-ups were missing (" + missing + ")");
+  ok(r.t.ok > 0 && r.t.err === 0, "busy host: every 3D picture still loaded, asked again or from a wider picture " + JSON.stringify(r.t));
+  ok(r.bar, "busy host: no error bar in 3D " + JSON.stringify(r.text));
+  ok(errors.length === 0, "busy host: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  if (OUT) await p.screenshot({ path: OUT + "/busy-3d.png" });
   await ctx.close();
 }
 await browser.close(); server.close();

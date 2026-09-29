@@ -45,3 +45,4 @@ jobs:
       - run: node tests/milsym_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
+      - run: node tests/speed_budget.mjs
