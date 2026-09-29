@@ -68,3 +68,6 @@ refresh: function () { dsUi(); }
 
 # map point icons: military symbols (2525D via milsymbol), shapes and pins (claude/mil-symbol-picker)
 <script src="assets/osap-milsym.js"></script>
+
+# workspaces, KML/KMZ import and export (claude/workspaces)
+<script src="assets/osap-ws.js"></script>
