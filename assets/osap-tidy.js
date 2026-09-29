@@ -5,7 +5,8 @@
    - One country picker on every screen size: the phone's grouped menu replaces the desktop's rows of region buttons, and
      "Add a country to this map" is its last entry. The activity-dot explanation moves into the picker's tooltip.
    - Reports (Country brief, Country report, Timeline report) and Settings (map colours, Credits) are two small menus in
-     place of six buttons; on a phone they sit behind More with the period.
+     place of six buttons. Settings is a gear icon. On a phone there is no More/Less: the gear sits beside the country
+     picker and its menu holds the period, the reports, map colours and credits (Shane 2026-09-29 12:04Z).
    - One data freshness badge: the flood line under the header is gone on every view (the Flood panel keeps its own
      time, Live/Snapshot badge and Refresh now), and the list's own "Data ... / Refresh now" moves into the badge's panel.
    - On a phone the map credits fold to a small "i" (tap to read them).
@@ -71,22 +72,55 @@
     var b = D.createElement("button"); b.type = "button"; b.id = id; b.className = "refresh tidybtn"; b.textContent = label; b.title = t;
     b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false"); return b;
   }
-  var rep = mk("tidy-rep", "Reports", "Country brief, country report and timeline report"), set = mk("tidy-set", "Settings", "Map colours and credits");
+  var rep = mk("tidy-rep", "Reports", "Country brief, country report and timeline report"), set = mk("tidy-set", "", "Settings: map colours and credits");
+  set.setAttribute("aria-label", "Settings");
+  set.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+  set.classList.add("tidygear");
   var anchor = q("#credits-btn") || q("#hdr-src");
   if (anchor) { anchor.parentNode.insertBefore(rep, anchor); anchor.parentNode.insertBefore(set, anchor); } else { hdr.appendChild(rep); hdr.appendChild(set); }
+  /* phone: no More/Less; the gear sits beside the country picker (it goes back beside Reports on a wider screen) */
+  var setHome = D.createComment("tidy-set"); set.parentNode.insertBefore(setHome, set);
+  var per = q("#period-seg"), perHome = D.createComment("period-seg"); if (per) per.parentNode.insertBefore(perHome, per);
+  function place() {
+    var nav = q("#phone-nav"), more = q("#ph-more");
+    if (phone() && nav) { if (set.parentNode !== nav) nav.insertBefore(set, more || null); }
+    else if (set.parentNode !== setHome.parentNode) setHome.parentNode.insertBefore(set, setHome.nextSibling);
+  }
+  function perBack() { if (per && per.parentNode !== perHome.parentNode) perHome.parentNode.insertBefore(per, perHome.nextSibling); }
+  function perLabel() {
+    var b = per && per.querySelector("button[aria-pressed=true],button.on,button[aria-current=true]");
+    set.title = phone() ? "Settings: period" + (b ? " (now " + b.textContent.trim() + ")" : "") + ", reports, map colours and credits" : "Settings: map colours and credits";
+  }
+  place(); perLabel();
+  if (per && W.MutationObserver) new MutationObserver(perLabel).observe(per, { attributes: true, subtree: true });
+  W.addEventListener("resize", function () { place(); perLabel(); });
+  if (root.classList.contains("hdr-open")) press("#ph-more");
   var popFor = null;
   function popClose() {
     if (!popFor) return;
-    popFor.setAttribute("aria-expanded", "false"); popFor = null; pop.hidden = true;
+    popFor.setAttribute("aria-expanded", "false"); popFor = null; pop.hidden = true; perBack();
   }
   function popOpen(btn) {
     popClose();
+    var items;
     if (btn === rep) {
-      var items = [["#brief-btn", "Country brief", "One page to print or save as PDF"], ["#report-btn", "Country report", "PMESII summary and threat assessment (AI draft)"], ["#tlrep-btn", "Timeline report", "The timeline as it is filtered now"]];
+      items = [["#brief-btn", "Country brief", "One page to print or save as PDF"], ["#report-btn", "Country report", "PMESII summary and threat assessment (AI draft)"], ["#tlrep-btn", "Timeline report", "The timeline as it is filtered now"]];
       pop.innerHTML = items.filter(function (it) { var b = q(it[0]); return b && !b.hidden; }).map(function (it) {
         return '<button type="button" role="menuitem" data-tp="' + it[0] + '"><b>' + esc(it[1]) + "</b><span>" + esc(it[2]) + "</span></button>";
       }).join("") || '<p class="tpnone">No reports for this view.</p>';
-    } else { pop.innerHTML = ""; pop.appendChild(setBox); }
+    } else {
+      pop.innerHTML = "";
+      if (phone()) {
+        /* the phone gear also holds what used to sit behind More: the period and the reports */
+        if (per) { var pl = D.createElement("div"); pl.className = "tplbl"; pl.textContent = "Period"; pop.appendChild(pl); pop.appendChild(per); }
+        items = [["#brief-btn", "Country brief"], ["#report-btn", "Country report"], ["#tlrep-btn", "Timeline report"]].filter(function (it) { var b = q(it[0]); return b && !b.hidden; });
+        if (items.length) {
+          var rl = D.createElement("div"); rl.className = "tplbl"; rl.textContent = "Reports"; pop.appendChild(rl);
+          items.forEach(function (it) { var b = D.createElement("button"); b.type = "button"; b.setAttribute("role", "menuitem"); b.setAttribute("data-tp", it[0]); b.innerHTML = "<b>" + esc(it[1]) + "</b>"; pop.appendChild(b); });
+        }
+      }
+      pop.appendChild(setBox);
+    }
     pop.hidden = false; popFor = btn; btn.setAttribute("aria-expanded", "true");
     var r = btn.getBoundingClientRect(), w = pop.offsetWidth;
     pop.style.top = Math.round(r.bottom + 4) + "px";
@@ -96,12 +130,16 @@
   pop.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-tp]"); if (!b) return;
     var sel = b.getAttribute("data-tp"); popClose();
-    if (phone() && root.classList.contains("hdr-open")) press("#ph-more");
     press(sel);
+  });
+  /* picking a period in the gear menu closes it so the map shows the new set of points (Custom stays open for its dates) */
+  if (per) per.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-p]");
+    if (b && per.parentNode === pop && b.getAttribute("data-p") !== "custom") setTimeout(popClose, 0);
   });
   D.addEventListener("pointerdown", function (e) { if (popFor && !pop.contains(e.target) && !popFor.contains(e.target)) popClose(); }, true);
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && popFor) { var b = popFor; popClose(); b.focus(); } });
-  W.addEventListener("resize", popClose);
+  W.addEventListener("resize", function () { if (popFor && popFor.getBoundingClientRect().width === 0) popClose(); });
 
   /* ---------- one freshness badge: the list's own read time and Refresh now live in its panel ---------- */
   function asof() { var a = q("#rv-asof"); return a ? a.textContent.trim() : ""; }
@@ -163,7 +201,11 @@
     "html.tidy header .xabar.xa-open{display:flex!important}html.tidy header .xabar.xa-open select{display:inline-block!important}" +
     "html.tidy:not(.phone) header .xabar{flex:0 1 auto}" +
     /* Reports and Settings */
-    "html.phone:not(.hdr-open) .tidybtn{display:none!important}" +
+    "html.phone.tidy #ph-more,html.phone.tidy #tidy-rep{display:none!important}" +
+    ".tidygear{display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;min-width:36px}.tidygear svg{display:block}" +
+    "html.phone.tidy #phone-nav .tidygear{flex:0 0 auto;min-width:44px;min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}" +
+    "html.phone.tidy #phone-nav .tidygear[aria-expanded=true]{background:var(--ink);color:var(--surface)}" +
+    "#tidy-pop #period-seg{display:flex!important;flex-wrap:wrap;gap:4px;margin:0 10px 6px}#tidy-pop #period-seg .plbl{display:none}" +
     "#tidy-pop{position:fixed;z-index:4000;min-width:220px;max-width:calc(100vw - 16px);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:6px;display:flex;flex-direction:column;gap:2px}#tidy-pop[hidden]{display:none}" +
     "#tidy-pop [data-tp]{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:6px;padding:8px 10px;color:var(--ink);cursor:pointer;min-height:40px}" +
     "#tidy-pop [data-tp]:hover,#tidy-pop [data-tp]:focus-visible{background:var(--accent-soft,rgba(0,0,0,.06))}#tidy-pop [data-tp] span{font-size:12px;color:var(--muted)}" +

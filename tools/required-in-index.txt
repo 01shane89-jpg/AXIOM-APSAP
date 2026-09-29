@@ -73,3 +73,6 @@ function setShade(k, on) {
 # loading bar and failed-tile notice on the flat map (claude/3d-speed); hidden watch-check frames load no map tiles
 <script src="assets/osap-maploading.js"></script>
 if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
+
+# workspaces, KML/KMZ import and export (claude/workspaces)
+<script src="assets/osap-ws.js"></script>
