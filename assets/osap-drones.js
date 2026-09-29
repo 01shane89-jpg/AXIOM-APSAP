@@ -31,8 +31,8 @@
 
   function load(force) {
     if (busy) return; busy = true;
-    // one address per minute, so the CDN's five-minute copy is skipped without asking for a new file on every tap
-    var u = URL_ + "?m=" + Math.floor(Date.now() / 60e3);
+    // raw.githubusercontent.com keeps each file for up to five minutes whatever the query, so a new file shows within about 5 min
+    var u = URL_;
     var ctl = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
     fetch(u, ctl ? { signal: ctl.signal, cache: force ? "no-store" : "default" } : {}).then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
@@ -124,7 +124,7 @@
     if (D.getElementById("ml-air")) return true;
     var d = D.createElement("div"); d.id = "ml-air";
     d.innerHTML = '<div class="mlh">Live aircraft</div>' +
-      '<label class="mlrow"><input type="checkbox" data-air="uav"' + (ON.uav ? " checked" : "") + '><span><b>Drones in the air</b><i>Unmanned aircraft broadcasting ADS-B, live from adsb.lol, updated every 2 minutes</i></span></label>' +
+      '<label class="mlrow"><input type="checkbox" data-air="uav"' + (ON.uav ? " checked" : "") + '><span><b>Drones in the air</b><i>Unmanned aircraft broadcasting ADS-B, from adsb.lol. Refreshed every 2 minutes; positions reach the map a few minutes late</i></span></label>' +
       '<label class="mlrow"><input type="checkbox" data-air="mil"' + (ON.mil ? " checked" : "") + '><span><b>Other military aircraft</b><i>Aircraft the aggregators list as military, same feed</i></span></label>' +
       '<p class="mlkey" id="air-st"></p><div id="air-list"></div>' +
       '<p class="mlkey">Only aircraft that broadcast ADS-B appear. Most military drones fly with it switched off, and small drones (Remote ID) are in no public feed, so an empty map does not mean no drones. Positions are reported, not verified.</p>';
