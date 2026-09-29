@@ -346,7 +346,8 @@
         var zoned = (f.current.areas.features || []).some(function (x) { return x.properties && x.properties.name; });
         lyr.area = L.geoJSON(f.current.areas, { pane: "cfarea", style: function (x) {
           var p = x.properties || {}, col = /^#[0-9a-f]{3,8}$/i.test(p.col || "") ? p.col : null, th = p.ctl === "threat";
-          return col ? { color: col, weight: 1.4, dashArray: th ? "6 4" : null, fillColor: col, fillOpacity: th ? 0.06 : 0.16 } : { color: "#9E3118", weight: 1.4, fillColor: "#C0392B", fillOpacity: 0.22 };
+          // an area of control in the DeepState style: one flat red fill and a crisp darker edge, which reads as the front line
+          return col ? { color: col, weight: 1.4, dashArray: th ? "6 4" : null, fillColor: col, fillOpacity: th ? 0.06 : 0.16 } : { color: "#A31515", weight: 2, opacity: 0.95, fillColor: "#D7372E", fillOpacity: 0.36, lineJoin: "round" };
         }, onEachFeature: zoned ? function (x, l) {
           var p = x.properties || {};
           var rs = (p.reports || []).slice(0, 5);
@@ -448,7 +449,7 @@
         if (feats.some(function (x) { return x.properties && x.properties.name; })) {
           h.push("<h3>Zones (reported, not verified)</h3>");
           feats.forEach(function (x) { var p = x.properties || {}, k = p.ctl + "|" + p.col; if (seen[k]) return; seen[k] = 1; h.push(sq(/^#[0-9a-f]{3,8}$/i.test(p.col || "") ? p.col : "#C0392B", AREAN[p.ctl] || p.ctl || "Area", "", p.ctl === "threat")); });
-        } else h.push("<h3>Front line</h3>" + sq("#C0392B", Object.keys(cu.km2 || {})[0] || "Area of control", "As " + srcName(f, cu.source) + " shows it; reported, not verified"));
+        } else h.push("<h3>Front line</h3>" + sq("#D7372E", Object.keys(cu.km2 || {})[0] || "Area of control", "As " + srcName(f, cu.source) + " shows it; reported, not verified"));
         if (F.show.prev && f.previous) h.push('<div class="lg"><span class="sw" style="background:transparent;border:1.5px dashed #555"></span><div>Previous version</div></div>');
       } else if (cu.kind === "places") {
         var cnt = {}; (cu.places || []).forEach(function (p) { cnt[p.ctl] = (cnt[p.ctl] || 0) + 1; });
