@@ -50,3 +50,6 @@ function openRec(id) { if (!(window.ASAP_PHONE && window.ASAP_PHONE.on())) setVi
 
 # drawn-area summary (assets/osap-areasum.js reads it)
 window.TSAP.areaApi
+
+# ATAK-style map controls (claude/atak-controls)
+<script src="assets/osap-atak.js"></script>
