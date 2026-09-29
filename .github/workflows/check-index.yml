@@ -41,3 +41,5 @@ jobs:
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/points_smoke.mjs
+      - run: node tests/3d_smoke.mjs
+      - run: node tests/milsym_smoke.mjs
