@@ -72,7 +72,7 @@ for (const d of days) {
 for (const f of fs.readdirSync(DIR)) if (/\.js$/.test(f) && !byDay[f.slice(0, -3)]) fs.rmSync(DIR + "/" + f);
 const out = { asof: stamp, days: days.map((d) => ({ d, n: byDay[d].length })), fields: ["cc", "date", "title", "orig", "outlet", "link", "summary", "flags", "topics", "views"],
   flags: { s: "news search result", n: "non-commercial terms", g: "state media", m: "machine translated" },
-  topics: T.map((t) => ({ id: t.id, name: t.name, words: (topics.find((x) => x.id === t.id) || {}).words || [], n: count[t.id] || 0 })),
+  topics: T.map((t) => ({ id: t.id, name: t.name, words: (topics.find((x) => x.id === t.id) || {}).words || [], n: count[t.id] || 0, ...(t.cc.size ? { countries: [...t.cc] } : {}) })),
   views: V.map((v) => ({ id: v.id, n: vcount[v.id] || 0 })),
   relevance: { kept: (relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0), left_out: (relN.drop || 0) + (relN.none || 0) } };
 fs.writeFileSync(OUT, "window.OSAP_NEWSIX=" + JSON.stringify(out).replace(/<\//g, "<\\/") + ";\n");
