@@ -28,8 +28,8 @@ const readCf = (id) => {
   return p;
 };
 
-async function post(url, body, accept) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+async function post(url, body, accept, ms) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms || TIMEOUT);
   try {
     const r = await fetch(url, { method: "POST", signal: ctl.signal, body, headers: { "user-agent": UA, accept, "content-type": "application/x-www-form-urlencoded" } });
     if (!r.ok) throw new Error("HTTP " + r.status);
@@ -114,7 +114,7 @@ async function overpass(q) {
   for (const u of OVERPASS.slice(0, 2)) {
     if (Date.now() - NOW > BUDGET_MS) throw new Error("out of time");
     try {
-      const j = await post(u, "data=" + encodeURIComponent(q), "application/json");
+      const j = await post(u, "data=" + encodeURIComponent(q), "application/json", 75000);
       // Overpass answers 200 with a "remark" when the query ran out of time or memory: that is a failure, not "none found"
       if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error(String(j.remark).slice(0, 120));
       return j;
@@ -122,16 +122,16 @@ async function overpass(q) {
   }
   throw last;
 }
-// a large map area is asked for in tiles of at most 8 by 8 degrees
+// a large map area is asked for in tiles of at most 6 by 6 degrees
 function tiles(bounds) {
-  const [[s, w], [n, e]] = bounds, out = [], st = 8;
+  const [[s, w], [n, e]] = bounds, out = [], st = 6;
   for (let a = s; a < n; a += st) for (let b = w; b < e; b += st) out.push([a, b, Math.min(a + st, n), Math.min(b + st, e)]);
   return out;
 }
 async function osm(c) {
   const els = [];
   for (const [s, w, n, e] of tiles(c.bounds)) {
-    const q = `[out:json][timeout:90];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
+    const q = `[out:json][timeout:60];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
     els.push(...((await overpass(q)).elements || []));
     await sleep(1500);
   }
@@ -179,49 +179,51 @@ if (!PROBE) fs.mkdirSync(OUT, { recursive: true });
 const STATE_F = OUT + "/_state.json";
 let state = {}; try { state = JSON.parse(fs.readFileSync(STATE_F, "utf8")); } catch (e) {}
 const probe = {};
-// the conflicts whose lists are oldest go first, so a run that runs out of time picks up where the last one stopped
 const ALLCC = [...new Set(CFG.conflicts.flatMap((c) => c.countries))];
+const age = (t) => (t ? (NOW - Date.parse(String(t).replace(" ", "T"))) / 864e5 : Infinity);
+const saveState = () => { if (!PROBE) fs.writeFileSync(STATE_F, JSON.stringify(state, null, 1) + "\n"); };
+// Wikidata answers every conflict in one query, so its part is re-read for all due conflicts at once. OpenStreetMap is asked
+// one conflict at a time, oldest first, within the time budget; once Overpass fails in a run it is not asked again until the
+// next run, and each conflict keeps its last OpenStreetMap list meanwhile.
 const order = CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.includes(c.id)))
-  .sort((a, b) => String((state[a.id] || {}).built || "").localeCompare(String((state[b.id] || {}).built || "")));
+  .sort((a, b) => String((state[a.id] || {}).osm || "").localeCompare(String((state[b.id] || {}).osm || "")));
+let osmDown = "";
 for (const c of order) {
-  const file = OUT + "/" + c.id + ".js", prev = readJs(file), st = state[c.id] || {};
-  const due = Date.now() - NOW < BUDGET_MS && (FORCE || PROBE || !prev || !st.built || (NOW - Date.parse(st.built.replace(" ", "T"))) / 864e5 >= REFETCH_DAYS);
+  const file = OUT + "/" + c.id + ".js", prev = readJs(file), st = state[c.id] || (state[c.id] = {});
   // the last list without its report matches (worked out again below)
-  let sites = (prev?.sites || []).map(({ m, ...s }) => s), sources = (prev?.sources || []).filter((s) => s.id !== "kept");
-  if (due) {
-    const src = [], wd = [], om = [];
-    try { const r = await wikidata(c, ALLCC); wd.push(...r); src.push({ id: "wikidata", ok: true, n: r.length }); }
-    catch (e) { src.push({ id: "wikidata", ok: false, error: errMsg(e) }); }
-    await sleep(1500);
-    try { const r = await osm(c); om.push(...r); src.push({ id: "osm", ok: true, n: r.length }); }
-    catch (e) { src.push({ id: "osm", ok: false, error: errMsg(e) }); }
-    await sleep(2000);
-    const allFailed = src.every((s) => !s.ok);
-    if (PROBE) {
-      const cls = {}; wd.forEach((s) => s.cls.forEach((x) => (cls[x] = (cls[x] || 0) + 1)));
-      probe[c.id] = { src, wdClasses: cls, wdSample: wd.slice(0, 5), osmSample: om.slice(0, 5), merged: merge(c, wd, om).length };
-      console.log(c.id, JSON.stringify(src));
-      continue;
-    }
-    // a source that failed keeps its part of the last good list
-    if (!allFailed) {
-      const wdOk = src.find((s) => s.id === "wikidata").ok, osmOk = src.find((s) => s.id === "osm").ok;
-      if (!wdOk) wd.push(...sites.filter((s) => s.wd).map((s) => ({ qid: s.wd, n: s.n, la: s.la, lo: s.lo, cc: s.cc, cls: s.cls ? s.cls.split(", ") : [], w: s.w || "", k: s.k })));
-      if (!osmOk) om.push(...sites.filter((s) => s.osm && !s.wd).map((s) => ({ osm: s.osm, n: s.n, n2: s.n2, la: s.la, lo: s.lo, cc: s.cc, k: s.k, op: s.op || "" })));
-      sites = merge(c, wd, om); sources = src; state[c.id] = { built: stamp, n: sites.length };
-    } else sources = src.concat([{ id: "kept", ok: true, note: "all sources failed; last good list kept" }]);
+  const old = (prev?.sites || []).map(({ m, ...s }) => s);
+  const src = Object.fromEntries((prev?.sources || []).filter((x) => x.id === "wikidata" || x.id === "osm").map((x) => [x.id, x]));
+  let wd = null, om = null;
+  if (FORCE || PROBE || age(st.wd) >= REFETCH_DAYS) {
+    try { wd = await wikidata(c, ALLCC); src.wikidata = { id: "wikidata", ok: true, n: wd.length, at: stamp }; st.wd = stamp; }
+    catch (e) { src.wikidata = { id: "wikidata", ok: false, error: errMsg(e), at: stamp }; }
   }
-  if (PROBE) continue;
-  if (!prev && !due) continue;   // out of time before this conflict's first list: next run
+  if ((FORCE || PROBE || age(st.osm) >= REFETCH_DAYS) && !osmDown && Date.now() - NOW < BUDGET_MS) {
+    try { om = await osm(c); src.osm = { id: "osm", ok: true, n: om.length, at: stamp }; st.osm = stamp; }
+    catch (e) { osmDown = errMsg(e); src.osm = { id: "osm", ok: false, error: osmDown, at: stamp }; }
+  }
+  if (PROBE) {
+    const cls = {}; (wd || []).forEach((x) => x.cls.forEach((k) => (cls[k] = (cls[k] || 0) + 1)));
+    probe[c.id] = { src, wdClasses: cls, wdSample: (wd || []).slice(0, 5), osmSample: (om || []).slice(0, 5), merged: merge(c, wd || [], om || []).length };
+    console.log(c.id, JSON.stringify(src));
+    continue;
+  }
+  // a part not re-read (or that failed) is taken from the last list
+  if (!wd) wd = old.filter((x) => x.wd).map((x) => ({ qid: x.wd, n: x.n, n2: x.n2, la: x.la, lo: x.lo, cc: x.cc, cls: x.cls ? x.cls.split(", ") : [], w: x.w || "", k: x.k }));
+  if (!om) om = old.filter((x) => x.osm).map((x) => ({ osm: x.osm, n: x.n, n2: x.n2, la: x.la, lo: x.lo, cc: x.cc, k: x.k, op: x.op || "", wd: x.wd || "" }));
+  const sites = merge(c, wd, om);
+  if (!sites.length && !prev && !src.wikidata?.ok && !src.osm?.ok) { saveState(); continue; }   // nothing yet: next run
+  st.n = sites.length; st.built = [st.wd, st.osm].filter(Boolean).sort().pop() || "";
   const d = readCf(c.id), hits = mentions(c, sites, (d && d.items) || []);
   const data = {
-    schema: "osap-cf-sites/1", id: c.id, asof: stamp, built: state[c.id]?.built || "",
+    schema: "osap-cf-sites/1", id: c.id, asof: stamp, built: st.built,
     note: "Military sites as the named public sources record them (Wikidata, OpenStreetMap): reported, not verified. Positions are the sources' own. A site on this list is not a target or a finding; 'named in reports' is a machine match of the site's name in this conflict's reports.",
     licences: { wikidata: "CC0", osm: "ODbL 1.0, © OpenStreetMap contributors" },
-    sources, sites: sites.map((s, i) => (hits[i] ? { ...s, m: hits[i] } : s))
+    sources: Object.values(src), sites: sites.map((x, i) => (hits[i] ? { ...x, m: hits[i] } : x))
   };
   fs.writeFileSync(file, "(window.OSAP_CF_SITES=window.OSAP_CF_SITES||{})[" + JSON.stringify(c.id) + "]=" + JSON.stringify(data).replace(/<\//g, "<\\/") + ";\n");
-  console.log("sites", c.id.padEnd(22), String(sites.length).padStart(5), "named in reports:", Object.keys(hits).length, due ? "(lists re-read: " + sources.map((s) => s.id + ":" + (s.ok ? s.n ?? "ok" : s.error)).join(" ") + ")" : "");
+  saveState();
+  console.log("sites", c.id.padEnd(22), String(sites.length).padStart(5), "named in reports:", String(Object.keys(hits).length).padStart(3), " ", Object.values(src).map((x) => x.id + ":" + (x.ok ? x.n : x.error) + (x.at === stamp ? "" : " (kept)")).join(" "));
 }
 if (PROBE) { fs.mkdirSync("probe-out", { recursive: true }); fs.writeFileSync("probe-out/mil_sites.json", JSON.stringify(probe, null, 1)); }
-else fs.writeFileSync(STATE_F, JSON.stringify(state, null, 1) + "\n");
+if (osmDown) console.log("Overpass failed this run (" + osmDown + "); the conflicts not reached keep their last OpenStreetMap list and are tried next run.");
