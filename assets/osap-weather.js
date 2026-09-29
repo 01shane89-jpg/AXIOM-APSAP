@@ -1402,6 +1402,7 @@
       if (on) LYR[k] = l.make(opOf(k, l.op)).addTo(map);
     }
     var row = document.querySelector('.wxrow[data-wxrow="' + k + '"]'); if (row) row.classList.toggle("on", !!on);
+    var cb = document.querySelector('#ml-wx input[data-wxl="' + k + '"]'); if (cb && cb.checked !== !!on) cb.checked = !!on;
     legendDraw();
   }
   function setOp(k, v) {
@@ -1536,8 +1537,8 @@
     });
     mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
     mountSection(); mountPanel();
-    /* restore layers switched on last time (flood rows follow the page's own setting) */
-    LAY.forEach(function (l) { if (!l.mirror && LS[l.k]) setLayer(l.k, true); });
+    /* weather layers start off, like every other map extra (the page switches them off on start and on each tab change);
+       the analyst ticks the ones wanted in the Layers menu */
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();

@@ -358,7 +358,7 @@
   om.addEventListener("click", function (e) {
     var t = e.target, b;
     if (t.closest("[data-om=x]")) { omClose(); return; }
-    if ((b = t.closest("[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
+    if ((b = t.closest(".atk-dsb[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
     if ((b = t.closest("[data-mk-del]"))) { var id = b.getAttribute("data-mk-del"); ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); return; }
     if ((b = t.closest("[data-mk-go]"))) { var p = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-go"); })[0]; if (p) { if (phone()) omClose(); map.setView([p.lat, p.lon], Math.max(map.getZoom(), 12)); } return; }
     if ((b = t.closest("[data-aoi-go]"))) { if (W.OSAP_AOI) { omClose(); W.OSAP_AOI.open(b.getAttribute("data-aoi-go")); } return; }
