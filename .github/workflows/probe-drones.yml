@@ -1,0 +1,16 @@
+# Test only: checks the free, no-key ADS-B hosts for the live drones layer. Prints to the log; writes nothing to the repo.
+name: Probe drone hosts
+on:
+  push:
+    branches: [claude/live-drones]
+    paths: [tools/probe_drones.sh, .github/workflows/probe-drones.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_drones.sh
