@@ -24,7 +24,7 @@
 
   var CSS = ".tdday{grid-column:1/-1;text-align:left}.tdday .dlhead{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}.tdday h2{margin:0}" +
     ".dlsub{font-size:12px;color:var(--muted)}.dlbluf{margin:8px 0 4px;padding:8px 10px;border-left:3px solid var(--accent,#1f5f99);background:var(--surface2,rgba(127,127,127,.07));border-radius:4px}" +
-    ".dlbluf p{margin:0 0 4px;font-size:14.5px;line-height:1.45}.dlbluf p:last-child{margin:0}.dllbl{font:700 11px/1.4 inherit;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 3px}" +
+    ".dlbluf p{margin:0 0 4px;font-size:14.5px;line-height:1.45}.dlbluf p:last-child{margin:0}.dllbl{font:700 11px/1.4 inherit;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 3px}.dlkev summary{cursor:pointer;min-height:28px}.dlkev[open] summary{margin-bottom:4px}" +
     ".dlcols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;margin-top:8px}@media (max-width:760px){.dlcols{grid-template-columns:1fr}}" +
     ".dlev,.dlw{list-style:none;margin:0;padding:0}.dlev li,.dlw li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}" +
     ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
@@ -63,10 +63,12 @@
     var b = d.basis || {}, ai = d.method === "ai";
     var h = '<div class="dlhead"><h2>Daily summary</h2>' + tag(d) + '<span class="dlsub">' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + "</span></div>";
     if ((d.bluf || []).length) h += '<div class="dlbluf"><p class="dllbl">' + (ai ? "BLUF" : "Top lines") + "</p>" + d.bluf.map(function (s) { return "<p>" + esc(s.text) + refs(s.refs, d) + "</p>"; }).join("") + "</div>";
-    h += '<div class="dlcols"><div><p class="dllbl">Key events</p>' + ((d.events || []).length ? '<ul class="dlev">' + d.events.map(function (e) {
+    /* key events fold away by default: Top stories just below already lists the same headlines; Print keeps them in full */
+    var nev = (d.events || []).length;
+    h += '<div class="dlcols"><div>' + (nev ? '<details class="dlkev"><summary class="dllbl">Key events (' + nev + ")</summary>" : '<p class="dllbl">Key events</p>') + (nev ? '<ul class="dlev">' + d.events.map(function (e) {
       return "<li><b>" + esc(e.text) + "</b>" + refs(e.refs, d) + '<span class="dlmeta">' + (e.n > 1 ? e.n + " outlets: " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when, false)) +
         (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + (e.conflict ? " · " + esc(e.conflict) : "") + "</span></li>";
-    }).join("") + "</ul>" : '<p class="dlsub">No analyst-relevant reports in the window.</p>') + "</div>";
+    }).join("") + "</ul></details>" : '<p class="dlsub">No analyst-relevant reports in the window.</p>') + "</div>";
     h += '<div><p class="dllbl">What to watch</p><ul class="dlw">' + (watchList(d) || '<li class="dlsub">Nothing flagged.</li>') + "</ul></div></div>";
     h += '<div class="dlfoot"><span>From ' + (b.reports || 0) + " report" + (b.reports === 1 ? "" : "s") + " by " + (b.outlets || 0) + " outlet" + (b.outlets === 1 ? "" : "s") +
       "; sport, celebrity and lifestyle left out. Reports are the sources' claims, not verified." + ((d.gaps || []).length ? " " + esc(d.gaps.join(" ")) : "") + "</span>" +
