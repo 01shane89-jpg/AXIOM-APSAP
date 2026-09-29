@@ -1,13 +1,13 @@
-# Test only: compares keyless high-resolution imagery tile services over SE Asia from GitHub's runners (tools/probe_imagery.py).
-# Prints to the log and uploads probe-out/ as an artifact; writes nothing to the repo.
+# Test only: compares keyless high-resolution imagery tile services over SE Asia from GitHub's runners.
+# Prints to the log; the side-by-side picture goes to the throwaway branch claude/imagery-probe-out (deleted after review).
 name: Probe imagery hosts
 on:
   push:
     branches: [claude/sharper-imagery]
-    paths: [tools/probe_imagery.py, .github/workflows/probe-imagery.yml]
+    paths: [tools/probe_imagery2.py, .github/workflows/probe-imagery.yml]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -15,9 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - run: python3 -m pip install --quiet pillow
-      - run: python3 tools/probe_imagery.py
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
-        with:
-          name: probe-imagery
-          path: probe-out/
+      - run: python3 tools/probe_imagery2.py
+      - run: |
+          cd probe-out && git init -q -b claude/imagery-probe-out && git add compare.jpg
+          git -c user.name=probe -c user.email=probe@users.noreply.github.com commit -qm "imagery probe picture (throwaway)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" claude/imagery-probe-out
