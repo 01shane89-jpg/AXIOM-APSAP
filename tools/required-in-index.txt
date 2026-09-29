@@ -76,3 +76,8 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 
 # workspaces, KML/KMZ import and export (claude/workspaces)
 <script src="assets/osap-ws.js"></script>
+
+# timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
+<div class="tlscope" id="tl-scope"
+  var TOPIC = null, SCOPED = false;
+data-ev-tlr="1"

@@ -704,7 +704,11 @@
     var seg = D.getElementById("view-seg"); if (!seg) return;
     seg.addEventListener("click", onSeg, true);
     var ph = D.getElementById("ph-view");
-    if (ph) ph.addEventListener("change", function (e) { if (/^cf-/.test(ph.value)) { e.stopImmediatePropagation(); activate(ph.value.slice(3)); } else if (active) { var b = D.querySelector('#view-seg button[data-view="' + ph.value + '"]'); deactivate(); if (b) b.click(); e.stopImmediatePropagation(); } }, true);
+    if (ph) ph.addEventListener("change", function (e) { if (/^cf-/.test(ph.value)) { e.stopImmediatePropagation(); activate(ph.value.slice(3)); } else if (active) {
+      var b = D.querySelector('#view-seg button[data-view="' + ph.value + '"]'); deactivate(); e.stopImmediatePropagation();
+      // the page ignores a click on the tab it still holds as open (often the Master timeline): mark it chosen here, as onSeg does
+      if (b) { b.click(); Array.prototype.forEach.call(D.querySelectorAll("#view-seg button"), function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); }); }
+    } }, true);
     (W.OSAP_CONFLICTS ? Promise.resolve() : load("data/live/conflicts/index.js")).then(function () {
       IDX = W.OSAP_CONFLICTS; if (!IDX) return;
       addTabs(); addMenu();
@@ -719,5 +723,9 @@
   function whenReady() { if (W.TSAP && D.getElementById("view-seg") && D.getElementById("view-seg").children.length) start(); else setTimeout(whenReady, 150); }
   if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", whenReady); else whenReady();
   // panels (OSAP_CF_PANELS) filter their own lists with inPeriod, so every list in a conflict tab follows the chosen period
-  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin };
+  // layers(id): this country's layer tabs the conflict has taken over (their records are the page's own, so the Master timeline and
+  // the Timeline report can cover just this conflict); name(id): its short name
+  W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin,
+    layers: function (id) { var m = absorbed(); return Object.keys(m).filter(function (l) { return m[l] === id; }); },
+    name: function (id) { var c = byId(id); return c ? c.short || c.name : ""; } };
 })();
