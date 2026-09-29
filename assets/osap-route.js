@@ -444,6 +444,8 @@ function main() {
   function ensureLayer() {
     var map = S.ctx.map;
     if (!map.getPane("routepane")) { map.createPane("routepane"); map.getPane("routepane").style.zIndex = 660; }
+    /* waypoints get a pane of their own above the lines, so the route never draws over them */
+    if (!map.getPane("routewppane")) { map.createPane("routewppane"); map.getPane("routewppane").style.zIndex = 662; }
     if (!S.svg) S.svg = L.svg({ pane: "routepane" });
     if (!S.layer) { S.layer = L.layerGroup(); S.lines = L.layerGroup().addTo(S.layer); S.marks = L.layerGroup().addTo(S.layer); S.hz = L.layerGroup().addTo(S.layer); }
     if (!S.ctx.layer.hasLayer(S.layer)) S.ctx.layer.addLayer(S.layer);
@@ -471,7 +473,7 @@ function main() {
     if (!S.layer) return;
     S.marks.clearLayers();
     S.wps.forEach(function (w, i) {
-      var m = L.marker([w.lat, w.lon], { pane: "routepane", draggable: true, keyboard: true, title: wpName(i) + ": drag to move",
+      var m = L.marker([w.lat, w.lon], { pane: "routewppane", draggable: true, keyboard: true, title: wpName(i) + ": drag to move",
         icon: L.divIcon({ className: "rtv" + (i === 0 ? " s" : i === S.wps.length - 1 ? " e" : ""), html: "<span>" + LET.charAt(i) + "</span>", iconSize: [26, 26], iconAnchor: [13, 13] }) });
       m.bindPopup('<div data-keep-pop="1"><h3>' + E(wpName(i)) + "</h3><p><code>" + E(G.mgrs(w.lat, w.lon) || "") + "</code><br>" + E(G.fmtLL(w.lat, w.lon)) + "</p><p class=\"obs\">Waypoint you placed; drag to move it.</p></div>");
       m.on("dragend", function (e) { var ll = e.target.getLatLng(); S.wps[i].lat = ll.lat; S.wps[i].lon = G.wrap(ll.lng); changed(); });
