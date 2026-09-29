@@ -1,10 +1,10 @@
-# Test only: compares keyless high-resolution imagery tile services over SE Asia from GitHub's runners.
-# Prints to the log; the side-by-side picture goes to the throwaway branch claude/imagery-probe-out (deleted after review).
+# Test only: opens OSAP headless on the Satellite base maps and zooms past the sharpest imagery (tools/imagery_smoke.mjs).
+# Prints to the log; screenshots go to the throwaway branch claude/imagery-probe-out (deleted after review).
 name: Probe imagery hosts
 on:
   push:
     branches: [claude/sharper-imagery]
-    paths: [tools/probe_imagery2.py, .github/workflows/probe-imagery.yml]
+    paths: [tools/imagery_smoke.mjs, index.html, .github/workflows/probe-imagery.yml]
   workflow_dispatch:
 permissions:
   contents: write
@@ -14,9 +14,14 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - run: python3 -m pip install --quiet pillow
-      - run: python3 tools/probe_imagery2.py
-      - run: |
-          cd probe-out && git init -q -b claude/imagery-probe-out && git add compare.jpg
-          git -c user.name=probe -c user.email=probe@users.noreply.github.com commit -qm "imagery probe picture (throwaway)"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/imagery_smoke.mjs
+      - if: always()
+        run: |
+          cd probe-out && git init -q -b claude/imagery-probe-out && git add .
+          git -c user.name=probe -c user.email=probe@users.noreply.github.com commit -qm "imagery smoke screenshots (throwaway)"
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" claude/imagery-probe-out
