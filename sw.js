@@ -431,6 +431,8 @@ const PRECACHE = [
 "assets/osap-tidy.js",
 "assets/osap-points.js",
 "assets/osap-3d.js",
+"assets/osap-milsym.js",
+"assets/osap-milsym-cat.js",
 "assets/osap-route.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
@@ -442,14 +444,15 @@ const PRECACHE = [
 "assets/tiles-base.js",
 "assets/tiles-flood.js",
 "assets/tiles-flood25.js",
-"assets/vendor/leaflet-1.9.4.js"
+"assets/vendor/leaflet-1.9.4.js",
+"assets/vendor/milsymbol-3.0.4.js"
 ];
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
 const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
+const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
