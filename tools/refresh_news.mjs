@@ -7,6 +7,7 @@ import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
 import { parseFeed, parseList } from "./feedparse.mjs";
+import { ADAPTERS } from "./news_adapters.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
@@ -70,10 +71,10 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
 const { feeds, focus = {} } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
 // Dates of the items the last run wrote, by link: an item its outlet publishes without a date (a web-page list, a feed with no
 // dates) keeps the time OSAP first saw it instead of looking new on every run.
-const seenAt = new Map();
+const seenAt = new Map(), seenDetail = new Map();
 try {
   const t = fs.readFileSync("data/live/news.js", "utf8"), prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
-  for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) seenAt.set(i.link, i.date);
+  for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) { seenAt.set(i.link, i.date); if (i.detail) seenDetail.set(i.link, i); }
 } catch (e) {}
 const nowIso = new Date().toISOString().slice(0, 16);
 // a date with no time zone is the outlet's local time: tz in tools/news_feeds.json, e.g. "+08:00"
@@ -101,6 +102,17 @@ async function readFeed(f) {
       return o;
     });
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
+    // detail: the list's headline is generic (the same every day); the item's own page gives the facts (tools/news_adapters.mjs).
+    // A page read on an earlier run is reused; at most a few new pages a run.
+    if (f.detail && ADAPTERS[f.detail]) {
+      let reads = 0;
+      for (const o of list) {
+        const was = seenDetail.get(o.link);
+        if (was) { o.title = was.title; o.summary = was.summary; o.detail = was.detail; continue; }
+        if (reads++ >= 6) continue;
+        try { const d = ADAPTERS[f.detail](await getFeed(o.link)); if (d) { o.title = d.title; o.summary = d.summary.slice(0, 400); o.detail = d.counts || true; } } catch (e) {}
+      }
+    }
     push(f.st ? "us:" + f.st : f.cc, list); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: list.length });
   } catch (e) { status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
