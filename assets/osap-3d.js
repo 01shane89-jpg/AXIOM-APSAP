@@ -140,7 +140,8 @@
     var per = big, max = mpp * maxPx / 3;
     if (small && max < big * 0.5) { per = small; lab = U[3]; }
     var v = max / per, p = Math.pow(10, Math.floor(Math.log10(v))), step = p;
-    [1, 2, 2.5, 5].forEach(function (f) { if (f * p <= v) step = f * p; });
+    /* no quarter steps below one unit: 0.25 / 0.5 / 0.75 do not fit side by side on a phone */
+    [1, 2, 2.5, 5].forEach(function (f) { if (f * p <= v && !(f === 2.5 && p < 1)) step = f * p; });
     return { px: step * per / mpp, step: step, lab: lab };
   }
   function fmtN(n) { return String(+n.toFixed(2)).replace(/\.0+$/, ""); }
@@ -148,7 +149,9 @@
     if (!(mpp > 0) || !isFinite(mpp)) return "";
     var f = scaleFit(mpp, maxPx), w = Math.round(f.px * 3);
     var t = "";
-    for (var i = 0; i <= 3; i++) t += '<span style="left:' + Math.round(f.px * i) + 'px">' + fmtN(f.step * i) + (i === 3 ? " " + f.lab : "") + "</span>";
+    /* when the middle numbers would touch (short steps such as 0.2 nm), only the ends are labelled */
+    var mid = fmtN(f.step * 2).length * 7 + 6 <= f.px;
+    for (var i = 0; i <= 3; i++) if (mid || i === 0 || i === 3) t += '<span style="left:' + Math.round(f.px * i) + 'px">' + fmtN(f.step * i) + (i === 3 ? "<b>" + f.lab + "</b>" : "") + "</span>";
     return '<div class="o3s-t" style="width:' + w + 'px">' + t + '</div><div class="o3s-b" style="width:' + w + 'px"><i></i><i></i><i></i></div>';
   }
   function scaleMax() { return mapEl.clientWidth < 520 ? 130 : 190; }
@@ -510,10 +513,11 @@
   /* ---------- look ---------- */
   var st = D.createElement("style");
   st.textContent =
-    ".o3s{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 22px 5px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25)}" +
+    ".o3s{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 8px 5px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25)}" +
     ".o3s:empty{display:none}.o3s:focus-visible{outline:2px solid #4dabf7}" +
-    ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 6px 2px 0}" +
-    ".o3s-t span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.o3s-t span:first-child{transform:none}.o3s-t span:last-child{transform:translateX(-8px)}" +
+    /* the box grows past the bar end by room for half the last number and its unit, so "600 km" stays inside it */
+    ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 0 2px 0;padding-right:3.4em}" +
+    ".o3s-t span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.o3s-t span:first-child{transform:none}.o3s-t span b{position:absolute;left:100%;font-weight:inherit;padding-left:.3em}" +
     ".o3s-b{display:flex;height:7px;border:1.5px solid #343a40;border-radius:5px;overflow:hidden;box-sizing:content-box}" +
     ".o3s-b i{flex:1}.o3s-b i:nth-child(odd){background:#495057}.o3s-b i:nth-child(2){background:#f1f3f5}" +
     ".o3s small{display:block;font:10px/1.2 system-ui,sans-serif;color:#495057;margin-top:2px}" +

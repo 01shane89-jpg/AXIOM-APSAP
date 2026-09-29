@@ -29,10 +29,10 @@ async function open(opts, classic) {
   p.on("request", (r) => { if (/maplibre-gl/.test(r.url())) libs.push(r.url()); });
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(3500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, libs };
+  return { ctx, p, errors, libs, early: libs.length };
 }
-async function run3d(name, p, errors, libs, openSel) {
-  ok(libs.length === 0, name + ": 3D engine not downloaded before 3D is opened");
+async function run3d(name, p, errors, libs, openSel, early) {
+  ok(early === 0, name + ": 3D engine not downloaded while the app starts (it is fetched later, when idle)");
   const before = await p.evaluate(() => { const m = window.__asapMap; m.setView([18.79, 98.98], 10, { animate: false }); return { c: m.getCenter(), z: m.getZoom() }; });
   await p.waitForTimeout(300);
   await p.click(openSel);
@@ -84,7 +84,7 @@ async function run3d(name, p, errors, libs, openSel) {
 
 // ---------- phone, toolbar mode ----------
 {
-  const { ctx, p, errors, libs } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const { ctx, p, errors, libs, early } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   ok(await shown(p, ".leaflet-bottom .o3s .o3s-b"), "phone: scale bar shown on the 2D map");
   const t1 = await p.textContent(".leaflet-bottom .o3s .o3s-t");
   ok(/km|\bm\b/.test(t1), "phone: scale bar in km by default: " + t1);
@@ -92,20 +92,34 @@ async function run3d(name, p, errors, libs, openSel) {
   ok(/mi|ft/.test(t2), "phone: tap switches the scale bar to miles: " + t2);
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-meas-unit")).unit === "mi"), "phone: unit shared with Measure");
   await p.click(".leaflet-bottom .o3s"); await p.click(".leaflet-bottom .o3s");
+  // every label inside the box and clear of its neighbour, at every zoom and in km, mi and nm
+  const spill = [];
+  for (let u = 0; u < 3; u++) {
+    for (let z = 5; z <= 18; z++) {
+      await p.evaluate((z) => { window.__asapMap.setView([13.7, 100.5], z, { animate: false }); }, z); await p.waitForTimeout(60);
+      const r = await p.evaluate(() => { const box = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(); const sp = [...document.querySelectorAll(".leaflet-bottom .o3s .o3s-t span")].map((e) => e.getBoundingClientRect());
+        const txt = document.querySelector(".leaflet-bottom .o3s .o3s-t").textContent, last = document.querySelector(".leaflet-bottom .o3s .o3s-t span:last-child b").getBoundingClientRect();
+        const bad = sp.some((b) => b.left < box.left - 0.5 || b.right > box.right + 0.5) || last.right > box.right + 0.5 || sp.some((b, i) => i && b.left < sp[i - 1].right + 2) || (sp.length && last.left < sp[sp.length - 1].right - 0.5);
+        return bad ? txt + " box " + Math.round(box.left) + "-" + Math.round(box.right) + " labels " + sp.map((b) => Math.round(b.left) + "-" + Math.round(b.right)).join(",") + " unit " + Math.round(last.left) + "-" + Math.round(last.right) : ""; });
+      if (r) spill.push("z" + z + ": " + r);
+    }
+    await p.click(".leaflet-bottom .o3s");
+  }
+  ok(spill.length === 0, "phone: scale labels stay inside the box and apart at every zoom, in km, mi and nm " + JSON.stringify(spill.slice(0, 3)));
   // clear of the grid strip
   const clear = await p.evaluate(() => { const s = document.querySelector(".leaflet-bottom .o3s").getBoundingClientRect(), b = document.getElementById("atk-bar"); if (!b) return true; const r = b.getBoundingClientRect(); return s.bottom <= r.top + 0.5; });
   ok(clear, "phone: scale bar sits above the grid strip");
   ok(await shown(p, "#atk-tools [data-o3d]"), "phone: 3D button in the map toolbar");
   ok(!(await shown(p, ".o3dctl")), "phone: classic 3D button hidden in toolbar mode");
   if (OUT) await p.screenshot({ path: OUT + "/phone-2d.png" });
-  await run3d("phone", p, errors, libs, "#atk-tools [data-o3d]");
+  await run3d("phone", p, errors, libs, "#atk-tools [data-o3d]", early);
   await ctx.close();
 }
 // ---------- desktop, classic controls ----------
 {
-  const { ctx, p, errors, libs } = await open({ viewport: { width: 1400, height: 900 } }, true);
+  const { ctx, p, errors, libs, early } = await open({ viewport: { width: 1400, height: 900 } }, true);
   ok(await shown(p, ".o3dctl a"), "desktop classic: 3D button on the map");
-  await run3d("desktop", p, errors, libs, ".o3dctl a");
+  await run3d("desktop", p, errors, libs, ".o3dctl a", early);
   await ctx.close();
 }
 // ---------- a busy imagery host: every picture is refused once (429), and there are no close-ups past zoom 9 (404) ----------
