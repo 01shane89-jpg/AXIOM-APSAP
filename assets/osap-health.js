@@ -116,14 +116,32 @@
   document.addEventListener("click", function (e) { if (panel && !panel.parentNode.contains(e.target)) toggle(null, false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && panel) { var b = panel.parentNode.firstChild; toggle(null, false); b.focus(); } });
 
+  /* Ask with ?fresh=1: the service worker (sw.js) then waits for the network and saves the copy under the plain address.
+     The first version asked for health.json?t=<minute>, which the worker saved as a new entry every minute; on a slow
+     connection it answered from the OLDEST of them, so the badge showed hours-old data while the site was fresh.
+     Those entries are removed once, and a copy older than the one already shown is never used. */
+  function tidy() {
+    try {
+      if (!window.caches) return;
+      caches.open("asap-data").then(function (c) {
+        return c.keys().then(function (ks) { ks.forEach(function (k) { if (/\/data\/live\/health\.json\?t=/.test(k.url)) c.delete(k); }); });
+      }).catch(function () {});
+    } catch (e) {}
+  }
   function load() {
     readAt = Date.now();
-    var done = function (j) { if (j && typeof j === "object" && j.asof) H = j; draw(); };
+    var done = function (j) {
+      if (j && typeof j === "object" && j.asof && !(H && parseStamp(H.asof) > parseStamp(j.asof))) H = j;
+      draw();
+    };
     if (!window.fetch) return done(window.OSAP_HEALTH);
-    fetch("data/live/health.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-cache" })
+    var ac = window.AbortController ? new AbortController() : null, t = ac && setTimeout(function () { ac.abort(); }, 20000);
+    fetch("data/live/health.json?fresh=1", { cache: "no-store", signal: ac ? ac.signal : undefined })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(done, function () { done(H || window.OSAP_HEALTH); });
+      .then(done, function () { done(H || window.OSAP_HEALTH); })
+      .then(function () { if (t) clearTimeout(t); });
   }
+  tidy();
   window.OSAP_HEALTH_UI = { reload: load, evaluate: evaluate, state: function () { return EV && EV.state; } };
   mount(); load();
   setInterval(draw, 60000);
