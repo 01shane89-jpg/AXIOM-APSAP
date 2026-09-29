@@ -39,3 +39,4 @@ jobs:
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
       - run: node tests/atak_smoke.mjs
+      - run: node tests/3d_smoke.mjs
