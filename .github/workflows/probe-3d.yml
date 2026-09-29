@@ -3,7 +3,7 @@
 name: Probe 3D hosts
 on:
   push:
-    branches: [claude/3d-terrain, claude/3d-sat-fix]
+    branches: [claude/3d-terrain, claude/3d-sat-fix, claude/3d-buildings]
     paths: [tools/probe_3d.mjs, tools/probe_3d_cache.mjs, assets/osap-3d.js, .github/workflows/probe-3d.yml]
   workflow_dispatch:
 permissions:
