@@ -145,11 +145,28 @@
   }
   /* the card stops above the map's Legend (bottom left) so neither covers the other */
   function fit() {
-    if (phoneMq.matches) { card.style.maxHeight = S.more ? Math.max(160, Math.floor(map.getSize().y * 0.5)) + "px" : ""; return; }
+    if (phoneMq.matches) { card.style.maxHeight = S.more ? Math.max(160, Math.floor(map.getSize().y * 0.5)) + "px" : ""; lift(); return; }
     var mr = map.getContainer().getBoundingClientRect(), cr = card.getBoundingClientRect(), lg = map.getContainer().querySelector(".leaflet-bottom.leaflet-left");
     var bottom = mr.bottom - 8; if (lg) { var lr = lg.getBoundingClientRect(); if (lr.height && lr.left < cr.right) bottom = Math.min(bottom, lr.top - 6); }
     card.style.maxHeight = Math.max(140, Math.floor(bottom - cr.top)) + "px";
   }
+  /* on a narrow map the credits line runs the full width along the bottom; with no Legend under it the docked bar would sit
+     behind the credits, so lift the bar above them whenever the two would overlap */
+  var attr = map.getContainer().querySelector(".leaflet-control-attribution");
+  function lift() {
+    card.style.marginBottom = "";
+    if (!attr || !phoneMq.matches || card.hidden) return;
+    var a = attr.getBoundingClientRect(), c = card.getBoundingClientRect();
+    if (a.width && c.width && a.left < c.right && a.right > c.left && a.top < c.bottom && a.bottom > c.top) card.style.marginBottom = Math.ceil(c.bottom - a.top + 12) + "px";
+    /* a short phone's side toolbar (osap-atak.js) can reach down beside the bar: stop the bar short of it so × stays tappable */
+    card.style.width = "";
+    var tb = document.getElementById("atk-tools"), t = tb && tb.offsetParent ? tb.getBoundingClientRect() : null;
+    c = card.getBoundingClientRect();
+    if (tb && ro && !tb._measRo) { tb._measRo = 1; ro.observe(tb); }
+    if (t && t.width && t.left < c.right && t.top < c.bottom && t.bottom > c.top) card.style.width = Math.floor(t.left - c.left - 6) + "px";
+  }
+  var ro = window.ResizeObserver ? new ResizeObserver(function () { if (S.on) lift(); }) : null;
+  if (ro && attr) ro.observe(attr);
   map.on("resize", function () { if (S.on) fit(); });
   /* the pointer readout (mouse only): where the pointer is, and distance and bearing to it from the last point */
   var hvLine = L.polyline([], { pane: "measpane", renderer: svg, color: "#e8590c", weight: 2, opacity: 0.6, dashArray: "3 5", interactive: false });
