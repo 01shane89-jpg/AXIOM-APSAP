@@ -117,7 +117,8 @@
   /* ---------- drawing ---------- */
   function drawChips() {
     var c = S.el && S.el.querySelector(".nqchips"); if (!c) return;
-    var T = (S.man && S.man.topics) || [];
+    /* a country's own data sets (countries in tools/topics.json) show only on that country, and in every-country search */
+    var T = ((S.man && S.man.topics) || []).filter(function (t) { return !t.countries || S.where === "all" || t.countries.indexOf(S.cc) >= 0 || S.topic === t.id; });
     c.innerHTML = T.length ? '<span class="nqlbl">Data sets</span>' + T.map(function (t) {
       return '<button type="button" data-nqt="' + esc(t.id) + '" aria-pressed="' + (S.topic === t.id) + '" title="' + esc((t.words || []).join(", ")) + '">' + esc(t.name) + "</button>"; }).join("") : "";
   }
@@ -178,7 +179,7 @@
       if (a === "load") { ensure(); return; }
       if (a === "more") { S.shown += PAGE; draw(); return; }
       if (a === "older") { S.want = Math.min(S.want + MORE_DAYS, S.man.days.length); ensure(); return; }
-      if (a === "all" || a === "here") { S.where = a; S.shown = PAGE; draw(); }
+      if (a === "all" || a === "here") { S.where = a; S.shown = PAGE; drawChips(); draw(); }
     });
     draw();
   }
