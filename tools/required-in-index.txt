@@ -55,5 +55,11 @@ window.TSAP.areaApi
 
 # ATAK-style map controls (claude/atak-controls)
 <script src="assets/osap-atak.js"></script>
+
+# tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
+<script src="assets/osap-tidy.js"></script>
+setSheet: function (s)
+refresh: function () { dsUi(); }
+
 # map points with a name, a note and photos on this device (claude/map-point-photos)
 <script src="assets/osap-points.js"></script>
