@@ -23,6 +23,8 @@ async function ctxWith(geo, perm = true) {
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block", geolocation: geo, permissions: perm ? ["geolocation"] : [] });
   const urls = []; const errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { urls.push(r.request().url()); r.abort(); });
+  /* this test drives the classic map buttons; the ATAK-style toolbar (assets/osap-atak.js) has its own test */
+  await ctx.addInitScript(() => { try { localStorage.setItem("osap-ui", "classic"); } catch (e) {} });
   ctx.on("page", (p) => p.on("pageerror", (e) => errors.push(e.message)));
   return { ctx, urls, errors };
 }
