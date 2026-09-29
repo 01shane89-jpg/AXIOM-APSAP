@@ -413,6 +413,7 @@ const PRECACHE = [
 "assets/osap-cf-russia-ukraine.js",
 "assets/osap-cf-thailand.js",
 "assets/osap-cf-history.js",
+"assets/osap-cf-sites.js",
 "assets/osap-evsum.js",
 "assets/osap-share.js",
 "assets/osap-push.js",
