@@ -1,5 +1,5 @@
 // Test only: fetches sample tiles from the elevation shading sources in the Layers menu (index.html HSX) with the real network
-// and prints status, type, size and CORS header per tile, plus the Esri service's zoom levels. Writes nothing to the repo.
+// (and GSI's elevation tiles used by 3D in Japan) and prints status, type, size and CORS header per tile, plus the Esri service's zoom levels. Writes nothing to the repo.
 // Run: node tools/probe_hillshade.mjs
 const t = (z, lat, lon) => {
   const n = 2 ** z, x = Math.floor((lon + 180) / 360 * n), r = lat * Math.PI / 180;
@@ -10,7 +10,8 @@ const PLACES = [["Chiang Mai", 18.79, 98.98], ["Manila", 14.6, 121.0], ["Mindana
   ["Sydney", -33.87, 151.2], ["Wellington", -41.29, 174.78], ["Denver", 39.74, -104.99], ["London", 51.5, -0.12]];
 const SRC = {
   esri: (c) => `https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/${c.z}/${c.y}/${c.x}`,
-  gsi: (c) => `https://cyberjapandata.gsi.go.jp/xyz/hillshademap/${c.z}/${c.x}/${c.y}.png`
+  gsi: (c) => `https://cyberjapandata.gsi.go.jp/xyz/hillshademap/${c.z}/${c.x}/${c.y}.png`,
+  gsidem: (c) => c.z <= 14 ? `https://cyberjapandata.gsi.go.jp/xyz/dem_png/${c.z}/${c.x}/${c.y}.png` : c.z === 15 ? `https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/${c.z}/${c.x}/${c.y}.png` : null
 };
 let bad = 0;
 try {
@@ -20,13 +21,13 @@ try {
 for (const [name, lat, lon, jp] of PLACES) {
   for (const z of [12, 15, 16, 17]) {
     for (const k of Object.keys(SRC)) {
-      if (k === "gsi" && !jp) continue;   /* GSI answers 404 outside Japan; the map asks it only inside its bounds */
-      const u = SRC[k](t(z, lat, lon));
+      if (k !== "esri" && !jp) continue;   /* GSI answers 404 outside Japan; the map asks it only inside its bounds */
+      const u = SRC[k](t(z, lat, lon)); if (!u) continue;
       try {
         const r = await fetch(u, { headers: { Origin: "https://01shane89-jpg.github.io" } });
         const b = Buffer.from(await r.arrayBuffer());
         console.log(`${name.padEnd(18)} ${k.padEnd(5)} z${z} ${r.status} ${r.headers.get("content-type")} ${b.length}B cors=${r.headers.get("access-control-allow-origin")}`);
-        if (z <= 16 && r.status !== 200) bad++;   /* z17 and up are enlarged from z16 on the map (maxNativeZoom 16) */
+        if (z <= 16 && r.status !== 200 && k !== "gsidem") bad++;   /* dem5a (laser) covers only part of Japan */   /* z17 and up are enlarged from z16 on the map (maxNativeZoom 16) */
       } catch (e) { console.log(`${name} ${k} z${z} ERROR ${e.message}`); bad++; }
     }
   }

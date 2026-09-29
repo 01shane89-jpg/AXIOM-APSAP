@@ -33,7 +33,7 @@ const layers = () => p.evaluate(() => [...document.querySelectorAll("#map .leafl
 
 await load("#th");
 const rows = await p.evaluate(() => [...document.querySelectorAll('#ml-panel input[data-hs]')].map((i) => i.dataset.hs));
-ok(rows.join() === "world,jp", "Layers menu lists the world hillshade and Japan LiDAR rows: " + rows.join());
+ok(rows.join() === "world,jp", "Layers menu lists the world hillshade and Japan relief rows: " + rows.join());
 ok(await p.evaluate(() => /Elevation and LiDAR/.test(document.querySelector("#ml-panel").textContent)), "rows sit under an Elevation and LiDAR heading");
 asked.length = 0; await tick("world", true); await p.waitForTimeout(800);
 let L1 = await layers();
@@ -61,6 +61,46 @@ await p.waitForTimeout(1500);
 ok(asked.some((u) => u.includes("cyberjapandata.gsi.go.jp/xyz/hillshademap/")), "over Japan it asks GSI for hillshade tiles");
 await tick("world", false); await tick("jp", false); await p.waitForTimeout(300);
 ok((await layers()).length === 0, "unticking removes the layers");
+
+// ---------- 3D elevation in Japan (assets/osap-3d.js demTile), with made-up tiles instead of the network ----------
+// GSI tile: 3776.00 m on the left half, no value (2^23) on the right half; AWS terrarium tile: 100 m everywhere.
+const png = (kind) => p.evaluate((kind) => {
+  const c = document.createElement("canvas"); c.width = c.height = 256; const x = c.getContext("2d"), im = x.createImageData(256, 256), d = im.data;
+  for (let k = 0, i = 0; k < 65536; k++, i += 4) {
+    if (kind === "aws") { const v = 100 + 32768; d[i] = v >> 8; d[i + 1] = v & 255; d[i + 2] = 0; }
+    else if (kind === "gsi5" ? (k >> 8) < 128 : (k & 255) < 128) { const v = kind === "gsi5" ? 377612 : 377600; d[i] = v >> 16; d[i + 1] = (v >> 8) & 255; d[i + 2] = v & 255; }
+    else { d[i] = 128; d[i + 1] = 0; d[i + 2] = 0; }
+    d[i + 3] = 255;
+  }
+  x.putImageData(im, 0, 0); return c.toDataURL("image/png").split(",")[1];
+}, kind);
+const T = { aws: Buffer.from(await png("aws"), "base64"), gsi: Buffer.from(await png("gsi"), "base64"), gsi5: Buffer.from(await png("gsi5"), "base64") };
+const hits = [];
+await p.route(/cyberjapandata\.gsi\.go\.jp\/xyz\/dem(5a)?_png\/|elevation-tiles-prod\/terrarium\//, (r) => {
+  const u = r.request().url(); hits.push(u);
+  if (/terrarium/.test(u)) return r.fulfill({ status: 200, contentType: "image/png", body: T.aws, headers: { "Access-Control-Allow-Origin": "*" } });
+  if (/dem5a_png\/15\/29034\//.test(u)) return r.fulfill({ status: 200, contentType: "image/png", body: T.gsi5, headers: { "Access-Control-Allow-Origin": "*" } });
+  if (/dem5a_png/.test(u) || /dem_png\/12\/9999\//.test(u)) return r.fulfill({ status: 404, body: "", headers: { "Access-Control-Allow-Origin": "*" } });
+  return r.fulfill({ status: 200, contentType: "image/png", body: T.gsi, headers: { "Access-Control-Allow-Origin": "*" } });
+});
+const dem = (url) => p.evaluate((url) => window.OSAP_3D._demTile({ url: url }, new AbortController()).then(async (r) => {
+  const bm = await createImageBitmap(new Blob([r.data]), { colorSpaceConversion: "none", premultiplyAlpha: "none" });
+  const c = document.createElement("canvas"); c.width = c.height = 256; const x = c.getContext("2d"); x.drawImage(bm, 0, 0); const d = x.getImageData(0, 0, 256, 256).data;
+  const h = (k) => d[k * 4] * 256 + d[k * 4 + 1] + d[k * 4 + 2] / 256 - 32768;
+  return { tl: h(0), tr: h(255), bl: h(255 * 256), br: h(65535) };
+}), url);
+let H = await dem("osapdem://12/3629/1617");   /* Mt Fuji, z12 */
+ok(Math.abs(H.tl - 3776) < 0.01 && Math.abs(H.bl - 3776) < 0.01, "3D Japan: GSI 10 m heights are decoded (3776 m): " + JSON.stringify(H));
+ok(Math.abs(H.tr - 100) < 0.01 && Math.abs(H.br - 100) < 0.01, "3D Japan: pixels GSI has no value for come from the AWS tile (100 m)");
+ok(hits.some((u) => u.includes("/xyz/dem_png/12/3629/1617.png")), "3D Japan: asks GSI dem_png for the tile");
+hits.length = 0; H = await dem("osapdem://15/29034/12938");   /* z15 near Fuji: laser 5 m top half, 10 m parent fills the rest */
+ok(Math.abs(H.tl - 3776.12) < 0.01 && Math.abs(H.tr - 3776.12) < 0.01, "3D Japan z15: the 5 m laser model is used where it has values: " + JSON.stringify(H));
+ok(Math.abs(H.bl - 3776) < 0.01 && Math.abs(H.br - 3776) < 0.01, "3D Japan z15: the rest comes from the 10 m parent tile (left half of it for an even x)");
+ok(hits.some((u) => u.includes("/dem_png/14/14517/6469.png")), "3D Japan z15: the 10 m parent is the z14 tile above");
+hits.length = 0; H = await dem("osapdem://12/9999/1617");   /* inside the box but GSI has no tile: AWS as is */
+ok(Math.abs(H.tl - 100) < 0.01, "3D Japan: a tile GSI does not have is the AWS tile");
+hits.length = 0; H = await dem("osapdem://12/3200/1900");   /* Thailand */
+ok(Math.abs(H.tl - 100) < 0.01 && !hits.some((u) => u.includes("cyberjapandata")), "3D outside Japan: AWS only, GSI never asked");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await browser.close(); server.close();
 if (fails) { console.log(fails + " failed"); process.exit(1); }
