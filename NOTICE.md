@@ -24,6 +24,8 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 | Source | Used for | Terms | Licence page |
 |---|---|---|---|
 | Esri World Light/Dark Gray Canvas basemap | Background map | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://www.esri.com/content/dam/arcgisonline/docs/tou_summary.pdf) |
+| Esri World Hillshade | Elevation and LiDAR shading overlay (Layers menu) | Esri terms of use; free non-commercial use, commercial use needs a paid plan or permission | [terms](https://www.esri.com/content/dam/arcgisonline/docs/tou_summary.pdf) |
+| GSI Japan hillshade tiles (地理院タイル 陰影起伏図) | Japan LiDAR relief overlay (Layers menu) | Free to use with credit to GSI | [terms](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html) |
 | NASA LANCE MODIS flood (MCDWD) tiles, packaged | Thailand flood extent layer | Free to use | [terms](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies) |
 | NASA GIBS / Worldview imagery and VIIRS fire tiles | Satellite true colour and fire layers | Free to use | [terms](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies) |
 | Natural Earth 1:50m country outlines | Land and borders outside the packaged tiles | Free to use | [terms](https://www.naturalearthdata.com/about/terms-of-use/) |

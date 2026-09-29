@@ -68,3 +68,5 @@ refresh: function () { dsUi(); }
 
 # map point icons: military symbols (2525D via milsymbol), shapes and pins (claude/mil-symbol-picker)
 <script src="assets/osap-milsym.js"></script>
+# elevation and LiDAR hillshade overlays in the Layers menu (claude/lidar-hillshade)
+function setShade(k, on) {

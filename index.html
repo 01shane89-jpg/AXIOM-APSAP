@@ -451,6 +451,7 @@ select.mini{
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
+.osap-hs{mix-blend-mode:multiply}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
 .plabel{
@@ -1286,6 +1287,27 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
   }
   function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
+     Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
+     Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
+  var HSX = {
+    world: { name: "Hillshade, LiDAR where published", note: "Esri World Hillshade, worldwide. Uses 1 m LiDAR where governments publish it (much of the US and Europe, and more added each year), about 30 m satellite elevation elsewhere, including most of South-East Asia",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", max: 16, lic: "restricted",
+      attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener">coverage</a>)' },
+    jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
+      url: "https://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png", max: 16, min: 2, bounds: [[20, 122], [46, 154]], lic: "GSI terms (credit)",
+      attr: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> hillshade' }
+  };
+  if (!(ML.hsop > 0)) ML.hsop = 0.55;
+  var hsOn = {};
+  function setShade(k, on) {
+    ML["hs_" + k] = !!on; mlSet();
+    var h = HSX[k];
+    if (on && !hsOn[k]) hsOn[k] = L.tileLayer(h.url, { maxNativeZoom: h.max, minNativeZoom: h.min || 0, maxZoom: 20, bounds: h.bounds, zIndex: 5,
+      className: "osap-hs", opacity: ML.hsop, attribution: h.attr }).addTo(map);
+    if (!on && hsOn[k]) { map.removeLayer(hsOn[k]); delete hsOn[k]; }
+  }
+  function setShadeOp(v) { ML.hsop = v; mlSet(); Object.keys(hsOn).forEach(function (k) { hsOn[k].setOpacity(v); }); }
   /* ---------- road closures: official road-agency notices (data/live/roads.js) plus closures named in this area's reports ----------
      Agency notices are shown as the agency published them. "Reported" markers are news or warning records whose text says a
      road is closed; they are unverified and sit where the record was placed, which may be approximate. */
@@ -1355,6 +1377,11 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
           return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
         }).join("") +
         '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
+        '<div class="mlh">Elevation and LiDAR</div>' +
+        Object.keys(HSX).map(function (k) {
+          return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
+        }).join("") +
+        '<label class="mlop">Shading <input type="range" min="0.2" max="1" step="0.05" value="' + ML.hsop + '" id="ml-hsop"><output id="ml-hsopv">' + Math.round(ML.hsop * 100) + "%</output></label>" +
         '<div class="mlh">Roads</div>' +
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
@@ -1375,7 +1402,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         if (t.name === "ml-base") setBase(t.value);
         else if (t.dataset.fx) setFlood(t.dataset.fx, t.checked);
         else if (t.dataset.roads) setRoads(t.checked);
+        else if (t.dataset.hs) setShade(t.dataset.hs, t.checked);
       });
+      box.querySelector("#ml-hsop").addEventListener("input", function () { setShadeOp(parseFloat(this.value)); box.querySelector("#ml-hsopv").textContent = Math.round(this.value * 100) + "%"; });
       box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
       return box;
     }
@@ -1395,6 +1424,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   };
   if (ML.base !== "grey") setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
+  Object.keys(HSX).forEach(function (k) { if (ML["hs_" + k]) setShade(k, true); });
   /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
   /* the start switches extras off (extrasOff) while this waits, so check again before drawing */
   if (ML.roads) (function wait(n) { if (window.TSAP || n > 40) { if (ML.roads) setRoads(true); } else setTimeout(function () { wait(n + 1); }, 250); })(0);
@@ -5676,8 +5706,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
      whenever the data set changes, and on start. The base map choice stays. */
+  /* elevation shading (data-hs) belongs with the base map, so it stays on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
