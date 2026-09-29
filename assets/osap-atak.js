@@ -1,6 +1,6 @@
 /* AXIOM OSAP: ATAK-style map controls.
    - one slim icon toolbar down the right side of the map, folding away to a single button (remembered on this device);
-     its buttons press the page's own controls (Layers, Measure, Draw area, Watch, What's new, My work, Layout, Today,
+     its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
      here, Drop a point, Save as NAI/TAI, Watch this area, Copy the grid;
@@ -62,10 +62,8 @@
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
-    ["new", "New", I.bell, "What's new since your last visit"],
-    ["mine", "My work", I.work, "Your saved work"],
+    ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
     ["layout", "Layout", I.layout, "Map only, map with list, or list"],
-    ["today", "Today", I.today, "Weather, alerts and top stories for this country"],
     ["full", "Full", I.full, "Full-screen map"]
   ];
   var bar = D.createElement("div");
@@ -98,13 +96,12 @@
     var mb = q("#meas-btn"), m = bar.querySelector('[data-atk="measure"]');
     if (m) m.setAttribute("aria-pressed", mb && mb.getAttribute("aria-pressed") === "true" ? "true" : "false");
     var a = bar.querySelector('[data-atk="area"]'); if (a) a.classList.toggle("on", areaOn());
-    var nb = q('[data-wk-btn="new"] .wkn'), n = bar.querySelector('[data-atk="new"]');
-    if (n) { var bd = n.querySelector(".atk-n"); if (nb) { if (!bd) { bd = D.createElement("span"); bd.className = "atk-n"; n.appendChild(bd); } bd.textContent = nb.textContent; } else if (bd) bd.remove(); }
-    var mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
-    if (mm) { var b2 = mm.querySelector(".atk-n"); if (mw) { if (!b2) { b2 = D.createElement("span"); b2.className = "atk-n n2"; mm.appendChild(b2); } b2.textContent = mw.textContent; } else if (b2) b2.remove(); }
+    /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
+    var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
+    if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
-    if (lay) lay.hidden = !seg;
+    if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
   }
   bar.addEventListener("click", function (e) {
     var b = e.target.closest("[data-atk]"); if (!b) return;
@@ -119,13 +116,15 @@
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"]].concat(has ? [null, ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
-    else if (k === "new") press('[data-wk-btn="new"]');
-    else if (k === "mine") press('[data-wk-btn="mine"]');
+    else if (k === "mine") {
+      var nn = q('[data-wk-btn="new"] .wkn'), mn = q('[data-wk-btn="mine"] .wkn');
+      if (!q('[data-wk-btn="new"]')) press('[data-wk-btn="mine"]');
+      else popOpen(b, [["new", "What's new" + (nn ? " (" + nn.textContent + ")" : "")], ["mine", "Saved work" + (mn ? " (" + mn.textContent + ")" : "")]]);
+    }
     else if (k === "layout") {
       var cur = q("#rv-seg [aria-pressed=true]") || q("#rv-seg .on"), mode = cur ? cur.getAttribute("data-rv-mode") : "";
       popOpen(b, [["map", "Map only", mode === "map"], ["split", "Map and list", mode === "split"], ["list", "List", mode === "list"]]);
     }
-    else if (k === "today") press(".tdctl button");
     else if (k === "full") { press("#fs-btn"); setTimeout(paintTools, 80); }
   });
   pop.addEventListener("click", function (e) {
@@ -133,6 +132,7 @@
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
     if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
+    else if (f === "mine") press('[data-wk-btn="' + k + '"]');
   });
   D.addEventListener("pointerdown", function (e) { if (!pop.hidden && !pop.contains(e.target) && !bar.contains(e.target)) popClose(); }, true);
 
@@ -323,7 +323,7 @@
   var om = D.createElement("aside"); om.id = "atk-om"; om.className = "leaflet-control"; om.hidden = true; om.setAttribute("aria-label", "Overlay Manager");
   om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
     '<div class="atk-omb"><section><h3>Data sets</h3><div id="atk-ds"></div></section>' +
-    '<section><h3>Map layers</h3><div id="atk-ml"></div></section>' +
+    '<section><h3>What to show</h3><div id="atk-ml"></div></section>' +
     '<section><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
     '<section><h3>Controls</h3><label class="atk-sw"><input type="checkbox" id="atk-classic"> <span>Classic controls (the old buttons instead of this toolbar)</span></label></section></div>';
   L.DomEvent.disableClickPropagation(om); L.DomEvent.disableScrollPropagation(om);
@@ -333,6 +333,7 @@
     /* data sets: once the page has its own on/off checklist (window.OSAP_DATASETS, #ml-ds inside the Layers panel that this
        sheet holds), that is the one list; until then the page's own tabs, pressed as before */
     var dsSec = om.querySelector("#atk-ds").parentNode; dsSec.hidden = !!(W.OSAP_DATASETS && q("#ml-ds"));
+    if (dsSec.hidden && W.OSAP_DATASETS.refresh) W.OSAP_DATASETS.refresh();
     var ds = om.querySelector("#atk-ds"), btns = D.querySelectorAll("#view-seg button[data-view]");
     ds.innerHTML = Array.prototype.map.call(btns, function (b) {
       var v = b.getAttribute("data-view"), sel = b.getAttribute("aria-selected") === "true";
@@ -362,6 +363,11 @@
     if ((b = t.closest("[data-mk-del]"))) { var id = b.getAttribute("data-mk-del"); ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); return; }
     if ((b = t.closest("[data-mk-go]"))) { var p = ptsAll().filter(function (x) { return x.id === b.getAttribute("data-mk-go"); })[0]; if (p) { if (phone()) omClose(); map.setView([p.lat, p.lon], Math.max(map.getZoom(), 12)); } return; }
     if ((b = t.closest("[data-aoi-go]"))) { if (W.OSAP_AOI) { omClose(); W.OSAP_AOI.open(b.getAttribute("data-aoi-go")); } return; }
+  });
+  /* Open on a data set or view in the list: on a phone the sheet closes and the list comes up half way, so the choice shows */
+  D.addEventListener("osap:dsopen", function () {
+    if (!phone() || om.hidden) return;
+    omClose(); if (W.ASAP_PHONE && W.ASAP_PHONE.setSheet) setTimeout(function () { W.ASAP_PHONE.setSheet("half"); }, 80);
   });
   om.addEventListener("change", function (e) { if (e.target.id === "atk-classic") { setMode(!e.target.checked); if (!e.target.checked) omPaint(); } });
   function phone() { return root.classList.contains("phone") || W.innerWidth <= 700; }

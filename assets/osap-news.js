@@ -149,7 +149,7 @@
     var more = [];
     if (R.length > S.shown) more.push('<button type="button" class="tdlink" data-nq="more">Show ' + Math.min(PAGE, R.length - S.shown) + " more</button>");
     if (S.man && S.loaded < total && !S.busy) more.push('<button type="button" class="tdlink" data-nq="older">Search older days (' + (total - S.loaded) + " more)</button>");
-    if (S.where === "here") more.push('<button type="button" class="tdlink" data-nq="all">Search every country</button>');
+    more.push(S.where === "here" ? '<button type="button" class="tdlink" data-nq="all">Search every country</button>' : '<button type="button" class="tdlink" data-nq="here">Only ' + esc(S.name) + "</button>");
     more.push('<a class="tdlink nqweb" href="' + esc(webUrl()) + '" target="_blank" rel="noopener noreferrer">' + (R.length < 5 ? "Find more on the web ↗" : "More on the web ↗") + "</a>");
     h += '<div class="tdlinks">' + more.join("") + "</div>";
     if (!R.length && !S.busy && S.man && S.loaded >= total) h += '<p class="nqnote">Nothing in the last ' + total + " days of the pool. The web link above searches Bing News instead.</p>";
@@ -163,7 +163,6 @@
     S.el = el;
     el.innerHTML = '<form class="nqform" role="search"><label class="tdvh" for="nq-q">Search news</label>' +
       '<input id="nq-q" type="search" autocomplete="off" enterkeyhint="search" maxlength="200" placeholder="Search the news" title="Any words; &quot;a phrase&quot; stays together; -word leaves it out" value="' + esc(S.q) + '">' +
-      '<select id="nq-where" aria-label="Where"><option value="here"' + (S.where === "here" ? " selected" : "") + ">" + esc(S.name) + '</option><option value="all"' + (S.where === "all" ? " selected" : "") + ">Every country</option></select>" +
       '<button type="submit" class="tdmap">Search</button></form><div class="nqchips"></div><div class="nqres" aria-live="polite"></div>';
     drawChips();
     if (!S.man) { var c = el.querySelector(".nqchips"); c.innerHTML = '<button type="button" class="nqload" data-nq="load">Show data sets (earthquakes, storms, floods…)</button>'; }
@@ -172,7 +171,6 @@
       if (e.target.id !== "nq-q") return;
       clearTimeout(deb); deb = setTimeout(function () { S.q = e.target.value; S.shown = PAGE; if (S.q.trim()) ensure(); draw(); }, 250);
     });
-    el.addEventListener("change", function (e) { if (e.target.id === "nq-where") { S.where = e.target.value; S.shown = PAGE; draw(); } });
     el.addEventListener("click", function (e) {
       var b = e.target.closest && e.target.closest("[data-nqt],[data-nq]"); if (!b) return;
       var t = b.getAttribute("data-nqt"), a = b.getAttribute("data-nq");
@@ -180,13 +178,12 @@
       if (a === "load") { ensure(); return; }
       if (a === "more") { S.shown += PAGE; draw(); return; }
       if (a === "older") { S.want = Math.min(S.want + MORE_DAYS, S.man.days.length); ensure(); return; }
-      if (a === "all") { S.where = "all"; var w = el.querySelector("#nq-where"); if (w) w.value = "all"; S.shown = PAGE; draw(); }
+      if (a === "all" || a === "here") { S.where = a; S.shown = PAGE; draw(); }
     });
     draw();
   }
   var CSS = ".tdq{margin-bottom:12px}.nqform{display:flex;gap:6px;flex-wrap:wrap}" +
     "#nq-q{flex:1 1 260px;min-width:0;font:inherit;font-size:16px;min-height:44px;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}" +
-    "#nq-where{font:inherit;font-size:14px;min-height:44px;max-width:45vw;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}" +
     ".nqchips{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding:8px 0 2px;scrollbar-width:thin;align-items:center}.nqlbl{font-size:12px;color:var(--muted);white-space:nowrap}" +
     ".nqchips button{font:inherit;font-size:12.5px;white-space:nowrap;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;min-height:32px;padding:3px 11px}" +
     ".nqchips button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}.nqchips .nqload{border-style:dashed;color:var(--muted)}" +
