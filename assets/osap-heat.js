@@ -21,7 +21,7 @@
     return p;
   })();
   var SCALE = 0.5;   // drawn at half the screen's resolution and stretched; a heat map is soft anyway, and it is 4x less work
-  function radius(z) { return z <= 4 ? 11 : z <= 6 ? 14 : 17; }   // CSS pixels
+  function radius(z) { return z <= 4 ? 10 : z <= 6 ? 12 : 14; }   // CSS pixels
   var kern = {};
   function kernel(r) {
     if (kern[r]) return kern[r];
@@ -79,8 +79,9 @@
         var ctx = c.getContext("2d"), img = ctx.createImageData(w, h), d = img.data;
         for (var m = 0; m < acc.length; m++) {
           var val = acc[m]; if (val < 0.02) continue;
-          var t = Math.min(1, val / vmax), pi = Math.round(Math.sqrt(t) * 255) * 3, o = m * 4;
-          d[o] = PAL[pi]; d[o + 1] = PAL[pi + 1]; d[o + 2] = PAL[pi + 2]; d[o + 3] = Math.min(1, Math.sqrt(t) * 2.2) * 215;
+          // faint where little happened (so the map and borders stay readable), solid where most did
+          var t = Math.min(1, val / vmax), pi = Math.round(Math.pow(t, 0.7) * 255) * 3, o = m * 4, a = Math.min(1, t / 0.3);
+          d[o] = PAL[pi]; d[o + 1] = PAL[pi + 1]; d[o + 2] = PAL[pi + 2]; d[o + 3] = (a * a * (3 - 2 * a)) * 205;
         }
         ctx.putImageData(img, 0, 0);
         this._acc = acc; this._vmax = vmax; this._w = w; this._h = h;
