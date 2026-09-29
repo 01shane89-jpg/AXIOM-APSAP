@@ -35,6 +35,7 @@
 country-data:start
 
 # helpers other features call
+window.OSAP_ROUTE_SEED
 window.OSAP_LATER
 function osapSym(
 window.OSAP_REDCROSS

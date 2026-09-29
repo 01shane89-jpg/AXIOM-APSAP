@@ -280,7 +280,7 @@
   var UNITS = { km: { big: 1000, name: "km", small: 1, sname: "m" }, mi: { big: 1609.344, name: "mi", small: 0.3048, sname: "ft" }, nm: { big: 1852, name: "nm", small: 1, sname: "m" } };
   function fmtDist(m, u) {
     var U = UNITS[u] || UNITS.km, v = m / U.big;
-    if (u !== "nm" && v < (u === "mi" ? 0.1 : 1)) { var s = m / U.small; return (s < 10 ? s.toFixed(1) : Math.round(s).toLocaleString("en-GB")) + " " + U.sname; }
+    if (u !== "nm" && v < (u === "mi" ? 0.1 : 1)) { var s = m / U.small; return (s === 0 ? "0" : s < 10 ? s.toFixed(1) : Math.round(s).toLocaleString("en-GB")) + " " + U.sname; }
     return (v < 10 ? v.toFixed(2) : v < 1000 ? v.toFixed(1) : Math.round(v).toLocaleString("en-GB")) + " " + U.name;
   }
   function fmtArea(m2, u) {
