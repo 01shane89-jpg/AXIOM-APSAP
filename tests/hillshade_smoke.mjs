@@ -57,6 +57,8 @@ const outside = asked.filter((u) => u.includes("cyberjapandata.gsi.go.jp")).filt
 });
 ok(!outside.length, "Japan LiDAR asks for no tiles outside Japan while the map is over Thailand" + (outside.length ? ": " + outside.slice(0, 3).join(" ") : ""));
 await load("#jp");
+// the map itself over Japan (this used to pass only because a hidden watch-check frame loaded Japan's tiles)
+await p.evaluate(() => window.__asapMap.setView([35.36, 138.73], 9, { animate: false }));
 await p.waitForTimeout(1500);
 ok(asked.some((u) => u.includes("cyberjapandata.gsi.go.jp/xyz/hillshademap/")), "over Japan it asks GSI for hillshade tiles");
 await tick("world", false); await tick("jp", false); await p.waitForTimeout(300);
