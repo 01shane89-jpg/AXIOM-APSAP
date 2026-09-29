@@ -427,6 +427,7 @@ const PRECACHE = [
 "assets/osap-geo.js",
 "assets/osap-measure.js",
 "assets/osap-route.js",
+"assets/osap-locate.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
