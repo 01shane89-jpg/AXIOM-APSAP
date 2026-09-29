@@ -1344,10 +1344,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     onAdd: function () {
       var box = L.DomUtil.create("div", "leaflet-control mlctl");
       box.innerHTML = '<button type="button" class="mlbtn" aria-expanded="false" aria-controls="ml-panel" title="Map layers">&#9776; Layers</button>' +
-        '<div class="mlpanel" id="ml-panel" hidden><div class="mlh">Base map</div>' +
+        /* the base map list sits in its own block: with the tactical toolbar on it is hidden here, because the toolbar has its
+           own Base map button (osap-atak.js, through window.OSAP_BASEMAP below); classic controls keep it in Layers */
+        '<div class="mlpanel" id="ml-panel" hidden><div class="mlbase"><div class="mlh">Base map</div>' +
         Object.keys(BASES).map(function (k) {
           return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
-        }).join("") +
+        }).join("") + "</div>" +
         '<div class="mlh">Flooding</div>' +
         Object.keys(FLOODX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
@@ -1380,6 +1382,17 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   });
   new LayersCtl().addTo(map);
   window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
+  /* the base map choice for other controls (the toolbar's Base map button): list, current, set; setting also ticks the
+     matching radio in Layers so both stay in step */
+  window.OSAP_BASEMAP = {
+    list: function () { return Object.keys(BASES).map(function (k) { return { id: k, name: BASES[k].name, note: BASES[k].note }; }); },
+    get: function () { return ML.base; },
+    set: function (k) {
+      if (!BASES[k]) return;
+      setBase(k);
+      var r = document.querySelector('input[name="ml-base"][value="' + k + '"]'); if (r) r.checked = true;
+    }
+  };
   if (ML.base !== "grey") setBase(ML.base);
   Object.keys(FLOODX).forEach(function (k) { if (ML[k]) setFlood(k, true); });
   /* records exist only once the page has built them (window.TSAP); draw saved road markers after that */
