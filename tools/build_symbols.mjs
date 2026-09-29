@@ -36,6 +36,10 @@ const DEFS = {
   govt:       [N, "20", "120600", "Embassy or government site", "Places"],
   airport:    [N, "20", "121301", "Airport or air base", "Places"],
   seaport:    [N, "20", "121309", "Seaport or naval base", "Places"],
+  // military sites on the conflict tabs (Wikidata, OpenStreetMap; always unknown frame: a source's record, not a judgement)
+  ms_air:     [U, "20", "121301", "Military airfield or air base", "Military sites"],
+  ms_naval:   [U, "20", "121309", "Naval base", "Military sites"],
+  ms_depot:   [U, "20", "120801", "Depot, arsenal or ammunition store", "Military sites"],
   // map graphics
   crossing:   [U, "25", "130300", "Border crossing (checkpoint)", "Map graphics"],
   keyterrain: [U, "25", "132100", "Key terrain (hill, pass, river, reef); a number is the hill's name", "Map graphics"],
