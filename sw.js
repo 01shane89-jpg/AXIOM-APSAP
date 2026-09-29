@@ -429,6 +429,7 @@ const PRECACHE = [
 "assets/osap-tools.js",
 "assets/osap-route.js",
 "assets/osap-locate.js",
+"assets/osap-drones.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
@@ -442,7 +443,7 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/];
+const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//];
 // Saved after install rather than during it (see the top of this file).
 const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
