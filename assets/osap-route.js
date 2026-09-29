@@ -417,9 +417,13 @@ function main() {
   }
   function sumUi() {
     var box = el("rt-sum"), alt = el("rt-alt"), lg = el("rt-legs"); if (!box) return;
-    if (S.busy) { box.innerHTML = '<p class="obs">Planning the route…</p>'; alt.innerHTML = lg.innerHTML = ""; return; }
-    if (!S.routes.length) { box.innerHTML = S.wps.length ? '<p class="obs">Add one more waypoint to plan a route.</p>' : ""; alt.innerHTML = lg.innerHTML = ""; return; }
+    /* on a phone the folded bottom sheet shows this one line, so the route can be read with the map in full view */
+    var res = el("rt-res");
+    function note(t) { if (res) res.setAttribute("data-sheet-note", t); }
+    if (S.busy) { note("Planning the route…"); box.innerHTML = '<p class="obs">Planning the route…</p>'; alt.innerHTML = lg.innerHTML = ""; return; }
+    if (!S.routes.length) { note(S.wps.length ? "Tap the map to add the next waypoint" : "Tap the map to add waypoints"); box.innerHTML = S.wps.length ? '<p class="obs">Add one more waypoint to plan a route.</p>' : ""; alt.innerHTML = lg.innerHTML = ""; return; }
     var r = prep(S.routes[S.sel]), dep = departMs(), arr = dep + r.total * 1000;
+    note(dist(r.m) + " · " + dur(r.total) + " · arrive " + zOnly(arr));
     box.innerHTML = (S.err ? '<p class="rtbad">' + E(S.err) + "</p>" : "") + (r.note ? '<p class="obs">' + E(r.note) + "</p>" : "") +
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
