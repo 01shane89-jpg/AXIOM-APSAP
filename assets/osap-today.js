@@ -129,6 +129,14 @@
     var c = CAPS[CC], out = pts.length ? pts.map(function (p) { return { name: p.name, lat: p.lat, lon: p.lon, days: p.days || [], snap: f.asof }; }) : c ? [{ name: c[0], lat: c[1], lon: c[2], days: [], snap: "" }] : [];
     /* the province or spot chosen here or in the Weather tab comes first */
     var X = window.OSAP_WX, pl = X && X.placePoint ? X.placePoint(CC) : null;
+    /* then, with "Use my location" on (assets/osap-locate.js), the app's own forecast point nearest the person: the position
+       itself is never sent to the weather service */
+    var me = window.OSAP_LOC && window.OSAP_LOC.here();
+    if (me && me.cc === CC && out.length > 1) {
+      var k = 0, bd = Infinity, cl = Math.cos(me.lat * Math.PI / 180);
+      out.forEach(function (p, i) { var d = Math.pow((p.lon - me.lon) * cl, 2) + Math.pow(p.lat - me.lat, 2); if (d < bd) { bd = d; k = i; } });
+      if (k > 0) out.unshift(out.splice(k, 1)[0]);
+    }
     if (pl && !out.some(function (p) { return p.name === pl.name; })) out.unshift({ name: pl.name, lat: pl.lat, lon: pl.lon, days: [], snap: "" });
     return out;
   }
@@ -399,6 +407,9 @@
     box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo.png" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {
         return '<option value="' + esc(c.id) + '"' + (c.id === CC ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("") + "</select></label>" : "") +
+      (window.OSAP_LOC ? '<button type="button" class="tdloc" data-loc aria-pressed="' + window.OSAP_LOC.on() + '" title="' +
+        (window.OSAP_LOC.on() ? "Using your location. Your position stays on this device." : "Start on your own country and see where you are on the map. Your position stays on this device.") + '">' +
+        (window.OSAP_LOC.on() ? "My location" : "Use my location") + "</button>" : "") +
       '<button type="button" class="tdmap" data-go="map">Open map</button></div>';
     box.querySelector("#td-body").innerHTML = '<div class="tdcols"><div class="tdcol tdc1">' + weatherHtml() + "</div><div class=\"tdcol tdc2\">" + alertsHtml() + "</div><div class=\"tdcol tdc3\">" + storiesHtml() + newHtml() + "</div><div class=\"tdcol tdc4\">" + shortcutsHtml() + "</div></div>" +
       '<footer class="tdfoot"><div class="tdhome" role="group" aria-label="Open the app on"><span>Each time the app opens, start on</span><button type="button" data-home="today" aria-pressed="' + (home === "today") + '">Today</button>' +
@@ -446,7 +457,7 @@
     ".tdbrand{display:flex;flex-direction:column;flex:1;min-width:150px}.tdbrand b{font-size:22px;line-height:1.1}" +
     ".tdcc select{font:inherit;font-size:15px;min-height:40px;max-width:60vw;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}" +
     ".tdvh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}" +
-    ".tdmap,.tdlink,.tdgrid button,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
+    ".tdloc[aria-pressed=true]{border-color:#1a73e8;color:#1a73e8}.tdmap,.tdloc,.tdlink,.tdgrid button,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
     ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--on-accent,var(--surface));font-weight:600}" +
     /* the screen fills the window, news first: three columns on a wide screen (stories | weather | warnings), two on a tablet or
        small laptop (stories beside weather and warnings), one on a phone (stories on top) */
@@ -493,6 +504,7 @@
       var t = e.target.closest ? e.target : null; if (!t) return;
       var b = t.closest("[data-rec]");
       if (b) { var id = b.getAttribute("data-rec"); hide(); if (window.TSAP) { window.TSAP.setView("timeline"); window.TSAP.select(id, true); } return; }
+      b = t.closest("[data-loc]"); if (b) { if (window.OSAP_LOC) window.OSAP_LOC.use(); return; }
       b = t.closest("[data-go]"); if (b) { go(b.getAttribute("data-go")); return; }
       b = t.closest("[data-wx]"); if (b) { wxSel = +b.getAttribute("data-wx") || 0; render(); return; }
       b = t.closest("[data-home]"); if (b) { lsSet(HOME_KEY, b.getAttribute("data-home")); render(); }
@@ -517,6 +529,12 @@
       ctl = new Ctl().addTo(map).getContainer();
     }
     window.OSAP_TODAY = { show: show, hide: hide, isOpen: function () { return open; } };
+    /* a new position redraws only when it changes the weather place or the location button */
+    var locSig = "";
+    if (window.OSAP_LOC) window.OSAP_LOC.onChange(function () {
+      var P = wxPlaces(), s = window.OSAP_LOC.on() + "|" + (P[0] ? P[0].name : "");
+      if (s === locSig) return; locSig = s; wxSel = 0; if (open) renderSoon();
+    });
     /* open on Today: assets/osap-start.js marks every fresh open of the app ("osap-today" = "1") before the page reads the
        address; a country change reloads with it still set. Coming back after 30 minutes or more away also counts as opening
        the app. Without the start script (an older cached page) a fresh tab still opens here unless Map was chosen. */
