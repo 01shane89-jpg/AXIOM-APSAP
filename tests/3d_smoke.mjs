@@ -129,8 +129,9 @@ async function run3d(name, p, errors, libs, openSel) {
   await p.evaluate(() => { window.__t = { ok: 0, err: 0 }; window.OSAP_3D.open(); });
   await p.waitForFunction(() => window.OSAP_3D.gl, null, { timeout: 30000 });
   await p.evaluate(() => { const gl = window.OSAP_3D.gl; gl.on("data", (e) => { if (e.sourceId === "r0" && e.tile && e.dataType === "source") window.__t.ok++; }); gl.on("error", (e) => { if (e.sourceId === "r0") { window.__t.err++; window.__t.msg = String(e.error && e.error.message); } }); });
-  await p.waitForFunction(() => { const gl = window.OSAP_3D.gl; return gl.loaded() && gl.areTilesLoaded() && !gl.isMoving(); }, null, { timeout: 40000 }).catch(() => {});
-  await p.waitForTimeout(800);
+  /* after the tilt, once every picture is in, the bar goes away (it never turns into an error) */
+  await p.waitForFunction(() => { const gl = window.OSAP_3D.gl; return gl.getPitch() > 55 && gl.loaded() && gl.areTilesLoaded() && !gl.isMoving(); }, null, { timeout: 40000 }).catch(() => {});
+  await p.waitForFunction(() => document.querySelector("#o3d .o3-load").hidden || document.querySelector("#o3d .o3-load").classList.contains("err"), null, { timeout: 15000 }).catch(() => {});
   const r = await p.evaluate(() => ({ t: window.__t, bar: document.querySelector("#o3d .o3-load").hidden, text: document.querySelector("#o3d .o3-load").textContent }));
   ok(busy > 0 && missing > 0, "busy host: pictures were refused once (" + busy + ") and close-ups were missing (" + missing + ")");
   ok(r.t.ok > 0 && r.t.err === 0, "busy host: every 3D picture still loaded, asked again or from a wider picture " + JSON.stringify(r.t));
