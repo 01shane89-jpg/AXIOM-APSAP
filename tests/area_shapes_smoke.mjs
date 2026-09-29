@@ -74,6 +74,8 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   const want = await dist(p, center, edge), got = A ? await dist(p, center, A[16]) : 0;
   ok(A && Math.abs(got - want) / want < 0.02, `desktop: every point is the radius from the centre (${Math.round(got)} m vs ${Math.round(want)} m)`);
   ok(await p.evaluate((c) => window.TSAP.areaApi.inPoly(c[0], c[1], window.TSAP.areaApi.area()), center), "desktop: the centre is inside the area");
+  ok(await p.evaluate(() => !!document.querySelector('#area-ctl [data-area="save"]') && !!document.querySelector('#area-ctl [data-area="clear"]') && document.querySelectorAll(".areah").length === 6), "desktop: after drawing, Save, Delete and the edit handles are right there");
+  await p.click('#area-ctl [data-area="done"]');
   ok(/Summarise area/.test(await p.textContent("#area-ctl")), "desktop: Summarise area offered for the circle");
   if (OUT) await p.screenshot({ path: OUT + "/desk-circle.png" });
   // square: corner to corner
@@ -83,6 +85,7 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok(/[\d.]+ km × [\d.]+ km/.test(sh), "desktop: width × height shows while dragging: " + sh);
   const S = await area(p);
   ok(S && S.length === 4, "desktop: square becomes a 4-corner drawn area");
+  await p.click('#area-ctl [data-area="done"]');
   const near = (u, v) => Math.abs(u[0] - v[0]) < 1e-3 && Math.abs(u[1] - v[1]) < 1e-3;
   ok(S && near(S[0], a) && near(S[2], b) && near(S[1], [a[0], b[1]]) && near(S[3], [b[0], a[1]]), "desktop: corners are where the drag started and ended");
   if (OUT) await p.screenshot({ path: OUT + "/desk-square.png" });
@@ -120,7 +123,9 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   const b3 = await pxBox(p);
   ok(Math.abs(b3.cx - bm.cx + 60) < 3 && Math.abs(b3.cy - bm.cy - 20) < 3, "edit: centre handle moves the shape");
   ok(await p.evaluate(() => !document.querySelector(".leaflet-popup-content")), "edit: no report opened by handle taps");
-  // colours and opacity
+  // colours and opacity (under Style)
+  ok(await p.evaluate(() => !document.querySelector('#area-ctl [data-ast]')), "style: the style settings stay folded until asked for");
+  await p.click('#area-ctl [data-area="look"]');
   await p.evaluate(() => { const set = (k, v) => { const i = document.querySelector('#area-ctl [data-ast="' + k + '"]'); i.value = v; i.dispatchEvent(new Event("input", { bubbles: true })); }; set("fill", "#ff0000"); set("line", "#00ff00"); set("op", "50"); });
   const paths = await p.evaluate(() => [...document.querySelectorAll(".leaflet-areapane-pane path")].map((x) => [x.getAttribute("fill"), x.getAttribute("fill-opacity"), x.getAttribute("stroke")]));
   ok(paths.some((x) => x[0] === "#ff0000" && x[1] === "0.5") && paths.some((x) => x[2] === "#00ff00"), "style: fill colour, fill opacity and outline colour apply");
@@ -137,6 +142,36 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   for (const [dx, dy] of [[60, -30], [80, 30], [30, 80], [-40, 70], [-70, 10]]) await p.mouse.move(cx + dx, cy + dy, { steps: 3 });
   await p.mouse.up(); await p.waitForTimeout(300);
   ok((await area(p)).length > 6, "desktop: lasso still draws");
+  // outline width: thinner by default, a setting, and thinner again when zoomed out
+  const w = () => p.evaluate(() => { const ps = [...document.querySelectorAll(".leaflet-areapane-pane path")].filter((x) => x.getAttribute("fill") === "none" && /z$/i.test(x.getAttribute("d") || "")); return ps.length ? +ps[ps.length - 1].getAttribute("stroke-width") : 0; });
+  await p.click('#area-ctl [data-area="look"]');
+  await p.click('#area-ctl [data-area="reset"]');
+  await p.evaluate(() => window.__asapMap.setZoom(10, { animate: false })); await p.waitForTimeout(300);
+  ok(await w() === 2, "width: outline is 2 px by default at close zoom: " + await w());
+  await p.evaluate(() => { const i = document.querySelector('#area-ctl [data-ast="w"]'); i.value = "5"; i.dispatchEvent(new Event("input", { bubbles: true })); });
+  ok(await w() === 5 && /5 px/.test(await p.textContent("#area-ctl")), "width: the Outline width setting applies");
+  await p.evaluate(() => window.__asapMap.setZoom(5, { animate: false })); await p.waitForTimeout(300);
+  ok(await w() === 2.5, "width: halves when zoomed out to country level: " + await w());
+  await p.evaluate(() => window.__asapMap.setZoom(3, { animate: false })); await p.waitForTimeout(300);
+  ok(await w() === 2, "width: 40% (never under 1 px) zoomed right out: " + await w());
+  await p.evaluate(() => { const i = document.querySelector('#area-ctl [data-ast="w"]'); i.value = "1"; i.dispatchEvent(new Event("input", { bubbles: true })); });
+  ok(await w() === 1, "width: a 1 px outline stays visible at 1 px zoomed out");
+  await p.evaluate(() => window.__asapMap.setZoom(7, { animate: false })); await p.waitForTimeout(300);
+  // Save: the name form opens, the saved area keeps its look and stays on the map after a reload
+  await p.evaluate(() => { const set = (k, v) => { const i = document.querySelector('#area-ctl [data-ast="' + k + '"]'); i.value = v; i.dispatchEvent(new Event("input", { bubbles: true })); }; set("fill", "#ff8800"); set("line", "#112233"); set("w", "3"); });
+  await p.click('#area-ctl [data-area="save"]'); await p.waitForTimeout(300);
+  ok(/Save the drawn area/.test(await p.textContent("#aoidlg")), "save: Save opens the name form");
+  await p.fill("#aoi-name", "Bridge"); await p.click('#aoi-form button[type="submit"]'); await p.waitForTimeout(300);
+  const saved = await p.evaluate(() => window.OSAP_AOI.list(window.TSAP.country));
+  ok(saved.length === 1 && saved[0].name === "Bridge" && saved[0].st && saved[0].st.fill === "#ff8800" && saved[0].st.line === "#112233" && saved[0].st.w === 3, "save: saved with its name and look " + JSON.stringify(saved[0] && saved[0].st));
+  await p.evaluate(() => { const x = document.querySelector("#aoidlg [data-aoi-x]"); if (x) x.click(); });
+  // Delete: the drawn shape goes; the saved copy stays
+  await p.click('#area-ctl [data-area="open"]'); await p.click('#area-ctl [data-area="edit"]'); await p.click('#area-ctl [data-area="clear"]'); await p.waitForTimeout(300);
+  ok(!(await area(p)) && await p.evaluate(() => document.querySelectorAll(".areah").length === 0) && /Draw area/.test(await p.textContent("#area-ctl")), "delete: Delete removes the drawn shape and its handles");
+  await p.reload(); await p.waitForFunction(() => window.TSAP && window.OSAP_AOI, null, { timeout: 60000 }); await p.waitForTimeout(3000);
+  const kept = await p.evaluate(() => [...document.querySelectorAll(".leaflet-areapane-pane path")].some((x) => x.getAttribute("stroke") === "#112233" && x.getAttribute("fill") === "#ff8800"));
+  ok(kept && /Bridge/.test(await p.evaluate(() => document.querySelector(".leaflet-pane").textContent + [...document.querySelectorAll(".aoilbl")].map((x) => x.textContent).join(" "))), "save: the saved area is on the map after a reload, in its own colours");
+  await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -154,13 +189,17 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok(/Radius/.test(hint), "phone: radius shows under the finger: " + hint);
   if (OUT) await p.screenshot({ path: OUT + "/phone-circle.png" });
   ok((await area(p) || []).length === 64, "phone: finger drag draws the circle");
+  ok(await p.evaluate(() => { const b = document.querySelector('#area-ctl [data-area="save"]'); if (!b) return false; const r = b.getBoundingClientRect(), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return b.contains(t); }), "phone: Save is on screen right after drawing");
+  await p.click('#area-ctl [data-area="done"]');
   await p.click('#atk-tools [data-atk="area"]'); await p.click('#atk-pop [data-pk="rect"]'); await p.waitForTimeout(200);
   await touchDrag(p, cdp, cx - 80, cy - 60, cx + 70, cy + 90);
   ok((await area(p) || []).length === 4, "phone: finger drag draws the square");
+  await p.click('#area-ctl [data-area="done"]');
   if (OUT) await p.screenshot({ path: OUT + "/phone-square.png" });
   ok(await p.evaluate(() => !document.getElementById("map").classList.contains("area-drawing")), "phone: map panning is back after drawing");
   // edit with a finger: the toolbar's Edit shape, then drag a corner
   await p.click('#atk-tools [data-atk="area"]'); await p.click('#atk-pop [data-pk="edit"]'); await p.waitForTimeout(300);
+  await p.click('#area-ctl [data-area="look"]');
   ok(await p.evaluate(() => document.querySelectorAll(".areah").length) === 6, "phone: Edit shape shows the handles");
   ok(await p.evaluate(() => { const e = document.getElementById("area-ctl"), r = e.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return r.width > 100 && r.left >= 0 && r.right <= innerWidth && !!e.querySelector('[data-ast="op"]') && e.contains(t); }), "phone: colour controls fit the screen and nothing covers them");
   if (OUT) await p.screenshot({ path: OUT + "/phone-edit.png" });

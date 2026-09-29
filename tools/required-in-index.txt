@@ -60,3 +60,26 @@ window.TSAP.areaApi
 <script src="assets/osap-tidy.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
+
+# map points with a name, a note and photos on this device (claude/map-point-photos)
+<script src="assets/osap-points.js"></script>
+# 3D terrain view, scale bar and compass (claude/3d-terrain); MapLibre is loaded by it only when 3D is opened
+<script src="assets/osap-3d.js"></script>
+
+# map point icons: military symbols (2525D via milsymbol), shapes and pins (claude/mil-symbol-picker)
+<script src="assets/osap-milsym.js"></script>
+# elevation and LiDAR hillshade overlays in the Layers menu (claude/lidar-hillshade)
+function setShade(k, on) {
+# loading bar and failed-tile notice on the flat map (claude/3d-speed); hidden watch-check frames load no map tiles
+<script src="assets/osap-maploading.js"></script>
+if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
+
+# workspaces, KML/KMZ import and export (claude/workspaces)
+<script src="assets/osap-ws.js"></script>
+
+# timeline covers the open topic (Deep South / All Thailand) and the event report (claude/timeline-topic-scope)
+<div class="tlscope" id="tl-scope"
+  var TOPIC = null, SCOPED = false;
+data-ev-tlr="1"
+# MGRS grid lines and centre crosshair (claude/map-grid-crosshair)
+<script src="assets/osap-grid.js"></script>

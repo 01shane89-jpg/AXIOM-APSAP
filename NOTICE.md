@@ -15,17 +15,24 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 ## Libraries, fonts and map material
 
 - **Leaflet 1.9.4** (`assets/vendor/leaflet-1.9.4.js`): Copyright (c) 2010-2023 Volodymyr Agafonkin, (c) 2010-2011 CloudMade. BSD 2-Clause licence, reproduced below.
+- **MapLibre GL JS 5.24.0** (`assets/vendor/maplibre-gl-5.24.0.js` and `.css`, loaded only when the 3D view is opened): Copyright (c) 2023 MapLibre contributors, (c) 2020 Mapbox (mapbox-gl-js v1.13 and earlier). BSD 3-Clause licence, full text in `assets/vendor/maplibre-gl-LICENSE.txt`.
+- **milsymbol 3.0.4** (`assets/vendor/milsymbol-3.0.4.js`, draws military symbols for map points): Copyright (c) 2017 Måns Beckman, spatialillusions.com. MIT licence, kept in the file header.
+- **mil-std-2525 0.2.8** tables (symbol function names in `assets/osap-milsym-cat.js`): Copyright (c) Måns Beckman, spatialillusions.com. MIT licence.
 
 ## Services and data
 
 | Source | Used for | Terms | Licence page |
 |---|---|---|---|
 | Esri World Light/Dark Gray Canvas basemap | Background map | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://www.esri.com/content/dam/arcgisonline/docs/tou_summary.pdf) |
+| Esri World Hillshade | Elevation and LiDAR shading overlay (Layers menu) | Esri terms of use; free non-commercial use, commercial use needs a paid plan or permission | [terms](https://www.esri.com/content/dam/arcgisonline/docs/tou_summary.pdf) |
+| GSI Japan hillshade tiles (地理院タイル 陰影起伏図) | Japan LiDAR relief overlay (Layers menu) | Free to use with credit to GSI | [terms](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html) |
 | NASA LANCE MODIS flood (MCDWD) tiles, packaged | Thailand flood extent layer | Free to use | [terms](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies) |
 | NASA GIBS / Worldview imagery and VIIRS fire tiles | Satellite true colour and fire layers | Free to use | [terms](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies) |
 | Natural Earth 1:50m country outlines | Land and borders outside the packaged tiles | Free to use | [terms](https://www.naturalearthdata.com/about/terms-of-use/) |
 | OpenStreetMap data (Thai-Cambodian border line, military areas, facilities, via Geofabrik) | Border line, facilities near the border, military areas | Free to use with attribution | [terms](https://www.openstreetmap.org/copyright) |
 | Leaflet 1.9.4 | Map engine | Free to use with attribution | [terms](https://github.com/Leaflet/Leaflet/blob/main/LICENSE) |
+| MapLibre GL JS 5.24.0 | 3D terrain view engine | Free to use with attribution | [terms](https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt) |
+| Terrain Tiles on AWS (Mapzen/Tilezen terrarium; SRTM, GMTED, ETOPO1, NED and others) | Ground height in the 3D view | Free to use with attribution | [terms](https://github.com/tilezen/joerd/blob/master/docs/attribution.md) |
 | IBM Plex Sans / Condensed / Mono via Google Fonts | Page typography | Free to use | [terms](https://github.com/IBM/plex/blob/master/LICENSE.txt) |
 | GitHub Pages hosting and GitHub Actions | Hosts the app; hourly/15-min refresh jobs | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) |
 | Google Translate free web endpoint (translate.googleapis.com, client=gtx) | Translating headlines and warnings | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://policies.google.com/terms) |
