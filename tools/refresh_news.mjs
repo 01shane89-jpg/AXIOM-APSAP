@@ -6,9 +6,9 @@
 import fs from "node:fs";
 import { translateAll, saveCache } from "./translate.mjs";
 import { updateHistory } from "./history.mjs";
-import { parseFeed } from "./feedparse.mjs";
+import { parseFeed, parseList } from "./feedparse.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
-import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
+import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
@@ -67,20 +67,37 @@ for (let b = 0; USE_GDELT && b < codes.length; b += BATCH) {
   }
   for (const [cc] of part) status.push(j ? { cc, source: "GDELT", ok: true, n: n[cc] || 0 } : { cc, source: "GDELT", ok: false, error });
 }
-const { feeds } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
+const { feeds, focus = {} } = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
+// Dates of the items the last run wrote, by link: an item its outlet publishes without a date (a web-page list, a feed with no
+// dates) keeps the time OSAP first saw it instead of looking new on every run.
+const seenAt = new Map();
+try {
+  const t = fs.readFileSync("data/live/news.js", "utf8"), prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
+  for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) seenAt.set(i.link, i.date);
+} catch (e) {}
+const nowIso = new Date().toISOString().slice(0, 16);
+// a date with no time zone is the outlet's local time: tz in tools/news_feeds.json, e.g. "+08:00"
+const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
 const LANES = 8;
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
-    const list = parseFeed(await getFeed(f.url)).slice(0, 25).map((i) => {
+    const body = await getFeed(f.url);
+    // html: an agency's news list on a web page (links matching f.match), read like a feed
+    const list = (f.html ? parseList(body, f.url, f.match) : parseFeed(body)).slice(0, f.max || 25).map((i) => {
       const link = f.search ? unwrap(i.link) : i.link;
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
       // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
       const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
-      const o = { title: i.title, summary: i.summary.slice(0, 280), date: iso(i.date), link, outlet, lang, via: f.search ? "search" : "RSS", state: !!f.state };
+      let date = iso(zoned(i.date, f.tz)), seen = false;
+      if (!date) { date = seenAt.get(link) || nowIso; seen = true; }
+      const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
+      if (seen) o.date_seen = true;          // the outlet gives no date: this is when OSAP first saw it
       if (f.nc) o.nc = true;
+      if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
+      if (f.region) o.region = f.region;    // the province or island group a regional outlet covers
       return o;
     });
     // a US state's own outlets are kept apart ("us:TX") and written to data/live/news/us-states/<st>.js for the state view
@@ -120,9 +137,20 @@ console.log("news coverage: " + coverage.with + " of " + coverage.countries + " 
 if (coverage.none.length) console.log("::warning::No working news source this run for " + coverage.none.join(", "));
 // Okinawa shares Japan's outlets: keep the Japanese items that name the islands
 if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ishigaki|yonaguni|沖縄|那覇|宮古|石垣|与那国/i.test(i.title + " " + i.summary)));   // plus Okinawa's own outlets
+// The relevance check runs before each area is cut to its share, where it can: on English headlines, and on headlines in a
+// language tools/relevance.json has its own word lists for (native_langs: Thai, Filipino, Mongolian, Korean, Chinese).
+// Otherwise busy outlets' sport and celebrity headlines would take the places of relevant ones, and the translation model
+// would spend its hourly budget on headlines that are dropped anyway. Other languages are checked after translation.
+{
+  const R = await loadRelevance(); let pre = 0;
+  for (const cc of Object.keys(items)) { const n = items[cc].length; items[cc] = items[cc].filter((i) => preTranslation(R, i)); pre += n - items[cc].length; }
+  console.log("relevance before translation: left out", pre, "headlines");
+}
+// Focus countries (tools/news_feeds.json "focus") read many more outlets, so they keep more items a run.
+const share = (cc) => (focus[cc] && focus[cc].per_run) || (cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
 for (const cc of Object.keys(items)) {
   const seen = new Set();
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
+  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, share(cc));
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
 const OG_MAX = Number(process.env.OG_MAX || 400);
@@ -211,6 +239,6 @@ fs.mkdirSync("data/live", { recursive: true });
 }
 fs.writeFileSync("data/live/news.js", "window.ASAP_NEWS=" + JSON.stringify({ asof: stamp, sources: status.filter((s) => !s.st), coverage, items }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/news.js", "ASAP_NEWS"); // one small file per country for the page (tools/split_country.mjs)
-try { await updateHistory("news", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
+try { await updateHistory("news", items, stamp, Object.fromEntries(Object.entries(focus).map(([cc, v]) => [cc, v.history]).filter((e) => e[1]))); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : "FAIL", s.cc, s.source, s.ok ? s.n + " items" : s.error));
 console.log("items with a picture:", Object.entries(items).map(([cc, l]) => cc + " " + l.filter((i) => i.img).length + "/" + l.length).join(", "));
