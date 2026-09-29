@@ -29,7 +29,7 @@ const UAS_DESC = /unmanned|\bUAV\b|\bUAS\b|\bRPA\b|global hawk|triton|reaper|pre
 // call sign families publicly reported as drone flights (kept short on purpose; each hit says which rule matched)
 const UAS_CALLS = [[/^FORTE\d/, "call sign FORTE (RQ-4 flights)"], [/^REAPR/, "call sign REAPR"]];
 const ROTOR = /^(H60|H64|H47|H53|H53S|H1|UH1|AS65|EC45|EC35|EC30|EC25|A109|A119|A139|B212|B412|B407|B06|NH90|TIGR|MI8|MI17|MI24|MI35|KA52|V22|LYNX|WILD|AS32|AS50|S70|S76|H145|H135)/;
-const GAP = 4000; // between adsb.lol requests; it limits bursts well below one a second
+const GAP = 5500; // between adsb.lol requests; it limits bursts well below one a second
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function get(src, path, retry = true) {
@@ -37,7 +37,7 @@ async function get(src, path, retry = true) {
   try {
     const r = await fetch(src.api + path, { headers: { "User-Agent": UA, Accept: "application/json" }, signal: ctl.signal });
     // adsb.lol answers 429 after a short burst: wait and ask once more
-    if (r.status === 429 && retry) { clearTimeout(t); await sleep(12000); return get(src, path, false); }
+    if (r.status === 429 && retry) { clearTimeout(t); await sleep(15000); return get(src, path, false); }
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     if (!Array.isArray(j.ac)) throw new Error("no aircraft list");
