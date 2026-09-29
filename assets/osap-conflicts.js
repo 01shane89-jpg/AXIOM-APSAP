@@ -5,6 +5,7 @@
    page back untouched when another tab is chosen.
    Reports are unverified; statements by any party are claims; kinds are machine-sorted. Front lines and control markers are the
    named source's own depiction, shown as "Reported, not verified". Nothing here is an analyst judgement.
+   Layers from other files hook in through window.OSAP_CF_HOOKS (render after each render, clear when the tab changes or closes).
    Per-conflict extras can be added by other files: window.OSAP_CF_PANELS[id] = function (box, data, front) { ... } is called
    after the tab renders, with an empty element placed under the headline figures.
    A conflict may take over a country's own layer tab that covers the same fighting (merge_tabs in tools/conflicts.json, e.g. Thailand's
@@ -269,7 +270,7 @@
     var md = D.querySelector(".cfdrop"); if (md) md.classList.add("cur");
     try { history.replaceState(null, "", location.pathname + location.search + "#" + (cc() === "th" ? "" : cc() + "/") + "cf-" + id); } catch (e) {}
     rail().hidden = false; rail().innerHTML = '<div class="sec"><h2>' + esc(c.name) + '</h2><p class="cfsub">Loading reports, events and the front line…</p></div>';
-    ensureMap(); clearMap();
+    ensureMap(); clearMap(); hooks("clear");
     if (c.bounds && map) { map.invalidateSize(); map.fitBounds(c.bounds, { padding: [8, 8], animate: false }); }
     var p = c.auto ? loadAuto(c) : Promise.all([load("data/live/conflicts/" + id + ".js"), load("data/live/conflicts/front/" + id + ".js").catch(function () {})]);
     p.then(function () { if (active !== id) return; render(c); if (F.days > 90 && needOlder()) loadOlder(); }, function (e) {
@@ -279,7 +280,7 @@
     D.dispatchEvent(new Event("osap:view"));
   }
   function deactivate() {
-    active = null; D.documentElement.removeAttribute("data-cf"); clearMap();
+    active = null; D.documentElement.removeAttribute("data-cf"); clearMap(); hooks("clear");
     var r = D.getElementById("cf-rail"); if (r) { r.hidden = true; r.innerHTML = ""; }
     var md = D.querySelector(".cfdrop"); if (md) md.classList.remove("cur");
     if (saved) {
@@ -524,7 +525,10 @@
     drawMap();
     var ex = D.getElementById("cf-extra"), P = W.OSAP_CF_PANELS || {};
     if (ex && typeof P[c.id] === "function") try { P[c.id](ex, d, f); } catch (e) { ex.textContent = ""; }
+    hooks("render", c, d, r);
   }
+  // layers kept in other files (assets/osap-cf-history.js): window.OSAP_CF_HOOKS = [{ render(c, data, rail), clear() }]
+  function hooks(k, a, b, c) { (W.OSAP_CF_HOOKS || []).forEach(function (h) { if (h && typeof h[k] === "function") try { h[k](a, b, c); } catch (e) {} }); }
   function uniq(a) { return a.filter(function (x, k) { return a.indexOf(x) === k; }); }
   var VIOLENT = { ied: 1, gun: 1, arson: 1 };
   function tabCounts(d) {
