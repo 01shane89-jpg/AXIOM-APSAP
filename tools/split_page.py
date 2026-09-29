@@ -68,6 +68,7 @@ PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(locati
             ' if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); });'
             ' navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {'
             ' reg.update().catch(function () {});'
+            ' navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); });'
             ' document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); });'
             ' }).catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):
