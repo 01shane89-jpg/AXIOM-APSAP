@@ -66,12 +66,16 @@
     /* the drawn area's own pane (made by the page, ignores the pointer): conflict tabs keep it visible, so saved areas show there too */
     if (!map.getPane("areapane")) { map.createPane("areapane"); map.getPane("areapane").style.zIndex = 640; map.getPane("areapane").style.pointerEvents = "none"; }
     if (layer) { map.removeLayer(layer); layer = null; }
+    /* outlines thin out as the map zooms out, like the drawn area */
+    if (!map.__aoiZoom) { map.__aoiZoom = 1; map.on("zoomend", function () { var zw = A() && A().zoomW; if (layer && zw) layer.eachLayer(function (p) { p.setStyle({ weight: zw(p.__aoiW || 2) }); }); }); }
     if (!shown()) return;
     var mine = forCc(cc()); if (!mine.length) return;
     var svg = L.svg({ pane: "areapane" });
     layer = L.layerGroup(mine.map(function (a) {
-      var t = TYPES[a.type];
-      var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: t.col, weight: 2, dashArray: t.dash, fillColor: t.col, fillOpacity: 0.06, interactive: false });
+      var t = TYPES[a.type], st = okSt(a.st), zw = A() && A().zoomW;
+      var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: zw ? zw(st ? st.w : 2) : 2, dashArray: t.dash,
+        fillColor: st ? st.fill : t.col, fillOpacity: st ? st.op : 0.06, interactive: false });
+      p.__aoiW = st ? st.w : 2;
       p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + "</span>", { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
       return p;
     })).addTo(map);
@@ -130,6 +134,7 @@
       var dup = all().filter(function (x) { return x.id !== a.id && x.cc === a.cc && x.type === ty && x.name.toLowerCase() === n.toLowerCase(); })[0];
       if (dup) { err.textContent = ty + " " + n + " already exists in this country. Use another name or number."; err.hidden = false; return; }
       var b = { id: a.id, type: ty, name: n, notes: cleanNotes(el.querySelector("#aoi-notes").value), cc: a.cc, pts: a.pts, created: a.created || Date.now(), updated: Date.now() };
+      if (okSt(a.st)) b.st = okSt(a.st);
       var bad = save(b); if (bad) { err.textContent = bad; err.hidden = false; return; }
       card(b.id, isNew ? "Saved." : "Changes saved.");
     });
@@ -171,7 +176,15 @@
     var pts = okPts(P); if (!pts) return;
     var c = cc(), same = all().filter(function (x) { return x.cc === c && JSON.stringify(x.pts) === JSON.stringify(pts); })[0];
     if (same) { card(same.id, "This drawn area is already saved as " + label(same) + "."); return; }
-    form({ id: newId(), type: "NAI", name: nextNum("NAI", c), notes: "", cc: c, pts: pts }, true);
+    /* the drawn area's own look (fill, opacity, outline colour and width) goes with it */
+    form({ id: newId(), type: "NAI", name: nextNum("NAI", c), notes: "", cc: c, pts: pts, st: api.style ? api.style() : null }, true);
+  }
+  function okSt(t) {
+    if (!t || typeof t !== "object") return null;
+    var hx = function (v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }, o = { fill: hx(t.fill), line: hx(t.line), op: +t.op, w: +t.w };
+    if (!o.fill || !o.line || !isFinite(o.op) || !isFinite(o.w)) return null;
+    o.op = Math.max(0, Math.min(0.8, o.op)); o.w = Math.max(1, Math.min(8, o.w));
+    return o;
   }
 
   /* ---------- "Save as NAI/TAI" beside Draw area ---------- */
@@ -316,7 +329,7 @@
     });
   }
 
-  window.OSAP_AOI = { list: forCc, all: all, get: get, label: label, types: TYPES, pick: null, open: card, redraw: draw,
+  window.OSAP_AOI = { list: forCc, all: all, get: get, label: label, types: TYPES, pick: null, open: card, redraw: draw, saveDrawn: saveDrawn,
     /* for tests and tools: GeoJSON in and out, no file dialog */
     toGeoJSON: function (scope) { return toGeo(scope === "all" ? all() : forCc(cc())); }, importGeoJSON: function (o) { var r = fromGeo(o, cc()); return r.err ? r : merge(r.list); } };
 

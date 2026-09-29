@@ -7,7 +7,9 @@
    - The 3D engine (MapLibre GL JS 5.24.0, BSD 3-Clause, assets/vendor/maplibre-gl-5.24.0.js, about 1 MB) is loaded only when
      3D is first opened, so the 2D app does not carry it.
    - Elevation: Terrain Tiles on AWS (Mapzen/Tilezen "terrarium" PNG, keyless public data set; SRTM, GMTED, ETOPO1, NED and
-     others). The imagery, map tiles and overlays are the same keyless tiles the 2D map already shows.
+     others); inside Japan GSI's elevation tiles (5 m laser survey where it exists, 10 m elsewhere). The imagery, map tiles and
+     overlays are the same keyless tiles the 2D map already shows (the 2D Elevation and LiDAR shading excepted: 3D shades from
+     the elevation itself).
    - Points, lines and shapes on the 2D map (the ticked data sets, conflict lines, your own dropped marks) are copied into the
      3D view as they are when it opens. Tapping one shows its popup; "Show in 2D" goes back and opens it there. Display only:
      nothing here writes to records, and your marks stay in this browser.
@@ -20,6 +22,69 @@
   var LIB = "assets/vendor/maplibre-gl-5.24.0", K_UNIT = "osap-meas-unit", K_3D = "osap-3d";
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
   var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
+  /* Japan: GSI elevation tiles replace the AWS model inside Japan and Okinawa. At the closest zoom GSI's 5 m model from its
+     airborne laser survey (LiDAR) is used where it exists, the 10 m national model elsewhere and at the other zooms. They are
+     recoded to terrarium in this browser; any pixel GSI has no value for (sea, outside Japan, no survey) comes from the next
+     source down, ending with the AWS tile. */
+  var GSI5 = "https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/{z}/{x}/{y}.png", GSI10 = "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png";
+  var JP = [20, 122, 46, 154], JP_ATTR = 'Terrain in Japan: <a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> elevation tiles (5 m laser survey, 10 m)';
+  function tileLon(x, z) { return x / Math.pow(2, z) * 360 - 180; }
+  function tileLat(y, z) { return Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, z)))) * 180 / Math.PI; }
+  function inJapan(z, x, y) { return z >= 6 && tileLon(x + 1, z) > JP[1] && tileLon(x, z) < JP[3] && tileLat(y, z) > JP[0] && tileLat(y + 1, z) < JP[2]; }
+  function sub(u, z, x, y) { return u.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
+  /* a tile's pixels, or null when the host has no tile there (404) */
+  function px(u, sig) {
+    return fetch(u, { signal: sig, mode: "cors" }).then(function (r) {
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.blob().then(function (b) { return createImageBitmap(b, { colorSpaceConversion: "none", premultiplyAlpha: "none" }); }).then(function (bm) {
+        var c = W.OffscreenCanvas ? new OffscreenCanvas(256, 256) : D.createElement("canvas"); c.width = c.height = 256;
+        var x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(bm, 0, 0, 256, 256);
+        return x.getImageData(0, 0, 256, 256).data;
+      });
+    });
+  }
+  /* GSI PNG elevation: 0.01 m steps in 24 bits, two's complement; 2^23 (and transparent) = no value */
+  function gsiH(d) {
+    if (!d) return null;
+    var h = new Float32Array(65536);
+    for (var i = 0, k = 0; k < 65536; i += 4, k++) {
+      var v = d[i] * 65536 + d[i + 1] * 256 + d[i + 2];
+      h[k] = d[i + 3] === 0 || v === 8388608 ? NaN : (v < 8388608 ? v : v - 16777216) * 0.01;
+    }
+    return h;
+  }
+  function demTile(params, abort) {
+    var m = /(\d+)\/(\d+)\/(\d+)$/.exec(params.url), z = +m[1], x = +m[2], y = +m[3], sig = abort && abort.signal;
+    var awsU = sub(DEM, z, x, y);
+    var aws = function () { return fetch(awsU, { signal: sig, mode: "cors" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.arrayBuffer(); }).then(function (b) { return { data: b }; }); };
+    if (!inJapan(z, x, y)) return aws();
+    /* at z15 the laser model, then the 10 m model of the z14 tile above (each pixel covers 2 x 2) */
+    var layers = z >= 15 ? [px(sub(GSI5, z, x, y), sig).then(gsiH), px(sub(GSI10, 14, x >> 1, y >> 1), sig).then(gsiH).then(function (P) {
+      if (!P) return null;
+      var h = new Float32Array(65536), ox = (x & 1) * 128, oy = (y & 1) * 128;
+      for (var j = 0; j < 256; j++) for (var i = 0; i < 256; i++) h[j * 256 + i] = P[(oy + (j >> 1)) * 256 + ox + (i >> 1)];
+      return h;
+    })] : [px(sub(GSI10, z, x, y), sig).then(gsiH)];
+    return Promise.all(layers).then(function (L2) {
+      var h = new Float32Array(65536).fill(NaN), got = 0, miss = 0;
+      L2.forEach(function (a) { if (a) for (var k = 0; k < 65536; k++) if (h[k] !== h[k] && a[k] === a[k]) { h[k] = a[k]; got++; } });
+      if (!got) return aws();
+      for (var k = 0; k < 65536; k++) if (h[k] !== h[k]) miss++;
+      return (miss ? px(awsU, sig) : Promise.resolve(null)).then(function (a) {
+        var c = W.OffscreenCanvas ? new OffscreenCanvas(256, 256) : D.createElement("canvas"); c.width = c.height = 256;
+        var cx = c.getContext("2d"), im = cx.createImageData(256, 256), d = im.data;
+        for (var k = 0, i = 0; k < 65536; k++, i += 4) {
+          if (h[k] === h[k]) { var v = h[k] + 32768; d[i] = Math.floor(v / 256); d[i + 1] = Math.floor(v) % 256; d[i + 2] = Math.floor((v - Math.floor(v)) * 256); }
+          else if (a) { d[i] = a[i]; d[i + 1] = a[i + 1]; d[i + 2] = a[i + 2]; }
+          else { d[i] = 128; d[i + 1] = 0; d[i + 2] = 0; }   /* 0 m */
+          d[i + 3] = 255;
+        }
+        cx.putImageData(im, 0, 0);
+        return c.convertToBlob ? c.convertToBlob({ type: "image/png" }) : new Promise(function (ok) { c.toBlob(ok, "image/png"); });
+      }).then(function (b) { return b.arrayBuffer(); }).then(function (b) { return { data: b }; });
+    });
+  }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -116,6 +181,8 @@
     var out = [];
     map.eachLayer(function (l) {
       if (!(l instanceof L.TileLayer) || !map.hasLayer(l)) return;
+      /* the Elevation and LiDAR shading is multiplied into the 2D base map; 3D has no multiply, so it shades from the elevation instead */
+      if (/(^| )osap-hs( |$)/.test(l.options.className || "")) return;
       var p = paneOf(l); if (!paneShown(p)) return;
       var urls = tileUrls(l); if (!urls) return;
       var o = l.options, op = o.opacity == null ? 1 : o.opacity;
@@ -200,7 +267,7 @@
   W.addEventListener("load", function () { setTimeout(function () { (W.requestIdleCallback || setTimeout)(preload, { timeout: 8000 }); }, 5000); });
 
   /* ---------- the 3D view ---------- */
-  var view3 = null;
+  var view3 = null, demProto = false;
   function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5 }; }
   function savePrefs(o) { var p = prefs(); for (var k in o) p[k] = o[k]; lsSet(K_3D, JSON.stringify(p)); }
   var COMPASS = '<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="rgba(20,24,28,.86)" stroke="rgba(255,255,255,.35)"/>' +
@@ -269,7 +336,10 @@
 
     loadLib().then(function (ml) {
       if (dead) return;
-      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR];
+      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR], b2 = map.getBounds();
+      if (!demProto) { try { ml.addProtocol("osapdem", demTile); demProto = true; } catch (e) {} }
+      if (b2.getEast() > JP[1] && b2.getWest() < JP[3] && b2.getNorth() > JP[0] && b2.getSouth() < JP[2]) attrs.push(JP_ATTR);
+      var DEMU = demProto ? "osapdem://{z}/{x}/{y}" : DEM;
       var style = { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#d9d4c7" } }],
         /* a deep blue sky fading to a pale horizon, and a light haze over distant ground, as the eye sees it */
         sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
@@ -280,10 +350,9 @@
         if (r.base) hillAt = style.layers.length;
         if (r.attr && attrs.indexOf(r.attr) < 0) attrs.push(r.attr);
       });
-      /* the ground's shape needs far fewer elevation tiles than the shading does: the terrain source asks for each 256 px
-         tile as if it covered 512 px (a quarter of the downloads, a mesh still finer than the eye can tell at a tilt),
-         and the shading keeps full detail */
-      style.sources.dem = { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 14, encoding: "terrarium" };
+      /* terrain and hill shading share one elevation source (one download per tile); inside Japan the GSI survey is
+         sharp enough to be worth one more zoom level */
+      style.sources.dem = { type: "raster-dem", tiles: [DEMU], tileSize: 256, maxzoom: attrs.indexOf(JP_ATTR) >= 0 ? 15 : 14, encoding: "terrarium" };
       var photo = R.some(function (r) { return r.base && /imagery|sentinel|s2cloudless|gibs|clarity/i.test(r.urls[0]); });
       style.layers.splice(hillAt || 1, 0, { id: "hill", type: "hillshade", source: "dem", paint: { "hillshade-method": "multidirectional",
         "hillshade-exaggeration": photo ? 0.3 : 0.55, "hillshade-shadow-color": photo ? "rgba(20,16,10,.55)" : "#473b2c", "hillshade-highlight-color": photo ? "rgba(255,250,235,.25)" : "#fffdf3",
@@ -336,7 +405,7 @@
       gl.on("pitchend", function () { savePrefs({ pitch: Math.round(gl.getPitch()) }); });
       var demErr = 0;
       gl.on("error", function (e) {
-        if (e && e.sourceId && /^(dem|hill)$/.test(e.sourceId) && ++demErr === 4) say("Elevation tiles are not loading, so the ground may look flat.");
+        if (e && e.sourceId && e.sourceId === "dem" && ++demErr === 4) say("Elevation tiles are not loading, so the ground may look flat.");
       });
       gl.once("style.load", function () { if (!demErr) say(""); });
       gl.on("load", function () { paint(); drawSc(); });
@@ -442,7 +511,7 @@
   D.head.appendChild(st);
 
   W.OSAP_3D = { open: open3d, close: function () { if (view3) view3.close(); }, isOpen: function () { return !!view3; }, gl: null,
-    _scaleFit: scaleFit, _rasters: rasters, _vectors: vectors };
+    _scaleFit: scaleFit, _rasters: rasters, _demTile: demTile, _vectors: vectors };
   /* the toolbar may be built after this file runs (or rebuilt): add the 3D button when it appears */
   if (!D.querySelector("[data-o3d]")) {
     var tries = 0, t = setInterval(function () { if (addToolbarBtn() || ++tries > 20) clearInterval(t); }, 500);
