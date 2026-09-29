@@ -317,8 +317,15 @@
    "merge_tabs": {"ph": ["insurgency"]},
    "parties": ["Armed Forces of the Philippines", "New People's Army", "Dawlah Islamiyah and BIFF factions", "Abu Sayyaf remnants"],
    "bounds": [[4.5, 116.8], [21.2, 127.0]],
-   "terms": ["NPA", "New People's Army", "CPP-NPA", "communist rebel\\w*", "Dawlah Islamiyah", "BIFF", "Abu Sayyaf", "Maguindanao", "Lanao", "Sulu", "Basilan", "Mindanao", "encounter"],
-   "searches": [{ "q": "NPA encounter soldiers", "lang": "en" }, { "q": "Mindanao clash BIFF Dawlah", "lang": "en" }],
+   "terms": ["NPA", "New People's Army", "CPP-NPA", "communist rebel\\w*", "Dawlah Islamiyah", "BIFF", "Abu Sayyaf", "Maguindanao", "Lanao", "Sulu", "Basilan", "Mindanao", "encounter", "Maute", "engkwentro", "sagupaan", "rebelde"],
+   "feeds": [
+    { "id": "mindanaotimes", "outlet": "Mindanao Times", "url": "https://www.mindanaotimes.com.ph/feed/", "lang": "en" },
+    { "id": "sunstar-ph", "outlet": "SunStar", "url": "https://www.sunstar.com.ph/feed", "lang": "en" },
+    { "id": "bangsamoro-bio", "outlet": "Bangsamoro Information Office", "url": "https://bangsamoro.gov.ph/feed/", "lang": "en" },
+    { "id": "bomboradyo", "outlet": "Bombo Radyo", "url": "https://www.bomboradyo.com/feed", "lang": "tl" }
+   ],
+   "searches": [{ "q": "NPA encounter soldiers", "lang": "en" }, { "q": "Mindanao clash BIFF Dawlah", "lang": "en" }, { "q": "Abu Sayyaf", "lang": "en" }, { "q": "Dawlah Islamiyah Lanao", "lang": "en" },
+    { "q": "NPA ambush", "lang": "en" }, { "q": "site:newsinfo.inquirer.net Mindanao soldiers", "lang": "en" }, { "q": "engkwentro NPA sundalo", "lang": "tl" }],
    "ucdp": { "countries": "Philippines" },
    "front": []
   },

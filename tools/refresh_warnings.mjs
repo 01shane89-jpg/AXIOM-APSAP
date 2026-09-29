@@ -41,6 +41,8 @@ for (const f of feeds) {
   try {
     const body = await getText(f.url);
     let list = f.type ? ADAPT[f.type](JSON.parse(body)) : parseFeed(body);
+    // tz: an agency that prints local time with no zone ("2026-09-29 14:27:00"), e.g. "+08:00"
+    if (f.tz) list = list.map((i) => (/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(i.date).trim()) ? { ...i, date: String(i.date).trim().replace(" ", "T") + f.tz } : i));
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
     // exclude: drop matching items (agencies' test alerts); max_age_days: a feed that keeps old alerts listed shows only recent ones
     if (f.exclude) { const re = new RegExp(f.exclude, "i"); list = list.filter((i) => !re.test(i.title + " " + i.summary)); }
