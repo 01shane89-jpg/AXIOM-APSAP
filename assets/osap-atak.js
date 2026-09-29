@@ -51,7 +51,7 @@
   function areaPress(k) {
     if (!areaEl) return;
     var b = areaEl.querySelector('[data-area="' + k + '"]');
-    if (!b && (k === "lasso" || k === "poly")) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
+    if (!b && /^(lasso|poly|circle|rect)$/.test(k)) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
     if (b) b.click();
   }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
@@ -116,7 +116,7 @@
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"]].concat(has ? [null, ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["sum", "Summarise area"], ["save", "Save as NAI/TAI"], ["clear", "Clear area"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "new") press('[data-wk-btn="new"]');
