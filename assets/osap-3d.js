@@ -85,6 +85,42 @@
       }).then(function (b) { return b.arrayBuffer(); }).then(function (b) { return { data: b }; });
     });
   }
+  /* 3D map pictures go through here: a busy host (429, 5xx, dropped connection) is asked once or twice more after a pause,
+     and on a base map a place with no picture at this zoom (404) or a host that keeps failing gets the closest wider
+     picture (up to 6 levels up) enlarged to fit, as the flat map does, instead of a blurry hole and an error */
+  var TPL = [];
+  function pause(ms, sig) { return new Promise(function (ok, no) { var t = setTimeout(ok, ms); if (sig) sig.addEventListener("abort", function () { clearTimeout(t); no(new DOMException("aborted", "AbortError")); }); }); }
+  function getTile(u, sig, tries) {
+    return fetch(u, { signal: sig, mode: "cors" }).then(function (r) {
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.arrayBuffer();
+    }).catch(function (e) {
+      if (e.name === "AbortError" || tries <= 0) throw e;
+      return pause(tries > 1 ? 800 : 2000, sig).then(function () { return getTile(u, sig, tries - 1); });
+    });
+  }
+  function rasterTile(params, abort) {
+    var m = /^osapr:\/\/(\d+)\/(\d+)\/(\d+)\/(\d+)$/.exec(params.url), t = m && TPL[+m[1]], sig = abort && abort.signal;
+    if (!t) return Promise.reject(new Error("map closed"));
+    var z = +m[2], x = +m[3], y = +m[4];
+    function up(k) {
+      if (k > (t.base ? 6 : 0) || z - k < 0) return Promise.reject(new Error("no map picture here"));
+      var X = x >> k, Y = y >> k, u = t.urls[(X + Y) % t.urls.length];
+      return getTile(sub(u, z - k, X, Y), sig, k ? 1 : 2).then(function (b) {
+        if (!b || !b.byteLength) return up(k + 1);
+        if (!k) return { data: b };
+        return createImageBitmap(new Blob([b])).then(function (bm) {
+          var f = 1 << k, w = bm.width / f, h = bm.height / f;
+          var c = W.OffscreenCanvas ? new OffscreenCanvas(256, 256) : D.createElement("canvas"); c.width = c.height = 256;
+          var cx = c.getContext("2d"); cx.imageSmoothingQuality = "high";
+          cx.drawImage(bm, (x - (X << k)) * w, (y - (Y << k)) * h, w, h, 0, 0, 256, 256);
+          return c.transferToImageBitmap ? c.transferToImageBitmap() : createImageBitmap(c);
+        }).then(function (bm) { return { data: bm }; });
+      }, function (e) { if (e.name === "AbortError" || !t.base) throw e; return up(k + 1); });
+    }
+    return up(0);
+  }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -337,15 +373,17 @@
     loadLib().then(function (ml) {
       if (dead) return;
       var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR], b2 = map.getBounds();
-      if (!demProto) { try { ml.addProtocol("osapdem", demTile); demProto = true; } catch (e) {} }
+      if (!demProto) { try { ml.addProtocol("osapdem", demTile); ml.addProtocol("osapr", rasterTile); demProto = true; } catch (e) {} }
       if (b2.getEast() > JP[1] && b2.getWest() < JP[3] && b2.getNorth() > JP[0] && b2.getSouth() < JP[2]) attrs.push(JP_ATTR);
       var DEMU = demProto ? "osapdem://{z}/{x}/{y}" : DEM;
       var style = { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#d9d4c7" } }],
         /* a deep blue sky fading to a pale horizon, and a light haze over distant ground, as the eye sees it */
         sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
-      var hillAt = 0;
+      var hillAt = 0; TPL = [];
       R.forEach(function (r, i) {
-        style.sources["r" + i] = { type: "raster", tiles: r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
+        var viaUs = demProto && !/\{bbox/.test(r.urls[0]);
+        if (viaUs) TPL[i] = { urls: r.urls, base: r.base };
+        style.sources["r" + i] = { type: "raster", tiles: viaUs ? ["osapr://" + i + "/{z}/{x}/{y}"] : r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
         style.layers.push({ id: "r" + i, type: "raster", source: "r" + i, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } });
         if (r.base) hillAt = style.layers.length;
         if (r.attr && attrs.indexOf(r.attr) < 0) attrs.push(r.attr);
@@ -412,8 +450,8 @@
       /* it opens looking straight down, where the flat map's pictures are already in this browser, so something shows at
          once; then it tilts to your angle and the ground rises while the rest loads */
       var tilted = false;
-      function tiltIn() { if (tilted || dead) return; tilted = true; if (P.pitch > 0 && gl.getPitch() < 1) gl.easeTo({ pitch: P.pitch, duration: 1400 }); }
-      gl.once("idle", tiltIn); setTimeout(tiltIn, 2500);
+      function tiltIn() { if (tilted || dead) return; tilted = true; if (P.pitch > 0 && gl.getPitch() < 1) gl.easeTo({ pitch: P.pitch, duration: 1000 }); }
+      gl.once("load", function () { setTimeout(tiltIn, 250); }); setTimeout(tiltIn, 1500);
       progress(gl, box.querySelector(".o3-load"), function () { return dead; });
       /* credits sit behind an (i) button, so they never cover the scale bar and tilt slider */
       var cr = box.querySelector(".o3-cr"), crb = box.querySelector(".o3-crb");
