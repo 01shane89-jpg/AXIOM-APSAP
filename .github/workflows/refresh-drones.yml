@@ -3,14 +3,12 @@ name: Refresh live drones
 # Live drones and military aircraft (tools/refresh_drones.mjs): every two minutes while a run lasts, the ADS-B positions from
 # adsb.lol (adsb.fi as fallback) are written to drones.json on the live-drones branch, one commit replaced each time so the
 # branch never grows. The page reads it from raw.githubusercontent.com, which lets any site read it (the aggregators do not).
-# Nothing is committed to main, so this does not rebuild GitHub Pages.
+# raw.githubusercontent.com serves each file for up to five minutes, so a position is typically two to seven minutes old on the
+# map; the pop-up shows its age. Nothing is committed to main, so this does not rebuild GitHub Pages.
 on:
   schedule:
     # each run polls for about 14 minutes; GitHub starts scheduled runs late when busy, so gaps of a few minutes are normal
     - cron: "4,19,34,49 * * * *"
-  push:
-    branches: [claude/live-drones]
-    paths: [tools/refresh_drones.mjs, .github/workflows/refresh-drones.yml]
   workflow_dispatch:
     inputs:
       rounds:
