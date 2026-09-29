@@ -28,6 +28,8 @@
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
+<script src="assets/osap-geo.js"></script>
+<script src="assets/osap-measure.js"></script>
 <script src="assets/osap-drones.js"></script>
 
 # loading cover and the per-country data loader
@@ -35,6 +37,7 @@
 country-data:start
 
 # helpers other features call
+window.OSAP_ROUTE_SEED
 window.OSAP_LATER
 function osapSym(
 window.OSAP_REDCROSS
