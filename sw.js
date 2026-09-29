@@ -11,7 +11,7 @@
      DATA_WAIT and the page PAGE_WAIT for the network; the network copy is still saved when the wait runs out.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "9f51e57869ce";
+const VERSION = "167fd5f5ff29";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -424,6 +424,8 @@ const PRECACHE = [
 "assets/osap-aoi.js",
 "assets/osap-viewrep.js",
 "assets/osap-et.js",
+"assets/osap-geo.js",
+"assets/osap-measure.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
