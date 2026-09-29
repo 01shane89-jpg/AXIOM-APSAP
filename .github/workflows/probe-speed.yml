@@ -24,4 +24,5 @@ jobs:
       - run: git worktree add ../before origin/main
       - run: node tools/probe_speed.mjs
         env:
-          SITES: main=../before,now=.,live=https://01shane89-jpg.github.io/AXIOM-APSAP/
+          SITES: main=../before,now=.
+          RUNS: 2
