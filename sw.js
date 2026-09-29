@@ -11,7 +11,7 @@
      DATA_WAIT and the page PAGE_WAIT for the network; the network copy is still saved when the wait runs out.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "a9e73de4794d";
+const VERSION = "9eeeeab18506";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -430,6 +430,7 @@ const PRECACHE = [
 "assets/osap-atak.js",
 "assets/osap-route.js",
 "assets/osap-locate.js",
+"assets/osap-drones.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
@@ -443,7 +444,7 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/];
+const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//];
 // Saved after install rather than during it (see the top of this file).
 const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
