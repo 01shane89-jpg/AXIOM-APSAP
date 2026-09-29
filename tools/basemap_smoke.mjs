@@ -32,15 +32,20 @@ await page.waitForTimeout(4000);
 console.log("sw:", await page.evaluate(() => navigator.serviceWorker && navigator.serviceWorker.controller ? "controlled" : "none"));
 const keys = await page.evaluate(() => [...document.querySelectorAll('input[name="ml-base"]')].map((i) => i.value));
 console.log("base map radios:", keys.join(", "));
-const open = await page.$(".mlbtn"); if (open) await open.click();
+// open the base map list the way a user does: the tactical toolbar's Overlays button, or the classic Layers button
+const ov = page.locator("#atk-tools button", { hasText: "Overlays" });
+if (await ov.count() && await ov.first().isVisible()) { await ov.first().click(); console.log("opened: Overlays sheet"); }
+else { await page.click(".mlbtn"); console.log("opened: Layers button"); }
+await page.waitForTimeout(500);
 for (const k of keys) {
   for (const h in hits) delete hits[h];
-  await page.evaluate((k) => { const i = document.querySelector('input[name="ml-base"][value="' + k + '"]'); i.checked = true; i.dispatchEvent(new Event("change", { bubbles: true })); }, k);
+  await page.locator('input[name="ml-base"][value="' + k + '"]').check({ force: true });
   await page.evaluate(() => window.__asapMap.setView([13.75, 100.5], 12, { animate: false }));
   await page.waitForTimeout(5000);
   const st = await page.evaluate(() => { const t = [...document.querySelectorAll(".leaflet-tile-pane .leaflet-layer")].map((l) => [l.className.slice(0, 40), l.querySelectorAll(".leaflet-tile-loaded").length, l.querySelectorAll(".leaflet-tile").length]); return t; });
   console.log(`\n== ${k}: layers ${JSON.stringify(st)}\n   answers ${JSON.stringify(hits)}`);
   await page.locator("#map").screenshot({ path: `probe-out/base-${k}.jpg`, type: "jpeg", quality: 60 });
 }
+const bad = []; // filled below
 console.log("\npage errors:", JSON.stringify(errors.slice(0, 20)));
 await browser.close(); if (server) server.close();
