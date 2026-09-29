@@ -1,0 +1,23 @@
+# Test only: compares keyless high-resolution imagery tile services over SE Asia from GitHub's runners (tools/probe_imagery.py).
+# Prints to the log and uploads probe-out/ as an artifact; writes nothing to the repo.
+name: Probe imagery hosts
+on:
+  push:
+    branches: [claude/sharper-imagery]
+    paths: [tools/probe_imagery.py, .github/workflows/probe-imagery.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: python3 -m pip install --quiet pillow
+      - run: python3 tools/probe_imagery.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: probe-imagery
+          path: probe-out/
