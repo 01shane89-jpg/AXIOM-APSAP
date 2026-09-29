@@ -444,6 +444,11 @@ select.mini{
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
+#ml-ds .dstabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}#ml-ds .dstabs button,#ml-ds .dsopen{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
+#ml-ds .dstabs button[aria-pressed=true],#ml-ds .dsopen[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+#ml-ds .dsrow{display:flex;align-items:center;gap:8px}#ml-ds .dsrow label{flex:1;display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer}#ml-ds .dsopen{flex:none;font-weight:500;min-height:32px;padding:2px 10px}
+html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
@@ -1134,6 +1139,28 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
   });
 
+  /* Imagery tiles that go closer than the source has pictures for. The host is asked with blankTile=false, so a missing
+     close-up comes back as 404 instead of a grey "Map data not yet available" square; the tile then shows the nearest
+     wider tile that does exist (up to 3 levels up), enlarged and cropped to fit. Zooming in past the sharpest picture
+     therefore stays on imagery, as Apple and Google maps do, instead of going blank. */
+  var DeepTiles = L.TileLayer.extend({
+    createTile: function (c, done) {
+      var self = this, sz = this.getTileSize(), k = 0, tile = document.createElement("div"), img = document.createElement("img");
+      tile.style.overflow = "hidden";
+      img.alt = ""; img.setAttribute("role", "presentation"); img.style.position = "absolute"; img.style.maxWidth = "none";
+      function load() {
+        var f = 1 << k, p = { x: Math.floor(c.x / f), y: Math.floor(c.y / f), z: c.z - k };
+        img.style.width = sz.x * f + "px"; img.style.height = sz.y * f + "px";
+        img.style.left = -(c.x - p.x * f) * sz.x + "px"; img.style.top = -(c.y - p.y * f) * sz.y + "px";
+        img.src = L.Util.template(self._url, L.extend({ s: self._getSubdomain(p), x: p.x, y: p.y, z: p.z, r: "" }, self.options));
+      }
+      img.onload = function () { done(null, tile); };
+      img.onerror = function () { if (k < 3 && c.z - k > 3) { k++; load(); } else done(new Error("no imagery here"), tile); };
+      tile.appendChild(img); load();
+      return tile;
+    }
+  });
+
   /* ---------- map ---------- */
   /* on touch screens every canvas marker answers a tap up to 14 px beyond its edge (Leaflet's hit tolerance), so a
      finger does not have to land exactly on a small dot: a 5 px dot becomes a target about 38 px across */
@@ -1191,14 +1218,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
     /* sharp imagery. Licences are tagged so restricted ones can be dropped before any commercial use:
        Esri World Imagery is under Esri's terms of use (restricted), EOX Sentinel-2 cloudless 2021 is CC BY-NC-SA 4.0 (non-commercial) */
-    sat: { name: "Satellite", note: "Esri World Imagery: sharp aerial and satellite photos, down to street level in most towns (image dates vary by place)",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+    sat: { name: "Satellite", note: "Esri World Imagery (Maxar and others): sharp aerial and satellite photos, about 30 to 60 cm in most cities and towns. Zooms in as far as the pictures go, then enlarges the closest one (image dates vary by place)",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
       attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community' },
     hybrid: { name: "Hybrid", note: "The same imagery with borders, place names and roads on top",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", max: 19, zmax: 18, lic: "restricted",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
       labels: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}",
                "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"],
       attr: 'Imagery and labels &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community' },
+    /* Esri World Imagery (Clarity): the same providers with less colour processing, and often a different capture date.
+       A second look when the main picture is old, cloudy or blurred; it can be hazier and stops a level sooner in some places */
+    clarity: { name: "Satellite, second look", note: "Esri World Imagery (Clarity): often a different or newer picture of the same place, less colour-processed. Can look hazier",
+      url: "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?blankTile=false", max: 20, zmax: 20, deep: 1, lic: "restricted",
+      attr: 'Imagery &copy; Esri, Maxar, Earthstar Geographics and the GIS user community (World Imagery Clarity)' },
     s2: { name: "Sentinel-2 cloudless", note: "EOX: a cloud-free mosaic of 2021 Sentinel-2 images, one look for the whole world (10 m)",
       url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 15, zmax: 16, lic: "CC BY-NC-SA 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' },
@@ -1225,9 +1257,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
       var url = b.url.replace("{date}", new Date(Date.now() - 864e5).toISOString().slice(0, 10));
-      altBase = L.tileLayer(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
+      altBase = new (b.deep ? DeepTiles : L.TileLayer)(url, { maxNativeZoom: b.max, maxZoom: zmax, subdomains: "abc", attribution: b.attr, crossOrigin: false }).addTo(map);
       altBase.bringToBack();
-      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: b.max, maxZoom: zmax }); })).addTo(map);
+      if (b.labels) hybLabels = L.layerGroup(b.labels.map(function (u) { return L.tileLayer(u, { pane: "hybpane", maxNativeZoom: Math.min(b.max, 19), maxZoom: zmax }); })).addTo(map);
     }
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
@@ -1471,7 +1503,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         '<label class="mlrow"><input type="checkbox" data-ter="fp"><span><b>Possible flashpoints</b><i><span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span> Each zone lists the reporting behind it.</i></span></label>' +
         '<p class="mlkey"><span style="background:#c62828"></span>Active <span style="background:#ef6c00"></span>Elevated <span style="background:#b8860b"></span>Latent</p>' +
         '<p class="mlkey ternote"></p>' +
-        (HASPR[cc] ? '<label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p>' : "");
+        /* the row stays (hidden) so a data set switch still turns the layer off; it is chosen as the "Chinese presence" data set */
+        (HASPR[cc] ? '<div hidden><label class="mlrow"><input type="checkbox" data-ter="pr"><span><b>Chinese presence and influence</b><i>Held features, coast guard and militia at sea; state-linked companies, loans, POGO hubs and spying cases on land. Reported, not verified.</i></span></label><p class="mlkey ternote" data-k="pr"></p></div>' : "");
     }
     var ex = document.getElementById("ml-extra");
     if (ex) { var d = document.createElement("div"); d.innerHTML = '<div class="mlh">Terrain &amp; flashpoints</div>' + rows(); ex.appendChild(d); }
@@ -4429,6 +4462,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Satellite and Hybrid base maps: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> and Esri reference labels, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
+      ['Satellite, second look base map: Esri World Imagery (Clarity), &copy; Esri, Maxar, Earthstar Geographics and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
       ['Sentinel-2 cloudless base map: <a href="https://s2maps.eu">Sentinel-2 cloudless 2021</a> by EOX IT Services GmbH, contains modified Copernicus Sentinel data 2021. Licence: CC BY-NC-SA 4.0, <b>non-commercial</b>.'],
       ['Daily satellite base map: NASA MODIS Terra corrected reflectance via <a href="https://www.earthdata.nasa.gov/gibs">NASA GIBS</a> (public domain).'],
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
@@ -5631,6 +5665,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
+  /* the headings the data set list is grouped under; a set in none of them goes under "More" */
+  var DS_GROUPS = [["Alerts", ["alerts"]], ["Security", ["border", "insurgency", "security", "safety", "partners", "presence"]], ["Crime", ["crime", "scam", "aml"]],
+    ["Weather and hazards", ["weather", "hazards", "flood"]], ["Infrastructure and services", ["infra", "transport", "health", "crisis"]], ["News and social media", ["news", "social"]]];
   /* a tab that is not in the list (Route, Timeline, one merged into a conflict tab) draws as it always has */
   function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
   function dsList() {
@@ -5707,7 +5744,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   window.OSAP_DATASETS = {
     list: function () { return dsList().map(function (l) { return { id: l.id, name: l.name, on: !!DS[l.id], open: l.id === current }; }); },
     set: function (id, on) { if (dsList().some(function (l) { return l.id === id; })) { dsSet(id, !!on); dsUi(); } },
-    onChange: function (f) { if (typeof f === "function") dsFns.push(f); }
+    onChange: function (f) { if (typeof f === "function") dsFns.push(f); },
+    refresh: function () { dsUi(); }
   };
   /* the checklist at the top of the Layers menu, and a note on the map when the open tab's own set is not on it */
   var dsBox = document.createElement("div"), dsHint = document.createElement("div");
@@ -5724,20 +5762,42 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var list = dsList(), l = LBY[current];
     var mine = l && list.some(function (x) { return x.id === current; });
     if (mine && !DS[current]) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
-    else if (current === "timeline" && !list.some(function (x) { return DS[x.id]; })) dsHint.innerHTML = '<span>No data sets on the map</span><button type="button" data-dspick="1">Choose</button>';
     else dsHint.innerHTML = "";
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
-    var n = list.filter(function (x) { return DS[x.id]; }).length;
-    dsBox.innerHTML = '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
-      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ".</p>" +
-      list.map(function (x) {
-        return '<label class="mlrow"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b>" + (x.id === current ? "<i>Open tab</i>" : "") + "</span></label>";
+    var n = list.filter(function (x) { return DS[x.id]; }).length, seen = {};
+    /* this panel is the one place to choose what to see: the tabs that are not data sets (Timeline, the conflict tabs, Route)
+       open from the row on top; each data set has its map tick and an Open button for its own panel, grouped by subject */
+    var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
+      return !b.hidden && !list.some(function (x) { return x.id === b.getAttribute("data-view"); });
+    });
+    var grp = DS_GROUPS.map(function (g) {
+      var rows = list.filter(function (x) { return g[1].indexOf(x.id) >= 0; }); rows.forEach(function (x) { seen[x.id] = 1; }); return [g[0], rows];
+    });
+    grp.push(["More", list.filter(function (x) { return !seen[x.id]; })]);
+    dsBox.innerHTML = (tabs.length ? '<div class="mlh">Views</div><div class="dstabs" role="group" aria-label="Views">' + tabs.map(function (b) {
+        var v = b.getAttribute("data-view");
+        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === current) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
+      }).join("") + "</div>" : "") +
+      '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
+      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ". Open shows a data set's own list and details.</p>" +
+      grp.filter(function (g) { return g[1].length; }).map(function (g) {
+        return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x) {
+          return '<div class="mlrow dsrow"><label><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b></span></label>" +
+            '<button type="button" class="dsopen" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === current) + '" title="Open the ' + esc(x.name) + ' list and details">' + (x.id === current ? "Open now" : "Open") + "</button></div>";
+        }).join("");
       }).join("");
   }
   dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
   dsBox.addEventListener("click", function (e) {
+    var o = e.target.closest && e.target.closest("[data-dsopen]");
+    if (o) {
+      var ov = o.getAttribute("data-dsopen"), ob = seg.querySelector('[data-view="' + ov + '"]');
+      if (ob && ov !== current) ob.click();
+      document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: ov }));
+      return;
+    }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
@@ -6355,7 +6415,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       btn.title = on ? "Show the map legend" : "Hide the map legend";
       if (!keep) try { localStorage.setItem(LG_KEY, on ? "1" : "0"); } catch (e) {}
     }
-    fold(shut == null ? document.documentElement.classList.contains("phone") || window.matchMedia("(max-width: 920px), (pointer: coarse)").matches : shut === "1", true);
+    fold(shut == null || shut === "1", true);   /* starts folded everywhere; opening it by hand is remembered */
     btn.addEventListener("click", function () { fold(!box.classList.contains("shut")); });
     function sync() {
       var any = false;
@@ -7615,7 +7675,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var x = box.querySelector(".pkghead .x"); if (x) x.addEventListener("click", close);
       return true;
     },
-    close: close
+    close: close,
+    setSheet: function (s) { if (on() && STATES.indexOf(s) >= 0) setSheet(s); }
   };
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
   mq.addEventListener ? mq.addEventListener("change", function () { if (!on()) close(); apply(); }) : mq.addListener(apply);
@@ -7654,6 +7715,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-atak.js"></script>
+<script src="assets/osap-tidy.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
