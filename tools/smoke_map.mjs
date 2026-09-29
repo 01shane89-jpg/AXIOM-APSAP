@@ -24,6 +24,8 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 // keep a handle on the page's Leaflet map so drawn objects can be counted (most are on a canvas, not in the DOM)
 await page.addInitScript(() => {
+  // the map shows only the data sets ticked in the Layers menu (none until the user ticks one); tick the ones checked here
+  try { if (localStorage.getItem("osap-mapsets-th") == null) localStorage.setItem("osap-mapsets-th", JSON.stringify(["flood", "crime", "crisis"])); } catch (e) {}
   let lib;
   Object.defineProperty(window, "L", { configurable: true, get: () => lib, set(v) {
     lib = v;
@@ -48,6 +50,12 @@ for (const [tab, need] of Object.entries(CHECKS)) {
   console.log(`${tab}: ${got.markers} markers, ${got.dots} dots, ${got.sym} military symbols${short.length ? "  <- nothing drawn: " + short.join(", ") : ""}`);
   if (short.length) { failed++; console.log(`::error::The ${tab} tab drew no ${short.join(" or ")}`); }
 }
+// with no data set ticked, a tab draws nothing on the map
+await page.evaluate(() => { const i = document.querySelector('[data-dsall="0"]'); if (i) i.click(); document.querySelector('button[role=tab][data-view="flood"]').click(); });
+await page.waitForTimeout(2500);
+const none = await page.evaluate(() => { let n = 0; for (const l of Object.values((window.__smokeMap || {})._layers || {})) if (l instanceof window.L.CircleMarker || l instanceof window.L.Marker) n++; return n; });
+console.log(`flood with no data set ticked: ${none} markers and dots`);
+if (none) { failed++; console.log("::error::The flood tab drew objects with no data set ticked"); }
 for (const e of errors) console.log(`::error::Page error: ${e}`);
 await browser.close(); server.close();
 process.exit(failed || errors.length ? 1 : 0);
