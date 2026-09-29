@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "conflicts (default), history (the History of violence layer only) or probe-conflicts (diagnostic, writes probe-out/ only)"
+        description: "conflicts (default), history (the History of violence layer only), sites (the Military sites layer only, lists re-read), probe-sites or probe-conflicts (diagnostic, writes probe-out/ only)"
         required: false
         default: ""
 
@@ -25,7 +25,7 @@ concurrency:
 jobs:
   conflicts:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -45,23 +45,39 @@ jobs:
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
       - name: Refresh the conflict tabs
-        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' }}
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' && inputs.only != 'sites' && inputs.only != 'probe-sites' }}
         run: node tools/refresh_conflicts.mjs
         timeout-minutes: 18
         continue-on-error: true
       # Data that is not a report, such as air-raid alert states, satellite heat detections and each side's running claims.
       # Reads the front files written above.
       - name: Refresh the conflict extras
-        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' }}
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' && inputs.only != 'sites' && inputs.only != 'probe-sites' }}
         run: node tools/conflict_extras.mjs
         timeout-minutes: 4
+        continue-on-error: true
+      # Military sites (tools/refresh_mil_sites.mjs): bases, airfields, naval bases and depots from Wikidata and OpenStreetMap,
+      # re-read weekly, and every run the conflict's reports that name one. Reads the reports written above.
+      - name: Refresh the military sites
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' && inputs.only != 'probe-sites' }}
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          if [ "$ONLY" = "sites" ]; then export SITES_FORCE=1; fi
+          node tools/refresh_mil_sites.mjs
+        timeout-minutes: 12
+        continue-on-error: true
+      - name: Probe the military site sources (diagnostic, writes probe-out/ only)
+        if: ${{ inputs.only == 'probe-sites' }}
+        run: PROBE=1 node tools/refresh_mil_sites.mjs
+        timeout-minutes: 12
         continue-on-error: true
       # History of violence (tools/refresh_conflict_history.mjs): every UCDP event of each conflict since its start, from the UCDP
       # GED yearly release plus the candidate events written above. Weekly: runs when the last build is 6 days old, or with only=history.
       # The release zip (tens of MB, changes once a year) is kept in the Actions cache under its release name.
       - name: Is the violence history due
         id: histdue
-        if: ${{ inputs.only != 'probe-conflicts' }}
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'sites' && inputs.only != 'probe-sites' }}
         env:
           ONLY: ${{ inputs.only }}
         run: |
@@ -99,7 +115,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
-          case "${ONLY:-conflicts}" in conflicts|history|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
+          case "${ONLY:-conflicts}" in conflicts|history|sites|probe-sites|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan conflicts-preview-data
@@ -110,7 +126,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots, and only data/live/conflicts. The 15-minute refresh commits to main too, so rebase onto it and retry.
       - name: Commit if the conflict data changed
-        if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-conflicts' }}
+        if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-conflicts' && inputs.only != 'probe-sites' }}
         run: |
           git add -N data/live/conflicts
           if git diff --quiet -- data/live/conflicts; then echo "no change"; exit 0; fi
