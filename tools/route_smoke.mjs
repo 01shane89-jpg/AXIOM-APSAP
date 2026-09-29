@@ -29,8 +29,10 @@ for (const [mode, a, b] of [["car", "13.7563, 100.5018", "12.9236, 100.8825"], [
   ["foot", "13.7563, 100.5018", "13.7300, 100.5230"], ["bike", "13.7563, 100.5018", "13.7300, 100.5230"], ["line", "13.7563, 100.5018", "12.9236, 100.8825"]]) {
   await page.click('[data-rt="clear"]');
   await page.click(`[data-mode="${mode}"]`);
-  for (const q of [a, b]) { await page.fill("#rt-q", q); await page.press("#rt-q", "Enter"); await page.waitForTimeout(200); }
-  await page.waitForFunction(() => { const s = window.OSAP_ROUTETAB.state(); return s.routes && !s.busy; }, null, { timeout: 40000 }).catch(() => {});
+  await page.waitForTimeout(600);
+  for (const q of [a, b]) { await page.fill("#rt-q", q); await page.press("#rt-q", "Enter"); await page.waitForTimeout(100); }
+  const tok0 = await page.evaluate(() => window.OSAP_ROUTETAB.state().token);
+  await page.waitForFunction((t) => { const s = window.OSAP_ROUTETAB.state(); return s.token > t && s.routes && !s.busy; }, tok0, { timeout: 40000 }).catch(() => {});
   await page.waitForFunction(() => window.OSAP_ROUTETAB.state().elev || /did not answer/.test(document.getElementById("rt-prof").textContent), null, { timeout: 30000 }).catch(() => {});
   await page.waitForFunction(() => window.OSAP_ROUTETAB.state().wx || /did not answer|16 days/.test(document.getElementById("rt-wx").textContent), null, { timeout: 30000 }).catch(() => {});
   const st = await page.evaluate(() => window.OSAP_ROUTETAB.state());
