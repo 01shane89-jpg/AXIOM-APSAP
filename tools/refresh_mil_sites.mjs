@@ -12,9 +12,10 @@
 //      the site was struck; the page shows each matching report with its link and fingerprint.
 // No keys, no accounts. PROBE=1 prints what each source returns and writes nothing. CONFLICTS=id,id limits the run.
 import fs from "node:fs";
+import { ccsAt } from "./geo_cc.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean), FORCE = process.env.SITES_FORCE === "1";
-const OUT = "data/live/conflicts/sites", CF = "data/live/conflicts", TIMEOUT = 90000, REFETCH_DAYS = 6.5, CAP = 2500;
+const OUT = "data/live/conflicts/sites", CF = "data/live/conflicts", TIMEOUT = 150000, REFETCH_DAYS = 6.5, CAP = 2500, BUDGET_MS = 9 * 60000;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z", NOW = Date.now();
 const UA = "AXIOM-OSAP/1.0 (conflict map military sites; +https://01shane89-jpg.github.io/AXIOM-APSAP/) node-fetch";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -49,46 +50,67 @@ function kindOf(text) {
 const OSM_KIND = { airfield: "air", naval_base: "naval", base: "base", barracks: "barracks", ammunition: "depot", office: "hq" };
 
 /* ---------- Wikidata ---------- */
-// Q18691599 military base; its subclasses (air base, naval base, military airfield, fort in use ...) come with P279*.
+// Q18691599 military base and Q695850 air base, with all their subclasses (naval base, military airfield ...). The subclass list
+// is read once per run in a query of its own: walking the class tree inside the site query makes Wikidata time out (HTTP 504).
 const WD_ROOTS = ["Q18691599", "Q695850"];
+const WDQ = "https://query.wikidata.org/sparql";
+let wdClasses = null;
+async function wdClassList() {
+  if (wdClasses) return wdClasses;
+  const q = `SELECT DISTINCT ?c WHERE { VALUES ?r { ${WD_ROOTS.map((x) => "wd:" + x).join(" ")} } ?c wdt:P279* ?r. }`;
+  const j = await post(WDQ, "query=" + encodeURIComponent(q), "application/sparql-results+json");
+  wdClasses = j.results.bindings.map((b) => b.c.value.split("/").pop()).filter((x) => /^Q\d+$/.test(x));
+  return wdClasses;
+}
 async function wikidata(c) {
-  const isos = c.countries.map((x) => '"' + (x === "xk" ? "XK" : x.toUpperCase()) + '"').join(" ");
-  const q = `SELECT ?s ?sLabel ?c ?iso ?clsLabel ?art ?osm WHERE {
-  VALUES ?iso { ${isos} } VALUES ?root { ${WD_ROOTS.map((x) => "wd:" + x).join(" ")} }
-  ?ctry wdt:P297 ?iso. ?s wdt:P17 ?ctry; wdt:P31 ?cls; wdt:P625 ?c. ?cls wdt:P279* ?root.
+  const cls = await wdClassList();
+  const isos = c.countries.map((x) => '"' + x.toUpperCase() + '"').join(" ");
+  const q = `SELECT ?s ?sLabel ?c ?iso ?cls ?art WHERE {
+  VALUES ?iso { ${isos} } VALUES ?cls { ${cls.map((x) => "wd:" + x).join(" ")} }
+  ?ctry wdt:P297 ?iso. ?s wdt:P31 ?cls; wdt:P17 ?ctry; wdt:P625 ?c.
   FILTER NOT EXISTS { ?s wdt:P576 [] } FILTER NOT EXISTS { ?s wdt:P3999 [] } FILTER NOT EXISTS { ?s wdt:P582 [] }
   OPTIONAL { ?art schema:about ?s; schema:isPartOf <https://en.wikipedia.org/>. }
-  OPTIONAL { ?s wdt:P402 ?osm. }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul,fr,es,ar,ru,uk,fa,my,th,id,he". }
 }`;
-  const j = await post("https://query.wikidata.org/sparql", "query=" + encodeURIComponent(q), "application/sparql-results+json");
+  const j = await post(WDQ, "query=" + encodeURIComponent(q), "application/sparql-results+json");
+  const clsName = await wdClassNames(j.results.bindings.map((b) => b.cls.value.split("/").pop()));
   const seen = new Map();
   for (const b of j.results.bindings) {
-    const qid = b.s.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.c.value);
+    const qid = b.s.value.split("/").pop(), m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.c.value), cn = clsName[b.cls.value.split("/").pop()];
     if (!m) continue;
     const lo = +m[1], la = +m[2], name = b.sLabel?.value || qid;
     if (/^Q\d+$/.test(name)) continue;   // no label in any listed language
     const prev = seen.get(qid);
-    if (prev) { if (b.clsLabel && !prev.cls.includes(b.clsLabel.value)) prev.cls.push(b.clsLabel.value); continue; }
-    seen.set(qid, { qid, n: name, la: +la.toFixed(5), lo: +lo.toFixed(5), cc: b.iso.value.toLowerCase(), cls: b.clsLabel ? [b.clsLabel.value] : [],
-      w: b.art?.value || "", osmRel: b.osm?.value || "" });
+    if (prev) { if (cn && !prev.cls.includes(cn)) prev.cls.push(cn); continue; }
+    seen.set(qid, { qid, n: name, la: +la.toFixed(5), lo: +lo.toFixed(5), cc: b.iso.value.toLowerCase(), cls: cn ? [cn] : [], w: b.art?.value || "" });
   }
   return [...seen.values()].map((s) => ({ ...s, k: kindOf(s.cls.join(" ") + " " + s.n) }));
 }
+const clsNames = {};
+async function wdClassNames(ids) {
+  const need = [...new Set(ids)].filter((x) => !(x in clsNames));
+  if (need.length) {
+    const q = `SELECT ?c ?l WHERE { VALUES ?c { ${need.map((x) => "wd:" + x).join(" ")} } ?c rdfs:label ?l. FILTER(LANG(?l) = "en") }`;
+    try { const j = await post(WDQ, "query=" + encodeURIComponent(q), "application/sparql-results+json"); j.results.bindings.forEach((b) => (clsNames[b.c.value.split("/").pop()] = b.l.value)); } catch (e) {}
+    need.forEach((x) => { if (!(x in clsNames)) clsNames[x] = ""; });
+  }
+  return clsNames;
+}
 
 /* ---------- OpenStreetMap (Overpass) ---------- */
+// One query per conflict over its map area (a bounding box; a query by country outline times out for large countries).
+// A feature is kept when it lies in one of the conflict's countries, or where the country outlines here do not cover it.
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
 async function overpass(q) {
   let last;
   for (const u of OVERPASS) {
-    try { return await post(u, "data=" + encodeURIComponent(q), "application/json"); } catch (e) { last = e; await sleep(4000); }
+    try { return await post(u, "data=" + encodeURIComponent(q), "application/json"); } catch (e) { last = e; await sleep(3000); }
   }
   throw last;
 }
-async function osm(c, cc) {
-  const [[s, w], [n, e]] = c.bounds, a2 = cc === "xk" ? "XK" : cc.toUpperCase();
-  const q = `[out:json][timeout:180];area["ISO3166-1"="${a2}"]["admin_level"="2"]->.a;
-nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](area.a)(${s},${w},${n},${e});out center tags;`;
+async function osm(c) {
+  const [[s, w], [n, e]] = c.bounds;
+  const q = `[out:json][timeout:120];nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"](${s},${w},${n},${e});out center tags;`;
   const j = await overpass(q), out = [];
   for (const el of j.elements || []) {
     const t = el.tags || {}, la = el.lat ?? el.center?.lat, lo = el.lon ?? el.center?.lon;
@@ -96,8 +118,10 @@ nwr["military"~"^(airfield|naval_base|base|barracks|ammunition|office)$"]["name"
     if (t.disused || t.abandoned || /^(yes|abandoned|disused)$/.test(t["disused:military"] || "") || t.historic || t["abandoned:military"]) continue;
     // military=office is kept only for headquarters, ministries and commands, not recruiting offices
     if (t.military === "office" && !/headquarter|ministry|command|staff|штаб|міністерств|министерств/i.test((t.name || "") + " " + (t["name:en"] || ""))) continue;
+    const here = ccsAt(+la, +lo, 0);
+    if (here.length && !here.some((x) => c.countries.includes(x))) continue;
     out.push({ osm: el.type + "/" + el.id, n: t["name:en"] || t["int_name"] || t.name, n2: t["name:en"] && t.name !== t["name:en"] ? t.name : "",
-      la: +(+la).toFixed(5), lo: +(+lo).toFixed(5), cc, k: OSM_KIND[t.military] || "base", op: t.operator || "", wd: t.wikidata || "" });
+      la: +(+la).toFixed(5), lo: +(+lo).toFixed(5), cc: here.find((x) => c.countries.includes(x)) || "", k: OSM_KIND[t.military] || "base", op: t.operator || "", wd: t.wikidata || "" });
   }
   return out;
 }
@@ -171,20 +195,21 @@ if (!PROBE) fs.mkdirSync(OUT, { recursive: true });
 const STATE_F = OUT + "/_state.json";
 let state = {}; try { state = JSON.parse(fs.readFileSync(STATE_F, "utf8")); } catch (e) {}
 const probe = {};
-for (const c of CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.includes(c.id)))) {
+// the conflicts whose lists are oldest go first, so a run that runs out of time picks up where the last one stopped
+const order = CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.includes(c.id)))
+  .sort((a, b) => String((state[a.id] || {}).built || "").localeCompare(String((state[b.id] || {}).built || "")));
+for (const c of order) {
   const file = OUT + "/" + c.id + ".js", prev = readJs(file), st = state[c.id] || {};
-  const due = FORCE || PROBE || !prev || !st.built || (NOW - Date.parse(st.built.replace(" ", "T"))) / 864e5 >= REFETCH_DAYS;
+  const due = Date.now() - NOW < BUDGET_MS && (FORCE || PROBE || !prev || !st.built || (NOW - Date.parse(st.built.replace(" ", "T"))) / 864e5 >= REFETCH_DAYS);
   let sites = prev?.sites || [], sources = prev?.sources || [];
   if (due) {
     const src = [], wd = [], om = [];
     try { const r = await wikidata(c); wd.push(...r); src.push({ id: "wikidata", ok: true, n: r.length }); }
     catch (e) { src.push({ id: "wikidata", ok: false, error: errMsg(e) }); }
     await sleep(1500);
-    for (const cc of c.countries) {
-      try { const r = await osm(c, cc); om.push(...r); src.push({ id: "osm:" + cc, ok: true, n: r.length }); }
-      catch (e) { src.push({ id: "osm:" + cc, ok: false, error: errMsg(e) }); }
-      await sleep(2500);
-    }
+    try { const r = await osm(c); om.push(...r); src.push({ id: "osm", ok: true, n: r.length }); }
+    catch (e) { src.push({ id: "osm", ok: false, error: errMsg(e) }); }
+    await sleep(2000);
     const allFailed = src.every((s) => !s.ok);
     if (PROBE) {
       const cls = {}; wd.forEach((s) => s.cls.forEach((x) => (cls[x] = (cls[x] || 0) + 1)));
@@ -194,13 +219,14 @@ for (const c of CFG.conflicts.filter((c) => c.bounds && (!ONLY.length || ONLY.in
     }
     // a source that failed keeps its part of the last good list
     if (!allFailed) {
-      const wdOk = src.find((s) => s.id === "wikidata").ok, osmFailed = src.filter((s) => s.id.startsWith("osm:") && !s.ok).map((s) => s.id.slice(4));
+      const wdOk = src.find((s) => s.id === "wikidata").ok, osmOk = src.find((s) => s.id === "osm").ok;
       if (!wdOk) wd.push(...sites.filter((s) => s.wd).map((s) => ({ qid: s.wd, n: s.n, la: s.la, lo: s.lo, cc: s.cc, cls: s.cls ? s.cls.split(", ") : [], w: s.w || "", k: s.k })));
-      om.push(...sites.filter((s) => s.osm && !s.wd && osmFailed.includes(s.cc)).map((s) => ({ osm: s.osm, n: s.n, n2: s.n2, la: s.la, lo: s.lo, cc: s.cc, k: s.k, op: s.op || "" })));
+      if (!osmOk) om.push(...sites.filter((s) => s.osm && !s.wd).map((s) => ({ osm: s.osm, n: s.n, n2: s.n2, la: s.la, lo: s.lo, cc: s.cc, k: s.k, op: s.op || "" })));
       sites = merge(c, wd, om); sources = src; state[c.id] = { built: stamp, n: sites.length };
     } else sources = src.concat([{ id: "kept", ok: true, note: "all sources failed; last good list kept" }]);
   }
   if (PROBE) continue;
+  if (!prev && !due) continue;   // out of time before this conflict's first list: next run
   const d = readCf(c.id), hits = mentions(c, sites, (d && d.items) || []);
   const data = {
     schema: "osap-cf-sites/1", id: c.id, asof: stamp, built: state[c.id]?.built || "",
