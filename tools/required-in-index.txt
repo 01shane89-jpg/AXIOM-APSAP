@@ -60,3 +60,6 @@ window.TSAP.areaApi
 <script src="assets/osap-tidy.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
+
+# map points with a name, a note and photos on this device (claude/map-point-photos)
+<script src="assets/osap-points.js"></script>
