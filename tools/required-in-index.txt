@@ -70,3 +70,6 @@ refresh: function () { dsUi(); }
 <script src="assets/osap-milsym.js"></script>
 # elevation and LiDAR hillshade overlays in the Layers menu (claude/lidar-hillshade)
 function setShade(k, on) {
+# loading bar and failed-tile notice on the flat map (claude/3d-speed); hidden watch-check frames load no map tiles
+<script src="assets/osap-maploading.js"></script>
+if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};

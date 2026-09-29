@@ -1180,6 +1180,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (!window.OSAP_LEGEND) window.OSAP_LEGEND = { q: {}, set: function (id, html, home) { this.q[id] = [html, home]; } };
   /* sideways panning stops about 60 degrees past the dateline on each side, so the world does not scroll forever but Fiji, Kiribati and the Pacific can still be seen across it */
   var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true, maxBounds: [[-85, -240], [85, 240]], maxBoundsViscosity: 1 });
+  /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
+  if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
   /* symbols grow as you zoom in: --msk scales every NATO-style symbol (about 37 px at 1) from roughly 24 px zoomed out to 48 px zoomed in */
   function symZoom() {
@@ -7943,6 +7945,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-milsym.js"></script>
 <script src="assets/osap-points.js"></script>
 <script src="assets/osap-3d.js"></script>
+<script src="assets/osap-maploading.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
