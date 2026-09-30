@@ -30,6 +30,8 @@
   var I = {
     fold: ic('<path d="M9 6l6 6-6 6"/>'), unfold: ic('<path d="M15 6l-6 6 6 6"/>'),
     globe: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/>'),
+    data: ic('<ellipse cx="12" cy="5.5" rx="8" ry="2.8"/><path d="M4 5.5v6.5c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8V5.5"/><path d="M4 12v6.5c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8V12"/>'),
+    cloud: ic('<path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z"/><path d="M9 21l1-2M13 21l1-2" opacity=".7"/>'),
     layers: ic('<path d="M12 3 2 8l10 5 10-5z"/><path d="M2 13l10 5 10-5"/><path d="M2 17.5l10 5 10-5" opacity=".55"/>'),
     ruler: ic('<path d="M3 16.5 16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l1.8 1.8M9.5 10l1.2 1.2M12 7.5l1.8 1.8M14.5 5l1.2 1.2"/>'),
     area: ic('<path d="M5 7l6-3 8 4-2 9-9 2-4-6z" stroke-dasharray="3 2.4"/><circle cx="5" cy="7" r="1.4" fill="currentColor"/><circle cx="19" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="19" r="1.4" fill="currentColor"/>'),
@@ -64,9 +66,15 @@
   /* ---------- the toolbar ---------- */
   var TOOLS = [
     ["search", "Search", I.search, "Search places, or go to an MGRS, UTM or lat/long"],
-    ["overlays", "Overlays", I.layers, "Overlay Manager: data sets, map layers, your marks"],
+    /* data sets (what the map and list show) and map overlays (weather, grid, terrain...) are two buttons (Shane 2026-09-30) */
+    ["datasets", "Data sets", I.data, "Data sets: what the map and the list show"],
+    ["overlays", "Overlays", I.layers, "Map overlays: flooding, terrain, roads, aircraft, your marks"],
+    /* weather is its own area (Shane 2026-09-30): radar, cloud, wind, warnings, cyclones and the forecasts */
+    ["weather", "Weather", I.cloud, "Weather: radar, cloud, wind, warnings, cyclones and forecasts"],
     ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
+    /* Route is a map tool, not a data set (Shane 2026-09-30): it opens the route planner, and again goes back */
+    ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
@@ -107,6 +115,7 @@
     /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
     var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
+    var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
     if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
@@ -118,13 +127,19 @@
     if (pop._for === k) { popClose(); return; }
     popClose();
     if (k === "search") search();
-    else if (k === "overlays") omOpen();
+    else if (k === "datasets" || k === "overlays" || k === "weather") { if (!om.hidden && omMode === k) omClose(); else omOpen(k); }
     else if (k === "basemap") {
       var BM = W.OSAP_BASEMAP; if (!BM) return;
       var cur = BM.get();
       popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
     }
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
+    else if (k === "route") {
+      var onRoute = root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf");
+      if (!onRoute) { rtBack = root.getAttribute("data-cf") ? '#view-seg button[data-view="cf-' + root.getAttribute("data-cf") + '"]' : '#view-seg button[data-view="' + (root.getAttribute("data-view") || "timeline") + '"]'; press('#view-seg button[data-view="route"]'); }
+      else press(q(rtBack || "") ? rtBack : '#view-seg button[data-view="timeline"]');
+      if (phone() && !om.hidden) omClose(); setTimeout(paintTools, 60);
+    }
     else if (k === "area") {
       var has = areaOn();
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
@@ -377,13 +392,13 @@
 
   /* ---------- Overlay Manager ---------- */
   var om = D.createElement("aside"); om.id = "atk-om"; om.className = "leaflet-control"; om.hidden = true; om.setAttribute("aria-label", "Overlay Manager");
-  om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
-    '<div class="atk-omb"><section><h3>Data sets</h3><div id="atk-ds"></div></section>' +
-    '<section><h3>What to show</h3><div id="atk-ml"></div></section>' +
-    '<section><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
-    '<section><h3>Controls</h3><label class="atk-sw"><input type="checkbox" id="atk-classic"> <span>Classic controls (the old buttons instead of this toolbar)</span></label></section></div>';
+  om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><div class="atk-omm" role="tablist" aria-label="Show"><button type="button" role="tab" data-omm="datasets">Data sets</button><button type="button" role="tab" data-omm="overlays">Map overlays</button><button type="button" role="tab" data-omm="weather">Weather</button></div><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
+    '<div class="atk-omb"><section class="atk-s-ds"><h3>Data sets</h3><div id="atk-ds"></div></section>' +
+    '<section class="atk-s-ml"><div id="atk-ml"></div></section>' +
+    '<section class="atk-s-ov"><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
+    '<section class="atk-s-ov"><h3>Controls</h3><label class="atk-sw"><input type="checkbox" id="atk-classic"> <span>Classic controls (the old buttons instead of this toolbar)</span></label></section></div>';
   L.DomEvent.disableClickPropagation(om); L.DomEvent.disableScrollPropagation(om);
-  var mlHome = null;
+  var mlHome = null, omMode = "datasets", rtBack = null;
   function omPaint() {
     if (om.hidden) return;
     /* data sets: once the page has its own on/off checklist (window.OSAP_DATASETS, #ml-ds inside the Layers panel that this
@@ -401,7 +416,14 @@
       A.map(function (a) { return '<div class="atk-mk"><button type="button" data-aoi-go="' + esc(a.id) + '"><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + "</button></div>"; }).join("");
     om.querySelector("#atk-classic").checked = !on();
   }
-  function omOpen() {
+  /* one sheet, two uses: "datasets" shows only the data set list; "overlays" shows the map layers, your marks and controls */
+  function omOpen(mode) {
+    omMode = mode === "overlays" || mode === "weather" ? mode : "datasets";
+    var ttl = { datasets: "Data sets", overlays: "Map overlays", weather: "Weather" }[omMode];
+    om.setAttribute("data-mode", omMode); om.setAttribute("aria-label", ttl);
+    om.querySelector("h2").textContent = ttl;
+    Array.prototype.forEach.call(om.querySelectorAll("[data-omm]"), function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-omm") === omMode)); });
+    ["datasets", "overlays", "weather"].forEach(function (k) { var b = bar.querySelector('[data-atk="' + k + '"]'); if (b) b.setAttribute("aria-pressed", String(k === omMode)); });
     var ml = q("#ml-panel");
     if (ml && ml.parentNode !== om.querySelector("#atk-ml")) { mlHome = ml.parentNode; om.querySelector("#atk-ml").appendChild(ml); }
     if (ml) ml.hidden = false;
@@ -410,11 +432,13 @@
   }
   function omClose() {
     om.hidden = true; root.classList.remove("atk-omopen");
+    ["datasets", "overlays", "weather"].forEach(function (k) { var b = bar.querySelector('[data-atk="' + k + '"]'); if (b) b.setAttribute("aria-pressed", "false"); });
     var ml = q("#ml-panel"); if (ml && mlHome && ml.parentNode !== mlHome) { mlHome.appendChild(ml); ml.hidden = true; var b = mlHome.querySelector(".mlbtn"); if (b) b.setAttribute("aria-expanded", "false"); }
   }
   om.addEventListener("click", function (e) {
     var t = e.target, b;
     if (t.closest("[data-om=x]")) { omClose(); return; }
+    if ((b = t.closest("[data-omm]"))) { omOpen(b.getAttribute("data-omm")); return; }
     if ((b = t.closest(".atk-dsb[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
     if ((b = t.closest("[data-mk-del]"))) { ptDel(b.getAttribute("data-mk-del")); return; }
     if ((b = t.closest("[data-mk-ed]"))) { if (phone()) omClose(); if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-mk-ed")); return; }
@@ -456,6 +480,13 @@
     "html.atak #map .leaflet-top.leaflet-right:has(>#area-ctl .areahint){overflow:visible!important}" +
     /* the toolbar has its own Base map button, so Overlays does not repeat the list */
     "html.atak #ml-panel .mlbase{display:none}" +
+    /* Data sets shows the list alone; Map overlays shows everything else in the Layers panel, plus your marks and controls */
+    /* the sheet's header switches between the two, so on a phone (where the sheet covers the toolbar) neither needs closing first */
+    "#atk-om h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}#atk-om .atk-omm{display:flex;gap:2px;background:var(--line);border-radius:8px;padding:2px}" +
+    "#atk-om .atk-omm button{font:600 13.5px system-ui,sans-serif;border:0;border-radius:6px;padding:7px 12px;min-height:34px;background:none;color:var(--ink,#222);cursor:pointer}#atk-om .atk-omm button[aria-selected=true]{background:var(--surface,#fff);box-shadow:0 1px 3px rgba(0,0,0,.2)}" +
+    "#atk-om[data-mode=datasets] .atk-s-ov,#atk-om[data-mode=datasets] #ml-panel>:not(#ml-ds),#atk-om[data-mode=overlays] #ml-ds,#atk-om[data-mode=overlays] #ml-wx{display:none!important}" +
+    /* Weather shows the weather section of the Layers panel alone */
+    "#atk-om[data-mode=weather] .atk-s-ov,#atk-om[data-mode=weather] #ml-panel>:not(#ml-extra),#atk-om[data-mode=weather] #ml-extra>:not(#ml-wx),#atk-om[data-mode=weather] #ml-wx>.mlh:first-child{display:none!important}" +
     "html.atak #map #atk-tools,html.atak #map #atk-bar{display:flex}#atk-tools,#atk-bar,#atk-cross,#atk-ring[hidden],#atk-om[hidden],#atk-pop[hidden]{display:none}" +
     "@media (pointer:coarse){html.atak #map .leaflet-control-zoom{display:none}}" +
     "html.atak #map .leaflet-bottom{bottom:30px}html.atak #map{-webkit-touch-callout:none}" +
@@ -521,10 +552,10 @@
     if (recs.every(function (r) { var t = r.target; return bar.contains(t) || (t.closest && t.closest("#atk-back")) || (r.addedNodes.length === 1 && r.addedNodes[0].id === "atk-back"); })) return;
     paintTools(); syncBack(); }).observe(mapEl.querySelector(".leaflet-control-container") || mapEl, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class", "hidden"] });
   W.addEventListener("hashchange", function () { setTimeout(function () { ptDraw(); omPaint(); }, 300); });
-  D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); });
+  D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); setTimeout(paintTools, 60); });
   /* the page's "No data sets on the map: Choose" note opens the Layers menu, which this toolbar holds in the Overlay Manager */
   D.addEventListener("click", function (e) {
-    if (root.classList.contains("atak") && e.target.closest && e.target.closest("[data-dspick]")) { e.stopPropagation(); e.preventDefault(); omOpen(); }
+    if (root.classList.contains("atak") && e.target.closest && e.target.closest("[data-dspick]")) { e.stopPropagation(); e.preventDefault(); omOpen("datasets"); }
   }, true);
   if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
