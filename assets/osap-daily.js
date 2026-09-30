@@ -26,6 +26,8 @@
     ".dlsub{font-size:12px;color:var(--muted)}.dlbluf{margin:8px 0 4px;padding:8px 10px;border-left:3px solid var(--accent,#1f5f99);background:var(--surface2,rgba(127,127,127,.07));border-radius:4px}" +
     ".dlbluf p{margin:0 0 4px;font-size:14.5px;line-height:1.45}.dlbluf p:last-child{margin:0}.dllbl{font:700 11px/1.4 inherit;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 3px}.dlkev summary{cursor:pointer;min-height:28px}.dlkev[open] summary{margin-bottom:4px}" +
     ".dlcols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;margin-top:8px}@media (max-width:760px){.dlcols{grid-template-columns:1fr}}" +
+      /* Key events folded: its column shrinks to the heading, so What to watch fills the width instead of leaving half blank */
+      "@media (min-width:761px){.dlcols:has(>div>details.dlkev:not([open])){grid-template-columns:max-content minmax(0,1fr)}}" +
     ".dlev,.dlw{list-style:none;margin:0;padding:0}.dlev li,.dlw li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}" +
     ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
     ".dlref{font-size:11px;font-weight:600;text-decoration:none;margin-left:2px;vertical-align:1px}.dlref:hover{text-decoration:underline}" +

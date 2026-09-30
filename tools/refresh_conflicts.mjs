@@ -17,6 +17,7 @@ import { parseFeed } from "./feedparse.mjs";
 import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES, staleSearchResult } from "./conflict_lib.mjs";
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
+import { tgItems } from "./tg_preview.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
