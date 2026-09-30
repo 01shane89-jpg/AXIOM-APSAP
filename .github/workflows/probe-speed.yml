@@ -3,7 +3,7 @@
 name: Probe map speed
 on:
   push:
-    branches: [claude/3d-sat-fix]
+    branches: [claude/3d-sat-fix, claude/map-first]
     paths: [tools/probe_speed.mjs, .github/workflows/probe-speed.yml, assets/**, index.html]
   workflow_dispatch:
 permissions:
@@ -21,7 +21,8 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium webkit
-      - run: git worktree add ../before 13f5d2d38^1
+      - run: git worktree add ../before origin/main
       - run: node tools/probe_speed.mjs
         env:
-          SITES: before=../before,now=.,live=https://01shane89-jpg.github.io/AXIOM-APSAP/
+          SITES: main=../before,now=.
+          RUNS: 2
