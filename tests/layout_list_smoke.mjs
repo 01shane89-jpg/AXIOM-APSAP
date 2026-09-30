@@ -66,8 +66,10 @@ const cover = (p) => p.evaluate(() => {
 }
 
 // ---------- conflict tabs: no Layout button, never a blank column ----------
-for (const [cc, tab] of [["th", "cf-thailand-deep-south"], ["th", "cf-thailand-cambodia"], ["ua", "cf-russia-ukraine"]]) {
+// Syria with Details folded to its strip is the screen Shane saw go grey (2026-09-30)
+for (const [cc, tab, folded] of [["th", "cf-thailand-deep-south"], ["th", "cf-thailand-cambodia"], ["ua", "cf-russia-ukraine"], ["sy", "cf-syria", true]]) {
   const { ctx, p, errors } = await open("#" + cc + "/timeline");
+  if (folded) { await p.evaluate(() => window.OSAP_COL("rail", true)); await p.waitForTimeout(300); }
   await pickList(p);                                    // List chosen on another tab first (remembered)
   await view(p, tab); await p.waitForTimeout(2500);
   ok(await p.evaluate(() => document.documentElement.hasAttribute("data-cf")), `${tab}: conflict tab open`);
@@ -75,7 +77,7 @@ for (const [cc, tab] of [["th", "cf-thailand-deep-south"], ["th", "cf-thailand-c
   const c = await cover(p);
   ok(c.mapW > 300, `${tab}: map on screen after List on another tab (${c.mapW}px wide)`);
   ok(c.covered > 0.97, `${tab}: no blank column (${Math.round(c.covered * 100)}% of the width covered)`);
-  ok(await p.evaluate(() => { const r = document.getElementById("cf-rail"); return r && !r.hidden && r.getBoundingClientRect().width > 200; }), `${tab}: conflict panel shown`);
+  if (!folded) ok(await p.evaluate(() => { const r = document.getElementById("cf-rail"); return r && !r.hidden && r.getBoundingClientRect().width > 200; }), `${tab}: conflict panel shown`);
   if (OUT) await p.screenshot({ path: OUT + "/layout-list-" + tab + ".png" });
   await view(p, "timeline"); await p.waitForTimeout(1500);
   const n = await cards(p); ok(n > 0, `${tab}: back on the Master timeline, List shows the cards again (${n})`);
