@@ -96,10 +96,25 @@ export function loadGazetteer(get = fetchBuf) {
 // (first by position wins), a town counts only if it lies in a region the text also names, or the text names no region and
 // the town's name is not ambiguous (see loadGazetteer). With no usable town, a single named region is used; two or more
 // named regions, or none, leave the text unplaced.
-// Every town and region a text names in those countries (for placeIn and tools/probe_placement.mjs).
+// A wire dateline names where the reporter filed, not where the story happened: "SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
+// "MANILA (AP) —", "BANGKOK --". Its words are blanked before places are read, so a Seoul dateline on a Yongbyon story is not a
+// Seoul pin. The same patterns are in index.html (DATELINE), for items placed in the browser and items placed before this rule.
+const AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
+export const DATELINE = [
+  /\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
+  new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
+  /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu,
+];
+export function stripDatelines(text) {
+  let t = String(text || "");
+  for (const re of DATELINE) t = t.replace(re, (m, lead) => (typeof lead === "string" ? lead : "") + " ".repeat(m.length - (typeof lead === "string" ? lead.length : 0)));
+  return t;
+}
+// Every town and region a text names in those countries (for placeIn and tools/probe_placement.mjs), datelines left out.
 export function namesIn(gz, text, ccs) {
   const towns = [], regs = [];
   if (!gz || !text) return { towns, regs };
+  text = stripDatelines(text);
   for (const cc of ccs) {
     const g = gz[cc]; if (!g) continue;
     g.re.lastIndex = 0;
