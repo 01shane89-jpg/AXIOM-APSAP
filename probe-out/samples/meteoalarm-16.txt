@@ -1,0 +1,100 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:11.078312Z</updated>
+  <entry>
+    <cap:polygon>31.85243066,34.65992935 31.85211572,34.6597712 31.85181495,34.65962016 31.85176935,34.65959727 31.84933344,34.65849895 31.83030876,34.64992102 31.79766588,34.63020604 31.7959014,34.62914036 31.79336588,34.62760901 31.79244395,34.62705221 31.73082613,34.58983753 31.68417179,34.55826994 31.6838237,34.55800185 31.68273578,34.55716397 31.6802685,34.55526376 31.67941633,34.55460744 31.67832413,34.55376627 31.67590825,34.55190564 31.63863787,34.52320126 31.63827569,34.52292231 31.6370131,34.52194991 31.63679719,34.52178363 31.63527207,34.52060902 31.63339314,34.51916194 31.62983686,34.51642301 31.6263432,34.51373231 31.59622433,34.49053578 31.69907982,34.3216845 31.77712639,34.37759099 31.87460583,34.44409888 31.93965631,34.47905253 31.85243066,34.65992935</cap:polygon>
+    <link title="Sea - South" href="https://meteoalarm.org?polygon=d263991b-23f6-4972-a87e-419cc9721b08,0,2,0" hreflang="en"/>
+    <cap:areaDesc>Sea - South</cap:areaDesc>
+    <cap:event>COASTAL EVENT</cap:event>
+    <cap:sent>2026-09-29T18:35:10+00:00</cap:sent>
+    <cap:expires>2026-09-30T07:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:35:10+00:00</cap:effective>
+    <cap:onset>2026-09-29T19:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.260929213510.58955</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:35:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08?index_info=0&amp;index_area=2&amp;index_polygon=0</id>
+    <title>Orange Coastalevent Warning issued for Israel - Sea - South</title>
+    <updated>2026-09-29T18:35:10Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>32.55460249,34.76002585 32.54809375,34.90175258 32.53573688,34.89822756 32.50204554,34.8886165 32.47824044,34.88593681 32.28422551,34.8334535 32.26910843,34.82936416 32.20089717,34.8046875 32.12913316,34.78386014 32.05717134,34.75379761 32.05289925,34.74650284 32.00780154,34.73129662 31.97016349,34.71860569 31.9181786,34.68869906 31.85243066,34.65992935 31.93965631,34.47905253 32.02198252,34.51996666 32.08814809,34.54895146 32.12439226,34.5601488 32.14785558,34.57171962 32.16796771,34.58507872 32.27089322,34.62010515 32.33006283,34.64022055 32.49870592,34.68436813 32.55744207,34.69793194 32.55460249,34.76002585</cap:polygon>
+    <link title="Sea - Center" href="https://meteoalarm.org?polygon=d263991b-23f6-4972-a87e-419cc9721b08,0,1,0" hreflang="en"/>
+    <cap:areaDesc>Sea - Center</cap:areaDesc>
+    <cap:event>COASTAL EVENT</cap:event>
+    <cap:sent>2026-09-29T18:35:10+00:00</cap:sent>
+    <cap:expires>2026-09-30T07:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:35:10+00:00</cap:effective>
+    <cap:onset>2026-09-29T19:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.260929213510.58955</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:35:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08?index_info=0&amp;index_area=1&amp;index_polygon=0</id>
+    <title>Orange Coastalevent Warning issued for Israel - Sea - Center</title>
+    <updated>2026-09-29T18:35:10Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>33.04941234,35.1006572 33.01372234,35.08811183 32.94214905,35.0729703 32.93138607,35.07076649 32.90611044,35.08248171 32.87929741,35.07735869 32.84308658,35.05968276 32.82702152,35.04246966 32.81322873,35.02769122 32.81840925,35.00400312 32.83665464,34.98049926 32.83178786,34.96931443 32.83176348,34.96925838 32.82577412,34.95549363 32.81187675,34.95420449 32.73709171,34.94726736 32.70119638,34.92821211 32.68414496,34.92575638 32.57716885,34.91034977 32.5668912,34.90731078 32.54809375,34.90175258 32.54877191,34.88752452 32.54877191,34.88752444 32.55460249,34.76002585 32.55744207,34.69793194 32.7615851,34.73785616 32.82852533,34.75296884 32.8940272,34.76665077 32.89457282,34.76685088 32.93682268,34.78832736 33.01265064,34.88163955 33.09650468,34.90384654 33.09169738,35.10342556 33.04941234,35.1006572</cap:polygon>
+    <link title="Sea - North" href="https://meteoalarm.org?polygon=d263991b-23f6-4972-a87e-419cc9721b08,0,0,0" hreflang="en"/>
+    <cap:areaDesc>Sea - North</cap:areaDesc>
+    <cap:event>COASTAL EVENT</cap:event>
+    <cap:sent>2026-09-29T18:35:10+00:00</cap:sent>
+    <cap:expires>2026-09-30T07:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:35:10+00:00</cap:effective>
+    <cap:onset>2026-09-29T19:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.376.0.260929213510.58955</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08"/>
+    <link title="Israel" rel="related" href="https://meteoalarm.org?region=IL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:35:10Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-israel/d263991b-23f6-4972-a87e-419cc9721b08?index_info=0&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Orange Coastalevent Warning issued for Israel - Sea - North</title>
+    <updated>2026-09-29T18:35:10Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>31.04533009,35.42713897 31.04538051,35.42546174 31.06589229,35.36508011 31.09071256,35.32096685 31.10450395,35.2946378 31.20127354,35.28897596 31.28728852,35.28394335 31.34428397,35.24838506 31.37146376,35.23213367 31.3773363,35.22783087 31.38021464,35.23683445 31.42175669,35.29574867 31.45179743,35.35626618 31.49642939,35.47708495 31.42534834,35.4751214 31.36030192,35.45473711 31.29644389,35.4138859 31.2480

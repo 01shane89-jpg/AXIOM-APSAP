@@ -1,0 +1,156 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:SK</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:03.414420Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK606</value>
+    </cap:geocode>
+    <link title="Lučenec" href="https://meteoalarm.org?geocode=EMMA_ID:SK606" hreflang="en"/>
+    <cap:areaDesc>Lučenec</cap:areaDesc>
+    <cap:event>Moderate frost that can cause damage to vegetation</cap:event>
+    <cap:sent>2026-09-29T09:10:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T09:09:00+00:00</cap:effective>
+    <cap:onset>2026-10-01T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.260929090900.6abb8058_LC</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/574f023c-56b2-4ece-9e49-b4942bc917bc"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:10:45Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/574f023c-56b2-4ece-9e49-b4942bc917bc?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Low-temperature Warning issued for Slovakia - Lučenec</title>
+    <updated>2026-09-29T09:10:45Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK609</value>
+    </cap:geocode>
+    <link title="Rimavská Sobota" href="https://meteoalarm.org?geocode=EMMA_ID:SK609" hreflang="en"/>
+    <cap:areaDesc>Rimavská Sobota</cap:areaDesc>
+    <cap:event>Moderate frost that can cause damage to vegetation</cap:event>
+    <cap:sent>2026-09-29T09:10:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T09:09:00+00:00</cap:effective>
+    <cap:onset>2026-10-01T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.260929090900.6abb8057_RS</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/6a8edd1e-c620-46fa-a778-f77fc6168607"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:10:45Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/6a8edd1e-c620-46fa-a778-f77fc6168607?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Low-temperature Warning issued for Slovakia - Rimavská Sobota</title>
+    <updated>2026-09-29T09:10:45Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK608</value>
+    </cap:geocode>
+    <link title="Revúca" href="https://meteoalarm.org?geocode=EMMA_ID:SK608" hreflang="en"/>
+    <cap:areaDesc>Revúca</cap:areaDesc>
+    <cap:event>Moderate frost that can cause damage to vegetation</cap:event>
+    <cap:sent>2026-09-29T09:10:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T09:09:00+00:00</cap:effective>
+    <cap:onset>2026-10-01T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.260929090900.6abb8058_RA</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/1cfd9dc8-c325-4585-8d3d-bfaec8798947"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:10:45Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/1cfd9dc8-c325-4585-8d3d-bfaec8798947?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Low-temperature Warning issued for Slovakia - Revúca</title>
+    <updated>2026-09-29T09:10:45Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK123</value>
+    </cap:geocode>
+    <link title="Michalovce" href="https://meteoalarm.org?geocode=EMMA_ID:SK123" hreflang="en"/>
+    <cap:areaDesc>Michalovce</cap:areaDesc>
+    <cap:event>Moderate frost that can cause damage to vegetation</cap:event>
+    <cap:sent>2026-09-29T09:10:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T09:09:00+00:00</cap:effective>
+    <cap:onset>2026-10-01T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.703.0.SK.260929090900.6abb8058_MI</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/3382a291-fc2b-4120-a664-711723f80d1b"/>
+    <link title="Slovakia" rel="related" href="https://meteoalarm.org?region=SK" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:10:45Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovakia/3382a291-fc2b-4120-a664-711723f80d1b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Low-temperature Warning issued for Slovakia - Michalovce</title>
+    <updated>2026-09-29T09:10:45Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>SK709</value>
+    </cap:geocode>
+    <link title="Snina" href="https://meteoalarm.org?geocode=EMMA_ID:SK709" hreflang="en"/>
+    <cap:areaDesc>Snina</cap:areaDesc>
+    <cap:event>Moderate frost that can cause damage to vegetation</cap:event>
+    <cap:sent>2026-09-29T09:10:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T09:09:00+00:00</cap:effective>
+    <cap:onset>2026-10-01T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:ident

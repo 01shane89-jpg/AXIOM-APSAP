@@ -1,0 +1,142 @@
+https://chinapower.csis.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>ChinaPower Project</title>
+	<atom:link href="https://chinapower.csis.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://chinapower.csis.org/</link>
+	<description>Unpacking the complexity of China&#039;s rise</description>
+	<lastBuildDate>Mon, 28 Sep 2026 19:31:58 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.5</generator>
+<site xmlns="com-wordpress:feed-additions:1">131150412</site>	<item>
+		<title>What Does China Really Spend on its Military?</title>
+		<link>https://chinapower.csis.org/military-spending/</link>
+		
+		<dc:creator><![CDATA[chinapower2017]]></dc:creator>
+		<pubDate>Mon, 28 Dec 2015 19:35:34 +0000</pubDate>
+				<category><![CDATA[Military]]></category>
+		<category><![CDATA[defense budget]]></category>
+		<category><![CDATA[military modernization]]></category>
+		<category><![CDATA[military spending]]></category>
+		<category><![CDATA[procurement]]></category>
+		<category><![CDATA[transparency]]></category>
+		<category><![CDATA[white papers]]></category>
+		<guid isPermaLink="false">http://chinapower.csis.org/?p=142</guid>
+
+					<description><![CDATA[<p>China’s military budget provides insight into its expanding military capabilities. In terms of gauging relative military strength, defense budgets can be compared between countries and over a set period of time to assess overall trends.</p>
+<p>The post <a href="https://chinapower.csis.org/military-spending/">What Does China Really Spend on its Military?</a> appeared first on <a href="https://chinapower.csis.org">ChinaPower Project</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="wpb-content-wrapper"><div class="vc_row wpb_row vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element" >
+		<div class="wpb_wrapper">
+			<p>Defense spending is one of the most direct ways of measuring a country’s potential military capability. Comparing defense spending between countries—whether nominally or as a percentage of government expenditure—is a useful gauge of relative military strength. Spending patterns can also reveal key political events that have implications for defense and national security.</p>
+<p>Understanding the connection between China’s military spending and its military power is made difficult by a lack of transparency. Although Beijing provides figures for its defense spending each year, outside estimates of China’s defense budget are often significantly higher than the official numbers. China provides limited information on the distribution of its military spending, which further obscures spending patterns.</p>
+<p class="wp-block-paragraph"><div class='fullWidthFeatureContent'>    <div class="int-interactive">
+      <div class="int-header">
+        <h1 id="title">Defense Spending Giants</h1>
+        <p id="desc">
+          This interactive compares China’s defense spending with that of other key countries. Use the filtering options to select other measures of spending or to look at another country grouping. Data provided by the 
+          <a
+            href="https://www.sipri.org/databases/milex"
+            target="_blank"
+            id="desc-source"
+            >SIPRI Military Expenditure Database</a
+          >.
+        </p>
+      </div>
+      <!-- .int-header -->
+      <div class="int-chart-input">
+        <div class="int-input-row">
+          <div class="int-input-col-1">
+            <h3 class="filter-category" id="filter-category">
+              Filter by category:
+            </h3>
+            <div class="int-dropdown-container">
+              <div class="int-dropdown" id="int-metric-dropdown">
+                <div class="int-label-flag"></div>
+                <select name="metric">
+                  <option value="spending" id="spending"
+                    >Spending (Constant 2023 US$)</option
+                  >
+                  <option value="percent_gdp" id="gdp">Percent of GDP</option>
+                  <option value="percent_gov_spending" id="gov-spending"
+                    >Percent of Government Spending</option
+                  >
+                  <option value="per_capita" id="per-capita">Per Capita</option>
+                </select>
+              </div>
+            </div>
+            <h3 id="filter-group">Filter by grouping:</h3>
+            <div class="int-dropdown-container">
+              <div class="int-dropdown">
+                <select name="category">
+                  <option value="top_10" id="top-ten">Top 10 Spenders</option>
+                  <option value="china_neighbors" id="neighbors"
+                    >China’s Neighbors</option
+                  >
+                  <option value="g_20" id="g20">Top Spenders in G20</option>
+                  <option value="developing_countries" id="dev-economies"
+                    >Developing Economies</option
+                  >
+                  <option value="largest_populations" id="largest-pop"
+                    >Largest Populations</option
+                  >
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="int-input-col-2">
+            <h3 id="filter-year">Filter by year:</h3>
+            <div id="year-stepper">
+              <div class="js-numstepper">
+                <input type="number" min="2010" max="2024" value="2024" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- .int-chart-input -->
+      <div class="int-content">
+        <div class="int-chart-legend">
+          <span class="int-legend-marker"></span>
+          <p class="int-legend-label"></p>
+        </div>
+        <div class="int-chart-container"></div>
+      </div>
+      <!-- .int-content -->
+      <div class="int-source">
+        <img decoding="async"
+          src="https://csis-ilab.github.io/cpower-viz/china-military/img/cpp-logo-red.svg"
+          alt="China Power Project"
+          title="China Power Project"
+        />
+        <p id="source-label">
+          Source:
+          <a
+            id="source-name"
+            href="https://www.sipri.org/databases/milex"
+            target="_blank"
+            >Stockholm International Peace Research Institute (SIPRI)</a
+          >
+        </p>
+      </div>
+    </div></div>
+<h2 class="wp-block-heading">Tracking Chinese Military Spending</h2>
+<p>There is no universally accepted standard for reporting military spending. While international mechanisms exist, such as the<a href="https://www.un.org/disarmament/convarms/milex/"> UN Report on Military Expenditures</a>, participation is voluntary. This allows governments to report their expenditure with varying degrees of detail. China <a href="https://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html">joined</a> the UN instrument in 2007, but it remains less transparent than many countries.</p>
+<p>The Chinese government announces defense expenditure information annually. In March 2026, China <a href="https://web.archive.org/web/20260305144133/https://static.poder360.com.br/2026/03/relatorio-china-2026.pdf" target="_blank" rel="noreferrer noopener">announced </a>a yearly defense budget of RMB 1.91 trillion ($276.7 billion),<span id='easy-footnote-1-142'

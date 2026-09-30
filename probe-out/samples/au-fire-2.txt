@@ -1,0 +1,72 @@
+https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.json
+{
+	"type" : "FeatureCollection",
+	"name" : "QFDWarnings",
+	"features" : [
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Polygon",
+				"coordinates" : [
+					[
+						[ 144.484801533, -15.6116666943, 0 ],
+						[ 144.4958641364, -15.5352340044, 0 ],
+						[ 144.3531944633, -15.5054616744, 0 ],
+						[ 144.3385078812, -15.5973377283, 0 ],
+						[ 144.484801533, -15.6116666943, 0 ]
+					]
+				]
+			},
+			"properties" : {
+				"OBJECTID" : 3719,
+				"UniqueID" : "WARN-879",
+				"WarningTitle" : "STAY INFORMED - Laura (Cape York) - fire as at 3:37pm Tuesday, 29 September 2026",
+				"WarningLevel" : "Advice",
+				"CallToAction" : "Stay Informed",
+				"WarningText" : "A fire is burning near Ginger Creek. This fire could burn for days.\r\n\r\nStay informed because the situation could change.\r\n\r\nWhat you should do:\r\n\r\n- Check for warning updates often and listen to your local radio station.\r\n\r\n- Decide what you will do if the bushfire gets closer.\r\n\r\n- If the smoke is thick where you are, stay inside and close windows and doors.\r\n\r\n- If you need medication to help you breathe keep it close. Smoke can make it hard to breathe.\r\n\r\n- Do not fly drones around the fire as they affect firefighting.\r\n\r\n- If you are in danger, call Triple Zero (000) now.\r\n\r\nImpacts:\r\n\r\n- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way. Avoid driving on Deighton Road.\r\n\r\nWhat firefighters are doing:\r\n\r\n- Firefighters are working to control the fire.\r\n\r\n- Backburning is being done to help control the fire.\r\n\r\nMore information:\r\n\r\n- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you are worried about your health call your doctor or 13 HEALTH (13 432 584).\r\n\r\n- Natural disasters can affect your mental health. If you need help contact:\r\n\r\n  - Lifeline on 13 11 14.\r\n\r\n  - Beyond Blue on 1300 224 636.\r\n\r\n  - Kids Helpline on 1800 551 800.\r\n\r\n- If you need translation, call TIS National on 131 450.\r\n\r\n- Learn how to get ready for a bushfire on the Qld Fire website - Prepare - Bushfire.\r\n\r\nUpdates will be issued if the situation changes.\r\n\r\nThis warning is from the Queensland Fire Department.",
+				"Header" : "A fire is burning near Ginger Creek. This fire could burn for days.\r\n\r\nStay informed because the situation could change.",
+				"Impacts" : "- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way. Avoid driving on Deighton Road.\r\n\r\nWhat firefighters are doing:\r\n\r\n- Firefighters are working to control the fire.\r\n\r\n- Backburning is being done to help control the fire.",
+				"LeaveSafely" : null,
+				"FurtherInformation" : "- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you are worried about your health call your doctor or 13 HEALTH (13 432 584).\r\n\r\n- Natural disasters can affect your mental health. If you need help contact:\r\n\r\n  - Lifeline on 13 11 14.\r\n\r\n  - Beyond Blue on 1300 224 636.\r\n\r\n  - Kids Helpline on 1800 551 800.\r\n\r\n- If you need translation, call TIS National on 131 450.\r\n\r\n- Learn how to get ready for a bushfire on the Qld Fire website - Prepare - Bushfire.\r\n\r\nUpdates will be issued if the situation changes.\r\n\r\nThis warning is from the Queensland Fire Department.",
+				"WarningLevelSort" : 5,
+				"ShouldDo" : "- Check for warning updates often and listen to your local radio station.\r\n\r\n- Decide what you will do if the bushfire gets closer.\r\n\r\n- If the smoke is thick where you are, stay inside and close windows and doors.\r\n\r\n- If you need medication to help you breathe keep it close. Smoke can make it hard to breathe.\r\n\r\n- Do not fly drones around the fire as they affect firefighting.\r\n\r\n- If you are in danger, call Triple Zero (000) now.",
+				"WarningArea" : "Laura",
+				"Latitude" : -15.562143529835678,
+				"Longitude" : 144.41584642367062,
+				"GroupedType" : "FIRE VEGETATION",
+				"ItemDateTimeUTM" : "20260929053854.550000",
+				"ItemDateTimeLocal_ISO" : "2026-09-29T15:38:54+10:00",
+				"PublishDateLocal_ISO" : "2026-09-30T10:48:02+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-09-30T15:38:54.55+10:00",
+				"MultipleWarnings" : null,
+				"MessageSent" : null,
+				"SendEmailSubscription" : null,
+				"WarningType_Level" : "Advice Fire",
+				"EventType" : "Fire"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Polygon",
+				"coordinates" : [
+					[
+						[ 144.8626614429, -18.2432769066, 0 ],
+						[ 144.8866940356, -18.0664595807, 0 ],
+						[ 144.6313382135, -18.059568861, 0 ],
+						[ 144.6221066368, -18.210775959, 0 ],
+						[ 144.8626614429, -18.2432769066, 0 ]
+					]
+				]
+			},
+			"properties" : {
+				"OBJECTID" : 3712,
+				"UniqueID" : "WARN-863",
+				"WarningTitle" : "AVOID SMOKE - Minnamoolka and Mount Surprise - fire as at 12:50pm Monday, 28 September 2026",
+				"WarningLevel" : "Advice",
+				"CallToAction" : "Avoid Smoke",
+				"WarningText" : "Thick smoke is affecting Minnamoolka and Mount Surprise. This is from a fire burning near the intersection of Kennedy Developmental Road and Gulf Developmental Road, Minnamoolka.\r\n\r\nProtect yourself from the impacts of smoke.\r\n\r\nWhat you should do:\r\n\r\n- If the smoke is thick where you are, stay inside and close windows and doors.\r\n\r\n- If you need medication to help you breathe keep it close.\r\n\r\n- If you are worried about your health call your doctor or 13 HEALTH (13 432 584). If it is an emergency, call Triple Zero (000) now.\r\n\r\n- If you are affected by the smoke you may need to leave the area.\r\n\r\n- Check for warning updates often.\r\n\r\n- Do not fly drones around the fire as they affect firefighting.\r\n\r\nImpacts:\r\n\r\n- No properties are at risk.\r\n\r\n- Smoke could make it hard for some people to breathe and can cause health issues.\r\n\r\n- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way.\r\n\r\nMore information:\r\n\r\n- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you need translation, call TIS National on 131 450.\r\n\r\n- Learn how to get ready for a bushfire on the Qld Fire website - Prepare - Bushfire.\r\n\r\nUpdates will be issued if the situation changes.\r\n\r\nThis warning is from the Queensland Fire Department.",
+				"Header" : "Thick smoke is affecting Minnamoolka and Mount Surprise. This is from a fire burning near the intersection of Kennedy Developmental Road and Gulf Developmental Road, Minnamoolka.\r\n\r\nProtect yourself from the impacts of smoke.",
+				"Impacts" : "- No properties are at risk.\r\n\r\n- Smoke could make it hard for some people to breathe and can cause health issues.\r\n\r\n- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way.",
+				"LeaveSafely" : null,
+				"FurtherInformation" : "- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you need translation, call TIS National on 

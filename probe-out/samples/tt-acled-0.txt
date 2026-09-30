@@ -1,0 +1,125 @@
+https://acleddata.com/
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+
+<head>
+  <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent','default',{ 'ad_storage':'denied', 'analytics_storage':'denied', 'ad_user_data':'denied', 'ad_personalization':'denied' });</script>
+<script>window.dataLayer = window.dataLayer || []; window.dataLayer.push({"user_role":"anonymous","content_type":"homepage"});</script>
+<meta charset="utf-8">
+<meta name="description" content="ACLED is an independent, impartial conflict monitor providing realtime data and analysis for all violent conflict and protests in all countries and territories across the world.">
+<link rel="canonical" href="https://acleddata.com/">
+<link rel="shortlink" href="https://acleddata.com/">
+<link rel="image_src" href="https://acleddata.com/sites/default/files/styles/og_image/public/2025-05/screenshot-2025-05-09-at-12.20.12.png?itok=bI23HWHh">
+<meta property="og:site_name" content="ACLED">
+<meta property="og:title" content="ACLED">
+<meta property="og:description" content="ACLED is an independent, impartial conflict monitor providing realtime data and analysis for all violent conflict and protests in all countries and territories across the world.">
+<meta property="og:image" content="https://acleddata.com/sites/default/files/styles/og_image/public/2025-05/screenshot-2025-05-09-at-12.20.12.png?itok=bI23HWHh">
+<meta property="og:image:alt" content="screenshot-2025-05-09">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:description" content="ACLED is an independent, impartial conflict monitor providing realtime data and analysis for all violent conflict and protests in all countries and territories across the world.">
+<meta name="twitter:title" content="ACLED">
+<meta name="twitter:image" content="https://acleddata.com/sites/default/files/styles/og_image/public/2025-05/screenshot-2025-05-09-at-12.20.12.png?itok=bI23HWHh">
+<meta name="twitter:image:alt" content="screenshot-2025-05-09">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="alternate" hreflang="en" href="https://acleddata.com/">
+
+
+  <title>ACLED</title>
+
+  <link rel="apple-touch-icon" sizes="57x57" href="/themes/custom/acled/assets/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/themes/custom/acled/assets/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/themes/custom/acled/assets/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/themes/custom/acled/assets/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/themes/custom/acled/assets/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/themes/custom/acled/assets/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/themes/custom/acled/assets/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/themes/custom/acled/assets/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/themes/custom/acled/assets/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/themes/custom/acled/assets/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/themes/custom/acled/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/themes/custom/acled/assets/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/themes/custom/acled/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/themes/custom/acled/assets/favicon/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+
+  <meta name="theme-color" content="#1a334a">
+
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" media="all" href="/sites/default/files/css/css_zAXppdsHiL0S4fyedSzhxLgolAn31lMp4H0QmPBkLPk.css?delta=0&amp;language=en&amp;theme=acled&amp;include=eJxNh0kOgCAMAD8E9kmmSkMaKpi2LvxeYjx4mQVXoQRZ2oISzbtwzYFuHy6Q9NhRpm9DEdQGL_8d20mqnCgYO10jZhRSB67swbo5bbCg0QPshyoG">
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_s2GWRXzJE0nZrUYMBcUEsp81A3nBf8ym3zG_YFt5X6A.css?delta=1&amp;language=en&amp;theme=acled&amp;include=eJxNh0kOgCAMAD8E9kmmSkMaKpi2LvxeYjx4mQVXoQRZ2oISzbtwzYFuHy6Q9NhRpm9DEdQGL_8d20mqnCgYO10jZhRSB67swbo5bbCg0QPshyoG">
+
+  <script src="/libraries/klaro/dist/klaro-no-translations-no-css.js?tluzqk" defer id="klaro-js"></script>
+
+
+                  <!-- Google Tag Manager (Live) -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-M7KDF4R');</script>
+        <!-- End Google Tag Manager -->
+          </head>
+
+<body class="path-frontpage page-node-type-homepage">
+<a href="#content" class="c-skip-button o-button">
+  Skip to main content
+</a>
+
+      <!-- Google Tag Manager (Live) (noscript) -->
+    <noscript>
+      <iframe height="0" width="0" style="display:none;visibility:hidden" data-src="https://www.googletagmanager.com/ns.html?id=GTM-M7KDF4R" data-name="gtm"></iframe>
+    </noscript>
+  
+<div data-sitewide-alert aria-live="polite"></div>
+
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+      <div>
+    <div data-drupal-messages-fallback class="hidden"></div>
+
+  </div>
+
+
+    
+<header class="c-header has-dark-bg o-layout js-header">
+  <div class="c-header__inner js-header-inner">
+    <a href="/" class="c-header__logo" aria-label="Return to the homepage">
+
+      <svg class="o-svg o-svg--acled-logo-single-colour c-header__logo-svg" role="img">
+  <use class="o-svg__use" href="/themes/custom/acled/assets/img/symbol/svg/sprite.symbol.svg?v6.83#acled-logo-single-colour"></use>
+</svg>
+      <svg class="o-svg o-svg--acled-logo-text-only c-header__logo-svg-text-only" role="img">
+  <use class="o-svg__use" href="/themes/custom/acled/assets/img/symbol/svg/sprite.symbol.svg?v6.83#acled-logo-text-only"></use>
+</svg>
+    </a>
+
+    <div class="c-header__content-wrapper">
+                  <div class="c-header__menu">
+  <nav aria-labelledby="block-main-navigation-first-level-only-menu" id="block-main-navigation-first-level-only" data-region="header" class="block block-menu navigation menu--main">
+                      
+    <p class="visually-hidden" id="block-main-navigation-first-level-only-menu">Main navigation</p>
+    
+
+                    
+              <ul class="c-main-menu">
+    
+                              <li class="c-main-menu__item c-main-menu__item--expanded">
+          <a href="/about-acled" data-drupal-link-system-path="node/34">About</a>
+                                    <ul class="c-main-menu__sub-menu">
+    
+                              <li class="c-main-menu__item">
+          <a href="/about/our-impact" data-drupal-link-system-path="node/2943">Our impact</a>
+                  </li>
+                                    <li class="c-main-menu__item">
+          <a href="/about/our-team" data-drupal-link-system-path="node/20">Our team</a>
+                  </li>
+                                    <li class="c-main-menu__item">
+          <a href="/about/local-networks" data-drupal-link-system-path="node/1580">Local networks</a>
+                  </li>
+                                    <li class="c-main-menu__item">
+          <a href="/about/careers" data-

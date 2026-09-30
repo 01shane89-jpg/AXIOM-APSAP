@@ -1,0 +1,10 @@
+https://pacforum.org/robots.txt
+Crawl-delay: 10
+# START YOAST BLOCK
+# ---------------------------
+User-agent: *
+Disallow:
+
+Sitemap: https://pacforum.org/sitemap_index.xml
+# ---------------------------
+# END YOAST BLOCK

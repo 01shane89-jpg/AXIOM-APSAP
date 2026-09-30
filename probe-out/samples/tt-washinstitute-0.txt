@@ -1,0 +1,137 @@
+https://www.washingtoninstitute.org/
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+<link rel="shortlink" href="https://www.washingtoninstitute.org/" />
+<link rel="canonical" href="https://www.washingtoninstitute.org/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.washingtoninstitute.org/home" />
+<meta property="fb:app_id" content="256281040558" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Homepage" />
+<meta property="og:image" content="https://www.washingtoninstitute.org/modules/custom/newcity_customizations/newcity_customizations.info.yml/images/twi-default-social.jpg" />
+<meta property="twitter:image" content="https://www.washingtoninstitute.org/modules/custom/newcity_customizations/newcity_customizations.info.yml/images/twi-default-social.jpg" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/themes/custom/wayah/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.washingtoninstitute.org/" />
+<link rel="alternate" hreflang="ar" href="https://www.washingtoninstitute.org/ar" />
+<link rel="alternate" hreflang="fa" href="https://www.washingtoninstitute.org/fa" />
+<script src="/sites/default/files/google_tag/main/google_tag.script.js?tm453k" defer></script>
+
+    <title>Homepage | The Washington Institute</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_d2V67K_9H5YGpxECcjvZ3qzH-bVVK9UJA4NwM6SDlfs.css?delta=0&amp;language=en&amp;theme=wayah&amp;include=eJxNjOEOgyAQg1-IwTOdUCILcOaAOfb0E8XEP037tallgXHSNoqa3vRVdoDMkiiGH1SCC2R8iBWiLW01cJ6QkRY47ce2HrUqvVQks1CB-gTsxZyqE7sWoXbqtF7tZZGn8aDa5MY--Npfp96EefxfYQW5RxCeVrgdoz90jE-O" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_8iPoFQS_2d0_p6hdFNgTu0423XW_15sryDTWvZh5KoI.css?delta=1&amp;language=en&amp;theme=wayah&amp;include=eJxNjOEOgyAQg1-IwTOdUCILcOaAOfb0E8XEP037tallgXHSNoqa3vRVdoDMkiiGH1SCC2R8iBWiLW01cJ6QkRY47ce2HrUqvVQks1CB-gTsxZyqE7sWoXbqtF7tZZGn8aDa5MY--Npfp96EefxfYQW5RxCeVrgdoz90jE-O" />
+<link rel="stylesheet" media="all" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Serif:wght@400;500;700&amp;family=Oswald&amp;family=Montserrat:wght@400;600;700;800&amp;family=Changa:wght@200&amp;display=swap" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_R-zXWDZ3f173PyfC6TdT0AvVXoRo2Juc3nbLGeu4Q_c.css?delta=3&amp;language=en&amp;theme=wayah&amp;include=eJxNjOEOgyAQg1-IwTOdUCILcOaAOfb0E8XEP037tallgXHSNoqa3vRVdoDMkiiGH1SCC2R8iBWiLW01cJ6QkRY47ce2HrUqvVQks1CB-gTsxZyqE7sWoXbqtF7tZZGn8aDa5MY--Npfp96EefxfYQW5RxCeVrgdoz90jE-O" />
+<link rel="stylesheet" media="print" href="/sites/default/files/css/css_5h7AQpT5NGvaC8LWap7SsAXA3Ytuf6guj7eFMv_KjzU.css?delta=4&amp;language=en&amp;theme=wayah&amp;include=eJxNjOEOgyAQg1-IwTOdUCILcOaAOfb0E8XEP037tallgXHSNoqa3vRVdoDMkiiGH1SCC2R8iBWiLW01cJ6QkRY47ce2HrUqvVQks1CB-gTsxZyqE7sWoXbqtF7tZZGn8aDa5MY--Npfp96EefxfYQW5RxCeVrgdoz90jE-O" />
+
+    
+    <meta name="format-detection" content="telephone=no">
+  </head>
+  <body>
+        <a href="#main-content" class="visually-hidden focusable block text-center">
+      Skip to main content
+    </a>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N3G3KV2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div class="layout-container">
+  
+<header class="header relative
+               text-white
+               
+               bg-blue
+               ">
+
+    <div class="flex justify-between sm:hidden py-10 px-15">
+    <a class="flex items-center pr-15" href="/">
+      <img src="/themes/custom/wayah/static/twi_logo-lockup.svg" alt="TWI logo" class="h-40" />
+      <span class="sr-only">The Washington Institute for Near East Policy</span>
+    </a>
+    <button id="main-menu-toggler" aria-expanded="false" class="flex relative items-center px-10 py-5 text-blue-120">
+      <svg id="main-menu-open-logo" class="fill-current h-15 w-15" aria-hidden="true" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"><g><rect x="0.5" y="18" width="21" height="4"/><rect x="0.5" y="9" width="21" height="4"/><rect x="0.5" width="21" height="4"/></g></svg>
+      <svg id="main-menu-close-logo" class="hidden fill-current h-15 w-15" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path d="M13.69.321a1.057 1.057 0 0 0-1.498 0L7 5.503 1.808.31A1.057 1.057 0 1 0 .31 1.808L5.503 7 .31 12.192a1.057 1.057 0 1 0 1.497 1.497L7 8.497l5.192 5.192a1.057 1.057 0 1 0 1.497-1.497L8.497 7l5.192-5.192a1.064 1.064 0 0 0 0-1.487z" fill="currentColor" fill-rule="evenodd"/></svg>
+      <span aria-hidden="true" class="pl-10 font-sans_alt uppercase">Menu</span>
+      <span class="sr-only">Toggle Main Menu</span>
+    </button>
+  </div>
+
+    <div id="header-content" class="hidden sm:flex flex-col px-30 sm:px-0" style="transition: height 300ms;">
+
+    <div class="container py-15 border-b-1 border-dashed border-blue-230 mb-20  sm:py-25  sm:border-b-0 sm:mb-0 flex-row-wrap">
+      <div class="flex flex-wrap justify-between">
+        <div class="header__logo hidden sm:flex items-center sm:flex-shrink-0 max-w-full xl:flex-2/5">
+          <a href="/" class="flex items-center">
+            <div>
+              <img src="/themes/custom/wayah/static/logo.svg" alt="logo"/>
+            </div>
+            <div class="pl-15">
+              <img src="/themes/custom/wayah/static/wordmark.svg" alt="wordmark" class="ie11:max-w-none" />
+            </div>
+            <span class="visually-hidden">Homepage</span>
+
+          </a>
+        </div>
+
+        <div class="header__nav flex flex-col items-end">
+          <div class="header__main-nav sm:mt-25">
+                    <div>
+    <nav role="navigation" aria-labelledby="block-wayah-main-menu-menu" id="block-wayah-main-menu">
+            
+  <h2 class="visually-hidden" id="block-wayah-main-menu-menu">Main navigation</h2>
+  
+
+        <div>
+
+
+<div class="main-nav text-base md:text-lg font-bold font-heading uppercase tracking-wider">
+  <ul class="no-decoration sm:flex flex-wrap -mt-10 ">
+                      <li class="mt-10 pr-30"><a 
+        class=""
+        href="/policy-analysis">Analysis</a></li>
+                      <li class="mt-10 pr-30"><a 
+        class=""
+        href="/experts">Experts</a></li>
+                      <li class="mt-10 pr-30"><a 
+        class=""
+        href="/about">About</a></li>
+                      <li class="mt-10 pr-30"><a 
+        class=""
+        href="/support">Support</a></li>
+                      <li class="mt-10 "><a 
+        class=""
+        href="/maps-multimedia">Maps &amp; Multimedia</a></li>
+      </ul>
+</div></div>
+  </nav>
+
+  </div>
+
+              </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header__subhead 
+                sm:bg-blue-800 text-blue-230
+                ">
+      <div class="header__subhead-flexbox container flex flex-wrap flex-row sm:items-center text-sm sm:pt-15 md:pt-0">
+        <div class="flex-none w-full sm:w-auto mr-8 mb-10 sm:mb-0 text-base text-blue-120 sm:text-blue-230">
+          <span class="font-sans_alt uppercase tracking-wider">Trending:</span>
+        </div>
+                      <div id="block-trendingissues" class="header__trending-list">
+  
+  
+  <ul class="slash ">
+      <li>
+                      <a class="" href="/policy-analysis/terrorism" >
+                      Terrorism
+                            </a>
+          </li>
+      <li>
+                      <a class="" href="/policy-analysis/great-power-competition" >
+                      Great Power Competition
+                       

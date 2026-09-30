@@ -1,0 +1,139 @@
+https://www.fpri.org/
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7"><![endif]--><!--[if IE 8]>
+<html class="ie ie8"><![endif]--><!--[if IE 9]>
+<html class="ie ie9"><![endif]--><!--[if !(IE 7) & !(IE 8) & !(IE 9)]><!-->
+<html lang="en-US" prefix="og: https://ogp.me/ns#" lang="en"><!--<![endif]-->
+  <head>
+    <title>Foreign Policy Research Institute - International Policy Think Tank</title>
+    <!-- ** METAS ** -->
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+
+    <link rel="pingback" href="https://www.fpri.org/xmlrpc.php" />
+  
+<!-- Search Engine Optimization by Rank Math PRO - https://rankmath.com/ -->
+<meta name="description" content="The Foreign Policy Research Institute is dedicated to bringing the insights of scholarship to bear on the foreign policy and national security challenges facing the world."/>
+<meta name="robots" content="follow, index"/>
+<link rel="canonical" href="https://www.fpri.org/" />
+<link rel="next" href="https://www.fpri.org/page/2/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Foreign Policy Research Institute - International Policy Think Tank" />
+<meta property="og:description" content="The Foreign Policy Research Institute is dedicated to bringing the insights of scholarship to bear on the foreign policy and national security challenges facing the world." />
+<meta property="og:url" content="https://www.fpri.org/" />
+<meta property="og:site_name" content="Foreign Policy Research Institute" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Foreign Policy Research Institute - International Policy Think Tank" />
+<meta name="twitter:description" content="The Foreign Policy Research Institute is dedicated to bringing the insights of scholarship to bear on the foreign policy and national security challenges facing the world." />
+<meta name="twitter:site" content="@https://twitter.com/fpri/" />
+<script type="application/ld+json" class="rank-math-schema-pro">{"@context":"https://schema.org","@graph":[{"@type":"Place","@id":"https://www.fpri.org/#place","address":{"@type":"PostalAddress","streetAddress":"123 S Broad St, Suite 1920","addressLocality":"Philadelphia","addressRegion":"Pennsylvania","postalCode":"19109","addressCountry":"United States"}},{"@type":"Organization","@id":"https://www.fpri.org/#organization","name":"Foreign Policy Research Institute","url":"https://www.fpri.org","sameAs":["https://www.facebook.com/FPRInews/","https://twitter.com/https://twitter.com/fpri/"],"address":{"@type":"PostalAddress","streetAddress":"123 S Broad St, Suite 1920","addressLocality":"Philadelphia","addressRegion":"Pennsylvania","postalCode":"19109","addressCountry":"United States"},"logo":{"@type":"ImageObject","@id":"https://www.fpri.org/#logo","url":"https://www.fpri.org/wp-content/uploads/2019/11/defaultfpritwittercard-01.jpg","contentUrl":"https://www.fpri.org/wp-content/uploads/2019/11/defaultfpritwittercard-01.jpg","caption":"Foreign Policy Research Institute","inLanguage":"en-US","width":"1310","height":"714"},"contactPoint":[{"@type":"ContactPoint","telephone":"215.732.3774","contactType":"customer support"}],"location":{"@id":"https://www.fpri.org/#place"}},{"@type":"WebSite","@id":"https://www.fpri.org/#website","url":"https://www.fpri.org","name":"Foreign Policy Research Institute","publisher":{"@id":"https://www.fpri.org/#organization"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":"https://www.fpri.org/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"CollectionPage","@id":"https://www.fpri.org/#webpage","url":"https://www.fpri.org/","name":"Foreign Policy Research Institute - International Policy Think Tank","about":{"@id":"https://www.fpri.org/#organization"},"isPartOf":{"@id":"https://www.fpri.org/#website"},"inLanguage":"en-US"}]}</script>
+<meta name="msvalidate.01" content="1" />
+<meta name="dragon-metrics-site-verification" content="3a69ecd13c5f480a8b8088d6c836ef20" />
+<!-- /Rank Math WordPress SEO plugin -->
+
+<link rel='dns-prefetch' href='//www.google.com' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//fonts.bunny.net' />
+		<!-- This site uses the Google Analytics by MonsterInsights plugin v11.3.0 - Using Analytics tracking - https://www.monsterinsights.com/ -->
+							<script src="//www.googletagmanager.com/gtag/js?id=G-4W3Y1EMDFF"  data-cfasync="false" data-wpfc-render="false" type="text/javascript" async></script>
+			<script data-cfasync="false" data-wpfc-render="false" type="text/javascript">
+				var mi_version = '11.3.0';
+				var mi_track_user = true;
+				var mi_no_track_reason = '';
+								var MonsterInsightsDefaultLocations = {"page_location":"https:\/\/www.fpri.org\/"};
+								MonsterInsightsDefaultLocations.page_location = window.location.href;
+								if ( typeof MonsterInsightsPrivacyGuardFilter === 'function' ) {
+					var MonsterInsightsLocations = (typeof MonsterInsightsExcludeQuery === 'object') ? MonsterInsightsPrivacyGuardFilter( MonsterInsightsExcludeQuery ) : MonsterInsightsPrivacyGuardFilter( MonsterInsightsDefaultLocations );
+				} else {
+					var MonsterInsightsLocations = (typeof MonsterInsightsExcludeQuery === 'object') ? MonsterInsightsExcludeQuery : MonsterInsightsDefaultLocations;
+				}
+
+								var disableStrs = [
+										'ga-disable-G-4W3Y1EMDFF',
+									];
+
+				/* Function to detect opted out users */
+				function __gtagTrackerIsOptedOut() {
+					for (var index = 0; index < disableStrs.length; index++) {
+						if (document.cookie.indexOf(disableStrs[index] + '=true') > -1) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				/* Disable tracking if the opt-out cookie exists. */
+				if (__gtagTrackerIsOptedOut()) {
+					for (var index = 0; index < disableStrs.length; index++) {
+						window[disableStrs[index]] = true;
+					}
+				}
+
+				/* Opt-out function */
+				function __gtagTrackerOptout() {
+					for (var index = 0; index < disableStrs.length; index++) {
+						document.cookie = disableStrs[index] + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+						window[disableStrs[index]] = true;
+					}
+				}
+
+				if ('undefined' === typeof gaOptout) {
+					function gaOptout() {
+						__gtagTrackerOptout();
+					}
+				}
+								window.dataLayer = window.dataLayer || [];
+
+				window.MonsterInsightsDualTracker = {
+					helpers: {},
+					trackers: {},
+				};
+				if (mi_track_user) {
+					function __gtagDataLayer() {
+						dataLayer.push(arguments);
+					}
+
+					function __gtagTracker(type, name, parameters) {
+						if (!parameters) {
+							parameters = {};
+						}
+
+						if (parameters.send_to) {
+							__gtagDataLayer.apply(null, arguments);
+							return;
+						}
+
+						if (type === 'event') {
+														parameters.send_to = monsterinsights_frontend.v4_id;
+							var hookName = name;
+							if (typeof parameters['event_category'] !== 'undefined') {
+								hookName = parameters['event_category'] + ':' + name;
+							}
+
+							if (typeof MonsterInsightsDualTracker.trackers[hookName] !== 'undefined') {
+								MonsterInsightsDualTracker.trackers[hookName](parameters);
+							} else {
+								__gtagDataLayer('event', name, parameters);
+							}
+							
+						} else {
+							__gtagDataLayer.apply(null, arguments);
+						}
+					}
+
+					__gtagTracker('js', new Date());
+					__gtagTracker('set', {
+						'developer_id.dZGIzZG': true,
+											});
+					if ( MonsterInsightsLocations.page_location ) {
+						__gtagTracker('set', MonsterInsightsLocations);
+					}
+										__gtagTracker('config', 'G-4W3Y1EMDFF', {"forceSSL":"true","link_attribution":"true","linker":{"domains":["fpri.org"]}} );
+										window.gtag = __gtagTracker;										(function () {
+						/* https://developers.google.com/analytics/devguide

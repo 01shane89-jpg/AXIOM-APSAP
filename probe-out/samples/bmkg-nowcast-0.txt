@@ -1,0 +1,63 @@
+https://www.bmkg.go.id/alerts/nowcast/en/rss.xml
+<?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="/cap/nowcast-rss-style.xsl"?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <channel>
+            <title>BMKG Weather Alerts</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/rss.xml</link>
+            <description>Weather Alerts from BMKG (Indonesia Agency for Meteorology, Climatology, and Geophysics)</description>
+            <atom:link href="https://www.bmkg.go.id/alerts/nowcast/en/rss.xml" rel="self" type="application/rss+xml"/>
+            <language>en</language>
+            <copyright>public domain</copyright>
+            <pubDate>Wed, 30 Sep 2026 00:45:10 +0000</pubDate>
+            <lastBuildDate>Wed, 30 Sep 2026 00:45:10 +0000</lastBuildDate>
+            <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+            
+        <item>
+            <title>Thunderstorm This Morning in Bengkulu</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CBK20260930001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 30 September 2026, 07:30 WIB in parts of Bengkulu especially in: AIR DIKIT, AIR MAJUNTO, KOTA MUKOMUKO, LUBUK PINANG, PENARIK, PONDOK SUGUH, SELAGAN RAYA, TERAMANG JAYA, TERAS TERUNJAM, V KOTO, XIV KOTO.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 30 September 2026, 10:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.09.30.00.17.001</guid>
+            <pubDate>Wed, 30 Sep 2026 07:25:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Morning in Aceh</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CAH20260930001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 30 September 2026, 07:23 WIB in parts of Aceh especially in: BADAR, BANDA ALAM, BANDA MULIA, BANDAR PUSAKA, BENDAHARA, BINTANG, BIREM BAYEUN, BLANGJERANGO, BLANGKEJEREN, BLANGPEGAYON, COT GIREK, DABUN GELANG, DARUL AMAN, DARUL FALAH, DARUL HASANAH, DARUL IHSAN, IDI RAYEUK, IDI TIMUR, IDI TUNONG, INDRA MAKMU, JULOK, KARANG BARU, KEJURUAN MUDA, KETAMBE, KOTA KUALASINPANG, KUTAPANJANG, LANGKAHAN, LANGSA BARAT, LANGSA BARO, LANGSA KOTA, LANGSA LAMA, LANGSA TIMUR, LINGE, MANYAK PAYED, NURUSSALAM, PANTAN CUACA, PANTE BIDARI, PEUDAWA, PEUNARON, PEUREULAK, PEUREULAK BARAT, PEUREULAK TIMUR, PINING, PUTERI BETUNG, RANTAU, RANTAU PEUREULAK, RANTAU SELAMAT, RIKIT GAIB, SEKERAK, SERBAJADI, SERUWAY, SIMPANG JERNIH, SUNGAI RAYA, SYIAH UTAMA, TAMIANG HULU, TENGGULUN, TERIPE JAYA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 30 September 2026, 10:00 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.09.30.00.11.001</guid>
+            <pubDate>Wed, 30 Sep 2026 07:20:00 +0700</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Morning in Papua Tengah</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CPT20260930001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 30 September 2026, 09:12 WIT in parts of Papua Tengah especially in: KUALA KENCANA, KWAMKI NARAMA, MIMIKA BARU, TEMBAGAPURA.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 30 September 2026, 10:15 WIT.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <category>Met</category>
+            <guid isPermaLink="false">2.49.0.1.360.0.2026.09.30.00.94.001</guid>
+            <pubDate>Wed, 30 Sep 2026 09:07:00 +0900</pubDate>
+        </item>
+
+        <item>
+            <title>Thunderstorm This Morning in Sumatera Utara</title>
+            <link>https://www.bmkg.go.id/alerts/nowcast/en/CSU20260930001_alert.xml</link>
+            <description>Thunderstorms and heavy rainfall are forecasted to occur starting from 30 September 2026, 07:30 WIB in parts of Sumatera Utara especially in: AEK KUASAN, AEK SONGSONGAN, AFULU, AIR BATU, AIR JOMAN, AIR PUTIH, ALASA, ALASA TALUMUZOI, AMANDRAYA, ANGKOLA SANGKUNUR, ANGKOLA SELATAN, ARAMO, BABALAN, BADIRI, BAHOROK, BAJENIS, BANDAR, BANDAR KHALIFAH, BANDAR MASILAM, BANDAR PASIR MANDOGE, BANDAR PULAU, BANGUN PURBA, BATANG ANGKOLA, BATANG KUIS, BATANG SERANGAN, BAWOLATO, BERINGIN, BESITANG, BINJAI, BINJAI BARAT, BINJAI KOTA, BINJAI SELATAN, BINJAI TIMUR, BINJAI UTARA, BINTANG BAYU, BORONADU, BOSAR MALIGAS, BOTOMUZOI, BRANDAN BARAT, BUNTU PANE, DATUK BANDAR, DATUK BANDAR TIMUR, DELI TUA, DOLOK MASIHUL, DOLOK MERAWAN, DOLOK SILAU, FANAYAMA, GALANG, GEBANG, GIDO, GOMO, GUNUNG MERIAH, GUNUNGSITOLI, GUNUNGSITOLI ALO'OA, GUNUNGSITOLI BARAT, GUNUNGSITOLI IDANOI, GUNUNGSITOLI SELATAN, GUNUNGSITOLI UTARA, HAMPARAN PERAK, HILIDUHO, HILIMEGAI, HILISALAWA'AHE, HILISERANGKAI, HINAI, HURUNA, HUTA BAYU RAJA, IDANOGAWO, IDANOTAE, KOTA KISARAN BARAT, KOTA KISARAN TIMUR, KOTARIH, KUALA, KUALUH HILIR, KUALUH LEIDONG, KUTALIMBARU, KUTAMBARU, LABUHAN DELI, LAHEWA, LAHEWA TIMUR, LAHOMI, LAHUSA, LIMA PULUH, LOLOFITU MOI, LOLOMATUA, LOLOWAU, LOTU, LUAHAGUNDRE MANIAMOLO, LUBUK PAKAM, LUMUT, MA'U, MANDREHE, MANDREHE BARAT, MANDREHE UTARA, MANIAMOLO, MAZINO, MAZO, MEDAN AMPLAS, MEDAN AREA, MEDAN BARAT, MEDAN BARU, MEDAN DELI, MEDAN DENAI, MEDAN HELVETIA, MEDAN JOHOR, MEDAN KOTA, MEDAN LABUHAN, MEDAN MAIMUN, MEDAN MARELAN, MEDAN PERJUANGAN, MEDAN PETISAH, MEDAN POLONIA, MEDAN SELAYANG, MEDAN SUNGGAL, MEDAN TEMBUNG, MEDAN TIMUR, MEDAN TUNTUNGAN, MEDANG DERAS, MERANTI, MORO'O, MUARA BATANG GADIS, MUARA BATANG TORU, NAMOHALU ESIWA, NAMORAMBE, NATAL, O'O'U, ONOHAZUMBA, ONOLALU, PADANG HILIR, PADANG HULU, PADANG TUALANG, PAGAR MERBAU, PANAI HILIR, PANCUR BATU, PANGKALAN SUSU, PANTAI CERMIN, PANTAI LABU, PATUMBAK, PEGAJAHAN, PEMATANG JAYA, PERBAUNGAN, PERCUT SEI TUAN, PINANGSORI, PULAU RAKYAT, PULO BANDRING, RAHUNIG, RAMBUTAN, RAWANG PANCA ARGA, SAWIT SEBERANG, SAWO, SECANGGANG, SEI BALAI, SEI BAMBAN, SEI BINGEI, SEI DADAP, SEI KEPAYANG, SEI KEPAYANG BARAT, SEI KEPAYANG TIMUR, SEI LEPAN, SEI SUKA, SEI TUALANG RASO, SEI. RAMPAH, SELESAI, SERBA JADI, SETIA JANJI, SIBIRU-BIRU, SIBOLANGIT, SIDUA'ORI, SIEMPAT NEMPU HILIR, SILAU LAUT, SILIMA PUNGGA PUNGGA, SILINDA, SILOU KAHEAN, SIMPANG EMPAT, SIRAPIT, SIROMBU, SITOLU ORI, SOGAE'ADU, SOMAMBAWA, SOMOLO-MOLO, STABAT, STM HILIR, STM HULU, SUKA BANGUN, SUNGGAL, SUSUA, TALAWI, TANAH PINEM, TANJUNG BALAI, TANJUNG BERINGIN, TANJUNG MORAWA, TANJUNG PURA, TANJUNG TIRAM, TEBING SYAHBANDAR, TEBING TINGGI, TEBING TINGGI KOTA, TELUK DALAM, TELUK DALAM, TELUK MENGKUDU, TELUK NIBUNG, TINGGI RAJA, TOMA, TUGALA OYO, TUHEMBERUA, UJUNG PADANG, ULU IDANOTAE, ULU MORO'O, ULUGAWO, ULUNOYO, ULUSUSUA, UMBUNASI, WAMPU.
+ These conditions may lead to reduced visibility, strong winds, and localized flooding.
+ The public is strongly advised to remain vigilant during this period, limit outdoor activities, and take all necessary precautions to ensure safety.
+ Conditions are expected to gradually improve by 30 September 2026, 10:30 WIB.</description>
+            <author>cuaca.ekstrem@bmkg.go.id (BMKG)</author>
+            <catego

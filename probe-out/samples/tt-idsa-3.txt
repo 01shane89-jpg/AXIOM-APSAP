@@ -1,0 +1,5 @@
+https://www.idsa.in/robots.txt
+User-agent: *
+Disallow:
+
+Sitemap: https://www.idsa.in/sitemap_index.xml

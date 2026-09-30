@@ -1,0 +1,72 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:LV</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:27.952531Z</updated>
+  <entry>
+    <cap:polygon>57.38935,26.59757 57.395219,26.541233 57.400208,26.494124 57.39185,26.470433 57.36973,26.438906 57.33989,26.406617 57.320946,26.385423 57.320308,26.328299 57.318838,26.287366 57.292897,26.256916 57.280115,26.221044 57.277616,26.180332 57.2757,26.149666 57.278171,26.109084 57.261984,26.05334 57.250047,26.026282 57.216296,26.01042 57.216893,26.043848 57.208044,26.093514 57.184182,26.114147 57.167686,26.130101 57.150439,26.150526 57.120168,26.144746 57.090583,26.126376 57.078879,26.109193 57.082868,26.159364 57.091002,26.20482 57.085162,26.251611 57.085726,26.303687 57.071699,26.330292 57.048653,26.36481 57.054507,26.426164 57.061108,26.467044 57.050271,26.500236 57.030937,26.531425 57.015282,26.546826 56.993417,26.550307 56.976388,26.562896 56.963241,26.625498 56.970673,26.674197 56.987466,26.7334 56.992546,26.767032 56.984593,26.809171 56.983568,26.863333 57.0054,26.870375 57.028447,26.878282 57.039598,26.91858 57.053963,26.948813 57.068222,26.966529 57.092538,26.979463 57.109028,27.004306 57.128806,27.035407 57.149686,27.050832 57.16708,27.087451 57.18759,27.111443 57.21482,27.146978 57.227108,27.163065 57.23727,27.123015 57.245197,27.086797 57.262709,27.058639 57.280063,27.036989 57.301923,26.991927 57.304177,26.946914 57.303392,26.905193 57.305037,26.856248 57.3167,26.821971 57.317735,26.788038 57.313688,26.750705 57.313262,26.693895 57.337439,26.660807 57.359529,26.629184 57.38935,26.59757</cap:polygon>
+    <link title="Gulbene municipality" href="https://meteoalarm.org?polygon=50c65214-c59d-4569-94e2-372a8d2de798,0,16,0" hreflang="en"/>
+    <cap:areaDesc>Gulbene municipality</cap:areaDesc>
+    <cap:event>Yellow Fog Warning</cap:event>
+    <cap:sent>2026-09-29T06:53:18+00:00</cap:sent>
+    <cap:expires>2026-09-29T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.260929095318.103422</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/50c65214-c59d-4569-94e2-372a8d2de798"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:53:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/50c65214-c59d-4569-94e2-372a8d2de798?index_info=0&amp;index_area=16&amp;index_polygon=0</id>
+    <title>Yellow Fog Warning issued for Latvia - Gulbene municipality</title>
+    <updated>2026-09-29T06:53:18Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>58.073496,25.21579 58.080788,25.212182 58.076015,25.191226 58.074749,25.153881 58.079756,25.134444 58.066372,25.079839 58.061591,25.071357 58.017825,25.020406 58.010966,24.994738 58.010152,24.971376 58.009427,24.950653 57.995881,24.90971 57.980719,24.865724 57.976754,24.851543 57.97278,24.834082 57.940534,24.843635 57.912425,24.851579 57.899356,24.873249 57.877978,24.885866 57.843657,24.89861 57.825032,24.912635 57.811008,24.97568 57.792344,25.016882 57.781987,25.047325 57.762258,25.075512 57.735666,25.092931 57.718719,25.075558 57.69446,25.086536 57.666338,25.080817 57.63919,25.068494 57.62908,25.027396 57.63424,24.977352 57.61399,24.925637 57.594144,24.902513 57.563605,24.944223 57.56846,24.984619 57.547718,25.027571 57.520104,25.055801 57.501767,25.076145 57.489918,25.100117 57.466564,25.137587 57.441643,25.168225 57.426468,25.184933 57.415086,25.222353 57.407946,25.262738 57.399691,25.30458 57.39503,25.348637 57.418569,25.392882 57.434649,25.405703 57.439703,25.462212 57.441594,25.518367 57.456609,25.573448 57.46654,25.621362 57.466312,25.665387 57.488709,25.719251 57.494659,25.782748 57.492006,25.813123 57.491353,25.859602 57.483333,25.898162 57.509494,25.942758 57.534146,25.943052 57.556036,25.900245 57.587031,25.912998 57.61313,25.937018 57.627784,25.962222 57.651768,25.979819 57.672744,25.95547 57.680145,25.908483 57.683891,25.876186 57.703416,25.839057 57.724201,25.836808 57.733996,25.7834 57.730166,25.760884 57.737001,25.698922 57.748041,25.661325 57.770005,25.615971 57.777527,25.583279 57.79951,25.556 57.823755,25.534684 57.844,25.504102 57.868082,25.500103 57.879388,25.544511 57.871406,25.614308 57.880719,25.680085 57.90332,25.703258 57.904393,25.678969 57.91521,25.660043 57.92256,25.647175 57.930729,25.638646 57.944192,25.58052 57.947578,25.585562 57.956364,25.591987 57.974024,25.574694 57.967464,25.565393 57.967917,25.522813 57.974483,25.522695 57.974817,25.485864 57.982544,25.478635 57.99212,25.452968 58.00218,25.457693 58.010463,25.458741 58.029167,25.406587 58.029389,25.393469 58.029653,25.377712 58.031396,25.363858 58.046912,25.344985 58.074136,25.309792 58.081449,25.295676 58.080911,25.286483 58.070009,25.281178 58.067234,25.266076 58.060086,25.264866 58.050663,25.27959 58.046423,25.293345 58.034273,25.303738 58.025677,25.303091 58.014533,25.29718 58.000551,25.302223 57.992993,25.292216 57.989639,25.282834 57.994598,25.267416 58.002959,25.256006 58.010381,25.23784 58.017644,25.233261 58.024453,25.227023 58.030157,25.21948 58.039623,25.21691 58.046944,25.225644 58.053467,25.228268 58.058719,25.216321 58.065292,25.204082 58.073496,25.21579</cap:polygon>
+    <link title="Valmiera municipality" href="https://meteoalarm.org?polygon=50c65214-c59d-4569-94e2-372a8d2de798,0,15,0" hreflang="en"/>
+    <cap:areaDesc>Valmiera municipality</cap:areaDesc>
+    <cap:event>Yellow Fog Warning</cap:event>
+    <cap:sent>2026-09-29T06:53:18+00:00</cap:sent>
+    <cap:expires>2026-09-29T08:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.428.0.LV.260929095318.103422</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/50c65214-c59d-4569-94e2-372a8d2de798"/>
+    <link title="Latvia" rel="related" href="https://meteoalarm.org?region=LV" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:53:18Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-latvia/50c65214-c59d-4569-94e2-372a8d2de798?index_info=0&amp;index_area=15&amp;index_polygon=0</id>
+    <title>Yellow Fog Warning issued for Latvia - Valmiera municipality</title>
+    <updated>2026-09-29T06:53:18Z</updated>
+  </entry>
+  <entry>

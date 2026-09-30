@@ -1,0 +1,68 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2023-11-02:UA</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:26.781883Z</updated>
+  <entry>
+    <cap:polygon>45.12498,36.545642 44.883767,36.528231 44.882812,36.526277 44.875612,36.509149 44.869256,36.491369 44.863774,36.473017 44.859192,36.454181 44.855532,36.434947 44.852811,36.415406 44.851041,36.395649 44.850231,36.375767 44.85033,36.363022 44.844677,36.349585 44.838318,36.331804 44.832833,36.313453 44.828249,36.294616 44.824587,36.275383 44.821864,36.255842 44.820093,36.236084 44.819283,36.216202 44.819437,36.196289 44.820555,36.176437 44.82263,36.156738 44.825655,36.137285 44.829614,36.118169 44.833616,36.10282 44.827269,36.087735 44.820908,36.069954 44.815422,36.051603 44.810836,36.032767 44.807173,36.013533 44.804449,35.993992 44.802678,35.974234 44.801867,35.954352 44.802021,35.934439 44.802602,35.924129 44.80116,35.918207 44.797496,35.898974 44.794772,35.879433 44.793,35.859675 44.79219,35.839793 44.792344,35.81988 44.793462,35.800027 44.795539,35.780329 44.798565,35.760876 44.802525,35.74176 44.807402,35.723069 44.813171,35.704891 44.819807,35.68731 44.827277,35.670408 44.835547,35.654264 44.844578,35.638954 44.849116,35.632249 44.846322,35.630153 44.834338,35.619621 44.822888,35.60796 44.812028,35.595224 44.801808,35.581473 44.792275,35.566772 44.783476,35.551188 44.77545,35.534794 44.768237,35.517666 44.761869,35.499886 44.756377,35.481534 44.751787,35.462698 44.74812,35.443464 44.745393,35.423923 44.74429,35.411628 44.743775,35.410716 44.737327,35.397554 44.725223,35.389932 44.71273,35.380578 44.700718,35.370045 44.689242,35.358384 44.678357,35.345649 44.668113,35.331898 44.658558,35.317196 44.649739,35.301612 44.641694,35.285218 44.634464,35.268091 44.631086,35.258679 44.624507,35.24706 44.616459,35.230666 44.609226,35.213539 44.602841,35.195758 44.597334,35.177407 44.592731,35.15857 44.589054,35.139337 44.58632,35.119796 44.584542,35.100038 44.583905,35.084477 44.791998,35.081765 44.822683,35.130957 44.859161,35.136483 44.896105,35.16076 44.919549,35.241895 44.968162,35.269351 44.964593,35.327581 44.993968,35.365093 45.012682,35.425913 45.048122,35.385934 45.099137,35.448681 45.130301,35.566012 45.110835,35.680958 45.066978,35.778568 45.043489,35.809753 44.998677,35.840961 45.0187,35.904764 45.012488,35.954699 45.049916,36.030182 45.047645,36.087804 45.027988,36.225629 45.054191,36.270198 45.059033,36.374696 45.087334,36.4446 45.10139,36.453984 45.12498,36.545642</cap:polygon>
+    <link title="Eastern Crimean area, Kerch-Feodosia region, Southern Crimean area" href="https://meteoalarm.org?polygon=93d185a5-ee5f-4c7e-9924-e530adcfc55f,0,0,2" hreflang="en"/>
+    <cap:areaDesc>Eastern Crimean area, Kerch-Feodosia region, Southern Crimean area</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-09-29T10:25:36+00:00</cap:sent>
+    <cap:expires>2026-09-30T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T10:25:36+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.804.0.GB.260929102536.1V6tGOze8SXDM641dw37</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/93d185a5-ee5f-4c7e-9924-e530adcfc55f"/>
+    <link title="Ukraine" rel="related" href="https://meteoalarm.org?region=UA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T10:25:36Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/93d185a5-ee5f-4c7e-9924-e530adcfc55f?index_info=0&amp;index_area=0&amp;index_polygon=2</id>
+    <title>Yellow Coastalevent Warning issued for Ukraine - Eastern Crimean area, Kerch-Feodosia region, Southern Crimean area</title>
+    <updated>2026-09-29T10:25:36Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>44.390898,33.969757 44.185042,33.962202 44.184598,33.951438 44.184754,33.931525 44.185884,33.911673 44.187982,33.891974 44.19104,33.872521 44.194349,33.856713 44.193662,33.853922 44.18996,33.834688 44.187207,33.815147 44.185417,33.79539 44.184695,33.777861 44.184607,33.772923 44.184754,33.755595 44.184924,33.752602 44.185884,33.735742 44.187982,33.716044 44.19104,33.696591 44.195042,33.677475 44.199969,33.658784 44.200675,33.656583 44.200818,33.655677 44.204819,33.636561 44.209746,33.61787 44.215575,33.599691 44.222279,33.58211 44.229826,33.565209 44.229834,33.565194 44.233164,33.549277 44.238088,33.530586 44.243915,33.512408 44.250615,33.494827 44.258159,33.477925 44.26651,33.461782 44.275629,33.446472 44.285474,33.432067 44.294654,33.420348 44.297531,33.40201 44.301526,33.382894 44.306445,33.364203 44.312264,33.346024 44.318957,33.328443 44.326492,33.311542 44.334834,33.295398 44.343942,33.280088 44.353775,33.265683 44.364287,33.25225 44.375427,33.239851 44.387144,33.228544 44.399382,33.218383 44.412085,33.209415 44.413345,33.208671 44.415743,33.204024 44.424839,33.188713 44.434658,33.174308 44.445155,33.160875 44.45628,33.148476 44.467981,33.13717 44.470013,33.13548 44.519408,33.103842 44.575292,33.0912 44.617635,33.09592 44.658379,33.112639 44.698315,33.143189 44.707299,33.152319 44.718179,33.165054 44.728414,33.178805 44.731152,33.183022 44.732585,33.545659 44.658235,33.542771 44.628539,33.522509 44.608408,33.483751 44.603407,33.43385 44.559202,33.401825 44.507997,33.481828 44.487234,33.555891 44.493405,33.595993 44.471926,33.636007 44.425661,33.649887 44.421127,33.704157 44.392333,33.726505 44.38609,33.778012 44.406713,33.860941 44.390898,33.969757</cap:polygon>
+    <link title="Eastern Crimean area, Kerch-Feodosia region, Southern Crimean area" href="https://meteoalarm.org?polygon=93d185a5-ee5f-4c7e-9924-e530adcfc55f,0,0,1" hreflang="en"/>
+    <cap:areaDesc>Eastern Crimean area, Kerch-Feodosia region, Southern Crimean area</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-09-29T10:25:36+00:00</cap:sent>
+    <cap:expires>2026-09-30T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T10:25:36+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.804.0.GB.260929102536.1V6tGOze8SXDM641dw37</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukraine/93d185a5-ee5f-4c7e-9924-e530adcfc55f"/>
+    <link title="Ukraine" rel="related" href="https://meteoalarm.org?region=UA" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T10:25:36Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ukra

@@ -1,0 +1,108 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:LT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:24.108509Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT010</value>
+    </cap:geocode>
+    <link title="Vilnius county" href="https://meteoalarm.org?geocode=EMMA_ID:LT010" hreflang="en"/>
+    <cap:areaDesc>Vilnius county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-09-28T08:06:52+00:00</cap:sent>
+    <cap:expires>2026-09-29T07:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-28T08:06:52+00:00</cap:effective>
+    <cap:onset>2026-09-28T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.260928110652_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-28T08:06:52Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2?index_info=1&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Vilnius county</title>
+    <updated>2026-09-28T08:06:52Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT009</value>
+    </cap:geocode>
+    <link title="Utena county" href="https://meteoalarm.org?geocode=EMMA_ID:LT009" hreflang="en"/>
+    <cap:areaDesc>Utena county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-09-28T08:06:52+00:00</cap:sent>
+    <cap:expires>2026-09-29T07:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-28T08:06:52+00:00</cap:effective>
+    <cap:onset>2026-09-28T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.260928110652_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-28T08:06:52Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Utena county</title>
+    <updated>2026-09-28T08:06:52Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>LT005</value>
+    </cap:geocode>
+    <link title="Panevėžys county" href="https://meteoalarm.org?geocode=EMMA_ID:LT005" hreflang="en"/>
+    <cap:areaDesc>Panevėžys county</cap:areaDesc>
+    <cap:event>Dangerous fog</cap:event>
+    <cap:sent>2026-09-28T08:06:52+00:00</cap:sent>
+    <cap:expires>2026-09-29T07:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-28T08:06:52+00:00</cap:effective>
+    <cap:onset>2026-09-28T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.440.0.LT.260928110652_04_000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2"/>
+    <link title="Lithuania" rel="related" href="https://meteoalarm.org?region=LT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-28T08:06:52Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-lithuania/8c20751b-0774-4804-9ff9-5d03955e54d2?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Fog Warning issued for Lithuania - Panevėžys county</title>
+    <updated>2026-09-28T08:06:52Z</updated>
+  </entry>
+</feed>

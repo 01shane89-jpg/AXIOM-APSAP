@@ -1,0 +1,190 @@
+https://api.weather.gov/alerts/active?status=actual&message_type=alert,update
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "@vocab": "https://api.weather.gov/ontology#"
+        }
+    ],
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.477c84407cc132f8736f6fc559a94152fc1a77b5.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -102,
+                            34.86
+                        ],
+                        [
+                            -101.94,
+                            34.99
+                        ],
+                        [
+                            -101.69,
+                            34.89
+                        ],
+                        [
+                            -101.87,
+                            34.81
+                        ],
+                        [
+                            -102,
+                            34.86
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.477c84407cc132f8736f6fc559a94152fc1a77b5.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.477c84407cc132f8736f6fc559a94152fc1a77b5.001.1",
+                "areaDesc": "Randall, TX",
+                "geocode": {
+                    "SAME": [
+                        "048381"
+                    ],
+                    "UGC": [
+                        "TXC381"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/TXC381"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.491b4a12c77ca5d6e92f5829e548a6cfd3bcaceb.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.491b4a12c77ca5d6e92f5829e548a6cfd3bcaceb.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-09-29T19:30:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.795fddc9ab5db205988815d116d59bb70c235769.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.795fddc9ab5db205988815d116d59bb70c235769.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-09-29T19:39:00-05:00"
+                    }
+                ],
+                "sent": "2026-09-29T19:46:00-05:00",
+                "effective": "2026-09-29T19:46:00-05:00",
+                "onset": "2026-09-29T19:46:00-05:00",
+                "expires": "2026-09-29T20:00:00-05:00",
+                "ends": "2026-09-29T20:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Extreme",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Tornado Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Amarillo TX",
+                "headline": "Tornado Warning issued September 29 at 7:46PM CDT until September 29 at 8:00PM CDT by NWS Amarillo TX",
+                "description": "At 746 PM CDT, a severe thunderstorm capable of producing a tornado\nwas located 8 miles south of Canyon, moving northeast at 20 mph.\n\nHAZARD...Tornado.\n\nSOURCE...Radar indicated rotation.\n\nIMPACT...Flying debris will be dangerous to those caught without\nshelter. Mobile homes will be damaged or destroyed. Damage\nto roofs, windows, and vehicles will occur.  Tree damage is\nlikely.\n\nLocations impacted include...\nCanyon.",
+                "instruction": "TAKE COVER NOW! Move to a basement or an interior room on the lowest\nfloor of a sturdy building. Avoid windows. If you are outdoors, in a\nmobile home, or in a vehicle, move to the closest substantial shelter\nand protect yourself from flying debris.\n\nTorrential rainfall is occurring with this storm, and may lead to\nflash flooding. Do not drive your vehicle through flooded roadways.",
+                "response": "Shelter",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SVSAMA"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS54 KAMA 300046"
+                    ],
+                    "NWSheadline": [
+                        "A TORNADO WARNING REMAINS IN EFFECT UNTIL 800 PM CDT FOR SOUTHEASTERN RANDALL COUNTY"
+                    ],
+                    "eventMotionDescription": [
+                        "2026-09-30T00:46:00-00:00...storm...215DEG...19KT...34.86,-101.9"
+                    ],
+                    "maxHailSize": [
+                        "0.00"
+                    ],
+                    "tornadoDetection": [
+                        "RADAR INDICATED"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KAMA.TO.W.0016.000000T0000Z-260930T0100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-09-29T20:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SVS"
+                    ],
+                    "NationalWeatherService": [
+                        "TOW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.14f95f1b43494bb83cc12f95ebac6870a900920c.002.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -100.04,
+                            37.92
+                        ],
+                        [
+                            -100.01,
+                            38.02
+                        ],
+                        [
+                            -99.83,
+                            37.96
+                        ],
+                        [
+                            -99.88,
+                            37.91
+                        ],
+                        [
+                            -100.03,
+                            37.91
+                        ],
+                        [
+                            -100.04,
+                            37.92
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.14f95f1b43494bb83cc12f95ebac6870a900920c.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.14f95f1b43494bb83cc12f95ebac6870a900920c.002.1",
+                "areaDesc": "Hodgeman, KS",
+                "geocode": {
+                    "SAME": [
+                        "020083"
+                    ],
+                    "UGC": [
+                        "KSC083"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/KSC083"
+                ],
+                "references

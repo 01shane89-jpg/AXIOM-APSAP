@@ -1,0 +1,66 @@
+https://pacforum.org/feed
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Pacific Forum</title>
+	<atom:link href="https://pacforum.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://pacforum.org/</link>
+	<description>Nonprofit, private, foreign policy research institute focused on the Indo-Pacific</description>
+	<lastBuildDate>Wed, 04 Mar 2026 01:20:04 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.0.5</generator>
+
+<image>
+	<url>https://pacforum.org/wp-content/uploads/2024/02/cropped-PF-favicon-20242501-32x32.png</url>
+	<title>Pacific Forum</title>
+	<link>https://pacforum.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>The impact of the India-Israel partnership on US strategic interests</title>
+		<link>https://pacforum.org/the-impact-of-the-india-israel-partnership-on-us-strategic-interests/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-impact-of-the-india-israel-partnership-on-us-strategic-interests</link>
+		
+		<dc:creator><![CDATA[Moses Sakai]]></dc:creator>
+		<pubDate>Wed, 04 Mar 2026 01:20:04 +0000</pubDate>
+				<category><![CDATA[The Pilot: Indo-Pacific Policy Briefs]]></category>
+		<guid isPermaLink="false">https://pacforum.org/?p=18052</guid>
+
+					<description><![CDATA[<p>The February 2026 meeting between Indian Prime Minister Narendra Modi and Israeli Prime Minister Benjamin Netanyahu is a pivotal event that strongly supports the strategic objectives of the US 2025 [&#8230;]</p>
+<p>The post <a href="https://pacforum.org/the-impact-of-the-india-israel-partnership-on-us-strategic-interests/">The impact of the India-Israel partnership on US strategic interests</a> appeared first on <a href="https://pacforum.org">Pacific Forum</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The February 2026 meeting between Indian Prime Minister Narendra Modi and Israeli Prime Minister Benjamin Netanyahu is a pivotal event that strongly supports the strategic objectives of the US 2025 National Security Strategy (NSS). The NSS prioritizes a strategic pivot to the Western Hemisphere, which is enabled by empowering key US partners to manage regional security and stability. The deepening India-Israel alliance, reinforced by frameworks like the I2U2 Group and Netanyahu&#8217;s &#8220;hexagon of alliances,&#8221; is central to this burden-sharing model. This partnership enhances US interests by building a resilient technological and defense ecosystem, creating a strategic economic corridor to counter China, and balancing destabilizing forces in the Middle East and Indo-Pacific.</p>
+<p><strong>The US strategic framework: The 2025 National Security Strategy</strong></p>
+<p>The 2025 NSS marks a shift in US foreign policy, focusing resources on the Western Hemisphere to counter narco-terrorism, hostile foreign incursions (especially from China and Russia), and border insecurity. This &#8220;America First&#8221; doctrine is enabled by a de-pivot from Asia, which requires key allies like India to take primary responsibility for their regions. India is identified as a linchpin partner, expected to secure the Indian Ocean Region and counter revisionist powers. This allows the US to reduce its forward deployments while ensuring its interests are protected by capable partners.</p>
+<p><strong>Pillars of the India-Israel partnership</strong></p>
+<ol>
+<li><strong> Technological and defense cooperation</strong></li>
+</ol>
+<p>The partnership combines India&#8217;s market and software talent with Israel&#8217;s advanced innovation, creating a force multiplier for US interests.</p>
+<ul>
+<li><strong>Democratic tech ecosystem:</strong> Joint ventures in AI, robotics, and semiconductors are crucial for building resilient supply chains independent of China. Key examples include an MoU for high-tech cooperation, the Adani Group&#8217;s partnership with Tower Semiconductor for a chip plant, and a $150 million deal for Edge AI chip co-development. This supports India&#8217;s &#8220;Make in India&#8221; mission and US strategy, with one visible example being the $2.75 billion American investment in the Micron semiconductor plant in Gujarat.</li>
+<li><strong>Defense co-production:</strong> The India-Israel relationship has evolved from a simple buyer-seller dynamic to deep co-production. A prime example is the Drishti-10 Starliner, an Indian-made version of Israel&#8217;s advanced Hermes-900 UAV, assembled by an Adani-Elbit joint venture. By inducting these drones, the Indian Navy enhances its maritime surveillance, empowering India to act as a net security provider in the Indian Ocean. Another example occurred in October 2025, when US and Indian naval aviation units conducted a first-ever bilateral training exercise near Diego Garcia, a main platform for American power projection into the Indian Ocean Region. US Navy P-8A Poseidon and Indian Navy P-8I aircraft participated in combined drills focusing on anti-submarine warfare and enhancing maritime domain awareness, strengthening interoperability between the two forces. This increased combined capability reduces the operational burden on US forces, fulfilling a core tenet of the 2025 NSS.</li>
+</ul>
+<ol start="2">
+<li><strong> Geoeconomic architecture</strong></li>
+</ol>
+<ul>
+<li><strong>India-Middle East-Europe Economic Corridor (IMEC):</strong> Announced at the G20 Summit, IMEC is a strategic alternative to China&#8217;s Belt and Road Initiative. It establishes a transparent, financially stable trade route connecting key US partners: India, the UAE, Saudi Arabia, Jordan, Israel, and the EU. The project&#8217;s urgency is highlighted by Houthi attacks on Red Sea shipping. Tangible progress included a February 2024 agreement between India and the UAE to advance the corridor, which is projected to reduce India-to-Europe shipping times by 40%. Israel’s Haifa Port is the final link in the chain, connecting the Middle East to Europe via the Mediterranean Sea.</li>
+<li><strong>Regional alliances (I2U2 &amp; &#8220;hexagon&#8221;):</strong> Formations like the I2U2 Group (India, Israel, UAE, USA) and Netanyahu&#8217;s &#8220;hexagon of alliances&#8221; formalize this cooperation. I2U2 is already mobilizing private capital for major projects, including a $2 billion investment in tech-enabled food parks in India and a 300 MW renewable energy project. These alliances of peace and prosperity can be reinforced by Saudi Arabia&#8217;s pragmatic Vision 2030, which requires regional stability and should make it a willing IMEC partner. India should encourage Saudi Arabia to use its power to complete IMEC’s hard and soft infrastructure.</li>
+</ul>
+<p><strong>India’s role in regional stability</strong></p>
+<p>India’s sophisticated foreign policy of &#8220;multi-alignment&#8221; allows it to build issue-based coalitions with competing powers, making it a unique stabilizing force.</p>
+<ul>
+<li><strong>Countering extremism:</strong> The India-Israel-Arab bloc serves as a formidable counterweight to the &#8220;radical Shiite axis&#8221; led by Iran. Simultaneously, India&#8217;s management of Iran&#8217;s Chabahar Port provides a strategic trade route to Central Asia that bypasses Pakistan and prevents China from filling a vacuum. In a time of strong regional tension, this nuanced engagement could remind Tehran of the possibility of participation in a peaceful regional framework and offer it a constructive alternative to its own destabilizing and self-destructive activities.</li>
+<li><strong>Balancing the &#8220;Sunni Islamist axis:”</strong> The In

@@ -1,0 +1,161 @@
+https://www.usip.org/feed/
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Donald J. Trump Institute of Peace</title>
+	<atom:link href="https://www.usip.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.usip.org</link>
+	<description></description>
+	<lastBuildDate>Tue, 07 Jul 2026 14:45:17 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.2</generator>
+	<item>
+		<title>Iran &#124; United States</title>
+		<link>https://www.usip.org/iran-united-states/</link>
+		
+		<dc:creator><![CDATA[usip]]></dc:creator>
+		<pubDate>Thu, 25 Jun 2026 22:00:22 +0000</pubDate>
+				<category><![CDATA[Articles]]></category>
+		<category><![CDATA[Ending Wars and Fostering Peace]]></category>
+		<category><![CDATA[Iran]]></category>
+		<guid isPermaLink="false">https://usip.etv.newpress.co/?p=491</guid>
+
+					<description><![CDATA[Memorandum of Understanding between the Islamic Republic of Iran and the United States Description On June 17, 2026, President Donald J. Trump signed a Memorandum of Understanding with Iran at the Palace of Versailles in France. The Memorandum declares an immediate and permanent termination of military operations on all fronts, including Lebanon. Both sides committed [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+<h2 class="wp-block-heading"><strong><strong>Memorandum of Understanding between the Islamic Republic of Iran and the United States</strong></strong></h2>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<figure class="wp-block-image size-large"><img fetchpriority="high" decoding="async" width="1024" height="683" src="https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-1024x683.webp" alt="" class="wp-image-498" srcset="https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-1024x683.webp 1024w, https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-300x200.webp 300w, https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-768x512.webp 768w, https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-1536x1024.webp 1536w, https://www.usip.org/wp-content/uploads/2026/06/P20260617DT-4957-2048x1365.webp 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /><figcaption class="wp-element-caption">President Donald J. Trump at the Palace of Versailles, France, on June 17, 2026. (Official White House Photo by Daniel Torok)</figcaption></figure>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="has-superbfont-medium-font-size wp-block-paragraph"><strong>Description</strong></p>
+
+
+
+<p class="has-superbfont-medium-font-size wp-block-paragraph"><br>On June 17, 2026, President Donald J. Trump signed a Memorandum of Understanding with Iran at the Palace of Versailles in France. The Memorandum declares an immediate and permanent termination of military operations on all fronts, including Lebanon. Both sides committed to refrain from initiating war or threatening force against one another and to respect each other&#8217;s sovereignty. The agreement opens a 60-day window, extendable by mutual consent, for negotiations toward a final deal.&nbsp;</p>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="wp-block-paragraph">Iran committed to arranging safe passage of commercial vessels through the Strait of Hormuz, at no charge, for 60 days. Simultaneously, the United States committed to begin removing its naval blockade immediately upon signing and to fully end it within 30 days. Iran reaffirmed that it will not procure or develop nuclear weapons</p>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="wp-block-paragraph">The White House stated that the agreement ensures Iran will never obtain a nuclear weapon and that any sanctions relief or economic benefits are strictly contingent on Iran&#8217;s continued compliance. The State Department has since identified the memorandum as a continuing regional priority alongside efforts to secure full and free transit through the Strait and support peace and stability in the region.&nbsp;</p>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="wp-block-paragraph"><em>This page will be updated as negotiations progress.</em></p>
+
+
+
+<div style="height:50px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+<p class="has-superbfont-medium-font-size wp-block-paragraph"><strong>Quotes</strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<blockquote class="wp-block-quote is-style-default is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">“Most importantly, we have a deal that Iran will never have a nuclear weapon.” &#8211; President Donald J. Trump</p>
+</blockquote>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">“The President’s Peace Plan in Iran is Already Bearing Real Fruits For The American People.” &#8211;&nbsp;Vice President JD Vance</p>
+</blockquote>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">“I think all of our allies are onboard with peace.” &#8211; U.S. Secretary of State, Marco Rubio</p>
+</blockquote>
+
+
+
+<div style="height:30px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">“President Trump signed tonight at Versailles the agreement between Iran and the United States. This agreement paves the way for lasting peace and allows the reopening of the Strait of Hormuz.” &#8211; French President Emmanuel Macron</p>
+</blockquote>
+</div>
+
+
+
+<div style="height:50px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+<p class="has-superbfont-medium-font-size wp-block-paragraph"><strong>News</strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<ul style="padding-top:var(--wp--preset--spacing--superbspacing-xxsmall);padding-right:0;padding-bottom:var(--wp--preset--spacing--superbspacing-xxsmall);padding-left:0" class="wp-block-list is-style-tw-border-inner">
+<li><a href="https://www.whitehouse.gov/releases/2026/06/president-trumps-iran-agreement-is-america-first-in-action" target="_blank" rel="noreferrer noopener">President Trump’s Iran Agreement Is America First in Action</a> &#8211; The White House, June 19, 2026</li>
+
+
+
+<li><a href="https://www.whitehouse.gov/videos/vice-president-jd-vance-briefs-members-of-the-media-jun-18-2026/" target="_blank" rel="noreferrer noopener">Vice President JD Vance Briefs Members of the Media</a> &#8211; The White House, June 18, 2026</li>
+
+
+
+<li><a href="https://www.whitehouse.gov/releases/2026/04/peace-through-strength-operation-epic-fury-crushes-iranian-threat-as-ceasefire-takes-hold/" target="_blank" rel="noreferrer noopener">Peace Through Strength: Operation Epic Fury Crushes Iranian Threat as Ceasefire Takes Hold</a> &#8211; The White House, April 8, 2026</li>
+
+
+
+<li><a href="https://www.state.gov/releases/office-of-the-spokesperson/2026/06/

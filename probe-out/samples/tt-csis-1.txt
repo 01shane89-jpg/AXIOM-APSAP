@@ -1,0 +1,118 @@
+https://www.csis.org/
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#" class="bg-blue-800">
+<head>
+  <meta charset="utf-8" />
+<meta name="description" content="The Center for Strategic and International Studies (CSIS) is a bipartisan, nonprofit policy research organization &amp; think tank analyzing global issues &amp; policy." />
+<meta name="keywords" content="csis, center for strategic and international studies, foreign policy think tank, international relations and affairs, csis think tank" />
+<link rel="canonical" href="https://www.csis.org/" />
+<link rel="shortlink" href="https://www.csis.org/" />
+<link rel="image_src" href="https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/social_metatag_preview_image/s3/program/160209_CSIS_headquarters_main_image_0.jpg?VersionId=8z7cevdMIhy9dyF4XHu7rfRsoMgN4VZk&amp;itok=_lwpc9ST" />
+<meta property="og:title" content="CSIS | Center for Strategic and International Studies" />
+<meta property="og:description" content="The Center for Strategic and International Studies (CSIS) is a bipartisan, nonprofit policy research organization &amp; think tank analyzing global issues &amp; policy." />
+<meta property="og:image" content="https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/social_metatag_preview_image/s3/program/160209_CSIS_headquarters_main_image_0.jpg?VersionId=8z7cevdMIhy9dyF4XHu7rfRsoMgN4VZk&amp;itok=_lwpc9ST" />
+<meta name="twitter:title" content="CSIS | Center for Strategic and International Studies" />
+<meta name="twitter:description" content="The Center for Strategic and International Studies (CSIS) is a bipartisan, nonprofit policy research organization &amp; think tank analyzing global issues &amp; policy." />
+<meta name="twitter:image" content="https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/social_metatag_preview_image/s3/program/160209_CSIS_headquarters_main_image_0.jpg?VersionId=8z7cevdMIhy9dyF4XHu7rfRsoMgN4VZk&amp;itok=_lwpc9ST" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebPage",
+            "@id": "https://www.csis.org/",
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://csis.org",
+                "name": "Center for Strategic and International Studies",
+                "url": "https://csis.org",
+                "sameAs": [
+                    "https://www.facebook.com/CSIS.org",
+                    "https://x.com/CSIS",
+                    "https://www.instagram.com/csis/",
+                    "https://www.linkedin.com/company/csis",
+                    "https://www.youtube.com/user/csisdc"
+                ]
+            },
+            "isAccessibleForFree": "True"
+        }
+    ]
+}</script>
+<link rel="icon" href="/themes/custom/ts_csis/assets/favicon.ico" type="image/vnd.microsoft.icon" />
+
+    <title>CSIS | Center for Strategic and International Studies</title>
+    <link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/align.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/fieldgroup.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/container-inline.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/clearfix.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/details.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/hidden.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/item-list.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/js.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/nowrap.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/position-container.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/reset-appearance.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/resize.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/system-status-counter.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/system-status-report-counters.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/system-status-report-general-info.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/composer/stable/css/system/components/tablesort.module.css?tm554m" />
+<link rel="stylesheet" media="all" href="/modules/custom/c2pa/css/c2pa.css?tm554m" />
+<link rel="stylesheet" media="all" href="/modules/composer/ckeditor_indentblock/css/plugins/indentblock/ckeditor.indentblock.css?tm554m" />
+<link rel="stylesheet" media="all" href="//use.typekit.net/mkb5tpc.css" />
+<link rel="stylesheet" media="print" href="/themes/custom/ts_csis/dist/print.css?tm554m" />
+<link rel="stylesheet" media="all" href="/themes/custom/ts_csis/dist/ts-csis.css?tm554m" />
+
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"node\/100000","currentPathIsAdmin":false,"isFront":true,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"csis_seo":{"entity_details":{"content_type":"page","program_related":[],"person_related":[],"topic_related":[],"region_related":[],"parent_related":[],"month_published":"","year_published":"","date_published":"","page_type":"Landing Page"},"gtm_id":"GTM-MNGQTH"},"csis_events":{"events_live_now":"Live Now","events_on_demand":"Video On Demand","events_live_in":"Live in"},"user":{"uid":0,"permissionsHash":"bbd232f226cd0bc2c35c2c93ba541dc18c97c53039a4ac1aa255b83027d3d5d2"}}</script>
+<script src="/themes/custom/ts_csis/node_modules/jquery/dist/jquery.min.js?tm554m"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=10.6.17"></script>
+<script src="/modules/custom/csis_seo/js/csis_seo.js?tm554m"></script>
+<script src="/modules/custom/csis_seo/js/csis_gtm.js?tm554m"></script>
+
+    
+  </head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MNGQTH"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+  
+
+<a class="btn-utility-outline btn-utility-outline--sm btn-skip-link absolute visually-hidden focusable text-high-contrast top-0 left-0 z-8" href="#main-content" >
+  
+              Skip to main content
+    
+                  
+    </a>
+
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<header role="banner" class="page-header ts-bg-blue-800">
+  
+  
+
+
+
+
+<div class="region--primary-navigation has-nav-full ts-bg-blue-800 nav-text py-base lg:py-xl relative text-high-contrast nav-links z-7">
+  <div class="p-site xl:container">
+          
+<div class="full ">
+  <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between">
+                    <button class="menu-toggle mr-lg lg:mr-xl w-4xl" for="hamburger-checkbox" aria-label="Main menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      
+          <div class="hidden lg:inline-block mr-md">
+        
+
+<button class="btn-mega-menu--departments btn-mega-dropdown">
+  <span
