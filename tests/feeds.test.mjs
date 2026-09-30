@@ -88,8 +88,18 @@ for (const f of reg.feeds) {
   assert.ok(/^[a-z]{2,3}$/.test(f.cc) && f.outlet && /^https?:\/\//.test(f.url), "bad feed " + JSON.stringify(f));
   if (f.html) assert.ok(f.match && new RegExp(f.match), "html feed without match: " + f.outlet);
   if (f.tier) assert.ok(["official", "national", "regional", "local-language", "specialist"].includes(f.tier), "bad tier " + f.outlet);
+  if (f.relevance) assert.equal(f.relevance, "exempt", "bad relevance " + f.outlet);
   if (f.clock || f.tz) assert.match(f.clock || f.tz, /^[+-]\d\d:\d\d$/, "bad clock or tz " + f.outlet);
 }
 assert.equal(new Set(reg.feeds.map((f) => f.url)).size, reg.feeds.length, "duplicate feed address");
 for (const [cc, v] of Object.entries(reg.focus || {})) assert.ok(v.per_run > 0 && v.history > 0, "bad focus entry " + cc);
 console.log("feeds tests passed");
+
+// an outlet marked relevance "exempt" keeps every item, before and after translation, even with no relevant word
+{
+  const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
+  const i = { title: "Changes in the KPA High Command", summary: "", lang: "en", exempt: true };
+  assert.equal(preTranslation(R, i), true);
+  assert.equal(itemRelevance(R, i), "strong");
+  assert.equal(itemRelevance(R, { ...i, title: "A quiet week", exempt: undefined }), "none");
+}

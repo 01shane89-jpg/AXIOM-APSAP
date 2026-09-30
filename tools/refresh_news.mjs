@@ -99,6 +99,7 @@ async function readFeed(f) {
       const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
       if (seen) o.date_seen = true;          // the outlet gives no date: this is when OSAP first saw it
       if (f.nc) o.nc = true;
+      if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
       if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
       if (f.region) o.region = f.region;    // the province or island group a regional outlet covers
       return o;

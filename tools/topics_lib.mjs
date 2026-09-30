@@ -59,6 +59,7 @@ export function relevance(R, text) {
 // its English headline, original headline and summary. A headline the translation step left in its own script cannot be
 // checked against English words, so it is kept ("unchecked") unless a drop word matched.
 export function itemRelevance(R, i) {
+  if (i.exempt) return "strong";   // an outlet marked relevance "exempt" in tools/news_feeds.json
   const en = String(i.title_en || i.title || ""), orig = i.title && i.title !== en ? i.title : "";
   const rel = relevance(R, en + " \n " + orig + " \n " + String(i.summary_en || i.summary || "").slice(0, 400));
   if (rel !== "none") return rel;
@@ -71,6 +72,7 @@ const baseLang = (l) => String(l || "").toLowerCase().split(/[-_]/)[0];
 // Before translation (tools/refresh_news.mjs): true = keep the headline for now. An English headline, or one in a language with
 // its own word lists (relevance.json native_langs), is checked now on its own words; any other language waits for translation.
 export function preTranslation(R, i) {
+  if (i.exempt) return true;
   const l = baseLang(i.lang);
   if (l !== "en" && !(R.native && R.native.has(l))) return true;
   if (l === "en" && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title || "")) return true;   // an "English" search result in another script
