@@ -112,6 +112,14 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
+  /* UCDP candidate data codes armed groups it has not yet identified as XXX<number> ("XXX771 - XXX771"): show them in words.
+     The raw codes stay in the data files, where the refresh jobs match on them. */
+  window.OSAP_ACTORS = function (s) {
+    s = String(s || "");
+    if (/^(XXX\d+) (?:-|vs) \1$/.test(s)) return "Unidentified armed groups";
+    return s.replace(/\bXXX\d+\b/g, "unidentified armed group").replace(/^unidentified/, "Unidentified");
+  };
+  window.OSAP_ACTORS.note = function (s) { var m = String(s || "").match(/\bXXX\d+\b/g); return m ? "UCDP has not yet named the group (its code " + m.filter(function (c, i) { return m.indexOf(c) === i; }).join(", ") + "). " : ""; };
   /* hospitals always show as a red cross on a white tile, in every layer and legend, so they read on light, dark and
      satellite maps alike. hollow: the cross in outline only (used for the Cambodian side of the border layer). */
   window.OSAP_REDCROSS = function (px, hollow) {
@@ -5373,9 +5381,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     if (lay && U) (U.items || []).filter(hasCC).forEach(function (e) {
       add({ layer: lay, type: "report", cat: "Conflict event (UCDP, " + e.type + ")", kind: "other", more2: true, live: true,
-        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
-        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + e.conflict + ". " : "") +
-          "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
+        title: window.OSAP_ACTORS(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + window.OSAP_ACTORS(e.conflict) + ". " : "") +
+          window.OSAP_ACTORS.note(e.conflict) + "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
         prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province", sev: e.best >= 10 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES.ucdp, url: U.src, issued: e.date, recorded: U.asof });
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -5419,9 +5427,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     (W.ucdp || []).forEach(function (e) {
       if (ucdpNow[e.id]) return;   /* the newest month is already on the layer from data/live/ucdp.js */
       add({ layer: "insurgency", type: "report", cat: "Conflict event (UCDP, past year)", kind: "other", live: true, ds: true,
-        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        title: window.OSAP_ACTORS(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
         detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + ")" +
-          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". UCDP candidate data is preliminary and can be revised.",
+          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". " + window.OSAP_ACTORS.note(e.sideA + " " + e.sideB) + "UCDP candidate data is preliminary and can be revised.",
         ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon, prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province",
         sev: e.best >= 3 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES["ds-ucdp"], url: "https://ucdp.uu.se/downloads/candidateged/" + e.file, issued: e.date, recorded: W.asof });
     });
