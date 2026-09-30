@@ -52,7 +52,8 @@ async function open(opts) {
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
   return { ctx, p, errors, hits, mode };
 }
-async function type(p, text) { await p.fill("#srch-q", ""); await p.type("#srch-q", text, { delay: 15 }); await p.waitForTimeout(450); }
+// the box focuses and selects its text on the tick after it opens: typing before that loses the first key to the selection
+async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-q", ""); await p.type("#srch-q", text, { delay: 15 }); await p.waitForTimeout(450); }
 
 // ---------- phone ----------
 {
