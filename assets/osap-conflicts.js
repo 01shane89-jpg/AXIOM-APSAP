@@ -15,6 +15,7 @@
   "use strict";
   var W = window, D = document;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function actors(s) { return W.OSAP_ACTORS ? W.OSAP_ACTORS(s) : String(s || ""); }   /* UCDP XXX<number> codes in words (index.html) */
   function url(s) { return /^https?:\/\//i.test(s || "") ? esc(s) : "#"; }
   function num(n) { return n == null ? "—" : Number(n).toLocaleString("en-GB"); }
   function parseT(s) { if (!s) return NaN; var t = String(s).replace(" ", "T"); if (!/Z$|[+-]\d\d:?\d\d$/.test(t)) t += (t.length <= 10 ? "T00:00:00Z" : "Z"); return Date.parse(t); }
@@ -522,7 +523,7 @@
         return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
   }
   function ucdpHtml(e) {
-    return "<b>" + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
+    return "<b>" + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
       (e.end && e.end !== e.date ? " to " + day(e.end) : "") + "</div><div>" + esc(TYPEN[e.type] || "") + ". Deaths, UCDP best estimate: <b>" + num(e.best) + "</b> (range " + num(e.low) + " to " + num(e.high) + ")" +
       (e.civ ? ", of which civilians " + num(e.civ) : "") + ".</div>" + (e.headline ? '<div class="cfm">Source headline: ' + esc(e.headline) + "</div>" : "") +
       '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener\">UCDP</a>, CC BY 4.0</div>" +
@@ -613,7 +614,7 @@
         '<button type="button" class="refresh more" data-cfolder="1">Load ' + num(cur.data.older.items) + " reports from before " + day(cur.data.older.from) + "</button>");
     }
     h.push("<details" + (cur.data.auto ? " open" : "") + '><summary>UCDP events in this period (' + num(ev.length) + ")</summary><table><tbody>" + ev.slice(0, 200).map(function (e) {
-      return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</div></td><td>" + num(e.best) + "</td></tr>";
+      return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</div></td><td>" + num(e.best) + "</td></tr>";
     }).join("") + "</tbody></table>" + (ev.length > 200 ? '<p class="cfm">The newest 200 are listed; all are on the map.</p>' : "") + "</details>");
     box.innerHTML = h.join("");
     box._items = gs.map(function (g) { return g.lead; }); box._groups = gs;
