@@ -51,7 +51,8 @@ const cases = [
   ["Typhoon warning \n SEOUL, Sept. 30 (Yonhap) -- Heavy rain hit Busan on Tuesday", "kr", "Busan"],
   ["SEOUL -- Flooding closes roads", "kr", null],
   ["Senator seeks shelter subsidy \n SEOUL, Korea - A senator is pushing for a rental subsidy", "kr", null],
-  ["Seoul - Busan rail line reopens", "kr", "Seoul"],                                 // not all capitals: a headline, not a dateline
+  ["Seoul - Busan rail line reopens", "kr", "Seoul"],
+  ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
   ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
 ];
 let bad = 0;
