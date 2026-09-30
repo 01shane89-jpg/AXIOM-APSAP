@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-08-30"]=[["ne","2026-08-30T15:48","Niger coup attempt exposes weakness of Tiani junta","","Le Monde (via Bing News search)","https://www.lemonde.fr/en/le-monde-africa/article/2026/08/30/niger-coup-attempt-exposes-weakness-of-tiani-junta_6756995_124.html","","sn","elections","crisis,security"]];

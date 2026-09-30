@@ -30,7 +30,7 @@ async function once(bm) {
   await ctx.addInitScript((bm) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: bm })); } catch (e) {} }, bm);
   const p = await ctx.newPage(), cdp = await ctx.newCDPSession(p);
   await cdp.send("Network.enable");
-  if (process.env.NET) await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 9e6 / 8, uploadThroughput: 3e6 / 8 });
+  await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 9e6 / 8, uploadThroughput: 3e6 / 8 });
   await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
   await p.goto(base + "#th", { waitUntil: "commit" });
   const r = await p.evaluate(async () => {

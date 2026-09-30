@@ -21,6 +21,11 @@
   if (!map || !L || /[?&]watchscan=1/.test(location.search)) return;
   var LIB = "assets/vendor/maplibre-gl-5.24.0", K_UNIT = "osap-meas-unit", K_3D = "osap-3d";
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+  /* 3D buildings: OpenStreetMap footprints and heights from OpenFreeMap's keyless vector tiles (OpenMapTiles schema). A building
+     with no height or floor count in OpenStreetMap stands at the tiles' 5 m default. Shown from zoom 14, so zoomed-out views
+     download none. */
+  var BLD = "https://tiles.openfreemap.org/planet", BLD_Z = 14,
+    BLD_ATTR = 'Buildings: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
   var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
   /* Japan: GSI elevation tiles replace the AWS model inside Japan and Okinawa. At the closest zoom GSI's 5 m model from its
      airborne laser survey (LiDAR) is used where it exists, the 10 m national model elsewhere and at the other zooms. They are
@@ -85,6 +90,42 @@
       }).then(function (b) { return b.arrayBuffer(); }).then(function (b) { return { data: b }; });
     });
   }
+  /* 3D map pictures go through here: a busy host (429, 5xx, dropped connection) is asked once or twice more after a pause,
+     and on a base map a place with no picture at this zoom (404) or a host that keeps failing gets the closest wider
+     picture (up to 6 levels up) enlarged to fit, as the flat map does, instead of a blurry hole and an error */
+  var TPL = [];
+  function pause(ms, sig) { return new Promise(function (ok, no) { var t = setTimeout(ok, ms); if (sig) sig.addEventListener("abort", function () { clearTimeout(t); no(new DOMException("aborted", "AbortError")); }); }); }
+  function getTile(u, sig, tries) {
+    return fetch(u, { signal: sig, mode: "cors" }).then(function (r) {
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.arrayBuffer();
+    }).catch(function (e) {
+      if (e.name === "AbortError" || tries <= 0) throw e;
+      return pause(tries > 1 ? 800 : 2000, sig).then(function () { return getTile(u, sig, tries - 1); });
+    });
+  }
+  function rasterTile(params, abort) {
+    var m = /^osapr:\/\/(\d+)\/(\d+)\/(\d+)\/(\d+)$/.exec(params.url), t = m && TPL[+m[1]], sig = abort && abort.signal;
+    if (!t) return Promise.reject(new Error("map closed"));
+    var z = +m[2], x = +m[3], y = +m[4];
+    function up(k) {
+      if (k > (t.base ? 6 : 0) || z - k < 0) return Promise.reject(new Error("no map picture here"));
+      var X = x >> k, Y = y >> k, u = t.urls[(X + Y) % t.urls.length];
+      return getTile(sub(u, z - k, X, Y), sig, k ? 1 : 2).then(function (b) {
+        if (!b || !b.byteLength) return up(k + 1);
+        if (!k) return { data: b };
+        return createImageBitmap(new Blob([b])).then(function (bm) {
+          var f = 1 << k, w = bm.width / f, h = bm.height / f;
+          var c = W.OffscreenCanvas ? new OffscreenCanvas(256, 256) : D.createElement("canvas"); c.width = c.height = 256;
+          var cx = c.getContext("2d"); cx.imageSmoothingQuality = "high";
+          cx.drawImage(bm, (x - (X << k)) * w, (y - (Y << k)) * h, w, h, 0, 0, 256, 256);
+          return c.transferToImageBitmap ? c.transferToImageBitmap() : createImageBitmap(c);
+        }).then(function (bm) { return { data: bm }; });
+      }, function (e) { if (e.name === "AbortError" || !t.base) throw e; return up(k + 1); });
+    }
+    return up(0);
+  }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -104,7 +145,8 @@
     var per = big, max = mpp * maxPx / 3;
     if (small && max < big * 0.5) { per = small; lab = U[3]; }
     var v = max / per, p = Math.pow(10, Math.floor(Math.log10(v))), step = p;
-    [1, 2, 2.5, 5].forEach(function (f) { if (f * p <= v) step = f * p; });
+    /* no quarter steps below one unit: 0.25 / 0.5 / 0.75 do not fit side by side on a phone */
+    [1, 2, 2.5, 5].forEach(function (f) { if (f * p <= v && !(f === 2.5 && p < 1)) step = f * p; });
     return { px: step * per / mpp, step: step, lab: lab };
   }
   function fmtN(n) { return String(+n.toFixed(2)).replace(/\.0+$/, ""); }
@@ -112,7 +154,9 @@
     if (!(mpp > 0) || !isFinite(mpp)) return "";
     var f = scaleFit(mpp, maxPx), w = Math.round(f.px * 3);
     var t = "";
-    for (var i = 0; i <= 3; i++) t += '<span style="left:' + Math.round(f.px * i) + 'px">' + fmtN(f.step * i) + (i === 3 ? " " + f.lab : "") + "</span>";
+    /* when the middle numbers would touch (short steps such as 0.2 nm), only the ends are labelled */
+    var mid = fmtN(f.step * 2).length * 7 + 6 <= f.px;
+    for (var i = 0; i <= 3; i++) if (mid || i === 0 || i === 3) t += '<span style="left:' + Math.round(f.px * i) + 'px">' + fmtN(f.step * i) + (i === 3 ? "<b>" + f.lab + "</b>" : "") + "</span>";
     return '<div class="o3s-t" style="width:' + w + 'px">' + t + '</div><div class="o3s-b" style="width:' + w + 'px"><i></i><i></i><i></i></div>';
   }
   function scaleMax() { return mapEl.clientWidth < 520 ? 130 : 190; }
@@ -268,7 +312,9 @@
 
   /* ---------- the 3D view ---------- */
   var view3 = null, demProto = false;
-  function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5 }; }
+  var BLD_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">' +
+    '<path d="M3 21h18M5 21V8l6-3v16M11 21V3l8 4v14"/><path d="M14 9h2M14 12h2M14 15h2M7.5 11h1M7.5 14h1M7.5 17h1" stroke-linecap="round"/></svg>';
+  function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5, bld: p.bld !== false }; }
   function savePrefs(o) { var p = prefs(); for (var k in o) p[k] = o[k]; lsSet(K_3D, JSON.stringify(p)); }
   var COMPASS = '<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="rgba(20,24,28,.86)" stroke="rgba(255,255,255,.35)"/>' +
     '<g class="o3-needle"><path d="M20 5l5 15h-10z" fill="#e03131"/><path d="M20 35l-5-15h10z" fill="#dee2e6"/><text x="20" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">N</text></g></svg>';
@@ -309,7 +355,8 @@
       '<div class="o3-side"><button type="button" class="o3-b o3-2d" title="Back to the flat map at this place" aria-label="Back to 2D">2D</button>' +
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + "</button>" +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
-      '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button></div>' +
+      '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
+      '<button type="button" class="o3-b o3-bld" title="3D buildings (from OpenStreetMap). They appear when you zoom in close" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
       '<div class="o3-tilt"><label>Tilt <input type="range" min="0" max="85" step="1" aria-label="View angle (tilt)"></label><output></output></div>' +
       '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button><div class="o3-cr" hidden></div>' +
       '<div class="o3s o3-scale" role="button" tabindex="0" title="Map scale. Tap to change the unit (km, mi, nm)"></div>';
@@ -336,16 +383,18 @@
 
     loadLib().then(function (ml) {
       if (dead) return;
-      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR], b2 = map.getBounds();
-      if (!demProto) { try { ml.addProtocol("osapdem", demTile); demProto = true; } catch (e) {} }
+      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR, BLD_ATTR], b2 = map.getBounds();
+      if (!demProto) { try { ml.addProtocol("osapdem", demTile); ml.addProtocol("osapr", rasterTile); demProto = true; } catch (e) {} }
       if (b2.getEast() > JP[1] && b2.getWest() < JP[3] && b2.getNorth() > JP[0] && b2.getSouth() < JP[2]) attrs.push(JP_ATTR);
       var DEMU = demProto ? "osapdem://{z}/{x}/{y}" : DEM;
       var style = { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#d9d4c7" } }],
         /* a deep blue sky fading to a pale horizon, and a light haze over distant ground, as the eye sees it */
         sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
-      var hillAt = 0;
+      var hillAt = 0; TPL = [];
       R.forEach(function (r, i) {
-        style.sources["r" + i] = { type: "raster", tiles: r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
+        var viaUs = demProto && !/\{bbox/.test(r.urls[0]);
+        if (viaUs) TPL[i] = { urls: r.urls, base: r.base };
+        style.sources["r" + i] = { type: "raster", tiles: viaUs ? ["osapr://" + i + "/{z}/{x}/{y}"] : r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" };
         style.layers.push({ id: "r" + i, type: "raster", source: "r" + i, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } });
         if (r.base) hillAt = style.layers.length;
         if (r.attr && attrs.indexOf(r.attr) < 0) attrs.push(r.attr);
@@ -375,6 +424,31 @@
         say("3D needs WebGL, which this browser or device has turned off. The flat map still works."); gl = null; return;
       }
       /* phones: a vertical one-finger drag should pan, two fingers tilt (the default) */
+      /* 3D buildings, under the map's own overlays; the tiles are asked for only while the switch is on and the view is close */
+      var bldB = box.querySelector(".o3-bld"), hintT = 0;
+      function bldOn(on) {
+        bldB.setAttribute("aria-pressed", on ? "true" : "false"); bldB.classList.toggle("on", on);
+        if (!styleUp) return;   /* added once the style has loaded (see "style.load" below) */
+        if (on && !gl.getSource("bld")) {
+          gl.addSource("bld", { type: "vector", url: BLD });
+          gl.addLayer({ id: "bld", type: "fill-extrusion", source: "bld", "source-layer": "building", minzoom: BLD_Z,
+            filter: ["!=", ["get", "hide_3d"], true],
+            paint: { "fill-extrusion-color": ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 5], 0, "#d8d2c6", 20, "#c9c1b3", 60, "#b3a998", 150, "#9d9282"],
+              "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_height"], 5]],
+              "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_min_height"], 0]],
+              "fill-extrusion-opacity": 0.88, "fill-extrusion-vertical-gradient": true } }, gl.getLayer("vf") ? "vf" : undefined);
+        }
+        if (gl.getLayer("bld")) gl.setLayoutProperty("bld", "visibility", on ? "visible" : "none");
+      }
+      var styleUp = false;
+      bldOn(P.bld);
+      if (gl.style && gl.style._loaded) { styleUp = true; bldOn(P.bld); }   /* an inline style can finish loading at once */
+      else gl.once("style.load", function () { styleUp = true; if (!dead) bldOn(P.bld); });
+      bldB.addEventListener("click", function () {
+        P.bld = !P.bld; bldOn(P.bld); savePrefs({ bld: P.bld });
+        clearTimeout(hintT);
+        if (P.bld && gl.getZoom() < BLD_Z) { say("Buildings appear when you zoom in close."); hintT = setTimeout(function () { say(""); }, 2600); }
+      });
       var needle = box.querySelector(".o3-needle"), tilt = box.querySelector(".o3-tilt input"), tOut = box.querySelector(".o3-tilt output"), ex = box.querySelector(".o3-ex"), sc = box.querySelector(".o3-scale");
       function paint() {
         var b = gl.getBearing(), p = gl.getPitch();
@@ -412,8 +486,8 @@
       /* it opens looking straight down, where the flat map's pictures are already in this browser, so something shows at
          once; then it tilts to your angle and the ground rises while the rest loads */
       var tilted = false;
-      function tiltIn() { if (tilted || dead) return; tilted = true; if (P.pitch > 0 && gl.getPitch() < 1) gl.easeTo({ pitch: P.pitch, duration: 1400 }); }
-      gl.once("idle", tiltIn); setTimeout(tiltIn, 2500);
+      function tiltIn() { if (tilted || dead) return; tilted = true; if (P.pitch > 0 && gl.getPitch() < 1) gl.easeTo({ pitch: P.pitch, duration: 1000 }); }
+      gl.once("load", function () { setTimeout(tiltIn, 250); }); setTimeout(tiltIn, 1500);
       progress(gl, box.querySelector(".o3-load"), function () { return dead; });
       /* credits sit behind an (i) button, so they never cover the scale bar and tilt slider */
       var cr = box.querySelector(".o3-cr"), crb = box.querySelector(".o3-crb");
@@ -472,10 +546,11 @@
   /* ---------- look ---------- */
   var st = D.createElement("style");
   st.textContent =
-    ".o3s{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 22px 5px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25)}" +
+    ".o3s{background:rgba(255,255,255,.82);border-radius:6px;padding:3px 8px 5px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;color:#212529;box-shadow:0 1px 4px rgba(0,0,0,.25)}" +
     ".o3s:empty{display:none}.o3s:focus-visible{outline:2px solid #4dabf7}" +
-    ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 6px 2px 0}" +
-    ".o3s-t span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.o3s-t span:first-child{transform:none}.o3s-t span:last-child{transform:translateX(-8px)}" +
+    /* the box grows past the bar end by room for half the last number and its unit, so "600 km" stays inside it */
+    ".o3s-t{position:relative;height:15px;font:600 11.5px/15px system-ui,-apple-system,sans-serif;margin:0 0 2px 0;padding-right:3.4em}" +
+    ".o3s-t span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.o3s-t span:first-child{transform:none}.o3s-t span b{position:absolute;left:100%;font-weight:inherit;padding-left:.3em}" +
     ".o3s-b{display:flex;height:7px;border:1.5px solid #343a40;border-radius:5px;overflow:hidden;box-sizing:content-box}" +
     ".o3s-b i{flex:1}.o3s-b i:nth-child(odd){background:#495057}.o3s-b i:nth-child(2){background:#f1f3f5}" +
     ".o3s small{display:block;font:10px/1.2 system-ui,sans-serif;color:#495057;margin-top:2px}" +
@@ -495,6 +570,7 @@
     "#o3d .o3-b:focus-visible{outline:2px solid #4dabf7;outline-offset:1px}#o3d .o3-2d{background:#0b7285;color:#fff}" +
     "#o3d .o3-cmp{padding:0;background:none;box-shadow:none;border-radius:50%}#o3d .o3-cmp svg{display:block;transition:transform .15s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}" +
     "#o3d .o3-zi,#o3d .o3-zo{font-size:22px;font-weight:500}#o3d .o3-ex{font-size:12.5px}" +
+    "#o3d .o3-bld{display:flex;align-items:center;justify-content:center;color:#adb5bd}#o3d .o3-bld.on{color:#fff;background:#1c7ed6}" +
     "#o3d .o3-tilt{position:absolute;right:8px;bottom:34px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(20,24,28,.86);color:#f1f3f5;border-radius:10px;padding:6px 10px;font:600 12.5px/1 system-ui,sans-serif}" +
     "#o3d .o3-tilt label{display:flex;align-items:center;gap:8px}#o3d .o3-tilt input{width:130px;accent-color:#15aabf;margin:0;height:28px}#o3d .o3-tilt output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}" +
     "#o3d .o3-scale{position:absolute;left:8px;bottom:34px;z-index:2}" +

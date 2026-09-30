@@ -50,5 +50,24 @@ for (const bm of ["grey", "sat", "hybrid", "clarity", "topo", "streets", "s2", "
   console.log(`${ok ? "OK  " : "BAD "} ${bm}: dem ${JSON.stringify(dem)} rasters ${JSON.stringify(Object.fromEntries(rs))} urls ${JSON.stringify(r.urls)} note "${r.msg}" errors ${JSON.stringify(errs.slice(0, 2))}`);
   await ctx.close();
 }
+// 3D buildings over central Bangkok and Makati, satellite base map
+for (const [name, lat, lon] of [["bangkok", 13.7245, 100.5335], ["makati", 14.5547, 121.0244]]) {
+  const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1280, height: 800 } });
+  await ctx.addInitScript(() => { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: "sat" })); });
+  const p = await ctx.newPage();
+  await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
+  await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(3000);
+  await p.evaluate(([lat, lon]) => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([lat, lon], 13, { animate: false }); window.OSAP_3D.open(); }, [lat, lon]);
+  await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.getLayer("bld"), null, { timeout: 30000 }).catch(() => {});
+  await p.evaluate(([lat, lon]) => { const gl = window.OSAP_3D.gl; window.__b = { ok: 0, err: 0 }; gl.on("data", (e) => { if (e.sourceId === "bld" && e.tile && e.dataType === "source") window.__b.ok++; }); gl.on("error", (e) => { if (e.sourceId === "bld") { window.__b.err++; window.__b.msg = String(e.error && e.error.message); } });
+    gl.jumpTo({ center: [lon, lat], zoom: 15.6, pitch: 62, bearing: -30 }); }, [lat, lon]);
+  await p.waitForTimeout(15000);
+  const r = await p.evaluate(() => ({ t: window.__b, drawn: window.OSAP_3D.gl.queryRenderedFeatures({ layers: ["bld"] }).length }));
+  await p.screenshot({ path: `probe-out/3d-buildings-${name}.png` });
+  const ok = r.drawn > 50 && r.t.err === 0;
+  if (!ok) bad++;
+  console.log(`${ok ? "OK  " : "BAD "} buildings ${name}: ${r.drawn} drawn, tiles ${JSON.stringify(r.t)}`);
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(bad ? bad + " base maps did not load in 3D" : "every base map loaded in 3D");
