@@ -13,6 +13,7 @@ import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
+import { dedupeStories } from "./news_dedupe.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 25, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
@@ -168,11 +169,11 @@ if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ish
 const OFFICIAL_EXTRA = 20;
 const share = (cc) => (focus[cc] && focus[cc].per_run) || (cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
 for (const cc of Object.keys(items)) {
-  const seen = new Set();
   // official sources (tier "official": a ministry, coast guard, disaster agency) post a few items a day, often dated by day only,
   // so busy outlets must not push them out: up to OFFICIAL_EXTRA of theirs are kept beyond the country's share.
   let extra = 0;
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1))
+  // one copy per story (tools/news_dedupe.mjs): the same article under another link, or the same headline within 3 days
+  items[cc] = dedupeStories(items[cc].sort((a, b) => (b.date > a.date ? 1 : -1)))
     .filter((i, k) => k < share(cc) || (i.tier === "official" && extra++ < OFFICIAL_EXTRA));
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
