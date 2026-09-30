@@ -1,0 +1,123 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:NO</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:04.739927Z</updated>
+  <entry>
+    <cap:polygon>64.1828,9.4457 63.9943,10.0302 64.147,10.2257 64.2737,10.3815 64.4067,10.5937 64.6077,10.9382 64.7582,11.2387 65,10.567 64.9193,10.4843 64.834,10.4182 64.7883,10.4027 64.7618,10.3462 64.629,10.0647 64.4955,9.7858 64.3615,9.5098 64.2268,9.2412 64.1828,9.4457 64.1828,9.4457</cap:polygon>
+    <link title="Froeya - Roervik" href="https://meteoalarm.org?polygon=b127753c-3b6a-4e47-94f1-acadf3bf5d9e,1,0,1" hreflang="en"/>
+    <cap:areaDesc>Froeya - Roervik</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T15:03:06+00:00</cap:sent>
+    <cap:expires>2026-09-30T14:00:00+00:00</cap:expires>
+    <cap:onset>2026-09-30T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20260929145936.020</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b127753c-3b6a-4e47-94f1-acadf3bf5d9e"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T15:03:06Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b127753c-3b6a-4e47-94f1-acadf3bf5d9e?index_info=1&amp;index_area=0&amp;index_polygon=1</id>
+    <title>Yellow Wind Warning issued for Norway - Froeya - Roervik</title>
+    <updated>2026-09-29T15:03:06Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>63.7878,8.1965 63.5922,8.5632 63.68,9.0648 63.7733,9.5882 63.879,9.8772 63.9943,10.0302 64.1827,9.4457 64.227,9.2363 64.1618,9.0593 64.0453,8.7472 63.9213,8.4228 63.7878,8.1965 63.7878,8.1965</cap:polygon>
+    <link title="Froeya - Roervik" href="https://meteoalarm.org?polygon=b127753c-3b6a-4e47-94f1-acadf3bf5d9e,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Froeya - Roervik</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T15:03:06+00:00</cap:sent>
+    <cap:expires>2026-09-30T14:00:00+00:00</cap:expires>
+    <cap:onset>2026-09-30T04:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20260929145936.020</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b127753c-3b6a-4e47-94f1-acadf3bf5d9e"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T15:03:06Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b127753c-3b6a-4e47-94f1-acadf3bf5d9e?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Froeya - Roervik</title>
+    <updated>2026-09-29T15:03:06Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>70.3497,30.0332 70.4225,31.1445 70.7112,30.1582 71.1057,28.2377 70.7442,27.6212 70.7332,28.1832 70.6832,28.7167 70.55,29.4667 70.3497,30.0332 70.3497,30.0332</cap:polygon>
+    <link title="Slettnes lighthouse - Vardoe" href="https://meteoalarm.org?polygon=fd8b6e54-bb5b-4600-838d-39d7ea42efd9,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Slettnes lighthouse - Vardoe</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T14:28:51+00:00</cap:sent>
+    <cap:expires>2026-09-30T04:00:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20260929142308.080</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/fd8b6e54-bb5b-4600-838d-39d7ea42efd9"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T14:28:51Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/fd8b6e54-bb5b-4600-838d-39d7ea42efd9?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Slettnes lighthouse - Vardoe</title>
+    <updated>2026-09-29T14:28:51Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>58.2,6.3025 58.3058,6.4088 58.3302,6.3185 58.3592,6.2137 58.3988,6.0827 58.4442,5.9707 58.4987,5.8422 58.5687,5.6927 58.6587,5.5955 58.6458,5.5248 58.5455,5.632 58.5447,5.633 58.5432,5.635 58.5157,5.6767 58.5152,5.6777 58.4185,5.8387 58.4178,5.8398 58.4118,5.8508 58.411,5.8527 58.3112,6.0673 58.2,6.3025 58.2,6.3025</cap:polygon>
+    <link title="Aana-Sira - Obrestad" href="https://meteoalarm.org?polygon=b592ece3-e223-4000-af54-043b728a24e2,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Aana-Sira - Obrestad</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T14:04:20+00:00</cap:sent>
+    <cap:expires>2026-09-30T13:00:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.578.0.20260929140400.054</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b592ece3-e223-4000-af54-043b728a24e2"/>
+    <link title="Norway" rel="related" href="https://meteoalarm.org?region=NO" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T14:04:20Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-norway/b592ece3-e223-4000-af54-043b728a24e2?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Norway - Aana-Sira - Obrestad</title>
+    <updated>2026-09-29T14:04:20Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>58.6458,5.5247 58.6587,5.5955 58.712,5.5587 58.8212,5.5608 58.9027,5.579 58.9967,5.5703 59.0647,5.5097 59.1192,5.3882 59.1532,5.2727 59.1922,5.227 59.2662,5.2057 59.3467,5.1937 59.298,4.8173 59.2883,4.8125 59.2878,4.8122 59.286,4.8117 59.2843,4.8115 59.2825,4.8118 59.2697,4.8148 59.2693,4.8148 59.2677,4.8155 59.266,4.8167 59.2643,4.818 59.2627,4.8197 59.2615,4.8213 59.2612,4.8217 59.2597,4.8238 59.2583

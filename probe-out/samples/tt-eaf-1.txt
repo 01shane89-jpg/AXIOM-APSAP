@@ -1,0 +1,7 @@
+https://eastasiaforum.org/robots.txt
+User-agent: *
+Disallow: /wp-admin/
+Disallow: /index.php?=
+Allow: /wp-admin/admin-ajax.php
+
+Sitemap: https://eastasiaforum.org/sitemap_index.xml

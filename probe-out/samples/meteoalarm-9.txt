@@ -1,0 +1,125 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FI</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:40.941660Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI809</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI809" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Strong wind advisory</cap:event>
+    <cap:sent>2026-09-29T02:08:11+00:00</cap:sent>
+    <cap:expires>2026-09-29T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:08:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:08:11+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.260929020811.nDKGJf1mdM6KTLWGVyVw</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T02:08:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47?index_info=2&amp;index_area=0&amp;index_geocode=7</id>
+    <title>Yellow Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</title>
+    <updated>2026-09-29T02:08:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI810</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI810" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Strong wind advisory</cap:event>
+    <cap:sent>2026-09-29T02:08:11+00:00</cap:sent>
+    <cap:expires>2026-09-29T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:08:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:08:11+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.260929020811.nDKGJf1mdM6KTLWGVyVw</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T02:08:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47?index_info=2&amp;index_area=0&amp;index_geocode=6</id>
+    <title>Yellow Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</title>
+    <updated>2026-09-29T02:08:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI801</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI801" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Strong wind advisory</cap:event>
+    <cap:sent>2026-09-29T02:08:11+00:00</cap:sent>
+    <cap:expires>2026-09-29T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:08:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:08:11+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.260929020811.nDKGJf1mdM6KTLWGVyVw</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T02:08:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/35954b96-1e5f-428c-a120-611d24a01c47?index_info=2&amp;index_area=0&amp;index_geocode=5</id>
+    <title>Yellow Wind Warning issued for Finland - Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</title>
+    <updated>2026-09-29T02:08:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI802</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI802" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren itäosa, Pohjois-Itämeren länsiosa, Saaristomeri, Selkämeren eteläosa, Selkämeren pohjoisosa, Merenkurkku, Perämeren eteläosa, Perämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Strong wind advisory</cap:event>
+    <cap:sent>2026-09-29T02:08:11+00:00</cap:sent>
+    <cap:expires>2026-09-29T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T02:08:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T02:08:11+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>

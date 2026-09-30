@@ -1,0 +1,171 @@
+https://www.chathamhouse.org/
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    
+    <meta charset="utf-8" />
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WJHKX9N');
+</script>
+<script>if ("PerformanceObserver" in window && "PerformancePaintTiming" in window) { // Feature detection to ensure safe usage
+  const observer = new PerformanceObserver(function(list) {
+    for (i = 0; i < list.getEntries().length; i++) {
+      const entry = list.getEntries()[i];
+      // `name` will be either 'first-paint' or 'first-contentful-paint'.
+      const metricName = entry.name;
+      const time = Math.round(entry.startTime + entry.duration);
+
+      dataLayer.push({
+        'POmetricName': metricName,
+        'POtime': time,
+        'event': 'performanceObserver'
+      });
+    }
+  });
+  observer.observe({entryTypes: ['paint']});
+}
+</script>
+<meta name="description" content="Chatham House, the Royal Institute of International Affairs, is an independent policy institute based in London. Discover what we do, visit our website today." />
+<link rel="canonical" href="https://www.chathamhouse.org/" />
+<link rel="image_src" href="https://www.chathamhouse.org/sites/default/files/2019-10/Fallback.png" />
+<meta property="og:site_name" content="Chatham House – International Affairs Think Tank" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.chathamhouse.org/" />
+<meta property="og:title" content="International Affairs Think Tank | Chatham House" />
+<meta property="og:description" content="Chatham House, the Royal Institute of International Affairs, is an independent policy institute based in London. Discover what we do, visit our website today." />
+<meta property="og:image" content="https://www.chathamhouse.org/sites/default/files/2019-10/Fallback.png" />
+<meta property="og:image:secure_url" content="https://www.chathamhouse.org/sites/default/files/2019-10/Fallback.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="501" />
+<meta property="og:image:height" content="137" />
+<meta property="og:image:alt" content="An image of the Chatham House logo" />
+<meta property="og:updated_time" content="2026-09-29T12:15:04Z" />
+<meta property="fb:pages" content="202798122688" />
+<meta property="fb:app_id" content="666440450109119" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:description" content="Chatham House, the Royal Institute of International Affairs, is an independent policy institute based in London. Discover what we do, visit our website today." />
+<meta name="twitter:site" content="@ChathamHouse" />
+<meta name="twitter:title" content="International Affairs Think Tank | Chatham House" />
+<meta name="twitter:creator" content="@ChathamHouse" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "NGO",
+            "additionalType": "NewsMediaOrganization",
+            "@id": "https://www.chathamhouse.org/#organisation",
+            "description": "Chatham House, the Royal Institute of International Affairs, is an independent policy institute based in London. Discover what we do, visit our website today.",
+            "name": "Chatham House – International Affairs Think Tank",
+            "sameAs": [
+                "https://www.facebook.com/ChathamHouse",
+                "https://twitter.com/ChathamHouse",
+                "https://www.instagram.com/chathamhouse_org/",
+                "https://www.youtube.com/user/ChathamHouse10",
+                "https://www.linkedin.com/company/473772",
+                "https://medium.com/chatham-house"
+            ],
+            "url": "https://www.chathamhouse.org/",
+            "telephone": "+442079575700",
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+442079575700",
+                "email": "contact@chathamhouse.org",
+                "faxnumber": "+442079575710",
+                "url": "https://www.chathamhouse.org/"
+            },
+            "image": {
+                "@type": "ImageObject",
+                "url": "https://www.chathamhouse.org/themes/custom/numiko/logo/chatham-house-logo.png",
+                "width": "501",
+                "height": "137"
+            },
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.chathamhouse.org/themes/custom/numiko/logo/chatham-house-logo.png",
+                "width": "501",
+                "height": "137"
+            },
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "10 St James\u0027s Square",
+                "addressLocality": "London",
+                "addressRegion": "Greater London",
+                "postalCode": "SW1Y 4LE",
+                "addressCountry": "UK"
+            },
+            "ethicsPolicy": "https://www.chathamhouse.org/about-us/our-editorial-standards",
+            "founder": [
+                {
+                    "@type": "Person",
+                    "name": "Lionel Curtis"
+                },
+                {
+                    "@type": "Person",
+                    "name": "Robert Cecil"
+                },
+                {
+                    "@type": "Person",
+                    "name": "Edward Grey"
+                },
+                {
+                    "@type": "Person",
+                    "name": "Arthur J. Balfour"
+                },
+                {
+                    "@type": "Person",
+                    "name": "John R. Clynes"
+                },
+                {
+                    "@type": "Person",
+                    "name": "G. M. Gathorne–Hardy"
+                }
+            ],
+            "foundingDate": "1920-07-05",
+            "foundingLocation": {
+                "@type": "City",
+                "name": "London"
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.chathamhouse.org/chatham-house"
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://www.chathamhouse.org/",
+            "name": "Chatham House – International Affairs Think Tank",
+            "url": "https://www.chathamhouse.org/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://www.chathamhouse.org//search?search-query={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.chathamhouse.org/#organisation",
+                "name": "Chatham House"
+            }
+        }
+    ]
+}</script>
+
+    <title>Chatham House – International Affairs Think Tank</title>
+
+    <link rel="preload" href="/themes/custom/numiko/dist/font/CalibreWeb-Bold.woff2" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="/themes/custom/numiko/dist/font/CalibreWeb-Regular.woff2" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="/themes/custom/numiko/dist/font/CalibreWeb-Semibold.woff2" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="/themes/custom/numiko/dist/font/CharterITCWeb-Regular.woff2" as="font" crossorigin="anonymous" />
+
+    <link rel="stylesheet" media="all" href="/sites/defau

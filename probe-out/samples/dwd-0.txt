@@ -1,0 +1,2 @@
+https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json
+warnWetter.loadWarnings({"time":1790729285000,"warnings":{},"vorabInformation":{},"copyright":"Copyright Deutscher Wetterdienst"});

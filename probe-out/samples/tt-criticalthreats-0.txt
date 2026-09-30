@@ -1,0 +1,86 @@
+https://www.criticalthreats.org/
+<!DOCTYPE html>
+<html>
+	<head>
+		
+<title>Critical Threats</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="KCjG7WjPgPLCVhp9N/rHy+eD/w7aweT2J9UfBuX83tHSwERuLwDNQwVYC6V34qlEHWiIZ4nwnyCTSekB9bVi+A==" />
+
+<meta name="google-site-verification" content="sK6K9CgpRCXrPjmshyHtu77__8FzbA4Fu4vMKJTVlps" />
+
+<meta property="og:url" content="https://www.criticalthreats.org/"/>
+<meta property="og:site_name" content="Critical Threats"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@criticalthreats">
+<meta name="twitter:creator" content="@criticalthreats">
+
+
+
+<meta property="og:title" content="Critical Threats"/>
+<meta name="twitter:title" content="Critical Threats">
+
+<script>
+//<![CDATA[
+window.ajax_url = 'https://www.criticalthreats.org'
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.api_url = 'https://api.criticalthreats.org/v1'
+//]]>
+</script>
+<script>
+//<![CDATA[
+window._token = 'tkf8ZAQ4MCryfu6nGoKc1gIb7DTl1M5tquu4b8UtRM1Mr37nQ/d9mzVw/39amvJZ+PCbXbbltbsed05o1WT45A=='
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+window.signed_in_name = ''
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.signed_in = false
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.google_api = 'AIzaSyBhkXAN6iJYV2b99-3PqPeTQwH8FVQ9doY'
+//]]>
+</script>
+
+<script src="//use.typekit.net/qvb2wjj.js"></script>
+<script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+<style media="screen">
+.wf-loading {
+	visibility: hidden;
+}
+
+.wf-active {
+	visibility: visible;
+}
+
+.wf-inactive {
+/* styles to use when web fonts are inactive */
+}
+</style>
+
+<link rel="shortcut icon" href="/assets/favicon-2495c78b0f2e2313807ff32949366c31088aa37a486f5bf2d1fc40376be96f70.ico">
+
+<link rel="stylesheet" media="print" href="/assets/print-79871ea3afb99353343313cc631f524c4d2367e31e3f910491465fde6f06525f.css" />
+
+		<link rel="stylesheet" media="screen" href="/assets/home-8f8b00680c57623668f40f35639c7edd2cecaf19084f0add95cb00be0579ef99.css" />
+		<script src="/assets/home-head-d480ea1f1aa22789244b1fe64a61ac23c09d1d07012119ec74cfead156b09b78.js"></script>
+	</head>
+	<body class="front"  ng-app="MainApp" ng-controller="BaseController">
+		<div ng-class="{'aside-open': mobileHeaderDelegate.isOpen()}" class="view-wrapper" id="body-wrapper">
+			<script>
+	window.TOPIC_HASH = [{"id":"org_576a8ccd8043a","title":"Basij","slug":"basij","label":"ORGANIZATION"},{"id":"org_576a8ccd8052d","title":"Hamas","slug":"hamas","label":"ORGANIZATION"},{"id":"org_576a8ccd8061f","title":"Hezbollah","slug":"hezbollah","label":"ORGANIZATION"},{"id":"org_576a8ccd806ad","title":"IRGC","slug":"irgc","label":"ORGANIZATION"},{"id":"org_576a8ccd80755","title":"Quds Force","slug":"quds-force","label":"ORGANIZATION"},{"id":"org_577f2ba1e660f","title":"Jabhat al Nusra (JN)","slug":"jabhat-al-nusra-jn","label":"ORGANIZATION"},{"id":"org_577f4afb9d780","title":"al Qaeda","slug":"al-qaeda","label":"ORGANIZATION"},{"id":"org_577faa5f772de","title":"Tehrik-e-Taliban Pakistan (TTP)","slug":"tehrik-e-taliban-pakistan-ttp","label":"ORGANIZATION"},{"id":"org_577fbc6f6faa5","title":"Ansar al Din","slug":"ansar-al-din","label":"ORGANIZATION"},{"id":"org_577fc1e683dfd","title":"Gulf Cooperation Council","slug":"gulf-cooperation-council","label":"ORGANIZATION"},{"id":"org_577fc50156f71","title":"AQAP","slug":"al-qaeda-in-the-arabian-peninsula","label":"ORGANIZATION"},{"id":"org_578020e172170","title":"Hizb al Islam","slug":"hizb-al-islam","label":"ORGANIZATION"},{"id":"org_57811e94b027b","title":"Khorasan Group","slug":"khorasan-group","label":"ORGANIZATION"},{"id":"org_578122f18442e","title":"Libyan National Army","slug":"libyan-national-army","label":"ORGANIZATION"},{"id":"org_5781230faf0c9","title":"Afghan National Security Forces","slug":"afghan-national-security-forces","label":"ORGANIZATION"},{"id":"org_578126c25afa0","title":"Houthi Movement","slug":"al-houthi-movement","label":"ORGANIZATION"},{"id":"org_57813d24c927d","title":"General People’s Congress","slug":"general-peoples-congress-yemen","label":"ORGANIZATION"},{"id":"org_57813d343dfdd","title":"Ansar al Sharia Tunisia","slug":"ansar-al-sharia-tunisia","label":"ORGANIZATION"},{"id":"org_57814e181267f","title":"Afghan Taliban","slug":"afghan-taliban","label":"ORGANIZATION"},{"id":"org_57815416bde98","title":"Ansaru","slug":"ansaru","label":"ORGANIZATION"},{"id":"org_57827b9d938d8","title":"National Front for the Liberation of Azawad","slug":"national-front-for-the-liberation-of-azawad","label":"ORGANIZATION"},{"id":"org_5782b32f96788","title":"The Islamic State","slug":"islamic-state-of-iraq-and-al-sham-isis","label":"ORGANIZATION"},{"id":"org_5782dd7e14f96","title":"Jaish-e-Mohammad","slug":"jaish-e-mohammad","label":"ORGANIZATION"},{"id":"org_5783939019641","title":"Libya Dawn","slug":"libya-dawn","label":"ORGANIZATION"},{"id":"org_578399aa29aa6","title":"MINUSMA","slug":"minusma","label":"ORGANIZATION"},{"id":"org_57839a9e56a60","title":"Al Shabaab","slug":"al-shabaab","label":"ORGANIZATION"},{"id":"org_5783b3c836a3e","title":"Ansar al Sharia Libya","slug":"ansar-al-sharia-libya","label":"ORGANIZATION"},{"id":"org_5783df1e27bfe","title":"al Qaeda in the Indian Subcontinent","slug":"al-qaeda-in-the-indian-subcontinent","label":"ORGANIZATION"},{"id":"org_5783f7052d258","title":"Arab Movement of Azawad (Rebel)","slug":"arab-movement-of-azawad-rebel","label":"ORGANIZATION"},{"id":"org_5784040ce97ad","title":"ATMIS","slug":"ATMIS","label":"ORGANIZATION"},{"id":"org_57840c282c478","title":"Coordination of the Movement of Azawad (CMA)","slug":"coordination-of-the-movement-of-azawad-cma","label":"ORGANIZATION"},{"id":"org_57840d09689ec","title":"Southern Movement","slug":"southern-movement","label":"ORGANIZATION"},{"id":"org_57840d4da99a6","title":"Boko Haram (ISIS Wilayat Gharb Ifriqiyya)","slug":"boko-haram-isis-wilayat-gharb-ifriqiyya","label":"ORGANIZATION"},{"id":"org_57852125073ee","title":"AQIM","slug":"al-qaeda-in-the-islamic-maghreb","label":"ORGANIZATION"},{"id":"org_57853cf378004","title":"Ahlu Sunna wa al Jama’a (Somalia)","slug":"ahlu-sunna-wa-al-jamaa","label":"ORGANIZATION"},{"id":"org_588f6fc5da95b","title":"al Qaeda in Iraq","slug":"al-qaeda-in-iraq-5b1ff4c8bfef5","label":"ORGANIZATION"},{"id":"org_58b9dd95e0901","title":"ISIS in Libya","slug":"isis-in-libya","label":"ORGANIZATION"},{"id":"org_58b9df3064f36","title":"Petroleum Facilities Guard","slug":"petroleum-facilities-guard","label":"ORGANIZATION"},{"id":"org_58c7e729b4f33","title":"ISIS in Yemen","slug":"isis-in-yemen","label":"ORGANIZATION"},{"id":"org_67b6599478dd6","title":"M23","slug":"m23","label":"ORGANIZATION"},{"id":"org_59f0bb66449f2","title":"Setad","slug":"setad","label":"ORGANIZATION"},{"id":"org_67d2fe009ae95","title":"Democratic Forces for the Liberation of Rwanda (FDLR) ","slug":"democratic-forces-for-the-liberation-of-rwanda-fdlr","label":"ORGANIZATION"},{"id":"org_5a04bbc37a666","title":"Kurdistan Regional Government","slug":"kurdistan-regional-government","label":"ORGANIZATION"},{"id":"org_5a2071b70cf85","title":"Jubilee Party","slug":"jubilee-party","label":"ORGANIZATION"},{"id":"org_5a2078cf9e12c","title":"National Super Alliance","slug":"national-super-alliance","label":"ORGANIZATION"},{"id":"org_5a207ae351bf3","title":"Jama’at Nusrat al Islam w'al Muslimeen","slug":"jamaa-nusrat-al-islam-wal-muslimeen","label":"ORGANIZATION"},{"id":"org_5fce6efb0d54e","title":"Iranian Artesh","slug":"iranian-artesh","label":"ORGANIZATION"},{"id":"org_5fdd1c0762916","title":"IRGC Ground Forces","slug":"irgc-ground-forces-5fdd1c0762955","label":"ORGANIZATION"},{"id":"org_67eebe4bcfd66","title":"ADF/ISCAP","slug":"adf-iscap","label":"ORGANIZATION"},{"id":"org_67e2c8d490b49","title":"Hayat Tahrir al-Sham (HTS) ","slug":"hayat-tahrir-al-sham-hts","label":"ORGANIZATION"},{"id":"org_61857cd54a2d8","title":"Southern Transitional Council","

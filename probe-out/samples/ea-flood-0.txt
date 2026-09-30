@@ -1,0 +1,104 @@
+https://environment.data.gov.uk/flood-monitoring/id/floods
+{ 
+  "@context" : "http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld" ,
+  "meta" : { 
+    "publisher" : "Environment Agency" ,
+    "licence" : "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" ,
+    "documentation" : "http://environment.data.gov.uk/flood-monitoring/doc/reference" ,
+    "version" : "0.9" ,
+    "comment" : "Status: Beta service" ,
+    "hasFormat" : [ "http://environment.data.gov.uk/flood-monitoring/id/floods.csv", "http://environment.data.gov.uk/flood-monitoring/id/floods.rdf", "http://environment.data.gov.uk/flood-monitoring/id/floods.ttl", "http://environment.data.gov.uk/flood-monitoring/id/floods.html" ]
+  }
+   ,
+  "items" : [ { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/111WATCHXH" ,
+    "description" : "Christchurch Harbour" ,
+    "eaAreaName" : "Wessex" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/111WATCHXH" ,
+      "county" : "Bournemouth, Christchurch and Poole" ,
+      "notation" : "111WATCHXH" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/111WATCHXH/polygon" ,
+      "riverOrSea" : "English Channel"
+    }
+     ,
+    "floodAreaID" : "111WATCHXH" ,
+    "isTidal" : true ,
+    "message" : "High tides this evening may lead to flooding. \nFlooding is possible from 9:00PM to 1:00AM on the 29 September 2026. \nAreas most at risk include Christchurch Harbour and tidal stretches of the Lower Stour and Avon. The detailed tidal forecast for those who use it is for a peak level at Christchurch Harbour of 1.26mAODN at 11:00PM, 29 September 2026, with force 4 South Easterly winds. (mAODN is height above average sea level.). After this high tide, conditions become more settled. \nWe are closing flood gates and closely monitoring the situation. \nAvoid coastal roads, footpaths and carparks, which may be flooded . \nThis message will be updated by 11:00AM on 30 September 2026 or as the situation changes.\n\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-09-29T11:14:00" ,
+    "timeRaised" : "2026-09-29T11:14:49" ,
+    "timeSeverityChanged" : "2026-09-29T11:14:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/113WACT1B" ,
+    "description" : "South Devon coast from Start Point to Dawlish Warren" ,
+    "eaAreaName" : "Devon, Cornwall and the Isles of Scilly" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/113WACT1B" ,
+      "county" : "Devon, Torbay" ,
+      "notation" : "113WACT1B" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/113WACT1B/polygon" ,
+      "riverOrSea" : "South Devon Coast"
+    }
+     ,
+    "floodAreaID" : "113WACT1B" ,
+    "isTidal" : true ,
+    "message" : "High tides this evening may lead to flooding. \nFlooding is possible Flooding is possible 2 hours either side of high tides on Tuesday evening and Wednesday morning. \nAreas particularly at risk include Torbay, Teignmouth, Beesands, Torcross, Slapton and Dawlish. Locations most affected will be coastal roads and footpaths. The high tide at Teignmouth on Tuesday evening is at 9:15pm, times of high water will vary along the coast. The forecast total high tide level is 2.62mAOD, which is 0.43 metres above tide table level. Strong force 5-6, south easterly winds and offshore wave heights of over 1m are forecast over the high tide. Similar coastal conditions are expected for Wednesday morning's high tide at 9:30am, with a slightly lower tide level. \nWe are closely monitoring the situation . \nTake care and avoid walking, cycling or driving through flood water . \nThis message will be updated by 3:00PM on 30 September 2026 or as the situation changes.\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-09-29T14:52:00" ,
+    "timeRaised" : "2026-09-29T14:52:45" ,
+    "timeSeverityChanged" : "2026-09-28T14:43:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/114WACT1T1BA00" ,
+    "description" : "South Cornwall coast from Lizard Point to Gribbin Head excluding the Tidal Fal Estuary" ,
+    "eaAreaName" : "Devon, Cornwall and the Isles of Scilly" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/114WACT1T1BA00" ,
+      "county" : "Cornwall" ,
+      "notation" : "114WACT1T1BA00" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/114WACT1T1BA00/polygon" ,
+      "riverOrSea" : "South Cornwall Coast"
+    }
+     ,
+    "floodAreaID" : "114WACT1T1BA00" ,
+    "isTidal" : true ,
+    "message" : "High tides this evening may lead to flooding. \nFlooding is possible 2 hours either side of high tide on Tuesday evening (today) at 19:33. \nAreas particularly at risk include low lying coastal communities including Cadgwith and Coverack, Porthallow, the tidal Helford Estuary, Maenporth and Swanpool, St.Mawes, East Portholland, Gorran Haven,  Portmellon, Mevagissey, Pentewan and Par.\n\nThe high tide at Falmouth on Tuesday is at 19:33, times of high water will vary along the coast.  Forecast total high tide level is 2.68mAOD. Expect tide levels along the coast to be between 0.42 and 0.47 metres above tide table level. Strong force 6 SE winds and offshore wave heights of over 1.7m are forecast over the high tide. \nWe are closely monitoring the situation . \nTake care and avoid walking, cycling or driving through flood water . \nThis message will be updated by 12:00PM on 30 September 2026 or as the situation changes.\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-09-29T11:39:00" ,
+    "timeRaised" : "2026-09-29T11:39:53" ,
+    "timeSeverityChanged" : "2026-09-29T11:39:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/114WACT1T1AA00" ,
+    "description" : "South Cornwall Coast from Lands End to Lizard Point" ,
+    "eaAreaName" : "Devon, Cornwall and the Isles of Scilly" ,
+    "eaRegionName" : "No longer used" ,
+    "floodArea" : { 
+      "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/114WACT1T1AA00" ,
+      "county" : "Cornwall" ,
+      "notation" : "114WACT1T1AA00" ,
+      "polygon" : "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/114WACT1T1AA00/polygon" ,
+      "riverOrSea" : "South Cornwall Coast"
+    }
+     ,
+    "floodAreaID" : "114WACT1T1AA00" ,
+    "isTidal" : true ,
+    "message" : "High tides and forecast weather conditions this evening may lead to flooding. \nFlooding is possible 2 hours either side of the high tide on 29/09/2026 \nLocations most affected will be coastal roads and footpaths.  Areas particularly at risk include Mousehole, Newlyn, Penzance, Longrock, Marazion, Praa Sands and Porthleven harbour.\nThe high tide at Newlyn on Tuesday is at 19:09, times of high water will vary along the coast.  Forecast total high tide level is 3.11 mAOD. Expect tide levels along the coast to be between 0.42 and  0.47 metres above tide table level. Near gale Force 7 southerly winds and offshore wave heights of over 3m are forecast over the high tide.\n\nCoastal conditions should ease for Wednesday morning's high tide. \nWe are closely monitoring the situation . \nTake care and avoid walking, cycling or driving through flood water . \nThis message will be updated by 12:00PM on 30 September 2026 or as the situation changes.\n" ,
+    "severity" : "Flood alert" ,
+    "severityLevel" : 3 ,
+    "timeMessageChanged" : "2026-09-29T11:42:00" ,
+    "timeRaised" : "2026-09-29T11:42:46" ,
+    "timeSeverityChanged" : "2026-09-29T11:42:00"
+  }
+  , { 
+    "@id" : "http://environment.data.gov.uk/flood-monitoring/id/floods/113WACT1D" ,
+    "description" : "South Devon Estuaries" ,
+  

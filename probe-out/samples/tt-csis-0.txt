@@ -1,0 +1,198 @@
+https://www.csis.org/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.csis.org/">
+  <channel>
+    <title>CSIS</title>
+    <link>https://www.csis.org/</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>The Bio-Pharma Industry and Society</title>
+  <link>https://www.csis.org/events/bio-pharma-industry-and-society</link>
+  <description>&lt;span&gt;The Bio-Pharma Industry and Society&lt;/span&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Listing Summary&lt;/div&gt;
+              &lt;div&gt;&lt;p&gt;Please join the CSIS Global Health Policy Center on March 17, from 10:00am – 11:30am, for an exploration of how private bio-pharmaceutical firms can better support the critically important societal goals of improved affordability, access, quality, and innovation.&lt;/p&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+&lt;span&gt;&lt;span&gt;Drupal Admin&lt;/span&gt;&lt;/span&gt;
+&lt;span&gt;&lt;time datetime="2016-03-03T15:36:33-05:00" title="Thursday, March 3, 2016 - 15:36"&gt;Thu, 03/03/2016 - 15:36&lt;/time&gt;
+&lt;/span&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Featured Image&lt;/div&gt;
+              &lt;div&gt;&lt;figure&gt;
+  
+  
+        
+  &lt;div&gt;
+    &lt;div class="visually-hidden"&gt;Image&lt;/div&gt;
+              &lt;div&gt;  &lt;img loading="lazy" src="https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/large/s3/event/160317_Bio-Pharma_Industry.jpg?VersionId=O3Rb3Z19_dNpJprUpJUQ4Eijhlpki3KQ&amp;amp;itok=8I79rKTx" width="480" height="320" alt="The Bio-Pharma Industry and Society"&gt;
+
+
+&lt;/div&gt;
+          &lt;/div&gt;
+
+
+          &lt;/figure&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Contributors&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.csis.org/people/j-stephen-morrison" hreflang="en"&gt;J. Stephen Morrison&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Downloads&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;article&gt;
+  
+      
+            &lt;div&gt;Download Transcript Here&lt;/div&gt;
+      
+  &lt;div&gt;
+    &lt;div class="visually-hidden"&gt;Document&lt;/div&gt;
+              &lt;div&gt;&lt;span class="file file--mime-application-pdf file--application-pdf"&gt;&lt;a href="https://csis-website-prod.s3.amazonaws.com/s3fs-public/event/160317_The_Bio-Pharma_Industry_and_Society_Transcript.pdf" type="application/pdf"&gt;160317_The_Bio-Pharma_Industry_and_Society_Transcript.pdf&lt;/a&gt;&lt;/span&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;/article&gt;
+&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Programs &amp;amp; Projects&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;article&gt;
+
+  
+      &lt;h2&gt;
+      &lt;a href="https://www.csis.org/programs/global-health-policy-center" rel="bookmark"&gt;&lt;span&gt;Global Health Policy Center&lt;/span&gt;
+&lt;/a&gt;
+    &lt;/h2&gt;
+    
+
+  
+  &lt;div&gt;
+    
+  &lt;div&gt;
+    &lt;div&gt;Parent&lt;/div&gt;
+              &lt;div&gt;&lt;a href="https://www.csis.org/global-development" hreflang="en"&gt;Global Development&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Featured Image&lt;/div&gt;
+              &lt;div&gt;220325_GHPC_Banner_0.jpg&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Listing Summary&lt;/div&gt;
+              &lt;div&gt;&lt;p&gt;CSIS’ Global Health Policy Center (GHPC) is the leading research institution focused on building bipartisan awareness and shaping policy debate about global health and its importance to U.S. national security&lt;/p&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Navigation&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/commissions"&gt;Commissions&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/topics"&gt;Topics&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/featured-projects"&gt;Featured Projects&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/analysis"&gt;Analysis&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/podcasts"&gt;Podcasts&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/events"&gt;Events&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/videos"&gt;Videos&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/staff-and-affiliates"&gt;Staff and Affiliates&lt;/a&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;a href="https://www.csis.org/programs/global-health-policy-center/archive"&gt;Archive&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;/div&gt;
+
+&lt;/article&gt;
+&lt;/div&gt;
+          &lt;div&gt;&lt;article&gt;
+
+  
+      &lt;h2&gt;
+      &lt;a href="https://www.csis.org/global-development" rel="bookmark"&gt;&lt;span&gt;Global Development&lt;/span&gt;
+&lt;/a&gt;
+    &lt;/h2&gt;
+    
+
+  
+  &lt;div&gt;
+    
+  &lt;div&gt;
+    &lt;div&gt;Featured Image&lt;/div&gt;
+              &lt;div&gt;hero-bg-human-security.jpg&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Listing Summary&lt;/div&gt;
+              &lt;div&gt;&lt;p&gt;CSIS’s Global Development Department is dedicated to strengthening U.S. national security and global prosperity through policies that promote human wellbeing and economic opportunity.&lt;/p&gt;
+&lt;p&gt;Our scholars conduct timely analysis and work directly with policymakers, industry leaders, and civil society to generate innovative solutions to today’s unprecedented&amp;nbsp;international development challenges.&lt;/p&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;/div&gt;
+
+&lt;/article&gt;
+&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Topics&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;a href="https://www.csis.org/topics/global-health" hreflang="en"&gt;Global Health&lt;/a&gt;&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Event Dates&lt;/div&gt;
+          &lt;div&gt;
+              &lt;div&gt;&lt;time datetime="2016-03-17T14:00:00Z"&gt;Thu, 03/17/2016 - 10:00&lt;/time&gt;
+ - &lt;time datetime="2016-03-17T15:30:00Z"&gt;Thu, 03/17/2016 - 11:30&lt;/time&gt;
+&lt;/div&gt;
+              &lt;/div&gt;
+      &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Featured Video&lt;/div&gt;
+              &lt;div&gt;&lt;article&gt;
+  
+      
+            &lt;div class="media-oembed-video"&gt;&lt;iframe src="https://www.csis.org/media/oembed?url=https%3A//www.youtube.com/watch%3Fv%3DqeaxZE24Zeo%26feature%3Dyoutu.be&amp;amp;max_width=691&amp;amp;max_height=414&amp;amp;hash=czsfU_1Tp9htNI5RbSNmoiMVOzospCEk8NZmxRDvNjw" width="691" height="389" class="media-oembed-content" loading="eager" title="The Bio-Pharma Industry and Society"&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+      
+  &lt;/article&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Enable Registration&lt;/div&gt;
+              &lt;div&gt;Off&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Display Event Menu Bar&lt;/div&gt;
+              &lt;div&gt;Off&lt;/div&gt;
+          &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;div&gt;Event Type&lt;/div&gt;
+              &lt;div&gt;&lt;a href="https://www.csis.org/taxonomy/term/3012" hreflang="en"&gt;Event&lt;/a&gt;&lt;/div&gt;
+          &lt;/div&gt;
+</description>
+  <pubDate>Thu, 03 Mar 2016 20:36:33 +0000</pubDate>
+    <dc:creator>Drupal Admin</dc:creator>
+    <guid isPermaLink="false">35175 at https://www.csis.org</guid>
+    </item>
+<item>
+  <title>The FY

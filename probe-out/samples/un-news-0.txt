@@ -1,0 +1,75 @@
+https://news.un.org/feed/subscribe/en/news/all/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://news.un.org/en/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:yandex="http://news.yandex.ru" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>UN News - Global perspective Human stories</title>
+    <link>https://news.un.org/en/</link>
+    <description><![CDATA[Global perspective Human stories]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://news.un.org/feed/subscribe/en/news/all/rss.xml"></atom:link>
+<image><url>https://news.un.org/en/themes/custom/un_base_theme/images/un-emblem-for-rss.png</url>
+<title>UN News</title>
+<link>https://news.un.org/en/</link>
+<description>Global perspective Human stories</description>
+</image>
+<generator>United Nations</generator>
+<lastBuildDate>Tue, 29 Sep 2026 17:00:13 -0400</lastBuildDate>
+<pubDate>Tue, 29 Sep 2026 08:00:00 -0400</pubDate>
+<item>
+  <title>World News in Brief: Deadly Myanmar strikes as Malaysia begins deportations, new emergency funding released, Gaza and West Bank update</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168488</link>
+  <description>The UN chief on Tuesday strongly condemned an airstrike that reportedly killed at least 50 people at a market in Myanmar’s Rakhine state and called for those responsible to be held to account.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Libraries/Production+Library/06-05-20-UNHCR-Rohingya-boat-people-bay-of-bengal-andaman-sea.jpg/image560x340cropped.jpg" length="51401" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168488</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Funding cuts put 8.3 million refugees at risk of losing vital assistance</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168486</link>
+  <description>Haji Mohammad Shafi spent 44 years in Pakistan before he was forced to leave. He sold everything he owned and returned to Afghanistan with his five children, arriving with almost nothing.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/09/29-09-2026-UNHCR-Burundi.jpg/image560x340cropped.jpg" length="34576" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168486</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Clean your plate – to reduce food loss and waste</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168485</link>
+  <description>Food waste is helping to fuel global warming, one half-eaten sandwich at a time.&amp;nbsp;</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/09/24-09-2026_Adobe_food-waste.jpg/image560x340cropped.jpg" length="47031" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168485</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>LIVE: Weighing nuclear risks amid rising tensions and war</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168483</link>
+  <description>Amid rising tensions, extreme weather impacts and strikes on nuclear infrastructure in war-torn Iran and Ukraine, UN Member States are returning to the core issue of disarmament on Tuesday, closing out the General Assembly’s High-Level Week with expected calls for greater safeguards.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Embargoed/12-08-2024-IAEA-Ukraine-Zaporizhzhya-01.jpg/image560x340cropped.jpg" length="45140" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168483</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Security Council LIVE: DRC peace deals fail to halt fighting as Ebola deepens crisis</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168482</link>
+  <description>The Security Council met in New York&amp;nbsp;on the Democratic Republic of the Congo (DRC) Tuesday, where clashes between Government forces and M23 rebels continue in the east despite a series of peace agreements. Ambassadors are likely to focus on ceasefire monitoring, rising tensions between the DRC and Rwanda, and the country’s worst Ebola outbreak on record, which has killed more than 3,900 people.&amp;nbsp;&amp;nbsp;</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/08/19-08-2026_yuan8.jpg/image560x340cropped.jpg" length="39577" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168482</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>DRC: Early access to care and oxygen decisive for Ebola patients’ survival – WHO</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168481</link>
+  <description>In the Democratic Republic of the Congo (DRC), health workers fighting the country’s largest-ever Ebola outbreak are struggling to overcome critical challenges to patient care, the UN World Health Organization (WHO) warned on Tuesday.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/09/21-09-2026_WHO_Africa-DRC_Vaccination_ERVEBO.jpg/image560x340cropped.jpg" length="37548" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/09/1168481</guid>
+                                              <pubDate>Tue, 29 Sep 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Yemen escalation fuels fears of further cholera, measles spread</title>
+  <link>https://news.un.org/feed/view/en/story/2026/09/1168480</link>
+  <description>Heavy fighting in Yemen is fuelling concerns of an uptick in cholera, measles and other preventable dise

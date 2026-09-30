@@ -1,0 +1,249 @@
+https://issafrica.org/
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- begin::Head -->
+<head>
+	<base href="">
+	<meta charset="utf-8" />
+	<title>Home | ISS Africa</title>
+	<meta name="description" content="Home">
+  <!-- <meta name="google-site-verification" content="" /> -->
+  <meta property="og:url" content="https://issafrica.org/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Home | ISS Africa"/>
+  <meta property="og:description" content="Home">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="csrf-token" content="lh2gqOyv-ftGgPwCnrmtSyQbtL2-vJFAJQyE">
+	<meta name="site_id" content="32bfe3a5-2e1c-4fca-acaf-ec44db90e3a6">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <meta name="msapplication-TileColor" content="#172859">
+  <meta name="theme-color" content="#172859">
+  <meta property="og:type" content= "website" />
+  <meta property="og:site_name" content="ISS Africa" />
+  <meta property="og:image" itemprop="image primaryImageOfPage" content="https://issafrica.org/web/img/social-banner.png">
+  <meta name="twitter:image" content="https://issafrica.org/web/img/social-banner.png">
+  <meta name="twitter:title" content="Home | ISS Africa"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+
+
+	<!--begin::Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <link href="/web/css/main.css" rel="stylesheet">
+  <link href="/web/css/mobile.css" rel="stylesheet">
+  <link href="/web/css/print.css" rel="stylesheet">
+
+	<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+
+	<!--end::Layout Skins -->
+	<link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4H6X47L22J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4H6X47L22J');
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5CDV5V6');</script>
+<!-- End Google Tag Manager -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5CDV5V6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- Google tag (gtag.js) event -->
+<script>
+  gtag('event', 'conversion_event_page_view', {
+    // <event_parameters>
+  });
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17143798450"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-17143798450');
+</script>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "rx75u16lpk");
+</script>
+
+<!-- Wonderchat AI Assistant -->
+<script
+    src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+    data-name="wonderchat-seo"
+    data-address="app.wonderchat.io"
+    data-id="cmaxzexkj0p5t12y7k82ylrm7"
+    data-widget-size="normal"
+    data-widget-button-size="normal"
+    defer
+  ></script>
+<!-- X conversion tracking base code -->
+<script>
+!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+twq('config','o8vwv');
+</script>
+<!-- End X conversion tracking base code -->
+
+  
+
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+</head>
+
+	<!-- end::Head -->
+
+<body>
+
+  <div class="print-only">
+    <div class="container">
+      <img class="logo ms-4 mb-0" src="/web/img/logo.svg">
+    </div>
+  </div>
+
+  <div class="fixed-spacer no-print"></div>
+
+  <div class="bg-nav no-print">
+    <!-- begin::TopNavigation -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-nav">
+   
+    <a class="navbar-brand" href="/">
+      <img class="logo logo-" src="/web/img/logo.svg" />
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        
+  
+    <li class="nav-item">
+      <a class="nav-link" href="/iss-today">ISS Today</a>
+    </li>
+  
+
+  
+    <li class="nav-item">
+      <a class="nav-link" href="/events">Events</a>
+    </li>
+  
+
+  
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" id="navbarDropdown_" data-bs-toggle="dropdown" aria-expanded="false" 
+       
+        href="/research"
+      
+      
+        >Research</a>
+
+      <ul class="dropdown-menu" aria-labelledby="navbarDropdown_">
+        
+          <li>
+            <a class="dropdown-item" 
+            
+              href="/iss-today"
+            
+            
+              >ISS Today</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/policy-briefs"
+            
+            
+              >Policy Briefs</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/africa-report"
+            
+            
+              >Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/central-africa-report"
+            
+            
+              >Central Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/east-africa-report"
+            
+            
+              >East Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/north-africa-report"
+            
+            
+              >North Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/southern-africa-report"
+            
+            
+              >Southern Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+             
+              href="/research/west-africa-report"
+            
+            
+              >West Africa Report</a>
+
+          </li>
+        
+          <li>
+            <a class="dropdown-item" 
+   

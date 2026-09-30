@@ -1,0 +1,156 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:HR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:39.743036Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR802</value>
+    </cap:geocode>
+    <link title="Kvarner i Kvarneric region" href="https://meteoalarm.org?geocode=EMMA_ID:HR802" hreflang="en"/>
+    <cap:areaDesc>Kvarner i Kvarneric region</cap:areaDesc>
+    <cap:event>Yellow wind warning</cap:event>
+    <cap:sent>2026-09-29T17:01:45+00:00</cap:sent>
+    <cap:expires>2026-10-01T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T17:01:45+00:00</cap:effective>
+    <cap:onset>2026-09-30T22:01:01+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.260929190145_0_yellow_HR802</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/026f8307-c2fe-4e36-8b56-b7de2bbc7a28"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T17:01:45Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/026f8307-c2fe-4e36-8b56-b7de2bbc7a28?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Croatia - Kvarner i Kvarneric region</title>
+    <updated>2026-09-29T17:01:45Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR803</value>
+    </cap:geocode>
+    <link title="Velebit channel region" href="https://meteoalarm.org?geocode=EMMA_ID:HR803" hreflang="en"/>
+    <cap:areaDesc>Velebit channel region</cap:areaDesc>
+    <cap:event>Yellow wind warning</cap:event>
+    <cap:sent>2026-09-29T06:45:21+00:00</cap:sent>
+    <cap:expires>2026-10-01T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:45:21+00:00</cap:effective>
+    <cap:onset>2026-09-30T22:01:01+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.260929084521_0_yellow_HR803</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/4273b56c-639f-49c6-8724-6288f20221d5"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:45:21Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/4273b56c-639f-49c6-8724-6288f20221d5?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Croatia - Velebit channel region</title>
+    <updated>2026-09-29T06:45:21Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR803</value>
+    </cap:geocode>
+    <link title="Velebit channel region" href="https://meteoalarm.org?geocode=EMMA_ID:HR803" hreflang="en"/>
+    <cap:areaDesc>Velebit channel region</cap:areaDesc>
+    <cap:event>Yellow wind warning</cap:event>
+    <cap:sent>2026-09-29T06:45:05+00:00</cap:sent>
+    <cap:expires>2026-09-30T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:45:05+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:01:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.260929084505_0_yellow_HR803</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/aece3450-4170-4c53-8262-1b1f82c62468"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:45:05Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/aece3450-4170-4c53-8262-1b1f82c62468?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Croatia - Velebit channel region</title>
+    <updated>2026-09-29T06:45:05Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR803</value>
+    </cap:geocode>
+    <link title="Velebit channel region" href="https://meteoalarm.org?geocode=EMMA_ID:HR803" hreflang="en"/>
+    <cap:areaDesc>Velebit channel region</cap:areaDesc>
+    <cap:event>Yellow wind warning</cap:event>
+    <cap:sent>2026-09-29T06:43:56+00:00</cap:sent>
+    <cap:expires>2026-09-29T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:43:56+00:00</cap:effective>
+    <cap:onset>2026-09-28T22:01:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.191.0.HR.260929084356_0_yellow_HR803</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/346cfb14-82af-4938-83e7-1bbca77e1aa2"/>
+    <link title="Croatia" rel="related" href="https://meteoalarm.org?region=HR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:43:56Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-croatia/346cfb14-82af-4938-83e7-1bbca77e1aa2?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Croatia - Velebit channel region</title>
+    <updated>2026-09-29T06:43:56Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>HR802</value>
+    </cap:geocode>
+    <link title="Kvarner i Kvarneric region" href="https://meteoalarm.org?geocode=EMMA_ID:HR802" hreflang="en"/>
+    <cap:areaDesc>Kvarner i Kvarneric region</cap:areaDesc>
+    <cap:event>Yellow wind warning</cap:event>
+    <cap:sent>2026-09-29T06:43:56+00:00</cap:sent>
+    <cap:expires>2026-09-29T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:43:56+00:00</cap:effective>
+    <cap:onset>2026-09-28T22:01:01+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:i

@@ -1,0 +1,155 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:33.066421Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IE801</value>
+    </cap:geocode>
+    <link title="from Slyne Head to Erris Head to Rossan Point" href="https://meteoalarm.org?geocode=EMMA_ID:IE801" hreflang="en"/>
+    <cap:areaDesc>from Slyne Head to Erris Head to Rossan Point</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T23:30:03+00:00</cap:sent>
+    <cap:expires>2026-09-30T16:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T23:30:03+00:00</cap:effective>
+    <cap:onset>2026-09-30T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.260929233003.M_WindSea000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/f8edb71c-54ea-45aa-a8b6-4609670a051d"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T23:30:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/f8edb71c-54ea-45aa-a8b6-4609670a051d?index_info=0&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Yellow Wind Warning issued for Ireland - from Slyne Head to Erris Head to Rossan Point</title>
+    <updated>2026-09-29T23:30:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IE802</value>
+    </cap:geocode>
+    <link title="from Slyne Head to Erris Head to Rossan Point" href="https://meteoalarm.org?geocode=EMMA_ID:IE802" hreflang="en"/>
+    <cap:areaDesc>from Slyne Head to Erris Head to Rossan Point</cap:areaDesc>
+    <cap:event>Gale</cap:event>
+    <cap:sent>2026-09-29T23:30:03+00:00</cap:sent>
+    <cap:expires>2026-09-30T16:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T23:30:03+00:00</cap:effective>
+    <cap:onset>2026-09-30T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.260929233003.M_WindSea000</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/f8edb71c-54ea-45aa-a8b6-4609670a051d"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T23:30:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/f8edb71c-54ea-45aa-a8b6-4609670a051d?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Ireland - from Slyne Head to Erris Head to Rossan Point</title>
+    <updated>2026-09-29T23:30:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>FIPS</valueName>
+      <value>EI31</value>
+    </cap:geocode>
+    <link title="Wexford, Wicklow" href="https://meteoalarm.org?geocode=EMMA_ID:IE011" hreflang="en"/>
+    <cap:areaDesc>Wexford, Wicklow</cap:areaDesc>
+    <cap:event>Yellow Rain</cap:event>
+    <cap:sent>2026-09-29T23:30:03+00:00</cap:sent>
+    <cap:expires>2026-09-30T02:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T23:30:03+00:00</cap:effective>
+    <cap:onset>2026-09-29T23:29:42+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.260929233003.M_Rain001</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/2c5717bc-90d5-4c02-8d9a-e93bb6170048"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T23:30:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/2c5717bc-90d5-4c02-8d9a-e93bb6170048?index_info=0&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Yellow Rain Warning issued for Ireland - Wexford, Wicklow</title>
+    <updated>2026-09-29T23:30:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>FIPS</valueName>
+      <value>EI30</value>
+    </cap:geocode>
+    <link title="Wexford, Wicklow" href="https://meteoalarm.org?geocode=EMMA_ID:IE010" hreflang="en"/>
+    <cap:areaDesc>Wexford, Wicklow</cap:areaDesc>
+    <cap:event>Yellow Rain</cap:event>
+    <cap:sent>2026-09-29T23:30:03+00:00</cap:sent>
+    <cap:expires>2026-09-30T02:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T23:30:03+00:00</cap:effective>
+    <cap:onset>2026-09-29T23:29:42+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.1.372.0.260929233003.M_Rain001</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/2c5717bc-90d5-4c02-8d9a-e93bb6170048"/>
+    <link title="Ireland" rel="related" href="https://meteoalarm.org?region=IE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T23:30:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-ireland/2c5717bc-90d5-4c02-8d9a-e93bb6170048?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Ireland - Wexford, Wicklow</title>
+    <updated>2026-09-29T23:30:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>FIPS</valueName>
+      <value>EI22</value>
+    </cap:geocode>
+    <link title="Dublin, Louth, Meath, Monaghan" href="https://meteoalarm.org?geocode=EMMA_ID:IE031" hreflang="en"/>
+    <cap:areaDesc>Dublin, Louth, Meath, Monaghan</cap:areaDesc>
+    <cap:event>Yellow Rain</cap:event>
+    <cap:sent>2026-09-29T23:30:03+00:00</cap:sent>
+    <cap:expires>2026-09-30T04:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T23:30:03+00:00</cap:effective>
+    <cap:onset>2026-09-29T23:29:42+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>

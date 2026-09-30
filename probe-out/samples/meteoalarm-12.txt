@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:GR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:05.953716Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR016</value>
+    </cap:geocode>
+    <link title="Kriti" href="https://meteoalarm.org?geocode=EMMA_ID:GR016" hreflang="en"/>
+    <cap:areaDesc>Kriti</cap:areaDesc>
+    <cap:event>Moderate Thunderstorm warning</cap:event>
+    <cap:sent>2026-09-29T12:14:00+00:00</cap:sent>
+    <cap:expires>2026-09-30T20:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T12:14:00+00:00</cap:effective>
+    <cap:onset>2026-09-30T05:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.260929121400.010000016</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/a8e604ec-2847-4ecf-846f-88010ee7a1c8"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T12:14:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/a8e604ec-2847-4ecf-846f-88010ee7a1c8?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Greece - Kriti</title>
+    <updated>2026-09-29T12:14:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR003</value>
+    </cap:geocode>
+    <link title="East Sterea &amp;amp; Evvoia" href="https://meteoalarm.org?geocode=EMMA_ID:GR003" hreflang="en"/>
+    <cap:areaDesc>East Sterea &amp;amp; Evvoia</cap:areaDesc>
+    <cap:event>Severe Thunderstorm warning</cap:event>
+    <cap:sent>2026-09-29T12:03:00+00:00</cap:sent>
+    <cap:expires>2026-09-30T17:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T12:03:00+00:00</cap:effective>
+    <cap:onset>2026-09-30T09:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.260929120300.010000003</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/56e904f8-98c3-47a5-b855-61ff4343ad30"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T12:03:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/56e904f8-98c3-47a5-b855-61ff4343ad30?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Thunderstorm Warning issued for Greece - East Sterea &amp;amp; Evvoia</title>
+    <updated>2026-09-29T12:03:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR016</value>
+    </cap:geocode>
+    <link title="Kriti" href="https://meteoalarm.org?geocode=EMMA_ID:GR016" hreflang="en"/>
+    <cap:areaDesc>Kriti</cap:areaDesc>
+    <cap:event>Orange Warning</cap:event>
+    <cap:sent>2026-09-29T11:46:00+00:00</cap:sent>
+    <cap:expires>2026-09-30T20:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T11:46:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.260929114600.001000016</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/9e192efb-ada8-4646-949b-e376054cc9f1"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T11:46:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/9e192efb-ada8-4646-949b-e376054cc9f1?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Rain Warning issued for Greece - Kriti</title>
+    <updated>2026-09-29T11:46:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR003</value>
+    </cap:geocode>
+    <link title="East Sterea &amp;amp; Evvoia" href="https://meteoalarm.org?geocode=EMMA_ID:GR003" hreflang="en"/>
+    <cap:areaDesc>East Sterea &amp;amp; Evvoia</cap:areaDesc>
+    <cap:event>Severe Rain warning</cap:event>
+    <cap:sent>2026-09-29T11:46:00+00:00</cap:sent>
+    <cap:expires>2026-09-30T20:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T11:46:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T21:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.260929114600.001000003</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/d49313a3-fb6e-4907-86df-44417f711e5b"/>
+    <link title="Greece" rel="related" href="https://meteoalarm.org?region=GR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T11:46:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-greece/d49313a3-fb6e-4907-86df-44417f711e5b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Rain Warning issued for Greece - East Sterea &amp;amp; Evvoia</title>
+    <updated>2026-09-29T11:46:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>GR014</value>
+    </cap:geocode>
+    <link title="North East Aegean Islands" href="https://meteoalarm.org?geocode=EMMA_ID:GR014" hreflang="en"/>
+    <cap:areaDesc>North East Aegean Islands</cap:areaDesc>
+    <cap:event>Moderate Wind warning</cap:event>
+    <cap:sent>2026-09-29T11:41:00+00:00</cap:sent>
+    <cap:expires>2026-09-30T20:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T11:41:00+00:00</cap:effective>
+    <cap:onset>2026-09-30T03:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.300.0.GR.260929114100.100000014</cap:identifier>
+    <link type="ap

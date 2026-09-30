@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:ES</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:16.935215Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES184</value>
+    </cap:geocode>
+    <link title="Ampurdán" href="https://meteoalarm.org?geocode=EMMA_ID:ES184" hreflang="en"/>
+    <cap:areaDesc>Ampurdán</cap:areaDesc>
+    <cap:event>Severe rain warning</cap:event>
+    <cap:sent>2026-09-29T18:44:09+00:00</cap:sent>
+    <cap:expires>2026-09-29T19:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:40:29+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.260929184409.691703PRP2292007449</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/7ebe2fc1-e950-438c-b658-bf6251fa1027"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:44:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/7ebe2fc1-e950-438c-b658-bf6251fa1027?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Rain Warning issued for Spain - Ampurdán</title>
+    <updated>2026-09-29T18:44:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES184</value>
+    </cap:geocode>
+    <link title="Ampurdán" href="https://meteoalarm.org?geocode=EMMA_ID:ES184" hreflang="en"/>
+    <cap:areaDesc>Ampurdán</cap:areaDesc>
+    <cap:event>Severe rain warning</cap:event>
+    <cap:sent>2026-09-29T18:44:09+00:00</cap:sent>
+    <cap:expires>2026-09-29T19:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:40:29+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.260929184409.691703PRP1292007449</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/c76f1292-37ec-447c-9a1a-2b08732eee8c"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:44:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/c76f1292-37ec-447c-9a1a-2b08732eee8c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Rain Warning issued for Spain - Ampurdán</title>
+    <updated>2026-09-29T18:44:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES184</value>
+    </cap:geocode>
+    <link title="Ampurdán" href="https://meteoalarm.org?geocode=EMMA_ID:ES184" hreflang="en"/>
+    <cap:areaDesc>Ampurdán</cap:areaDesc>
+    <cap:event>Severe thunderstorm warning</cap:event>
+    <cap:sent>2026-09-29T18:44:09+00:00</cap:sent>
+    <cap:expires>2026-09-29T19:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:40:29+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.260929184409.691703TOTO292007449</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/53f382e9-a61b-45c5-9ae2-e20d35dea1ab"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:44:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/53f382e9-a61b-45c5-9ae2-e20d35dea1ab?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Thunderstorm Warning issued for Spain - Ampurdán</title>
+    <updated>2026-09-29T18:44:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES216</value>
+    </cap:geocode>
+    <link title="Interior de Pontevedra" href="https://meteoalarm.org?geocode=EMMA_ID:ES216" hreflang="en"/>
+    <cap:areaDesc>Interior de Pontevedra</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-09-29T18:36:11+00:00</cap:sent>
+    <cap:expires>2026-09-29T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T18:32:35+00:00</cap:effective>
+    <cap:onset>2026-09-29T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.260929183611.713602PRP1292206971</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/5a9acfbd-81a5-49f8-8234-d2cf3d92700c"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T18:36:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/5a9acfbd-81a5-49f8-8234-d2cf3d92700c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Spain - Interior de Pontevedra</title>
+    <updated>2026-09-29T18:36:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES249</value>
+    </cap:geocode>
+    <link title="Litoral sur de Valencia" href="https://meteoalarm.org?geocode=EMMA_ID:ES249" hreflang="en"/>
+    <cap:areaDesc>Litoral sur de Valencia</cap:areaDesc>
+    <cap:event>Moderate rain warning</cap:event>
+    <cap:sent>2026-09-29T17:46:10+00:00</cap:sent>
+    <cap:expires>2026-10-01T21:59:59+00:00</cap:expires>
+    <cap:effective>2026-09-29T17:44:02+00:00</cap:effective>
+    <cap:onset>2026-10-01T12:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.260929174610.774604PRP1012203970</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds

@@ -1,0 +1,45 @@
+https://www.usip.org/
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Donald J. Trump Institute of Peace</title>
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="https://www.usip.org/">
+<script id="website-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Donald J. Trump Institute of Peace","alternateName":"DJTIP, USIP, \u0022United States Institute of Peace\u0022","description":"","url":"https://www.usip.org"}</script>
+<meta property="og:url" content="https://www.usip.org/">
+<meta property="og:site_name" content="Donald J. Trump Institute of Peace">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Donald J. Trump Institute of Peace">
+<meta property="fb:pages" content="">
+<meta property="fb:app_id" content="">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@https://x.com/usiporg">
+<meta name="twitter:creator" content="@https://x.com/usiporg">
+<meta name="twitter:title" content="Donald J. Trump Institute of Peace">
+<link rel='dns-prefetch' href='//www.usip.org' />
+<link rel="alternate" type="application/rss+xml" title="Donald J. Trump Institute of Peace &raquo; Feed" href="https://www.usip.org/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Donald J. Trump Institute of Peace &raquo; Comments Feed" href="https://www.usip.org/comments/feed/" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Donald J. Trump Institute of Peace","url":"https://www.usip.org","alternateName":"DJTIP, USIP, \u0022United States Institute of Peace\u0022","description":"The United States Institute of Peace is the nation’s independent, nonpartisan institute that supports the Executive Branch in resolving violent conflict abroad.","sameAs":["https://x.com/https://x.com/usiporg"]}</script>
+		<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://www.usip.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.usip.org%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://www.usip.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.usip.org%2F&#038;format=xml" />
+<style id="superb-addons-variable-fallbacks-inline-css">
+:root{--wp--preset--color--primary:#1f7cec;--wp--preset--color--primary-hover:#3993ff;--wp--preset--color--base:#fff;--wp--preset--color--featured:#0a284b;--wp--preset--color--contrast-light:#fff;--wp--preset--color--contrast-dark:#000;--wp--preset--color--mono-1:#0d3c74;--wp--preset--color--mono-2:#64748b;--wp--preset--color--mono-3:#e2e8f0;--wp--preset--color--mono-4:#f8fafc;--wp--preset--spacing--superbspacing-xxsmall:clamp(5px,1vw,10px);--wp--preset--spacing--superbspacing-xsmall:clamp(10px,2vw,20px);--wp--preset--spacing--superbspacing-small:clamp(20px,4vw,40px);--wp--preset--spacing--superbspacing-medium:clamp(30px,6vw,60px);--wp--preset--spacing--superbspacing-large:clamp(40px,8vw,80px);--wp--preset--spacing--superbspacing-xlarge:clamp(50px,10vw,100px);--wp--preset--spacing--superbspacing-xxlarge:clamp(60px,12vw,120px);--wp--preset--font-size--superbfont-tiny:clamp(10px,0.625rem + ((1vw - 3.2px) * 0.227),12px);--wp--preset--font-size--superbfont-xxsmall:clamp(12px,0.75rem + ((1vw - 3.2px) * 0.227),14px);--wp--preset--font-size--superbfont-xsmall:clamp(16px,1rem + ((1vw - 3.2px) * 1),16px);--wp--preset--font-size--superbfont-small:clamp(16px,1rem + ((1vw - 3.2px) * 0.227),18px);--wp--preset--font-size--superbfont-medium:clamp(18px,1.125rem + ((1vw - 3.2px) * 0.227),20px);--wp--preset--font-size--superbfont-large:clamp(24px,1.5rem + ((1vw - 3.2px) * 0.909),32px);--wp--preset--font-size--superbfont-xlarge:clamp(32px,2rem + ((1vw - 3.2px) * 1.818),48px);--wp--preset--font-size--superbfont-xxlarge:clamp(40px,2.5rem + ((1vw - 3.2px) * 2.727),64px)}.has-primary-color{color:var(--wp--preset--color--primary)!important}.has-primary-hover-color{color:var(--wp--preset--color--primary-hover)!important}.has-base-color{color:var(--wp--preset--color--base)!important}.has-featured-color{color:var(--wp--preset--color--featured)!important}.has-contrast-light-color{color:var(--wp--preset--color--contrast-light)!important}.has-contrast-dark-color{color:var(--wp--preset--color--contrast-dark)!important}.has-mono-1-color{color:var(--wp--preset--color--mono-1)!important}.has-mono-2-color{color:var(--wp--preset--color--mono-2)!important}.has-mono-3-color{color:var(--wp--preset--color--mono-3)!important}.has-mono-4-color{color:var(--wp--preset--color--mono-4)!important}.has-primary-background-color{background-color:var(--wp--preset--color--primary)!important}.has-primary-hover-background-color{background-color:var(--wp--preset--color--primary-hover)!important}.has-base-background-color{background-color:var(--wp--preset--color--base)!important}.has-featured-background-color{background-color:var(--wp--preset--color--featured)!important}.has-contrast-light-background-color{background-color:var(--wp--preset--color--contrast-light)!important}.has-contrast-dark-background-color{background-color:var(--wp--preset--color--contrast-dark)!important}.has-mono-1-background-color{background-color:var(--wp--preset--color--mono-1)!important}.has-mono-2-background-color{background-color:var(--wp--preset--color--mono-2)!important}.has-mono-3-background-color{background-color:var(--wp--preset--color--mono-3)!important}.has-mono-4-background-color{background-color:var(--wp--preset--color--mono-4)!important}.has-superbfont-tiny-font-size{font-size:var(--wp--preset--font-size--superbfont-tiny)!important}.has-superbfont-xxsmall-font-size{font-size:var(--wp--preset--font-size--superbfont-xxsmall)!important}.has-superbfont-xsmall-font-size{font-size:var(--wp--preset--font-size--superbfont-xsmall)!important}.has-superbfont-small-font-size{font-size:var(--wp--preset--font-size--superbfont-small)!important}.has-superbfont-medium-font-size{font-size:var(--wp--preset--font-size--superbfont-medium)!important}.has-superbfont-large-font-size{font-size:var(--wp--preset--font-size--superbfont-large)!important}.has-superbfont-xlarge-font-size{font-size:var(--wp--preset--font-size--superbfont-xlarge)!important}.has-superbfont-xxlarge-font-size{font-size:var(--wp--preset--font-size--superbfont-xxlarge)!important}
+/*# sourceURL=superb-addons-variable-fallbacks-inline-css */
+</style>
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-block-site-logo-inline-css">
+.wp-block-site-logo{box-sizing:border-box;line-height:0}.wp-block-site-logo a{display:inline-block;line-height:0}.wp-block-site-logo.is-default-size img{height:auto;width:120px}.wp-block-site-logo img{height:auto;max-width:100%}.wp-block-site-logo a,.wp-block-site-logo img{border-radius:inherit}.wp-block-site-logo.aligncenter{margin-left:auto;margin-right:auto;text-align:center}:root :where(.wp-block-site-logo.is-style-rounded){border-radius:9999px}
+/*# sourceURL=https://www.usip.org/wp-includes/blocks/site-logo/style.min.css */
+</style>
+<style id="wp-block-navigation-link-inline-css">
+.wp-block-navigation .wp-block-navigation-item__label{overflow-wrap:break-word}.wp-block-navigation .wp-block-navigation-item__description{display:none}.link-ui-tools{outline:1px solid #f0f0f0;padding:8px}.link-ui-block-inserter{padding-top:8px}.link-ui-block-inserter__back{margin-left:8px;text-transform:uppercase}
+/*# sourceURL=https://www.usip.org/wp-includes/blocks/navigation-link/style.min.css */
+</style>
+<link rel='stylesheet' id='wp-block-navigation-css' href='https://www.usip.org/wp-includes/blocks/navigation/style.min.css?ver=7.1.2' media='all' />
+<style id="tw-block-navigation-inline-c

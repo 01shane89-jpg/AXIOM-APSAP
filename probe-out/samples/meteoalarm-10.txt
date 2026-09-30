@@ -1,0 +1,158 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FR</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:05.060351Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR622</value>
+    </cap:geocode>
+    <link title="Aveyron" href="https://meteoalarm.org?geocode=EMMA_ID:FR021" hreflang="en"/>
+    <cap:areaDesc>Aveyron</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-09-29T22:00:38+00:00</cap:sent>
+    <cap:expires>2026-09-30T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T22:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:00:06+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20260930000038.535024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T22:00:38Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b?index_info=1&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Flooding Warning issued for France - Aveyron</title>
+    <updated>2026-09-29T22:00:38Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR814</value>
+    </cap:geocode>
+    <link title="Lozère" href="https://meteoalarm.org?geocode=EMMA_ID:FR023" hreflang="en"/>
+    <cap:areaDesc>Lozère</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-09-29T22:00:38+00:00</cap:sent>
+    <cap:expires>2026-09-30T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T22:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:00:06+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20260930000038.535024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T22:00:38Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Flooding Warning issued for France - Lozère</title>
+    <updated>2026-09-29T22:00:38Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR712</value>
+    </cap:geocode>
+    <link title="Ardèche" href="https://meteoalarm.org?geocode=EMMA_ID:FR026" hreflang="en"/>
+    <cap:areaDesc>Ardèche</cap:areaDesc>
+    <cap:event>Moderate flooding warning</cap:event>
+    <cap:sent>2026-09-29T22:00:38+00:00</cap:sent>
+    <cap:expires>2026-09-30T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T22:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:00:06+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20260930000038.535024</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T22:00:38Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/ac0d80c4-da13-497a-92a0-1e76be838d8b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Flooding Warning issued for France - Ardèche</title>
+    <updated>2026-09-29T22:00:38Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR813</value>
+    </cap:geocode>
+    <link title="Hérault" href="https://meteoalarm.org?geocode=EMMA_ID:FR020" hreflang="en"/>
+    <cap:areaDesc>Hérault</cap:areaDesc>
+    <cap:event>Severe flooding warning</cap:event>
+    <cap:sent>2026-09-29T22:00:34+00:00</cap:sent>
+    <cap:expires>2026-09-30T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T22:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:00:06+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20260930000034.956034</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/3070e865-9635-4066-bc4d-f9e40bb8057a"/>
+    <link title="France" rel="related" href="https://meteoalarm.org?region=FR" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T22:00:34Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/3070e865-9635-4066-bc4d-f9e40bb8057a?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Orange Flooding Warning issued for France - Hérault</title>
+    <updated>2026-09-29T22:00:34Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS3</valueName>
+      <value>FR812</value>
+    </cap:geocode>
+    <link title="Gard" href="https://meteoalarm.org?geocode=EMMA_ID:FR022" hreflang="en"/>
+    <cap:areaDesc>Gard</cap:areaDesc>
+    <cap:event>Severe flooding warning</cap:event>
+    <cap:sent>2026-09-29T22:00:34+00:00</cap:sent>
+    <cap:expires>2026-09-30T22:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T22:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-29T22:00:06+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.250.1.FR.20260930000034.956034</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-france/3070e865-9635-4066-bc4d-f9e40bb8057a"/>
+    <link title="France" rel="related" href="htt

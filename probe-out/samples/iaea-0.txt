@@ -1,0 +1,122 @@
+https://www.iaea.org/feeds/topnews
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="http://www.iaea.org/">
+  <channel>
+    <title>IAEA Top News</title>
+    <link>http://www.iaea.org/</link>
+    <description><![CDATA[Top stories from the International Atomic Energy Agency]]></description>
+    <language>en</language>
+        <pubDate>Tue, 29 Sep 26 09:22:00 +0200</pubDate>
+<item>
+  <title>How Nuclear Science Helps Tackle Food Waste</title>
+  <link>http://www.iaea.org/newscenter/news/how-nuclear-science-helps-tackle-food-waste</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/waste-fruit-at-packing-facility.jpg.png?itok=uww4Rnpq" type="image/png" length="336226"/><guid isPermaLink="false">288534</guid>
+          <pubDate>
+26-09-29  09:22
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA and Inter-American Development Bank Sign Partnership Agreement on Nuclear Energy for Development</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-and-inter-american-development-bank-sign-partnership-agreement-on-nuclear-energy-for-development</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/iaea_ibd_mou.JPG?itok=CSCyuK81" type="image/jpeg" length="24470"/><guid isPermaLink="false">290001</guid>
+          <pubDate>
+26-09-25  14:02
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Türkiye Protects its Citrus Harvests with Nuclear Science</title>
+  <link>http://www.iaea.org/newscenter/news/turkiye-protects-its-citrus-harvests-with-nuclear-science</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Adedolapo Akingbade|IAEA Department of Technical Cooperation</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/turkey-tc-lemons-banner.jpg?itok=mhwGtJho" type="image/jpeg" length="26626"/><guid isPermaLink="false">290006</guid>
+          <pubDate>
+26-09-25  08:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 368 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-368-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/situation_in_ukraine_banner.jpg?itok=LueJ2XDs" type="image/jpeg" length="21888"/><guid isPermaLink="false">290003</guid>
+          <pubDate>
+26-09-25  04:34
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Week in Review: IAEA 70th General Conference</title>
+  <link>http://www.iaea.org/newscenter/news/week-in-review-iaea-70th-general-conference</link>
+  <description>The 70th annual IAEA General Conference came to a close on Friday last week, following five days of discussions, events and activities related to a range of nuclear topics.</description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/2026-70th-gc-template-1140-x-640-px.png?itok=M9BMMvj6" type="image/png" length="353087"/><guid isPermaLink="false">289976</guid>
+          <pubDate>
+26-09-21  06:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>New Members Elected to the IAEA Board of Governors</title>
+  <link>http://www.iaea.org/newscenter/news/GC70-new-members-elected-to-the-iaea-board-of-governors</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/1809-gc70-bog-11.jpg?itok=Z4OJWI5l" type="image/jpeg" length="41371"/><guid isPermaLink="false">289974</guid>
+          <pubDate>
+26-09-18  06:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 367 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-367-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/situation_in_ukraine_banner.jpg?itok=LueJ2XDs" type="image/jpeg" length="21888"/><guid isPermaLink="false">289951</guid>
+          <pubDate>
+26-09-17  17:39
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Scientific Forum Highlights Progress in Expanding Access to Cancer Care</title>
+  <link>http://www.iaea.org/newscenter/news/scientific-forum-highlights-progress-in-expanding-access-to-cancer-care</link>
+  <description>The IAEA’s flagship Rays of Hope initiative to expand access to cancer care was in the spotlight at this year’s Scientific Forum.&amp;nbsp;The signature side event at the 70th IAEA General Conference, the forum brought together a</description>
+  <newsauthor>Mary Albon|IAEA Office of Public Information and Communication</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/1709_sf-closing-banner.jpg?itok=x91YgTHU" type="image/jpeg" length="20873"/><guid isPermaLink="false">289950</guid>
+          <pubDate>
+26-09-17  15:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Visitor Centre Celebrates Its First Anniversary</title>
+  <link>http://www.iaea.org/newscenter/news/iaea-visitor-centre-celebrates-its-first-anniversary</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Lenka Dojcanova|IAEA Office of Public Information and Communication</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/vc-1-year-banner.jpeg?itok=JQgzorE6" type="image/jpeg" length="33601"/><guid isPermaLink="false">289921</guid>
+          <pubDate>
+26-09-17  07:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Scientific Forum Opening 2026: Delivering on the Promise of Cancer Care</title>
+  <link>http://www.iaea.org/newscenter/multimedia/videos/scientific-forum-opening-2026-delivering-on-the-promise-of-cancer-care</link>
+  <description><![CDATA[]]></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/delivering-hope-v2.jpg?itok=5NMgFsAr" type="image/jpeg" length="23709"/><guid isPermaLink="false">289868</guid>
+          <pubDate>
+26-09-15  09:59
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews?feed_author=6">IAEA Top News</source>
+          </item>
+<item>
+  <title>Bridging the Global Gap in Cancer Care</title>
+  <link>http://www.iaea.org/newscenter/news/bridging-the-global-gap-in-cancer-care</link>
+  <description><![CDATA[]]></description>
+  <newsauthor>Mary Albon|IAEA Office of Public Information and Communication</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-09/malawi-sfirst-radiotherapy-centre.jpg?itok=VgFGqgzL" type="image/jpeg" length="21311"/><guid isPermaLink="false">289667</guid>
+          <pubDate>
+26-09-15  04:30
+</pubDate>
+          <source url="http://www.iaea.org/feeds/to

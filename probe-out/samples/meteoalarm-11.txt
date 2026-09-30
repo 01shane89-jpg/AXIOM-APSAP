@@ -1,0 +1,152 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:DE</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:30.579196Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE803</value>
+    </cap:geocode>
+    <link title="Helgoland" href="https://meteoalarm.org?geocode=EMMA_ID:DE803" hreflang="en"/>
+    <cap:areaDesc>Helgoland</cap:areaDesc>
+    <cap:event>near gale</cap:event>
+    <cap:sent>2026-09-29T09:24:00+00:00</cap:sent>
+    <cap:expires>2026-09-29T09:24:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T06:05:30+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1790673840000.55609ef1-87b4-46c8-9890-fa59c6fc98e3.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:24:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98?index_info=1&amp;index_area=2&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Germany - Helgoland</title>
+    <updated>2026-09-29T09:24:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE802</value>
+    </cap:geocode>
+    <link title="Ostfriesische Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE802" hreflang="en"/>
+    <cap:areaDesc>Ostfriesische Küste</cap:areaDesc>
+    <cap:event>near gale</cap:event>
+    <cap:sent>2026-09-29T09:24:00+00:00</cap:sent>
+    <cap:expires>2026-09-29T09:24:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T06:05:30+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1790673840000.55609ef1-87b4-46c8-9890-fa59c6fc98e3.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:24:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Germany - Ostfriesische Küste</title>
+    <updated>2026-09-29T09:24:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE801</value>
+    </cap:geocode>
+    <link title="Nordfriesische Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE801" hreflang="en"/>
+    <cap:areaDesc>Nordfriesische Küste</cap:areaDesc>
+    <cap:event>near gale</cap:event>
+    <cap:sent>2026-09-29T09:24:00+00:00</cap:sent>
+    <cap:expires>2026-09-29T09:24:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T06:05:30+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Minor</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1790673840000.55609ef1-87b4-46c8-9890-fa59c6fc98e3.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T09:24:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/e7b9ed89-82ef-4617-9a2b-49e43a095d98?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Germany - Nordfriesische Küste</title>
+    <updated>2026-09-29T09:24:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE103</value>
+    </cap:geocode>
+    <link title="Kreis Aurich - Küste" href="https://meteoalarm.org?geocode=EMMA_ID:DE103" hreflang="en"/>
+    <cap:areaDesc>Kreis Aurich - Küste</cap:areaDesc>
+    <cap:event>heavy thunderstorms with gale- or storm-force gusts and heavy rain</cap:event>
+    <cap:sent>2026-09-29T05:01:00+00:00</cap:sent>
+    <cap:expires>2026-09-29T05:45:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T05:01:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1790658060000.b696c2d8-d46b-49a7-bb69-3966e96c75c8.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/0a93d3c1-d9c9-45c9-9a4f-c250f7955e08"/>
+    <link title="Germany" rel="related" href="https://meteoalarm.org?region=DE" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T05:01:00Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-germany/0a93d3c1-d9c9-45c9-9a4f-c250f7955e08?index_info=1&amp;index_area=1&amp;index_geocode=0</id>
+    <title>Orange Thunderstorm Warning issued for Germany - Kreis Aurich - Küste</title>
+    <updated>2026-09-29T05:01:00Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>DE039</value>
+    </cap:geocode>
+    <link title="Insel Borkum" href="https://meteoalarm.org?geocode=EMMA_ID:DE039" hreflang="en"/>
+    <cap:areaDesc>Insel Borkum</cap:areaDesc>
+    <cap:event>heavy thunderstorms with gale- or storm-force gusts and heavy rain</cap:event>
+    <cap:sent>2026-09-29T05:01:00+00:00</cap:sent>
+    <cap:expires>2026-09-29T05:45:00+00:00</cap:expires>
+    <cap:onset>2026-09-29T05:01:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.276.0.DWD.PVW.1790658060000.b696c2d8-d46b-49a7-bb69-3966e96c75c8.MUL</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org

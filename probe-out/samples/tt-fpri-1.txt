@@ -1,0 +1,3 @@
+https://www.fpri.org/robots.txt
+User-Agent: *
+Disallow:

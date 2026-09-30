@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-30T00:35:38.157216Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT024</value>
+    </cap:geocode>
+    <link title="Madeira - Costa Sul" href="https://meteoalarm.org?geocode=EMMA_ID:PT024" hreflang="en"/>
+    <cap:areaDesc>Madeira - Costa Sul</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-29T20:33:11+00:00</cap:sent>
+    <cap:expires>2026-09-30T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T20:33:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T20:34:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.260929203311.MD-10-1163</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/1833e42f-272f-42a0-a702-d254ff751725"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T20:33:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/1833e42f-272f-42a0-a702-d254ff751725?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Madeira - Costa Sul</title>
+    <updated>2026-09-29T20:33:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT023</value>
+    </cap:geocode>
+    <link title="Madeira - Regiões Montanhosas" href="https://meteoalarm.org?geocode=EMMA_ID:PT023" hreflang="en"/>
+    <cap:areaDesc>Madeira - Regiões Montanhosas</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-29T20:33:11+00:00</cap:sent>
+    <cap:expires>2026-09-30T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T20:33:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T20:34:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.260929203311.MD-10-1162</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f703edc9-59ce-4d8b-8ba8-0fb9218760ca"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T20:33:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/f703edc9-59ce-4d8b-8ba8-0fb9218760ca?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Madeira - Regiões Montanhosas</title>
+    <updated>2026-09-29T20:33:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT025</value>
+    </cap:geocode>
+    <link title="Madeira - Costa Norte" href="https://meteoalarm.org?geocode=EMMA_ID:PT025" hreflang="en"/>
+    <cap:areaDesc>Madeira - Costa Norte</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-29T20:33:11+00:00</cap:sent>
+    <cap:expires>2026-09-30T03:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T20:33:11+00:00</cap:effective>
+    <cap:onset>2026-09-29T20:34:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.260929203311.MD-10-1161</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/d9f50649-aa44-4352-acfc-c35644ced8a0"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T20:33:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/d9f50649-aa44-4352-acfc-c35644ced8a0?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Madeira - Costa Norte</title>
+    <updated>2026-09-29T20:33:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT017</value>
+    </cap:geocode>
+    <link title="Santarém" href="https://meteoalarm.org?geocode=EMMA_ID:PT017" hreflang="en"/>
+    <cap:areaDesc>Santarém</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-29T06:16:52+00:00</cap:sent>
+    <cap:expires>2026-09-30T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:16:52+00:00</cap:effective>
+    <cap:onset>2026-09-30T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.260929061652.PO-10-6131</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/78b9b355-82bc-4ea5-b067-31b0ab5283ab"/>
+    <link title="Portugal" rel="related" href="https://meteoalarm.org?region=PT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-29T06:16:52Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-portugal/78b9b355-82bc-4ea5-b067-31b0ab5283ab?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Portugal - Santarém</title>
+    <updated>2026-09-29T06:16:52Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PT016</value>
+    </cap:geocode>
+    <link title="Lisboa" href="https://meteoalarm.org?geocode=EMMA_ID:PT016" hreflang="en"/>
+    <cap:areaDesc>Lisboa</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-29T06:16:52+00:00</cap:sent>
+    <cap:expires>2026-09-30T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-09-29T06:16:52+00:00</cap:effective>
+    <cap:onset>2026-09-30T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.620.0.PT.260929061652.PO-10-6130</cap:identifier>
+    <link
