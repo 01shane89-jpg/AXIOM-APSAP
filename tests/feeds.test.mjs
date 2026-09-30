@@ -8,6 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { compileRelevance, preTranslation, itemRelevance, kept } from "../tools/topics_lib.mjs";
 import { parseList, pageDate, parseFeed } from "../tools/feedparse.mjs";
+import { dedupeStories } from "../tools/news_dedupe.mjs";
 import { ADAPTERS } from "../tools/news_adapters.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("../tools/relevance.json", import.meta.url), "utf8"));
@@ -102,4 +103,23 @@ console.log("feeds tests passed");
   assert.equal(preTranslation(R, i), true);
   assert.equal(itemRelevance(R, i), "strong");
   assert.equal(itemRelevance(R, { ...i, title: "A quiet week", exempt: undefined }), "none");
+}
+
+// one copy per story: same headline within 3 days (any outlet, " - Outlet" suffix ignored), or a link differing only by tracking tags
+{
+  const n = (t, d, link, outlet) => ({ title: t, date: d, link, outlet });
+  const out = dedupeStories([
+    n("Student stabs teacher to death at Slovakia elementary school", "2026-09-29T10:00", "https://a.com/1?utm_source=x", "Yahoo"),
+    n("Student stabs teacher to death at Slovakia elementary school - Euronews", "2026-09-29T08:00", "https://b.com/2", "Euronews"),
+    n("Student stabs teacher to death at Slovakia elementary school", "2026-09-20T08:00", "https://c.com/3", "Yahoo"),   // 9 days apart: kept
+    n("Other story entirely about something", "2026-09-29T07:00", "https://www.a.com/1/amp", "Yahoo"),                       // same article as the first
+    n("Debate for the government of Rondonia on TV", "2026-09-29T06:00", "https://g1.com/r", "G1"),
+    n("Debate for the government of DF on TV", "2026-09-29T06:00", "https://g1.com/d", "G1"),                                // near-match: kept
+    n("DIGITAL 08H: the verdict", "2026-09-29T05:00", "https://h.bj/1", "24 Haubenin"),
+    n("DIGITAL 08H: the verdict", "2026-09-29T04:00", "https://h.bj/2", "24 Haubenin"),                                       // short headline: kept
+    n("Ministry statement on flood relief", "2026-09-29T03:00", "https://m.gov/x?id=5", "Ministry"),
+    n("Ministry statement on flood aid", "2026-09-29T03:00", "https://m.gov/x?id=6", "Ministry"),                             // real query differs: kept
+  ]);
+  assert.deepEqual(out.map((i) => i.link), ["https://a.com/1?utm_source=x", "https://c.com/3", "https://g1.com/r", "https://g1.com/d", "https://h.bj/1", "https://h.bj/2", "https://m.gov/x?id=5", "https://m.gov/x?id=6"]);
+  console.log("news dedupe tests passed");
 }

@@ -5064,6 +5064,29 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   var ENT = document.createElement("textarea");
   function unent(t) { if (!t || t.indexOf("&") < 0) return t; ENT.innerHTML = t; return ENT.value; }
+  /* one copy per news story, as tools/news_dedupe.mjs does in the refresh job: the same article under a link that differs only by
+     tracking tags, "www." or "/amp", or the same headline (5 words or more) within 3 days. The newer copy is kept. */
+  function sameStory(list) {
+    function title(t) {
+      t = String(t || "").toLowerCase().replace(/\s[-–|]\s[^-–|]{2,40}$/, "");
+      t = t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+      return t.split(" ").length >= 5 ? t : "";
+    }
+    function link(u) {
+      try {
+        var x = new URL(u), q = [];
+        x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
+        return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
+      } catch (e) { return String(u || ""); }
+    }
+    var L = {}, T = {};
+    return list.slice().sort(function (a, b) { return (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : 0; }).filter(function (i) {
+      var l = link(i.link); if (L[l]) return false; L[l] = 1;
+      var t = title(i.title), d = Date.parse(i.date) || 0;
+      if (t) { if (t in T && Math.abs(T[t] - d) <= 3 * 864e5) return false; T[t] = d; }
+      return true;
+    });
+  }
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key], H = ((window.ASAP_HIST || {})[CC] || {})[layer] || [];
@@ -5073,7 +5096,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cur = w.items[CC] || [], seenL = {}; cur.forEach(function (i) { seenL[i.link] = 1; });
     var older = H.filter(function (i) { return i && i.link && !seenL[i.link] && (seenL[i.link] = 1); });
     histN[layer] = older.length;
-    cur.concat(older).forEach(function (i) {
+    var all = cur.concat(older);
+    if (layer === "news") all = sameStory(all);
+    all.forEach(function (i) {
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
         "F", layer === "news" ? "Read every 15 minutes from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read every 15 minutes. Posts are that account's claims.", i.link);
