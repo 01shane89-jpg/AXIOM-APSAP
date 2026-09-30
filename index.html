@@ -453,6 +453,7 @@ select.mini{
 #ml-ds .dsname{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:14px;font-weight:600;padding:4px 8px;border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer}
 #ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
 #ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
+#ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
 #ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
@@ -5796,14 +5797,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
-  /* the headings the Overlays list is grouped under, by what an analyst is looking for (Shane 2026-09-30: the old grouping
-     was not intuitive). Views that are not map data sets (the conflict tabs, "cf-", and Route) sit in the same groups as the
-     data sets; anything in none of them goes under "Other" */
+  /* the headings the Data sets list is grouped under (Shane 2026-09-30: data sets are only the topics and areas that filter
+     the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
+     "More topics" */
   var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence"]],
     ["Crime", ["crime", "scam", "aml"]],
     ["Disasters and hazards", ["alerts", "flood", "hazards", "safety", "health", "crisis"]],
     ["Infrastructure and movement", ["infra", "transport"]],
-    ["News and sources", ["news", "social", "opendata", "et"]]];
+    ["News and social media", ["news", "social"]]];
   function dsGroupOf(v) {
     for (var i = 0; i < DS_GROUPS.length; i++) if (DS_GROUPS[i][1].some(function (k) { return k === v || (k === "cf-" && v.indexOf("cf-") === 0); })) return i;
     return DS_GROUPS.length;
@@ -5917,9 +5918,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cfv = function (x) { return x.id.indexOf("cf-") === 0; };
     /* Route is a map tool (its own toolbar button) and Weather sits with the map overlays, so neither is listed here
        (Shane 2026-09-30: data sets are only the topics and areas that filter reporting) */
-    var notDs = { timeline: 1, route: 1, weather: 1 };
+    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1 };
     var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
-    grp.push(["Other", []]);
+    grp.push(["More topics", []]);
     rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
     var tl = tabs.filter(function (x) { return x.id === "timeline"; })[0];
     dsBox.innerHTML =
@@ -5934,7 +5935,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           return '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
             "<span>" + esc(x.name) + "</span></button></div>";
         }).join("");
-      }).join("");
+      }).join("") +
+      /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
+      (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
   }
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
      events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
