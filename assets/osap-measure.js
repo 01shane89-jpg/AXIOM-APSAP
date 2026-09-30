@@ -289,5 +289,7 @@
   document.head.appendChild(st);
 
   window.OSAP_MEASURE = { on: function (v) { setOn(v !== false); }, state: function () { return { pts: S.pts.slice(), closed: S.closed, unit: S.unit }; },
+    /* units and position format, read with no argument or set from Settings: { unit: "km"|"mi"|"nm", fmt: "mgrs"|"dec"|"dms" } */
+    prefs: function (o) { if (o) { if (G.UNITS[o.unit]) S.unit = o.unit; if (/^(mgrs|dec|dms)$/.test(o.fmt)) S.fmt = o.fmt; keep(); if (S.pts.length) draw(); ui(); } return { unit: S.unit, fmt: S.fmt }; },
     set: function (pts, closed) { S.pts = (pts || []).map(function (p) { return [+p[0], +p[1]]; }); S.closed = !!closed && S.pts.length >= 3; draw(); ui(); }, text: text };
 })();
