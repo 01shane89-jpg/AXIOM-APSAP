@@ -165,9 +165,21 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   const saved = await p.evaluate(() => window.OSAP_AOI.list(window.TSAP.country));
   ok(saved.length === 1 && saved[0].name === "Bridge" && saved[0].st && saved[0].st.fill === "#ff8800" && saved[0].st.line === "#112233" && saved[0].st.w === 3, "save: saved with its name and look " + JSON.stringify(saved[0] && saved[0].st));
   await p.evaluate(() => { const x = document.querySelector("#aoidlg [data-aoi-x]"); if (x) x.click(); });
-  // Delete: the drawn shape goes; the saved copy stays
-  await p.click('#area-ctl [data-area="open"]'); await p.click('#area-ctl [data-area="edit"]'); await p.click('#area-ctl [data-area="clear"]'); await p.waitForTimeout(300);
-  ok(!(await area(p)) && await p.evaluate(() => document.querySelectorAll(".areah").length === 0) && /Draw area/.test(await p.textContent("#area-ctl")), "delete: Delete removes the drawn shape and its handles");
+  // Delete: one tap on the shape's red button removes the shape and its saved copy; Undo brings both back
+  const naiCount = () => p.evaluate(() => window.OSAP_AOI.list(window.TSAP.country).length);
+  ok(await p.evaluate(() => document.querySelectorAll(".areadel").length === 1 && document.querySelectorAll(".aoidelx").length === 1), "delete: the shape and its saved label each show a delete button");
+  await p.click(".areadel"); await p.waitForTimeout(300);
+  ok(!(await area(p)) && await naiCount() === 0 && await p.evaluate(() => !document.querySelector(".areadel") && document.querySelectorAll(".areah").length === 0) && /Draw area/.test(await p.textContent("#area-ctl")), "delete: one tap removes the shape, its saved copy and the buttons");
+  ok(await p.evaluate(() => { const u = document.querySelector(".aoiundo"); return !!u && !u.hidden && /Bridge deleted/.test(u.textContent); }), "delete: says what was deleted and offers Undo");
+  ok(await p.evaluate(() => !document.querySelector(".leaflet-popup-content")), "delete: the tap does not open a report underneath");
+  await p.click(".aoiundo button"); await p.waitForTimeout(300);
+  ok((await area(p) || []).length > 3 && await naiCount() === 1, "delete: Undo brings the shape and the saved area back");
+  // the label's delete button on a saved area, and Delete in the Area menu
+  await p.evaluate(() => window.TSAP.areaApi.setArea(null)); await p.waitForTimeout(200);
+  await p.click(".aoidelx"); await p.waitForTimeout(300);
+  ok(await naiCount() === 0 && await p.evaluate(() => !document.querySelector(".aoilbl")), "delete: the saved label's delete button removes that saved area");
+  await p.click(".aoiundo button"); await p.waitForTimeout(300);
+  ok(await naiCount() === 1, "delete: Undo restores it");
   await p.reload(); await p.waitForFunction(() => window.TSAP && window.OSAP_AOI, null, { timeout: 60000 }); await p.waitForTimeout(3000);
   const kept = await p.evaluate(() => [...document.querySelectorAll(".leaflet-areapane-pane path")].some((x) => x.getAttribute("stroke") === "#112233" && x.getAttribute("fill") === "#ff8800"));
   ok(kept && /Bridge/.test(await p.evaluate(() => document.querySelector(".leaflet-pane").textContent + [...document.querySelectorAll(".aoilbl")].map((x) => x.textContent).join(" "))), "save: the saved area is on the map after a reload, in its own colours");
@@ -208,6 +220,15 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   const pb1 = await pxBox(p);
   ok(pb1.w > pb0.w + 20 && pb1.h > pb0.h + 20, "phone: finger drag on a corner resizes");
   await p.click('#area-ctl [data-area="done"]');
+  // delete with a finger tap on the shape's red button
+  const dx = await p.evaluate(() => { const r = document.querySelector(".areadel").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+  ok(await p.evaluate(([x, y]) => !!document.elementFromPoint(x, y).closest(".areadel"), dx), "phone: the delete button is on screen and not covered");
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: dx[0], y: dx[1] }] });
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }); await p.waitForTimeout(500);
+  ok(!(await area(p)), "phone: one tap on the red button deletes the shape");
+  if (OUT) await p.screenshot({ path: OUT + "/phone-deleted.png" });
+  const ub = await p.evaluate(() => { const r = document.querySelector(".aoiundo button").getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= innerWidth && r.bottom <= innerHeight; });
+  ok(ub, "phone: Undo is on screen");
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
   await ctx.close();
 }

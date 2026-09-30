@@ -453,6 +453,7 @@ select.mini{
 #ml-ds .dsname{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:14px;font-weight:600;padding:4px 8px;border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer}
 #ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
 #ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
+.mlopen{display:block;width:100%;text-align:left;font:inherit;padding:6px 8px;margin:2px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}.mlopen b{display:block;font-weight:600}.mlopen i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
 #ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
 #ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
@@ -617,6 +618,8 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl.editing button[aria-expanded=true]{background:var(--accent);color:var(--on-accent)}
 .areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
 .areah.areah-c{border-radius:4px;cursor:nwse-resize}
+.areadel{border-radius:50%;background:#c92a2a;color:#fff;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+#map.area-drawing .areadel{display:none}
 #map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
@@ -1151,7 +1154,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         tile._fellBack = true;
         loadBase(isDark() ? "dark" : "light", function (store) {
           var k = coords.z + "/" + coords.x + "/" + coords.y;
-          tile.src = (store && store[k]) || BLANK;
+          /* no packaged picture here (it covers Thailand only): report the failure, so the map's loading bar says the
+             map service is not answering and offers Try again, instead of a silently blank grey map */
+          if (store && store[k]) tile.src = store[k];
+          else { tile.classList.add("osap-tile-fail"); done(new Error("base map not answering"), tile); }
         });
       };
       tile.alt = ""; tile.setAttribute("role", "presentation"); tile.fetchPriority = "high";   /* the base map before the data downloads */
@@ -1400,6 +1406,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
         '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
+        /* Infrastructure: the home in Map overlays for infrastructure layers and tools (communications masts and coverage,
+           power grid); filled by their own modules, hidden while empty */
+        '<div id="ml-infra" hidden><div class="mlh">Infrastructure</div></div>' +
         '<div id="ml-extra"></div></div>';
       L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
       var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
@@ -5063,7 +5072,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return null;
   }
   var ENT = document.createElement("textarea");
-  function unent(t) { if (!t || t.indexOf("&") < 0) return t; ENT.innerHTML = t; return ENT.value; }
+  /* entities decoded (twice for double-escaped feeds) and markup left in older stored summaries removed: shown as plain text */
+  function unent(t) {
+    if (!t) return t;
+    for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
+    return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
+  }
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key], H = ((window.ASAP_HIST || {})[CC] || {})[layer] || [];
@@ -5907,6 +5921,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
+    infraUi();
     var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
@@ -5918,7 +5933,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cfv = function (x) { return x.id.indexOf("cf-") === 0; };
     /* Route is a map tool (its own toolbar button) and Weather sits with the map overlays, so neither is listed here
        (Shane 2026-09-30: data sets are only the topics and areas that filter reporting) */
-    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1 };
+    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1, comms: 1 };
     var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
     grp.push(["More topics", []]);
     rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
@@ -5938,6 +5953,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }).join("") +
       /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
       (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
+  }
+  /* Map overlays > Infrastructure: the Communications tool (masts, radio towers, coverage check) opens from here once the
+     page has it; a module with a map layer of its own (power grid) adds its row to #ml-infra */
+  function infraUi() {
+    var box = document.getElementById("ml-infra"); if (!box) return;
+    var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
+    if (cv && !row) {
+      row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
+      row.innerHTML = "<b>Communications</b><i>Phone masts, radio and TV towers, and a coverage check</i>";
+      row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
+      box.appendChild(row);
+    }
+    box.hidden = box.children.length < 2;
   }
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
      events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
@@ -6300,6 +6328,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (RV_MODES.indexOf(m) < 0) return;
     rvMode = m;
     try { localStorage.setItem("asap-rv-mode", m); } catch (e) {}
+    /* full-screen map hides the report list, so asking for the list leaves full screen (it used to leave a grey half-screen) */
+    if (m !== "map" && document.documentElement.classList.contains("mapfull")) fsSet(false);
     rvPlace();
   }
   /* the layout switch sits on the map, so it stays reachable in every mode */
@@ -6341,7 +6371,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaHas(lat, lon) { return !AREA || inPoly(lat, lon, AREA); }
   function areaShow() {
     if (areaLayer) { map.removeLayer(areaLayer); areaLayer = null; }
-    if (!AREA) return;
+    if (!AREA) { areaDelMark(); return; }
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
@@ -6350,7 +6380,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
     areaLayer.__world = world;
+    areaDelMark();
   }
+  /* a round delete button on the shape's top-right corner, always there while the area is shown: one tap deletes it (Undo follows) */
+  var areaDelM = null;
+  function areaDelMark() {
+    if (areaDelM) { map.removeLayer(areaDelM); areaDelM = null; }
+    if (!AREA || areaDraw) return;
+    var la = -90, lo = -540; AREA.forEach(function (q) { if (q[0] > la) la = q[0]; if (q[1] > lo) lo = q[1]; });
+    areaDelM = L.marker([la, lo], { pane: "areapane", icon: L.divIcon({ className: "areadel", html: "\u2715", iconSize: [28, 28], iconAnchor: [14, 14] }), keyboard: false, interactive: true, zIndexOffset: 900 }).addTo(map);
+    var el = areaDelM.getElement(); el.setAttribute("role", "button"); el.setAttribute("aria-label", "Delete this shape"); el.title = "Delete this shape";
+  }
+  /* delete the drawn shape; osap-aoi.js also removes a saved NAI/TAI of the same shape and offers Undo */
+  function areaDelete() { editEnd(); areaEl.classList.remove("open"); if (window.OSAP_AOI && window.OSAP_AOI.deleteShape) window.OSAP_AOI.deleteShape(); else areaSet(null); }
   /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
   function areaShowPts(P) {
     if (!areaLayer) return;
@@ -6554,7 +6596,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   mapEl.addEventListener("pointerup", editUp, true);
   mapEl.addEventListener("pointercancel", editUp, true);
   /* a tap on a handle must not reach the map-click dispatcher (it would open the report under it) */
-  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah,.areadel")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  /* the delete button acts on the finger or mouse lifting over it (a phone's map may never turn that tap into a click) */
+  var delDown = null;
+  mapEl.addEventListener("pointerdown", function (e) { delDown = e.target.closest && e.target.closest(".areadel") ? e.pointerId : null; if (delDown !== null) { e.preventDefault(); e.stopPropagation(); } }, true);
+  mapEl.addEventListener("pointerup", function (e) {
+    if (delDown === null || delDown !== e.pointerId) return;
+    delDown = null;
+    var t = document.elementFromPoint(e.clientX, e.clientY);
+    e.preventDefault(); e.stopPropagation();
+    if (t && t.closest(".areadel")) { drawEndT = Date.now(); areaDelete(); }
+  }, true);
   function editStart() { if (!AREA) return; drawEnd(true); areaEdit = { lay: L.layerGroup().addTo(map), drag: null }; mapEl.classList.add("area-editing"); editHandles(); areaUi(); }
   function editEnd() { if (!areaEdit) return; if (areaEdit.drag) map.dragging.enable(); map.removeLayer(areaEdit.lay); areaEdit = null; mapEl.classList.remove("area-editing"); }
   function hexOk(v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }
@@ -6591,7 +6643,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
     else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
-    else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
+    else if (k === "clear") { areaDelete(); return; }
     else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
     else if (k === "done") { editEnd(); }
     else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; AREA_ST.w = 2; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
@@ -8051,6 +8103,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
 <script src="assets/osap-heat.js"></script>
+<script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
@@ -8075,7 +8128,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <script src="assets/osap-grid.js"></script>
-<script src="assets/osap-power.js"></script>
+<script src="assets/osap-medplan.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

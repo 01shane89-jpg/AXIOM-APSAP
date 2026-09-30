@@ -193,7 +193,7 @@
   function addToolbarBtns() {
     var list = D.querySelector("#atk-tools .atk-list");
     if (!list || list.querySelector("[data-ogrid]")) return !!list;
-    var at = list.querySelector('[data-atk="measure"]');
+    var at = list.querySelector("[data-o3d]") || list.querySelector('[data-atk="measure"]');   /* Grid, Crosshair, then 3D */
     TB.forEach(function (t) {
       var b = D.createElement("button");
       b.type = "button"; b.setAttribute("data-ogrid", t[0]); b.title = t[2]; b.setAttribute("aria-label", t[1]); b.setAttribute("aria-pressed", "false");
