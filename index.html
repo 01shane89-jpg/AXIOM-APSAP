@@ -6302,6 +6302,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (RV_MODES.indexOf(m) < 0) return;
     rvMode = m;
     try { localStorage.setItem("asap-rv-mode", m); } catch (e) {}
+    /* full-screen map hides the report list, so asking for the list leaves full screen (it used to leave a grey half-screen) */
+    if (m !== "map" && document.documentElement.classList.contains("mapfull")) fsSet(false);
     rvPlace();
   }
   /* the layout switch sits on the map, so it stays reachable in every mode */

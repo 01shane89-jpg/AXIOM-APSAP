@@ -35,6 +35,10 @@
     "html[data-cf] .rail>:not(#cf-rail):not(#rail-handle):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
+    // so the toolbar's Layout button is hidden here too, and a List layout chosen on another tab does not push the map off screen
+    // (that left this tab's panel beside a grey blank column)
+    "html[data-cf] #atk-tools [data-atk=layout]{display:none!important}html[data-cf] .shell.rv-list #map{position:relative!important;left:auto!important;width:100%!important}" +
+      "html[data-cf] .shell.rv-list #map .leaflet-control-container{display:block}html[data-cf] .shell.rv-list #map .areactl{display:flex}",
     // every other map pane is hidden, except the overlays a person switches on in the Layers menu (terrain, possible flashpoints,
     // flood maps, road closures, weather, ground mobility, live aircraft) and the area drawn with Draw area: those draw only when switched on, and each data set
     // change switches the overlays off again
