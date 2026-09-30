@@ -1144,7 +1144,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         tile._fellBack = true;
         loadBase(isDark() ? "dark" : "light", function (store) {
           var k = coords.z + "/" + coords.x + "/" + coords.y;
-          tile.src = (store && store[k]) || BLANK;
+          /* no packaged picture here (it covers Thailand only): report the failure, so the map's loading bar says the
+             map service is not answering and offers Try again, instead of a silently blank grey map */
+          if (store && store[k]) tile.src = store[k];
+          else { tile.classList.add("osap-tile-fail"); done(new Error("base map not answering"), tile); }
         });
       };
       tile.alt = ""; tile.setAttribute("role", "presentation"); tile.fetchPriority = "high";   /* the base map before the data downloads */
