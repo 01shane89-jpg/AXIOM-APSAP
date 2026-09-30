@@ -160,6 +160,8 @@ function fixDate(d) {
   return isNaN(t) ? "" : new Date(t).toISOString();
 }
 
+// Institutes that cover one country only: an item naming no country is filed under it (38 North writes "the KPA", "Kim Yo Jong").
+const HOME_CC = { "38north": ["kp"] };
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
@@ -200,7 +202,8 @@ for (const [id, org, home, urls] of TT) {
       const summary = x.summary.replace(/The post .* appeared first on .*$/i, "").trim();
       const short = summary.length > 280 ? summary.slice(0, 277).replace(/\s+\S*$/, "") + "..." : summary;
       const text = x.title + " " + summary.slice(0, 800);
-      const ccs = countriesIn(text);
+      let ccs = countriesIn(text);
+      if (!ccs.length && HOME_CC[id]) ccs = HOME_CC[id];
       const it = { title: x.title, detail: short, date: x.date, url: x.link, sev: 1, kind };
       if (!ccs.length) { globals.push(it); continue; }
       // One copy per country, so each country's map pins only a city inside that country.
