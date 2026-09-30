@@ -24,7 +24,10 @@ const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s);
 const centre = (p) => p.evaluate(() => { const c = window.__asapMap.getCenter(); return [c.lat, c.lng]; });
 const near = (a, b, d) => Math.abs(a[0] - b[0]) < d && Math.abs(a[1] - b[1]) < d;
 // the map flies there (an animation that runs longer on a slow runner): wait up to 8 s for it to arrive, then read the centre
-const arrive = (p, ll) => p.waitForFunction((ll) => { const c = window.__asapMap.getCenter(); return Math.abs(c.lat - ll[0]) < 0.01 && Math.abs(c.lng - ll[1]) < 0.01; }, ll, { timeout: 8000 }).catch(() => {});
+// and has stopped moving (a flight ends with a zoom step; pressing Search during it can miss the box)
+const arrive = (p, ll) => p.waitForFunction((ll) => { const m = window.__asapMap, c = m.getCenter(); return Math.abs(c.lat - ll[0]) < 0.01 && Math.abs(c.lng - ll[1]) < 0.01 && !m._animatingZoom && !m._flyToFrame && !m._panAnim?._inProgress; }, ll, { timeout: 8000 }).then(() => p.waitForTimeout(300), () => {});
+// press Search and wait for its box before typing
+const openBox = async (p) => { await p.click('#atk-tools [data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 5000 }).catch(() => {}); };
 
 const PHOTON = { type: "FeatureCollection", features: [
   { type: "Feature", geometry: { type: "Point", coordinates: [100.5018, 13.7563] }, properties: { name: "Bangkok", osm_value: "city", type: "city", country: "Thailand", state: "Bangkok", extent: [100.33, 13.95, 100.94, 13.49] } },
@@ -91,10 +94,10 @@ async function type(p, text) { await p.fill("#srch-q", ""); await p.type("#srch-
   ok(hits.photon.length === n0, "phone: an MGRS is read on the device, no search sent");
   ok(near(await centre(p), [15.87, 100.99], 0.01), "phone: an MGRS goes straight there (" + mg + ")");
   // lat/long and UTM
-  await p.click('#atk-tools [data-atk="search"]'); await type(p, "13.75, 100.5"); await p.keyboard.press("Enter"); await p.waitForTimeout(300); await arrive(p, [13.75, 100.5]);
+  await openBox(p); await type(p, "13.75, 100.5"); await p.keyboard.press("Enter"); await p.waitForTimeout(300); await arrive(p, [13.75, 100.5]);
   ok(near(await centre(p), [13.75, 100.5], 0.01), "phone: a lat/long goes straight there");
   const u = await p.evaluate(() => { const u = window.OSAP_GEO.toUtm(14.2, 101.3); return u.zone + u.band + " " + Math.round(u.e) + " " + Math.round(u.n); });
-  await p.click('#atk-tools [data-atk="search"]'); await type(p, u); await p.keyboard.press("Enter"); await p.waitForTimeout(300); await arrive(p, [14.2, 101.3]);
+  await openBox(p); await type(p, u); await p.keyboard.press("Enter"); await p.waitForTimeout(300); await arrive(p, [14.2, 101.3]);
   ok(near(await centre(p), [14.2, 101.3], 0.01), "phone: a UTM goes straight there (" + u + ")");
   ok(hits.photon.length === n0, "phone: no search sent for grids");
   // Photon down: Open-Meteo answers
