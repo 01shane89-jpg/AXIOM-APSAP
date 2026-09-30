@@ -65,6 +65,24 @@ const cover = (p) => p.evaluate(() => {
   await ctx.close();
 }
 
+// ---------- nothing on screen for any other reason: the page goes back to the map by itself ----------
+{
+  const { ctx, p, errors } = await open("#az/timeline");
+  await pickList(p);
+  ok(await p.evaluate(() => document.querySelector(".shell").classList.contains("rv-list")), "Azerbaijan: List chosen");
+  await p.evaluate(() => { document.getElementById("rv").style.setProperty("display", "none", "important"); });   // stands in for an unknown cause
+  await p.waitForTimeout(4500);
+  const hm = await p.evaluate(() => [document.querySelector(".shell").className, localStorage.getItem("asap-rv-mode")]);
+  ok(/\brv-map\b/.test(hm[0]), "blank screen goes back to Map by itself (" + hm.join(", ") + ")");
+  const c = await cover(p); ok(c.mapW > 300, `map on screen again (${c.mapW}px wide)`);
+  ok(await p.evaluate(() => /layout list/.test(localStorage.getItem("osap-blank") || "")), "the blank screen is recorded for diagnosis");
+  await p.evaluate(() => { document.getElementById("rv").style.removeProperty("display"); });
+  await p.click('#atk-tools [data-atk="layout"]'); await p.waitForTimeout(200); await p.click('#atk-pop [data-pk="list"]'); await p.waitForTimeout(4500);
+  ok(await p.evaluate(() => document.querySelector(".shell").classList.contains("rv-list")), "a working List layout is left alone");
+  ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
+  await ctx.close();
+}
+
 // ---------- conflict tabs: no Layout button, never a blank column ----------
 // Syria with Details folded to its strip is the screen Shane saw go grey (2026-09-30)
 for (const [cc, tab, folded] of [["th", "cf-thailand-deep-south"], ["th", "cf-thailand-cambodia"], ["ua", "cf-russia-ukraine"], ["sy", "cf-syria", true]]) {
