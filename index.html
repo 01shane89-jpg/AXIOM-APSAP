@@ -617,6 +617,8 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl.editing button[aria-expanded=true]{background:var(--accent);color:var(--on-accent)}
 .areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
 .areah.areah-c{border-radius:4px;cursor:nwse-resize}
+.areadel{border-radius:50%;background:#c92a2a;color:#fff;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+#map.area-drawing .areadel{display:none}
 #map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
@@ -6341,7 +6343,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaHas(lat, lon) { return !AREA || inPoly(lat, lon, AREA); }
   function areaShow() {
     if (areaLayer) { map.removeLayer(areaLayer); areaLayer = null; }
-    if (!AREA) return;
+    if (!AREA) { areaDelMark(); return; }
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
@@ -6350,7 +6352,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
     areaLayer.__world = world;
+    areaDelMark();
   }
+  /* a round delete button on the shape's top-right corner, always there while the area is shown: one tap deletes it (Undo follows) */
+  var areaDelM = null;
+  function areaDelMark() {
+    if (areaDelM) { map.removeLayer(areaDelM); areaDelM = null; }
+    if (!AREA || areaDraw) return;
+    var la = -90, lo = -540; AREA.forEach(function (q) { if (q[0] > la) la = q[0]; if (q[1] > lo) lo = q[1]; });
+    areaDelM = L.marker([la, lo], { pane: "areapane", icon: L.divIcon({ className: "areadel", html: "\u2715", iconSize: [28, 28], iconAnchor: [14, 14] }), keyboard: false, interactive: true, zIndexOffset: 900 }).addTo(map);
+    var el = areaDelM.getElement(); el.setAttribute("role", "button"); el.setAttribute("aria-label", "Delete this shape"); el.title = "Delete this shape";
+  }
+  /* delete the drawn shape; osap-aoi.js also removes a saved NAI/TAI of the same shape and offers Undo */
+  function areaDelete() { editEnd(); areaEl.classList.remove("open"); if (window.OSAP_AOI && window.OSAP_AOI.deleteShape) window.OSAP_AOI.deleteShape(); else areaSet(null); }
   /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
   function areaShowPts(P) {
     if (!areaLayer) return;
@@ -6554,7 +6568,17 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   mapEl.addEventListener("pointerup", editUp, true);
   mapEl.addEventListener("pointercancel", editUp, true);
   /* a tap on a handle must not reach the map-click dispatcher (it would open the report under it) */
-  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah,.areadel")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  /* the delete button acts on the finger or mouse lifting over it (a phone's map may never turn that tap into a click) */
+  var delDown = null;
+  mapEl.addEventListener("pointerdown", function (e) { delDown = e.target.closest && e.target.closest(".areadel") ? e.pointerId : null; if (delDown !== null) { e.preventDefault(); e.stopPropagation(); } }, true);
+  mapEl.addEventListener("pointerup", function (e) {
+    if (delDown === null || delDown !== e.pointerId) return;
+    delDown = null;
+    var t = document.elementFromPoint(e.clientX, e.clientY);
+    e.preventDefault(); e.stopPropagation();
+    if (t && t.closest(".areadel")) { drawEndT = Date.now(); areaDelete(); }
+  }, true);
   function editStart() { if (!AREA) return; drawEnd(true); areaEdit = { lay: L.layerGroup().addTo(map), drag: null }; mapEl.classList.add("area-editing"); editHandles(); areaUi(); }
   function editEnd() { if (!areaEdit) return; if (areaEdit.drag) map.dragging.enable(); map.removeLayer(areaEdit.lay); areaEdit = null; mapEl.classList.remove("area-editing"); }
   function hexOk(v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }
@@ -6591,7 +6615,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
     else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
-    else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
+    else if (k === "clear") { areaDelete(); return; }
     else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
     else if (k === "done") { editEnd(); }
     else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; AREA_ST.w = 2; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
