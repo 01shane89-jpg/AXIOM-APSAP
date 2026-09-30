@@ -1414,7 +1414,10 @@
   function panelHtml() {
     var hrs = [0, 3, 6, 12, 24, 48, 72];
     var grp = "";
+    /* the Weather view (forecasts, warnings, storms) opens from here: weather sits with the map overlays, not the data sets */
+    var wxv = document.querySelector('#view-seg button[data-view="weather"]');
     return '<div id="ml-wx"><div class="mlh">Weather</div>' +
+      (wxv ? '<button type="button" class="wxopen" data-wxopen="1">Open forecasts and warnings</button>' : "") +
       '<label class="mlop">Model time <select id="wx-hour">' + hrs.map(function (h) { return '<option value="' + h + '"' + (h === HOUR ? " selected" : "") + ">" + (h ? "+" + h + " h" : "Now") + "</option>"; }).join("") +
       '</select><output id="wxn-grid" class="wxl"></output></label>' +
       /* the flood rows mirror the Flooding rows higher up the same panel: listed once, up there */
@@ -1438,6 +1441,10 @@
       else if (t.id === "wx-hour") { HOUR = +t.value; LS.hour = HOUR; lsave(); if (GRID.data) gridDraw(); }
     });
     box.addEventListener("input", function (e) { var t = e.target; if (t.dataset.wxop) setOp(t.dataset.wxop, parseFloat(t.value)); });
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("[data-wxopen]"), v = document.querySelector('#view-seg button[data-view="weather"]'); if (!b || !v) return;
+      v.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "weather" }));
+    });
     /* keep the mirrored flood rows in step with the originals */
     document.getElementById("ml-panel").addEventListener("change", function (e) {
       var fx = e.target.dataset && e.target.dataset.fx; if (!fx) return;
@@ -1515,6 +1522,7 @@
       ".wxbp table.wxbt td,.wxbp table.wxbt th{line-height:1.15}.wxbp table.wxbm td,.wxbp table.wxbm th{padding:0 2px;line-height:1.2}.wxbp table.wxbm th .wxl{font-size:.85em}.wxbp p.wxthr,.wxbp footer{font-size:7.6px;line-height:1.2}",
       ".bmeasure .wxbp,html.briefing .wxbp{font-size:8.6px;line-height:1.25}.bmeasure .wxbp h3,html.briefing .wxbp h3{margin:4px 0 1px}.bmeasure .wxbp td,.bmeasure .wxbp th{padding:0 3px}",
       "@media print{.wxscroll{overflow:visible}html.briefing .wxbp{font-size:8.6px;line-height:1.25}html.briefing .wxbp td,html.briefing .wxbp th{padding:0 3px}html.briefing .wxbp .bcols{gap:10px}}",
+      "#ml-wx .wxopen{display:block;width:100%;margin:2px 0 8px;font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}" +
       "#ml-wx .wxrow .wxmore{display:none;margin:0 0 6px 24px}#ml-wx .wxrow.on .wxmore{display:block}#ml-wx .wxlic{font-style:normal;opacity:.75;font-size:.9em}#ml-wx .wxnote{font-style:normal;color:var(--accent,#1b6)}",
       ".wxramp{display:block;height:9px;border-radius:2px;margin:3px 0 1px;min-width:140px}.wxrl{display:flex;justify-content:space-between;font-size:10.5px;gap:8px}",
       ".wxcat{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;margin-right:6px;white-space:nowrap}.wxcat i{display:inline-block;width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.25)}",

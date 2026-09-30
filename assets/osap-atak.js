@@ -70,6 +70,8 @@
     ["overlays", "Overlays", I.layers, "Map overlays: weather, grid, terrain, roads, aircraft, your marks"],
     ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
+    /* Route is a map tool, not a data set (Shane 2026-09-30): it opens the route planner, and again goes back */
+    ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
@@ -110,6 +112,7 @@
     /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
     var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
+    var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
     if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
@@ -128,6 +131,12 @@
       popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
     }
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
+    else if (k === "route") {
+      var onRoute = root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf");
+      if (!onRoute) { rtBack = root.getAttribute("data-cf") ? '#view-seg button[data-view="cf-' + root.getAttribute("data-cf") + '"]' : '#view-seg button[data-view="' + (root.getAttribute("data-view") || "timeline") + '"]'; press('#view-seg button[data-view="route"]'); }
+      else press(q(rtBack || "") ? rtBack : '#view-seg button[data-view="timeline"]');
+      if (phone() && !om.hidden) omClose(); setTimeout(paintTools, 60);
+    }
     else if (k === "area") {
       var has = areaOn();
       popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
@@ -386,7 +395,7 @@
     '<section class="atk-s-ov"><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
     '<section class="atk-s-ov"><h3>Controls</h3><label class="atk-sw"><input type="checkbox" id="atk-classic"> <span>Classic controls (the old buttons instead of this toolbar)</span></label></section></div>';
   L.DomEvent.disableClickPropagation(om); L.DomEvent.disableScrollPropagation(om);
-  var mlHome = null, omMode = "datasets";
+  var mlHome = null, omMode = "datasets", rtBack = null;
   function omPaint() {
     if (om.hidden) return;
     /* data sets: once the page has its own on/off checklist (window.OSAP_DATASETS, #ml-ds inside the Layers panel that this
@@ -537,7 +546,7 @@
     if (recs.every(function (r) { var t = r.target; return bar.contains(t) || (t.closest && t.closest("#atk-back")) || (r.addedNodes.length === 1 && r.addedNodes[0].id === "atk-back"); })) return;
     paintTools(); syncBack(); }).observe(mapEl.querySelector(".leaflet-control-container") || mapEl, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class", "hidden"] });
   W.addEventListener("hashchange", function () { setTimeout(function () { ptDraw(); omPaint(); }, 300); });
-  D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); });
+  D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); setTimeout(paintTools, 60); });
   /* the page's "No data sets on the map: Choose" note opens the Layers menu, which this toolbar holds in the Overlay Manager */
   D.addEventListener("click", function (e) {
     if (root.classList.contains("atak") && e.target.closest && e.target.closest("[data-dspick]")) { e.stopPropagation(); e.preventDefault(); omOpen("datasets"); }
