@@ -8,8 +8,14 @@
      Copernicus 90 m DEM), light (BMNT, sunrise, sunset, EENT, darkness en route, moon), weather at each point at the time
      you pass it (Open-Meteo forecast), hazards within a chosen distance of the route from what the app already holds
      (this country's reports, road closures, GDACS, USGS quakes, UCDP events, storms, saved NAI/TAI), turn-by-turn steps.
+   - Search this route: one brief of everything along the route within the chosen distance: the reports and news OSAP holds
+     (located ones inside the corridor, and unlocated ones that name a town the route passes through), neighbouring countries'
+     reports, open data and event groups, summarised and cited by assets/osap-areasum.js; movement restrictions mapped in
+     OpenStreetMap (border posts, checkpoints, military and protected areas, fords, weight and height limits); and the hazards,
+     weather and light worked out below, at a glance.
    - Export: GPX, KML, GeoJSON, print sheet, share link, copy as text. Routes are saved in this browser only
-     (localStorage "osap-routes"); nothing is sent anywhere except the waypoints to the routing, elevation and forecast hosts.
+     (localStorage "osap-routes"); nothing is sent anywhere except the waypoints to the routing, elevation and forecast hosts,
+     and, when "Search this route" is pressed, the route line to OpenStreetMap's Photon (town names) and Overpass (restrictions).
    A route is a planning aid built by the analyst, never a record or evidence. Hazards listed are the app's existing records
    and feeds, shown with their own sources; roads, closures and conditions change and must be checked on the ground.
    The main page calls window.OSAP_ROUTETAB.show(ctx) from setView; ctx = { rail, layer, map, cc, name, bounds, esc, put, seed }. */
@@ -26,7 +32,8 @@ function main() {
     elev: { name: "Open-Meteo Elevation (Copernicus DEM GLO-90)", url: "https://open-meteo.com/en/docs/elevation-api", nc: true },
     wx: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", nc: true },
     geo: { name: "Open-Meteo geocoding (GeoNames)", url: "https://open-meteo.com/en/docs/geocoding-api" },
-    photon: { name: "Photon (Komoot, OpenStreetMap)", url: "https://photon.komoot.io/", nc: true }
+    photon: { name: "Photon (Komoot, OpenStreetMap)", url: "https://photon.komoot.io/", nc: true },
+    overpass: { name: "Overpass API (overpass-api.de, OpenStreetMap)", url: "https://overpass-api.de/api/interpreter", data: "OpenStreetMap contributors, ODbL" }
   };
   var MODES = [
     { id: "car", name: "Drive", road: "car", icon: "🚗" }, { id: "truck", name: "Truck", road: "truck" },
@@ -45,7 +52,7 @@ function main() {
   var S = {
     ctx: null, wps: [], mode: "car", speed: 4, speedId: "foot", stopMin: 0, depart: null, unit: G.UNITS[P0.unit] ? P0.unit : "km", buf: [1, 5, 10, 25].indexOf(P0.buf) >= 0 ? P0.buf : 5,
     tap: true, routes: [], sel: 0, err: "", busy: false, token: 0, elev: null, elevErr: "", wx: null, wxErr: "", haz: null, found: null, onlyCc: P0.onlyCc !== false,
-    layer: null, hover: null, planT: 0
+    layer: null, hover: null, planT: 0, srch: null, stok: 0
   };
   if (MODES.some(function (m) { return m.id === P0.mode; })) S.mode = P0.mode;
   if (P0.speedId) { S.speedId = P0.speedId; S.speed = +P0.speed || 4; }
@@ -76,9 +83,10 @@ function main() {
   function departMs() { return S.depart != null ? S.depart : Date.now(); }
 
   /* ---------- network: every call has a time limit and reports its own failure ---------- */
-  function getJSON(url, ms) {
+  function getJSON(url, ms, init) {
     var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, ms || 20000);
-    return fetch(url, ac ? { signal: ac.signal } : {}).then(function (r) {
+    init = init || {}; if (ac) init.signal = ac.signal;
+    return fetch(url, init).then(function (r) {
       clearTimeout(t);
       return r.json().catch(function () { return null; }).then(function (j) {
         if (!r.ok) { var e = new Error((j && (j.message || j.error)) || "HTTP " + r.status); e.status = r.status; throw e; }
@@ -246,6 +254,11 @@ function main() {
       '<div class="rtrow"><label>Stop at each waypoint <input type="number" id="rt-stop" min="0" max="1440" step="5" value="' + S.stopMin + '"> min</label>' +
       '<label>Units <select id="rt-unit"><option value="km">km</option><option value="mi">mi</option><option value="nm">nm</option></select></label></div></div>' +
       '<div class="sec rtsec" id="rt-res"><div id="rt-sum"></div><div id="rt-alt"></div><div id="rt-legs"></div></div>' +
+      '<div class="sec rtsec" id="rt-srch"><h2>Search this route</h2>' +
+      '<p class="obs">One brief of everything along the route: reports and news, hazards, movement restrictions, weather and light.</p>' +
+      '<div class="rtrow"><label>Within <select id="rt-sbuf"><option>1</option><option>5</option><option>10</option><option>25</option></select> km</label>' +
+      '<button type="button" data-rt="search" class="rtgo">Search this route</button></div>' +
+      '<div id="rt-brief"></div><div id="rt-brep" class="rtbrep" hidden></div><div id="rt-rx"></div></div>' +
       '<div class="sec rtsec" id="rt-profs"><h2>Elevation</h2><div id="rt-prof"></div></div>' +
       '<div class="sec rtsec"><h2>Light</h2><div id="rt-sun"></div></div>' +
       '<div class="sec rtsec"><h2>Weather along the route</h2><div id="rt-wx"></div></div>' +
@@ -260,7 +273,7 @@ function main() {
       '<p class="obs" id="rt-msg" role="status"></p><div id="rt-saved"></div>' +
       '<p class="obs rtsrc">Sources: roads ' + E(HOST.osrm.name) + " and " + E(HOST.valhalla.name) + " (" + E(HOST.osrm.data) + ", fair use); elevation " + E(HOST.elev.name) +
       "; weather " + E(HOST.wx.name) + "; places " + E(HOST.geo.name) + " and " + E(HOST.photon.name) + ". Bearings: " + G.MODEL + " magnetic model, WGS 84.</p></div>";
-    el("rt-unit").value = S.unit; el("rt-buf").value = String(S.buf);
+    el("rt-unit").value = S.unit; el("rt-buf").value = el("rt-sbuf").value = String(S.buf);
     setDepInput();
     wire();
   }
@@ -331,11 +344,13 @@ function main() {
     else if (k === "text") copy(asText(), b);
     else if (k === "import") el("rt-file").click();
     else if (k === "layers") { var mb = D.querySelector(".mlbtn"); if (mb) mb.click(); }
+    else if (k === "search") search();
+    else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
   }
   function onChange(e) {
     var t = e.target, id = t.id;
     if (id === "rt-unit") { S.unit = t.value; prefs(); afterRoute(); }
-    else if (id === "rt-buf") { S.buf = +t.value; prefs(); hazards(); }
+    else if (id === "rt-buf" || id === "rt-sbuf") { S.buf = +t.value; el("rt-buf").value = el("rt-sbuf").value = String(S.buf); prefs(); hazards(); if (S.srch) search(); }
     else if (id === "rt-onlycc") { S.onlyCc = t.checked; prefs(); }
     else if (id === "rt-stop") { S.stopMin = Math.max(0, Math.min(1440, +t.value || 0)); keepCur(); retime(); }
     else if (id === "rt-dep") { var ms = Date.parse(t.value + ":00Z"); if (isFinite(ms)) { S.depart = ms; retime(); } }
@@ -406,7 +421,7 @@ function main() {
   }
   /* after a route arrives (or the unit, departure or stop time changes): redraw, then fill the slower sections one by one */
   function afterRoute(timeOnly) {
-    drawRoute(); sumUi(); wpsUi();
+    drawRoute(); sumUi(); wpsUi(); if (!timeOnly) staleSearch();
     if (!S.routes.length && S.fitNext && S.wps.length === 1 && !S.busy) { S.fitNext = false; fit(); }
     if (!S.routes.length) { ["rt-prof", "rt-sun", "rt-wx", "rt-haz", "rt-dir"].forEach(function (id) { var x = el(id); if (x) x.innerHTML = '<p class="obs">' + (S.busy ? "Planning…" : "Add at least two waypoints.") + "</p>"; }); mobUi(); return; }
     prep(S.routes[S.sel]);
@@ -427,7 +442,8 @@ function main() {
     box.innerHTML = (S.err ? '<p class="rtbad">' + E(S.err) + "</p>" : "") + (r.note ? '<p class="obs">' + E(r.note) + "</p>" : "") +
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
-      '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>";
+      '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
+      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + (i ? "Alternative " + i : "Fastest") + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
     }).join("") + "</div>" : "";
@@ -447,7 +463,7 @@ function main() {
     /* waypoints get a pane of their own above the lines, so the route never draws over them */
     if (!map.getPane("routewppane")) { map.createPane("routewppane"); map.getPane("routewppane").style.zIndex = 662; }
     if (!S.svg) S.svg = L.svg({ pane: "routepane" });
-    if (!S.layer) { S.layer = L.layerGroup(); S.lines = L.layerGroup().addTo(S.layer); S.marks = L.layerGroup().addTo(S.layer); S.hz = L.layerGroup().addTo(S.layer); }
+    if (!S.layer) { S.layer = L.layerGroup(); S.lines = L.layerGroup().addTo(S.layer); S.marks = L.layerGroup().addTo(S.layer); S.hz = L.layerGroup().addTo(S.layer); S.rxl = L.layerGroup().addTo(S.layer); }
     if (!S.ctx.layer.hasLayer(S.layer)) S.ctx.layer.addLayer(S.layer);
   }
   function drawRoute() {
@@ -484,7 +500,8 @@ function main() {
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg) return;
     Lg.set("route", S.routes.length ? '<h3>Route</h3><div><span class="rtsw" style="background:#1c7ed6"></span>Planned route on roads</div><div><span class="rtsw" style="background:#e8590c"></span>Straight-line route</div>' +
-      (S.routes.length > 1 ? '<div><span class="rtsw" style="background:#868e96"></span>Alternative (tap to use)</div>' : "") + '<div><span class="rtsw" style="background:#c92a2a;height:8px;width:8px;border-radius:50%"></span>Hazard near the route</div>' : "", S.ctx.rail);
+      (S.routes.length > 1 ? '<div><span class="rtsw" style="background:#868e96"></span>Alternative (tap to use)</div>' : "") + '<div><span class="rtsw" style="background:#c92a2a;height:8px;width:8px;border-radius:50%"></span>Hazard near the route</div>' +
+      (S.srch && !S.srch.stale && S.srch.rx && S.srch.rx.length ? '<div><span class="rtsw" style="background:#6a1b9a;height:8px;width:8px;border-radius:50%"></span>Movement restriction (OpenStreetMap; tap for its kind)</div>' : "") : "", S.ctx.rail);
   }
   /* taps on the map add a waypoint while the Route tab is open (not while measuring or drawing an area) */
   var down = null;
@@ -588,6 +605,7 @@ function main() {
         return { p: p, at: at, t: hr.temperature_2m[k], pp: hr.precipitation_probability[k], pr: hr.precipitation[k], wc: hr.weather_code[k], ws: hr.wind_speed_10m[k], wg: hr.wind_gusts_10m[k], vis: hr.visibility[k] };
       });
       S.wx = rows;
+      if (S.srch) glance();
       var bad = [];
       rows.forEach(function (x) { if (!x) return; if (x.wc >= 95) bad.push("thunderstorms"); if (x.pr >= 4) bad.push("heavy rain"); if (x.wg >= 60) bad.push("strong gusts"); if (x.vis != null && x.vis < 1000) bad.push("poor visibility"); });
       box.innerHTML = (bad.length ? '<p class="rtbad"><b>Watch for ' + E(bad.filter(function (v, i) { return bad.indexOf(v) === i; }).join(", ")) + ".</b></p>" : "") +
@@ -655,6 +673,221 @@ function main() {
     box.innerHTML = W.OSAP_MOBILITY ? '<p class="obs">For cross-country legs, switch on <b>Ground mobility</b> in Layers to see go/no-go terrain under the route. <button type="button" class="linkish" data-rt="layers">Open Layers</button></p>' : "";
   }
 
+  /* ---------- search this route: one brief of everything along it ---------- */
+  /* the corridor test: nearest point of the route to (lat, lon) when it lies within buf metres, else null */
+  function corridor(r, bufM) {
+    var pts = sample(r, Math.min(400, Math.max(40, Math.round(r.m / 1000))));
+    var lat0 = Infinity, lat1 = -Infinity, lo0 = Infinity, lo1 = -Infinity;
+    pts.forEach(function (x) { lat0 = Math.min(lat0, x.p[0]); lat1 = Math.max(lat1, x.p[0]); lo0 = Math.min(lo0, x.p[1]); lo1 = Math.max(lo1, x.p[1]); });
+    var pad = bufM / 111000 + 0.01;
+    return { pts: pts, at: function (lat, lon) {
+      lat = +lat; lon = +lon; if (lat == null || lon == null || !isFinite(lat) || !isFinite(lon)) return null;
+      while (lon < lo0 - 180) lon += 360; while (lon > lo1 + 180) lon -= 360;
+      if (lat < lat0 - pad || lat > lat1 + pad || lon < lo0 - pad * 3 || lon > lo1 + pad * 3) return null;
+      var n = near(r, [lat, lon], pts); return n.d <= bufM ? n : null;
+    } };
+  }
+  function staleSearch() {
+    if (!S.srch || S.srch.stale) return;
+    S.srch.stale = true; S.stok++;
+    if (S.rxl) S.rxl.clearLayers(); legend();
+    var b = el("rt-brief"); if (b) b.innerHTML = '<p class="obs">The route changed. <button type="button" class="linkish" data-rt="search">Search again</button></p>';
+    var rp = el("rt-brep"); if (rp) rp.hidden = true;
+    var rx = el("rt-rx"); if (rx) rx.innerHTML = "";
+  }
+  function search() {
+    var r = S.routes[S.sel];
+    if (!r || S.busy) { msg("Plan a route first: add at least two waypoints."); var b0 = el("rt-brief"); if (b0) b0.innerHTML = '<p class="obs">Plan a route first: add at least two waypoints.</p>'; return; }
+    var tok = ++S.stok, A = W.TSAP && W.TSAP.areaApi;
+    S.srch = { r: r, tok: tok, buf: S.buf, at: Date.now(), cor: corridor(r, S.buf * 1000), towns: [], townsDone: false, townErr: "", rx: null, rxErr: "", reps: null,
+      period: A && A.periodLabel ? A.periodLabel() : "the period shown" };
+    ensureLayer(); S.rxl.clearLayers();
+    reportsAlong(); glance();
+    var sec = el("rt-srch"); if (sec && sec.scrollIntoView) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+    towns(tok).then(function () { if (tok === S.stok) { reportsAlong(); glance(); } });
+    restrictions(tok);
+  }
+  /* towns the route passes through (Photon reverse geocoding at points along it), so unlocated news that names them is found */
+  function towns(tok) {
+    var q = S.srch, r = q.r, n = Math.min(16, Math.max(3, Math.round(r.m / 10000) + 1)), pts = sample(r, n), out = [], seen = {}, i = 0, fails = 0;
+    function one() {
+      if (tok !== S.stok || i >= pts.length) return Promise.resolve();
+      var p = pts[i++];
+      return getJSON(HOST.photon.url + "reverse?lat=" + p.p[0].toFixed(5) + "&lon=" + G.wrap(p.p[1]).toFixed(5) + "&limit=1&lang=en", 10000).then(function (j) {
+        var f = j && j.features && j.features[0], pr = f && f.properties; if (!pr) return;
+        var nm = clean(pr.city || (/^(city|town|village|locality|district|suburb)$/.test(pr.type || "") ? pr.name : "") || pr.district || pr.county || "", 60);
+        if (nm && !seen[nm.toLowerCase()]) { seen[nm.toLowerCase()] = 1; out.push({ name: nm, along: p.m, sub: clean([pr.county, pr.state].filter(function (x) { return x && x !== nm; }).join(", "), 80) }); }
+      }, function () { fails++; }).then(one);
+    }
+    /* three at a time keeps it quick without hammering the free server */
+    return Promise.all([one(), one(), one()]).then(function () {
+      if (tok !== S.stok) return;
+      out.sort(function (a, b) { return a.along - b.along; });
+      q.towns = out; q.townsDone = true; q.townErr = fails && !out.length ? "Town names did not load (" + HOST.photon.name + " did not answer)." : "";
+    });
+  }
+  /* reports, news, neighbouring countries' reports, open data and event groups along the route, handed to the area summary writer */
+  function reportsAlong() {
+    var q = S.srch, A = W.TSAP && W.TSAP.areaApi, box = el("rt-brep");
+    if (!q || !box) return;
+    if (!A || !A.records) { q.reps = { items: [], events: [], named: 0, err: "This page has no reports loaded yet." }; return; }
+    var at = q.cor.at, items = [];
+    function ms(t) { t = String(t || ""); if (!t) return NaN; if (/^\d{4}-\d\d-\d\d[T ]\d\d:\d\d/.test(t)) { t = t.replace(" ", "T"); if (!/(Z|[+-]\d\d:?\d\d)$/.test(t)) t = t.slice(0, 16) + "Z"; return Date.parse(t); } return Date.parse(t.slice(0, 10) + "T00:00:00Z"); }
+    function where(n) { return dist(n.along) + " along, " + dist(n.d) + " off the route"; }
+    function rec(r0, n, named) {
+      return { rec: r0, id: r0.id, title: r0.title, detail: r0.detail || "", when: A.fmtTs(r0), t: ms(r0.issued || r0.ts), src: r0.src ? r0.src.name : "", url: r0.url || "",
+        kind: r0.social ? "social" : r0.news ? "news" : "record", layer: A.layerName(r0.layer), place: n ? [r0.place, r0.prov].filter(Boolean).join(", ") : "", named: named || "",
+        note: n ? where(n) : "", along: n ? n.along : null, sev: r0.sev || 0, killed: r0.killed, injured: r0.injured, status: A.status(r0) };
+    }
+    A.records().forEach(function (r0) {
+      if (r0.lat == null || !A.inPeriod(r0)) return;
+      var n = at(r0.lat, r0.lon); if (n) items.push(rec(r0, n));
+    });
+    /* unlocated reports (most news and social posts) count when they name a town on the route or a place the located items name.
+       Names under five letters are skipped as too easily confused. */
+    var names = {};
+    function addName(nm) { nm = String(nm || "").split(",")[0].replace(/\s+(province|district|subdistrict|city|municipality|region|state|county)$/i, "").trim(); if (nm.length >= 5 && !/\d/.test(nm)) names[nm.toLowerCase()] = nm; }
+    q.towns.forEach(function (t) { addName(t.name); });
+    S.wps.forEach(function (w) { addName(w.name); });
+    items.forEach(function (it) { addName(it.place); if (it.rec) addName(it.rec.prov); });
+    var nl = Object.keys(names).sort(function (x, y) { return y.length - x.length; }), named = 0;
+    if (nl.length) {
+      var re = new RegExp("(^|[^\\p{L}])(" + nl.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("|") + ")(?![\\p{L}])", "iu");
+      A.records().forEach(function (r0) {
+        if (r0.lat != null && isFinite(r0.lat) || !A.inPeriod(r0)) return;
+        var m = re.exec(r0.title + " " + String(r0.detail || "").slice(0, 400)); if (!m) return;
+        named++; items.push(rec(r0, null, names[m[2].toLowerCase()]));
+      });
+    }
+    (A.neighbours ? A.neighbours() : []).forEach(function (x) {
+      var n = at(x.lat, x.lon); if (!n || !A.inPeriodDate(x.issued || x.ts)) return;
+      items.push({ x: x, id: x.id, title: x.title, detail: "", when: A.fmtTs(x), t: ms(x.issued || x.ts), src: x.src ? x.src.name : "", url: x.url || "", href: A.xbHref(x),
+        kind: x.social ? "social" : "neighbour", cc: x.xcc, layer: A.layerName(x.layer), place: x.place || "", note: where(n), along: n.along, sev: x.sev || 0, status: A.status(x) });
+    });
+    (A.openData ? A.openData() : []).forEach(function (i) {
+      var n = at(i.la, i.lo); if (!n || !A.inPeriodDate(i.d)) return;
+      items.push({ id: "o:" + (i.u || i.t), title: i.t, detail: i.x || "", when: i.d ? (i.d.length > 10 && W.OSAP_TIME ? W.OSAP_TIME.asofT(i.d) : String(i.d).slice(0, 10)) : "", t: ms(i.d), src: i.src, url: i.u || "",
+        kind: "open", layer: i.cat || "Open data", place: "", note: where(n), along: n.along, sev: 0 });
+    });
+    var byId = {}; items.forEach(function (it) { byId[it.id] = it; });
+    var evs = (A.events ? A.events() : []).filter(function (v) { return v.loc && at(v.loc.lat, v.loc.lon); }).map(function (v) {
+      var m = v.m.map(function (x) { return byId[x.id]; }).filter(Boolean);
+      return { title: v.head.title, n: v.m.length, srcs: v.srcs.length, members: m, head: byId[v.head.id] || m[0], t: m.reduce(function (x, it) { return Math.max(x, it.t || 0); }, 0) };
+    }).filter(function (e) { return e.members.length >= 2; });
+    q.reps = { items: items, events: evs, named: named };
+    var sum = W.OSAP_AREASUM;
+    if (!sum) { box.hidden = false; box.innerHTML = '<p class="obs">The report summary is still loading; press Search this route again in a moment.</p>'; return; }
+    sum.open("rt-brep", { items: items, events: evs, title: "Reports along this route", period: q.period, inline: true,
+      sub: routeName() + " · within " + q.buf + " km" + (q.towns.length ? " · passes " + q.towns.slice(0, 6).map(function (t) { return t.name; }).join(", ") + (q.towns.length > 6 ? "…" : "") : ""),
+      where: "within " + q.buf + " km of this route", placeWhere: "on the route", about: "a planned route (" + routeName() + ")",
+      empty: "Nothing OSAP holds lies within " + q.buf + " km of this route for " + q.period + ", and no unlocated report names a town on it. Widen the distance or the period in the page header. An empty list is not a clearance." });
+  }
+  /* movement restrictions mapped in OpenStreetMap along the route (Overpass): points and short features close to the line,
+     military and protected areas near it or containing it */
+  var RXL = { border: ["Border post or crossing", "#6a1b9a"], chk: ["Military checkpoint", "#b71c1c"], mil: ["Military area: entry may be prohibited", "#b71c1c"],
+    prot: ["Protected area: vehicle access may be limited", "#2e7d32"], ford: ["Ford", "#0277bd"], limit: ["Weight or height limit", "#e65100"] };
+  function rxKind(t) {
+    if (t.military === "checkpoint") return "chk";
+    var M = W.OSAP_MOBILITY; if (M && M.rxKind) return M.rxKind(t);
+    if (t.barrier === "border_control") return "border"; if (t.landuse === "military" || t.military) return "mil";
+    if (t.boundary === "protected_area" || t.leisure === "nature_reserve") return "prot"; if (t.ford && t.ford !== "no") return "ford";
+    if (t.maxweight || t.maxheight || t["maxweight:signed"]) return "limit"; return null;
+  }
+  function rxQuery(r, bufM) {
+    var pts = sample(r, Math.min(150, Math.max(20, Math.round(r.m / 2000))));
+    var line = pts.map(function (x) { return x.p[0].toFixed(5) + "," + G.wrap(x.p[1]).toFixed(5); }).join(",");
+    function A1(m) { return "(around:" + m + "," + line + ")"; }
+    var far = Math.min(bufM, 2000), ins = sample(r, Math.min(25, Math.max(3, Math.round(r.m / 10000))));
+    return "[out:json][timeout:45][maxsize:32000000];(" +
+      'node["barrier"="border_control"]' + A1(1000) + ';way["barrier"="border_control"]' + A1(1000) + ';node["military"="checkpoint"]' + A1(1000) + ";" +
+      'way["landuse"="military"]' + A1(far) + ';relation["landuse"="military"]' + A1(far) + ';way["military"~"^(danger_area|range|training_area|base|barracks|airfield)$"]' + A1(far) + ";" +
+      'way["boundary"="protected_area"]' + A1(far) + ';way["leisure"="nature_reserve"]' + A1(far) + ";" +
+      'node["ford"]["ford"!="no"]' + A1(60) + ';way["ford"]["ford"!="no"]' + A1(60) + ";" +
+      'way["highway"]["maxweight"]' + A1(40) + ';way["highway"]["maxheight"]' + A1(40) + ';way["bridge"]["maxweight"]' + A1(40) + ";" +
+      ");out tags center 400;out count;" +
+      /* areas the route runs inside, found from points along it */
+      "(" + ins.map(function (x) { return "is_in(" + x.p[0].toFixed(5) + "," + G.wrap(x.p[1]).toFixed(5) + ");"; }).join("") + ")->.a;" +
+      '(area.a["landuse"="military"];area.a["boundary"="protected_area"];area.a["leisure"="nature_reserve"];)->.b;(way(pivot.b);relation(pivot.b););out tags center 100;';
+  }
+  function restrictions(tok) {
+    var q = S.srch, r = q.r, box = el("rt-rx"); if (!box) return;
+    box.innerHTML = '<h3>Movement restrictions</h3><p class="obs">Loading from OpenStreetMap…</p>';
+    getJSON(HOST.overpass.url, 60000, { method: "POST", body: "data=" + encodeURIComponent(rxQuery(r, q.buf * 1000)), headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then(function (j) {
+      if (tok !== S.stok) return;
+      var els = (j && j.elements) || [], out = [], seen = {}, inside = false, cor = corridor(r, 2500);
+      els.forEach(function (e) {
+        if (e.type === "count") { inside = true; return; }
+        var t = e.tags || {}, k = rxKind(t); if (!k) return;
+        var key = e.type + "/" + e.id; if (seen[key]) { if (inside) seen[key].inside = true; return; }
+        var lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
+        var n = lat != null ? near(r, [+lat, +lon], cor.pts) : null;
+        var x = { k: k, lbl: RXL[k][0], col: RXL[k][1], name: clean(t.name || t["name:en"] || t.ref || "", 80), inside: inside, lat: +lat, lon: +lon, along: n ? n.along : 0, d: n ? n.d : null, area: k === "mil" || k === "prot",
+          detail: clean([t.maxweight ? "max weight " + t.maxweight : "", t.maxheight ? "max height " + t.maxheight : "", t.access && t.access !== "yes" ? "access " + t.access : "", t.operator || ""].filter(Boolean).join(" · "), 120),
+          url: "https://www.openstreetmap.org/" + (e.type === "relation" ? "relation" : e.type === "way" ? "way" : "node") + "/" + (+e.id) };
+        seen[key] = x; out.push(x);
+      });
+      out.sort(function (a, b) { return a.along - b.along; });
+      q.rx = out; rxUi(); glance(); legend();
+    }).catch(function (e) {
+      if (tok !== S.stok) return;
+      q.rxErr = "OpenStreetMap restrictions did not load (" + (e.status === 429 || e.status === 504 ? "the free server is busy" : e.message) + "). Search again in a minute.";
+      box.innerHTML = '<h3>Movement restrictions</h3><p class="rtbad">' + E(q.rxErr) + "</p>"; glance();
+    });
+  }
+  function rxUi() {
+    var q = S.srch, box = el("rt-rx"); if (!q || !box || !q.rx) return;
+    S.rxl.clearLayers();
+    q.rx.slice(0, 300).forEach(function (x) {
+      if (!isFinite(x.lat) || !isFinite(x.lon)) return;
+      L.circleMarker([x.lat, x.lon], { pane: "routepane", renderer: S.svg, radius: x.area ? 5 : 6, color: "#fff", weight: 1.5, fillColor: x.col, fillOpacity: 0.9 })
+        .bindPopup('<div data-keep-pop="1"><h3>' + E(x.lbl) + "</h3>" + (x.name ? "<p>" + E(x.name) + "</p>" : "") + (x.detail ? '<p class="obs">' + E(x.detail) + "</p>" : "") +
+          '<p class="obs">' + (x.inside ? "The route runs inside this area. " : "") + "Mapped in OpenStreetMap; community-mapped, may be incomplete or out of date.</p>" +
+          '<p><a href="' + E(x.url) + '" target="_blank" rel="noopener">OpenStreetMap</a></p></div>').addTo(S.rxl);
+    });
+    var by = {}; q.rx.forEach(function (x) { by[x.lbl] = (by[x.lbl] || 0) + 1; });
+    box.innerHTML = '<h3>Movement restrictions</h3>' + (q.rx.length ? '<p class="obs">' + Object.keys(by).map(function (k) { return E(k) + " " + by[k]; }).join(" · ") + ". In order along the route" + (q.rx.length > 80 ? "; the first 80 are listed" : "") + '.</p><ol class="rthaz">' +
+      q.rx.slice(0, 80).map(function (x) {
+        return '<li><button type="button" data-zoom="' + x.lat.toFixed(5) + "," + x.lon.toFixed(5) + '" title="Show on the map">' + E(dist(x.along)) + '</button><div><span class="rtrxk" style="background:' + x.col + '"></span><b>' + E(x.lbl) + "</b> " +
+          '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.name || "unnamed") + "</a>" + (x.detail ? " · " + E(x.detail) : "") +
+          '<span class="obs"> · ' + (x.inside ? "route runs inside" : x.area ? "near the route" : x.d < 50 ? "on the route" : E(dist(x.d)) + " off") + "</span></div></li>";
+      }).join("") + "</ol>" : '<p class="obs">None mapped in OpenStreetMap along this route.</p>') +
+      '<p class="obs">Checked in OpenStreetMap: border posts and military checkpoints within 1 km, military and protected areas within ' + Math.min(q.buf, 2) + " km or containing the route, fords and weight or height limits on the route itself. " +
+      "Community-mapped (&copy; OpenStreetMap contributors, ODbL); may be incomplete or out of date. An empty list is not a clearance.</p>";
+  }
+  /* the brief's first block: one line per subject, each linking to its full section */
+  function glance() {
+    var q = S.srch, box = el("rt-brief"), r = S.routes[S.sel]; if (!q || !box || !r || q.stale) return;
+    var dep = departMs(), arr = dep + r.total * 1000, rows = [];
+    function row(lbl, html, to, bad) { rows.push("<li><b>" + E(lbl) + "</b><span" + (bad ? ' class="rtbad"' : "") + ">" + html + "</span>" + (to ? '<button type="button" data-rt="goto" data-to="' + to + '">Show</button>' : "<span></span>") + "</li>"); }
+    var mode = (MODES.filter(function (m) { return m.id === S.mode; })[0] || {}).name || "";
+    row("Route", E(dist(r.m) + " · " + dur(r.total) + " · " + mode) + "<br>" + E("depart " + zOnly(dep) + ", arrive " + zOnly(arr)), "rt-res");
+    row("Passes", q.towns.length ? E(q.towns.map(function (t) { return t.name; }).join(", ")) : q.townErr ? E(q.townErr) : q.townsDone ? "No town names found along the route." : "Looking up towns along the route…", null);
+    var rp = q.reps;
+    row("Reports", !rp ? "Gathering…" : rp.err ? E(rp.err) : rp.items.length ? E(rp.items.length + " for " + q.period + (rp.named ? ", " + rp.named + " of them unlocated but naming a town on the route" : "")) +
+      (rp.items.some(function (it) { return it.sev >= 3; }) ? ' · <b class="rtbad">' + rp.items.filter(function (it) { return it.sev >= 3; }).length + " high severity</b>" : "") : "None within " + q.buf + " km for " + E(q.period) + ".", rp && rp.items.length ? "rt-brep" : null);
+    var hz = (S.haz && S.haz.hits || []).filter(function (h) { return h.kind !== "Report"; }), hk = {};
+    hz.forEach(function (h) { var k = /^Earthquake/.test(h.kind) ? "Earthquakes" : h.kind; hk[k] = (hk[k] || 0) + 1; });
+    var ar = S.haz && S.haz.areas || [];
+    row("Hazards", (ar.length ? '<b class="rtbad">Crosses ' + E(ar.map(function (x) { return x.a.type + " " + x.a.name; }).join(", ")) + "</b>. " : "") +
+      (hz.length ? E(Object.keys(hk).map(function (k) { return k + " " + hk[k]; }).join(" · ")) : "No road closures, disaster alerts, quakes, conflict events or storms within " + S.buf + " km."), "rt-haz", !!(hz.length || ar.length));
+    var rx = q.rx;
+    if (rx) { var rk = {}; rx.forEach(function (x) { rk[x.lbl] = (rk[x.lbl] || 0) + 1; }); var insd = rx.filter(function (x) { return x.inside; });
+      row("Restrictions", rx.length ? (insd.length ? "<b>Runs inside " + E(insd.slice(0, 3).map(function (x) { return (x.name || x.lbl); }).join(", ")) + "</b>. " : "") + E(Object.keys(rk).map(function (k) { return k.split(":")[0] + " " + rk[k]; }).join(" · ")) : "None mapped in OpenStreetMap.", "rt-rx", !!insd.length); }
+    else row("Restrictions", q.rxErr ? E(q.rxErr) : "Loading from OpenStreetMap…", q.rxErr ? "rt-rx" : null, !!q.rxErr);
+    if (S.wx) {
+      var w = S.wx.filter(Boolean), bad = [];
+      w.forEach(function (x) { if (x.wc >= 95) bad.push("thunderstorms"); if (x.pr >= 4) bad.push("heavy rain"); if (x.wg >= 60) bad.push("strong gusts"); if (x.vis != null && x.vis < 1000) bad.push("poor visibility"); });
+      bad = bad.filter(function (v, i) { return bad.indexOf(v) === i; });
+      var tmax = Math.max.apply(null, w.map(function (x) { return x.t == null ? -99 : x.t; })), tmin = Math.min.apply(null, w.map(function (x) { return x.t == null ? 99 : x.t; })), pmax = Math.max.apply(null, w.map(function (x) { return x.pp || 0; }));
+      row("Weather", (bad.length ? "<b>Watch for " + E(bad.join(", ")) + ".</b> " : "") + (w.length ? E((Math.round(tmin) === Math.round(tmax) ? Math.round(tmax) : Math.round(tmin) + " to " + Math.round(tmax)) + " °C, rain chance up to " + pmax + "%.") : "No forecast for these hours."), "rt-wx", !!bad.length);
+    } else row("Weather", "Loading the forecast…", "rt-wx");
+    var pts = sample(r, 60), dark = 0;
+    pts.forEach(function (x) { if (G.sunAlt(dep + x.t * 1000, x.p[0], x.p[1]) < -0.833) dark++; });
+    row("Light", dark ? E("About " + Math.round(dark / pts.length * 100) + "% of the trip is in darkness.") : "All of the trip is in daylight.", "rt-sun");
+    box.innerHTML = '<ul class="rtgl">' + rows.join("") + "</ul>" +
+      '<p class="obs">Searched ' + E(when(q.at)) + " within " + q.buf + " km. Reports are what their sources claim, not confirmed. Everything here is a planning aid: check conditions on the ground.</p>";
+  }
+
   /* ---------- directions ---------- */
   function dirUi() {
     var box = el("rt-dir"), r = S.routes[S.sel]; if (!box) return;
@@ -717,6 +950,10 @@ function main() {
       L1.push("Total " + dist(r.m) + ", " + dur(r.total) + (r.src ? " (" + r.src.name + ")" : ""));
       for (var i = 0; i < S.wps.length - 1; i++) { var inv = G.inverse([S.wps[i].lat, S.wps[i].lon], [S.wps[i + 1].lat, S.wps[i + 1].lon]); L1.push("Leg " + LET.charAt(i) + "-" + LET.charAt(i + 1) + ": " + dist((r.legs[i] || {}).m || inv.m) + ", " + dur((r.legs[i] || {}).s) + ", " + G.fmtBrg(inv.b1) + "T " + G.fmtBrg(inv.b1 - G.decl(S.wps[i].lat, S.wps[i].lon)) + "M"); }
     }
+    var q = S.srch && !S.srch.stale ? S.srch : null;
+    if (q && q.towns.length) L1.push("Passes: " + q.towns.map(function (t) { return t.name; }).join(", "));
+    if (q && q.reps) L1.push("Reports within " + q.buf + " km (" + q.period + "): " + q.reps.items.length);
+    if (q && q.rx) L1.push("Movement restrictions mapped in OpenStreetMap: " + q.rx.length + (q.rx.length ? " (" + q.rx.slice(0, 10).map(function (x) { return x.lbl + " at " + dist(x.along); }).join("; ") + ")" : ""));
     if (S.haz && S.haz.hits.length) L1.push("Hazards within " + S.buf + " km: " + S.haz.hits.length + " (" + S.haz.hits.slice(0, 10).map(function (h) { return h.kind + " at " + dist(h.along); }).join("; ") + ")");
     return L1.join("\n");
   }
@@ -730,6 +967,7 @@ function main() {
     var grab = function (id) { var x = el(id); return x ? x.innerHTML.replace(/<button[^>]*>[\s\S]*?<\/button>/g, "") : ""; };
     pr.innerHTML = "<h1>" + E(routeName()) + "</h1><p>AXIOM OSAP route plan, printed " + E(when(Date.now())) + ". A planning aid built in the browser, not a record.</p>" +
       "<h2>Summary</h2>" + grab("rt-sum") + grab("rt-legs") + "<h2>Waypoints</h2><ol>" + S.wps.map(function (w, i) { return "<li><b>" + E(wpName(i)) + "</b> " + E(G.mgrs(w.lat, w.lon) || "") + " · " + E(G.fmtLL(w.lat, w.lon)) + "</li>"; }).join("") + "</ol>" +
+      (S.srch && !S.srch.stale ? "<h2>Along the route within " + S.srch.buf + " km</h2>" + grab("rt-brief") + grab("rt-rx") + grab("rt-brep") : "") +
       "<h2>Light</h2>" + grab("rt-sun") + "<h2>Weather</h2>" + grab("rt-wx") + "<h2>Hazards within " + S.buf + " km</h2>" + grab("rt-haz") + "<h2>Directions</h2>" + grab("rt-dir");
     D.documentElement.classList.add("rtprinting");
     var done = function () { D.documentElement.classList.remove("rtprinting"); W.removeEventListener("afterprint", done); };
@@ -815,6 +1053,11 @@ function main() {
     ".rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}.rtsw{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}" +
     ".rtv{background:none;border:0}.rtv span{display:block;width:22px;height:22px;border-radius:50%;background:#1c7ed6;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.45);color:#fff;font:700 11.5px/22px system-ui,sans-serif;text-align:center;cursor:grab}" +
     ".rtv.s span{background:#2b8a3e}.rtv.e span{background:#c92a2a}" +
+    ".rtbtns button.rtgo,.rtrow button.rtgo{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}ul.rtgl{list-style:none;margin:6px 0;padding:0}" +
+    "ul.rtgl li{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:6px;align-items:start;padding:5px 0;border-top:1px solid var(--line-soft,var(--line));font-size:12.5px;line-height:1.35}" +
+    "ul.rtgl li>b{font-size:11.5px;color:var(--muted);font-weight:600}ul.rtgl li button{font:inherit;font-size:11.5px;border:1px solid var(--line);background:none;color:var(--accent);border-radius:3px;padding:1px 6px;cursor:pointer}" +
+    ".rtbrep{margin-top:8px;border-top:2px solid var(--line);padding-top:4px}.rtbrep .pkghead{display:flex;justify-content:space-between;align-items:center}.rtbrep .pkghead h2{font-size:13.5px;margin:4px 0}" +
+    ".rtbrep .pkghead .x{font:inherit;font-size:18px;background:none;border:0;color:var(--muted);cursor:pointer}.rtrxk{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:0}" +
     "#rt-print{display:none}@media print{html.rtprinting body>*:not(#rt-print){display:none!important}html.rtprinting #rt-print{display:block!important;font:10.5pt/1.35 system-ui,sans-serif;color:#000;background:#fff}" +
     "html.rtprinting #rt-print h1{font-size:15pt;margin:0 0 4px}html.rtprinting #rt-print h2{font-size:12pt;margin:12px 0 4px}html.rtprinting #rt-print table{border-collapse:collapse;width:100%}html.rtprinting #rt-print td,html.rtprinting #rt-print th{border-bottom:1px solid #ccc;padding:2px 6px 2px 0;text-align:left}" +
     "html.rtprinting #rt-print .rtkpi{display:flex;gap:18px}html.rtprinting #rt-print ol{padding-left:18px}html.rtprinting #rt-print li{display:list-item!important}}" +
@@ -823,7 +1066,7 @@ function main() {
 
   /* ---------- entry points ---------- */
   function show(ctx) {
-    S.ctx = ctx; S.layer = null;
+    S.ctx = ctx; S.layer = null; S.srch = null; S.stok++;
     var fromUrl = fromLink();
     if (ctx.seed && ctx.seed.length) { S.wps = cleanWps(ctx.seed.map(function (p) { return { lat: p[0], lon: p[1] }; })); keepCur(); }
     skeleton(); modesUi(); wpsUi(); savedUi(); ensureLayer(); drawWps();
