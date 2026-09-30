@@ -31,6 +31,7 @@
     fold: ic('<path d="M9 6l6 6-6 6"/>'), unfold: ic('<path d="M15 6l-6 6 6 6"/>'),
     globe: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/>'),
     data: ic('<ellipse cx="12" cy="5.5" rx="8" ry="2.8"/><path d="M4 5.5v6.5c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8V5.5"/><path d="M4 12v6.5c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8V12"/>'),
+    home: ic('<path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/>'),
     cloud: ic('<path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z"/><path d="M9 21l1-2M13 21l1-2" opacity=".7"/>'),
     layers: ic('<path d="M12 3 2 8l10 5 10-5z"/><path d="M2 13l10 5 10-5"/><path d="M2 17.5l10 5 10-5" opacity=".55"/>'),
     ruler: ic('<path d="M3 16.5 16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l1.8 1.8M9.5 10l1.2 1.2M12 7.5l1.8 1.8M14.5 5l1.2 1.2"/>'),
@@ -65,6 +66,7 @@
 
   /* ---------- the toolbar ---------- */
   /* the toolbar in groups, top to bottom, with a thin line between groups (Shane 2026-09-30: easy and intuitive to find):
+       Home:   Today (the start screen; the header logo opens it too)
        Find:   Search
        Show:   Data sets (reporting topics), Weather, Overlays (map layers, your marks), Base map
        Map:    Grid, Crosshair (osap-grid.js) and 3D (osap-3d.js) are added here, before Measure
@@ -73,6 +75,7 @@
        Screen: Layout, Full
      New map layers (power grid, communications towers) go in Overlays; area tools (a medical plan) go in the Area menu. */
   var TOOLS = [
+    ["today", "Today", I.home, "Back to Today: weather, alerts and top stories"],
     ["search", "Search", I.search, "Search places, or go to an MGRS, UTM or lat/long"],
     ["datasets", "Data sets", I.data, "Data sets: the reporting topics the map and the list show"],
     ["weather", "Weather", I.cloud, "Weather: radar, cloud, wind, warnings, cyclones and forecasts"],
@@ -131,7 +134,8 @@
     if (k === "fold") { fold(!bar.classList.contains("folded")); return; }
     if (pop._for === k) { popClose(); return; }
     popClose();
-    if (k === "search") search();
+    if (k === "today") { omClose(); if (W.OSAP_TODAY) W.OSAP_TODAY.show(); }
+    else if (k === "search") search();
     else if (k === "datasets" || k === "overlays" || k === "weather") { if (!om.hidden && omMode === k) omClose(); else omOpen(k); }
     else if (k === "basemap") {
       var BM = W.OSAP_BASEMAP; if (!BM) return;
@@ -504,10 +508,10 @@
     /* toolbar */
     "#atk-tools{position:absolute;right:0;top:0;z-index:1000;flex-direction:column;align-items:stretch;top:8px;right:8px;margin:0!important;background:rgba(20,24,28,.86);border-radius:10px;padding:3px;box-shadow:0 2px 10px rgba(0,0,0,.35);max-height:calc(100% - 46px);box-sizing:border-box;pointer-events:auto}" +
     "#atk-tools .atk-list{display:flex;flex-direction:column;gap:2px;overflow-y:auto;scrollbar-width:none}#atk-tools .atk-list::-webkit-scrollbar{display:none}" +
-    "#atk-tools button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:48px;min-height:42px;padding:4px 2px;border:0;border-radius:7px;background:none;color:#e9eef2;cursor:pointer;font:600 9.5px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.01em}" +
+    "#atk-tools button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:48px;min-height:40px;padding:4px 2px;border:0;border-radius:7px;background:none;color:#e9eef2;cursor:pointer;font:600 9.5px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.01em}" +
     /* a thin line above the first button of each group */
-    "#atk-tools .atk-list>[data-atk=datasets],#atk-tools .atk-list>[data-ogrid=lines],#atk-tools .atk-list>[data-atk=measure],#atk-tools .atk-list>[data-atk=mine],#atk-tools .atk-list>[data-atk=layout]{margin-top:5px}" +
-    "#atk-tools .atk-list>[data-atk=datasets]::before,#atk-tools .atk-list>[data-ogrid=lines]::before,#atk-tools .atk-list>[data-atk=measure]::before,#atk-tools .atk-list>[data-atk=mine]::before,#atk-tools .atk-list>[data-atk=layout]::before{content:'';position:absolute;left:8px;right:8px;top:-4px;border-top:1px solid rgba(255,255,255,.22)}" +
+    "#atk-tools .atk-list>[data-atk=search],#atk-tools .atk-list>[data-atk=datasets],#atk-tools .atk-list>[data-ogrid=lines],#atk-tools .atk-list>[data-atk=measure],#atk-tools .atk-list>[data-atk=mine],#atk-tools .atk-list>[data-atk=layout]{margin-top:5px}" +
+    "#atk-tools .atk-list>[data-atk=search]::before,#atk-tools .atk-list>[data-atk=datasets]::before,#atk-tools .atk-list>[data-ogrid=lines]::before,#atk-tools .atk-list>[data-atk=measure]::before,#atk-tools .atk-list>[data-atk=mine]::before,#atk-tools .atk-list>[data-atk=layout]::before{content:'';position:absolute;left:8px;right:8px;top:-4px;border-top:1px solid rgba(255,255,255,.22)}" +
     "#atk-tools button:hover{background:rgba(255,255,255,.1)}#atk-tools button:focus-visible{outline:2px solid #4dabf7;outline-offset:-2px}" +
     "#atk-tools button[aria-pressed=true],#atk-tools button.on{background:#0b7285;color:#fff}#atk-tools button[hidden]{display:none}" +
     "#atk-tools .atk-fold{min-height:28px;color:#9fb3c1;border-bottom:1px solid rgba(255,255,255,.12);border-radius:7px 7px 0 0;margin-bottom:2px}" +
