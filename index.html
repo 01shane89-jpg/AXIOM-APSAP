@@ -444,10 +444,17 @@ select.mini{
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
-#ml-ds .dstabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}#ml-ds .dstabs button,#ml-ds .dsopen{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
-#ml-ds .dstabs button[aria-pressed=true],#ml-ds .dsopen[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
-#ml-ds .dsrow{display:flex;align-items:center;gap:8px}#ml-ds .dsrow label{flex:1;display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer}#ml-ds .dsopen{flex:none;font-weight:500;min-height:32px;padding:2px 10px}
+#ml-ds .dsbar{display:flex;align-items:center;gap:8px;margin:2px 0 8px}#ml-ds .dscount{flex:1;font-size:13px;color:var(--muted)}#ml-ds .dscount b{color:var(--ink)}
+#ml-ds .dsclear,#ml-ds .dsshowall{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+#ml-ds .dsclear{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}#ml-ds .dsclear[disabled]{background:var(--surface);border-color:var(--line);color:var(--muted);cursor:default;opacity:.7}#ml-ds .dsshowall{font-weight:500}
+#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 2px;padding-top:8px;border-top:1px solid var(--line)}
+#ml-ds .dsrow{display:flex;align-items:stretch;gap:2px;min-height:38px}
+#ml-ds .dstick,#ml-ds .dsnobox{flex:none;width:38px;display:flex;align-items:center;justify-content:center;cursor:pointer}#ml-ds .dstick input{width:18px;height:18px;margin:0;cursor:pointer}
+#ml-ds .dsname{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:14px;font-weight:600;padding:4px 8px;border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer}
+#ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
+#ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
+#ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
+#ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
@@ -5790,9 +5797,18 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
-  /* the headings the data set list is grouped under; a set in none of them goes under "More" */
-  var DS_GROUPS = [["Alerts", ["alerts"]], ["Security", ["border", "insurgency", "security", "safety", "partners", "presence"]], ["Crime", ["crime", "scam", "aml"]],
-    ["Weather and hazards", ["weather", "hazards", "flood"]], ["Infrastructure and services", ["infra", "transport", "health", "crisis"]], ["News and social media", ["news", "social"]]];
+  /* the headings the Data sets list is grouped under (Shane 2026-09-30: data sets are only the topics and areas that filter
+     the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
+     "More topics" */
+  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence"]],
+    ["Crime", ["crime", "scam", "aml"]],
+    ["Disasters and hazards", ["alerts", "flood", "hazards", "safety", "health", "crisis"]],
+    ["Infrastructure and movement", ["infra", "transport"]],
+    ["News and social media", ["news", "social"]]];
+  function dsGroupOf(v) {
+    for (var i = 0; i < DS_GROUPS.length; i++) if (DS_GROUPS[i][1].some(function (k) { return k === v || (k === "cf-" && v.indexOf("cf-") === 0); })) return i;
+    return DS_GROUPS.length;
+  }
   /* a tab that is not in the list (Route, Timeline, one merged into a conflict tab) draws as it always has */
   function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
   function dsList() {
@@ -5891,31 +5907,52 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
-    var n = list.filter(function (x) { return DS[x.id]; }).length, seen = {};
-    /* this panel is the one place to choose what to see: the tabs that are not data sets (Timeline, the conflict tabs, Route)
-       open from the row on top; each data set has its map tick and an Open button for its own panel, grouped by subject */
+    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
+    /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
+       which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
       return !b.hidden && !list.some(function (x) { return x.id === b.getAttribute("data-view"); });
-    });
-    var grp = DS_GROUPS.map(function (g) {
-      var rows = list.filter(function (x) { return g[1].indexOf(x.id) >= 0; }); rows.forEach(function (x) { seen[x.id] = 1; }); return [g[0], rows];
-    });
-    grp.push(["More", list.filter(function (x) { return !seen[x.id]; })]);
+    }).map(function (b) { return { id: b.getAttribute("data-view"), name: b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim(), view: 1 }; });
     /* while a conflict tab is open the page still holds its previous tab as current: the conflict tab is the one shown as chosen */
-    var cfOpen = document.documentElement.getAttribute("data-cf");
-    dsBox.innerHTML = (tabs.length ? '<div class="mlh">Views</div><div class="dstabs" role="group" aria-label="Views">' + tabs.map(function (b) {
-        var v = b.getAttribute("data-view");
-        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === (cfOpen ? "cf-" + cfOpen : current)) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
-      }).join("") + "</div>" : "") +
-      '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
-      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ". Open shows a data set's own list and details.</p>" +
+    var cfOpen = document.documentElement.getAttribute("data-cf"), openId = cfOpen ? "cf-" + cfOpen : current;
+    var cfv = function (x) { return x.id.indexOf("cf-") === 0; };
+    /* Route is a map tool (its own toolbar button) and Weather sits with the map overlays, so neither is listed here
+       (Shane 2026-09-30: data sets are only the topics and areas that filter reporting) */
+    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1 };
+    var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
+    grp.push(["More topics", []]);
+    rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
+    var tl = tabs.filter(function (x) { return x.id === "timeline"; })[0];
+    dsBox.innerHTML =
+      '<div class="dsbar"><span class="dscount">' + (n ? "<b>" + n + "</b> on the map" : "Nothing on the map") + "</span>" +
+        '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
+        '<button type="button" class="dsshowall" data-dsall="1" title="Put every data set on the map">Show all</button></div>' +
+      (tl ? '<button type="button" class="dsname dsall-rep" data-dsopen="timeline" aria-pressed="' + (openId === "timeline") + '"><span>All reports</span><i>Timeline</i></button>' : "") +
       grp.filter(function (g) { return g[1].length; }).map(function (g) {
         return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x) {
-          return '<div class="mlrow dsrow"><label><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b></span></label>" +
-            '<button type="button" class="dsopen" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === current) + '" title="Open the ' + esc(x.name) + ' list and details">' + (x.id === current ? "Open now" : "Open") + "</button></div>";
+          var box = x.view ? '<span class="dsnobox" title="A view of its own, not a map data set"></span>' :
+            '<label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>';
+          return '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
+            "<span>" + esc(x.name) + "</span></button></div>";
         }).join("");
-      }).join("");
+      }).join("") +
+      /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
+      (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
   }
+  /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
+     events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
+     without leaving the tab (Shane 2026-09-30) */
+  var DS_CFSEL = 'input[id^="bl-"],[data-cfshow],[data-cfh="on"],[data-cfs="on"],[data-cfs="s"],[data-cfi],[data-cfua]';
+  function dsCfOn() {
+    var r = document.getElementById("cf-rail");
+    if (!r || !document.documentElement.getAttribute("data-cf")) return [];
+    return Array.prototype.filter.call(r.querySelectorAll(DS_CFSEL), function (i) { return i.type === "checkbox" && i.checked; });
+  }
+  function dsCfClear() {
+    /* one at a time: a panel may redraw itself after a switch, which replaces the boxes still to do */
+    for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
+  }
+  document.addEventListener("change", function (e) { var t = e.target; if (t && t.closest && t.closest("#cf-rail") && t.matches(DS_CFSEL)) dsUi(); });
   dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
   dsBox.addEventListener("click", function (e) {
     var o = e.target.closest && e.target.closest("[data-dsopen]");
@@ -5927,6 +5964,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
+    if (!on) dsCfClear();
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });

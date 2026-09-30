@@ -91,7 +91,18 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // right side toolbar opens the Overlay Manager with the Layers panel inside
   await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#atk-om") && await p.evaluate(() => !!document.querySelector("#atk-om #ml-panel")), "phone: Overlay Manager opens holding the map layers");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-om #ml-ds input, #atk-ds [data-ds]").length > 3), "phone: Overlay Manager lists the data sets");
+  ok(await p.evaluate(() => { const d = document.querySelector("#atk-om #ml-ds"); return !d || d.offsetParent === null; }), "phone: Map overlays does not repeat the data sets");
+  // Data sets is its own button: the list alone, no map layers or marks
+  await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => [...document.querySelectorAll("#atk-om #ml-ds input")].filter((i) => i.offsetParent !== null).length > 3), "phone: Data sets lists the data sets");
+  ok(await p.evaluate(() => { const g = document.querySelector("#atk-marks"); return g.offsetParent === null && ![...document.querySelectorAll("#atk-om #ml-panel > :not(#ml-ds)")].some((e) => e.offsetParent !== null); }), "phone: Data sets shows no map layers or marks");
+  // the sheet's own header switches back, since on a phone the sheet covers the toolbar
+  await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode")) === "overlays", "phone: header switches the sheet to Map overlays");
+  ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !w || w.offsetParent === null; }), "phone: Map overlays does not hold the weather layers");
+  await p.click('#atk-om [data-omm="weather"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !!w && w.offsetParent !== null && document.querySelector("#atk-marks").offsetParent === null; }), "phone: Weather shows the weather layers alone");
+  await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
   ok(/P1/.test(await p.textContent("#atk-marks")) && /NAI/.test(await p.textContent("#atk-marks")), "phone: Overlay Manager lists your point and NAI");
   if (OUT) await p.screenshot({ path: OUT + "/phone-overlays.png" });
   await p.click('#atk-om [data-om="x"]');
