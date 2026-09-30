@@ -54,6 +54,7 @@ jobs:
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
+      - run: node tests/medplan_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/speed_budget.mjs

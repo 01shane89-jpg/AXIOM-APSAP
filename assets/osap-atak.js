@@ -142,7 +142,7 @@
     }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }), [["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]]) : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -164,7 +164,13 @@
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
     if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
-    else if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
+    else if (f === "area") {
+      /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
+      var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
+      if (at) { if (typeof at.run === "function") at.run(); }
+      else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
+      setTimeout(paintTools, 30);
+    }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
     else if (f === "mine") press('[data-wk-btn="' + k + '"]');
     else if (f === "point") {
