@@ -25,9 +25,10 @@ for (const part of (process.env.SITES || "now=.").split(",")) {
 const RUNS = +(process.env.RUNS || 3), BASEMAP = process.env.BASEMAP || "sat";
 const med = (a) => { const b = a.filter((x) => x != null).sort((x, y) => x - y); return b.length ? Math.round(b[Math.floor(b.length / 2)]) : null; };
 
-async function once(engine, dev, url) {
+async function once(engine, dev, url, warm) {
   const browser = await engine.launch(engine === chromium ? { args: ["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--ignore-gpu-blocklist"] } : {});
-  const ctx = await browser.newContext({ ...dev, serviceWorkers: "block" });
+  const ctx = await browser.newContext({ ...dev, serviceWorkers: warm ? "allow" : "block" });
+  await ctx.addInitScript(() => { window.__lt = []; try { new PerformanceObserver((l) => l.getEntries().forEach((e) => window.__lt.push({ s: e.startTime, d: e.duration }))).observe({ type: "longtask", buffered: true }); } catch (e) {} });
   await ctx.addInitScript((bm) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-map-layers", JSON.stringify({ base: bm })); } catch (e) {} }, BASEMAP);
   const p = await ctx.newPage();
   if (engine === chromium) {
@@ -37,18 +38,31 @@ async function once(engine, dev, url) {
     await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 9e6 / 8, uploadThroughput: 3e6 / 8 });
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
   }
+  if (warm) {
+    /* a phone that has opened the app before: its service worker has saved the app and the data, then the app is opened again */
+    await p.goto(url + "#th", { waitUntil: "load" });
+    await p.waitForFunction(() => navigator.serviceWorker && navigator.serviceWorker.controller, null, { timeout: 60000 }).catch(() => {});
+    await p.waitForTimeout(15000);
+  }
   const t0 = Date.now();
+  if (warm) await p.goto("about:blank");   /* the same address again would only be a jump within the open page */
   await p.goto(url + "#th", { waitUntil: "domcontentloaded" });
   const r = await p.evaluate(async () => {
     const T = (h) => new Promise((res) => { const s = performance.now(); (function tick() { const v = h(); if (v || performance.now() - s > 60000) res(v ? performance.now() : null); else setTimeout(tick, 50); })(); });
     const tileImg = () => [...document.querySelectorAll("#map .leaflet-tile-pane img.leaflet-tile-loaded, #map .leaflet-tile-pane .leaflet-tile-loaded img")].some((i) => i.complete && i.naturalWidth > 0);
+    const cover = T(() => { const b = document.getElementById("osap-boot"); return !b || b.hidden || b.classList.contains("gone"); });
     const first = await T(tileImg);
+    const coverGone = await cover;
     const all = await T(() => { const m = window.__asapMap; if (!m || !tileImg()) return false; let busy = false; m.eachLayer((l) => { if (l.isLoading && l.isLoading()) busy = true; }); return !busy; });
+    const tr = performance.getEntriesByType("resource").filter((e) => /World_Imagery|World_Light_Gray|Canvas|tile\./i.test(e.name) && e.initiatorType === "img");
+    const tileReq = tr.length ? Math.min(...tr.map((e) => e.startTime)) : null, tileGot = tr.length ? Math.min(...tr.map((e) => e.responseEnd)) : null;
+    const lt = (window.__lt || []).filter((t) => t.s < first).reduce((a, t) => a + t.d, 0);
+    const bytesBefore = performance.getEntriesByType("resource").filter((e) => e.responseEnd < first).reduce((a, e) => a + (e.encodedBodySize || 0), 0);
     const tiles = performance.getEntriesByType("resource").filter((e) => /tile|arcgis|opentopomap|eox|gibs/i.test(e.name) && e.initiatorType === "img").length;
-    return { first, all, tiles, scripts: performance.getEntriesByType("resource").filter((e) => e.initiatorType === "script" || e.initiatorType === "fetch").reduce((a, e) => a + (e.transferSize || 0), 0) };
+    return { first, all, coverGone, tiles, tileReq, tileGot, lt, bytesBefore, scripts: performance.getEntriesByType("resource").filter((e) => e.initiatorType === "script" || e.initiatorType === "fetch").reduce((a, e) => a + (e.transferSize || 0), 0) };
   });
   let three = null;
-  try {
+  if (!warm) try {
     await p.waitForFunction(() => window.OSAP_3D, null, { timeout: 30000 });
     await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
     await p.waitForTimeout(6000);   /* a person looks at the map for a few seconds before opening 3D */
@@ -58,13 +72,13 @@ async function once(engine, dev, url) {
     });
   } catch (e) {}
   await browser.close();
-  return { first: r.first, all: r.all, three, tiles: r.tiles, js: r.scripts, wall: Date.now() - t0 };
+  return { first: r.first, all: r.all, cover: r.coverGone, three, tiles: r.tiles, js: r.scripts, tileReq: r.tileReq, tileGot: r.tileGot, lt: r.lt, kb: Math.round(r.bytesBefore / 1024), wall: Date.now() - t0 };
 }
 for (const [ename, engine, dev] of [["chrome", chromium, devices["Pixel 7"]], ["safari", webkit, devices["iPhone 13"]]]) {
-  for (const s of sites) {
+  for (const s of sites) for (const warm of [false, true]) {
     const rs = [];
-    for (let i = 0; i < RUNS; i++) { try { rs.push(await once(engine, dev, s.url)); } catch (e) { console.log(`  ${ename} ${s.name} run ${i}: ${e.message.slice(0, 120)}`); } }
-    console.log(`SPEED ${ename.padEnd(6)} ${s.name.padEnd(8)} base=${BASEMAP} first picture ${med(rs.map((r) => r.first))} ms | all in view ${med(rs.map((r) => r.all))} ms | 3D ready ${med(rs.map((r) => r.three))} ms | tiles ${med(rs.map((r) => r.tiles))} | runs ${JSON.stringify(rs.map((r) => [r.first && Math.round(r.first), r.all && Math.round(r.all), r.three && Math.round(r.three)]))}`);
+    for (let i = 0; i < RUNS; i++) { try { rs.push(await once(engine, dev, s.url, warm)); } catch (e) { console.log(`  ${ename} ${s.name} run ${i}: ${e.message.slice(0, 120)}`); } }
+    console.log(`SPEED ${ename.padEnd(6)} ${s.name.padEnd(5)} ${warm ? "warm" : "cold"} cover gone ${med(rs.map((r) => r.cover))} ms | first picture ${med(rs.map((r) => r.first))} ms | all in view ${med(rs.map((r) => r.all))} ms | 3D ready ${med(rs.map((r) => r.three))} ms | tiles ${med(rs.map((r) => r.tiles))} | first tile asked ${med(rs.map((r) => r.tileReq))} ms, arrived ${med(rs.map((r) => r.tileGot))} ms | main thread busy before it ${med(rs.map((r) => r.lt))} ms | ${med(rs.map((r) => r.kb))} KB downloaded before it`);
   }
 }
 process.exit(0);
