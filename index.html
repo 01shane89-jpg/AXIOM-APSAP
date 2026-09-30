@@ -5014,13 +5014,31 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* ---------- local news: GDELT and national outlets (15-minute snapshot, headlines machine-translated in the job) ----------
      Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
   LCOL.news = "--accent";
-  var GAZ = null;
+  var GAZ = null, CNAMES = {};
+  COUNTRIES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
+  /* a wire dateline names where the reporter filed, not where the story happened ("SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
+     "MANILA (AP) —"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
+  var AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
+  var DATELINE = [/\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
+    new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
+    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu];
+  function stripDatelines(text) {
+    var t = String(text || "");
+    DATELINE.forEach(function (re) { t = t.replace(re, function (m, lead) { lead = typeof lead === "string" ? lead : ""; return lead + new Array(m.length - lead.length + 1).join(" "); }); });
+    return t;
+  }
+  function namesPlace(text, name) {
+    var t = " " + String(text || "").toLowerCase() + " ", n = String(name || "").toLowerCase(), at = n ? t.indexOf(n) : -1;
+    while (at > 0) { if (!/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return true; at = t.indexOf(n, at + 1); }
+    return false;
+  }
   function gazetteer() {
     if (GAZ) return GAZ;
     var g = {};
     function put(name, lat, lon) {
       name = String(name || "").replace(/\s+(District|Province|City|Region|Prefecture|State|Division)$/i, "").trim();
-      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name)) return;
+      /* a country's name is not a place in it: a Wonsan record filed under "North Korea" must not pin every headline naming North Korea at Wonsan */
+      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name) || CNAMES[name.toLowerCase()]) return;
       if (!g[name.toLowerCase()]) g[name.toLowerCase()] = { name: name, lat: lat, lon: lon };
     }
     R.forEach(function (r) { if (r.lat != null && !r.news && !r.social) { put(r.place, r.lat, r.lon); put(r.prov, r.lat, r.lon); } });
@@ -5030,7 +5048,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return GAZ;
   }
   function placeFor(text) {
-    var t = " " + String(text || "").toLowerCase() + " ", gz = gazetteer();
+    var t = " " + stripDatelines(text).toLowerCase() + " ", gz = gazetteer();
     for (var i = 0; i < gz.length; i++) {
       var n = gz[i].name.toLowerCase(), at = t.indexOf(n);
       if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return gz[i];
@@ -5055,7 +5073,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary),
         /* i.geo: placed by the refresh job from GeoNames (p "approx" = a town centre, "province" = a region's rough centre); otherwise matched here against places already on the map */
         g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? { name: i.geo.n, lat: i.geo.la, lon: i.geo.lo, prec: i.geo.p === "province" ? "province" : "approx", gn: 1 } : null,
-        pl = g || placeFor(en + " " + (sen || ""));
+        txt = en + " \n " + (sen || "");
+      /* a job placement read from a dateline alone (items placed before the job left datelines out) is dropped and read again here */
+      if (g && namesPlace(txt, g.name) && !namesPlace(stripDatelines(txt), g.name)) g = null;
+      var pl = g || placeFor(txt);
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
         derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
@@ -6901,7 +6922,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function evMake(ev, members) {
     var sorted = members.slice().sort(function (a, b) { return b.__t.ms - a.__t.ms; });
     var pr = function (r) { return PRANK[r.prec] != null ? PRANK[r.prec] : 2; };
-    var loc = members.filter(hasLL).sort(function (a, b) { return pr(b) - pr(a) || a.__t.ms - b.__t.ms; })[0] || null;
+    /* the pin sits at one of this country's own reports; a neighbour's report is placed for its own story (often only its
+       dateline or capital), so an event whose local reports have no place gets no pin rather than one in the next country */
+    var loc = members.filter(function (r) { return hasLL(r) && !r.xcc; }).sort(function (a, b) { return pr(b) - pr(a) || a.__t.ms - b.__t.ms; })[0] || null;
     /* the headline: an official claim or an instrument reading first, then the report with the most words shared with the rest */
     var head = members.slice().sort(function (a, b) {
       var oa = a.type === "claim" || a.type === "observation" ? 1 : 0, ob = b.type === "claim" || b.type === "observation" ? 1 : 0;
