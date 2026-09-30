@@ -6365,6 +6365,24 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (m !== "map" && document.documentElement.classList.contains("mapfull")) fsSet(false);
     rvPlace();
   }
+  /* a desktop must never be left with nothing below the header (no map, no report list, no conflict panel): when that happens
+     the layout goes back to Map, and what the screen was is kept in osap-blank so a screenshot of reset.html can show the cause */
+  function rvHeal() {
+    var root = document.documentElement;
+    if (rvPhone() || root.classList.contains("td-on") || document.hidden) return;
+    var seen = function (el) {
+      if (!el) return false;
+      var r = el.getBoundingClientRect();
+      return r.width > 200 && r.height > 150 && r.right > 0 && r.left < window.innerWidth && getComputedStyle(el).visibility !== "hidden";
+    };
+    if (seen(document.getElementById("map")) || seen(rvBox) || seen(document.getElementById("cf-rail"))) return;
+    var why = "layout " + rvMode + ", " + shell.className + ", tab " + (root.getAttribute("data-cf") || "-") + (root.classList.contains("mapfull") ? ", full screen" : "");
+    try { localStorage.setItem("osap-blank", new Date().toISOString() + " " + why); } catch (e) {}
+    if (window.console) console.warn("OSAP: nothing on screen, back to the map (" + why + ")");
+    if (root.classList.contains("mapfull")) fsSet(false);
+    if (rvMode !== "map") { rvMode = "map"; try { localStorage.setItem("asap-rv-mode", "map"); } catch (e) {} rvPlace(); }
+  }
+  setInterval(rvHeal, 3000);
   /* the layout switch sits on the map, so it stays reachable in every mode */
   var RvCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-control");
