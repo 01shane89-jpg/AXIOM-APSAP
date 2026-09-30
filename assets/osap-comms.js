@@ -1,0 +1,631 @@
+/* AXIOM OSAP: the Comms tab (view id "comms"), communications on every country. Loaded only when the tab is first opened.
+   - Masts and towers: OpenStreetMap communication masts and towers for the area on screen (Overpass, keyless), sorted into
+     mobile phone masts, radio and TV broadcast towers, and other communication masts (the mapper did not say what they carry).
+     Community-mapped: many countries are only partly mapped, so a place with no mast on the map may still have masts.
+   - Measured coverage: where phones actually ran speed tests on a mobile network (Ookla Open Data, the two newest quarters,
+     folded into cells of about 2.4 km by tools/build_comms_coverage.py). A shaded cell is proof of some service there during
+     those months; an empty one says nothing, because nobody may have tested there.
+   - Coverage check for a place, a line you tap, or the route planned on the Route tab: measured tests near the place, then
+     terrain line of sight from the nearest mapped masts (AWS Terrain Tiles, Earth curvature with normal radio refraction).
+     The answer is an estimate shown with its method and sources: Likely, Possible (may be weak), No sign of coverage, or Unknown.
+     It cannot see which network a mast serves, its bands, power or antenna direction, buildings, trees or outages.
+   Nothing here is a record or evidence: it is a planning aid over public reference data, worked out in this browser. Nothing
+   is stored except the layer switches (localStorage "osap-comms"); the places checked are sent to no one (the mast query
+   sends only the map box to the Overpass server).
+   The main page calls window.OSAP_COMMSTAB.show(ctx) from setView; ctx = { rail, layer, map, cc, name, bounds, esc, put }.
+   window.OSAP_COMMS_LIB holds the pure rules (no DOM), for tests/comms.test.mjs. */
+(function (root) {
+  "use strict";
+  var DEG = Math.PI / 180, RE = 6371008.8, K = 4 / 3;
+  /* ---------- pure rules ---------- */
+  var MOBILE_KEYS = /^communication:(mobile_phone|mobile|gsm|umts|lte|nr|5g|4g|3g|2g|cdma)$/;
+  var BCAST_KEYS = /^communication:(radio|television|tv|fm|am|dab|dvb|dvb_t|broadcast|broadcasting)$/;
+  function yes(v) { return v != null && !/^(no|none|0|false)$/i.test(String(v).trim()); }
+  /* "cell" mobile phone mast, "bcast" radio or TV broadcast tower, "comm" communication mast with no service tagged, or null */
+  function kind(t) {
+    t = t || {};
+    var tt = String(t["tower:type"] || "").toLowerCase(), mm = String(t.man_made || "").toLowerCase(), k, cell = false, bc = false;
+    for (k in t) { if (MOBILE_KEYS.test(k) && yes(t[k])) cell = true; if (BCAST_KEYS.test(k) && yes(t[k])) bc = true; }
+    if (/cellular|mobile|gsm|lte|base_station|bts/.test(tt)) cell = true;
+    if (tt === "broadcasting" || tt === "broadcast") bc = true;
+    if (cell) return "cell";
+    if (bc) return "bcast";
+    if (/^(communication|telecommunication|telecom|radio|antenna|repeater|microwave)$/.test(tt) || mm === "communications_tower") return "comm";
+    return null;
+  }
+  /* height in metres from the OSM height tag ("45", "45 m", "150 ft", "150'"), or null */
+  function height(v) {
+    var m = String(v == null ? "" : v).trim().match(/^([0-9]+(?:[.,][0-9]+)?)\s*(m|metres|meters|ft|feet|')?$/i);
+    if (!m) return null;
+    var n = parseFloat(m[1].replace(",", ".")); if (!(n > 0 && n < 700 * 3.3)) return null;
+    return /^(ft|feet|')$/i.test(m[2] || "") ? n * 0.3048 : n;
+  }
+  /* assumed antenna height when none is mapped */
+  function antH(t) { var h = height((t || {}).height); if (h) return Math.min(h, 400); return String((t || {}).man_made) === "communications_tower" ? 60 : 30; }
+  function hav(a, b) {
+    var p1 = a[0] * DEG, p2 = b[0] * DEG, dp = p2 - p1, dl = (b[1] - a[1]) * DEG;
+    var h = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+    return 2 * RE * Math.asin(Math.min(1, Math.sqrt(h)));
+  }
+  /* zoom-14 web-mercator cell of a place, and the zoom-7 shard (quadkey) that holds it */
+  var CZ = 14, SZ = 7, N14 = 1 << CZ;
+  function cell(lat, lon) {
+    lat = Math.max(-85.05, Math.min(85.05, lat)); lon = ((lon + 180) % 360 + 360) % 360 - 180;
+    var s = Math.sin(lat * DEG);
+    return [Math.min(N14 - 1, Math.floor((lon + 180) / 360 * N14)), Math.min(N14 - 1, Math.max(0, Math.floor((0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * N14)))];
+  }
+  function quadkey(x, y, z) { var q = ""; for (var i = z - 1; i >= 0; i--) q += String(((x >> i) & 1) + 2 * ((y >> i) & 1)); return q; }
+  function shardOf(cx, cy) { return quadkey(cx >> (CZ - SZ), cy >> (CZ - SZ), SZ); }
+  /* the shard's cells as [cx, cy, band]: the file stores sorted codes ((dy * 128 + dx) * 4 + band) as differences */
+  function decodeShard(q, d) {
+    var x0 = 0, y0 = 0, i, out = [], c = 0, S = 1 << (CZ - SZ);
+    for (i = 0; i < q.length; i++) { var v = +q.charAt(i); x0 = x0 * 2 + (v & 1); y0 = y0 * 2 + (v >> 1); }
+    for (i = 0; i < d.length; i++) { c += d[i]; var b = c & 3, idx = c >> 2; out.push([x0 * S + (idx % S), y0 * S + Math.floor(idx / S), b]); }
+    return out;
+  }
+  /* terrain line of sight from an antenna to a person: prof = ground heights (m) at n+1 evenly spaced points from the mast (0)
+     to the person (n), over dist metres. Earth bulge with 4/3 refraction. Returns { clear, worst } where worst is the smallest
+     clearance in metres (negative = the ground or the Earth's curve is in the way). */
+  function los(prof, dist, hTx, hRx) {
+    var n = prof.length - 1, a = prof[0] + hTx, b = prof[n] + (hRx == null ? 1.5 : hRx), worst = Infinity;
+    for (var i = 1; i < n; i++) {
+      var f = i / n, d1 = dist * f, d2 = dist - d1, line = a + (b - a) * f, bulge = d1 * d2 / (2 * K * RE);
+      var cl = line - (prof[i] + bulge); if (cl < worst) worst = cl;
+    }
+    return { clear: worst >= 0, worst: n > 1 ? worst : 0 };
+  }
+  /* the answer for one place from what was found:
+     meas = { here: band or -1 (tests in the place's own cell), near: band or -1 (tests within about 3 km) }
+     masts = [{ kind, d (m), clear (true/false/null when the terrain could not be read) }], mastsOk = masts could be loaded
+     level: 3 likely, 2 possible, 1 no sign, 0 unknown */
+  var LIKELY_LOS = 12000, FRINGE_LOS = 35000, CLOSE_BLOCKED = 3000;
+  function verdict(meas, masts, mastsOk) {
+    var why = [], lv = 0, est = 0, best = null;
+    (masts || []).forEach(function (m) {
+      if (m.kind !== "cell" && m.kind !== "comm") return;
+      var e = m.clear === true ? (m.d <= LIKELY_LOS ? 3 : m.d <= FRINGE_LOS ? 2 : 0) : m.d <= CLOSE_BLOCKED ? 2 : 0;
+      if (m.kind === "comm" && e === 3) e = 2;   /* not tagged as carrying mobile service */
+      if (e > est) { est = e; best = m; }
+    });
+    if (meas.here >= 0) { lv = 3; why.push("here"); }
+    else if (meas.near >= 0) { lv = 2; why.push("near"); }
+    if (est > lv) lv = est;
+    if (est) why.push("mast");
+    if (!lv) lv = mastsOk || meas.here >= 0 || meas.near >= 0 ? 1 : 0;
+    return { level: lv, why: why, mast: best };
+  }
+  var LIB = { kind: kind, height: height, antH: antH, hav: hav, cell: cell, quadkey: quadkey, shardOf: shardOf, decodeShard: decodeShard, los: los, verdict: verdict,
+    LIKELY_LOS: LIKELY_LOS, FRINGE_LOS: FRINGE_LOS, CLOSE_BLOCKED: CLOSE_BLOCKED };
+  root.OSAP_COMMS_LIB = LIB;
+  if (typeof document === "undefined") return;
+
+function main() {
+  var W = window, D = document, G = W.OSAP_GEO;
+  var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/";
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+  var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png", DEMZ = 12;
+  var MASTZ = 9, COVZ = 8, BOX = 0.25, MAX_BOXES = 30, R_CHECK = 35000, R_BCAST = 60000;
+  var KINDS = {
+    cell: { name: "Mobile phone mast", plural: "Mobile phone masts", col: "#1971c2" },
+    bcast: { name: "Radio or TV broadcast tower", plural: "Radio and TV towers", col: "#9c36b5" },
+    comm: { name: "Communication mast (services not mapped)", plural: "Other communication masts", col: "#495057" }
+  };
+  var BANDS = ["under 2 Mbps", "2 to 10 Mbps", "10 to 50 Mbps", "over 50 Mbps"], BCOL = ["#fcc419", "#a9e34b", "#51cf66", "#2b8a3e"];
+  var LV = [{ t: "Unknown", c: "#868e96" }, { t: "No sign of coverage", c: "#e03131" }, { t: "Possible, may be weak", c: "#f08c00" }, { t: "Likely coverage", c: "#2f9e44" }];
+  function lsGet() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+  var sv = lsGet();
+  var S = {
+    ctx: null, on: { cell: sv.cell !== false, bcast: sv.bcast !== false, comm: sv.comm !== false, cov: sv.cov !== false },
+    masts: {}, boxes: {}, boxWait: {}, mastErr: "", mastBusy: 0,
+    cov: null, covIdx: null, covWait: {}, covCells: new Map(), covErr: "",
+    mode: "place", line: [], result: null, token: 0
+  };
+  function lsSet() { try { localStorage.setItem(KEY, JSON.stringify(S.on)); } catch (e) {} }
+  function E(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function clean(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }
+  function km(m) { return m < 1000 ? Math.round(m) + " m" : (m < 10000 ? (m / 1000).toFixed(1) : Math.round(m / 1000)) + " km"; }
+  function active() { return !!S.ctx && D.documentElement.getAttribute("data-view") === "comms"; }
+  function withTimeout(ms) { var c = W.AbortController ? new AbortController() : null; if (c) setTimeout(function () { c.abort(); }, ms); return c; }
+
+  /* ---------- masts from OpenStreetMap, fetched in 0.25 degree boxes ---------- */
+  function boxKey(i, j) { return i + ":" + j; }
+  function boxesFor(s, w, n, e) {
+    var out = [];
+    for (var j = Math.floor(s / BOX); j <= Math.floor(n / BOX); j++) for (var i = Math.floor(w / BOX); i <= Math.floor(e / BOX); i++) out.push([i, j]);
+    return out;
+  }
+  function query(s, w, n, e) {
+    var bb = "(" + [s, w, n, e].map(function (v) { return v.toFixed(4); }).join(",") + ")";
+    return "[out:json][timeout:40];(nwr[\"man_made\"~\"^(mast|tower|communications_tower)$\"][~\"^(tower:type|communication:.*)$\"~\".\"]" + bb +
+      ";nwr[\"man_made\"=\"communications_tower\"]" + bb + ";);out center tags 6000;";
+  }
+  function post(q, i) {
+    var c = withTimeout(45000);
+    return fetch(OVERPASS[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: c && c.signal })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .catch(function (err) { if (i + 1 < OVERPASS.length) return post(q, i + 1); throw err; });
+  }
+  /* loads every missing box in the area (one request for their joint rectangle); resolves when all are in */
+  function ensureMasts(s, w, n, e) {
+    var need = boxesFor(s, w, n, e), miss = need.filter(function (b) { return !S.boxes[boxKey(b[0], b[1])]; });
+    if (need.length > MAX_BOXES * 4) return Promise.reject(new Error("area too large"));
+    var waits = need.map(function (b) { return S.boxWait[boxKey(b[0], b[1])]; }).filter(Boolean);
+    miss = miss.filter(function (b) { return !S.boxWait[boxKey(b[0], b[1])]; });
+    if (miss.length) {
+      var i0 = Infinity, i1 = -Infinity, j0 = Infinity, j1 = -Infinity;
+      miss.forEach(function (b) { i0 = Math.min(i0, b[0]); i1 = Math.max(i1, b[0]); j0 = Math.min(j0, b[1]); j1 = Math.max(j1, b[1]); });
+      S.mastBusy++; paintStatus();
+      var p = post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), 0).then(function (j) {
+        (j.elements || []).forEach(function (el) {
+          var t = el.tags || {}, k = kind(t), lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
+          if (!k || lat == null || lon == null) return;
+          S.masts[el.type + "/" + el.id] = { id: el.type + "/" + el.id, kind: k, lat: +lat, lon: +lon, t: t, h: antH(t), hm: !!height(t.height) };
+        });
+        for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) S.boxes[boxKey(a, b)] = 1;
+        S.mastErr = "";
+      }, function (err) { S.mastErr = err && err.name === "AbortError" ? "The mast server took too long" : "The mast server could not be reached"; throw err; })
+        .finally(function () { S.mastBusy--; for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) delete S.boxWait[boxKey(a, b)]; paintStatus(); });
+      for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) if (!S.boxes[boxKey(a, b)]) S.boxWait[boxKey(a, b)] = p;
+      waits.push(p);
+    }
+    return Promise.all(waits);
+  }
+  function mastsNear(lat, lon, r) {
+    var out = [];
+    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id], d = hav([lat, lon], [m.lat, m.lon]); if (d <= r) out.push({ m: m, d: d }); });
+    return out.sort(function (a, b) { return a.d - b.d; });
+  }
+  function around(lat, lon, r) { var dl = r / 111320, dn = r / (111320 * Math.max(0.1, Math.cos(lat * DEG))); return [lat - dl, lon - dn, lat + dl, lon + dn]; }
+
+  /* ---------- measured coverage shards ---------- */
+  function covIndex() {
+    if (S.covIdx) return S.covIdx;
+    var c = withTimeout(30000);
+    S.covIdx = fetch(COV + "index.json", c ? { signal: c.signal } : {}).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { S.cov = j; S.covErr = ""; paintSources(); return j; }, function (e) { S.covIdx = null; S.covErr = "Measured coverage could not be loaded"; paintStatus(); throw e; });
+    return S.covIdx;
+  }
+  function loadShard(q) {
+    if (S.covWait[q]) return S.covWait[q];
+    S.covWait[q] = covIndex().then(function (ix) {
+      if (!ix.n[q]) return [];
+      var c = withTimeout(30000);
+      return fetch(COV + q + ".json", c ? { signal: c.signal } : {}).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (j) { var cells = decodeShard(q, j.d || []); cells.forEach(function (c) { S.covCells.set(c[1] * N14 + c[0], c[2]); }); return cells; });
+    }).catch(function (e) { delete S.covWait[q]; throw e; });
+    return S.covWait[q];
+  }
+  function bandAt(cx, cy) { var b = S.covCells.get(cy * N14 + cx); return b == null ? -1 : b; }
+  /* measured tests in the place's own cell, and the best within one cell around it (about 3 km) */
+  function measured(lat, lon) {
+    var c = cell(lat, lon), qs = {};
+    for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) { var x = c[0] + dx, y = c[1] + dy; if (x >= 0 && y >= 0 && x < N14 && y < N14) qs[shardOf(x, y)] = 1; }
+    return Promise.all(Object.keys(qs).map(loadShard)).then(function () {
+      var near = -1;
+      for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) if (dx || dy) near = Math.max(near, bandAt(c[0] + dx, c[1] + dy));
+      return { here: bandAt(c[0], c[1]), near: near, ok: true };
+    }, function () { return { here: -1, near: -1, ok: false }; });
+  }
+
+  /* ---------- terrain ---------- */
+  var demCache = new Map();
+  function demTile(x, y) {
+    var k = x + "/" + y;
+    if (demCache.has(k)) return demCache.get(k);
+    var p = new Promise(function (res, rej) {
+      var im = new Image(); im.crossOrigin = "anonymous";
+      im.onload = function () {
+        try {
+          var c = D.createElement("canvas"); c.width = c.height = 256;
+          var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(im, 0, 0);
+          var d = g.getImageData(0, 0, 256, 256).data, e = new Float32Array(65536);
+          for (var i = 0; i < 65536; i++) e[i] = d[i * 4] * 256 + d[i * 4 + 1] + d[i * 4 + 2] / 256 - 32768;
+          res(e);
+        } catch (err) { rej(err); }
+      };
+      im.onerror = function () { rej(new Error("terrain tile")); };
+      im.src = DEM.replace("{z}", DEMZ).replace("{x}", x).replace("{y}", y);
+    });
+    p.catch(function () { demCache.delete(k); });
+    demCache.set(k, p);
+    if (demCache.size > 80) demCache.delete(demCache.keys().next().value);
+    return p;
+  }
+  function tilePx(lat, lon) {
+    var n = 256 << DEMZ, s = Math.sin(Math.max(-85, Math.min(85, lat)) * DEG);
+    return [((lon + 180) / 360) * n, (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n];
+  }
+  /* ground heights along the straight line a -> b */
+  function profile(a, b, dist) {
+    var n = Math.max(8, Math.min(240, Math.round(dist / 120))), pts = [], tiles = {};
+    for (var i = 0; i <= n; i++) {
+      var f = i / n, p = tilePx(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f), tx = Math.floor(p[0] / 256), ty = Math.floor(p[1] / 256);
+      pts.push([tx, ty, Math.min(255, Math.floor(p[0] - tx * 256)), Math.min(255, Math.floor(p[1] - ty * 256))]); tiles[tx + "/" + ty] = [tx, ty];
+    }
+    var keys = Object.keys(tiles);
+    return Promise.all(keys.map(function (k) { return demTile(tiles[k][0], tiles[k][1]); })).then(function (arr) {
+      var by = {}; keys.forEach(function (k, i) { by[k] = arr[i]; });
+      return pts.map(function (p) { return Math.max(0, by[p[0] + "/" + p[1]][p[3] * 256 + p[2]]); });
+    });
+  }
+  function sight(m, lat, lon, d) {
+    return profile([m.lat, m.lon], [lat, lon], d).then(function (prof) { return los(prof, d, m.h, 1.5); }, function () { return null; });
+  }
+
+  /* ---------- checking a place ---------- */
+  function checkPlace(lat, lon, opt) {
+    opt = opt || {};
+    var bb = around(lat, lon, opt.bcast === false ? R_CHECK : R_BCAST);
+    var mp = opt.noMasts ? Promise.resolve(false) : ensureMasts(bb[0], bb[1], bb[2], bb[3]).then(function () { return true; }, function () { return false; });
+    return Promise.all([measured(lat, lon), mp]).then(function (r) {
+      var meas = r[0], ok = r[1];
+      var near = mastsNear(lat, lon, R_BCAST), cellish = near.filter(function (x) { return x.m.kind !== "bcast" && x.d <= R_CHECK; }).slice(0, opt.few ? 2 : 6);
+      var bc = opt.bcast === false ? [] : near.filter(function (x) { return x.m.kind === "bcast"; }).slice(0, 4);
+      return Promise.all(cellish.concat(bc).map(function (x) { return sight(x.m, lat, lon, x.d); })).then(function (sl) {
+        var rows = cellish.concat(bc).map(function (x, i) { return { m: x.m, kind: x.m.kind, d: x.d, clear: sl[i] ? sl[i].clear : null, worst: sl[i] ? sl[i].worst : null }; });
+        var v = verdict(meas, rows.filter(function (x) { return x.kind !== "bcast"; }), ok);
+        return { lat: lat, lon: lon, meas: meas, mastsOk: ok, rows: rows, v: v, when: new Date() };
+      });
+    });
+  }
+  /* ---------- checking a line: points every 1 km or so (at most 80), two nearest masts each ---------- */
+  function sampleLine(pts) {
+    var segs = [], total = 0, i;
+    for (i = 1; i < pts.length; i++) { var d = hav(pts[i - 1], pts[i]); segs.push(d); total += d; }
+    var step = Math.max(1000, total / 80), out = [], acc = 0;
+    out.push({ p: pts[0], at: 0 });
+    for (i = 1; i < pts.length; i++) {
+      var d0 = segs[i - 1], t = step - acc;
+      while (t <= d0) { var f = t / d0; out.push({ p: [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * f, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * f], at: 0 }); t += step; }
+      acc = (acc + d0) % step;
+    }
+    out.push({ p: pts[pts.length - 1] });
+    var run = 0; for (i = 0; i < out.length; i++) { if (i) run += hav(out[i - 1].p, out[i].p); out[i].at = run; }
+    return { pts: out, total: total };
+  }
+  function checkLine(pts) {
+    var sm = sampleLine(pts), s = 90, w = 180, n = -90, e = -180, pad;
+    sm.pts.forEach(function (x) { s = Math.min(s, x.p[0]); n = Math.max(n, x.p[0]); w = Math.min(w, x.p[1]); e = Math.max(e, x.p[1]); });
+    pad = around((s + n) / 2, (w + e) / 2, R_CHECK);
+    var dLat = (pad[2] - pad[0]) / 2, dLon = (pad[3] - pad[1]) / 2;
+    var big = boxesFor(s - dLat, w - dLon, n + dLat, e + dLon).length > MAX_BOXES * 4;
+    var pre = big ? Promise.resolve(false) : ensureMasts(s - dLat, w - dLon, n + dLat, e + dLon).then(function () { return true; }, function () { return false; });
+    return pre.then(function (ok) {
+      var out = [], i = 0;
+      function next() {
+        if (i >= sm.pts.length) return Promise.resolve();
+        var x = sm.pts[i++];
+        return checkPlace(x.p[0], x.p[1], { bcast: false, few: true, noMasts: !ok }).then(function (r) { r.at = x.at; out.push(r); prog(i, sm.pts.length); return next(); });
+      }
+      return Promise.all([next(), next(), next(), next()]).then(function () {
+        out.sort(function (a, b) { return a.at - b.at; });
+        return { line: true, pts: pts, samples: out, total: sm.total, big: big, mastsOk: ok, when: new Date() };
+      });
+    });
+  }
+  function prog(i, n) { var el = S.ctx && S.ctx.rail.querySelector("#com-prog"); if (el) el.textContent = "Checking " + Math.min(i, n) + " of " + n + " points…"; }
+
+  /* ---------- map ---------- */
+  var covLayer = null, mastLayer = null, chkLayer = null, canv = null;
+  function panes() {
+    var map = S.ctx.map;
+    [["comcov", 405], ["comchk", 663]].forEach(function (p) { if (!map.getPane(p[0])) { map.createPane(p[0]); map.getPane(p[0]).style.zIndex = p[1]; } });
+    map.getPane("comcov").style.pointerEvents = "none";
+  }
+  var CovGrid = W.L && L.GridLayer.extend({
+    createTile: function (co, done) {
+      var t = D.createElement("canvas"); t.width = t.height = 256;
+      var z = co.z, cs = 256 * Math.pow(2, z - CZ), x0 = co.x * 256, y0 = co.y * 256;
+      var cx0 = Math.floor(x0 / cs), cy0 = Math.floor(y0 / cs), cx1 = Math.floor((x0 + 255) / cs), cy1 = Math.floor((y0 + 255) / cs), qs = {}, a, b;
+      for (b = cy0; b <= cy1; b++) for (a = cx0; a <= cx1; a++) qs[shardOf(((a % N14) + N14) % N14, b)] = 1;
+      Promise.all(Object.keys(qs).map(function (q) { return loadShard(q).catch(function () { return []; }); })).then(function () {
+        var g = t.getContext("2d"), w = Math.max(1, cs);
+        for (b = cy0; b <= cy1; b++) for (a = cx0; a <= cx1; a++) {
+          var band = bandAt(((a % N14) + N14) % N14, b); if (band < 0) continue;
+          g.fillStyle = BCOL[band]; g.fillRect(Math.floor(a * cs - x0), Math.floor(b * cs - y0), Math.ceil(w), Math.ceil(w));
+        }
+        done(null, t);
+      });
+      return t;
+    }
+  });
+  function drawCov() {
+    if (!S.ctx) return;
+    if (!covLayer) covLayer = new CovGrid({ pane: "comcov", minZoom: COVZ, opacity: 0.5, maxNativeZoom: 18, updateWhenIdle: true, keepBuffer: 1 });
+    var on = S.on.cov;
+    if (on && !S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.addLayer(covLayer);
+    if (!on && S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.removeLayer(covLayer);
+  }
+  function mastPopup(m) {
+    var t = m.t, k = KINDS[m.kind], svc = [], osm = "https://www.openstreetmap.org/" + m.id.replace(/^(node|way|relation)\//, "$1/");
+    Object.keys(t).forEach(function (x) { var mm = x.match(/^communication:(.+)$/); if (mm && yes(t[x])) svc.push(mm[1].replace(/_/g, " ")); });
+    var name = clean(t.name || t["name:en"] || t.ref || "", 80), op = clean(t.operator || t.owner || "", 80);
+    return '<div data-keep-pop="1"><h3>' + E(name || k.name) + "</h3><p>" + E(k.name) + (op ? "<br>Operator: " + E(op) : "") +
+      "<br>Height: " + (m.hm ? E(Math.round(m.h)) + " m (mapped)" : "not mapped (" + m.h + " m assumed)") + (svc.length ? "<br>Carries: " + E(svc.join(", ").slice(0, 160)) : "") +
+      "<br><code>" + E((G && G.mgrs(m.lat, m.lon)) || "") + "</code></p>" +
+      '<p class="obs">OpenStreetMap, community-mapped; may be missing, moved or out of date. <a href="' + E(osm) + '" target="_blank" rel="noopener">Open in OpenStreetMap</a></p>' +
+      '<p><button type="button" class="linkish" data-comchk="' + m.lat.toFixed(5) + "," + m.lon.toFixed(5) + '">Check coverage here</button></p></div>';
+  }
+  function drawMasts() {
+    if (!S.ctx) return;
+    if (!canv) canv = L.canvas({ padding: 0.3 });
+    if (!mastLayer) mastLayer = L.layerGroup();
+    if (!S.ctx.layer.hasLayer(mastLayer)) S.ctx.layer.addLayer(mastLayer);
+    mastLayer.clearLayers();
+    var map = S.ctx.map; if (map.getZoom() < MASTZ) { paintCounts(); return; }
+    var b = map.getBounds().pad(0.1), n = 0;
+    Object.keys(S.masts).forEach(function (id) {
+      var m = S.masts[id]; if (!S.on[m.kind] || !b.contains([m.lat, m.lon])) return;
+      var k = KINDS[m.kind];
+      var mk = L.circleMarker([m.lat, m.lon], { renderer: canv, radius: m.kind === "bcast" ? 6 : 5, color: "#fff", weight: 1.5, fillColor: k.col, fillOpacity: 0.95 });
+      mk.bindPopup(function () { return mastPopup(m); });
+      mk.addTo(mastLayer); n++;
+    });
+    paintCounts();
+  }
+  function loadView() {
+    if (!active()) return;
+    var map = S.ctx.map;
+    if (map.getZoom() < MASTZ) { drawMasts(); paintStatus(); return; }
+    var b = map.getBounds();
+    ensureMasts(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()).then(drawMasts, drawMasts);
+    drawMasts();
+  }
+  function drawResult() {
+    if (!S.ctx) return;
+    if (!chkLayer) chkLayer = L.layerGroup();
+    if (!S.ctx.layer.hasLayer(chkLayer)) S.ctx.layer.addLayer(chkLayer);
+    chkLayer.clearLayers();
+    var r = S.result, svg = L.svg({ pane: "comchk" });
+    if (S.mode === "line" && S.line.length && !(r && r.line)) {
+      L.polyline(S.line, { pane: "comchk", renderer: svg, color: "#1c7ed6", weight: 3, dashArray: "6 6", interactive: false }).addTo(chkLayer);
+      S.line.forEach(function (p) { L.circleMarker(p, { pane: "comchk", renderer: svg, radius: 4, color: "#1c7ed6", fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(chkLayer); });
+    }
+    if (!r) return;
+    if (r.line) {
+      for (var i = 1; i < r.samples.length; i++) {
+        var a = r.samples[i - 1], b = r.samples[i], lv = Math.min(a.v.level, b.v.level);
+        L.polyline([[a.lat, a.lon], [b.lat, b.lon]], { pane: "comchk", renderer: svg, color: "#fff", weight: 9, opacity: 0.9, interactive: false }).addTo(chkLayer);
+        L.polyline([[a.lat, a.lon], [b.lat, b.lon]], { pane: "comchk", renderer: svg, color: LV[lv].c, weight: 5.5, opacity: 1 })
+          .bindTooltip(LV[lv].t + " at " + km(a.at) + " to " + km(b.at) + " along", { sticky: true }).addTo(chkLayer);
+      }
+      return;
+    }
+    r.rows.forEach(function (x) {
+      if (x.kind === "bcast" || x.clear == null) return;
+      L.polyline([[x.m.lat, x.m.lon], [r.lat, r.lon]], { pane: "comchk", renderer: svg, color: x.clear ? "#2f9e44" : "#e03131", weight: 2, opacity: 0.8, dashArray: x.clear ? null : "4 5", interactive: false }).addTo(chkLayer);
+    });
+    var pin = L.marker([r.lat, r.lon], { pane: "comchk", keyboard: true, title: LV[r.v.level].t,
+      icon: L.divIcon({ className: "comv", html: '<span style="background:' + LV[r.v.level].c + '"></span>', iconSize: [22, 22], iconAnchor: [11, 11] }) });
+    pin.addTo(chkLayer);
+    if (S.ctx.put) S.ctx.put("com:check", pin);
+  }
+  function legend() {
+    var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
+    var h = "<h3>Comms</h3>";
+    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + "</div>"; });
+    if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast</small></div>";
+    if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
+    Lg.set("comms", h, S.ctx.rail);
+  }
+
+  /* ---------- panel ---------- */
+  function skeleton() {
+    var r = S.ctx.rail;
+    r.innerHTML =
+      '<div class="sec comsec"><h3>Will I have phone signal?</h3>' +
+      '<div class="combtns" role="group" aria-label="What to check"><button type="button" data-cmode="place">A place</button><button type="button" data-cmode="line">Along a line</button><button type="button" data-cmode="route">Planned route</button></div>' +
+      '<p class="obs" id="com-hint"></p><div id="com-res" aria-live="polite"></div></div>' +
+      '<div class="sec comsec"><h3>On the map</h3><div id="com-tg"></div><p class="obs" id="com-st"></p></div>' +
+      '<div class="sec comsec" id="com-ops"></div>' +
+      '<div class="sec comsec"><h3>How the answer is worked out</h3>' +
+      "<p>1. <b>Measured</b>: did phones run speed tests on a mobile network in this spot (a cell about 2.4 km across) or right next to it? A test there proves there was some service, on some network, in those months.</p>" +
+      "<p>2. <b>Estimated</b>: for the nearest mapped masts within 35 km, is there a clear line of sight over the terrain from a " +
+      "mast (its mapped height, or 30 m) to a phone held 1.5 m up, allowing for the Earth's curve? In sight within 12 km counts as likely, 12 to 35 km as possible, and a mast within 3 km but behind a hill as possible.</p>" +
+      '<p class="obs">This is an estimate, not a promise of signal. It cannot see which network a mast serves, its bands, power or which way its antennas point, buildings, trees, outages or jamming. ' +
+      "A place with no measured tests and no mapped mast may still have signal: many masts are not mapped. Before relying on a phone, carry another way to talk (satellite messenger or radio).</p>" +
+      '<p class="obs rtsrc" id="com-src"></p></div>';
+    r.querySelector(".combtns").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-cmode]"); if (!b) return;
+      var m = b.getAttribute("data-cmode");
+      if (m === "route") { checkRoute(); return; }
+      S.mode = m; S.line = []; if (m === "line" && S.result && !S.result.line) S.result = null;
+      paintMode(); drawResult();
+    });
+    r.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-comact]"); if (!t) return;
+      var a = t.getAttribute("data-comact");
+      if (a === "undo") { S.line.pop(); paintMode(); drawResult(); }
+      else if (a === "clear") { S.line = []; S.result = null; paintMode(); paintResult(); drawResult(); legend(); }
+      else if (a === "go") runLine(S.line.slice());
+      else if (a === "zoom") { var bb = S.result && S.result.line ? L.latLngBounds(S.result.pts) : S.result && L.latLngBounds([[S.result.lat, S.result.lon]]); if (bb) S.ctx.map.fitBounds(bb.pad(0.2), { maxZoom: 13 }); }
+    });
+    r.querySelector("#com-tg").addEventListener("change", function (e) {
+      var k = e.target.getAttribute("data-comtg"); if (!k) return;
+      S.on[k] = e.target.checked; lsSet();
+      if (k === "cov") drawCov(); else drawMasts();
+      legend();
+    });
+    paintToggles(); paintMode(); paintResult(); paintSources(); paintStatus();
+  }
+  function paintToggles() {
+    var el = S.ctx && S.ctx.rail.querySelector("#com-tg"); if (!el) return;
+    el.innerHTML = Object.keys(KINDS).map(function (k) {
+      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + ' <span class="comn" data-comn="' + k + '"></span></label>';
+    }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage</label>';
+    paintCounts();
+  }
+  function paintCounts() {
+    if (!S.ctx) return;
+    var map = S.ctx.map, b = map.getBounds(), c = { cell: 0, bcast: 0, comm: 0 }, ops = {};
+    var z = map.getZoom() >= MASTZ;
+    if (z) Object.keys(S.masts).forEach(function (id) {
+      var m = S.masts[id]; if (!b.contains([m.lat, m.lon])) return; c[m.kind]++;
+      var o = clean(m.t.operator || "", 60); if (o && m.kind !== "bcast") ops[o] = (ops[o] || 0) + 1;
+    });
+    Object.keys(c).forEach(function (k) { var el = S.ctx.rail.querySelector('[data-comn="' + k + '"]'); if (el) el.textContent = z ? "(" + c[k] + " in view)" : ""; });
+    var oe = S.ctx.rail.querySelector("#com-ops"); if (!oe) return;
+    var ol = Object.keys(ops).sort(function (a, b) { return ops[b] - ops[a]; }).slice(0, 8);
+    oe.hidden = !ol.length;
+    oe.innerHTML = ol.length ? "<h3>Mast operators in view</h3><p>" + ol.map(function (o) { return E(o) + " " + ops[o]; }).join(" · ") + '</p><p class="obs">As mapped in OpenStreetMap; many masts carry no operator tag.</p>' : "";
+    legend();
+  }
+  function paintStatus() {
+    var el = S.ctx && S.ctx.rail.querySelector("#com-st"); if (!el) return;
+    var z = S.ctx.map.getZoom(), msg = [];
+    if (z < MASTZ) msg.push("Zoom in to about city level to load masts and towers.");
+    else if (S.mastBusy) msg.push("Loading masts and towers from OpenStreetMap…");
+    else if (S.mastErr) msg.push(S.mastErr + "; move the map to try again.");
+    if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
+    if (S.covErr) msg.push(S.covErr + ".");
+    el.textContent = msg.join(" ");
+  }
+  function paintSources() {
+    var el = S.ctx && S.ctx.rail.querySelector("#com-src"); if (!el) return;
+    var c = S.cov;
+    el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) via Overpass, read live. ' +
+      'Measured coverage, <a href="https://github.com/teamookla/ookla-open-data" target="_blank" rel="noopener">Speedtest by Ookla Global Fixed and Mobile Network Performance Maps</a>' +
+      (c ? ", " + E((c.periods || []).join(" and ")) : "") + " (CC BY-NC-SA 4.0, non-commercial). " +
+      "Terrain, AWS Terrain Tiles (SRTM, GMTED and others, about 30 to 90 m). Worked out in this browser; a planning aid, not a record.";
+  }
+  function paintMode() {
+    if (!S.ctx) return;
+    var r = S.ctx.rail;
+    r.querySelectorAll("[data-cmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-cmode") === S.mode)); });
+    var h = r.querySelector("#com-hint");
+    if (S.mode === "place") h.innerHTML = "Tap the map where you will be.";
+    else h.innerHTML = "Tap the map to draw the line you will travel (" + S.line.length + " point" + (S.line.length === 1 ? "" : "s") + ")." +
+      ' <button type="button" data-comact="go"' + (S.line.length < 2 ? " disabled" : "") + '>Check this line</button> <button type="button" data-comact="undo"' + (S.line.length ? "" : " disabled") + ">Undo</button>" +
+      ' <button type="button" data-comact="clear"' + (S.line.length || S.result ? "" : " disabled") + ">Clear</button>";
+  }
+  function mastRow(x) {
+    var n = clean(x.m.t.name || x.m.t.operator || "", 60), k = KINDS[x.kind];
+    var los = x.clear == null ? "terrain not read" : x.clear ? "in line of sight" : "behind terrain (" + Math.round(-x.worst) + " m short)";
+    return "<li>" + '<span class="comsw" style="background:' + k.col + '"></span>' + E(n || k.name) + ", " + km(x.d) + ", " + los + "</li>";
+  }
+  function paintResult() {
+    var el = S.ctx && S.ctx.rail.querySelector("#com-res"); if (!el) return;
+    var r = S.result;
+    /* on a phone the folded sheet shows the answer under the tab name */
+    if (r && r.v) el.setAttribute("data-sheet-note", LV[r.v.level].t + " here");
+    else if (r && r.line) el.setAttribute("data-sheet-note", "Coverage along the line checked");
+    else el.removeAttribute("data-sheet-note");
+    if (!r) { el.innerHTML = ""; return; }
+    if (r.busy) { el.innerHTML = '<p class="obs" id="com-prog">' + E(r.busy) + "</p>"; return; }
+    if (r.err) { el.innerHTML = '<p class="obs">' + E(r.err) + "</p>"; return; }
+    var head = function (lv, sub) { return '<div class="comv-h" style="border-color:' + LV[lv].c + '"><b style="color:' + LV[lv].c + '">' + E(LV[lv].t) + "</b>" + (sub ? "<br><span>" + sub + "</span>" : "") + "</div>"; };
+    if (r.line) {
+      var cnt = [0, 0, 0, 0], gap = 0, run = 0, runStart = 0, gaps = [];
+      r.samples.forEach(function (s, i) {
+        cnt[s.v.level]++;
+        var bad = s.v.level <= 1;
+        if (bad && !run) runStart = s.at;
+        run = bad ? 1 : 0;
+        var nx = r.samples[i + 1];
+        if (bad && (!nx || nx.v.level > 1)) { var len = (nx ? nx.at : s.at) - runStart; gaps.push([runStart, len]); gap = Math.max(gap, len); }
+      });
+      var nS = r.samples.length, pc = function (l) { return Math.round(cnt[l] / nS * 100); };
+      /* the headline: likely when most of the line is, no sign when half of it has none, possible otherwise */
+      var overall = cnt[0] === nS ? 0 : cnt[3] >= nS * 0.7 ? 3 : cnt[1] + cnt[0] >= nS * 0.5 ? 1 : 2;
+      el.innerHTML = head(overall, E(km(r.total)) + " checked at " + nS + " points: " + pc(3) + "% likely, " + pc(2) + "% possible, " + pc(1) + "% no sign" + (cnt[0] ? ", " + pc(0) + "% unknown" : "") + ".") +
+        (gaps.length ? "<p><b>Stretches with no sign of coverage</b>" + (gap ? " (longest about " + E(km(gap)) + ")" : "") + ":</p><ul class=\"comgaps\">" +
+          gaps.slice(0, 8).map(function (g) { return "<li>From " + E(km(g[0])) + " along, for about " + E(km(Math.max(g[1], 500))) + "</li>"; }).join("") + "</ul>" : "<p>No stretch without any sign of coverage.</p>") +
+        (r.big ? '<p class="obs">The line is long, so only measured tests were used (no mast line-of-sight). Check shorter parts for the terrain estimate.</p>' : "") +
+        (!r.mastsOk && !r.big ? '<p class="obs">Masts could not be loaded, so this uses measured tests only.</p>' : "") +
+        '<p><button type="button" data-comact="zoom">Zoom to the line</button> <button type="button" data-comact="clear">Clear</button></p>';
+      return;
+    }
+    var m = r.meas, v = r.v, parts = [];
+    if (m.here >= 0) parts.push("Phones ran speed tests on a mobile network in this spot (best average " + E(BANDS[m.here]) + ").");
+    else if (m.near >= 0) parts.push("No tests in this spot, but there were next to it, within about 3 km (best average " + E(BANDS[m.near]) + ").");
+    else if (m.ok) parts.push("No phone speed tests were recorded within about 3 km.");
+    else parts.push("Measured coverage could not be loaded.");
+    var cells = r.rows.filter(function (x) { return x.kind !== "bcast"; }), bcs = r.rows.filter(function (x) { return x.kind === "bcast"; });
+    if (!r.mastsOk) parts.push("Masts could not be loaded, so there is no line-of-sight estimate.");
+    else if (!cells.length) parts.push("No communication mast is mapped within 35 km.");
+    else if (v.mast) parts.push("The best mapped mast is " + E(km(v.mast.d)) + " away and " + (v.mast.clear ? "in line of sight" : "behind terrain, but close") + ".");
+    else parts.push("The mapped masts nearby are out of sight behind terrain or too far away.");
+    el.innerHTML = head(v.level, "<code>" + E((G && G.mgrs(r.lat, r.lon)) || "") + "</code>") + "<p>" + parts.join(" ") + "</p>" +
+      (cells.length ? "<p><b>Nearest masts</b></p><ul class=\"comlist\">" + cells.map(mastRow).join("") + "</ul>" : "") +
+      (bcs.length ? "<p><b>Radio and TV towers within 60 km</b></p><ul class=\"comlist\">" + bcs.map(mastRow).join("") + "</ul>" : r.mastsOk ? '<p class="obs">No radio or TV broadcast tower is mapped within 60 km.</p>' : "") +
+      '<p><button type="button" data-comact="zoom">Zoom here</button> <button type="button" data-comact="clear">Clear</button></p>';
+  }
+
+  /* ---------- actions ---------- */
+  function runPlace(lat, lon) {
+    var tok = ++S.token;
+    S.result = { busy: "Checking this place…" }; paintResult();
+    checkPlace(lat, lon).then(function (r) { if (tok !== S.token) return; S.result = r; paintResult(); drawResult(); legend(); drawMasts(); },
+      function () { if (tok !== S.token) return; S.result = { err: "The check could not be finished. Try again." }; paintResult(); });
+  }
+  function runLine(pts) {
+    if (pts.length < 2) return;
+    var tok = ++S.token;
+    S.result = { busy: "Checking the line…" }; paintResult();
+    checkLine(pts).then(function (r) { if (tok !== S.token) return; S.result = r; S.line = []; paintMode(); paintResult(); drawResult(); legend(); drawMasts(); },
+      function () { if (tok !== S.token) return; S.result = { err: "The check could not be finished. Try again." }; paintResult(); });
+  }
+  function routeLine() {
+    var rt = W.OSAP_ROUTETAB, c = rt && rt.line && rt.line();
+    if (c && c.length >= 2) return c.map(function (p) { return [p.lat != null ? p.lat : p[0], p.lng != null ? p.lng : p[1]]; });
+    try { var cur = JSON.parse(localStorage.getItem("osap-route-cur")); if (cur && cur.wps && cur.wps.length >= 2) return cur.wps.map(function (w) { return [+w.lat, +w.lon]; }); } catch (e) {}
+    return null;
+  }
+  function checkRoute() {
+    var pts = routeLine();
+    if (!pts) { S.result = { err: "There is no planned route yet. Plan one on the Route tab, or draw a line here." }; S.mode = "line"; paintMode(); paintResult(); return; }
+    S.mode = "line"; S.line = []; paintMode();
+    runLine(pts);
+    S.ctx.map.fitBounds(L.latLngBounds(pts).pad(0.15), { maxZoom: 13 });
+  }
+  /* taps on the map while the Comms tab is open (not while measuring or drawing an area) */
+  var down = null;
+  function mine(e) {
+    if (!active()) return false;
+    var mapEl = S.ctx.map.getContainer();
+    if (!mapEl.contains(e.target) || mapEl.classList.contains("measuring") || D.querySelector("#area-ctl .areahint")) return false;
+    if (e.target.closest && e.target.closest(".leaflet-control,.leaflet-popup,.comv,.leaflet-interactive,.leaflet-marker-icon")) return false;
+    return true;
+  }
+  W.addEventListener("pointerdown", function (e) { down = mine(e) ? [e.clientX, e.clientY] : null; }, true);
+  W.addEventListener("click", function (e) {
+    if (!mine(e) || !down || Math.abs(e.clientX - down[0]) + Math.abs(e.clientY - down[1]) > 8) return;
+    var ll = S.ctx.map.mouseEventToLatLng(e), lat = ll.lat, lon = G ? G.wrap(ll.lng) : ll.lng;
+    if (S.mode === "line") { if (S.result && S.result.line) S.result = null; if (S.line.length < 60) S.line.push([lat, lon]); paintMode(); paintResult(); drawResult(); }
+    else runPlace(lat, lon);
+  });
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-comchk]"); if (!b || !active()) return;
+    var p = b.getAttribute("data-comchk").split(",").map(Number); S.ctx.map.closePopup(); S.mode = "place"; paintMode(); runPlace(p[0], p[1]);
+  });
+  var mvT = null;
+  function onMove() { if (!active()) return; clearTimeout(mvT); mvT = setTimeout(function () { loadView(); paintStatus(); }, 350); }
+
+  var st = D.createElement("style");
+  st.textContent = ".comsec h3{margin-bottom:6px}.combtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}.combtns button{flex:1 1 auto}" +
+    ".combtns button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}" +
+    ".comtg{display:flex;align-items:center;gap:6px;margin:3px 0}.comn{color:var(--muted);font-size:12px}" +
+    ".comsw{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}" +
+    ".comsq{display:inline-block;width:12px;height:12px;margin-right:2px;vertical-align:middle;opacity:.8}" +
+    ".comv-h{border-left:5px solid;padding:6px 10px;margin:6px 0;background:var(--card,rgba(0,0,0,.03));border-radius:4px}.comv-h b{font-size:16px}.comv-h span{font-size:12px}" +
+    ".comlist,.comgaps{margin:4px 0 8px;padding-left:18px}.comlist li,.comgaps li{margin:2px 0}.comlist{list-style:none;padding-left:0}" +
+    ".comv{background:none;border:0}.comv span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
+    ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
+    ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}";
+  D.head.appendChild(st);
+
+  /* ---------- entry point ---------- */
+  var hooked = null;
+  function show(ctx) {
+    S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null;
+    panes(); skeleton(); drawCov(); drawResult(); legend();
+    if (hooked !== ctx.map) { ctx.map.on("moveend", onMove); hooked = ctx.map; }
+    covIndex().catch(function () {});
+    setTimeout(loadView, 0);
+  }
+  W.OSAP_COMMSTAB = { show: show, check: function (lat, lon) { S.mode = "place"; paintMode(); runPlace(lat, lon); }, line: function (pts) { runLine(pts); },
+    state: function () { return { masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
+  if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
+}
+  (function boot(n) { if (window.OSAP_GEO && window.L) main(); else if (n < 400) setTimeout(function () { boot(n + 1); }, 50); })(0);
+})(typeof window !== "undefined" ? window : globalThis);

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AXIOM OSAP reset</title>
+<style>
+:root{--bg:#f3f5f8;--ink:#15202b;--muted:#5b6673;--line:#d5dbe3;--accent:#1d5d8f;--on:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#1b2027;--ink:#e6ebf1;--muted:#9aa6b3;--line:#333c47;--accent:#6fb6ee;--on:#0c1520}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:24px 16px}
+h1{font-size:20px;margin:0 0 8px}
+p{margin:0 0 12px}
+.ok{color:#1f8a4c;font-weight:600}
+a.btn{display:inline-block;background:var(--accent);color:var(--on);text-decoration:none;font-weight:600;border-radius:6px;padding:10px 16px;margin:8px 0 16px}
+pre{font:12px/1.45 ui-monospace,monospace;background:rgba(127,127,127,.12);border:1px solid var(--line);border-radius:6px;padding:10px;white-space:pre-wrap;word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<h1>AXIOM OSAP reset</h1>
+<p id="st">Resetting the saved layout and the app's saved copy…</p>
+<p>Your saved points, drawn areas, workspaces, watches and routes are kept. Only the screen layout, map panel and display
+settings go back to their defaults, and the app downloads a fresh copy of itself.</p>
+<a class="btn" id="go" href="./">Open OSAP</a>
+<p>If the map is still blank after this, send a screenshot of this page: the list below shows what was reset.</p>
+<pre id="log"></pre>
+</main>
+<script>
+/* One page that gets a stuck screen back: it clears only layout and display settings (never the analyst's own saved work),
+   unregisters the service worker and drops the app's caches, so the next open loads the current version from the network. */
+(function () {
+  var log = document.getElementById("log"), lines = [];
+  function out(s) { lines.push(s); log.textContent = lines.join("\n"); }
+  /* layout and display settings only; saved work (points, areas, workspaces, watches, routes, shapes, my work) is not touched */
+  var LAYOUT = /^(asap-rv-mode|asap-col-rv|asap-col-rail|asap-map-layers|asap-legend-shut|asap-ev-split|asap-ev-on|osap-ui|osap-atak-fold|osap-tools-fold|osap-mlfold|osap-3d|osap-terrain|osap-grid|osap-gridrows|osap-xhair|osap-xh|osap-heat|osap-hs|osap-sides|osap-mobility|osap-air|osap-wx-layers|osap-mapsets-.*|osap-g[123]|osap-gimg|osap-x-off|osap-cf-ua|osap-cf-sites|osap-cf-hist|osap-aoi-show)$/;
+  out("page: " + location.href);
+  out("time: " + new Date().toISOString());
+  try {
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    keys.sort();
+    out("saved settings on this device: " + keys.length);
+    keys.forEach(function (k) {
+      if (!LAYOUT.test(k)) return;
+      var v = String(localStorage.getItem(k) || "");
+      out("reset " + k + " = " + (v.length > 80 ? v.slice(0, 80) + "…" : v));
+      localStorage.removeItem(k);
+    });
+    try { sessionStorage.clear(); } catch (e) {}
+  } catch (e) { out("could not read saved settings: " + e.message); }
+  var jobs = [];
+  if ("serviceWorker" in navigator) jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) {
+    out("app workers: " + rs.length);
+    return Promise.all(rs.map(function (r) { out("unregister " + r.scope + (r.active ? " (active)" : "") + (r.waiting ? " (waiting)" : "")); return r.unregister(); }));
+  }).catch(function (e) { out("worker: " + e.message); }));
+  if (window.caches) jobs.push(caches.keys().then(function (ks) {
+    out("app caches: " + ks.join(", "));
+    /* map tiles are only pictures of the map and come back as they are viewed; everything cached is dropped */
+    return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+  }).catch(function (e) { out("caches: " + e.message); }));
+  Promise.all(jobs).then(function () {
+    var st = document.getElementById("st");
+    st.className = "ok"; st.textContent = "Done. Close any other OSAP windows, then press Open OSAP.";
+    out("done");
+  });
+})();
+</script>
+</body>
+</html>

@@ -3125,7 +3125,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
     { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
-    { id: "route", name: "Route", title: "Route planning", sof: true, live: true });
+    { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
+    { id: "comms", name: "Comms", title: "Comms: towers and phone coverage", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -5800,7 +5801,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
-  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else showPartners(); }
+  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
   /* ET: UFO and UAP reports (assets/osap-et.js, data/live/et.js); reported claims, never verified events */
   function showEt() {
     sofLayer.clearLayers(); sofM = {};
@@ -5825,6 +5826,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var seed = routeSeed; routeSeed = null;
     window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
+  }
+  /* Comms: communication masts, radio and TV towers and a phone coverage check (assets/osap-comms.js, loaded the first time
+     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record. */
+  var commsLoading = false;
+  function showComms() {
+    sofLayer.clearLayers(); sofM = {};
+    if (!window.OSAP_COMMSTAB) {
+      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading the communications tab…</p></div>';
+      if (!commsLoading) {
+        commsLoading = true;
+        var s = document.createElement("script"); s.src = "assets/osap-comms.js";
+        s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">The communications tab could not be loaded. Check the connection and open the tab again.</p></div>'; };
+        document.body.appendChild(s);
+      }
+      return;
+    }
+    window.OSAP_COMMSTAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
   }
   window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
@@ -5860,7 +5878,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
   function dsList() {
     return LAYERS.filter(function (l) {
-      if (l.id === "timeline" || l.id === "route") return false;
+      if (l.id === "timeline" || l.id === "route" || l.id === "comms") return false;
       var b = seg.querySelector('[data-view="' + l.id + '"]'); if (b && b.hidden) return false;   /* merged into a conflict tab */
       return l.id === "alerts" || l.curated || l.sof || (TH && (l.id === "flood" || l.id === "border"));
     });
@@ -6049,7 +6067,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles; coverage is an estimate, not a promise of signal" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -8179,6 +8197,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <script src="assets/osap-grid.js"></script>
+<script src="assets/osap-power.js"></script>
 <script src="assets/osap-medplan.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
