@@ -3,9 +3,10 @@
    state-based (a government is one side), non-state (armed groups against each other) and one-sided (against civilians).
    Data: data/live/conflicts/history/<id>.js (per-year totals, a 0.5-degree density grid, the list of chunks) and
    history/<id>.<years>.js (the events), written weekly by tools/refresh_conflict_history.mjs from the UCDP GED yearly release
-   plus the provisional candidate events after it. Nothing is loaded until the layer is switched on; chunks of years load only
-   when events are shown one by one (zoomed in, or the past 12 months).
-   Zoomed out, the map shows density circles (events per area); zoomed in, one pin per event. Deaths are UCDP's reported
+   plus the provisional candidate events after it. Nothing is loaded until the layer is switched on; then the year files shown
+   load one by one and the map fills in as each arrives.
+   Zoomed out, a heat map (assets/osap-heat.js) drawn from each event's own position, never snapped to a grid; zoomed in (or
+   with "Heat map when zoomed out" off in Layers), one pin per event. Deaths are UCDP's reported
    estimates (low, best, high), not counts. Each event's SHA-256 fingerprint is computed from its UCDP record when opened.
    Hooks into assets/osap-conflicts.js through window.OSAP_CF_HOOKS (render, clear). */
 (function () {
@@ -40,12 +41,6 @@
     return x.chunks.filter(function (c) { return +c.to >= y0 && +c.from <= y1; });
   }
   function chunk(c) { return (W.OSAP_CF_HIST || {})[c.f.replace(/\.js$/, "")]; }
-  function loadChunks(list) {
-    return Promise.all(list.map(function (c) {
-      if (chunk(c)) return null;
-      return pending[c.f] || (pending[c.f] = load(BASE + c.f).then(null, function (e) { delete pending[c.f]; throw e; }));
-    }));
-  }
   function inSel(date, type) {
     if (!sel.t[type]) return false;
     if (sel.last12) return date >= new Date(Date.now() - 365 * 864e5).toISOString().slice(0, 10);
@@ -78,72 +73,66 @@
     if (!bound) { bound = true; map.on("moveend", function () { if (on && id && ctab() && ctab().active() === id && moved()) draw(); }); }
     return true;
   }
-  // a pan that stays inside what was drawn (a pop-up nudging the map, say) needs no redraw: redrawing would close the pop-up
-  var drawn = null;
+  // a pan that stays inside what was drawn (a pop-up nudging the map, say) needs no redraw: redrawing would close the pop-up;
+  // the heat map follows the map by itself, so it is redrawn here only when the view switches between heat and pins
+  var drawn = null, hl = null, redrawT = null;
+  function heatOn() { return !!(W.OSAP_HEAT && W.OSAP_HEAT.on()); }
+  function mode(z) { return z >= PINZ || !heatOn() || (sel.last12 && loaded() && events().length <= MAXPINS) ? "pins" : "heat"; }
   function moved() {
-    if (!drawn || !lyr) return true;
-    var z = map.getZoom();
-    if (drawn.pins ? z < PINZ && !drawn.last12 : z >= PINZ || (z <= 4 ? 4 : z <= 5 ? 2 : 1) !== drawn.f) return true;
-    return drawn.pins && !drawn.b.contains(map.getBounds());
+    if (!drawn || (!lyr && !hl)) return true;
+    var m = mode(map.getZoom());
+    if (m !== drawn.mode) return true;
+    return m === "pins" && !drawn.b.contains(map.getBounds());
   }
-  function clear() { if (lyr && map) map.removeLayer(lyr); lyr = null; if (W.OSAP_LEGEND) W.OSAP_LEGEND.set("cf-hist", ""); }
-  // density: cells of 0.5, 1 or 2 degrees by zoom, from the loaded events when there are any, else from the per-year grid
-  function cells() {
-    var x = idx(), z = map.getZoom(), f = z <= 4 ? 4 : z <= 5 ? 2 : 1, deg = x.grid_deg * f, m = {};
-    function add(la, lo, n, b, t) {
-      var k = Math.floor(la / f) + "," + Math.floor(lo / f), c = m[k] || (m[k] = { la: Math.floor(la / f), lo: Math.floor(lo / f), n: 0, b: 0, t: { 1: 0, 2: 0, 3: 0 } });
-      c.n += n; c.b += b; c.t[t] += n;
-    }
-    if (loaded()) events().forEach(function (e) { var r = e[0]; add(Math.floor(r[3] / x.grid_deg), Math.floor(r[4] / x.grid_deg), 1, r[6], r[5]); });
-    else Object.keys(x.grid).forEach(function (y) {
-      if (!sel.last12 && (+y < sel.from || +y > sel.to)) return;
-      if (sel.last12 && +y < new Date(Date.now() - 365 * 864e5).getUTCFullYear()) return;
-      x.grid[y].forEach(function (g) {
-        var shown = 0; [1, 2, 3].forEach(function (t) { if (sel.t[t]) { add(g[0], g[1], g[3 + t], 0, t); shown += g[3 + t]; } });
-        if (shown) add(g[0], g[1], 0, Math.round(g[3] * shown / g[2]), 1);   // deaths shared out by the share of the types shown
-      });
+  function clear() { if (lyr && map) map.removeLayer(lyr); lyr = null; if (hl && map) map.removeLayer(hl); hl = null; if (W.OSAP_LEGEND) W.OSAP_LEGEND.set("cf-hist", ""); }
+  // the year files shown load one by one; the map is redrawn as each arrives, so the picture fills in rather than waiting
+  function loadMore() {
+    need().forEach(function (c) {
+      if (chunk(c) || pending[c.f] || bad[c.f]) return;
+      pending[c.f] = load(BASE + c.f).then(function () { soon(); }, function () { delete pending[c.f]; bad[c.f] = 1; soon(); });
     });
-    return Object.keys(m).map(function (k) { var c = m[k]; c.deg = deg; c.cla = (c.la + 0.5) * deg; c.clo = (c.lo + 0.5) * deg; return c; }).filter(function (c) { return c.n > 0; });
   }
-  function heat(v, max) { var r = Math.sqrt(v / Math.max(max, 1)); return r > 0.66 ? "#B71C1C" : r > 0.4 ? "#E64A19" : r > 0.2 ? "#F57C00" : r > 0.08 ? "#FFA000" : "#FBC02D"; }
+  var bad = {};   // year files that failed to load: tried again only when another conflict or the layer is reopened
+  function soon() { clearTimeout(redrawT); redrawT = setTimeout(function () { if (on && id) { draw(); panel(); } }, 120); }
+  // UCDP places some events only at a province's centre (precision 4 or wider); the heat map leaves those out, so it shows
+  // only where things were placed to a town or district. They stay as pins, with a note, when zoomed in.
+  function rough(r) { return r[14] >= 4; }
   function draw() {
     if (!ensure()) return; clear();
     var x = idx(); if (!on || !x || !id) return;
-    var L = W.L, z = map.getZoom(), g = [], note = "";
-    var pins = z >= PINZ || (sel.last12 && loaded() && events().length <= MAXPINS);
-    if (pins && !loaded()) { note = "Loading events…"; loadChunks(need()).then(function () { draw(); panel(); }, function () { panel("The events could not be loaded; the density view is shown."); }); pins = false; }
-    if (pins) {
-      var b = map.getBounds().pad(0.2), ev = events().filter(function (e) { return b.contains([e[0][3], e[0][4]]); });
-      if (ev.length > MAXPINS) { ev.sort(function (a, c) { return c[0][6] - a[0][6]; }); note = "Showing the " + num(MAXPINS) + " deadliest of " + num(ev.length) + " events here; zoom in for the rest."; ev = ev.slice(0, MAXPINS); }
+    var L = W.L, z = map.getZoom(), g = [], note = "", m = mode(z), n = need(), have = n.filter(function (c) { return !!chunk(c); }).length;
+    var nbad = n.filter(function (c) { return bad[c.f]; }).length;
+    if (have < n.length) { loadMore(); note = nbad && have + nbad === n.length ? "Some years could not be loaded; the map shows the years that did." : "Loading events: " + have + " of " + n.length + " year files…"; }
+    var ev = events();
+    if (m === "pins") {
+      var b = map.getBounds().pad(0.2); ev = ev.filter(function (e) { return b.contains([e[0][3], e[0][4]]); });
+      if (ev.length > MAXPINS) { ev.sort(function (a, c) { return c[0][6] - a[0][6]; }); note = (note ? note + " " : "") + "Showing the " + num(MAXPINS) + " deadliest of " + num(ev.length) + " events here; zoom in for the rest."; ev = ev.slice(0, MAXPINS); }
       ev.forEach(function (e) {
         var r = e[0];
         g.push(L.circleMarker([r[3], r[4]], { renderer: rend, pane: "cfpane", radius: Math.min(3 + Math.sqrt(r[6]) * 1.1, 13), color: "#222", weight: r[15] ? 1.2 : 0.8, dashArray: r[15] ? "2 2" : null,
           fillColor: TYPEC[r[5]] || TYPEC[1], fillOpacity: 0.72 }).bindPopup(function () { return pop(r, e[1]); }, { maxWidth: 330 }).on("popupopen", function () { setTimeout(function () { fp(r, e[1]); }, 0); }));
       });
+      lyr = L.layerGroup(g).addTo(map);
     } else {
-      var cs = cells(), max = Math.max.apply(null, cs.map(function (c) { return c.n; }).concat([1]));
-      cs.forEach(function (c) {
-        var dom = [1, 2, 3].sort(function (a, b2) { return c.t[b2] - c.t[a]; })[0];
-        g.push(L.circleMarker([c.cla, c.clo], { renderer: rend, pane: "cfpane", radius: Math.min(5 + Math.sqrt(c.n / max) * 22, 28), stroke: false, fillColor: heat(c.n, max), fillOpacity: 0.55 })
-          .bindPopup('<b>' + num(c.n) + " violent events</b><div class=\"cfm\">In this area of about " + Math.round(c.deg * 111) + " km, " + period() + ".</div>" +
-            "<div>" + [1, 2, 3].filter(function (t) { return c.t[t]; }).map(function (t) { return esc(TYPEN[t]) + ": " + num(c.t[t]); }).join("<br>") + "</div>" +
-            "<div>Deaths, UCDP best estimates added up: about <b>" + num(c.b) + "</b> (reported estimates, not counts).</div>" +
-            '<div class="cfm">Mostly ' + esc(TYPEN[dom].toLowerCase()) + '. <a href="#" data-cfhz="' + c.cla + "," + c.clo + '">Zoom in to see each event</a>.</div>', { maxWidth: 300 }));
-      });
+      // each event where UCDP placed it; a deadlier event weighs more (1 + log10 of 1 + deaths, best estimate)
+      var pts = [], left = 0;
+      ev.forEach(function (e) { var r = e[0]; if (rough(r)) { left++; return; } pts.push([r[3], r[4], 1 + Math.log(1 + (r[6] || 0)) / Math.LN10]); });
+      hl = W.OSAP_HEAT.layer({ pane: "cfpane", onTap: function (ll) { map.closePopup(); map.setView(ll, Math.min(map.getZoom() + 2, PINZ)); } });
+      hl.setData(pts).addTo(map);
+      drawn = { mode: m, left: left, n: pts.length };
     }
-    lyr = L.layerGroup(g).addTo(map);
-    drawn = { pins: pins, last12: sel.last12, b: pins ? map.getBounds().pad(0.2) : null, f: z <= 4 ? 4 : z <= 5 ? 2 : 1 };
-    legend(pins);
-    var nb = D.getElementById("cfh-note"); if (nb) nb.textContent = note || (pins ? "" : "Zoomed out: circles show how many events happened in each area. Zoom in to see each event.");
+    if (m === "pins") drawn = { mode: m, b: map.getBounds().pad(0.2) };
+    legend(m);
+    var nb = D.getElementById("cfh-note"); if (nb) nb.textContent = note || (m === "pins" ? "" : "Zoomed out: a heat map of where each event happened. Tap a hot area or zoom in to see each event.");
   }
   function period() { return sel.last12 ? "the past 12 months" : sel.from === sel.to ? String(sel.from) : sel.from + " to " + sel.to; }
-  function legend(pins) {
+  function legend(m) {
     if (!W.OSAP_LEGEND) return;
     var h = "<h3>History of violence (UCDP), " + esc(period()) + "</h3>";
-    if (pins) h += [1, 2, 3].filter(function (t) { return sel.t[t]; }).map(function (t) { return '<div class="lg"><span class="sw round" style="background:' + TYPEC[t] + '"></span><div>' + esc(TYPEN[t]) + "</div></div>"; }).join("") +
+    if (m === "pins") h += [1, 2, 3].filter(function (t) { return sel.t[t]; }).map(function (t) { return '<div class="lg"><span class="sw round" style="background:' + TYPEC[t] + '"></span><div>' + esc(TYPEN[t]) + "</div></div>"; }).join("") +
       '<div class="lg"><div><span class="d">Larger pin: more deaths (UCDP best estimate). Dashed ring: provisional event, not yet in a yearly release.</span></div></div>';
-    else h += '<div class="lg"><span class="sw round" style="background:#FBC02D"></span><div>Few events</div></div><div class="lg"><span class="sw round" style="background:#F57C00"></span><div>More</div></div>' +
-      '<div class="lg"><span class="sw round" style="background:#B71C1C"></span><div>Most events in this period</div></div><div class="lg"><div><span class="d">Circle size also grows with the number of events. Zoom in for pins by type.</span></div></div>';
+    else h = W.OSAP_HEAT.legend("History of violence (UCDP), " + esc(period()), "Heat map of " + num(drawn.n) + " events, each where UCDP placed it; deadlier events weigh more." +
+      (drawn.left ? " " + num(drawn.left) + " events UCDP placed only to a province or wider are left out here; zoom in to see them." : "") + " Zoom in or tap a hot area for each event.");
     W.OSAP_LEGEND.set("cf-hist", h, rail());
   }
   var SIDES = function (r, k) { return k.sides[r[10]] + " vs " + k.sides[r[11]]; };
@@ -205,7 +194,7 @@
   }
   function selectAll() { var yr = yearsRange(); sel.from = yr[0]; sel.to = yr[1]; sel.last12 = false; }
   function open(cid) {
-    if (id !== cid) { clear(); id = cid; sel.from = 0; }
+    if (id !== cid) { clear(); id = cid; sel.from = 0; bad = {}; drawn = null; }
     if (!on) { panel(); return; }
     panel();
     loadIdx(cid).then(function () {
@@ -218,7 +207,7 @@
   /* ---------- events ---------- */
   D.addEventListener("change", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cfh")) return;
-    if (t.getAttribute("data-cfh") === "on") { on = t.checked; try { localStorage.setItem("osap-cf-hist", on ? "1" : "0"); } catch (x) {} if (on) open(id); else { clear(); panel(); } return; }
+    if (t.getAttribute("data-cfh") === "on") { on = t.checked; try { localStorage.setItem("osap-cf-hist", on ? "1" : "0"); } catch (x) {} if (on) { bad = {}; open(id); } else { clear(); panel(); } return; }
     if (t.hasAttribute("data-cfht")) { sel.t[t.getAttribute("data-cfht")] = t.checked; panel(); draw(); }
   });
   // the year sliders: the label follows as you drag; the map redraws when you let go
@@ -234,6 +223,8 @@
     var p = t.closest("[data-cfhp]"); if (p && p.closest("#cfh")) { if (p.getAttribute("data-cfhp") === "all") selectAll(); else sel.last12 = true; panel(); draw(); return; }
     var z = t.closest("[data-cfhz]"); if (z && map) { e.preventDefault(); var ll = z.getAttribute("data-cfhz").split(","); map.closePopup(); map.setView([+ll[0], +ll[1]], PINZ); }
   });
+
+  if (W.OSAP_HEAT) W.OSAP_HEAT.onChange(function () { if (on && id && idx()) draw(); });
 
   /* ---------- hooks from the conflict tabs ---------- */
   var css = D.createElement("style");
