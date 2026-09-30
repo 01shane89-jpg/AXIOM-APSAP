@@ -23,7 +23,7 @@
 
   /* ---------- the view: Overlays is where it is chosen ---------- */
   function openOverlays() {
-    if (press('#atk-tools [data-atk="overlays"]') && root.classList.contains("atak")) return;
+    if (press('#atk-tools [data-atk="datasets"]') && root.classList.contains("atak")) return;
     var mb = q(".mlctl .mlbtn"); if (mb && mb.getAttribute("aria-expanded") !== "true") mb.click();
   }
   var title = q("#hdr-title");
@@ -32,7 +32,7 @@
     title.addEventListener("click", openOverlays);
     /* the view's source line folds into the title's tooltip, so the header stays one row on a desktop */
     var src = q("#hdr-src");
-    var tip = function () { var t = src ? src.textContent.trim() : ""; title.title = (t ? "Sources: " + t + ". " : "") + "Tap to change what you see (opens Overlays)"; };
+    var tip = function () { var t = src ? src.textContent.trim() : ""; title.title = (t ? "Sources: " + t + ". " : "") + "Tap to change what you see (opens Data sets)"; };
     tip(); if (src && W.MutationObserver) new MutationObserver(tip).observe(src, { childList: true, characterData: true, subtree: true });
     title.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openOverlays(); } });
   }
