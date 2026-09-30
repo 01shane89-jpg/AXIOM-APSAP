@@ -188,7 +188,8 @@
     b.type = "button"; b.setAttribute("data-o3d", ""); b.title = "3D terrain: tilt and turn the map over the ground"; b.setAttribute("aria-label", "3D");
     b.innerHTML = ICON + '<span class="atk-l">3D</span>';
     b.addEventListener("click", function (e) { e.stopPropagation(); open3d(); });
-    list.insertBefore(b, list.querySelector('[data-atk="full"]'));
+    /* with Grid and Crosshair, after Base map: the map group of the toolbar */
+    list.insertBefore(b, list.querySelector('[data-atk="measure"]'));
     return true;
   }
   addToolbarBtn();
