@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-08-31"]=[["ne","2026-08-31T20:55","Niger Coup Attempt - 'Russians Saved the Day' Analyst Tells Rfi","","allAfrica.com on MSN (via Bing News search)","https://www.msn.com/en-xl/news/other/niger-coup-attempt-russians-saved-the-day-analyst-tells-rfi/ar-AA2bjlwO","","sn","elections","crisis,security"]];
