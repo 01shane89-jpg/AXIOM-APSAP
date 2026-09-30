@@ -5890,7 +5890,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
     if (!pan.__dsml) { pan.__dsml = 1; pan.addEventListener("change", function (e) { if (!dsBox.contains(e.target)) dsUi(); }); }
-    var n = list.filter(function (x) { return DS[x.id]; }).length;
+    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
@@ -5920,6 +5920,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<button type="button" class="dsmlfold" aria-expanded="' + !dsFold + '" aria-controls="ml-panel">Map layers' + (mlOn ? ' <i>' + mlOn + " on</i>" : "") + '<span class="dsmlhint">Weather radar, grid, terrain, roads, aircraft</span></button>';
     pan.classList.toggle("mlfold", dsFold);
   }
+  /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
+     events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
+     without leaving the tab (Shane 2026-09-30) */
+  var DS_CFSEL = 'input[id^="bl-"],[data-cfshow],[data-cfh="on"],[data-cfs="on"],[data-cfs="s"],[data-cfi],[data-cfua]';
+  function dsCfOn() {
+    var r = document.getElementById("cf-rail");
+    if (!r || !document.documentElement.getAttribute("data-cf")) return [];
+    return Array.prototype.filter.call(r.querySelectorAll(DS_CFSEL), function (i) { return i.type === "checkbox" && i.checked; });
+  }
+  function dsCfClear() {
+    /* one at a time: a panel may redraw itself after a switch, which replaces the boxes still to do */
+    for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
+  }
+  document.addEventListener("change", function (e) { var t = e.target; if (t && t.closest && t.closest("#cf-rail") && t.matches(DS_CFSEL)) dsUi(); });
   /* the map layers under the data sets (weather, grid, terrain and the rest) fold away behind one heading; kept per browser */
   var dsFold = true;
   try { dsFold = localStorage.getItem("osap-mlfold") !== "0"; } catch (e) {}
@@ -5940,6 +5954,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (f) { dsFold = !dsFold; try { localStorage.setItem("osap-mlfold", dsFold ? "1" : "0"); } catch (x) {} dsUi(); return; }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
+    if (!on) dsCfClear();
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
