@@ -454,10 +454,6 @@ select.mini{
 #ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
 #ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
 #ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
-#ml-ds .dsmlfold{display:block;width:100%;margin:12px 0 0;padding:10px 8px 8px;text-align:left;font:inherit;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink);background:none;border:0;border-top:1px solid var(--line);cursor:pointer}
-#ml-ds .dsmlfold::before{content:"\25BE";display:inline-block;margin-right:6px}#ml-ds .dsmlfold[aria-expanded=false]::before{transform:rotate(-90deg)}
-#ml-ds .dsmlfold i{font-style:normal;text-transform:none;letter-spacing:0;color:var(--accent);margin-left:4px}#ml-ds .dsmlhint{display:block;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;color:var(--muted);margin:2px 0 0 16px}
-#ml-panel.mlfold>:not(#ml-ds):not(.mlbase):not(#atk-back){display:none!important}#ml-panel.mlfold #ml-ds{border-bottom:0}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
@@ -5889,7 +5885,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
-    if (!pan.__dsml) { pan.__dsml = 1; pan.addEventListener("change", function (e) { if (!dsBox.contains(e.target)) dsUi(); }); }
     var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
@@ -5903,7 +5898,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     grp.push(["Other", []]);
     rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
     var tl = tabs.filter(function (x) { return x.id === "timeline"; })[0];
-    var mlOn = dsMlOn();
     dsBox.innerHTML =
       '<div class="dsbar"><span class="dscount">' + (n ? "<b>" + n + "</b> on the map" : "Nothing on the map") + "</span>" +
         '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
@@ -5916,9 +5910,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           return '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
             "<span>" + esc(x.name) + "</span></button></div>";
         }).join("");
-      }).join("") +
-      '<button type="button" class="dsmlfold" aria-expanded="' + !dsFold + '" aria-controls="ml-panel">Map layers' + (mlOn ? ' <i>' + mlOn + " on</i>" : "") + '<span class="dsmlhint">Weather radar, grid, terrain, roads, aircraft</span></button>';
-    pan.classList.toggle("mlfold", dsFold);
+      }).join("");
   }
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
      events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
@@ -5934,13 +5926,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
   }
   document.addEventListener("change", function (e) { var t = e.target; if (t && t.closest && t.closest("#cf-rail") && t.matches(DS_CFSEL)) dsUi(); });
-  /* the map layers under the data sets (weather, grid, terrain and the rest) fold away behind one heading; kept per browser */
-  var dsFold = true;
-  try { dsFold = localStorage.getItem("osap-mlfold") !== "0"; } catch (e) {}
-  function dsMlOn() {
-    var pan = document.getElementById("ml-panel"); if (!pan) return 0;
-    return Array.prototype.filter.call(pan.querySelectorAll('input[type=checkbox]:checked'), function (i) { return !dsBox.contains(i) && !i.closest("#atk-back"); }).length;
-  }
   dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
   dsBox.addEventListener("click", function (e) {
     var o = e.target.closest && e.target.closest("[data-dsopen]");
@@ -5950,8 +5935,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: ov }));
       return;
     }
-    var f = e.target.closest && e.target.closest(".dsmlfold");
-    if (f) { dsFold = !dsFold; try { localStorage.setItem("osap-mlfold", dsFold ? "1" : "0"); } catch (x) {} dsUi(); return; }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
     if (!on) dsCfClear();
