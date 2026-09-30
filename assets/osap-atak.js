@@ -529,5 +529,7 @@
   if (W.OSAP_DATASETS && W.OSAP_DATASETS.onChange) W.OSAP_DATASETS.onChange(function () { omPaint(); });
 
   W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
+    /* the readout's position format ("mgrs", "dd" or "dms"): read with no argument, set from Settings with one */
+    posFmt: function (f) { if (f && FMTS.indexOf(f) >= 0) { fmt = f; lsSet(K_FMT, f); paintStrip(); } return fmt; },
     pts: { all: ptsAll, save: ptsSave, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };
 })();
