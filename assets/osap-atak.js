@@ -64,16 +64,21 @@
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
 
   /* ---------- the toolbar ---------- */
+  /* the toolbar in groups, top to bottom, with a thin line between groups (Shane 2026-09-30: easy and intuitive to find):
+       Find:   Search
+       Show:   Data sets (reporting topics), Weather, Overlays (map layers, your marks), Base map
+       Map:    Grid, Crosshair (osap-grid.js) and 3D (osap-3d.js) are added here, before Measure
+       Tools:  Measure, Route, Area (draw, summarise, NAI/TAI), Point, Watch
+       Yours:  My work
+       Screen: Layout, Full
+     New map layers (power grid, communications towers) go in Overlays; area tools (a medical plan) go in the Area menu. */
   var TOOLS = [
     ["search", "Search", I.search, "Search places, or go to an MGRS, UTM or lat/long"],
-    /* data sets (what the map and list show) and map overlays (weather, grid, terrain...) are two buttons (Shane 2026-09-30) */
-    ["datasets", "Data sets", I.data, "Data sets: what the map and the list show"],
-    ["overlays", "Overlays", I.layers, "Map overlays: flooding, terrain, roads, aircraft, your marks"],
-    /* weather is its own area (Shane 2026-09-30): radar, cloud, wind, warnings, cyclones and the forecasts */
+    ["datasets", "Data sets", I.data, "Data sets: the reporting topics the map and the list show"],
     ["weather", "Weather", I.cloud, "Weather: radar, cloud, wind, warnings, cyclones and forecasts"],
+    ["overlays", "Overlays", I.layers, "Map overlays: flooding, terrain, roads, aircraft, your marks"],
     ["basemap", "Base map", I.globe, "Choose the base map: grey, streets, topographic, satellite and more"],
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
-    /* Route is a map tool, not a data set (Shane 2026-09-30): it opens the route planner, and again goes back */
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
@@ -142,7 +147,7 @@
     }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }), [["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]]) : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -164,7 +169,13 @@
     var b = e.target.closest("[data-pk]"); if (!b) return;
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
     if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
-    else if (f === "area") { if (k === "save") press("[data-aoi-save]"); else areaPress(k); setTimeout(paintTools, 30); }
+    else if (f === "area") {
+      /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
+      var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
+      if (at) { if (typeof at.run === "function") at.run(); }
+      else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
+      setTimeout(paintTools, 30);
+    }
     else if (f === "layout") press('#rv-seg [data-rv-mode="' + k + '"]');
     else if (f === "mine") press('[data-wk-btn="' + k + '"]');
     else if (f === "point") {
@@ -493,7 +504,10 @@
     /* toolbar */
     "#atk-tools{position:absolute;right:0;top:0;z-index:1000;flex-direction:column;align-items:stretch;top:8px;right:8px;margin:0!important;background:rgba(20,24,28,.86);border-radius:10px;padding:3px;box-shadow:0 2px 10px rgba(0,0,0,.35);max-height:calc(100% - 46px);box-sizing:border-box;pointer-events:auto}" +
     "#atk-tools .atk-list{display:flex;flex-direction:column;gap:2px;overflow-y:auto;scrollbar-width:none}#atk-tools .atk-list::-webkit-scrollbar{display:none}" +
-    "#atk-tools button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:48px;min-height:46px;padding:4px 2px;border:0;border-radius:7px;background:none;color:#e9eef2;cursor:pointer;font:600 9.5px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.01em}" +
+    "#atk-tools button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:48px;min-height:42px;padding:4px 2px;border:0;border-radius:7px;background:none;color:#e9eef2;cursor:pointer;font:600 9.5px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.01em}" +
+    /* a thin line above the first button of each group */
+    "#atk-tools .atk-list>[data-atk=datasets],#atk-tools .atk-list>[data-ogrid=lines],#atk-tools .atk-list>[data-atk=measure],#atk-tools .atk-list>[data-atk=mine],#atk-tools .atk-list>[data-atk=layout]{margin-top:5px}" +
+    "#atk-tools .atk-list>[data-atk=datasets]::before,#atk-tools .atk-list>[data-ogrid=lines]::before,#atk-tools .atk-list>[data-atk=measure]::before,#atk-tools .atk-list>[data-atk=mine]::before,#atk-tools .atk-list>[data-atk=layout]::before{content:'';position:absolute;left:8px;right:8px;top:-4px;border-top:1px solid rgba(255,255,255,.22)}" +
     "#atk-tools button:hover{background:rgba(255,255,255,.1)}#atk-tools button:focus-visible{outline:2px solid #4dabf7;outline-offset:-2px}" +
     "#atk-tools button[aria-pressed=true],#atk-tools button.on{background:#0b7285;color:#fff}#atk-tools button[hidden]{display:none}" +
     "#atk-tools .atk-fold{min-height:28px;color:#9fb3c1;border-bottom:1px solid rgba(255,255,255,.12);border-radius:7px 7px 0 0;margin-bottom:2px}" +
