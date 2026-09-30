@@ -85,3 +85,5 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 data-ev-tlr="1"
 # MGRS grid lines and centre crosshair (claude/map-grid-crosshair)
 <script src="assets/osap-grid.js"></script>
+# power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
+<script src="assets/osap-power.js"></script>
