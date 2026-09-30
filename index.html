@@ -8075,6 +8075,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <script src="assets/osap-grid.js"></script>
+<script src="assets/osap-medplan.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
