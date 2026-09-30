@@ -19,6 +19,7 @@
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
 <script src="assets/osap-heat.js"></script>
+<script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
@@ -88,5 +89,7 @@ data-ev-tlr="1"
 
 # Comms tab: masts, radio and TV towers, phone coverage check (claude/comms-tab)
   function showComms() {
+# medical plan for the drawn area, in the Area menu (claude/medical-plan)
+<script src="assets/osap-medplan.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
   function stripDatelines(text) {
