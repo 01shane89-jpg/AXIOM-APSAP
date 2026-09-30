@@ -62,7 +62,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await view(p, "comms");
   await p.waitForFunction(() => window.OSAP_COMMSTAB && document.querySelector("#com-tg input"), null, { timeout: 20000 });
   ok(true, "the tab loads its script on first open");
-  ok(await p.evaluate(() => !document.querySelector('input[data-ds="comms"]') && !!document.querySelector('[data-dsopen="comms"]')), "Comms is a tool tab in Views, not a data set");
+  ok(await p.evaluate(() => !document.querySelector('input[data-ds="comms"]') && !document.querySelector('[data-dsopen="comms"]') && !!document.querySelector('#ml-infra [data-infra-comms]')), "Comms is not a data set; it opens from Map overlays > Infrastructure");
   ok(/zoom in/i.test(await p.textContent("#com-st")) || (await p.evaluate(() => window.__asapMap.getZoom())) >= 9, "asks to zoom in when zoomed out");
   await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(2500);
   let s = await st(p);

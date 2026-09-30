@@ -82,7 +82,7 @@ const nowIso = new Date().toISOString().slice(0, 16);
 const onClock = (d, tz) => { const m = /^([+-])(\d\d):(\d\d)$/.exec(tz || ""); if (!m || !d) return d; const off = (m[1] === "-" ? -1 : 1) * (+m[2] * 60 + +m[3]); return new Date(Date.parse(d + "Z") - off * 60000).toISOString().slice(0, 16); };
 const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
-const LANES = 8;
+const LANES = 8, MAX_AGE_DAYS = 30;
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
@@ -116,7 +116,10 @@ async function readFeed(f) {
         try { const d = ADAPTERS[f.detail](await getFeed(o.link)); if (d) { o.title = d.title; o.summary = d.summary.slice(0, 400); o.detail = d.counts || true; } } catch (e) {}
       }
     }
-    push(f.st ? "us:" + f.st : f.cc, list); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: list.length });
+    // an outlet's own date older than MAX_AGE_DAYS is an archive hit (search fallbacks, front-page feeds that stopped updating),
+    // not current news: left out of the live list (data/history keeps older items it already had)
+    const cut = new Date(Date.now() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 16), fresh = list.filter((o) => o.date_seen || !(o.date < cut));
+    push(f.st ? "us:" + f.st : f.cc, fresh); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: fresh.length, ...(fresh.length < list.length ? { old: list.length - fresh.length } : {}) });
   } catch (e) { status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
 const byHost = {};
