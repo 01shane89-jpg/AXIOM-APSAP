@@ -5056,7 +5056,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return null;
   }
   var ENT = document.createElement("textarea");
-  function unent(t) { if (!t || t.indexOf("&") < 0) return t; ENT.innerHTML = t; return ENT.value; }
+  /* entities decoded (twice for double-escaped feeds) and markup left in older stored summaries removed: shown as plain text */
+  function unent(t) {
+    if (!t) return t;
+    for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
+    return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
+  }
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key], H = ((window.ASAP_HIST || {})[CC] || {})[layer] || [];
