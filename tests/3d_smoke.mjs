@@ -122,6 +122,38 @@ async function run3d(name, p, errors, libs, openSel, early) {
   await run3d("desktop", p, errors, libs, ".o3dctl a", early);
   await ctx.close();
 }
+// ---------- 3D buildings switch: on by default, tiles only when zoomed in close, off and on again, remembered ----------
+{
+  const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
+  const asked = [];
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
+    const u = r.request().url();
+    if (u === "https://tiles.openfreemap.org/planet") return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+      body: JSON.stringify({ tilejson: "3.0.0", tiles: ["https://tiles.openfreemap.org/planet/test/{z}/{x}/{y}.pbf"], minzoom: 0, maxzoom: 14, vector_layers: [{ id: "building" }] }) });
+    if (/tiles\.openfreemap\.org\/planet\/test\//.test(u)) { asked.push(+u.split("/").slice(-3)[0]); return r.fulfill({ status: 204, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }
+    return r.abort();
+  });
+  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-mapsets-th", "[]"); } catch (e) {} });
+  const p = await ctx.newPage(), errors = []; p.on("pageerror", (e) => errors.push(e.message));
+  await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(2500);
+  await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([13.726, 100.531], 11, { animate: false }); });
+  await p.evaluate(() => window.OSAP_3D.open());
+  await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.getLayer("bld"), null, { timeout: 30000 }).catch(() => {});
+  const b1 = await p.evaluate(() => { const gl = window.OSAP_3D.gl, L = gl.getLayer("bld"); return { layer: !!L, type: L && L.type, min: L && L.minzoom, vis: L && gl.getLayoutProperty("bld", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed") }; });
+  ok(b1.layer && b1.type === "fill-extrusion" && b1.min === 14 && b1.pressed === "true", "buildings: on by default, raised from OpenStreetMap footprints, from zoom 14 " + JSON.stringify(b1));
+  await p.waitForTimeout(2500);
+  ok(asked.length === 0, "buildings: no building tiles downloaded while zoomed out (" + asked.length + ")");
+  await p.evaluate(() => window.OSAP_3D.gl.jumpTo({ zoom: 15.5, pitch: 60 })); await p.waitForTimeout(2500);
+  ok(asked.length > 0 && asked.every((z) => z === 14), "buildings: close in, building tiles are asked for (" + asked.length + " at zoom " + [...new Set(asked)].join(",") + ")");
+  await p.click("#o3d .o3-bld");
+  const b2 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed"), saved: JSON.parse(localStorage.getItem("osap-3d")).bld }));
+  ok(b2.vis === "none" && b2.pressed === "false" && b2.saved === false, "buildings: the switch turns them off and remembers it " + JSON.stringify(b2));
+  await p.evaluate(() => window.OSAP_3D.gl.jumpTo({ zoom: 10 })); await p.click("#o3d .o3-bld");
+  const b3 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), msg: document.querySelector("#o3d .o3-msg").textContent }));
+  ok(b3.vis === "visible" && /zoom in/i.test(b3.msg), "buildings: on again while zoomed out says to zoom in " + JSON.stringify(b3));
+  ok(errors.length === 0, "buildings: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
 // ---------- a busy imagery host: every picture is refused once (429), and there are no close-ups past zoom 9 (404) ----------
 {
   const png = await readFile(join(root, "assets/icons/icon-192.png"));
