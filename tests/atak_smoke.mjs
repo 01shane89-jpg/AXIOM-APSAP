@@ -99,6 +99,10 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // the sheet's own header switches back, since on a phone the sheet covers the toolbar
   await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode")) === "overlays", "phone: header switches the sheet to Map overlays");
+  ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !w || w.offsetParent === null; }), "phone: Map overlays does not hold the weather layers");
+  await p.click('#atk-om [data-omm="weather"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !!w && w.offsetParent !== null && document.querySelector("#atk-marks").offsetParent === null; }), "phone: Weather shows the weather layers alone");
+  await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
   ok(/P1/.test(await p.textContent("#atk-marks")) && /NAI/.test(await p.textContent("#atk-marks")), "phone: Overlay Manager lists your point and NAI");
   if (OUT) await p.screenshot({ path: OUT + "/phone-overlays.png" });
   await p.click('#atk-om [data-om="x"]');
