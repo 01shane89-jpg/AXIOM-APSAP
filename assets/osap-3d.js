@@ -21,6 +21,11 @@
   if (!map || !L || /[?&]watchscan=1/.test(location.search)) return;
   var LIB = "assets/vendor/maplibre-gl-5.24.0", K_UNIT = "osap-meas-unit", K_3D = "osap-3d";
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+  /* 3D buildings: OpenStreetMap footprints and heights from OpenFreeMap's keyless vector tiles (OpenMapTiles schema). A building
+     with no height or floor count in OpenStreetMap stands at the tiles' 5 m default. Shown from zoom 14, so zoomed-out views
+     download none. */
+  var BLD = "https://tiles.openfreemap.org/planet", BLD_Z = 14,
+    BLD_ATTR = 'Buildings: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
   var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
   /* Japan: GSI elevation tiles replace the AWS model inside Japan and Okinawa. At the closest zoom GSI's 5 m model from its
      airborne laser survey (LiDAR) is used where it exists, the 10 m national model elsewhere and at the other zooms. They are
@@ -307,7 +312,9 @@
 
   /* ---------- the 3D view ---------- */
   var view3 = null, demProto = false;
-  function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5 }; }
+  var BLD_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">' +
+    '<path d="M3 21h18M5 21V8l6-3v16M11 21V3l8 4v14"/><path d="M14 9h2M14 12h2M14 15h2M7.5 11h1M7.5 14h1M7.5 17h1" stroke-linecap="round"/></svg>';
+  function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5, bld: p.bld !== false }; }
   function savePrefs(o) { var p = prefs(); for (var k in o) p[k] = o[k]; lsSet(K_3D, JSON.stringify(p)); }
   var COMPASS = '<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="rgba(20,24,28,.86)" stroke="rgba(255,255,255,.35)"/>' +
     '<g class="o3-needle"><path d="M20 5l5 15h-10z" fill="#e03131"/><path d="M20 35l-5-15h10z" fill="#dee2e6"/><text x="20" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">N</text></g></svg>';
@@ -348,7 +355,8 @@
       '<div class="o3-side"><button type="button" class="o3-b o3-2d" title="Back to the flat map at this place" aria-label="Back to 2D">2D</button>' +
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + "</button>" +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
-      '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button></div>' +
+      '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
+      '<button type="button" class="o3-b o3-bld" title="3D buildings (from OpenStreetMap). They appear when you zoom in close" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
       '<div class="o3-tilt"><label>Tilt <input type="range" min="0" max="85" step="1" aria-label="View angle (tilt)"></label><output></output></div>' +
       '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button><div class="o3-cr" hidden></div>' +
       '<div class="o3s o3-scale" role="button" tabindex="0" title="Map scale. Tap to change the unit (km, mi, nm)"></div>';
@@ -375,7 +383,7 @@
 
     loadLib().then(function (ml) {
       if (dead) return;
-      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR], b2 = map.getBounds();
+      var c = map.getCenter(), R = rasters(), V = vectors(), attrs = [DEM_ATTR, BLD_ATTR], b2 = map.getBounds();
       if (!demProto) { try { ml.addProtocol("osapdem", demTile); ml.addProtocol("osapr", rasterTile); demProto = true; } catch (e) {} }
       if (b2.getEast() > JP[1] && b2.getWest() < JP[3] && b2.getNorth() > JP[0] && b2.getSouth() < JP[2]) attrs.push(JP_ATTR);
       var DEMU = demProto ? "osapdem://{z}/{x}/{y}" : DEM;
@@ -416,6 +424,31 @@
         say("3D needs WebGL, which this browser or device has turned off. The flat map still works."); gl = null; return;
       }
       /* phones: a vertical one-finger drag should pan, two fingers tilt (the default) */
+      /* 3D buildings, under the map's own overlays; the tiles are asked for only while the switch is on and the view is close */
+      var bldB = box.querySelector(".o3-bld"), hintT = 0;
+      function bldOn(on) {
+        bldB.setAttribute("aria-pressed", on ? "true" : "false"); bldB.classList.toggle("on", on);
+        if (!styleUp) return;   /* added once the style has loaded (see "style.load" below) */
+        if (on && !gl.getSource("bld")) {
+          gl.addSource("bld", { type: "vector", url: BLD });
+          gl.addLayer({ id: "bld", type: "fill-extrusion", source: "bld", "source-layer": "building", minzoom: BLD_Z,
+            filter: ["!=", ["get", "hide_3d"], true],
+            paint: { "fill-extrusion-color": ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 5], 0, "#d8d2c6", 20, "#c9c1b3", 60, "#b3a998", 150, "#9d9282"],
+              "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_height"], 5]],
+              "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_min_height"], 0]],
+              "fill-extrusion-opacity": 0.88, "fill-extrusion-vertical-gradient": true } }, gl.getLayer("vf") ? "vf" : undefined);
+        }
+        if (gl.getLayer("bld")) gl.setLayoutProperty("bld", "visibility", on ? "visible" : "none");
+      }
+      var styleUp = false;
+      bldOn(P.bld);
+      if (gl.style && gl.style._loaded) { styleUp = true; bldOn(P.bld); }   /* an inline style can finish loading at once */
+      else gl.once("style.load", function () { styleUp = true; if (!dead) bldOn(P.bld); });
+      bldB.addEventListener("click", function () {
+        P.bld = !P.bld; bldOn(P.bld); savePrefs({ bld: P.bld });
+        clearTimeout(hintT);
+        if (P.bld && gl.getZoom() < BLD_Z) { say("Buildings appear when you zoom in close."); hintT = setTimeout(function () { say(""); }, 2600); }
+      });
       var needle = box.querySelector(".o3-needle"), tilt = box.querySelector(".o3-tilt input"), tOut = box.querySelector(".o3-tilt output"), ex = box.querySelector(".o3-ex"), sc = box.querySelector(".o3-scale");
       function paint() {
         var b = gl.getBearing(), p = gl.getPitch();
@@ -537,6 +570,7 @@
     "#o3d .o3-b:focus-visible{outline:2px solid #4dabf7;outline-offset:1px}#o3d .o3-2d{background:#0b7285;color:#fff}" +
     "#o3d .o3-cmp{padding:0;background:none;box-shadow:none;border-radius:50%}#o3d .o3-cmp svg{display:block;transition:transform .15s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}" +
     "#o3d .o3-zi,#o3d .o3-zo{font-size:22px;font-weight:500}#o3d .o3-ex{font-size:12.5px}" +
+    "#o3d .o3-bld{display:flex;align-items:center;justify-content:center;color:#adb5bd}#o3d .o3-bld.on{color:#fff;background:#1c7ed6}" +
     "#o3d .o3-tilt{position:absolute;right:8px;bottom:34px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(20,24,28,.86);color:#f1f3f5;border-radius:10px;padding:6px 10px;font:600 12.5px/1 system-ui,sans-serif}" +
     "#o3d .o3-tilt label{display:flex;align-items:center;gap:8px}#o3d .o3-tilt input{width:130px;accent-color:#15aabf;margin:0;height:28px}#o3d .o3-tilt output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}" +
     "#o3d .o3-scale{position:absolute;left:8px;bottom:34px;z-index:2}" +
