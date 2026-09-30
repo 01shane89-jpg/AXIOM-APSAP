@@ -41,6 +41,12 @@ for (const [mode, a, b] of [["car", "13.7563, 100.5018", "12.9236, 100.8825"], [
   console.log("weather:", await txt("#rt-wx")); console.log("directions:", (await page.evaluate(() => document.getElementById("rt-dir").textContent)).replace(/\s+/g, " ").slice(0, 300));
   if (!st.routes || st.err || !st.elev || !st.wx) { failed++; console.log(`::warning::${mode} incomplete`); }
 }
+// Search this route on the last straight-line Bangkok -> Pattaya route: real Photon reverse (towns) and Overpass (restrictions)
+await page.click('#rt-sum [data-rt="search"]').catch((e) => console.log("::warning::no search button", e.message));
+await page.waitForFunction(() => { const t = document.getElementById("rt-brief").textContent; return !/Looking up towns|Loading from OpenStreetMap/.test(t) && /Restrictions/.test(t); }, null, { timeout: 90000 }).catch(() => console.log("::warning::route search did not finish"));
+console.log("\nroute search:", await txt("#rt-brief"));
+console.log("restrictions:", (await page.evaluate(() => document.getElementById("rt-rx").textContent)).replace(/\s+/g, " ").slice(0, 600));
+console.log("reports:", (await page.evaluate(() => document.getElementById("rt-brep").textContent)).replace(/\s+/g, " ").slice(0, 400));
 await page.fill("#rt-q", "Pattaya"); await page.press("#rt-q", "Enter"); await page.waitForTimeout(4000);
 console.log("\nplace search:", await txt("#rt-found"));
 console.log("\npage errors:", errors);
