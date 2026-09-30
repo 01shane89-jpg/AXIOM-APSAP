@@ -18,9 +18,6 @@
   var S = { q: "", where: "here", topic: "", shown: PAGE, loaded: 0, want: FIRST_DAYS, busy: false, err: "", man: null, rows: [], el: null, cc: "", name: "" };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  /* stored headlines can carry entity codes (&#8216;) from double-escaped feeds: decode them to text before escaping */
-  var TA = document.createElement("textarea");
-  function txt(s) { s = String(s == null ? "" : s); for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(s); k++) { TA.innerHTML = s; s = TA.value; } return s.replace(/<\/?[a-z][^>]*>/gi, " "); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function fold(s) { s = String(s || ""); try { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {} return s.toLowerCase(); }
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
@@ -144,8 +141,8 @@
       var r = x.r, url = safeUrl(r[5]), w = when(r[1]), fl = r[7] || "";
       /* the countries it is filed under: all of them when searching every country, else only the others it names */
       var where = (S.where === "all" ? x.ccs : x.ccs.filter(function (c) { return c !== S.cc; })).slice(0, 3).map(cName);
-      h += '<article class="nqrow"><a class="nqh" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[2])) + "</a>" +
-        (r[3] ? '<span class="nqorig" lang="">' + esc(txt(r[3])) + "</span>" : "") +
+      h += '<article class="nqrow"><a class="nqh" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(r[2]) + "</a>" +
+        (r[3] ? '<span class="nqorig" lang="">' + esc(r[3]) + "</span>" : "") +
         '<span class="nqsub">' + esc(r[4]) + (where.length ? " · " + esc(where.join(", ")) : "") + " · " + esc(w.txt) + "</span>" +
         '<span class="nqtags"><span class="tdtag unv">' + (fl.indexOf("s") >= 0 ? "News search result" : "Unverified report") + "</span>" +
         (fl.indexOf("g") >= 0 ? '<span class="tdtag claim">State media</span>' : "") + (fl.indexOf("m") >= 0 ? '<span class="tdtag mt">Machine translated</span>' : "") + "</span></article>";

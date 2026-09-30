@@ -112,14 +112,6 @@
   function asofT(s, fromTz) { var t = parseT(s, fromTz); return isFinite(t) ? dualT(t, { date: true }) : (s || ""); }
   window.OSAP_TZMAP = Object.assign({}, TZW, TZ28);
   window.OSAP_TIME = { dualT: dualT, parseT: parseT, asofT: asofT, abbr: abbr, zone: zone };
-  /* UCDP candidate data codes armed groups it has not yet identified as XXX<number> ("XXX771 - XXX771"): show them in words.
-     The raw codes stay in the data files, where the refresh jobs match on them. */
-  window.OSAP_ACTORS = function (s) {
-    s = String(s || "");
-    if (/^(XXX\d+) (?:-|vs) \1$/.test(s)) return "Unidentified armed groups";
-    return s.replace(/\bXXX\d+\b/g, "unidentified armed group").replace(/^unidentified/, "Unidentified");
-  };
-  window.OSAP_ACTORS.note = function (s) { var m = String(s || "").match(/\bXXX\d+\b/g); return m ? "UCDP has not yet named the group (its code " + m.filter(function (c, i) { return m.indexOf(c) === i; }).join(", ") + "). " : ""; };
   /* hospitals always show as a red cross on a white tile, in every layer and legend, so they read on light, dark and
      satellite maps alike. hollow: the cross in outline only (used for the Cambodian side of the border layer). */
   window.OSAP_REDCROSS = function (px, hollow) {
@@ -452,18 +444,10 @@ select.mini{
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
-#ml-ds .dsbar{display:flex;align-items:center;gap:8px;margin:2px 0 8px}#ml-ds .dscount{flex:1;font-size:13px;color:var(--muted)}#ml-ds .dscount b{color:var(--ink)}
-#ml-ds .dsclear,#ml-ds .dsshowall{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
-#ml-ds .dsclear{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}#ml-ds .dsclear[disabled]{background:var(--surface);border-color:var(--line);color:var(--muted);cursor:default;opacity:.7}#ml-ds .dsshowall{font-weight:500}
-#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 2px;padding-top:8px;border-top:1px solid var(--line)}
-#ml-ds .dsrow{display:flex;align-items:stretch;gap:2px;min-height:38px}
-#ml-ds .dstick,#ml-ds .dsnobox{flex:none;width:38px;display:flex;align-items:center;justify-content:center;cursor:pointer}#ml-ds .dstick input{width:18px;height:18px;margin:0;cursor:pointer}
-#ml-ds .dsname{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:14px;font-weight:600;padding:4px 8px;border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer}
-#ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
-#ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
-.mlopen{display:block;width:100%;text-align:left;font:inherit;padding:6px 8px;margin:2px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}.mlopen b{display:block;font-weight:600}.mlopen i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
-#ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
-#ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
+#ml-ds .dstabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}#ml-ds .dstabs button,#ml-ds .dsopen{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
+#ml-ds .dstabs button[aria-pressed=true],#ml-ds .dsopen[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#ml-ds .dsgrp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+#ml-ds .dsrow{display:flex;align-items:center;gap:8px}#ml-ds .dsrow label{flex:1;display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer}#ml-ds .dsopen{flex:none;font-weight:500;min-height:32px;padding:2px 10px}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
@@ -626,8 +610,6 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areactl.editing button[aria-expanded=true]{background:var(--accent);color:var(--on-accent)}
 .areah{border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.4);touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--accent);font-weight:700}
 .areah.areah-c{border-radius:4px;cursor:nwse-resize}
-.areadel{border-radius:50%;background:#c92a2a;color:#fff;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
-#map.area-drawing .areadel{display:none}
 #map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
@@ -1162,10 +1144,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         tile._fellBack = true;
         loadBase(isDark() ? "dark" : "light", function (store) {
           var k = coords.z + "/" + coords.x + "/" + coords.y;
-          /* no packaged picture here (it covers Thailand only): report the failure, so the map's loading bar says the
-             map service is not answering and offers Try again, instead of a silently blank grey map */
-          if (store && store[k]) tile.src = store[k];
-          else { tile.classList.add("osap-tile-fail"); done(new Error("base map not answering"), tile); }
+          tile.src = (store && store[k]) || BLANK;
         });
       };
       tile.alt = ""; tile.setAttribute("role", "presentation"); tile.fetchPriority = "high";   /* the base map before the data downloads */
@@ -1414,9 +1393,6 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
         '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
-        /* Infrastructure: the home in Map overlays for infrastructure layers and tools (communications masts and coverage,
-           power grid); filled by their own modules, hidden while empty */
-        '<div id="ml-infra" hidden><div class="mlh">Infrastructure</div></div>' +
         '<div id="ml-extra"></div></div>';
       L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
       var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
@@ -3125,8 +3101,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
     { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
-    { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
-    { id: "comms", name: "Comms", title: "Comms: towers and phone coverage", sof: true, live: true });
+    { id: "route", name: "Route", title: "Route planning", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -5039,31 +5014,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* ---------- local news: GDELT and national outlets (15-minute snapshot, headlines machine-translated in the job) ----------
      Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
   LCOL.news = "--accent";
-  var GAZ = null, CNAMES = {};
-  COUNTRIES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
-  /* a wire dateline names where the reporter filed, not where the story happened ("SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
-     "MANILA (AP) —"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
-  var AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
-  var DATELINE = [/\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
-    new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
-    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu];
-  function stripDatelines(text) {
-    var t = String(text || "");
-    DATELINE.forEach(function (re) { t = t.replace(re, function (m, lead) { lead = typeof lead === "string" ? lead : ""; return lead + new Array(m.length - lead.length + 1).join(" "); }); });
-    return t;
-  }
-  function namesPlace(text, name) {
-    var t = " " + String(text || "").toLowerCase() + " ", n = String(name || "").toLowerCase(), at = n ? t.indexOf(n) : -1;
-    while (at > 0) { if (!/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return true; at = t.indexOf(n, at + 1); }
-    return false;
-  }
+  var GAZ = null;
   function gazetteer() {
     if (GAZ) return GAZ;
     var g = {};
     function put(name, lat, lon) {
       name = String(name || "").replace(/\s+(District|Province|City|Region|Prefecture|State|Division)$/i, "").trim();
-      /* a country's name is not a place in it: a Wonsan record filed under "North Korea" must not pin every headline naming North Korea at Wonsan */
-      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name) || CNAMES[name.toLowerCase()]) return;
+      if (name.length < 4 || lat == null || !isFinite(lat) || !inArea(lat, lon) || /^(nationwide|unknown|multiple|various)/i.test(name)) return;
       if (!g[name.toLowerCase()]) g[name.toLowerCase()] = { name: name, lat: lat, lon: lon };
     }
     R.forEach(function (r) { if (r.lat != null && !r.news && !r.social) { put(r.place, r.lat, r.lon); put(r.prov, r.lat, r.lon); } });
@@ -5073,7 +5030,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return GAZ;
   }
   function placeFor(text) {
-    var t = " " + stripDatelines(text).toLowerCase() + " ", gz = gazetteer();
+    var t = " " + String(text || "").toLowerCase() + " ", gz = gazetteer();
     for (var i = 0; i < gz.length; i++) {
       var n = gz[i].name.toLowerCase(), at = t.indexOf(n);
       if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return gz[i];
@@ -5081,12 +5038,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return null;
   }
   var ENT = document.createElement("textarea");
-  /* entities decoded (twice for double-escaped feeds) and markup left in older stored summaries removed: shown as plain text */
-  function unent(t) {
-    if (!t) return t;
-    for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
-    return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
-  }
+  function unent(t) { if (!t || t.indexOf("&") < 0) return t; ENT.innerHTML = t; return ENT.value; }
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key], H = ((window.ASAP_HIST || {})[CC] || {})[layer] || [];
@@ -5096,19 +5048,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cur = w.items[CC] || [], seenL = {}; cur.forEach(function (i) { seenL[i.link] = 1; });
     var older = H.filter(function (i) { return i && i.link && !seenL[i.link] && (seenL[i.link] = 1); });
     histN[layer] = older.length;
-    var all = cur.concat(older);
-    if (layer === "news") all = sameStory(all);
-    all.forEach(function (i) {
+    cur.concat(older).forEach(function (i) {
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
         "F", layer === "news" ? "Read every 15 minutes from " + (i.via || "a feed") + ". Not assessed." : "Official or established account, read every 15 minutes. Posts are that account's claims.", i.link);
       var en = unent(i.title_en || i.title), sen = unent(i.summary_en || i.summary),
         /* i.geo: placed by the refresh job from GeoNames (p "approx" = a town centre, "province" = a region's rough centre); otherwise matched here against places already on the map */
         g = i.geo && isFinite(i.geo.la) && isFinite(i.geo.lo) ? { name: i.geo.n, lat: i.geo.la, lon: i.geo.lo, prec: i.geo.p === "province" ? "province" : "approx", gn: 1 } : null,
-        txt = en + " \n " + (sen || "");
-      /* a job placement read from a dateline alone (items placed before the job left datelines out) is dropped and read again here */
-      if (g && namesPlace(txt, g.name) && !namesPlace(stripDatelines(txt), g.name)) g = null;
-      var pl = g || placeFor(txt);
+        pl = g || placeFor(en + " " + (sen || ""));
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
         derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
@@ -5119,29 +5066,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
     if (window.TSAP) window.TSAP.records = R;
-  }
-  /* one copy per news story, as tools/news_dedupe.mjs does in the refresh job: the same article under a link that differs only by
-     tracking tags, "www." or "/amp", or the same headline (5 words or more) within 3 days. The newer copy is kept. */
-  function sameStory(list) {
-    function title(t) {
-      t = String(t || "").toLowerCase().replace(/\s[-–|]\s[^-–|]{2,40}$/, "");
-      t = t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-      return t.split(" ").length >= 5 ? t : "";
-    }
-    function link(u) {
-      try {
-        var x = new URL(u), q = [];
-        x.searchParams.forEach(function (v, k) { if (!/^(utm_|fbclid|gclid|ocid|cmpid|seo_visit|at_|ref$|rss$|src$)/i.test(k)) q.push(k + "=" + v); });
-        return x.hostname.replace(/^(www|amp|m)\./, "") + x.pathname.replace(/\/(amp(\.html)?)?\/?$/, "") + (q.length ? "?" + q.sort().join("&") : "");
-      } catch (e) { return String(u || ""); }
-    }
-    var L = {}, T = {};
-    return list.slice().sort(function (a, b) { return (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : 0; }).filter(function (i) {
-      var l = link(i.link); if (L[l]) return false; L[l] = 1;
-      var t = title(i.title), d = Date.parse(i.date) || 0;
-      if (t) { if (t in T && Math.abs(T[t] - d) <= 3 * 864e5) return false; T[t] = d; }
-      return true;
-    });
   }
   LCOL.social = "--sat-flood";
   var histN = {};
@@ -5421,9 +5345,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     if (lay && U) (U.items || []).filter(hasCC).forEach(function (e) {
       add({ layer: lay, type: "report", cat: "Conflict event (UCDP, " + e.type + ")", kind: "other", more2: true, live: true,
-        title: window.OSAP_ACTORS(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
-        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + window.OSAP_ACTORS(e.conflict) + ". " : "") +
-          window.OSAP_ACTORS.note(e.conflict) + "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + e.conflict + ". " : "") +
+          "UCDP candidate data is preliminary and can be revised.", ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon,
         prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province", sev: e.best >= 10 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES.ucdp, url: U.src, issued: e.date, recorded: U.asof });
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -5467,9 +5391,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     (W.ucdp || []).forEach(function (e) {
       if (ucdpNow[e.id]) return;   /* the newest month is already on the layer from data/live/ucdp.js */
       add({ layer: "insurgency", type: "report", cat: "Conflict event (UCDP, past year)", kind: "other", live: true, ds: true,
-        title: window.OSAP_ACTORS(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
+        title: (e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
         detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + ")" +
-          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". " + window.OSAP_ACTORS.note(e.sideA + " " + e.sideB) + "UCDP candidate data is preliminary and can be revised.",
+          (e.deaths_civilians ? ", of them civilians " + e.deaths_civilians : "") + ". UCDP candidate data is preliminary and can be revised.",
         ts: e.date, place: e.where, prov: e.adm1, lat: e.lat, lon: e.lon, prec: e.prec === 1 ? "exact" : e.prec && e.prec <= 3 ? "approx" : "province",
         sev: e.best >= 3 ? 3 : e.best >= 1 ? 2 : 1, src: SOURCES["ds-ucdp"], url: "https://ucdp.uu.se/downloads/candidateged/" + e.file, issued: e.date, recorded: W.asof });
     });
@@ -5801,7 +5725,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
-  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
+  function showSof(v) { if (v === "presence") showPresence(); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else showPartners(); }
   /* ET: UFO and UAP reports (assets/osap-et.js, data/live/et.js); reported claims, never verified events */
   function showEt() {
     sofLayer.clearLayers(); sofM = {};
@@ -5827,23 +5751,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var seed = routeSeed; routeSeed = null;
     window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
   }
-  /* Comms: communication masts, radio and TV towers and a phone coverage check (assets/osap-comms.js, loaded the first time
-     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record. */
-  var commsLoading = false;
-  function showComms() {
-    sofLayer.clearLayers(); sofM = {};
-    if (!window.OSAP_COMMSTAB) {
-      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading the communications tab…</p></div>';
-      if (!commsLoading) {
-        commsLoading = true;
-        var s = document.createElement("script"); s.src = "assets/osap-comms.js";
-        s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">The communications tab could not be loaded. Check the connection and open the tab again.</p></div>'; };
-        document.body.appendChild(s);
-      }
-      return;
-    }
-    window.OSAP_COMMSTAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
-  }
   window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
@@ -5862,23 +5769,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the open tab is drawn by its own tab's code into a layer of its own (DSG), with the panel output thrown away. The
      Timeline lists the ticked sets' records (every record when none is ticked) and maps only the ticked ones. */
   var DSG = {}, dsLg = {}, dsPrev = null, dsStamp = 0, dsTry = {};
-  /* the headings the Data sets list is grouped under (Shane 2026-09-30: data sets are only the topics and areas that filter
-     the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
-     "More topics" */
-  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence"]],
-    ["Crime", ["crime", "scam", "aml"]],
-    ["Disasters and hazards", ["alerts", "flood", "hazards", "safety", "health", "crisis"]],
-    ["Infrastructure and movement", ["infra", "transport"]],
-    ["News and social media", ["news", "social"]]];
-  function dsGroupOf(v) {
-    for (var i = 0; i < DS_GROUPS.length; i++) if (DS_GROUPS[i][1].some(function (k) { return k === v || (k === "cf-" && v.indexOf("cf-") === 0); })) return i;
-    return DS_GROUPS.length;
-  }
+  /* the headings the data set list is grouped under; a set in none of them goes under "More" */
+  var DS_GROUPS = [["Alerts", ["alerts"]], ["Security", ["border", "insurgency", "security", "safety", "partners", "presence"]], ["Crime", ["crime", "scam", "aml"]],
+    ["Weather and hazards", ["weather", "hazards", "flood"]], ["Infrastructure and services", ["infra", "transport", "health", "crisis"]], ["News and social media", ["news", "social"]]];
   /* a tab that is not in the list (Route, Timeline, one merged into a conflict tab) draws as it always has */
   function dsShown(v) { return !!DS[v] || !dsList().some(function (x) { return x.id === v; }); }
   function dsList() {
     return LAYERS.filter(function (l) {
-      if (l.id === "timeline" || l.id === "route" || l.id === "comms") return false;
+      if (l.id === "timeline" || l.id === "route") return false;
       var b = seg.querySelector('[data-view="' + l.id + '"]'); if (b && b.hidden) return false;   /* merged into a conflict tab */
       return l.id === "alerts" || l.curated || l.sof || (TH && (l.id === "flood" || l.id === "border"));
     });
@@ -5972,66 +5870,31 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
-    infraUi();
-    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
-    /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
-       which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
+    var n = list.filter(function (x) { return DS[x.id]; }).length, seen = {};
+    /* this panel is the one place to choose what to see: the tabs that are not data sets (Timeline, the conflict tabs, Route)
+       open from the row on top; each data set has its map tick and an Open button for its own panel, grouped by subject */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
       return !b.hidden && !list.some(function (x) { return x.id === b.getAttribute("data-view"); });
-    }).map(function (b) { return { id: b.getAttribute("data-view"), name: b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim(), view: 1 }; });
+    });
+    var grp = DS_GROUPS.map(function (g) {
+      var rows = list.filter(function (x) { return g[1].indexOf(x.id) >= 0; }); rows.forEach(function (x) { seen[x.id] = 1; }); return [g[0], rows];
+    });
+    grp.push(["More", list.filter(function (x) { return !seen[x.id]; })]);
     /* while a conflict tab is open the page still holds its previous tab as current: the conflict tab is the one shown as chosen */
-    var cfOpen = document.documentElement.getAttribute("data-cf"), openId = cfOpen ? "cf-" + cfOpen : current;
-    var cfv = function (x) { return x.id.indexOf("cf-") === 0; };
-    /* Route is a map tool (its own toolbar button) and Weather sits with the map overlays, so neither is listed here
-       (Shane 2026-09-30: data sets are only the topics and areas that filter reporting) */
-    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1, comms: 1 };
-    var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
-    grp.push(["More topics", []]);
-    rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
-    var tl = tabs.filter(function (x) { return x.id === "timeline"; })[0];
-    dsBox.innerHTML =
-      '<div class="dsbar"><span class="dscount">' + (n ? "<b>" + n + "</b> on the map" : "Nothing on the map") + "</span>" +
-        '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
-        '<button type="button" class="dsshowall" data-dsall="1" title="Put every data set on the map">Show all</button></div>' +
-      (tl ? '<button type="button" class="dsname dsall-rep" data-dsopen="timeline" aria-pressed="' + (openId === "timeline") + '"><span>All reports</span><i>Timeline</i></button>' : "") +
+    var cfOpen = document.documentElement.getAttribute("data-cf");
+    dsBox.innerHTML = (tabs.length ? '<div class="mlh">Views</div><div class="dstabs" role="group" aria-label="Views">' + tabs.map(function (b) {
+        var v = b.getAttribute("data-view");
+        return '<button type="button" data-dsopen="' + esc(v) + '" aria-pressed="' + (v === (cfOpen ? "cf-" + cfOpen : current)) + '">' + esc(b.textContent.replace(/\s+/g, " ").replace(/\s\d+( new)?$/, "").trim()) + "</button>";
+      }).join("") + "</div>" : "") +
+      '<div class="mlh">Data sets on the map <span class="dsall"><button type="button" data-dsall="1">All</button> · <button type="button" data-dsall="0">None</button></span></div>' +
+      '<p class="mlkey">' + (n ? n + " on the map. " : "None on the map. ") + "Tick any number; your choice is kept for " + esc(C.name) + ". Open shows a data set's own list and details.</p>" +
       grp.filter(function (g) { return g[1].length; }).map(function (g) {
         return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x) {
-          var box = x.view ? '<span class="dsnobox" title="A view of its own, not a map data set"></span>' :
-            '<label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>';
-          return '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
-            "<span>" + esc(x.name) + "</span></button></div>";
+          return '<div class="mlrow dsrow"><label><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + "><span><b>" + esc(x.name) + "</b></span></label>" +
+            '<button type="button" class="dsopen" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === current) + '" title="Open the ' + esc(x.name) + ' list and details">' + (x.id === current ? "Open now" : "Open") + "</button></div>";
         }).join("");
-      }).join("") +
-      /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
-      (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
+      }).join("");
   }
-  /* Map overlays > Infrastructure: the Communications tool (masts, radio towers, coverage check) opens from here once the
-     page has it; a module with a map layer of its own (power grid) adds its row to #ml-infra */
-  function infraUi() {
-    var box = document.getElementById("ml-infra"); if (!box) return;
-    var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
-    if (cv && !row) {
-      row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
-      row.innerHTML = "<b>Communications</b><i>Phone masts, radio and TV towers, and a coverage check</i>";
-      row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
-      box.appendChild(row);
-    }
-    box.hidden = box.children.length < 2;
-  }
-  /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
-     events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
-     without leaving the tab (Shane 2026-09-30) */
-  var DS_CFSEL = 'input[id^="bl-"],[data-cfshow],[data-cfh="on"],[data-cfs="on"],[data-cfs="s"],[data-cfi],[data-cfua]';
-  function dsCfOn() {
-    var r = document.getElementById("cf-rail");
-    if (!r || !document.documentElement.getAttribute("data-cf")) return [];
-    return Array.prototype.filter.call(r.querySelectorAll(DS_CFSEL), function (i) { return i.type === "checkbox" && i.checked; });
-  }
-  function dsCfClear() {
-    /* one at a time: a panel may redraw itself after a switch, which replaces the boxes still to do */
-    for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
-  }
-  document.addEventListener("change", function (e) { var t = e.target; if (t && t.closest && t.closest("#cf-rail") && t.matches(DS_CFSEL)) dsUi(); });
   dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
   dsBox.addEventListener("click", function (e) {
     var o = e.target.closest && e.target.closest("[data-dsopen]");
@@ -6043,7 +5906,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
-    if (!on) dsCfClear();
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
@@ -6067,7 +5929,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles; coverage is an estimate, not a promise of signal" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -6379,28 +6241,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (RV_MODES.indexOf(m) < 0) return;
     rvMode = m;
     try { localStorage.setItem("asap-rv-mode", m); } catch (e) {}
-    /* full-screen map hides the report list, so asking for the list leaves full screen (it used to leave a grey half-screen) */
-    if (m !== "map" && document.documentElement.classList.contains("mapfull")) fsSet(false);
     rvPlace();
   }
-  /* a desktop must never be left with nothing below the header (no map, no report list, no conflict panel): when that happens
-     the layout goes back to Map, and what the screen was is kept in osap-blank so a screenshot of reset.html can show the cause */
-  function rvHeal() {
-    var root = document.documentElement;
-    if (rvPhone() || root.classList.contains("td-on") || document.hidden) return;
-    var seen = function (el) {
-      if (!el) return false;
-      var r = el.getBoundingClientRect();
-      return r.width > 200 && r.height > 150 && r.right > 0 && r.left < window.innerWidth && getComputedStyle(el).visibility !== "hidden";
-    };
-    if (seen(document.getElementById("map")) || seen(rvBox) || seen(document.getElementById("cf-rail"))) return;
-    var why = "layout " + rvMode + ", " + shell.className + ", tab " + (root.getAttribute("data-cf") || "-") + (root.classList.contains("mapfull") ? ", full screen" : "");
-    try { localStorage.setItem("osap-blank", new Date().toISOString() + " " + why); } catch (e) {}
-    if (window.console) console.warn("OSAP: nothing on screen, back to the map (" + why + ")");
-    if (root.classList.contains("mapfull")) fsSet(false);
-    if (rvMode !== "map") { rvMode = "map"; try { localStorage.setItem("asap-rv-mode", "map"); } catch (e) {} rvPlace(); }
-  }
-  setInterval(rvHeal, 3000);
   /* the layout switch sits on the map, so it stays reachable in every mode */
   var RvCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {
     var d = L.DomUtil.create("div", "leaflet-control");
@@ -6440,7 +6282,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaHas(lat, lon) { return !AREA || inPoly(lat, lon, AREA); }
   function areaShow() {
     if (areaLayer) { map.removeLayer(areaLayer); areaLayer = null; }
-    if (!AREA) { areaDelMark(); return; }
+    if (!AREA) return;
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
@@ -6449,19 +6291,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
     areaLayer.__world = world;
-    areaDelMark();
   }
-  /* a round delete button on the shape's top-right corner, always there while the area is shown: one tap deletes it (Undo follows) */
-  var areaDelM = null;
-  function areaDelMark() {
-    if (areaDelM) { map.removeLayer(areaDelM); areaDelM = null; }
-    if (!AREA || areaDraw) return;
-    var la = -90, lo = -540; AREA.forEach(function (q) { if (q[0] > la) la = q[0]; if (q[1] > lo) lo = q[1]; });
-    areaDelM = L.marker([la, lo], { pane: "areapane", icon: L.divIcon({ className: "areadel", html: "\u2715", iconSize: [28, 28], iconAnchor: [14, 14] }), keyboard: false, interactive: true, zIndexOffset: 900 }).addTo(map);
-    var el = areaDelM.getElement(); el.setAttribute("role", "button"); el.setAttribute("aria-label", "Delete this shape"); el.title = "Delete this shape";
-  }
-  /* delete the drawn shape; osap-aoi.js also removes a saved NAI/TAI of the same shape and offers Undo */
-  function areaDelete() { editEnd(); areaEl.classList.remove("open"); if (window.OSAP_AOI && window.OSAP_AOI.deleteShape) window.OSAP_AOI.deleteShape(); else areaSet(null); }
   /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
   function areaShowPts(P) {
     if (!areaLayer) return;
@@ -6665,17 +6495,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   mapEl.addEventListener("pointerup", editUp, true);
   mapEl.addEventListener("pointercancel", editUp, true);
   /* a tap on a handle must not reach the map-click dispatcher (it would open the report under it) */
-  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah,.areadel")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-  /* the delete button acts on the finger or mouse lifting over it (a phone's map may never turn that tap into a click) */
-  var delDown = null;
-  mapEl.addEventListener("pointerdown", function (e) { delDown = e.target.closest && e.target.closest(".areadel") ? e.pointerId : null; if (delDown !== null) { e.preventDefault(); e.stopPropagation(); } }, true);
-  mapEl.addEventListener("pointerup", function (e) {
-    if (delDown === null || delDown !== e.pointerId) return;
-    delDown = null;
-    var t = document.elementFromPoint(e.clientX, e.clientY);
-    e.preventDefault(); e.stopPropagation();
-    if (t && t.closest(".areadel")) { drawEndT = Date.now(); areaDelete(); }
-  }, true);
+  mapEl.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".areah")) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
   function editStart() { if (!AREA) return; drawEnd(true); areaEdit = { lay: L.layerGroup().addTo(map), drag: null }; mapEl.classList.add("area-editing"); editHandles(); areaUi(); }
   function editEnd() { if (!areaEdit) return; if (areaEdit.drag) map.dragging.enable(); map.removeLayer(areaEdit.lay); areaEdit = null; mapEl.classList.remove("area-editing"); }
   function hexOk(v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }
@@ -6712,7 +6532,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (k === "open") areaEl.classList.add("open");
     else if (k === "close") areaEl.classList.remove("open");
     else if (k === "lasso" || k === "poly" || k === "circle" || k === "rect") { areaEl.classList.remove("open"); drawStart(k); return; }
-    else if (k === "clear") { areaDelete(); return; }
+    else if (k === "clear") { areaEl.classList.remove("open"); areaSet(null); return; }
     else if (k === "edit") { areaEl.classList.remove("open"); editStart(); return; }
     else if (k === "done") { editEnd(); }
     else if (k === "reset") { AREA_ST.fill = ""; AREA_ST.line = ""; AREA_ST.op = 0.12; AREA_ST.w = 2; areaStSave(); areaShow(); if (areaEdit) editHandles(); }
@@ -7079,9 +6899,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function evMake(ev, members) {
     var sorted = members.slice().sort(function (a, b) { return b.__t.ms - a.__t.ms; });
     var pr = function (r) { return PRANK[r.prec] != null ? PRANK[r.prec] : 2; };
-    /* the pin sits at one of this country's own reports; a neighbour's report is placed for its own story (often only its
-       dateline or capital), so an event whose local reports have no place gets no pin rather than one in the next country */
-    var loc = members.filter(function (r) { return hasLL(r) && !r.xcc; }).sort(function (a, b) { return pr(b) - pr(a) || a.__t.ms - b.__t.ms; })[0] || null;
+    var loc = members.filter(hasLL).sort(function (a, b) { return pr(b) - pr(a) || a.__t.ms - b.__t.ms; })[0] || null;
     /* the headline: an official claim or an instrument reading first, then the report with the most words shared with the rest */
     var head = members.slice().sort(function (a, b) {
       var oa = a.type === "claim" || a.type === "observation" ? 1 : 0, ob = b.type === "claim" || b.type === "observation" ? 1 : 0;
@@ -8172,7 +7990,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
 <script src="assets/osap-heat.js"></script>
-<script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
@@ -8197,8 +8014,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-maploading.js"></script>
 <script src="assets/osap-ws.js"></script>
 <script src="assets/osap-grid.js"></script>
-<script src="assets/osap-power.js"></script>
-<script src="assets/osap-medplan.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

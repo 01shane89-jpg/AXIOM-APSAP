@@ -11,7 +11,7 @@
      DATA_WAIT and the page PAGE_WAIT for the network; the network copy is still saved when the wait runs out.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "5f3234d473e5";
+const VERSION = "61b1a25fadad";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -410,7 +410,6 @@ const PRECACHE = [
 "assets/logo.png",
 "assets/osap-cf-iran.js",
 "assets/osap-heat.js",
-"assets/osap-sides.js",
 "assets/osap-conflicts.js",
 "assets/osap-cf-russia-ukraine.js",
 "assets/osap-cf-thailand.js",
@@ -439,11 +438,8 @@ const PRECACHE = [
 "assets/osap-milsym-cat.js",
 "assets/osap-maploading.js",
 "assets/osap-grid.js",
-"assets/osap-power.js",
 "assets/osap-route.js",
-"assets/osap-comms.js",
 "assets/osap-search.js",
-"assets/osap-medplan.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
 "assets/osap-today.js",
@@ -492,9 +488,7 @@ function warm() {
   return warming;
 }
 self.addEventListener("activate", (e) => {
-  // drop data copies saved under an address with a query (?t=...) by earlier versions; the plain-address copy stays
-  e.waitUntil(Promise.all([self.clients.claim(),
-    caches.open(DATA).then((c) => c.keys().then((ks) => Promise.all(ks.filter((k) => new URL(k.url).search).map((k) => c.delete(k))))).catch(() => {})]));
+  e.waitUntil(self.clients.claim());
 });
 // The page asks for the warm-up once it has loaded, so it never competes with the first paint.
 self.addEventListener("message", (e) => { if (e.data === "warm") e.waitUntil(warm()); });
@@ -519,11 +513,8 @@ self.addEventListener("fetch", (e) => {
     // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
     // The save is part of the event (waitUntil), so the new copy is kept even when the saved one was shown and the phone
     // would otherwise stop the worker before the download finished.
-    // A data file is kept once, under its plain address: the page adds ?t=<10 minutes> to some of them, and one saved copy
-    // per value used to pile up, so a slow load (served with ignoreSearch) got the OLDEST copy, days out of date.
-    const key = /\/data\//.test(url.pathname) ? url.origin + url.pathname : req.url;
     const net = fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then((res) => {
-      if (res.ok) return save(key, res.clone()).then(() => res);
+      if (res.ok) return save(req.url, res.clone()).then(() => res);
       return res;
     });
     e.waitUntil(net.catch(() => {}));

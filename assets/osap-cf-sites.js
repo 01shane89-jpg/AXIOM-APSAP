@@ -9,8 +9,7 @@
      missile, drone or shelling and whose headline names a military target (base, airfield, depot, radar, air defence ...). Drawn at
      the place the report names, which is often the town, not the target.
    Every item is "Reported, not verified", with its source link and SHA-256 fingerprint. Statements by any party are claims. All
-   symbols use the UNKNOWN frame: OSAP never marks a side as hostile or friendly. The one exception is the user's own choice: a
-   site in a country the user marked in Country sides (assets/osap-sides.js) takes that side's frame. Markers go in pane "cfpane".
+   symbols use the UNKNOWN frame: OSAP never marks a side as hostile or friendly. Markers go in pane "cfpane".
    Hooks into assets/osap-conflicts.js through window.OSAP_CF_HOOKS (render, clear). */
 (function () {
   "use strict";
@@ -35,10 +34,7 @@
   try { var st = JSON.parse(localStorage.getItem("osap-cf-sites") || "null"); if (st) { on = st.on !== false; strikesOn = st.s !== false; onlyNamed = !!st.n; if (st.g) grp = Object.assign(grp, st.g); } } catch (e) {}
   function save() { try { localStorage.setItem("osap-cf-sites", JSON.stringify({ on: on, s: strikesOn, n: onlyNamed, g: grp })); } catch (e) {} }
 
-  var id = null, data = null, map = null, lyr = null, bound = false, pending = {}, S = null, used = [];
-  // the frame follows the side the user marked for the site's country (Country sides); unknown when nothing is marked
-  function symKey(k, cc) { return W.OSAP_SIDES ? W.OSAP_SIDES.symKey(k, cc) : k; }
-  D.addEventListener("osap:sides", function () { if (id && lyr) draw(); });
+  var id = null, data = null, map = null, lyr = null, bound = false, pending = {}, S = null;
   function sites() { return ((W.OSAP_CF_SITES || {})[id] || {}).sites || []; }
   function file() { return (W.OSAP_CF_SITES || {})[id]; }
   function grpOf(k) { return k === "barracks" || k === "hq" ? "base" : k; }
@@ -69,7 +65,7 @@
   }
   function draw() {
     if (!ensure() || !id) return; clear();
-    var L = W.L, g = [], z = map.getZoom(), b = map.getBounds().pad(0.25), shown = 0, hidden = 0; used = [];
+    var L = W.L, g = [], z = map.getZoom(), b = map.getBounds().pad(0.25), shown = 0, hidden = 0;
     if (on && file()) {
       // zoomed out, only sites named in reports, air bases and naval bases; zoomed in (7+), every site in view
       sites().forEach(function (s, ix) {
@@ -80,8 +76,7 @@
         if (z < 7 && !nm && s.k !== "air" && s.k !== "naval") { hidden++; return; }
         if (shown >= MAXV && !nm) { hidden++; return; }
         shown++;
-        var sk1 = KS[s.k] || "milbase", sk0 = symKey(sk1, s.cc); if (sk0 !== sk1 && used.indexOf(sk0) < 0) used.push(sk0);
-        var ic = icon(sk0, "cfs" + (nm ? " cfs-hit" : ""), s.k === "hq" && z >= 9 ? "HQ" : "");
+        var ic = icon(KS[s.k] || "milbase", "cfs" + (nm ? " cfs-hit" : ""), s.k === "hq" && z >= 9 ? "HQ" : "");
         var mk = ic ? L.marker([s.la, s.lo], { pane: "cfpane", icon: ic, zIndexOffset: nm ? 500 : 0, keyboard: false })
           : L.circleMarker([s.la, s.lo], { pane: "cfpane", radius: 5, color: nm ? "#c62828" : "#333", weight: nm ? 3 : 1, fillColor: "#FFEB3B", fillOpacity: 0.9 });
         mk.bindTooltip(esc(s.n) + " · " + esc(KN[s.k] || "Military site") + (nm ? " · named in " + nm + " report" + (nm > 1 ? "s" : "") : ""), { direction: "top" });
@@ -108,12 +103,11 @@
     if (!W.OSAP_LEGEND) return;
     var S = W.OSAP_SYM, keys = [];
     if (on) GROUPS.forEach(function (x) { if (grp[x[0]]) keys.push(KS[x[2][0]]); });
-    if (on) keys = keys.concat(used);
     var h = "<h3>Military sites</h3>";
     if (S && S.d) h += keys.filter(function (k, i) { return keys.indexOf(k) === i; }).map(function (k) { return '<div class="lg msyml"><span class="msw">' + S.d[k][0] + "</span><div>" + esc(S.m[k][0]) + "</div></div>"; }).join("");
     if (on) h += '<div class="lg"><span class="sw round" style="background:transparent;border:2.5px solid #c62828"></span><div>Named in a report in this period</div></div>';
     if (strikesOn && S && S.d) h += '<div class="lg msyml"><span class="msw">' + S.d.strike[0] + "</span><div>Reported strike on a military target (" + num(nStrikes) + ")</div></div>";
-    h += '<div class="lg"><div><span class="d">Sites as Wikidata and OpenStreetMap record them; strikes as reports claim them. Reported, not verified. Yellow frame: side not known or not verified.' + (used.length ? " Other frames: the side you marked for the site's country (Country sides, in Layers), your own judgement." : "") + "</span></div></div>";
+    h += '<div class="lg"><div><span class="d">Sites as Wikidata and OpenStreetMap record them; strikes as reports claim them. Reported, not verified. Yellow frame: side not known or not verified.</span></div></div>';
     W.OSAP_LEGEND.set("cf-sites", h, rail());
   }
 
@@ -130,19 +124,11 @@
       '<div class="cfm">' + esc(m.o) + " · " + day(m.d) + (m.st ? ' <span class="tag claim" title="A party to the conflict said this">Claim</span>' : "") + "</div>" +
       (m.fp ? '<div class="fp" title="SHA-256 fingerprint of this report: ' + esc(m.fp) + '">SHA-256 ' + esc(m.fp.slice(0, 16)) + "…</div>" : "") + "</li>";
   }
-  // the frame's meaning when the user marked the site's country
-  function sideLine(s) {
-    var sd = W.OSAP_SIDES, k = KS[s.k] || "milbase";
-    if (!sd || !s.cc || sd.symKey(k, s.cc) === k) return "";
-    var c = (W.OSAP_COUNTRIES || []).filter(function (x) { return x.id === s.cc; })[0];
-    return '<div class="cfm">Frame: you marked ' + esc(c ? c.name : s.cc.toUpperCase()) + " " + esc(sd.name(sd.get(s.cc)).toLowerCase()) +
-      " (Country sides). Your judgement on this device, not the source's, and not a statement about who operates this site.</div>";
-  }
   function sitePop(s, ix) {
     var nm = named(s), all = (s.m || []).length;
     return "<b>" + esc(s.n) + "</b>" + (s.n2 ? '<div class="cfm">' + esc(s.n2) + "</div>" : "") +
       '<div class="cfm">' + esc(KN[s.k] || "Military site") + (s.cls ? " (" + esc(s.cls) + ")" : "") + (s.cc ? " · " + esc(s.cc.toUpperCase()) : "") + (s.op ? " · operator: " + esc(s.op) : "") + "</div>" +
-      "<div>Recorded by " + srcLinks(s) + '. <span class="tag">Reported, not verified</span></div>' + sideLine(s) +
+      "<div>Recorded by " + srcLinks(s) + '. <span class="tag">Reported, not verified</span></div>' +
       '<div class="cfm">Position as the source gives it: ' + (+s.la).toFixed(4) + ", " + (+s.lo).toFixed(4) + ".</div>" +
       (nm.length ? '<div style="margin-top:6px"><b>Named in ' + nm.length + " report" + (nm.length > 1 ? "s" : "") + " in this period</b>" +
         '<div class="cfm">A machine match of the name in the report text; it does not by itself mean the site was struck.</div><ol class="cfl" style="list-style:none;padding:0;margin:4px 0 0">' + nm.map(repLine).join("") + "</ol></div>"

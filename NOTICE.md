@@ -11,7 +11,6 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 - `tools/news_feeds.json` (news outlets and news searches)
 - `tools/deepsouth_feeds.json` (Deep South feeds)
 - `tools/conflicts.json` (conflict tab feeds)
-- `data/comms/cov` (Comms tab measured coverage from Ookla Open Data; `"nc": true` in its `index.json`, removed by deleting the folder)
 
 ## Libraries, fonts and map material
 
@@ -33,9 +32,7 @@ Some feeds are only free for non-commercial use. They are marked `"nc": true` in
 | OpenStreetMap data (Thai-Cambodian border line, military areas, facilities, via Geofabrik) | Border line, facilities near the border, military areas | Free to use with attribution | [terms](https://www.openstreetmap.org/copyright) |
 | Leaflet 1.9.4 | Map engine | Free to use with attribution | [terms](https://github.com/Leaflet/Leaflet/blob/main/LICENSE) |
 | MapLibre GL JS 5.24.0 | 3D terrain view engine | Free to use with attribution | [terms](https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt) |
-| Terrain Tiles on AWS (Mapzen/Tilezen terrarium; SRTM, GMTED, ETOPO1, NED and others) | Ground height in the 3D view, ground mobility, and line of sight in the Comms coverage check | Free to use with attribution | [terms](https://github.com/tilezen/joerd/blob/master/docs/attribution.md) |
-| Speedtest by Ookla Global Fixed and Mobile Network Performance Maps (Ookla Open Data, mobile tiles) | Comms tab: measured phone coverage (`data/comms/cov`, built by `tools/build_comms_coverage.py`) | CC BY-NC-SA 4.0: non-commercial (nc), credit Ookla, share derived data alike | [terms](https://github.com/teamookla/ookla-open-data/blob/master/LICENSE) |
-| OpenStreetMap data via the Overpass API (overpass-api.de, overpass.private.coffee) | Comms tab: communication masts, radio and TV towers, read live for the map area | Free to use with attribution (ODbL); public Overpass servers ask for fair use | [terms](https://www.openstreetmap.org/copyright) |
+| Terrain Tiles on AWS (Mapzen/Tilezen terrarium; SRTM, GMTED, ETOPO1, NED and others) | Ground height in the 3D view | Free to use with attribution | [terms](https://github.com/tilezen/joerd/blob/master/docs/attribution.md) |
 | IBM Plex Sans / Condensed / Mono via Google Fonts | Page typography | Free to use | [terms](https://github.com/IBM/plex/blob/master/LICENSE.txt) |
 | GitHub Pages hosting and GitHub Actions | Hosts the app; hourly/15-min refresh jobs | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) |
 | Google Translate free web endpoint (translate.googleapis.com, client=gtx) | Translating headlines and warnings | Free non-commercial use; commercial use needs a paid plan or permission | [terms](https://policies.google.com/terms) |

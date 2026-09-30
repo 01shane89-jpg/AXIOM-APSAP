@@ -40,9 +40,8 @@ await ctx.route(/conflicts\/russia-ukraine\.js$/, async (r) => {
   const body = await readFile(join(root, "data/live/conflicts/russia-ukraine.js"), "utf8");
   r.fulfill({ contentType: "text/javascript", body: body + '\nwindow.OSAP_CF["russia-ukraine"].items.unshift(' + JSON.stringify(STRIKE) + ");" });
 });
-// (only the page itself starts with no saved switches: the hidden watch-check copies it loads must not wipe them mid-test)
 // the period in the page header: past 30 days; one placed report that names a military target is added to the tab's data
-await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "30" })); if (window.top === window) localStorage.removeItem("osap-cf-sites"); } catch (e) {} });
+await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "30" })); localStorage.removeItem("osap-cf-sites"); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
 p.on("pageerror", (e) => errors.push(e.message)); p.on("crash", () => console.log("PAGE CRASHED")); if (process.env.DBG) p.on("framenavigated", (f) => { if (f === p.mainFrame()) console.log("nav", f.url()); });
 // the country's first load reloads the page once (for its files); then the conflict tab is opened
