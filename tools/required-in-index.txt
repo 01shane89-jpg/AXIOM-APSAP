@@ -85,3 +85,5 @@ if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update 
 data-ev-tlr="1"
 # MGRS grid lines and centre crosshair (claude/map-grid-crosshair)
 <script src="assets/osap-grid.js"></script>
+# News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
+  function stripDatelines(text) {
