@@ -5,8 +5,8 @@
    - Centre crosshair: a fixed reticle on the map centre (the point the Centre readout reports) with that point's grid,
      given to the precision the zoom supports.
    Both are reference drawing computed from window.OSAP_GEO, never records. Both start off; the choice is kept on this device
-   (localStorage "osap-grid", "osap-xhair"). The switches sit in the Layers panel (inside the Overlays sheet with the
-   tactical toolbar). */
+   (localStorage "osap-grid", "osap-xhair"). The switches are two buttons on the tactical toolbar (Grid,
+   Crosshair); with classic controls they are two rows in the Layers panel instead. */
 (function () {
   "use strict";
   var W = window, D = document, map = W.__asapMap, L = W.L;
@@ -180,8 +180,31 @@
     var a = D.querySelector('#osap-gridrows input[data-grid="lines"]'), b = D.querySelector('#osap-gridrows input[data-grid="cross"]');
     if (a && a.checked !== st.grid) a.checked = st.grid;
     if (b && b.checked !== st.cross) b.checked = st.cross;
+    Array.prototype.forEach.call(D.querySelectorAll("#atk-tools [data-ogrid]"), function (t) {
+      var v = String(t.getAttribute("data-ogrid") === "lines" ? st.grid : st.cross);
+      if (t.getAttribute("aria-pressed") !== v) t.setAttribute("aria-pressed", v);
+    });
   }
-  /* two rows in the Layers panel, which the Overlays sheet holds when the tactical toolbar is on */
+  /* two buttons on the tactical toolbar, after Base map: each one turns its drawing on or off */
+  var TB = [
+    ["lines", "Grid", "MGRS grid lines on or off", '<rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>'],
+    ["cross", "Crosshair", "Centre crosshair with its grid reference on or off", '<circle cx="12" cy="12" r="6.5"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="1" fill="currentColor"/>']
+  ];
+  function addToolbarBtns() {
+    var list = D.querySelector("#atk-tools .atk-list");
+    if (!list || list.querySelector("[data-ogrid]")) return !!list;
+    var at = list.querySelector('[data-atk="measure"]');
+    TB.forEach(function (t) {
+      var b = D.createElement("button");
+      b.type = "button"; b.setAttribute("data-ogrid", t[0]); b.title = t[2]; b.setAttribute("aria-label", t[1]); b.setAttribute("aria-pressed", "false");
+      b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + t[3] + '</svg><span class="atk-l">' + t[1] + "</span>";
+      b.addEventListener("click", function (e) { e.stopPropagation(); if (t[0] === "lines") setGrid(!st.grid); else setCross(!st.cross); });
+      list.insertBefore(b, at);
+    });
+    sync();
+    return true;
+  }
+  /* with classic controls (no toolbar), the same two switches as rows in the Layers panel */
   function addRows() {
     if (D.getElementById("osap-gridrows")) return true;
     var ex = D.getElementById("ml-extra"); if (!ex) return false;
@@ -197,6 +220,7 @@
     return true;
   }
   (function wait(n) { if (!addRows() && n < 40) setTimeout(function () { wait(n + 1); }, 250); })(0);
+  (function waitBar(n) { if (!addToolbarBtns() && n < 40) setTimeout(function () { waitBar(n + 1); }, 250); })(0);
   D.addEventListener("change", function (e) { if (e.target && e.target.name === "ml-base") setTimeout(paintBase, 0); }, true);
 
   /* ---------- styles ---------- */
@@ -220,7 +244,9 @@
     "#osap-xhair .c{stroke:#d9480f;stroke-width:2}#osap-xhair .c circle{fill:#d9480f;stroke:none}" +
     "#osap-xhair .xl{position:absolute;left:50%;top:48px;transform:translateX(-50%);white-space:nowrap;padding:2px 6px;border-radius:4px;background:rgba(20,24,28,.82);color:#ffd8a8;font:600 11.5px/1.3 'IBM Plex Mono',ui-monospace,monospace}" +
     /* the tactical toolbar's brief move marker would sit on top of this one */
-    "html.osap-xh #atk-cross{display:none!important}";
+    "html.osap-xh #atk-cross{display:none!important}" +
+    /* the toolbar carries the switches; the Layers rows are for classic controls only */
+    "html.atak #osap-gridrows{display:none}";
   D.head.appendChild(css);
 
   mapEl.appendChild(cross);
