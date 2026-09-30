@@ -55,6 +55,13 @@ assert.deepEqual(L.map((i) => [i.date, i.title, i.link]), [
 ]);
 // numeric entities in feed titles
 assert.equal(parseFeed("<rss><item><title>&#xD55C;&#44397; test</title><link>https://x/1</link></item></rss>")[0].title, "한국 test");
+// escaped markup in a description and double-escaped entities come out as plain text
+{
+  const it = parseFeed("<rss><item><title>505 sacks of &amp;#8216;illegal&amp;#8217; ores</title><link>https://x/2</link><description>&lt;p&gt;&lt;span class=\"x\"&gt;Troops&lt;/span&gt; moved &amp;amp; left&lt;/p&gt;</description></item></rss>")[0];
+  assert.equal(it.title, "505 sacks of \u2018illegal\u2019 ores");
+  assert.equal(it.summary, "Troops moved & left");
+  assert.equal(parseFeed("<rss><item><title>a &lt; b and 3 &gt; 2</title><link>https://x/3</link></item></rss>")[0].title, "a < b and 3 > 2");
+}
 
 // Taiwan MND daily activity page: counts copied as printed
 {
