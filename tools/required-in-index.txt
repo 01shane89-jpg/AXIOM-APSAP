@@ -89,6 +89,8 @@ data-ev-tlr="1"
 
 # Comms tab: masts, radio and TV towers, phone coverage check (claude/comms-tab)
   function showComms() {
+# power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
+<script src="assets/osap-power.js"></script>
 # medical plan for the drawn area, in the Area menu (claude/medical-plan)
 <script src="assets/osap-medplan.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
