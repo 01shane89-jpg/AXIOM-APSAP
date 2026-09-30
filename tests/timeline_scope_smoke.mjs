@@ -114,7 +114,7 @@ const listed = (p) => p.evaluate(() => {
   const ds = await listed(p);
   ok(ds.layers.every((l) => l === "insurgency"), "phone: only Deep South records listed");
   // the same through the Overlays views (the phone's view chooser)
-  const chip = async (v) => { await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(400); await p.click('#ml-ds [data-dsopen="' + v + '"]'); await p.waitForTimeout(1800); };
+  const chip = async (v) => { await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(400); await p.click('#ml-ds [data-dsopen="' + v + '"]'); await p.waitForTimeout(1800); };
   await chip("cf-thailand-deep-south");
   ok(await p.evaluate(() => document.documentElement.getAttribute("data-cf") === "thailand-deep-south"), "phone: Deep South open from Overlays");
   ok(await p.evaluate(() => { const t = document.querySelector('#ml-ds [data-dsopen="timeline"]'); return !t || t.getAttribute("aria-pressed") === "false"; }), "phone: Overlays shows Deep South, not Timeline, as chosen");

@@ -13,7 +13,6 @@ import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
-import { dedupeStories } from "./news_dedupe.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 25, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
@@ -83,7 +82,7 @@ const nowIso = new Date().toISOString().slice(0, 16);
 const onClock = (d, tz) => { const m = /^([+-])(\d\d):(\d\d)$/.exec(tz || ""); if (!m || !d) return d; const off = (m[1] === "-" ? -1 : 1) * (+m[2] * 60 + +m[3]); return new Date(Date.parse(d + "Z") - off * 60000).toISOString().slice(0, 16); };
 const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
-const LANES = 8, MAX_AGE_DAYS = 30;
+const LANES = 8;
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
@@ -117,10 +116,7 @@ async function readFeed(f) {
         try { const d = ADAPTERS[f.detail](await getFeed(o.link)); if (d) { o.title = d.title; o.summary = d.summary.slice(0, 400); o.detail = d.counts || true; } } catch (e) {}
       }
     }
-    // an outlet's own date older than MAX_AGE_DAYS is an archive hit (search fallbacks, front-page feeds that stopped updating),
-    // not current news: left out of the live list (data/history keeps older items it already had)
-    const cut = new Date(Date.now() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 16), fresh = list.filter((o) => o.date_seen || !(o.date < cut));
-    push(f.st ? "us:" + f.st : f.cc, fresh); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: fresh.length, ...(fresh.length < list.length ? { old: list.length - fresh.length } : {}) });
+    push(f.st ? "us:" + f.st : f.cc, list); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: list.length });
   } catch (e) { status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
 }
 const byHost = {};
@@ -169,11 +165,11 @@ if (items.jp) push("oki", items.jp.filter((i) => /okinawa|naha|ryukyu|miyako|ish
 const OFFICIAL_EXTRA = 20;
 const share = (cc) => (focus[cc] && focus[cc].per_run) || (cc === "oki" ? 2 * PER_AREA : cc.includes(":") ? PER_STATE : PER_AREA);   // Okinawa reads more searches than any other area
 for (const cc of Object.keys(items)) {
+  const seen = new Set();
   // official sources (tier "official": a ministry, coast guard, disaster agency) post a few items a day, often dated by day only,
   // so busy outlets must not push them out: up to OFFICIAL_EXTRA of theirs are kept beyond the country's share.
   let extra = 0;
-  // one copy per story (tools/news_dedupe.mjs): the same article under another link, or the same headline within 3 days
-  items[cc] = dedupeStories(items[cc].sort((a, b) => (b.date > a.date ? 1 : -1)))
+  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1))
     .filter((i, k) => k < share(cc) || (i.tier === "official" && extra++ < OFFICIAL_EXTRA));
 }
 // Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.

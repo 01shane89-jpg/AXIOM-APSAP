@@ -15,7 +15,6 @@
   "use strict";
   var W = window, D = document;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function actors(s) { return W.OSAP_ACTORS ? W.OSAP_ACTORS(s) : String(s || ""); }   /* UCDP XXX<number> codes in words (index.html) */
   function url(s) { return /^https?:\/\//i.test(s || "") ? esc(s) : "#"; }
   function num(n) { return n == null ? "—" : Number(n).toLocaleString("en-GB"); }
   function parseT(s) { if (!s) return NaN; var t = String(s).replace(" ", "T"); if (!/Z$|[+-]\d\d:?\d\d$/.test(t)) t += (t.length <= 10 ? "T00:00:00Z" : "Z"); return Date.parse(t); }
@@ -36,15 +35,11 @@
     "html[data-cf] .rail>:not(#cf-rail):not(#rail-handle):not(.pcol){display:none!important}html[data-cf] #rv,html[data-cf] #map .rvseg{display:none!important}",
     // the page's Map / Split / List layouts do not apply here: the map and this tab's panel, side by side
     "html[data-cf]:not(.phone) .shell{grid-template-columns:1fr var(--railw,372px)!important}@media (max-width:920px){html[data-cf] .shell{grid-template-columns:1fr!important}}html[data-cf] #map{display:block!important}",
-    // so the toolbar's Layout button is hidden here too, and a List layout chosen on another tab does not push the map off screen
-    // (that left this tab's panel beside a grey blank column)
-    "html[data-cf] #atk-tools [data-atk=layout]{display:none!important}html[data-cf] .shell.rv-list #map{position:relative!important;left:auto!important;width:100%!important}" +
-      "html[data-cf] .shell.rv-list #map .leaflet-control-container{display:block}html[data-cf] .shell.rv-list #map .areactl{display:flex}",
     // every other map pane is hidden, except the overlays a person switches on in the Layers menu (terrain, possible flashpoints,
     // flood maps, road closures, weather, ground mobility, live aircraft) and the area drawn with Draw area: those draw only when switched on, and each data set
     // change switches the overlays off again
-    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-sidespane-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
-      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane):not(.leaflet-pwrpane-pane):not(.leaflet-pwrpt-pane):not(.leaflet-comcov-pane):not(.leaflet-comchk-pane){visibility:hidden}",
+    "html[data-cf] #map .leaflet-map-pane>.leaflet-pane:not(.leaflet-tile-pane):not(.leaflet-cbase-pane):not(.leaflet-cfarea-pane):not(.leaflet-cfpane-pane):not(.leaflet-cfrep-pane):not(.leaflet-popup-pane):not(.leaflet-tooltip-pane):not(.leaflet-fpzone-pane):not(.leaflet-terpane-pane)" +
+      ":not(.leaflet-fldpane-pane):not(.leaflet-roadpane-pane):not(.leaflet-wxpane-pane):not(.leaflet-wxvec-pane):not(.leaflet-wxlbl-pane):not(.leaflet-areapane-pane):not(.leaflet-mylocpane-pane):not(.leaflet-mobpane-pane):not(.leaflet-mobrx-pane):not(.leaflet-measpane-pane):not(.leaflet-routepane-pane):not(.leaflet-routewppane-pane):not(.leaflet-airpane-pane):not(.leaflet-atakpane-pane):not(.leaflet-gridpane-pane){visibility:hidden}",
     "#cf-print{display:none}@media print{html.cfprinting body>*:not(#cf-print){display:none!important}html.cfprinting #cf-print{display:block!important;font:11pt/1.35 system-ui,sans-serif;color:#000;background:#fff}html.cfprinting #cf-print h1{font-size:16pt;margin:0 0 4px}html.cfprinting #cf-print li{margin:0 0 8px;break-inside:avoid}html.cfprinting #cf-print .cfpm{font-size:9pt;color:#333;word-break:break-all}html.cfprinting #cf-print h2{font-size:12.5pt;margin:12px 0 4px}html.cfprinting #cf-print .cfpcols{display:flex;gap:24px;align-items:flex-start}html.cfprinting #cf-print .cfpt{border-collapse:collapse;font-size:9.5pt}html.cfprinting #cf-print .cfpt th,html.cfprinting #cf-print .cfpt td{border-bottom:1px solid #ccc;padding:2px 8px 2px 0;text-align:left}}",
     "#cf-rail[hidden]{display:none}#cf-rail .sec{padding:12px 14px;border-bottom:1px solid var(--line-soft)}#cf-rail h2{font-size:15px;margin:0 0 4px}#cf-rail h3{font-size:12.5px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}",
     "#cf-rail .cfsub{font-size:12px;color:var(--muted);margin:0 0 6px}#cf-rail .cfpart{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}#cf-rail .cfpart span{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 7px;background:var(--surface2)}",
@@ -523,7 +518,7 @@
         return '<a href="' + url(x.link) + '" target="_blank" rel="noopener" title="' + esc((x.title_en || x.title) + " · " + when(x.date)) + '">' + esc(oname(x) || "report") + "</a>"; }).join(" · ") : "") + "</div>";
   }
   function ucdpHtml(e) {
-    return "<b>" + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
+    return "<b>" + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</b><div class=\"cfm\">" + esc(e.where) + (e.adm1 ? ", " + esc(e.adm1) : "") + " · " + day(e.date) +
       (e.end && e.end !== e.date ? " to " + day(e.end) : "") + "</div><div>" + esc(TYPEN[e.type] || "") + ". Deaths, UCDP best estimate: <b>" + num(e.best) + "</b> (range " + num(e.low) + " to " + num(e.high) + ")" +
       (e.civ ? ", of which civilians " + num(e.civ) : "") + ".</div>" + (e.headline ? '<div class="cfm">Source headline: ' + esc(e.headline) + "</div>" : "") +
       '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener\">UCDP</a>, CC BY 4.0</div>" +
@@ -614,7 +609,7 @@
         '<button type="button" class="refresh more" data-cfolder="1">Load ' + num(cur.data.older.items) + " reports from before " + day(cur.data.older.from) + "</button>");
     }
     h.push("<details" + (cur.data.auto ? " open" : "") + '><summary>UCDP events in this period (' + num(ev.length) + ")</summary><table><tbody>" + ev.slice(0, 200).map(function (e) {
-      return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</div></td><td>" + num(e.best) + "</td></tr>";
+      return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + "</div></td><td>" + num(e.best) + "</td></tr>";
     }).join("") + "</tbody></table>" + (ev.length > 200 ? '<p class="cfm">The newest 200 are listed; all are on the map.</p>' : "") + "</details>");
     box.innerHTML = h.join("");
     box._items = gs.map(function (g) { return g.lead; }); box._groups = gs;

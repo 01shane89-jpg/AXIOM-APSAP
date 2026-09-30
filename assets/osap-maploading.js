@@ -36,11 +36,6 @@
     });
   }
   map.eachLayer(watch);
-  /* base-map pictures that already failed before this file ran (a service that refuses at once) still count */
-  watched.forEach(function (l) {
-    for (var k in l._tiles || {}) { var el = l._tiles[k].el; if (!l._tiles[k].loaded) continue; want++; if (el && el.classList.contains("osap-tile-fail")) fails.push(l); else got++; }
-  });
-  if (fails.length) kick();
   map.on("layeradd", function (e) { watch(e.layer); });
   map.on("layerremove", function (e) { if (e.layer instanceof L.GridLayer && e.layer.isLoading && e.layer.isLoading()) setTimeout(draw, 0); });
 

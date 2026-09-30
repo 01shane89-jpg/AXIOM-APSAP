@@ -1,14 +1,9 @@
 // Minimal RSS, Atom and CAP item reader shared by the warnings and news jobs (no dependencies).
-// A feed that escapes its HTML (&lt;p&gt;) or double-escapes entities (&amp;#8216;) is decoded a second time, and tags that
-// only appear after decoding are removed too, so no markup or entity code reaches a headline or summary.
-const decode = (s) => { let t = decode1(String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1"));
-  if (/&(#x?[0-9a-f]+|[a-z]+);/i.test(t) || /<\/?[a-z][^>]*>/i.test(t)) t = decode1(t);
-  return t; };
-const decode1 = (s) => String(s || "").replace(/<[^>]+>/g, " ")
+const decode = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/<[^>]+>/g, " ")
   .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
   .replace(/&nbsp;/g, " ").replace(/&[lr]dquo;/g, '"').replace(/&[lr]squo;/g, "'").replace(/&ndash;|&mdash;/g, "-")
   .replace(/&#x([0-9a-f]{1,6});/gi, (m, h) => safeChar(parseInt(h, 16), m)).replace(/&#(\d{1,7});/g, (m, d) => safeChar(+d, m))
-  .replace(/&amp;/g, "&").replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s+/g, " ").trim();
+  .replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 function safeChar(n, m) { try { return n > 31 && n !== 60 && n !== 62 ? String.fromCodePoint(n) : " "; } catch (e) { return m; } }
 function tag(block, names) {
   for (const n of names) {

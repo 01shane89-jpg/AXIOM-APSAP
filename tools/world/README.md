@@ -18,6 +18,3 @@ Coverage: the 193 UN members plus Taiwan, Kosovo, Palestine and Western Sahara. 
 3. Hand fixes applied when embedding: bounds clamped to ±180° (Leaflet), France fitted to the metropolitan area,
    Kiribati to the Gilbert Islands, Russia and Cyprus grouped under Europe, Afghanistan and Iran under South Asia,
    the rest of Asia under "Western and Central Asia".
-4. `node tools/world/full-us-ru.cjs` (run from the repo root, `TOL=0.02 SMALL=0 MIN=0.001`) replaces the Pacific-edge
-   slivers of the United States and Russia in country-outlines.js with their whole 1:50m outlines (Douglas-Peucker to 0.02°,
-   Chukotka cut at the 180th meridian) and adds Tuvalu (1:10m) to world-outlines.js, so point feeds place them.

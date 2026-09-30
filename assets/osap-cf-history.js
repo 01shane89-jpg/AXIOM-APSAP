@@ -135,7 +135,7 @@
       (drawn.left ? " " + num(drawn.left) + " events UCDP placed only to a province or wider are left out here; zoom in to see them." : "") + " Zoom in or tap a hot area for each event.");
     W.OSAP_LEGEND.set("cf-hist", h, rail());
   }
-  var SIDES = function (r, k) { var s = k.sides[r[10]] + " vs " + k.sides[r[11]]; return W.OSAP_ACTORS ? W.OSAP_ACTORS(s) : s; };
+  var SIDES = function (r, k) { return k.sides[r[10]] + " vs " + k.sides[r[11]]; };
   function pop(r, k) {
     var x = idx() || {}, rel = x.release || {};
     return "<b>" + esc(SIDES(r, k)) + "</b><div class=\"cfm\">" + esc(r[12] || "Place not named") + (k.adm[r[13]] ? ", " + esc(k.adm[r[13]]) : "") + " · " + day(r[1]) + (r[2] ? " to " + day(r[2]) : "") + "</div>" +

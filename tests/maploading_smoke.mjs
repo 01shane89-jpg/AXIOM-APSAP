@@ -56,21 +56,6 @@ await p.waitForFunction(() => window.OSAP_MAPLOAD.state().hidden, null, { timeou
 ok(osmN > before && await p.evaluate(() => window.OSAP_MAPLOAD.state().hidden), "Try again asks for the tiles again and clears the notice");
 ok(errors.length === 0, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await ctx.close();
-// default base map (not packaged outside Thailand) failing: the bar must say so instead of leaving a blank grey map
-{
-  const c3 = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1200, height: 800 } });
-  await c3.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => /arcgisonline/.test(r.request().url()) ? r.fulfill({ status: 503, body: "" }) : r.abort());
-  await c3.addInitScript(() => { try { localStorage.setItem("osap-home", JSON.stringify("map")); sessionStorage.setItem("osap-today", "0"); } catch (e) {} });
-  const q = await c3.newPage(); const e3 = []; q.on("pageerror", (e) => e3.push(e.message));
-  await q.goto(base + "#ua/timeline", { waitUntil: "load" });
-  await q.waitForTimeout(3000);   // the page may reload once to open the country
-  await q.waitForFunction(() => window.TSAP && window.OSAP_MAPLOAD, null, { timeout: 60000 });
-  await q.waitForFunction(() => window.OSAP_MAPLOAD.state().err, null, { timeout: 20000 }).catch(() => {});
-  const s3 = await q.evaluate(() => window.OSAP_MAPLOAD.state());
-  ok(s3.err && /did not load/.test(s3.text) && /arcgisonline/.test(s3.text), "default base map failing outside Thailand: says the map service did not load " + JSON.stringify(s3));
-  ok(e3.length === 0, "no page errors with a failing default base map " + JSON.stringify(e3.slice(0, 3)));
-  await c3.close();
-}
 // hidden watch-check frame
 {
   const c2 = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1100, height: 700 } });

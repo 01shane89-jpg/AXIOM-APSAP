@@ -52,9 +52,7 @@ function warm() {
   return warming;
 }
 self.addEventListener("activate", (e) => {
-  // drop data copies saved under an address with a query (?t=...) by earlier versions; the plain-address copy stays
-  e.waitUntil(Promise.all([self.clients.claim(),
-    caches.open(DATA).then((c) => c.keys().then((ks) => Promise.all(ks.filter((k) => new URL(k.url).search).map((k) => c.delete(k))))).catch(() => {})]));
+  e.waitUntil(self.clients.claim());
 });
 // The page asks for the warm-up once it has loaded, so it never competes with the first paint.
 self.addEventListener("message", (e) => { if (e.data === "warm") e.waitUntil(warm()); });
@@ -79,11 +77,8 @@ self.addEventListener("fetch", (e) => {
     // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
     // The save is part of the event (waitUntil), so the new copy is kept even when the saved one was shown and the phone
     // would otherwise stop the worker before the download finished.
-    // A data file is kept once, under its plain address: the page adds ?t=<10 minutes> to some of them, and one saved copy
-    // per value used to pile up, so a slow load (served with ignoreSearch) got the OLDEST copy, days out of date.
-    const key = /\/data\//.test(url.pathname) ? url.origin + url.pathname : req.url;
     const net = fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then((res) => {
-      if (res.ok) return save(key, res.clone()).then(() => res);
+      if (res.ok) return save(req.url, res.clone()).then(() => res);
       return res;
     });
     e.waitUntil(net.catch(() => {}));

@@ -54,7 +54,7 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
 {
   const { ctx, p, errors, hits, mode } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   ok(await shown(p, '#atk-tools [data-atk="search"]'), "phone: magnifying glass on the map toolbar");
-  ok(await p.evaluate(() => [...document.querySelectorAll('#atk-tools .atk-list [data-atk]')].slice(0, 2).map(b => b.getAttribute("data-atk")).join() === "today,search"), "phone: Search is the first tool after Today");
+  ok(await p.evaluate(() => document.querySelector('#atk-tools .atk-list [data-atk]').getAttribute("data-atk") === "search"), "phone: Search is the first tool");
   ok(hits.search === 0 && !(await p.evaluate(() => !!window.OSAP_SEARCH)), "phone: nothing for search is loaded before the button is pressed");
   await p.click('#atk-tools [data-atk="search"]'); await p.waitForFunction(() => window.OSAP_SEARCH && window.OSAP_SEARCH.isOpen(), null, { timeout: 10000 });
   ok(hits.search === 1 && await shown(p, "#srch"), "phone: pressing it loads search once and opens the box");

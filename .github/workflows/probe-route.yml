@@ -3,8 +3,8 @@
 name: Probe route hosts
 on:
   push:
-    branches: [claude/route-planning, claude/route-search]
-    paths: [tools/probe_route.sh, tools/route_smoke.mjs, assets/osap-route.js, assets/osap-areasum.js, .github/workflows/probe-route.yml]
+    branches: [claude/route-planning]
+    paths: [tools/probe_route.sh, tools/route_smoke.mjs, assets/osap-route.js, .github/workflows/probe-route.yml]
   workflow_dispatch:
 permissions:
   contents: read

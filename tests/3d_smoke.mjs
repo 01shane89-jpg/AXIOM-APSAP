@@ -29,14 +29,7 @@ async function open(opts, classic) {
   p.on("request", (r) => { if (/maplibre-gl/.test(r.url())) libs.push(r.url()); });
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(3500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  // "while the app starts": the app waits 5 s after the page's load event before it fetches the engine in idle time
-  // (osap-3d.js preload). Count only engine requests that began before that, so a slow start on a busy runner, where the
-  // idle fetch can land inside the fixed waits above, is not taken for an early download.
-  const early = await p.evaluate(() => {
-    const nav = performance.getEntriesByType("navigation")[0], t = nav && nav.loadEventEnd ? nav.loadEventEnd + 4900 : Infinity;
-    return performance.getEntriesByType("resource").filter((e) => /maplibre-gl/.test(e.name) && e.startTime < t).length;
-  });
-  return { ctx, p, errors, libs, early };
+  return { ctx, p, errors, libs, early: libs.length };
 }
 async function run3d(name, p, errors, libs, openSel, early) {
   ok(early === 0, name + ": 3D engine not downloaded while the app starts (it is fetched later, when idle)");

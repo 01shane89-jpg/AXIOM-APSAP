@@ -12,8 +12,7 @@
      listed item is dropped before it is shown. Source text is passed to the model as data, never as instructions.
    The main page hands over what it knows through window.TSAP.areaApi (see "drawn area" in index.html).
    The same writers summarise one tab (Flood, Border, a war tab...) on request: assets/osap-viewrep.js gathers that tab's items
-   and calls OSAP_AREASUM.open(boxId, { items, events, title, sub, where, about, placeWhere, period, empty, inline }); the Route tab's "Search this route"
-   (assets/osap-route.js) does the same for the reports along a route, with a note per item saying where on the route it lies. */
+   and calls OSAP_AREASUM.open(boxId, { items, events, title, sub, where, about, period }). */
 (function () {
   "use strict";
   var MAX_REFS = 40, MAX_AI_IN = 30;
@@ -99,7 +98,7 @@
       kinds.neighbour ? plural(kinds.neighbour, "report") + " from neighbouring countries' pages" : ""].filter(Boolean);
     var named = I.filter(function (it) { return it.named; }).length;
     out.push("OSAP holds " + plural(I.length, "item") + " " + (g.where || "inside this area") + " for " + g.period + ", from " + plural(Object.keys(srcs).length, "source") + ": " + parts.join(", ") + "." +
-      (named ? " " + plural(named, "of them has", "of them have") + " no map location but name" + (named === 1 ? "s" : "") + " a place " + (g.placeWhere || "inside the area") + "." : ""));
+      (named ? " " + plural(named, "of them has", "of them have") + " no map location but name" + (named === 1 ? "s" : "") + " a place inside the area." : ""));
     /* what it is mostly about, and where */
     var lay = {}; I.forEach(function (it) { if (it.layer) lay[it.layer] = (lay[it.layer] || 0) + 1; });
     var topL = Object.keys(lay).sort(function (x, y) { return lay[y] - lay[x]; }).slice(0, 3);
@@ -206,7 +205,7 @@
     var u = safeUrl(it.url), k = it.kind === "social" ? "Social media, unverified" : it.kind === "open" ? it.layer : it.kind === "neighbour" ? A().countryName(it.cc) : it.layer;
     return '<li id="asref-' + (i + 1) + '" class="asitem"><span class="tlt">' + esc([k, it.when].filter(Boolean).join(" · ")) + "</span>" +
       '<span class="tln">' + esc(it.title) + "</span>" +
-      '<span class="tls">' + esc([it.src, it.status, it.note, it.named ? "not mapped; mentions " + it.named : ""].filter(Boolean).join(" · ")) + "</span>" +
+      '<span class="tls">' + esc([it.src, it.status, it.named ? "not mapped; mentions " + it.named : ""].filter(Boolean).join(" · ")) + "</span>" +
       '<span class="asbtns">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + (it.kind === "social" ? "Post" : "Source") + "</a>" : '<span class="obs">No link</span>') +
       (it.rec ? '<button type="button" class="refresh" data-as-rec="' + esc(it.rec.id) + '">Open report</button>' : it.href ? '<a class="refresh" href="' + esc(it.href) + '">Open in ' + esc(A().countryName(it.cc)) + "</a>" : "") + "</span>" +
       '<span class="asfp">' + (it.rec || it.fp ? "Record" : "Listing") + ' fingerprint <code class="fp" data-asfp="' + i + '">computing…</code></span></li>';
@@ -222,7 +221,7 @@
     var a = A(); if (!spec && (!a || !a.area())) return;
     style();
     var box = document.getElementById(boxId || "rv-pkg"); if (!box) return;
-    var g = spec ? { items: spec.items || [], events: spec.events || [], nolocIn: 0, period: spec.period || "the period shown", where: spec.where, about: spec.about, placeWhere: spec.placeWhere } : gather(), au = automatic(g), refs = au.refs.slice();
+    var g = spec ? { items: spec.items || [], events: spec.events || [], nolocIn: 0, period: spec.period || "the period shown", where: spec.where, about: spec.about } : gather(), au = automatic(g), refs = au.refs.slice();
     /* the numbered list: what the Automatic text cites first, then the rest, newest first, up to MAX_REFS */
     var seen = {}; refs.forEach(function (it) { seen[it.id] = 1; });
     g.items.slice().sort(function (x, y) { return (y.t || 0) - (x.t || 0); }).forEach(function (it) { if (!seen[it.id] && refs.length < MAX_REFS) { seen[it.id] = 1; refs.push(it); } });
@@ -232,7 +231,7 @@
     box.innerHTML = '<div class="pkghead"><h2>' + esc(spec ? spec.title || "Summary" : "Area summary") + '</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
       '<div class="asum">' +
       '<p class="obs">' + (spec ? esc(spec.sub || "") : "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km²") + " · " + esc(g.period) + " · written " + esc(T().dualT(LAST.at)) + "</p>" +
-      (g.items.length ? "" : spec ? '<p class="obs">' + esc(spec.empty || "Nothing to summarise on this tab for " + g.period + ". Widen the period in the page header.") + "</p>" : '<p class="obs">Nothing with a map location lies inside the drawn area for ' + esc(g.period) + ". Widen the period or draw a larger area.</p>") +
+      (g.items.length ? "" : spec ? '<p class="obs">Nothing to summarise on this tab for ' + esc(g.period) + ". Widen the period in the page header.</p>" : '<p class="obs">Nothing with a map location lies inside the drawn area for ' + esc(g.period) + ". Widen the period or draw a larger area.</p>") +
       (g.items.length ? '<div class="ashead"><h4>Summary</h4><span class="aitag" tabindex="0" title="Written by fixed rules from the numbered items below: counts, the largest groups and the newest titles. Not AI and not analyst-approved.">Automatic</span></div>' +
         au.paras.map(function (p) { return '<p class="asp">' + citeHtml(p) + "</p>"; }).join("") : "") +
       (g.items.length ? '<div class="ashead"><h4>AI summary</h4></div><div id="as-ai">' + (api ? '<p class="obs">Checking for this browser\'s on-device AI…</p>'
@@ -245,7 +244,6 @@
     if (!box.__asum) { box.__asum = 1; box.addEventListener("click", onBoxClick); }
     fps(box, refs);
     if (api && g.items.length) aiAvail(api).then(function (st) { aiUi(box, api, st); });
-    if (spec && spec.inline) return;   /* the caller shows it in place (the Route tab's search keeps it under its at-a-glance list) */
     if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet && window.ASAP_PHONE.sheet(box))) { box.scrollTop = 0; var rb = box.getBoundingClientRect(); if (rb.top > window.innerHeight - 60 || rb.bottom < 0) box.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
   function onBoxClick(e) {

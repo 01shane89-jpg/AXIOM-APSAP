@@ -76,7 +76,7 @@
       var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: zw ? zw(st ? st.w : 2) : 2, dashArray: t.dash,
         fillColor: st ? st.fill : t.col, fillOpacity: st ? st.op : 0.06, interactive: false });
       p.__aoiW = st ? st.w : 2;
-      p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + '</span><span class="aoidelx" role="button" aria-label="Delete ' + esc(label(a)) + '" title="Delete" data-aoi-delx="' + esc(a.id) + '">\u2715</span>', { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
+      p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + "</span>", { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
       return p;
     })).addTo(map);
   }
@@ -86,8 +86,6 @@
     var t = e.target && e.target.closest && e.target.closest(".aoilbl");
     if (!t) return;
     var m = window.__asapMap; if (m && m.getContainer().classList.contains("area-drawing")) return;
-    var x = e.target.closest("[data-aoi-delx]");
-    if (x) { e.preventDefault(); e.stopPropagation(); deleteShape(x.getAttribute("data-aoi-delx")); return; }
     var s = t.querySelector("[data-aoi-lbl]"); if (!s) return;
     e.preventDefault(); e.stopPropagation();
     card(s.getAttribute("data-aoi-lbl"));
@@ -170,37 +168,8 @@
     if ((id = t.getAttribute("data-aoi-use"))) { var a = get(id), api = A(); if (a && api && api.setArea) { api.setArea(a.pts.slice()); zoomTo(a); } close(); return; }
     if ((id = t.getAttribute("data-aoi-zoom"))) { var z = get(id); if (z) zoomTo(z); close(); return; }
     if ((id = t.getAttribute("data-aoi-edit"))) { var ed = get(id); if (ed) form(ed, false); return; }
-    if ((id = t.getAttribute("data-aoi-del"))) { close(); deleteShape(id); return; }
+    if ((id = t.getAttribute("data-aoi-del"))) { var d = get(id); if (!d || !confirm("Delete " + label(d) + "? Watches made from it keep their own copy of the shape.")) return; remove(id); close(); return; }
     if ((id = t.getAttribute("data-aoi-watch"))) { close(); if (window.OSAP_WATCH) { window.OSAP_AOI.pick = id; window.OSAP_WATCH.open(); } return; }
-  }
-  /* ---------- delete a shape in one tap, with Undo ----------
-     With an id: that saved area, and the drawn area too when it is the same shape. Without: the drawn area, and a saved area of
-     the same shape in this country. Watches made from a saved area keep their own copy of the shape either way. */
-  function sameShape(a, P) { var q = okPts(P); return !!q && JSON.stringify(q) === JSON.stringify(a.pts); }
-  function deleteShape(id) {
-    var api = A(), cur = api && api.area && api.area(), c = cc();
-    var hit = id ? get(id) : cur ? all().filter(function (x) { return x.cc === c && sameShape(x, cur); })[0] : null;
-    var drawn = cur && (!id || (hit && sameShape(hit, cur))) ? cur.slice() : null;
-    if (!hit && !drawn) return;
-    if (hit) remove(hit.id);
-    if (drawn && api.setArea) api.setArea(null);
-    undoBar((hit ? label(hit) : "Shape") + " deleted", function () {
-      if (hit && !get(hit.id)) save(hit);
-      if (drawn && api.setArea) api.setArea(drawn);
-    });
-  }
-  var undoEl = null, undoT = 0;
-  function undoBar(msg, undo) {
-    var map = window.__asapMap; if (!map) return;
-    if (!undoEl) {
-      undoEl = document.createElement("div"); undoEl.className = "leaflet-control aoiundo"; undoEl.setAttribute("role", "status");
-      map.getContainer().appendChild(undoEl);
-      if (window.L) { L.DomEvent.disableClickPropagation(undoEl); L.DomEvent.disableScrollPropagation(undoEl); }
-    }
-    undoEl.innerHTML = "<span>" + esc(msg) + '</span><button type="button">Undo</button>';
-    undoEl.hidden = false;
-    undoEl.querySelector("button").onclick = function () { undoEl.hidden = true; clearTimeout(undoT); undo(); };
-    clearTimeout(undoT); undoT = setTimeout(function () { undoEl.hidden = true; }, 8000);
   }
   function saveDrawn() {
     var api = A(), P = api && api.area && api.area(); if (!P) return;
@@ -360,7 +329,7 @@
     });
   }
 
-  window.OSAP_AOI = { list: forCc, all: all, get: get, label: label, types: TYPES, pick: null, open: card, redraw: draw, saveDrawn: saveDrawn, deleteShape: deleteShape,
+  window.OSAP_AOI = { list: forCc, all: all, get: get, label: label, types: TYPES, pick: null, open: card, redraw: draw, saveDrawn: saveDrawn,
     /* for tests and tools: GeoJSON in and out, no file dialog */
     toGeoJSON: function (scope) { return toGeo(scope === "all" ? all() : forCc(cc())); }, importGeoJSON: function (o) { var r = fromGeo(o, cc()); return r.err ? r : merge(r.list); } };
 
@@ -373,10 +342,6 @@
     "#aoidlg .wbtns .on{border-color:var(--accent);color:var(--accent)}.aoinote{white-space:normal;border-left:3px solid var(--line);padding-left:8px}" +
     ".chip.aoichip{font-weight:700;text-transform:none}.chip.aoi-nai{color:#1971c2;border-color:#1971c2}.chip.aoi-tai{color:#c92a2a;border-color:#c92a2a}" +
     ".leaflet-tooltip.aoilbl{font:700 11px/1.2 'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:pointer;pointer-events:auto;background:var(--surface,#fff);color:var(--ink,#111)}" +
-    ".leaflet-tooltip.aoilbl{display:flex;align-items:center;gap:6px}" +
-    ".aoidelx{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-2px -4px -2px 0;border-radius:50%;background:#c92a2a;color:#fff;font:700 12px/1 system-ui,sans-serif}" +
-    ".leaflet-container .aoiundo.leaflet-control{position:absolute!important;left:50%;right:auto;top:auto;bottom:64px;margin:0;float:none;transform:translateX(-50%);z-index:1200;display:flex;gap:12px;align-items:center;background:#222;color:#fff;border-radius:6px;padding:8px 8px 8px 14px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.4);white-space:nowrap}" +
-    ".aoiundo[hidden]{display:none}.aoiundo button{font:inherit;font-weight:700;background:none;border:0;color:#8fd3ff;padding:6px 8px;cursor:pointer}" +
     ".leaflet-tooltip.aoilbl::before{display:none}.leaflet-tooltip.aoi-nai{border:1.5px dashed #1971c2}.leaflet-tooltip.aoi-tai{border:1.5px solid #c92a2a}" +
     "#area-ctl button.aoisave{flex:1 1 100%!important;border-left:0!important;border-top:1px solid var(--line)}" +
     ".aoisec .aoitools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.aoisec .aoishow{display:flex;gap:6px;align-items:center;margin-right:6px}";

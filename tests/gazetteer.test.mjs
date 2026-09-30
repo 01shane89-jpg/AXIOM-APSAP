@@ -21,11 +21,9 @@ const cities = [
   row("Paris", 48.85, 2.35, "PPLC", "FR", "11", 2100000),
   row("Chicago", 41.85, -87.65, "PPL", "US", "IL", 2700000),
   row("Bangkok", 13.75, 100.5, "PPLC", "TH", "40", 5100000),
-  row("Seoul", 37.566, 126.978, "PPLC", "KR", "11", 10000000),
-  row("Busan", 35.102, 129.04, "PPLA", "KR", "10", 3400000),
 ].join("\n");
 const admin = ["US.UT\tUtah\tUtah\t1", "US.HI\tHawaii\tHawaii\t2", "US.TX\tTexas\tTexas\t3", "US.IL\tIllinois\tIllinois\t4",
-  "FR.11\tIle-de-France\tIle-de-France\t5", "TH.40\tBangkok\tBangkok\t6", "KR.11\tSeoul\tSeoul\t7", "KR.10\tBusan\tBusan\t8"].join("\n");
+  "FR.11\tIle-de-France\tIle-de-France\t5", "TH.40\tBangkok\tBangkok\t6"].join("\n");
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gz-")), txt = path.join(dir, "cities15000.txt"), zip = path.join(dir, "c.zip");
 fs.writeFileSync(txt, cities + "\n");
 spawnSync("zip", ["-qj", zip, txt]);
@@ -45,15 +43,6 @@ const cases = [
   ["Floods hit Bangkok", "th", "Bangkok"],
   ["More disruption on SH1 near Hamilton after motorcycle crash", "nz", "Hamilton"],   // a bigger Hamilton elsewhere, but under a million
   ["Rerun election count begins in Victoria", "sc", "Victoria"],                       // a capital is not ambiguous against a smaller town
-  // a wire dateline is where the reporter filed, not a place the story names
-  ["North Korea begins expansion of uranium enrichment facility \n (Seoul = Yonhap) Kang Hun-sang, reporter North Korea's Yongbyon complex", "kr", null],
-  ["N. Korea fires missile \n SEOUL, Sept. 30 (Yonhap) -- North Korea fired a ballistic missile", "kr", null],
-  ["Typhoon warning \n SEOUL, Sept. 30 (Yonhap) -- Heavy rain hit Busan on Tuesday", "kr", "Busan"],
-  ["SEOUL -- Flooding closes roads", "kr", null],
-  ["Senator seeks shelter subsidy \n SEOUL, Korea - A senator is pushing for a rental subsidy", "kr", null],
-  ["Seoul - Busan rail line reopens", "kr", "Seoul"],
-  ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
-  ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
 ];
 let bad = 0;
 for (const [t, cc, want] of cases) {
