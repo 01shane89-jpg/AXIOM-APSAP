@@ -453,6 +453,7 @@ select.mini{
 #ml-ds .dsname{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:14px;font-weight:600;padding:4px 8px;border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer}
 #ml-ds .dsname span{flex:1;min-width:0}#ml-ds .dsname::after{content:"\203A";color:var(--muted);font-size:18px;line-height:1}#ml-ds .dsname:hover{background:var(--line)}
 #ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
+.mlopen{display:block;width:100%;text-align:left;font:inherit;padding:6px 8px;margin:2px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}.mlopen b{display:block;font-weight:600}.mlopen i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
 #ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
 #ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
@@ -1400,6 +1401,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
         '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
+        /* Infrastructure: the home in Map overlays for infrastructure layers and tools (communications masts and coverage,
+           power grid); filled by their own modules, hidden while empty */
+        '<div id="ml-infra" hidden><div class="mlh">Infrastructure</div></div>' +
         '<div id="ml-extra"></div></div>';
       L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
       var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
@@ -5907,6 +5911,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
+    infraUi();
     var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
@@ -5918,7 +5923,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cfv = function (x) { return x.id.indexOf("cf-") === 0; };
     /* Route is a map tool (its own toolbar button) and Weather sits with the map overlays, so neither is listed here
        (Shane 2026-09-30: data sets are only the topics and areas that filter reporting) */
-    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1 };
+    var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1, comms: 1 };
     var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
     grp.push(["More topics", []]);
     rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
@@ -5938,6 +5943,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }).join("") +
       /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
       (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
+  }
+  /* Map overlays > Infrastructure: the Communications tool (masts, radio towers, coverage check) opens from here once the
+     page has it; a module with a map layer of its own (power grid) adds its row to #ml-infra */
+  function infraUi() {
+    var box = document.getElementById("ml-infra"); if (!box) return;
+    var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
+    if (cv && !row) {
+      row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
+      row.innerHTML = "<b>Communications</b><i>Phone masts, radio and TV towers, and a coverage check</i>";
+      row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
+      box.appendChild(row);
+    }
+    box.hidden = box.children.length < 2;
   }
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
      events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
