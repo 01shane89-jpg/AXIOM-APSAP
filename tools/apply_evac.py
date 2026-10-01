@@ -33,8 +33,8 @@ def apply(patch, asof):
             for k in CONTACT:
                 if fields.get(k):
                     p[k] = fields[k]
-            # a researched post with no coordinate takes the mapped one
-            if p.get("lat") is None and fields.get("lat") is not None:
+            # a researched post with no coordinate, or one estimated from its address, takes the mapped one
+            if fields.get("lat") is not None and (p.get("lat") is None or p.get("prec") != "exact"):
                 for k in ("lat", "lon", "prec", "coord_basis"):
                     p[k] = fields[k]
             p["fp"] = fp(p)

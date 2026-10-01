@@ -22,29 +22,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "a82414aae9479664ec2e3ce459d9ae6e487d5ae185bce0b5db71618b15259bbd"
  },
- "posts": [
-  {
-   "id": "sof:mw:post:u-s-embassy-malawi",
-   "name": "U.S. Embassy, Malawi",
-   "kind": "embassy",
-   "city": null,
-   "address": "16 Kenyatta Road",
-   "services_note": null,
-   "lat": -13.962487,
-   "lon": 33.786845,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/909303053",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://mw.usembassy.gov",
-   "phone": "+265 (0)88 477 3166",
-   "phone_after_hours": "+265 (0)88 738 4109",
-   "phone_src": "https://mw.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "148eec723373eeb7d6589524cb9a2019221f1cb5d424aae9dafd7b5237abf91e"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:mw:airport:fwki",
@@ -272,102 +250,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:mw:xing:node-2598220691",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -14.37145,
-   "lon": 35.60143,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2598220691",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a0bb9b326116f79562313fec136aef8e226fbfce88de7d51a27a9e2d579584a5"
-  },
-  {
-   "id": "sof:mw:xing:node-265767881",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": -16.033859,
-   "lon": 35.518119,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/265767881",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "03e31fdb1c0bc9c97a5b2adbbb2cb48be381432337409db42a371b07b7305f9b"
-  },
-  {
-   "id": "sof:mw:xing:node-270052960",
-   "name": "Chipita Border Post",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -9.697408,
-   "lon": 33.252614,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/270052960",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7ba5ffef003a84ef9ba6347a16aca33943d71943036f1558926c5f921f9766e7"
-  },
-  {
-   "id": "sof:mw:xing:node-3419999703",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -13.752824,
-   "lon": 32.797066,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/3419999703",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "3984c778da6210bc52dd41f68c94a99e5fd39a40c0bc6ecc527947340a3b650a"
-  },
-  {
-   "id": "sof:mw:xing:node-6427751776",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -14.002722,
-   "lon": 33.246652,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/6427751776",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "6a4b36f961579147f3d342611b5362b145e953be97a68e52b9934de08e41cf25"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

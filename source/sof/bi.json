@@ -22,29 +22,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "65f6a41bb5603df906b86f5b0b7e32e300d1d1fad94098bbbbbd00b0f1629260"
  },
- "posts": [
-  {
-   "id": "sof:bi:post:u-s-embassy-burundi",
-   "name": "U.S. Embassy, Burundi",
-   "kind": "embassy",
-   "city": null,
-   "address": "Avenue des États-Unis",
-   "services_note": null,
-   "lat": -3.36532,
-   "lon": 29.380197,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/188304171",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://bi.usembassy.gov",
-   "phone": "257 22-207-000",
-   "phone_after_hours": "257 22 207 000",
-   "phone_src": "https://bi.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "6ac0d1e07e19460c0ef37087671dd21db68a3a5e8bad9c7f9cadb8964fd595c6"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:bi:airport:hbba",
@@ -175,102 +153,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:bi:xing:node-1396048037",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.356526,
-   "lon": 30.21955,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1396048037",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "044b0080e4de21b5e0fa6db82356a056e33f1f92f1bf1b79a3ada4ed187c4e27"
-  },
-  {
-   "id": "sof:bi:xing:node-2070535224",
-   "name": "Rwanda Border Offices",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.790977,
-   "lon": 29.666985,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2070535224",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a636c9f82dccc41b8edddc3046626cdf302f89efb750159501f39a1383205218"
-  },
-  {
-   "id": "sof:bi:xing:node-2070535434",
-   "name": "Burundi Border Offices",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.792268,
-   "lon": 29.669082,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2070535434",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "08765da2dee20e672d93c1556583a2c747a35384a3aaf6c61332f09569e51b7f"
-  },
-  {
-   "id": "sof:bi:xing:node-2651989047",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.664644,
-   "lon": 30.410253,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2651989047",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "f678446a376287803d76442eb42368c7bbb66006f557fa76c53a0b1b3dcedf18"
-  },
-  {
-   "id": "sof:bi:xing:node-3257460378",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": -2.73215,
-   "lon": 29.043514,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/3257460378",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "e7356acf018da000df836b486721b00cbb6299991ee95d63b2a19e5749b46981"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -38,13 +38,7 @@
    "src": "https://www.wikidata.org/entity/Q23541051",
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "96f49aa0ba1294d77ce311847021e1c00798b13392162f6470ee91c5396ecd7f",
-   "web": "https://be.usembassy.gov/",
-   "phone": "(32-2) 811-4000",
-   "phone_after_hours": "(+32)(0)2-811-4000",
-   "phone_src": "https://be.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "12ccff5043acb55767d900a0a81655f53c3c3b157b6e673bcbc8b54f22392157"
   },
   {
    "id": "sof:be:post:embassy-of-the-united-states-brussels",
@@ -59,12 +53,7 @@
    "src": "https://www.wikidata.org/entity/Q18071136",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "09e64a3e4ef67c5eec02ddd2b09030cd98a1e1334e73d545993c1deefc81fb41",
-   "phone": "(32-2) 811-4000",
-   "phone_after_hours": "(+32)(0)2-811-4000",
-   "phone_src": "https://be.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "52fad889fda3d77b12490bcec27206e3fa42448c4ae9b74a2fd5294d414aaa5e"
   },
   {
    "id": "sof:be:post:united-states-mission-to-nato",
@@ -79,12 +68,7 @@
    "src": "https://www.wikidata.org/entity/Q118868620",
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "3766bf13ea33a4226c79458193c2eb41de3329862306b109a74308304912b1f1",
-   "phone": "(32-2) 811-4000",
-   "phone_after_hours": "(+32)(0)2-811-4000",
-   "phone_src": "https://be.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "56666c6eddff5164866d0c8322973385c62a45ed38c9774a5014979a2a25a545"
   }
  ],
  "airports": [
@@ -693,80 +677,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:be:xing:node-11347095838",
-   "name": "UK Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 50.836428,
-   "lon": 4.335192,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/11347095838",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1ddb8340c2fdad3c384b6210bac1a98626a41e6dd56796f6329199b94a25a74f"
-  },
-  {
-   "id": "sof:be:xing:node-3070897591",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 51.338637,
-   "lon": 3.186928,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/3070897591",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ae4a62537e5d0aa5d55adbc7c94d742280d53c457eb0cc83fded656d62a4c25f"
-  },
-  {
-   "id": "sof:be:xing:way-200951095",
-   "name": "Douanes françaises",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 50.439254,
-   "lon": 3.667386,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/200951095",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1449212b9a531974a86872522d12dd02603b1712e323d70dae9f3bce82466156"
-  },
-  {
-   "id": "sof:be:xing:way-693707041",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 51.199772,
-   "lon": 2.899426,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/693707041",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "31710c91d6b938a84654f0ebde851f8fec7ce598c824b4a9e8fef0f2c6dd72bc"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

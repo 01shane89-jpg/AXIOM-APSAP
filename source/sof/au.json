@@ -30,12 +30,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Canberra",
-   "fp": "f8f388e10f6bc344e82931b4fb2f3d6dcd2260b431c121f532e65c2d9cd4978f",
-   "web": "https://au.usembassy.gov/",
-   "phone": "(02) 6214-5600",
-   "phone_src": "https://au.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "9175dc21b4220353d44f43dc4f9abe521cbc320e2dc65cbd41817b9917780897"
   },
   {
    "id": "sof:au:post:u-s-consulate-general-sydney",
@@ -50,12 +45,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "estimated from published address",
-   "fp": "15ffe78dc74bf2964a2b137e983e69f61d1ee3936634c22a7653577fa0daa38d",
-   "web": "https://au.usembassy.gov/sydney/",
-   "phone": "(02) 8219 2100",
-   "phone_src": "https://au.usembassy.gov/sydney/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "217b0096f2d85e5a3ceceefe39e400ac070c31fe4465e94d2963825c3b6c6d1c"
   },
   {
    "id": "sof:au:post:u-s-consulate-general-melbourne",
@@ -70,12 +60,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "estimated from published address",
-   "fp": "366ab2c0584fcfe45aef64151185797d3aab8a73d3c416b49af3a3cbb32cf52c",
-   "web": "https://au.usembassy.gov/melbourne/",
-   "phone": "1300 139 399",
-   "phone_src": "https://au.usembassy.gov/melbourne/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "6007e97022526d6e540777b32d4468adc207b463345d25c5bd8fcc302f7fbe84"
   },
   {
    "id": "sof:au:post:u-s-consulate-general-perth",
@@ -90,28 +75,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Australia.html",
    "srcname": "travel.state.gov Australia country information",
    "coord_basis": "estimated from published address",
-   "fp": "51f9f5d86a0c3f2a9de163e29bc7cbc6f2ad82babac3b547b570665eff74744b",
-   "web": "https://au.usembassy.gov/perth/",
-   "phone": "02 7908 7456",
-   "phone_src": "https://au.usembassy.gov/perth/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
-  },
-  {
-   "id": "sof:au:post:consulate-general-of-the-united-states-of-america",
-   "name": "Consulate-General of the United States of America",
-   "kind": "consulate_general",
-   "city": null,
-   "address": "19-29 Martin Place",
-   "services_note": null,
-   "lat": -33.868721,
-   "lon": 151.209452,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/4216608955",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "http://sydney.usconsulate.gov/index.html",
-   "fp": "c36384a6d2022caa8ad3fb7a602bf09c4766ac46870089a7ce2fbb5edd647478"
+   "fp": "a5103b9af0a677e20668bee8aee6e60dba544653735b66f07e6f1b1d27eb013d"
   }
  ],
  "airports": [
@@ -934,97 +898,5 @@
  ],
  "gaps": [
   "au.usembassy.gov returned 403 (no embassy list); hospitals from Wikipedia. Sydney consulate address taken verbatim from travel.state.gov (North Sydney) - differs from the long-standing MLC Centre, Martin Place address, verify. Consulate coords and RPA coords estimated. No 'Level 1' numeric designations stated; Australian 'major trauma centre' wording used."
- ],
- "crossings": [
-  {
-   "id": "sof:au:xing:node-3353511732",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": "Wilson Security",
-   "lat": -35.017861,
-   "lon": 150.80901,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/3353511732",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "153be2a9b95481b9bf40b1288ab229636361e18c63c4fbb73901d7a82790ee5a"
-  },
-  {
-   "id": "sof:au:xing:node-7331487645",
-   "name": "Customs & Security",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -33.936206,
-   "lon": 151.166695,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/7331487645",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7584d4eb0d0d4c167e90df0a3749ed4cc7b18ddc89bcd1690f667958f1153dc7"
-  },
-  {
-   "id": "sof:au:xing:node-9946389785",
-   "name": "Customs",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -37.669809,
-   "lon": 144.847709,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/9946389785",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "eaf21c7cdbdd3db2b32b62dae97736c3ca47d0c731700c9006208a6aa344c6f2"
-  },
-  {
-   "id": "sof:au:xing:way-388344182",
-   "name": "Quarantine Checkpoint",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": "Department of Primary Industries and Regional Development",
-   "lat": -31.638453,
-   "lon": 129.001916,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/388344182",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d4ce69637ef89e2c06ea9bc1d0e8d93d7d44c00d20464bdcb7fe237f36716d6c"
-  },
-  {
-   "id": "sof:au:xing:way-967996021",
-   "name": "Mickleham Post Entry Animal Quarantine Facility",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": "Australian Government - Department of Agriculture, Water and the Environment",
-   "lat": -37.542978,
-   "lon": 144.931634,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/967996021",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "2d74471eca9acb2c412b0ffaa7b2f45944b9894afab920d521be599ba7024b2b"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }
