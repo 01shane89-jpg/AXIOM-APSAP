@@ -1,322 +1,185 @@
 {
-"note": "PROBE BRANCH ONLY (never merged): core Asia news + CAP alert hub",
+"note": "PROBE BRANCH ONLY (never merged): national weather warning feeds + every CAP folder",
 "feeds": [
 {
-"cc": "vn",
-"outlet": "VnExpress latest",
-"url": "https://vnexpress.net/rss/tin-moi-nhat.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "VnExpress news",
-"url": "https://vnexpress.net/rss/thoi-su.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "Tuoi Tre",
-"url": "https://tuoitre.vn/rss/tin-moi-nhat.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "Thanh Nien",
-"url": "https://thanhnien.vn/rss/home.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "Dan Tri",
-"url": "https://dantri.com.vn/rss/home.rss",
-"lang": "vi"
-},
-{
-"cc": "vn",
-"outlet": "VietnamPlus",
-"url": "https://en.vietnamplus.vn/rss/news.rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "vn",
-"outlet": "VietnamPlus home",
-"url": "https://en.vietnamplus.vn/rss/home.rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "vn",
-"outlet": "Viet Nam News",
-"url": "https://vietnamnews.vn/rss/home.rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "vn",
-"outlet": "Tuoi Tre News",
-"url": "https://tuoitrenews.vn/rss/news.rss",
+"cc": "us",
+"outlet": "NWS active alerts (Atom)",
+"url": "https://api.weather.gov/alerts/active.atom?status=actual&message_type=alert&severity=Extreme,Severe",
 "lang": "en"
 },
 {
-"cc": "vn",
-"outlet": "Saigon Giai Phong English",
-"url": "https://en.sggp.org.vn/rss/home.rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "vn",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Vietnam%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "la",
-"outlet": "KPL Lao News Agency",
-"url": "https://kpl.gov.la/En/rss.aspx",
-"lang": "en",
-"state": true
-},
-{
-"cc": "la",
-"outlet": "Vientiane Times",
-"url": "https://www.vientianetimes.org.la/rss.xml",
-"lang": "en",
-"state": true
-},
-{
-"cc": "la",
-"outlet": "Lao Post",
-"url": "https://laopost.com/feed/",
+"cc": "us",
+"outlet": "NWS active alerts JSON",
+"url": "https://api.weather.gov/alerts/active?status=actual&severity=Extreme,Severe&limit=50",
 "lang": "en"
 },
 {
-"cc": "la",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Laos%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "la",
-"outlet": "Bing News search (Lao PDR)",
-"url": "https://www.bing.com/news/search?q=%22Lao+PDR%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "kh",
-"outlet": "Khmer Times",
-"url": "https://www.khmertimeskh.com/feed/",
+"cc": "br",
+"outlet": "INMET alerts RSS",
+"url": "https://apiprevmet3.inmet.gov.br/avisos/rss",
 "lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "Phnom Penh Post",
-"url": "https://www.phnompenhpost.com/rss",
+"cc": "ar",
+"outlet": "SMN Argentina alerts",
+"url": "https://ssl.smn.gob.ar/feeds/avisocorto_GeoRSS.xml",
 "lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "Kiripost",
-"url": "https://kiripost.com/feed",
+"cc": "ar",
+"outlet": "SMN Argentina CAP",
+"url": "https://ssl.smn.gob.ar/CAP/AR.php",
 "lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "Cambodianess",
-"url": "https://cambodianess.com/feed",
+"cc": "de",
+"outlet": "DWD warnings JSON",
+"url": "https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json",
 "lang": "en"
 },
 {
-"cc": "kh",
-"outlet": "Fresh News English",
-"url": "https://en.freshnewsasia.com/index.php/en/?format=feed&type=rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "kh",
-"outlet": "AKP Cambodia",
-"url": "https://www.akp.gov.kh/rss",
-"lang": "en",
-"state": true
-},
-{
-"cc": "kh",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Cambodia%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "bd",
-"outlet": "Prothom Alo English",
-"url": "https://en.prothomalo.com/feed/",
+"cc": "gb",
+"outlet": "Met Office warnings UK",
+"url": "https://www.metoffice.gov.uk/public/data/PWSCache/WarningsRSS/Region/UK",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "Prothom Alo",
-"url": "https://www.prothomalo.com/feed/",
-"lang": "bn"
-},
-{
-"cc": "bd",
-"outlet": "bdnews24",
-"url": "https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true",
+"cc": "ie",
+"outlet": "Met Eireann warnings",
+"url": "https://www.met.ie/Open_Data/json/warning_IRELAND.json",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "Dhaka Tribune",
-"url": "https://www.dhakatribune.com/feed",
+"cc": "no",
+"outlet": "MET Norway MetAlerts",
+"url": "https://api.met.no/weatherapi/metalerts/2.0/current.rss",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "The Business Standard",
-"url": "https://www.tbsnews.net/top-news/rss.xml",
+"cc": "fi",
+"outlet": "FMI CAP feed",
+"url": "https://alerts.fmi.fi/cap/feed/atom_en-GB.xml",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "New Age",
-"url": "https://www.newagebd.net/rss/rss.xml",
+"cc": "se",
+"outlet": "SMHI warnings",
+"url": "https://opendata-download-warnings.smhi.se/ibww/api/version/1/warning.json",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "Daily Star Bangladesh",
-"url": "https://www.thedailystar.net/news/bangladesh/rss.xml",
+"cc": "pl",
+"outlet": "IMGW warnings",
+"url": "https://danepubliczne.imgw.pl/api/data/warningsmeteo",
 "lang": "en"
 },
 {
-"cc": "bd",
-"outlet": "BSS",
-"url": "https://www.bssnews.net/rss.xml",
-"lang": "en",
-"state": true
-},
-{
-"cc": "bd",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Bangladesh%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "bn",
-"outlet": "Borneo Bulletin",
-"url": "https://borneobulletin.com.bn/feed/",
+"cc": "cz",
+"outlet": "CHMI CAP",
+"url": "https://vystrahy-cr.chmi.cz/data/XOCZ50_OKPR.xml",
 "lang": "en"
 },
 {
-"cc": "bn",
-"outlet": "Pelita Brunei",
-"url": "https://www.pelitabrunei.gov.bn/_layouts/15/listfeed.aspx",
-"lang": "ms",
-"state": true
-},
-{
-"cc": "bn",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Brunei%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "tl",
-"outlet": "Tatoli Tetum",
-"url": "https://tatoli.tl/feed/",
-"lang": "tet",
-"state": true
-},
-{
-"cc": "tl",
-"outlet": "Timor Post",
-"url": "https://www.timorpost.com/feed/",
-"lang": "tet"
-},
-{
-"cc": "tl",
-"outlet": "Diligente",
-"url": "https://www.diligenteonline.com/feed/",
-"lang": "tet"
-},
-{
-"cc": "tl",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Timor-Leste%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "mm",
-"outlet": "The Irrawaddy",
-"url": "https://www.irrawaddy.com/feed",
+"cc": "id",
+"outlet": "BMKG CAP RSS",
+"url": "https://signature.bmkg.go.id/alert/public/en/rss.xml",
 "lang": "en"
 },
 {
-"cc": "mm",
-"outlet": "Mizzima",
-"url": "https://eng.mizzima.com/feed",
+"cc": "ca",
+"outlet": "ECCC alerts Atom (national)",
+"url": "https://weather.gc.ca/rss/alerts/ca_e.xml",
 "lang": "en"
 },
 {
-"cc": "mm",
-"outlet": "Frontier Myanmar",
-"url": "https://www.frontiermyanmar.net/en/feed/",
+"cc": "mx",
+"outlet": "SMN Mexico avisos",
+"url": "https://smn.conagua.gob.mx/tools/RESOURCES/Avisos/rss.xml",
 "lang": "en"
 },
 {
-"cc": "mm",
-"outlet": "Global New Light of Myanmar",
-"url": "https://www.gnlm.com.mm/feed/",
-"lang": "en",
-"state": true
-},
-{
-"cc": "mm",
-"outlet": "BNI Online",
-"url": "https://www.bnionline.net/en/rss.xml",
+"cc": "ch",
+"outlet": "MeteoSwiss warnings",
+"url": "https://www.meteoswiss.admin.ch/product/output/warnings/warnings_en.xml",
 "lang": "en"
 },
 {
-"cc": "mm",
-"outlet": "Myanmar Now Burmese",
-"url": "https://myanmar-now.org/mm/feed/",
-"lang": "my"
-},
-{
-"cc": "mm",
-"outlet": "Bing News search",
-"url": "https://www.bing.com/news/search?q=%22Myanmar%22&format=rss",
-"lang": "en",
-"search": true,
-"nc": true
-},
-{
-"cc": "bt",
-"outlet": "Kuensel",
-"url": "https://kuenselonline.com/feed/",
+"cc": "at",
+"outlet": "GeoSphere warnings",
+"url": "https://warnungen.zamg.at/wsapp/api/getWarningStatus?lang=en",
 "lang": "en"
 },
 {
-"cc": "bt",
-"outlet": "BBS",
-"url": "https://www.bbs.bt/news/?feed=rss2",
-"lang": "en",
-"state": true
+"cc": "es",
+"outlet": "AEMET CAP (no key) test",
+"url": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_wah_RSS.xml",
+"lang": "en"
+},
+{
+"cc": "it",
+"outlet": "Protezione Civile bollettino",
+"url": "https://www.protezionecivile.gov.it/static/rss/allerte.xml",
+"lang": "en"
+},
+{
+"cc": "pt",
+"outlet": "IPMA warnings",
+"url": "https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json",
+"lang": "en"
+},
+{
+"cc": "nl",
+"outlet": "KNMI waarschuwingen RSS",
+"url": "https://cdn.knmi.nl/knmi/xml/rss/rss_KNMIwaarschuwingen.xml",
+"lang": "en"
+},
+{
+"cc": "be",
+"outlet": "RMI warnings",
+"url": "https://www.meteo.be/en/warnings.rss",
+"lang": "en"
+},
+{
+"cc": "tr",
+"outlet": "MGM warnings",
+"url": "https://www.mgm.gov.tr/FTPDATA/analiz/sonSOA.xml",
+"lang": "en"
+},
+{
+"cc": "za",
+"outlet": "SAWS warnings",
+"url": "https://www.weathersa.co.za/home/warnings/rss",
+"lang": "en"
+},
+{
+"cc": "cl",
+"outlet": "DMC Chile alertas",
+"url": "https://archivos.meteochile.gob.cl/portaldmc/meteochile/js/avisos_alertas.json",
+"lang": "en"
+},
+{
+"cc": "co",
+"outlet": "IDEAM alertas",
+"url": "http://www.pronosticosyalertas.gov.co/rss",
+"lang": "en"
+},
+{
+"cc": "pe",
+"outlet": "SENAMHI avisos",
+"url": "https://www.senamhi.gob.pe/?p=aviso-meteorologico-rss",
+"lang": "en"
+},
+{
+"cc": "ua",
+"outlet": "UkrHMC warnings",
+"url": "https://meteo.gov.ua/en/rss",
+"lang": "en"
+},
+{
+"cc": "kr",
+"outlet": "KMA warnings RSS",
+"url": "https://www.weather.go.kr/w/rss/warning/wrn.do",
+"lang": "en"
 }
 ]
 }
