@@ -1,0 +1,8 @@
+[["n1001683012",53.82136,-101.19534,"ca",{"aeroway":"aerodrome"}],
+["n1042026402",53.8264,-101.205,"ca",{"name":"Grace Lake Airport","aeroway":"aerodrome","wikidata":"Q3914793"}],
+["w1012585163",53.70498,-100.34386,"ca",{"name":"100 - Nursing Station","amenity":"clinic","healthcare":"nurse","phone":"+1 204 678 2252","addr:housenumber":"100","addr:street":"Runway Road","addr:city":"Moose Lake","addr:province":"Manitoba","addr:postcode":"R0B0Y0"}],
+["w1117993155",53.8268,-101.25152,"ca",{"name":"The Pas Health Complex","amenity":"hospital","healthcare":"hospital"}],
+["w1251037912",52.10577,-101.26136,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1251050660",52.12093,-101.23382,"ca",{"name":"Swan Valley Municipal Airport","operator":"Town of Swan River","operator:type":"public","addr:city":"Swan Valley West","addr:province":"Manitoba","aeroway":"aerodrome","icao":"CZJN","iata":"ZJN","wikidata":"Q3914154"}],
+["w200492407",53.97134,-101.09685,"ca",{"name":"The Pas Airport","aeroway":"aerodrome","icao":"CYQD","iata":"YQD"}],
+["w954698364",53.82607,-101.25137,"ca",{"name":"The Pas EMS","healthcare":"yes","emergency":"ambulance_station","addr:city":"The Pas","addr:province":"MB"}]]

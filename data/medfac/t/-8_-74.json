@@ -1,0 +1,9 @@
+[["n2795552717",-7.54502,-72.58198,"br",{"amenity":"hospital","healthcare":"hospital","phone":"+55 97 99170 1612","addr:street":"Avenida Getúlio Vargas","addr:city":"Guajará","addr:postcode":"69895-000"}],
+["n9173556517",-7.59525,-72.68328,"br",{"name":"Hospital Regional do Juruá","amenity":"hospital","phone":"+55 68 3322 5516","addr:housenumber":"5121","addr:street":"Avenida Vinte e Cinco de Agosto","addr:postcode":"69859-000","opening_hours":"24/7"}],
+["w1100968123",-7.63273,-72.6641,"br",{"amenity":"hospital","healthcare":"hospital"}],
+["w1387384825",-7.71086,-72.70855,"br",{"name":"Posto Saúde Buritirana","amenity":"clinic","healthcare":"clinic"}],
+["w242631142",-7.59896,-72.77043,"br",{"name":"Aeroporto Internacional de Cruzeiro do Sul","name:en":"Cruzeiro do Sul International Airport","operator":"Infraero","aeroway":"aerodrome","icao":"SBCZ","iata":"CZS","aerodrome:type":"regional","wikidata":"Q1657929"}],
+["w642913092",-7.62885,-72.88155,"br",{"name":"Casa de Saúde do Indio","amenity":"hospital","healthcare":"hospital"}],
+["w660663646",-7.15749,-73.12205,"br",{"aeroway":"aerodrome"}],
+["w784433341",-7.80628,-72.00276,"br",{"amenity":"clinic","healthcare":"clinic"}],
+["w987017289",-7.60785,-72.90854,"br",{"name":"Hospital Dr. Abel Pinheiro Filho","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]

@@ -1,0 +1,11 @@
+[["n1042076636",-18.20083,-58.17,"bo",{"name":"Rincon Del Tigre Airport","aeroway":"aerodrome"}],
+["n1042076723",-18.34527,-59.60486,"bo",{"name":"Aeropuerto de Santiago de Chiquitos","aeroway":"aerodrome"}],
+["n3235613821",-18.33334,-59.74674,"bo",{"name":"Caja Petrolera de Salud","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"CPS"}],
+["n4019971941",-18.32836,-59.75354,"bo",{"name":"Hospital Caja Nacional de Salud","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"CNS","operator:type":"public"}],
+["n4299185691",-18.45316,-59.50321,"bo",{"name":"P.S. Aguas Calientes","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"MinSalud","operator:type":"public","addr:city":"Aguas Calientes","addr:postcode":"SCZ"}],
+["n6770857867",-18.54603,-59.2978,"bo",{"aeroway":"aerodrome"}],
+["w273097117",-18.32781,-59.76558,"bo",{"name":"Aeródromo de Roboré","addr:city":"Robore","aeroway":"aerodrome","icao":"SLRB","iata":"RBO","aerodrome:type":"public/military","wikidata":"Q12694714"}],
+["w399133478",-18.34264,-59.75656,"bo",{"name":"Hospital Municipal Germán Vaca Díez","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}],
+["w710780662",-18.63756,-59.52614,"bo",{"aeroway":"helipad"}],
+["w710780664",-18.6312,-59.52553,"bo",{"aeroway":"aerodrome"}],
+["w721146224",-18.89484,-58.42219,"bo",{"aeroway":"helipad"}]]
