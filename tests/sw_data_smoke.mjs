@@ -11,7 +11,7 @@ const root = process.cwd();
 let n = 0, slow = 0, tileHits = 0;
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
-  if (path.startsWith("tile/")) {   // a map tile from another origin (localhost, the page is on 127.0.0.1), CORS allowed
+  if (path.startsWith("tile/")) {   // a map tile from another origin (tiles.osap.test, the page is on 127.0.0.1), CORS allowed
     tileHits++; res.writeHead(200, { "Content-Type": "image/png", "Access-Control-Allow-Origin": "*" }); res.end(await readFile(join(root, "assets/logo.png"))); return;
   }
   if (path === "data/live/sw-test.js") {   // a data file whose content changes on every download
@@ -25,7 +25,8 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const browser = await chromium.launch();
+/* the map tile host: another origin than the page, resolved to this server (localhost can be IPv6 on a runner) */
+const browser = await chromium.launch({ args: ["--host-resolver-rules=MAP tiles.osap.test 127.0.0.1"] });
 const ctx = await browser.newContext({ viewport: { width: 1200, height: 800 } });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
 
@@ -43,7 +44,7 @@ slow = 4000;
 const got = await get(4);
 ok(got === "window.SWT=3;", "slow network: the newest saved copy is used (got " + got + ", want window.SWT=3;)");
 /* the map shows a tile (no CORS, saved opaque), then the print map draws the same tile on a canvas (CORS) */
-const TILE = `http://localhost:${server.address().port}/tile/10/811/473.png`;
+const TILE = `http://tiles.osap.test:${server.address().port}/tile/10/811/473.png`;
 const img = (cors) => p.evaluate(([cors, TILE]) => new Promise((res) => { const im = new Image(); if (cors) im.crossOrigin = "anonymous";
   im.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 4; const g = c.getContext("2d"); g.drawImage(im, 0, 0); c.toDataURL(); res("drawn"); } catch (e) { res("tainted"); } };
   im.onerror = () => res("error"); im.src = TILE; }), [cors, TILE]);
