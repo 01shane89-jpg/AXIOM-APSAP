@@ -28,13 +28,19 @@
    "city": "Belize",
    "address": "4 Floral Park Road",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": null,
-   "lon": null,
-   "prec": "approx",
+   "lat": 17.256327,
+   "lon": -88.773343,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105550855",
    "srcname": "Wikidata",
-   "coord_basis": "no position found",
-   "fp": "2e125bdff6daf3d463b0d8dd07b19d7e816cb15f639ac23bb31e3b84db97b5a0"
+   "coord_basis": "OpenStreetMap way/293941150",
+   "fp": "ffe3f0a05243526a2eaf77c73cc0d712312a0a3b000485d4b76b104ba0add994",
+   "web": "https://bz.usembassy.gov/",
+   "phone": "(501) 822-4011",
+   "phone_after_hours": "(+501) 822-4011",
+   "phone_src": "https://bz.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -356,5 +362,82 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:bz:xing:node-2164679452",
+   "name": "Belize - Guatemala Border Checkpoint",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 16.189532,
+   "lon": -89.187961,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2164679452",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "bfb49c3f3e1d4bf8a8bbff6a43ad7ee3037affddcb38e0f32acfd15fc646cf56"
+  },
+  {
+   "id": "sof:bz:xing:node-287277185",
+   "name": "Belize Customs and Immigration",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 17.057898,
+   "lon": -89.149163,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/287277185",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8a7a636d899a2cfd6a5a84bc2ca97d8cbb4e2b6e5a7faa12609f3f24ee5364fb"
+  },
+  {
+   "id": "sof:bz:xing:node-3268860583",
+   "name": "Aduanas e Inmigración de Guatemala",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 17.057828,
+   "lon": -89.150518,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3268860583",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "54f618b6e3a1d1997910f049f5f64fe488625b3f1ca9a0a7b08e3902907cf062"
+  },
+  {
+   "id": "sof:bz:xing:way-1290024330",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 17.036054,
+   "lon": -89.125558,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1290024330",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "23478ca2d44a8af9b678482cfd0788543122d31ea7b157362436dda6283aa0e7"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
