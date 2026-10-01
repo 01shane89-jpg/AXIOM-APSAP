@@ -11,19 +11,27 @@ ctx.window = ctx; vm.createContext(ctx); vm.runInContext(readFileSync("assets/os
 const P = ctx.OSAP_POWER;
 const box = (lat, lon, z) => { const d = 180 / Math.pow(2, z) * 2.2; return { getSouth: () => lat - d * 0.6, getNorth: () => lat + d * 0.6, getWest: () => lon - d, getEast: () => lon + d }; };
 const HOSTS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+const UA = "OSAP-probe/1.0 (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
+async function post(h, q, label) {
+  const t = Date.now();
+  try {
+    const r = await fetch(h, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA, Origin: "https://01shane89-jpg.github.io" }, signal: AbortSignal.timeout(60000) });
+    const txt = await r.text(); let n = "-", kinds = {};
+    try { const j = JSON.parse(txt); n = j.elements.length; j.elements.forEach((e) => { const k = (e.tags || {}).power; kinds[k] = (kinds[k] || 0) + 1; }); if (j.remark) kinds.remark = j.remark.slice(0, 160); } catch { kinds.body = txt.slice(0, 200).replace(/\s+/g, " "); }
+    console.log(`${label} ${h.split("/")[2]}: HTTP ${r.status} cors=${r.headers.get("access-control-allow-origin")} ${txt.length} B ${Date.now() - t} ms elements=${n} ${JSON.stringify(kinds)}`);
+  } catch (e) { console.log(`${label} ${h.split("/")[2]}: FAILED ${e.message} ${Date.now() - t} ms`); }
+}
+const ALL = { lines: true, subs: true, plants: true };
 for (const [name, lat, lon] of [["Bangkok", 13.75, 100.5], ["Berlin", 52.52, 13.4]]) {
-  for (const z of [6, 8, 9, 11, 12]) {
-    const q = P.query(box(lat, lon, z), z, { lines: true, subs: true, plants: true });
-    for (const h of HOSTS.slice(0, z === 9 ? 4 : 1)) {
-      const t = Date.now();
-      try {
-        const r = await fetch(h, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded", Origin: "https://01shane89-jpg.github.io" }, signal: AbortSignal.timeout(45000) });
-        const txt = await r.text(); let n = "-", kinds = {};
-        try { const j = JSON.parse(txt); n = j.elements.length; j.elements.forEach((e) => { const k = (e.tags || {}).power; kinds[k] = (kinds[k] || 0) + 1; }); if (j.remark) kinds.remark = j.remark.slice(0, 160); } catch { kinds.body = txt.slice(0, 300).replace(/\s+/g, " "); }
-        console.log(`${name} z${z} ${h.split("/")[2]}: HTTP ${r.status} cors=${r.headers.get("access-control-allow-origin")} ${txt.length} B ${Date.now() - t} ms elements=${n} ${JSON.stringify(kinds)}`);
-      } catch (e) { console.log(`${name} z${z} ${h.split("/")[2]}: FAILED ${e.message} ${Date.now() - t} ms`); }
-    }
+  for (const z of [8, 11]) {
+    const q = P.query(box(lat, lon, z), z, ALL);
+    await post(HOSTS[0], q.replace("[timeout:25]", "[timeout:25][maxsize:16000000]"), `${name} z${z} OLD(16MB)`);
+    for (const h of HOSTS) await post(h, q, `${name} z${z} NEW`);
   }
+}
+// would country-zoom lines work? the z8 query on wider boxes
+for (const [name, lat, lon] of [["Thailand", 13.5, 101], ["Germany", 51, 10], ["Nigeria", 9, 8]]) {
+  for (const z of [5, 6, 7]) await post(HOSTS[0], P.query(box(lat, lon, z), 8, { lines: true, subs: true, plants: false }), `${name} z${z} (HV query)`);
 }
 console.log("query z12:", P.query(box(13.75, 100.5, 12), 12, { lines: true, subs: true, plants: true }));
 
@@ -40,7 +48,7 @@ const bc = await browser.newContext({ serviceWorkers: "block", viewport: { width
 await bc.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
 const p = await bc.newPage(); p.on("pageerror", (e) => console.log("pageerror", e.message));
 p.on("console", (m) => { if (m.type() === "error") console.log("console", m.text().slice(0, 200)); });
-p.on("requestfinished", async (r) => { if (/overpass|mail\.ru/.test(r.url())) { const s = await r.response(); console.log("page request", r.url(), s && s.status()); } });
+p.on("requestfinished", async (r) => { if (/overpass|mail\.ru/.test(r.url())) { const s = await r.response(); let x = ""; try { const j = await s.json(); x = "elements=" + (j.elements || []).length + (j.remark ? " remark=" + j.remark.slice(0, 160) : ""); } catch (e) {} console.log("page request", r.url(), s && s.status(), x); } });
 p.on("requestfailed", (r) => { if (/overpass|mail\.ru/.test(r.url())) console.log("page request FAILED", r.url(), r.failure() && r.failure().errorText); });
 await p.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_POWER && window.__asapMap, null, { timeout: 60000 }); await p.waitForTimeout(4000);

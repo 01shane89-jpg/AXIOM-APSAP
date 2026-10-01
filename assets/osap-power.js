@@ -127,7 +127,7 @@
   var HV = '["voltage"~"^([2-9][0-9]{5}|[1-9][0-9]{6})"]', BIG = '["plant:output:electricity"~"^ *(([1-9][0-9]{2,}|[1-9][0-9]{0,2},[0-9]{3})([.][0-9]+)? *MW|[0-9.]+ *GW)",i]';
   function query(b, z, want) {
     var bb = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(4); }).join(",");
-    var all = z >= ALLZ, q = "[out:json][timeout:25][maxsize:16000000][bbox:" + bb + "];";
+    var all = z >= ALLZ, q = "[out:json][timeout:25][bbox:" + bb + "];";
     var lines = want.lines ? (all ? 'way["power"="line"];way["power"="cable"]' + HV + ";" : 'way["power"="line"]' + HV + ";") : "";
     var pts = (want.subs ? (all ? 'nwr["power"="substation"];' : 'nwr["power"="substation"]' + HV + ";") : "") +
       (want.plants ? (all ? 'nwr["power"="plant"];' : 'nwr["power"="plant"]' + BIG + ";") : "");
@@ -152,6 +152,8 @@
       /* POST so the service worker never caches it */
       return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ctl.signal })
         .then(function (r) { if (!r.ok) throw new Error(r.status === 429 || r.status === 504 ? "busy" : "HTTP " + r.status); return r.json(); })
+        /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: that is a failure, not an empty grid */
+        .then(function (j) { if (j && j.remark && /error/i.test(j.remark)) throw new Error(/timed? ?out|memory/i.test(j.remark) ? "busy" : "remark"); return j; })
         .catch(function (e) { if (e && e.name === "AbortError") throw e; if (i + 1 < OVERPASS.length) return go(i + 1); throw e; });
     };
     go(0).then(function (j) {
