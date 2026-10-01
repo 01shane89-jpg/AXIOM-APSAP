@@ -91,6 +91,11 @@ const WD = { results: { bindings: [
   { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "1669" }, d: { value: "emergency medical services number in Thailand" } },
   { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "199" }, u2Label: { value: "Q12345" } }
 ] } };
+/* Wikidata hospitals round the plan: one matches Trauma Test Hospital by location (30 m), one is far from every OSM hospital */
+const WDH = { results: { bindings: [
+  { h: { value: "http://www.wikidata.org/entity/Q900001" }, hLabel: { value: "Trauma Test Hospital" }, c: { value: "Point(100.4003 13.7002)" }, phone: { value: "+66 2 777 1000" }, web: { value: "https://trauma-test.example.org/" }, beds: { value: "250" } },
+  { h: { value: "http://www.wikidata.org/entity/Q900002" }, hLabel: { value: "Elsewhere Hospital" }, c: { value: "Point(100.9 14.2)" }, phone: { value: "+66 2 000 0000" } }
+] } };
 function meteo() {
   const days = ["2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"], ht = [], vis = [], g = [], lc = [], pr = [], at = [];
   days.forEach((d) => { for (let h = 0; h < 24; h++) { ht.push(d + "T" + String(h).padStart(2, "0") + ":00"); vis.push(d === "2026-10-01" && h === 5 ? 800 : 20000); g.push(10); lc.push(d === "2026-10-02" ? 95 : 20); pr.push(0); at.push(30); } });
@@ -120,6 +125,7 @@ async function open(opts, o) {
     if (/valhalla.*sources_to_targets/.test(u)) { calls.vhm++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhMatrix(u)); }
     if (/valhalla.*\/route\?/.test(u)) { calls.vhr++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla/.test(u)) { calls.iso++; return J(r, iso(u)); }
+    if (/query\.wikidata\.org/.test(u) && /wikibase%3Aaround|wikibase:around/.test(u)) { calls.wdh = (calls.wdh || 0) + 1; return o.wdFails ? r.fulfill({ status: 504, body: "" }) : J(r, WDH); }
     if (/query\.wikidata\.org/.test(u)) { calls.wd++; return J(r, WD); }
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u)) { if (/hourly=visibility,wind_gusts_10m,cloud_cover_low/.test(u)) calls.meteo++; return J(r, meteo()); }
     return r.abort();
@@ -196,6 +202,9 @@ async function openPlan(p) {
   ok(/Community Health Centre 7/.test(fac) && !/Smile Dental/.test(fac), "desktop: public clinic listed, dentist left out");
   ok(await p.evaluate(() => !!document.querySelector('#mp-fac a[href="tel:+6629990000"]')) && /Website/.test(fac) && /Address: North Road, Testburi/.test(fac), "desktop: hospital phone, website and address shown");
   ok(/listed in OpenStreetMap/.test(fac), "desktop: each published number says where it is listed");
+  await p.waitForFunction(() => /Wikidata Q900001/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
+  const wdRow = await p.evaluate(() => [...document.querySelectorAll("#mp-fac tbody tr")].map((r) => r.textContent).find((t) => /Trauma Test Hospital/.test(t)) || "");
+  ok(/\+66 2 777 1000 \(Wikidata Q900001, matched by location, \d+ m\)/.test(wdRow) && /Website \(Wikidata Q900001/.test(wdRow) && !/listed in OpenStreetMap/.test(wdRow) && !/000 0000/.test(await p.textContent("#mp-fac")), "desktop: a hospital OSM lists without contacts gets Wikidata's phone and website, each labelled: " + wdRow.slice(0, 200));
   ok(/flight|kn/i.test(fac) && /at 120 kn/.test(fac), "desktop: flight time from the POI at the stated cruise speed");
   const rt = await p.textContent("#mp-rt");
   ok(/Primary: H1 Sourced Trauma Centre/.test(rt) && /Secondary: H2 Trauma Test Hospital/.test(rt) && /Tertiary: H3 Far North Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
@@ -261,7 +270,8 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("mp-fp") || {}).textContent || ""), null, { timeout: 5000 }).catch(() => {});
   ok(/^[0-9a-f]{64}$/.test(await p.textContent("#mp-fp")), "desktop: plan fingerprint is a SHA-256");
   // cruise speed changes flight times without new requests
-  await p.fill('#mp-mev [data-mpf="rwkn"]', "240"); await p.waitForTimeout(1000);
+  await p.fill('#mp-mev [data-mpf="rwkn"]', "240");
+  await p.waitForFunction(() => /to the POI at 240 kn/.test(document.getElementById("mp-mev").textContent), null, { timeout: 5000 }).catch(() => {});
   ok(/to the POI at 240 kn/.test(await p.textContent("#mp-mev")) && calls.overpass === 1, "desktop: a new cruise speed recomputes flight times on the device");
   // out of country
   await p.check('#mp-oc [data-mp-oc]');
@@ -273,6 +283,19 @@ async function openPlan(p) {
   ok(/at 250 kn \+ 15 min launch/.test(oc), "out of country: flight times state the speed and launch time");
   ok(/U\.S\. Embassy Bangkok/.test(oc) && /205 4000/.test(oc) && /1-888-407-4747/.test(oc) && /\+1 202-501-4444/.test(oc) && /travel\.state\.gov/.test(oc), "out of country: embassy address and phone, State Department emergency numbers with source");
   ok(await p.evaluate(() => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === "P1")), "out of country: the airport is marked on the map");
+  /* strategic evacuation out of Asia-Pacific: east through Hawaii to a west-coast Level I, or west to Germany */
+  const se = await p.evaluate(() => [...document.querySelectorAll("#mp-oc table.mpse tbody tr")].map((r) => r.textContent));
+  ok(se.length === 2 && /^West\s*Suggested/.test(se[0]) && /Singapore General Hospital.*Landstuhl Regional Medical Center.*Level II trauma centre, ACS verified/.test(se[0]) &&
+    /^East/.test(se[1]) && /U\.S\. Naval Hospital Okinawa.*Tripler Army Medical Center.*UC San Diego Health, Hillcrest.*Level I trauma centre/.test(se[1]), "out of country: two strategic chains, shorter first, each stop with its level and source: " + se.map((x) => x.slice(0, 90)).join(" | "));
+  ok(/at 450 kn with 2 h on the ground/.test(oc) && /\d+ h \d{2} min/.test(se[0]), "out of country: chain times are labelled estimates at the stated speed");
+  ok(await p.evaluate(() => ["HAW", "DEU", "SGP", "JPN", "USA"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "out of country: every chain stop is marked on the map");
+  await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-oc [data-mp="strat"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => window.__asapMap.getZoom() <= 4 && !document.getElementById("medplan").hidden), "out of country: Show on the map zooms out to the whole chain, beside the side panel");
+  await p.click('#medplan [data-mp="dock"]');
+  await p.fill('#mp-oc [data-mpf="sjkn"]', "300");
+  await p.waitForFunction(() => /at 300 kn with 2 h/.test(document.getElementById("mp-oc").textContent), null, { timeout: 5000 }).catch(() => {});
+  ok(/at 300 kn with 2 h/.test(await p.textContent("#mp-oc")), "out of country: a new strategic cruise speed recomputes the chains");
+  await p.fill('#mp-oc [data-mpf="sjkn"]', "450"); await p.waitForTimeout(1200);
   // point of injury picked on the map
   await p.click('#medplan [data-mp="pick"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !!document.getElementById("mp-pickbar")), "POI: Pick on map hides the plan and asks for a tap");
@@ -308,6 +331,9 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const pv = await p.evaluate(() => { const b = document.getElementById("brief"), d = b.querySelector(".mpdoc"); return { shown: !b.hidden && document.documentElement.classList.contains("briefing"), t: d.textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpd-map").naturalWidth }; });
   ok(pv.shown && pv.w >= 1000, "print view: opens with a drawn map " + pv.w);
+  await p.waitForFunction(() => /^data:image\/png/.test((document.querySelector("#brief .mpscmap img") || {}).src || ""), null, { timeout: 20000 });
+  ok(/East: JPN → HAW → USA/.test(await p.textContent("#brief .mpscmap figcaption")), "print view: the strategic chains have their own world map in section 6");
+  if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
@@ -326,13 +352,14 @@ async function openPlan(p) {
   await p.click('#mp-fac tr:has-text("Far North Hospital") [data-mp-assess]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
   const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
-    return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery and operating theatres"),
+    return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery"), or: row("Operating rooms"), s24: row("24-hour surgeon"), oh: row("Opening hours"),
       blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Capability"),
       ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpa-map").naturalWidth }; });
   ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
   ok(as.w >= 900, "assessment: has its own map " + as.w);
   ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Role 2 equivalent \(estimated\)/.test(as.cap), "assessment: emergency department, beds and level with their source");
   ok(/^Not known/.test(as.icu) && /^Not known/.test(as.surg) && /^Not known/.test(as.blood) && /^Not known/.test(as.ct), "assessment: every gap says Not known (surgery, ICU, blood bank, CT/MRI)");
+  ok(/^Not known/.test(as.or) && /^Not known/.test(as.s24) && /ask the hospital/.test(as.s24) && /^Not known/.test(as.oh), "assessment: operating rooms, 24-hour surgeon and opening hours rows, Not known where nothing is published");
   ok(/47P [A-Z]{2} \d{4} \d{4}/.test(as.mgrs) && /min/.test(as.road) && /golden hour/i.test(as.road) && /kn/.test(as.air), "assessment: MGRS, road and air times from the point of injury against the golden hour");
   ok(/Main roads/.test(as.rt), "assessment: the road route with its main roads: " + as.rt);
   ok(as.pad && as.af && /\+66 2 123 4567/.test(as.ct2), "assessment: helipad, nearest airfield and contacts lines");
