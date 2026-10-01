@@ -58,6 +58,7 @@ jobs:
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
       - run: node tests/power_smoke.mjs
+      - run: node tests/privacy_smoke.mjs
       - run: node tests/borders_smoke.mjs
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs

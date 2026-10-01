@@ -9,6 +9,21 @@
       "osap-last-cc"). The tab part of the address is dropped. Not applied when the user chose "Map" as the start screen.
    Neither applies to alert links (?wopen=) or the hidden scan frames (?watchscan=). */
 (function () {
+  /* 0. A shared route link carries its waypoints after "#" (".../#kh/route?rt=..."), the part of an address a browser never
+        sends to any server, so the places in it stay between the people who share it. They are moved here to this tab's
+        sessionStorage ("osap-rt-link"), where the Route tab picks them up (assets/osap-route.js), and the address is
+        tidied back to "#kh/route" before anything reads it. Older links with "?rt=" still open. */
+  (function () {
+    var m = /^(#[^?&]*)[?&]rt=([^&]*)/.exec(location.hash || ""); if (!m) return;
+    try { sessionStorage.setItem("osap-rt-link", m[2]); } catch (e) { window.OSAP_RT_LINK = m[2]; }
+    try { history.replaceState(null, "", location.pathname + location.search + m[1]); } catch (e) {}
+  })();
+  /* links in reports come from outside sources: one that would run script ("javascript:" and the like) is never followed,
+     whichever part of the app drew it, so a bad feed item cannot reach the points, notes and photos kept in this browser */
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (a && (/^(javascript|vbscript):$/i.test(a.protocol || "") || /^\s*(javascript|vbscript):/i.test(a.getAttribute("href") || ""))) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   function ls(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   cover();
