@@ -88,6 +88,9 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await longPress(p, 40, -40); await ringBtn(p, "watch"); await p.waitForTimeout(500);
   ok(await p.evaluate(() => { const r = document.querySelector('[name="w-area"][value="drawn"]'); return !!r && r.checked; }), "phone: Watch opens the watch form with the area picked");
   await p.keyboard.press("Escape"); await p.evaluate(() => { const d = document.getElementById("watchdlg"); if (d) d.hidden = true; });
+  // on a phone every tool shows its name under its icon, and a down arrow shows when more tools are below
+  ok(await p.evaluate(() => { const l = document.querySelector('#atk-tools [data-atk="area"] .atk-l'); return !!l && getComputedStyle(l).display !== "none" && l.textContent === "Area"; }), "phone: toolbar buttons show their names");
+  ok(await p.evaluate(() => { const l = document.querySelector("#atk-tools .atk-list"); return (l.scrollHeight > l.clientHeight + 4) === document.getElementById("atk-tools").classList.contains("more"); }), "phone: the more-below arrow matches whether the tools overflow");
   // right side toolbar opens the Overlay Manager with the Layers panel inside
   await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#atk-om") && await p.evaluate(() => !!document.querySelector("#atk-om #ml-panel")), "phone: Overlay Manager opens holding the map layers");
