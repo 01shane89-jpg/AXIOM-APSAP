@@ -93,5 +93,7 @@ data-ev-tlr="1"
 <script src="assets/osap-power.js"></script>
 # medical plan for the drawn area, in the Area menu (claude/medical-plan)
 <script src="assets/osap-medplan.js"></script>
+# Reports menu lists every report OSAP makes (claude/reports-menu)
+<script src="assets/osap-reports.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
   function stripDatelines(text) {
