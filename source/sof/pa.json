@@ -34,33 +34,7 @@
    "src": "https://www.wikidata.org/entity/Q105622924",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "15437da75a67e33998280cf7e5225c9aed203eed66768fdff576f75dc84a8800",
-   "phone": "(507) 317-5000",
-   "phone_after_hours": "(507) 317-5000",
-   "phone_src": "https://pa.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
-  },
-  {
-   "id": "sof:pa:post:embassy-of-the-united-states",
-   "name": "Embassy of the United States",
-   "kind": "embassy",
-   "city": null,
-   "address": "783 Avenida Demetrio B. Lakas",
-   "services_note": null,
-   "lat": 8.998409,
-   "lon": -79.561319,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/300882164",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://pa.usembassy.gov",
-   "phone": "(507) 317-5000",
-   "phone_after_hours": "(507) 317-5000",
-   "phone_src": "https://pa.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "b7b2736c483d1074aacd982b111577aee018d713fc68cff51cfed2707212cb48"
+   "fp": "b40f3fac47a199b76f7a83409c87d58e6fa90aea42e9d73126d54d6172e0d5ec"
   }
  ],
  "airports": [
@@ -652,63 +626,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:pa:xing:node-13198405243",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 9.498332,
-   "lon": -82.613289,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/13198405243",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a73d82573da5da5b2e3dad30d9834f205cb902f3dea9e05e21639b6b6df262f8"
-  },
-  {
-   "id": "sof:pa:xing:way-234821632",
-   "name": "Panama Immigration",
-   "local_name": "Migración Panamá",
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 8.818291,
-   "lon": -82.862647,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/234821632",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "94a9c754049485af33c04d29c5c1a858e13ced454ef819eb88d75c4caca68049"
-  },
-  {
-   "id": "sof:pa:xing:way-234963318",
-   "name": "Aduanas - Migración Panameña",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 8.533982,
-   "lon": -82.838453,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/234963318",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d46b7f1daa543819b6b19273ed8893ab72cd97be61c9587c3a159d39d3bf2dfa"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

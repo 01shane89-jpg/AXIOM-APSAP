@@ -42,33 +42,7 @@
    "src": "https://www.wikidata.org/entity/Q105605623",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "0d458c178bf5d7cc086b4f699792529569f26b289b718fd77edf98ff6464d77d",
-   "phone": "011-509-2229-8000",
-   "phone_after_hours": "509-2229-8000",
-   "phone_src": "https://ht.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
-  },
-  {
-   "id": "sof:ht:post:embassy-of-the-united-states-in-haiti-48381308",
-   "name": "Embassy of the United States in Haiti",
-   "kind": "embassy",
-   "city": "Tabarre",
-   "address": "41 Boulevard 15 Octobre, Tabarre",
-   "services_note": null,
-   "lat": 18.56382,
-   "lon": -72.249112,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/48381308",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://ht.usembassy.gov/",
-   "phone": "011-509-2229-8000",
-   "phone_after_hours": "509-2229-8000",
-   "phone_src": "https://ht.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "69db25f49f37b59a383fe3bc0a23e900e598853068b0d5df8a592c7bdf64c446"
+   "fp": "f89d2ee2f9b115d9f6ff415dca739568a677f540767c17d41e03adf7a4b78e95"
   }
  ],
  "airports": [
@@ -365,73 +339,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:ht:xing:node-1102331250",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 18.716464,
-   "lon": -72.364641,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1102331250",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "2b8cd836911ea71134744bc49af8b184b1f77fe7c1232a63e2a3a023f25681c8"
-  },
-  {
-   "id": "sof:ht:xing:node-1448401106",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 18.576805,
-   "lon": -72.277826,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1448401106",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1212e78b5f686c07231a8b0c19a021b32212fb0f97198bc91da314feacb14d82"
-  },
-  {
-   "id": "sof:ht:xing:node-1683458455",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 19.109427,
-   "lon": -72.702216,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1683458455",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "e7a8a354f8e079314c8af0f4eaa583cc4c9ca6ff759d55fa01f3a7895ea7fde9"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

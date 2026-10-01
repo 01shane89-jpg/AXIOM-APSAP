@@ -55,12 +55,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/PapuaNewGuinea.html",
    "srcname": "travel.state.gov Papua New Guinea country information",
    "coord_basis": "estimated from published address",
-   "fp": "ff2bf046592e5ff9f28df3193030c0fbb999c8c84e68a89f0fca4cda9231873d",
-   "phone": "+675-308-9100",
-   "phone_after_hours": "+675-308-9100",
-   "phone_src": "https://pg.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "c57bd478a67a3a7837fc3f08311dd81381e1fbaccdda3a47038106b6f374db27"
   }
  ],
  "airports": [
@@ -420,65 +415,5 @@
  ],
  "gaps": [
   "pg.usembassy.gov medical list not reachable. Embassy, PIH and ANGAU coords estimated. Only hyperbaric chamber: Tropicair Hangar, Jacksons Intl Airport (travel.state.gov). Care outside Port Moresby very limited."
- ],
- "crossings": [
-  {
-   "id": "sof:pg:xing:node-1250672295",
-   "name": "Indonesia",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.608626,
-   "lon": 140.99803,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1250672295",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "eacbe494e3bb43d5196231acc53ed42ef9fb4e0ddd34aa26c0678c7906d69087"
-  },
-  {
-   "id": "sof:pg:xing:node-5558126545",
-   "name": "Papua Niugini",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -2.608086,
-   "lon": 141.001415,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/5558126545",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "b0a3fc52cdcb1657e660bfb176626a93d44d0f04c0f11f1bdd1d0909475275ed"
-  },
-  {
-   "id": "sof:pg:xing:way-806707961",
-   "name": "Sota Border",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": -8.428201,
-   "lon": 141.01745,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/806707961",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "4320b7547a0af4421e0fb5cb2da7b1083ed2771e43703f0e1ec618e970eeaa95"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -20,29 +20,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "b6b61c326278e499225c9e79920787fcef88233d2f7bd5cf0a6361fa23fe0fde"
  },
- "posts": [
-  {
-   "id": "sof:mu:post:embassy-of-the-united-states-of-america",
-   "name": "Embassy of the United States of America",
-   "kind": "embassy",
-   "city": "Port Louis",
-   "address": "John Kennedy Street, Port Louis",
-   "services_note": null,
-   "lat": -20.162034,
-   "lon": 57.500477,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/6903125444",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://mu.usembassy.gov/",
-   "phone": "(230) 202-4400",
-   "phone_after_hours": "(230) 202 4400",
-   "phone_src": "https://mu.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "4a920ed001006c5021fb701f716ce50341eb0b2600eddb216de58a729a60c7e0"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:mu:airport:fimp",
@@ -342,46 +320,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ],
- "crossings": [
-  {
-   "id": "sof:mu:xing:node-13011847618",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -20.150895,
-   "lon": 57.498517,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/13011847618",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ed27ac8d6b1a25220947e8c91ee0aee03def5aac0146990a4616bc128076797e"
-  },
-  {
-   "id": "sof:mu:xing:node-13011847623",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -20.142844,
-   "lon": 57.495491,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/13011847623",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a91855295599b416141a4cfa58114791348dfbf6591b000b47560b8f0d343588"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

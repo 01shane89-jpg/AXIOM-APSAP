@@ -44,11 +44,7 @@
    "src": "https://so.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "745844342ee48a54b185c66785d6a874ade4b6cfa1a44b9d9d74381b5902d80e",
-   "phone_after_hours": "254 20 363 6000",
-   "phone_src": "https://so.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "33d1cd8bc888a8d991d72b6dfec29f52943fbe80488bed92163d8ab600585551"
   }
  ],
  "airports": [
@@ -243,29 +239,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ],
- "crossings": [
-  {
-   "id": "sof:so:xing:way-312793636",
-   "name": "Mandera Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 3.933662,
-   "lon": 41.86963,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/312793636",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "b060cd88b6438facb1c4d60aeb4eac58b0561c9ba3710a398e3e1064533deb03"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }
