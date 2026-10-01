@@ -60,6 +60,7 @@ jobs:
       - run: node tests/borders_smoke.mjs
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
+      - run: node tests/dc_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs

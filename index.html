@@ -2706,6 +2706,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   src.push("data/live/news/" + cc + ".js", "data/live/social/" + cc + ".js");
   /* feeds that cover every country but are too big to load whole: sanctions lists and UCDP events (tools/refresh_more.mjs) */
   src.push("data/live/sanctions/" + cc + ".js", "data/live/ucdp/" + cc + ".js");
+  /* automatic layer reports from the news pool (tools/refresh_layerfeed.mjs) */
+  src.push("data/live/layerfeed/" + cc + ".js");
   document.write(src.map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(""));
 })();
 </script>
@@ -3134,6 +3136,22 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: "Terrorism and extremism", crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
     tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: "Martial-arts group violence", crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
   };
+  /* A layer with automatic reports from the layer feed (data/live/layerfeed/<cc>.js) but no researched records yet gets an empty
+     layer definition, so it opens like any other layer; its records are added by addLayerFeed() and are all automatic. */
+  (function () {
+    var F = window.OSAP_LAYERFEED, ids = {};
+    if (TH || !F || F.cc !== CC) return;   /* Thailand's layers are all researched, and its flood and border tabs are live widgets */
+    (F.items || []).forEach(function (i) { ids[i.l] = 1; });
+    var day = String(F.asof || "").slice(0, 10), from = new Date(Date.parse(day + "T00:00:00Z") - (F.days || 30) * 864e5).toISOString().slice(0, 10);
+    Object.keys(ids).forEach(function (lid) {
+      if (TD[lid] || (AREA_NAMES[CC] || {})[lid] === null || !/^[a-z]+$/.test(lid) || !day) return;
+      TD[lid] = { asof: day, from: from, color: "--muted", auto: true, events: [], tableAll: true, unit: "reports", unitShort: "Reports",
+        srcline: "Automatic reports from the news pool · not reviewed",
+        status: "<b>Automatic reports only.</b> Headlines from the news pool that the refresh job sorted into this layer by their words. Not reviewed, and not a count of incidents; no researched records yet.",
+        chartTitle: "Reports by month", chartSub: "Automatic reports by month.",
+        kinds: { other: { label: "Automatic report", color: "--muted" } }, kpis: [{ type: "all", label: "Automatic reports (not reviewed)", hot: true }] };
+    });
+  })();
   if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return C.world ? !!TD[l.id] || l.id === "timeline" : n !== null || !!TD[l.id]; });
   if (!TH) LAYERS.forEach(function (l) {
     if (l.id === "flood" || l.id === "border") l.live = false;
@@ -4024,7 +4042,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var D = TD[lid], recsAll = R.filter(function (r) { return r.layer === lid; }), recs = recsAll.filter(inPeriod);
     var vis = recs.filter(function (r) { return !curOff[lid + ":" + r.kind]; });
     /* live Deep South reports (r.ds) are machine-sorted leads: shown, never counted */
-    var viol = recs.filter(function (r) { return !r.ds && (kindOf(r).violent || kindOf(r).counted); });
+    var viol = recs.filter(function (r) { return !r.ds && !r.lf && (kindOf(r).violent || kindOf(r).counted); });
     var sum = function (a, k) { return a.reduce(function (n, r) { return n + (r[k] || 0); }, 0); };
     var lastV = viol.length ? viol.reduce(function (m, r) { return r.ts > m ? r.ts : m; }, "") : "";
     var since = lastV ? dnum(D.asof) - dnum(lastV) : null;
@@ -4070,7 +4088,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         { type: "sum", field: "killed", label: "Killed, as reported", hot: true },
         { type: "sum", field: "injured", label: "Injured, as reported" },
         { type: "days", label: "Days since the last recorded attack" }]).map(function (kp) {
-          var v = kp.type === "count" ? viol.length : kp.type === "all" ? recs.length :
+          var v = kp.type === "count" ? viol.length : kp.type === "all" ? (D.auto ? recs.length : recs.filter(function (r) { return !r.lf; }).length) :
                   kp.type === "sum" ? sum(kp.all ? recs : viol, kp.field) :
                   kp.type === "kind" ? recs.filter(function (r) { return r.kind === kp.kind; }).length :
                   kp.type === "assets" ? (D.assets || []).length :
@@ -5507,6 +5525,35 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (window.TSAP) window.TSAP.records = R;
   }
   addDeepSouth();
+  /* ---------- Layer feed: headlines from the news pool that the refresh job sorted into a layer by their words
+     (tools/refresh_layerfeed.mjs, docs/LAYER-FEED.md). Automatic reports, not reviewed: they never count in a layer's totals,
+     a link a researched record already uses is skipped, and a pin only comes from the place the news job matched. ---------- */
+  function addLayerFeed() {
+    R = R.filter(function (r) { if (r.lf) { delete byId[r.id]; r.src.n--; return false; } return true; });
+    var F = window.OSAP_LAYERFEED;
+    if (!F || F.cc !== CC) return;
+    var used = {}; Object.keys(TD).forEach(function (lid) { TD[lid].events.forEach(function (e) { if (e.src) used[e.src] = 1; }); });
+    (window.ASAP_DS && window.ASAP_DS.items || []).forEach(function (i) { if (i.link) used[i.link] = 1; });
+    (F.items || []).forEach(function (i) {
+      if (!i.u || used[i.u] || !LBY[i.l] || LBY[i.l].sof) return;
+      used[i.u] = 1;
+      var fl = i.f || "", g = i.g;
+      var s = src("lf-" + String(i.s || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.s || "Unknown outlet",
+        /g/.test(fl) ? "State media or government (its own statements)" : /s/.test(fl) ? "News search result" : "News outlet", "F",
+        "Headline from the news pool, sorted into this layer automatically. Not assessed." + (/n/.test(fl) ? " Non-commercial terms." : ""), i.u);
+      add({ layer: i.l, type: /g/.test(fl) ? "claim" : "report", cat: "Automatic report (not reviewed)", kind: "other", live: true, lf: true,
+        title: unent(i.t), detail: "", orig: i.o ? unent(i.o) : "", origLang: "",
+        derived: ["Sorted into this layer by machine from the headline's words; not reviewed by an analyst and not counted in the layer's totals.",
+          /m/.test(fl) ? "Headline machine translated." : "",
+          g ? "Placed at " + g[0] + (g[3] === "province" ? " (the rough centre of the region)" : " (the town centre, approximate)") + " because the text names it." : "Not placed: the text names no place the news job could match."].filter(Boolean).join(" "),
+        ts: i.d, tsLabel: i.d ? String(i.d).replace("T", " ") + "Z" : "", place: g ? g[0] : "", prov: "",
+        lat: g ? g[1] : null, lon: g ? g[2] : null, prec: g ? (g[3] === "province" ? "province" : "approx") : "none", sev: 1,
+        src: s, url: i.u, issued: i.d, recorded: F.asof });
+    });
+    R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
+    if (window.TSAP) window.TSAP.records = R;
+  }
+  addLayerFeed();
   function nqHtml() {
     var N = window.ASAP_NQ, list = N ? (N.items || []).filter(function (q) { return hasCC(q) && inPeriodDate(q.time); }).sort(function (a, b) { return a.time < b.time ? 1 : -1; }) : [];
     if (!N) return "";
@@ -8312,6 +8359,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-grid.js"></script>
 <script src="assets/osap-power.js"></script>
 <script src="assets/osap-evac.js"></script>
+<script>window.OSAP_LATER("assets/osap-dc.js");</script>
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
