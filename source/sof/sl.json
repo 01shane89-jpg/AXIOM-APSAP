@@ -24,7 +24,29 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "bcbfce361595e2af527f8e0a691096ec8d52d1c13afadfc6d7af2af0ad3ea00b"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:sl:post:embassy-of-the-united-states",
+   "name": "Embassy of the United States",
+   "kind": "embassy",
+   "city": "Freetown",
+   "address": "Southridge - Hill Station, Freetown, Sierra Leone",
+   "services_note": null,
+   "lat": 8.452087,
+   "lon": -13.229822,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/205999920",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://sl.usembassy.gov/",
+   "phone": "+232 99 105 000",
+   "phone_after_hours": "(232) 99 105 000",
+   "phone_src": "https://sl.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "9bf5ccc4d8e60a086bbfd5fb5eb889ac57d5d585b298b7e3db4a01e4aadd3f28"
+  }
+ ],
  "airports": [
   {
    "id": "sof:sl:airport:gfll",
@@ -207,5 +229,80 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:sl:xing:node-3423510167",
+   "name": "Wandalyah",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 9.41188,
+   "lon": -12.683962,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3423510167",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "ad97bc7f18554a507c39018dfe52b12384b790810107cf0b37b4f5197493c635"
+  },
+  {
+   "id": "sof:sl:xing:node-4888702952",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 8.311061,
+   "lon": -10.558454,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4888702952",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7ede9f7a8424d6d49700b98dcce80e5cad983c987e89cdfe3d46c96225f27328"
+  },
+  {
+   "id": "sof:sl:xing:node-5459864107",
+   "name": "Guinéan border post",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 9.876923,
+   "lon": -12.441245,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5459864107",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "091c89b69684b553fc8be98c1c1835dbcbb1c46794e6091063b35b457b79d5a1"
+  },
+  {
+   "id": "sof:sl:xing:node-5459864108",
+   "name": "Border post of Sierra Leone",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 9.845091,
+   "lon": -12.379597,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5459864108",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6978c36289a91c02e72f3f00d58a23faeb72970982d2f60d5654e5bc771d6c66"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

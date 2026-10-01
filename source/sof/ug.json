@@ -16,7 +16,28 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "5be24ca515ce95b66dc06e274a86630337b7ce649e527bf7dd3522fcc56de659"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ug:post:embassy-of-the-united-states-of-america",
+   "name": "Embassy of the United States of America",
+   "kind": "embassy",
+   "city": "Kampala",
+   "address": "1577 Ggaba Road, Kampala",
+   "services_note": null,
+   "lat": 0.300289,
+   "lon": 32.592049,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/525270881",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://ug.usembassy.gov",
+   "phone": "+256-414-306-001",
+   "phone_src": "https://ug.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "d59f4b667df9447afd009477fb7d3124203f11ddabee9185a4420578e653213f"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ug:airport:huen",
@@ -340,5 +361,146 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ug:xing:node-228690802",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 3.541372,
+   "lon": 30.88174,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/228690802",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f9a6539df70a3519772838af9d608404f15c363815e862512d12a8c1f1e45fa4"
+  },
+  {
+   "id": "sof:ug:xing:node-2684030725",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": -1.341564,
+   "lon": 29.740674,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2684030725",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "4b1d0afa28e4d6a009438e2f6d34e090e4903aff73cb5f23f39695d54b13ad54"
+  },
+  {
+   "id": "sof:ug:xing:node-282221835",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -1.426227,
+   "lon": 30.013042,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/282221835",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "fb5b5e94886a14b9b2c1c9cd271cb0149e2b988c7fb3ad5a9013190c33e179b5"
+  },
+  {
+   "id": "sof:ug:xing:node-6470678520",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.375551,
+   "lon": 31.029033,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6470678520",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "cae5da9447a593f45a125b89c1baa635acf687c7516cf2733c6bd2cfdd461fb0"
+  },
+  {
+   "id": "sof:ug:xing:node-732513540",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 0.040886,
+   "lon": 29.720049,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/732513540",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3b42664242a7e190bb0fdb325d8f42c7683047c24dbf6bcfc656c5f1fe1b591c"
+  },
+  {
+   "id": "sof:ug:xing:node-9072469003",
+   "name": "Busia One Stop Border Uganda - Pedestrians",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": "Uganda Immigration",
+   "lat": 0.465153,
+   "lon": 34.098504,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9072469003",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "2bd971e68aa8a0b67c04c8c92244aefc488c945160927782cbccbce8b5922c5e"
+  },
+  {
+   "id": "sof:ug:xing:way-1353908497",
+   "name": "Kajo keji County & Moyo District Border Crossing (South Sudan & Uganda Border Crossing)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 3.706363,
+   "lon": 31.676416,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1353908497",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "42fb40dca46c25a883939d5e23108cd0844a7cda0d33f548bd4b4e622af0fed3"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

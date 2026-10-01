@@ -28,7 +28,29 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "31bb2f75f12185f3c845e14aa84dd0c6b794784a54780eb0aed980a7a8e8f6af"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ci:post:embassy-of-the-united-states",
+   "name": "Embassy of the United States",
+   "kind": "embassy",
+   "city": "Cocody",
+   "address": "Rue D33, Riviera 1, Cocody",
+   "services_note": null,
+   "lat": 5.33492,
+   "lon": -3.975528,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/327513169",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://ci.usembassy.gov",
+   "phone": "+225) 27-22-49-40-00",
+   "phone_after_hours": "+225) 27 22 49 4000",
+   "phone_src": "https://ci.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "051cf589b87227cde95f788991ff983d381101a7d27c0d3595e6a8d17f86a250"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ci:airport:diap",
@@ -372,5 +394,114 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ci:xing:node-1163184461",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 6.758982,
+   "lon": -7.378531,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1163184461",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "e0aa48600481877997e3c95e9b5b818ab1403e026a26f761449634b2f87722c7"
+  },
+  {
+   "id": "sof:ci:xing:node-12236079132",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.45674,
+   "lon": -7.581308,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12236079132",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "877f541ff8153531be8212c237a9927091eb7addfa593fb1a820025b1bfa74c6"
+  },
+  {
+   "id": "sof:ci:xing:node-12236079139",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.337635,
+   "lon": -7.60101,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12236079139",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "42e0f7cada084800e5923a750901eb4c72a3f9e04fc45e752caac4b679d84ce1"
+  },
+  {
+   "id": "sof:ci:xing:node-12772816176",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.857524,
+   "lon": -8.110355,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12772816176",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f4fe8d919d4701e31228612f0cfb10f6852ca47a569473bebd52b455d9183d76"
+  },
+  {
+   "id": "sof:ci:xing:node-5104802536",
+   "name": "Poste Frontière de Soko",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.987533,
+   "lon": -2.738588,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5104802536",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3215c3445ac5c3b8c55ddf0787b29224bb40da0a639c9911c96fd7dbcad5ddd6"
+  },
+  {
+   "id": "sof:ci:xing:node-5209369821",
+   "name": "Poste frontière de Gnato",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 4.433305,
+   "lon": -7.539714,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5209369821",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "414552c83626c85a8c8c58adb58f298c82a9c61060b14436f60258e020053c96"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

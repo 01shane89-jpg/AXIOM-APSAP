@@ -56,7 +56,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Philippines.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Manila",
-   "fp": "eaea774aadadf6c9db7f0967635ada306de7bd5c1da0f7dc73899d88fe0f83b3"
+   "fp": "5dbe28e28267e7ab9c3df683af0c699ec5167b4cabbbd10432a2808bc0c9f443",
+   "web": "https://ph.usembassy.gov/",
+   "phone": "+63) 2 5301-2000",
+   "phone_after_hours": "+63) 2 5301-2000",
+   "phone_src": "https://ph.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   },
   {
    "id": "sof:ph:post:u-s-consular-agency-cebu",
@@ -71,7 +77,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Philippines.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "estimated from published address",
-   "fp": "120493deed91a43e3fa5c0210ed234b28d6e15b2e6d935cc8d340d509a670623"
+   "fp": "f6ee47f37132649e98a3fba8c664353e0bef1ea47aa786ecdaf4229fee55da1f",
+   "web": "https://ph.usembassy.gov/u-s-citizen-services/citizenship-services/consular-agency-cebu/",
+   "phone": "+63 32 231 1261",
+   "phone_src": "https://www.openstreetmap.org/node/1595957563",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -1050,5 +1061,97 @@
  ],
  "gaps": [
   "ph.usembassy.gov 403. Trauma level for Makati Med is from Wikipedia infobox, not an official designation document."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ph:xing:node-11738060472",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 14.588527,
+   "lon": 120.99673,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11738060472",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "985611bb00f1c2a7a0d6c4a0e269ddd749b17f236ed68d60ed77f39915e49b70"
+  },
+  {
+   "id": "sof:ph:xing:node-13539000665",
+   "name": "No Entry",
+   "local_name": null,
+   "hours": "no @ (Mo-Fr 06:30-08:00, 15:00-17:00)",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 10.271679,
+   "lon": 123.583727,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/13539000665",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3c0c04bdd582ba224067afda9f4dc420cc69ac1ce11314ff46691064399871ee"
+  },
+  {
+   "id": "sof:ph:xing:node-6814493976",
+   "name": "Balutakay Border Control Point",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 6.721144,
+   "lon": 125.353633,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6814493976",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "090d6345202a2760a96e2bbe843f548c654fc65602f7ee7b8c8670c7c57bf1ec"
+  },
+  {
+   "id": "sof:ph:xing:node-9634943156",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.496659,
+   "lon": 125.249053,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9634943156",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "86c6d06cda20f7d2ab473fc01a8d3b1ed6acfd85ffca17eefbe0d4f93889a25b"
+  },
+  {
+   "id": "sof:ph:xing:way-896362056",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 10.238661,
+   "lon": 123.779066,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/896362056",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8bda4d5bf9489228c0f7f1176ab14e1b41d3e239dbde6e4a1682d67aed45553f"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

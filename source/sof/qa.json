@@ -34,7 +34,33 @@
    "src": "https://qa.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "8129e25ef009d285b2a17f13b28974ea5e419b8b4de872e6fc22825237b690ee"
+   "fp": "294e77fb513938ce0bffcd4412791777fda2b09564da43f97178d122982648c6",
+   "phone": "974-4496-6000",
+   "phone_after_hours": "+974 4496-6700",
+   "phone_src": "https://qa.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
+  },
+  {
+   "id": "sof:qa:post:embassy-of-the-united-states",
+   "name": "Embassy of the United States",
+   "kind": "embassy",
+   "city": null,
+   "address": "22 فبراير",
+   "services_note": null,
+   "lat": 25.303726,
+   "lon": 51.471427,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/234513507",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://qa.usembassy.gov",
+   "phone": "974-4496-6000",
+   "phone_after_hours": "+974 4496-6700",
+   "phone_src": "https://qa.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "d0b019e8d142d55cbcc4e03d291c1d57714f2458aecd8dfd80af34bf47a09bc9"
   }
  ],
  "airports": [
@@ -378,5 +404,29 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: hospitals not yet researched for this country.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:qa:xing:way-1456475677",
+   "name": "Abu Samra Border Post",
+   "local_name": "منفذ أبو سمرة الحدودي",
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 24.741508,
+   "lon": 50.842395,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1456475677",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "60e4fe65dd48d731b509d928d592e4220fb5d7abee2df78d9ef68695c527391a"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

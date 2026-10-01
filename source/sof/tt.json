@@ -36,7 +36,33 @@
    "src": "https://www.wikidata.org/entity/Q105635406",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "950216f2c9d421ddfafecf694256d470a6deb03a7cfa65e7e6a970aa2d010e23"
+   "fp": "23b3bed4f9a3b849bc5e81775a1ded446abe3cdf8fd5390a475b0ed40db00f23",
+   "phone": "(868) 622-6371",
+   "phone_after_hours": "1-868-622-6371",
+   "phone_src": "https://tt.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
+  },
+  {
+   "id": "sof:tt:post:embassy-of-the-united-states-of-america",
+   "name": "Embassy of the United States of America",
+   "kind": "embassy",
+   "city": "Port of Spain",
+   "address": "15 Queen's Park West, Port of Spain",
+   "services_note": null,
+   "lat": 10.665893,
+   "lon": -61.516744,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/165665292",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://tt.usembassy.gov",
+   "phone": "(868) 622-6371",
+   "phone_after_hours": "1-868-622-6371",
+   "phone_src": "https://tt.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "f2d6bb54641143d9f63cdd2fe23c0697728c967120e50c2cf8f03fba81203fcb"
   }
  ],
  "airports": [
@@ -350,5 +376,11 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

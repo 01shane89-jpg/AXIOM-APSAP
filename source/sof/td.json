@@ -30,7 +30,50 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "40dd797f443317e6d5db23b875974e348ff227586c05abc414096038768907eb"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:td:post:embassy-of-the-united-states-of-america",
+   "name": "Embassy of the United States of America",
+   "kind": "embassy",
+   "city": "انجمينا",
+   "address": "انجمينا",
+   "services_note": null,
+   "lat": 12.102048,
+   "lon": 15.048119,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/197729364",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "http://ndjamena.usembassy.gov/",
+   "phone": "+235 6885 1065",
+   "phone_after_hours": "+235-6885-1065",
+   "phone_src": "https://td.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "e13e4a564cf8de3783fcc12e961a2175b8bbb8bd2b3cd2503448e6671a3de2da"
+  },
+  {
+   "id": "sof:td:post:embassy-of-the-united-states",
+   "name": "Embassy of the United States",
+   "kind": "embassy",
+   "city": "انجمينا",
+   "address": "Rond Point de Chagoua, انجمينا",
+   "services_note": null,
+   "lat": 12.093081,
+   "lon": 15.084242,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/547412119",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://td.usembassy.gov",
+   "phone": "+235 6885 1065",
+   "phone_after_hours": "+235-6885-1065",
+   "phone_src": "https://td.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "4b03dbf7c08920f3148d34e678aab75173cdf024876c769f69c381c6a3c62f2d"
+  }
+ ],
  "airports": [
   {
    "id": "sof:td:airport:fttj",
@@ -171,5 +214,46 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:td:xing:node-4760036111",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.772254,
+   "lon": 15.588284,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4760036111",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "e7a6bb511df00c4bc1f5d90e962410799e3653dcd4d63f307036693881d1c48d"
+  },
+  {
+   "id": "sof:td:xing:way-415007017",
+   "name": "Douanes Camerounaises - poste de contrôle",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": "Douanes Camerounaises",
+   "lat": 12.066934,
+   "lon": 15.051454,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/415007017",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6ea2c62d685b0b3113bb24cf1a8c8c37997d9563ce0a820da0233ee1c0c9a900"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
