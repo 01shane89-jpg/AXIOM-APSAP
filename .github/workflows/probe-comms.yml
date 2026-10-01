@@ -1,0 +1,16 @@
+# Test only: checks the free Overpass servers with the Comms tab's mast query (tools/probe_comms.sh). Prints to the log; writes nothing to the repo.
+name: Probe comms masts
+on:
+  push:
+    branches: [claude/comms-providers]
+    paths: [tools/probe_comms.sh, .github/workflows/probe-comms.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_comms.sh
