@@ -51,8 +51,9 @@
 
     ["areasum", "Drawn area", "Area summary", "Everything inside the drawn area, summarised with sources",
       function () { return (areaOn() && !!q('[data-area="sum"]')) || "Draw an area first"; }, function () { press('[data-area="sum"]'); }, drawArea],
-    ["medplan", "Drawn area", "Medical plan", "Draft MEDEVAC plan from a point of injury: hospitals by capability, routes, contacts, golden hour, evacuation",
-      function () { return (!!W.OSAP_MEDPLAN && areaOn()) || "Draw an area first"; }, function () { W.OSAP_MEDPLAN.open(); }, drawArea],
+    /* no drawn area needed: the plan opens on the drawn area when there is one, else on the map centre (Pick on map moves it) */
+    ["medplan", "Point on the map", "Medical plan", "Draft MEDEVAC plan from a point of injury: hospitals by capability, routes, contacts, golden hour, evacuation",
+      function () { return !!W.OSAP_MEDPLAN || "Not available"; }, function () { W.OSAP_MEDPLAN.open(areaOn() ? undefined : { centre: true }); }],
 
     ["route", "Route", "Route plan (print)", "Legs, timings, light, weather and hazards along a planned route",
       function () { return !!shown('[data-rt="print"]') || "Plan a route first"; }, function () { press(shown('[data-rt="print"]')); }, openRoute],

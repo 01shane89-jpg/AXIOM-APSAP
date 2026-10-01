@@ -1,0 +1,8 @@
+[["n1042026141",49.445,-106.932,"ca",{"name":"Ferland Airport","aeroway":"aerodrome"}],
+["n13340946616",49.41918,-107.07066,"ca",{"name":"Primary Health Clinic","amenity":"clinic","healthcare":"clinic","phone":"+1-306-478-2200","website":"https://www.saskhealthauthority.ca/facilities-locations/prairie-view-health-centre","opening_hours":"Tu-We 08:30-16:30; Th-Mo Off"}],
+["w1135309752",49.87425,-106.56337,"ca",{"name":"St Joseph's Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1135797063",49.41911,-107.07027,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1135816927",49.7046,-106.57269,"ca",{"name":"Lafleche and District Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+1 306-472-5230","website":"https://www.saskhealthauthority.ca/facilities-locations/lafleche-and-district-health-centre","addr:housenumber":"315","addr:street":"Main Street","opening_hours":"Mo off; Tu 08:30-11:30; We off; Th 08:30-11:30; Fr-Su off"}],
+["w545353594",49.24503,-107.73034,"ca",{"name":"Ambulance Bay","emergency":"ambulance_station"}],
+["w769765734",49.00266,-106.38501,"ca",{"name":"West Poplar Airport","aeroway":"aerodrome","wikidata":"Q3915616"}],
+["w865227628",49.86575,-106.57003,"ca",{"name":"Gravelbourg Airport","aeroway":"aerodrome"}]]

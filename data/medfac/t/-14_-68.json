@@ -1,0 +1,13 @@
+[["n1042076048",-13.07418,-66.55799,"bo",{"name":"Buena Hora Airport","aeroway":"aerodrome","icao":"SLBH"}],
+["n1042076074",-13.86656,-66.33043,"bo",{"name":"Villa Vista Montano Airport","aeroway":"aerodrome","icao":"SLBV","wikidata":"Q16840044"}],
+["n1042076162",-13.56938,-66.07137,"bo",{"name":"El Cocal Airport","aeroway":"aerodrome","icao":"SLEA"}],
+["n1042076163",-13.79138,-66.31866,"bo",{"name":"El Cairo Airport","aeroway":"aerodrome","icao":"SLEC","wikidata":"Q16890903"}],
+["n1042076566",-13.20046,-66.9874,"bo",{"name":"Coquinal Airport","aeroway":"aerodrome","icao":"SLQN"}],
+["n1042076629",-13.9085,-66.36202,"bo",{"name":"Santa Rita Airport","aeroway":"aerodrome","icao":"SLRT","wikidata":"Q16899750"}],
+["n1042076673",-13.90891,-66.12799,"bo",{"name":"San Miguel De Gaser Airport","aeroway":"aerodrome"}],
+["n10740717618",-12.47506,-66.92637,"bo",{"name":"P.S. Carmen Alto","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Carmen Alto"}],
+["n10760479909",-13.09158,-66.70976,"bo",{"name":"P.S. Cerrito","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:city":"El Cerrito"}],
+["n10760572214",-13.48208,-66.89791,"bo",{"name":"P.S. El Candado","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:city":"El Candado"}],
+["n2409155492",-13.68214,-67.06325,"bo",{"aeroway":"aerodrome"}],
+["w273100876",-13.73796,-66.40932,"bo",{"name":"Palmira Airport","aeroway":"aerodrome"}],
+["w570045981",-13.09894,-67.26461,"bo",{"name":"Santa Catalina Airport","aeroway":"aerodrome","icao":"SLIN"}]]
