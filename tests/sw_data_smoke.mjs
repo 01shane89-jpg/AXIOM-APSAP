@@ -28,7 +28,7 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 /* the map tile host: another origin than the page, resolved to this server (localhost can be IPv6 on a runner) */
 const browser = await chromium.launch({ args: ["--host-resolver-rules=MAP tiles.osap.test 127.0.0.1"] });
 const ctx = await browser.newContext({ viewport: { width: 1200, height: 800 } });
-await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|tiles\.osap\.test)/, (r) => r.abort());   // tiles.osap.test is this server (newer Playwright also routes the service worker)
 
 const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
 await p.goto(base + "#th/timeline");
