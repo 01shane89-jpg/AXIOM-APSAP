@@ -303,7 +303,7 @@ await job("sanc", "sanctions.js", "ASAP_SANC", async () => {
     entries.push({ id: r[0], n: r[1].trim(), t, p: (r[3] || "").replace(/\] \[/g, "; ").replace(/[\[\]]/g, "").trim(), ccs: [...set] });
   }
   // every country's list is about 1.5 MB together, so the page loads only the open country's (data/live/sanctions/<cc>.js);
-X
+  // sanctions.js keeps the time stamp and the per-country counts
   const kb = Math.round(writeSplit("sanctions", "ASAP_SANC_CC", entries) / 1024), counts = {};
   entries.forEach((e) => e.ccs.forEach((c) => (counts[c] = (counts[c] || 0) + 1)));
   return { src: "https://sanctionssearch.ofac.treas.gov/", total: sdn.length, listed: entries.length, counts, split: "data/live/sanctions/<cc>.js", entries: [],
