@@ -1,0 +1,12 @@
+[["n1042025568",54.6786,-101.66,"ca",{"name":"Bakers Narrows Seaplane Base","aeroway":"aerodrome","wikidata":"Q3915233"}],
+["n1042026279",54.74706,-101.82836,"ca",{"name":"Flin Flon/Channing Seaplane Base","aeroway":"aerodrome"}],
+["n1042026877",54.8833,-100.033,"ca",{"name":"Snow Lake Seaplane Base","aeroway":"aerodrome"}],
+["n1042031121",54.6781,-101.682,"ca",{"name":"Flin Flon Airport","aeroway":"aerodrome","icao":"CYFO","iata":"YFO","wikidata":"Q1431291"}],
+["n11014383824",54.58356,-101.37191,"ca",{"name":"Cranberry Portage EMS","emergency":"ambulance_station"}],
+["n1112224128",55.7367,-101.327,"ca",{"name":"Pukatawagan Seaplane Base","aeroway":"aerodrome"}],
+["n1196084412",54.88287,-100.03328,"ca",{"aeroway":"aerodrome"}],
+["n1752774549",54.76512,-101.87775,"ca",{"name":"Flin Flon General Hospital","amenity":"hospital","healthcare":"hospital","contact:phone":"+1 204 6877591","contact:website":"https://northernhealthregion.com/"}],
+["n631317465",55.74768,-101.31976,"ca",{"name":"Pukatawagan Nursing Station","amenity":"hospital","healthcare":"hospital"}],
+["w1106974271",54.76812,-101.86199,"ca",{"name":"Flin Flon EMS","emergency":"ambulance_station","addr:city":"Flin Flon","addr:province":"MB"}],
+["w1181518928",54.22579,-100.60226,"ca",{"name":"107 - Nursing Station","amenity":"clinic","healthcare":"clinic","addr:housenumber":"107","addr:street":"Clark Street","addr:city":"Cormorant","addr:province":"MB"}],
+["w631153964",55.74885,-101.26607,"ca",{"name":"Pukatawagan Airport","aeroway":"aerodrome","icao":"CZFG","iata":"XPK","wikidata":"Q3913567"}]]

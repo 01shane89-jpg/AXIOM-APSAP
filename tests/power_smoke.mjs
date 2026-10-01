@@ -40,6 +40,9 @@ async function open(opts, hash = "", overpass = "ok") {
   await ctx.route(/overpass/, async (r) => {
     queries.push(decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")));
     if (overpass === "busy") return r.fulfill({ status: 429, body: "busy" });
+    if (overpass === "slow") await new Promise((res) => setTimeout(res, 1500));
+    /* what the real server did (2026-10-01): 200, no elements, a runtime-error remark */
+    if (overpass === "remark" || (overpass === "remark1" && queries.length === 1)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ elements: [], remark: 'runtime error: Query ran out of memory in "query" at line 1. It would need at least 32 MB of RAM to continue.' }) });
     return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FIX) });
   });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*overpass)/, (r) => r.abort());
@@ -130,8 +133,44 @@ const om = async (p, want) => {
   const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "busy");
   await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(2000);
   const g = await grid(p);
-  ok(/busy/.test(g.st.msg) && queries.length === 2, "busy: tries the second Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
+  ok(/busy/.test(g.st.msg) && queries.length === 3, "busy: tries every Overpass server, then says the server is busy (" + queries.length + " tries): " + g.st.msg);
   ok(errors.length === 0, "busy: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- a server that answers with an error remark is a failure, not an empty grid ----------
+{
+  const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "remark1");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(2000);
+  let g = await grid(p);
+  ok(queries.length === 2 && g.st.drawn.lines.length > 0 && /on screen/.test(g.st.msg), "remark: first server's out-of-memory remark falls through to the second, which draws (" + queries.length + " tries, " + g.st.drawn.lines.length + " lines): " + g.st.msg);
+  ok(!/maxsize/.test(queries[0]), "remark: queries carry no tight memory cap");
+  await ctx.close();
+  const o = await open({ viewport: { width: 1360, height: 860 } }, "", "remark");
+  await o.p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await o.p.waitForTimeout(2000);
+  g = await grid(o.p);
+  ok(/did not load/.test(g.st.msg) && g.st.drawn.lines.length === 0, "remark: both servers erroring says the grid did not load, never \"0 lines\": " + g.st.msg);
+  ok(errors.length === 0 && o.errors.length === 0, "remark: no page errors " + errors.concat(o.errors).join(" | "));
+  await o.ctx.close();
+}
+// ---------- panning while a view is loading: the newer view still draws ----------
+{
+  const { ctx, p, errors, queries } = await open({ viewport: { width: 1360, height: 860 } }, "", "slow");
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 10, { animate: false }); window.OSAP_POWER.set("lines", true); }); await p.waitForTimeout(300);
+  await p.evaluate(() => window.__asapMap.setView([13.9, 100.7], 10, { animate: false }));
+  await p.waitForFunction(() => /on screen|did not load/.test(window.OSAP_POWER.state().msg), null, { timeout: 15000 }).catch(() => {});
+  await p.waitForTimeout(500);
+  const g = await grid(p);
+  ok(queries.length === 2 && g.st.drawn.lines.length > 0 && /on screen/.test(g.st.msg), "pan while loading: the newer view draws, no \"did not load\" (" + queries.length + " queries, " + g.st.drawn.lines.length + " lines): " + g.st.msg);
+  ok(errors.length === 0, "pan while loading: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- low zoom: the hint shows on the map, not only in the panel ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 5, { animate: false }); window.OSAP_POWER.set("subs", true); }); await p.waitForTimeout(300);
+  const t = await p.evaluate(() => { const n = document.getElementById("atk-toast"); return n && n.classList.contains("show") ? n.textContent : ""; });
+  ok(/Zoom in/.test(t), "low zoom: switching on shows a map hint: " + t);
+  ok(errors.length === 0, "low zoom: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- WRI plants from the country's reference data, at any zoom ----------

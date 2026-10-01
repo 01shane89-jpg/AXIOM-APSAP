@@ -1,0 +1,12 @@
+[["n10585625710",17.93353,-87.95445,"bz",{"name":"San Pedro Ambulance Station","emergency":"ambulance_station"}],
+["n8459164811",17.9179,-87.96479,"bz",{"name":"Caring Hands Clinic","amenity":"clinic"}],
+["n9569715495",17.94758,-87.9436,"bz",{"name":"San Pedro Urgent Care","amenity":"clinic","healthcare":"clinic","addr:street":"Honourable Heredia Jr. North Road","addr:city":"Caribeville"}],
+["w358461076",17.91438,-87.97052,"bz",{"name":"John Greif II Airport","addr:housenumber":"7","addr:street":"Coconut Drive","addr:city":"San Pedro Town","aeroway":"aerodrome","icao":"MZSP","iata":"SPR","wikidata":"Q4383718"}],
+["w377040752",17.91326,-87.96853,"bz",{"amenity":"clinic","addr:city":"San Pedro","osap:withheld":"1"}],
+["w377171150",17.92101,-87.96164,"bz",{"name":"San Carlos Medical Center","amenity":"clinic","addr:street":"Pescador Drive","addr:city":"San Pedro"}],
+["w377314852",17.91763,-87.96532,"bz",{"name":"SSS Hyperbaric Chamber","amenity":"clinic","healthcare":"clinic","emergency":"yes","phone":"226-2851","addr:street":"Lion Street","addr:city":"San Pedro"}],
+["w377372411",17.92295,-87.96059,"bz",{"name":"Daniel Gonzales","amenity":"clinic","healthcare":"clinic"}],
+["w453836698",17.9154,-87.96672,"bz",{"amenity":"clinic","healthcare":"clinic","addr:city":"San Pedro","osap:withheld":"1"}],
+["w603960877",17.45358,-87.49812,"bz",{"name":"Northern Two Cayes Airstrip","aeroway":"aerodrome","icao":"MZLH","wikidata":"Q60773134"}],
+["w603971669",17.31867,-87.79773,"bz",{"name":"Blackbird Caye Airstrip","aeroway":"aerodrome","icao":"MZBB","wikidata":"Q60773542"}],
+["w908202737",17.23169,-87.86522,"bz",{"name":"Belize Dive haven Runway","aeroway":"aerodrome"}]]

@@ -1,0 +1,7 @@
+[["n12610139701",2.04974,15.22576,"cm",{"name":"CENTRE DE SANTE LUMEN-CHRISTI","amenity":"hospital","healthcare":"birthing_center;clinic;hospital;laboratory;pharmacy;rehabilitation","healthcare:speciality":"clinical_pathology;community;general;infectious_diseases;occupational;pathology","emergency":"no","beds":"15","operator:type":"private","contact:phone":"+237696894961/653583387","addr:street":"N10","addr:city":"PEZAM","opening_hours":"24/7"}],
+["n13907756863",2.60082,15.38848,"cm",{"name":"Centre de Santé Intégré de Salapoumbé","amenity":"hospital"}],
+["w1113337751",2.62216,15.37952,"cm",{"name":"Hôpital Catholique Notre Dame de Vie","amenity":"hospital"}],
+["w315023044",3.78804,14.98256,"cm",{"aeroway":"aerodrome"}],
+["w316362530",2.78261,15.2603,"cm",{"aeroway":"helipad"}],
+["w786503546",3.48731,15.33149,"cm",{"amenity":"hospital","healthcare":"hospital"}],
+["w786503547",3.92657,15.11395,"cm",{"name":"Centre médical d'arrondissement de Gari Gombo","amenity":"hospital","healthcare":"yes"}]]
