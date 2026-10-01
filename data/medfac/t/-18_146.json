@@ -1,0 +1,12 @@
+[["n1042093934",-17.5594,146.01199,"au",{"name":"Innisfail Aerodrome","aeroway":"aerodrome","icao":"YIFL","iata":"IFL"}],
+["n10888983008",-17.8984,146.09256,"au",{"name":"Tristar Medical","amenity":"clinic","healthcare":"clinic"}],
+["n12982437013",-17.8811,146.09175,"au",{"name":"Mission Helicopters","website":"https://missionhelicopters.com.au/","addr:housenumber":"2188","addr:street":"Tully Mission Beach Road","addr:postcode":"4852","aeroway":"helipad","surface":"paved"}],
+["n2463586470",-17.90478,146.09256,"au",{"name":"Mission Beach Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
+["n2465291021",-17.74111,146.01233,"au",{"name":"Silkwood Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
+["n5527357549",-17.52189,146.0309,"au",{"name":"Innisfail Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service (QAS)","addr:housenumber":"5","addr:street":"Grace Street","addr:postcode":"4860"}],
+["n9946137501",-16.92272,146.00652,"au",{"aeroway":"helipad","surface":"asphalt"}],
+["w1346549397",-17.93914,146.14141,"au",{"aeroway":"aerodrome","icao":"YDKI","iata":"DKI"}],
+["w1412717597",-17.88113,146.09193,"au",{"aeroway":"helipad","surface":"paved"}],
+["w430344812",-17.51844,146.02992,"au",{"name":"Innisfail Hospital Helipad","aeroway":"helipad"}],
+["w666916108",-17.5594,146.01175,"au",{"name":"Innisfail (Mundoo) Aerodrome","aeroway":"aerodrome","icao":"YIFL","iata":"IFL"}],
+["w844460866",-17.51912,146.03015,"au",{"name":"Innisfail Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;community;maternity","emergency":"yes","operator":"Queensland Health","operator:type":"government","addr:street":"Rankin Street","addr:postcode":"4860"}]]

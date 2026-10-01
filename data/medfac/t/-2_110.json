@@ -1,0 +1,13 @@
+[["n10125249957",-0.29207,111.60851,"id",{"name":"RSUD Pratama Batu Buil","amenity":"hospital","healthcare":"hospital"}],
+["n10125249958",-0.3183,111.6572,"id",{"name":"Puskesmas Pemuar","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
+["n5414325396",-0.35064,111.67868,"id",{"aeroway":"helipad"}],
+["w1105715561",-0.04294,111.46073,"id",{"name":"Bandara Tebelian Sintang","aeroway":"aerodrome","icao":"WIOS","iata":"SQG"}],
+["w1525649541",-1.89512,111.31508,"id",{"name":"Puskesmas Tapin Bini","amenity":"clinic"}],
+["w1525649600",-1.89155,111.11934,"id",{"name":"Puskesmas Kawa","amenity":"clinic"}],
+["w1525649609",-1.95622,111.17884,"id",{"name":"Poskesdes Penopa","amenity":"clinic"}],
+["w1525679690",-1.59665,111.03568,"id",{"name":"Puskesmas Delang","amenity":"clinic"}],
+["w1525679734",-1.62303,110.9398,"id",{"name":"Poskesdes Sekombulan","amenity":"clinic"}],
+["w562153394",-1.52655,110.56582,"id",{"name":"Puskesmas Nanga Tayap","amenity":"clinic"}],
+["w674050844",-0.34848,111.74542,"id",{"name":"Bandar Udara Nangapinoh","name:en":"Nangapinoh Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 568 21181","addr:street":"Jl. Kota Baru, KM. 2.5, Nanga Pinoh, Kel. Paal, Kec. Nanga Pinoh, Kab. Melawi, Kalimantan Barat, 79672","aeroway":"aerodrome","icao":"WIOG","iata":"NPO","aerodrome:type":"regional"}],
+["w782553655",-0.00291,110.92429,"id",{"name":"RSUD Sekadau","amenity":"hospital","healthcare":"hospital"}],
+["w821733634",-0.4535,111.79948,"id",{"name":"Puskesmas Manggala","amenity":"clinic"}]]

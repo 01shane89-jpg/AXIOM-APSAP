@@ -1,0 +1,10 @@
+[["w1018911220",41.75406,83.02775,"cn",{"aeroway":"heliport"}],
+["w1018911221",41.75434,83.02698,"cn",{"aeroway":"helipad"}],
+["w1018911222",41.75464,83.02834,"cn",{"aeroway":"helipad"}],
+["w1079531359",41.22953,82.83321,"cn",{"name":"沙雅县疫情防控留观点","amenity":"hospital","healthcare":"quarantine"}],
+["w1079531363",41.74419,83.2376,"cn",{"name":"牙哈镇卫生院","amenity":"hospital","healthcare":"hospital"}],
+["w1079531389",41.2279,82.77929,"cn",{"name":"沙雅县第二人民医院","amenity":"hospital"}],
+["w1347255607",41.71467,82.95459,"cn",{"name":"库车市人民医院","amenity":"hospital","healthcare":"hospital"}],
+["w183939727",41.67919,82.87167,"cn",{"name":"库车龟兹机场 كۇچار ئايرودرومى","name:en":"Kuqa Qiuci Airport","addr:city":"库车市","addr:province":"新疆维吾尔自治区","addr:postcode":"842000","aeroway":"aerodrome","icao":"ZWKC","iata":"KCA"}],
+["w186652297",41.96735,82.50815,"cn",{"aeroway":"helipad"}],
+["w650004011",41.71789,82.93199,"cn",{"name":"库车市中医医院","amenity":"hospital","healthcare":"hospital"}]]

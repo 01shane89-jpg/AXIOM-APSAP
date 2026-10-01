@@ -1,0 +1,7 @@
+[["n1042093412",-31.63798,129.01071,"au",{"name":"Border Village Airport","aeroway":"aerodrome","icao":"YBOV"}],
+["n1042093731",-31.70683,128.87786,"au",{"name":"Eucla Airport","aeroway":"aerodrome","icao":"YECL","iata":"EUC"}],
+["n1042093905",-30.71702,129.51385,"au",{"name":"Hughes Siding Airport","aeroway":"aerodrome","icao":"YHGS"}],
+["n1042095369",-31.8267,128.23,"au",{"name":"Mundrabilla Motel Airport","aeroway":"aerodrome","icao":"YMDT"}],
+["n1967797507",-31.5435,129.22178,"au",{"aeroway":"aerodrome"}],
+["w1010180332",-31.67644,128.88945,"au",{"name":"Silverchain Remote Area Nursing Posts Eucla","amenity":"clinic","healthcare":"nurse","healthcare:speciality":"general;emergency","operator":"Silverchain"}],
+["w333530262",-30.8383,128.11727,"au",{"name":"Forrest","operator":"CIVIL","website":"http://www.forrestairport.com.au/","aeroway":"aerodrome","icao":"YFRT","iata":"FOS"}]]

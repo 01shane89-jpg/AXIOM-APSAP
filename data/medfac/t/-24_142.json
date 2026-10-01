@@ -1,0 +1,7 @@
+[["n1042094992",-22.5333,143.517,"au",{"name":"Lorraine Station Airport","aeroway":"aerodrome"}],
+["n1042095912",-23.37083,143.89282,"au",{"name":"Maneroo Airport","aeroway":"aerodrome"}],
+["n7016114897",-23.43585,143.52061,"au",{"name":"Alroy","aeroway":"aerodrome"}],
+["n8962520018",-22.48078,143.18208,"au",{"aeroway":"helipad"}],
+["w176869533",-22.36344,143.08313,"au",{"name":"Winton Aerodrome","aeroway":"aerodrome","icao":"YWTN","iata":"WIN","aerodrome:type":"public"}],
+["w231048030",-22.38116,143.04077,"au",{"name":"Winton Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w334121817",-22.38602,143.03767,"au",{"emergency":"ambulance_station"}]]

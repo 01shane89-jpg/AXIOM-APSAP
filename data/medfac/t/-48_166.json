@@ -1,0 +1,10 @@
+[["n11558189319",-47.03362,167.70549,"nz",{"name":"Doughboy Bay Beach Airstrip","aeroway":"aerodrome"}],
+["n11558219936",-46.92756,167.763,"nz",{"name":"Mason Bay Beach Airstrip","aeroway":"aerodrome"}],
+["n11558235442",-46.86367,167.75705,"nz",{"name":"Little Hellfire Beach Airstrip","aeroway":"aerodrome"}],
+["n11558376980",-46.73636,167.72144,"nz",{"name":"West Ruggedy Beach Airstrip","aeroway":"aerodrome"}],
+["n13575049933",-46.1276,167.68956,"nz",{"name":"Tuatapere Medical Centre","healthcare":"clinic","healthcare:speciality":"general;physiatry;psychiatry","operator":"Waiau Health Trust","phone":"+64 3 226 6123","website":"https://www.healthpoint.co.nz/gps-accident-urgent-medical-care/gp/tuatapere-medical-centre/at/waiau-health-trust-69a-orawia-road-tuatapere/","addr:housenumber":"69A","addr:street":"Orawia Road","addr:city":"Tuatapere","addr:postcode":"9620"}],
+["n5646782921",-46.1406,167.99525,"nz",{"name":"St John Ambulance","emergency":"ambulance_station","addr:housenumber":"199","addr:street":"Main Street","addr:city":"Otautau","addr:postcode":"9610"}],
+["w1479974852",-46.12749,167.69004,"nz",{"emergency":"ambulance_station","operator":"St John Ambulance","addr:housenumber":"69A","addr:street":"Orawia Road","addr:city":"Tuatapere","addr:postcode":"9620"}],
+["w1480569553",-46.12754,167.68961,"nz",{"name":"Tuatapere Medical Centre","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}],
+["w978403962",-46.15855,167.30982,"nz",{"name":"Okaka Lodge Helipad","aeroway":"helipad","surface":"wood"}],
+["w987023330",-46.12777,167.69028,"nz",{"name":"Tuatapere Medical Centre","healthcare":"clinic"}]]

@@ -1,0 +1,8 @@
+[["n12610695823",-38.66983,178.02512,"nz",{"name":"Hand Therapy","amenity":"clinic","healthcare":"clinic"}],
+["n12610757397",-38.66993,178.02527,"nz",{"name":"Three Rivers Medical","amenity":"clinic","healthcare":"clinic"}],
+["n6816252544",-38.66468,178.0227,"nz",{"name":"City Medical Gisborne","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;clinic","phone":"+64 6 868 6104","addr:housenumber":"134","addr:street":"Derby Street","addr:city":"Gisborne","addr:postcode":"4010"}],
+["w1218864721",-38.05482,178.30447,"nz",{"name":"Te Puia Springs Hospital Heliport","aeroway":"helipad"}],
+["w138915055",-38.05532,178.30515,"nz",{"name":"Te Puia Springs Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w455898997",-38.66438,178.02666,"nz",{"name":"St John Ambulance Station","emergency":"ambulance_station","operator":"St John Ambulance"}],
+["w911433373",-38.63892,178.0037,"nz",{"name":"Gisborne Hospital Heliport","aeroway":"helipad"}],
+["w96928177",-38.63781,178.00482,"nz",{"name":"Gisborne Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Tairawhiti District Health Board","operator:type":"public","addr:housenumber":"421","addr:street":"Ormond Road","addr:city":"Gisborne","addr:postcode":"4010"}]]

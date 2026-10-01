@@ -1,0 +1,13 @@
+[["n1042092697",-2,120.76667,"id",{"name":"Tentena Airport","aeroway":"aerodrome"}],
+["n12148177905",-1.41436,120.66191,"id",{"aeroway":"helipad"}],
+["n1620234325",-1.76041,120.64452,"id",{"amenity":"hospital"}],
+["n7362238881",-1.97246,121.3372,"id",{"name":"RSU Kolonodale","amenity":"hospital","healthcare":"hospital"}],
+["w1312569465",-0.86511,121.62428,"id",{"aeroway":"helipad"}],
+["w529477254",-1.38244,120.75987,"id",{"name":"Rumah Sakit Umum Daerah Poso","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Pemerintah Daerah Kabupaten Poso","addr:city":"Poso"}],
+["w628293837",-0.86642,121.63138,"id",{"name":"Bandar Udara Tanjung Api Ampana","name:en":"Tanjung Api Ampana Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAFU","iata":"OJU","aerodrome:type":"regional"}],
+["w630780260",-1.41503,120.65962,"id",{"name":"Bandar Udara Kasiguncu","name:en":"Kasiguncu Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 82272006800","aeroway":"aerodrome","icao":"WAFP","iata":"PSJ","aerodrome:type":"regional"}],
+["w647590411",-0.86894,120.21235,"id",{"name":"Pustu","amenity":"clinic","addr:full":"Dusun 2","addr:city":"Parigi Moutong"}],
+["w787430067",-1.97249,121.33667,"id",{"name":"RSU Kolonodale","amenity":"hospital","healthcare":"hospital"}],
+["w847088672",-0.80586,120.17446,"id",{"name":"Puskesmas Parigi","amenity":"clinic"}],
+["w847095718",-0.81308,120.17328,"id",{"name":"RSU Daerah Anuntaloko","amenity":"hospital","healthcare":"hospital","addr:housenumber":"214","addr:street":"Jl. Sis Aljufrie","addr:city":"Masigi","addr:postcode":"94471"}],
+["w847401296",-0.77666,120.12548,"id",{"name":"POSKESDES Petapa","amenity":"clinic"}]]

@@ -1,0 +1,11 @@
+[["n1042095539",-28.78723,122.03657,"au",{"name":"Mount Morgans Airport","aeroway":"aerodrome"}],
+["n1042097743",-29.77586,122.2694,"au",{"name":"Porphyry Airport","aeroway":"aerodrome"}],
+["n1042098674",-29.09966,122.45014,"au",{"name":"Sunrise Dam Airport","aeroway":"aerodrome","icao":"YSRD"}],
+["n1042100460",-28.154,123.673,"au",{"name":"Yamarna Airport","aeroway":"aerodrome"}],
+["n2462935419",-28.77067,122.44082,"au",{"name":"Granny Smith Airport","operator":"Barrick (Granny Smith) Pty Ltd","aeroway":"aerodrome","icao":"YGRS"}],
+["n7210797271",-28.03399,123.81405,"au",{"name":"Gruyere Airport","aeroway":"aerodrome","icao":"YGRM","iata":"GYZ"}],
+["w1047725644",-29.09893,122.4566,"au",{"name":"Sunrise Dam Airport","aeroway":"aerodrome","icao":"YSRD"}],
+["w1094659034",-28.61107,122.42963,"au",{"name":"Laverton Airport","aeroway":"aerodrome","icao":"YLTN","iata":"LVO"}],
+["w186982866",-28.62661,122.39962,"au",{"name":"Laverton Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+61 8 9088 2600","addr:housenumber":"2","addr:street":"Beria Road","addr:postcode":"6440"}],
+["w188829567",-28.32132,122.40589,"au",{"name":"Cork Tree Well Airport","aeroway":"aerodrome","icao":"YCTW"}],
+["w260760985",-28.48033,122.24449,"au",{"name":"Windarra Airport","aeroway":"aerodrome","icao":"YWDA","iata":"WND"}]]
