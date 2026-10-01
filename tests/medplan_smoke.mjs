@@ -233,6 +233,19 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* air times count the aircraft's flight from its base to the POI (Shane) */
+  await p.waitForFunction(() => /Aircraft base: Test Air Rescue/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  const airMin = () => p.evaluate(() => { const m = /(\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent) || /(\d+) h (\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent); return m ? +m[1] : null; });
+  const ab = await p.evaluate(() => ({ gh: document.getElementById("mp-gh").textContent, mev: document.getElementById("mp-mev").textContent, fac: document.getElementById("mp-fac").textContent }));
+  const withBase = await airMin();
+  ok(/Aircraft base: Test Air Rescue, [\d.]+ km from the POI, \d+ min to fly to it \(nearest air rescue base in OpenStreetMap\)/.test(ab.gh) && /Aircraft base used for every air time: Test Air Rescue/.test(ab.mev) && /from the call, with the aircraft's flight in/.test(ab.fac), "air times: the aircraft's base is named and its flight to the POI is counted " + ab.gh.slice(ab.gh.indexOf("Aircraft base"), ab.gh.indexOf("Aircraft base") + 120));
+  await p.selectOption("#medplan [data-mp-base]", "poi");
+  await p.waitForFunction(() => /set to start at the point of injury/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  const atPoi = await airMin();
+  ok(withBase != null && atPoi != null && atPoi < withBase, "air times: starting the aircraft at the POI drops the flight in (" + withBase + " → " + atPoi + " min)");
+  await p.selectOption("#medplan [data-mp-base]", "");
+  await p.waitForFunction(() => /nearest air rescue base in OpenStreetMap/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok((await airMin()) === withBase, "air times: back to the nearest air rescue base");
   /* turning a hospital off: it leaves the picks and the map, the next one is picked, and the choice is kept */
   const offId = await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Sourced Trauma Centre/.test(x.textContent)); return r && r.querySelector("[data-mp-off]").getAttribute("data-mp-off"); });
   const mk0 = await p.evaluate(() => document.querySelectorAll(".mpicon").length);

@@ -742,6 +742,7 @@
     ".mpdoc .mpval{display:block;border-bottom:1px solid #777;min-height:18px;padding:1px 2px;color:#111;font-size:12px;white-space:pre-wrap}" +
     ".mpdoc .mpscroll{overflow:visible}.mpdoc table{table-layout:auto}.mpdoc td.mpfac{min-width:0}" +
     ".mpdoc .mpgh,.mpdoc .mpbest,.mpdoc .mpmark,.mpdoc .mppst th,.mpdoc figure img{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+    "#medplan [data-mp-base]{max-width:100%;min-width:0;margin-top:3px}#medplan .mpbase{overflow-wrap:anywhere}" +
     "#medplan .mpon{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;margin-top:4px;cursor:pointer}#medplan .mpon input{width:18px;height:18px;margin:0}" +
     "#medplan tr.mpoff td{opacity:.55}#medplan tr.mpoff td:first-child{opacity:1}#medplan .mpofftag{font-size:11.5px;font-weight:700;color:#8b0010}" +
     ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
@@ -899,8 +900,8 @@
       srcRender();
     });
     /* air rescue bases and U.S. posts once the main lookup is answered, so one plan never holds two Overpass slots */
-    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); mevRender(); ocRender(); mapShow(); srcRender(); },
-      function (e) { if (ST !== s) return; s.xErr = e.message; mevRender(); srcRender(); }); };
+    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); timesChanged(); mevRender(); ocRender(); mapShow(); srcRender(); },
+      function (e) { if (ST !== s) return; s.xErr = e.message; timesChanged(); mevRender(); srcRender(); }); };
     facP.then(xGo, xGo);
     isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
@@ -913,9 +914,38 @@
   }
   function byDrive(x, y) { var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s; return a - b || x.m - y.m; }
   function groundTotal(f) { return f.s == null ? null : f.s + PREP_MIN * 60; }
-  /* by air: launch, then the flight from the POI to the hospital, with time on the ground at the POI. The aircraft is assumed
-     to launch near the POI; section 4 gives the extra leg from each air rescue base */
-  function airTotal(f) { return (num("launch") + ONSCENE_MIN) * 60 + flightS(f.m, num("rwkn")); }
+  /* by air (Shane: the aircraft has to get from its home to the POI first): launch, the flight from the aircraft's base to
+     the POI, time on the ground at the POI, then the flight to the hospital. The base is the one chosen in section 4, else the
+     nearest air rescue base, else the nearest heliport or airfield (an assumption, said so), else the POI itself (said so). */
+  function baseList(s) {
+    var R = s.x ? s.x.R.slice() : [], O = s.fac ? s.fac.L.filter(function (l) { return l.kind === "heliport"; }).concat(s.fac.AF).sort(function (a, b) { return a.m - b.m; }) : [];
+    return R.concat(O);
+  }
+  function mbase(s) {
+    var v = fieldVals().mbase, L = baseList(s), b = v && v !== "poi" && L.filter(function (x) { return x.id === v; })[0];
+    if (v === "poi") return { b: null, how: "set to start at the point of injury: no flight to it is counted" };
+    if (b) return { b: b, how: "chosen in section 4" };
+    if (s.x && s.x.R[0]) return { b: s.x.R[0], how: "nearest air rescue base in OpenStreetMap" };
+    var o = L.filter(function (x) { return x.kind; })[0];
+    if (o) return { b: o, how: "assumed: no air rescue base " + (s.x ? "within 400 km" : s.xErr ? "could be read" : "read yet") + ", so the nearest " + (o.kind === "airfield" ? "airfield" : "heliport") + " (no medevac service listed there)" };
+    return { b: null, how: "no aircraft base known: assumed to launch at the point of injury, so real times are longer" };
+  }
+  function inboundS(s) { var m = mbase(s); return m.b ? flightS(m.b.m, num("rwkn")) : 0; }
+  function airTotal(f) { return (num("launch") + ONSCENE_MIN) * 60 + inboundS(ST) + flightS(f.m, num("rwkn")); }
+  /* each leg of an air time, for the reader */
+  function airLegs(f) {
+    var rw = num("rwkn"), m = mbase(ST), L = [num("launch") + " min launch"];
+    L.push(m.b ? mins(inboundS(ST)) + " from " + m.b.name + " to the POI" : "no flight to the POI (" + m.how + ")");
+    L.push(ONSCENE_MIN + " min on the ground", mins(flightS(f.m, rw)) + " to the hospital at " + rw + " kn");
+    return L.join(" + ") + " = " + mins(airTotal(f));
+  }
+  /* air times changed (the aircraft base was chosen or read): the picks follow, and their routes if the picks changed */
+  function timesChanged() {
+    var s = ST; if (!s || !s.fac) return;
+    facRender(); pickRender(); ghRender(); mevRender(); mapShow();
+    var ids = picks(s).map(function (p) { return p.f.id; }).join(), had = (s.rts || []).map(function (x) { return x.f.id; }).join();
+    if (s.rts && ids !== had) routes(s);
+  }
   function airOn() { return fieldVals().air !== 0; }
   /* the fastest way to surgical care for a hospital: [seconds from injury, "road" or "air"] */
   function bestWay(f) {
@@ -1019,7 +1049,7 @@
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
       "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
-      '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">at ' + rw + " kn</span></td>" +
+      '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(airTotal(f))) + " from the call, with the aircraft's flight in</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
       '<td class="n"><code>' + esc(grid(f.lat, f.lon)) + "</code></td>" +
       '<td class="noprint"><div class="mpact">' + (f.osm ? link(f.osm, "OSM").replace("<a ", '<a class="refresh" ') : link(f.src, "Source").replace("<a ", '<a class="refresh" ')) +
@@ -1100,14 +1130,15 @@
   /* air golden-hour rings round the POI: the flight that still arrives inside 50 and 60 minutes after the launch time and
      the time on the ground */
   function airRings() {
-    var rw = num("rwkn"), used = num("launch") + ONSCENE_MIN;
+    var rw = num("rwkn"), used = num("launch") + ONSCENE_MIN + inboundS(ST) / 60;
     return [GOLDEN_MIN - 10, GOLDEN_MIN].map(function (t) { return { t: t, r: Math.max(0, t - used) * 60 * rw * 1852 / 3600 }; });
   }
   function ringsOn(k) { return fieldVals()[k] !== 0; }
   function ghRender() {
     var el = D.getElementById("mp-gh"), s = ST; if (!el) return;
     var P = s.fac ? picks(s) : [], rw = num("rwkn"), R = airRings(), li = [];
-    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving; air times allow " + num("launch") + " minutes to launch and " + ONSCENE_MIN + " minutes on the ground, then the flight at " + rw + " kn.</li>");
+    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving; air times count " + num("launch") + " minutes to launch, the flight from the aircraft's base to the POI, " + ONSCENE_MIN + " minutes on the ground, then the flight to the hospital at " + rw + " kn.</li>" +
+      (function () { var m = mbase(s); return '<li' + (m.b ? "" : ' class="mpwarn"') + ">Aircraft base: " + (m.b ? "<b>" + esc(m.b.name) + "</b>, " + esc(km(m.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " to fly to it (" + esc(m.how) + ")" : esc(m.how)) + ". Change it in section 4.</li>"; })());
     P.forEach(function (p) { var b = bestWay(p.f); if (b) li.push("<li>" + esc(p.role) + " (H" + (s.fac.H.indexOf(p.f) + 1) + " " + esc(p.f.name) + "): " + esc(mins(b[0])) + " from injury by " + b[1] + ". " + ghTag(b[0]) + "</li>"); });
     if (s.fac && s.routeDone && P.length && !P.some(function (p) { var b = bestWay(p.f); return b && b[0] <= GOLDEN_MIN * 60; }))
       li.push('<li class="mpwarn"><b>No hospital is inside the golden hour' + (airOn() ? " by road or air" : " by road") + ".</b> Plan forward surgical or damage-control capability.</li>");
@@ -1116,7 +1147,7 @@
         : s.isoErr ? '<span class="mpwarn">The road reach could not be drawn (' + esc(clip(s.isoErr, 120)) + ").</span>" : "Drawing the 30 and " + (GOLDEN_MIN - PREP_MIN) + " minute road reach…") + "</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="ar"' + (ringsOn("ar") ? " checked" : "") + "> Air rings on the map</label> " +
       "Helicopter at " + rw + " kn: inside the light blue ring a hospital is reached inside " + R[0].t + " minutes (" + esc(km(R[0].r)) + "), inside the dark blue ring inside " + R[1].t + " minutes (" + esc(km(R[1].r)) + "). " +
-      "The rings assume the aircraft launches near the POI; section 4 adds the leg from each air rescue base.</li>");
+      "The rings include the launch, the flight from the aircraft's base to the POI and the time on the ground.</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="air"' + (airOn() ? " checked" : "") + "> Air evacuation available</label> " +
       (airOn() ? "Primary and Secondary may be chosen by air time." : "Off: Primary and Secondary are chosen by road time only.") + "</li>");
     el.innerHTML = '<div class="mpkey"><span class="mpgh g">Inside golden hour</span><span class="obs">up to ' + (GOLDEN_MIN - 10) + ' min</span><span class="mpgh a">At the golden-hour limit</span><span class="obs">' + (GOLDEN_MIN - 10) + "-" + GOLDEN_MIN + ' min</span><span class="mpgh r">Beyond golden hour</span><span class="obs">over ' + GOLDEN_MIN + " min</span></div><ul>" + li.join("") + "</ul>";
@@ -1146,6 +1177,11 @@
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
     h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
+    var mb = mbase(s), BL = baseList(s), cur = fieldVals().mbase || "";
+    h += '<p class="mpbase"><b>Aircraft base used for every air time:</b> ' + (mb.b ? esc(mb.b.name) + ", " + esc(km(mb.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " flight to it at " + rw + " kn (" + esc(mb.how) + ")" : '<span class="mpwarn">' + esc(mb.how) + "</span>") + ".</p>" +
+      '<p class="noprint"><label>Aircraft starts from <select data-mp-base><option value=""' + (!cur ? " selected" : "") + ">Nearest air rescue base (else nearest heliport or airfield)</option>" +
+      BL.map(function (b) { return '<option value="' + esc(b.id) + '"' + (cur === b.id ? " selected" : "") + ">" + esc(b.name) + " · " + esc(km(b.m)) + "</option>"; }).join("") +
+      '<option value="poi"' + (cur === "poi" ? " selected" : "") + ">At the point of injury (no flight in)</option></select></label></p>";
     function row(b, i, mk, cls) {
       var fly = flightS(b.m, rw), tot = launch * 60 + fly + ONSCENE_MIN * 60 + (best ? flightS(best.m, rw) : 0);
       return '<tr><td class="n"><span class="mpmark ' + cls + '">' + mk + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + (b.op && b.op !== b.name ? '<span class="sub">' + esc(b.op) + "</span>" : "") + (b.kind ? '<span class="sub">' + esc(b.kind === "airfield" ? "Airfield" : b.kind === "heliport" ? "Heliport" : "Helipad") + (b.code ? " · " + esc(b.code) : "") + "</span>" : "") + ctHtml(b) + "</td>" +
@@ -1663,7 +1699,7 @@
     var rw = num("rwkn"), g = groundTotal(f), a = airTotal(f), bw = bestWay(f), L = [];
     L.push(["Straight line", esc(km(f.m)) + ", " + Math.round(f.brg) + "° " + card(f.brg) + " of the point of injury"]);
     L.push(["By road", f.s != null ? esc(mins(f.s)) + ", " + esc(km(f.rm || 0)) + (f.est ? " (estimate: no road router answered)" : "") + ". From injury with " + PREP_MIN + " min to treat and load: " + esc(mins(g)) + " " + ghTag(g) : nk("No road time.")]);
-    L.push(["By air", esc(mins(flightS(f.m, rw))) + " flight at " + rw + " kn. From injury with " + num("launch") + " min to launch and " + ONSCENE_MIN + " min on the ground: " + esc(mins(a)) + " " + ghTag(a) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
+    L.push(["By air", "From the call: " + esc(airLegs(f)) + " " + ghTag(a) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
     if (bw && bw[0] != null) L.push(["Quickest", esc(mins(bw[0])) + " from injury by " + esc(bw[1])]);
     L.push(["Route", r && r.line ? esc(mins(r.s)) + ", " + esc(km(r.m)) + (r.roads.length ? ". Main roads: " + esc(r.roads.map(function (q) { return q.n; }).join(" → ")) : "") : r && r.err ? nk("No road route: " + clip(r.err, 120)) : "Working out the route…"]);
     return L;
@@ -1794,6 +1830,10 @@
   function offChanged() { if (ST && ST.fac) { facRender(); pickRender(); routes(ST); mevRender(); ghRender(); mapShow(); srcRender(); } }
   function onChange(e) {
     var t = e.target;
+    if (t.hasAttribute && t.hasAttribute("data-mp-base")) {
+      var vb = fieldVals(); vb.mbase = t.value; lsSet(fieldsKey(), vb); timesChanged();
+      var sb = D.querySelector("#medplan [data-mp-base]"); if (sb) sb.focus(); return;
+    }
     if (t.getAttribute && t.getAttribute("data-mp-off")) {
       setOff(t.getAttribute("data-mp-off"), !t.checked); offChanged();
       var b = D.querySelector('#medplan [data-mp-off="' + (W.CSS && CSS.escape ? CSS.escape(t.getAttribute("data-mp-off")) : t.getAttribute("data-mp-off")) + '"]'); if (b) b.focus();
