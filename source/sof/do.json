@@ -28,13 +28,39 @@
    "city": "Dominican Republic",
    "address": "Avenida República de Colombia 57",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": null,
-   "lon": null,
-   "prec": "approx",
+   "lat": 18.51011,
+   "lon": -69.964348,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105583801",
    "srcname": "Wikidata",
-   "coord_basis": "no position found",
-   "fp": "478524b2a0441f302fb279854b1b014f1996793607bef9b43e37717b72f285a7"
+   "coord_basis": "OpenStreetMap way/197660740",
+   "fp": "90c1ee5532163ed406da021a775bcda0034a408546d5c7f8b8e07bc17215331b",
+   "web": "https://do.usembassy.gov",
+   "phone": "(809) 567-7775",
+   "phone_after_hours": "(809) 567-7775",
+   "phone_src": "https://do.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
+  },
+  {
+   "id": "sof:do:post:u-s-consular-agent-bavaro-punta-cana",
+   "name": "U.S. Consular Agent - Bavaro/Punta Cana",
+   "kind": "consular_agency",
+   "city": null,
+   "address": null,
+   "services_note": null,
+   "lat": 18.670852,
+   "lon": -68.417125,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/12247170780",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://do.usembassy.gov/u-s-citizen-services/consular-agency-bavaropunta-cana/",
+   "phone": "(809) 552-8990",
+   "phone_src": "https://www.openstreetmap.org/node/12247170780",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01",
+   "fp": "d5fde67e40754f9eb0b065952fdaf0047194cd0eb3f306791c329ae8022b59f0"
   }
  ],
  "airports": [
@@ -620,5 +646,125 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:do:xing:node-2040771999",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 19.550977,
+   "lon": -71.713502,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2040771999",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "54cb625c63ffcda40f47cbd1dc25376beff8b91b791c74764a2d93e2f0d30621"
+  },
+  {
+   "id": "sof:do:xing:node-330935496",
+   "name": "Haiti Border Control",
+   "local_name": "Poste de Douane Haïti",
+   "hours": null,
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 18.495044,
+   "lon": -71.890341,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/330935496",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "41bdf83da74230747be88f0d9f403c7e92a9cd7a0b2e437185201da3d06e31a8"
+  },
+  {
+   "id": "sof:do:xing:node-330935648",
+   "name": "Dominican Republic Border Control",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 18.490641,
+   "lon": -71.883472,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/330935648",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "86e6d66dcb75dccc0c2f752d151107e9b00213b0c0aced82132568fde46854ea"
+  },
+  {
+   "id": "sof:do:xing:node-614558469",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 18.041543,
+   "lon": -71.756428,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/614558469",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6ca2be5d1fe045d685a55bed5f20e75fef83270e2fe32bd441bad28dc04453cc"
+  },
+  {
+   "id": "sof:do:xing:node-620011993",
+   "name": "Haiti Border Control",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 18.877637,
+   "lon": -71.725045,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/620011993",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "779930856b3849fed54e9d2c512c5fa42b59e5cca961478b58422a31959089cf"
+  },
+  {
+   "id": "sof:do:xing:way-1552375981",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 19.895299,
+   "lon": -70.959779,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1552375981",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8a34e9303ce2daf18c202a14226500772d112a8ad40387288bf2949619bbd693"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
