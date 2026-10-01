@@ -24,23 +24,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "c37138d7269e276943c65ce83ad6047c4385649452810ffdc512b4374ae5318d"
  },
- "posts": [
-  {
-   "id": "sof:gw:post:u-s-consulate-guinea-bissau",
-   "name": "U.S. Consulate, Guinea-Bissau",
-   "kind": "consulate",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": 11.85632,
-   "lon": -15.613325,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/2130831673",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "fp": "961895b076664c6be391a3d713bb654043f425c44678ce8258f3386729e53bae"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:gw:airport:ggov",
@@ -110,34 +94,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ],
- "crossings": [
-  {
-   "id": "sof:gw:xing:node-4010318128",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 11.549789,
-   "lon": -14.683559,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/4010318128",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "5f8b42a6f01ebdc96a30655ad561581882a695981456e8a17684769ec314ef8d"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

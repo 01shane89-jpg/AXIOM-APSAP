@@ -30,12 +30,7 @@
    "src": "https://ws.usembassy.gov/services/",
    "srcname": "U.S. Embassy in Samoa",
    "coord_basis": "Apia centre estimate; verify",
-   "fp": "55fd65cbb569d1adf7caf5004e7d217e3c85c927e5d191a53413e44372f0525a",
-   "phone": "+685 21436",
-   "phone_after_hours": "(685) 21631",
-   "phone_src": "https://ws.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "4d36e62853e7b53e0e10b3ba330fde5a3144c9383aa6e3b91369f0758582a9da"
   }
  ],
  "airports": [
@@ -167,29 +162,5 @@
  ],
  "gaps": [
   "U.S. Coast Guard tabletop exercises with Samoan maritime officers found (ws.usembassy.gov) but undated, so not listed. Samoa has no military. Hospital facts not verified beyond search titles."
- ],
- "crossings": [
-  {
-   "id": "sof:ws:xing:way-1456108623",
-   "name": "Ministry of Customs Holding Building",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -13.834667,
-   "lon": -171.77064,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/way/1456108623",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "925da3603e3357259ff9f8f331fbda042b8ed6f88af5401bf3523889c84e2a56"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

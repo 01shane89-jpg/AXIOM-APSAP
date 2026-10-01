@@ -28,28 +28,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "f56f62966e64f841541b3691bb517837a7f4cd233d6b32ceaec1b3064927fe06"
  },
- "posts": [
-  {
-   "id": "sof:ne:post:u-s-embassy-niger",
-   "name": "U.S. Embassy, Niger",
-   "kind": "embassy",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": 13.519522,
-   "lon": 2.103419,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/5951220385",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "phone": "(227) 20-72-26-61",
-   "phone_after_hours": "+227 20 72 26 61",
-   "phone_src": "https://ne.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "b245dab61773ac5ee808d6a795d17028bf830131b30e05f0b9cf2589d0fd9a6f"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:ne:airport:drrn",
@@ -330,46 +309,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:ne:xing:node-1711944234",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 15.412677,
-   "lon": 3.024708,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1711944234",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "2de4bcf50ba9aa5c3bc37a924043c4fba58c815c9de5667219c7d70ae4fde404"
-  },
-  {
-   "id": "sof:ne:xing:node-2833525680",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 13.114145,
-   "lon": 7.212549,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2833525680",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "86e75ce9f5e8981c52982f3d61ae6553713b185bfd05d4b01bdf064316a73a0d"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -38,12 +38,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SriLanka.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "estimated from published address",
-   "fp": "fde3a2b66148113f2f038b86d993a3c5ec55d3a3cf45cfc53d2ef98c94b0bfca",
-   "phone": "+94 (11) 202-8500",
-   "phone_after_hours": "011-202-8500",
-   "phone_src": "https://lk.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "d22156d40ae896c525576767c3025da5f47e2fc5d67481cd866f17e2fa79cbd5"
   }
  ],
  "airports": [
@@ -403,46 +398,5 @@
  ],
  "gaps": [
   "lk.usembassy.gov blocked; embassy medical list not consulted. No Wikipedia coordinates for Embassy Colombo (article redirects to ambassador's residence) -> approx."
- ],
- "crossings": [
-  {
-   "id": "sof:lk:xing:node-5722655131",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 6.12721,
-   "lon": 81.080765,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/5722655131",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "87c09cc120e89dae3d345c694cdd3a4666996dcc8e4c26bb5b11d8ca781d8ec8"
-  },
-  {
-   "id": "sof:lk:xing:node-5722655151",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 6.153014,
-   "lon": 81.0857,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/5722655151",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "377c74f15cf4fc92774b56abeacb8729c2d24298e7d77f03d692fd2b8f9f2780"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

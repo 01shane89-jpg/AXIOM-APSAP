@@ -30,13 +30,7 @@
    "src": "https://fm.usembassy.gov/medical-assistance/",
    "srcname": "U.S. Embassy Kolonia",
    "coord_basis": "town centre estimate; not surveyed",
-   "fp": "685fcc29bb380a81600c444baacf51fddaf5686dbe1ca4073794c80a46ff0853",
-   "web": "https://fm.usembassy.gov",
-   "phone": "+691 320-2187",
-   "phone_after_hours": "691-320-2187",
-   "phone_src": "https://fm.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "1d8cd22972a6783a71c8fe141d4aa06cd86d4ede865c13d030e99d5a50f9bb58"
   }
  ],
  "airports": [
@@ -436,11 +430,5 @@
   "Embassy street address not retrieved; coordinates are town-centre estimates.",
   "Chuuk, Yap and Kosrae hospitals are cited to a Wikipedia overview page whose body was not read; verify names and emergency capability.",
   "No 2026 exercise hosted in FSM found within the search budget (US Civic Action Team and Yap airfield work are construction, not exercises)."
- ],
- "crossings": [],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }
