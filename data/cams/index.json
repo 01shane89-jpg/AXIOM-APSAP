@@ -1,9 +1,10 @@
 {
- "built": "2026-10-01T10:15Z",
+ "built": "2026-10-01T10:18Z",
  "sources": [
   {
    "id": "sg-lta",
    "cc": "sg",
+   "tz": "Asia/Singapore",
    "country": "Singapore",
    "agency": "Land Transport Authority (LTA), via data.gov.sg",
    "licence": "Singapore Open Data Licence",
@@ -17,11 +18,12 @@
     1.44702,
     103.82389
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "hk-td",
    "cc": "hk",
+   "tz": "Asia/Hong_Kong",
    "country": "Hong Kong",
    "agency": "Transport Department, Hong Kong SAR Government (DATA.GOV.HK)",
    "licence": "DATA.GOV.HK terms and conditions",
@@ -34,11 +36,12 @@
     22.54589,
     114.26637
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "nz-nzta",
    "cc": "nz",
+   "tz": "Pacific/Auckland",
    "country": "New Zealand",
    "agency": "NZ Transport Agency Waka Kotahi (traffic.nzta.govt.nz)",
    "licence": "Creative Commons Attribution 4.0",
@@ -51,11 +54,12 @@
     -36.38935,
     176.87727
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "gb-tfl",
    "cc": "gb",
+   "tz": "Europe/London",
    "country": "United Kingdom (London)",
    "agency": "Transport for London JamCams (TfL Open Data)",
    "licence": "Powered by TfL Open Data (Open Government Licence)",
@@ -68,11 +72,12 @@
     51.6799,
     0.23161
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "fi-digitraffic",
    "cc": "fi",
+   "tz": "Europe/Helsinki",
    "country": "Finland",
    "agency": "Fintraffic Digitraffic road weather cameras",
    "licence": "Creative Commons Attribution 4.0",
@@ -85,11 +90,12 @@
     70.08851,
     31.27705
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "ca-drivebc",
    "cc": "ca",
+   "tz": "America/Vancouver",
    "country": "Canada (British Columbia)",
    "agency": "BC Ministry of Transportation and Transit (DriveBC)",
    "licence": "Open Government Licence - British Columbia",
@@ -102,11 +108,12 @@
     59.99805,
     -114.71282
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "au-nsw",
    "cc": "au",
+   "tz": "Australia/Sydney",
    "country": "Australia (New South Wales)",
    "agency": "Transport for NSW Live Traffic",
    "licence": "Creative Commons Attribution 4.0",
@@ -119,11 +126,12 @@
     -28.22595,
     153.55694
    ],
-   "checked": "2026-10-01T10:14Z"
+   "checked": "2026-10-01T10:17Z"
   },
   {
    "id": "us-caltrans",
    "cc": "us",
+   "tz": "America/Los_Angeles",
    "country": "United States (California)",
    "agency": "California Department of Transportation (Caltrans)",
    "licence": "Caltrans public data",
@@ -136,11 +144,12 @@
     41.99656,
     -114.55031
    ],
-   "checked": "2026-10-01T10:15Z"
+   "checked": "2026-10-01T10:18Z"
   },
   {
    "id": "us-nycdot",
    "cc": "us",
+   "tz": "America/New_York",
    "country": "United States (New York City)",
    "agency": "NYC Department of Transportation",
    "licence": "NYC DOT public traffic cameras",
@@ -153,7 +162,7 @@
     40.9063,
     -73.71378
    ],
-   "checked": "2026-10-01T10:15Z"
+   "checked": "2026-10-01T10:18Z"
   }
  ]
 }
