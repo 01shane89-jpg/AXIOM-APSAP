@@ -15,24 +15,24 @@ import { ccsAt } from "./geo_cc.mjs";
 
 const SRC = "source/sof", OUT = "data/sof", DEBUG = !!process.env.EVAC_DEBUG, SITES = process.env.EVAC_SITES !== "0";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP evacuation points snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 const TODAY = new Date().toISOString().slice(0, 10);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (...a) => console.log(...a);
 
 /* ---------- network ---------- */
 async function overpass(q) {
-  for (let round = 0; round < 2; round++) for (const h of OVERPASS) {
+  for (let round = 0; round < 4; round++) for (const h of OVERPASS) {
     try {
       const r = await fetch(h, { method: "POST", body: "data=" + encodeURIComponent(q), signal: AbortSignal.timeout(420000),
-        headers: { "user-agent": UA, accept: "application/json", "content-type": "application/x-www-form-urlencoded" } });
+        headers: { "user-agent": UA, accept: "*/*", "content-type": "application/x-www-form-urlencoded" } });
       const t = await r.text();
       if (r.status !== 200) { log("  overpass", h, r.status); continue; }
       const j = JSON.parse(t);
       if (j.remark && /error|timed out|out of memory/i.test(j.remark)) { log("  overpass remark", h, j.remark.slice(0, 160)); continue; }
       return j.elements || [];
     } catch (e) { log("  overpass", h, String(e).slice(0, 120)); }
-    await sleep(5000);
+    await sleep(5000 + round * 30000);
   }
   throw new Error("every Overpass host failed");
 }
