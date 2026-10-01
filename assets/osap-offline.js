@@ -78,7 +78,8 @@
       if (b[0][0] <= me[1][0] + 1.5 && b[1][0] >= me[0][0] - 1.5 && b[0][1] <= me[1][1] + 1.5 && b[1][1] >= me[0][1] - 1.5) L.push("data/sof/" + o.id + ".js");
     });
     L.push("data/live/news/" + c + ".js", "data/live/social/" + c + ".js", "data/history/" + c + ".js", "data/terrain/" + c + ".js", "data/live/daily/" + c + ".js",
-      "data/live/news-index.js", "data/medfac/index.json");
+      "data/live/news-index.js", "data/medfac/index.json", "data/live/sanctions/" + c + ".js", "data/live/ucdp/" + c + ".js",
+      "data/basemap/borders-50m.js", "data/basemap/borders-10m.js");
     for (var i = 0; i < 7; i++) L.push("data/live/news-index/" + new Date(Date.now() - i * 864e5).toISOString().slice(0, 10) + ".js");
     /* whatever this session has already read from data/ (open tabs, conflict files, weather, power, comms coverage) */
     try {
@@ -95,7 +96,7 @@
     }).catch(function () { return []; });
   }
   /* files only this country uses (deleting the country removes them; shared files stay) */
-  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily)/" + c + "\\.js$)").test(u); }
+  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp)/" + c + "\\.js$)").test(u); }
 
   /* ---------- downloading ---------- */
   var JOB = null;
