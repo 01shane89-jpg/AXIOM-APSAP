@@ -6033,16 +6033,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
     if (cv && !row) {
       row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
-      row.innerHTML = "<b>Communications</b><i>Phone masts, radio and TV towers, and a coverage check</i>";
+      row.innerHTML = "<b>Communications infrastructure</b><i>Phone masts, radio and TV towers, and a phone coverage check</i>";
       row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
       box.appendChild(row);
     }
     box.hidden = box.children.length < 2;
   }
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
-     it is intuitive): terrain, then roads and movement, infrastructure, aircraft, then your own marking (country sides,
+     it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-elev"], [null, /^Terrain/], ["#ml-roads"], ["#mob-sec", /^Ground movement/], ["#ml-infra"], [null, /embass|evacuat/i], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-roads"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
