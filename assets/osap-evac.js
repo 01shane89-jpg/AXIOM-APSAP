@@ -114,8 +114,11 @@
     Promise.all(ids.map(loadSof)).then(function () {
       if (tok !== drawTok) return;
       ptL.clearLayers();
+      /* crossings run to thousands across a region: only those in and around the view, redrawn as the map moves */
+      var vb = map.getBounds().pad(0.5);
       items(ids).forEach(function (x) {
         if (!S.on[x.k]) return;
+        if (x.k === "crossings" && !vb.contains([x.i.lat, x.i.lon])) return;
         var m = L.marker([x.i.lat, x.i.lon], { icon: icon(x.k), keyboard: false, pane: "evpane", lgk: "ev:" + x.k, lgl: KINDS.filter(function (y) { return y.k === x.k; })[0].name });
         m.bindPopup(function () { return pop(x); }, { maxWidth: 330 }); m._ev = x.i.id;
         ptL.addLayer(m);
@@ -261,6 +264,7 @@
     if (!map || !W.L || !mount()) return false;
     if (!map.getPane("evpane")) { var p = map.createPane("evpane"); p.style.zIndex = 640; }
     ptL = L.layerGroup().addTo(map); nearL = L.layerGroup().addTo(map);
+    map.on("moveend", function () { if (S.on.crossings) draw(); });
     map.on("click", function (e) { if (!S.tap) return; S.tap = false; map.getContainer().style.cursor = ""; setFrom([e.latlng.lat, e.latlng.lng], "the tapped point"); });
     map.on("popupopen", function (e) {
       var el = e.popup.getElement(), b = el && el.querySelector("[data-ev-from]"); if (!b) return;
