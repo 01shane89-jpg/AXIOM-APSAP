@@ -28,13 +28,19 @@
    "city": "Luxembourg",
    "address": "22 Boulevard Emmanuel Servais",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 49.6098,
-   "lon": 6.1327,
-   "prec": "approx",
+   "lat": 49.618867,
+   "lon": 6.128907,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q25056609",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "b73364df2b797123c4c112785ca00c832d1048c995a444bf227a79bc1195a94d"
+   "coord_basis": "OpenStreetMap way/107435917",
+   "fp": "0651804a5424bbf3c6dd3a1a68b1e2e3ce987c61eb49c8cdbfece8b56b183c95",
+   "web": "https://lu.usembassy.gov/",
+   "phone": "+352 46 01 23 00",
+   "phone_after_hours": "+352 46 01 23 00",
+   "phone_src": "https://lu.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -175,5 +181,11 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
