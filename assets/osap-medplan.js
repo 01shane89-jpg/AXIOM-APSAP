@@ -326,11 +326,42 @@
     return out;
   }
   /* the countries a circle round the point can reach, from their bounding boxes */
+  /* countries within R of the POI: by the packaged country outlines (COUNTRY_BASE, WORLD_BASE) where there is one, so a
+     country whose bounding box merely overlaps (Laos over central Thailand) is not counted; else by bounding box */
+  var NE_IDX = null;
+  function neIndex() {
+    if (NE_IDX) return NE_IDX;
+    NE_IDX = {};
+    [W.COUNTRY_BASE, W.WORLD_BASE].forEach(function (fc) { ((fc && fc.features) || []).forEach(function (f) { if (f.properties && f.geometry && !NE_IDX[f.properties.n]) NE_IDX[f.properties.n] = f.geometry; }); });
+    return NE_IDX;
+  }
+  function inRing(o, ring) {
+    var x = o[1], y = o[0], inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  /* true when the outline comes within R of o (vertices, with a 30 km allowance for simplified edges) or holds o */
+  function nearOutline(o, g, R) {
+    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    for (var p = 0; p < polys.length; p++) {
+      var ring = polys[p][0] || [];
+      if (inRing(o, ring)) return true;
+      for (var i = 0; i < ring.length; i++) if (hav(o, [ring[i][1], ring[i][0]]) <= R + 30000) return true;
+    }
+    return false;
+  }
   function ccNear(o, R) {
-    var dLa = R / 111320, dLo = R / (111320 * Math.max(0.1, Math.cos(o[0] * Math.PI / 180)));
+    var dLa = R / 111320, dLo = R / (111320 * Math.max(0.1, Math.cos(o[0] * Math.PI / 180))), ne = neIndex();
+    var meta = {};
+    (W.ASAP_WORLD || []).forEach(function (w) { meta[w.id] = w; });
     return (W.OSAP_COUNTRIES || []).filter(function (c) {
       var b = c.bounds; if (!b || !/^[a-z]{2}$/.test(c.id)) return false;
-      return o[0] + dLa >= b[0][0] && o[0] - dLa <= b[1][0] && o[1] + dLo >= b[0][1] && o[1] - dLo <= b[1][1];
+      if (!(o[0] + dLa >= b[0][0] && o[0] - dLa <= b[1][0] && o[1] + dLo >= b[0][1] && o[1] - dLo <= b[1][1])) return false;
+      var g = ne[(meta[c.id] && meta[c.id].ne) || c.ne || c.name];
+      return g ? nearOutline(o, g, R) : true;
     });
   }
   function storedFac(o, R) {
@@ -1414,6 +1445,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", run: open });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

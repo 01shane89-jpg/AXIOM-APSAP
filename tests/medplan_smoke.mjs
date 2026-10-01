@@ -348,13 +348,15 @@ async function openPlan(p) {
   await ctx.close();
 }
 {
-  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: ["th"] });
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: ["kh"] });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
   await p.waitForFunction(() => /does not yet cover/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 25000 });
   const fac = await p.textContent("#mp-fac");
-  ok(/Far North Hospital/.test(fac) && /does not yet cover Laos, Myanmar: facilities there are missing/.test(fac) && !/No hospital/.test(fac), "stored, partly: lists the stored hospitals and names the countries not yet stored: " + fac.slice(0, 400));
+  ok(/Far North Hospital/.test(fac) && /does not yet cover Thailand: facilities there are missing/.test(fac) && !/Laos|Myanmar/.test(fac) && !/No hospital/.test(fac), "stored, partly: lists the stored hospitals and names the countries not yet stored: " + fac.slice(0, 400));
   ok(calls.overpass >= 1, "stored, partly: Overpass is asked for the rest");
+  const cn = await p.evaluate(() => [window.OSAP_MEDPLAN._ccNear([15.89442, 100.11841], 150000).map((c) => c.id), window.OSAP_MEDPLAN._ccNear([18.8, 100.8], 150000).map((c) => c.id)]);
+  ok(cn[0].includes("th") && !cn[0].includes("la") && cn[1].includes("la"), "stored, partly: countries in reach follow their borders, not bounding boxes (Nakhon Sawan " + cn[0] + "; Nan " + cn[1] + ")");
   ok(!errors.length, "stored, partly: no page errors " + errors.join(" | "));
   await ctx.close();
 }
