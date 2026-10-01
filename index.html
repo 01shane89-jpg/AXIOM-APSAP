@@ -465,7 +465,8 @@ select.mini{
 #ml-ds .dsname[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#ml-ds .dsname[aria-pressed=true]::after{color:inherit}
 .mlopen{display:block;width:100%;text-align:left;font:inherit;padding:6px 8px;margin:2px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}.mlopen b{display:block;font-weight:600}.mlopen i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
 #ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
-#ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
+#ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}
+#ml-ds .dsxname{cursor:pointer}#ml-ds .dsxname::after{content:none}#ml-ds .dsxname i{display:block;font-size:11.5px;color:var(--muted);opacity:1;font-weight:400}#ml-ds .dsxop{margin:2px 0 6px 40px}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
 .dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
@@ -1303,12 +1304,15 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
   var FLOODX = {
-    now: { name: "Flooding now", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Satellite-derived and approximate (about 250 m); cloud can hide water.",
+    now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Satellite-derived and approximate (about 250 m); cloud can hide water.",
       layer: function () { return L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
         { pane: "fldpane", maxNativeZoom: 9, maxZoom: 13, opacity: ML.op, attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
-    hist: { name: "Flood history", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Includes rivers and lakes: pale = rarely wet, deep = always wet.",
+    hist: { name: "Flood history", short: "How often each place has flooded, 1984 to 2021", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Includes rivers and lakes: pale = rarely wet, deep = always wet.",
       layer: function () { return L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
-        { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } }
+        { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } },
+    fire: { name: "Fires now", short: "Satellite heat detections, yesterday", note: "NASA VIIRS satellite heat detections (375 m), yesterday, worldwide. Includes field and forest burning; a detection does not say what caused it.",
+      layer: function () { return L.tileLayer.wms("https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi", { layers: "VIIRS_NOAA20_Thermal_Anomalies_375m_All", format: "image/png", transparent: true,
+        version: "1.3.0", TIME: new Date(Date.now() - 864e5).toISOString().slice(0, 10), pane: "fldpane", maxZoom: 13, opacity: ML.op, attribution: "NASA FIRMS / GIBS" }); } }
   };
   var fldOn = {};
   function setFlood(k, on) {
@@ -1402,20 +1406,17 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         Object.keys(BASES).map(function (k) {
           return '<label class="mlrow"><input type="radio" name="ml-base" value="' + k + '"' + (ML.base === k ? " checked" : "") + '><span><b>' + BASES[k].name + "</b><i>" + BASES[k].note + "</i></span></label>";
         }).join("") + "</div>" +
-        '<div class="mlh">Flooding</div>' +
-        Object.keys(FLOODX).map(function (k) {
-          return '<label class="mlrow"><input type="checkbox" data-fx="' + k + '"' + (ML[k] ? " checked" : "") + '><span><b>' + FLOODX[k].name + "</b><i>" + FLOODX[k].note + "</i></span></label>";
-        }).join("") +
-        '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + ML.op + '" id="ml-op"><output id="ml-opv">' + Math.round(ML.op * 100) + "%</output></label>" +
-        '<div class="mlh">Elevation and LiDAR</div>' +
+        /* flooding and fires are natural disasters: they sit in Data sets > Natural disasters (dsUi, through window.OSAP_DISASTERX),
+           not here (Shane 2026-10-01) */
+        '<div id="ml-elev"><div class="mlh">Elevation and LiDAR</div>' +
         Object.keys(HSX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
         }).join("") +
-        '<label class="mlop">Shading <input type="range" min="0.2" max="1" step="0.05" value="' + ML.hsop + '" id="ml-hsop"><output id="ml-hsopv">' + Math.round(ML.hsop * 100) + "%</output></label>" +
-        '<div class="mlh">Roads</div>' +
+        '<label class="mlop">Shading <input type="range" min="0.2" max="1" step="0.05" value="' + ML.hsop + '" id="ml-hsop"><output id="ml-hsopv">' + Math.round(ML.hsop * 100) + "%</output></label></div>" +
+        '<div id="ml-roads"><div class="mlh">Roads</div>' +
         '<label class="mlrow"><input type="checkbox" data-roads="1"' + (ML.roads ? " checked" : "") + '><span><b>Road closures</b><i id="ml-roadnote">' + roadEsc(roadNote()) + "</i></span></label>" +
         '<p class="mlkey"><span style="background:#c62828"></span>Closed <span style="background:#ef6c00"></span>Roadworks <span style="background:#f9a825"></span>Incident <span class="rep"></span>Reported in news or records, unverified</p>' +
-        '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p>' +
+        '<p class="mlkey">For roads themselves, pick the Streets or Topographic base map.</p></div>' +
         /* Infrastructure: the home in Map overlays for infrastructure layers and tools (communications masts and coverage,
            power grid); filled by their own modules, hidden while empty */
         '<div id="ml-infra" hidden><div class="mlh">Infrastructure</div></div>' +
@@ -1438,12 +1439,19 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         else if (t.dataset.hs) setShade(t.dataset.hs, t.checked);
       });
       box.querySelector("#ml-hsop").addEventListener("input", function () { setShadeOp(parseFloat(this.value)); box.querySelector("#ml-hsopv").textContent = Math.round(this.value * 100) + "%"; });
-      box.querySelector("#ml-op").addEventListener("input", function () { setOpacity(parseFloat(this.value)); box.querySelector("#ml-opv").textContent = Math.round(this.value * 100) + "%"; });
+      /* the satellite layers' opacity slider is drawn by the Data sets list, which redraws, so it is heard on the panel */
+      pan.addEventListener("input", function (e) { var t = e.target; if (t.id === "ml-op") { setOpacity(parseFloat(t.value)); var o = pan.querySelector("#ml-opv"); if (o) o.textContent = Math.round(t.value * 100) + "%"; } });
       return box;
     }
   });
   new LayersCtl().addTo(map);
   window.ASAP_MAPLAYERS = { panel: function () { return document.getElementById("ml-extra"); } };
+  /* satellite disaster layers (flooding now, flood history, fires now) for the Data sets list's Natural disasters group */
+  window.OSAP_DISASTERX = {
+    list: function () { return Object.keys(FLOODX).map(function (k) { return { id: k, name: FLOODX[k].name, short: FLOODX[k].short, note: FLOODX[k].note, on: !!ML[k] }; }); },
+    set: function (k, on) { if (FLOODX[k]) setFlood(k, on); },
+    opacity: function () { return ML.op; }
+  };
   /* the base map choice for other controls (the toolbar's Base map button): list, current, set; setting also ticks the
      matching radio in Layers so both stay in step */
   window.OSAP_BASEMAP = {
@@ -3121,7 +3129,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "crisis", name: "Crisis response", title: "Crisis response", sof: true, live: true },
     { id: "partners", name: "Military exercises", title: "Military exercises", sof: true, live: true });
   if (window.OSAP_PR && window.OSAP_PR.has[CC]) LAYERS.push({ id: "presence", name: "Chinese presence", title: "Chinese presence and influence", sof: true, live: true });
-  LAYERS.push({ id: "hazards", name: "Live hazards", title: "Live hazards", sof: true, live: true },
+  LAYERS.push({ id: "hazards", name: "Earthquakes and hazards", title: "Earthquakes and hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
     { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
@@ -5867,9 +5875,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the headings the Data sets list is grouped under (Shane 2026-09-30: data sets are only the topics and areas that filter
      the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
      "More topics" */
+  var DS_NAT = "Natural disasters";
   var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence"]],
     ["Crime", ["crime", "scam", "aml"]],
-    ["Disasters and hazards", ["alerts", "flood", "hazards", "safety", "health", "crisis"]],
+    /* natural disasters also list the satellite layers (flooding now, flood history, fires now): window.OSAP_DISASTERX */
+    ["Natural disasters", ["flood", "hazards"]],
+    ["Public safety and health", ["alerts", "safety", "health", "crisis"]],
     ["Infrastructure and movement", ["infra", "transport"]],
     ["News and social media", ["news", "social"]]];
   function dsGroupOf(v) {
@@ -5975,7 +5986,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var pan = document.getElementById("ml-panel"); if (!pan) return;
     if (!dsBox.parentNode) pan.insertBefore(dsBox, pan.firstChild);
     infraUi();
-    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length;
+    var DX = window.OSAP_DISASTERX, dx = DX ? DX.list() : [];
+    var n = list.filter(function (x) { return DS[x.id]; }).length + dsCfOn().length + dx.filter(function (x) { return x.on; }).length;
     /* one list: Timeline on top as "All reports", then each group's rows. A data set's row has its map tick and its name,
        which opens its own list and details; a view that is not a map data set (a conflict tab, Route) has only the name */
     var tabs = Array.prototype.filter.call(seg.querySelectorAll("button[data-view]"), function (b) {
@@ -5989,6 +6001,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var notDs = { timeline: 1, route: 1, weather: 1, opendata: 1, comms: 1 };
     var rows = tabs.filter(cfv).concat(list.filter(function (x) { return !notDs[x.id]; }), tabs.filter(function (x) { return !notDs[x.id] && !cfv(x); })), grp = DS_GROUPS.map(function (g) { return [g[0], []]; });
     grp.push(["More topics", []]);
+    /* the satellite layers are map pictures, not reports: a tick and a name with what it shows, no list to open */
+    var dxRows = dx.map(function (x) {
+      return '<label class="dsrow dsx"><span class="dstick"><input type="checkbox" data-fx="' + esc(x.id) + '"' + (x.on ? " checked" : "") + '></span>' +
+        '<span class="dsname dsxname" title="' + esc(x.note) + '"><span>' + esc(x.name) + "<i>" + esc(x.short || x.note) + "</i></span></span></label>";
+    }).join("") + (dx.some(function (x) { return x.on; }) ? '<label class="mlop dsxop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + DX.opacity() + '" id="ml-op"><output id="ml-opv">' + Math.round(DX.opacity() * 100) + "%</output></label>" : "");
     rows.forEach(function (x) { grp[dsGroupOf(x.id)][1].push(x); });
     var tl = tabs.filter(function (x) { return x.id === "timeline"; })[0];
     dsBox.innerHTML =
@@ -5996,13 +6013,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         '<button type="button" class="dsclear" data-dsall="0"' + (n ? "" : " disabled") + ' title="Take every data set off the map">Clear map</button>' +
         '<button type="button" class="dsshowall" data-dsall="1" title="Put every data set on the map">Show all</button></div>' +
       (tl ? '<button type="button" class="dsname dsall-rep" data-dsopen="timeline" aria-pressed="' + (openId === "timeline") + '"><span>All reports</span><i>Timeline</i></button>' : "") +
-      grp.filter(function (g) { return g[1].length; }).map(function (g) {
-        return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x) {
+      grp.filter(function (g) { return g[1].length || (g[0] === DS_NAT && dxRows); }).map(function (g) {
+        /* Natural disasters: the flood reports, then the satellite pictures (flooding now, flood history, fires now), then the rest */
+        var nat = g[0] === DS_NAT, fi = nat ? g[1].map(function (x) { return x.id; }).indexOf("flood") + 1 : 0;
+        return '<div class="dsgrp">' + esc(g[0]) + "</div>" + g[1].map(function (x, i) {
           var box = x.view ? '<span class="dsnobox" title="A view of its own, not a map data set"></span>' :
             '<label class="dstick" title="Show ' + esc(x.name) + ' on the map"><input type="checkbox" data-ds="' + esc(x.id) + '"' + (DS[x.id] ? " checked" : "") + ' aria-label="Show ' + esc(x.name) + ' on the map"></label>';
-          return '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
+          return (nat && i === fi ? dxRows : "") + '<div class="dsrow">' + box + '<button type="button" class="dsname" data-dsopen="' + esc(x.id) + '" aria-pressed="' + (x.id === openId) + '" title="Open ' + esc(x.name) + '">' +
             "<span>" + esc(x.name) + "</span></button></div>";
-        }).join("");
+        }).join("") + (nat && fi >= g[1].length ? dxRows : "");
       }).join("") +
       /* Open data is the list of every public feed, not a topic: a link at the foot, not a row */
       (LBY.opendata ? '<button type="button" class="dsfeeds" data-dsopen="opendata" aria-pressed="' + (openId === "opendata") + '">Every public feed for ' + esc(C.name) + "</button>" : "");
@@ -6020,6 +6039,27 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     box.hidden = box.children.length < 2;
   }
+  /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
+     it is intuitive): terrain, then roads and movement, infrastructure, aircraft, then your own marking (country sides,
+     boundaries), then display options. Sections not named here stay where their module put them. */
+  var ML_ORDER = [["#ml-elev"], [null, /^Terrain/], ["#ml-roads"], ["#mob-sec", /^Ground movement/], ["#ml-infra"], ["#ml-air", /^Live aircraft/],
+    [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
+  function mlArrange() {
+    var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
+    if (!base) return;
+    var pool = Array.prototype.slice.call(pan.children).concat(ex ? Array.prototype.slice.call(ex.children) : []).filter(function (c) { return c.id !== "ml-wx" && c.id !== "ml-extra" && c.id !== "ml-ds"; });
+    var head = function (c) { var h = c.matches(".mlh") ? c : c.querySelector(".mlh"); return h ? h.textContent.trim() : ""; };
+    var want = [];
+    ML_ORDER.forEach(function (o) { pool.forEach(function (c) { if (want.indexOf(c) < 0 && ((o[0] && c.matches(o[0])) || (o[1] && o[1].test(head(c))))) want.push(c); }); });
+    for (var i = 0, a = base; i < want.length; a = want[i], i++) if (a.nextElementSibling !== want[i]) break;
+    if (i === want.length) return;
+    want.reduce(function (a, c) { a.after(c); return c; }, base);
+  }
+  (function () {
+    var go = function () { var pan = document.getElementById("ml-panel"); if (!pan) return setTimeout(go, 500);
+      var mo = new MutationObserver(mlArrange); mo.observe(pan, { childList: true }); var ex = document.getElementById("ml-extra"); if (ex) mo.observe(ex, { childList: true }); mlArrange(); };
+    go();
+  })();
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
      events, placed reports, history, military sites, alerts. Clear map switches those off too, so the map can be emptied
      without leaving the tab (Shane 2026-09-30) */
@@ -6034,7 +6074,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     for (var k = 0, i; k < 20 && (i = dsCfOn()[0]); k++) { i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true })); }
   }
   document.addEventListener("change", function (e) { var t = e.target; if (t && t.closest && t.closest("#cf-rail") && t.matches(DS_CFSEL)) dsUi(); });
-  dsBox.addEventListener("change", function (e) { var t = e.target; if (t && t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked); });
+  dsBox.addEventListener("change", function (e) {
+    var t = e.target; if (!t) return;
+    if (t.getAttribute("data-ds")) dsSet(t.getAttribute("data-ds"), t.checked);
+    /* a satellite layer: the Layers panel's own change listener switches it; redraw the list for the count and the opacity slider */
+    else if (t.getAttribute("data-fx")) setTimeout(dsUi, 0);
+  });
   dsBox.addEventListener("click", function (e) {
     var o = e.target.closest && e.target.closest("[data-dsopen]");
     if (o) {
@@ -6045,7 +6090,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var b = e.target.closest && e.target.closest("[data-dsall]"); if (!b) return;
     var on = b.getAttribute("data-dsall") === "1";
-    if (!on) dsCfClear();
+    if (!on) { dsCfClear(); var DX = window.OSAP_DISASTERX; if (DX) DX.list().forEach(function (x) { if (x.on) DX.set(x.id, false); }); }
     dsList().forEach(function (x) { if (on) DS[x.id] = 1; else delete DS[x.id]; });
     dsSet(current, !!DS[current]);
   });
