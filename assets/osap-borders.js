@@ -1,5 +1,5 @@
 /* AXIOM OSAP · Country boundaries: every land border between countries, worldwide, as crisp lines over any base map.
-   - Map overlays, section "Boundaries", row "Country borders". Off until switched on; the choice is kept on this device
+   - Map overlays, section "Country boundaries", row "Country borders". Off until switched on; the choice is kept on this device
      (localStorage "osap-borders") like the base map, and a data set change does not switch it off (extrasOff skips [data-bd]).
    - Lines: Natural Earth admin-0 countries (public domain), built by tools/build_borders.mjs. Zoomed out (below zoom 6) the
      1:50m file (data/basemap/borders-50m.js, ~70 KB); zoomed in the 1:10m file (borders-10m.js, ~310 KB), fetched the first time
@@ -86,7 +86,7 @@
     var pan = D.getElementById("ml-panel"); if (!pan) return false;
     if (D.getElementById("ml-bounds")) return true;
     var box = D.createElement("div"); box.id = "ml-bounds";
-    box.innerHTML = '<div class="mlh">Boundaries</div>' +
+    box.innerHTML = '<div class="mlh">Country boundaries</div>' +
       '<label class="mlrow"><input type="checkbox" data-bd="countries"' + (on ? " checked" : "") + '><span><b>Country borders</b>' +
       "<i>Every land border between countries, worldwide, drawn sharp at any zoom. Natural Earth (public domain); de facto lines, disputed borders are not marked.</i></span></label>" +
       '<p class="mlkey" id="bd-msg" hidden></p>';
