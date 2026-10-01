@@ -45,7 +45,7 @@ for (const [cc, q] of CAP_ONLY ? [] : [["ml", "Mali"], ["so", "Somalia"], ["ht",
 // folder's rss.xml (or the only language an agency publishes in) checked for items and their age.
 let cap = { url: "https://cap-sources.s3.amazonaws.com/", prefixes: [], feeds: [] };
 try {
-  for (let tok = "", n = 0; n < (process.env.SKIP_CAP === "0" ? 20 : 0); n++) {
+  for (let tok = "", n = 0; n < (process.env.SKIP_CAP === "1" ? 0 : 20); n++) {
     const r = await get(cap.url + "?list-type=2&delimiter=/" + (tok ? "&continuation-token=" + encodeURIComponent(tok) : ""), 20000);
     cap.prefixes.push(...[...r.body.matchAll(/<Prefix>([^<]+)\/<\/Prefix>/g)].map((m) => m[1]));
     const nt = r.body.match(/<NextContinuationToken>([^<]+)</);
