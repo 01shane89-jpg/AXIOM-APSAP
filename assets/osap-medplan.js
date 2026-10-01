@@ -742,6 +742,7 @@
     ".mpdoc .mpval{display:block;border-bottom:1px solid #777;min-height:18px;padding:1px 2px;color:#111;font-size:12px;white-space:pre-wrap}" +
     ".mpdoc .mpscroll{overflow:visible}.mpdoc table{table-layout:auto}.mpdoc td.mpfac{min-width:0}" +
     ".mpdoc .mpgh,.mpdoc .mpbest,.mpdoc .mpmark,.mpdoc .mppst th,.mpdoc figure img{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+    ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
     "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
     "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}";
   /* every #medplan rule also styles the print view's copy of the plan (.mpdoc) */
@@ -1037,8 +1038,13 @@
       : "No hospital with a known capability within " + Math.round(s.radii.h / 1000) + " km. See section 2 for hospitals with no details listed, and check national sources.") + "</p>"; return; }
     el.innerHTML = '<table class="mppst"><tbody>' + P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f);
-      return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" + (f.phone ? ' · <a href="tel:' + esc(f.phone.replace(/[^+0-9]/g, "")) + '">' + esc(f.phone) + "</a>" : "") +
-        '<span class="sub">' + esc(p.reason) + "</span></td></tr>";
+      /* the pick's contacts and what is known of its capability are shown here, not only in the hospital table (whose
+         buttons sit off-screen on a phone) */
+      var cap = (f.why || []).slice(); if (f.beds) cap.push(f.beds + " beds"); if (f.pad) cap.push("helipad on site");
+      return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" +
+        '<span class="sub">' + esc(p.reason) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
+        '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
+        '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button></span></td></tr>';
     }).join("") + "</tbody></table>" +
       '<p class="obs">Chosen by fixed rules: life, limb or eyesight goes to the highest level of care. Primary is the highest level of care that can be reached, the quickest of that level' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
       ". When Primary is beyond the golden hour, Secondary is the most capable inside it, to stabilise on the way; otherwise Secondary and Tertiary are the next highest levels of care. Confirm each by phone before relying on it.</p>";
@@ -1545,7 +1551,7 @@
       '<article class="bpage mpdoc"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
-      c.innerHTML + "</article>";
+      c.innerHTML + assessPrint(s, pts) + "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
     var ready = mapImage(1000, 640).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
@@ -1658,6 +1664,15 @@
       "<h3>Landing</h3>" + tb(R.filter(function (x) { return x[0] === "Helipad" || x[0] === "Nearest airfield"; })) +
       "<h3>Contacts and cover</h3>" + tb(R.filter(function (x) { return /^(Contacts|Address|TRICARE)$/.test(x[0]); })) +
       '<p class="obs">' + (gaps.length ? "Not known: " + esc(gaps.join(", ")) + ". " : "") + "Each line says where it comes from. OpenStreetMap is community data and can be out of date; a source's statement is that source's claim. Phone the hospital to confirm capability, beds and acceptance before relying on it.</p>";
+  }
+  /* the print view carries the full assessment of Primary, Secondary and Tertiary, each from a new page */
+  function assessPrint(s, P) {
+    if (!P.length) return "";
+    return P.map(function (p) {
+      var f = p.f, H = s.fac.H.indexOf(f), known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0];
+      return '<section class="mpaprint"><h3>Hospital assessment, ' + esc(p.role) + ": H" + (H + 1) + " " + esc(f.name) + "</h3>" +
+        assessHtml(f, s, known ? known.r : null).replace(/ id="[^"]*"/g, "").replace("Working out the route…", "Not worked out yet when this print was made; see section 3 of the plan, or print again once the routes are drawn.") + "</section>";
+    }).join("");
   }
   function assessView(id) {
     var f = find(id), s = ST, el = D.getElementById("brief"); if (!f || !el || f.kind !== "hospital") return false;

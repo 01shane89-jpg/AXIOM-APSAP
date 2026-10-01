@@ -209,6 +209,8 @@ async function openPlan(p) {
   const pst = await p.textContent("#mp-pst");
   ok(/Primary\s*H1 Sourced Trauma Centre/.test(pst) && /Secondary\s*H2 Trauma Test Hospital/.test(pst) && /Tertiary\s*H3 Far North Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
   ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); highest level of care in reach/.test(pst) && /next highest level of care/.test(pst) && /life, limb or eyesight goes to the highest level of care/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
+  ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
+  ok(await p.evaluate(() => [...document.querySelectorAll("#mp-pst [data-mp-assess]")].every((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth; })), "desktop: the picks' Assessment buttons are on screen");
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
@@ -334,6 +336,8 @@ async function openPlan(p) {
   if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
+  const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
+  ok(pa3.length === 3 && /^Hospital assessment, Primary: H1 Sourced Trauma Centre/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
   ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
