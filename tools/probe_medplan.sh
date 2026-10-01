@@ -24,7 +24,7 @@ try:
 except Exception as x: print('not json', x)
 PY
 }
-OP=https://overpass-api.de/api/interpreter
+OP=https://maps.mail.ru/osm/tools/overpass/api/interpreter
 # hospitals round Bangkok and Yala: which capability and contact tags exist
 for c in "13.75,100.52" "6.54,101.28" "50.11,8.68"; do
   probe "$OP" -H "Accept: */*" --data-urlencode "data=[out:json][timeout:40];nwr[\"amenity\"=\"hospital\"](around:30000,$c);out center tags 400;"; tags
