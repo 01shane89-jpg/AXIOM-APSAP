@@ -95,8 +95,8 @@
     if (S.err) return S.err;
     if (!S.data) return "";
     var n = S.n || { ai: 0, all: 0 }, bits = [];
-    if (S.ai) bits.push(n.ai ? n.ai + " AI data centre" + (n.ai === 1 ? "" : "s") : "No AI data centres listed for this country");
-    if (S.all) bits.push(n.all ? n.all + (S.ai ? " other" : "") + " data centre" + (n.all === 1 ? "" : "s") + " mapped" : (S.ai ? "no others mapped" : "No data centres mapped for this country"));
+    if (S.ai) bits.push(n.ai ? fmt(n.ai) + " AI data centre" + (n.ai === 1 ? "" : "s") : "No AI data centres listed for this country");
+    if (S.all) bits.push(n.all ? fmt(n.all) + (S.ai ? " other" : "") + " data centre" + (n.all === 1 ? "" : "s") + " mapped" : (S.ai ? "no others mapped" : "No data centres mapped for this country"));
     var ix = S.ix, stale = ix && ix.sources ? Object.keys(ix.sources).filter(function (k) { return ix.sources[k].ok === false; }).map(function (k) { return ix.sources[k].name; }) : [];
     return bits.join("; ") + "." + (ix && ix.at ? " List built " + String(ix.at).replace("T", " ") + "." : "") +
       (stale.length ? " Last refresh could not reach " + stale.join(", ") + "; their points are from the run before." : "");
