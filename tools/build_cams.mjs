@@ -28,22 +28,30 @@ function xmlTag(s, t) { const m = new RegExp(`<${t}>([^<]*)</${t}>`).exec(s); re
 const https = (u) => /^https:\/\//.test(String(u || "")) ? String(u) : null;
 
 export const SOURCES = [
-  { id: "sg-lta", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
+  { id: "sg-lta", tz: "Asia/Singapore", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
     licence: "Singapore Open Data Licence", page: "https://data.gov.sg/datasets/d_6cdb6b405b25aaaacbaf7689bcc6fae0/view",
     // the image addresses change every minute, so the page asks the same keyless API for the current one (live: true)
     live: "https://api.data.gov.sg/v1/transport/traffic-images",
     async list() {
-      const j = await get("https://api.data.gov.sg/v1/transport/traffic-images");
-      return ((j.items || [])[0] || {}).cameras.map((c) => [String(c.camera_id), r5(c.location.latitude), r5(c.location.longitude), "LTA camera " + c.camera_id, null]);
+      // one answer can hold only the cameras that sent an image that minute, so several moments in the last week are merged
+      const seen = new Map(), at = [0, 1, 6, 24, 72, 168].map((h) => h ? "?date_time=" + new Date(Date.now() - h * 36e5).toISOString().slice(0, 19) : "");
+      for (const q of at) {
+        try {
+          const j = await get("https://api.data.gov.sg/v1/transport/traffic-images" + q);
+          (((j.items || [])[0] || {}).cameras || []).forEach((c) => { if (!seen.has(String(c.camera_id))) seen.set(String(c.camera_id), c); });
+          console.log(`  sg-lta${q || " now"}: ${(((j.items || [])[0] || {}).cameras || []).length}`);
+        } catch (e) { console.log(`  sg-lta${q}: ${e.message}`); }
+      }
+      return [...seen.values()].map((c) => [String(c.camera_id), r5(c.location.latitude), r5(c.location.longitude), "LTA camera " + c.camera_id, null]);
     } },
-  { id: "hk-td", cc: "hk", country: "Hong Kong", agency: "Transport Department, Hong Kong SAR Government (DATA.GOV.HK)", every: 2,
+  { id: "hk-td", tz: "Asia/Hong_Kong", cc: "hk", country: "Hong Kong", agency: "Transport Department, Hong Kong SAR Government (DATA.GOV.HK)", every: 2,
     licence: "DATA.GOV.HK terms and conditions", page: "https://data.gov.hk/en-data/dataset/hk-td-tis_2-traffic-snapshot-images",
     async list() {
       const x = await get("https://static.data.gov.hk/td/traffic-snapshot-images/code/Traffic_Camera_Locations_En.xml", "text");
       return xmlItems(x, "image").map((s) => [xmlTag(s, "key"), r5(xmlTag(s, "latitude")), r5(xmlTag(s, "longitude")),
         tidy(xmlTag(s, "description") + (xmlTag(s, "district") ? ", " + xmlTag(s, "district") : "")), https(xmlTag(s, "url"))]);
     } },
-  { id: "nz-nzta", cc: "nz", country: "New Zealand", agency: "NZ Transport Agency Waka Kotahi (traffic.nzta.govt.nz)", every: 2,
+  { id: "nz-nzta", tz: "Pacific/Auckland", cc: "nz", country: "New Zealand", agency: "NZ Transport Agency Waka Kotahi (traffic.nzta.govt.nz)", every: 2,
     licence: "Creative Commons Attribution 4.0", page: "https://www.nzta.govt.nz/traffic-and-travel-information/infoconnect-section-page/",
     async list() {
       const x = await get("https://trafficnz.info/service/traffic/rest/4/cameras/all", "text");
@@ -54,7 +62,7 @@ export const SOURCES = [
           tidy(xmlTag(body, "name") + (xmlTag(body, "description") ? ": " + xmlTag(body, "description") : "")), img ? https("https://trafficnz.info" + img) : null];
       });
     } },
-  { id: "gb-tfl", cc: "gb", country: "United Kingdom (London)", agency: "Transport for London JamCams (TfL Open Data)", every: 5,
+  { id: "gb-tfl", tz: "Europe/London", cc: "gb", country: "United Kingdom (London)", agency: "Transport for London JamCams (TfL Open Data)", every: 5,
     licence: "Powered by TfL Open Data (Open Government Licence)", page: "https://tfl.gov.uk/info-for/open-data-users/",
     async list() {
       const j = await get("https://api.tfl.gov.uk/Place/Type/JamCam");
@@ -64,7 +72,7 @@ export const SOURCES = [
         return [String(p.id).replace(/^JamCams_/, ""), r5(p.lat), r5(p.lon), tidy(p.commonName + (a.view ? ", looking " + a.view : "")), https(a.imageUrl)];
       }).filter(Boolean);
     } },
-  { id: "fi-digitraffic", cc: "fi", country: "Finland", agency: "Fintraffic Digitraffic road weather cameras", every: 10,
+  { id: "fi-digitraffic", tz: "Europe/Helsinki", cc: "fi", country: "Finland", agency: "Fintraffic Digitraffic road weather cameras", every: 10,
     licence: "Creative Commons Attribution 4.0", page: "https://www.digitraffic.fi/en/road-traffic/",
     async list() {
       const j = await get("https://tie.digitraffic.fi/api/weathercam/v1/stations");
@@ -73,7 +81,7 @@ export const SOURCES = [
         return pr.length ? [f.properties.id, r5(f.geometry.coordinates[1]), r5(f.geometry.coordinates[0]), tidy(String(f.properties.name).replace(/_/g, " ")), pr.length === 1 ? pr[0] : pr] : null;
       }).filter(Boolean);
     } },
-  { id: "ca-drivebc", cc: "ca", country: "Canada (British Columbia)", agency: "BC Ministry of Transportation and Transit (DriveBC)", every: 15,
+  { id: "ca-drivebc", tz: "America/Vancouver", cc: "ca", country: "Canada (British Columbia)", agency: "BC Ministry of Transportation and Transit (DriveBC)", every: 15,
     licence: "Open Government Licence - British Columbia", page: "https://catalogue.data.gov.bc.ca/dataset/drivebc-highwaycams",
     async list() {
       const j = await get("https://www.drivebc.ca/api/webcams/");
@@ -81,14 +89,14 @@ export const SOURCES = [
         [String(c.id), r5(c.location.coordinates[1]), r5(c.location.coordinates[0]), tidy(c.name + (c.caption ? ": " + c.caption : "")),
           https("https://www.drivebc.ca" + String(c.links.imageDisplay).replace(/\?.*$/, ""))]);
     } },
-  { id: "au-nsw", cc: "au", country: "Australia (New South Wales)", agency: "Transport for NSW Live Traffic", every: 1,
+  { id: "au-nsw", tz: "Australia/Sydney", cc: "au", country: "Australia (New South Wales)", agency: "Transport for NSW Live Traffic", every: 1,
     licence: "Creative Commons Attribution 4.0", page: "https://opendata.transport.nsw.gov.au/dataset/live-traffic-cameras",
     async list() {
       const j = await get("https://data.livetraffic.com/cameras/traffic-cam.json");
       return j.features.map((f) => [String(f.id), r5(f.geometry.coordinates[1]), r5(f.geometry.coordinates[0]),
         tidy(f.properties.title + (f.properties.view ? ": " + f.properties.view : "")), https(f.properties.href)]);
     } },
-  { id: "us-caltrans", cc: "us", country: "United States (California)", agency: "California Department of Transportation (Caltrans)", every: 5,
+  { id: "us-caltrans", tz: "America/Los_Angeles", cc: "us", country: "United States (California)", agency: "California Department of Transportation (Caltrans)", every: 5,
     licence: "Caltrans public data", page: "https://cwwp2.dot.ca.gov/documentation/cctv/cctv.htm",
     async list() {
       const out = [];
@@ -103,7 +111,7 @@ export const SOURCES = [
       }
       return out;
     } },
-  { id: "us-nycdot", cc: "us", country: "United States (New York City)", agency: "NYC Department of Transportation", every: 1,
+  { id: "us-nycdot", tz: "America/New_York", cc: "us", country: "United States (New York City)", agency: "NYC Department of Transportation", every: 1,
     licence: "NYC DOT public traffic cameras", page: "https://webcams.nyctmc.org/",
     async list() {
       const j = await get("https://webcams.nyctmc.org/api/cameras");
@@ -132,7 +140,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   let bad = 0;
   for (const s of SOURCES) {
     const prev = old.sources.find((o) => o.id === s.id);
-    const meta = { id: s.id, cc: s.cc, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
+    const meta = { id: s.id, cc: s.cc, tz: s.tz, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
     if (s.live) meta.live = s.live;
     try {
       const t = Date.now();
