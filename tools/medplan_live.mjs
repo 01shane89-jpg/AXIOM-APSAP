@@ -39,7 +39,8 @@ async function run(cc, c, poi, noOverpass, tag) {
   const r = await p.evaluate(() => { const t = (id) => (document.getElementById(id) || {}).textContent || "";
     return { fac: document.querySelectorAll("#mp-fac tbody tr").length > 0 && /min/.test(t("mp-fac")), rt: /by road/.test(t("mp-rt")), ems: !!document.querySelector('#mp-ems a[href^="tel:"]'),
       oc: /P1/.test(t("mp-oc")), dst: /D1/.test(t("mp-oc")), wx: !!document.querySelector("#mp-wx table"), poi: /Centred on the anticipated point of injury/.test(t("medplan")),
-      pst: /Primary/.test(t("mp-pst")) && !!document.querySelector("#mp-pst table"), noNone: !/No hospital (within|is listed)/.test(t("mp-fac")), stored: /stored copy/.test(t("mp-fac") + t("mp-src")) }; });
+      pst: /Primary/.test(t("mp-pst")) && !!document.querySelector("#mp-pst table"), noNone: !/No hospital (within|is listed)/.test(t("mp-fac")), stored: /stored copy/.test(t("mp-fac") + t("mp-src")),
+      osmDown: /Live OpenStreetMap could not be reached/.test(t("mp-fac")), honest: /does not mean there is no hospital/.test(t("medplan")) }; });
   if (process.env.OUT) await p.screenshot({ path: process.env.OUT + "/medplan-live-" + tag + ".png", fullPage: false });
   /* the print view: the map is drawn, then the pages as they print */
   await p.evaluate(() => window.OSAP_MEDPLAN.printView());
@@ -54,7 +55,12 @@ async function run(cc, c, poi, noOverpass, tag) {
   console.log(errors.length ? "page errors: " + errors.join(" | ") : "no page errors");
   console.log(tag + " checks: " + JSON.stringify(r));
   await ctx.close();
-  return r.fac && r.rt && r.ems && r.oc && r.wx && r.poi && r.pst && r.noNone && r.map && (!noOverpass || r.stored) && !errors.length;
+  const full = r.fac && r.rt && r.ems && r.oc && r.wx && r.poi && r.pst && r.noNone && r.map && (!noOverpass || r.stored) && !errors.length;
+  /* where the stored copy does not cover the country yet and public Overpass is down, the right result is an honest
+     failure (never "no hospital") with the rest of the plan still built; that passes, and says so */
+  const honest = !full && !noOverpass && r.osmDown && r.honest && r.noNone && r.ems && r.oc && r.poi && r.map && !errors.length;
+  if (honest) console.log(tag + ": public Overpass was down and the country is not stored yet; the plan said the lookup failed, as it should");
+  return full || honest;
 }
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 /* public servers have outages; a country that fails is tried once more after a pause before the job fails */
