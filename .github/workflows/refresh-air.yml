@@ -9,6 +9,9 @@ on:
   schedule:
     # each run sweeps for about 14 minutes; GitHub starts scheduled runs late when busy, so gaps of a few minutes are normal
     - cron: "1,16,31,46 * * * *"
+  push: # TEMP test trigger, removed before review
+    branches: [claude/air-sea-traffic]
+    paths: [tools/refresh_air.mjs, .github/workflows/refresh-air.yml]
   workflow_dispatch:
     inputs:
       sweeps:
