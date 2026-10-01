@@ -212,6 +212,7 @@ async function openPlan(p) {
   ok(/City Ambulance Station/.test(ems) && /111 2222/.test(ems), "desktop: ambulance stations near the POI with their published phone");
   const mev = await p.textContent("#mp-mev");
   ok(/Test Air Rescue/.test(mev) && /555 0100/.test(mev) && /to the POI at 120 kn/.test(mev), "desktop: air rescue base with phone and flight time to the POI");
+  ok(/International SOS assistance centre, Bangkok/.test(mev) && /\+66 2 206 7777/.test(mev) && /read 2026-10-01/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => a.href === "https://www.internationalsos.com/assistance-centres")) && /International SOS assistance centres/.test(await p.textContent("#mp-src")), "desktop: the nearest International SOS assistance centres show with their published numbers and source");
   ok(/launch, fly in, 10 min on the ground, fly to H1/.test(mev) && /(Inside|Beyond) golden hour|golden-hour limit/.test(mev), "desktop: medevac call-to-hospital time against the golden hour");
   const air = await p.textContent("#mp-air");
   ok(/Riverside Pad/.test(air) && /Test Airfield/.test(air) && /VTXX/.test(air), "desktop: helipads and airfields listed with ICAO code");
@@ -249,6 +250,7 @@ async function openPlan(p) {
   await p.waitForFunction(() => /D1/.test(document.getElementById("mp-oc").textContent) && /Road route to P1/.test(document.getElementById("mp-oc").textContent), null, { timeout: 15000 });
   const oc = await p.textContent("#mp-oc");
   ok(/Test International/.test(oc) && /VTTT \/ TTT/.test(oc) && /30 min/.test(oc), "out of country: departure airport with drive time");
+  ok(/International SOS assistance centre, (Bangkok|Kuala Lumpur|Singapore)/.test(oc), "out of country: International SOS assistance centres listed with the emergency contacts");
   ok(/Receiving hospitals in nearby countries/.test(oc) && await p.evaluate(() => document.querySelectorAll("#mp-oc tbody tr").length >= 2), "out of country: sourced hospitals in nearby countries");
   ok(/at 250 kn \+ 15 min launch/.test(oc), "out of country: flight times state the speed and launch time");
   ok(/U\.S\. Embassy Bangkok/.test(oc) && /205 4000/.test(oc) && /1-888-407-4747/.test(oc) && /\+1 202-501-4444/.test(oc) && /travel\.state\.gov/.test(oc), "out of country: embassy address and phone, State Department emergency numbers with source");

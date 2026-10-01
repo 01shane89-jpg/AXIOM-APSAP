@@ -43,6 +43,21 @@
   /* planning assumptions, shown wherever they are used */
   var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15 };
   var STATE_EMERG = { url: "https://travel.state.gov/content/travel/en/international-travel/emergencies.html", us: "1-888-407-4747", abroad: "+1 202-501-4444" };
+  /* International SOS assistance centres: published 24-hour numbers, read from ISOS's public page on 2026-10-01. City
+     points are only used to show the nearest centres; ISOS's clinic and network data needs a login and is not used. */
+  var ISOS_URL = "https://www.internationalsos.com/assistance-centres", ISOS_AT = "2026-10-01";
+  var ISOS = [
+    ["Bangkok", 13.75, 100.5, "+66 2 206 7777", "+66 2 254 0272"], ["Singapore", 1.29, 103.85, "+65 6338 7800", "+65 6338 7611"],
+    ["Sydney", -33.87, 151.21, "+61 2 9372 2468", "+61 2 9372 2455"], ["Philadelphia", 39.95, -75.17, "+1 215 942 8226", "+1 215 354 2338"],
+    ["London", 51.51, -0.13, "+44 20 8762 8008", "+44 20 8748 7744"], ["Bali", -8.65, 115.22, "+62 21 766 4633"],
+    ["Beijing", 39.9, 116.4, "+86 10 6462 9100"], ["Delhi", 28.61, 77.21, "+91 22 42838383"], ["Dubai", 25.2, 55.27, "+971 4 601 8777"],
+    ["Frankfurt", 50.11, 8.68, "+49 6102 358 8100"], ["Geneva", 46.2, 6.14, "+41 22 785 6464"], ["Ho Chi Minh City", 10.78, 106.7, "+84 28 3999 8100"],
+    ["Hong Kong", 22.32, 114.17, "+852 2528 9900"], ["Jakarta", -6.2, 106.85, "+62 21 750 6001"], ["Johannesburg", -26.2, 28.05, "+27 11 541 1300"],
+    ["Kuala Lumpur", 3.14, 101.69, "+603 2787 3126"], ["Madrid", 40.42, -3.7, "+34 91 572 4363"], ["Manila", 14.6, 120.98, "+63 2 8687 0909"],
+    ["Mexico City", 19.43, -99.13, "+52 55 4166 2808"], ["Milan", 45.46, 9.19, "+39 02 35 98 95 01"], ["Paris", 48.86, 2.35, "+33 155 633 155"],
+    ["Prague", 50.08, 14.44, "+420 222 111 155"], ["San Antonio", 29.42, -98.49, "+1 726 222 9361"], ["Seoul", 37.57, 126.98, "+82 2 3140 1700"],
+    ["Shanghai", 31.23, 121.47, "+86 21 6295 0099"], ["Taipei", 25.03, 121.57, "+886 2 2523 2220"], ["Tokyo", 35.68, 139.69, "+81 3 3560 7183 (English)"]
+  ];
   var SRC = {
     medfac: { name: "OSAP stored copy of OpenStreetMap health facilities and landing sites", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Refreshed from OpenStreetMap every four weeks." },
     osm: { name: "OpenStreetMap via Overpass API", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Community data: capabilities, contacts and access can be out of date." },
@@ -51,6 +66,7 @@
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
     wd: { name: "Wikidata emergency phone numbers (P2852)", url: "https://www.wikidata.org/wiki/Property:P2852", note: "Community data; confirm locally." },
     state: { name: "U.S. Department of State: emergencies abroad", url: STATE_EMERG.url },
+    isos: { name: "International SOS assistance centres", url: ISOS_URL, note: "Published 24-hour numbers, read " + ISOS_AT + ". ISOS assists its members and their clients; check your organisation's membership." },
     meteo: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", note: "Model forecast for one point, not an aviation forecast." },
     who: { name: "WHO Disease Outbreak News", url: "https://www.who.int/emergencies/disease-outbreak-news" },
     cdc: { name: "CDC travel health notices", url: "https://wwwnc.cdc.gov/travel/notices" },
@@ -73,6 +89,14 @@
   ];
 
   function A() { return W.TSAP && W.TSAP.areaApi; }
+  /* the two International SOS assistance centres nearest the POI, as a list item block */
+  function isosNear(o) { return ISOS.map(function (c) { return { c: c, m: hav(o, [c[1], c[2]]) }; }).sort(function (a, b) { return a.m - b.m; }).slice(0, 2); }
+  function isosHtml(o) {
+    return isosNear(o).map(function (x) {
+      return '<li class="mpisos">International SOS assistance centre, ' + esc(x.c[0]) + " (" + esc(km(x.m)) + " away): " + x.c.slice(3).map(function (n) { return '<a href="tel:' + esc(n.replace(/\(.*\)/, "").replace(/[^0-9+]/g, "")) + '">' + esc(n) + "</a>"; }).join(", ") +
+        " " + link(ISOS_URL, "(internationalsos.com, read " + ISOS_AT + ")") + "</li>";
+    }).join("");
+  }
   function G() { return W.OSAP_GEO; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function clip(s, n) { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
@@ -947,6 +971,7 @@
     var mine = ["medevac1", "medevac2", "freq1", "freq2"].filter(function (k) { return v[k]; });
     h += mine.length ? "<ul>" + mine.map(function (k) { return "<li>" + esc(fieldLabel(k)) + ": <b>" + esc(v[k]) + "</b></li>"; }).join("") + "</ul>"
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
+    h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
     function row(b, i, mk, cls) {
       var fly = flightS(b.m, rw), tot = launch * 60 + fly + ONSCENE_MIN * 60 + (best ? flightS(best.m, rw) : 0);
@@ -1072,7 +1097,7 @@
     }).join("") + "</tbody></table></div>";
     var sof = sofOf(s.cc), posts = ((sof && sof.posts) || []).slice().sort(function (a, b) { return (a.lat == null) - (b.lat == null) || (a.lat != null && b.lat != null ? hav(s.o, [a.lat, a.lon]) - hav(s.o, [b.lat, b.lon]) : 0); });
     h += "<h4>U.S. Embassy and emergency contacts</h4><ul>" + (posts.length ? posts.slice(0, 3).map(function (p) { return postRow(p, s.x); }).join("") : '<li class="obs">No U.S. post listed for ' + esc(s.name) + " in OSAP.</li>") +
-      '<li>U.S. citizens\' emergencies abroad (State Department): from the U.S. and Canada <a href="tel:+18884074747">' + esc(STATE_EMERG.us) + '</a>; from overseas <a href="tel:+12025014444">' + esc(STATE_EMERG.abroad) + "</a> " + link(STATE_EMERG.url, "(travel.state.gov)") + "</li></ul>" +
+      isosHtml(s.o) + '<li>U.S. citizens\' emergencies abroad (State Department): from the U.S. and Canada <a href="tel:+18884074747">' + esc(STATE_EMERG.us) + '</a>; from overseas <a href="tel:+12025014444">' + esc(STATE_EMERG.abroad) + "</a> " + link(STATE_EMERG.url, "(travel.state.gov)") + "</li></ul>" +
       '<p class="obs">Destinations are hospitals OSAP\'s researchers listed from named sources; acceptance, capability and entry rules must be agreed with the receiving hospital and the medevac provider. Flight times are straight-line estimates at ' + fw + " kn (a typical air-ambulance jet) plus " + launch + " min launch, without clearances, fuel stops or ground transfers. Record the agreed destination in section 9.</p>";
     el.innerHTML = h;
   }
@@ -1122,6 +1147,7 @@
     li.push(srcLi(SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"));
     li.push(srcLi(SRC.wd, s.emsErr ? "not reached: " + s.emsErr : s.ems ? "read " + dual(s.ems.at, true) : "reading…"));
     if (s.oc) li.push(srcLi(SRC.state, "published numbers"));
+    li.push(srcLi(SRC.isos, "published numbers, read " + ISOS_AT));
     li.push(srcLi(SRC.meteo, s.wxErr ? "not reached: " + s.wxErr : s.wx ? "read" : "reading…"));
     if (s.thr) {
       if (s.thr.who.length) li.push(srcLi(SRC.who, "OSAP snapshot " + ((W.ASAP_WHO || {}).asof || "")));
