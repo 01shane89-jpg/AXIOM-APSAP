@@ -1,5 +1,5 @@
 // Test only: opens the Medical plan against the real keyless hosts (OpenStreetMap Overpass, FOSSGIS OSRM and Valhalla,
-// Wikidata, Open-Meteo) for areas round Nakhon Sawan, Thailand (the point Shane tested, once as is and once with Overpass
+// Wikidata, Open-Meteo) for areas round Nakhon Sawan and Bangkok, Thailand (the points Shane tested; Nakhon Sawan once as is and once with Overpass
 // blocked, so the plan must stand on OSAP's stored copy in data/medfac) and Frankfurt, Germany, and prints what came back.
 // With OUT=dir it saves screenshots, the print view and its PDF. Run by the "Probe medical plan hosts" workflow; writes nothing to the repo.
 // Run from the repo root: node tools/medplan_live.mjs   (needs the playwright package and Chromium; OUT=dir saves a screenshot)
@@ -74,7 +74,9 @@ async function tryTwice(cc, c, poi, noOverpass, tag) {
 const NS = [15.89442, 100.11841];
 const okOff = await tryTwice("th", NS, "15.89442, 100.11841", true, "th-overpass-down");
 const okTh = await tryTwice("th", NS, "15.89442, 100.11841", false, "th");
+/* Shane's Bangkok point, from the stored copy: the picks should be Bangkok's own top hospitals */
+const okBk = await tryTwice("th", [13.59994, 100.5661], "13.59994, 100.56610", true, "bkk");
 await wait(20000); /* let the Overpass slot free up */
 const okDe = await tryTwice("de", [50.11, 8.68], "50.1100, 8.6800");
-console.log("results: overpass down " + okOff + ", th " + okTh + ", de " + okDe);
-await browser.close(); server.close(); process.exit(okOff && okTh && okDe ? 0 : 1);
+console.log("results: overpass down " + okOff + ", th " + okTh + ", bangkok " + okBk + ", de " + okDe);
+await browser.close(); server.close(); process.exit(okOff && okTh && okBk && okDe ? 0 : 1);
