@@ -597,7 +597,7 @@
     ".atk-mk{display:flex;align-items:center;gap:4px;border-top:1px solid var(--line-soft,var(--line))}.atk-mk:first-child{border-top:0}.atk-mk>button:first-child{flex:1;text-align:left;border:0;background:none;color:inherit;font:inherit;padding:8px 2px;cursor:pointer;display:flex;align-items:center;gap:6px}" +
     ".atk-mk code{font:11.5px 'IBM Plex Mono',monospace;color:var(--muted)}.atk-dot{display:inline-block;width:9px;height:9px;background:#15aabf;transform:rotate(45deg);border:1.5px solid #fff;box-shadow:0 0 0 1px #15aabf}" +
     ".atk-sw{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.atk-sw input{margin-top:2px}" +
-    "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:72%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
+    "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:55%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
     "#atk-tools{top:6px;right:6px}#atk-tools button{width:50px;min-height:44px}#atk-tools .atk-fold{min-height:26px}}" +
     "#atk-tools.more::after{content:'';position:absolute;left:3px;right:3px;bottom:3px;height:26px;border-radius:0 0 8px 8px;pointer-events:none;background:linear-gradient(rgba(20,24,28,0),rgba(20,24,28,.95) 70%)}" +
     "#atk-tools.more::before{content:'';position:absolute;z-index:1;left:50%;bottom:9px;width:7px;height:7px;margin-left:-5px;border:solid #e9eef2;border-width:0 2px 2px 0;transform:rotate(45deg);pointer-events:none}" +
