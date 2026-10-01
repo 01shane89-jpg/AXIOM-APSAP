@@ -70,6 +70,13 @@
     Object.keys((M.layers || {})[c] || {}).forEach(function (l) { L.push("data/layers/" + c + "/" + l + ".js"); });
     if ((M.sof || []).indexOf(c) >= 0) L.push("data/sof/" + c + ".js");
     if ((M.brief || []).indexOf(c) >= 0) L.push("data/brief/" + c + ".js");
+    /* SOF notes for the neighbours too (countries whose box touches this one's, padded 1.5 degrees): saved evacuation
+       plans (assets/osap-evac.js) read them for the crossing points */
+    var me = cinfo(c).bounds;
+    if (me) (W.OSAP_COUNTRIES || []).forEach(function (o) {
+      var b = o.bounds; if (!b || o.id === c || (M.sof || []).indexOf(o.id) < 0) return;
+      if (b[0][0] <= me[1][0] + 1.5 && b[1][0] >= me[0][0] - 1.5 && b[0][1] <= me[1][1] + 1.5 && b[1][1] >= me[0][1] - 1.5) L.push("data/sof/" + o.id + ".js");
+    });
     L.push("data/live/news/" + c + ".js", "data/live/social/" + c + ".js", "data/history/" + c + ".js", "data/terrain/" + c + ".js", "data/live/daily/" + c + ".js",
       "data/live/news-index.js", "data/medfac/index.json");
     for (var i = 0; i < 7; i++) L.push("data/live/news-index/" + new Date(Date.now() - i * 864e5).toISOString().slice(0, 10) + ".js");
@@ -247,6 +254,7 @@
       "<p>The Offline map is Sentinel-2 cloudless 2021 satellite imagery by EOX (10 m, CC BY-NC-SA 4.0, non-commercial), which allows saving tiles. It has no street names; OSAP's own borders, reports and your points still draw on it. " +
       "Saved detail stops at zoom 13; closer in, the map enlarges the saved picture.</p>" +
       "<p>The Grey, Streets, Topographic and Esri satellite maps cannot be saved in bulk under their providers' terms. Parts of them you have already looked at are kept (up to 1,500 squares) and show offline.</p>" +
+      "<p>Saved evacuation plans open offline; planning a new evacuation or road route needs signal.</p>" +
       "<p>Still needs signal: live weather and radar, road routing, satellite fire and flood layers, Refresh now, AI summaries and anything fetched from another website.</p></details></div>";
     paint();
   }
