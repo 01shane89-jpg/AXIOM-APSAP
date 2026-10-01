@@ -1,0 +1,7 @@
+[["n1042025770",60.39114,-111.35542,"ca",{"name":"Taltson River Airport","operator":"Northwest Territories Power Corporation","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3913068"}],
+["n13302985785",60.00321,-111.87982,"ca",{"name":"Fort Smith Health Centre","healthcare":"hospital","operator":"NWT Health & Social Services Authority","phone":"+1-867-872-6205","website":"https://www.nthssa.ca/en/fort-smith-region","addr:housenumber":"41","addr:street":"Breynat Street","addr:city":"Fort Smith","addr:province":"NT","addr:postcode":"X0E 0P0"}],
+["r12412306",60.01917,-111.96112,"ca",{"name":"Fort Smith Airport","aeroway":"aerodrome","icao":"CYSM","iata":"YSM","aerodrome:type":"public","wikidata":"Q3912580"}],
+["w1239949180",60.00302,-111.90815,"ca",{"name":"Fort Smith (District) Heliport","aeroway":"helipad"}],
+["w1239949181",60.00274,-111.90811,"ca",{"name":"Fort Smith (District) Heliport","aeroway":"helipad"}],
+["w1239949182",60.00284,-111.90971,"ca",{"name":"Fort Smith (District) Heliport","aeroway":"helipad"}],
+["w993095407",60.00306,-111.87947,"ca",{"amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]
