@@ -1,7 +1,7 @@
 // Test only: runs the landing zone finder (assets/osap-lz.js) against the real keyless hosts (AWS Terrain Tiles and
 // OpenStreetMap Overpass) round a few places and prints what came back: candidates with grid, clear size, slope, surface
 // and nearest obstacles, mapped helipads, and any warning or error. Fails when a search errors or finds nothing where open
-// ground is known to exist. With OUT=dir it saves a screenshot per place. Run by the "Probe landing zone hosts" workflow;
+// ground is known to exist; one place refused by every Overpass server (reported as such) is tolerated. With OUT=dir it saves a screenshot per place. Run by the "Probe landing zone hosts" workflow;
 // writes nothing to the repo.
 // Run from the repo root: node tools/lz_live.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
@@ -17,7 +17,7 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const browser = await chromium.launch();
-let fails = 0;
+let fails = 0, busy = 0;
 /* rice country north of Nakhon Sawan (Thailand), farmland near Ingolstadt (Germany), and central Bangkok (dense city) */
 const PLACES = [
   { tag: "nakhon-sawan", cc: "th", c: [15.745, 100.075], r: "2", d: "100", want: 1 },
@@ -46,11 +46,16 @@ for (const P of PLACES) {
   console.log("--- card\n" + card.slice(0, 2500));
   if (OUT) await p.screenshot({ path: OUT + "/lz-" + P.tag + ".png" });
   const good = !s.err && s.res && s.res.counts.any > 0 && s.res.cands.length >= P.want && errors.length === 0;
-  console.log((good ? "PASS " : "FAIL ") + P.tag + (errors.length ? " page errors: " + errors.join(" | ") : ""));
-  if (!good) fails++;
+  /* the free Overpass servers are often overloaded: a search they all refuse must say so plainly (and not count as
+     "no LZ"), and the run fails only when more than one place could not be searched */
+  const outage = !s.res && /OpenStreetMap obstacles did not load/.test(s.err || "") && errors.length === 0;
+  console.log((good ? "PASS " : outage ? "BUSY " : "FAIL ") + P.tag + (errors.length ? " page errors: " + errors.join(" | ") : ""));
+  if (!good && !outage) fails++;
+  if (outage) busy++;
   await ctx.close();
   await new Promise((r) => setTimeout(r, 5000));   /* be gentle with the free Overpass servers */
 }
 await browser.close(); server.close();
+if (busy > 1) { fails++; console.log("FAIL Overpass refused " + busy + " of " + PLACES.length + " places"); }
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
