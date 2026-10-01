@@ -1,0 +1,4 @@
+[["w158723880",44.04413,26.59507,"bg",{"name":"Многопрофилна болница за активно лечение (МБАЛ)","amenity":"hospital","phone":"+359 86 660 078","addr:housenumber":"81","addr:street":"Трансмариска","addr:city":"Тутракан","addr:postcode":"7600"}],
+["w161904614",44.04565,26.60006,"bg",{"name":"Медицински център \"Св. Иван Рилски\"","amenity":"hospital","phone":"+359 86 660 560","website":"https://invitro-tutrakan.bg/","addr:housenumber":"69","addr:street":"Трансмариска","addr:city":"Тутракан","addr:postcode":"7600"}],
+["w169950022",44.12177,27.2593,"bg",{"aeroway":"helipad"}],
+["w962797645",44.11051,27.26361,"bg",{"name":"МБАЛ Силистра","name:en":"Silistra Hospital","amenity":"hospital","healthcare":"hospital","website":"https://new.mbal-silistra.bg"}]]

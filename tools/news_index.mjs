@@ -13,7 +13,10 @@ import { compileViews, viewsOf } from "./view_reports_lib.mjs";
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const cutoff = new Date(Date.now() - DAYS * 864e5).toISOString().slice(0, 16);
-const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.indexOf("=", t.lastIndexOf("window.")) + 1).trim().replace(/;$/, "")); };
+// The data files open with "window.X=" (or "window.X=window.X||{};window.X[\"cc\"]="); only that opening is skipped, because a
+// headline or summary can itself contain "window." and "=" (one Pakistan item carried page script text and broke the whole pool).
+const JS_HEAD = /^(?:window\.\w+=window\.\w+\|\|\{\};)?window\.\w+(?:\["[^"]+"\])?=/;
+const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.match(JS_HEAD)[0].length).trim().replace(/;$/, "")); };
 const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
 const T = compileTopics(topics);
 // the tabs each headline is listed under in the app's Reports section (tools/view_reports.json)
@@ -32,8 +35,12 @@ function add(i, ccs) {
   pool.set(i.link, { i: { ...i, date: d }, ccs: new Set(ccs), tp: new Set(i.topics || []) });
 }
 let files = 0;
-try { for (const f of fs.readdirSync("data/history")) if (/^[a-z]{2,3}\.js$/.test(f)) { const cc = f.slice(0, -3), h = readJs("data/history/" + f); (h.news || []).forEach((i) => add(i, [cc])); files++; } }
-catch (e) { console.error("history unreadable:", e.message); }
+// one unreadable file is reported and skipped; it never stops the rest of the countries from being read
+try { for (const f of fs.readdirSync("data/history")) if (/^[a-z]{2,3}\.js$/.test(f)) {
+  try { const cc = f.slice(0, -3), h = readJs("data/history/" + f); (h.news || []).forEach((i) => add(i, [cc])); files++; }
+  catch (e) { console.error("history unreadable:", f, e.message); }
+} }
+catch (e) { console.error("history folder unreadable:", e.message); }
 try { const n = readJs("data/live/news.js"); for (const [cc, l] of Object.entries(n.items || {})) if (/^[a-z]{2,3}$/.test(cc)) l.forEach((i) => add(i, [cc])); }
 catch (e) { console.error("news.js unreadable:", e.message); }
 let tn = 0;
@@ -60,6 +67,24 @@ console.log(`relevance: kept ${(relN.strong || 0) + (relN.keep || 0) + (relN.unc
 dropped.slice(0, 20).forEach((d) => console.log("  left out:", d.cc, "|", d.why, "|", String(d.title).slice(0, 100)));
 // NEWSIX_DROPPED=<file>: write every left-out headline there for review (a diagnostic; not part of the app's data)
 if (process.env.NEWSIX_DROPPED) fs.writeFileSync(process.env.NEWSIX_DROPPED, JSON.stringify(dropped, null, 0));
+// Busy countries keep only their newest headlines in data/history (tools/history.mjs caps each file), which can be a few days'
+// worth. Headlines this index already listed inside the window stay listed when their history copy has rolled off, so a
+// search still covers the full DAYS days. Rows carried over keep the data sets and tabs they were given when first written.
+const seen = new Set(rows.map((r) => r[5]));
+let carried = 0;
+try {
+  for (const f of fs.readdirSync(DIR)) {
+    if (!/^\d{4}-\d{2}-\d{2}\.js$/.test(f) || f.slice(0, 10) < cutoff.slice(0, 10)) continue;
+    let old; try { old = readJs(DIR + "/" + f); } catch (e) { console.error("index day unreadable:", f, e.message); continue; }
+    for (const r of Array.isArray(old) ? old : []) {
+      if (!Array.isArray(r) || r.length < 10 || !r[5] || seen.has(r[5]) || r[1] < cutoff) continue;
+      seen.add(r[5]); rows.push(r); carried++;
+      String(r[8] || "").split(",").filter(Boolean).forEach((id) => (count[id] = (count[id] || 0) + 1));
+      String(r[9] || "").split(",").filter(Boolean).forEach((id) => (vcount[id] = (vcount[id] || 0) + 1));
+    }
+  }
+} catch (e) {}
+if (carried) console.log(`carried over ${carried} headlines already in the index whose history copy has rolled off`);
 const byDay = {};
 rows.forEach((r) => (byDay[r[1].slice(0, 10)] = byDay[r[1].slice(0, 10)] || []).push(r));
 fs.mkdirSync(DIR, { recursive: true });

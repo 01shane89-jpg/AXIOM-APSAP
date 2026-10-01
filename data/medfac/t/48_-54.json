@@ -1,0 +1,9 @@
+[["n1042024505",48.2747,-53.9239,"ca",{"name":"Clarenville Airport","aeroway":"aerodrome","wikidata":"Q3275200"}],
+["n11501484433",48.64772,-53.10672,"ca",{"name":"Bonavista Peninsula Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["n14158586292",48.56672,-53.06054,"ca",{"name":"Bonavista Aerodrome","addr:street":"Airport Road","addr:city":"Trinity Bay North","addr:province":"Newfoundland and Labrador","addr:postcode":"A0C 0C1","aeroway":"aerodrome","icao":"CWVA"}],
+["w1230807292",48.16412,-53.98327,"ca",{"aeroway":"helipad"}],
+["w1273418220",49.12292,-53.60088,"ca",{"name":"Brookfield Bonnews Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Central Health","operator:type":"public/government"}],
+["w443666042",49.06158,-53.55164,"ca",{"aeroway":"helipad"}],
+["w500803232",48.1651,-53.98469,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w568734988",48.67163,-53.98638,"ca",{"name":"Delaney's Ambulance Service","emergency":"ambulance_station","operator":"Delaney","addr:housenumber":"96","addr:street":"Main Street","addr:city":"Glovertown","addr:postcode":"A0G 2M0"}],
+["w697365974",48.50425,-53.04335,"ca",{"aeroway":"helipad"}]]
