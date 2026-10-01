@@ -118,9 +118,10 @@
 function main() {
   var W = window, D = document, G = W.OSAP_GEO;
   var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/";
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+  /* same servers and order as the Power grid layer; overpass-api.de often 504s under load */
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png", DEMZ = 12;
-  var MASTZ = 9, COVZ = 8, BOX = 0.25, MAX_BOXES = 30, R_CHECK = 35000, R_BCAST = 60000;
+  var MASTZ = 9, COVZ = 8, BOX = 0.25, MAX_BOXES = 30, VIEW_BOXES = 64, R_CHECK = 35000, R_BCAST = 60000;
   var KINDS = {
     cell: { name: "Mobile phone mast", plural: "Mobile phone masts", col: "#1971c2" },
     bcast: { name: "Radio or TV broadcast tower", plural: "Radio and TV towers", col: "#9c36b5" },
@@ -161,35 +162,64 @@ function main() {
       ";nwr[\"man_made\"=\"communications_tower\"]" + bb + ";);out center tags 6000;";
   }
   function post(q, i) {
-    var c = withTimeout(45000);
+    var c = withTimeout(35000);
     return fetch(OVERPASS[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: c && c.signal })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: a failure, not "no masts here" */
+      .then(function (j) { if (!j || (j.remark && /error/i.test(j.remark))) throw new Error("remark"); return j; })
       .catch(function (err) { if (i + 1 < OVERPASS.length) return post(q, i + 1); throw err; });
   }
-  /* loads every missing box in the area (one request for their joint rectangle); resolves when all are in */
-  function ensureMasts(s, w, n, e) {
-    var need = boxesFor(s, w, n, e), miss = need.filter(function (b) { return !S.boxes[boxKey(b[0], b[1])]; });
-    if (need.length > MAX_BOXES * 4) return Promise.reject(new Error("area too large"));
-    var waits = need.map(function (b) { return S.boxWait[boxKey(b[0], b[1])]; }).filter(Boolean);
-    miss = miss.filter(function (b) { return !S.boxWait[boxKey(b[0], b[1])]; });
-    if (miss.length) {
-      var i0 = Infinity, i1 = -Infinity, j0 = Infinity, j1 = -Infinity;
-      miss.forEach(function (b) { i0 = Math.min(i0, b[0]); i1 = Math.max(i1, b[0]); j0 = Math.min(j0, b[1]); j1 = Math.max(j1, b[1]); });
-      S.mastBusy++; paintStatus();
-      var p = post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), 0).then(function (j) {
+  /* loads every missing box in the area, one request per block of up to 4 x 4 boxes (one degree), at most two at a time;
+     draws as each block arrives. With cap, only the cap boxes nearest the middle are loaded (a wide screen at zoom 9 holds 200+). */
+  var queue = [], running = 0;
+  function pump() {
+    while (running < 2 && queue.length) {
+      var job = queue.shift(); running++;
+      job().finally(function () { running--; pump(); });
+    }
+  }
+  function loadBlock(blk) {
+    var i0 = Infinity, i1 = -Infinity, j0 = Infinity, j1 = -Infinity;
+    blk.forEach(function (b) { i0 = Math.min(i0, b[0]); i1 = Math.max(i1, b[0]); j0 = Math.min(j0, b[1]); j1 = Math.max(j1, b[1]); });
+    var res, rej, p = new Promise(function (y, n) { res = y; rej = n; });
+    blk.forEach(function (b) { S.boxWait[boxKey(b[0], b[1])] = p; });
+    S.mastBusy++; paintStatus();
+    queue.push(function () {
+      return post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), 0).then(function (j) {
         (j.elements || []).forEach(function (el) {
           var t = el.tags || {}, k = kind(t), lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
           if (!k || lat == null || lon == null) return;
           var pv = providers(t); pv.forEach(function (x) { if (!S.prov[x.key]) S.prov[x.key] = x.name; });
           S.masts[el.type + "/" + el.id] = { id: el.type + "/" + el.id, kind: k, lat: +lat, lon: +lon, t: t, h: antH(t), hm: !!height(t.height), p: pv.map(function (x) { return x.key; }) };
         });
-        for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) S.boxes[boxKey(a, b)] = 1;
+        blk.forEach(function (b) { S.boxes[boxKey(b[0], b[1])] = 1; });
         S.mastErr = "";
-      }, function (err) { S.mastErr = err && err.name === "AbortError" ? "The mast server took too long" : "The mast server could not be reached"; throw err; })
-        .finally(function () { S.mastBusy--; for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) delete S.boxWait[boxKey(a, b)]; paintStatus(); });
-      for (var a = i0; a <= i1; a++) for (var b = j0; b <= j1; b++) if (!S.boxes[boxKey(a, b)]) S.boxWait[boxKey(a, b)] = p;
-      waits.push(p);
-    }
+        if (active()) drawMasts();
+        res();
+      }, function (err) { S.mastErr = err && err.name === "AbortError" ? "The mast server took too long" : "The mast servers did not answer"; rej(err); })
+        .finally(function () { S.mastBusy--; blk.forEach(function (b) { delete S.boxWait[boxKey(b[0], b[1])]; }); paintStatus(); });
+    });
+    pump();
+    return p;
+  }
+  function ensureMasts(s, w, n, e, cap) {
+    var need = boxesFor(s, w, n, e);
+    if (cap && need.length > cap) {
+      /* keep whole one-degree blocks, nearest the middle first, so each request is a full block */
+      var ci = (w + e) / 2 / BOX / 4 - 0.5, cj = (s + n) / 2 / BOX / 4 - 0.5, keep = {}, bl = {};
+      need.forEach(function (b) { bl[Math.floor(b[0] / 4) + ":" + Math.floor(b[1] / 4)] = [Math.floor(b[0] / 4), Math.floor(b[1] / 4)]; });
+      Object.keys(bl).sort(function (a, b) { return Math.hypot(bl[a][0] - ci, bl[a][1] - cj) - Math.hypot(bl[b][0] - ci, bl[b][1] - cj); })
+        .slice(0, Math.max(1, Math.round(cap / 16))).forEach(function (k) { keep[k] = 1; });
+      need = need.filter(function (b) { return keep[Math.floor(b[0] / 4) + ":" + Math.floor(b[1] / 4)]; });
+    } else if (need.length > MAX_BOXES * 4) return Promise.reject(new Error("area too large"));
+    var waits = [], blocks = {};
+    need.forEach(function (b) {
+      var k = boxKey(b[0], b[1]);
+      if (S.boxes[k]) return;
+      if (S.boxWait[k]) { if (waits.indexOf(S.boxWait[k]) < 0) waits.push(S.boxWait[k]); return; }
+      var bk = Math.floor(b[0] / 4) + ":" + Math.floor(b[1] / 4); (blocks[bk] = blocks[bk] || []).push(b);
+    });
+    Object.keys(blocks).forEach(function (bk) { waits.push(loadBlock(blocks[bk])); });
     return Promise.all(waits);
   }
   function mastsNear(lat, lon, r) {
@@ -371,15 +401,59 @@ function main() {
     if (on && !S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.addLayer(covLayer);
     if (!on && S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.removeLayer(covLayer);
   }
+  /* the tower's data, for the hover card and the click popup: every line comes from its OpenStreetMap tags */
+  var SKIP_TAG = /^(name|name:en|man_made|tower:type|operator|owner|height|ref|brand|source.*|note.*|fixme|created_by|check_date.*|wikidata|wikipedia|image|website|url|phone|contact:.*|email|addr:.*)$/;
+  function mastInfo(m) {
+    var t = m.t, k = KINDS[m.kind], svc = [], freq = [], other = [], rows = [];
+    Object.keys(t).forEach(function (x) {
+      var mm = x.match(/^communication:([a-z_]+)$/);
+      if (mm && yes(t[x])) svc.push(mm[1].replace(/_/g, " "));
+      else if (/frequency|band|channel|technology|generation|radio|antenna|mobile_phone:|polarisation|erp|power/i.test(x) && !SKIP_TAG.test(x)) freq.push(x.replace(/^communication:/, "").replace(/[_:]/g, " ") + ": " + clean(t[x], 60));
+      else if (/^(tower:construction|construction|structure|material|colour|start_date|ele|access|operator:type|owner:type)$/.test(x)) other.push(x.replace(/[_:]/g, " ") + ": " + clean(t[x], 40));
+    });
+    var name = clean(t.name || t["name:en"] || "", 80), prov = m.p.map(provName);
+    rows.push(["Type", k.name + (t["tower:type"] ? " (" + clean(t["tower:type"], 30) + ")" : "")]);
+    rows.push(["Provider", prov.length ? prov.join(", ") : "not mapped"]);
+    if (t.operator && clean(t.operator, 80) !== prov.join(", ")) rows.push(["Operator tag", clean(t.operator, 80)]);
+    if (t.owner) rows.push(["Owner", clean(t.owner, 80)]);
+    if (t.ref) rows.push(["Ref", clean(t.ref, 40)]);
+    rows.push(["Height", m.hm ? Math.round(m.h) + " m (mapped)" : "not mapped (" + m.h + " m assumed)"]);
+    if (svc.length) rows.push(["Carries", svc.join(", ").slice(0, 160)]);
+    if (freq.length) rows.push(["Radio", freq.slice(0, 6).join("; ").slice(0, 220)]);
+    if (other.length) rows.push(["Details", other.slice(0, 5).join("; ").slice(0, 160)]);
+    rows.push(["Grid", (G && G.mgrs(m.lat, m.lon)) || m.lat.toFixed(5) + ", " + m.lon.toFixed(5)]);
+    rows.push(["Source", "OpenStreetMap " + m.id]);
+    return "<h3>" + E(name || k.name) + '</h3><table class="comtip">' + rows.map(function (r) { return "<tr><th>" + E(r[0]) + "</th><td>" + E(r[1]) + "</td></tr>"; }).join("") + "</table>";
+  }
   function mastPopup(m) {
-    var t = m.t, k = KINDS[m.kind], svc = [], osm = "https://www.openstreetmap.org/" + m.id.replace(/^(node|way|relation)\//, "$1/");
-    Object.keys(t).forEach(function (x) { var mm = x.match(/^communication:(.+)$/); if (mm && yes(t[x])) svc.push(mm[1].replace(/_/g, " ")); });
-    var name = clean(t.name || t["name:en"] || t.ref || "", 80), op = clean(t.operator || t.owner || "", 80);
-    return '<div data-keep-pop="1"><h3>' + E(name || k.name) + "</h3><p>" + E(k.name) + (op ? "<br>Operator: " + E(op) : "") +
-      "<br>Height: " + (m.hm ? E(Math.round(m.h)) + " m (mapped)" : "not mapped (" + m.h + " m assumed)") + (svc.length ? "<br>Carries: " + E(svc.join(", ").slice(0, 160)) : "") +
-      "<br><code>" + E((G && G.mgrs(m.lat, m.lon)) || "") + "</code></p>" +
+    var osm = "https://www.openstreetmap.org/" + m.id.replace(/^(node|way|relation)\//, "$1/");
+    return '<div data-keep-pop="1">' + mastInfo(m) +
       '<p class="obs">OpenStreetMap, community-mapped; may be missing, moved or out of date. <a href="' + E(osm) + '" target="_blank" rel="noopener">Open in OpenStreetMap</a></p>' +
       '<p><button type="button" class="linkish" data-comchk="' + m.lat.toFixed(5) + "," + m.lon.toFixed(5) + '">Check coverage here</button></p></div>';
+  }
+  /* hover card on mouse and pen screens; on touch the tap popup carries the same data */
+  var HOVER = !!(W.matchMedia && W.matchMedia("(hover: hover)").matches);
+  /* map canvases ignore the pointer (index.html hands clicks out itself), so Leaflet tooltips never open on canvas circles:
+     find the mast under the mouse here and open one shared card on it */
+  var shown = [], tip = null, tipId = "", hovRaf = 0;
+  function hoverOff() { if (tip && S.ctx) S.ctx.layer.removeLayer(tip); tip = null; tipId = ""; }
+  function mastAt(e) {
+    var map = S.ctx.map, pt = map.mouseEventToContainerPoint(e), best = null, bd = 9;
+    shown.forEach(function (m) { var q = map.latLngToContainerPoint([m.lat, m.lon]), d = Math.hypot(q.x - pt.x, q.y - pt.y); if (d < bd) { bd = d; best = m; } });
+    return best;
+  }
+  function onHover(e) {
+    if (hovRaf) return;
+    hovRaf = requestAnimationFrame(function () {
+      hovRaf = 0;
+      if (!active() || !shown.length || (e.target && e.target.closest && e.target.closest(".leaflet-popup, .leaflet-control"))) { hoverOff(); return; }
+      var m = mastAt(e);
+      if (!m) { hoverOff(); return; }
+      if (m.id === tipId) return;
+      hoverOff();
+      tip = L.tooltip({ direction: "top", offset: [0, -7], className: "comtipw", opacity: 1, interactive: false }).setLatLng([m.lat, m.lon]).setContent(mastInfo(m));
+      tipId = m.id; S.ctx.layer.addLayer(tip);
+    });
   }
   function drawMasts() {
     if (!S.ctx) return;
@@ -389,12 +463,13 @@ function main() {
     mastLayer.clearLayers();
     var map = S.ctx.map; if (map.getZoom() < MASTZ) { paintCounts(); return; }
     var b = map.getBounds().pad(0.1), n = 0;
+    shown = []; hoverOff();
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
       var k = KINDS[m.kind];
       var mk = L.circleMarker([m.lat, m.lon], { renderer: canv, radius: m.kind === "bcast" ? 6 : 5, color: "#fff", weight: 1.5, fillColor: k.col, fillOpacity: 0.95 });
       mk.bindPopup(function () { return mastPopup(m); });
-      mk.addTo(mastLayer); n++;
+      mk.addTo(mastLayer); n++; shown.push(m);
     });
     S.drawn = n;
     paintCounts();
@@ -403,9 +478,10 @@ function main() {
     if (!active()) return;
     var map = S.ctx.map;
     if (map.getZoom() < MASTZ) { drawMasts(); paintStatus(); return; }
-    var b = map.getBounds();
-    ensureMasts(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()).then(drawMasts, drawMasts);
-    drawMasts();
+    var b = map.getBounds(), all = boxesFor(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()).length;
+    S.partial = all > VIEW_BOXES;
+    ensureMasts(b.getSouth(), b.getWest(), b.getNorth(), b.getEast(), VIEW_BOXES).then(drawMasts, drawMasts);
+    drawMasts(); paintStatus();
   }
   function drawResult() {
     if (!S.ctx) return;
@@ -544,6 +620,7 @@ function main() {
     if (z < MASTZ) msg.push("Zoom in to about city level to load masts and towers.");
     else if (S.mastBusy) msg.push("Loading masts and towers from OpenStreetMap…");
     else if (S.mastErr) msg.push(S.mastErr + "; move the map to try again.");
+    else if (S.partial) msg.push("Masts are loaded for the middle of the map; zoom in or pan to see the rest.");
     if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
     if (S.covErr) msg.push(S.covErr + ".");
     el.textContent = msg.join(" ");
@@ -694,7 +771,9 @@ function main() {
     ".comlist,.comgaps{margin:4px 0 8px;padding-left:18px}.comlist li,.comgaps li{margin:2px 0}.comlist{list-style:none;padding-left:0}" +
     ".comv{background:none;border:0}.comv span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
     ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
-    ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}";
+    ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}" +
+    ".comtipw{max-width:320px;white-space:normal}.comtipw h3,.leaflet-popup-content .comtip+p{margin:0 0 4px}.comtipw h3{font-size:13px}" +
+    "table.comtip{border-collapse:collapse;font-size:12px;line-height:1.35}table.comtip th{text-align:left;font-weight:600;padding:1px 8px 1px 0;vertical-align:top;white-space:nowrap;color:var(--muted,#555)}table.comtip td{padding:1px 0;overflow-wrap:anywhere}";
   D.head.appendChild(st);
 
   /* ---------- entry point ---------- */
@@ -702,9 +781,15 @@ function main() {
   function show(ctx) {
     S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null;
     panes(); skeleton(); drawCov(); drawResult(); legend();
-    if (hooked !== ctx.map) { ctx.map.on("moveend", onMove); hooked = ctx.map; }
+    if (hooked !== ctx.map) {
+      ctx.map.on("moveend", onMove); hooked = ctx.map;
+      if (HOVER) { var box = ctx.map.getContainer(); box.addEventListener("mousemove", onHover); box.addEventListener("mouseleave", function () { hoverOff(); }); }
+    }
+    shown = []; tip = null; tipId = "";
     covIndex().catch(function () {});
     setTimeout(loadView, 0);
+    /* the panel note can sit off screen on a phone: say it on the map too */
+    if (ctx.map.getZoom() < MASTZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to about city level to see masts and towers");
   }
   W.OSAP_COMMSTAB = { show: show, check: function (lat, lon) { S.mode = "place"; paintMode(); runPlace(lat, lon); }, line: function (pts) { runLine(pts); },
     state: function () { return { drawn: S.drawn, prov: S.prov, off: S.off, masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
