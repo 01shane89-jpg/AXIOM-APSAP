@@ -5,11 +5,14 @@
 //     An unnamed data centre building within 300 m of another mapped data centre is taken to be part of it and left out.
 //   - Wikidata (CC0): items that are an instance of data center (Q671224, or a subclass) with coordinates; one within 300 m of an
 //     OpenStreetMap data centre is left out as the same site.
-//   - Epoch AI (CC BY 4.0): Frontier Data Centers (AI data centre campuses with their own coordinates) and GPU Clusters (AI
-//     supercomputers, placed at the town or region the record names, using the GeoNames gazetteer in tools/gazetteer.mjs).
+//   - Epoch AI (CC BY 4.0): GPU Clusters (AI supercomputers, with Epoch's own latitude and longitude where given) and Frontier
+//     Data Centers (the largest AI campuses; the table gives a street address, so they are placed at the town the address names,
+//     using the GeoNames gazetteer in tools/gazetteer.mjs, and marked approximate). Epoch's confidence tags ("#likely") are kept
+//     as words in brackets, never dropped silently. Rows Epoch marks Exclude are left out.
 // Only Epoch AI records carry the AI flag: Epoch lists them as AI data centres or GPU clusters. Nothing else is called AI.
-// A GPU cluster that cannot be placed is kept in its country's file as unplaced (listed in the panel, not drawn). A cluster
-// within 60 km of a Frontier Data Centers site of the same owner is listed on that site instead of being drawn twice.
+// A site that cannot be placed is kept in its country's file as unplaced (listed in the panel, not drawn). GPU clusters at the
+// same coordinates with the same owner (phases of one build, such as Colossus phases 1 to 3) are one point: the largest
+// existing one leads and the others are listed on it.
 // Output: data/dc/<cc>.json { v, cc, at, items: [...], unplaced: [...] } and data/dc/index.json { v, at, sources, countries }.
 // A source that fails keeps its items from the last good run (index.sources[s].ok false, with that run's time), so a busy server
 // never empties the map, and the failure is shown in the panel rather than hidden.
@@ -133,10 +136,12 @@ function csv(text) {
 /* the first column whose header matches */
 const col = (head, ...res) => { for (const re of res) { const h = head.find((x) => re.test(x)); if (h) return h; } return null; };
 async function firstOk(urls) { let err; for (const u of urls) { try { return { u, t: await get(u) }; } catch (e) { err = e; log("  ", u, e.message); } } throw err; }
+/* "SpaceXAI #confident, Cursor #likely" -> "SpaceXAI (confident), Cursor (likely)" */
+const tags = (s) => String(s || "").replace(/\s*#(\w+)/g, " ($1)").trim();
 const num = (s) => { const n = parseFloat(String(s || "").replace(/[, ]/g, "")); return isFinite(n) ? n : null; };
 const page = (u) => u.replace(/\/[^/]*\.csv$/, "").replace("/generated/data_centers", "/data-centers").replace("/data/data_centers", "/data/data-centers").replace("/data/gpu_clusters", "/data/gpu-clusters");
 
-async function epochDc() {
+async function epochDc(gz) {
   const { u, t } = await firstOk(EPOCH_DC);
   const { head, rows } = csv(t);
   log("  epoch dc columns:", head.join(" | "));
@@ -152,44 +157,70 @@ async function epochDc() {
     if ((lat == null || lon == null) && H.coords) { const m = /(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)/.exec(r[H.coords] || ""); if (m) { lat = +m[1]; lon = +m[2]; } }
     const nm = r[H.name]; if (!nm) continue;
     const hint = ccFromName(r[H.country]) || ccFromA2(r[H.country]);
-    if (lat == null || lon == null || Math.abs(lat) > 90 || Math.abs(lon) > 180) { out.push({ unplaced: true, cc: hint, nm: clip(nm), op: clip(r[H.owner]), why: "Epoch AI Frontier Data Centers", u: page(u) }); continue; }
+    const x = Object.fromEntries([["users", clip(tags(r[H.users]), 100)], ["power_mw", num(r[H.mw])], ["h100e", num(r[H.h100])], ["where", clip(r[H.loc], 80)]].filter((p) => p[1] != null && p[1] !== ""));
+    const base = { id: "epdc:" + fp(nm).slice(0, 12), nm: clip(nm), op: clip(tags(r[H.owner])), s: "epochdc", ai: 1, u: page(u), st: clip(r[H.status], 40), x };
+    let p = "exact", pb = "";
+    if (lat == null || lon == null || Math.abs(lat) > 90 || Math.abs(lon) > 180) {
+      const at = gz && hint ? placeIn(gz, (r[H.loc] || "") + ". " + nm, [hint]) : null;
+      if (!at) { out.push({ ...base, unplaced: true, cc: hint, why: "Epoch AI Frontier Data Centers (no town found in the address)" }); continue; }
+      lat = at.lat; lon = at.lon; p = at.prec; pb = at.basis + ": " + at.name;
+    }
     const cc = ccOf(lat, lon, hint) || hint; if (!cc) continue;
-    out.push({ id: "epdc:" + fp(nm).slice(0, 12), cc, la: r5(lat), lo: r5(lon), nm: clip(nm), op: clip(r[H.owner]), s: "epochdc", ai: 1, u: page(u), p: "exact",
-      st: clip(r[H.status], 40), x: Object.fromEntries([["users", clip(r[H.users], 80)], ["power_mw", num(r[H.mw])], ["h100e", num(r[H.h100])], ["where", clip(r[H.loc], 80)]].filter((p) => p[1] != null && p[1] !== "")) });
+    out.push({ ...base, cc, la: r5(lat), lo: r5(lon), p, ...(pb ? { pb } : {}) });
   }
   return out;
 }
-async function epochGpu(gz, sites) {
+async function epochGpu(gz) {
   const { u, t } = await firstOk(EPOCH_GPU);
   const { head, rows } = csv(t);
   log("  epoch gpu columns:", head.join(" | "));
   if (DEBUG) log("  sample:", JSON.stringify(rows.slice(0, 2)));
   const H = { name: col(head, /^name$/i, /name/i), owner: col(head, /^owner/i, /operator/i), users: col(head, /^users?$/i),
     country: col(head, /^country/i), loc: col(head, /^location/i, /city/i), status: col(head, /^status/i), cert: col(head, /certainty/i),
-    h100: col(head, /h100/i), mw: col(head, /power.*(mw|capacity)/i, /mw/i), chip: col(head, /chip type/i, /hardware/i), date: col(head, /first operational/i, /operational date/i, /date/i) };
+    h100: col(head, /h100/i), mw: col(head, /power.*(mw|capacity)/i, /mw/i), chip: col(head, /chip type/i, /hardware/i), date: col(head, /^first operational date$/i, /first operational/i),
+    lat: col(head, /^latitude$/i, /^lat$/i), lon: col(head, /^longitude$/i, /^lon$/i, /^lng$/i), excl: col(head, /^exclude$/i), gone: col(head, /decommissioned/i),
+    sup: col(head, /^superseded by$/i) };
   log("  epoch gpu mapped:", JSON.stringify(H));
   const out = [];
-  let placed = 0, merged = 0;
+  let placed = 0, exact = 0;
   for (const r of rows) {
     const nm = r[H.name]; if (!nm) continue;
+    if (H.excl && /^(true|yes|1|x)$/i.test(r[H.excl] || "")) continue;
     const country = r[H.country] || "", loc = r[H.loc] || "";
     /* a cluster spread over several countries or places is listed, not drawn */
     const ccs = country.split(/[;,/]| and /).map((s) => ccFromName(s.trim()) || ccFromA2(s.trim())).filter(Boolean);
     const x = Object.fromEntries([["users", clip(r[H.users], 80)], ["h100e", num(r[H.h100])], ["power_mw", num(r[H.mw])], ["chips", clip(r[H.chip], 60)],
-      ["operational", clip(r[H.date], 20)], ["certainty", clip(r[H.cert], 30)], ["where", clip(loc, 80)]].filter((p) => p[1] != null && p[1] !== ""));
-    const base = { nm: clip(nm), op: clip(r[H.owner]), s: "epochgpu", ai: 1, u: page(u), st: clip(r[H.status], 40), x };
+      ["operational", clip(r[H.date], 20)], ["certainty", clip(r[H.cert], 30)], ["where", clip(loc, 80)], ["decommissioned", clip(r[H.gone], 20)], ["superseded_by", clip(r[H.sup], 80)]].filter((p) => p[1] != null && p[1] !== ""));
+    const base = { nm: clip(nm), op: clip(tags(r[H.owner])), s: "epochgpu", ai: 1, u: page(u), st: clip(r[H.gone] ? "Decommissioned" : r[H.status], 40), x };
     if (ccs.length !== 1) { for (const cc of ccs) out.push({ ...base, unplaced: true, cc, why: "Epoch AI GPU Clusters (more than one country)" }); continue; }
-    const cc = ccs[0], at = gz && loc ? placeIn(gz, loc, [cc]) : null;
-    if (!at) { out.push({ ...base, unplaced: true, cc, why: "Epoch AI GPU Clusters (no town named)" }); continue; }
+    const cc = ccs[0], la = num(r[H.lat]), lo = num(r[H.lon]);
+    if (la != null && lo != null && Math.abs(la) <= 90 && Math.abs(lo) <= 180 && (la || lo)) {
+      placed++; exact++;
+      out.push({ ...base, id: "epgpu:" + fp(nm, country).slice(0, 12), cc: ccOf(la, lo, cc) || cc, la: r5(la), lo: r5(lo), p: "exact" });
+      continue;
+    }
+    const at = gz && loc ? placeIn(gz, loc, [cc]) : null;
+    if (!at) { out.push({ ...base, unplaced: true, cc, why: "Epoch AI GPU Clusters (no location given)" }); continue; }
     placed++;
-    /* the same campus already drawn from Frontier Data Centers: list the cluster there */
-    const own = String(r[H.owner] || "").toLowerCase().split(/[^a-z0-9]+/)[0];
-    const site = own && sites.find((s) => s.cc === cc && String(s.op).toLowerCase().includes(own) && dist({ lat: s.la, lon: s.lo }, at) < 60000);
-    if (site) { (site.cl = site.cl || []).push(clip(nm, 80)); merged++; continue; }
     out.push({ ...base, id: "epgpu:" + fp(nm, country).slice(0, 12), cc, la: at.lat, lo: at.lon, p: at.prec, pb: at.basis + ": " + at.name });
   }
-  log("  epoch gpu rows", rows.length, "placed", placed, "listed on a Frontier site", merged);
-  return out;
+  log("  epoch gpu rows", rows.length, "placed", placed, "with Epoch's own coordinates", exact);
+  /* phases of one build at one place are one point: the largest existing cluster leads, the rest are listed on it */
+  const groups = new Map(), rest = [];
+  for (const i of out) {
+    if (i.unplaced) { rest.push(i); continue; }
+    const k = i.cc + "|" + i.la.toFixed(3) + "," + i.lo.toFixed(3) + "|" + String(i.op).toLowerCase().split(/[^a-z0-9]+/)[0];
+    (groups.get(k) || groups.set(k, []).get(k)).push(i);
+  }
+  const live = (i) => (/^existing$/i.test(i.st || "") && !i.x.superseded_by ? 2 : /^existing$/i.test(i.st || "") ? 1 : 0);
+  for (const g of groups.values()) {
+    g.sort((a, b) => live(b) - live(a) || (b.x.h100e || 0) - (a.x.h100e || 0));
+    const lead = g[0];
+    if (g.length > 1) lead.cl = g.slice(1).map((i) => clip(i.nm + (i.st ? " (" + i.st + ")" : ""), 90));
+    rest.push(lead);
+  }
+  log("  epoch gpu points after grouping phases", rest.filter((i) => !i.unplaced).length);
+  return rest;
 }
 
 function dist(a, b) {
@@ -225,9 +256,9 @@ async function run(s, f) {
 }
 await run("osm", osm);
 await run("wd", wikidata);
-await run("epochdc", epochDc);
 let gz = null; try { gz = await loadGazetteer(); } catch (e) { log("gazetteer failed", e.message); }
-await run("epochgpu", () => epochGpu(gz, (got.epochdc || []).filter((i) => !i.unplaced)));
+await run("epochdc", () => epochDc(gz));
+await run("epochgpu", () => epochGpu(gz));
 
 /* Wikidata sites already mapped in OpenStreetMap */
 const osmGrid = new Map();
