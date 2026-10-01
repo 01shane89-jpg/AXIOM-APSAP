@@ -1,0 +1,10 @@
+[["n1042025905",49.65678,-108.40552,"ca",{"name":"Shaunavon Airport","aeroway":"aerodrome","wikidata":"Q3914816"}],
+["n1042026334",49.17356,-108.56559,"ca",{"name":"Frontier Airport","aeroway":"aerodrome"}],
+["n1042026829",49.54669,-108.80251,"ca",{"name":"Eastend Airport","aeroway":"aerodrome"}],
+["w1013405511",49.89655,-109.47597,"ca",{"name":"Maple Creek Airport","operator":"Town of Maple Creek","operator:type":"public","addr:city":"Maple Creek","addr:province":"SK","aeroway":"aerodrome","icao":"CJQ4","wikidata":"Q1031006"}],
+["w1085928649",49.14816,-108.09331,"ca",{"aeroway":"aerodrome"}],
+["w1128001472",49.90322,-109.48859,"ca",{"name":"Southwest Integrated Healthcare Facility","amenity":"hospital","healthcare":"hospital"}],
+["w1128001473",49.90285,-109.48707,"ca",{"name":"Maple Creek Primary Health Care Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1263020331",49.66476,-109.53476,"ca",{"aeroway":"helipad"}],
+["w196202315",49.65243,-108.40386,"ca",{"amenity":"hospital"}],
+["w376119942",49.5149,-108.82492,"ca",{"amenity":"hospital"}]]

@@ -21,7 +21,10 @@ const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved"
 const PRIORITY = "th kh la mm vn my sg id bn ph tl cn tw jp oki kr kp mn in pk bd np bt lk mv au nz pg".split(" ");
 const end = process.env.DAILY_END ? Date.parse(process.env.DAILY_END) : Date.now(), today = new Date(end).toISOString().slice(0, 10);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
-const readJs = (f) => { try { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.indexOf("=", t.lastIndexOf("window.")) + 1).trim().replace(/;$/, "")); } catch (e) { return null; } };
+// The data files open with "window.X=" (or "window.X=window.X||{};window.X[\"cc\"]="); only that opening is skipped, because a
+// headline or summary can itself contain "window." and "=" (one Pakistan item carried page script text and broke the whole pool).
+const JS_HEAD = /^(?:window\.\w+=window\.\w+\|\|\{\};)?window\.\w+(?:\["[^"]+"\])?=/;
+const readJs = (f) => { try { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.match(JS_HEAD)[0].length).trim().replace(/;$/, "")); } catch (e) { return null; } };
 const readWin = (f, v) => { try { const w = {}; new Function("window", fs.readFileSync(f, "utf8"))(w); return w[v]; } catch (e) { return null; } };
 
 const oldIdx = readJs(INDEX) || {};
