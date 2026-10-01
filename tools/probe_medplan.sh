@@ -1,30 +1,47 @@
 #!/usr/bin/env bash
 # Test only: checks the free, no-key hosts the Medical plan tool calls from the browser (Overpass for hospitals, clinics,
-# helipads and airfields; OSRM table for drive times; Open-Meteo for evacuation weather). Prints status, CORS header and a
-# short body to the log; writes nothing to the repo.
+# helipads, airfields, air rescue bases and embassies; OSRM for drive times and routes; Valhalla for drive-time areas;
+# Wikidata for national emergency numbers; Open-Meteo for evacuation weather). Prints status, CORS header and a short body
+# to the log; writes nothing to the repo.
 O="https://01shane89-jpg.github.io"
+UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36"
 probe() {
   echo "=== $1"
-  curl -sS -m 45 -H "Origin: $O" -D /tmp/h -o /tmp/b "$@" -w "time %{time_total}s size %{size_download}\n" || echo "FAILED"
+  curl -sS -m 60 -A "$UA" -H "Origin: $O" -D /tmp/h -o /tmp/b "$@" -w "time %{time_total}s size %{size_download}\n" || echo "FAILED"
   grep -i '^HTTP/\|^access-control-allow-origin\|^content-type\|^retry-after' /tmp/h
-  head -c 700 /tmp/b | tr '\n' ' '; echo; echo
+  head -c 600 /tmp/b | tr '\n' ' '; echo; echo
 }
-Q='[out:json][timeout:25];(nwr["amenity"~"^(hospital|clinic)$"](around:40000,6.87,101.25);nwr["healthcare"="hospital"](around:40000,6.87,101.25);nwr["aeroway"~"^(helipad|heliport|aerodrome)$"](around:60000,6.87,101.25););out center tags 400;'
-for h in https://overpass-api.de/api/interpreter https://maps.mail.ru/osm/tools/overpass/api/interpreter; do
-  probe "$h" -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36" -H "Accept: */*" --data-urlencode "data=$Q"
-  python3 - <<'PY'
-import json
+tags() { python3 - "$1" <<'PY'
+import json,sys
+from collections import Counter
 try:
   j=json.load(open('/tmp/b')); E=j.get('elements',[])
-  from collections import Counter
-  print('elements',len(E), Counter((e.get('tags',{}).get('amenity') or e.get('tags',{}).get('aeroway') or e.get('tags',{}).get('healthcare')) for e in E))
-  print('tag keys', Counter(k for e in E for k in e.get('tags',{})).most_common(40))
+  print('elements',len(E))
+  print('tag keys', Counter(k for e in E for k in e.get('tags',{})).most_common(60))
+  for k in ['emergency','healthcare:speciality','trauma','emergency:trauma','healthcare:trauma','operator:type','beds','phone','contact:phone','website','air_rescue_service','country','diplomatic']:
+    v=Counter(e.get('tags',{}).get(k) for e in E if k in e.get('tags',{}))
+    if v: print(' ',k, v.most_common(12))
 except Exception as x: print('not json', x)
 PY
+}
+OP=https://overpass-api.de/api/interpreter
+# hospitals round Bangkok and Yala: which capability and contact tags exist
+for c in "13.75,100.52" "6.54,101.28" "50.11,8.68"; do
+  probe "$OP" -H "Accept: */*" --data-urlencode "data=[out:json][timeout:40];nwr[\"amenity\"=\"hospital\"](around:30000,$c);out center tags 400;"; tags
 done
-echo "=== preflight overpass POST"; curl -sS -m 20 -X OPTIONS -H "Origin: $O" -H "Access-Control-Request-Method: POST" -D - -o /dev/null https://overpass-api.de/api/interpreter | grep -i 'HTTP/\|access-control'
-C="101.25,6.87;101.2519,6.8697;101.28,6.55;100.99,6.62"
-probe "https://routing.openstreetmap.de/routed-car/table/v1/driving/$C?sources=0&annotations=duration,distance"
-probe "https://router.project-osrm.org/table/v1/driving/$C?sources=0&annotations=duration,distance"
-probe "https://routing.openstreetmap.de/routed-car/nearest/v1/driving/101.25,6.87?number=1"
-probe "https://api.open-meteo.com/v1/forecast?latitude=6.87&longitude=101.25&hourly=visibility,wind_gusts_10m,cloud_cover_low,precipitation,is_day&daily=sunrise,sunset,precipitation_sum,wind_gusts_10m_max,temperature_2m_max,apparent_temperature_max&past_days=3&forecast_days=3&timezone=UTC"
+# trauma tags anywhere (sample)
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["amenity"="hospital"]["healthcare:speciality"~"trauma"](around:300000,13.75,100.52);out center tags 50;'; tags
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["emergency"="air_rescue_service"](around:400000,13.75,100.52);out center tags 50;'; tags
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["emergency"="air_rescue_service"](around:200000,50.11,8.68);out center tags 50;'; tags
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["office"="diplomatic"]["country"="US"](around:800000,13.75,100.52);out center tags 20;'; tags
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["amenity"="embassy"]["country"="US"](around:800000,13.75,100.52);out center tags 20;'; tags
+probe "$OP" -H "Accept: */*" --data-urlencode 'data=[out:json][timeout:60];nwr["aeroway"="aerodrome"]["aerodrome:type"="international"](around:400000,6.54,101.28);out center tags 20;'; tags
+# Wikidata: emergency numbers (P2852) with their usage qualifier (P366) for Thailand Q869 and Germany Q183
+Q='SELECT ?c ?num ?useLabel WHERE { VALUES ?c { wd:Q869 wd:Q183 wd:Q928 } ?c p:P2852 ?st . ?st ps:P2852 ?n . ?n rdfs:label ?num . FILTER(LANG(?num)="en") OPTIONAL { ?st pq:P366 ?use } SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }'
+probe "https://query.wikidata.org/sparql?format=json&query=$(python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' "$Q")"
+Q2='SELECT ?c ?n ?nLabel ?useLabel WHERE { VALUES ?c { wd:Q869 wd:Q183 } ?c p:P2852 ?st . ?st ps:P2852 ?n . OPTIONAL { ?n wdt:P366 ?use } SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }'
+probe "https://query.wikidata.org/sparql?format=json&query=$(python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' "$Q2")"
+# OSRM route with geometry; Valhalla isochrone
+probe "https://routing.openstreetmap.de/routed-car/route/v1/driving/101.28,6.54;101.2519,6.8697?overview=simplified&geometries=geojson&steps=true"
+J=$(python3 -c 'import urllib.parse,json;print(urllib.parse.quote(json.dumps({"locations":[{"lat":6.54,"lon":101.28}],"costing":"auto","contours":[{"time":30},{"time":60}],"polygons":True,"generalize":150})))')
+probe "https://valhalla1.openstreetmap.de/isochrone?json=$J"
