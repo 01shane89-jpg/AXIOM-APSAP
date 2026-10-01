@@ -466,6 +466,7 @@ select.mini{
 .mlopen{display:block;width:100%;text-align:left;font:inherit;padding:6px 8px;margin:2px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}.mlopen b{display:block;font-weight:600}.mlopen i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
 #ml-ds .dsfeeds{display:block;margin:14px 0 2px;padding:4px 8px;font:inherit;font-size:12.5px;color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer}#ml-ds .dsfeeds[aria-pressed=true]{font-weight:700}
 #ml-ds .dsname i{font-style:normal;font-weight:400;font-size:12px;opacity:.75}
+#ml-infra>div>.mlh,#ml-infra>#ml-roads>.mlh{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;color:var(--ink);margin:8px 0 2px}
 #ml-ds .dsxname{cursor:pointer}#ml-ds .dsxname::after{content:none}#ml-ds .dsxname i{display:block;font-size:11.5px;color:var(--muted);opacity:1;font-weight:400}#ml-ds .dsxop{margin:2px 0 6px 40px}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
@@ -6042,11 +6043,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-roads"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
     if (!base) return;
+    /* everything infrastructure sits under Infrastructure (Shane 2026-10-01): roads (closures, traffic cameras) go inside it, last */
+    var infra = document.getElementById("ml-infra"), roads = document.getElementById("ml-roads");
+    if (infra && roads && (roads.parentNode !== infra || roads.nextElementSibling)) infra.appendChild(roads);
     var pool = Array.prototype.slice.call(pan.children).concat(ex ? Array.prototype.slice.call(ex.children) : []).filter(function (c) { return c.id !== "ml-wx" && c.id !== "ml-extra" && c.id !== "ml-ds"; });
     var head = function (c) { var h = c.matches(".mlh") ? c : c.querySelector(".mlh"); return h ? h.textContent.trim() : ""; };
     var want = [];
@@ -6057,7 +6061,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   (function () {
     var go = function () { var pan = document.getElementById("ml-panel"); if (!pan) return setTimeout(go, 500);
-      var mo = new MutationObserver(mlArrange); mo.observe(pan, { childList: true }); var ex = document.getElementById("ml-extra"); if (ex) mo.observe(ex, { childList: true }); mlArrange(); };
+      var mo = new MutationObserver(mlArrange); mo.observe(pan, { childList: true }); var ex = document.getElementById("ml-extra"); if (ex) mo.observe(ex, { childList: true });
+      var inf = document.getElementById("ml-infra"); if (inf) mo.observe(inf, { childList: true }); mlArrange(); };
     go();
   })();
   /* a conflict tab (Deep South, Thai-Cambodian border and the rest) draws its own layers, switched in its panel: front line,
