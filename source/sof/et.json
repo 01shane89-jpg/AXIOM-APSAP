@@ -44,7 +44,13 @@
    "src": "https://et.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "f7c8cae71491a701ff59d033016f971cede1e3800068e92eecc6f66c27f0931a"
+   "fp": "51703ed7bd609f985204a2b61b5866334ba55d4ff308060d2339748a4b961109",
+   "web": "https://et.usembassy.gov",
+   "phone": "+251 111 30 60 00",
+   "phone_after_hours": "251111307900",
+   "phone_src": "https://et.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -519,5 +525,156 @@
   "Auto: landlocked, no seaports.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:et:xing:node-1102262742",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 4.456221,
+   "lon": 36.230305,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1102262742",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "56ca03e9b9d66ea664f9148b45b9b40341b1dc94bb28c289c75fbd6fb9008241"
+  },
+  {
+   "id": "sof:et:xing:node-1108823798",
+   "name": "Clearance Needed!",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 5.877578,
+   "lon": 37.690592,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1108823798",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "fd3be6c116683b00a76c74927e22d8fee2616a8f43aca5c0bb37dbd5e1fbccfd"
+  },
+  {
+   "id": "sof:et:xing:node-1138650397",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 9.600215,
+   "lon": 43.332395,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1138650397",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "497d87f0c4c979ffc18bc5043f839923ba4eb9e6b58ed68af3d81314a0a50193"
+  },
+  {
+   "id": "sof:et:xing:node-13119366566",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 3.524854,
+   "lon": 39.053012,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/13119366566",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3d91e51cd7e94e4582e531d15e438bff9015aee04144ac41c02bb19471065561"
+  },
+  {
+   "id": "sof:et:xing:node-1401901184",
+   "name": "Hamarlaguhed",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 8.134167,
+   "lon": 46.608611,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1401901184",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7fd2788678ec341e3d2a940fa87c153f3c1fdd513d1b5dabbe1d8e80bffe301f"
+  },
+  {
+   "id": "sof:et:xing:node-1920718393",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 12.958173,
+   "lon": 36.151332,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1920718393",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0d7ec46b2239f3536e0914957e0fe686d6d1f8db11b93df757895535b3045cc2"
+  },
+  {
+   "id": "sof:et:xing:node-4791127512",
+   "name": "Customs",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.288526,
+   "lon": 38.650908,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4791127512",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "5ef2843783c6b1fc4293176d04a34a5fc1eccf1c1569828888a010f25523dbeb"
+  },
+  {
+   "id": "sof:et:xing:way-1375056951",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 8.989004,
+   "lon": 38.74573,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1375056951",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "51c70db90e8ec27f2377001aedfad7fd87e8d14eac41da4d59019755c630a360"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

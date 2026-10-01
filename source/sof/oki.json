@@ -392,5 +392,11 @@
  ],
  "gaps": [
   "No Wikipedia coords reachable for Naha consulate or Okinawa hospitals; all coords estimated. Okinawa Prefectural Chubu Hospital (major trauma/ER center, Uruma) not in JNTO list and no page fetchable, so omitted. USNH Okinawa address/coords approximate (Camp Foster/Lester area)."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
