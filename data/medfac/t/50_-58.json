@@ -1,0 +1,13 @@
+[["n10733197260",51.47547,-57.71084,"ca",{"name":"CLSC de Rivière-Saint-Paul","amenity":"clinic","healthcare":"clinic"}],
+["n14204603954",51.42124,-57.17604,"ca",{"name":"Groupe CTR","emergency":"ambulance_station"}],
+["n2352563384",50.64937,-57.30562,"ca",{"name":"Rufas Guinchard Hospital","amenity":"hospital"}],
+["n3379867204",51.46019,-57.17945,"ca",{"aeroway":"aerodrome"}],
+["n9677912875",51.47333,-56.95913,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["n9677912876",51.47388,-56.95922,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1241109449",51.41168,-57.20334,"ca",{"name":"Centre multiservices de santé et de services sociaux de la Basse-Côte-Nord","amenity":"hospital","healthcare":"hospital"}],
+["w140950026",50.64163,-57.30452,"ca",{"amenity":"hospital"}],
+["w209171419",51.44268,-57.18566,"ca",{"name":"Aéroport Lourdes-de-Blanc-Sablon","name:en":"Lourdes-de-Blanc-Sablon Airport","aeroway":"aerodrome","icao":"CYBX","iata":"YBX","aerodrome:type":"regional","wikidata":"Q3912632"}],
+["w763418251",50.86768,-56.11429,"ca",{"name":"White Bay Central Health Clinic","healthcare":"clinic","healthcare:speciality":"general;emergency;mental_health;blood_check","emergency":"yes","addr:housenumber":"63","addr:street":"Cloud Drive","addr:city":"Roddickton-Bide Arm","addr:postcode":"A0K 4P0"}],
+["w798586991",51.39154,-56.08423,"ca",{"name":"St Anthony Airport","operator":"Transport Canada","aeroway":"aerodrome","icao":"CYAY","iata":"YAY","wikidata":"Q3912847"}],
+["w828441403",50.69014,-57.32985,"ca",{"name":"Port Au Choix Airport","operator":"Government of Newfoundland and Labrador","aeroway":"aerodrome","wikidata":"Q3914989"}],
+["w832372946",50.63309,-57.32167,"ca",{"aeroway":"helipad"}]]

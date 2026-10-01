@@ -1,0 +1,8 @@
+[["n1042023613",53.79757,-130.43314,"ca",{"name":"Kitkatla Seaplane Base","aeroway":"aerodrome","iata":"YKK","wikidata":"Q3913077"}],
+["n1042024048",53.21474,-131.99208,"ca",{"name":"Alliford Bay Seaplane Base","aeroway":"aerodrome"}],
+["w1293463086",53.79518,-130.4256,"ca",{"aeroway":"helipad"}],
+["w1339175272",53.49299,-130.63522,"ca",{"name":"Bonilla Island Lightstation","addr:street":"Skeena-Queen Charlotte","addr:city":"Skeena-Queen Charlotte C, BC V0V 1C0","aeroway":"aerodrome","icao":"CA-0660","iata":"CA-0660"}],
+["w1446202961",53.94789,-130.25776,"ca",{"aeroway":"helipad"}],
+["w374512260",53.49299,-130.63522,"ca",{"name":"CA-0660","aeroway":"helipad","surface":"concrete"}],
+["w753371713",53.25356,-131.81423,"ca",{"name":"Sandspit Airport","aeroway":"aerodrome","icao":"CYZP","iata":"YZP","wikidata":"Q3915788"}],
+["w786945224",53.24305,-131.82153,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"380","addr:street":"School Road"}]]
