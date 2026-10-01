@@ -83,13 +83,15 @@ function query(cc, bbox) {
 }
 /* the whole country in one answer; a failure is asked again in four parts, down to three levels */
 async function fetchCountry(c) {
+  /* a country that keeps failing gives up after 8 minutes, so one bad country cannot spend the run's budget */
+  const until = Date.now() + 8 * 60000;
   async function part(bbox, depth) {
     try {
       const j = await overpass(query(c.id, bbox));
       if (!(j.elements || []).some((e) => e.type === "area")) throw new Error("no boundary for " + c.id.toUpperCase() + " in OpenStreetMap");
       return { els: j.elements.filter((e) => e.type !== "area"), base: j.osm3s && j.osm3s.timestamp_osm_base };
     } catch (e) {
-      if (/no boundary/.test(e.message) || depth >= 3) throw e;
+      if (/no boundary/.test(e.message) || depth >= 3 || Date.now() > until) throw e;
       const [[s, w], [n, ea]] = bbox || [[c.b[0][0], c.b[0][1]], [c.b[1][0], c.b[1][1]]];
       const mla = (s + n) / 2, mlo = (w + ea) / 2, out = { els: [], base: null };
       log("  split", c.id, depth + 1, "(" + e.message.slice(0, 80) + ")");
