@@ -1,0 +1,22 @@
+# Test only: how fast 3D buildings appear and how smoothly the 3D view draws with them (tools/probe_bld_perf.mjs), on the real
+# network. Prints to the log; writes nothing to the repo.
+name: Probe 3D buildings speed
+on:
+  push:
+    branches: [claude/3d-buildings-2]
+    paths: [tools/probe_bld_perf.mjs, .github/workflows/probe-bld-perf.yml, assets/osap-3d.js]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/probe_bld_perf.mjs
