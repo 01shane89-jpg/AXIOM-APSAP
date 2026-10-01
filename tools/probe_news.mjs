@@ -53,7 +53,7 @@ try {
   }
   const byAgency = {};
   for (const p of cap.prefixes) { const m = p.match(/^(.+)-([a-z]{2,3})$/); if (m) (byAgency[m[1]] = byAgency[m[1]] || []).push(m[2]); }
-  const pick = Object.entries(byAgency).map(([a, langs]) => a + "-" + (langs.includes("en") ? "en" : langs[0]));
+  const pick = Object.entries(byAgency).flatMap(([a, langs]) => langs.map((l) => a + "-" + l));
   cap.feeds = await pool(pick, 8, (k) => check({ cc: k.slice(0, 2), key: k, url: cap.url + k + "/rss.xml" }));
 } catch (e) { cap.error = e.message; }
 fs.mkdirSync("probe-out", { recursive: true });
