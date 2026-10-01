@@ -336,22 +336,25 @@
     var idx = [], t = p.h.t;
     for (var i = 0; i < t.length; i++) if (t[i] >= b.t0 && t[i] < b.t1) idx.push(i);
     if (!idx.length) return null;
-    var o = { ceil: null, vis: null, cloud: null, code: null, pr: 0, sn: 0, wind: null, gust: null, tmin: null, tmax: null, hi: null, wc: null, ts: 0, cape: null, fzl: null, n: idx.length };
+    var o = { ceil: null, vis: null, cloud: null, code: null, pr: 0, sn: 0, wind: null, gust: null, tmin: null, tmax: null, hi: null, wc: null, ts: 0, cape: null, fzl: null, n: idx.length, tsH: 0, cs: [], vs: [] };
     var dirs = [], spd = [];
     function mn(k, v) { if (v != null && (o[k] == null || v < o[k])) o[k] = v; }
     function mx(k, v) { if (v != null && (o[k] == null || v > o[k])) o[k] = v; }
     idx.forEach(function (i) {
-      var c = ceilingFt(p, i); if (c != null) mn("ceil", c);
-      mn("vis", at(p, "visibility", i)); mx("cloud", at(p, "cloud_cover", i));
+      var c = ceilingFt(p, i); if (c != null) { mn("ceil", c); o.cs.push(c); }
+      var vv = at(p, "visibility", i); mn("vis", vv); if (vv != null) o.vs.push(vv); mx("cloud", at(p, "cloud_cover", i));
       var code = at(p, "weather_code", i); if (wxRank(code) > wxRank(o.code)) o.code = code;
       o.pr += at(p, "precipitation", i) || 0; o.sn += at(p, "snowfall", i) || 0;
       mx("wind", at(p, "wind_speed_10m", i)); mx("gust", at(p, "wind_gusts_10m", i));
       dirs.push(at(p, "wind_direction_10m", i)); spd.push(at(p, "wind_speed_10m", i));
       var T = at(p, "temperature_2m", i); mn("tmin", T); mx("tmax", T);
       mx("hi", heatIndex(T, at(p, "relative_humidity_2m", i))); mn("wc", windChill(T, at(p, "wind_speed_10m", i)));
-      o.ts = Math.max(o.ts, tsState(p, i)); mx("cape", at(p, "cape", i)); mn("fzl", at(p, "freezing_level_height", i));
+      var tsi = tsState(p, i); o.ts = Math.max(o.ts, tsi); if (tsi === 2) o.tsH++; mx("cape", at(p, "cape", i)); mn("fzl", at(p, "freezing_level_height", i));
     });
     o.dir = vecMean(dirs, spd);
+    /* for impacts, a low ceiling or visibility counts only when it lasts 2 hours or more: the second-lowest hour */
+    function second(a) { a.sort(function (x, y) { return x - y; }); return a.length >= 2 ? a[1] : null; }
+    o.ceil2 = second(o.cs); o.vis2 = second(o.vs); delete o.cs; delete o.vs;
     /* upper winds at the middle hour of the block */
     var mid = idx[Math.floor(idx.length / 2)];
     o.up = [850, 700, 500, 300].map(function (l) { return { l: l, d: at(p, "wind_direction_" + l + "hPa", mid), s: at(p, "wind_speed_" + l + "hPa", mid) }; });
@@ -394,15 +397,19 @@
      red, possible in amber); frz is freezing precipitation or icing. Sizes follow common classes (US DoD drone groups 1 to 5). */
   var LIM_ORDER = ["ts", "frz", "ceil", "vis", "wind", "gust", "prh", "pr24", "sn", "wave", "hi", "wc", "tmax"];
   var THR = [
-    ["fwl", "Air", "Fixed-wing, light (single or twin prop)", "FW light", { ceil: 500, vis: 1600, gust: 30, ts: 1, frz: 1 }, { ceil: 1000, vis: 5000, gust: 20, ts: 1 }],
-    ["fwm", "Air", "Fixed-wing, medium transport (C-130 class)", "FW medium", { ceil: 200, vis: 800, gust: 40, ts: 1 }, { ceil: 500, vis: 1600, gust: 30, ts: 1, frz: 1 }],
-    ["fwh", "Air", "Fixed-wing, large or heavy jet", "FW heavy", { ceil: 200, vis: 550, gust: 45, ts: 1 }, { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }],
-    ["rwl", "Air", "Rotary-wing, light (under about 5 t)", "RW light", { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, tmax: 35 }],
-    ["rwm", "Air", "Rotary-wing, medium (Black Hawk class)", "RW medium", { ceil: 500, vis: 800, gust: 40, ts: 1, frz: 1 }, { ceil: 1000, vis: 3000, gust: 30, ts: 1, tmax: 35 }],
-    ["rwh", "Air", "Rotary-wing, heavy lift (Chinook class)", "RW heavy", { ceil: 300, vis: 800, gust: 45, ts: 1, frz: 1 }, { ceil: 700, vis: 3000, gust: 35, ts: 1, tmax: 35 }],
-    ["uas1", "Air", "Drones, small (Group 1–2, quadcopters, hand-launched)", "Drone small", { wind: 20, gust: 25, prh: 1, ts: 1 }, { wind: 12, gust: 18, prh: 0.2, vis: 1600 }],
-    ["uas3", "Air", "Drones, medium (Group 3, ScanEagle or Shadow class)", "Drone medium", { wind: 30, gust: 35, prh: 4, ts: 1, frz: 1 }, { wind: 20, gust: 25, prh: 1, vis: 3000, ts: 1 }],
-    ["uas4", "Air", "Drones, large (Group 4–5, MQ-9 class)", "Drone large", { gust: 40, ts: 1, frz: 1 }, { gust: 30, ceil: 500, vis: 1600, ts: 1 }],
+    /* fixed-wing: light aircraft fly VFR, so FAA VFR (1,000 ft, 3 sm) and marginal VFR (3,000 ft, 5 sm) limits (14 CFR 91.155,
+       FAA flight categories); transports and jets fly IFR, so a precision approach minimum (200 ft, 800 m; 550 m for CAT I jets)
+       and the IFR line (1,000 ft, 3 sm). Rotary-wing: Army day VFR minimum of 500 ft and 1 sm (AR 95-1) and 1,000 ft, 3 sm.
+       Drone wind and rain limits are typical maker figures by size. Gust limits are generic. */
+    ["fwl", "Air", "Fixed-wing, light (VFR, single or twin prop)", "FW light", { ceil: 1000, vis: 4800, gust: 25, ts: 1, frz: 1 }, { ceil: 3000, vis: 8000, gust: 15, ts: 1 }],
+    ["fwm", "Air", "Fixed-wing, medium transport (IFR, C-130 class)", "FW medium", { ceil: 200, vis: 800, gust: 35, ts: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, frz: 1 }],
+    ["fwh", "Air", "Fixed-wing, large or heavy jet (IFR)", "FW heavy", { ceil: 200, vis: 550, gust: 40, ts: 1 }, { ceil: 1000, vis: 4800, gust: 30, ts: 1, frz: 1 }],
+    ["rwl", "Air", "Rotary-wing, light (under about 5 t)", "RW light", { ceil: 500, vis: 1600, gust: 30, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 20, ts: 1, tmax: 35 }],
+    ["rwm", "Air", "Rotary-wing, medium (Black Hawk class)", "RW medium", { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, tmax: 35 }],
+    ["rwh", "Air", "Rotary-wing, heavy lift (Chinook class)", "RW heavy", { ceil: 500, vis: 1600, gust: 40, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 30, ts: 1, tmax: 35 }],
+    ["uas1", "Air", "Drones, small (Group 1–2, quadcopters, hand-launched)", "Drone small", { wind: 20, gust: 25, prh: 1, ts: 1 }, { wind: 12, gust: 18, prh: 0.2, vis: 1600, ts: 1 }],
+    ["uas3", "Air", "Drones, medium (Group 3, ScanEagle or Shadow class)", "Drone medium", { wind: 25, gust: 30, prh: 4, ts: 1, frz: 1 }, { wind: 18, gust: 22, prh: 1, vis: 3000, ts: 1 }],
+    ["uas4", "Air", "Drones, large (Group 4–5, MQ-9 class)", "Drone large", { gust: 35, ts: 1, frz: 1 }, { gust: 25, ceil: 500, vis: 1600, ts: 1 }],
     ["isr", "Air", "Air observation (EO sensors)", "Air ISR", { ceil: 500, vis: 1000 }, { ceil: 1500, vis: 5000 }],
     ["gwl", "Ground", "Wheeled, light (4x4s, light trucks), off-road", "Wheeled light", { pr24: 40, sn: 15 }, { pr24: 20, sn: 5, vis: 200 }],
     ["gwh", "Ground", "Wheeled, heavy (MRAPs, heavy trucks), off-road", "Wheeled heavy", { pr24: 30, sn: 20 }, { pr24: 15, sn: 10, gust: 45, vis: 200 }],
@@ -440,7 +447,7 @@
   }
   function limText(L, red) {
     var n = function (v) { return v.toLocaleString("en-GB"); }, T = {
-      ts: function () { return red ? "thunderstorms" : "thunderstorms possible"; }, frz: function () { return "freezing precipitation or icing"; },
+      ts: function () { return red ? "thunderstorms for 2 hours or more" : "thunderstorms for 1 hour or possible"; }, frz: function () { return "freezing precipitation or icing"; },
       ceil: function (v) { return "ceiling below " + n(v) + " ft"; }, vis: function (v) { return "visibility below " + n(v) + " m"; },
       wind: function (v) { return "wind " + v + " kt or more"; }, gust: function (v) { return "gusts " + v + " kt or more"; },
       prh: function (v) { return "rain " + v + " mm/h or more"; }, pr24: function (v) { return v + " mm or more of rain in 24 h"; },
@@ -480,6 +487,18 @@
   var RAG = ["G", "A", "R"], RAGN = ["Green: little or no effect", "Amber: degraded", "Red: severe or unsafe"];
 
   /* ---------- the analysis for a period ---------- */
+  /* Impacts rate the chosen place (the reference point), as a weather officer briefs a mission location; the worst anywhere in
+     the region stays in its own table. Ceiling and visibility use the value that lasts 2 hours or more; thunderstorms are red when
+     forecast for 2 hours or more, amber for 1 hour or when only possible. Sea rows use the nearest sea (worst sea point). */
+  function placeW(a, w, hrs, ref) {
+    if (!a) return w;
+    var o = {}; for (var k in a) o[k] = a[k];
+    o.ceil = a.ceil2 != null ? a.ceil2 : a.ceil; o.vis = a.vis2 != null ? a.vis2 : a.vis;
+    o.ts = a.tsH >= 2 ? 2 : a.ts ? 1 : 0;
+    o.prh = a.pr != null ? a.pr / Math.max(1, hrs) : null;
+    o.wave = w.wave; o.where = { wave: w.where && w.where.wave };
+    return o;
+  }
   function analyse(D, per) {
     var BL = blocks(per, D.tz), ref = D.pts[0];
     var rows = BL.map(function (b) {
@@ -488,7 +507,7 @@
       w.prh = w.pr != null ? w.pr / Math.max(1, hrs) : null;
       var seaList = D.pts.concat(D.sea).map(function (p) { return { p: p, s: aggSea(p, b) }; }).filter(function (x) { return x.s; });
       seaList.forEach(function (x) { if (w.wave == null || x.s.wave > w.wave) { w.wave = x.s.wave; w.where.wave = x.p.name; } });
-      var imp = THR.map(function (t) { var r = t.f(w); return { id: t.id, c: r[0], why: r[1] }; });
+      var imp = THR.map(function (t) { var r = t.f(placeW(list[0].a, w, hrs, ref)); return { id: t.id, c: r[0], why: r[1] }; });
       return { b: b, ref: list[0].a, w: w, sea: seaList, imp: imp, list: list };
     }).filter(function (r) { return r.ref; });
     return { per: per, blocks: rows, ref: ref };
@@ -773,7 +792,7 @@
       '<p class="wxsyn">' + esc(synopsis(A, D)) + "</p>" +
       '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <span class="obs">Hour by hour, 16 days, model agreement, sea, air, light; four printed pages.</span></p>' +
       "<h3>Next 7 days at " + esc(ref.name) + "</h3>" + meteogram(D, 7) +
-      "<h3>Impacts, worst case in the region</h3>" + matrixHtml(A, D, "wxsm") +
+      "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxsm") +
       '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason. G green, A amber, R red.</p>' +
       "<h3>Forecast at " + esc(ref.name) + "</h3>" + fcTable(A, D) +
       '<p class="note">Ceiling is estimated from the model&rsquo;s cloud layers (lowest layer at 60% cover or more), not observed. Wind in knots (direction from, true); G = gusts. HI heat index, WC wind chill. Official warnings take precedence over this model output.</p>' +
@@ -901,7 +920,7 @@
       D.aq.t.forEach(function (t, i) { if (t < t0 || t >= t1) return; var v = D.aq.v.us_aqi[i]; if (v != null && (aqi == null || v > aqi)) aqi = v; var d = D.aq.v.dust[i]; if (d != null && (dust == null || d > dust)) dust = d; });
       if (aqi != null) aqh = "<h3>" + bl("https://open-meteo.com/en/docs/air-quality-api", "Air quality") + '</h3><p class="bm">Worst US AQI at the reference point ' + Math.round(aqi) + " (" + aqiName(aqi) + ")" + (dust != null && dust >= 50 ? ", dust up to " + Math.round(dust) + " µg/m³ (can cut visibility)" : "") + ". CAMS model, not measured.</p>";
     }
-    var imp = "<h3>Impacts, worst case in the region</h3>" + matrixHtml(A, D, "wxbm") +
+    var imp = "<h3>Impacts at " + esc(ref.name) + "</h3>" + matrixHtml(A, D, "wxbm") +
       '<p class="bm wxthr"><b>Generic planning thresholds, not doctrine.</b> ' + THR.map(function (t) { return "<b>" + esc(t.short) + "</b> R: " + esc(t.red) + "; A: " + esc(t.amber) + "."; }).join(" ") + "</p>";
     o += '<div class="bcols"><div>' + sum + haz + "</div><div>" + spread + sea + aqh + "</div></div>" + fct + upw + lit + imp;
     o += '<footer>Forecast: Open-Meteo.com (CC BY 4.0), best-match blend of national weather models; marine and air quality: Open-Meteo (CC BY 4.0; air quality contains modified Copernicus Atmosphere Monitoring Service information). ' +
@@ -1069,7 +1088,7 @@
       "<h3>Next 7 days</h3><p class=\"wxsum\">" + esc(synopsis(A7, D).replace(/^At [^,]+, /, "")) + "</p>" +
       "<h3>Warnings, cyclones and floods (" + hz.length + ")</h3>" + (hz.length ? '<table class="btwo wxhz">' + hz.join("") + "</table>" : '<p class="bm">None in the app&rsquo;s feeds for this region' + (H.warnFeeds && !H.warnFeeds.length ? " (no machine-readable national warning feed is set up for this country; check its weather agency)" : "") + ".</p>") +
       "<h3>" + bl("https://open-meteo.com/", "7-day meteogram at " + esc(ref.name)) + "</h3>" + meteogram(D, 7) +
-      "<h3>Impacts, worst case in the region, next 72 hours</h3>" + matrixHtml(A72, D, "wxbm");
+      "<h3>Impacts at " + esc(ref.name) + ", next 72 hours</h3>" + matrixHtml(A72, D, "wxbm");
 
     /* page 2: hour by hour, next 48 hours, at the reference point */
     var t0 = hourNow(), ix = hrsFrom(ref, t0, t0 + 48 * 36e5);
