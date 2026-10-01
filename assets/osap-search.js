@@ -187,7 +187,7 @@
     "#srch .srch-h{padding:7px 12px 3px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#666)}" +
     "#srch .srch-st{margin:0;padding:8px 12px;font-size:12.5px;color:var(--muted,#666)}#srch .srch-st[hidden]{display:none}" +
     ".srch-pin{background:none;border:0}.srch-pop code{display:block;font:12px/1.4 'IBM Plex Mono',monospace;margin:4px 0}.srch-pop .obs{color:var(--muted);font-size:11.5px;margin:3px 0}" +
-    "@media (max-width:700px){#srch{top:6px;left:6px;right:58px;width:auto}}";
+    "@media (max-width:700px){#srch{top:6px;left:6px;right:64px;width:auto}}";
   D.head.appendChild(css);
 
   W.OSAP_SEARCH = { open: open, close: close, isOpen: function () { return !box.hidden; }, go: go, parse: fromGrid, recent: recAll };

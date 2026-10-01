@@ -129,9 +129,16 @@ async function openPlan(p) {
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } });
   await p.evaluate(() => { try { window.TSAP.areaApi.setArea(null); } catch (e) {} });
-  ok(!/Medical plan/.test(await areaMenu(p)), "desktop: no Medical plan in the Area menu before an area is drawn");
-  await p.click('#atk-tools [data-atk="area"]'); await p.waitForTimeout(100);
+  ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu lists Medical plan before an area is drawn");
+  await p.click('#atk-pop [data-pk="med"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const m = document.getElementById("atk-pop"); return !m.hidden && /Circle/.test(m.textContent) && !/Medical plan/.test(m.textContent) && document.getElementById("medplan") === null || document.getElementById("medplan").hidden; }), "desktop: Medical plan with no area asks for a shape first");
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await p.waitForFunction(() => { const m = document.getElementById("medplan"); return m && !m.hidden; }, null, { timeout: 5000 }).catch(() => {});
+  ok(await p.evaluate(() => { const m = document.getElementById("medplan"); return !!m && !m.hidden; }), "desktop: the plan opens by itself once the area is drawn");
+  await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"), w = document.querySelector("#mp-wx table"); return t && w; }, null, { timeout: 20000 }).catch(() => {});
+  await p.evaluate(() => { const b = document.querySelector('#medplan [data-mp="close"]'); if (b) b.click(); }); await p.waitForTimeout(150);
+  calls.overpass = calls.osrm = calls.meteo = 0; /* the checks below count the requests of one fresh open */
+  await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
   ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu offers Medical plan once an area is drawn");
   await p.click('#atk-tools [data-atk="area"]'); await p.waitForTimeout(100);
   await openPlan(p);
