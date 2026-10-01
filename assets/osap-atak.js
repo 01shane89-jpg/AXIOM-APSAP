@@ -63,6 +63,19 @@
     if (b) b.click();
   }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
+  /* an area tool picked before a shape is drawn: ask for the shape, then run the tool as soon as the shape is finished */
+  var areaWaitT = 0;
+  function areaWait(run, label) {
+    clearInterval(areaWaitT);
+    toast("Draw the area for " + label + ": pick a shape");
+    var ab = bar.querySelector('[data-atk="area"]');
+    if (ab) popOpen(ab, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]]);
+    var until = Date.now() + 600000;
+    areaWaitT = setInterval(function () {
+      if (areaOn()) { clearInterval(areaWaitT); setTimeout(run, 250); }
+      else if (Date.now() > until) clearInterval(areaWaitT);
+    }, 400);
+  }
 
   /* ---------- the toolbar ---------- */
   /* the toolbar in groups, top to bottom, with a thin line between groups (Shane 2026-09-30: easy and intuitive to find):
@@ -97,6 +110,12 @@
       return '<button type="button" data-atk="' + t[0] + '" title="' + esc(t[3]) + '" aria-label="' + esc(t[1]) + '">' + t[2] + '<span class="atk-l">' + esc(t[1]) + "</span></button>";
     }).join("") + "</div>";
   L.DomEvent.disableClickPropagation(bar); L.DomEvent.disableScrollPropagation(bar);
+  /* when the tools run past the bottom of the map (phones), a fade and a down arrow say there are more below */
+  function moreCue() { var l = bar.querySelector(".atk-list"); if (l) bar.classList.toggle("more", !bar.classList.contains("folded") && l.scrollTop + l.clientHeight < l.scrollHeight - 4); }
+  bar.querySelector(".atk-list").addEventListener("scroll", moreCue, { passive: true });
+  W.addEventListener("resize", moreCue);
+  if (W.ResizeObserver) new ResizeObserver(moreCue).observe(bar.querySelector(".atk-list"));
+  if (W.MutationObserver) new MutationObserver(moreCue).observe(bar.querySelector(".atk-list"), { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   /* every floating piece carries leaflet-control, so the page's map-click dispatcher leaves its taps alone */
   var pop = D.createElement("div"); pop.id = "atk-pop"; pop.className = "leaflet-control"; pop.hidden = true; pop.setAttribute("role", "menu");
   L.DomEvent.disableClickPropagation(pop); L.DomEvent.disableScrollPropagation(pop);
@@ -104,7 +123,7 @@
   function fold(v) {
     bar.classList.toggle("folded", v); lsSet(K_FOLD, v ? "1" : null);
     var b = bar.querySelector(".atk-fold"); b.innerHTML = v ? I.unfold : I.fold; b.setAttribute("aria-expanded", String(!v));
-    b.title = v ? "Show the map tools" : "Fold the toolbar away"; popClose();
+    b.title = v ? "Show the map tools" : "Fold the toolbar away"; popClose(); moreCue();
   }
   function popOpen(btn, items) {
     pop.innerHTML = items.map(function (it) {
@@ -151,7 +170,9 @@
     }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }), [["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]]) : []));
+      /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }),
+        has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -176,7 +197,9 @@
     else if (f === "area") {
       /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
-      if (at) { if (typeof at.run === "function") at.run(); }
+      var run = at ? function () { if (typeof at.run === "function") at.run(); } : k === "sum" ? function () { areaPress("sum"); } : null;
+      if (run && !areaOn()) { areaWait(run, at ? at.label : "Summarise area"); return; }
+      if (run) run();
       else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
       setTimeout(paintTools, 30);
     }
@@ -554,7 +577,9 @@
     ".atk-mk code{font:11.5px 'IBM Plex Mono',monospace;color:var(--muted)}.atk-dot{display:inline-block;width:9px;height:9px;background:#15aabf;transform:rotate(45deg);border:1.5px solid #fff;box-shadow:0 0 0 1px #15aabf}" +
     ".atk-sw{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.atk-sw input{margin-top:2px}" +
     "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:72%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
-    "#atk-tools{top:6px;right:6px}#atk-tools button{width:44px;min-height:44px}#atk-tools .atk-l{display:none}#atk-tools .atk-fold{min-height:26px}}" +
+    "#atk-tools{top:6px;right:6px}#atk-tools button{width:50px;min-height:44px}#atk-tools .atk-fold{min-height:26px}}" +
+    "#atk-tools.more::after{content:'';position:absolute;left:3px;right:3px;bottom:3px;height:26px;border-radius:0 0 8px 8px;pointer-events:none;background:linear-gradient(rgba(20,24,28,0),rgba(20,24,28,.95) 70%)}" +
+    "#atk-tools.more::before{content:'';position:absolute;z-index:1;left:50%;bottom:9px;width:7px;height:7px;margin-left:-5px;border:solid #e9eef2;border-width:0 2px 2px 0;transform:rotate(45deg);pointer-events:none}" +
     "@media (max-width:700px) and (max-height:760px){#atk-tools button{min-height:40px}}";
   D.head.appendChild(st);
 
