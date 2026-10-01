@@ -20,7 +20,28 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "ff63fc4834ea2e50e7c22f44a32be227bd98e3aea8f7d9f1c04a50b148114bc6"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:dj:post:u-s-embassy-djibouti",
+   "name": "U.S. Embassy, Djibouti",
+   "kind": "embassy",
+   "city": "جيبوتي",
+   "address": "شارع دني لوريفوي, جيبوتي",
+   "services_note": null,
+   "lat": 11.606437,
+   "lon": 43.156716,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/79799866",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "phone": "(+253) 21-453-000",
+   "phone_after_hours": "(+253) 21-453-000",
+   "phone_src": "https://dj.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "3f7d1f14d5dd9a4b58e6e765622501f85e889321ad8eda19f1640c742196a0fd"
+  }
+ ],
  "airports": [
   {
    "id": "sof:dj:airport:hdam",
@@ -104,5 +125,29 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:dj:xing:node-8405526244",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 11.460287,
+   "lon": 43.256974,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/8405526244",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "ac8ee57df846686b648207be519e9e47902497a2b26e261e306ae844b7b39fb5"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

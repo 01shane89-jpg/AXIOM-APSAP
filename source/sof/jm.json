@@ -36,7 +36,52 @@
    "src": "https://www.wikidata.org/entity/Q105607157",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "b030388016446d5f9c119e3ff983e36e256ff3c7b54a95f8a192568861b189e8"
+   "fp": "c965bf2d9846cdf5f5ffeb017cdb4adccaebbe6d77c497028ad7f85f6ca4123a",
+   "phone": "876-702-6000",
+   "phone_after_hours": "1 (876) 702-6000",
+   "phone_src": "https://jm.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
+  },
+  {
+   "id": "sof:jm:post:u-s-consulate-montego-bay",
+   "name": "U.S. Consulate Montego Bay",
+   "kind": "consulate",
+   "city": "Montego Bay",
+   "address": "Northern Coastal Highway, Montego Bay",
+   "services_note": null,
+   "lat": 18.514176,
+   "lon": -77.880986,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/3810123434",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "phone": "8769530620",
+   "phone_src": "https://www.openstreetmap.org/node/3810123434",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01",
+   "fp": "553c21882e77e928b8bfe629bbfd3b1a4acbc25c089ef480dce993a6a7d99ec0"
+  },
+  {
+   "id": "sof:jm:post:u-s-embassy-kingston-6",
+   "name": "U.S. Embassy Kingston 6",
+   "kind": "embassy",
+   "city": "Kingston 6",
+   "address": "142 Old Hope Road, Kingston 6",
+   "services_note": null,
+   "lat": 18.018458,
+   "lon": -76.764614,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/362095345",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://jm.usembassy.gov",
+   "phone": "876-702-6000",
+   "phone_after_hours": "1 (876) 702-6000",
+   "phone_src": "https://jm.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "b2e2ea173c243dba264efc65648c6578a5998e90424aef785c9ed7423caea2e3"
   }
  ],
  "airports": [
@@ -577,5 +622,29 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:jm:xing:way-688035634",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 17.902093,
+   "lon": -77.743344,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/688035634",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "e2334ed95989a0259e3b37a0165e9811b7288f3b8f9be58b421e6ae74940b199"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

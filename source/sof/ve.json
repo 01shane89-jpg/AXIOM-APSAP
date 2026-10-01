@@ -1106,5 +1106,141 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ve:xing:node-12132459201",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.818818,
+   "lon": -72.453637,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12132459201",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f817f4f9359e8497cdef6bf4e058e72acf426766e502ebf83106df1298df85d2"
+  },
+  {
+   "id": "sof:ve:xing:node-1747180346",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 11.359934,
+   "lon": -72.129385,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1747180346",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a051739fffc9841c3c9ede1d1e165e0a1e540b4c5e425b2fb4e2204be56d21d2"
+  },
+  {
+   "id": "sof:ve:xing:node-1754416945",
+   "name": "Alcabala de Guarero",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": "Guardia Nacional",
+   "lat": 11.356873,
+   "lon": -72.066311,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1754416945",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "65cfc188025c3af4d8bfb60130a52cdc8cbf1e899ededd9170cf1eaf93314b8b"
+  },
+  {
+   "id": "sof:ve:xing:node-3811340458",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 10.599919,
+   "lon": -66.956884,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3811340458",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "99787b0599cfddd639df1dd155210f6c33a2b940d2404a4f53448d3663e009af"
+  },
+  {
+   "id": "sof:ve:xing:node-5520544951",
+   "name": "Control Fronterizo de Tienditas",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.878763,
+   "lon": -72.447484,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5520544951",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3e31ab2dd8d8cb7b0c5eec1b7da7bf88f77f5e88b62827503fe088469d6a1c6c"
+  },
+  {
+   "id": "sof:ve:xing:node-857388044",
+   "name": "Alcabala de Peracal",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 7.791911,
+   "lon": -72.431775,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/857388044",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7ff7b3854fe2dbb8b18858349f68c83ea8a84429e53cba6b6633766a373b7b2a"
+  },
+  {
+   "id": "sof:ve:xing:node-9088028832",
+   "name": "Alcabala de Carapa",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": "Guardia Nacional",
+   "lat": 11.661243,
+   "lon": -69.749334,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9088028832",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "29220444c74144d77651a9458a7e81a7730d30c9e1991c2bb29eea7946411f37"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

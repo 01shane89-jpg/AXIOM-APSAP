@@ -42,7 +42,13 @@
    "src": "https://cd.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "54ec2ec3002647f53f71c0da92c67cb0f4c88a017838d96b9864e6b776e0ff86"
+   "fp": "7fb94c994ca8219cd739b5f7fc4b83cb6ec5edbf4b82060d967d4f53e3990fda",
+   "web": "https://cd.usembassy.gov/",
+   "phone": "+243 (0) 808-363-951",
+   "phone_after_hours": "+243(0) 808 363 951",
+   "phone_src": "https://cd.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -559,5 +565,163 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:cd:xing:node-10688774989",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -11.195621,
+   "lon": 25.301734,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/10688774989",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "693e2a21d8ea9d929508a2d0504f80bd763da82d1870dbb73c91164991a8b189"
+  },
+  {
+   "id": "sof:cd:xing:node-14107105165",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -12.313461,
+   "lon": 27.96143,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/14107105165",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "b481a2e12c05c3b71a62503030eb8f1f0b4ce7d0fcb7b0b19a79d7943018eecf"
+  },
+  {
+   "id": "sof:cd:xing:node-2052006942",
+   "name": "Border Barrier",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": -4.87822,
+   "lon": 14.375165,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2052006942",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c78ec3f3d02f5562f8421a70c31cac61fe959aeed7b3f942ec8f43d03d69441a"
+  },
+  {
+   "id": "sof:cd:xing:node-2052006944",
+   "name": "Customs Control",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": -4.863665,
+   "lon": 14.42674,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2052006944",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "9053a599d566d86d8f0c1c4b0def9cd783d2025946e3638ce2da9edb7fbecccb"
+  },
+  {
+   "id": "sof:cd:xing:node-2052006946",
+   "name": "Passports Control",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": -4.879259,
+   "lon": 14.377718,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2052006946",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "55206c16e3a1adcca4401de886edfb5e201046f6f6bc5ee266813ba624af3084"
+  },
+  {
+   "id": "sof:cd:xing:node-3170234584",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -12.265562,
+   "lon": 27.795842,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3170234584",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "761627a3f1d266c81a959591fbc365bcf38004c9ba0104a75b3d88399ac07916"
+  },
+  {
+   "id": "sof:cd:xing:node-5118146824",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -5.849069,
+   "lon": 15.275704,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5118146824",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "1385c46d787e85a197632b11e42911e32f8d5a062f1ffdb246f17685bf8e9ce9"
+  },
+  {
+   "id": "sof:cd:xing:way-984092138",
+   "name": "Entrepôt de Douane Public de type B de Buyonga",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 0.176375,
+   "lon": 29.302469,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/984092138",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "80b0ea64d7a2689670189a7d45bd0afe8fd675adc5225bb0e2283349077d3a5d"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

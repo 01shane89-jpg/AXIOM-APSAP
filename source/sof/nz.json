@@ -30,7 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/NewZealand.html",
    "srcname": "travel.state.gov New Zealand country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Wellington",
-   "fp": "5fa967f492edde1ac66f22035124cfdce76eec3451ce7887ecc82d51b6113711"
+   "fp": "6686e45e9df06c3a4aeee87c8c5f7a31c9e05a529eb6d57583d631149581b673",
+   "web": "https://nz.usembassy.gov",
+   "phone": "64 4 462 6000",
+   "phone_after_hours": "(64) (9) 303 2724",
+   "phone_src": "https://nz.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   },
   {
    "id": "sof:nz:post:u-s-consulate-general-auckland",
@@ -45,7 +51,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/NewZealand.html",
    "srcname": "travel.state.gov New Zealand country information",
    "coord_basis": "estimated from published address",
-   "fp": "1b936158fc3f7a406b669072bfd7ef19e2f0c6cedcc1e3cf3fb7446481b1f767"
+   "fp": "62fa64f0d59703ffd28877489f9865d045289e80c2ba4d4ee46655b4ffb906e1",
+   "web": "https://nz.usembassy.gov/",
+   "phone": "+64 9 303 2724",
+   "phone_src": "https://www.openstreetmap.org/node/6620337465",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -358,5 +369,114 @@
  "gaps": [
   "nz.usembassy.gov not reachable; hospitals from Wikipedia. Auckland consulate and Auckland City/Middlemore/Wellington hospital coords estimated.",
   "No publicly announced 2026 exercise hosted here was found."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:nz:xing:way-101956052",
+   "name": "Customs/Cargo Inspection",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -43.491815,
+   "lon": 172.544188,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/101956052",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "99dedfa8d05885ef65a9114ee5370d4004488ce9f8fe8f8f5e7e26df15790375"
+  },
+  {
+   "id": "sof:nz:xing:way-156937968",
+   "name": "Customs & Border Security",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -35.314189,
+   "lon": 174.120806,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/156937968",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "02df905ddca6687d5c51f0c2470eaeff4215ff53b68dd474cc6e57a7dc937bed"
+  },
+  {
+   "id": "sof:nz:xing:way-362034053",
+   "name": "Customs",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -37.670434,
+   "lon": 176.170646,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/362034053",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "60d1bfc0b30436df73f0287e294ff74f329df0bbc5436956ade3f83dbe7bb6f7"
+  },
+  {
+   "id": "sof:nz:xing:way-366071763",
+   "name": "MPI Vehicle Inspection",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -43.608122,
+   "lon": 172.731578,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/366071763",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c16e18282dedcab9bda0f131e4e68ee5c418db598fe16e4c0d4df13eb0e09c4f"
+  },
+  {
+   "id": "sof:nz:xing:way-531457296",
+   "name": "Customs Inspection Facility",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": "New Zealand Customs Service",
+   "lat": -36.843755,
+   "lon": 174.773776,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/531457296",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8be12dc3ccc718ab480482e5b6b7c4a91d4e26860d78bfbf1a2c575016c77a74"
+  },
+  {
+   "id": "sof:nz:xing:way-908338680",
+   "name": "United States Embassy Gatehouse",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -41.27324,
+   "lon": 174.778983,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/908338680",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f1162c462a5bdb8bc18a47b587d3c1af451c8e204f7a2253a9ba8c8571ff50fe"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

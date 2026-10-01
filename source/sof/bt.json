@@ -148,5 +148,97 @@
   "No U.S. post; covering post New Delhi. Regional hospital coords approx.",
   "Landlocked: no seaports.",
   "No publicly announced 2026 exercise hosted here was found."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:bt:xing:node-11931673010",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 26.859615,
+   "lon": 90.483749,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11931673010",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "cff41678207e74db5ba6b9a18bcfd251195214c107d641fb0ef26bf00b3c9ac3"
+  },
+  {
+   "id": "sof:bt:xing:node-12416730781",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 26.861276,
+   "lon": 89.380808,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12416730781",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c1064ff501ba90f25b3f3737fd8c4bbb6db52a48259dbeb0e64cf252c6395c0e"
+  },
+  {
+   "id": "sof:bt:xing:node-1988646265",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 26.891973,
+   "lon": 89.095384,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1988646265",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8ec67c480d020c3a5d8c599148fcc28f5a1ca3da58b9f2a0a22e12c074f16d88"
+  },
+  {
+   "id": "sof:bt:xing:node-2926155115",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 26.804075,
+   "lon": 91.264815,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2926155115",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "bc7c579171c321fef05e668be3e643b62a81e5ba7e86070c566481a15ee9616f"
+  },
+  {
+   "id": "sof:bt:xing:node-4910881331",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 26.819534,
+   "lon": 91.244868,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4910881331",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6ff28117fc657318d174c9411812c18603d63b723683c0ff62e8772d2dfd1afb"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
