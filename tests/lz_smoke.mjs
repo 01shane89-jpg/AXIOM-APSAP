@@ -155,6 +155,8 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   const ar = await p.evaluate(() => window.OSAP_LZ.state().res.cands.map((k) => [k.lat, k.lon]));
   ok(ar.length >= 1 && ar.every((q) => inBox(q, 13.745, 100.484, 13.752, 100.5025)), "desktop: area search keeps candidates inside the drawn area (" + ar.length + ")");
 
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return !!document.querySelector("#lz-dock.osplit #lz-card") && Math.abs(c.right - innerWidth) < 2 && Math.abs(c.top - Math.max(0, m.top)) < 2 && c.width <= 482; }), "desktop: split view docks the card on the right, under the header");
+  ok(await p.evaluate(() => { const pad = window.OSAP_SPLIT.clear(document.getElementById("lz-dock")), m = window.__asapMap, b = m.getBounds(); return window.OSAP_LZ.state().res.cands.every((k) => { const pt = m.latLngToContainerPoint([k.lat, k.lon]); return pt.x >= pad.tl[0] && pt.x <= m.getSize().x - pad.br[0]; }); }), "desktop: every candidate is in the part of the map the panel leaves clear");
   await p.click('#lz-card [data-lz="close"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-lzpane-pane path, .leaflet-lzpane-pane img").length === 0 && document.getElementById("lz-card").hidden), "desktop: Close removes the card and the marks");
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
@@ -170,8 +172,17 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   await p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 }); await done(p);
   const st = await p.evaluate(() => { const s = window.OSAP_LZ.state(); return { err: s.err, res: !!s.res }; });
   ok(!st.res && /OpenStreetMap obstacles did not load/.test(st.err) && calls() >= 4, "phone: failed Overpass (all hosts) is reported as a failure, no candidates: " + st.err);
-  ok(await p.evaluate(() => { const c = document.getElementById("lz-card"); return c.classList.contains("lzdock") && c.closest(".leaflet-bottom.leaflet-left") !== null; }), "phone: the card docks at the bottom of the map");
+  /* split view (the default): the card is the bottom half of the screen, the map above it stays usable */
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-card"), d = c.closest("#lz-dock"), r = c.getBoundingClientRect(); return !!d && d.classList.contains("osplit") && !d.hidden && r.top >= innerHeight * 0.45 - 2 && Math.abs(r.bottom - innerHeight) < 2 && r.left === 0; }), "phone: split view puts the card in the bottom half");
+  ok(await p.evaluate(() => { const b = document.querySelector("#lz-card [data-osplit]"); return !!b && b.textContent === "Full window"; }), "phone: the card has a Full window switch");
+  await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-card"); return c.classList.contains("lzdock") && c.closest(".leaflet-bottom.leaflet-left") !== null && document.getElementById("lz-dock").hidden && localStorage.getItem("osap.split") === "0"; }), "phone: Full window puts the card back on the map and is remembered");
   ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return c.left >= 0 && c.right <= t.left; }), "phone: the card fits beside the toolbar");
+  ok(await p.evaluate(() => document.querySelector("#lz-card [data-osplit]").textContent === "Half screen"), "phone: the switch then offers Half screen");
+  await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.getElementById("lz-dock").hidden && !!document.querySelector("#lz-dock #lz-card")), "phone: Half screen docks it again");
+  await p.evaluate(() => window.OSAP_LZ.close());
+  ok(await p.evaluate(() => document.getElementById("lz-dock").hidden), "phone: Close hides the docked panel");
   if (OUT) await p.screenshot({ path: OUT + "/lz-phone.png" });
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
   await ctx.close();

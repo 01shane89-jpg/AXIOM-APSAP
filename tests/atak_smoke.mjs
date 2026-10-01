@@ -115,6 +115,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await p.evaluate(() => { const ids = [...document.querySelectorAll("#ml-panel > *")].map((c) => c.id || (c.querySelector(".mlh") || c).textContent.trim().slice(0, 7)); const at = (x) => ids.indexOf(x); return at("ml-infra") >= 0 && at("ml-infra") < at("ml-elev") && document.querySelector("#ml-infra > #ml-roads") && !document.getElementById("ml-infra").hidden; }), "phone: Map overlays open with Infrastructure, which holds roads");
   await via("weather");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !!w && w.offsetParent !== null && document.querySelector("#atk-marks").offsetParent === null; }), "phone: Weather shows the weather layers alone");
+  ok(await p.evaluate(() => { const o = document.getElementById("atk-om").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return o.height <= m.height * 0.56; }), "phone: the data sets sheet leaves the top half of the map in view");
   await via("overlays");
   ok(/P1/.test(await p.textContent("#atk-marks")) && /NAI/.test(await p.textContent("#atk-marks")), "phone: Overlay Manager lists your point and NAI");
   if (OUT) await p.screenshot({ path: OUT + "/phone-overlays.png" });
@@ -158,6 +159,15 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await p.evaluate(() => !document.documentElement.classList.contains("atak")) && await shown(p, "#watch-btn") && !(await shown(p, "#atk-tools")), "desktop: Classic controls brings the old buttons back");
   await p.click(".mlctl .mlbtn"); await p.check("#atk-back input"); await p.waitForTimeout(150);
   ok(await p.evaluate(() => document.documentElement.classList.contains("atak")), "desktop: Tactical toolbar in Layers turns it back on");
+  // split view: Watch docks to the right of the map, the switch turns it back into a window, and the choice is kept
+  await p.evaluate(() => { document.querySelectorAll("#atk-om .x, #atk-om [data-om=close]").forEach((x) => x.click()); localStorage.removeItem("osap.split"); });
+  await p.click('#atk-tools [data-atk="watch"]'); await p.waitForTimeout(250);
+  ok(await p.evaluate(() => { const w = document.getElementById("watchdlg"), b = w.querySelector(".cbox").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return w.classList.contains("osplit") && w.getAttribute("aria-modal") === "false" && Math.abs(b.right - innerWidth) < 2 && b.left >= m.right - 1; }), "desktop: Watch opens as a side panel beside the map");
+  await p.click("#watchdlg [data-osplit]"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => { const w = document.getElementById("watchdlg"); return !w.classList.contains("osplit") && w.getAttribute("aria-modal") === "true" && localStorage.getItem("osap.split") === "0" && w.querySelector("[data-osplit]").textContent === "Side panel"; }), "desktop: Full window makes Watch a window again and is remembered");
+  await p.click("#watchdlg [data-osplit]"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => document.getElementById("watchdlg").classList.contains("osplit") && localStorage.getItem("osap.split") === "1"), "desktop: Side panel docks it again");
+  await p.click("#watchdlg .x"); await p.waitForTimeout(150);
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
