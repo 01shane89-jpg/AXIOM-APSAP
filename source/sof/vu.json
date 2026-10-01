@@ -407,5 +407,11 @@
  "gaps": [
   "No publicly announced 2026 exercise in Vanuatu was found in searches.",
   "Embassy street address not retrieved."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

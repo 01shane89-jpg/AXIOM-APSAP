@@ -30,13 +30,19 @@
    "city": "Dili",
    "address": "Av. de Portugal, Praia dos Coqueiros, Dili, Timor-Leste",
    "services_note": null,
-   "lat": -8.552,
-   "lon": 125.553,
-   "prec": "approx",
+   "lat": -8.546157,
+   "lon": 125.550236,
+   "prec": "exact",
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Timor-Leste.html",
    "srcname": "travel.state.gov country information page",
-   "coord_basis": "estimated from published address",
-   "fp": "496c0248074de3a8fe3925dd50ba18fc49dea6113454462b9e036231649e7a1c"
+   "coord_basis": "OpenStreetMap way/130770595",
+   "fp": "5426519fb2390413b5202e78daee81e657cb4a5628b4154bf2306037d85ec6af",
+   "web": "https://tl.usembassy.gov",
+   "phone": "+670 330 2400",
+   "phone_after_hours": "+670 330 2400",
+   "phone_src": "https://tl.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -229,5 +235,46 @@
  ],
  "gaps": [
   "tl.usembassy.gov 403. Only one hospital confirmed; no referral hospitals outside Dili (e.g. Baucau) confirmed. Smartraveller: serious cases require medevac."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:tl:xing:node-1783173607",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -9.360032,
+   "lon": 124.074203,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1783173607",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "9e03581109f085fda6402857593127d4c7148d3fc6d84b67c8f28fddb0736138"
+  },
+  {
+   "id": "sof:tl:xing:way-658027880",
+   "name": "Pos Lintas Batas Negara Motamasin",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -9.451873,
+   "lon": 125.085234,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/658027880",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "36a801dd5905065507fa6e6f07a2c00db5fd3f156c307d8cbab2c986319a7ecc"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
