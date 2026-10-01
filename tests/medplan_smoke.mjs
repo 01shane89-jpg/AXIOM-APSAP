@@ -201,7 +201,7 @@ async function openPlan(p) {
   ok(/Primary: H1 Sourced Trauma Centre/.test(rt) && /Secondary: H2 Trauma Test Hospital/.test(rt) && /Tertiary: H3 Far North Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
   const pst = await p.textContent("#mp-pst");
   ok(/Primary\s*H1 Sourced Trauma Centre/.test(pst) && /Secondary\s*H2 Trauma Test Hospital/.test(pst) && /Tertiary\s*H3 Far North Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
-  ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); most capable inside the golden hour/.test(pst) && /onward transfer|nothing more capable/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
+  ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); highest level of care in reach/.test(pst) && /next highest level of care/.test(pst) && /life, limb or eyesight goes to the highest level of care/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
@@ -238,7 +238,24 @@ async function openPlan(p) {
   ok(JSON.stringify(await lines()) === JSON.stringify(ln), "desktop: and back on");
   await p.uncheck('#mp-gh [data-mp-opt="air"]'); await p.waitForTimeout(300);
   ok(/by road/.test(await p.textContent("#mp-pst")) && !/by air/.test(await p.textContent("#mp-pst")), "desktop: with air evacuation off, the picks use road time only");
+  /* highest level of care first, even beyond the golden hour; then the most capable inside it to stabilise on the way */
+  const far = await p.evaluate(() => {
+    const M = window.OSAP_MEDPLAN, P0 = M._picks(), f = P0[0].f, s0 = f.s; f.s = 3 * 3600;
+    const P = M._picks().map((x) => x.role + ":" + x.f.name + ":" + x.reason); f.s = s0; return P;
+  });
+  ok(far.length === 3 && /^Primary:Sourced Trauma Centre:.*beyond golden hour.*stabilise at Secondary/.test(far[0]) && /^Secondary:Far North Hospital:.*inside the golden hour, to stabilise on the way/.test(far[1]) && /^Tertiary:Trauma Test Hospital/.test(far[2]), "desktop: Primary stays the highest level of care when it is beyond the golden hour, Secondary stabilises: " + far.join(" | "));
   await p.check('#mp-gh [data-mp-opt="air"]'); await p.waitForTimeout(300);
+  /* side panel: the plan moves to the side and the map beside it stays usable */
+  await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
+  const dk = await p.evaluate(() => {
+    const el = document.getElementById("medplan"), r = el.querySelector(".mpbox").getBoundingClientRect(), hit = document.elementFromPoint(40, Math.round(innerHeight / 2));
+    return { dock: el.classList.contains("dock"), left: Math.round(r.left), w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")), btn: el.querySelector('[data-mp="dock"]').textContent, modal: el.getAttribute("aria-modal"), kept: localStorage.getItem("osap.medplan.dock") };
+  });
+  ok(dk.dock && dk.left > dk.vw / 2 - 2 && dk.map && dk.btn === "Full window" && dk.modal === "false" && dk.kept === "1", "desktop: Side panel moves the plan right and leaves the map usable " + JSON.stringify(dk));
+  await p.click('#mp-fac tr:has-text("Far North Hospital") [data-mp-go]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.getElementById("medplan").hidden && !!document.querySelector(".mpicon")), "desktop: Map on a hospital keeps the side panel open with the plan on the map");
+  await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.getElementById("medplan").classList.contains("dock") && document.querySelector('#medplan [data-mp="dock"]').textContent === "Side panel" && localStorage.getItem("osap.medplan.dock") === "0"), "desktop: Full window puts it back");
   ok(await p.evaluate(() => /Automatic draft/.test(document.querySelector("#medplan .mphead").textContent) && !/AI generated/.test(document.getElementById("medplan").textContent)), "desktop: labelled Automatic draft, no AI tag");
   ok(/published numbers of institutions/.test(await p.textContent("#medplan")), "desktop: the plan says how phone numbers are sourced");
   await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("mp-fp") || {}).textContent || ""), null, { timeout: 5000 }).catch(() => {});
@@ -361,6 +378,10 @@ async function openPlan(p) {
   ok(true, "phone: emergency numbers still show when OpenStreetMap is down");
   ok(await p.evaluate(() => document.getElementById("medplan").scrollWidth <= window.innerWidth + 1 && document.querySelector("#medplan .mpbox").getBoundingClientRect().width <= window.innerWidth), "phone: the plan fits the screen width");
   if (OUT) await p.screenshot({ path: OUT + "/phone-plan.png" });
+  await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
+  const hs = await p.evaluate(() => { const r = document.querySelector("#medplan .mpbox").getBoundingClientRect(), hit = document.elementFromPoint(20, 120); return { top: Math.round(r.top), vh: innerHeight, w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")) }; });
+  ok(hs.top > hs.vh * 0.4 && hs.w <= hs.vw && hs.map, "phone: Half screen puts the plan in the lower half with the map usable above " + JSON.stringify(hs));
+  await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(150);
   ok(!errors.length, "phone: no page errors " + errors.join(" | "));
   await ctx.close();
 }

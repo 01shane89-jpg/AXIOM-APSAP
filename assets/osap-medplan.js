@@ -9,7 +9,8 @@
      capability: a trauma level only where a source states one; otherwise a Role 1, 2 or 3 equivalent estimated from the
      services the hospital lists, with the rule and the reasons shown. Hospitals with nothing listed are kept apart, and
      ones with no name are left out. A failed lookup is reported as a failure, never as "no hospital";
-   - the plan's Primary, Secondary and Tertiary hospitals, chosen by fixed rules from capability and time by road or air;
+   - the plan's Primary, Secondary and Tertiary hospitals, chosen by fixed rules: Primary is the highest level of care in reach (life, limb or eyesight),
+     Secondary the most capable inside the golden hour when Primary is beyond it;
    - road drive time to each (FOSSGIS OSRM, the OSRM demo server, then FOSSGIS Valhalla; a labelled straight-line estimate
      when none answers), and the road route to the three hospitals drawn on the map with the main roads listed;
    - golden hour: each hospital's time from injury to arrival (10 min to treat and load, then the drive) against 60 min,
@@ -111,6 +112,27 @@
   function cc() { var a = A(); return (a && a.cc) || (W.TSAP && W.TSAP.country) || ""; }
   function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable; the choice is kept on this device */
+  var DOCK_KEY = "osap.medplan.dock";
+  function dockOn() { return !!lsGet(DOCK_KEY); }
+  function phoneW() { return W.innerWidth <= 700; }
+  function dockBtn() {
+    var on = dockOn();
+    return '<button type="button" class="refresh noprint" data-mp="dock" aria-pressed="' + on + '" title="' + (on ? "Show the plan as a full window" : "Move the plan to the side so the map stays usable") + '">' + (on ? "Full window" : phoneW() ? "Half screen" : "Side panel") + "</button>";
+  }
+  function dockApply() {
+    var el = D.getElementById("medplan"); if (!el) return;
+    var on = dockOn(); el.classList.toggle("dock", on); el.setAttribute("aria-modal", on ? "false" : "true");
+    var b = el.querySelector('[data-mp="dock"]'); if (b) b.outerHTML = dockBtn();
+    if (W.__asapMap && W.__asapMap.invalidateSize) W.__asapMap.invalidateSize();
+  }
+  /* centre a point in the part of the map the side panel leaves clear */
+  function mapFocus(lat, lon) {
+    var map = W.__asapMap; if (!map) return;
+    map.setView([lat, lon], Math.max(map.getZoom(), 14), { animate: false });
+    var el = D.getElementById("medplan"), bx = el && !el.hidden && dockOn() && el.querySelector(".mpbox");
+    if (bx) { var r = bx.getBoundingClientRect(); map.panBy(phoneW() ? [0, Math.round(r.height / 2)] : [Math.round(r.width / 2), 0], { animate: false }); }
+  }
   function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
   function sha(text) {
     if (!(W.crypto && crypto.subtle && W.TextEncoder)) return Promise.resolve("");
@@ -667,6 +689,9 @@
     "#mp-pickbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:4001;background:#111;color:#fff;border-radius:6px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
     "#mp-pickbar button{min-height:30px}" +
     "@media (max-width:700px){#medplan{padding:0}#medplan .mpbox{border-radius:0;min-height:100%;padding:0 10px 18px}#medplan .mphead{top:0;gap:6px}#medplan .mphead h2{font-size:15px}#medplan .mphead .aitag{order:3}#medplan .mpgrid input{min-height:34px}#mp-pickbar{top:auto;bottom:80px;width:calc(100% - 32px);box-sizing:border-box}}" +
+    "#medplan.dock{inset:auto;top:0;right:0;bottom:0;width:min(520px,48vw);padding:0;background:none;pointer-events:none;overflow:visible}" +
+    "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
+    "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,#f6f8fa)}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
@@ -735,7 +760,7 @@
     /* a point of injury typed for another area far away is not used */
     if (poi && hav(c, poi) > Math.max(reach * 3, 50000)) poi = null;
     ST = { P: P, c: c, o: poi || c, from: poi ? "poi" : "c", reach: reach, at: Date.now(), cc: cc(), name: a.ccName ? a.ccName() : cc().toUpperCase() };
-    render(); el.hidden = false;
+    render(); el.hidden = false; dockApply();
     var h = el.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus(); }
     build();
   }
@@ -749,7 +774,7 @@
     var el = box(), s = ST, km2 = areaKm2(s.P), v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="print">Print view</button><button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, the picks and every section">Print view (map and details)</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
       '<p class="obs">Drawn area of about ' + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -840,32 +865,32 @@
     if (g == null && a == null) return null;
     return g != null && (a == null || g <= a) ? [g, "road"] : [a, "air"];
   }
-  /* the plan's three hospitals:
-     Primary: the most capable inside the golden hour by the fastest way (road, or air when air evacuation is on);
-     Secondary: the next most capable inside the golden hour;
-     Tertiary: the most capable definitive care at any distance, for onward transfer.
-     With none inside the golden hour, Primary is the quickest to reach of the most capable that can be reached. */
+  /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care):
+     Primary: the highest level of care that can be reached, the quickest of that level by road (or air when air evacuation is on);
+     Secondary: when Primary is beyond the golden hour, the most capable inside it, to stabilise on the way;
+       otherwise the next highest level of care in reach;
+     Tertiary: the next highest level of care of the rest, as the backup. */
   var ROLE_PICK = ["Primary", "Secondary", "Tertiary"];
   function picks(s) {
     var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.tier > 0; });
     if (!H.length) return [];
-    var inGh = H.filter(function (f) { var b = bestWay(f); return b && b[0] <= GOLDEN_MIN * 60; }).sort(byCap), out = [];
+    var out = [], gh = GOLDEN_MIN * 60;
     function why(f, tag) {
       var b = bestWay(f);
       return tierLabel(f) + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
     }
-    function add(f, k, tag) { if (!f || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[k], why: [ROLE_PICK[k]], reason: why(f, tag) }); }
-    if (inGh.length) { add(inGh[0], 0, "most capable inside the golden hour"); add(inGh[1], 1, "next most capable inside the golden hour"); }
-    else {
-      var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) { return y.tier - x.tier || bestWay(x)[0] - bestWay(y)[0]; });
-      add(reach[0], 0, "none is inside the golden hour; the most capable that can be reached, quickest first");
-      add(reach.filter(function (f) { return f !== reach[0]; }).sort(function (x, y) { return bestWay(x)[0] - bestWay(y)[0]; })[0], 1, "quickest of the rest");
-    }
-    var rest = H.slice().sort(byCap).filter(function (f) { return !out.some(function (p) { return p.f === f; }); });
-    if (rest[0] && (rest[0].tier > out[0].f.tier || (rest[0].tier === out[0].f.tier && rest[0].tier >= 3) || out.length < 2)) add(rest[0], 2, "most capable definitive care at any distance, for onward transfer");
-    else if (rest[0]) add(rest[0], 2, "most capable of the rest; nothing more capable than Primary in reach");
-    /* Secondary missing (one hospital inside the golden hour): the quickest of the rest */
-    if (out.length === 2 && out[1].role === "Tertiary") { var q = rest.filter(function (f) { return f !== out[1].f && bestWay(f); }).sort(function (x, y) { return bestWay(x)[0] - bestWay(y)[0]; })[0]; if (q) { out.splice(1, 0, { f: q, role: "Secondary", why: ["Secondary"], reason: why(q, "outside the golden hour; the quickest of the rest") }); } }
+    function add(f, k, tag) { if (!f || out.length > 2 || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[out.length], why: [ROLE_PICK[out.length]], reason: why(f, tag) }); }
+    function free(f) { return !out.some(function (p) { return p.f === f; }); }
+    var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) { return y.tier - x.tier || bestWay(x)[0] - bestWay(y)[0] || byCap(x, y); });
+    if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next highest level of care" : "highest level of care listed"); }); return out; }
+    var P = reach[0], pIn = bestWay(P)[0] <= gh;
+    add(P, 0, "highest level of care in reach" + (pIn ? "" : "; beyond the golden hour, so stabilise at Secondary if the casualty cannot make it"));
+    var inGh = reach.filter(function (f) { return free(f) && bestWay(f)[0] <= gh; });
+    if (!pIn && inGh[0]) add(inGh[0], 1, "most capable inside the golden hour, to stabilise on the way to Primary");
+    var next = reach.filter(free)[0];
+    add(next, 1, "next highest level of care in reach");
+    add(reach.filter(free)[0], 2, "next highest level of care, as the backup");
+    if (out.length < 3) add(H.slice().sort(byCap).filter(free)[0], 2, "next highest level of care listed");
     return out;
   }
   function routes(s) {
@@ -926,8 +951,8 @@
       return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" + (f.phone ? ' · <a href="tel:' + esc(f.phone.replace(/[^+0-9]/g, "")) + '">' + esc(f.phone) + "</a>" : "") +
         '<span class="sub">' + esc(p.reason) + "</span></td></tr>";
     }).join("") + "</tbody></table>" +
-      '<p class="obs">Chosen by fixed rules from capability and time: Primary is the most capable inside the golden hour by the quickest way' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
-      ", Secondary the next, Tertiary the most capable definitive care at any distance for onward transfer. Confirm each by phone before relying on it.</p>";
+      '<p class="obs">Chosen by fixed rules: life, limb or eyesight goes to the highest level of care. Primary is the highest level of care that can be reached, the quickest of that level' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
+      ". When Primary is beyond the golden hour, Secondary is the most capable inside it, to stabilise on the way; otherwise Secondary and Tertiary are the next highest levels of care. Confirm each by phone before relying on it.</p>";
   }
   function facRender() {
     var el = D.getElementById("mp-fac"), s = ST; if (!el || !s.fac) return;
@@ -1533,6 +1558,7 @@
     var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess]"); if (!b) return;
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
+    if (k === "dock") { lsSet(DOCK_KEY, dockOn() ? 0 : 1); dockApply(); var db = D.querySelector('#medplan [data-mp="dock"]'); if (db) db.focus(); if (ST && ST.o) mapFocus(ST.o[0], ST.o[1]); return; }
     if (k === "retry") { build(); return; }
     if (k === "pick") { pickStart(); return; }
     if (k === "setpoi") { setPoi(); return; }
@@ -1541,7 +1567,7 @@
     if (b.hasAttribute("data-mp-assess")) { assessView(b.getAttribute("data-mp-assess")); return; }
     var f = find(b.getAttribute("data-mp-go") || b.getAttribute("data-mp-route") || b.getAttribute("data-mp-id"));
     if (!f) return;
-    if (b.hasAttribute("data-mp-go")) { close(); if (W.__asapMap) W.__asapMap.setView([f.lat, f.lon], Math.max(W.__asapMap.getZoom(), 14)); mapShow(); return; }
+    if (b.hasAttribute("data-mp-go")) { if (!dockOn()) close(); mapFocus(f.lat, f.lon); mapShow(); return; }
     if (b.hasAttribute("data-mp-route")) { close(); W.OSAP_ROUTE_SEED([[ST.o[0], ST.o[1]], [f.lat, f.lon]]); return; }
     var set = b.getAttribute("data-mp-set"), vals = fieldVals(), g = grid(f.lat, f.lon);
     if (set === "recv") { var t = vals.recv1 && vals.recv1.indexOf(f.name) < 0 && !vals.recv2 ? "recv2" : "recv1"; setField(t, f.name + " (" + g + ")"); }
