@@ -28,13 +28,18 @@
    "city": "Grenada",
    "address": "Lance Aux Epines, St. George’s",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": null,
-   "lon": null,
-   "prec": "approx",
+   "lat": 12.009835,
+   "lon": -61.758059,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q109335369",
    "srcname": "Wikidata",
-   "coord_basis": "no position found",
-   "fp": "e13402581b565ea713e4bd4fcc4373e5418d9f19f56d304f5dc27af334ddbe39"
+   "coord_basis": "OpenStreetMap node/6617348740",
+   "fp": "bf1a70c1acae9da418c74fa26aeaa8b7b949e2461877ccae7a6dd1fcab1c58d7",
+   "web": "https://bb.usembassy.gov/embassy/grenada/",
+   "phone": "(+1 473) 444-1173",
+   "phone_src": "https://www.openstreetmap.org/node/6617348740",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -88,5 +93,11 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

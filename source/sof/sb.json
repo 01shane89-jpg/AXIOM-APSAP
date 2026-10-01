@@ -40,7 +40,12 @@
    "coord_basis": "city centre estimate; address not retrieved",
    "src": "https://sb.usembassy.gov/contact/",
    "srcname": "U.S. Embassy to Solomon Islands",
-   "fp": "30e245eff29e19f2256eed6eca124a25fbeb83f4a2e7c89f25c82d839485ae08"
+   "fp": "c16174cef97ad1921f520c096e000a697fd1ea9be0a74ccc7b3b561f770a7eff",
+   "phone": "+677 23426",
+   "phone_after_hours": "+675-308-9100",
+   "phone_src": "https://sb.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -655,5 +660,11 @@
   "U.S. Embassy Honiara: no source URL or address retrieved.",
   "Gizo Hospital (Western Province) not added: no source retrieved.",
   "Operation Render Safe in Solomon Islands (DVIDS video) could not be dated to 2026; left out."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

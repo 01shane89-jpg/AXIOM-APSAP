@@ -30,7 +30,12 @@
    "src": "https://www.wikidata.org/entity/Q783754",
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "75311e096223fc81bc845ea24301a48035f6ddb538e4b9277ea9ca6bcc580ed8"
+   "fp": "735aeee832723404d0995d42ec8474b4432d97235b30350f8adb983288e7da2e",
+   "phone": "(36-1) 475-4400",
+   "phone_after_hours": "06 (1) 475-4400",
+   "phone_src": "https://hu.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -597,5 +602,217 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:hu:xing:node-11265137584",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 46.975973,
+   "lon": 16.270077,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11265137584",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c2932d37ddf8b874b6939790db83d5ec55614bc51a57461c49f7d12fd4f89cc4"
+  },
+  {
+   "id": "sof:hu:xing:node-1200020968",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "truck",
+    "bus"
+   ],
+   "access_note": "limited to citizens of: all",
+   "operator": null,
+   "lat": 46.174061,
+   "lon": 19.974818,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1200020968",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f29df4cc7b02fdd5d3a1e2a3631778b97d22aefe8efed23efd28c5dcc96fe9b9"
+  },
+  {
+   "id": "sof:hu:xing:node-12568293959",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 47.432245,
+   "lon": 19.259855,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12568293959",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "b659d55186883fec5d007b8a67113e841a4c4e82d5fbd7ff3b1f5e9e038ace37"
+  },
+  {
+   "id": "sof:hu:xing:node-1614974595",
+   "name": "Đala (EU citizens only)",
+   "local_name": "Ђала (само за држављане ЕУ)",
+   "hours": "07:00-19:00",
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": "limited to citizens of: EU;EEA;CH;interstate",
+   "operator": null,
+   "lat": 46.157407,
+   "lon": 20.114253,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1614974595",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "13910c5b812f2bfa4bfa25b0f52409d292b066d17331bff19ca4217a6bdad649"
+  },
+  {
+   "id": "sof:hu:xing:node-1614974597",
+   "name": "Tiszasziget Border Crossing - EU citizens only",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": "limited to citizens of: EU;EEA;CH;interstate",
+   "operator": null,
+   "lat": 46.158266,
+   "lon": 20.116449,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1614974597",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "70b0edf906ef465635b33bf86673563587d53f05491261bba586c3ad0e5dfd2f"
+  },
+  {
+   "id": "sof:hu:xing:node-3677193677",
+   "name": "Régi határátkelőhely Röszke - Horgos 2",
+   "local_name": null,
+   "hours": "24/7",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 46.177233,
+   "lon": 19.98583,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3677193677",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0210db4913065bdafc955e45aeb5c852165c9a4ae32e8b48d38f10e8e45c88d0"
+  },
+  {
+   "id": "sof:hu:xing:node-5329297934",
+   "name": "Kelebija / Tompa Border Crossing",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": "limited to citizens of: all",
+   "operator": null,
+   "lat": 46.169212,
+   "lon": 19.557835,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5329297934",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "88405dc29785eec55cfcb2deaa68ac9fd63f46870cf865fb51f6f06515c7d10f"
+  },
+  {
+   "id": "sof:hu:xing:node-6389297872",
+   "name": "River border crossing for passengers",
+   "local_name": "Személyforgalmi vízi határátkelőhely",
+   "hours": null,
+   "modes": [
+    "foot"
+   ],
+   "access_note": null,
+   "operator": "Rendőrség",
+   "lat": 46.255217,
+   "lon": 20.157158,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6389297872",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "4c5d1fcbee24c0c6b51ef968894567dd4712cca2336736869ef014b9d8e492c5"
+  },
+  {
+   "id": "sof:hu:xing:node-6790389206",
+   "name": "Kübekháza - Rabe border crossing station",
+   "local_name": "Kübekháza - Rábé Határátkelőhely",
+   "hours": "07:00-19:00",
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": "limited to citizens of: EU;EEA;CH;interstate",
+   "operator": null,
+   "lat": 46.127077,
+   "lon": 20.26472,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6790389206",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "687091e9b3549ef0dd9344d0d84b839702d8550e6bb8ba5b31296b932f2eda07"
+  },
+  {
+   "id": "sof:hu:xing:node-974126073",
+   "name": "Kelebija",
+   "local_name": "Келебија",
+   "hours": null,
+   "modes": null,
+   "access_note": "limited to citizens of: all",
+   "operator": null,
+   "lat": 46.167131,
+   "lon": 19.56169,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/974126073",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3e5ed3d086c410f0c8ebffb6399fba99f90e80f5d08cabb4f1d1d45cfeaea373"
+  },
+  {
+   "id": "sof:hu:xing:way-1294831317",
+   "name": "Vztopna kontrola v SLO",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 46.52255,
+   "lon": 16.518569,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1294831317",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c600ed57bcfe3cb356ec143584bf24057d4a11d519ce5fff278c865f860242d5"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
