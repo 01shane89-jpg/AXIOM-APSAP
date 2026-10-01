@@ -5,7 +5,7 @@
 //
 // Sources (no key, no account):
 //   adsb.fi   https://github.com/adsbfi/opendata   1 request a second allowed; asked most often. adsb.fi's own terms, tagged NC
-//   adsb.lol  https://api.adsb.lol/docs           data under ODbL 1.0; answers 429 after ~15 quick calls, so asked every 4 s
+//   adsb.lol  https://api.adsb.lol/docs           data under ODbL 1.0; answers 429 after ~15 quick calls, so asked every 6 s
 // Neither sends CORS headers, so the page cannot ask them for the area on screen; .github/workflows/refresh-air.yml runs this
 // in a loop and publishes the files on the live-air branch, which the page reads from raw.githubusercontent.com (CORS open).
 //
@@ -28,7 +28,7 @@ const SRC = [
   { id: "fi", name: "adsb.fi", site: "https://adsb.fi/", url: (la, lo) => `https://opendata.adsb.fi/api/v3/lat/${la}/lon/${lo}/dist/250`,
     licence: "adsb.fi open data terms", nc: true, track: "https://globe.adsb.fi/?icao={hex}", gap: 1100, wait429: 10000 },
   { id: "lol", name: "adsb.lol", site: "https://adsb.lol/", url: (la, lo) => `https://api.adsb.lol/v2/point/${la}/${lo}/250`,
-    licence: "ODbL 1.0", nc: false, track: "https://globe.adsb.lol/?icao={hex}", gap: 4000, wait429: 30000 },
+    licence: "ODbL 1.0", nc: false, track: "https://globe.adsb.lol/?icao={hex}", gap: 6000, wait429: 30000 },
 ];
 const OSKY = { id: "osky", name: "OpenSky Network", site: "https://opensky-network.org/", url: "https://opensky-network.org/api/states/all",
   licence: "OpenSky Network terms (non-commercial and research use)", nc: true, track: "https://map.opensky-network.org/?icao={hex}" };
