@@ -1,0 +1,12 @@
+[["n2815695777",19.89057,86.09763,"in",{"amenity":"hospital"}],
+["n7078980187",19.94237,86.19068,"in",{"name":"Bangurigaon Medical","healthcare":"hospital","addr:full":"Bangurigaon","addr:street":"Bangurigaon-Kakatpur-Konark-Road","addr:district":"Puri","addr:city":"puri","addr:postcode":"752118"}],
+["n7085481889",19.99589,86.20223,"in",{"name":"Agadhu Kamala Hospital","amenity":"hospital","addr:full":"C/O-Prachi Youth Social Organisation, Kakatpur","addr:district":"Puri","addr:postcode":"752108"}],
+["n7087554830",19.98853,86.01263,"in",{"name":"Seva Nursing Home, Puri","amenity":"clinic","addr:full":"At/Po Kuspur P.S. Gop","addr:district":"Puri","addr:postcode":"752110"}],
+["n7701568121",19.92783,86.10718,"in",{"amenity":"clinic","addr:district":"Puri","addr:postcode":"752111","osap:withheld":"1"}],
+["n7701568129",19.95062,86.18514,"in",{"name":"Maa Managala Clinic","amenity":"clinic","addr:full":"Asijanga","addr:district":"Puri","addr:postcode":"752118"}],
+["n7701568141",19.93985,86.22489,"in",{"name":"Ratnapur Hospital","amenity":"hospital","addr:full":"Siso","addr:district":"Puri","addr:postcode":"752109"}],
+["n7701568142",19.91357,86.15334,"in",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:district":"Puri","addr:city":"Balidokan","addr:postcode":"752111","osap:withheld":"1"}],
+["n7701568159",19.96159,86.03516,"in",{"name":"Kanakalata Seva Sadan Ayush Clinic","amenity":"clinic","addr:full":"Nagapur Nayahat Road, Erabanga","addr:district":"Puri","addr:postcode":"752116"}],
+["w1337792635",19.88261,86.10097,"in",{"aeroway":"helipad"}],
+["w1337792636",19.88315,86.10099,"in",{"aeroway":"helipad"}],
+["w1337792637",19.8829,86.10048,"in",{"aeroway":"helipad"}]]

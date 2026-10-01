@@ -1,0 +1,12 @@
+[["n13583402307",-29.54119,-68.09693,"ar",{"amenity":"hospital"}],
+["n13917650956",-28.38205,-68.00003,"ar",{"name":"Centro de Salud","amenity":"clinic"}],
+["n4477444829",-28.75165,-68.20497,"ar",{"name":"Hospital Distrital Ramon Linidor Martinez - Vinchina","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Carlos Menem S/N","addr:city":"Villa San Jose De Vinchina","addr:postcode":"5357"}],
+["n5095084798",-29.31887,-68.22728,"ar",{"name":"Centro de Salud","amenity":"clinic"}],
+["n5187401969",-29.3157,-68.20997,"ar",{"name":"Centro de salud \"Barrio Valdivielso\"","amenity":"hospital","healthcare":"hospital"}],
+["n7387098572",-29.54375,-68.10195,"ar",{"name":"Hospital Seccional Pagancillo","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Avenida 24 De Septiembre S/N","addr:city":"Pagancillo","addr:postcode":"5390"}],
+["n7387098575",-29.52655,-68.56559,"ar",{"name":"Hospital Distrital Guandacol","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"San Martín S/N","addr:city":"Guandacol (Santa Clara)","addr:postcode":"5353"}],
+["n7387098584",-29.01275,-68.22584,"ar",{"name":"Hospital Distrital Villa Castelli","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"San Martín S/N","addr:city":"Villa Castelli","addr:postcode":"5355"}],
+["w445423619",-29.32416,-68.22685,"ar",{"name":"Hospital Zonal Dr. Eduardo S. Neira","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Arenales S/N","addr:city":"Villa Unión","addr:postcode":"5350"}],
+["w445423621",-29.3243,-68.22725,"ar",{"aeroway":"helipad"}],
+["w445425541",-29.24398,-68.24561,"ar",{"name":"Aeródromo Villa Unión","aeroway":"aerodrome"}],
+["w500507418",-28.75179,-68.20563,"ar",{"aeroway":"helipad"}]]

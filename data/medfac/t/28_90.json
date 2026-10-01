@@ -27,6 +27,7 @@
 ["w1098027030",29.58772,91.01855,"cn",{"aeroway":"helipad"}],
 ["w1098027031",29.58661,91.0196,"cn",{"aeroway":"helipad"}],
 ["w1108440229",29.19823,91.75796,"cn",{"amenity":"hospital","healthcare":"hospital"}],
+["w1153949733",28.0343,90.09237,"bt",{"name":"Lunana BHU","amenity":"hospital","healthcare":"hospital","operator":"Tashi Norbu(DHO)","contact:phone":"+97517648612"}],
 ["w1238794564",29.66151,91.06351,"cn",{"aeroway":"helipad"}],
 ["w1238794565",29.66153,91.06403,"cn",{"aeroway":"helipad"}],
 ["w1238794566",29.66158,91.06454,"cn",{"aeroway":"helipad"}],
