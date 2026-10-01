@@ -30,7 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q53564198",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "44351ece82b383c834a6d3f32ee0a1260981b0ceae48c8d18803ef472deb5878"
+   "fp": "efb96861242f295cee58e93a6a99744a04d7e6c535d36ded987a5c89b7834ca4",
+   "web": "https://mt.usembassy.gov",
+   "phone": "(+356) 2561-4000",
+   "phone_after_hours": "(+356) 2561-4000",
+   "phone_src": "https://mt.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -232,5 +238,11 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

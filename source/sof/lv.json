@@ -30,7 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q105609518",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "51a46b92f6a0b831391eeec94478df62cefba6154ec0c63059a27362e5ce323f"
+   "fp": "0ab95190c649484a5e4b8953657e195fdb660e83b42e6138aba01c06b0df7feb",
+   "web": "https://lv.usembassy.gov/",
+   "phone": "+371 6710 7000",
+   "phone_after_hours": "+371 6710 7000",
+   "phone_src": "https://lv.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -515,5 +521,114 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:lv:xing:node-5121561682",
+   "name": "Meikšāni (local traffic)",
+   "local_name": "Meikšāni (vietējā satiksme)",
+   "hours": "09:00-19:00",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 56.16706,
+   "lon": 28.121616,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5121561682",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "811ac18eaae43a3a5b5c40e57a4b835358537113f7f0995b210464a207ca2115"
+  },
+  {
+   "id": "sof:lv:xing:node-5121561683",
+   "name": "Haŭrylina (local traffic)",
+   "local_name": "Гаўрыліна (лакальны трафік)",
+   "hours": "09:00-19:00",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 56.165971,
+   "lon": 28.121854,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5121561683",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "092b4da7633b36dcd520072b041a53a2eb8bf94f3bdc3387fbe683831ed290fc"
+  },
+  {
+   "id": "sof:lv:xing:node-9216141495",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 56.924943,
+   "lon": 23.977262,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9216141495",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "34bed982b854bc11a5200164191011b77bc3bbc9af4995f6229752c78b7f4c6d"
+  },
+  {
+   "id": "sof:lv:xing:node-9963146706",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 56.391649,
+   "lon": 28.116723,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9963146706",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "d45a3d918fae2c8dba8c0d55a159c94a6caa793d13a6ce70ef5501a93696a5a5"
+  },
+  {
+   "id": "sof:lv:xing:relation-21401842",
+   "name": "Robežšķērsošanas vieta Rīgas osta",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 57.009528,
+   "lon": 24.108159,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/relation/21401842",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "5f63757be23eeb3561675de578d2fb4cefb51a62cb17cebdb8abeae33ec6d1d9"
+  },
+  {
+   "id": "sof:lv:xing:way-538922652",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 57.774624,
+   "lon": 26.026565,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/538922652",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "e03e02619e6c24f72e0477acbbc61bfda025799f1694c3465c382d02cd6926d9"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

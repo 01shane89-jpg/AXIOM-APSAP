@@ -30,7 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Singapore.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Singapore",
-   "fp": "bb8093c78a5cbfca11a9c14b15f99791e8bd5160f85c0f309559e41b5feca6bb"
+   "fp": "2f54bc96dc5b280622c445d35c65002b5446da4cd5d6678261a6a1b4678c64b6",
+   "web": "https://sg.usembassy.gov/",
+   "phone": "(65) 6476-9100",
+   "phone_after_hours": "6476-9100",
+   "phone_src": "https://sg.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -367,5 +373,97 @@
  ],
  "gaps": [
   "sg.usembassy.gov 403 (medical list not reachable)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:sg:xing:node-1375254867",
+   "name": "Tuas (heavy vehicles)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 1.345938,
+   "lon": 103.635712,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1375254867",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "381dedf46c1e585a8e6c60aa898b0cb2c5935bdf3b34b9d9655df5e136ef00c5"
+  },
+  {
+   "id": "sof:sg:xing:node-1375254908",
+   "name": "Tuas",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 1.347251,
+   "lon": 103.635619,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1375254908",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "470a2353c4e936087985c0eddc26cfda3c9177de1df56ff896702dd59b5b10f9"
+  },
+  {
+   "id": "sof:sg:xing:node-7084413162",
+   "name": "Puteri harbour (Iskandar Puteri)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 1.414074,
+   "lon": 103.66077,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/7084413162",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "de5f17502de960c8aebb8d91d509a0bc43843ccd652da9865d49e126092ce58d"
+  },
+  {
+   "id": "sof:sg:xing:node-7122632650",
+   "name": "Tuas (motorcycle - manual counter)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 1.350022,
+   "lon": 103.636298,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/7122632650",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "59b8c9a13e2e93930ca913f05c58cc9c24c268a3331125fbc081d49d3e1afea1"
+  },
+  {
+   "id": "sof:sg:xing:way-842171838",
+   "name": "Tuas Checkpoint",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 1.348363,
+   "lon": 103.635865,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/842171838",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "4955a967bfb156f3f10826bd39fbcaaa516b62b6dc3af806eaeb81009ba1eee8"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

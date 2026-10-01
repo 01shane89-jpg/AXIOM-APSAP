@@ -20,7 +20,29 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "ccedf6573a5ff068d9d726bf36816e48d9aa6289e5b6d663a82cad4d96ab43a9"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:cg:post:u-s-embassy-brazzaville",
+   "name": "U.S. Embassy Brazzaville",
+   "kind": "embassy",
+   "city": "Brazzaville",
+   "address": "70-83 Section D Maya-Maya Boulevard, Brazzaville",
+   "services_note": null,
+   "lat": -4.275257,
+   "lon": 15.256378,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/relation/6715512",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://cg.usembassy.gov/",
+   "phone": "(+242) 05 387 97",
+   "phone_after_hours": "+242 06-612-2010",
+   "phone_src": "https://cg.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "ca6b46bf00f9e95d455428456e23dcbfc7791366245b5d1501fe0d48c75b9594"
+  }
+ ],
  "airports": [
   {
    "id": "sof:cg:airport:fcbb",
@@ -337,5 +359,114 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:cg:xing:node-3323403917",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -2.662313,
+   "lon": 11.60207,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3323403917",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "705c6e4a5e383a785760666253f7722552c7fd33ed124598226bf51d7f73ca77"
+  },
+  {
+   "id": "sof:cg:xing:node-3323403918",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -2.719172,
+   "lon": 11.650113,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3323403918",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0f3bce4e40fd8ee00c7ec36f518914bdae55b66445398c020fc95adb02017a70"
+  },
+  {
+   "id": "sof:cg:xing:node-3323403921",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -2.914775,
+   "lon": 11.888848,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3323403921",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0f4d38f8a45344c0b1d5d2cdb144fd03673da6ccd0a48d01fa14d5e786c24eb7"
+  },
+  {
+   "id": "sof:cg:xing:node-928151126",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -1.675409,
+   "lon": 14.420546,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/928151126",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "b2d518eb31caeb78eaf0ff6e61554315f71ed610b4c08ab0eeaebdc774bac490"
+  },
+  {
+   "id": "sof:cg:xing:node-928154015",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -1.622608,
+   "lon": 14.618383,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/928154015",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "1f9ce4883f9593f6d1ef69119fb52cac6b4c7b16f20530f998c885a077841826"
+  },
+  {
+   "id": "sof:cg:xing:way-907060357",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": -4.591744,
+   "lon": 13.109536,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/907060357",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "82f41877de427ed43bbeae53f01020edf2df81750336479dbc7f77925fbbcaf2"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
