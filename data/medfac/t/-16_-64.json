@@ -1,0 +1,8 @@
+[["n10032996280",-15.48644,-63.69961,"bo",{"name":"P.S. Nueva Magdalena (1er Nivel)","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Nueva Magdalena"}],
+["n1042076376",-14.2962,-63.40901,"bo",{"name":"Aerodromo Lago Huachi","aeroway":"aerodrome"}],
+["n5119726332",-15.24198,-63.86511,"bo",{"name":"Centro Integral de Salud Puente San Pablo","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Educación","operator:type":"government","addr:city":"Puente San Pablo"}],
+["n5487561530",-14.18631,-63.5485,"bo",{"name":"San Pedro del Rio Blanco Airport","aeroway":"aerodrome","icao":"SLZJ"}],
+["n5963354888",-15.89179,-63.18858,"bo",{"name":"Clinica San Camilo","name:en":"San Camilo's Hospital","amenity":"clinic","healthcare":"clinic","addr:street":"Avenida Santa Cruz"}],
+["w1278353815",-15.63041,-63.09021,"bo",{"name":"P.S. Urubicha","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:city":"Urubicha"}],
+["w284690734",-15.93314,-63.15576,"bo",{"name":"Aerodromo de Ascención de Guarayos","addr:street":"RN9: Ascención de Guarayos-San Ramón","addr:city":"Ascención De Guarayos","aeroway":"aerodrome","icao":"SLAS","iata":"ASC","wikidata":"Q11824223"}],
+["w631712848",-15.89673,-63.19059,"bo",{"name":"Hospital de Ascención de Guarayos","amenity":"hospital","healthcare":"hospital"}]]
