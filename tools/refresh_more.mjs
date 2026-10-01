@@ -35,6 +35,18 @@ function write(file, global, body) {
   fs.writeFileSync("data/live/" + file, txt);
   return txt.length;
 }
+// One file per country, data/live/<dir>/<cc>.js (window.<global> = { cc, asof, items }), for feeds too big to load whole on every
+// page: the page loads only the open country's file (tools/country_loader.py). Every country gets a file, empty or not.
+function writeSplit(dir, global, rows) {
+  fs.mkdirSync("data/live/" + dir, { recursive: true });
+  let bytes = 0;
+  for (const c of COUNTRIES) {
+    const items = rows.filter((r) => (r.ccs || []).includes(c.id));
+    const txt = "window." + global + "=" + JSON.stringify({ cc: c.id, asof: stamp, items }).replace(/<\//g, "<\\/") + ";\n";
+    fs.writeFileSync("data/live/" + dir + "/" + c.id + ".js", txt); bytes += txt.length;
+  }
+  return bytes;
+}
 // true when data/live/<file> was written less than `hours` ago (for slow sources that change rarely)
 function freshFile(file, hours) {
   try { const m = /"asof":"([^"]+)"/.exec(fs.readFileSync("data/live/" + file, "utf8").slice(0, 300)); const t = m && Date.parse(m[1].replace(" ", "T"));
@@ -290,7 +302,12 @@ await job("sanc", "sanctions.js", "ASAP_SANC", async () => {
     const type = (r[2] || "").trim(), t = /individual/i.test(type) ? "person" : /vessel/i.test(type) ? "vessel" : /aircraft/i.test(type) ? "aircraft" : "entity";
     entries.push({ id: r[0], n: r[1].trim(), t, p: (r[3] || "").replace(/\] \[/g, "; ").replace(/[\[\]]/g, "").trim(), ccs: [...set] });
   }
-  return { src: "https://sanctionssearch.ofac.treas.gov/", total: sdn.length, entries, note: entries.length + " entries in covered areas" };
+  // every country's list is about 1.5 MB together, so the page loads only the open country's (data/live/sanctions/<cc>.js);
+X
+  const kb = Math.round(writeSplit("sanctions", "ASAP_SANC_CC", entries) / 1024), counts = {};
+  entries.forEach((e) => e.ccs.forEach((c) => (counts[c] = (counts[c] || 0) + 1)));
+  return { src: "https://sanctionssearch.ofac.treas.gov/", total: sdn.length, listed: entries.length, counts, split: "data/live/sanctions/<cc>.js", entries: [],
+    note: entries.length + " entries with an address in " + Object.keys(counts).length + " countries; per-country files " + kb + " KB" };
 });
 
 // 8. UNHCR population statistics: people hosted in, and originating from, each area (latest year with data).
@@ -449,7 +466,11 @@ await job("ucdp", "ucdp.js", "ASAP_UCDP", async () => {
       conflict: r[ix("conflict_name")] || "", sideA: r[ix("side_a")] || "", sideB: r[ix("side_b")] || "", type: V[r[ix("type_of_violence")]] || "",
       best: +r[ix("best")] || 0, low: +r[ix("low")] || 0, high: +r[ix("high")] || 0, prec: +r[ix("where_prec")] || null, headline: (r[ix("source_headline")] || "").slice(0, 160), ccs });
   }
-  return { src: url, items, note: items.length + " events" };
+  // full records per country (data/live/ucdp/<cc>.js); ucdp.js keeps a slim copy of every event for the world views
+  // (country sides, route checks) that need positions and deaths only
+  const kb = Math.round(writeSplit("ucdp", "ASAP_UCDP_CC", items) / 1024);
+  const slim = items.map((e) => ({ id: e.id, date: e.date, lat: +e.lat.toFixed(3), lon: +e.lon.toFixed(3), where: String(e.where || "").slice(0, 60), type: e.type, best: e.best, ccs: e.ccs }));
+  return { src: url, items: slim, split: "data/live/ucdp/<cc>.js", note: items.length + " events; per-country files " + kb + " KB" };
 });
 
 process.exit(okAny ? 0 : 1);
