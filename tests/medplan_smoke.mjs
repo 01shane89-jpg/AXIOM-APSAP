@@ -233,6 +233,22 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* turning a hospital off: it leaves the picks and the map, the next one is picked, and the choice is kept */
+  const offId = await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Sourced Trauma Centre/.test(x.textContent)); return r && r.querySelector("[data-mp-off]").getAttribute("data-mp-off"); });
+  const mk0 = await p.evaluate(() => document.querySelectorAll(".mpicon").length);
+  await p.click(`#mp-fac [data-mp-off="${offId}"]`);
+  await p.waitForFunction(() => /Primary\s*H\d+ Trauma Test Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  const offd = await p.evaluate((id) => ({ pst: document.getElementById("mp-pst").textContent, row: [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => x.querySelector(`[data-mp-off="${id}"]`)).className,
+    mk: document.querySelectorAll(".mpicon").length, saved: localStorage.getItem("osap-medplan-off-th"), note: /1 hospital is turned off/.test(document.getElementById("mp-fac").textContent) }), offId);
+  ok(!/Sourced Trauma Centre/.test(offd.pst) && /Primary\s*H\d+ Trauma Test Hospital/.test(offd.pst) && offd.row === "mpoff" && offd.note && offd.mk === mk0 - 1 && JSON.parse(offd.saved || "[]").includes(offId), "desktop: unticking a hospital drops it from the picks (the next one is picked), greys its row and is kept on the device " + JSON.stringify(offd).slice(0, 220));
+  await p.click('#medplan [data-mp="allon"]');
+  await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary\s*H1 Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !(await p.$("#mp-fac tr.mpoff")), "desktop: Turn all back on restores the picks");
+  await p.click('#mp-pst [data-mp-offbtn]');
+  await p.waitForFunction(() => !/Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(!/Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !!(await p.$("#mp-fac tr.mpoff")), "desktop: Turn off on a pick drops it and picks the next");
+  await p.click('#medplan [data-mp="allon"]');
+  await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
   ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 12), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base)");
   const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
