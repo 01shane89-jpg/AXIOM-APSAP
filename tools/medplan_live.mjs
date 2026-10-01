@@ -41,8 +41,14 @@ async function run(cc, c, poi) {
   await ctx.close();
   return r.fac && r.rt && r.ems && r.oc && r.wx && r.poi && !errors.length;
 }
-const okTh = await run("th", [6.54, 101.28], "6.5450, 101.2800");
-await new Promise((r) => setTimeout(r, 20000)); /* let the Overpass slot free up */
-const okDe = await run("de", [50.11, 8.68], "50.1100, 8.6800");
-console.log(okTh && okDe ? "LIVE OK: POI, ranked hospitals, routes, EMS numbers, out-of-country and weather" : "LIVE FAILED");
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+/* public servers have outages; a country that fails is tried once more after a pause before the job fails */
+async function tryTwice(cc, c, poi) {
+  if (await run(cc, c, poi)) return true;
+  console.log(cc + ": retrying once in 60 s");
+  await wait(60000); return run(cc, c, poi);
+}
+const okTh = await tryTwice("th", [6.54, 101.28], "6.5450, 101.2800");
+await wait(20000); /* let the Overpass slot free up */
+const okDe = await tryTwice("de", [50.11, 8.68], "50.1100, 8.6800");
 await browser.close(); server.close(); process.exit(okTh && okDe ? 0 : 1);

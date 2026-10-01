@@ -596,10 +596,13 @@
     s.fac = null; s.osmErr = ""; s.route = null; s.routeErr = ""; s.wx = null; s.wxErr = ""; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
     var sofP = loadSof(s.cc);
     var main = overpass(oQuery(o, rH, rC, rA));
-    Promise.all([main, sofP]).then(function (r) {
+    /* when OpenStreetMap is down, plan from OSAP's sourced hospitals so the plan still names, ranks and routes them */
+    var osmWarn = function () { return '<p class="obs mpwarn">OpenStreetMap could not be reached (' + esc(clip(s.osmErr, 160)) + '). <button type="button" class="refresh noprint" data-mp="retry">Try again</button></p>'; };
+    Promise.all([main.catch(function (e) { s.osmErr = e.message; return null; }), sofP]).then(function (r) {
       if (ST !== s) return;
       var j = r[0], sof = r[1];
-      s.fac = sortOsm(j.elements, o); s.osmAt = Date.now(); s.osmBase = j.osm3s && j.osm3s.timestamp_osm_base;
+      if (!j && !(sof && sof.hospitals && sof.hospitals.length)) throw new Error(s.osmErr);
+      s.fac = sortOsm(j ? j.elements : [], o); s.osmAt = j ? Date.now() : null; s.osmBase = j && j.osm3s && j.osm3s.timestamp_osm_base;
       s.fac.H = pickHosp(s.fac, o, rH, sof && sof.hospitals); s.fac.H.sort(byCap);
       facRender(); airRender(); emsRender(); mevRender(); mapShow(); srcRender();
       return driveTimes(o, s.fac.H.concat(s.fac.C)).then(function (host) {
@@ -608,9 +611,8 @@
         routes(s);
       }, function (e) { if (ST !== s) return; s.routeErr = e.message; facRender(); srcRender(); rtRender(); });
     }).catch(function (e) {
-      if (ST !== s) return; s.osmErr = e.message;
-      var m = '<p class="obs mpwarn">OpenStreetMap could not be reached (' + esc(clip(e.message, 160)) + '). <button type="button" class="refresh noprint" data-mp="retry">Try again</button></p>';
-      ["mp-fac", "mp-air"].forEach(function (id) { var x = D.getElementById(id); if (x) x.innerHTML = m; });
+      if (ST !== s) return; s.osmErr = s.osmErr || e.message;
+      ["mp-fac", "mp-air"].forEach(function (id) { var x = D.getElementById(id); if (x) x.innerHTML = osmWarn(); });
       var rt = D.getElementById("mp-rt"); if (rt) rt.innerHTML = '<p class="obs">No hospital list, so no routes.</p>';
       srcRender();
     });
@@ -671,7 +673,7 @@
   }
   function facRender() {
     var el = D.getElementById("mp-fac"), s = ST; if (!el || !s.fac) return;
-    var F = s.fac, h = "", P = picks(s);
+    var F = s.fac, h = s.osmErr ? '<p class="obs mpwarn">OpenStreetMap could not be reached (' + esc(clip(s.osmErr, 160)) + '), so this list holds only OSAP\'s sourced hospitals and no clinics. <button type="button" class="refresh noprint" data-mp="retry">Try again</button></p>' : "", P = picks(s);
     function bestOf(f) { var x = P.filter(function (p) { return p.f === f; })[0]; return x ? x.why : null; }
     var head = "<thead><tr><th></th><th>Facility, capability and contacts</th><th>Drive and golden hour</th><th>Flight</th><th>Straight line</th><th>Grid (MGRS)</th><th class=\"noprint\"></th></tr></thead>";
     h += F.H.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.H.map(function (f, i) { return facRow(f, i, bestOf(f)); }).join("") + "</tbody></table></div>"
@@ -763,6 +765,7 @@
   function airRender() {
     var el = D.getElementById("mp-air"), s = ST; if (!el || !s.fac) return;
     var F = s.fac, head = "<thead><tr><th></th><th>Site</th><th>Straight line</th><th>Grid (MGRS)</th><th class=\"noprint\"></th></tr></thead>";
+    if (s.osmErr) { el.innerHTML = '<p class="obs mpwarn">OpenStreetMap could not be reached (' + esc(clip(s.osmErr, 160)) + '), so no landing sites are listed. Departure airports in section 6 come from OSAP\'s sourced list. <button type="button" class="refresh noprint" data-mp="retry">Try again</button></p>'; return; }
     el.innerHTML = "<p><b>Helipads and heliports</b> within " + Math.round(s.radii.a / 1000) + " km</p>" +
       (F.L.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.L.map(airRow).join("") + "</tbody></table></div>" : '<p class="obs">None in OpenStreetMap. Pick an HLZ on open, level ground and survey it.</p>') +
       "<p><b>Airfields</b></p>" +
