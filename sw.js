@@ -504,6 +504,10 @@ async function trim(name, max) {
   const c = await caches.open(name), ks = await c.keys();
   for (let i = 0; i < ks.length - max; i++) await c.delete(ks[i]);
 }
+// The tile cache is trimmed once things go quiet, not after every tile: listing 1,500 saved tiles for each new one kept this
+// worker busy while a map was filling in, and every tile waits on it.
+let trimT = 0;
+function trimTilesSoon() { if (!trimT) trimT = setTimeout(() => { trimT = 0; trim(TILES, MAX_TILES).catch(() => {}); }, 5000); }
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
@@ -545,10 +549,11 @@ self.addEventListener("fetch", (e) => {
     }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || Promise.reject(new TypeError("offline"))))));
     return;
   }
-  e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+  // other hosts' files are only ever saved in TILES, so only that cache is searched (not every cache this app keeps)
+  e.respondWith(caches.open(TILES).then((c) => c.match(req)).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
-      e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(() => trim(TILES, MAX_TILES)).catch(() => {}));
+      e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {}));
     }
     return res;
   })));
