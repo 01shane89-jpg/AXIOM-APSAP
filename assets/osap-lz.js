@@ -4,7 +4,8 @@
    How a search works, all in this browser:
    - the ground round the search point is cut into cells of about 10 m (a zoom 14 Web Mercator grid);
    - slope comes from the AWS Terrain Tiles elevation model (terrarium PNG, keyless, the same tiles the 3D view uses; about
-     30 m detail in most of the world, so a ditch or a bank narrower than that is not seen);
+     30 m detail in most of the world, so a ditch or a bank narrower than that is not seen), measured across about 60 m so
+     the model's own noise (it includes some tree and roof height) is not read as steep ground;
    - obstacles come from OpenStreetMap for the area (one Overpass request, POST so the service worker never caches it):
      buildings, trees and forest, power and cable lines, masts and towers, wind turbines, water, wetland, railways, walls,
      fences and hedges, and built-up land use (where buildings may be unmapped). Sports pitches, parks and airfields inside
@@ -277,7 +278,7 @@
   function analyse(win, E, els, o) {
     var w = win.w, h = win.h, n = w * h, cell = win.cell, R = o.size / 2, tanMax = Math.tan(o.slope * Math.PI / 180);
     var rs = rasterise(win, els), OBC = rs.OBC, SFC = rs.SFC;
-    var SL = new Float32Array(n), K = 2, blocked = new Uint8Array(n), x, y, i;
+    var SL = new Float32Array(n), K = Math.max(2, Math.round(30 / cell)), blocked = new Uint8Array(n), x, y, i;
     for (y = 0; y < h; y++) for (x = 0; x < w; x++) {
       i = y * w + x;
       var e = E[i];
@@ -509,7 +510,10 @@
         var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly });
         res.o = o; res.radius = radius; res.size = size; res.poly = poly; res.warn = [];
         if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
-        if (!res.counts.bld) res.warn.push("OpenStreetMap shows no buildings here, so mapping may be incomplete: check satellite imagery for houses and trees.");
+        /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
+        var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
+        if (res.counts.bld < 5 * km2) res.warn.push(res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here, so houses, sheds and trees are probably missing: check every candidate on satellite imagery." :
+          "OpenStreetMap shows no buildings here, so mapping may be incomplete: check every candidate on satellite imagery for houses and trees.");
         res.bounds = L.latLngBounds([se[0], nw[1]], [nw[0], se[1]]);
         res.maskUrl = maskImage(win, res.OBC); delete res.OBC;
         ST.res = res; ST.busy = 0; ST.msg = res.cands.length ? res.cands.length + " candidate" + (res.cands.length === 1 ? "" : "s") + ", best first. Tap one for details." : "";

@@ -129,6 +129,7 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   ok(st.cands.some((k) => k.surface === "Farmland"), "desktop: a candidate on the farmland says so");
   ok(st.cands.every((k) => k.clearD >= 100 && k.max <= 7.01), "desktop: every candidate is at least 100 m clear with slope within 7 degrees");
   ok(st.cands.some((k) => k.near.some((o) => o.n === "Power or cable line")), "desktop: nearby power line is reported in a candidate");
+  ok(await p.evaluate(() => /Only 1 building is mapped/.test(document.getElementById("lz-card").textContent)), "desktop: thin building mapping is warned about");
   ok(st.pads.length === 1 && st.pads[0].name === "Test Pad", "desktop: mapped helipad is listed");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-lzpane-pane path.leaflet-interactive").length >= 3), "desktop: candidate circles are drawn on the map");
   await p.click("#lz-card li[data-lzi='0']"); await p.waitForTimeout(500);
