@@ -12,6 +12,7 @@
 // Set ONLY=adv,tsu,... to run some of them.
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
+import { COUNTRIES, ccsAt as geoAt, ccsInText as geoInText } from "./geo_cc.mjs";
 
 const TIMEOUT = 45000, UA = "AXIOM-ASAP/1.0 (situational awareness; hourly)";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -30,7 +31,14 @@ async function get(url, as = "json", opt = {}) {
 }
 function write(file, global, body) {
   fs.mkdirSync("data/live", { recursive: true });
-  fs.writeFileSync("data/live/" + file, "window." + global + "=" + JSON.stringify(body).replace(/<\//g, "<\\/") + ";\n");
+  const txt = "window." + global + "=" + JSON.stringify(body).replace(/<\//g, "<\\/") + ";\n";
+  fs.writeFileSync("data/live/" + file, txt);
+  return txt.length;
+}
+// true when data/live/<file> was written less than `hours` ago (for slow sources that change rarely)
+function freshFile(file, hours) {
+  try { const m = /"asof":"([^"]+)"/.exec(fs.readFileSync("data/live/" + file, "utf8").slice(0, 300)); const t = m && Date.parse(m[1].replace(" ", "T"));
+    return !!t && Date.now() - t < hours * 3600e3; } catch (e) { return false; }
 }
 const unhtml = (h) => unhtml1(unhtml1(h));
 const unhtml1 = (h) => String(h || "").replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
@@ -38,15 +46,12 @@ const unhtml1 = (h) => String(h || "").replace(/<br\s*\/?>/gi, " ").replace(/<[^
 const isoDay = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 10); };
 const isoMin = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
 
-// Areas: bounds from the page, plus ISO codes and the names sources use.
-const page = fs.readFileSync("index.html", "utf8");
-const AREAS = [...page.matchAll(/\{ id: "([a-z]+)", name: "([^"]+)", region: "[^"]+", ne: "[^"]+", bounds: (\[\[[^\]]+\], \[[^\]]+\]\]) \}/g)]
-  .map((m) => ({ cc: m[1], name: m[2], bounds: JSON.parse(m[3]) }));
-if (AREAS.length < 20) { console.error("could not read the area list from index.html"); process.exit(1); }
-const ISO = { th: ["TH", "THA"], vn: ["VN", "VNM"], kh: ["KH", "KHM"], la: ["LA", "LAO"], mm: ["MM", "MMR"], ph: ["PH", "PHL"], my: ["MY", "MYS"], sg: ["SG", "SGP"],
-  id: ["ID", "IDN"], bn: ["BN", "BRN"], tl: ["TL", "TLS"], cn: ["CN", "CHN"], tw: ["TW", "TWN"], kp: ["KP", "PRK"], kr: ["KR", "KOR"], jp: ["JP", "JPN"], oki: ["JP", "JPN"],
-  mn: ["MN", "MNG"], au: ["AU", "AUS"], nz: ["NZ", "NZL"], pg: ["PG", "PNG"], in: ["IN", "IND"], pk: ["PK", "PAK"], np: ["NP", "NPL"], bt: ["BT", "BTN"],
-  bd: ["BD", "BGD"], lk: ["LK", "LKA"], mv: ["MV", "MDV"] };
+// Areas: every country in the picker (the 28 researched areas in index.html plus data/basemap/world-countries.js), with ISO
+// codes, from tools/geo_cc.mjs. Until 2026-10-01 this list held only the 28, so these feeds never reached the other 170 countries.
+const AREAS = COUNTRIES.map((c) => ({ cc: c.id, name: c.name, bounds: c.bounds }));
+if (AREAS.length < 150) { console.error("could not read the country list (" + AREAS.length + ")"); process.exit(1); }
+const ISO = Object.fromEntries(COUNTRIES.filter((c) => c.a2 && c.a3).map((c) => [c.id, [c.a2, c.a3]]));
+// The original areas' names, kept for the advisory matcher below (it adds every world country's own names itself).
 const NAMES = { th: ["Thailand"], vn: ["Vietnam", "Viet Nam"], kh: ["Cambodia"], la: ["Laos", "Lao People's Democratic Republic", "Lao PDR"], mm: ["Burma", "Myanmar"],
   ph: ["Philippines"], my: ["Malaysia"], sg: ["Singapore"], id: ["Indonesia"], bn: ["Brunei", "Brunei Darussalam"], tl: ["Timor-Leste", "East Timor"],
   cn: ["China", "Mainland China", "People's Republic of China", "Hong Kong", "Macau", "Macao"], tw: ["Taiwan"],
@@ -54,22 +59,23 @@ const NAMES = { th: ["Thailand"], vn: ["Vietnam", "Viet Nam"], kh: ["Cambodia"],
   kr: ["South Korea", "Korea, South", "Republic of Korea", "Korea, Republic of"], jp: ["Japan"], mn: ["Mongolia"], au: ["Australia"], nz: ["New Zealand"],
   pg: ["Papua New Guinea"], in: ["India"], pk: ["Pakistan"], np: ["Nepal"], bt: ["Bhutan"], bd: ["Bangladesh"], lk: ["Sri Lanka"], mv: ["Maldives"] };
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const NAME_RE = Object.fromEntries(Object.entries(NAMES).map(([cc, ns]) => [cc, new RegExp("(^|[^A-Za-z])(" + ns.map(esc).join("|") + ")([^A-Za-z]|$)", "i")]));
-// "South Korea" also contains "Korea"; only whole names are matched, and North/South are told apart by their own patterns.
+// Countries named in free text: whole names only, longest first ("South Sudan" before "Sudan", "Papua New Guinea" before
+// "Guinea"), from tools/geo_cc.mjs. Taiwan named with "Republic of China" is not also China.
 function ccsInText(text) {
-  let out = Object.keys(NAME_RE).filter((cc) => NAME_RE[cc].test(text));
-  if (out.includes("kp") && !/south korea|korea, south/i.test(text)) out = out.filter((cc) => cc !== "kr");
-  return out.filter((cc) => !(cc === "cn" && /taiwan/i.test(text) && !/china/i.test(text.replace(/republic of china/i, ""))));
+  const out = geoInText(text);
+  return out.filter((cc) => !(cc === "cn" && /taiwan/i.test(text) && !/china/i.test(String(text).replace(/republic of china/i, ""))));
 }
-function ccsAt(lat, lon, pad = 0) {
-  return AREAS.filter((a) => lat >= a.bounds[0][0] - pad && lat <= a.bounds[1][0] + pad && lon >= a.bounds[0][1] - pad && lon <= a.bounds[1][1] + pad).map((a) => a.cc);
-}
-const inRegion = (lat, lon) => lat >= -50 && lat <= 56 && lon >= 58 && lon <= 180;
+// Countries at a point: the one whose outline holds it; at sea, those whose outline lies within `pad` degrees (nearest first, at most 4).
+const ccsAt = (lat, lon, pad = 0) => geoAt(lat, lon, pad);
 
 let okAny = 0;
 async function job(key, file, global, fn) {
   if (!want(key)) return;
-  try { const body = await fn(); write(file, global, { asof: stamp, ...body }); console.log("ok  ", key, body.note || ""); okAny++; }
+  try {
+    const body = await fn();
+    if (body === null) { console.log("skip", key, "(snapshot still fresh)"); okAny++; return; }
+    const n = write(file, global, { asof: stamp, ...body }); console.log("ok  ", key, body.note || "", "(" + Math.round(n / 1024) + " KB)"); okAny++;
+  }
   catch (e) { console.error("FAIL", key, err(e)); }
 }
 
@@ -227,7 +233,7 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
     for (const a of j.asam || j.data || []) {
       const lat = typeof a.latitude === "number" ? a.latitude : dm(a.latitude), lon = typeof a.longitude === "number" ? a.longitude : dm(a.longitude);
       const date = isoDay(a.date || a.occurrenceDate);
-      if (isNaN(lat) || isNaN(lon) || !inRegion(lat, lon) || Date.now() - Date.parse(date) > 365 * 864e5) continue;
+      if (isNaN(lat) || isNaN(lon) || Date.now() - Date.parse(date) > 365 * 864e5) continue;
       asam.push({ ref: a.reference || "", date, lat, lon, victim: a.victim || "", hostility: a.hostility || "", navArea: a.navArea || "", subreg: a.subreg || "",
         text: String(a.description || "").replace(/\s+/g, " ").slice(0, 700), ccs: ccsAt(lat, lon, 1.5) });
     }
@@ -238,9 +244,8 @@ await job("mar", "maritime.js", "ASAP_MAR", async () => {
   } catch (e) { status.push({ source: "NGA ASAM", ok: false, error: err(e) }); }
   try {
     const h = await get("https://www.maritime.dot.gov/msci-advisories", "text");
-    const RE = /(Malacca|Singapore|South China Sea|Sulu|Celebes|Philippine|Indonesia|Indian Ocean|Bay of Bengal|Taiwan|Korea|Japan|Pacific|Gulf of Thailand|Andaman|Arabian Sea|Myanmar|Burma|Vietnam|China|Global)/i;
     for (const m of h.matchAll(/<a[^>]+href="(\/msci\/[^"#?]+)"[^>]*>([\s\S]*?)<\/a>/g)) {
-      const t = unhtml(m[2]); if (!t || t.length < 12 || !RE.test(t) || marad.some((x) => x.link.endsWith(m[1]))) continue;
+      const t = unhtml(m[2]); if (!t || t.length < 12 || marad.some((x) => x.link.endsWith(m[1]))) continue;
       marad.push({ title: t, link: "https://www.maritime.dot.gov" + m[1], ccs: ccsInText(t) });
     }
     status.push({ source: "MARAD MSCI", ok: true, n: marad.length });
@@ -290,6 +295,8 @@ await job("sanc", "sanctions.js", "ASAP_SANC", async () => {
 
 // 8. UNHCR population statistics: people hosted in, and originating from, each area (latest year with data).
 await job("unhcr", "displacement.js", "ASAP_UNHCR", async () => {
+  // yearly figures, two calls per country for every country: once a day is plenty (ONLY=unhcr always runs)
+  if (!ONLY.includes("unhcr") && freshFile("displacement.js", 20)) return null;
   const y = new Date().getUTCFullYear(), base = "https://api.unhcr.org/population/v1/population/?limit=20&yearFrom=" + (y - 3) + "&yearTo=" + y;
   const items = {}, fails = [];
   const latest = (arr) => (arr || []).filter((r) => r.year).sort((a, b) => b.year - a.year)[0] || null;
@@ -348,9 +355,9 @@ await job("nq", "national-quakes.js", "ASAP_NQ", async () => {
   return { status, items, note: items.length + " quakes" };
 });
 
-// 10. NASA EONET open natural events (storms with track points, wildfires, volcanoes, floods) in the Asia-Pacific box.
+// 10. NASA EONET open natural events (storms with track points, wildfires, volcanoes, floods), worldwide.
 await job("eonet", "eonet.js", "ASAP_EONET", async () => {
-  const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?status=open&bbox=58,56,180,-50&days=30");
+  const j = await get("https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=30");
   const items = [];
   for (const e of j.events || []) {
     const pts = (e.geometry || []).filter((g) => g.type === "Point" && Array.isArray(g.coordinates)).map((g) => ({ lat: g.coordinates[1], lon: g.coordinates[0], date: isoMin(g.date),
@@ -364,9 +371,9 @@ await job("eonet", "eonet.js", "ASAP_EONET", async () => {
   return { src: "https://eonet.gsfc.nasa.gov/", items, note: items.length + " events" };
 });
 
-// 11. IFRC GO emergencies (Asia Pacific region). Figures are IFRC's and national societies' claims.
+// 11. IFRC GO emergencies (all regions). Figures are IFRC's and national societies' claims.
 await job("ifrc", "ifrc.js", "ASAP_IFRC", async () => {
-  const j = await get("https://goadmin.ifrc.org/api/v2/event/?regions__in=2&ordering=-disaster_start_date&limit=60");
+  const j = await get("https://goadmin.ifrc.org/api/v2/event/?ordering=-disaster_start_date&limit=150");
   const iso2 = Object.fromEntries(Object.entries(ISO).filter(([cc]) => cc !== "oki").map(([cc, v]) => [v[0], cc]));
   const items = [];
   for (const e of j.results || []) {
@@ -390,7 +397,7 @@ await job("cdc", "cdc.js", "ASAP_CDC", async () => {
   return { src: "https://wwwnc.cdc.gov/travel/notices", items, note: items.length + " notices" };
 });
 
-// 13. NGA broadcast navigational warnings (HYDROPAC, NAVAREA IV/XII not needed here). Positions parsed from the text.
+// 13. NGA broadcast navigational warnings (HYDROPAC, NAVAREA IV, NAVAREA XII). Positions parsed from the text.
 function navPos(text) {
   const out = [];
   for (const m of String(text).matchAll(/(\d{1,2})-(\d{2}(?:\.\d+)?)\s*([NS])\s+(\d{1,3})-(\d{2}(?:\.\d+)?)\s*([EW])/g)) {
@@ -400,16 +407,25 @@ function navPos(text) {
   return out;
 }
 await job("navw", "navwarnings.js", "ASAP_NAVW", async () => {
-  const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=P&status=A&output=json");
-  const items = [];
-  for (const w of j["broadcast-warn"] || j.broadcastWarn || j.data || []) {
-    const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text).filter((p) => inRegion(p[0], p[1]));
-    let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
-    if (!ccs.length) continue;
-    items.push({ id: "HYDROPAC " + (w.msgNumber || "") + "/" + String(w.msgYear || "").slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
-      text: text.slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
+  // HYDROPAC (western Pacific and Indian Ocean), NAVAREA IV (western Atlantic, Caribbean) and NAVAREA XII (eastern Pacific)
+  const AREAS_NAV = [["P", "HYDROPAC"], ["4", "NAVAREA IV"], ["12", "NAVAREA XII"]], items = [], status = [];
+  for (const [area, label] of AREAS_NAV) {
+    try {
+      const j = await get("https://msi.nga.mil/api/publications/broadcast-warn?navArea=" + area + "&status=A&output=json");
+      let n = 0;
+      for (const w of j["broadcast-warn"] || j.broadcastWarn || j.data || []) {
+        const text = String(w.text || "").replace(/\s+/g, " ").trim(), pos = navPos(text);
+        let ccs = [...new Set(pos.flatMap((p) => ccsAt(p[0], p[1], 1.5)))]; if (!ccs.length) ccs = ccsInText(text);
+        if (!ccs.length) continue;
+        items.push({ id: label + " " + (w.msgNumber || "") + "/" + String(w.msgYear || "").slice(-2), issued: w.issueDate || "", subregion: w.subregion || "", authority: w.authority || "",
+          text: text.slice(0, 700), pos, kind: /missile|rocket|space debris|launch/i.test(text) ? "missile or rocket" : /gunnery|firing|exercise|military/i.test(text) ? "military exercise" : "navigation", ccs });
+        n++;
+      }
+      status.push({ area: label, ok: true, n });
+    } catch (e) { status.push({ area: label, ok: false, error: err(e) }); }
   }
-  return { src: "https://msi.nga.mil/NavWarnings", items, note: items.length + " warnings" };
+  if (!status.some((x) => x.ok)) throw new Error(status.map((x) => x.area + ": " + x.error).join("; "));
+  return { src: "https://msi.nga.mil/NavWarnings", status, items, note: items.length + " warnings (" + status.map((x) => x.area + (x.ok ? " " + x.n : " failed")).join(", ") + ")" };
 });
 
 // 14. UCDP Candidate Events (monthly, about a month behind). The newest file name is read from the downloads page.
@@ -425,8 +441,10 @@ await job("ucdp", "ucdp.js", "ASAP_UCDP", async () => {
   const need = ["latitude", "longitude", "date_start", "best"]; if (need.some((k) => ix(k) < 0)) throw new Error("unexpected columns in " + url);
   const V = { 1: "state-based", 2: "non-state", 3: "one-sided (against civilians)" }, items = [];
   for (const r of rows) {
-    const lat = +r[ix("latitude")], lon = +r[ix("longitude")]; if (isNaN(lat) || !inRegion(lat, lon)) continue;
-    const ccs = ccsAt(lat, lon, 0).filter((cc) => ccsInText(r[ix("country")] || "").includes(cc) || cc === "oki"); if (!ccs.length) continue;
+    const lat = +r[ix("latitude")], lon = +r[ix("longitude")]; if (isNaN(lat)) continue;
+    // UCDP's own country ("DR Congo (Zaire)", "Myanmar (Burma)") decides; the point picks Okinawa or settles a border case
+    const named = ccsInText(r[ix("country")] || ""), at = ccsAt(lat, lon, 0.3);
+    let ccs = at.filter((cc) => named.includes(cc) || (cc === "oki" && named.includes("jp"))); if (!ccs.length) ccs = named.slice(0, 1); if (!ccs.length) continue;
     items.push({ id: r[ix("id")], date: isoDay(r[ix("date_start")]), end: isoDay(r[ix("date_end")]), lat, lon, where: r[ix("where_description")] || "", adm1: r[ix("adm_1")] || "",
       conflict: r[ix("conflict_name")] || "", sideA: r[ix("side_a")] || "", sideB: r[ix("side_b")] || "", type: V[r[ix("type_of_violence")]] || "",
       best: +r[ix("best")] || 0, low: +r[ix("low")] || 0, high: +r[ix("high")] || 0, prec: +r[ix("where_prec")] || null, headline: (r[ix("source_headline")] || "").slice(0, 160), ccs });
