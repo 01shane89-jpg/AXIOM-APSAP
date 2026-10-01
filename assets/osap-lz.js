@@ -375,7 +375,8 @@
   var phoneMq = W.matchMedia("(max-width: 700px)");
   var CSS = "#lz-card{width:320px;max-width:calc(100vw - 80px);max-height:calc(100vh - 160px);overflow:auto;background:var(--surface,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.3);font-size:12.5px;line-height:1.4;padding:8px 10px}" +
     "#lz-card.lzdock{width:calc(100vw - 100px);max-width:none;max-height:45vh}" +
-    "#lz-card h3{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:14px}#lz-card h3 .x{margin-left:auto}" +
+    "#lz-card h3{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:14px}#lz-card h3 .x,#lz-card h3 .osplit-btn{margin-left:auto}#lz-card h3 .osplit-btn+.x{margin-left:0}" +
+    "#lz-dock #lz-card{padding:10px 14px;border:0;font-size:13px}#lz-dock #lz-card h3{position:sticky;top:-10px;background:var(--surface,#fff);padding:6px 0;z-index:1}" +
     "#lz-card button{font:inherit;font-size:12px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 8px;min-height:28px;cursor:pointer}" +
     "#lz-card button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:600}#lz-card button[aria-pressed=true]{background:#e3f2f4}" +
     "#lz-card select,#lz-card input[type=text]{font:inherit;font-size:12px;max-width:100%}" +
@@ -399,11 +400,22 @@
     card.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.id === "lz-at") { e.preventDefault(); typed(); } });
     place();
     if (phoneMq.addEventListener) phoneMq.addEventListener("change", place);
+    D.addEventListener("osap:split", function () { place(); if (!card.hidden) render(); });
     return card;
   }
-  /* on a phone the card sits at the bottom of the map so the marks stay in view */
+  /* split view (W.OSAP_SPLIT, the device setting shared with the other map windows): the card docks to the right, or to the
+     bottom half on a phone, and the map stays usable. Without it, on a phone the card sits at the bottom of the map. */
+  var dock = null;
+  function split() { return !!(W.OSAP_SPLIT && W.OSAP_SPLIT.on()); }
+  function syncDock() { if (!dock) return; dock.hidden = !(split() && card && !card.hidden); if (W.OSAP_SPLIT.top) W.OSAP_SPLIT.top(); }
   function place() {
     if (!card) return;
+    if (split()) {
+      if (!dock) { dock = D.createElement("div"); dock.id = "lz-dock"; dock.className = "osplit"; dock.hidden = true; D.body.appendChild(dock); }
+      if (card.parentNode !== dock) dock.appendChild(card);
+      card.classList.remove("lzdock"); syncDock(); return;
+    }
+    syncDock();
     var phone = phoneMq.matches, corner = map._controlCorners && map._controlCorners[phone ? "bottomleft" : "topleft"];
     if (corner && card.parentNode !== corner) { if (phone) corner.insertBefore(card, corner.firstChild); else corner.appendChild(card); }
     card.classList.toggle("lzdock", phone);
@@ -412,7 +424,7 @@
   function render() {
     var c = ensure(), r = ST.res, o = ST.o;
     var where = ST.poly ? "Inside the drawn area" : o ? '<span class="lzpt">' + esc(grid(o[0], o[1])) + "</span>" : "Map centre";
-    var h = '<h3>' + IC + ' Landing zones <span class="lztag" tabindex="0" title="Worked out by fixed rules from open data in this browser. Not AI, not a survey and not analyst-approved.">Open data</span><button type="button" class="x" data-lz="close" aria-label="Close the landing zone finder">Close</button></h3>' +
+    var h = '<h3>' + IC + ' Landing zones <span class="lztag" tabindex="0" title="Worked out by fixed rules from open data in this browser. Not AI, not a survey and not analyst-approved.">Open data</span>' + (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-lz="close" aria-label="Close the landing zone finder">Close</button></h3>' +
       '<div class="lzrow"><span>Search at:</span> ' + where + "</div>" +
       '<div class="lzrow"><button type="button" data-lz="centre">Map centre</button><button type="button" data-lz="tap" aria-pressed="' + ST.arm + '">Tap the map</button>' +
       '<input type="text" id="lz-at" placeholder="MGRS or lat, lon" maxlength="60" autocomplete="off" aria-label="Search point as MGRS or lat, lon" style="width:9.5em"></div>' +
@@ -434,7 +446,7 @@
         "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL).</p>" +
         '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button><button type="button" data-lz="clear">Clear marks</button></div>';
     }
-    c.innerHTML = h; c.hidden = false;
+    c.innerHTML = h; c.hidden = false; syncDock();
     legend();
   }
   function legend() {
@@ -522,9 +534,11 @@
         res.maskUrl = maskImage(win, res.OBC); delete res.OBC;
         ST.res = res; ST.busy = 0; ST.msg = res.cands.length ? res.cands.length + " candidate" + (res.cands.length === 1 ? "" : "s") + ", best first. Tap one for details." : "";
         render(); draw();
-        /* keep the marks clear of the card: beside it on a large screen, above it on a phone */
+        /* keep the marks clear of the card: beside it on a large screen, above it on a phone; docked, clear of the panel */
         var b = res.cands.length ? L.latLngBounds(res.cands.map(function (k) { return [k.lat, k.lon]; })).extend(o).pad(0.2) : poly ? L.latLngBounds(poly).pad(0.1) : L.latLng(o[0], o[1]).toBounds(radius * 2.2);
         var cr = card.getBoundingClientRect(), phone = phoneMq.matches;
+        var sp = split() && W.OSAP_SPLIT.clear(dock);
+        if (sp) { try { map.fitBounds(b, { maxZoom: 16, paddingTopLeft: [sp.tl[0] + 10, 10], paddingBottomRight: [sp.br[0] + 70, sp.br[1] + 10] }); } catch (e) {} return; }
         try { map.fitBounds(b, { maxZoom: 16, paddingTopLeft: [phone ? 10 : Math.min(cr.width + 20, map.getSize().x / 2), 10], paddingBottomRight: [phone ? 70 : 70, phone ? Math.min(cr.height + 10, map.getSize().y / 2) : 10] }); } catch (e) {}
       });
     }).catch(function (e) {
@@ -544,7 +558,8 @@
   function onTap(e) { tapEnd(); ST.poly = null; ST.o = [e.latlng.lat, L.Util.wrapNum(e.latlng.lng, [-180, 180], true)]; ST.err = ""; render(); find(); }
   function onClick(e) {
     var b = e.target.closest("[data-lz]"), li = e.target.closest("[data-lzi]");
-    if (li && ST.res) { var k = ST.res.cands[+li.getAttribute("data-lzi")]; if (k && k._m) { map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); k._m.openPopup(); } return; }
+    if (e.target.closest("[data-osplit]")) { W.OSAP_SPLIT.set(!split()); var nb = card.querySelector("[data-osplit]"); if (nb) nb.focus(); return; }
+    if (li && ST.res) { var k = ST.res.cands[+li.getAttribute("data-lzi")]; if (k && k._m) { if (split()) W.OSAP_SPLIT.focus(k.lat, k.lon, Math.max(map.getZoom(), 15)); else map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); k._m.openPopup(); } return; }
     if (!b) return;
     var a = b.getAttribute("data-lz");
     if (a === "close") close();
@@ -567,7 +582,7 @@
     try { navigator.clipboard.writeText(s).then(function () { b.textContent = "Copied"; }, function () {}); } catch (x) {}
   });
   function open() { ensure(); render(); }
-  function close() { RUN++; tapEnd(); ST = { o: null, poly: null, busy: 0, res: null, err: "", msg: "", arm: false }; draw(); if (card) card.hidden = true; legend(); }
+  function close() { RUN++; tapEnd(); ST = { o: null, poly: null, busy: 0, res: null, err: "", msg: "", arm: false }; draw(); if (card) card.hidden = true; syncDock(); legend(); }
   function isOpen() { return !!card && !card.hidden; }
   W.OSAP_LZ = {
     open: open, close: close, isOpen: isOpen,
