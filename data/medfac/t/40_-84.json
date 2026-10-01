@@ -1,0 +1,4 @@
+[["n7482230014",41.7638,-82.68809,"ca",{"emergency":"ambulance_station","operator":"Essex-Windsor EMS","addr:housenumber":"1047","addr:street":"West Shore Road","addr:city":"Pelee Island","addr:province":"Ontario","addr:postcode":"N0R 1M0"}],
+["r14442127",41.77782,-82.67742,"ca",{"name":"Pelee Island Airport","aeroway":"aerodrome","icao":"CYPT","wikidata":"Q3915236"}],
+["w1080435797",41.76383,-82.6882,"ca",{"name":"Pelee Island (VON) Clinic","amenity":"clinic","healthcare":"clinic","operator":"Victorian Order of Nurses","addr:housenumber":"1047","addr:street":"West Shore Road","addr:city":"Pelee Island","addr:province":"Ontario","addr:postcode":"N0R 1M0"}],
+["w540727853",41.7636,-82.6863,"ca",{"aeroway":"helipad"}]]

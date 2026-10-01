@@ -1,0 +1,7 @@
+[["n1042023506",55.9792,-123.777,"ca",{"name":"Finlay Bay Seaplane Base","aeroway":"aerodrome"}],
+["n1042023589",54.01965,-123.99689,"ca",{"name":"Vanderhoof (District) Seaplane Base","aeroway":"aerodrome"}],
+["n13556656570",55.33879,-123.09788,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"49","addr:street":"Centennial Drive"}],
+["w175953203",55.39945,-122.20175,"ca",{"aeroway":"helipad"}],
+["w545672862",54.49452,-122.68159,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"330","addr:street":"Hart Lake Road"}],
+["w843398055",55.33774,-123.09902,"ca",{"emergency":"ambulance_station"}],
+["w98568569",55.298,-123.13426,"ca",{"name":"Mackenzie Airport","aeroway":"aerodrome","icao":"CYZY","wikidata":"Q3912604"}]]

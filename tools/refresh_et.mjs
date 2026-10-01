@@ -21,7 +21,10 @@ const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const iso = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); };
 const fp = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const clip = (s, n) => { s = unent(String(s || "").replace(/<[^>]+>/g, " ")).replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
-const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.indexOf("=", t.lastIndexOf("window.")) + 1).trim().replace(/;$/, "")); };
+// The data files open with "window.X=" (or "window.X=window.X||{};window.X[\"cc\"]="); only that opening is skipped, because a
+// headline or summary can itself contain "window." and "=" (one Pakistan item carried page script text and broke the whole pool).
+const JS_HEAD = /^(?:window\.\w+=window\.\w+\|\|\{\};)?window\.\w+(?:\["[^"]+"\])?=/;
+const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.slice(t.match(JS_HEAD)[0].length).trim().replace(/;$/, "")); };
 const { topics } = JSON.parse(fs.readFileSync("tools/topics.json", "utf8"));
 const UAP = compileTopics(topics.filter((t) => t.id === "uap"));
 const isUap = (text) => UAP.length && topicsOf(UAP, text, []).length > 0;
