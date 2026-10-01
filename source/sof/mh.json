@@ -24,13 +24,19 @@
    "city": "Majuro",
    "address": null,
    "services_note": "Address not retrieved; see embassy site",
-   "lat": 7.09,
-   "lon": 171.38,
-   "prec": "approx",
+   "lat": 7.073982,
+   "lon": 171.318538,
+   "prec": "exact",
    "src": "https://mh.usembassy.gov/health-alert-u-s-embassy-majuro-marshall-islands-august-27-2026/",
    "srcname": "U.S. Embassy Majuro",
-   "coord_basis": "town centre estimate; not surveyed",
-   "fp": "7b7e1bac35adaba135713bbc8590ff8d62275d3bd3844f291638f88752a45d65"
+   "coord_basis": "OpenStreetMap way/315534022",
+   "fp": "5b6d3b06b6d8891df825515a875e16942425405dd38c0ea71d6e162bbcf8c178",
+   "web": "https://mh.usembassy.gov",
+   "phone": "+692-247-4011",
+   "phone_after_hours": "+692-247-4011",
+   "phone_src": "https://mh.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -347,5 +353,11 @@
   "Embassy street address not retrieved; coordinates are town-centre estimates.",
   "Ebeye (Leroj Kitlang) health centre and the US Army Garrison Kwajalein hospital were not sourced within the search budget.",
   "No 2026 exercise hosted in RMI was found; Minuteman III test flights into the Reagan Test Site are recorded as events in fill/mh.json, not as exercises."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

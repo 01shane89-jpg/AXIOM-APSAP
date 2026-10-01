@@ -1,0 +1,38 @@
+# Embassy and evacuation points (tools/build_evac.mjs + tools/apply_evac.py): fills the U.S. posts with OpenStreetMap's
+# mapped posts and their published phone numbers, and stores the official border crossings, in source/sof and data/sof.
+# Monthly on main; a manual run commits to the branch it is dispatched on; a push of the build scripts to the feature
+# branch builds and commits there.
+name: Build evacuation points
+on:
+  schedule:
+    - cron: "41 3 9 * *"
+  workflow_dispatch:
+  push:
+    branches: [claude/embassies-evac]
+    paths: [tools/build_evac.mjs, tools/apply_evac.py, .github/workflows/build-evac.yml]
+permissions:
+  contents: write
+concurrency:
+  group: build-evac-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      # embassy sites send headers larger than Node's default limit
+      - run: EVAC_PATCH=/tmp/evac-patch.json node --max-http-header-size=262144 tools/build_evac.mjs
+      - run: python3 tools/apply_evac.py /tmp/evac-patch.json
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/sof data/sof
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "Refresh embassy and evacuation points $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 10; done
+          exit 1
