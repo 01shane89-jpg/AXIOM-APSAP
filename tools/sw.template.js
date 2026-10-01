@@ -95,7 +95,9 @@ self.addEventListener("fetch", (e) => {
       return res;
     });
     e.waitUntil(net.catch(() => {}));
-    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"));
+    // Only a page load falls back to the saved page: a script or data file that was never saved (a country with no
+    // sanctions or UCDP file, say) must fail as missing, not run index.html as JavaScript.
+    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()));
     // Feed files wait at most DATA_WAIT ms and the page PAGE_WAIT ms, then use the last saved copy so the page still opens;
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;
