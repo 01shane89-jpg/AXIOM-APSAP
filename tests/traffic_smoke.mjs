@@ -1,5 +1,5 @@
 // Headless check of the live traffic layers (assets/osap-traffic.js): "All air traffic" sits in Map overlays > Live aircraft and
-// "Ships (AIS)" in its own Live ships section; nothing is fetched while off; aircraft come from the live-air cell files (fixture),
+// "Ships (AIS)" in its own Ships section; nothing is fetched while off; aircraft come from the live-air cell files (fixture),
 // only the cells on screen; ships come from Open Waters AIS (fixture) in boxes of at most 10° x 10°, with a zoom-in note beyond
 // that; both pop-ups give the data, age and source; feed text is escaped; small private craft show no name; a failing feed is
 // reported, not hidden.
@@ -84,8 +84,8 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   const { ctx, p, errors, air, sea } = await open({ viewport: { width: 1360, height: 860 } });
   await om(p); await p.waitForTimeout(400);
   ok(await shown(p, '#atk-om #ml-air input[data-trf="air"]'), "desktop: All air traffic switch in Overlays > Live aircraft");
-  ok(await shown(p, '#atk-om #ml-sea input[data-trf="sea"]'), "desktop: Ships (AIS) switch in its own Live ships section");
-  ok(await p.evaluate(() => document.getElementById("ml-air").nextElementSibling.id === "ml-sea"), "desktop: Live ships sits right after Live aircraft");
+  ok(await shown(p, '#atk-om #ml-sea input[data-trf="sea"]'), "desktop: Ships (AIS) switch in its own Ships section");
+  ok(await p.evaluate(() => document.getElementById("ml-air").nextElementSibling.id === "ml-sea"), "desktop: Ships sits right after Live aircraft");
   ok(air.length === 0 && sea.length === 0, "desktop: nothing fetched while off (" + air.length + "/" + sea.length + ")");
   await p.evaluate(() => window.__asapMap.setView([13.7, 100.6], 9, { animate: false }));
   await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1500);
