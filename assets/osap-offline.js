@@ -152,7 +152,8 @@
         area.at = new Date().toISOString(); area.n = job.total; area.bytes = (area.bytes || 0) + job.bytes;
         if (!job.stop) {
           var i = p.areas.findIndex(function (a) { return a.id === area.id; });
-          if (i >= 0) p.areas[i] = area; else p.areas.push(area);
+          /* a second whole-country download at less detail keeps the record of the deeper squares still saved, so Delete finds them */
+          if (i >= 0) { if (p.areas[i].z > area.z) { area.z = p.areas[i].z; area.n = Math.max(area.n, p.areas[i].n || 0); } p.areas[i] = area; } else p.areas.push(area);
         }
       }
       if (job.list && !job.stop) p.files = { at: new Date().toISOString(), n: job.files, bytes: job.fbytes, list: job.list };
@@ -307,5 +308,5 @@
   W.addEventListener("online", goOnline);
   if (navigator.onLine === false) setTimeout(goOffline, 0);
 
-  W.OSAP_OFFLINE = { open: open, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
+  W.OSAP_OFFLINE = { open: open, area: areaFor, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
 })();

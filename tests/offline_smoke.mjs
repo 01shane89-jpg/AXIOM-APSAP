@@ -52,8 +52,12 @@ const item = p.locator('#tidy-pop [data-tp="@off"]');
 ok(await item.count() === 1, "Settings gear has Offline maps and data");
 await item.click();
 await p.waitForSelector("#offdlg:not([hidden]) [data-off-dl]");
-const want = await p.evaluate(() => { const O = window.OSAP_OFFLINE, c = window.OSAP_COUNTRIES.find((x) => x.id === "sg"); return O.est(c.bounds, O.bestZ(c.bounds)); });
-ok(want.pos > 0 && want.pos <= 6000, "whole country fits under the cap (" + want.pos + " squares)");
+// the panel's default for a whole country: zoom 10 at most; Singapore is small, so pick the most detail (13) to save more squares
+const want = await p.evaluate(() => { const O = window.OSAP_OFFLINE, a = O.area("country"); return { z: a.z, max: O.bestZ(a.b), e: O.est(a.b, 13) }; });
+ok(want.z === Math.min(10, want.max), "whole country starts at zoom " + want.z + " (most that fits: " + want.max + ")");
+await p.selectOption("#offdlg [data-off-z]", "13");
+want.pos = want.e.pos; want.tiles = want.e.tiles;
+ok(want.pos > 0 && want.pos <= 6000, "whole country at street level fits under the cap (" + want.pos + " squares)");
 tileHits = 0;
 await p.click("#offdlg [data-off-dl]");
 await p.waitForFunction(() => /Saved\./.test((document.querySelector("#offdlg .offmsg") || {}).textContent || ""), null, { timeout: 120000 });
