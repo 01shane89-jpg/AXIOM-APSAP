@@ -30,29 +30,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "01e446c161f9592595bb92c6dc73eb80a74c7e7cd45699dcceeb48ecdb2c291f"
  },
- "posts": [
-  {
-   "id": "sof:cf:post:u-s-embassy-central-african-republic",
-   "name": "U.S. Embassy, Central African Republic",
-   "kind": "embassy",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": 4.359801,
-   "lon": 18.579155,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/188824096",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://cf.usembassy.gov",
-   "phone": "(236) 2161 - 0200",
-   "phone_after_hours": "00-237-22220-1500",
-   "phone_src": "https://cf.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "9fca06792fc1e289b52dbe7a2ee3295437c486072497d9c83300f1d3b6341111"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:cf:airport:feff",
@@ -151,46 +129,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:cf:xing:node-6835533966",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 3.945768,
-   "lon": 15.135086,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/6835533966",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "2745cef1ff2b7042855d76f05c4a7ddff039858ac53d49485efd776243fcbc31"
-  },
-  {
-   "id": "sof:cf:xing:node-6835533968",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 3.947149,
-   "lon": 15.142856,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/6835533968",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "cf739b4134670e2d8586c22b2bea8c413029f596936514b13c12e4dc2001072c"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

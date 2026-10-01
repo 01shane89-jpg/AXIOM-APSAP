@@ -49,11 +49,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Maldives.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "estimated (Male city centre; no address published)",
-   "fp": "67b801a2f8e2611480aacec1910c744af156142bd27262711811ee88a1df5d50",
-   "phone_after_hours": "00-94-11-202-8500",
-   "phone_src": "https://mv.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "c5ba812d38bdf3d26e4db2932478271bd5abcdf31a362895f3962cbac370c8f1"
   }
  ],
  "airports": [
@@ -324,11 +320,5 @@
  ],
  "gaps": [
   "mv.usembassy.gov blocked (403); could not confirm whether Embassy Male opened in 2026 or its address - travel.state.gov still says Colombo serves Maldives and Male anticipated early 2026. Hulhumale Hospital not verified."
- ],
- "crossings": [],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

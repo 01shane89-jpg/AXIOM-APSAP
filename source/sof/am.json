@@ -20,28 +20,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "87f162b34d0d770f329af3c279fb828f4391164038cb61048bd337099a327e52"
  },
- "posts": [
-  {
-   "id": "sof:am:post:embassy-of-the-usa",
-   "name": "Embassy of the USA",
-   "kind": "embassy",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": 40.164784,
-   "lon": 44.481093,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/473629435",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "phone": "(+37410) 464-700",
-   "phone_after_hours": "(+374) 10494585",
-   "phone_src": "https://am.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "733e6ade5ecb4d1b0b39aff85fec0a79fa7e4685606248439181d2c7b6c5219b"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:am:airport:udyz",
@@ -263,51 +242,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:am:xing:node-10700740917",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 41.231017,
-   "lon": 44.836231,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/10700740917",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "74a9d687681eb77ffd1d8435c234f08495457dbc7c9cec8ac0b7727aad0b1010"
-  },
-  {
-   "id": "sof:am:xing:node-130072995",
-   "name": "Tiknis border control",
-   "local_name": "Akyaka Hudut Kapısı",
-   "hours": null,
-   "modes": [
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 40.729663,
-   "lon": 43.740683,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/130072995",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d0ccfd8b354658579894d2c422207715a6ce2550db461411311e6faf99a29463"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

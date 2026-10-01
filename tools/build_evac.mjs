@@ -58,7 +58,7 @@ export function cleanPhone(s) {
   var open = 0, out = "";
   for (const ch of s) { if (ch === "(") { open++; out += ch; } else if (ch === ")") { if (open) { open--; out += ch; } } else out += ch; }
   for (; open > 0; open--) { const i = out.lastIndexOf("("); out = out.slice(0, i) + out.slice(i + 1); }
-  s = out.replace(/(\d)\s\d{1,2}$/, "$1").replace(/\s+/g, " ").replace(/^[\s\-./]+|[\s\-./(]+$/g, "").trim();
+  s = out.replace(/\s+/g, " ").replace(/^[\s\-./]+|[\s\-./(]+$/g, "").trim();
   return (s.replace(/[^0-9]/g, "").length >= 6) ? s : "";
 }
 function webOf(t) { const w = (t["contact:website"] || t.website || "").split(";")[0].trim(); return /^https?:\/\//.test(w) ? w : ""; }
@@ -219,10 +219,18 @@ async function main() {
       for (const p of cur) {
         if (p.lat == null) continue;
         const d = km([p.lat, p.lon], [o.lat, o.lon]);
-        const near = (d < 3 && (p.kind === o.kind || (p.kind || "").startsWith("consul") && o.kind.startsWith("consul"))) || d < 1 || (d < 25 && p.kind === "embassy" && o.kind === "embassy");
+        /* researched posts often sit on the city centre (approx), so the same family of post within 25 km is the same post */
+        const fam = (k) => k === "embassy" ? "e" : "c", near = d < 3 || (d < 25 && fam(p.kind) === fam(o.kind));
         if (near && d < bd) { bd = d; best = p; }
       }
-      if (best) { if (!best._osm) { best._osm = o; stats.matched++; } continue; }
+      if (best) {
+        if (!best._osm) {
+          best._osm = o; stats.matched++;
+          /* a researched coordinate estimated from the address gives way to the mapped building */
+          if (best.prec !== "exact" && bd < 25) { best.lat = o.lat; best.lon = o.lon; best.prec = "exact"; best.coord_basis = "OpenStreetMap " + o.osm; }
+        }
+        continue;
+      }
       /* a researched post with no coordinate, of this kind, and the only one of its kind without: this is it */
       const bare = cur.filter((p) => p.lat == null && (p.kind === o.kind || (p.kind || "").startsWith("consul") && o.kind.startsWith("consul")));
       if (bare.length === 1 && !bare[0]._osm) {
