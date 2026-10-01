@@ -69,7 +69,8 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(s.masts === 4 && overpassCalls >= 1, "4 communication masts kept from the Overpass answer, the lighting mast left out (" + s.masts + ")");
   const counts = await p.evaluate(() => [...document.querySelectorAll("[data-comn]")].map((e) => e.getAttribute("data-comn") + e.textContent).join(" "));
   ok(/cell\(2 in view\)/.test(counts) && /bcast\(1 in view\)/.test(counts) && /comm\(1 in view\)/.test(counts), "counts by kind: " + counts);
-  ok(/AIS 1/.test(await p.textContent("#com-ops")), "operators in view listed");
+  const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.getAttribute("data-comprov") + ":" + i.checked));
+  ok(provs.join() === "ais:true,true:true,?:true", "providers in view listed with switches, unmapped last: " + provs);
   ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
   const before = overpassCalls;
   await p.evaluate(() => window.__asapMap.panBy([30, 20], { animate: false })); await p.waitForTimeout(1200);
@@ -115,6 +116,26 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.click('[data-cmode="route"]');
   await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.line; }, null, { timeout: 30000 });
   ok(true, "planned route (kept waypoints) checked");
+
+  // providers: switching AIS off hides its mast and leaves it out of the check
+  await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.lat === 13.7563; }, null, { timeout: 20000 });
+  let bp = (await st(p)).result.byProv.map((x) => x.name + "=" + x.level).join();
+  ok(/AIS=3/.test(bp) && /True=3/.test(bp) && /Operator not mapped=2/.test(bp), "by provider: " + bp);
+  ok(/By provider/.test(await p.textContent("#com-res")), "the answer lists each provider");
+  if (OUT) await p.screenshot({ path: OUT + "/comms-providers.png", fullPage: true });
+  const drawnAll = (await st(p)).drawn;
+  await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.offN === 1; }, null, { timeout: 20000 });
+  s = await st(p);
+  ok(s.drawn === drawnAll - 1 && s.off.ais === true, "AIS off: its mast leaves the map (" + drawnAll + " to " + s.drawn + ")");
+  ok(!s.result.rows.some((r) => r.m.p.includes("ais")) && !s.result.byProv.some((x) => x.key === "ais"), "AIS off: the check leaves its masts out");
+  ok(/1 switched off/.test(await p.textContent("#com-res")), "the answer says a provider is switched off");
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms-prov")).ais === true), "provider choice is remembered");
+  await p.click('#com-ops [data-comprovall="0"]'); await p.waitForTimeout(300);
+  ok((await st(p)).drawn === 1, "None: only the broadcast tower stays on the map");
+  await p.click('#com-ops [data-comprovall="1"]'); await p.waitForTimeout(300);
+  ok((await st(p)).drawn === drawnAll, "All: every mast back");
 
   // switches
   await p.uncheck('[data-comtg="cell"]'); await p.waitForTimeout(200);
