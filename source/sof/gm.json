@@ -24,7 +24,29 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "d7755a0a1e18b504aafb6c771177ab8b8628606b979f89c85cae79ef6c2e5bca"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:gm:post:u-s-embassy-fajara",
+   "name": "U.S. Embassy Fajara",
+   "kind": "embassy",
+   "city": "Fajara",
+   "address": "123 Kairaba Avenue, Fajara",
+   "services_note": null,
+   "lat": 13.462117,
+   "lon": -16.686749,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/244899718",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://gm.usembassy.gov",
+   "phone": "(220) 439-2856",
+   "phone_after_hours": "(220) 439-2856",
+   "phone_src": "https://gm.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "247496cd10911375729badfdedfb22da0cccc7cd128a0c034f47804bbc04c850"
+  }
+ ],
  "airports": [
   {
    "id": "sof:gm:airport:gbyd",
@@ -110,5 +132,46 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:gm:xing:node-2616620847",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 13.172151,
+   "lon": -16.575698,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2616620847",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a976d92a49b21ca4f7d47b0b66ac9b2ef5ceb64036c79690893438091d6f6079"
+  },
+  {
+   "id": "sof:gm:xing:node-2617724092",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 13.592048,
+   "lon": -16.421934,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2617724092",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f427bf7c8f90532276223ee35af2811293ccab9a9f62cbda3404606ea6a09d5b"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

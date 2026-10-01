@@ -24,13 +24,19 @@
    "city": "San Salvador",
    "address": "Final Boulevard Santa Elena",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 13.6893,
-   "lon": -89.1872,
-   "prec": "approx",
+   "lat": 13.664547,
+   "lon": -89.25702,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q16935247",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "2c9c85f90890a29b28f9262eb77fe0b8ed65ea8b6658b413ec38ad6e663f83da"
+   "coord_basis": "OpenStreetMap way/46923221",
+   "fp": "d1b7df69c8c026057ccf0bacd8bf77b8ee39bf8c18371b2a00cabfe08c95ace8",
+   "web": "https://sv.usembassy.gov",
+   "phone": "(503) 2501-2999",
+   "phone_after_hours": "(503) 2501-2999",
+   "phone_src": "https://sv.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -503,5 +509,46 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:sv:xing:node-4173750130",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 13.591864,
+   "lon": -87.772747,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4173750130",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "d40124ded7c4f1356448a9d2d041ac36be2aa172f6ed35b429a2aaf55e6fd2f3"
+  },
+  {
+   "id": "sof:sv:xing:way-388288848",
+   "name": "Aduana Terrestre Anguiatú",
+   "local_name": null,
+   "hours": "24/7",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 14.412076,
+   "lon": -89.436428,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/388288848",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7d98d9a0f454f4a133dbca10173e7ed1754f9982c4acd7ff95f8cfdad0244331"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

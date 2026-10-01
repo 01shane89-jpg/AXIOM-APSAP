@@ -92,6 +92,7 @@ data-ev-tlr="1"
   function showComms() {
 # power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
 <script src="assets/osap-power.js"></script>
+<script src="assets/osap-evac.js"></script>
 # medical plan for the drawn area, in the Area menu (claude/medical-plan)
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)

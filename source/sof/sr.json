@@ -24,13 +24,19 @@
    "city": "Suriname",
    "address": "165 Kristalstraat",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": null,
-   "lon": null,
-   "prec": "approx",
+   "lat": 5.86426,
+   "lon": -55.127123,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105623517",
    "srcname": "Wikidata",
-   "coord_basis": "no position found",
-   "fp": "6a4d29c384bb17a3923bdfb83f31fe399c505fb2da0b7827d2de0ac60199d83a"
+   "coord_basis": "OpenStreetMap node/4351247157",
+   "fp": "fcda19680438ba449934438b4b33fdf0d54f46d40e1062846fd8c513ee12f2d4",
+   "web": "https://sr.usembassy.gov",
+   "phone": "(597) 556-700",
+   "phone_after_hours": "(597) 556-700",
+   "phone_src": "https://sr.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -283,5 +289,56 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:sr:xing:node-1203517110",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 5.492717,
+   "lon": -54.036262,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1203517110",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "d638ea661148e72f6255b6f1e396e6c092919f74a098c6ac141ebae402853ffd"
+  },
+  {
+   "id": "sof:sr:xing:node-507609626",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 5.49602,
+   "lon": -54.05689,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/507609626",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c6cc4bc7688ee29d2d1d76427365a0cc371459634f87e85db26a67aff7f19ff5"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
