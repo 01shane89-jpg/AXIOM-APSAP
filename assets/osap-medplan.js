@@ -1437,14 +1437,21 @@
     var n = 256 * Math.pow(2, z), la = Math.max(-85, Math.min(85, p[0])) * Math.PI / 180;
     return [(p[1] + 180) / 360 * n, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n];
   }
+  /* a tile the live map already showed can come back from a cache in a form a canvas may not read (saved without CORS),
+     which failed every tile Shane had looked at on iPhone; a tile that errors is asked for once more under its own address
+     (a tile that times out is not, so a slow or absent network costs one wait) */
   function tileImg(z, x, y) {
     var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    return new Promise(function (res) {
-      if (y < 0 || y >= n) { res(null); return; }
-      var im = new Image(), t = setTimeout(function () { res(null); }, 10000);
-      im.crossOrigin = "anonymous"; im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); res(null); };
-      im.src = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
-    });
+    var url = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
+    function one(u) {
+      return new Promise(function (res) {
+        var im = new Image(), t = setTimeout(function () { res(null); }, 10000);
+        im.crossOrigin = "anonymous"; im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); res(false); };
+        im.src = u;
+      });
+    }
+    if (y < 0 || y >= n) return Promise.resolve(null);
+    return one(url).then(function (im) { return im === false ? one(url + "?print=1").then(function (r) { return r || null; }) : im; });
   }
   function mapImage(Wd, Ht, focus) {
     var s = ST, items = focus ? focus.items : mapItems(), P = s.fac ? picks(s) : [], pts = [s.o];

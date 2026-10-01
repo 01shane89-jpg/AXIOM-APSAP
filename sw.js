@@ -544,7 +544,9 @@ self.addEventListener("fetch", (e) => {
     }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || Promise.reject(new TypeError("offline"))))));
     return;
   }
-  e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+  // A tile the map showed is saved opaque (no CORS); a canvas that asks for it with CORS (the Medical plan print map)
+  // cannot use that copy, so it goes to the network and the CORS copy replaces it.
+  e.respondWith(caches.match(req).then((hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null) || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
       e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(() => trim(TILES, MAX_TILES)).catch(() => {}));
