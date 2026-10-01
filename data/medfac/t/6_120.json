@@ -1,0 +1,13 @@
+[["n3709927765",6.0532,121.00156,"ph",{"name":"Clinica Pambata","amenity":"clinic","addr:street":"Piñon Street","addr:postcode":"7400"}],
+["r18364362",6.05006,121.00592,"ph",{"name":"Sulu Sanitarium and General Hospital","amenity":"hospital","healthcare":"hospital","beds":"75","operator:type":"public","contact:phone":"+63688460047","addr:street":"Buyon Street"}],
+["r18706616",6.04637,121.00174,"ph",{"name":"Sulu Provincial Hospital","amenity":"hospital","healthcare":"hospital","beds":"100","addr:street":"Scott Road"}],
+["w1126599838",6.69836,121.96852,"ph",{"name":"Basilan Community Hospital","amenity":"hospital","addr:street":"Rizal Avenue","addr:city":"Isabela"}],
+["w1248826794",6.94056,121.99104,"ph",{"name":"NGCP-TransCo","aeroway":"helipad"}],
+["w1297223304",6.65404,121.97975,"ph",{"name":"Menzi (Cabunbata) Airfield","aeroway":"aerodrome","icao":"RP16"}],
+["w1339781350",6.54165,121.87728,"ph",{"name":"Maluso Rural Health Unit","amenity":"clinic","healthcare":"doctor","addr:city":"Maluso"}],
+["w1523860564",7.09754,121.90412,"ph",{"name":"Labuan General Hospital","amenity":"hospital","emergency":"yes","addr:street":"Zamboanga City-Labuan-Limpapa Road","addr:city":"Zamboanga City"}],
+["w308326339",6.05343,121.01284,"ph",{"name":"Jolo Airport","name:en":"Jolo Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Jolo","addr:province":"Sulu","addr:postcode":"7400","aeroway":"aerodrome","icao":"RPMJ","iata":"JOL","aerodrome:type":"regional"}],
+["w435994855",6.70523,121.97284,"ph",{"name":"Infante Hospital","amenity":"hospital","beds":"25","operator:type":"private","addr:street":"C. P. Garcia Street"}],
+["w612256864",6.70029,121.97058,"ph",{"name":"Alano's Hospital","amenity":"hospital","addr:street":"Rizal Avenue"}],
+["w663531516",6.70009,121.98803,"ph",{"name":"Basilan Medical Center","amenity":"hospital","healthcare":"hospital","operator":"Department of Health","operator:type":"government","contact:website":"https://bgh.doh.gov.ph/m","addr:subdistrict":"Binuangan","addr:city":"Isabela City","addr:province":"Basilan","addr:postcode":"7300"}],
+["w822774882",6.04479,121.00158,"ph",{"name":"Camp Navarro General Hospital","amenity":"hospital","beds":"50","contact:phone":"+63 629830495"}]]

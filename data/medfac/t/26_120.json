@@ -1,0 +1,7 @@
+[["w1290804501",26.2243,120.0004,"tw",{"aeroway":"helipad"}],
+["w237133738",26.22439,120.00251,"tw",{"name":"馬祖北竿機場","name:en":"Matsu Beigan Airport","operator":"Civil Aeronautics Administration (Taiwan)","addr:full":"連江縣北竿鄉塘岐村261-2號","addr:housenumber":"261-2","addr:district":"北竿鄉","addr:city":"連江縣","addr:province":"福建省","addr:postcode":"210005","aeroway":"aerodrome","icao":"RCMT","iata":"MFK","aerodrome:type":"public"}],
+["w431591550",26.36727,120.49086,"tw",{"name":"東引鄉衛生所","amenity":"clinic","healthcare":"clinic","addr:full":"連江縣東引鄉中柳村123號","addr:housenumber":"123","addr:district":"東引鄉","addr:city":"連江縣","addr:province":"福建省"}],
+["w529638249",26.37413,120.49692,"tw",{"name":"東引醫院","amenity":"hospital","healthcare":"hospital"}],
+["w529638256",26.37307,120.49574,"tw",{"aeroway":"helipad"}],
+["w529642100",26.35931,120.48332,"tw",{"name":"東引直昇機飛行場","aeroway":"helipad"}],
+["w707149685",26.33726,120.21949,"tw",{"aeroway":"helipad"}]]

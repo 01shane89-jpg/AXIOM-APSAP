@@ -1,0 +1,8 @@
+[["n4912787932",5.02928,119.77051,"ph",{"name":"Medical Specialist Polyclinic","amenity":"clinic","addr:province":"Tawi-Tawi","addr:postcode":"7500"}],
+["w1260461835",4.84194,119.46148,"ph",{"aeroway":"helipad","surface":"grass"}],
+["w1265823028",5.06926,119.8857,"ph",{"aeroway":"helipad"}],
+["w287748709",4.84269,119.4609,"ph",{"name":"Sibutu Air Base","operator":"Philippine Air Force","addr:city":"Sibutu","addr:province":"Tawi-Tawi","addr:postcode":"7510","aeroway":"aerodrome","military":"airfield"}],
+["w397038442",5.04947,119.74409,"ph",{"name":"Sanga Sanga Airport","addr:city":"Bongao","addr:postcode":"7500","aeroway":"aerodrome","icao":"RPMN","iata":"TWT"}],
+["w497135600",5.0527,119.74394,"ph",{"name":"Sick House","amenity":"clinic","addr:city":"Bongao","addr:province":"Tawi-Tawi","addr:postcode":"7500"}],
+["w497135622",5.02569,119.77693,"ph",{"name":"Datu Halun Sakilan Memorial Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"Bongao","addr:postcode":"7500"}],
+["w664575313",4.84024,119.45895,"ph",{"name":"Datu Alawaddin Bandon Sr Memorial Hospital","amenity":"hospital","healthcare":"hospital"}]]
