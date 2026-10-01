@@ -37,13 +37,16 @@ const OSM = { osm3s: { timestamp_osm_base: "2026-09-30T06:00:00Z" }, elements: [
   { type: "node", id: 7, lat: 13.91, lon: 100.60, tags: { aeroway: "aerodrome", name: "Test Airfield", icao: "VTXX", iata: "TXX" } },
   { type: "node", id: 8, lat: 13.70, lon: 100.45, tags: { aeroway: "helipad", name: "Riverside Pad" } },
   { type: "node", id: 9, lat: 13.71, lon: 100.46, tags: { aeroway: "helipad", disused: "yes" } },
-  { type: "node", id: 10, lat: 13.70, lon: 100.40, tags: { amenity: "hospital", name: "Trauma Test Hospital", "healthcare:speciality": "trauma;surgery" } },
+  { type: "node", id: 10, lat: 13.70, lon: 100.40, tags: { amenity: "hospital", name: "Trauma Test Hospital", "healthcare:speciality": "trauma;surgery;neurosurgery" } },
   { type: "node", id: 12, lat: 13.7608, lon: 100.5108, tags: { amenity: "hospital", name: "โรงพยาบาลใกล้" } },
   { type: "node", id: 11, lat: 13.752, lon: 100.498, tags: { emergency: "ambulance_station", name: "City Ambulance Station", phone: "+66 2 111 2222" } }
 ] };
 /* air rescue bases and U.S. posts (the second, wider Overpass request) */
 const OSMX = { elements: [
   { type: "node", id: 20, lat: 13.90, lon: 100.60, tags: { emergency: "air_rescue_service", name: "Test Air Rescue", phone: "+66 2 555 0100" } },
+  { type: "node", id: 31, lat: 13.74, lon: 100.53, tags: { healthcare: "blood_bank", name: "Test National Blood Centre", phone: "+66 2 256 4300" } },
+  { type: "node", id: 32, lat: 13.80, lon: 100.55, tags: { healthcare: "blood_donation", name: "Test Donation Room" } },
+  { type: "node", id: 33, lat: 12.68, lon: 100.88, tags: { amenity: "clinic", healthcare: "clinic", "healthcare:speciality": "hyperbaric_medicine;diving_medicine", name: "Test Hyperbaric Centre", phone: "+66 38 000 911" } },
   { type: "node", id: 21, lat: 13.7362, lon: 100.5465, tags: { office: "diplomatic", diplomatic: "embassy", country: "US", name: "Embassy of the United States", phone: "+66 2 205 4000" } }
 ] };
 /* OSAP's sourced list for the test country: one trauma centre OSM lacks, a 24-hour emergency note for Near Hospital,
@@ -209,6 +212,8 @@ async function openPlan(p) {
   const pst = await p.textContent("#mp-pst");
   ok(/Primary\s*H1 Sourced Trauma Centre/.test(pst) && /Secondary\s*H2 Trauma Test Hospital/.test(pst) && /Tertiary\s*H3 Far North Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
   ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); highest level of care in reach/.test(pst) && /next highest level of care/.test(pst) && /life, limb or eyesight goes to the highest level of care/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
+  ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
+  ok(await p.evaluate(() => [...document.querySelectorAll("#mp-pst [data-mp-assess]")].every((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth; })), "desktop: the picks' Assessment buttons are on screen");
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
@@ -231,8 +236,47 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
+  const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
+  ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
+  /* the nearest blood bank (Shane) */
+  await p.waitForFunction(() => /Test National Blood Centre/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
+  const bl = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent; return { f: f.slice(f.indexOf("Nearest blood bank"), f.indexOf("Nearest blood bank") + 400), mk: [...document.querySelectorAll(".mpicon.bl")].map((m) => m.textContent) }; });
+  ok(/Test National Blood Centre\s*Blood bank/.test(bl.f) && /\+66 2 256 4300/.test(bl.f) && /Test Donation Room\s*Blood donation centre/.test(bl.f) && /km/.test(bl.f) && bl.mk.includes("B1") && bl.mk.includes("B2"), "blood: the nearest blood banks are listed with contacts, distance and their own map marks " + JSON.stringify(bl).slice(0, 260));
+  /* the nearest dive decompression chamber (Shane) */
+  const dc = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent, i = f.indexOf("Nearest dive decompression"); return { f: f.slice(i, i + 520), mk: [...document.querySelectorAll(".mpicon.dc")].map((m) => m.textContent) }; });
+  ok(/Test Hyperbaric Centre/.test(dc.f) && /healthcare:speciality=hyperbaric_medicine/.test(dc.f) && /\+66 38 000 911/.test(dc.f) && /km/.test(dc.f) && /fly as low as safely possible/.test(dc.f) && dc.mk.includes("D1"), "chamber: the nearest decompression chamber is listed with its source, contacts, distance, a D mark and the low-altitude note " + JSON.stringify(dc).slice(0, 240));
+  /* air times count the aircraft's flight from its base to the POI (Shane) */
+  await p.waitForFunction(() => /Aircraft base: Test Air Rescue/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  const airMin = () => p.evaluate(() => { const m = /(\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent) || /(\d+) h (\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent); return m ? +m[1] : null; });
+  const ab = await p.evaluate(() => ({ gh: document.getElementById("mp-gh").textContent, mev: document.getElementById("mp-mev").textContent, fac: document.getElementById("mp-fac").textContent }));
+  const withBase = await airMin();
+  ok(/Aircraft base: Test Air Rescue, [\d.]+ km from the POI, \d+ min to fly to it \(nearest air rescue base in OpenStreetMap\)/.test(ab.gh) && /Aircraft base used for every air time: Test Air Rescue/.test(ab.mev) && /from the call, with the aircraft's flight in/.test(ab.fac), "air times: the aircraft's base is named and its flight to the POI is counted " + ab.gh.slice(ab.gh.indexOf("Aircraft base"), ab.gh.indexOf("Aircraft base") + 120));
+  await p.selectOption("#medplan [data-mp-base]", "poi");
+  await p.waitForFunction(() => /set to start at the point of injury/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  const atPoi = await airMin();
+  ok(withBase != null && atPoi != null && atPoi < withBase, "air times: starting the aircraft at the POI drops the flight in (" + withBase + " → " + atPoi + " min)");
+  await p.selectOption("#medplan [data-mp-base]", "");
+  await p.waitForFunction(() => /nearest air rescue base in OpenStreetMap/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok((await airMin()) === withBase, "air times: back to the nearest air rescue base");
+  /* turning a hospital off: it leaves the picks and the map, the next one is picked, and the choice is kept */
+  const offId = await p.evaluate(() => { const r = [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => /Sourced Trauma Centre/.test(x.textContent)); return r && r.querySelector("[data-mp-off]").getAttribute("data-mp-off"); });
+  const mk0 = await p.evaluate(() => document.querySelectorAll(".mpicon").length);
+  await p.click(`#mp-fac [data-mp-off="${offId}"]`);
+  await p.waitForFunction(() => /Primary\s*H\d+ Trauma Test Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  const offd = await p.evaluate((id) => ({ pst: document.getElementById("mp-pst").textContent, row: [...document.querySelectorAll("#mp-fac tbody tr")].find((x) => x.querySelector(`[data-mp-off="${id}"]`)).className,
+    mk: document.querySelectorAll(".mpicon").length, saved: localStorage.getItem("osap-medplan-off-th"), note: /1 hospital is turned off/.test(document.getElementById("mp-fac").textContent) }), offId);
+  ok(!/Sourced Trauma Centre/.test(offd.pst) && /Primary\s*H\d+ Trauma Test Hospital/.test(offd.pst) && offd.row === "mpoff" && offd.note && offd.mk === mk0 - 1 && JSON.parse(offd.saved || "[]").includes(offId), "desktop: unticking a hospital drops it from the picks (the next one is picked), greys its row and is kept on the device " + JSON.stringify(offd).slice(0, 220));
+  await p.click('#medplan [data-mp="allon"]');
+  await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(/Primary\s*H1 Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !(await p.$("#mp-fac tr.mpoff")), "desktop: Turn all back on restores the picks");
+  await p.click('#mp-pst [data-mp-offbtn]');
+  await p.waitForFunction(() => !/Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  ok(!/Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !!(await p.$("#mp-fac tr.mpoff")), "desktop: Turn off on a pick drops it and picks the next");
+  await p.click('#medplan [data-mp="allon"]');
+  await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
-  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 12), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base)");
+  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 15), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services, 1 chamber)");
   const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
   const ln = await lines();
   ok(ln.r === 3 && ln.g === 2 && ln.a === 2, "desktop: three routes, two road-reach outlines and two air rings drawn on the map " + JSON.stringify(ln));
@@ -334,6 +378,8 @@ async function openPlan(p) {
   if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
+  const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
+  ok(pa3.length === 3 && /^Hospital assessment, Primary: H1 Sourced Trauma Centre/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
   ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });

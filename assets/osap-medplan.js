@@ -249,6 +249,8 @@
     var la = o[0].toFixed(5), lo = o[1].toFixed(5);
     return "[out:json][timeout:40];" +
       'nwr["emergency"="air_rescue_service"](around:400000,' + la + "," + lo + ");out center tags 40;" +
+      '(nwr["healthcare:speciality"~"hyperbaric|diving|decompression",i](around:500000,' + la + "," + lo + ');nwr["healthcare"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + ');nwr["amenity"~"^(hospital|clinic)$"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + '););out center tags 20;' +
+      '(nwr["healthcare"="blood_bank"](around:200000,' + la + "," + lo + ');nwr["healthcare"="blood_donation"](around:200000,' + la + "," + lo + ');nwr["amenity"="blood_bank"](around:200000,' + la + "," + lo + '););out center tags 40;' +
       '(nwr["office"="diplomatic"]["country"="US"](around:1500000,' + la + "," + lo + ');nwr["amenity"="embassy"]["country"="US"](around:1500000,' + la + "," + lo + '););out center tags 40;';
   }
   function post(url, body, ms) {
@@ -332,17 +334,26 @@
     return out;
   }
   function sortX(els, o) {
-    var seen = {}, R = [], P = [];
+    var seen = {}, R = [], P = [], B = [], D = [], HB = /hyperbaric|diving|decompression|recompression/i;
     (els || []).forEach(function (e) {
       var k = e.type + e.id; if (seen[k]) return; seen[k] = 1;
       var t = e.tags || {}, p = pos(e); if (!p) return;
       var b = { id: k, osm: osmUrl(e), lat: p[0], lon: p[1], m: distM(o, p), brg: brg(o, p) };
       contactsOf(t, b);
-      if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); R.push(b); }
+      if (HB.test(String(t["healthcare:speciality"] || "")) || ((t.healthcare || /^(hospital|clinic)$/.test(t.amenity || "")) && /hyperbaric|decompression|recompression/i.test(t.name || ""))) {
+        b.name = clip(t["name:en"] || t.name || t.operator || "Hyperbaric chamber (no name in OSM)", 90); b.op = clip(t.operator || "", 80); b.kind = "chamber";
+        b.why = HB.test(String(t["healthcare:speciality"] || "")) ? "healthcare:speciality=" + clip(t["healthcare:speciality"], 60) : "name"; D.push(b);
+      }
+      else if (/^blood_(bank|donation)$/.test(t.healthcare || "") || t.amenity === "blood_bank") {
+        b.name = clip(t["name:en"] || t.name || t.operator || "Blood service (no name in OSM)", 90); b.op = clip(t.operator || "", 80); b.kind = "blood";
+        b.bank = t.healthcare === "blood_bank" || t.amenity === "blood_bank"; B.push(b);
+      }
+      else if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); R.push(b); }
       else { b.name = clip(t["name:en"] || t.name || "U.S. diplomatic post", 90); b.dip = t.diplomatic || ""; P.push(b); }
     });
-    R.sort(function (x, y) { return x.m - y.m; });
-    return { R: R.slice(0, 6), P: P };
+    R.sort(function (x, y) { return x.m - y.m; }); B.sort(function (x, y) { return x.m - y.m; });
+    D.sort(function (x, y) { return x.m - y.m; });
+    return { R: R.slice(0, 6), P: P, B: B.slice(0, 5), D: D.slice(0, 4) };
   }
 
   /* ---------- capability ---------- */
@@ -730,7 +741,7 @@
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,#f6f8fa)}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
-    ".mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
+    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
     ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
     ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
@@ -742,6 +753,10 @@
     ".mpdoc .mpval{display:block;border-bottom:1px solid #777;min-height:18px;padding:1px 2px;color:#111;font-size:12px;white-space:pre-wrap}" +
     ".mpdoc .mpscroll{overflow:visible}.mpdoc table{table-layout:auto}.mpdoc td.mpfac{min-width:0}" +
     ".mpdoc .mpgh,.mpdoc .mpbest,.mpdoc .mpmark,.mpdoc .mppst th,.mpdoc figure img{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+    "#medplan [data-mp-base]{max-width:100%;min-width:0;margin-top:3px}#medplan .mpbase{overflow-wrap:anywhere}" +
+    "#medplan .mpon{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;margin-top:4px;cursor:pointer}#medplan .mpon input{width:18px;height:18px;margin:0}" +
+    "#medplan tr.mpoff td{opacity:.55}#medplan tr.mpoff td:first-child{opacity:1}#medplan .mpofftag{font-size:11.5px;font-weight:700;color:#8b0010}" +
+    ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
     "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
     "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}";
   /* every #medplan rule also styles the print view's copy of the plan (.mpdoc) */
@@ -762,6 +777,12 @@
     return el;
   }
   function fieldsKey() { return KEY + (cc() || "x"); }
+  /* hospitals the user turned off for this country's plan: left out of the picks, the routes, the map and the print, kept
+     on this device */
+  function offKey() { return KEY + "off-" + (cc() || "x"); }
+  function offIds() { var v = lsGet(offKey()); return Array.isArray(v) ? v : []; }
+  function isOff(f) { return !!f && f.kind === "hospital" && offIds().indexOf(f.id) >= 0; }
+  function setOff(id, off) { var L = offIds().filter(function (x) { return x !== id; }); if (off) L.push(id); lsSet(offKey(), L.slice(-500)); }
   function fieldVals() { return lsGet(fieldsKey()) || {}; }
   function num(k) { var v = +fieldVals()[k]; return isFinite(v) && v > 0 && v < 1000 ? v : DEF[k]; }
   function fieldsHtml() {
@@ -890,8 +911,8 @@
       srcRender();
     });
     /* air rescue bases and U.S. posts once the main lookup is answered, so one plan never holds two Overpass slots */
-    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); mevRender(); ocRender(); mapShow(); srcRender(); },
-      function (e) { if (ST !== s) return; s.xErr = e.message; mevRender(); srcRender(); }); };
+    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); timesChanged(); mevRender(); ocRender(); mapShow(); srcRender(); },
+      function (e) { if (ST !== s) return; s.xErr = e.message; timesChanged(); mevRender(); srcRender(); }); };
     facP.then(xGo, xGo);
     isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
@@ -904,9 +925,38 @@
   }
   function byDrive(x, y) { var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s; return a - b || x.m - y.m; }
   function groundTotal(f) { return f.s == null ? null : f.s + PREP_MIN * 60; }
-  /* by air: launch, then the flight from the POI to the hospital, with time on the ground at the POI. The aircraft is assumed
-     to launch near the POI; section 4 gives the extra leg from each air rescue base */
-  function airTotal(f) { return (num("launch") + ONSCENE_MIN) * 60 + flightS(f.m, num("rwkn")); }
+  /* by air (Shane: the aircraft has to get from its home to the POI first): launch, the flight from the aircraft's base to
+     the POI, time on the ground at the POI, then the flight to the hospital. The base is the one chosen in section 4, else the
+     nearest air rescue base, else the nearest heliport or airfield (an assumption, said so), else the POI itself (said so). */
+  function baseList(s) {
+    var R = s.x ? s.x.R.slice() : [], O = s.fac ? s.fac.L.filter(function (l) { return l.kind === "heliport"; }).concat(s.fac.AF).sort(function (a, b) { return a.m - b.m; }) : [];
+    return R.concat(O);
+  }
+  function mbase(s) {
+    var v = fieldVals().mbase, L = baseList(s), b = v && v !== "poi" && L.filter(function (x) { return x.id === v; })[0];
+    if (v === "poi") return { b: null, how: "set to start at the point of injury: no flight to it is counted" };
+    if (b) return { b: b, how: "chosen in section 4" };
+    if (s.x && s.x.R[0]) return { b: s.x.R[0], how: "nearest air rescue base in OpenStreetMap" };
+    var o = L.filter(function (x) { return x.kind; })[0];
+    if (o) return { b: o, how: "assumed: no air rescue base " + (s.x ? "within 400 km" : s.xErr ? "could be read" : "read yet") + ", so the nearest " + (o.kind === "airfield" ? "airfield" : "heliport") + " (no medevac service listed there)" };
+    return { b: null, how: "no aircraft base known: assumed to launch at the point of injury, so real times are longer" };
+  }
+  function inboundS(s) { var m = mbase(s); return m.b ? flightS(m.b.m, num("rwkn")) : 0; }
+  function airTotal(f) { return (num("launch") + ONSCENE_MIN) * 60 + inboundS(ST) + flightS(f.m, num("rwkn")); }
+  /* each leg of an air time, for the reader */
+  function airLegs(f) {
+    var rw = num("rwkn"), m = mbase(ST), L = [num("launch") + " min launch"];
+    L.push(m.b ? mins(inboundS(ST)) + " from " + m.b.name + " to the POI" : "no flight to the POI (" + m.how + ")");
+    L.push(ONSCENE_MIN + " min on the ground", mins(flightS(f.m, rw)) + " to the hospital at " + rw + " kn");
+    return L.join(" + ") + " = " + mins(airTotal(f));
+  }
+  /* air times changed (the aircraft base was chosen or read): the picks follow, and their routes if the picks changed */
+  function timesChanged() {
+    var s = ST; if (!s || !s.fac) return;
+    facRender(); pickRender(); ghRender(); mevRender(); mapShow();
+    var ids = picks(s).map(function (p) { return p.f.id; }).join(), had = (s.rts || []).map(function (x) { return x.f.id; }).join();
+    if (s.rts && ids !== had) routes(s);
+  }
   function airOn() { return fieldVals().air !== 0; }
   /* the fastest way to surgical care for a hospital: [seconds from injury, "road" or "air"] */
   function bestWay(f) {
@@ -922,7 +972,7 @@
      Tertiary: the next highest level of care of the rest, as the backup. */
   var ROLE_PICK = ["Primary", "Secondary", "Tertiary"];
   function picks(s) {
-    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.tier > 0; });
+    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.tier > 0 && !isOff(f); });
     if (!H.length) return [];
     var out = [], gh = GOLDEN_MIN * 60;
     function why(f, tag) {
@@ -1006,10 +1056,11 @@
     var tier = f.kind === "hospital" ? '<span class="mptier t' + f.tier + '" tabindex="0" title="' + esc(f.trauma ? "Stated by " + f.trauma.srcname + ". " + ROLE_RULE : ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" : "";
     var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
-    return "<tr><td class=\"n\"><span class=\"mpmark\">" + mk + "</span></td><td class=\"mpfac\">" + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
+    var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
+    return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
       "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
-      '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">at ' + rw + " kn</span></td>" +
+      '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(airTotal(f))) + " from the call, with the aircraft's flight in</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
       '<td class="n"><code>' + esc(grid(f.lat, f.lon)) + "</code></td>" +
       '<td class="noprint"><div class="mpact">' + (f.osm ? link(f.osm, "OSM").replace("<a ", '<a class="refresh" ') : link(f.src, "Source").replace("<a ", '<a class="refresh" ')) +
@@ -1028,6 +1079,24 @@
     if (st && !s.osmAt) return '<p class="obs">From OSAP\'s stored copy of OpenStreetMap' + (at ? " (" + esc(at) + ")" : "") + '. <button type="button" class="refresh noprint" data-mp="live">Check live OpenStreetMap</button></p>';
     return "";
   }
+  /* head trauma (Shane): the quickest hospital a source says has neurosurgery; where none says so, the quickest Role 3
+     equivalent is shown as the likely place, labelled as an estimate. Times include the aircraft's legs. */
+  var NEURO = /neuro\s*surg|neurosurg|brain\s*surg|neurolog.*surg/i;
+  function neuroSrc(f) {
+    if (NEURO.test(String(f.specRaw || ""))) return f.osm ? link(f.osm, "OpenStreetMap") + " healthcare:speciality" : "OpenStreetMap healthcare:speciality";
+    if (f.sofRec && NEURO.test(String(f.sofRec.notes || ""))) return link(f.sofRec.src, f.sofRec.srcname || "source");
+    return "";
+  }
+  function headHtml(s) {
+    var H = s.fac.H.filter(function (f) { return !isOff(f) && bestWay(f); }), byT = function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; };
+    var N = H.filter(neuroSrc).sort(byT), E = H.filter(function (f) { return f.tier >= 3 && !neuroSrc(f); }).sort(byT);
+    function line(f, tag) { var b = bestWay(f); return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b>, " + esc(mins(b[0])) + " from injury by " + b[1] + " " + ghTag(b[0]) + " " + tag + ctHtml(f); }
+    var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> ';
+    if (N.length) h += line(N[0], '<span class="obs">(neurosurgery stated by ' + neuroSrc(N[0]) + ")</span>") + (N[1] ? '<span class="sub">Next: H' + (s.fac.H.indexOf(N[1]) + 1) + " " + esc(N[1].name) + ", " + esc(mins(bestWay(N[1])[0])) + "</span>" : "");
+    else h += '<span class="mpnk">Not known</span> <span class="obs">No hospital in reach states neurosurgery in OpenStreetMap or OSAP\'s sources.</span>' +
+      (E.length ? '<span class="sub">Likely place (estimated, not stated): ' + line(E[0], '<span class="obs">(' + esc(tierLabel(E[0])) + "; confirm neurosurgery by phone)</span>") + "</span>" : "");
+    return h + "</p></div>";
+  }
   function failed(s) { return !!(s.osmErr || (s.storedErr && !s.osmAt)); }
   function pickRender() {
     var el = D.getElementById("mp-pst"), s = ST; if (!el) return;
@@ -1037,9 +1106,16 @@
       : "No hospital with a known capability within " + Math.round(s.radii.h / 1000) + " km. See section 2 for hospitals with no details listed, and check national sources.") + "</p>"; return; }
     el.innerHTML = '<table class="mppst"><tbody>' + P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f);
-      return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" + (f.phone ? ' · <a href="tel:' + esc(f.phone.replace(/[^+0-9]/g, "")) + '">' + esc(f.phone) + "</a>" : "") +
-        '<span class="sub">' + esc(p.reason) + "</span></td></tr>";
+      /* the pick's contacts and what is known of its capability are shown here, not only in the hospital table (whose
+         buttons sit off-screen on a phone) */
+      var cap = (f.why || []).slice(); if (f.beds) cap.push(f.beds + " beds"); if (f.pad) cap.push("helipad on site");
+      return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" +
+        '<span class="sub">' + esc(p.reason) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
+        '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
+        '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
+        '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
     }).join("") + "</tbody></table>" +
+      headHtml(s) +
       '<p class="obs">Chosen by fixed rules: life, limb or eyesight goes to the highest level of care. Primary is the highest level of care that can be reached, the quickest of that level' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
       ". When Primary is beyond the golden hour, Secondary is the most capable inside it, to stabilise on the way; otherwise Secondary and Tertiary are the next highest levels of care. Confirm each by phone before relying on it.</p>";
   }
@@ -1053,10 +1129,13 @@
       : '<p class="obs mpwarn">No hospital with a known capability within ' + Math.round(s.radii.h / 1000) + " km in OpenStreetMap or OSAP's sourced list" + (F.nU ? "; see the hospitals with no details listed below" : "") + ". Check national sources before relying on this.</p>";
     if (F.H.length) h += '<p class="obs">Ranked by capability: a <b>trauma level</b> only where a source states one (linked); otherwise a <b>Role 1, 2 or 3 equivalent (estimated)</b> from the services listed for the hospital (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
       (F.nH > 10 ? "The nearest 10 hospitals with something listed, plus the best-ranked of the rest." : "") + "</p>";
+    var nOff = F.H.concat(F.U || []).filter(isOff).length;
+    if (nOff) h += '<p class="obs mpwarn">' + nOff + " hospital" + (nOff > 1 ? "s are" : " is") + ' turned off and left out of the picks, routes, map and print. <button type="button" class="refresh noprint" data-mp="allon">Turn all back on</button></p>';
     if (F.nU) h += '<details class="mpu"><summary>Other hospitals with no details listed (' + F.nU + ")</summary>" +
       '<p class="obs">OpenStreetMap names these as hospitals but lists no emergency department, beds, specialities or contacts, so their level cannot be estimated. ' + (F.nU > F.U.length ? "The nearest " + F.U.length + " are shown. " : "") + "Phone or visit before relying on one.</p>" +
       '<div class="mpscroll"><table>' + head + "<tbody>" + F.U.map(function (f, i) { return facRow(f, i, bestOf(f), "U"); }).join("") + "</tbody></table></div></details>";
     if (F.nNo) h += '<p class="obs">' + F.nNo + " more hospital" + (F.nNo > 1 ? "s" : "") + " in OpenStreetMap with no name and no details are left out.</p>";
+    h += bloodHtml(s) + chamberHtml(s);
     h += "<h4>Clinics and first-aid posts within " + Math.round(s.radii.c / 1000) + " km</h4>";
     h += F.C.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.C.map(function (f, i) { return facRow(f, i, null); }).join("") + "</tbody></table></div>"
       : failed(s) ? '<p class="obs mpwarn">Clinics could not be looked up.</p>' : '<p class="obs">None in OpenStreetMap.</p>';
@@ -1064,6 +1143,36 @@
     else if (!s.routeDone && (F.H.length || F.C.length || F.U.length)) h += '<p class="obs">Working out road drive times…</p>';
     el.innerHTML = h;
     pickRender();
+  }
+  /* the nearest blood bank (Shane): blood banks and donation centres OpenStreetMap lists within 200 km, and hospitals that
+     list a blood bank or transfusion service. Nothing is inferred: where none is listed the plan says so. */
+  function hasBlood(f) { return BLOOD.test(String(f.specRaw || "")); }
+  function bloodHtml(s) {
+    var rw = num("rwkn"), H = s.fac.H.filter(function (f) { return hasBlood(f) && !isOff(f); }).sort(function (a, b) { return a.m - b.m; });
+    var h = "<h4>Nearest blood bank</h4>";
+    if (s.x && s.x.B.length) h += '<div class="mpscroll"><table><thead><tr><th></th><th>Blood service and contacts</th><th>Straight line</th><th>Grid (MGRS)</th></tr></thead><tbody>' + s.x.B.map(function (b, i) {
+      return '<tr><td class="n"><span class="mpmark bl">B' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + '<span class="sub">' + (b.bank ? "Blood bank" : "Blood donation centre (collects blood; may not issue it)") + (b.op && b.op !== b.name ? " · " + esc(b.op) : "") + "</span>" + ctHtml(b) + "</td>" +
+        '<td class="n">' + esc(km(b.m)) + '<span class="sub">' + Math.round(b.brg) + "° " + card(b.brg) + " · " + esc(mins(flightS(b.m, rw))) + " at " + rw + ' kn</span></td><td class="n"><code>' + esc(grid(b.lat, b.lon)) + "</code></td></tr>";
+    }).join("") + "</tbody></table></div>";
+    else if (s.x) h += '<p class="obs">No blood bank or donation centre within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
+    else if (s.xErr) h += '<p class="obs mpwarn">Blood banks could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
+    else h += '<p class="obs">Looking up blood banks…</p>';
+    h += H.length ? '<p class="obs">Hospitals here that list a blood bank or transfusion service (OpenStreetMap healthcare:speciality): ' + H.slice(0, 4).map(function (f) { return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b> (" + esc(km(f.m)) + ")"; }).join(", ") + ".</p>"
+      : '<p class="obs">None of the hospitals listed here states a blood bank; most do not publish it. Confirm blood availability with the receiving hospital.</p>';
+    return h;
+  }
+  /* the nearest dive decompression (hyperbaric) chamber (Shane): places OpenStreetMap tags with a hyperbaric or diving
+     speciality, or names as a hyperbaric or recompression centre, within 500 km. Nothing is inferred. */
+  function chamberHtml(s) {
+    var rw = num("rwkn"), h = "<h4>Nearest dive decompression (hyperbaric) chamber</h4>";
+    if (s.x && s.x.D.length) h += '<div class="mpscroll"><table><thead><tr><th></th><th>Chamber and contacts</th><th>Straight line</th><th>Grid (MGRS)</th></tr></thead><tbody>' + s.x.D.map(function (b, i) {
+      return '<tr><td class="n"><span class="mpmark dc">D' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + '<span class="sub">Listed in ' + (b.osm ? link(b.osm, "OpenStreetMap") : "OpenStreetMap") + " by " + esc(b.why) + (b.op && b.op !== b.name ? " · " + esc(b.op) : "") + "</span>" + ctHtml(b) + "</td>" +
+        '<td class="n">' + esc(km(b.m)) + '<span class="sub">' + Math.round(b.brg) + "° " + card(b.brg) + " · " + esc(mins(flightS(b.m, rw))) + " at " + rw + ' kn</span></td><td class="n"><code>' + esc(grid(b.lat, b.lon)) + "</code></td></tr>";
+    }).join("") + "</tbody></table></div>";
+    else if (s.x) h += '<p class="obs"><span class="mpnk">Not known</span> No hyperbaric or recompression chamber within 500 km in OpenStreetMap. This does not mean there is none: ask your diving emergency service or the receiving hospital.</p>';
+    else if (s.xErr) h += '<p class="obs mpwarn">Chambers could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
+    else h += '<p class="obs">Looking up decompression chambers…</p>';
+    return h + '<p class="obs">Decompression illness: move by ground or fly as low as safely possible (cabin pressure near sea level); confirm the chamber is staffed and the transfer with your diving emergency service before moving.</p>';
   }
   function rtRender() {
     var el = D.getElementById("mp-rt"), s = ST; if (!el) return;
@@ -1082,14 +1191,15 @@
   /* air golden-hour rings round the POI: the flight that still arrives inside 50 and 60 minutes after the launch time and
      the time on the ground */
   function airRings() {
-    var rw = num("rwkn"), used = num("launch") + ONSCENE_MIN;
+    var rw = num("rwkn"), used = num("launch") + ONSCENE_MIN + inboundS(ST) / 60;
     return [GOLDEN_MIN - 10, GOLDEN_MIN].map(function (t) { return { t: t, r: Math.max(0, t - used) * 60 * rw * 1852 / 3600 }; });
   }
   function ringsOn(k) { return fieldVals()[k] !== 0; }
   function ghRender() {
     var el = D.getElementById("mp-gh"), s = ST; if (!el) return;
     var P = s.fac ? picks(s) : [], rw = num("rwkn"), R = airRings(), li = [];
-    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving; air times allow " + num("launch") + " minutes to launch and " + ONSCENE_MIN + " minutes on the ground, then the flight at " + rw + " kn.</li>");
+    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving; air times count " + num("launch") + " minutes to launch, the flight from the aircraft's base to the POI, " + ONSCENE_MIN + " minutes on the ground, then the flight to the hospital at " + rw + " kn.</li>" +
+      (function () { var m = mbase(s); return '<li' + (m.b ? "" : ' class="mpwarn"') + ">Aircraft base: " + (m.b ? "<b>" + esc(m.b.name) + "</b>, " + esc(km(m.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " to fly to it (" + esc(m.how) + ")" : esc(m.how)) + ". Change it in section 4.</li>"; })());
     P.forEach(function (p) { var b = bestWay(p.f); if (b) li.push("<li>" + esc(p.role) + " (H" + (s.fac.H.indexOf(p.f) + 1) + " " + esc(p.f.name) + "): " + esc(mins(b[0])) + " from injury by " + b[1] + ". " + ghTag(b[0]) + "</li>"); });
     if (s.fac && s.routeDone && P.length && !P.some(function (p) { var b = bestWay(p.f); return b && b[0] <= GOLDEN_MIN * 60; }))
       li.push('<li class="mpwarn"><b>No hospital is inside the golden hour' + (airOn() ? " by road or air" : " by road") + ".</b> Plan forward surgical or damage-control capability.</li>");
@@ -1098,7 +1208,7 @@
         : s.isoErr ? '<span class="mpwarn">The road reach could not be drawn (' + esc(clip(s.isoErr, 120)) + ").</span>" : "Drawing the 30 and " + (GOLDEN_MIN - PREP_MIN) + " minute road reach…") + "</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="ar"' + (ringsOn("ar") ? " checked" : "") + "> Air rings on the map</label> " +
       "Helicopter at " + rw + " kn: inside the light blue ring a hospital is reached inside " + R[0].t + " minutes (" + esc(km(R[0].r)) + "), inside the dark blue ring inside " + R[1].t + " minutes (" + esc(km(R[1].r)) + "). " +
-      "The rings assume the aircraft launches near the POI; section 4 adds the leg from each air rescue base.</li>");
+      "The rings include the launch, the flight from the aircraft's base to the POI and the time on the ground.</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="air"' + (airOn() ? " checked" : "") + "> Air evacuation available</label> " +
       (airOn() ? "Primary and Secondary may be chosen by air time." : "Off: Primary and Secondary are chosen by road time only.") + "</li>");
     el.innerHTML = '<div class="mpkey"><span class="mpgh g">Inside golden hour</span><span class="obs">up to ' + (GOLDEN_MIN - 10) + ' min</span><span class="mpgh a">At the golden-hour limit</span><span class="obs">' + (GOLDEN_MIN - 10) + "-" + GOLDEN_MIN + ' min</span><span class="mpgh r">Beyond golden hour</span><span class="obs">over ' + GOLDEN_MIN + " min</span></div><ul>" + li.join("") + "</ul>";
@@ -1128,6 +1238,11 @@
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
     h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
+    var mb = mbase(s), BL = baseList(s), cur = fieldVals().mbase || "";
+    h += '<p class="mpbase"><b>Aircraft base used for every air time:</b> ' + (mb.b ? esc(mb.b.name) + ", " + esc(km(mb.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " flight to it at " + rw + " kn (" + esc(mb.how) + ")" : '<span class="mpwarn">' + esc(mb.how) + "</span>") + ".</p>" +
+      '<p class="noprint"><label>Aircraft starts from <select data-mp-base><option value=""' + (!cur ? " selected" : "") + ">Nearest air rescue base (else nearest heliport or airfield)</option>" +
+      BL.map(function (b) { return '<option value="' + esc(b.id) + '"' + (cur === b.id ? " selected" : "") + ">" + esc(b.name) + " · " + esc(km(b.m)) + "</option>"; }).join("") +
+      '<option value="poi"' + (cur === "poi" ? " selected" : "") + ">At the point of injury (no flight in)</option></select></label></p>";
     function row(b, i, mk, cls) {
       var fly = flightS(b.m, rw), tot = launch * 60 + fly + ONSCENE_MIN * 60 + (best ? flightS(best.m, rw) : 0);
       return '<tr><td class="n"><span class="mpmark ' + cls + '">' + mk + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + (b.op && b.op !== b.name ? '<span class="sub">' + esc(b.op) + "</span>" : "") + (b.kind ? '<span class="sub">' + esc(b.kind === "airfield" ? "Airfield" : b.kind === "heliport" ? "Heliport" : "Helipad") + (b.code ? " · " + esc(b.code) : "") + "</span>" : "") + ctHtml(b) + "</td>" +
@@ -1410,9 +1525,11 @@
       s.fac.E.forEach(function (f, i) { out.push(["mk", [f.lat, f.lon], "E" + (i + 1), "e", f.name]); });
       s.fac.L.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "L" + (i + 1), "air", l.name]); });
       s.fac.AF.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
-      s.fac.H.forEach(function (f, i) { var r = pk(f); out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : "H" + (i + 1), r ? "pk" : "", (r ? r + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), !!r]); });
+      s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f); out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : "H" + (i + 1), r ? "pk" : "", (r ? r + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), !!r]); });
     }
     if (s.x) s.x.R.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "M" + (i + 1), "air", b.name + " (air rescue)"]); });
+    if (s.x) s.x.D.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "D" + (i + 1), "dc", b.name + " (decompression chamber)"]); });
+    if (s.x) s.x.B.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "B" + (i + 1), "bl", b.name + (b.bank ? " (blood bank)" : " (blood donation)")]); });
     if (s.oc) s.oc.ap.forEach(function (a, i) { out.push(["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
     if (s.oc) out = out.concat(stratItems(s));
     out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
@@ -1437,14 +1554,21 @@
     var n = 256 * Math.pow(2, z), la = Math.max(-85, Math.min(85, p[0])) * Math.PI / 180;
     return [(p[1] + 180) / 360 * n, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n];
   }
+  /* a tile the live map already showed can come back from a cache in a form a canvas may not read (saved without CORS),
+     which failed every tile Shane had looked at on iPhone; a tile that errors is asked for once more under its own address
+     (a tile that times out is not, so a slow or absent network costs one wait) */
   function tileImg(z, x, y) {
     var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    return new Promise(function (res) {
-      if (y < 0 || y >= n) { res(null); return; }
-      var im = new Image(), t = setTimeout(function () { res(null); }, 10000);
-      im.crossOrigin = "anonymous"; im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); res(null); };
-      im.src = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
-    });
+    var url = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
+    function one(u) {
+      return new Promise(function (res) {
+        var im = new Image(), t = setTimeout(function () { res(null); }, 10000);
+        im.crossOrigin = "anonymous"; im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); res(false); };
+        im.src = u;
+      });
+    }
+    if (y < 0 || y >= n) return Promise.resolve(null);
+    return one(url).then(function (im) { return im === false ? one(url + "?print=1").then(function (r) { return r || null; }) : im; });
   }
   function mapImage(Wd, Ht, focus) {
     var s = ST, items = focus ? focus.items : mapItems(), P = s.fac ? picks(s) : [], pts = [s.o];
@@ -1481,7 +1605,7 @@
       items.filter(function (it) { return it[0] === "mk"; }).sort(function (x, y) { return (x[5] ? 1 : 0) - (y[5] ? 1 : 0); }).forEach(function (it) {
         var q = xy(it[1]); if (q[0] < -20 || q[1] < -20 || q[0] > Wd + 20 || q[1] > Ht + 20) return;
         g.setLineDash([]); g.globalAlpha = 1; g.font = "700 11px system-ui, sans-serif";
-        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : "#D7141A";
+        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : "#D7141A";
         g.fillStyle = bg; g.strokeStyle = it[3] === "pk" ? "#ffd166" : "#fff"; g.lineWidth = 2;
         g.beginPath(); g.rect(q[0] - w / 2, q[1] - h / 2, w, h); g.fill(); g.stroke();
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
@@ -1524,12 +1648,13 @@
     [].forEach.call(c.querySelectorAll("input,textarea"), function (i) {
       var live = i.id ? src.querySelector("#" + i.id) : null, v = live ? live.value : i.value, sp = D.createElement("span"); sp.className = "mpval"; sp.textContent = v || " "; i.replaceWith(sp);
     });
+    [].forEach.call(c.querySelectorAll("tr.mpoff"), function (x) { x.remove(); });
     [].forEach.call(c.querySelectorAll(".noprint,button,select,.mphead,.mppoi"), function (x) { x.remove(); });
     [].forEach.call(c.querySelectorAll("details"), function (x) { x.open = true; });
     [].forEach.call(c.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
     var title = "Medical plan, " + s.name, pts = picks(s);
     var key = '<div class="mpkeyd"><span><b style="background:#111;color:#fff;padding:0 3px">POI</b> point of injury</span>' + (pts.length ? '<span><b style="background:#8b0010;color:#fff;padding:0 3px">PRI SEC TER</b> Primary, Secondary, Tertiary</span>' : "") +
-      '<span><b style="background:#D7141A;color:#fff;padding:0 3px">H</b> hospital, <b style="background:#D7141A;color:#fff;padding:0 3px">C</b> clinic</span><span><b style="background:#1d5fa8;color:#fff;padding:0 3px">L A M</b> helipad, airfield, air rescue</span>' +
+      '<span><b style="background:#D7141A;color:#fff;padding:0 3px">H</b> hospital, <b style="background:#D7141A;color:#fff;padding:0 3px">C</b> clinic</span><span><b style="background:#1d5fa8;color:#fff;padding:0 3px">L A M</b> helipad, airfield, air rescue</span><span><b style="background:#a4005b;color:#fff;padding:0 3px">B</b> blood bank</span><span><b style="background:#00727a;color:#fff;padding:0 3px">D</b> decompression chamber</span>' +
       '<span><i style="color:#D7141A"></i>route to Primary</span><span><i style="color:#222"></i>Secondary, <i style="color:#222;border-top-style:dashed"></i>Tertiary</span>' +
       (ringsOn("gr") && s.iso ? '<span><i style="color:#1e7a3a;border-top-style:dashed"></i>30 min road</span><span><i style="color:#c77700;border-top-style:dashed"></i>' + (GOLDEN_MIN - PREP_MIN) + " min road</span>" : "") +
       (ringsOn("ar") ? '<span><i style="color:#6fa8dc;border-top-style:dashed"></i>air ' + (GOLDEN_MIN - 10) + ' min</span><span><i style="color:#1d5fa8"></i>air ' + GOLDEN_MIN + " min</span>" : "") + "</div>";
@@ -1538,7 +1663,7 @@
       '<article class="bpage mpdoc"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
-      c.innerHTML + "</article>";
+      c.innerHTML + assessPrint(s, pts) + "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
     var ready = mapImage(1000, 640).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
@@ -1637,7 +1762,7 @@
     var rw = num("rwkn"), g = groundTotal(f), a = airTotal(f), bw = bestWay(f), L = [];
     L.push(["Straight line", esc(km(f.m)) + ", " + Math.round(f.brg) + "° " + card(f.brg) + " of the point of injury"]);
     L.push(["By road", f.s != null ? esc(mins(f.s)) + ", " + esc(km(f.rm || 0)) + (f.est ? " (estimate: no road router answered)" : "") + ". From injury with " + PREP_MIN + " min to treat and load: " + esc(mins(g)) + " " + ghTag(g) : nk("No road time.")]);
-    L.push(["By air", esc(mins(flightS(f.m, rw))) + " flight at " + rw + " kn. From injury with " + num("launch") + " min to launch and " + ONSCENE_MIN + " min on the ground: " + esc(mins(a)) + " " + ghTag(a) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
+    L.push(["By air", "From the call: " + esc(airLegs(f)) + " " + ghTag(a) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
     if (bw && bw[0] != null) L.push(["Quickest", esc(mins(bw[0])) + " from injury by " + esc(bw[1])]);
     L.push(["Route", r && r.line ? esc(mins(r.s)) + ", " + esc(km(r.m)) + (r.roads.length ? ". Main roads: " + esc(r.roads.map(function (q) { return q.n; }).join(" → ")) : "") : r && r.err ? nk("No road route: " + clip(r.err, 120)) : "Working out the route…"]);
     return L;
@@ -1651,6 +1776,15 @@
       "<h3>Landing</h3>" + tb(R.filter(function (x) { return x[0] === "Helipad" || x[0] === "Nearest airfield"; })) +
       "<h3>Contacts and cover</h3>" + tb(R.filter(function (x) { return /^(Contacts|Address|TRICARE)$/.test(x[0]); })) +
       '<p class="obs">' + (gaps.length ? "Not known: " + esc(gaps.join(", ")) + ". " : "") + "Each line says where it comes from. OpenStreetMap is community data and can be out of date; a source's statement is that source's claim. Phone the hospital to confirm capability, beds and acceptance before relying on it.</p>";
+  }
+  /* the print view carries the full assessment of Primary, Secondary and Tertiary, each from a new page */
+  function assessPrint(s, P) {
+    if (!P.length) return "";
+    return P.map(function (p) {
+      var f = p.f, H = s.fac.H.indexOf(f), known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0];
+      return '<section class="mpaprint"><h3>Hospital assessment, ' + esc(p.role) + ": H" + (H + 1) + " " + esc(f.name) + "</h3>" +
+        assessHtml(f, s, known ? known.r : null).replace(/ id="[^"]*"/g, "").replace("Working out the route…", "Not worked out yet when this print was made; see section 3 of the plan, or print again once the routes are drawn.") + "</section>";
+    }).join("");
   }
   function assessView(id) {
     var f = find(id), s = ST, el = D.getElementById("brief"); if (!f || !el || f.kind !== "hospital") return false;
@@ -1732,11 +1866,13 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn]"); if (!b) return;
+    if (b.hasAttribute("data-mp-offbtn")) { setOff(b.getAttribute("data-mp-offbtn"), true); offChanged(); var pb = D.querySelector("#mp-pst [data-mp-assess]"); if (pb) pb.focus(); return; }
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
     if (k === "dock") { lsSet(DOCK_KEY, dockOn() ? 0 : 1); dockApply(); var db = D.querySelector('#medplan [data-mp="dock"]'); if (db) db.focus(); if (ST && ST.o) mapFocus(ST.o[0], ST.o[1]); return; }
     if (k === "retry") { build(); return; }
+    if (k === "allon") { lsSet(offKey(), []); offChanged(); return; }
     if (k === "pick") { pickStart(); return; }
     if (k === "setpoi") { setPoi(); return; }
     if (k === "print") { printView(); return; }
@@ -1753,8 +1889,19 @@
     var sel = D.getElementById("mp-from"); if (sel) sel.innerHTML = startOpts();
     srcRender();
   }
+  /* a hospital turned off or on: the picks, their routes and the map follow */
+  function offChanged() { if (ST && ST.fac) { facRender(); pickRender(); routes(ST); mevRender(); ghRender(); mapShow(); srcRender(); } }
   function onChange(e) {
     var t = e.target;
+    if (t.hasAttribute && t.hasAttribute("data-mp-base")) {
+      var vb = fieldVals(); vb.mbase = t.value; lsSet(fieldsKey(), vb); timesChanged();
+      var sb = D.querySelector("#medplan [data-mp-base]"); if (sb) sb.focus(); return;
+    }
+    if (t.getAttribute && t.getAttribute("data-mp-off")) {
+      setOff(t.getAttribute("data-mp-off"), !t.checked); offChanged();
+      var b = D.querySelector('#medplan [data-mp-off="' + (W.CSS && CSS.escape ? CSS.escape(t.getAttribute("data-mp-off")) : t.getAttribute("data-mp-off")) + '"]'); if (b) b.focus();
+      return;
+    }
     if (t.getAttribute && t.getAttribute("data-mp-oc")) {
       var vals = fieldVals(); vals.oc = t.checked ? 1 : 0; lsSet(fieldsKey(), vals);
       if (t.checked) evac(ST); else { ST.oc = null; ocRender(); mapShow(); }
