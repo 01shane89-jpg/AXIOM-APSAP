@@ -44,6 +44,8 @@ const OSM = { osm3s: { timestamp_osm_base: "2026-09-30T06:00:00Z" }, elements: [
 /* air rescue bases and U.S. posts (the second, wider Overpass request) */
 const OSMX = { elements: [
   { type: "node", id: 20, lat: 13.90, lon: 100.60, tags: { emergency: "air_rescue_service", name: "Test Air Rescue", phone: "+66 2 555 0100" } },
+  { type: "node", id: 31, lat: 13.74, lon: 100.53, tags: { healthcare: "blood_bank", name: "Test National Blood Centre", phone: "+66 2 256 4300" } },
+  { type: "node", id: 32, lat: 13.80, lon: 100.55, tags: { healthcare: "blood_donation", name: "Test Donation Room" } },
   { type: "node", id: 21, lat: 13.7362, lon: 100.5465, tags: { office: "diplomatic", diplomatic: "embassy", country: "US", name: "Embassy of the United States", phone: "+66 2 205 4000" } }
 ] };
 /* OSAP's sourced list for the test country: one trauma centre OSM lacks, a 24-hour emergency note for Near Hospital,
@@ -233,6 +235,10 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* the nearest blood bank (Shane) */
+  await p.waitForFunction(() => /Test National Blood Centre/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
+  const bl = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent; return { f: f.slice(f.indexOf("Nearest blood bank"), f.indexOf("Nearest blood bank") + 400), mk: [...document.querySelectorAll(".mpicon.bl")].map((m) => m.textContent) }; });
+  ok(/Test National Blood Centre\s*Blood bank/.test(bl.f) && /\+66 2 256 4300/.test(bl.f) && /Test Donation Room\s*Blood donation centre/.test(bl.f) && /km/.test(bl.f) && bl.mk.includes("B1") && bl.mk.includes("B2"), "blood: the nearest blood banks are listed with contacts, distance and their own map marks " + JSON.stringify(bl).slice(0, 260));
   /* air times count the aircraft's flight from its base to the POI (Shane) */
   await p.waitForFunction(() => /Aircraft base: Test Air Rescue/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
   const airMin = () => p.evaluate(() => { const m = /(\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent) || /(\d+) h (\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent); return m ? +m[1] : null; });
@@ -263,7 +269,7 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="allon"]');
   await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
-  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 12), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base)");
+  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 14), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services)");
   const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
   const ln = await lines();
   ok(ln.r === 3 && ln.g === 2 && ln.a === 2, "desktop: three routes, two road-reach outlines and two air rings drawn on the map " + JSON.stringify(ln));
