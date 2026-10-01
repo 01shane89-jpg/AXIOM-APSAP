@@ -1,0 +1,11 @@
+[["n1423615915",36.28424,133.25018,"jp",{"name":"村民国民健康保険診療所","amenity":"hospital"}],
+["n1423619715",36.21606,133.31841,"jp",{"name":"隠岐広域連合立隠岐病院","amenity":"hospital","healthcare":"hospital"}],
+["w1140712638",36.0081,133.06163,"jp",{"aeroway":"heliport"}],
+["w1140714549",36.1008,133.09622,"jp",{"aeroway":"heliport"}],
+["w1140720782",36.21629,133.31869,"jp",{"aeroway":"helipad"}],
+["w1395294349",36.10633,133.03651,"jp",{"name":"隠岐島前病院","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2071-1","addr:street":"美田","addr:city":"西ノ島町","addr:postcode":"684-0303"}],
+["w57010769",36.17871,133.32324,"jp",{"name":"隠岐空港","name:en":"Oki Airport","aeroway":"aerodrome","icao":"RJNO","iata":"OKI"}],
+["w589473027",36.10101,133.09595,"jp",{"name":"海士町へリポート","operator":"海士町","aeroway":"helipad","surface":"asphalt"}],
+["w719505808",36.00797,133.06135,"jp",{"name":"知夫村ヘリポート","operator":"知夫村","aeroway":"helipad","surface":"asphalt"}],
+["w913328068",36.09191,133.01484,"jp",{"name":"西ノ島町ヘリポート","operator":"西ノ島町","aeroway":"helipad","surface":"asphalt"}],
+["w913328075",36.1068,133.03404,"jp",{"aeroway":"helipad"}]]

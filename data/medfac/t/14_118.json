@@ -1,0 +1,9 @@
+[["n8686698917",15.73211,119.91019,"ph",{"name":"Kidney Dialysis Center","amenity":"clinic","healthcare":"clinic"}],
+["n9441272768",15.57489,119.92376,"ph",{"aeroway":"helipad"}],
+["w1054950635",15.53683,119.9477,"ph",{"name":"Masinloc Rural Health Unit","amenity":"clinic","emergency":"yes","addr:street":"Santa Lucia Street","addr:postcode":"2211"}],
+["w1080855994",15.32613,119.98858,"ph",{"name":"Saint Pio's Medical Center, Inc.","amenity":"hospital","healthcare":"hospital","phone":"09171329711","website":"http://www.saintpiomedical.com/","addr:street":"Govic Highway","addr:city":"Iba","addr:postcode":"2201"}],
+["w210239670",15.31533,119.99121,"ph",{"name":"President Ramon Magsaysay Memorial Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","beds":"150","operator:type":"government","contact:phone":"+63915 3966014;+63919 2442299","addr:street":"J. P. Rizal Street","addr:city":"Iba","addr:postcode":"2201"}],
+["w307154518",15.32593,119.96861,"ph",{"name":"Iba Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Iba","addr:province":"Zambales","addr:postcode":"2201","aeroway":"aerodrome","icao":"RPUI","aerodrome:type":"regional"}],
+["w427582674",15.32074,119.98754,"ph",{"name":"Santa Cecilia Medical Center","amenity":"hospital","addr:street":"J. P. Rizal Street","addr:city":"Iba","addr:province":"Zambales","addr:postcode":"2201"}],
+["w789122037",15.77497,119.91131,"ph",{"name":"Santa Cruz General Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w835048384",15.60628,119.9389,"ph",{"name":"Candelaria District Hospital","amenity":"hospital","healthcare":"hospital","operator":"Provincial Government of Zambales","operator:type":"government","addr:street":"Zambales Highway"}]]

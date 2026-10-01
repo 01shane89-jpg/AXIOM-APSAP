@@ -1,0 +1,6 @@
+[["n9551789247",-23.89316,-61.85634,"ar",{"name":"Hospital Ingeniero Juárez Eva Perón","amenity":"hospital","healthcare":"hospital","addr:street":"Cornelio Saavedra","addr:city":"Ingeniero Guillermo N. Juárez","addr:postcode":"3636"}],
+["n9553887018",-23.91365,-61.82015,"ar",{"name":"Aeródromo de Ingeniero Juárez","aeroway":"aerodrome"}],
+["w1296077915",-23.20127,-61.75695,"ar",{"aeroway":"aerodrome"}],
+["w165377226",-23.98851,-60.45838,"ar",{"aeroway":"helipad"}],
+["w165542896",-23.89781,-60.75645,"ar",{"aeroway":"helipad","surface":"unpaved"}],
+["w392170408",-23.89299,-61.85669,"ar",{"amenity":"hospital","healthcare":"hospital"}]]

@@ -1,0 +1,13 @@
+[["n2145147107",1.73053,128.00932,"id",{"name":"RS Bethesda","name:en":"Bethesda Hospital","amenity":"hospital","addr:street":"RS. Bethesda"}],
+["n2954444458",0.63091,128.43374,"id",{"name":"Postu Desa Loleolamo","amenity":"clinic"}],
+["n2955791823",0.63096,128.43183,"id",{"name":"Puskesmas Gotowasi","amenity":"clinic"}],
+["w1028274797",0.59124,128.5121,"id",{"name":"Pusat Kesehatan Masyarakat Bicoli","amenity":"hospital","healthcare":"hospital"}],
+["w1029337901",0.68593,128.29193,"id",{"name":"Rumah Sakit Daerah Kab. Halmahera Timur","amenity":"hospital","healthcare":"hospital"}],
+["w286552973",0.59577,128.47762,"id",{"name":"Pustu Desa Wacu","amenity":"clinic"}],
+["w291940781",0.63089,128.43368,"id",{"name":"Postu Desa Loleolamo","amenity":"clinic","operator:type":"government"}],
+["w291975497",0.59112,128.51199,"id",{"amenity":"hospital","healthcare":"hospital"}],
+["w291975502",0.59142,128.51203,"id",{"name":"puskesmas bicoli","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
+["w291975507",0.59118,128.51188,"id",{"amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
+["w292278731",0.70069,128.28515,"id",{"name":"puskesmas kota maba","amenity":"clinic","healthcare":"clinic","operator:type":"government"}],
+["w303136219",1.25037,128.1158,"id",{"name":"PUSKESMAS","amenity":"hospital"}],
+["w678961702",0.91719,128.38152,"id",{"name":"Bandar Udara Buli","name:en":"Buli Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAEM","iata":"PGQ","aerodrome:type":"regional"}]]

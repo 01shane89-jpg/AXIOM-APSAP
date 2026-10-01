@@ -1,0 +1,6 @@
+[["n1042058651",-47.71983,-65.9296,"ar",{"name":"Aeródromo Deseado Oeste - CLOSED","aeroway":"aerodrome"}],
+["n2969772492",-47.789,-65.92346,"ar",{"name":"Aeródromo Santa Elena","aeroway":"aerodrome"}],
+["w128436899",-47.75668,-65.89637,"ar",{"name":"Hospital Distrital Puerto Deseado","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","addr:full":"Almirante Brown Y Colon","addr:city":"Puerto Deseado","addr:postcode":"9050"}],
+["w1346008159",-47.74637,-65.88791,"ar",{"name":"Centro Asistencial","amenity":"hospital","healthcare":"hospital"}],
+["w1346183040",-47.74409,-65.88189,"ar",{"name":"Centro Periférico de Salud N°3","amenity":"clinic","healthcare":"yes"}],
+["w219721647",-47.73423,-65.90272,"ar",{"name":"Aeropuerto Puerto Deseado","name:en":"Puerto Deseado Airport","aeroway":"aerodrome","icao":"SAWD","iata":"PUD"}]]

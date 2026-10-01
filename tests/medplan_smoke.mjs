@@ -71,6 +71,21 @@ function iso(url) {
   const j = JSON.parse(new URL(url).searchParams.get("json")), c = j.locations[0], ring = (d) => [[c.lon - d, c.lat - d], [c.lon + d, c.lat - d], [c.lon + d, c.lat + d], [c.lon - d, c.lat + d], [c.lon - d, c.lat - d]];
   return { type: "FeatureCollection", features: j.contours.map((x) => ({ type: "Feature", properties: { contour: x.time }, geometry: { type: "Polygon", coordinates: [ring(x.time / 300)] } })) };
 }
+function vhMatrix(url) {
+  const j = JSON.parse(new URL(url).searchParams.get("json"));
+  return { sources_to_targets: [j.targets.map((t) => ({ time: secsTo(t.lon, t.lat), distance: secsTo(t.lon, t.lat) / 100 }))] };
+}
+/* a two-point Valhalla shape: polyline6 of [[lat, lon], [lat, lon]] */
+function enc6(pts) {
+  let out = "", pl = 0, pn = 0;
+  const one = (v) => { v = v < 0 ? ~(v << 1) : v << 1; let s = ""; while (v >= 0x20) { s += String.fromCharCode((0x20 | (v & 0x1f)) + 63); v >>= 5; } return s + String.fromCharCode(v + 63); };
+  for (const [la, lo] of pts) { const a = Math.round(la * 1e6), b = Math.round(lo * 1e6); out += one(a - pl) + one(b - pn); pl = a; pn = b; }
+  return out;
+}
+function vhRoute(url) {
+  const j = JSON.parse(new URL(url).searchParams.get("json")), a = j.locations[0], b = j.locations[1], d = secsTo(b.lon, b.lat);
+  return { trip: { summary: { time: d, length: d / 100 }, legs: [{ shape: enc6([[a.lat, a.lon], [b.lat, b.lon]]), maneuvers: [{ street_names: ["Valhalla Road"], length: 4 }, { street_names: [], length: 0.1 }] }] } };
+}
 const WD = { results: { bindings: [
   { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "191" }, u1Label: { value: "police" } },
   { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "1669" }, d: { value: "emergency medical services number in Thailand" } },
@@ -83,9 +98,15 @@ function meteo() {
     daily: { time: days, sunrise: days.map((d) => d + "T23:00"), sunset: days.map((d) => d + "T11:10"), precipitation_sum: [10, 8, 6, 0, 25, 0], wind_gusts_10m_max: [10, 10, 10, 12, 35, 10],
       apparent_temperature_max: [33, 33, 33, 36, 40, 31], apparent_temperature_min: [24, 24, 24, 25, 25, 24] } };
 }
-async function open(opts, overpassFails) {
+/* OSAP's stored copy (data/medfac) for the fixture: every element in one 2-degree tile, the countries in reach listed as built */
+const MF_ROWS = OSM.elements.map((e) => [e.type.charAt(0) + e.id, e.lat ?? e.center.lat, e.lon ?? e.center.lon, "th", e.tags]);
+const MF_ALL = ["th", "kh", "la", "mm", "vn", "my"];
+const mfIndex = (ccs) => ({ v: 1, tile: 2, countries: Object.fromEntries(ccs.map((c) => [c, { at: "2026-09-30T02:00:00Z", n: {}, tiles: ["12_100"] }])), tiles: { "12_100": MF_ROWS.length } });
+async function open(opts, o) {
+  o = typeof o === "object" ? o : { overpassFails: !!o };
+  const overpassFails = o.overpassFails;
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
-  const errors = [], calls = { overpass: 0, overpassX: 0, osrm: 0, route: 0, meteo: 0, wd: 0, iso: 0 };
+  const errors = [], calls = { overpass: 0, overpassX: 0, osrm: 0, route: 0, meteo: 0, wd: 0, iso: 0, vhm: 0, vhr: 0, medfac: 0 };
   const J = (r, b) => r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(b) });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
@@ -94,12 +115,22 @@ async function open(opts, overpassFails) {
       if (x) { calls.overpassX++; return J(r, OSMX); }
       calls.overpass++; return overpassFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSM);
     }
-    if (/\/table\/v1\//.test(u)) { calls.osrm++; return J(r, osrm(u)); }
-    if (/\/route\/v1\//.test(u)) { calls.route++; return J(r, osrmRoute(u)); }
+    if (/\/table\/v1\//.test(u)) { calls.osrm++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrm(u)); }
+    if (/\/route\/v1\//.test(u)) { calls.route++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrmRoute(u)); }
+    if (/valhalla.*sources_to_targets/.test(u)) { calls.vhm++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhMatrix(u)); }
+    if (/valhalla.*\/route\?/.test(u)) { calls.vhr++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla/.test(u)) { calls.iso++; return J(r, iso(u)); }
     if (/query\.wikidata\.org/.test(u)) { calls.wd++; return J(r, WD); }
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u)) { if (/hourly=visibility,wind_gusts_10m,cloud_cover_low/.test(u)) calls.meteo++; return J(r, meteo()); }
     return r.abort();
+  });
+  await ctx.route(/\/data\/medfac\//, (r) => {
+    calls.medfac++;
+    const u = r.request().url();
+    if (!o.medfac) return r.fulfill({ status: 404, body: "" });
+    if (/index\.json/.test(u)) return J(r, mfIndex(o.medfac));
+    if (/t\/12_100\.json/.test(u)) return J(r, MF_ROWS);
+    return r.fulfill({ status: 404, body: "" });
   });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -147,17 +178,18 @@ async function openPlan(p) {
   await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 10000 });
   const fac = await p.textContent("#mp-fac");
   const order = (await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr td:nth-child(2) b")].map((x) => x.textContent)));
-  ok(order.join("|") === "Trauma Test Hospital|Sourced Trauma Centre|Far North Hospital|Near Hospital", "desktop: hospitals ranked by capability, then drive time: " + order.join(", "));
-  ok(await p.evaluate(() => /Most capable/.test(document.querySelector("#mp-fac tbody tr td:nth-child(2)").textContent)), "desktop: the first hospital is marked Most capable");
-  ok(/Trauma centre \(sourced\)/.test(fac) && /Level 1 trauma centre \(test\)/.test(fac) && await p.evaluate(() => [...document.querySelectorAll("#mp-fac a")].some((a) => a.href === "https://example.org/trauma")), "desktop: a stated trauma designation shows with its source link");
-  ok(/Trauma speciality listed/.test(fac), "desktop: an OSM trauma speciality counts as stated, linked to OSM");
-  ok(/Medium \(estimated\)/.test(fac) && /Estimated from: emergency department, 300 beds/.test(fac), "desktop: other hospitals rated as estimates with the reasons shown");
+  ok(order.join("|") === "Sourced Trauma Centre|Trauma Test Hospital|Far North Hospital|Near Hospital", "desktop: hospitals ranked by capability, then drive time: " + order.join(", "));
+  ok(await p.evaluate(() => /Primary/.test(document.querySelector("#mp-fac tbody tr td:nth-child(2)").textContent)), "desktop: the first hospital is marked Primary");
+  ok(/Trauma level 1 \(sourced\)/.test(fac) && /Level 1 trauma centre \(test\)/.test(fac) && await p.evaluate(() => [...document.querySelectorAll("#mp-fac a")].some((a) => a.href === "https://example.org/trauma")), "desktop: a stated trauma level shows as stated, with its source link");
+  ok(/Role 3 equivalent \(estimated\)/.test(fac) && /Role 2 equivalent \(estimated\)/.test(fac) && /Role 1 equivalent \(estimated\)/.test(fac), "desktop: other hospitals get a Role 1, 2 or 3 equivalent, labelled estimated");
+  ok(!/(Basic|Medium|High) \(estimated\)/.test(fac) && !/Not known: no services listed/.test(fac), "desktop: no Low, Medium or High ratings");
+  ok(/Estimated from: emergency department, 300 beds/.test(fac), "desktop: the services behind each estimate are shown");
+  ok(await p.evaluate(() => [...document.querySelectorAll("#mp-fac .mptier")].every((t) => /Role 1: first aid/.test(t.title))), "desktop: each level label explains the Role rule");
   ok(/24-hour emergency \(Test wiki\)/.test(fac), "desktop: an OSM hospital is matched to its sourced record");
-  ok(!/Role [1-4]\b/.test(fac), "desktop: no military Role designation is invented for a civilian hospital");
   ok(/10 min/.test(fac) && /25 min/.test(fac), "desktop: drive times shown (10 min, 25 min)");
   ok(/Near Hospital \(โรงพยาบาลใกล้\)/.test(fac) && order.length === 4, "desktop: a hospital mapped twice in OSM is listed once, with its other name");
   const gh = await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr")].map((r) => (r.querySelector(".mpgh") || {}).textContent || ""));
-  ok(gh[0] === "Beyond golden hour" && gh[1] === "Inside golden hour" && gh[2] === "Inside golden hour", "desktop: golden-hour badges from treat-and-load plus drive: " + gh.join(", "));
+  ok(gh[0] === "Inside golden hour" && gh[1] === "Beyond golden hour" && gh[2] === "Inside golden hour", "desktop: golden-hour badges from treat-and-load plus drive: " + gh.join(", "));
   ok(/Helipad on site/.test(fac) || /helipad on site/.test(fac), "desktop: a helipad next to a hospital counts");
   ok(/47P [A-Z]{2} \d{4} \d{4}/.test(fac), "desktop: facilities carry MGRS grids");
   ok(/name withheld/.test(fac) && !/Somchai/.test(await p.textContent("#medplan")) && !/777 8888/.test(await p.innerHTML("#medplan")), "desktop: a clinic named after a doctor is withheld, with its phone");
@@ -166,16 +198,21 @@ async function openPlan(p) {
   ok(/listed in OpenStreetMap/.test(fac), "desktop: each published number says where it is listed");
   ok(/flight|kn/i.test(fac) && /at 120 kn/.test(fac), "desktop: flight time from the POI at the stated cruise speed");
   const rt = await p.textContent("#mp-rt");
-  ok(/Route 1: to H1 Trauma Test Hospital/.test(rt) && /Most capable inside the golden hour/.test(rt) && /Nearest by road/.test(rt), "desktop: routes to the most capable, the best inside the golden hour and the nearest");
+  ok(/Primary: H1 Sourced Trauma Centre/.test(rt) && /Secondary: H2 Trauma Test Hospital/.test(rt) && /Tertiary: H3 Far North Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
+  const pst = await p.textContent("#mp-pst");
+  ok(/Primary\s*H1 Sourced Trauma Centre/.test(pst) && /Secondary\s*H2 Trauma Test Hospital/.test(pst) && /Tertiary\s*H3 Far North Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
+  ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); most capable inside the golden hour/.test(pst) && /onward transfer|nothing more capable/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
+  ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
-  ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green outline/.test(ghs), "desktop: golden-hour section states its thresholds and the drawn reach");
+  ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green 30 minutes/.test(ghs) && /light blue ring/.test(ghs), "desktop: golden-hour section states its thresholds, the road reach and the air rings");
   const ems = await p.textContent("#mp-ems");
   ok(/1669: emergency medical services number in Thailand/.test(ems) && (await p.$$eval("#mp-ems li", (l) => l.map((x) => x.textContent))).includes("199") && !/Q12345/.test(ems) && /191: police/.test(ems) && ems.indexOf("1669") < ems.indexOf("191"), "desktop: local emergency numbers, ambulance first");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-ems a")].some((a) => a.href === "https://www.wikidata.org/wiki/Q869#P2852")), "desktop: emergency numbers link to their Wikidata source");
   ok(/City Ambulance Station/.test(ems) && /111 2222/.test(ems), "desktop: ambulance stations near the POI with their published phone");
   const mev = await p.textContent("#mp-mev");
   ok(/Test Air Rescue/.test(mev) && /555 0100/.test(mev) && /to the POI at 120 kn/.test(mev), "desktop: air rescue base with phone and flight time to the POI");
+  ok(/International SOS assistance centre, Bangkok/.test(mev) && /\+66 2 206 7777/.test(mev) && /read 2026-10-01/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => a.href === "https://www.internationalsos.com/assistance-centres")) && /International SOS assistance centres/.test(await p.textContent("#mp-src")), "desktop: the nearest International SOS assistance centres show with their published numbers and source");
   ok(/launch, fly in, 10 min on the ground, fly to H1/.test(mev) && /(Inside|Beyond) golden hour|golden-hour limit/.test(mev), "desktop: medevac call-to-hospital time against the golden hour");
   const air = await p.textContent("#mp-air");
   ok(/Riverside Pad/.test(air) && /Test Airfield/.test(air) && /VTXX/.test(air), "desktop: helipads and airfields listed with ICAO code");
@@ -185,11 +222,22 @@ async function openPlan(p) {
   ok(/low cloud cover up to 95%/.test(wx), "desktop: low cloud flag");
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
-  ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
   ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 12), "desktop: numbered marks on the map (centre, 4 hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base)");
-  const lines = () => p.evaluate(() => { let r = 0, g = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#1d5fa8/.test(l.options.color)) r++; }); return { r, g }; });
+  const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
   const ln = await lines();
-  ok(ln.r === 3 && ln.g === 2, "desktop: three routes and two golden-hour outlines drawn on the map " + JSON.stringify(ln));
+  ok(ln.r === 3 && ln.g === 2 && ln.a === 2, "desktop: three routes, two road-reach outlines and two air rings drawn on the map " + JSON.stringify(ln));
+  await p.uncheck('#mp-gh [data-mp-opt="ar"]'); await p.waitForTimeout(200);
+  const ln2 = await lines();
+  await p.uncheck('#mp-gh [data-mp-opt="gr"]'); await p.waitForTimeout(200);
+  const ln3 = await lines();
+  ok(ln2.a === 0 && ln2.g === 2 && ln3.g === 0 && ln3.r === 3, "desktop: air and ground rings switch off separately " + JSON.stringify([ln2, ln3]));
+  await p.check('#mp-gh [data-mp-opt="ar"]'); await p.check('#mp-gh [data-mp-opt="gr"]'); await p.waitForTimeout(200);
+  ok(JSON.stringify(await lines()) === JSON.stringify(ln), "desktop: and back on");
+  await p.uncheck('#mp-gh [data-mp-opt="air"]'); await p.waitForTimeout(300);
+  ok(/by road/.test(await p.textContent("#mp-pst")) && !/by air/.test(await p.textContent("#mp-pst")), "desktop: with air evacuation off, the picks use road time only");
+  await p.check('#mp-gh [data-mp-opt="air"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => /Automatic draft/.test(document.querySelector("#medplan .mphead").textContent) && !/AI generated/.test(document.getElementById("medplan").textContent)), "desktop: labelled Automatic draft, no AI tag");
   ok(/published numbers of institutions/.test(await p.textContent("#medplan")), "desktop: the plan says how phone numbers are sourced");
   await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("mp-fp") || {}).textContent || ""), null, { timeout: 5000 }).catch(() => {});
@@ -202,6 +250,7 @@ async function openPlan(p) {
   await p.waitForFunction(() => /D1/.test(document.getElementById("mp-oc").textContent) && /Road route to P1/.test(document.getElementById("mp-oc").textContent), null, { timeout: 15000 });
   const oc = await p.textContent("#mp-oc");
   ok(/Test International/.test(oc) && /VTTT \/ TTT/.test(oc) && /30 min/.test(oc), "out of country: departure airport with drive time");
+  ok(/International SOS assistance centre, (Bangkok|Kuala Lumpur|Singapore)/.test(oc), "out of country: International SOS assistance centres listed with the emergency contacts");
   ok(/Receiving hospitals in nearby countries/.test(oc) && await p.evaluate(() => document.querySelectorAll("#mp-oc tbody tr").length >= 2), "out of country: sourced hospitals in nearby countries");
   ok(/at 250 kn \+ 15 min launch/.test(oc), "out of country: flight times state the speed and launch time");
   ok(/U\.S\. Embassy Bangkok/.test(oc) && /205 4000/.test(oc) && /1-888-407-4747/.test(oc) && /\+1 202-501-4444/.test(oc) && /travel\.state\.gov/.test(oc), "out of country: embassy address and phone, State Department emergency numbers with source");
@@ -236,18 +285,27 @@ async function openPlan(p) {
   await p.waitForFunction(() => /Centred on Casualty collection point/.test(document.getElementById("medplan").textContent) && document.querySelector("#mp-fac table"), null, { timeout: 10000 });
   ok(calls.osrm > before, "desktop: drive times recomputed from the CCP");
   ok(await p.inputValue("#mpf-unit") === "Test element", "desktop: fields survive a new centre");
-  // Print prints only the plan
-  const pr = await p.evaluate(() => new Promise((res) => { window.print = () => res(document.documentElement.classList.contains("medprint")); document.querySelector('#medplan [data-mp="print"]').click(); }));
-  ok(pr, "desktop: Print marks the page so only the plan prints");
+  // Print view: every page, with the map, then Print
+  await p.click('#medplan [data-mp="print"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+  const pv = await p.evaluate(() => { const b = document.getElementById("brief"), d = b.querySelector(".mpdoc"); return { shown: !b.hidden && document.documentElement.classList.contains("briefing"), t: d.textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpd-map").naturalWidth }; });
+  ok(pv.shown && pv.w >= 1000, "print view: opens with a drawn map " + pv.w);
+  ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
+  ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
+  const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
+  ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
-  await p.evaluate(() => document.documentElement.classList.add("medprint"));
-  ok(await p.evaluate(() => [...document.body.children].every((e) => e.id === "medplan" || getComputedStyle(e).display === "none") && getComputedStyle(document.getElementById("medplan")).display !== "none" && getComputedStyle(document.querySelector('#medplan [data-mp="print"]')).display === "none"), "desktop: in print only the plan shows, without its buttons");
-  if (OUT) await p.screenshot({ path: OUT + "/print.png", fullPage: true });
-  if (OUT) await p.pdf({ path: OUT + "/medplan.pdf", format: "A4", margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" } });
-  await p.evaluate(() => document.documentElement.classList.remove("medprint")); await p.emulateMedia({ media: "screen" });
+  ok(await p.evaluate(() => [...document.body.children].every((e) => e.id === "brief" || getComputedStyle(e).display === "none") && getComputedStyle(document.getElementById("mpd-print").parentElement).display === "none"), "print view: in print only the plan pages show, without the bar");
+  if (OUT) { const pdf = await p.pdf({ path: OUT + "/medplan.pdf", format: "A4", margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" } }); console.log("pdf pages: " + (pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length); }
+  const pages = (( await p.pdf({ format: "A4" })).toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+  ok(pages >= 3, "print view: the plan prints on several pages, not one (" + pages + ")");
+  await p.emulateMedia({ media: "screen" });
+  if (OUT) await p.screenshot({ path: OUT + "/print-view.png", fullPage: true });
+  await p.click("#mpd-close");
+  ok(await p.evaluate(() => document.getElementById("brief").hidden && !document.getElementById("medplan").hidden), "print view: Back returns to the plan");
   if (OUT) await p.screenshot({ path: OUT + "/desk-plan.png" });
   await p.click('#medplan [data-mp="close"]');
-  ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && (await lines()).r === 0 && (await lines()).g === 0, "desktop: Close hides the plan and takes the marks, routes and outlines off the map");
+  ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && JSON.stringify(await lines()) === '{"r":0,"g":0,"a":0}', "desktop: Close hides the plan and takes the marks, routes, outlines and rings off the map");
   ok(!errors.length, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -259,7 +317,7 @@ async function openPlan(p) {
   await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
   await p.waitForFunction(() => /could not be reached/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 20000 });
   ok(/Try again/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down says so and offers Try again");
-  ok(/Sourced Trauma Centre/.test(await p.textContent("#mp-fac")) && /only OSAP's sourced hospitals/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down still lists OSAP's sourced hospitals, and says that is all");
+  ok(/Sourced Trauma Centre/.test(await p.textContent("#mp-fac")) && /only OSAP's researched hospitals/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down still lists OSAP's sourced hospitals, and says that is all");
   await p.waitForFunction(() => /Sourced Trauma Centre/.test((document.getElementById("mp-rt") || {}).textContent || "") && /min/.test(document.getElementById("mp-rt").textContent), null, { timeout: 15000 });
   ok(true, "phone: routes are still planned to the sourced hospitals");
   await p.waitForFunction(() => document.querySelector("#mp-wx table"), null, { timeout: 10000 });
@@ -269,6 +327,88 @@ async function openPlan(p) {
   ok(await p.evaluate(() => document.getElementById("medplan").scrollWidth <= window.innerWidth + 1 && document.querySelector("#medplan .mpbox").getBoundingClientRect().width <= window.innerWidth), "phone: the plan fits the screen width");
   if (OUT) await p.screenshot({ path: OUT + "/phone-plan.png" });
   ok(!errors.length, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- OSAP's stored copy covers the area: Overpass is not asked, and when it is down the plan still lists hospitals ----------
+{
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: MF_ALL });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"); return t && /min/.test(document.getElementById("mp-fac").textContent); }, null, { timeout: 20000 });
+  const fac = await p.textContent("#mp-fac");
+  ok(/Sourced Trauma Centre/.test(fac) && /Far North Hospital/.test(fac) && /Trauma Test Hospital/.test(fac) && /Community Health Centre 7/.test(fac), "stored: hospitals and clinics from the stored copy");
+  ok(/From OSAP's stored copy of OpenStreetMap \(2026-09-30\)/.test(fac) && !/could not be reached/.test(fac), "stored: says where the list came from, with its date");
+  ok(calls.overpass === 0, "stored: Overpass is not asked when the stored copy covers every country in reach (" + calls.overpass + ")");
+  ok(/name withheld/.test(fac) && !/Somchai/.test(await p.textContent("#medplan")), "stored: the doctor-named clinic stays withheld");
+  ok(await p.evaluate(() => !!document.querySelector('#mp-fac [data-mp="live"]')), "stored: offers a live OpenStreetMap check");
+  await p.click('#mp-fac [data-mp="live"]');
+  await p.waitForFunction(() => /could not be reached/.test(document.getElementById("mp-fac").textContent) && document.querySelector("#mp-fac table"), null, { timeout: 20000 });
+  ok(calls.overpass >= 1 && /Far North Hospital/.test(await p.textContent("#mp-fac")) && /stored copy/.test(await p.textContent("#mp-fac")), "stored: a failed live check keeps the stored list and says so " + calls.overpass + " " + (await p.textContent("#mp-fac")).slice(0, 300));
+  ok(!errors.length, "stored: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: ["kh"] });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => /does not yet cover/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 25000 });
+  const fac = await p.textContent("#mp-fac");
+  ok(/Far North Hospital/.test(fac) && /does not yet cover Thailand: facilities there are missing/.test(fac) && !/Laos|Myanmar/.test(fac) && !/No hospital/.test(fac), "stored, partly: lists the stored hospitals and names the countries not yet stored: " + fac.slice(0, 400));
+  ok(calls.overpass >= 1, "stored, partly: Overpass is asked for the rest");
+  const cn = await p.evaluate(() => [window.OSAP_MEDPLAN._ccNear([15.89442, 100.11841], 150000).map((c) => c.id), window.OSAP_MEDPLAN._ccNear([18.8, 100.8], 150000).map((c) => c.id)]);
+  ok(cn[0].includes("th") && !cn[0].includes("la") && cn[1].includes("la"), "stored, partly: countries in reach follow their borders, not bounding boxes (Nakhon Sawan " + cn[0] + "; Nan " + cn[1] + ")");
+  ok(!errors.length, "stored, partly: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- print view on an iPhone-sized screen: the plan is one long page the phone prints in full ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }, { medfac: MF_ALL });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await p.evaluate(() => { const b = document.getElementById("atk-tools"); if (b && b.classList.contains("folded")) b.querySelector('[data-atk="fold"]').click(); });
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 25000 });
+  await p.click('#medplan [data-mp="print"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+  await p.waitForTimeout(300);
+  const ph = await p.evaluate(() => ({ flow: getComputedStyle(document.getElementById("brief")).position, h: document.documentElement.scrollHeight, vh: innerHeight, w: document.querySelector(".mpdoc").getBoundingClientRect().width, vw: innerWidth,
+    img: document.getElementById("mpd-map").getBoundingClientRect().width, plan: getComputedStyle(document.getElementById("medplan")).display }));
+  ok(ph.flow !== "fixed" && ph.h > 4 * ph.vh && ph.plan === "none", "phone print view: the plan is the page itself, in normal flow, so iPhone prints every page " + JSON.stringify(ph));
+  ok(ph.w <= ph.vw && ph.img > 300 && ph.img <= ph.vw, "phone print view: fits the screen, map across the width");
+  if (OUT) await p.screenshot({ path: OUT + "/phone-print-view.png", fullPage: true });
+  ok(!errors.length, "phone print view: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- road routing falls back to Valhalla, then to a labelled estimate ----------
+{
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, medfac: MF_ALL });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => /answered by valhalla1/.test((document.getElementById("mp-src") || {}).textContent || "") && /Valhalla Road/.test(document.getElementById("mp-rt").textContent), null, { timeout: 30000 });
+  ok(/10 min/.test(await p.textContent("#mp-fac")) && calls.vhm === 1 && calls.vhr === 3, "routing: OSRM down, Valhalla gives drive times and routes " + JSON.stringify(calls));
+  ok(!errors.length, "routing: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, vhFails: true, medfac: MF_ALL });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => /\(estimate\)/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 40000 });
+  const fac = await p.textContent("#mp-fac");
+  ok(/No road router answered/.test(fac) && /straight line × 1\.4 at 50 km\/h/.test(fac) && /golden hour/i.test(fac), "routing: no router at all gives labelled estimates and golden-hour badges");
+  ok(/Primary/.test(await p.textContent("#mp-pst")), "routing: the picks still stand on estimated times");
+  ok(!errors.length, "routing estimate: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- every source down: the plan never says there is no hospital ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true });
+  await p.evaluate(() => { const s = window.ASAP_SOF[window.TSAP.areaApi.cc || "th"]; s.hospitals = []; });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await p.waitForFunction(() => /lookup failed/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 30000 });
+  const t = await p.textContent("#medplan");
+  ok(/does not mean there is no hospital/.test(t) && !/No hospital within/.test(t) && /No routes: the hospital lookup failed/.test(t), "all down: says the lookup failed, never that there is no hospital");
+  ok(!errors.length, "all down: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- rule helpers ----------
@@ -283,14 +423,26 @@ async function openPlan(p) {
     h: M._wxFlags({ vis: 5000, gust: 12, lc: 10, rain: 1, hi: 25, lo: 10 }).length,
     i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
     k: M._golden(45 * 60).c + M._golden(55 * 60).c + M._golden(61 * 60).c, l: Math.round(M._flightS(222240, 120) / 60),
-    m: M._phoneOf({ phone: "+66 2 123 4567;+66 2 765 4321" }), n: M._phoneOf({ phone: "call us" }), o: M._webOf({ website: "javascript:alert(1)" }), q: M._webOf({ website: "www.x.org" }) }; });
+    m: M._phoneOf({ phone: "+66 2 123 4567;+66 2 765 4321" }), n: M._phoneOf({ phone: "call us" }), o: M._webOf({ website: "javascript:alert(1)" }), q: M._webOf({ website: "www.x.org" }),
+    r1: M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).tier, r2: M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).tier,
+    r3: M._capability({ name: "C", lat: 0, lon: 0, er: "yes" }, []).tier, r4: M._capability({ name: "D", lat: 0, lon: 0, specRaw: "surgery;intensive_care" }, []).tier,
+    r5: M._tierLabel(M._capability({ name: "E", lat: 0, lon: 0, sofRec: { trauma_level: "Level II trauma center (ACS)", src: "x" } }, [])), r6: M._tierLabel(M._capability({ name: "F", lat: 0, lon: 0, sofRec: { trauma_level: "Major Trauma Centre (NSW)", src: "x" } }, [])),
+    tk: M._tileKeys([13.75, 100.5], 50000), tk2: M._tileKeys([0.5, 179.5], 100000), p6: M._poly6("_izlhA~rlgdF_{geCn{s|J"),
+    wh: M._facName({ "osap:withheld": "1" }, "clinic"),
+    hc: M._sortOsm([{ type: "node", id: 1, lat: 0, lon: 0, tags: { amenity: "hospital", name: "Ban Test Health Center" } }, { type: "node", id: 2, lat: 0.01, lon: 0, tags: { amenity: "hospital", name: "\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25\u0e2a\u0e48\u0e07\u0e40\u0e2a\u0e23\u0e34\u0e21\u0e2a\u0e38\u0e02\u0e20\u0e32\u0e1e\u0e15\u0e33\u0e1a\u0e25 X" } }], [0, 0]) }; });
   ok(/withheld/.test(r.a) && /withheld/.test(r.b) && r.c === "Bangkok Hospital" && r.d === "Hospital Drive Clinic", "rules: doctor-named clinics withheld, others kept");
   ok(r.e && r.e[0] === 13.75 && r.f && Math.abs(r.f[0] - 13.7) < 1 && r.g === null, "rules: grids parse from lat, lon and MGRS; nonsense does not");
   ok(r.h === 0, "rules: calm weather raises no flags");
-  ok(r.i === 3 && r.j === 0, "rules: emergency dept + helipad + 600 beds rate High (estimated); nothing listed rates Not known");
+  ok(r.i === 3 && r.j === 0, "rules: emergency dept + 600 beds is a Role 3 equivalent; nothing listed is level not known");
   ok(r.k === "gar", "rules: golden hour inside up to 50 min, at the limit to 60, beyond after");
   ok(r.l === 60, "rules: 120 nautical miles at 120 kn is 60 minutes");
   ok(r.m === "+66 2 123 4567" && r.n === "" && r.o === "" && r.q === "https://www.x.org", "rules: only well-formed phones and web links are shown");
+  ok(r.r1 === 2 && r.r2 === 2 && r.r3 === 1 && r.r4 === 3, "rules: surgery is Role 2, ED + 100 beds Role 2, ED alone Role 1, surgery + intensive care Role 3 " + [r.r1, r.r2, r.r3, r.r4]);
+  ok(r.r5 === "Trauma level 2 (sourced)" && r.r6 === "Trauma centre (sourced)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
+  ok(r.tk.includes("12_100") && r.tk2.includes("0_178") && r.tk2.includes("0_-180"), "rules: stored-copy tiles cover the reach, across the date line " + r.tk2.join(" "));
+  ok(r.p6.length === 2 && Math.abs(r.p6[0][0] - 38.5) < 1e-6 && Math.abs(r.p6[1][1] + 126.453) < 1e-6, "rules: Valhalla route shapes decode " + JSON.stringify(r.p6));
+  ok(/withheld/.test(r.wh), "rules: a clinic withheld in the stored copy stays withheld");
+  ok(r.hc.H.length === 0 && r.hc.nC === 2, "rules: health centres and health-promoting hospitals mapped as hospitals count as clinics");
   await ctx.close();
 }
 await browser.close(); server.close();

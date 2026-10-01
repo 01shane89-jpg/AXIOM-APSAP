@@ -1,0 +1,13 @@
+[["n10241259117",-31.20323,121.66703,"au",{"emergency":"ambulance_station","operator":"St John Ambulance WA"}],
+["n10242355780",-30.95995,121.16499,"au",{"name":"Harry J,Ware Ambulance Depot","emergency":"ambulance_station","operator":"St John Ambulance WA"}],
+["n1042093476",-30.11895,120.5775,"au",{"name":"Callion Airport","aeroway":"aerodrome"}],
+["n1042093528",-30.89786,121.19637,"au",{"name":"Coolgardie Airport","aeroway":"aerodrome","icao":"YCLG"}],
+["n1123244622",-30.96004,121.1645,"au",{"name":"Coolgardie Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["n11917334269",-30.74795,121.47329,"au",{"name":"Goldfields Chiropractic & Healing Centre","amenity":"clinic","phone":"+61 8 9091 5667","website":"https://goldfieldschiropractic.com.au/","addr:housenumber":"130","addr:street":"Egan Street","addr:postcode":"6430"}],
+["n12895348018",-30.76946,120.30638,"au",{"name":"East Jaurdi Airport","aeroway":"aerodrome","icao":"YEJI"}],
+["w157188116",-31.19093,121.59808,"au",{"name":"Kambalda Airport","aeroway":"aerodrome","icao":"YKBL","iata":"KDB"}],
+["w207396963",-30.78759,121.46091,"au",{"name":"Kalgoorlie-Boulder Airport","operator":"City of Kalgoorlie-Boulder","contact:website":"http://www.kalbould.wa.gov.au/","aeroway":"aerodrome","icao":"YPKG","iata":"KGI","aerodrome:type":"public"}],
+["w223117302",-30.74094,121.4704,"au",{"name":"Kalgoorlie Regional Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"WA Country Health Service","operator:type":"government","addr:street":"Piccadilly Street"}],
+["w353631374",-30.78157,121.48944,"au",{"name":"Boulder Medical Centre","amenity":"clinic","healthcare":"clinic","phone":"+61 8 9093 1044","addr:housenumber":"49","addr:street":"Burt Street","addr:postcode":"6432"}],
+["w426111600",-30.19594,121.42165,"au",{"aeroway":"helipad"}],
+["w426111603",-30.41019,121.45478,"au",{"aeroway":"helipad"}]]

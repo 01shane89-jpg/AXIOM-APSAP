@@ -1,0 +1,6 @@
+[["n1477783248",2.81802,104.15826,"my",{"name":"Tioman Clinic","name:en":"Tioman Clinic","amenity":"hospital","healthcare":"hospital","phone":"094191880"}],
+["n2510091191",2.71937,104.17855,"my",{"emergency":"ambulance_station"}],
+["n2987177177",2.76158,104.12308,"my",{"amenity":"clinic","healthcare":"clinic"}],
+["w23155281",2.81797,104.15997,"my",{"name":"Lapangan Terbang Tioman","name:en":"Tioman Airport","operator":"Malaysia Airports Berhad","phone":"010-265 5915","aeroway":"aerodrome","icao":"WMBT","iata":"TOD"}],
+["w673814645",2.96381,105.75364,"id",{"name":"Bandar Udara Letung","name:en":"Letung Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WIDL","iata":"LMU","aerodrome:type":"regional"}],
+["w676725382",2.99212,105.7018,"id",{"name":"Puskesmas","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"Geografiunp Anak pak indra yani","operator:type":"government","addr:housenumber":"1","addr:street":"Jalan Muhammad Said","addr:city":"letung"}]]

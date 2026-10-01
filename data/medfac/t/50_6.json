@@ -1,0 +1,13 @@
+[["n1042032020",50.48374,6.18174,"be",{"name":"Elsenborn Air Base","aeroway":"aerodrome","icao":"EBLB"}],
+["n3124090479",50.42629,6.02401,"be",{"name":"PIT","emergency":"ambulance_station"}],
+["n5038588827",50.40556,6.25182,"be",{"name":"Belgisches Rotes Kreuz - Rettungsdienst Büllingen","emergency":"ambulance_station","operator":"Belgisches Rotes Kreuz","addr:housenumber":"5","addr:street":"Malmedyer Straße","addr:city":"Büllingen","addr:postcode":"4760"}],
+["n9825429745",50.67158,6.07511,"be",{"name":"Medizinisches Zentrum Merols","amenity":"clinic","healthcare":"clinic","phone":"+32 87 31 18 52"}],
+["w1233256738",50.62597,6.04359,"be",{"name":"Feuerwehr & Rettungsdienst Eupen","amenity":"fire_station","emergency":"ambulance_station","operator":"Hilfeleistungszone DG","operator:type":"emergency_zone","addr:housenumber":"9C","addr:street":"Kehrweg","addr:city":"Eupen","addr:postcode":"4700"}],
+["w1394138798",50.62951,6.02817,"be",{"name":"Terrain d’atterrissage d’hélico CMH","website":"https://www.c-m-h.be","aeroway":"helipad","surface":"grass"}],
+["w237722672",50.41436,6.27672,"be",{"name":"Flugplatz Büllingen - Club Feuervogel","aeroway":"aerodrome","icao":"EBBN"}],
+["w300753949",50.42629,6.02396,"be",{"name":"Centre Hospitalier Reine Astrid Malmedy","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","phone":"+32 80 79 31 11","addr:housenumber":"2","addr:street":"Rue Devant les Religieuses","addr:city":"Malmedy"}],
+["w300835466",50.27711,6.12735,"be",{"name":"Klinik St Josef","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","website":"https://www.klinik.be/","addr:housenumber":"9","addr:street":"Klosterstraße","addr:city":"Sankt Vith"}],
+["w353407559",50.28911,6.26305,"be",{"aeroway":"helipad"}],
+["w664386184",50.27526,6.12548,"be",{"aeroway":"helipad"}],
+["w785907726",50.6283,6.02935,"be",{"name":"Sankt Nikolaus-Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","phone":"+32 87 59 95 99","website":"http://www.hospital-eupen.be/","addr:housenumber":"4-8","addr:street":"Hufengasse","addr:city":"Eupen","addr:postcode":"4700"}],
+["w99204567",50.71265,6.01918,"be",{"name":"Feuerwehr und Rettungsdienst Kelmis","amenity":"fire_station","emergency":"ambulance_station","operator":"Hilfeleistungszone DG","operator:type":"emergency_zone","addr:housenumber":"108","addr:street":"Altenberger Straße","addr:city":"Kelmis - Hergenrath","addr:postcode":"4728"}]]

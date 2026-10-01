@@ -1,0 +1,6 @@
+[["n7175082772",-0.63445,127.52597,"id",{"name":"Rumah Sakit Marabose","amenity":"hospital","healthcare":"hospital"}],
+["w1282849234",-1.34813,127.64283,"id",{"amenity":"hospital","healthcare":"hospital"}],
+["w1305759722",-0.65047,127.49169,"id",{"name":"Posyandu","amenity":"clinic"}],
+["w196851604",-0.63359,127.50535,"id",{"name":"Bandar Udara Oesman Sadik","name:en":"Oesman Sadik Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAEL","iata":"LAH","aerodrome:type":"regional"}],
+["w291217923",-0.66323,127.26435,"id",{"name":"Puskesmas Desa Pelita","amenity":"hospital"}],
+["w291217930",-0.66375,127.26423,"id",{"name":"Puskesmas Desa Pelita","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}]]

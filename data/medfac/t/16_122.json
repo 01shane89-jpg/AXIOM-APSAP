@@ -1,0 +1,9 @@
+[["n5111354851",17.74618,122.26918,"ph",{"name":"GOMEZ-HEMADY CLINIC","amenity":"clinic","phone":"7757350","addr:housenumber":"32","addr:postcode":"1631"}],
+["n5922177189",17.06509,122.42539,"ph",{"name":"Palanan Station Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;paediatrics;surgery;gynaecology","emergency":"yes","operator":"Provincial Government of sabela","operator:type":"public","website":"https://www.provinceofisabela.ph/index.php/using-joomla/extensions/components/content-component/article-categories/303-palanan-station-hospital"}],
+["r18064836",16.5233,122.2586,"ph",{"name":"Dinapigue Hospital","amenity":"hospital"}],
+["r18064839",16.52146,122.26441,"ph",{"aeroway":"aerodrome"}],
+["w237079020",16.1937,122.06446,"ph",{"name":"Casiguran Airport","addr:city":"Casiguran","addr:postcode":"3204","aeroway":"aerodrome","iata":"CGG"}],
+["w400116206",17.06574,122.42774,"ph",{"name":"Palanan Airport","name:en":"Palanan Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Palanan","addr:postcode":"3334","aeroway":"aerodrome","icao":"RPLN","aerodrome:type":"public"}],
+["w403828078",16.27473,122.11732,"ph",{"name":"Casiguran District Hospital","amenity":"hospital","website":"https://www.facebook.com/profile.php?id=100077888066935"}],
+["w628384694",16.98387,122.00105,"ph",{"name":"San Mariano Community Hospital","amenity":"hospital","addr:street":"Naguilian-San Mariano-Palanan Road"}],
+["w812765116",17.38299,122.24792,"ph",{"name":"Maconacon Airport","name:en":"Maconacon Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Maconacon","addr:postcode":"3333","aeroway":"aerodrome","aerodrome:type":"public"}]]

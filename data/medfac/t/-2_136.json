@@ -1,0 +1,9 @@
+[["n13985966302",-1.84605,136.98861,"id",{"name":"Puskesmas Kurudu","official_name":"Pusat Kesehatan Masyarakat Kurudu","amenity":"clinic","addr:city":"Kepulauan Yapen","addr:province":"Papua"}],
+["n2069845109",-1.07671,136.38603,"id",{"aeroway":"helipad"}],
+["n4746303461",-1.18429,136.08478,"id",{"name":"BP Elisabeth","amenity":"clinic"}],
+["w1112725715",-1.17728,136.06106,"id",{"name":"Rumah Sakit TNI AL Dr Raden Gandhi Biak","amenity":"hospital","healthcare":"hospital","operator":"TNI AL","operator:type":"public"}],
+["w1112725716",-1.1775,136.06086,"id",{"name":"Rumah Sakit TNI AL Dr Raden Gandhi Biak","amenity":"hospital","healthcare":"hospital","operator":"TNI AL","operator:type":"public"}],
+["w150560836",-1.18854,136.10512,"id",{"name":"Bandar Udara Frans Kaisiepo","name:en":"Frans Kaisiepo International Airport","operator":"PT. Angkasa Pura I","aeroway":"aerodrome","icao":"WABB","iata":"BIK","aerodrome:type":"international"}],
+["w404531456",-1.82864,136.06311,"id",{"name":"Bandar Udara Stevanus Rumbewas Serui","name:en":"Stevanus Rumbewas Serui Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WABO","iata":"ZRI","aerodrome:type":"regional"}],
+["w421029087",-1.8844,136.24275,"id",{"name":"puskesmas","amenity":"clinic"}],
+["w691454065",-1.83911,137.9676,"id",{"name":"Kapaiso","aeroway":"aerodrome"}]]

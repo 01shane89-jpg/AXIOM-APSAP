@@ -1,0 +1,9 @@
+[["n2975069279",-12.39734,17.54529,"ao",{"name":"Ringoma","aeroway":"aerodrome"}],
+["w1174776060",-12.43977,16.9142,"ao",{"name":"Hospital Dr. Walter Strangway","amenity":"hospital","healthcare":"hospital","operator":"Ministerio da Saúde","addr:city":"Cuíto"}],
+["w1426689440",-12.2122,16.77298,"ao",{"amenity":"clinic","healthcare":"clinic"}],
+["w1426691829",-12.2339,16.7834,"ao",{"amenity":"clinic","healthcare":"clinic"}],
+["w1444693271",-12.56607,16.22065,"ao",{"name":"Hospital Municipal","amenity":"hospital","healthcare":"hospital","addr:city":"Cachiungo"}],
+["w1444703342",-12.53985,16.23459,"ao",{"name":"Hospital do Dondi","amenity":"hospital","healthcare":"hospital","addr:city":"Cachiungo"}],
+["w591162287",-12.40434,16.94859,"ao",{"name":"Aeroporto de Cuíto","name:en":"Cuíto Airport","addr:city":"Cuíto","aeroway":"aerodrome","icao":"FNKU","iata":"SVP"}],
+["w975387074",-12.40298,16.93639,"ao",{"amenity":"hospital","healthcare":"hospital","phone":"+244944268866","addr:street":"Rua Joaquim Kapango","addr:city":"Cuíto"}],
+["w976687034",-12.403,16.93638,"ao",{"name":"Clínica Raiar da Vida","amenity":"clinic","healthcare":"hospital"}]]

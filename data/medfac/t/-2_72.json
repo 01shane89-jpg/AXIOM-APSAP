@@ -1,0 +1,12 @@
+[["n12895354033",-0.69081,73.15573,"mv",{"name":"Gan Island International Airport","addr:city":"Addu atoll","aeroway":"aerodrome","icao":"VRMG","iata":"GAN"}],
+["n13305840607",-0.62133,73.09602,"mv",{"name":"Addu Equatorial Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n13747936508",-0.69849,73.15967,"mv",{"name":"MDNF Air Corps Station GAN","aeroway":"aerodrome","military":"airfield"}],
+["n6722533043",-0.59996,73.08135,"mv",{"name":"Hithadhoo Regional Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n6723361843",-0.60194,73.08723,"mv",{"name":"IMDC","amenity":"hospital","healthcare":"hospital"}],
+["n9532890185",-0.29577,73.42448,"mv",{"name":"Drug treatment and detoxification centre - Gn Fuvahmulah","amenity":"hospital","healthcare":"hospital"}],
+["w1032953203",-0.29716,73.42606,"mv",{"name":"Farook Health Care","amenity":"clinic","healthcare":"clinic","addr:housenumber":"Randhaan","addr:street":"Husnuheenaa magu","addr:city":"Fuvahmulah","addr:postcode":"18014"}],
+["w1077616738",-0.62273,73.09588,"mv",{"name":"Hospital Helipad","aeroway":"helipad"}],
+["w1077933569",-0.61267,73.0966,"mv",{"aeroway":"helipad"}],
+["w501718359",-0.30929,73.43306,"mv",{"name":"Fuvahmulah Island","aeroway":"aerodrome","icao":"VRMR","iata":"FVM"}],
+["w715658099",-0.62132,73.09602,"mv",{"name":"Addu Equatorial Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w744245617",-0.58827,73.22738,"mv",{"name":"HMHC","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health, Rep of Maldives","operator:type":"government"}]]
