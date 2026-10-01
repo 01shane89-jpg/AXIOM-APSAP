@@ -1073,6 +1073,24 @@
     if (st && !s.osmAt) return '<p class="obs">From OSAP\'s stored copy of OpenStreetMap' + (at ? " (" + esc(at) + ")" : "") + '. <button type="button" class="refresh noprint" data-mp="live">Check live OpenStreetMap</button></p>';
     return "";
   }
+  /* head trauma (Shane): the quickest hospital a source says has neurosurgery; where none says so, the quickest Role 3
+     equivalent is shown as the likely place, labelled as an estimate. Times include the aircraft's legs. */
+  var NEURO = /neuro\s*surg|neurosurg|brain\s*surg|neurolog.*surg/i;
+  function neuroSrc(f) {
+    if (NEURO.test(String(f.specRaw || ""))) return f.osm ? link(f.osm, "OpenStreetMap") + " healthcare:speciality" : "OpenStreetMap healthcare:speciality";
+    if (f.sofRec && NEURO.test(String(f.sofRec.notes || ""))) return link(f.sofRec.src, f.sofRec.srcname || "source");
+    return "";
+  }
+  function headHtml(s) {
+    var H = s.fac.H.filter(function (f) { return !isOff(f) && bestWay(f); }), byT = function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; };
+    var N = H.filter(neuroSrc).sort(byT), E = H.filter(function (f) { return f.tier >= 3 && !neuroSrc(f); }).sort(byT);
+    function line(f, tag) { var b = bestWay(f); return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b>, " + esc(mins(b[0])) + " from injury by " + b[1] + " " + ghTag(b[0]) + " " + tag + ctHtml(f); }
+    var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> ';
+    if (N.length) h += line(N[0], '<span class="obs">(neurosurgery stated by ' + neuroSrc(N[0]) + ")</span>") + (N[1] ? '<span class="sub">Next: H' + (s.fac.H.indexOf(N[1]) + 1) + " " + esc(N[1].name) + ", " + esc(mins(bestWay(N[1])[0])) + "</span>" : "");
+    else h += '<span class="mpnk">Not known</span> <span class="obs">No hospital in reach states neurosurgery in OpenStreetMap or OSAP\'s sources.</span>' +
+      (E.length ? '<span class="sub">Likely place (estimated, not stated): ' + line(E[0], '<span class="obs">(' + esc(tierLabel(E[0])) + "; confirm neurosurgery by phone)</span>") + "</span>" : "");
+    return h + "</p></div>";
+  }
   function failed(s) { return !!(s.osmErr || (s.storedErr && !s.osmAt)); }
   function pickRender() {
     var el = D.getElementById("mp-pst"), s = ST; if (!el) return;
@@ -1091,6 +1109,7 @@
         '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
         '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
     }).join("") + "</tbody></table>" +
+      headHtml(s) +
       '<p class="obs">Chosen by fixed rules: life, limb or eyesight goes to the highest level of care. Primary is the highest level of care that can be reached, the quickest of that level' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
       ". When Primary is beyond the golden hour, Secondary is the most capable inside it, to stabilise on the way; otherwise Secondary and Tertiary are the next highest levels of care. Confirm each by phone before relying on it.</p>";
   }
