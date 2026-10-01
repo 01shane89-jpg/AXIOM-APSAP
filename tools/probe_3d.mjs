@@ -67,7 +67,7 @@ for (const [name, lat, lon] of [["bangkok", 13.7245, 100.5335], ["makati", 14.55
   const first = await p.waitForFunction(() => window.OSAP_3D.gl.queryRenderedFeatures({ layers: ["bld", "bldp"] }).length > 50, null, { timeout: 30000, polling: 250 }).then(() => Date.now() - t0, () => null);
   await p.waitForTimeout(12000);
   const r = await p.evaluate(() => { const f = window.OSAP_3D.gl.queryRenderedFeatures({ layers: ["bld", "bldp"] }); return { t: window.__b, drawn: f.length, known: f.filter((x) => x.properties.height != null || x.properties.num_floors != null).length, ver: window.OSAP_3D.gl.getSource("bld").url }; });
-  await p.screenshot({ path: `probe-out/3d-buildings-${name}.png` });
+  await p.screenshot({ path: `probe-out/3d-buildings-${name}.png`, timeout: 90000 }).catch((e) => console.log("no screenshot:", e.message.split("\n")[0]));
   const ok = r.drawn > 50 && r.t.err === 0;
   if (!ok) bad++;
   console.log(`${ok ? "OK  " : "BAD "} buildings ${name}: ${r.drawn} drawn (${r.known} with a recorded height or floors), first 50 after ${first} ms, ${reqs} requests ${Math.round(kb)} KB, tiles ${JSON.stringify(r.t)} ${r.ver}`);
