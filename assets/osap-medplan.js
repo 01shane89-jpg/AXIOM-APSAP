@@ -37,7 +37,7 @@
   var VH = "https://valhalla1.openstreetmap.de/", VALHALLA = VH + "isochrone";
   /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
      weeks): 2-degree tiles, so a plan lists hospitals even when Overpass does not answer */
-  var MEDFAC = "data/medfac/", MF_TILE = 2;
+  var MEDFAC = W.OSAP_MEDFAC || "data/medfac/", MF_TILE = 2;
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
