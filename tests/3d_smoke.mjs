@@ -163,11 +163,20 @@ function pmFixture() {
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-mapsets-th", "[]"); } catch (e) {} });
   const p = await ctx.newPage(), errors = []; p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(2500);
-  await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([13.726, 100.531], 11, { animate: false }); });
+  await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([13.726, 100.531], 11, { animate: false });
+    /* a saved point, as the map's own mark tool keeps them */
+    const m = window.__asapMap; if (!m.getPane("atakpane")) m.createPane("atakpane");
+    window.L.marker([13.726, 100.531], { pane: "atakpane", title: "AOB 1120" }).addTo(m); });
   await p.evaluate(() => window.OSAP_3D.open());
   await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.getLayer("bld") && window.OSAP_3D.gl.getLayer("bldp"), null, { timeout: 30000 }).catch(() => {});
   const b1 = await p.evaluate(() => { const gl = window.OSAP_3D.gl, L = gl.getLayer("bld"), P = gl.getLayer("bldp"); return { layer: !!L, parts: !!P, type: L && L.type, min: L && L.minzoom, vis: L && gl.getLayoutProperty("bld", "visibility"), op: L && gl.getPaintProperty("bld", "fill-extrusion-opacity"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed") }; });
   ok(b1.layer && b1.parts && b1.type === "fill-extrusion" && b1.min === 14 && b1.op === 1 && b1.pressed === "true", "buildings: on by default, solid, buildings and building parts from zoom 14 " + JSON.stringify(b1));
+  // the saved point stays at full strength even when the engine decides the ground or a building is in front of it
+  const mk = await p.evaluate(() => { const gl = window.OSAP_3D.gl, el = document.querySelector("#o3d .o3-mark"); if (!el || !gl.terrain) return { el: !!el, terrain: !!gl.terrain };
+    gl.terrain.depthAtPoint = () => -1;   /* everything is "in front" */
+    (window.OSAP_3D._markers || []).forEach((k) => k._updateOpacity(true));
+    return { n: (window.OSAP_3D._markers || []).length, el: true, terrain: true, label: el.textContent, opacity: el.style.opacity, covered: el.closest(".maplibregl-marker").classList.contains("maplibregl-marker-covered") }; });
+  ok(mk.n > 0 && mk.el && mk.terrain && mk.covered && mk.opacity === "1" && mk.label === "AOB 1120", "3D: a saved point the engine thinks is hidden still shows at full strength " + JSON.stringify(mk));
   ok(archives.length > 0 && archives.every((a) => a === "2026-10-21.1/buildings.pmtiles"), "buildings: the newest Overture release in the bucket listing is used " + JSON.stringify([...new Set(archives)]));
   const cached = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-3d-ovr") || "null"));
   ok(cached && cached.r === "2026-10-21.1", "buildings: the release is remembered so the listing is not read on every open " + JSON.stringify(cached));
