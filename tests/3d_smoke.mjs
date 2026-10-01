@@ -130,14 +130,34 @@ async function run3d(name, p, errors, libs, openSel, early) {
   await ctx.close();
 }
 // ---------- 3D buildings switch: on by default, tiles only when zoomed in close, off and on again, remembered ----------
+// The buildings come from an Overture PMTiles archive on S3. The test serves a tiny real archive: one empty "building" tile that
+// answers for every zoom-14 address, so each tile the map wants shows up as a byte-range request past the archive's directory.
+function pmFixture() {
+  const vw = (n) => { const o = []; while (n >= 128) { o.push((n % 128) | 128); n = Math.floor(n / 128); } o.push(n); return o; };
+  const tile = Buffer.from([0x1a, 15, 0x78, 2, 0x0a, 8, ...Buffer.from("building"), 0x28, 0x80, 0x20]);
+  const z14 = (Math.pow(4, 14) - 1) / 3, dir = Buffer.from([...vw(1), ...vw(z14), ...vw(Math.pow(4, 14)), ...vw(tile.length), ...vw(1)]);
+  const meta = Buffer.from(JSON.stringify({ vector_layers: [{ id: "building", fields: {}, minzoom: 14, maxzoom: 14 }, { id: "building_part", fields: {}, minzoom: 14, maxzoom: 14 }] }));
+  const h = Buffer.alloc(127); h.write("PMTiles", 0); h[7] = 3;
+  const at = [127, dir.length, 127 + dir.length, meta.length, 0, 0, 127 + dir.length + meta.length, tile.length, Math.pow(4, 14), 1, 1];
+  at.forEach((v, i) => h.writeBigUInt64LE(BigInt(v), 8 + i * 8));
+  h[96] = 1; h[97] = 1; h[98] = 1; h[99] = 1; h[100] = 14; h[101] = 14;
+  [-1800000000, -850000000, 1800000000, 850000000].forEach((v, i) => h.writeInt32LE(v, 102 + i * 4));
+  h[118] = 14;
+  return { buf: Buffer.concat([h, dir, meta, tile]), tileAt: 127 + dir.length + meta.length };
+}
 {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
-  const asked = [];
+  const asked = [], archives = [], pm = pmFixture(), CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "ETag, Content-Length, Content-Range" };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
-    if (u === "https://tiles.openfreemap.org/planet") return r.fulfill({ status: 200, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
-      body: JSON.stringify({ tilejson: "3.0.0", tiles: ["https://tiles.openfreemap.org/planet/test/{z}/{x}/{y}.pbf"], minzoom: 0, maxzoom: 14, vector_layers: [{ id: "building" }] }) });
-    if (/tiles\.openfreemap\.org\/planet\/test\//.test(u)) { asked.push(+u.split("/").slice(-3)[0]); return r.fulfill({ status: 204, headers: { "Access-Control-Allow-Origin": "*" }, body: "" }); }
+    if (/overturemaps-extras-us-west-2\.s3\.us-west-2\.amazonaws\.com\/\?list-type=2/.test(u))
+      return r.fulfill({ status: 200, headers: { ...CORS, "Content-Type": "application/xml" }, body: "<ListBucketResult><CommonPrefixes><Prefix>tiles/2026-08-19.0/</Prefix></CommonPrefixes><CommonPrefixes><Prefix>tiles/2026-10-21.0/</Prefix></CommonPrefixes><CommonPrefixes><Prefix>tiles/2026-10-21.1/</Prefix></CommonPrefixes></ListBucketResult>" });
+    if (/overturemaps-extras-us-west-2\.s3\.us-west-2\.amazonaws\.com\/tiles\/.*\/buildings\.pmtiles$/.test(u)) {
+      archives.push(u.split("/tiles/")[1]);
+      const m = /bytes=(\d+)-(\d+)/.exec(r.request().headers()["range"] || ""), from = m ? +m[1] : 0, to = Math.min(m ? +m[2] : pm.buf.length - 1, pm.buf.length - 1);
+      if (from >= pm.tileAt) asked.push(from);
+      return r.fulfill({ status: 206, headers: { ...CORS, "Content-Type": "application/octet-stream", ETag: '"t1"', "Content-Range": `bytes ${from}-${to}/${pm.buf.length}` }, body: pm.buf.subarray(from, to + 1) });
+    }
     return r.abort();
   });
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-mapsets-th", "[]"); } catch (e) {} });
@@ -145,16 +165,21 @@ async function run3d(name, p, errors, libs, openSel, early) {
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_3D, null, { timeout: 60000 }); await p.waitForTimeout(2500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); window.__asapMap.setView([13.726, 100.531], 11, { animate: false }); });
   await p.evaluate(() => window.OSAP_3D.open());
-  await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.getLayer("bld"), null, { timeout: 30000 }).catch(() => {});
-  const b1 = await p.evaluate(() => { const gl = window.OSAP_3D.gl, L = gl.getLayer("bld"); return { layer: !!L, type: L && L.type, min: L && L.minzoom, vis: L && gl.getLayoutProperty("bld", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed") }; });
-  ok(b1.layer && b1.type === "fill-extrusion" && b1.min === 14 && b1.pressed === "true", "buildings: on by default, raised from OpenStreetMap footprints, from zoom 14 " + JSON.stringify(b1));
+  await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.getLayer("bld") && window.OSAP_3D.gl.getLayer("bldp"), null, { timeout: 30000 }).catch(() => {});
+  const b1 = await p.evaluate(() => { const gl = window.OSAP_3D.gl, L = gl.getLayer("bld"), P = gl.getLayer("bldp"); return { layer: !!L, parts: !!P, type: L && L.type, min: L && L.minzoom, vis: L && gl.getLayoutProperty("bld", "visibility"), op: L && gl.getPaintProperty("bld", "fill-extrusion-opacity"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed") }; });
+  ok(b1.layer && b1.parts && b1.type === "fill-extrusion" && b1.min === 14 && b1.op === 1 && b1.pressed === "true", "buildings: on by default, solid, buildings and building parts from zoom 14 " + JSON.stringify(b1));
+  ok(archives.length > 0 && archives.every((a) => a === "2026-10-21.1/buildings.pmtiles"), "buildings: the newest Overture release in the bucket listing is used " + JSON.stringify([...new Set(archives)]));
+  const cached = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-3d-ovr") || "null"));
+  ok(cached && cached.r === "2026-10-21.1", "buildings: the release is remembered so the listing is not read on every open " + JSON.stringify(cached));
   await p.waitForTimeout(2500);
   ok(asked.length === 0, "buildings: no building tiles downloaded while zoomed out (" + asked.length + ")");
-  await p.evaluate(() => window.OSAP_3D.gl.jumpTo({ zoom: 15.5, pitch: 60 })); await p.waitForTimeout(2500);
-  ok(asked.length > 0 && asked.every((z) => z === 14), "buildings: close in, building tiles are asked for (" + asked.length + " at zoom " + [...new Set(asked)].join(",") + ")");
+  await p.evaluate(() => window.OSAP_3D.gl.jumpTo({ zoom: 15.5, pitch: 60 })); await p.waitForTimeout(3000);
+  ok(asked.length > 0, "buildings: close in, building tiles are asked for (" + asked.length + ")");
+  const kinds = await p.evaluate(() => { const e = window.OSAP_3D.gl.getPaintProperty("bld", "fill-extrusion-height"); return JSON.stringify(e).includes("num_floors") && JSON.stringify(e).includes("apartments"); });
+  ok(kinds, "buildings: heights come from the recorded height, else floors, else the building's kind");
   await p.click("#o3d .o3-bld");
-  const b2 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed"), saved: JSON.parse(localStorage.getItem("osap-3d")).bld }));
-  ok(b2.vis === "none" && b2.pressed === "false" && b2.saved === false, "buildings: the switch turns them off and remembers it " + JSON.stringify(b2));
+  const b2 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), vp: window.OSAP_3D.gl.getLayoutProperty("bldp", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed"), saved: JSON.parse(localStorage.getItem("osap-3d")).bld }));
+  ok(b2.vis === "none" && b2.vp === "none" && b2.pressed === "false" && b2.saved === false, "buildings: the switch turns them off and remembers it " + JSON.stringify(b2));
   await p.evaluate(() => window.OSAP_3D.gl.jumpTo({ zoom: 10 })); await p.click("#o3d .o3-bld");
   const b3 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), msg: document.querySelector("#o3d .o3-msg").textContent }));
   ok(b3.vis === "visible" && /zoom in/i.test(b3.msg), "buildings: on again while zoomed out says to zoom in " + JSON.stringify(b3));

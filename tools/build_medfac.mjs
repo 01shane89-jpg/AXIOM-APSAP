@@ -27,7 +27,7 @@ const log = (...a) => console.log(...a);
 /* tags the plan reads (assets/osap-medplan.js sortOsm, contactsOf, capability) */
 const KEEP = ["name", "name:en", "official_name", "amenity", "healthcare", "healthcare:speciality", "emergency", "emergency:phone", "beds",
   "operator", "operator:type", "phone", "contact:phone", "website", "contact:website", "addr:full", "addr:housenumber", "addr:street",
-  "addr:subdistrict", "addr:district", "addr:city", "addr:province", "addr:postcode", "aeroway", "icao", "iata", "surface", "aerodrome:type", "military"];
+  "addr:subdistrict", "addr:district", "addr:city", "addr:province", "addr:postcode", "aeroway", "icao", "iata", "surface", "aerodrome:type", "military", "wikidata", "opening_hours", "opening_hours:emergency"];
 const CONTACT = ["phone", "contact:phone", "emergency:phone", "website", "contact:website", "addr:full", "addr:housenumber", "addr:street"];
 const NOT_MED = /^(dentist|optometrist|physiotherapist|psychotherapist|alternative|laboratory|pharmacy|blood_donation|sample_collection|audiologist|speech_therapist|podiatrist|veterinary|counselling|birthing_centre)$/;
 const PERSON = /(^|[\s.(])(dr|dra|drs|doctor|doktor|dokter|docteur|dottor|médico|medico)(\b|\.)|клиника доктора/i;

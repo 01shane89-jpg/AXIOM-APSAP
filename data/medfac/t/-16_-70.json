@@ -1,0 +1,11 @@
+[["n13859739803",-15.95308,-68.25647,"bo",{"name":"C.S.C.I Amaguaya","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"government","addr:street":"Camino a Amaguaya","addr:city":"Amaguaya"}],
+["n5221034190",-15.80792,-68.65613,"bo",{"name":"PS Chejje (1er Nivel)","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Ilabaya"}],
+["n5221691975",-15.87296,-68.61827,"bo",{"name":"C.S.A. Millipaya (1er Nivel)","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no","operator":"Ministerio de Salud y Deportes","operator:type":"public","addr:city":"Millipaya"}],
+["n5221897362",-15.45909,-68.9971,"bo",{"name":"C.S.I. Moco Moco (1er Nivel)","amenity":"hospital","healthcare":"hospital","addr:city":"Mocomoco"}],
+["n5221973767",-15.46021,-68.83694,"bo",{"name":"C.S.I. Ayata","amenity":"hospital","healthcare":"hospital","addr:city":"Ayata","addr:postcode":"LPZ"}],
+["w1358230983",-15.31511,-68.32421,"bo",{"name":"Centro de Salud Santa Rosa de Mapiri","amenity":"hospital","healthcare":"hospital"}],
+["w1372360784",-15.56692,-68.02083,"bo",{"healthcare":"clinic","osap:withheld":"1"}],
+["w1432385188",-15.56771,-68.02107,"bo",{"name":"Hospital Central Tipuani","amenity":"hospital","healthcare":"hospital"}],
+["w1445859796",-15.56488,-68.0147,"bo",{"amenity":"hospital","healthcare":"hospital"}],
+["w520550342",-14.73955,-68.41087,"bo",{"name":"Aeropuerto de Apolo","operator":"Navegación Aérea y Aeropuertos Bolivianos","operator:type":"public","website":"https://naabol.gob.bo/aeropuerto-de-apolo/","addr:city":"Apolo","aeroway":"aerodrome","icao":"SLAP","iata":"APB","wikidata":"Q11824214"}],
+["w970672515",-15.67211,-68.55288,"bo",{"name":"Sanidad","amenity":"clinic","healthcare":"clinic"}]]

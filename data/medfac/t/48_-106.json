@@ -1,0 +1,12 @@
+[["n1042026349",49.72906,-105.94643,"ca",{"name":"Assiniboia Airport","aeroway":"aerodrome"}],
+["n1042026642",49.64621,-104.66549,"ca",{"name":"Pangman Airport","aeroway":"aerodrome"}],
+["n1042026699",49.4606,-104.272,"ca",{"name":"Radville Airport","aeroway":"aerodrome"}],
+["n1042027178",49.4,-105.667,"ca",{"name":"Willow Bunch Airport","aeroway":"aerodrome"}],
+["n1042027352",49.985,-104.115,"ca",{"name":"Lewvan (Farr Strip) Airport","aeroway":"aerodrome"}],
+["n11973560529",49.93815,-105.96717,"ca",{"name":"Mossbank Wellness Clinic","amenity":"clinic","healthcare":"clinic","website":"https://www.saskhealthauthority.ca/facilities-locations/mossbank-wellness-clinic","addr:housenumber":"201","addr:street":"3rd Avenue West","opening_hours":"Mo 08:00-16:30; Tu off; We 08:00-16:30; Th off; Fr 08:00-16:30; Sa-Su Off; PH Off"}],
+["n1406581176",49.3935,-105.13432,"ca",{"name":"Bengough Health Centre","amenity":"hospital"}],
+["n369141879",48.99952,-105.40058,"ca",{"name":"Scobey Border Station / East Poplar International Airport","operator":"State of Montana","operator:type":"public","aeroway":"aerodrome","wikidata":"Q1656785"}],
+["w1110654330",49.18187,-105.9526,"ca",{"name":"Grasslands Health Centre","amenity":"clinic","healthcare":"clinic","addr:housenumber":"1006","addr:street":"Highway 2","addr:city":"Rockglen","addr:province":"Saskatchewan","addr:postcode":"S0H 3R0"}],
+["w1135423700",49.6286,-105.98364,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1135423722",49.64641,-104.66174,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1135423728",49.46344,-104.30566,"ca",{"name":"Radville Marian Health Centre","amenity":"hospital","healthcare":"hospital"}]]

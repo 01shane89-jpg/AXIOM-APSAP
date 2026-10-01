@@ -97,5 +97,8 @@ data-ev-tlr="1"
 <script src="assets/osap-reports.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
   function stripDatelines(text) {
+# Country boundaries overlay in Map overlays (claude/country-borders)
+<script src="assets/osap-borders.js"></script>
+:not([data-bd])
 # data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
 <script>window.OSAP_LATER("assets/osap-dc.js");</script>

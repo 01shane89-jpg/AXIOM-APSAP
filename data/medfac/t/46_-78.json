@@ -1,0 +1,11 @@
+[["n1042028927",46.11688,-77.5278,"ca",{"name":"Deep River/Rolph Airport","aeroway":"aerodrome","wikidata":"Q1656760"}],
+["n1042029425",47.03679,-76.5369,"ca",{"name":"Hydrobase, Parc De La Vérendrye (Le Domaine)","name:en":"Parc De La Vérendrye (Le Domaine) Seaplane Base","aeroway":"aerodrome"}],
+["n1042029633",46.2433,-76.03262,"ca",{"name":"Hydrobase Lac Blue Sea","name:en":"Blue Sea Lake Seaplane Base","aeroway":"aerodrome","icao":"CSM6"}],
+["n2464382278",46.19783,-77.68955,"ca",{"name":"CLSC Rapides-des-Joachims","amenity":"clinic","healthcare":"clinic","website":"http://www.santepontiac.qc.ca/dossiers/dossier_34_clsc+rapides-des-joachims.html"}],
+["r18815557",46.98384,-76.4831,"ca",{"aeroway":"aerodrome"}],
+["w1376719752",47.10568,-77.62846,"ca",{"name":"Piste, Pourvoirie Joncas","name:en":"Pourvoirie Joncas Airstrip","aeroway":"aerodrome"}],
+["w1382891135",46.06337,-77.4879,"ca",{"name":"Bonnechere Soaring Club Aerodrome","aeroway":"aerodrome"}],
+["w305645932",46.09101,-77.47487,"ca",{"name":"Deep River and District Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Deep River and District Hospital","website":"https://www.drdh.org/","addr:housenumber":"117","addr:street":"Banting Drive","addr:city":"Deep River"}],
+["w305645972",46.09069,-77.47611,"ca",{"name":"Deep River & District Hospital","aeroway":"helipad"}],
+["w559555438",46.57059,-77.33162,"ca",{"aeroway":"aerodrome"}],
+["w704856731",46.09175,-76.0519,"ca",{"name":"CLSC Gracefield","amenity":"clinic","healthcare":"yes"}]]
