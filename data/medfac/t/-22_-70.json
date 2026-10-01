@@ -1,0 +1,6 @@
+[["n11011611092",-20.11695,-68.30169,"bo",{"name":"P.S. Sejcihua","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"government","addr:city":"Secsigua"}],
+["n12690293217",-20.74725,-68.05065,"bo",{"name":"C.S. San Pedro de Quemes","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"Ministerio de Salud y Deportes","operator:type":"government","addr:city":"San Pedro de Quemes"}],
+["w1184076299",-20.78279,-68.51646,"bo",{"aeroway":"helipad"}],
+["w1243731898",-21.20364,-68.20943,"bo",{"aeroway":"helipad"}],
+["w1256482290",-20.73357,-68.47385,"bo",{"aeroway":"helipad","surface":"unpaved"}],
+["w1377160168",-20.15139,-68.36196,"bo",{"aeroway":"helipad"}]]
