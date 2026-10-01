@@ -1,0 +1,8 @@
+[["n1042029857",54.8281,-66.8014,"ca",{"name":"Hydrobase Lac de la Squaw","name:en":"Schefferville/Squaw Lake Seaplane Base","aeroway":"aerodrome"}],
+["n12505225533",54.79901,-66.81593,"ca",{"name":"CLSC de Schefferville","amenity":"clinic","healthcare":"clinic","addr:housenumber":"320","addr:street":"Rue A.-P.-Low","addr:city":"Schefferville","addr:province":"Québec"}],
+["n13539082874",54.80076,-66.8228,"ca",{"name":"Services ambulanciers Porlier","emergency":"ambulance_station"}],
+["w1236273710",54.80208,-66.80506,"ca",{"aeroway":"helipad"}],
+["w1521393716",54.86127,-66.7639,"ca",{"healthcare":"clinic"}],
+["w409619859",54.80112,-66.81728,"ca",{"name":"Dispensaire de Matimekush","amenity":"clinic","healthcare":"clinic","website":"https://www.matimekush.com/","addr:street":"Rue Gagnon","addr:postcode":"G0G 2T0"}],
+["w557130422",54.80536,-66.80567,"ca",{"name":"Aéroport de Schefferville","name:en":"Schefferville Airport","aeroway":"aerodrome","icao":"CYKL","iata":"YKL","wikidata":"Q3912785"}],
+["w859437771",54.86116,-66.764,"ca",{"name":"ᓇᔅᑲᐱ ᐃᔪᔅᒋᒡ ᒥᔪᐱᒪᑎᓯᐅᓐ ᐛᐎᒋᐃᐛᐅᓐ / CLSC Naskapi","name:en":"Naskapi Local Community Service Centre","amenity":"clinic","healthcare":"clinic","website":"https://clscnaskapi.org"}]]

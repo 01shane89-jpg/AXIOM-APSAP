@@ -1,0 +1,8 @@
+[["n1042024262",61.9569,-128.203,"ca",{"name":"Tungsten (Cantung) Airport","operator":"North American Tungsten Corp","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3914144"}],
+["n1042025100",60.113,-128.79604,"ca",{"name":"Watson Lake Seaplane Base","operator":"Northern Rockies Air Charters","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3915224"}],
+["n1042025717",61.5239,-128.269,"ca",{"name":"Hyland Airport","operator":"Government of Yukon","operator:type":"public","aeroway":"aerodrome","wikidata":"Q265017"}],
+["w1355812010",60.05742,-128.67505,"ca",{"aeroway":"helipad"}],
+["w29096998",60.1185,-128.82194,"ca",{"name":"Watson Lake Airport","operator":"Government of Yukon","operator:type":"public","aeroway":"aerodrome","icao":"CYQH","iata":"YQH","wikidata":"Q3914811"}],
+["w753443814",60.0703,-128.71033,"ca",{"name":"Watson Lake Community Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w994092357",60.0622,-128.71667,"ca",{"name":"YukonEMS Ambulance Station","emergency":"ambulance_station","operator":"YukonEMS","phone":"+1-867-536-3216","addr:housenumber":"1003","addr:street":"Frank Trail","addr:city":"Watson Lake","addr:province":"Yukon","addr:postcode":"Y0A 1C0"}],
+["w999725160",60.07041,-128.70988,"ca",{"name":"Watson Lake Community Hospital","amenity":"hospital","addr:housenumber":"817","addr:street":"Ravenhill Drive","addr:city":"Watson Lake","addr:province":"Yukon","addr:postcode":"Y0A 1C0"}]]

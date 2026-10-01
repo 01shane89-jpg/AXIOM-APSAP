@@ -1,0 +1,11 @@
+[["n1042025015",60.43604,-121.25727,"ca",{"name":"Sambaa K'e Seaplane Base","operator":"Sambaa K'e First Nation","operator:type":"First_Nation","aeroway":"aerodrome","wikidata":"Q3913616"}],
+["n1042025378",61.86654,-121.3672,"ca",{"name":"Fort Simpson Island Airport","aeroway":"aerodrome","wikidata":"Q3912725"}],
+["n1042025407",60.44067,-121.23723,"ca",{"name":"Sambaa K'e Aerodrome","operator":"Government of the Northwest Territories","operator:type":"public","aeroway":"aerodrome","wikidata":"Q6588220"}],
+["n6316672956",61.83687,-121.32529,"ca",{"name":"Fort Simpson (Great Slave No. 2) Heliport","operator":"Dehcho Helicopters; Great Slave Helicopters 2018","phone":"+1-867-695-2326","aeroway":"helipad"}],
+["n8258834296",61.86099,-121.37214,"ca",{"name":"Fort Simpson Island Seaplane Base","operator":"Wolverine Air/Simpson Air","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3913559"}],
+["w1237251201",61.83831,-121.32757,"ca",{"name":"Fort Simpson (Great Slave No. 1) Heliport","operator":"Dehcho Helicopters; Great Slave Helicopters 2018","phone":"+1-867-695-2326","aeroway":"helipad"}],
+["w1476289215",61.86509,-121.35386,"ca",{"name":"Fort Simpson Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["w264241101",61.44961,-121.24671,"ca",{"aeroway":"aerodrome"}],
+["w264241104",61.34842,-121.79996,"ca",{"aeroway":"aerodrome"}],
+["w264257566",61.76345,-121.23972,"ca",{"name":"Fort Simpson Airport","operator":"Government of the Northwest Territories","operator:type":"public","aeroway":"aerodrome","icao":"CYFS","iata":"YFS","wikidata":"Q3506240"}],
+["w264316231",61.5237,-120.62775,"ca",{"name":"Jean Marie River Airport","operator":"Government of the Northwest Territories","operator:type":"public","aeroway":"aerodrome","wikidata":"Q2902301"}]]
