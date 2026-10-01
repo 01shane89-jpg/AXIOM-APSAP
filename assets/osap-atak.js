@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -11,6 +11,7 @@
    Dropped points are the analyst's own marks, kept in this browser only (localStorage "osap-atak-pts"), never records.
    assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
    The magnifying glass loads assets/osap-search.js (Search places) on its first press.
+   Find LZ and Area > Landing zones load assets/osap-lz.js (the landing zone finder) on first use.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -49,7 +50,8 @@
     lock: ic('<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>'),
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
     pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
-    search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>')
+    search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
+    heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>')
   };
 
   /* ---------- the page's own controls, pressed on the analyst's behalf ---------- */
@@ -338,10 +340,22 @@
   /* removing a point also removes its photos from this device */
   function ptDel(id) { ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); if (W.OSAP_POINTS) W.OSAP_POINTS.forget(id); }
 
+  /* the landing zone finder lives in assets/osap-lz.js, fetched the first time Find LZ (long-press) or Area > Landing zones is used */
+  var lzWait = null;
+  function lzLoad(fn) {
+    if (W.OSAP_LZ) { fn(W.OSAP_LZ); return; }
+    if (lzWait) { lzWait.push(fn); return; } lzWait = [fn];
+    var sc = D.createElement("script"); sc.src = "assets/osap-lz.js";
+    sc.onload = function () { var f = lzWait; lzWait = null; if (W.OSAP_LZ) f.forEach(function (g) { g(W.OSAP_LZ); }); };
+    sc.onerror = function () { lzWait = null; sc.remove(); toast("The landing zone finder could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
+
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
   ];
   var RADII = [0.5, 1, 5, 10];
   function radius() { var r = +lsGet(K_R); return RADII.indexOf(r) >= 0 ? r : 1; }
@@ -377,6 +391,7 @@
     if (k === "measure") { if (W.OSAP_MEASURE) { W.OSAP_MEASURE.on(true); W.OSAP_MEASURE.set([P], false); toast("Measuring from here: tap the next point"); setTimeout(paintTools, 30); } }
     else if (k === "route") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([P]); }
     else if (k === "pin") ptAdd(ll);
+    else if (k === "lz") lzLoad(function (Z) { Z.at(P); });
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
