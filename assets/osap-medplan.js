@@ -1,6 +1,8 @@
-/* AXIOM OSAP: medical plan for a drawn area, centred on an anticipated point of injury.
-   Picked from the Area menu on the map toolbar, next to Summarise area, once an area is drawn: this file adds itself to
-   window.OSAP_AREA_TOOLS, which assets/osap-atak.js lists there. Nothing is built or fetched until it is picked.
+/* AXIOM OSAP: medical plan centred on an anticipated point of injury; no drawn area needed (Shane 2026-10-01).
+   Opened from a point: "Med plan" in the long-press ring and "Medical plan here" on a dropped point (assets/osap-atak.js),
+   or from the Reports menu on the map centre. The Area menu (window.OSAP_AREA_TOOLS, next to Summarise area) still opens
+   it for a drawn area. The user's dropped points are offered as other points of injury. Nothing is built or fetched until
+   it is opened.
    The user sets the anticipated point of injury (POI: tap the map, type an MGRS or lat, lon grid, or use the area's centre,
    a CCP, AXP or HLZ). Everything is measured from it:
    - receiving hospitals from OSAP's stored copy of OpenStreetMap (data/medfac, built by tools/build_medfac.mjs every four
@@ -771,28 +773,41 @@
           : '<input id="' + id + '" data-mpf="' + f[0] + '" maxlength="160" autocomplete="off" value="' + esc(v[f[0]] || "") + '">') + "</label>";
     }).join("");
   }
-  function fieldLabel(k) { if (k === "poi") return "the anticipated point of injury"; if (k === "c") return "the centre of the area"; var d = FIELDS.filter(function (x) { return x[0] === k; })[0]; return d ? d[1].split(",")[0].replace(/ \(.*\)/, "") + (k.slice(-1) === "2" ? " (alternate)" : "") : "the start point"; }
+  function fieldLabel(k) { if (k === "poi") return "the anticipated point of injury"; if (k === "c") return ST && !ST.P ? "the map centre" : "the centre of the area";
+    var pt = /^pt:/.test(k) && ownPt(k.slice(3)); if (pt) return "your point " + pt.n; var d = FIELDS.filter(function (x) { return x[0] === k; })[0]; return d ? d[1].split(",")[0].replace(/ \(.*\)/, "") + (k.slice(-1) === "2" ? " (alternate)" : "") : "the start point"; }
   function startOpts() {
     var v = fieldVals(), o = [];
     if (parseGrid(v.poi)) o.push('<option value="poi"' + (ST && ST.from === "poi" ? " selected" : "") + ">Point of injury: " + esc(v.poi) + "</option>");
-    o.push('<option value="c"' + (ST && ST.from === "c" ? " selected" : "") + ">Centre of the area</option>");
+    o.push('<option value="c"' + (ST && ST.from === "c" ? " selected" : "") + ">" + (ST && !ST.P ? "Map centre when opened" : "Centre of the area") + "</option>");
+    ownPts().forEach(function (p) { o.push('<option value="pt:' + esc(p.id) + '"' + (ST && ST.from === "pt:" + p.id ? " selected" : "") + ">Your point " + esc(p.n) + ": " + esc(grid(p.lat, p.lon)) + "</option>"); });
     FIELDS.forEach(function (f) { if (f[2] && parseGrid(v[f[0]])) o.push('<option value="' + f[0] + '"' + (ST && ST.from === f[0] ? " selected" : "") + ">" + esc(fieldLabel(f[0])) + ": " + esc(v[f[0]]) + "</option>"); });
     return o.join("");
   }
 
-  function open() {
-    var a = A(), P = a && a.area && a.area();
+  /* the analyst's own dropped points on this country's map (assets/osap-atak.js keeps them in this browser) */
+  function ownPts() { var a = lsGet("osap-atak-pts"); if (typeof a === "string") { try { a = JSON.parse(a); } catch (e) { a = []; } } return (Array.isArray(a) ? a : []).filter(function (p) { return p && p.cc === cc() && isFinite(p.lat) && isFinite(p.lon); }).slice(-20); }
+  function ownPt(id) { return ownPts().filter(function (p) { return p.id === id; })[0]; }
+  function mapCentre() { var m = W.__asapMap; if (!m) return null; var c = m.getCenter(); return [c.lat, ((c.lng + 540) % 360) - 180]; }
+  /* open({ at: [lat, lon] }) plans from that point as the point of injury; open({ centre: true }) from the map centre;
+     open() for the drawn area, or the map centre when no area is drawn. A point plan searches as an area 70 km across would. */
+  function open(opts) {
+    opts = opts && typeof opts === "object" && !opts.type ? opts : {};
+    var a = A(), P = opts.at || opts.centre ? null : a && a.area && a.area();
     style();
-    var el = box();
+    var el = box(), name = a && a.ccName ? a.ccName() : cc().toUpperCase();
     if (!P || P.length < 3) {
-      el.innerHTML = '<div class="mpbox"><div class="mphead"><h2>Medical plan</h2><button type="button" class="refresh" data-mp="close">Close</button></div>' +
-        '<p>Draw an area first (Draw area on the map toolbar), or open a saved NAI or TAI and use it as the map filter. The plan is built for that area.</p></div>';
-      el.hidden = false; return;
+      var at = opts.at || mapCentre() || [0, 0];
+      if (opts.at) setField("poi", grid(at[0], at[1]));
+      var poiP = parseGrid(fieldVals().poi);
+      /* a point of injury typed earlier far from here is not used */
+      var useP = poiP && (opts.at || hav(at, poiP) < 50000);
+      ST = { P: null, c: at, o: useP ? poiP : at, from: useP ? "poi" : "c", reach: 70000, at: Date.now(), cc: cc(), name: name };
+    } else {
+      var c = centre(P), reach = 0, poi = parseGrid(fieldVals().poi); P.forEach(function (p) { reach = Math.max(reach, hav(c, p)); });
+      /* a point of injury typed for another area far away is not used */
+      if (poi && hav(c, poi) > Math.max(reach * 3, 50000)) poi = null;
+      ST = { P: P, c: c, o: poi || c, from: poi ? "poi" : "c", reach: reach, at: Date.now(), cc: cc(), name: name };
     }
-    var c = centre(P), reach = 0, poi = parseGrid(fieldVals().poi); P.forEach(function (p) { reach = Math.max(reach, hav(c, p)); });
-    /* a point of injury typed for another area far away is not used */
-    if (poi && hav(c, poi) > Math.max(reach * 3, 50000)) poi = null;
-    ST = { P: P, c: c, o: poi || c, from: poi ? "poi" : "c", reach: reach, at: Date.now(), cc: cc(), name: a.ccName ? a.ccName() : cc().toUpperCase() };
     render(); el.hidden = false; dockApply();
     var h = el.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus(); }
     build();
@@ -804,11 +819,11 @@
   }
 
   function render() {
-    var el = box(), s = ST, km2 = areaKm2(s.P), v = fieldVals();
+    var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
       '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, the picks and every section">Print view (map and details)</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
-      '<p class="obs">Drawn area of about ' + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
+      '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
       '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label></div>" +
@@ -1400,7 +1415,7 @@
     if (s.x) s.x.R.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "M" + (i + 1), "air", b.name + " (air rescue)"]); });
     if (s.oc) s.oc.ap.forEach(function (a, i) { out.push(["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
     if (s.oc) out = out.concat(stratItems(s));
-    out.push(["mk", s.o, s.from === "poi" ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
+    out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
     return out;
   }
   function mapShow() {
@@ -1698,7 +1713,8 @@
     map.getContainer().addEventListener("click", pickFn, true);
   }
   function useFrom(v, p) {
-    p = p || (v === "c" ? ST.c : parseGrid(fieldVals()[v]));
+    var pt = /^pt:/.test(v) && ownPt(v.slice(3));
+    p = p || (v === "c" ? ST.c : pt ? [pt.lat, pt.lon] : parseGrid(fieldVals()[v]));
     if (!p) return false;
     ST = Object.assign({}, ST, { from: v, o: p, at: Date.now() }); ST.oc = null; render(); build(); return true;
   }
@@ -1766,7 +1782,7 @@
     clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); srcRender(); }, 600);
   }
 
-  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", run: open });
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
   W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();

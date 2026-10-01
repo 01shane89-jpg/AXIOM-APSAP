@@ -167,13 +167,11 @@ async function openPlan(p) {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } });
   await p.evaluate(() => { try { window.TSAP.areaApi.setArea(null); } catch (e) {} });
   ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu lists Medical plan before an area is drawn");
-  await p.click('#atk-pop [data-pk="med"]'); await p.waitForTimeout(200);
-  ok(await p.evaluate(() => { const m = document.getElementById("atk-pop"); return !m.hidden && /Circle/.test(m.textContent) && !/Medical plan/.test(m.textContent) && document.getElementById("medplan") === null || document.getElementById("medplan").hidden; }), "desktop: Medical plan with no area asks for a shape first");
-  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await p.waitForFunction(() => { const m = document.getElementById("medplan"); return m && !m.hidden; }, null, { timeout: 5000 }).catch(() => {});
-  ok(await p.evaluate(() => { const m = document.getElementById("medplan"); return !!m && !m.hidden; }), "desktop: the plan opens by itself once the area is drawn");
+  await p.click('#atk-pop [data-pk="med"]'); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => { const m = document.getElementById("medplan"); return !!m && !m.hidden && /Planned from a point, no drawn area needed/.test(m.textContent); }), "desktop: Medical plan with no area opens straight away on the map centre, no shape needed");
   await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"), w = document.querySelector("#mp-wx table"); return t && w; }, null, { timeout: 20000 }).catch(() => {});
   await p.evaluate(() => { const b = document.querySelector('#medplan [data-mp="close"]'); if (b) b.click(); }); await p.waitForTimeout(150);
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await p.waitForTimeout(1500); Object.keys(calls).forEach((k) => { if (k !== "wd") calls[k] = 0; }); /* the checks below count the requests of one fresh open (Wikidata is cached a week on the device) */
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
   ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu offers Medical plan once an area is drawn");
@@ -386,6 +384,24 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="close"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && JSON.stringify(await lines()) === '{"r":0,"g":0,"a":0}', "desktop: Close hides the plan and takes the marks, routes, outlines and rings off the map");
   ok(!errors.length, "desktop: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- from a point, no drawn area ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } });
+  await p.evaluate(() => { try { window.TSAP.areaApi.setArea(null); } catch (e) {} localStorage.setItem("osap-atak-pts", JSON.stringify([{ id: "pa", cc: "th", lat: 13.70, lon: 100.45, n: "Alpha", t: 1 }])); });
+  await p.evaluate(() => window.OSAP_MEDPLAN.open({ at: [13.76, 100.51] }));
+  await p.waitForFunction(() => document.querySelector("#mp-fac table") && /min/.test(document.getElementById("mp-fac").textContent), null, { timeout: 20000 }).catch(() => {});
+  const pt = await p.evaluate(() => ({ t: document.getElementById("medplan").textContent, poi: document.getElementById("mpf-poi").value, opts: [...document.querySelectorAll("#mp-from option")].map((o) => o.textContent), pst: (document.getElementById("mp-pst") || {}).textContent || "", mk: [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === "POI") }));
+  ok(/Planned from a point, no drawn area needed/.test(pt.t) && /Centred on the anticipated point of injury/.test(pt.t) && /^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}$/.test(pt.poi) && /Primary/.test(pt.pst) && pt.mk, "point: the plan opens on a point with no drawn area, the point as the POI: " + pt.poi);
+  ok(pt.opts.some((x) => /^Your point Alpha: 47P/.test(x)) && pt.opts.some((x) => /Map centre when opened/.test(x)), "point: your dropped points are offered as other points of injury: " + pt.opts.join(" | "));
+  await p.selectOption("#mp-from", "pt:pa");
+  await p.waitForFunction(() => /Centred on your point Alpha/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 }).catch(() => {});
+  ok(/Centred on your point Alpha/.test(await p.textContent("#medplan")), "point: choosing your point re-centres the plan on it");
+  await p.click('#medplan [data-mp="close"]');
+  await p.evaluate(() => window.OSAP_MEDPLAN.open({ centre: true })); await p.waitForTimeout(300);
+  ok(/Centred on the map centre|Centred on the anticipated point of injury/.test(await p.textContent("#medplan")) && !/Draw an area first/.test(await p.textContent("#medplan")), "point: from the Reports menu it opens on the map centre, never asking for an area");
+  ok(!errors.length, "point: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- phone, and OpenStreetMap down ----------
