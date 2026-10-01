@@ -30,33 +30,7 @@
    "src": "https://www.wikidata.org/entity/Q105623517",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "fa362cd41872d9079a7063fa90b1c69550ccb67c775aba85b4e33e09bd774ecd",
-   "phone": "(597) 556-700",
-   "phone_after_hours": "(597) 556-700",
-   "phone_src": "https://sr.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
-  },
-  {
-   "id": "sof:sr:post:u-s-embassy-paramaribo",
-   "name": "U.S. Embassy Paramaribo",
-   "kind": "embassy",
-   "city": "Paramaribo",
-   "address": "165 Kristalstraat, Paramaribo",
-   "services_note": null,
-   "lat": 5.86426,
-   "lon": -55.127123,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/4351247157",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://sr.usembassy.gov",
-   "phone": "(597) 556-700",
-   "phone_after_hours": "(597) 556-700",
-   "phone_src": "https://sr.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "0eb6f66a2fd5e1801493a9693b8d687c4b6d04f8101bb8ba2c2d13d90239879d"
+   "fp": "6a4d29c384bb17a3923bdfb83f31fe399c505fb2da0b7827d2de0ac60199d83a"
   }
  ],
  "airports": [
@@ -309,56 +283,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:sr:xing:node-1203517110",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 5.492717,
-   "lon": -54.036262,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1203517110",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d638ea661148e72f6255b6f1e396e6c092919f74a098c6ac141ebae402853ffd"
-  },
-  {
-   "id": "sof:sr:xing:node-507609626",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 5.49602,
-   "lon": -54.05689,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/507609626",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "c6cc4bc7688ee29d2d1d76427365a0cc371459634f87e85db26a67aff7f19ff5"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

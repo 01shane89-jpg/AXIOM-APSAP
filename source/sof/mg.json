@@ -24,29 +24,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "e97b3ba082440a1e4ec23c70124ae1d60bf19c0a72ce737b66a6eb51d0b35c9b"
  },
- "posts": [
-  {
-   "id": "sof:mg:post:u-s-embassy-madagascar",
-   "name": "U.S. Embassy, Madagascar",
-   "kind": "embassy",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": -18.852447,
-   "lon": 47.477933,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/40487858",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://mg.usembassy.gov",
-   "phone": "(+261) 33 44 320 00",
-   "phone_after_hours": "(+261) 33 44 320 00",
-   "phone_src": "https://mg.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "11077ea16d09418da1d8036aa04054c045edc9fb2c42535280072b5159b61a02"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:mg:airport:fmmi",
@@ -523,29 +501,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ],
- "crossings": [
-  {
-   "id": "sof:mg:xing:node-8937953430",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -23.355275,
-   "lon": 43.669013,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/8937953430",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "e40308d48fe84dcb95855412314642f0c345fdbb5d4893b0d9d33f3b3ff0bdb5"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

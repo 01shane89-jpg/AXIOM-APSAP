@@ -135,53 +135,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: no main seaport listed with the UN/LOCODE port flag."
- ],
- "crossings": [
-  {
-   "id": "sof:eh:xing:node-1922480509",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "truck",
-    "motorcycle"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 21.333602,
-   "lon": -16.947112,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1922480509",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "4419350d595a1e275dca2a2d01910bc4cce7dbb1ac87dd751514aba927442bd2"
-  },
-  {
-   "id": "sof:eh:xing:node-2577079318",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": "09:00-18:00",
-   "modes": [
-    "car",
-    "motorcycle"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 21.361728,
-   "lon": -16.960603,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/2577079318",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7edcb1dafb97443c55c4c83c2a1e636683932d723c89d26c99ffe3e9a1a02e35"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -22,28 +22,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "c044e71a055f06319468b96d68d62062da9145d0989bd4300f3a86f06a5e3e64"
  },
- "posts": [
-  {
-   "id": "sof:rw:post:u-s-embassy-rwanda",
-   "name": "U.S. Embassy, Rwanda",
-   "kind": "embassy",
-   "city": null,
-   "address": null,
-   "services_note": null,
-   "lat": -1.93641,
-   "lon": 30.077831,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/173163960",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "phone": "(250) 252 596 400",
-   "phone_after_hours": "(250) 252 596 400",
-   "phone_src": "https://rw.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "238b154d91cc58ca7161ef5ce0b42be7d50202dff2e740579c43fb8167207ad4"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:rw:airport:hryr",
@@ -313,85 +292,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:rw:xing:node-4359038179",
-   "name": "Rwanda-DRC Border",
-   "local_name": "Frontière Rwanda-RDC",
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": -2.707058,
-   "lon": 29.007444,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/4359038179",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ae7ac5949b2fbfce7d44ee4dcb10e27ed335a6ff33c3ef33fede864e6df31ef2"
-  },
-  {
-   "id": "sof:rw:xing:node-436047582",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -1.697761,
-   "lon": 29.244789,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/436047582",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "132f31e8af8743233f564f8c0f05faecbc50dba8cec04b9c5e639e83e025b0bc"
-  },
-  {
-   "id": "sof:rw:xing:node-6588338749",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -1.681584,
-   "lon": 29.245909,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/6588338749",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "38159170c222e6f41deaea601caff189f150de79dc20fadc804dfd27544a3c67"
-  },
-  {
-   "id": "sof:rw:xing:node-8809878605",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -1.356292,
-   "lon": 30.145205,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/8809878605",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "31aae113a7f2ca88662fc964e19487520090e03bca2a2fcf9e448aed8feb36c2"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

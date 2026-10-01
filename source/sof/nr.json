@@ -129,11 +129,5 @@
  ],
  "gaps": [
   "No 2026 military/HADR exercise specific to Nauru found. Hospital name and location unverified. Nauru has no military; Australia provides security under the Nauru-Australia Treaty."
- ],
- "crossings": [],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

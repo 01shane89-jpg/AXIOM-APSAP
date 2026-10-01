@@ -33,6 +33,10 @@ def apply(patch, asof):
             for k in CONTACT:
                 if fields.get(k):
                     p[k] = fields[k]
+            # a researched post with no coordinate takes the mapped one
+            if p.get("lat") is None and fields.get("lat") is not None:
+                for k in ("lat", "lon", "prec", "coord_basis"):
+                    p[k] = fields[k]
             p["fp"] = fp(p)
             n["set"] += 1
         for p in P.get("add", []):

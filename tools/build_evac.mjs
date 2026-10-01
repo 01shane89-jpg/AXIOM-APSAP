@@ -58,7 +58,7 @@ export function cleanPhone(s) {
   var open = 0, out = "";
   for (const ch of s) { if (ch === "(") { open++; out += ch; } else if (ch === ")") { if (open) { open--; out += ch; } } else out += ch; }
   for (; open > 0; open--) { const i = out.lastIndexOf("("); out = out.slice(0, i) + out.slice(i + 1); }
-  s = out.replace(/\s+/g, " ").replace(/^[\s\-./]+|[\s\-./(]+$/g, "").trim();
+  s = out.replace(/(\d)\s\d{1,2}$/, "$1").replace(/\s+/g, " ").replace(/^[\s\-./]+|[\s\-./(]+$/g, "").trim();
   return (s.replace(/[^0-9]/g, "").length >= 6) ? s : "";
 }
 function webOf(t) { const w = (t["contact:website"] || t.website || "").split(";")[0].trim(); return /^https?:\/\//.test(w) ? w : ""; }
@@ -85,10 +85,14 @@ async function osmPosts() {
     const t = e.tags || {}, lat = e.lat ?? e.center?.lat, lon = e.lon ?? e.center?.lon, kind = kindOf(t);
     if (lat == null || !kind) continue;
     if (/residence|marine house|warehouse|annex|housing/i.test(t.name || "") || t.diplomatic === "ambassadors_residence") continue;
+    /* an honorary consul is a private person acting part-time; their office and number are not published by the post */
+    if (/honorary/i.test([t.name, t["name:en"], t.consulate, t.diplomatic].join(" "))) continue;
     const cc = ccsAt(lat, lon, 0.05)[0];
     if (!cc) { if (DEBUG) log("  post outside every country", t.name, lat, lon); continue; }
     out.push({ cc, osm: e.type + "/" + e.id, lat: +lat.toFixed(6), lon: +lon.toFixed(6), kind, t });
   }
+  /* the best-mapped object first, so a second "embassy" far from the first (a mis-tag) is the one dropped */
+  out.sort((a, b) => Object.keys(b.t).length - Object.keys(a.t).length);
   log("OSM U.S. posts", el.length, "kept", out.length);
   return out;
 }
@@ -219,6 +223,16 @@ async function main() {
         if (near && d < bd) { bd = d; best = p; }
       }
       if (best) { if (!best._osm) { best._osm = o; stats.matched++; } continue; }
+      /* a researched post with no coordinate, of this kind, and the only one of its kind without: this is it */
+      const bare = cur.filter((p) => p.lat == null && (p.kind === o.kind || (p.kind || "").startsWith("consul") && o.kind.startsWith("consul")));
+      if (bare.length === 1 && !bare[0]._osm) {
+        const b = bare[0]; b._osm = o; b.lat = o.lat; b.lon = o.lon; b.prec = "exact"; b.coord_basis = "OpenStreetMap " + o.osm; stats.matched++; continue;
+      }
+      /* one embassy per country unless the name says it is a separate mission or a branch */
+      const label = (o.t["name:en"] || o.t.name || "");
+      if (o.kind === "embassy" && cur.some((p) => p.kind === "embassy" && p.lat != null) && !/mission|branch|office|holy see|vatican|nato|united nations|\bun\b|osce|european union/i.test(label)) {
+        if (DEBUG) log("  second embassy dropped", cc, label, o.osm); continue;
+      }
       const it = postFromOsm(o); it._osm = o; it._new = true;
       if (cur.some((p) => p.id === it.id)) it.id += "-" + o.osm.split("/")[1];
       cur.push(it); stats.added++;
@@ -234,7 +248,7 @@ async function main() {
       if (p.phone) stats.phones++; if (p.phone_after_hours) stats.after++;
       const isNew = p._new; delete p._osm; delete p._new;
       if (isNew) P.add.push(p);
-      else if (JSON.stringify(p) !== before) P.set[p.id] = Object.fromEntries(["web", "phone", "phone_after_hours", "phone_src", "phone_srcname", "phone_asof"].filter((k) => p[k]).map((k) => [k, p[k]]));
+      else if (JSON.stringify(p) !== before) P.set[p.id] = Object.fromEntries(["web", "phone", "phone_after_hours", "phone_src", "phone_srcname", "phone_asof", "lat", "lon", "prec", "coord_basis"].filter((k) => p[k] != null && p[k] !== "").map((k) => [k, p[k]]));
     }
     P.crossings = xings.filter((x) => x.cc === cc).map(crossingItem).sort((a, b) => a.id < b.id ? -1 : 1);
     stats.xings += P.crossings.length;
