@@ -3,6 +3,7 @@
 ["w315838870",5.989,124.62633,"ph",{"name":"Salem Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w338466268",5.82076,125.21,"ph",{"name":"Glan Medicare Community Hospital","amenity":"hospital","healthcare":"hospital","operator":"Local Government","operator:type":"government","addr:street":"D. Cania Street","addr:city":"Glan","addr:postcode":"9517"}],
 ["w431117547",5.97043,125.28921,"ph",{"name":"Malapatan Health Center","amenity":"clinic","addr:city":"Malapatan","addr:province":"Sarangani","addr:postcode":"9516"}],
+["w552014915",4.7292,125.479,"id",{"name":"Puskemas Marore","amenity":"clinic"}],
 ["w677363200",5.86297,124.99755,"ph",{"amenity":"hospital"}],
 ["w732505029",5.8233,125.20469,"ph",{"name":"TB DOTS","amenity":"clinic","healthcare":"clinic","addr:street":"Enrique D. Yap Sr. Street"}],
 ["w983876895",5.98845,124.63356,"ph",{"name":"Tiburcio Aquino Memorial Hospital","amenity":"hospital","healthcare":"hospital"}]]

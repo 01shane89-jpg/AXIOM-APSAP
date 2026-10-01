@@ -1,0 +1,12 @@
+[["n7569800943",40.7327,107.31705,"cn",{"name":"青春湖起降点","aeroway":"helipad"}],
+["n7569881559",40.72456,107.39389,"cn",{"name":"湿地公园起降点","aeroway":"helipad"}],
+["r3552457",40.92562,107.74553,"cn",{"name":"巴彦淖尔天吉泰机场","name:en":"Bayannur Tianjitai Airport","operator":"内蒙古机场集团","aeroway":"aerodrome","icao":"ZBYZ","iata":"RLK","aerodrome:type":"public"}],
+["w1230825092",40.7278,107.37991,"cn",{"name":"巴彦淖尔医院起降点","aeroway":"helipad"}],
+["w1510842575",40.7198,107.41891,"cn",{"amenity":"hospital","healthcare":"hospital"}],
+["w525631346",41.08302,107.07827,"cn",{"name":"乌拉特后旗医院","amenity":"hospital"}],
+["w525637328",40.72703,107.37931,"cn",{"name":"巴彦淖尔市医院","amenity":"hospital","healthcare":"hospital"}],
+["w535835851",40.3237,106.97458,"cn",{"name":"磴口县人民医院","name:en":"Dengkou County People's Hospital","amenity":"hospital"}],
+["w541646776",40.88759,107.12984,"cn",{"name":"杭锦后旗医院","name:en":"Hanggin Rear Banner Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w809605930",40.30312,107.01518,"cn",{"name":"磴口通用航空起降点","name:en":"Dengkou General Aviation Airport","aeroway":"aerodrome","icao":"ZBMV"}],
+["w828840815",40.72516,107.38183,"cn",{"name":"巴彦淖尔市蒙医医院","amenity":"hospital","healthcare":"hospital"}],
+["w995150103",40.76112,107.42644,"cn",{"name":"临河区人民医院","amenity":"hospital","healthcare":"hospital"}]]

@@ -1,0 +1,12 @@
+[["n2034547840",48.85536,106.46719,"mn",{"amenity":"hospital"}],
+["n3909513692",48.85251,106.46124,"mn",{"name":"халдварт","amenity":"hospital"}],
+["n3909516286",48.85288,106.4603,"mn",{"name":"Улаан загалмай","amenity":"hospital"}],
+["n3909520920",48.85151,106.46338,"mn",{"name":"өрхийн эмнэлэг","amenity":"hospital"}],
+["n5266430225",48.91245,106.08647,"mn",{"name":"Эмнэлэг","amenity":"hospital"}],
+["n5266452221",49.24529,106.41638,"mn",{"name":"Шарын голын эрүүл мэндийн төв","amenity":"clinic","healthcare":"clinic"}],
+["n5439823034",48.0422,106.9658,"mn",{"name":"Эрхэс сувилал","name:en":"Erkhes suvilal","amenity":"clinic"}],
+["n8301620059",49.83259,106.13328,"mn",{"name":"Орхон сумын эрүүл мэндийн төв","amenity":"clinic","healthcare":"clinic"}],
+["n8485119481",48.12429,106.64819,"mn",{"name":"Odont manal","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"primary_care;maternity","operator":"n/a","operator:type":"private","addr:housenumber":"Сонгинохайрхан дүүрэг, Жаргалант тосгонд өөрийн байранд","addr:street":"Jargalant - Батсүмбэр","addr:subdistrict":"Khoroo 21","addr:district":"Songinokhairkhan","addr:city":"Улаанбаатар","addr:province":"Ulaanbaatar"}],
+["w225190747",48.8522,106.46072,"mn",{"name":"Negdsen Emneleg","amenity":"hospital"}],
+["w453482868",48.05073,107.2733,"mn",{"name":"Сэргээн засах клиник сувилал","amenity":"clinic"}],
+["w893203105",49.83246,106.13335,"mn",{"amenity":"hospital","healthcare":"hospital"}]]

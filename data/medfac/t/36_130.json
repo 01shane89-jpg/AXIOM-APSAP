@@ -1,0 +1,8 @@
+[["n12174442758",37.49399,130.90634,"kr",{"name":"시온한의원","amenity":"clinic"}],
+["n4624114496",37.51244,130.79855,"kr",{"name":"태하보건진료소","amenity":"clinic","healthcare":"hospital","healthcare:speciality":"general","addr:housenumber":"226-3","addr:street":"태하길","addr:city":"울릉군","addr:province":"경상북도"}],
+["w467678969",37.48588,130.89964,"kr",{"name":"울릉군보건의료원","amenity":"hospital","healthcare":"hospital"}],
+["w510021211",37.5301,130.93764,"kr",{"aeroway":"helipad"}],
+["w525863368",37.48131,130.89112,"kr",{"aeroway":"helipad"}],
+["w686272806",37.51726,130.87082,"kr",{"aeroway":"helipad"}],
+["w710478783",37.2395,131.86918,"kr",{"name":"독도 헬기착륙장","name:en":"Dokdo Helipad","aeroway":"helipad","icao":"RKDD"}],
+["w943211538",37.50666,130.87601,"kr",{"aeroway":"helipad"}]]

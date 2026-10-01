@@ -1,0 +1,10 @@
+[["n1042094354",-13.84719,141.59031,"au",{"name":"Kencherang Airport","aeroway":"aerodrome","icao":"YKNC"}],
+["n1042099175",-13.98445,141.6561,"au",{"name":"Ti Tree Airport","aeroway":"aerodrome","icao":"YTTE"}],
+["n2507217359",-13.70208,141.55403,"au",{"name":"Wathanin Airport","aeroway":"aerodrome","icao":"YWNI"}],
+["w1117663076",-12.90405,141.69864,"au",{"name":"Beagle Bay Airport","aeroway":"aerodrome"}],
+["w1155935745",-12.67799,141.92246,"au",{"name":"Weipa Airport","aeroway":"aerodrome","icao":"YBWP","iata":"WEI"}],
+["w220972880",-12.64072,141.8668,"au",{"name":"Weipa Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w273329666",-13.76214,141.85353,"au",{"aeroway":"aerodrome"}],
+["w278471201",-13.3538,141.71997,"au",{"name":"Aurukun Airport","aeroway":"aerodrome","icao":"YAUR","iata":"AUU","aerodrome:type":"public"}],
+["w711658317",-12.04988,141.90611,"au",{"aeroway":"aerodrome"}],
+["w923305889",-13.35415,141.72652,"au",{"amenity":"clinic","healthcare":"clinic"}]]

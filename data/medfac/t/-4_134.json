@@ -1,0 +1,13 @@
+[["n13985973001",-2.38116,134.13186,"id",{"name":"Puskesmas Nikiwar","official_name":"Pusat Kesehatan Masyarakat Nikiwar","amenity":"clinic","addr:subdistrict":"Werabur","addr:district":"Nikiwar","addr:city":"Teluk Wondama","addr:province":"Papua Barat"}],
+["n4942813914",-3.3662,135.49672,"id",{"aeroway":"helipad"}],
+["n5813713258",-3.02134,134.81282,"id",{"name":"Puskesmas","amenity":"hospital"}],
+["w1164608674",-3.47522,134.00686,"id",{"name":"Puskesmas Pembantu","amenity":"hospital"}],
+["w1182681653",-3.86491,135.51816,"id",{"name":"Minou Airstrip","aeroway":"aerodrome"}],
+["w503039779",-2.72021,134.50621,"id",{"name":"Bandar Udara Wasior","name:en":"Wasior Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAUW","iata":"WSR","aerodrome:type":"regional"}],
+["w504072799",-3.3685,135.49697,"id",{"name":"Bandar Udara Nabire","name:en":"Nabire Airport","operator":"Unit Penyelenggara Bandar Udara","website":"https://www.airportia.com/indonesia/nabire-airport/","aeroway":"aerodrome","aerodrome:type":"regional"}],
+["w603586364",-3.9906,135.8533,"id",{"name":"Bandar Udara Magode","name:en":"Magoda Airstrip","aeroway":"aerodrome"}],
+["w608980064",-3.96087,135.93966,"id",{"name":"Bomoani","aeroway":"aerodrome","icao":"WABM"}],
+["w608980080",-3.96196,135.48201,"id",{"name":"Ideduna","aeroway":"aerodrome","icao":"WACV"}],
+["w608980088",-3.53876,135.94895,"id",{"name":"Siriwo","aeroway":"aerodrome"}],
+["w674041752",-3.40074,135.39421,"id",{"name":"Bandar Udara Douw Aturure Nabire","name:en":"Nabire Douw Aturure Airport","aeroway":"aerodrome","icao":"WABI","iata":"NBX"}],
+["w788329592",-3.34295,135.52961,"id",{"name":"RSUD Nabire","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"Dinas Kesehatan Kabupaten Nabire","operator:type":"government","addr:street":"Jalan RE Marthadinata","addr:city":"Nabire","addr:postcode":"98816"}]]

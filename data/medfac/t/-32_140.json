@@ -1,0 +1,9 @@
+[["n1042093121",-31.4167,141.89999,"au",{"name":"Acacia Downs Airport","aeroway":"aerodrome"}],
+["n1042093537",-31.2908,141.452,"au",{"name":"Corona Station Airport","aeroway":"aerodrome"}],
+["n1042095039",-31.63995,140.51198,"au",{"name":"Mooleulooloo Airport","aeroway":"aerodrome"}],
+["n1042098733",-31.75831,140.34476,"au",{"name":"Strathearn Airport","aeroway":"aerodrome"}],
+["n12679486701",-30.42617,141.72442,"au",{"name":"Pimpara Lake Station Airstrip","aeroway":"aerodrome"}],
+["w1125797617",-31.96569,141.45037,"au",{"name":"Broken Hill Ambulance Station","emergency":"ambulance_station","addr:housenumber":"243-245","addr:street":"Wills Street"}],
+["w1147826156",-31.95701,141.43802,"au",{"aeroway":"helipad"}],
+["w174881688",-31.94753,141.45444,"au",{"name":"Broken Hill Base Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"https://www.healthdirect.gov.au/australian-health-services/20056182/broken-hill-base-hospital/services/broken-hill-2880-thomas"}],
+["w630869157",-31.9745,141.46263,"au",{"name":"Southern Cross Hospital","amenity":"hospital","healthcare":"hospital","operator":"Southern Cross","addr:housenumber":"267","addr:street":"Eyre Street"}]]

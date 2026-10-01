@@ -1,0 +1,12 @@
+[["n1042022864",-18.01979,135.54202,"au",{"name":"Anthony Lagoon Airport","aeroway":"aerodrome","iata":"AYL"}],
+["n1042023114",-18.95227,135.1993,"au",{"name":"Rockhampton Downs Airport","aeroway":"aerodrome","iata":"RDA"}],
+["n1042093259",-19.70432,135.8162,"au",{"name":"Barkly Wayside Inn Airport","aeroway":"aerodrome"}],
+["n1042093402",-18.8697,134.49095,"au",{"name":"Brunchilly Airport","aeroway":"aerodrome"}],
+["n1042093796",-18.001,134.86301,"au",{"name":"Eva Downs Airport","aeroway":"aerodrome","iata":"EVD"}],
+["n2039555418",-19.6465,134.1876,"au",{"name":"Ambulance","emergency":"ambulance_station"}],
+["w174638392",-19.634,134.17996,"au",{"name":"Tennant Creek Airport","aeroway":"aerodrome","icao":"YTNK","iata":"TCA"}],
+["w193273437",-19.64789,134.18699,"au",{"name":"Tennant Creek Hospital","amenity":"hospital","healthcare":"hospital","operator":"Central Australia Health Service","operator:type":"government"}],
+["w415167643",-18.95112,135.19937,"au",{"aeroway":"helipad"}],
+["w443776501",-18.36648,135.86034,"au",{"name":"Corrella Creek Health Centre","healthcare":"clinic","operator":"Anyinginyi Health Aboriginal Corporation","operator:type":"community","phone":"+61 8 8962 2633","website":"https://www.anyinginyi.org.au/"}],
+["w456358575",-18.63418,135.93816,"au",{"name":"Brunette Downs Airport","aeroway":"aerodrome","iata":"BTD"}],
+["w458830993",-19.00602,135.17854,"au",{"name":"Wogyala Health Centre","healthcare":"clinic","operator":"Anyinginyi Health Aboriginal Corporation","operator:type":"community","phone":"+61 8 8962 2633","website":"https://www.anyinginyi.org.au/"}]]

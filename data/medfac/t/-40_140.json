@@ -1,0 +1,9 @@
+[["n11572223321",-38.137,141.62481,"au",{"name":"Heywood Ambulance Station","emergency":"ambulance_station","operator":"Ambulance Victoria"}],
+["n3818420288",-38.13795,141.62407,"au",{"name":"Heywood Rural Health","amenity":"hospital","healthcare":"hospital","phone":"+61 3 5527 0555","website":"https://swarh.com.au/hrh","addr:housenumber":"21","addr:street":"Barclay Street"}],
+["n7130873232",-38.34525,141.60401,"au",{"name":"Hearing Australia","amenity":"clinic","healthcare":"clinic"}],
+["n9740683790",-38.33558,141.60364,"au",{"name":"Portland Ambulance Station","emergency":"ambulance_station","operator":"Ambulance Victoria","addr:housenumber":"1","addr:street":"New Street","addr:postcode":"3305"}],
+["n9896763855",-38.05092,141.02164,"au",{"name":"Nelson Airfield","aeroway":"aerodrome"}],
+["w1241541400",-38.34142,141.60626,"au",{"name":"Portland Hospital Helipad","aeroway":"helipad","surface":"concrete"}],
+["w450185203",-38.34116,141.60556,"au",{"name":"Portland District Hospital","amenity":"hospital","healthcare":"hospital","website":"https://swarh.com.au/pdh"}],
+["w820804176",-38.31872,141.47139,"au",{"name":"Portland Airport","operator":"Glenelg Shire Council","operator:type":"government","addr:housenumber":"1260","addr:street":"Bridgewater Lakes Road","aeroway":"aerodrome","icao":"YPOD","iata":"PTJ","aerodrome:type":"public"}],
+["w847382591",-38.13808,141.62436,"au",{"name":"Heywood Rural Health","amenity":"hospital","healthcare":"hospital"}]]
