@@ -1,0 +1,7 @@
+[["n1042031688",45.8853,-82.5678,"ca",{"name":"Gore Bay Manitoulin Airport","addr:housenumber":"257","addr:street":"Airport Road","addr:city":"Gore Bay","addr:province":"Ontario","addr:postcode":"P0P1H0","aeroway":"aerodrome","iata":"YZE","wikidata":"Q3912899"}],
+["n1042145063",45.73818,-82.16554,"ca",{"aeroway":"helipad"}],
+["w1092766837",45.95868,-83.3744,"ca",{"name":"Cockburn Island Airport","aeroway":"aerodrome"}],
+["w1422316614",45.9106,-82.45739,"ca",{"name":"EMS Gore Bay","emergency":"ambulance_station","operator":"Manitoulin-Sudbury District Services Board"}],
+["w299511089",45.73911,-82.16721,"ca",{"name":"Paramedic Services Mindemoya","emergency":"ambulance_station","operator":"Manitoulin-Sudbury District Services Board","addr:housenumber":"2090","addr:street":"Highway 551","addr:city":"Mindemoya","addr:province":"Ontario"}],
+["w375122628",45.91825,-82.4641,"ca",{"name":"Gore Bay Medical Centre","amenity":"clinic","healthcare":"clinic","website":"https://www.gorebay.ca/living-here/healthcare-and-clinics/","addr:housenumber":"70","addr:street":"Meredith Street","addr:city":"Gore Bay","addr:province":"Ontario","addr:postcode":"P0P 1H0"}],
+["w781430736",45.73813,-82.16637,"ca",{"name":"Mindemoya Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Manitoulin Health Centre","addr:housenumber":"2120","addr:street":"Highway 551","addr:city":"Mindemoya","addr:postcode":"P0P 1S0"}]]

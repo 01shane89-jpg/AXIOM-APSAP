@@ -1,0 +1,10 @@
+[["n11679041659",50.02061,-66.88251,"ca",{"name":"Clinique Horizon Santé","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;family_medicine","phone":"+1 418 766 4643","addr:housenumber":"8","addr:street":"Boulevard Des Îles","addr:city":"Port-Cartier","addr:province":"Quebec","addr:postcode":"G5B 2J4"}],
+["n874530756",50.30016,-66.41443,"ca",{"name":"Hydrobase Sept-Îles/lac Rapides","aeroway":"aerodrome"}],
+["r15545990",50.22522,-66.26273,"ca",{"name":"Aéroport de Sept-Îles","name:en":"Sept-Îles Airport","aeroway":"aerodrome","icao":"CYZV","iata":"YZV","wikidata":"Q2875916"}],
+["r4430179",50.21016,-66.38359,"ca",{"name":"Centre de Santé et Services Sociaux de Sept-Îles","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"http://www.cssssi.qc.ca","addr:housenumber":"45","addr:street":"du Père-Divet","addr:city":"Sept-Îles","addr:province":"Québec","addr:postcode":"G4R 3N7"}],
+["w1050525655",50.21455,-66.20453,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w1236273782",50.28881,-66.41218,"ca",{"name":"Héliport, Sept-Îles (Hydro-Québec)","name:en":"Sept-Îles (Hydro-Québec) Heliport","aeroway":"helipad"}],
+["w1236273821",50.20311,-66.3882,"ca",{"aeroway":"helipad"}],
+["w571129313",50.21009,-66.38336,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w572389067",50.02376,-66.89402,"ca",{"name":"CISSS de la Côte-Nord","amenity":"hospital","healthcare":"hospital","addr:housenumber":"3","addr:street":"Rue de Shelter Bay"}],
+["w72470868",50.21455,-66.2046,"ca",{"name":"Dispensaire de Maliotenam","amenity":"clinic","healthcare":"clinic"}]]

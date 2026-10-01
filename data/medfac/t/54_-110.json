@@ -1,0 +1,9 @@
+[["n1042025888",55.85,-108.47925,"ca",{"name":"Buffalo Narrows Seaplane Base","aeroway":"aerodrome","wikidata":"Q3885277"}],
+["n1042026514",54.0183,-109.135,"ca",{"name":"Loon Lake Airport","aeroway":"aerodrome"}],
+["n1042026703",54.4167,-109.233,"ca",{"name":"Goodsoil Airport","aeroway":"aerodrome","wikidata":"Q3913624"}],
+["n1042134074",55.83416,-108.40436,"ca",{"name":"Buffalo Narrows (Fire Centre) Heliport","aeroway":"helipad"}],
+["n2646935236",54.02734,-109.15745,"ca",{"amenity":"hospital"}],
+["r16252837",55.84091,-108.41586,"ca",{"name":"Buffalo Narrows Airport","aeroway":"aerodrome","icao":"CYVT","iata":"YVT","wikidata":"Q3886126"}],
+["w321834900",54.12358,-108.43487,"ca",{"name":"Northwest Health Facility/Meadow Lake Hospital","amenity":"hospital","healthcare":"hospital","addr:housenumber":"711","addr:street":"Centre Street","addr:postcode":"S9X 1E6"}],
+["w393530824",54.1256,-108.51991,"ca",{"name":"Meadow Lake Airport","operator":"Transport Canada","operator:type":"public","aeroway":"aerodrome","icao":"CYLJ","iata":"YLJ","wikidata":"Q6803265"}],
+["w393530978",54.12373,-108.43451,"ca",{"amenity":"hospital"}]]
