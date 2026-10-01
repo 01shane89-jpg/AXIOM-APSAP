@@ -1,0 +1,9 @@
+[["n1042025914",56.2486,-101.304,"ca",{"name":"Laurie River Airport","aeroway":"aerodrome","iata":"LRQ"}],
+["n1042026652",56.8172,-101.019,"ca",{"name":"Lynn Lake (Eldon Lake) Seaplane Base","aeroway":"aerodrome"}],
+["n1042026784",56.5667,-101.5,"ca",{"name":"Mcgavock Lake Seaplane Base","aeroway":"aerodrome"}],
+["n1042031677",56.8639,-101.076,"ca",{"name":"Lynn Lake Airport","aeroway":"aerodrome","icao":"CYYL","iata":"YYL","wikidata":"Q3506267"}],
+["w1368774704",56.85709,-101.04415,"ca",{"emergency":"ambulance_station"}],
+["w1368800204",56.46331,-100.01062,"ca",{"name":"leaf rapids medical clinic","amenity":"clinic","healthcare":"clinic","operator":"NRHA"}],
+["w1423995345",56.85719,-101.04317,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w414029959",56.85728,-101.04316,"ca",{"name":"Lynn Lake Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"640","addr:street":"Camp Street","addr:city":"Lynn Lake","addr:postcode":"R0B 0W0"}],
+["w631149766",57.88928,-101.67937,"ca",{"name":"Brochet Airport","aeroway":"aerodrome","icao":"CYBT","iata":"YBT","wikidata":"Q3885275"}]]

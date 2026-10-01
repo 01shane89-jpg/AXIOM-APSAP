@@ -1,0 +1,10 @@
+[["n1042023320",41.81541,26.30406,"bg",{"name":"Райкова могила","name:en":"Raikova Mogila Airfield","aeroway":"aerodrome"}],
+["n11444018978",41.77889,26.20355,"bg",{"name":"Спешна помощ Свиленград","name:en":"Emergency Healthcare Svilengrad","healthcare":"hospital","emergency":"emergency_ward_entrance"}],
+["n30419179",41.84,26.30972,"bg",{"name":"Мустрак","name:en":"Mustrak Airstrip","aeroway":"aerodrome"}],
+["n7540795778",41.76549,26.2046,"bg",{"name":"Спешна помощ Свиленград","name:en":"Emergency Healthcare Svilengrad","healthcare":"hospital","emergency":"emergency_ward_entrance"}],
+["r14660346",41.76553,26.20422,"bg",{"name":"ДКЦ","amenity":"clinic","healthcare":"clinic","emergency":"yes","phone":"+359 379 71 627","addr:housenumber":"137","addr:street":"бул. България","addr:city":"Свиленград","addr:postcode":"6500"}],
+["w1494517699",41.76564,26.20421,"bg",{"amenity":"hospital","healthcare":"clinic"}],
+["w252201428",41.52832,26.13057,"bg",{"name":"Медицински център","amenity":"clinic"}],
+["w806375866",41.76588,26.2043,"bg",{"name":"Линейки Спешна помощ","emergency":"ambulance_station"}],
+["w806381207",41.77895,26.20439,"bg",{"name":"МБАЛ Свиленград","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no"}],
+["w848664444",41.97723,27.52196,"bg",{"name":"Районна болница Иван Башев","amenity":"hospital","healthcare":"hospital"}]]
