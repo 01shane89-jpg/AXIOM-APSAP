@@ -36,7 +36,12 @@
    "src": "https://bh.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "f3471f8a46492f9c45859fee2b32f20fb0bfff5cc4005451bdf3baa97c4dafe4"
+   "fp": "a4ed6fecba36dbbb923fd5302c6a913a902b703d5da32803bf919eb0a37e6fa3",
+   "phone": "+973) 17 242700",
+   "phone_after_hours": "+973-1724-2700",
+   "phone_src": "https://bh.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -247,5 +252,11 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: hospitals not yet researched for this country.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

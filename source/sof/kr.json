@@ -30,7 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SouthKorea.html",
    "srcname": "travel.state.gov South Korea country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Seoul",
-   "fp": "9b65d046cc4e8c6a0fb89228d3bcd5f56c0d4c58b99a5f86dde4e26fb0ccd1f9"
+   "fp": "f7becda89889301271ed83f01982436ef29131b68a512fbeab054de77e4c3b1d",
+   "web": "https://kr.usembassy.gov/",
+   "phone": "+82-2-397-4114",
+   "phone_after_hours": "(02)-397-4114",
+   "phone_src": "https://kr.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   },
   {
    "id": "sof:kr:post:u-s-consulate-busan",
@@ -46,6 +52,26 @@
    "srcname": "travel.state.gov South Korea country information",
    "coord_basis": "estimated from published address",
    "fp": "f3f94ccdd585f7975a23f45cf94170d906c050ce59cbba96bbc5bba7b9cd1c20"
+  },
+  {
+   "id": "sof:kr:post:u-s-consulate-in-busan",
+   "name": "U.S. Consulate in Busan",
+   "kind": "consulate",
+   "city": null,
+   "address": null,
+   "services_note": null,
+   "lat": 35.178086,
+   "lon": 129.074492,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/6620305911",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://kr.usembassy.gov/busan/",
+   "phone_after_hours": "(02) 397-4114",
+   "phone_src": "https://kr.usembassy.gov/busan/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "9b33ce459dd4fb871e64a97ea2d7723947f01ab8cb28ecb0bbc3e393b843e74a"
   }
  ],
  "airports": [
@@ -629,5 +655,134 @@
  ],
  "gaps": [
   "kr.usembassy.gov returned 403 (no embassy medical list). Brian D. Allgood Army Community Hospital (Camp Humphreys) and National Medical Center could not be confirmed (pages not fetchable). Most coords estimated. ER hours not stated in sources; regional trauma center designations not confirmed."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:kr:xing:node-10272475183",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 38.206556,
+   "lon": 128.597252,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/10272475183",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "9bd95599a0dc0b157d314940efba5635775c0e1a5749edf64015c432482c6e03"
+  },
+  {
+   "id": "sof:kr:xing:node-10272773829",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 37.491689,
+   "lon": 129.125521,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/10272773829",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "5746284d34bcc3a77f78b84da105492184d706bfa4406e8fa270f47502fff33b"
+  },
+  {
+   "id": "sof:kr:xing:node-6438562659",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 37.692472,
+   "lon": 126.834701,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6438562659",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a35eb0a2ca0f9e11dca53f385bc4b850c96b45186135b5781fa34f7634e6ce6f"
+  },
+  {
+   "id": "sof:kr:xing:way-1123255204",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 37.42592,
+   "lon": 126.607227,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1123255204",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7bdc9322af002fbfcee6aebd3c93dd18ad575edade2b1f2b30a1e44678b1cc17"
+  },
+  {
+   "id": "sof:kr:xing:way-1123296204",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 35.118485,
+   "lon": 129.050261,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1123296204",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "340073959e9a73d5edede7716a6ed8f5b79f1a73ddbcab37d58b6247627872d4"
+  },
+  {
+   "id": "sof:kr:xing:way-245072804",
+   "name": "Donghae Line Inter-Korean Transit Office",
+   "local_name": "동해선남북출입사무소",
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 38.568691,
+   "lon": 128.391022,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/245072804",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "4e5c5bbbc871cc01245c2f7d9d978027b70942043d885cd7b9c142623ced8002"
+  },
+  {
+   "id": "sof:kr:xing:way-92854802",
+   "name": "Gyeongui Line Inter-Korean Transit Office",
+   "local_name": "경의선남북출입사무소",
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 37.903023,
+   "lon": 126.709327,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/92854802",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7631c0bb1bc0800d140051c8ef5aca5a338a0ef095fc536706d8eb0059ab74c8"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

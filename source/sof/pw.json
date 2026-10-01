@@ -30,7 +30,33 @@
    "src": "https://pw.usembassy.gov/medical-assistance/",
    "srcname": "U.S. Embassy Koror",
    "coord_basis": "town centre estimate; not surveyed",
-   "fp": "8deb6688ef5d2e9de37f76ca3abee226486f8166b56c8206d08880782ed5958c"
+   "fp": "bf64d378482c52a8fd6cc466cea441b8e68a8a395a8e7d948de406037d251b76",
+   "phone": "(680) 587-2920",
+   "phone_after_hours": "680-750-8821 (775",
+   "phone_src": "https://pw.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
+  },
+  {
+   "id": "sof:pw:post:embassy-of-the-united-states-of-america",
+   "name": "Embassy of the United States of America",
+   "kind": "embassy",
+   "city": null,
+   "address": null,
+   "services_note": null,
+   "lat": 7.359634,
+   "lon": 134.551178,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/6139820921",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://pw.usembassy.gov",
+   "phone": "(680) 587-2920",
+   "phone_after_hours": "680-750-8821 (775",
+   "phone_src": "https://pw.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "b54e24891dba0a8582fc8ec9a06d208592abab83749429618e2d2275e80911b1"
   }
  ],
  "airports": [
@@ -145,5 +171,11 @@
   "Only one hospital in Palau; no second emergency facility identified from the searches.",
   "Valiant Shield 2026 dates not retrieved; status left as 'announced' although DVIDS imagery indicates Palau activity occurred.",
   "No 2026 Koa Moana, Tempest Wind or Palau-specific HADR exercise found within the search budget."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
