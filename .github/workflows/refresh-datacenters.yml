@@ -1,0 +1,44 @@
+# Stored data centres for Map overlays > Infrastructure > Data centres (tools/build_datacenters.mjs -> data/dc): OpenStreetMap,
+# Wikidata and Epoch AI (AI data centres and GPU clusters), every country. Weekly; commits on the branch it runs on (main on
+# schedule). A source that fails keeps its last good copy and is reported in data/dc/index.json.
+name: Refresh data centres
+
+on:
+  # a push of the builder on a data centre branch builds there, so the layer can be previewed and tested with real data
+  push:
+    branches: ["claude/ai-datacenters*"]
+    paths: ["tools/build_datacenters.mjs", ".github/workflows/refresh-datacenters.yml"]
+  schedule:
+    - cron: "41 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-datacenters-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Build
+        env:
+          DC_DEBUG: "1"
+        run: node tools/build_datacenters.mjs
+      - name: Commit
+        run: |
+          git add -A data/dc
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Refresh data centres $(date -u +'%Y-%m-%d %H:%MZ')"
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1

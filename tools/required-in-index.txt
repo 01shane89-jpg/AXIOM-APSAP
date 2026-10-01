@@ -101,3 +101,5 @@ data-ev-tlr="1"
 # Country boundaries overlay in Map overlays (claude/country-borders)
 <script src="assets/osap-borders.js"></script>
 :not([data-bd])
+# data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
+<script>window.OSAP_LATER("assets/osap-dc.js");</script>
