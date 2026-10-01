@@ -130,3 +130,15 @@ console.log("feeds tests passed");
   assert.deepEqual(out.map((i) => i.link), ["https://a.com/1?utm_source=x", "https://c.com/3", "https://g1.com/r", "https://g1.com/d", "https://h.bj/1", "https://h.bj/2", "https://m.gov/x?id=5", "https://m.gov/x?id=6"]);
   console.log("news dedupe tests passed");
 }
+
+// Page script inside an item body is dropped with its contents (a Pakistan item once carried "if (!window._raw..." text,
+// which also broke every reader that looked for the last "window." in a data file).
+{
+  const xml = `<rss><channel><item><title>Govt reduces petrol price</title><link>https://x.pk/1</link>
+    <description><![CDATA[<p>Prices fall.</p><script>if (!window._rawHtmlListenerAttached) { window.addEventListener('message', function(e) {}); }</script>]]></description></item>
+    <item><title>Escaped</title><link>https://x.pk/2</link><description>&lt;p&gt;Ok.&lt;/p&gt;&lt;script&gt;window.foo = 1;&lt;/script&gt;</description></item></channel></rss>`;
+  const it = parseFeed(xml);
+  assert.equal(it[0].summary, "Prices fall.");
+  assert.equal(it[1].summary, "Ok.");
+  console.log("script stripping tests passed");
+}

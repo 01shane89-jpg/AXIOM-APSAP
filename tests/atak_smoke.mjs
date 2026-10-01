@@ -64,7 +64,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 8, "phone: radial has 7 actions (Med plan included) and close");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 9, "phone: radial has 8 actions (Med plan and Find LZ included) and close");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
@@ -99,12 +99,20 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => [...document.querySelectorAll("#atk-om #ml-ds input")].filter((i) => i.offsetParent !== null).length > 3), "phone: Data sets lists the data sets");
   ok(await p.evaluate(() => { const g = document.querySelector("#atk-marks"); return g.offsetParent === null && ![...document.querySelectorAll("#atk-om #ml-panel > :not(#ml-ds)")].some((e) => e.offsetParent !== null); }), "phone: Data sets shows no map layers or marks");
+  // natural disasters: flooding and fires are data sets, ticked here and cleared by Clear map (Shane 2026-10-01)
+  ok(await p.evaluate(() => { const t = document.querySelector("#atk-om #ml-ds").textContent; return /Natural disasters/.test(t) && /Flooding now/.test(t) && /Fires now/.test(t) && /Earthquakes and hazards/.test(t); }), "phone: Data sets > Natural disasters lists Flooding now, Fires now and earthquakes");
+  await p.click('#atk-om #ml-ds .dsx:has([data-fx="now"])'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => document.querySelector('#ml-ds [data-fx="now"]').checked && /\b1\b/.test(document.querySelector("#ml-ds .dscount").textContent)), "phone: ticking Flooding now puts it on the map and counts it");
+  await p.click("#atk-om #ml-ds .dsclear"); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.querySelector('#ml-ds [data-fx="now"]').checked && !JSON.parse(localStorage.getItem("asap-map-layers") || "{}").now), "phone: Clear map takes Flooding now off");
   // each button opens its own panel: no tabs leading to the other two, and the title says which one is open
   ok(await p.evaluate(() => !document.querySelector("#atk-om [data-omm], #atk-om [role=tab]") && document.querySelector("#atk-om h2").textContent === "Data sets" && document.querySelector("#atk-om h2").offsetParent !== null), "phone: Data sets panel has its own title and no tabs to the others");
   const via = async (k) => { await p.click('#atk-om [data-om="x"]'); await p.waitForTimeout(150); await p.click('#atk-tools [data-atk="' + k + '"]'); await p.waitForTimeout(200); };
   await via("overlays");
   ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode") === "overlays" && document.querySelector("#atk-om h2").textContent === "Map overlays"), "phone: the Overlays button opens Map overlays");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !w || w.offsetParent === null; }), "phone: Map overlays does not hold the weather layers");
+  ok(await p.evaluate(() => { const vis = [...document.querySelectorAll("#atk-om [data-fx]")].filter((i) => i.offsetParent !== null || i.closest("label")?.offsetParent); return !vis.length && !/Flooding/.test([...document.querySelectorAll("#atk-om .mlh")].filter((h) => h.offsetParent).map((h) => h.textContent).join()); }), "phone: Map overlays no longer holds flooding");
+  ok(await p.evaluate(() => { const ids = [...document.querySelectorAll("#ml-panel > *")].map((c) => c.id || (c.querySelector(".mlh") || c).textContent.trim().slice(0, 7)); const at = (x) => ids.indexOf(x); return at("ml-infra") >= 0 && at("ml-infra") < at("ml-elev") && document.querySelector("#ml-infra > #ml-roads") && !document.getElementById("ml-infra").hidden; }), "phone: Map overlays open with Infrastructure, which holds roads");
   await via("weather");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !!w && w.offsetParent !== null && document.querySelector("#atk-marks").offsetParent === null; }), "phone: Weather shows the weather layers alone");
   await via("overlays");
