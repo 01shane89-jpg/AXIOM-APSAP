@@ -88,7 +88,7 @@
     var m = W.__asapMap, root = D.documentElement, mr = m && m.getContainer().getBoundingClientRect(), t = mr && !phone() ? Math.max(0, Math.round(mr.top)) : 0;
     root.style.setProperty("--osplit-top", t + "px");
     var cov = 0;
-    if (mr && !phone()) Array.prototype.forEach.call(D.querySelectorAll(".osplit:not([hidden])"), function (w) {
+    if (mr && !phone()) Array.prototype.forEach.call(D.querySelectorAll(".osplit:not([hidden]), #medplan.dock:not([hidden])"), function (w) {
       var r = (w.firstElementChild || w).getBoundingClientRect(); if (!r.width || r.left >= mr.right) return;
       cov = Math.max(cov, Math.round(mr.right - Math.max(r.left, mr.left)));
     });
