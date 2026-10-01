@@ -63,6 +63,19 @@
     if (b) b.click();
   }
   function areaOn() { var A = W.TSAP && W.TSAP.areaApi; return !!(A && A.area && A.area()); }
+  /* an area tool picked before a shape is drawn: ask for the shape, then run the tool as soon as the shape is finished */
+  var areaWaitT = 0;
+  function areaWait(run, label) {
+    clearInterval(areaWaitT);
+    toast("Draw the area for " + label + ": pick a shape");
+    var ab = bar.querySelector('[data-atk="area"]');
+    if (ab) popOpen(ab, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]]);
+    var until = Date.now() + 600000;
+    areaWaitT = setInterval(function () {
+      if (areaOn()) { clearInterval(areaWaitT); setTimeout(run, 250); }
+      else if (Date.now() > until) clearInterval(areaWaitT);
+    }, 400);
+  }
 
   /* ---------- the toolbar ---------- */
   /* the toolbar in groups, top to bottom, with a thin line between groups (Shane 2026-09-30: easy and intuitive to find):
@@ -97,6 +110,12 @@
       return '<button type="button" data-atk="' + t[0] + '" title="' + esc(t[3]) + '" aria-label="' + esc(t[1]) + '">' + t[2] + '<span class="atk-l">' + esc(t[1]) + "</span></button>";
     }).join("") + "</div>";
   L.DomEvent.disableClickPropagation(bar); L.DomEvent.disableScrollPropagation(bar);
+  /* when the tools run past the bottom of the map (phones), a fade and a down arrow say there are more below */
+  function moreCue() { var l = bar.querySelector(".atk-list"); if (l) bar.classList.toggle("more", !bar.classList.contains("folded") && l.scrollTop + l.clientHeight < l.scrollHeight - 4); }
+  bar.querySelector(".atk-list").addEventListener("scroll", moreCue, { passive: true });
+  W.addEventListener("resize", moreCue);
+  if (W.ResizeObserver) new ResizeObserver(moreCue).observe(bar.querySelector(".atk-list"));
+  if (W.MutationObserver) new MutationObserver(moreCue).observe(bar.querySelector(".atk-list"), { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   /* every floating piece carries leaflet-control, so the page's map-click dispatcher leaves its taps alone */
   var pop = D.createElement("div"); pop.id = "atk-pop"; pop.className = "leaflet-control"; pop.hidden = true; pop.setAttribute("role", "menu");
   L.DomEvent.disableClickPropagation(pop); L.DomEvent.disableScrollPropagation(pop);
@@ -104,7 +123,7 @@
   function fold(v) {
     bar.classList.toggle("folded", v); lsSet(K_FOLD, v ? "1" : null);
     var b = bar.querySelector(".atk-fold"); b.innerHTML = v ? I.unfold : I.fold; b.setAttribute("aria-expanded", String(!v));
-    b.title = v ? "Show the map tools" : "Fold the toolbar away"; popClose();
+    b.title = v ? "Show the map tools" : "Fold the toolbar away"; popClose(); moreCue();
   }
   function popOpen(btn, items) {
     pop.innerHTML = items.map(function (it) {
@@ -151,7 +170,9 @@
     }
     else if (k === "area") {
       var has = areaOn();
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"]].concat(has ? [null, ["edit", "Edit shape"], ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }), [["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]]) : []));
+      /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }),
+        has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -176,7 +197,9 @@
     else if (f === "area") {
       /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
-      if (at) { if (typeof at.run === "function") at.run(); }
+      var run = at ? function () { if (typeof at.run === "function") at.run(); } : k === "sum" ? function () { areaPress("sum"); } : null;
+      if (run && !areaOn()) { areaWait(run, at ? at.label : "Summarise area"); return; }
+      if (run) run();
       else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
       setTimeout(paintTools, 30);
     }
@@ -407,7 +430,7 @@
 
   /* ---------- Overlay Manager ---------- */
   var om = D.createElement("aside"); om.id = "atk-om"; om.className = "leaflet-control"; om.hidden = true; om.setAttribute("aria-label", "Overlay Manager");
-  om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><div class="atk-omm" role="tablist" aria-label="Show"><button type="button" role="tab" data-omm="datasets">Data sets</button><button type="button" role="tab" data-omm="overlays">Map overlays</button><button type="button" role="tab" data-omm="weather">Weather</button></div><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
+  om.innerHTML = '<div class="atk-omh"><h2>Overlays</h2><button type="button" class="atk-ic" data-om="x" aria-label="Close">' + I.x + "</button></div>" +
     '<div class="atk-omb"><section class="atk-s-ds"><h3>Data sets</h3><div id="atk-ds"></div></section>' +
     '<section class="atk-s-ml"><div id="atk-ml"></div></section>' +
     '<section class="atk-s-ov"><h3>Your marks <span class="obs">(this browser only)</span></h3><div id="atk-marks"></div></section>' +
@@ -431,13 +454,13 @@
       A.map(function (a) { return '<div class="atk-mk"><button type="button" data-aoi-go="' + esc(a.id) + '"><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + "</button></div>"; }).join("");
     om.querySelector("#atk-classic").checked = !on();
   }
-  /* one sheet, two uses: "datasets" shows only the data set list; "overlays" shows the map layers, your marks and controls */
+  /* one sheet, three separate uses, each opened only by its own toolbar button (no tabs between them): "datasets" shows only the data set list;
+     "overlays" shows the map layers, your marks and controls; "weather" shows only the weather layers */
   function omOpen(mode) {
     omMode = mode === "overlays" || mode === "weather" ? mode : "datasets";
     var ttl = { datasets: "Data sets", overlays: "Map overlays", weather: "Weather" }[omMode];
     om.setAttribute("data-mode", omMode); om.setAttribute("aria-label", ttl);
     om.querySelector("h2").textContent = ttl;
-    Array.prototype.forEach.call(om.querySelectorAll("[data-omm]"), function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-omm") === omMode)); });
     ["datasets", "overlays", "weather"].forEach(function (k) { var b = bar.querySelector('[data-atk="' + k + '"]'); if (b) b.setAttribute("aria-pressed", String(k === omMode)); });
     var ml = q("#ml-panel");
     if (ml && ml.parentNode !== om.querySelector("#atk-ml")) { mlHome = ml.parentNode; om.querySelector("#atk-ml").appendChild(ml); }
@@ -453,7 +476,6 @@
   om.addEventListener("click", function (e) {
     var t = e.target, b;
     if (t.closest("[data-om=x]")) { omClose(); return; }
-    if ((b = t.closest("[data-omm]"))) { omOpen(b.getAttribute("data-omm")); return; }
     if ((b = t.closest(".atk-dsb[data-ds]"))) { press('#view-seg button[data-view="' + b.getAttribute("data-ds") + '"]'); setTimeout(omPaint, 60); return; }
     if ((b = t.closest("[data-mk-del]"))) { ptDel(b.getAttribute("data-mk-del")); return; }
     if ((b = t.closest("[data-mk-ed]"))) { if (phone()) omClose(); if (W.OSAP_POINTS) W.OSAP_POINTS.edit(b.getAttribute("data-mk-ed")); return; }
@@ -497,8 +519,7 @@
     "html.atak #ml-panel .mlbase{display:none}" +
     /* Data sets shows the list alone; Map overlays shows everything else in the Layers panel, plus your marks and controls */
     /* the sheet's header switches between the two, so on a phone (where the sheet covers the toolbar) neither needs closing first */
-    "#atk-om h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}#atk-om .atk-omm{display:flex;gap:2px;background:var(--line);border-radius:8px;padding:2px}" +
-    "#atk-om .atk-omm button{font:600 13.5px system-ui,sans-serif;border:0;border-radius:6px;padding:7px 12px;min-height:34px;background:none;color:var(--ink,#222);cursor:pointer}#atk-om .atk-omm button[aria-selected=true]{background:var(--surface,#fff);box-shadow:0 1px 3px rgba(0,0,0,.2)}" +
+    "#atk-om h2{margin:0;font:700 17px system-ui,sans-serif}" +
     "#atk-om[data-mode=datasets] .atk-s-ov,#atk-om[data-mode=datasets] #ml-panel>:not(#ml-ds),#atk-om[data-mode=overlays] #ml-ds,#atk-om[data-mode=overlays] #ml-wx{display:none!important}" +
     /* Weather shows the weather section of the Layers panel alone */
     "#atk-om[data-mode=weather] .atk-s-ov,#atk-om[data-mode=weather] #ml-panel>:not(#ml-extra),#atk-om[data-mode=weather] #ml-extra>:not(#ml-wx),#atk-om[data-mode=weather] #ml-wx>.mlh:first-child{display:none!important}" +
@@ -556,7 +577,9 @@
     ".atk-mk code{font:11.5px 'IBM Plex Mono',monospace;color:var(--muted)}.atk-dot{display:inline-block;width:9px;height:9px;background:#15aabf;transform:rotate(45deg);border:1.5px solid #fff;box-shadow:0 0 0 1px #15aabf}" +
     ".atk-sw{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.atk-sw input{margin-top:2px}" +
     "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:72%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
-    "#atk-tools{top:6px;right:6px}#atk-tools button{width:44px;min-height:44px}#atk-tools .atk-l{display:none}#atk-tools .atk-fold{min-height:26px}}" +
+    "#atk-tools{top:6px;right:6px}#atk-tools button{width:50px;min-height:44px}#atk-tools .atk-fold{min-height:26px}}" +
+    "#atk-tools.more::after{content:'';position:absolute;left:3px;right:3px;bottom:3px;height:26px;border-radius:0 0 8px 8px;pointer-events:none;background:linear-gradient(rgba(20,24,28,0),rgba(20,24,28,.95) 70%)}" +
+    "#atk-tools.more::before{content:'';position:absolute;z-index:1;left:50%;bottom:9px;width:7px;height:7px;margin-left:-5px;border:solid #e9eef2;border-width:0 2px 2px 0;transform:rotate(45deg);pointer-events:none}" +
     "@media (max-width:700px) and (max-height:760px){#atk-tools button{min-height:40px}}";
   D.head.appendChild(st);
 
