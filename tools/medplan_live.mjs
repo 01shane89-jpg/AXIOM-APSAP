@@ -42,6 +42,7 @@ async function run(cc, c, poi) {
   return r.fac && r.rt && r.ems && r.oc && r.wx && r.poi && !errors.length;
 }
 const okTh = await run("th", [6.54, 101.28], "6.5450, 101.2800");
+await new Promise((r) => setTimeout(r, 20000)); /* let the Overpass slot free up */
 const okDe = await run("de", [50.11, 8.68], "50.1100, 8.6800");
 console.log(okTh && okDe ? "LIVE OK: POI, ranked hospitals, routes, EMS numbers, out-of-country and weather" : "LIVE FAILED");
 await browser.close(); server.close(); process.exit(okTh && okDe ? 0 : 1);

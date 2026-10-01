@@ -185,7 +185,11 @@
     var body = "data=" + encodeURIComponent(q), errs = [];
     function go(i) {
       if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      return post(OVERPASS[i], body, 45000).catch(function (e) { errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1); });
+      return post(OVERPASS[i], body, 45000).catch(function (e) {
+        /* busy: wait a moment and ask the same server once more before the next one */
+        if (/429/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 3000); }).then(function () { return go(i); }); }
+        errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1);
+      });
     }
     return go(0);
   }
@@ -219,12 +223,28 @@
       if (!/withheld/.test(base.name)) contactsOf(t, base);
       (hosp ? H : C).push(base);
     });
+    /* one hospital mapped twice (a point and an outline, or a Thai and an English entry): within 250 m, or the same name
+       within 1.5 km, keep the entry with more tags and add the other's contacts */
+    H = dedupe(H); C = dedupe(C);
     /* a helipad within 400 m of a facility counts as on site */
     H.concat(C).forEach(function (f) { f.pad = L.some(function (l) { return l.kind !== "airfield" && hav([f.lat, f.lon], [l.lat, l.lon]) < 400; }); });
     function byM(x, y) { return x.m - y.m; }
     H.sort(byM); C.sort(byM); L.sort(byM); E.sort(byM);
     return { H: H, C: C.slice(0, MAX_CLIN), L: L.filter(function (l) { return l.kind !== "airfield"; }).slice(0, MAX_AIR),
       AF: L.filter(function (l) { return l.kind === "airfield"; }).slice(0, 8), E: E.slice(0, 5), nH: H.length, nC: C.length };
+  }
+  function richness(f) { return (f.er ? 2 : 0) + (f.beds ? 1 : 0) + (f.specRaw ? 1 : 0) + (f.phone ? 1 : 0) + (f.web ? 1 : 0) + (f.addr ? 1 : 0) + (/no name|withheld/.test(f.name) ? -3 : 0) + (/[a-z]/i.test(f.name) ? 1 : 0); }
+  function dedupe(L) {
+    var out = [];
+    L.forEach(function (f) {
+      var d = out.filter(function (g) { var m = hav([f.lat, f.lon], [g.lat, g.lon]); return m < 250 || (m < 1500 && f.name.toLowerCase() === g.name.toLowerCase() && !/no name|withheld/.test(f.name)); })[0];
+      if (!d) { out.push(f); return; }
+      var keep = richness(f) > richness(d) ? f : d, other = keep === f ? d : f;
+      ["phone", "ephone", "web", "addr", "er", "beds", "specRaw", "spec", "op"].forEach(function (k) { if (!keep[k] && other[k]) keep[k] = other[k]; });
+      keep.alias = other.name;
+      if (keep !== d) out[out.indexOf(d)] = keep;
+    });
+    return out;
   }
   function sortX(els, o) {
     var seen = {}, R = [], P = [];
@@ -352,20 +372,24 @@
 
   /* ---------- emergency numbers (Wikidata, kept a week on this device) ---------- */
   function ems(c) {
-    var k = KEY + "ems-" + c, kept = lsGet(k);
+    var k = KEY + "ems2-" + c, kept = lsGet(k);
     if (kept && kept.nums && Date.now() - kept.at < 7 * 864e5) return Promise.resolve(kept);
     var iso = c === "oki" ? "JP" : c.toUpperCase();
-    var q = 'SELECT ?c ?nLabel ?useLabel WHERE { ?c wdt:P297 "' + iso + '" . ?c p:P2852 ?st . ?st ps:P2852 ?n . OPTIONAL { ?n wdt:P366 ?use } SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }';
+    /* what each number is for: the statement's "use" qualifier, the number item's own "use", or its English description */
+    var q = 'SELECT ?c ?nLabel ?u1Label ?u2Label ?d WHERE { ?c wdt:P297 "' + iso + '" . ?c p:P2852 ?st . ?st ps:P2852 ?n . OPTIONAL { ?st pq:P366 ?u1 } OPTIONAL { ?n wdt:P366 ?u2 } ' +
+      'OPTIONAL { ?n schema:description ?d . FILTER(LANG(?d) = "en") } SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }';
     return getJSON(WIKIDATA + "?format=json&query=" + encodeURIComponent(q), 20000, { Accept: "application/sparql-results+json" }).then(function (j) {
       var by = {}, qid = "";
       ((j && j.results && j.results.bindings) || []).forEach(function (b) {
         var n = b.nLabel && b.nLabel.value; if (!n || !/^[0-9]{2,6}$/.test(n)) return;
         qid = qid || String(b.c && b.c.value || "").split("/").pop();
-        var u = by[n] || (by[n] = { n: n, uses: [] }), use = b.useLabel && b.useLabel.value;
-        if (use && !/^Q\d+$/.test(use) && u.uses.indexOf(use) < 0) u.uses.push(use);
+        var u = by[n] || (by[n] = { n: n, uses: [] });
+        [b.u1Label, b.u2Label].forEach(function (x) { var use = x && x.value; if (use && !/^Q\d+$/.test(use) && u.uses.indexOf(use) < 0) u.uses.push(clip(use, 60)); });
+        if (b.d && b.d.value) u.desc = clip(b.d.value, 100);
       });
       var nums = Object.keys(by).map(function (n) { return by[n]; });
       if (!nums.length) throw new Error("no emergency number listed");
+      nums.forEach(function (x) { if (!x.uses.length && x.desc) x.uses.push(x.desc); });
       function amb(x) { return /medic|ambulance|health/i.test(x.uses.join(" ")); }
       nums.sort(function (x, y) { return amb(y) - amb(x) || x.n.length - y.n.length; });
       var r = { at: Date.now(), q: qid, nums: nums.slice(0, 6) };
@@ -571,7 +595,8 @@
     s.radii = { h: rH, c: rC, a: rA };
     s.fac = null; s.osmErr = ""; s.route = null; s.routeErr = ""; s.wx = null; s.wxErr = ""; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
     var sofP = loadSof(s.cc);
-    Promise.all([overpass(oQuery(o, rH, rC, rA)), sofP]).then(function (r) {
+    var main = overpass(oQuery(o, rH, rC, rA));
+    Promise.all([main, sofP]).then(function (r) {
       if (ST !== s) return;
       var j = r[0], sof = r[1];
       s.fac = sortOsm(j.elements, o); s.osmAt = Date.now(); s.osmBase = j.osm3s && j.osm3s.timestamp_osm_base;
@@ -589,8 +614,10 @@
       var rt = D.getElementById("mp-rt"); if (rt) rt.innerHTML = '<p class="obs">No hospital list, so no routes.</p>';
       srcRender();
     });
-    overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); mevRender(); ocRender(); mapShow(); srcRender(); },
-      function (e) { if (ST !== s) return; s.xErr = e.message; mevRender(); srcRender(); });
+    /* air rescue bases and U.S. posts once the main lookup is answered, so one plan never holds two Overpass slots */
+    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); mevRender(); ocRender(); mapShow(); srcRender(); },
+      function (e) { if (ST !== s) return; s.xErr = e.message; mevRender(); srcRender(); }); };
+    main.then(xGo, xGo);
     isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
     weather(o).then(function (w) { if (ST !== s) return; s.wx = w; wxRender(); srcRender(); }, function (e) { if (ST !== s) return; s.wxErr = e.message; wxRender(); srcRender(); });
@@ -633,7 +660,7 @@
     var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
     return "<tr><td class=\"n\"><span class=\"mpmark\">" + mk + "</span></td><td class=\"mpfac\">" + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
-      "<b>" + esc(f.name) + "</b><br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + "</td>" +
+      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.route || ST.routeErr ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">at ' + rw + " kn</span></td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
@@ -750,13 +777,18 @@
     var la = Math.max(b[0][0], Math.min(b[1][0], o[0])), lo = Math.max(b[0][1], Math.min(b[1][1], o[1]));
     return hav(o, [la, lo]);
   }
+  function rwy(r) {
+    if (!r) return "";
+    if (typeof r !== "object") return clip(r, 30);
+    return r.length_m ? Math.round(r.length_m).toLocaleString("en-GB") + " m" + (r.surface ? " " + clip(r.surface, 12) : "") : "";
+  }
   function airports(s) {
     var sof = sofOf(s.cc), A2 = [];
     ((sof && sof.airports) || []).forEach(function (a) {
       if (a.lat == null || !(a.iata || a.icao)) return;
       if (!(a.scheduled_service === "yes" || a.scheduled_service === true || a.type === "large_airport")) return;
       A2.push({ id: "ap:" + (a.icao || a.iata), name: clip(a.name, 90), code: [a.icao, a.iata].filter(Boolean).join(" / "), lat: a.lat, lon: a.lon, big: a.type === "large_airport",
-        runway: a.longest_runway || "", src: a.src, srcname: a.srcname || "OurAirports", m: distM(s.o, [a.lat, a.lon]), brg: brg(s.o, [a.lat, a.lon]) });
+        runway: rwy(a.longest_runway), src: a.src, srcname: a.srcname || "OurAirports", m: distM(s.o, [a.lat, a.lon]), brg: brg(s.o, [a.lat, a.lon]) });
     });
     if (!A2.length && s.fac) s.fac.AF.forEach(function (a) { if (a.iata) A2.push({ id: a.id, name: a.name, code: a.code, lat: a.lat, lon: a.lon, big: false, src: a.osm, srcname: "OpenStreetMap", m: a.m, brg: a.brg }); });
     A2.sort(function (x, y) { return (x.m - (x.big ? 60000 : 0)) - (y.m - (y.big ? 60000 : 0)); });

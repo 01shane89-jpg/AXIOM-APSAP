@@ -38,6 +38,7 @@ const OSM = { osm3s: { timestamp_osm_base: "2026-09-30T06:00:00Z" }, elements: [
   { type: "node", id: 8, lat: 13.70, lon: 100.45, tags: { aeroway: "helipad", name: "Riverside Pad" } },
   { type: "node", id: 9, lat: 13.71, lon: 100.46, tags: { aeroway: "helipad", disused: "yes" } },
   { type: "node", id: 10, lat: 13.70, lon: 100.40, tags: { amenity: "hospital", name: "Trauma Test Hospital", "healthcare:speciality": "trauma;surgery" } },
+  { type: "node", id: 12, lat: 13.7608, lon: 100.5108, tags: { amenity: "hospital", name: "โรงพยาบาลใกล้" } },
   { type: "node", id: 11, lat: 13.752, lon: 100.498, tags: { emergency: "ambulance_station", name: "City Ambulance Station", phone: "+66 2 111 2222" } }
 ] };
 /* air rescue bases and U.S. posts (the second, wider Overpass request) */
@@ -71,8 +72,9 @@ function iso(url) {
   return { type: "FeatureCollection", features: j.contours.map((x) => ({ type: "Feature", properties: { contour: x.time }, geometry: { type: "Polygon", coordinates: [ring(x.time / 300)] } })) };
 }
 const WD = { results: { bindings: [
-  { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "191" }, useLabel: { value: "police" } },
-  { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "1669" }, useLabel: { value: "emergency medical services" } }
+  { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "191" }, u1Label: { value: "police" } },
+  { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "1669" }, d: { value: "emergency medical services number in Thailand" } },
+  { c: { value: "http://www.wikidata.org/entity/Q869" }, nLabel: { value: "199" }, u2Label: { value: "Q12345" } }
 ] } };
 function meteo() {
   const days = ["2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"], ht = [], vis = [], g = [], lc = [], pr = [], at = [];
@@ -146,6 +148,7 @@ async function openPlan(p) {
   ok(/24-hour emergency \(Test wiki\)/.test(fac), "desktop: an OSM hospital is matched to its sourced record");
   ok(!/Role [1-4]\b/.test(fac), "desktop: no military Role designation is invented for a civilian hospital");
   ok(/10 min/.test(fac) && /25 min/.test(fac), "desktop: drive times shown (10 min, 25 min)");
+  ok(/Near Hospital \(โรงพยาบาลใกล้\)/.test(fac) && order.length === 4, "desktop: a hospital mapped twice in OSM is listed once, with its other name");
   const gh = await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr")].map((r) => (r.querySelector(".mpgh") || {}).textContent || ""));
   ok(gh[0] === "Beyond golden hour" && gh[1] === "Inside golden hour" && gh[2] === "Inside golden hour", "desktop: golden-hour badges from treat-and-load plus drive: " + gh.join(", "));
   ok(/Helipad on site/.test(fac) || /helipad on site/.test(fac), "desktop: a helipad next to a hospital counts");
@@ -161,7 +164,7 @@ async function openPlan(p) {
   const ghs = await p.textContent("#mp-gh");
   ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green outline/.test(ghs), "desktop: golden-hour section states its thresholds and the drawn reach");
   const ems = await p.textContent("#mp-ems");
-  ok(/1669: emergency medical services/.test(ems) && /191: police/.test(ems) && ems.indexOf("1669") < ems.indexOf("191"), "desktop: local emergency numbers, ambulance first");
+  ok(/1669: emergency medical services number in Thailand/.test(ems) && (await p.$$eval("#mp-ems li", (l) => l.map((x) => x.textContent))).includes("199") && !/Q12345/.test(ems) && /191: police/.test(ems) && ems.indexOf("1669") < ems.indexOf("191"), "desktop: local emergency numbers, ambulance first");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-ems a")].some((a) => a.href === "https://www.wikidata.org/wiki/Q869#P2852")), "desktop: emergency numbers link to their Wikidata source");
   ok(/City Ambulance Station/.test(ems) && /111 2222/.test(ems), "desktop: ambulance stations near the POI with their published phone");
   const mev = await p.textContent("#mp-mev");
