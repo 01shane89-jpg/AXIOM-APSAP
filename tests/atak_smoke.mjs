@@ -64,7 +64,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 7, "phone: radial has 6 actions and close");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 8, "phone: radial has 7 actions (Med plan included) and close");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
@@ -132,6 +132,11 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await shown(p, "#atk-ring"), "desktop: right-click opens the radial menu");
   if (OUT) await p.screenshot({ path: OUT + "/desk-radial.png" });
   await p.keyboard.press("Escape"); ok(!(await shown(p, "#atk-ring")), "desktop: Escape closes it");
+  /* Med plan in the ring plans from that point, with no drawn area */
+  await p.evaluate(() => { window.__mp = null; window.OSAP_MEDPLAN.open = (o) => { window.__mp = o; }; });
+  await p.mouse.click(box[0] - 100, box[1], { button: "right" }); await p.waitForTimeout(200);
+  await ringBtn(p, "medplan"); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => !!(window.__mp && Array.isArray(window.__mp.at) && isFinite(window.__mp.at[0]) && Math.abs(window.__mp.at[1]) <= 180)), "desktop: Med plan in the radial menu opens the medical plan at that point");
   await p.click('#atk-tools [data-atk="area"]');
   ok(await shown(p, "#atk-pop") && /Lasso/.test(await p.textContent("#atk-pop")), "desktop: Area opens Lasso / Polygon");
   await p.click('#atk-pop [data-pk="poly"]'); await p.waitForTimeout(150);
