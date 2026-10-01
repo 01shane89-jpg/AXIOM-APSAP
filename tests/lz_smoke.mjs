@@ -169,7 +169,7 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   await p.evaluate(() => document.querySelector('#atk-ring [data-rk="lz"]').click());
   await p.waitForFunction(() => window.OSAP_LZ, null, { timeout: 15000 }); await done(p);
   const st = await p.evaluate(() => { const s = window.OSAP_LZ.state(); return { err: s.err, res: !!s.res }; });
-  ok(!st.res && /OpenStreetMap obstacles did not load/.test(st.err) && calls() >= 3, "phone: failed Overpass (all hosts) is reported as a failure, no candidates: " + st.err);
+  ok(!st.res && /OpenStreetMap obstacles did not load/.test(st.err) && calls() >= 4, "phone: failed Overpass (all hosts) is reported as a failure, no candidates: " + st.err);
   ok(await p.evaluate(() => { const c = document.getElementById("lz-card"); return c.classList.contains("lzdock") && c.closest(".leaflet-bottom.leaflet-left") !== null; }), "phone: the card docks at the bottom of the map");
   ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), t = document.getElementById("atk-tools").getBoundingClientRect(); return c.left >= 0 && c.right <= t.left; }), "phone: the card fits beside the toolbar");
   if (OUT) await p.screenshot({ path: OUT + "/lz-phone.png" });

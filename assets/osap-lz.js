@@ -27,7 +27,7 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var map = W.__asapMap; if (!map || !W.L) return;
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var ZA = 14, ZD = 13, KEY = "osap-lz", MAXC = 8, NEAR = 300;
   var RADII = [0.5, 1, 2, 3, 5];
   var SIZES = [[50, "50 m: light helicopter"], [100, "100 m: single ship"], [150, "150 m: heavy helicopter"], [250, "250 m: two ships"]];
@@ -143,7 +143,11 @@
     var body = "data=" + encodeURIComponent(q), errs = [];
     function go(i) {
       if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      return post(OVERPASS[i], body, 50000).catch(function (e) { errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1); });
+      return post(OVERPASS[i], body, 45000).catch(function (e) {
+        /* busy or overloaded (429, 502-504): wait a moment and ask the same server once more before the next one */
+        if (/429|HTTP 50[234]/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 4000); }).then(function () { return go(i); }); }
+        errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1);
+      });
     }
     return go(0);
   }
