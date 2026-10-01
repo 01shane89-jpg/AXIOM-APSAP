@@ -1,0 +1,1 @@
+window.ASAP_NEWS={"asof":"2026-10-01 10:27Z","sources":[{"cc":"sm","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22San%20Marino%22&format=rss","ok":true,"n":6,"old":5}],"coverage":{"countries":198,"with":192,"none":["ad","gq","jo","lb","li","sk"]},"items":{"sm":[]}};
