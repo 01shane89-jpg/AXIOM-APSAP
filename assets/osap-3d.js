@@ -553,7 +553,9 @@
       crb.addEventListener("click", function () { cr.hidden = !cr.hidden; crb.setAttribute("aria-expanded", String(!cr.hidden)); });
       paint(); drawSc();
 
-      /* symbols drawn as their own element in 2D (military symbols, Red Cross posts and the like): the same picture, standing on the ground */
+      /* symbols drawn as their own element in 2D (military symbols, Red Cross posts and the like): the same picture, standing on the ground.
+         They and your marks stay at full strength even where the engine thinks a hill or building is in front: its guess
+         (20% when "covered") was often wrong while the elevation was still loading, and a saved point must never fade out. */
       /* only those around the view (an HTML element each is costly to move with the camera) */
       var near = map.getBounds().pad(1.5);
       V.icons.filter(function (m) { return near.contains(m.ll); }).slice(0, 150).sort(function (a, b) { return a.z - b.z; }).forEach(function (m) {
@@ -561,14 +563,14 @@
         w.className = "o3-ic"; k.style.transform = ""; k.style.left = "0"; k.style.top = "0"; k.style.position = "absolute"; k.removeAttribute("tabindex");
         w.appendChild(k);
         w.addEventListener("click", function (e) { e.stopPropagation(); pop(V.layers[m.id], [m.ll.lng, m.ll.lat]); });
-        markers.push(new ml.Marker({ element: w, anchor: "center" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
+        markers.push(new ml.Marker({ element: w, anchor: "center", opacityWhenCovered: "1" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
       });
       /* your own dropped marks: labelled pins standing on the ground */
       V.marks.forEach(function (m) {
         var el = D.createElement("button"); el.type = "button"; el.className = "o3-mark";
         el.innerHTML = "<i></i><span>" + esc(m.n) + "</span>"; el.title = m.n;
         el.addEventListener("click", function (e) { e.stopPropagation(); pop(V.layers[m.id], [m.ll.lng, m.ll.lat]); });
-        markers.push(new ml.Marker({ element: el, anchor: "left", offset: [-7, 0] }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
+        markers.push(new ml.Marker({ element: el, anchor: "left", offset: [-7, 0], opacityWhenCovered: "1" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
       });
       /* tap a point or shape: its 2D popup, and a way back to it in 2D */
       var popup = null;
@@ -597,7 +599,7 @@
         gl.on("mouseenter", id, function () { gl.getCanvas().style.cursor = "pointer"; });
         gl.on("mouseleave", id, function () { gl.getCanvas().style.cursor = ""; });
       });
-      W.OSAP_3D.gl = gl;
+      W.OSAP_3D.gl = gl; W.OSAP_3D._markers = markers;
     }).catch(function (e) { say((e && e.message) || "3D could not start."); });
   }
 

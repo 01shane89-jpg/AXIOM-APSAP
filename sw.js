@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "6de5a9f40cc3";
+const VERSION = "bb23f2b6d337";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -449,6 +449,7 @@ const PRECACHE = [
 "assets/osap-search.js",
 "assets/osap-medplan.js",
 "assets/osap-lz.js",
+"assets/osap-split.js",
 "assets/osap-reports.js",
 "assets/osap-offline.js",
 "assets/osap-locate.js",
@@ -563,7 +564,10 @@ self.addEventListener("fetch", (e) => {
   // Tiles saved by "Offline maps and data" (assets/osap-offline.js) are looked up first and never trimmed; they are saved
   // under the plain address with no Vary, so the map's image requests find them however they were fetched.
   // Other hosts' files are otherwise only ever saved in TILES, so only that cache is searched (not every cache this app keeps).
-  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => hit || caches.open(TILES).then((c) => c.match(req))).then((hit) => hit || fetch(req).then((res) => {
+  // A tile the map showed is saved opaque (no CORS); a canvas that asks for it with CORS (the Medical plan print map)
+  // cannot use that copy, so it goes to the network and the CORS copy replaces it.
+  const usable = (hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null);
+  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => usable(hit) || caches.open(TILES).then((c) => c.match(req)).then(usable)).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
       e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {}));
