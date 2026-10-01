@@ -213,6 +213,7 @@ async function openPlan(p) {
   const mev = await p.textContent("#mp-mev");
   ok(/Test Air Rescue/.test(mev) && /555 0100/.test(mev) && /to the POI at 120 kn/.test(mev), "desktop: air rescue base with phone and flight time to the POI");
   ok(/International SOS assistance centre, Bangkok/.test(mev) && /\+66 2 206 7777/.test(mev) && /read 2026-10-01/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => a.href === "https://www.internationalsos.com/assistance-centres")) && /International SOS assistance centres/.test(await p.textContent("#mp-src")), "desktop: the nearest International SOS assistance centres show with their published numbers and source");
+  ok(/TRICARE Overseas, Pacific Area regional call centre: \+65-6339-2676/.test(mev) && !/Eurasia-Africa/.test(mev) && await p.evaluate(() => [...document.querySelectorAll("#mp-mev a")].some((a) => /web\.archive\.org\/web\/20260423013428\/https:\/\/www\.tricare\.mil/.test(a.href))), "desktop: the TRICARE Overseas Pacific call centre shows in medevac, with its source");
   ok(/launch, fly in, 10 min on the ground, fly to H1/.test(mev) && /(Inside|Beyond) golden hour|golden-hour limit/.test(mev), "desktop: medevac call-to-hospital time against the golden hour");
   const air = await p.textContent("#mp-air");
   ok(/Riverside Pad/.test(air) && /Test Airfield/.test(air) && /VTXX/.test(air), "desktop: helipads and airfields listed with ICAO code");
@@ -303,6 +304,40 @@ async function openPlan(p) {
   if (OUT) await p.screenshot({ path: OUT + "/print-view.png", fullPage: true });
   await p.click("#mpd-close");
   ok(await p.evaluate(() => document.getElementById("brief").hidden && !document.getElementById("medplan").hidden), "print view: Back returns to the plan");
+  // Hospital assessment: one hospital as printable pages, every gap stated, TRICARE never assumed
+  ok(/TRICARE: not known, confirm with TRICARE Overseas/.test(await p.textContent("#mp-fac")), "plan rows: each hospital says its TRICARE status is not known");
+  await p.click('#mp-fac tr:has-text("Far North Hospital") [data-mp-assess]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
+  const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
+    return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery and operating theatres"),
+      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Capability"),
+      ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpa-map").naturalWidth }; });
+  ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
+  ok(as.w >= 900, "assessment: has its own map " + as.w);
+  ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Role 2 equivalent \(estimated\)/.test(as.cap), "assessment: emergency department, beds and level with their source");
+  ok(/^Not known/.test(as.icu) && /^Not known/.test(as.surg) && /^Not known/.test(as.blood) && /^Not known/.test(as.ct), "assessment: every gap says Not known (surgery, ICU, blood bank, CT/MRI)");
+  ok(/47P [A-Z]{2} \d{4} \d{4}/.test(as.mgrs) && /min/.test(as.road) && /golden hour/i.test(as.road) && /kn/.test(as.air), "assessment: MGRS, road and air times from the point of injury against the golden hour");
+  ok(/Main roads/.test(as.rt), "assessment: the road route with its main roads: " + as.rt);
+  ok(as.pad && as.af && /\+66 2 123 4567/.test(as.ct2), "assessment: helipad, nearest airfield and contacts lines");
+  ok(/TRICARE status not known/.test(as.tc) && !/accept/i.test(as.tc.replace(/acceptance/g, "")) && as.tclinks >= 2, "assessment: TRICARE status not known, never assumed, with where to confirm: " + as.tc);
+  ok(/Pacific Area regional call centre: \+65-6339-2676/.test(as.tc), "assessment: TRICARE line gives the Pacific call centre to confirm with");
+  ok(as.btn === 0, "assessment: no buttons inside the printed pages");
+  const aprn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpa-print").click(); setTimeout(() => res(false), 5000); }));
+  ok(aprn, "assessment: Print or save PDF opens the print dialog");
+  await p.emulateMedia({ media: "print" });
+  const apages = ((await p.pdf({ format: "A4" })).toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+  ok(apages >= 1 && await p.evaluate(() => getComputedStyle(document.getElementById("mpa-print").parentElement).display === "none"), "assessment: prints without the bar (" + apages + " pages)");
+  if (OUT) await p.pdf({ path: OUT + "/assessment.pdf", format: "A4", margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" } });
+  await p.emulateMedia({ media: "screen" });
+  if (OUT) await p.screenshot({ path: OUT + "/assessment.png", fullPage: true });
+  await p.click("#mpa-close");
+  ok(await p.evaluate(() => document.getElementById("brief").hidden && !document.getElementById("medplan").hidden), "assessment: Back returns to the plan");
+  const r0 = calls.route;
+  await p.click('#mp-fac tr:has-text("Near Hospital") [data-mp-assess]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
+  ok(calls.route > r0 && /Main roads/.test(await p.textContent("#brief")), "assessment: a hospital that is not a pick gets its road route asked when opened");
+  ok(/Test wiki/.test(await p.textContent("#brief")), "assessment: a sourced hospital names its source");
+  await p.click("#mpa-close");
   if (OUT) await p.screenshot({ path: OUT + "/desk-plan.png" });
   await p.click('#medplan [data-mp="close"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && JSON.stringify(await lines()) === '{"r":0,"g":0,"a":0}', "desktop: Close hides the plan and takes the marks, routes, outlines and rings off the map");
@@ -355,6 +390,8 @@ async function openPlan(p) {
   const fac = await p.textContent("#mp-fac");
   ok(/Far North Hospital/.test(fac) && /does not yet cover Thailand: facilities there are missing/.test(fac) && !/Laos|Myanmar/.test(fac) && !/No hospital/.test(fac), "stored, partly: lists the stored hospitals and names the countries not yet stored: " + fac.slice(0, 400));
   ok(calls.overpass >= 1, "stored, partly: Overpass is asked for the rest");
+  const tc = await p.evaluate(() => ["th", "de", "br", "ca", "pk", "af", "jp", "ir"].map((c) => window.OSAP_MEDPLAN._tcArea(c)).join(","));
+  ok(tc === "pac,ea,la,la,ea,,pac,ea", "stored, partly: TRICARE areas follow the page's own descriptions, none where it names nothing: " + tc);
   const cn = await p.evaluate(() => [window.OSAP_MEDPLAN._ccNear([15.89442, 100.11841], 150000).map((c) => c.id), window.OSAP_MEDPLAN._ccNear([18.8, 100.8], 150000).map((c) => c.id)]);
   ok(cn[0].includes("th") && !cn[0].includes("la") && cn[1].includes("la"), "stored, partly: countries in reach follow their borders, not bounding boxes (Nakhon Sawan " + cn[0] + "; Nan " + cn[1] + ")");
   ok(!errors.length, "stored, partly: no page errors " + errors.join(" | "));
@@ -375,6 +412,13 @@ async function openPlan(p) {
   ok(ph.flow !== "fixed" && ph.h > 4 * ph.vh && ph.plan === "none", "phone print view: the plan is the page itself, in normal flow, so iPhone prints every page " + JSON.stringify(ph));
   ok(ph.w <= ph.vw && ph.img > 300 && ph.img <= ph.vw, "phone print view: fits the screen, map across the width");
   if (OUT) await p.screenshot({ path: OUT + "/phone-print-view.png", fullPage: true });
+  await p.click("#mpd-close");
+  await p.evaluate(() => document.querySelector('#mp-fac [data-mp-assess]').click());
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
+  await p.waitForTimeout(300);
+  const pa = await p.evaluate(() => ({ sw: document.documentElement.scrollWidth, vw: innerWidth, w: document.querySelector(".mpdoc").getBoundingClientRect().width, img: document.getElementById("mpa-map").getBoundingClientRect().width, flow: getComputedStyle(document.getElementById("brief")).position }));
+  ok(pa.sw <= pa.vw + 1 && pa.w <= pa.vw && pa.img > 300 && pa.flow !== "fixed", "phone assessment: fits the screen with no sideways scroll, map across the width " + JSON.stringify(pa));
+  if (OUT) await p.screenshot({ path: OUT + "/phone-assessment.png", fullPage: true });
   ok(!errors.length, "phone print view: no page errors " + errors.join(" | "));
   await ctx.close();
 }

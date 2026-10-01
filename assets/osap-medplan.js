@@ -25,6 +25,11 @@
      fields the user fills (unit, CCPs, HLZs, medevac provider, frequencies), kept on this device only;
    - a print view: every page of the plan with a map (OpenStreetMap tiles and the plan drawn on a canvas), shown first in
      OSAP's report overlay, then printed or saved as a PDF.
+   - a hospital assessment for each hospital (Assessment button): location and MGRS, times and route from the POI,
+     capability with its source, emergency department, surgery, ICU, beds, blood bank, imaging and specialities, helipad,
+     nearest airfield, contacts and TRICARE, with "Not known" on every gap, as printable pages with its own map. TRICARE
+     acceptance is never shown as yes or no: OSAP has no network list, so it says not known and gives the regional call
+     centre published by TRICARE.mil.
    Everything is computed by fixed rules from open data and is a draft: not analyst-approved and not AI. Only published
    institutional numbers are shown (hospitals, ambulance and air rescue services, embassies); a private person's number or
    name never is: clinic names that read as a doctor's are withheld with their contacts. Nothing is saved to any server. */
@@ -66,6 +71,7 @@
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
     wd: { name: "Wikidata emergency phone numbers (P2852)", url: "https://www.wikidata.org/wiki/Property:P2852", note: "Community data; confirm locally." },
     state: { name: "U.S. Department of State: emergencies abroad", url: STATE_EMERG.url },
+    tricare: { name: "TRICARE.mil Overseas Resources (Internet Archive copy)", url: "https://web.archive.org/web/20260423013428/https://www.tricare.mil/ContactUs/CallUs/OverseasResources", note: "The live page answers a bot check, so the archived copy of 23 Apr 2026 was read. OSAP holds no TRICARE network list: acceptance by a hospital is never shown as yes or no." },
     isos: { name: "International SOS assistance centres", url: ISOS_URL, note: "Published 24-hour numbers, read " + ISOS_AT + ". ISOS assists its members and their clients; check your organisation's membership." },
     meteo: { name: "Open-Meteo forecast", url: "https://open-meteo.com/", note: "Model forecast for one point, not an aviation forecast." },
     who: { name: "WHO Disease Outbreak News", url: "https://www.who.int/emergencies/disease-outbreak-news" },
@@ -255,7 +261,7 @@
       base.kind = hosp ? "hospital" : "clinic"; base.name = facName(t, base.kind);
       base.er = t.emergency === "yes" ? "yes" : t.emergency === "no" ? "no" : "";
       base.beds = /^\d{1,4}$/.test(t.beds || "") ? +t.beds : null;
-      base.op = t["operator:type"] || ""; base.specRaw = String(t["healthcare:speciality"] || ""); base.spec = clip(base.specRaw.replace(/;/g, ", ").replace(/_/g, " "), 80);
+      base.tags = t; base.op = t["operator:type"] || ""; base.specRaw = String(t["healthcare:speciality"] || ""); base.spec = clip(base.specRaw.replace(/;/g, ", ").replace(/_/g, " "), 80);
       /* a withheld (doctor-named) clinic keeps no contacts either */
       if (!/withheld/.test(base.name)) contactsOf(t, base);
       (hosp ? H : C).push(base);
@@ -666,6 +672,9 @@
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
     ".mpicon.pk{background:#8b0010;border-color:#ffd166}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
+    ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
+    ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
+    "@media (max-width:700px){.mpdoc table.mpas th{width:auto;display:block;border-bottom:0;padding-bottom:0}.mpdoc table.mpas td{display:block}}" +
     ".mpdoc{--surface:#fff;--ink:#111;--muted:#444;--line:#b9c0c7;--line-soft:#dde2e6;--bg:#f3f5f7;color:#111;background:#fff;font-size:12px}" +
     ".mpdoc .mpdh{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;border-bottom:2px solid #111;padding-bottom:4px;margin-bottom:6px}.mpdoc .mpdh h2{margin:0;font-size:19px;flex:1 1 auto}" +
     ".mpdoc figure{margin:6px 0 8px}.mpdoc figure img{display:block;width:100%;height:auto;border:1px solid #888}.mpdoc figcaption{font-size:10.5px;color:#444;margin-top:3px;line-height:1.35}" +
@@ -884,14 +893,15 @@
     var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
     return "<tr><td class=\"n\"><span class=\"mpmark\">" + mk + "</span></td><td class=\"mpfac\">" + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
-      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + "</td>" +
+      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">at ' + rw + " kn</span></td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
       '<td class="n"><code>' + esc(grid(f.lat, f.lon)) + "</code></td>" +
       '<td class="noprint"><div class="mpact">' + (f.osm ? link(f.osm, "OSM").replace("<a ", '<a class="refresh" ') : link(f.src, "Source").replace("<a ", '<a class="refresh" ')) +
       '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' + (W.OSAP_ROUTE_SEED ? '<button type="button" class="refresh" data-mp-route="' + esc(f.id) + '">Route</button>' : "") +
-      '<button type="button" class="refresh" data-mp-set="recv" data-mp-id="' + esc(f.id) + '" title="Fill the receiving facility field with this one">Use</button></div></td></tr>';
+      '<button type="button" class="refresh" data-mp-set="recv" data-mp-id="' + esc(f.id) + '" title="Fill the receiving facility field with this one">Use</button>' +
+      (f.kind === "hospital" ? '<button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' : "") + "</div></td></tr>";
   }
   /* where the facility list came from, and what is missing from it */
   function facNote(s) {
@@ -1002,7 +1012,7 @@
     var mine = ["medevac1", "medevac2", "freq1", "freq2"].filter(function (k) { return v[k]; });
     h += mine.length ? "<ul>" + mine.map(function (k) { return "<li>" + esc(fieldLabel(k)) + ": <b>" + esc(v[k]) + "</b></li>"; }).join("") + "</ul>"
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
-    h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
+    h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
     function row(b, i, mk, cls) {
       var fly = flightS(b.m, rw), tot = launch * 60 + fly + ONSCENE_MIN * 60 + (best ? flightS(best.m, rw) : 0);
@@ -1128,7 +1138,7 @@
     }).join("") + "</tbody></table></div>";
     var sof = sofOf(s.cc), posts = ((sof && sof.posts) || []).slice().sort(function (a, b) { return (a.lat == null) - (b.lat == null) || (a.lat != null && b.lat != null ? hav(s.o, [a.lat, a.lon]) - hav(s.o, [b.lat, b.lon]) : 0); });
     h += "<h4>U.S. Embassy and emergency contacts</h4><ul>" + (posts.length ? posts.slice(0, 3).map(function (p) { return postRow(p, s.x); }).join("") : '<li class="obs">No U.S. post listed for ' + esc(s.name) + " in OSAP.</li>") +
-      isosHtml(s.o) + '<li>U.S. citizens\' emergencies abroad (State Department): from the U.S. and Canada <a href="tel:+18884074747">' + esc(STATE_EMERG.us) + '</a>; from overseas <a href="tel:+12025014444">' + esc(STATE_EMERG.abroad) + "</a> " + link(STATE_EMERG.url, "(travel.state.gov)") + "</li></ul>" +
+      isosHtml(s.o) + tricareHtml(s.cc, true) + '<li>U.S. citizens\' emergencies abroad (State Department): from the U.S. and Canada <a href="tel:+18884074747">' + esc(STATE_EMERG.us) + '</a>; from overseas <a href="tel:+12025014444">' + esc(STATE_EMERG.abroad) + "</a> " + link(STATE_EMERG.url, "(travel.state.gov)") + "</li></ul>" +
       '<p class="obs">Destinations are hospitals OSAP\'s researchers listed from named sources; acceptance, capability and entry rules must be agreed with the receiving hospital and the medevac provider. Flight times are straight-line estimates at ' + fw + " kn (a typical air-ambulance jet) plus " + launch + " min launch, without clearances, fuel stops or ground transfers. Record the agreed destination in section 9.</p>";
     el.innerHTML = h;
   }
@@ -1179,6 +1189,7 @@
     li.push(srcLi(SRC.wd, s.emsErr ? "not reached: " + s.emsErr : s.ems ? "read " + dual(s.ems.at, true) : "reading…"));
     if (s.oc) li.push(srcLi(SRC.state, "published numbers"));
     li.push(srcLi(SRC.isos, "published numbers, read " + ISOS_AT));
+    li.push(srcLi(SRC.tricare, "regional call centres as published, page updated 23 May 2025; archived copy read 2026-10-01"));
     li.push(srcLi(SRC.meteo, s.wxErr ? "not reached: " + s.wxErr : s.wx ? "read" : "reading…"));
     if (s.thr) {
       if (s.thr.who.length) li.push(srcLi(SRC.who, "OSAP snapshot " + ((W.ASAP_WHO || {}).asof || "")));
@@ -1251,10 +1262,13 @@
       im.src = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
     });
   }
-  function mapImage(Wd, Ht) {
-    var s = ST, items = mapItems(), P = s.fac ? picks(s) : [], pts = [s.o];
-    P.forEach(function (p) { pts.push([p.f.lat, p.f.lon]); });
-    (s.rts || []).forEach(function (x) { if (x.r) x.r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); });
+  function mapImage(Wd, Ht, focus) {
+    var s = ST, items = focus ? focus.items : mapItems(), P = s.fac ? picks(s) : [], pts = [s.o];
+    if (focus) pts = focus.pts.slice();
+    else {
+      P.forEach(function (p) { pts.push([p.f.lat, p.f.lon]); });
+      (s.rts || []).forEach(function (x) { if (x.r) x.r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); });
+    }
     if (pts.length < 2) pts.push([s.o[0] + 0.05, s.o[1] + 0.05], [s.o[0] - 0.05, s.o[1] - 0.05]);
     var z = 15, a, b;
     for (; z > 3; z--) {
@@ -1312,7 +1326,7 @@
   }
   function find(id) {
     var F = ST && ST.fac; if (!F) return null;
-    var all = F.H.concat(F.C, F.L, F.AF, F.E, ST.x ? ST.x.R : [], ST.oc ? ST.oc.ap : []);
+    var all = F.H.concat(F.C, F.U || [], F.L, F.AF, F.E, ST.x ? ST.x.R : [], ST.oc ? ST.oc.ap : []);
     return all.filter(function (x) { return x.id === id; })[0] || null;
   }
 
@@ -1349,6 +1363,125 @@
     }).catch(function () { var cap = D.getElementById("mpd-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
     D.getElementById("mpd-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
     D.getElementById("mpd-close").addEventListener("click", function () { el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
+    return ready;
+  }
+
+  /* ---------- hospital assessment: one hospital as printable pages, every gap stated ---------- */
+  /* TRICARE: OSAP has no public TRICARE Overseas network list it can read, so acceptance is never shown as yes or no */
+  var TRICARE = { url: "https://www.tricare-overseas.com/contact-us", name: "TRICARE Overseas Program contact page", alt: "https://tricare.mil/ContactUs/CallUs/OverseasResources", altname: "TRICARE.mil overseas contacts" };
+  /* TRICARE regional call centres as published on TRICARE.mil "Overseas Resources" (page last updated 23 May 2025), read
+     2026-10-01 from the Internet Archive copy of 23 Apr 2026 because the live page answers a bot check. An area is used
+     only where the page's own description names the country or its region; anywhere else all three are listed. */
+  var TC_SRC = "https://web.archive.org/web/20260423013428/https://www.tricare.mil/ContactUs/CallUs/OverseasResources";
+  var TC_AREAS = {
+    pac: { name: "Pacific Area", covers: "Guam, Japan, Korea, Asia, Australia, New Zealand, India and Western Pacific remote countries", tel: "+65-6339-2676", us: "877-678-1208", dsn: "315-645-3199" },
+    ea: { name: "Eurasia-Africa Area", covers: "European and African continents, all Middle Eastern countries, Pakistan, Russia and several former Soviet republics", tel: "+44-20-8762-8384", us: "877-678-1207", dsn: "314-590-2999" },
+    la: { name: "Latin America and Canada Area", covers: "Central and South America, the Caribbean Basin, Canada, Puerto Rico and the Virgin Islands", tel: "+1-215-942-8393", us: "877-451-8659", dsn: "312-761-1153" }
+  };
+  var TC_EA = /^(pk|ru|ge|kz|kg|uz|ua|by|ir|iq|il|jo|kw|lb|om|qa|sa|sy|ae|ye|bh|tr|ps|eg|cy)$/, TC_NOTPAC = /^(pk|af|ir)$/;
+  function tcArea(cc) {
+    var c = (W.OSAP_COUNTRIES || []).filter(function (x) { return x.id === cc; })[0], r = (c && c.region) || "";
+    if (TC_EA.test(cc) || /^(Europe|Africa)$/.test(r)) return "ea";
+    if (/^(North America and Caribbean|South America)$/.test(r) && cc !== "us") return "la";
+    if (!TC_NOTPAC.test(cc) && /Southeast Asia|East Asia|Oceania|South Asia/.test(r)) return "pac";
+    return "";
+  }
+  function tcLine(a) { return esc(a.name) + " regional call centre: " + '<a href="tel:' + esc(a.tel.replace(/[^0-9+]/g, "")) + '">' + esc(a.tel) + "</a> (overseas), " + esc(a.us) + " (toll-free from the U.S.), DSN " + esc(a.dsn); }
+  function tricareHtml(cc, li) {
+    var k = tcArea(cc), L = k ? [TC_AREAS[k]] : [TC_AREAS.pac, TC_AREAS.ea, TC_AREAS.la];
+    var src = " " + link(TC_SRC, "(TRICARE.mil Overseas Resources, updated 23 May 2025; archived copy read 2026-10-01)");
+    return L.map(function (a) { return (li ? '<li class="mptco">TRICARE Overseas, ' : "") + tcLine(a) + (li ? src + "</li>" : ""); }).join(li ? "" : "<br>") + (li ? "" : src) + (k ? "" : ' <span class="obs">(the page does not name this country\'s area; use the one that covers it)</span>');
+  }
+  var BLOOD = /blood|transfus/i, IMG = /radiolog|imaging|tomograph|\bct\b|\bmri\b/i;
+  function asTable(L) { return '<table class="mpas"><tbody>' + L.map(function (x) { return '<tr><th scope="row">' + esc(x[0]) + "</th><td>" + x[1] + "</td></tr>"; }).join("") + "</tbody></table>"; }
+  function nk(t) { return '<span class="mpnk">Not known</span>' + (t ? ' <span class="obs">' + esc(t) + "</span>" : ""); }
+  function nearestTo(f, L) {
+    var b = null; (L || []).forEach(function (x) { var m = hav([f.lat, f.lon], [x.lat, x.lon]); if (!b || m < b.m) b = { x: x, m: m }; }); return b;
+  }
+  function assessRows(f, s) {
+    var t = f.tags || {}, sp = String(f.specRaw || ""), spl = sp.split(/[;,]/).map(function (x) { return x.trim().replace(/_/g, " "); }).filter(Boolean);
+    var osm = f.osm ? link(f.osm, "OpenStreetMap") : "", sr = f.sofRec, sof = sr ? link(sr.src, sr.srcname || "source") : "";
+    var listed = function (re, what) { var m = spl.filter(function (x) { return re.test(x); }); return m.length ? esc(what + ": " + m.join(", ")) + (osm ? " (" + osm + " healthcare:speciality)" : "") : ""; };
+    var R = [];
+    function row(k, v) { R.push([k, v]); }
+    row("Capability", '<b>' + esc(tierLabel(f)) + "</b>" + (f.trauma ? " " + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" : f.why && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + ". " + esc(ROLE_RULE) + "</span>" : '<span class="sub">' + esc(ROLE_RULE) + "</span>"));
+    row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
+      sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : nk("No emergency department listed."));
+    row("Surgery and operating theatres", listed(SURG, "Surgical services listed") || nk("No surgery listed; operating theatres not stated."));
+    row("Intensive care (ICU)", listed(ICU, "Listed") || nk("No intensive care listed."));
+    row("Beds", f.beds ? esc(String(f.beds)) + (osm ? " (" + osm + " beds)" : "") : nk("Bed count not listed."));
+    row("Blood bank", listed(BLOOD, "Listed") || nk("No blood bank or transfusion service listed."));
+    row("CT and MRI", listed(IMG, "Imaging listed") ? listed(IMG, "Imaging listed") + ' <span class="obs">CT and MRI are not stated separately.</span>' : nk("No imaging listed."));
+    row("Specialities", spl.length ? esc(spl.join(", ")) + (osm ? " (" + osm + ")" : "") : nk("None listed."));
+    row("Operator", f.op || (sr && sr.type) ? esc((f.op || sr.type).replace(/_/g, " ")) + (t.operator ? ", " + esc(clip(t.operator, 80)) : "") : t.operator ? esc(clip(t.operator, 80)) : nk());
+    if (sr && sr.notes) row("Source notes", esc(clip(sr.notes, 240)) + " (" + sof + ")");
+    /* landing: a helipad within 400 m counts as on site */
+    var pads = s.fac ? s.fac.L.filter(function (l) { return l.kind !== "airfield"; }) : [], hp = nearestTo(f, pads);
+    row("Helipad", hp && hp.m < 400 ? "On site: " + esc(hp.x.name) + ", " + esc(km(hp.m)) + " from the hospital, <code>" + esc(grid(hp.x.lat, hp.x.lon)) + "</code>. Surface: " + (hp.x.surface ? esc(hp.x.surface) : nk()) + " (" + link(hp.x.osm, "OpenStreetMap") + ")"
+      : nk("No helipad within 400 m in OpenStreetMap.") + (hp ? ' <span class="sub">Nearest: ' + esc(hp.x.name) + ", " + esc(km(hp.m)) + " away, <code>" + esc(grid(hp.x.lat, hp.x.lon)) + "</code></span>" : ""));
+    var sofAp = ((sofOf(s.cc) || {}).airports || []).filter(function (a) { return a.lat != null; }).map(function (a) {
+      return { name: a.name, lat: a.lat, lon: a.lon, code: [a.icao, a.iata].filter(Boolean).join(" / "), rw: rwy(a.longest_runway), src: a.src, srcname: a.srcname || "OurAirports" };
+    });
+    var af = nearestTo(f, (s.fac ? s.fac.AF : []).map(function (a) { return { name: a.name, lat: a.lat, lon: a.lon, code: a.code, rw: a.surface ? "surface " + a.surface : "", src: a.osm, srcname: "OpenStreetMap" }; }).concat(sofAp));
+    row("Nearest airfield", af ? esc(af.x.name) + (af.x.code ? " (" + esc(af.x.code) + ")" : "") + ", " + esc(km(af.m)) + " from the hospital, <code>" + esc(grid(af.x.lat, af.x.lon)) + "</code>" + (af.x.rw ? ", longest runway " + esc(af.x.rw) : "") + " (" + (link(af.x.src, af.x.srcname) || esc(af.x.srcname)) + ")" : nk("No airfield in the plan's search area."));
+    var ct = ctHtml(f);
+    row("Contacts", (ct || nk("No phone, website or address listed.")) + (f.phone || f.ephone ? "" : ' <span class="sub">' + nk("No published phone.") + "</span>"));
+    row("Address", f.addr ? esc(f.addr) : nk());
+    row("TRICARE", '<span class="mpnk">TRICARE status not known</span> <span class="obs">OSAP has no public TRICARE Overseas network list it can read, so this says nothing either way. Confirm with TRICARE Overseas before relying on it: ' +
+      link(TRICARE.url, TRICARE.name) + ", " + link(TRICARE.alt, TRICARE.altname) + ".</span><span class=\"sub\">" + tricareHtml(s.cc) + "</span>");
+    return R;
+  }
+  /* times from the point of injury: road (with the treat-and-load allowance) and air, against the golden hour */
+  function assessTimes(f, s, r) {
+    var rw = num("rwkn"), g = groundTotal(f), a = airTotal(f), bw = bestWay(f), L = [];
+    L.push(["Straight line", esc(km(f.m)) + ", " + Math.round(f.brg) + "° " + card(f.brg) + " of the point of injury"]);
+    L.push(["By road", f.s != null ? esc(mins(f.s)) + ", " + esc(km(f.rm || 0)) + (f.est ? " (estimate: no road router answered)" : "") + ". From injury with " + PREP_MIN + " min to treat and load: " + esc(mins(g)) + " " + ghTag(g) : nk("No road time.")]);
+    L.push(["By air", esc(mins(flightS(f.m, rw))) + " flight at " + rw + " kn. From injury with " + num("launch") + " min to launch and " + ONSCENE_MIN + " min on the ground: " + esc(mins(a)) + " " + ghTag(a) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
+    if (bw && bw[0] != null) L.push(["Quickest", esc(mins(bw[0])) + " from injury by " + esc(bw[1])]);
+    L.push(["Route", r && r.line ? esc(mins(r.s)) + ", " + esc(km(r.m)) + (r.roads.length ? ". Main roads: " + esc(r.roads.map(function (q) { return q.n; }).join(" → ")) : "") : r && r.err ? nk("No road route: " + clip(r.err, 120)) : "Working out the route…"]);
+    return L;
+  }
+  function assessHtml(f, s, r) {
+    var tb = asTable;
+    var R = assessRows(f, s), gaps = R.filter(function (x) { return /mpnk/.test(x[1]); }).map(function (x) { return x[0]; });
+    return "<h3>Location</h3>" + tb([["Grid (MGRS)", "<code>" + esc(grid(f.lat, f.lon)) + "</code>"], ["Lat, lon", f.lat.toFixed(5) + ", " + f.lon.toFixed(5)]].concat(f.alias && f.alias !== f.name ? [["Also mapped as", esc(f.alias)]] : [])) +
+      "<h3>From the point of injury</h3><div id=\"mpa-times\">" + tb(assessTimes(f, s, r)) + "</div>" +
+      "<h3>Capability and services</h3>" + tb(R.slice(0, R.findIndex(function (x) { return x[0] === "Helipad"; }))) +
+      "<h3>Landing</h3>" + tb(R.filter(function (x) { return x[0] === "Helipad" || x[0] === "Nearest airfield"; })) +
+      "<h3>Contacts and cover</h3>" + tb(R.filter(function (x) { return /^(Contacts|Address|TRICARE)$/.test(x[0]); })) +
+      '<p class="obs">' + (gaps.length ? "Not known: " + esc(gaps.join(", ")) + ". " : "") + "Each line says where it comes from. OpenStreetMap is community data and can be out of date; a source's statement is that source's claim. Phone the hospital to confirm capability, beds and acceptance before relying on it.</p>";
+  }
+  function assessView(id) {
+    var f = find(id), s = ST, el = D.getElementById("brief"); if (!f || !el || f.kind !== "hospital") return false;
+    var known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0], rt = known ? known.r : null;
+    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpa-print">Print or save PDF</button> <button type="button" class="refresh" id="mpa-close">Back to the plan</button> ' +
+      '<span class="obs">Every page as it prints.</span></div>' +
+      '<article class="bpage mpdoc"><header class="mpdh"><h2>Hospital assessment: ' + esc(f.name) + '</h2><span class="aitag" title="Built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
+      '<span class="obs">For the medical plan, ' + esc(s.name) + " · built " + esc(dual(Date.now(), true)) + " · point of injury <code>" + esc(grid(s.o[0], s.o[1])) + "</code></span></header>" +
+      '<figure><img id="mpa-map" alt="Map: the point of injury, this hospital, the road route and the nearest helipad and airfield"><figcaption id="mpa-cap">Drawing the map…</figcaption></figure>' +
+      '<div id="mpa-body">' + assessHtml(f, s, rt) + "</div></article>";
+    el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
+    function closeA() { el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp-assess="' + (W.CSS && CSS.escape ? CSS.escape(id) : id) + '"]'); if (b) b.focus(); }
+    /* the road route: the one already drawn for a pick, else asked now */
+    var rP = rt ? Promise.resolve(rt) : route(s.o, f).then(function (r) { return r; }, function (e) { return { err: e.message }; });
+    var ready = rP.then(function (r) {
+      if (ST !== s) return;
+      var t = D.getElementById("mpa-times"); if (t && r) t.innerHTML = asTable(assessTimes(f, s, r));
+      var items = [], pts = [s.o, [f.lat, f.lon]];
+      if (r && r.line && r.line.length) { items.push(["line", r.line, RT_STYLE[0]]); r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); }
+      var pads = s.fac.L.filter(function (l) { return l.kind !== "airfield"; }), hp = nearestTo(f, pads), af = nearestTo(f, s.fac.AF);
+      if (hp && hp.m < 5000) items.push(["mk", [hp.x.lat, hp.x.lon], "L", "air"]);
+      if (af && af.m < 30000) { items.push(["mk", [af.x.lat, af.x.lon], "A", "air"]); pts.push([af.x.lat, af.x.lon]); }
+      items.push(["mk", [f.lat, f.lon], "H", "h", "", 1], ["mk", s.o, "POI", "o", "", 2]);
+      return mapImage(900, 520, { items: items, pts: pts });
+    }).then(function (m) {
+      var im = D.getElementById("mpa-map"), cap = D.getElementById("mpa-cap"); if (!im || !m) return;
+      im.src = m.url;
+      if (cap) cap.textContent = (m.base ? "" : "The basemap could not be loaded; drawn without it. ") + "POI point of injury, H this hospital, L nearest helipad, A nearest airfield; red line the road route. Straight north up, zoom " + m.z + ".";
+      return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
+    }).catch(function () { var cap = D.getElementById("mpa-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
+    D.getElementById("mpa-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
+    D.getElementById("mpa-close").addEventListener("click", closeA);
     return ready;
   }
 
@@ -1397,7 +1530,7 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess]"); if (!b) return;
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
     if (k === "retry") { build(); return; }
@@ -1405,6 +1538,7 @@
     if (k === "setpoi") { setPoi(); return; }
     if (k === "print") { printView(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
+    if (b.hasAttribute("data-mp-assess")) { assessView(b.getAttribute("data-mp-assess")); return; }
     var f = find(b.getAttribute("data-mp-go") || b.getAttribute("data-mp-route") || b.getAttribute("data-mp-id"));
     if (!f) return;
     if (b.hasAttribute("data-mp-go")) { close(); if (W.__asapMap) W.__asapMap.setView([f.lat, f.lon], Math.max(W.__asapMap.getZoom(), 14)); mapShow(); return; }
@@ -1445,6 +1579,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", run: open });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
