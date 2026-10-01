@@ -1,0 +1,8 @@
+[["n6478250887",7.77061,15.35639,"cm",{"name":"HDT TBRO","amenity":"hospital"}],
+["n6478250894",7.76604,15.35265,"cm",{"name":"CSI PRIVEE","amenity":"clinic"}],
+["n6478251426",7.79495,15.44406,"cm",{"name":"CSI DE MBAILAINDE (PNDP)","amenity":"hospital","operator":"SALIHOU"}],
+["w1110812580",7.26096,15.11454,"cm",{"aeroway":"helipad"}],
+["w1110812582",7.26526,15.11367,"cm",{"name":"Aérodrome de Dompta","operator":"COTCO","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1239732146",6.84713,14.47263,"cm",{"aeroway":"helipad"}],
+["w316960577",6.69265,14.34618,"cm",{"amenity":"hospital","emergency":"no"}],
+["w316960579",6.69269,14.34635,"cm",{"amenity":"hospital","emergency":"no"}]]

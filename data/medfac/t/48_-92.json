@@ -1,0 +1,13 @@
+[["n1042025946",49.41309,-91.67621,"ca",{"name":"Ignace Seaplane Base","aeroway":"aerodrome"}],
+["n1042026155",48.80474,-91.66263,"ca",{"name":"Atikokan Seaplane Base","aeroway":"aerodrome","wikidata":"Q2902271"}],
+["n1042026457",48.9403,-90.49291,"ca",{"name":"Cushing Lake Seaplane Base","aeroway":"aerodrome"}],
+["n1042026708",48.65,-90.4,"ca",{"name":"Kashabowie/Upper Shebandowan Lake Seaplane Base","aeroway":"aerodrome"}],
+["n1042031796",49.4297,-91.7178,"ca",{"name":"Ignace Municipal Airport","aeroway":"aerodrome","iata":"ZUC"}],
+["n1042144730",49.04978,-90.46942,"ca",{"name":"Upsala Heliport","aeroway":"helipad"}],
+["n2479545689",49.4068,-91.63511,"ca",{"amenity":"clinic"}],
+["w1258660312",49.40759,-91.63443,"ca",{"name":"Ignace Heliport","aeroway":"helipad"}],
+["w1258660447",48.75477,-91.59671,"ca",{"aeroway":"helipad"}],
+["w1449599795",49.42845,-91.71881,"ca",{"name":"Ignace Municipal Airport","aeroway":"aerodrome","icao":"CZUC","iata":"ZUC","wikidata":"Q3084623"}],
+["w268298885",49.40674,-91.63509,"ca",{"name":"Mary Berglund Community Health Centre","amenity":"clinic"}],
+["w564426216",48.77368,-91.63782,"ca",{"name":"Atikokan Municipal Airport","aeroway":"aerodrome","icao":"CYIB","iata":"YIB","wikidata":"Q2902979"}],
+["w785369049",48.7544,-91.59773,"ca",{"name":"Atikokan General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Atikokan General Hospital","addr:housenumber":"120","addr:street":"Dorothy Street","addr:city":"Atikokan","addr:postcode":"P0T 1C0"}]]

@@ -1,0 +1,5 @@
+[["n1042088030",-9.78861,-68.00723,"br",{"name":"Fazenda Vista Alegre","aeroway":"aerodrome"}],
+["w1293544754",-9.13041,-68.95206,"br",{"name":"POSTO DE SAUDE ALDA SIQUEIRA","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination;community","addr:street":"RAMAL DO CAZUMBA, 50 FUNASA","addr:city":"sena madureira","addr:postcode":"69940000","opening_hours":"FECHADO"}],
+["w274313034",-8.85007,-69.26008,"br",{"name":"Manuel Urbano","addr:city":"Manoel Urbano","aeroway":"aerodrome","icao":"SIMB","wikidata":"Q31205622"}],
+["w648635817",-9.06736,-68.65818,"br",{"name":"Hospital João Câncio Fernandes","amenity":"hospital","healthcare":"hospital"}],
+["w648635823",-9.06802,-68.65938,"br",{"amenity":"clinic","healthcare":"clinic"}]]

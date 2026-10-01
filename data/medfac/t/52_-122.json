@@ -1,0 +1,10 @@
+[["n1042023721",53.0881,-121.515,"ca",{"name":"Barkerville Airport","aeroway":"aerodrome"}],
+["n1042024116",52.515,-121.045,"ca",{"name":"Quesnel Lake Airport","aeroway":"aerodrome"}],
+["n1042029766",52.00812,-121.44842,"ca",{"name":"Spout Lake Seaplane Base","aeroway":"aerodrome"}],
+["n13194801595",53.10304,-121.56585,"ca",{"name":"Wells Ambulance Station","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"2509","addr:street":"Barkerville Highway"}],
+["n13194895951",53.30131,-120.16066,"ca",{"name":"McBride Ambulance Station","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"640","addr:street":"King Street"}],
+["w1290124439",53.30103,-120.16139,"ca",{"name":"McBride and District Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Northern health","operator:type":"public","phone":"+1-250-569-2251","website":"https://www.northernhealth.ca/find-a-facility/hospitals/mcbride-and-district-hospital","addr:housenumber":"1136","addr:street":"5th Avenue","opening_hours:emergency":"24/7"}],
+["w370993640",53.31532,-120.16939,"ca",{"name":"McBride Airport","aeroway":"aerodrome","wikidata":"Q652501"}],
+["w488954499",52.62504,-120.37139,"ca",{"name":"Silvertip Lodge Airstrip","aeroway":"aerodrome"}],
+["w557538007",52.76844,-120.74825,"ca",{"name":"Penfold Airstrip","aeroway":"aerodrome"}],
+["w753569057",52.61328,-121.50776,"ca",{"name":"Likely Airport","aeroway":"aerodrome","icao":"CAX5"}]]

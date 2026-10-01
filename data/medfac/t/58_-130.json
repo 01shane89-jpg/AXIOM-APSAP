@@ -1,0 +1,3 @@
+[["n13511195512",58.44139,-129.99203,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"7171","addr:street":"Highway 37"}],
+["n14213505012",59.27723,-129.80542,"ca",{"name":"Cassiar Airstrip","aeroway":"aerodrome"}],
+["w1472560623",58.44183,-129.99187,"ca",{"name":"Stikine Regional Health Centre","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Northern Health","operator:type":"public","phone":"+1-250-842-4456;+1- 250-771-4444","website":"https://www.northernhealth.ca/find-a-facility/medical-clinics/stikine-health-centre","addr:housenumber":"48875","addr:street":"Highway 37","addr:city":"Dease Lake","addr:province":"BC","addr:postcode":"V0C 1L0","opening_hours:emergency":"Mo-Fr 08:30-16:30"}]]
