@@ -444,6 +444,7 @@ const PRECACHE = [
 "assets/osap-comms.js",
 "assets/osap-search.js",
 "assets/osap-medplan.js",
+"assets/osap-lz.js",
 "assets/osap-reports.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
