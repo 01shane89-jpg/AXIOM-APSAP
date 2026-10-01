@@ -118,8 +118,9 @@
 function main() {
   var W = window, D = document, G = W.OSAP_GEO;
   var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/";
-  /* same servers and order as the Power grid layer; overpass-api.de often 504s under load */
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+  /* probed 2026-10-01 from a GitHub runner: maps.mail.ru answered every mast query in 10-16 s (Bangkok zoom 9: 575 masts);
+     overpass-api.de, overpass.kumi.systems and overpass.private.coffee gave no answer within 60 s */
+  var OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png", DEMZ = 12;
   var MASTZ = 9, COVZ = 8, BOX = 0.25, MAX_BOXES = 30, VIEW_BOXES = 64, R_CHECK = 35000, R_BCAST = 60000;
   var KINDS = {
@@ -158,8 +159,8 @@ function main() {
   }
   function query(s, w, n, e) {
     var bb = "(" + [s, w, n, e].map(function (v) { return v.toFixed(4); }).join(",") + ")";
-    return "[out:json][timeout:40];(nwr[\"man_made\"~\"^(mast|tower|communications_tower)$\"][~\"^(tower:type|communication:.*)$\"~\".\"]" + bb +
-      ";nwr[\"man_made\"=\"communications_tower\"]" + bb + ";);out center tags 6000;";
+    /* every mast and tower, sorted into kinds here: a key-pattern filter on the server made the same query time out (504) */
+    return "[out:json][timeout:25];nwr[\"man_made\"~\"^(mast|tower|communications_tower)$\"]" + bb + ";out center tags 10000;";
   }
   function post(q, i) {
     var c = withTimeout(35000);
