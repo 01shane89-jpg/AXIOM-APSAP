@@ -137,7 +137,7 @@ async function openPlan(p) {
   ok(await p.evaluate(() => { const m = document.getElementById("medplan"); return !!m && !m.hidden; }), "desktop: the plan opens by itself once the area is drawn");
   await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"), w = document.querySelector("#mp-wx table"); return t && w; }, null, { timeout: 20000 }).catch(() => {});
   await p.evaluate(() => { const b = document.querySelector('#medplan [data-mp="close"]'); if (b) b.click(); }); await p.waitForTimeout(150);
-  calls.overpass = calls.osrm = calls.meteo = 0; /* the checks below count the requests of one fresh open */
+  await p.waitForTimeout(1500); Object.keys(calls).forEach((k) => { if (k !== "wd") calls[k] = 0; }); /* the checks below count the requests of one fresh open (Wikidata is cached a week on the device) */
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
   ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu offers Medical plan once an area is drawn");
   await p.click('#atk-tools [data-atk="area"]'); await p.waitForTimeout(100);
