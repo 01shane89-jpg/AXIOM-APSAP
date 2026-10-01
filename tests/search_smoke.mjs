@@ -98,7 +98,8 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(hits.photon.length === n0, "phone: no search sent for grids");
   // Photon down: Open-Meteo answers
   mode.photon = "down";
-  await p.click('#atk-tools [data-atk="search"]'); await type(p, "Chiang Mai"); await p.waitForTimeout(600);
+  await p.click('#atk-tools [data-atk="search"]'); await type(p, "Chiang Mai");
+  await p.waitForFunction(() => /Chiang Mai/.test((document.getElementById("srch-list") || {}).textContent || "") && /GeoNames/.test((document.getElementById("srch") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
   ok(hits.meteo >= 1 && /Chiang Mai/.test(await p.textContent("#srch-list")) && /GeoNames/.test(await p.textContent("#srch")), "phone: when Photon fails, Open-Meteo answers and says so");
   // Escape / X closes; route to here
   await p.click("#srch [data-sx]"); ok(!(await shown(p, "#srch")), "phone: the X closes the box");
