@@ -300,7 +300,7 @@
     }
     if (!D.getElementById("ml-sea")) {
       var s = D.createElement("div"); s.id = "ml-sea";
-      s.innerHTML = '<div class="mlh">Live ships</div>' +
+      s.innerHTML = '<div class="mlh">Ships</div>' +
         '<label class="mlrow"><input type="checkbox" data-trf="sea"' + (S.sea ? " checked" : "") + '><span><b>Ships (AIS)</b><i>Ships broadcasting AIS, from Open Waters AIS (AISHub, Norway, Finland and volunteer receivers). Asked for the area on screen; refreshed every minute</i></span></label>' +
         '<div class="trkinds">' + KINDS.map(function (k) {
           return '<label><input type="checkbox" data-trk="' + k[0] + '"' + (S.k[k[0]] ? " checked" : "") + '><span class="trsw" style="background:' + k[2] + '"></span>' + esc(k[1]) + "</label>";
