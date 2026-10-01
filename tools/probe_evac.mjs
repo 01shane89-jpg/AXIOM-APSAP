@@ -1,25 +1,27 @@
 // Test only: checks the free, no-key sources for the embassy and evacuation points layer. Prints to the log.
-const UA = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) OSAP-probe/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)", "Accept": "*/*" };
+const UA = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) OSAP-probe/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)", "Accept": "text/html,application/json,*/*" };
 async function get(u, opt = {}) {
-  try { const r = await fetch(u, { ...opt, headers: { ...UA, ...(opt.headers || {}) }, signal: AbortSignal.timeout(90000) }); const t = await r.text(); return [r.status, t]; }
-  catch (e) { return [0, String(e)]; }
+  try { const r = await fetch(u, { ...opt, headers: { ...UA, ...(opt.headers || {}) }, signal: AbortSignal.timeout(120000) }); const t = await r.text(); return [r.status, t, r.url]; }
+  catch (e) { return [0, String(e), u]; }
 }
-async function sparql(q) { const [s, t] = await get("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), { headers: { Accept: "application/sparql-results+json" } }); try { return [s, JSON.parse(t).results.bindings]; } catch { return [s, t.slice(0, 300)]; } }
-for (const c of ["Ghana", "Thailand", "Angola"]) {
-  const [s, t] = await get(`https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/${c}.html`);
-  const i = t.indexOf("Telephone"); console.log("TSG", c, s, t.length, i >= 0 ? JSON.stringify(t.slice(Math.max(0, i - 600), i + 400).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")) : "no Telephone");
+const OP = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+async function op(q) { for (const h of OP) { const [s, t] = await get(h, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" } }); if (s === 200) { try { return JSON.parse(t); } catch { console.log("bad json", h, t.slice(0, 200)); } } else console.log("OP", h, s, t.slice(0, 120)); } return null; }
+let j = await op('[out:json][timeout:170];(nwr["office"="diplomatic"]["country"="US"];nwr["amenity"="embassy"]["country"="US"];);out center tags;');
+if (j) {
+  const e = j.elements; console.log("OSM US missions", e.length, "remark", j.remark || "");
+  const k = {}; e.forEach(x => { const d = x.tags.diplomatic || x.tags.amenity; k[d] = (k[d] || 0) + 1; }); console.log(JSON.stringify(k));
+  console.log("phone", e.filter(x => x.tags.phone || x.tags["contact:phone"]).length, "addr", e.filter(x => x.tags["addr:street"]).length, "web", e.filter(x => x.tags.website || x.tags["contact:website"]).length);
+  console.log(JSON.stringify(e.slice(0, 2)));
 }
-for (const u of ["https://gh.usembassy.gov/embassy/accra/", "https://ao.usembassy.gov/"]) { const [s, t] = await get(u); console.log("USEMB", u, s, t.length); }
-let [s, b] = await sparql(`SELECT ?m ?mLabel ?cc ?coord ?phone ?web ?addr ?typeLabel WHERE {
-  ?m wdt:P137 ?op . VALUES ?op { wd:Q30 wd:Q789915 } ?m wdt:P31 ?type . ?type wdt:P279* wd:Q7843791 .
-  OPTIONAL { ?m wdt:P17 ?c . ?c wdt:P297 ?cc } OPTIONAL { ?m wdt:P625 ?coord } OPTIONAL { ?m wdt:P1329 ?phone } OPTIONAL { ?m wdt:P856 ?web } OPTIONAL { ?m wdt:P6375 ?addr }
-  FILTER NOT EXISTS { ?m wdt:P576 ?end } SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } }`);
-console.log("WD missions", s, Array.isArray(b) ? b.length : b);
-if (Array.isArray(b)) { console.log("with coord", b.filter(x => x.coord).length, "phone", b.filter(x => x.phone).length, "addr", b.filter(x => x.addr).length, "cc", new Set(b.map(x => x.cc && x.cc.value)).size); console.log(JSON.stringify(b.slice(0, 3))); }
-[s, b] = await sparql(`SELECT ?cls ?clsLabel (COUNT(?x) AS ?n) WHERE { ?cls rdfs:label "border crossing"@en . ?x wdt:P31 ?cls . SERVICE wikibase:label { bd:serviceParam wikibase:language "en". } } GROUP BY ?cls ?clsLabel`);
-console.log("WD border crossing classes", s, JSON.stringify(b));
-for (const h of ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"]) {
-  const [s2, t2] = await get(h, { method: "POST", body: "data=" + encodeURIComponent('[out:json][timeout:170];nwr["barrier"="border_control"];out count;'), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-  console.log("OVERPASS", h, s2, t2.slice(0, 400));
-  if (s2 === 200) break;
+j = await op('[out:json][timeout:170];nwr["barrier"="border_control"];out center tags qt;');
+if (j) {
+  const e = j.elements, k = {}; e.forEach(x => Object.keys(x.tags).forEach(t => k[t] = (k[t] || 0) + 1));
+  console.log("BC", e.length, JSON.stringify(Object.entries(k).sort((a, b) => b[1] - a[1]).slice(0, 40)));
+  console.log(JSON.stringify(e.filter(x => x.tags.name).slice(0, 4)));
+}
+for (const cc of ["gh", "ao", "th", "uk", "tz", "ml", "kg", "dk", "om", "si"]) {
+  const [s, t, u] = await get(`https://${cc}.usembassy.gov/`);
+  const txt = t.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ");
+  const ph = [...txt.matchAll(/(?:Phone|Tel(?:ephone)?|Emergency|After[- ]hours)[^+0-9(]{0,40}(\+?[0-9][0-9 ()\-.]{6,22}[0-9])/gi)].map(m => m[0]).slice(0, 6);
+  console.log("USEMB", cc, s, u, t.length, JSON.stringify(ph));
 }
