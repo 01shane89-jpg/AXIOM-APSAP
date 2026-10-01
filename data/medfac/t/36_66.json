@@ -1,0 +1,12 @@
+[["n12431402243",36.7005,67.11233,"af",{"aeroway":"helipad"}],
+["n14074311391",36.74039,67.12156,"af",{"name":"کلینیک نورخدا","amenity":"clinic","healthcare":"clinic"}],
+["n4591597110",36.71297,67.12005,"af",{"name:en":"Parween Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n5614604624",36.70351,67.11429,"af",{"name:en":"Aamoon Ophthalmic Center","amenity":"hospital","healthcare":"hospital"}],
+["n5700163285",36.71609,67.10371,"af",{"name":"شفاخانه كيشا فارابي","name:en":"kesha HealthCare","amenity":"hospital","healthcare":"hospital"}],
+["n8442131363",36.71014,67.13055,"af",{"name":"كلينيك دندانپزشکی رفاه","name:en":"Refah Dental Clinic","amenity":"dentist","healthcare":"clinic","healthcare:speciality":"dentist","phone":"شماره هاى تماس: ٠٧٨٦٧٣٤٠٧٣ - ٠٥٠٢٠٤٧٦٦٧","addr:street":"آدرس: سرك دوم تخنيكم، مقابل ليسه افغان- ترك، مزار شريف، افغانستان"}],
+["w1332673310",36.75109,66.89801,"af",{"name":"Balkh district hospital","name:en":"Balkh district hospital","amenity":"hospital"}],
+["w1343549487",36.71552,67.108,"af",{"name":"بیمارستان منطقه ای مزارشریف","name:en":"Mazar-e-Sharif Regional Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w230406477",36.7048,67.21135,"af",{"name":"فرودگاه مزار شریف","name:en":"Mazar Sharif International Airport","operator":"افغانستان کی وزارت ٹرانسپورٹ اور شہری ہوا بازی","aeroway":"aerodrome","icao":"OAMS","iata":"MZR"}],
+["w238402100",36.64983,66.99942,"af",{"aeroway":"helipad"}],
+["w999812393",36.65111,67.03442,"af",{"aeroway":"helipad"}],
+["w999812394",36.65114,67.03585,"af",{"aeroway":"helipad"}]]

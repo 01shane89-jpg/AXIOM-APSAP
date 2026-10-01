@@ -1,6 +1,9 @@
 [["n12479685499",28.49689,87.47382,"cn",{"name":"措果乡卫生院","amenity":"hospital"}],
+["n3524370768",28.04755,86.16967,"np",{"aeroway":"helipad"}],
+["w1159092292",28.11895,86.17184,"np",{"name":"lapchi helipad","aeroway":"helipad"}],
 ["w274564778",28.36996,87.77779,"cn",{"aeroway":"helipad"}],
 ["w274564779",28.3701,87.77701,"cn",{"aeroway":"helipad"}],
+["w904650481",28.11735,86.16949,"np",{"name":"lapchi helipad","aeroway":"helipad"}],
 ["w912318511",28.60338,86.79766,"cn",{"name":"日喀则定日机场","name:en":"Shigatse Tingri Airport","operator":"民航西藏自治区机场集团有限公司日喀则定日机场分公司","addr:district":"定日县","addr:city":"日喀则市","addr:province":"西藏自治区","addr:postcode":"858200","aeroway":"aerodrome","icao":"ZUDR","iata":"DDR"}],
 ["w915774770",29.08841,87.63148,"cn",{"name":"拉孜县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w995739390",28.61801,86.16361,"cn",{"aeroway":"helipad"}]]

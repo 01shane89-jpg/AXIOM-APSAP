@@ -107,6 +107,7 @@
 ["n7858159650",22.76861,95.6178,"mm",{"name":"ခင်ဦးမြို့နယ်ဆေးရုံ","name:en":"Khin-U Township Hospital","amenity":"hospital","healthcare":"hospital","beds":"25","addr:city":"ခင်ဦး"}],
 ["n7858159651",22.56419,95.70055,"mm",{"name":"ရွှေဘိုပြည်သူ့ဆေးရုံကြီး","name:en":"Shwebo General Hospital","amenity":"hospital","beds":"200"}],
 ["w1191590462",23.80536,95.94184,"mm",{"name":"ကျောက်ပုထိုးရွှေတွင်းရဟတ်ယာဉ်ကွင်း","name:en":"Kyauk Pa Htoe Gold Mine Helipad","aeroway":"helipad","surface":"concrete"}],
+["w1222119017",23.93397,94.0923,"in",{"aeroway":"helipad"}],
 ["w1224668658",22.17234,94.12635,"mm",{"name":"ဂဂန့်ဂေါပြည်သူ့ဆေးရုံ","name:en":"Gangaw General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"surgery;gynaecology;paediatrics;physician;orthopaedics;anaesthetics;ophthalmology;dentistry;radiology;laboratory;otolaryngology","emergency":"yes","beds":"100","operator":"Ministry of Health and Sports","operator:type":"government","addr:city":"Gangaw"}],
 ["w1236237962",23.0335,95.97344,"mm",{"amenity":"hospital"}],
 ["w1280762446",22.55293,95.2349,"mm",{"name":"စိုင်ပြင်တိုက်နယ်ဆေးရုံ","name:en":"Saing Pyin Station Hospital","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health and Sports","operator:type":"government","addr:city":"စိုင်ပြင်"}],

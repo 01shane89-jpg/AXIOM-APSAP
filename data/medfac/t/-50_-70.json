@@ -1,0 +1,6 @@
+[["n1042058735",-49.9951,-68.9531,"ar",{"name":"Aeródromo Piedrabuena","aeroway":"aerodrome"}],
+["n12184655764",-48.23012,-69.95679,"ar",{"aeroway":"aerodrome"}],
+["n12184698839",-48.38469,-69.93744,"ar",{"aeroway":"aerodrome"}],
+["n3371293075",-48.37355,-68.10637,"ar",{"name":"Aeródromo Cerro Vanguardia","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1276358836",-49.97697,-68.9283,"ar",{"aeroway":"helipad"}],
+["w672019012",-49.98593,-68.91449,"ar",{"name":"Hospital Seccional Dr. Armando Zamudio","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator:type":"public","addr:full":"Saenz Peña 244","addr:city":"Comandante Luis Piedrabuena","addr:postcode":"9303"}]]

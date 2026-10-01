@@ -1,0 +1,10 @@
+[["n11382011970",31.69051,6.06342,"dz",{"amenity":"clinic"}],
+["n4311948959",31.6904,6.06448,"dz",{"name":"مستشفى حاسي مسعود","amenity":"hospital","healthcare":"hospital","addr:city":"حاسي مسعود","addr:postcode":"30500"}],
+["n5204164928",31.68603,6.06817,"dz",{"name":"ملحق طبي","amenity":"clinic","healthcare":"clinic","addr:city":"حاسي مسعود"}],
+["n6591068388",31.70582,6.05809,"dz",{"name":"Medecine du travail","amenity":"clinic"}],
+["n6822605091",31.68663,6.07047,"dz",{"name":"طبيب عمل بوخنشوش","amenity":"clinic","healthcare":"clinic","addr:city":"حاسي مسعود"}],
+["n8096597817",31.68656,6.06641,"dz",{"name":"Clinic Ibn-Sina عيادة ابن سينا","name:en":"Clinic Ibn-Sina","amenity":"clinic","healthcare":"clinic","phone":"029750261","addr:city":"حاسي مسعود","addr:postcode":"30001"}],
+["w1065813561",30.12615,7.65887,"dz",{"name":"Menzel Ledjmet East Gas Field Airport","name:en":"Menzel Ledjmet East Gas Field Airport","aeroway":"aerodrome"}],
+["w204647487",31.67498,6.14219,"dz",{"name":"مطار حاسي مسعود كريم بلقاسم","name:en":"Hassi Messaoud Krim Belkacem Airport","operator":"Etablissement de Gestion de Services Aéroportuaires","aeroway":"aerodrome","icao":"DAUH","iata":"HME","aerodrome:type":"international"}],
+["w374169493",30.51565,6.45315,"dz",{"name":"Aéroport de Gassi Touil","name:en":"Gassi Touil Airport","aeroway":"aerodrome"}],
+["w783029547",31.69036,6.06426,"dz",{"name":"مستشفى حاسي مسعود","amenity":"hospital","healthcare":"hospital"}]]

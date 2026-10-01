@@ -1,0 +1,6 @@
+[["n1042059420",-45.57464,-69.07702,"ar",{"name":"Aeródromo de Sarmiento","aeroway":"aerodrome","icao":"SAVM","iata":"OLN"}],
+["n12624261465",-45.30784,-69.97432,"ar",{"name":"Puesto Sanitario","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"community"}],
+["n12753280685",-45.45946,-69.02672,"ar",{"name":"Pista de aterrizaje de avanzada \"Zapadores del Chubut\"","aeroway":"aerodrome","military":"airfield"}],
+["n8105637917",-45.58547,-69.06628,"ar",{"name":"Clínica Sagrado Corazón","amenity":"clinic","healthcare":"clinic","phone":"+54 297 489 8888","website":"https://clinicasagradocorazon.com.co/","addr:housenumber":"879","addr:street":"Avenida 9 de Julio","addr:postcode":"9020"}],
+["w1332876330",-45.58656,-69.07069,"ar",{"name":"Hospital Rural Sarmiento","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Público provincial","operator:type":"public","addr:full":"Roca 665","addr:housenumber":"788","addr:street":"España","addr:city":"Sarmiento","addr:postcode":"9020"}],
+["w317981556",-45.72527,-68.3066,"ar",{"name":"Aeródromo Cerro Dragón","aeroway":"aerodrome","aerodrome:type":"airfield"}]]

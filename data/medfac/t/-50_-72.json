@@ -1,0 +1,5 @@
+[["n12184655727",-48.11097,-70.20199,"ar",{"aeroway":"aerodrome"}],
+["n12184700297",-48.18346,-70.04572,"ar",{"aeroway":"aerodrome"}],
+["r6747634",-48.78256,-70.15018,"ar",{"name":"Aeropuerto Gobernador Gregores","name:en":"Gobernador Gregores Airport","official_name":"Aeropuerto Nestor Carlos Kirchner","aeroway":"aerodrome","icao":"SAWR","iata":"GGS"}],
+["w305909684",-48.75482,-70.24527,"ar",{"name":"Hospital Distrital Doctor Ramón Eraso Santa Paul","amenity":"hospital","healthcare":"hospital","operator:type":"public","phone":"+542962491027","addr:full":"Mario Cástulo Paradelo 1025","addr:housenumber":"1025","addr:street":"Mario Cástulo Paradelo","addr:city":"Gobernador Gregores","addr:postcode":"9311"}],
+["w442694295",-49.59829,-71.44436,"ar",{"name":"Puesto Sanitario Tres Lagos","amenity":"clinic","healthcare":"centre","operator":"Ministerio de Salud y Ambiente - Gobierno de Santa Cruz","addr:housenumber":"S/N","addr:street":"Avenida San Martín","addr:city":"Tres Lagos","addr:postcode":"Z9301"}]]

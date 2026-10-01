@@ -1,0 +1,8 @@
+[["n13395033837",42.0772,20.42241,"al",{"name":"Klinika Dentare Ngjeçi","amenity":"dentist","healthcare":"hospital","healthcare:speciality":"dentist;dental_oral_maxillo_facial_surgery;dentistry","emergency":"no","operator":"Dental Clinic","operator:type":"private","addr:housenumber":"H14","addr:street":"Rruga Kosova","addr:city":"kukes","addr:postcode":"8501"}],
+["n13917453586",42.24698,20.3817,"al",{"name":"Qendra Shëndetësore Golaj","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator:type":"public"}],
+["n7078852986",42.21549,20.27976,"al",{"name":"Qendra Shendetsore Helshan","amenity":"hospital","addr:street":"Vas Pas","addr:postcode":"8660"}],
+["n7573306886",42.3635,20.07471,"al",{"name":"Spitali Isa Zllami Tropojë","name:en":"Tropoja Isa Zllami Hospital","amenity":"hospital","addr:street":"Agim Ramadani","addr:postcode":"8701"}],
+["w1319282770",42.08211,20.41609,"al",{"amenity":"hospital","healthcare":"hospital"}],
+["w250354581",42.0351,20.41498,"al",{"name":"Aeroporti Ndërkombëtar i Kukësit Zayed","name:en":"Kukes International Airport Zayed","operator":"Municipality of Kukës, Bami SHPK, Global Technical Mechanics SHPK","operator:type":"public","website":"https://kuiport.al/","addr:street":"Rruga Peshkopi Kukës","addr:city":"Shtiqën","aeroway":"aerodrome","icao":"LAKU","iata":"KFZ","aerodrome:type":"international"}],
+["w505281131",42.19617,20.41168,"al",{"name":"Spitali \"Haxhi Derri\"","amenity":"hospital","healthcare":"hospital"}],
+["w574819873",42.50481,20.16611,"al",{"aeroway":"helipad"}]]
