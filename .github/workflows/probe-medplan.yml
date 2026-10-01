@@ -3,8 +3,8 @@
 name: Probe medical plan hosts
 on:
   push:
-    branches: [claude/medical-plan, claude/medical-plan-poi]
-    paths: [tools/probe_medplan.sh, tools/medplan_live.mjs, assets/osap-medplan.js, .github/workflows/probe-medplan.yml]
+    branches: [claude/medical-plan, claude/medical-plan-poi, claude/medplan-offline]
+    paths: [tools/probe_medplan.sh, tools/medplan_live.mjs, assets/osap-medplan.js, .github/workflows/probe-medplan.yml, data/medfac/index.json]
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
       - run: bash tools/probe_medplan.sh
   live:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -27,4 +27,10 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: node tools/medplan_live.mjs
+      - run: mkdir -p medplan-out && OUT=medplan-out node tools/medplan_live.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: medplan-live
+          path: medplan-out
+          retention-days: 7
