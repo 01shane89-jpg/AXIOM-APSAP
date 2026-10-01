@@ -1275,7 +1275,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' },
     daily: { name: "Daily satellite", note: "NASA MODIS true colour from yesterday, worldwide (about 250 m): smoke, storms, flood water and cloud as they were",
       url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg", max: 9, lic: "public domain",
-      attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" }
+      attr: "NASA Worldview / GIBS, MODIS Terra corrected reflectance" },
+    /* the one map OSAP saves to the device for offline use (assets/osap-offline.js): EOX's terms allow saving its tiles.
+       Detail stops at zoom 13 so it never asks for squares a download did not save; closer in it enlarges them */
+    offline: { name: "Offline map", note: "Sentinel-2 cloudless satellite imagery (10 m). The map Offline maps and data saves to this device, so it works with no signal",
+      url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 13, zmax: 16, lic: "CC BY-NC-SA 4.0",
+      attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' }
   };
   function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
   function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
@@ -8209,6 +8214,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-power.js"></script>
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-reports.js"></script>
+<script src="assets/osap-offline.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
