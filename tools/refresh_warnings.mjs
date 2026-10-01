@@ -32,15 +32,43 @@ const ADAPT = {
   // MET Malaysia via data.gov.my: [ { warning_issue: { issued, title_en }, valid_from, valid_to, heading_en, text_en } ]
   metmy: (j) => (Array.isArray(j) ? j : (j && j.data) || []).map((w) => ({ title: w.heading_en || (w.warning_issue || {}).title_en || "", summary: strip(w.text_en).slice(0, 400),
     date: (w.warning_issue || {}).issued || w.valid_from, link: "https://www.met.gov.my/en/forecast/weather/warning/", severity: "",
-    valid_to: w.valid_to })).filter((w) => w.title && (!w.valid_to || Date.parse(w.valid_to) > Date.now() - 864e5))
+    valid_to: w.valid_to })).filter((w) => w.title && (!w.valid_to || Date.parse(w.valid_to) > Date.now() - 864e5)),
+  // DWD (Germany): JSONP warnWetter.loadWarnings({ time, warnings: { regionId: [ { level, event, headline, regionName, start, end, description } ] } }).
+  // One warning is repeated for every district it covers, so districts are grouped under one item per headline; level 2+ only (1 = minor).
+  dwd: (j) => {
+    const g = {};
+    for (const list of Object.values((j || {}).warnings || {})) for (const w of list || []) {
+      if (!w || (w.level || 0) < 2 || !w.headline) continue;
+      const k = w.headline + "|" + (w.start || "");
+      (g[k] = g[k] || { w, areas: new Set() }).areas.add(w.regionName || "");
+    }
+    return Object.values(g).map(({ w, areas }) => ({ title: w.headline, summary: (strip(w.description).slice(0, 300) + " Areas: " + [...areas].filter(Boolean).slice(0, 12).join(", ") + (areas.size > 12 ? " and " + (areas.size - 12) + " more" : "")).trim(),
+      date: w.start ? new Date(w.start).toISOString() : "", link: "https://www.dwd.de/DE/wetter/warnungen/warnWetter_node.html", severity: ["", "minor", "moderate", "severe", "extreme"][w.level] || "" }));
+  },
+  // IPMA (Portugal): [ { awarenessTypeName, awarenessLevelID: green|yellow|orange|red, idAreaAviso, startTime, endTime, text } ]; green means no warning
+  ipma: (j) => (Array.isArray(j) ? j : []).filter((w) => w && w.awarenessLevelID && w.awarenessLevelID !== "green" && (!w.endTime || Date.parse(w.endTime) > Date.now())).map((w) => ({
+    title: w.awarenessTypeName + " warning (" + w.awarenessLevelID + "), " + (IPMA_AREA[w.idAreaAviso] || w.idAreaAviso), summary: strip(w.text).slice(0, 400),
+    date: w.startTime, link: "https://www.ipma.pt/en/otempo/prev-sam/", severity: w.awarenessLevelID })),
+  // SMHI (Sweden): [ { event: { en, sv }, warningAreas: [ { areaName: { en, sv }, warningLevel: { en, code }, published, approximateStart, descriptions: [ { text: { en } } ] } ] } ]
+  smhi: (j) => (Array.isArray(j) ? j : []).flatMap((w) => ((w && w.warningAreas) || []).map((a) => {
+    const name = (x) => (x && (x.en || x.sv)) || "";
+    return { title: [name(w.event), name(a.warningLevel), name(a.areaName)].filter(Boolean).join(", "), summary: strip(((a.descriptions || [])[0] || {}).text ? name(a.descriptions[0].text) : "").slice(0, 400),
+      date: a.published || a.approximateStart || w.published || "", link: "https://www.smhi.se/en/weather/warnings-and-advisories", severity: (a.warningLevel || {}).code || "" };
+  })).filter((w) => w.title && w.severity !== "MESSAGE")
 };
+// IPMA warning area codes (districts, Madeira and Azores groups)
+const IPMA_AREA = { AVR: "Aveiro", BJA: "Beja", BRG: "Braga", BGC: "Bragança", CBO: "Castelo Branco", CBR: "Coimbra", EVR: "Évora", FAR: "Faro", GDA: "Guarda", LRA: "Leiria", LSB: "Lisboa",
+  PTG: "Portalegre", PTO: "Porto", STM: "Santarém", STB: "Setúbal", VCT: "Viana do Castelo", VRL: "Vila Real", VIS: "Viseu", MCN: "Madeira north coast", MCS: "Madeira south coast",
+  MRM: "Madeira mountains", MPS: "Porto Santo", AOR: "Azores eastern group", ACE: "Azores central group", AOC: "Azores western group" };
+// JSON, or JSONP such as DWD's warnWetter.loadWarnings({...});
+const json = (b) => JSON.parse(String(b).trim().replace(/^[\w.$]+\(/, "").replace(/\);?$/, ""));
 function iso(d) { const t = new Date(d); return isNaN(t) ? "" : t.toISOString().slice(0, 16); }
 
 const status = [], items = {};
 for (const f of feeds) {
   try {
     const body = await getText(f.url);
-    let list = f.type ? ADAPT[f.type](JSON.parse(body)) : parseFeed(body);
+    let list = f.type ? ADAPT[f.type](json(body)) : parseFeed(body);
     // tz: an agency that prints local time with no zone ("2026-09-29 14:27:00"), e.g. "+08:00"
     if (f.tz) list = list.map((i) => (/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(i.date).trim()) ? { ...i, date: String(i.date).trim().replace(" ", "T") + f.tz } : i));
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }

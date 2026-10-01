@@ -10,9 +10,10 @@
      always sees the newest published data and an offline one falls back to the last copy it saw. Data files wait at most
      DATA_WAIT and the page PAGE_WAIT for the network; the network copy is still saved when the wait runs out.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
-   - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
-const VERSION = "98fd9ae5b064";
-const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
+   - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
+     (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
+const VERSION = "6b4a25b40824";
+const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
 const DATA_WAIT = 1200, PAGE_WAIT = 2500;
@@ -440,13 +441,18 @@ const PRECACHE = [
 "assets/osap-maploading.js",
 "assets/osap-grid.js",
 "assets/osap-power.js",
+"assets/osap-borders.js",
+"assets/osap-dc.js",
 "assets/osap-route.js",
 "assets/osap-comms.js",
 "assets/osap-search.js",
 "assets/osap-medplan.js",
+"assets/osap-lz.js",
 "assets/osap-reports.js",
+"assets/osap-offline.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
+"assets/osap-traffic.js",
 "assets/osap-today.js",
 "assets/osap-weather.js",
 "assets/osap-work.js",
@@ -461,7 +467,7 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//];
+const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/];
 // Saved after install rather than during it (see the top of this file).
 const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
@@ -503,10 +509,17 @@ async function trim(name, max) {
   const c = await caches.open(name), ks = await c.keys();
   for (let i = 0; i < ks.length - max; i++) await c.delete(ks[i]);
 }
+// The tile cache is trimmed once things go quiet, not after every tile: listing 1,500 saved tiles for each new one kept this
+// worker busy while a map was filling in, and every tile waits on it.
+let trimT = 0;
+function trimTilesSoon() { if (!trimT) trimT = setTimeout(() => { trimT = 0; trim(TILES, MAX_TILES).catch(() => {}); }, 5000); }
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+  // A request that asks not to be cached (cache: "no-store") goes straight to the network: Offline maps and data downloads
+  // its tiles that way and saves them itself, so they are not also copied into the capped tile cache.
+  if (url.origin !== location.origin && req.cache === "no-store") return;
   if (NEVER.some((r) => r.test(url.href))) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
     if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
@@ -528,7 +541,9 @@ self.addEventListener("fetch", (e) => {
       return res;
     });
     e.waitUntil(net.catch(() => {}));
-    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"));
+    // With no network and no saved copy, only a page load gets the saved page; a script or data file gets a plain network
+    // error (handled by the page as a missing file) rather than the page's HTML, which threw "Unexpected token '<'" offline.
+    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()));
     // Feed files wait at most DATA_WAIT ms and the page PAGE_WAIT ms, then use the last saved copy so the page still opens;
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;
@@ -544,12 +559,16 @@ self.addEventListener("fetch", (e) => {
     }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || Promise.reject(new TypeError("offline"))))));
     return;
   }
+  // Tiles saved by "Offline maps and data" (assets/osap-offline.js) are looked up first and never trimmed; they are saved
+  // under the plain address with no Vary, so the map's image requests find them however they were fetched.
+  // Other hosts' files are otherwise only ever saved in TILES, so only that cache is searched (not every cache this app keeps).
   // A tile the map showed is saved opaque (no CORS); a canvas that asks for it with CORS (the Medical plan print map)
   // cannot use that copy, so it goes to the network and the CORS copy replaces it.
-  e.respondWith(caches.match(req).then((hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null) || fetch(req).then((res) => {
+  const usable = (hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null);
+  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => usable(hit) || caches.open(TILES).then((c) => c.match(req)).then(usable)).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
-      e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(() => trim(TILES, MAX_TILES)).catch(() => {}));
+      e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {}));
     }
     return res;
   })));
