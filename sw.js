@@ -563,7 +563,10 @@ self.addEventListener("fetch", (e) => {
   // Tiles saved by "Offline maps and data" (assets/osap-offline.js) are looked up first and never trimmed; they are saved
   // under the plain address with no Vary, so the map's image requests find them however they were fetched.
   // Other hosts' files are otherwise only ever saved in TILES, so only that cache is searched (not every cache this app keeps).
-  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => hit || caches.open(TILES).then((c) => c.match(req))).then((hit) => hit || fetch(req).then((res) => {
+  // A tile the map showed is saved opaque (no CORS); a canvas that asks for it with CORS (the Medical plan print map)
+  // cannot use that copy, so it goes to the network and the CORS copy replaces it.
+  const usable = (hit) => (hit && !(hit.type === "opaque" && req.mode === "cors") ? hit : null);
+  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => usable(hit) || caches.open(TILES).then((c) => c.match(req)).then(usable)).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
       e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {}));
