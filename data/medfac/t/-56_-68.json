@@ -1,0 +1,6 @@
+[["n1042020307",-54.3429,-67.83615,"ar",{"name":"Aeródromo Los Cerros","aeroway":"aerodrome"}],
+["n1042143940",-54.2333,-67.22,"ar",{"name":"Estancia Rio Ewan Heliport","aeroway":"helipad"}],
+["n12763038701",-54.508,-67.19081,"ar",{"name":"Centro Modular Sanitario 34","amenity":"hospital","addr:housenumber":"149","addr:street":"Los Ñires","addr:postcode":"9412"}],
+["w1056498995",-54.49914,-67.17246,"ar",{"name":"Aeródromo de Tolhuin","aeroway":"aerodrome","military":"airfield"}],
+["w900012885",-54.49914,-67.17246,"ar",{"name":"Aeródromo Lago Fagnano","aeroway":"aerodrome","icao":"SAWL"}],
+["w900454334",-54.51071,-67.19497,"ar",{"name":"Centro Asistencial Tolhuin","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salud - Gobierno de Tierra del Fuego A. e. I. A. S.","operator:type":"public","addr:housenumber":"243","addr:street":"Avenida de los Shelknam","addr:city":"Tolhuin","addr:postcode":"V9420"}]]

@@ -1,0 +1,12 @@
+[["n1042020861",-34.96993,-67.72292,"ar",{"name":"General Alvear Aeroclub","aeroway":"aerodrome"}],
+["n13113039043",-34.77561,-66.58513,"ar",{"name":"Centro de Salud","amenity":"clinic","healthcare":"clinic"}],
+["n4110236477",-35.0008,-67.69063,"ar",{"name":"Sala de Primeros Auxilios \"Las Dorcas\"","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Hospital Enfermeros Argentinos","addr:housenumber":"70","addr:street":"Santa Fe","addr:city":"General Alvear","addr:postcode":"5620"}],
+["n5266101809",-35.88156,-66.44537,"ar",{"name":"CAPS Los Overos","amenity":"hospital","emergency":"yes"}],
+["n7385478209",-34.90828,-67.8154,"ar",{"name":"Hospital Eva Peron - San Rafael","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Republica S/N, San Rafael","addr:city":"Jaime Prats","addr:postcode":"5623"}],
+["w244279890",-34.84292,-67.76697,"ar",{"name":"Centro de Salud 115","amenity":"hospital","healthcare":"hospital","addr:street":"Córdoba","addr:city":"Real del Padre","addr:postcode":"5624"}],
+["w244686111",-34.89072,-67.72836,"ar",{"name":"Posta Sanitaria Palermo Chico","amenity":"hospital","addr:street":"Guillén","addr:city":"Real del Padre","addr:postcode":"5624"}],
+["w244686216",-34.83986,-67.75727,"ar",{"name":"Posta Sanitaria Dr Vicente Marelli","amenity":"hospital","healthcare":"hospital","addr:street":"La Rioja","addr:city":"Real del Padre","addr:postcode":"5624"}],
+["w254573900",-34.83017,-67.92453,"ar",{"name":"Mini hospital","amenity":"hospital","healthcare":"hospital"}],
+["w346598959",-34.97408,-67.69802,"ar",{"name":"Hospital Enfermeros Argentinos - General Alvear","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Emilio Civit 400, General Alvear","addr:street":"Mitre","addr:city":"General Alvear (Est.Colonia Alvear Norte)","addr:postcode":"5620"}],
+["w494292708",-34.98199,-67.6829,"ar",{"name":"Sanatorio GASA","amenity":"clinic","healthcare":"clinic","addr:street":"Diagonal Carlos Pellegrini"}],
+["w494292709",-34.98192,-67.68147,"ar",{"name":"Clinica Atuel","amenity":"clinic","healthcare":"clinic","addr:street":"Alexander Fleming"}]]

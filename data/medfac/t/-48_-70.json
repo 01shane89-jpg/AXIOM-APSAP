@@ -1,0 +1,9 @@
+[["n12623566821",-46.71617,-68.22715,"ar",{"name":"Puesto Sanitario","amenity":"clinic"}],
+["n1333703168",-46.54962,-68.92249,"ar",{"name":"Hospital Distrital Las Heras","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","addr:full":"El Calafate Y Juan Jose Paso","addr:city":"Las Heras","addr:postcode":"9017"}],
+["n2671772726",-46.61385,-68.55404,"ar",{"name":"Aeródromo de Piedra Clavada","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["n3295939995",-46.65257,-69.20989,"ar",{"name":"Aeródromo Cañadón Vasco","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["n3779112464",-46.42664,-68.00271,"ar",{"name":"Aeródromo Las Chapas","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1031917813",-46.54276,-68.96576,"ar",{"name":"Aeródromo Las Heras","aeroway":"aerodrome","icao":"SAVH","iata":"LHS"}],
+["w1416550366",-46.54964,-68.92248,"ar",{"name":"Hospital Distrital Las Heras","amenity":"hospital","healthcare":"hospital"}],
+["w1416576152",-46.5452,-68.92668,"ar",{"name":"CIC Micaela Santana","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general"}],
+["w221236122",-46.19129,-69.2807,"ar",{"name":"Aeropuerto Los Perales","aeroway":"aerodrome","aerodrome:type":"airfield"}]]

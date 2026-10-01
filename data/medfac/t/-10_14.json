@@ -1,0 +1,13 @@
+[["n1042037175",-8.1184,14.50039,"ao",{"name":"Aeroporto de Camembe","name:en":"Camembe Airport","aeroway":"aerodrome","icao":"FNCB"}],
+["n2344410849",-9.26654,15.6608,"ao",{"name":"Pista da Fazenda Terras de Koló","name:en":"Fazenda Terras de Koló Airport","addr:housenumber":"Fazenda Terras de Koló","addr:city":"Comuna do Soqueco s/n Cacuso","aeroway":"aerodrome"}],
+["w1009373307",-9.77058,15.45659,"ao",{"name":"Aeroporto de Capanda","name:en":"Capanda Airport","aeroway":"aerodrome","icao":"FNCP","iata":"KNP"}],
+["w1052307824",-8.17822,15.38339,"ao",{"name":"Aeroporto de Camabatela","aeroway":"aerodrome","icao":"FNCM"}],
+["w1224468851",-9.77024,15.45399,"ao",{"aeroway":"helipad"}],
+["w1224468852",-9.77047,15.45371,"ao",{"aeroway":"helipad"}],
+["w1232243781",-9.74298,14.48712,"ao",{"aeroway":"helipad"}],
+["w1381082837",-9.27948,15.0575,"ao",{"name":"Hospital Geral do Cuanza Norte Mário Pinto de Andrade","amenity":"hospital","healthcare":"hospital"}],
+["w194755736",-9.28043,14.98203,"ao",{"name":"Aeroporto de N'dalatando","name:en":"N'dalatando Airport","aeroway":"aerodrome","iata":"NDF"}],
+["w210358393",-9.42423,15.73903,"ao",{"name":"Hospital do Cacuso","amenity":"hospital"}],
+["w210365291",-9.26213,15.81115,"ao",{"name":"Posto Médico do Soqueco","amenity":"hospital"}],
+["w303755543",-9.97572,14.91843,"ao",{"name":"Aeroporto de Calulo","name:en":"Calulo Airport","aeroway":"aerodrome","military":"airfield"}],
+["w556122238",-9.67973,14.47045,"ao",{"aeroway":"helipad"}]]

@@ -1,0 +1,12 @@
+[["n13228105402",-11.18936,13.92383,"ao",{"name":"Banco de Urgência (HGCS)","amenity":"hospital","healthcare":"hospital"}],
+["n6583602248",-10.72469,13.75746,"ao",{"name":"Clinigroup","amenity":"clinic","healthcare":"clinic"}],
+["w1224631449",-11.29794,13.84365,"ao",{"aeroway":"helipad"}],
+["w1441673118",-11.18905,13.92358,"ao",{"name":"Hospital Geral do Cuanza Sul (HGCS) - Comandante Raúl Díaz Arguelles","amenity":"hospital","healthcare":"hospital","operator":"Ministério da Saúde","operator:type":"public","addr:housenumber":"Km 5","addr:street":"Estrada CSU 244-1 (Chingo - Cuacra)","addr:city":"Sumbe"}],
+["w173244150",-11.2044,13.84229,"ao",{"name":"Hospital Geral do Kwanza Sul","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w191197605",-11.18879,13.85783,"ao",{"name":"Hospital do Sumbe","amenity":"hospital","healthcare":"hospital"}],
+["w244172710",-10.72264,13.76407,"ao",{"name":"Aeroporto de Porto Amboim","name:en":"Porto Amboim Airport","aeroway":"aerodrome","icao":"FNPA","iata":"PBN"}],
+["w724235239",-10.71928,13.76659,"ao",{"name":"CSE","amenity":"hospital","healthcare":"hospital"}],
+["w775367790",-11.12788,13.93158,"ao",{"aeroway":"helipad"}],
+["w783360498",-10.72377,13.78777,"ao",{"name":"Centro Materna Infantil","amenity":"hospital","healthcare":"hospital"}],
+["w783921106",-10.73118,13.75871,"ao",{"amenity":"hospital","healthcare":"hospital"}],
+["w996855240",-11.16769,13.84953,"ao",{"name":"Aeroporto de Sumbe","name:en":"Sumbe Airport","aeroway":"aerodrome","icao":"FNSU","iata":"NDD"}]]

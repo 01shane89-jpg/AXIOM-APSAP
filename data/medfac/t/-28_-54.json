@@ -1,0 +1,5 @@
+[["n1042059337",-26.27866,-53.67179,"ar",{"name":"Aeródromo de Bernardo de Irigoyen","aeroway":"aerodrome","icao":"SATI","aerodrome:type":"regional"}],
+["n4424981817",-26.05633,-53.73579,"ar",{"name":"Hospital de San Antonio","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+54 3741 493054","addr:housenumber":"750","addr:street":"Avenida Comandante Andresito","addr:city":"San Antonio"}],
+["n4424986133",-26.24926,-53.65136,"ar",{"name":"Hospital de Bernardo de Irigoyen - Manuel Belgrano","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+54 3741 420201;+54 3741 420220","addr:housenumber":"290","addr:street":"Avenida de Las Américas","addr:city":"Bernardo de Irigoyen","addr:postcode":"3366"}],
+["w360314492",-26.24913,-53.65121,"ar",{"healthcare":"hospital"}],
+["w360338649",-26.05576,-53.73638,"ar",{"healthcare":"hospital"}]]

@@ -1,0 +1,8 @@
+[["n7629139588",24.52704,9.49077,"dz",{"name":"محطة مراقبة الأوبئة","amenity":"clinic"}],
+["w1034647312",24.50734,9.49846,"dz",{"aeroway":"helipad"}],
+["w1208314564",25.55752,9.83999,"dz",{"aeroway":"helipad","surface":"asphalt"}],
+["w1461633549",24.23057,9.91439,"dz",{"aeroway":"helipad"}],
+["w309126459",24.28559,9.46175,"dz",{"name":"مطار جانت تيسكا Aéroport de Djanet - Tiska Inedbirene","name:en":"Djanet Tiska Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","phone":"+213 29 47 67 47","aeroway":"aerodrome","icao":"DAAJ","iata":"DJG"}],
+["w355334829",24.47757,9.50941,"dz",{"name":"المستشفى جانت العام EPH Djanet","name:en":"EPH Djanet","amenity":"hospital","addr:city":"جانت"}],
+["w777819920",25.55895,9.83988,"dz",{"aeroway":"helipad","surface":"asphalt"}],
+["w782780778",24.55349,9.484,"dz",{"name":"المستشفى المحلي L'hôpital local","amenity":"hospital","healthcare":"hospital","addr:city":"جانت"}]]

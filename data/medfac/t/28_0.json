@@ -1,0 +1,13 @@
+[["n3329495501",29.7075,0.7203,"dz",{"name":"المؤسسة العمومية للصحة الجوارية تينركوك","amenity":"hospital","healthcare":"hospital"}],
+["n3913329329",29.41273,0.24416,"dz",{"name":"عيادة أولاد سعيد","amenity":"clinic","healthcare":"clinic","addr:city":"أولاد السعيد"}],
+["w1097901337",28.2111,0.19451,"dz",{"aeroway":"helipad"}],
+["w1097928798",28.11866,0.32817,"dz",{"aeroway":"aerodrome"}],
+["w1181357592",28.14174,0.24516,"dz",{"name":"Oued Zine Airport","aeroway":"aerodrome"}],
+["w1360137594",29.75971,1.62767,"dz",{"name":"Heliport","aeroway":"aerodrome"}],
+["w1360137595",29.75969,1.62768,"dz",{"aeroway":"aerodrome"}],
+["w1360137596",29.7591,1.62751,"dz",{"aeroway":"helipad"}],
+["w1361722542",28.70273,0.34237,"dz",{"amenity":"hospital","healthcare":"hospital"}],
+["w228053573",29.23631,0.27561,"dz",{"name":"مطار تيميمون ⴰⴼⴰⴳⵓⵔ ⵏ ⵜⵉⵎⵉⵎⵓⵏ","name:en":"Timimoun Airport","operator":"مؤسسة تسيير مصالح مطارات وهران","aeroway":"aerodrome","icao":"DAUT","iata":"TMX"}],
+["w320728587",29.25602,0.23405,"dz",{"name":"EPH Timimoun - Hachemi M'hamed;المؤسسة العمومية الاستشفائية تيميمون","name:en":"Timimoun Public Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministère de la Santé","operator:type":"government","contact:phone":"+21349901502","website":"https://www.sante.gov.dz","addr:city":"تيميمون","addr:postcode":"01001"}],
+["w546631427",29.26161,0.22748,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"ﺗﻴﻤﻴﻤﻮن"}],
+["w782782263",29.70826,0.72085,"dz",{"name":"مصلحة الامومة الريفية","amenity":"hospital","healthcare":"hospital"}]]

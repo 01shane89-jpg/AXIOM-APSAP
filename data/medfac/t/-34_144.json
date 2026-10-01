@@ -1,0 +1,8 @@
+[["n1042093912",-33.4933,145.523,"au",{"name":"Hillston Airport","aeroway":"aerodrome","icao":"YHLS"}],
+["n1042094044",-32.89278,144.31102,"au",{"name":"Ivanhoe Airport","operator":"Central Darling Shire Council","aeroway":"aerodrome","aerodrome:type":"public"}],
+["n11254988567",-33.48635,145.53052,"au",{"name":"Hilston Ambulance Station","emergency":"ambulance_station","operator":"NSW Ambulance"}],
+["n4973101771",-33.99209,145.71888,"au",{"name":"Goolgowi Airstrip","operator":"Carrathool Shire Council","aeroway":"aerodrome","aerodrome:type":"public"}],
+["w1021533285",-33.47889,145.53895,"au",{"name":"Hillston Multi-Purpose Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"NSW Health","contact:phone":"+61 2 6967 2502","addr:housenumber":"48C","addr:street":"Burns Street"}],
+["w1301644669",-32.89434,144.2952,"au",{"name":"Ivanhoe Health Service","amenity":"hospital","healthcare":"hospital"}],
+["w761944848",-32.62341,145.56911,"au",{"operator":"National Parks and Wildlife Service","aeroway":"helipad","surface":"asphalt"}],
+["w777171851",-32.89457,144.29545,"au",{"name":"Ivanhoe Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]

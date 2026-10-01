@@ -1,0 +1,12 @@
+[["n1042023155",-20.8437,120.70292,"au",{"name":"Warrawagine Airport","aeroway":"aerodrome","icao":"YWWG","iata":"WRW"}],
+["n1042093187",-20.9446,120.165,"au",{"name":"Bamboo Creek Airport","aeroway":"aerodrome"}],
+["n1042093538",-21.67092,121.58833,"au",{"name":"Camp Nifty Airport","aeroway":"aerodrome","icao":"YCNF","iata":"NIF"}],
+["n1042093576",-20.93581,120.0808,"au",{"name":"Coppins Gap Airport","aeroway":"aerodrome"}],
+["n1042096248",-20.6589,120.067,"au",{"name":"Muccan Station Airport","aeroway":"aerodrome","iata":"MUQ"}],
+["n1042096918",-21.9092,120.19575,"au",{"name":"Nullagine Airport","aeroway":"aerodrome","iata":"NLL"}],
+["n1042098461",-20.4247,120.141,"au",{"name":"Shay Gap Airport","aeroway":"aerodrome","icao":"YSHG","iata":"SGP"}],
+["n1042100217",-21.6628,121.234,"au",{"name":"Woodie Woodie Mine Airport","aeroway":"aerodrome"}],
+["n12898147063",-21.6456,121.19162,"au",{"name":"Woodie Woodie Airport","aeroway":"aerodrome","icao":"YWWI"}],
+["n9731367207",-21.88692,120.10883,"au",{"name":"Nullagine Health Clinic","healthcare":"clinic","healthcare:speciality":"general","addr:housenumber":"10","addr:street":"Cooke Street","addr:postcode":"6758"}],
+["w1152211970",-21.88699,120.10892,"au",{"amenity":"clinic","healthcare":"clinic"}],
+["w1307683610",-20.73145,121.76362,"au",{"aeroway":"helipad"}]]

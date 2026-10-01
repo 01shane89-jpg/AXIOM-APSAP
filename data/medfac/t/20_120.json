@@ -1,0 +1,10 @@
+[["n14077773292",20.45056,121.9704,"ph",{"name":"Sabtang Bagong Urgent Care Ambulatory Service","amenity":"clinic","emergency":"no","operator":"Batanes General Hospital"}],
+["n4369771067",21.92227,120.73805,"tw",{"emergency":"ambulance_station"}],
+["w1026238215",21.11769,121.94717,"ph",{"aeroway":"helipad"}],
+["w1026238216",21.11812,121.94703,"ph",{"aeroway":"helipad"}],
+["w246307666",20.72211,121.80975,"ph",{"name":"Jorge Abad Airport","name:en":"Jorge Abad Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Itbayat","addr:postcode":"3905","aeroway":"aerodrome","icao":"RPLT","aerodrome:type":"public"}],
+["w258515423",20.45151,121.98007,"ph",{"name":"Basco Airport","operator":"Civil Aviation Authority of the Philippines","addr:city":"Basco","addr:postcode":"3900","aeroway":"aerodrome","icao":"RPUO","iata":"BSO","aerodrome:type":"public"}],
+["w499306139",21.92181,120.85183,"tw",{"aeroway":"helipad"}],
+["w625500215",20.78665,121.84028,"ph",{"name":"Itbayat District Hospital","name:en":"Itbayat District Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"Itbayat"}],
+["w625643038",20.4504,121.97048,"ph",{"name":"Batanes General Hospital & Medical Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","beds":"75","operator":"Department fo Health","operator:type":"government","phone":"+63 917 882 4023","website":"https://batanesgeneralhospital.doh.gov.ph","addr:street":"National Road","addr:city":"Basco","addr:postcode":"3900"}],
+["w668053121",21.99902,120.7451,"tw",{"name":"衛福部恆春旅遊醫院","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]

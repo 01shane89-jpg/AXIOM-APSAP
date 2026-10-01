@@ -1,0 +1,12 @@
+[["n4326895847",21.33103,0.9607,"dz",{"name":"EPSP BBM;المؤسسة العمومية للصحة الجوارية","amenity":"hospital","healthcare":"hospital","addr:street":"طريق الساورة","addr:city":"برج باجي مختار"}],
+["n6737692086",21.33071,0.94915,"dz",{"name":"عيادة الحكيم فراجي","amenity":"hospital","healthcare":"hospital","addr:city":"برج باجي مختار"}],
+["n6737692087",21.3306,0.9417,"dz",{"amenity":"clinic","healthcare":"clinic","addr:city":"برج باجي مختار"}],
+["n8390829217",21.32662,0.96594,"dz",{"name":"Hôpital Mixte Tati-Argali المستشفى المختلط تاتي ارغالي","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministère de la Santé / Ministère de la Défense Nationale","operator:type":"public","website":"http://sante.dz","addr:city":"Bordj Badji Mokhtar"}],
+["w321318512",21.32938,0.95415,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"برج باجي مختار"}],
+["w357892472",21.37533,0.92808,"dz",{"name":"مطار برج باجي مختار ⴰⴼⴰⴳⵓⵔ ⵏ ⴱⵓⵔⵊ ⴱⴰⵊⵉ ⵎⵓⵅⵜⴰⵔ","name:en":"Bordj Badji Mokhtar Airport","operator":"EGSA d'Oran","aeroway":"aerodrome","icao":"DATM","iata":"BMW"}],
+["w703473762",20.43854,1.82533,"dz",{"aeroway":"helipad"}],
+["w703473763",20.43982,1.82571,"dz",{"aeroway":"helipad"}],
+["w703473764",20.43986,1.82522,"dz",{"aeroway":"helipad"}],
+["w783037177",21.33112,0.96074,"dz",{"name":"المؤسسة العمومية للصحة الجوارية","amenity":"hospital","healthcare":"hospital"}],
+["w783902178",21.33055,0.94915,"dz",{"name":"Clinique du Docteur Faradji;عيادة الحكيم فراجي","amenity":"hospital","healthcare":"hospital"}],
+["w929737036",21.37362,0.92674,"dz",{"aeroway":"helipad"}]]

@@ -1,0 +1,12 @@
+[["n1042093289",-26.8169,114.61088,"au",{"name":"Billabong Road House Airport","aeroway":"aerodrome"}],
+["n1042094289",-27.69278,114.25923,"au",{"name":"Kalbarri Airport","website":"https://www.northampton.wa.gov.au/","aeroway":"aerodrome","icao":"YKBR","iata":"KAX","aerodrome:type":"public"}],
+["n1042096139",-26.88992,115.96116,"au",{"name":"Murchison Shire Airport","aeroway":"aerodrome"}],
+["n1042100389",-27.4263,115.518,"au",{"name":"Yallalong Homestead Airport","aeroway":"aerodrome"}],
+["n3899132191",-26.42357,114.20961,"au",{"name":"Hamelin Airstrip","aeroway":"aerodrome"}],
+["n3899132337",-26.69896,114.30687,"au",{"name":"Coburn Airstrip","aeroway":"aerodrome"}],
+["n3899140025",-26.2069,114.28057,"au",{"name":"Carbla Airstrip","aeroway":"aerodrome"}],
+["n3904067184",-26.96349,115.97914,"au",{"name":"Meebeerie","aeroway":"aerodrome","military":"airfield"}],
+["w1085718967",-27.6922,114.26131,"au",{"aeroway":"aerodrome","icao":"YKBR","iata":"KAX"}],
+["w1098697388",-26.40736,114.45267,"au",{"name":"Overlander Airport","operator":"BP Overlander Roadhouse","aeroway":"aerodrome"}],
+["w489986886",-27.71294,114.16158,"au",{"name":"Kalbarri Health Centre","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+61 8 9937 0100","addr:housenumber":"5","addr:street":"Kaiber Street"}],
+["w733214159",-27.34828,115.17501,"au",{"aeroway":"aerodrome"}]]
