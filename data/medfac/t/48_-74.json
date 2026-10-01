@@ -1,0 +1,10 @@
+[["n1042031016",48.77619,-72.37154,"ca",{"name":"Aéroport de Dolbeau Saint-Felicien","name:en":"Dolbeau St Felicien Airport","aeroway":"aerodrome","icao":"CYDO","iata":"YDO","wikidata":"Q1658148"}],
+["n1042134206",48.93081,-72.20513,"ca",{"name":"Héliport Potvin Heli-Base","name:en":"Potvin Heli-Base Heliport","aeroway":"helipad"}],
+["n1571984005",48.51989,-72.26604,"ca",{"name":"Aéroport de Roberval","name:en":"Roberval Airport","aeroway":"aerodrome","iata":"YRJ"}],
+["n5664273118",48.90936,-72.20818,"ca",{"name":"Hydrobase","aeroway":"aerodrome"}],
+["n5667173833",48.83885,-72.53106,"ca",{"name":"CLSC des Chutes de Normandin","amenity":"clinic","healthcare":"clinic"}],
+["n9642142417",48.97806,-72.28656,"ca",{"name":"CLSC des Chûtes","amenity":"clinic","healthcare":"clinic"}],
+["w1352468714",48.52099,-72.26713,"ca",{"name":"Aéroport de Roberval","aeroway":"aerodrome","icao":"CYRJ","iata":"YRJ"}],
+["w143642726",48.50751,-72.21944,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w593167432",48.88599,-72.23976,"ca",{"name":"Hôpital de Dolbeau-Mistassini","amenity":"hospital","healthcare":"hospital"}],
+["w593530591",48.50747,-72.21956,"ca",{"name":"Hôpital Hôtel-Dieu de Roberval","amenity":"hospital","healthcare":"hospital"}]]

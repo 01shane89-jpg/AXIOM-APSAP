@@ -1,0 +1,7 @@
+[["n1042029818",50.18961,-61.75186,"ca",{"name":"Hydrobase de Natashquan (Lac De L'Avion)","name:en":"Natashquan (Lac De L'Avion) Seaplane Base","aeroway":"aerodrome"}],
+["n10733740738",50.18869,-61.277,"ca",{"name":"CLSC de Kegaska","amenity":"clinic","healthcare":"clinic"}],
+["n13034175547",50.21686,-60.66137,"ca",{"name":"Dipensaire","healthcare":"clinic"}],
+["w266177940",50.18988,-61.7875,"ca",{"name":"Aéroport de Natashquan","name:en":"Natashquan Airport","aeroway":"aerodrome","icao":"CYNA","iata":"YNA","aerodrome:type":"public"}],
+["w473226200",50.19571,-61.26579,"ca",{"name":"Aéroport de Kegaska","name:en":"Kégashka Airport","operator:type":"public","aeroway":"aerodrome","iata":"ZKG"}],
+["w473226204",50.25889,-60.67405,"ca",{"name":"Aéroport de La Romaine","aeroway":"aerodrome","icao":"CZGS","iata":"ZGS","wikidata":"Q3914118"}],
+["w769442901",50.18842,-61.27804,"ca",{"aeroway":"helipad"}]]

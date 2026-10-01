@@ -1,0 +1,11 @@
+[["n1042023489",52.33393,-125.15177,"ca",{"name":"Nimpo Lake Seaplane Base","aeroway":"aerodrome"}],
+["n11603668150",53.02994,-124.84126,"ca",{"aeroway":"aerodrome"}],
+["n13547087494",53.97525,-125.87842,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"33860","addr:street":"Keefes Landing Road"}],
+["w1141933262",53.12015,-125.18051,"ca",{"name":"Laidman Lodge Airstrip","aeroway":"aerodrome"}],
+["w1145160807",52.99559,-125.07472,"ca",{"aeroway":"aerodrome"}],
+["w1174457712",52.46305,-125.29461,"ca",{"name":"Anahim Lake Ambulance Station","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"6637","addr:street":"Marten Road"}],
+["w1559234281",52.11285,-124.14477,"ca",{"name":"Puntzi Mountain Airport","aeroway":"aerodrome","icao":"CYPU"}],
+["w620989309",53.07353,-125.40995,"ca",{"name":"Moose Lake Lodge Airport","aeroway":"aerodrome"}],
+["w628391301",52.45122,-125.30347,"ca",{"name":"Anahim Lake Airport","aeroway":"aerodrome","iata":"YAA","wikidata":"Q3912615"}],
+["w628788082",53.01926,-124.84389,"ca",{"name":"Tsacha Lake Airport","aeroway":"aerodrome"}],
+["w628788084",52.97123,-125.0259,"ca",{"name":"Tsetzi Lake (Pan Phillips) Airport","aeroway":"aerodrome"}]]

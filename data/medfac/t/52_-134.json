@@ -1,0 +1,5 @@
+[["n1042023657",53.25285,-132.07403,"ca",{"name":"Queen Charlotte City Seaplane Base","aeroway":"aerodrome","iata":"ZQS","wikidata":"Q3914591"}],
+["n9008784350",53.25416,-132.07092,"ca",{"name":"British Columbia Ambulance Service","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"3211","addr:street":"Wharf Street"}],
+["w188008270",53.25492,-132.07029,"ca",{"name":"Haida Gwaii Hospital and Health Centre","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community;general;clinic","operator":"Northern Health","addr:housenumber":"3209","addr:street":"Oceanview Drive"}],
+["w782856730",53.25102,-132.03825,"ca",{"aeroway":"helipad","surface":"asphalt"}],
+["w784879806",53.68708,-132.18298,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"12","addr:street":"Park Street"}]]
