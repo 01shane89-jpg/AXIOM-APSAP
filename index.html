@@ -259,6 +259,8 @@ header h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
 @media (max-width:640px){.bcols{grid-template-columns:1fr}.bpage{padding:10px;font-size:10.5px}#brief{padding:8px}.bpage table{table-layout:auto}.bpage table td{width:auto!important}.bpage td,.bpage th{padding:2px 2px}.bpage td:first-child{white-space:normal}.bpage .mg{white-space:normal}}
 @media print{html.briefing body>*:not(#brief){display:none!important}html.briefing #brief{position:static;padding:0;background:#fff;overflow:visible}
 html.briefing .noprint{display:none!important}html.briefing .bpage{box-shadow:none;max-width:none;padding:0;font-size:9.5px}html.briefing .bpage h3{margin:5px 0 2px}}
+/* on touch screens an open brief or report is the page itself: the map and panels behind it are taken out of rendering and the report scrolls as the document, so pinch-zooming it stays cheap (zooming a fixed overlay over the live map ran iPhone Safari out of memory, which reloads the page back to the map) */
+@media screen and (hover:none),screen and (max-width:700px){html.briefing body>*:not(#brief):not(.bmeasure){display:none!important}html.briefing:root,html.briefing:root body{height:auto!important;overflow:visible!important}html.briefing #brief{position:relative;inset:auto;min-height:100vh;overflow:visible}}
 .bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
 .breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
@@ -8152,6 +8154,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   };
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
   mq.addEventListener ? mq.addEventListener("change", function () { if (!on()) close(); apply(); }) : mq.addListener(apply);
+  /* the brief/report overlay hides the map on touch screens: give the map its size back and return to the top when it closes */
+  var bEl = document.getElementById("brief");
+  if (bEl && window.MutationObserver) new MutationObserver(function () {
+    if (!bEl.hidden) return;
+    window.scrollTo(0, 0);
+    setTimeout(function () { map.invalidateSize(); window.dispatchEvent(new Event("resize")); }, 60);
+  }).observe(bEl, { attributes: true, attributeFilter: ["hidden"] });
   apply(); label();
   var vseg = document.getElementById("view-seg"); vseg.addEventListener("click", function () { setTimeout(label, 50); });
   document.addEventListener("osap:view", label);
