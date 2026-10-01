@@ -45,5 +45,34 @@
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none.",
   "No U.S. embassy or consulate found in Wikidata for this country; check travel.state.gov for the post that covers it.",
   "No airport with scheduled service in the country; access is through neighbouring countries."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ad:xing:node-5292726211",
+   "name": "Duana espanyola",
+   "local_name": null,
+   "hours": "24/7",
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 42.435248,
+   "lon": 1.472664,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5292726211",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7489bea27131117e8a4a2a398793ebfe4e80493c23b0350d72e7a432a57b5ddc"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
