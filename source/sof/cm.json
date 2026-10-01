@@ -28,29 +28,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "b33dad4e91cb9bbf150b037b48b0681f1d0df3f0a1808689bfb04a2cbc3d62f5"
  },
- "posts": [
-  {
-   "id": "sof:cm:post:embassy-of-the-united-states-of-america",
-   "name": "Embassy of the United States of America",
-   "kind": "embassy",
-   "city": null,
-   "address": "Rue Rosa Parks",
-   "services_note": null,
-   "lat": 3.900074,
-   "lon": 11.499199,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/6281453705",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://cm.usembassy.gov",
-   "phone": "(237) 22251- 4000",
-   "phone_after_hours": "(237) 22251-4000 / (237) 22",
-   "phone_src": "https://cm.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "43a65676beb32bef0f7c29707a91426d6cdbfb90c9c21c6680f60a334a1d5293"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:cm:airport:fkys",
@@ -435,48 +413,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ],
- "crossings": [
-  {
-   "id": "sof:cm:xing:node-3426459443",
-   "name": "Poste de controle forestier de chasse de Djaposten",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 3.409497,
-   "lon": 13.547344,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/3426459443",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "f7dff73c03d94c51125fe8e9cc9eddd87e65f96c825f5a5a093aeaef57aa0ca7"
-  },
-  {
-   "id": "sof:cm:xing:node-5684595569",
-   "name": "Poste de Contrôle Unique Frontalier de Ntam",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 2.172089,
-   "lon": 13.698429,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/5684595569",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "45c875671d880c73219a53602012a96118eacc70425c4e4a1c06d9c800830530"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -30,12 +30,7 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Tonga.html",
    "srcname": "travel.state.gov Tonga country information",
    "coord_basis": "Nuku'alofa centre estimate; verify",
-   "fp": "222826deb2ddc8cf7facb9384fee4080d3e02a8282acdf9478b3306e43077baa",
-   "phone": "(676) 28-279",
-   "phone_after_hours": "679 331-4466",
-   "phone_src": "https://to.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "8f387429c84ae02c8fa99152d79e56d7b338ddcb9fb26fb68243d13603643561"
   }
  ],
  "airports": [
@@ -326,11 +321,5 @@
  ],
  "gaps": [
   "Embassy address and hospital coordinates not retrieved (no WebFetch); Vaiola / Prince Ngu from a Wikipedia list, verify. Tropic Twilight 2026 dates unknown. Tui Moana 2026 participant list not confirmed."
- ],
- "crossings": [],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

@@ -52,8 +52,13 @@ function km(a, b) {
 }
 const latin = (s) => !!s && /^[\x00-\x7fÀ-ɏ‘-”–— ]+$/.test(s);
 /* a phone as published: one number, trimmed; anything that is not digits, spaces, + ( ) - . / is dropped */
-function cleanPhone(s) {
+export function cleanPhone(s) {
   s = String(s || "").split(/[;,]| or /)[0].trim().replace(/[^0-9+()\-./ ]/g, "").replace(/\s+/g, " ").trim();
+  /* a bracket without its partner (a match that began after "(") is dropped, so "+420) 257" reads "+420 257" */
+  var open = 0, out = "";
+  for (const ch of s) { if (ch === "(") { open++; out += ch; } else if (ch === ")") { if (open) { open--; out += ch; } } else out += ch; }
+  for (; open > 0; open--) { const i = out.lastIndexOf("("); out = out.slice(0, i) + out.slice(i + 1); }
+  s = out.replace(/\s+/g, " ").replace(/^[\s\-./]+|[\s\-./(]+$/g, "").trim();
   return (s.replace(/[^0-9]/g, "").length >= 6) ? s : "";
 }
 function webOf(t) { const w = (t["contact:website"] || t.website || "").split(";")[0].trim(); return /^https?:\/\//.test(w) ? w : ""; }
@@ -131,7 +136,7 @@ function crossingItem(x) {
 }
 
 /* ---------- 3. published phone numbers on the post's own site ---------- */
-const PH_RE = /(\+?\(?[0-9][0-9 ()\-. /]{6,24}[0-9])/;
+const PH_RE = /(\(?\+?\(?[0-9][0-9 ()\-. /]{6,24}[0-9])/;
 function text(html) {
   return html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<br\s*\/?>|<\/p>|<\/li>|<\/div>/gi, "\n").replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;|&#160;/g, " ").replace(/&amp;/g, "&").replace(/&#8211;|&ndash;/g, "-").replace(/&#43;/g, "+").replace(/[ \t]+/g, " ");
@@ -150,9 +155,11 @@ export function sitePhones(html) {
   return res;
 }
 async function siteFor(post, cc) {
-  const tries = [];
-  if (post.web && /usembassy\.gov|usconsulate\.gov|state\.gov|ait\.org\.tw/.test(post.web)) tries.push(post.web);
-  if (post.kind === "embassy") tries.push("https://" + cc + ".usembassy.gov/");
+  /* the mission's home page lists the embassy's numbers, so only the embassy reads them there; a consulate reads only a page of
+     its own (a path below the home page), else keeps the number tagged on it */
+  const tries = [], own = (u) => /usembassy\.gov|usconsulate\.gov|state\.gov|ait\.org\.tw/.test(u) && (post.kind === "embassy" || new URL(u).pathname.replace(/\/+$/, "").length > 1);
+  if (post.web && own(post.web)) tries.push(post.web);
+  if (post.kind === "embassy" && !tries.length) tries.push("https://" + cc + ".usembassy.gov/");
   for (const u of tries) {
     const p = await page(u); if (!p) continue;
     const ph = sitePhones(p.html);
@@ -165,7 +172,9 @@ async function siteFor(post, cc) {
 const ADDED_BASIS = "OpenStreetMap", TODAYS = TODAY;
 function postFromOsm(o) {
   const t = o.t, city = cityOf(t), en = latin(t["name:en"]) ? t["name:en"] : latin(t.name) && /united states|u\.s\.|american|usa/i.test(t.name) ? t.name : "";
-  const name = en || (KNAME[o.kind] + (city && latin(city) ? " " + city : ""));
+  /* "Embassy of the United States" alone says nowhere: name it by the city, else the country */
+  const generic = !en || /^(the )?(embassy|consulate( general)?|consular agency) of the united states( of america)?$/i.test(en.trim());
+  const name = !generic ? en : KNAME[o.kind] + (city && latin(city) ? " " + city : ", " + o.country);
   const it = { id: "sof:" + o.cc + ":post:" + slug(name) , name, kind: o.kind, city: latin(city) ? city : city || null, address: addrOf(t) || null,
     services_note: null, lat: o.lat, lon: o.lon, prec: "exact", src: "https://www.openstreetmap.org/" + o.osm, srcname: "OpenStreetMap (ODbL)", coord_basis: ADDED_BASIS };
   return it;
@@ -200,12 +209,14 @@ async function main() {
     const S = SOF[cc], P = patch[cc] = { set: {}, add: [], crossings: [] }, list = byCc[cc] || [], cur = (S.posts || []).map((p) => ({ ...p }));
     const had = cur.length;
     for (const o of list) {
+      o.country = S.country || cc.toUpperCase();
       /* the researched post this OSM object is: the same kind within 3 km, or any post within 1 km */
       let best = null, bd = 1e9;
       for (const p of cur) {
         if (p.lat == null) continue;
         const d = km([p.lat, p.lon], [o.lat, o.lon]);
-        if ((d < 3 && (p.kind === o.kind || (p.kind || "").startsWith("consul") && o.kind.startsWith("consul"))) || d < 1) if (d < bd) { bd = d; best = p; }
+        const near = (d < 3 && (p.kind === o.kind || (p.kind || "").startsWith("consul") && o.kind.startsWith("consul"))) || d < 1 || (d < 25 && p.kind === "embassy" && o.kind === "embassy");
+        if (near && d < bd) { bd = d; best = p; }
       }
       if (best) { if (!best._osm) { best._osm = o; stats.matched++; } continue; }
       const it = postFromOsm(o); it._osm = o; it._new = true;

@@ -22,29 +22,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "7bbc29c067c3df4ad0a02db967b97759ef7f8a698d7309cffb6fdb7695fed6a3"
  },
- "posts": [
-  {
-   "id": "sof:ls:post:embassy-of-the-united-states",
-   "name": "Embassy of the United States",
-   "kind": "embassy",
-   "city": "Maseru",
-   "address": "254 Mpilo Boulevard / Kingsway Road, Maseru",
-   "services_note": null,
-   "lat": -29.306675,
-   "lon": 27.46823,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/node/6620305862",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://ls.usembassy.gov",
-   "phone": "+266-2231-2666",
-   "phone_after_hours": "+266-2231-2666",
-   "phone_src": "https://ls.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "78b79af31dd0792505c48b1a9ece909bc75bf0d04423cbe77b77a576965dd41c"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:ls:airport:fxmm",
@@ -100,80 +78,5 @@
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country.",
   "Auto: landlocked, no seaports."
- ],
- "crossings": [
-  {
-   "id": "sof:ls:xing:node-1358061602",
-   "name": "Sepapu's Gate Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -29.94882,
-   "lon": 27.198734,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1358061602",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "3b79b2332d881d0b365514c38f75c3bb95c93c4eb8137e7640b7fb7240d856c1"
-  },
-  {
-   "id": "sof:ls:xing:node-1395168391",
-   "name": "Makhaleng Bridge Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -30.162947,
-   "lon": 27.39918,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1395168391",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "07f5742846a8b63bb579267bbcb46e9653c12af2a52bd21f1ef8b677dba81e04"
-  },
-  {
-   "id": "sof:ls:xing:node-1408960775",
-   "name": "Telle Bridge Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -30.432693,
-   "lon": 27.56822,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/1408960775",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "52fbac5c3602a8b5d61f3ec7e5313b8dcbc3072878bdeaaa262ebaf7d62dffd5"
-  },
-  {
-   "id": "sof:ls:xing:node-248237847",
-   "name": "Van Rooyen's Gate Border Control",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": -29.756429,
-   "lon": 27.108407,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/248237847",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "4129e9a9f2a49cc6edd8753a1697e8fccb024cea3fef7b9012fef1f7e19e1204"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

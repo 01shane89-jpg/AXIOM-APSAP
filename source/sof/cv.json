@@ -16,29 +16,7 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "dae061c1857f8c584cfe14de15f0b16f568124f068ff52b8670e4eac9807e7f7"
  },
- "posts": [
-  {
-   "id": "sof:cv:post:embassy-of-the-united-states-of-america",
-   "name": "Embassy of the United States of America",
-   "kind": "embassy",
-   "city": "Praia",
-   "address": "6 Rua Abílio Macedo, Praia",
-   "services_note": null,
-   "lat": 14.921072,
-   "lon": -23.506393,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/235972336",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://cv.usembassy.gov/",
-   "phone": "+238 260 8900",
-   "phone_after_hours": "+238) 260 8900",
-   "phone_src": "https://cv.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "2fa38b4089d3ebb03d8bbcb309ee671753c2fe0aeef6e428571f0eeed8855e0c"
-  }
- ],
+ "posts": [],
  "airports": [
   {
    "id": "sof:cv:airport:gvac",
@@ -305,11 +283,5 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ],
- "crossings": [],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

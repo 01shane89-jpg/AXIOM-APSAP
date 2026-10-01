@@ -30,13 +30,7 @@
    "src": "https://www.wikidata.org/entity/Q55610802",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "24e998e2cb7f9ff27c6b967ef7330a0026c664d75915fbb285c1ede7eceb4cd5",
-   "web": "https://pt.usembassy.gov",
-   "phone": "351-21-727-3300",
-   "phone_after_hours": "+351) 21-727-3300",
-   "phone_src": "https://pt.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "fp": "df8b130e2de0dad7a458feee3b26bc3c31c01caebf1d1a2f84bf54c9f065653e"
   },
   {
    "id": "sof:pt:post:consulate-of-the-united-states-ponta-delgada",
@@ -756,68 +750,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:pt:xing:node-4522429960",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 38.764101,
-   "lon": -9.135877,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/4522429960",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "99e47bc6c7302e81fb12d84ef8256e20dc1d0b8c84a4f1d5ef9eb9728ea1a5c0"
-  },
-  {
-   "id": "sof:pt:xing:node-600456565",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": [
-    "car",
-    "motorcycle",
-    "bicycle",
-    "foot"
-   ],
-   "access_note": null,
-   "operator": null,
-   "lat": 41.809779,
-   "lon": -7.421153,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/600456565",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "951dcd9528be317cea467b01282688723fe95bbd7a22384b469a8de98013bc47"
-  },
-  {
-   "id": "sof:pt:xing:node-7996999795",
-   "name": "Antiguo embarcadero aduana española",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 41.494642,
-   "lon": -6.266568,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/7996999795",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "9d1f72fea134ec59a6ad3f6ea87f6447cf5395c5ab4b0149bcf277f57ffe0305"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }

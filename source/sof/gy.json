@@ -34,33 +34,7 @@
    "src": "https://www.wikidata.org/entity/Q105592651",
    "srcname": "Wikidata",
    "coord_basis": "no position found",
-   "fp": "41a443d5f4040703a78b03e44fa5f865a752da1d977a06520bb1f617f260448d",
-   "phone": "592-225-4900/9",
-   "phone_after_hours": "592-225-4900",
-   "phone_src": "https://gy.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
-  },
-  {
-   "id": "sof:gy:post:united-states-embassy",
-   "name": "United States Embassy",
-   "kind": "embassy",
-   "city": "Georgetown",
-   "address": "100 Duke Street, Georgetown",
-   "services_note": null,
-   "lat": 6.82313,
-   "lon": -58.161064,
-   "prec": "exact",
-   "src": "https://www.openstreetmap.org/way/883644437",
-   "srcname": "OpenStreetMap (ODbL)",
-   "coord_basis": "OpenStreetMap",
-   "web": "https://gy.usembassy.gov",
-   "phone": "592-225-4900/9",
-   "phone_after_hours": "592-225-4900",
-   "phone_src": "https://gy.usembassy.gov/",
-   "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "ed3afe97219fea9500a47a59f021743af22e3bd0d66f1a7c9d4760d8a67962fc"
+   "fp": "4c07efe56355328efe5514fecadc5d3c4c48311725e4a3a1b35fc5403387686f"
   }
  ],
  "airports": [
@@ -313,46 +287,5 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ],
- "crossings": [
-  {
-   "id": "sof:gy:xing:node-5136057951",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 3.385836,
-   "lon": -59.803288,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/5136057951",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1f3a89b5c6e82273c6565670df1357cbcd8573add64eba8590eb96ff923b5e34"
-  },
-  {
-   "id": "sof:gy:xing:node-7015912455",
-   "name": "Border control (unnamed in OpenStreetMap)",
-   "local_name": null,
-   "hours": null,
-   "modes": null,
-   "access_note": null,
-   "operator": null,
-   "lat": 3.380406,
-   "lon": -59.816966,
-   "prec": "exact",
-   "coord_basis": "OpenStreetMap",
-   "src": "https://www.openstreetmap.org/node/7015912455",
-   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "875a4800c403b62e63fc2e7f0dea8127c35c1cd5ae58d3ef75f5731f93e3c6da"
-  }
- ],
- "evac_sources": {
-  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
-  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
- },
- "evac_asof": "2026-10-01"
+ ]
 }
