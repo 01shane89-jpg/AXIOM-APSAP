@@ -20,7 +20,7 @@ const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), TILE
 const BUDGET = (+process.env.MEDFAC_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MEDFAC_MAX_AGE_D || 28) * 864e5;
 const DEBUG = !!process.env.MEDFAC_DEBUG, T0 = Date.now();
 const UA = "AXIOM-OSAP medical-plan facility snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (...a) => console.log(...a);
 
@@ -63,7 +63,7 @@ async function overpass(q) {
   for (const u of OVERPASS) {
     for (let k = 0; k < 2; k++) {
       const t0 = Date.now();
-      try { const j = await post(u, q, 330000); if (DEBUG) log("   ", new URL(u).host, Date.now() - t0, "ms", (j.elements || []).length); return j; }
+      try { const j = await post(u, q, 200000); if (DEBUG) log("   ", new URL(u).host, Date.now() - t0, "ms", (j.elements || []).length); return j; }
       catch (e) {
         errs.push(new URL(u).host + ": " + e.message); if (DEBUG) log("   ", new URL(u).host, e.message);
         if (/429/.test(e.message)) { await sleep(30000); continue; }
@@ -74,9 +74,10 @@ async function overpass(q) {
   }
   throw new Error(errs.join("; "));
 }
+/* a smaller declared timeout and memory size: a busy Overpass server turns away big declared queries (HTTP 504 or 429) */
 function query(cc, bbox) {
-  const f = bbox ? `(${bbox.map((x) => x.toFixed(4)).join(",")})` : "";
-  return `[out:json][timeout:300][maxsize:1073741824];area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]->.a;.a out ids;(` +
+  const f = bbox ? `(${bbox.flat().map((x) => (+x).toFixed(4)).join(",")})` : "";
+  return `[out:json][timeout:${bbox ? 120 : 180}][maxsize:536870912];area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]->.a;.a out ids;(` +
     `nwr(area.a)${f}["amenity"~"^(hospital|clinic)$"];nwr(area.a)${f}["healthcare"~"^(hospital|clinic)$"];` +
     `nwr(area.a)${f}["aeroway"~"^(helipad|heliport|aerodrome)$"];nwr(area.a)${f}["emergency"~"^(ambulance_station|air_rescue_service)$"];);out center tags;`;
 }
