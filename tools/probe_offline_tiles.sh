@@ -1,18 +1,20 @@
 #!/bin/sh
 # Test only: checks the offline map's tile hosts answer with CORS (needed to save tiles on the device without the browser's
-# large padding for opaque responses) and measures average tile sizes around Bangkok. Writes nothing to the repo.
-o="Origin: https://01shane89-jpg.github.io"
-S2="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g"
-FE="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Reference_Features_15m/default/default/GoogleMapsCompatible_Level13"
-LB="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Reference_Labels_15m/default/default/GoogleMapsCompatible_Level13"
-for b in "$S2|jpg" "$FE|png" "$LB|png"; do
-  u=${b%|*}; ext=${b#*|}
-  curl -s -D - -o /dev/null -H "$o" "$u/10/472/797.$ext" | grep -i -E "^HTTP|access-control-allow-origin|^vary"
-  for zxy in "8 118 199" "10 472 797" "12 1890 3191" "13 3780 6382"; do
-    set -- $zxy; tot=0; n=0
-    for dy in 0 1 2 3; do for dx in 0 1 2 3; do
-      s=$(curl -s -o /dev/null -w "%{size_download}" "$u/$1/$(($2+dy))/$(($3+dx)).$ext"); tot=$((tot+s)); n=$((n+1))
-    done; done
-    echo "$u z$1: avg $((tot/n)) bytes over $n tiles"
+# large padding for opaque responses) and measures tile sizes. Writes nothing to the repo.
+G="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best"
+curl -s "$G/wmts.cgi?SERVICE=WMTS&REQUEST=GetCapabilities" -o /tmp/cap.xml; echo "caps $(wc -c < /tmp/cap.xml) bytes"
+grep -o "<ows:Identifier>[A-Za-z_]*\(Reference\|Label\|Coast\|Road\|Border\|OSM\)[A-Za-z0-9_]*</ows:Identifier>" /tmp/cap.xml | sort -u
+python3 - <<'P'
+import re
+s=open('/tmp/cap.xml').read()
+for m in re.finditer(r'<Layer>(.*?)</Layer>', s, re.S):
+    b=m.group(1); i=re.search(r'<ows:Identifier>(.*?)</ows:Identifier>', b).group(1)
+    if re.search('Reference|Coast|OSM|Label', i):
+        print(i, re.findall(r'<TileMatrixSet>(.*?)</TileMatrixSet>', b), re.findall(r'template="([^"]+)"', b)[:1], re.findall(r'<Format>(.*?)</Format>', b)[:2])
+P
+for zyx in "3 3 6" "5 14 24" "6 29 49" "8 118 199" "10 472 797"; do
+  set -- $zyx
+  for L in Reference_Labels_15m Reference_Features_15m Coastlines_15m; do
+    echo "$L $1/$2/$3: $(curl -s -o /dev/null -w '%{http_code} %{size_download}' "$G/$L/default/default/GoogleMapsCompatible_Level13/$1/$2/$3.png")"
   done
 done
