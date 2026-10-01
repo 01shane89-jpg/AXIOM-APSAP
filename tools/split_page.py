@@ -68,7 +68,7 @@ PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(locati
             ' if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); });'
             ' navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {'
             ' reg.update().catch(function () {});'
-            ' navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); });'
+            ' navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map\'s pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); });'
             ' document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); });'
             ' }).catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):

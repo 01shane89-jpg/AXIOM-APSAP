@@ -1,0 +1,13 @@
+[["n1042024122",58.82093,-122.78644,"ca",{"name":"Gordon Field","aeroway":"aerodrome","wikidata":"Q3915257"}],
+["n1042025350",58.8333,-122.9,"ca",{"name":"Fort Nelson (Parker Lake) Seaplane Base","aeroway":"aerodrome","wikidata":"Q3915258"}],
+["n1042134109",58.75228,-122.68634,"ca",{"name":"Fort Nelson (Guardian) Heliport","aeroway":"helipad"}],
+["n13616277875",58.83861,-122.57795,"ca",{"operator":"Bailey Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n13616277876",58.83887,-122.57735,"ca",{"operator":"Bailey Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n13616277877",58.83876,-122.57763,"ca",{"operator":"Bailey Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n13616277878",58.83843,-122.57832,"ca",{"operator":"Qwest Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n13616277879",58.83826,-122.57873,"ca",{"operator":"Qwest Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n13616277880",58.83822,-122.57932,"ca",{"operator":"Qwest Helicopters","aeroway":"helipad","surface":"asphalt"}],
+["n1517190381",58.83933,-122.57421,"ca",{"aeroway":"helipad"}],
+["w1472772876",58.8089,-122.70462,"ca",{"name":"Fort Nelson General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Northern Health","operator:type":"public","phone":"+1- 250-774-8100","website":"https://www.northernhealth.ca/find-a-facility/hospitals/fort-nelson-general-hospital","addr:housenumber":"5315","addr:street":"Liard Street","addr:city":"Fort Nelson"}],
+["w161779721",58.80883,-122.70363,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"5300","addr:street":"Liard Street"}],
+["w532565033",58.83629,-122.59514,"ca",{"name":"Fort Nelson Airport","website":"https://www.flynorthernrockies.ca/","aeroway":"aerodrome","icao":"CYYE","iata":"YYE","wikidata":"Q428081"}]]

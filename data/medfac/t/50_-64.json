@@ -1,0 +1,8 @@
+[["n1042029961",50.26348,-63.54927,"ca",{"name":"Hydrobase de Havre St-Pierre","name:en":"Havre St-Pierre Seaplane Base","aeroway":"aerodrome"}],
+["n1042030084",50.2306,-62.1125,"ca",{"name":"Hydrobase d'Aguanish","name:en":"Aguanish Seaplane Base","aeroway":"aerodrome"}],
+["n10790995082",50.22186,-62.07974,"ca",{"name":"CLSC Victor-Lachance","amenity":"clinic","healthcare":"clinic","operator":"CISSS de la Côte-Nord","addr:housenumber":"102","addr:street":"Route Jacques-Cartier","addr:city":"Aguanish","addr:postcode":"G0G 1R0"}],
+["n2718002010",50.28327,-63.60252,"ca",{"aeroway":"helipad"}],
+["n2718002043",50.28442,-63.59943,"ca",{"aeroway":"helipad"}],
+["n4656286983",50.28393,-62.81033,"ca",{"name":"Hydrobase Baie-Johan-Beetz","name:en":"Baie-Johan-Beetz Seaplane Base","aeroway":"aerodrome","iata":"YBJ"}],
+["w266231657",50.28301,-63.60834,"ca",{"name":"Aéroport de Havre-Saint-Pierre","name:en":"Havre St Pierre Airport","aeroway":"aerodrome","icao":"CYGV","iata":"YGV","wikidata":"Q3885280"}],
+["w571335956",50.23766,-63.60489,"ca",{"name":"Centre de Santé et de Services Sociaux de la Minganie","amenity":"hospital","healthcare":"hospital"}]]

@@ -254,7 +254,7 @@
             : i.url ? '<a class="tdrow" href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + t + " ↗</a>" : '<span class="tdrow">' + t + "</span>";
         }).join("") + (g.n > 2 ? '<span class="tdmore">and ' + (g.n - 2) + " more</span>" : "") + '<span class="tdsub">' + esc(g.src) + "</span></div>";
     });
-    if (G.length > 6) h += '<p class="tdobs">' + (G.length - 6) + " more kinds of alert are in the Alerts and Live hazards tabs.</p>";
+    if (G.length > 6) h += '<p class="tdobs">' + (G.length - 6) + " more kinds of alert are in the Alerts and Earthquakes and hazards tabs.</p>";
     h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="alerts">All alerts</button><button type="button" class="tdlink" data-go="hazards">Live hazards map</button></div></section>';
     return h;
   }

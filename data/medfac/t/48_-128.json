@@ -1,0 +1,13 @@
+[["n1042023469",49.9778,-126.84518,"ca",{"name":"Zeballos Water Aerodrome","aeroway":"aerodrome","wikidata":"Q3913091"}],
+["n1042023771",49.67939,-126.11683,"ca",{"name":"Gold River Water Aerodrome","aeroway":"aerodrome"}],
+["n10665803239",49.78174,-126.0463,"ca",{"emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"503","addr:street":"Muchalat Drive"}],
+["n3246637481",49.753,-126.05487,"ca",{"name":"Heliport","addr:housenumber":"500","addr:street":"Western Drive","aeroway":"helipad"}],
+["n867583178",49.9218,-126.65349,"ca",{"name":"Tahsis Water Aerodrome","aeroway":"aerodrome","iata":"ZTS","wikidata":"Q3913468"}],
+["w1251313555",49.92341,-126.65525,"ca",{"aeroway":"helipad"}],
+["w1251313556",49.92334,-126.6548,"ca",{"aeroway":"helipad"}],
+["w1308522029",49.34767,-126.25976,"ca",{"aeroway":"helipad"}],
+["w372862391",49.98949,-126.85182,"ca",{"name":"BC Ambulance Station 135","emergency":"ambulance_station","operator":"BC Ambulance Service"}],
+["w374388992",49.38265,-126.54439,"ca",{"aeroway":"helipad"}],
+["w374515537",49.59223,-126.61633,"ca",{"aeroway":"helipad"}],
+["w423732474",49.91358,-126.66312,"ca",{"name":"VIHA Health Clinic","amenity":"clinic"}],
+["w793097116",49.78069,-126.05138,"ca",{"name":"Gold River Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Island Health","phone":"+1-250-283-2626","website":"https://www.islandhealth.ca/our-locations/hospitals-health-centre-locations/gold-river-health-centre","addr:housenumber":"601","addr:street":"Trumpeter Drive"}]]
