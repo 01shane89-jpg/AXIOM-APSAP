@@ -10,9 +10,10 @@
      always sees the newest published data and an offline one falls back to the last copy it saw. Data files wait at most
      DATA_WAIT and the page PAGE_WAIT for the network; the network copy is still saved when the wait runs out.
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
-   - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. */
+   - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
+     (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
 const VERSION = "fb2f73d47e74";
-const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500;
+const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
 const DATA_WAIT = 1200, PAGE_WAIT = 2500;
@@ -448,6 +449,7 @@ const PRECACHE = [
 "assets/osap-medplan.js",
 "assets/osap-lz.js",
 "assets/osap-reports.js",
+"assets/osap-offline.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
 "assets/osap-traffic.js",
@@ -515,6 +517,9 @@ self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+  // A request that asks not to be cached (cache: "no-store") goes straight to the network: Offline maps and data downloads
+  // its tiles that way and saves them itself, so they are not also copied into the capped tile cache.
+  if (url.origin !== location.origin && req.cache === "no-store") return;
   if (NEVER.some((r) => r.test(url.href))) return;
   if (url.origin === location.origin && FRESH.some((r) => r.test(url.pathname))) {
     if (/\/data\//.test(url.pathname) && url.searchParams.has("fresh")) {
@@ -536,7 +541,9 @@ self.addEventListener("fetch", (e) => {
       return res;
     });
     e.waitUntil(net.catch(() => {}));
-    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"));
+    // With no network and no saved copy, only a page load gets the saved page; a script or data file gets a plain network
+    // error (handled by the page as a missing file) rather than the page's HTML, which threw "Unexpected token '<'" offline.
+    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()));
     // Feed files wait at most DATA_WAIT ms and the page PAGE_WAIT ms, then use the last saved copy so the page still opens;
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;
@@ -552,8 +559,10 @@ self.addEventListener("fetch", (e) => {
     }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || Promise.reject(new TypeError("offline"))))));
     return;
   }
-  // other hosts' files are only ever saved in TILES, so only that cache is searched (not every cache this app keeps)
-  e.respondWith(caches.open(TILES).then((c) => c.match(req)).then((hit) => hit || fetch(req).then((res) => {
+  // Tiles saved by "Offline maps and data" (assets/osap-offline.js) are looked up first and never trimmed; they are saved
+  // under the plain address with no Vary, so the map's image requests find them however they were fetched.
+  // Other hosts' files are otherwise only ever saved in TILES, so only that cache is searched (not every cache this app keeps).
+  e.respondWith(caches.open(OFFLINE).then((c) => c.match(req.url, { ignoreVary: true })).catch(() => null).then((hit) => hit || caches.open(TILES).then((c) => c.match(req))).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok || res.type === "opaque") {
       const copy = res.clone();
       e.waitUntil(caches.open(TILES).then((c) => c.put(req, copy)).then(trimTilesSoon).catch(() => {}));
