@@ -37,7 +37,7 @@ const OSM = { osm3s: { timestamp_osm_base: "2026-09-30T06:00:00Z" }, elements: [
   { type: "node", id: 7, lat: 13.91, lon: 100.60, tags: { aeroway: "aerodrome", name: "Test Airfield", icao: "VTXX", iata: "TXX" } },
   { type: "node", id: 8, lat: 13.70, lon: 100.45, tags: { aeroway: "helipad", name: "Riverside Pad" } },
   { type: "node", id: 9, lat: 13.71, lon: 100.46, tags: { aeroway: "helipad", disused: "yes" } },
-  { type: "node", id: 10, lat: 13.70, lon: 100.40, tags: { amenity: "hospital", name: "Trauma Test Hospital", "healthcare:speciality": "trauma;surgery" } },
+  { type: "node", id: 10, lat: 13.70, lon: 100.40, tags: { amenity: "hospital", name: "Trauma Test Hospital", "healthcare:speciality": "trauma;surgery;neurosurgery" } },
   { type: "node", id: 12, lat: 13.7608, lon: 100.5108, tags: { amenity: "hospital", name: "โรงพยาบาลใกล้" } },
   { type: "node", id: 11, lat: 13.752, lon: 100.498, tags: { emergency: "ambulance_station", name: "City Ambulance Station", phone: "+66 2 111 2222" } }
 ] };
@@ -235,6 +235,9 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
+  const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
+  ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
   /* the nearest blood bank (Shane) */
   await p.waitForFunction(() => /Test National Blood Centre/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
   const bl = await p.evaluate(() => { const f = document.getElementById("mp-fac").textContent; return { f: f.slice(f.indexOf("Nearest blood bank"), f.indexOf("Nearest blood bank") + 400), mk: [...document.querySelectorAll(".mpicon.bl")].map((m) => m.textContent) }; });
