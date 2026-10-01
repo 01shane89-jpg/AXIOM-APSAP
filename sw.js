@@ -538,7 +538,9 @@ self.addEventListener("fetch", (e) => {
       return res;
     });
     e.waitUntil(net.catch(() => {}));
-    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("./index.html"));
+    // With no network and no saved copy, only a page load gets the saved page; a script or data file gets a plain network
+    // error (handled by the page as a missing file) rather than the page's HTML, which threw "Unexpected token '<'" offline.
+    const fallback = () => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()));
     // Feed files wait at most DATA_WAIT ms and the page PAGE_WAIT ms, then use the last saved copy so the page still opens;
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;

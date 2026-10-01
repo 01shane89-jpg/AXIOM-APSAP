@@ -15,6 +15,7 @@ const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
 const root = process.cwd();
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
+  if (path === "data/live/not-saved-test.js") { req.socket.destroy(); return; }   // a file the network never delivers
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
 }).listen(0, "127.0.0.1");
@@ -90,6 +91,8 @@ const off = await p.evaluate(() => {
 });
 const rec = await p.evaluate(() => ({ cc: window.TSAP && window.TSAP.country, n: window.TSAP && window.TSAP.records ? window.TSAP.records.length : 0 }));
 ok(rec.cc === "sg" && rec.n > 0, "offline: the country opens with its reporting (" + rec.n + " records)");
+const miss = await p.evaluate(() => fetch("data/live/not-saved-test.js").then((r) => r.status + " " + (r.headers.get("content-type") || "")).catch(() => "network error"));
+ok(!/html/.test(miss), "offline: a data file never saved is a plain network error, not the page's HTML (" + miss + ")");
 ok(off.base === "offline", "offline load switches to the Offline map (" + off.base + ")");
 ok(off.n > 0 && off.loaded === off.n, "saved Offline map tiles drawn from the device: " + off.loaded + " of " + off.n);
 ok(tileHits === 0, "no tile went to the network offline");
