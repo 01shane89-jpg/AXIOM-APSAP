@@ -249,6 +249,7 @@
     var la = o[0].toFixed(5), lo = o[1].toFixed(5);
     return "[out:json][timeout:40];" +
       'nwr["emergency"="air_rescue_service"](around:400000,' + la + "," + lo + ");out center tags 40;" +
+      '(nwr["healthcare"="blood_bank"](around:200000,' + la + "," + lo + ');nwr["healthcare"="blood_donation"](around:200000,' + la + "," + lo + ');nwr["amenity"="blood_bank"](around:200000,' + la + "," + lo + '););out center tags 40;' +
       '(nwr["office"="diplomatic"]["country"="US"](around:1500000,' + la + "," + lo + ');nwr["amenity"="embassy"]["country"="US"](around:1500000,' + la + "," + lo + '););out center tags 40;';
   }
   function post(url, body, ms) {
@@ -332,17 +333,21 @@
     return out;
   }
   function sortX(els, o) {
-    var seen = {}, R = [], P = [];
+    var seen = {}, R = [], P = [], B = [];
     (els || []).forEach(function (e) {
       var k = e.type + e.id; if (seen[k]) return; seen[k] = 1;
       var t = e.tags || {}, p = pos(e); if (!p) return;
       var b = { id: k, osm: osmUrl(e), lat: p[0], lon: p[1], m: distM(o, p), brg: brg(o, p) };
       contactsOf(t, b);
-      if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); R.push(b); }
+      if (/^blood_(bank|donation)$/.test(t.healthcare || "") || t.amenity === "blood_bank") {
+        b.name = clip(t["name:en"] || t.name || t.operator || "Blood service (no name in OSM)", 90); b.op = clip(t.operator || "", 80); b.kind = "blood";
+        b.bank = t.healthcare === "blood_bank" || t.amenity === "blood_bank"; B.push(b);
+      }
+      else if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); R.push(b); }
       else { b.name = clip(t["name:en"] || t.name || "U.S. diplomatic post", 90); b.dip = t.diplomatic || ""; P.push(b); }
     });
-    R.sort(function (x, y) { return x.m - y.m; });
-    return { R: R.slice(0, 6), P: P };
+    R.sort(function (x, y) { return x.m - y.m; }); B.sort(function (x, y) { return x.m - y.m; });
+    return { R: R.slice(0, 6), P: P, B: B.slice(0, 5) };
   }
 
   /* ---------- capability ---------- */
@@ -730,7 +735,7 @@
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,#f6f8fa)}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
-    ".mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
+    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
     ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
     ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
@@ -1105,6 +1110,7 @@
       '<p class="obs">OpenStreetMap names these as hospitals but lists no emergency department, beds, specialities or contacts, so their level cannot be estimated. ' + (F.nU > F.U.length ? "The nearest " + F.U.length + " are shown. " : "") + "Phone or visit before relying on one.</p>" +
       '<div class="mpscroll"><table>' + head + "<tbody>" + F.U.map(function (f, i) { return facRow(f, i, bestOf(f), "U"); }).join("") + "</tbody></table></div></details>";
     if (F.nNo) h += '<p class="obs">' + F.nNo + " more hospital" + (F.nNo > 1 ? "s" : "") + " in OpenStreetMap with no name and no details are left out.</p>";
+    h += bloodHtml(s);
     h += "<h4>Clinics and first-aid posts within " + Math.round(s.radii.c / 1000) + " km</h4>";
     h += F.C.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.C.map(function (f, i) { return facRow(f, i, null); }).join("") + "</tbody></table></div>"
       : failed(s) ? '<p class="obs mpwarn">Clinics could not be looked up.</p>' : '<p class="obs">None in OpenStreetMap.</p>';
@@ -1112,6 +1118,23 @@
     else if (!s.routeDone && (F.H.length || F.C.length || F.U.length)) h += '<p class="obs">Working out road drive times…</p>';
     el.innerHTML = h;
     pickRender();
+  }
+  /* the nearest blood bank (Shane): blood banks and donation centres OpenStreetMap lists within 200 km, and hospitals that
+     list a blood bank or transfusion service. Nothing is inferred: where none is listed the plan says so. */
+  function hasBlood(f) { return BLOOD.test(String(f.specRaw || "")); }
+  function bloodHtml(s) {
+    var rw = num("rwkn"), H = s.fac.H.filter(function (f) { return hasBlood(f) && !isOff(f); }).sort(function (a, b) { return a.m - b.m; });
+    var h = "<h4>Nearest blood bank</h4>";
+    if (s.x && s.x.B.length) h += '<div class="mpscroll"><table><thead><tr><th></th><th>Blood service and contacts</th><th>Straight line</th><th>Grid (MGRS)</th></tr></thead><tbody>' + s.x.B.map(function (b, i) {
+      return '<tr><td class="n"><span class="mpmark bl">B' + (i + 1) + '</span></td><td class="mpfac"><b>' + esc(b.name) + "</b>" + '<span class="sub">' + (b.bank ? "Blood bank" : "Blood donation centre (collects blood; may not issue it)") + (b.op && b.op !== b.name ? " · " + esc(b.op) : "") + "</span>" + ctHtml(b) + "</td>" +
+        '<td class="n">' + esc(km(b.m)) + '<span class="sub">' + Math.round(b.brg) + "° " + card(b.brg) + " · " + esc(mins(flightS(b.m, rw))) + " at " + rw + ' kn</span></td><td class="n"><code>' + esc(grid(b.lat, b.lon)) + "</code></td></tr>";
+    }).join("") + "</tbody></table></div>";
+    else if (s.x) h += '<p class="obs">No blood bank or donation centre within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
+    else if (s.xErr) h += '<p class="obs mpwarn">Blood banks could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
+    else h += '<p class="obs">Looking up blood banks…</p>';
+    h += H.length ? '<p class="obs">Hospitals here that list a blood bank or transfusion service (OpenStreetMap healthcare:speciality): ' + H.slice(0, 4).map(function (f) { return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b> (" + esc(km(f.m)) + ")"; }).join(", ") + ".</p>"
+      : '<p class="obs">None of the hospitals listed here states a blood bank; most do not publish it. Confirm blood availability with the receiving hospital.</p>';
+    return h;
   }
   function rtRender() {
     var el = D.getElementById("mp-rt"), s = ST; if (!el) return;
@@ -1467,6 +1490,7 @@
       s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f); out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : "H" + (i + 1), r ? "pk" : "", (r ? r + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), !!r]); });
     }
     if (s.x) s.x.R.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "M" + (i + 1), "air", b.name + " (air rescue)"]); });
+    if (s.x) s.x.B.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "B" + (i + 1), "bl", b.name + (b.bank ? " (blood bank)" : " (blood donation)")]); });
     if (s.oc) s.oc.ap.forEach(function (a, i) { out.push(["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
     if (s.oc) out = out.concat(stratItems(s));
     out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
@@ -1542,7 +1566,7 @@
       items.filter(function (it) { return it[0] === "mk"; }).sort(function (x, y) { return (x[5] ? 1 : 0) - (y[5] ? 1 : 0); }).forEach(function (it) {
         var q = xy(it[1]); if (q[0] < -20 || q[1] < -20 || q[0] > Wd + 20 || q[1] > Ht + 20) return;
         g.setLineDash([]); g.globalAlpha = 1; g.font = "700 11px system-ui, sans-serif";
-        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : "#D7141A";
+        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : "#D7141A";
         g.fillStyle = bg; g.strokeStyle = it[3] === "pk" ? "#ffd166" : "#fff"; g.lineWidth = 2;
         g.beginPath(); g.rect(q[0] - w / 2, q[1] - h / 2, w, h); g.fill(); g.stroke();
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
@@ -1591,7 +1615,7 @@
     [].forEach.call(c.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
     var title = "Medical plan, " + s.name, pts = picks(s);
     var key = '<div class="mpkeyd"><span><b style="background:#111;color:#fff;padding:0 3px">POI</b> point of injury</span>' + (pts.length ? '<span><b style="background:#8b0010;color:#fff;padding:0 3px">PRI SEC TER</b> Primary, Secondary, Tertiary</span>' : "") +
-      '<span><b style="background:#D7141A;color:#fff;padding:0 3px">H</b> hospital, <b style="background:#D7141A;color:#fff;padding:0 3px">C</b> clinic</span><span><b style="background:#1d5fa8;color:#fff;padding:0 3px">L A M</b> helipad, airfield, air rescue</span>' +
+      '<span><b style="background:#D7141A;color:#fff;padding:0 3px">H</b> hospital, <b style="background:#D7141A;color:#fff;padding:0 3px">C</b> clinic</span><span><b style="background:#1d5fa8;color:#fff;padding:0 3px">L A M</b> helipad, airfield, air rescue</span><span><b style="background:#a4005b;color:#fff;padding:0 3px">B</b> blood bank</span>' +
       '<span><i style="color:#D7141A"></i>route to Primary</span><span><i style="color:#222"></i>Secondary, <i style="color:#222;border-top-style:dashed"></i>Tertiary</span>' +
       (ringsOn("gr") && s.iso ? '<span><i style="color:#1e7a3a;border-top-style:dashed"></i>30 min road</span><span><i style="color:#c77700;border-top-style:dashed"></i>' + (GOLDEN_MIN - PREP_MIN) + " min road</span>" : "") +
       (ringsOn("ar") ? '<span><i style="color:#6fa8dc;border-top-style:dashed"></i>air ' + (GOLDEN_MIN - 10) + ' min</span><span><i style="color:#1d5fa8"></i>air ' + GOLDEN_MIN + " min</span>" : "") + "</div>";
