@@ -1,0 +1,8 @@
+[["n1042024628",43.95823,-65.99623,"ca",{"name":"Finlay Air Park","aeroway":"aerodrome","wikidata":"Q3915906"}],
+["n1042024656",43.9541,-65.98984,"ca",{"name":"Hoopers Lake Seaplane Base","aeroway":"aerodrome","wikidata":"Q3207322"}],
+["n1042027278",43.6222,-65.7619,"ca",{"name":"Lower East Pubnico (La Field) Airport","aeroway":"aerodrome"}],
+["n931251913",43.74921,-65.30979,"ca",{"name":"Roseway Hospital","amenity":"hospital","phone":"+1 902-875-3011","website":"https://www.nshealth.ca/locations-details/Roseway%20Hospital","addr:housenumber":"1606","addr:street":"Lake Road","addr:city":"Shelburne","addr:province":"Nova Scotia","addr:postcode":"B0T 1W0"}],
+["w1004258278",43.52223,-65.62609,"ca",{"name":"Emergency Health Services Barrington Passage","emergency":"ambulance_station","operator":"EHS Nova Scotia","addr:housenumber":"3874","addr:street":"Highway 3","addr:city":"Barrington Passage","addr:province":"Nova Scotia"}],
+["w1243481139",43.75031,-65.30973,"ca",{"name":"Shelburne (Roseway Hospital) Heliport","aeroway":"helipad","surface":"asphalt"}],
+["w1302800846",43.54785,-65.59812,"ca",{"aeroway":"helipad"}],
+["w890969238",43.76727,-65.30899,"ca",{"name":"Emergency Health Services  Shelburne","emergency":"ambulance_station","operator":"EHS Nova Scotia","addr:housenumber":"131","addr:street":"King Street","addr:city":"Shelburne","addr:province":"Nova Scotia"}]]

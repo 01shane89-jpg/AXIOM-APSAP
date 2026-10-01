@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Medical plan from this point, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -45,6 +45,7 @@
     route: ic('<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h6a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h6"/>'),
     pin: ic('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/>'),
     nai: ic('<rect x="3.5" y="5.5" width="17" height="13" rx="1" stroke-dasharray="3.2 2.2"/><path d="M8 15V9l4 6V9M15 9v6"/>'),
+    medic: ic('<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'),
     copy: ic('<rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
     lock: ic('<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>'),
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
@@ -195,10 +196,11 @@
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
     if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
     else if (f === "area") {
-      /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
+      /* area tools from other modules (a medical plan): W.OSAP_AREA_TOOLS = [{ id, label, run, point }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
       var run = at ? function () { if (typeof at.run === "function") at.run(); } : k === "sum" ? function () { areaPress("sum"); } : null;
-      if (run && !areaOn()) { areaWait(run, at ? at.label : "Summarise area"); return; }
+      /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
+      if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
       if (run) run();
       else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
       setTimeout(paintTools, 30);
@@ -311,7 +313,7 @@
         var PX = W.OSAP_POINTS;
         d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
@@ -341,8 +343,10 @@
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["medplan", "Med plan", I.medic], ["copy", "Copy", I.copy]
   ];
+  /* Med plan only once assets/osap-medplan.js has loaded (it loads after this file) */
+  function radNow() { return RAD.filter(function (a) { return a[0] !== "medplan" || W.OSAP_MEDPLAN; }); }
   var RADII = [0.5, 1, 5, 10];
   function radius() { var r = +lsGet(K_R); return RADII.indexOf(r) >= 0 ? r : 1; }
   var ring = D.createElement("div"); ring.id = "atk-ring"; ring.className = "leaflet-control"; ring.hidden = true; ring.setAttribute("role", "menu"); ring.setAttribute("aria-label", "Actions at this point");
@@ -356,8 +360,8 @@
   function ringOpen(ll) {
     ringLL = ll; var p = map.latLngToContainerPoint(ll), sz = mapEl.getBoundingClientRect(), R = 118;
     var x = Math.max(R, Math.min(sz.width - R, p.x)), y = Math.max(R - 10, Math.min(sz.height - R - 30, p.y));
-    var n = RAD.length, r = sz.width < 380 ? 70 : 76;
-    ring.innerHTML = RAD.map(function (a, i) {
+    var RN = radNow(), n = RN.length, r = sz.width < 380 ? 70 : 76;
+    ring.innerHTML = RN.map(function (a, i) {
       var t = -Math.PI / 2 + i * 2 * Math.PI / n, bx = Math.round(Math.cos(t) * r), by = Math.round(Math.sin(t) * r);
       return '<button type="button" role="menuitem" data-rk="' + a[0] + '" style="transform:translate(' + bx + "px," + by + 'px)">' + a[2] + "<span>" + esc(a[1]) + "</span></button>";
     }).join("") +
@@ -378,6 +382,8 @@
     else if (k === "route") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([P]); }
     else if (k === "pin") ptAdd(ll);
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
+    /* the medical plan from this point as the point of injury; no drawn area needed */
+    else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
       A.setArea(circle(ll, radius())); setTimeout(paintTools, 30);

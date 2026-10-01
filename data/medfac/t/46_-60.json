@@ -1,0 +1,8 @@
+[["n1042024580",47.77377,-59.31298,"ca",{"name":"St Andrews Codroy Valley Airport","aeroway":"aerodrome"}],
+["n5991023611",46.19626,-59.95811,"ca",{"name":"Professional Centre","amenity":"clinic","healthcare":"clinic"}],
+["w106984528",46.18321,-59.93901,"ca",{"name":"Glace Bay Health Care Facility","amenity":"hospital"}],
+["w119938717",47.58867,-59.16308,"ca",{"name":"Dr Charles L.Legrow","amenity":"hospital","healthcare":"hospital"}],
+["w526231910",47.5918,-58.89757,"ca",{"aeroway":"helipad"}],
+["w636055639",46.19216,-59.9545,"ca",{"name":"Emergency Health Servicesc Glace Bay","emergency":"ambulance_station","operator":"EHS Nova Scotia","addr:housenumber":"36","addr:street":"Brookside Street","addr:city":"Glace Bay","addr:province":"Nova Scotia","addr:postcode":"B1A 2J6"}],
+["w697276224",47.56578,-59.12376,"ca",{"aeroway":"helipad"}],
+["w748675330",47.61552,-58.68865,"ca",{"name":"Rose Blanche Medical Clinic","amenity":"clinic","healthcare":"clinic","operator":"Western Health","operator:type":"public"}]]

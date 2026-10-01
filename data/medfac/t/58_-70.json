@@ -1,0 +1,6 @@
+[["w472801083",58.66763,-69.9541,"ca",{"name":"Aéroport de Tasiujaq","name:en":"Tasiujaq Airport","aeroway":"aerodrome","icao":"CYTQ","iata":"YTQ"}],
+["w472806501",58.09436,-68.42251,"ca",{"name":"Aéroport de Kuujjuaq","name:en":"Kuujjuaq Airport","operator":"Administration régionale Kativik","operator:type":"public","aeroway":"aerodrome","icao":"CYVP","iata":"YVP","wikidata":"Q520142"}],
+["w502410394",59.30276,-69.60527,"ca",{"name":"Nursing Station","amenity":"hospital","healthcare":"hospital"}],
+["w502410396",59.29634,-69.60125,"ca",{"name":"Aéroport d'Aupaluk","name:en":"Aupaluk Airport","operator":"Administration régional Kativik","aeroway":"aerodrome","icao":"CYLA","iata":"YPJ","wikidata":"Q256013"}],
+["w502908638",58.10715,-68.40574,"ca",{"name":"Centre de santé Ungava Tulattavik / Ungava Tulattavik Health Centre","amenity":"hospital","healthcare":"hospital","addr:housenumber":"5001","addr:city":"Kuujjuaq","addr:province":"Quebec","addr:postcode":"J0M 1C0"}],
+["w503871582",58.69681,-69.92764,"ca",{"name":"ᓄᓇᓖᑦ ᐋᓐᓂᐊᕕᖏᑦ / Dispensaire de Tasiujaq - CLSC","name:en":"Tasiujaq Outpost Nurse - CLSC","amenity":"clinic","healthcare":"clinic"}]]

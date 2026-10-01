@@ -46,6 +46,8 @@ def block(m):
             "  if (M.brief.indexOf(cc) >= 0) src.push(\"data/brief/\" + cc + \".js\");\n"
             "  /* news and social posts: the refresh job writes one file per country (tools/split_country.mjs) */\n"
             "  src.push(\"data/live/news/\" + cc + \".js\", \"data/live/social/\" + cc + \".js\");\n"
+            "  /* feeds that cover every country but are too big to load whole: sanctions lists and UCDP events (tools/refresh_more.mjs) */\n"
+            "  src.push(\"data/live/sanctions/\" + cc + \".js\", \"data/live/ucdp/\" + cc + \".js\");\n"
             "  /* automatic layer reports from the news pool (tools/refresh_layerfeed.mjs) */\n"
             "  src.push(\"data/live/layerfeed/\" + cc + \".js\");\n"
             "  document.write(src.map(function (s) { return '<script src=\"' + s + '\"><\\/script>'; }).join(\"\"));\n"
