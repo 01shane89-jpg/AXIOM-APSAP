@@ -252,6 +252,9 @@ async function openPlan(p) {
   await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
   await p.waitForFunction(() => /could not be reached/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 20000 });
   ok(/Try again/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down says so and offers Try again");
+  ok(/Sourced Trauma Centre/.test(await p.textContent("#mp-fac")) && /only OSAP's sourced hospitals/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down still lists OSAP's sourced hospitals, and says that is all");
+  await p.waitForFunction(() => /Sourced Trauma Centre/.test((document.getElementById("mp-rt") || {}).textContent || "") && /min/.test(document.getElementById("mp-rt").textContent), null, { timeout: 15000 });
+  ok(true, "phone: routes are still planned to the sourced hospitals");
   await p.waitForFunction(() => document.querySelector("#mp-wx table"), null, { timeout: 10000 });
   ok(true, "phone: weather still shows when OpenStreetMap is down");
   await p.waitForFunction(() => /1669/.test(document.getElementById("mp-ems").textContent), null, { timeout: 10000 });
