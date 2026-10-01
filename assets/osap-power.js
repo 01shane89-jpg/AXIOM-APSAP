@@ -14,7 +14,8 @@
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   var D = document, W = window;
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  /* probed 2026-10-01 from GitHub runners: overpass-api.de answers but often 504s under load; maps.mail.ru answered when it did not */
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var HVZ = 8, ALLZ = 11, DAYS = 3;
   var BANDS = [
     { min: 500, col: "#c2255c", w: 3.6, l: "500 kV and up" },
@@ -143,27 +144,33 @@
     var b = map.getBounds().pad(0.1), want = { lines: S.lines, subs: S.subs, plants: S.plants };
     var k = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(2); }).join(",") + "|" + (z >= ALLZ ? "a" : "h") + "|" + +want.lines + +want.subs + +want.plants;
     if (k === key) return; key = k;
+    if (busy) { busy.abort(); busy = null; }
     if (cache[k]) { done(draw(cache[k], z), z); return; }
-    if (busy) busy.abort();
-    var ctl = busy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 40000);
+    var ctl = busy = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 90000);
     S.msg = "Loading the grid from OpenStreetMap…"; paint();
     var body = "data=" + encodeURIComponent(query(b, z, want));
     var go = function (i) {
+      /* each server gets 35 s (the query asks for 25), then the next one is tried */
+      var one = new AbortController(), slow = false, st = setTimeout(function () { slow = true; one.abort(); }, 35000);
+      ctl.signal.addEventListener("abort", function () { one.abort(); });
       /* POST so the service worker never caches it */
-      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ctl.signal })
+      return fetch(OVERPASS[i], { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: one.signal })
         .then(function (r) { if (!r.ok) throw new Error(r.status === 429 || r.status === 504 ? "busy" : "HTTP " + r.status); return r.json(); })
         /* Overpass answers 200 with a "remark" and no elements when a query times out or runs out of memory: that is a failure, not an empty grid */
         .then(function (j) { if (j && j.remark && /error/i.test(j.remark)) throw new Error(/timed? ?out|memory/i.test(j.remark) ? "busy" : "remark"); return j; })
-        .catch(function (e) { if (e && e.name === "AbortError") throw e; if (i + 1 < OVERPASS.length) return go(i + 1); throw e; });
+        .then(function (j) { clearTimeout(st); return j; }, function (e) { clearTimeout(st); if (ctl.signal.aborted) throw e; if (i + 1 < OVERPASS.length) return go(i + 1); throw slow ? new Error("busy") : e; });
     };
     go(0).then(function (j) {
-      clearTimeout(to); busy = null;
+      clearTimeout(to); if (busy === ctl) busy = null;
       var els = j.elements || [];
       var ks = Object.keys(cache); if (ks.length > 16) delete cache[ks[0]];
       cache[k] = els;
       if (k === key) done(draw(els, z), z);
     }).catch(function (e) {
-      clearTimeout(to); if (busy === ctl) busy = null; key = "";
+      clearTimeout(to);
+      /* replaced by a newer view: that one owns the key, the message and the drawing */
+      if (busy !== ctl) return;
+      busy = null; key = "";
       if (e && e.name === "AbortError" && !anyOn()) return;
       S.msg = "The grid did not load from OpenStreetMap" + (e && e.message === "busy" ? " (the free server is busy; pan or zoom to try again)." : " (no answer; pan or zoom to try again).");
       paint();
@@ -267,6 +274,8 @@
     S[k] = !!on;
     if (k === "plants") wriDraw();
     key = ""; load(); paint();
+    /* the panel note sits under the switch, often off screen on a phone: say it on the map too */
+    if (on && k !== "plants" && map.getZoom() < HVZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to a region to see " + (k === "lines" ? "transmission lines" : "substations"));
   }
   function onChange(e) { var k = e.target && e.target.getAttribute("data-pwr"); if (k) set(k, e.target.checked); }
   var css = D.createElement("style");

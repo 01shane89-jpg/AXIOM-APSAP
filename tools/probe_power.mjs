@@ -11,6 +11,7 @@ ctx.window = ctx; vm.createContext(ctx); vm.runInContext(readFileSync("assets/os
 const P = ctx.OSAP_POWER;
 const box = (lat, lon, z) => { const d = 180 / Math.pow(2, z) * 2.2; return { getSouth: () => lat - d * 0.6, getNorth: () => lat + d * 0.6, getWest: () => lon - d, getEast: () => lon + d }; };
 const HOSTS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+if (!process.env.PAGE_ONLY) {
 const UA = "OSAP-probe/1.0 (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
 async function post(h, q, label) {
   const t = Date.now();
@@ -35,6 +36,7 @@ for (const [name, lat, lon] of [["Thailand", 13.5, 101], ["Germany", 51, 10], ["
 }
 console.log("query z12:", P.query(box(13.75, 100.5, 12), 12, { lines: true, subs: true, plants: true }));
 
+}
 // ---------- the page, against the real servers ----------
 const { chromium } = await import("playwright");
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
@@ -47,7 +49,7 @@ const browser = await chromium.launch();
 const bc = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1360, height: 860 } });
 await bc.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
 const p = await bc.newPage(); p.on("pageerror", (e) => console.log("pageerror", e.message));
-p.on("console", (m) => { if (m.type() === "error") console.log("console", m.text().slice(0, 200)); });
+p.on("response", (r) => { if (r.status() >= 400) console.log("HTTP", r.status(), r.url().slice(0, 160)); });
 p.on("requestfinished", async (r) => { if (/overpass|mail\.ru/.test(r.url())) { const s = await r.response(); let x = ""; try { const j = await s.json(); x = "elements=" + (j.elements || []).length + (j.remark ? " remark=" + j.remark.slice(0, 160) : ""); } catch (e) {} console.log("page request", r.url(), s && s.status(), x); } });
 p.on("requestfailed", (r) => { if (/overpass|mail\.ru/.test(r.url())) console.log("page request FAILED", r.url(), r.failure() && r.failure().errorText); });
 await p.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: "domcontentloaded" });
@@ -57,7 +59,7 @@ await p.evaluate(() => { window.OSAP_POWER.set("lines", true); window.OSAP_POWER
 await p.waitForTimeout(3000); console.log("at start zoom:", JSON.stringify(await p.evaluate(() => window.OSAP_POWER.state())));
 for (const z of [8, 11]) {
   await p.evaluate((z) => window.__asapMap.setView([13.75, 100.5], z, { animate: false }), z);
-  await p.waitForFunction(() => !/Loading/.test(window.OSAP_POWER.state().msg), null, { timeout: 60000 }).catch(() => {});
+  await p.waitForFunction(() => !/Loading/.test(window.OSAP_POWER.state().msg), null, { timeout: 120000 }).catch(() => console.log("still loading after 120 s"));
   await p.waitForTimeout(3000);
   const s = await p.evaluate(() => window.OSAP_POWER.state());
   console.log("z" + z + ":", s.msg, "lines drawn", s.drawn.lines.length, "points", s.drawn.points);
