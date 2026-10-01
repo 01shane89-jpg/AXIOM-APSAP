@@ -51,7 +51,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Bangladesh.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Dhaka",
-   "fp": "41425eac97b6c90867fbe128967db47c2fa08041965f3982fc4caea4ad5d8ae7"
+   "fp": "6943a385b535a574b25b55f4884086197f42429a50973942a7e7c73de1f706b4",
+   "web": "https://bd.usembassy.gov/",
+   "phone": "(880) (2) 5566-2000",
+   "phone_after_hours": "+880 2 55662000",
+   "phone_src": "https://bd.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -397,5 +403,150 @@
  ],
  "gaps": [
   "bd.usembassy.gov blocked (403); embassy medical list not consulted. United Hospital Dhaka site returned no text, omitted. Most coordinates approx."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:bd:xing:node-5142350050",
+   "name": "Mohodipur Border crossiong",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 24.842711,
+   "lon": 88.141149,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/5142350050",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "febbf3c68dc3f3dbfab78a9f6b7d7bd186ca240008cd017df372a5e0c5c7ae24"
+  },
+  {
+   "id": "sof:bd:xing:node-7557117257",
+   "name": "Petrapole - Benapole Zero Point",
+   "local_name": "পেট্রাপোল - বেনাপোল জিরো পয়েন্ট",
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 23.03791,
+   "lon": 88.883932,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/7557117257",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "793bc151c33bb09f6c060bdff3a927e5ec2e06bcba72054fddfd300fbfee252f"
+  },
+  {
+   "id": "sof:bd:xing:node-9090095189",
+   "name": "BGB Check Post",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 22.994834,
+   "lon": 91.724695,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/9090095189",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "83ba72c5bb1be29eedebd2189147d133ed2b6735d4d5e57ae6f951ef296e8746"
+  },
+  {
+   "id": "sof:bd:xing:way-1108544838",
+   "name": "Zakiganj Land Customs Station",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 24.873911,
+   "lon": 92.365361,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1108544838",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "119c4f7c8d304ecaa7522681398a8cdc988af686c22d78be4defdc70995f1bf0"
+  },
+  {
+   "id": "sof:bd:xing:way-1220555798",
+   "name": "Integrated Check Post, Sabroom",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 22.998465,
+   "lon": 91.723782,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1220555798",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "933c36b9443cfa5d1b910a4b8798f26dea281718f4faa666c0351471ede83100"
+  },
+  {
+   "id": "sof:bd:xing:way-1220555801",
+   "name": "Ramgarh Immigration Building",
+   "local_name": "রামগড় ইমিগ্রেশন ভবন",
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 22.993045,
+   "lon": 91.724196,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1220555801",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "181917ef0ea67011280f84c805f0e6cc5b1df37f2db8437adbd26d40e7738947"
+  },
+  {
+   "id": "sof:bd:xing:way-1541237327",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 25.667003,
+   "lon": 89.299717,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1541237327",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a98618a5e2679364e7e8b7dff5e2a841893d5b4058f11bf025dd8fb608409cc9"
+  },
+  {
+   "id": "sof:bd:xing:way-794829044",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 22.669448,
+   "lon": 88.946636,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/794829044",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "054e1a26542efd22d2f905192d79818c8714dc272eba90b36d9fe17b805a7882"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
