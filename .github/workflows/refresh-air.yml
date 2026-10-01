@@ -1,10 +1,10 @@
 name: Refresh live air traffic
 
-# Live air traffic (tools/refresh_air.mjs): sweeps adsb.fi and adsb.lol circle by circle around the globe, about every five
-# minutes while a run lasts, and writes one file per 10° map cell to the live-air branch (one commit, replaced each time, so
+# Live air traffic (tools/refresh_air.mjs): sweeps adsb.fi and adsb.lol circle by circle around the globe (plus OpenSky's
+# whole-world snapshot every 15 minutes), about every five minutes while a run lasts, and writes one file per 10° map cell to the live-air branch (one commit, replaced each time, so
 # the branch never grows). The page reads the cells on screen from raw.githubusercontent.com, which lets any site read them
 # (the aggregators do not). raw.githubusercontent.com serves each file for up to five minutes, so positions are typically
-# five to ten minutes old on the map; each pop-up shows its age. Nothing is committed to main, so this does not rebuild Pages.
+# five to fifteen minutes old on the map; each pop-up shows its age. Nothing is committed to main, so this does not rebuild Pages.
 on:
   schedule:
     # each run sweeps for about 14 minutes; GitHub starts scheduled runs late when busy, so gaps of a few minutes are normal
@@ -43,14 +43,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p /tmp/la
-          # carry on from the last published index (which circles had aircraft, sweep number)
-          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git show FETCH_HEAD:index.json > /tmp/la/prev.json 2>/dev/null || true
+          mkdir -p /tmp/la/prev
+          # carry on from the last published files (which circles had aircraft, aircraft not asked about again yet)
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/la/prev 2>/dev/null || true
           git worktree add -q --detach /tmp/lawt
           for i in $(seq 1 "$SWEEPS"); do
             rm -rf /tmp/la/out
-            if node tools/refresh_air.mjs /tmp/la/out /tmp/la/prev.json 290; then
-              cp /tmp/la/out/index.json /tmp/la/prev.json
+            if node tools/refresh_air.mjs /tmp/la/out /tmp/la/prev 290; then
+              rm -rf /tmp/la/prev && cp -r /tmp/la/out /tmp/la/prev
               ( cd /tmp/lawt && git checkout -q --orphan "la-$i" && git rm -rfq . && cp -r /tmp/la/out/. . && git add -A &&
                 git commit -qm "Live air traffic $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET" ) || echo "publish failed"
             fi
