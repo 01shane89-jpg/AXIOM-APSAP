@@ -37,20 +37,21 @@ const OSM = { elements: [
   { type: "node", id: 4, lat: 13.73, lon: 100.53, tags: { man_made: "mast", "tower:type": "communication" } },
   { type: "node", id: 5, lat: 13.75, lon: 100.52, tags: { man_made: "mast", "tower:type": "lighting" } }
 ] };
-let overpassCalls = 0, remarkCalls = 0;
+let overpassCalls = 0, remarkCalls = 0, keyFilter = 0;
 const overpassSpans = [];
 
 async function open(opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-  await ctx.route(/overpass/, (r) => {
+  await ctx.route(/overpass|maps\.mail\.ru/, (r) => {
     overpassCalls++;
     const q = decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")), bb = q.match(/\((-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\)/);
     if (bb) overpassSpans.push(Math.max(bb[3] - bb[1], bb[4] - bb[2]));
     // the first server answers like a real overloaded Overpass: 200, no elements, an error remark
-    const body = /overpass-api\.de/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
-    if (/overpass-api\.de/.test(r.request().url())) remarkCalls++;
+    const body = /maps\.mail\.ru/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
+    if (/maps\.mail\.ru/.test(r.request().url())) remarkCalls++;
+    if (/\[~/.test(q)) keyFilter++;
     r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(body) });
   });
   await ctx.route(/elevation-tiles-prod\/terrarium/, (r) => r.fulfill({ contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: PNG }));
@@ -76,12 +77,12 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(2500);
   let s = await st(p);
   ok(s.masts === 4 && overpassCalls >= 1, "4 communication masts kept from the Overpass answer, the lighting mast left out (" + s.masts + ")");
+  ok(keyFilter === 0, "the mast query has no key-pattern filter (that made the servers time out)");
   ok(remarkCalls >= 1, "an Overpass \"out of memory\" remark counts as a failure and the next server is asked");
   // hover card with the tower's data
   const pt = await p.evaluate(() => { const q = window.__asapMap.latLngToContainerPoint([13.76, 100.51]), r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + q.x, y: r.top + q.y }; });
   await p.mouse.move(pt.x + 40, pt.y + 40); await p.mouse.move(pt.x, pt.y, { steps: 4 }); await p.waitForTimeout(300);
   const tip = await p.evaluate(() => (document.querySelector(".leaflet-tooltip.comtipw") || {}).textContent || "");
-  if (process.env.DBG) console.log(JSON.stringify(pt), await p.evaluate((pt) => { const e = document.elementFromPoint(pt.x, pt.y); return [e && e.tagName + "." + e.className, [...document.querySelectorAll(".leaflet-container canvas")].map((c) => { const r = c.getBoundingClientRect(); return c.parentNode.className + " " + getComputedStyle(c).pointerEvents + " " + getComputedStyle(c.parentNode).pointerEvents + " " + [r.left, r.top, r.width, r.height].map(Math.round); })]; }, pt));
   ok(/Provider\s*AIS/.test(tip) && /Height\s*40 m \(mapped\)/.test(tip) && /Carries\s*mobile phone/.test(tip) && /Source\s*OpenStreetMap node\/1/.test(tip), "hovering a mast shows its data: " + tip.slice(0, 160));
   await p.mouse.move(5, 5);
   const counts = await p.evaluate(() => [...document.querySelectorAll("[data-comn]")].map((e) => e.getAttribute("data-comn") + e.textContent).join(" "));
