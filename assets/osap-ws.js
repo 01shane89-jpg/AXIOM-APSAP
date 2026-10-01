@@ -442,7 +442,7 @@
       /* fresh point and photo ids, so the copy and the original never share photos */
       var map = {}, pts = arr(json(keys[PTS] || "[]", [])).filter(function (p) { return p && typeof p.id === "string"; });
       pts.forEach(function (p) { var n = "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); map[p.id] = n; p.id = n; p.ph = 0; });
-      var metas = arr(h.photos).filter(function (m) { return m && map[m.pid] && typeof m.path === "string" && /^image\//.test(m.type || ""); }), bad = 0, added = [];
+      var metas = arr(h.photos).filter(function (m) { return m && map[m.pid] && typeof m.path === "string" && /^image\/(jpeg|png|gif|webp|heic|heif|avif|bmp)$/i.test(m.type || ""); }) /* pictures only: an SVG can carry script */, bad = 0, added = [];
       return metas.reduce(function (pr, m) {
         return pr.then(function () {
           var e = ents.filter(function (x) { return x.name === m.path; })[0]; if (!e) { bad++; return; }
