@@ -203,7 +203,7 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="pick"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !!document.getElementById("mp-pickbar")), "POI: Pick on map hides the plan and asks for a tap");
   const box = await p.evaluate(() => { const r = window.__asapMap.getContainer().getBoundingClientRect(); return { x: r.left + r.width / 2 + 40, y: r.top + r.height / 2 + 30 }; });
-  await p.evaluate(({ x, y }) => { const m = window.__asapMap; m.fire("click", { latlng: m.containerPointToLatLng([x - m.getContainer().getBoundingClientRect().left, y - m.getContainer().getBoundingClientRect().top]) }); }, box);
+  await p.mouse.click(box.x, box.y);
   await p.waitForFunction(() => !document.getElementById("medplan").hidden && /Centred on the anticipated point of injury/.test(document.getElementById("medplan").textContent), null, { timeout: 5000 });
   ok(/^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}$/.test(await p.inputValue("#mpf-poi")), "POI: the tapped point fills the POI grid: " + await p.inputValue("#mpf-poi"));
   await p.waitForFunction(() => document.querySelector("#mp-fac table"), null, { timeout: 10000 });
