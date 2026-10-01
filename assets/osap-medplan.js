@@ -439,7 +439,8 @@
     (list || []).forEach(function (h) {
       if (h.lat == null) return;
       var m = hav([f.lat, f.lon], [h.lat, h.lon]), share = words(h.name).some(function (w) { return fw.indexOf(w) >= 0; });
-      if (m < 600 || (m < 2500 && share)) { if (!best || m < best.m) best = { h: h, m: m }; }
+      /* in a dense city a sourced hospital 600 m away can be a different one: without a shared name, 250 m */
+      if (m < 250 || (m < 2500 && share)) { if (!best || (share && !best.share) || (share === best.share && m < best.m)) best = { h: h, m: m, share: share }; }
     });
     return best && best.h;
   }
@@ -450,19 +451,23 @@
   var ROLE_RULE = "Role equivalents follow the military treatment roles. Role 1: first aid and resuscitation, no surgery. Role 2: emergency department and surgery. " +
     "Role 3: surgery with intensive care and specialist care such as neurosurgery or trauma. Estimated from the services OpenStreetMap or OSAP's sources list for the hospital: " +
     "Role 3 where surgery and intensive or specialist care are listed (or an emergency department with 400 or more beds); Role 2 where surgery is listed (or an emergency department with 100 or more beds); " +
-    "Role 1 where only an emergency department, beds or a helipad are listed. A stated trauma designation is shown as the source states it.";
+    "Role 1 where only an emergency department, beds or a helipad are listed. A university teaching or national referral hospital in OSAP's sourced list is a Role 3 equivalent. " +
+    "A stated trauma designation is shown as the source states it.";
+  /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
+  var REFERRAL = /universit|teaching hospital|referral cent|tertiary|faculty of medicine|college of medicine/i;
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
   function tierLabel(f) {
     if (f.tier === 4 && f.trauma) { var m = /level\s*(i{1,3}|[1-5])\b/i.exec(f.trauma.text); return m ? "Trauma level " + ({ i: 1, ii: 2, iii: 3 }[m[1].toLowerCase()] || m[1]) + " (sourced)" : TIER[4]; }
     return TIER[f.tier];
   }
   function capability(f, sofList) {
-    var why = [], sc = 0, tr = null, m = f.sofRec || sofMatch(f, sofList), er24 = false;
+    var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false;
     if (m) {
       f.sofRec = m;
       if (m.trauma_level) tr = { text: clip(m.trauma_level, 120), src: m.src, srcname: m.srcname || "source" };
       if (m.emergency_24h === true) { er24 = true; sc += 3; why.push("24-hour emergency (" + (m.srcname || "source") + ")"); }
-      if (!f.addr && m.address) f.addr = clip(m.address, 160);
+      if (!f.addr && m.address) { f.addr = clip(m.address, 160); f.addrSof = true; }
+      var ref = REFERRAL.test(m.notes || "") ? clip(m.notes, 90) : "";
     }
     var er = f.er === "yes" || er24;
     if (f.er === "yes") { sc += 3; why.push("emergency department"); }
@@ -472,6 +477,7 @@
     if (sp.length) { sc += Math.min(3, sp.length); why.push(sp.slice(0, 5).join(", ").replace(/_/g, " ")); }
     var spAll = String(f.specRaw || ""), surg = SURG.test(spAll), icu = ICU.test(spAll), spec = SPECIAL.test(spAll);
     var role = surg && (icu || spec) || (er && f.beds >= 400) ? 3 : surg || (er && f.beds >= 100) ? 2 : er || f.beds || f.pad ? 1 : 0;
+    if (ref) { role = 3; sc += 4; why.unshift("teaching or referral hospital: " + ref + " (" + (m.srcname || "source") + ")"); }
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
     f.tier = tr ? 4 : role;
     return f;
@@ -484,6 +490,15 @@
   /* hospitals for the plan: the nearest ten, plus the best-ranked of the rest, plus sourced hospitals OSM lacks */
   function pickHosp(F, o, rH, sofList) {
     var H = F.H.map(function (f) { return capability(f, sofList); });
+    /* one sourced record describes one hospital: when two OSM entries match it, the one sharing its name (else the
+       nearer) keeps it and the other is rated on its own tags */
+    var own = {};
+    H.forEach(function (f) {
+      var r = f.sofRec; if (!r) return;
+      var k = r.id || r.name, sh = words(f.name).some(function (w) { return words(r.name).indexOf(w) >= 0; }), m = hav([f.lat, f.lon], [r.lat, r.lon]), c = own[k];
+      if (!c || (sh && !c.sh) || (sh === c.sh && m < c.m)) own[k] = { f: f, sh: sh, m: m };
+    });
+    H.forEach(function (f) { var r = f.sofRec; if (r && own[r.id || r.name].f !== f) { f.sofRec = null; f.noSof = true; if (f.addrSof) { f.addr = ""; f.addrSof = false; } capability(f, []); } });
     var used = {}; H.forEach(function (f) { if (f.sofRec) used[f.sofRec.id || f.sofRec.name] = 1; });
     (sofList || []).forEach(function (h) {
       if (h.lat == null || used[h.id || h.name]) return;
@@ -886,6 +901,7 @@
   }
   /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care):
      Primary: the highest level of care that can be reached, the quickest of that level by road (or air when air evacuation is on);
+       within the same 10 minutes the better-equipped one;
      Secondary: when Primary is beyond the golden hour, the most capable inside it, to stabilise on the way;
        otherwise the next highest level of care in reach;
      Tertiary: the next highest level of care of the rest, as the backup. */
@@ -900,7 +916,11 @@
     }
     function add(f, k, tag) { if (!f || out.length > 2 || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[out.length], why: [ROLE_PICK[out.length]], reason: why(f, tag) }); }
     function free(f) { return !out.some(function (p) { return p.f === f; }); }
-    var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) { return y.tier - x.tier || bestWay(x)[0] - bestWay(y)[0] || byCap(x, y); });
+    var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) {
+      /* same level: within the same 10 minutes the better-equipped (sourced teaching hospital, more services) first */
+      var a = bestWay(x)[0], b = bestWay(y)[0];
+      return y.tier - x.tier || Math.floor(a / 600) - Math.floor(b / 600) || y.score - x.score || a - b || byCap(x, y);
+    });
     if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next highest level of care" : "highest level of care listed"); }); return out; }
     var P = reach[0], pIn = bestWay(P)[0] <= gh;
     add(P, 0, "highest level of care in reach" + (pIn ? "" : "; beyond the golden hour, so stabilise at Secondary if the casualty cannot make it"));

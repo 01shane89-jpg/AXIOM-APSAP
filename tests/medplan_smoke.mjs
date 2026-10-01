@@ -519,6 +519,8 @@ async function openPlan(p) {
     r1: M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).tier, r2: M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).tier,
     r3: M._capability({ name: "C", lat: 0, lon: 0, er: "yes" }, []).tier, r4: M._capability({ name: "D", lat: 0, lon: 0, specRaw: "surgery;intensive_care" }, []).tier,
     r5: M._tierLabel(M._capability({ name: "E", lat: 0, lon: 0, sofRec: { trauma_level: "Level II trauma center (ACS)", src: "x" } }, [])), r6: M._tierLabel(M._capability({ name: "F", lat: 0, lon: 0, sofRec: { trauma_level: "Major Trauma Centre (NSW)", src: "x" } }, [])),
+    ref: (() => { const f = M._capability({ name: "G", lat: 0, lon: 0, sofRec: { name: "G", notes: "Mahidol University; Emergency and Trauma Center on site", src: "x", srcname: "English Wikipedia" } }, []); return [f.tier, f.why[0], M._tierLabel(f)]; })(),
+    nref: M._capability({ name: "H", lat: 0, lon: 0, sofRec: { name: "H", notes: "Major private international hospital", src: "x" } }, []).tier,
     tk: M._tileKeys([13.75, 100.5], 50000), tk2: M._tileKeys([0.5, 179.5], 100000), p6: M._poly6("_izlhA~rlgdF_{geCn{s|J"),
     wh: M._facName({ "osap:withheld": "1" }, "clinic"),
     hc: M._sortOsm([{ type: "node", id: 1, lat: 0, lon: 0, tags: { amenity: "hospital", name: "Ban Test Health Center" } }, { type: "node", id: 2, lat: 0.01, lon: 0, tags: { amenity: "hospital", name: "\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25\u0e2a\u0e48\u0e07\u0e40\u0e2a\u0e23\u0e34\u0e21\u0e2a\u0e38\u0e02\u0e20\u0e32\u0e1e\u0e15\u0e33\u0e1a\u0e25 X" } }], [0, 0]) }; });
@@ -529,6 +531,7 @@ async function openPlan(p) {
   ok(r.k === "gar", "rules: golden hour inside up to 50 min, at the limit to 60, beyond after");
   ok(r.l === 60, "rules: 120 nautical miles at 120 kn is 60 minutes");
   ok(r.m === "+66 2 123 4567" && r.n === "" && r.o === "" && r.q === "https://www.x.org", "rules: only well-formed phones and web links are shown");
+  ok(r.ref[0] === 3 && /teaching or referral hospital: Mahidol University/.test(r.ref[1]) && /English Wikipedia/.test(r.ref[1]) && /Role 3 equivalent \(estimated\)/.test(r.ref[2]) && r.nref === 0, "rules: a university teaching or referral hospital in the sourced list is a Role 3 equivalent, with its source; a private hospital note is not: " + JSON.stringify([r.ref, r.nref]));
   ok(r.r1 === 2 && r.r2 === 2 && r.r3 === 1 && r.r4 === 3, "rules: surgery is Role 2, ED + 100 beds Role 2, ED alone Role 1, surgery + intensive care Role 3 " + [r.r1, r.r2, r.r3, r.r4]);
   ok(r.r5 === "Trauma level 2 (sourced)" && r.r6 === "Trauma centre (sourced)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
   ok(r.tk.includes("12_100") && r.tk2.includes("0_178") && r.tk2.includes("0_-180"), "rules: stored-copy tiles cover the reach, across the date line " + r.tk2.join(" "));
