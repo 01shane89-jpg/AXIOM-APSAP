@@ -128,6 +128,8 @@
       '<path d="M6.3 2.8h3.4v3.5h3.5v3.4H9.7v3.5H6.3V9.7H2.8V6.3h3.5z" fill="' + (hollow ? "#fff" : "#D7141A") + '" stroke="#D7141A" stroke-width="' + (hollow ? 1.3 : 0) + '"/></svg></span>';
   };
   window.OSAP_LATER = function (src, done) {
+    /* the hidden watch-check copies never show the map, so they skip these map-only downloads */
+    if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
     /* start a big, non-urgent script once the page has shown and the browser is idle, so it never delays the first screen */
     function go() { var s = document.createElement("script"); s.src = src; s.async = true; if (done) s.onload = done; document.body.appendChild(s); }
     function idle() { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 500); }
@@ -140,23 +142,35 @@
    (Thai station names, original-language headlines) with their own language so detection and screen readers get them right. */
 (function () {
   var de = document.documentElement; de.lang = "en"; de.setAttribute("translate", "no");
+  /* the hidden watch-check copies are never read by anyone, so their text needs no language tags */
+  if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var SCRIPTS = [[/[\u0E00-\u0E7F]/, "th"], [/[\u1780-\u17FF]/, "km"], [/[\u0E80-\u0EFF]/, "lo"], [/[\u1000-\u109F]/, "my"], [/[\uAC00-\uD7AF]/, "ko"],
     [/[\u3040-\u30FF]/, "ja"], [/[\u4E00-\u9FFF]/, "zh"], [/[\u0980-\u09FF]/, "bn"], [/[\u0D80-\u0DFF]/, "si"], [/[\u0780-\u07BF]/, "dv"], [/[\u0900-\u097F]/, "hi"], [/[\u0600-\u06FF]/, "ur"]];
   var ANY = new RegExp(SCRIPTS.map(function (x) { return x[0].source; }).join("|"));
   function langOf(s) { if (!ANY.test(s)) return ""; for (var i = 0; i < SCRIPTS.length; i++) if (SCRIPTS[i][0].test(s)) return SCRIPTS[i][1]; return ""; }
   function tag(root) {
     if (!root || root.nodeType !== 1) return;
-    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, seen = [];
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, seen = [], last = null, lastOk = false;
     while ((n = w.nextNode())) {
+      /* an element's text is weighed once, however many text pieces it holds */
       var el = n.parentNode; if (!el || el.nodeType !== 1 || el.hasAttribute("lang") || /^(SCRIPT|STYLE)$/.test(el.tagName)) continue;
       var l = langOf(n.nodeValue); if (!l) continue;
+      if (el === last) { if (lastOk) seen.push([el, l]); continue; }
       var latin = (el.textContent.match(/[A-Za-z]/g) || []).length, other = (el.textContent.match(/[^\u0000-\u024F\s\d\p{P}]/gu) || []).length;
-      if (other >= latin) seen.push([el, l]);
+      last = el; lastOk = other >= latin;
+      if (lastOk) seen.push([el, l]);
     }
     seen.forEach(function (x) { x[0].setAttribute("lang", x[1]); });
   }
   var pend = [], sched = false;
-  function flush() { sched = false; var list = pend; pend = []; list.forEach(tag); }
+  /* tags the added pieces while the browser is idle, a few at a time, so a long list never blocks a tap or a map move */
+  function flush(dl) {
+    var t0 = Date.now(), i = 0;
+    /* pieces already taken off the page need no tag (they are tagged again if they come back) */
+    do { var x = pend[i++]; if (x && x.isConnected !== false) tag(x); } while (i < pend.length && (dl && dl.timeRemaining ? dl.timeRemaining() > 2 : Date.now() - t0 < 12));
+    pend = pend.slice(i); sched = false;
+    if (pend.length) { sched = true; (window.requestIdleCallback || setTimeout)(flush); }
+  }
   function start() {
     (window.requestIdleCallback || setTimeout)(function () { tag(document.body); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
@@ -6975,6 +6989,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var PRANK = { exact: 3, approx: 2, province: 1 };
   /* broadcast programme posts (episodes, replays, live streams) carry a show's name, not an incident */
   var EV_SHOW = /\b(part \d+|playback|full episode|episode \d+|livestream|live stream|live:|highlights|replay|webcast|newscast|bulletin \d+|24 oras|tv patrol|news patrol)\b/i;
+  /* nSame() for two grouped records, by counting shared word numbers: the record being placed (a) has its words marked in
+     EVW_MARK, so each comparison is a short array walk instead of two object scans (same rule, same answer) */
+  var EVW_ID = Object.create(null), EVW_N = 0, EVW_MARK = [], EVW_STAMP = 0, EVW_CUR = null;
+  function evWords(r) { var ids = []; for (var k in nWords(r.title)) ids.push(EVW_ID[k] || (EVW_ID[k] = ++EVW_N)); return ids; }
+  function evMark(r) { EVW_STAMP++; EVW_CUR = r; for (var i = 0; i < r.__wi.length; i++) EVW_MARK[r.__wi[i]] = EVW_STAMP; }
+  function evSame(a, b) {
+    if (a !== EVW_CUR) evMark(a);
+    var bw = b.__wi, n = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP) n++;
+    return n >= 2 && n / Math.max(1, a.__wi.length + bw.length - n) >= 0.3;
+  }
   function evPair(a, b) {
     /* one source's own reports are separate issues (bulletins, catalogue rows, an account's posts), never one event */
     if (a.src === b.src || a.src.name === b.src.name) return false;
@@ -6986,7 +7010,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (a.magnitude != null || b.magnitude != null) {
       if (!(a.quake || b.quake || /quake/i.test(a.title + " " + b.title))) return false;
     }
-    var words = nSame(a.__w, b.__w);
+    var words = evSame(a, b);
     if (la && lb) return words;
     /* one or both have no map point: wording alone, tighter in time */
     if (!words) return false;
@@ -7045,25 +7069,48 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      report and holds at most 40 reports), or starts its own */
   function evBuild() {
     var sig = evSig(); if (sig === EVC.sig) return EVC;
+    EVW_CUR = null;
     var recs = R.concat(XR).filter(function (r) {
       if (EV_SPLIT[rk(r)] || r.ongoing) return false;
       if (r.type === "observation" && r.magnitude == null) return false;
       /* sport, entertainment and advertising headlines are not incidents */
       if ((r.news || r.social) && (NROUTINE.test(r.title) || EV_SHOW.test(r.title))) return false;
-      r.__t = evMs(r); r.__w = nWords(r.title);
+      r.__t = evMs(r); r.__wi = evWords(r);
       return isFinite(r.__t.ms);
     }).sort(function (a, b) { return a.__t.ms - b.__t.ms; });
-    var open = [], all = [];
+    var open = [], all = [], o0 = 0, EW = Object.create(null), MAG = [], hs = 0;
+    /* an index from each word to the events whose reports use it (EW), and the events holding a magnitude reading (MAG): only
+       events that share two words with a report, or hold a magnitude when the report does too, can take it, since a pair needs
+       two shared words or a magnitude on both; those are then compared report by report exactly as before, in opening order */
+    function add(e, r) {
+      e.m.push(r);
+      for (var i = 0; i < r.__wi.length; i++) { var w = r.__wi[i]; if (!e.w[w]) { e.w[w] = 1; (EW[w] || (EW[w] = [])).push(e); } }
+      if (r.magnitude != null && !e.mag++) MAG.push(e);
+    }
+    /* drops events past their 48 hours from an index list in place, so each list only ever holds open events */
+    function live(lst) { for (var i = 0, j = 0; i < lst.length; i++) if (lst[i].ix >= o0) lst[j++] = lst[i]; lst.length = j; return lst; }
     recs.forEach(function (r) {
-      open = open.filter(function (e) { return r.__t.ms - e.t0 <= 48 * 36e5; });
-      var best = null, bestN = 0;
-      open.forEach(function (e) {
-        if (e.m.length >= 40) return;
-        var n = 0; e.m.forEach(function (o) { if (evPair(r, o)) n++; });
-        if (n > bestN) { best = e; bestN = n; }
-      });
-      if (best) best.m.push(r);
-      else { var e = { t0: r.__t.ms, m: [r] }; open.push(e); all.push(e); }
+      /* events are opened in time order, so the ones past their 48 hours are always at the front */
+      while (o0 < open.length && r.__t.ms - open[o0].t0 > 48 * 36e5) o0++;
+      var best = null, bestN = 0, rw = r.__wi, rmag = r.magnitude != null, cand = [];
+      if (rw.length >= 2 || rmag) {
+        hs++;
+        for (var i = 0; i < rw.length; i++) {
+          var lst = EW[rw[i]]; if (!lst) continue;
+          live(lst);
+          for (var j = 0; j < lst.length; j++) { var e = lst[j]; if (e.hs !== hs) { e.hs = hs; e.hc = 0; } if (++e.hc === 2) cand.push(e); }
+        }
+        if (rmag) live(MAG).forEach(function (e) { if (e.hc2 !== hs) { e.hc2 = hs; if (!(e.hs === hs && e.hc >= 2)) cand.push(e); } });
+        cand.sort(function (x, y) { return x.ix - y.ix; });
+        evMark(r);
+        for (var c = 0; c < cand.length; c++) {
+          var ce = cand[c]; if (ce.m.length >= 40) continue;
+          var n = 0; for (var k = 0; k < ce.m.length; k++) if (evPair(r, ce.m[k])) n++;
+          if (n > bestN) { best = ce; bestN = n; }
+        }
+      }
+      if (best) add(best, r);
+      else { var ne = { t0: r.__t.ms, ix: open.length, m: [], w: Object.create(null), mag: 0 }; add(ne, r); open.push(ne); all.push(ne); }
     });
     var byRec = {}, list = [];
     all.forEach(function (e) {
@@ -8096,9 +8143,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var name = b ? b.childNodes[0].textContent.trim() : "Details", tl = window.TSAP && window.TSAP.timeline && b && b.getAttribute("data-view") === "timeline" ? window.TSAP.timeline() : null;
     if (tl && tl.scope) name = tl.scope.label + " timeline";
     var n = pn ? pn.querySelectorAll(".tlrow, tr[data-id], tr[data-asset], [data-sof], ol.cfl>li").length : 0;
-    h.querySelector(".grab b").textContent = name + (n ? " · " + n + (n === 1 ? " item" : " items") : "");
+    /* text is only written when it changes: writing it re-wakes the watcher below, which would call this again for ever */
+    function put(el, t) { if (el.textContent !== t) el.textContent = t; }
+    put(h.querySelector(".grab b"), name + (n ? " · " + n + (n === 1 ? " item" : " items") : ""));
     var sn = pn && pn.querySelector("[data-sheet-note]"), snt = sn && sn.getAttribute("data-sheet-note");
-    h.querySelector(".grab small").textContent = perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : snt ? snt : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list";
+    put(h.querySelector(".grab small"), perNote && Date.now() < perUntil ? perNote : s === "full" ? "Tap to see the map" : snt ? snt : s === "half" ? "Tap or drag up for the full list" : "Tap or drag up for the list");
     h.querySelector(".grab").setAttribute("aria-label", name + ". " + (s === "full" ? "Show the map" : "Show more of the panel"));
   }
   function setSheet(s) { root.setAttribute("data-sheet", s); rail.style.removeProperty("--sheet-h"); if (s !== "full") rail.scrollTop = 0; label(); }
@@ -8210,5 +8259,5 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-reports.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
-<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage("warm"); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
