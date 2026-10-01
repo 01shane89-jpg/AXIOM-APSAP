@@ -3,13 +3,15 @@
 name: Probe medical plan hosts
 on:
   push:
-    branches: [claude/medical-plan]
+    branches: [claude/medical-plan, claude/medical-plan-poi]
     paths: [tools/probe_medplan.sh, tools/medplan_live.mjs, assets/osap-medplan.js, .github/workflows/probe-medplan.yml]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   probe:
+    # the raw host probe only on demand: run on every push it competes with the live check for Overpass slots
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

@@ -51,7 +51,7 @@
 
     ["areasum", "Drawn area", "Area summary", "Everything inside the drawn area, summarised with sources",
       function () { return (areaOn() && !!q('[data-area="sum"]')) || "Draw an area first"; }, function () { press('[data-area="sum"]'); }, drawArea],
-    ["medplan", "Drawn area", "Medical plan", "Draft MEDEVAC support plan: facilities, landing sites, health threats",
+    ["medplan", "Drawn area", "Medical plan", "Draft MEDEVAC plan from a point of injury: hospitals by capability, routes, contacts, golden hour, evacuation",
       function () { return (!!W.OSAP_MEDPLAN && areaOn()) || "Draw an area first"; }, function () { W.OSAP_MEDPLAN.open(); }, drawArea],
 
     ["route", "Route", "Route plan (print)", "Legs, timings, light, weather and hazards along a planned route",
