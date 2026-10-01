@@ -958,9 +958,11 @@
   function pickEnd() {
     var map = W.__asapMap, bar = D.getElementById("mp-pickbar");
     if (bar) bar.remove();
-    if (map && pickFn) { map.off("click", pickFn); map.getContainer().style.cursor = ""; }
+    if (map && pickFn) { map.getContainer().removeEventListener("click", pickFn, true); map.getContainer().style.cursor = ""; }
     pickFn = null;
   }
+  /* the tap is caught on the map's own element before any map tool sees it, so picking the point never also measures,
+     draws or opens a report */
   function pickStart() {
     var map = W.__asapMap, el = box(); if (!map) return;
     pickEnd(); el.hidden = true;
@@ -970,10 +972,12 @@
     D.body.appendChild(bar);
     map.getContainer().style.cursor = "crosshair";
     pickFn = function (e) {
-      var p = [e.latlng.lat, ((e.latlng.lng + 540) % 360) - 180];
+      if (e.target && e.target.closest && e.target.closest(".leaflet-control-container")) return;
+      e.preventDefault(); e.stopPropagation();
+      var ll = map.mouseEventToLatLng(e), p = [ll.lat, ((ll.lng + 540) % 360) - 180];
       pickEnd(); setField("poi", grid(p[0], p[1])); useFrom("poi", p); el.hidden = false;
     };
-    setTimeout(function () { if (pickFn) map.on("click", pickFn); }, 0);
+    map.getContainer().addEventListener("click", pickFn, true);
   }
   function useFrom(v, p) {
     p = p || (v === "c" ? ST.c : parseGrid(fieldVals()[v]));
