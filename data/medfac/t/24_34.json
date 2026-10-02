@@ -1,0 +1,11 @@
+[["n12864285153",25.96491,34.35974,"eg",{"name":"Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n13947706720",24.87785,34.98374,"eg",{"name":"Sentido Suakin Hotel Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n1493105013",25.9148,34.40461,"eg",{"amenity":"hospital"}],
+["n4716324527",25.60139,34.60891,"eg",{"name":"Jaz Lamaya clinic","amenity":"clinic","operator":"Jaz Lamaya","opening_hours":"Mo-Su 10:00-13:00,18:00-21:00"}],
+["n4750648997",25.06124,34.88714,"eg",{"name":"One Life Hospital","amenity":"clinic","healthcare":"clinic"}],
+["n9080144789",25.54091,34.61674,"eg",{"amenity":"hospital"}],
+["r13424855",25.55668,34.58477,"eg",{"name":"مطار مرسى علم الدولى","name:en":"Marsa Alam International Airport","operator":"Aéroports de Paris","website":"http://www.marsa-alam-airport.com/","aeroway":"aerodrome","icao":"HEMA","iata":"RMF","aerodrome:type":"international","wikidata":"Q123222"}],
+["w1237997453",25.55876,34.58986,"eg",{"aeroway":"helipad"}],
+["w1237997454",25.55847,34.59004,"eg",{"aeroway":"helipad"}],
+["w247207528",25.07826,34.07306,"eg",{"aeroway":"helipad"}],
+["w454976417",25.53905,34.61663,"eg",{"name":"Port Ghalib Hospital","amenity":"hospital","healthcare":"hyperbaric_chamber","phone":"+20 100 000 4402","website":"http://www.portghalibhospital.com/"}]]

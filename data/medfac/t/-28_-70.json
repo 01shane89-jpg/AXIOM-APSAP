@@ -1,1 +1,9 @@
-[["n11228143309",-26.91371,-68.12928,"ar",{"name":"Centros Modulares Sanitarios de Frontera (CMSF-6)","amenity":"clinic"}]]
+[["n1105800566",-26.31234,-69.75248,"cl",{"aeroway":"helipad"}],
+["n11228143309",-26.91371,-68.12928,"ar",{"name":"Centros Modulares Sanitarios de Frontera (CMSF-6)","amenity":"clinic"}],
+["n1439623227",-26.24862,-69.62447,"cl",{"name":"Asociación Chilena de Seguridad ACHS","amenity":"clinic","healthcare":"clinic"}],
+["n1457423151",-26.25327,-69.62218,"cl",{"name":"CESFAM El Salvador","official_name":"Centro de Salud Familiar","amenity":"clinic","healthcare":"clinic","emergency":"yes","addr:housenumber":"2508","addr:street":"Cobresal","addr:city":"Diego de Almagro"}],
+["w1323968342",-26.38009,-69.47553,"cl",{"aeroway":"aerodrome"}],
+["w1332533993",-26.08074,-68.97413,"cl",{"aeroway":"helipad"}],
+["w133830781",-26.24525,-69.63121,"cl",{"name":"Clínica San Lorenzo","amenity":"hospital","healthcare":"hospital","emergency":"yes","wikidata":"Q93741975"}],
+["w1363459334",-26.87331,-69.34565,"cl",{"aeroway":"aerodrome"}],
+["w829182548",-26.31223,-69.76616,"cl",{"name":"Aeropuerto Ricardo García Posada","name:en":"Ricardo García Posada Airport","aeroway":"aerodrome","icao":"SCES","iata":"ESR","wikidata":"Q2160889"}]]

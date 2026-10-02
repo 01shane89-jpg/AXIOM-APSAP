@@ -1,0 +1,10 @@
+[["n7474876588",19.91197,-75.62901,"cu",{"name":"Villa Colibrí","amenity":"clinic","addr:street":"Calle Principal del Resort Villa Daiquirí"}],
+["w1070312506",19.90889,-75.20462,"cu",{"name":"Guantanamo Bay NAS - Leeward Point Field","operator":"United States Air Force","aeroway":"aerodrome","icao":"MUGM","iata":"NBW","military":"airfield"}],
+["w1244980259",19.90805,-75.20824,"cu",{"aeroway":"helipad"}],
+["w1244980260",19.90802,-75.21004,"cu",{"aeroway":"helipad"}],
+["w1357929321",19.97822,-75.83615,"cu",{"aeroway":"helipad","surface":"paved"}],
+["w1357929322",19.97949,-75.83614,"cu",{"aeroway":"helipad","surface":"paved"}],
+["w168354856",19.93956,-75.12734,"cu",{"amenity":"hospital","healthcare":"hospital"}],
+["w168354857",19.93881,-75.12779,"cu",{"aeroway":"helipad"}],
+["w38843022",19.90258,-75.09915,"cu",{"amenity":"hospital","healthcare":"hospital"}],
+["w605599692",19.97509,-75.83477,"cu",{"name":"Aeropuerto Internacional Antonio Maceo","name:en":"Antonio Maceo International Airport","operator":"ECASA","aeroway":"aerodrome","icao":"MUCU","iata":"SCU","aerodrome:type":"international","wikidata":"Q1432764"}]]

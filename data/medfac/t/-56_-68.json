@@ -1,6 +1,16 @@
 [["n1042020307",-54.3429,-67.83615,"ar",{"name":"Aeródromo Los Cerros","aeroway":"aerodrome"}],
 ["n1042143940",-54.2333,-67.22,"ar",{"name":"Estancia Rio Ewan Heliport","aeroway":"helipad"}],
+["n1266334163",-55.06709,-66.94149,"cl",{"name":"Aeródromo Yocalía","aeroway":"aerodrome"}],
 ["n12763038701",-54.508,-67.19081,"ar",{"name":"Centro Modular Sanitario 34","amenity":"hospital","addr:housenumber":"149","addr:street":"Los Ñires","addr:postcode":"9412"}],
+["n12810820796",-55.08316,-67.0743,"cl",{"name":"Punto de Posada de Emergencia Puerto Toro","operator":"Carabineros de Chile","aeroway":"helipad","surface":"concrete"}],
+["w1028425942",-54.93535,-67.60071,"cl",{"name":"Hospital Comunitario de Puerto Williams Cristina Calderón","amenity":"hospital","healthcare":"hospital","addr:housenumber":"246","addr:street":"O'Higgins"}],
+["w1028425943",-54.93438,-67.60885,"cl",{"name":"Hospital Naval de Puerto Williams","amenity":"hospital","healthcare":"hospital","addr:housenumber":"56","addr:street":"Almirante Mcintyre","addr:city":"Puerto Williams","wikidata":"Q6981841"}],
 ["w1056498995",-54.49914,-67.17246,"ar",{"name":"Aeródromo de Tolhuin","aeroway":"aerodrome","military":"airfield"}],
+["w1232427325",-55.17693,-66.54728,"cl",{"aeroway":"helipad"}],
+["w1236251980",-54.93279,-67.60399,"cl",{"aeroway":"helipad"}],
+["w1306376862",-55.9629,-67.22482,"cl",{"name":"Helipuerto Naval Cabo de Hornos","aeroway":"helipad","surface":"wood"}],
+["w1307277219",-54.93222,-67.63153,"cl",{"aeroway":"helipad"}],
+["w700007377",-55.29932,-66.83942,"cl",{"aeroway":"helipad"}],
 ["w900012885",-54.49914,-67.17246,"ar",{"name":"Aeródromo Lago Fagnano","aeroway":"aerodrome","icao":"SAWL"}],
-["w900454334",-54.51071,-67.19497,"ar",{"name":"Centro Asistencial Tolhuin","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salud - Gobierno de Tierra del Fuego A. e. I. A. S.","operator:type":"public","addr:housenumber":"243","addr:street":"Avenida de los Shelknam","addr:city":"Tolhuin","addr:postcode":"V9420"}]]
+["w900454334",-54.51071,-67.19497,"ar",{"name":"Centro Asistencial Tolhuin","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salud - Gobierno de Tierra del Fuego A. e. I. A. S.","operator:type":"public","addr:housenumber":"243","addr:street":"Avenida de los Shelknam","addr:city":"Tolhuin","addr:postcode":"V9420"}],
+["w948943889",-54.93131,-67.62649,"cl",{"name":"Aeródromo Guardiamarina Zañartu","name:en":"Guardiamarina Zañartu Airport","addr:street":"Ruta Y-907","addr:city":"Puerto Williams","aeroway":"aerodrome","icao":"SCGZ","iata":"WPU","wikidata":"Q2875729"}]]

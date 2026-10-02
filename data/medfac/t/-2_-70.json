@@ -1,3 +1,5 @@
 [["n1042086949",-1.40178,-69.42642,"br",{"name":"Aeródromo Vila Bittencourt","aeroway":"aerodrome"}],
 ["n7670914437",-0.4,-69.3,"br",{"name":"Santo Atanázio","aeroway":"aerodrome"}],
-["n7670914449",-0.125,-68.545,"br",{"name":"Taraquá","aeroway":"aerodrome"}]]
+["n7670914449",-0.125,-68.545,"br",{"name":"Taraquá","aeroway":"aerodrome"}],
+["w484286373",-1.32575,-69.58079,"co",{"name":"La Pedrera Airport","aeroway":"aerodrome","icao":"SKLP","iata":"LPD","wikidata":"Q10852961"}],
+["w484286377",-1.31776,-69.58664,"co",{"amenity":"hospital","healthcare":"hospital"}]]

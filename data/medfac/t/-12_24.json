@@ -1,0 +1,11 @@
+[["n1042040442",-10.56225,24.41723,"cd",{"name":"Mutshatsha Airport","aeroway":"aerodrome","icao":"FZQN"}],
+["w1153914485",-10.72537,25.39834,"cd",{"amenity":"hospital","operator":"Kamoto"}],
+["w1223153467",-10.77619,25.25826,"cd",{"aeroway":"helipad"}],
+["w1223153476",-10.71414,25.45295,"cd",{"name":"Heliport de Kolwezi","aeroway":"helipad"}],
+["w1321625878",-10.76621,25.50702,"cd",{"name":"Aéroport de Kolwezi","name:en":"Kolwezi Airport","aeroway":"aerodrome","icao":"FZQM","iata":"KWZ","wikidata":"Q6427966"}],
+["w444374397",-10.71153,25.49707,"cd",{"name":"Dispensaire Gécamines","amenity":"hospital","operator":"Gécamines","addr:street":"Avenue Sakania","addr:city":"Kolwezi"}],
+["w474310871",-10.7089,25.49441,"cd",{"name":"Mulolo Medical Center","amenity":"hospital"}],
+["w474311407",-10.7091,25.49435,"cd",{"name":"Mulolo Medical Center","amenity":"hospital"}],
+["w717549142",-10.89716,25.18393,"cd",{"aeroway":"helipad"}],
+["w791842809",-10.71731,25.46064,"cd",{"name":"Hopital du personnel de Kolwezi","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Générale des carrières et des mines","addr:housenumber":"00","addr:street":"Avenue de l'Hopital","addr:city":"Kolwezi"}],
+["w84630490",-10.71582,25.46264,"cd",{"name":"Clinique Gécamines","amenity":"hospital"}]]

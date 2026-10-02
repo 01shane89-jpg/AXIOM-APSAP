@@ -25,6 +25,7 @@
 ["r7903079",10.46656,-4.77945,"bf",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1061000174",10.98664,-4.92655,"bf",{"name":"Orodara Airport","aeroway":"aerodrome"}],
 ["w1065165826",10.68981,-4.72735,"bf",{"name":"Banfora Airport","aeroway":"aerodrome","icao":"DFOB","iata":"BNR","surface":"unpaved","wikidata":"Q2495220"}],
+["w1165462798",10.30912,-5.23548,"ci",{"name":"CSR Kadarvogo","amenity":"hospital","healthcare":"hospital"}],
 ["w1175447479",11.08771,-4.10893,"bf",{"name":"CSPS de Baré","amenity":"clinic","healthcare":"clinic","opening_hours":"24/7"}],
 ["w1205855668",11.19789,-4.25424,"bf",{"name":"Clinique Adulte","amenity":"hospital","healthcare":"hospital","operator":"CMA de Dafra"}],
 ["w1205855674",11.1973,-4.25423,"bf",{"name":"Service d'Urgence","amenity":"hospital","healthcare":"hospital","operator":"CMA de Dafra"}],

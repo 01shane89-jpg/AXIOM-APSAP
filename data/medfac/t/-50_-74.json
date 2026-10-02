@@ -1,5 +1,10 @@
-[["n13201783316",-48.48971,-72.55321,"ar",{"aeroway":"helipad"}],
+[["n1042061945",-48.93287,-72.79847,"cl",{"name":"Aeródromo Laguna Redonda","aeroway":"aerodrome","icao":"SCIO","wikidata":"Q16902733"}],
+["n13201783316",-48.48971,-72.55321,"ar",{"aeroway":"helipad"}],
+["w1213746937",-48.4689,-72.56352,"cl",{"name":"Aeródromo Villa O'Higgins","aeroway":"aerodrome","icao":"SCOH","wikidata":"Q12695485"}],
+["w1280135157",-48.22907,-73.29919,"cl",{"name":"Aeródromo Río Pascua","name:en":"Río Pascua Airport","aeroway":"aerodrome","icao":"SCTP","wikidata":"Q16899326"}],
 ["w1299891752",-49.53501,-72.52116,"ar",{"name":"Aeroclub El Chaltén","official_name":"Aeroclub El Chaltén - Alférez de Gendarmería Nacional Argentina Walter Omar D'anna","aeroway":"aerodrome"}],
+["w1323056387",-48.20132,-72.32766,"cl",{"name":"Aeródromo Entrada Mayer","aeroway":"aerodrome","icao":"SCEY","wikidata":"Q16891054"}],
 ["w1372566200",-49.33341,-72.88585,"ar",{"name":"Puesto Sanitario","amenity":"clinic"}],
 ["w1436309822",-48.48972,-72.55321,"ar",{"aeroway":"helipad"}],
+["w151943023",-48.21001,-72.32359,"cl",{"aeroway":"helipad"}],
 ["w671140901",-48.99951,-72.83858,"ar",{"aeroway":"helipad"}]]

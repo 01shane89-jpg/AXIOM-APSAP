@@ -1,0 +1,11 @@
+[["r8726898",22.29228,-84.28321,"cu",{"amenity":"clinic","healthcare":"clinic"}],
+["w1038276044",22.08371,-84.20282,"cu",{"name":"Policlínico Ernesto Guevara de la Serna","amenity":"clinic","healthcare":"clinic","operator":"Ministerio de Salud Pública","operator:type":"public"}],
+["w1194735024",22.22903,-84.37163,"cu",{"name":"Antiguo Aeródromo Agrícola Las Clavellinas","aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1272055818",22.29221,-84.28318,"cu",{"name":"Policlínico Juan Bruno Zayas","amenity":"clinic","healthcare":"clinic","operator":"Ministerio de Salud Pública","operator:type":"public"}],
+["w377196046",22.08403,-84.19925,"cu",{"name":"Hospital Municipal Augusto César Sandino","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública","operator:type":"public"}],
+["w486469662",22.20072,-84.0843,"cu",{"name":"Policlínico Manuel «Piti» Fajardo","amenity":"clinic","healthcare":"clinic","operator":"MINSAP","operator:type":"public","addr:city":"Guane"}],
+["w627397289",22.29287,-84.28352,"cu",{"name":"Hospital Mantua","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública"}],
+["w647473438",22.18987,-84.09043,"cu",{"emergency":"ambulance_station"}],
+["w90086525",22.10274,-84.16036,"cu",{"name":"Base Aérea de San Julián","operator":"Ministerio de las Fuerzas Armadas Revolucionarias","aeroway":"aerodrome","icao":"MUSJ","iata":"SNJ","surface":"concrete","wikidata":"Q7414659"}],
+["w90088559",22.2556,-84.31347,"cu",{"name":"Aeródromo de Mantua","aeroway":"aerodrome"}],
+["w909470873",22.08292,-84.19943,"cu",{"name":"Clínica Estomatológica Carlos Ulloa Arauz","amenity":"dentist","healthcare":"clinic","operator":"MINSAP","operator:type":"public"}]]
