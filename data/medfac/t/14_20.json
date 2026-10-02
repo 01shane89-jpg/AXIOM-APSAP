@@ -1,0 +1,10 @@
+[["n1972682226",15.82145,20.87948,"td",{"name":"Aéroport de Kalait مطار كاليت","aeroway":"aerodrome"}],
+["n9751960084",14.61536,21.90319,"td",{"name":"koursigue","amenity":"hospital"}],
+["n9752055638",14.97923,21.8826,"td",{"name":"forou","amenity":"hospital"}],
+["n9810585846",14.67614,21.42592,"td",{"name":"Eya Maraone","amenity":"hospital"}],
+["n9959599707",14.46127,21.93992,"td",{"name":"Centre de santé Kounougou","amenity":"hospital"}],
+["w1089638960",14.04129,21.1625,"td",{"name":"Centre Hospitalier de Mata","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination;general;dentistry;dialysis;ophthalmology","operator":"Centre Hospitalier de Mata","operator:type":"public","addr:street":"Rue D'Erté","addr:city":"MATA","opening_hours":"Mo-Su 08:00-18:30 Véternaire"}],
+["w175158815",14.55113,20.84194,"td",{"name":"مطار بلتن Biltine","name:en":"Biltine Airport","aeroway":"aerodrome"}],
+["w723737578",14.6482,20.85752,"td",{"amenity":"hospital"}],
+["w777353918",15.82008,20.87633,"td",{"aeroway":"aerodrome"}],
+["w777754476",15.8366,20.83199,"td",{"aeroway":"aerodrome"}]]

@@ -1,0 +1,12 @@
+[["n1042025203",54.6708,-115.415,"ca",{"name":"Swan Hills Airport","aeroway":"aerodrome","aerodrome:type":"public","wikidata":"Q3912649"}],
+["n1042031690",55.2931,-114.777,"ca",{"name":"Slave Lake Airport","website":"https://slavelakeairport.com/","aeroway":"aerodrome","icao":"CYZH","iata":"YZH","wikidata":"Q3912584"}],
+["n1042134121",54.11828,-114.40007,"ca",{"name":"Barrhead (Healthcare Centre) Heliport","aeroway":"helipad"}],
+["n1042134250",55.29333,-114.78139,"ca",{"name":"Slave Lake / Slave Lake Helicopters","aeroway":"helipad"}],
+["w1063783326",54.72699,-115.40289,"ca",{"name":"Swan Hills Healthcare Centre","amenity":"hospital","healthcare":"hospital","addr:housenumber":"29","addr:street":"Freeman Drive","addr:city":"Swan Hills","addr:province":"AB","addr:postcode":"T0G 2C0"}],
+["w115326487",55.28433,-114.76078,"ca",{"name":"Slave Lake Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"paediatrics;general","emergency":"yes","operator":"Eunice2"}],
+["w1172830916",54.11887,-114.40049,"ca",{"amenity":"hospital","healthcare":"hospital"}],
+["w206968947",55.28489,-114.76056,"ca",{"name":"Slave Lake EMS","emergency":"ambulance_station","operator":"Alberta Health Services"}],
+["w438183871",54.13172,-115.67414,"ca",{"name":"Whitecourt Healthcare Centre","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Alberta Health Services","operator:type":"public","addr:housenumber":"20","addr:street":"Sunset Boulevard","addr:city":"Whitecourt","addr:province":"Alberta","addr:postcode":"T7S 1M8"}],
+["w564398956",54.09574,-114.43936,"ca",{"name":"Barrhead Airport","operator":"County of Barrhead","aeroway":"aerodrome","icao":"CEP3","wikidata":"Q2788529"}],
+["w680613290",54.14165,-115.78414,"ca",{"name":"Whitecourt Airport","aeroway":"aerodrome","icao":"CYZU","iata":"YZU","aerodrome:type":"public","wikidata":"Q3912600"}],
+["w96904019",54.11907,-114.40039,"ca",{"name":"Barrhead Healthcare Centre","amenity":"hospital","phone":"+1-780-674-2221","addr:street":"4815 51 Ave","addr:city":"Barrhead","addr:postcode":"T7N 1M1"}]]

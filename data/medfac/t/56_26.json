@@ -1,1 +1,11 @@
-[["w1262000335",56.07357,27.94508,"by",{"aeroway":"helipad"}]]
+[["n10542781666",57.95057,26.47749,"ee",{"name":"Tõutsi lennuväli","name:en":"Tõutsi aerodrome","operator":"Joosti Puhkemaja OÜ","website":"https://joostipuhkemaja.ee/","addr:city":"Tõutsi küla","addr:postcode":"67303","aeroway":"aerodrome","icao":"EETI","wikidata":"Q106634080"}],
+["n3525983658",57.83095,26.53131,"ee",{"name":"Kiirabi","emergency":"ambulance_station"}],
+["n8693412033",57.82638,26.49264,"ee",{"name":"Antsla lennuväli","name:en":"Antsla Airfield","aeroway":"aerodrome","icao":"EEAA"}],
+["w1262000335",56.07357,27.94508,"by",{"aeroway":"helipad"}],
+["w1508162415",57.78039,26.05465,"ee",{"name":"Valga Haigla","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency;nephrology;community;internal;surgery;physiatry;cardiology;blood_check;clinical_pathology;infectious_diseases;radiology;dentistry;intensive","emergency":"yes","website":"https://valgahaigla.ee/","addr:housenumber":"2","addr:street":"Peetri","addr:city":"Valga","addr:postcode":"68206"}],
+["w1508209972",57.80903,26.99673,"ee",{"name":"Lõuna-Eesti Haigla","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;psychiatry;nephrology;emergency;gynaecology;community;surgery;cardiology;intensive;neurology;infectious_diseases;blood_check;urology;orthopaedics;vaccination;neonatology;abortion;clinical_path","emergency":"yes","website":"https://www.leh.ee/"}],
+["w1564178359",57.95559,27.63829,"ee",{"amenity":"clinic"}],
+["w179323202",57.80855,26.99738,"ee",{"name":"Lõuna-Eesti Haigla","amenity":"hospital","healthcare":"hospital","addr:city":"Meegomäe küla","addr:postcode":"65526"}],
+["w191884709",57.85043,27.00134,"ee",{"name":"Võru Tervisekeskus","amenity":"clinic","healthcare":"clinic","website":"https://vorutervisekeskus.ee/","addr:housenumber":"9","addr:street":"Tartu","addr:city":"Võru","addr:postcode":"65605","opening_hours":"Mo-Fr 08:00-18:00"}],
+["w329459938",57.63349,26.6713,"ee",{"name":"Varstu lennuväli","phone":"+372 5019372","website":"https://transpordiamet.ee/visuaallennuvaljad","aeroway":"aerodrome","icao":"EEVU"}],
+["w51683663",57.93947,26.97871,"ee",{"name":"Ridali lennuväli","name:en":"Ridali Airfield","aeroway":"aerodrome","icao":"EERI"}]]

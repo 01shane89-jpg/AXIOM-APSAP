@@ -1,0 +1,10 @@
+[["n1042026806",54.25896,-97.0099,"ca",{"name":"Molson Lake Airport","aeroway":"aerodrome"}],
+["n1042030975",54.6089,-97.76756,"ca",{"name":"Cross Lake (Charlie Sinclair Memorial) Airport","operator":"Northern Airports and Marine Operations, Manitoba Infrastructure and Transportation,","aeroway":"aerodrome","icao":"CYCR","iata":"YCR","wikidata":"Q949527"}],
+["n1042144740",55.70742,-97.89124,"ca",{"name":"Thompson Heliport","aeroway":"helipad"}],
+["n1458259476",55.31799,-97.70197,"ca",{"name":"Thicket Portage Airport","operator":"Manitoba Infrastructure and Transportation","phone":"+1-204-286-3278","aeroway":"aerodrome","icao":"CZLQ","iata":"YTD","wikidata":"Q3914680"}],
+["n7845280052",54.60646,-97.76967,"ca",{"aeroway":"helipad"}],
+["w1420286577",55.58757,-97.16652,"ca",{"name":"Pikwitonei Airport","phone":"+1-204-458-2450","aeroway":"aerodrome","icao":"CZMN","iata":"PIW","wikidata":"Q3915066"}],
+["w479745252",54.62742,-97.77928,"ca",{"name":"Cross Lake Nursing Station","amenity":"clinic","healthcare":"clinic","phone":"+1-204-676-2218","website":"https://crosslakehealth.ca/"}],
+["w481678409",55.75488,-97.83354,"ca",{"name":"Thompson Seaplane Base","aeroway":"aerodrome"}],
+["w829420025",55.80491,-97.861,"ca",{"name":"Thompson Municipal Airport","operator":"Local Government District of Mystery Lake","operator:type":"government","phone":"+1-204-677-0720","website":"https://thompsonairport.ca/","aeroway":"aerodrome","icao":"CYTH","iata":"YTH","wikidata":"Q2235239"}],
+["w875546667",54.61003,-97.76091,"ca",{"aeroway":"aerodrome","icao":"CYCR","iata":"YCR"}]]

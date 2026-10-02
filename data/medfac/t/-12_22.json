@@ -1,4 +1,9 @@
-[["w1053408097",-11.89336,22.91633,"ao",{"name":"Aeroporto de Cazombo","name:en":"Cazombo Airport","aeroway":"aerodrome","icao":"FNCZ","iata":"CAV"}],
+[["n1042040449",-10.66641,23.17438,"cd",{"name":"Kisenge Airport","aeroway":"aerodrome","icao":"FZQP"}],
+["n5575046070",-10.37104,23.4256,"cd",{"name":"Kasaji Airport","aeroway":"aerodrome","icao":"FZSJ","wikidata":"Q21974291"}],
+["n5599479097",-10.75642,22.3429,"cd",{"name":"Aéroport de Dilolo","aeroway":"aerodrome","icao":"FZSI","wikidata":"Q16961846"}],
+["n7681574563",-10.65967,22.74668,"cd",{"name":"Katoka Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n7681577536",-10.65986,22.74614,"cd",{"name":"Katoka Maternity","amenity":"hospital","healthcare":"hospital"}],
+["w1053408097",-11.89336,22.91633,"ao",{"name":"Aeroporto de Cazombo","name:en":"Cazombo Airport","aeroway":"aerodrome","icao":"FNCZ","iata":"CAV"}],
 ["w1195011831",-11.89722,22.91238,"ao",{"name":"Hospital do Alto Zambeze","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Cazombo"}],
 ["w348485035",-10.69907,22.15983,"ao",{"name":"Aeroporto do Luau","name:en":"Luau Airport","aeroway":"aerodrome","icao":"FNUA","iata":"UAL"}],
 ["w656080332",-10.71524,22.2318,"ao",{"name":"Aeroporto de Luau","name:en":"Luau Airport","aeroway":"aerodrome"}]]

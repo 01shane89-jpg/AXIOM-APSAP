@@ -1,0 +1,13 @@
+[["n1042040577",-5.7,23.717,"cd",{"name":"Mutoto Airport","aeroway":"aerodrome"}],
+["n1042040597",-5.97608,22.45892,"cd",{"name":"Tshikaji airport","aeroway":"aerodrome","icao":"FZUS"}],
+["n1042040642",-4.96094,23.37881,"cd",{"name":"Aéroport de Lusambo","name:en":"Lusambo Airport","aeroway":"aerodrome","icao":"FZVI","iata":"LBO","wikidata":"Q6705017"}],
+["n1042040651",-4.37203,22.17632,"cd",{"name":"Lukombe-Batwa Airport","aeroway":"aerodrome","icao":"FZVK"}],
+["n1042040682",-4.07325,22.84029,"cd",{"name":"Beni-Dibele Airport","aeroway":"aerodrome","icao":"FZVO","wikidata":"Q4887880"}],
+["n1042040716",-5.75954,23.05492,"cd",{"name":"Munkamba Airport","aeroway":"aerodrome","icao":"FZWL","wikidata":"Q21974316"}],
+["n4549772274",-5.89233,22.40204,"cd",{"amenity":"clinic"}],
+["n9991327417",-5.89334,22.41688,"cd",{"name":"Clinique de la renaissance","amenity":"clinic"}],
+["w1215502834",-5.19824,23.85284,"cd",{"amenity":"hospital","healthcare":"hospital"}],
+["w395971446",-5.89812,22.39119,"cd",{"name":"Polyclinique Saint Georges","amenity":"hospital","emergency":"no","operator":"Catholic church"}],
+["w460424111",-5.89898,22.38846,"cd",{"name":"Jukayi","amenity":"hospital","healthcare":"hospital","operator":"Frère de la Charité"}],
+["w653385946",-5.96299,22.30646,"cd",{"amenity":"clinic","healthcare":"clinic"}],
+["w998130396",-5.90019,22.46925,"cd",{"name":"Aéroport de Kananga","name:en":"Kananga Airport","operator":"Civil Government","aeroway":"aerodrome","icao":"FZUA","iata":"KGA","aerodrome:type":"public","wikidata":"Q2443546"}]]

@@ -1,0 +1,11 @@
+[["n5352036322",21.88955,-82.80631,"cu",{"name":"Casita del Ojo","amenity":"clinic","healthcare":"clinic"}],
+["n7359731422",21.89094,-82.80726,"cu",{"emergency":"ambulance_station"}],
+["n7359732175",21.89169,-82.80684,"cu",{"emergency":"ambulance_station"}],
+["n8260614476",21.74434,-82.75403,"cu",{"name":"Andrés Cuevas","amenity":"clinic","healthcare":"nurse"}],
+["r7162277",21.89306,-82.80777,"cu",{"name":"Centro de Higiene y Epidemiología Isla de la Juventud","amenity":"clinic","healthcare":"clinic"}],
+["w1219815659",21.64259,-82.95504,"cu",{"name":"Antiguo Aeródromo Siguanea","aeroway":"aerodrome","icao":"MUSN","iata":"SZJ","wikidata":"Q3545288"}],
+["w1387065333",21.88954,-82.80863,"cu",{"name":"Policlínico Leonida Tamayo","amenity":"clinic","healthcare":"clinic","operator":"Ministerio de Salud Pública","operator:type":"public","addr:street":"Calle 18"}],
+["w1503807118",21.74102,-82.75705,"cu",{"name":"Policlínico Nº3 Orestes Falls Oñate","amenity":"clinic","healthcare":"clinic","emergency":"yes","operator":"Ministerio de Salud Pública","operator:type":"public"}],
+["w268959787",21.88254,-82.80546,"cu",{"name":"Policlínico Juan Manuel Paez","amenity":"clinic","healthcare":"clinic","operator":"MINSAP","operator:type":"public","addr:street":"Calle 41","addr:postcode":"25300"}],
+["w487075431",21.89117,-82.8066,"cu",{"name":"Hospital Héroes del Baire","amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public"}],
+["w843581870",21.83362,-82.78506,"cu",{"name":"Aeropuerto Rafael Cabrera Mustelier","operator":"ECASA","operator:type":"public","addr:street":"Autopista Nueva Gerona - La Fe","aeroway":"aerodrome","icao":"MUNG","iata":"GER","aerodrome:type":"regional","wikidata":"Q3545314"}]]

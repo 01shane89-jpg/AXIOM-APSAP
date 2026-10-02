@@ -1,0 +1,7 @@
+[["n10879354104",43.83733,-66.12113,"ca",{"name":"Holistic Thyme Wellness Center","amenity":"clinic","healthcare":"clinic","website":"https://holisticthyme.com/","addr:housenumber":"101","addr:street":"Water Street"}],
+["n6983017172",43.83633,-66.12029,"ca",{"name":"Tri-County Pregnancy Care Centre","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"fertility"}],
+["w746412547",43.8239,-66.0879,"ca",{"name":"Yarmouth International Airport","phone":"+1 902-742-6484","website":"https://www.yarmouthairport.ca/","addr:housenumber":"310","addr:street":"Forest Street","addr:city":"Yarmouth","addr:province":"Nova Scotia","aeroway":"aerodrome","icao":"CYQI","iata":"YQI","wikidata":"Q3502274"}],
+["w748892453",43.83358,-66.12045,"ca",{"name":"Forever Healthy Allergy Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w763918517",43.83595,-66.09695,"ca",{"name":"Emergency Health Services Yarmouth","emergency":"ambulance_station","operator":"EHS Nova Scotia","addr:housenumber":"130","addr:street":"Haley Road","addr:city":"Yarmouth","addr:province":"Nova Scotia"}],
+["w890968467",43.85031,-66.12256,"ca",{"name":"Yarmouth Regional Hospital","amenity":"hospital","healthcare":"hospital","phone":"+1 902-742-3541","website":"https://www.nshealth.ca/locations-details/Yarmouth%20Regional%20Hospital","wikidata":"Q116780242"}],
+["w890968468",43.84835,-66.12127,"ca",{"name":"Yarmouth (Regional Hospital) Heliport","aeroway":"helipad"}]]

@@ -24,13 +24,19 @@
    "city": "Dublin",
    "address": "42 Elgin Road",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 53.3331,
-   "lon": -6.2489,
-   "prec": "approx",
+   "lat": 53.330266,
+   "lon": -6.233729,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q5369955",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "912465085afd3dfd43d1c37d0d4a9d26a4b34c2d7e72bf0e186c7b47c320fb9c"
+   "coord_basis": "OpenStreetMap way/30754771",
+   "fp": "52c95f406812d93cfe11ab3887fd2f733a20cc9cd159bea9ec4d797e5faae0e1",
+   "web": "https://ie.usembassy.gov/",
+   "phone": "353 1 668-8777",
+   "phone_after_hours": "+353 1 668-8777",
+   "phone_src": "https://ie.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -735,5 +741,68 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ie:xing:node-13082068549",
+   "name": "US Preclearance",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 53.424968,
+   "lon": -6.241249,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/13082068549",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "925bfd3767507a13ae83ccb4cc4323a24a6e32fb8cc0b9fffa652f3f50634dc0"
+  },
+  {
+   "id": "sof:ie:xing:node-162936528",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 53.29572,
+   "lon": -6.134101,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/162936528",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3cb5309742f160547d21276006fd9557472f7274e94bd70bacf910a29aef945f"
+  },
+  {
+   "id": "sof:ie:xing:way-1457221090",
+   "name": "Security Check",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 52.252362,
+   "lon": -6.34519,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1457221090",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a60af62359a9a2a7d070883a45a8ee19bb9007c0370aecae1570a3cfc0c5b5b3"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

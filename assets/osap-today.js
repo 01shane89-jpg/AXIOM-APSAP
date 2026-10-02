@@ -150,7 +150,7 @@
     if (c) wxLive[k] = c; /* an older copy shows while the new one loads, marked with its time */
     if (wxBusy[k] || !navigator.onLine && c) return;
     wxBusy[k] = 1;
-    var u = "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon +
+    var u = "https://api.open-meteo.com/v1/forecast?latitude=" + (+p.lat).toFixed(3) + "&longitude=" + (+p.lon).toFixed(3) + /* about 100 m, as the Weather tab asks: a chosen spot is never sent exactly */
       "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,precipitation" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max" +
       "&timezone=auto&forecast_days=6";
@@ -254,7 +254,7 @@
             : i.url ? '<a class="tdrow" href="' + esc(i.url) + '" target="_blank" rel="noopener noreferrer">' + t + " ↗</a>" : '<span class="tdrow">' + t + "</span>";
         }).join("") + (g.n > 2 ? '<span class="tdmore">and ' + (g.n - 2) + " more</span>" : "") + '<span class="tdsub">' + esc(g.src) + "</span></div>";
     });
-    if (G.length > 6) h += '<p class="tdobs">' + (G.length - 6) + " more kinds of alert are in the Alerts and Live hazards tabs.</p>";
+    if (G.length > 6) h += '<p class="tdobs">' + (G.length - 6) + " more kinds of alert are in the Alerts and Earthquakes and hazards tabs.</p>";
     h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="alerts">All alerts</button><button type="button" class="tdlink" data-go="hazards">Live hazards map</button></div></section>';
     return h;
   }

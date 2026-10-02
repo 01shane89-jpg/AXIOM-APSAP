@@ -21,11 +21,15 @@
   if (!map || !L || /[?&]watchscan=1/.test(location.search)) return;
   var LIB = "assets/vendor/maplibre-gl-5.24.0", K_UNIT = "osap-meas-unit", K_3D = "osap-3d";
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
-  /* 3D buildings: OpenStreetMap footprints and heights from OpenFreeMap's keyless vector tiles (OpenMapTiles schema). A building
-     with no height or floor count in OpenStreetMap stands at the tiles' 5 m default. Shown from zoom 14, so zoomed-out views
-     download none. */
-  var BLD = "https://tiles.openfreemap.org/planet", BLD_Z = 14,
-    BLD_ATTR = 'Buildings: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+  /* 3D buildings: Overture Maps buildings (keyless PMTiles on a public bucket). Overture joins OpenStreetMap with Google's and
+     Microsoft's footprints traced from satellite pictures, so towns OpenStreetMap barely covers (Yala, Pattani, Narathiwat)
+     have their buildings too. Few buildings in the region have a recorded height: those without one are drawn at an
+     estimate from their kind and floor count, in a cooler grey so they can be told apart. Shown from zoom 14, so zoomed-out
+     views download none. Overture publishes a release every month and removes old ones, so the newest is looked up in the
+     bucket's listing (kept for 3 days) with OVR as the fallback. */
+  var OVB = "https://overturemaps-extras-us-west-2.s3.us-west-2.amazonaws.com/", OVR = "2026-09-23.1", K_OVR = "osap-3d-ovr", BLD_Z = 14,
+    PMLIB = "assets/vendor/pmtiles-4.5.0.js",
+    BLD_ATTR = 'Buildings: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener">Overture Maps Foundation</a> (&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Google Open Buildings, Microsoft building footprints)';
   var DEM_ATTR = 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles on AWS</a> (Mapzen/Tilezen; SRTM, GMTED, ETOPO1 and others)';
   /* Japan: GSI elevation tiles replace the AWS model inside Japan and Okinawa. At the closest zoom GSI's 5 m model from its
      airborne laser survey (LiDAR) is used where it exists, the 10 m national model elsewhere and at the other zooms. They are
@@ -303,6 +307,53 @@
     return libP;
   }
 
+  /* the PMTiles reader for the buildings, loaded the first time buildings are drawn; its protocol is added to the engine once */
+  var pmP = null;
+  function loadPm(ml) {
+    if (pmP) return pmP;
+    pmP = new Promise(function (ok, bad) {
+      var s = D.createElement("script"); s.src = PMLIB;
+      s.onload = function () { if (!W.pmtiles) return bad(new Error("no reader")); try { ml.addProtocol("pmtiles", new W.pmtiles.Protocol({ metadata: true }).tile); } catch (e) {} ok(); };
+      s.onerror = function () { pmP = null; bad(new Error("no reader")); };
+      D.head.appendChild(s);
+    });
+    return pmP;
+  }
+  /* the newest Overture release that has buildings tiles, from the bucket's own listing */
+  function ovRelease() {
+    var c = null; try { c = JSON.parse(lsGet(K_OVR) || "null"); } catch (e) {}
+    if (c && /^\d{4}-\d\d-\d\d\.\d+$/.test(c.r) && Date.now() - c.t < 3 * 864e5) return Promise.resolve(c.r);
+    var ac = W.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ac) ac.abort(); }, 6000);
+    return fetch(OVB + "?list-type=2&prefix=tiles/&delimiter=/", ac ? { signal: ac.signal } : {}).then(function (r) { return r.ok ? r.text() : ""; }).then(function (x) {
+      clearTimeout(to);
+      var m, all = [], re = /<Prefix>tiles\/(\d{4}-\d\d-\d\d\.\d+)\/<\/Prefix>/g;
+      while ((m = re.exec(x))) all.push(m[1]);
+      all.sort(function (a, b) { var p = a.split("."), q = b.split("."); return p[0] < q[0] ? -1 : p[0] > q[0] ? 1 : p[1] - q[1]; });
+      var r = all.length ? all[all.length - 1] : OVR;
+      if (all.length) lsSet(K_OVR, JSON.stringify({ r: r, t: Date.now() }));
+      return r;
+    }).catch(function () { clearTimeout(to); return OVR; });
+  }
+  /* A building's height in metres: the recorded height, else its floors at 3.2 m, else an estimate from its kind with a spread
+     taken from the last hex digit of its id (0-15), so a block of houses is not one flat slab. Shared by buildings and their
+     parts (OpenStreetMap's detailed models of a building's sections). */
+  var V16 = ["/", ["index-of", ["slice", ["get", "id"], ["-", ["length", ["get", "id"]], 1]], "0123456789abcdef"], 15];
+  var KNOWN = ["any", ["has", "height"], ["has", "num_floors"]];
+  var HEIGHT = ["case", ["has", "height"], ["get", "height"], ["has", "num_floors"], ["max", 3, ["*", ["get", "num_floors"], 3.2]],
+    ["match", ["get", "class"],
+      ["roof", "carport", "parking", "shelter", "pavilion", "garage", "garages"], ["+", 3, ["*", V16, 1.5]],
+      ["apartments", "hotel", "office", "hospital", "dormitory", "university", "college", "government"], ["+", 12, ["*", V16, 12]],
+      ["commercial", "retail", "school", "civic", "train_station", "industrial", "warehouse", "temple", "church", "library", "post_office"], ["+", 6, ["*", V16, 6]],
+      ["+", 3.5, ["*", V16, 5]]]];
+  var MINH = ["case", ["has", "min_height"], ["get", "min_height"], ["has", "min_floor"], ["*", ["get", "min_floor"], 3.2], 0];
+  function bldPaint() {
+    return { /* warm sandstone where the height is recorded (taller is deeper), a cool pale grey where it is estimated */
+      "fill-extrusion-color": ["case", KNOWN, ["interpolate", ["linear"], HEIGHT, 0, "#e9dfcc", 25, "#dccab0", 70, "#c6ac8a", 160, "#a98a68"], "#d5d9de"],
+      "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, HEIGHT],
+      "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, MINH],
+      "fill-extrusion-opacity": 1, "fill-extrusion-vertical-gradient": true };
+  }
+
   /* fetch the engine into this browser's cache while the app is idle, so the first press of 3D only has to start it
      (skipped when the phone asks to save data) */
   function preload() {
@@ -357,7 +408,7 @@
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + "</button>" +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
       '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
-      '<button type="button" class="o3-b o3-bld" title="3D buildings (from OpenStreetMap). They appear when you zoom in close" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
+      '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; grey ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
       '<div class="o3-tilt"><label>Tilt <input type="range" min="0" max="85" step="1" aria-label="View angle (tilt)"></label><output></output></div>' +
       '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button><div class="o3-cr" hidden></div>' +
       '<div class="o3s o3-scale" role="button" tabindex="0" title="Map scale. Tap to change the unit (km, mi, nm)"></div>';
@@ -390,7 +441,9 @@
       var DEMU = demProto ? "osapdem://{z}/{x}/{y}" : DEM;
       var style = { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#d9d4c7" } }],
         /* a deep blue sky fading to a pale horizon, and a light haze over distant ground, as the eye sees it */
-        sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] } };
+        sky: { "sky-color": "#3f7fc4", "horizon-color": "#cfe0f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.8, "fog-ground-blend": 0.6, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0] },
+        /* late-morning sun from the south-east, high enough that walls facing away are shaded but not black */
+        light: { anchor: "map", position: [1.4, 135, 40], color: "#fff8ec", intensity: 0.42 } };
       var hillAt = 0; TPL = [];
       R.forEach(function (r, i) {
         var viaUs = demProto && !/\{bbox/.test(r.urls[0]);
@@ -426,20 +479,24 @@
       }
       /* phones: a vertical one-finger drag should pan, two fingers tilt (the default) */
       /* 3D buildings, under the map's own overlays; the tiles are asked for only while the switch is on and the view is close */
-      var bldB = box.querySelector(".o3-bld"), hintT = 0;
+      var bldB = box.querySelector(".o3-bld"), hintT = 0, bldAsk = false;
       function bldOn(on) {
         bldB.setAttribute("aria-pressed", on ? "true" : "false"); bldB.classList.toggle("on", on);
         if (!styleUp) return;   /* added once the style has loaded (see "style.load" below) */
-        if (on && !gl.getSource("bld")) {
-          gl.addSource("bld", { type: "vector", url: BLD });
-          gl.addLayer({ id: "bld", type: "fill-extrusion", source: "bld", "source-layer": "building", minzoom: BLD_Z,
-            filter: ["!=", ["get", "hide_3d"], true],
-            paint: { "fill-extrusion-color": ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 5], 0, "#d8d2c6", 20, "#c9c1b3", 60, "#b3a998", 150, "#9d9282"],
-              "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_height"], 5]],
-              "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], BLD_Z, 0, BLD_Z + 0.6, ["coalesce", ["get", "render_min_height"], 0]],
-              "fill-extrusion-opacity": 0.88, "fill-extrusion-vertical-gradient": true } }, gl.getLayer("vf") ? "vf" : undefined);
+        if (on && !bldAsk) {
+          bldAsk = true;
+          Promise.all([loadPm(ml), ovRelease()]).then(function (v) {
+            if (dead || gl.getSource("bld")) return;
+            gl.addSource("bld", { type: "vector", url: "pmtiles://" + OVB + "tiles/" + v[1] + "/buildings.pmtiles" });
+            var under = gl.getLayer("vf") ? "vf" : undefined;
+            gl.addLayer({ id: "bld", type: "fill-extrusion", source: "bld", "source-layer": "building", minzoom: BLD_Z,
+              filter: ["all", ["!=", ["get", "is_underground"], true], ["!=", ["get", "has_parts"], true]], paint: bldPaint() }, under);
+            gl.addLayer({ id: "bldp", type: "fill-extrusion", source: "bld", "source-layer": "building_part", minzoom: BLD_Z,
+              filter: ["!=", ["get", "is_underground"], true], paint: bldPaint() }, under);
+            bldOn(P.bld);
+          }, function () { bldAsk = false; say("3D buildings did not load. Check the connection and press the buildings button again."); });
         }
-        if (gl.getLayer("bld")) gl.setLayoutProperty("bld", "visibility", on ? "visible" : "none");
+        ["bld", "bldp"].forEach(function (id) { if (gl.getLayer(id)) gl.setLayoutProperty(id, "visibility", on ? "visible" : "none"); });
       }
       var styleUp = false;
       bldOn(P.bld);
@@ -496,7 +553,9 @@
       crb.addEventListener("click", function () { cr.hidden = !cr.hidden; crb.setAttribute("aria-expanded", String(!cr.hidden)); });
       paint(); drawSc();
 
-      /* symbols drawn as their own element in 2D (military symbols, Red Cross posts and the like): the same picture, standing on the ground */
+      /* symbols drawn as their own element in 2D (military symbols, Red Cross posts and the like): the same picture, standing on the ground.
+         They and your marks stay at full strength even where the engine thinks a hill or building is in front: its guess
+         (20% when "covered") was often wrong while the elevation was still loading, and a saved point must never fade out. */
       /* only those around the view (an HTML element each is costly to move with the camera) */
       var near = map.getBounds().pad(1.5);
       V.icons.filter(function (m) { return near.contains(m.ll); }).slice(0, 150).sort(function (a, b) { return a.z - b.z; }).forEach(function (m) {
@@ -504,14 +563,14 @@
         w.className = "o3-ic"; k.style.transform = ""; k.style.left = "0"; k.style.top = "0"; k.style.position = "absolute"; k.removeAttribute("tabindex");
         w.appendChild(k);
         w.addEventListener("click", function (e) { e.stopPropagation(); pop(V.layers[m.id], [m.ll.lng, m.ll.lat]); });
-        markers.push(new ml.Marker({ element: w, anchor: "center" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
+        markers.push(new ml.Marker({ element: w, anchor: "center", opacityWhenCovered: "1" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
       });
       /* your own dropped marks: labelled pins standing on the ground */
       V.marks.forEach(function (m) {
         var el = D.createElement("button"); el.type = "button"; el.className = "o3-mark";
         el.innerHTML = "<i></i><span>" + esc(m.n) + "</span>"; el.title = m.n;
         el.addEventListener("click", function (e) { e.stopPropagation(); pop(V.layers[m.id], [m.ll.lng, m.ll.lat]); });
-        markers.push(new ml.Marker({ element: el, anchor: "left", offset: [-7, 0] }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
+        markers.push(new ml.Marker({ element: el, anchor: "left", offset: [-7, 0], opacityWhenCovered: "1" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
       });
       /* tap a point or shape: its 2D popup, and a way back to it in 2D */
       var popup = null;
@@ -540,7 +599,7 @@
         gl.on("mouseenter", id, function () { gl.getCanvas().style.cursor = "pointer"; });
         gl.on("mouseleave", id, function () { gl.getCanvas().style.cursor = ""; });
       });
-      W.OSAP_3D.gl = gl;
+      W.OSAP_3D.gl = gl; W.OSAP_3D._markers = markers;
     }).catch(function (e) { say((e && e.message) || "3D could not start."); });
   }
 

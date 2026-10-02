@@ -87,7 +87,7 @@ jobs:
       # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads.
       - name: Pull data-set searches and build the news search index
         if: ${{ !inputs.only || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'et' }}
-        run: node tools/refresh_topics.mjs; node tools/news_index.mjs
+        run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/refresh_layerfeed.mjs
         continue-on-error: true
       # The ET tab (UFO and UAP reports): the news pool's "uap" data set pinned on the map, official releases and the
       # notable cases in tools/et_cases.json, into data/live/et.js (tools/refresh_et.mjs).
@@ -215,7 +215,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/et.js data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/et.js data/live/social.js data/live/social data/live/warnings.js data/live/deepsouth.js probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
