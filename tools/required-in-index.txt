@@ -109,4 +109,7 @@ data-ev-tlr="1"
 
 # offline maps and data: Offline map base map and the saving panel (claude/offline-mode)
 <script src="assets/osap-offline.js"></script>
+
+# move saved data to another device: encrypted backup file, no account (claude/move-device)
+<script src="assets/osap-move.js"></script>
 offline: { name: "Offline map"
