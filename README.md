@@ -2,9 +2,24 @@
 
 <p align="center"><img src="assets/logo.png" alt="AXIOM OSAP, Open Source Awareness Platform" width="320"></p>
 
-Open Source Awareness Platform. One map, one timeline and one set of alert rules for every country on the globe (the 193 UN members plus Taiwan, Kosovo, Palestine and Western Sahara). Hand-researched layers cover 28 areas, grouped as Mainland Southeast Asia (Thailand, Vietnam, Cambodia, Laos, Myanmar), Maritime Southeast Asia (Philippines, Malaysia, Singapore, Indonesia, Brunei, Timor-Leste), East Asia (China, Taiwan, North Korea, South Korea, Japan, Okinawa, Mongolia), Oceania (Australia, New Zealand, Papua New Guinea) and South Asia (India, Pakistan, Nepal, Bhutan, Bangladesh, Sri Lanka, Maldives). Each area has the same layer set (floods, border or maritime security, insurgency where it applies, organized crime, scam centers, money laundering, weather, infrastructure, transportation, public safety, public health), named for what matters there. Every other country gets the automatic global feeds (earthquakes and GDACS disaster alerts) until it is researched.
+**Open Source Awareness Platform.** One map, one timeline and one set of alerts for every country on the globe (the 193 UN members plus Taiwan, Kosovo, Palestine and Western Sahara). It puts the news that matters to an analyst or a team on the ground first, and builds everything else around it from free public sources, with no accounts and no keys. Hand-researched layers go deeper for the original 28 areas in Southeast Asia, East Asia, South Asia and Oceania.
 
-It is a separate build for now and is meant to fold into AXIOM later (see [Path into AXIOM](#path-into-axiom)).
+**Open it:** https://01shane89-jpg.github.io/AXIOM-APSAP/ (installs as an app on a computer, Android or iPhone, and works offline).
+
+## What it does
+
+- **News first:** one searchable pool of national outlets for every country, translated to English, filtered to security, conflict, crime, politics, disasters and infrastructure (no sport, celebrity or lifestyle). Data sets narrow it to a topic, and keyword watches can push to your phone.
+- **Live hazards:** earthquakes, GDACS disaster alerts, tropical cyclone tracks, official weather warnings, tsunami and volcano bulletins, outbreaks, and a 7-day forecast with weather impacts.
+- **Security picture:** conflict tabs with front lines, military sites, history of violence, internet outages, maritime warnings and sanctions lists.
+- **Air and sea:** live aircraft (ADS-B) and ships (AIS) on the map.
+- **Planning tools:** medical plan for a point or area (hospitals by care level, evacuation legs, print view), embassies and evacuation points with an evac route, landing zone finder, route planning with distance and search along the route, and saved NAI/TAI areas.
+- **Infrastructure:** communications masts and coverage, power grid, data centres, roads and movement restrictions.
+- **Map tools:** MGRS grid and centre crosshair, measure, 2525D military symbols, drawn shapes, map points with notes and photos, 3D terrain, workspaces with KML/KMZ import and export, and offline maps.
+- **Country brief and reports:** a printable one-page brief and a Reports menu covering every report type.
+
+Every record links to its source and carries a SHA-256 fingerprint. Government figures are shown as claims, and AI-written text is tagged as AI generated.
+
+It is a separate build for now and is meant to fold into AXIOM later.
 
 ## Run it
 
