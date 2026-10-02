@@ -463,12 +463,15 @@
   var TIER = ["Level not known", "Role 1 equivalent (estimated)", "Role 2 equivalent (estimated)", "Role 3 equivalent (estimated)", "Trauma centre (sourced)"];
   var ROLE_RULE = "Role equivalents follow the military treatment roles. Role 1: first aid and resuscitation, no surgery. Role 2: emergency department and surgery. " +
     "Role 3: surgery with intensive care and specialist care such as neurosurgery or trauma. Estimated from the services OpenStreetMap or OSAP's sources list for the hospital: " +
-    "Role 3 where surgery and intensive or specialist care are listed (or an emergency department with 400 or more beds); Role 2 where surgery is listed (or an emergency department with 100 or more beds); " +
+    "Role 3 where surgery and intensive or specialist care are listed; Role 2 where surgery is listed, or an emergency department with 100 or more beds; " +
     "Role 1 where only an emergency department, beds or a helipad are listed. A university teaching or national referral hospital in OSAP's sourced list is a Role 3 equivalent. " +
+    "A bed count never makes a Role 3 equivalent. Low confidence: no services are listed, so the level rests only on an emergency department, beds or a helipad. " +
     "A stated trauma designation is shown as the source states it.";
   /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
   var REFERRAL = /universit|teaching hospital|referral cent|tertiary|faculty of medicine|college of medicine/i;
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
+  var LOW_TXT = "Low confidence: no services listed, only an emergency department, beds or a helipad";
+  function lowTag(f) { return f.kind === "hospital" && f.low ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
   function tierLabel(f) {
     if (f.tier === 4 && f.trauma) { var m = /level\s*(i{1,3}|[1-5])\b/i.exec(f.trauma.text); return m ? "Trauma level " + ({ i: 1, ii: 2, iii: 3 }[m[1].toLowerCase()] || m[1]) + " (sourced)" : TIER[4]; }
     return TIER[f.tier];
@@ -489,16 +492,19 @@
     var sp = String(f.specRaw || "").split(/[;,]/).map(function (x) { return x.trim(); }).filter(function (x) { return x && SPEC.test(x) && !(er && /^emergency$/i.test(x)); });
     if (sp.length) { sc += Math.min(3, sp.length); why.push(sp.slice(0, 5).join(", ").replace(/_/g, " ")); }
     var spAll = String(f.specRaw || ""), surg = SURG.test(spAll), icu = ICU.test(spAll), spec = SPECIAL.test(spAll);
-    var role = surg && (icu || spec) || (er && f.beds >= 400) ? 3 : surg || (er && f.beds >= 100) ? 2 : er || f.beds || f.pad ? 1 : 0;
+    /* Shane 2026-10-02: an emergency department and a bed count are not credible grounds for Role 3, so beds alone stop at
+       Role 2, and a level resting only on an emergency department, beds or a helipad (no services listed) is low confidence */
+    var role = surg && (icu || spec) ? 3 : surg || (er && f.beds >= 100) ? 2 : er || f.beds || f.pad ? 1 : 0;
     if (ref) { role = 3; sc += 4; why.unshift("teaching or referral hospital: " + ref + " (" + (m.srcname || "source") + ")"); }
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
+    f.low = !tr && !ref && !surg && role > 0;
     f.tier = tr ? 4 : role;
     return f;
   }
   /* most capable first; within a tier the higher score, then the shorter drive, then the nearer */
   function byCap(x, y) {
     var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s;
-    return y.tier - x.tier || y.score - x.score || a - b || x.m - y.m;
+    return y.tier - x.tier || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || x.m - y.m;
   }
   /* hospitals for the plan: the nearest ten, plus the best-ranked of the rest, plus sourced hospitals OSM lacks */
   function pickHosp(F, o, rH, sofList) {
@@ -726,6 +732,8 @@
     "#medplan .mpmark{display:inline-block;min-width:18px;text-align:center;font-weight:700;border-radius:3px;background:#D7141A;color:#fff;font-size:11px;padding:0 3px}" +
     "#medplan .mpmark.air{background:#1d5fa8}#medplan .mpmark.o{background:#111}#medplan .mpmark.e{background:#b35c00}" +
     "#medplan .mptier{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;border:1px solid currentColor}" +
+    "#medplan .mplow,.mpdoc .mplow{display:block;font-size:11.5px;font-weight:600;color:#8a4b00;margin:1px 0}" +
+    ":root[data-map=grey] #medplan .mplow,:root[data-map=dark] #medplan .mplow{color:#F5C877}.mpdoc .mplow{color:#8a4b00!important}" +
     "#medplan .mptier.t4{color:#8b0010}#medplan .mptier.t3{color:#7a3e00}#medplan .mptier.t2{color:#3d5a00}#medplan .mptier.t1,#medplan .mptier.t0{color:var(--muted,#56626F)}" +
     "#medplan .mpbest{display:inline-block;font-size:11px;font-weight:700;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;background:#111;color:#fff}" +
     "#medplan .mpgh{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin-top:2px;color:#fff}#medplan .mpgh.g{background:#1e7a3a}#medplan .mpgh.a{background:#a86400}#medplan .mpgh.r{background:#b3141a}" +
@@ -977,14 +985,14 @@
     var out = [], gh = GOLDEN_MIN * 60;
     function why(f, tag) {
       var b = bestWay(f);
-      return tierLabel(f) + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
+      return tierLabel(f) + (f.low ? " (low confidence)" : "") + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
     }
     function add(f, k, tag) { if (!f || out.length > 2 || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[out.length], why: [ROLE_PICK[out.length]], reason: why(f, tag) }); }
     function free(f) { return !out.some(function (p) { return p.f === f; }); }
     var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) {
       /* same level: within the same 10 minutes the better-equipped (sourced teaching hospital, more services) first */
       var a = bestWay(x)[0], b = bestWay(y)[0];
-      return y.tier - x.tier || Math.floor(a / 600) - Math.floor(b / 600) || y.score - x.score || a - b || byCap(x, y);
+      return y.tier - x.tier || Math.floor(a / 600) - Math.floor(b / 600) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || byCap(x, y);
     });
     if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next highest level of care" : "highest level of care listed"); }); return out; }
     var P = reach[0], pIn = bestWay(P)[0] <= gh;
@@ -1058,7 +1066,7 @@
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
-      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
+      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(airTotal(f))) + " from the call, with the aircraft's flight in</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
@@ -1110,7 +1118,7 @@
          buttons sit off-screen on a phone) */
       var cap = (f.why || []).slice(); if (f.beds) cap.push(f.beds + " beds"); if (f.pad) cap.push("helipad on site");
       return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" +
-        '<span class="sub">' + esc(p.reason) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
+        '<span class="sub">' + esc(p.reason) + "</span>" + lowTag(f) + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
         '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
         '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
         '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
@@ -1726,7 +1734,7 @@
     var listed = function (re, what) { var m = spl.filter(function (x) { return re.test(x); }); return m.length ? esc(what + ": " + m.join(", ")) + (osm ? " (" + osm + " healthcare:speciality)" : "") : ""; };
     var R = [];
     function row(k, v) { R.push([k, v]); }
-    row("Capability", '<b>' + esc(tierLabel(f)) + "</b>" + (f.trauma ? " " + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" : f.why && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + ". " + esc(ROLE_RULE) + "</span>" : '<span class="sub">' + esc(ROLE_RULE) + "</span>"));
+    row("Capability", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? " " + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" : f.why && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + ". " + esc(ROLE_RULE) + "</span>" : '<span class="sub">' + esc(ROLE_RULE) + "</span>"));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
       sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : nk("No emergency department listed."));
     row("Surgery", listed(SURG, "Surgical services listed") || nk("No surgery listed."));
