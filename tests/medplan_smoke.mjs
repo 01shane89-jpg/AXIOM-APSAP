@@ -53,6 +53,9 @@ const OSMX = { elements: [
    an international airport and the U.S. Embassy */
 const SOF = { asof: "2026-09-27", hospitals: [
   { id: "sof:th:hospital:sourced-trauma", name: "Sourced Trauma Centre", city: "Testburi", address: "1 Trauma Way", emergency_24h: null, trauma_level: "Level 1 trauma centre (test)", lat: 13.80, lon: 100.56, src: "https://example.org/trauma", srcname: "Test ministry list" },
+  /* Shane 2026-10-02: only hospitals with a documented trauma level can be picked, so the test country documents three */
+  { id: "sof:th:hospital:trauma-test", name: "Trauma Test Hospital", city: "Testburi", address: "", emergency_24h: null, trauma_level: "Level 2 trauma centre (test)", lat: 13.70, lon: 100.40, src: "https://example.org/tt", srcname: "Test registry" },
+  { id: "sof:th:hospital:far-north", name: "Far North Hospital", city: "Testburi", address: "", emergency_24h: null, trauma_level: "Level 3 trauma centre (test)", lat: 13.80, lon: 100.50, src: "https://example.org/fn", srcname: "Test registry" },
   { id: "sof:th:hospital:near", name: "Near Hospital", city: "Testburi", address: "", emergency_24h: true, trauma_level: null, lat: 13.7601, lon: 100.5101, src: "https://example.org/near", srcname: "Test wiki" }
 ], airports: [{ name: "Test International", icao: "VTTT", iata: "TTT", type: "large_airport", scheduled_service: "yes", lat: 13.69, lon: 100.75, src: "https://ourairports.com/airports/VTTT/", srcname: "OurAirports" }],
   posts: [{ name: "U.S. Embassy Bangkok", kind: "embassy", address: "95 Wireless Road, Bangkok", lat: 13.736167, lon: 100.546444, src: "https://travel.state.gov/test", srcname: "travel.state.gov" }] };
@@ -188,11 +191,14 @@ async function openPlan(p) {
   const order = (await p.$$eval("#mp-fac table", (t) => [...t[0].querySelectorAll("tbody tr td:nth-child(2) b")].map((x) => x.textContent)));
   ok(order.join("|") === "Sourced Trauma Centre|Trauma Test Hospital|Far North Hospital|Near Hospital", "desktop: hospitals ranked by capability, then drive time: " + order.join(", "));
   ok(await p.evaluate(() => /Primary/.test(document.querySelector("#mp-fac tbody tr td:nth-child(2)").textContent)), "desktop: the first hospital is marked Primary");
-  ok(/Trauma level 1 \(sourced\)/.test(fac) && /Level 1 trauma centre \(test\)/.test(fac) && await p.evaluate(() => [...document.querySelectorAll("#mp-fac a")].some((a) => a.href === "https://example.org/trauma")), "desktop: a stated trauma level shows as stated, with its source link");
-  ok(/Role 3 equivalent \(estimated\)/.test(fac) && /Role 2 equivalent \(estimated\)/.test(fac) && /Role 1 equivalent \(estimated\)/.test(fac), "desktop: other hospitals get a Role 1, 2 or 3 equivalent, labelled estimated");
+  ok(/Trauma Level I \(official designation, reported\)/.test(fac) && /Level 1 trauma centre \(test\)/.test(fac) && await p.evaluate(() => [...document.querySelectorAll("#mp-fac a")].some((a) => a.href === "https://example.org/trauma")), "desktop: a stated trauma level shows as stated, with its source link");
+  ok(/No verified trauma designation/.test(fac) && !/Role [123] equivalent/.test(fac) && /Observed T5 basic emergency facility \(inferred\); could be T4 if 24\/7 emergency department, blood bank and X-ray or ultrasound are confirmed/.test(fac), "desktop: an observed T-class with what would raise it; no Role estimate");
+  ok(/No verified trauma designation/.test(fac) && !/Role [123] equivalent/.test(fac), "desktop: hospitals with no stated trauma level read Trauma level not known, never a Role estimate");
   ok(!/(Basic|Medium|High) \(estimated\)/.test(fac) && !/Not known: no services listed/.test(fac), "desktop: no Low, Medium or High ratings");
-  ok(/Estimated from: emergency department, 300 beds/.test(fac), "desktop: the services behind each estimate are shown");
-  ok(await p.evaluate(() => [...document.querySelectorAll("#mp-fac .mptier")].every((t) => /Role 1: first aid/.test(t.title))), "desktop: each level label explains the Role rule");
+  ok(/Listed services: emergency department, 300 beds/.test(fac), "desktop: the services listed for each hospital are shown");
+  ok(await p.evaluate(() => { const rows = [...document.querySelectorAll("#mp-fac tr")]; const nr = rows.find((r) => /Near Hospital/.test(r.textContent)), tr = rows.find((r) => /Trauma Test Hospital/.test(r.textContent));
+    return !!nr && /No verified trauma designation/.test(nr.textContent) && /Reference only, not eligible for the picks: no official trauma designation found/.test(nr.textContent) && !!tr && !/Reference only/.test(tr.textContent); }), "desktop: a hospital with no documented trauma level is marked reference only, not eligible; documented ones are not");
+  ok(await p.evaluate(() => [...document.querySelectorAll("#mp-fac .mptier")].every((t) => /Only a hospital with an official trauma designation stated by a source/.test(t.title) && /never worked out from what a hospital has/.test(t.title))), "desktop: each level label explains the ranking rule");
   ok(/24-hour emergency \(Test wiki\)/.test(fac), "desktop: an OSM hospital is matched to its sourced record");
   ok(/10 min/.test(fac) && /25 min/.test(fac), "desktop: drive times shown (10 min, 25 min)");
   ok(/Near Hospital \(โรงพยาบาลใกล้\)/.test(fac) && order.length === 4, "desktop: a hospital mapped twice in OSM is listed once, with its other name");
@@ -212,7 +218,7 @@ async function openPlan(p) {
   ok(/Primary: H1 Sourced Trauma Centre/.test(rt) && /Secondary: H2 Trauma Test Hospital/.test(rt) && /Tertiary: H3 Far North Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
   const pst = await p.textContent("#mp-pst");
   ok(/Primary\s*H1 Sourced Trauma Centre/.test(pst) && /Secondary\s*H2 Trauma Test Hospital/.test(pst) && /Tertiary\s*H3 Far North Hospital/.test(pst), "desktop: Primary, Secondary and Tertiary named at the top of the plan");
-  ok(/Trauma level 1 \(sourced\), \d+ min from injury by air \(inside golden hour\); highest level of care in reach/.test(pst) && /next highest level of care/.test(pst) && /life, limb or eyesight goes to the highest level of care/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
+  ok(/Trauma Level I \(official designation, reported\), \d+ min from injury by air \(inside golden hour\); top ranked in reach/.test(pst) && /next ranked/.test(pst) && /life, limb or eyesight goes to the highest level of care/.test(pst), "desktop: each pick has a one-line reason: " + pst.slice(0, 200));
   ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-pst [data-mp-assess]")].every((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth; })), "desktop: the picks' Assessment buttons are on screen");
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
@@ -274,6 +280,12 @@ async function openPlan(p) {
   await p.click('#mp-pst [data-mp-offbtn]');
   await p.waitForFunction(() => !/Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(!/Sourced Trauma Centre/.test(await p.textContent("#mp-pst")) && !!(await p.$("#mp-fac tr.mpoff")), "desktop: Turn off on a pick drops it and picks the next");
+  /* Shane 2026-10-02: with every documented hospital off, nothing is picked, and an undocumented hospital is never put in */
+  for (let i = 0; i < 2; i++) { await p.click('#mp-pst [data-mp-offbtn]'); await p.waitForTimeout(400); }
+  await p.waitForFunction(() => /No Primary, Secondary or Tertiary/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
+  const none = await p.textContent("#mp-pst");
+  ok(/No Primary, Secondary or Tertiary: no hospital within \d+ km has an official trauma designation in OSAP's sources \(or the ones that do are turned off\)/.test(none) && /reference only and are not eligible/.test(none) && !/Near Hospital/.test(none)
+    && (await p.evaluate(() => window.OSAP_MEDPLAN._picks().length)) === 0, "desktop: with no documented hospital, the plan says so plainly and picks none, never an undocumented one: " + none.slice(0, 160));
   await p.click('#medplan [data-mp="allon"]');
   await p.waitForFunction(() => /Primary\s*H1 Sourced Trauma Centre/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
@@ -398,11 +410,12 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
   const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
     return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery"), or: row("Operating rooms"), s24: row("24-hour surgeon"), oh: row("Opening hours"),
-      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Capability"),
+      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
       ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpa-map").naturalWidth }; });
   ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
   ok(as.w >= 900, "assessment: has its own map " + as.w);
-  ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Role 2 equivalent \(estimated\)/.test(as.cap), "assessment: emergency department, beds and level with their source");
+  ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Trauma Level III \(official designation, reported\)/.test(as.cap) && /not yet verified with the designating authority/.test(as.cap), "assessment: emergency department, beds and the official designation as reported, with its source");
+  ok(as.h3.includes("Capability flags") && /^Observed T5/.test(as.cls) && /REPORTED, confidence LOW · OpenStreetMap emergency=yes/.test(as.flag) && /UNKNOWN No source states: 24\/7 emergency department, Trauma team/.test(as.unk), "assessment: capability flags with status, confidence and source; unknown listed as unknown: " + [as.cls, as.flag, as.unk.slice(0, 80)].join(" | "));
   ok(/^Not known/.test(as.icu) && /^Not known/.test(as.surg) && /^Not known/.test(as.blood) && /^Not known/.test(as.ct), "assessment: every gap says Not known (surgery, ICU, blood bank, CT/MRI)");
   ok(/^Not known/.test(as.or) && /^Not known/.test(as.s24) && /ask the hospital/.test(as.s24) && /^Not known/.test(as.oh), "assessment: operating rooms, 24-hour surgeon and opening hours rows, Not known where nothing is published");
   ok(/47P [A-Z]{2} \d{4} \d{4}/.test(as.mgrs) && /min/.test(as.road) && /golden hour/i.test(as.road) && /kn/.test(as.air), "assessment: MGRS, road and air times from the point of injury against the golden hour");
@@ -576,11 +589,21 @@ async function openPlan(p) {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
     d: M._facName({ name: "Hospital Drive Clinic" }, "clinic"), e: M._parseGrid("13.75, 100.5"), f: M._parseGrid("47P PR 6300 2000"), g: M._parseGrid("nonsense"),
     h: M._wxFlags({ vis: 5000, gust: 12, lc: 10, rain: 1, hi: 25, lo: 10 }).length,
-    i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
+    i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, il: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).low,
+    lows: [M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).low, M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).low,
+      M._capability({ name: "G", lat: 0, lon: 0, sofRec: { name: "G", notes: "Mahidol University", src: "x" } }, []).low, M._capability({ name: "Y", lat: 0, lon: 0 }, []).low], j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
     k: M._golden(45 * 60).c + M._golden(55 * 60).c + M._golden(61 * 60).c, l: Math.round(M._flightS(222240, 120) / 60),
     m: M._phoneOf({ phone: "+66 2 123 4567;+66 2 765 4321" }), n: M._phoneOf({ phone: "call us" }), o: M._webOf({ website: "javascript:alert(1)" }), q: M._webOf({ website: "www.x.org" }),
     r1: M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).tier, r2: M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).tier,
     r3: M._capability({ name: "C", lat: 0, lon: 0, er: "yes" }, []).tier, r4: M._capability({ name: "D", lat: 0, lon: 0, specRaw: "surgery;intensive_care" }, []).tier,
+    rk: [M._capability({ name: "L1", lat: 0, lon: 0, sofRec: { trauma_level: "Level I trauma center", src: "x" } }, []), M._capability({ name: "L2", lat: 0, lon: 0, sofRec: { trauma_level: "Level 2", src: "x" } }, []),
+      M._capability({ name: "TC", lat: 0, lon: 0, sofRec: { trauma_level: "Major Trauma Centre (NSW)", src: "x" } }, []), M._capability({ name: "U", lat: 0, lon: 0, sofRec: { name: "U", notes: "Mahidol University", src: "x" } }, []),
+      M._capability({ name: "S", lat: 0, lon: 0, specRaw: "surgery" }, [])].map(M._rankOf),
+    tc: (() => { const R = (k) => ({ status: "REPORTED", confidence: "LOW" }), C = (ks) => Object.fromEntries(ks.map((k) => [k, R(k)]));
+      const t3 = ["ed", "ed_24_7", "blood_bank", "xray", "ct", "icu", "general_surgeon", "emergency_operating_room", "anesthesia", "orthopedic_surgery"];
+      const rich = M._capability({ name: "Rich", lat: 0, lon: 0, er: "yes", beds: 900, specRaw: "trauma;neurosurgery;intensive;orthopaedics;vascular_surgery;cardiothoracic_surgery;plastic_surgery;radiology" }, []);
+      return { u: M._tClass({})["class"], t5: M._tClass(C(["ed"]))["class"], t3: [M._tClass(C(t3))["class"], M._tcText({ tc: M._tClass(C(t3)) })],
+        none: M._tClass({ ed: { status: "NOT_AVAILABLE", confidence: "LOW" } })["class"], nolev: rich.trauma === null && rich.lvl === null ? 3 : 0 }; })(),
     r5: M._tierLabel(M._capability({ name: "E", lat: 0, lon: 0, sofRec: { trauma_level: "Level II trauma center (ACS)", src: "x" } }, [])), r6: M._tierLabel(M._capability({ name: "F", lat: 0, lon: 0, sofRec: { trauma_level: "Major Trauma Centre (NSW)", src: "x" } }, [])),
     ref: (() => { const f = M._capability({ name: "G", lat: 0, lon: 0, sofRec: { name: "G", notes: "Mahidol University; Emergency and Trauma Center on site", src: "x", srcname: "English Wikipedia" } }, []); return [f.tier, f.why[0], M._tierLabel(f)]; })(),
     nref: M._capability({ name: "H", lat: 0, lon: 0, sofRec: { name: "H", notes: "Major private international hospital", src: "x" } }, []).tier,
@@ -590,13 +613,17 @@ async function openPlan(p) {
   ok(/withheld/.test(r.a) && /withheld/.test(r.b) && r.c === "Bangkok Hospital" && r.d === "Hospital Drive Clinic", "rules: doctor-named clinics withheld, others kept");
   ok(r.e && r.e[0] === 13.75 && r.f && Math.abs(r.f[0] - 13.7) < 1 && r.g === null, "rules: grids parse from lat, lon and MGRS; nonsense does not");
   ok(r.h === 0, "rules: calm weather raises no flags");
-  ok(r.i === 3 && r.j === 0, "rules: emergency dept + 600 beds is a Role 3 equivalent; nothing listed is level not known");
+  ok(r.i === 2 && r.il === true && r.j === 0, "rules: emergency dept + 600 beds ranks only with surgery-level hospitals, low confidence (a bed count never ranks top); nothing listed is level not known");
+  ok(r.rk[0] > r.rk[1] && r.rk[1] > r.rk[2] && r.rk[2] > r.rk[3] && r.rk[3] > r.rk[4], "rules: Level 1 above Level 2 above a level-less trauma centre above every hospital without a stated level " + JSON.stringify(r.rk));
+  ok(JSON.stringify(r.lows) === "[false,true,false,false]", "rules: low confidence only where no services are listed and nothing is sourced " + JSON.stringify(r.lows));
   ok(r.k === "gar", "rules: golden hour inside up to 50 min, at the limit to 60, beyond after");
   ok(r.l === 60, "rules: 120 nautical miles at 120 kn is 60 minutes");
   ok(r.m === "+66 2 123 4567" && r.n === "" && r.o === "" && r.q === "https://www.x.org", "rules: only well-formed phones and web links are shown");
-  ok(r.ref[0] === 3 && /teaching or referral hospital: Mahidol University/.test(r.ref[1]) && /English Wikipedia/.test(r.ref[1]) && /Role 3 equivalent \(estimated\)/.test(r.ref[2]) && r.nref === 0, "rules: a university teaching or referral hospital in the sourced list is a Role 3 equivalent, with its source; a private hospital note is not: " + JSON.stringify([r.ref, r.nref]));
+  ok(r.ref[0] === 3 && /teaching or referral hospital: Mahidol University/.test(r.ref[1]) && /English Wikipedia/.test(r.ref[1]) && r.ref[2] === "No verified trauma designation" && r.nref === 0, "rules: a university teaching or referral hospital in the sourced list ranks top of the not-known group, with its source; a private hospital note is not: " + JSON.stringify([r.ref, r.nref]));
   ok(r.r1 === 2 && r.r2 === 2 && r.r3 === 1 && r.r4 === 3, "rules: surgery is Role 2, ED + 100 beds Role 2, ED alone Role 1, surgery + intensive care Role 3 " + [r.r1, r.r2, r.r3, r.r4]);
-  ok(r.r5 === "Trauma level 2 (sourced)" && r.r6 === "Trauma centre (sourced)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
+  ok(r.r5 === "Trauma Level II (official designation, reported)" && r.r6 === "Trauma centre, level not stated (reported)", "rules: a stated trauma level reads as stated: " + r.r5 + ", " + r.r6);
+  ok(r.tc.u === "UNKNOWN" && r.tc.t5 === "T5" && r.tc.t3[0] === "T3" && /could be T2 if neurosurgery 24\/7, mechanical ventilation and trauma surgeon or trauma team are confirmed/.test(r.tc.t3[1]) && r.tc.none === "NONE"
+    && !/Level/.test(r.tc.t3[1]) && r.tc.nolev === 3, "rules: T-class from flags (unknown stays unknown, a met class names what would raise it, no emergency department is NONE); never worded as a level; capabilities never give an official designation " + JSON.stringify(r.tc));
   ok(r.tk.includes("12_100") && r.tk2.includes("0_178") && r.tk2.includes("0_-180"), "rules: stored-copy tiles cover the reach, across the date line " + r.tk2.join(" "));
   ok(r.p6.length === 2 && Math.abs(r.p6[0][0] - 38.5) < 1e-6 && Math.abs(r.p6[1][1] + 126.453) < 1e-6, "rules: Valhalla route shapes decode " + JSON.stringify(r.p6));
   ok(/withheld/.test(r.wh), "rules: a clinic withheld in the stored copy stays withheld");
