@@ -1,0 +1,13 @@
+[["n1042097856",-26.61162,144.25595,"au",{"name":"Quilpie Airport","phone":"+61 7 4656 1203","aeroway":"aerodrome","iata":"ULP"}],
+["n1042098226",-27.1333,145.89999,"au",{"name":"Rosevale Resort Airport","aeroway":"aerodrome"}],
+["n1042100226",-27.26519,145.98508,"au",{"name":"Wyandra Airport","aeroway":"aerodrome"}],
+["n1042100532",-27.94727,144.62879,"au",{"name":"Yowah Airport","aeroway":"aerodrome"}],
+["n7043020367",-27.86262,144.27216,"au",{"name":"Thargo","aeroway":"aerodrome"}],
+["n7043027594",-27.79554,144.25874,"au",{"name":"Wiralla","aeroway":"aerodrome"}],
+["n7057315337",-27.85459,145.14367,"au",{"name":"Tilbooroo","aeroway":"aerodrome"}],
+["n7059332554",-27.56064,145.16008,"au",{"name":"Yerrel Creek","aeroway":"aerodrome"}],
+["n9166266050",-27.97047,144.63481,"au",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
+["n9166266051",-27.96967,144.63275,"au",{"aeroway":"helipad"}],
+["w1217902958",-26.60627,144.25696,"au",{"name":"Quilpie Airport","aeroway":"aerodrome","icao":"YQLP","iata":"ULP"}],
+["w192854416",-26.61639,144.27454,"au",{"name":"Quilpie Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.southwest.health.qld.gov.au/healthcare-facilities/multipurpose-health-services/quilpie-multipurpose-health-service/","addr:housenumber":"30","addr:street":"Gyrica Street","addr:postcode":"4480"}],
+["w991899169",-26.61352,144.26786,"au",{"name":"CWAATSICH","healthcare":"clinic","phone":"+61 7 4656 1391","addr:housenumber":"49","addr:street":"Brolga Street","addr:postcode":"4480"}]]

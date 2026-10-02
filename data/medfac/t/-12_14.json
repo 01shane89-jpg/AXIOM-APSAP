@@ -1,0 +1,9 @@
+[["n1042037204",-11.42565,15.10444,"ao",{"name":"Aeroporto Waku Kungo","name:en":"Waku Kungo Airport","aeroway":"aerodrome","icao":"FNWK","iata":"CEO"}],
+["n13179063825",-11.41981,15.12654,"ao",{"name":"Hospital da Cela - Banco de Urgência","amenity":"hospital","healthcare":"hospital"}],
+["w1432321226",-11.35197,15.1524,"ao",{"amenity":"clinic","healthcare":"clinic"}],
+["w203082808",-11.42007,15.12593,"ao",{"name":"Hospital da Cela","amenity":"hospital","healthcare":"hospital"}],
+["w359249620",-10.85034,14.36537,"ao",{"amenity":"hospital"}],
+["w491311031",-10.86283,14.32585,"ao",{"amenity":"hospital"}],
+["w748815732",-10.92167,14.34495,"ao",{"name":"Centro de Saúde da Maria Augusta","name:en":"Maria Augusta Health Center","amenity":"clinic","healthcare":"clinic"}],
+["w749310725",-10.14024,14.68543,"ao",{"aeroway":"helipad"}],
+["w755569658",-11.36343,15.11534,"ao",{"amenity":"clinic","healthcare":"clinic"}]]

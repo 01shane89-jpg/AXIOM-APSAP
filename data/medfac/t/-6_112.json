@@ -1,0 +1,7 @@
+[["n11753487361",-5.84831,112.66093,"id",{"name":"RSUD UMAR MAS'UD BAWEAN","amenity":"hospital","healthcare":"hospital"}],
+["n12003481098",-5.84324,112.63699,"id",{"name":"Puskesmas Sangkapura","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
+["n12003491686",-5.73321,112.64865,"id",{"name":"Puskesmas Tambak","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
+["w1265243159",-5.84841,112.66119,"id",{"name":"RSUD UMAR MAS'UD BAWEAN","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","phone":"+6281336139526","website":"https://pgds.kemkes.go.id/profil_rs?id=35452","addr:street":"Jalan Pendidikan","addr:subdistrict":"Sangkapura","addr:district":"Kabupaten Gresik","addr:province":"Jawa Timur","addr:postcode":"61181"}],
+["w1295376605",-5.8432,112.63701,"id",{"name":"Puskesmas Sangkapura","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"public","addr:street":"Jalan Raya Rujing No.17","addr:city":"Kabupaten Gresik","addr:postcode":"61181"}],
+["w1295378350",-5.73317,112.64858,"id",{"name":"Puskesmas Tambak","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"public","contact:phone":"+62 352 5421101","addr:street":"Jalan Bhakti No.44","addr:city":"Kabupaten Gresik"}],
+["w163570940",-5.72473,112.67968,"id",{"name":"Bandar Udara Harun Thohir","name:en":"Harun Thohir Airport","operator":"PT Angkasa Pura I","aeroway":"aerodrome","icao":"WARW","iata":"BXW"}]]

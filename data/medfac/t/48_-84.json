@@ -1,0 +1,10 @@
+[["n2072434776",49.70981,-83.69327,"ca",{"aeroway":"helipad"}],
+["n2072434781",49.70964,-83.69345,"ca",{"aeroway":"helipad"}],
+["n3055816241",48.1867,-82.51264,"ca",{"aeroway":"aerodrome"}],
+["n3191689999",49.39637,-82.15552,"ca",{"aeroway":"aerodrome"}],
+["n3192394184",49.25455,-82.01443,"ca",{"aeroway":"aerodrome"}],
+["w243804671",49.42635,-82.42663,"ca",{"aeroway":"helipad"}],
+["w453085604",49.71414,-83.68811,"ca",{"name":"Hearst René Fontaine Municipal Airport","aeroway":"aerodrome","icao":"CYHF","iata":"YHF","wikidata":"Q3888430"}],
+["w645107060",49.4103,-82.46267,"ca",{"name":"Kapuskasing Airport","aeroway":"aerodrome","icao":"CYYU","iata":"YYU","wikidata":"Q3912855"}],
+["w653872892",49.42513,-82.42814,"ca",{"name":"Sensenbrenner Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Sensenbrenner Hospital","addr:housenumber":"101","addr:street":"Progress Crescent","addr:city":"Kapuskasing","addr:postcode":"P5N 3H5"}],
+["w781435667",49.6852,-83.67933,"ca",{"name":"Notre Dame Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Notre Dame Hospital","addr:housenumber":"1405","addr:street":"Edward Street","addr:city":"Hearst","addr:postcode":"P0L 1N0"}]]

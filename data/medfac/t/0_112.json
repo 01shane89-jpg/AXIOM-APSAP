@@ -1,0 +1,5 @@
+[["n1440386831",0.8695,112.92353,"id",{"name":"RSUD Dr. Achmad Diponegoro","amenity":"hospital"}],
+["n1447971840",0.87288,112.92278,"id",{"name":"Klinik Bersalin Nur Annisa","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"gynaecology"}],
+["n7231850685",1.90689,112.56075,"my",{"name":"Klinik Ng Tekalit","amenity":"clinic","healthcare":"clinic"}],
+["w541386007",0.8355,112.94048,"id",{"name":"Bandar Udara Pangsuma","name:en":"Pangsuma Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 567 21115","addr:street":"Jl. Adi Sucipto RT. 005/ 002, Kel. Kedamin Hulu, Kec. Putussibau Selatan, Kab. Kapuas Hulu, Kalimantan Barat, 78715","aeroway":"aerodrome","icao":"WIOP","iata":"PSU","aerodrome:type":"regional"}],
+["w581873463",1.10704,112.29253,"id",{"name":"Puskesmas Labian","amenity":"clinic"}]]

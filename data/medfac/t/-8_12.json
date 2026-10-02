@@ -1,0 +1,12 @@
+[["n287533173",-7.85581,13.11512,"ao",{"name":"Aeroporto de Ambriz","name:en":"Ambriz Airport","aeroway":"aerodrome","icao":"FNAM","iata":"AZZ"}],
+["w1171758198",-6.12412,12.33088,"ao",{"name":"Kwanda Base Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1224631679",-7.84138,13.10047,"ao",{"aeroway":"helipad"}],
+["w1324185483",-7.2299,12.86275,"ao",{"amenity":"hospital","healthcare":"hospital","addr:city":"N'Zeto"}],
+["w1324953393",-6.1326,12.37364,"ao",{"name":"Centro Médico do Soyo","amenity":"hospital","healthcare":"hospital","website":"https://clinicasagradaesperanca.co.ao/unidade/centro-mdico-do-soyo","addr:city":"Soyo"}],
+["w1326279020",-6.14274,13.74615,"ao",{"name":"Hospital do Mpala","amenity":"hospital","healthcare":"hospital"}],
+["w206950409",-6.14119,12.3716,"ao",{"name":"Aeroporto de Soyo","name:en":"Soyo Airport","aeroway":"aerodrome","icao":"FNSO","iata":"SZA"}],
+["w262983806",-6.12445,12.32803,"ao",{"name":"Aeródromo","operator":"Shut-down","aeroway":"aerodrome"}],
+["w573472214",-6.00197,12.39988,"cd",{"aeroway":"helipad"}],
+["w656548298",-7.25851,12.86288,"ao",{"name":"Aeroporto de Nzeto","name:en":"Nzeto Airport","aeroway":"aerodrome","icao":"FNZE","iata":"ARZ"}],
+["w705413862",-7.84424,13.10677,"ao",{"amenity":"hospital","healthcare":"hospital"}],
+["w948951795",-6.13242,12.37347,"ao",{"amenity":"clinic","healthcare":"clinic","addr:city":"Soyo"}]]

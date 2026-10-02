@@ -1,0 +1,13 @@
+[["n1042101457",46.92449,102.76946,"mn",{"name":"Khujirt Airport","aeroway":"aerodrome","icao":"ZMHU","iata":"HJT"}],
+["n2315439308",46.26729,102.78451,"mn",{"name":"Өвөрхангай Бүсийн Оношлогоо","amenity":"hospital","addr:city":"Арвайхээр"}],
+["n2316959308",47.19473,102.82505,"mn",{"name":"County Hospital","amenity":"hospital"}],
+["n3897533452",47.66727,102.55135,"mn",{"name":"Эмнэлэг","amenity":"hospital"}],
+["n4312767208",47.30747,103.25312,"mn",{"name:en":"dagmid","amenity":"hospital"}],
+["n4504753550",46.8988,102.76808,"mn",{"amenity":"hospital"}],
+["n4504758475",46.90217,102.77574,"mn",{"name":"Khujirt Spa Resort","amenity":"hospital"}],
+["n5439347402",46.2664,102.78501,"mn",{"amenity":"hospital"}],
+["w210010427",47.24634,102.82617,"mn",{"name":"Хархорин","aeroway":"aerodrome","icao":"ZMHH","iata":"KHR"}],
+["w210025845",46.2492,102.80379,"mn",{"name":"Арвайхээр нисэх буудал ᠠᠷᠪᠠᠶ ᠬᠡᠭᠡᠷ᠎ᠡ ᠨᠢᠰᠬᠦ ᠪᠠᠭᠤᠳᠠᠯ","name:en":"Arvaikheer","operator":"Civil Aviation Authority of Mongolia","aeroway":"aerodrome","icao":"ZMAH","iata":"AVK","aerodrome:type":"military/public"}],
+["w229126495",47.7454,103.48349,"mn",{"amenity":"clinic","healthcare":"clinic"}],
+["w241433379",46.81374,102.24702,"mn",{"name":"Бат-Өлзий сумын Эмнэлэг2","amenity":"hospital"}],
+["w278011731",46.26731,102.78538,"mn",{"name":"Төр эмэгтэйчүүдийн эмнэлэг","amenity":"hospital"}]]

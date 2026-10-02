@@ -1,0 +1,12 @@
+[["n8120957033",40.98975,80.09351,"cn",{"name":"Airport","aeroway":"aerodrome"}],
+["w1060129505",40.43307,81.25874,"cn",{"name":"阿拉尔塔里木机场","name:en":"Aral Talim Airport","addr:housenumber":"6000号","addr:street":"机场大道","addr:city":"阿拉尔市","addr:province":"新疆维吾尔自治区","addr:postcode":"844300","aeroway":"aerodrome","icao":"ZWAL","iata":"ACF"}],
+["w1079531393",41.15444,80.22004,"cn",{"name":"康宁医院","amenity":"hospital"}],
+["w1079531475",41.17533,80.2975,"cn",{"name":"阿克苏地区第二人民医院","amenity":"hospital"}],
+["w1079531476",41.14745,80.31011,"cn",{"name":"阿克苏地区第三人民医院","amenity":"hospital","addr:housenumber":"24","addr:street":"交通路"}],
+["w1095292761",41.1246,80.17138,"cn",{"name":"阿克苏市传染病医院","amenity":"hospital","healthcare":"hospital"}],
+["w1348283000",41.12083,80.11624,"cn",{"aeroway":"helipad"}],
+["w1348283001",41.12049,80.11759,"cn",{"aeroway":"helipad"}],
+["w1348283002",41.12129,80.11797,"cn",{"aeroway":"helipad"}],
+["w1348283003",41.12165,80.11661,"cn",{"aeroway":"helipad"}],
+["w871867474",41.26194,80.29077,"cn",{"name":"阿克苏红旗坡机场 ئاقسۇ خوڭچىپو ئايرودرومى","name:en":"Aksu Hongqipo Airport","addr:housenumber":"17号","addr:street":"机场大道","addr:city":"阿克苏市","addr:province":"新疆维吾尔自治区","aeroway":"aerodrome","icao":"ZWAK","iata":"AKU","aerodrome:type":"military/public"}],
+["w927414065",40.64074,81.27415,"cn",{"aeroway":"aerodrome"}]]

@@ -1,0 +1,5 @@
+[["n12671074147",-24.40926,113.49374,"au",{"name":"Lake MacLeod Airport","aeroway":"aerodrome"}],
+["n6938721904",-25.92718,113.53587,"au",{"name":"Shark Bay Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Silver Chain","website":"https://www.healthdirect.gov.au/australian-health-services/20055760/shark-bay-silver-chain-health-centre/services/denham-6537-hughes","addr:housenumber":"53","addr:street":"Hughes Street","addr:postcode":"6537"}],
+["w186998517",-24.88242,113.67183,"au",{"name":"Carnarvon Airport","operator":"Shire of Carnarvon","website":"https://www.carnarvon.wa.gov.au/services/airport/","aeroway":"aerodrome","icao":"YCAR","iata":"CVQ","aerodrome:type":"public"}],
+["w242912630",-24.88678,113.65899,"au",{"name":"Carnarvon Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.health.wa.gov.au/services/detail.cfm?Unit_ID=32"}],
+["w401638808",-25.89619,113.57624,"au",{"name":"Shark Bay Airport","aeroway":"aerodrome","icao":"YSHK","iata":"MJK","aerodrome:type":"public"}]]

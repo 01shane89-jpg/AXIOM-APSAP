@@ -1,0 +1,11 @@
+[["n357978409",29.92336,66.7461,"pk",{"name":"Dhingar","aeroway":"aerodrome","icao":"OP28"}],
+["n358046039",29.53881,66.0228,"pk",{"name":"Nushki Airport","name:en":"Nushki Airfield (historical)","aeroway":"aerodrome","icao":"OPNK","iata":"NHS"}],
+["n3966717043",29.64724,67.57214,"pk",{"aeroway":"helipad"}],
+["n6123937960",29.86237,67.33125,"pk",{"name":"Civil Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1111786901",29.5579,66.01299,"pk",{"aeroway":"helipad"}],
+["w1111786902",29.55758,66.01441,"pk",{"aeroway":"helipad"}],
+["w1111786903",29.55704,66.01474,"pk",{"aeroway":"helipad"}],
+["w1254156558",29.53874,66.02427,"pk",{"aeroway":"helipad"}],
+["w395299507",29.57532,67.84291,"pk",{"name":"Sibi Airport","aeroway":"aerodrome","icao":"OPSB","iata":"SBQ"}],
+["w651492384",29.57055,67.84792,"pk",{"aeroway":"helipad"}],
+["w651492387",29.5703,67.8482,"pk",{"aeroway":"helipad"}]]

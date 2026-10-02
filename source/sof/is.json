@@ -24,13 +24,19 @@
    "city": "Iceland",
    "address": "Engjateigur 7, 105 Reykjavík",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": null,
-   "lon": null,
-   "prec": "approx",
+   "lat": 64.141115,
+   "lon": -21.889611,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105605792",
    "srcname": "Wikidata",
-   "coord_basis": "no position found",
-   "fp": "67ff70ef6540bcaf8ad47a0040eb5319adee0cca5a7463d2dd85d319f81ff12d"
+   "coord_basis": "OpenStreetMap node/8069721862",
+   "fp": "eb92482308d99e49b19126b6fa091e74c331e4bc81fcf44606744fff3bff93d6",
+   "web": "https://is.usembassy.gov/",
+   "phone": "(354) 595 2200",
+   "phone_after_hours": "+354 595 2248",
+   "phone_src": "https://is.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -594,5 +600,68 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:is:xing:node-331269260",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 65.263637,
+   "lon": -14.000794,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/331269260",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "ec4eabb6a147e5602b927c324f23c04b6f19e25aa9e0ed66e06b91beb3a74290"
+  },
+  {
+   "id": "sof:is:xing:node-8933371965",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 63.994253,
+   "lon": -22.623706,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/8933371965",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "8304c9777ca883b52bf85255540e11fb019c5b9e7be1acac92bdd2eb76e9ee7f"
+  },
+  {
+   "id": "sof:is:xing:way-1420034817",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 66.066138,
+   "lon": -23.120362,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1420034817",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "38193923548100a3be5796b8db397481d4cfafeb1eb74dea1baf925440624fd1"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

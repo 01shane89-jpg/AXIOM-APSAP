@@ -1,0 +1,8 @@
+[["n1042023494",52.35273,-127.69554,"ca",{"name":"Ocean Falls Seaplane Base","aeroway":"aerodrome","iata":"ZOF","wikidata":"Q368630"}],
+["n1042134096",53.5625,-127.9487,"ca",{"name":"Kemano Heliport","operator":"Rio Tinto - Alcan","aeroway":"helipad"}],
+["w1096865586",53.82357,-126.17432,"ca",{"name":"Reef Hueston Airfield","aeroway":"aerodrome"}],
+["w1096865588",53.82305,-126.17197,"ca",{"name":"Reef Hueston Heliport","aeroway":"helipad"}],
+["w420654453",52.3735,-126.75727,"ca",{"name":"Bella Coola General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Vancouver Coastal Health","operator:type":"public","phone":"+1-250-799-5311","website":"https://www.vch.ca/en/location/bella-coola-general-hospital","addr:housenumber":"1025","addr:street":"Elcho Street","addr:city":"Bella Coola","addr:postcode":"V0T 1C0","opening_hours":"24/7","opening_hours:emergency":"24/7"}],
+["w420654496",52.38424,-126.58716,"ca",{"name":"Bella Coola Ambulance Station","emergency":"ambulance_station","operator":"BC Ambulance Service","addr:housenumber":"1626","addr:street":"Airport Road"}],
+["w628377433",52.38758,-126.59601,"ca",{"name":"Bella Coola Airport","addr:housenumber":"1685","addr:street":"Airport Road","addr:city":"Hagensborg","addr:province":"BC","addr:postcode":"V0T1H0","aeroway":"aerodrome","icao":"CYBD","iata":"QBC"}],
+["w629033934",52.82406,-126.9651,"ca",{"name":"Dean River Airport","aeroway":"aerodrome","iata":"YRD","wikidata":"Q22612669"}]]

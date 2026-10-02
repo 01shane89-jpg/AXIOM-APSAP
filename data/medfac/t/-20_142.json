@@ -1,0 +1,11 @@
+[["n1042099229",-19.21503,143.66157,"au",{"name":"Talavera Airport","aeroway":"aerodrome"}],
+["n3782937484",-18.29215,143.54718,"au",{"name":"Georgetown Primary Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+61 7 4062 1266","website":"https://www.health.qld.gov.au/services/cairns-hinterland/cairns_georgetown_hos.asp","addr:street":"High Street","addr:postcode":"4871"}],
+["n423493920",-18.30261,143.53201,"au",{"name":"Georgetown Airport","aeroway":"aerodrome","iata":"GTT"}],
+["n6975407932",-19.31144,142.07027,"au",{"name":"Pioneer","aeroway":"aerodrome"}],
+["n8023691121",-18.79623,143.42485,"au",{"aeroway":"helipad"}],
+["n8891747540",-18.21126,142.24011,"au",{"name":"Croydon Primary Health Care Centre","amenity":"clinic","healthcare":"clinic","operator":"Queensland Government","operator:type":"public"}],
+["w235999339",-18.21886,142.25517,"au",{"name":"Croydon Aerodrome","aeroway":"aerodrome","icao":"YCRY","iata":"CDQ"}],
+["w408753482",-18.29218,143.54715,"au",{"name":"Georgetown Primary Health Centre","amenity":"clinic","healthcare":"clinic","phone":"+61 7 4062 1266","website":"https://www.health.qld.gov.au/services/cairns-hinterland/cairns_georgetown_hos.asp","addr:street":"High Street","addr:postcode":"4871"}],
+["w709252858",-18.58654,143.56614,"au",{"name":"Forsayth Airport","aeroway":"aerodrome"}],
+["w709622959",-18.84987,143.71001,"au",{"name":"Robinhood Airport","aeroway":"aerodrome","icao":"YROB","iata":"ROH"}],
+["w962110432",-18.58996,143.60503,"au",{"name":"Forsayth Hospital - Primary Health Centre","amenity":"hospital","healthcare":"hospital","operator":"Cairns and Hinterland Hospital and Health Service"}]]

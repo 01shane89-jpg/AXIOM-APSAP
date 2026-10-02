@@ -4,7 +4,7 @@
      the open view and opens Overlays when tapped.
    - One country picker on every screen size: the phone's grouped menu replaces the desktop's rows of region buttons, and
      "Add a country to this map" is its last entry. The activity-dot explanation moves into the picker's tooltip.
-   - Reports (Country brief, Country report, Timeline report) is one small menu in place of three buttons. Settings is a
+   - Reports is one menu listing every report OSAP makes (assets/osap-reports.js), in place of a row of buttons. Settings is a
      gear holding device preferences only (see below). On a phone there is no More/Less (Shane 2026-09-29 12:04Z): the
      period chip and the gear sit beside the country picker, and Reports is a map tool.
    - One data freshness badge: the flood line under the header is gone on every view (the Flood panel keeps its own
@@ -71,8 +71,8 @@
     var b = D.createElement("button"); b.type = "button"; b.id = id; b.className = "refresh tidybtn"; b.textContent = label; b.title = t;
     b.setAttribute("data-tidy", kind); b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false"); return b;
   }
-  var rep = mk("tidy-rep", "Reports", "Country brief, country report and timeline report", "rep");
-  var set = mk("tidy-set", "", "Settings: map colours, grid format, units, my location and credits", "set");
+  var rep = mk("tidy-rep", "Reports", "Every report OSAP makes: country, weather, timeline, area, route and more", "rep");
+  var set = mk("tidy-set", "", "Settings: map colours, grid format, units, my location, offline maps and credits", "set");
   var perChip = mk("tidy-per", "", "Reporting period", "per");
   set.setAttribute("aria-label", "Settings");
   set.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -81,7 +81,7 @@
   if (anchor) { anchor.parentNode.insertBefore(rep, anchor); anchor.parentNode.insertBefore(set, anchor); } else { hdr.appendChild(rep); hdr.appendChild(set); }
   /* phone: Reports as a map tool, just above Layout (which a phone does not show) */
   var repTool = D.createElement("button"); repTool.type = "button"; repTool.id = "tidy-reptool"; repTool.setAttribute("data-tidy", "rep");
-  repTool.title = "Country brief, country report and timeline report"; repTool.setAttribute("aria-label", "Reports"); repTool.setAttribute("aria-haspopup", "menu"); repTool.setAttribute("aria-expanded", "false");
+  repTool.title = "Every report OSAP makes: country, weather, timeline, area, route and more"; repTool.setAttribute("aria-label", "Reports"); repTool.setAttribute("aria-haspopup", "menu"); repTool.setAttribute("aria-expanded", "false");
   repTool.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg><span class="atk-l">Reports</span>';
   function toolPlace() {
     var list = q("#atk-tools .atk-list"); if (!list || repTool.parentNode === list) return;
@@ -122,6 +122,8 @@
     if (A && A.posFmt) h += seg("fmt", "Grid format", [["mgrs", "MGRS"], ["dd", "Lat/long"], ["dms", "DMS"]], A.posFmt());
     if (M && M.prefs) h += seg("unit", "Distance units", [["km", "km"], ["mi", "miles"], ["nm", "nautical mi"]], M.prefs().unit);
     if (LOC) h += '<label class="tpchk"><input type="checkbox" data-tset="loc"' + (LOC.on() ? " checked" : "") + '> Use my location<span>Kept on this device only</span></label>';
+    /* saving maps and data on this device for use with no signal (assets/osap-offline.js) */
+    if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -135,8 +137,9 @@
   function popOpen(btn) {
     popClose();
     var kind = btn.getAttribute("data-tidy");
-    pop.innerHTML = "";
-    if (kind === "rep") {
+    pop.innerHTML = ""; pop.classList.remove("tprep");
+    if (kind === "rep" && W.OSAP_REPORTS) { pop.innerHTML = W.OSAP_REPORTS.menuHtml(); pop.classList.add("tprep"); }
+    else if (kind === "rep") {
       var items = [["#brief-btn", "Country brief", "One page to print or save as PDF"], ["#report-btn", "Country report", "PMESII summary and threat assessment (AI draft)"], ["#tlrep-btn", "Timeline report", "The timeline as it is filtered now"]];
       pop.innerHTML = items.filter(function (it) { var b = q(it[0]); return b && !b.hidden; }).map(function (it) {
         return '<button type="button" role="menuitem" data-tp="' + it[0] + '"><b>' + esc(it[1]) + "</b><span>" + esc(it[2]) + "</span></button>";
@@ -145,6 +148,7 @@
       var pl = D.createElement("div"); pl.className = "tplbl"; pl.textContent = "Reporting period"; pop.appendChild(pl);
       if (per) pop.appendChild(per);
     } else pop.appendChild(setPanel());
+    pop.style.maxHeight = "";
     pop.hidden = false; popFor = btn; btn.setAttribute("aria-expanded", "true");
     var r = btn.getBoundingClientRect(), w = pop.offsetWidth, ph = pop.offsetHeight;
     if (btn === repTool) {
@@ -154,6 +158,8 @@
     } else {
       pop.style.top = Math.round(r.bottom + 4) + "px";
       pop.style.left = Math.round(Math.max(8, Math.min(r.left, W.innerWidth - w - 8))) + "px";
+      /* a long menu (Reports) scrolls inside the space below the button */
+      if (r.bottom + 4 + ph > W.innerHeight - 8) pop.style.maxHeight = Math.max(160, Math.round(W.innerHeight - r.bottom - 12)) + "px";
     }
   }
   [rep, set, perChip, repTool].forEach(function (b) { b.addEventListener("click", function (e) { e.stopPropagation(); if (popFor === b) popClose(); else popOpen(b); }); });
@@ -170,7 +176,9 @@
     }
     var b = e.target.closest && e.target.closest("[data-tp]"); if (!b) return;
     var sel = b.getAttribute("data-tp"); popClose();
-    press(sel);
+    if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
+    else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
+    else press(sel);
   });
   pop.addEventListener("change", function (e) {
     var c = e.target; if (c.getAttribute("data-tset") !== "loc" || !W.OSAP_LOC) return;
@@ -258,6 +266,9 @@
     "#tidy-pop [data-tp]{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:6px;padding:8px 10px;color:var(--ink);cursor:pointer;min-height:40px}" +
     "#tidy-pop [data-tp]:hover,#tidy-pop [data-tp]:focus-visible{background:var(--accent-soft,rgba(0,0,0,.06))}#tidy-pop [data-tp] span{font-size:12px;color:var(--muted)}" +
     "#tidy-pop .tplbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:4px 10px 4px}#tidy-pop .tpset{display:flex;flex-direction:column;gap:6px}#tidy-pop #theme-seg{display:flex!important;margin:0 10px 4px}#tidy-pop{min-width:250px}" +
+    "#tidy-pop.tprep{box-sizing:border-box;max-height:calc(100vh - 16px);overflow:auto;display:block}#tidy-pop .tprg{break-inside:avoid;padding-bottom:4px}#tidy-pop .tprg [data-tp],#tidy-pop .tprg .tpoff{width:100%}" +
+    "#tidy-pop .tpoff{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font-size:14px;padding:8px 10px;min-height:40px;border-radius:6px;color:var(--muted)}#tidy-pop .tpoff b{font-weight:600}#tidy-pop .tpoff span{font-size:12px;font-style:italic}" +
+    "@media (min-width:760px) and (min-height:500px){#tidy-pop.tprep{column-count:2;column-gap:8px;width:min(620px,calc(100vw - 16px))}}" +
     "#tidy-pop .tpnone{margin:6px 10px;font-size:13px;color:var(--muted)}" +
     ".ohp .tpref{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 8px}.ohp .tpref .obs{font-size:12px}" +
     /* phone: map credits as an "i" until tapped */

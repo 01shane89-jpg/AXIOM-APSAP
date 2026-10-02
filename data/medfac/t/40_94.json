@@ -1,0 +1,12 @@
+[["n12116845808",40.04068,94.80773,"cn",{"amenity":"clinic","healthcare":"clinic"}],
+["r10357707",40.16345,94.81259,"cn",{"name":"敦煌莫高国际机场","name:en":"Dunhuang Mogao International Airport","aeroway":"aerodrome","icao":"ZLDH","iata":"DNH"}],
+["w104170165",40.09258,94.6819,"cn",{"name":"敦煌鸣沙山通用机场","aeroway":"aerodrome"}],
+["w1046946618",40.093,94.68144,"cn",{"aeroway":"helipad"}],
+["w1046946619",40.09294,94.6808,"cn",{"aeroway":"helipad"}],
+["w1046946620",40.09282,94.68025,"cn",{"aeroway":"helipad"}],
+["w1046946621",40.0928,94.67976,"cn",{"aeroway":"helipad"}],
+["w1046946622",40.09277,94.67929,"cn",{"aeroway":"helipad"}],
+["w1046946623",40.09274,94.67881,"cn",{"aeroway":"helipad"}],
+["w1308436440",40.14473,94.64964,"cn",{"name":"敦煌市妇幼保健站","amenity":"hospital","healthcare":"hospital"}],
+["w359361104",40.09305,94.68207,"cn",{"aeroway":"helipad"}],
+["w777937780",40.14387,94.67336,"cn",{"name":"敦煌市医院","name:en":"Dunhuang Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;paediatrics;ophthalmology;orthopaedics;emergency;cardiology;oncology;dermatology;gynaecology","emergency":"yes"}]]

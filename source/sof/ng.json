@@ -36,13 +36,19 @@
    "city": "Abuja",
    "address": null,
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 9.0579,
-   "lon": 7.4951,
-   "prec": "approx",
+   "lat": 9.041223,
+   "lon": 7.476955,
+   "prec": "exact",
    "src": "https://ng.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
-   "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "1af558dd8883a54d02366cde065cb166f73b7417543305d13d2cc6a8859212a2"
+   "coord_basis": "OpenStreetMap way/206315588",
+   "fp": "4240ba1f79ee0c695c5ea0546012e6a11795aa448c89de8f500d812555999827",
+   "web": "https://ng.usembassy.gov",
+   "phone": "+234 209 461 4000",
+   "phone_after_hours": "+234 209 461 4000",
+   "phone_src": "https://ng.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   },
   {
    "id": "sof:ng:post:u-s-consulate-general-lagos",
@@ -51,13 +57,18 @@
    "city": "Lagos",
    "address": null,
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 6.4541,
-   "lon": 3.3947,
-   "prec": "approx",
+   "lat": 6.440704,
+   "lon": 3.406664,
+   "prec": "exact",
    "src": "https://ng.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
-   "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "dc70816133eadc6cc911e47ab362be4c5486dfd43ef0c59b88b367efedbfb572"
+   "coord_basis": "OpenStreetMap way/596634611",
+   "fp": "e7c57494aaba0fe0532eaad8fae185114d5552bf305e143ef3a1e14c6c2c6f55",
+   "web": "https://ng.usembassy.gov/embassy-consulate/lagos/",
+   "phone": "(234)-1-460-3400",
+   "phone_src": "https://www.openstreetmap.org/way/596634611",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -681,5 +692,100 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ng:xing:node-11307797838",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 5.675608,
+   "lon": 8.84139,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11307797838",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "b48e12e93d7aefffb366d7bf4ece4495ea637f500cb6b29d0f0030d6a429d844"
+  },
+  {
+   "id": "sof:ng:xing:node-13347836968",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 6.695572,
+   "lon": 2.78326,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/13347836968",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "ad4a3df225b1423b82bdf959600ab57086ccca0e0ca0a62c4ed690dedb665450"
+  },
+  {
+   "id": "sof:ng:xing:node-6810816145",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 5.821222,
+   "lon": 8.840012,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6810816145",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "563fd5d36255003de815cd15f3d22d0b829dedd24fb4a114459035df48b20a39"
+  },
+  {
+   "id": "sof:ng:xing:node-929836425",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 5.811561,
+   "lon": 8.846515,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/929836425",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7bf4d3c6741a6a8d76731ff7f465d779fb484158369f2cef880b191360376c33"
+  },
+  {
+   "id": "sof:ng:xing:node-932143954",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 12.835945,
+   "lon": 8.986256,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/932143954",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "a75415e5af319cd7f7e62f33b37083500380bf4adba73ab48b4b4de72dd8b706"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

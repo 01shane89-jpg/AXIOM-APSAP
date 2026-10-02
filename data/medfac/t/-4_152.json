@@ -1,0 +1,10 @@
+[["w1028637521",-3.84551,152.48788,"pg",{"name":"Kabanut Health Centre","amenity":"clinic","healthcare":"clinic"}],
+["w1028829933",-3.88137,152.77683,"pg",{"name":"Lipek Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["w1028919060",-3.19523,152.60122,"pg",{"name":"Palie Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["w1033537369",-3.38364,153.28301,"pg",{"name":"Amfar Health Centre","amenity":"hospital","healthcare":"hospital"}],
+["w1265675983",-2.63629,152.02551,"pg",{"name":"Medical Centre","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;emergency;internal;vaccination;infectious_diseases","operator":"Simberi Gold Company Limited","operator:type":"private","addr:city":"Pikiput Mining Camp"}],
+["w218711160",-3.04403,152.62948,"pg",{"name":"Lihir Island Airport","name:en":"Lihir Island Airport","aeroway":"aerodrome","icao":"AYKY","iata":"LNV","aerodrome:type":"public"}],
+["w324625960",-3.06774,152.62905,"pg",{"name":"Lihir Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w792974564",-3.66932,152.43776,"pg",{"name":"Namatanai Airport","aeroway":"aerodrome","icao":"AYNX","iata":"ATN"}],
+["w793224597",-3.38369,153.28111,"pg",{"name":"Boang Island Airstrip","aeroway":"aerodrome","iata":"BOV"}],
+["w835279530",-3.67134,152.44179,"pg",{"name":"Namatanai Hospital","amenity":"hospital","healthcare":"hospital"}]]

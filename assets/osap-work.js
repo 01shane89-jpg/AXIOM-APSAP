@@ -62,6 +62,8 @@
   /* ---------- my work store ---------- */
   var WORK = lsGet(WORK_KEY);
   if (!WORK || typeof WORK !== "object" || !WORK.items || typeof WORK.items !== "object") WORK = { schema: "osap-work/1", items: {} };
+  /* item keys are record fingerprints (16 hex); anything else (a hand-made or tampered workspace file) is dropped */
+  Object.keys(WORK.items).forEach(function (k) { if (!/^[0-9a-f]{16}$/.test(k)) delete WORK.items[k]; });
   function saveWork() { if (!lsSet(WORK_KEY, WORK)) toast("This browser would not store your work (storage full or blocked)."); }
   function snap(r) {
     return { title: String(r.title || ""), layer: r.layer || "", type: r.type || "", status: claimStatus(r), source: r.src ? r.src.name : "",
@@ -407,11 +409,11 @@
           (u ? '<div class="wks"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 70)) + "</a></div>" : "") +
           (s.fp ? '<div class="wks wkfp">SHA-256 ' + esc(s.fp) + "</div>" : "") +
           '<div class="wkanl"><span class="wktag">Your note</span>' +
-          '<textarea data-wk-note="' + it.k + '" rows="2" maxlength="4000" placeholder="Your own note (not part of the source)">' + esc(it.note || "") + "</textarea></div>" +
-          '<div class="wkbtns">' + (live ? '<button type="button" class="refresh" data-wk-open="' + it.k + '">Open</button>' : '<span class="obs">Not in the current data; kept from when you saved it.</span>') +
-          '<button type="button" class="refresh" data-wk-tog="saved" data-k="' + it.k + '" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
-          '<button type="button" class="refresh" data-wk-tog="reviewed" data-k="' + it.k + '" aria-pressed="' + !!it.reviewed + '">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
-          '<button type="button" class="refresh" data-wk-del="' + it.k + '">Remove</button></div></div>';
+          '<textarea data-wk-note="' + esc(it.k) + '" rows="2" maxlength="4000" placeholder="Your own note (not part of the source)">' + esc(it.note || "") + "</textarea></div>" +
+          '<div class="wkbtns">' + (live ? '<button type="button" class="refresh" data-wk-open="' + esc(it.k) + '">Open</button>' : '<span class="obs">Not in the current data; kept from when you saved it.</span>') +
+          '<button type="button" class="refresh" data-wk-tog="saved" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
+          '<button type="button" class="refresh" data-wk-tog="reviewed" data-k="' + esc(it.k) + '" aria-pressed="' + !!it.reviewed + '">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
+          '<button type="button" class="refresh" data-wk-del="' + esc(it.k) + '">Remove</button></div></div>';
       }).join("") + "</div>" : '<p class="obs">Nothing here yet. Open any report and use ☆ Save, Mark reviewed or Add note.</p>') +
       '<h3>Keep your work when you change phone</h3><p class="obs">Export writes every country\'s saved items and notes to a file. Import merges a file back in; the newer copy of each item wins.</p>' +
       '<p class="wkbtns"><button type="button" class="refresh" data-wk-act="notes-out">Export my notes (.json)</button>' +

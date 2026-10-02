@@ -1,0 +1,12 @@
+[["n1042093163",-26.69678,141.04909,"au",{"name":"Arrabury Airport","operator":"m","aeroway":"aerodrome","iata":"AAB"}],
+["n1042093558",-26.7453,140.638,"au",{"name":"Cordillo Downs Airport","aeroway":"aerodrome","iata":"ODL"}],
+["n1042093717",-27.075,141.89999,"au",{"name":"Durham Downs Airport","aeroway":"aerodrome","iata":"DHD"}],
+["n1042093946",-27.7417,140.745,"au",{"name":"Innamincka Township Airport","aeroway":"aerodrome","icao":"YIMT"}],
+["n1042093965",-27.70241,140.73647,"au",{"name":"Innamincka Airport","aeroway":"aerodrome","iata":"INM"}],
+["n1042094872",-27.40123,141.81251,"au",{"name":"Ballera Airport","aeroway":"aerodrome","icao":"YLLE","iata":"BBL"}],
+["n3287653515",-27.67011,140.09431,"au",{"name":"Tirrawarra Airport","aeroway":"aerodrome","icao":"YTIW"}],
+["n5000955886",-27.62125,141.07217,"au",{"name":"Dig Tree Airstrip","aeroway":"aerodrome"}],
+["n8548274364",-27.74646,140.73668,"au",{"name":"RFDS Clinic Innamincka","amenity":"clinic","healthcare":"clinic","operator":"Royal Flying Doctor Service","operator:type":"ngo"}],
+["w1155949340",-26.74517,140.63784,"au",{"name":"Cordillo Downs Airport","aeroway":"aerodrome","icao":"YCOD","iata":"ODL"}],
+["w1448400730",-26.69089,141.04968,"au",{"name":"Arrabury Airport","operator":"m","aeroway":"aerodrome","icao":"YARY","iata":"AAB"}],
+["w1450169699",-27.54846,141.16114,"au",{"name":"Nappa Merrie Airport","aeroway":"aerodrome","icao":"YNAP","iata":"NMR"}]]
