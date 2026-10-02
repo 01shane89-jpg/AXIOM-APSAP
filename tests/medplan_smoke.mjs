@@ -1,6 +1,6 @@
-// Headless check of the Medical plan (assets/osap-medplan.js) opened from Draw area on the map toolbar, on a desktop and a
+// Headless check of the Medical plan (assets/osap-medplan.js) opened from its own Med plan button on the map toolbar, on a desktop and a
 // phone. OpenStreetMap (Overpass), OSRM and Open-Meteo are answered by fixed test data here, so the check is the same every
-// run; tools/probe_medplan.sh checks the real hosts. Checks: the menu offers Medical plan only once an area is drawn; the plan
+// run; tools/probe_medplan.sh checks the real hosts. Checks: the toolbar has a Med plan button and the Area menu does not list it; the plan
 // lists hospitals sorted by road drive time with MGRS grids, emergency and helipad flags; a clinic named after a doctor is
 // withheld; phone numbers never appear; helipads and airfields are listed; "Use as HLZ" fills the HLZ field, which is kept on
 // the device; a typed CCP can be the start point; weather flags come from the rules; the map shows numbered marks that go
@@ -163,9 +163,13 @@ async function areaMenu(p) {
   }
   return p.textContent("#atk-pop");
 }
+/* the toolbar's Med plan button (it closes an open plan, so it is only pressed when the plan is shut) */
+async function medBtn(p) {
+  await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (m && !m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
+  if (await p.evaluate(() => { const m = document.getElementById("medplan"); return !m || m.hidden; })) await p.click('#atk-tools [data-atk="medplan"]');
+}
 async function openPlan(p) {
-  await areaMenu(p);
-  await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"), w = document.querySelector("#mp-wx table"); return t && w && /min/.test(document.getElementById("mp-fac").textContent); }, null, { timeout: 20000 });
 }
 
@@ -173,18 +177,20 @@ async function openPlan(p) {
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } });
   await p.evaluate(() => { try { window.TSAP.areaApi.setArea(null); } catch (e) {} });
-  ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu lists Medical plan before an area is drawn");
-  await p.click('#atk-pop [data-pk="med"]'); await p.waitForTimeout(300);
+  ok(!/Medical plan/.test(await areaMenu(p)), "desktop: the Area menu no longer lists Medical plan");
+  ok(await p.evaluate(() => { const b = document.querySelector('#atk-tools [data-atk="medplan"]'); return !!b && /Med plan/.test(b.textContent); }), "desktop: Med plan has its own toolbar button");
+  await medBtn(p); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => document.querySelector('#atk-tools [data-atk="medplan"]').getAttribute("aria-pressed") === "true"), "desktop: the Med plan button shows pressed while the plan is open");
   ok(await p.evaluate(() => { const m = document.getElementById("medplan"); return !!m && !m.hidden && /Planned from a point, no drawn area needed/.test(m.textContent); }), "desktop: Medical plan with no area opens straight away on the map centre, no shape needed");
   await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"), w = document.querySelector("#mp-wx table"); return t && w; }, null, { timeout: 20000 }).catch(() => {});
   await p.evaluate(() => { const b = document.querySelector('#medplan [data-mp="close"]'); if (b) b.click(); }); await p.waitForTimeout(150);
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await p.waitForTimeout(1500); Object.keys(calls).forEach((k) => { if (k !== "wd") calls[k] = 0; }); /* the checks below count the requests of one fresh open (Wikidata is cached a week on the device) */
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
-  ok(/Medical plan/.test(await areaMenu(p)), "desktop: Area menu offers Medical plan once an area is drawn");
-  await p.click('#atk-tools [data-atk="area"]'); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => document.querySelector('#atk-tools [data-atk="medplan"]').getAttribute("aria-pressed") === "false"), "desktop: closing the plan releases the Med plan button");
+  ok(!/Medical plan/.test(await areaMenu(p)), "desktop: still not in the Area menu once an area is drawn");
   await openPlan(p);
-  ok(await p.evaluate(() => !!window.OSAP_MEDPLAN && !document.getElementById("medplan").hidden), "desktop: Medical plan in the Area menu opens the plan");
+  ok(await p.evaluate(() => !!window.OSAP_MEDPLAN && !document.getElementById("medplan").hidden), "desktop: the Med plan button opens the plan for the drawn area");
   ok(/Centred on the centre of the area/.test(await p.textContent("#medplan")), "desktop: with no point of injury set, the plan is centred on the area's centre");
   await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 10000 });
   const fac = await p.textContent("#mp-fac");
@@ -469,7 +475,7 @@ async function openPlan(p) {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }, true);
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await p.evaluate(() => { const b = document.getElementById("atk-tools"); if (b && b.classList.contains("folded")) b.querySelector('[data-atk="fold"]').click(); });
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => /could not be reached/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 20000 });
   ok(/Try again/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down says so and offers Try again");
   ok(/Sourced Trauma Centre/.test(await p.textContent("#mp-fac")) && /only OSAP's researched hospitals/.test(await p.textContent("#mp-fac")), "phone: OpenStreetMap down still lists OSAP's sourced hospitals, and says that is all");
@@ -492,7 +498,7 @@ async function openPlan(p) {
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: MF_ALL });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => { const t = document.querySelector("#mp-fac table"); return t && /min/.test(document.getElementById("mp-fac").textContent); }, null, { timeout: 20000 });
   const fac = await p.textContent("#mp-fac");
   ok(/Sourced Trauma Centre/.test(fac) && /Far North Hospital/.test(fac) && /Trauma Test Hospital/.test(fac) && /Community Health Centre 7/.test(fac), "stored: hospitals and clinics from the stored copy");
@@ -509,7 +515,7 @@ async function openPlan(p) {
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true, medfac: ["kh"] });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => /does not yet cover/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 25000 });
   const fac = await p.textContent("#mp-fac");
   ok(/Far North Hospital/.test(fac) && /does not yet cover Thailand: facilities there are missing/.test(fac) && !/Laos|Myanmar/.test(fac) && !/No hospital/.test(fac), "stored, partly: lists the stored hospitals and names the countries not yet stored: " + fac.slice(0, 400));
@@ -526,7 +532,7 @@ async function openPlan(p) {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }, { medfac: MF_ALL });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await p.evaluate(() => { const b = document.getElementById("atk-tools"); if (b && b.classList.contains("folded")) b.querySelector('[data-atk="fold"]').click(); });
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 25000 });
   await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
@@ -550,7 +556,7 @@ async function openPlan(p) {
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, medfac: MF_ALL });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => /answered by valhalla1/.test((document.getElementById("mp-src") || {}).textContent || "") && /Valhalla Road/.test(document.getElementById("mp-rt").textContent), null, { timeout: 30000 });
   ok(/10 min/.test(await p.textContent("#mp-fac")) && calls.vhm === 1 && calls.vhr === 3, "routing: OSRM down, Valhalla gives drive times and routes " + JSON.stringify(calls));
   ok(!errors.length, "routing: no page errors " + errors.join(" | "));
@@ -559,7 +565,7 @@ async function openPlan(p) {
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, vhFails: true, medfac: MF_ALL });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => /\(estimate\)/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 40000 });
   const fac = await p.textContent("#mp-fac");
   ok(/No road router answered/.test(fac) && /straight line × 1\.4 at 50 km\/h/.test(fac) && /golden hour/i.test(fac), "routing: no router at all gives labelled estimates and golden-hour badges");
@@ -572,7 +578,7 @@ async function openPlan(p) {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { overpassFails: true });
   await p.evaluate(() => { const s = window.ASAP_SOF[window.TSAP.areaApi.cc || "th"]; s.hospitals = []; });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
-  await areaMenu(p); await p.click('#atk-pop [data-pk="med"]');
+  await medBtn(p);
   await p.waitForFunction(() => /lookup failed/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 30000 });
   const t = await p.textContent("#medplan");
   ok(/does not mean there is no hospital/.test(t) && !/No hospital within/.test(t) && /No routes: the hospital lookup failed/.test(t), "all down: says the lookup failed, never that there is no hospital");
