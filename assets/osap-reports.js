@@ -35,6 +35,8 @@
       function () { return !!(W.OSAP_WX && W.OSAP_WX.brief) || "Weather is still loading"; }, function () { W.OSAP_WX.brief(); }],
     ["wxreport", "Country", "Detailed weather report", "Hour by hour, 16 days, model agreement, sea, air and light",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.report) || "Weather is still loading"; }, function () { W.OSAP_WX.report(); }],
+    ["illum", "Country", "Night illumination", "Sunset, twilight (BMNT/EENT), moonrise and set, moon phase and percent lit, night by night, with a chart",
+      function () { return !!(W.OSAP_ILLUM && W.OSAP_ILLUM.open) || "Still loading"; }, function () { W.OSAP_ILLUM.open(); }],
 
     ["timeline", "On screen now", "Timeline report", "Chronology, key events, map and sources for the period and topic shown",
       function () { return !!(W.OSAP_TLREPORT && W.OSAP_TLREPORT.eligible()) || "Needs at least 3 dated reports in the period; widen the period"; },
