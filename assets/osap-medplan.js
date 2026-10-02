@@ -8,8 +8,8 @@
    - receiving hospitals from OSAP's stored copy of OpenStreetMap (data/medfac, built by tools/build_medfac.mjs every four
      weeks, so the plan never depends on a live Overpass answer; Overpass is asked live only where the stored copy does
      not yet cover a country in reach, or when the user asks) and OSAP's sourced facility list (data/sof). Ranked by
-     trauma level (Shane 2026-10-02): Level 1 first, only where a source states it; every other hospital reads "Trauma level
-     not known" and ranks below them, ordered by the services it lists, with the rule and the reasons shown. Hospitals with nothing listed are kept apart, and
+     trauma level (Shane 2026-10-02): Level 1 first, only where a source documents it, and only those can be picked; every
+     other hospital reads "Trauma level not known" and is listed for reference only, ordered by the services it lists. Hospitals with nothing listed are kept apart, and
      ones with no name are left out. A failed lookup is reported as a failure, never as "no hospital";
    - the plan's Primary, Secondary and Tertiary hospitals, chosen by fixed rules: Primary is the highest level of care in reach (life, limb or eyesight),
      Secondary the most capable inside the golden hour when Primary is beyond it;
@@ -463,15 +463,14 @@
      they list (f.tier, kept internally: 3 surgery with intensive or specialist care, or a sourced teaching or referral
      hospital; 2 surgery, or an emergency department with 100 or more beds; 1 an emergency department, beds or a helipad) */
   var NK_LVL = "Trauma level not known";
-  var ROLE_RULE = "Ranked by trauma level: a trauma level is shown only where a source states it (Level 1 first). Every other hospital reads \"Trauma level not known\" " +
-    "and ranks below them, ordered by what OpenStreetMap or OSAP's sources list for it: first surgery with intensive or specialist care (neurosurgery, trauma, burns), " +
-    "or a university teaching or national referral hospital; then surgery, or an emergency department with 100 or more beds; then an emergency department, beds or a helipad only. " +
-    "Low confidence: no services are listed, only an emergency department, beds or a helipad.";
+  var ROLE_RULE = "Only a hospital whose trauma level a source documents can be Primary, Secondary or Tertiary (Level 1 first). Every other hospital reads \"Trauma level not known\" " +
+    "and is listed for reference only, not eligible, ordered by what OpenStreetMap or OSAP's sources list for it: surgery with intensive or specialist care, " +
+    "or a university teaching or national referral hospital; then surgery, or an emergency department with 100 or more beds; then an emergency department, beds or a helipad only.";
   /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
   var REFERRAL = /universit|teaching hospital|referral cent|tertiary|faculty of medicine|college of medicine/i;
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
-  var LOW_TXT = "Low confidence: no services listed, only an emergency department, beds or a helipad";
-  function lowTag(f) { return f.kind === "hospital" && f.low ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
+  var LOW_TXT = "Reference only, not eligible for the picks: no documented trauma level";
+  function lowTag(f) { return f.kind === "hospital" && !f.trauma ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
   /* the stated trauma level as a number (1 to 5), or null where the source names a trauma centre without a level */
   function lvlOf(tr) { var m = tr && /level\s*(i{1,3}|iv|v|[1-5])\b/i.exec(tr.text); return m ? +({ i: 1, ii: 2, iii: 3, iv: 4, v: 5 }[m[1].toLowerCase()] || m[1]) : null; }
   function tierLabel(f) {
@@ -877,7 +876,7 @@
       '<div class="mpgrid">' + fieldsHtml() + "</div>" +
       '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
-      "Trauma levels are shown only where a source states one; every other hospital reads \"Trauma level not known\" and is ordered by the services listed for it. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
+      "Only hospitals with a trauma level documented by a source are picked; every other hospital reads \"Trauma level not known\" and is listed for reference only. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
       "</div>";
     ghRender(); ocRender(); thrRender();
   }
@@ -978,7 +977,7 @@
     return g != null && (a == null || g <= a) ? [g, "road"] : [a, "air"];
   }
   /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care; 2026-10-02:
-     the level is the stated trauma level, see rankOf):
+     the level is the documented trauma level, see rankOf, and a hospital without one is never picked):
      Primary: the highest level of care that can be reached, the quickest of that level by road (or air when air evacuation is on);
        within the same 10 minutes the better-equipped one;
      Secondary: when Primary is beyond the golden hour, the most capable inside it, to stabilise on the way;
@@ -986,12 +985,13 @@
      Tertiary: the next highest level of care of the rest, as the backup. */
   var ROLE_PICK = ["Primary", "Secondary", "Tertiary"];
   function picks(s) {
-    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.tier > 0 && !isOff(f); });
+    /* Shane 2026-10-02: a hospital without credible documentation of its trauma level is not an option for any pick */
+    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.trauma && !isOff(f); });
     if (!H.length) return [];
     var out = [], gh = GOLDEN_MIN * 60;
     function why(f, tag) {
       var b = bestWay(f);
-      return tierLabel(f) + (f.low ? " (low confidence)" : "") + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
+      return tierLabel(f) + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
     }
     function add(f, k, tag) { if (!f || out.length > 2 || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[out.length], why: [ROLE_PICK[out.length]], reason: why(f, tag) }); }
     function free(f) { return !out.some(function (p) { return p.f === f; }); }
@@ -1094,7 +1094,7 @@
     return "";
   }
   /* head trauma (Shane): the quickest hospital a source says has neurosurgery; where none says so, the quickest hospital
-     listing surgery with intensive or specialist care (or a teaching or referral hospital) is shown as the likely place, labelled as an estimate. Times include the aircraft's legs. */
+     with a documented trauma level is shown (undocumented hospitals are never offered, Shane 2026-10-02), labelled as an estimate. Times include the aircraft's legs. */
   var NEURO = /neuro\s*surg|neurosurg|brain\s*surg|neurolog.*surg/i;
   function neuroSrc(f) {
     if (NEURO.test(String(f.specRaw || ""))) return f.osm ? link(f.osm, "OpenStreetMap") + " healthcare:speciality" : "OpenStreetMap healthcare:speciality";
@@ -1103,12 +1103,12 @@
   }
   function headHtml(s) {
     var H = s.fac.H.filter(function (f) { return !isOff(f) && bestWay(f); }), byT = function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; };
-    var N = H.filter(neuroSrc).sort(byT), E = H.filter(function (f) { return f.tier >= 3 && !neuroSrc(f); }).sort(byT);
+    var N = H.filter(neuroSrc).sort(byT), E = H.filter(function (f) { return f.trauma && !neuroSrc(f); }).sort(byT);
     function line(f, tag) { var b = bestWay(f); return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b>, " + esc(mins(b[0])) + " from injury by " + b[1] + " " + ghTag(b[0]) + " " + tag + ctHtml(f); }
     var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> ';
     if (N.length) h += line(N[0], '<span class="obs">(neurosurgery stated by ' + neuroSrc(N[0]) + ")</span>") + (N[1] ? '<span class="sub">Next: H' + (s.fac.H.indexOf(N[1]) + 1) + " " + esc(N[1].name) + ", " + esc(mins(bestWay(N[1])[0])) + "</span>" : "");
     else h += '<span class="mpnk">Not known</span> <span class="obs">No hospital in reach states neurosurgery in OpenStreetMap or OSAP\'s sources.</span>' +
-      (E.length ? '<span class="sub">Likely place (estimated, not stated): ' + line(E[0], '<span class="obs">(' + esc(E[0].trauma ? tierLabel(E[0]) : "lists surgery with intensive or specialist care") + "; confirm neurosurgery by phone)</span>") + "</span>" : "");
+      (E.length ? '<span class="sub">Nearest with a documented trauma level: ' + line(E[0], '<span class="obs">(' + esc(tierLabel(E[0])) + "; neurosurgery not stated, confirm by phone)</span>") + "</span>" : "");
     return h + "</p></div>";
   }
   function failed(s) { return !!(s.osmErr || (s.storedErr && !s.osmAt)); }
@@ -1117,7 +1117,8 @@
     if (!s.fac) { el.innerHTML = '<p class="obs">Choosing the Primary, Secondary and Tertiary hospitals…</p>'; return; }
     var P = picks(s);
     if (!P.length) { el.innerHTML = '<p class="obs mpwarn">' + (failed(s) ? "No hospitals could be chosen: the hospital lookup failed (" + esc(clip(lookupErr(s), 160)) + "). This does not mean there is no hospital."
-      : "No hospital with a known capability within " + Math.round(s.radii.h / 1000) + " km. See section 2 for hospitals with no details listed, and check national sources.") + "</p>"; return; }
+      : "No Primary, Secondary or Tertiary: no hospital within " + Math.round(s.radii.h / 1000) + " km has a documented trauma level" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
+        ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>"; return; }
     el.innerHTML = '<table class="mppst"><tbody>' + P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f);
       /* the pick's contacts and what is known of its capability are shown here, not only in the hospital table (whose
@@ -1141,7 +1142,7 @@
     h += F.H.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.H.map(function (f, i) { return facRow(f, i, bestOf(f)); }).join("") + "</tbody></table></div>"
       : failed(s) ? '<p class="obs mpwarn"><b>No hospital is listed because the lookup failed</b> (' + esc(clip(lookupErr(s), 160)) + "). This does not mean there is none: call the ambulance number in section 4 and check national sources.</p>"
       : '<p class="obs mpwarn">No hospital with a known capability within ' + Math.round(s.radii.h / 1000) + " km in OpenStreetMap or OSAP's sourced list" + (F.nU ? "; see the hospitals with no details listed below" : "") + ". Check national sources before relying on this.</p>";
-    if (F.H.length) h += '<p class="obs">Ranked by <b>trauma level</b>, Level 1 first, only where a source states one (linked). The rest read <b>Trauma level not known</b> and come after, ordered by the services listed for them (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
+    if (F.H.length) h += '<p class="obs">Only hospitals with a <b>documented trauma level</b> (linked to the source), Level 1 first, can be Primary, Secondary or Tertiary. The rest read <b>Trauma level not known</b> and are listed for reference only, not eligible (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
       (F.nH > 10 ? "The nearest 10 hospitals with something listed, plus the best-ranked of the rest." : "") + "</p>";
     var nOff = F.H.concat(F.U || []).filter(isOff).length;
     if (nOff) h += '<p class="obs mpwarn">' + nOff + " hospital" + (nOff > 1 ? "s are" : " is") + ' turned off and left out of the picks, routes, map and print. <button type="button" class="refresh noprint" data-mp="allon">Turn all back on</button></p>';
@@ -1190,7 +1191,7 @@
   }
   function rtRender() {
     var el = D.getElementById("mp-rt"), s = ST; if (!el) return;
-    if (s.fac && !picks(s).length) { el.innerHTML = '<p class="obs' + (failed(s) ? ' mpwarn">No routes: the hospital lookup failed.' : '">No hospital with a known capability to route to; see section 2.') + "</p>"; return; }
+    if (s.fac && !picks(s).length) { el.innerHTML = '<p class="obs' + (failed(s) ? ' mpwarn">No routes: the hospital lookup failed.' : '">No hospital with a documented trauma level to route to; see section 2.') + "</p>"; return; }
     if (s.routeErr && !s.rts) { el.innerHTML = '<p class="obs mpwarn">No road router answered (' + esc(clip(s.routeErr, 140)) + "), so no route can be drawn. Drive times in section 2 are estimates.</p>"; return; }
     if (!s.rts) return;
     el.innerHTML = s.rts.map(function (x, i) {
