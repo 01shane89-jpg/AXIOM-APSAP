@@ -71,7 +71,7 @@
       var im = el.querySelector("[data-camimg]");
       if (im) im.innerHTML = url ? imgTag(url, big ? "cam-big" : "cam-tip", alt) : '<span class="cam-no">No image from the agency right now.</span>';
       var t = el.querySelector("[data-camt]");
-      if (t) t.textContent = (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + ". The agency updates it about every " + s.every + " min.";
+      if (t) t.textContent = (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min";
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else put(fresh(safeUrl(u)));
@@ -85,13 +85,15 @@
   }
   function popHtml(s, c) {
     var views = Array.isArray(c[4]) ? c[4].length : 1;
-    return '<div class="pop cam-pop"><div class="tier" style="color:var(--cam,#0b7285)">Traffic camera · official open data</div><h3>' + esc(c[3]) + "</h3>" +
+    /* data-keep-pop: stays a pop-up on the map (the page otherwise moves pop-up content into the report panel), so the image,
+       its refresh and the view buttons keep working */
+    return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:var(--cam,#0b7285)">Traffic camera · official open data</div><h3>' + esc(c[3]) + "</h3>" +
       '<div data-camimg class="cam-frame"><span class="cam-no">Loading the image…</span></div>' +
       (views > 1 ? '<div class="cam-views">' + Array.apply(null, Array(views)).map(function (_, i) { return '<button type="button" data-camview="' + i + '" aria-pressed="' + (i === 0) + '">View ' + (i + 1) + "</button>"; }).join("") + "</div>" : "") +
       '<p class="obs"><span data-camt></span> <button type="button" class="linkish" data-camref>Refresh</button><br>' +
       esc(s.agency) + " · " + esc(s.licence) + (safeUrl(s.page) ? ' · <a href="' + esc(s.page) + '" target="_blank" rel="noopener">source</a>' : "") +
       "<br>" + esc(c[1].toFixed(5) + ", " + c[2].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(c[1], c[2])) : "") +
-      "<br>A still image published by the agency for traffic information, not a live video or a record.</p></div>";
+      "<br>A still image the agency publishes for traffic information, not a live video or a record.</p></div>";
   }
   function marker(s, c) {
     var m = L.marker([c[1], c[2]], { icon: icon(), pane: "campt", keyboard: false, title: c[3], lgk: "cam", lgl: "Traffic camera" });
@@ -101,10 +103,15 @@
       m.bindTooltip(function () { return tipHtml(s, c); }, { direction: "top", offset: [0, -10], opacity: 1, className: "cam-tt" });
       m.on("tooltipopen", function (e) { fill(e.tooltip.getElement(), s, c, 0, false); });
     }
-    m.bindPopup(function () { return popHtml(s, c); }, { maxWidth: 360, minWidth: 260, className: "cam-pp" });
+    var narrow = W.innerWidth < 500;
+    m.bindPopup(function () { return popHtml(s, c); }, { maxWidth: narrow ? 290 : 360, minWidth: narrow ? 240 : 260, className: "cam-pp", autoPanPaddingTopLeft: [60, 70], autoPanPaddingBottomRight: [20, 20] });
     m.on("popupopen", function (e) {
       if (m.closeTooltip) m.closeTooltip();
-      var el = e.popup.getElement(); view = 0;
+      var el = e.popup.getElement(), node = el.querySelector(".cam-pop"); view = 0;
+      /* keep this content from now on: a re-fit below would otherwise rebuild it from the template, image and all */
+      if (node) e.popup.setContent(node);
+      /* the image arrives after the pop-up opens: fit and pan again once it has its size */
+      el.addEventListener("load", function () { if (e.popup.isOpen()) e.popup.update(); }, true);
       fill(el, s, c, view, true);
       el.onclick = function (ev) {
         var t = ev.target;
@@ -120,6 +127,7 @@
   }
   function draw() {
     if (!map || !layer) return;
+    S.draws = (S.draws || 0) + 1;
     if (!S.on) { layer.clearLayers(); drawn = {}; S.msg = ""; paintSec(); legend(); return; }
     if (!S.ix) { S.msg = S.ixErr || "Reading the camera list…"; paintSec(); if (!S.ixErr) loadIndex().then(draw); return; }
     var z = map.getZoom(), b = map.getBounds(), here = hits(b.pad(0.2));
@@ -195,6 +203,7 @@
     ".cam-tt{padding:6px;white-space:normal;width:250px}.cam-tipbox b{display:block;font-size:12px;margin-bottom:4px;line-height:1.25}.cam-tipbox i{display:block;font-size:11px;color:#555;margin-top:3px}" +
     ".cam-tip{display:block;width:238px;max-height:170px;object-fit:contain;background:#111;border-radius:3px}" +
     ".cam-frame{min-height:60px;margin:4px 0}.cam-big{display:block;width:100%;max-height:260px;object-fit:contain;background:#111;border-radius:4px}" +
+    "@media (max-width:500px){.cam-big{max-height:170px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
     '.cam-views button[aria-pressed="true"]{background:#0b7285;color:#fff;border-color:#0b7285}';
@@ -219,11 +228,11 @@
     if (!map || !W.L || !mount()) return false;
     if (!map.getPane("campt")) { map.createPane("campt"); map.getPane("campt").style.zIndex = 660; }
     layer = L.layerGroup().addTo(map);
-    map.on("moveend", function () { if (S.on) soon(); });
+    map.on("moveend zoomend viewreset", function () { if (S.on) soon(); });
     D.addEventListener("osap:dsopen", function () { setTimeout(mount, 0); });
     return true;
   }
-  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
+  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
     inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
