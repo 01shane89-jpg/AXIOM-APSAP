@@ -1,0 +1,48 @@
+# Traffic camera lists for Map overlays > Infrastructure > Traffic cameras (tools/build_cams.mjs): only cameras that a
+# government or transport agency publishes as open data with no key or login. Camera sites change slowly, so the lists are
+# rebuilt once a week; the still images themselves are fetched by the page straight from each agency.
+# It commits on main. A run on another branch builds and reports without committing, unless dispatched with commit=true.
+name: Refresh traffic camera lists
+
+on:
+  schedule:
+    - cron: "41 4 * * 1"
+  push:
+    branches: [claude/traffic-cameras]
+    paths: [tools/build_cams.mjs, .github/workflows/refresh-cams.yml]
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "Commit the lists on this branch too (not only on main)"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-cams-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cams:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: CHECK_IMAGES=1 node tools/build_cams.mjs data/cams
+      - run: du -sh data/cams && ls -la data/cams
+      - name: Commit
+        if: ${{ github.ref == 'refs/heads/main' || inputs.commit == 'true' }}
+        run: |
+          git add -A data/cams
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Refresh traffic camera lists $(date -u +'%Y-%m-%d')"
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull --rebase -X theirs origin "$b" && git push origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1
