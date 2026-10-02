@@ -76,7 +76,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-ocam]"))), "desktop: no toolbar button of its own");
   await om(p, true);
   ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Traffic cameras switch in the Overlays sheet");
-  ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-infra" && !h.hidden && !!h.querySelector("#pwr-sec"); }), "desktop: under Infrastructure, next to the power grid");
+  ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
   await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
   s = await st(p);
