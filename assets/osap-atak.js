@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Medical plan from this point, Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -11,6 +11,7 @@
    Dropped points are the analyst's own marks, kept in this browser only (localStorage "osap-atak-pts"), never records.
    assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
    The magnifying glass loads assets/osap-search.js (Search places) on its first press.
+   Find LZ and Area > Landing zones load assets/osap-lz.js (the landing zone finder) on first use.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -45,11 +46,13 @@
     route: ic('<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h6a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h6"/>'),
     pin: ic('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/>'),
     nai: ic('<rect x="3.5" y="5.5" width="17" height="13" rx="1" stroke-dasharray="3.2 2.2"/><path d="M8 15V9l4 6V9M15 9v6"/>'),
+    medic: ic('<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'),
     copy: ic('<rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
     lock: ic('<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>'),
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
     pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
-    search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>')
+    search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
+    heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>')
   };
 
   /* ---------- the page's own controls, pressed on the analyst's behalf ---------- */
@@ -97,6 +100,8 @@
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
+    /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
+    ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
     ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
@@ -142,6 +147,7 @@
     /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
     var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
+    var mb2 = bar.querySelector('[data-atk="medplan"]'), mpe = D.getElementById("medplan"); if (mb2) mb2.setAttribute("aria-pressed", String(!!(mpe && !mpe.hidden)));
     var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
@@ -171,8 +177,13 @@
     else if (k === "area") {
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }),
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
         has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+    }
+    else if (k === "medplan") {
+      var mp = D.getElementById("medplan");
+      if (mp && !mp.hidden && W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.close(); else if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open();
+      setTimeout(paintTools, 60);
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -195,10 +206,11 @@
     var k = b.getAttribute("data-pk"), f = pop._for; popClose();
     if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
     else if (f === "area") {
-      /* area tools from other modules (a medical plan for the drawn area): W.OSAP_AREA_TOOLS = [{ id, label, run }, ...] */
+      /* area tools from other modules (a medical plan): W.OSAP_AREA_TOOLS = [{ id, label, run, point }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
       var run = at ? function () { if (typeof at.run === "function") at.run(); } : k === "sum" ? function () { areaPress("sum"); } : null;
-      if (run && !areaOn()) { areaWait(run, at ? at.label : "Summarise area"); return; }
+      /* a tool marked point: true (the medical plan) runs without a shape, from the map centre */
+      if (run && !areaOn() && !(at && at.point)) { areaWait(run, at ? at.label : "Summarise area"); return; }
       if (run) run();
       else if (k === "save") press("[data-aoi-save]"); else areaPress(k);
       setTimeout(paintTools, 30);
@@ -311,7 +323,7 @@
         var PX = W.OSAP_POINTS;
         d.innerHTML = "<b>" + esc(p.n) + "</b> <span class=\"obs\">your own mark</span>" + (p.sym && W.OSAP_MSYM && W.OSAP_MSYM.valid(p.sym) ? '<p class="obs atk-psym">' + esc(W.OSAP_MSYM.label(p.sym)) + "</p>" : "") + (p.note ? '<p class="atk-note">' + esc(p.note) + "</p>" : "") + (PX && p.ph ? '<div class="atk-pph"></div>' : "") + "<code>" + esc(fmtPt(p.lat, p.lon, "mgrs")) + "</code><code>" + esc(fmtPt(p.lat, p.lon, "dd")) + "</code>" +
           '<p class="obs">Dropped ' + esc(new Date(p.t).toISOString().slice(0, 16).replace("T", " ")) + "Z. Kept in this browser only; not a report.</p>" +
-          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button><button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
+          '<div class="atk-pb">' + (PX ? '<button type="button" data-pp="edit">Edit, photos</button>' : "") + '<button type="button" data-pp="measure">Measure from</button><button type="button" data-pp="route">Route from</button>' + (W.OSAP_MEDPLAN ? '<button type="button" data-pp="medplan">Medical plan here</button>' : "") + '<button type="button" data-pp="copy">Copy</button><button type="button" data-pp="del">Remove</button></div>';
         d.addEventListener("click", function (e) {
           var b = e.target.closest("[data-pp]"); if (!b) return; var k = b.getAttribute("data-pp");
           map.closePopup();
@@ -338,11 +350,25 @@
   /* removing a point also removes its photos from this device */
   function ptDel(id) { ptsSave(ptsAll().filter(function (x) { return x.id !== id; })); ptDraw(); omPaint(); if (W.OSAP_POINTS) W.OSAP_POINTS.forget(id); }
 
+  /* the landing zone finder lives in assets/osap-lz.js, fetched the first time Find LZ (long-press) or Area > Landing zones is used */
+  var lzWait = null;
+  function lzLoad(fn) {
+    if (W.OSAP_LZ) { fn(W.OSAP_LZ); return; }
+    if (lzWait) { lzWait.push(fn); return; } lzWait = [fn];
+    var sc = D.createElement("script"); sc.src = "assets/osap-lz.js";
+    sc.onload = function () { var f = lzWait; lzWait = null; if (W.OSAP_LZ) f.forEach(function (g) { g(W.OSAP_LZ); }); };
+    sc.onerror = function () { lzWait = null; sc.remove(); toast("The landing zone finder could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
+
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["medplan", "Med plan", I.medic], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
   ];
+  /* Med plan only once assets/osap-medplan.js has loaded (it loads after this file) */
+  function radNow() { return RAD.filter(function (a) { return a[0] !== "medplan" || W.OSAP_MEDPLAN; }); }
   var RADII = [0.5, 1, 5, 10];
   function radius() { var r = +lsGet(K_R); return RADII.indexOf(r) >= 0 ? r : 1; }
   var ring = D.createElement("div"); ring.id = "atk-ring"; ring.className = "leaflet-control"; ring.hidden = true; ring.setAttribute("role", "menu"); ring.setAttribute("aria-label", "Actions at this point");
@@ -356,8 +382,8 @@
   function ringOpen(ll) {
     ringLL = ll; var p = map.latLngToContainerPoint(ll), sz = mapEl.getBoundingClientRect(), R = 118;
     var x = Math.max(R, Math.min(sz.width - R, p.x)), y = Math.max(R - 10, Math.min(sz.height - R - 30, p.y));
-    var n = RAD.length, r = sz.width < 380 ? 70 : 76;
-    ring.innerHTML = RAD.map(function (a, i) {
+    var RN = radNow(), n = RN.length, r = sz.width < 380 ? 70 : 76;
+    ring.innerHTML = RN.map(function (a, i) {
       var t = -Math.PI / 2 + i * 2 * Math.PI / n, bx = Math.round(Math.cos(t) * r), by = Math.round(Math.sin(t) * r);
       return '<button type="button" role="menuitem" data-rk="' + a[0] + '" style="transform:translate(' + bx + "px," + by + 'px)">' + a[2] + "<span>" + esc(a[1]) + "</span></button>";
     }).join("") +
@@ -377,7 +403,10 @@
     if (k === "measure") { if (W.OSAP_MEASURE) { W.OSAP_MEASURE.on(true); W.OSAP_MEASURE.set([P], false); toast("Measuring from here: tap the next point"); setTimeout(paintTools, 30); } }
     else if (k === "route") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([P]); }
     else if (k === "pin") ptAdd(ll);
+    else if (k === "lz") lzLoad(function (Z) { Z.at(P); });
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
+    /* the medical plan from this point as the point of injury; no drawn area needed */
+    else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
       A.setArea(circle(ll, radius())); setTimeout(paintTools, 30);
@@ -576,7 +605,7 @@
     ".atk-mk{display:flex;align-items:center;gap:4px;border-top:1px solid var(--line-soft,var(--line))}.atk-mk:first-child{border-top:0}.atk-mk>button:first-child{flex:1;text-align:left;border:0;background:none;color:inherit;font:inherit;padding:8px 2px;cursor:pointer;display:flex;align-items:center;gap:6px}" +
     ".atk-mk code{font:11.5px 'IBM Plex Mono',monospace;color:var(--muted)}.atk-dot{display:inline-block;width:9px;height:9px;background:#15aabf;transform:rotate(45deg);border:1.5px solid #fff;box-shadow:0 0 0 1px #15aabf}" +
     ".atk-sw{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.atk-sw input{margin-top:2px}" +
-    "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:72%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
+    "@media (max-width:700px){#atk-om{left:0;right:0;top:auto;width:auto;max-height:55%;border-radius:12px 12px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.3)}" +
     "#atk-tools{top:6px;right:6px}#atk-tools button{width:50px;min-height:44px}#atk-tools .atk-fold{min-height:26px}}" +
     "#atk-tools.more::after{content:'';position:absolute;left:3px;right:3px;bottom:3px;height:26px;border-radius:0 0 8px 8px;pointer-events:none;background:linear-gradient(rgba(20,24,28,0),rgba(20,24,28,.95) 70%)}" +
     "#atk-tools.more::before{content:'';position:absolute;z-index:1;left:50%;bottom:9px;width:7px;height:7px;margin-left:-5px;border:solid #e9eef2;border-width:0 2px 2px 0;transform:rotate(45deg);pointer-events:none}" +
@@ -592,6 +621,9 @@
   new MutationObserver(function (recs) {
     if (recs.every(function (r) { var t = r.target; return bar.contains(t) || (t.closest && t.closest("#atk-back")) || (r.addedNodes.length === 1 && r.addedNodes[0].id === "atk-back"); })) return;
     paintTools(); syncBack(); }).observe(mapEl.querySelector(".leaflet-control-container") || mapEl, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class", "hidden"] });
+  /* the Med plan button shows pressed while the plan is open; the plan's own Close or Esc releases it */
+  D.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("#medplan")) setTimeout(paintTools, 60); });
+  D.addEventListener("keyup", function (e) { if (e.key === "Escape") setTimeout(paintTools, 60); });
   W.addEventListener("hashchange", function () { setTimeout(function () { ptDraw(); omPaint(); }, 300); });
   D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); setTimeout(paintTools, 60); });
   /* the page's "No data sets on the map: Choose" note opens the Layers menu, which this toolbar holds in the Overlay Manager */

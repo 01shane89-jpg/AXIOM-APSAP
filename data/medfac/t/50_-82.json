@@ -1,0 +1,8 @@
+[["n1042028256",51.26064,-80.65557,"ca",{"name":"Moosonee Seaplane Base","aeroway":"aerodrome"}],
+["n3148189639",50.18295,-81.63146,"ca",{"name":"Otter Rapids Dam Helipad","aeroway":"helipad"}],
+["w1556586322",51.27102,-80.65096,"ca",{"name":"Moosonee Health Centre","name:en":"Moosonee Health Centre","amenity":"hospital","operator":"Weeneebayko Area Health Authority","addr:housenumber":"5","addr:street":"Percys Way"}],
+["w179551779",51.24912,-80.6172,"ca",{"name":"Weeneebayko General Hospital Helipad","aeroway":"helipad"}],
+["w392700483",51.2884,-80.6129,"ca",{"aeroway":"helipad"}],
+["w392700484",51.28853,-80.6127,"ca",{"aeroway":"helipad"}],
+["w392700494",51.29115,-80.61057,"ca",{"name":"Moosonee Airport","operator":"The Corporation of the Town of Moosonee","aeroway":"aerodrome","icao":"CYMO","iata":"YMO","wikidata":"Q3612841","opening_hours":"24/7"}],
+["w393123395",51.25007,-80.61727,"ca",{"name":"Weeneebayko General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Weeneebayko Area Health Authority","phone":"+1-705-658-4544","website":"http://www.weeneebaykohealth.ca/","addr:housenumber":"19","addr:street":"Hospital Drive","addr:city":"Moose Factory","addr:province":"ON","addr:postcode":"P0L 1W0","wikidata":"Q47508451"}]]

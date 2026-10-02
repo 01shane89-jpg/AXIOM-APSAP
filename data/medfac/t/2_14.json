@@ -1,0 +1,12 @@
+[["n12610139701",2.04974,15.22576,"cm",{"name":"CENTRE DE SANTE LUMEN-CHRISTI","amenity":"hospital","healthcare":"birthing_center;clinic;hospital;laboratory;pharmacy;rehabilitation","healthcare:speciality":"clinical_pathology;community;general;infectious_diseases;occupational;pathology","emergency":"no","beds":"15","operator:type":"private","contact:phone":"+237696894961/653583387","addr:street":"N10","addr:city":"PEZAM","opening_hours":"24/7"}],
+["n13907756863",2.60082,15.38848,"cm",{"name":"Centre de Santé Intégré de Salapoumbé","amenity":"hospital"}],
+["n4733949188",3.92074,15.50491,"cf",{"name":"Maternité du CDS Sosso Nakombo","amenity":"clinic"}],
+["n4733949189",3.92087,15.50491,"cf",{"name":"Salle d'Observation - CDS Sosso Nakombo","amenity":"clinic"}],
+["w1113337751",2.62216,15.37952,"cm",{"name":"Hôpital Catholique Notre Dame de Vie","amenity":"hospital"}],
+["w315023044",3.78804,14.98256,"cm",{"aeroway":"aerodrome"}],
+["w316362530",2.78261,15.2603,"cm",{"aeroway":"helipad"}],
+["w480373904",3.9207,15.50491,"cf",{"name":"Maternité du CDS Sosso Nakombo","amenity":"clinic","addr:city":"Sosso-Nakombo","addr:province":"Mambéré-Kadéï"}],
+["w480373905",3.92087,15.50493,"cf",{"name":"Sale de Observación du CDS - Sosso Nakombo","amenity":"clinic"}],
+["w480373906",3.92106,15.50478,"cf",{"name":"CDS - Centre de Santé de Sosso Nakombo - Sale de Consultation","amenity":"clinic","addr:city":"Sosso-Nakombo","addr:province":"Mambéré-Kadéï"}],
+["w786503546",3.48731,15.33149,"cm",{"amenity":"hospital","healthcare":"hospital"}],
+["w786503547",3.92657,15.11395,"cm",{"name":"Centre médical d'arrondissement de Gari Gombo","amenity":"hospital","healthcare":"yes"}]]

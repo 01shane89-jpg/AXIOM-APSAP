@@ -1,0 +1,7 @@
+[["n1312178637",21.62372,-81.56293,"cu",{"amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public"}],
+["w1257196805",21.62402,-81.55246,"cu",{"aeroway":"helipad"}],
+["w304571698",21.9208,-80.02789,"cu",{"name":"Topes de Collante","aeroway":"helipad"}],
+["w40014046",21.61579,-81.54501,"cu",{"name":"Aeropuerto Vitalio Acuña","name:en":"Vitalio Acuña Airport","operator":"ECASA","aeroway":"aerodrome","icao":"MUCL","iata":"CYO","aerodrome:type":"international","wikidata":"Q3505324"}],
+["w441867586",21.965,-81.11782,"cu",{"aeroway":"helipad"}],
+["w488341445",21.91445,-80.02052,"cu",{"amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public","addr:city":"Topes de Collantes","addr:postcode":"64310"}],
+["w558496023",21.98984,-80.21808,"cu",{"name":"Hospital Rural San Blas","amenity":"hospital","healthcare":"hospital","operator":"MINSAP","operator:type":"public"}]]

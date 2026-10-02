@@ -120,6 +120,10 @@ async function type(p, text) { await p.waitForTimeout(150); await p.fill("#srch-
   ok(await p.evaluate(() => document.querySelector('#srch-list [data-i="1"]').getAttribute("aria-selected") === "true"), "desktop: arrow keys move through the results");
   await p.keyboard.press("Enter"); await p.waitForTimeout(1500);
   ok(near(await centre(p), [13.75, 100.493], 0.01), "desktop: Enter goes to the chosen result (Grand Palace)");
+  // Enter straight after typing, before the results are in: the Recent list (Grand Palace now first) must not answer it
+  await p.evaluate(() => window.__asapMap.setView([-30, 20], 5));
+  await p.click('#atk-tools [data-atk="search"]'); await p.waitForTimeout(150); await p.type("#srch-q", "Bangkok", { delay: 15 }); await p.keyboard.press("Enter"); await p.waitForTimeout(2000);
+  ok(near(await centre(p), [13.72, 100.63], 0.4) && !near(await centre(p), [13.75, 100.493], 0.05), "desktop: Enter before the results arrive goes to the typed place, not a recent one " + JSON.stringify(await centre(p)));
   await p.click('#atk-tools [data-atk="search"]'); await p.keyboard.press("Escape");
   ok(!(await shown(p, "#srch")), "desktop: Escape closes the box");
   ok(hits.search === 1, "desktop: search loaded once");

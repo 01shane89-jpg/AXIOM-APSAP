@@ -1,0 +1,8 @@
+[["n2228773861",9.91138,20.87232,"td",{"amenity":"hospital"}],
+["n3880096039",9.13472,20.77747,"cf",{"aeroway":"aerodrome"}],
+["n416321596",8.49999,21.25768,"cf",{"name":"Aéroport de Koumala - FERMÉ","name:en":"Koumala Airport - CLOSED","operator":"Civil Government","aeroway":"aerodrome","iata":"KOL","aerodrome:type":"public","wikidata":"Q6434594"}],
+["n6337444306",8.41116,20.64997,"cf",{"name":"Hôpital Préfectoral","amenity":"hospital","healthcare":"hospital"}],
+["n7494613833",8.43155,20.63468,"cf",{"aeroway":"helipad"}],
+["w1217712025",9.58237,21.72617,"cf",{"name":"Aéroport de Gordil","name:en":"Gordil Airport","aeroway":"aerodrome","icao":"FEGL","iata":"GDI","wikidata":"Q2277703"}],
+["w195866967",8.42683,20.63453,"cf",{"name":"Aéroport de N'Délé","name:en":"N'Délé Airport","operator":"Civil Government","aeroway":"aerodrome","icao":"FEFN","iata":"NDL","aerodrome:type":"public","wikidata":"Q3015290"}],
+["w213126541",9.91134,20.87234,"td",{"amenity":"hospital","healthcare":"hospital"}]]

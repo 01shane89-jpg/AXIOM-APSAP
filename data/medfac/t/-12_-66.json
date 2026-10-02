@@ -1,0 +1,12 @@
+[["n1042071957",-10.22222,-64.34333,"br",{"name":"Fazenda Botelho","aeroway":"aerodrome"}],
+["n1042087706",-10.82667,-65.22963,"br",{"name":"Fazenda Rancho Maria e Tereza","aeroway":"aerodrome"}],
+["n13228333752",-10.78635,-65.33933,"br",{"name":"Hospital Bom Pastor","amenity":"hospital","healthcare":"hospital","addr:housenumber":"663","addr:street":"Avenida Pimenta Bueno","addr:city":"Guajará-Mirim","addr:postcode":"76850-000"}],
+["n13228404931",-10.79194,-65.34418,"br",{"name":"Hospital Regional Perpétuo Socorro de Guajará-Mirim","amenity":"hospital","healthcare":"hospital"}],
+["n5784384192",-10.53868,-65.5794,"bo",{"name":"Centro de Salud Integral Cachuela Esperanza","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","operator":"GAMCE","addr:city":"Cachuela Esperanza"}],
+["w1257042521",-10.82612,-65.22933,"br",{"name":"Fazenda Rancho Maria e Tereza","aeroway":"aerodrome"}],
+["w300227428",-10.89043,-65.3789,"bo",{"name":"Aeropuerto de Guayaramerin","official_name":"Cap de Av. Emilio Beltran","operator":"AASANA","aeroway":"aerodrome","icao":"SLGM","iata":"GYA","wikidata":"Q2875724"}],
+["w665903384",-10.41506,-65.32939,"br",{"amenity":"clinic","healthcare":"clinic","addr:city":"Nova Mamoré","addr:postcode":"76857-000","osap:withheld":"1"}],
+["w665903403",-10.41181,-65.32993,"br",{"name":"Hospital Antônio Luiz de Macedo","amenity":"hospital","healthcare":"hospital","addr:street":"Avenida Antônio Lucas de Araújo","addr:city":"Nova Mamoré","addr:postcode":"76857-000"}],
+["w665903416",-10.40445,-65.33359,"br",{"name":"Posto de Saúde do Planalto","amenity":"clinic","healthcare":"clinic","addr:street":"Avenida Tercina Valdivino do Nascimento","addr:city":"Nova Mamoré","addr:postcode":"76857-000"}],
+["w665903436",-10.39943,-65.34771,"br",{"aeroway":"aerodrome"}],
+["w957759018",-10.78618,-65.28446,"br",{"name":"Aeroporto de Guajará-Mirim","name:en":"Guajará-Mirim Airport","aeroway":"aerodrome","icao":"SBGM","iata":"GJM","aerodrome:type":"regional","wikidata":"Q12692901"}]]

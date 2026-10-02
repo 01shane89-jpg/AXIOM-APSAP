@@ -1,0 +1,11 @@
+[["n1042036735",5.4221,27.20935,"cf",{"name":"Aéroport de Bambouti","aeroway":"aerodrome","icao":"FEGB"}],
+["n1080893089",4.14945,27.57097,"cd",{"name":"Bangadi","aeroway":"aerodrome","surface":"grass"}],
+["n1080894267",4.17034,27.08244,"cd",{"name":"Banda","aeroway":"aerodrome","surface":"grass"}],
+["w1022372393",4.17034,27.082,"cd",{"aeroway":"aerodrome"}],
+["w330159172",5.40428,26.48735,"cf",{"name":"Aéroport de Poste","name:en":"Poste Airport","aeroway":"aerodrome","icao":"FEFB","wikidata":"Q7234143"}],
+["w331244033",5.40263,26.48651,"cf",{"aeroway":"helipad"}],
+["w331244034",5.40293,26.48675,"cf",{"aeroway":"helipad"}],
+["w331244035",5.40277,26.48663,"cf",{"aeroway":"helipad"}],
+["w331244036",5.40309,26.48687,"cf",{"aeroway":"helipad"}],
+["w331244038",5.37851,26.47643,"cf",{"name":"Aéroport d'Obo","name:en":"Obo Airport","operator":"Civil Government","aeroway":"aerodrome","aerodrome:type":"public"}],
+["w495287423",4.71725,27.69129,"cd",{"name":"Doruma Airport","aeroway":"aerodrome","icao":"FZJD","wikidata":"Q12692477"}]]

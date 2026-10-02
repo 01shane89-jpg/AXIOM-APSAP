@@ -1,5 +1,6 @@
 [["n10691495807",-34.61228,-68.34195,"ar",{"name":"Policlinica San Rfaael","amenity":"clinic","healthcare":"clinic","operator":"Circulo Medico de San Rafael","operator:type":"private"}],
 ["n11347625730",-35.08052,-69.56768,"ar",{"name":"Puesto de Salud","amenity":"clinic","healthcare":"clinic","addr:street":"Ruta Nacional 40","addr:city":"El Sosneado","addr:postcode":"5611"}],
+["n12272123663",-34.1719,-69.96712,"cl",{"aeroway":"helipad","surface":"ground"}],
 ["n1281667901",-35.47135,-69.58672,"ar",{"name":"Clínica San Francisco","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["n1373777946",-34.61218,-68.34223,"ar",{"name":"Policlínica","amenity":"hospital","healthcare":"hospital"}],
 ["n1374006184",-34.61912,-68.33171,"ar",{"name":"Clínica San Rafael","amenity":"hospital","healthcare":"hospital"}],

@@ -36,13 +36,18 @@
    "city": "Juba",
    "address": null,
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 4.8517,
-   "lon": 31.5825,
-   "prec": "approx",
+   "lat": 4.855556,
+   "lon": 31.586178,
+   "prec": "exact",
    "src": "https://ss.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
-   "coord_basis": "city centre (GeoNames); address not retrieved",
-   "fp": "bbf0f083027658aca4a1adbba9f9193781eb3c853e9022668d020ee867ea5632"
+   "coord_basis": "OpenStreetMap node/807897803",
+   "fp": "1d67443213eff234a21fc07d304a633e70eece2ac7f034a82215b7464e134c8e",
+   "web": "https://ss.usembassy.gov/",
+   "phone_after_hours": "+211 9121 05188",
+   "phone_src": "https://ss.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -182,5 +187,53 @@
   "Auto: landlocked, no seaports.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated.",
   "U.S. post names from the mission website pattern; addresses and exact positions not retrieved (usembassy.gov blocked)."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ss:xing:node-2566150102",
+   "name": "Immigration",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 4.751144,
+   "lon": 33.599329,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2566150102",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "ed25acf16760f81546a8218fc50504873996ac387d2431d8046b5b65c72459e4"
+  },
+  {
+   "id": "sof:ss:xing:way-1050428886",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 6.196269,
+   "lon": 31.598998,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1050428886",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "00ce75b098b610c44faa36b5875650c31f503ef773202dbb439cbf92a97fbb05"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
