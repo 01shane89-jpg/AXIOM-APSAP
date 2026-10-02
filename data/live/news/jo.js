@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-02 02:04Z","sources":[{"cc":"jo","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Jordan%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":195,"none":["cz","fm","nr"]},"items":{"jo":[]}};
+window.ASAP_NEWS={"asof":"2026-10-02 02:27Z","sources":[{"cc":"jo","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Jordan%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":195,"none":["ao","li","qa"]},"items":{"jo":[]}};
