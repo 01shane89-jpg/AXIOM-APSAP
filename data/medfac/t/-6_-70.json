@@ -1,2 +1,7 @@
 [["n12869375954",-4.38342,-69.9941,"br",{"name":"Posto de Saude de Filadelfia","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:street":"Rua Tchimaucu"}],
+["n8126723547",-4.21682,-69.93744,"co",{"name":"Clinica Leticia","amenity":"clinic","healthcare":"clinic","operator":"Privado","operator:type":"private"}],
+["w1029167497",-4.19052,-69.94158,"co",{"name":"Aeropuerto Internacional Alfredo Vásquez Cobo","operator":"Aerocivil","operator:type":"public/government","aeroway":"aerodrome","icao":"SKLT","iata":"LET","aerodrome:type":"international","wikidata":"Q432334"}],
+["w1248311565",-4.21811,-69.93618,"co",{"name":"Unidad Renal","amenity":"clinic","healthcare":"clinic"}],
+["w515649647",-4.20635,-69.94549,"co",{"name":"Dispensario Ejercito","amenity":"hospital","healthcare":"hospital","operator":"Ejercito Nacional","operator:type":"government"}],
+["w812938460",-4.20864,-69.94272,"co",{"name":"Hospital San Rafael","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ministerio de Salúd de Colombia","operator:type":"government"}],
 ["w957838117",-4.2553,-69.93566,"br",{"name":"Aeroporto Internacional de Tabatinga","aeroway":"aerodrome","icao":"SBTT","iata":"TBT","aerodrome:type":"regional","wikidata":"Q2576078"}]]

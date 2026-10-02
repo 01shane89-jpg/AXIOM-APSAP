@@ -2,4 +2,6 @@
 ["n1042086062",1.78963,-67.40869,"br",{"name":"Aeródromo Anamoim","aeroway":"aerodrome"}],
 ["n13074874414",0.62719,-66.12031,"br",{"name":"Aeródromo Maturacá","aeroway":"aerodrome","icao":"SWMK"}],
 ["n13075012603",1.12542,-66.84309,"br",{"name":"Aeroporto de Cucuí","name:en":"Cucuí Airport","aeroway":"aerodrome","icao":"SWKU","wikidata":"Q20450721"}],
+["n703320020",1.24321,-66.86791,"co",{"name":"La Guadalupe","aeroway":"aerodrome"}],
+["n703320042",1.91334,-67.07722,"co",{"name":"Aeropuerto de San Felipe","name:en":"San Felipe Airport","aeroway":"aerodrome"}],
 ["w477685227",0.62478,-66.12435,"br",{"aeroway":"helipad"}]]

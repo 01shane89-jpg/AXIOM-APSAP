@@ -1,0 +1,6 @@
+[["n10269364779",56.01933,12.56879,"dk",{"name":"Helsingør Sundhedshus","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Helsingør Kommune","phone":"+45 49 28 28 28","website":"https://sundhedshus.helsingor.dk/velkommen/"}],
+["n13829434935",56.0241,12.57308,"dk",{"name":"Falck Helsingør","emergency":"ambulance_station"}],
+["n13969296164",56.01573,12.20282,"dk",{"emergency":"ambulance_station","operator":"Falck"}],
+["n6868106149",56.03305,12.6111,"dk",{"name":"Allergi og Lungeklinikken Helsingør","amenity":"clinic","healthcare":"clinic","phone":"+45 49702216","website":"https://www.allergia.dk/","opening_hours":"Mo 13:00-15:00; Tu-Th 09:00-11:00"}],
+["w137043489",56.02489,12.57228,"dk",{"emergency":"ambulance_station"}],
+["w145245495",56.0384,12.56842,"dk",{"name":"Psykiatrisk Center Nordsjælland","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"psychiatry"}]]
