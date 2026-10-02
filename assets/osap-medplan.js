@@ -51,7 +51,7 @@
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
-  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450 };
+  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450, dwell: 30, xact: 15 };
   var STATE_EMERG = { url: "https://travel.state.gov/content/travel/en/international-travel/emergencies.html", us: "1-888-407-4747", abroad: "+1 202-501-4444" };
   /* International SOS assistance centres: published 24-hour numbers, read from ISOS's public page on 2026-10-01. City
      points are only used to show the nearest centres; ISOS's clinic and network data needs a login and is not used. */
@@ -468,17 +468,18 @@
      they list (f.tier, kept internally: 3 surgery with intensive or specialist care, or a sourced teaching or referral
      hospital; 2 surgery, or an emergency department with 100 or more beds; 1 an emergency department, beds or a helipad) */
   var NK_LVL = "No verified trauma designation";
-  var ROLE_RULE = "Only a hospital with an official trauma designation stated by a source can be Primary, Secondary or Tertiary (Level I first). " +
-    "The designation is shown only as the source states it, never worked out from what a hospital has. Every other hospital reads \"No verified trauma designation\" " +
-    "and is listed for reference only. For every hospital OSAP also shows an observed class, T1 to T5, inferred from its capability flags (draft rule " + "osap.tclass/0.1" + "): " +
+  var ROLE_RULE = "The official trauma designation is shown only as a source states it, never worked out from what a hospital has; without one a hospital reads \"No verified trauma designation\". " +
+    "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source (an official register or a planner's check), not from the designation alone; OpenStreetMap and Wikipedia are shown but never qualify. " +
+    "OSAP also shows an observed class, T1 to T5, inferred from the capability flags (draft rule osap.tclass/0.1): " +
     "T5 emergency department; T4 adds 24/7 emergency, blood bank and X-ray or ultrasound; T3 adds CT, ICU, general surgeon, emergency operating room, anaesthesia and orthopaedic surgery; " +
     "T2 adds neurosurgery 24/7, mechanical ventilation and a trauma surgeon or team; T1 adds massive transfusion, vascular, thoracic and plastic surgery. " +
     "Unknown flags never count as present or absent. The observed class is not an official level and is not used to pick";
   /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
   var REFERRAL = /universit|teaching hospital|referral cent|tertiary|faculty of medicine|college of medicine/i;
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
-  var LOW_TXT = "Reference only, not eligible for the picks: no official trauma designation found";
-  function lowTag(f) { return f.kind === "hospital" && !f.trauma ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
+  var LOW_TXT = "Not picked for any casualty type: the needed capabilities are not documented by a credible source";
+  function inAnyRole(f) { return !!ST && !!ST.fac && planRoles(ST).some(function (r) { return r.choice && r.choice.f === f; }); }
+  function lowTag(f) { return f.kind === "hospital" && !inAnyRole(f) ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
   /* the stated trauma level as a number (1 to 5), or null where the source names a trauma centre without a level */
   function lvlOf(tr) { var m = tr && /level\s*(i{1,3}|iv|v|[1-5])\b/i.exec(tr.text); return m ? +({ i: 1, ii: 2, iii: 3, iv: 4, v: 5 }[m[1].toLowerCase()] || m[1]) : null; }
   var ROMAN = ["", "I", "II", "III", "IV", "V"];
@@ -497,7 +498,7 @@
     var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false;
     if (m) {
       f.sofRec = m;
-      if (m.trauma_level) tr = { text: clip(m.trauma_level, 120), src: m.src, srcname: m.srcname || "source" };
+      if (m.trauma_level) tr = { text: clip(m.trauma_level, 120), src: m.trauma_src || m.src, srcname: m.trauma_srcname || m.srcname || "source", authority: m.trauma_authority || "", jurisdiction: m.trauma_jurisdiction || "", official: m.trauma_official === true };
       if (m.emergency_24h === true) { er24 = true; sc += 3; why.push("24-hour emergency (" + (m.srcname || "source") + ")"); }
       if (!f.addr && m.address) { f.addr = clip(m.address, 160); f.addrSof = true; }
       var ref = REFERRAL.test(m.notes || "") ? clip(m.notes, 90) : "";
@@ -517,6 +518,9 @@
     f.low = !tr && !ref && !surg && role > 0;
     f.tier = tr ? 4 : role; f.lvl = lvlOf(tr);
     f.caps = capFlags(f, m); f.tc = tClass(f.caps);
+    /* schema field official_trauma_designation: only as a source states it; VERIFIED only from the designating authority */
+    f.official_trauma_designation = tr ? { level: f.lvl ? ROMAN[f.lvl] : "UNSPECIFIED", designation_name: tr.text, authority: tr.authority || "", jurisdiction: tr.jurisdiction || "",
+      status: tr.official ? "VERIFIED" : "REPORTED", source_refs: [tr.src], source: { kind: tr.official ? "register" : "sof", url: tr.src, name: tr.srcname } } : { level: "NONE_IDENTIFIED", status: "UNKNOWN", source_refs: [] };
     return f;
   }
   /* ---------- capability flags and the operational T-class (Shane's trauma-level criteria, 2026-10-02) ----------
@@ -525,38 +529,38 @@
      OpenStreetMap tags are REPORTED at LOW confidence and OSAP's sourced list at MODERATE; nothing is VERIFIED until a
      planner or an authoritative register confirms it, and UNKNOWN never counts as present or absent. */
   var CAPS = [
-    ["ed", "Emergency department"], ["ed_24_7", "24/7 emergency department"], ["trauma_team", "Trauma team"], ["trauma_surgeon", "Trauma surgeon"],
-    ["general_surgeon", "General surgeon"], ["emergency_operating_room", "Emergency operating room"], ["anesthesia", "Anaesthesia"],
-    ["blood_bank", "Blood bank"], ["massive_transfusion", "Massive transfusion"], ["xray", "X-ray"], ["ultrasound", "Ultrasound"], ["ct", "CT"], ["mri", "MRI"],
-    ["interventional_radiology", "Interventional radiology"], ["icu", "ICU"], ["mechanical_ventilation", "Mechanical ventilation"], ["neurosurgery", "Neurosurgery"],
-    ["orthopedic_surgery", "Orthopaedic surgery"], ["vascular_surgery", "Vascular surgery"], ["thoracic_surgery", "Thoracic surgery"], ["plastic_surgery", "Plastic surgery"],
-    ["ophthalmology", "Ophthalmology"], ["maxillofacial_surgery", "Maxillofacial surgery"], ["burn_care", "Burn care"], ["pediatric_trauma", "Paediatric trauma"],
-    ["obstetrics", "Obstetrics"], ["cardiac_catheterization", "Cardiac catheterisation"], ["stroke_capability", "Stroke"], ["hyperbaric_medicine", "Hyperbaric medicine"],
-    ["rehabilitation", "Rehabilitation"], ["helipad", "Helipad"], ["ambulance_transfer", "Ambulance transfer"], ["critical_care_transport", "Critical care transport"]];
+    ["ed.basic", "Emergency department"], ["ed.24_7", "24/7 emergency department"], ["trauma.team", "Trauma team"], ["surg.trauma", "Trauma surgeon"],
+    ["surg.general", "General surgeon"], ["surg.or_emergency", "Emergency operating room"], ["surg.anaesthesia", "Anaesthesia"],
+    ["blood.bank", "Blood bank"], ["blood.mtp", "Massive transfusion"], ["dx.xray", "X-ray"], ["dx.ultrasound", "Ultrasound"], ["dx.ct", "CT"], ["dx.mri", "MRI"],
+    ["dx.ir", "Interventional radiology"], ["cc.icu", "ICU"], ["cc.ventilator", "Mechanical ventilation"], ["surg.neuro", "Neurosurgery"],
+    ["surg.ortho", "Orthopaedic surgery"], ["surg.vascular", "Vascular surgery"], ["surg.thoracic", "Thoracic surgery"], ["surg.plastic", "Plastic surgery"],
+    ["surg.ophthalmology", "Ophthalmology"], ["surg.maxfac", "Maxillofacial surgery"], ["spec.burn", "Burn care"], ["spec.pediatric_trauma", "Paediatric trauma"],
+    ["spec.obstetric", "Obstetrics"], ["spec.cath_lab", "Cardiac catheterisation"], ["spec.stroke", "Stroke"], ["spec.hyperbaric", "Hyperbaric medicine"],
+    ["spec.rehabilitation", "Rehabilitation"], ["trans.helipad", "Helipad"], ["trans.transfer", "Ambulance transfer"], ["trans.critical_care_transport", "Critical care transport"]];
   var CAP_NAME = {}; CAPS.forEach(function (c) { CAP_NAME[c[0]] = c[1]; });
   /* healthcare:speciality values that state a flag (whole values, so "neurology" is not neurosurgery) */
   var CAP_RE = {
-    trauma_surgeon: /^(trauma|traumatology|trauma_surgery)$/, general_surgeon: /^(surgery|general_surgery)$/, anesthesia: /^(anaesthetics?|anesthesiology|anaesthesiology|anesthesia)$/,
-    blood_bank: /^(blood_bank|transfusion(_medicine)?|haematology_blood_bank)$/, xray: /^(x_?ray|radiography)$/, ultrasound: /^(ultrasound|sonography)$/,
-    ct: /^(ct|computed_tomography|tomography)$/, mri: /^(mri|magnetic_resonance_imaging)$/, interventional_radiology: /^interventional_radiology$/,
-    icu: /^(intensive(_care)?|critical_care|icu)$/, neurosurgery: /^neurosurgery$/, orthopedic_surgery: /^(orthopa?edics|orthopa?edic_surgery|orthopa?edic_trauma)$/,
-    vascular_surgery: /^vascular_surgery$/, thoracic_surgery: /^(thoracic_surgery|cardiothoracic_surgery|cardiac_surgery)$/, plastic_surgery: /^(plastic_surgery|reconstructive_surgery)$/,
-    ophthalmology: /^ophthalmology$/, maxillofacial_surgery: /^(maxillofacial_surgery|oral_and_maxillofacial_surgery|oral_surgery)$/, burn_care: /^(burns?|burn_care|burn_unit)$/,
-    pediatric_trauma: /^(paediatric|pediatric)_trauma$/, obstetrics: /^(obstetrics|gynaecology_obstetrics|obstetrics_gynaecology|obstetrics_gynecology)$/,
-    cardiac_catheterization: /^(cardiac_catheterisation|cardiac_catheterization|interventional_cardiology)$/, stroke_capability: /^(stroke|stroke_unit)$/,
-    hyperbaric_medicine: /^(hyperbaric(_medicine)?|diving_medicine)$/, rehabilitation: /^(rehabilitation|physical_medicine_and_rehabilitation)$/ };
+    "surg.trauma": /^(trauma|traumatology|trauma_surgery)$/, "surg.general": /^(surgery|general_surgery)$/, "surg.anaesthesia": /^(anaesthetics?|anesthesiology|anaesthesiology|anesthesia)$/,
+    "blood.bank": /^(blood_bank|transfusion(_medicine)?|haematology_blood_bank)$/, "dx.xray": /^(x_?ray|radiography)$/, "dx.ultrasound": /^(ultrasound|sonography)$/,
+    "dx.ct": /^(ct|computed_tomography|tomography)$/, "dx.mri": /^(mri|magnetic_resonance_imaging)$/, "dx.ir": /^interventional_radiology$/,
+    "cc.icu": /^(intensive(_care)?|critical_care|icu)$/, "surg.neuro": /^neurosurgery$/, "surg.ortho": /^(orthopa?edics|orthopa?edic_surgery|orthopa?edic_trauma)$/,
+    "surg.vascular": /^vascular_surgery$/, "surg.thoracic": /^(thoracic_surgery|cardiothoracic_surgery|cardiac_surgery)$/, "surg.plastic": /^(plastic_surgery|reconstructive_surgery)$/,
+    "surg.ophthalmology": /^ophthalmology$/, "surg.maxfac": /^(maxillofacial_surgery|oral_and_maxillofacial_surgery|oral_surgery)$/, "spec.burn": /^(burns?|burn_care|burn_unit)$/,
+    "spec.pediatric_trauma": /^(paediatric|pediatric)_trauma$/, "spec.obstetric": /^(obstetrics|gynaecology_obstetrics|obstetrics_gynaecology|obstetrics_gynecology)$/,
+    "spec.cath_lab": /^(cardiac_catheterisation|cardiac_catheterization|interventional_cardiology)$/, "spec.stroke": /^(stroke|stroke_unit)$/,
+    "spec.hyperbaric": /^(hyperbaric(_medicine)?|diving_medicine)$/, "spec.rehabilitation": /^(rehabilitation|physical_medicine_and_rehabilitation)$/ };
   function capFlags(f, m) {
     var C = {}, osm = { kind: "osm", url: f.osm || "", name: "OpenStreetMap" }, sof = m ? { kind: "sof", url: m.src, name: m.srcname || "source", at: m.asof || "" } : null;
-    CAPS.forEach(function (c) { C[c[0]] = { status: "UNKNOWN", confidence: "UNKNOWN", source: null, last_verified: null }; });
-    function rep(k, src, how, conf) { if (C[k].status === "UNKNOWN") C[k] = { status: "REPORTED", confidence: conf, source: src, how: how, last_verified: null }; }
-    function na(k, src, how) { C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", source: src, how: how, last_verified: null }; }
-    if (f.er === "yes") rep("ed", osm, "emergency=yes", "LOW"); else if (f.er === "no") na("ed", osm, "emergency=no");
-    if (m && m.emergency_24h === true) { rep("ed_24_7", sof, "24-hour emergency", "MODERATE"); rep("ed", sof, "24-hour emergency", "MODERATE"); }
-    if (f.pad) rep("helipad", osm, "aeroway=helipad within 400 m", "LOW");
+    CAPS.forEach(function (c) { C[c[0]] = { status: "UNKNOWN", confidence: "UNKNOWN", availability: "unknown", source: null, last_verified: null }; });
+    function rep(k, src, how, conf) { if (C[k].status === "UNKNOWN") C[k] = { status: "REPORTED", confidence: conf, availability: "unknown", source: src, how: how, last_verified: null }; }
+    function na(k, src, how) { C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", availability: "unknown", source: src, how: how, last_verified: null }; }
+    if (f.er === "yes") rep("ed.basic", osm, "emergency=yes", "LOW"); else if (f.er === "no") na("ed.basic", osm, "emergency=no");
+    if (m && m.emergency_24h === true) { rep("ed.24_7", sof, "24-hour emergency", "MODERATE"); rep("ed.basic", sof, "24-hour emergency", "MODERATE"); }
+    if (f.pad) rep("trans.helipad", osm, "aeroway=helipad within 400 m", "LOW");
     String(f.specRaw || "").split(/[;,]/).map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean).forEach(function (v) {
       Object.keys(CAP_RE).forEach(function (k) { if (CAP_RE[k].test(v)) rep(k, osm, "healthcare:speciality=" + v, "LOW"); });
     });
-    if (m && NEURO.test(String(m.notes || ""))) rep("neurosurgery", sof, "neurosurgery in the source notes", "MODERATE");
+    if (m && NEURO.test(String(m.notes || ""))) rep("surg.neuro", sof, "neurosurgery in the source notes", "MODERATE");
     return C;
   }
   function has(C, k) { var x = C[k]; return !!x && (x.status === "VERIFIED" || x.status === "REPORTED" || x.status === "INFERRED"); }
@@ -566,22 +570,22 @@
      planner's confirmation. Always INFERRED, never an official level. */
   var TC_RULE_ID = "osap.tclass/0.1";
   var TC_NEED = [
-    ["T5", [["ed"]]],
-    ["T4", [["ed_24_7"], ["blood_bank"], ["xray", "ultrasound"]]],
-    ["T3", [["ct"], ["icu"], ["general_surgeon"], ["emergency_operating_room"], ["anesthesia"], ["orthopedic_surgery"]]],
-    ["T2", [["neurosurgery_24_7"], ["mechanical_ventilation"], ["trauma_surgeon", "trauma_team"]]],
-    ["T1", [["massive_transfusion"], ["vascular_surgery"], ["thoracic_surgery"], ["plastic_surgery"]]]];
+    ["T5", [["ed.basic"]]],
+    ["T4", [["ed.24_7"], ["blood.bank"], ["dx.xray", "dx.ultrasound"]]],
+    ["T3", [["dx.ct"], ["cc.icu"], ["surg.general"], ["surg.or_emergency"], ["surg.anaesthesia"], ["surg.ortho"]]],
+    ["T2", [["surg.neuro_24_7"], ["cc.ventilator"], ["surg.trauma", "trauma.team"]]],
+    ["T1", [["blood.mtp"], ["surg.vascular"], ["surg.thoracic"], ["surg.plastic"]]]];
   var TC_TXT = { T1: "comprehensive definitive trauma", T2: "major definitive trauma", T3: "selective definitive trauma", T4: "stabilisation facility", T5: "basic emergency facility" };
   var TC_WORD = { T1: "Observed capabilities are broadly consistent with a high-capability trauma facility.", T2: "Observed capabilities are broadly consistent with a major trauma facility.",
     T3: "Observed capabilities suggest selective definitive trauma care; complex cases need transfer.", T4: "Observed capabilities suggest stabilisation and transfer.",
     T5: "Observed capabilities suggest basic emergency care; rapid transfer expected for serious trauma." };
   function tClass(C) {
     function st(k) {
-      if (k === "neurosurgery_24_7") { var n = C.neurosurgery; return n && n.status === "NOT_AVAILABLE" ? "no" : n && n.status === "VERIFIED" && n.availability === "physically_present_24_7" ? "yes" : "unknown"; }
+      if (k === "surg.neuro_24_7") { var n = C["surg.neuro"]; return n && n.status === "NOT_AVAILABLE" ? "no" : n && n.status === "VERIFIED" && n.availability === "physically_present_24_7" ? "yes" : "unknown"; }
       return has(C, k) ? "yes" : C[k] && C[k].status === "NOT_AVAILABLE" ? "no" : "unknown";
     }
     function need(alts) { var v = alts.map(st); return v.indexOf("yes") >= 0 ? "yes" : v.every(function (x) { return x === "no"; }) ? "no" : "unknown"; }
-    function nm(alts) { return alts.map(function (k) { return k === "neurosurgery_24_7" ? "neurosurgery 24/7" : (CAP_NAME[k] || k).replace(/^[A-Z](?=[a-z])/, function (c) { return c.toLowerCase(); }); }).join(" or "); }
+    function nm(alts) { return alts.map(function (k) { return k === "surg.neuro_24_7" ? "neurosurgery 24/7" : (CAP_NAME[k] || k).replace(/^[A-Z](?=[a-z])/, function (c) { return c.toLowerCase(); }); }).join(" or "); }
     var cls = null, met = [], next = null;
     for (var i = 0; i < TC_NEED.length; i++) {
       var R = TC_NEED[i][1], v = R.map(need);
@@ -835,7 +839,8 @@
     "#medplan .mpmark{display:inline-block;min-width:18px;text-align:center;font-weight:700;border-radius:3px;background:#D7141A;color:#fff;font-size:11px;padding:0 3px}" +
     "#medplan .mpmark.air{background:#1d5fa8}#medplan .mpmark.o{background:#111}#medplan .mpmark.e{background:#b35c00}" +
     "#medplan .mptier{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;border:1px solid currentColor}" +
-    "#medplan .mptcls{color:var(--muted,#56626F)}" +
+    "#medplan .mptcls{color:var(--muted,#56626F)}#medplan .mproles td,#medplan .mproles th{vertical-align:top;text-align:left;padding:4px 6px;border-bottom:1px solid var(--line-soft,#e3e7eb)}" +
+    "#medplan .mpbypc b{opacity:.75}#medplan .mpbyp{display:block;font-size:11.5px;font-weight:600;color:var(--muted,#56626F)}" +
     "#medplan .mplow,.mpdoc .mplow{display:block;font-size:11.5px;font-weight:600;color:#8a4b00;margin:1px 0}" +
     ":root[data-map=grey] #medplan .mplow,:root[data-map=dark] #medplan .mplow{color:#F5C877}.mpdoc .mplow{color:#8a4b00!important}" +
     "#medplan .mptier.t4{color:#8b0010}#medplan .mptier.t3{color:#7a3e00}#medplan .mptier.t2{color:#3d5a00}#medplan .mptier.t1,#medplan .mptier.t0{color:var(--muted,#56626F)}" +
@@ -896,7 +901,7 @@
   function isOff(f) { return !!f && f.kind === "hospital" && offIds().indexOf(f.id) >= 0; }
   function setOff(id, off) { var L = offIds().filter(function (x) { return x !== id; }); if (off) L.push(id); lsSet(offKey(), L.slice(-500)); }
   function fieldVals() { return lsGet(fieldsKey()) || {}; }
-  function num(k) { var v = +fieldVals()[k]; return isFinite(v) && v > 0 && v < 1000 ? v : DEF[k]; }
+  function num(k) { var v = +fieldVals()[k]; return isFinite(v) && (v > 0 || (k === "dwell" || k === "xact") && v === 0 && fieldVals()[k] !== "") && v < 1000 ? v : DEF[k]; }
   function fieldsHtml() {
     var v = fieldVals();
     return FIELDS.map(function (f) {
@@ -977,7 +982,7 @@
       '<div class="mpgrid">' + fieldsHtml() + "</div>" +
       '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
-      "Only hospitals with an official trauma designation stated by a source are picked; every other hospital reads \"No verified trauma designation\" and is listed for reference only. Observed classes T1 to T5 are inferred from capability flags and are not official levels. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
+      "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source; OpenStreetMap and Wikipedia are shown but never qualify. Official trauma designations appear only as a source states them. Observed classes T1 to T5 are inferred from capability flags and are not official levels. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
       "</div>";
     ghRender(); ocRender(); thrRender();
   }
@@ -1077,40 +1082,158 @@
     if (g == null && a == null) return null;
     return g != null && (a == null || g <= a) ? [g, "road"] : [a, "air"];
   }
-  /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care; 2026-10-02:
-     the level is the documented trauma level, see rankOf, and a hospital without one is never picked):
-     Primary: the highest level of care that can be reached, the quickest of that level by road (or air when air evacuation is on);
-       within the same 10 minutes the better-equipped one;
-     Secondary: when Primary is beyond the golden hour, the most capable inside it, to stabilise on the way;
-       otherwise the next highest level of care in reach;
-     Tertiary: the next highest level of care of the rest, as the backup. */
+  /* ---------- MTF plan roles per casualty type (Shane's MTF classification, 2026-10-02) ----------
+     Primary, Secondary and Tertiary are a facility's function in this plan for one casualty type, not its trauma level or
+     Role: Primary is the quickest facility giving a meaningful increase in care over the point of injury, Secondary the
+     quickest with advanced resuscitation, surgery, blood, CT and ICU, Tertiary the quickest with the definitive specialty care
+     that type needs (a separate Tertiary per specialty). A facility qualifies only on capabilities documented by a credible
+     source (Shane: "unless there is credible documentation ... it's not even an option"): an official register or a planner's
+     verification. Crowd-edited sources (OpenStreetMap, Wikipedia) are shown but never qualify. Casualty types and their
+     required capabilities are planning templates, draft and not clinically reviewed. Rows follow the plan_roles schema
+     (osap-medplan): casualty_category, role, specialty, state, choice {facility_id, time_to_required_care, met, missing,
+     unknown}, bypassed [{facility_id, reason}]. */
+  var DECISION_NOTE = "Destination is decided by medical personnel under the applicable protocol; this is the planned option.";
+  var CATS = [
+    { id: "cat.major_trauma", label: "Major trauma", specialty: "trauma", stages: {
+      primary: { required: ["ed.basic"], gain: ["blood.bank", "dx.ct", "surg.general", "cc.icu", "cc.ventilator"], alt: "I-V" },
+      secondary: { required: ["ed.24_7", "surg.general", "surg.or_emergency", "surg.anaesthesia", "blood.bank", "dx.ct", "cc.icu"], alt: "I-III" },
+      tertiary: { required: ["trauma.designated"], preferred: ["surg.neuro", "surg.vascular", "spec.rehabilitation"], byLevel: true } } },
+    { id: "cat.severe_tbi", label: "Severe head injury", specialty: "neuro", stages: {
+      primary: { required: ["ed.basic"], gain: ["cc.ventilator", "dx.ct", "blood.bank"] },
+      secondary: { required: ["ed.24_7", "dx.ct", "cc.icu", "cc.ventilator"] },
+      tertiary: { required: ["dx.ct", "surg.neuro", "cc.icu", "cc.ventilator"], preferred: ["spec.rehabilitation"] } } },
+    { id: "cat.major_burn", label: "Major burn", specialty: "burn", stages: {
+      primary: { required: ["ed.basic"], gain: ["cc.ventilator", "cc.icu"] },
+      secondary: { required: ["ed.24_7", "cc.icu", "cc.ventilator"] },
+      tertiary: { required: ["spec.burn", "cc.icu", "surg.plastic"], preferred: ["spec.rehabilitation"] } } },
+    { id: "cat.complex_limb", label: "Complex limb trauma", specialty: "other", stages: {
+      primary: { required: ["ed.basic"], gain: ["blood.bank", "surg.general"] },
+      secondary: { required: ["surg.general", "surg.or_emergency", "surg.anaesthesia", "blood.bank", "surg.ortho"] },
+      tertiary: { required: ["surg.ortho", "surg.vascular", "surg.plastic", "cc.icu"], preferred: ["spec.rehabilitation"] } } }];
+  var ROLE_NAME = { primary: "Primary", secondary: "Secondary", tertiary: "Tertiary" };
+  CAP_NAME["trauma.designated"] = "Official trauma designation";
+  function crowd(src) { return !src || src.kind === "osm" || /wiki|openstreetmap/i.test(src.name || ""); }
+  /* one capability for one facility: "yes" (documented by a credible source), "crowd" (only a crowd-edited source says so),
+     "no" (a source says it is not available) or "unknown" */
+  function capOk(f, k) {
+    if (k === "trauma.designated") { var d = f.official_trauma_designation; return !d || d.level === "NONE_IDENTIFIED" ? "unknown" : d.status === "VERIFIED" || !crowd(d.source) ? "yes" : "crowd"; }
+    var x = f.caps && f.caps[k]; if (!x) return "unknown";
+    if (x.status === "NOT_AVAILABLE") return "no";
+    if (!has(f.caps, k)) return "unknown";
+    return x.status === "VERIFIED" || !crowd(x.source) ? "yes" : "crowd";
+  }
+  /* an official trauma designation documented by a credible source stands for the stage where the template says so: any
+     level for major trauma's Primary, Levels I to III (or a designation with no number) for its Secondary; Levels IV and V
+     are stabilisation levels in Shane's criteria */
+  function desigFits(f, alt) {
+    if (!alt || capOk(f, "trauma.designated") !== "yes") return false;
+    var l = f.official_trauma_designation.level;
+    return alt === "I-V" || ["I", "II", "III", "III-N", "UNSPECIFIED"].indexOf(l) >= 0;
+  }
+  function stageFit(f, st) {
+    var r = { met: [], missing: [], unknown: [], crowd: [], gain: [] };
+    if (desigFits(f, st.alt)) { r.met = ["trauma.designated"]; r.ok = true; r.byDesig = true; return r; }
+    st.required.forEach(function (k) { var v = capOk(f, k); (v === "yes" ? r.met : v === "no" ? r.missing : v === "crowd" ? r.crowd : r.unknown).push(k); });
+    (st.gain || []).forEach(function (k) { if (capOk(f, k) === "yes") r.gain.push(k); });
+    r.ok = r.met.length === st.required.length && (!st.gain || r.gain.length > 0);
+    return r;
+  }
+  function capNames(L) { return L.map(function (k) { return (CAP_NAME[k] || k).replace(/^[A-Z](?=[a-z])/, function (c) { return c.toLowerCase(); }); }); }
+  function planRoles(s) {
+    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return !isOff(f) && bestWay(f); }).sort(function (a, b) { return bestWay(a)[0] - bestWay(b)[0] || byCap(a, b); });
+    var rows = [];
+    CATS.forEach(function (c) {
+      ["primary", "secondary", "tertiary"].forEach(function (role) {
+        var st = c.stages[role], pick = null, by = [], L = H;
+        /* Tertiary is the highest relevant capability: by official level first (Level I first), then time */
+        if (st.byLevel) L = H.slice().sort(function (a, b) { return rankOf(b) - rankOf(a) || bestWay(a)[0] - bestWay(b)[0]; });
+        for (var i = 0; i < L.length; i++) {
+          var fit = stageFit(L[i], st);
+          if (fit.ok) { pick = { f: L[i], fit: fit }; break; }
+          by.push({ facility_id: L[i].id, f: L[i], reason: fit.missing.length ? "lacks_required_capability" : role === "primary" && fit.met.length === st.required.length ? "no_meaningful_stabilisation_benefit" : "receiving_capability_unconfirmed", fit: fit });
+        }
+        var row = { casualty_category: c.id, label: c.label, role: role, state: pick ? "filled" : "gap", bypassed: by.slice(0, 5), required: st.required, decision_note: DECISION_NOTE };
+        if (role === "tertiary") row.specialty = c.specialty;
+        if (pick) { var b = bestWay(pick.f); row.choice = { facility_id: pick.f.id, f: pick.f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: pick.fit.met, missing: pick.fit.missing, unknown: pick.fit.unknown.concat(pick.fit.crowd), gain: pick.fit.gain }; }
+        rows.push(row);
+      });
+      bypassTiming(rows.slice(-3));
+    });
+    return rows;
+  }
+  /* Step 2 of Shane's MTF classification: bypass by time to required care. For a casualty type, stopping at a lower role
+     costs the time there plus a transfer; going direct reaches the higher capability sooner. Compared:
+       via    = to the lower facility + time there + transfer activation + transfer drive
+       direct = to the higher facility from the point of injury
+     Going direct is planned when it reaches the higher care inside the golden hour; otherwise the lower facility is a planned
+     stop, to stabilise on the way. A bypassed facility stays listed as a stabilisation option. Times at a facility and transfer
+     activation are planner defaults (assumptions, set under the table); a transfer drive is the straight line x 1.4 at 50 km/h,
+     an estimate, since no road route between hospitals is drawn. */
+  var XFER_FACTOR = 1.4, XFER_KMH = 50;
+  function xferS(a, b) { return hav([a.lat, a.lon], [b.lat, b.lon]) * XFER_FACTOR / (XFER_KMH / 3.6); }
+  function bypassTiming(R) {
+    var byRole = {}; R.forEach(function (r) { byRole[r.role] = r; });
+    var order = ["primary", "secondary", "tertiary"], gh = GOLDEN_MIN * 60;
+    R.forEach(function (r) { r.stop = r.state === "filled"; });
+    for (var i = 0; i < 2; i++) {
+      var lo = byRole[order[i]], hi = byRole[order[i + 1]];
+      if (!lo.choice || !hi.choice) continue;
+      var a = lo.choice.f, b = hi.choice.f;
+      if (a === b) { lo.stop = false; lo.same_as = hi.role; continue; }
+      var tLo = lo.choice.time_to_required_care.s, direct = hi.choice.time_to_required_care.s;
+      var via = tLo + (num("dwell") + num("xact")) * 60 + xferS(a, b);
+      hi.via = { from: lo.role, via_s: Math.round(via), direct_s: Math.round(direct) };
+      if (direct <= gh || direct <= via && tLo >= direct) {
+        lo.stop = false;
+        lo.bypass = { facility_id: a.id, f: a, reason: "direct_route_faster_to_required_care", via_time: { s: Math.round(via), basis: "estimate" }, direct_time: { s: Math.round(direct), basis: "estimate" } };
+        hi.bypassed.unshift(lo.bypass);
+      }
+    }
+    /* a Primary or Secondary passed over still stands as the stabilisation option if the casualty cannot tolerate the longer move */
+    R.forEach(function (r) { r.stabilisation_option = r.state === "filled" && !r.stop && !r.same_as; });
+  }
+  function pathText(R) {
+    var stops = R.filter(function (r) { return r.state === "filled" && r.stop; }).map(function (r) { return ROLE_NAME[r.role]; });
+    return stops.length ? "POI → " + stops.join(" → ") : "No planned destination";
+  }
+  /* the hospitals that carry the routes, map marks, print and assessments: major trauma's Primary, Secondary and Tertiary,
+     each once (a facility filling two roles is listed under the first) */
   var ROLE_PICK = ["Primary", "Secondary", "Tertiary"];
   function picks(s) {
-    /* Shane 2026-10-02: a hospital without credible documentation of its trauma level is not an option for any pick */
-    var H = ((s.fac && s.fac.H) || []).filter(function (f) { return f.trauma && !isOff(f); });
-    if (!H.length) return [];
-    var out = [], gh = GOLDEN_MIN * 60;
-    function why(f, tag) {
-      var b = bestWay(f);
-      return tierLabel(f) + (b ? ", " + mins(b[0]) + " from injury by " + b[1] + " (" + golden(b[0]).t.toLowerCase() + ")" : ", no drive time yet") + (tag ? "; " + tag : "");
-    }
-    function add(f, k, tag) { if (!f || out.length > 2 || out.some(function (p) { return p.f === f; })) return; out.push({ f: f, role: ROLE_PICK[out.length], why: [ROLE_PICK[out.length]], reason: why(f, tag) }); }
-    function free(f) { return !out.some(function (p) { return p.f === f; }); }
-    var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) {
-      /* same level: within the same 10 minutes the better-equipped (sourced teaching hospital, more services) first */
-      var a = bestWay(x)[0], b = bestWay(y)[0];
-      return rankOf(y) - rankOf(x) || Math.floor(a / 600) - Math.floor(b / 600) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || byCap(x, y);
+    var out = [];
+    planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.state === "filled"; }).forEach(function (r) {
+      var f = r.choice.f, had = out.filter(function (p) { return p.f === f; })[0], nm = ROLE_NAME[r.role];
+      if (had) { had.why.push(nm); had.reason += "; also " + nm; return; }
+      var byp = r.bypass ? "; bypass: going direct reaches " + (r.role === "primary" ? "Secondary" : "Tertiary") + " care in " + mins(r.bypass.direct_time.s) + " (via here " + mins(r.bypass.via_time.s) + "), so this is the stabilisation option" : "";
+      out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + tierLabel(f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way + " (" + golden(r.choice.time_to_required_care.s).t.toLowerCase() + ")" +
+        "; documented: " + andList(capNames(r.choice.met.concat(r.choice.gain.filter(function (k) { return r.choice.met.indexOf(k) < 0; })))) + byp });
     });
-    if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next ranked" : "top ranked listed"); }); return out; }
-    var P = reach[0], pIn = bestWay(P)[0] <= gh;
-    add(P, 0, "top ranked in reach" + (pIn ? "" : "; beyond the golden hour, so stabilise at Secondary if the casualty cannot make it"));
-    var inGh = reach.filter(function (f) { return free(f) && bestWay(f)[0] <= gh; });
-    if (!pIn && inGh[0]) add(inGh[0], 1, "most capable inside the golden hour, to stabilise on the way to Primary");
-    var next = reach.filter(free)[0];
-    add(next, 1, "next ranked in reach");
-    add(reach.filter(free)[0], 2, "next ranked, as the backup");
-    if (out.length < 3) add(H.slice().sort(byCap).filter(free)[0], 2, "next ranked listed");
     return out;
+  }
+  /* the role table: one row per casualty type, Primary, Secondary and Tertiary (with its specialty) across */
+  function rolesHtml(s) {
+    var R = planRoles(s), km0 = Math.round(s.radii.h / 1000);
+    function byRoleOf(r, d) { var o = ["primary", "secondary", "tertiary"], k = o[o.indexOf(r.role) + d]; return R.filter(function (x) { return x.casualty_category === r.casualty_category && x.role === k; })[0]; }
+    function cell(r) {
+      if (r.state === "gap") return '<td class="mpgap"><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+        (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
+      var c = r.choice, f = c.f, unk = capNames(c.unknown);
+      var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
+        '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here. Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
+      var hv = r.via && r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? '<span class="sub obs">Reached via ' + ROLE_NAME[r.via.from] + " in about " + esc(mins(r.via.via_s)) + "; direct would be " + esc(mins(r.via.direct_s)) + ", beyond the golden hour.</span>" : "";
+      return "<td" + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv +
+        (unk.length ? '<span class="sub obs">Not documented: ' + esc(unk.join(", ")) + "</span>" : "") + "</td>";
+    }
+    var h = '<div class="mpscroll"><table class="mproles"><thead><tr><th scope="col">Casualty type</th><th scope="col">Primary</th><th scope="col">Secondary</th><th scope="col">Tertiary</th></tr></thead><tbody>';
+    CATS.forEach(function (c) {
+      var r = R.filter(function (x) { return x.casualty_category === c.id; }), by = function (k) { return r.filter(function (x) { return x.role === k; })[0]; };
+      h += '<tr><th scope="row">' + esc(c.label) + '<span class="sub">' + esc(pathText(r)) + "</span></th>" + cell(by("primary")) + cell(by("secondary")) + cell(by("tertiary")) + "</tr>";
+    });
+    return h + "</tbody></table></div>" +
+      '<p class="obs">MTF roles per casualty type (draft templates, not clinically reviewed): Primary is the quickest hospital giving a meaningful increase in care; Secondary adds advanced resuscitation, surgery, blood, CT and ICU; Tertiary has the definitive specialty care for that type. ' +
+      "A hospital qualifies only on capabilities documented by a credible source (an official register or a planner's check); OpenStreetMap and Wikipedia are shown but never qualify. " +
+      "Bypass: a lower stop is skipped when going direct reaches the higher care inside the golden hour; otherwise it is a planned stop to stabilise. Via a stop counts its time there (" + num("dwell") + " min) plus transfer activation (" + num("xact") + " min) plus a transfer drive (straight line x " + XFER_FACTOR + " at " + XFER_KMH + " km/h, an estimate). " + esc(DECISION_NOTE) + "</p>" +
+      '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
   }
   function routes(s) {
     var P = picks(s); s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "" }; }); rtRender();
@@ -1206,7 +1329,7 @@
     var H = s.fac.H.filter(function (f) { return !isOff(f) && bestWay(f); }), byT = function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; };
     var N = H.filter(neuroSrc).sort(byT), E = H.filter(function (f) { return f.trauma && !neuroSrc(f); }).sort(byT);
     function line(f, tag) { var b = bestWay(f); return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b>, " + esc(mins(b[0])) + " from injury by " + b[1] + " " + ghTag(b[0]) + " " + tag + ctHtml(f); }
-    var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> ';
+    var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> <span class="obs">Where any source states neurosurgery, for information; the planned destination is the Severe head injury row above.</span> ';
     if (N.length) h += line(N[0], '<span class="obs">(neurosurgery stated by ' + neuroSrc(N[0]) + ")</span>") + (N[1] ? '<span class="sub">Next: H' + (s.fac.H.indexOf(N[1]) + 1) + " " + esc(N[1].name) + ", " + esc(mins(bestWay(N[1])[0])) + "</span>" : "");
     else h += '<span class="mpnk">Not known</span> <span class="obs">No hospital in reach states neurosurgery in OpenStreetMap or OSAP\'s sources.</span>' +
       (E.length ? '<span class="sub">Nearest with an official trauma designation: ' + line(E[0], '<span class="obs">(' + esc(tierLabel(E[0])) + "; neurosurgery not stated, confirm by phone)</span>") + "</span>" : "");
@@ -1218,8 +1341,8 @@
     if (!s.fac) { el.innerHTML = '<p class="obs">Choosing the Primary, Secondary and Tertiary hospitals…</p>'; return; }
     var P = picks(s);
     if (!P.length) { el.innerHTML = '<p class="obs mpwarn">' + (failed(s) ? "No hospitals could be chosen: the hospital lookup failed (" + esc(clip(lookupErr(s), 160)) + "). This does not mean there is no hospital."
-      : "No Primary, Secondary or Tertiary: no hospital within " + Math.round(s.radii.h / 1000) + " km has an official trauma designation in OSAP's sources" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
-        ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>"; return; }
+      : "No Primary, Secondary or Tertiary for major trauma: no hospital within " + Math.round(s.radii.h / 1000) + " km has the needed capabilities documented by a credible source" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
+        ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>" + (failed(s) ? "" : rolesHtml(s)); return; }
     el.innerHTML = '<table class="mppst"><tbody>' + P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f);
       /* the pick's contacts and what is known of its capability are shown here, not only in the hospital table (whose
@@ -1230,10 +1353,10 @@
         '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
         '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
         '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
-    }).join("") + "</tbody></table>" +
+    }).join("") + "</tbody></table>" + rolesHtml(s) +
       headHtml(s) +
-      '<p class="obs">Chosen by fixed rules: life, limb or eyesight goes to the highest level of care. Primary is the highest level of care that can be reached, the quickest of that level' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
-      ". When Primary is beyond the golden hour, Secondary is the most capable inside it, to stabilise on the way; otherwise Secondary and Tertiary are the next highest levels of care. Confirm each by phone before relying on it.</p>";
+      '<p class="obs">Above: the major trauma Primary, Secondary and Tertiary, which carry the routes, map and print. Times are from injury' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
+      ". Confirm each by phone before relying on it.</p>";
   }
   function facRender() {
     var el = D.getElementById("mp-fac"), s = ST; if (!el || !s.fac) return;
@@ -1243,7 +1366,7 @@
     h += F.H.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.H.map(function (f, i) { return facRow(f, i, bestOf(f)); }).join("") + "</tbody></table></div>"
       : failed(s) ? '<p class="obs mpwarn"><b>No hospital is listed because the lookup failed</b> (' + esc(clip(lookupErr(s), 160)) + "). This does not mean there is none: call the ambulance number in section 4 and check national sources.</p>"
       : '<p class="obs mpwarn">No hospital with a known capability within ' + Math.round(s.radii.h / 1000) + " km in OpenStreetMap or OSAP's sourced list" + (F.nU ? "; see the hospitals with no details listed below" : "") + ". Check national sources before relying on this.</p>";
-    if (F.H.length) h += '<p class="obs">Only hospitals with an <b>official trauma designation</b> stated by a source (linked), Level I first, can be Primary, Secondary or Tertiary. The rest read <b>No verified trauma designation</b> and are listed for reference only, not eligible. Each hospital also shows an <b>observed class</b> (T1 to T5), inferred from its capability flags; it is not an official level (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
+    if (F.H.length) h += '<p class="obs">Each hospital shows its <b>official trauma designation</b> only where a source states one (linked), and an <b>observed class</b> (T1 to T5) inferred from its capability flags, which is not an official level. Primary, Secondary and Tertiary are chosen per casualty type from capabilities a credible source documents (see the table at the top) (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
       (F.nH > 10 ? "The nearest 10 hospitals with something listed, plus the best-ranked of the rest." : "") + "</p>";
     var nOff = F.H.concat(F.U || []).filter(isOff).length;
     if (nOff) h += '<p class="obs mpwarn">' + nOff + " hospital" + (nOff > 1 ? "s are" : " is") + ' turned off and left out of the picks, routes, map and print. <button type="button" class="refresh noprint" data-mp="allon">Turn all back on</button></p>';
@@ -2054,12 +2177,13 @@
     }
     var k = t.getAttribute && t.getAttribute("data-mpf"); if (!k) return;
     var vals2 = fieldVals(); vals2[k] = String(t.value || "").slice(0, 600); lsSet(fieldsKey(), vals2);
+    if (k === "dwell" || k === "xact") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
     clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); srcRender(); }, 600);
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
