@@ -103,7 +103,9 @@ const AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI
 export const DATELINE = [
   /\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
   new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
-  /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-|(?<=,[^\n\u2013\u2014-]{1,30})-(?=\p{Lu}))/gu,
+  /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu,
+  // "MANILA, Philippines-The ...": no space either side of the dash, only after a "PLACE, Country" dateline
+  /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30},[^\n\u2013\u2014-]{1,30}-(?=\p{Lu})/gu,
 ];
 export function stripDatelines(text) {
   let t = String(text || "");
