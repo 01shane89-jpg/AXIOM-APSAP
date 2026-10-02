@@ -1,0 +1,12 @@
+[["n4261573689",1.0357,120.82257,"id",{"name":"RSU MOKOPIDO","amenity":"hospital","healthcare":"hospital","addr:street":"Jl. Lanoni"}],
+["n7704819044",0.76998,120.54196,"id",{"name":"Poskesdes","amenity":"hospital","healthcare":"hospital"}],
+["n9497454644",1.03612,120.82248,"id",{"name":"IGD","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w1026582099",0.78276,120.52569,"id",{"name":"UPT Puskesmas Dondo","amenity":"hospital","healthcare":"hospital"}],
+["w1027226978",1.17202,121.42019,"id",{"name":"RSU Mokoyurli Buol","amenity":"hospital","healthcare":"hospital"}],
+["w1032000153",0.44546,121.11338,"id",{"amenity":"hospital","healthcare":"hospital"}],
+["w1313926479",0.46393,121.81453,"id",{"name":"Bandar Udara Panua Pohuwato","operator":"Direktorat Jenderal Perhubungan Udara","aeroway":"aerodrome","icao":"WAFZ"}],
+["w592957731",0.4416,120.95277,"id",{"amenity":"clinic"}],
+["w678086078",1.1029,121.41376,"id",{"name":"Bandar Udara Pogogul Buol","name:en":"Pogogul Buol Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAFY","iata":"UOL","aerodrome:type":"regional"}],
+["w678088603",1.12351,120.79297,"id",{"name":"Bandar Udara Sultan Bantilan","name:en":"Sultan Bantilan Airport","operator":"Unit Penyelenggara Bandar Udara","phone":"+62 453 22978","aeroway":"aerodrome","icao":"WAFL","iata":"TLI","aerodrome:type":"regional"}],
+["w787328714",1.03526,120.82295,"id",{"name":"RSU Mokopido","amenity":"hospital","healthcare":"hospital"}],
+["w825153786",0.7708,120.54272,"id",{"name":"RSU Hj. Zubaedah Bantilan","amenity":"hospital","addr:subdistrict":"Malala","addr:district":"Dondo","addr:city":"Tolitoli","addr:province":"Sulawesi Tengah"}]]

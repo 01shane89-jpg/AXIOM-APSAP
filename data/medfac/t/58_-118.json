@@ -1,0 +1,8 @@
+[["n1042025127",58.6167,-117.183,"ca",{"name":"High Level/Footner Lake Seaplane Base","aeroway":"aerodrome"}],
+["n1042025587",59.63445,-117.78865,"ca",{"name":"Steen Tower Airport","aeroway":"aerodrome"}],
+["n6522515985",58.18627,-116.41925,"ca",{"name":"Alberta Health Services- La Crete Urgent and Long Term Care","amenity":"clinic","healthcare":"clinic","operator":"Alberta Health Services","website":"https://albertahealthservices.ca/"}],
+["n676439311",58.62043,-117.16353,"ca",{"name":"High Level Airport","aeroway":"aerodrome","icao":"CYOJ","iata":"YOJ","wikidata":"Q1431477"}],
+["w204644716",58.1719,-116.33543,"ca",{"name":"La Crete Airport","aeroway":"aerodrome","icao":"CFN5","wikidata":"Q3912720"}],
+["w290187673",58.51249,-117.1623,"ca",{"name":"NWHC","aeroway":"helipad"}],
+["w290188359",58.51308,-117.1619,"ca",{"name":"Northwest Health Centre","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"100 Avenue","addr:city":"High Level","addr:postcode":"T0H 1Z0"}],
+["w532526327",59.63031,-117.16943,"ca",{"name":"Steen River Airport","aeroway":"aerodrome","icao":"CFB7","wikidata":"Q3912655"}]]

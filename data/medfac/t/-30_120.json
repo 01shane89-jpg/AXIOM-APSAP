@@ -1,0 +1,13 @@
+[["n1042094104",-29.4047,121.27178,"au",{"name":"Jeedamya Airport","aeroway":"aerodrome"}],
+["n1042094418",-29.34039,121.49043,"au",{"name":"Kookynie Airport","aeroway":"aerodrome","icao":"YKOK"}],
+["n1042094559",-28.09136,120.54148,"au",{"name":"Lawlers Airport","aeroway":"aerodrome"}],
+["n1042094653",-28.8781,121.315,"au",{"name":"Leonora Airport","aeroway":"aerodrome","icao":"YLEO","iata":"LNO"}],
+["n1042097313",-29.1992,121.438,"au",{"name":"Orient Well Airport","aeroway":"aerodrome"}],
+["n1042097425",-28.2,120.433,"au",{"name":"Pinnacles Homestead Airport","aeroway":"aerodrome"}],
+["n1042100359",-29.4676,121.83,"au",{"name":"Yerilla Airport","aeroway":"aerodrome","icao":"YYER"}],
+["n7760310329",-28.15345,120.94716,"au",{"name":"Thunderbox Airport","aeroway":"aerodrome","icao":"YTHN"}],
+["w189332647",-29.68464,121.02908,"au",{"name":"Menzies","aeroway":"aerodrome","icao":"YMZI"}],
+["w250698738",-28.89443,121.33767,"au",{"name":"Leonora Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w426111594",-28.94442,121.17983,"au",{"aeroway":"helipad"}],
+["w426111597",-29.39995,121.20091,"au",{"aeroway":"helipad"}],
+["w694265237",-28.70502,121.8902,"au",{"name":"Murrin Murrin Airport","operator":"Minara Resources Pty Ltd.","aeroway":"aerodrome","icao":"YMMI","iata":"WUI"}]]

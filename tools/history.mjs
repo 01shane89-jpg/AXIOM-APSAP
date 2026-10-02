@@ -9,6 +9,10 @@ const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
 const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
 
+// Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
+// it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
+const CODE = /\bwindow\.\w+|addEventListener\s*\(|document\.getElementById|function\s*\(\s*\w*\s*\)\s*\{/;
+const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; return i; };
 function read(cc) {
   try {
     const t = fs.readFileSync(`${DIR}/${cc}.js`, "utf8");
@@ -26,11 +30,12 @@ export async function updateHistory(kind, items, stamp, caps) {
   for (const cc of Object.keys(items)) {
     if (!/^[a-z]{2,3}$/.test(cc)) continue;
     const h = read(cc), byLink = new Map();
-    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, i);
+    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, unCode(i));
     for (const i of items[cc] || []) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;
       const o = {}; for (const k of KEEP) if (i[k] != null && i[k] !== "") o[k] = i[k];
+      unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
       byLink.set(i.link, o);
     }

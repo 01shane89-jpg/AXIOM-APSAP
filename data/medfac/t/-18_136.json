@@ -1,0 +1,11 @@
+[["n1042097994",-17.19082,137.76763,"au",{"name":"Redbank Mine Airport","aeroway":"aerodrome"}],
+["n1042100062",-17.21918,137.93839,"au",{"name":"Wollogorang Airport","aeroway":"aerodrome","iata":"WLL"}],
+["n3825425975",-16.0545,136.30525,"au",{"name":"Borroloola Health Centre","amenity":"clinic","healthcare":"clinic"}],
+["n3827269789",-16.75943,136.98019,"au",{"name":"Robinson River Health Centre","healthcare":"clinic","operator":"NT Health","operator:type":"government","phone":"+61 8 8975 9985","addr:housenumber":"110"}],
+["n4461675871",-17.62344,137.5794,"au",{"name":"Jilundarina Airport","aeroway":"aerodrome"}],
+["w444569439",-17.91866,136.89579,"au",{"name":"Benmara Airport","aeroway":"aerodrome"}],
+["w450284115",-17.24517,136.18083,"au",{"name":"Kiana Station Airport","aeroway":"aerodrome"}],
+["w453721633",-16.71606,136.94387,"au",{"name":"Robinson River Airport","aeroway":"aerodrome","icao":"YRBR","iata":"RRV"}],
+["w456575320",-17.9701,137.96761,"au",{"name":"Nudjabarra Airport","aeroway":"aerodrome"}],
+["w510769385",-16.44476,136.07534,"au",{"name":"McArthur River Mine Airport","aeroway":"aerodrome","icao":"YMHU","iata":"MCV"}],
+["w943430775",-16.07662,136.30212,"au",{"name":"Borroloola Airport","aeroway":"aerodrome","icao":"YBRL","iata":"BOX"}]]

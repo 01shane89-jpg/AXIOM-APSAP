@@ -64,7 +64,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 7, "phone: radial has 6 actions and close");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 9, "phone: radial has 8 actions (Med plan and Find LZ included) and close");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
@@ -88,6 +88,9 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await longPress(p, 40, -40); await ringBtn(p, "watch"); await p.waitForTimeout(500);
   ok(await p.evaluate(() => { const r = document.querySelector('[name="w-area"][value="drawn"]'); return !!r && r.checked; }), "phone: Watch opens the watch form with the area picked");
   await p.keyboard.press("Escape"); await p.evaluate(() => { const d = document.getElementById("watchdlg"); if (d) d.hidden = true; });
+  // on a phone every tool shows its name under its icon, and a down arrow shows when more tools are below
+  ok(await p.evaluate(() => { const l = document.querySelector('#atk-tools [data-atk="area"] .atk-l'); return !!l && getComputedStyle(l).display !== "none" && l.textContent === "Area"; }), "phone: toolbar buttons show their names");
+  ok(await p.evaluate(() => { const l = document.querySelector("#atk-tools .atk-list"); return (l.scrollHeight > l.clientHeight + 4) === document.getElementById("atk-tools").classList.contains("more"); }), "phone: the more-below arrow matches whether the tools overflow");
   // right side toolbar opens the Overlay Manager with the Layers panel inside
   await p.click('#atk-tools [data-atk="overlays"]'); await p.waitForTimeout(200);
   ok(await shown(p, "#atk-om") && await p.evaluate(() => !!document.querySelector("#atk-om #ml-panel")), "phone: Overlay Manager opens holding the map layers");
@@ -96,13 +99,24 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => [...document.querySelectorAll("#atk-om #ml-ds input")].filter((i) => i.offsetParent !== null).length > 3), "phone: Data sets lists the data sets");
   ok(await p.evaluate(() => { const g = document.querySelector("#atk-marks"); return g.offsetParent === null && ![...document.querySelectorAll("#atk-om #ml-panel > :not(#ml-ds)")].some((e) => e.offsetParent !== null); }), "phone: Data sets shows no map layers or marks");
-  // the sheet's own header switches back, since on a phone the sheet covers the toolbar
-  await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
-  ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode")) === "overlays", "phone: header switches the sheet to Map overlays");
+  // natural disasters: flooding and fires are data sets, ticked here and cleared by Clear map (Shane 2026-10-01)
+  ok(await p.evaluate(() => { const t = document.querySelector("#atk-om #ml-ds").textContent; return /Natural disasters/.test(t) && /Flooding now/.test(t) && /Fires now/.test(t) && /Earthquakes and hazards/.test(t); }), "phone: Data sets > Natural disasters lists Flooding now, Fires now and earthquakes");
+  await p.click('#atk-om #ml-ds .dsx:has([data-fx="now"])'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => document.querySelector('#ml-ds [data-fx="now"]').checked && /\b1\b/.test(document.querySelector("#ml-ds .dscount").textContent)), "phone: ticking Flooding now puts it on the map and counts it");
+  await p.click("#atk-om #ml-ds .dsclear"); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.querySelector('#ml-ds [data-fx="now"]').checked && !JSON.parse(localStorage.getItem("asap-map-layers") || "{}").now), "phone: Clear map takes Flooding now off");
+  // each button opens its own panel: no tabs leading to the other two, and the title says which one is open
+  ok(await p.evaluate(() => !document.querySelector("#atk-om [data-omm], #atk-om [role=tab]") && document.querySelector("#atk-om h2").textContent === "Data sets" && document.querySelector("#atk-om h2").offsetParent !== null), "phone: Data sets panel has its own title and no tabs to the others");
+  const via = async (k) => { await p.click('#atk-om [data-om="x"]'); await p.waitForTimeout(150); await p.click('#atk-tools [data-atk="' + k + '"]'); await p.waitForTimeout(200); };
+  await via("overlays");
+  ok(await p.evaluate(() => document.getElementById("atk-om").getAttribute("data-mode") === "overlays" && document.querySelector("#atk-om h2").textContent === "Map overlays"), "phone: the Overlays button opens Map overlays");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !w || w.offsetParent === null; }), "phone: Map overlays does not hold the weather layers");
-  await p.click('#atk-om [data-omm="weather"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const vis = [...document.querySelectorAll("#atk-om [data-fx]")].filter((i) => i.offsetParent !== null || i.closest("label")?.offsetParent); return !vis.length && !/Flooding/.test([...document.querySelectorAll("#atk-om .mlh")].filter((h) => h.offsetParent).map((h) => h.textContent).join()); }), "phone: Map overlays no longer holds flooding");
+  ok(await p.evaluate(() => { const ids = [...document.querySelectorAll("#ml-panel > *")].map((c) => c.id || (c.querySelector(".mlh") || c).textContent.trim().slice(0, 7)); const at = (x) => ids.indexOf(x); return at("ml-infra") >= 0 && at("ml-infra") < at("ml-elev") && document.querySelector("#ml-infra > #ml-roads") && !document.getElementById("ml-infra").hidden; }), "phone: Map overlays open with Infrastructure, which holds roads");
+  await via("weather");
   ok(await p.evaluate(() => { const w = document.querySelector("#atk-om #ml-wx"); return !!w && w.offsetParent !== null && document.querySelector("#atk-marks").offsetParent === null; }), "phone: Weather shows the weather layers alone");
-  await p.click('#atk-om [data-omm="overlays"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => { const o = document.getElementById("atk-om").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return o.height <= m.height * 0.56; }), "phone: the data sets sheet leaves the top half of the map in view");
+  await via("overlays");
   ok(/P1/.test(await p.textContent("#atk-marks")) && /NAI/.test(await p.textContent("#atk-marks")), "phone: Overlay Manager lists your point and NAI");
   if (OUT) await p.screenshot({ path: OUT + "/phone-overlays.png" });
   await p.click('#atk-om [data-om="x"]');
@@ -127,6 +141,11 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await shown(p, "#atk-ring"), "desktop: right-click opens the radial menu");
   if (OUT) await p.screenshot({ path: OUT + "/desk-radial.png" });
   await p.keyboard.press("Escape"); ok(!(await shown(p, "#atk-ring")), "desktop: Escape closes it");
+  /* Med plan in the ring plans from that point, with no drawn area */
+  await p.evaluate(() => { window.__mp = null; window.OSAP_MEDPLAN.open = (o) => { window.__mp = o; }; });
+  await p.mouse.click(box[0] - 100, box[1], { button: "right" }); await p.waitForTimeout(200);
+  await ringBtn(p, "medplan"); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => !!(window.__mp && Array.isArray(window.__mp.at) && isFinite(window.__mp.at[0]) && Math.abs(window.__mp.at[1]) <= 180)), "desktop: Med plan in the radial menu opens the medical plan at that point");
   await p.click('#atk-tools [data-atk="area"]');
   ok(await shown(p, "#atk-pop") && /Lasso/.test(await p.textContent("#atk-pop")), "desktop: Area opens Lasso / Polygon");
   await p.click('#atk-pop [data-pk="poly"]'); await p.waitForTimeout(150);
@@ -140,6 +159,15 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   ok(await p.evaluate(() => !document.documentElement.classList.contains("atak")) && await shown(p, "#watch-btn") && !(await shown(p, "#atk-tools")), "desktop: Classic controls brings the old buttons back");
   await p.click(".mlctl .mlbtn"); await p.check("#atk-back input"); await p.waitForTimeout(150);
   ok(await p.evaluate(() => document.documentElement.classList.contains("atak")), "desktop: Tactical toolbar in Layers turns it back on");
+  // split view: Watch docks to the right of the map, the switch turns it back into a window, and the choice is kept
+  await p.evaluate(() => { document.querySelectorAll("#atk-om .x, #atk-om [data-om=close]").forEach((x) => x.click()); localStorage.removeItem("osap.split"); });
+  await p.click('#atk-tools [data-atk="watch"]'); await p.waitForTimeout(250);
+  ok(await p.evaluate(() => { const w = document.getElementById("watchdlg"), b = w.querySelector(".cbox").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return w.classList.contains("osplit") && w.getAttribute("aria-modal") === "false" && Math.abs(b.right - innerWidth) < 2 && b.left >= m.right - 1; }), "desktop: Watch opens as a side panel beside the map");
+  await p.click("#watchdlg [data-osplit]"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => { const w = document.getElementById("watchdlg"); return !w.classList.contains("osplit") && w.getAttribute("aria-modal") === "true" && localStorage.getItem("osap.split") === "0" && w.querySelector("[data-osplit]").textContent === "Side panel"; }), "desktop: Full window makes Watch a window again and is remembered");
+  await p.click("#watchdlg [data-osplit]"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => document.getElementById("watchdlg").classList.contains("osplit") && localStorage.getItem("osap.split") === "1"), "desktop: Side panel docks it again");
+  await p.click("#watchdlg .x"); await p.waitForTimeout(150);
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }

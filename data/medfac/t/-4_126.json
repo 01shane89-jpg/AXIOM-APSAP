@@ -1,0 +1,13 @@
+[["n12125885003",-3.81234,126.70143,"id",{"name":"Pustu Desa Namrinat","amenity":"clinic","addr:street":"jln. Gebba Rebut"}],
+["n12128648819",-3.83777,126.73658,"id",{"name":"RSUD Namrole","amenity":"hospital"}],
+["n12131136096",-3.86049,126.69002,"id",{"name":"PUSTU","amenity":"clinic"}],
+["n12132188801",-3.84571,126.71029,"id",{"name":"Puskesmas namrole","amenity":"hospital"}],
+["n12135760934",-3.78795,126.5424,"id",{"name":"Pustu pelayanan kesehatan","amenity":"clinic"}],
+["n12137090919",-3.75558,126.55033,"id",{"name":"Pustu Desa Neath","amenity":"clinic"}],
+["n12139641799",-3.68038,127.08725,"id",{"name":"Pustu Simi","amenity":"clinic"}],
+["n12141761792",-3.77801,126.52094,"id",{"name":"Puskesmas leksula","amenity":"clinic"}],
+["n12146145809",-3.68038,127.08725,"id",{"name":"Pustu Simi","amenity":"clinic"}],
+["w235083435",-3.23827,127.10071,"id",{"name":"Bandar Udara Namlea","name:en":"Namlea Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPR","iata":"NAM","aerodrome:type":"regional"}],
+["w317845664",-3.85502,126.70087,"id",{"name":"Bandar Udara Namrole","name:en":"Namrole Airport","operator":"Unit Penyelenggara Bandar Udara","aeroway":"aerodrome","icao":"WAPG","iata":"NRE","aerodrome:type":"regional"}],
+["w593184192",-3.1433,126.97708,"id",{"name":"Bandar Udara Namniwel","name:en":"Namniwel Airport","aeroway":"aerodrome","icao":"WAPN"}],
+["w595909343",-3.37951,126.98213,"id",{"aeroway":"helipad"}]]

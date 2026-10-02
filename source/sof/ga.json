@@ -24,7 +24,28 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "7651ea0f686d23c96c11be15d8bcd5a586a31c18976403b1e5aad34a47d0485c"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ga:post:u-s-embassy-gabon",
+   "name": "U.S. Embassy, Gabon",
+   "kind": "embassy",
+   "city": null,
+   "address": null,
+   "services_note": null,
+   "lat": 0.48383,
+   "lon": 9.394553,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/way/373413168",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://ga.usembassy.gov",
+   "phone": "(241) 011-45-71-00",
+   "phone_src": "https://ga.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "2344d3bf849c995f81419a74418c37ea3e6983d81214f3a446876a67e525acd0"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ga:airport:fool",
@@ -391,5 +412,97 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Auto: hospitals not yet researched for this country."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ga:xing:node-12870469750",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.175607,
+   "lon": 11.361799,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12870469750",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "441bb0e6f1790b710a45b43dbad18c0de5a58fa17162597617e6f83f99a8a64a"
+  },
+  {
+   "id": "sof:ga:xing:node-12870512963",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.152016,
+   "lon": 11.354382,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/12870512963",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "efdf984b493ea39732506d144f8440a6d96ed2c29aab7a346ac182f1c16bc2c2"
+  },
+  {
+   "id": "sof:ga:xing:node-4668643189",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.290227,
+   "lon": 11.447038,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4668643189",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "4291fbd02fec45cf26b9555ca538b9527d62ee76fc411519dd9443ad92625819"
+  },
+  {
+   "id": "sof:ga:xing:node-6533544289",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.295641,
+   "lon": 11.446852,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6533544289",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "c58856048140da0d69f7ab6647c9f0b1a52b1e10fc3dd2bac652ef4e0edd7f69"
+  },
+  {
+   "id": "sof:ga:xing:way-697055313",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 2.172822,
+   "lon": 11.336883,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/697055313",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "7f25fe39105a0c5d29979a5c27a7a026ac40207c78ef6aeebdc0a1eedf02999f"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

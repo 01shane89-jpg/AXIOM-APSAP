@@ -1,0 +1,5 @@
+[["n12949082059",-4.5157,129.90175,"id",{"name":"RSUD Banda","amenity":"hospital","healthcare":"hospital"}],
+["n3052748877",-4.52888,129.89847,"id",{"name":"Puskesmas Neira","amenity":"clinic","emergency":"yes"}],
+["n6257173685",-4.51174,129.90606,"id",{"name":"Posyandu Melati","amenity":"clinic"}],
+["w195867448",-4.52137,129.90528,"id",{"name":"Bandar Udara Bandaneira","name:en":"Bandaneira Airport","operator":"Unit Penyelenggara Bandar Udara, Direktorat Jenderal Perhubungan Udara","aeroway":"aerodrome","icao":"WAPC","iata":"NDA","aerodrome:type":"regional"}],
+["w600035678",-4.51151,129.90692,"id",{"name":"Puskesmas Pembantu (Pustu) Tanah Rata","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government","addr:city":"Tanah Rata"}]]

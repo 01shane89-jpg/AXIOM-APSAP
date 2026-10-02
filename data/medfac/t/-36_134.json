@@ -1,0 +1,12 @@
+[["n1042093650",-34.21448,135.63745,"au",{"name":"Cummins Airport","aeroway":"aerodrome"}],
+["n1042096198",-34.1367,135.338,"au",{"name":"Mount Hope Airport","aeroway":"aerodrome"}],
+["n3912947700",-34.26415,135.73294,"au",{"name":"Cummins and District Memorial Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n9696570577",-34.26362,135.73255,"au",{"name":"Cummins Ambulance Station","emergency":"ambulance_station","operator":"SA Ambulance Service"}],
+["w169450306",-34.60546,135.8808,"au",{"name":"Port Lincoln Airport","aeroway":"aerodrome","icao":"YPLC","iata":"PLO"}],
+["w169450315",-34.60275,135.87587,"au",{"aeroway":"helipad"}],
+["w172569195",-34.25219,135.70872,"au",{"name":"Cummins Town Airport","aeroway":"aerodrome","icao":"YCMM"}],
+["w174286245",-34.58907,135.50573,"au",{"name":"Coffin Bay Airport","aeroway":"aerodrome","icao":"YCOF"}],
+["w174286255",-34.5903,135.51174,"au",{"aeroway":"helipad"}],
+["w319338456",-34.72452,135.85096,"au",{"name":"SA Ambulance Service - Port Lincoln Station","emergency":"ambulance_station","operator":"SA Ambulance Service"}],
+["w320149328",-34.72403,135.85019,"au",{"name":"Port Lincoln Hospital and Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"SA Health","operator:type":"government","website":"https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/health+services/hospitals+and+health+services+-+country+south+australia/eyre+peninsula+western+hospitals+health+service"}],
+["w322612902",-34.72658,135.85283,"au",{"name":"Port Lincoln Aboriginal Health Service","amenity":"clinic","healthcare":"clinic","website":"https://plahs.org.au/","addr:housenumber":"19","addr:street":"Oxford Terrace","addr:postcode":"5606"}]]

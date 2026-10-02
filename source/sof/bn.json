@@ -24,13 +24,19 @@
    "city": "Bandar Seri Begawan",
    "address": "Simpang 336-52-16-9, Jalan Duta Bandar Seri Begawan BC4115, Brunei Darussalam",
    "services_note": null,
-   "lat": 4.917,
-   "lon": 114.927,
-   "prec": "approx",
+   "lat": 4.919992,
+   "lon": 114.956317,
+   "prec": "exact",
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Brunei.html",
    "srcname": "travel.state.gov country information page",
-   "coord_basis": "estimated from published address",
-   "fp": "a8ca16a152c044dacf725aa882ed17bf8c12cd3c8f38650b03b035076eea1d61"
+   "coord_basis": "OpenStreetMap way/525256685",
+   "fp": "80e1e239861cd5b4d216f0fd9a2f96e16a433ef2a852236d06b2bfac983e8e27",
+   "web": "https://bn.usembassy.gov/",
+   "phone": "673-238-7400",
+   "phone_after_hours": "238 7400",
+   "phone_src": "https://bn.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -207,5 +213,68 @@
  ],
  "gaps": [
   "bn.usembassy.gov 403. No Wikipedia article for U.S. Embassy BSB; coordinates approximate."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:bn:xing:node-2888615443",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 4.583215,
+   "lon": 114.075233,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2888615443",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "34b0617d1bf7424640204be421d24fff143927c3ab0b9d20f3242a4cb10e380e"
+  },
+  {
+   "id": "sof:bn:xing:node-2888652424",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 4.584588,
+   "lon": 114.081154,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2888652424",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "3b73dc0a50525c5563b5d683b020be2e26c986da2614f299bf5ec30d32b4a1a3"
+  },
+  {
+   "id": "sof:bn:xing:node-3800269327",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 5.015221,
+   "lon": 115.064862,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/3800269327",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "560a628a1ea8d98cf581683d6b097436cacd79d44621937ffb7b7061e6871647"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

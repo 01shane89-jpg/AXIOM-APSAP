@@ -1,0 +1,9 @@
+[["n13330614429",-9.44322,-70.48636,"br",{"amenity":"clinic","healthcare":"clinic"}],
+["n3885366671",-9.18988,-71.94698,"br",{"name":"Jordão","addr:city":"Jordão","aeroway":"aerodrome","icao":"SJOD","wikidata":"Q31205572"}],
+["n3885366675",-9.44365,-70.48468,"br",{"name":"Santa Rosa do Purus","addr:city":"Santa Rosa do Purus","aeroway":"aerodrome","icao":"SSRA","wikidata":"Q31205886"}],
+["n4597836731",-9.4422,-70.48783,"br",{"amenity":"hospital"}],
+["n9143299117",-8.17253,-70.36062,"br",{"name":"Hospital Geral de Feijó","name:en":"Feijó General Hospital","amenity":"hospital","phone":"+55 68 3463-2602","addr:street":"Avenida Marechal Deodoro","addr:postcode":"69960-000","opening_hours":"24/7"}],
+["n9156556418",-8.16844,-70.35774,"br",{"name":"Clinica Climed","name:en":"Climed Clinic","amenity":"clinic","phone":"+55 68 99998-7898","addr:street":"Avenida Marechal Deodoro","addr:postcode":"69960"}],
+["n9168180517",-8.16761,-70.35456,"br",{"name":"Clínica São Bernardo","amenity":"clinic","healthcare":"clinic","phone":"+55 68 99212 9946","addr:housenumber":"234","addr:street":"Rua Barao do Rio Branco","addr:city":"Feijó","addr:postcode":"69960-000"}],
+["w839954616",-8.14101,-70.34082,"br",{"name":"Aeródromo de Feijó","operator":"DERACRE","operator:type":"government","aeroway":"aerodrome","icao":"SNOU","wikidata":"Q1994833"}],
+["w878686673",-8.15506,-70.78355,"br",{"name":"Aeroporto Municipal de Tarauacá José Galera dos Santos","name:en":"Tarauacá Airport","aeroway":"aerodrome","icao":"SBTK","iata":"TRQ","aerodrome:type":"regional","wikidata":"Q7685578"}]]

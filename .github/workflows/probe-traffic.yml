@@ -1,0 +1,16 @@
+# Test only: checks the free, no-key air traffic and ship hosts (tools/probe_traffic.sh). Prints to the log; writes nothing.
+name: Probe traffic hosts
+on:
+  push:
+    branches: [claude/air-sea-traffic]
+    paths: [tools/probe_traffic.sh, .github/workflows/probe-traffic.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_traffic.sh

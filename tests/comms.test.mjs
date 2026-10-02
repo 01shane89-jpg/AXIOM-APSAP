@@ -19,6 +19,17 @@ ok(L.kind({ man_made: "mast", "tower:type": "communication", "communication:mobi
 ok(L.kind({ man_made: "mast", "tower:type": "lighting" }) === null, "lighting mast is left out");
 ok(L.kind({ man_made: "tower", "tower:type": "observation" }) === null, "observation tower is left out");
 
+// ---------- service providers ----------
+const pv = (t) => L.providers(t).map((x) => x.name).join("|");
+ok(pv({ operator: "AIS" }) === "AIS" && pv({}) === "", "one operator, none");
+ok(pv({ operator: "AIS;True Move H" }) === "AIS|True Move H" && pv({ operator: "Vodafone / O2" }) === "Vodafone|O2" && pv({ operator: "Telstra + Optus" }) === "Telstra|Optus", "shared masts split on ; / and +");
+ok(pv({ operator: "AT&T" }) === "AT&T" && pv({ operator: "T-Mobile/Sprint" }) === "T-Mobile/Sprint", "names with & or a bare slash stay whole");
+ok(pv({ "communication:mobile_phone:operator": "Globe", operator: "Tower Co" }) === "Globe", "the mobile operator tag wins over operator");
+ok(pv({ brand: "Smart" }) === "Smart", "brand used when there is no operator");
+ok(L.provKey("AIS") === L.provKey("ais") && L.provKey("AIS") === L.provKey("AIS Co., Ltd."), "provider keys fold case and company suffixes");
+ok(pv({ operator: "AIS;ais" }) === "AIS", "the same provider twice on a mast counts once");
+ok(L.provKey("Vodafone") !== L.provKey("Vodacom"), "different providers stay apart");
+
 // ---------- heights ----------
 ok(L.height("45") === 45 && L.height("45 m") === 45 && Math.abs(L.height("150 ft") - 45.72) < 0.01 && L.height("12,5") === 12.5, "height tags read in metres and feet");
 ok(L.height("tall") === null && L.height("") === null && L.height("-3") === null, "bad height tags ignored");

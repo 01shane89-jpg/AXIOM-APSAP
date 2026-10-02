@@ -1,0 +1,6 @@
+[["n1042093400",-21.8,145.08299,"au",{"name":"Bannockburn Airport","aeroway":"aerodrome"}],
+["n1042098775",-20.77926,145.02422,"au",{"name":"Torrens Creek Airport","aeroway":"aerodrome"}],
+["n1240519937",-20.84277,144.1878,"au",{"name":"Hughenden Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n306107873",-20.81649,144.22688,"au",{"name":"Hughenden Aerodrome","aeroway":"aerodrome","icao":"YHUG","iata":"HGD"}],
+["w1155959301",-20.81384,144.22337,"au",{"name":"Hughenden Airport","aeroway":"aerodrome","icao":"YHUG","iata":"HGD"}],
+["w1304950032",-20.84349,144.18782,"au",{"name":"Hughenden Hospital","amenity":"hospital","healthcare":"hospital","addr:housenumber":"12","addr:street":"Richmond Hill Drive"}]]

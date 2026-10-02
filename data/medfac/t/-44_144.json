@@ -1,0 +1,10 @@
+[["n11235507717",-42.07819,145.55271,"au",{"emergency":"ambulance_station","operator":"Ambulance Tasmania","addr:housenumber":"25","addr:street":"Esplanade","addr:postcode":"7467"}],
+["n2286351664",-42.08141,145.55876,"au",{"name":"Queenstown Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n2422397444",-42.77824,145.56719,"au",{"name":"Moores Valley Airstrip (disused)","aeroway":"aerodrome"}],
+["n2622906232",-42.26557,145.83622,"au",{"aeroway":"helipad"}],
+["n2624181889",-42.20868,145.98077,"au",{"aeroway":"helipad"}],
+["n412354412",-42.1556,145.2897,"au",{"name":"Strahan Airport","name:en":"Strahan Airport","operator":"West Coast Council","addr:postcode":"7468","aeroway":"aerodrome","icao":"YSRN","iata":"SRN","aerodrome:type":"public"}],
+["w1156493754",-42.15608,145.29004,"au",{"name":"Strahan Airport","aeroway":"aerodrome","icao":"YSRN","iata":"SRN"}],
+["w1304773707",-42.0812,145.55835,"au",{"name":"West Coast District Hospital At Queenstown","amenity":"hospital","healthcare":"hospital","addr:housenumber":"60-64","addr:street":"Orr Street","addr:postcode":"7467"}],
+["w326520783",-42.27094,145.88557,"au",{"aeroway":"helipad"}],
+["w399567900",-42.07483,145.5301,"au",{"name":"Queenstown Airport","operator":"West Coast Council","operator:type":"government","addr:housenumber":"24658","addr:street":"Lyell Highway","addr:postcode":"7467","aeroway":"aerodrome","icao":"YQNS","iata":"UEE"}]]

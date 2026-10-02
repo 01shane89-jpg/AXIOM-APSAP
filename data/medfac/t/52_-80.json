@@ -1,0 +1,12 @@
+[["n1710701574",53.82383,-78.99368,"ca",{"aeroway":"aerodrome"}],
+["w1130633174",53.78381,-78.89129,"ca",{"name":"Hôpital Chisasibi","name:en":"Chisasibi Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"https://www.creehealth.org/chisasibi","addr:housenumber":"21","addr:street":"Maamuu Road","addr:city":"Chisasibi","addr:province":"QC","addr:postcode":"J0M 1E0"}],
+["w1416333452",53.72649,-78.5883,"ca",{"aeroway":"helipad"}],
+["w321516188",53.80556,-78.91789,"ca",{"name":"Aéroport de Chisasibi","name:en":"Chisasibi Airport","aeroway":"aerodrome","icao":"CSU2","iata":"YKU","wikidata":"Q3275298"}],
+["w408652355",53.01043,-78.8329,"ca",{"name":"Aéroport de Wemindji","name:en":"Wemindji Airport","aeroway":"aerodrome","icao":"CYNC","iata":"YNC","wikidata":"Q3912872"}],
+["w472357117",53.77628,-78.88055,"ca",{"name":"Multi-Service Day Centre (MSDC)","amenity":"clinic","healthcare":"clinic","operator":"Cree board of health and social services of james bay","operator:type":"government","addr:housenumber":"26","addr:street":"Salt Street","addr:city":"Chisasibi","addr:postcode":"J0M 1E0"}],
+["w475064072",53.78363,-78.89082,"ca",{"name":"Chishaayiyuu clinic","amenity":"clinic","healthcare":"clinic","website":"https://www.mcgill.ca/familymed/files/familymed/chisasibi_orientation_guide_final_05-2014_0.pdf"}],
+["w475064074",53.78387,-78.89052,"ca",{"name":"Uschiniichisuu clinic (Youth health clinic)","amenity":"clinic","healthcare":"clinic","website":"https://www.creehealth.org/communities/chisasibi"}],
+["w475064075",53.78419,-78.89048,"ca",{"name":"Awash clinic","amenity":"clinic","healthcare":"clinic","website":"https://www.facebook.com/Chisasibi-Awash-Clinic-354927651270554/"}],
+["w476644749",52.24228,-78.503,"ca",{"name":"Eastmain Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w476648906",53.0057,-78.81451,"ca",{"name":"Miyuupimatisiun Centre","amenity":"clinic","healthcare":"clinic"}],
+["w516908858",52.22633,-78.52165,"ca",{"name":"Eastmain River Airport","name:en":"Eastmain River Airport","aeroway":"aerodrome","icao":"CZEM","iata":"ZEM"}]]

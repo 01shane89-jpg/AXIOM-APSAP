@@ -1,0 +1,4 @@
+[["n540914046",59.38946,28.11131,"ee",{"name":"Narva lennuväli","aeroway":"aerodrome","icao":"EENA","wikidata":"Q12694127"}],
+["w1086077657",59.36238,28.1916,"ee",{"name":"Narva Haigla","amenity":"hospital","healthcare":"hospital","contact:phone":"+372 3571835","contact:website":"https://narvahaigla.ee/","wikidata":"Q42900897"}],
+["w71185422",59.38283,28.20012,"ee",{"name":"Tervisekeskus Ljumam","name:en":"Health Center Ljumam Ltd.","healthcare":"clinic","addr:housenumber":"29","addr:street":"Vestervalli","addr:city":"Narva","addr:postcode":"20306"}],
+["w737896741",59.38026,28.19437,"ee",{"name":"Narva Haigla Polikliinik","amenity":"hospital","healthcare":"hospital","phone":"+372 35 72 778","website":"https://narvahaigla.ee/"}]]

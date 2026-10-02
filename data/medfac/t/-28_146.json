@@ -1,0 +1,10 @@
+[["n1042093411",-27.25,146.91701,"au",{"name":"Boatman Airport","aeroway":"aerodrome"}],
+["n1042095645",-26.48709,147.94256,"au",{"name":"Mitchell Airport","aeroway":"aerodrome","icao":"YMIT","iata":"MTQ"}],
+["n1042096373",-26.39577,147.12706,"au",{"name":"Morven Aerodrome","aeroway":"aerodrome"}],
+["n1430091317",-26.4043,146.23979,"au",{"emergency":"ambulance_station","operator":"Queensland Health","website":"https://www.ambulance.qld.gov.au/"}],
+["n8562432623",-26.41464,147.10774,"au",{"name":"Morven Community Clinic","amenity":"clinic","healthcare":"clinic","operator":"South West Hospital & Health Service"}],
+["n9810286444",-26.40407,146.23945,"au",{"name":"Charleville Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service"}],
+["w1155955822",-26.41514,146.26223,"au",{"name":"Charleville Airport","aeroway":"aerodrome","icao":"YBCV","iata":"CTL"}],
+["w1277756565",-26.48748,147.9754,"au",{"name":"Mitchell Ambulance Station","emergency":"ambulance_station","operator":"Queensland Ambulance Service","addr:housenumber":"68","addr:street":"Cambridge Street","addr:postcode":"4465"}],
+["w192882344",-26.41171,146.23905,"au",{"name":"Charleville Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","phone":"+61 7 4621 2200","website":"https://www.southwest.health.qld.gov.au/healthcare-facilities/hospitals/charleville-hospital/","addr:housenumber":"72","addr:street":"King Street","addr:postcode":"4470"}],
+["w846797582",-26.49004,147.97219,"au",{"name":"Mitchell Multipurpose Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","phone":"+61 7 4623 1277","website":"https://www.southwest.health.qld.gov.au/healthcare-facilities/multipurpose-health-services/mitchell-multipurpose-health-service/","addr:housenumber":"95","addr:street":"Ann Street","addr:postcode":"4465"}]]

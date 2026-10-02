@@ -1,0 +1,9 @@
+[["n1042093677",-15.38949,126.29934,"au",{"name":"Doongan Airport","aeroway":"aerodrome","iata":"DNG"}],
+["n1042093716",-15.7126,126.38131,"au",{"name":"Drysdale River Airport","aeroway":"aerodrome","icao":"YDRD","iata":"DRY"}],
+["n1042098843",-14.78924,126.49805,"au",{"name":"Theda Station Airport","aeroway":"aerodrome","iata":"TDN"}],
+["w1075273381",-14.33806,127.7754,"au",{"aeroway":"helipad"}],
+["w1075273382",-14.33737,127.77082,"au",{"name":"Berkeley Airstrip","operator":"Berkeley River Lodge","operator:type":"private","aeroway":"aerodrome"}],
+["w1560941558",-15.95648,127.04971,"au",{"name":"Ellenbrae Station Airstrip","operator":"Ellenbrae Station","aeroway":"aerodrome"}],
+["w191167911",-14.28616,126.63374,"au",{"name":"Kalumburu Airfield","aeroway":"aerodrome","icao":"YKAL","iata":"UBU","aerodrome:type":"public"}],
+["w289757093",-15.16503,127.84051,"au",{"name":"Forest River Mission Airport","name:en":"Forest River Mission Airport","aeroway":"aerodrome","icao":"YFRV","iata":"FVR","aerodrome:type":"public"}],
+["w863692494",-14.08881,126.38046,"au",{"name":"Mungalalu-Truscott Airbase","aeroway":"aerodrome","icao":"YTST","iata":"TTX"}]]
