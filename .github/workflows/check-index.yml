@@ -32,7 +32,7 @@ jobs:
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -52,13 +52,21 @@ jobs:
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
+      - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
       - run: node tests/power_smoke.mjs
+      - run: node tests/privacy_smoke.mjs
+      - run: node tests/borders_smoke.mjs
+      - run: node tests/evac_smoke.mjs
+      - run: node tests/evacroute_smoke.mjs
+      - run: node tests/dc_smoke.mjs
+      - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
+      - run: node tests/lz_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs

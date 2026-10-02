@@ -1,0 +1,6 @@
+[["n12198693584",59.01779,23.48534,"ee",{"name":"Paslepa lennuväli","aeroway":"aerodrome","icao":"EEPA"}],
+["n4906124835",59.02211,23.57756,"ee",{"name":"Lyckholmi lennuväli","name:en":"Lyckholm Airstrip","aeroway":"aerodrome","icao":"EELU"}],
+["w1088531659",59.26358,23.87548,"ee",{"aeroway":"helipad"}],
+["w45456738",58.91079,23.48742,"ee",{"name":"Haapsalu lennuväli","website":"https://laane.kaitseliit.ee/et/kontaktandmete-uuendamine-13279","aeroway":"aerodrome","military":"airfield"}],
+["w975262594",58.94549,23.54205,"ee",{"name":"Läänemaa haigla","amenity":"hospital","healthcare":"hospital"}],
+["w982208997",58.14738,23.99905,"ee",{"name":"Kihnu lennuväli","operator":"Pärnu Airport","phone":"+372 446 9946","website":"http://www.parnu-airport.ee/eng/associates/aviation/kihnu","aeroway":"aerodrome","icao":"EEKU","aerodrome:type":"regional"}]]

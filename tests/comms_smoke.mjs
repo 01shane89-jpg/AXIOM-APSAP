@@ -37,13 +37,23 @@ const OSM = { elements: [
   { type: "node", id: 4, lat: 13.73, lon: 100.53, tags: { man_made: "mast", "tower:type": "communication" } },
   { type: "node", id: 5, lat: 13.75, lon: 100.52, tags: { man_made: "mast", "tower:type": "lighting" } }
 ] };
-let overpassCalls = 0;
+let overpassCalls = 0, remarkCalls = 0, keyFilter = 0;
+const overpassSpans = [];
 
 async function open(opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-  await ctx.route(/overpass/, (r) => { overpassCalls++; r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(OSM) }); });
+  await ctx.route(/overpass|maps\.mail\.ru/, (r) => {
+    overpassCalls++;
+    const q = decodeURIComponent((r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " ")), bb = q.match(/\((-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\)/);
+    if (bb) overpassSpans.push(Math.max(bb[3] - bb[1], bb[4] - bb[2]));
+    // the first server answers like a real overloaded Overpass: 200, no elements, an error remark
+    const body = /maps\.mail\.ru/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
+    if (/maps\.mail\.ru/.test(r.request().url())) remarkCalls++;
+    if (/\[~/.test(q)) keyFilter++;
+    r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(body) });
+  });
   await ctx.route(/elevation-tiles-prod\/terrarium/, (r) => r.fulfill({ contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: PNG }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -67,9 +77,18 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(2500);
   let s = await st(p);
   ok(s.masts === 4 && overpassCalls >= 1, "4 communication masts kept from the Overpass answer, the lighting mast left out (" + s.masts + ")");
+  ok(keyFilter === 0, "the mast query has no key-pattern filter (that made the servers time out)");
+  ok(remarkCalls >= 1, "an Overpass \"out of memory\" remark counts as a failure and the next server is asked");
+  // hover card with the tower's data
+  const pt = await p.evaluate(() => { const q = window.__asapMap.latLngToContainerPoint([13.76, 100.51]), r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + q.x, y: r.top + q.y }; });
+  await p.mouse.move(pt.x + 40, pt.y + 40); await p.mouse.move(pt.x, pt.y, { steps: 4 }); await p.waitForTimeout(300);
+  const tip = await p.evaluate(() => (document.querySelector(".leaflet-tooltip.comtipw") || {}).textContent || "");
+  ok(/Provider\s*AIS/.test(tip) && /Height\s*40 m \(mapped\)/.test(tip) && /Carries\s*mobile phone/.test(tip) && /Source\s*OpenStreetMap node\/1/.test(tip), "hovering a mast shows its data: " + tip.slice(0, 160));
+  await p.mouse.move(5, 5);
   const counts = await p.evaluate(() => [...document.querySelectorAll("[data-comn]")].map((e) => e.getAttribute("data-comn") + e.textContent).join(" "));
   ok(/cell\(2 in view\)/.test(counts) && /bcast\(1 in view\)/.test(counts) && /comm\(1 in view\)/.test(counts), "counts by kind: " + counts);
-  ok(/AIS 1/.test(await p.textContent("#com-ops")), "operators in view listed");
+  const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.getAttribute("data-comprov") + ":" + i.checked));
+  ok(provs.join() === "ais:true,true:true,?:true", "providers in view listed with switches, unmapped last: " + provs);
   ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
   const before = overpassCalls;
   await p.evaluate(() => window.__asapMap.panBy([30, 20], { animate: false })); await p.waitForTimeout(1200);
@@ -116,12 +135,38 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.line; }, null, { timeout: 30000 });
   ok(true, "planned route (kept waypoints) checked");
 
+  // providers: switching AIS off hides its mast and leaves it out of the check
+  await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.lat === 13.7563; }, null, { timeout: 20000 });
+  let bp = (await st(p)).result.byProv.map((x) => x.name + "=" + x.level).join();
+  ok(/AIS=3/.test(bp) && /True=3/.test(bp) && /Operator not mapped=2/.test(bp), "by provider: " + bp);
+  ok(/By provider/.test(await p.textContent("#com-res")), "the answer lists each provider");
+  if (OUT) await p.screenshot({ path: OUT + "/comms-providers.png", fullPage: true });
+  const drawnAll = (await st(p)).drawn;
+  await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.offN === 1; }, null, { timeout: 20000 });
+  s = await st(p);
+  ok(s.drawn === drawnAll - 1 && s.off.ais === true, "AIS off: its mast leaves the map (" + drawnAll + " to " + s.drawn + ")");
+  ok(!s.result.rows.some((r) => r.m.p.includes("ais")) && !s.result.byProv.some((x) => x.key === "ais"), "AIS off: the check leaves its masts out");
+  ok(/1 switched off/.test(await p.textContent("#com-res")), "the answer says a provider is switched off");
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms-prov")).ais === true), "provider choice is remembered");
+  await p.click('#com-ops [data-comprovall="0"]'); await p.waitForTimeout(300);
+  ok((await st(p)).drawn === 1, "None: only the broadcast tower stays on the map");
+  await p.click('#com-ops [data-comprovall="1"]'); await p.waitForTimeout(300);
+  ok((await st(p)).drawn === drawnAll, "All: every mast back");
+
   // switches
   await p.uncheck('[data-comtg="cell"]'); await p.waitForTimeout(200);
   ok(!(await st(p)).on.cell && await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms")).cell === false), "switching phone masts off is remembered");
   await p.uncheck('[data-comtg="cov"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane canvas")), "measured coverage switches off");
   await p.check('[data-comtg="cell"]'); await p.check('[data-comtg="cov"]');
+
+  // a wide view at zoom 9 loads the middle in blocks of at most one degree and says so
+  overpassSpans.length = 0;
+  await p.evaluate(() => window.__asapMap.setView([18.79, 98.98], 9, { animate: false })); await p.waitForTimeout(3000);
+  ok(overpassSpans.length >= 2 && overpassSpans.every((x) => x <= 1.0001), "zoom 9: masts load in one-degree blocks (" + overpassSpans.length + " blocks, widest " + Math.max(...overpassSpans).toFixed(2) + " deg)");
+  ok((await st(p)).mastErr === "" && /middle of the map/.test(await p.textContent("#com-st")), "zoom 9 on a wide screen: says only the middle is loaded");
 
   // leaving the tab clears its layers
   await view(p, "news"); await p.waitForTimeout(800);

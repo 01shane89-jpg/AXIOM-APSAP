@@ -298,7 +298,9 @@ function watchInputs(cc) {
   const XF = loadWin("data/live/x/feeds.js", "OSAP_XF"), fmeta = (XF && XF.feeds) || {};
   ((xc && xc.items) || []).filter((i) => Date.parse(i.d) >= cut && /^(tt-|wiki-events|un-news|hdx|acled|crisis)/.test(i.f) && STRONG.test(i.t + " " + (i.x || "")))
     .forEach((i) => add({ source: (fmeta[i.f] && fmeta[i.f].name) || i.k || i.f, title: i.t, text: i.x || "", url: i.u || "", ts: i.d }, 2));
-  ((ucdp && ucdp.items) || []).filter((u) => (u.ccs || []).includes(cc) && Date.parse(u.date) >= cut).slice(-8)
+  // full records (type, province, headline) are in the country's own file since UCDP covers every country; ucdp.js is a slim copy
+  const uc = loadWin(`data/live/ucdp/${cc}.js`, "ASAP_UCDP_CC");
+  ((uc && uc.items) || (ucdp && ucdp.items) || []).filter((u) => (u.ccs || []).includes(cc) && Date.parse(u.date) >= cut).slice(-8)
     .forEach((u) => add({ source: "UCDP candidate events (Uppsala)", title: `${u.type} violence ${u.where}${u.adm1 ? ", " + u.adm1 : ""}: ${u.best} deaths (best estimate)`, text: u.headline || "", url: ucdp.src || "", ts: u.date }, 3));
   return out.sort((a, b) => b.score - a.score || String(b.ts).localeCompare(String(a.ts))).slice(0, WATCH_INPUTS)
     .sort((a, b) => String(b.ts).localeCompare(String(a.ts)));

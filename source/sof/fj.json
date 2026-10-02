@@ -24,13 +24,18 @@
    "city": "Suva",
    "address": null,
    "services_note": "Also accredited to Kiribati, Nauru, Tonga and Tuvalu (general knowledge; verify)",
-   "lat": -18.13,
-   "lon": 178.44,
-   "prec": "approx",
-   "coord_basis": "city centre estimate; address not retrieved",
+   "lat": -18.117015,
+   "lon": 178.43963,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap node/2115183227",
    "src": "https://fj.usembassy.gov/u-s-embassy-suva/",
    "srcname": "U.S. Embassy in Fiji, Kiribati, Nauru and Tuvalu",
-   "fp": "09e61f7c2626c1ac67f0a0776cd750a502726f80d17ddbcb0056f741000ca57a"
+   "fp": "61f602f0b936bf4f6bced3923398c51acffd290e173c5aa35d6371855c980dda",
+   "web": "https://fj.usembassy.gov/embassy/suva/",
+   "phone": "+679 331 4466",
+   "phone_src": "https://www.openstreetmap.org/node/2115183227",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -720,5 +725,11 @@
    "srcname": "WRI Global Power Plant Database v1.3.0 (2021), CC BY 4.0",
    "fp": "f1969fea47c72cffd90ca4f6f41b52789eea1d379f6defc6f007ce1cc2ce8719"
   }
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

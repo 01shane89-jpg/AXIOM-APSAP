@@ -1,0 +1,7 @@
+[["n4565317513",-0.919,-75.40581,"ec",{"name":"Hospital Franklin Tello","amenity":"hospital","emergency":"yes","operator":"Ministerio de Salud, Misiòn Capuchina","phone":"+593 62382171 / +593 62382191","addr:street":"Malecón José Mª Velasco Ibarra y N. Torres","addr:city":"Parroquia Nuevo Rocafuerte"}],
+["n4566564092",-0.62196,-75.85891,"ec",{"name":"Subcentro de Salud","amenity":"hospital","emergency":"no","operator":"Ministerio de Salud"}],
+["w405243698",-0.18202,-74.77089,"co",{"name":"Aeropuerto Caucaya","name:en":"Caucaya Airport","aeroway":"aerodrome","icao":"SKLG","iata":"LQM","wikidata":"Q1962669"}],
+["w645342196",-0.61344,-75.87623,"ec",{"aeroway":"helipad"}],
+["w707505591",-0.19535,-74.77891,"co",{"name":"Hospital Naval","amenity":"hospital","healthcare":"hospital"}],
+["w707505594",-0.18497,-74.78491,"co",{"name":"Hospital Maria Angelines","amenity":"hospital","healthcare":"hospital"}],
+["w954156205",-0.7762,-75.52767,"ec",{"name":"Tiputini Airport","aeroway":"aerodrome","icao":"SETI","iata":"TPN","wikidata":"Q11824788"}]]

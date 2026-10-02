@@ -1,0 +1,10 @@
+[["n12408255772",43.73133,15.8979,"hr",{"name":"Poliklinika Analiza","amenity":"clinic","phone":"+385 22 310 663","website":"https://poliklinika-analiza.hr/"}],
+["n4288921683",43.81734,15.59281,"hr",{"name":"Tourist ambulance","amenity":"doctors","healthcare":"doctor","emergency":"ambulance_station","opening_hours":"Mo-Fr 07:00-19:30"}],
+["n5996188301",43.90198,15.70266,"hr",{"amenity":"clinic","healthcare":"clinic"}],
+["n936824946",43.73381,15.89719,"hr",{"name":"Poliklinika Mikulandra","amenity":"clinic","healthcare":"clinic","addr:housenumber":"12","addr:street":"Matije Gupca"}],
+["w172961435",43.98404,15.06593,"hr",{"aeroway":"helipad"}],
+["w176321234",43.92753,15.47854,"hr",{"name":"Interventni heliodrom Crvena Luka","aeroway":"helipad","surface":"asphalt"}],
+["w432817548",43.94766,15.44723,"hr",{"name":"Specijalna bolnica za ortopediju","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"orthopaedics;physiatry","operator":"Specijalna bolnica za ortopediju","operator:type":"public","website":"https://www.ortopedija-biograd.hr/","addr:housenumber":"62","addr:street":"Zadarska ulica"}],
+["w490952487",43.73241,15.90015,"hr",{"name":"Opća bolnica Šibensko-kninske županije","amenity":"hospital","healthcare":"hospital","operator":"Opća bolnica Šibensko-kninske županije","operator:type":"public","website":"https://www.bolnica-sibenik.hr/","addr:housenumber":"83","addr:street":"Ulica Stjepana Radića","addr:city":"Šibenik","wikidata":"Q111182746"}],
+["w585166241",43.73321,15.90132,"hr",{"name":"Affidea","amenity":"clinic","healthcare":"clinic","website":"https://www.affidea.hr/","addr:housenumber":"93","addr:street":"Ulica Matije Gupca","addr:city":"Šibenik","addr:postcode":"22000"}],
+["w756073499",43.7109,15.90534,"hr",{"aeroway":"helipad"}]]

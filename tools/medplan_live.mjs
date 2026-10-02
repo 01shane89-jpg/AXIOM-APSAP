@@ -1,5 +1,5 @@
 // Test only: opens the Medical plan against the real keyless hosts (OpenStreetMap Overpass, FOSSGIS OSRM and Valhalla,
-// Wikidata, Open-Meteo) for areas round Nakhon Sawan, Thailand (the point Shane tested, once as is and once with Overpass
+// Wikidata, Open-Meteo) for areas round Nakhon Sawan and Bangkok, Thailand (the points Shane tested; Nakhon Sawan once as is and once with Overpass
 // blocked, so the plan must stand on OSAP's stored copy in data/medfac) and Frankfurt, Germany, and prints what came back.
 // With OUT=dir it saves screenshots, the print view and its PDF. Run by the "Probe medical plan hosts" workflow; writes nothing to the repo.
 // Run from the repo root: node tools/medplan_live.mjs   (needs the playwright package and Chromium; OUT=dir saves a screenshot)
@@ -33,14 +33,15 @@ async function run(cc, c, poi, noOverpass, tag) {
   await p.evaluate(() => window.OSAP_MEDPLAN.open());
   await p.waitForFunction(() => { const t = (id) => (document.getElementById(id) || {}).textContent || "";
     return (document.querySelector("#mp-fac table") || /could not be reached/.test(t("mp-fac"))) && !/Working out/.test(t("mp-fac") + t("mp-rt")) && (document.querySelector("#mp-wx table") || /could not/.test(t("mp-wx")))
-      && !/Looking up emergency/.test(t("mp-ems")) && !/Looking up air rescue/.test(t("mp-mev")) && !/Reading OSAP/.test(t("mp-oc")) && /read|not reached/.test(t("mp-src").split("Valhalla isochrones")[1] || "") && !/Choosing the Primary/.test(t("mp-pst")) && !/Working out the route/.test(t("mp-rt")); }, null, { timeout: 180000 }).catch(() => console.log("timed out waiting"));
+      && !/Looking up emergency/.test(t("mp-ems")) && !/Looking up air rescue/.test(t("mp-mev")) && !/Reading OSAP/.test(t("mp-oc")) && /read|not reached/.test(t("mp-src").split("Valhalla isochrones")[1] || "") && !/Choosing the Primary/.test(t("mp-pst")) && !/Working out the route/.test(t("mp-rt")) && /filled gaps|not reached/.test(t("mp-src").split("Wikidata hospitals")[1] || "filled gaps"); }, null, { timeout: 180000 }).catch(() => console.log("timed out waiting"));
   console.log("\n##### " + tag + ": ready in", ((Date.now() - t0) / 1000).toFixed(1), "s");
   for (const id of ["mp-pst", "mp-gh", "mp-fac", "mp-rt", "mp-ems", "mp-mev", "mp-air", "mp-oc", "mp-src"]) console.log("=== " + id + "\n" + (await p.$eval("#" + id, (e) => e.innerText)).slice(0, 3000));
   const r = await p.evaluate(() => { const t = (id) => (document.getElementById(id) || {}).textContent || "";
     return { fac: document.querySelectorAll("#mp-fac tbody tr").length > 0 && /min/.test(t("mp-fac")), rt: /by road/.test(t("mp-rt")), ems: !!document.querySelector('#mp-ems a[href^="tel:"]'),
       oc: /P1/.test(t("mp-oc")), dst: /D1/.test(t("mp-oc")), wx: !!document.querySelector("#mp-wx table"), poi: /Centred on the anticipated point of injury/.test(t("medplan")),
       pst: /Primary/.test(t("mp-pst")) && !!document.querySelector("#mp-pst table"), noNone: !/No hospital (within|is listed)/.test(t("mp-fac")), stored: /stored copy/.test(t("mp-fac") + t("mp-src")),
-      osmDown: /Live OpenStreetMap could not be reached/.test(t("mp-fac")), honest: /does not mean there is no hospital/.test(t("medplan")) }; });
+      osmDown: /Live OpenStreetMap could not be reached/.test(t("mp-fac")), honest: /does not mean there is no hospital/.test(t("medplan")),
+      wd: (/filled gaps for (\d+)/.exec(t("mp-src")) || [0, "not read"])[1], strat: document.querySelectorAll("#mp-oc table.mpse tbody tr").length }; });
   if (process.env.OUT) await p.screenshot({ path: process.env.OUT + "/medplan-live-" + tag + ".png", fullPage: false });
   /* the print view: the map is drawn, then the pages as they print */
   await p.evaluate(() => window.OSAP_MEDPLAN.printView());
@@ -73,7 +74,9 @@ async function tryTwice(cc, c, poi, noOverpass, tag) {
 const NS = [15.89442, 100.11841];
 const okOff = await tryTwice("th", NS, "15.89442, 100.11841", true, "th-overpass-down");
 const okTh = await tryTwice("th", NS, "15.89442, 100.11841", false, "th");
+/* Shane's Bangkok point, from the stored copy: the picks should be Bangkok's own top hospitals */
+const okBk = await tryTwice("th", [13.59994, 100.5661], "13.59994, 100.56610", true, "bkk");
 await wait(20000); /* let the Overpass slot free up */
 const okDe = await tryTwice("de", [50.11, 8.68], "50.1100, 8.6800");
-console.log("results: overpass down " + okOff + ", th " + okTh + ", de " + okDe);
-await browser.close(); server.close(); process.exit(okOff && okTh && okDe ? 0 : 1);
+console.log("results: overpass down " + okOff + ", th " + okTh + ", bangkok " + okBk + ", de " + okDe);
+await browser.close(); server.close(); process.exit(okOff && okTh && okBk && okDe ? 0 : 1);

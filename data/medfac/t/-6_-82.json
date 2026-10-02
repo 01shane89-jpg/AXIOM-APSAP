@@ -1,0 +1,8 @@
+[["n14140303034",-4.17205,-80.06544,"ec",{"name":"huaca","amenity":"hospital","healthcare":"hospital","operator":"turismo","operator:type":"private"}],
+["n3283309057",-4.15641,-80.00507,"ec",{"name":"Puesto de Salud Cruzpamba","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública"}],
+["n3284215675",-4.19955,-80.12418,"ec",{"name":"Subcentro de Salud Sabanilla","amenity":"hospital","operator":"MSP"}],
+["n5517419429",-4.10836,-80.15245,"ec",{"name":"CENTRO SALUD \"SEGURO SOCIAL CAMPESINO\"","amenity":"clinic","opening_hours":"Mo-Fr 08:00-17:00"}],
+["n5926721186",-4.17045,-80.02006,"ec",{"name":"Dispensario SSC zapallal","amenity":"hospital"}],
+["w321569957",-4.17233,-80.06374,"ec",{"name":"Puesto de Salud Algarrobillo","amenity":"hospital","healthcare":"hospital","operator":"MSP"}],
+["w321667222",-4.12223,-80.05458,"ec",{"name":"Centro de Salud Pózul","amenity":"hospital","operator":"MSP"}],
+["w454132712",-4.0189,-80.02299,"ec",{"name":"Hospital Básico Alamor","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;dentistry;vaccination;intensive;emergency","emergency":"yes","operator":"Ministerio de Salud Pública","operator:type":"public","phone":"(07) 268-0172","addr:street":"Pio Jaramillo","addr:city":"Alamor","addr:postcode":"110406"}]]

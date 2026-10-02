@@ -30,7 +30,29 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "1e799a65365e9a9e646ec5d292e81a15de4db0af965e748fbf2db7233eb20778"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:ye:post:u-s-embassy-sana-a",
+   "name": "U.S. Embassy Sana'a",
+   "kind": "embassy",
+   "city": "Sana'a",
+   "address": "Sa'awan Street, Sana'a",
+   "services_note": null,
+   "lat": 15.373942,
+   "lon": 44.228987,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/1222642575",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "web": "https://ye.usembassy.gov/",
+   "phone": "00966 11-835-4000",
+   "phone_after_hours": "1-888-407-4747",
+   "phone_src": "https://ye.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01",
+   "fp": "ff2821d0b31f5a2070d4e6da7b807c2b16e6cb97788eb131cf9b453fb59ee885"
+  }
+ ],
  "airports": [
   {
    "id": "sof:ye:airport:oysn",
@@ -465,5 +487,163 @@
   "Auto: airports (OurAirports), seaports (UN/LOCODE), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Auto: U.S. diplomatic posts not yet researched for this country.",
   "Hospitals are from English Wikipedia article titles found by search; positions are city centres, 24-hour emergency status not stated."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:ye:xing:node-1005717402",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 14.632887,
+   "lon": 43.001987,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/1005717402",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6ea5a55022d861e78582ae732b4c9f4e27daeb52227d2cde937aa09d527312e1"
+  },
+  {
+   "id": "sof:ye:xing:node-10865241857",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 15.895204,
+   "lon": 47.1079,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/10865241857",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "942f39aeb34483516ba8b9915ef22eb249d5b7b2dfdbceb805e32c89eaaf3385"
+  },
+  {
+   "id": "sof:ye:xing:node-11648716189",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 16.029883,
+   "lon": 45.155965,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11648716189",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "eaae01f414a33c33e025e9b1e6bea8515e6fc055f8ca3befc73b0ef0b50c9c1e"
+  },
+  {
+   "id": "sof:ye:xing:node-11648716218",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 16.056424,
+   "lon": 45.066862,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/11648716218",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "89617841f2e56e821380a4a568630ad8d03f3d7aac43c875b0365c34468e2337"
+  },
+  {
+   "id": "sof:ye:xing:node-2435738732",
+   "name": "Security Checkpoint",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 13.129846,
+   "lon": 44.856607,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/2435738732",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "668800eadaa200d164674f7ad53f0be9053d4d7406decc6f855c8d8775650e75"
+  },
+  {
+   "id": "sof:ye:xing:node-6786540445",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 12.931035,
+   "lon": 44.78395,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6786540445",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "01406c6a5064282747da38516dc3dd4e5318c5b9389b71b21793bcb58c42b583"
+  },
+  {
+   "id": "sof:ye:xing:node-699050263",
+   "name": "Security Checkpoint",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 12.950836,
+   "lon": 44.954995,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/699050263",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "f3ace7952a9c80359151ea522c4cc3f6929c45907fa35c195d13a25a23d0172d"
+  },
+  {
+   "id": "sof:ye:xing:node-700348949",
+   "name": "Security Checkpoint",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "car",
+    "motorcycle",
+    "bicycle",
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 13.576229,
+   "lon": 44.112899,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/700348949",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "b5bbc06d617f8a7391ab3acec1de346d36cc25cda444f5a5c3cad90fdcc910b4"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

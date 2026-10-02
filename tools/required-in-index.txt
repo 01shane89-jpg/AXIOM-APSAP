@@ -36,6 +36,7 @@
 <script src="assets/osap-measure.js"></script>
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
+<script src="assets/osap-traffic.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"
@@ -91,6 +92,7 @@ data-ev-tlr="1"
   function showComms() {
 # power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
 <script src="assets/osap-power.js"></script>
+<script src="assets/osap-evac.js"></script>
 # medical plan for the drawn area, in the Area menu (claude/medical-plan)
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
@@ -98,3 +100,12 @@ data-ev-tlr="1"
 <script src="assets/osap-illum.js"></script>
 # News placement: datelines left out, country names are not places, event pins from this country only (claude/event-pin-placement)
   function stripDatelines(text) {
+# Country boundaries overlay in Map overlays (claude/country-borders)
+<script src="assets/osap-borders.js"></script>
+:not([data-bd])
+# data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
+<script>window.OSAP_LATER("assets/osap-dc.js");</script>
+
+# offline maps and data: Offline map base map and the saving panel (claude/offline-mode)
+<script src="assets/osap-offline.js"></script>
+offline: { name: "Offline map"

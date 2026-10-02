@@ -1,0 +1,8 @@
+[["n11833375015",64.05056,-139.43137,"ca",{"aeroway":"helipad"}],
+["n14054244685",64.41941,-138.58704,"ca",{"name":"Talus Lake","aeroway":"helipad","surface":"plastic"}],
+["n8975526838",64.89985,-138.27682,"ca",{"name":"Chapman Aerodrome","operator":"Government of Yukon","operator:type":"public","aeroway":"aerodrome","wikidata":"Q1836556"}],
+["w1239726921",64.0465,-139.11508,"ca",{"aeroway":"helipad"}],
+["w1239726922",64.0463,-139.11564,"ca",{"aeroway":"helipad"}],
+["w244858643",64.04416,-139.12557,"ca",{"name":"Dawson City Airport","operator":"Government of Yukon","operator:type":"public","aeroway":"aerodrome","icao":"CYDA","iata":"YDA","wikidata":"Q1708897"}],
+["w259487844",65.67441,-138.1161,"ca",{"name":"Ogilvie Aerodrome","addr:province":"YT","aeroway":"aerodrome","wikidata":"Q2903559"}],
+["w875976710",64.05675,-139.43386,"ca",{"name":"Dawson City Medical Center","amenity":"hospital","healthcare":"hospital","emergency":"yes"}]]

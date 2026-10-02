@@ -1,8 +1,8 @@
 // Headless check of the Reports menu (assets/osap-reports.js, opened from assets/osap-tidy.js) on a desktop and a phone.
 // Checks: the menu lists every report OSAP makes, in groups; ready ones open the same thing their own button does (Country
 // brief, Country report, Timeline report, Daily summary in Today, the weather brief and detailed report, Situation report);
-// reports that need something first are greyed with what to do, and Area summary / Medical plan become ready once an area
-// is drawn and then open; on a conflict tab (Deep South) the report list print and the tab summary are ready; an open
+// reports that need something first are greyed with what to do (the Medical plan needs nothing: it opens on the map centre),
+// Area summary becomes ready once an area is drawn and then opens; on a conflict tab (Deep South) the report list print and the tab summary are ready; an open
 // event offers its event report and the share PDF; the menu fits the screen on a phone; and the page throws nothing.
 // External hosts are blocked; the weather and medical plan calls are counted, not fetched.
 // Run from the repo root: node tests/reports_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -67,7 +67,6 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   ok(["Country", "On screen now", "Drawn area", "Route", "My work"].every((g) => m.groups.includes(g)), "grouped: " + m.groups.join(" / "));
   ok(m.fits, "the menu fits the screen");
   ok(item(m, "Area summary").off && /Draw an area/.test(item(m, "Area summary").hint), "Area summary greyed: " + item(m, "Area summary").hint);
-  ok(item(m, "Medical plan").off, "Medical plan greyed until an area is drawn");
   ok(item(m, "Event report").off && /event/.test(item(m, "Event report").hint), "Event report greyed: " + item(m, "Event report").hint);
   ok(item(m, "Route plan (print)").off, "Route plan greyed: " + item(m, "Route plan (print)").hint);
   ok(item(m, "Report list (print)").off, "conflict report list greyed off a conflict tab");
@@ -87,6 +86,7 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   ok(await p.evaluate(() => window.OSAP_TODAY.isOpen() && !!document.getElementById("td-daily")), "Daily summary opens Today at the daily summary");
   await p.evaluate(() => document.querySelector(".tdmap").click()); await p.waitForTimeout(400);
 
+  ok(!item(m, "Medical plan").off, "Medical plan is ready without a drawn area (it opens on the map centre)");
   // a greyed area report starts Draw area
   m = await menu(p); await pick(p, "areasum");
   ok(await p.evaluate(() => { const a = document.getElementById("atk-pop"); return !!a && !a.hidden && /Lasso/.test(a.textContent); }), "tapping greyed Area summary opens Draw area");

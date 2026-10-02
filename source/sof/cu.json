@@ -28,13 +28,18 @@
    "city": "Havana",
    "address": null,
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 23.133,
-   "lon": -82.383,
-   "prec": "approx",
+   "lat": 23.145909,
+   "lon": -82.387787,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q18156867",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "c900ddc7f4abfad13a8198d1884ef9ae9be3fe18152bb14513861fdaed49e42f"
+   "coord_basis": "OpenStreetMap way/23887651",
+   "fp": "2f5c5f2a3ff1f97d2bacfb2d2aaac6de7f0bafa68ba5f6fcbb2188bf3213ef38",
+   "web": "http://havana.usembassy.gov/",
+   "phone": "+53 7 839 4100",
+   "phone_src": "https://www.openstreetmap.org/way/23887651",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -705,5 +710,97 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:cu:xing:node-13466665514",
+   "name": "Garita",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 20.884554,
+   "lon": -76.216955,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/13466665514",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "474c2b29b36e0c903f5f1fbca13bced7860d3fa636a9a3eaea4373287c1a1b31"
+  },
+  {
+   "id": "sof:cu:xing:node-4341059373",
+   "name": "Punto Fronterizo",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 19.885464,
+   "lon": -75.538111,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/4341059373",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "2b73b08c2a88ea99fc6f2a1788867c64eb1d06a06702cdb5ee2d39f084c0a10e"
+  },
+  {
+   "id": "sof:cu:xing:node-6496273685",
+   "name": "Garita Frontera",
+   "local_name": null,
+   "hours": "24/7",
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 20.037384,
+   "lon": -75.078899,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/6496273685",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "dd3feb95324cfd5c9943793209f64e5af54be10467408b243801051ae5a0ac09"
+  },
+  {
+   "id": "sof:cu:xing:node-8973164435",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 23.019238,
+   "lon": -82.752401,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/8973164435",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0c94e5317f9c2689d4377570077c7b94cac94032e8859fc39226a62ca80e6bbe"
+  },
+  {
+   "id": "sof:cu:xing:way-1307851553",
+   "name": "Guardafronteras",
+   "local_name": null,
+   "hours": null,
+   "modes": null,
+   "access_note": null,
+   "operator": null,
+   "lat": 22.727885,
+   "lon": -79.638284,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/way/1307851553",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "0152fa9a006f901a5a99a67658367ea43255b98bd547c8d594d31910900346d9"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

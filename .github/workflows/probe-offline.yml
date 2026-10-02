@@ -1,0 +1,16 @@
+# Test only: checks the offline map's tile hosts (tools/probe_offline_tiles.sh). Writes nothing to the repo.
+name: Probe offline tiles
+on:
+  push:
+    branches: [claude/offline-mode]
+    paths: [tools/probe_offline_tiles.sh, .github/workflows/probe-offline.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: sh tools/probe_offline_tiles.sh

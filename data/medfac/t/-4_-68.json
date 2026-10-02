@@ -1,0 +1,8 @@
+[["n12105352069",-2.86106,-67.77302,"br",{"name":"UBS Clebson Souza da Costa (CENTRO)","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;orthodontics;paediatrics;dentist;emergency"}],
+["n2148076096",-3.47917,-66.0572,"br",{"name":"Aeródromo Antônio Costa da Silva","operator":"Município de Juruá","aeroway":"aerodrome","icao":"SWIA"}],
+["n5029708922",-2.51824,-66.09797,"br",{"name":"Hospital Municipal de Fonte Boa","amenity":"hospital","healthcare":"hospital"}],
+["n7193224707",-2.8601,-67.7724,"br",{"name":"Hospital Frei Francisco","amenity":"hospital","healthcare":"hospital"}],
+["n7207150797",-2.87245,-67.80179,"br",{"amenity":"clinic","healthcare":"clinic"}],
+["w1549124641",-3.47148,-66.05756,"br",{"name":"UBS EDSON JACIGUARA","amenity":"clinic","healthcare":"clinic","operator":"PREFEITURA DE JURUÁ","operator:type":"public","addr:street":"Rua Dulcilio Rocha","addr:city":"Juruá","addr:postcode":"69520000"}],
+["w1550954687",-3.47319,-66.0654,"br",{"name":"Unidade Hospitalar de Juruá","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Prefeitura de Juruá","operator:type":"public","addr:street":"Rua Samuel Amaral","addr:city":"Juruá","addr:postcode":"69520000"}],
+["w959707482",-2.53243,-66.08309,"br",{"name":"Aeroporto de Fonte Boa","name:en":"Fonte Boa Airport","aeroway":"aerodrome","icao":"SWOB","iata":"FBA","wikidata":"Q5465163"}]]

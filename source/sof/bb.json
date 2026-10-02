@@ -24,13 +24,19 @@
    "city": "Bridgetown",
    "address": "U.S. Embassy Bridgetown Wildey Business Park 14006",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 13.1073,
-   "lon": -59.6202,
-   "prec": "approx",
+   "lat": 13.093147,
+   "lon": -59.584886,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105550740",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "4198aa29e21edf6f968f90357e5bc24a75a54e063584a80fb0a37ee83af4b812"
+   "coord_basis": "OpenStreetMap way/480461576",
+   "fp": "1182aa9ff35784ca290c5ce908fd1ca6497ff490790b8366ef456edd708a2fbd",
+   "web": "https://bb.usembassy.gov",
+   "phone": "(246) 227-4000",
+   "phone_after_hours": "1-246-227-4000",
+   "phone_src": "https://bb.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -119,5 +125,11 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }
