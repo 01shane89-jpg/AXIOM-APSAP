@@ -59,6 +59,8 @@
   function areaPress(k) {
     if (!areaEl) return;
     var b = areaEl.querySelector('[data-area="' + k + '"]');
+    /* a shape just drawn stays in Edit shape (Save, Delete, Style, Done) and that panel has no Summarise area: finish editing first */
+    if (!b && k !== "edit") { var dn = areaEl.querySelector('[data-area="done"]'); if (dn) { dn.click(); b = areaEl.querySelector('[data-area="' + k + '"]'); } }
     if (!b && /^(lasso|poly|circle|rect|edit)$/.test(k)) { press(areaEl.querySelector('[data-area="open"]')); b = areaEl.querySelector('[data-area="' + k + '"]'); }
     if (b) b.click();
   }
