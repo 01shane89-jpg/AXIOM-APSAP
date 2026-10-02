@@ -57,14 +57,15 @@
     return p;
   }
   /* the newest image: a minute-stamped address so neither the browser nor the agency's cache hands back an old one */
-  function fresh(u) { return u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + Math.floor(Date.now() / 6e4) : ""; }
+  /* Refresh (now) stamps the exact time, so a second press in the same minute still asks the agency again */
+  function fresh(u, now) { return u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + (now ? Date.now() : Math.floor(Date.now() / 6e4)) : ""; }
   function imgTag(u, cls, alt) {
     return '<img class="' + cls + '" src="' + esc(u) + '" alt="' + esc(alt) + '" referrerpolicy="no-referrer" decoding="async" ' +
       'onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'cam-no\',textContent:\'No image from the agency right now.\'}))">';
   }
   function when(ms, tz) { return W.OSAP_TIME ? W.OSAP_TIME.dualT(ms, { tz: tz, date: true }) : new Date(ms).toISOString().slice(0, 16) + "Z"; }
   /* fills an element with the camera's image; Singapore's address comes from the live API first */
-  function fill(el, s, c, view, big) {
+  function fill(el, s, c, view, big, now) {
     var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3];
     var put = function (url, ts) {
       if (!el.isConnected && !el.parentNode) return;
@@ -74,7 +75,7 @@
       if (t) t.textContent = (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min";
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
-    else put(fresh(safeUrl(u)));
+    else put(fresh(safeUrl(u), now));
   }
 
   /* ---------- map layer ---------- */
@@ -115,7 +116,7 @@
       fill(el, s, c, view, true);
       el.onclick = function (ev) {
         var t = ev.target;
-        if (t.hasAttribute("data-camref")) { delete live[s.id]; fill(el, s, c, view, true); }
+        if (t.hasAttribute("data-camref")) { delete live[s.id]; fill(el, s, c, view, true, true); }
         else if (t.hasAttribute("data-camview")) {
           view = +t.getAttribute("data-camview");
           Array.prototype.forEach.call(el.querySelectorAll("[data-camview]"), function (b) { b.setAttribute("aria-pressed", String(b === t)); });
