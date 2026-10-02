@@ -191,6 +191,8 @@ async function openPlan(p) {
   ok(/Role 3 equivalent \(estimated\)/.test(fac) && /Role 2 equivalent \(estimated\)/.test(fac) && /Role 1 equivalent \(estimated\)/.test(fac), "desktop: other hospitals get a Role 1, 2 or 3 equivalent, labelled estimated");
   ok(!/(Basic|Medium|High) \(estimated\)/.test(fac) && !/Not known: no services listed/.test(fac), "desktop: no Low, Medium or High ratings");
   ok(/Estimated from: emergency department, 300 beds/.test(fac), "desktop: the services behind each estimate are shown");
+  ok(await p.evaluate(() => { const rows = [...document.querySelectorAll("#mp-fac tr")]; const far = rows.find((r) => /Far North Hospital/.test(r.textContent)), tr = rows.find((r) => /Trauma Test Hospital/.test(r.textContent));
+    return !!far && /Low confidence: no services listed/.test(far.textContent) && !!tr && !/Low confidence/.test(tr.textContent); }), "desktop: a level resting only on an emergency department and beds is flagged low confidence; listed services are not");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-fac .mptier")].every((t) => /Role 1: first aid/.test(t.title))), "desktop: each level label explains the Role rule");
   ok(/24-hour emergency \(Test wiki\)/.test(fac), "desktop: an OSM hospital is matched to its sourced record");
   ok(/10 min/.test(fac) && /25 min/.test(fac), "desktop: drive times shown (10 min, 25 min)");
@@ -575,7 +577,9 @@ async function openPlan(p) {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
     d: M._facName({ name: "Hospital Drive Clinic" }, "clinic"), e: M._parseGrid("13.75, 100.5"), f: M._parseGrid("47P PR 6300 2000"), g: M._parseGrid("nonsense"),
     h: M._wxFlags({ vis: 5000, gust: 12, lc: 10, rain: 1, hi: 25, lo: 10 }).length,
-    i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
+    i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, il: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).low,
+    lows: [M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).low, M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).low,
+      M._capability({ name: "G", lat: 0, lon: 0, sofRec: { name: "G", notes: "Mahidol University", src: "x" } }, []).low, M._capability({ name: "Y", lat: 0, lon: 0 }, []).low], j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
     k: M._golden(45 * 60).c + M._golden(55 * 60).c + M._golden(61 * 60).c, l: Math.round(M._flightS(222240, 120) / 60),
     m: M._phoneOf({ phone: "+66 2 123 4567;+66 2 765 4321" }), n: M._phoneOf({ phone: "call us" }), o: M._webOf({ website: "javascript:alert(1)" }), q: M._webOf({ website: "www.x.org" }),
     r1: M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).tier, r2: M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).tier,
@@ -589,7 +593,8 @@ async function openPlan(p) {
   ok(/withheld/.test(r.a) && /withheld/.test(r.b) && r.c === "Bangkok Hospital" && r.d === "Hospital Drive Clinic", "rules: doctor-named clinics withheld, others kept");
   ok(r.e && r.e[0] === 13.75 && r.f && Math.abs(r.f[0] - 13.7) < 1 && r.g === null, "rules: grids parse from lat, lon and MGRS; nonsense does not");
   ok(r.h === 0, "rules: calm weather raises no flags");
-  ok(r.i === 3 && r.j === 0, "rules: emergency dept + 600 beds is a Role 3 equivalent; nothing listed is level not known");
+  ok(r.i === 2 && r.il === true && r.j === 0, "rules: emergency dept + 600 beds is only a Role 2 equivalent, low confidence (a bed count never makes Role 3); nothing listed is level not known");
+  ok(JSON.stringify(r.lows) === "[false,true,false,false]", "rules: low confidence only where no services are listed and nothing is sourced " + JSON.stringify(r.lows));
   ok(r.k === "gar", "rules: golden hour inside up to 50 min, at the limit to 60, beyond after");
   ok(r.l === 60, "rules: 120 nautical miles at 120 kn is 60 minutes");
   ok(r.m === "+66 2 123 4567" && r.n === "" && r.o === "" && r.q === "https://www.x.org", "rules: only well-formed phones and web links are shown");
