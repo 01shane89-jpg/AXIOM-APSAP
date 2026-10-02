@@ -100,6 +100,8 @@
     ["measure", "Measure", I.ruler, "Measure distance, bearing and area"],
     ["route", "Route", I.route, "Plan a route on roads or in a straight line"],
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
+    /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
+    ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
     ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
@@ -145,6 +147,7 @@
     /* My work carries What's new too: its badge counts the new reports (orange), else the saved items (grey) */
     var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
+    var mb2 = bar.querySelector('[data-atk="medplan"]'), mpe = D.getElementById("medplan"); if (mb2) mb2.setAttribute("aria-pressed", String(!!(mpe && !mpe.hidden)));
     var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
@@ -174,8 +177,13 @@
     else if (k === "area") {
       var has = areaOn();
       /* the area tools are always listed, so they can be found before anything is drawn; picking one with no shape asks for the shape first */
-      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).map(function (x) { return [x.id, x.label]; }),
+      popOpen(b, [["lasso", "Lasso"], ["poly", "Polygon"], ["circle", "Circle"], ["rect", "Square"], null, ["sum", "Summarise area"]].concat((W.OSAP_AREA_TOOLS || []).filter(function (x) { return x.id !== "med"; }).map(function (x) { return [x.id, x.label]; }),
         has ? [null, ["edit", "Edit shape"], ["save", "Save (NAI/TAI)"], ["clear", "Delete shape"]] : []));
+    }
+    else if (k === "medplan") {
+      var mp = D.getElementById("medplan");
+      if (mp && !mp.hidden && W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.close(); else if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open();
+      setTimeout(paintTools, 60);
     }
     else if (k === "watch") press("#watch-btn");
     else if (k === "mine") {
@@ -613,6 +621,9 @@
   new MutationObserver(function (recs) {
     if (recs.every(function (r) { var t = r.target; return bar.contains(t) || (t.closest && t.closest("#atk-back")) || (r.addedNodes.length === 1 && r.addedNodes[0].id === "atk-back"); })) return;
     paintTools(); syncBack(); }).observe(mapEl.querySelector(".leaflet-control-container") || mapEl, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class", "hidden"] });
+  /* the Med plan button shows pressed while the plan is open; the plan's own Close or Esc releases it */
+  D.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("#medplan")) setTimeout(paintTools, 60); });
+  D.addEventListener("keyup", function (e) { if (e.key === "Escape") setTimeout(paintTools, 60); });
   W.addEventListener("hashchange", function () { setTimeout(function () { ptDraw(); omPaint(); }, 300); });
   D.addEventListener("osap:view", function () { setTimeout(omPaint, 60); setTimeout(paintTools, 60); });
   /* the page's "No data sets on the map: Choose" note opens the Layers menu, which this toolbar holds in the Overlay Manager */
