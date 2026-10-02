@@ -141,7 +141,8 @@ async function open(opts, o) {
     if (/t\/12_100\.json/.test(u)) return J(r, MF_ROWS);
     return r.fulfill({ status: 404, body: "" });
   });
-  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
+  /* the split view setting (shared with Find LZ, Watch, NAI/TAI) starts on; these checks start from the full window */
+  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.TSAP.areaApi && document.getElementById("atk-tools"), null, { timeout: 60000 });
   await p.waitForTimeout(3000);
@@ -300,13 +301,13 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
   const dk = await p.evaluate(() => {
     const el = document.getElementById("medplan"), r = el.querySelector(".mpbox").getBoundingClientRect(), hit = document.elementFromPoint(40, Math.round(innerHeight / 2));
-    return { dock: el.classList.contains("dock"), left: Math.round(r.left), w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")), btn: el.querySelector('[data-mp="dock"]').textContent, modal: el.getAttribute("aria-modal"), kept: localStorage.getItem("osap.medplan.dock") };
+    return { dock: el.classList.contains("dock"), left: Math.round(r.left), w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")), btn: el.querySelector('[data-mp="dock"]').textContent, modal: el.getAttribute("aria-modal"), kept: localStorage.getItem("osap.split") };
   });
   ok(dk.dock && dk.left > dk.vw / 2 - 2 && dk.map && dk.btn === "Full window" && dk.modal === "false" && dk.kept === "1", "desktop: Side panel moves the plan right and leaves the map usable " + JSON.stringify(dk));
   await p.click('#mp-fac tr:has-text("Far North Hospital") [data-mp-go]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.getElementById("medplan").hidden && !!document.querySelector(".mpicon")), "desktop: Map on a hospital keeps the side panel open with the plan on the map");
   await p.click('#medplan [data-mp="dock"]'); await p.waitForTimeout(200);
-  ok(await p.evaluate(() => !document.getElementById("medplan").classList.contains("dock") && document.querySelector('#medplan [data-mp="dock"]').textContent === "Side panel" && localStorage.getItem("osap.medplan.dock") === "0"), "desktop: Full window puts it back");
+  ok(await p.evaluate(() => !document.getElementById("medplan").classList.contains("dock") && document.querySelector('#medplan [data-mp="dock"]').textContent === "Side panel" && localStorage.getItem("osap.split") === "0"), "desktop: Full window puts it back (one split view setting)");
   ok(await p.evaluate(() => /Automatic draft/.test(document.querySelector("#medplan .mphead").textContent) && !/AI generated/.test(document.getElementById("medplan").textContent)), "desktop: labelled Automatic draft, no AI tag");
   ok(/published numbers of institutions/.test(await p.textContent("#medplan")), "desktop: the plan says how phone numbers are sourced");
   await p.waitForFunction(() => /^[0-9a-f]{64}$/.test((document.getElementById("mp-fp") || {}).textContent || ""), null, { timeout: 5000 }).catch(() => {});
