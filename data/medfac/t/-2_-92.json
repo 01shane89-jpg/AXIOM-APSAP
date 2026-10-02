@@ -1,0 +1,12 @@
+[["n13240116179",-0.95627,-90.96672,"ec",{"name":"USAID Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n1376341393",-0.73756,-90.31581,"ec",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
+["n1779473243",-0.7362,-90.31277,"ec",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
+["n4754536323",-0.95734,-90.96706,"ec",{"name":"Centro de Salud de Puerto Villamil","healthcare":"hospital"}],
+["w111571640",-0.95653,-90.96623,"ec",{"name":"Policlinico Municipal","name:en":"Municipality Medical Center","amenity":"hospital","healthcare":"hospital"}],
+["w230316519",-0.65166,-90.40762,"ec",{"name":"Subcentro de Salud","amenity":"hospital","healthcare":"hospital"}],
+["w530485335",-0.94276,-90.95321,"ec",{"name":"Aeropuerto General Villamil","name:en":"General Villamil Airport","aeroway":"aerodrome","icao":"SEII","iata":"IBB","wikidata":"Q20452703"}],
+["w530488351",-0.45389,-90.26576,"ec",{"name":"Aeropuerto Ecológico Galápagos","name:en":"Seymour Galapagos Ecological Airport","operator":"ECOGAL S. A.","operator:type":"private","website":"https://www.ecogal.aero","aeroway":"aerodrome","icao":"SEGS","iata":"GPS","wikidata":"Q1186422"}],
+["w550743842",-0.7413,-90.32342,"ec",{"name":"Helipuerto de Santa Cruz","aeroway":"helipad"}],
+["w557992777",-0.74711,-90.31381,"ec",{"name":"Hospital República del Ecuador","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública","operator:type":"government"}],
+["w621647974",-0.747,-90.31421,"ec",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital"}],
+["w908464804",-1.27677,-90.4818,"ec",{"aeroway":"helipad"}]]

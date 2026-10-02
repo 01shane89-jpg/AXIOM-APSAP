@@ -28,13 +28,18 @@
    "city": "Nassau",
    "address": "42 Queen Street",
    "services_note": "Operating status can change quickly; check the current advisory and the post's own site.",
-   "lat": 25.0582,
-   "lon": -77.3431,
-   "prec": "approx",
+   "lat": 25.077293,
+   "lon": -77.346932,
+   "prec": "exact",
    "src": "https://www.wikidata.org/entity/Q105550345",
    "srcname": "Wikidata",
-   "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "a8af2800686514a4320c112871218f02770c5f58577f530a527ce17781f886d4"
+   "coord_basis": "OpenStreetMap node/6617641001",
+   "fp": "cc90f8952f3e14365d06ccedaef06040f1b53e5e6f384c88dcd79683df53285d",
+   "web": "https://bs.usembassy.gov/embassy/nassau/",
+   "phone": "242-322-1181",
+   "phone_src": "https://www.openstreetmap.org/node/6617641001",
+   "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
+   "phone_asof": "2026-10-01"
   },
   {
    "id": "sof:bs:post:embassy-of-the-united-states-of-america-nassau",
@@ -49,7 +54,12 @@
    "src": "https://www.wikidata.org/entity/Q137722584",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "28804ac01a34e9a345f67dd8fe6e7e8c218172ea693af9d4b4b2e3762aef28ab"
+   "fp": "db7a40ad9eab53e890dfa045cfebbabaa01a2ff42542e20619c3b0bc97df2e4b",
+   "phone": "242-461-5025",
+   "phone_after_hours": "242-461-5025",
+   "phone_src": "https://bs.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-10-01"
   }
  ],
  "airports": [
@@ -349,5 +359,31 @@
  "gaps": [
   "Auto: airports (OurAirports), power plants (WRI GPPD 2021, capacities and plants may be out of date) and the advisory (State Department feed) are built from open datasets; they are reference data, not verified.",
   "Hospitals, seaports and U.S. posts are Wikidata items ranked by number of Wikipedia articles; 24-hour emergency status and trauma levels are not stated, and a missing item does not mean there is none."
- ]
+ ],
+ "crossings": [
+  {
+   "id": "sof:bs:xing:node-7214177134",
+   "name": "Border control (unnamed in OpenStreetMap)",
+   "local_name": null,
+   "hours": null,
+   "modes": [
+    "foot"
+   ],
+   "access_note": null,
+   "operator": null,
+   "lat": 26.518647,
+   "lon": -78.774034,
+   "prec": "exact",
+   "coord_basis": "OpenStreetMap",
+   "src": "https://www.openstreetmap.org/node/7214177134",
+   "srcname": "OpenStreetMap (ODbL), barrier=border_control",
+   "asof": "2026-10-01",
+   "fp": "6020f6da24f327e47fcce9a40e219804774c4c74bf8d7ad90cfef9ceedc5a7ae"
+  }
+ ],
+ "evac_sources": {
+  "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
+  "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
+ },
+ "evac_asof": "2026-10-01"
 }

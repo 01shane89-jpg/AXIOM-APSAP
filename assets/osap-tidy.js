@@ -72,7 +72,7 @@
     b.setAttribute("data-tidy", kind); b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false"); return b;
   }
   var rep = mk("tidy-rep", "Reports", "Every report OSAP makes: country, weather, timeline, area, route and more", "rep");
-  var set = mk("tidy-set", "", "Settings: map colours, grid format, units, my location and credits", "set");
+  var set = mk("tidy-set", "", "Settings: map colours, grid format, units, my location, offline maps and credits", "set");
   var perChip = mk("tidy-per", "", "Reporting period", "per");
   set.setAttribute("aria-label", "Settings");
   set.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -122,6 +122,8 @@
     if (A && A.posFmt) h += seg("fmt", "Grid format", [["mgrs", "MGRS"], ["dd", "Lat/long"], ["dms", "DMS"]], A.posFmt());
     if (M && M.prefs) h += seg("unit", "Distance units", [["km", "km"], ["mi", "miles"], ["nm", "nautical mi"]], M.prefs().unit);
     if (LOC) h += '<label class="tpchk"><input type="checkbox" data-tset="loc"' + (LOC.on() ? " checked" : "") + '> Use my location<span>Kept on this device only</span></label>';
+    /* saving maps and data on this device for use with no signal (assets/osap-offline.js) */
+    if (W.OSAP_OFFLINE) h += '<button type="button" role="menuitem" data-tp="@off">Offline maps and data</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -175,6 +177,7 @@
     var b = e.target.closest && e.target.closest("[data-tp]"); if (!b) return;
     var sel = b.getAttribute("data-tp"); popClose();
     if (sel.indexOf("@rep:") === 0) { if (W.OSAP_REPORTS) W.OSAP_REPORTS.run(sel.slice(5)); }
+    else if (sel === "@off") { if (W.OSAP_OFFLINE) W.OSAP_OFFLINE.open(); }
     else press(sel);
   });
   pop.addEventListener("change", function (e) {

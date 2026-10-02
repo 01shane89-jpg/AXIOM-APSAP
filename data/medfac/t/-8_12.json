@@ -6,6 +6,7 @@
 ["w1326279020",-6.14274,13.74615,"ao",{"name":"Hospital do Mpala","amenity":"hospital","healthcare":"hospital"}],
 ["w206950409",-6.14119,12.3716,"ao",{"name":"Aeroporto de Soyo","name:en":"Soyo Airport","aeroway":"aerodrome","icao":"FNSO","iata":"SZA"}],
 ["w262983806",-6.12445,12.32803,"ao",{"name":"Aeródromo","operator":"Shut-down","aeroway":"aerodrome"}],
+["w573472214",-6.00197,12.39988,"cd",{"aeroway":"helipad"}],
 ["w656548298",-7.25851,12.86288,"ao",{"name":"Aeroporto de Nzeto","name:en":"Nzeto Airport","aeroway":"aerodrome","icao":"FNZE","iata":"ARZ"}],
 ["w705413862",-7.84424,13.10677,"ao",{"amenity":"hospital","healthcare":"hospital"}],
 ["w948951795",-6.13242,12.37347,"ao",{"amenity":"clinic","healthcare":"clinic","addr:city":"Soyo"}]]

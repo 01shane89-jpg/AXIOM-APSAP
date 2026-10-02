@@ -36,7 +36,7 @@
   L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
   mapEl.appendChild(box);
   var inp = box.querySelector("#srch-q"), list = box.querySelector("#srch-list"), st = box.querySelector(".srch-st");
-  var items = [], sel = -1, timer = 0, seq = 0, ac = null, cache = {};
+  var items = [], sel = -1, timer = 0, seq = 0, ac = null, cache = {}, itemsFor = "";  /* itemsFor: the query the list answers ("" = recent) */
 
   function status(t) { st.textContent = t || ""; st.hidden = !t; }
   function paint(head) {
@@ -54,7 +54,7 @@
     var li = list.querySelector('[data-i="' + sel + '"]'); if (li && li.scrollIntoView) li.scrollIntoView({ block: "nearest" });
   }
   function showRecent() {
-    items = recAll(); paint(items.length ? "Recent" : "");
+    items = recAll(); itemsFor = ""; paint(items.length ? "Recent" : "");
     status(items.length ? "" : "Type a place, or a grid such as 47P PS 12345 67890 or 13.75, 100.5.");
   }
 
@@ -92,12 +92,13 @@
     if (/^(country)$/.test(t)) return 5; if (/^(state|region|province)$/.test(t)) return 7; if (/^(county|district)$/.test(t)) return 9;
     if (/^(city)$/.test(t)) return 11; if (/^(town|locality|suburb|village|hamlet)$/.test(t)) return 13; return 16;
   }
-  function run(q) {
+  /* goFirst: Enter was pressed before this query's results were in, so go to the best match when they arrive */
+  function run(q, goFirst) {
     var n = ++seq;
     if (ac) try { ac.abort(); } catch (e) {}
     ac = W.AbortController ? new AbortController() : null;
     var sig = ac ? ac.signal : undefined, key = q.toLowerCase() + "@" + map.getCenter().lat.toFixed(0) + "," + map.getCenter().lng.toFixed(0);
-    if (cache[key]) { items = cache[key]; paint(); status(items.length ? "" : 'No places found for "' + q + '".'); return; }
+    if (cache[key]) { items = cache[key]; itemsFor = q; paint(); status(items.length ? "" : 'No places found for "' + q + '".'); if (goFirst && items.length) go(items[0]); return; }
     status("Searching…");
     var t = setTimeout(function () { if (ac) try { ac.abort(); } catch (e) {} }, 10000);
     photon(q, sig).catch(function (e) { if (n !== seq) throw e; return openMeteo(q, W.AbortController ? new AbortController().signal : undefined).then(function (r) { r.fallback = true; return r; }); })
@@ -105,15 +106,16 @@
         clearTimeout(t); if (n !== seq) return;
         items = r.filter(function (x) { return x.name && isFinite(x.lat) && isFinite(x.lon); }).slice(0, 8);
         if (!r.fallback) cache[key] = items;
-        paint(); status(items.length ? (r.fallback ? "OpenStreetMap search did not answer; towns from GeoNames." : "") : 'No places found for "' + q + '".');
-      }, function () { clearTimeout(t); if (n !== seq) return; items = []; paint(); status("Place search did not answer. Check the connection and try again; grids still work offline."); });
+        itemsFor = q; paint(); status(items.length ? (r.fallback ? "OpenStreetMap search did not answer; towns from GeoNames." : "") : 'No places found for "' + q + '".');
+        if (goFirst && items.length) go(items[0]);
+      }, function () { clearTimeout(t); if (n !== seq) return; items = []; itemsFor = q; paint(); status("Place search did not answer. Check the connection and try again; grids still work offline."); });
   }
   inp.addEventListener("input", function () {
     clearTimeout(timer);
     var q = inp.value.trim().slice(0, 120);
     if (q.length < 2) { seq++; showRecent(); return; }
     var g = fromGrid(q);
-    if (g) { seq++; items = [g]; paint(); status("Press Enter or tap it to go there."); return; }
+    if (g) { seq++; items = [g]; itemsFor = q; paint(); status("Press Enter or tap it to go there."); return; }
     timer = setTimeout(function () { run(q); }, 300);
   });
   inp.addEventListener("keydown", function (e) {
@@ -122,7 +124,8 @@
     else if (e.key === "Enter") {
       e.preventDefault(); clearTimeout(timer);
       var q = inp.value.trim().slice(0, 120), g = q && fromGrid(q);
-      if (g) go(g); else if (sel >= 0 && items[sel]) go(items[sel]); else if (q.length >= 2) run(q);
+      /* only a list that answers what is typed now: the Recent list or an older query's results would send the map to the wrong place */
+      if (g) go(g); else if (sel >= 0 && items[sel] && itemsFor === q) go(items[sel]); else if (q.length >= 2) run(q, true);
     }
     else if (e.key === "Escape") { e.stopPropagation(); close(); }
   });
