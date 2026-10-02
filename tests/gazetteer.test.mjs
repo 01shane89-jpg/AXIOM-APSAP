@@ -53,6 +53,7 @@ const cases = [
   ["Senator seeks shelter subsidy \n SEOUL, Korea - A senator is pushing for a rental subsidy", "kr", null],
   ["Seoul - Busan rail line reopens", "kr", "Seoul"],
   ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
+  ["Coast guard patrols \n MANILA, Philippines-The Department of Foreign Affairs rejected the claim", "ph", null],   // no space either side of the dash
   ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
 ];
 let bad = 0;
