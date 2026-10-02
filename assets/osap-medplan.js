@@ -8,8 +8,8 @@
    - receiving hospitals from OSAP's stored copy of OpenStreetMap (data/medfac, built by tools/build_medfac.mjs every four
      weeks, so the plan never depends on a live Overpass answer; Overpass is asked live only where the stored copy does
      not yet cover a country in reach, or when the user asks) and OSAP's sourced facility list (data/sof). Ranked by
-     capability: a trauma level only where a source states one; otherwise a Role 1, 2 or 3 equivalent estimated from the
-     services the hospital lists, with the rule and the reasons shown. Hospitals with nothing listed are kept apart, and
+     trauma level (Shane 2026-10-02): Level 1 first, only where a source states it; every other hospital reads "Trauma level
+     not known" and ranks below them, ordered by the services it lists, with the rule and the reasons shown. Hospitals with nothing listed are kept apart, and
      ones with no name are left out. A failed lookup is reported as a failure, never as "no hospital";
    - the plan's Primary, Secondary and Tertiary hospitals, chosen by fixed rules: Primary is the highest level of care in reach (life, limb or eyesight),
      Secondary the most capable inside the golden hour when Primary is beyond it;
@@ -458,24 +458,29 @@
     return best && best.h;
   }
   var SPEC = /trauma|surgery|orthopa|neurosurg|intensive|emergency|cardiothoracic|burn|vascular|anaesthe|anesthe/i;
-  /* Role equivalents: the military treatment roles applied to what a civilian hospital lists, because civilian hospitals
-     carry no Role designation. A trauma designation is used only where a source states one */
-  var TIER = ["Level not known", "Role 1 equivalent (estimated)", "Role 2 equivalent (estimated)", "Role 3 equivalent (estimated)", "Trauma centre (sourced)"];
-  var ROLE_RULE = "Role equivalents follow the military treatment roles. Role 1: first aid and resuscitation, no surgery. Role 2: emergency department and surgery. " +
-    "Role 3: surgery with intensive care and specialist care such as neurosurgery or trauma. Estimated from the services OpenStreetMap or OSAP's sources list for the hospital: " +
-    "Role 3 where surgery and intensive or specialist care are listed; Role 2 where surgery is listed, or an emergency department with 100 or more beds; " +
-    "Role 1 where only an emergency department, beds or a helipad are listed. A university teaching or national referral hospital in OSAP's sourced list is a Role 3 equivalent. " +
-    "A bed count never makes a Role 3 equivalent. Low confidence: no services are listed, so the level rests only on an emergency department, beds or a helipad. " +
-    "A stated trauma designation is shown as the source states it.";
+  /* Shane 2026-10-02: hospitals are labelled and ranked by trauma level, never by a Role estimate. A level is shown only
+     where a source states one; the rest read "Trauma level not known" and rank below any sourced level, ordered by what
+     they list (f.tier, kept internally: 3 surgery with intensive or specialist care, or a sourced teaching or referral
+     hospital; 2 surgery, or an emergency department with 100 or more beds; 1 an emergency department, beds or a helipad) */
+  var NK_LVL = "Trauma level not known";
+  var ROLE_RULE = "Ranked by trauma level: a trauma level is shown only where a source states it (Level 1 first). Every other hospital reads \"Trauma level not known\" " +
+    "and ranks below them, ordered by what OpenStreetMap or OSAP's sources list for it: first surgery with intensive or specialist care (neurosurgery, trauma, burns), " +
+    "or a university teaching or national referral hospital; then surgery, or an emergency department with 100 or more beds; then an emergency department, beds or a helipad only. " +
+    "Low confidence: no services are listed, only an emergency department, beds or a helipad.";
   /* OSAP's sourced list names university teaching and referral hospitals: the country's tertiary centres */
   var REFERRAL = /universit|teaching hospital|referral cent|tertiary|faculty of medicine|college of medicine/i;
   var SURG = /surg|orthopa|trauma|cardiothoracic|vascular|anaesthe|anesthe|burn/i, ICU = /intensive|critical/i, SPECIAL = /neurosurg|trauma|cardiothoracic|burn|vascular/i;
   var LOW_TXT = "Low confidence: no services listed, only an emergency department, beds or a helipad";
   function lowTag(f) { return f.kind === "hospital" && f.low ? '<span class="mplow" title="' + esc(ROLE_RULE) + '">' + esc(LOW_TXT) + "</span>" : ""; }
+  /* the stated trauma level as a number (1 to 5), or null where the source names a trauma centre without a level */
+  function lvlOf(tr) { var m = tr && /level\s*(i{1,3}|iv|v|[1-5])\b/i.exec(tr.text); return m ? +({ i: 1, ii: 2, iii: 3, iv: 4, v: 5 }[m[1].toLowerCase()] || m[1]) : null; }
   function tierLabel(f) {
-    if (f.tier === 4 && f.trauma) { var m = /level\s*(i{1,3}|[1-5])\b/i.exec(f.trauma.text); return m ? "Trauma level " + ({ i: 1, ii: 2, iii: 3 }[m[1].toLowerCase()] || m[1]) + " (sourced)" : TIER[4]; }
-    return TIER[f.tier];
+    if (f.trauma) return f.lvl ? "Trauma level " + f.lvl + " (sourced)" : "Trauma centre, level not stated (sourced)";
+    return NK_LVL;
   }
+  /* rank: a sourced level above every hospital without one (Level 1 highest; a trauma centre with no stated level after
+     Level 5); without one, the order of what is listed */
+  function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : f.tier / 10; }
   function capability(f, sofList) {
     var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false;
     if (m) {
@@ -498,13 +503,13 @@
     if (ref) { role = 3; sc += 4; why.unshift("teaching or referral hospital: " + ref + " (" + (m.srcname || "source") + ")"); }
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
     f.low = !tr && !ref && !surg && role > 0;
-    f.tier = tr ? 4 : role;
+    f.tier = tr ? 4 : role; f.lvl = lvlOf(tr);
     return f;
   }
   /* most capable first; within a tier the higher score, then the shorter drive, then the nearer */
   function byCap(x, y) {
     var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s;
-    return y.tier - x.tier || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || x.m - y.m;
+    return rankOf(y) - rankOf(x) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || x.m - y.m;
   }
   /* hospitals for the plan: the nearest ten, plus the best-ranked of the rest, plus sourced hospitals OSM lacks */
   function pickHosp(F, o, rH, sofList) {
@@ -872,7 +877,7 @@
       '<div class="mpgrid">' + fieldsHtml() + "</div>" +
       '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
-      "Trauma levels are shown only where a source states one; otherwise a Role 1, 2 or 3 equivalent is estimated from the services listed for the hospital (civilian hospitals have no military Role designation). Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
+      "Trauma levels are shown only where a source states one; every other hospital reads \"Trauma level not known\" and is ordered by the services listed for it. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
       "</div>";
     ghRender(); ocRender(); thrRender();
   }
@@ -972,7 +977,8 @@
     if (g == null && a == null) return null;
     return g != null && (a == null || g <= a) ? [g, "road"] : [a, "air"];
   }
-  /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care):
+  /* the plan's three hospitals (Shane 2026-10-01: life, limb or eyesight always goes to the highest level of care; 2026-10-02:
+     the level is the stated trauma level, see rankOf):
      Primary: the highest level of care that can be reached, the quickest of that level by road (or air when air evacuation is on);
        within the same 10 minutes the better-equipped one;
      Secondary: when Primary is beyond the golden hour, the most capable inside it, to stabilise on the way;
@@ -992,17 +998,17 @@
     var reach = H.filter(function (f) { return bestWay(f); }).sort(function (x, y) {
       /* same level: within the same 10 minutes the better-equipped (sourced teaching hospital, more services) first */
       var a = bestWay(x)[0], b = bestWay(y)[0];
-      return y.tier - x.tier || Math.floor(a / 600) - Math.floor(b / 600) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || byCap(x, y);
+      return rankOf(y) - rankOf(x) || Math.floor(a / 600) - Math.floor(b / 600) || (x.low ? 1 : 0) - (y.low ? 1 : 0) || y.score - x.score || a - b || byCap(x, y);
     });
-    if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next highest level of care" : "highest level of care listed"); }); return out; }
+    if (!reach.length) { H.slice().sort(byCap).slice(0, 3).forEach(function (f, i) { add(f, i, i ? "next ranked" : "top ranked listed"); }); return out; }
     var P = reach[0], pIn = bestWay(P)[0] <= gh;
-    add(P, 0, "highest level of care in reach" + (pIn ? "" : "; beyond the golden hour, so stabilise at Secondary if the casualty cannot make it"));
+    add(P, 0, "top ranked in reach" + (pIn ? "" : "; beyond the golden hour, so stabilise at Secondary if the casualty cannot make it"));
     var inGh = reach.filter(function (f) { return free(f) && bestWay(f)[0] <= gh; });
     if (!pIn && inGh[0]) add(inGh[0], 1, "most capable inside the golden hour, to stabilise on the way to Primary");
     var next = reach.filter(free)[0];
-    add(next, 1, "next highest level of care in reach");
-    add(reach.filter(free)[0], 2, "next highest level of care, as the backup");
-    if (out.length < 3) add(H.slice().sort(byCap).filter(free)[0], 2, "next highest level of care listed");
+    add(next, 1, "next ranked in reach");
+    add(reach.filter(free)[0], 2, "next ranked, as the backup");
+    if (out.length < 3) add(H.slice().sort(byCap).filter(free)[0], 2, "next ranked listed");
     return out;
   }
   function routes(s) {
@@ -1061,8 +1067,8 @@
     var mk = (pre || (f.kind === "hospital" ? "H" : "C")) + (i + 1), rw = num("rwkn");
     var cap = [f.er === "yes" ? "Emergency dept (OSM)" : f.er === "no" ? "No emergency dept (OSM)" : "", f.pad ? "Helipad on site" : "", f.beds ? f.beds + " beds" : "",
       f.op ? f.op.replace(/_/g, " ") : "", f.spec].filter(Boolean).join(" · ");
-    var tier = f.kind === "hospital" ? '<span class="mptier t' + f.tier + '" tabindex="0" title="' + esc(f.trauma ? "Stated by " + f.trauma.srcname + ". " + ROLE_RULE : ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" : "";
-    var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + "</span>" : "";
+    var tier = f.kind === "hospital" ? '<span class="mptier t' + (f.trauma ? 4 : 0) + '" tabindex="0" title="' + esc(f.trauma ? "Stated by " + f.trauma.srcname + ". " + ROLE_RULE : ROLE_RULE) + '">' + esc(tierLabel(f)) + "</span>" : "";
+    var tr = f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " " + (link(f.trauma.src, "(" + f.trauma.srcname + ")") || "") + "</span>" : f.kind === "hospital" && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : "";
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
@@ -1087,8 +1093,8 @@
     if (st && !s.osmAt) return '<p class="obs">From OSAP\'s stored copy of OpenStreetMap' + (at ? " (" + esc(at) + ")" : "") + '. <button type="button" class="refresh noprint" data-mp="live">Check live OpenStreetMap</button></p>';
     return "";
   }
-  /* head trauma (Shane): the quickest hospital a source says has neurosurgery; where none says so, the quickest Role 3
-     equivalent is shown as the likely place, labelled as an estimate. Times include the aircraft's legs. */
+  /* head trauma (Shane): the quickest hospital a source says has neurosurgery; where none says so, the quickest hospital
+     listing surgery with intensive or specialist care (or a teaching or referral hospital) is shown as the likely place, labelled as an estimate. Times include the aircraft's legs. */
   var NEURO = /neuro\s*surg|neurosurg|brain\s*surg|neurolog.*surg/i;
   function neuroSrc(f) {
     if (NEURO.test(String(f.specRaw || ""))) return f.osm ? link(f.osm, "OpenStreetMap") + " healthcare:speciality" : "OpenStreetMap healthcare:speciality";
@@ -1102,7 +1108,7 @@
     var h = '<div class="mpneuro"><p><b>Head trauma (neurosurgery):</b> ';
     if (N.length) h += line(N[0], '<span class="obs">(neurosurgery stated by ' + neuroSrc(N[0]) + ")</span>") + (N[1] ? '<span class="sub">Next: H' + (s.fac.H.indexOf(N[1]) + 1) + " " + esc(N[1].name) + ", " + esc(mins(bestWay(N[1])[0])) + "</span>" : "");
     else h += '<span class="mpnk">Not known</span> <span class="obs">No hospital in reach states neurosurgery in OpenStreetMap or OSAP\'s sources.</span>' +
-      (E.length ? '<span class="sub">Likely place (estimated, not stated): ' + line(E[0], '<span class="obs">(' + esc(tierLabel(E[0])) + "; confirm neurosurgery by phone)</span>") + "</span>" : "");
+      (E.length ? '<span class="sub">Likely place (estimated, not stated): ' + line(E[0], '<span class="obs">(' + esc(E[0].trauma ? tierLabel(E[0]) : "lists surgery with intensive or specialist care") + "; confirm neurosurgery by phone)</span>") + "</span>" : "");
     return h + "</p></div>";
   }
   function failed(s) { return !!(s.osmErr || (s.storedErr && !s.osmAt)); }
@@ -1135,7 +1141,7 @@
     h += F.H.length ? '<div class="mpscroll"><table>' + head + "<tbody>" + F.H.map(function (f, i) { return facRow(f, i, bestOf(f)); }).join("") + "</tbody></table></div>"
       : failed(s) ? '<p class="obs mpwarn"><b>No hospital is listed because the lookup failed</b> (' + esc(clip(lookupErr(s), 160)) + "). This does not mean there is none: call the ambulance number in section 4 and check national sources.</p>"
       : '<p class="obs mpwarn">No hospital with a known capability within ' + Math.round(s.radii.h / 1000) + " km in OpenStreetMap or OSAP's sourced list" + (F.nU ? "; see the hospitals with no details listed below" : "") + ". Check national sources before relying on this.</p>";
-    if (F.H.length) h += '<p class="obs">Ranked by capability: a <b>trauma level</b> only where a source states one (linked); otherwise a <b>Role 1, 2 or 3 equivalent (estimated)</b> from the services listed for the hospital (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
+    if (F.H.length) h += '<p class="obs">Ranked by <b>trauma level</b>, Level 1 first, only where a source states one (linked). The rest read <b>Trauma level not known</b> and come after, ordered by the services listed for them (hover or tap the label for the rule). Within a rank, the shorter drive first. ' +
       (F.nH > 10 ? "The nearest 10 hospitals with something listed, plus the best-ranked of the rest." : "") + "</p>";
     var nOff = F.H.concat(F.U || []).filter(isOff).length;
     if (nOff) h += '<p class="obs mpwarn">' + nOff + " hospital" + (nOff > 1 ? "s are" : " is") + ' turned off and left out of the picks, routes, map and print. <button type="button" class="refresh noprint" data-mp="allon">Turn all back on</button></p>';
@@ -1734,7 +1740,7 @@
     var listed = function (re, what) { var m = spl.filter(function (x) { return re.test(x); }); return m.length ? esc(what + ": " + m.join(", ")) + (osm ? " (" + osm + " healthcare:speciality)" : "") : ""; };
     var R = [];
     function row(k, v) { R.push([k, v]); }
-    row("Capability", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? " " + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" : f.why && f.why.length ? '<span class="sub">Estimated from: ' + esc(f.why.join(", ")) + ". " + esc(ROLE_RULE) + "</span>" : '<span class="sub">' + esc(ROLE_RULE) + "</span>"));
+    row("Capability", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? " " + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" : f.why && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + ". " + esc(ROLE_RULE) + "</span>" : '<span class="sub">' + esc(ROLE_RULE) + "</span>"));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
       sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : nk("No emergency department listed."));
     row("Surgery", listed(SURG, "Surgical services listed") || nk("No surgery listed."));
@@ -1938,6 +1944,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
