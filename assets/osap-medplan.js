@@ -132,9 +132,13 @@
   function cc() { var a = A(); return (a && a.cc) || (W.TSAP && W.TSAP.country) || ""; }
   function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable; the choice is kept on this device */
+  /* side panel: the plan docked to the right (bottom half on a phone) so the map stays usable. The choice is the one split view
+     setting on this device (W.OSAP_SPLIT, assets/osap-split.js) that Find LZ, Watch and NAI/TAI share; this key is only the fallback. */
   var DOCK_KEY = "osap.medplan.dock";
-  function dockOn() { return !!lsGet(DOCK_KEY); }
+  function SP() { return W.OSAP_SPLIT; }
+  function dockOn() { return SP() ? SP().on() : !!lsGet(DOCK_KEY); }
+  function dockSet(v) { if (SP()) SP().set(v); else { lsSet(DOCK_KEY, v ? 1 : 0); dockApply(); } }
+  D.addEventListener("osap:split", function () { var el = D.getElementById("medplan"); if (el && !el.hidden) dockApply(); });
   function phoneW() { return W.innerWidth <= 700; }
   function dockBtn() {
     var on = dockOn();
@@ -144,6 +148,7 @@
     var el = D.getElementById("medplan"); if (!el) return;
     var on = dockOn(); el.classList.toggle("dock", on); el.setAttribute("aria-modal", on ? "false" : "true");
     var b = el.querySelector('[data-mp="dock"]'); if (b) b.outerHTML = dockBtn();
+    if (SP() && SP().top) SP().top();
     if (W.__asapMap && W.__asapMap.invalidateSize) W.__asapMap.invalidateSize();
   }
   /* centre a point in the part of the map the side panel leaves clear */
@@ -847,7 +852,7 @@
     "#mp-pickbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:4001;background:#111;color:#fff;border-radius:6px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
     "#mp-pickbar button{min-height:30px}" +
     "@media (max-width:700px){#medplan{padding:0}#medplan .mpbox{border-radius:0;min-height:100%;padding:0 10px 18px}#medplan .mphead{top:0;gap:6px}#medplan .mphead h2{font-size:15px}#medplan .mphead .aitag{order:3}#medplan .mpgrid input{min-height:34px}#mp-pickbar{top:auto;bottom:80px;width:calc(100% - 32px);box-sizing:border-box}}" +
-    "#medplan.dock{inset:auto;top:0;right:0;bottom:0;width:min(520px,48vw);padding:0;background:none;pointer-events:none;overflow:visible}" +
+    "#medplan.dock{inset:auto;top:var(--osplit-top,0px);right:0;bottom:0;width:min(520px,48vw);padding:0;background:none;pointer-events:none;overflow:visible}" +
     "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
     "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
@@ -947,6 +952,7 @@
   }
   function close() {
     var el = D.getElementById("medplan"); if (el) el.hidden = true;
+    if (SP() && SP().top) SP().top();
     pickEnd();
     if (layer) { layer.remove(); layer = null; }
   }
@@ -1776,7 +1782,7 @@
       if (it[0] === "iso") L.polygon(it[1], { color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], { radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2])).addTo(layer);
-      else L.marker(it[1], { icon: L.divIcon({ className: "mpicon " + it[3], html: it[2], iconSize: [it[2].length > 2 ? 32 : 26, 20], iconAnchor: [it[2].length > 2 ? 16 : 13, 10] }), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(it[4]).addTo(layer);
+      else L.marker(it[1], { icon: L.divIcon({ className: "mpicon " + it[3], html: it[2], iconSize: [it[2].length > 2 ? 32 : 26, 20], iconAnchor: [it[2].length > 2 ? 16 : 13, 10] }), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
   }
@@ -2117,7 +2123,7 @@
     if (b.hasAttribute("data-mp-offbtn")) { setOff(b.getAttribute("data-mp-offbtn"), true); offChanged(); var pb = D.querySelector("#mp-pst [data-mp-assess]"); if (pb) pb.focus(); return; }
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
-    if (k === "dock") { lsSet(DOCK_KEY, dockOn() ? 0 : 1); dockApply(); var db = D.querySelector('#medplan [data-mp="dock"]'); if (db) db.focus(); if (ST && ST.o) mapFocus(ST.o[0], ST.o[1]); return; }
+    if (k === "dock") { dockSet(!dockOn()); var db = D.querySelector('#medplan [data-mp="dock"]'); if (db) db.focus(); if (ST && ST.o) mapFocus(ST.o[0], ST.o[1]); return; }
     if (k === "retry") { build(); return; }
     if (k === "allon") { lsSet(offKey(), []); offChanged(); return; }
     if (k === "pick") { pickStart(); return; }
