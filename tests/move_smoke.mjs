@@ -38,7 +38,7 @@ const SEED_A = {
   "asap-xrecs-th": "CACHE", "osap-today-wx-1.00,2.00": "CACHE", "osap-offline": JSON.stringify({ v: 1, packs: { th: {} } }), "osap-loc": JSON.stringify({ on: true, cc: "th" }),
   "unrelated-key": "keep-out"
 };
-const SEED_B = { "osap-atak-pts": JSON.stringify([{ id: "pt-b1", n: "B own point", lat: 1.3, lon: 103.8, cc: "sg" }]), "osap-meas-unit": "mi", "osap-loc": JSON.stringify({ on: true, cc: "sg" }) };
+const SEED_B = { "osap-atak-pts": JSON.stringify([{ id: "pt-b1", n: "B own point", lat: 1.3, lon: 103.8, cc: "sg" }]), "osap-meas-unit": "mi", "osap-offline": JSON.stringify({ v: 1, packs: { sg: { name: "Singapore" } } }) };
 const PASS = "correct horse battery staple";
 
 /* ---------- device A: make the backup ---------- */
@@ -109,12 +109,12 @@ const after = await B.p.evaluate(async () => {
   const d = await new Promise((res) => { const r = indexedDB.open("osap-points", 1); r.onsuccess = () => res(r.result); });
   const ph = await new Promise((res) => { const q = d.transaction("photos").objectStore("photos").get("ph-1"); q.onsuccess = () => res(q.result); });
   d.close();
-  return { pts: localStorage.getItem("osap-atak-pts"), unit: localStorage.getItem("osap-meas-unit"), loc: localStorage.getItem("osap-loc"), ws: JSON.parse(localStorage.getItem("osap-ws")).list.length,
+  return { pts: localStorage.getItem("osap-atak-pts"), unit: localStorage.getItem("osap-meas-unit"), off: localStorage.getItem("osap-offline"), ws: JSON.parse(localStorage.getItem("osap-ws")).list.length,
     plan: localStorage.getItem("osap-medplan-th"), photo: ph ? Array.from(new Uint8Array(ph.buf)) : null, pid: ph && ph.pid };
 });
 ok(JSON.parse(after.pts).map((x) => x.id).join() === "pt-a1,pt-a2", "device B now has device A's points");
 ok(after.unit === "nm" && after.plan && after.ws === 2, "settings, med plan and both workspaces arrived", { unit: after.unit, ws: after.ws });
-ok(after.loc && JSON.parse(after.loc).cc === "sg", "device B keeps its own Use my location");
+ok(after.off && JSON.parse(after.off).packs.sg && !JSON.parse(after.off).packs.th, "device B keeps its own offline map list (device-only stores are not replaced)");
 ok(after.photo && after.photo.length === photoBytes.length && after.photo.every((x, i) => x === photoBytes[i]) && after.pid === "pt-a1", "the photo arrived byte for byte on its point");
 // the photo shows on the point in the map's point viewer data
 const viaPoints = await B.p.evaluate(async () => (await OSAP_POINTS.photos("pt-a1")).length);
