@@ -1,7 +1,7 @@
 /* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves
    as open data, with no key, account or login (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly).
-   Never private, unsecured or scraped cameras. Its switch sits in Map overlays > Infrastructure (#ml-infra), next to the power
-   grid. It is not a data set: it never filters reports, and nothing here creates or changes a record.
+   Never private, unsecured or scraped cameras. Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
+   closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
      draws a camera icon per camera, up to MAX at a time.
    - Hover (mouse) shows the latest still image; a tap or click opens it larger with the agency, licence and fetch time, a refresh
@@ -210,7 +210,8 @@
   D.head.appendChild(css);
 
   function mount() {
-    var home = D.getElementById("ml-infra") || D.getElementById("ml-extra");
+    /* the home is Map overlays > Infrastructure > Roads (#ml-roads, next to road closures); older pages have only #ml-infra or #ml-extra */
+    var home = D.getElementById("ml-roads") || D.getElementById("ml-infra") || D.getElementById("ml-extra");
     if (!home) return false;
     if (sec && sec.parentNode === home) return true;
     if (!sec) {
