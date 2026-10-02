@@ -150,7 +150,7 @@
     if (c) wxLive[k] = c; /* an older copy shows while the new one loads, marked with its time */
     if (wxBusy[k] || !navigator.onLine && c) return;
     wxBusy[k] = 1;
-    var u = "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon +
+    var u = "https://api.open-meteo.com/v1/forecast?latitude=" + (+p.lat).toFixed(3) + "&longitude=" + (+p.lon).toFixed(3) + /* about 100 m, as the Weather tab asks: a chosen spot is never sent exactly */
       "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,precipitation" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max" +
       "&timezone=auto&forecast_days=6";

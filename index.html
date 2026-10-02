@@ -3385,7 +3385,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   var STATE = { observation: ["Observed", "instrument reading, not reviewed"], claim: ["Reported", "official statement, not confirmed"],
                 event: ["Reported", "sourced report, not confirmed"] };
-  function chip(cls, text) { return '<span class="chip ' + cls + '">' + esc(text) + "</span>"; }
+  function chip(cls, text) { return '<span class="chip ' + esc(cls) + '">' + esc(text) + "</span>"; }
 
   function markerStyle(r) {
     if (r.xcc) { var xc = xaCol(r.xcc); return { radius: 3.5 + (r.sev || 1) * 1.6, color: xc, weight: 2.4, fillColor: xc, fillOpacity: 0.3 }; }
@@ -7670,7 +7670,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (wAreaLayer) { map.removeLayer(wAreaLayer); wAreaLayer = null; }
     if (!w || !w.area) return;
     wAreaLayer = L.polygon(w.area, { pane: "areapane", color: tok("--near"), weight: 2.5, dashArray: "2 6", fill: false, interactive: false }).addTo(map);
-    wAreaLayer.bindTooltip("Watch: " + w.name, { permanent: true, direction: "center", className: "wlbl" });
+    wAreaLayer.bindTooltip("Watch: " + esc(w.name), { permanent: true, direction: "center", className: "wlbl" });
     map.fitBounds(wAreaLayer.getBounds(), { padding: [30, 30] });
   }
   var WatchCtl = L.Control.extend({ options: { position: "topright" }, onAdd: function () {

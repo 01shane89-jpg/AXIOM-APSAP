@@ -1543,7 +1543,7 @@
       if (it[0] === "iso") L.polygon(it[1], { color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], { radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2])).addTo(layer);
-      else L.marker(it[1], { icon: L.divIcon({ className: "mpicon " + it[3], html: it[2], iconSize: [it[2].length > 2 ? 32 : 26, 20], iconAnchor: [it[2].length > 2 ? 16 : 13, 10] }), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(it[4]).addTo(layer);
+      else L.marker(it[1], { icon: L.divIcon({ className: "mpicon " + it[3], html: it[2], iconSize: [it[2].length > 2 ? 32 : 26, 20], iconAnchor: [it[2].length > 2 ? 16 : 13, 10] }), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
   }

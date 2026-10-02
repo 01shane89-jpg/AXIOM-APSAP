@@ -14,7 +14,7 @@
      OpenStreetMap (border posts, checkpoints, military and protected areas, fords, weight and height limits); and the hazards,
      weather and light worked out below, at a glance.
    - Export: GPX, KML, GeoJSON, print sheet, share link, copy as text. Routes are saved in this browser only
-     (localStorage "osap-routes"); nothing is sent anywhere except the waypoints to the routing, elevation and forecast hosts,
+     (localStorage "osap-routes"); a share link carries the waypoints after "#", so opening it sends them to no server; nothing is sent anywhere except the waypoints to the routing, elevation and forecast hosts,
      and, when "Search this route" is pressed, the route line to OpenStreetMap's Photon (town names) and Overpass (restrictions).
    A route is a planning aid built by the analyst, never a record or evidence. Hazards listed are the app's existing records
    and feeds, shown with their own sources; roads, closures and conditions change and must be checked on the ground.
@@ -484,7 +484,7 @@ function main() {
     S.routes.forEach(function (r, i) {
       if (i === S.sel) return;
       var alt = L.polyline(r.coords, { pane: "routepane", renderer: S.svg, color: "#868e96", weight: 5, opacity: 0.75 });
-      alt.bindTooltip((r.label || (i ? "Alternative " + i : "Fastest")) + ": " + dist(r.m) + ", " + dur(r.s) + ". Tap to use it.", { sticky: true });
+      alt.bindTooltip(E((r.label || (i ? "Alternative " + i : "Fastest")) + ": " + dist(r.m) + ", " + dur(r.s) + ". Tap to use it."), { sticky: true });
       alt.on("click", function (e) { if (e.originalEvent) L.DomEvent.stop(e.originalEvent); S.sel = i; afterRoute(); });
       alt.addTo(S.lines);
     });
@@ -539,7 +539,7 @@ function main() {
     var r = S.routes[S.sel], tok = S.token, box = el("rt-prof"); if (!r || !box) return;
     var pts = sample(r, 100);
     box.innerHTML = '<p class="obs">Loading elevation…</p>';
-    getJSON("https://api.open-meteo.com/v1/elevation?latitude=" + pts.map(function (p) { return p.p[0].toFixed(5); }).join(",") + "&longitude=" + pts.map(function (p) { return G.wrap(p.p[1]).toFixed(5); }).join(","), 15000)
+    getJSON("https://api.open-meteo.com/v1/elevation?latitude=" + pts.map(function (p) { return p.p[0].toFixed(4); }).join(",") + "&longitude=" + pts.map(function (p) { return G.wrap(p.p[1]).toFixed(4); }).join(","), 15000)
       .then(function (j) {
         if (tok !== S.token || r !== S.routes[S.sel]) return;
         var h = (j && j.elevation) || []; if (h.length !== pts.length) throw new Error("unexpected answer");
@@ -606,7 +606,7 @@ function main() {
     if (arr < now - 90 * 864e5) { box.innerHTML = '<p class="obs">This trip is more than 90 days ago; no weather shown.</p>'; return; }
     var n = Math.min(8, Math.max(2, Math.round(r.m / 25000) + 1)), pts = sample(r, n), day = function (ms) { return new Date(ms).toISOString().slice(0, 10); };
     box.innerHTML = '<p class="obs">Loading the forecast for ' + n + " points…</p>";
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pts.map(function (p) { return p.p[0].toFixed(4); }).join(",") + "&longitude=" + pts.map(function (p) { return G.wrap(p.p[1]).toFixed(4); }).join(",") +
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pts.map(function (p) { return p.p[0].toFixed(3); }).join(",") + "&longitude=" + pts.map(function (p) { return G.wrap(p.p[1]).toFixed(3); }).join(",") +
       "&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,visibility&timezone=UTC&start_date=" + day(Math.min(dep, now)) + "&end_date=" + day(Math.max(arr, dep) + 3600e3);
     getJSON(url, 15000).then(function (j) {
       if (tok !== S.token || r !== S.routes[S.sel]) return;
@@ -1149,11 +1149,16 @@ function main() {
   }
   function shareLink() {
     var q = S.mode + "~" + (S.mode === "line" ? S.speed : "") + "~" + S.wps.map(function (w) { return w.lat.toFixed(5) + "," + w.lon.toFixed(5) + (w.name ? "," + w.name.replace(/[~|,]/g, " ") : ""); }).join("|");
-    return location.origin + location.pathname + "?rt=" + encodeURIComponent(q) + "#" + S.ctx.cc + "/route";
+    /* after "#", so no server (GitHub Pages included) ever receives the waypoints; assets/osap-start.js reads it */
+    return location.origin + location.pathname + "#" + S.ctx.cc + "/route?rt=" + encodeURIComponent(q);
   }
   function fromLink() {
-    var m = location.search.match(/[?&]rt=([^&]*)/); if (!m) return false;
-    var s; try { s = decodeURIComponent(m[1]); } catch (e) { return false; }
+    var raw = null, m = location.search.match(/[?&]rt=([^&]*)/);
+    try { raw = sessionStorage.getItem("osap-rt-link"); sessionStorage.removeItem("osap-rt-link"); } catch (e) {}
+    if (raw == null && W.OSAP_RT_LINK) { raw = W.OSAP_RT_LINK; W.OSAP_RT_LINK = null; }
+    if (raw == null && m) raw = m[1]; /* links made before the waypoints moved after "#" */
+    if (raw == null) return false;
+    var s; try { s = decodeURIComponent(raw); } catch (e) { return false; }
     var parts = s.split("~"); if (parts.length !== 3) return false;
     var wps = parts[2].split("|").map(function (x) { var f = x.split(","); return { lat: +f[0], lon: +f[1], name: f.slice(2).join(" ") }; });
     wps = cleanWps(wps); if (wps.length < 1) return false;
