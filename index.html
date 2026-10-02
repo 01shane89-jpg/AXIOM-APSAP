@@ -5092,11 +5092,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var GAZ = null, CNAMES = {};
   COUNTRIES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
   /* a wire dateline names where the reporter filed, not where the story happened ("SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
-     "MANILA (AP) —"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
+     "MANILA (AP) —", "MANILA, Philippines-The"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
   var AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
   var DATELINE = [/\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
     new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
-    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-)/gu];
+    /(^|\n)[ \t]*\p{Lu}[\p{Lu} .'-]{2,30}(?:,[^\n\u2013\u2014-]{0,30})?\s*(?:--|[\u2013\u2014]|-(?=\s)|(?<=\s)-|(?<=,[^\n\u2013\u2014-]{1,30})-(?=\p{Lu}))/gu];
   function stripDatelines(text) {
     var t = String(text || "");
     DATELINE.forEach(function (re) { t = t.replace(re, function (m, lead) { lead = typeof lead === "string" ? lead : ""; return lead + new Array(m.length - lead.length + 1).join(" "); }); });
