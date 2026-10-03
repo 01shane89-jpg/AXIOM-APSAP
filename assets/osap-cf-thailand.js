@@ -39,7 +39,7 @@
     det.innerHTML = "<summary>Border watch: map layers, crossings, people and facilities near the line, toll</summary>";
     rb.hidden = false; det.appendChild(rb); box.appendChild(det);
     D.documentElement.classList.add("cf-tbw");
-    if (!on) { on = true; W.TBW.show(); }
+    if (!on) { on = true; W.TBW.show(false, { noEvents: true }); }
   };
   // the conflict tab closed or switched to another conflict: give the border view back to the page
   new MutationObserver(function () { if (D.documentElement.getAttribute("data-cf") !== ID && (on || D.documentElement.classList.contains("cf-tbw"))) tbwOff(); })
