@@ -1,0 +1,19 @@
+{"cc":"bb","at":"2026-10-03T09:28:56Z","base":"2026-07-28T02:16:18Z","m":[
+["n10788582668",13.13393,-59.62639,{"man_made":"tower","tower:type":"communication"}],
+["n11074448797",13.09829,-59.55415,{"man_made":"mast","tower:type":"communication"}],
+["n13027188104",13.14782,-59.48057,{"man_made":"mast","name":"Moncreiffe Signal Station","tower:construction":"lattice","tower:type":"communication"}],
+["n13265066544",13.12902,-59.59584,{"man_made":"tower","tower:type":"communication"}],
+["n2397309669",13.09128,-59.57817,{"man_made":"tower","tower:type":"communication"}],
+["n2930569406",13.19304,-59.49012,{"communication:mobile_phone":"yes","man_made":"mast"}],
+["n8338384335",13.14728,-59.48882,{"man_made":"mast","tower:type":"communication"}],
+["n8743737641",13.13123,-59.44787,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n8890601911",13.07135,-59.49048,{"man_made":"mast","tower:type":"communication"}],
+["n9501249974",13.31039,-59.59299,{"man_made":"mast","tower:type":"communication"}],
+["n9509162782",13.16381,-59.43287,{"man_made":"tower","tower:type":"communication"}],
+["w1075641918",13.08629,-59.52385,{"man_made":"tower","tower:type":"communication"}],
+["w1088558075",13.0964,-59.6081,{"man_made":"tower","tower:type":"communication"}],
+["w1090639887",13.0985,-59.45855,{"man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
+["w1098855198",13.14088,-59.52715,{"man_made":"tower","tower:type":"communication"}],
+["w893443843",13.13797,-59.48527,{"man_made":"tower","tower:type":"communication"}],
+["w946562704",13.16809,-59.63666,{"man_made":"tower","tower:type":"communication"}]
+]}
