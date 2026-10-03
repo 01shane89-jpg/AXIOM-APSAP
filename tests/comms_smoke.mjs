@@ -40,8 +40,24 @@ const OSM = { elements: [
 let overpassCalls = 0, remarkCalls = 0, keyFilter = 0;
 const overpassSpans = [];
 
-async function open(opts) {
+// stand-in stored country copy (data/comms/masts): masts across Thailand, two networks and one unmapped
+const STORED = { cc: "th", at: "2026-10-03T02:00:00Z", base: "2026-10-03T01:58:00Z", m: [
+  ["n101", 18.79, 98.98, { man_made: "mast", "tower:type": "communication", "communication:mobile_phone": "yes", operator: "AIS" }],
+  ["n102", 7.88, 98.39, { man_made: "mast", "tower:type": "communication", "communication:mobile_phone": "yes", operator: "AIS" }],
+  ["n103", 15.24, 104.85, { man_made: "mast", "tower:type": "communication", "communication:mobile_phone": "yes", operator: "True" }],
+  ["n104", 13.76, 100.51, { man_made: "mast", "tower:type": "communication", "communication:mobile_phone": "yes", operator: "AIS;True", height: "40" }],
+  ["w105", 16.43, 102.83, { man_made: "tower", "tower:type": "broadcasting", name: "Khon Kaen TV" }],
+  ["n106", 12.57, 99.96, { man_made: "mast", "tower:type": "communication" }]
+] };
+
+async function open(opts, stored) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
+  await ctx.route(/\/data\/comms\/masts\//, (r) => {
+    if (!stored) return r.fulfill({ status: 404, body: "" });
+    if (/index\.json/.test(r.request().url())) return r.fulfill({ contentType: "application/json", body: JSON.stringify({ v: 1, countries: { th: { at: STORED.at, base: STORED.base, n: { cell: 4, bcast: 1, comm: 1 } } } }) });
+    if (/\/th\.json/.test(r.request().url())) return r.fulfill({ contentType: "application/json", body: JSON.stringify(STORED) });
+    r.fulfill({ status: 404, body: "" });
+  });
   const errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/overpass|maps\.mail\.ru/, (r) => {
@@ -199,6 +215,30 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
   await p.waitForFunction(() => /Likely coverage/.test((document.querySelector(".grab small") || {}).textContent || ""), null, { timeout: 20000 }).then(() => ok(true, "phone: the folded sheet shows the answer"), () => ok(false, "phone: the folded sheet shows the answer"));
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+}
+// ---------- whole country from the stored copy ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, true);
+  await view(p, "comms");
+  await p.waitForFunction(() => window.OSAP_COMMSTAB, null, { timeout: 20000 });
+  const calls0 = overpassCalls;
+  await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })); await p.waitForTimeout(2500);
+  let s = await st(p);
+  ok(s.drawn === 6, "country zoom: every stored mast in Thailand is on the map (" + s.drawn + ")");
+  ok(overpassCalls === calls0, "country zoom: no live Overpass request");
+  ok(await p.evaluate(() => document.querySelector(".comzoom").hidden), "country zoom with a stored copy: no zoom-in button");
+  ok(/stored OpenStreetMap copy of 2026-10-03/.test(await p.textContent("#com-st")), "the panel says the masts come from the stored copy and its date");
+  const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((e) => e.getAttribute("data-comprov") + ":" + e.parentNode.querySelector(".comsw").style.background));
+  ok(provs.length === 3 && provs[0].startsWith("ais:") && provs[1].startsWith("true:") && provs[2].startsWith("?:") && new Set(provs.map((x) => x.split(":").slice(1).join(":"))).size === 3, "country zoom: providers listed with their own colours: " + provs.join(" | "));
+  await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
+  ok((await st(p)).drawn === 4, "country zoom: AIS off leaves its own masts out, shared AIS;True stays (" + (await st(p)).drawn + ")");
+  await p.check('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
+  // inside the country at city zoom the stored copy answers; no live load
+  await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(1500);
+  ok(overpassCalls === calls0 && (await st(p)).drawn >= 1, "city zoom inside a stored country: no live Overpass request");
+  ok(!errors.length, "stored: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  if (OUT) await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })), await p.waitForTimeout(800), await p.screenshot({ path: OUT + "/comms-country.png" });
   await ctx.close();
 }
 await browser.close(); server.close();
