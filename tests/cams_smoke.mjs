@@ -90,7 +90,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   for (const s of ix.sources) {
     if (s.live) continue;
     for (const c of JSON.parse(await readFile(join(root, `data/cams/${s.id}.json`), "utf8")).cams)
-      for (const u of [].concat(c[4] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
+      for (const u of [].concat(c[4] || [], c[5] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
   }
   ok(!missed.size, "sw.js never caches any camera image" + (missed.size ? ": missing " + [...missed].slice(0, 12).join(", ") : ""));
 }

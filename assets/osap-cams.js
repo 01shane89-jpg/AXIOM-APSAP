@@ -133,8 +133,8 @@
     if (W.Hls) return Promise.resolve(W.Hls);
     return hlsP || (hlsP = new Promise(function (ok, no) { var sc = document.createElement("script"); sc.src = HLSLIB; sc.onload = function () { W.Hls ? ok(W.Hls) : no(new Error("no player")); }; sc.onerror = function () { hlsP = null; no(new Error("player did not load")); }; document.head.appendChild(sc); }));
   }
-  function playLive(el, s, c) {
-    var box = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]"), url = safeUrl(c[4]);
+  function playLive(el, s, c, src) {
+    var box = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]"), url = safeUrl(src || c[4]), clip = /\.mp4(\?|$)/.test(url || "");
     if (!box) return;
     stopLive(el);
     var v = document.createElement("video"), started = false;
@@ -145,11 +145,12 @@
       box.innerHTML = '<span class="cam-no">' + esc(why) + "</span>";
       if (t) t.textContent = "Tried " + when(Date.now(), s.tz);
     };
-    var go = function () { if (started) return; started = true; clearTimeout(el._camLive.tm); box.innerHTML = ""; box.appendChild(v); if (t) t.textContent = "Live video · started " + when(Date.now(), s.tz) + " · the stream carries no time stamp"; };
+    var go = function () { if (started) return; started = true; clearTimeout(el._camLive.tm); box.innerHTML = ""; box.appendChild(v); if (t) t.textContent = (clip ? "Video clip of the last moments, as the agency published it · " : "Live video · started ") + when(Date.now(), s.tz) + (clip ? "" : " · the stream carries no time stamp"); };
     el._camLive = { v: v, tm: setTimeout(function () { fail("The live video did not start in " + Math.round((S.wait || 20000) / 1000) + " s. The camera may be off air."); }, S.wait || 20000) };
     v.addEventListener("loadeddata", go); v.addEventListener("playing", go);
     v.addEventListener("error", function () { fail("The live video is not available right now."); });
     if (!url) return fail("The live video is not available right now.");
+    if (clip) { v.loop = true; v.src = url; box.appendChild(v); v.style.position = "absolute"; v.style.opacity = "0"; v.addEventListener("loadeddata", function () { v.style.position = ""; v.style.opacity = ""; }); v.play().catch(function () {}); return; }
     if (v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; box.appendChild(v); v.style.position = "absolute"; v.style.opacity = "0"; v.addEventListener("loadeddata", function () { v.style.position = ""; v.style.opacity = ""; }); return; }
     hlsLib().then(function (H) {
       if (!el._camLive || el._camLive.v !== v) return;
@@ -183,10 +184,12 @@
        its refresh and the view buttons keep working */
     var hls = s.kind === "hls";
     if (hls) views = 1;
+    /* c[5]: the agency's live video (HLS) or short clip (mp4), where it streams one to anyone */
     var tier = hls ? "Road camera · live video" : s.kind === "dwr" ? "River camera · published by the agency" : "Traffic camera · published by the agency";
     return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:var(--cam,#0b7285)">' + tier + "</div><h3>" + esc(c[3]) + "</h3>" +
       '<div data-camimg class="cam-frame"><span class="cam-no">' + (hls ? "Starting the live video…" : "Loading the image…") + "</span></div>" +
       (views > 1 ? '<div class="cam-views">' + Array.apply(null, Array(views)).map(function (_, i) { return '<button type="button" data-camview="' + i + '" aria-pressed="' + (i === 0) + '">View ' + (i + 1) + "</button>"; }).join("") + "</div>" : "") +
+      (!hls && c[5] ? '<div class="cam-views"><button type="button" data-camlive aria-pressed="false">' + (/\.mp4(\?|$)/.test(c[5]) ? "Play video clip" : "Watch live video") + "</button></div>" : "") +
       '<p class="obs"><span data-camt></span> <button type="button" class="linkish" data-camref>' + (hls ? "Restart" : "Refresh") + "</button><br>" +
       esc(s.agency) + " · " + esc(s.licence) + (safeUrl(s.page) ? ' · <a href="' + esc(s.page) + '" target="_blank" rel="noopener">source</a>' : "") +
       "<br>" + esc(c[1].toFixed(5) + ", " + c[2].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(c[1], c[2])) : "") +
@@ -219,13 +222,20 @@
       fill(el, s, c, view, true);
       m._camTick = setInterval(function () {
         if (!e.popup.isOpen()) { clearInterval(m._camTick); return; }
-        if (!document.hidden) { delete live[s.id]; fill(el, s, c, view, true, true); }
+        if (!document.hidden && !el._camLive) { delete live[s.id]; fill(el, s, c, view, true, true); }
       }, S.tick || every(s));
       el.onclick = function (ev) {
         var t = ev.target;
-        if (t.hasAttribute("data-camref")) { delete live[s.id]; fill(el, s, c, view, true, true); }
+        if (t.hasAttribute("data-camlive")) {
+          /* the agency's live video in place of the still; Refresh goes back to the newest still */
+          clearInterval(m._camTick); t.setAttribute("aria-pressed", "true"); playLive(el, s, c, c[5]);
+        }
+        else if (t.hasAttribute("data-camref")) {
+          stopLive(el); var lb = el.querySelector("[data-camlive]"); if (lb) lb.setAttribute("aria-pressed", "false");
+          delete live[s.id]; fill(el, s, c, view, true, true);
+        }
         else if (t.hasAttribute("data-camview")) {
-          view = +t.getAttribute("data-camview");
+          stopLive(el); view = +t.getAttribute("data-camview");
           Array.prototype.forEach.call(el.querySelectorAll("[data-camview]"), function (b) { b.setAttribute("aria-pressed", String(b === t)); });
           fill(el, s, c, view, true);
         }
