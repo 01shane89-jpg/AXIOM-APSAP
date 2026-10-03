@@ -12,11 +12,19 @@ import { join } from "node:path";
 const OUT = process.argv[2] || "data/cams";
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; OSAP camera list builder; +https://01shane89-jpg.github.io/AXIOM-APSAP/)" };
 const r5 = (v) => Math.round(+v * 1e5) / 1e5;
+const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 const tidy = (s) => String(s == null ? "" : s).replace(/\s+/g, " ").trim().slice(0, 140);
-async function get(u, as = "json") {
-  const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(45000) });
-  if (!r.ok) throw new Error(`HTTP ${r.status} from ${u}`);
-  return as === "json" ? r.json() : r.text();
+// three tries with a pause: some agency servers answer a busy moment with a 500/429 or drop the connection
+async function get(u, as = "json", headers = {}) {
+  let last;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(u, { headers: { ...UA, ...headers }, signal: AbortSignal.timeout(60000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status} from ${u.slice(0, 80)}`);
+      return as === "json" ? await r.json() : await r.text();
+    } catch (e) { last = e; await pause(3000 * (i + 1)); }
+  }
+  throw new Error(String(last.message || last) + (last.cause ? " (" + (last.cause.code || last.cause.message) + ")" : ""));
 }
 // a small, forgiving reader for the flat XML lists below: the text of each <tag> inside each <item>
 function xmlItems(xml, item) {
@@ -27,16 +35,14 @@ function xmlItems(xml, item) {
 function xmlTag(s, t) { const m = new RegExp(`<${t}>([^<]*)</${t}>`).exec(s); return m ? m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'") : ""; }
 const https = (u) => /^https:\/\//.test(String(u || "")) ? String(u) : null;
 const one = (a) => (a.length === 1 ? a[0] : a.length ? a : null);
-const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 // 511 traveller sites built on the same platform (Iteris/IBI): the camera list behind each site's own public Cameras page,
 // read 100 at a time (the most it gives), and each camera's still image at /map/Cctv/<image id> on the same site
 async function atis(host) {
   const out = [];
   for (let start = 0, total = 1; start < total && start < 20000; start += 100) {
     const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start, length: 100, search: { value: "" } }));
-    const r = await fetch(`https://${host}/List/GetData/Cameras?query=${q}&lang=en`, { headers: { ...UA, "X-Requested-With": "XMLHttpRequest" }, signal: AbortSignal.timeout(45000) });
-    if (!r.ok) throw new Error(`HTTP ${r.status} from ${host}`);
-    const j = await r.json(); total = j.recordsTotal || 0;
+    const j = await get(`https://${host}/List/GetData/Cameras?query=${q}&lang=en`, "json", { "X-Requested-With": "XMLHttpRequest" }).catch((e) => { throw new Error(e.message + " at camera " + start); });
+    total = j.recordsTotal || 0;
     (j.data || []).forEach((c) => {
       const m = /POINT \(([-\d.]+) ([-\d.]+)\)/.exec((((c.latLng || {}).geography) || {}).wellKnownText || "");
       const imgs = (c.images || []).filter((i) => !i.disabled && !i.blocked && i.imageUrl).map((i) => https(new URL(i.imageUrl, `https://${host}/`).href)).filter(Boolean);
@@ -172,7 +178,8 @@ export const SOURCES = [
     async list() {
       const x = await get("https://www.wsdot.wa.gov/Traffic/api/HighwayCameras/kml.aspx", "text");
       const out = [], re = /<Placemark id="ID (\d+)"><name><!\[CDATA\[([^\]]*)\]\]><\/name><description><!\[CDATA\[[\s\S]*?src="([^"]+)"[\s\S]*?<coordinates>([-\d.]+),([-\d.]+)/g; let m;
-      while ((m = re.exec(x))) out.push([m[1], r5(m[5]), r5(m[4]), tidy(m[2]), https(m[3])]);
+      // only WSDOT's own cameras (the list also links some private and partner webcams)
+      while ((m = re.exec(x))) if (/^https:\/\/images\.wsdot\.wa\.gov\//.test(m[3])) out.push([m[1], r5(m[5]), r5(m[4]), tidy(m[2]), m[3]]);
       return out;
     } },
   { id: "us-or", tz: "America/Los_Angeles", cc: "us", country: "United States (Oregon)", agency: "Oregon DOT (TripCheck)", every: 5,
@@ -183,7 +190,6 @@ export const SOURCES = [
     } },
   atisSrc("ca-on", "511on.ca", "America/Toronto", "ca", "Canada (Ontario)", "Ontario Ministry of Transportation (Ontario 511)"),
   atisSrc("ca-ab", "511.alberta.ca", "America/Edmonton", "ca", "Canada (Alberta)", "Alberta Transportation (511 Alberta)"),
-  atisSrc("ca-sk", "hotline.gov.sk.ca", "America/Regina", "ca", "Canada (Saskatchewan)", "Saskatchewan Highways (Highway Hotline)"),
   atisSrc("ca-nb", "511.gnb.ca", "America/Moncton", "ca", "Canada (New Brunswick)", "New Brunswick Transportation (511 NB)"),
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
