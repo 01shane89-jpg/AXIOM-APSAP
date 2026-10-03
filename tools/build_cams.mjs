@@ -48,7 +48,7 @@ const https = (u) => /^https:\/\//.test(String(u || "")) ? String(u) : null;
 const one = (a) => (a.length === 1 ? a[0] : a.length ? a : null);
 // 511 traveller sites built on the same platform (Iteris/IBI): the camera list behind each site's own public Cameras page,
 // read 100 at a time (the most it gives), and each camera's still image at /map/Cctv/<image id> on the same site
-async function atis(host) {
+async function atis(host, video) {
   const out = [];
   for (let start = 0, total = 1; start < total && start < 20000; start += 100) {
     const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start, length: 100, search: { value: "" } }));
@@ -58,7 +58,7 @@ async function atis(host) {
       const m = /POINT \(([-\d.]+) ([-\d.]+)\)/.exec((((c.latLng || {}).geography) || {}).wellKnownText || "");
       const imgs = (c.images || []).filter((i) => !i.disabled && !i.blocked && i.imageUrl).map((i) => https(new URL(i.imageUrl, `https://${host}/`).href)).filter(Boolean);
       // live video too, where the site streams it to anyone (no sign-in)
-      const vid = (c.images || []).map((i) => (!i.isVideoAuthRequired && !i.videoDisabled && /^https:\/\/[^?#]+\.m3u8$/.test(i.videoUrl || "") ? i.videoUrl : null)).find(Boolean);
+      const vid = video && (c.images || []).map((i) => (!i.isVideoAuthRequired && !i.videoDisabled && /^https:\/\/[^?#]+\.m3u8$/.test(i.videoUrl || "") ? i.videoUrl : null)).find(Boolean);
       if (m && imgs.length) out.push([String(c.id), r5(m[2]), r5(m[1]), tidy(c.location || c.roadway || "Camera " + c.id), one(imgs)].concat(vid ? [vid] : []));
     });
     await pause(250);
@@ -80,7 +80,8 @@ async function cars(p, video) {
 // cannot show), Texas, Virginia, Michigan, Tennessee (no keyless list), Taiwan (refuses connections from abroad), Vietnam
 // (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
-const atisSrc = (id, host, tz, cc, country, agency) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host) });
+// video: only where the streams answered a browser from GitHub without sign-in (Pennsylvania's "open" ones answered 401)
+const atisSrc = (id, host, tz, cc, country, agency, video) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host, video) });
 const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
 export const SOURCES = [
@@ -181,12 +182,12 @@ export const SOURCES = [
   atisSrc("us-pa", "511pa.com", "America/New_York", "us", "United States (Pennsylvania)", "PennDOT (511PA)"),
   atisSrc("us-ne511", "newengland511.org", "America/New_York", "us", "United States (Vermont, New Hampshire, Maine)", "New England 511 (VTrans, NHDOT, MaineDOT)"),
   atisSrc("us-ct", "ctroads.org", "America/New_York", "us", "United States (Connecticut)", "Connecticut DOT (CTroads)"),
-  atisSrc("us-wi", "511wi.gov", "America/Chicago", "us", "United States (Wisconsin)", "Wisconsin DOT (511 Wisconsin)"),
-  atisSrc("us-la", "511la.org", "America/Chicago", "us", "United States (Louisiana)", "Louisiana DOTD (511LA)"),
+  atisSrc("us-wi", "511wi.gov", "America/Chicago", "us", "United States (Wisconsin)", "Wisconsin DOT (511 Wisconsin)", true),
+  atisSrc("us-la", "511la.org", "America/Chicago", "us", "United States (Louisiana)", "Louisiana DOTD (511LA)", true),
   atisSrc("us-az", "az511.gov", "America/Phoenix", "us", "United States (Arizona)", "Arizona DOT (AZ511)"),
   atisSrc("us-ut", "udottraffic.utah.gov", "America/Denver", "us", "United States (Utah)", "Utah DOT (UDOT Traffic)"),
   atisSrc("us-id", "511.idaho.gov", "America/Boise", "us", "United States (Idaho)", "Idaho Transportation Department (511 Idaho)"),
-  atisSrc("us-nv", "nvroads.com", "America/Los_Angeles", "us", "United States (Nevada)", "Nevada DOT (NVroads)"),
+  atisSrc("us-nv", "nvroads.com", "America/Los_Angeles", "us", "United States (Nevada)", "Nevada DOT (NVroads)", true),
   atisSrc("us-ak", "511.alaska.gov", "America/Anchorage", "us", "United States (Alaska)", "Alaska DOT&PF (Alaska 511)"),
   { id: "us-de", tz: "America/New_York", cc: "us", country: "United States (Delaware)", agency: "Delaware DOT (DelDOT TMC)", every: 0,
     licence: "DelDOT public traffic camera video", page: "https://deldot.gov/map/", kind: "hls",

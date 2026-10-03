@@ -142,7 +142,6 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const sg = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
   ok(/images\.data\.gov\.sg\/api\/traffic-images\/2026\/10\/\d+\.jpg$/.test(sg.src) && /Image taken 1 Oct 2026 1005Z \/ 18:05 SGT/.test(sg.t), "Singapore: live image address and its time: " + sg.src + " | " + (sg.t.match(/Image taken[^.]*/) || [""])[0]);
   // Finland: several views
-  await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [60.05374, 23.99616], 14);
   { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
   await p.waitForTimeout(700);
@@ -164,6 +163,19 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await p.waitForFunction(() => /not available|did not start|cannot play/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
   const live = await p.evaluate(() => ({ t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "", hls: !!window.Hls }));
   ok(/Road camera · live video/.test(live.t) && /live video is not available right now/.test(live.t) && live.hls && imgs.some((u) => /camerai1\.iticfoundation\.org\/hls\/.+\.m3u8/.test(u)), "Thailand live camera: the player loads, asks iTIC for the stream and says plainly when it is off air");
+  // a still camera that also has video: the button plays it in place, Refresh goes back to the newest still
+  const tfl = JSON.parse(await readFile(join(root, "data/cams/gb-tfl.json"), "utf8")).cams.find((c) => c[5]);
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [tfl[1], tfl[2]], 15);
+  ok(await p.evaluate((id) => window.OSAP_CAMS.open("gb-tfl", id), tfl[0]), "London camera with a video clip drawn");
+  await p.waitForTimeout(800);
+  ok(await p.evaluate(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || "")), "London: the pop-up offers the agency's video clip");
+  const clipN = imgs.length;
+  await p.click(".leaflet-popup-content [data-camlive]");
+  await p.waitForFunction(() => /not available|did not start/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || "") || !!document.querySelector(".leaflet-popup-content video"), null, { timeout: 25000 }).catch(() => {});
+  ok(imgs.slice(clipN).some((u) => /\.mp4/.test(u)), "London: Play video clip asks TfL for the clip");
+  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(800);
+  ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video")), "London: Refresh goes back to the newest still");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [60.05374, 23.99616], 14);
   { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
