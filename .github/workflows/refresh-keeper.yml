@@ -1,7 +1,7 @@
 name: Keep the 15-minute refresh running
 
 # GitHub runs scheduled workflows late or skips them when it is busy (the 15-minute cron in refresh-flood.yml has been firing
-# only about every 3 hours). This job starts "Refresh live snapshots" on main every 15 minutes itself, for about 5 h 30 min (under
+# only about every 3 hours). This job starts both lanes of "Refresh live snapshots" on main every 15 minutes itself, for about 5 h 30 min (under
 # GitHub's 6-hour job limit), then starts a fresh copy of itself so the chain carries on. The hourly schedule below restarts
 # the chain if it ever breaks. Only one keeper runs at a time: a new copy waits in the queue until the current one ends
 # (GitHub keeps at most one waiting), so the hand-over and the hourly restart never double up.
@@ -36,13 +36,16 @@ jobs:
         run: |
           end=$(( $(date +%s) + 330*60 ))
           while :; do
-            # skip a round while a main refresh is still waiting, so rounds never pile up
-            waiting=$(( $(gh run list --workflow refresh-flood.yml --branch main --status queued --json databaseId --jq length || echo 0) + $(gh run list --workflow refresh-flood.yml --branch main --status pending --json databaseId --jq length || echo 0) ))
-            if [ "$waiting" = "0" ]; then
-              gh workflow run refresh-flood.yml --ref main && echo "$(date -u +%H:%MZ) started a refresh" || echo "$(date -u +%H:%MZ) could not start a refresh"
-            else
-              echo "$(date -u +%H:%MZ) a refresh is still queued; skipping this round"
-            fi
+            # two lanes, each in its own queue: "fast" (weather, hazards, quick feeds; about 10 minutes) and "news" (news, data sets,
+            # Deep South, social, summaries; about 20). Skip a lane's round while one of its runs is still waiting, so rounds never pile up.
+            for lane in fast news; do
+              waiting=$(( $(gh run list --workflow refresh-flood.yml --branch main --status queued --json displayTitle --jq "[.[]|select(.displayTitle|endswith(\"($lane)\"))]|length" || echo 0) + $(gh run list --workflow refresh-flood.yml --branch main --status pending --json displayTitle --jq "[.[]|select(.displayTitle|endswith(\"($lane)\"))]|length" || echo 0) ))
+              if [ "$waiting" = "0" ]; then
+                gh workflow run refresh-flood.yml --ref main -f lane=$lane && echo "$(date -u +%H:%MZ) started the $lane refresh" || echo "$(date -u +%H:%MZ) could not start the $lane refresh"
+              else
+                echo "$(date -u +%H:%MZ) a $lane refresh is still queued; skipping this round"
+              fi
+            done
             # the conflict tabs (refresh-conflicts.yml) every fourth round, about once an hour, unless one is still waiting
             round=$(( ${round:-0} + 1 ))
             if [ $(( round % 4 )) = 1 ]; then
