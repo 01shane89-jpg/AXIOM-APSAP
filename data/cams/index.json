@@ -1,5 +1,5 @@
 {
- "built": "2026-10-03T07:45Z",
+ "built": "2026-10-03T08:14Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -626,6 +626,7 @@
    "page": "https://telemetry.dwr.go.th/",
    "every": 15,
    "kind": "dwr",
+   "type": "river",
    "n": 128,
    "box": [
     6.22808,
@@ -633,7 +634,7 @@
     20.44465,
     105.4932
    ],
-   "checked": "2026-10-03T07:45Z"
+   "checked": "2026-10-03T08:10Z"
   },
   {
    "id": "th-itic",
@@ -707,6 +708,159 @@
     26.53135
    ],
    "checked": "2026-10-03T07:45Z"
+  },
+  {
+   "id": "us-ashcam",
+   "cc": "us",
+   "tz": "America/Anchorage",
+   "country": "United States (volcanoes)",
+   "agency": "USGS Volcano Hazards Program (AshCam)",
+   "licence": "U.S. Geological Survey, public domain",
+   "page": "https://volcview.wr.usgs.gov/ashcam-gui/",
+   "every": 10,
+   "type": "volcano",
+   "n": 99,
+   "box": [
+    19.421,
+    -177.8148,
+    61.2002,
+    -110.39988
+   ],
+   "checked": "2026-10-03T08:10Z"
+  },
+  {
+   "id": "us-ashcam-w",
+   "cc": "us",
+   "tz": "America/Adak",
+   "country": "United States (western Aleutian volcanoes)",
+   "agency": "USGS Volcano Hazards Program (AshCam)",
+   "licence": "U.S. Geological Survey, public domain",
+   "page": "https://volcview.wr.usgs.gov/ashcam-gui/",
+   "every": 10,
+   "type": "volcano",
+   "n": 4,
+   "box": [
+    51.3784,
+    178.5714,
+    51.96491,
+    179.6474
+   ],
+   "checked": "2026-10-03T08:10Z"
+  },
+  {
+   "id": "nz-geonet",
+   "cc": "nz",
+   "tz": "Pacific/Auckland",
+   "country": "New Zealand (volcanoes)",
+   "agency": "GeoNet (GNS Science and Toka Tū Ake EQC)",
+   "licence": "Creative Commons Attribution 3.0 New Zealand",
+   "page": "https://www.geonet.org.nz/volcano/cameras",
+   "every": 10,
+   "type": "volcano",
+   "n": 11,
+   "box": [
+    -39.38461,
+    -177.90723,
+    -29.26733,
+    177.69217
+   ],
+   "checked": "2026-10-03T08:10Z"
+  },
+  {
+   "id": "jp-jma-volcano",
+   "cc": "jp",
+   "tz": "Asia/Tokyo",
+   "country": "Japan (volcanoes)",
+   "agency": "Japan Meteorological Agency (volcano cameras)",
+   "licence": "JMA website terms of use (credit the Japan Meteorological Agency)",
+   "page": "https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/",
+   "every": 2,
+   "kind": "jma",
+   "type": "volcano",
+   "n": 95,
+   "box": [
+    29.611,
+    129.706,
+    43.662,
+    144.465
+   ],
+   "checked": "2026-10-03T08:10Z"
+  },
+  {
+   "id": "jp-mlit-river",
+   "cc": "jp",
+   "tz": "Asia/Tokyo",
+   "country": "Japan (rivers)",
+   "agency": "Ministry of Land, Infrastructure, Transport and Tourism (river cameras, river.go.jp)",
+   "licence": "River.go.jp terms of use (river disaster information of MLIT and the prefectures)",
+   "page": "https://www.river.go.jp/",
+   "every": 10,
+   "type": "river",
+   "n": 11720,
+   "box": [
+    31.30879,
+    128.83459,
+    45.40325,
+    145.18755
+   ],
+   "checked": "2026-10-03T08:14Z"
+  },
+  {
+   "id": "us-nims",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (rivers)",
+   "agency": "U.S. Geological Survey (HIVIS river cameras)",
+   "licence": "U.S. Geological Survey, public domain",
+   "page": "https://apps.usgs.gov/hivis/",
+   "every": 15,
+   "type": "river",
+   "n": 918,
+   "box": [
+    18.44382,
+    -166.36748,
+    69.3605,
+    -66.01224
+   ],
+   "checked": "2026-10-03T08:14Z"
+  },
+  {
+   "id": "us-hpwren",
+   "cc": "us",
+   "tz": "America/Los_Angeles",
+   "country": "United States (Southern California mountains)",
+   "agency": "HPWREN, UC San Diego (fire and weather cameras)",
+   "licence": "HPWREN public camera images (credit HPWREN, UC San Diego)",
+   "page": "https://www.hpwren.ucsd.edu/cameras/",
+   "every": 2,
+   "type": "weather",
+   "n": 53,
+   "box": [
+    32.55957,
+    -120.04873,
+    34.70864,
+    -116.31798
+   ],
+   "checked": "2026-10-03T08:14Z"
+  },
+  {
+   "id": "th-egat",
+   "cc": "th",
+   "tz": "Asia/Bangkok",
+   "country": "Thailand (dams)",
+   "agency": "Electricity Generating Authority of Thailand (dam cameras, via ThaiWater)",
+   "licence": "Public dam camera images listed by ThaiWater (HII) (no licence stated)",
+   "page": "https://www.thaiwater.net/water/cctv",
+   "every": 15,
+   "type": "river",
+   "n": 8,
+   "box": [
+    6.32028,
+    98.59285,
+    17.76507,
+    105.43222
+   ],
+   "checked": "2026-10-03T08:14Z"
   }
  ]
 }
