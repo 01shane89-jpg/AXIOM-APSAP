@@ -83,6 +83,7 @@
     medfac: { name: "OSAP stored copy of OpenStreetMap health facilities and landing sites", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Refreshed from OpenStreetMap every four weeks." },
     osm: { name: "OpenStreetMap via Overpass API", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Community data: capabilities, contacts and access can be out of date." },
     sof: { name: "OSAP sourced facility list", url: "", note: "Hospitals, airports and U.S. posts researched from named public sources, each linked in the plan." },
+    gov: { name: "Official hospital records (HA Thailand open data)", url: "https://data.ha.or.th/", note: "MOPH hospital codes, official type, MOPH service level, beds open, HA accreditation and the programmes HA has certified (tools/build_th_registry.mjs, monthly). A certificate confirms only what the certified programme cannot run without; no certificate does not mean no service." },
     web: { name: "Hospitals' own websites, read automatically", url: "", note: "Quoted sentences in which a hospital states a service (tools/read_hospital_sites.mjs on GitHub Actions). The hospital's own claim: reported, not confirmed. News, job and procurement pages are left out." },
     osrm: { name: "Road routing: FOSSGIS OSRM, OSRM demo server, FOSSGIS Valhalla (first that answers)", url: "https://routing.openstreetmap.de/", note: "Road drive time without traffic, checkpoints or damage." },
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
@@ -367,6 +368,16 @@
   function hp(id) { var p = W.OSAP_HOSP && W.OSAP_HOSP.provider(id); if (!p) throw new Error("hospital data layer not loaded"); return p; }
   function loadSof(c) { return hp("sof").load(c); }
   function loadWeb(c) { return hp("web").load(c); }
+  /* the country's official hospital records (a tier-0 provider, Thailand first), indexed for the plan; GOV is the index in use */
+  var GOV = null, GOV_P = null;
+  function regProv(c) { var H = W.OSAP_HOSP; return H ? H.providers(c).filter(function (p) { return p.tier === 0 && p.index; })[0] || null : null; }
+  function loadGov(c) { var p = regProv(c); return p ? p.load(c).then(function (d) { return d ? { p: p, ix: p.index(d) } : null; }) : Promise.resolve(null); }
+  /* the official record of a plan's hospital: by its OpenStreetMap entry, else (a hospital from OSAP's list) by the resolver */
+  function govOf(f) {
+    if (!GOV) return null;
+    var c = f.sofRec && hp("sof").toFacility(f.sofRec, ST ? ST.cc : "", "");
+    return GOV_P.lookup(GOV, f.osm, f.osm ? null : c) || null;
+  }
   function tileKeys(o, R) { return hp("osm").tileKeys(o, R); }
   function ccNear(o, R) { return hp("osm").ccNear(o, R); }
   /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
@@ -427,13 +438,20 @@
      Level 5); without one, the order of what is listed */
   function rankOf(f) { return f.trauma ? 10 - (f.lvl || 5.5) : tcRank(f) / 10 + f.tier / 100; }
   function capability(f, sofList) {
-    var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false;
+    var why = [], sc = 0, tr = null, m = f.sofRec || (f.noSof ? null : sofMatch(f, sofList)), er24 = false, ref = "";
     if (m) {
       f.sofRec = m;
       if (m.trauma_level) tr = { text: clip(m.trauma_level, 120), src: m.trauma_src || m.src, srcname: m.trauma_srcname || m.srcname || "source", authority: m.trauma_authority || "", jurisdiction: m.trauma_jurisdiction || "", official: m.trauma_official === true };
       if (m.emergency_24h === true) { er24 = true; sc += 3; why.push("24-hour emergency (" + (m.srcname || "source") + ")"); }
       if (!f.addr && m.address) { f.addr = clip(m.address, 160); f.addrSof = true; }
-      var ref = REFERRAL.test(m.notes || "") ? clip(m.notes, 90) : "";
+      if (REFERRAL.test(m.notes || "")) ref = clip(m.notes, 90) + " (" + (m.srcname || "source") + ")";
+    }
+    if (f.gov === undefined) f.gov = govOf(f);
+    var g = f.gov;
+    if (g) {
+      if (g.beds_open && !f.beds) { f.beds = g.beds_open; f.bedsGov = true; }
+      /* MOPH service level A (regional referral) and medical school hospitals are official tertiary referral centres */
+      if (!ref && (g.level === "A" || /\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e41\u0e1e\u0e17\u0e22\u0e4c/.test(g.type_th || ""))) ref = (g.level === "A" ? "MOPH service level A, regional referral" : "medical school hospital") + " (official record, H code " + g.hcode + ")";
     }
     var er = f.er === "yes" || er24;
     if (f.er === "yes") { sc += 3; why.push("emergency department"); }
@@ -445,7 +463,7 @@
     /* Shane 2026-10-02: an emergency department and a bed count are not credible grounds for Role 3, so beds alone stop at
        Role 2, and a level resting only on an emergency department, beds or a helipad (no services listed) is low confidence */
     var role = surg && (icu || spec) ? 3 : surg || (er && f.beds >= 100) ? 2 : er || f.beds || f.pad ? 1 : 0;
-    if (ref) { role = 3; sc += 4; why.unshift("teaching or referral hospital: " + ref + " (" + (m.srcname || "source") + ")"); }
+    if (ref) { role = 3; sc += 4; why.unshift("teaching or referral hospital: " + ref); }
     f.score = sc; f.why = why; f.trauma = tr; f.role = role;
     f.low = !tr && !ref && !surg && role > 0;
     f.tier = tr ? 4 : role; f.lvl = lvlOf(tr);
@@ -480,9 +498,21 @@
        so the flag reads CONTRADICTED and counts as unknown, never as no */
     function na(k, src, how) {
       var c = C[k];
-      if (c.status === "REPORTED" && c.source && c.source.kind !== "osm") { c.status = "CONTRADICTED"; c.conflict = { source: src, how: how }; return; }
+      if (c.status === "VERIFIED" || (c.status === "REPORTED" && c.source && c.source.kind !== "osm")) { c.status = "CONTRADICTED"; c.conflict = { source: src, how: how }; return; }
       C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", availability: "unknown", source: src, how: how, last_verified: null };
     }
+    /* the official record first (f.gov): a programme HA Thailand has certified confirms what it cannot run without, VERIFIED
+       at HIGH confidence while the certificate is current; past its end date it stays REPORTED at LOW confidence, marked expired */
+    var g = f.gov, gs = ST && ST.gov && ST.gov.ix.doc.sources || {};
+    if (g) (g.programs || []).forEach(function (p) {
+      var on = GOV_P.current(p.to), ps = gs[p.src] || {};
+      (p.caps || []).forEach(function (k) {
+        if (!C[k] || C[k].status === "VERIFIED" || (C[k].status === "REPORTED" && !on)) return;
+        C[k] = { status: on ? "VERIFIED" : "REPORTED", confidence: on ? "HIGH" : "LOW", availability: "unknown", last_verified: on ? g.retrieved : null,
+          source: { kind: "register", url: ps.page || "", name: ps.name || "HA Thailand certification", at: g.retrieved, sha: g.sha256 || "" },
+          how: (p.name_en ? p.name_en + ": " : "") + "\u201c" + clip(p.name_th, 120) + "\u201d" + (p.stage ? " (" + p.stage + ")" : "") + ", certified " + (p.from || "?") + " to " + (p.to || "?") + (on ? "" : ", expired") + ", H code " + g.hcode };
+      });
+    });
     /* capabilities the sourced record documents one by one (m.caps, source/sof/SCHEMA.txt): each from the hospital's own
        or a government page, quoted, so they count as credible; read before OpenStreetMap so they win */
     if (m && m.caps) Object.keys(m.caps).forEach(function (k) {
@@ -951,8 +981,8 @@
     var rH = Math.min(150000, Math.max(40000, s.reach + 30000)), rC = Math.min(40000, Math.max(15000, s.reach + 5000)), rA = Math.min(200000, Math.max(80000, s.reach + 60000));
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
-    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
-    var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; });
+    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
+    var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
        live check); otherwise the live answer is added to it, and a failed live answer leaves the stored copy */
     var facP = storedFac(o, Math.max(rH, rA)).catch(function (e) { s.storedErr = e.message; return null; }).then(function (st) {
@@ -965,8 +995,10 @@
         return { els: (j.elements || []).concat(mine) };
       }, function (e) { s.osmErr = e.message; return st ? { els: mine } : null; });
     });
-    Promise.all([facP, sofP, webP]).then(function (r) {
+    Promise.all([facP, sofP, webP, govP]).then(function (r) {
       if (ST !== s) return;
+      /* official records first: each hospital's record is attached by capability() (H code, level, beds, certificates) */
+      s.gov = r[3]; GOV = r[3] ? r[3].ix : null; GOV_P = r[3] ? r[3].p : null;
       /* OSAP's list with what hospitals state on their own websites folded in (assets/hospital-sources/web-provider.js) */
       var got = r[0], sof = r[1], hosp = r[2] || (sof && sof.hospitals) ? hp("web").fold(sof && sof.hospitals, r[2], s.cc) : null;
       s.web = r[2];
@@ -1696,6 +1728,7 @@
     li.push(srcLi(SRC.medfac, s.storedErr ? "not read: " + s.storedErr : s.stored ? "OpenStreetMap as of " + (s.stored.at || "unknown").slice(0, 10) + (s.stored.missing.length ? "; not yet stored: " + s.stored.missing.join(", ") : "") : "reading…"));
     li.push(srcLi(SRC.osm, s.osmErr ? "not reached: " + s.osmErr : s.osmAt ? "read " + dual(s.osmAt, true) + (s.osmBase ? "; OSM data as of " + s.osmBase : "") : s.fac ? "not asked: the stored copy covers this area" : "waiting"));
     if (sofOf(s.cc)) li.push(srcLi(SRC.sof, "as of " + (sofOf(s.cc).asof || "")));
+    if (s.gov || s.govErr) li.push(srcLi(SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")));
     if (s.web || s.webErr) li.push(srcLi(SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"));
     li.push(srcLi(SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"));
     li.push(srcLi(SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"));
@@ -1953,7 +1986,7 @@
     var oh = t["opening_hours:emergency"] || t.opening_hours;
     row("Opening hours", oh ? esc(clip(oh, 80)) + (osm ? " (" + osm + ")" : "") : nk());
     row("Intensive care (ICU)", listed(ICU, "Listed") || nk("No intensive care listed."));
-    row("Beds", f.beds ? esc(String(f.beds)) + (wdNote(f, "beds") || (osm ? " (" + osm + " beds)" : "")) : nk("Bed count not listed."));
+    row("Beds", f.beds ? esc(String(f.beds)) + (f.bedsGov ? " open (official record, H code " + esc(f.gov.hcode) + ")" : "") + (f.bedsGov ? "" : wdNote(f, "beds") || (osm ? " (" + osm + " beds)" : "")) : nk("Bed count not listed."));
     row("Blood bank", listed(BLOOD, "Listed") || nk("No blood bank or transfusion service listed."));
     row("CT and MRI", listed(IMG, "Imaging listed") ? listed(IMG, "Imaging listed") + ' <span class="obs">CT and MRI are not stated separately.</span>' : nk("No imaging listed."));
     row("Specialities", spl.length ? esc(spl.join(", ")) + (osm ? " (" + osm + ")" : "") : nk("None listed."));
@@ -1998,11 +2031,35 @@
     if (unk.length) L.push(["Unknown", '<span class="mpnk">UNKNOWN</span> <span class="obs">No source states: ' + esc(unk.map(function (c) { return c[1]; }).join(", ")) + ". Unknown is not the same as absent; confirm with the hospital.</span>"]);
     return asTable(L);
   }
+  /* the hospital's official record as published (HA Thailand open data), Thai kept beside the English */
+  function govRows(g, s) {
+    var S = (s.gov && s.gov.ix.doc.sources) || {}, P = GOV_P, L = [];
+    function th(t, e) { return e ? esc(e) + (t ? ' <span class="obs">(' + esc(t) + ")</span>" : "") : t ? esc(t) : nk(); }
+    function dates(a, b) { return a || b ? (a || "?") + " to " + (b || "?") : ""; }
+    L.push(["Official name", esc(g.name_th) + (g.name_en ? '<span class="sub">' + esc(g.name_en) + "</span>" : "")]);
+    L.push(["MOPH hospital code", "<code>" + esc(g.hcode) + "</code>" + (g.province ? ", " + esc(g.province) + " province" : "") + (g.health_region ? ", health region " + esc(g.health_region) : "")]);
+    L.push(["Official type", th(g.type_th, g.type_en)]);
+    L.push(["MOPH service level", g.level ? th(g.level_th, g.level_en) : nk("Not in the published level list.")]);
+    L.push(["Beds", g.beds_open || g.beds_requested ? (g.beds_open ? esc(String(g.beds_open)) + " open" : "") + (g.beds_requested ? (g.beds_open ? ", " : "") + esc(String(g.beds_requested)) + " registered" : "") : nk()]);
+    var h = g.ha;
+    L.push(["HA accreditation", h ? th(h.stage_th, h.stage_en) + (dates(h.from, h.to) ? ", " + esc(dates(h.from, h.to)) : "") + (h.accredited && h.to && !P.current(h.to) ? ' <b>expired</b>' : "") +
+      (h.note ? '<span class="sub">' + esc(h.note) + "</span>" : "") : nk("Not in the published accreditation list.")]);
+    var pr = (g.programs || []).map(function (p) {
+      return esc(p.name_en || p.name_th) + (p.name_en ? ' <span class="obs">(' + esc(p.name_th) + ")</span>" : "") + (p.stage ? ", " + esc(p.stage) : "") + (dates(p.from, p.to) ? ", " + esc(dates(p.from, p.to)) : "") + (P.current(p.to) ? "" : ' <b>expired</b>');
+    });
+    L.push(["Certified programmes", pr.length ? pr.join("<br>") : nk("None in HA's published certifications. This does not mean the hospital lacks the service.")]);
+    if (g.specialties_reported) L.push(["Specialties (as reported to HA)", esc(g.specialties_reported)]);
+    L.push(["Location", esc(g.coord_basis || "")]);
+    L.push(["Source", ["hospital", "accreditation", "level", "pdsc", "hnc"].map(function (k) { return S[k] ? link(S[k].page, S[k].name) + " (" + esc(S[k].licence || "") + ")" : ""; }).filter(function (x, i, A) { return x && A.indexOf(x) === i; }).join("; ") +
+      '<span class="sub">Record built ' + esc(g.retrieved || "") + ', SHA-256 <code title="' + esc(g.sha256 || "") + '">' + esc(String(g.sha256 || "").slice(0, 12)) + "</code>. Official status as published; confirm current capability with the hospital.</span>"]);
+    return L;
+  }
   function assessHtml(f, s, r) {
     var tb = asTable;
     var R = assessRows(f, s), gaps = R.filter(function (x) { return /mpnk/.test(x[1]); }).map(function (x) { return x[0]; });
     return "<h3>Location</h3>" + tb([["Grid (MGRS)", "<code>" + esc(grid(f.lat, f.lon)) + "</code>"], ["Lat, lon", f.lat.toFixed(5) + ", " + f.lon.toFixed(5)]].concat(f.alias && f.alias !== f.name ? [["Also mapped as", esc(f.alias)]] : [])) +
       "<h3>From the point of injury</h3><div id=\"mpa-times\">" + tb(assessTimes(f, s, r)) + "</div>" +
+      (f.gov ? "<h3>Official record</h3>" + tb(govRows(f.gov, s)) : "") +
       "<h3>Capability and services</h3>" + tb(R.slice(0, R.findIndex(function (x) { return x[0] === "Helipad"; }))) +
       "<h3>Capability flags</h3>" + capTable(f, s) +
       "<h3>Landing</h3>" + tb(R.filter(function (x) { return x[0] === "Helipad" || x[0] === "Nearest airfield"; })) +

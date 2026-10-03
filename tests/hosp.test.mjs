@@ -1,7 +1,8 @@
 // Rules of the hospital data layer (assets/hospital-sources/): the canonical facility record, capability statuses, source
 // grading, SHA-256 fingerprints, the OpenStreetMap and researched-list providers, and that a failing provider is reported
 // as a failure, never as "no hospitals". Also the identity resolver, evidence assessment (contradictions kept), the
-// hospital-website evidence (tools/build_hospital_web.mjs and its provider) and how it folds into OSAP's list.
+// hospital-website evidence (tools/build_hospital_web.mjs and its provider) and how it folds into OSAP's list, and
+// Thailand's official records (tools/build_th_registry.mjs and assets/hospital-sources/countries/th-provider.js).
 // Run from the repo root: node tests/hosp.test.mjs
 globalThis.window = globalThis;
 globalThis.document = { createElement: () => ({}), head: { appendChild: () => {} } };
@@ -11,6 +12,7 @@ await import("../assets/hospital-sources/resolver.js");
 await import("../assets/hospital-sources/sof-provider.js");
 await import("../assets/hospital-sources/web-provider.js");
 await import("../assets/hospital-sources/osm-provider.js");
+await import("../assets/hospital-sources/countries/th-provider.js");
 const H = globalThis.OSAP_HOSP;
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
@@ -39,7 +41,7 @@ ok((await H.fingerprint(s3)) !== h1, "a changed excerpt changes the fingerprint"
 
 // ---------- OpenStreetMap provider ----------
 const osm = H.provider("osm"), sof = H.provider("sof");
-ok(osm && sof && H.providers("th").map((p) => p.id).join() === "sof,web,osm", "providers registered, highest authority first");
+ok(osm && sof && H.providers("th").map((p) => p.id).join() === "th-registry,sof,web,osm" && H.providers("kh").map((p) => p.id).join() === "sof,web,osm", "providers registered, highest authority first; a country registry only for its country");
 const fo = osm.toFacility({ type: "way", id: 42, lat: 13.7, lon: 100.5, tags: { amenity: "hospital", name: "โรงพยาบาลทดสอบ", "name:en": "Test Hospital", emergency: "yes", beds: "250",
   "healthcare:speciality": "general_surgery;neurosurgery;icu", website: "https://t.example/", wikidata: "Q1", "addr:province": "Bangkok" } }, "th", "2026-09-30T06:00:00Z");
 ok(fo.id === "TH-OSM-w42" && fo.name === "Test Hospital" && fo.name_local === "โรงพยาบาลทดสอบ" && fo.country_code === "TH" && fo.admin1 === "Bangkok", "stable OSM id, English and local names");
@@ -131,6 +133,61 @@ H.register({ id: "fixed", tier: 1, countries: ["zz"], discoverFacilities: () => 
 const r = await H.discover({ cc: "zz", lat: 13.7, lon: 100.5, radius_m: 1000 });
 const ob = r.outcome.find((x) => x.provider === "broken"), of = r.outcome.find((x) => x.provider === "fixed");
 ok(ob && !ob.ok && /registry offline/.test(ob.err) && of && of.ok && of.n === 1 && r.facilities.length === 1, "a failing provider is reported as failed; the others still answer");
+
+// ---------- Thailand's official records: the builder ----------
+{
+  const R = await import("../tools/build_th_registry.mjs");
+  const fs = await import("node:fs"), os = await import("node:os"), path = await import("node:path");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "threg-"));
+  const W = (f, rows) => fs.writeFileSync(path.join(dir, f), rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\n") + "\n");
+  const BKK = "กรุงเทพมหานคร";
+  W("ha-hospital.csv", [["h"], ["13", BKK, "โรงพยาบาลศิริราช คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล", "SIRIRAJ HOSPITAL", "13814", "มหาวิทยาลัย", "โรงเรียนแพทย์", "2241", "2136", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลธนบุรี", "Thonburi Hospital", "11645", "เอกชน", "รพ.เอกชน", "", "300", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลธนบุรี 2", "Thonburi 2 Hospital", "11640", "เอกชน", "รพ.เอกชน", "", "100", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลเอ", "Same Hospital", "20001", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลบี", "Same Hospital", "20002", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลไม่มีที่", "Nowhere Hospital", "20003", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""]]);
+  W("ha-accreditation.csv", [["h"], ["13", BKK, "โรงพยาบาลศิริราช", "13814", "", "", "ขั้นก้าวหน้า", "2024-09-26", "2028-09-25", ""]]);
+  W("ha-pdsc.csv", [["h"], [BKK, "โรงพยาบาลธนบุรี", "โรคหลอดเลือดสมอง (Stroke)", "PDSC", "2025-01-01", "2028-01-01", ""], [BKK, "โรงพยาบาลไม่มีในรายชื่อ", "โรคหลอดเลือดสมอง", "PDSC", "2025-01-01", "2028-01-01", ""]]);
+  W("ha-2p-safety.csv", [["h"], ["13814", "", "", "", "", "", "", "รพศ.(A) มีการเรียน-สอนครบทุกสาขา"]]);
+  W("ha-hnc.csv", [["h"]]);
+  W("odm-health-facilities-th.csv", [["ID", "Ministry", "Department", "Agency", "Address", "Lat", "Long"], ["1", "", "", "x รพ.สต.ใกล้", "แขวงศิริราช เขตบางกอกน้อย จ.กรุงเทพมหานคร 10700", "13.7590", "100.4860"]]);
+  const osm = [R.osmEntry("r1", 13.7578, 100.4854, { name: "โรงพยาบาลศิริราช", "name:en": "Siriraj Hospital" }),
+    R.osmEntry("n2", 13.7600, 100.4800, { name: "โรงพยาบาลธนบุรี", "addr:province": BKK }),
+    R.osmEntry("n3", 13.7000, 100.5000, { name: "Same Hospital", "addr:province": BKK })];
+  const { doc } = await R.build(dir, { osm });
+  const by = Object.fromEntries(doc.hospitals.map((h) => [h.hcode, h]));
+  ok(doc.schema === "osap-th-registry/1" && doc.hospitals.length === 6 && doc.hospitals.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)), "registry: one record per H code, each fingerprinted");
+  ok(by["13814"].osm === "r1" && /nearest MOPH-listed facility/.test(by["13814"].coord_basis), "registry: a long official name is placed on its OpenStreetMap entry by its first part, province taken from the nearest MOPH facility");
+  ok(by["13814"].level === "A" && /teaching in all specialties/.test(by["13814"].level_en) && by["13814"].ha.accredited && by["13814"].beds_open === 2136 && by["13814"].name_en === "Siriraj Hospital", "registry: MOPH level, HA accreditation and beds are read; English names are title-cased");
+  ok(by["11645"].osm === "n2" && by["11640"].osm === "" && by["11640"].lat === null, "registry: a numbered branch is never placed on the main hospital's entry");
+  ok(by["20001"].lat === null && by["20002"].lat === null && /claimed by more than one/.test(by["20001"].coord_note || ""), "registry: one OpenStreetMap entry claimed equally by two records goes to neither");
+  ok(by["20003"].lat === null && /not placed/.test(by["20003"].coord_basis), "registry: a hospital with no match is kept, without a location");
+  ok(by["11645"].programs.length === 1 && by["11645"].programs[0].caps.join() === "spec.stroke" && doc.stats.programmes_unmatched === 1, "registry: a certificate joins the one hospital of that name and province; others are counted as unmatched");
+  ok(R.key("คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี") === "รามาธิบดี" && R.ekey("Bangkok 8 Hospital") === "bangkok8" && R.ekey("Bangkok Hospital") === "bangkok", "registry: name keys drop generic words, never digits");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+
+// ---------- Thailand's official records: the provider ----------
+{
+  const T = H.provider("th-registry");
+  const SRCS = { hospital: { name: "HA hospital", page: "https://data.ha.or.th/dataset/hospital" }, pdsc: { name: "HA certifications", page: "https://data.ha.or.th/dataset/pdsc" } };
+  const rec = { hcode: "99001", name_th: "x", name_en: "Near Hospital", province: "P", type_en: "Regional hospital", kind: "hospital", beds_open: 450, level_en: "A", retrieved: "2026-10-03", sha256: "c".repeat(64),
+    programs: [{ name_th: "s", name_en: "Stroke care", stage: "PDSC", from: "2025-01-01", to: "2999-01-01", caps: ["spec.stroke"], src: "pdsc" },
+      { name_th: "h", name_en: "Hip", stage: "PDSC", from: "2020-01-01", to: "2021-01-01", caps: ["surg.ortho"], src: "pdsc" }], lat: 13.76, lon: 100.51, osm: "w2" };
+  const doc = { schema: "osap-th-registry/1", sources: SRCS, hospitals: [rec, { hcode: "99003", name_en: "Unplaced", lat: null, lon: null, programs: [], osm: "" }] };
+  const f = T.toFacility(rec, doc);
+  ok(T.tier === 0 && f.ids.gov === "99001" && f.ids.osm === "w2" && f.beds.value === 450 && f.beds.sources[0].source_type === "government_registry", "registry provider: tier 0, H code and OpenStreetMap id kept, beds sourced to the registry");
+  const st = f.capabilities["spec.stroke"], ho = f.capabilities["surg.ortho"];
+  ok(st.status === "confirmed" && st.sources[0].source_type === "accreditation" && st.sources[0].reliability + st.sources[0].credibility === "A2" && st.sources[0].sha256 === "c".repeat(64), "registry provider: a current certificate confirms its capability (accreditation, A2, fingerprinted)");
+  ok(ho.status === "reported" && /expired/.test(ho.sources[0].excerpt) && ho.sources[0].credibility === "3", "registry provider: an expired certificate is reported and marked expired, never confirmed");
+  ok(H.getCap(f, "spec.burn").status === "unknown", "registry provider: no certificate leaves a capability unknown, never no");
+  const ix = T.index(doc);
+  ok(ix.total === 2 && ix.placed.length === 1 && T.lookup(ix, "https://www.openstreetmap.org/way/2") === rec && T.lookup(ix, "n9") === null, "registry provider: looked up by OpenStreetMap link; an unknown entry finds nothing");
+  const near = H.facility({ name: "Near Hospital", lat: 13.7605, lon: 100.5105 }), other = H.facility({ name: "Near Ram Hospital", lat: 13.7605, lon: 100.5105 });
+  ok(T.lookup(ix, "", near) === rec && T.lookup(ix, "", other) === null, "registry provider: OSAP's own record finds it by the same name nearby, never by a longer name");
+  ok((await T.load("kh")) === null && T.current("2999-01-01") && !T.current("2001-01-01") && T.current(""), "registry provider: other countries have none; end dates decide current");
+}
 
 console.log(fails ? fails + " FAILED" : "all hospital data layer checks passed");
 process.exit(fails ? 1 : 0);
