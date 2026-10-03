@@ -218,14 +218,15 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [tfl[1], tfl[2]], 15);
   ok(await p.evaluate((id) => window.OSAP_CAMS.open("gb-tfl", id), tfl[0]), "London camera with a video clip drawn");
-  await p.waitForTimeout(800);
+  await p.waitForFunction(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
   ok(await p.evaluate(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || "")), "London: the pop-up offers the agency's video clip");
   const clipN = imgs.length;
   await p.click(".leaflet-popup-content [data-camlive]");
   // the video element goes in at once (hidden until it has a frame), so wait for the clip request itself
   for (let i = 0; i < 50 && !imgs.slice(clipN).some((u) => /\.mp4/.test(u)); i++) await p.waitForTimeout(200);
   ok(imgs.slice(clipN).some((u) => /\.mp4/.test(u)), "London: Play video clip asks TfL for the clip");
-  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(800);
+  await p.click(".leaflet-popup-content [data-camref]");
+  await p.waitForFunction(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video"), null, { timeout: 15000 }).catch(() => {});
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video")), "London: Refresh goes back to the newest still");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [60.05374, 23.99616], 14);
@@ -281,7 +282,8 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const s = await st(p);
   ok(s.drawn > 0, "phone: London " + s.drawn + " cameras");
   const q = await iconAt(p);
-  await p.touchscreen.tap(q[0], q[1]); await p.waitForTimeout(800);
+  await p.touchscreen.tap(q[0], q[1]);
+  await p.waitForFunction(() => /jamcams\.tfl\.gov\.uk/.test((document.querySelector(".leaflet-popup-content") || {}).innerHTML || ""), null, { timeout: 15000 }).catch(() => {});
   const pop = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); return x ? x.innerHTML : ""; });
   ok(/jamcams\.tfl\.gov\.uk/.test(pop) && /Transport for London/.test(pop), "phone: a tap opens the image");
   ok((await p.evaluate(() => document.querySelectorAll(".cam-tt").length)) === 0, "phone: no hover box on a touch screen");
