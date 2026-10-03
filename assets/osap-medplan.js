@@ -41,7 +41,7 @@
 (function () {
   "use strict";
   var W = window, D = document;
-  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var OSRM = ["https://routing.openstreetmap.de/routed-car/", "https://router.project-osrm.org/"];
   var METEO = "https://api.open-meteo.com/v1/forecast";
   var VH = "https://valhalla1.openstreetmap.de/", VALHALLA = VH + "isochrone";
@@ -248,13 +248,19 @@
       'nwr["aeroway"~"^(helipad|heliport|aerodrome)$"](around:' + rA + "," + la + "," + lo + ");out center tags 400;" +
       'nwr["emergency"="ambulance_station"](around:' + rE + "," + la + "," + lo + ");out center tags 40;";
   }
-  /* air rescue bases and U.S. diplomatic posts: wider, and a separate request so a slow answer never holds the plan */
+  /* air rescue bases, chambers and blood services, live: only for the countries OSAP's stored copy (data/medfac/x) does not
+     cover yet, and a separate request so a slow answer never holds the plan */
   function xQuery(o) {
     var la = o[0].toFixed(5), lo = o[1].toFixed(5);
     return "[out:json][timeout:40];" +
       'nwr["emergency"="air_rescue_service"](around:400000,' + la + "," + lo + ");out center tags 40;" +
       '(nwr["healthcare:speciality"~"hyperbaric|diving|decompression",i](around:500000,' + la + "," + lo + ');nwr["healthcare"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + ');nwr["amenity"~"^(hospital|clinic)$"]["name"~"hyperbaric|decompression|recompression",i](around:500000,' + la + "," + lo + '););out center tags 20;' +
-      '(nwr["healthcare"="blood_bank"](around:200000,' + la + "," + lo + ');nwr["healthcare"="blood_donation"](around:200000,' + la + "," + lo + ');nwr["amenity"="blood_bank"](around:200000,' + la + "," + lo + '););out center tags 40;' +
+      '(nwr["healthcare"="blood_bank"](around:200000,' + la + "," + lo + ');nwr["healthcare"="blood_donation"](around:200000,' + la + "," + lo + ');nwr["amenity"="blood_bank"](around:200000,' + la + "," + lo + '););out center tags 40;';
+  }
+  /* U.S. diplomatic posts (phones for the embassy rows): its own small request after the extras, never blocking them */
+  function pQuery(o) {
+    var la = o[0].toFixed(5), lo = o[1].toFixed(5);
+    return "[out:json][timeout:25];" +
       '(nwr["office"="diplomatic"]["country"="US"](around:1500000,' + la + "," + lo + ');nwr["amenity"="embassy"]["country"="US"](around:1500000,' + la + "," + lo + '););out center tags 40;';
   }
   function post(url, body, ms) {
@@ -271,13 +277,17 @@
       clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
     }, function (e) { clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "network error"); });
   }
-  function overpass(q) {
+  function overpass(q, ms) {
     var body = "data=" + encodeURIComponent(q), errs = [];
     function go(i) {
       if (i >= OVERPASS.length) return Promise.reject(new Error(errs.join("; ")));
-      return post(OVERPASS[i], body, 45000).catch(function (e) {
-        /* busy: wait a moment and ask the same server once more before the next one */
-        if (/429/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 3000); }).then(function () { return go(i); }); }
+      return post(OVERPASS[i], body, ms || 45000).then(function (j) {
+        /* a server that ran out of time or memory answers 200 with a remark and a partial list: that is a failure, not "none" */
+        if (j && j.remark && /runtime error|timed? ?out|out of memory|too many/i.test(j.remark)) throw new Error("incomplete answer (" + String(j.remark).replace(/^runtime error:\s*/i, "").slice(0, 60) + ")");
+        return j;
+      }).catch(function (e) {
+        /* busy or a server error: wait a moment and ask the same server once more before the next one */
+        if (/429|HTTP 5\d\d/.test(e.message) && !go["r" + i]) { go["r" + i] = 1; return new Promise(function (r) { setTimeout(r, 3000); }).then(function () { return go(i); }); }
         errs.push(OVERPASS[i].split("/")[2] + ": " + e.message); return go(i + 1);
       });
     }
@@ -337,6 +347,8 @@
     });
     return out;
   }
+  /* how far each list reaches: air rescue 400 km, blood services 200 km, chambers 500 km (the stored copy is read to 500 km) */
+  var X_R = { R: 400000, B: 200000, D: 500000 };
   function sortX(els, o) {
     var seen = {}, R = [], P = [], B = [], D = [], HB = /hyperbaric|diving|decompression|recompression/i;
     (els || []).forEach(function (e) {
@@ -346,13 +358,13 @@
       contactsOf(t, b);
       if (HB.test(String(t["healthcare:speciality"] || "")) || ((t.healthcare || /^(hospital|clinic)$/.test(t.amenity || "")) && /hyperbaric|decompression|recompression/i.test(t.name || ""))) {
         b.name = clip(t["name:en"] || t.name || t.operator || "Hyperbaric chamber (no name in OSM)", 90); b.op = clip(t.operator || "", 80); b.kind = "chamber";
-        b.why = HB.test(String(t["healthcare:speciality"] || "")) ? "healthcare:speciality=" + clip(t["healthcare:speciality"], 60) : "name"; D.push(b);
+        b.why = HB.test(String(t["healthcare:speciality"] || "")) ? "healthcare:speciality=" + clip(t["healthcare:speciality"], 60) : "name"; if (b.m <= X_R.D) D.push(b);
       }
       else if (/^blood_(bank|donation)$/.test(t.healthcare || "") || t.amenity === "blood_bank") {
         b.name = clip(t["name:en"] || t.name || t.operator || "Blood service (no name in OSM)", 90); b.op = clip(t.operator || "", 80); b.kind = "blood";
-        b.bank = t.healthcare === "blood_bank" || t.amenity === "blood_bank"; B.push(b);
+        b.bank = t.healthcare === "blood_bank" || t.amenity === "blood_bank"; if (b.m <= X_R.B) B.push(b);
       }
-      else if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); R.push(b); }
+      else if (t.emergency === "air_rescue_service") { b.name = clip(t["name:en"] || t.name || t.operator || "Air rescue base (no name in OSM)", 90); b.op = clip(t.operator || "", 80); if (b.m <= X_R.R) R.push(b); }
       else { b.name = clip(t["name:en"] || t.name || "U.S. diplomatic post", 90); b.dip = t.diplomatic || ""; P.push(b); }
     });
     R.sort(function (x, y) { return x.m - y.m; }); B.sort(function (x, y) { return x.m - y.m; });
@@ -987,7 +999,7 @@
     var rH = Math.min(150000, Math.max(40000, s.reach + 30000)), rC = Math.min(40000, Math.max(15000, s.reach + 5000)), rA = Math.min(200000, Math.max(80000, s.reach + 60000));
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
-    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
+    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
     var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
        live check); otherwise the live answer is added to it, and a failed live answer leaves the stored copy */
@@ -1028,8 +1040,21 @@
       srcRender();
     });
     /* air rescue bases and U.S. posts once the main lookup is answered, so one plan never holds two Overpass slots */
-    var xGo = function () { if (ST !== s) return; overpass(xQuery(o)).then(function (j) { if (ST !== s) return; s.x = sortX(j.elements, o); timesChanged(); mevRender(); ocRender(); mapShow(); srcRender(); },
-      function (e) { if (ST !== s) return; s.xErr = e.message; timesChanged(); mevRender(); srcRender(); }); };
+    /* blood services, chambers and air rescue bases: OSAP's stored copy first (works offline, no live call); Overpass only
+       when the copy does not cover every country within 500 km, and a failed live check keeps what the copy holds */
+    var xShow = function () { timesChanged(); mevRender(); ocRender(); mapShow(); srcRender(); };
+    var xGo = function () {
+      if (ST !== s) return;
+      var pv = W.OSAP_HOSP && W.OSAP_HOSP.provider("osm"), st = pv && pv.extras ? pv.extras(o, X_R.D).catch(function () { return null; }) : Promise.resolve(null);
+      st.then(function (sx) {
+        if (ST !== s) return;
+        if (sx) { s.xAt = sx.at; s.xMiss = sx.missing; }
+        if (sx && !sx.missing.length) { s.x = sortX(sx.els, o); xShow(); return pGo(); }
+        return overpass(xQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xMiss = []; s.xLive = true; s.x = sortX((sx ? sx.els : []).concat(j.elements || []), o); xShow(); },
+          function (e) { if (ST !== s) return; if (sx && sx.near.length > sx.missing.length) { s.x = sortX(sx.els, o); s.xPart = e.message; } else s.xErr = e.message; xShow(); }).then(pGo);
+      });
+    };
+    var pGo = function () { if (ST !== s) return; overpass(pQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xPost = sortX(j.elements, o); ocRender(); }, function () {}); };
     facP.then(xGo, xGo);
     isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
@@ -1402,6 +1427,13 @@
   /* the nearest blood bank (Shane): blood banks and donation centres OpenStreetMap lists within 200 km, and hospitals that
      list a blood bank or transfusion service. Nothing is inferred: where none is listed the plan says so. */
   function hasBlood(f) { return BLOOD.test(String(f.specRaw || "")); }
+  /* where the blood, chamber and air rescue lists came from, and which countries in reach they lack (never a bare "none") */
+  function xNote(s) {
+    if (!s.x) return "";
+    var miss = s.xMiss || [];
+    if (s.xPart) return '<p class="obs mpwarn">OSAP\'s stored copy does not yet cover ' + esc(miss.join(", ")) + " and the live OpenStreetMap check failed (" + esc(clip(s.xPart, 100)) + "), so any there are not listed.</p>";
+    return '<p class="obs">' + (s.xLive ? "From live OpenStreetMap" + (s.xAt ? " and OSAP's stored copy (" + esc(String(s.xAt).slice(0, 10)) + ")" : "") : "From OSAP's stored copy of OpenStreetMap" + (s.xAt ? " (" + esc(String(s.xAt).slice(0, 10)) + ")" : "")) + ".</p>";
+  }
   function bloodHtml(s) {
     var rw = num("rwkn"), H = s.fac.H.filter(function (f) { return hasBlood(f) && !isOff(f); }).sort(function (a, b) { return a.m - b.m; });
     var h = "<h4>Nearest blood bank</h4>";
@@ -1412,6 +1444,7 @@
     else if (s.x) h += '<p class="obs">No blood bank or donation centre within 200 km in OpenStreetMap. This does not mean there is none: ask the receiving hospital.</p>';
     else if (s.xErr) h += '<p class="obs mpwarn">Blood banks could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
     else h += '<p class="obs">Looking up blood banks…</p>';
+    h += xNote(s);
     h += H.length ? '<p class="obs">Hospitals here that list a blood bank or transfusion service (OpenStreetMap healthcare:speciality): ' + H.slice(0, 4).map(function (f) { return "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b> (" + esc(km(f.m)) + ")"; }).join(", ") + ".</p>"
       : '<p class="obs">None of the hospitals listed here states a blood bank; most do not publish it. Confirm blood availability with the receiving hospital.</p>';
     return h;
@@ -1427,7 +1460,7 @@
     else if (s.x) h += '<p class="obs"><span class="mpnk">Not known</span> No hyperbaric or recompression chamber within 500 km in OpenStreetMap. This does not mean there is none: ask your diving emergency service or the receiving hospital.</p>';
     else if (s.xErr) h += '<p class="obs mpwarn">Chambers could not be looked up (' + esc(clip(s.xErr, 120)) + ").</p>";
     else h += '<p class="obs">Looking up decompression chambers…</p>';
-    return h + '<p class="obs">Decompression illness: move by ground or fly as low as safely possible (cabin pressure near sea level); confirm the chamber is staffed and the transfer with your diving emergency service before moving.</p>';
+    return h + xNote(s) + '<p class="obs">Decompression illness: move by ground or fly as low as safely possible (cabin pressure near sea level); confirm the chamber is staffed and the transfer with your diving emergency service before moving.</p>';
   }
   function rtRender() {
     var el = D.getElementById("mp-rt"), s = ST; if (!el) return;
@@ -1512,6 +1545,7 @@
       var LP = s.fac ? s.fac.L.filter(function (l) { return l.kind === "heliport"; }).concat(s.fac.AF).sort(function (a, b) { return a.m - b.m; }).slice(0, 3) : [];
       if (LP.length) h += '<div class="mpscroll"><table>' + head + "<tbody>" + LP.map(function (b, i) { return row(b, i, b.kind === "airfield" ? "A" : "L", "air").replace(/>[AL]\d+</, ">" + (b.kind === "airfield" ? "A" + (s.fac.AF.indexOf(b) + 1) : "L" + (s.fac.L.indexOf(b) + 1)) + "<"); }).join("") + "</tbody></table></div>";
     } else h += '<p class="obs">Looking up air rescue bases…</p>';
+    if (s.xPart) h += xNote(s);
     h += '<p class="obs">Flight times are straight-line estimates at ' + rw + " kn cruise (a typical medical helicopter) with " + launch + " min to launch; they ignore weather, routing, crew duty and refuelling. Confirm availability, response time and the request procedure with the provider before the mission.</p>";
     el.innerHTML = h;
   }
@@ -1688,7 +1722,7 @@
     }).join("") + "</tbody></table></div>";
     h += stratHtml(s);
     var sof = sofOf(s.cc), posts = ((sof && sof.posts) || []).slice().sort(function (a, b) { return (a.lat == null) - (b.lat == null) || (a.lat != null && b.lat != null ? hav(s.o, [a.lat, a.lon]) - hav(s.o, [b.lat, b.lon]) : 0); });
-    h += "<h4>U.S. Embassy and emergency contacts</h4><ul>" + (posts.length ? posts.slice(0, 3).map(function (p) { return postRow(p, s.x); }).join("") : '<li class="obs">No U.S. post listed for ' + esc(s.name) + " in OSAP.</li>") +
+    h += "<h4>U.S. Embassy and emergency contacts</h4><ul>" + (posts.length ? posts.slice(0, 3).map(function (p) { return postRow(p, s.xPost); }).join("") : '<li class="obs">No U.S. post listed for ' + esc(s.name) + " in OSAP.</li>") +
       isosHtml(s.o) + tricareHtml(s.cc, true) + '<li>U.S. citizens\' emergencies abroad (State Department): from the U.S. and Canada <a href="tel:+18884074747">' + esc(STATE_EMERG.us) + '</a>; from overseas <a href="tel:+12025014444">' + esc(STATE_EMERG.abroad) + "</a> " + link(STATE_EMERG.url, "(travel.state.gov)") + "</li></ul>" +
       '<p class="obs">Destinations are hospitals OSAP\'s researchers listed from named sources; acceptance, capability and entry rules must be agreed with the receiving hospital and the medevac provider. Flight times are straight-line estimates at ' + fw + " kn (a typical air-ambulance jet) plus " + launch + " min launch, without clearances, fuel stops or ground transfers. Record the agreed destination in section 9.</p>";
     el.innerHTML = h;
