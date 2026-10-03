@@ -1,5 +1,5 @@
 {
- "built": "2026-10-03T08:14Z",
+ "built": "2026-10-03T11:16Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -710,6 +710,24 @@
    "checked": "2026-10-03T07:45Z"
   },
   {
+   "id": "es-dgt",
+   "cc": "es",
+   "tz": "Europe/Madrid",
+   "country": "Spain",
+   "agency": "Dirección General de Tráfico (DGT)",
+   "licence": "DGT National Access Point open data (credit the DGT)",
+   "page": "https://infocar.dgt.es/etraffic/",
+   "every": 5,
+   "n": 1955,
+   "box": [
+    35.87692,
+    -8.99783,
+    43.5638,
+    3.21198
+   ],
+   "checked": "2026-10-03T11:16Z"
+  },
+  {
    "id": "us-ashcam",
    "cc": "us",
    "tz": "America/Anchorage",
@@ -842,6 +860,44 @@
     -116.31798
    ],
    "checked": "2026-10-03T08:14Z"
+  },
+  {
+   "id": "us-ndbc",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (ocean buoys)",
+   "agency": "NOAA National Data Buoy Center (buoy cameras)",
+   "licence": "NOAA, public domain",
+   "page": "https://www.ndbc.noaa.gov/buoycams.shtml",
+   "every": 60,
+   "type": "ocean",
+   "n": 76,
+   "box": [
+    14.114,
+    -177.468,
+    60.802,
+    -46.052
+   ],
+   "checked": "2026-10-03T11:16Z"
+  },
+  {
+   "id": "us-ndbc-w",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (western Pacific buoys)",
+   "agency": "NOAA National Data Buoy Center (buoy cameras)",
+   "licence": "NOAA, public domain",
+   "page": "https://www.ndbc.noaa.gov/buoycams.shtml",
+   "every": 60,
+   "type": "ocean",
+   "n": 1,
+   "box": [
+    51.035,
+    179.808,
+    51.035,
+    179.808
+   ],
+   "checked": "2026-10-03T11:16Z"
   },
   {
    "id": "th-egat",
