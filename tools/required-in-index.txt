@@ -101,6 +101,7 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/sof-provider.js"></script>
 <script src="assets/hospital-sources/web-provider.js"></script>
 <script src="assets/hospital-sources/osm-provider.js"></script>
+<script src="assets/hospital-sources/countries/th-provider.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
 <script src="assets/osap-reports.js"></script>
