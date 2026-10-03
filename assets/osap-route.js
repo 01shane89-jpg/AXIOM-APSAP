@@ -52,11 +52,11 @@ function main() {
   var S = {
     ctx: null, wps: [], mode: "car", speed: 4, speedId: "foot", stopMin: 0, depart: null, unit: G.UNITS[P0.unit] ? P0.unit : "km", buf: [1, 5, 10, 25].indexOf(P0.buf) >= 0 ? P0.buf : 5,
     tap: true, routes: [], sel: 0, err: "", busy: false, token: 0, elev: null, elevErr: "", wx: null, wxErr: "", haz: null, found: null, onlyCc: P0.onlyCc !== false,
-    layer: null, hover: null, planT: 0, srch: null, stok: 0, evac: null, evTok: 0
+    layer: null, hover: null, planT: 0, srch: null, stok: 0, evac: null, evTok: 0, evFoot: /^(both|paths|xc)$/.test(P0.evFoot) ? P0.evFoot : "both"
   };
   if (MODES.some(function (m) { return m.id === P0.mode; })) S.mode = P0.mode;
   if (P0.speedId) { S.speedId = P0.speedId; S.speed = +P0.speed || 4; }
-  function prefs() { lsSet(PKEY, { unit: S.unit, buf: S.buf, mode: S.mode, speedId: S.speedId, speed: S.speed, onlyCc: S.onlyCc }); }
+  function prefs() { lsSet(PKEY, { unit: S.unit, buf: S.buf, mode: S.mode, speedId: S.speedId, speed: S.speed, onlyCc: S.onlyCc, evFoot: S.evFoot }); }
   function keepCur() { lsSet(CKEY, { wps: S.wps, mode: S.mode, speedId: S.speedId, speed: S.speed, stopMin: S.stopMin }); }
   (function () { var c = lsGet(CKEY, null); if (c && Array.isArray(c.wps)) { S.wps = cleanWps(c.wps); if (c.mode) S.mode = c.mode; S.stopMin = +c.stopMin || 0; } })();
 
@@ -247,6 +247,8 @@ function main() {
       '<div class="rtrow"><label>To <select id="rt-evto"><option value="any">Nearest of any kind</option><option value="lz">Nearest landing zone (LZ)</option>' +
       '<option value="airfields">Airfield of any size (regional, military, airstrip)</option><option value="airports">Major airport</option><option value="posts">U.S. embassy or consulate</option>' +
       '<option value="seaports">Seaport</option><option value="crossings">Border crossing</option></select></label>' +
+      '<label id="rt-evfootl"' + (S.mode === "foot" ? "" : " hidden") + '>Walking <select id="rt-evfoot"><option value="both"' + (S.evFoot === "both" ? " selected" : "") + '>Compare paths and cross-country</option>' +
+      '<option value="xc"' + (S.evFoot === "xc" ? " selected" : "") + '>Cross-country, over open ground</option><option value="paths"' + (S.evFoot === "paths" ? " selected" : "") + ">On roads and paths only</option></select></label>" +
       '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option selected>30</option><option>90</option></select> days</label></div>' +
       '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
       '<div class="sec rtsec"><h2>Travel by</h2><div class="rtseg" role="group" aria-label="Travel by" id="rt-modes"></div><div id="rt-speed"></div></div>' +
@@ -295,6 +297,7 @@ function main() {
       '<div class="rtrow"><label>Speed <select id="rt-spd">' + SPEEDS.map(function (s) { return '<option value="' + s[0] + '"' + (S.speedId === s[0] ? " selected" : "") + ">" + E(s[1]) + " · " + s[2] + " km/h</option>"; }).join("") +
       '<option value="custom"' + (S.speedId === "custom" ? " selected" : "") + '>Custom</option></select></label><label>km/h <input type="number" id="rt-kmh" min="0.5" max="2000" step="0.5" value="' + S.speed + '"></label></div>' +
       '<p class="obs">Straight lines on the great circle between waypoints, at a steady speed. Use it for cross-country foot or vehicle legs, boats and aircraft; it knows nothing of terrain or obstacles.</p>';
+    var fl = el("rt-evfootl"); if (fl) fl.hidden = S.mode !== "foot";
     el("rt-tapbtn").textContent = S.tap ? "Tap map: on" : "Tap map: off";
     el("rt-tapbtn").setAttribute("aria-pressed", String(S.tap));
   }
@@ -364,6 +367,7 @@ function main() {
     if (id === "rt-unit") { S.unit = t.value; prefs(); afterRoute(); }
     else if (id === "rt-buf" || id === "rt-sbuf") { S.buf = +t.value; el("rt-buf").value = el("rt-sbuf").value = String(S.buf); prefs(); hazards(); if (S.srch) search(); }
     else if (id === "rt-onlycc") { S.onlyCc = t.checked; prefs(); }
+    else if (id === "rt-evfoot") { S.evFoot = t.value; prefs(); }
     else if (id === "rt-stop") { S.stopMin = Math.max(0, Math.min(1440, +t.value || 0)); keepCur(); retime(); }
     else if (id === "rt-dep") { var ms = Date.parse(t.value + ":00Z"); if (isFinite(ms)) { S.depart = ms; retime(); } }
     else if (id === "rt-spd") { S.speedId = t.value; var s = SPEEDS.filter(function (x) { return x[0] === t.value; })[0]; if (s) S.speed = s[2]; prefs(); modesUi(); plan(); }
@@ -456,7 +460,7 @@ function main() {
     box.innerHTML = (S.err ? '<p class="rtbad">' + E(S.err) + "</p>" : "") + (r.note ? '<p class="obs">' + E(r.note) + "</p>" : "") +
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
-      '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
+      '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : r.xc ? "Cross-country estimate at off-path walking pace (about 3 km/h on the flat), slowed by slope and seasonal water, with no time for water crossings; averages " + r.kmh + " km/h without rests." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
       '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + E(x.label || (i ? "Alternative " + i : "Fastest")) + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
@@ -753,7 +757,7 @@ function main() {
     var start = { lat: a.lat, lon: a.lon, name: a.name || "Start" };
     S.evac = null; drawCps();
     box.innerHTML = '<p class="obs">' + (to === "lz" ? "Searching for open, flat ground round the start…" : to === "airfields" ? "Finding the nearest airfields in OpenStreetMap…" : "Finding the nearest evacuation points…") + "</p>";
-    var notes = [];
+    var notes = [], foot = mode === "foot" ? S.evFoot : "paths", xcMax = 60000;
     evCands(to, [a.lat, a.lon], notes, function (t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">' + E(t) + "</p>"; }).then(function (c) {
       if (tok !== S.evTok) return;
       var hz = evHaz(days), opts = [], n = 0;
@@ -763,7 +767,17 @@ function main() {
           if (tok !== S.evTok) return;
           n++; box.innerHTML = '<p class="obs">Routing to ' + E(cand.i.name) + " (" + n + " of " + c.length + ") and weighing reported incidents…</p>";
           var b = { lat: cand.i.lat, lon: cand.i.lon, name: cand.i.name }, wps = [start, b];
-          return roadRoutes(mode, wps).then(function (rs) {
+          /* on foot: a cross-country line over open ground as well as (or instead of) the paths the router knows */
+          var xc = foot === "paths" || cand.line > xcMax ? Promise.resolve() : xcLoad().then(function (X) {
+            if (tok !== S.evTok) return;
+            return X.route([start.lat, start.lon], [b.lat, b.lon], { prog: function (d, t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">Working out a cross-country line to ' + E(cand.i.name) + " (" + n + " of " + c.length + "): loading elevation and surface water " + d + " of " + t + "…</p>"; } });
+          }).then(function (r) {
+            if (!r || tok !== S.evTok) return;
+            r.evHow = "cross-country"; r.note = "Cross-country over open ground, worked out in this browser from open elevation and surface water (" + r.cellM + " m grid). " + r.notes.join(" ");
+            opts.push(evScore({ r: r, cand: cand }, wps, hz));
+          }, function (e) { cand.xcErr = e.message; });
+          if (foot === "xc") return xc;
+          return xc.then(function () { return roadRoutes(mode, wps); }).then(function (rs) {
             rs.forEach(function (r, j) { r.evHow = j ? "alternative" : "fastest"; opts.push(evScore({ r: r, cand: cand }, wps, hz)); });
             var fast = opts.filter(function (o) { return o.cand === cand; }).sort(function (x, y) { return x.r.s - y.r.s; })[0];
             if (!fast || !fast.exp.hits.length) return;
@@ -775,7 +789,15 @@ function main() {
         });
       }, Promise.resolve()).then(function () {
         if (tok !== S.evTok) return;
-        if (!opts.length) throw new Error("the routers did not answer" + (c[0].err ? " (" + c[0].err + ")" : "") + ". Try again in a minute");
+        if (foot !== "paths") {
+          var far = c.filter(function (x) { return x.line > xcMax; }).length, xe = c.filter(function (x) { return x.xcErr; })[0];
+          if (far) notes.push(far + " of the " + c.length + " nearest points " + (far === 1 ? "is" : "are") + " more than " + xcMax / 1000 + " km away in a straight line, too far for a cross-country line" + (foot === "xc" ? "" : ": only the path route was worked out to " + (far === 1 ? "it" : "them")) + ".");
+          if (xe) notes.push("No cross-country line to " + xe.i.name + ": " + xe.xcErr + ".");
+        }
+        if (!opts.length) {
+          if (foot === "xc") throw new Error(c.every(function (x) { return x.line > xcMax; }) ? "the nearest point is " + Math.round(c[0].line / 1000) + " km away in a straight line; cross-country lines are worked out up to " + xcMax / 1000 + " km. Pick On roads and paths, or another destination" : "no cross-country line could be worked out" + (c[0].xcErr ? " (" + c[0].xcErr + ")" : ""));
+          throw new Error("the routers did not answer" + (c[0].err ? " (" + c[0].err + ")" : "") + ". Try again in a minute");
+        }
         evChoose(opts, start, days, mode, c.length, notes);
       });
     }).catch(function (e) { if (tok !== S.evTok) return; box.innerHTML = '<p class="rtbad">No evacuation route: ' + E(e.message) + ".</p>"; });
@@ -901,6 +923,18 @@ function main() {
      settings, then 5 km if nothing fits. Routed to: the nearest few candidates and the best one, and the nearest mapped
      helipad or heliport in the area. The router stops at the road nearest the LZ; the rest is shown as the off-road stretch. */
   var lzWait = null;
+  var xcWait = null;
+  function xcLoad() {
+    if (W.OSAP_XCOUNTRY) return Promise.resolve(W.OSAP_XCOUNTRY);
+    if (xcWait) return xcWait;
+    xcWait = new Promise(function (res, rej) {
+      var sc = document.createElement("script"); sc.src = "assets/osap-xc.js";
+      sc.onload = function () { if (W.OSAP_XCOUNTRY) res(W.OSAP_XCOUNTRY); else { xcWait = null; rej(new Error("the cross-country planner did not start")); } };
+      sc.onerror = function () { xcWait = null; sc.remove(); rej(new Error("the cross-country planner could not load. Check the connection")); };
+      document.head.appendChild(sc);
+    });
+    return xcWait;
+  }
   function lzLoad() {
     if (W.OSAP_LZ && W.OSAP_LZ.scan) return Promise.resolve(W.OSAP_LZ);
     if (lzWait) return lzWait;
@@ -953,6 +987,12 @@ function main() {
     rec.label = !other ? "Recommended: quickest, fewest incidents" : rec === safe ? "Recommended: fewer incidents" : "Recommended: quickest";
     if (other) other.label = other === safe ? "Fewer incidents, much slower" : "Quickest, more incidents";
     var list = [rec].concat(other ? [other] : []);
+    /* on foot, comparing: the best line of each kind (paths, cross-country) is always offered */
+    [function (o) { return o.r.xc; }, function (o) { return !o.r.xc; }].forEach(function (kind) {
+      if (list.some(kind)) return;
+      var best = opts.filter(kind).sort(function (a, b) { return a.exp.score - b.exp.score || a.r.s - b.r.s; })[0];
+      if (best) { best.label = best.r.xc ? "Cross-country over open ground" : "On roads and paths"; list.push(best); }
+    });
     list.forEach(function (o) { o.r.label = o.label; });
     if (S.mode !== mode) { S.mode = mode; prefs(); modesUi(); }
     S.evac = { at: Date.now(), days: days, mode: mode, opts: list, n: opts.length, nCand: nCand, start: start, notes: notes || [] };
@@ -983,6 +1023,9 @@ function main() {
         if (seen[x.id]) return; var n2 = cor.at(x.lat, x.lon);
         if (n2) { seen[x.id] = 1; out.push({ id: "BX", p: [x.lat, x.lon], m: n2.along, t: n2.t, what: "Border crossing: " + x.name + (x.hours ? " (open " + x.hours + ")" : ""), url: x.src, flag: true }); }
       });
+    });
+    (r.xc && r.water || []).forEach(function (w) {
+      out.push({ id: "WX", p: w.p, m: w.along, t: null, what: "Water crossing, about " + dist(w.m) + " across: needs a bridge, ford or boat", flag: true });
     });
     (o.exp.hits || []).forEach(function (h) {
       if (h.d > 1000) return;
@@ -1017,10 +1060,10 @@ function main() {
     box.innerHTML = (ev.saved ? '<p class="obs">Kept plan from ' + E(when(ev.at)) + ". Incidents and roads are as they were then.</p>" : "") +
       '<div class="rtalts">' + ev.opts.map(function (x, j) {
         return '<button type="button" data-alt="' + j + '" aria-pressed="' + (j === S.sel) + '"><b>' + E(x.label) + "</b> to " + E(x.cand.i.name) + " (" + E(evKindName(x.cand)) + ")<br>" +
-          E(dist(x.r.m)) + " · " + E(dur(x.r.s)) + " · " + (x.exp.hits.length ? x.exp.hits.length + " reported incident" + (x.exp.hits.length === 1 ? "" : "s") + " within " + EV_R / 1000 + " km (weight " + x.exp.score + ")" : "no incidents OSAP holds within " + EV_R / 1000 + " km") + "</button>";
+          (ev.mode === "foot" ? (x.r.xc ? "Cross-country · " : "Roads and paths · ") : "") + E(dist(x.r.m)) + " · " + E(dur(x.r.s)) + " · " + (x.r.xc && x.r.water && x.r.water.length ? x.r.water.length + " water crossing" + (x.r.water.length === 1 ? "" : "s") + " · " : "") + (x.exp.hits.length ? x.exp.hits.length + " reported incident" + (x.exp.hits.length === 1 ? "" : "s") + " within " + EV_R / 1000 + " km (weight " + x.exp.score + ")" : "no incidents OSAP holds within " + EV_R / 1000 + " km") + "</button>";
       }).join("") + "</div>" +
       '<div class="rtevd"><b>' + E(i.name) + '</b> <span class="obs">' + E(evKindName(o.cand)) + (i.access ? " · access " + E(i.access) : "") + "</span><br>" +
-      (i.note ? E(i.note) + "<br>" : "") + (off > 50 ? '<span class="rtbad">The road ends about ' + E(dist(off)) + " short of it: that last stretch is on foot or cross-country.</span><br>" : "") +
+      (i.note ? E(i.note) + "<br>" : "") + (off > 50 && !r.xc ? '<span class="rtbad">The road ends about ' + E(dist(off)) + " short of it: that last stretch is on foot or cross-country.</span><br>" : "") +
       (i.address ? E(i.address) + "<br>" : "") +
       (i.phone ? "Phone " + phone(i.phone) : "") + (i.phone_after_hours ? (i.phone ? " · " : "") + "After hours " + phone(i.phone_after_hours) : "") + (i.phone || i.phone_after_hours ? "<br>" : "") +
       (i.hours ? "Open " + E(i.hours) + "<br>" : "") + (i.longest_runway && i.longest_runway.length_m ? (i.longest_runway.mapped ? "Longest mapped runway about " : "Longest runway ") + E(i.longest_runway.length_m) + " m" + (i.longest_runway.surface ? " (" + E(i.longest_runway.surface) + ")" : "") + "<br>" : i.surface ? "Surface " + E(i.surface) + "<br>" : "") +
@@ -1028,11 +1071,13 @@ function main() {
       ((ev.notes || []).length ? '<p class="obs">' + ev.notes.map(E).join(" ") + "</p>" : "") +
       (o.cand.k === "lz" || o.cand.k === "airfields" ? '<p class="obs">' + (o.cand.k === "lz" ? "Landing zones are worked out from open elevation and OpenStreetMap obstacle data (Find LZ): a candidate, not a surveyed LZ. Check it on imagery and on the ground before use." :
         "Airfields come from OpenStreetMap (any size, including airstrips, heliports and military fields) and the OurAirports reference list. Mapped is not open: confirm status, access and runway condition.") + "</p>" : "") +
+      (r && r.xc ? '<p class="obs"><b>Cross-country line, an estimate.</b> Worked out in this browser on a ' + E(r.cellM) + " m grid from open elevation (AWS Terrain Tiles) and JRC Global Surface Water: it keeps off the sea and slopes over 40°, weighs each slope by Tobler's hiking rule at off-path pace, and crosses lakes and rivers only where it must (WX below; each needs a bridge, ford or boat). " +
+        "About " + E(r.climb || 0) + " m of climb in all. It does not see forest, crops, swamp, walls, fences, private or military land, mines or small streams. Check it on imagery and the Ground mobility overlay.</p>" : "") +
       "<h3>Checkpoints</h3>" + (cps.length ? '<table class="rttab rtcps"><thead><tr><th></th><th>Grid</th><th>Along</th><th>Pass</th><th>What</th></tr></thead><tbody>' + cps.map(function (x) {
         return "<tr" + (x.flag ? ' class="rtflag"' : "") + "><td><b>" + E(x.id) + '</b></td><td><button type="button" class="linkish" data-zoom="' + x.p[0].toFixed(5) + "," + x.p[1].toFixed(5) + '">' + E(G.mgrs(x.p[0], x.p[1], 4) || G.fmtLL(x.p[0], x.p[1], 3)) + "</button></td><td>" + E(dist(x.m)) + "</td><td>" + E(zOnly(dep + x.t * 1000)) + "</td><td>" +
           (x.url && safeUrl(x.url) ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.what) + "</a>" : E(x.what)) + "</td></tr>";
       }).join("") + "</tbody></table>" : '<p class="obs">No route.</p>') +
-      '<p class="obs">SP, CP and RP are control points spaced evenly along the line for reporting progress. BX is a border crossing mapped in OpenStreetMap, CHK a checkpoint and INC an incident reported within 1 km of the line.</p>' +
+      '<p class="obs">SP, CP and RP are control points spaced evenly along the line for reporting progress. BX is a border crossing mapped in OpenStreetMap, WX a water crossing on a cross-country line, CHK a checkpoint and INC an incident reported within 1 km of the line.</p>' +
       '<p class="obs"><b>Safety weighting is an estimate from open reporting.</b> It counts what OSAP holds within ' + EV_R / 1000 + " km of each line from the last " + ev.days + " days (this country's reports, UCDP conflict events, road closures, disaster alerts and storms), weighted by kind (conflict events and violent reports 3, closures and disasters 2, other reports 1) and fading with age. " +
       ev.n + " lines to " + ev.nCand + " nearest points were weighed. It is not a threat assessment: no reports is not the same as safe, and roads, posts and crossings change. Confirm with the post and on the ground.</p>" +
       '<div class="rtbtns"><button type="button" data-rt="evsave" class="rtgo">Keep for offline use</button><button type="button" data-rt="print">Print</button></div>' + '<div id="rt-evsaved"></div>';
@@ -1045,7 +1090,7 @@ function main() {
     var i = o.cand.i, b = new Uint8Array(4); crypto.getRandomValues(b);
     var keep = { id: "ev-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(wpName(0) + " to " + i.name, 80), cc: S.ctx.cc,
       saved: new Date().toISOString(), at: ev.at, days: ev.days, mode: ev.mode, label: o.label, n: ev.n, nCand: ev.nCand, wps: S.wps.slice(),
-      route: { coords: thinCoords(r.coords, 1500).map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }), m: r.m, s: r.s, legs: r.legs, src: r.src ? r.src.name : "", note: r.note || "" },
+      route: { coords: thinCoords(r.coords, 1500).map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }), m: r.m, s: r.s, legs: r.legs, src: r.src ? r.src.name : "", note: r.note || "", xc: !!r.xc, cellM: r.cellM || null, climb: r.climb || null, water: r.xc ? (r.water || []).slice(0, 40) : null },
       dest: { k: o.cand.k, cc: o.cand.cc, i: { id: i.id, name: i.name, lat: i.lat, lon: i.lon, address: i.address || null, phone: i.phone || null, phone_after_hours: i.phone_after_hours || null, hours: i.hours || null, src: i.src || null, longest_runway: i.longest_runway || null,
         kind: i.kind || null, note: i.note || null, access: i.access || null, surface: i.surface || null } },
       notes: (ev.notes || []).slice(0, 6), exp: { score: o.exp.score, hits: o.exp.hits.slice(0, 60).map(function (h) { return { p: h.p, kind: h.kind, w: h.w, title: clean(h.title, 160), url: h.url, date: h.date, d: Math.round(h.d), along: Math.round(h.along) }; }) } };
@@ -1055,7 +1100,7 @@ function main() {
   }
   function evOpen(id) {
     var k = evAll().filter(function (x) { return x.id === id; })[0]; if (!k) return;
-    var r = { coords: k.route.coords, m: k.route.m, s: k.route.s, legs: k.route.legs || [{ m: k.route.m, s: k.route.s }], steps: [], src: { name: k.route.src || "the router", data: "OpenStreetMap contributors, ODbL" }, road: true, note: "Kept plan: the line as it was routed on " + String(k.saved).slice(0, 10) + ".", label: k.label };
+    var r = { coords: k.route.coords, m: k.route.m, s: k.route.s, legs: k.route.legs || [{ m: k.route.m, s: k.route.s }], steps: [], src: { name: k.route.src || "the router", data: k.route.xc ? "AWS Terrain Tiles (Mapzen); JRC Global Surface Water" : "OpenStreetMap contributors, ODbL" }, road: !k.route.xc, xc: !!k.route.xc, kmh: k.route.xc ? Math.round(k.route.m / Math.max(1, k.route.s) * 36) / 10 : null, cellM: k.route.cellM, climb: k.route.climb, water: k.route.water || [], note: "Kept plan: the line as it was routed on " + String(k.saved).slice(0, 10) + ".", label: k.label };
     var o = { r: r, cand: { k: k.dest.k, cc: k.dest.cc, i: k.dest.i }, exp: k.exp, label: k.label };
     S.token++; S.evTok++; S.busy = false; S.err = "";
     S.wps = cleanWps(k.wps); S.routes = [r]; S.sel = 0;
@@ -1484,6 +1529,7 @@ function main() {
     }, 0);
   }
   W.OSAP_ROUTETAB = { show: show, seed: function (pts) { if (S.ctx) { S.wps = cleanWps(pts.map(function (p) { return { lat: p[0], lon: p[1] }; })); changed(); fit(); } },
+    route: function () { var r = S.routes[S.sel]; return r ? { coords: r.coords.slice(), xc: !!r.xc, road: !!r.road, water: (r.water || []).slice(), m: r.m, s: r.s } : null; },
     state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx }; },
     hosts: HOST,
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
