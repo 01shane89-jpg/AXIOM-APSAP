@@ -67,6 +67,7 @@ jobs:
       - run: node tests/borders_smoke.mjs
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
+      - run: node tests/route_wpdel_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
