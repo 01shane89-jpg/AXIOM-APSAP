@@ -367,6 +367,18 @@ async function round12() {
   }
   await br.close();
 }
+/* ---------- round 13: Croatia (HAK) camera manifests ---------- */
+async function round13() {
+  const show = (k, r, n = 1500) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  show("HAK A1", await get("https://www.hak.hr/info/kamere/manifest/A1.json", 30000), 2500);
+  const pg = await get("https://www.hak.hr/info/kamere/", 30000); const t = pg.b.toString("utf8");
+  console.log("   manifests " + [...new Set(t.match(/manifest\/[^"'\s]+\.json/g) || [])].join(" "));
+  console.log("   scripts " + [...new Set(t.match(/[^"'\s]+\.js(\?[^"'\s]*)?/g) || [])].slice(0, 12).join(" "));
+  for (const m of ["manifest/index.json", "manifest/all.json", "manifest.json", "manifest/list.json"]) show("HAK try " + m, await get("https://www.hak.hr/info/kamere/" + m, 20000), 600);
+  console.log("   page text " + t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1200));
+  console.log("   terms " + ((t.match(/[^.]{0,200}(uvjeti|copyright|©|zabranjeno|prenošenje)[^.]{0,200}/i) || [""])[0]));
+}
+if (only === "r13") await round13();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
