@@ -19,6 +19,7 @@ const UA = "OSAP-hospital-phones/1 (+https://01shane89-jpg.github.io/AXIOM-APSAP
 const LISTS = { th: [
   { id: "au-embassy-bkk", kind: "embassy_list", name: "Australian Embassy Thailand: Hospital List (August 2025)", url: "https://thailand.embassy.gov.au/files/bkok/Hospital%20List%20(August%202025).pdf", page: "https://thailand.embassy.gov.au/" },
   /* insurers' network lists: hospitals' own published numbers, collected by a company (lower grade than an official list) */
+  { id: "azaycare-network", kind: "insurer_network_list", name: "Allianz Ayudhya AZAY Care: hospital network list", url: "https://campaign.azay.co.th/content/dam/onemarketing/azay/azay-co-th1/partner-download/AZAYCare_HospitalNetwork_EN.pdf", page: "https://campaign.azay.co.th/" },
   { id: "allianz-network", kind: "insurer_network_list", name: "Allianz Ayudhya: Hospital Network List (1 July 2026)", url: "https://www.allianz.co.th/content/dam/onemarketing/azay/allianz-co-th/services/network-search-index/Hospital-Network-List-OneAllianz-01-07-2026-EN.pdf", page: "https://www.allianz.co.th/" },
   { id: "tokiomarine-network", kind: "insurer_network_list", name: "Tokio Marine Life Thailand: network hospitals and clinics (1 May 2026)", url: "https://www.tokiomarine.com/content/dam/tokiomarine/th/life/customer-service/hospital/may2026/" + encodeURIComponent("รายชื่อโรงพยาบาลและคลินิกคู่สัญญา ลูกค้าธุรกิจองค์กร-01052026") + ".pdf", page: "https://www.tokiomarine.com/th/life/" }
 ] };
@@ -175,7 +176,34 @@ async function readWikidata() {
   }).filter(Boolean);
 }
 
+/* official download pages whose files may list hospitals with their numbers: the links are listed and the hospital
+   files saved for review (MOPH Bureau of Health Administration, basic data of hospitals under the Permanent Secretary) */
+const PROBE = { th: ["https://phdb.moph.go.th/main/index/downloadlist/57/0", "https://phdb.moph.go.th/main/index/downloadlist/1/0"] };
+async function probe() {
+  const out = [];
+  for (const u of PROBE[CC] || []) {
+    if (!(await allowed(u))) { out.push({ url: u, status: "robots" }); continue; }
+    const r = await get(u); const L = [];
+    if (r.html) for (const m of r.html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]{0,400}?)<\/a>/gi)) {
+      let h; try { h = new URL(m[1], r.url).href; } catch (e) { continue; }
+      L.push({ href: h, text: text(m[2]).replace(/\s+/g, " ").trim().slice(0, 160) });
+    }
+    out.push({ url: u, status: r.status, links: L });
+    let n = 0;
+    for (const l of L) {
+      if (n >= 6 || !/โรงพยาบาล|ข้อมูลพื้นฐาน|hospital|สถานบริการ|หน่วยบริการ/i.test(l.text + " " + l.href) || !/\.(xlsx?|csv|pdf)(\?|$)|download|file/i.test(l.href)) continue;
+      if (!(await allowed(l.href))) { l.saved = "robots"; continue; }
+      const f = await get(l.href, true); if (!f.buf) { l.saved = "status " + (f.status || f.err); continue; }
+      const ext = (/\.(xlsx?|csv|pdf)/i.exec(l.href) || [, "bin"])[1].toLowerCase(), name = "probe-" + (++n) + "." + ext;
+      fs.writeFileSync(path.join(OUT, name), f.buf); l.saved = name; l.bytes = f.buf.length;
+      if (ext === "pdf") { try { fs.writeFileSync(path.join(OUT, name + ".txt"), execFileSync("pdftotext", ["-layout", path.join(OUT, name), "-"], { maxBuffer: 64 << 20 })); fs.unlinkSync(path.join(OUT, name)); } catch (e) {} }
+    }
+  }
+  fs.writeFileSync(path.join(OUT, "probe-" + CC + ".json"), JSON.stringify(out, null, 1));
+}
+
 fs.mkdirSync(OUT, { recursive: true });
+await probe();
 const osm = osmHospitals(), lists = await readLists(), wd = await readWikidata();
 const sites = new Map();
 for (const h of [...sofSeeds(), ...osm]) {
