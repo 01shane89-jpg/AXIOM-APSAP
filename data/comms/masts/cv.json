@@ -1,0 +1,15 @@
+{"cc":"cv","at":"2026-10-03T09:49:09Z","base":"2026-10-03T09:47:16Z","m":[
+["n11412612820",16.7582,-22.98286,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n11429369342",16.6214,-24.35478,{"man_made":"mast","tower:type":"communication"}],
+["n11435496360",16.64399,-24.39852,{"man_made":"mast","tower:type":"communication"}],
+["n12344572251",16.59313,-22.91921,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n12344595622",16.59322,-22.91914,{"man_made":"mast","tower:construction":"freestanding","tower:type":"communication"}],
+["n12848561006",16.88928,-24.98319,{"man_made":"mast","tower:type":"communication"}],
+["n1960669840",15.01388,-23.51971,{"man_made":"tower","name":"Doze Vintéens","tower:type":"communication"}],
+["n1960679475",15.23599,-23.64626,{"man_made":"tower","tower:type":"communication"}],
+["n2612402861",16.6766,-22.93458,{"height":"20","man_made":"tower","tower:type":"communication"}],
+["n3957491255",17.15011,-25.01598,{"man_made":"tower","tower:type":"communication"}],
+["n9897469731",16.60953,-22.92264,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
+["n9902482216",16.61485,-22.91782,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"freestanding","tower:type":"communication"}],
+["w166335792",16.75693,-22.94275,{"man_made":"tower","tower:type":"communication"}]
+]}
