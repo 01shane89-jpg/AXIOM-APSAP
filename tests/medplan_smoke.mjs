@@ -429,6 +429,20 @@ async function openPlan(p) {
   await p.waitForFunction(() => /Centred on Casualty collection point/.test(document.getElementById("medplan").textContent) && document.querySelector("#mp-fac table"), null, { timeout: 10000 });
   ok(calls.osrm > before, "desktop: drive times recomputed from the CCP");
   ok(await p.inputValue("#mpf-unit") === "Test element", "desktop: fields survive a new centre");
+  // Plan status (Build Plan v2 phase 0): one plan record, checked by fixed rules
+  await p.waitForFunction(() => window.OSAP_MEDPLAN_MODEL && /AMBER|GREEN/.test((document.querySelector("#mp-val .mpvs") || {}).textContent || ""), null, { timeout: 20000 });
+  const vs0 = await p.evaluate(() => ({ t: document.querySelector("#mp-val .mpvs").textContent, n: document.querySelectorAll("#mp-val li").length, txt: document.getElementById("mp-val").textContent }));
+  ok(vs0.n >= 10 && /Definitive care facility/.test(vs0.txt) && /Definitive facility acceptance/.test(vs0.txt), "plan status: the plan is checked by fixed rules and the result shown (" + vs0.t + ", " + vs0.n + " checks)");
+  await p.fill("#mpf-recv1", "Nowhere Memorial Hospital");
+  await p.waitForFunction(() => /RED/.test((document.querySelector("#mp-val .mpvs") || {}).textContent || ""), null, { timeout: 10000 });
+  ok(/does not match the calculated definitive destination/.test(await p.textContent("#mp-val")), "plan status: a receiving facility in unit details that is not the calculated destination is a blocking error");
+  await p.click('#medplan [data-mp="print"]');
+  const held = await p.evaluate(() => ({ dis: document.getElementById("mpd-print").disabled, msg: (document.getElementById("mpd-held") || {}).textContent || "" }));
+  ok(held.dis && /^Blocking error: .*Nowhere Memorial Hospital/.test(held.msg), "plan status: printing is held while a blocking error stands: " + held.msg.slice(0, 120));
+  await p.click("#mpd-close");
+  await p.fill("#mpf-recv1", "");
+  await p.waitForFunction(() => !/RED/.test((document.querySelector("#mp-val .mpvs") || {}).textContent || ""), null, { timeout: 10000 });
+  ok(true, "plan status: clearing the receiving facility clears the blocking error");
   // Print view: every page, with the map, then Print
   await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
@@ -439,6 +453,7 @@ async function openPlan(p) {
   if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
+  ok(!/Looking up|Reading…|Still reading/.test(pv.t) && /Plan status/.test(pv.t), "print view: the plan status prints and no lookup is left in progress");
   const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
   ok(pa3.length === 3 && /^Hospital assessment, Primary: H3 Far North Hospital/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
