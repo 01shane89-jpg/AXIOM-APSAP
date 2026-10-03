@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "38b52f6438b5";
+const VERSION = "54f2c2aec512";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -456,6 +456,7 @@ const PRECACHE = [
 "assets/hospital-sources/countries/th-provider.js",
 "assets/osap-medplan.js",
 "assets/osap-lz.js",
+"assets/osap-xc.js",
 "assets/osap-split.js",
 "assets/osap-reports.js",
 "assets/osap-offline.js",
@@ -487,7 +488,7 @@ const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.ear
   /camerai1\.iticfoundation\.org\//, /telemetry\.dwr\.go\.th\/api\//,
   // volcano, river and weather camera stills (and JMA's camera page, read for the newest picture)
   /volcview\.wr\.usgs\.gov\/ashcam-api\/images\//, /images\.geonet\.org\.nz\/volcano\/cameras\//, /data\.jma\.go\.jp\/.*(volcam\.php|\/camera\/)/, /cam\.river\.go\.jp\/cam\//,
-  /usgs-nims-images\.s3\.amazonaws\.com\//, /hpwren\.ucsd\.edu\/cameras\//, /egatwater\.egat\.co\.th\/assets\/CCTV\//,
+  /usgs-nims-images\.s3\.amazonaws\.com\//, /hpwren\.ucsd\.edu\/cameras\//, /egatwater\.egat\.co\.th\/assets\/CCTV\//, /etraffic\.dgt\.es\/camarasEtraffic\//, /ndbc\.noaa\.gov\/buoycam\.php/,
   // live camera video (playlists and their pieces): never kept, always the stream as it is now
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];

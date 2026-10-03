@@ -26,7 +26,8 @@
   var S = { on: false, msg: "", ix: null, ixErr: "", lists: {}, busy: {} };
   /* the kinds of camera, by the source's type (road when it has none) */
   var TYPES = { road: { n: "Road", t: "Traffic camera", c: "#0b7285" }, river: { n: "River", t: "River camera", c: "#1971c2" },
-    volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" } };
+    volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" },
+    ocean: { n: "Sea", t: "Ocean buoy camera", c: "#0c8599", z: 4 } }; // z: a kind spread thinly enough to show from further out
   var KINDS = { dwr: 1, hls: 1, jma: 1 };
   function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
   var OFF = {};
@@ -122,7 +123,8 @@
         return;
       }
       if (t && !im.querySelector("img")) t.textContent = "Asking " + s.agency + " for the newest image…";
-      loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
+      /* a buoy's picture is one long strip of views round the horizon: shown at a readable height, scrolled sideways */
+      loadInto(im, url, (big ? "cam-big" : "cam-tip") + (typeOf(s) === "ocean" ? " cam-strip" : ""), alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else if (s.kind === "jma") jmaImg(c[0]).then(function (r) { put(r && r.u, r && r.ts); });
@@ -297,10 +299,16 @@
       S.msg = "No official open cameras" + (Object.keys(OFF).length ? " of the kinds chosen" : "") + " on screen. Cameras are published openly in: " + names(S.ix.sources.filter(function (s) { return !OFF[typeOf(s)]; })) + ".";
       paintSec(); legend(); return;
     }
+    /* zoomed out, only the thinly spread kinds (the ocean buoys) are drawn; the rest wait for a closer view */
+    var later = [];
     if (z < MINZ) {
-      layer.clearLayers(); drawn = {};
-      S.msg = "Zoom in to a city or region to see the cameras (" + names(here) + ").";
-      paintSec(); legend(); return;
+      later = here.filter(function (s) { return z < (TYPES[typeOf(s)].z || MINZ); });
+      here = here.filter(function (s) { return z >= (TYPES[typeOf(s)].z || MINZ); });
+      if (!here.length) {
+        layer.clearLayers(); drawn = {};
+        S.msg = "Zoom in to a city or region to see the cameras (" + names(later) + ").";
+        paintSec(); legend(); return;
+      }
     }
     var pb = b.pad(0.25), want = {}, n = 0, more = 0, loading = 0;
     here.forEach(function (s) { s._here = 0; });
@@ -318,7 +326,7 @@
     Object.keys(want).forEach(function (k) { if (!drawn[k]) drawn[k] = marker(want[k][0], want[k][1]).addTo(layer); });
     var shown = Object.keys(drawn).length;
     S.msg = loading ? "Loading the camera list…" : shown + " camera" + (shown === 1 ? "" : "s") + " on screen" + (more ? " (zoom in to see " + more + " more)" : "") +
-      (function (a) { return a.length ? " · " + a.join("; ") : ""; })(here.filter(function (s) { return s._here; }).map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); })) + "." + (S.failed ? " Some camera lists did not load." : "");
+      (function (a) { return a.length ? " · " + a.join("; ") : ""; })(here.filter(function (s) { return s._here; }).map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); })) + "." + (later.length ? " Zoom in to see the other cameras (" + names(later) + ")." : "") + (S.failed ? " Some camera lists did not load." : "");
     paintSec(); legend();
   }
   var t0 = 0;
@@ -336,7 +344,7 @@
       '<p class="pwr-m">Only cameras a government agency or public body publishes itself, openly, with no account or login. Left out on purpose: the FAA\'s aviation weather cameras (shared only under an agreement), and any camera list that needs a key. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
-    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano and weather cameras: hover or tap a camera</i></span></label>' +
+    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano, weather and sea cameras: hover or tap a camera</i></span></label>' +
       '<div class="cam-kinds" data-camkinds role="group" aria-label="Kinds of camera to show">' + Object.keys(TYPES).map(function (k) {
         return '<button type="button" data-camkind="' + k + '" aria-pressed="' + !OFF[k] + '"><span style="background:' + TYPES[k].c + '"></span>' + TYPES[k].n + "</button>"; }).join("") + "</div>" +
       '<p class="mlkey pwr-m" data-cammsg aria-live="polite" hidden></p>' +
@@ -370,8 +378,9 @@
     ".cam-ic span{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:#0b7285;color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.55);box-sizing:border-box}" +
     ".cam-tt{padding:6px;white-space:normal;width:250px}.cam-tipbox b{display:block;font-size:12px;margin-bottom:4px;line-height:1.25}.cam-tipbox i{display:block;font-size:11px;color:#555;margin-top:3px}" +
     ".cam-tip{display:block;width:238px;max-height:170px;object-fit:contain;background:#111;border-radius:3px}" +
+    "[data-camimg]{overflow-x:auto}img.cam-strip{width:auto;max-width:none;height:140px;max-height:none}img.cam-big.cam-strip{height:220px}" +
     ".cam-frame{min-height:60px;margin:4px 0}.cam-big{display:block;width:100%;max-height:260px;object-fit:contain;background:#111;border-radius:4px}" +
-    "@media (max-width:500px){.cam-big{max-height:170px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
+    "@media (max-width:500px){.cam-big{max-height:170px}img.cam-big.cam-strip{height:160px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
     "[data-camloading] img{opacity:.55}.cam-no a{display:block;margin-top:4px}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
