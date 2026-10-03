@@ -322,6 +322,17 @@ async function round9() {
     if (r.s === 200) { line("CARS " + st, r); console.log("   " + note); } else console.log("CARS " + st + " " + (r.s || r.err));
   }
 }
+/* ---------- round 10: Quebec (Données Québec) and Norway (Statens vegvesen) camera lists ---------- */
+async function round10() {
+  const show = (k, r, n = 900) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const [k, u] of [["QC", "https://www.donneesquebec.ca/recherche/api/3/action/package_show?id=camera-de-circulation"], ["NO", "https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera"], ["NO statuser", "https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera-statuser-api"]]) {
+    const r = await get(u, 40000); line(k, r);
+    try { const j = JSON.parse(r.b).result; console.log("   licence " + j.license_title + " | " + (j.notes || "").slice(0, 300).replace(/\s+/g, " ")); for (const x of j.resources || []) { console.log("   res " + x.format + " " + x.url + " | " + x.name);
+      if (/json|csv|xml|geojson/i.test(x.format + x.url)) { const d = await get(x.url, 60000); show("     get", d, 1500); const t = d.b.toString("utf8"); for (const m of [...new Set(t.match(/https?:[^"'<>\s,]+\.(jpg|jpeg|png)/gi) || [])].slice(0, 2)) await img(m, "     img"); } } } catch (e) { console.log("   " + e); }
+  }
+  for (const u of ["https://www.quebec511.info/fr/Diffusion/Etat/Camera.aspx", "https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:infos_cameras&outputformat=geojson", "https://webkamera.atlas.vegvesen.no/public/kamera?id=0329001_1", "https://kamera.atlas.vegvesen.no/api/images/0329001_1"]) show("try " + u, await get(u, 30000), 600);
+}
+if (only === "r10") await round10();
 if (only === "r9") await round9();
 if (only === "r8") await round8();
 if (only === "r7") await round7();
