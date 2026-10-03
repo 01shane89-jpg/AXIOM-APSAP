@@ -1,4 +1,4 @@
-// Headless check of the traffic cameras (assets/osap-cams.js): the switch sits in Map overlays (Infrastructure), starts off and
+// Headless check of the public cameras (assets/osap-cams.js): the switch sits in Map overlays (Infrastructure), starts off and
 // reads nothing until switched on; an area with no official open cameras says where they are; zoomed out it asks to zoom in;
 // close in it draws the cameras from the agency lists in data/cams (the repo's own files); hover shows the still image, a click
 // opens it larger with the agency, licence and a refresh; Singapore's image address comes from the live API; a camera with
@@ -40,19 +40,25 @@ async function open(opts, hash = "") {
   await ctx.route(/telemetry\.dwr\.go\.th\/api\//, (r) => {
     const u = r.request().url(); imgs.push(u);
     if (r.request().method() === "OPTIONS") return r.fulfill({ status: 204, headers: CORS });
-    if (/reportCctv\/snapshot\//.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ value: "/TA210507/2026/10/3/14_05.jpg" }) });
+    if (/reportCctv\/snapshot\//.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ value: ctxMode.v === "dwrnone" ? null : "/TA210507/2026/10/3/14_05.jpg" }) });
     if (/file\/image\/cctv/.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: PNG });
     return r.fulfill({ status: 404, headers: CORS, body: "" });
   });
+  // Japan's volcano cameras: JMA's camera page lists the recent pictures by the minute they were taken; the newest is shown
+  await ctx.route(/data\.jma\.go\.jp\//, (r) => {
+    const u = r.request().url(); imgs.push(u);
+    if (/volcam\.php/.test(u)) return r.fulfill({ status: 200, contentType: "text/html", headers: CORS, body: '<html><img src="../camera/104_82002710/20261003165401.jpg"><img src="../camera/104_82002710/20261003165601.jpg"><img src="./icon/camera.png"></html>' });
+    return r.fulfill({ status: 200, contentType: "image/png", body: PNG });
+  });
   // iTIC live video: the playlist is refused here, so the pop-up must say the video is not available
   await ctx.route(/camerai1\.iticfoundation\.org/, (r) => { imgs.push(r.request().url()); return r.fulfill({ status: 404, headers: CORS, body: "" }); });
-  await ctx.route(/tdcctv\.data\.one\.gov\.hk|images\.data\.gov\.sg|weathercam\.digitraffic\.fi|jamcams\.tfl\.gov\.uk/, (r) => {
+  await ctx.route(/tdcctv\.data\.one\.gov\.hk|images\.data\.gov\.sg|weathercam\.digitraffic\.fi|jamcams\.tfl\.gov\.uk|etraffic\.dgt\.es|ndbc\.noaa\.gov/, (r) => {
     imgs.push(r.request().url());
     if (/BROKEN/.test(r.request().url()) || ctxMode.v === "fail") return r.fulfill({ status: 404, body: "" });
     if (ctxMode.v === "hang") return new Promise((ok) => setTimeout(ok, 4000)).then(() => r.fulfill({ status: 200, contentType: "image/png", body: PNG })).catch(() => {});
     return r.fulfill({ status: 200, contentType: "image/png", body: PNG });
   });
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*(data\.gov\.sg|tdcctv|weathercam|jamcams|telemetry\.dwr|camerai1\.iticfoundation))/, (r) => r.abort());
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*(data\.gov\.sg|tdcctv|weathercam|jamcams|telemetry\.dwr|camerai1\.iticfoundation|data\.jma\.go\.jp|etraffic\.dgt\.es|ndbc\.noaa\.gov))/, (r) => r.abort());
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_CAMS, null, { timeout: 60000 }); await p.waitForTimeout(3500);
@@ -92,6 +98,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
     for (const c of JSON.parse(await readFile(join(root, `data/cams/${s.id}.json`), "utf8")).cams)
       for (const u of [].concat(c[4] || [], c[5] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
   }
+  if (ix.sources.some((s) => s.kind === "jma") && !NEVER.some((r) => r.test("https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/volcam.php?VC=10401"))) missed.add("JMA camera page");
   ok(!missed.size, "sw.js never caches any camera image" + (missed.size ? ": missing " + [...missed].slice(0, 12).join(", ") : ""));
 }
 // ---------- desktop ----------
@@ -101,7 +108,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   ok(!s.on && s.drawn === 0 && reads.length === 0, "desktop: starts off, nothing read (" + reads.join(",") + ")");
   ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-ocam]"))), "desktop: no toolbar button of its own");
   await om(p, true);
-  ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Traffic cameras switch in the Overlays sheet");
+  ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Public cameras switch in the Overlays sheet");
   ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
   await p.evaluate(() => window.__asapMap.setView([22.57, 88.36], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
@@ -150,6 +157,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   if (nv > 1) { await p.click('.leaflet-popup-content [data-camview="1"]'); await p.waitForTimeout(400); }
   const v1 = await p.evaluate(() => document.querySelector(".leaflet-popup-content img.cam-big").getAttribute("src"));
   ok(nv > 1 && v0 !== v1 && /weathercam\.digitraffic\.fi/.test(v1), "Finland: " + nv + " views, switching changes the image " + v1);
+  const popText = () => p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
   // Thailand: a river camera shows DWR's newest snapshot with the time in its path; a live road camera starts the video player
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [6.47985, 101.44526], 13);
@@ -157,6 +165,13 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await p.waitForTimeout(1200);
   const dwr = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
   ok(/^blob:/.test(dwr.src) && /River camera/.test(dwr.t) && /Image taken 3 Oct 2026 0705Z \/ 14:05/.test(dwr.t), "Thailand river camera: DWR snapshot and its time: " + dwr.src.slice(0, 30) + " | " + (dwr.t.match(/Image taken[^·]*/) || [""])[0]);
+  // Refresh on a camera the agency has no picture for: it says it is asking again, then answers with the time it tried
+  ctxMode.v = "dwrnone";
+  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(250);
+  const asking = await popText();
+  await p.waitForTimeout(1500);
+  const none = await popText(); ctxMode.v = "";
+  ok(/Asking Department of Water Resources[^·]* again/.test(asking) && /No image from the agency right now/.test(none) && /Tried 3 Oct|Tried \d+ \w+ \d{4}/.test(none), "Refresh with no picture: says it is asking again, then that the agency has none, with the time tried");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [13.69257, 101.0709], 15);
   ok(await p.evaluate(() => window.OSAP_CAMS.open("th-itic", "ITICM_BMAMI0184")), "Thailand live camera drawn in Chachoengsao");
@@ -165,25 +180,59 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const live = await p.evaluate(() => ({ t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "", hls: !!window.Hls, native: !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl") }));
   ok(/Road camera · live video/.test(live.t) && /live video is not available right now/.test(live.t) && (live.hls || live.native) && imgs.some((u) => /camerai1\.iticfoundation\.org\/hls\/.+\.m3u8/.test(u)),
     "Thailand live camera: the player (" + (live.native ? "built in" : "hls.js") + ") asks iTIC for the stream and says plainly when it is off air: " + (live.t.match(/[^.]*(not available|did not start|cannot play)[^.]*/) || [""])[0]);
+  // Japan: a volcano camera shows JMA's newest picture with its time; the kind buttons hide and bring back each kind of camera
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [43.638, 144.465], 13);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("jp-jma-volcano", "10401")), "Japan volcano camera drawn at Atosanupuri");
+  await p.waitForFunction(() => /Image taken/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
+  const jma = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
+  ok(/\/camera\/104_82002710\/20261003165601\.jpg$/.test(jma.src) && /Volcano camera/.test(jma.t) && /Image taken 3 Oct 2026 0756Z/.test(jma.t), "Japan volcano camera: JMA's newest picture and its time: " + jma.src.slice(-40) + " | " + (jma.t.match(/Image taken[^·]*/) || [""])[0]);
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await om(p, true);
+  ok(await shown(p, '#cam-sec [data-camkind="volcano"]'), "desktop: the kinds of camera show as buttons under the switch");
+  await p.click('#cam-sec [data-camkind="volcano"]'); await p.waitForTimeout(500);
+  const offV = await p.evaluate(() => ({ open: window.OSAP_CAMS.open("jp-jma-volcano", "10401"), kept: localStorage.getItem("osap-cam-off"), pressed: document.querySelector('#cam-sec [data-camkind="volcano"]').getAttribute("aria-pressed") }));
+  await p.click('#cam-sec [data-camkind="volcano"]'); await p.waitForTimeout(500);
+  const onV = await p.evaluate(() => window.OSAP_CAMS.open("jp-jma-volcano", "10401"));
+  ok(!offV.open && /volcano/.test(offV.kept || "") && offV.pressed === "false" && onV, "desktop: Volcano off hides the volcano cameras (kept on this device), on brings them back");
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await om(p, false);
+  // Spain (DGT) road camera, and a NOAA ocean buoy: its strip of views is shown at a readable height, scrolled sideways
+  await at(p, [42.2624, -3.9403], 13);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("es-dgt", "176130")), "Spain DGT camera drawn on the A-62");
+  await p.waitForFunction(() => !!document.querySelector(".leaflet-popup-content img.cam-big"), null, { timeout: 15000 }).catch(() => {});
+  const dgt = await p.evaluate(() => { const i = document.querySelector(".leaflet-popup-content img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "" }; });
+  ok(/^https:\/\/etraffic\.dgt\.es\/camarasEtraffic\/176130\.jpg\?t=/.test(dgt.src) && /Traffic camera/.test(dgt.t) && /DGT/.test(dgt.t), "Spain DGT camera shows the DGT's picture: " + dgt.src.slice(0, 60));
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [31.743, -74.955], 9);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("us-ndbc", "41002")), "NOAA buoy camera drawn off Cape Hatteras");
+  await p.waitForFunction(() => !!document.querySelector(".leaflet-popup-content img.cam-big"), null, { timeout: 15000 }).catch(() => {});
+  const sea = await p.evaluate(() => { const i = document.querySelector(".leaflet-popup-content img.cam-big"); return { src: i ? i.getAttribute("src") : "", strip: !!(i && i.classList.contains("cam-strip")), h: i ? i.getBoundingClientRect().height : 0, t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "" }; });
+  ok(/buoycam\.php\?station=41002&t=/.test(sea.src) && sea.strip && sea.h >= 140 && /Ocean buoy camera/.test(sea.t), "NOAA buoy camera: the strip of views shown " + Math.round(sea.h) + " px high, scrolled sideways");
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [33, -77], 6); await p.waitForTimeout(1200);
+  const far = await p.evaluate(() => { const s = window.OSAP_CAMS.state(); return { n: s.drawn, msg: s.msg }; });
+  ok(far.n > 0 && /Zoom in to see the other cameras/.test(far.msg), "zoomed out: the ocean buoys still show, the road cameras wait for a closer view: " + far.n + " · " + far.msg.slice(0, 120));
   // a still camera that also has video: the button plays it in place, Refresh goes back to the newest still
   const tfl = JSON.parse(await readFile(join(root, "data/cams/gb-tfl.json"), "utf8")).cams.find((c) => c[5]);
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [tfl[1], tfl[2]], 15);
   ok(await p.evaluate((id) => window.OSAP_CAMS.open("gb-tfl", id), tfl[0]), "London camera with a video clip drawn");
-  await p.waitForTimeout(800);
+  await p.waitForFunction(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
   ok(await p.evaluate(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || "")), "London: the pop-up offers the agency's video clip");
   const clipN = imgs.length;
   await p.click(".leaflet-popup-content [data-camlive]");
-  await p.waitForFunction(() => /not available|did not start/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || "") || !!document.querySelector(".leaflet-popup-content video"), null, { timeout: 25000 }).catch(() => {});
+  // the video element goes in at once (hidden until it has a frame), so wait for the clip request itself
+  for (let i = 0; i < 50 && !imgs.slice(clipN).some((u) => /\.mp4/.test(u)); i++) await p.waitForTimeout(200);
   ok(imgs.slice(clipN).some((u) => /\.mp4/.test(u)), "London: Play video clip asks TfL for the clip");
-  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(800);
+  await p.click(".leaflet-popup-content [data-camref]");
+  await p.waitForFunction(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video"), null, { timeout: 15000 }).catch(() => {});
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video")), "London: Refresh goes back to the newest still");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [60.05374, 23.99616], 14);
   { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
   await p.waitForTimeout(700);
   // a failed image says so, with a link to open it directly
-  const popText = () => p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
   ctxMode.v = "fail";
   await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(700);
   ok(/No image from the agency right now/.test(await popText()) && await p.evaluate(() => !!document.querySelector('.leaflet-popup-content .cam-no a[target="_blank"]')),
@@ -226,14 +275,15 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate(() => { window.OSAP_ATAK.mode(false); if (window.OSAP_TOOLS) window.OSAP_TOOLS.fold(false); }); await p.waitForTimeout(200);
   await p.evaluate(() => document.querySelector(".mlctl .mlbtn").click()); await p.waitForTimeout(200);
-  ok(await shown(p, "#cam-sec input[data-cam]"), "phone classic: Traffic cameras switch in the Layers panel");
+  ok(await shown(p, "#cam-sec input[data-cam]"), "phone classic: Public cameras switch in the Layers panel");
   await p.check("#cam-sec input[data-cam]");
   await p.evaluate(() => document.querySelector(".mlctl .mlbtn").click()); await p.waitForTimeout(200);
   await at(p, [51.507, -0.128], 13);
   const s = await st(p);
   ok(s.drawn > 0, "phone: London " + s.drawn + " cameras");
   const q = await iconAt(p);
-  await p.touchscreen.tap(q[0], q[1]); await p.waitForTimeout(800);
+  await p.touchscreen.tap(q[0], q[1]);
+  await p.waitForFunction(() => /jamcams\.tfl\.gov\.uk/.test((document.querySelector(".leaflet-popup-content") || {}).innerHTML || ""), null, { timeout: 15000 }).catch(() => {});
   const pop = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); return x ? x.innerHTML : ""; });
   ok(/jamcams\.tfl\.gov\.uk/.test(pop) && /Transport for London/.test(pop), "phone: a tap opens the image");
   ok((await p.evaluate(() => document.querySelectorAll(".cam-tt").length)) === 0, "phone: no hover box on a touch screen");
