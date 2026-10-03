@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"gn","asof":"2026-10-03 08:32Z","items":[{"id":"34955","n":"TAHER, Ibrahim","t":"person","p":"SDGT","ccs":["gn"]},{"id":"37505","n":"NORD GOLD PLC","t":"entity","p":"RUSSIA-EO14024","ccs":["gb","ru","bf","gn"]}]};
+window.ASAP_SANC_CC={"cc":"gn","asof":"2026-10-03 08:56Z","items":[{"id":"34955","n":"TAHER, Ibrahim","t":"person","p":"SDGT","ccs":["gn"]},{"id":"37505","n":"NORD GOLD PLC","t":"entity","p":"RUSSIA-EO14024","ccs":["gb","ru","bf","gn"]}]};
