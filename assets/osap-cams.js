@@ -123,7 +123,8 @@
         return;
       }
       if (t && !im.querySelector("img")) t.textContent = "Asking " + s.agency + " for the newest image…";
-      loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
+      /* a buoy's picture is one long strip of views round the horizon: shown at a readable height, scrolled sideways */
+      loadInto(im, url, (big ? "cam-big" : "cam-tip") + (typeOf(s) === "ocean" ? " cam-strip" : ""), alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else if (s.kind === "jma") jmaImg(c[0]).then(function (r) { put(r && r.u, r && r.ts); });
@@ -371,8 +372,9 @@
     ".cam-ic span{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:#0b7285;color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.55);box-sizing:border-box}" +
     ".cam-tt{padding:6px;white-space:normal;width:250px}.cam-tipbox b{display:block;font-size:12px;margin-bottom:4px;line-height:1.25}.cam-tipbox i{display:block;font-size:11px;color:#555;margin-top:3px}" +
     ".cam-tip{display:block;width:238px;max-height:170px;object-fit:contain;background:#111;border-radius:3px}" +
+    "[data-camimg]{overflow-x:auto}img.cam-strip{width:auto;max-width:none;height:140px;max-height:none}img.cam-big.cam-strip{height:220px}" +
     ".cam-frame{min-height:60px;margin:4px 0}.cam-big{display:block;width:100%;max-height:260px;object-fit:contain;background:#111;border-radius:4px}" +
-    "@media (max-width:500px){.cam-big{max-height:170px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
+    "@media (max-width:500px){.cam-big{max-height:170px}img.cam-big.cam-strip{height:160px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
     "[data-camloading] img{opacity:.55}.cam-no a{display:block;margin-top:4px}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
