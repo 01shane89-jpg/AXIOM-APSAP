@@ -569,6 +569,16 @@ async function openPlan(p) {
   await p.evaluate(() => { const b = document.getElementById("atk-tools"); if (b && b.classList.contains("folded")) b.querySelector('[data-atk="fold"]').click(); });
   await medBtn(p);
   await p.waitForFunction(() => document.querySelectorAll("#mp-rt h4").length === 3 && !/Working out the route/.test(document.getElementById("mp-rt").textContent), null, { timeout: 25000 });
+  /* Shane 2026-10-03: on a phone the role table was squeezed into three narrow columns, one word per line, Tertiary cut off */
+  const rl = await p.evaluate(() => {
+    const t = document.querySelector("#mp-pst table.mproles"), tw = t.getBoundingClientRect().width, cells = [...t.querySelectorAll("tbody td")];
+    return { tw: Math.round(tw), vw: innerWidth, sw: document.getElementById("mp-pst").scrollWidth, cw: document.getElementById("mp-pst").clientWidth, n: cells.length,
+      narrow: cells.filter((c) => c.getBoundingClientRect().width < tw * 0.85).length, labels: cells.slice(0, 3).map((c) => getComputedStyle(c, "::before").content).join(" "),
+      head: getComputedStyle(t.querySelector("thead")).display };
+  });
+  ok(rl.n >= 12 && rl.narrow === 0 && rl.sw <= rl.cw + 1 && rl.tw <= rl.vw && rl.head === "none" && /Primary.*Secondary.*Tertiary/.test(rl.labels), "phone: Primary, Secondary and Tertiary stack full width with their labels, nothing cut off " + JSON.stringify(rl));
+  if (OUT) await p.evaluate(() => document.querySelector("#mp-pst table.mproles").scrollIntoView());
+  if (OUT) await p.screenshot({ path: OUT + "/phone-roles.png" });
   await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   await p.waitForTimeout(300);
