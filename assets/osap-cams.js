@@ -95,7 +95,7 @@
       var im = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]");
       var stamp = function (ok) {
         S.loads = (S.loads || 0) + 1;
-        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min"
+        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + (s.every ? " · updated about every " + s.every + " min" : "")
           : "Tried " + when(Date.now(), s.tz) + " · trying again on its own while this stays open";
       };
       if (!im) return;
@@ -104,7 +104,68 @@
       loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
+    else if (s.kind === "dwr") dwrImg(c[0]).then(function (r) {
+      /* the previous picture's local address is let go once the new one is up */
+      var old = el._camObj; el._camObj = r && r.u;
+      put(r && r.u, r && r.ts);
+      if (old) setTimeout(function () { URL.revokeObjectURL(old); }, 30000);
+    });
     else put(fresh(safeUrl(u), now));
+  }
+  /* Thailand's river cameras (DWR): the public API gives the newest snapshot's path, then the picture itself by POST, so the
+     page reads it as a file and shows it from a local address; the path carries the time it was taken (Thai time) */
+  var DWR = "https://telemetry.dwr.go.th/api";
+  function dwrImg(id) {
+    return fetch(DWR + "/public/reportCctv/snapshot/" + encodeURIComponent(id)).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (j) {
+      var path = j && typeof j.value === "string" ? j.value : "";
+      if (!/^\/[\w-]+\/\d{4}\/\d{1,2}\/\d{1,2}\/\d{1,2}_\d{1,2}\.jpe?g$/.test(path)) return null;
+      var m = path.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})\/(\d{1,2})_(\d{1,2})\./), p2 = function (v) { return ("0" + v).slice(-2); };
+      var ts = m ? m[1] + "-" + p2(m[2]) + "-" + p2(m[3]) + "T" + p2(m[4]) + ":" + p2(m[5]) + ":00+07:00" : null;
+      return fetch(DWR + "/file/image/cctv", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: path }) })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); })
+        .then(function (b) { return b && /^image\//.test(b.type || "image/") && b.size > 500 ? { u: URL.createObjectURL(b), ts: ts, local: true } : null; });
+    }).catch(function () { return null; });
+  }
+  /* live video (HLS): Safari plays it itself; other browsers get the small hls.js player (assets/vendor, Apache-2.0), loaded the
+     first time a live camera is opened. It stops when the pop-up closes. */
+  var HLSLIB = "assets/vendor/hls.light-1.7.3.min.js", hlsP = null;
+  function hlsLib() {
+    if (W.Hls) return Promise.resolve(W.Hls);
+    return hlsP || (hlsP = new Promise(function (ok, no) { var sc = document.createElement("script"); sc.src = HLSLIB; sc.onload = function () { W.Hls ? ok(W.Hls) : no(new Error("no player")); }; sc.onerror = function () { hlsP = null; no(new Error("player did not load")); }; document.head.appendChild(sc); }));
+  }
+  function playLive(el, s, c) {
+    var box = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]"), url = safeUrl(c[4]);
+    if (!box) return;
+    stopLive(el);
+    var v = document.createElement("video"), started = false;
+    v.className = "cam-big"; v.muted = true; v.autoplay = true; v.controls = true; v.playsInline = true; v.setAttribute("playsinline", "");
+    box.innerHTML = '<span class="cam-no">Starting the live video…</span>';
+    var fail = function (why) {
+      if (started || !el._camLive) return; stopLive(el);
+      box.innerHTML = '<span class="cam-no">' + esc(why) + "</span>";
+      if (t) t.textContent = "Tried " + when(Date.now(), s.tz);
+    };
+    var go = function () { if (started) return; started = true; clearTimeout(el._camLive.tm); box.innerHTML = ""; box.appendChild(v); if (t) t.textContent = "Live video · started " + when(Date.now(), s.tz) + " · the stream carries no time stamp"; };
+    el._camLive = { v: v, tm: setTimeout(function () { fail("The live video did not start in " + Math.round((S.wait || 20000) / 1000) + " s. The camera may be off air."); }, S.wait || 20000) };
+    v.addEventListener("loadeddata", go); v.addEventListener("playing", go);
+    v.addEventListener("error", function () { fail("The live video is not available right now."); });
+    if (!url) return fail("The live video is not available right now.");
+    if (v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; box.appendChild(v); v.style.position = "absolute"; v.style.opacity = "0"; v.addEventListener("loadeddata", function () { v.style.position = ""; v.style.opacity = ""; }); return; }
+    hlsLib().then(function (H) {
+      if (!el._camLive || el._camLive.v !== v) return;
+      if (!H.isSupported()) return fail("This browser cannot play live video.");
+      var h = new H({ maxBufferLength: 12, liveSyncDurationCount: 2 });
+      el._camLive.h = h;
+      h.on(H.Events.ERROR, function (_, d) { if (d && d.fatal) fail("The live video is not available right now."); });
+      h.loadSource(url); h.attachMedia(v);
+      v.play().catch(function () {});
+    }).catch(function () { fail("The video player did not load."); });
+  }
+  function stopLive(el) {
+    var L0 = el && el._camLive; if (!L0) return;
+    clearTimeout(L0.tm); if (L0.h) { try { L0.h.destroy(); } catch (e) {} }
+    if (L0.v) { try { L0.v.pause(); L0.v.removeAttribute("src"); L0.v.load(); } catch (e) {} }
+    el._camLive = null;
   }
   /* while a pop-up stays open the image renews on its own, as often as the agency renews it (not more than once a minute) */
   function every(s) { return Math.max(60, (+s.every || 1) * 60) * 1000; }
@@ -113,19 +174,23 @@
   var map = null, layer = null, drawn = {};
   function icon() { return L.divIcon({ className: "cam-ic", iconSize: [20, 20], iconAnchor: [10, 10], html: "<span>" + CAM + "</span>" }); }
   function tipHtml(s, c) {
+    if (s.kind === "hls") return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><span class="cam-no">Live video: click the camera to play it.</span><i>' + esc(s.agency) + "</i></div>";
     return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><div data-camimg><span class="cam-no">Loading the image…</span></div><i>' + esc(s.agency) + "</i></div>";
   }
   function popHtml(s, c) {
     var views = Array.isArray(c[4]) ? c[4].length : 1;
     /* data-keep-pop: stays a pop-up on the map (the page otherwise moves pop-up content into the report panel), so the image,
        its refresh and the view buttons keep working */
-    return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:var(--cam,#0b7285)">Traffic camera · official open data</div><h3>' + esc(c[3]) + "</h3>" +
-      '<div data-camimg class="cam-frame"><span class="cam-no">Loading the image…</span></div>' +
+    var hls = s.kind === "hls";
+    if (hls) views = 1;
+    var tier = hls ? "Road camera · live video" : s.kind === "dwr" ? "River camera · published by the agency" : "Traffic camera · published by the agency";
+    return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:var(--cam,#0b7285)">' + tier + "</div><h3>" + esc(c[3]) + "</h3>" +
+      '<div data-camimg class="cam-frame"><span class="cam-no">' + (hls ? "Starting the live video…" : "Loading the image…") + "</span></div>" +
       (views > 1 ? '<div class="cam-views">' + Array.apply(null, Array(views)).map(function (_, i) { return '<button type="button" data-camview="' + i + '" aria-pressed="' + (i === 0) + '">View ' + (i + 1) + "</button>"; }).join("") + "</div>" : "") +
-      '<p class="obs"><span data-camt></span> <button type="button" class="linkish" data-camref>Refresh</button><br>' +
+      '<p class="obs"><span data-camt></span> <button type="button" class="linkish" data-camref>' + (hls ? "Restart" : "Refresh") + "</button><br>" +
       esc(s.agency) + " · " + esc(s.licence) + (safeUrl(s.page) ? ' · <a href="' + esc(s.page) + '" target="_blank" rel="noopener">source</a>' : "") +
       "<br>" + esc(c[1].toFixed(5) + ", " + c[2].toFixed(5)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(c[1], c[2])) : "") +
-      "<br>A still image the agency publishes for traffic information, not a live video or a record.</p></div>";
+      "<br>" + (hls ? "Live video the camera's owner streams publicly, not a record." : "A still image the agency publishes, not a live video or a record.") + "</p></div>";
   }
   function marker(s, c) {
     var m = L.marker([c[1], c[2]], { icon: icon(), pane: "campt", keyboard: false, title: c[3], lgk: "cam", lgl: "Traffic camera" });
@@ -133,7 +198,7 @@
     /* hover with a mouse: a small image; a tap opens the popup instead (no hover on touch screens) */
     if (!(W.matchMedia && W.matchMedia("(hover: none)").matches)) {
       m.bindTooltip(function () { return tipHtml(s, c); }, { direction: "top", offset: [0, -10], opacity: 1, className: "cam-tt" });
-      m.on("tooltipopen", function (e) { fill(e.tooltip.getElement(), s, c, 0, false); });
+      if (s.kind !== "hls") m.on("tooltipopen", function (e) { fill(e.tooltip.getElement(), s, c, 0, false); });
     }
     var narrow = W.innerWidth < 500;
     m.bindPopup(function () { return popHtml(s, c); }, { maxWidth: narrow ? 290 : 360, minWidth: narrow ? 240 : 260, className: "cam-pp", autoPanPaddingTopLeft: [60, 70], autoPanPaddingBottomRight: [20, 20] });
@@ -144,8 +209,14 @@
       if (node) e.popup.setContent(node);
       /* the image arrives after the pop-up opens: fit and pan again once it has its size */
       el.addEventListener("load", function () { if (e.popup.isOpen()) e.popup.update(); }, true);
-      fill(el, s, c, view, true);
+      m._camEl = el;
       clearInterval(m._camTick);
+      if (s.kind === "hls") {
+        playLive(el, s, c);
+        el.onclick = function (ev) { if (ev.target.hasAttribute("data-camref")) playLive(el, s, c); };
+        return;
+      }
+      fill(el, s, c, view, true);
       m._camTick = setInterval(function () {
         if (!e.popup.isOpen()) { clearInterval(m._camTick); return; }
         if (!document.hidden) { delete live[s.id]; fill(el, s, c, view, true, true); }
@@ -160,7 +231,7 @@
         }
       };
     });
-    m.on("popupclose", function () { clearInterval(m._camTick); });
+    m.on("popupclose", function () { clearInterval(m._camTick); stopLive(m._camEl); });
     return m;
   }
   function draw() {
@@ -215,7 +286,7 @@
       return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
         " · " + esc(s.licence) + (s.stale ? " · list not refreshed this week" : "") + "</li>";
     }).join("") + "</ul>" +
-      '<p class="pwr-m">Only cameras a government or road agency publishes itself, openly, with no account or login. Other countries have no such feed yet, need a key (South Korea), only publish video (Thailand), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
+      '<p class="pwr-m">Only cameras a government or road agency publishes itself, openly, with no account or login. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
     return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Traffic cameras</b><i>Still images from official road cameras: hover or tap a camera</i></span></label>' +
@@ -230,7 +301,7 @@
   }
   function legend() {
     if (!W.OSAP_LEGEND) return;
-    W.OSAP_LEGEND.set("cam", S.on && Object.keys(drawn).length ? '<div class="lg"><span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span>' + CAM + "</span></span><div>Traffic camera (official open data): hover or tap for the latest image</div></div>" : "");
+    W.OSAP_LEGEND.set("cam", S.on && Object.keys(drawn).length ? '<div class="lg"><span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span>' + CAM + "</span></span><div>Road camera (published by its agency): hover or tap for the latest image or live video</div></div>" : "");
   }
   function set(on) {
     if (!map) return;
