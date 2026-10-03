@@ -122,7 +122,7 @@ function main() {
      overpass-api.de, overpass.kumi.systems and overpass.private.coffee gave no answer within 60 s */
   var OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png", DEMZ = 12;
-  var MASTZ = 9, COVZ = 8, BOX = 0.25, MAX_BOXES = 30, VIEW_BOXES = 64, R_CHECK = 35000, R_BCAST = 60000;
+  var MASTZ = 9, COVZ = 5, BOX = 0.25, MAX_BOXES = 30, VIEW_BOXES = 64, R_CHECK = 35000, R_BCAST = 60000;
   var KINDS = {
     cell: { name: "Mobile phone mast", plural: "Mobile phone masts", col: "#1971c2" },
     bcast: { name: "Radio or TV broadcast tower", plural: "Radio and TV towers", col: "#9c36b5" },
@@ -383,13 +383,18 @@ function main() {
       var t = D.createElement("canvas"); t.width = t.height = 256;
       var z = co.z, cs = 256 * Math.pow(2, z - CZ), x0 = co.x * 256, y0 = co.y * 256;
       var cx0 = Math.floor(x0 / cs), cy0 = Math.floor(y0 / cs), cx1 = Math.floor((x0 + 255) / cs), cy1 = Math.floor((y0 + 255) / cs), qs = {}, a, b;
-      for (b = cy0; b <= cy1; b++) for (a = cx0; a <= cx1; a++) qs[shardOf(((a % N14) + N14) % N14, b)] = 1;
-      Promise.all(Object.keys(qs).map(function (q) { return loadShard(q).catch(function () { return []; }); })).then(function () {
-        var g = t.getContext("2d"), w = Math.max(1, cs);
-        for (b = cy0; b <= cy1; b++) for (a = cx0; a <= cx1; a++) {
-          var band = bandAt(((a % N14) + N14) % N14, b); if (band < 0) continue;
-          g.fillStyle = BCOL[band]; g.fillRect(Math.floor(a * cs - x0), Math.floor(b * cs - y0), Math.ceil(w), Math.ceil(w));
-        }
+      var SS = 1 << (CZ - SZ), NS = 1 << SZ;
+      for (b = Math.floor(cy0 / SS); b <= Math.floor(cy1 / SS); b++) for (a = Math.floor(cx0 / SS); a <= Math.floor(cx1 / SS); a++) if (b >= 0 && b < NS) qs[quadkey(((a % NS) + NS) % NS, b, SZ)] = 1;
+      Promise.all(Object.keys(qs).map(function (q) { return loadShard(q).catch(function () { return []; }); })).then(function (lists) {
+        /* draw from the shards' own cell lists: zoomed out, a tile spans up to a million cells and most are empty;
+           a cell under 2 px is drawn 2 px so measured coverage still reads at country zoom */
+        var g = t.getContext("2d"), w = Math.max(z < CZ - 6 ? 2 : 1, cs);
+        lists.forEach(function (cells) {
+          (cells || []).forEach(function (c) {
+            if (c[0] < cx0 || c[0] > cx1 || c[1] < cy0 || c[1] > cy1) return;
+            g.fillStyle = BCOL[c[2]]; g.fillRect(Math.floor(c[0] * cs - x0), Math.floor(c[1] * cs - y0), Math.ceil(w), Math.ceil(w));
+          });
+        });
         done(null, t);
       });
       return t;
@@ -473,7 +478,7 @@ function main() {
       mk.addTo(mastLayer); n++; shown.push(m);
     });
     S.drawn = n;
-    paintCounts();
+    paintCounts(); paintStatus();
   }
   function loadView() {
     if (!active()) return;
@@ -625,7 +630,30 @@ function main() {
     if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
     if (S.covErr) msg.push(S.covErr + ".");
     el.textContent = msg.join(" ");
+    var masts = S.on.cell || S.on.bcast || S.on.comm, far = z < MASTZ && masts;
+    /* the panel note sits below the fold on a phone: say it on the map, with a button that does it */
+    if (chip) chip.hidden = !far;
+    S.note = far ? "Zoom in to see towers" : z >= MASTZ && masts && S.mastBusy ? "Loading towers…" : z >= MASTZ && masts && S.mastErr ? "Towers did not load; move the map to retry" :
+      z >= MASTZ && masts ? S.drawn + (S.drawn === 1 ? " tower" : " towers") + " on the map" : "";
+    paintNote();
   }
+  /* on a phone the folded sheet shows one line under the tab name: the check's answer, else what the map shows */
+  function paintNote() {
+    var el = S.ctx && S.ctx.rail.querySelector("#com-res"); if (!el) return;
+    var r = S.result, n = r && r.v ? LV[r.v.level].t + " here" : r && r.line ? "Coverage along the line checked" : S.note;
+    if (n) el.setAttribute("data-sheet-note", n); else el.removeAttribute("data-sheet-note");
+  }
+  var chip = null;
+  var Chip = W.L && L.Layer.extend({
+    onAdd: function (map) {
+      chip = D.createElement("button"); chip.type = "button"; chip.className = "comzoom"; chip.hidden = true;
+      chip.textContent = "Zoom in to see towers";
+      L.DomEvent.disableClickPropagation(chip);
+      chip.addEventListener("click", function () { map.setView(map.getCenter(), MASTZ + 1); });
+      map.getContainer().appendChild(chip); paintStatus();
+    },
+    onRemove: function () { if (chip) chip.remove(); chip = null; }
+  });
   function paintSources() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-src"); if (!el) return;
     var c = S.cov;
@@ -658,9 +686,7 @@ function main() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-res"); if (!el) return;
     var r = S.result;
     /* on a phone the folded sheet shows the answer under the tab name */
-    if (r && r.v) el.setAttribute("data-sheet-note", LV[r.v.level].t + " here");
-    else if (r && r.line) el.setAttribute("data-sheet-note", "Coverage along the line checked");
-    else el.removeAttribute("data-sheet-note");
+    paintNote();
     if (!r) { el.innerHTML = ""; return; }
     if (r.busy) { el.innerHTML = '<p class="obs" id="com-prog">' + E(r.busy) + "</p>"; return; }
     if (r.err) { el.innerHTML = '<p class="obs">' + E(r.err) + "</p>"; return; }
@@ -773,6 +799,8 @@ function main() {
     ".comv{background:none;border:0}.comv span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
     ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
     ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}" +
+    ".comzoom{position:absolute;left:50%;top:44px;transform:translateX(-50%);z-index:800;padding:8px 14px;min-height:40px;border-radius:20px;border:1px solid var(--line,#ccc);" +
+    "background:var(--surface,#fff);color:var(--ink,#111);font:600 14px/1.2 inherit;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer}.comzoom[hidden]{display:none}" +
     ".comtipw{max-width:320px;white-space:normal}.comtipw h3,.leaflet-popup-content .comtip+p{margin:0 0 4px}.comtipw h3{font-size:13px}" +
     "table.comtip{border-collapse:collapse;font-size:12px;line-height:1.35}table.comtip th{text-align:left;font-weight:600;padding:1px 8px 1px 0;vertical-align:top;white-space:nowrap;color:var(--muted,#555)}table.comtip td{padding:1px 0;overflow-wrap:anywhere}";
   D.head.appendChild(st);
@@ -782,6 +810,7 @@ function main() {
   function show(ctx) {
     S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null;
     panes(); skeleton(); drawCov(); drawResult(); legend();
+    if (Chip) ctx.layer.addLayer(new Chip());
     if (hooked !== ctx.map) {
       ctx.map.on("moveend", onMove); hooked = ctx.map;
       if (HOVER) { var box = ctx.map.getContainer(); box.addEventListener("mousemove", onHover); box.addEventListener("mouseleave", function () { hoverOff(); }); }
@@ -789,8 +818,6 @@ function main() {
     shown = []; tip = null; tipId = "";
     covIndex().catch(function () {});
     setTimeout(loadView, 0);
-    /* the panel note can sit off screen on a phone: say it on the map too */
-    if (ctx.map.getZoom() < MASTZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to about city level to see masts and towers");
   }
   W.OSAP_COMMSTAB = { show: show, check: function (lat, lon) { S.mode = "place"; paintMode(); runPlace(lat, lon); }, line: function (pts) { runLine(pts); },
     state: function () { return { drawn: S.drawn, prov: S.prov, off: S.off, masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
