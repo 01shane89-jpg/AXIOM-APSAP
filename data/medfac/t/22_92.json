@@ -100,7 +100,7 @@
 ["n8913811029",23.0854,93.29129,"in",{"aeroway":"helipad"}],
 ["n9592063264",22.04783,92.40816,"bd",{"name":"Ruma Health Complex","amenity":"hospital","healthcare":"hospital"}],
 ["w1065472301",23.71532,92.73601,"in",{"name":"Mualpui Helipad","addr:street":"Near Rajiv Gandhi Stadium","addr:city":"Mualpui , Aizawl, Mizoram","addr:postcode":"796005","aeroway":"helipad"}],
-["w1172535241",22.9386,93.61552,"mm",{"name":"Surbung Airport","aeroway":"aerodrome","icao":"VYFS","iata":"SRU"}],
+["w1172535241",22.9386,93.61552,"mm",{"name":"Surbung Airport","aeroway":"aerodrome","icao":"VYFS","iata":"SRU","wikidata":"Q100934269"}],
 ["w1188878378",23.68053,92.72521,"in",{"name":"Trinity Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1203024686",23.63948,92.05464,"bd",{"aeroway":"helipad"}],
 ["w1203024700",23.65748,92.0091,"bd",{"aeroway":"helipad"}],

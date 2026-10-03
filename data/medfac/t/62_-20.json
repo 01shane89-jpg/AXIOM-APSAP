@@ -1,0 +1,7 @@
+[["n1042023371",63.79218,-18.0094,"is",{"name":"Kirkjubæjarklaustur","name:en":"Kirkjubæjarklaustur Airport","aeroway":"aerodrome","icao":"BIKL","wikidata":"Q132132107"}],
+["n13790892954",63.79035,-18.05287,"is",{"name":"Heilsugæslan Kirkjubæjarklaustri","amenity":"clinic","healthcare":"clinic","operator":"HSU","phone":"+354 432 2880","website":"https://island.is/s/hsu/hsu-kirkjubaejarklaustur","addr:housenumber":"13","addr:street":"Skriðuvellir","addr:city":"Kirkjubæjarklaustur","addr:postcode":"880","opening_hours":"Mo,Th 12:00-15:00; Tu,We,Fr 09:00-12:00"}],
+["n13790892956",63.42067,-19.00707,"is",{"name":"Heilsugæslan Vík í Mýrdal","amenity":"clinic","healthcare":"clinic","operator":"HSU","phone":"+354 432 2800","website":"https://island.is/s/hsu/hsu-vik-i-myrdal","addr:housenumber":"2","addr:street":"Hátún","addr:city":"Vík","addr:postcode":"870","opening_hours":"Mo-Fr 09:00-13:00"}],
+["r17808135",63.42076,-19.00643,"is",{"name":"Heilbrigðisstofnun Suðurlands","amenity":"hospital","healthcare":"hospital"}],
+["w1303068085",63.67914,-19.47979,"is",{"aeroway":"helipad"}],
+["w564049734",63.42238,-18.88789,"is",{"name":"Víkurflugvöllur","name:en":"Vík Airport","aeroway":"aerodrome","icao":"BIVI"}],
+["w564072231",63.71455,-19.88097,"is",{"name":"Múlakotsflugvöllur","name:en":"Múlakot Airport","aeroway":"aerodrome"}]]

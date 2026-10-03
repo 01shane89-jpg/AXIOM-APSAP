@@ -1,0 +1,9 @@
+[["n2777482026",48.20732,22.08917,"hu",{"emergency":"ambulance_station"}],
+["r6067523",48.20873,22.08997,"hu",{"name":"Szent Damján Görögkatolikus Kórház","amenity":"hospital","healthcare":"hospital","addr:housenumber":"26","addr:street":"Árpád utca","addr:city":"Kisvárda","addr:postcode":"4600"}],
+["w1036515273",48.40003,22.1752,"hu",{"name":"Mentőállomás","emergency":"ambulance_station","addr:city":"Záhony","addr:postcode":"4625"}],
+["w1200032732",48.04233,22.40082,"hu",{"amenity":"clinic","healthcare":"clinic"}],
+["w1260449547",48.05221,22.719,"hu",{"emergency":"ambulance_station"}],
+["w332401860",48.12894,22.30879,"hu",{"name":"Vásárosnaményi Kórház","amenity":"hospital","healthcare":"hospital","emergency":"no","operator":"Szabolcs-Szatmár-Bereg Megyei Kórházak és Egyetemi Oktatókórház","phone":"+36 45 570 770","website":"https://szszbmk.hu/fehergyarmat","addr:housenumber":"5","addr:street":"Ady Endre utca","addr:city":"Vásárosnamény","addr:postcode":"4800"}],
+["w609312349",48.21967,22.07964,"hu",{"name":"Egészségügyi Alapellátás","amenity":"clinic","healthcare":"clinic","addr:housenumber":"5","addr:street":"Szent György tér","addr:city":"Kisvárda","addr:postcode":"4600"}],
+["w609312351",48.20642,22.08992,"hu",{"name":"Mentőállomás","emergency":"ambulance_station","addr:street":"Árpád utca","addr:city":"Kisvárda","addr:postcode":"4600"}],
+["w904172510",48.12363,22.31829,"hu",{"name":"Mentőállomás","emergency":"ambulance_station","addr:housenumber":"52","addr:street":"Jókai út","addr:city":"Vásárosnamény","addr:postcode":"4800"}]]

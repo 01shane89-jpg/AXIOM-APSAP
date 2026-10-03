@@ -1,0 +1,6 @@
+[["n11057420705",5.24255,-57.29597,"gy",{"name":"SIPARUTA Village","amenity":"clinic"}],
+["n5290650447",5.89114,-57.13717,"gy",{"name":"Skeldon Health Centre","amenity":"clinic","healthcare":"clinic"}],
+["n9091312969",5.87774,-57.14137,"gy",{"name":"Skeldon Public Hospital","amenity":"hospital","healthcare":"hospital","addr:housenumber":"3392211","addr:street":"Public Road","opening_hours":"24/7"}],
+["n969529650",5.97554,-57.15019,"gy",{"name":"No. 64 Health Center","amenity":"hospital"}],
+["w1463599348",5.85951,-57.14895,"gy",{"name":"Skeldon Airport","addr:street":"Airport Road","aeroway":"aerodrome","icao":"SYSK","iata":"SKM"}],
+["w1463763336",5.56834,-57.77524,"gy",{"name":"Ebini Airport","aeroway":"aerodrome","icao":"SYEB","wikidata":"Q17363866"}]]

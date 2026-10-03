@@ -1,0 +1,9 @@
+[["n10712356709",37.14867,42.68066,"iq",{"name":"blood bank","healthcare":"blood_donation","healthcare:speciality":"bank"}],
+["n11585032608",33.42314,43.29733,"iq",{"name":"مصرف الدم","healthcare":"blood_donation"}],
+["n11754124158",32.04189,44.363,"iq",{"name":"مصرف الدم الرئيسي","healthcare":"blood_donation"}],
+["n4738155122",36.18854,44.03777,"iq",{"name":"بانکی خوێن","name:en":"Blood Bank","healthcare":"blood_donation","addr:district":"شارۆچکەی ناوەندیی هەولێر","addr:city":"هەولێر","addr:province":"پارێزگای هەولێر","addr:postcode":"44001"}],
+["n7812957055",33.74658,44.61915,"iq",{"name":"بنك الدم العام - مركز فحص الدم","healthcare":"blood_donation"}],
+["n8913103113",33.3088,44.28566,"iq",{"name:en":"Baghdad Blood Bank Institute","healthcare":"blood_bank"}],
+["n8922032788",36.33328,43.13329,"iq",{"name:en":"MOSUL BLOOD BANK","healthcare":"blood_bank"}],
+["w404448196",30.49379,47.80795,"iq",{"name":"مصرف الدم في البصرة","name:en":"Blood Bank in Basra","healthcare":"blood_donation","healthcare:speciality":"blood_bank","addr:city":"البصرة"}],
+["w997075154",33.34763,44.37711,"iq",{"name":"مصرف الدم","name:en":"Blood Bank","amenity":"clinic","healthcare":"blood_donation"}]]

@@ -89,10 +89,10 @@
     } catch (e) {}
     var seen = {}; return L.filter(function (u) { if (seen[u]) return false; seen[u] = 1; return true; });
   }
-  /* the stored hospital copy for this country, from its index (assets/osap-medplan.js reads the same files) */
+  /* the stored hospital copy for this country, from its index, with its blood, chamber and air rescue file (assets/osap-medplan.js reads the same files) */
   function medFiles(c) {
     return fetch("data/medfac/index.json", { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-      var x = j && j.countries && j.countries[c]; return x && x.tiles ? x.tiles.map(function (t) { return "data/medfac/t/" + t + ".json"; }) : [];
+      var x = j && j.countries && j.countries[c]; return (x && x.tiles ? x.tiles.map(function (t) { return "data/medfac/t/" + t + ".json"; }) : []).concat(x && x.x ? ["data/medfac/x/" + c + ".json"] : []);
     }).catch(function () { return []; });
   }
   /* files only this country uses (deleting the country removes them; shared files stay) */
@@ -194,7 +194,7 @@
       return pool(urls, function (u) { return tc.delete(u); }, function () {});
     }).then(function () {
       return caches.open(DATA).then(function (dc) {
-        return Promise.all(files.filter(function (u) { return !keepF[u] && (own(u, c) || /^data\/medfac\/t\//.test(u)); }).map(function (u) { return dc.delete(abs(u)); }));
+        return Promise.all(files.filter(function (u) { return !keepF[u] && (own(u, c) || /^data\/medfac\/[tx]\//.test(u)); }).map(function (u) { return dc.delete(abs(u)); }));
       });
     }).then(function () {
       var r2 = get(), p2 = r2.packs[c]; if (!p2) return;

@@ -1,1 +1,9 @@
-[["n1042145852",55.50895,7.87492,"dk",{"name":"Horns Rev A Helideck","operator":"Energinet.dk","aeroway":"helipad","wikidata":"Q134776169"}]]
+[["n1042145852",55.50895,7.87492,"dk",{"name":"Horns Rev A Helideck","operator":"Energinet.dk","aeroway":"helipad","wikidata":"Q134776169"}],
+["n1576588342",54.18635,7.91398,"de",{"aeroway":"helipad"}],
+["n2877781333",54.18082,7.89059,"de",{"name":"Deutsches Rotes Kreuz","emergency":"ambulance_station","contact:phone":"+49 4725 765","opening_hours":"May-Sep 11:00-16:30"}],
+["n5909505712",54.1757,7.88914,"de",{"name":"Such- und Rettungsdienst Helgoland","name:en":"Search and Rescue Station Helgoland","emergency":"air_rescue_service","operator":"Marine","wikidata":"Q113469206","opening_hours":"24/7"}],
+["w1273793023",54.18151,7.88304,"de",{"name":"Rettungswache Helgoland","emergency":"ambulance_station","operator":"Rettungsdienst-Kooperation in Schleswig-Holstein","website":"https://www.rkish.de/unsere-wachen/unsere-wachen-details/rettungswache-helgoland.html","addr:housenumber":"733","addr:street":"Leuchtturmstraße","addr:city":"Helgoland","addr:postcode":"27498"}],
+["w160468733",54.18546,7.91487,"de",{"name":"Flugplatz Helgoland-Düne","operator":"Helgoland AirService GmbH","phone":"+49 4725 311","website":"https://www.flugplatz-helgoland.de/","aeroway":"aerodrome","icao":"EDXH","iata":"HGL","aerodrome:type":"regional","wikidata":"Q20739","opening_hours":"Mo-Su 08:20-12:00,14:20-18:30"}],
+["w272420297",54.17537,7.88979,"de",{"name":"Marinefliegergeschwader 5 - SAR Helgoland","operator":"Marinefliegergeschwader 5 Nordholz","aeroway":"heliport","military":"airfield"}],
+["w308896759",54.17532,7.89,"de",{"aeroway":"helipad"}],
+["w826516551",54.17868,7.88652,"de",{"name":"Nordseeklinik Helgoland","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Park-Hospital GmbH","contact:phone":"+49 4725 8030","website":"https://www.nordseeklinik-helgoland.de","addr:housenumber":"1040","addr:street":"Invasorenpfad","addr:city":"Helgoland","addr:postcode":"27498","wikidata":"Q61786518","opening_hours":"24/7"}]]

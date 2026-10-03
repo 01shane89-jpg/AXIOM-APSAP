@@ -1,0 +1,5 @@
+[["n12396327896",25.58947,59.418,"ir",{"name":"درمانگاه","amenity":"clinic","healthcare":"clinic"}],
+["n6371194080",25.48105,59.48161,"ir",{"name":"پایگاه اورژانس ۱۱۵","emergency":"ambulance_station"}],
+["n6598257565",25.74366,59.21153,"ir",{"name":"خانه بهداشت","amenity":"hospital","healthcare":"hospital"}],
+["w287980279",25.40767,59.08814,"ir",{"aeroway":"helipad"}],
+["w783305425",25.74366,59.21157,"ir",{"name":"خانه بهداشت","amenity":"clinic","healthcare":"clinic","emergency":"no","addr:street":"معبر محله گنجک","addr:city":"گنجک"}]]

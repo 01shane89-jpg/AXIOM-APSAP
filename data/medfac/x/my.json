@@ -1,0 +1,5 @@
+[["n12696201364",6.12517,102.24415,"my",{"name":"Pusat Derma Darah","healthcare":"blood_donation","operator":"Hospital Raja Perempuan Zainab II"}],
+["n1610799506",5.36384,100.46252,"my",{"name":"BP Healthcare","name:en":"BP Healthcare","healthcare":"blood_donation"}],
+["n9391726776",5.41763,100.32035,"my",{"name":"Hyperbaric Clinic","name:en":"Hyperbaric Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"wound_care;healing","website":"https://hyperbaric.com.my/"}],
+["r16814633",3.13852,101.55106,"my",{"name":"Pangkalan Udara Wilayah Tengah","amenity":"emergency_service","emergency":"air_rescue_service","operator":"Jabatan Bomba dan Penyelamat Malaysia"}],
+["w1265535538",4.37406,114.0003,"my",{"name":"Tabung Darah Hospital Miri","healthcare":"blood_donation","operator":"Miri Hospital","phone":"085-416 657","website":"https://www.facebook.com/tabungdarahhospitalmiri/"}]]

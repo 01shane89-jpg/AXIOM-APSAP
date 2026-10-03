@@ -1,0 +1,9 @@
+[["n14063494107",60.30101,19.13191,"fi",{"aeroway":"helipad"}],
+["n5149935169",60.09816,19.93668,"fi",{"name":"Cityläkarna","amenity":"clinic","healthcare":"clinic","phone":"+358 18 22700","website":"https://www.citylakarna.ax/","addr:housenumber":"17","addr:street":"Norragatan","addr:city":"Mariehamn"}],
+["w1082998542",60.42026,19.91534,"fi",{"aeroway":"helipad"}],
+["w1254970951",60.11442,19.91251,"fi",{"amenity":"hospital","healthcare":"hospital","addr:street":"Lövuddsvägen"}],
+["w1463723241",60.12172,19.89783,"fi",{"name":"Mariehamns flyplats","name:en":"Mariehamn Airport","operator":"Finavia","operator:type":"public","website":"https://www.finavia.fi/en/airports/mariehamn","addr:housenumber":"67","addr:street":"Flygfältsvägen","addr:city":"Mariehamn","addr:postcode":"22120","aeroway":"aerodrome","icao":"EFMA","iata":"MHQ","aerodrome:type":"regional","wikidata":"Q1031590"}],
+["w150519688",60.1143,19.91275,"fi",{"name":"Medimar","amenity":"clinic","healthcare":"clinic","emergency":"no","contact:phone":"+358 18 14404","contact:website":"http://www.medimar.ax","addr:housenumber":"4","addr:street":"Lövuddsvägen","addr:city":"Mariehamn","addr:postcode":"22120"}],
+["w160393202",60.11473,19.93292,"fi",{"aeroway":"helipad"}],
+["w360782167",60.11571,19.93235,"fi",{"name":"Ålands centralsjukhus","name:en":"Åland central hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Ålands hälso- och sjukvård","operator:type":"public","phone":"+358185355","website":"https://www.ahs.ax/","wikidata":"Q49293259"}],
+["w451897068",60.15968,19.94613,"fi",{"name":"Rönngården","amenity":"clinic","healthcare":"clinic"}]]

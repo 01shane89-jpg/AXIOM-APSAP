@@ -1,0 +1,5 @@
+[["n10924080985",66.12971,-18.93251,"is",{"name":"Viking Heliskiing","aeroway":"helipad"}],
+["n3064216321",66.1557,-18.90894,"is",{"name":"Heilsugæsla","amenity":"clinic"}],
+["n3075924550",66.15565,-18.9093,"is",{"name":"Heilbrigðisstofnunin Fjallabyggð","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w195808921",66.1373,-18.90987,"is",{"name":"Siglufjarðarflugvöllur","name:en":"Siglufjörður Airport","aeroway":"aerodrome","icao":"BISI","iata":"SIJ","wikidata":"Q2875922"}],
+["w564067476",66.54641,-18.01703,"is",{"name":"Grímseyjarflugvöllur","name:en":"Grímsey Airport","operator":"ISAVIA","aeroway":"aerodrome","icao":"BIGR","iata":"GRY","aerodrome:type":"regional","wikidata":"Q2875830"}]]

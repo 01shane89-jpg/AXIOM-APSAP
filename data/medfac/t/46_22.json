@@ -1,0 +1,9 @@
+[["n3251419494",47.83669,22.13558,"hu",{"name":"mentők","amenity":"hospital"}],
+["n4067214590",47.99584,22.51254,"hu",{"name":"Mentőállomás","emergency":"ambulance_station"}],
+["n9233854541",47.99197,22.51076,"hu",{"amenity":"clinic","healthcare":"clinic"}],
+["r10115652",47.83635,22.67878,"hu",{"name":"Járóbeteg Szakellátó Központ","amenity":"clinic","healthcare":"clinic","addr:housenumber":"20","addr:street":"Ady Endre út","addr:city":"Csenger","addr:postcode":"4765"}],
+["w163379715",47.95518,22.3161,"hu",{"name":"Szabolcs-Szatmár-Bereg Megyei Kórházak Mátészalkai Kórház","amenity":"hospital","healthcare":"hospital"}],
+["w182726894",47.83588,22.67973,"hu",{"name":"Mentőállomás","emergency":"ambulance_station"}],
+["w409119542",47.95471,22.31822,"hu",{"name":"Mentőállomás","emergency":"ambulance_station"}],
+["w505257715",47.99511,22.51339,"hu",{"name":"Fehérgyarmati Kórház és Gyógyfürdő","amenity":"hospital","contact:phone":"+36 44 511 111","contact:website":"http://www.szszbmk.hu/","addr:housenumber":"1","addr:street":"Damjanich utca","addr:city":"Fehérgyarmat","addr:postcode":"4900"}],
+["w549279380",47.9973,22.07638,"hu",{"name":"Egészségügyi Központ","amenity":"clinic","healthcare":"clinic"}]]

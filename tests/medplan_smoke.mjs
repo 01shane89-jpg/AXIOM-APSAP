@@ -116,7 +116,9 @@ function meteo() {
 /* OSAP's stored copy (data/medfac) for the fixture: every element in one 2-degree tile, the countries in reach listed as built */
 const MF_ROWS = OSM.elements.map((e) => [e.type.charAt(0) + e.id, e.lat ?? e.center.lat, e.lon ?? e.center.lon, "th", e.tags]);
 const MF_ALL = ["th", "kh", "la", "mm", "vn", "my"];
-const mfIndex = (ccs) => ({ v: 1, tile: 2, countries: Object.fromEntries(ccs.map((c) => [c, { at: "2026-09-30T02:00:00Z", n: {}, tiles: ["12_100"] }])), tiles: { "12_100": MF_ROWS.length } });
+const mfIndex = (ccs, xs) => ({ v: 1, tile: 2, countries: Object.fromEntries(ccs.map((c) => [c, Object.assign({ at: "2026-09-30T02:00:00Z", n: {}, tiles: ["12_100"] }, (xs || []).includes(c) ? { x: { b: 2, d: 1, r: 1 } } : {})])), tiles: { "12_100": MF_ROWS.length } });
+/* the stored blood services, chamber and air rescue base (data/medfac/x/th.json): the live extras answer without the embassy */
+const MFX_TH = OSMX.elements.filter((e) => !e.tags.country).map((e) => [e.type.charAt(0) + e.id, e.lat, e.lon, "th", e.tags]);
 async function open(opts, o) {
   o = typeof o === "object" ? o : { overpassFails: !!o };
   const overpassFails = o.overpassFails;
@@ -126,8 +128,9 @@ async function open(opts, o) {
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     if (/overpass|interpreter/.test(u)) {
-      const x = /air_rescue_service/.test(decodeURIComponent(r.request().postData() || ""));
-      if (x) { calls.overpassX++; return J(r, OSMX); }
+      const q = decodeURIComponent(r.request().postData() || ""), x = /air_rescue_service/.test(q);
+      if (x) { calls.overpassX++; return o.xFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSMX); }
+      if (/"country"="US"/.test(q)) { calls.overpassP = (calls.overpassP || 0) + 1; return J(r, { elements: OSMX.elements.filter((e) => e.tags.country) }); }
       calls.overpass++; return overpassFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSM);
     }
     if (/\/table\/v1\//.test(u)) { calls.osrm++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrm(u)); }
@@ -144,7 +147,9 @@ async function open(opts, o) {
     calls.medfac++;
     const u = r.request().url();
     if (!o.medfac) return r.fulfill({ status: 404, body: "" });
-    if (/index\.json/.test(u)) return J(r, mfIndex(o.medfac));
+    if (/index\.json/.test(u)) return J(r, mfIndex(o.medfac, o.medfacX));
+    const xm = /\/x\/([a-z]{2})\.json/.exec(u);
+    if (xm) { calls.medfacX = (calls.medfacX || 0) + 1; return (o.medfacX || []).includes(xm[1]) ? J(r, xm[1] === "th" ? MFX_TH : []) : r.fulfill({ status: 404, body: "" }); }
     if (/t\/12_100\.json/.test(u)) return J(r, MF_ROWS);
     return r.fulfill({ status: 404, body: "" });
   });
@@ -562,6 +567,31 @@ async function openPlan(p) {
   const cn = await p.evaluate(() => [window.OSAP_MEDPLAN._ccNear([15.89442, 100.11841], 150000).map((c) => c.id), window.OSAP_MEDPLAN._ccNear([18.8, 100.8], 150000).map((c) => c.id)]);
   ok(cn[0].includes("th") && !cn[0].includes("la") && cn[1].includes("la"), "stored, partly: countries in reach follow their borders, not bounding boxes (Nakhon Sawan " + cn[0] + "; Nan " + cn[1] + ")");
   ok(!errors.length, "stored, partly: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- blood banks, chambers and air rescue from OSAP's stored copy (Shane 2026-10-03: "could not be looked up", Overpass timed out) ----------
+{
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { xFails: true, medfac: MF_ALL, medfacX: MF_ALL });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await medBtn(p);
+  await p.waitForFunction(() => /Test National Blood Centre/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
+  const f = await p.textContent("#mp-fac"), bl = f.slice(f.indexOf("Nearest blood bank")), mev = await p.textContent("#mp-mev");
+  ok(/Test National Blood Centre/.test(bl) && /Test Donation Room/.test(bl) && /Test Hyperbaric Centre/.test(bl) && /Test Air Rescue/.test(mev) && !/could not be looked up|could not be read/.test(f + mev), "stored extras: blood services, the chamber and the air rescue base come from the stored copy while live Overpass is down " + bl.slice(0, 300));
+  ok(/From OSAP's stored copy of OpenStreetMap \(2026-09-30\)/.test(bl), "stored extras: says they come from the stored copy, with its date");
+  ok(calls.overpassX === 0 && calls.medfacX >= 1, "stored extras: no live extras request when the copy covers every country within 500 km " + JSON.stringify(calls));
+  ok(!errors.length, "stored extras: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  /* only Thailand's extras are stored and the live check fails: Thailand's are listed, the countries missing are named */
+  const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { xFails: true, medfac: MF_ALL, medfacX: ["th"] });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await medBtn(p);
+  await p.waitForFunction(() => /does not yet cover/.test((document.getElementById("mp-fac") || {}).textContent || ""), null, { timeout: 60000 }).catch(() => {});
+  const f = await p.textContent("#mp-fac"), bl = f.slice(f.indexOf("Nearest blood bank"));
+  ok(/Test National Blood Centre/.test(bl) && /Test Hyperbaric Centre/.test(bl) && /stored copy does not yet cover [A-Z][a-z]+.* and the live OpenStreetMap check failed/.test(bl) && !/could not be looked up/.test(bl), "stored extras, partly: lists what is stored and names the countries not yet stored " + bl.slice(0, 500));
+  ok(calls.overpassX >= 1, "stored extras, partly: Overpass is asked for the rest " + JSON.stringify(calls));
+  ok(!errors.length, "stored extras, partly: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- print view on an iPhone-sized screen: the plan is one long page the phone prints in full ----------

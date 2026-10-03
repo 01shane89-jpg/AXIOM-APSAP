@@ -1,1 +1,16 @@
-[["w992135332",30.97278,61.86568,"af",{"name":"فرودگاه زرنج","name:en":"Zaranj Airport","aeroway":"aerodrome","icao":"OAZJ","iata":"ZAJ"}]]
+[["n12135934651",31.03074,61.49145,"ir",{"name":"فروشگاه کالای پزشکی نوین طب","amenity":"clinic","healthcare":"clinic","addr:street":"خیابان بعثت","addr:city":"زابل"}],
+["n5092188359",31.53856,60.03951,"ir",{"name":"ساختمان پزشکان","amenity":"clinic","healthcare":"clinic"}],
+["n6905988001",31.02498,61.49407,"ir",{"name":"بیمارستان خیریه الزهرا","amenity":"hospital","healthcare":"hospital"}],
+["n7299827355",31.03761,61.49641,"ir",{"name":"کلینیک سید الشهدا","amenity":"clinic","healthcare":"clinic"}],
+["n8638450183",30.40458,61.1552,"ir",{"name":"اورژانس ۱۱۵","emergency":"ambulance_station"}],
+["n8778891978",31.01886,61.50147,"ir",{"name":"کلینیک علی اصغر","amenity":"clinic","healthcare":"clinic"}],
+["r18636393",30.98727,61.48813,"ir",{"name":"بیمارستان علی ابن ابی طالب","amenity":"hospital"}],
+["w1008395885",31.13841,61.79817,"ir",{"name":"بیمارستان شهدا هیرمند","amenity":"hospital","healthcare":"hospital"}],
+["w114982723",31.54644,60.04029,"ir",{"name":"بیمارستان آتشدست","amenity":"hospital","healthcare":"hospital"}],
+["w118874884",31.09738,61.54426,"ir",{"name":"فرودگاه زابل","name:en":"Zabol Airport","website":"http://zabol.airport.ir/","aeroway":"aerodrome","icao":"OIZB","iata":"ACZ","aerodrome:type":"regional","wikidata":"Q964336"}],
+["w1237490004",30.98737,61.48687,"ir",{"aeroway":"helipad"}],
+["w402089222",30.23105,60.131,"ir",{"aeroway":"helipad"}],
+["w402089223",30.23049,60.13133,"ir",{"aeroway":"helipad"}],
+["w523721161",31.54796,60.04631,"ir",{"emergency":"ambulance_station"}],
+["w593370472",30.88843,61.68308,"ir",{"name":"بیمارستان زهک","amenity":"hospital"}],
+["w992135332",30.97278,61.86568,"af",{"name":"فرودگاه زرنج","name:en":"Zaranj Airport","aeroway":"aerodrome","icao":"OAZJ","iata":"ZAJ"}]]

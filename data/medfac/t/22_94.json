@@ -210,7 +210,7 @@
 ["w1544692122",22.1394,94.11875,"mm",{"amenity":"hospital"}],
 ["w293181209",22.09674,94.33179,"mm",{"aeroway":"helipad"}],
 ["w293181228",22.09757,94.33187,"mm",{"aeroway":"helipad"}],
-["w410092980",23.18898,94.0491,"mm",{"name":"ကလေးမြို့ လေဆိပ်","name:en":"Kalaymyo Airport","aeroway":"aerodrome","icao":"VYKL","iata":"KMV"}],
+["w410092980",23.18898,94.0491,"mm",{"name":"ကလေးမြို့ လေဆိပ်","name:en":"Kalaymyo Airport","aeroway":"aerodrome","icao":"VYKL","iata":"KMV","wikidata":"Q1321678"}],
 ["w437467863",23.20125,95.54385,"mm",{"aeroway":"helipad"}],
 ["w437467864",23.20186,95.54361,"mm",{"aeroway":"helipad"}],
 ["w437467865",23.20169,95.54427,"mm",{"aeroway":"helipad"}],
