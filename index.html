@@ -647,6 +647,10 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areah.areah-c{border-radius:4px;cursor:nwse-resize}
 .areadel{border-radius:50%;background:#c92a2a;color:#fff;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
 #map.area-drawing .areadel{display:none}
+.areasz{width:0!important;height:0!important;display:flex;justify-content:center;align-items:flex-start;pointer-events:none!important}
+.areasz span{flex:none;white-space:nowrap;margin-top:16px;padding:3px 8px;border-radius:4px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.35);font:600 12px/1.25 system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+#map.area-drawing .areasz{display:none}
+.areahsz{display:block;font-weight:600;color:var(--ink);margin-top:2px}.areahsz:empty{display:none}
 #map.area-drawing .dshint,#map.area-editing .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
@@ -6580,7 +6584,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function areaHas(lat, lon) { return !AREA || inPoly(lat, lon, AREA); }
   function areaShow() {
     if (areaLayer) { map.removeLayer(areaLayer); areaLayer = null; }
-    if (!AREA) { areaDelMark(); return; }
+    if (!AREA) { areaDelMark(); areaSzMark(); return; }
     var world = [[-89.9, -539], [89.9, -539], [89.9, 539], [-89.9, 539]];
     areaLayer = L.layerGroup([
       L.polygon([world, AREA], { pane: "areapane", renderer: areaSvg, stroke: false, fillColor: "#0b1a26", fillOpacity: 0.28, interactive: false }),
@@ -6589,7 +6593,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       L.polygon(AREA, { pane: "areapane", renderer: areaSvg, color: stLine(), weight: stW(), fill: false, interactive: false })
     ]).addTo(map);
     areaLayer.__world = world;
-    areaDelMark();
+    areaDelMark(); areaSzMark();
   }
   /* a round delete button on the shape's top-right corner, always there while the area is shown: one tap deletes it (Undo follows) */
   var areaDelM = null;
@@ -6600,6 +6604,41 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     areaDelM = L.marker([la, lo], { pane: "areapane", icon: L.divIcon({ className: "areadel", html: "\u2715", iconSize: [28, 28], iconAnchor: [14, 14] }), keyboard: false, interactive: true, zIndexOffset: 900 }).addTo(map);
     var el = areaDelM.getElement(); el.setAttribute("role", "button"); el.setAttribute("aria-label", "Delete this shape"); el.title = "Delete this shape";
   }
+  /* the drawn shape's size on the ground, in the distance unit Measure and Settings use (osap-meas-unit): a circle gives its
+     radius and diameter, a square its two sides, any other shape the distance round its edge; every shape gives its area.
+     Distances and area come from assets/osap-geo.js (WGS 84 ellipsoid), not from the flat map */
+  function areaUnit() { var m = null; try { m = window.OSAP_MEASURE && window.OSAP_MEASURE.prefs && window.OSAP_MEASURE.prefs(); } catch (e) {} return m && m.unit || "km"; }
+  function areaSize(P, kind) {
+    var G = window.OSAP_GEO; if (!G || !P || P.length < 3) return null;
+    var u = areaUnit(), d = function (m) { return G.fmtDist(m, u); }, a = G.fmtArea(G.area(P), u), n = P.length, i, s = 0;
+    if (kind === "circle" && n >= 8 && n % 2 === 0) {
+      /* the circle is a ring of points: the diameter is the mean distance across to the opposite point */
+      for (i = 0; i < n / 2; i++) s += G.dist(P[i], P[i + n / 2]);
+      s /= n / 2;
+      return { short: "Radius " + d(s / 2) + " \u00b7 " + a, long: "Radius " + d(s / 2) + " \u00b7 diameter " + d(s) + " \u00b7 area " + a };
+    }
+    if (kind === "rect" && n === 4) {
+      var w = G.dist(P[0], P[1]), h = G.dist(P[1], P[2]);
+      return { short: d(w) + " \u00d7 " + d(h) + " \u00b7 " + a, long: d(w) + " \u00d7 " + d(h) + " \u00b7 area " + a };
+    }
+    for (i = 0; i < n; i++) s += G.dist(P[i], P[(i + 1) % n]);
+    return { short: d(s) + " round \u00b7 " + a, long: "Perimeter " + d(s) + " \u00b7 area " + a };
+  }
+  /* a size label just under the shape's lowest point, always there while the area is shown; it takes no taps */
+  var areaSzM = null;
+  function areaSzMark(P) {
+    P = P || AREA;
+    var z = P && !areaDraw ? areaSize(P, AREA_ST.kind) : null;
+    if (!z) { if (areaSzM) { map.removeLayer(areaSzM); areaSzM = null; } return; }
+    var la = 90, mn = 540, mx = -540; P.forEach(function (q) { if (q[0] < la) la = q[0]; if (q[1] < mn) mn = q[1]; if (q[1] > mx) mx = q[1]; });
+    var ll = [la, (mn + mx) / 2], h = '<span title="Size of the drawn shape (unit as set in Measure)">' + esc(z.short) + "</span>";
+    if (!areaSzM) areaSzM = L.marker(ll, { pane: "areapane", icon: L.divIcon({ className: "areasz", html: h, iconSize: null }), keyboard: false, interactive: false, zIndexOffset: 800 }).addTo(map);
+    else { areaSzM.setLatLng(ll); var el = areaSzM.getElement(); if (el) el.innerHTML = h; }
+    var hs = areaEl && areaEl.querySelector(".areahsz"); if (hs && areaEdit) hs.textContent = z.long;
+  }
+  /* Measure and Settings announce a unit change; the page's geodesy loads after this script, so look again once it has */
+  window.addEventListener("osap-meas-unit", function () { areaSzMark(); });
+  window.addEventListener("load", function () { areaSzMark(); });
   /* delete the drawn shape; osap-aoi.js also removes a saved NAI/TAI of the same shape and offers Undo */
   function areaDelete() { editEnd(); areaEl.classList.remove("open"); if (window.OSAP_AOI && window.OSAP_AOI.deleteShape) window.OSAP_AOI.deleteShape(); else areaSet(null); }
   /* while a shape is being resized, turned or moved: move the drawn outline without rebuilding it */
@@ -6607,6 +6646,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaLayer) return;
     var ls = areaLayer.getLayers();
     ls[0].setLatLngs([areaLayer.__world, P]); ls[1].setLatLngs(P); ls[2].setLatLngs(P);
+    areaSzMark(P);
   }
   /* hide map items outside the area: canvas markers go transparent and stop taking taps; icon markers are hidden */
   function areaMarkers() {
@@ -6660,11 +6700,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function drawShow() {
     var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
     areaDraw.line.setLatLngs(E); areaDraw.halo.setLatLngs(E); areaDraw.fill.setLatLngs(P.length >= 3 ? P : []);
+    /* lasso and polygon: the size so far, as if closed now, under the instructions */
+    var hs = !S && areaEl.querySelector(".areahsz"), z = hs && P.length >= 3 ? areaSize(P, "") : null;
+    if (hs) hs.textContent = z ? z.long : "";
   }
   /* circle and square: the shape from the press point to where the finger or mouse is now */
   var SHAPE_N = 64;
-  function kmTxt(m) { var k = m / 1000; return (k < 10 ? k.toFixed(2) : k < 100 ? k.toFixed(1) : Math.round(k)) + " km"; }
-  function nmTxt(m) { var n = m / 1852; return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.round(n)) + " nm"; }
   function circlePts(c, r) {
     /* true distance on the earth's surface: each point is r metres from the centre (great-circle destination) */
     var R = 6371008.8, d = r / R, la = c[0] * Math.PI / 180, lo = c[1] * Math.PI / 180, P = [];
@@ -6683,13 +6724,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       areaDraw.pts = r > 0 ? circlePts(a, r) : [];
       L.polyline([a, b], { pane: "areapane", renderer: areaSvg, color: tok("--accent"), weight: 2, dashArray: "5 5", interactive: false }).addTo(areaDraw.dots);
       L.circleMarker(a, { pane: "areapane", renderer: areaSvg, radius: 5, color: tok("--accent"), weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(areaDraw.dots);
-      t = "Radius " + kmTxt(r) + " (" + nmTxt(r) + ")";
-    } else {
-      areaDraw.pts = [a, [a[0], b[1]], b, [b[0], a[1]]];
-      var w = map.distance([(a[0] + b[0]) / 2, a[1]], [(a[0] + b[0]) / 2, b[1]]), h = map.distance([a[0], a[1]], [b[0], a[1]]);
-      t = kmTxt(w) + " × " + kmTxt(h);
-    }
-    if (hint) hint.textContent = t;
+    } else areaDraw.pts = [a, [a[0], b[1]], b, [b[0], a[1]]];
+    t = areaSize(areaDraw.pts, areaDraw.mode);
+    if (hint && t) hint.textContent = t.long;
     drawShow();
   }
   function evLL(e) { var ll = map.mouseEventToLatLng(e); return [ll.lat, ll.lng]; }
@@ -6829,7 +6866,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!areaEl) return;
     var h;
     areaEl.classList.toggle("editing", !!areaEdit);
-    if (areaEdit) h = '<span class="areahint">Drag a corner to resize, \u21bb to turn, \u2725 to move</span>' +
+    if (areaEdit) h = '<span class="areahint">Drag a corner to resize, \u21bb to turn, \u2725 to move<b class="areahsz">' + esc((areaSize(AREA, AREA_ST.kind) || {}).long || "") + "</b></span>" +
       (areaEdit.look ? '<label class="areast">Fill <input type="color" data-ast="fill" value="' + hexOf(stFill()) + '"></label>' +
       '<label class="areast">Outline <input type="color" data-ast="line" value="' + hexOf(stLine()) + '"></label>' +
       '<label class="areast areaop">Fill opacity <input type="range" min="0" max="80" step="1" data-ast="op" value="' + Math.round(AREA_ST.op * 100) + '"><output>' + Math.round(AREA_ST.op * 100) + '%</output></label>' +
@@ -6837,7 +6874,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<button type="button" data-area="reset" class="areawide" title="Back to the standard look">Reset look</button>' : "") +
       '<button type="button" data-area="save" title="Save it with a name (as an NAI or TAI); saved areas stay on the map">Save</button><button type="button" data-area="clear" title="Remove the drawn shape">Delete</button>' +
       '<button type="button" data-area="look" aria-expanded="' + !!areaEdit.look + '" title="Fill colour, fill opacity, outline colour and width">Style</button><button type="button" data-area="done">Done</button>';
-    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + "</span>" +
+    else if (areaDraw) h = '<span class="areahint">' + ({ lasso: "Hold and draw round the area", circle: "Press the centre and drag out to the edge", rect: "Press one corner and drag to the opposite corner" }[areaDraw.mode] || "Tap each corner, then tap the first corner or Finish") + '<b class="areahsz"></b></span>' +
       (areaDraw.mode === "poly" ? '<button type="button" data-area="finish"' + (areaDraw.pts.length < 3 ? " disabled" : "") + ">Finish</button>" : "") + '<button type="button" data-area="cancel">Cancel</button>';
     else if (areaEl.classList.contains("open")) h = '<button type="button" data-area="lasso">Lasso</button><button type="button" data-area="poly">Polygon</button>' +
       '<button type="button" data-area="circle">Circle</button><button type="button" data-area="rect">Square</button>' +
@@ -8077,7 +8114,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     } };
   /* what the area summary (assets/osap-areasum.js) reads; it never writes back. setArea is for the saved NAI/TAI areas
      (assets/osap-aoi.js): "Use as map filter" makes a saved shape the drawn area, as drawing it again would */
-  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine(), w: AREA_ST.w }; }, zoomW: zoomW, setArea: function (P) { areaSet(P, ""); }, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
+  window.TSAP.areaApi = { area: function () { return AREA; }, style: function () { return { kind: AREA_ST.kind, rot: AREA_ST.rot, fill: stFill(), op: AREA_ST.op, line: stLine(), w: AREA_ST.w }; }, zoomW: zoomW, setArea: function (P) { areaSet(P, ""); }, size: areaSize, inPoly: inPoly, inPeriod: inPeriod, inPeriodDate: inPeriodDate, periodLabel: periodLabel,
     records: function () { return R; }, neighbours: function () { return XR; }, fmtTs: fmtTs, xbHref: xbHref, select: select, fingerprint: fingerprint,
     fingerprints: function () { return FP; }, layerName: function (l) { return LBY[l] ? LBY[l].name : l || ""; }, status: function (r) { return (STATE[r.type] || [r.type || ""])[0]; },
     countryName: function (c) { return flagOf(c) + " " + cName(c); },
