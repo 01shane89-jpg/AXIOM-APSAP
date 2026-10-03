@@ -138,6 +138,30 @@ async function open(opts, ctxIn) {
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- a full browser store (Safari keeps about 5 MB per site) ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } });
+  /* fill this site's store: neighbour-report caches first, then plain filler until nothing more fits */
+  const fill = (xrecs) => p.evaluate((xrecs) => {
+    const big = "x".repeat(256 * 1024); let i = 0;
+    for (; i < 400; i++) { try { localStorage.setItem((xrecs && i < 6 ? "asap-xrecs-z" : "fill-") + i, big); } catch (e) { break; } }
+    let small = "x".repeat(4096); for (let j = 0; j < 4000; j++) { try { localStorage.setItem("fill-s" + j, small); } catch (e) { if (small.length < 64) break; small = small.slice(0, small.length >> 1); } }
+    try { localStorage.setItem("probe", "x".repeat(200)); localStorage.removeItem("probe"); return false; } catch (e) { return true; }
+  }, xrecs);
+  ok(await fill(true), "full store: this browser's store is full");
+  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
+  let P = await pts(p);
+  ok(P.length === 1 && await shown(p, "#pt-ed"), "full store: a new point is still saved (neighbour-report caches let go)");
+  ok(await p.evaluate(() => Object.keys(localStorage).every((k) => k.indexOf("asap-xrecs-") !== 0)), "full store: the caches went, the filler stayed");
+  await p.keyboard.press("Escape");
+  ok(await fill(false), "full store: full again with no caches to let go");
+  await p.click('#atk-tools [data-atk="point"]'); await p.click('#atk-pop [data-pk="centre"]'); await p.waitForTimeout(300);
+  P = await pts(p);
+  ok(P.length === 1 && !(await shown(p, "#pt-ed")), "full store: a point that cannot be stored is not shown as dropped");
+  ok(/storage for OSAP is full/.test(await p.evaluate(() => document.body.innerText)), "full store: the user is told the point was not saved");
+  ok(errors.length === 0, "full store: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
