@@ -6,7 +6,8 @@
 // Checks: no toolbar button; the long-press "Find LZ" and Area > Landing zones open it; a search finds candidates, every one
 // outside forest, village, lake and the steep ground, clear of the power line and the house by at least the LZ radius;
 // a 100 m LZ on the pitch inside the village is confined by the houses (10 to 1 approach) and a 50 m one is found there; every
-// candidate has a clear approach; LZ sizes are the pathfinder sizes; roads from residential up block, tracks do not; each candidate pop-up says "candidate from open data, verify on the ground" and
+// candidate has a clear approach; LZ sizes are the pathfinder sizes; on a phone, Area > Landing zones opens in half screen, the map numbers
+// are sharp solid badges, a tapped candidate and its pop-up sit above the panel, and in Full window the switch stays in view; roads from residential up block, tracks do not; each candidate pop-up says "candidate from open data, verify on the ground" and
 // gives an MGRS grid; the helipad is listed; a bigger LZ finds fewer; a failed Overpass request is reported as a failure
 // with no candidates; the distance transform matches brute force; closing removes the marks; no page errors.
 // Run from the repo root: node tests/lz_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -195,6 +196,32 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   ok(await p.evaluate(() => document.getElementById("lz-dock").hidden), "phone: Close hides the docked panel");
   if (OUT) await p.screenshot({ path: OUT + "/lz-phone.png" });
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+
+/* ---------- phone, Area > Landing zones with results: half screen, sharp numbers, tapping a candidate ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3 });
+  await p.evaluate((c) => window.__asapMap.setView(c, 14), C0);
+  await p.evaluate(() => window.TSAP.areaApi.setArea([[13.745, 100.484], [13.752, 100.484], [13.752, 100.5025], [13.745, 100.5025]])); await p.waitForTimeout(300);
+  await p.evaluate(() => window.OSAP_AREA_TOOLS.filter((t) => t.id === "lz")[0].run()); await p.waitForTimeout(300); await done(p);
+  ok(await p.evaluate(() => !!document.querySelector("#lz-dock.osplit:not([hidden]) #lz-card")), "phone results: Landing zones opens in half screen");
+  const tip = await p.evaluate(() => { const t = document.querySelector(".leaflet-tooltip.lznum"); if (!t) return null; const c = getComputedStyle(t); return { bg: c.backgroundColor, col: c.color, ts: c.textShadow, op: c.opacity, h: t.getBoundingClientRect().height }; });
+  ok(!!tip && tip.bg === "rgb(46, 125, 50)" && tip.col === "rgb(255, 255, 255)" && tip.ts === "none" && tip.op === "1" && Math.abs(tip.h - 24) < 0.5, "phone results: candidate numbers are solid green badges with white text, no blurred shadow, full opacity " + JSON.stringify(tip));
+  /* tapping a candidate in the list centres it in the strip of map above the panel, with its pop-up there too */
+  await p.click("#lz-card li[data-lzi='0']"); await p.waitForTimeout(700);
+  const pos = await p.evaluate(() => { const m = window.__asapMap, k = window.OSAP_LZ.state().res.cands[0], pt = m.latLngToContainerPoint([k.lat, k.lon]), mt = m.getContainer().getBoundingClientRect().top, top = document.querySelector("#lz-dock #lz-card").getBoundingClientRect().top, pop = document.querySelector(".leaflet-popup"); return { y: pt.y + mt, top, mt, pop: pop ? pop.getBoundingClientRect() : null }; });
+  ok(pos.y > pos.mt && pos.y < pos.top - 10, "phone results: the tapped candidate is in the map above the panel (y " + Math.round(pos.y) + ", panel top " + Math.round(pos.top) + ")");
+  ok(!!pos.pop && pos.pop.top >= pos.mt - 1 && pos.pop.bottom <= pos.top + 1, "phone results: its pop-up fits above the panel");
+  /* Full window: the title bar with the Half screen switch stays in view while the list scrolls */
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
+  await p.evaluate(() => { document.getElementById("lz-card").scrollTop = 10000; }); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-card"), b = c.querySelector("[data-osplit]"), cr = c.getBoundingClientRect(), br = b.getBoundingClientRect(); return c.scrollTop > 50 && br.top >= cr.top - 1 && br.bottom <= cr.bottom + 1 && b.textContent === "Half screen"; }), "phone results: in Full window the Half screen switch stays in view after scrolling the list");
+  await p.click("#lz-card [data-osplit]"); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !document.getElementById("lz-dock").hidden), "phone results: Half screen docks it again");
+  if (OUT) await p.screenshot({ path: OUT + "/lz-phone-results.png" });
+  ok(errors.length === 0, "phone results: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 
