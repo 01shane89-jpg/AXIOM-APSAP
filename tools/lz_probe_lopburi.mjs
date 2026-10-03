@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
-const START = [14.80022, 100.69635], B = [14.80076, 100.69550];
+const START = [14.81022, 100.69635], B = [14.81076, 100.69550];
 const SVC = "https://ic.imagery1.arcgis.com/arcgis/rest/services/Sentinel2_10m_LandCover/ImageServer";
 for (const u of [SVC + "?f=json", "https://services.terrascope.be/wms/v2?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0", "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E099_Map.tif"]) {
   try { const r = await fetch(u, { method: /\.tif$/.test(u) ? "HEAD" : "GET", headers: { Origin: "https://01shane89-jpg.github.io" } }); const t = /\.tif$/.test(u) ? "" : await r.text();
@@ -26,7 +26,7 @@ await new Promise((r) => server.once("listening", r));
 const browser = await chromium.launch();
 const p = await (await browser.newContext()).newPage();
 await p.goto(`http://127.0.0.1:${server.address().port}/blank`);
-for (const extra of ["", "&renderingRule=" + encodeURIComponent(JSON.stringify({ rasterFunction: "None" })), "&time=1704067200000", "&renderingRule=" + encodeURIComponent(JSON.stringify({ rasterFunction: "None" })) + "&time=1704067200000"]) {
+for (const extra of ["&renderingRule=" + encodeURIComponent(JSON.stringify({ rasterFunction: "None" })) + "&time=1704067200000"]) {
   const url = ex(extra);
   const out = await p.evaluate(async ({ url, START, B, bb }) => {
     try {
@@ -57,13 +57,13 @@ const ctx2 = await browser.newContext({ serviceWorkers: "block", viewport: { wid
 await ctx2.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
 const q = await ctx2.newPage();
 q.on("pageerror", (e) => console.log("pageerror", e.message));
-q.on("response", (r) => { if (/arcgis/.test(r.url())) console.log("landcover HTTP", r.status(), r.url().slice(0, 140)); });
+q.on("response", (r) => { if (/Sentinel2_10m/.test(r.url())) console.log("landcover HTTP", r.status()); });
 await q.goto(`http://127.0.0.1:${server.address().port}/#th/`, { waitUntil: "domcontentloaded" });
 await q.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_AREA_TOOLS, null, { timeout: 60000 });
 await q.waitForTimeout(3000);
 await q.evaluate(() => window.OSAP_AREA_TOOLS.filter((t) => t.id === "lz")[0].run());
 await q.waitForFunction(() => window.OSAP_LZ && window.OSAP_LZ.isOpen(), null, { timeout: 30000 });
-for (const [sz, r] of [["100", "2"], ["50", "1"]]) {
+for (const [sz, r] of [["100", "2"], ["50", "0.5"]]) {
   await q.selectOption("#lz-r", r); await q.selectOption("#lz-d", sz);
   await q.evaluate((c) => window.OSAP_LZ.at(c), START);
   await q.waitForFunction(() => !window.OSAP_LZ.state().busy, null, { timeout: 240000 }).catch(() => console.log("timed out"));
