@@ -332,6 +332,22 @@ async function round10() {
   }
   for (const u of ["https://www.quebec511.info/fr/Diffusion/Etat/Camera.aspx", "https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:infos_cameras&outputformat=geojson", "https://webkamera.atlas.vegvesen.no/public/kamera?id=0329001_1", "https://kamera.atlas.vegvesen.no/api/images/0329001_1"]) show("try " + u, await get(u, 30000), 600);
 }
+/* ---------- round 11: Quebec camera image address, Norway WFS ---------- */
+async function round11() {
+  const show = (k, r, n = 900) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const id of ["c0d13822-e774-4ea0-b95f-3c61a693c316"]) { const r = await get("https://dataut.vegvesen.no/api/3/action/resource_show?id=" + id, 30000); show("NO res", r, 1500); }
+  const pk = await get("https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera", 30000); try { for (const x of JSON.parse(pk.b).result.resources) console.log("   res " + JSON.stringify(x).slice(0, 700)); } catch {}
+  for (const u of ["https://ogckart-sn1.atlas.vegvesen.no/webkamera_1_0/ows?service=WFS&request=GetCapabilities", "https://ogckart-sn1.atlas.vegvesen.no/webkamera/ows?service=WFS&request=GetCapabilities", "https://ogckart-sn1.atlas.vegvesen.no/webkamera_1_0/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=webkamera_1_0:Webkamera&count=2&outputFormat=application/json"]) show("NO try", await get(u, 30000), 1500);
+  // Quebec: the camera window page in a real browser (Cloudflare refuses plain fetches), and the image it shows
+  const { chromium } = await import("playwright"); const br = await chromium.launch(); const pg = await br.newPage(); const seen = [];
+  pg.on("response", (r) => { const ct = r.headers()["content-type"] || ""; if (/image|json|javascript/.test(ct) && !/google|gstatic/.test(r.url())) seen.push(r.status() + " " + ct.split(";")[0] + " " + r.url()); });
+  try { await pg.goto("https://www.quebec511.info/Carte/Fenetres/FenetreVideo.html?id=4057", { waitUntil: "networkidle", timeout: 45000 }); } catch (e) { console.log("QC page " + e.message); }
+  console.log("QC title " + (await pg.title().catch(() => "")) + " | html " + (await pg.content().catch(() => "")).slice(0, 1500).replace(/\s+/g, " "));
+  console.log("QC responses:\n   " + seen.slice(0, 30).join("\n   "));
+  await br.close();
+  for (const u of ["https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057", "https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057&format=mobile", "https://www.quebec511.info/diffusion/images/cameras/4057.jpg"]) await img(u, "  QC guess");
+}
+if (only === "r11") await round11();
 if (only === "r10") await round10();
 if (only === "r9") await round9();
 if (only === "r8") await round8();

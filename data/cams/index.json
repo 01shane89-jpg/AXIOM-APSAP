@@ -509,42 +509,6 @@
    "checked": "2026-10-03T07:43Z"
   },
   {
-   "id": "us-ma",
-   "cc": "us",
-   "tz": "America/New_York",
-   "country": "United States (Massachusetts)",
-   "agency": "Massachusetts DOT (Mass511)",
-   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
-   "page": "https://mass511.com/",
-   "every": 5,
-   "n": 308,
-   "box": [
-    41.45783,
-    -73.36344,
-    42.80218,
-    -69.9829
-   ],
-   "checked": "2026-10-03T13:09Z"
-  },
-  {
-   "id": "us-sd",
-   "cc": "us",
-   "tz": "America/Chicago",
-   "country": "United States (South Dakota)",
-   "agency": "South Dakota DOT (SD511)",
-   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
-   "page": "https://sd511.org/",
-   "every": 5,
-   "n": 89,
-   "box": [
-    32.55132,
-    -117.3883,
-    33.21153,
-    -116.91755
-   ],
-   "checked": "2026-10-03T13:09Z"
-  },
-  {
    "id": "us-nc",
    "cc": "us",
    "tz": "America/New_York",
