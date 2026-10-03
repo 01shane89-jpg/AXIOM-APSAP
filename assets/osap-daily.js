@@ -31,6 +31,9 @@
     ".dlev,.dlw{list-style:none;margin:0;padding:0}.dlev li,.dlw li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}" +
     ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
     ".dlref{font-size:11px;font-weight:600;text-decoration:none;margin-left:2px;vertical-align:1px}.dlref:hover{text-decoration:underline}" +
+    ".dlwbtn{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;border-radius:4px;padding:2px 22px 2px 2px;margin:-2px;position:relative}.dlwbtn:hover{background:var(--surface2,rgba(127,127,127,.09))}" +
+    ".dlwbtn:focus-visible{outline:2px solid var(--accent,#1f5f99);outline-offset:1px}.dlwarr{position:absolute;right:4px;top:2px;color:var(--accent,#1f5f99);font-weight:700}" +
+    ".dlwrep{list-style:none;margin:6px 0 2px;padding:0 0 0 10px;border-left:2px solid var(--line)}.dlwrep li{padding:4px 0;font-size:13px}.dlwrep a{font-weight:600}" +
     ".dlfrom{font:600 10.5px/1.5 inherit;color:var(--muted);border:1px solid currentColor;border-radius:9px;padding:0 6px;margin-right:5px;white-space:nowrap}" +
     ".dlfoot{margin-top:8px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.dlfoot select{font:inherit;font-size:12px}" +
     ".dlfoot button{min-height:30px;padding:2px 12px;font-weight:600}.dlauto{display:inline-block;font:500 10.5px/1.5 inherit;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;cursor:help}" +
@@ -48,14 +51,76 @@
     if (d.method === "ai") return '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span>';
     return '<span class="dlauto" tabindex="0" title="Built by rules from the sources listed, with no AI: the most reported, security-first headlines of the day, as the outlets wrote them. Not an assessment.">Automatic</span>';
   }
+  /* every What to watch line opens what it rests on (Shane 2026-10-03: "click on any of these and it will take me to those
+     reports"): a conflict line opens its conflict tab, the travel advisory opens the State Department page, a country brief
+     line opens the country brief, and a flashpoint, warning or AI line unfolds the reports behind it, each linking to the original.
+     A flashpoint built before its line carried its reports finds them in the watch list file (data/live/aiwatch.js) by name. */
+  var openW = {}, AIW_FILE = "data/live/aiwatch.js", aiwState = 0;
+  function watchAll(d) { return (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs }; }).concat(d.watch || []); }
+  function aiwItem(w) {
+    var A = W.OSAP_AIWATCH, a = A && A.areas && A.areas[CC], t = w.fp || "";
+    var it = a && (a.items || []).filter(function (x) { return x && x.title && (t ? x.title === t : String(w.text).indexOf(x.title) === 0); })[0];
+    return it ? { a: a, it: it } : null;
+  }
+  function aiwLoad() {
+    if (W.OSAP_AIWATCH || aiwState) return; aiwState = 1;
+    var s = D.createElement("script"); s.src = AIW_FILE + "?t=" + Math.floor(Date.now() / 6e5);
+    s.onload = s.onerror = function () { aiwState = 2; render(); };
+    D.head.appendChild(s);
+  }
+  /* what a line does when tapped: "tab", "url", "brief", "list" or "" (nothing behind it) */
+  function watchGo(w) {
+    if (w.from === "conflict" && w.tab) return "tab";
+    if (w.from === "advisory" && (w.refs || []).length) return "url";
+    if (w.from === "brief") return D.getElementById("brief-btn") ? "brief" : "";
+    if ((w.refs || []).length || w.from === "flashpoint") return "list";
+    return "";
+  }
+  var GO_HINT = { tab: "Open the conflict tab and its reports", url: "Open the source", brief: "Open the country brief", list: "Show the reports" };
+  function repRow(r) {
+    var u = safeUrl(r.url), meta = esc(r.outlet || r.source || "") + (r.date || r.ts ? " · " + esc(when(r.date || r.ts, true)) : "");
+    return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(r.title) + "</a>" : esc(r.title)) + '<span class="dlmeta">' + meta +
+      (/g/.test(r.flags || "") ? " · official or state media, a claim" : "") + (/m/.test(r.flags || "") ? " · machine translated" : "") + "</span></li>";
+  }
+  function watchReports(w, d) {
+    var L = (w.refs || []).map(function (n) { return d.refs[n - 1]; }).filter(Boolean), note = "";
+    if (!L.length && w.from === "flashpoint") {
+      var m = aiwItem(w);
+      if (m) { L = (m.it.reports || []).map(function (n) { return m.a.refs[n - 1]; }).filter(Boolean).sort(function (x, y) { return String(y.ts || "").localeCompare(String(x.ts || "")); });
+        note = m.a.note || ""; }
+      else if (!W.OSAP_AIWATCH && aiwState < 2) { aiwLoad(); return '<p class="dlsub">Loading the reports…</p>'; }
+    }
+    if (!L.length) return '<p class="dlsub">No report OSAP holds is linked to this line.</p>';
+    return '<ul class="dlwrep">' + L.map(repRow).join("") + "</ul>" + (note ? '<p class="dlsub">' + esc(note) + "</p>" : "");
+  }
   function watchList(d) {
-    var L = (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs }; }).concat(d.watch || []);
-    return L.map(function (w) {
-      var f = FROM[w.from] || "", extra = w.from === "brief" && w.asof ? " (" + w.asof + ", AI draft)" : "";
+    return watchAll(d).map(function (w, i) {
+      var f = FROM[w.from] || "", extra = w.from === "brief" && w.asof ? " (" + w.asof + ", AI draft)" : "", go = watchGo(w), open = go === "list" && openW[i];
       var lab = w.from === "ai" ? '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span> '
         : f ? '<span class="dlfrom">' + esc(f + extra) + "</span>" : "";
-      return "<li>" + lab + esc(w.text) + refs(w.refs, d) + "</li>";
+      if (!go) return "<li>" + lab + esc(w.text) + refs(w.refs, d) + "</li>";
+      return '<li class="dlwgo' + (open ? " open" : "") + '"><button type="button" class="dlwbtn" data-dlw="' + i + '" title="' + GO_HINT[go] + '"' + (go === "list" ? ' aria-expanded="' + !!open + '"' : "") + ">" +
+        lab.replace(' tabindex="0"', "") + esc(w.text) + '<span class="dlwarr" aria-hidden="true">' + (go === "list" ? (open ? "▾" : "▸") : go === "url" ? "↗" : "›") + "</span></button>" +
+        (go === "list" ? "" : refs(w.refs, d)) + (open ? watchReports(w, d) : "") + "</li>";
     }).join("");
+  }
+  function watchTap(i) {
+    var d = day(), w = d && watchAll(d)[i]; if (!w) return;
+    var go = watchGo(w);
+    /* Today covers the page: it steps aside first so the tab or the brief shows (as Today's own Brief button does) */
+    var leave = function () { var TD = W.OSAP_TODAY; if (TD && TD.isOpen && TD.isOpen()) TD.hide(); };
+    if (go === "tab") {
+      leave();
+      var CT = W.OSAP_CONFLICT_TABS, b = D.querySelector('#view-seg [data-view="cf-' + w.tab + '"]');
+      if (b) b.click(); else if (CT && CT.open) CT.open(w.tab, CC);
+    } else if (go === "url") {
+      var r = d.refs[w.refs[0] - 1], u = r && safeUrl(r.url); if (u) W.open(u, "_blank", "noopener,noreferrer");
+    } else if (go === "brief") {
+      leave(); var bb = D.getElementById("brief-btn"); if (bb) bb.click();
+    } else if (go === "list") {
+      openW[i] = !openW[i]; render();
+      var nb = el && el.querySelector('[data-dlw="' + i + '"]'); if (nb) nb.focus();
+    }
   }
   function render() {
     if (!el) return;
@@ -108,8 +173,11 @@
   function mount(box, cc, name) {
     el = box; CC = cc; NAME = name || cc; el.classList.add("tdday"); el.hidden = true;
     if (!D.getElementById("dl-css")) { var st = D.createElement("style"); st.id = "dl-css"; st.textContent = CSS; D.head.appendChild(st); }
-    el.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest("[data-dlprint]"); if (t) { e.preventDefault(); printIt(); } });
-    el.addEventListener("change", function (e) { if (e.target.hasAttribute("data-dlday")) { sel = +e.target.value || 0; render(); } });
+    el.addEventListener("click", function (e) {
+      var t = e.target.closest && e.target.closest("[data-dlprint]"); if (t) { e.preventDefault(); printIt(); return; }
+      var g = e.target.closest && e.target.closest("[data-dlw]"); if (g && !(e.target.closest("a, .aitag") && e.target !== g)) { e.preventDefault(); watchTap(+g.getAttribute("data-dlw")); }
+    });
+    el.addEventListener("change", function (e) { if (e.target.hasAttribute("data-dlday")) { sel = +e.target.value || 0; openW = {}; render(); } });
     load();
   }
   W.OSAP_DAILYQ = { mount: mount, print: printIt };
