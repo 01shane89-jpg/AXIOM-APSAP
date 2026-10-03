@@ -80,14 +80,19 @@ const osrmRoute = (c) => { const m = km(c); return { distance: m, duration: m / 
 
 async function open(o = {}) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 }, ...(o.state ? { storageState: o.state } : {}) });
-  const errors = [], calls = { lz: 0, fields: 0, runways: 0, osrm: 0 };
+  const errors = [], calls = { lz: 0, fields: 0, runways: 0, osrm: 0, log: [] };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
+    try { return answer(r); } catch (e) { console.log("mock error: " + e.message); return r.abort(); }
+  });
+  function answer(r) {
     const u = r.request().url();
     if (o.offline) return r.abort();
     const m = u.match(/elevation-tiles-prod\/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
     if (m) return r.fulfill({ status: 200, contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: tile(+m[1], +m[2], +m[3]) });
     if (/\/api\/interpreter/.test(u)) {
-      const q = decodeURIComponent(String(r.request().postData() || "").replace(/^data=/, "").replace(/\+/g, " "));
+      let q = "";
+      try { const b = r.request().postDataBuffer(); q = decodeURIComponent(String(b ? b.toString("utf8") : "").replace(/^data=/, "").replace(/\+/g, " ")); } catch (e) { console.log("could not read the Overpass body: " + e.message); }
+      calls.log.push(q.slice(0, 60));
       const json = (j) => r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(j) });
       if (/aeroway"="runway"\]\(around/.test(q)) { calls.runways++; return o.osmDown ? r.fulfill({ status: 504, body: "busy" }) : json(RUNWAY); }
       if (/aerodrome\|airstrip\|heliport/.test(q)) { calls.fields++; return o.osmDown ? r.fulfill({ status: 504, body: "busy" }) : json(FIELDS); }
@@ -101,10 +106,10 @@ async function open(o = {}) {
       return r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ code: "Ok", routes: [osrmRoute(line(a, end))] }) });
     }
     if (/valhalla1\.openstreetmap\.de/.test(u)) return r.fulfill({ status: 400, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: "{}" });
-    r.abort();
-  });
+    return r.abort();
+  }
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
-  const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
+  const p = await ctx.newPage(); p.__calls = calls; p.on("pageerror", (e) => errors.push(e.message)); p.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource/.test(m.text())) console.log("console: " + m.text().slice(0, 200)); });
   await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_EVAC, null, { timeout: 60000 }); await p.waitForTimeout(2500);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
@@ -116,7 +121,9 @@ async function plan(p, to) {
   await p.evaluate((s) => window.OSAP_ROUTETAB.seed([s]), START); await p.waitForTimeout(300);
   await p.selectOption("#rt-evto", to);
   await p.click('[data-rt="evac"]');
-  await p.waitForFunction(() => document.querySelector("#rt-evres .rtalts") || document.querySelector("#rt-evres .rtbad"), null, { timeout: 90000 }); await p.waitForTimeout(600);
+  try { await p.waitForFunction(() => document.querySelector("#rt-evres .rtalts") || document.querySelector("#rt-evres .rtbad"), null, { timeout: 90000 }); }
+  catch (e) { console.log("stuck at: " + (await p.textContent("#rt-evres")).slice(0, 300) + " | calls " + JSON.stringify(p.__calls || {})); throw e; }
+  await p.waitForTimeout(600);
   return p.evaluate(() => ({ b: [...document.querySelectorAll("#rt-evres .rtalts button")].map((x) => x.textContent), txt: document.getElementById("rt-evres").textContent,
     st: window.OSAP_ROUTETAB.state(), card: !!document.getElementById("lz-card") && !document.getElementById("lz-card").hidden }));
 }
