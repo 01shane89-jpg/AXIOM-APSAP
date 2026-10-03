@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"bs","asof":"2026-10-03 19:04Z","items":[{"id":"8131","n":"HAVANATUR BAHAMAS LTD.","t":"entity","p":"CUBA","ccs":["bs"]},{"id":"40826","n":"CALIBER WEALTH MANAGEMENT LTD","t":"entity","p":"RUSSIA-EO14024","ccs":["bs","cy"]}]};
+window.ASAP_SANC_CC={"cc":"bs","asof":"2026-10-03 19:28Z","items":[{"id":"8131","n":"HAVANATUR BAHAMAS LTD.","t":"entity","p":"CUBA","ccs":["bs"]},{"id":"40826","n":"CALIBER WEALTH MANAGEMENT LTD","t":"entity","p":"RUSSIA-EO14024","ccs":["bs","cy"]}]};
