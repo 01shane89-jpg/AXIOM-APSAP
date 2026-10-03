@@ -1,2 +1,14 @@
-[["n5798334943",3.17076,-52.32915,"br",{"name":"Posto de saúde Villa Brasil","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque","addr:city":"Oiapoque"}],
-["n5799505922",3.24921,-52.2607,"br",{"name":"Posto de saúde Ilha Bela & Centro Malakit","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque & Ong Dpac Fronteira","addr:city":"Oiapoque"}]]
+[["n11278284470",3.1674,-52.33474,"fr",{"name":"CDPS : Centre de Santé","amenity":"hospital","addr:street":"Bourg de Camopi","addr:postcode":"97330","opening_hours":"Mo-Fr 07:30-14:30, 16:00-18:00; Sa 11:00-12:00"}],
+["n1419257056",3.62335,-53.20959,"fr",{"name":"Centre Délocalisé de Prévention et de Soins de Saül","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon (CHAR)","operator:type":"public","addr:city":"Saül","addr:postcode":"97314","opening_hours":"Mo-Fr 07:30-14:30"}],
+["n2648586490",3.62335,-53.20786,"fr",{"aeroway":"helipad"}],
+["n5246015877",3.74133,-53.53546,"fr",{"name":"Aerodrome de Dorlin","operator":"Néant","aeroway":"aerodrome"}],
+["n5669784724",2.25709,-52.87327,"fr",{"name":"Centre Délocalisé de Prévention et de Soins de Trois Sauts","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon (CHAR)","addr:city":"Camopi","addr:postcode":"97330"}],
+["n5798334943",3.17076,-52.32915,"br",{"name":"Posto de saúde Villa Brasil","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque","addr:city":"Oiapoque"}],
+["n5799505922",3.24921,-52.2607,"br",{"name":"Posto de saúde Ilha Bela & Centro Malakit","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque & Ong Dpac Fronteira","addr:city":"Oiapoque"}],
+["n5964019270",2.25699,-52.87423,"fr",{"name":"Héliport de Trois Sauts","aeroway":"helipad"}],
+["n5980259663",3.38973,-53.92627,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon"}],
+["w280427594",3.16833,-52.33262,"fr",{"name":"Centre hospitalier Andrée Rosemon","amenity":"hospital"}],
+["w288661038",3.62336,-53.2096,"fr",{"name":"CDPS Saül","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"CHAR","operator:type":"public"}],
+["w453423391",3.17258,-52.33601,"fr",{"name":"Aérodrome de Camopi","aeroway":"aerodrome","icao":"SOOC","aerodrome:type":"public","wikidata":"Q30625542"}],
+["w540183541",3.61499,-53.20332,"fr",{"name":"Aéroport de Saül","name:en":"Saül Airport","aeroway":"aerodrome","icao":"SOOS","iata":"XAU","wikidata":"Q7429454"}],
+["w572891599",2.25708,-52.87327,"fr",{"healthcare":"hospital","healthcare:speciality":"general"}]]
