@@ -1,5 +1,5 @@
 {
- "built": "2026-10-03T11:20Z",
+ "built": "2026-10-03T13:10Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -509,6 +509,60 @@
    "checked": "2026-10-03T07:43Z"
   },
   {
+   "id": "us-ma",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Massachusetts)",
+   "agency": "Massachusetts DOT (Mass511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://mass511.com/",
+   "every": 5,
+   "n": 308,
+   "box": [
+    41.45783,
+    -73.36344,
+    42.80218,
+    -69.9829
+   ],
+   "checked": "2026-10-03T13:09Z"
+  },
+  {
+   "id": "us-sd",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (South Dakota)",
+   "agency": "South Dakota DOT (SD511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://sd511.org/",
+   "every": 5,
+   "n": 89,
+   "box": [
+    32.55132,
+    -117.3883,
+    33.21153,
+    -116.91755
+   ],
+   "checked": "2026-10-03T13:09Z"
+  },
+  {
+   "id": "us-nc",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (North Carolina)",
+   "agency": "North Carolina DOT (DriveNC)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://drivenc.gov/cctv",
+   "every": 2,
+   "n": 1156,
+   "box": [
+    34.12588,
+    -83.15371,
+    36.55035,
+    -75.46962
+   ],
+   "checked": "2026-10-03T13:09Z"
+  },
+  {
    "id": "us-wa",
    "cc": "us",
    "tz": "America/Los_Angeles",
@@ -615,6 +669,60 @@
     -52.87225
    ],
    "checked": "2026-10-03T07:44Z"
+  },
+  {
+   "id": "ca-mb",
+   "cc": "ca",
+   "tz": "America/Winnipeg",
+   "country": "Canada (Manitoba)",
+   "agency": "Manitoba Transportation and Infrastructure (Manitoba 511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://manitoba511.ca/cctv",
+   "every": 2,
+   "n": 49,
+   "box": [
+    49.00545,
+    -101.45282,
+    54.66911,
+    -95.15482
+   ],
+   "checked": "2026-10-03T13:10Z"
+  },
+  {
+   "id": "ca-pe",
+   "cc": "ca",
+   "tz": "America/Halifax",
+   "country": "Canada (Prince Edward Island)",
+   "agency": "PEI Transportation and Infrastructure (511 PEI)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.gov.pe.ca/cctv",
+   "every": 2,
+   "n": 7,
+   "box": [
+    46.21072,
+    -64.14285,
+    46.81474,
+    -62.61556
+   ],
+   "checked": "2026-10-03T13:10Z"
+  },
+  {
+   "id": "ca-yt",
+   "cc": "ca",
+   "tz": "America/Whitehorse",
+   "country": "Canada (Yukon)",
+   "agency": "Yukon Highways and Public Works (511 Yukon)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511yukon.ca/cctv",
+   "every": 2,
+   "n": 15,
+   "box": [
+    59.58996,
+    -140.9756,
+    66.44319,
+    -128.26911
+   ],
+   "checked": "2026-10-03T13:10Z"
   },
   {
    "id": "th-dwr",
