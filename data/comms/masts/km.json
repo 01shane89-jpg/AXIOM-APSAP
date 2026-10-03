@@ -1,0 +1,6 @@
+{"cc":"km","at":"2026-10-03T09:59:56Z","base":"2026-10-03T09:58:21Z","m":[
+["n13149270164",-11.55531,43.27665,{"man_made":"tower","tower:type":"communication"}],
+["n3264230080",-11.53665,43.2746,{"man_made":"tower","name":"Tour de contrôle","tower:type":"communication"}],
+["n6367341394",-11.70523,43.24905,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n6786910920",-12.25469,43.65805,{"man_made":"mast","tower:type":"communication"}]
+]}

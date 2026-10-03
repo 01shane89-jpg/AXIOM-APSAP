@@ -11,7 +11,7 @@
      { schema, id (stable: <CC>-<SRC>-<source id>, e.g. TH-OSM-n123), name, name_local, aliases[], country_code, admin1, admin2,
        lat, lon, kind ("hospital" | "clinic"), operator, ownership, official_type, official_designation, beds (null or
        { value, sources }), contact { phone, website, emergency_phone }, address, ids { osm, wikidata, sof, gov },
-       capabilities { <code>: capability }, osap_classification, confidence, sources[], record_created, last_checked,
+       capabilities { <code>: capability }, conflicts [{ field, values }], osap_classification, confidence, sources[], record_created, last_checked,
        last_verified, source_last_updated }
    capability: { status, value, sources[] }. status is one of STATUS; "unknown" is never read as "no": a capability is
    "not_available" only where a source says so.
@@ -68,7 +68,7 @@
   CAPABILITIES.forEach(function (c) { CAP_BY_CODE[c[0]] = c; CAP_BY_NAME[c[1]] = c; });
 
   function today() { return new Date().toISOString().slice(0, 10); }
-  function clip(s, n) { s = String(s == null ? "" : s).replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  function clip(s, n) { s = String(s == null ? "" : s).replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "\u2026" : s; }
   /* a source entry, graded by its type; sha256 is filled later by fingerprint() (crypto.subtle is asynchronous) */
   function source(type, o) {
     var g = SOURCE_TYPES[type] || SOURCE_TYPES.unknown;
@@ -83,7 +83,7 @@
       schema: SCHEMA, id: "", name: "", name_local: "", aliases: [], country_code: "", admin1: "", admin2: "", lat: null, lon: null, kind: "hospital",
       operator: "", ownership: "", official_type: "", official_designation: "", beds: null,
       contact: { phone: "", website: "", emergency_phone: "" }, address: "", ids: { osm: "", wikidata: "", sof: "", gov: "" },
-      capabilities: {}, osap_classification: "", confidence: "", sources: [],
+      capabilities: {}, conflicts: [], osap_classification: "", confidence: "", sources: [],
       record_created: "", last_checked: "", last_verified: "", source_last_updated: ""
     };
     Object.keys(o || {}).forEach(function (k) {
@@ -97,6 +97,23 @@
   function capability(status, src, value) {
     if (STATUS.indexOf(status) < 0) throw new Error("capability status " + status);
     return { status: status, value: value === undefined ? (status === "not_available" ? false : status === "unknown" ? null : true) : value, sources: src ? [src] : [] };
+  }
+  /* the status of one capability from all the evidence for it (phase 6). A source saying "not available" against one
+     saying it is there makes it "contradicted": both are kept and neither wins. "confirmed" needs an A-graded source
+     (government registry, accreditation, official designation) or the planner's own check; everything else that states it
+     is "reported". With no statement it stays "unknown", which is never read as "no". */
+  function assess(entries) {
+    var yes = [], no = [];
+    (entries || []).forEach(function (c) {
+      if (!c) return;
+      (c.status === "not_available" ? no : c.status === "unknown" ? [] : yes).push(c);
+    });
+    var src = function (L) { return L.reduce(function (a, c) { return a.concat(c.sources || []); }, []); };
+    if (yes.length && no.length) return { status: "contradicted", value: null, sources: src(yes).concat(src(no)) };
+    if (no.length) return { status: "not_available", value: false, sources: src(no) };
+    if (!yes.length) return { status: "unknown", value: null, sources: [] };
+    var S = src(yes), conf = yes.some(function (c) { return c.status === "confirmed"; }) || S.some(function (x) { return x.reliability === "A" || x.source_type === "planner"; });
+    return { status: conf ? "confirmed" : "reported", value: true, sources: S };
   }
   function getCap(f, code) { return (f && f.capabilities && f.capabilities[code]) || { status: "unknown", value: null, sources: [] }; }
   /* SHA-256 of a source entry's canonical JSON (sorted keys, sha256 left out), the way OSAP fingerprints its records */
@@ -143,6 +160,6 @@
   }
 
   W.OSAP_HOSP = { SCHEMA: SCHEMA, STATUS: STATUS, SOURCE_TYPES: SOURCE_TYPES, CAPABILITIES: CAPABILITIES, CAP_BY_CODE: CAP_BY_CODE, CAP_BY_NAME: CAP_BY_NAME, SPECIALITY_RE: SPECIALITY_RE,
-    facility: facility, source: source, capability: capability, getCap: getCap, fingerprint: fingerprint, canon: canon,
+    facility: facility, source: source, capability: capability, assess: assess, getCap: getCap, fingerprint: fingerprint, canon: canon,
     register: register, provider: provider, providers: providers, discover: discover, getJSON: getJSON, hav: hav, clip: clip, today: today };
 })();

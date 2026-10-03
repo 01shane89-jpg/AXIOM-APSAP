@@ -36,13 +36,17 @@
     Object.keys(h.caps || {}).forEach(function (k) {
       var x = h.caps[k]; if (!x || !x.src || !H.CAP_BY_CODE[k]) return;
       var s = H.source(typeOf(x.src, x.srcname, x.quote_basis), { name: x.srcname, url: x.src, observed: x.asof, retrieved: x.asof, excerpt: x.quote });
+      s.sha256 = x.sha256 || "";
       C[k] = H.capability("reported", s);
       if (k === "ed.24_7" && !C["ed.basic"]) C["ed.basic"] = H.capability("reported", s);
     });
     if (h.emergency_24h === true && !C["ed.24_7"]) C["ed.24_7"] = H.capability("reported", Object.assign({}, main, { excerpt: "24-hour emergency" }));
+    /* the hospital's own website, from the pages that document its capabilities (for the resolver's domain match) */
+    var site = "";
+    Object.keys(h.caps || {}).some(function (k) { var x = h.caps[k], t = x && x.src ? typeOf(x.src, x.srcname, x.quote_basis) : ""; if (t === "hospital_website" || t === "institutional") { site = x.src; return true; } return false; });
     var o = {
       id: cc.toUpperCase() + "-SOF-" + slugOf(h.id), name: h.name || "", name_local: h.name_local || "", country_code: cc.toUpperCase(), admin1: h.city || "",
-      lat: h.lat, lon: h.lon, kind: "hospital", ownership: h.type || "", address: h.address || "", ids: { sof: h.id },
+      lat: h.lat, lon: h.lon, kind: "hospital", ownership: h.type || "", address: h.address || "", ids: { sof: h.id }, contact: { website: site },
       official_designation: h.trauma_level || "", capabilities: C, sources: [main], source_last_updated: asof || "", last_checked: asof || ""
     };
     return H.facility(o);

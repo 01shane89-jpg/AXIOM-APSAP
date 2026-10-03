@@ -1,0 +1,9 @@
+[["n1042036498",-2.45,11.65,"ga",{"name":"Mavinza Airport","aeroway":"aerodrome"}],
+["n1042037209",-2.45624,10.93705,"ga",{"name":"Moabi","aeroway":"aerodrome","icao":"FOGI","iata":"MGX","wikidata":"Q11824596"}],
+["w1000756842",-3.45841,10.67605,"ga",{"name":"Aéroport de Mayumba","aeroway":"aerodrome","icao":"FOOY","iata":"MYB","wikidata":"Q11824584"}],
+["w1009817543",-2.88934,10.95629,"ga",{"name":"Aéroport de Tchibanga","name:en":"Tchibanga Airport","aeroway":"aerodrome","icao":"FOOT","iata":"TCH","aerodrome:type":"public","wikidata":"Q2250873"}],
+["w1134349739",-2.23624,11.46409,"ga",{"name":"Hôpital de Bongolo","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"psychiatry;clinic;paediatrics;dentist","emergency":"yes","phone":"+241 74 09 89 84","website":"https://www.bongolohospital.org/","addr:city":"Bongolo"}],
+["w1235923344",-3.20913,11.32462,"ga",{"aeroway":"aerodrome"}],
+["w509501682",-3.46035,10.67658,"ga",{"aeroway":"helipad"}],
+["w550931037",-2.7886,10.05211,"ga",{"name":"Aéroport de Gamba","aeroway":"aerodrome","icao":"FOGX","iata":"GAX","wikidata":"Q1862823"}],
+["w696699441",-2.21474,11.49046,"ga",{"name":"Lebamba Airport","aeroway":"aerodrome","icao":"FOGL"}]]

@@ -1,0 +1,12 @@
+[["n6815616985",11.1587,-16.02696,"gw",{"name":"Canogo Centro de Saude","amenity":"clinic","healthcare":"clinic","emergency":"no","operator":"Ministerio di Saude","operator:type":"government"}],
+["n6815633185",11.33138,-16.114,"gw",{"name":"Uracane Centro de Saude","amenity":"clinic","healthcare":"clinic","operator":"MoH","operator:type":"government"}],
+["n6815643885",11.2936,-16.4478,"gw",{"name":"Unhocomo Centro de Saude","amenity":"clinic","healthcare":"clinic","operator":"moh","operator:type":"government","opening_hours":"Mo-Fr 09:00-16:00"}],
+["n6815643886",11.4933,-16.3028,"gw",{"name":"Caravela Cento de Saude","amenity":"clinic","healthcare":"clinic","operator":"moh","operator:type":"government","opening_hours":"Mo-Fr 08:00-15:00"}],
+["n6815647887",11.1596,-16.1427,"gw",{"name":"Orango grande Centro de Saude","amenity":"clinic","healthcare":"clinic","operator":"moh","operator:type":"government","opening_hours":"Mo-Fr 08:00-15:00"}],
+["n6815662785",11.857,-16.2547,"gw",{"name":"Jeta Centro de Saude","amenity":"clinic","healthcare":"clinic","operator":"moh","operator:type":"government","opening_hours":"Mo-Fr 08:00-16:00"}],
+["n6815664985",11.7678,-16.0576,"gw",{"name":"Pecixe Centro de Saude","amenity":"clinic","healthcare":"clinic","operator":"moh","operator:type":"government","opening_hours":"Mo-Fr 08:00-16:00"}],
+["w1089673284",11.33137,-16.114,"gw",{"amenity":"hospital","healthcare":"hospital"}],
+["w1096301995",11.24625,-16.16253,"gw",{"name":"Uno Centro di Saude","amenity":"hospital","healthcare":"hospital","operator":"Ministry of Health","operator:type":"public"}],
+["w493102536",11.24639,-16.1626,"gw",{"name":"Uno Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Ministerio de Saude","operator:type":"government"}],
+["w494018717",11.15874,-16.02696,"gw",{"name":"Canogo","amenity":"hospital","healthcare":"hospital"}],
+["w767912425",11.29363,-16.44781,"gw",{"name":"Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Ministerio di Saude","operator:type":"government"}]]
