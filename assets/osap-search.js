@@ -151,7 +151,7 @@
         '<p class="obs">' + (r.grid ? "Typed grid." : "Place from " + esc(r.src || "a place search") + ", not a report.") + "</p>" + '<div class="atk-pb"><button type="button" data-sp="save">Save as point</button><button type="button" data-sp="route">Route to here</button><button type="button" data-sp="copy">Copy grid</button><button type="button" data-sp="x">Remove</button></div>';
       d.addEventListener("click", function (e) {
         var b = e.target.closest("[data-sp]"); if (!b) return; var k = b.getAttribute("data-sp"), lon = wrap(r.lon);
-        if (k === "save") { map.closePopup(); var a = A(); if (a && a.pts && a.pts.add) { a.pts.add(L.latLng(r.lat, lon), r.grid ? "" : r.name); clearMark(); } }
+        if (k === "save") { map.closePopup(); var a = A(); if (a && a.pts && a.pts.add) { if (a.pts.add(L.latLng(r.lat, lon), r.grid ? "" : r.name)) clearMark(); else here.openPopup(); } }
         else if (k === "route") {
           map.closePopup(); clearMark();
           var h = W.OSAP_LOC && W.OSAP_LOC.here && W.OSAP_LOC.here();
