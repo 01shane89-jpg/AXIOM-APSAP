@@ -26,6 +26,17 @@ async function get(u, as = "json", headers = {}) {
   }
   throw new Error(String(last.message || last) + (last.cause ? " (" + (last.cause.code || last.cause.message) + ")" : ""));
 }
+async function post(u, body) {
+  let last;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(u, { method: "POST", headers: { ...UA, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(60000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status} from ${u.slice(0, 80)}`);
+      return await r.json();
+    } catch (e) { last = e; await pause(3000 * (i + 1)); }
+  }
+  throw last;
+}
 // a small, forgiving reader for the flat XML lists below: the text of each <tag> inside each <item>
 function xmlItems(xml, item) {
   const out = [], re = new RegExp(`<${item}>([\\s\\S]*?)</${item}>`, "g"); let m;
@@ -196,6 +207,37 @@ export const SOURCES = [
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
   /* ---- Asia-Pacific and Europe ---- */
+  { id: "th-dwr", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
+    licence: "Public telemetry API of the Department of Water Resources (no terms of use stated)", page: "https://telemetry.dwr.go.th/",
+    // the image is not a plain address: the page asks DWR's public API for the newest snapshot path, then for the picture (kind "dwr")
+    kind: "dwr",
+    async list() {
+      const API = "https://telemetry.dwr.go.th/api", out = [];
+      for (let page = 1, total = 1; (page - 1) * 200 < total && page < 20; page++) {
+        const j = await post(API + "/public/reportCctv/listPaginate", { paginate: { page, pageSize: 200, orders: [] }, search: {} });
+        total = (j.value || {}).totalCount || 0;
+        for (const r of (j.value || {}).results || []) {
+          const e = r.entity || {};
+          if (!e.id || !e.stationCode || e.cctvOnline === false) continue;
+          try {
+            const st = await get(API + "/public/station/getByCode/" + encodeURIComponent(e.stationCode));
+            const pt = ((((st.value || {}).fullCon || {}).entity || {}).point) || {};
+            if (isFinite(pt.lat) && isFinite(pt.lon)) out.push([e.id, r5(pt.lat), r5(pt.lon), tidy((e.stnNameEn || e.stnNameTh) + (r.provinceNameEn ? ", " + r.provinceNameEn : "") + " (" + e.stationCode + ")"), null]);
+          } catch (err) { console.log("  th-dwr " + e.stationCode + ": " + err.message); }
+          await pause(200);
+        }
+      }
+      return out;
+    } },
+  { id: "th-itic", tz: "Asia/Bangkok", cc: "th", country: "Thailand (live video)", agency: "iTIC Foundation road cameras (list published by Longdo)", every: 0,
+    licence: "Public live streams of the iTIC Foundation (no licence stated)", page: "https://www.iticfoundation.org/",
+    // live video (HLS), not stills: the pop-up plays it (kind "hls")
+    kind: "hls",
+    async list() {
+      const j = await get("https://camera.longdo.com/feed/?command=json");
+      return j.filter((c) => /^https:\/\/camerai1\.iticfoundation\.org\/hls\/[\w-]+\.m3u8$/.test(c.hls_url || "") && !/tempsus/.test(c.hls_url))
+        .map((c) => [String(c.camid), r5(c.latitude), r5(c.longitude), tidy(c.title), c.hls_url]);
+    } },
   { id: "au-qld", tz: "Australia/Brisbane", cc: "au", country: "Australia (Queensland)", agency: "Queensland Department of Transport and Main Roads (QLDTraffic)", every: 2,
     licence: "Creative Commons Attribution 4.0", page: "https://www.data.qld.gov.au/dataset/131940-traffic-and-travel-information-geojson-api",
     async list() {
@@ -257,15 +299,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const prev = old.sources.find((o) => o.id === s.id);
     const meta = { id: s.id, cc: s.cc, tz: s.tz, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
     if (s.live) meta.live = s.live;
+    if (s.kind) meta.kind = s.kind;
     try {
       const t = Date.now();
-      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live));
+      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr"));
       if (!cams.length || (prev && cams.length < prev.n * 0.5)) throw new Error(`only ${cams.length} cameras (had ${prev ? prev.n : 0})`);
       const lat = cams.map((c) => c[1]), lon = cams.map((c) => c[2]);
       meta.n = cams.length; meta.box = [Math.min(...lat), Math.min(...lon), Math.max(...lat), Math.max(...lon)].map(r5);
       meta.checked = new Date().toISOString().slice(0, 16) + "Z";
       writeFileSync(join(OUT, s.id + ".json"), JSON.stringify({ id: s.id, cams }).replace(/\],\[/g, "],\n["));
-      const img = process.env.CHECK_IMAGES ? " images: " + (s.live ? "live (fetched by the page)" : await checkImages(cams)) : "";
+      const img = process.env.CHECK_IMAGES ? " images: " + (s.live || s.kind ? (s.kind || "live") + " (fetched by the page)" : await checkImages(cams)) : "";
       console.log(`${s.id}: ${cams.length} cameras in ${Date.now() - t} ms${img}`);
       sources.push(meta);
     } catch (e) {

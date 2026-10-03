@@ -92,10 +92,10 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await om(p, true);
   ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Traffic cameras switch in the Overlays sheet");
   ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
-  await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 9, { animate: false }));
+  await p.evaluate(() => window.__asapMap.setView([22.57, 88.36], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
   s = await st(p);
-  ok(s.on && s.drawn === 0 && /No official open cameras on screen.*Hong Kong/.test(s.msg), "desktop: Thailand has none; the note says where they are: " + s.msg.slice(0, 120));
+  ok(s.on && s.drawn === 0 && /No official open cameras on screen.*Hong Kong/.test(s.msg), "desktop: Kolkata has none; the note says where they are: " + s.msg.slice(0, 120));
   ok(reads.length === 1 && reads[0] === "data/cams/index.json", "desktop: only the index is read (" + reads.join(",") + ")");
   await p.evaluate(() => { const d = document.querySelector("#cam-sec .cam-cov"); d.open = true; }); await p.waitForTimeout(300);
   ok(/Hong Kong/.test(await p.evaluate(() => document.querySelector("#cam-sec [data-camcov]").textContent)), "desktop: Where cameras are available lists the agencies");
