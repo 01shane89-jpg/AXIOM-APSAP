@@ -12,6 +12,9 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 const SKIP_URL = /news|ข่าว|activit|event|blog|article|job|career|recruit|สมัครงาน|รับสมัคร|procure|purchase|จัดซื้อ|จัดจ้าง|ประกวดราคา|bid|tender|announce|ประกาศ|gallery|ภาพกิจกรรม|calendar/i;
+/* a quote naming a person (a title before a name: "Asst. Prof. Somchai", "นพ.สมชาย", "แพทย์หญิง ...") is left out: the
+   layer records what a hospital offers, never its staff (build prompt section 24: no unnecessary staff PII) */
+const PERSON = /\b(Dr|Prof|Assoc|Asst|Mr|Mrs|Ms|Miss)\.?\s+(Prof\.?\s+)?[A-Z][a-z]+|(?<![\u0e00-\u0e7f])(นพ\.|พญ\.|ทพ\.|ทพญ\.|ภก\.|ภญ\.|ผศ\.|รศ\.|ศ\.|พ\.อ\.|พ\.ท\.|พ\.ต\.|ร\.อ\.|ร\.ท\.|ร\.ต\.|นายแพทย์|แพทย์หญิง|นางสาว|นาย|นาง)\s*[\u0e01-\u0e2e]/;
 const SKIP_QUOTE = /จัดซื้อ|ประกวดราคา|ราคากลาง|purchase|procure|tender|\bbid\b|ส่งต่อ.*ไปยัง|refer(red)? to/i;
 const MAX_PER_CAP = 2, MAX_QUOTE = 240;
 
@@ -25,6 +28,7 @@ const sha = (o) => crypto.createHash("sha256").update(canon(o)).digest("hex");
 const text = (s, n) => { s = String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
 const http = (u) => /^https?:\/\//i.test(u || "") ? u : "";
 
+export { PERSON };
 export function build(R) {
   const observed = String(R.at || "").slice(0, 10), out = [];
   let dropped = 0, kept = 0;
@@ -33,7 +37,7 @@ export function build(R) {
     for (const [k, L] of Object.entries(site.hits || {})) {
       for (const x of L || []) {
         const url = http(x.url);
-        if (!url || SKIP_URL.test(url) || SKIP_QUOTE.test(x.quote || "")) { dropped++; continue; }
+        if (!url || SKIP_URL.test(url) || SKIP_QUOTE.test(x.quote || "") || PERSON.test(x.quote || "")) { dropped++; continue; }
         const ev = { url, title: text(x.title, 140), excerpt: text(x.quote, MAX_QUOTE), observed };
         ev.sha256 = sha(ev);
         const tgt = k.startsWith("info.") ? info : caps;
