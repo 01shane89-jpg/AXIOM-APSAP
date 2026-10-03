@@ -283,7 +283,7 @@
   map.on("dragstart", function () { if (locked) { locked = false; paintStrip(); toast("Unlocked from your position"); } });
   function toast(t) {
     var n = q("#atk-toast"); if (!n) { n = D.createElement("div"); n.id = "atk-toast"; n.setAttribute("role", "status"); mapEl.appendChild(n); }
-    n.textContent = t; n.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function () { n.classList.remove("show"); }, 1800);
+    n.textContent = t; n.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function () { n.classList.remove("show"); }, Math.max(1800, t.length * 60));
   }
   function copy(t) {
     var done = function () { toast("Copied " + t); };
@@ -310,7 +310,15 @@
   var ptLayer = L.layerGroup().addTo(map);
   var CAM = ' <svg class="atk-cam" viewBox="0 0 24 24" width="11" height="11" aria-label="photos" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>';
   function ptsAll() { try { var a = JSON.parse(lsGet(K_PTS) || "[]"); return Array.isArray(a) ? a.filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }) : []; } catch (e) { return []; } }
-  function ptsSave(a) { lsSet(K_PTS, JSON.stringify(a.slice(-500))); }
+  /* false when this browser would not store them. A full store (Safari keeps about 5 MB per site) first lets go of the
+     neighbour-report caches (index.html "asap-xrecs-*", fetched again when needed) and tries once more. */
+  function ptsSave(a) {
+    var v = JSON.stringify(a.slice(-500));
+    try { localStorage.setItem(K_PTS, v); return true; } catch (e) {}
+    try { for (var i = localStorage.length - 1; i >= 0; i--) { var k = localStorage.key(i); if (k && k.indexOf("asap-xrecs-") === 0) localStorage.removeItem(k); } } catch (e) {}
+    try { localStorage.setItem(K_PTS, v); return true; } catch (e) { return false; }
+  }
+  var SAVE_FAIL = "Point not saved: this browser's storage for OSAP is full. Delete some saved items or workspaces, then try again.";
   function ptsHere() { var c = cc(); return ptsAll().filter(function (p) { return p.cc === c; }); }
   function ptDraw() {
     ptLayer.clearLayers();
@@ -345,7 +353,8 @@
     name = String(name || "").trim().slice(0, 80) || "P" + n;
     a.push({ id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), cc: c, lat: +ll.lat.toFixed(6), lon: +L.Util.wrapNum(ll.lng, [-180, 180], true).toFixed(6), n: name, t: Date.now() });
     var pt = a[a.length - 1];
-    ptsSave(a); ptDraw(); omPaint(); toast("Dropped " + name);
+    if (!ptsSave(a)) { toast(SAVE_FAIL); return null; }
+    ptDraw(); omPaint(); toast("Dropped " + name);
     if (W.OSAP_POINTS) W.OSAP_POINTS.edit(pt.id);
     return pt;
   }
@@ -637,5 +646,5 @@
   W.OSAP_ATAK = { on: on, mode: setMode, ring: function (lat, lon) { ringOpen(L.latLng(lat, lon)); }, close: ringClose, overlays: omOpen, points: ptsHere, fmt: fmtPt, toast: toast,
     /* the readout's position format ("mgrs", "dd" or "dms"): read with no argument, set from Settings with one */
     posFmt: function (f) { if (f && FMTS.indexOf(f) >= 0) { fmt = f; lsSet(K_FMT, f); paintStrip(); } return fmt; },
-    pts: { all: ptsAll, save: ptsSave, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };
+    pts: { all: ptsAll, save: ptsSave, fail: SAVE_FAIL, draw: ptDraw, del: ptDel, paint: omPaint, add: ptAdd }, search: search };
 })();
