@@ -166,7 +166,12 @@
     if (!S.on) { layer.clearLayers(); drawn = {}; S.msg = ""; paintSec(); legend(); return; }
     if (!S.ix) { S.msg = S.ixErr || "Reading the camera list…"; paintSec(); if (!S.ixErr) loadIndex().then(draw); return; }
     var z = map.getZoom(), b = map.getBounds(), here = hits(b.pad(0.2));
-    var names = function (a) { return a.map(function (s) { return s.country; }).join(", "); };
+    /* one name per country ("United States", not each state), unless only one area of it is in view */
+    var names = function (a) {
+      var seen = {}, out = [];
+      a.forEach(function (s) { var k = a.length > 3 ? String(s.country).replace(/ \(.*$/, "") : s.country; if (!seen[k]) { seen[k] = 1; out.push(k); } });
+      return out.join(", ");
+    };
     if (!here.length) {
       layer.clearLayers(); drawn = {};
       S.msg = "No official open cameras on screen. Cameras are published openly in: " + names(S.ix.sources) + ".";
@@ -203,11 +208,11 @@
   function coverage() {
     if (S.ixErr) return esc(S.ixErr);
     if (!S.ix) return "Reading the list of agencies…";
-    return '<ul class="cam-src">' + S.ix.sources.map(function (s) {
+    return '<ul class="cam-src">' + S.ix.sources.slice().sort(function (a, b) { return a.country < b.country ? -1 : a.country > b.country ? 1 : 0; }).map(function (s) {
       return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
         " · " + esc(s.licence) + (s.stale ? " · list not refreshed this week" : "") + "</li>";
     }).join("") + "</ul>" +
-      '<p class="pwr-m">Only cameras an agency publishes itself as open data with no key or login. Other countries have no such feed yet, or need a key (Ontario, Alberta, South Korea) or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
+      '<p class="pwr-m">Only cameras a government or road agency publishes itself, openly, with no account or login. Other countries have no such feed yet, need a key (South Korea), only publish video (Thailand), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
     return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Traffic cameras</b><i>Still images from official road cameras: hover or tap a camera</i></span></label>' +

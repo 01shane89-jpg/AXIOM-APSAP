@@ -489,24 +489,6 @@
    "checked": "2026-10-03T06:24Z"
   },
   {
-   "id": "ca-sk",
-   "cc": "ca",
-   "tz": "America/Regina",
-   "country": "Canada (Saskatchewan)",
-   "agency": "Saskatchewan Highways (Highway Hotline)",
-   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
-   "page": "https://hotline.gov.sk.ca/cctv",
-   "every": 2,
-   "n": 56,
-   "box": [
-    49.08318,
-    -109.97736,
-    59.56133,
-    -101.98503
-   ],
-   "checked": "2026-10-03T06:24Z"
-  },
-  {
    "id": "ca-nb",
    "cc": "ca",
    "tz": "America/Moncton",

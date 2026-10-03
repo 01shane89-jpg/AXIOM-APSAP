@@ -475,7 +475,9 @@ const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
 const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
   // traffic camera stills (assets/osap-cams.js): always the agency's newest image, never a saved copy
   /api\.data\.gov\.sg\/v1\/transport/, /images\.data\.gov\.sg\//, /tdcctv\.data\.one\.gov\.hk/, /trafficnz\.info\/camera/, /jamcams\.tfl\.gov\.uk/,
-  /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/];
+  /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/,
+  /\/map\/Cctv\/\d+/, /carsprogram\.org\//, /websvc\.coloradosprings\.gov\//, /atmsqf\.iowadot\.gov\//, /dot511\.nebraska\.gov\/images\//, /kcscout\.net\//,
+  /images\.wsdot\.wa\.gov\//, /tripcheck\.com\/RoadCams\//, /cameras\.qldtraffic\.qld\.gov\.au\//, /vegagerdin\.is\/vgdata\/vefmyndavelar\//, /eismoinfo\.lt\/eismoinfo-backend\/image-provider\//, /data\.livetraffic\.com\/cameras\/[^/]+\.jpe?g/];
 // Saved after install rather than during it (see the top of this file).
 const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));

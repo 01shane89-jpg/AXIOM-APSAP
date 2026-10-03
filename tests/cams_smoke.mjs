@@ -71,6 +71,18 @@ async function at(p, ll, z) {
 
 ok(ix.sources.length >= 5 && ix.sources.every((s) => s.n > 0 && s.box && s.agency && s.licence && s.page), "index: " + ix.sources.length + " sources, each with agency, licence, page, box and count");
 ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((s) => s.id + ":" + s.n).join(" "));
+// every camera image address is on the service worker's never-cache list, so a phone never shows yesterday's still from its tile cache
+{
+  const sw = await readFile(join(root, "sw.js"), "utf8");
+  const NEVER = eval(sw.match(/const NEVER = (\[[\s\S]*?\]);/)[1]);
+  const missed = new Set();
+  for (const s of ix.sources) {
+    if (s.live) continue;
+    for (const c of JSON.parse(await readFile(join(root, `data/cams/${s.id}.json`), "utf8")).cams)
+      for (const u of [].concat(c[4] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
+  }
+  ok(!missed.size, "sw.js never caches any camera image" + (missed.size ? ": missing " + [...missed].slice(0, 12).join(", ") : ""));
+}
 // ---------- desktop ----------
 {
   const { ctx, p, errors, imgs } = await open({ viewport: { width: 1360, height: 860 } });
