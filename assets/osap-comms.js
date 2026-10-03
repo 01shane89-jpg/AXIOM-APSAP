@@ -100,7 +100,15 @@
   /* service providers named on a mast: the mobile operator tag, else operator, else brand; several split on ";", " / " or "+".
      key folds case, punctuation and company suffixes, so "AIS", "ais" and "AIS Co., Ltd." are one provider. */
   var SUFFIX = /\b(public company limited|company limited|co\.?,? ?ltd\.?|ltd\.?|limited|plc|pcl|inc\.?|llc|corp\.?|corporation|gmbh|pty|tbk|bhd|sdn)(?=[^a-z]|$)/gi;
-  function provKey(n) { return String(n == null ? "" : n).toLowerCase().replace(SUFFIX, " ").replace(/[^a-z0-9\u00c0-\uffff]+/g, ""); }
+  /* words that say what a company does rather than which it is: "Globe Telecoms", "Globe Telecom" and "Globe" are one network */
+  var GENERIC = /\b(telecoms?|telecommunications?|communications?|cellular|mobile|wireless|networks?|group|holdings?|bts|public|company|co)\b|株式会社/gi;
+  /* the same network under its product name */
+  var ALIAS = { truemove: "true", truemoveh: "true", truecorporation: "true", truemovehuniversalcommunication: "true", dtactrinet: "dtac", totpcl: "tot" };
+  function provKey(n) {
+    var raw = String(n == null ? "" : n).toLowerCase().replace(SUFFIX, " "), k = raw.replace(GENERIC, " ").replace(/[^a-z0-9\u00c0-\uffff]+/g, "");
+    if (!k) k = raw.replace(/[^a-z0-9\u00c0-\uffff]+/g, "");
+    return ALIAS[k] || ALIAS[raw.replace(/[^a-z0-9]+/g, "")] || k;
+  }
   function providers(t) {
     t = t || {};
     var v = t["communication:mobile_phone:operator"] || t.operator || t["operator:en"] || t.brand || "", out = [], seen = {};
@@ -223,21 +231,22 @@ function main() {
     return Promise.all(waits);
   }
   /* a colour per phone network, the biggest first, so the whole country's footprint of each reads at a glance */
-  var PCOL = ["#1971c2", "#e8590c", "#2f9e44", "#c2255c", "#f59f00", "#0c8599", "#5c940d", "#a61e4d", "#364fc7", "#d6336c"];
+  var PCOL = ["#e8590c", "#2f9e44", "#c2255c", "#f59f00", "#0c8599", "#5c940d", "#3b5bdb", "#a61e4d"];
   function provCol(m) {
-    if (m.kind !== "cell") return KINDS[m.kind].col;
-    var k = m.p[0]; if (!k) return "#74c0fc";
-    if (!S.pcol[k]) S.pcol[k] = S.pcolN < PCOL.length ? PCOL[S.pcolN++] : KINDS.cell.col;
-    return S.pcol[k];
+    if (m.kind === "bcast") return KINDS.bcast.col;
+    var k = m.p[0]; if (!k) return KINDS[m.kind].col;
+    if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++];
+    return S.pcol[k] || KINDS[m.kind].col;
   }
   function colourProviders() {
     var n = {};
-    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id]; if (m.kind === "cell" && m.p[0]) n[m.p[0]] = (n[m.p[0]] || 0) + 1; });
+    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id]; if (m.kind !== "bcast" && m.p[0]) n[m.p[0]] = (n[m.p[0]] || 0) + 1; });
     Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).forEach(function (k) { if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++]; });
   }
   function addMast(id, lat, lon, t) {
     var k = kind(t); if (!k) return;
-    var pv = providers(t); pv.forEach(function (x) { if (!S.prov[x.key]) S.prov[x.key] = x.name; });
+    /* the shortest spelling seen names the network ("Globe" over "Globe Telecoms, Inc.") */
+    var pv = providers(t); pv.forEach(function (x) { if (!S.prov[x.key] || x.name.length < S.prov[x.key].length) S.prov[x.key] = x.name; });
     S.masts[id] = { id: id, kind: k, lat: +lat, lon: +lon, t: t, h: antH(t), hm: !!height(t.height), p: pv.map(function (x) { return x.key; }) };
   }
   /* the stored copy of a whole country (tools/build_comms_masts.mjs): every mast at once, at any zoom */
@@ -562,7 +571,7 @@ function main() {
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
     var h = "<h3>Comms</h3>";
-    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (colour = network)" : "") + "</div>"; });
+    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
     if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
     Lg.set("comms", h, S.ctx.rail);
@@ -621,7 +630,7 @@ function main() {
   function paintToggles() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-tg"); if (!el) return;
     el.innerHTML = Object.keys(KINDS).map(function (k) {
-      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? ", coloured by network" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
+      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
     }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage</label>';
     paintCounts();
   }
@@ -653,9 +662,9 @@ function main() {
       return;
     }
     oe.innerHTML = "<h3>Service providers</h3>" +
-      '<p class="obs">Tick the networks to show. Phone masts are coloured by network; the masts on the map and the coverage check follow your choice.</p>' +
+      '<p class="obs">Tick the networks to show. Masts whose network is named are drawn in its colour; the masts on the map and the coverage check follow your choice.</p>' +
       '<div class="comprov">' + ol.map(function (k) {
-        var col = k === "?" ? "#74c0fc" : S.pcol[k] || KINDS.cell.col;
+        var col = k === "?" ? KINDS.cell.col : S.pcol[k] || KINDS.cell.col;
         return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + col + '"></span>' + E(provName(k)) + ' <span class="comn">(' + (k === "?" ? nm : ops[k]) + " in view)</span></label>";
       }).join("") + "</div>" +
       '<p><button type="button" data-comprovall="1">All</button> <button type="button" data-comprovall="0">None</button></p>' +

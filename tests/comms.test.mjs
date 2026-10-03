@@ -29,6 +29,10 @@ ok(pv({ brand: "Smart" }) === "Smart", "brand used when there is no operator");
 ok(L.provKey("AIS") === L.provKey("ais") && L.provKey("AIS") === L.provKey("AIS Co., Ltd."), "provider keys fold case and company suffixes");
 ok(pv({ operator: "AIS;ais" }) === "AIS", "the same provider twice on a mast counts once");
 ok(L.provKey("Vodafone") !== L.provKey("Vodacom"), "different providers stay apart");
+ok(L.provKey("Globe Telecoms") === L.provKey("Globe") && L.provKey("Smart Communications, Inc.") === L.provKey("Smart") && L.provKey("CAT Telecom Public Co. Ltd.") === L.provKey("CAT"), "names that only add what the company does fold into one network");
+ok(L.provKey("TrueMove") === L.provKey("True") && L.provKey("True Move") === L.provKey("True") && L.provKey("True Corporation") === L.provKey("True"), "True's product names fold into True");
+ok(L.provKey("KDDI株式会社") === L.provKey("KDDI"), "Japanese company suffix folds");
+ok(L.provKey("Telecom") === "telecom" && L.provKey("Globe") !== L.provKey("Smart"), "a name that is only a generic word keeps itself");
 
 // ---------- heights ----------
 ok(L.height("45") === 45 && L.height("45 m") === 45 && Math.abs(L.height("150 ft") - 45.72) < 0.01 && L.height("12,5") === 12.5, "height tags read in metres and feet");
