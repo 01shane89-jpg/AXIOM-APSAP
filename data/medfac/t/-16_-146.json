@@ -1,0 +1,8 @@
+[["n1042050085",-15.62289,-145.49592,"fr",{"name":"Aratika Airport","aeroway":"aerodrome"}],
+["n1042050105",-15.78218,-145.12412,"fr",{"name":"Kauehi Airport","aeroway":"aerodrome","icao":"NTKA","iata":"KHZ","wikidata":"Q22247916"}],
+["n1042050108",-15.48611,-145.46989,"fr",{"name":"Aratika Nord Airport","aeroway":"aerodrome","icao":"NTKK","iata":"RKA","wikidata":"Q22247911"}],
+["w1285657041",-14.4564,-145.02466,"fr",{"name":"Takaroa Airport","aeroway":"aerodrome","iata":"TKX","wikidata":"Q7677281"}],
+["w1285768920",-14.70921,-145.24484,"fr",{"name":"Takapoto Airport","aeroway":"aerodrome","iata":"TKP","wikidata":"Q4264128"}],
+["w748890833",-14.70607,-145.24974,"fr",{"name":"Infirmerie","amenity":"clinic","healthcare":"clinic"}],
+["w748890867",-14.70597,-145.24988,"fr",{"name":"infirmerie","amenity":"clinic","healthcare":"clinic"}],
+["w749946767",-15.82628,-145.11094,"fr",{"amenity":"clinic","operator":"Pays","operator:type":"public"}]]

@@ -1,0 +1,13 @@
+[["n10827479570",8.84626,40.01249,"et",{"name":"Helipad","aeroway":"helipad"}],
+["n11506302491",9.08026,41.68959,"et",{"name":"Sabanbon Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n4800340422",9.58808,41.85952,"et",{"name":"Dilchora Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n8590253518",8.03967,41.71893,"et",{"name:en":"Mino Health Center","amenity":"clinic","addr:street":"Qumbii Street"}],
+["n9316126117",9.59952,41.84032,"et",{"name":"Delt General Hospital","amenity":"hospital"}],
+["w311833269",9.62476,41.85409,"et",{"name":"አባ ጤና ደጃዝማች ይልማ ድፍን ዓለም የአየር ማረፊያ","name:en":"Dire Dawa Airport","aeroway":"aerodrome","icao":"HADR","iata":"DIR","aerodrome:type":"international","military":"airfield","wikidata":"Q2507539"}],
+["w787549760",9.0703,40.86526,"et",{"name":"General- and Eyeclinic","healthcare":"hospital"}],
+["w787549769",9.13813,41.83714,"et",{"name":"Girawa","amenity":"hospital","healthcare":"hospital","phone":"0920687804","addr:housenumber":"00678","addr:street":"Addis"}],
+["w787549805",9.58799,41.85975,"et",{"amenity":"hospital","healthcare":"hospital"}],
+["w787549806",9.59011,41.85589,"et",{"name":"ፈረንሳይ ሆስፒታል","name:en":"French Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w787549807",9.5995,41.84942,"et",{"name":"Art Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w787549836",9.60378,41.86507,"et",{"name":"ደሬዳዋ ሪጅናል ላቦራቶሪ","name:en":"Dire Dawa Regional Laboratory","amenity":"hospital","healthcare":"hospital"}],
+["w787549837",9.60452,41.86506,"et",{"name":"ነምበር ዋን ጤና አጠባበቅ ጣቢያ","name:en":"Number One Health Center","amenity":"hospital","healthcare":"hospital"}]]
