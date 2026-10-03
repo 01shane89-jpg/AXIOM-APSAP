@@ -210,6 +210,9 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const sea = await p.evaluate(() => { const i = document.querySelector(".leaflet-popup-content img.cam-big"); return { src: i ? i.getAttribute("src") : "", strip: !!(i && i.classList.contains("cam-strip")), h: i ? i.getBoundingClientRect().height : 0, t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "" }; });
   ok(/buoycam\.php\?station=41002&t=/.test(sea.src) && sea.strip && sea.h >= 140 && /Ocean buoy camera/.test(sea.t), "NOAA buoy camera: the strip of views shown " + Math.round(sea.h) + " px high, scrolled sideways");
   await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [33, -77], 6); await p.waitForTimeout(1200);
+  const far = await p.evaluate(() => { const s = window.OSAP_CAMS.state(); return { n: s.drawn, msg: s.msg }; });
+  ok(far.n > 0 && /Zoom in to see the other cameras/.test(far.msg), "zoomed out: the ocean buoys still show, the road cameras wait for a closer view: " + far.n + " · " + far.msg.slice(0, 120));
   // a still camera that also has video: the button plays it in place, Refresh goes back to the newest still
   const tfl = JSON.parse(await readFile(join(root, "data/cams/gb-tfl.json"), "utf8")).cams.find((c) => c[5]);
   await p.evaluate(() => window.__asapMap.closePopup());
