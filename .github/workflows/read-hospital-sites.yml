@@ -1,5 +1,6 @@
 # Reads hospitals' own websites for the medical plan's documented capabilities (tools/read_hospital_sites.mjs).
-# Uploads hospital-sites-<cc>.json as an artifact; writes nothing to the repo. The quotes are reviewed before any is used.
+# Commits hospital-sites-out/hospital-sites-<cc>.json to this working branch only (never main); the quotes are reviewed
+# before any is used.
 name: Read hospital websites
 on:
   push:
@@ -11,7 +12,7 @@ on:
         description: Country code
         default: th
 permissions:
-  contents: read
+  contents: write
 jobs:
   read:
     runs-on: ubuntu-latest
@@ -24,9 +25,11 @@ jobs:
       - run: node tools/read_hospital_sites.mjs "${CC:-th}" hospital-sites-out
         env:
           CC: ${{ github.event.inputs.cc }}
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
-        with:
-          name: hospital-sites
-          path: hospital-sites-out
-          retention-days: 14
+      - name: Commit the result to this branch
+        if: github.ref == 'refs/heads/claude/hospital-sites'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hospital-sites-out
+          git commit -m "Hospital websites read $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          git pull --rebase origin claude/hospital-sites && git push origin HEAD:claude/hospital-sites
