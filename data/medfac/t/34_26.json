@@ -1,0 +1,11 @@
+[["n1625211172",35.30308,26.2949,"gr",{"aeroway":"helipad"}],
+["n5696490919",35.50759,27.21186,"gr",{"name":"Hippocrates Quick Med Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1067984168",35.52776,27.19481,"gr",{"name":"Γενικό Νοσοκομείο Καρπάθου \"Άγιος Ιωάννης ο Καρπάθιος\"","name:en":"Karpathos General Hospital \"Agios Ioannis o Karpathios\"","amenity":"hospital","healthcare":"hospital","wikidata":"Q112286539"}],
+["w183688380",35.21611,26.10097,"gr",{"name":"Κρατικός Αερολιμένας Σητείας","name:en":"Sitia Public Airport","aeroway":"aerodrome","icao":"LGST","iata":"JSH","wikidata":"Q630703"}],
+["w233023526",35.42104,27.14501,"gr",{"name":"Κρατικός Αερολιμένας Καρπάθου","name:en":"Karpathos National Airport","aeroway":"aerodrome","icao":"LGKP","iata":"AOK","wikidata":"Q1360757"}],
+["w273492943",35.73893,27.18595,"gr",{"aeroway":"helipad"}],
+["w306542817",35.05815,26.14771,"gr",{"aeroway":"helipad"}],
+["w564038441",35.73837,27.17651,"gr",{"amenity":"clinic","emergency":"no"}],
+["w572184999",35.20442,26.0963,"gr",{"amenity":"hospital","healthcare":"hospital","emergency":"ambulance_station"}],
+["w598530170",35.50739,27.21125,"gr",{"name":"Γενικό Νοσοκομείο Καρπάθου \"Άγιος Ιωάννης ο Καρπάθιος\"","name:en":"Karpathos Hospital","healthcare":"hospital","phone":"+302245022228","addr:city":"Κάρπαθος","addr:postcode":"85700"}],
+["w968052439",35.42133,26.91033,"gr",{"name":"Δημοτικός Αερολιμένας Κάσου","name:en":"Kasos Airport","aeroway":"aerodrome","icao":"LGKS","iata":"KSJ","wikidata":"Q3307142"}]]
