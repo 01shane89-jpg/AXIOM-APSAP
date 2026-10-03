@@ -201,7 +201,9 @@
   box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-labelledby", "move-h");
   D.body.appendChild(box);
   var UI = { busy: "", msg: "", made: null, got: null, file: null, undoAt: 0 };
-  function open() { UI.msg = ""; UI.busy = ""; UI.got = null; UI.file = null; if (UI.made && UI.made.url) URL.revokeObjectURL(UI.made.url); UI.made = null; box.hidden = false; render(); hasUndo().then(function (t) { UI.undoAt = t; render(); }); }
+  function open() { UI.msg = ""; UI.busy = ""; UI.got = null; UI.file = null; if (UI.made && UI.made.url) URL.revokeObjectURL(UI.made.url); UI.made = null; box.hidden = false; render();
+    /* redraw only when there is something to put back: a redraw replaces the file box, and a file chosen in that moment was lost */
+    hasUndo().then(function (t) { if (t !== UI.undoAt) { UI.undoAt = t; render(); } }); }
   function close() { box.hidden = true; if (UI.made && UI.made.url) URL.revokeObjectURL(UI.made.url); UI.made = null; UI.got = null; }
   function canShareFile(f) { try { return !!(navigator.canShare && navigator.share && navigator.canShare({ files: [f] })); } catch (e) { return false; } }
   function render() {
