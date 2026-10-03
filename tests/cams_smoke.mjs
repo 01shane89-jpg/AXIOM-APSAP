@@ -35,13 +35,24 @@ async function open(opts, hash = "") {
   ctxMode.v = "";
   await ctx.route(/api\.data\.gov\.sg\/v1\/transport\/traffic-images/, (r) => r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" },
     body: JSON.stringify({ items: [{ cameras: sgList.map((c) => ({ camera_id: c[0], timestamp: "2026-10-01T18:05:36+08:00", image: "https://images.data.gov.sg/api/traffic-images/2026/10/" + c[0] + ".jpg", location: { latitude: c[1], longitude: c[2] } })) }] }) }));
+  // Thailand's river cameras: DWR's API gives a snapshot path, then the picture by POST
+  const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "GET, POST" };
+  await ctx.route(/telemetry\.dwr\.go\.th\/api\//, (r) => {
+    const u = r.request().url(); imgs.push(u);
+    if (r.request().method() === "OPTIONS") return r.fulfill({ status: 204, headers: CORS });
+    if (/reportCctv\/snapshot\//.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ value: "/TA210507/2026/10/3/14_05.jpg" }) });
+    if (/file\/image\/cctv/.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: PNG });
+    return r.fulfill({ status: 404, headers: CORS, body: "" });
+  });
+  // iTIC live video: the playlist is refused here, so the pop-up must say the video is not available
+  await ctx.route(/camerai1\.iticfoundation\.org/, (r) => { imgs.push(r.request().url()); return r.fulfill({ status: 404, headers: CORS, body: "" }); });
   await ctx.route(/tdcctv\.data\.one\.gov\.hk|images\.data\.gov\.sg|weathercam\.digitraffic\.fi|jamcams\.tfl\.gov\.uk/, (r) => {
     imgs.push(r.request().url());
     if (/BROKEN/.test(r.request().url()) || ctxMode.v === "fail") return r.fulfill({ status: 404, body: "" });
     if (ctxMode.v === "hang") return new Promise((ok) => setTimeout(ok, 4000)).then(() => r.fulfill({ status: 200, contentType: "image/png", body: PNG })).catch(() => {});
     return r.fulfill({ status: 200, contentType: "image/png", body: PNG });
   });
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*(data\.gov\.sg|tdcctv|weathercam|jamcams))/, (r) => r.abort());
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)(?!.*(data\.gov\.sg|tdcctv|weathercam|jamcams|telemetry\.dwr|camerai1\.iticfoundation))/, (r) => r.abort());
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_CAMS, null, { timeout: 60000 }); await p.waitForTimeout(3500);
@@ -79,7 +90,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   for (const s of ix.sources) {
     if (s.live) continue;
     for (const c of JSON.parse(await readFile(join(root, `data/cams/${s.id}.json`), "utf8")).cams)
-      for (const u of [].concat(c[4] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
+      for (const u of [].concat(c[4] || [], c[5] || [])) if (!NEVER.some((r) => r.test(u))) missed.add(s.id + " " + new URL(u).host);
   }
   ok(!missed.size, "sw.js never caches any camera image" + (missed.size ? ": missing " + [...missed].slice(0, 12).join(", ") : ""));
 }
@@ -92,10 +103,10 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await om(p, true);
   ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Traffic cameras switch in the Overlays sheet");
   ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
-  await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 9, { animate: false }));
+  await p.evaluate(() => window.__asapMap.setView([22.57, 88.36], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
   s = await st(p);
-  ok(s.on && s.drawn === 0 && /No official open cameras on screen.*Hong Kong/.test(s.msg), "desktop: Thailand has none; the note says where they are: " + s.msg.slice(0, 120));
+  ok(s.on && s.drawn === 0 && /No official open cameras on screen.*Hong Kong/.test(s.msg), "desktop: Kolkata has none; the note says where they are: " + s.msg.slice(0, 120));
   ok(reads.length === 1 && reads[0] === "data/cams/index.json", "desktop: only the index is read (" + reads.join(",") + ")");
   await p.evaluate(() => { const d = document.querySelector("#cam-sec .cam-cov"); d.open = true; }); await p.waitForTimeout(300);
   ok(/Hong Kong/.test(await p.evaluate(() => document.querySelector("#cam-sec [data-camcov]").textContent)), "desktop: Where cameras are available lists the agencies");
@@ -131,7 +142,6 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const sg = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
   ok(/images\.data\.gov\.sg\/api\/traffic-images\/2026\/10\/\d+\.jpg$/.test(sg.src) && /Image taken 1 Oct 2026 1005Z \/ 18:05 SGT/.test(sg.t), "Singapore: live image address and its time: " + sg.src + " | " + (sg.t.match(/Image taken[^.]*/) || [""])[0]);
   // Finland: several views
-  await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [60.05374, 23.99616], 14);
   { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
   await p.waitForTimeout(700);
@@ -140,6 +150,38 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   if (nv > 1) { await p.click('.leaflet-popup-content [data-camview="1"]'); await p.waitForTimeout(400); }
   const v1 = await p.evaluate(() => document.querySelector(".leaflet-popup-content img.cam-big").getAttribute("src"));
   ok(nv > 1 && v0 !== v1 && /weathercam\.digitraffic\.fi/.test(v1), "Finland: " + nv + " views, switching changes the image " + v1);
+  // Thailand: a river camera shows DWR's newest snapshot with the time in its path; a live road camera starts the video player
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [6.47985, 101.44526], 13);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("th-dwr", "b0f778e3-029f-418d-8024-e22e3004a3c9")), "Thailand river camera drawn at Sai Buri River, Yala");
+  await p.waitForTimeout(1200);
+  const dwr = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
+  ok(/^blob:/.test(dwr.src) && /River camera/.test(dwr.t) && /Image taken 3 Oct 2026 0705Z \/ 14:05/.test(dwr.t), "Thailand river camera: DWR snapshot and its time: " + dwr.src.slice(0, 30) + " | " + (dwr.t.match(/Image taken[^·]*/) || [""])[0]);
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [13.69257, 101.0709], 15);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("th-itic", "ITICM_BMAMI0184")), "Thailand live camera drawn in Chachoengsao");
+  await p.waitForFunction(() => /not available|did not start|cannot play/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
+  // newer Chromium plays HLS itself (like Safari), older needs hls.js: either way the stream is asked for and the failure said plainly
+  const live = await p.evaluate(() => ({ t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "", hls: !!window.Hls, native: !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl") }));
+  ok(/Road camera · live video/.test(live.t) && /live video is not available right now/.test(live.t) && (live.hls || live.native) && imgs.some((u) => /camerai1\.iticfoundation\.org\/hls\/.+\.m3u8/.test(u)),
+    "Thailand live camera: the player (" + (live.native ? "built in" : "hls.js") + ") asks iTIC for the stream and says plainly when it is off air: " + (live.t.match(/[^.]*(not available|did not start|cannot play)[^.]*/) || [""])[0]);
+  // a still camera that also has video: the button plays it in place, Refresh goes back to the newest still
+  const tfl = JSON.parse(await readFile(join(root, "data/cams/gb-tfl.json"), "utf8")).cams.find((c) => c[5]);
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [tfl[1], tfl[2]], 15);
+  ok(await p.evaluate((id) => window.OSAP_CAMS.open("gb-tfl", id), tfl[0]), "London camera with a video clip drawn");
+  await p.waitForTimeout(800);
+  ok(await p.evaluate(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || "")), "London: the pop-up offers the agency's video clip");
+  const clipN = imgs.length;
+  await p.click(".leaflet-popup-content [data-camlive]");
+  await p.waitForFunction(() => /not available|did not start/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || "") || !!document.querySelector(".leaflet-popup-content video"), null, { timeout: 25000 }).catch(() => {});
+  ok(imgs.slice(clipN).some((u) => /\.mp4/.test(u)), "London: Play video clip asks TfL for the clip");
+  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(800);
+  ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video")), "London: Refresh goes back to the newest still");
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await at(p, [60.05374, 23.99616], 14);
+  { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
+  await p.waitForTimeout(700);
   // a failed image says so, with a link to open it directly
   const popText = () => p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
   ctxMode.v = "fail";
