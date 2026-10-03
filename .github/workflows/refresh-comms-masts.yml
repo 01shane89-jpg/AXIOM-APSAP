@@ -1,0 +1,55 @@
+# Stored masts and towers for the Comms tab (tools/build_comms_masts.mjs -> data/comms/masts), so a whole country shows at
+# once, by provider. Each run builds the countries never stored first, then any older than four weeks, until its time
+# budget is spent; a daily run fills the world in a few days and then keeps it fresh. It commits on the branch it runs on
+# (main on schedule).
+name: Refresh comms masts
+
+on:
+  # a push of the builder on a comms branch builds there, so the tab can be previewed and tested with real data
+  push:
+    branches: ["claude/comms-*"]
+    paths: ["tools/build_comms_masts.mjs", ".github/workflows/refresh-comms-masts.yml"]
+  schedule:
+    - cron: "41 3 * * *"
+  workflow_dispatch:
+    inputs:
+      countries:
+        description: "Country codes to rebuild (space separated); empty builds the next countries due"
+        required: false
+        default: ""
+      budget:
+        description: "Minutes to spend"
+        required: false
+        default: "45"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-comms-masts-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Build
+        env:
+          MASTS_BUDGET_MIN: ${{ inputs.budget || '45' }}
+          COUNTRIES: ${{ inputs.countries }}
+        run: node tools/build_comms_masts.mjs $COUNTRIES
+      - name: Commit
+        run: |
+          git add -A data/comms/masts
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Refresh comms masts $(date -u +'%Y-%m-%d %H:%MZ')"
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1
