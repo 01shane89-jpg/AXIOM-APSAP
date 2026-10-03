@@ -39,6 +39,6 @@
 ["w1378290415",19.14933,93.64277,"mm",{"amenity":"hospital"}],
 ["w1378290491",19.57168,93.9289,"mm",{"amenity":"hospital"}],
 ["w477855141",19.56468,93.93288,"mm",{"amenity":"hospital"}],
-["w489588789",19.42243,93.53537,"mm",{"name":"ကျောက်ဖြူလေဆိပ်","name:en":"Kyaukpyu Airport","aeroway":"aerodrome","icao":"VYKP","iata":"KYP"}],
-["w489589639",18.84434,93.68425,"mm",{"name":"မာန်အောင်လေဆိပ်","name:en":"Manaung Airport","aeroway":"aerodrome","icao":"VYMN","iata":"MGU"}],
+["w489588789",19.42243,93.53537,"mm",{"name":"ကျောက်ဖြူလေဆိပ်","name:en":"Kyaukpyu Airport","aeroway":"aerodrome","icao":"VYKP","iata":"KYP","wikidata":"Q3277249"}],
+["w489589639",18.84434,93.68425,"mm",{"name":"မာန်အောင်လေဆိပ်","name:en":"Manaung Airport","aeroway":"aerodrome","icao":"VYMN","iata":"MGU","wikidata":"Q12693777"}],
 ["w853281013",19.75454,93.83318,"mm",{"amenity":"hospital","healthcare":"hospital"}]]

@@ -13,7 +13,7 @@
 ["w1379253177",8.69321,106.5997,"vn",{"name":"Trung tâm Quân Dân Y Côn Đảo (mới)","amenity":"hospital","healthcare":"hospital","addr:street":"Huỳnh Thúc Kháng"}],
 ["w1385327614",9.86889,106.05407,"vn",{"name":"Trung tâm Y tế huyện Cầu Kè","amenity":"hospital","healthcare":"hospital","phone":"+84 294 3834 019","addr:street":"30 Tháng 4","addr:subdistrict":"TT. Cầu Kè","addr:district":"Cầu Kè","addr:province":"Trà Vinh"}],
 ["w288574311",9.92643,106.34192,"vn",{"name":"Bệnh viện Đa khoa Tp Trà Vinh","amenity":"hospital"}],
-["w62060973",8.73209,106.6327,"vn",{"name":"Sân bay Côn Đảo","name:en":"Con Dao Airport","official_name":"Cảng Hàng không Côn Sơn","aeroway":"aerodrome","icao":"VVCS","iata":"VCS"}],
+["w62060973",8.73209,106.6327,"vn",{"name":"Sân bay Côn Đảo","name:en":"Con Dao Airport","official_name":"Cảng Hàng không Côn Sơn","aeroway":"aerodrome","icao":"VVCS","iata":"VCS","wikidata":"Q47724"}],
 ["w669652621",9.51117,106.19771,"vn",{"name":"Trung tâm Y tế Huyện Trần Đề","amenity":"hospital"}],
 ["w669691749",9.54814,106.17006,"vn",{"name":"Trạm Y tế xã Đại Ân 2","amenity":"clinic"}],
 ["w751056535",8.68537,106.60464,"vn",{"name":"Trung tâm Quân dân y đặc khu Côn Đảo","name:en":"Con Dao Military Medical Centre","amenity":"hospital","healthcare":"hospital","addr:street":"Lê Hồng Phong"}],

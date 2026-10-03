@@ -19,9 +19,9 @@
 ["w726088927",2.93073,115.85124,"id",{"name":"Lapangan Perintis Long Alango","aeroway":"aerodrome"}],
 ["w727206605",2.5907,115.79866,"id",{"name":"Lapangan Terbang Long Pujungan","name:en":"Long Pujungan Airstrip","aeroway":"aerodrome"}],
 ["w729837390",2.00756,115.15133,"id",{"name":"Lapangan Perintis Data Dian","aeroway":"aerodrome"}],
-["w910358395",3.97377,115.61712,"my",{"name":"Lapangan Terbang Bakelalan","name:en":"Ba'kelalan Airport","operator":"Malaysia Airports Holdings Berhad","operator:type":"government","aeroway":"aerodrome","icao":"WBGQ","iata":"BKM"}],
-["w913837696",3.73471,115.4784,"my",{"name":"Lapangan Terbang Bario","name:en":"Bario Airport","operator":"Malaysia Airports Holdings Berhad","aeroway":"aerodrome","icao":"WBGZ","iata":"BBN"}],
-["w915690416",3.42163,115.15376,"my",{"name":"Lapangan Terbang Long Lellang","name:en":"Long Lellang Airport","operator":"Malaysia Airports","operator:type":"government","aeroway":"aerodrome","icao":"WBGF","iata":"LGL"}],
-["w915700423",3.311,114.78565,"my",{"name":"Lapangan Terbang Long Akah","name:en":"Long Akah Airport","aeroway":"aerodrome","icao":"WBGA","iata":"LKH"}],
-["w918612605",3.97639,115.06748,"my",{"name":"Lapangan Terbang Long Seridan","name:en":"Long Seridan Airport","operator":"Malaysia Airports","operator:type":"government","aeroway":"aerodrome","icao":"WBGI","iata":"ODN"}],
-["w920725968",3.20179,115.4019,"my",{"name":"Lapangan Terbang Long Banga","name:en":"Long Banga Airport","aeroway":"aerodrome","iata":"LBP"}]]
+["w910358395",3.97377,115.61712,"my",{"name":"Lapangan Terbang Bakelalan","name:en":"Ba'kelalan Airport","operator":"Malaysia Airports Holdings Berhad","operator:type":"government","aeroway":"aerodrome","icao":"WBGQ","iata":"BKM","wikidata":"Q1927116"}],
+["w913837696",3.73471,115.4784,"my",{"name":"Lapangan Terbang Bario","name:en":"Bario Airport","operator":"Malaysia Airports Holdings Berhad","aeroway":"aerodrome","icao":"WBGZ","iata":"BBN","wikidata":"Q1932958"}],
+["w915690416",3.42163,115.15376,"my",{"name":"Lapangan Terbang Long Lellang","name:en":"Long Lellang Airport","operator":"Malaysia Airports","operator:type":"government","aeroway":"aerodrome","icao":"WBGF","iata":"LGL","wikidata":"Q1927082"}],
+["w915700423",3.311,114.78565,"my",{"name":"Lapangan Terbang Long Akah","name:en":"Long Akah Airport","aeroway":"aerodrome","icao":"WBGA","iata":"LKH","wikidata":"Q3503058"}],
+["w918612605",3.97639,115.06748,"my",{"name":"Lapangan Terbang Long Seridan","name:en":"Long Seridan Airport","operator":"Malaysia Airports","operator:type":"government","aeroway":"aerodrome","icao":"WBGI","iata":"ODN","wikidata":"Q1936233"}],
+["w920725968",3.20179,115.4019,"my",{"name":"Lapangan Terbang Long Banga","name:en":"Long Banga Airport","aeroway":"aerodrome","iata":"LBP","wikidata":"Q3503051"}]]
