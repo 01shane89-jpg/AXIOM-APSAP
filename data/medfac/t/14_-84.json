@@ -1,0 +1,9 @@
+[["n1042048024",15.06498,-83.29281,"hn",{"name":"Aeropuerto de Raya","aeroway":"aerodrome"}],
+["n1042048032",15.175,-83.68222,"hn",{"name":"La Katabila Airport","aeroway":"aerodrome"}],
+["n1042048034",15.00204,-83.72311,"hn",{"name":"Tipimuratara Airport","aeroway":"aerodrome"}],
+["n1042048038",14.94068,-83.8482,"hn",{"name":"Auca Airport","aeroway":"aerodrome"}],
+["n1042048040",15.50329,-83.93849,"hn",{"name":"Uhi Airport","aeroway":"aerodrome","icao":"MHUH"}],
+["r16203672",15.06687,-83.29404,"hn",{"name":"Centro de Salud de Raya","amenity":"clinic","healthcare":"clinic","operator":"IHSS","operator:type":"public","addr:city":"Ramón Villeda Morales"}],
+["w584963129",15.26687,-83.78196,"hn",{"name":"Hospital Puerto Lempira","amenity":"hospital","healthcare":"hospital","addr:street":"5a Calle N","addr:city":"Puerto Lempira"}],
+["w606180864",15.26209,-83.7816,"hn",{"name":"Aeropuerto de Puerto Lempira","name:en":"Puerto Lempira Airport","addr:street":"Carretera Puerto Lempira - Rus Rus","addr:city":"Puerto Lempira","aeroway":"aerodrome","icao":"MHPL","iata":"PEU","wikidata":"Q11824691"}],
+["w606223486",15.32121,-83.60406,"hn",{"name":"Aeropuerto de Cauquira","name:en":"Kaukira Airport","addr:city":"Puerto Lempira","aeroway":"aerodrome","icao":"MHCU","iata":"CDD","wikidata":"Q11824307"}]]

@@ -1,4 +1,5 @@
 [["n1042069310",4.10833,-60.7333,"br",{"name":"Fazenda Depósito","aeroway":"aerodrome"}],
+["n1042071561",4.82024,-60.02505,"gy",{"name":"Canawapai Airport","aeroway":"aerodrome","wikidata":"Q31203154"}],
 ["n1042071565",4.70319,-60.2674,"br",{"name":"Caracanã","aeroway":"aerodrome","icao":"SJKN","wikidata":"Q31203160"}],
 ["n1042071571",4.06306,-60.165,"br",{"name":"Cararuau","aeroway":"aerodrome","wikidata":"Q31203167"}],
 ["n1042071575",4.54111,-60.4631,"br",{"name":"Caraparu","aeroway":"aerodrome","wikidata":"Q31203164"}],
@@ -62,4 +63,11 @@
 ["n6913921004",4.48661,-61.14119,"br",{"name":"Hospital Délio Tupinambá","amenity":"hospital","healthcare":"hospital"}],
 ["n6946174059",4.59014,-60.16352,"br",{"aeroway":"helipad"}],
 ["n6958579897",4.48194,-61.14436,"br",{"amenity":"clinic","healthcare":"clinic"}],
+["w1014276428",4.72766,-60.0334,"gy",{"name":"Orinduik Airport","addr:city":"Orinduik","aeroway":"aerodrome","icao":"SYOR","iata":"ORJ","wikidata":"Q11824652"}],
+["w1014562597",5.7065,-60.29623,"gy",{"name":"Imbaimadai Airport","addr:city":"Imbaimadai","aeroway":"aerodrome","icao":"SYIB","iata":"IMB","wikidata":"Q11824434"}],
+["w1041149634",5.3568,-60.38173,"gy",{"aeroway":"aerodrome","aerodrome:type":"airfield"}],
+["w1188974431",5.86548,-60.61401,"gy",{"name":"Kamarang Airport","addr:city":"Kamarang","aeroway":"aerodrome","icao":"SYKM","iata":"KAR","wikidata":"Q11824458"}],
+["w1463747245",5.81717,-61.05581,"gy",{"name":"Paruima Airport","addr:city":"Paruima","aeroway":"aerodrome","icao":"SYPR","iata":"PRR","wikidata":"Q25106432"}],
+["w1463748429",5.79961,-60.77377,"gy",{"name":"Waramadong Airstrip","addr:city":"Waramadong","aeroway":"aerodrome"}],
+["w581657212",4.62821,-60.05686,"gy",{"name":"Kako Mountain Airstrip","aeroway":"aerodrome"}],
 ["w857334690",4.48159,-61.1443,"br",{"name":"Unidade de Referência da Família","amenity":"clinic","healthcare":"clinic"}]]
