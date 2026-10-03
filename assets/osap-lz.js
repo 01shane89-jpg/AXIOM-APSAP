@@ -500,6 +500,34 @@
     return c.toDataURL("image/png");
   }
 
+  /* one search with no card or map marks: elevation and OpenStreetMap obstacles for the window round o, then analyse().
+     Used by find() below and by Route > Evacuation route ("nearest landing zone"). prog(done, total) reports elevation tiles;
+     busy() is called before the heavy work and may return false to stop. Resolves the analysis (cands best first, pads, warn,
+     bounds) or rejects with "elevation: ..." or the Overpass failure; never resolves "no landing zone" for a failed request. */
+  function scan(o, radius, size, slope, poly, prog, busy) {
+    var win = windowFor(o, radius + size / 2 + 60);
+    var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);
+    var bbox = [se[0], nw[1], nw[0], se[1]];
+    var osm = overpass(overpassQuery(bbox)).then(function (j) { return j.elements || []; });
+    osm.catch(function () {});
+    var dem = demFor(win, prog);
+    return Promise.all([dem, osm]).then(function (v) {
+      if (v[0].failed === v[0].tiles) throw new Error("elevation: no tile loaded");
+      if (busy && busy() === false) return null;
+      return new Promise(function (r) { setTimeout(r, 30); }).then(function () {
+        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly });
+        res.o = o; res.radius = radius; res.size = size; res.slope = slope; res.poly = poly; res.warn = []; res.win = win;
+        if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
+        /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
+        var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
+        if (res.counts.bld < 5 * km2) res.warn.push(res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here, so houses, sheds and trees are probably missing: check every candidate on satellite imagery." :
+          "OpenStreetMap shows no buildings here, so mapping may be incomplete: check every candidate on satellite imagery for houses and trees.");
+        res.bounds = L.latLngBounds([se[0], nw[1]], [nw[0], se[1]]);
+        return res;
+      });
+    });
+  }
+
   var RUN = 0;
   function find() {
     var run = ++RUN, o = ST.poly ? null : (ST.o || (function () { var c = map.getCenter(); return [c.lat, L.Util.wrapNum(c.lng, [-180, 180], true)]; })());
@@ -511,27 +539,11 @@
     } else radius = S.r * 1000;
     ST.o = poly ? null : o;
     ST.busy = 1; ST.err = ""; ST.res = null; ST.msg = "Loading elevation…"; render(); layer.clearLayers(); if (mask) { map.removeLayer(mask); mask = null; }
-    var size = S.d, slope = S.s, win = windowFor(o, radius + size / 2 + 60);
-    var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);
-    var bbox = [se[0], nw[1], nw[0], se[1]];
-    var osm = overpass(overpassQuery(bbox)).then(function (j) { return j.elements || []; });
-    osm.catch(function () {});
-    var dem = demFor(win, function (d, t) { if (run === RUN && ST.busy) { ST.msg = "Loading elevation " + d + " of " + t + ", obstacles from OpenStreetMap…"; var m = card && card.querySelector(".lzmsg"); if (m) m.textContent = ST.msg; } });
-    Promise.all([dem, osm]).then(function (v) {
-      if (run !== RUN) return;
-      if (v[0].failed === v[0].tiles) throw new Error("elevation: no tile loaded");
-      ST.msg = "Working out slope and clear ground…"; render();
-      return new Promise(function (r) { setTimeout(r, 30); }).then(function () {
-        if (run !== RUN) return;
-        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly });
-        res.o = o; res.radius = radius; res.size = size; res.poly = poly; res.warn = [];
-        if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
-        /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
-        var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
-        if (res.counts.bld < 5 * km2) res.warn.push(res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here, so houses, sheds and trees are probably missing: check every candidate on satellite imagery." :
-          "OpenStreetMap shows no buildings here, so mapping may be incomplete: check every candidate on satellite imagery for houses and trees.");
-        res.bounds = L.latLngBounds([se[0], nw[1]], [nw[0], se[1]]);
-        res.maskUrl = maskImage(win, res.OBC); delete res.OBC;
+    var size = S.d, slope = S.s;
+    scan(o, radius, size, slope, poly, function (d, t) { if (run === RUN && ST.busy) { ST.msg = "Loading elevation " + d + " of " + t + ", obstacles from OpenStreetMap…"; var m = card && card.querySelector(".lzmsg"); if (m) m.textContent = ST.msg; } },
+      function () { if (run === RUN) { ST.msg = "Working out slope and clear ground…"; render(); } return run === RUN; }).then(function (res) {
+        if (run !== RUN || !res) return;
+        res.maskUrl = maskImage(res.win, res.OBC); delete res.OBC; delete res.win;
         ST.res = res; ST.busy = 0; ST.msg = res.cands.length ? res.cands.length + " candidate" + (res.cands.length === 1 ? "" : "s") + ", best first. Tap one for details." : "";
         render(); draw();
         /* keep the marks clear of the card: beside it on a large screen, above it on a phone; docked, clear of the panel */
@@ -540,7 +552,6 @@
         var sp = split() && W.OSAP_SPLIT.clear(dock);
         if (sp) { try { map.fitBounds(b, { maxZoom: 16, paddingTopLeft: [sp.tl[0] + 10, 10], paddingBottomRight: [sp.br[0] + 70, sp.br[1] + 10] }); } catch (e) {} return; }
         try { map.fitBounds(b, { maxZoom: 16, paddingTopLeft: [phone ? 10 : Math.min(cr.width + 20, map.getSize().x / 2), 10], paddingBottomRight: [phone ? 70 : 70, phone ? Math.min(cr.height + 10, map.getSize().y / 2) : 10] }); } catch (e) {}
-      });
     }).catch(function (e) {
       if (run !== RUN) return;
       ST.busy = 0; ST.msg = "";
@@ -597,6 +608,10 @@
       ST.poly = P.map(function (p) { return [p[0], p[1]]; }); ST.err = ""; render(); find();
     },
     state: function () { return { busy: !!ST.busy, err: ST.err, res: ST.res, settings: { r: S.r, d: S.d, s: S.s } }; },
+    /* a search with no card or marks (Route > Evacuation route): scan([lat, lon], radius m, { size, slope, prog }) with the
+       analyst's own LZ size and slope settings unless given; the card and its marks are left as they are */
+    scan: function (o, radius, opt) { opt = opt || {}; return scan([+o[0], +o[1]], Math.min(5000, Math.max(200, +radius || 2000)), +opt.size || S.d, +opt.slope || S.s, null, opt.prog, null).then(function (r) { if (r) { delete r.OBC; delete r.win; } return r; }); },
+    sizes: SIZES, slopes: SLOPES,
     analyse: analyse, windowFor: windowFor, obCls: obCls, surfCls: surfCls, edt: edt, query: overpassQuery
   };
 })();
