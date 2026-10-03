@@ -307,6 +307,22 @@ async function round8() {
   const n = await get("https://www.ndbc.noaa.gov/buoycams.php", 30000); line("NDBC buoycams.php", n); console.log("   " + n.b.toString("utf8").slice(0, 900));
   for (const st of ["41002", "46026"]) { const x = await get("https://www.ndbc.noaa.gov/buoycam.php?station=" + st, 30000); line("NDBC cam " + st, x); }
 }
+/* ---------- round 9: more 511 sites (same camera list as the ones in use) and more CARS states ---------- */
+async function round9() {
+  const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start: 0, length: 3, search: { value: "" } }));
+  for (const h of ["511ny.org", "511sc.org", "mdottraffic.com", "manitoba511.ca", "511yukon.ca", "511nj.org", "mass511.com", "511.wv.gov", "511virginia.org", "travelinfo.mt.gov", "sd511.org", "511.nd.gov", "wyoroad.info", "idrivearkansas.com", "algotraffic.com", "oktraffic.org", "nmroads.com", "511.alberta.ca", "511.gov.pe.ca", "quebec511.info", "drivenc.gov", "511.ky.gov", "smartway.tn.gov", "511ga.org", "mo511.org", "traveler.modot.org", "511.org", "hawaii511.org", "goakamai.org", "511tx.org", "drivetexas.org", "511mi.gov", "ohgo.com", "511.mt.gov", "511wv.org", "511.ri.gov", "511.vermont.gov", "511.dot.ri.gov", "ncdot.gov"]) {
+    const r = await get(`https://${h}/List/GetData/Cameras?query=${q}&lang=en`, 30000, { "X-Requested-With": "XMLHttpRequest" });
+    let note = ""; try { const j = JSON.parse(r.b); const c = (j.data || [])[0] || {}; note = "total " + j.recordsTotal + " img " + JSON.stringify((c.images || []).map((i) => i.imageUrl)).slice(0, 160); } catch {}
+    line("511 " + h, r); if (note) console.log("   " + note);
+    if (note) { try { const c = JSON.parse(r.b).data[0]; const u = ((c.images || [])[0] || {}).imageUrl; if (u) await img(new URL(u, `https://${h}/`).href, "  " + h); } catch {} }
+  }
+  for (const st of ["nh", "vt", "me", "ma", "sd", "nd", "mt", "wy", "ok", "mo", "ar", "ms", "al", "nm", "ky", "oh", "tn", "tx", "va", "nc", "sc", "ga", "wv", "ri", "nj", "ny", "il", "mi", "ut", "id", "wa", "or", "ca", "md", "de", "pa", "hi", "ak", "la", "wi", "fl"]) {
+    const r = await get(`https://${st}tg.carsprogram.org/cameras_v1/api/cameras`, 30000);
+    let note = ""; try { const j = JSON.parse(r.b); note = j.length + " cams, first " + JSON.stringify(j[0] && j[0].views).slice(0, 200); } catch {}
+    if (r.s === 200) { line("CARS " + st, r); console.log("   " + note); } else console.log("CARS " + st + " " + (r.s || r.err));
+  }
+}
+if (only === "r9") await round9();
 if (only === "r8") await round8();
 if (only === "r7") await round7();
 if (only === "r5") await round5();
