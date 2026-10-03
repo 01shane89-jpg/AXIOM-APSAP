@@ -8,7 +8,7 @@ on:
   schedule:
     - cron: "41 4 * * 1"
   push:
-    branches: [claude/traffic-cameras]
+    branches: [claude/cams-more]
     paths: [tools/build_cams.mjs, .github/workflows/refresh-cams.yml]
   workflow_dispatch:
     inputs:
@@ -27,7 +27,7 @@ concurrency:
 jobs:
   cams:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
