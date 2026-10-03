@@ -81,7 +81,8 @@ function links(html, base) {
     if (SKIP.test(href)) continue;
     let u; try { u = new URL(href, base); } catch (e) { continue; }
     if (!/^https?:$/.test(u.protocol) || u.hostname.replace(/^www\./, "") !== b.hostname.replace(/^www\./, "")) continue;
-    if (!FOLLOW.test(decodeURIComponent(u.pathname + u.search)) && !FOLLOW.test(label)) continue;
+    let du; try { du = decodeURIComponent(u.pathname + u.search); } catch (e) { du = u.pathname + u.search; }
+    if (!FOLLOW.test(du) && !FOLLOW.test(label)) continue;
     u.hash = ""; out.push(u.href);
   }
   return [...new Set(out)];
@@ -164,7 +165,8 @@ console.log(CC + ": " + list.length + " sites (" + list.filter((h) => h.seed).le
 const out = []; let i = 0;
 await Promise.all(Array.from({ length: CONC }, async () => {
   while (i < list.length) {
-    const h = list[i++], r = await readSite(h);
+    const h = list[i++];
+    let r; try { r = await readSite(h); } catch (e) { r = { ...h, start: undefined, pages: [], hits: {}, err: String(e.message).slice(0, 120) }; }
     out.push(r);
     console.log((r.pages.filter((p) => p.status === 200).length + "/" + r.pages.length).padEnd(6) + " " + Object.keys(r.hits).join(",").slice(0, 120) + "  " + (r.name || "").slice(0, 50) + " " + r.web);
   }
