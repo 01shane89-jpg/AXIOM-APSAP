@@ -27,6 +27,7 @@
   /* the kinds of camera, by the source's type (road when it has none) */
   var TYPES = { road: { n: "Road", t: "Traffic camera", c: "#0b7285" }, river: { n: "River", t: "River camera", c: "#1971c2" },
     volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" } };
+  var KINDS = { dwr: 1, hls: 1, jma: 1 };
   function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
   var OFF = {};
   try { (JSON.parse(localStorage.getItem("osap-cam-off") || "[]") || []).forEach(function (k) { if (TYPES[k]) OFF[k] = 1; }); } catch (e) {}
@@ -44,7 +45,8 @@
   function src(id) { return ((S.ix || {}).sources || []).filter(function (s) { return s.id === id; })[0]; }
   function hits(b) {
     return ((S.ix || {}).sources || []).filter(function (s) {
-      var x = s.box; return x && !OFF[typeOf(s)] && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
+      /* a kind of camera this copy of the page does not know how to fetch (a newer list read by an older page) is left out */
+      var x = s.box; return x && !OFF[typeOf(s)] && (!s.kind || KINDS[s.kind]) && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
     });
   }
   function loadList(id) {
@@ -99,6 +101,11 @@
   /* fills an element with the camera's image; Singapore's address comes from the live API first */
   function fill(el, s, c, view, big, now) {
     var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3], tz = c[6] || s.tz;
+    if (now) {
+      var t0 = el.querySelector("[data-camt]"), b0 = el.querySelector("[data-camimg]");
+      if (t0) t0.textContent = "Asking " + s.agency + " again…";
+      if (b0 && !b0.querySelector("img")) b0.innerHTML = '<span class="cam-no">Loading the image…</span>';
+    }
     var put = function (url, ts) {
       if (!el.isConnected && !el.parentNode) return;
       var im = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]");
@@ -108,7 +115,12 @@
           : "Tried " + when(Date.now(), tz) + " · trying again on its own while this stays open";
       };
       if (!im) return;
-      if (!url) { im._camGen = (im._camGen || 0) + 1; im.innerHTML = '<span class="cam-no">' + NOIMG + "</span>"; stamp(false); return; }
+      if (!url) {
+        var g = (im._camGen = (im._camGen || 0) + 1);
+        /* Refresh pressed: the "asking again" line stays a moment, so the answer (even the same one) is seen to be new */
+        setTimeout(function () { if (im._camGen !== g) return; im.innerHTML = '<span class="cam-no">' + NOIMG + "</span>"; stamp(false); }, now ? 700 : 0);
+        return;
+      }
       if (t && !im.querySelector("img")) t.textContent = "Asking " + s.agency + " for the newest image…";
       loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
     };
