@@ -180,7 +180,48 @@ async function round3() {
     ["DPWH", "https://www.dpwh.gov.ph/"], ["NLEX", "https://www.nlex.com.ph/traffic-advisory/"], ["Cebu City", "https://www.cebucity.gov.ph/"], ["data.gov.ph cctv", "https://data.gov.ph/index/public/dataset?q=cctv"], ["Sakay", "https://sakay.ph/"]]) { const r = await get(u, 40000); show(k, r, 500);
     const t = r.b.toString("utf8"); const m = t.match(/[^"'\s]*(cctv|camera|cam\d|live)[^"'\s]*/gi); if (m) console.log("   links: " + [...new Set(m)].slice(0, 15).join(" | ")); }
 }
+/* ---------- round 4: which sources also stream live video a browser on the live site may play ---------- */
+async function round4() {
+  const vid = async (k, u) => {
+    const r = await get(u, 25000); line(`${k} ${u.slice(0, 110)}`, r);
+    if (r.s !== 200) return;
+    const t = r.b.toString("utf8"); if (!/#EXTM3U/.test(t)) { console.log("   not a playlist: " + r.ct); return; }
+    const next = t.split(/\r?\n/).find((l) => l && !l.startsWith("#")); if (!next) return;
+    const nu = new URL(next, r.url || u).href; const r2 = await get(nu, 25000); line("   next " + nu.slice(0, 100), r2);
+    const t2 = r2.b.toString("utf8"); const seg = /#EXTM3U/.test(t2) && t2.split(/\r?\n/).find((l) => l && !l.startsWith("#"));
+    if (seg) { const r3 = await get(new URL(seg, r2.url || nu).href, 25000); line("   seg " + seg.slice(0, 60), r3); }
+  };
+  const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start: 0, length: 100, search: { value: "" } }));
+  console.log("\n##### R4. 511 sites: video without sign-in");
+  for (const h of ["fl511.com", "511pa.com", "newengland511.org", "ctroads.org", "511wi.gov", "511la.org", "az511.gov", "udottraffic.utah.gov", "511.idaho.gov", "nvroads.com", "511.alaska.gov", "511on.ca", "511.gnb.ca", "511.novascotia.ca", "511nl.ca"]) {
+    const r = await get(`https://${h}/List/GetData/Cameras?query=${q}&lang=en`, 40000, { "X-Requested-With": "XMLHttpRequest" });
+    let all = 0, open = 0, sample = [];
+    try { for (const c of JSON.parse(r.b).data || []) for (const i of c.images || []) { if (!i.videoUrl) continue; all++; if (!i.isVideoAuthRequired && !i.videoDisabled) { open++; if (sample.length < 2) sample.push(i.videoUrl); } } } catch {}
+    console.log(`${h}: of 100 sites, ${all} with video, ${open} without sign-in`);
+    for (const u of sample) await vid("  ", u);
+  }
+  console.log("\n##### R4. CARS states");
+  for (const p of ["cotg", "mntg", "iatg", "intg", "kstg"]) {
+    const r = await get(`https://${p}.carsprogram.org/cameras_v1/api/cameras`, 40000); let n = 0, sample = [];
+    try { for (const c of JSON.parse(r.b)) for (const v of c.views || []) if (v.type === "WMP" && /\.m3u8/.test(v.url || "")) { n++; if (sample.length < 2 && n % 50 === 1) sample.push(v.url); } } catch {}
+    console.log(`${p}: ${n} video views`); for (const u of sample) await vid("  ", u);
+  }
+  console.log("\n##### R4. others");
+  const ct = await get("https://cwwp2.dot.ca.gov/data/d4/cctv/cctvStatusD04.json", 60000); let cv = [];
+  try { cv = (JSON.parse(ct.b).data || []).map((e) => ((((e.cctv || {}).imageData) || {}).streamingVideoURL)).filter((u) => u && u !== "Not Reported"); } catch {}
+  console.log("Caltrans d4 streaming urls: " + cv.length); for (const u of cv.slice(0, 2)) await vid("  ", u);
+  const de = await get("https://tmc.deldot.gov/json/videocamera.json", 40000); let dv = [];
+  try { const j = JSON.parse(de.b); dv = (j.videoCameras || j).map((c) => c.urls && c.urls.m3u8s).filter(Boolean); } catch {}
+  console.log("Delaware m3u8s: " + dv.length); for (const u of dv.slice(0, 2)) await vid("  ", u);
+  const md = await get("https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0/query?where=1%3D1&outFields=hlsurl&f=json&resultRecordCount=3", 40000);
+  try { for (const f of JSON.parse(md.b).features || []) await vid("  MD", f.attributes.hlsurl); } catch {}
+  const tfl = await get("https://api.tfl.gov.uk/Place/Type/JamCam", 40000);
+  try { const p0 = JSON.parse(tfl.b)[0]; const v = (p0.additionalProperties || []).find((x) => x.key === "videoUrl"); console.log("TfL videoUrl " + (v && v.value)); if (v) { const r = await get(v.value, 25000); line("  TfL mp4", r); } } catch (e) { console.log(e); }
+  const ny = await get("https://webcams.nyctmc.org/api/cameras", 40000); try { console.log("NYC keys " + Object.keys(JSON.parse(ny.b)[0]).join(",")); } catch {}
+  const bc = await get("https://www.drivebc.ca/api/webcams/", 40000); try { console.log("DriveBC links " + JSON.stringify(JSON.parse(bc.b)[0].links)); } catch {}
+}
 if (only === "r2") await round2();
+if (only === "r4") await round4();
 if (only === "r3") await round3();
 if (!only || only === "browser") await browserCheck().catch((e) => console.log("browser check failed: " + e));
 if (!only || only === "lists") await candidates();

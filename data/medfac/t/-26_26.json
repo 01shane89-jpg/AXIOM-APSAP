@@ -1,0 +1,8 @@
+[["w1228893718",-24.3545,26.08723,"bw",{"aeroway":"helipad","surface":"paving_stones"}],
+["w1531000277",-24.42135,26.13838,"bw",{"name":"Boseja Clinic","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","addr:street":"Boseja Road","addr:city":"Mochudi"}],
+["w1531066421",-24.3739,26.16104,"bw",{"name":"Mochudi Clinic 2","amenity":"clinic","healthcare":"clinic","addr:city":"Mochudi"}],
+["w1531202766",-24.39608,26.14305,"bw",{"name":"Mochudi Clinic 1","amenity":"clinic","healthcare":"clinic","addr:city":"Mochudi"}],
+["w262751383",-24.35542,26.09338,"bw",{"name":"Matsieng Airfield","operator":"Matsieng Trust","aeroway":"aerodrome","icao":"FBMA"}],
+["w783849690",-24.38294,26.14701,"bw",{"name":"Deborah Retief Memorial Hospital","amenity":"hospital","healthcare":"hospital","operator":"District","operator:type":"public","phone":"5777333","addr:street":"Manamakgote Ward","addr:city":"Mochudi","opening_hours":"24/7"}],
+["w802952232",-24.32756,26.04961,"bw",{"amenity":"hospital","healthcare":"hospital"}],
+["w818929540",-24.62629,26.12551,"bw",{"amenity":"clinic","healthcare":"clinic"}]]

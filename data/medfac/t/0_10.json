@@ -3,6 +3,12 @@
 ["r20955876",1.84249,10.7481,"gq",{"aeroway":"helipad"}],
 ["w1222244416",1.62394,11.28163,"gq",{"aeroway":"helipad"}],
 ["w496247954",1.6824,11.02473,"gq",{"name":"Aeropuerto Internacional del Presidente Obiang Nguema","name:en":"President Obiang Nguema International Airport","operator":"Aeropuertos de Guinea Ecuatorial","aeroway":"aerodrome","icao":"FGMY","iata":"GEM","aerodrome:type":"international","wikidata":"Q19931170"}],
+["w597742159",1.58472,11.56491,"ga",{"name":"Centre Hospitalier Régional d'Oyem","name:en":"Oyem Hospital","amenity":"hospital"}],
+["w597746487",1.54314,11.5813,"ga",{"name":"Aéroport d'Oyem","name:en":"Oyem Airport","aeroway":"aerodrome","icao":"FOGO","iata":"OYE","aerodrome:type":"public","wikidata":"Q2522379"}],
+["w696378029",0.86963,11.50014,"ga",{"name:en":"Airfield","aeroway":"aerodrome"}],
+["w871395382",1.7064,11.64355,"ga",{"aeroway":"helipad"}],
+["w871395383",1.70828,11.64482,"ga",{"aeroway":"helipad"}],
 ["w940113552",1.60843,11.28834,"gq",{"aeroway":"helipad"}],
 ["w940113553",1.60794,11.28847,"gq",{"aeroway":"helipad"}],
-["w940113554",1.60751,11.28858,"gq",{"aeroway":"helipad"}]]
+["w940113554",1.60751,11.28858,"gq",{"aeroway":"helipad"}],
+["w973125173",1.46369,11.57751,"ga",{"name":"Hôpital Hansénien d'Ebeigne","amenity":"hospital","healthcare":"hospital","addr:street":"RN2","addr:city":"Oyem","addr:province":"Woleu-Ntem"}]]
