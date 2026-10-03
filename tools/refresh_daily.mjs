@@ -64,7 +64,7 @@ const index = { asof: stamp, date: today, schema: SCHEMA, countries: {}, ai: { m
 const built = {};
 for (const cc of only || ccs) {
   const brief = (readWin(`data/brief/${cc}.js`, "ASAP_BRIEF") || {})[cc];
-  const fps = ((AIW.areas || {})[cc] || {}).items || [];
+  const aw = (AIW.areas || {})[cc] || {}, fps = (aw.items || []).map((f) => ({ ...f, _reports: (f.reports || []).map((n) => (aw.refs || [])[n - 1]).filter(Boolean) }));
   const d = buildRules({ cc, name: nameOf(cc), end, items: byCc[cc] || [], warnings: (WARN.items || {})[cc] || [], advisory: (ADV.items || {})[cc],
     conflicts: confByCc[cc] || [], flashpoints: fps.filter((f) => (f.reports || []).length), brief, _soft: soft[cc] || 0 }, R);
   d.made = stamp;
