@@ -1,0 +1,32 @@
+# Reads hospitals' own websites for the medical plan's documented capabilities (tools/read_hospital_sites.mjs).
+# Uploads hospital-sites-<cc>.json as an artifact; writes nothing to the repo. The quotes are reviewed before any is used.
+name: Read hospital websites
+on:
+  push:
+    branches: [claude/hospital-sites]
+    paths: [tools/read_hospital_sites.mjs, .github/workflows/read-hospital-sites.yml]
+  workflow_dispatch:
+    inputs:
+      cc:
+        description: Country code
+        default: th
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: node tools/read_hospital_sites.mjs "${CC:-th}" hospital-sites-out
+        env:
+          CC: ${{ github.event.inputs.cc }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: hospital-sites
+          path: hospital-sites-out
+          retention-days: 14
