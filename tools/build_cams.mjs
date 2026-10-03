@@ -77,8 +77,7 @@ async function cars(p, video) {
     return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)].concat(vid ? [vid] : []) : null;
   }).filter(Boolean);
 }
-// Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder),
-// Alberta (its list answers HTTP 500), Saskatchewan (placeholders), Kentucky and Hawaii (http-only images, which a https page
+// Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder), Saskatchewan (placeholders), Kentucky and Hawaii (http-only images, which a https page
 // cannot show), Texas, Virginia, Michigan, Tennessee (no keyless list), Taiwan (refuses connections from abroad), Vietnam
 // (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
@@ -248,6 +247,9 @@ export const SOURCES = [
   carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)", true),
   carsSrc("us-ne", "netg", "511.nebraska.gov", "America/Chicago", "United States (Nebraska)", "Nebraska DOT (Nebraska 511)"),
   carsSrc("us-ks", "kstg", "kandrive.gov", "America/Chicago", "United States (Kansas)", "Kansas DOT (KanDrive)"),
+  carsSrc("us-ma", "matg", "mass511.com", "America/New_York", "United States (Massachusetts)", "Massachusetts DOT (Mass511)"),
+  carsSrc("us-sd", "sdtg", "sd511.org", "America/Chicago", "United States (South Dakota)", "South Dakota DOT (SD511)"),
+  atisSrc("us-nc", "drivenc.gov", "America/New_York", "us", "United States (North Carolina)", "North Carolina DOT (DriveNC)"),
   { id: "us-wa", tz: "America/Los_Angeles", cc: "us", country: "United States (Washington)", agency: "Washington State DOT (WSDOT)", every: 2,
     licence: "WSDOT traveler information (public)", page: "https://wsdot.com/travel/real-time/cameras",
     async list() {
@@ -267,6 +269,10 @@ export const SOURCES = [
   atisSrc("ca-nb", "511.gnb.ca", "America/Moncton", "ca", "Canada (New Brunswick)", "New Brunswick Transportation (511 NB)"),
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
+  atisSrc("ca-ab", "511.alberta.ca", "America/Edmonton", "ca", "Canada (Alberta)", "Alberta Transportation and Economic Corridors (511 Alberta)"),
+  atisSrc("ca-mb", "manitoba511.ca", "America/Winnipeg", "ca", "Canada (Manitoba)", "Manitoba Transportation and Infrastructure (Manitoba 511)"),
+  atisSrc("ca-pe", "511.gov.pe.ca", "America/Halifax", "ca", "Canada (Prince Edward Island)", "PEI Transportation and Infrastructure (511 PEI)"),
+  atisSrc("ca-yt", "511yukon.ca", "America/Whitehorse", "ca", "Canada (Yukon)", "Yukon Highways and Public Works (511 Yukon)"),
   /* ---- Asia-Pacific and Europe ---- */
   { id: "th-dwr", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
     licence: "Public telemetry API of the Department of Water Resources (no terms of use stated)", page: "https://telemetry.dwr.go.th/",
