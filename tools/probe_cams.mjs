@@ -220,6 +220,40 @@ async function round4() {
   const ny = await get("https://webcams.nyctmc.org/api/cameras", 40000); try { console.log("NYC keys " + Object.keys(JSON.parse(ny.b)[0]).join(",")); } catch {}
   const bc = await get("https://www.drivebc.ca/api/webcams/", 40000); try { console.log("DriveBC links " + JSON.stringify(JSON.parse(bc.b)[0].links)); } catch {}
 }
+/* ---------- round 5: official non-traffic cameras (volcano, river, coastal, weather) ---------- */
+async function round5() {
+  const show = (k, r, n = 900) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  const L = [
+    ["USGS AshCam", "https://volcview.wr.usgs.gov/ashcam-api/webcamApi/webcams"],
+    ["GeoNet volcano", "https://images.geonet.org.nz/volcano/cameras/all.json"],
+    ["NDBC buoycams", "https://www.ndbc.noaa.gov/buoycams.php"],
+    ["MLIT towns", "https://www.river.go.jp/kawabou/file/files/map/twn/twnarea.json"],
+    ["Taiwan Civil IoT CCTV", "https://sta.ci.taiwan.gov.tw/STA_CCTV/v1.0/Things?$top=2&$expand=Locations,Datastreams($expand=Observations($top=1))"],
+    ["ThaiWater cctv", "https://api-v3.thaiwater.net/api/v1/thaiwater30/analyst/cctv"],
+    ["USGS NIMS", "https://api.waterdata.usgs.gov/nims/v0/cameras?enabled=true"],
+    ["TfNSW maritime", "https://portal.data.nsw.gov.au/arcgis/rest/services/Hosted/TfNSW_Maritime_Camera_Public/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=3"],
+    ["MeteoSwiss app overview", "https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcam_overview.json"],
+    ["HPWREN sites", "https://www.hpwren.ucsd.edu/cameras/sites.js"],
+    ["JMA volcam icons", "https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/param/geojson/camicon.geojson"],
+    ["Tainan drainage", "https://soa.tainan.gov.tw/Api/Service/Get/427a8287-0bc1-4b45-92ac-53eb858b5b9c"],
+    ["Puertos del Estado", "https://portus.puertos.es/portussvr/api/stations"],
+  ];
+  const got = {};
+  for (const [k, u] of L) { const r = await get(u, 60000); got[k] = r; show(k, r); if (/json/.test(r.ct)) sample(r, 900); }
+  try { const j = JSON.parse(got["USGS AshCam"].b).webcams || []; const ok = j.filter((c) => c.faaInd !== "Y" && c.hasImages !== "N");
+    console.log("   AshCam " + j.length + " total, " + ok.length + " not FAA"); for (const c of ok.slice(0, 3)) await img(c.currentImageUrl); } catch (e) { console.log("   " + e); }
+  try { const j = JSON.parse(got["GeoNet volcano"].b); const f = [].concat(...(Array.isArray(j) ? j : [j]).map((x) => x.features || []));
+    console.log("   GeoNet " + f.length + " features; first " + JSON.stringify(f[0]).slice(0, 500)); const p = f[0] && f[0].properties; if (p) await img(new URL(p["latest-image-large"], "https://images.geonet.org.nz/volcano/cameras/").href); } catch (e) { console.log("   " + e); }
+  try { const j = JSON.parse(got["NDBC buoycams"].b); console.log("   NDBC " + j.length); for (const c of j.slice(0, 2)) await img("https://www.ndbc.noaa.gov/images/buoycam/" + c.img); } catch (e) { console.log("   " + e); }
+  try { const j = JSON.parse(got["MLIT towns"].b); const arr = Array.isArray(j) ? j : Object.values(j).find(Array.isArray) || []; const t = arr.filter((x) => x.scamExistFlg == 1);
+    console.log("   MLIT towns " + arr.length + ", with cameras " + t.length + "; first " + JSON.stringify(t[0]).slice(0, 300));
+    if (t[0]) { const r = await get(`https://www.river.go.jp/kawabou/file/gjson/scam/${t[0].twnCd}.json`, 40000); show("  MLIT town cams", r, 800); try { const g = JSON.parse(r.b); const f0 = (g.features || [])[0]; if (f0) { const id = f0.properties.obsFcd || f0.properties.id || f0.properties.obsCd; console.log("   props " + JSON.stringify(f0.properties).slice(0, 400)); } } catch {} } } catch (e) { console.log("   " + e); }
+  try { const j = JSON.parse(got["USGS NIMS"].b); const a = Array.isArray(j) ? j : j.cameras || []; console.log("   NIMS " + a.length); if (a[0]) await img(`https://usgs-nims-images.s3.amazonaws.com/720/${a[0].camId}/${a[0].camId}_newest.jpg`); } catch (e) { console.log("   " + e); }
+  for (const c of ["cp1", "hko", "kfb", "swh", "tm2"]) await img(`https://www.hko.gov.hk/wxinfo/aws/hko_mica/${c}/latest_${c.toUpperCase()}.jpg`, "  HKO");
+  for (const c of ["grsm", "yose", "olym", "bibe"]) await img(`https://www.nps.gov/featurecontent/ard/webcams/images/${c}.jpg`, "  NPS");
+  for (const u of ["https://www.cenapred.unam.mx/popo/UltimaImagen.jpg", "https://www.fs.usda.gov/Internet/FSE_MEDIA/sthelens.jpg", "https://trollcam.npolar.no/TrollWebCam3HD.jpg"]) await img(u, "  single");
+}
+if (only === "r5") await round5();
 if (only === "r2") await round2();
 if (only === "r4") await round4();
 if (only === "r3") await round3();
