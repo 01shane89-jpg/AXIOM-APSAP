@@ -17,7 +17,10 @@ const CC = (process.argv[2] || "th").toLowerCase(), OUT = process.argv[3] || "ho
 const MAX_CONTACT = 3, MAX_BYTES = 2_500_000, TIMEOUT = 15000, CONC = 8;
 const UA = "OSAP-hospital-phones/1 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)";
 const LISTS = { th: [
-  { id: "au-embassy-bkk", name: "Australian Embassy Thailand: Hospital List (August 2025)", url: "https://thailand.embassy.gov.au/files/bkok/Hospital%20List%20(August%202025).pdf", page: "https://thailand.embassy.gov.au/" }
+  { id: "au-embassy-bkk", kind: "embassy_list", name: "Australian Embassy Thailand: Hospital List (August 2025)", url: "https://thailand.embassy.gov.au/files/bkok/Hospital%20List%20(August%202025).pdf", page: "https://thailand.embassy.gov.au/" },
+  /* insurers' network lists: hospitals' own published numbers, collected by a company (lower grade than an official list) */
+  { id: "allianz-network", kind: "insurer_network_list", name: "Allianz Ayudhya: Hospital Network List (1 July 2026)", url: "https://www.allianz.co.th/content/dam/onemarketing/azay/allianz-co-th/services/network-search-index/Hospital-Network-List-OneAllianz-01-07-2026-EN.pdf", page: "https://www.allianz.co.th/" },
+  { id: "tokiomarine-network", kind: "insurer_network_list", name: "Tokio Marine Life Thailand: network hospitals and clinics (1 May 2026)", url: "https://www.tokiomarine.com/content/dam/tokiomarine/th/life/customer-service/hospital/may2026/" + encodeURIComponent("รายชื่อโรงพยาบาลและคลินิกคู่สัญญา ลูกค้าธุรกิจองค์กร-01052026") + ".pdf", page: "https://www.tokiomarine.com/th/life/" }
 ] };
 
 /* ---------- numbers ---------- */
@@ -112,7 +115,9 @@ async function readSite(h) {
   while (queue.length && pages.length < 1 + MAX_CONTACT) {
     const u = queue.shift(); if (seen.has(u)) continue; seen.add(u);
     if (!(await allowed(u))) { pages.push({ url: u, status: "robots" }); continue; }
-    const r = await get(u);
+    let r = await get(u);
+    /* some public hospital sites serve an incomplete certificate chain; the same public page over plain http is tried once */
+    if (r.status === 0 && /^https:/i.test(u) && r.err !== "timeout") { const h = u.replace(/^https:/i, "http:"); if (await allowed(h)) r = await get(h); }
     pages.push({ url: r.url, status: r.status, err: r.err || r.skip || undefined });
     if (!r.html) continue;
     const src = { source: "hospital_website", url: r.url };
@@ -151,7 +156,7 @@ async function readLists() {
     const f = path.join(OUT, L.id + ".pdf"); fs.writeFileSync(f, r.buf);
     let t = ""; try { t = execFileSync("pdftotext", ["-layout", f, "-"], { maxBuffer: 64 << 20 }).toString("utf8"); } catch (e) { out.push({ ...L, status: r.status, err: "pdftotext: " + e.message.slice(0, 80) }); continue; }
     fs.writeFileSync(path.join(OUT, L.id + ".txt"), t); fs.unlinkSync(f);
-    out.push({ ...L, status: r.status, bytes: r.buf.length, lines: t.split("\n").length, found: numbers(t, { source: "embassy_list", url: L.url }).length });
+    out.push({ ...L, status: r.status, bytes: r.buf.length, lines: t.split("\n").length, found: numbers(t, { source: L.kind, url: L.url }).length });
   }
   return out;
 }
