@@ -291,6 +291,7 @@
       paintSec(); legend(); return;
     }
     var pb = b.pad(0.25), want = {}, n = 0, more = 0, loading = 0;
+    here.forEach(function (s) { s._here = 0; });
     here.forEach(function (s) {
       var list = S.lists[s.id];
       if (!list) { loading++; loadList(s.id); return; }
@@ -298,14 +299,14 @@
         var c = list[i];
         if (!pb.contains([c[1], c[2]])) continue;
         if (n >= MAX) { more++; continue; }
-        want[s.id + "|" + c[0]] = [s, c]; n++;
+        want[s.id + "|" + c[0]] = [s, c]; n++; s._here = 1;
       }
     });
     Object.keys(drawn).forEach(function (k) { if (!want[k]) { layer.removeLayer(drawn[k]); delete drawn[k]; } });
     Object.keys(want).forEach(function (k) { if (!drawn[k]) drawn[k] = marker(want[k][0], want[k][1]).addTo(layer); });
     var shown = Object.keys(drawn).length;
     S.msg = loading ? "Loading the camera list…" : shown + " camera" + (shown === 1 ? "" : "s") + " on screen" + (more ? " (zoom in to see " + more + " more)" : "") +
-      " · " + here.map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); }).join("; ") + "." + (S.failed ? " Some camera lists did not load." : "");
+      (function (a) { return a.length ? " · " + a.join("; ") : ""; })(here.filter(function (s) { return s._here; }).map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); })) + "." + (S.failed ? " Some camera lists did not load." : "");
     paintSec(); legend();
   }
   var t0 = 0;
