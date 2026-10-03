@@ -931,6 +931,9 @@ function main() {
           var surf = k.surface ? ", " + k.surface.toLowerCase() : "";
           c.push({ k: "lz", lz: k, cc: "", line: k.dist, i: { id: "lz:" + k.lat.toFixed(5) + "," + k.lon.toFixed(5), name: "LZ " + k.rank + " (" + k.clearD + " m clear)", lat: k.lat, lon: k.lon,
             kind: "Landing zone candidate", note: "Candidate from open data, verify on the ground. About " + k.clearD + " m of clear ground, average slope " + k.mean.toFixed(1) + "°, steepest " + k.max.toFixed(1) + "°" + surf + "." +
+              (k.cover ? " Land cover: " + k.cover.toLowerCase() + "." : "") +
+              (k.open ? k.axes.length ? " Clear approach and departure (10:1) along " + k.axes.map(function (d) { return ("00" + Math.round(d)).slice(-3) + "°/" + ("00" + Math.round(d + 180) % 360).slice(-3) + "°"; }).join(", ") + "." :
+                " Confined: no straight-through approach; in and out only from " + k.open.map(function (d) { return ("00" + Math.round(d)).slice(-3) + "°"; }).join(", ") + "." : "") +
               (k.near.length ? " Nearest obstacle: " + k.near[0].n.toLowerCase() + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir + "." : "") } });
         });
         var pad = r.pads.filter(function (x) { return x.kind !== "aerodrome"; })[0];
