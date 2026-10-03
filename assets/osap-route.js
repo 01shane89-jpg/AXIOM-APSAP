@@ -13,6 +13,8 @@
      reports, open data and event groups, summarised and cited by assets/osap-areasum.js; movement restrictions mapped in
      OpenStreetMap (border posts, checkpoints, military and protected areas, fords, weight and height limits); and the hazards,
      weather and light worked out below, at a glance.
+   - Preview route: steps through the route on show with street-level pictures where open sources hold them, satellite,
+     terrain or map where not (assets/osap-preview.js, loaded on first use).
    - Export: GPX, KML, GeoJSON, print sheet, share link, copy as text. Routes are saved in this browser only
      (localStorage "osap-routes"); a share link carries the waypoints after "#", so opening it sends them to no server; nothing is sent anywhere except the waypoints to the routing, elevation and forecast hosts,
      and, when "Search this route" is pressed, the route line to OpenStreetMap's Photon (town names) and Overpass (restrictions).
@@ -359,6 +361,7 @@ function main() {
     else if (k === "layers") { var mb = D.querySelector(".mlbtn"); if (mb) mb.click(); }
     else if (k === "search") search();
     else if (k === "evac") evPlan();
+    else if (k === "preview") preview(b);
     else if (k === "evsave") evSave();
     else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
   }
@@ -439,6 +442,7 @@ function main() {
   /* after a route arrives (or the unit, departure or stop time changes): redraw, then fill the slower sections one by one */
   function afterRoute(timeOnly) {
     evSync();
+    if (S.pvR && S.pvR !== S.routes[S.sel] && W.OSAP_PREVIEW && W.OSAP_PREVIEW.isOpen()) { S.pvR = null; W.OSAP_PREVIEW.close(); }
     drawRoute(); sumUi(); wpsUi(); evUi(); if (!timeOnly) staleSearch();
     if (!S.routes.length && S.fitNext && S.wps.length === 1 && !S.busy) { S.fitNext = false; fit(); }
     if (!S.routes.length) { ["rt-prof", "rt-sun", "rt-wx", "rt-haz", "rt-dir"].forEach(function (id) { var x = el(id); if (x) x.innerHTML = '<p class="obs">' + (S.busy ? "Planning…" : "Add at least two waypoints.") + "</p>"; }); mobUi(); return; }
@@ -461,7 +465,7 @@ function main() {
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
       '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : r.xc ? "Cross-country estimate at off-path walking pace (about 3 km/h on the flat), slowed by slope and seasonal water, with no time for water crossings; averages " + r.kmh + " km/h without rests." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button></div>';
+      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + E(x.label || (i ? "Alternative " + i : "Fastest")) + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
     }).join("") + "</div>" : "";
@@ -530,6 +534,8 @@ function main() {
   var down = null;
   function mine(e) {
     var ctx = S.ctx; if (!ctx || !S.tap || D.documentElement.getAttribute("data-view") !== "route") return false;
+    /* while Route preview is open, a tap on the route previews that place instead of adding a waypoint */
+    if (D.documentElement.classList.contains("rtpv-on")) return false;
     var mapEl = ctx.map.getContainer();
     if (!mapEl.contains(e.target) || mapEl.classList.contains("measuring") || D.querySelector("#area-ctl .areahint")) return false;
     if (e.target.closest && e.target.closest(".leaflet-control,.leaflet-popup,.rtv,.leaflet-interactive,.leaflet-marker-icon")) return false;
@@ -1083,7 +1089,7 @@ function main() {
       '<p class="obs">SP, CP and RP are control points spaced evenly along the line for reporting progress. BX is a border crossing mapped in OpenStreetMap, WX a water crossing on a cross-country line, CHK a checkpoint and INC an incident reported within 1 km of the line.</p>' +
       '<p class="obs"><b>Safety weighting is an estimate from open reporting.</b> It counts what OSAP holds within ' + EV_R / 1000 + " km of each line from the last " + ev.days + " days (this country's reports, UCDP conflict events, road closures, disaster alerts and storms), weighted by kind (conflict events and violent reports 3, closures and disasters 2, other reports 1) and fading with age. " +
       ev.n + " lines to " + ev.nCand + " nearest points were weighed. It is not a threat assessment: no reports is not the same as safe, and roads, posts and crossings change. Confirm with the post and on the ground.</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="evsave" class="rtgo">Keep for offline use</button><button type="button" data-rt="print">Print</button></div>' + '<div id="rt-evsaved"></div>';
+      '<div class="rtbtns"><button type="button" data-rt="evsave" class="rtgo">Keep for offline use</button><button type="button" data-rt="preview">Preview route</button><button type="button" data-rt="print">Print</button></div>' + '<div id="rt-evsaved"></div>';
     evSavedUi();
   }
   function evAll() { var a = lsGet(EV_KEY, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && x.route && Array.isArray(x.route.coords); }) : []; }
@@ -1116,6 +1122,48 @@ function main() {
       return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E(dist(x.route.m)) + " · " + E(dur(x.route.s)) + " · " + E(String(x.saved).slice(0, 10)) + "</i></span>" +
         '<button type="button" data-evopen="' + E(x.id) + '">Open</button><button type="button" data-evdel="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
     }).join("") + "</ul>" : "";
+  }
+
+  /* ---------- route preview (assets/osap-preview.js, loaded on first use) ----------
+     The preview gets a snapshot of the route on show: its line with distance and time along it, the router's turns, the
+     elevation profile, the hazards OSAP holds near it (Hazards near the route, with their sources), an evacuation plan's end
+     point and control points, and two helpers: the Overpass mirrors and a detour round one place (Valhalla exclude_locations). */
+  var pvWait = null;
+  function pvLoad() {
+    if (W.OSAP_PREVIEW) return Promise.resolve(W.OSAP_PREVIEW);
+    if (pvWait) return pvWait;
+    pvWait = new Promise(function (res, rej) {
+      var sc = document.createElement("script"); sc.src = "assets/osap-preview.js";
+      sc.onload = function () { if (W.OSAP_PREVIEW) res(W.OSAP_PREVIEW); else { pvWait = null; rej(new Error("the route preview did not start")); } };
+      sc.onerror = function () { pvWait = null; sc.remove(); rej(new Error("the route preview could not load. Check the connection")); };
+      document.head.appendChild(sc);
+    });
+    return pvWait;
+  }
+  function pvSnap() {
+    var r = S.routes[S.sel]; if (!r || !r.coords || r.coords.length < 2) return null;
+    prep(r);
+    if (!S.haz) hazards();
+    var ev = S.evac, o = ev && ev.opts[S.sel];
+    return { r: { coords: r.coords.map(function (c) { return [c[0], c[1]]; }), cum: r.cum.slice(), t: r.t.slice(), steps: (r.steps || []).slice(), m: r.m, road: !!r.road, xc: !!r.xc, kmh: r.kmh || null },
+      wps: S.wps.map(function (w) { return { lat: w.lat, lon: w.lon, name: w.name || "" }; }), mode: S.mode, unit: S.unit, buf: S.buf, name: routeName(),
+      haz: S.haz ? S.haz.hits.map(function (h) { return { p: h.p, kind: h.kind, title: h.title, url: h.url, date: h.date, src: h.src, d: h.d, along: h.along }; }) : [],
+      elev: S.elev ? S.elev.map(function (e) { return { m: e.m, h: e.h }; }) : null,
+      evac: o ? { dest: { name: o.cand.i.name, lat: o.cand.i.lat, lon: o.cand.i.lon, k: o.cand.k, kind: evKindName(o.cand) }, cps: evCps(r).map(function (c) { return { id: c.id, m: c.m, what: c.what, url: c.url }; }) } : null,
+      map: S.ctx.map, cc: S.ctx.cc, overpass: overpassAny,
+      detour: function (lat, lon) {
+        if (!r.road || S.mode === "line") return Promise.reject(new Error("only road routes can be re-routed"));
+        return valhalla(evCost(S.mode), S.wps, { exclude_locations: [{ lat: lat, lon: lon }], alternates: 0 }).then(function (rs) {
+          var x = rs[0], pass = x.coords.some(function (c) { return hav(c, [lat, lon]) < 30; });
+          return { coords: x.coords, m: x.m, s: x.s, through: pass };
+        });
+      } };
+  }
+  function preview(b) {
+    var snap = pvSnap(); if (!snap) { msg("Plan a route first, then preview it."); return; }
+    if (b) b.disabled = true;
+    pvLoad().then(function (P) { S.pvR = S.routes[S.sel]; P.open(snap); }, function (e) { msg("Route preview: " + e.message + "."); })
+      .then(function () { if (b) b.disabled = false; });
   }
 
   /* ---------- search this route: one brief of everything along it ---------- */
@@ -1534,7 +1582,7 @@ function main() {
   W.OSAP_ROUTETAB = { show: show, seed: function (pts) { if (S.ctx) { S.wps = cleanWps(pts.map(function (p) { return { lat: p[0], lon: p[1] }; })); changed(); fit(); } },
     route: function () { var r = S.routes[S.sel]; return r ? { coords: r.coords.slice(), xc: !!r.xc, road: !!r.road, water: (r.water || []).slice(), m: r.m, s: r.s } : null; },
     state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx }; },
-    hosts: HOST,
+    hosts: HOST, preview: function () { preview(null); },
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
     line: function () { var r = S.routes[S.sel]; return r && r.coords && r.coords.length > 1 ? r.coords.map(function (c) { return c.lat != null ? [c.lat, c.lng] : [c[0], c[1]]; }) : null; } };
   if (W.OSAP_ROUTE_WAIT && D.documentElement.getAttribute("data-view") === "route") W.OSAP_ROUTE_WAIT();
