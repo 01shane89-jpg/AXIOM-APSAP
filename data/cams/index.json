@@ -719,11 +719,30 @@
    "page": "https://volcview.wr.usgs.gov/ashcam-gui/",
    "every": 10,
    "type": "volcano",
-   "n": 103,
+   "n": 99,
    "box": [
     19.421,
     -177.8148,
     61.2002,
+    -110.39988
+   ],
+   "checked": "2026-10-03T08:10Z"
+  },
+  {
+   "id": "us-ashcam-w",
+   "cc": "us",
+   "tz": "America/Adak",
+   "country": "United States (western Aleutian volcanoes)",
+   "agency": "USGS Volcano Hazards Program (AshCam)",
+   "licence": "U.S. Geological Survey, public domain",
+   "page": "https://volcview.wr.usgs.gov/ashcam-gui/",
+   "every": 10,
+   "type": "volcano",
+   "n": 4,
+   "box": [
+    51.3784,
+    178.5714,
+    51.96491,
     179.6474
    ],
    "checked": "2026-10-03T08:10Z"

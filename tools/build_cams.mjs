@@ -86,6 +86,18 @@ const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no
 const atisSrc = (id, host, tz, cc, country, agency, video) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host, video) });
 const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
+// USGS AshCam: volcano cameras in Alaska, Hawaii, the Cascades and the Northern Marianas
+async function ashcam(keep) {
+  const j = await get("https://volcview.wr.usgs.gov/ashcam-api/webcamApi/webcams"), week = Date.now() / 1000 - 7 * 86400;
+  // FAA's own cameras (faaInd Y) are shared with USGS under an FAA agreement, so they are left out; so are cameras with no
+  // picture this week. c[6] is the camera's own time zone.
+  const zone = (lat, lon) => lon > 0 ? (lat < 30 ? "Pacific/Saipan" : "America/Adak") : lat < 25 ? "Pacific/Honolulu" : lon < -169 ? "America/Adak" : lon < -129 ? "America/Anchorage" : "America/Los_Angeles";
+  return (j.webcams || []).filter((c) => c.faaInd !== "Y" && c.hasImages === "Y" && +c.lastImageTimestamp > week && https(c.currentImageUrl) && keep(+c.longitude))
+    .map((c) => [c.webcamCode, r5(c.latitude), r5(c.longitude), tidy(c.webcamName + (c.vName ? " (" + c.vName + ")" : "")), c.currentImageUrl, null, zone(+c.latitude, +c.longitude)]);
+}
+const ashcamSrc = (id, cc, country, tz, keep) => ({ id, type: "volcano", tz, cc, country, agency: "USGS Volcano Hazards Program (AshCam)", every: 10,
+  licence: "U.S. Geological Survey, public domain", page: "https://volcview.wr.usgs.gov/ashcam-gui/", list: () => ashcam(keep) });
+
 export const SOURCES = [
   { id: "sg-lta", tz: "Asia/Singapore", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
     licence: "Singapore Open Data Licence", page: "https://data.gov.sg/datasets/d_6cdb6b405b25aaaacbaf7689bcc6fae0/view",
@@ -288,16 +300,10 @@ export const SOURCES = [
       return j.map((c) => { const [lat, lon] = lks94(c.x, c.y); return [String(c.id), r5(lat), r5(lon), tidy(c.name + (c.roadName ? ", " + c.roadName : "")), https(c.image)]; });
     } },
   /* ---- other official cameras: volcanoes, rivers, weather (type tells the page what kind of camera it is) ---- */
-  { id: "us-ashcam", type: "volcano", tz: "America/Anchorage", cc: "us", country: "United States (volcanoes)", agency: "USGS Volcano Hazards Program (AshCam)", every: 10,
-    licence: "U.S. Geological Survey, public domain", page: "https://volcview.wr.usgs.gov/ashcam-gui/",
-    async list() {
-      const j = await get("https://volcview.wr.usgs.gov/ashcam-api/webcamApi/webcams"), week = Date.now() / 1000 - 7 * 86400;
-      // FAA's own cameras (faaInd Y) are shared with USGS under an FAA agreement, so they are left out; so are cameras with no
-      // picture this week. c[6] is the camera's own time zone (Alaska, Hawaii, the Cascades, the Northern Marianas).
-      const zone = (lat, lon) => lon > 140 ? "Pacific/Saipan" : lat < 25 ? "Pacific/Honolulu" : lon < -129 ? "America/Anchorage" : "America/Los_Angeles";
-      return (j.webcams || []).filter((c) => c.faaInd !== "Y" && c.hasImages === "Y" && +c.lastImageTimestamp > week && https(c.currentImageUrl))
-        .map((c) => [c.webcamCode, r5(c.latitude), r5(c.longitude), tidy(c.webcamName + (c.vName ? " (" + c.vName + ")" : "")), c.currentImageUrl, null, zone(+c.latitude, +c.longitude)]);
-    } },
+  ashcamSrc("us-ashcam", "us", "United States (volcanoes)", "America/Anchorage", (lon) => lon < 0),
+  // the western Aleutians (and the Northern Marianas, when their cameras are up) sit across the date line: a source of their
+  // own keeps each box from wrapping round the world
+  ashcamSrc("us-ashcam-w", "us", "United States (western Aleutian volcanoes)", "America/Adak", (lon) => lon > 0),
   { id: "nz-geonet", type: "volcano", tz: "Pacific/Auckland", cc: "nz", country: "New Zealand (volcanoes)", agency: "GeoNet (GNS Science and Toka Tū Ake EQC)", every: 10,
     licence: "Creative Commons Attribution 3.0 New Zealand", page: "https://www.geonet.org.nz/volcano/cameras",
     async list() {
