@@ -244,7 +244,8 @@ function main() {
       "closures, checkpoints and conditions must be checked on the ground. Everything here is worked out in this browser and kept on this device.</div></div>" +
       '<div class="sec rtsec" id="rt-evac"><h2>Evacuation route</h2>' +
       '<p class="obs">From waypoint A (tap the map, My location, or a grid typed under Waypoints) to the nearest evacuation point, weighing the quickest way against incidents reported near the road.</p>' +
-      '<div class="rtrow"><label>To <select id="rt-evto"><option value="any">Nearest of any kind</option><option value="posts">U.S. embassy or consulate</option><option value="airports">Airport</option>' +
+      '<div class="rtrow"><label>To <select id="rt-evto"><option value="any">Nearest of any kind</option><option value="lz">Nearest landing zone (LZ)</option>' +
+      '<option value="airfields">Airfield of any size (regional, military, airstrip)</option><option value="airports">Major airport</option><option value="posts">U.S. embassy or consulate</option>' +
       '<option value="seaports">Seaport</option><option value="crossings">Border crossing</option></select></label>' +
       '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option selected>30</option><option>90</option></select> days</label></div>' +
       '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
@@ -697,7 +698,8 @@ function main() {
      chosen line with grid, distance and time; mapped border crossings, reported checkpoints and incidents on the line itself
      are listed with them in order. A plan can be kept on this device (localStorage EV_KEY) and opened with no connection. */
   var EV_R = 2000, EV_KEY = "osap-evac-plans", EV_MAX = 20, EV_W = { conflict: 3, violent: 3, closure: 2, disaster: 2, report: 1, other: 1 };
-  var EV_KINDS = { posts: "U.S. embassy or consulate", airports: "Airport", seaports: "Seaport", crossings: "Border crossing" };
+  var EV_KINDS = { posts: "U.S. embassy or consulate", airports: "Major airport", seaports: "Seaport", crossings: "Border crossing", airfields: "Airfield", lz: "Landing zone candidate" };
+  function evKindName(c) { return (c.i && c.i.kind) || EV_KINDS[c.k] || ""; }
   var EV_VIOLENT = /attack|bomb|blast|explos|shoot|gunfire|gunmen|clash|ambush|\bied\b|grenade|mortar|rocket|air ?strike|drone strike|kidnap|abduct|hostage|fighting|militant|insurgent|rebel|armed|riot|unrest|curfew|landmine|checkpoint/i;
   function evKind(h) {
     if (h.kind === "Conflict event") return "conflict";
@@ -743,13 +745,10 @@ function main() {
     var a = S.wps[0], to = el("rt-evto").value, days = +el("rt-evdays").value || 30, mode = S.mode === "line" ? "car" : S.mode, tok = ++S.evTok;
     var start = { lat: a.lat, lon: a.lon, name: a.name || "Start" };
     S.evac = null; drawCps();
-    box.innerHTML = '<p class="obs">Finding the nearest evacuation points…</p>';
-    EV.nearest([a.lat, a.lon]).then(function (nr) {
+    box.innerHTML = '<p class="obs">' + (to === "lz" ? "Searching for open, flat ground round the start…" : to === "airfields" ? "Finding the nearest airfields in OpenStreetMap…" : "Finding the nearest evacuation points…") + "</p>";
+    var notes = [];
+    evCands(to, [a.lat, a.lon], notes, function (t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">' + E(t) + "</p>"; }).then(function (c) {
       if (tok !== S.evTok) return;
-      var kinds = to === "any" ? ["posts", "airports", "seaports", "crossings"] : [to], c = [];
-      kinds.forEach(function (k) { (nr[k] || []).slice(0, to === "any" ? 1 : 3).forEach(function (r) { c.push({ k: k, i: r.x.i, cc: r.x.cc, line: r.m }); }); });
-      c = c.filter(function (x) { return x.line < 1500000; }).sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
-      if (!c.length) throw new Error("no " + (to === "any" ? "evacuation point" : EV_KINDS[to].toLowerCase()) + " within 1,500 km in the reference data");
       var hz = evHaz(days), opts = [], n = 0;
       /* one candidate at a time: the routers are free services that ask for fair use */
       return c.reduce(function (pr, cand) {
@@ -770,11 +769,176 @@ function main() {
       }, Promise.resolve()).then(function () {
         if (tok !== S.evTok) return;
         if (!opts.length) throw new Error("the routers did not answer" + (c[0].err ? " (" + c[0].err + ")" : "") + ". Try again in a minute");
-        evChoose(opts, start, days, mode, c.length);
+        evChoose(opts, start, days, mode, c.length, notes);
       });
     }).catch(function (e) { if (tok !== S.evTok) return; box.innerHTML = '<p class="rtbad">No evacuation route: ' + E(e.message) + ".</p>"; });
   }
-  function evChoose(opts, start, days, mode, nCand) {
+  /* the candidates to route to, nearest first (at most four): { k, i: { name, lat, lon, ... }, cc, line: straight-line metres }.
+     Reference kinds come from OSAP_EVAC; "airfields" and "lz" are looked up live (OpenStreetMap, the landing zone finder).
+     notes collects what the analyst should know about how the list was made (a lookup that failed, a wider search). */
+  function evCands(to, p, notes, say) {
+    var EV = W.OSAP_EVAC;
+    if (to === "lz") return evLz(p, notes, say);
+    if (to === "airfields") return evAirfields(p, EV, notes, [50000, 150000, 400000], 3).then(function (c) {
+      if (!c.length) throw new Error("no airfield within 400 km in OpenStreetMap or the reference data");
+      return c;
+    });
+    return EV.nearest(p).then(function (nr) {
+      var kinds = to === "any" ? ["posts", "airports", "seaports", "crossings"] : [to], c = [];
+      kinds.forEach(function (k) { (nr[k] || []).slice(0, to === "any" ? 1 : 3).forEach(function (r) { c.push({ k: k, i: r.x.i, cc: r.x.cc, line: r.m }); }); });
+      c = c.filter(function (x) { return x.line < 1500000; });
+      if (to !== "any") return c;
+      /* "any" also weighs the nearest smaller airfield when OpenStreetMap answers; without it the reference points stand */
+      say("Finding the nearest evacuation points and airfields…");
+      return evAirfields(p, null, notes, [50000, 150000], 1).then(function (af) {
+        af = af.filter(function (x) { return !c.some(function (y) { return y.k === "airports" && hav([x.i.lat, x.i.lon], [y.i.lat, y.i.lon]) < 3000; }); });
+        return c.concat(af.slice(0, 1));
+      }, function () { return c; });
+    }).then(function (c) {
+      c = c.sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
+      if (!c.length) throw new Error("no " + (to === "any" ? "evacuation point" : EV_KINDS[to].toLowerCase()) + " within 1,500 km in the reference data");
+      return c;
+    });
+  }
+
+  /* ---------- airfields of any size, from OpenStreetMap ----------
+     Aerodromes (international down to private and gliding fields), airstrips, heliports and military airfields round the start,
+     widening the search (radii) until `want` are found; then the runways of the ones picked (length worked out from the mapped
+     line, surface as tagged). Model-aircraft fields and disused or abandoned ones are left out. The reference airports
+     (OurAirports, with published runway data) are merged in and win over an OpenStreetMap point within 3 km of them. Mapped is
+     not open: every airfield needs checking for status, access and runway condition. */
+  var OVERPASS_ALL = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  function overpassAny(q, ms) {
+    var body = "data=" + encodeURIComponent(q), errs = [];
+    function go(i) {
+      if (i >= OVERPASS_ALL.length) return Promise.reject(new Error(errs.join("; ")));
+      return getJSON(OVERPASS_ALL[i], ms || 45000, { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then(function (j) {
+        /* Overpass can answer 200 with a remark and no elements when it gives up: that is a failure, not an empty map */
+        if (j && j.remark && /runtime error|out of memory|timed out|Query run out/i.test(j.remark)) throw new Error("server gave up");
+        if (!j || !Array.isArray(j.elements)) throw new Error("no answer");
+        return j;
+      }).catch(function (e) { errs.push(OVERPASS_ALL[i].split("/")[2] + ": " + e.message); return go(i + 1); });
+    }
+    return go(0);
+  }
+  function afKind(t) {
+    var ty = String(t["aerodrome:type"] || t.aerodrome || "").toLowerCase();
+    if (t.military === "airfield" || /military|air_?base/.test(ty) || t.landuse === "military") return "Military airfield";
+    if (t.aeroway === "heliport") return "Heliport";
+    if (t.aeroway === "airstrip") return "Airstrip";
+    if (/international/.test(ty)) return "International airport";
+    if (/regional|domestic/.test(ty)) return "Regional airport";
+    if (/gliding|glider/.test(ty)) return "Gliding field";
+    if (/private/.test(ty)) return "Private airfield";
+    if (/public/.test(ty)) return "Public airfield";
+    return "Airfield";
+  }
+  function afSkip(t) {
+    var all = [t["aerodrome:type"], t.aerodrome, t.name, t["name:en"]].join(" ");
+    return /\bmodel\b|\brc\b|aeromodel|modelflug/i.test(all) || t.disused === "yes" || t.abandoned === "yes" || /^(no|disused|abandoned)$/.test(t.operational_status || "");
+  }
+  function afQuery(p, R) {
+    var at = "(around:" + Math.round(R) + "," + p[0].toFixed(5) + "," + G.wrap(p[1]).toFixed(5) + ")";
+    return "[out:json][timeout:40];(nwr[\"aeroway\"~\"^(aerodrome|airstrip|heliport)$\"]" + at + ";nwr[\"military\"=\"airfield\"]" + at + ";);out center tags qt;";
+  }
+  function evAirfields(p, EV, notes, radii, want) {
+    var refP = EV ? EV.nearest(p).then(function (nr) { return nr.airports || []; }, function () { return []; }) : Promise.resolve([]);
+    function look(i) {
+      return overpassAny(afQuery(p, radii[i]), 45000).then(function (j) {
+        var out = [], seen = {};
+        j.elements.forEach(function (e) {
+          var t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
+          if (lat == null || lon == null || afSkip(t)) return;
+          var key = e.type + "/" + (+e.id); if (seen[key]) return; seen[key] = 1;
+          var kind = afKind(t), code = clean(t.icao || t.iata || t.ref || "", 8), nm = clean(t["name:en"] || t.name || "", 70);
+          out.push({ k: "airfields", cc: "", line: hav(p, [+lat, +lon]), i: {
+            id: "osm:" + key, name: nm ? nm + (code ? " (" + code + ")" : "") : kind + (code ? " " + code : ""),
+            lat: +lat, lon: +lon, kind: kind, access: /^(private|no|military)$/.test(t.access || "") ? t.access : "",
+            surface: clean(t.surface || "", 30), src: "https://www.openstreetmap.org/" + key } });
+        });
+        if (out.length < want && i + 1 < radii.length) { notes.push("Fewer than " + want + " airfield" + (want === 1 ? " is" : "s are") + " mapped within " + radii[i] / 1000 + " km, so the search was widened to " + radii[i + 1] / 1000 + " km."); return look(i + 1); }
+        return out;
+      });
+    }
+    return Promise.all([look(0).catch(function (e) { notes.push("OpenStreetMap airfields did not load (" + e.message + "): only the reference airports were weighed."); return null; }), refP]).then(function (v) {
+      var osm = v[0] || [], ref = v[1].map(function (r) {
+        var i = r.x.i, o = {}; Object.keys(i).forEach(function (k) { o[k] = i[k]; });
+        o.kind = i.type === "large_airport" ? "Major airport" : i.type === "medium_airport" ? "Regional airport" : "Airport";
+        return { k: "airfields", i: o, cc: r.x.cc, line: r.m };
+      });
+      if (v[0] == null && !ref.length) throw new Error("OpenStreetMap airfields did not load and no reference airport is near");
+      var all = ref.concat(osm.filter(function (x) { return !ref.some(function (y) { return hav([x.i.lat, x.i.lon], [y.i.lat, y.i.lon]) < 3000; }); }));
+      all = all.filter(function (x) { return x.line < 1500000; }).sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
+      return afRunways(all).then(function () { return all; });
+    });
+  }
+  /* runways of the OpenStreetMap airfields picked: the longest mapped one within 3 km of each, with its surface */
+  function afRunways(c) {
+    var osm = c.filter(function (x) { return /^osm:/.test(x.i.id || ""); });
+    if (!osm.length) return Promise.resolve();
+    var q = "[out:json][timeout:30];(" + osm.map(function (x) { return 'way["aeroway"="runway"](around:3000,' + x.i.lat.toFixed(5) + "," + G.wrap(x.i.lon).toFixed(5) + ");"; }).join("") + ");out tags geom qt;";
+    return overpassAny(q, 30000).then(function (j) {
+      j.elements.forEach(function (e) {
+        var g = (e.geometry || []).filter(function (x) { return x && x.lat != null; }); if (g.length < 2) return;
+        var m = 0; for (var k = 1; k < g.length; k++) m += hav([g[k - 1].lat, g[k - 1].lon], [g[k].lat, g[k].lon]);
+        var mid = g[Math.floor(g.length / 2)], best = null, bd = 3000;
+        osm.forEach(function (x) { var d = hav([x.i.lat, x.i.lon], [mid.lat, mid.lon]); if (d < bd) { bd = d; best = x; } });
+        if (!best || m < 100) return;
+        if (!best.i.longest_runway || m > best.i.longest_runway.length_m) best.i.longest_runway = { length_m: Math.round(m / 10) * 10, surface: clean((e.tags || {}).surface || "", 30), mapped: true };
+      });
+    }, function () { /* runway lengths are a help, not a need */ });
+  }
+
+  /* ---------- the nearest landing zone ----------
+     The landing zone finder (assets/osap-lz.js) searches 2 km round the start with the analyst's own Find LZ size and slope
+     settings, then 5 km if nothing fits. Routed to: the nearest few candidates and the best one, and the nearest mapped
+     helipad or heliport in the area. The router stops at the road nearest the LZ; the rest is shown as the off-road stretch. */
+  var lzWait = null;
+  function lzLoad() {
+    if (W.OSAP_LZ && W.OSAP_LZ.scan) return Promise.resolve(W.OSAP_LZ);
+    if (lzWait) return lzWait;
+    lzWait = new Promise(function (res, rej) {
+      var sc = document.createElement("script"); sc.src = "assets/osap-lz.js";
+      sc.onload = function () { if (W.OSAP_LZ && W.OSAP_LZ.scan) res(W.OSAP_LZ); else { lzWait = null; rej(new Error("the landing zone finder did not start")); } };
+      sc.onerror = function () { lzWait = null; sc.remove(); rej(new Error("the landing zone finder could not load. Check the connection")); };
+      document.head.appendChild(sc);
+    });
+    return lzWait;
+  }
+  function evLz(p, notes, say) {
+    return lzLoad().then(function (Z) {
+      var st = Z.state ? Z.state().settings : {}, size = st.d || 100, slope = st.s || 7;
+      function one(R) {
+        say("Searching " + R / 1000 + " km round the start for open ground " + size + " m across, slope under " + slope + "°…");
+        return Z.scan(p, R, { size: size, slope: slope, prog: function (d, t) { say("Loading elevation " + d + " of " + t + " and obstacles from OpenStreetMap (" + R / 1000 + " km round the start)…"); } });
+      }
+      return one(2000).then(function (r) {
+        if (r && (r.cands.length || r.pads.some(function (x) { return x.kind !== "aerodrome"; }))) return r;
+        notes.push("No landing zone " + size + " m across fits within 2 km of the start, so the search was widened to 5 km.");
+        return one(5000);
+      }).then(function (r) {
+        (r.warn || []).forEach(function (w) { notes.push(w); });
+        var c = [], best = r.cands[0];
+        r.cands.slice().sort(function (a, b) { return a.dist - b.dist; }).slice(0, 3).concat(best ? [best] : []).forEach(function (k) {
+          if (c.some(function (x) { return x.lz === k; })) return;
+          var surf = k.surface ? ", " + k.surface.toLowerCase() : "";
+          c.push({ k: "lz", lz: k, cc: "", line: k.dist, i: { id: "lz:" + k.lat.toFixed(5) + "," + k.lon.toFixed(5), name: "LZ " + k.rank + " (" + k.clearD + " m clear)", lat: k.lat, lon: k.lon,
+            kind: "Landing zone candidate", note: "Candidate from open data, verify on the ground. About " + k.clearD + " m of clear ground, average slope " + k.mean.toFixed(1) + "°, steepest " + k.max.toFixed(1) + "°" + surf + "." +
+              (k.near.length ? " Nearest obstacle: " + k.near[0].n.toLowerCase() + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir + "." : "") } });
+        });
+        var pad = r.pads.filter(function (x) { return x.kind !== "aerodrome"; })[0];
+        if (pad) c.push({ k: "lz", cc: "", line: pad.dist, i: { id: "lz:" + pad.osm, name: pad.name ? clean(pad.name, 60) : pad.kind === "heliport" ? "Heliport" : "Mapped helipad", lat: pad.lat, lon: pad.lon,
+          kind: pad.kind === "heliport" ? "Heliport" : "Mapped helipad", note: "Mapped in OpenStreetMap: check it is in use, its access and what is round it.", src: pad.osm } });
+        if (!c.length) throw new Error("no open, flat ground " + size + " m across with slope under " + slope + "° within 5 km of the start, and no mapped helipad. Try a smaller LZ size in Find LZ, or Airfield of any size");
+        c.forEach(function (x) { delete x.lz; });
+        return c.sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
+      });
+    }).catch(function (e) {
+      if (/^elevation/.test(e.message)) throw new Error("the elevation tiles did not load, so no landing zone search was made. Check the connection and try again");
+      throw e;
+    });
+  }
+  function evChoose(opts, start, days, mode, nCand, notes) {
     var quick = opts.slice().sort(function (a, b) { return a.r.s - b.r.s; })[0];
     var safe = opts.slice().sort(function (a, b) { return a.exp.score - b.exp.score || a.r.s - b.r.s; })[0];
     var rec = safe !== quick && safe.exp.score < quick.exp.score && safe.r.s <= quick.r.s * 2 + 3600 ? safe : quick;
@@ -784,7 +948,7 @@ function main() {
     var list = [rec].concat(other ? [other] : []);
     list.forEach(function (o) { o.r.label = o.label; });
     if (S.mode !== mode) { S.mode = mode; prefs(); modesUi(); }
-    S.evac = { at: Date.now(), days: days, mode: mode, opts: list, n: opts.length, nCand: nCand, start: start };
+    S.evac = { at: Date.now(), days: days, mode: mode, opts: list, n: opts.length, nCand: nCand, start: start, notes: notes || [] };
     S.routes = list.map(function (o) { return o.r; }); S.sel = 0; S.err = ""; S.busy = false; S.token++;
     S.wps = cleanWps([start, { lat: rec.cand.i.lat, lon: rec.cand.i.lon, name: rec.cand.i.name }]);
     keepCur(); wpsUi(); S.fitNext = true; afterRoute();
@@ -839,19 +1003,24 @@ function main() {
     var ev = S.evac;
     if (!ev) { drawCps(null); evSavedUi(); return; }
     var o = ev.opts[S.sel] || ev.opts[0], r = S.routes[S.sel], i = o.cand.i, dep = departMs();
+    var endP = r && r.coords && r.coords.length ? r.coords[r.coords.length - 1] : null, off = endP ? hav(endP, [i.lat, i.lon]) : 0;
     var cps = r ? evCps(r) : [];
     drawCps(cps);
     var phone = function (p) { return p ? '<a href="tel:' + E(tel(p)) + '">' + E(p) + "</a>" : ""; };
     box.innerHTML = (ev.saved ? '<p class="obs">Kept plan from ' + E(when(ev.at)) + ". Incidents and roads are as they were then.</p>" : "") +
       '<div class="rtalts">' + ev.opts.map(function (x, j) {
-        return '<button type="button" data-alt="' + j + '" aria-pressed="' + (j === S.sel) + '"><b>' + E(x.label) + "</b> to " + E(x.cand.i.name) + " (" + E(EV_KINDS[x.cand.k] || "") + ")<br>" +
+        return '<button type="button" data-alt="' + j + '" aria-pressed="' + (j === S.sel) + '"><b>' + E(x.label) + "</b> to " + E(x.cand.i.name) + " (" + E(evKindName(x.cand)) + ")<br>" +
           E(dist(x.r.m)) + " · " + E(dur(x.r.s)) + " · " + (x.exp.hits.length ? x.exp.hits.length + " reported incident" + (x.exp.hits.length === 1 ? "" : "s") + " within " + EV_R / 1000 + " km (weight " + x.exp.score + ")" : "no incidents OSAP holds within " + EV_R / 1000 + " km") + "</button>";
       }).join("") + "</div>" +
-      '<div class="rtevd"><b>' + E(i.name) + '</b> <span class="obs">' + E(EV_KINDS[o.cand.k] || "") + "</span><br>" +
+      '<div class="rtevd"><b>' + E(i.name) + '</b> <span class="obs">' + E(evKindName(o.cand)) + (i.access ? " · access " + E(i.access) : "") + "</span><br>" +
+      (i.note ? E(i.note) + "<br>" : "") + (off > 50 ? '<span class="rtbad">The road ends about ' + E(dist(off)) + " short of it: that last stretch is on foot or cross-country.</span><br>" : "") +
       (i.address ? E(i.address) + "<br>" : "") +
       (i.phone ? "Phone " + phone(i.phone) : "") + (i.phone_after_hours ? (i.phone ? " · " : "") + "After hours " + phone(i.phone_after_hours) : "") + (i.phone || i.phone_after_hours ? "<br>" : "") +
-      (i.hours ? "Open " + E(i.hours) + "<br>" : "") + (i.longest_runway && i.longest_runway.length_m ? "Longest runway " + E(i.longest_runway.length_m) + " m<br>" : "") +
+      (i.hours ? "Open " + E(i.hours) + "<br>" : "") + (i.longest_runway && i.longest_runway.length_m ? (i.longest_runway.mapped ? "Longest mapped runway about " : "Longest runway ") + E(i.longest_runway.length_m) + " m" + (i.longest_runway.surface ? " (" + E(i.longest_runway.surface) + ")" : "") + "<br>" : i.surface ? "Surface " + E(i.surface) + "<br>" : "") +
       '<code>' + E(G.mgrs(i.lat, i.lon, 5) || "") + "</code>" + (safeUrl(i.src) ? ' · <a href="' + E(i.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
+      ((ev.notes || []).length ? '<p class="obs">' + ev.notes.map(E).join(" ") + "</p>" : "") +
+      (o.cand.k === "lz" || o.cand.k === "airfields" ? '<p class="obs">' + (o.cand.k === "lz" ? "Landing zones are worked out from open elevation and OpenStreetMap obstacle data (Find LZ): a candidate, not a surveyed LZ. Check it on imagery and on the ground before use." :
+        "Airfields come from OpenStreetMap (any size, including airstrips, heliports and military fields) and the OurAirports reference list. Mapped is not open: confirm status, access and runway condition.") + "</p>" : "") +
       "<h3>Checkpoints</h3>" + (cps.length ? '<table class="rttab rtcps"><thead><tr><th></th><th>Grid</th><th>Along</th><th>Pass</th><th>What</th></tr></thead><tbody>' + cps.map(function (x) {
         return "<tr" + (x.flag ? ' class="rtflag"' : "") + "><td><b>" + E(x.id) + '</b></td><td><button type="button" class="linkish" data-zoom="' + x.p[0].toFixed(5) + "," + x.p[1].toFixed(5) + '">' + E(G.mgrs(x.p[0], x.p[1], 4) || G.fmtLL(x.p[0], x.p[1], 3)) + "</button></td><td>" + E(dist(x.m)) + "</td><td>" + E(zOnly(dep + x.t * 1000)) + "</td><td>" +
           (x.url && safeUrl(x.url) ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + E(x.what) + "</a>" : E(x.what)) + "</td></tr>";
@@ -870,8 +1039,9 @@ function main() {
     var keep = { id: "ev-" + Date.now().toString(36) + Array.prototype.map.call(b, function (x) { return x.toString(16); }).join(""), name: clean(wpName(0) + " to " + i.name, 80), cc: S.ctx.cc,
       saved: new Date().toISOString(), at: ev.at, days: ev.days, mode: ev.mode, label: o.label, n: ev.n, nCand: ev.nCand, wps: S.wps.slice(),
       route: { coords: thinCoords(r.coords, 1500).map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }), m: r.m, s: r.s, legs: r.legs, src: r.src ? r.src.name : "", note: r.note || "" },
-      dest: { k: o.cand.k, cc: o.cand.cc, i: { id: i.id, name: i.name, lat: i.lat, lon: i.lon, address: i.address || null, phone: i.phone || null, phone_after_hours: i.phone_after_hours || null, hours: i.hours || null, src: i.src || null, longest_runway: i.longest_runway || null } },
-      exp: { score: o.exp.score, hits: o.exp.hits.slice(0, 60).map(function (h) { return { p: h.p, kind: h.kind, w: h.w, title: clean(h.title, 160), url: h.url, date: h.date, d: Math.round(h.d), along: Math.round(h.along) }; }) } };
+      dest: { k: o.cand.k, cc: o.cand.cc, i: { id: i.id, name: i.name, lat: i.lat, lon: i.lon, address: i.address || null, phone: i.phone || null, phone_after_hours: i.phone_after_hours || null, hours: i.hours || null, src: i.src || null, longest_runway: i.longest_runway || null,
+        kind: i.kind || null, note: i.note || null, access: i.access || null, surface: i.surface || null } },
+      notes: (ev.notes || []).slice(0, 6), exp: { score: o.exp.score, hits: o.exp.hits.slice(0, 60).map(function (h) { return { p: h.p, kind: h.kind, w: h.w, title: clean(h.title, 160), url: h.url, date: h.date, d: Math.round(h.d), along: Math.round(h.along) }; }) } };
     var list = evAll(); list.unshift(keep); list = list.slice(0, EV_MAX);
     msg(lsSet(EV_KEY, list) ? "Kept on this device: it opens from Evacuation route with no connection." : "This browser would not keep it (storage full or blocked).");
     evSavedUi();
@@ -882,7 +1052,7 @@ function main() {
     var o = { r: r, cand: { k: k.dest.k, cc: k.dest.cc, i: k.dest.i }, exp: k.exp, label: k.label };
     S.token++; S.evTok++; S.busy = false; S.err = "";
     S.wps = cleanWps(k.wps); S.routes = [r]; S.sel = 0;
-    S.evac = { at: Date.parse(k.saved), days: k.days, mode: k.mode, opts: [o], n: k.n, nCand: k.nCand, saved: k.id };
+    S.evac = { at: Date.parse(k.saved), days: k.days, mode: k.mode, opts: [o], n: k.n, nCand: k.nCand, saved: k.id, notes: Array.isArray(k.notes) ? k.notes : [] };
     keepCur(); wpsUi(); S.fitNext = true; afterRoute();
   }
   function evSavedUi() {
