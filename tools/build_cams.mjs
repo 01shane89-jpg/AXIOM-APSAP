@@ -87,6 +87,27 @@ const atisSrc = (id, host, tz, cc, country, agency, video) => ({ id, tz, cc, cou
 const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
 // USGS AshCam: volcano cameras in Alaska, Hawaii, the Cascades and the Northern Marianas
+// rough local clock for a buoy, from where it is (the page always shows Zulu as well)
+function seaZone(lat, lon) {
+  if (lon > 0) return lat > 45 ? "America/Adak" : lat < 0 ? "Pacific/Pago_Pago" : "Pacific/Guam";
+  if (lon < -150 && lat < 35) return "Pacific/Honolulu";
+  if (lon < -169) return lat > 30 ? "America/Adak" : "Pacific/Pago_Pago";
+  if (lon < -130 && lat > 50) return "America/Anchorage";
+  if (lon < -112) return "America/Los_Angeles";
+  if (lon < -82 && lat < 31) return "America/Chicago";
+  if (lon < -68 && lat < 20) return "America/Puerto_Rico";
+  return "America/New_York";
+}
+function ndbcSrc(id, country, keep) {
+  return { id, type: "ocean", tz: "America/New_York", cc: "us", country, agency: "NOAA National Data Buoy Center (buoy cameras)", every: 60,
+    licence: "NOAA, public domain", page: "https://www.ndbc.noaa.gov/buoycams.shtml",
+    async list() {
+      const j = await get("https://www.ndbc.noaa.gov/buoycams.php");
+      // only buoys with a picture now; buoycam.php hands back the newest one for that station
+      return j.filter((c) => c.img && /^\w+$/.test(c.id) && isFinite(c.lat) && isFinite(c.lng) && keep(+c.lng))
+        .map((c) => [c.id, r5(c.lat), r5(c.lng), tidy(c.name), "https://www.ndbc.noaa.gov/buoycam.php?station=" + c.id, null, seaZone(+c.lat, +c.lng)]);
+    } };
+}
 async function ashcam(keep) {
   const j = await get("https://volcview.wr.usgs.gov/ashcam-api/webcamApi/webcams"), week = Date.now() / 1000 - 7 * 86400;
   // FAA's own cameras (faaInd Y) are shared with USGS under an FAA agreement, so they are left out; so are cameras with no
@@ -299,6 +320,21 @@ export const SOURCES = [
       // positions come in the Lithuanian grid (LKS-94, EPSG:3346), converted here to latitude and longitude
       return j.map((c) => { const [lat, lon] = lks94(c.x, c.y); return [String(c.id), r5(lat), r5(lon), tidy(c.name + (c.roadName ? ", " + c.roadName : "")), https(c.image)]; });
     } },
+  { id: "es-dgt", tz: "Europe/Madrid", cc: "es", country: "Spain", agency: "Dirección General de Tráfico (DGT)", every: 5,
+    licence: "DGT National Access Point open data (credit the DGT)", page: "https://infocar.dgt.es/etraffic/",
+    async list() {
+      // DATEX II v3.7 device list from the DGT's National Access Point; the Basque Country and Catalonia run their own cameras
+      const x = await get("https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v37.xml", "text"), out = [];
+      const tag = (b, t) => { const m = new RegExp(`<${t}>([^<]*)</${t}>`).exec(b); return m ? m[1].replace(/&amp;/g, "&").trim() : ""; };
+      const title = (v) => v.toLowerCase().replace(/(^|[\s(/-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+      for (const m of x.matchAll(/<ns2:device\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/ns2:device>/g)) {
+        const b = m[2], u = tag(b, "fse:deviceUrl"); if (!/camera/.test(tag(b, "ns2:typeOfDevice")) || !/^https:\/\/etraffic\.dgt\.es\/camarasEtraffic\//.test(u)) continue;
+        const lat = +tag(b, "loc:latitude"), lon = +tag(b, "loc:longitude"), km = tag(b, "lse:kilometerPoint"), pr = tag(b, "lse:province"), to = tag(b, "loc:roadDestination");
+        // c[6]: the Canary Islands keep their own clock
+        out.push([m[1], r5(lat), r5(lon), tidy(tag(b, "loc:roadName") + (km ? " km " + km : "") + (to ? " towards " + title(to) : "") + (pr ? ", " + title(pr) : "")), u].concat(lon < -12 ? [null, "Atlantic/Canary"] : []));
+      }
+      return out;
+    } },
   /* ---- other official cameras: volcanoes, rivers, weather (type tells the page what kind of camera it is) ---- */
   ashcamSrc("us-ashcam", "us", "United States (volcanoes)", "America/Anchorage", (lon) => lon < 0),
   // the western Aleutians (and the Northern Marianas, when their cameras are up) sit across the date line: a source of their
@@ -361,6 +397,9 @@ export const SOURCES = [
         return v.length && isFinite(x.lat) ? [k, r5(x.lat), r5(x.long), tidy(x.name), one(v)] : null;
       }).filter(Boolean);
     } },
+  /* the ocean buoys' cameras (NOAA National Data Buoy Center): a strip of views round the horizon, about once an hour */
+  ndbcSrc("us-ndbc", "United States (ocean buoys)", (lon) => lon < 0),
+  ndbcSrc("us-ndbc-w", "United States (buoys west of the date line)", (lon) => lon > 0),
   { id: "th-egat", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (dams)", agency: "Electricity Generating Authority of Thailand (dam cameras, via ThaiWater)", every: 15,
     licence: "Public dam camera images listed by ThaiWater (HII) (no licence stated)", page: "https://www.thaiwater.net/water/cctv",
     async list() {

@@ -277,6 +277,38 @@ async function round6() {
   const nps = await get("https://www.nps.gov/subjects/air/webcams.htm", 30000); line("NPS air webcams page", nps);
   try { const t = nps.b.toString("utf8"); console.log("   codes " + [...new Set([...t.matchAll(/webcams\/images\/([a-z0-9_]+)\.jpg/gi)].map((m) => m[1]))].join(",")); } catch {}
 }
+/* ---------- round 7: Spain (DGT), US ocean buoys (NDBC), Hong Kong Observatory weather photos ---------- */
+async function round7() {
+  const show = (k, r, n = 700) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const ds of ["camaras-dgt-datex2-v3-7", "camaras-dgt-datex2-v3-6-nuevo", "camaras-dgt"]) {
+    const r = await get("https://nap.dgt.es/api/3/action/package_show?id=" + ds, 40000); line("DGT package " + ds, r);
+    try { const j = JSON.parse(r.b); for (const x of j.result.resources || []) console.log("   res " + x.format + " " + x.url + " | " + (x.name || "")); } catch { show("  page", await get("https://nap.dgt.es/en/dataset/" + ds, 40000), 300); }
+  }
+  for (const u of ["https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v37.xml", "https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v36.xml", "https://infocar.dgt.es/datex2/dgt/CCTVSiteTablePublication/all/content.xml"]) {
+    const r = await get(u, 60000); show("DGT try " + u, r, 1200);
+    const t = r.b.toString("utf8"); const im = [...new Set(t.match(/https?:[^<"\s]+\.(jpg|jpeg|png)/gi) || [])]; console.log("   images " + im.length + " e.g. " + im.slice(0, 3).join(" "));
+    for (const x of im.slice(0, 2)) await img(x.replace(/&amp;/g, "&"), "  DGT");
+  }
+  for (const st of ["41002", "46026"]) { const r = await get("https://www.ndbc.noaa.gov/buoycam.php?station=" + st, 30000); line("NDBC buoycam.php " + st, r); console.log("   final url " + r.url); }
+  const hk = await get("https://www.hko.gov.hk/en/wxinfo/ts/index_webcam.htm", 30000); const t = hk.b.toString("utf8");
+  const js = [...new Set(t.match(/[^"'\s]+\.js[^"'\s]*/g) || [])].filter((x) => !/jquery|bootstrap|respond|html5shiv|flexslider|cookie|easing|menu\.js/i.test(x));
+  console.log("HKO scripts: " + js.join(" | "));
+  for (const x of js.slice(0, 8)) { const r = await get(new URL(x, "https://www.hko.gov.hk/en/wxinfo/ts/").href, 30000); const b = r.b.toString("utf8"); if (/lat|lon|webcam|mica/i.test(b)) show("  HKO js " + x, r, 1500); }
+  const m = t.match(/[^\n]{0,200}(lat|longitude|22\.\d{3,})[^\n]{0,200}/i); console.log("   page coords sample: " + (m ? m[0].slice(0, 400) : "none"));
+  for (const u of ["https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en", "https://data.gov.hk/en-data/dataset/hk-hko-rss-weather-photo", "https://www.hko.gov.hk/en/wxinfo/ts/webcam/json/webcam.json", "https://www.hko.gov.hk/wxinfo/ts/webcam/webcam_list.json"]) show("HKO try " + u, await get(u, 30000), 500);
+}
+/* ---------- round 8: element shape of the DGT camera list and the NDBC buoy list ---------- */
+async function round8() {
+  const r = await get("https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v37.xml", 90000); line("DGT v37", r);
+  const t = r.b.toString("utf8"); const i = t.indexOf("etraffic.dgt.es/camarasEtraffic");
+  console.log("   head " + t.slice(0, 1500).replace(/\s+/g, " "));
+  if (i > 0) { console.log("   around first image: " + t.slice(Math.max(0, i - 3500), i + 800).replace(/\s+/g, " ")); const j = t.indexOf("etraffic.dgt.es/camarasEtraffic", i + 50); console.log("   second: " + t.slice(Math.max(0, j - 3500), j + 300).replace(/\s+/g, " ")); }
+  const tags = {}; for (const m of t.matchAll(/<([a-zA-Z0-9]+:[a-zA-Z]+)[\s>]/g)) tags[m[1]] = (tags[m[1]] || 0) + 1; console.log("   tag counts " + JSON.stringify(tags).slice(0, 3000));
+  const n = await get("https://www.ndbc.noaa.gov/buoycams.php", 30000); line("NDBC buoycams.php", n); console.log("   " + n.b.toString("utf8").slice(0, 900));
+  for (const st of ["41002", "46026"]) { const x = await get("https://www.ndbc.noaa.gov/buoycam.php?station=" + st, 30000); line("NDBC cam " + st, x); }
+}
+if (only === "r8") await round8();
+if (only === "r7") await round7();
 if (only === "r5") await round5();
 if (only === "r6") await round6();
 if (only === "r2") await round2();
