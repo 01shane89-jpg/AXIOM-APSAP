@@ -83,7 +83,7 @@
         '<div class="kpi"><div class="v">' + day + '</div><div class="k">Alerts declared, past 24 h</div></div></div>' +
         (on.length ? "<table>" + on.map(function (r) { return "<tr><td>" + E(r.en) + '</td><td class="n">' + (r.since ? "since " + T(r.since) : "start time not given") + "</td></tr>"; }).join("") + "</table>" : '<p class="note">No region is under an air-raid alert.</p>') +
         (stand.length ? '<p class="src">Standing alerts (unchanged for over 30 days, occupied areas): ' + E(stand.map(function (r) { return r.en; }).join(", ")) + ".</p>" : "") +
-        '<div class="ctl"><input type="checkbox" id="cfua-al" data-cfua="alerts"' + (ST.alerts ? " checked" : "") + '><label for="cfua-al">Show alerts on the map</label></div>' +
+        '<div class="ctl"><input type="checkbox" id="cfua-al" data-cfua="alerts"' + (ST.alerts ? " checked" : "") + '><label for="cfua-al">Air-raid alerts</label></div>' +
         '<p class="src">' + A(al.home, al.source) + ". " + E(al.claim) + " The job reads it every 15 minutes, so short alerts can be missed.</p>";
     }
     var he = X.heat;
@@ -92,7 +92,7 @@
       h += "<h3>Satellite heat detections, past 24 hours</h3><div class=\"kpis\"><div class=\"kpi\"><div class=\"v\">" + N(he.counts.ua) + '</div><div class="k">Government-held Ukraine</div></div>' +
         '<div class="kpi"><div class="v">' + N(he.counts.occ) + '</div><div class="k">Russian-occupied areas</div></div><div class="kpi"><div class="v">' + N(he.counts.ru) + '</div><div class="k">Russia (border regions)</div></div></div>' +
         (he.series.length > 1 ? '<div class="spark" title="Detections per day this job has seen">' + he.series.map(function (d) { var t = d.ua + d.occ + d.ru; return '<i title="' + E(d.d + ": " + t) + '" style="height:' + Math.round(t / mx * 100) + '%"></i>'; }).join("") + "</div>" : "") +
-        '<div class="ctl"><input type="checkbox" id="cfua-ht" data-cfua="heat"' + (ST.heat ? " checked" : "") + '><label for="cfua-ht">Show heat detections on the map</label></div>' +
+        '<div class="ctl"><input type="checkbox" id="cfua-ht" data-cfua="heat"' + (ST.heat ? " checked" : "") + '><label for="cfua-ht">Satellite heat detections, past 24 hours</label></div>' +
         '<p class="src">' + A(he.home, he.source) + ". " + E(he.claim) + " Occupied or not is worked out against the front-line layer's current version.</p>";
     }
     var lo = X.losses;
@@ -125,7 +125,11 @@
   var api0 = null;
   function render(el, api) {
     api0 = api; el.innerHTML = html(api); draw(api);
-    Array.prototype.forEach.call(el.querySelectorAll("input[data-cfua]"), function (i) {
+    // the switches join the tab's other map switches (Map layers, at the top of the tab)
+    var sw = el.querySelectorAll("input[data-cfua]"), slot = document.getElementById("cf-layers-x"), lh;
+    if (sw.length && slot) { lh = document.createElement("h4"); lh.textContent = "Alerts and heat"; slot.appendChild(lh);
+      Array.prototype.forEach.call(sw, function (i) { var c = i.closest(".ctl") || i; c.classList.add("cfua-ctl"); slot.appendChild(c); }); }
+    Array.prototype.forEach.call(sw, function (i) {
       i.addEventListener("change", function () {
         ST[i.getAttribute("data-cfua")] = i.checked;
         try { localStorage.setItem("osap-cf-ua", JSON.stringify(ST)); } catch (e) {}
