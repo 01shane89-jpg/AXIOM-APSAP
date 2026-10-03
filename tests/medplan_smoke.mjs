@@ -148,6 +148,8 @@ async function open(opts, o) {
     if (/t\/12_100\.json/.test(u)) return J(r, MF_ROWS);
     return r.fulfill({ status: 404, body: "" });
   });
+  /* what hospitals state on their own websites (data/hospitals/<cc>/web.json): none unless a check supplies it */
+  await ctx.route(/\/data\/hospitals\//, (r) => o.web === "fail" ? r.fulfill({ status: 503, body: "" }) : o.web && /\/th\/web\.json/.test(r.request().url()) ? J(r, o.web) : r.fulfill({ status: 404, body: "" }));
   /* the split view setting (shared with Find LZ, Watch, NAI/TAI) starts on; these checks start from the full window */
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -585,6 +587,40 @@ async function openPlan(p) {
   ok(!errors.length, "phone print view: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- hospitals' own websites (build prompt phase 6) ----------
+const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:48:05Z", facilities: [
+  { key: "osm:w2", osm: "w2", sof: "", name: "Near Hospital", lat: 13.76, lon: 100.51, website: "https://near.example.org/",
+    caps: { "dx.ct": [{ url: "https://near.example.org/ct", title: "CT", excerpt: "CT scanner open 24 hours", observed: "2026-10-03", sha256: "a".repeat(64) }] } },
+  { key: "osm:n99", osm: "n99", sof: "", name: "Website Only Hospital", lat: 13.73, lon: 100.52, website: "https://wo.example.org/",
+    caps: { "ed.24_7": [{ url: "https://wo.example.org/er", title: "ER", excerpt: "Emergency room open 24 hours <b>x</b>", observed: "2026-10-03", sha256: "b".repeat(64) }] } }] };
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, web: WEB });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await openPlan(p);
+  ok(/Website Only Hospital/.test(await p.textContent("#mp-fac")), "websites: a hospital documented only by its own website is listed");
+  ok(/Hospitals' own websites, read automatically/.test(await p.textContent("#mp-src")) && /read 2026-10-03, 2 hospitals/.test(await p.textContent("#mp-src")), "websites: the sources list names the website reading and its date");
+  await p.click('#mp-fac tr:has-text("Near Hospital") [data-mp-assess]');
+  await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
+  const b = await p.textContent("#brief");
+  ok(/CT scanner open 24 hours/.test(b) && /Near Hospital website/.test(b) && /hospital website text \(automatic match\)/.test(b) && /aaaaaaaaaaaa/.test(b), "websites: the assessment quotes the hospital's page, names it and shows the evidence SHA-256");
+  ok(/REPORTED/.test(b) && !/CONFIRMED|VERIFIED<\/b>, confidence MODERATE · <a[^>]*near\.example/.test(b), "websites: a hospital's own claim is reported, never confirmed");
+  await p.click("#mpa-close");
+  await p.click('#mp-fac tr:has-text("Website Only Hospital") [data-mp-assess]');
+  await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
+  ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>x<\/b>/.test(document.getElementById("brief").textContent)), "websites: quoted page text is shown as text, never as markup");
+  await p.click("#mpa-close");
+  ok(!errors.length, "websites: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, web: "fail" });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await openPlan(p);
+  const src = await p.textContent("#mp-src");
+  ok(/Hospitals' own websites, read automatically/.test(src) && /not read: HTTP 503/.test(src) && /Near Hospital/.test(await p.textContent("#mp-fac")), "websites: an unreadable file is reported as not read and the plan still lists hospitals");
+  ok(!errors.length, "websites down: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- road routing falls back to Valhalla, then to a labelled estimate ----------
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, medfac: MF_ALL });
@@ -624,12 +660,13 @@ async function openPlan(p) {
   await p.goto(base + "tests/", { waitUntil: "domcontentloaded" }).catch(() => {});
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
-  for (const f of ["base-provider", "sof-provider", "osm-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
+  for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
   await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
     d: M._facName({ name: "Hospital Drive Clinic" }, "clinic"), e: M._parseGrid("13.75, 100.5"), f: M._parseGrid("47P PR 6300 2000"), g: M._parseGrid("nonsense"),
     h: M._wxFlags({ vis: 5000, gust: 12, lc: 10, rain: 1, hi: 25, lo: 10 }).length,
+    cx: M._capability({ name: "X", lat: 0, lon: 0, er: "no", sofRec: { name: "X", src: "https://x.example/", srcname: "X website", caps: { "ed.basic": { src: "https://x.example/er", srcname: "X website", quote: "Emergency room", quote_basis: "hospital website text (automatic match)", asof: "2026-10-03" } } } }, []).caps["ed.basic"],
     i: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).tier, il: M._capability({ name: "X", lat: 0, lon: 0, er: "yes", pad: true, beds: 600 }, []).low,
     lows: [M._capability({ name: "A", lat: 0, lon: 0, specRaw: "general_surgery" }, []).low, M._capability({ name: "B", lat: 0, lon: 0, er: "yes", beds: 120 }, []).low,
       M._capability({ name: "G", lat: 0, lon: 0, sofRec: { name: "G", notes: "Mahidol University", src: "x" } }, []).low, M._capability({ name: "Y", lat: 0, lon: 0 }, []).low], j: M._capability({ name: "Y", lat: 0, lon: 0 }, []).tier,
@@ -654,6 +691,7 @@ async function openPlan(p) {
   ok(/withheld/.test(r.a) && /withheld/.test(r.b) && r.c === "Bangkok Hospital" && r.d === "Hospital Drive Clinic", "rules: doctor-named clinics withheld, others kept");
   ok(r.e && r.e[0] === 13.75 && r.f && Math.abs(r.f[0] - 13.7) < 1 && r.g === null, "rules: grids parse from lat, lon and MGRS; nonsense does not");
   ok(r.h === 0, "rules: calm weather raises no flags");
+  ok(r.cx.status === "CONTRADICTED" && r.cx.source.url === "https://x.example/er" && r.cx.conflict && /emergency=no/.test(r.cx.conflict.how), "rules: a website stating an emergency room against OpenStreetMap emergency=no is CONTRADICTED, both kept, never NOT_AVAILABLE");
   ok(r.i === 2 && r.il === true && r.j === 0, "rules: emergency dept + 600 beds ranks only with surgery-level hospitals, low confidence (a bed count never ranks top); nothing listed is level not known");
   ok(r.rk[0] > r.rk[1] && r.rk[1] > r.rk[2] && r.rk[2] > r.rk[3] && r.rk[3] > r.rk[4], "rules: Level 1 above Level 2 above a level-less trauma centre above every hospital without a stated level " + JSON.stringify(r.rk));
   ok(JSON.stringify(r.lows) === "[false,true,false,false]", "rules: low confidence only where no services are listed and nothing is sourced " + JSON.stringify(r.lows));
