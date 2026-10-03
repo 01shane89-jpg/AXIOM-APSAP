@@ -1,0 +1,37 @@
+# Reads hospitals' published institutional phone numbers (tools/read_hospital_phones.mjs): embassy hospital lists, each
+# hospital's own website (robots.txt obeyed) and Wikidata. Runs only on the scratch branch claude/hospital-phones-raw and
+# commits hospital-phones-out/ there for review; nothing here is merged to main.
+name: Read hospital phone numbers
+on:
+  push:
+    branches: [claude/hospital-phones-raw]
+    paths: [tools/read_hospital_phones.mjs, .github/workflows/read-hospital-phones.yml]
+  workflow_dispatch:
+    inputs:
+      cc:
+        description: Country code
+        default: th
+permissions:
+  contents: write
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: command -v pdftotext || (sudo apt-get update -q && sudo apt-get install -yq poppler-utils)
+      - run: node tools/read_hospital_phones.mjs "${CC:-th}" hospital-phones-out
+        env:
+          CC: ${{ github.event.inputs.cc }}
+      - name: Commit the result to this branch
+        if: github.ref == 'refs/heads/claude/hospital-phones-raw'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hospital-phones-out
+          git commit -qm "Hospital phone numbers read $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase origin claude/hospital-phones-raw && git push -q origin HEAD:claude/hospital-phones-raw && exit 0; sleep 7; done
+          exit 1
