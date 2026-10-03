@@ -114,5 +114,49 @@ async function candidates() {
   }
 }
 
+/* ---------- round 2: field details for building the chosen sources ---------- */
+async function round2() {
+  const full = (k, r, n = 2500) => { line(k, r); console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  console.log("\n##### R2. NSW images (browser said error)");
+  for (const u of ["https://webcams.transport.nsw.gov.au/livetraffic-webcams/cameras/erskine_st_sydney.jpeg", "https://data.livetraffic.com/cameras/traffic-cam.json"]) { const r = await get(u); line(u, r); if (/json/.test(r.ct)) console.log("   " + r.b.toString().slice(0, 900)); else console.log("   " + r.b.toString().slice(0, 200)); }
+  console.log("\n##### R2. ATIS full rows and big pages");
+  const big = (n, st = 0) => encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start: st, length: n, search: { value: "" } }));
+  for (const h of ["511ga.org", "fl511.com", "udottraffic.utah.gov", "511on.ca"]) {
+    const r = await get(`https://${h}/List/GetData/Cameras?query=${big(1)}&lang=en`, 30000, { "X-Requested-With": "XMLHttpRequest" }); full(h + " row", r, 3000);
+    const b = await get(`https://${h}/List/GetData/Cameras?query=${big(5000)}&lang=en`, 60000, { "X-Requested-With": "XMLHttpRequest" });
+    try { const j = JSON.parse(b.b); line(h + " length 5000", b); console.log(`   rows ${j.data.length} of ${j.recordsTotal}`); } catch { line(h + " length 5000 (not json)", b); }
+  }
+  console.log("\n##### R2. ATIS placeholder check (same 15136 B png?)");
+  for (const u of ["https://fl511.com/map/Cctv/4358", "https://fl511.com/map/Cctv/4400", "https://fl511.com/map/Cctv/5000", "https://511ga.org/map/Cctv/24897", "https://511.novascotia.ca/map/Cctv/56", "https://hotline.gov.sk.ca/map/Cctv/2", "https://nvroads.com/map/Cctv/7572"]) {
+    const r = await get(u, 30000); line(u, r);
+    const crypto = await import("node:crypto"); console.log("   sha1 " + crypto.createHash("sha1").update(r.b).digest("hex").slice(0, 12)); await new Promise((ok) => setTimeout(ok, 1500));
+  }
+  console.log("\n##### R2. CARS views");
+  for (const p of ["cotg", "mntg", "iatg", "intg", "netg", "kstg"]) {
+    const r = await get(`https://${p}.carsprogram.org/cameras_v1/api/cameras`, 30000);
+    try { const j = JSON.parse(r.b); const kinds = {}; j.forEach((c) => (c.views || []).forEach((v) => { const k = Object.keys(v).sort().join(",") + " | " + (v.category || v.type || ""); kinds[k] = (kinds[k] || 0) + 1; }));
+      console.log(p + " " + j.length + " cams; view shapes: " + JSON.stringify(kinds).slice(0, 900)); console.log("   one: " + JSON.stringify(j[5]).slice(0, 1500)); } catch (e) { line(p, r); }
+  }
+  console.log("\n##### R2. others, full first record");
+  for (const [k, u] of [
+    ["QLD", "https://api.qldtraffic.qld.gov.au/v1/webcams?apikey=3e83add325cbb69ac4d8e5bf433d770b"],
+    ["Illinois", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=2&outSR=4326"],
+    ["Illinois count", "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"],
+    ["Iowa count", "https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/Traffic_Cameras_View/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"],
+    ["Kentucky count", "https://services2.arcgis.com/CcI36Pduqd0OR4W9/ArcGIS/rest/services/trafficCamerasCur_Prd/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"],
+    ["Missouri", "https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/MODOT_Traffic_Cameras/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=1&outSR=4326"],
+    ["Hawaii", "https://services.arcgis.com/6I1ysurtNWNxkuwd/arcgis/rest/services/HawaiiTrafficCameras/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=1&outSR=4326"],
+    ["Maryland arcgis", "https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=1&outSR=4326"],
+    ["WSDOT KML", "https://www.wsdot.wa.gov/Traffic/api/HighwayCameras/kml.aspx"],
+    ["Iceland", "https://gagnaveita.vegagerdin.is/api/vefmyndavelar2014_1"],
+    ["HCMC list a", "https://giaothong.hochiminhcity.gov.vn/render/ImageHandler.ashx?id=56de42f611f398ec0c48127d&t=1"],
+    ["HCMC map page", "https://giaothong.hochiminhcity.gov.vn/Map.aspx"],
+    ["HCMC home", "https://giaothong.hochiminhcity.gov.vn/"],
+    ["notis list", "https://api.notis.vn/v4/cameras/bylocation?lat=10.79&lng=106.68"],
+  ]) { const r = await get(u, 60000); full(k, r, k === "WSDOT KML" ? 1800 : 1500); }
+  for (const u of ["https://www.tripcheck.com/RoadCams/cams/AstoriaUS101MeglerBrNB_pid392.jpg", "https://eismoinfo.lt/eismoinfo-backend/image-provider/camera/last?id=72", "https://www.vegagerdin.is/vgdata/vefmyndavelar/hellisheidi_1.jpg",
+    "https://atmsqf.iowadot.gov/snapshots/Public/RWIS/RWIS_84-01.jpg", "http://pws.trafficwise.org/pullover/172_65_56_11.jpg", "https://pws.trafficwise.org/pullover/172_65_56_11.jpg", "https://api.qldtraffic.qld.gov.au/v1/webcams/1"]) await img(u);
+}
+if (only === "r2") await round2();
 if (!only || only === "browser") await browserCheck().catch((e) => console.log("browser check failed: " + e));
 if (!only || only === "lists") await candidates();
