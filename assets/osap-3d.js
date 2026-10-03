@@ -451,9 +451,10 @@
       '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + '<span class="o3-deg" aria-hidden="true">000° N</span></button>' +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
       '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
-      '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; grey ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
+      '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; grey ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button>" +
+      '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button></div>' +
       '<div class="o3-tilt"><label>Tilt <input type="range" min="0" max="85" step="1" aria-label="View angle (tilt)"></label><output></output></div>' +
-      '<button type="button" class="o3-crb" aria-expanded="false" aria-label="Map credits" title="Map credits">i</button><div class="o3-cr" hidden></div>' +
+      '<div class="o3-cr" hidden></div>' +
       '<div class="o3s o3-scale" role="button" tabindex="0" title="Map scale. Tap to change the unit (km, mi, nm)"></div>';
     ["click", "dblclick", "mousedown", "pointerdown", "touchstart", "wheel", "contextmenu", "keydown"].forEach(function (t) { box.addEventListener(t, function (e) { e.stopPropagation(); }); });
     mapEl.appendChild(box);
@@ -467,14 +468,16 @@
         try { gl.remove(); } catch (e) {}
         map.setView([c.lat, c.lng], z, { animate: false });
       }
-      box.remove(); view3 = null; D.removeEventListener("keydown", onKey);
+      box.remove(); view3 = null; D.removeEventListener("keydown", onKey); D.documentElement.classList.remove("o3d-on");
       var b = D.querySelector("[data-o3d]"); if (b) b.focus();
       if (then) then();
     }
     function onKey(e) { if (e.key === "Escape") close(); }
     D.addEventListener("keydown", onKey);
     box.querySelector(".o3-2d").addEventListener("click", function () { close(); });
-    view3 = { close: close, scale: function () {} };
+    view3 = { close: close, scale: function () {}, sync: function () {}, moved: function () {} };
+    var follow = false;
+    D.documentElement.classList.add("o3d-on");
 
     loadLib().then(function (ml) {
       if (dead) return;
@@ -603,6 +606,8 @@
          They and your marks stay at full strength even where the engine thinks a hill or building is in front: its guess
          (20% when "covered") was often wrong while the elevation was still loading, and a saved point must never fade out. */
       /* only those around the view (an HTML element each is costly to move with the camera) */
+      function drawMarks() {
+      markers.forEach(function (m) { m.remove(); }); markers.length = 0;
       var near = map.getBounds().pad(1.5);
       V.icons.filter(function (m) { return near.contains(m.ll); }).slice(0, 150).sort(function (a, b) { return a.z - b.z; }).forEach(function (m) {
         var w = D.createElement("div"), k = m.el.cloneNode(true);
@@ -618,6 +623,8 @@
         el.addEventListener("click", function (e) { e.stopPropagation(); pop(V.layers[m.id], [m.ll.lng, m.ll.lat]); });
         markers.push(new ml.Marker({ element: el, anchor: "left", offset: [-7, 0], opacityWhenCovered: "1" }).setLngLat([m.ll.lng, m.ll.lat]).addTo(gl));
       });
+      }
+      drawMarks();
       /* tap a point or shape: its 2D popup, and a way back to it in 2D */
       var popup = null;
       function pop(l, at) {
@@ -655,9 +662,80 @@
         gl.on("mouseenter", id, function () { gl.getCanvas().style.cursor = "pointer"; });
         gl.on("mouseleave", id, function () { gl.getCanvas().style.cursor = ""; });
       });
+      /* the toolbar works over the 3D view, so what it changes on the flat map shows here too: data sets, overlays, weather,
+         the base map and anything a tool draws are read again from the flat map a moment after they change */
+      var rSig = JSON.stringify(R.map(function (r) { return [r.urls[0], r.op]; })), rIds = R.map(function (r, i) { return "r" + i; }), syncT = 0;
+      function rasterSync() {
+        var R2 = rasters(), sig = JSON.stringify(R2.map(function (r) { return [r.urls[0], r.op]; }));
+        if (sig === rSig) return;
+        rSig = sig;
+        rIds.forEach(function (id) { if (gl.getLayer(id)) gl.removeLayer(id); if (gl.getSource(id)) gl.removeSource(id); });
+        rIds = [];
+        R2.forEach(function (r) {
+          /* new ids each time, so a tile still on its way for a picture just switched off is never drawn in the new one */
+          var k = TPL.length, id = "r" + k, viaUs = demProto && !/\{bbox/.test(r.urls[0]);
+          TPL[k] = viaUs ? { urls: r.urls, base: r.base } : null;
+          gl.addSource(id, { type: "raster", tiles: viaUs ? ["osapr://" + k + "/{z}/{x}/{y}"] : r.urls, tileSize: 256, minzoom: r.min, maxzoom: r.max, scheme: r.tms ? "tms" : "xyz" });
+          var before = r.base ? "hill" : ["bld", "bldp", "vf"].filter(function (x) { return gl.getLayer(x); })[0];
+          gl.addLayer({ id: id, type: "raster", source: id, paint: { "raster-opacity": r.op, "raster-fade-duration": 120, "raster-contrast": r.base ? 0.06 : 0, "raster-saturation": r.base ? 0.08 : 0 } }, before);
+          rIds.push(id);
+          if (r.attr && attrs.indexOf(r.attr) < 0) { attrs.push(r.attr); cr.innerHTML = attrs.join(" · ") + " · <a href=\"https://maplibre.org\" target=\"_blank\" rel=\"noopener\">MapLibre</a>"; }
+        });
+      }
+      function sync() {
+        if (dead || !styleUp) return;
+        try {
+          V = vectors();
+          gl.getSource("vf").setData({ type: "FeatureCollection", features: V.fills });
+          gl.getSource("vl").setData({ type: "FeatureCollection", features: V.lines });
+          gl.getSource("vp").setData({ type: "FeatureCollection", features: V.pts });
+          drawMarks(); rasterSync();
+        } catch (e) {}
+      }
+      view3.sync = function () { clearTimeout(syncT); syncT = setTimeout(sync, 350); };
+      /* the flat map follows the 3D camera, so the Centre grid, Search, the medical plan from the map centre and the layers
+         that load for the area in view all use the place you are looking at; and going to a place moves the 3D camera there */
+      /* the flat map's zoom for this 3D view: one more (its tiles are half the size), within the flat map's own limits */
+      function z2d() { return Math.max(map.getMinZoom(), Math.min(Math.round(gl.getZoom() + 1), map.getMaxZoom())); }
+      gl.on("moveend", function () {
+        if (dead) return;
+        var c = gl.getCenter(), z = z2d();
+        var at = map.getCenter();
+        if (Math.abs(at.lat - c.lat) < 1e-7 && Math.abs(at.lng - c.lng) < 1e-7 && map.getZoom() === z) return;
+        follow = true; try { map.setView([c.lat, c.lng], z, { animate: false }); } finally { follow = false; }
+      });
+      view3.moved = function () {
+        if (follow || dead) return;
+        var c = map.getCenter(), g = gl.getCenter();
+        if (map.distance(c, [g.lat, g.lng]) < 5 && map.getZoom() === z2d()) return;   /* a resize, or our own move */
+        gl.flyTo({ center: [c.lng, c.lat], zoom: Math.max(0, map.getZoom() - 1), duration: 900 });
+      };
       W.OSAP_3D.gl = gl; W.OSAP_3D._markers = markers;
     }).catch(function (e) { say((e && e.message) || "3D could not start."); });
   }
+
+  /* the regular toolbar over the 3D view: what it switches on shows in 3D; the tools that need taps or drags on the map
+     (measuring, a route, drawing an area or a watch area, placing a point by tap) go back to the flat map at the same place */
+  map.on("layeradd layerremove", function () { if (view3) view3.sync(); });
+  map.on("moveend", function () { if (view3) view3.moved(); });
+  var FLAT = { measure: "Measuring", route: "Route planning", watch: "Drawing a watch area" };
+  var DRAW = { lasso: 1, poly: 1, circle: 1, rect: 1, edit: 1 };
+  D.addEventListener("click", function (e) {
+    if (!view3 || !e.target.closest) return;
+    var b = e.target.closest("#atk-tools [data-atk]"), k = b && b.getAttribute("data-atk"), why = "";
+    if (FLAT[k]) why = FLAT[k];
+    var pk = e.target.closest("#atk-pop [data-pk]"), pop = pk && D.getElementById("atk-pop"), f = pop && pop._for, v = pk && pk.getAttribute("data-pk");
+    if (f === "area" && (DRAW[v] || (!pop.querySelector('[data-pk="edit"]') && v !== "save" && v !== "clear"))) why = DRAW[v] ? "Drawing an area" : "Drawing the area first";
+    if (f === "point" && v === "tap") why = "Placing a point by tap";
+    if (f === "layout" && v === "list") why = "The list";
+    if (why) {
+      view3.close();
+      var A = W.OSAP_ATAK; if (A && A.toast) setTimeout(function () { A.toast(why + " works on the flat map, so 3D closed here"); }, 0);
+      return;
+    }
+    /* switches in the panels (data sets, overlays, weather) can show or hide a layer without adding one: read it again */
+    if (!e.target.closest("#o3d")) view3.sync();
+  }, true);
 
   /* ---------- look ---------- */
   var st = D.createElement("style");
@@ -673,15 +751,18 @@
     "html[data-map=dark] .o3s,html[data-map=grey] .o3s{background:rgba(20,24,28,.8);color:#e9ecef}html[data-map=dark] .o3s-b,html[data-map=grey] .o3s-b{border-color:#ced4da}" +
     "html[data-map=dark] .o3s-b i:nth-child(2),html[data-map=grey] .o3s-b i:nth-child(2){background:#212529}html[data-map=dark] .o3s-b i:nth-child(odd),html[data-map=grey] .o3s-b i:nth-child(odd){background:#ced4da}" +
     ".o3dctl a{font:700 13px/30px system-ui,sans-serif!important;color:#212529}html.atak #map .o3dctl{display:none}" +
-    "#o3d{position:absolute!important;inset:0;z-index:1200;margin:0!important;float:none;background:#1b1f24;cursor:auto}" +
+    "#o3d{position:absolute!important;inset:0;z-index:999;margin:0!important;float:none;background:#1b1f24;cursor:auto}" +
     "#o3d .o3-map{position:absolute;inset:0}" +
     "#o3d .o3-load{position:absolute;left:0;right:0;top:0;z-index:3;height:22px;pointer-events:none}#o3d .o3-load[hidden]{display:none}" +
     "#o3d .o3-load i{display:block;height:3px;width:0;background:#15aabf;transition:width .25s}" +
-    "#o3d .o3-load span{position:absolute;left:8px;top:6px;font:600 11.5px/1 system-ui,sans-serif;color:#fff;background:rgba(20,24,28,.78);padding:3px 7px;border-radius:9px;pointer-events:auto}" +
+    "#o3d .o3-load span{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;top:6px;font:600 11.5px/1 system-ui,sans-serif;color:#fff;background:rgba(20,24,28,.78);padding:3px 7px;border-radius:9px;pointer-events:auto}" +
     "#o3d .o3-load.err i{background:#e8590c}#o3d .o3-load span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer}" +
     "#o3d .o3-msg{position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
     "#o3d .o3-msg[hidden]{display:none}" +
-    "#o3d .o3-side{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:6px;z-index:2;align-items:center}" +
+    /* the toolbar, bottom bar and their panels sit over the 3D view (z-index 1000 and up); the flat map's own corner
+       controls, loading bar and press-and-hold ring are hidden while it is open */
+    "html.o3d-on #map>.leaflet-control-container,html.o3d-on #map>#mload,html.o3d-on #map>#atk-ring{display:none!important}" +
+    "#o3d .o3-side{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:6px;z-index:2;align-items:center}" +
     "#o3d .o3-b{min-width:44px;min-height:44px;border:0;border-radius:10px;background:rgba(20,24,28,.86);color:#f1f3f5;font:700 14px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35);padding:0 8px}" +
     "#o3d .o3-b:focus-visible{outline:2px solid #4dabf7;outline-offset:1px}#o3d .o3-2d{background:#0b7285;color:#fff}" +
     "#o3d .o3-cmp{padding:0;background:none;box-shadow:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;gap:2px}" +
@@ -689,11 +770,11 @@
     "#o3d .o3-cmp svg{display:block;transition:transform .15s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}" +
     "#o3d .o3-zi,#o3d .o3-zo{font-size:22px;font-weight:500}#o3d .o3-ex{font-size:12.5px}" +
     "#o3d .o3-bld{display:flex;align-items:center;justify-content:center;color:#adb5bd}#o3d .o3-bld.on{color:#fff;background:#1c7ed6}" +
-    "#o3d .o3-tilt{position:absolute;right:8px;bottom:34px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(20,24,28,.86);color:#f1f3f5;border-radius:10px;padding:6px 10px;font:600 12.5px/1 system-ui,sans-serif}" +
+    "#o3d .o3-tilt{position:absolute;left:8px;bottom:38px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(20,24,28,.86);color:#f1f3f5;border-radius:10px;padding:6px 10px;font:600 12.5px/1 system-ui,sans-serif}" +
     "#o3d .o3-tilt label{display:flex;align-items:center;gap:8px}#o3d .o3-tilt input{width:130px;accent-color:#15aabf;margin:0;height:28px}#o3d .o3-tilt output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}" +
-    "#o3d .o3-scale{position:absolute;left:8px;bottom:34px;z-index:2}" +
-    "#o3d .o3-crb{position:absolute;right:8px;bottom:6px;z-index:2;width:22px;height:22px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:#212529;font:italic 700 13px/22px Georgia,serif;cursor:pointer;padding:0}" +
-    "#o3d .o3-cr{position:absolute;left:8px;right:36px;bottom:4px;z-index:3;background:rgba(255,255,255,.95);color:#343a40;border-radius:6px;padding:5px 8px;font:11px/1.35 system-ui,sans-serif}#o3d .o3-cr[hidden]{display:none}" +
+    "#o3d .o3-scale{position:absolute;left:8px;bottom:84px;z-index:2}" +
+    "#o3d .o3-crb{width:22px;height:22px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:#212529;font:italic 700 13px/22px Georgia,serif;cursor:pointer;padding:0}" +
+    "#o3d .o3-cr{position:absolute;left:62px;right:70px;top:8px;z-index:3;background:rgba(255,255,255,.95);color:#343a40;border-radius:6px;padding:5px 8px;font:11px/1.35 system-ui,sans-serif}#o3d .o3-cr[hidden]{display:none}" +
     "#o3d .o3-ic{width:0;height:0;cursor:pointer}#o3d .o3-ic>*{pointer-events:auto}" +
     "#o3d .o3-mark{display:flex;align-items:center;gap:4px;border:0;background:none;padding:0;cursor:pointer}" +
     "#o3d .o3-mark i{width:14px;height:14px;border-radius:50%;background:#e8590c;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);box-sizing:border-box}" +
