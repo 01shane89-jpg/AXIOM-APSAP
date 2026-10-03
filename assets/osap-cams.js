@@ -26,7 +26,8 @@
   var S = { on: false, msg: "", ix: null, ixErr: "", lists: {}, busy: {} };
   /* the kinds of camera, by the source's type (road when it has none) */
   var TYPES = { road: { n: "Road", t: "Traffic camera", c: "#0b7285" }, river: { n: "River", t: "River camera", c: "#1971c2" },
-    volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" } };
+    volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" },
+    ocean: { n: "Sea", t: "Ocean buoy camera", c: "#0c8599" } };
   var KINDS = { dwr: 1, hls: 1, jma: 1 };
   function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
   var OFF = {};
@@ -336,7 +337,7 @@
       '<p class="pwr-m">Only cameras a government agency or public body publishes itself, openly, with no account or login. Left out on purpose: the FAA\'s aviation weather cameras (shared only under an agreement), and any camera list that needs a key. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
-    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano and weather cameras: hover or tap a camera</i></span></label>' +
+    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano, weather and sea cameras: hover or tap a camera</i></span></label>' +
       '<div class="cam-kinds" data-camkinds role="group" aria-label="Kinds of camera to show">' + Object.keys(TYPES).map(function (k) {
         return '<button type="button" data-camkind="' + k + '" aria-pressed="' + !OFF[k] + '"><span style="background:' + TYPES[k].c + '"></span>' + TYPES[k].n + "</button>"; }).join("") + "</div>" +
       '<p class="mlkey pwr-m" data-cammsg aria-live="polite" hidden></p>' +
