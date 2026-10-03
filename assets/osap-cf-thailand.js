@@ -14,13 +14,23 @@
     "html.cf-tbw #map .leaflet-map-pane>.leaflet-borderpane-pane,html.cf-tbw #map .leaflet-map-pane>.leaflet-bandpane-pane,html.cf-tbw #map .leaflet-map-pane>.leaflet-tambpane-pane," +
     "html.cf-tbw #map .leaflet-map-pane>.leaflet-sitepane-pane,html.cf-tbw #map .leaflet-map-pane>.leaflet-lblpane-pane,html.cf-tbw #map .leaflet-map-pane>.leaflet-assetpane-pane," +
     "html.cf-tbw #map .leaflet-map-pane>.leaflet-firepane-pane{visibility:visible!important}",
-    "#cf-rail #rail-border .cf-tbw-off{display:none!important}#cf-rail details.cf-tbw>summary{padding:8px 0}#cf-rail #rail-border .sec{padding-left:0;padding-right:0}"
+    "#cf-rail .cf-tbw-off{display:none!important}#cf-rail #cf-layers-x .sec{padding:0;border:0}#cf-rail #cf-layers-x .sec>h2{display:none}#cf-rail details.cf-tbw>summary{padding:8px 0}#cf-rail #rail-border .sec{padding-left:0;padding-right:0}"
   ].join("\n");
   D.head.appendChild(css);
 
+  // the border view's own map switches go with the tab's other switches (Map layers, at the top of the tab), not inside the panel
+  var LS = null, lsHome = null;
+  function layersSec(rb) {
+    if (LS) return LS;
+    var all = rb.querySelectorAll(".sec > h2");
+    for (var k = 0; k < all.length; k++) if (/map layers/i.test(all[k].textContent)) return (LS = all[k].parentNode);
+    return null;
+  }
   function tbwOff() {
     // held by reference: closing the tab has already emptied the panel it sat in
     var rb = RB;
+    if (LS && lsHome && LS.parentNode !== lsHome.parent) lsHome.parent.insertBefore(LS, lsHome.next && lsHome.next.parentNode === lsHome.parent ? lsHome.next : null);
+    var lh = D.getElementById("cf-tbw-lh"); if (lh) lh.remove();
     if (rb && home && rb.parentNode !== home.parent) home.parent.insertBefore(rb, home.next && home.next.parentNode === home.parent ? home.next : null);
     if (rb) rb.hidden = D.documentElement.getAttribute("data-view") !== "border";
     D.documentElement.classList.remove("cf-tbw");
@@ -36,10 +46,16 @@
     var ev = D.getElementById("ev-list"); if (ev && ev.closest(".sec")) ev.closest(".sec").classList.add("cf-tbw-off");
     ["bl-ev", "phase-seg"].forEach(function (id) { var e = D.getElementById(id); if (e) (e.closest(".ctl") || e).classList.add("cf-tbw-off"); });
     var det = D.createElement("details"); det.className = "cf-tbw"; det.open = true;
-    det.innerHTML = "<summary>Border watch: map layers, crossings, people and facilities near the line, toll</summary>";
+    det.innerHTML = "<summary>Border watch: crossings, people and facilities near the line, toll</summary>";
     rb.hidden = false; det.appendChild(rb); box.appendChild(det);
+    var ls = layersSec(rb), slot = D.getElementById("cf-layers-x");
+    if (ls && slot) {
+      if (!lsHome) lsHome = { parent: ls.parentNode, next: ls.nextSibling };
+      var lh = D.createElement("h4"); lh.id = "cf-tbw-lh"; lh.textContent = "Border watch";
+      slot.appendChild(lh); slot.appendChild(ls);
+    }
     D.documentElement.classList.add("cf-tbw");
-    if (!on) { on = true; W.TBW.show(); }
+    if (!on) { on = true; W.TBW.show(false, { noEvents: true }); }
   };
   // the conflict tab closed or switched to another conflict: give the border view back to the page
   new MutationObserver(function () { if (D.documentElement.getAttribute("data-cf") !== ID && (on || D.documentElement.classList.contains("cf-tbw"))) tbwOff(); })

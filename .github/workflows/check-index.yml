@@ -28,6 +28,7 @@ jobs:
       - run: node tests/milsites.test.mjs
       - run: node tests/comms.test.mjs
       - run: node tests/gazetteer.test.mjs
+      - run: node tests/illum.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
@@ -47,6 +48,7 @@ jobs:
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
+      - run: node tests/cf_layout_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
@@ -55,6 +57,7 @@ jobs:
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
+      - run: node tests/period_smoke.mjs
       - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
@@ -71,5 +74,6 @@ jobs:
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/speed_budget.mjs

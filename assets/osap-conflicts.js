@@ -65,18 +65,23 @@
     "#view-seg button.cftab::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--l3);margin-right:5px;vertical-align:1px}",
     ".cmenu.cfmenu{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.cmenu.cfmenu h4{grid-column:1/-1;margin:4px 2px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}",
     ".cmenu.cfmenu button span.n{margin-left:6px;font-size:11px;color:var(--muted)}",
+    "#cf-rail .cfjump{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}#cf-rail .cfjump button{font:inherit;font-size:12.5px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2);color:var(--ink);cursor:pointer}" +
+    "#cf-rail .cfjump button:hover{border-color:var(--accent);color:var(--accent)}#cf-rail #cf-layers,#cf-rail #cf-reps,#cf-rail #cf-more{scroll-margin-top:8px}#cf-rail .cfcount{margin:0 0 4px}" +
+    "#cf-rail [data-cftile]{cursor:pointer}#cf-rail [data-cftile]:hover,#cf-rail [data-cftile]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}#cf-rail svg[data-cfwk]{cursor:pointer}" +
+    "#cf-rail .cfpick{margin:0 0 4px;color:var(--ink)}#cf-rail .cfpick button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}" +
+    "#cf-rail #cf-layers-x:empty{display:none}#cf-rail #cf-layers-x{margin:8px 0 4px;padding-top:8px;border-top:1px solid var(--line-soft)}#cf-rail #cf-layers-x h4{font-size:12px;margin:0 0 4px;color:var(--muted)}",
     "@media (max-width:640px){#cf-rail .cfk{grid-template-columns:repeat(2,minmax(0,1fr))}}"
   ].join("\n");
   D.head.appendChild(css);
 
   /* ---------- state ---------- */
-  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", show: { front: true, ucdp: true, rep: true, prev: false } };
+  var IDX = null, active = null, saved = null, map = null, panes = false, lyr = {}, cur = { data: null, front: null }, F = { kind: "", cc: "", q: "", days: 30, from: "", to: "", win: null, att: false, show: { front: true, ucdp: true, rep: true, prev: false } };
   /* ---------- period: follows the page header (24 h, 7/30/90 days, all, custom); the tab's own list can narrow it ---------- */
   var ALL = 36500;
   function headerPeriod() {
     var p = null; try { p = JSON.parse(localStorage.getItem("asap-period")); } catch (e) {}
     p = p && p.p ? p : { p: "all" };
-    F.from = ""; F.to = "";
+    F.from = ""; F.to = ""; F.win = null; F.att = false;
     if (p.p === "24h") F.days = 1; else if (p.p === "all") F.days = ALL;
     else if (p.p === "custom") { F.days = ALL; F.from = p.from || ""; F.to = p.to || ""; }
     else if (+p.p > 0) F.days = +p.p;
@@ -84,6 +89,8 @@
   // a report counts when its date (UTC) falls inside the window; for 24 hours the full time is compared where there is one
   function inWin(s) {
     s = String(s || ""); if (!s) return false;
+    // a week or span picked from a figure or a chart bar (F.win: { from, to } in ms, label)
+    if (F.win) { var m = parseT(s); return isFinite(m) && m >= F.win.from && m < F.win.to; }
     if (F.from && s.slice(0, 10) < F.from) return false;
     if (F.to && s.slice(0, 10) > F.to) return false;
     if (F.days >= ALL) return true;
@@ -489,6 +496,7 @@
     });
     return allItems(d).filter(function (i) {
       if (!(inWin(i.date) && (!F.kind || i.kind === F.kind) && (!F.cc || i.cc === F.cc))) return false;
+      if (F.att && !VIOLENT[family(i)]) return false;
       if (!qs.length) return true;
       var txt = ((i.title_en || "") + " " + i.title + " " + (i.summary_en || i.summary || "") + " " + i.outlet + " " + kindName(i.kind) + " " + (i.place || "")).toLowerCase();
       return qs.every(function (re) { return re.test(txt); });
@@ -529,6 +537,26 @@
       '<div class="cfm">UCDP candidate event ' + esc(e.id) + ", provisional (revised by UCDP later). <a href=\"https://ucdp.uu.se/downloads/\" target=\"_blank\" rel=\"noopener\">UCDP</a>, CC BY 4.0</div>" +
       '<div class="fp" title="SHA-256 fingerprint: ' + esc(e.fp || "") + '">SHA-256 ' + esc((e.fp || "").slice(0, 16)) + "…</div>";
   }
+  function periodSel() {
+    var opts = (F.win ? [[-1, F.win.label]] : F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]);
+    return '<select data-cff="days" aria-label="Period">' + opts.map(function (p) {
+      return '<option value="' + p[0] + '"' + ((F.win ? p[0] === -1 : F.days === p[0]) ? " selected" : "") + ">" + esc(p[1]) + "</option>"; }).join("") + "</select>";
+  }
+  // a figure or a chart bar was tapped: list what it counts (span in days, or a week back from now; attacks only for the attack figures)
+  function pick(o) {
+    F.att = !!o.att; F.from = ""; F.to = ""; F.kind = ""; F.cc = ""; F.q = "";
+    Array.prototype.forEach.call(D.querySelectorAll('#cf-rail [data-cff="kind"],#cf-rail [data-cff="cc"],#cf-rail [data-cff="q"]'), function (x) { x.value = ""; });
+    if (o.week != null) { var to = Date.now() - o.week * 7 * 864e5; F.win = { from: to - 7 * 864e5, to: to, label: "Week to " + day(new Date(to).toISOString().slice(0, 10)) }; }
+    else if (o.span) F.win = { from: Date.now() - o.span * 864e5, to: Infinity, label: o.label };
+    else { F.win = null; F.days = o.days; }
+    var s = D.querySelector('#cf-rail select[data-cff="days"]'); if (s) s.outerHTML = periodSel();
+    if ((F.win ? Date.now() - F.win.from : F.days * 864e5) > 90 * 864e5 && needOlder()) loadOlder();
+    var b = D.getElementById("cf-list"); if (b) b.removeAttribute("data-lim");
+    list(); drawMap();
+    var el = o.ucdp ? D.querySelector("#cf-list details") : D.getElementById("cf-reps");
+    if (o.ucdp && el) el.open = true;
+    if (el) el.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
   function bars(weeks, key, cls, label) {
     if (!weeks || !weeks.length) return "";
     var max = Math.max.apply(null, weeks.map(function (w) { return w[key]; }).concat([1])), n = weeks.length, bw = 100 / n;
@@ -536,7 +564,7 @@
       var h = Math.round(w[key] / max * 44), wkEnd = new Date(Date.now() - w.w * 7 * 864e5).toISOString().slice(0, 10);
       return '<rect class="' + cls + '" x="' + (k * bw + 0.15).toFixed(2) + '%" y="' + (46 - h) + '" width="' + (bw - 0.3).toFixed(2) + '%" height="' + Math.max(h, w[key] ? 1 : 0) + '"><title>Week to ' + wkEnd + ": " + num(w[key]) + " " + label + "</title></rect>";
     }).join("");
-    return '<div class="cfchart" role="img" aria-label="' + esc(label) + ' per week, past year"><svg viewBox="0 0 100 56" preserveAspectRatio="none">' + r + '</svg><div class="cfnote" style="display:flex;justify-content:space-between;margin:0"><span>a year ago</span><span>max ' + num(max) + " a week</span><span>this week</span></div></div>";
+    return '<div class="cfchart" role="img" aria-label="' + esc(label) + ' per week, past year. Tap a week to list it"><svg viewBox="0 0 100 56" preserveAspectRatio="none" data-cfwk="' + weeks.map(function (w) { return w.w; }).join(",") + '" data-cfwkk="' + (key === "best" ? "ucdp" : "rep") + '">' + r + '</svg><div class="cfnote" style="display:flex;justify-content:space-between;margin:0"><span>a year ago</span><span>max ' + num(max) + " a week</span><span>this week</span></div></div>";
   }
   function render(c) {
     var d = cur.data = (W.OSAP_CF || {})[c.id], f = cur.front = (W.OSAP_FRONT || {})[c.id] || null, r = rail();
@@ -551,33 +579,39 @@
     // headline figures count incidents (reports of one incident counted once)
     var cnt = d._all ? tabCounts(d) : null;
     if (cnt) st = Object.assign({}, st, { weeks: cnt.weeks });
-    if (st.reports) h.push('<div class="cfk"><div><b>' + num(cnt ? cnt.d1 : st.reports.d1) + "</b><span" + (cnt ? ' title="Bombings, shootings, strikes, clashes and arson; several reports of one incident count once"' : "") + ">" + (cnt ? "attacks reported" : "reports") + ", 24 h</span></div><div><b>" + num(cnt ? cnt.d7 : st.reports.d7) + "</b><span>" + (cnt ? "attacks reported" : "reports") + ", 7 days</span></div>" +
-      "<div><b>" + num(u30.events) + '</b><span>UCDP events, 30 days</span></div><div><b>' + num(u30.best) + '</b><span>deaths, 30 days (UCDP best estimate)</span></div></div>');
-    else h.push('<div class="cfk"><div><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
+    // each figure opens what it counts (data-cftile, handled below)
+    var T = function (k) { return ' data-cftile="' + k + '" role="button" tabindex="0"'; };
+    if (st.reports) h.push('<div class="cfk"><div' + T(cnt ? "att1" : "rep1") + "><b>" + num(cnt ? cnt.d1 : st.reports.d1) + "</b><span" + (cnt ? ' title="Bombings, shootings, strikes, clashes and arson; several reports of one incident count once"' : "") + ">" + (cnt ? "attacks reported" : "reports") + ", 24 h</span></div><div" + T(cnt ? "att7" : "rep7") + "><b>" + num(cnt ? cnt.d7 : st.reports.d7) + "</b><span>" + (cnt ? "attacks reported" : "reports") + ", 7 days</span></div>" +
+      "<div" + T("ucdp30") + "><b>" + num(u30.events) + '</b><span>UCDP events, 30 days</span></div><div' + T("ucdp30") + '><b>' + num(u30.best) + '</b><span>deaths, 30 days (UCDP best estimate)</span></div></div>');
+    else h.push('<div class="cfk"><div' + T("ucdp365") + '><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div' + T("ucdp365") + '><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
     h.push('<p class="cfnote">Updated ' + when(d.asof) + ". Reports are unverified and statements by any party are claims. UCDP figures are provisional candidate data" +
       (st.ucdp_latest ? ", latest event coded " + day(st.ucdp_latest) : "") + ".</p>");
-    if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
-      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed, mapped and counted with the reports below.</p>");
-    if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
-    h.push('<div id="cf-extra"></div></div>');
-    h.push(frontHtml(c, d, f));
+    // the two things looked for most sit straight under the title: every map switch in one place, then the recent reports
+    h.push('<nav class="cfjump" aria-label="On this tab"><button type="button" data-cfjump="cf-layers">Map layers</button>' +
+      '<button type="button" data-cfjump="cf-reps">' + (d.auto ? "UCDP events" : "Recent reports") + "</button>" + '<button type="button" data-cfjump="cf-more">Trends and background</button></nav></div>');
     // filters and layer switches
     var kinds = {}, ccs = {};
     allItems(d).forEach(function (i) { kinds[i.kind] = (kinds[i.kind] || 0) + 1; if (i.cc) ccs[i.cc] = 1; });
-    h.push('<div class="sec"><h3 style="margin-top:0">On the map</h3><div class="cfctl">' +
+    // tab-specific switches (border watch, Iran, Ukraine) are moved into #cf-layers-x by their own files; history and military
+    // sites append theirs to this section after it
+    h.push('<div class="sec" id="cf-layers"><h3 style="margin-top:0">Map layers</h3><div class="cfctl">' +
       '<label><input type="checkbox" data-cfshow="front"' + (F.show.front ? " checked" : "") + "> Front line or control</label>" +
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
       '<label><input type="checkbox" data-cfshow="ucdp"' + (F.show.ucdp ? " checked" : "") + "> UCDP events</label>" +
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
-      '<div class="cfm">What each colour means is in the legend on the map.</div>' +
-      '<div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
-        return '<option value="' + p[0] + '"' + (F.days === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select>" +
+      '<div class="cfm">What each colour means is in the legend on the map.</div><div id="cf-layers-x"></div></div>');
+    h.push('<div class="sec" id="cf-reps"><h3 style="margin-top:0">' + (d.auto ? "UCDP events" : "Recent reports") + '</h3><div class="cfctl">' + periodSel() +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.kind === k ? " selected" : "") + ">" + esc(kindName(k)) + " (" + kinds[k] + ")</option>"; }).join("") + "</select>" : "") +
       (Object.keys(ccs).length > 1 ? '<select data-cff="cc" aria-label="Country"><option value="">All countries</option>' + Object.keys(ccs).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.cc === k ? " selected" : "") + ">" + esc(cname(k)) + "</option>"; }).join("") + "</select>" : "") +
-      (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + "</div></div>");
-    h.push('<div class="sec" id="cf-list"></div>');
+      (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + '</div><div id="cf-list"></div></div>');
+    h.push('<div class="sec" id="cf-more"><h3 style="margin-top:0">Trends and background</h3>');
+    if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
+      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed, mapped and counted with the reports above.</p>");
+    if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
+    h.push('<div id="cf-extra"></div></div>');
+    h.push(frontHtml(c, d, f));
     h.push(sourcesHtml(d, f));
     r.innerHTML = h.join("");
     list();
@@ -604,7 +638,9 @@
     var it = filtered(), gs = grouped(it), ev = (cur.data.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
     var lim = +(box.getAttribute("data-lim") || 60), h = [];
     if (!cur.data.auto) {
-      h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : "") + ")</h3>");
+      if (F.att || F.win) h.push('<p class="cfm cfpick">Showing ' + (F.att ? "attacks only (bombings, shootings, strikes, clashes, arson)" : "every kind") + (F.win ? ", " + esc(F.win.label.toLowerCase()) : "") +
+        ' · <button type="button" data-cfclr="1">Show all reports</button></p>');
+      h.push('<p class="cfm cfcount">' + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : " reports") + ", newest first</p>");
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button></p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
@@ -725,10 +761,17 @@
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
     if (t.hasAttribute("data-cfshow")) { F.show[t.getAttribute("data-cfshow")] = t.checked; drawMap(); return; }
     var k = t.getAttribute("data-cff"); if (!k || k === "q") return;   // the search box filters as you type (input event); its "change" on blur must not rebuild the list under a click
-    F[k] = k === "days" ? +t.value : t.value; if (k === "days") { F.from = ""; F.to = ""; } if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
+    if (k === "days" && +t.value === -1) return;
+    F[k] = k === "days" ? +t.value : t.value; if (k === "days") { F.from = ""; F.to = ""; F.win = null; F.att = false; } if (k === "days" || k === "cc") drawMap(); else if (lyr.rep) drawMap();
     if (k === "days" && F.days > 90 && needOlder()) loadOlder();
     var b = D.getElementById("cf-list"); if (b) b.removeAttribute("data-lim"); list();
   });
+  function tile(k) {
+    if (k === "att1") pick({ days: 1, att: true }); else if (k === "att7") pick({ days: 7, att: true });
+    else if (k === "rep1") pick({ days: 1 }); else if (k === "rep7") pick({ days: 7 });
+    else if (k === "ucdp30") pick({ days: 30, ucdp: true }); else if (k === "ucdp365") pick({ span: 365, label: "Past 12 months", ucdp: true });
+  }
+  D.addEventListener("keydown", function (e) { var t = e.target; if ((e.key !== "Enter" && e.key !== " ") || !t.closest || !t.closest("#cf-rail") || !t.hasAttribute("data-cftile")) return; e.preventDefault(); tile(t.getAttribute("data-cftile")); });
   var qT = 0;
   // Enter in the search box applies it at once and closes the phone keyboard (the list already filters as you type)
   D.addEventListener("keydown", function (e) { var t = e.target; if (e.key !== "Enter" || !t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return;
@@ -736,6 +779,13 @@
   D.addEventListener("input", function (e) { var t = e.target; if (!t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return; clearTimeout(qT); qT = setTimeout(function () { F.q = t.value; list(); drawMap(); }, 250); });
   D.addEventListener("click", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
+    var tl = t.closest("[data-cftile]"); if (tl) { tile(tl.getAttribute("data-cftile")); return; }
+    var sv = t.closest("svg[data-cfwk]"); if (sv) {
+      var wk = sv.getAttribute("data-cfwk").split(","), bx = sv.getBoundingClientRect(), ix = Math.min(wk.length - 1, Math.max(0, Math.floor((e.clientX - bx.left) / bx.width * wk.length)));
+      pick({ week: +wk[ix], ucdp: sv.getAttribute("data-cfwkk") === "ucdp" }); return;
+    }
+    if (t.closest("[data-cfclr]")) { F.att = false; F.win = null; headerPeriod(); var s0 = D.querySelector('#cf-rail select[data-cff="days"]'); if (s0) s0.outerHTML = periodSel(); list(); drawMap(); return; }
+    var j = t.closest("[data-cfjump]"); if (j) { var to = D.getElementById(j.getAttribute("data-cfjump")); if (to) to.scrollIntoView({ block: "start", behavior: "smooth" }); return; }
     if (t.closest("[data-cfolder]")) { loadOlder(); return; }
     var m = t.closest("[data-cfmore]"); if (m) { var b = D.getElementById("cf-list"); b.setAttribute("data-lim", (+(b.getAttribute("data-lim") || 60)) + 60); list(); return; }
     var g = t.closest("[data-cfgo]"); if (g && map) {

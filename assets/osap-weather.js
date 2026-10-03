@@ -796,7 +796,7 @@
       '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason. G green, A amber, R red.</p>' +
       "<h3>Forecast at " + esc(ref.name) + "</h3>" + fcTable(A, D) +
       '<p class="note">Ceiling is estimated from the model&rsquo;s cloud layers (lowest layer at 60% cover or more), not observed. Wind in knots (direction from, true); G = gusts. HI heat index, WC wind chill. Official warnings take precedence over this model output.</p>' +
-      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
+      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-ilopen="1">Night illumination</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
   }
   /* where the section goes: above the storms, warnings and forecast of the Weather view; for countries that have no Weather view
      (those with automatic global feeds only), at the top of the Live hazards view */
@@ -1437,6 +1437,7 @@
     var wxv = document.querySelector('#view-seg button[data-view="weather"]');
     return '<div id="ml-wx"><div class="mlh">Weather</div>' +
       (wxv ? '<button type="button" class="wxopen" data-wxopen="1">Open forecasts and warnings</button>' : "") +
+      '<button type="button" class="wxopen" data-ilopen="1">Night illumination: sun, twilight and moon</button>' +
       '<label class="mlop">Model time <select id="wx-hour">' + hrs.map(function (h) { return '<option value="' + h + '"' + (h === HOUR ? " selected" : "") + ">" + (h ? "+" + h + " h" : "Now") + "</option>"; }).join("") +
       '</select><output id="wxn-grid" class="wxl"></output></label>' +
       /* the flood rows mirror the Flooding rows higher up the same panel: listed once, up there */

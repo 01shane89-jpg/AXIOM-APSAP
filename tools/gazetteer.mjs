@@ -97,7 +97,7 @@ export function loadGazetteer(get = fetchBuf) {
 // the town's name is not ambiguous (see loadGazetteer). With no usable town, a single named region is used; two or more
 // named regions, or none, leave the text unplaced.
 // A wire dateline names where the reporter filed, not where the story happened: "SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
-// "MANILA (AP) —", "BANGKOK --". Its words are blanked before places are read, so a Seoul dateline on a Yongbyon story is not a
+// "MANILA (AP) —", "BANGKOK --", "MANILA, Philippines-The". Its words are blanked before places are read, so a Seoul dateline on a Yongbyon story is not a
 // Seoul pin. The same patterns are in index.html (DATELINE), for items placed in the browser and items placed before this rule.
 const AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
 export const DATELINE = [
