@@ -1,0 +1,7 @@
+[["w334077656",18.06047,-63.08628,"fr",{"name":"Centre Ophtalmologie","amenity":"clinic"}],
+["w367451661",18.06593,-63.08665,"fr",{"name":"Laboratoire Lepers Saint-Martin Biologie","amenity":"clinic","healthcare":"clinic","addr:housenumber":"47","addr:street":"Rue de la Liberté"}],
+["w431203603",18.10005,-63.04709,"fr",{"name":"Aéroport Saint-Martin-Grand-Case","name:en":"Grand-Case Airport","website":"https://www.saintmartin-airport.com/","addr:street":"Route de l'Espérance","addr:city":"Saint-Martin (France)","addr:postcode":"97150","aeroway":"aerodrome","icao":"TFFG","iata":"SFG","wikidata":"Q1432662"}],
+["w524462591",18.06455,-63.0736,"fr",{"name":"Centre hospitalier Louis Constant Fleming","name:en":"Hospital Louis Constant Fleming","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","phone":"+590 5 90 52 25 25","website":"https://www.chsaintmartin.org/","addr:street":"Spring Concordia","addr:city":"Saint-Martin","addr:postcode":"97150"}],
+["w680394072",18.10155,-63.04822,"fr",{"aeroway":"helipad"}],
+["w680394098",18.10174,-63.04869,"fr",{"aeroway":"helipad"}],
+["w680394099",18.10152,-63.04877,"fr",{"aeroway":"helipad"}]]
