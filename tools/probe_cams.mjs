@@ -347,6 +347,27 @@ async function round11() {
   await br.close();
   for (const u of ["https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057", "https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057&format=mobile", "https://www.quebec511.info/diffusion/images/cameras/4057.jpg"]) await img(u, "  QC guess");
 }
+/* ---------- round 12: open each agency's own camera map in a browser and list the camera data it asks for ---------- */
+async function round12() {
+  const nsw = await get("https://data.nsw.gov.au/data/api/3/action/package_show?id=1-4fed724a31bc450b8af248a9b552aba9", 30000); line("NSW webcams pkg", nsw);
+  try { const j = JSON.parse(nsw.b).result; console.log("   " + j.title + " | " + j.license_title); for (const x of j.resources || []) console.log("   res " + x.format + " " + x.url); } catch {}
+  const { chromium } = await import("playwright"); const br = await chromium.launch();
+  const sites = [["NO", "https://www.vegvesen.no/trafikk/kart/?layers=webkamera"], ["EE", "https://tarktee.ee/"], ["SI", "https://www.promet.si/sl/kamere"], ["IE", "https://www.tii.ie/en/roads-tolling/operations-and-maintenance/traffic-cameras/"], ["IE2", "https://traffic.tii.ie/"],
+    ["CZ", "https://www.dopravniinfo.cz/"], ["HR", "https://www.hak.hr/info/kamere/"], ["DK", "https://trafikkort.vejdirektoratet.dk/"], ["PL", "https://www.traxelektronik.pl/pogoda/kamery/"], ["WA", "https://travelmap.mainroads.wa.gov.au/"], ["SA", "https://traffic.sa.gov.au/"],
+    ["VIC", "https://traffic.vicroads.vic.gov.au/"], ["TAS", "https://www.transport.tas.gov.au/roadside-cameras"], ["NT", "https://roadreport.nt.gov.au/"], ["LV", "https://lvceli.lv/kameras/"], ["HU", "https://kozut.hu/"], ["PT", "https://www.infraestruturasdeportugal.pt/pt-pt/camaras"], ["MO", "https://www.dsat.gov.mo/dsat/realtime.aspx"], ["MY", "https://www.llm.gov.my/"], ["SE", "https://www.trafikverket.se/trafikinformation/vag/?map_x=650778&map_y=6732275&map_z=2&map_l=100000000000000000000001"]];
+  for (const [k, u] of sites) {
+    const ctx = await br.newContext({ userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36" }); const pg = await ctx.newPage(); const seen = [];
+    pg.on("response", async (r) => { const ct = r.headers()["content-type"] || "", url = r.url();
+      if (/json|xml|geo/.test(ct) && /cam|kamer|kaam|cctv|webcam|video|camara/i.test(url + " " + ct)) { let n = 0; try { n = (await r.body()).length; } catch {} seen.push(r.status() + " " + ct.split(";")[0] + " " + n + "B " + url.slice(0, 220)); }
+      else if (/image\/jpe?g/.test(ct) && /cam|kamer|kaam|cctv|webcam/i.test(url) && seen.filter((x) => / image\//.test(x)).length < 3) seen.push(r.status() + " " + ct + " " + url.slice(0, 220)); });
+    try { await pg.goto(u, { waitUntil: "networkidle", timeout: 40000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 80)); }
+    await pg.waitForTimeout(3000);
+    console.log(k + " " + u + " title=" + (await pg.title().catch(() => "")).slice(0, 60) + "\n   " + (seen.slice(0, 14).join("\n   ") || "(no camera data seen)"));
+    await ctx.close();
+  }
+  await br.close();
+}
+if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
 if (only === "r9") await round9();

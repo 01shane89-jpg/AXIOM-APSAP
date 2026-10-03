@@ -18,4 +18,4 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: ONLY=r11 node tools/probe_cams.mjs
+      - run: ONLY=r12 node tools/probe_cams.mjs
