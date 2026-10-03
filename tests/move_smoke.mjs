@@ -33,7 +33,7 @@ async function device(seed, vp) {
 const PTS_A = JSON.stringify([{ id: "pt-a1", n: "Alpha CP", lat: 6.54, lon: 101.25, cc: "th", note: "gate", ph: 1 }, { id: "pt-a2", n: "Bravo", lat: 6.6, lon: 101.3, cc: "th" }]);
 const SEED_A = {
   "osap-atak-pts": PTS_A, "asap-area-th": JSON.stringify([[6, 101], [6, 101.5], [6.5, 101.5], [6.5, 101]]),
-  "asap-watches": JSON.stringify([{ id: "w1", name: "IED", kw: ["ied"], cc: "th" }]), "osap-medplan-th": JSON.stringify({ v: 1, name: "Plan A" }),
+  "asap-watches": JSON.stringify([{ id: "w1", name: "IED route watch", kw: ["ied"], cc: "th" }]), "osap-medplan-th": JSON.stringify({ v: 1, name: "Plan A" }),
   "osap-meas-unit": "nm", "tfw-theme": "dark",
   "asap-xrecs-th": "CACHE", "osap-today-wx-1.00,2.00": "CACHE", "osap-offline": JSON.stringify({ v: 1, packs: { th: {} } }), "osap-loc": JSON.stringify({ on: true, cc: "th" }),
   "unrelated-key": "keep-out"
@@ -72,7 +72,7 @@ const file = await readFile(filePath);
 ok(/^osap-backup-\d{4}-\d{2}-\d{2}\.osap$/.test(fileName), "file is named osap-backup-<date>.osap", fileName);
 ok(file.subarray(0, 8).toString() === "OSAPMOVE", "file starts with the OSAP move marker");
 const txt = file.toString("latin1");
-ok(!/Alpha CP|IED|Plan A|correct horse/.test(txt), "nothing saved (names, watch words, passphrase) is readable in the file");
+ok(!/Alpha CP|IED route watch|Plan A|correct horse/.test(txt), "nothing saved (names, watch words, passphrase) is readable in the file");
 // what was packed, read back inside A with the right passphrase
 const inA = await A.p.evaluate(async ({ b, pass }) => { const g = await OSAP_MOVE.read(new Blob([new Uint8Array(b)]), pass); return { keys: Object.keys(g.stores).sort(), photos: g.photos.length }; }, { b: Array.from(file), pass: PASS });
 ok(inA.keys.includes("osap-atak-pts") && inA.keys.includes("osap-medplan-th") && inA.keys.includes("osap-ws") && inA.keys.includes("osap-ws-data-ws-second1") && inA.keys.includes("tfw-theme"), "points, med plan, every workspace and settings are packed", inA.keys);
