@@ -1,5 +1,5 @@
 {
- "built": "2026-10-01T10:18Z",
+ "built": "2026-10-03T06:25Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -18,7 +18,7 @@
     1.44702,
     103.82389
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "hk-td",
@@ -36,7 +36,7 @@
     22.54589,
     114.26637
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "nz-nzta",
@@ -47,14 +47,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.nzta.govt.nz/traffic-and-travel-information/infoconnect-section-page/",
    "every": 2,
-   "n": 249,
+   "n": 253,
    "box": [
     -45.89658,
     168.66154,
     -36.38935,
     176.87727
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "gb-tfl",
@@ -65,14 +65,14 @@
    "licence": "Powered by TfL Open Data (Open Government Licence)",
    "page": "https://tfl.gov.uk/info-for/open-data-users/",
    "every": 5,
-   "n": 805,
+   "n": 801,
    "box": [
     51.3169,
     -0.49324,
     51.6799,
     0.23161
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "fi-digitraffic",
@@ -83,14 +83,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.digitraffic.fi/en/road-traffic/",
    "every": 10,
-   "n": 809,
+   "n": 808,
    "box": [
     59.85645,
     19.61872,
     70.08851,
     31.27705
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "ca-drivebc",
@@ -101,14 +101,14 @@
    "licence": "Open Government Licence - British Columbia",
    "page": "https://catalogue.data.gov.bc.ca/dataset/drivebc-highwaycams",
    "every": 15,
-   "n": 1043,
+   "n": 1045,
    "box": [
     48.38774,
     -132.00963,
     59.99805,
     -114.71282
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "au-nsw",
@@ -126,7 +126,7 @@
     -28.22595,
     153.55694
    ],
-   "checked": "2026-10-01T10:17Z"
+   "checked": "2026-10-03T06:21Z"
   },
   {
    "id": "us-caltrans",
@@ -137,14 +137,14 @@
    "licence": "Caltrans public data",
    "page": "https://cwwp2.dot.ca.gov/documentation/cctv/cctv.htm",
    "every": 5,
-   "n": 3392,
+   "n": 3395,
    "box": [
     32.55138,
     -124.19934,
     41.99656,
     -114.55031
    ],
-   "checked": "2026-10-01T10:18Z"
+   "checked": "2026-10-03T06:22Z"
   },
   {
    "id": "us-nycdot",
@@ -155,14 +155,464 @@
    "licence": "NYC DOT public traffic cameras",
    "page": "https://webcams.nyctmc.org/",
    "every": 1,
-   "n": 970,
+   "n": 975,
    "box": [
     40.50773,
     -74.23036,
     40.9063,
     -73.71378
    ],
-   "checked": "2026-10-01T10:18Z"
+   "checked": "2026-10-03T06:22Z"
+  },
+  {
+   "id": "us-pa",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Pennsylvania)",
+   "agency": "PennDOT (511PA)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511pa.com/cctv",
+   "every": 2,
+   "n": 1403,
+   "box": [
+    39.72343,
+    -80.5799,
+    42.25058,
+    -74.7137
+   ],
+   "checked": "2026-10-03T06:22Z"
+  },
+  {
+   "id": "us-ne511",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Vermont, New Hampshire, Maine)",
+   "agency": "New England 511 (VTrans, NHDOT, MaineDOT)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://newengland511.org/cctv",
+   "every": 2,
+   "n": 405,
+   "box": [
+    42.7068,
+    -73.34704,
+    47.14303,
+    -67.35085
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-ct",
+   "cc": "us",
+   "tz": "America/New_York",
+   "country": "United States (Connecticut)",
+   "agency": "Connecticut DOT (CTroads)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://ctroads.org/cctv",
+   "every": 2,
+   "n": 347,
+   "box": [
+    41.00814,
+    -73.6467,
+    41.89839,
+    -72.07225
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-wi",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Wisconsin)",
+   "agency": "Wisconsin DOT (511 Wisconsin)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511wi.gov/cctv",
+   "every": 2,
+   "n": 456,
+   "box": [
+    42.4964,
+    -92.75306,
+    45.89991,
+    -87.76084
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-la",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Louisiana)",
+   "agency": "Louisiana DOTD (511LA)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511la.org/cctv",
+   "every": 2,
+   "n": 336,
+   "box": [
+    29.25891,
+    -93.89861,
+    32.56823,
+    -89.71119
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-az",
+   "cc": "us",
+   "tz": "America/Phoenix",
+   "country": "United States (Arizona)",
+   "agency": "Arizona DOT (AZ511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://az511.gov/cctv",
+   "every": 2,
+   "n": 644,
+   "box": [
+    31.34775,
+    -114.61384,
+    36.987,
+    -109.05118
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-ut",
+   "cc": "us",
+   "tz": "America/Denver",
+   "country": "United States (Utah)",
+   "agency": "Utah DOT (UDOT Traffic)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://udottraffic.utah.gov/cctv",
+   "every": 2,
+   "n": 2081,
+   "box": [
+    37.00019,
+    -114.05926,
+    41.99907,
+    -109.06794
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-id",
+   "cc": "us",
+   "tz": "America/Boise",
+   "country": "United States (Idaho)",
+   "agency": "Idaho Transportation Department (511 Idaho)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.idaho.gov/cctv",
+   "every": 2,
+   "n": 457,
+   "box": [
+    40.73809,
+    -118.13,
+    49.11869,
+    -110.907
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-nv",
+   "cc": "us",
+   "tz": "America/Los_Angeles",
+   "country": "United States (Nevada)",
+   "agency": "Nevada DOT (NVroads)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://nvroads.com/cctv",
+   "every": 2,
+   "n": 652,
+   "box": [
+    35.17232,
+    -120.0035,
+    41.98833,
+    -114.06374
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-ak",
+   "cc": "us",
+   "tz": "America/Anchorage",
+   "country": "United States (Alaska)",
+   "agency": "Alaska DOT&PF (Alaska 511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.alaska.gov/cctv",
+   "every": 2,
+   "n": 130,
+   "box": [
+    55.45805,
+    -152.45972,
+    68.12538,
+    -132.54265
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-co",
+   "cc": "us",
+   "tz": "America/Denver",
+   "country": "United States (Colorado)",
+   "agency": "Colorado DOT (COtrip)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://cotrip.org/",
+   "every": 5,
+   "n": 1033,
+   "box": [
+    36.99926,
+    -109.04076,
+    69.63329,
+    -102.24673
+   ],
+   "checked": "2026-10-03T06:23Z"
+  },
+  {
+   "id": "us-mn",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Minnesota)",
+   "agency": "Minnesota DOT (511MN)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511mn.org/",
+   "every": 5,
+   "n": 1528,
+   "box": [
+    43.50833,
+    -97.20144,
+    48.97072,
+    -89.68326
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "us-ia",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Iowa)",
+   "agency": "Iowa DOT (511IA)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511ia.org/",
+   "every": 5,
+   "n": 861,
+   "box": [
+    40.39297,
+    -96.47557,
+    43.44541,
+    -90.16799
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "us-in",
+   "cc": "us",
+   "tz": "America/Indiana/Indianapolis",
+   "country": "United States (Indiana)",
+   "agency": "Indiana DOT (511IN)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511in.org/",
+   "every": 5,
+   "n": 748,
+   "box": [
+    37.89013,
+    -87.86042,
+    41.75352,
+    87.30259
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "us-ne",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Nebraska)",
+   "agency": "Nebraska DOT (Nebraska 511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.nebraska.gov/",
+   "every": 5,
+   "n": 347,
+   "box": [
+    40.00865,
+    -104.04849,
+    43.00086,
+    -95.82282
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "us-ks",
+   "cc": "us",
+   "tz": "America/Chicago",
+   "country": "United States (Kansas)",
+   "agency": "Kansas DOT (KanDrive)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://kandrive.gov/",
+   "every": 5,
+   "n": 608,
+   "box": [
+    36.99825,
+    -101.9659,
+    39.99394,
+    -94.22559
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "us-wa",
+   "cc": "us",
+   "tz": "America/Los_Angeles",
+   "country": "United States (Washington)",
+   "agency": "Washington State DOT (WSDOT)",
+   "licence": "WSDOT traveler information (public)",
+   "page": "https://wsdot.com/travel/real-time/cameras",
+   "every": 2,
+   "n": 1706,
+   "box": [
+    45.33631,
+    -124.33312,
+    49.00225,
+    -117.05037
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "ca-on",
+   "cc": "ca",
+   "tz": "America/Toronto",
+   "country": "Canada (Ontario)",
+   "agency": "Ontario Ministry of Transportation (Ontario 511)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511on.ca/cctv",
+   "every": 2,
+   "n": 925,
+   "box": [
+    42.06727,
+    -95.13638,
+    51.48012,
+    -74.38254
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "ca-sk",
+   "cc": "ca",
+   "tz": "America/Regina",
+   "country": "Canada (Saskatchewan)",
+   "agency": "Saskatchewan Highways (Highway Hotline)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://hotline.gov.sk.ca/cctv",
+   "every": 2,
+   "n": 56,
+   "box": [
+    49.08318,
+    -109.97736,
+    59.56133,
+    -101.98503
+   ],
+   "checked": "2026-10-03T06:24Z"
+  },
+  {
+   "id": "ca-nb",
+   "cc": "ca",
+   "tz": "America/Moncton",
+   "country": "Canada (New Brunswick)",
+   "agency": "New Brunswick Transportation (511 NB)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.gnb.ca/cctv",
+   "every": 2,
+   "n": 57,
+   "box": [
+    45.12318,
+    -68.38426,
+    47.95752,
+    -63.93869
+   ],
+   "checked": "2026-10-03T06:25Z"
+  },
+  {
+   "id": "ca-ns",
+   "cc": "ca",
+   "tz": "America/Halifax",
+   "country": "Canada (Nova Scotia)",
+   "agency": "Nova Scotia Public Works (511 Nova Scotia)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.novascotia.ca/cctv",
+   "every": 2,
+   "n": 57,
+   "box": [
+    43.7123,
+    -66.1223,
+    46.8772,
+    -60.2754
+   ],
+   "checked": "2026-10-03T06:25Z"
+  },
+  {
+   "id": "ca-nl",
+   "cc": "ca",
+   "tz": "America/St_Johns",
+   "country": "Canada (Newfoundland and Labrador)",
+   "agency": "Newfoundland and Labrador Transportation (511 NL)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511nl.ca/cctv",
+   "every": 2,
+   "n": 48,
+   "box": [
+    46.73987,
+    -66.82888,
+    53.56083,
+    -52.87225
+   ],
+   "checked": "2026-10-03T06:25Z"
+  },
+  {
+   "id": "au-qld",
+   "cc": "au",
+   "tz": "Australia/Brisbane",
+   "country": "Australia (Queensland)",
+   "agency": "Queensland Department of Transport and Main Roads (QLDTraffic)",
+   "licence": "Creative Commons Attribution 4.0",
+   "page": "https://www.data.qld.gov.au/dataset/131940-traffic-and-travel-information-geojson-api",
+   "every": 2,
+   "n": 137,
+   "box": [
+    -28.16448,
+    145.7437,
+    -16.95385,
+    153.5168
+   ],
+   "checked": "2026-10-03T06:25Z"
+  },
+  {
+   "id": "is-vegagerdin",
+   "cc": "is",
+   "tz": "Atlantic/Reykjavik",
+   "country": "Iceland",
+   "agency": "Icelandic Road and Coastal Administration (Vegagerðin)",
+   "licence": "Vegagerðin open data",
+   "page": "https://www.vegagerdin.is/vegakerfid/umferd/vefmyndavelar/",
+   "every": 10,
+   "n": 165,
+   "box": [
+    63.45432,
+    -23.8552,
+    66.32717,
+    -13.85469
+   ],
+   "checked": "2026-10-03T06:25Z"
+  },
+  {
+   "id": "lt-eismoinfo",
+   "cc": "lt",
+   "tz": "Europe/Vilnius",
+   "country": "Lithuania",
+   "agency": "Lithuanian Road Administration (eismoinfo.lt)",
+   "licence": "Lithuanian Road Administration open data",
+   "page": "https://eismoinfo.lt/",
+   "every": 5,
+   "n": 305,
+   "box": [
+    54.03408,
+    20.97875,
+    56.37486,
+    26.53135
+   ],
+   "checked": "2026-10-03T06:25Z"
   }
  ]
 }
