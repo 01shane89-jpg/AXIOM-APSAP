@@ -1,0 +1,21 @@
+# Test only: real camera images in a browser plus candidate official keyless camera lists (tools/probe_cams.mjs). Prints to the log; writes nothing.
+name: Probe camera sources
+on:
+  push:
+    branches: [claude/cams-more]
+    paths: [tools/probe_cams.mjs, .github/workflows/probe-cams.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/probe_cams.mjs
