@@ -360,11 +360,11 @@
   function osmAsk(lat, lon) {
     var k = lat.toFixed(5) + "," + lon.toFixed(5);
     if (osmMemo[k]) return osmMemo[k];
-    var q = "[out:json][timeout:15];is_in(" + lat + "," + lon + ")->.a;(way(pivot.a)[building];relation(pivot.a)[building];way(pivot.a)[amenity];relation(pivot.a)[amenity];);out tags 6;" +
+    var q = "[out:json][timeout:8];is_in(" + lat + "," + lon + ")->.a;(way(pivot.a)[building];relation(pivot.a)[building];way(pivot.a)[amenity];relation(pivot.a)[amenity];);out tags 6;" +
       "node(around:25," + lat + "," + lon + ")[name];out tags center 8;";
     function go(i) {
       if (i >= OVP.length) return Promise.reject(new Error("OpenStreetMap could not be reached"));
-      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, 15000);
+      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, 9000);
       return fetch(OVP[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac && ac.signal })
         .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
         .then(function (j) { clearTimeout(t); return j; }, function () { clearTimeout(t); return go(i + 1); });
