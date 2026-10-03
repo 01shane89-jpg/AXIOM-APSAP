@@ -56,6 +56,12 @@ crossings (added 2026-10-01, tools/build_evac.mjs, monthly): official border cro
   (car, truck, bus, motorcycle, bicycle, foot where tagged), "access_note", "operator", "asof", src = the OSM object.
   "evac_asof" and "evac_sources" on the country object say when and from where these were built.
 
+hospitals: optional "caps" (added 2026-10-03, medical plan): capabilities documented one by one, keyed by the medical plan's
+  capability codes (ed.24_7, dx.ct, cc.icu, cc.ventilator, surg.neuro, surg.trauma, trauma.team, spec.burn, surg.plastic, ...).
+  Each { "src" URL of the hospital's own, university or government page that states it, "srcname", "quote" (the stating
+  text, short), "quote_basis" (e.g. "official page title"), "asof" }. Never from Wikipedia or OpenStreetMap; never inferred.
+  Researched list and leads: /mnt/project-files/apsap/mtf-capabilities/.
+
 airports (from OurAirports open data, github.com/davidmegginson/ourairports-data, fetched 2026-09-26):
   "name", "icao" (null if none), "ident" (OurAirports ident; equals ICAO when one exists),
   "iata", "type" (large_airport | medium_airport; includes some military air bases),

@@ -430,7 +430,44 @@
    "src": "https://en.wikipedia.org/wiki/Siriraj_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "estimated from published location (no coordinates in Wikipedia article text)",
-   "fp": "8f433b0bfa46f1631dabea55cffc59ba3a144d8f9f623325ee1202560980a0f5"
+   "fp": "ba8ec446a831f0af993a600b404a2c386aa1d6a2c5bfa103c02d3eed58870e29",
+   "caps": {
+    "surg.trauma": {
+     "src": "https://www.si.mahidol.ac.th/th/department/surgery/version2/trauma/index.html",
+     "srcname": "Siriraj Hospital website",
+     "quote": "สาขาศัลยศาสตร์อุบัติเหตุ (Division of Trauma Surgery)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "spec.burn": {
+     "src": "https://www.si.mahidol.ac.th/th/division/soqD/admin/news_files/626_18_3.pdf",
+     "srcname": "Siriraj Hospital website",
+     "quote": "หอผูปวยอุบัติเหตุ4 (Burn Unit)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.ortho": {
+     "src": "https://www2.si.mahidol.ac.th/en/orthopaedic-surgery/orthopaedic-surgery-unit/",
+     "srcname": "Siriraj Hospital website",
+     "quote": "Orthopaedic Surgery Unit - SIRIRAJ",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.general": {
+     "src": "https://www2.si.mahidol.ac.th/en/category/surgery/general-surgery/",
+     "srcname": "Siriraj Hospital website",
+     "quote": "General Surgery",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "spec.stroke": {
+     "src": "https://www2.si.mahidol.ac.th/en/news-events/stroke-one-stop-the-mobile-stroke-unit-for-emergency-cases/",
+     "srcname": "Siriraj Hospital website",
+     "quote": "Stroke One Stop: the mobile stroke unit for emergency cases",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:king-chulalongkorn-memorial-hospital",
@@ -447,7 +484,37 @@
    "src": "https://en.wikipedia.org/wiki/King_Chulalongkorn_Memorial_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/King_Chulalongkorn_Memorial_Hospital",
-   "fp": "103e1e91a1ef1bba55464fca0dc37d55889457ae78b3a94b5f97eaafc60dace7"
+   "fp": "015e5fbc8aa4340f105a960cff1b22894a5f0711f124625b50f7deb0ec02ebc8",
+   "caps": {
+    "spec.burn": {
+     "src": "https://kcmh.chulalongkornhospital.go.th/en/ec/excellence-center-for-burns-en/",
+     "srcname": "King Chulalongkorn Memorial Hospital website",
+     "quote": "Excellence Center for Burns",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "spec.stroke": {
+     "src": "https://kcmh.chulalongkornhospital.go.th/en/ec/chulalongkorn-stroke-center-of-excellence-en/",
+     "srcname": "King Chulalongkorn Memorial Hospital website",
+     "quote": "Chulalongkorn Stroke Center of Excellence",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "cc.icu": {
+     "src": "https://kcmh.chulalongkornhospital.go.th/en/ec/critical-care-excellence-center-en/",
+     "srcname": "King Chulalongkorn Memorial Hospital website",
+     "quote": "Critical Care Excellence Center",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.ortho": {
+     "src": "https://kcmh.chulalongkornhospital.go.th/en/dept/department-of-orthopaedics-en/",
+     "srcname": "King Chulalongkorn Memorial Hospital website",
+     "quote": "Department of Orthopaedics",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:ramathibodi-hospital",
@@ -464,7 +531,30 @@
    "src": "https://en.wikipedia.org/wiki/Ramathibodi_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Ramathibodi_Hospital",
-   "fp": "915e6e34bea9a95fb4214200c312ef6dc25096fb3334a82670e6035961c517ec"
+   "fp": "7b03d7ddf0c8d85bc1c756d1bdff521a015d65a18fa2bb20b25b5a81d7ac641a",
+   "caps": {
+    "surg.trauma": {
+     "src": "https://www.rama.mahidol.ac.th/surgery/en/Major/Trauma_Surgery_and_Surgical_Critical_Care",
+     "srcname": "Ramathibodi Hospital website",
+     "quote": "Trauma Surgery and Surgical Critical Care",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.neuro": {
+     "src": "https://www.rama.mahidol.ac.th/surgery/en/Major/Neuro_Surgery",
+     "srcname": "Ramathibodi Hospital website",
+     "quote": "Neuro Surgery",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.vascular": {
+     "src": "https://www.rama.mahidol.ac.th/surgery/en/Major/Vascular_and_Transplantation_Surgery",
+     "srcname": "Ramathibodi Hospital website",
+     "quote": "Vascular and Transplantation Surgery",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:bumrungrad-international-hospital",
@@ -481,7 +571,16 @@
    "src": "https://en.wikipedia.org/wiki/Bumrungrad_International_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Bumrungrad_International_Hospital",
-   "fp": "4773bd2724eeba56307b1524d3c828cda931fc89a430547ab16c8f43abaa8166"
+   "fp": "de933d4c79a45f66d1ec41c0e08e074ec2f99be0b0f384e8371232619b6f4b29",
+   "caps": {
+    "cc.icu": {
+     "src": "https://www.bumrungrad.com/en/centers/intensive-care-unit-icu-bangkok-thailand",
+     "srcname": "Bumrungrad International Hospital website",
+     "quote": "Intensive Care Unit (ICU)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:bangkok-hospital",
@@ -498,7 +597,30 @@
    "src": "https://en.wikipedia.org/wiki/Bangkok_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Bangkok_Hospital",
-   "fp": "ead735a89c28b4a47e51ab989842778a3f883834af7f27160c3f956a400aef4d"
+   "fp": "dd3aef94a1395c6229934a62dd66cd84181bdaf581a2d84aef37804f45b6794f",
+   "caps": {
+    "trauma.team": {
+     "src": "https://ww2.bangkokhospital.com/index.php/en/center-of-excellence/emergency-referral/bangkok-trauma-center",
+     "srcname": "Bangkok Hospital website",
+     "quote": "Bangkok Trauma Center",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "spec.hyperbaric": {
+     "src": "https://www.bangkokhospital.com/en/bangkok/center-clinic/other/bangkok-hyperbaric-oxygen-therapy-center/overview",
+     "srcname": "Bangkok Hospital website",
+     "quote": "Hyperbaric Oxygen Therapy Center",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "spec.stroke": {
+     "src": "https://www.bangkokhospital.com/en/bangkok/center-clinic/brain/stroke-clinic/overview",
+     "srcname": "Bangkok Hospital website",
+     "quote": "Stroke (stroke clinic page)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:maharaj-nakorn-chiang-mai-hospital",
@@ -515,7 +637,37 @@
    "src": "https://en.wikipedia.org/wiki/Maharaj_Nakorn_Chiang_Mai_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Maharaj_Nakorn_Chiang_Mai_Hospital",
-   "fp": "d416879e2b03b89002b2de9a463140840d1395b7e2241f92e35609a389c78f2d"
+   "fp": "6a9b9f8579d22a22e403b308508611ab15973a1e0545492486d999c0f1bd43a5",
+   "caps": {
+    "surg.neuro": {
+     "src": "https://w2.med.cmu.ac.th/nsurg/ward/surg/nsw/",
+     "srcname": "Chiang Mai University Faculty of Medicine website",
+     "quote": "ศัลยกรรมประสาท - งานการพยาบาลผู้ป่วยศัลยศาสตร์ โรงพยาบาลมหาราชนครเชียงใหม่",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "cc.icu": {
+     "src": "https://w2.med.cmu.ac.th/nsurg/ward/icu-subicu/scw/",
+     "srcname": "Chiang Mai University Faculty of Medicine website",
+     "quote": "วิกฤติศัลยกรรมอุบัติเหตุ (trauma surgical critical-care ward)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.thoracic": {
+     "src": "https://w2.med.cmu.ac.th/nsurg/index.php?option=com_content&view=category&id=43&Itemid=247",
+     "srcname": "Chiang Mai University Faculty of Medicine website",
+     "quote": "ศัลยกรรมทรวงอก หัวใจ และ หลอดเลือด (thoracic, cardiac and vascular surgery)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.vascular": {
+     "src": "https://w2.med.cmu.ac.th/nsurg/index.php?option=com_content&view=category&id=43&Itemid=247",
+     "srcname": "Chiang Mai University Faculty of Medicine website",
+     "quote": "ศัลยกรรมทรวงอก หัวใจ และ หลอดเลือด (thoracic, cardiac and vascular surgery)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:songklanagarind-hospital",
@@ -566,7 +718,23 @@
    "src": "https://en.wikipedia.org/wiki/Rajavithi_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Rajavithi_Hospital",
-   "fp": "74671487dd2982159079440ddb93d7232b7d17b6aecb4ba39cb436b68ba0567d"
+   "fp": "afc8683907300923a4c64d5ca03cc307348e42b565210e039fd09dfaa12cdd8b",
+   "caps": {
+    "cc.icu": {
+     "src": "https://www.rajavithi.go.th/rj/?p=16058",
+     "srcname": "Rajavithi Hospital website",
+     "quote": "รพ.ราชวิถี เปิดหอผู้ป่วยวิกฤตศัลยกรรม (Rajavithi opens surgical critical-care ward)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    },
+    "surg.ortho": {
+     "src": "https://www.rajavithi.go.th/rj/?p=22879",
+     "srcname": "Rajavithi Hospital website",
+     "quote": "รพ.ราชวิถี โดยศูนย์ความเป็นเลิศเฉพาะทางด้านผ่าตัดทางกล้อง สาขาออร์โธปิดิกส์",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:phramongkutklao-hospital",
@@ -583,7 +751,16 @@
    "src": "https://en.wikipedia.org/wiki/Phramongkutklao_Hospital",
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Phramongkutklao_Hospital",
-   "fp": "e6564c67fb853e7ac85ac6599c7ea533b99d248128887817319a7f97da135391"
+   "fp": "4dc6a7ff9711ff8ecfb7db918dcb3da4499967cf96708a513b8c46cab0182be7",
+   "caps": {
+    "surg.neuro": {
+     "src": "https://clinic.pmk.ac.th/index.php/neurosurgery",
+     "srcname": "Phramongkutklao Hospital website",
+     "quote": "ศัลยกรรมประสาทวิทยา (Neurosurgery)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   }
   },
   {
    "id": "sof:th:hospital:vajira-hospital",
@@ -601,6 +778,32 @@
    "srcname": "English Wikipedia",
    "coord_basis": "https://en.wikipedia.org/wiki/Vajira_Hospital",
    "fp": "29df0ad0a212b86887f130938f4b6764d8d703852980e951f579b8010701db8b"
+  },
+  {
+   "id": "sof:th:hospital:khon-kaen-hospital",
+   "name": "Khon Kaen Hospital",
+   "city": "Khon Kaen",
+   "address": null,
+   "emergency_24h": null,
+   "type": "public",
+   "trauma_level": null,
+   "notes": "Ministry of Public Health regional hospital",
+   "lat": 16.429,
+   "lon": 102.838,
+   "prec": "approx",
+   "src": "https://www.kkh.go.th/trauma-center/",
+   "srcname": "Khon Kaen Hospital website",
+   "coord_basis": "estimated from the hospital's published location; verify",
+   "caps": {
+    "trauma.team": {
+     "src": "https://www.kkh.go.th/trauma-center/",
+     "srcname": "Khon Kaen Hospital website",
+     "quote": "ศูนย์อุบัติเหตุและวิกฤตบำบัด (Trauma and Critical Care Center)",
+     "quote_basis": "official page title",
+     "asof": "2026-10-03"
+    }
+   },
+   "fp": "b97f21940797d2cb0a18b2a27a5a1f85cfe259714bac1a1452dc60be7c6ab932"
   }
  ],
  "exercises": [
