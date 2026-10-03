@@ -5092,7 +5092,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var GAZ = null, CNAMES = {};
   COUNTRIES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
   /* a wire dateline names where the reporter filed, not where the story happened ("SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
-     "MANILA (AP) —"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
+     "MANILA (AP) —", "MANILA, Philippines-The"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
   var AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
   var DATELINE = [/\([^()=\n]{2,40}=[^()=\n]{2,40}\)/gu,
     new RegExp("(^|\\n)[ \\t]*[^\\n()]{0,60}?\\((?:" + AGENCY + ")\\)\\s*(?:--|[-\u2013\u2014:])", "gu"),
@@ -8375,6 +8375,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-borders.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
+<script src="assets/osap-illum.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
