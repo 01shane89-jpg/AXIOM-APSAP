@@ -117,7 +117,7 @@
 
 function main() {
   var W = window, D = document, G = W.OSAP_GEO;
-  var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/";
+  var KEY = "osap-comms", COV = W.OSAP_COMMS_COV || "data/comms/cov/", MASTS = W.OSAP_COMMS_MASTS || "data/comms/masts/";
   /* probed 2026-10-01 from a GitHub runner: maps.mail.ru answered every mast query in 10-16 s (Bangkok zoom 9: 575 masts);
      overpass-api.de, overpass.kumi.systems and overpass.private.coffee gave no answer within 60 s */
   var OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
@@ -137,6 +137,7 @@ function main() {
     masts: {}, boxes: {}, boxWait: {}, mastErr: "", mastBusy: 0,
     cov: null, covIdx: null, covWait: {}, covCells: new Map(), covErr: "",
     mode: "place", line: [], result: null, token: 0,
+    stored: {}, storedIdx: null, pcol: {}, pcolN: 0,
     prov: {}, off: (function () { try { return JSON.parse(localStorage.getItem(KEY + "-prov")) || {}; } catch (e) { return {}; } })(), drawn: 0
   };
   /* "?" stands for masts with no operator tag; broadcast towers are not switched by provider */
@@ -188,10 +189,8 @@ function main() {
     queue.push(function () {
       return post(query(j0 * BOX, i0 * BOX, (j1 + 1) * BOX, (i1 + 1) * BOX), 0).then(function (j) {
         (j.elements || []).forEach(function (el) {
-          var t = el.tags || {}, k = kind(t), lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
-          if (!k || lat == null || lon == null) return;
-          var pv = providers(t); pv.forEach(function (x) { if (!S.prov[x.key]) S.prov[x.key] = x.name; });
-          S.masts[el.type + "/" + el.id] = { id: el.type + "/" + el.id, kind: k, lat: +lat, lon: +lon, t: t, h: antH(t), hm: !!height(t.height), p: pv.map(function (x) { return x.key; }) };
+          var lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
+          if (lat != null && lon != null) addMast(el.type + "/" + el.id, lat, lon, el.tags || {});
         });
         blk.forEach(function (b) { S.boxes[boxKey(b[0], b[1])] = 1; });
         S.mastErr = "";
@@ -223,6 +222,45 @@ function main() {
     Object.keys(blocks).forEach(function (bk) { waits.push(loadBlock(blocks[bk])); });
     return Promise.all(waits);
   }
+  /* a colour per phone network, the biggest first, so the whole country's footprint of each reads at a glance */
+  var PCOL = ["#1971c2", "#e8590c", "#2f9e44", "#c2255c", "#f59f00", "#0c8599", "#5c940d", "#a61e4d", "#364fc7", "#d6336c"];
+  function provCol(m) {
+    if (m.kind !== "cell") return KINDS[m.kind].col;
+    var k = m.p[0]; if (!k) return "#74c0fc";
+    if (!S.pcol[k]) S.pcol[k] = S.pcolN < PCOL.length ? PCOL[S.pcolN++] : KINDS.cell.col;
+    return S.pcol[k];
+  }
+  function colourProviders() {
+    var n = {};
+    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id]; if (m.kind === "cell" && m.p[0]) n[m.p[0]] = (n[m.p[0]] || 0) + 1; });
+    Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).forEach(function (k) { if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++]; });
+  }
+  function addMast(id, lat, lon, t) {
+    var k = kind(t); if (!k) return;
+    var pv = providers(t); pv.forEach(function (x) { if (!S.prov[x.key]) S.prov[x.key] = x.name; });
+    S.masts[id] = { id: id, kind: k, lat: +lat, lon: +lon, t: t, h: antH(t), hm: !!height(t.height), p: pv.map(function (x) { return x.key; }) };
+  }
+  /* the stored copy of a whole country (tools/build_comms_masts.mjs): every mast at once, at any zoom */
+  function loadStored(cc) {
+    if (!cc || S.stored[cc]) return;
+    var st = S.stored[cc] = { busy: true };
+    var c = withTimeout(60000);
+    (S.storedIdx = S.storedIdx || fetch(MASTS + "index.json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).catch(function () { S.storedIdx = null; return { countries: {} }; }))
+      .then(function (ix) {
+        var e = ix.countries && ix.countries[cc];
+        if (!e) { st.busy = false; st.none = true; return; }
+        return fetch(MASTS + cc + ".json", c ? { signal: c.signal } : {}).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (j) {
+          var T = { n: "node/", w: "way/", r: "relation/" };
+          (j.m || []).forEach(function (row) { addMast(T[row[0].charAt(0)] + row[0].slice(1), row[1], row[2], row[3] || {}); });
+          st.busy = false; st.ok = true; st.at = j.base || j.at; st.n = (j.m || []).length;
+          colourProviders();
+        });
+      }).catch(function () { st.busy = false; st.err = true; delete S.stored[cc]; })
+      .then(function () { if (active() && S.ctx.cc === cc) { drawMasts(); paintStatus(); } });
+  }
+  function storedHere() { var st = S.ctx && S.stored[S.ctx.cc]; return !!(st && st.ok); }
+  /* masts show at every zoom where the country is stored; elsewhere from city zoom, read live */
+  function seeMasts() { return S.ctx.map.getZoom() >= MASTZ || storedHere(); }
   function mastsNear(lat, lon, r) {
     var out = [];
     Object.keys(S.masts).forEach(function (id) { var m = S.masts[id], d = hav([lat, lon], [m.lat, m.lon]); if (d <= r) out.push({ m: m, d: d }); });
@@ -467,13 +505,13 @@ function main() {
     if (!mastLayer) mastLayer = L.layerGroup();
     if (!S.ctx.layer.hasLayer(mastLayer)) S.ctx.layer.addLayer(mastLayer);
     mastLayer.clearLayers();
-    var map = S.ctx.map; if (map.getZoom() < MASTZ) { paintCounts(); return; }
-    var b = map.getBounds().pad(0.1), n = 0;
+    var map = S.ctx.map; if (!seeMasts()) { S.drawn = 0; paintCounts(); paintStatus(); return; }
+    var z = map.getZoom(), b = map.getBounds().pad(0.1), n = 0, rad = z < 7 ? 0.6 : z < 9 ? 0.75 : 1;
     shown = []; hoverOff();
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
       var k = KINDS[m.kind];
-      var mk = L.circleMarker([m.lat, m.lon], { renderer: canv, radius: m.kind === "bcast" ? 6 : 5, color: "#fff", weight: 1.5, fillColor: k.col, fillOpacity: 0.95 });
+      var mk = L.circleMarker([m.lat, m.lon], { renderer: canv, radius: (m.kind === "bcast" ? 6 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
       mk.bindPopup(function () { return mastPopup(m); });
       mk.addTo(mastLayer); n++; shown.push(m);
     });
@@ -483,9 +521,12 @@ function main() {
   function loadView() {
     if (!active()) return;
     var map = S.ctx.map;
+    loadStored(S.ctx.cc);
     if (map.getZoom() < MASTZ) { drawMasts(); paintStatus(); return; }
     var b = map.getBounds(), all = boxesFor(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()).length;
     S.partial = all > VIEW_BOXES;
+    var cb = S.ctx.bounds && (typeof S.ctx.bounds === "function" ? S.ctx.bounds() : S.ctx.bounds);
+    if (storedHere() && cb && L.latLngBounds(cb).contains(b)) { S.partial = false; drawMasts(); paintStatus(); return; }
     ensureMasts(b.getSouth(), b.getWest(), b.getNorth(), b.getEast(), VIEW_BOXES).then(drawMasts, drawMasts);
     drawMasts(); paintStatus();
   }
@@ -521,7 +562,7 @@ function main() {
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
     var h = "<h3>Comms</h3>";
-    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + "</div>"; });
+    Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (colour = network)" : "") + "</div>"; });
     if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
     Lg.set("comms", h, S.ctx.rail);
@@ -580,14 +621,14 @@ function main() {
   function paintToggles() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-tg"); if (!el) return;
     el.innerHTML = Object.keys(KINDS).map(function (k) {
-      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + ' <span class="comn" data-comn="' + k + '"></span></label>';
+      return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? ", coloured by network" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
     }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage</label>';
     paintCounts();
   }
   function paintCounts() {
     if (!S.ctx) return;
     var map = S.ctx.map, b = map.getBounds(), c = { cell: 0, bcast: 0, comm: 0 }, ops = {}, nm = 0, all = 0;
-    var z = map.getZoom() >= MASTZ;
+    var z = seeMasts();
     if (z) Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!b.contains([m.lat, m.lon])) return;
       if (provOn(m)) c[m.kind]++;
@@ -612,9 +653,10 @@ function main() {
       return;
     }
     oe.innerHTML = "<h3>Service providers</h3>" +
-      '<p class="obs">Tick the networks to show. The masts on the map and the coverage check follow your choice.</p>' +
+      '<p class="obs">Tick the networks to show. Phone masts are coloured by network; the masts on the map and the coverage check follow your choice.</p>' +
       '<div class="comprov">' + ol.map(function (k) {
-        return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + ">" + E(provName(k)) + ' <span class="comn">(' + (k === "?" ? nm : ops[k]) + " in view)</span></label>";
+        var col = k === "?" ? "#74c0fc" : S.pcol[k] || KINDS.cell.col;
+        return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + col + '"></span>' + E(provName(k)) + ' <span class="comn">(' + (k === "?" ? nm : ops[k]) + " in view)</span></label>";
       }).join("") + "</div>" +
       '<p><button type="button" data-comprovall="1">All</button> <button type="button" data-comprovall="0">None</button></p>' +
       '<p class="obs">Names come from the "operator" tags mappers put on masts in OpenStreetMap; ' + (nm ? nm + " of " + all + " masts in view have none. " : "") +
@@ -622,19 +664,21 @@ function main() {
   }
   function paintStatus() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-st"); if (!el) return;
-    var z = S.ctx.map.getZoom(), msg = [];
-    if (z < MASTZ) msg.push("Zoom in to about city level to load masts and towers.");
+    var z = S.ctx.map.getZoom(), msg = [], st = S.stored[S.ctx.cc] || {}, see = seeMasts();
+    if (st.busy) msg.push("Loading the stored masts and towers for " + (S.ctx.name || "this country") + "…");
+    else if (st.ok) msg.push("Masts and towers for all of " + (S.ctx.name || "this country") + " from a stored OpenStreetMap copy of " + String(st.at || "").slice(0, 10) + (z >= MASTZ ? "; outside it they are read live." : "."));
+    if (!see) msg.push("Zoom in to about city level to load masts and towers.");
     else if (S.mastBusy) msg.push("Loading masts and towers from OpenStreetMap…");
     else if (S.mastErr) msg.push(S.mastErr + "; move the map to try again.");
     else if (S.partial) msg.push("Masts are loaded for the middle of the map; zoom in or pan to see the rest.");
     if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
     if (S.covErr) msg.push(S.covErr + ".");
     el.textContent = msg.join(" ");
-    var masts = S.on.cell || S.on.bcast || S.on.comm, far = z < MASTZ && masts;
+    var masts = S.on.cell || S.on.bcast || S.on.comm, far = !see && !st.busy && masts;
     /* the panel note sits below the fold on a phone: say it on the map, with a button that does it */
     if (chip) chip.hidden = !far;
-    S.note = far ? "Zoom in to see towers" : z >= MASTZ && masts && S.mastBusy ? "Loading towers…" : z >= MASTZ && masts && S.mastErr ? "Towers did not load; move the map to retry" :
-      z >= MASTZ && masts ? S.drawn + (S.drawn === 1 ? " tower" : " towers") + " on the map" : "";
+    S.note = !masts ? "" : st.busy ? "Loading towers…" : far ? "Zoom in to see towers" : S.mastBusy && !S.drawn ? "Loading towers…" : S.mastErr && !S.drawn ? "Towers did not load; move the map to retry" :
+      S.drawn + (S.drawn === 1 ? " tower" : " towers") + " on the map";
     paintNote();
   }
   /* on a phone the folded sheet shows one line under the tab name: the check's answer, else what the map shows */
