@@ -66,6 +66,27 @@ const layout = () => {
   const moved = await p.evaluate(() => { document.querySelector('.cfjump [data-cfjump="cf-reps"]').click(); return new Promise((ok) => setTimeout(() => {
     const r = document.getElementById("cf-reps").getBoundingClientRect(), a = document.querySelector("aside.rail").getBoundingClientRect(); ok(Math.abs(r.top - a.top) < 60); }, 900)); });
   ok(moved, "Recent reports button scrolls the list to the top of the panel");
+  // the figures and the weekly chart open what they count
+  const tiles = await p.evaluate(async () => {
+    const w = (ms) => new Promise((r) => setTimeout(r, ms)), out = {}, sel = () => document.querySelector('#cf-rail select[data-cff="days"]');
+    const shown = () => +((document.querySelector("#cf-list .cfcount") || {}).textContent || "").replace(/,/g, "").match(/^\d+|$/)[0];
+    const t7 = document.querySelector('[data-cftile="att7"]'); out.n7 = +t7.querySelector("b").textContent.replace(/,/g, ""); t7.click(); await w(400);
+    out.l7 = shown(); out.sel7 = sel().selectedOptions[0].textContent; out.pick = !!document.querySelector("#cf-list .cfpick");
+    out.kinds = Array.from(document.querySelectorAll("#cf-list ol.cfl li")).length;
+    const t1 = document.querySelector('[data-cftile="att1"]'); out.n1 = +t1.querySelector("b").textContent.replace(/,/g, ""); t1.click(); await w(400); out.l1 = shown();
+    document.querySelector('[data-cftile="ucdp30"]').click(); await w(400); out.ucdpOpen = !!document.querySelector("#cf-list details[open]"); out.sel30 = sel().selectedOptions[0].textContent;
+    const sv = document.querySelector('svg[data-cfwkk="rep"]'), bx = sv.getBoundingClientRect();
+    sv.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: bx.right - 1, clientY: bx.top + bx.height / 2 })); await w(400);
+    out.selWk = sel().selectedOptions[0].textContent; out.wk = shown();
+    out.wkN = +((sv.querySelector("rect:last-child title") || {}).textContent || "").replace(/,/g, "").match(/: (\d+)/)[1];
+    document.querySelector("[data-cfclr]").click(); await w(400); out.cleared = !document.querySelector("#cf-list .cfpick") && !/Week/.test(sel().selectedOptions[0].textContent);
+    return out;
+  });
+  ok(tiles.sel7 === "7 days" && tiles.pick && tiles.l7 === tiles.n7, "tapping attacks, 7 days lists those attacks: figure " + tiles.n7 + ", list " + tiles.l7);
+  ok(tiles.l1 === tiles.n1, "tapping attacks, 24 h lists those attacks: figure " + tiles.n1 + ", list " + tiles.l1);
+  ok(tiles.ucdpOpen && tiles.sel30 === "30 days", "tapping UCDP events, 30 days opens the UCDP events of 30 days");
+  ok(/^Week to /.test(tiles.selWk), "tapping this week's bar lists that week: " + tiles.selWk + " (" + tiles.wk + " incidents; the bar counts " + tiles.wkN + " reports)");
+  ok(tiles.cleared, "Show all reports goes back to the page's period");
   const t = await p.evaluate(() => { const i = document.getElementById("bl-border"); i.click(); return i.checked; });
   ok(t === false, "a moved border switch still works");
   await p.evaluate(() => document.getElementById("bl-border").click());
