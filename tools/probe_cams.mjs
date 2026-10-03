@@ -157,6 +157,30 @@ async function round2() {
   for (const u of ["https://www.tripcheck.com/RoadCams/cams/AstoriaUS101MeglerBrNB_pid392.jpg", "https://eismoinfo.lt/eismoinfo-backend/image-provider/camera/last?id=72", "https://www.vegagerdin.is/vgdata/vefmyndavelar/hellisheidi_1.jpg",
     "https://atmsqf.iowadot.gov/snapshots/Public/RWIS/RWIS_84-01.jpg", "http://pws.trafficwise.org/pullover/172_65_56_11.jpg", "https://pws.trafficwise.org/pullover/172_65_56_11.jpg", "https://api.qldtraffic.qld.gov.au/v1/webcams/1"]) await img(u);
 }
+/* ---------- round 3: Thailand and the Philippines ---------- */
+async function round3() {
+  const show = (k, r, n = 1200) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  console.log("\n##### R3. Thailand");
+  const lg = await get("https://camera.longdo.com/feed/?command=json", 60000); show("Longdo iTIC list", lg, 1500);
+  try {
+    const j = JSON.parse(lg.b); const orgs = {}, kinds = { hls: 0, img: 0 };
+    j.forEach((c) => { orgs[c.organization] = (orgs[c.organization] || 0) + 1; if (/^https:\/\/camerai1/.test(c.hls_url || "") && !/tempsus/.test(c.hls_url)) kinds.hls++; if (c.imgurl) kinds.img++; });
+    console.log("   " + j.length + " cams; orgs " + JSON.stringify(orgs) + "; " + JSON.stringify(kinds));
+    const h = j.find((c) => /^https:\/\/camerai1/.test(c.hls_url || "") && !/tempsus/.test(c.hls_url)); if (h) { const r = await get(h.hls_url, 30000); show("  hls " + h.hls_url, r, 400); }
+    const im = j.filter((c) => c.imgurl).slice(0, 3); for (const c of im) await img(c.imgurl);
+  } catch (e) { console.log("   parse " + e); }
+  for (const [k, u] of [["DOH page", "https://www.highwaytraffic.go.th/DOHWeb/home.aspx"], ["BMA traffic", "https://cpudapp.bangkok.go.th/bmatraffic/"], ["BMA legacy", "http://www.bmatraffic.com/"],
+    ["BMA data", "https://data.bangkok.go.th/api/3/action/package_show?id=bma-cctv"], ["EXAT", "https://www.exat.co.th/"], ["EXAT cctv", "https://cctv.exat.co.th/"], ["Police tourist CCTV", "https://data.go.th/api/3/action/package_show?id=police_catalog"],
+    ["Chiang Mai cctv", "https://cctv.chiangmaicity.go.th/"], ["Phuket cctv", "https://www.phuketcity.go.th/cctv"]]) { const r = await get(u, 40000); show(k, r, 600); }
+  const d = await fetch("https://telemetry.dwr.go.th/api/public/reportCctv/listPaginate", { method: "POST", headers: { "Content-Type": "application/json", "User-Agent": UA, Origin: O }, body: JSON.stringify({ paginate: { page: 1, pageSize: 3, orders: [] }, search: {} }), signal: AbortSignal.timeout(40000) }).then(async (r) => ({ s: r.status, ct: r.headers.get("content-type") || "", cors: r.headers.get("access-control-allow-origin") || "", b: Buffer.from(await r.arrayBuffer()), ms: 0 })).catch((e) => ({ s: 0, err: String(e), b: Buffer.alloc(0), ct: "" }));
+  d.n = d.b.length; show("DWR cctv list", d, 1500);
+  try { const j = JSON.parse(d.b); const c = (j.value || j.data || {}).data || (j.value || {}).items || []; const id = c[0] && (c[0].id || c[0].cctvId); if (id) { const r = await get("https://telemetry.dwr.go.th/api/public/reportCctv/snapshot/" + id, 30000); show("DWR snapshot " + id, r, 800); } } catch (e) { console.log("   " + e); }
+  console.log("\n##### R3. Philippines");
+  for (const [k, u] of [["MMDA site", "https://mmda.gov.ph/"], ["MMDA traffic (Interaksyon)", "http://mmdatraffic.interaksyon.com/line-view-edsa.php"], ["MMDA cctv guess", "https://mmda.gov.ph/cctv"],
+    ["DPWH", "https://www.dpwh.gov.ph/"], ["NLEX", "https://www.nlex.com.ph/traffic-advisory/"], ["Cebu City", "https://www.cebucity.gov.ph/"], ["data.gov.ph cctv", "https://data.gov.ph/index/public/dataset?q=cctv"], ["Sakay", "https://sakay.ph/"]]) { const r = await get(u, 40000); show(k, r, 500);
+    const t = r.b.toString("utf8"); const m = t.match(/[^"'\s]*(cctv|camera|cam\d|live)[^"'\s]*/gi); if (m) console.log("   links: " + [...new Set(m)].slice(0, 15).join(" | ")); }
+}
 if (only === "r2") await round2();
+if (only === "r3") await round3();
 if (!only || only === "browser") await browserCheck().catch((e) => console.log("browser check failed: " + e));
 if (!only || only === "lists") await candidates();
