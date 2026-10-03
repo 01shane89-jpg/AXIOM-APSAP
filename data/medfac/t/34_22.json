@@ -1,0 +1,7 @@
+[["n3645165534",35.51773,23.90366,"gr",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
+["w1151362070",35.5261,23.83104,"gr",{"aeroway":"helipad"}],
+["w124178960",35.49382,23.65365,"gr",{"name":"Medical Center","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["w124532650",35.53014,23.83353,"gr",{"name":"Αεροδρόμιο Μάλεμε","name:en":"Maleme Military Airfield","aeroway":"aerodrome","military":"airfield","wikidata":"Q3606076"}],
+["w282580371",35.87505,23.28931,"gr",{"name":"Ελικοδρόμιο Αντικυθήρων","aeroway":"helipad"}],
+["w378274008",35.22933,23.96281,"gr",{"aeroway":"helipad"}],
+["w734188155",35.5225,23.84766,"gr",{"name":"Veterinarian Stavros Daskalakis","amenity":"clinic","healthcare":"clinic","addr:street":"Κισσάμου - Χανίων","addr:city":"Μάλεμε","addr:postcode":"73014","opening_hours":"Mo-Sa 09:00-14:00"}]]

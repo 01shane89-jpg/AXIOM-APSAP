@@ -503,4 +503,5 @@
 ["w860642766",3.89598,11.49226,"cm",{"name":"Centre Hospitalier Mère-Enfant Deo Gratias","amenity":"clinic","healthcare":"clinic","operator":"Afrique Future","website":"https://www.afriquefuture.org/realisation/centre-hospitalier-doliga/"}],
 ["w879035837",3.95105,11.53854,"cm",{"aeroway":"helipad"}],
 ["w886692366",3.81378,11.55862,"cm",{"name":"IAI-infirmerie","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"IAI-infirmerie","operator:type":"private"}],
-["w945630235",2.94652,11.12033,"cm",{"name":"Centre Hospitalier Régional d'Ebolowa","amenity":"hospital","healthcare":"hospital"}]]
+["w945630235",2.94652,11.12033,"cm",{"name":"Centre Hospitalier Régional d'Ebolowa","amenity":"hospital","healthcare":"hospital"}],
+["w971920835",2.07711,11.49208,"ga",{"name":"Aéroport de Bitam","name:en":"Bitam Airport","aeroway":"aerodrome","icao":"FOOB","iata":"BMM","wikidata":"Q4918740"}]]
