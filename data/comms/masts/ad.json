@@ -1,0 +1,10 @@
+{"cc":"ad","at":"2026-10-03T02:24:38Z","base":"2026-10-03T02:23:36Z","m":[
+["n10096400428",42.43451,1.53379,{"man_made":"mast","tower:type":"communication"}],
+["n10097286162",42.46715,1.54683,{"man_made":"mast","tower:type":"communication"}],
+["n2021871842",42.52122,1.56818,{"communication:radio":"yes","height":"125","man_made":"mast","tower:construction":"guyed_lattice"}],
+["n2021871844",42.52241,1.57078,{"communication:radio":"yes","height":"125","man_made":"mast","tower:construction":"guyed_lattice"}],
+["n2422238812",42.53401,1.71671,{"communication:mobile_phone":"yes","man_made":"mast","operator":"Andorra Telecom","tower:type":"communication"}],
+["n5856710081",42.63614,1.53426,{"communication:mobile_phone":"yes","ele":"2490","man_made":"mast","tower:type":"communication"}],
+["n8477421291",42.51398,1.49566,{"communication:radio":"yes","communication:television":"yes","man_made":"communications_tower","tower:type":"communication"}],
+["w1055616938",42.50531,1.51789,{"man_made":"tower","tower:type":"communication"}]
+]}
