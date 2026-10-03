@@ -554,6 +554,13 @@
     CAPS.forEach(function (c) { C[c[0]] = { status: "UNKNOWN", confidence: "UNKNOWN", availability: "unknown", source: null, last_verified: null }; });
     function rep(k, src, how, conf) { if (C[k].status === "UNKNOWN") C[k] = { status: "REPORTED", confidence: conf, availability: "unknown", source: src, how: how, last_verified: null }; }
     function na(k, src, how) { C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", availability: "unknown", source: src, how: how, last_verified: null }; }
+    /* capabilities the sourced record documents one by one (m.caps, source/sof/SCHEMA.txt): each from the hospital's own
+       or a government page, quoted, so they count as credible; read before OpenStreetMap so they win */
+    if (m && m.caps) Object.keys(m.caps).forEach(function (k) {
+      var x = m.caps[k]; if (!C[k] || !x || !x.src) return;
+      rep(k, { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "" }, (x.quote ? "\u201c" + clip(x.quote, 160) + "\u201d" : "stated by the source") + (x.quote_basis ? " (" + x.quote_basis + ")" : ""), "MODERATE");
+      if (k === "ed.24_7") rep("ed.basic", { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "" }, "24-hour emergency department", "MODERATE");
+    });
     if (f.er === "yes") rep("ed.basic", osm, "emergency=yes", "LOW"); else if (f.er === "no") na("ed.basic", osm, "emergency=no");
     if (m && m.emergency_24h === true) { rep("ed.24_7", sof, "24-hour emergency", "MODERATE"); rep("ed.basic", sof, "24-hour emergency", "MODERATE"); }
     if (f.pad) rep("trans.helipad", osm, "aeroway=helipad within 400 m", "LOW");
@@ -638,7 +645,29 @@
     H = H.filter(function (f) { return f.tier > 0 || f.sofRec; });
     function near10(L, n) { L.sort(function (x, y) { return x.m - y.m; }); return L.slice(0, 10).concat(L.slice(10).sort(byCap).slice(0, n - 10)); }
     F.U = near10(U, 10); F.nU = U.length; F.nNo = nNo;
-    return near10(H, MAX_HOSP);
+    return near10(H, MAX_HOSP).concat(farDoc(o, rH, sofList, used));
+  }
+  /* Shane 2026-10-03: when nothing near has the documented capability, the plan finds the nearest that does instead of
+     stopping at "Gap". So the sourced hospitals beyond the search radius that a credible source documents (capabilities
+     stated one by one, or an official trauma designation) are added, nearest first, up to FAR_KM away; they are marked as
+     found by the wider search. OpenStreetMap is not searched farther: it never qualifies. */
+  var FAR_KM = 1500, MAX_FAR = 8;
+  function documented(h) {
+    return !!(h && ((h.caps && Object.keys(h.caps).some(function (k) { return h.caps[k] && h.caps[k].src && !/wiki|openstreetmap/i.test((h.caps[k].srcname || "") + " " + h.caps[k].src); })) ||
+      (h.trauma_level && !/wiki|openstreetmap/i.test((h.trauma_srcname || h.srcname || "") + " " + (h.trauma_src || h.src || "")))));
+  }
+  function farDoc(o, rH, sofList, used) {
+    var L = [];
+    (sofList || []).forEach(function (h) {
+      if (h.lat == null || used[h.id || h.name] || !documented(h)) return;
+      var m = distM(o, [h.lat, h.lon]); if (m <= rH || m > FAR_KM * 1000) return;
+      L.push({ h: h, m: m });
+    });
+    return L.sort(function (a, b) { return a.m - b.m; }).slice(0, MAX_FAR).map(function (x) {
+      var h = x.h;
+      return capability({ id: "sof:" + (h.id || h.name), kind: "hospital", name: clip(h.name, 90), lat: h.lat, lon: h.lon, m: x.m, brg: brg(o, [h.lat, h.lon]), far: true,
+        osm: "", src: h.src, srcname: h.srcname, sofRec: h, er: "", addr: h.address ? clip(h.address, 160) : "", phone: "", web: "" }, sofList);
+    });
   }
 
   /* ---------- routing ---------- */
@@ -841,6 +870,7 @@
     "#medplan .mptier{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;border:1px solid currentColor}" +
     "#medplan .mptcls{color:var(--muted,#56626F)}#medplan .mproles td,#medplan .mproles th{vertical-align:top;text-align:left;padding:4px 6px;border-bottom:1px solid var(--line-soft,#e3e7eb)}" +
     "#medplan .mpbypc b{opacity:.75}#medplan .mpbyp{display:block;font-size:11.5px;font-weight:600;color:var(--muted,#56626F)}" +
+    "#medplan .mpfar{display:inline-block;font-size:11.5px;font-weight:600;color:#1d5fa8}:root[data-map=grey] #medplan .mpfar,:root[data-map=dark] #medplan .mpfar{color:#8FC1FF}" +
     "#medplan .mplow,.mpdoc .mplow{display:block;font-size:11.5px;font-weight:600;color:#8a4b00;margin:1px 0}" +
     ":root[data-map=grey] #medplan .mplow,:root[data-map=dark] #medplan .mplow{color:#F5C877}.mpdoc .mplow{color:#8a4b00!important}" +
     "#medplan .mptier.t4{color:#8b0010}#medplan .mptier.t3{color:#7a3e00}#medplan .mptier.t2{color:#3d5a00}#medplan .mptier.t1,#medplan .mptier.t0{color:var(--muted,#56626F)}" +
@@ -1154,6 +1184,20 @@
         }
         var row = { casualty_category: c.id, label: c.label, role: role, state: pick ? "filled" : "gap", bypassed: by.slice(0, 5), required: st.required, decision_note: DECISION_NOTE };
         if (role === "tertiary") row.specialty = c.specialty;
+        /* a gap still names the nearest hospital with part of what is needed documented, for the planner to confirm the rest;
+           it is not picked (Shane 2026-10-03: find the nearest available resource instead of just saying no info) */
+        if (!pick) {
+          /* the quickest with any of it documented, and the quickest with the most, when that is another hospital */
+          var near = null, most = null;
+          H.forEach(function (f) {
+            var met = st.required.filter(function (k) { return capOk(f, k) === "yes"; });
+            if (!met.length) return;
+            var x = { facility_id: f.id, f: f, met: met, not_documented: st.required.filter(function (k) { return met.indexOf(k) < 0; }) };
+            if (!near) near = x;
+            if (!most || met.length > most.met.length) most = x;
+          });
+          if (near) row.partial = most.f === near.f ? [near] : [near, most];
+        }
         if (pick) { var b = bestWay(pick.f); row.choice = { facility_id: pick.f.id, f: pick.f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: pick.fit.met, missing: pick.fit.missing, unknown: pick.fit.unknown.concat(pick.fit.crowd), gain: pick.fit.gain }; }
         rows.push(row);
       });
@@ -1205,23 +1249,25 @@
       var f = r.choice.f, had = out.filter(function (p) { return p.f === f; })[0], nm = ROLE_NAME[r.role];
       if (had) { had.why.push(nm); had.reason += "; also " + nm; return; }
       var byp = r.bypass ? "; bypass: going direct reaches " + (r.role === "primary" ? "Secondary" : "Tertiary") + " care in " + mins(r.bypass.direct_time.s) + " (via here " + mins(r.bypass.via_time.s) + "), so this is the stabilisation option" : "";
-      out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + tierLabel(f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way + " (" + golden(r.choice.time_to_required_care.s).t.toLowerCase() + ")" +
+      out.push({ f: f, role: nm, why: [nm], row: r, reason: nm + " for major trauma: " + (f.far ? "found by the wider search (nothing nearer has it documented), " : "") + tierLabel(f) + ", " + mins(r.choice.time_to_required_care.s) + " from injury by " + r.choice.way + " (" + golden(r.choice.time_to_required_care.s).t.toLowerCase() + ")" +
         "; documented: " + andList(capNames(r.choice.met.concat(r.choice.gain.filter(function (k) { return r.choice.met.indexOf(k) < 0; })))) + byp });
     });
     return out;
   }
   /* the role table: one row per casualty type, Primary, Secondary and Tertiary (with its specialty) across */
   function rolesHtml(s) {
-    var R = planRoles(s), km0 = Math.round(s.radii.h / 1000);
+    var R = planRoles(s), km0 = Math.round(s.radii.h / 1000), farN = s.fac.H.filter(function (f) { return f.far; }).length;
     function byRoleOf(r, d) { var o = ["primary", "secondary", "tertiary"], k = o[o.indexOf(r.role) + d]; return R.filter(function (x) { return x.casualty_category === r.casualty_category && x.role === k; })[0]; }
     function cell(r) {
-      if (r.state === "gap") return '<td class="mpgap"><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+      if (r.state === "gap") return '<td class="mpgap"><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km" + (farN ? ", nor any of the " + farN + " documented hospitals farther out (up to " + FAR_KM + " km)," : "") + " has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+        (r.partial ? r.partial.map(function (x, i) { return '<span class="sub mpfar">' + (i ? "Most documented" : "Nearest with part documented") + ": H" + (s.fac.H.indexOf(x.f) + 1) + " " + esc(x.f.name) + ", " + esc(km(x.f.m)) + " (" + esc(andList(capNames(x.met))) + " documented; " + esc(andList(capNames(x.not_documented))) + " not). Confirm the rest before using it.</span>"; }).join("") : "") +
         (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
       var c = r.choice, f = c.f, unk = capNames(c.unknown);
       var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
         '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here. Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
       var hv = r.via && r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? '<span class="sub obs">Reached via ' + ROLE_NAME[r.via.from] + " in about " + esc(mins(r.via.via_s)) + "; direct would be " + esc(mins(r.via.direct_s)) + ", beyond the golden hour.</span>" : "";
       return "<td" + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv +
+        (f.far ? '<span class="sub mpfar">Wider search: nothing within ' + km0 + " km has this documented; " + esc(km(f.m)) + " away</span>" : "") +
         (unk.length ? '<span class="sub obs">Not documented: ' + esc(unk.join(", ")) + "</span>" : "") + "</td>";
     }
     var h = '<div class="mpscroll"><table class="mproles"><thead><tr><th scope="col">Casualty type</th><th scope="col">Primary</th><th scope="col">Secondary</th><th scope="col">Tertiary</th></tr></thead><tbody>';
@@ -1296,7 +1342,7 @@
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
-      "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
+      (f.far ? '<span class="mpfar">Beyond the ' + Math.round(ST.radii.h / 1000) + " km search: added as a hospital with documented capability</span><br>" : "") + "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(airTotal(f))) + " from the call, with the aircraft's flight in</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
@@ -1341,7 +1387,7 @@
     if (!s.fac) { el.innerHTML = '<p class="obs">Choosing the Primary, Secondary and Tertiary hospitals…</p>'; return; }
     var P = picks(s);
     if (!P.length) { el.innerHTML = '<p class="obs mpwarn">' + (failed(s) ? "No hospitals could be chosen: the hospital lookup failed (" + esc(clip(lookupErr(s), 160)) + "). This does not mean there is no hospital."
-      : "No Primary, Secondary or Tertiary for major trauma: no hospital within " + Math.round(s.radii.h / 1000) + " km has the needed capabilities documented by a credible source" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
+      : "No Primary, Secondary or Tertiary for major trauma: no hospital within " + Math.round(s.radii.h / 1000) + " km" + (s.fac.H.some(function (f) { return f.far; }) ? ", nor OSAP's documented hospitals farther out (up to " + FAR_KM + " km)," : " (and OSAP has no documented hospital farther out, up to " + FAR_KM + " km)") + " has the needed capabilities documented by a credible source" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
         ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>" + (failed(s) ? "" : rolesHtml(s)); return; }
     el.innerHTML = '<table class="mppst"><tbody>' + P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f);
