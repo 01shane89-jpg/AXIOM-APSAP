@@ -7,7 +7,11 @@
 // stations, keeping only the tags the plan reads. A country too big for one answer is asked in bounding-box parts (still
 // clipped to its boundary). Elements are written into 2-degree tiles shared by all countries:
 //   data/medfac/t/<lat>_<lon>.json   [["n123", lat, lon, "th", {tags}], ...]   (lat, lon: the tile's south-west corner)
-//   data/medfac/index.json          { v, tile, countries: { th: { at, base, n: {h,c,l,e}, tiles: [...] } }, tiles: { key: count } }
+//   data/medfac/index.json          { v, tile, countries: { th: { at, base, n: {h,c,l,e}, x: {b,d,r}, tiles: [...] } }, tiles: { key: count } }
+// The same query also reads blood banks and donation centres, hyperbaric (dive decompression) chambers and air rescue bases;
+// they go to one small file per country, read by the plan's "nearest blood bank / chamber / air rescue" sections:
+//   data/medfac/x/<cc>.json         [["n123", lat, lon, "th", {tags}], ...]
+// A country entry with "x" has that file; one built before this has none and is rebuilt first after the never-built ones.
 // A country is listed in index.countries only once a whole answer for it has been written, so the plan knows where the
 // stored copy is complete and where it must still ask Overpass live.
 // Privacy: a clinic whose name reads as a doctor's keeps no name and no contacts (the same rule the plan applies), so no
@@ -16,7 +20,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
-const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), TILE = 2;
+const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), XDIR = join(OUT, "x"), TILE = 2;
 const BUDGET = (+process.env.MEDFAC_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MEDFAC_MAX_AGE_D || 28) * 864e5;
 const DEBUG = !!process.env.MEDFAC_DEBUG, T0 = Date.now();
 const UA = "AXIOM-OSAP medical-plan facility snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
@@ -79,7 +83,9 @@ function query(cc, bbox) {
   const f = bbox ? `(${bbox.flat().map((x) => (+x).toFixed(4)).join(",")})` : "";
   return `[out:json][timeout:${bbox ? 120 : 180}][maxsize:536870912];area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]->.a;.a out ids;(` +
     `nwr(area.a)${f}["amenity"~"^(hospital|clinic)$"];nwr(area.a)${f}["healthcare"~"^(hospital|clinic)$"];` +
-    `nwr(area.a)${f}["aeroway"~"^(helipad|heliport|aerodrome)$"];nwr(area.a)${f}["emergency"~"^(ambulance_station|air_rescue_service)$"];);out center tags;`;
+    `nwr(area.a)${f}["aeroway"~"^(helipad|heliport|aerodrome)$"];nwr(area.a)${f}["emergency"~"^(ambulance_station|air_rescue_service)$"];` +
+    `nwr(area.a)${f}["healthcare"~"^blood_(bank|donation)$"];nwr(area.a)${f}["amenity"="blood_bank"];` +
+    `nwr(area.a)${f}["healthcare:speciality"~"hyperbaric|diving|decompression",i];nwr(area.a)${f}["healthcare"]["name"~"hyperbaric|decompression|recompression",i];);out center tags;`;
 }
 /* the whole country in one answer; a failure is asked again in four parts, down to three levels */
 async function fetchCountry(c) {
@@ -121,6 +127,22 @@ function slim(e, cc) {
   }
   return [e.type.charAt(0) + e.id, +lat.toFixed(5), +lon.toFixed(5), cc, g];
 }
+/* blood services, chambers and air rescue bases for data/medfac/x (the plan's sortX reads the same tags); "b", "d" or "r" */
+const HB = /hyperbaric|diving|decompression|recompression/i;
+function xKind(t) {
+  if (HB.test(t["healthcare:speciality"] || "") || ((t.healthcare || /^(hospital|clinic)$/.test(t.amenity || "")) && /hyperbaric|decompression|recompression/i.test(t.name || ""))) return "d";
+  if (/^blood_(bank|donation)$/.test(t.healthcare || "") || t.amenity === "blood_bank") return "b";
+  if (t.emergency === "air_rescue_service") return "r";
+  return "";
+}
+function xslim(e, cc) {
+  const t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
+  if (lat == null || lon == null || !xKind(t) || t.disused || t.abandoned) return null;
+  const g = {};
+  for (const k of KEEP) if (t[k] != null && t[k] !== "") g[k] = String(t[k]).slice(0, 200);
+  if (PERSON.test(t["name:en"] || t.name || t.official_name || "")) { delete g.name; delete g["name:en"]; delete g.official_name; for (const k of CONTACT) delete g[k]; g["osap:withheld"] = "1"; }
+  return [e.type.charAt(0) + e.id, +lat.toFixed(5), +lon.toFixed(5), cc, g];
+}
 const tileKey = (lat, lon) => Math.floor(lat / TILE) * TILE + "_" + Math.floor(lon / TILE) * TILE;
 
 /* ---------- files ---------- */
@@ -131,13 +153,14 @@ function writeTile(k, rows) {
 }
 
 async function main() {
-  mkdirSync(TDIR, { recursive: true });
+  mkdirSync(TDIR, { recursive: true }); mkdirSync(XDIR, { recursive: true });
   const all = countries(), byId = Object.fromEntries(all.map((c) => [c.id, c]));
   const idx = readJSON(join(OUT, "index.json"), null) || { v: 1, tile: TILE, countries: {}, tiles: {} };
   const asked = process.argv.slice(2).map((x) => x.toLowerCase()).filter((x) => byId[x]);
   const todo = asked.length ? asked.map((x) => byId[x]) : [
     ...all.filter((c) => !idx.countries[c.id]),
-    ...all.filter((c) => idx.countries[c.id] && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
+    ...all.filter((c) => idx.countries[c.id] && !idx.countries[c.id].x),
+    ...all.filter((c) => idx.countries[c.id] && idx.countries[c.id].x && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
   ];
   log(`medfac: ${todo.length} countries to build, budget ${Math.round(BUDGET / 60000)} min`);
   let done = 0, failed = [];
@@ -147,9 +170,10 @@ async function main() {
     try {
       const r = await fetchCountry(c);
       const seen = new Set(), byTile = {};
-      const n = { h: 0, c: 0, l: 0, e: 0 };
+      const n = { h: 0, c: 0, l: 0, e: 0 }, x = { b: 0, d: 0, r: 0 }, xrows = [];
       for (const e of r.els) {
         const k0 = e.type + e.id; if (seen.has(k0)) continue; seen.add(k0);
+        const xr = xslim(e, c.id); if (xr) { xrows.push(xr); x[xKind(e.tags || {})]++; }
         const row = slim(e, c.id); if (!row) continue;
         const g = row[4];
         if (g.amenity === "hospital" || g.healthcare === "hospital") n.h++; else if (g.aeroway) n.l++; else if (g.emergency && !g.amenity && !g.healthcare) n.e++; else n.c++;
@@ -162,10 +186,12 @@ async function main() {
         if (rows.length) { writeTile(k, rows); idx.tiles[k] = rows.length; }
         else { if (existsSync(p)) unlinkSync(p); delete idx.tiles[k]; }
       }
-      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, tiles: Object.keys(byTile).sort() };
+      xrows.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+      writeFileSync(join(XDIR, c.id + ".json"), "[" + xrows.map((q) => JSON.stringify(q)).join(",\n") + "]\n");
+      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, x, tiles: Object.keys(byTile).sort() };
       writeFileSync(join(OUT, "index.json"), JSON.stringify(idx, null, 0) + "\n");
       done++;
-      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s`);
+      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s`);
     } catch (e) { failed.push(c.id); log(`${c.id} ${c.name}: FAILED ${e.message.slice(0, 200)}`); }
     await sleep(10000);
   }
