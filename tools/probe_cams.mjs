@@ -307,6 +307,82 @@ async function round8() {
   const n = await get("https://www.ndbc.noaa.gov/buoycams.php", 30000); line("NDBC buoycams.php", n); console.log("   " + n.b.toString("utf8").slice(0, 900));
   for (const st of ["41002", "46026"]) { const x = await get("https://www.ndbc.noaa.gov/buoycam.php?station=" + st, 30000); line("NDBC cam " + st, x); }
 }
+/* ---------- round 9: more 511 sites (same camera list as the ones in use) and more CARS states ---------- */
+async function round9() {
+  const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start: 0, length: 3, search: { value: "" } }));
+  for (const h of ["511ny.org", "511sc.org", "mdottraffic.com", "manitoba511.ca", "511yukon.ca", "511nj.org", "mass511.com", "511.wv.gov", "511virginia.org", "travelinfo.mt.gov", "sd511.org", "511.nd.gov", "wyoroad.info", "idrivearkansas.com", "algotraffic.com", "oktraffic.org", "nmroads.com", "511.alberta.ca", "511.gov.pe.ca", "quebec511.info", "drivenc.gov", "511.ky.gov", "smartway.tn.gov", "511ga.org", "mo511.org", "traveler.modot.org", "511.org", "hawaii511.org", "goakamai.org", "511tx.org", "drivetexas.org", "511mi.gov", "ohgo.com", "511.mt.gov", "511wv.org", "511.ri.gov", "511.vermont.gov", "511.dot.ri.gov", "ncdot.gov"]) {
+    const r = await get(`https://${h}/List/GetData/Cameras?query=${q}&lang=en`, 30000, { "X-Requested-With": "XMLHttpRequest" });
+    let note = ""; try { const j = JSON.parse(r.b); const c = (j.data || [])[0] || {}; note = "total " + j.recordsTotal + " img " + JSON.stringify((c.images || []).map((i) => i.imageUrl)).slice(0, 160); } catch {}
+    line("511 " + h, r); if (note) console.log("   " + note);
+    if (note) { try { const c = JSON.parse(r.b).data[0]; const u = ((c.images || [])[0] || {}).imageUrl; if (u) await img(new URL(u, `https://${h}/`).href, "  " + h); } catch {} }
+  }
+  for (const st of ["nh", "vt", "me", "ma", "sd", "nd", "mt", "wy", "ok", "mo", "ar", "ms", "al", "nm", "ky", "oh", "tn", "tx", "va", "nc", "sc", "ga", "wv", "ri", "nj", "ny", "il", "mi", "ut", "id", "wa", "or", "ca", "md", "de", "pa", "hi", "ak", "la", "wi", "fl"]) {
+    const r = await get(`https://${st}tg.carsprogram.org/cameras_v1/api/cameras`, 30000);
+    let note = ""; try { const j = JSON.parse(r.b); note = j.length + " cams, first " + JSON.stringify(j[0] && j[0].views).slice(0, 200); } catch {}
+    if (r.s === 200) { line("CARS " + st, r); console.log("   " + note); } else console.log("CARS " + st + " " + (r.s || r.err));
+  }
+}
+/* ---------- round 10: Quebec (Données Québec) and Norway (Statens vegvesen) camera lists ---------- */
+async function round10() {
+  const show = (k, r, n = 900) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const [k, u] of [["QC", "https://www.donneesquebec.ca/recherche/api/3/action/package_show?id=camera-de-circulation"], ["NO", "https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera"], ["NO statuser", "https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera-statuser-api"]]) {
+    const r = await get(u, 40000); line(k, r);
+    try { const j = JSON.parse(r.b).result; console.log("   licence " + j.license_title + " | " + (j.notes || "").slice(0, 300).replace(/\s+/g, " ")); for (const x of j.resources || []) { console.log("   res " + x.format + " " + x.url + " | " + x.name);
+      if (/json|csv|xml|geojson/i.test(x.format + x.url)) { const d = await get(x.url, 60000); show("     get", d, 1500); const t = d.b.toString("utf8"); for (const m of [...new Set(t.match(/https?:[^"'<>\s,]+\.(jpg|jpeg|png)/gi) || [])].slice(0, 2)) await img(m, "     img"); } } } catch (e) { console.log("   " + e); }
+  }
+  for (const u of ["https://www.quebec511.info/fr/Diffusion/Etat/Camera.aspx", "https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:infos_cameras&outputformat=geojson", "https://webkamera.atlas.vegvesen.no/public/kamera?id=0329001_1", "https://kamera.atlas.vegvesen.no/api/images/0329001_1"]) show("try " + u, await get(u, 30000), 600);
+}
+/* ---------- round 11: Quebec camera image address, Norway WFS ---------- */
+async function round11() {
+  const show = (k, r, n = 900) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const id of ["c0d13822-e774-4ea0-b95f-3c61a693c316"]) { const r = await get("https://dataut.vegvesen.no/api/3/action/resource_show?id=" + id, 30000); show("NO res", r, 1500); }
+  const pk = await get("https://dataut.vegvesen.no/api/3/action/package_show?id=webkamera", 30000); try { for (const x of JSON.parse(pk.b).result.resources) console.log("   res " + JSON.stringify(x).slice(0, 700)); } catch {}
+  for (const u of ["https://ogckart-sn1.atlas.vegvesen.no/webkamera_1_0/ows?service=WFS&request=GetCapabilities", "https://ogckart-sn1.atlas.vegvesen.no/webkamera/ows?service=WFS&request=GetCapabilities", "https://ogckart-sn1.atlas.vegvesen.no/webkamera_1_0/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=webkamera_1_0:Webkamera&count=2&outputFormat=application/json"]) show("NO try", await get(u, 30000), 1500);
+  // Quebec: the camera window page in a real browser (Cloudflare refuses plain fetches), and the image it shows
+  const { chromium } = await import("playwright"); const br = await chromium.launch(); const pg = await br.newPage(); const seen = [];
+  pg.on("response", (r) => { const ct = r.headers()["content-type"] || ""; if (/image|json|javascript/.test(ct) && !/google|gstatic/.test(r.url())) seen.push(r.status() + " " + ct.split(";")[0] + " " + r.url()); });
+  try { await pg.goto("https://www.quebec511.info/Carte/Fenetres/FenetreVideo.html?id=4057", { waitUntil: "networkidle", timeout: 45000 }); } catch (e) { console.log("QC page " + e.message); }
+  console.log("QC title " + (await pg.title().catch(() => "")) + " | html " + (await pg.content().catch(() => "")).slice(0, 1500).replace(/\s+/g, " "));
+  console.log("QC responses:\n   " + seen.slice(0, 30).join("\n   "));
+  await br.close();
+  for (const u of ["https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057", "https://www.quebec511.info/Carte/Fenetres/camera.ashx?id=4057&format=mobile", "https://www.quebec511.info/diffusion/images/cameras/4057.jpg"]) await img(u, "  QC guess");
+}
+/* ---------- round 12: open each agency's own camera map in a browser and list the camera data it asks for ---------- */
+async function round12() {
+  const nsw = await get("https://data.nsw.gov.au/data/api/3/action/package_show?id=1-4fed724a31bc450b8af248a9b552aba9", 30000); line("NSW webcams pkg", nsw);
+  try { const j = JSON.parse(nsw.b).result; console.log("   " + j.title + " | " + j.license_title); for (const x of j.resources || []) console.log("   res " + x.format + " " + x.url); } catch {}
+  const { chromium } = await import("playwright"); const br = await chromium.launch();
+  const sites = [["NO", "https://www.vegvesen.no/trafikk/kart/?layers=webkamera"], ["EE", "https://tarktee.ee/"], ["SI", "https://www.promet.si/sl/kamere"], ["IE", "https://www.tii.ie/en/roads-tolling/operations-and-maintenance/traffic-cameras/"], ["IE2", "https://traffic.tii.ie/"],
+    ["CZ", "https://www.dopravniinfo.cz/"], ["HR", "https://www.hak.hr/info/kamere/"], ["DK", "https://trafikkort.vejdirektoratet.dk/"], ["PL", "https://www.traxelektronik.pl/pogoda/kamery/"], ["WA", "https://travelmap.mainroads.wa.gov.au/"], ["SA", "https://traffic.sa.gov.au/"],
+    ["VIC", "https://traffic.vicroads.vic.gov.au/"], ["TAS", "https://www.transport.tas.gov.au/roadside-cameras"], ["NT", "https://roadreport.nt.gov.au/"], ["LV", "https://lvceli.lv/kameras/"], ["HU", "https://kozut.hu/"], ["PT", "https://www.infraestruturasdeportugal.pt/pt-pt/camaras"], ["MO", "https://www.dsat.gov.mo/dsat/realtime.aspx"], ["MY", "https://www.llm.gov.my/"], ["SE", "https://www.trafikverket.se/trafikinformation/vag/?map_x=650778&map_y=6732275&map_z=2&map_l=100000000000000000000001"]];
+  for (const [k, u] of sites) {
+    const ctx = await br.newContext({ userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36" }); const pg = await ctx.newPage(); const seen = [];
+    pg.on("response", async (r) => { const ct = r.headers()["content-type"] || "", url = r.url();
+      if (/json|xml|geo/.test(ct) && /cam|kamer|kaam|cctv|webcam|video|camara/i.test(url + " " + ct)) { let n = 0; try { n = (await r.body()).length; } catch {} seen.push(r.status() + " " + ct.split(";")[0] + " " + n + "B " + url.slice(0, 220)); }
+      else if (/image\/jpe?g/.test(ct) && /cam|kamer|kaam|cctv|webcam/i.test(url) && seen.filter((x) => / image\//.test(x)).length < 3) seen.push(r.status() + " " + ct + " " + url.slice(0, 220)); });
+    try { await pg.goto(u, { waitUntil: "networkidle", timeout: 40000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 80)); }
+    await pg.waitForTimeout(3000);
+    console.log(k + " " + u + " title=" + (await pg.title().catch(() => "")).slice(0, 60) + "\n   " + (seen.slice(0, 14).join("\n   ") || "(no camera data seen)"));
+    await ctx.close();
+  }
+  await br.close();
+}
+/* ---------- round 13: Croatia (HAK) camera manifests ---------- */
+async function round13() {
+  const show = (k, r, n = 1500) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  show("HAK A1", await get("https://www.hak.hr/info/kamere/manifest/A1.json", 30000), 2500);
+  const pg = await get("https://www.hak.hr/info/kamere/", 30000); const t = pg.b.toString("utf8");
+  console.log("   manifests " + [...new Set(t.match(/manifest\/[^"'\s]+\.json/g) || [])].join(" "));
+  console.log("   scripts " + [...new Set(t.match(/[^"'\s]+\.js(\?[^"'\s]*)?/g) || [])].slice(0, 12).join(" "));
+  for (const m of ["manifest/index.json", "manifest/all.json", "manifest.json", "manifest/list.json"]) show("HAK try " + m, await get("https://www.hak.hr/info/kamere/" + m, 20000), 600);
+  console.log("   page text " + t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1200));
+  console.log("   terms " + ((t.match(/[^.]{0,200}(uvjeti|copyright|©|zabranjeno|prenošenje)[^.]{0,200}/i) || [""])[0]));
+}
+if (only === "r13") await round13();
+if (only === "r12") await round12();
+if (only === "r11") await round11();
+if (only === "r10") await round10();
+if (only === "r9") await round9();
 if (only === "r8") await round8();
 if (only === "r7") await round7();
 if (only === "r5") await round5();
