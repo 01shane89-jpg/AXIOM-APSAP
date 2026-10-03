@@ -2404,7 +2404,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       '<div class="tier" style="color:' + tok("--ink") + '">' + esc(title(s.kind)) + "</div>" +
       '<div class="why">' + esc(s.status || "") + "</div>" +
       (s.prec === "approx" ? '<div class="why" style="font-size:11px">Position approximate (place-level).</div>' : "") +
-      (s.src ? '<div class="why" style="font-size:11px;margin:4px 0 0">Source: ' + srcLink(s.src) + "</div>" : "") + "</div>";
+      (s.src ? '<div class="why" style="font-size:11px;margin:4px 0 0">Source: ' + srcLink(s.src) + "</div>" : "") +
+      '<div class="why" style="font-size:11px;margin:4px 0 0;font-style:italic">Background: a standing place shown in every period, not a report from the period chosen.</div></div>';
   }
   function drawSites() {
     siteLayer.clearLayers();
@@ -2446,7 +2447,14 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (!PHASES[phase]) phase = "all";
   var EVENTS = (CF.events || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
   var evLayer = L.layerGroup();
+  /* incidents are dated reports, so they also follow the period chosen in the page header (24 h, 7/30/90 days, custom);
+     the page's period functions exist once the records script below has run, and every draw comes after that */
+  function inHeaderPeriod(e) {
+    var A = window.TSAP && window.TSAP.areaApi;
+    return !A || !A.inPeriodDate || A.inPeriodDate(e.date);
+  }
   function inPhase(e) {
+    if (!inHeaderPeriod(e)) return false;
     if (phase === "all") return true;
     if (phase === "jul25") return e.phase === "jul25" || e.phase === "prelude";
     return e.phase === phase;
@@ -2530,8 +2538,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     var el = document.getElementById("ev-list");
     el.textContent = "";
     var shown = EVENTS.filter(inPhase);
+    var A = window.TSAP && window.TSAP.areaApi, hid = EVENTS.filter(function (e) { return !inHeaderPeriod(e); }).length;
     document.getElementById("ev-sub").textContent = shown.length + " sourced incidents" +
-      (phase === "all" ? " since the crisis began" : " in this phase") + ", newest first. Click one to fly to it.";
+      (hid && A ? " in the " + A.periodLabel() + (phase === "all" ? "" : " and this phase") + " (" + hid + " older hidden by the period)"
+        : phase === "all" ? " since the crisis began" : " in this phase") + ", newest first. Click one to fly to it.";
     shown.slice(0, 40).forEach(function (e) {
       var k = KINDS[e.kind] || KINDS.clash;
       var d = document.createElement("div");
@@ -2658,11 +2668,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   /* ---------- layer toggles ---------- */
   var LAYERS = [["bl-ev", evLayer], ["bl-site", siteLayer], ["bl-border", borderLayer], ["bl-band", bandLayer],
                 ["bl-tamb", tambLayer], ["bl-civ", civLayer], ["bl-sch", schLayer], ["bl-mil", milLayer], ["bl-fire", fireLayer]];
-  var active = false;
+  var active = false, noEv = false;
+  document.addEventListener("osap:period", function () { drawEvents(); fillRail(); });
   LAYERS.forEach(function (p) {
     document.getElementById(p[0]).addEventListener("change", function () {
       if (!active) return;
-      if (this.checked) p[1].addTo(map); else map.removeLayer(p[1]);
+      if (this.checked && !(noEv && p[1] === evLayer)) p[1].addTo(map); else map.removeLayer(p[1]);
     });
   });
   document.getElementById("op-tamb").addEventListener("input", function () {
@@ -2682,9 +2693,12 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
 
   var BORDER_VIEW = L.latLngBounds([11.4, 102.0], [14.8, 105.6]);
   window.TBW = {
-    show: function (noFit) {
-      active = true;
-      LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked) p[1].addTo(map); });
+    /* opt.noEvents: the Thai-Cambodian conflict tab maps these incidents itself (its own list, filtered by period), so the
+       border view's incident pins stay off there */
+    show: function (noFit, opt) {
+      active = true; noEv = !!(opt && opt.noEvents);
+      drawEvents(); fillRail();
+      LAYERS.forEach(function (p) { if (document.getElementById(p[0]).checked && !(noEv && p[1] === evLayer)) p[1].addTo(map); });
       if (!noFit) map.fitBounds(BORDER_VIEW, { padding: [8, 8], animate: false });
     },
     hide: function () {
