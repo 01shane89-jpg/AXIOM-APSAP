@@ -505,7 +505,12 @@ function main() {
     S.wps.forEach(function (w, i) {
       var m = L.marker([w.lat, w.lon], { pane: "routewppane", draggable: true, keyboard: true, title: wpName(i) + ": drag to move",
         icon: L.divIcon({ className: "rtv" + (i === 0 ? " s" : i === S.wps.length - 1 ? " e" : ""), html: "<span>" + LET.charAt(i) + "</span>", iconSize: [26, 26], iconAnchor: [13, 13] }) });
-      m.bindPopup('<div data-keep-pop="1"><h3>' + E(wpName(i)) + "</h3><p><code>" + E(G.mgrs(w.lat, w.lon) || "") + "</code><br>" + E(G.fmtLL(w.lat, w.lon)) + "</p><p class=\"obs\">Waypoint you placed; drag to move it.</p></div>");
+      var pop = D.createElement("div"); pop.setAttribute("data-keep-pop", "1");
+      pop.innerHTML = "<h3>" + E(wpName(i)) + "</h3><p><code>" + E(G.mgrs(w.lat, w.lon) || "") + "</code><br>" + E(G.fmtLL(w.lat, w.lon)) + "</p><p class=\"obs\">Waypoint you placed; drag to move it.</p>" +
+        '<div class="rtpb"><button type="button" data-wpdel="' + i + '" aria-label="Delete waypoint ' + LET.charAt(i) + '">Delete waypoint</button></div>';
+      /* Delete in the popup: same as the list's ×, so the route plans again without it */
+      pop.querySelector("[data-wpdel]").addEventListener("click", function (e) { L.DomEvent.stop(e); S.ctx.map.closePopup(); if (S.wps[i]) { S.wps.splice(i, 1); changed(); } });
+      m.bindPopup(pop);
       m.on("dragend", function (e) { var ll = e.target.getLatLng(); S.wps[i].lat = ll.lat; S.wps[i].lon = G.wrap(ll.lng); changed(); });
       m.addTo(S.marks);
       if (S.ctx.put) S.ctx.put("rt:" + i, m);
@@ -1450,6 +1455,7 @@ function main() {
     ".rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}.rtsw{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}" +
     ".rtv{background:none;border:0}.rtv span{display:block;width:22px;height:22px;border-radius:50%;background:#1c7ed6;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.45);color:#fff;font:700 11.5px/22px system-ui,sans-serif;text-align:center;cursor:grab}" +
     ".rtv.s span{background:#2b8a3e}.rtv.e span{background:#c92a2a}" +
+    ".rtpb{display:flex;gap:4px;margin-top:6px}.rtpb button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:#c92a2a;border-radius:4px;padding:4px 10px;min-height:32px;cursor:pointer}" +
     ".rtbtns button.rtgo,.rtrow button.rtgo{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}ul.rtgl{list-style:none;margin:6px 0;padding:0}" +
     "ul.rtgl li{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:6px;align-items:start;padding:5px 0;border-top:1px solid var(--line-soft,var(--line));font-size:12.5px;line-height:1.35}" +
     "ul.rtgl li>b{font-size:11.5px;color:var(--muted);font-weight:600}ul.rtgl li button{font:inherit;font-size:11.5px;border:1px solid var(--line);background:none;color:var(--accent);border-radius:3px;padding:1px 6px;cursor:pointer}" +
