@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Test only: checks that the free, no-key weather hosts the Weather tab uses answer from a GitHub runner, and whether a
 # browser on the live site may read them (CORS). Prints status, CORS header, size and the first bytes. Writes nothing.
-O="https://01shane89-jpg.github.io"
+O="https://osap-app.github.io"
 probe() {
   local u="$1"
   local h

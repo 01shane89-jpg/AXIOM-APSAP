@@ -9,7 +9,7 @@ import { tgItems } from "./tg_preview.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean), OUT = "data/live/conflicts/extras";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
-const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP conflict extras; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-OSAP conflict extras; +https://osap-app.github.io/)";
 async function get(url, accept) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
   try {

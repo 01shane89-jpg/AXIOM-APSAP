@@ -23,7 +23,7 @@ import path from "path";
 const OUT = process.argv[2] || "air-out";
 const PREV = process.argv[3] || OUT;
 const BUDGET = (+process.argv[4] || 330) * 1000; // stop asking after this long so a sweep publishes on time
-const UA = "AXIOM-OSAP/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/; live air traffic layer)";
+const UA = "AXIOM-OSAP/1.0 (+https://osap-app.github.io/; live air traffic layer)";
 const SRC = [
   { id: "fi", name: "adsb.fi", site: "https://adsb.fi/", url: (la, lo) => `https://opendata.adsb.fi/api/v3/lat/${la}/lon/${lo}/dist/250`,
     licence: "adsb.fi open data terms", nc: true, track: "https://globe.adsb.fi/?icao={hex}", gap: 1100, wait429: 10000 },

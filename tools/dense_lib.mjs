@@ -4,7 +4,7 @@
 // A feed that fails keeps its previous items (read back from the old files) and is marked stale, so one outage never empties a country.
 import fs from "node:fs";
 
-export const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+export const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://osap-app.github.io/)";
 export const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 export const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.cause?.code || e.message || e).slice(0, 160));
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

@@ -3,8 +3,8 @@
 // status, type, size, a sample and one image from each. Prints to the log; writes nothing. Run: node tools/probe_cams.mjs
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
-const UA = "AXIOM-OSAP/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)";
-const O = "https://01shane89-jpg.github.io";
+const UA = "AXIOM-OSAP/1.0 (+https://osap-app.github.io/)";
+const O = "https://osap-app.github.io";
 const only = process.env.ONLY || "";
 
 async function get(u, ms = 40000, headers = {}) {

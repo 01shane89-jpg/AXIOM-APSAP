@@ -89,7 +89,7 @@
     { "id": "un-me", "outlet": "UN News: Middle East", "url": "https://news.un.org/feed/subscribe/en/news/region/middle-east/feed/rss.xml", "lang": "en" }
    ],
    "ucdp": { "countries": "Iran|Israel|United States|Iraq|Saudi|Emirates|Qatar|Bahrain|Kuwait|Oman|Jordan", "match": "Government of Iran", "exclude": "Jaish al-Adl|Jaish ul-Adl|PJAK|PDKI|KDPI|Komala|Kurdistan|Baloch|Ansar al-Furqan|Civilians|\\bIS\\b" },
-   "front": [{ "type": "zones", "id": "osap-zones", "name": "Reported strike zones and maritime areas (AXIOM OSAP, from reports)", "areas": "tools/conflict_extras/iran-war-facts.json", "backfill": "tools/conflict_extras/iran-war-backfill.json", "days": 14, "home": "https://01shane89-jpg.github.io/AXIOM-APSAP/" }]
+   "front": [{ "type": "zones", "id": "osap-zones", "name": "Reported strike zones and maritime areas (AXIOM OSAP, from reports)", "areas": "tools/conflict_extras/iran-war-facts.json", "backfill": "tools/conflict_extras/iran-war-backfill.json", "days": 14, "home": "https://osap-app.github.io/" }]
   },
   {
    "id": "sudan", "name": "Sudan civil war", "short": "Sudan war", "countries": ["sd", "td", "ss"], "since": "2023-04-15", "kind": "civil war", "tier": 1,

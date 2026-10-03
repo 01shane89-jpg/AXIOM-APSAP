@@ -18,7 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const UA = "OSAP-registry-build/1 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+const UA = "OSAP-registry-build/1 (+https://osap-app.github.io/)";
 const HA = "https://data.ha.or.th/dataset/";
 const SRC = {
   hospital: { file: "ha-hospital.csv", url: HA + "5e44de52-ca41-4d1d-bd6a-0a0fd56d7b75/resource/4e20e752-25f8-468c-b155-33be7aecc0d4/download/ha_aod_001-2.csv",

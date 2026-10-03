@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Test only: checks the free, no-key routing, elevation and forecast hosts the Route tab would call from the browser.
 # Prints status, CORS header and a short body to the log; writes nothing to the repo.
-O="https://01shane89-jpg.github.io"
+O="https://osap-app.github.io"
 A="100.5018,13.7563"; B="100.9925,12.9236"   # Bangkok -> Pattaya
 V='{"locations":[{"lat":13.7563,"lon":100.5018},{"lat":12.9236,"lon":100.9925}],"costing":"COST","alternates":2,"units":"kilometers","directions_options":{"units":"kilometers"}}'
 probe() {

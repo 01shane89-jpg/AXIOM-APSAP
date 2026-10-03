@@ -9,7 +9,7 @@
 (function () {
   "use strict";
   var W = window, D = document;
-  var AIR = "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-air/";
+  var AIR = "https://raw.githubusercontent.com/osap-app/osap-app.github.io/live-air/";
   var SEA = "https://ais.openwaters.io/v1/vessels";
   var EVERY = 60e3, AIR_STALE = 20 * 60e3, SEA_STALE = 6 * 3600e3, MAX_CELLS = 40, SEA_BOX = 10, MAX_BOXES = 8, LSK = "osap-traffic";
   var KINDS = [

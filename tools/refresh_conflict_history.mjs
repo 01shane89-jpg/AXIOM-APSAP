@@ -23,7 +23,7 @@ const FORCE = process.env.FORCE === "1", ONLY = (process.env.CONFLICTS || "").sp
 const CFG = JSON.parse(fs.readFileSync("tools/conflicts.json", "utf8"));
 const LIST = CFG.conflicts.filter((c) => c.ucdp && (!ONLY.length || ONLY.includes(c.id)));
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
-const UA = "Mozilla/5.0 (AXIOM-OSAP conflict history refresh; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+const UA = "Mozilla/5.0 (AXIOM-OSAP conflict history refresh; +https://osap-app.github.io/)";
 const CHUNK_BYTES = 450000, GRID = 0.5, FIRST_UCDP = "1989-01-01";
 const readJs = (f) => { try { const t = fs.readFileSync(f, "utf8"), i = t.indexOf("={"); return JSON.parse(t.slice(i + 1).trim().replace(/;\s*$/, "")); } catch (e) { return null; } };
 const js = (name, o) => name + "=" + JSON.stringify(o).replace(/<\//g, "<\\/") + ";\n";

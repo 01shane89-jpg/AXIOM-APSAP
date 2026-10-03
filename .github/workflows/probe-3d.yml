@@ -23,7 +23,7 @@ jobs:
         run: node tools/probe_3d_cache.mjs
         continue-on-error: true
         env:
-          BASE: https://01shane89-jpg.github.io/AXIOM-APSAP/
+          BASE: https://osap-app.github.io/
       - name: 3D after the flat map, this branch
         run: node tools/probe_3d_cache.mjs
         continue-on-error: true

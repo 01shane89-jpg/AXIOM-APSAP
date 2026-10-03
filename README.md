@@ -4,7 +4,7 @@
 
 **Open Source Awareness Platform.** One map, one timeline and one set of alerts for every country on the globe (the 193 UN members plus Taiwan, Kosovo, Palestine and Western Sahara). It puts the news that matters to an analyst or a team on the ground first, and builds everything else around it from free public sources, with no accounts and no keys. Hand-researched layers go deeper for the original 28 areas in Southeast Asia, East Asia, South Asia and Oceania.
 
-**Open it:** https://01shane89-jpg.github.io/AXIOM-APSAP/ (installs as an app on a computer, Android or iPhone, and works offline).
+**Open it:** https://osap-app.github.io/ (installs as an app on a computer, Android or iPhone, and works offline).
 
 ## What it does
 

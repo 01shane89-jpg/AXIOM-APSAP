@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const OUT = process.argv[2] || "data/cams";
-const UA = { "User-Agent": "Mozilla/5.0 (compatible; OSAP camera list builder; +https://01shane89-jpg.github.io/AXIOM-APSAP/)" };
+const UA = { "User-Agent": "Mozilla/5.0 (compatible; OSAP camera list builder; +https://osap-app.github.io/)" };
 const r5 = (v) => Math.round(+v * 1e5) / 1e5;
 const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 const tidy = (s) => String(s == null ? "" : s).replace(/\s+/g, " ").trim().slice(0, 140);

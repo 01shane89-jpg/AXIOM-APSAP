@@ -9,7 +9,7 @@
 (function () {
   "use strict";
   var W = window, D = document;
-  var URL_ = "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-drones/drones.json";
+  var URL_ = "https://raw.githubusercontent.com/osap-app/osap-app.github.io/live-drones/drones.json";
   var EVERY = 60e3, STALE = 20 * 60e3, LSK = "osap-air";
   var ON = lsGet() || { uav: false, mil: false }, DATA = null, ERR = "", FP = {}, map = null, grp = null, timer = null, busy = false, M = {};
 

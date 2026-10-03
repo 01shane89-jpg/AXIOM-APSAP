@@ -3,7 +3,7 @@
 # helipads, airfields, air rescue bases and embassies; OSRM for drive times and routes; Valhalla for drive-time areas;
 # Wikidata for national emergency numbers; Open-Meteo for evacuation weather). Prints status, CORS header and a short body
 # to the log; writes nothing to the repo.
-O="https://01shane89-jpg.github.io"
+O="https://osap-app.github.io"
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36"
 probe() {
   echo "=== $1"

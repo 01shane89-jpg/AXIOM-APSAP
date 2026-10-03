@@ -18,7 +18,7 @@ import { mentions } from "./mil_sites_lib.mjs";
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean), FORCE = process.env.SITES_FORCE === "1";
 const OUT = "data/live/conflicts/sites", CF = "data/live/conflicts", TIMEOUT = 100000, REFETCH_DAYS = 6.5, CAP = 2500, BUDGET_MS = 8 * 60000;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z", NOW = Date.now();
-const UA = "AXIOM-OSAP/1.0 (conflict map military sites; +https://01shane89-jpg.github.io/AXIOM-APSAP/) node-fetch";
+const UA = "AXIOM-OSAP/1.0 (conflict map military sites; +https://osap-app.github.io/) node-fetch";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const errMsg = (e) => (e.name === "AbortError" ? "timed out" : String(e.cause?.code || e.message || e).slice(0, 160));
 const readJs = (f) => { try { const t = fs.readFileSync(f, "utf8"), i = t.indexOf("={"); return JSON.parse(t.slice(i + 1).trim().replace(/;\s*$/, "")); } catch (e) { return null; } };

@@ -11,7 +11,7 @@
    about a report, never a finding. "Send a test alert" posts one line to the channel from this browser. */
 (function () {
   "use strict";
-  var REPO = "https://github.com/01shane89-jpg/AXIOM-APSAP";
+  var REPO = "https://github.com/osap-app/osap-app.github.io";
   var NTFY = "https://ntfy.sh";
   var T_KEY = "asap-push-topic", Q_KEY = "asap-push-asked", MAX_PTS = 150;
   var LIST = null, LIST_AT = 0, LIST_ERR = false;

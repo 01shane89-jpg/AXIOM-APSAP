@@ -14,7 +14,7 @@ import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { ccsAt } from "./geo_cc.mjs";
 
 const SRC = "source/sof", OUT = "data/sof", DEBUG = !!process.env.EVAC_DEBUG, SITES = process.env.EVAC_SITES !== "0";
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP evacuation points snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP evacuation points snapshot (+https://github.com/osap-app/osap-app.github.io)";
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 const TODAY = new Date().toISOString().slice(0, 10);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

@@ -2,7 +2,7 @@
 // town markers tools/refresh_conflicts.mjs can read from each, and the legend lines (marker image -> side) each template shows.
 // Reads raw wikitext only (robots.txt allows /wiki/<page>?action=raw). Prints to the log; writes probe-out/wikimaps.json.
 import fs from "node:fs";
-const UA = "Mozilla/5.0 (AXIOM-OSAP conflict probe; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+const UA = "Mozilla/5.0 (AXIOM-OSAP conflict probe; +https://osap-app.github.io/)";
 const T = (process.env.WIKIMAPS || "").split("\n").map((s) => s.trim()).filter(Boolean);
 const titles = T.length ? T : JSON.parse(fs.readFileSync("tools/wikimap_candidates.json", "utf8"));
 async function raw(title) {
