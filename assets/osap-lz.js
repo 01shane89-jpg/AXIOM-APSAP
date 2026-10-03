@@ -432,7 +432,9 @@
   var CSS = "#lz-card{width:320px;max-width:calc(100vw - 80px);max-height:calc(100vh - 160px);overflow:auto;background:var(--surface,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.3);font-size:12.5px;line-height:1.4;padding:8px 10px}" +
     "#lz-card.lzdock{width:calc(100vw - 100px);max-width:none;max-height:45vh}" +
     "#lz-card h3{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:14px}#lz-card h3 .x,#lz-card h3 .osplit-btn{margin-left:auto}#lz-card h3 .osplit-btn+.x{margin-left:0}" +
-    "#lz-dock #lz-card{padding:10px 14px;border:0;font-size:13px}#lz-dock #lz-card h3{position:sticky;top:-10px;background:var(--surface,#fff);padding:6px 0;z-index:1}" +
+        /* the title bar (with the Half screen / Full window switch and Close) stays in view while the list scrolls, in both modes */
+    "#lz-card h3{position:sticky;top:-8px;background:var(--surface,#fff);padding:4px 0;margin-top:-4px;z-index:1}" +
+    "#lz-dock #lz-card{padding:10px 14px;border:0;font-size:13px}#lz-dock #lz-card h3{top:-10px;padding:6px 0;margin-top:0}" +
     "#lz-card button{font:inherit;font-size:12px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 8px;min-height:28px;cursor:pointer}" +
     "#lz-card button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:600}#lz-card button[aria-pressed=true]{background:#e3f2f4}" +
     "#lz-card select,#lz-card input[type=text]{font:inherit;font-size:12px;max-width:100%}" +
@@ -442,7 +444,10 @@
     "#lz-card ol{margin:6px 0;padding:0;list-style:none}#lz-card li{border-top:1px solid var(--line,#ddd);padding:5px 0;cursor:pointer}#lz-card li:hover{background:rgba(11,114,133,.07)}" +
     "#lz-card li b.n{display:inline-block;min-width:20px;text-align:center;border-radius:10px;color:#fff;background:#2e7d32;margin-right:5px}#lz-card li.c b.n{background:#e65100}" +
     "#lz-card .lzsm{font-size:11.5px;color:var(--muted,#555)}#lz-card .lztag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
-    ".lznum{background:none;border:0;box-shadow:none;color:#fff;font-weight:700;font-size:12px;text-shadow:0 0 3px #000,0 0 2px #000}.lznum:before{display:none}" +
+    /* candidate numbers on the map: a solid badge in the list's colours, no blurred text shadow, sized in whole pixels so it stays sharp */
+    ".leaflet-tooltip.lznum{box-sizing:border-box;min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:#2e7d32;border:2px solid #fff;color:#fff;" +
+    "font:700 13px/20px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums;text-align:center;text-shadow:none;box-shadow:0 1px 3px rgba(0,0,0,.45);" +
+    "-webkit-font-smoothing:antialiased}.leaflet-tooltip.lznum.c{background:#e65100}.leaflet-tooltip.lznum:before{display:none}" +
     ".lzpad{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1565c0;color:#fff;font:700 12px sans-serif;border:2px solid #fff;box-sizing:border-box}" +
     ".lzmask{image-rendering:pixelated}.lzpop p{margin:3px 0}.lzpop .tier{font-weight:600}";
   function style() { if (D.getElementById("lz-css")) return; var s = D.createElement("style"); s.id = "lz-css"; s.textContent = CSS; D.head.appendChild(s); }
@@ -546,7 +551,7 @@
     r.cands.forEach(function (k) {
       var col = k.caution ? "#e65100" : "#2e7d32";
       var c = L.circle([k.lat, k.lon], { pane: "lzpane", renderer: rend, radius: r.size / 2, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.3, lgk: "lz", lgl: "Candidate LZ" })
-        .bindPopup(popHtml(k), { maxWidth: 320 }).bindTooltip(String(k.rank), { permanent: true, direction: "center", className: "lznum", interactive: false });
+        .on("click", function () { popFit(c); }).bindPopup(popHtml(k), { maxWidth: 320 }).bindTooltip(String(k.rank), { permanent: true, direction: "center", className: "lznum" + (k.caution ? " c" : ""), opacity: 1, interactive: false });
       c.addTo(layer); k._m = c;
     });
     r.pads.forEach(function (p) {
@@ -654,10 +659,21 @@
   }
   function tapEnd() { ST.arm = false; map.getContainer().style.cursor = ""; map.off("click", onTap); }
   function onTap(e) { tapEnd(); ST.poly = null; ST.o = [e.latlng.lat, L.Util.wrapNum(e.latlng.lng, [-180, 180], true)]; ST.err = ""; render(); find(); }
+  /* with the half screen panel up, a pop-up opens in the part of the map left clear, so the candidate and its pop-up are never
+     panned under the panel */
+  function popFit(m) {
+    var pp = m && m.getPopup && m.getPopup(); if (!pp) return;
+    var pad = split() && dock && !dock.hidden ? W.OSAP_SPLIT.clear(dock) : { tl: [0, 0], br: [0, 0] };
+    pp.options.autoPanPaddingTopLeft = L.point(pad.tl[0] + 8, pad.tl[1] + 8);
+    pp.options.autoPanPaddingBottomRight = L.point(pad.br[0] + 8, pad.br[1] + 8);
+    /* phone: the clear strip above the panel is short, so the pop-up takes at most half of it (scrolling inside) and the candidate,
+       centred there by OSAP_SPLIT.focus, stays in view under it */
+    pp.options.maxHeight = pad.br[1] ? Math.max(120, Math.round((map.getSize().y - pad.br[1]) / 2) - 40) : null;
+  }
   function onClick(e) {
     var b = e.target.closest("[data-lz]"), li = e.target.closest("[data-lzi]");
     if (e.target.closest("[data-osplit]")) { W.OSAP_SPLIT.set(!split()); var nb = card.querySelector("[data-osplit]"); if (nb) nb.focus(); return; }
-    if (li && ST.res) { var k = ST.res.cands[+li.getAttribute("data-lzi")]; if (k && k._m) { if (split()) W.OSAP_SPLIT.focus(k.lat, k.lon, Math.max(map.getZoom(), 15)); else map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); k._m.openPopup(); } return; }
+    if (li && ST.res) { var k = ST.res.cands[+li.getAttribute("data-lzi")]; if (k && k._m) { if (split()) W.OSAP_SPLIT.focus(k.lat, k.lon, Math.max(map.getZoom(), 15)); else map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); popFit(k._m); k._m.openPopup(); } return; }
     if (!b) return;
     var a = b.getAttribute("data-lz");
     if (a === "close") close();

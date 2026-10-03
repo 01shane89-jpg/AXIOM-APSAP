@@ -68,23 +68,37 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   ok(!(await area(p)) && /centre/.test(await p.textContent("#area-ctl .areahint")), "desktop: a click alone draws nothing, still drawing");
   const center = await ll(p, cx, cy), edge = await ll(p, cx + 150, cy);
   const hint = await mouseDrag(p, cx, cy, cx + 150, cy);
-  ok(/Radius [\d.]+ km \([\d.]+ nm\)/.test(hint), "desktop: radius shows while dragging: " + hint);
+  ok(/Radius [\d.,]+ (?:km|m|mi|ft|nm) · diameter [\d.,]+ (?:km|m|mi|ft|nm) · area [\d.,]+ (?:km²|ha)/.test(hint), "desktop: radius, diameter and area show while dragging: " + hint);
   const A = await area(p);
   ok(A && A.length === 64, "desktop: circle becomes a 64-point drawn area");
   const want = await dist(p, center, edge), got = A ? await dist(p, center, A[16]) : 0;
   ok(A && Math.abs(got - want) / want < 0.02, `desktop: every point is the radius from the centre (${Math.round(got)} m vs ${Math.round(want)} m)`);
   ok(await p.evaluate((c) => window.TSAP.areaApi.inPoly(c[0], c[1], window.TSAP.areaApi.area()), center), "desktop: the centre is inside the area");
   ok(await p.evaluate(() => !!document.querySelector('#area-ctl [data-area="save"]') && !!document.querySelector('#area-ctl [data-area="clear"]') && document.querySelectorAll(".areah").length === 6), "desktop: after drawing, Save, Delete and the edit handles are right there");
+  ok(/Drag a corner[\s\S]*Radius .* · diameter .* · area/.test(await p.textContent("#area-ctl .areahint")), "size: the edit panel gives radius, diameter and area");
   await p.click('#area-ctl [data-area="done"]');
   ok(/Summarise area/.test(await p.textContent("#area-ctl")), "desktop: Summarise area offered for the circle");
+  // the size label on the map: radius and area, true to the drawn radius (pi r^2 within 1%)
+  const szl = await p.evaluate(() => { const e = document.querySelector(".areasz span"); return e ? e.textContent : ""; });
+  const rm = /Radius ([\d.,]+) (km|m) · ([\d.,]+) (km²|ha)/.exec(szl);
+  const rM = rm ? parseFloat(rm[1].replace(/,/g, "")) * (rm[2] === "km" ? 1000 : 1) : 0, aM = rm ? parseFloat(rm[3].replace(/,/g, "")) * (rm[4] === "ha" ? 1e4 : 1e6) : 0;
+  ok(rm && Math.abs(rM - want) / want < 0.02, `size: map label shows the radius (${szl}; drawn ${Math.round(want)} m)`);
+  ok(rm && Math.abs(aM - Math.PI * want * want) / (Math.PI * want * want) < 0.03, `size: map label area matches pi r² (${Math.round(aM)} m² vs ${Math.round(Math.PI * want * want)} m²)`);
+  ok(await p.evaluate(() => { const e = document.querySelector(".areasz span"), r = e.getBoundingClientRect(), t = getComputedStyle(e).transform; return r.width > 40 && (t === "none" || !t); }), "size: label is drawn crisp (no scaling transform)");
+  // unit follows Measure: switch to miles and the label follows at once
+  await p.evaluate(() => window.OSAP_MEASURE.prefs({ unit: "mi" })); await p.waitForTimeout(100);
+  ok(/(mi|ft) · [\d.,]+ (sq mi|acres)/.test(await p.textContent(".areasz span")), "size: label follows the Measure unit (mi): " + await p.textContent(".areasz span"));
+  await p.evaluate(() => window.OSAP_MEASURE.prefs({ unit: "km" })); await p.waitForTimeout(100);
+  ok(/km|m/.test(await p.textContent(".areasz span")), "size: back to km");
   if (OUT) await p.screenshot({ path: OUT + "/desk-circle.png" });
   // square: corner to corner
   await p.click('#area-ctl [data-area="open"]'); await p.click('#area-ctl [data-area="rect"]');
   const a = await ll(p, cx - 120, cy - 80), b = await ll(p, cx + 100, cy + 90);
   const sh = await mouseDrag(p, cx - 120, cy - 80, cx + 100, cy + 90);
-  ok(/[\d.]+ km × [\d.]+ km/.test(sh), "desktop: width × height shows while dragging: " + sh);
+  ok(/[\d.,]+ (?:km|m|mi|ft|nm) × [\d.,]+ (?:km|m|mi|ft|nm) · area/.test(sh), "desktop: width × height and area show while dragging: " + sh);
   const S = await area(p);
   ok(S && S.length === 4, "desktop: square becomes a 4-corner drawn area");
+  ok(/[\d.,]+ (?:km|m|mi|ft|nm) × [\d.,]+ (?:km|m|mi|ft|nm) · [\d.,]+ (km²|ha)/.test(await p.textContent(".areasz span")), "size: map label gives the square's two sides and area: " + await p.textContent(".areasz span"));
   await p.click('#area-ctl [data-area="done"]');
   const near = (u, v) => Math.abs(u[0] - v[0]) < 1e-3 && Math.abs(u[1] - v[1]) < 1e-3;
   ok(S && near(S[0], a) && near(S[2], b) && near(S[1], [a[0], b[1]]) && near(S[3], [b[0], a[1]]), "desktop: corners are where the drag started and ended");
@@ -164,6 +178,11 @@ async function touchDrag(p, cdp, x0, y0, x1, y1) {
   await p.fill("#aoi-name", "Bridge"); await p.click('#aoi-form button[type="submit"]'); await p.waitForTimeout(300);
   const saved = await p.evaluate(() => window.OSAP_AOI.list(window.TSAP.country));
   ok(saved.length === 1 && saved[0].name === "Bridge" && saved[0].st && saved[0].st.fill === "#ff8800" && saved[0].st.line === "#112233" && saved[0].st.w === 3, "save: saved with its name and look " + JSON.stringify(saved[0] && saved[0].st));
+  await p.evaluate(() => { const x = document.querySelector("#aoidlg [data-aoi-x]"); if (x) x.click(); });
+  ok(saved[0] && !saved[0].st.kind, "size: a lasso area is saved with no circle/square kind");
+  ok(/Bridge · [\d.,]+ (km²|ha)/.test(await p.evaluate(() => [...document.querySelectorAll(".aoilbl")].map((x) => x.textContent).join(" "))), "size: the saved label gives its area");
+  await p.evaluate((id) => window.OSAP_AOI.open(id), saved[0].id); await p.waitForTimeout(200);
+  ok(/Perimeter [\d.,]+ (?:km|m) · area [\d.,]+ (km²|ha)/.test(await p.textContent("#aoidlg")), "size: the saved area's card gives its perimeter and area");
   await p.evaluate(() => { const x = document.querySelector("#aoidlg [data-aoi-x]"); if (x) x.click(); });
   // Delete: one tap on the shape's red button removes the shape and its saved copy; Undo brings both back
   const naiCount = () => p.evaluate(() => window.OSAP_AOI.list(window.TSAP.country).length);
