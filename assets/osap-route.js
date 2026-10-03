@@ -965,6 +965,9 @@ function main() {
           var surf = k.surface ? ", " + k.surface.toLowerCase() : "";
           c.push({ k: "lz", lz: k, cc: "", line: k.dist, i: { id: "lz:" + k.lat.toFixed(5) + "," + k.lon.toFixed(5), name: "LZ " + k.rank + " (" + k.clearD + " m clear)", lat: k.lat, lon: k.lon,
             kind: "Landing zone candidate", note: "Candidate from open data, verify on the ground. About " + k.clearD + " m of clear ground, average slope " + k.mean.toFixed(1) + "°, steepest " + k.max.toFixed(1) + "°" + surf + "." +
+              (k.cover ? " Land cover: " + k.cover.toLowerCase() + "." : "") +
+              (k.open ? k.axes.length ? " Clear approach and departure (10:1) along " + k.axes.map(function (d) { return ("00" + Math.round(d)).slice(-3) + "°/" + ("00" + Math.round(d + 180) % 360).slice(-3) + "°"; }).join(", ") + "." :
+                " Confined: no straight-through approach; in and out only from " + k.open.map(function (d) { return ("00" + Math.round(d)).slice(-3) + "°"; }).join(", ") + "." : "") +
               (k.near.length ? " Nearest obstacle: " + k.near[0].n.toLowerCase() + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir + "." : "") } });
         });
         var pad = r.pads.filter(function (x) { return x.kind !== "aerodrome"; })[0];
@@ -1069,7 +1072,7 @@ function main() {
       (i.hours ? "Open " + E(i.hours) + "<br>" : "") + (i.longest_runway && i.longest_runway.length_m ? (i.longest_runway.mapped ? "Longest mapped runway about " : "Longest runway ") + E(i.longest_runway.length_m) + " m" + (i.longest_runway.surface ? " (" + E(i.longest_runway.surface) + ")" : "") + "<br>" : i.surface ? "Surface " + E(i.surface) + "<br>" : "") +
       '<code>' + E(G.mgrs(i.lat, i.lon, 5) || "") + "</code>" + (safeUrl(i.src) ? ' · <a href="' + E(i.src) + '" target="_blank" rel="noopener">source</a>' : "") + "</div>" +
       ((ev.notes || []).length ? '<p class="obs">' + ev.notes.map(E).join(" ") + "</p>" : "") +
-      (o.cand.k === "lz" || o.cand.k === "airfields" ? '<p class="obs">' + (o.cand.k === "lz" ? "Landing zones are worked out from open elevation and OpenStreetMap obstacle data (Find LZ): a candidate, not a surveyed LZ. Check it on imagery and on the ground before use." :
+      (o.cand.k === "lz" || o.cand.k === "airfields" ? '<p class="obs">' + (o.cand.k === "lz" ? "Landing zones are worked out from open elevation, OpenStreetMap obstacles and 10 m satellite land cover (Find LZ): a candidate, not a surveyed LZ. Check it on imagery and on the ground before use." :
         "Airfields come from OpenStreetMap (any size, including airstrips, heliports and military fields) and the OurAirports reference list. Mapped is not open: confirm status, access and runway condition.") + "</p>" : "") +
       (r && r.xc ? '<p class="obs"><b>Cross-country line, an estimate.</b> Worked out in this browser on a ' + E(r.cellM) + " m grid from open elevation (AWS Terrain Tiles) and JRC Global Surface Water: it keeps off the sea and slopes over 40°, weighs each slope by Tobler's hiking rule at off-path pace, and crosses lakes and rivers only where it must (WX below; each needs a bridge, ford or boat). " +
         "About " + E(r.climb || 0) + " m of climb in all. It does not see forest, crops, swamp, walls, fences, private or military land, mines or small streams. Check it on imagery and the Ground mobility overlay.</p>" : "") +

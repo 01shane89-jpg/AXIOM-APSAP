@@ -5,7 +5,8 @@
 // north-south, and a mapped helipad.
 // Checks: no toolbar button; the long-press "Find LZ" and Area > Landing zones open it; a search finds candidates, every one
 // outside forest, village, lake and the steep ground, clear of the power line and the house by at least the LZ radius;
-// the pitch inside the village is found; each candidate pop-up says "candidate from open data, verify on the ground" and
+// a 100 m LZ on the pitch inside the village is confined by the houses (10 to 1 approach) and a 50 m one is found there; every
+// candidate has a clear approach; LZ sizes are the pathfinder sizes; roads from residential up block, tracks do not; each candidate pop-up says "candidate from open data, verify on the ground" and
 // gives an MGRS grid; the helipad is listed; a bigger LZ finds fewer; a failed Overpass request is reported as a failure
 // with no candidates; the distance transform matches brute force; closing removes the marks; no page errors.
 // Run from the repo root: node tests/lz_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -110,12 +111,12 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
     }
     return true;
   }), "desktop: distance transform matches brute force");
-  ok(await p.evaluate(() => { const f = window.OSAP_LZ.obCls; return f({ power: "line" })[0] === 3 && f({ building: "yes" })[0] === 1 && f({ landuse: "forest" })[0] === 2 && f({ landuse: "farmland" }) === null && window.OSAP_LZ.surfCls({ leisure: "pitch" }) === 3; }), "desktop: obstacle and surface classes");
+  ok(await p.evaluate(() => { const f = window.OSAP_LZ.obCls; return f({ power: "line" })[0] === 3 && f({ building: "yes" })[0] === 1 && f({ landuse: "forest" })[0] === 2 && f({ landuse: "farmland" }) === null && window.OSAP_LZ.surfCls({ leisure: "pitch" }) === 3 && f({ highway: "residential" })[0] === 12 && f({ highway: "track" }) === null && f({ highway: "unclassified" }) === null; }), "desktop: obstacle and surface classes (roads from residential up block, tracks do not)");
   ok(await p.evaluate(() => !/maxsize/.test(window.OSAP_LZ.query([13.7, 100.4, 13.8, 100.6]))), "desktop: Overpass query declares no [maxsize]");
 
   await p.evaluate((c) => window.OSAP_LZ.at(c), C0);
   await done(p);
-  const st = await p.evaluate(() => { const s = window.OSAP_LZ.state(); return { err: s.err, cands: s.res ? s.res.cands.map((k) => ({ lat: k.lat, lon: k.lon, clearD: k.clearD, mean: k.mean, max: k.max, near: k.near, surface: k.surface })) : [], pads: s.res ? s.res.pads : [] }; });
+  const st = await p.evaluate(() => { const s = window.OSAP_LZ.state(); return { err: s.err, cands: s.res ? s.res.cands.map((k) => ({ lat: k.lat, lon: k.lon, clearD: k.clearD, mean: k.mean, max: k.max, near: k.near, surface: k.surface, open: k.open, axes: k.axes })) : [], pads: s.res ? s.res.pads : [] }; });
   ok(!st.err && st.cands.length >= 3, "desktop: search finds candidates (" + st.cands.length + ")" + (st.err ? " " + st.err : ""));
   const R = 50;
   const bad = st.cands.filter((k) => { const p0 = [k.lat, k.lon];
@@ -125,7 +126,10 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   const nearLine = st.cands.filter((k) => k.lat > 13.744 && k.lat < 13.768 && metres([k.lat, k.lon], [k.lat, LINE_LON]) < R + 10);
   ok(nearLine.length === 0, "desktop: every candidate is clear of the power line by the LZ radius plus its margin " + JSON.stringify(nearLine));
   ok(st.cands.every((k) => metres([k.lat, k.lon], HOUSE) >= R + 10), "desktop: every candidate is clear of the house");
-  ok(st.cands.some((k) => inBox([k.lat, k.lon], 13.7383, 100.4965, 13.7400, 100.4983)), "desktop: the sports pitch inside the village is found " + JSON.stringify(st.cands.map((k) => [+k.lat.toFixed(4), +k.lon.toFixed(4), k.clearD, +k.mean.toFixed(1)])));
+  const onPitch = st.cands.filter((k) => inBox([k.lat, k.lon], 13.7383, 100.4965, 13.7400, 100.4983));
+  ok(onPitch.every((k) => !k.axes.length && k.open.length <= 3), "desktop: a 100 m LZ on the sports pitch inside the village is confined by the houses round it (10 to 1): no straight-through axis " + JSON.stringify(onPitch.map((k) => k.open)));
+  ok(st.cands.every((k) => k.open && k.open.length >= 1), "desktop: every candidate has at least one clear approach direction");
+  ok(st.cands.some((k) => k.axes && k.axes.length >= 1), "desktop: open farmland gives a straight-through approach axis");
   ok(st.cands.some((k) => k.surface === "Farmland"), "desktop: a candidate on the farmland says so");
   ok(st.cands.every((k) => k.clearD >= 100 && k.max <= 7.01), "desktop: every candidate is at least 100 m clear with slope within 7 degrees");
   ok(st.cands.some((k) => k.near.some((o) => o.n === "Power or cable line")), "desktop: nearby power line is reported in a candidate");
@@ -137,6 +141,7 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   ok(/candidate from open data, verify on the ground/.test(pop), "desktop: pop-up says candidate from open data, verify on the ground");
   ok(/Grid:\s*47P\s?[A-Z]{2}\s?\d{5}\s?\d{5}/.test(pop), "desktop: pop-up gives an MGRS grid (" + (pop.match(/Grid:[^C]*/) || [""])[0].trim() + ")");
   ok(/Slope:.*average.*steepest/.test(pop) && /Clear ground: about \d+ m across/.test(pop), "desktop: pop-up gives slope and clear size");
+  ok(/Approach and departure \(10:1 clearance\): (clear straight through along \d{3}°–\d{3}°|confined)/.test(pop), "desktop: pop-up gives the approach and departure directions (" + (pop.match(/Approach and departure[^.]*/) || [""])[0].slice(0, 120) + ")");
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content [data-keep-pop] [data-lzcopy]")), "desktop: pop-up keeps its Copy button");
   await p.check("#lz-mask"); await p.waitForTimeout(300);
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-lzpane-pane img.lzmask")), "desktop: Show blocked ground draws the mask");
@@ -146,6 +151,11 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   await p.selectOption("#lz-d", "250"); await p.click('#lz-card [data-lz="find"]'); await done(p);
   const big = await p.evaluate(() => window.OSAP_LZ.state().res.cands.map((k) => k.clearD));
   ok(big.length <= st.cands.length && big.every((d) => d >= 250), "desktop: a 250 m LZ finds " + big.length + ", each at least 250 m clear");
+  /* a size 3 (UH-60, 50 m) LZ fits the pitch with room to approach over the houses */
+  await p.selectOption("#lz-d", "50"); await p.click('#lz-card [data-lz="find"]'); await done(p);
+  const small = await p.evaluate(() => window.OSAP_LZ.state().res.cands.map((k) => ({ lat: k.lat, lon: k.lon, open: k.open })));
+  ok(small.some((k) => inBox([k.lat, k.lon], 13.7383, 100.4965, 13.7400, 100.4983)), "desktop: a 50 m LZ on the sports pitch inside the village is found " + JSON.stringify(small.map((k) => [+k.lat.toFixed(4), +k.lon.toFixed(4)])));
+  ok(await p.evaluate(() => [...document.querySelectorAll("#lz-d option")].map((o) => o.value).join(",") === "25,35,50,80,100,150,250"), "desktop: LZ sizes are the pathfinder sizes 1 to 5 plus larger areas");
   await p.selectOption("#lz-d", "100");
 
   /* Area menu: Landing zones searches inside the drawn area */

@@ -7,20 +7,33 @@
      30 m detail in most of the world, so a ditch or a bank narrower than that is not seen), measured across about 60 m so
      the model's own noise (it includes some tree and roof height) is not read as steep ground;
    - obstacles come from OpenStreetMap for the area (one Overpass request, POST so the service worker never caches it):
-     buildings, trees and forest, power and cable lines, masts and towers, wind turbines, water, wetland, railways, walls,
-     fences and hedges, and built-up land use (where buildings may be unmapped). Sports pitches, parks and airfields inside
+     buildings, trees and forest, power and cable lines, masts and towers, wind turbines, water, wetland, railways, roads
+     from residential up (street lights, signs, traffic; tracks and unclassified rural roads are not blocked), walls, fences
+     and hedges, and built-up land use (where buildings may be unmapped). Sports pitches, parks and airfields inside
      built-up land are kept open. Each obstacle is drawn with a small safety margin (wires 10 m each side);
+   - satellite land cover adds what OpenStreetMap often leaves out (unmapped bases, villages and tree lines): the Esri / Impact
+     Observatory Sentinel-2 10 m land cover (keyless ArcGIS image service, the 2024 map) for the same window, where built-up
+     land, trees, water and flooded vegetation are blocked like their mapped kinds. It is a classification of 10 m pixels, so a
+     single building, shed or lone tree can still be missed; if it does not load the search goes on with OpenStreetMap alone and
+     says so;
    - a cell is blocked when it holds an obstacle, is steeper than the chosen limit, or is sea or has no elevation. The
      distance from every open cell to the nearest blocked cell (an exact Euclidean distance transform) is how much clear
-     ground there is round it; a cell is a candidate centre when that clear radius is at least half the chosen LZ size;
-   - candidates are ranked by clear size, average slope, surface (mapped pitch or farmland helps, paddy hurts) and distance
-     from the search point: the best spot in each separate patch of open ground first, then more spots in the biggest
+     ground there is round it; a cell is a candidate centre when that clear radius is at least half the chosen LZ size, so
+     the whole circle is clear in every direction (a road, a track or a strip between buildings narrower than the LZ never
+     qualifies, however long). Sizes are the Army pathfinder landing point diameters (sizes 1 to 5: 25, 35, 50, 80, 100 m)
+     plus larger areas for several aircraft;
+   - approach and departure: from the LZ edge out to APPR metres in 16 directions, a corridor is clear when nothing is
+     closer than 10 times its height (the planning obstacle clearance ratio). Heights are assumed per kind (HT) and terrain
+     counts by its rise above the LZ. A spot with no clear direction at all is boxed in and dropped; one with a clear
+     straight-through axis ranks above a confined one (in and out the same way);
+   - candidates are ranked by clear size, average slope, surface (mapped pitch or farmland helps, paddy hurts; satellite
+     crops, bare ground and snow count against), clear approach axes and distance from the search point: the best spot in each separate patch of open ground first, then more spots in the biggest
      patches, up to eight.
    Every candidate is labelled "candidate from open data, verify on the ground". Its pop-up gives the grid (MGRS),
-   clear size, average and steepest slope, elevation, mapped surface, the nearest obstacles beyond its edge with direction,
+   clear size, average and steepest slope, elevation, mapped surface and land cover, approach and departure directions, the nearest obstacles beyond its edge with direction,
    and the distance and bearing from the search point. Mapped helipads and airfields in the search area are listed too.
    A failed elevation or OpenStreetMap request is reported as a failure, never as "no landing zone". The search is the
-   analyst's own working: nothing is saved except the settings, and nothing is sent anywhere but the two public hosts. */
+   analyst's own working: nothing is saved except the settings, and nothing is sent anywhere but the three public hosts. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -29,16 +42,27 @@
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
   var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var ZA = 14, ZD = 13, KEY = "osap-lz", MAXC = 8, NEAR = 300;
+  var LC = "https://ic.imagery1.arcgis.com/arcgis/rest/services/Sentinel2_10m_LandCover/ImageServer/exportImage", LC_YEAR = 2024;
+  /* Esri land cover class -> obstacle class here: 1 water, 2 trees, 4 flooded vegetation, 7 built area */
+  var LC_OB = { 1: 4, 2: 2, 4: 9, 7: 6 };
+  var LC_NAME = { 5: "Crops (check height)", 8: "Bare ground (dust, brownout)", 9: "Snow or ice (whiteout)", 10: "Cloud in the image (not seen)", 11: "Rangeland, grass or scrub" };
+  var LC_B = { 5: -0.03, 8: -0.03, 9: -0.1, 10: -0.05 };
   var RADII = [0.5, 1, 2, 3, 5];
-  var SIZES = [[50, "50 m: light helicopter"], [100, "100 m: single ship"], [150, "150 m: heavy helicopter"], [250, "250 m: two ships"]];
+  /* clear landing point diameters: the Army pathfinder sizes 1 to 5 (FM 3-21.38), then larger areas for several aircraft */
+  var SIZES = [[25, "25 m: size 1, light (MH-6, OH-58)"], [35, "35 m: size 2 (UH-1, AH-64)"], [50, "50 m: size 3 (UH-60)"], [80, "80 m: size 4 (CH-47)"],
+    [100, "100 m: size 5 (CH-47 with sling load)"], [150, "150 m: several aircraft"], [250, "250 m: many aircraft"]];
   var SLOPES = [[3, "3°"], [7, "7°: landing limit"], [10, "10°"], [15, "15°: caution limit"]];
   /* obstacle classes: the code is stored in the red channel of the obstacle canvas (code x 20) */
   var OB = [null,
     { n: "Building", tall: 1, c: [198, 40, 40] }, { n: "Trees", tall: 1, c: [46, 125, 50] }, { n: "Power or cable line", tall: 1, c: [123, 31, 162] },
     { n: "Water", c: [21, 101, 192] }, { n: "Mast, tower or wind turbine", tall: 1, c: [123, 31, 162] }, { n: "Built-up area", c: [198, 40, 40] },
     { n: "Railway", c: [93, 64, 55] }, { n: "Wall, fence or hedge", c: [93, 64, 55] }, { n: "Wetland", c: [21, 101, 192] },
-    { n: "Too steep", c: [239, 108, 0] }, { n: "Sea or no elevation", c: [21, 101, 192] }];
-  var STEEP = 10, SEA = 11;
+    { n: "Too steep", c: [239, 108, 0] }, { n: "Sea or no elevation", c: [21, 101, 192] }, { n: "Road (poles, signs, traffic)", tall: 1, c: [93, 64, 55] }];
+  var STEEP = 10, SEA = 11, ROAD = 12;
+  /* approach and departure: the planning obstacle clearance ratio of 10 to 1 (1 m of obstacle height needs 10 m of distance
+     from the LZ edge), checked out to APPR metres in 16 directions. Heights in metres assumed for each obstacle class, since
+     open data rarely has them; terrain higher than the LZ counts by its own height. */
+  var APPR = 300, RATIO = 10, HT = [0, 8, 15, 20, 0, 50, 6, 6, 3, 0, 0, 0, 8];
   var SURF = [null, "Farmland", "Grass or meadow", "Sports pitch or park", "Rice paddy (soft when wet)", "Scrub (low bushes)", "Sand or beach", "Bare rock or scree", "Airfield, runway or apron", "Helipad"];
   var SURFB = [0, 0.05, 0.05, 0.1, -0.1, -0.05, 0, -0.05, 0.1, 0.12];
 
@@ -125,6 +149,7 @@
       'way["power"~"^(line|minor_line)$"];way["aerialway"];way["communication"="line"];way["telecom"="line"];' +
       'nwr["man_made"~"^(mast|tower|chimney|communications_tower|water_tower|antenna|flagpole|silo)$"];nwr["power"="generator"]["generator:source"="wind"];' +
       'way["railway"~"^(rail|light_rail|tram|narrow_gauge|subway|monorail)$"]["tunnel"!="yes"];' +
+      'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|living_street)(_link)?$"]["tunnel"!="yes"];' +
       'way["barrier"~"^(wall|fence|hedge|city_wall|retaining_wall|guard_rail)$"];' +
       'nwr["leisure"~"^(pitch|park|recreation_ground|golf_course|stadium|sports_centre)$"];nwr["aeroway"~"^(helipad|heliport|aerodrome|runway|apron|taxiway)$"];' +
       ");out geom qt;";
@@ -165,6 +190,7 @@
     if (t.natural === "wetland") return [9, "a", 0];
     if (/^(residential|industrial|commercial|retail|construction|quarry|landfill|cemetery|allotments|greenhouse_horticulture|garages)$/.test(t.landuse || "")) return [6, "a", 0];
     if (t.railway) return [7, "l", 6];
+    if (/^(motorway|trunk|primary|secondary|tertiary|residential|living_street)(_link)?$/.test(t.highway || "")) return [ROAD, "l", /^(motorway|trunk|primary)/.test(t.highway) ? 12 : 8];
     if (t.barrier) return [8, "l", 1.5];
     return null;
   }
@@ -239,7 +265,7 @@
     items.forEach(function (it) { if (!it.sf) return; var gm = geomOf(it.e); if (gm && (gm.closed || gm.pt)) paint(h, it.sf, "a", it.sf === 9 && gm.pt ? 10 : 0, gm); });
     items.forEach(function (it) { if (!it.ob || it.ob[0] !== 6) return; var gm = geomOf(it.e); if (gm) { paint(g, 6, "a", 0, gm); counts.any++; } });
     items.forEach(function (it) { if (!it.sf || [3, 8, 9].indexOf(it.sf) < 0 || it.ob) return; var gm = geomOf(it.e); if (gm && gm.closed) paint(g, 0, "a", 0, gm, true); });
-    var ORDER = [9, 4, 2, 7, 8, 3, 5, 1];
+    var ORDER = [9, 4, 2, 7, ROAD, 8, 3, 5, 1];
     ORDER.forEach(function (code) {
       items.forEach(function (it) {
         if (!it.ob || it.ob[0] !== code) return; var gm = geomOf(it.e); if (!gm) return;
@@ -250,7 +276,7 @@
     var od = g.getImageData(0, 0, win.w, win.h).data, sd = h.getImageData(0, 0, win.w, win.h).data, n = win.w * win.h;
     var OBC = new Uint8Array(n), SFC = new Uint8Array(n);
     for (var i = 0; i < n; i++) {
-      if (od[i * 4 + 3] >= 100) OBC[i] = Math.max(1, Math.min(9, Math.round(od[i * 4] / 20)));
+      if (od[i * 4 + 3] >= 100) { var oc = Math.max(1, Math.min(ROAD, Math.round(od[i * 4] / 20))); OBC[i] = oc === STEEP || oc === SEA ? 1 : oc; }
       if (sd[i * 4 + 3] >= 100) SFC[i] = Math.max(1, Math.min(9, Math.round(sd[i * 4] / 20)));
     }
     return { OBC: OBC, SFC: SFC, counts: counts };
@@ -282,6 +308,8 @@
   function analyse(win, E, els, o) {
     var w = win.w, h = win.h, n = w * h, cell = win.cell, R = o.size / 2, tanMax = Math.tan(o.slope * Math.PI / 180);
     var rs = rasterise(win, els), OBC = rs.OBC, SFC = rs.SFC;
+    /* satellite land cover blocks built-up land, trees and water that OpenStreetMap left open */
+    if (o.lc) { var lcn = 0; for (i = 0; i < n; i++) { var lo = LC_OB[o.lc[i]]; if (lo && !OBC[i]) { OBC[i] = lo; lcn++; } } rs.counts.lc = Math.round(lcn * cell * cell / 1e4); rs.counts.lcOk = 1; }
     var SL = new Float32Array(n), K = Math.max(2, Math.round(30 / cell)), blocked = new Uint8Array(n), x, y, i;
     for (y = 0; y < h; y++) for (x = 0; x < w; x++) {
       i = y * w + x;
@@ -310,7 +338,7 @@
       if (PC ? !inPoly(x + 0.5, y + 0.5, PC) : dd > radC) continue;
       var clr = Math.sqrt(D2[i]) - 0.5; if (clr < need) continue;
       any++;
-      SC[i] = Math.min(clr / need, 2.5) / 2.5 - 0.6 * (meanSq(x, y) / o.slope) - 0.25 * Math.min(1, dd / Math.max(radC, 1)) + SURFB[SFC[i]];
+      SC[i] = Math.min(clr / need, 2.5) / 2.5 - 0.6 * (meanSq(x, y) / o.slope) - 0.25 * Math.min(1, dd / Math.max(radC, 1)) + SURFB[SFC[i]] + (o.lc ? LC_B[o.lc[i]] || 0 : 0);
     }
     /* one candidate per separate patch of open ground first (best patch first), then more from the biggest patches */
     var LB = new Int32Array(n), stack = new Int32Array(n), best = [], picks = [];
@@ -327,19 +355,46 @@
       }
       best.push(bi);
     }
+    /* which of 16 directions (every 22.5°, from north) give a clear approach or departure: a corridor 1.4 times the LZ radius
+       wide, from the LZ edge out to APPR, with no obstacle closer than RATIO times its assumed height (terrain: its rise above
+       the LZ centre, less 3 m for the elevation model's noise) */
+    var steps = Math.ceil(APPR / cell);
+    function approach(bx, by) {
+      var out = [], e0 = E[by * w + bx];
+      for (var k = 0; k < 16; k++) {
+        var a = k * Math.PI / 8, ux = Math.sin(a), uy = -Math.cos(a), clear = true;
+        for (var l = -1; l <= 1 && clear; l++) for (var st = 0; st <= steps; st++) {
+          var dd = need + st, px = Math.round(bx + ux * dd - uy * l * need * 0.7), py = Math.round(by + uy * dd + ux * l * need * 0.7);
+          if (px < 0 || py < 0 || px >= w || py >= h) break;
+          var j = py * w + px, ht = HT[OBC[j]] || 0, rise = E[j] - e0 - 3;
+          if (rise > ht) ht = rise;
+          if (ht > 0 && st * cell < RATIO * ht) { clear = false; break; }
+        }
+        out.push(clear);
+      }
+      return out;
+    }
+    var rejected = 0;
     function take(b) {
       var bx = b % w, by = (b - bx) / w, br = Math.sqrt(D2[b]) - 0.5, sup = Math.max(br + need, 2 * need), s0 = Math.ceil(sup);
-      picks.push({ x: bx, y: by, clr: br, sc: SC[b] });
+      var dirs = approach(bx, by), axes = [], open = [];
+      for (var k = 0; k < 16; k++) { if (dirs[k]) open.push(k * 22.5); if (k < 8 && dirs[k] && dirs[k + 8]) axes.push(k * 22.5); }
+      if (!open.length) {
+        /* boxed in: no way in or out at 10 to 1. Drop the spot (and a little round it) and let the search look elsewhere */
+        rejected++; var s1 = Math.ceil(need / 2);
+        for (var y1 = Math.max(0, by - s1); y1 <= Math.min(h - 1, by + s1); y1++) for (var x1 = Math.max(0, bx - s1); x1 <= Math.min(w - 1, bx + s1); x1++) if ((x1 - bx) * (x1 - bx) + (y1 - by) * (y1 - by) <= s1 * s1) SC[y1 * w + x1] = -9;
+        return;
+      }
+      picks.push({ x: bx, y: by, clr: br, sc: SC[b] + 0.15 * axes.length / 8 - (axes.length ? 0 : 0.15), axes: axes, open: open });
       /* drop every cell within reach of this one, so the next pick from the same patch is somewhere else in it */
       for (var yy = Math.max(0, by - s0); yy <= Math.min(h - 1, by + s0); yy++) for (var xx = Math.max(0, bx - s0); xx <= Math.min(w - 1, bx + s0); xx++) if ((xx - bx) * (xx - bx) + (yy - by) * (yy - by) <= sup * sup) SC[yy * w + xx] = -9;
     }
-    best.sort(function (a, b) { return SC[b] - SC[a]; }).slice(0, MAXC).forEach(function (b) { if (SC[b] > -9) take(b); });
-    while (picks.length < MAXC) {
-      var bb = -1, bs = -9;
-      for (i = 0; i < n; i++) { if (SC[i] > bs) { bs = SC[i]; bb = i; } }
-      if (bb < 0) break;
-      take(bb);
-    }
+    best.sort(function (a, b) { return SC[b] - SC[a]; }).slice(0, MAXC).forEach(function (b) { if (SC[b] > -9 && picks.length < MAXC) take(b); });
+    /* then the best cells left, best first (SC only ever drops to -9, so one sort holds) */
+    var order = [];
+    for (i = 0; i < n; i++) if (SC[i] > -9) order.push(i);
+    order.sort(function (a, b) { return SC[b] - SC[a]; });
+    for (var oi = 0; oi < order.length && picks.length < MAXC && rejected < 400; oi++) if (SC[order[oi]] > -9) take(order[oi]);
     picks.sort(function (a, b) { return b.sc - a.sc; });
     var nearC = Math.ceil((R + NEAR) / cell);
     var cands = picks.map(function (p, k) {
@@ -354,7 +409,8 @@
       var list = Object.keys(near).map(function (c) { return { c: +c, n: OB[c].n, m: near[c].m, dir: near[c].dir, tall: !!OB[c].tall }; }).filter(function (o2) { return o2.m <= NEAR; }).sort(function (a, b) { return a.m - b.m; });
       var mean = cnt ? sum / cnt : 0;
       return { rank: k + 1, lat: ll[0], lon: ll[1], clearD: Math.round(2 * (p.clr + 0.5) * cell / 5) * 5, mean: mean, max: mx, elev: Math.round(E[p.y * w + p.x]), relief: Math.round(emax - emin),
-        surface: SURF[SFC[p.y * w + p.x]] || "", near: list, dist: hav(o.o, ll), brg: brg(o.o, ll), caution: mx > 7 || mean > 7 };
+        surface: SURF[SFC[p.y * w + p.x]] || "", cover: o.lc ? LC_NAME[o.lc[p.y * w + p.x]] || "" : "", axes: p.axes, open: p.open,
+        near: list, dist: hav(o.o, ll), brg: brg(o.o, ll), caution: mx > 7 || mean > 7 };
     });
     var pads = [];
     (els || []).forEach(function (e) {
@@ -365,7 +421,7 @@
       pads.push({ lat: c[0], lon: c[1], kind: t.aeroway, name: t.name || t["name:en"] || "", dist: hav(o.o, c), brg: brg(o.o, c), osm: "https://www.openstreetmap.org/" + e.type + "/" + e.id });
     });
     pads.sort(function (a, b) { return a.dist - b.dist; });
-    return { cands: cands, pads: pads.slice(0, 10), open: any, counts: rs.counts, OBC: OBC };
+    return { cands: cands, pads: pads.slice(0, 10), open: any, boxed: rejected, counts: rs.counts, OBC: OBC };
   }
 
   /* ---------- the card, the map marks ---------- */
@@ -434,7 +490,7 @@
       (r ? '<label><input type="checkbox" id="lz-mask"' + (S.mask ? " checked" : "") + "> Show blocked ground</label>" : "") + "</div>";
     if (ST.msg || ST.err) h += '<p class="lzmsg' + (ST.err ? " err" : "") + '" aria-live="polite">' + esc(ST.err || ST.msg) + "</p>";
     if (r) {
-      if (!r.cands.length) h += '<p class="lzmsg">No open, flat ground of ' + S.d + " m across with slope under " + S.s + "° was found " + (ST.poly ? "in the drawn area" : "within " + S.r + " km") + ". Try a smaller LZ size, a wider radius or a higher slope limit.</p>";
+      if (!r.cands.length) h += '<p class="lzmsg">No open, flat ground of ' + S.d + " m across with slope under " + S.s + "° and a clear approach was found " + (ST.poly ? "in the drawn area" : "within " + S.r + " km") + "." + (r.boxed ? " " + r.boxed + " open spot" + (r.boxed === 1 ? " was" : "s were") + " boxed in by trees, buildings or wires with no approach at 10 to 1." : "") + " Try a smaller LZ size, a wider radius or a higher slope limit.</p>";
       else h += '<ol>' + r.cands.map(function (k) {
         return '<li data-lzi="' + (k.rank - 1) + '"' + (k.caution ? ' class="c"' : "") + '><b class="n">' + k.rank + '</b><span class="lzpt">' + esc(grid(k.lat, k.lon)) + "</span><br>" +
           '<span class="lzsm">Clear about ' + k.clearD + " m · slope " + k.mean.toFixed(1) + "° avg, " + k.max.toFixed(1) + "° max · " + esc(fmtKm(k.dist)) + " " + Math.round(k.brg) + "°" +
@@ -443,7 +499,7 @@
       if (r.pads.length) h += '<p class="lzsm"><b>Mapped helipads and airfields:</b> ' + r.pads.map(function (p) { return esc((p.name || (p.kind === "aerodrome" ? "Airfield" : "Helipad")) + " " + fmtKm(p.dist) + " " + Math.round(p.brg) + "°"); }).join("; ") + "</p>";
       if (r.warn.length) h += '<p class="lzmsg err">' + r.warn.map(esc).join(" ") + "</p>";
       h += '<p class="lzsm">Candidates from open data: verify on the ground and on current imagery before use. Not checked: soil and surface firmness, crops, ' +
-        "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL).</p>" +
+        "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
         '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button><button type="button" data-lz="clear">Clear marks</button></div>';
     }
     c.innerHTML = h; c.hidden = false; syncDock();
@@ -466,10 +522,19 @@
       "<p><b>Clear ground:</b> about " + k.clearD + " m across (needs " + S.d + " m)</p>" +
       "<p><b>Slope:</b> " + k.mean.toFixed(1) + "° average, " + k.max.toFixed(1) + "° steepest (limit " + lim + "°)" + (k.caution ? ". Caution: over 7°, land upslope or hover" : "") + "</p>" +
       "<p><b>Elevation:</b> " + k.elev + " m (varies " + k.relief + " m across the LZ)</p>" +
-      "<p><b>Surface (OpenStreetMap):</b> " + esc(k.surface || "not mapped") + "</p>" +
+      "<p><b>Surface (OpenStreetMap):</b> " + esc(k.surface || "not mapped") + (k.cover ? "</p><p><b>Land cover (satellite, 10 m):</b> " + esc(k.cover) : "") + "</p>" +
+      "<p><b>Approach and departure (10:1 clearance):</b> " + esc(apprText(k)) + "</p>" +
       "<p><b>Nearest obstacles beyond the edge:</b> " + (k.near.length ? k.near.slice(0, 5).map(function (o) { return esc(o.n) + " " + Math.round(o.m) + " m " + o.dir + (o.tall && o.m < 150 ? " (tall: check approach)" : ""); }).join("; ") : "none mapped within " + NEAR + " m") + "</p>" +
       "<p><b>From search point:</b> " + esc(fmtKm(k.dist)) + ", " + Math.round(k.brg) + "° true</p>" +
-      '<p class="obs">Not checked: soil and surface firmness, crops, small trees, poles and wires missing from OpenStreetMap, approach and departure paths. Elevation about 30 m detail (AWS Terrain Tiles).</p></div>';
+      '<p class="obs">Approach paths assume heights (trees 15 m, buildings 8 m, built-up land 6 m, power lines 20 m, masts 50 m, roads 8 m) and look ' + APPR + " m out. " +
+      "Not checked: soil and surface firmness, crop height, rocks, stumps and holes, small trees, poles and wires missing from the data, wind. Elevation about 30 m detail (AWS Terrain Tiles).</p></div>";
+  }
+  function deg3(d) { return ("00" + Math.round(d) % 360).slice(-3); }
+  /* "clear along 045°–225°, 090°–270°" or "confined: way in and out only from 045°" */
+  function apprText(k) {
+    if (!k.open) return "not checked";
+    if (k.axes.length) return "clear straight through along " + k.axes.map(function (a) { return deg3(a) + "°–" + deg3(a + 180) + "°"; }).join(", ") + (k.axes.length < 8 ? "" : " (every direction)");
+    return "confined: no straight-through path; way in and out only from " + k.open.map(function (a) { return deg3(a) + "°"; }).join(", ") + " (land and leave the same way)";
   }
   function draw() {
     layer.clearLayers(); if (mask) { map.removeLayer(mask); mask = null; }
@@ -500,28 +565,50 @@
     return c.toDataURL("image/png");
   }
 
+  /* satellite land cover for every cell of the window (Uint8Array of Esri classes, 0 where none), or null when it did not load.
+     The image is asked for in Web Mercator on exactly the window's zoom 14 grid, one pixel per cell, nearest neighbour. */
+  function landcover(win) {
+    var S0 = 256 * Math.pow(2, ZA), WM = 40075016.686;
+    function mx(p) { return (p / S0 - 0.5) * WM; }
+    function my(p) { return (0.5 - p / S0) * WM; }
+    if (win.w > 4000 || win.h > 4000 || win.x0 < 0 || win.x0 + win.w > S0) return Promise.resolve(null);
+    var url = LC + "?bbox=" + [mx(win.x0), my(win.y0 + win.h), mx(win.x0 + win.w), my(win.y0)].map(function (v) { return v.toFixed(2); }).join(",") +
+      "&bboxSR=3857&imageSR=3857&size=" + win.w + "," + win.h + "&format=png&interpolation=RSP_NearestNeighbor&renderingRule=" +
+      encodeURIComponent('{"rasterFunction":"None"}') + "&time=" + Date.UTC(LC_YEAR, 0, 1) + "&f=image";
+    return loadImg(url).then(function (im) {
+      var c = D.createElement("canvas"); c.width = win.w; c.height = win.h;
+      var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(im, 0, 0, win.w, win.h);
+      var d = g.getImageData(0, 0, win.w, win.h).data, out = new Uint8Array(win.w * win.h), seen = 0;
+      for (var i = 0; i < out.length; i++) { if (d[i * 4 + 3] < 128) continue; out[i] = d[i * 4]; if (out[i]) seen++; }
+      return seen ? out : null;
+    }, function () { return null; });
+  }
+
   /* one search with no card or map marks: elevation and OpenStreetMap obstacles for the window round o, then analyse().
      Used by find() below and by Route > Evacuation route ("nearest landing zone"). prog(done, total) reports elevation tiles;
      busy() is called before the heavy work and may return false to stop. Resolves the analysis (cands best first, pads, warn,
      bounds) or rejects with "elevation: ..." or the Overpass failure; never resolves "no landing zone" for a failed request. */
   function scan(o, radius, size, slope, poly, prog, busy) {
-    var win = windowFor(o, radius + size / 2 + 60);
+    /* the window reaches APPR past the farthest LZ edge, so approach paths can be checked */
+    var win = windowFor(o, radius + size / 2 + APPR + 20);
     var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);
     var bbox = [se[0], nw[1], nw[0], se[1]];
     var osm = overpass(overpassQuery(bbox)).then(function (j) { return j.elements || []; });
     osm.catch(function () {});
-    var dem = demFor(win, prog);
-    return Promise.all([dem, osm]).then(function (v) {
+    var dem = demFor(win, prog), lc = landcover(win);
+    return Promise.all([dem, osm, lc]).then(function (v) {
       if (v[0].failed === v[0].tiles) throw new Error("elevation: no tile loaded");
       if (busy && busy() === false) return null;
       return new Promise(function (r) { setTimeout(r, 30); }).then(function () {
-        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly });
+        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly, lc: v[2] });
         res.o = o; res.radius = radius; res.size = size; res.slope = slope; res.poly = poly; res.warn = []; res.win = win;
         if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
         /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
         var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
-        if (res.counts.bld < 5 * km2) res.warn.push(res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here, so houses, sheds and trees are probably missing: check every candidate on satellite imagery." :
-          "OpenStreetMap shows no buildings here, so mapping may be incomplete: check every candidate on satellite imagery for houses and trees.");
+        if (!v[2]) res.warn.push("Satellite land cover did not load, so built-up land and trees missing from OpenStreetMap are not seen: check every candidate on satellite imagery.");
+        if (res.counts.bld < 5 * km2) res.warn.push((res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here" : "OpenStreetMap shows no buildings here") +
+          (v[2] ? ", so built-up land and trees come from 10 m satellite land cover" + (res.counts.lc ? " (" + res.counts.lc + " ha blocked that OpenStreetMap left open)" : "") + ", which can miss a single building, shed or tree: check every candidate on satellite imagery." :
+            ", so houses, sheds and trees are probably missing: check every candidate on satellite imagery."));
         res.bounds = L.latLngBounds([se[0], nw[1]], [nw[0], se[1]]);
         return res;
       });
