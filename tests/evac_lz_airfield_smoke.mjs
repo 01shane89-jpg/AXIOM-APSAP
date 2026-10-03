@@ -118,7 +118,7 @@ async function open(o = {}) {
   return { ctx, p, errors, calls };
 }
 async function plan(p, to) {
-  await p.evaluate((s) => window.OSAP_ROUTETAB.seed([s]), START); await p.waitForTimeout(300);
+  await p.evaluate((s) => window.OSAP_ROUTETAB.seed([s]), START); await p.waitForTimeout(0);
   await p.selectOption("#rt-evto", to);
   await p.click('[data-rt="evac"]');
   try { await p.waitForFunction(() => document.querySelector("#rt-evres .rtalts") || document.querySelector("#rt-evres .rtbad"), null, { timeout: 90000 }); }
