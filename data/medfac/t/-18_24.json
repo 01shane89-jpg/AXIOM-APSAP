@@ -1,0 +1,11 @@
+[["n11397071585",-17.83852,25.03173,"bw",{"name":"Serondela Airstrip","aeroway":"aerodrome"}],
+["n4725440989",-17.80685,25.24094,"bw",{"name":"Prime Health Medical Kasane","amenity":"clinic","healthcare":"clinic","operator":"MRI Botswana","phone":"6251465","addr:housenumber":"28","addr:street":"Kanzungula Road","addr:postcode":"267","opening_hours":"Mo-Fr 08:00-19:00; Sa 09:00-13:00"}],
+["w1061354073",-17.79963,25.16061,"bw",{"name":"Plateau Clinic","amenity":"clinic","healthcare":"clinic","addr:street":"Sehudi Road","addr:city":"Kasane"}],
+["w1061364337",-17.7992,25.15364,"bw",{"name":"Kasane Health Post","amenity":"clinic","healthcare":"clinic","addr:street":"Kgotla Road","addr:city":"Kasane"}],
+["w1224468520",-17.79458,25.16491,"bw",{"aeroway":"helipad"}],
+["w1224468521",-17.79453,25.16509,"bw",{"aeroway":"helipad"}],
+["w1308460427",-17.80335,25.2373,"bw",{"name":"Kazungula Health Post","amenity":"clinic","healthcare":"clinic"}],
+["w192347460",-17.83121,25.16658,"bw",{"name":"Kasane Airport","operator":"Botswana Department of Civil Aviation","aeroway":"aerodrome","icao":"FBKE","iata":"BBK","aerodrome:type":"public"}],
+["w308745744",-17.98708,24.6465,"bw",{"name":"Mabele Health Post","amenity":"clinic","healthcare":"clinic","addr:housenumber":"805"}],
+["w411184930",-17.79245,25.15589,"bw",{"name":"New Hope Private Clinic","amenity":"clinic","healthcare":"clinic","addr:housenumber":"720","addr:street":"President Avenue","addr:city":"Kasane"}],
+["w586246653",-17.80126,25.14975,"bw",{"name":"Kasane Primary Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"President Avenue","addr:city":"Kasane"}]]

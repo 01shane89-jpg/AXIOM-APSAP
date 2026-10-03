@@ -1,0 +1,8 @@
+[["w1281179329",17.90393,-62.84354,"fr",{"aeroway":"helipad"}],
+["w1281179330",17.90384,-62.84375,"fr",{"aeroway":"helipad"}],
+["w24552620",17.90405,-62.84369,"fr",{"aeroway":"helipad"}],
+["w362249499",17.89783,-62.85222,"fr",{"name":"Confort Medical Saint-Barth","amenity":"clinic","healthcare":"clinic","addr:housenumber":"7","addr:street":"Rue de Pitéa","addr:city":"Gustavia"}],
+["w363204424",17.89428,-62.84919,"fr",{"name":"Cabinet d'ostéopathie","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"osteopathy","addr:housenumber":"36","addr:street":"Rue de l'Église","addr:city":"Gustavia"}],
+["w363340317",17.90096,-62.85102,"fr",{"amenity":"clinic","healthcare":"clinic","operator":"Collectivité de Saint-Barthélemy","operator:type":"government","osap:withheld":"1"}],
+["w399483982",17.89428,-62.85084,"fr",{"name":"Centre hospitalier Irénée de Bruyn","name:en":"Irénée de Bruyn Hospital","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Rue du Père Irénée de Bruyn","addr:city":"Gustavia"}],
+["w428461758",17.90429,-62.84405,"fr",{"name":"Aéroport de Saint-Barthélemy-Rémy de Haenen","operator":"Mairie de St Barthélemy","operator:type":"public","aeroway":"aerodrome","icao":"TFFJ","iata":"SBH","wikidata":"Q38805"}]]
