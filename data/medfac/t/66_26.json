@@ -1,0 +1,8 @@
+[["n1042032468",66.71265,27.15688,"fi",{"name":"Kemijärven lentokenttä","name:en":"Kemijarvi Airport","operator":"Kemijärven kaupunki","website":"https://lentopaikat.fi/kemijarvi-efkm/","aeroway":"aerodrome","icao":"EFKM","wikidata":"Q4810203"}],
+["n14234723110",67.69391,26.92681,"fi",{"aeroway":"helipad","surface":"asphalt"}],
+["n7152028331",67.4177,26.59277,"fi",{"name":"Terveystalo","amenity":"clinic","healthcare":"clinic","addr:housenumber":"18","addr:street":"Jäämerentie","addr:city":"Sodankylä","addr:postcode":"99600"}],
+["r3082812",67.39446,26.62,"fi",{"name":"Sodankylän lentoasema","name:en":"Sodankylä Airfield","operator":"Sodankylän kunta","website":"https://airportsodankyla.fi/","aeroway":"aerodrome","icao":"EFSO","iata":"SOT","aerodrome:type":"civil","wikidata":"Q268457"}],
+["w397232055",67.43569,26.56578,"fi",{"aeroway":"helipad","surface":"sand"}],
+["w397779024",67.122,27.48843,"fi",{"name":"Pelkosenniemen terveyskeskus","amenity":"hospital","healthcare":"hospital","addr:city":"Pelkosenniemi"}],
+["w823507158",67.41135,26.57408,"fi",{"name":"Sodankylän Hyvinvointikeskus Sopukka","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Sodankylän kunta","operator:type":"public","website":"https://www.sodankyla.fi/sosiaali-ja-terveyspalvelut/Pages/Terveyspalvelut.aspx","addr:housenumber":"4","addr:street":"Karistamontie","addr:city":"Sodankylä","addr:postcode":"99600"}],
+["w867279232",66.70524,27.44243,"fi",{"name":"Kemijärven terveyskeskus Lapponia","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Sairaalakatu","addr:city":"Kemijärvi","wikidata":"Q18661827"}]]

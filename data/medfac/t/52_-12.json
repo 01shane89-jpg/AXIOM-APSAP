@@ -1,0 +1,13 @@
+[["n13279709669",52.1427,-10.27015,"ie",{"name":"Ré Nua Natural Health Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n3381418414",52.13902,-10.26994,"ie",{"name":"Dingle Medical Centre","amenity":"clinic","healthcare":"clinic"}],
+["n3381418415",52.1402,-10.26728,"ie",{"name":"Clinic Cois Abhainn","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","phone":"+353669151465","addr:street":"The Mall","addr:city":"Dingle","addr:postcode":"V92PT99"}],
+["n3381418416",52.14164,-10.26494,"ie",{"name":"Dingle Doc","amenity":"clinic","healthcare":"clinic"}],
+["n6025853353",52.07527,-10.66106,"ie",{"operator":"Commissioners of Irish Lights","aeroway":"helipad"}],
+["w1163490467",53.41968,-10.14418,"ie",{"aeroway":"helipad"}],
+["w1242852720",53.48817,-10.03116,"ie",{"aeroway":"helipad"}],
+["w1242852721",53.48792,-10.02977,"ie",{"aeroway":"helipad"}],
+["w1242852733",53.48702,-10.02753,"ie",{"aeroway":"helipad"}],
+["w1378303748",53.70121,-10.09183,"ie",{"name":"Inishturk Island Helipad","aeroway":"helipad","surface":"concrete"}],
+["w215425623",53.6137,-10.22692,"ie",{"aeroway":"helipad","surface":"paved"}],
+["w221248586",52.13694,-10.26569,"ie",{"name":"Dingle Ambulance Station","emergency":"ambulance_station","operator":"HSE National Ambulance Service","website":"https://www.nationalambulanceservice.ie/"}],
+["w251051133",53.3995,-10.23416,"ie",{"aeroway":"helipad"}]]

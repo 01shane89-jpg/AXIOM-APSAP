@@ -1,0 +1,8 @@
+[["n11793105839",67.29202,28.15816,"fi",{"name":"Savukosken terveysasema","amenity":"clinic","healthcare":"clinic","addr:housenumber":"2","addr:street":"Uittotie","addr:city":"Savukoski","addr:postcode":"98800"}],
+["w150407122",66.11112,28.1542,"fi",{"name":"Posion terveyskeskus","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2","addr:street":"Sairaalantie","addr:city":"Posio","addr:postcode":"97900"}],
+["w234347841",66.28346,29.3226,"fi",{"aeroway":"helipad"}],
+["w430053054",66.82408,28.67161,"fi",{"name":"Sallan terveyskeskus","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Sallan kunta","phone":"+358 40 5207 390","addr:housenumber":"3","addr:street":"Jungintie","addr:city":"Salla","addr:postcode":"98900"}],
+["w440196269",66.94475,28.97433,"fi",{"aeroway":"helipad"}],
+["w443476883",67.75855,29.4591,"fi",{"aeroway":"helipad"}],
+["w531096842",66.94007,28.98106,"fi",{"aeroway":"helipad"}],
+["w566765764",67.76723,29.21264,"fi",{"aeroway":"helipad","surface":"concrete"}]]
