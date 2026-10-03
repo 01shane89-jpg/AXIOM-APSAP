@@ -1,14 +1,17 @@
-/* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves
-   as open data, with no key, account or login (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly).
-   Never private, unsecured or scraped cameras. Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
+/* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves,
+   openly, with no key, account or login: their open-data feeds or the camera lists on their own public traveller websites (511
+   sites) (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly). Never private or unsecured cameras.
+   Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
    closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
      draws a camera icon per camera, up to MAX at a time.
    - Hover (mouse) shows the latest still image; a tap or click opens it larger with the agency, licence and fetch time, a refresh
-     button, and the other views where the camera has several (Finland). Each image comes straight from the agency's server
+     button, and the other views where the camera has several (Finland, Ontario, Nebraska). The image shows "Loading" until it
+     has arrived, says so plainly when the agency gives none or does not answer in 20 s, and renews itself while the pop-up stays
+     open. Each image comes straight from the agency's server
      when it is opened, so it is as fresh as the agency makes it; Singapore's addresses change every minute, so the page asks
      data.gov.sg's keyless API for the current one.
-   window.OSAP_CAMS {set, state, inView}. */
+   window.OSAP_CAMS {set, state, inView, timing (tests)}. */
 (function () {
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
@@ -59,24 +62,52 @@
   /* the newest image: a minute-stamped address so neither the browser nor the agency's cache hands back an old one */
   /* Refresh (now) stamps the exact time, so a second press in the same minute still asks the agency again */
   function fresh(u, now) { return u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + (now ? Date.now() : Math.floor(Date.now() / 6e4)) : ""; }
-  function imgTag(u, cls, alt) {
-    return '<img class="' + cls + '" src="' + esc(u) + '" alt="' + esc(alt) + '" referrerpolicy="no-referrer" decoding="async" ' +
-      'onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'cam-no\',textContent:\'No image from the agency right now.\'}))">';
-  }
+  var NOIMG = "No image from the agency right now.";
   function when(ms, tz) { return W.OSAP_TIME ? W.OSAP_TIME.dualT(ms, { tz: tz, date: true }) : new Date(ms).toISOString().slice(0, 16) + "Z"; }
+  /* loads the image off-screen first: the "Loading" line (or the previous image) stays until the new one has arrived, a
+     failure or a slow agency (20 s) says so plainly with a link to open the image directly, and nothing ever sits blank */
+  function loadInto(im, url, cls, alt, done) {
+    var gen = (im._camGen = (im._camGen || 0) + 1), had = im.querySelector("img");
+    if (!had) im.innerHTML = '<span class="cam-no">Loading the image…</span>';
+    else im.setAttribute("data-camloading", "");
+    var img = new Image(), over = false;
+    var finish = function (ok, why) {
+      if (over || im._camGen !== gen) return;
+      over = true; clearTimeout(tm); im.removeAttribute("data-camloading");
+      if (ok) { img.className = cls; img.alt = alt; im.innerHTML = ""; im.appendChild(img); }
+      else {
+        im.innerHTML = '<span class="cam-no">' + esc(why) + (url ? ' <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open the image</a>' : "") + "</span>";
+        img.src = "";
+      }
+      if (done) done(ok);
+    };
+    var tm = setTimeout(function () { finish(false, "The agency's camera did not answer in " + Math.round((S.wait || 20000) / 1000) + " s."); }, S.wait || 20000);
+    img.referrerPolicy = "no-referrer"; img.decoding = "async";
+    img.onload = function () { finish(img.naturalWidth > 1, NOIMG); };
+    img.onerror = function () { finish(false, NOIMG); };
+    img.src = url;
+  }
   /* fills an element with the camera's image; Singapore's address comes from the live API first */
   function fill(el, s, c, view, big, now) {
     var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3];
     var put = function (url, ts) {
       if (!el.isConnected && !el.parentNode) return;
-      var im = el.querySelector("[data-camimg]");
-      if (im) im.innerHTML = url ? imgTag(url, big ? "cam-big" : "cam-tip", alt) : '<span class="cam-no">No image from the agency right now.</span>';
-      var t = el.querySelector("[data-camt]");
-      if (t) t.textContent = (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min";
+      var im = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]");
+      var stamp = function (ok) {
+        S.loads = (S.loads || 0) + 1;
+        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min"
+          : "Tried " + when(Date.now(), s.tz) + " · trying again on its own while this stays open";
+      };
+      if (!im) return;
+      if (!url) { im._camGen = (im._camGen || 0) + 1; im.innerHTML = '<span class="cam-no">' + NOIMG + "</span>"; stamp(false); return; }
+      if (t && !im.querySelector("img")) t.textContent = "Asking " + s.agency + " for the newest image…";
+      loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else put(fresh(safeUrl(u), now));
   }
+  /* while a pop-up stays open the image renews on its own, as often as the agency renews it (not more than once a minute) */
+  function every(s) { return Math.max(60, (+s.every || 1) * 60) * 1000; }
 
   /* ---------- map layer ---------- */
   var map = null, layer = null, drawn = {};
@@ -114,6 +145,11 @@
       /* the image arrives after the pop-up opens: fit and pan again once it has its size */
       el.addEventListener("load", function () { if (e.popup.isOpen()) e.popup.update(); }, true);
       fill(el, s, c, view, true);
+      clearInterval(m._camTick);
+      m._camTick = setInterval(function () {
+        if (!e.popup.isOpen()) { clearInterval(m._camTick); return; }
+        if (!document.hidden) { delete live[s.id]; fill(el, s, c, view, true, true); }
+      }, S.tick || every(s));
       el.onclick = function (ev) {
         var t = ev.target;
         if (t.hasAttribute("data-camref")) { delete live[s.id]; fill(el, s, c, view, true, true); }
@@ -124,6 +160,7 @@
         }
       };
     });
+    m.on("popupclose", function () { clearInterval(m._camTick); });
     return m;
   }
   function draw() {
@@ -132,7 +169,12 @@
     if (!S.on) { layer.clearLayers(); drawn = {}; S.msg = ""; paintSec(); legend(); return; }
     if (!S.ix) { S.msg = S.ixErr || "Reading the camera list…"; paintSec(); if (!S.ixErr) loadIndex().then(draw); return; }
     var z = map.getZoom(), b = map.getBounds(), here = hits(b.pad(0.2));
-    var names = function (a) { return a.map(function (s) { return s.country; }).join(", "); };
+    /* one name per country ("United States", not each state), unless only one area of it is in view */
+    var names = function (a) {
+      var seen = {}, out = [];
+      a.forEach(function (s) { var k = a.length > 3 ? String(s.country).replace(/ \(.*$/, "") : s.country; if (!seen[k]) { seen[k] = 1; out.push(k); } });
+      return out.join(", ");
+    };
     if (!here.length) {
       layer.clearLayers(); drawn = {};
       S.msg = "No official open cameras on screen. Cameras are published openly in: " + names(S.ix.sources) + ".";
@@ -169,11 +211,11 @@
   function coverage() {
     if (S.ixErr) return esc(S.ixErr);
     if (!S.ix) return "Reading the list of agencies…";
-    return '<ul class="cam-src">' + S.ix.sources.map(function (s) {
+    return '<ul class="cam-src">' + S.ix.sources.slice().sort(function (a, b) { return a.country < b.country ? -1 : a.country > b.country ? 1 : 0; }).map(function (s) {
       return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
         " · " + esc(s.licence) + (s.stale ? " · list not refreshed this week" : "") + "</li>";
     }).join("") + "</ul>" +
-      '<p class="pwr-m">Only cameras an agency publishes itself as open data with no key or login. Other countries have no such feed yet, or need a key (Ontario, Alberta, South Korea) or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
+      '<p class="pwr-m">Only cameras a government or road agency publishes itself, openly, with no account or login. Other countries have no such feed yet, need a key (South Korea), only publish video (Thailand), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
     return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Traffic cameras</b><i>Still images from official road cameras: hover or tap a camera</i></span></label>' +
@@ -205,6 +247,7 @@
     ".cam-tip{display:block;width:238px;max-height:170px;object-fit:contain;background:#111;border-radius:3px}" +
     ".cam-frame{min-height:60px;margin:4px 0}.cam-big{display:block;width:100%;max-height:260px;object-fit:contain;background:#111;border-radius:4px}" +
     "@media (max-width:500px){.cam-big{max-height:170px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
+    "[data-camloading] img{opacity:.55}.cam-no a{display:block;margin-top:4px}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
     '.cam-views button[aria-pressed="true"]{background:#0b7285;color:#fff;border-color:#0b7285}';
@@ -234,7 +277,9 @@
     D.addEventListener("osap:dsopen", function () { setTimeout(mount, 0); });
     return true;
   }
-  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
-    inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; } };
+  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, loads: S.loads || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
+    inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; },
+    /* tests only: shorter waits */
+    timing: function (t) { if (t.wait) S.wait = t.wait; if (t.tick) S.tick = t.tick; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
