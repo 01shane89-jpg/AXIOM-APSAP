@@ -63,7 +63,6 @@
   function when(ms, tz) { return W.OSAP_TIME ? W.OSAP_TIME.dualT(ms, { tz: tz, date: true }) : new Date(ms).toISOString().slice(0, 16) + "Z"; }
   /* loads the image off-screen first: the "Loading" line (or the previous image) stays until the new one has arrived, a
      failure or a slow agency (20 s) says so plainly with a link to open the image directly, and nothing ever sits blank */
-  var WAIT = 20000;
   function loadInto(im, url, cls, alt, done) {
     var gen = (im._camGen = (im._camGen || 0) + 1), had = im.querySelector("img");
     if (!had) im.innerHTML = '<span class="cam-no">Loading the image…</span>';
@@ -79,7 +78,7 @@
       }
       if (done) done(ok);
     };
-    var tm = setTimeout(function () { finish(false, "The agency's camera did not answer in 20 s."); }, WAIT);
+    var tm = setTimeout(function () { finish(false, "The agency's camera did not answer in " + Math.round((S.wait || 20000) / 1000) + " s."); }, S.wait || 20000);
     img.referrerPolicy = "no-referrer"; img.decoding = "async";
     img.onload = function () { finish(img.naturalWidth > 1, NOIMG); };
     img.onerror = function () { finish(false, NOIMG); };
@@ -270,7 +269,9 @@
     D.addEventListener("osap:dsopen", function () { setTimeout(mount, 0); });
     return true;
   }
-  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
-    inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; } };
+  W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, loads: S.loads || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
+    inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; },
+    /* tests only: shorter waits */
+    timing: function (t) { if (t.wait) S.wait = t.wait; if (t.tick) S.tick = t.tick; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
 })();
