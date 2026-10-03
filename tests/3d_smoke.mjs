@@ -129,6 +129,66 @@ async function run3d(name, p, errors, libs, openSel, early) {
   await run3d("desktop", p, errors, libs, ".o3dctl a", early);
   await ctx.close();
 }
+// ---------- the regular toolbar over the 3D view: panels open over it, what they switch on shows in 3D, the two views
+// follow each other, and the tools that need taps on the map go back to 2D at the same place ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  await p.evaluate(() => { window.__asapMap.setView([18.79, 98.98], 10, { animate: false }); });
+  await p.click("#atk-tools [data-o3d]");
+  await p.waitForFunction(() => window.OSAP_3D.gl && window.OSAP_3D.gl.isStyleLoaded(), null, { timeout: 30000 }).catch(() => {});
+  await p.waitForTimeout(1500);
+  const top = await p.evaluate(() => {
+    const at = (s) => { const r = document.querySelector(s).getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!e && !!e.closest(s); };
+    const a = document.querySelector("#o3d .o3-side").getBoundingClientRect(), b = document.querySelector("#atk-tools").getBoundingClientRect();
+    const t = document.querySelector("#o3d .o3-tilt").getBoundingClientRect(), s = document.querySelector("#atk-bar").getBoundingClientRect();
+    return { tools: at('#atk-tools [data-atk="datasets"]'), bar: at("#atk-bar .atk-pos"), apart: a.right <= b.left || a.left >= b.right, tilt: t.bottom <= s.top + 0.5 };
+  });
+  if (OUT) await p.screenshot({ path: OUT + "/phone-3d-bar.png" });
+  ok(top.tools && top.bar, "3D tools: the map toolbar and the grid strip stay on top of the 3D view " + JSON.stringify(top));
+  ok(top.apart && top.tilt, "3D tools: the 3D buttons and tilt slider sit clear of the toolbar and strip " + JSON.stringify(top));
+  // something switched on in 2D appears in 3D
+  await p.evaluate(() => { window.__tp = L.circleMarker([18.83, 99.02], { radius: 7, color: "#f00" }).addTo(window.__asapMap); });
+  const got = await p.waitForFunction(() => (window.OSAP_3D.gl.getSource("vp").serialize().data.features || []).some((f) => Math.abs(f.geometry.coordinates[0] - 99.02) < 1e-6 && Math.abs(f.geometry.coordinates[1] - 18.83) < 1e-6), null, { timeout: 5000 }).then(() => true).catch(() => false);
+  ok(got, "3D tools: a layer added on the map shows in 3D without reopening it");
+  await p.evaluate(() => { window.__tp.remove(); });
+  const gone = await p.waitForFunction(() => !(window.OSAP_3D.gl.getSource("vp").serialize().data.features || []).some((f) => Math.abs(f.geometry.coordinates[0] - 99.02) < 1e-6), null, { timeout: 5000 }).then(() => true).catch(() => false);
+  ok(gone, "3D tools: and goes when it is switched off");
+  // going to a place (Search, Today) moves the 3D camera; moving in 3D moves the flat map under it
+  await p.evaluate(() => { window.__asapMap.setView([13.75, 100.5], 12, { animate: false }); });
+  await p.waitForFunction(() => { const g = window.OSAP_3D.gl, c = g.getCenter(); return !g.isMoving() && Math.abs(c.lat - 13.75) < 0.01 && Math.abs(c.lng - 100.5) < 0.01; }, null, { timeout: 8000 }).catch(() => {});
+  const fly = await p.evaluate(() => { const g = window.OSAP_3D.gl, c = g.getCenter(); return { lat: c.lat, lng: c.lng, z: g.getZoom() }; });
+  ok(Math.abs(fly.lat - 13.75) < 0.01 && Math.abs(fly.lng - 100.5) < 0.01 && Math.abs(fly.z - 11) < 0.05, "3D tools: going to a place on the map moves the 3D view there " + JSON.stringify(fly));
+  await p.evaluate(() => { window.OSAP_3D.gl.jumpTo({ center: [100.62, 13.81], zoom: 13.4 }); }); await p.waitForTimeout(300);
+  const fl = await p.evaluate(() => { const m = window.__asapMap, c = m.getCenter(); return { lat: c.lat, lng: c.lng, z: m.getZoom(), want: Math.min(14, m.getMaxZoom()), grid: document.querySelector("#atk-bar .atk-v").textContent, still: window.OSAP_3D.gl.getCenter().lng }; });
+  ok(Math.abs(fl.lat - 13.81) < 0.001 && Math.abs(fl.lng - 100.62) < 0.001 && fl.z === fl.want && Math.abs(fl.still - 100.62) < 1e-6, "3D tools: the flat map follows the 3D view, so Centre, Search and Med plan use it " + JSON.stringify(fl));
+  // a panel from the toolbar opens over 3D
+  await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(400);
+  if (OUT) await p.screenshot({ path: OUT + "/phone-3d-panel.png" });
+  const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); if (!o || o.hidden) return false; const r = o.getBoundingClientRect(), e = document.elementFromPoint(r.left + r.width / 2, r.top + 60); return !!e && !!e.closest("#atk-om") && !!document.getElementById("o3d"); });
+  ok(om, "3D tools: Data sets opens over the 3D view, which stays open");
+  await p.click('#atk-tools [data-atk="datasets"]'); await p.waitForTimeout(200);
+  // Measure needs taps on the map: back to 2D at the same place, and it says why
+  await p.click('#atk-tools [data-atk="measure"]'); await p.waitForTimeout(400);
+  const ms = await p.evaluate(() => ({ open: !!document.getElementById("o3d"), toast: (document.getElementById("atk-toast") || {}).textContent || "", c: window.__asapMap.getCenter() }));
+  ok(!ms.open && /flat map/.test(ms.toast) && Math.abs(ms.c.lng - 100.62) < 0.01, "3D tools: Measure goes back to 2D at the same place and says why " + JSON.stringify(ms));
+  ok(await p.evaluate(() => !document.documentElement.classList.contains("o3d-on") && getComputedStyle(document.querySelector("#map .leaflet-control-container")).display !== "none"), "3D tools: the flat map's own controls are back in 2D");
+  ok(errors.length === 0, "3D tools: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  // the smallest phones: the 3D buttons stay clear of the scale bar, the tilt slider and the strip, the toolbar of all three
+  for (const [w, h] of [[360, 640], [360, 560], [640, 360]]) {
+    await p.setViewportSize({ width: w, height: h }); await p.evaluate(() => window.OSAP_3D.open());
+    await p.waitForFunction(() => window.OSAP_3D.gl, null, { timeout: 30000 }).catch(() => {}); await p.waitForTimeout(600);
+    const lay = await p.evaluate(() => {
+      const r = (s) => { const e = document.querySelector(s); if (!e || getComputedStyle(e).display === "none") return null; const b = e.getBoundingClientRect(); return { t: b.top, b: b.bottom, l: b.left, r: b.right }; };
+      const hit = (a, b) => !!a && !!b && a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+      const side = r("#o3d .o3-side"), others = ["#o3d .o3-scale", "#o3d .o3-tilt", "#atk-bar", "#atk-tools"].map(r);
+      return { clash: others.some((o) => hit(side, o)) || hit(others[0], others[1]) || hit(others[1], others[2]), zoomBtns: !!r("#o3d .o3-zi"), scale: !!others[0] };
+    });
+    ok(!lay.clash, "3D tools: " + w + "x" + h + ": the 3D buttons, scale bar, tilt slider, strip and toolbar do not overlap " + JSON.stringify(lay));
+    await p.evaluate(() => window.OSAP_3D.close()); await p.waitForTimeout(200);
+  }
+  if (OUT) await p.screenshot({ path: OUT + "/phone-3d-tools.png" });
+  await ctx.close();
+}
 // ---------- 3D buildings switch: on by default, tiles only when zoomed in close, off and on again, remembered ----------
 // The buildings come from an Overture PMTiles archive on S3. The test serves a tiny real archive: one empty "building" tile that
 // answers for every zoom-14 address, so each tile the map wants shows up as a byte-range request past the archive's directory.
@@ -156,6 +216,7 @@ function pmFixture() {
 }
 {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
+  const ovp = []; let ovpDown = false;
   const asked = [], archives = [], pm = pmFixture(), CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "ETag, Content-Length, Content-Range" };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
@@ -166,6 +227,14 @@ function pmFixture() {
       const m = /bytes=(\d+)-(\d+)/.exec(r.request().headers()["range"] || ""), from = m ? +m[1] : 0, to = Math.min(m ? +m[2] : pm.buf.length - 1, pm.buf.length - 1);
       if (from >= pm.tileAt) asked.push(from);
       return r.fulfill({ status: 206, headers: { ...CORS, "Content-Type": "application/octet-stream", ETag: '"t1"', "Content-Range": `bytes ${from}-${to}/${pm.buf.length}` }, body: pm.buf.subarray(from, to + 1) });
+    }
+    /* OpenStreetMap at the tapped spot: the first mirror is down, the second answers with a named temple outline and a shop nearby */
+    if (/overpass/.test(u)) {
+      ovp.push(u);
+      if (ovpDown || /overpass-api\.de/.test(u)) return r.fulfill({ status: 504, headers: CORS, body: "" });
+      return r.fulfill({ status: 200, headers: { ...CORS, "Content-Type": "application/json" }, body: JSON.stringify({ elements: [
+        { type: "way", id: 77, tags: { building: "temple", amenity: "place_of_worship", name: "วัดทดสอบ", "name:en": "Wat <b>Test</b>", "building:levels": "2" } },
+        { type: "node", id: 88, lat: 0, lon: 0, tags: { name: "Shop <img src=x onerror=alert(1)>", shop: "convenience" } }] }) });
     }
     return r.abort();
   });
@@ -202,13 +271,32 @@ function pmFixture() {
   await p.waitForTimeout(2500);
   const box = await p.locator("#o3d .o3-map canvas").boundingBox();
   await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2); await p.waitForTimeout(600);
-  const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); return e ? { html: e.innerHTML, text: e.textContent, bold: !!e.querySelector("h3 b"), link: (e.querySelector("a[href*='openstreetmap.org']") || {}).href } : null; });
-  ok(pop && /Test <b>Hall<\/b>/.test(pop.text) && !pop.bold && /School/.test(pop.text) && /Floors\s*3/.test(pop.text) && /Height\s*not recorded/.test(pop.text) && /OpenStreetMap \(drawn by volunteers\)/.test(pop.text) &&
-    pop.link === "https://www.openstreetmap.org/way/123" && /Last edited\s*2025-01-07/.test(pop.text) && /not an official survey/.test(pop.text) && /Footprint\s*about 1,411,\d{3} m²/.test(pop.text),
-    "buildings: tapping one shows its recorded details and source, and 'not recorded' for the rest " + JSON.stringify(pop && pop.text.slice(0, 400)));
+  await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
+  const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); if (!e) return null;
+    /* every value is inside the popup, on screen, left-aligned (the app's own table style once pushed them all out of sight) */
+    const box = document.querySelector("#o3d .o3-popw .maplibregl-popup-content").getBoundingClientRect();
+    const cells = [...e.querySelectorAll(".o3-bt td")].map((td) => { const r = td.getBoundingClientRect(), cs = getComputedStyle(td); return { in: r.width > 20 && r.left >= box.left - 0.5 && r.right <= box.right + 0.5, a: cs.textAlign, col: cs.color }; });
+    return { html: e.innerHTML, text: e.textContent, bold: !!e.querySelector("h3 b"), link: (e.querySelector(".o3-bt a[href*='openstreetmap.org']") || {}).href, cells, osm: (e.querySelector(".o3-osm") || {}).innerHTML || "", img: !!e.querySelector(".o3-osm img") }; });
+  ok(pop && /Test <b>Hall<\/b>/.test(pop.text) && !pop.bold && /Use\s*School/.test(pop.text) && /Floors\s*3/.test(pop.text) && !/Height/.test(pop.text) && /height in 3D is an estimate/.test(pop.text) && /OpenStreetMap \(drawn by volunteers\)/.test(pop.text) &&
+    pop.link === "https://www.openstreetmap.org/way/123" && /Last edited\s*2025-01-07/.test(pop.text) && /not an official survey/.test(pop.text) && /Footprint\s*about 1,411,\d{3} m²/.test(pop.text) && !/not recorded/.test(pop.text),
+    "buildings: tapping one shows only its recorded details and source " + JSON.stringify(pop && pop.text.slice(0, 400)));
+  ok(pop && pop.cells.length >= 4 && pop.cells.every((c) => c.in && c.a === "left" && c.col === "rgb(33, 37, 41)"), "buildings: every value shows inside the popup, left-aligned, dark on white " + JSON.stringify(pop && pop.cells));
+  ok(pop && /Wat &lt;b&gt;Test&lt;\/b&gt;<\/b> \(วัดทดสอบ\)/.test(pop.osm) && /Place of worship/.test(pop.osm) && /2 floors/.test(pop.osm) && /openstreetmap\.org\/way\/77/.test(pop.osm) && /Shop &lt;img/.test(pop.osm) && /Convenience/.test(pop.osm) && !pop.img && /not checked by OSAP/.test(pop.osm),
+    "buildings: OpenStreetMap at the tapped spot adds its name, use and floors, labelled and linked, nothing run as code " + JSON.stringify(pop && pop.osm.slice(0, 500)));
+  ok(ovp.length === 2 && /overpass-api\.de/.test(ovp[0]) && !/overpass-api\.de/.test(ovp[1]), "buildings: OpenStreetMap asked only on the tap, the next mirror when one is down " + JSON.stringify(ovp));
+  // nothing reachable: says so, and Try again asks again
+  ovpDown = true;
+  await p.evaluate(() => document.querySelector("#o3d .maplibregl-popup-close-button").click());
+  await p.evaluate(() => window.OSAP_3D.gl.panBy([3, 0], { duration: 0 })); await p.waitForTimeout(300);
+  await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const down = await p.waitForFunction(() => /could not be reached/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || "") && !!document.querySelector("#o3d .o3-osm .o3-again"), null, { timeout: 20000 }).then(() => true).catch(() => false);
+  ok(down, "buildings: when OpenStreetMap is down the popup says so and offers Try again");
+  ovpDown = false; await p.click("#o3d .o3-osm .o3-again");
+  const back = await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).then(() => true).catch(() => false);
+  ok(back, "buildings: Try again fetches it");
   const g = await p.evaluate(() => window.OSAP_3D._bldInfo({ "@geometry_source": "Google Open Buildings", sources: JSON.stringify([{ dataset: "Google Open Buildings", confidence: 0.87, update_time: "2023-05-01T00:00:00.000Z" }]) }, null));
-  ok(/<h3>Building<\/h3>/.test(g) && /No name recorded/.test(g) && /Use<\/th><td><i class="o3-nr">not recorded/.test(g) && /87% sure/.test(g) && /traced by a computer/.test(g) && !/Footprint/.test(g),
-    "buildings: a machine-traced building says so, with the model's confidence, and invents nothing");
+  ok(/<h3>Building<\/h3>/.test(g) && /class="o3-none">No name, use, height or floors are recorded/.test(g) && !/<th>Use/.test(g) && !/<th>Floors/.test(g) && /87% sure/.test(g) && /traced by a computer/.test(g) && !/Footprint/.test(g),
+    "buildings: a bare machine-traced building says once that nothing is recorded, with the model's confidence, and invents nothing");
   // the compass gives the heading in degrees
   const hd = [];
   for (const b of [0, 45, -90, 179.6, -0.4]) { await p.evaluate((b) => window.OSAP_3D.gl.jumpTo({ bearing: b }), b); await p.waitForTimeout(100); hd.push(await p.evaluate(() => document.querySelector("#o3d .o3-deg").textContent)); }
