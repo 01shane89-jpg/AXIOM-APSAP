@@ -11,7 +11,7 @@
      open. Each image comes straight from the agency's server
      when it is opened, so it is as fresh as the agency makes it; Singapore's addresses change every minute, so the page asks
      data.gov.sg's keyless API for the current one.
-   window.OSAP_CAMS {set, state, inView, timing (tests)}. */
+   window.OSAP_CAMS {set, state, inView, open, timing (tests)}. */
 (function () {
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
@@ -123,7 +123,7 @@
       var ts = m ? m[1] + "-" + p2(m[2]) + "-" + p2(m[3]) + "T" + p2(m[4]) + ":" + p2(m[5]) + ":00+07:00" : null;
       return fetch(DWR + "/file/image/cctv", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: path }) })
         .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); })
-        .then(function (b) { return b && /^image\//.test(b.type || "image/") && b.size > 500 ? { u: URL.createObjectURL(b), ts: ts, local: true } : null; });
+        .then(function (b) { return b && /^image\//.test(b.type || "image/") && b.size > 60 ? { u: URL.createObjectURL(b), ts: ts, local: true } : null; });
     }).catch(function () { return null; });
   }
   /* live video (HLS): Safari plays it itself; other browsers get the small hls.js player (assets/vendor, Apache-2.0), loaded the
@@ -350,6 +350,8 @@
   }
   W.OSAP_CAMS = { set: set, state: function () { return { on: S.on, msg: S.msg, draws: S.draws || 0, loads: S.loads || 0, drawn: Object.keys(drawn).length, sources: S.ix ? S.ix.sources.length : null, lists: Object.keys(S.lists) }; },
     inView: function () { return S.ix && map ? hits(map.getBounds()).map(function (s) { return s.id; }) : []; },
+    /* opens one drawn camera's pop-up (source id, camera id); false when it is not on screen */
+    open: function (sid, cid) { var m = drawn[sid + "|" + cid]; if (!m) return false; m.openPopup(); return true; },
     /* tests only: shorter waits */
     timing: function (t) { if (t.wait) S.wait = t.wait; if (t.tick) S.tick = t.tick; } };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
