@@ -168,8 +168,10 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await at(p, [13.69257, 101.0709], 15);
   ok(await p.evaluate(() => window.OSAP_CAMS.open("th-itic", "ITICM_BMAMI0184")), "Thailand live camera drawn in Chachoengsao");
   await p.waitForFunction(() => /not available|did not start|cannot play/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || ""), null, { timeout: 25000 }).catch(() => {});
-  const live = await p.evaluate(() => ({ t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "", hls: !!window.Hls }));
-  ok(/Road camera · live video/.test(live.t) && /live video is not available right now/.test(live.t) && live.hls && imgs.some((u) => /camerai1\.iticfoundation\.org\/hls\/.+\.m3u8/.test(u)), "Thailand live camera: the player loads, asks iTIC for the stream and says plainly when it is off air");
+  // newer Chromium plays HLS itself (like Safari), older needs hls.js: either way the stream is asked for and the failure said plainly
+  const live = await p.evaluate(() => ({ t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "", hls: !!window.Hls, native: !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl") }));
+  ok(/Road camera · live video/.test(live.t) && /live video is not available right now/.test(live.t) && (live.hls || live.native) && imgs.some((u) => /camerai1\.iticfoundation\.org\/hls\/.+\.m3u8/.test(u)),
+    "Thailand live camera: the player (" + (live.native ? "built in" : "hls.js") + ") asks iTIC for the stream and says plainly when it is off air: " + (live.t.match(/[^.]*(not available|did not start|cannot play)[^.]*/) || [""])[0]);
   // Japan: a volcano camera shows JMA's newest picture with its time; the kind buttons hide and bring back each kind of camera
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [43.638, 144.465], 13);
