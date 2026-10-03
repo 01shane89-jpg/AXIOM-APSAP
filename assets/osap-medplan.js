@@ -1356,7 +1356,7 @@
       var f = p.f, H = s.fac.H.indexOf(f);
       /* the pick's contacts and what is known of its capability are shown here, not only in the hospital table (whose
          buttons sit off-screen on a phone) */
-      var cap = (f.why || []).slice(); if (f.beds) cap.push(f.beds + " beds"); if (f.pad) cap.push("helipad on site");
+      var cap = (f.why || []).slice(); if (f.beds && cap.indexOf(f.beds + " beds") < 0) cap.push(f.beds + " beds"); if (f.pad && cap.indexOf("helipad on site") < 0) cap.push("helipad on site");
       return '<tr><th scope="row">' + esc(p.role) + '</th><td><b>H' + (H + 1) + " " + esc(f.name) + "</b>" +
         '<span class="sub">' + esc(p.reason) + "</span>" + lowTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
         '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
@@ -2050,7 +2050,7 @@
     L.push(["Certified programmes", pr.length ? pr.join("<br>") : nk("None in HA's published certifications. This does not mean the hospital lacks the service.")]);
     if (g.specialties_reported) L.push(["Specialties (as reported to HA)", esc(g.specialties_reported)]);
     L.push(["Location", esc(g.coord_basis || "")]);
-    L.push(["Source", ["hospital", "accreditation", "level", "pdsc", "hnc"].map(function (k) { return S[k] ? link(S[k].page, S[k].name) + " (" + esc(S[k].licence || "") + ")" : ""; }).filter(function (x, i, A) { return x && A.indexOf(x) === i; }).join("; ") +
+    L.push(["Source", ["hospital", "accreditation", "level", "pdsc", "hnc"].map(function (k) { return S[k] ? link(S[k].page, S[k].name) + " (" + esc(S[k].licence || "") + (S[k].last_modified && !isNaN(Date.parse(S[k].last_modified)) ? ", file updated " + new Date(Date.parse(S[k].last_modified)).toISOString().slice(0, 10) : "") + ")" : ""; }).filter(function (x, i, A) { return x && A.indexOf(x) === i; }).join("; ") +
       '<span class="sub">Record built ' + esc(g.retrieved || "") + ', SHA-256 <code title="' + esc(g.sha256 || "") + '">' + esc(String(g.sha256 || "").slice(0, 12)) + "</code>. Official status as published; confirm current capability with the hospital.</span>"]);
     return L;
   }
