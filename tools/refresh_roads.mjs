@@ -10,7 +10,7 @@
 // PROBE=1 prints one raw item per source and writes probe-out/roads.js instead of data/live (a test run commits nothing).
 import fs from "node:fs";
 
-const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (situational awareness; github.com/01shane89-jpg/AXIOM-APSAP)";
+const TIMEOUT = 45000, UA = "AXIOM-OSAP/1.0 (situational awareness; github.com/osap-app/osap-app.github.io)";
 const PROBE = !!process.env.PROBE;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const err = (e) => (e.name === "AbortError" ? "timed out" : String(e.message || e).slice(0, 140));

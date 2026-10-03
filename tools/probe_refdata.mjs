@@ -6,7 +6,7 @@ import fs from "node:fs";
 
 const OUT = "probe-out/refdata";
 fs.mkdirSync(OUT, { recursive: true });
-const UA = "AXIOM-OSAP reference-data probe (https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "AXIOM-OSAP reference-data probe (https://github.com/osap-app/osap-app.github.io)";
 const CCS = (process.env.CCS || "").split(/[ ,]+/).filter(Boolean).map((c) => c.toUpperCase());
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = [];

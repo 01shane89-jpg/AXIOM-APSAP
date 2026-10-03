@@ -5,7 +5,7 @@ import fs from "node:fs";
 
 const OUT = "probe-out/et";
 fs.mkdirSync(OUT, { recursive: true });
-const UA = "Mozilla/5.0 (compatible; AXIOM-OSAP research probe; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "Mozilla/5.0 (compatible; AXIOM-OSAP research probe; +https://github.com/osap-app/osap-app.github.io)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const WD = "SELECT ?i ?iLabel ?d ?c ?cc WHERE { ?i wdt:P31/wdt:P279* wd:Q1134556 . OPTIONAL { ?i wdt:P585 ?d } OPTIONAL { ?i wdt:P625 ?c } OPTIONAL { ?i wdt:P17/wdt:P297 ?cc } SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" } } LIMIT 2000";
 const C = [

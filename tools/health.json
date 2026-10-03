@@ -1,6 +1,6 @@
 {
   "about": "Data health (tools/health.mjs). Each refresh writes data/live/health.json from the files below; the keeper checks the published copy every 15 minutes and posts to the ntfy channel when data stops arriving. Ages are minutes. A feed's own stamp is when the refresh read it, up to about 25 minutes before the commit, and commits come every 15 to 35 minutes, so a feed read every run is normally up to about 60 minutes old: limits sit above that. 'key' feeds send a phone alert when stale; the rest only show in the app's data-health panel. Anyone can subscribe to the channel: it carries feed names and times only, never report content.",
-  "site": "https://01shane89-jpg.github.io/AXIOM-APSAP/",
+  "site": "https://osap-app.github.io/",
   "topic": "osap-health-952c35918047",
   "amberMin": 40,
   "downMin": 60,

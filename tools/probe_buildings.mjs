@@ -5,7 +5,7 @@ import { VectorTile } from "@mapbox/vector-tile";
 import Protobuf from "pbf";
 const TJ = "https://tiles.openfreemap.org/planet";
 const tj = await (await fetch(TJ)).json();
-const cors = (await fetch(TJ, { headers: { Origin: "https://01shane89-jpg.github.io" } })).headers.get("access-control-allow-origin");
+const cors = (await fetch(TJ, { headers: { Origin: "https://osap-app.github.io" } })).headers.get("access-control-allow-origin");
 console.log("TileJSON tiles", tj.tiles && tj.tiles[0], "maxzoom", tj.maxzoom, "CORS", cors);
 const places = [["Bangkok Silom", 13.726, 100.531], ["Bangkok Sukhumvit", 13.737, 100.560], ["Chiang Mai", 18.788, 98.985], ["Hat Yai", 7.006, 100.474], ["Yala", 6.541, 101.281],
   ["Pattani", 6.869, 101.25], ["Narathiwat", 6.426, 101.823], ["Manila Makati", 14.556, 121.023], ["Cotabato", 7.223, 124.246], ["Hanoi", 21.028, 105.852], ["Ho Chi Minh", 10.776, 106.701],

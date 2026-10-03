@@ -20,7 +20,7 @@ import { readList } from "./push_lib.mjs";
 
 const STATE = process.env.PUSH_STATE || ".push-state/state.json";
 const NTFY = (process.env.PUSH_NTFY || "https://ntfy.sh").replace(/\/$/, "");
-const LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
+const LIVE = "https://osap-app.github.io/";
 const TEST = !!process.env.PUSH_TEST, DRY = !!process.env.PUSH_DRY;
 const MAX_AGE_H = +(process.env.PUSH_MAX_AGE_H || 48), PER_WATCH = 3, PER_RUN = 40, KEEP_KEYS = 4000;
 const now = Date.now();

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Test only: checks the free, no-key air traffic (ADS-B) and ship (AIS) hosts from a GitHub runner: status, whether a browser
 # on the live site may read them (CORS), size, item counts and how fast they start refusing. Writes nothing.
-O="https://01shane89-jpg.github.io"
+O="https://osap-app.github.io"
 probe() {
   local u="$1" h
-  h=$(curl -sS -m 40 -L -D - -o /tmp/p.bin -w 'time %{time_total}s\n' -H "Origin: $O" -H "Accept-Encoding: gzip" --compressed -A "AXIOM-OSAP/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/)" "$u" 2>&1)
+  h=$(curl -sS -m 40 -L -D - -o /tmp/p.bin -w 'time %{time_total}s\n' -H "Origin: $O" -H "Accept-Encoding: gzip" --compressed -A "AXIOM-OSAP/1.0 (+https://osap-app.github.io/)" "$u" 2>&1)
   echo "=== $u"
   echo "$h" | grep -iE "^HTTP/|access-control-allow-origin|content-type|ratelimit|retry-after|^time" | tr -d '\r'
   echo "bytes: $(wc -c < /tmp/p.bin 2>/dev/null)"

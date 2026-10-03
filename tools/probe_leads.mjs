@@ -7,7 +7,7 @@ import { parseFeed } from "./feedparse.mjs";
 
 const OUT = "probe-out/leads";
 fs.mkdirSync(OUT, { recursive: true });
-const UA = "Mozilla/5.0 (compatible; AXIOM-OSAP research probe; +https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "Mozilla/5.0 (compatible; AXIOM-OSAP research probe; +https://github.com/osap-app/osap-app.github.io)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 global.window = {};
 await import("../data/basemap/world-countries.js");

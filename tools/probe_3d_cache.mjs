@@ -24,7 +24,7 @@ await mkdir("probe-out", { recursive: true });
 for (const u of ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/9/240/399?blankTile=false",
   "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/9/240/399?blankTile=false",
   "https://a.tile.opentopomap.org/9/399/240.png", "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/9/240/399.jpg"]) {
-  for (const origin of [null, "https://01shane89-jpg.github.io"]) {
+  for (const origin of [null, "https://osap-app.github.io"]) {
     try {
       const r = await fetch(u, { headers: origin ? { Origin: origin } : {} });
       const h = (k) => r.headers.get(k);

@@ -24,7 +24,7 @@ for (const [name, lat, lon, jp] of PLACES) {
       if (k !== "esri" && !jp) continue;   /* GSI answers 404 outside Japan; the map asks it only inside its bounds */
       const u = SRC[k](t(z, lat, lon)); if (!u) continue;
       try {
-        const r = await fetch(u, { headers: { Origin: "https://01shane89-jpg.github.io" } });
+        const r = await fetch(u, { headers: { Origin: "https://osap-app.github.io" } });
         const b = Buffer.from(await r.arrayBuffer());
         console.log(`${name.padEnd(18)} ${k.padEnd(5)} z${z} ${r.status} ${r.headers.get("content-type")} ${b.length}B cors=${r.headers.get("access-control-allow-origin")}`);
         if (z <= 16 && r.status !== 200 && k !== "gsidem") bad++;   /* dem5a (laser) covers only part of Japan */   /* z17 and up are enlarged from z16 on the map (maxNativeZoom 16) */

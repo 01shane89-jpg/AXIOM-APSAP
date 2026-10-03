@@ -15,7 +15,7 @@
    Opening a shared link whose story has since dropped out of the feed shows a short note instead of the watch-alert message. */
 (function () {
   "use strict";
-  var LIVE = "https://01shane89-jpg.github.io/AXIOM-APSAP/";
+  var LIVE = "https://osap-app.github.io/";
   var ESRI = "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
   var PRANK = { exact: 3, approx: 2, province: 1 };
 

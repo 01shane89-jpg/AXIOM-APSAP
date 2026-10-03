@@ -24,7 +24,7 @@ import { ccsAt, ccFromName, ccFromA2, COUNTRIES } from "./geo_cc.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
 
 const OUT = process.env.DC_OUT || "data/dc", DEBUG = !!process.env.DC_DEBUG;
-const UA = "AXIOM-OSAP data centre snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "AXIOM-OSAP data centre snapshot (https://github.com/osap-app/osap-app.github.io)";
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const EPOCH_DC = ["https://epoch.ai/data/generated/data_centers/data_centers.csv", "https://epoch.ai/data/data_centers/data_centers.csv"];
 const EPOCH_GPU = ["https://epoch.ai/data/gpu_clusters.csv"];

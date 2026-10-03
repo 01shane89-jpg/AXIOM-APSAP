@@ -18,7 +18,7 @@ import fs from "fs";
 
 const OUT = process.argv[2] || "drones.json";
 const PREV = process.argv[3] || OUT;
-const UA = "AXIOM-OSAP/1.0 (+https://01shane89-jpg.github.io/AXIOM-APSAP/; live drones layer)";
+const UA = "AXIOM-OSAP/1.0 (+https://osap-app.github.io/; live drones layer)";
 const SRC = {
   lol: { name: "adsb.lol", site: "https://adsb.lol/", api: "https://api.adsb.lol/v2", licence: "ODbL 1.0", nc: false, track: (h) => "https://globe.adsb.lol/?icao=" + h },
   fi: { name: "adsb.fi", site: "https://adsb.fi/", api: "https://opendata.adsb.fi/api/v2", licence: "adsb.fi open data terms", nc: true, track: (h) => "https://globe.adsb.fi/?icao=" + h },

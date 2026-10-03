@@ -17,7 +17,7 @@ const LIB = globalThis.OSAP_COMMS_LIB;
 const OUT = process.env.MASTS_OUT || "data/comms/masts";
 const BUDGET = (+process.env.MASTS_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MASTS_MAX_AGE_D || 28) * 864e5;
 const DEBUG = !!process.env.MASTS_DEBUG, T0 = Date.now();
-const UA = "AXIOM-OSAP comms mast snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const UA = "AXIOM-OSAP comms mast snapshot (https://github.com/osap-app/osap-app.github.io)";
 /* probed 2026-10-01: maps.mail.ru answered mast queries when overpass-api.de did not */
 const OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
