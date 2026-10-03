@@ -742,6 +742,8 @@ function main() {
     if (!box) return;
     if (!EV) { box.innerHTML = '<p class="rtbad">The evacuation points are not loaded on this page. Reload and try again.</p>'; return; }
     if (!S.wps.length) { box.innerHTML = '<p class="rtbad">Set the start first: tap the map, press My location, or type a grid (MGRS) in the box above. Waypoint A is the start.</p>'; return; }
+    /* a replan still waiting from the last waypoint change would cancel this plan (planNow bumps evTok): drop it */
+    clearTimeout(S.planT);
     var a = S.wps[0], to = el("rt-evto").value, days = +el("rt-evdays").value || 30, mode = S.mode === "line" ? "car" : S.mode, tok = ++S.evTok;
     var start = { lat: a.lat, lon: a.lon, name: a.name || "Start" };
     S.evac = null; drawCps();
