@@ -40,7 +40,7 @@ async function open(opts, hash = "") {
   await ctx.route(/telemetry\.dwr\.go\.th\/api\//, (r) => {
     const u = r.request().url(); imgs.push(u);
     if (r.request().method() === "OPTIONS") return r.fulfill({ status: 204, headers: CORS });
-    if (/reportCctv\/snapshot\//.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ value: "/TA210507/2026/10/3/14_05.jpg" }) });
+    if (/reportCctv\/snapshot\//.test(u)) return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ value: ctxMode.v === "dwrnone" ? null : "/TA210507/2026/10/3/14_05.jpg" }) });
     if (/file\/image\/cctv/.test(u)) return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: PNG });
     return r.fulfill({ status: 404, headers: CORS, body: "" });
   });
@@ -157,6 +157,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   if (nv > 1) { await p.click('.leaflet-popup-content [data-camview="1"]'); await p.waitForTimeout(400); }
   const v1 = await p.evaluate(() => document.querySelector(".leaflet-popup-content img.cam-big").getAttribute("src"));
   ok(nv > 1 && v0 !== v1 && /weathercam\.digitraffic\.fi/.test(v1), "Finland: " + nv + " views, switching changes the image " + v1);
+  const popText = () => p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
   // Thailand: a river camera shows DWR's newest snapshot with the time in its path; a live road camera starts the video player
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [6.47985, 101.44526], 13);
@@ -164,6 +165,13 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await p.waitForTimeout(1200);
   const dwr = await p.evaluate(() => { const x = document.querySelector(".leaflet-popup-content"); const i = x && x.querySelector("img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: x ? x.textContent : "" }; });
   ok(/^blob:/.test(dwr.src) && /River camera/.test(dwr.t) && /Image taken 3 Oct 2026 0705Z \/ 14:05/.test(dwr.t), "Thailand river camera: DWR snapshot and its time: " + dwr.src.slice(0, 30) + " | " + (dwr.t.match(/Image taken[^·]*/) || [""])[0]);
+  // Refresh on a camera the agency has no picture for: it says it is asking again, then answers with the time it tried
+  ctxMode.v = "dwrnone";
+  await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(250);
+  const asking = await popText();
+  await p.waitForTimeout(1500);
+  const none = await popText(); ctxMode.v = "";
+  ok(/Asking Department of Water Resources[^·]* again/.test(asking) && /No image from the agency right now/.test(none) && /Tried 3 Oct|Tried \d+ \w+ \d{4}/.test(none), "Refresh with no picture: says it is asking again, then that the agency has none, with the time tried");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [13.69257, 101.0709], 15);
   ok(await p.evaluate(() => window.OSAP_CAMS.open("th-itic", "ITICM_BMAMI0184")), "Thailand live camera drawn in Chachoengsao");
@@ -207,7 +215,6 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   { const q = await iconAt(p); await p.mouse.click(q[0], q[1]); }
   await p.waitForTimeout(700);
   // a failed image says so, with a link to open it directly
-  const popText = () => p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
   ctxMode.v = "fail";
   await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(700);
   ok(/No image from the agency right now/.test(await popText()) && await p.evaluate(() => !!document.querySelector('.leaflet-popup-content .cam-no a[target="_blank"]')),
