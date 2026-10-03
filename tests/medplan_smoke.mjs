@@ -588,6 +588,13 @@ async function openPlan(p) {
     img: document.getElementById("mpd-map").getBoundingClientRect().width, plan: getComputedStyle(document.getElementById("medplan")).display }));
   ok(ph.flow !== "fixed" && ph.h > 4 * ph.vh && ph.plan === "none", "phone print view: the plan is the page itself, in normal flow, so iPhone prints every page " + JSON.stringify(ph));
   ok(ph.w <= ph.vw && ph.img > 300 && ph.img <= ph.vw, "phone print view: fits the screen, map across the width");
+  /* Shane 2026-10-03: the iPhone printed or saved only page 1. Printing at phone width matches the phone layout, which pins
+     html and body to one screen with overflow hidden; the print rules must let the report run its full length */
+  await p.emulateMedia({ media: "print" });
+  const pr = await p.evaluate(() => { const st = (e) => getComputedStyle(e); return { ho: st(document.documentElement).overflowY, bo: st(document.body).overflowY, bh: document.body.getBoundingClientRect().height,
+    h: document.documentElement.scrollHeight, vh: innerHeight, phone: document.documentElement.classList.contains("phone"), last: /Sources and fingerprint/.test(document.getElementById("brief").textContent) }; });
+  ok(pr.ho === "visible" && pr.bo === "visible" && pr.bh > 4 * pr.vh && pr.h > 4 * pr.vh && pr.last, "phone print: html and body run the full length of the plan, so every page prints " + JSON.stringify(pr));
+  await p.emulateMedia({ media: "screen" });
   if (OUT) await p.screenshot({ path: OUT + "/phone-print-view.png", fullPage: true });
   await p.click("#mpd-close");
   await p.evaluate(() => document.querySelector('#mp-fac [data-mp-assess]').click());
