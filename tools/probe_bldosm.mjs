@@ -6,13 +6,15 @@ const places = [["Bangkok Silom", 13.726, 100.531], ["Chiang Mai", 18.788, 98.98
 const PER = +(process.env.PER || 25);
 function tile(lat, lon, z) { const n = 2 ** z, x = Math.floor((lon + 180) / 360 * n), r = lat * Math.PI / 180, y = Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); return [x, y]; }
 const KIND = ["amenity", "shop", "office", "tourism", "healthcare", "leisure", "military", "government", "craft", "religion", "building"];
+let errs = 0;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function ask(lat, lon) {
   const q = `[out:json][timeout:15];is_in(${lat},${lon})->.a;(way(pivot.a)[building];relation(pivot.a)[building];way(pivot.a)[amenity];relation(pivot.a)[amenity];);out tags 6;node(around:25,${lat},${lon})[name];out tags center 8;`;
   for (const u of ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]) {
     const t = Date.now();
-    try { const r = await fetch(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: AbortSignal.timeout(20000) });
-      if (r.ok) return { j: await r.json(), ms: Date.now() - t }; } catch (e) {}
+    try { const r = await fetch(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "OSAP-probe (github.com/01shane89-jpg/AXIOM-APSAP)" }, signal: AbortSignal.timeout(20000) });
+      if (r.ok) return { j: await r.json(), ms: Date.now() - t };
+      if (errs++ < 6) console.log("  ", u, r.status, (await r.text()).slice(0, 160).replace(/\s+/g, " ")); } catch (e) { if (errs++ < 6) console.log("  ", u, String(e).slice(0, 120)); }
   }
   return null;
 }
