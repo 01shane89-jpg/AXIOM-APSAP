@@ -1,5 +1,5 @@
 {
- "built": "2026-10-03T06:38Z",
+ "built": "2026-10-03T07:25Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -18,7 +18,7 @@
     1.44702,
     103.82389
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "hk-td",
@@ -36,7 +36,7 @@
     22.54589,
     114.26637
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "nz-nzta",
@@ -47,14 +47,14 @@
    "licence": "Creative Commons Attribution 4.0",
    "page": "https://www.nzta.govt.nz/traffic-and-travel-information/infoconnect-section-page/",
    "every": 2,
-   "n": 253,
+   "n": 252,
    "box": [
     -45.89658,
     168.66154,
     -36.38935,
     176.87727
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "gb-tfl",
@@ -65,14 +65,14 @@
    "licence": "Powered by TfL Open Data (Open Government Licence)",
    "page": "https://tfl.gov.uk/info-for/open-data-users/",
    "every": 5,
-   "n": 807,
+   "n": 801,
    "box": [
     51.3169,
     -0.49324,
     51.6799,
     0.23161
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "fi-digitraffic",
@@ -90,7 +90,7 @@
     70.08851,
     31.27705
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "ca-drivebc",
@@ -108,7 +108,7 @@
     59.99805,
     -114.71282
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "au-nsw",
@@ -126,7 +126,7 @@
     -28.22595,
     153.55694
    ],
-   "checked": "2026-10-03T06:32Z"
+   "checked": "2026-10-03T07:20Z"
   },
   {
    "id": "us-caltrans",
@@ -144,7 +144,7 @@
     41.99656,
     -114.55031
    ],
-   "checked": "2026-10-03T06:33Z"
+   "checked": "2026-10-03T07:21Z"
   },
   {
    "id": "us-nycdot",
@@ -162,7 +162,7 @@
     40.9063,
     -73.71378
    ],
-   "checked": "2026-10-03T06:33Z"
+   "checked": "2026-10-03T07:21Z"
   },
   {
    "id": "us-fl",
@@ -180,7 +180,7 @@
     30.99419,
     -80.06648
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:21Z"
   },
   {
    "id": "us-pa",
@@ -191,14 +191,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://511pa.com/cctv",
    "every": 2,
-   "n": 1400,
+   "n": 1403,
    "box": [
     39.72343,
     -80.5799,
     42.25058,
     -74.7137
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-ne511",
@@ -216,7 +216,7 @@
     47.14303,
     -67.35085
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-ct",
@@ -234,7 +234,7 @@
     41.89839,
     -72.07225
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-wi",
@@ -252,7 +252,7 @@
     45.89991,
     -87.76084
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-la",
@@ -270,7 +270,7 @@
     32.56823,
     -89.71119
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-az",
@@ -288,7 +288,7 @@
     36.987,
     -109.05118
    ],
-   "checked": "2026-10-03T06:35Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-ut",
@@ -306,7 +306,7 @@
     41.99907,
     -109.06794
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-id",
@@ -324,7 +324,7 @@
     49.11869,
     -110.907
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-nv",
@@ -342,7 +342,7 @@
     41.98833,
     -114.06374
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:22Z"
   },
   {
    "id": "us-ak",
@@ -360,7 +360,7 @@
     68.12538,
     -132.54265
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-co",
@@ -371,14 +371,14 @@
    "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
    "page": "https://cotrip.org/",
    "every": 5,
-   "n": 1032,
+   "n": 1033,
    "box": [
     36.99926,
     -109.04076,
     69.63329,
     -102.24673
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-mn",
@@ -396,7 +396,7 @@
     48.97072,
     -89.68326
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-ia",
@@ -414,7 +414,7 @@
     43.44541,
     -90.16799
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-in",
@@ -432,7 +432,7 @@
     41.75352,
     87.30259
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-ne",
@@ -450,7 +450,7 @@
     43.00086,
     -95.82282
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-ks",
@@ -468,7 +468,7 @@
     39.99394,
     -94.22559
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-wa",
@@ -486,7 +486,7 @@
     49.00225,
     -117.05037
    ],
-   "checked": "2026-10-03T06:36Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "us-or",
@@ -504,7 +504,7 @@
     46.90436,
     -116.77713
    ],
-   "checked": "2026-10-03T06:37Z"
+   "checked": "2026-10-03T07:23Z"
   },
   {
    "id": "ca-on",
@@ -522,7 +522,7 @@
     51.48012,
     -74.38254
    ],
-   "checked": "2026-10-03T06:37Z"
+   "checked": "2026-10-03T07:24Z"
   },
   {
    "id": "ca-nb",
@@ -540,7 +540,7 @@
     47.95752,
     -63.93869
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:24Z"
   },
   {
    "id": "ca-ns",
@@ -558,7 +558,7 @@
     46.8772,
     -60.2754
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:24Z"
   },
   {
    "id": "ca-nl",
@@ -576,7 +576,45 @@
     53.56083,
     -52.87225
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:24Z"
+  },
+  {
+   "id": "th-dwr",
+   "cc": "th",
+   "tz": "Asia/Bangkok",
+   "country": "Thailand (rivers)",
+   "agency": "Department of Water Resources, Thailand (telemetry river cameras)",
+   "licence": "Public telemetry API of the Department of Water Resources (no terms of use stated)",
+   "page": "https://telemetry.dwr.go.th/",
+   "every": 15,
+   "kind": "dwr",
+   "n": 128,
+   "box": [
+    6.22808,
+    98.36329,
+    20.44465,
+    105.4932
+   ],
+   "checked": "2026-10-03T07:25Z"
+  },
+  {
+   "id": "th-itic",
+   "cc": "th",
+   "tz": "Asia/Bangkok",
+   "country": "Thailand (live video)",
+   "agency": "iTIC Foundation road cameras (list published by Longdo)",
+   "licence": "Public live streams of the iTIC Foundation (no licence stated)",
+   "page": "https://www.iticfoundation.org/",
+   "every": 0,
+   "kind": "hls",
+   "n": 57,
+   "box": [
+    13.66608,
+    100.52785,
+    16.47656,
+    102.83274
+   ],
+   "checked": "2026-10-03T07:25Z"
   },
   {
    "id": "au-qld",
@@ -594,7 +632,7 @@
     -16.95385,
     153.5168
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:25Z"
   },
   {
    "id": "is-vegagerdin",
@@ -612,7 +650,7 @@
     66.32717,
     -13.85469
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:25Z"
   },
   {
    "id": "lt-eismoinfo",
@@ -630,7 +668,7 @@
     56.37486,
     26.53135
    ],
-   "checked": "2026-10-03T06:38Z"
+   "checked": "2026-10-03T07:25Z"
   }
  ]
 }
