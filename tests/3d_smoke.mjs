@@ -134,7 +134,16 @@ async function run3d(name, p, errors, libs, openSel, early) {
 // answers for every zoom-14 address, so each tile the map wants shows up as a byte-range request past the archive's directory.
 function pmFixture() {
   const vw = (n) => { const o = []; while (n >= 128) { o.push((n % 128) | 128); n = Math.floor(n / 128); } o.push(n); return o; };
-  const tile = Buffer.from([0x1a, 15, 0x78, 2, 0x0a, 8, ...Buffer.from("building"), 0x28, 0x80, 0x20]);
+  /* one "building" layer holding one square building in the middle of the tile, with a name, use, floors and its source */
+  const fld = (n, w, b) => [...vw(n * 8 + w), ...(w === 2 ? [...vw(b.length), ...b] : b)];
+  const str = (t) => [...Buffer.from(t)], zz = (n) => (n << 1) ^ (n >> 31);
+  const keys = ["@name", "class", "num_floors", "@geometry_source", "sources", "id"];
+  const vals = [fld(1, 2, str("Test <b>Hall</b>")), fld(1, 2, str("school")), fld(5, 0, vw(3)), fld(1, 2, str("OpenStreetMap")),
+    fld(1, 2, str(JSON.stringify([{ dataset: "OpenStreetMap", record_id: "w123@2", update_time: "2025-01-07T11:53:37.000Z" }]))), fld(1, 2, str("abc-1"))];
+  const geom = [9, zz(1024), zz(1024), 26, zz(2048), 0, 0, zz(2048), zz(-2048), 0, 15];
+  const feat = [...fld(1, 0, vw(1)), ...fld(2, 2, [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5]), ...fld(3, 0, vw(3)), ...fld(4, 2, geom.flatMap(vw))];
+  const layer = [...fld(15, 0, vw(2)), ...fld(1, 2, str("building")), ...fld(2, 2, feat), ...keys.flatMap((k) => fld(3, 2, str(k))), ...vals.flatMap((v) => fld(4, 2, v)), ...fld(5, 0, vw(4096))];
+  const tile = Buffer.from(fld(3, 2, layer));
   const z14 = (Math.pow(4, 14) - 1) / 3, dir = Buffer.from([...vw(1), ...vw(z14), ...vw(Math.pow(4, 14)), ...vw(tile.length), ...vw(1)]);
   const meta = Buffer.from(JSON.stringify({ vector_layers: [{ id: "building", fields: {}, minzoom: 14, maxzoom: 14 }, { id: "building_part", fields: {}, minzoom: 14, maxzoom: 14 }] }));
   const h = Buffer.alloc(127); h.write("PMTiles", 0); h[7] = 3;
@@ -186,6 +195,24 @@ function pmFixture() {
   ok(asked.length > 0, "buildings: close in, building tiles are asked for (" + asked.length + ")");
   const kinds = await p.evaluate(() => { const e = window.OSAP_3D.gl.getPaintProperty("bld", "fill-extrusion-height"); return JSON.stringify(e).includes("num_floors") && JSON.stringify(e).includes("apartments"); });
   ok(kinds, "buildings: heights come from the recorded height, else floors, else the building's kind");
+  // tap a building: what the data records, "not recorded" for the rest, its source, and nothing from the data run as code
+  await p.evaluate(() => { const gl = window.OSAP_3D.gl, c = gl.getCenter(), n = Math.pow(2, 14), x = Math.floor((c.lng + 180) / 360 * n), r = c.lat * Math.PI / 180,
+    y = Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n), lon = (x + 0.5) / n * 360 - 180, lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 0.5) / n))) * 180 / Math.PI;
+    gl.jumpTo({ center: [lon, lat], zoom: 16, pitch: 0, bearing: 0 }); });
+  await p.waitForTimeout(2500);
+  const box = await p.locator("#o3d .o3-map canvas").boundingBox();
+  await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2); await p.waitForTimeout(600);
+  const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); return e ? { html: e.innerHTML, text: e.textContent, bold: !!e.querySelector("h3 b"), link: (e.querySelector("a[href*='openstreetmap.org']") || {}).href } : null; });
+  ok(pop && /Test <b>Hall<\/b>/.test(pop.text) && !pop.bold && /School/.test(pop.text) && /Floors\s*3/.test(pop.text) && /Height\s*not recorded/.test(pop.text) && /OpenStreetMap \(drawn by volunteers\)/.test(pop.text) &&
+    pop.link === "https://www.openstreetmap.org/way/123" && /Last edited\s*2025-01-07/.test(pop.text) && /not an official survey/.test(pop.text) && /Footprint\s*about 1,411,\d{3} m²/.test(pop.text),
+    "buildings: tapping one shows its recorded details and source, and 'not recorded' for the rest " + JSON.stringify(pop && pop.text.slice(0, 400)));
+  const g = await p.evaluate(() => window.OSAP_3D._bldInfo({ "@geometry_source": "Google Open Buildings", sources: JSON.stringify([{ dataset: "Google Open Buildings", confidence: 0.87, update_time: "2023-05-01T00:00:00.000Z" }]) }, null));
+  ok(/<h3>Building<\/h3>/.test(g) && /No name recorded/.test(g) && /Use<\/th><td><i class="o3-nr">not recorded/.test(g) && /87% sure/.test(g) && /traced by a computer/.test(g) && !/Footprint/.test(g),
+    "buildings: a machine-traced building says so, with the model's confidence, and invents nothing");
+  // the compass gives the heading in degrees
+  const hd = [];
+  for (const b of [0, 45, -90, 179.6, -0.4]) { await p.evaluate((b) => window.OSAP_3D.gl.jumpTo({ bearing: b }), b); await p.waitForTimeout(100); hd.push(await p.evaluate(() => document.querySelector("#o3d .o3-deg").textContent)); }
+  ok(JSON.stringify(hd) === JSON.stringify(["000° N", "045° NE", "270° W", "180° S", "000° N"]), "3D compass: heading in degrees as the view turns " + JSON.stringify(hd));
   await p.click("#o3d .o3-bld");
   const b2 = await p.evaluate(() => ({ vis: window.OSAP_3D.gl.getLayoutProperty("bld", "visibility"), vp: window.OSAP_3D.gl.getLayoutProperty("bldp", "visibility"), pressed: document.querySelector("#o3d .o3-bld").getAttribute("aria-pressed"), saved: JSON.parse(localStorage.getItem("osap-3d")).bld }));
   ok(b2.vis === "none" && b2.vp === "none" && b2.pressed === "false" && b2.saved === false, "buildings: the switch turns them off and remembers it " + JSON.stringify(b2));
