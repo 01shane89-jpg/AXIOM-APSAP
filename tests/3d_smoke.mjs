@@ -216,6 +216,7 @@ function pmFixture() {
 }
 {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1000, height: 700 } });
+  const ovp = []; let ovpDown = false;
   const asked = [], archives = [], pm = pmFixture(), CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "ETag, Content-Length, Content-Range" };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
@@ -226,6 +227,14 @@ function pmFixture() {
       const m = /bytes=(\d+)-(\d+)/.exec(r.request().headers()["range"] || ""), from = m ? +m[1] : 0, to = Math.min(m ? +m[2] : pm.buf.length - 1, pm.buf.length - 1);
       if (from >= pm.tileAt) asked.push(from);
       return r.fulfill({ status: 206, headers: { ...CORS, "Content-Type": "application/octet-stream", ETag: '"t1"', "Content-Range": `bytes ${from}-${to}/${pm.buf.length}` }, body: pm.buf.subarray(from, to + 1) });
+    }
+    /* OpenStreetMap at the tapped spot: the first mirror is down, the second answers with a named temple outline and a shop nearby */
+    if (/overpass/.test(u)) {
+      ovp.push(u);
+      if (ovpDown || /overpass-api\.de/.test(u)) return r.fulfill({ status: 504, headers: CORS, body: "" });
+      return r.fulfill({ status: 200, headers: { ...CORS, "Content-Type": "application/json" }, body: JSON.stringify({ elements: [
+        { type: "way", id: 77, tags: { building: "temple", amenity: "place_of_worship", name: "วัดทดสอบ", "name:en": "Wat <b>Test</b>", "building:levels": "2" } },
+        { type: "node", id: 88, lat: 0, lon: 0, tags: { name: "Shop <img src=x onerror=alert(1)>", shop: "convenience" } }] }) });
     }
     return r.abort();
   });
@@ -262,13 +271,32 @@ function pmFixture() {
   await p.waitForTimeout(2500);
   const box = await p.locator("#o3d .o3-map canvas").boundingBox();
   await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2); await p.waitForTimeout(600);
-  const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); return e ? { html: e.innerHTML, text: e.textContent, bold: !!e.querySelector("h3 b"), link: (e.querySelector("a[href*='openstreetmap.org']") || {}).href } : null; });
-  ok(pop && /Test <b>Hall<\/b>/.test(pop.text) && !pop.bold && /School/.test(pop.text) && /Floors\s*3/.test(pop.text) && /Height\s*not recorded/.test(pop.text) && /OpenStreetMap \(drawn by volunteers\)/.test(pop.text) &&
-    pop.link === "https://www.openstreetmap.org/way/123" && /Last edited\s*2025-01-07/.test(pop.text) && /not an official survey/.test(pop.text) && /Footprint\s*about 1,411,\d{3} m²/.test(pop.text),
-    "buildings: tapping one shows its recorded details and source, and 'not recorded' for the rest " + JSON.stringify(pop && pop.text.slice(0, 400)));
+  await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
+  const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); if (!e) return null;
+    /* every value is inside the popup, on screen, left-aligned (the app's own table style once pushed them all out of sight) */
+    const box = document.querySelector("#o3d .o3-popw .maplibregl-popup-content").getBoundingClientRect();
+    const cells = [...e.querySelectorAll(".o3-bt td")].map((td) => { const r = td.getBoundingClientRect(), cs = getComputedStyle(td); return { in: r.width > 20 && r.left >= box.left - 0.5 && r.right <= box.right + 0.5, a: cs.textAlign, col: cs.color }; });
+    return { html: e.innerHTML, text: e.textContent, bold: !!e.querySelector("h3 b"), link: (e.querySelector(".o3-bt a[href*='openstreetmap.org']") || {}).href, cells, osm: (e.querySelector(".o3-osm") || {}).innerHTML || "", img: !!e.querySelector(".o3-osm img") }; });
+  ok(pop && /Test <b>Hall<\/b>/.test(pop.text) && !pop.bold && /Use\s*School/.test(pop.text) && /Floors\s*3/.test(pop.text) && !/Height/.test(pop.text) && /height in 3D is an estimate/.test(pop.text) && /OpenStreetMap \(drawn by volunteers\)/.test(pop.text) &&
+    pop.link === "https://www.openstreetmap.org/way/123" && /Last edited\s*2025-01-07/.test(pop.text) && /not an official survey/.test(pop.text) && /Footprint\s*about 1,411,\d{3} m²/.test(pop.text) && !/not recorded/.test(pop.text),
+    "buildings: tapping one shows only its recorded details and source " + JSON.stringify(pop && pop.text.slice(0, 400)));
+  ok(pop && pop.cells.length >= 4 && pop.cells.every((c) => c.in && c.a === "left" && c.col === "rgb(33, 37, 41)"), "buildings: every value shows inside the popup, left-aligned, dark on white " + JSON.stringify(pop && pop.cells));
+  ok(pop && /Wat &lt;b&gt;Test&lt;\/b&gt;<\/b> \(วัดทดสอบ\)/.test(pop.osm) && /Place of worship/.test(pop.osm) && /2 floors/.test(pop.osm) && /openstreetmap\.org\/way\/77/.test(pop.osm) && /Shop &lt;img/.test(pop.osm) && /Convenience/.test(pop.osm) && !pop.img && /not checked by OSAP/.test(pop.osm),
+    "buildings: OpenStreetMap at the tapped spot adds its name, use and floors, labelled and linked, nothing run as code " + JSON.stringify(pop && pop.osm.slice(0, 500)));
+  ok(ovp.length === 2 && /overpass-api\.de/.test(ovp[0]) && !/overpass-api\.de/.test(ovp[1]), "buildings: OpenStreetMap asked only on the tap, the next mirror when one is down " + JSON.stringify(ovp));
+  // nothing reachable: says so, and Try again asks again
+  ovpDown = true;
+  await p.evaluate(() => document.querySelector("#o3d .maplibregl-popup-close-button").click());
+  await p.evaluate(() => window.OSAP_3D.gl.panBy([3, 0], { duration: 0 })); await p.waitForTimeout(300);
+  await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const down = await p.waitForFunction(() => /could not be reached/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || "") && !!document.querySelector("#o3d .o3-osm .o3-again"), null, { timeout: 20000 }).then(() => true).catch(() => false);
+  ok(down, "buildings: when OpenStreetMap is down the popup says so and offers Try again");
+  ovpDown = false; await p.click("#o3d .o3-osm .o3-again");
+  const back = await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).then(() => true).catch(() => false);
+  ok(back, "buildings: Try again fetches it");
   const g = await p.evaluate(() => window.OSAP_3D._bldInfo({ "@geometry_source": "Google Open Buildings", sources: JSON.stringify([{ dataset: "Google Open Buildings", confidence: 0.87, update_time: "2023-05-01T00:00:00.000Z" }]) }, null));
-  ok(/<h3>Building<\/h3>/.test(g) && /No name recorded/.test(g) && /Use<\/th><td><i class="o3-nr">not recorded/.test(g) && /87% sure/.test(g) && /traced by a computer/.test(g) && !/Footprint/.test(g),
-    "buildings: a machine-traced building says so, with the model's confidence, and invents nothing");
+  ok(/<h3>Building<\/h3>/.test(g) && /class="o3-none">No name, use, height or floors are recorded/.test(g) && !/<th>Use/.test(g) && !/<th>Floors/.test(g) && /87% sure/.test(g) && /traced by a computer/.test(g) && !/Footprint/.test(g),
+    "buildings: a bare machine-traced building says once that nothing is recorded, with the model's confidence, and invents nothing");
   // the compass gives the heading in degrees
   const hd = [];
   for (const b of [0, 45, -90, 179.6, -0.4]) { await p.evaluate((b) => window.OSAP_3D.gl.jumpTo({ bearing: b }), b); await p.waitForTimeout(100); hd.push(await p.evaluate(() => document.querySelector("#o3d .o3-deg").textContent)); }
