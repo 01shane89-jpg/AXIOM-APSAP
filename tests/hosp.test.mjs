@@ -96,7 +96,10 @@ ok(L2[0].capabilities["ed.24_7"].status === "contradicted" && L2[0].conflicts.so
 ok(fs.capabilities["ed.24_7"].status === "reported", "merging never changes the records it came from");
 
 // ---------- hospital websites ----------
-const { build } = await import("../tools/build_hospital_web.mjs");
+const { build, PERSON } = await import("../tools/build_hospital_web.mjs");
+ok(["Asst. Prof. Somchai Jaidee, Emergency", "Prof. Nattachai Srisawat, M.D.", "Dr Somchai", "\u0e19\u0e1e.\u0e2a\u0e21\u0e0a\u0e32\u0e22", "\u0e23\u0e28.\u0e1e\u0e0d.\u0e1b\u0e23\u0e30\u0e19\u0e2d\u0e21", "\u0e1e.\u0e17. \u0e0a\u0e19\u0e30"].every((t) => PERSON.test(t)) &&
+  !["CT scanner open 24 hours", "\u0e2b\u0e49\u0e2d\u0e07\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19 24 \u0e0a\u0e31\u0e48\u0e27\u0e42\u0e21\u0e07", "\u0e23\u0e1e\u0e28.\u0e02\u0e2d\u0e19\u0e41\u0e01\u0e48\u0e19", "\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25\u0e19\u0e32\u0e07\u0e23\u0e2d\u0e07"].some((t) => PERSON.test(t)),
+  "website quotes naming a person (a title before a name, English or Thai) are recognised; service text and hospital names are not");
 const B = build({ cc: "th", at: "2026-10-03T07:48:05Z", sites: [
   { id: "osm:w42", name: "Test Hospital", lat: 13.7, lon: 100.5, web: "https://t.example/", hits: {
     "dx.ct": [{ url: "https://t.example/services/ct", title: "CT", quote: "CT scan 24 hours\u0007" }, { url: "https://t.example/news/new-ct", title: "News", quote: "We bought a CT scanner" }],
