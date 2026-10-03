@@ -797,6 +797,12 @@
     "#medplan .mpmark{display:inline-block;min-width:18px;text-align:center;font-weight:700;border-radius:3px;background:#D7141A;color:#fff;font-size:11px;padding:0 3px}" +
     "#medplan .mpmark.air{background:#1d5fa8}#medplan .mpmark.o{background:#111}#medplan .mpmark.e{background:#b35c00}" +
     "#medplan .mptier{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin:1px 4px 1px 0;border:1px solid currentColor}" +
+    /* on a phone the role table reads as one card per casualty type, Primary, Secondary and Tertiary stacked and labelled,
+       so the long gap explanations wrap across the full width instead of one word per line */
+    "@media screen and (max-width:700px){table.mproles,table.mproles tbody,table.mproles tr,table.mproles th,table.mproles td{display:block;width:auto}" +
+    "table.mproles thead{display:none}table.mproles tr{border:1px solid var(--line-soft,#e3e7eb);border-radius:8px;margin:0 0 10px;padding:2px 0}" +
+    "table.mproles td::before{content:attr(data-l);display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#56626F);margin:0 0 2px}" +
+    "table.mproles th{white-space:normal!important}table.mproles tr>*:last-child{border-bottom:0}}" +
     "#medplan .mptcls{color:var(--muted,#56626F)}#medplan .mproles td,#medplan .mproles th{vertical-align:top;text-align:left;padding:4px 6px;border-bottom:1px solid var(--line-soft,#e3e7eb)}" +
     "#medplan .mpbypc b{opacity:.75}#medplan .mpbyp{display:block;font-size:11.5px;font-weight:600;color:var(--muted,#56626F)}" +
     "#medplan .mpfar{display:inline-block;font-size:11.5px;font-weight:600;color:#1d5fa8}:root[data-map=grey] #medplan .mpfar,:root[data-map=dark] #medplan .mpfar{color:#8FC1FF}" +
@@ -1190,14 +1196,15 @@
     var R = planRoles(s), km0 = Math.round(s.radii.h / 1000), farN = s.fac.H.filter(function (f) { return f.far; }).length;
     function byRoleOf(r, d) { var o = ["primary", "secondary", "tertiary"], k = o[o.indexOf(r.role) + d]; return R.filter(function (x) { return x.casualty_category === r.casualty_category && x.role === k; })[0]; }
     function cell(r) {
-      if (r.state === "gap") return '<td class="mpgap"><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km" + (farN ? ", nor any of the " + farN + " documented hospitals farther out (up to " + FAR_KM + " km)," : "") + " has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+      var dl = ' data-l="' + ROLE_NAME[r.role] + '"';
+      if (r.state === "gap") return '<td class="mpgap"' + dl + '><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km" + (farN ? ", nor any of the " + farN + " documented hospitals farther out (up to " + FAR_KM + " km)," : "") + " has documented " + esc(andList(capNames(r.required))) + ".</span>" +
         (r.partial ? r.partial.map(function (x, i) { return '<span class="sub mpfar">' + (i ? "Most documented" : "Nearest with part documented") + ": H" + (s.fac.H.indexOf(x.f) + 1) + " " + esc(x.f.name) + ", " + esc(km(x.f.m)) + " (" + esc(andList(capNames(x.met))) + " documented; " + esc(andList(capNames(x.not_documented))) + " not). Confirm the rest before using it.</span>"; }).join("") : "") +
         (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
       var c = r.choice, f = c.f, unk = capNames(c.unknown);
       var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
         '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here. Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
       var hv = r.via && r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? '<span class="sub obs">Reached via ' + ROLE_NAME[r.via.from] + " in about " + esc(mins(r.via.via_s)) + "; direct would be " + esc(mins(r.via.direct_s)) + ", beyond the golden hour.</span>" : "";
-      return "<td" + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv +
+      return "<td" + dl + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv +
         (f.far ? '<span class="sub mpfar">Wider search: nothing within ' + km0 + " km has this documented; " + esc(km(f.m)) + " away</span>" : "") +
         (unk.length ? '<span class="sub obs">Not documented: ' + esc(unk.join(", ")) + "</span>" : "") + "</td>";
     }
