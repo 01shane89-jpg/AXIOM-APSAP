@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "e2983cbe8cdb";
+const VERSION = "40309bd4b2c4";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -448,6 +448,9 @@ const PRECACHE = [
 "assets/osap-route.js",
 "assets/osap-comms.js",
 "assets/osap-search.js",
+"assets/hospital-sources/base-provider.js",
+"assets/hospital-sources/sof-provider.js",
+"assets/hospital-sources/osm-provider.js",
 "assets/osap-medplan.js",
 "assets/osap-lz.js",
 "assets/osap-split.js",
@@ -475,7 +478,9 @@ const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
 const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
   // traffic camera stills (assets/osap-cams.js): always the agency's newest image, never a saved copy
   /api\.data\.gov\.sg\/v1\/transport/, /images\.data\.gov\.sg\//, /tdcctv\.data\.one\.gov\.hk/, /trafficnz\.info\/camera/, /jamcams\.tfl\.gov\.uk/,
-  /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/];
+  /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/,
+  /\/map\/Cctv\/\d+/, /carsprogram\.org\//, /websvc\.coloradosprings\.gov\//, /atmsqf\.iowadot\.gov\//, /dot511\.nebraska\.gov\/images\//, /kcscout\.net\//,
+  /images\.wsdot\.wa\.gov\//, /tripcheck\.com\/RoadCams\//, /cameras\.qldtraffic\.qld\.gov\.au\//, /vegagerdin\.is\/vgdata\/vefmyndavelar\//, /eismoinfo\.lt\/eismoinfo-backend\/image-provider\//, /data\.livetraffic\.com\/cameras\/[^/]+\.jpe?g/];
 // Saved after install rather than during it (see the top of this file).
 const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
