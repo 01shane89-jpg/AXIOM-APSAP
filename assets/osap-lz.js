@@ -10,6 +10,11 @@
      buildings, trees and forest, power and cable lines, masts and towers, wind turbines, water, wetland, railways, walls,
      fences and hedges, and built-up land use (where buildings may be unmapped). Sports pitches, parks and airfields inside
      built-up land are kept open. Each obstacle is drawn with a small safety margin (wires 10 m each side);
+   - satellite land cover adds what OpenStreetMap often leaves out (unmapped bases, villages and tree lines): the Esri / Impact
+     Observatory Sentinel-2 10 m land cover (keyless ArcGIS image service, the 2024 map) for the same window, where built-up
+     land, trees, water and flooded vegetation are blocked like their mapped kinds. It is a classification of 10 m pixels, so a
+     single building, shed or lone tree can still be missed; if it does not load the search goes on with OpenStreetMap alone and
+     says so;
    - a cell is blocked when it holds an obstacle, is steeper than the chosen limit, or is sea or has no elevation. The
      distance from every open cell to the nearest blocked cell (an exact Euclidean distance transform) is how much clear
      ground there is round it; a cell is a candidate centre when that clear radius is at least half the chosen LZ size;
@@ -29,6 +34,9 @@
   var DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
   var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
   var ZA = 14, ZD = 13, KEY = "osap-lz", MAXC = 8, NEAR = 300;
+  var LC = "https://ic.imagery1.arcgis.com/arcgis/rest/services/Sentinel2_10m_LandCover/ImageServer/exportImage", LC_YEAR = 2024;
+  /* Esri land cover class -> obstacle class here: 1 water, 2 trees, 4 flooded vegetation, 7 built area */
+  var LC_OB = { 1: 4, 2: 2, 4: 9, 7: 6 };
   var RADII = [0.5, 1, 2, 3, 5];
   var SIZES = [[50, "50 m: light helicopter"], [100, "100 m: single ship"], [150, "150 m: heavy helicopter"], [250, "250 m: two ships"]];
   var SLOPES = [[3, "3°"], [7, "7°: landing limit"], [10, "10°"], [15, "15°: caution limit"]];
@@ -282,6 +290,8 @@
   function analyse(win, E, els, o) {
     var w = win.w, h = win.h, n = w * h, cell = win.cell, R = o.size / 2, tanMax = Math.tan(o.slope * Math.PI / 180);
     var rs = rasterise(win, els), OBC = rs.OBC, SFC = rs.SFC;
+    /* satellite land cover blocks built-up land, trees and water that OpenStreetMap left open */
+    if (o.lc) { var lcn = 0; for (i = 0; i < n; i++) { var lo = LC_OB[o.lc[i]]; if (lo && !OBC[i]) { OBC[i] = lo; lcn++; } } rs.counts.lc = Math.round(lcn * cell * cell / 1e4); rs.counts.lcOk = 1; }
     var SL = new Float32Array(n), K = Math.max(2, Math.round(30 / cell)), blocked = new Uint8Array(n), x, y, i;
     for (y = 0; y < h; y++) for (x = 0; x < w; x++) {
       i = y * w + x;
@@ -443,7 +453,7 @@
       if (r.pads.length) h += '<p class="lzsm"><b>Mapped helipads and airfields:</b> ' + r.pads.map(function (p) { return esc((p.name || (p.kind === "aerodrome" ? "Airfield" : "Helipad")) + " " + fmtKm(p.dist) + " " + Math.round(p.brg) + "°"); }).join("; ") + "</p>";
       if (r.warn.length) h += '<p class="lzmsg err">' + r.warn.map(esc).join(" ") + "</p>";
       h += '<p class="lzsm">Candidates from open data: verify on the ground and on current imagery before use. Not checked: soil and surface firmness, crops, ' +
-        "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL).</p>" +
+        "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
         '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button><button type="button" data-lz="clear">Clear marks</button></div>';
     }
     c.innerHTML = h; c.hidden = false; syncDock();
@@ -500,6 +510,25 @@
     return c.toDataURL("image/png");
   }
 
+  /* satellite land cover for every cell of the window (Uint8Array of Esri classes, 0 where none), or null when it did not load.
+     The image is asked for in Web Mercator on exactly the window's zoom 14 grid, one pixel per cell, nearest neighbour. */
+  function landcover(win) {
+    var S0 = 256 * Math.pow(2, ZA), WM = 40075016.686;
+    function mx(p) { return (p / S0 - 0.5) * WM; }
+    function my(p) { return (0.5 - p / S0) * WM; }
+    if (win.w > 4000 || win.h > 4000 || win.x0 < 0 || win.x0 + win.w > S0) return Promise.resolve(null);
+    var url = LC + "?bbox=" + [mx(win.x0), my(win.y0 + win.h), mx(win.x0 + win.w), my(win.y0)].map(function (v) { return v.toFixed(2); }).join(",") +
+      "&bboxSR=3857&imageSR=3857&size=" + win.w + "," + win.h + "&format=png&interpolation=RSP_NearestNeighbor&renderingRule=" +
+      encodeURIComponent('{"rasterFunction":"None"}') + "&time=" + Date.UTC(LC_YEAR, 0, 1) + "&f=image";
+    return loadImg(url).then(function (im) {
+      var c = D.createElement("canvas"); c.width = win.w; c.height = win.h;
+      var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(im, 0, 0, win.w, win.h);
+      var d = g.getImageData(0, 0, win.w, win.h).data, out = new Uint8Array(win.w * win.h), seen = 0;
+      for (var i = 0; i < out.length; i++) { if (d[i * 4 + 3] < 128) continue; out[i] = d[i * 4]; if (out[i]) seen++; }
+      return seen ? out : null;
+    }, function () { return null; });
+  }
+
   /* one search with no card or map marks: elevation and OpenStreetMap obstacles for the window round o, then analyse().
      Used by find() below and by Route > Evacuation route ("nearest landing zone"). prog(done, total) reports elevation tiles;
      busy() is called before the heavy work and may return false to stop. Resolves the analysis (cands best first, pads, warn,
@@ -510,18 +539,20 @@
     var bbox = [se[0], nw[1], nw[0], se[1]];
     var osm = overpass(overpassQuery(bbox)).then(function (j) { return j.elements || []; });
     osm.catch(function () {});
-    var dem = demFor(win, prog);
-    return Promise.all([dem, osm]).then(function (v) {
+    var dem = demFor(win, prog), lc = landcover(win);
+    return Promise.all([dem, osm, lc]).then(function (v) {
       if (v[0].failed === v[0].tiles) throw new Error("elevation: no tile loaded");
       if (busy && busy() === false) return null;
       return new Promise(function (r) { setTimeout(r, 30); }).then(function () {
-        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly });
+        var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly, lc: v[2] });
         res.o = o; res.radius = radius; res.size = size; res.slope = slope; res.poly = poly; res.warn = []; res.win = win;
         if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
         /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
         var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
-        if (res.counts.bld < 5 * km2) res.warn.push(res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here, so houses, sheds and trees are probably missing: check every candidate on satellite imagery." :
-          "OpenStreetMap shows no buildings here, so mapping may be incomplete: check every candidate on satellite imagery for houses and trees.");
+        if (!v[2]) res.warn.push("Satellite land cover did not load, so built-up land and trees missing from OpenStreetMap are not seen: check every candidate on satellite imagery.");
+        if (res.counts.bld < 5 * km2) res.warn.push((res.counts.bld ? "Only " + res.counts.bld + " building" + (res.counts.bld === 1 ? " is" : "s are") + " mapped in OpenStreetMap here" : "OpenStreetMap shows no buildings here") +
+          (v[2] ? ", so built-up land and trees come from 10 m satellite land cover" + (res.counts.lc ? " (" + res.counts.lc + " ha blocked that OpenStreetMap left open)" : "") + ", which can miss a single building, shed or tree: check every candidate on satellite imagery." :
+            ", so houses, sheds and trees are probably missing: check every candidate on satellite imagery."));
         res.bounds = L.latLngBounds([se[0], nw[1]], [nw[0], se[1]]);
         return res;
       });

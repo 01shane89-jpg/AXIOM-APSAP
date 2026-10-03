@@ -44,8 +44,33 @@ for (const extra of ["", "&renderingRule=" + encodeURIComponent(JSON.stringify({
   }, { url, START, B, bb });
   console.log("\n### exportImage" + extra.slice(0, 80) + "\n" + JSON.stringify({ ...out, pic: undefined }) + "\n" + (out.pic || ""));
 }
+for (const t of [Date.UTC(2025, 0, 1), Date.UTC(2024, 0, 1)]) {
+  const r = await fetch(`${SVC}/identify?geometry=${START[1]},${START[0]}&geometryType=esriGeometryPoint&sr=4326&time=${t}&returnCatalogItems=false&f=json`).then((r) => r.text()).catch((e) => e.message);
+  console.log("identify year", new Date(t).getUTCFullYear(), r.slice(0, 300));
+}
 const id = await fetch(`${SVC}/identify?geometry=${START[1]},${START[0]}&geometryType=esriGeometryPoint&sr=4326&returnCatalogItems=false&f=json`).then((r) => r.text()).catch((e) => e.message);
 console.log("identify start:", id.slice(0, 800));
 const idb = await fetch(`${SVC}/identify?geometry=${B[1]},${B[0]}&geometryType=esriGeometryPoint&sr=4326&returnCatalogItems=false&f=json`).then((r) => r.text()).catch((e) => e.message);
 console.log("identify B:", idb.slice(0, 800));
+/* the finder itself, with land cover, from the start and from the point it picked before */
+const ctx2 = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 1000 } });
+await ctx2.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
+const q = await ctx2.newPage();
+q.on("pageerror", (e) => console.log("pageerror", e.message));
+q.on("response", (r) => { if (/arcgis/.test(r.url())) console.log("landcover HTTP", r.status(), r.url().slice(0, 140)); });
+await q.goto(`http://127.0.0.1:${server.address().port}/#th/`, { waitUntil: "domcontentloaded" });
+await q.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_AREA_TOOLS, null, { timeout: 60000 });
+await q.waitForTimeout(3000);
+await q.evaluate(() => window.OSAP_AREA_TOOLS.filter((t) => t.id === "lz")[0].run());
+await q.waitForFunction(() => window.OSAP_LZ && window.OSAP_LZ.isOpen(), null, { timeout: 30000 });
+for (const [sz, r] of [["100", "2"], ["50", "1"]]) {
+  await q.selectOption("#lz-r", r); await q.selectOption("#lz-d", sz);
+  await q.evaluate((c) => window.OSAP_LZ.at(c), START);
+  await q.waitForFunction(() => !window.OSAP_LZ.state().busy, null, { timeout: 240000 }).catch(() => console.log("timed out"));
+  const s = await q.evaluate(() => { const s = window.OSAP_LZ.state(); return { err: s.err, cands: s.res && s.res.cands.map((k) => ({ lat: +k.lat.toFixed(5), lon: +k.lon.toFixed(5), dist: Math.round(k.dist), clearD: k.clearD, surface: k.surface, near: k.near.slice(0, 4).map((o) => o.n + " " + Math.round(o.m) + " m " + o.dir) })), counts: s.res && s.res.counts, warn: s.res && s.res.warn }; });
+  console.log("\n##### LZ " + sz + " m within " + r + " km, with land cover:", JSON.stringify(s));
+  await q.evaluate(() => { const b = document.getElementById("lz-mask"); if (b && !b.checked) b.click(); });
+  await q.waitForTimeout(2500);
+  await q.screenshot({ path: "lz-out/lopburi-lc-" + sz + ".png" });
+}
 await browser.close(); server.close();
