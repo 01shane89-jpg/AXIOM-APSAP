@@ -1,5 +1,5 @@
 {
- "built": "2026-10-03T13:10Z",
+ "built": "2026-10-03T13:13Z",
  "sources": [
   {
    "id": "sg-lta",
@@ -633,6 +633,24 @@
     -52.87225
    ],
    "checked": "2026-10-03T07:44Z"
+  },
+  {
+   "id": "ca-ab",
+   "cc": "ca",
+   "tz": "America/Edmonton",
+   "country": "Canada (Alberta)",
+   "agency": "Alberta Transportation and Economic Corridors (511 Alberta)",
+   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
+   "page": "https://511.alberta.ca/cctv",
+   "every": 2,
+   "n": 340,
+   "box": [
+    49.077,
+    -119.999,
+    59.868,
+    -110.021
+   ],
+   "checked": "2026-10-03T13:13Z"
   },
   {
    "id": "ca-mb",
