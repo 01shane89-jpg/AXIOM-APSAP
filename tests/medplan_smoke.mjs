@@ -148,8 +148,10 @@ async function open(opts, o) {
     if (/t\/12_100\.json/.test(u)) return J(r, MF_ROWS);
     return r.fulfill({ status: 404, body: "" });
   });
-  /* what hospitals state on their own websites (data/hospitals/<cc>/web.json): none unless a check supplies it */
-  await ctx.route(/\/data\/hospitals\//, (r) => o.web === "fail" ? r.fulfill({ status: 503, body: "" }) : o.web && /\/th\/web\.json/.test(r.request().url()) ? J(r, o.web) : r.fulfill({ status: 404, body: "" }));
+  /* what hospitals state on their own websites (data/hospitals/<cc>/web.json) and the official records (th/registry.json):
+     none unless a check supplies them */
+  await ctx.route(/\/data\/hospitals\//, (r) => o.web === "fail" ? r.fulfill({ status: 503, body: "" }) : o.web && /\/th\/web\.json/.test(r.request().url()) ? J(r, o.web) :
+    o.gov && /\/th\/registry\.json/.test(r.request().url()) ? J(r, o.gov) : r.fulfill({ status: 404, body: "" }));
   /* the split view setting (shared with Find LZ, Watch, NAI/TAI) starts on; these checks start from the full window */
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -631,6 +633,40 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   ok(!errors.length, "websites down: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- official hospital records, Thailand (build prompt phase 7) ----------
+const HA_SRC = { name: "HA Thailand open data: test", page: "https://data.ha.or.th/dataset/test", url: "", licence: "CC BY", last_modified: "" };
+const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:00:00Z", source_type: "government_registry",
+  sources: { hospital: HA_SRC, accreditation: HA_SRC, pdsc: Object.assign({}, HA_SRC, { name: "HA Thailand open data: certifications test" }), level: HA_SRC }, hospitals: [
+  { hcode: "99001", name_th: "\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25\u0e43\u0e01\u0e25\u0e49\u0e17\u0e14\u0e2a\u0e2d\u0e1a", name_en: "Near Hospital", province: "Testburi", health_region: "13", type_th: "\u0e23\u0e1e\u0e28.", type_en: "Regional hospital",
+    kind: "hospital", beds_requested: 500, beds_open: 450, specialties_reported: "", level: "A", level_th: "A", level_en: "A (advanced: regional referral)",
+    ha: { stage_th: "x", stage_en: "Advanced HA accreditation", accredited: true, from: "2025-01-01", to: "2028-12-31", note: "" },
+    programs: [{ kind: "programme", name_th: "stroke-th <b>y</b>", name_en: "Stroke care", stage: "PDSC", from: "2025-02-01", to: "2028-01-31", caps: ["spec.stroke"], src: "pdsc" },
+      { kind: "programme", name_th: "hip-th", name_en: "Hip fracture surgery in older people", stage: "PDSC", from: "2021-01-01", to: "2024-01-01", caps: ["surg.ortho"], src: "pdsc" }],
+    lat: 13.76, lon: 100.51, osm: "w2", coord_basis: "OpenStreetMap entry with the same name", retrieved: "2026-10-03", sha256: "c".repeat(64) },
+  { hcode: "99002", name_th: "x", name_en: "Sourced Trauma Centre", province: "Testburi", type_th: "x", type_en: "General hospital", kind: "hospital", beds_open: 120, level: "S", level_en: "S (standard: provincial)",
+    ha: null, programs: [{ kind: "network", name_th: "er-th", name_en: "Emergency care system", stage: "HNC", from: "2025-01-01", to: "2029-01-01", caps: ["ed.basic"], src: "hnc" }],
+    lat: 13.8002, lon: 100.5601, osm: "", coord_basis: "MOPH location", retrieved: "2026-10-03", sha256: "d".repeat(64) },
+  { hcode: "99003", name_th: "y", name_en: "Unplaced Hospital", province: "Testburi", kind: "hospital", programs: [], lat: null, lon: null, osm: "", coord_basis: "not placed", retrieved: "2026-10-03", sha256: "e".repeat(64) }] };
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, gov: GOVDOC });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
+  await openPlan(p);
+  const src = await p.textContent("#mp-src");
+  ok(/Official hospital records \(HA Thailand open data\)/.test(src) && /built 2026-10-03, 3 hospitals, 2 placed on the map; 2 in this plan/.test(src), "official records: the sources list names the registry, its date, the placed count and how many plan hospitals it covers " + src.slice(0, 300));
+  await p.click('#mp-fac tr:has-text("Near Hospital") [data-mp-assess]');
+  await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
+  const b = await p.textContent("#brief"), h = await p.innerHTML("#brief");
+  ok(/Official record/.test(b) && /99001/.test(b) && /Regional hospital/.test(b) && /A \(advanced: regional referral\)/.test(b) && /450 open, 500 registered/.test(b) && /Advanced HA accreditation \(x\), 2025-01-01 to 2028-12-31/.test(b), "official records: the assessment shows the H code, type, MOPH level, beds and HA accreditation");
+  ok(/Stroke care/.test(b) && /Hip fracture surgery in older people[^<]*2021-01-01 to 2024-01-01 expired/.test(b), "official records: certified programmes are listed and a past end date reads expired");
+  ok(/<th scope="row">Stroke<\/th><td><b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
+  ok(/<th scope="row">Orthopaedic surgery<\/th><td><b>REPORTED<\/b>, confidence LOW[^<]*<a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
+  ok(!/<th scope="row">Cardiac catheterisation<\/th><td><b>(VERIFIED|NOT_AVAILABLE)/.test(h), "official records: no certificate is never read as no capability");
+  ok(/450 open \(official record, H code 99001\)/.test(b) && /teaching or referral hospital: MOPH service level A/.test(b), "official records: beds open and the MOPH level A referral status come from the official record");
+  ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>y<\/b>/.test(document.getElementById("brief").textContent)), "official records: registry text is shown as text, never as markup");
+  await p.click("#mpa-close");
+  ok(!errors.length, "official records: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- road routing falls back to Valhalla, then to a labelled estimate ----------
 {
   const { ctx, p, errors, calls } = await open({ viewport: { width: 1400, height: 900 } }, { osrmFails: true, medfac: MF_ALL });
@@ -670,7 +706,7 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   await p.goto(base + "tests/", { waitUntil: "domcontentloaded" }).catch(() => {});
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
-  for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
+  for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider", "countries/th-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
   await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
