@@ -458,6 +458,10 @@
       '<div class="o3s o3-scale" role="button" tabindex="0" title="Map scale. Tap to change the unit (km, mi, nm)"></div>';
     ["click", "dblclick", "mousedown", "pointerdown", "touchstart", "wheel", "contextmenu", "keydown"].forEach(function (t) { box.addEventListener(t, function (e) { e.stopPropagation(); }); });
     mapEl.appendChild(box);
+    /* a short map (a small phone, the list sheet pulled up, landscape): the zoom buttons go first (pinch and the wheel
+       still zoom), then the 3D buttons line up along the top, and last the scale bar goes, so the 3D buttons never sit over the scale bar, tilt slider or grid strip */
+    function fit() { var h = box.clientHeight; box.classList.toggle("o3-short", h > 0 && h < 560); box.classList.toggle("o3-tiny", h > 0 && h < 440); box.classList.toggle("o3-micro", h > 0 && h < 300); }
+    var fitRO = W.ResizeObserver ? new ResizeObserver(fit) : null; if (fitRO) fitRO.observe(box); fit();
     var msg = box.querySelector(".o3-msg"), P = prefs(), gl = null, dead = false, markers = [];
     function say(t) { msg.textContent = t || ""; msg.hidden = !t; }
     function close(then) {
@@ -468,7 +472,7 @@
         try { gl.remove(); } catch (e) {}
         map.setView([c.lat, c.lng], z, { animate: false });
       }
-      box.remove(); view3 = null; D.removeEventListener("keydown", onKey); D.documentElement.classList.remove("o3d-on");
+      if (fitRO) fitRO.disconnect(); box.remove(); view3 = null; D.removeEventListener("keydown", onKey); D.documentElement.classList.remove("o3d-on");
       var b = D.querySelector("[data-o3d]"); if (b) b.focus();
       if (then) then();
     }
@@ -762,6 +766,9 @@
     /* the toolbar, bottom bar and their panels sit over the 3D view (z-index 1000 and up); the flat map's own corner
        controls, loading bar and press-and-hold ring are hidden while it is open */
     "html.o3d-on #map>.leaflet-control-container,html.o3d-on #map>#mload,html.o3d-on #map>#atk-ring{display:none!important}" +
+    "#o3d.o3-short .o3-zi,#o3d.o3-short .o3-zo,#o3d.o3-micro .o3-scale{display:none}" +
+    /* very short (a phone on its side): the 3D buttons in a row along the top instead of a column */
+    "#o3d.o3-tiny .o3-side{flex-direction:row;align-items:flex-start}" +
     "#o3d .o3-side{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:6px;z-index:2;align-items:center}" +
     "#o3d .o3-b{min-width:44px;min-height:44px;border:0;border-radius:10px;background:rgba(20,24,28,.86);color:#f1f3f5;font:700 14px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35);padding:0 8px}" +
     "#o3d .o3-b:focus-visible{outline:2px solid #4dabf7;outline-offset:1px}#o3d .o3-2d{background:#0b7285;color:#fff}" +

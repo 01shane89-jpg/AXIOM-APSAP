@@ -173,6 +173,19 @@ async function run3d(name, p, errors, libs, openSel, early) {
   ok(!ms.open && /flat map/.test(ms.toast) && Math.abs(ms.c.lng - 100.62) < 0.01, "3D tools: Measure goes back to 2D at the same place and says why " + JSON.stringify(ms));
   ok(await p.evaluate(() => !document.documentElement.classList.contains("o3d-on") && getComputedStyle(document.querySelector("#map .leaflet-control-container")).display !== "none"), "3D tools: the flat map's own controls are back in 2D");
   ok(errors.length === 0, "3D tools: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  // the smallest phones: the 3D buttons stay clear of the scale bar, the tilt slider and the strip, the toolbar of all three
+  for (const [w, h] of [[360, 640], [360, 560], [640, 360]]) {
+    await p.setViewportSize({ width: w, height: h }); await p.evaluate(() => window.OSAP_3D.open());
+    await p.waitForFunction(() => window.OSAP_3D.gl, null, { timeout: 30000 }).catch(() => {}); await p.waitForTimeout(600);
+    const lay = await p.evaluate(() => {
+      const r = (s) => { const e = document.querySelector(s); if (!e || getComputedStyle(e).display === "none") return null; const b = e.getBoundingClientRect(); return { t: b.top, b: b.bottom, l: b.left, r: b.right }; };
+      const hit = (a, b) => !!a && !!b && a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+      const side = r("#o3d .o3-side"), others = ["#o3d .o3-scale", "#o3d .o3-tilt", "#atk-bar", "#atk-tools"].map(r);
+      return { clash: others.some((o) => hit(side, o)) || hit(others[0], others[1]) || hit(others[1], others[2]), zoomBtns: !!r("#o3d .o3-zi"), scale: !!others[0] };
+    });
+    ok(!lay.clash, "3D tools: " + w + "x" + h + ": the 3D buttons, scale bar, tilt slider, strip and toolbar do not overlap " + JSON.stringify(lay));
+    await p.evaluate(() => window.OSAP_3D.close()); await p.waitForTimeout(200);
+  }
   if (OUT) await p.screenshot({ path: OUT + "/phone-3d-tools.png" });
   await ctx.close();
 }
