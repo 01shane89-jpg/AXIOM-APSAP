@@ -297,6 +297,17 @@ async function round7() {
   const m = t.match(/[^\n]{0,200}(lat|longitude|22\.\d{3,})[^\n]{0,200}/i); console.log("   page coords sample: " + (m ? m[0].slice(0, 400) : "none"));
   for (const u of ["https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en", "https://data.gov.hk/en-data/dataset/hk-hko-rss-weather-photo", "https://www.hko.gov.hk/en/wxinfo/ts/webcam/json/webcam.json", "https://www.hko.gov.hk/wxinfo/ts/webcam/webcam_list.json"]) show("HKO try " + u, await get(u, 30000), 500);
 }
+/* ---------- round 8: element shape of the DGT camera list and the NDBC buoy list ---------- */
+async function round8() {
+  const r = await get("https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v37.xml", 90000); line("DGT v37", r);
+  const t = r.b.toString("utf8"); const i = t.indexOf("etraffic.dgt.es/camarasEtraffic");
+  console.log("   head " + t.slice(0, 1500).replace(/\s+/g, " "));
+  if (i > 0) { console.log("   around first image: " + t.slice(Math.max(0, i - 3500), i + 800).replace(/\s+/g, " ")); const j = t.indexOf("etraffic.dgt.es/camarasEtraffic", i + 50); console.log("   second: " + t.slice(Math.max(0, j - 3500), j + 300).replace(/\s+/g, " ")); }
+  const tags = {}; for (const m of t.matchAll(/<([a-zA-Z0-9]+:[a-zA-Z]+)[\s>]/g)) tags[m[1]] = (tags[m[1]] || 0) + 1; console.log("   tag counts " + JSON.stringify(tags).slice(0, 3000));
+  const n = await get("https://www.ndbc.noaa.gov/buoycams.php", 30000); line("NDBC buoycams.php", n); console.log("   " + n.b.toString("utf8").slice(0, 900));
+  for (const st of ["41002", "46026"]) { const x = await get("https://www.ndbc.noaa.gov/buoycam.php?station=" + st, 30000); line("NDBC cam " + st, x); }
+}
+if (only === "r8") await round8();
 if (only === "r7") await round7();
 if (only === "r5") await round5();
 if (only === "r6") await round6();
