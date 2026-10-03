@@ -28,8 +28,9 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    # A full run takes about 35 minutes since the conflict tabs step was added (news ~8, social ~14, conflict ~6). At 30 the job
-    # was cancelled before "Commit if a snapshot changed", so nothing was saved; a slow run only delays the next queued one.
+    # A full run takes about 25 minutes (news ~8, social ~6, warnings ~3). At 30 the job was cancelled before "Commit if a snapshot
+    # changed", so nothing was saved. Each pull step has its own time limit (about 1.5x its slowest run on 2026-10-03), so one stuck
+    # feed is cut off and the run still commits everything else: on 2026-10-03 the news step hung for 50 minutes and nothing was saved.
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -69,24 +70,29 @@ jobs:
         continue-on-error: true
       - name: Pull ThaiWater feeds
         if: ${{ !inputs.only || inputs.only == 'flood' }}
+        timeout-minutes: 4
         run: node tools/refresh_flood.mjs
         continue-on-error: true
       - name: Pull USGS earthquakes, air quality, GDACS alerts and ReliefWeb reports
         if: ${{ !inputs.only || inputs.only == 'feeds' }}
+        timeout-minutes: 4
         run: node tools/refresh_feeds.mjs
         continue-on-error: true
       - name: Pull official weather warnings and translate them
         if: ${{ !inputs.only || inputs.only == 'warnings' }}
+        timeout-minutes: 10
         run: node tools/refresh_warnings.mjs
         continue-on-error: true
       - name: Pull local news (GDELT and national outlets) and translate headlines
         if: ${{ !inputs.only || inputs.only == 'news' }}
+        timeout-minutes: 14
         run: node tools/refresh_news.mjs
         continue-on-error: true
       # Data sets (tools/topics.json): each one's news searches, then the one search index over every country's news and those
       # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads.
       - name: Pull data-set searches and build the news search index
         if: ${{ !inputs.only || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'et' }}
+        timeout-minutes: 5
         run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/refresh_layerfeed.mjs
         continue-on-error: true
       # The ET tab (UFO and UAP reports): the news pool's "uap" data set pinned on the map, official releases and the
@@ -100,6 +106,7 @@ jobs:
       # Patani-conflict events for the past 13 months. Runs after the news step because it reads data/live/news.js.
       - name: Pull Deep South insurgency reporting and translate Thai headlines
         if: ${{ !inputs.only || inputs.only == 'deepsouth' }}
+        timeout-minutes: 9
         run: node tools/refresh_deepsouth.mjs
         continue-on-error: true
       # The conflict tabs and their extras run hourly in their own workflow (refresh-conflicts.yml), so this one stays short.
@@ -122,6 +129,7 @@ jobs:
       # last social snapshot is 40 minutes old or more. Running "social" on its own always pulls.
       - name: Pull official and established social media accounts
         if: ${{ !inputs.only || inputs.only == 'social' }}
+        timeout-minutes: 11
         env:
           ONLY: ${{ inputs.only }}
         run: |
@@ -132,14 +140,17 @@ jobs:
         continue-on-error: true
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
         if: ${{ !inputs.only || inputs.only == 'more' }}
+        timeout-minutes: 7
         run: node tools/refresh_more.mjs
         continue-on-error: true
       - name: Pull road closures and road events from open road-agency feeds (NZ, France, Western Australia, British Columbia, Finland)
         if: ${{ !inputs.only || inputs.only == 'roads' }}
+        timeout-minutes: 4
         run: node tools/refresh_roads.mjs
         continue-on-error: true
       - name: Pull tropical cyclone positions and forecast tracks (JMA, JTWC, GDACS) and the weather forecast
         if: ${{ !inputs.only || inputs.only == 'storms' }}
+        timeout-minutes: 4
         run: node tools/refresh_storms.mjs
         continue-on-error: true
       # Every other free, no-login feed (tools/refresh_dense.mjs): writes data/live/x/feeds.js and one file per country.
@@ -239,8 +250,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/thailand/flood-live-snapshot.js data/live data/history
           git commit -m "Refresh live snapshots $(date -u +'%Y-%m-%d %H:%MZ')"
-          git pull --rebase -X theirs origin "$(git rev-parse --abbrev-ref HEAD)" || true
-          git push
+          # Pulling takes over a minute, and merges or the other refresh jobs often land on main meanwhile, so try a few times.
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            git rebase --abort 2>/dev/null || true; sleep $((i * 5))
+          done
+          exit 1
 
   # Event summaries and conflict watch lists (tools/refresh_evsum.mjs), in their own job after the refresh so they never slow it
   # down or make it time out. Grouped events reported by two or more different sources, found by opening each country's page
