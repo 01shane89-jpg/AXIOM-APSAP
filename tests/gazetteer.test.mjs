@@ -49,6 +49,8 @@ const cases = [
   ["North Korea begins expansion of uranium enrichment facility \n (Seoul = Yonhap) Kang Hun-sang, reporter North Korea's Yongbyon complex", "kr", null],
   ["N. Korea fires missile \n SEOUL, Sept. 30 (Yonhap) -- North Korea fired a ballistic missile", "kr", null],
   ["Typhoon warning \n SEOUL, Sept. 30 (Yonhap) -- Heavy rain hit Busan on Tuesday", "kr", "Busan"],
+  ["Ministry rejects claim \n SEOUL, Korea-The foreign ministry rejected the claim", "kr", null],   // "MANILA, Philippines-The": no space either side of the dash
+  ["Floods cut road \n SEOUL, Korea-The ministry said Busan was cut off", "kr", "Busan"],
   ["SEOUL -- Flooding closes roads", "kr", null],
   ["Senator seeks shelter subsidy \n SEOUL, Korea - A senator is pushing for a rental subsidy", "kr", null],
   ["Seoul - Busan rail line reopens", "kr", "Seoul"],

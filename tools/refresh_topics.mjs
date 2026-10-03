@@ -8,6 +8,7 @@ import { parseFeed } from "./feedparse.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { countriesNamed, compileTopics, topicsOf, compileRelevance, relevance } from "./topics_lib.mjs";
+import { staleSearchResult } from "./conflict_lib.mjs";
 
 const OUT = "data/live/topics.js", KEEP_DAYS = 30, PER_TOPIC = 300, MAX_SEARCHES = 4;
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -50,7 +51,8 @@ for (const t of topics || []) {
   }
 }
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16), count = {};
-const items = [...byLink.values()].filter((i) => (i.date || i.first_seen) >= cutoff).sort((a, b) => (b.date > a.date ? 1 : -1))
+// an old story the search listed with a fresh date (its link or its own text dates it earlier) is left out
+const items = [...byLink.values()].filter((i) => (i.date || i.first_seen) >= cutoff && !staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link })).sort((a, b) => (b.date > a.date ? 1 : -1))
   .filter((i) => i.topics.some((id) => (count[id] = (count[id] || 0) + 1) <= PER_TOPIC));
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_TOPICS=" + JSON.stringify({ asof: stamp, sources: status, items }).replace(/<\//g, "<\\/") + ";\n");

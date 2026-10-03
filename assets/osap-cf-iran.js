@@ -205,7 +205,10 @@
         if (on("navw")) h += "<h3>Navigational warnings</h3>" + '<div class="lg"><span class="sw" style="background:rgba(29,90,134,.12);border:1px solid #1D5A86"></span><div>Warning area (NGA)</div></div>';
         W.OSAP_LEGEND.set("cf-iran", h, box);
       }
-      Array.prototype.forEach.call(box.querySelectorAll("input[data-cfi]"), function (i) {
+      // the switches join the tab's other map switches (Map layers, at the top of the tab)
+      var tg = box.querySelector(".cfi-tog"), slot = D.getElementById("cf-layers-x");
+      if (tg && slot) { var th = tg.previousElementSibling; if (th && th.tagName === "H3") th.remove(); var lh = D.createElement("h4"); lh.textContent = "Iran war"; slot.appendChild(lh); slot.appendChild(tg); }
+      Array.prototype.forEach.call((tg || box).querySelectorAll("input[data-cfi]"), function (i) {
         set(i.getAttribute("data-cfi"), i.checked);
         i.addEventListener("change", function () { set(i.getAttribute("data-cfi"), i.checked); });
       });
