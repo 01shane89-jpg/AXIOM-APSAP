@@ -1,6 +1,8 @@
-/* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves,
-   openly, with no key, account or login: their open-data feeds or the camera lists on their own public traveller websites (511
-   sites) (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly). Never private or unsecured cameras.
+/* AXIOM OSAP: public cameras. Still images (and live video where offered) from the cameras that government agencies and public
+   bodies publish themselves, openly, with no key, account or login: road cameras (open-data feeds and the camera lists on their
+   own public 511 traveller websites), and volcano, river and weather cameras (each source's type in data/cams/index.json says
+   which; tools/build_cams.mjs rebuilds the lists weekly). Never private or unsecured cameras. A row of buttons under the switch
+   picks which kinds are drawn (kept on this device).
    Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
    closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
@@ -22,6 +24,13 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https:\/\//i.test(String(u || "")) ? String(u) : ""; }
   var S = { on: false, msg: "", ix: null, ixErr: "", lists: {}, busy: {} };
+  /* the kinds of camera, by the source's type (road when it has none) */
+  var TYPES = { road: { n: "Road", t: "Traffic camera", c: "#0b7285" }, river: { n: "River", t: "River camera", c: "#1971c2" },
+    volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" } };
+  function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
+  var OFF = {};
+  try { (JSON.parse(localStorage.getItem("osap-cam-off") || "[]") || []).forEach(function (k) { if (TYPES[k]) OFF[k] = 1; }); } catch (e) {}
+  function saveOff() { try { localStorage.setItem("osap-cam-off", JSON.stringify(Object.keys(OFF))); } catch (e) {} }
 
   /* ---------- the source index and the per-agency lists ---------- */
   function bust() { return "?t=" + Math.floor(Date.now() / 6e5); }
@@ -35,7 +44,7 @@
   function src(id) { return ((S.ix || {}).sources || []).filter(function (s) { return s.id === id; })[0]; }
   function hits(b) {
     return ((S.ix || {}).sources || []).filter(function (s) {
-      var x = s.box; return x && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
+      var x = s.box; return x && !OFF[typeOf(s)] && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
     });
   }
   function loadList(id) {
@@ -89,14 +98,14 @@
   }
   /* fills an element with the camera's image; Singapore's address comes from the live API first */
   function fill(el, s, c, view, big, now) {
-    var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3];
+    var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3], tz = c[6] || s.tz;
     var put = function (url, ts) {
       if (!el.isConnected && !el.parentNode) return;
       var im = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]");
       var stamp = function (ok) {
         S.loads = (S.loads || 0) + 1;
-        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + (s.every ? " · updated about every " + s.every + " min" : "")
-          : "Tried " + when(Date.now(), s.tz) + " · trying again on its own while this stays open";
+        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), tz) : "Fetched " + when(Date.now(), tz)) + (s.every ? " · updated about every " + s.every + " min" : "")
+          : "Tried " + when(Date.now(), tz) + " · trying again on its own while this stays open";
       };
       if (!im) return;
       if (!url) { im._camGen = (im._camGen || 0) + 1; im.innerHTML = '<span class="cam-no">' + NOIMG + "</span>"; stamp(false); return; }
@@ -104,6 +113,7 @@
       loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
+    else if (s.kind === "jma") jmaImg(c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else if (s.kind === "dwr") dwrImg(c[0]).then(function (r) {
       /* the previous picture's local address is let go once the new one is up */
       var old = el._camObj; el._camObj = r && r.u;
@@ -124,6 +134,20 @@
       return fetch(DWR + "/file/image/cctv", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: path }) })
         .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); })
         .then(function (b) { return b && /^image\//.test(b.type || "image/") && b.size > 60 ? { u: URL.createObjectURL(b), ts: ts, local: true } : null; });
+    }).catch(function () { return null; });
+  }
+  /* Japan's volcano cameras (JMA): every picture's address carries the minute it was taken, so the page reads JMA's own camera
+     page (open to any site) for the newest one; the time is Japan time */
+  function jmaImg(code) {
+    return fetch("https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/volcam.php?VC=" + encodeURIComponent(code)).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.text().then(function (t) {
+        var best = null, re = /["']((?:\.\.\/)+camera\/\w+\/(\d{14})\.jpg)["']/g, m;
+        while ((m = re.exec(t))) if (!best || m[2] > best[2]) best = m;
+        if (!best) return null;
+        var d = best[2], u = safeUrl(new URL(best[1], r.url).href);
+        return u && /^https:\/\/www\.data\.jma\.go\.jp\//.test(u) ? { u: u, ts: d.slice(0, 4) + "-" + d.slice(4, 6) + "-" + d.slice(6, 8) + "T" + d.slice(8, 10) + ":" + d.slice(10, 12) + ":" + d.slice(12, 14) + "+09:00" } : null;
+      });
     }).catch(function () { return null; });
   }
   /* live video (HLS): Safari plays it itself; other browsers get the small hls.js player (assets/vendor, Apache-2.0), loaded the
@@ -173,7 +197,7 @@
 
   /* ---------- map layer ---------- */
   var map = null, layer = null, drawn = {};
-  function icon() { return L.divIcon({ className: "cam-ic", iconSize: [20, 20], iconAnchor: [10, 10], html: "<span>" + CAM + "</span>" }); }
+  function icon(s) { return L.divIcon({ className: "cam-ic", iconSize: [20, 20], iconAnchor: [10, 10], html: '<span style="background:' + TYPES[typeOf(s)].c + '">' + CAM + "</span>" }); }
   function tipHtml(s, c) {
     if (s.kind === "hls") return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><span class="cam-no">Live video: click the camera to play it.</span><i>' + esc(s.agency) + "</i></div>";
     return '<div class="cam-tipbox"><b>' + esc(c[3]) + '</b><div data-camimg><span class="cam-no">Loading the image…</span></div><i>' + esc(s.agency) + "</i></div>";
@@ -185,8 +209,8 @@
     var hls = s.kind === "hls";
     if (hls) views = 1;
     /* c[5]: the agency's live video (HLS) or short clip (mp4), where it streams one to anyone */
-    var tier = hls ? "Road camera · live video" : s.kind === "dwr" ? "River camera · published by the agency" : "Traffic camera · published by the agency";
-    return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:var(--cam,#0b7285)">' + tier + "</div><h3>" + esc(c[3]) + "</h3>" +
+    var ty = TYPES[typeOf(s)], tier = hls ? "Road camera · live video" : ty.t + " · published by the agency";
+    return '<div class="pop cam-pop" data-keep-pop><div class="tier" style="color:' + ty.c + '">' + tier + "</div><h3>" + esc(c[3]) + "</h3>" +
       '<div data-camimg class="cam-frame"><span class="cam-no">' + (hls ? "Starting the live video…" : "Loading the image…") + "</span></div>" +
       (views > 1 ? '<div class="cam-views">' + Array.apply(null, Array(views)).map(function (_, i) { return '<button type="button" data-camview="' + i + '" aria-pressed="' + (i === 0) + '">View ' + (i + 1) + "</button>"; }).join("") + "</div>" : "") +
       (!hls && c[5] ? '<div class="cam-views"><button type="button" data-camlive aria-pressed="false">' + (/\.mp4(\?|$)/.test(c[5]) ? "Play video clip" : "Watch live video") + "</button></div>" : "") +
@@ -196,7 +220,7 @@
       "<br>" + (hls ? "Live video the camera's owner streams publicly, not a record." : "A still image the agency publishes, not a live video or a record.") + "</p></div>";
   }
   function marker(s, c) {
-    var m = L.marker([c[1], c[2]], { icon: icon(), pane: "campt", keyboard: false, title: c[3], lgk: "cam", lgl: "Traffic camera" });
+    var m = L.marker([c[1], c[2]], { icon: icon(s), pane: "campt", keyboard: false, title: c[3], lgk: "cam", lgl: TYPES[typeOf(s)].t });
     var view = 0;
     /* hover with a mouse: a small image; a tap opens the popup instead (no hover on touch screens) */
     if (!(W.matchMedia && W.matchMedia("(hover: none)").matches)) {
@@ -258,7 +282,7 @@
     };
     if (!here.length) {
       layer.clearLayers(); drawn = {};
-      S.msg = "No official open cameras on screen. Cameras are published openly in: " + names(S.ix.sources) + ".";
+      S.msg = "No official open cameras" + (Object.keys(OFF).length ? " of the kinds chosen" : "") + " on screen. Cameras are published openly in: " + names(S.ix.sources.filter(function (s) { return !OFF[typeOf(s)]; })) + ".";
       paintSec(); legend(); return;
     }
     if (z < MINZ) {
@@ -293,25 +317,32 @@
     if (S.ixErr) return esc(S.ixErr);
     if (!S.ix) return "Reading the list of agencies…";
     return '<ul class="cam-src">' + S.ix.sources.slice().sort(function (a, b) { return a.country < b.country ? -1 : a.country > b.country ? 1 : 0; }).map(function (s) {
-      return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
+      return "<li><b>" + esc(s.country) + "</b> " + esc(s.n) + " " + esc(TYPES[typeOf(s)].n.toLowerCase()) + " cameras · " + (safeUrl(s.page) ? '<a href="' + esc(s.page) + '" target="_blank" rel="noopener">' + esc(s.agency) + "</a>" : esc(s.agency)) +
         " · " + esc(s.licence) + (s.stale ? " · list not refreshed this week" : "") + "</li>";
     }).join("") + "</ul>" +
-      '<p class="pwr-m">Only cameras a government or road agency publishes itself, openly, with no account or login. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
+      '<p class="pwr-m">Only cameras a government agency or public body publishes itself, openly, with no account or login. Left out on purpose: the FAA\'s aviation weather cameras (shared only under an agreement), and any camera list that needs a key. Other countries have no such feed yet, need a key (South Korea), sit behind a robot check (Philippines, Bangkok), or block access from abroad (Taiwan). Lists checked ' + esc(String(S.ix.built || "").replace("T", " ")) + ".</p>";
   }
   function secHtml() {
-    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Traffic cameras</b><i>Still images from official road cameras: hover or tap a camera</i></span></label>' +
+    return '<label class="mlrow"><input type="checkbox" data-cam="on"' + (S.on ? " checked" : "") + '><span><b>Public cameras</b><i>Official road, river, volcano and weather cameras: hover or tap a camera</i></span></label>' +
+      '<div class="cam-kinds" data-camkinds role="group" aria-label="Kinds of camera to show">' + Object.keys(TYPES).map(function (k) {
+        return '<button type="button" data-camkind="' + k + '" aria-pressed="' + !OFF[k] + '"><span style="background:' + TYPES[k].c + '"></span>' + TYPES[k].n + "</button>"; }).join("") + "</div>" +
       '<p class="mlkey pwr-m" data-cammsg aria-live="polite" hidden></p>' +
       '<details class="cam-cov"><summary>Where cameras are available</summary><div data-camcov></div></details>';
   }
   function paintSec() {
     if (!sec) return;
     var i = sec.querySelector("input[data-cam]"); if (i) i.checked = S.on;
+    var kb = sec.querySelector("[data-camkinds]"); if (kb) kb.hidden = !S.on;
+    Array.prototype.forEach.call(sec.querySelectorAll("[data-camkind]"), function (b) { b.setAttribute("aria-pressed", String(!OFF[b.getAttribute("data-camkind")])); });
     var m = sec.querySelector("[data-cammsg]"); if (m) { m.textContent = S.msg; m.hidden = !S.msg; }
     var cv = sec.querySelector("[data-camcov]"); if (cv && sec.querySelector(".cam-cov").open) cv.innerHTML = coverage();
   }
   function legend() {
     if (!W.OSAP_LEGEND) return;
-    W.OSAP_LEGEND.set("cam", S.on && Object.keys(drawn).length ? '<div class="lg"><span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span>' + CAM + "</span></span><div>Road camera (published by its agency): hover or tap for the latest image or live video</div></div>" : "");
+    var on = {}; Object.keys(drawn).forEach(function (k) { on[typeOf(src(k.split("|")[0]))] = 1; });
+    W.OSAP_LEGEND.set("cam", S.on ? Object.keys(TYPES).filter(function (k) { return on[k]; }).map(function (k) {
+      return '<div class="lg"><span class="cam-ic" style="position:static;display:inline-block;width:20px;height:20px"><span style="background:' + TYPES[k].c + '">' + CAM + "</span></span><div>" + TYPES[k].t + " (published by its agency): hover or tap for the latest image" + (k === "road" ? " or live video" : "") + "</div></div>";
+    }).join("") : "");
   }
   function set(on) {
     if (!map) return;
@@ -331,7 +362,9 @@
     "[data-camloading] img{opacity:.55}.cam-no a{display:block;margin-top:4px}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
-    '.cam-views button[aria-pressed="true"]{background:#0b7285;color:#fff;border-color:#0b7285}';
+    '.cam-views button[aria-pressed="true"]{background:#0b7285;color:#fff;border-color:#0b7285}' +
+    ".cam-kinds{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 4px 26px}.cam-kinds button{font:inherit;font-size:12px;padding:3px 8px;border-radius:12px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;opacity:.55}" +
+    '.cam-kinds button[aria-pressed="true"]{opacity:1;font-weight:600}.cam-kinds button span{width:9px;height:9px;border-radius:50%;display:inline-block}';
   D.head.appendChild(css);
 
   function mount() {
@@ -342,6 +375,11 @@
     if (!sec) {
       sec = D.createElement("div"); sec.id = "cam-sec"; sec.innerHTML = secHtml();
       sec.addEventListener("change", function (e) { if (e.target && e.target.hasAttribute("data-cam")) set(e.target.checked); });
+      sec.addEventListener("click", function (e) {
+        var b = e.target && e.target.closest && e.target.closest("[data-camkind]"); if (!b) return;
+        var k = b.getAttribute("data-camkind"); if (OFF[k]) delete OFF[k]; else OFF[k] = 1;
+        saveOff(); paintSec(); draw();
+      });
       sec.querySelector(".cam-cov").addEventListener("toggle", function (e) { if (e.target.open) { loadIndex(); paintSec(); } });
     }
     if (home.id === "ml-extra" && !home.querySelector("#pwr-sec") && !sec.querySelector(".mlh")) sec.insertAdjacentHTML("afterbegin", '<div class="mlh">Infrastructure</div>');
