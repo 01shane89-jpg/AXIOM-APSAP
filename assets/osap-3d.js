@@ -325,26 +325,83 @@
   var SRC = { "OpenStreetMap": "OpenStreetMap (drawn by volunteers)", "Google Open Buildings": "Google Open Buildings (traced by a computer from satellite photos)",
     "Microsoft ML Buildings": "Microsoft building footprints (traced by a computer from satellite photos)" };
   function bldInfo(q, geom) {
-    var rows = [], nm = jsonOf(q.names) || {}, prim = nm.primary || q["@name"] || "", en = nm.common && nm.common.en, NR = '<i class="o3-nr">not recorded</i>';
-    function row(k, v) { rows.push("<tr><th>" + esc(k) + "</th><td>" + v + "</td></tr>"); }
+    var rows = [], nm = jsonOf(q.names) || {}, prim = nm.primary || q["@name"] || "", en = nm.common && nm.common.en, said = 0;
+    /* only what is recorded gets a line; "said" counts the details beyond the outline itself */
+    function row(k, v, own) { rows.push("<tr><th>" + esc(k) + "</th><td>" + v + "</td></tr>"); if (own) said++; }
     var use = q["class"] ? word(q["class"]) + (q.subtype && q.subtype !== q["class"] ? " (" + esc(word(q.subtype)).toLowerCase() + ")" : "") : q.subtype ? word(q.subtype) : "";
-    row("Use", use ? esc(use) : NR);
-    var hs = q["@height_source"] ? " (" + esc(q["@height_source"]) + ")" : "";
-    row("Height", q.height != null ? esc(Math.round(q.height * 10) / 10) + " m" + hs : NR + " – the 3D height shown is an estimate");
-    row("Floors", q.num_floors != null ? esc(q.num_floors) + (q.num_floors_underground ? " + " + esc(q.num_floors_underground) + " below ground" : "") : NR);
-    if (q.min_height != null || q.min_floor != null) row("Starts at", q.min_height != null ? esc(q.min_height) + " m up" : "floor " + esc(q.min_floor));
-    if (q.roof_shape || q.roof_material || q.roof_color) row("Roof", esc([q.roof_shape, q.roof_material, q.roof_color].filter(Boolean).map(word).join(", ")));
-    if (q.facade_material || q.facade_color) row("Walls", esc([q.facade_material, q.facade_color].filter(Boolean).map(word).join(", ")));
-    var a = footArea(geom); if (a > 1) row("Footprint", "about " + esc((a >= 1000 ? Math.round(a / 10) * 10 : Math.round(a)).toLocaleString("en-US")) + " m²");
-    var src = (jsonOf(q.sources) || [])[0] || {}, gs = q["@geometry_source"] || src.dataset || "", from = SRC[gs] ? esc(SRC[gs]) : gs ? esc(gs) : NR;
+    if (use) row("Use", esc(use), 1);
+    if (q.height != null) row("Height", esc(Math.round(q.height * 10) / 10) + " m" + (q["@height_source"] ? " (" + esc(q["@height_source"]) + ")" : ""), 1);
+    if (q.num_floors != null) row("Floors", esc(q.num_floors) + (q.num_floors_underground ? " + " + esc(q.num_floors_underground) + " below ground" : ""), 1);
+    if (q.min_height != null || q.min_floor != null) row("Starts at", q.min_height != null ? esc(q.min_height) + " m up" : "floor " + esc(q.min_floor), 1);
+    if (q.roof_shape || q.roof_material || q.roof_color) row("Roof", esc([q.roof_shape, q.roof_material, q.roof_color].filter(Boolean).map(word).join(", ")), 1);
+    if (q.facade_material || q.facade_color) row("Walls", esc([q.facade_material, q.facade_color].filter(Boolean).map(word).join(", ")), 1);
+    var a = footArea(geom); if (a > 1) row("Footprint", "about " + esc((a >= 1000 ? Math.round(a / 10) * 10 : Math.round(a)).toLocaleString("en-US")) + " m² (measured from the outline)");
+    var src = (jsonOf(q.sources) || [])[0] || {}, gs = q["@geometry_source"] || src.dataset || "", from = SRC[gs] ? esc(SRC[gs]) : gs ? esc(gs) : "";
     if (src.confidence != null) from += "; the computer was " + esc(Math.round(src.confidence * 100)) + "% sure it is a building";
     var m = /^([nwr])(\d+)/.exec(src.record_id || "");
     if (gs === "OpenStreetMap" && m) from += ' · <a href="https://www.openstreetmap.org/' + { n: "node", w: "way", r: "relation" }[m[1]] + "/" + m[2] + '" target="_blank" rel="noopener">see it on OpenStreetMap</a>';
-    row("Outline from", from);
+    if (from) row("Outline from", from);
     if (src.update_time) row(gs === "OpenStreetMap" ? "Last edited" : "Dated", esc(String(src.update_time).slice(0, 10)));
-    return "<h3>" + (prim ? esc(prim) : "Building") + "</h3>" + (en && en !== prim ? "<p>" + esc(en) + "</p>" : prim ? "" : "<p>No name recorded</p>") +
+    var none = !prim && !said;
+    return "<h3>" + (prim ? esc(prim) : "Building") + "</h3>" + (en && en !== prim ? "<p>" + esc(en) + "</p>" : "") +
+      (none ? '<p class="o3-none">No name, use, height or floors are recorded for this building in the open building data.</p>' : "") +
+      (q.height == null ? '<p class="o3-bn">Its height in 3D is an estimate.</p>' : "") +
       '<table class="o3-bt">' + rows.join("") + "</table>" +
+      '<div class="o3-osm" aria-live="polite"></div>' +
       '<p class="o3-bn">Open data from Overture Maps, not an official survey: details can be missing, out of date or wrong.' + (q.id ? " ID " + esc(q.id) : "") + "</p>";
+  }
+
+  /* Many buildings whose outline was traced by a computer carry nothing, while OpenStreetMap volunteers have named the
+     place or tagged its use at that spot. On a tap (never before), ask OpenStreetMap (Overpass, keyless) what building
+     outlines contain the tapped point and which named places are within 25 m. Shown under its own heading with links,
+     so it is never mixed up with the building data; only the tapped point is sent. */
+  var OVP = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  var osmMemo = {};
+  function osmAsk(lat, lon) {
+    var k = lat.toFixed(5) + "," + lon.toFixed(5);
+    if (osmMemo[k]) return osmMemo[k];
+    var q = "[out:json][timeout:15];is_in(" + lat + "," + lon + ")->.a;(way(pivot.a)[building];relation(pivot.a)[building];way(pivot.a)[amenity];relation(pivot.a)[amenity];);out tags 6;" +
+      "node(around:25," + lat + "," + lon + ")[name];out tags center 8;";
+    function go(i) {
+      if (i >= OVP.length) return Promise.reject(new Error("OpenStreetMap could not be reached"));
+      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, 15000);
+      return fetch(OVP[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ac && ac.signal })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (j) { clearTimeout(t); return j; }, function () { clearTimeout(t); return go(i + 1); });
+    }
+    var p = osmMemo[k] = go(0).then(null, function (e) { delete osmMemo[k]; throw e; });
+    return p;
+  }
+  function tidy(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 80); }
+  var KIND = ["amenity", "shop", "office", "tourism", "healthcare", "leisure", "military", "government", "craft", "religion", "public_transport", "railway", "aeroway", "man_made", "historic", "building"];
+  function osmKind(t) {
+    for (var i = 0; i < KIND.length; i++) { var v = t[KIND[i]]; if (v && v !== "yes") return word(tidy(v, 40)); }
+    return t.building ? "Building" : "";
+  }
+  function osmHtml(j, lat, lon) {
+    var els = (j && j.elements) || [], bl = [], pl = [];
+    els.forEach(function (e) {
+      var t = e.tags || {}, url = "https://www.openstreetmap.org/" + e.type + "/" + e.id, link = ' <a href="' + url + '" target="_blank" rel="noopener">OSM</a>';
+      if (e.type === "node") {
+        var d = Math.round(L.latLng(lat, lon).distanceTo([e.lat, e.lon]));
+        pl.push("<li>" + esc(tidy(t["name:en"] || t.name)) + (t["name:en"] && t.name && t.name !== t["name:en"] ? " (" + esc(tidy(t.name)) + ")" : "") +
+          (osmKind(t) ? " · " + esc(osmKind(t)) : "") + " · " + d + " m" + link + "</li>");
+      } else {
+        var bits = [];
+        if (t.name || t["name:en"]) bits.push("<b>" + esc(tidy(t["name:en"] || t.name)) + "</b>" + (t["name:en"] && t.name && t.name !== t["name:en"] ? " (" + esc(tidy(t.name)) + ")" : ""));
+        if (osmKind(t)) bits.push(esc(osmKind(t)));
+        if (t["building:levels"]) bits.push(esc(tidy(t["building:levels"], 6)) + " floors");
+        if (t.height) bits.push(esc(tidy(t.height, 10)) + (/[a-z]/i.test(t.height) ? "" : " m") + " high");
+        if (t.operator) bits.push("run by " + esc(tidy(t.operator)));
+        if (t["addr:housenumber"] || t["addr:street"]) bits.push(esc(tidy([t["addr:housenumber"], t["addr:street"]].filter(Boolean).join(" "))));
+        if (bits.length && !(bits.length === 1 && bits[0] === "Building")) bl.push("<li>" + bits.join(" · ") + link + "</li>");
+      }
+    });
+    var h = '<h4>OpenStreetMap at this spot</h4>';
+    if (!bl.length && !pl.length) return h + '<p class="o3-nr">Nothing more is recorded in OpenStreetMap here.</p>';
+    return h + (bl.length ? '<ul class="o3-ol">' + bl.slice(0, 4).join("") + "</ul>" : "") +
+      (pl.length ? "<p class=\"o3-bn\">Named places within 25 m:</p><ul class=\"o3-ol\">" + pl.slice(0, 6).join("") + "</ul>" : "") +
+      '<p class="o3-bn">Mapped by OpenStreetMap volunteers, not checked by OSAP.</p>';
   }
 
   /* the PMTiles reader for the buildings, loaded the first time buildings are drawn; its protocol is added to the engine once */
@@ -639,6 +696,15 @@
         if (popup) popup.remove();
         var d = D.createElement("div"); d.className = "o3-pop"; d.innerHTML = '<div class="o3-pc">' + bldInfo(f.properties || {}, f.geometry) + "</div>";
         popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl);
+        var box2 = d.querySelector(".o3-osm"), lat = at[1], lon = at[0];
+        function ask() {
+          box2.innerHTML = '<p class="o3-nr">Checking OpenStreetMap at this spot…</p>';
+          osmAsk(lat, lon).then(function (j) { box2.innerHTML = osmHtml(j, lat, lon); }, function () {
+            box2.innerHTML = '<p class="o3-nr">OpenStreetMap could not be reached. <button type="button" class="o3-again">Try again</button></p>';
+            box2.querySelector(".o3-again").addEventListener("click", ask);
+          });
+        }
+        ask();
       }
       gl.on("click", function (e) {
         var f = gl.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: ["vp", "vl", "vld", "vf"] })
@@ -699,7 +765,12 @@
     "#o3d .o3-mark i{width:14px;height:14px;border-radius:50%;background:#e8590c;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);box-sizing:border-box}" +
     "#o3d .o3-mark span{background:rgba(20,24,28,.85);color:#fff;font:600 11.5px/1 system-ui,sans-serif;padding:3px 5px;border-radius:4px;white-space:nowrap}#o3d .o3-mark span:empty{display:none}" +
     "#o3d .o3-popw .maplibregl-popup-content{padding:10px 12px;border-radius:10px;color:#212529;font:13px/1.35 system-ui,sans-serif;max-height:45vh;overflow:auto}" +
-    "#o3d .o3-bt{border-collapse:collapse;margin:4px 0;width:100%}#o3d .o3-bt th{text-align:left;font-weight:600;color:#495057;padding:2px 8px 2px 0;vertical-align:top;white-space:nowrap}#o3d .o3-bt td{padding:2px 0;overflow-wrap:anywhere}" +
+    /* the app's own table look (right-aligned, one line, capitals) is undone here: it pushed every value out of sight */
+    "#o3d .o3-bt{border-collapse:collapse;margin:4px 0;width:100%;table-layout:fixed;font-size:13px}#o3d .o3-bt tr{cursor:auto}" +
+    "#o3d .o3-bt th{width:34%;text-align:left;font:600 12px/1.35 system-ui,sans-serif;text-transform:none;letter-spacing:0;color:#495057;padding:3px 8px 3px 0;vertical-align:top;white-space:normal;border-bottom:1px solid #e9ecef}" +
+    "#o3d .o3-bt td{text-align:left;white-space:normal;padding:3px 0;color:#212529;overflow-wrap:anywhere;vertical-align:top;border-bottom:1px solid #e9ecef}" +
+    "#o3d .o3-none{color:#495057}#o3d .o3-pop h4{font-size:13px;margin:8px 0 2px}#o3d .o3-ol{margin:2px 0 4px;padding-left:18px}#o3d .o3-ol li{margin:2px 0;overflow-wrap:anywhere}" +
+    "#o3d .o3-again{font:inherit;color:#0b7285;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}" +
     "#o3d .o3-nr{color:#868e96}#o3d .o3-bn{font-size:11.5px;color:#868e96;overflow-wrap:anywhere}" +
     "#o3d .o3-pop h3{font-size:14px;margin:4px 0}#o3d .o3-pop p{margin:6px 0}#o3d .o3-pop .o3-pc .atk-pb{display:none}" +
     "#o3d .o3-go{margin-top:6px;min-height:34px;padding:0 12px;border:0;border-radius:8px;background:#0b7285;color:#fff;font:600 13px/1 system-ui,sans-serif;cursor:pointer}" +
