@@ -7176,6 +7176,24 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     XBV++;
   }
+  /* each copy's records are a 30-minute cache of up to 900 reports (about 0.4 MB of text). Watch scans write one for every
+     country they visit, so copies this map does not show are let go once stale; when the browser is still full (Safari keeps
+     about 5 MB per site), every copy this map does not show goes, so the cache never crowds out the user's own points, shapes
+     and plans. */
+  function xbPut(cc, recs) {
+    var keep = xbCcs().concat([cc]), now = Date.now();
+    function drop(all) {
+      var ks = [];
+      try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf(XB_KEY) === 0 && keep.indexOf(k.slice(XB_KEY.length)) < 0) ks.push(k); } } catch (e) {}
+      ks.forEach(function (k) {
+        var at = 0; if (!all) { try { var m = /^\{"at":(\d+)/.exec((localStorage.getItem(k) || "").slice(0, 40)); at = m ? +m[1] : 0; } catch (e) {} }
+        if (all || now - at > XB_AGE) try { localStorage.removeItem(k); } catch (e) {}
+      });
+    }
+    drop(false);
+    var v = JSON.stringify({ at: now, recs: recs });
+    try { localStorage.setItem(XB_KEY + cc, v); } catch (e) { drop(true); try { localStorage.setItem(XB_KEY + cc, v); } catch (e2) {} }
+  }
   function xbStale() { return NB.filter(function (cc) { var o = lsGet(XB_KEY + cc, null); return !o || !o.recs || Date.now() - o.at > XB_AGE; }); }
   /* what a scan copy sends back: its recent records, trimmed to the fields grouping and the lists need */
   function xbExport() {
@@ -7721,7 +7739,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }
       function onMsg(e) {
         if (e.source !== f.contentWindow || !e.data || e.data.osapWatchScan !== cc) return;
-        if (e.data.recs) { gotRecs = true; delete XA_FAIL[cc]; lsSet(XB_KEY + cc, { at: Date.now(), recs: e.data.recs }); if (NB.indexOf(cc) >= 0 || ADDED.indexOf(cc) >= 0) { xbLoad(); evRefresh(); if (ADDED.indexOf(cc) >= 0) xaChanged(false); } }
+        if (e.data.recs) { gotRecs = true; delete XA_FAIL[cc]; xbPut(cc, e.data.recs); if (NB.indexOf(cc) >= 0 || ADDED.indexOf(cc) >= 0) { xbLoad(); evRefresh(); if (ADDED.indexOf(cc) >= 0) xaChanged(false); } }
         fin(e.data.fresh || []);
       }
       window.addEventListener("message", onMsg);

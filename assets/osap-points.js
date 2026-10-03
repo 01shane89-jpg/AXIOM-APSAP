@@ -116,7 +116,7 @@
   function setPt(id, ch) {
     var a = P.all(), hit = false;
     a.forEach(function (p) { if (p.id === id) { for (var k in ch) { if (ch[k] === "" || ch[k] === 0) delete p[k]; else p[k] = ch[k]; } p.u = Date.now(); hit = true; } });
-    if (hit) { P.save(a); P.draw(); P.paint(); }
+    if (hit) { if (P.save(a) === false) toast(P.fail || "Not saved: this browser's storage is full."); P.draw(); P.paint(); }
   }
 
   /* ---------- thumbnails: object URLs, let go of when their holder is redrawn or closed ---------- */
