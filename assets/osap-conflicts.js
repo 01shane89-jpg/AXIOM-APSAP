@@ -65,6 +65,9 @@
     "#view-seg button.cftab::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--l3);margin-right:5px;vertical-align:1px}",
     ".cmenu.cfmenu{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.cmenu.cfmenu h4{grid-column:1/-1;margin:4px 2px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}",
     ".cmenu.cfmenu button span.n{margin-left:6px;font-size:11px;color:var(--muted)}",
+    "#cf-rail .cfjump{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}#cf-rail .cfjump button{font:inherit;font-size:12.5px;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2);color:var(--ink);cursor:pointer}" +
+    "#cf-rail .cfjump button:hover{border-color:var(--accent);color:var(--accent)}#cf-rail #cf-layers,#cf-rail #cf-reps,#cf-rail #cf-more{scroll-margin-top:8px}#cf-rail .cfcount{margin:0 0 4px}" +
+    "#cf-rail #cf-layers-x:empty{display:none}#cf-rail #cf-layers-x{margin:8px 0 4px;padding-top:8px;border-top:1px solid var(--line-soft)}#cf-rail #cf-layers-x h4{font-size:12px;margin:0 0 4px;color:var(--muted)}",
     "@media (max-width:640px){#cf-rail .cfk{grid-template-columns:repeat(2,minmax(0,1fr))}}"
   ].join("\n");
   D.head.appendChild(css);
@@ -556,28 +559,33 @@
     else h.push('<div class="cfk"><div><b>' + num((d.ucdp || []).length) + '</b><span>UCDP events, 12 months</span></div><div><b>' + num((d.ucdp || []).reduce(function (s, e) { return s + (e.best || 0); }, 0)) + "</b><span>deaths, 12 months (UCDP best estimate)</span></div></div>");
     h.push('<p class="cfnote">Updated ' + when(d.asof) + ". Reports are unverified and statements by any party are claims. UCDP figures are provisional candidate data" +
       (st.ucdp_latest ? ", latest event coded " + day(st.ucdp_latest) : "") + ".</p>");
-    if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
-      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed, mapped and counted with the reports below.</p>");
-    if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
-    h.push('<div id="cf-extra"></div></div>');
-    h.push(frontHtml(c, d, f));
+    // the two things looked for most sit straight under the title: every map switch in one place, then the recent reports
+    h.push('<nav class="cfjump" aria-label="On this tab"><button type="button" data-cfjump="cf-layers">Map layers</button>' +
+      '<button type="button" data-cfjump="cf-reps">' + (d.auto ? "UCDP events" : "Recent reports") + "</button>" + '<button type="button" data-cfjump="cf-more">Trends and background</button></nav></div>');
     // filters and layer switches
     var kinds = {}, ccs = {};
     allItems(d).forEach(function (i) { kinds[i.kind] = (kinds[i.kind] || 0) + 1; if (i.cc) ccs[i.cc] = 1; });
-    h.push('<div class="sec"><h3 style="margin-top:0">On the map</h3><div class="cfctl">' +
+    // tab-specific switches (border watch, Iran, Ukraine) are moved into #cf-layers-x by their own files; history and military
+    // sites append theirs to this section after it
+    h.push('<div class="sec" id="cf-layers"><h3 style="margin-top:0">Map layers</h3><div class="cfctl">' +
       '<label><input type="checkbox" data-cfshow="front"' + (F.show.front ? " checked" : "") + "> Front line or control</label>" +
       (f && f.previous ? '<label><input type="checkbox" data-cfshow="prev"' + (F.show.prev ? " checked" : "") + "> Previous version</label>" : "") +
       '<label><input type="checkbox" data-cfshow="ucdp"' + (F.show.ucdp ? " checked" : "") + "> UCDP events</label>" +
       '<label><input type="checkbox" data-cfshow="rep"' + (F.show.rep ? " checked" : "") + "> Placed reports</label></div>" +
-      '<div class="cfm">What each colour means is in the legend on the map.</div>' +
-      '<div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
+      '<div class="cfm">What each colour means is in the legend on the map.</div><div id="cf-layers-x"></div></div>');
+    h.push('<div class="sec" id="cf-reps"><h3 style="margin-top:0">' + (d.auto ? "UCDP events" : "Recent reports") + '</h3><div class="cfctl"><select data-cff="days" aria-label="Period">' + (F.from || F.to ? [[ALL, "Custom dates (page header)"]] : []).concat([[1, "24 hours"], [7, "7 days"], [30, "30 days"], [90, "90 days"], [180, "180 days"], [400, "13 months"], [ALL, "All dates"]]).map(function (p) {
         return '<option value="' + p[0] + '"' + (F.days === p[0] ? " selected" : "") + ">" + p[1] + "</option>"; }).join("") + "</select>" +
       (allItems(d).length ? '<select data-cff="kind" aria-label="Kind"><option value="">All kinds</option>' + Object.keys(kinds).sort(function (a, b) { return kinds[b] - kinds[a]; }).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.kind === k ? " selected" : "") + ">" + esc(kindName(k)) + " (" + kinds[k] + ")</option>"; }).join("") + "</select>" : "") +
       (Object.keys(ccs).length > 1 ? '<select data-cff="cc" aria-label="Country"><option value="">All countries</option>' + Object.keys(ccs).map(function (k) {
         return '<option value="' + esc(k) + '"' + (F.cc === k ? " selected" : "") + ">" + esc(cname(k)) + "</option>"; }).join("") + "</select>" : "") +
-      (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + "</div></div>");
-    h.push('<div class="sec" id="cf-list"></div>');
+      (allItems(d).length ? '<input type="search" data-cff="q" placeholder="Search reports" value="' + esc(F.q) + '">' : "") + '</div><div id="cf-list"></div></div>');
+    h.push('<div class="sec" id="cf-more"><h3 style="margin-top:0">Trends and background</h3>');
+    if (d._tab && d._tab.length) h.push('<p class="cfnote">This tab also holds the ' + num(d._tab.length) + " records of the former " +
+      esc(uniq(d._tab.map(function (i) { return "“" + i.tab + "” tab"; })).join(" and ")) + ", listed, mapped and counted with the reports above.</p>");
+    if (st.weeks) h.push("<h3>Deaths per week (UCDP)</h3>" + bars(st.weeks, "best", "", "deaths (UCDP best estimate)") + "<h3>Reports per week</h3>" + bars(st.weeks, "reports", "r", "reports collected"));
+    h.push('<div id="cf-extra"></div></div>');
+    h.push(frontHtml(c, d, f));
     h.push(sourcesHtml(d, f));
     r.innerHTML = h.join("");
     list();
@@ -604,7 +612,7 @@
     var it = filtered(), gs = grouped(it), ev = (cur.data.ucdp || []).filter(function (e) { return inWin(e.date) && (!F.cc || e.cc === F.cc); });
     var lim = +(box.getAttribute("data-lim") || 60), h = [];
     if (!cur.data.auto) {
-      h.push("<h3 style=\"margin-top:0\">Latest reports (" + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : "") + ")</h3>");
+      h.push('<p class="cfm cfcount">' + num(gs.length) + (gs.length !== it.length ? " incidents from " + num(it.length) + " reports" : " reports") + ", newest first</p>");
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Print this list (' + num(gs.length) + ")</button></p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
       h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + "</li>"; }).join("") + "</ol>");
@@ -736,6 +744,7 @@
   D.addEventListener("input", function (e) { var t = e.target; if (!t.closest || !t.closest("#cf-rail") || t.getAttribute("data-cff") !== "q") return; clearTimeout(qT); qT = setTimeout(function () { F.q = t.value; list(); drawMap(); }, 250); });
   D.addEventListener("click", function (e) {
     var t = e.target; if (!t.closest || !t.closest("#cf-rail")) return;
+    var j = t.closest("[data-cfjump]"); if (j) { var to = D.getElementById(j.getAttribute("data-cfjump")); if (to) to.scrollIntoView({ block: "start", behavior: "smooth" }); return; }
     if (t.closest("[data-cfolder]")) { loadOlder(); return; }
     var m = t.closest("[data-cfmore]"); if (m) { var b = D.getElementById("cf-list"); b.setAttribute("data-lim", (+(b.getAttribute("data-lim") || 60)) + 60); list(); return; }
     var g = t.closest("[data-cfgo]"); if (g && map) {
