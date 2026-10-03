@@ -148,9 +148,25 @@ export function statedDates(text) {
 }
 // A story that looks back on purpose (a verdict, an anniversary, "since 2004") names old dates and is still news: never treated as old.
 const LOOKBACK = /\b(?:court|sentenc\w*|verdict|convict\w*|trial|appeal|anniversary|ago|since|years? after|months? after|recalls?|remember\w*)\b|ศาล|พิพากษา|ครบรอบ|ย้อนรอย|รำลึก/i;
-export function staleSearchResult(text, date, days = 60) {
+// The story's own link often carries its publication date: /2025/07/27/, 2025-07-27, or a 13-digit millisecond timestamp
+// (WION: ...-1753580079862 is 27 Jul 2025). Returns the newest such date (ms), or null when the link carries none.
+export function linkDate(link) {
+  let path = ""; try { path = new URL(String(link || "")).pathname; } catch (e) { return null; }
+  const out = [];
+  for (const m of path.matchAll(/(?:^|\D)(20\d\d)[/_-](0[1-9]|1[0-2])(?:[/_-](0[1-9]|[12]\d|3[01]))?(?=\D|$)/g)) out.push(Date.UTC(+m[1], +m[2] - 1, m[3] ? +m[3] : 28));
+  for (const m of path.matchAll(/(?:^|\D)(1[4-9]\d{11})(?=\D|$)/g)) { const t = +m[1]; if (t <= Date.now() + 864e5) out.push(t); }
+  return out.length ? Math.max(...out) : null;
+}
+// opts.link: the result's link (a date in it decides even when the text states none); opts.old: a conflict's own phrases that
+// name a past episode (old_stories in tools/conflicts.json, e.g. Trump's July 2025 Thai-Cambodian ceasefire call)
+export function staleSearchResult(text, date, days = 60, opts = {}) {
+  const t = Date.parse(String(date || "").slice(0, 10) + "T00:00:00Z");
+  if (!isFinite(t)) return false;
+  const ld = linkDate(opts.link);
+  if (ld != null) return ld < t - days * 864e5;
+  if (opts.old && opts.old.test(String(text || ""))) return true;
   if (LOOKBACK.test(String(text || ""))) return false;
-  const ds = statedDates(text), t = Date.parse(String(date || "").slice(0, 10) + "T00:00:00Z");
-  if (!ds.length || !isFinite(t)) return false;
+  const ds = statedDates(text);
+  if (!ds.length) return false;
   return Math.max(...ds) < t - days * 864e5;
 }

@@ -197,7 +197,7 @@ for (const i of byLink.values()) if (i.undated) {
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16);
 let items = [...byLink.values()].filter((i) => !i.date || i.date >= cutoff).sort((a, b) => ((b.date || "") > (a.date || "") ? 1 : -1)).slice(0, CAP);
 // an old story that a search listed with a fresh date (its own text states only older dates) is left out
-{ const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date));
+{ const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link }));
   if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log("Deep South: " + stale.length + " search results dropped as old stories re-dated"); } }
 // A translation that lost or changed a Deep South place name ("Ra-ngae, Narathiwat" came out as "Ranah, Narayanganj") is done again,
 // this time with the place names already in English in the text the model is given.

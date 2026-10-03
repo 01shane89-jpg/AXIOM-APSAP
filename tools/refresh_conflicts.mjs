@@ -392,8 +392,9 @@ for (const c of LIST) {
   for (const i of fresh) { const o = byLink.get(i.link); byLink.set(i.link, { ...(o || {}), ...i, first_seen: (o && o.first_seen) || stamp }); }
   let items = [...byLink.values()].filter((i) => i.date && i.date >= cutoffOf(c) && i.date <= new Date(NOW + 36e5).toISOString().slice(0, 16))
     .sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, c.cap || CAP);
-  // an old story that a search listed with a fresh date (its own text states only older dates) is left out
-  const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date));
+  // an old story that a search listed with a fresh date (its link or its own text dates it earlier) is left out
+  const oldRe = c.old_stories && c.old_stories.length ? new RegExp(c.old_stories.join("|"), "i") : null;
+  const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link, old: oldRe }));
   if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log(c.id + ": " + stale.length + " search results dropped as old stories re-dated: " + stale.map((i) => i.link).join(" ")); }
   if (!PROBE && translateAll) {
     const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected);
