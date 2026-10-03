@@ -1,7 +1,9 @@
 [["n13953555101",15.11328,40.06536,"er",{"name":"Ghelalo Health center","amenity":"clinic"}],
 ["n13953571401",14.56337,40.14089,"er",{"name":"Bada Health center","amenity":"clinic"}],
+["n2986256421",14.51174,40.12503,"et",{"name":"Boleli? Assale?","aeroway":"aerodrome"}],
 ["n8234887877",14.89191,40.31354,"er",{"name":"Fatuma Airfield","aeroway":"aerodrome","icao":"HHMF"}],
 ["n8235014431",15.73042,40.07463,"er",{"name":"Dahlac 2","aeroway":"aerodrome"}],
 ["w1074163866",14.37608,40.35529,"er",{"aeroway":"aerodrome"}],
+["w1075602429",14.51236,40.12538,"et",{"aeroway":"aerodrome"}],
 ["w885212089",15.68287,40.10473,"er",{"name":"Dahalak Island Airfield مطار جزيرة دهلك","name:en":"Dahalak Island Airfield","aeroway":"aerodrome"}],
 ["w885579191",14.88837,40.31701,"er",{"name":"Fatuma","aeroway":"aerodrome","icao":"HHMF"}]]

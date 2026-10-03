@@ -26,6 +26,17 @@ async function get(u, as = "json", headers = {}) {
   }
   throw new Error(String(last.message || last) + (last.cause ? " (" + (last.cause.code || last.cause.message) + ")" : ""));
 }
+async function post(u, body) {
+  let last;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(u, { method: "POST", headers: { ...UA, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(60000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status} from ${u.slice(0, 80)}`);
+      return await r.json();
+    } catch (e) { last = e; await pause(3000 * (i + 1)); }
+  }
+  throw last;
+}
 // a small, forgiving reader for the flat XML lists below: the text of each <tag> inside each <item>
 function xmlItems(xml, item) {
   const out = [], re = new RegExp(`<${item}>([\\s\\S]*?)</${item}>`, "g"); let m;
@@ -37,7 +48,7 @@ const https = (u) => /^https:\/\//.test(String(u || "")) ? String(u) : null;
 const one = (a) => (a.length === 1 ? a[0] : a.length ? a : null);
 // 511 traveller sites built on the same platform (Iteris/IBI): the camera list behind each site's own public Cameras page,
 // read 100 at a time (the most it gives), and each camera's still image at /map/Cctv/<image id> on the same site
-async function atis(host) {
+async function atis(host, video) {
   const out = [];
   for (let start = 0, total = 1; start < total && start < 20000; start += 100) {
     const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start, length: 100, search: { value: "" } }));
@@ -46,18 +57,22 @@ async function atis(host) {
     (j.data || []).forEach((c) => {
       const m = /POINT \(([-\d.]+) ([-\d.]+)\)/.exec((((c.latLng || {}).geography) || {}).wellKnownText || "");
       const imgs = (c.images || []).filter((i) => !i.disabled && !i.blocked && i.imageUrl).map((i) => https(new URL(i.imageUrl, `https://${host}/`).href)).filter(Boolean);
-      if (m && imgs.length) out.push([String(c.id), r5(m[2]), r5(m[1]), tidy(c.location || c.roadway || "Camera " + c.id), one(imgs)]);
+      // live video too, where the site streams it to anyone (no sign-in)
+      const vid = video && (c.images || []).map((i) => (!i.isVideoAuthRequired && !i.videoDisabled && /^https:\/\/[^?#]+\.m3u8$/.test(i.videoUrl || "") ? i.videoUrl : null)).find(Boolean);
+      if (m && imgs.length) out.push([String(c.id), r5(m[2]), r5(m[1]), tidy(c.location || c.roadway || "Camera " + c.id), one(imgs)].concat(vid ? [vid] : []));
     });
     await pause(250);
   }
   return out;
 }
 // CARS program states: the cameras_v1 list their 511 sites use, with a still image or a video's preview still per view
-async function cars(p) {
+async function cars(p, video) {
   const j = await get(`https://${p}.carsprogram.org/cameras_v1/api/cameras`);
   return j.filter((c) => c.public !== false && c.active !== false && c.location).map((c) => {
     const v = (c.views || []).map((v) => https(v.type === "STILL_IMAGE" ? v.url : v.videoPreviewUrl)).filter(Boolean);
-    return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)] : null;
+    // live video where the state's streams answer any browser (checked from GitHub; Minnesota's answer 404, Kansas's carry expiring tokens)
+    const vid = video ? (c.views || []).map((v) => (v.type === "WMP" && /^https:\/\/[^?#]+\.m3u8$/.test(v.url || "") ? v.url : null)).find(Boolean) : null;
+    return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)].concat(vid ? [vid] : []) : null;
   }).filter(Boolean);
 }
 // Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder),
@@ -65,8 +80,9 @@ async function cars(p) {
 // cannot show), Texas, Virginia, Michigan, Tennessee (no keyless list), Taiwan (refuses connections from abroad), Vietnam
 // (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
-const atisSrc = (id, host, tz, cc, country, agency) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host) });
-const carsSrc = (id, p, host, tz, country, agency) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p) });
+// video: only where the streams answered a browser from GitHub without sign-in (Pennsylvania's "open" ones answered 401)
+const atisSrc = (id, host, tz, cc, country, agency, video) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host, video) });
+const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
 export const SOURCES = [
   { id: "sg-lta", tz: "Asia/Singapore", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
@@ -110,7 +126,8 @@ export const SOURCES = [
       return j.map((p) => {
         const a = {}; (p.additionalProperties || []).forEach((q) => { a[q.key] = q.value; });
         if (a.available === "false") return null;
-        return [String(p.id).replace(/^JamCams_/, ""), r5(p.lat), r5(p.lon), tidy(p.commonName + (a.view ? ", looking " + a.view : "")), https(a.imageUrl)];
+        // each JamCam also has a short video clip of the last moments, renewed with the still
+        return [String(p.id).replace(/^JamCams_/, ""), r5(p.lat), r5(p.lon), tidy(p.commonName + (a.view ? ", looking " + a.view : "")), https(a.imageUrl)].concat(/^https:\/\/[^?#]+\.mp4$/.test(a.videoUrl || "") ? [a.videoUrl] : []);
       }).filter(Boolean);
     } },
   { id: "fi-digitraffic", tz: "Europe/Helsinki", cc: "fi", country: "Finland", agency: "Fintraffic Digitraffic road weather cameras", every: 10,
@@ -147,7 +164,9 @@ export const SOURCES = [
         (j.data || []).forEach((e) => {
           const c = e.cctv || {}, l = c.location || {}, img = (((c.imageData || {}).static) || {}).currentImageURL;
           if (c.inService !== "true" || !https(img)) return;
-          out.push(["d" + d + "-" + c.index, r5(l.latitude), r5(l.longitude), tidy(l.locationName + (l.nearbyPlace ? ", " + l.nearbyPlace : "") + (l.direction ? " (" + l.direction + ")" : "")), img]);
+          const vid = (c.imageData || {}).streamingVideoURL;
+          out.push(["d" + d + "-" + c.index, r5(l.latitude), r5(l.longitude), tidy(l.locationName + (l.nearbyPlace ? ", " + l.nearbyPlace : "") + (l.direction ? " (" + l.direction + ")" : "")), img]
+            .concat(/^https:\/\/[^?#]+\.m3u8$/.test(vid || "") ? [vid] : []));
         });
       }
       return out;
@@ -163,17 +182,35 @@ export const SOURCES = [
   atisSrc("us-pa", "511pa.com", "America/New_York", "us", "United States (Pennsylvania)", "PennDOT (511PA)"),
   atisSrc("us-ne511", "newengland511.org", "America/New_York", "us", "United States (Vermont, New Hampshire, Maine)", "New England 511 (VTrans, NHDOT, MaineDOT)"),
   atisSrc("us-ct", "ctroads.org", "America/New_York", "us", "United States (Connecticut)", "Connecticut DOT (CTroads)"),
-  atisSrc("us-wi", "511wi.gov", "America/Chicago", "us", "United States (Wisconsin)", "Wisconsin DOT (511 Wisconsin)"),
-  atisSrc("us-la", "511la.org", "America/Chicago", "us", "United States (Louisiana)", "Louisiana DOTD (511LA)"),
+  atisSrc("us-wi", "511wi.gov", "America/Chicago", "us", "United States (Wisconsin)", "Wisconsin DOT (511 Wisconsin)", true),
+  atisSrc("us-la", "511la.org", "America/Chicago", "us", "United States (Louisiana)", "Louisiana DOTD (511LA)", true),
   atisSrc("us-az", "az511.gov", "America/Phoenix", "us", "United States (Arizona)", "Arizona DOT (AZ511)"),
   atisSrc("us-ut", "udottraffic.utah.gov", "America/Denver", "us", "United States (Utah)", "Utah DOT (UDOT Traffic)"),
   atisSrc("us-id", "511.idaho.gov", "America/Boise", "us", "United States (Idaho)", "Idaho Transportation Department (511 Idaho)"),
-  atisSrc("us-nv", "nvroads.com", "America/Los_Angeles", "us", "United States (Nevada)", "Nevada DOT (NVroads)"),
+  atisSrc("us-nv", "nvroads.com", "America/Los_Angeles", "us", "United States (Nevada)", "Nevada DOT (NVroads)", true),
   atisSrc("us-ak", "511.alaska.gov", "America/Anchorage", "us", "United States (Alaska)", "Alaska DOT&PF (Alaska 511)"),
-  carsSrc("us-co", "cotg", "cotrip.org", "America/Denver", "United States (Colorado)", "Colorado DOT (COtrip)"),
+  { id: "us-de", tz: "America/New_York", cc: "us", country: "United States (Delaware)", agency: "Delaware DOT (DelDOT TMC)", every: 0,
+    licence: "DelDOT public traffic camera video", page: "https://deldot.gov/map/", kind: "hls",
+    async list() {
+      const j = await get("https://tmc.deldot.gov/json/videocamera.json");
+      return (j.videoCameras || j).filter((c) => c.enabled !== false && c.status !== "Offline" && c.urls && /^https:\/\/[^?#]+\.m3u8$/.test(c.urls.m3u8s || ""))
+        .map((c) => [String(c.id), r5(c.lat ?? c.latitude), r5(c.lon ?? c.lng ?? c.longitude), tidy(c.title || c.name || c.id), c.urls.m3u8s]);
+    } },
+  { id: "us-md", tz: "America/New_York", cc: "us", country: "United States (Maryland)", agency: "Maryland DOT State Highway Administration (CHART)", every: 0,
+    licence: "MDOT SHA CHART public traffic camera video", page: "https://chart.maryland.gov/", kind: "hls",
+    async list() {
+      const out = [];
+      for (let off = 0; off < 5000; off += 1000) {
+        const j = await get(`https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0/query?where=1%3D1&outFields=ID,location,hlsurl,Latitude,Longitude&f=json&resultOffset=${off}&resultRecordCount=1000`);
+        for (const f of j.features || []) { const a = f.attributes || {}; if (/^https:\/\/[^?#]+\.m3u8$/.test(a.hlsurl || "")) out.push([String(a.ID), r5(a.Latitude), r5(a.Longitude), tidy(a.location), a.hlsurl]); }
+        if (!j.exceededTransferLimit) break;
+      }
+      return out;
+    } },
+  carsSrc("us-co", "cotg", "cotrip.org", "America/Denver", "United States (Colorado)", "Colorado DOT (COtrip)", true),
   carsSrc("us-mn", "mntg", "511mn.org", "America/Chicago", "United States (Minnesota)", "Minnesota DOT (511MN)"),
-  carsSrc("us-ia", "iatg", "511ia.org", "America/Chicago", "United States (Iowa)", "Iowa DOT (511IA)"),
-  carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)"),
+  carsSrc("us-ia", "iatg", "511ia.org", "America/Chicago", "United States (Iowa)", "Iowa DOT (511IA)", true),
+  carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)", true),
   carsSrc("us-ne", "netg", "511.nebraska.gov", "America/Chicago", "United States (Nebraska)", "Nebraska DOT (Nebraska 511)"),
   carsSrc("us-ks", "kstg", "kandrive.gov", "America/Chicago", "United States (Kansas)", "Kansas DOT (KanDrive)"),
   { id: "us-wa", tz: "America/Los_Angeles", cc: "us", country: "United States (Washington)", agency: "Washington State DOT (WSDOT)", every: 2,
@@ -196,6 +233,37 @@ export const SOURCES = [
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
   /* ---- Asia-Pacific and Europe ---- */
+  { id: "th-dwr", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
+    licence: "Public telemetry API of the Department of Water Resources (no terms of use stated)", page: "https://telemetry.dwr.go.th/",
+    // the image is not a plain address: the page asks DWR's public API for the newest snapshot path, then for the picture (kind "dwr")
+    kind: "dwr",
+    async list() {
+      const API = "https://telemetry.dwr.go.th/api", out = [];
+      for (let page = 1, total = 1; (page - 1) * 200 < total && page < 20; page++) {
+        const j = await post(API + "/public/reportCctv/listPaginate", { paginate: { page, pageSize: 200, orders: [] }, search: {} });
+        total = (j.value || {}).totalCount || 0;
+        for (const r of (j.value || {}).results || []) {
+          const e = r.entity || {};
+          if (!e.id || !e.stationCode || e.cctvOnline === false) continue;
+          try {
+            const st = await get(API + "/public/station/getByCode/" + encodeURIComponent(e.stationCode));
+            const pt = ((((st.value || {}).fullCon || {}).entity || {}).point) || {};
+            if (isFinite(pt.lat) && isFinite(pt.lon)) out.push([e.id, r5(pt.lat), r5(pt.lon), tidy((e.stnNameEn || e.stnNameTh) + (r.provinceNameEn ? ", " + r.provinceNameEn : "") + " (" + e.stationCode + ")"), null]);
+          } catch (err) { console.log("  th-dwr " + e.stationCode + ": " + err.message); }
+          await pause(200);
+        }
+      }
+      return out;
+    } },
+  { id: "th-itic", tz: "Asia/Bangkok", cc: "th", country: "Thailand (live video)", agency: "iTIC Foundation road cameras (list published by Longdo)", every: 0,
+    licence: "Public live streams of the iTIC Foundation (no licence stated)", page: "https://www.iticfoundation.org/",
+    // live video (HLS), not stills: the pop-up plays it (kind "hls")
+    kind: "hls",
+    async list() {
+      const j = await get("https://camera.longdo.com/feed/?command=json");
+      return j.filter((c) => /^https:\/\/camerai1\.iticfoundation\.org\/hls\/[\w-]+\.m3u8$/.test(c.hls_url || "") && !/tempsus/.test(c.hls_url))
+        .map((c) => [String(c.camid), r5(c.latitude), r5(c.longitude), tidy(c.title), c.hls_url]);
+    } },
   { id: "au-qld", tz: "Australia/Brisbane", cc: "au", country: "Australia (Queensland)", agency: "Queensland Department of Transport and Main Roads (QLDTraffic)", every: 2,
     licence: "Creative Commons Attribution 4.0", page: "https://www.data.qld.gov.au/dataset/131940-traffic-and-travel-information-geojson-api",
     async list() {
@@ -257,15 +325,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const prev = old.sources.find((o) => o.id === s.id);
     const meta = { id: s.id, cc: s.cc, tz: s.tz, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
     if (s.live) meta.live = s.live;
+    if (s.kind) meta.kind = s.kind;
     try {
       const t = Date.now();
-      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live));
+      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr"));
       if (!cams.length || (prev && cams.length < prev.n * 0.5)) throw new Error(`only ${cams.length} cameras (had ${prev ? prev.n : 0})`);
       const lat = cams.map((c) => c[1]), lon = cams.map((c) => c[2]);
       meta.n = cams.length; meta.box = [Math.min(...lat), Math.min(...lon), Math.max(...lat), Math.max(...lon)].map(r5);
       meta.checked = new Date().toISOString().slice(0, 16) + "Z";
       writeFileSync(join(OUT, s.id + ".json"), JSON.stringify({ id: s.id, cams }).replace(/\],\[/g, "],\n["));
-      const img = process.env.CHECK_IMAGES ? " images: " + (s.live ? "live (fetched by the page)" : await checkImages(cams)) : "";
+      const img = process.env.CHECK_IMAGES ? " images: " + (s.live || s.kind ? (s.kind || "live") + " (fetched by the page)" : await checkImages(cams)) : "";
       console.log(`${s.id}: ${cams.length} cameras in ${Date.now() - t} ms${img}`);
       sources.push(meta);
     } catch (e) {

@@ -1,0 +1,22 @@
+{"cc":"bi","at":"2026-10-03T09:48:34Z","base":"2026-10-03T09:47:16Z","m":[
+["n12427239810",-3.40407,29.55563,{"man_made":"tower","tower:type":"communication"}],
+["n12495333426",-3.76851,29.68281,{"man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n12495333427",-3.76858,29.68332,{"man_made":"tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n12882381751",-3.35832,29.37451,{"man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
+["n12882381752",-3.35816,29.37451,{"man_made":"tower","tower:construction":"tower","tower:type":"communication"}],
+["n1509503659",-3.4243,29.40522,{"man_made":"tower","tower:type":"communication"}],
+["n1708106701",-3.4286,29.51723,{"man_made":"tower","tower:type":"communication"}],
+["n1727025375",-3.41532,29.37108,{"man_made":"tower","tower:type":"communication"}],
+["n1727025388",-3.4285,29.51754,{"man_made":"tower","tower:type":"communication"}],
+["n1727025397",-3.42895,29.51633,{"man_made":"tower","tower:type":"communication"}],
+["n1728371186",-3.45582,29.44631,{"man_made":"tower","tower:type":"communication"}],
+["n1728371208",-3.45628,29.44562,{"man_made":"tower","tower:type":"communication"}],
+["n1817977341",-3.32092,29.32168,{"man_made":"tower","tower:type":"communication"}],
+["n2653373287",-3.37111,29.39621,{"man_made":"tower","tower:type":"communication"}],
+["n589929226",-3.38622,29.35476,{"man_made":"tower","operator":"RTNB","tower:type":"communication"}],
+["n9508200945",-3.02554,29.25382,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
+["n9514600033",-3.06481,29.2644,{"man_made":"mast","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n989989795",-3.42957,29.51593,{"height":"60","man_made":"tower","name":"Mount Manga","tower:type":"communication"}],
+["w1392869214",-3.39107,29.38597,{"man_made":"tower","tower:type":"communication"}],
+["w1392870176",-3.39043,29.38667,{"man_made":"tower","tower:type":"communication"}]
+]}

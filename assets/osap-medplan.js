@@ -83,6 +83,7 @@
     medfac: { name: "OSAP stored copy of OpenStreetMap health facilities and landing sites", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Refreshed from OpenStreetMap every four weeks." },
     osm: { name: "OpenStreetMap via Overpass API", url: "https://www.openstreetmap.org/copyright", note: "OpenStreetMap contributors, ODbL. Community data: capabilities, contacts and access can be out of date." },
     sof: { name: "OSAP sourced facility list", url: "", note: "Hospitals, airports and U.S. posts researched from named public sources, each linked in the plan." },
+    web: { name: "Hospitals' own websites, read automatically", url: "", note: "Quoted sentences in which a hospital states a service (tools/read_hospital_sites.mjs on GitHub Actions). The hospital's own claim: reported, not confirmed. News, job and procurement pages are left out." },
     osrm: { name: "Road routing: FOSSGIS OSRM, OSRM demo server, FOSSGIS Valhalla (first that answers)", url: "https://routing.openstreetmap.de/", note: "Road drive time without traffic, checkpoints or damage." },
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
     wdh: { name: "Wikidata hospitals: phone (P1329), website (P856), beds (P6801)", url: "https://www.wikidata.org/wiki/Q16917", note: "Used only where OpenStreetMap has no value; matched by the OSM wikidata tag or within 300 m. Community data; confirm with the hospital." },
@@ -365,6 +366,7 @@
      OpenStreetMap are providers there, so the plan reads hospitals the way every other OSAP view will */
   function hp(id) { var p = W.OSAP_HOSP && W.OSAP_HOSP.provider(id); if (!p) throw new Error("hospital data layer not loaded"); return p; }
   function loadSof(c) { return hp("sof").load(c); }
+  function loadWeb(c) { return hp("web").load(c); }
   function tileKeys(o, R) { return hp("osm").tileKeys(o, R); }
   function ccNear(o, R) { return hp("osm").ccNear(o, R); }
   /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
@@ -474,12 +476,18 @@
     var C = {}, osm = { kind: "osm", url: f.osm || "", name: "OpenStreetMap" }, sof = m ? { kind: "sof", url: m.src, name: m.srcname || "source", at: m.asof || "" } : null;
     CAPS.forEach(function (c) { C[c[0]] = { status: "UNKNOWN", confidence: "UNKNOWN", availability: "unknown", source: null, last_verified: null }; });
     function rep(k, src, how, conf) { if (C[k].status === "UNKNOWN") C[k] = { status: "REPORTED", confidence: conf, availability: "unknown", source: src, how: how, last_verified: null }; }
-    function na(k, src, how) { C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", availability: "unknown", source: src, how: how, last_verified: null }; }
+    /* a source saying "not available" against another that states it: both are kept, neither wins (build prompt phase 6),
+       so the flag reads CONTRADICTED and counts as unknown, never as no */
+    function na(k, src, how) {
+      var c = C[k];
+      if (c.status === "REPORTED" && c.source && c.source.kind !== "osm") { c.status = "CONTRADICTED"; c.conflict = { source: src, how: how }; return; }
+      C[k] = { status: "NOT_AVAILABLE", confidence: "LOW", availability: "unknown", source: src, how: how, last_verified: null };
+    }
     /* capabilities the sourced record documents one by one (m.caps, source/sof/SCHEMA.txt): each from the hospital's own
        or a government page, quoted, so they count as credible; read before OpenStreetMap so they win */
     if (m && m.caps) Object.keys(m.caps).forEach(function (k) {
       var x = m.caps[k]; if (!C[k] || !x || !x.src) return;
-      rep(k, { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "" }, (x.quote ? "\u201c" + clip(x.quote, 160) + "\u201d" : "stated by the source") + (x.quote_basis ? " (" + x.quote_basis + ")" : ""), "MODERATE");
+      rep(k, { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "", sha: x.sha256 || "" }, (x.quote ? "\u201c" + clip(x.quote, 160) + "\u201d" : "stated by the source") + (x.quote_basis ? " (" + x.quote_basis + ")" : ""), "MODERATE");
       if (k === "ed.24_7") rep("ed.basic", { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "" }, "24-hour emergency department", "MODERATE");
     });
     if (f.er === "yes") rep("ed.basic", osm, "emergency=yes", "LOW"); else if (f.er === "no") na("ed.basic", osm, "emergency=no");
@@ -943,8 +951,8 @@
     var rH = Math.min(150000, Math.max(40000, s.reach + 30000)), rC = Math.min(40000, Math.max(15000, s.reach + 5000)), rA = Math.min(200000, Math.max(80000, s.reach + 60000));
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
-    s.wx = null; s.wxErr = ""; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
-    var sofP = loadSof(s.cc);
+    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = "";
+    var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
        live check); otherwise the live answer is added to it, and a failed live answer leaves the stored copy */
     var facP = storedFac(o, Math.max(rH, rA)).catch(function (e) { s.storedErr = e.message; return null; }).then(function (st) {
@@ -957,12 +965,14 @@
         return { els: (j.elements || []).concat(mine) };
       }, function (e) { s.osmErr = e.message; return st ? { els: mine } : null; });
     });
-    Promise.all([facP, sofP]).then(function (r) {
+    Promise.all([facP, sofP, webP]).then(function (r) {
       if (ST !== s) return;
-      var got = r[0], sof = r[1];
-      if (!got && !(sof && sof.hospitals && sof.hospitals.length)) throw new Error(s.osmErr || s.storedErr || "no answer");
+      /* OSAP's list with what hospitals state on their own websites folded in (assets/hospital-sources/web-provider.js) */
+      var got = r[0], sof = r[1], hosp = r[2] || (sof && sof.hospitals) ? hp("web").fold(sof && sof.hospitals, r[2], s.cc) : null;
+      s.web = r[2];
+      if (!got && !(hosp && hosp.length)) throw new Error(s.osmErr || s.storedErr || "no answer");
       s.fac = sortOsm(got ? got.els : [], o);
-      s.fac.H = pickHosp(s.fac, o, rH, sof && sof.hospitals); s.fac.H.sort(byCap); s.sofList = sof && sof.hospitals;
+      s.fac.H = pickHosp(s.fac, o, rH, hosp); s.fac.H.sort(byCap); s.sofList = hosp;
       facRender(); airRender(); emsRender(); mevRender(); mapShow(); srcRender();
       wdHosp(s, o, rH);
       return driveTimes(o, s.fac.H.concat(s.fac.C, s.fac.U)).then(function (host) {
@@ -1686,6 +1696,7 @@
     li.push(srcLi(SRC.medfac, s.storedErr ? "not read: " + s.storedErr : s.stored ? "OpenStreetMap as of " + (s.stored.at || "unknown").slice(0, 10) + (s.stored.missing.length ? "; not yet stored: " + s.stored.missing.join(", ") : "") : "reading…"));
     li.push(srcLi(SRC.osm, s.osmErr ? "not reached: " + s.osmErr : s.osmAt ? "read " + dual(s.osmAt, true) + (s.osmBase ? "; OSM data as of " + s.osmBase : "") : s.fac ? "not asked: the stored copy covers this area" : "waiting"));
     if (sofOf(s.cc)) li.push(srcLi(SRC.sof, "as of " + (sofOf(s.cc).asof || "")));
+    if (s.web || s.webErr) li.push(srcLi(SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"));
     li.push(srcLi(SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"));
     li.push(srcLi(SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"));
     if (s.fac) li.push(srcLi(SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) + "; filled gaps for " + s.wdN + " hospital" + (s.wdN === 1 ? "" : "s") : "reading…"));
@@ -1981,7 +1992,8 @@
     var L = known.map(function (c) {
       var x = C[c[0]], src = x.source ? (x.source.url ? link(x.source.url, x.source.name) : esc(x.source.name)) + (x.how ? " <code>" + esc(x.how) + "</code>" : "") +
         (x.source.kind === "osm" && at ? ", data as of " + esc(at) : x.source.at ? ", as of " + esc(x.source.at) : "") : "";
-      return [c[1], "<b>" + esc(x.status) + "</b>, confidence " + esc(x.confidence) + (src ? " · " + src : "") + " · last verified: " + (x.last_verified ? esc(x.last_verified) : "never")];
+      var cf = x.conflict ? " · <b>against</b>: " + (x.conflict.source && x.conflict.source.url ? link(x.conflict.source.url, x.conflict.source.name) : esc((x.conflict.source && x.conflict.source.name) || "a source")) + (x.conflict.how ? " <code>" + esc(x.conflict.how) + "</code>" : "") + " (both kept; confirm with the hospital)" : "";
+      return [c[1], "<b>" + esc(x.status) + "</b>, confidence " + esc(x.confidence) + (src ? " · " + src : "") + (x.source && x.source.sha ? ' · evidence SHA-256 <code title="' + esc(x.source.sha) + '">' + esc(x.source.sha.slice(0, 12)) + "</code>" : "") + cf + " · last verified: " + (x.last_verified ? esc(x.last_verified) : "never")];
     });
     if (unk.length) L.push(["Unknown", '<span class="mpnk">UNKNOWN</span> <span class="obs">No source states: ' + esc(unk.map(function (c) { return c[1]; }).join(", ")) + ". Unknown is not the same as absent; confirm with the hospital.</span>"]);
     return asTable(L);

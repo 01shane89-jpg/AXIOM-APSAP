@@ -1,0 +1,10 @@
+[["n5906823193",-8.87227,-140.06363,"fr",{"name":"Infirmerie de Taipivai","amenity":"hospital"}],
+["n7260109685",-8.91503,-140.09295,"fr",{"name":"Cellule de la Santé","amenity":"hospital","healthcare":"hospital"}],
+["w1162127391",-8.83352,-140.08407,"fr",{"name":"Infirmerie de HATIHEU","amenity":"clinic","healthcare":"clinic"}],
+["w1221776164",-8.91958,-140.09279,"fr",{"aeroway":"helipad"}],
+["w133638461",-8.79562,-140.22808,"fr",{"name":"Aérodrome de Nuku A Taha","aeroway":"aerodrome","icao":"NTMD","iata":"NHV","wikidata":"Q4264144"}],
+["w175237406",-8.91609,-140.09236,"fr",{"name":"Louis Rollin","amenity":"hospital","healthcare":"hospital"}],
+["w314104769",-8.82818,-140.0819,"fr",{"amenity":"clinic","operator":"Pays","operator:type":"public"}],
+["w314130662",-8.87223,-140.06364,"fr",{"amenity":"clinic","operator":"Pays","operator:type":"public"}],
+["w314466052",-9.34755,-140.07996,"fr",{"name":"Ua Pou","aeroway":"aerodrome","icao":"NTMP","iata":"UAP","wikidata":"Q4263773"}],
+["w959811323",-8.81985,-140.13111,"fr",{"amenity":"clinic","operator":"Pays","operator:type":"public"}]]

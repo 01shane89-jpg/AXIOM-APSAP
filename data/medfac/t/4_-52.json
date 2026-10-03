@@ -1,2 +1,6 @@
-[["n5961936757",4.0193,-51.61706,"br",{"name":"Posto de saúde indígena Kunana","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretaria Especial de Saúde Indígena","operator:type":"government","addr:city":"Oiapoque"}],
-["n6110675816",4.01488,-51.69652,"br",{"name":"Posto de saúde de Taparabu","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque","addr:city":"Oiapoque"}]]
+[["n5924411252",4.04905,-51.66916,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier de Cayenne (CHC)","addr:city":"Saint-Georges","addr:postcode":"97313"}],
+["n5935765625",4.20994,-51.67184,"fr",{"name":"Centre Délocalisé de Prévention et de Soins de Ouanary","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon (CHAR)","addr:city":"Ouanary","addr:postcode":"97380"}],
+["n5961936757",4.0193,-51.61706,"br",{"name":"Posto de saúde indígena Kunana","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretaria Especial de Saúde Indígena","operator:type":"government","addr:city":"Oiapoque"}],
+["n6110675816",4.01488,-51.69652,"br",{"name":"Posto de saúde de Taparabu","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Secretario Municipal de Saúde de Oiapoque","addr:city":"Oiapoque"}],
+["w197826221",4.21017,-51.67175,"fr",{"aeroway":"helipad"}],
+["w391472443",4.2109,-51.66676,"fr",{"name":"Aérodrome de Ouanary","name:en":"Ouanary Airport","aeroway":"aerodrome","wikidata":"Q11824658"}]]

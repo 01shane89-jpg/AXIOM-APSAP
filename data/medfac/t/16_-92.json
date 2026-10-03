@@ -1,0 +1,12 @@
+[["n1042042121",16.06168,-91.42353,"gt",{"name":"Aeropuerto de Ixquisis","aeroway":"aerodrome"}],
+["n4951979580",17.24703,-90.33355,"gt",{"aeroway":"helipad"}],
+["n5879402597",17.46217,-90.05385,"gt",{"name":"Aeropuerto de Carmelita","aeroway":"aerodrome","icao":"MGCR","iata":"CMM","wikidata":"Q21974273"}],
+["n6199693467",17.22834,-90.81215,"gt",{"name":"Aeropuerto de El Naranjo","aeroway":"aerodrome"}],
+["n6702225285",16.51979,-90.18029,"gt",{"amenity":"clinic","osap:withheld":"1"}],
+["n7024677803",16.04064,-91.74642,"gt",{"name":"Centro de Salud","amenity":"clinic"}],
+["w1244596147",17.5338,-90.78501,"gt",{"aeroway":"helipad"}],
+["w1256085245",16.52161,-90.19555,"gt",{"name":"Aeropuerto de Sayaxché","aeroway":"aerodrome"}],
+["w264449815",17.53372,-90.77655,"gt",{"name":"Pozo Xan","aeroway":"aerodrome"}],
+["w566095052",16.22276,-90.36323,"gt",{"aeroway":"helipad"}],
+["w605945862",16.75034,-90.14087,"gt",{"name":"Aeropuerto De La Libertad","aeroway":"aerodrome","icao":"MGLL","wikidata":"Q21974303"}],
+["w665367949",16.52061,-90.18087,"gt",{"name":"Hospital Distrital Sayaxché","amenity":"hospital","healthcare":"hospital"}]]

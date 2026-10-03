@@ -1,1 +1,13 @@
-[["w757876614",2.22456,-55.94454,"br",{"name":"Tiriós","aeroway":"aerodrome","icao":"SBTS","aerodrome:type":"airfield","wikidata":"Q20461946"}]]
+[["n5669418509",3.81066,-54.15193,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon","phone":"+594 594 37 30 85","addr:city":"Papaichton","addr:postcode":"97316"}],
+["n5669418510",3.81053,-54.1519,"fr",{"name":"Centre de Protection Maternelle et Infantile","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"vaccination","operator":"Collectivité Territoriale de Guyane","operator:type":"government","phone":"+594 594 37 30 10","addr:housenumber":"460","addr:street":"Rue Akabou","addr:city":"Papaichton","addr:postcode":"97316"}],
+["n5669466367",3.64399,-54.03485,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;emergency","operator":"Centre Hospitalier de Cayenne Andrée Rosemon","phone":"+594 594 37 11 24"}],
+["n5669466368",3.64413,-54.0351,"fr",{"name":"Protection Maternelle et Infantile","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics;gynaecology;vaccination;community","operator":"Collectivité Territoriale de Guyane","operator:type":"government","phone":"+594 594 37 20 49"}],
+["n5669784725",3.38264,-54.04957,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Centre Hospitalier Andrée Rosemon","addr:postcode":"97370"}],
+["n5670006785",3.29707,-54.07064,"fr",{"name":"Centre Délocalisé de Prévention et de Soins","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"CHAR","addr:postcode":"97370"}],
+["n6327032890",3.64282,-54.03624,"fr",{"name":"CMP/CMPI","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"psychiatry","operator":"Centre Hospitalier de l'Ouest Guyanais Franck Joly (Saint-Laurent-du-Maroni)","addr:city":"Maripasoula"}],
+["w151372790",3.64406,-54.0345,"fr",{"aeroway":"helipad"}],
+["w152335309",3.64749,-54.02513,"fr",{"aeroway":"helipad"}],
+["w377830881",3.64395,-54.03487,"fr",{"name":"Dispensaire","amenity":"clinic","healthcare":"clinic","operator":"Centre Hospitalier de Cayenne"}],
+["w377830883",3.656,-54.03933,"fr",{"name":"Aérodrome de Maripasoula","operator":"Conseil Général de la Guyane","aeroway":"aerodrome","icao":"SOOA","iata":"MPY","aerodrome:type":"public","wikidata":"Q649881"}],
+["w594665423",3.38291,-54.04936,"fr",{"amenity":"clinic","healthcare":"clinic"}],
+["w757876614",2.22456,-55.94454,"br",{"name":"Tiriós","aeroway":"aerodrome","icao":"SBTS","aerodrome:type":"airfield","wikidata":"Q20461946"}]]
