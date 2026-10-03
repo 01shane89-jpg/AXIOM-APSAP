@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"mr","asof":"2026-10-03 23:14Z","items":[{"id":"6903","n":"AL-WALID, Mahfouz Ould","t":"person","p":"SDGT","ccs":["mr"]},{"id":"21187","n":"MOHAMEDOU, Saleck Ould Cheikh","t":"person","p":"SDGT","ccs":["mr"]}]};
+window.ASAP_SANC_CC={"cc":"mr","asof":"2026-10-03 23:22Z","items":[{"id":"6903","n":"AL-WALID, Mahfouz Ould","t":"person","p":"SDGT","ccs":["mr"]},{"id":"21187","n":"MOHAMEDOU, Saleck Ould Cheikh","t":"person","p":"SDGT","ccs":["mr"]}]};
