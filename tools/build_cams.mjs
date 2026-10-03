@@ -1,11 +1,13 @@
-// Builds the traffic camera lists for Map overlays > Infrastructure > Traffic cameras (assets/osap-cams.js).
+// Builds the official camera lists for Map overlays > Infrastructure > Public cameras (assets/osap-cams.js): road cameras, and
+// the volcano, river and weather cameras agencies publish the same way (each source's type says which).
 // Only cameras that a government or transport agency publishes itself, openly, with no key, account or login: as open data,
 // or as the camera list behind its own public traveller website (the 511 sites below). Never private or unsecured cameras. Each source becomes data/cams/<id>.json, a list of
-// [camera id, lat, lon, name, image URL or [URLs]]; data/cams/index.json lists the sources with their agency, licence,
+// [camera id, lat, lon, name, image URL or [URLs], live video URL?, own time zone?]; data/cams/index.json lists the sources with their agency, licence,
 // country, box and count. The page loads a source's list only when the camera switch is on and the map shows its box, and
 // the browser then fetches each still image straight from the agency when a camera is hovered or tapped.
 // A source that fails or comes back implausibly small keeps its previous file, and the run says so.
-// Run: node tools/build_cams.mjs [outdir]        (default data/cams; CHECK_IMAGES=1 also fetches two images per source)
+// Run: node tools/build_cams.mjs [outdir]        (default data/cams; CHECK_IMAGES=1 also fetches six images per source;
+//      ONLY=id,id rebuilds just those sources)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -233,7 +235,7 @@ export const SOURCES = [
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
   /* ---- Asia-Pacific and Europe ---- */
-  { id: "th-dwr", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
+  { id: "th-dwr", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (rivers)", agency: "Department of Water Resources, Thailand (telemetry river cameras)", every: 15,
     licence: "Public telemetry API of the Department of Water Resources (no terms of use stated)", page: "https://telemetry.dwr.go.th/",
     // the image is not a plain address: the page asks DWR's public API for the newest snapshot path, then for the picture (kind "dwr")
     kind: "dwr",
@@ -285,6 +287,82 @@ export const SOURCES = [
       // positions come in the Lithuanian grid (LKS-94, EPSG:3346), converted here to latitude and longitude
       return j.map((c) => { const [lat, lon] = lks94(c.x, c.y); return [String(c.id), r5(lat), r5(lon), tidy(c.name + (c.roadName ? ", " + c.roadName : "")), https(c.image)]; });
     } },
+  /* ---- other official cameras: volcanoes, rivers, weather (type tells the page what kind of camera it is) ---- */
+  { id: "us-ashcam", type: "volcano", tz: "America/Anchorage", cc: "us", country: "United States (volcanoes)", agency: "USGS Volcano Hazards Program (AshCam)", every: 10,
+    licence: "U.S. Geological Survey, public domain", page: "https://volcview.wr.usgs.gov/ashcam-gui/",
+    async list() {
+      const j = await get("https://volcview.wr.usgs.gov/ashcam-api/webcamApi/webcams"), week = Date.now() / 1000 - 7 * 86400;
+      // FAA's own cameras (faaInd Y) are shared with USGS under an FAA agreement, so they are left out; so are cameras with no
+      // picture this week. c[6] is the camera's own time zone (Alaska, Hawaii, the Cascades, the Northern Marianas).
+      const zone = (lat, lon) => lon > 140 ? "Pacific/Saipan" : lat < 25 ? "Pacific/Honolulu" : lon < -129 ? "America/Anchorage" : "America/Los_Angeles";
+      return (j.webcams || []).filter((c) => c.faaInd !== "Y" && c.hasImages === "Y" && +c.lastImageTimestamp > week && https(c.currentImageUrl))
+        .map((c) => [c.webcamCode, r5(c.latitude), r5(c.longitude), tidy(c.webcamName + (c.vName ? " (" + c.vName + ")" : "")), c.currentImageUrl, null, zone(+c.latitude, +c.longitude)]);
+    } },
+  { id: "nz-geonet", type: "volcano", tz: "Pacific/Auckland", cc: "nz", country: "New Zealand (volcanoes)", agency: "GeoNet (GNS Science and Toka Tū Ake EQC)", every: 10,
+    licence: "Creative Commons Attribution 3.0 New Zealand", page: "https://www.geonet.org.nz/volcano/cameras",
+    async list() {
+      const j = await get("https://images.geonet.org.nz/volcano/cameras/all.json"), seen = new Map();
+      // GeoNet writes these points as [latitude, longitude], not the usual GeoJSON order
+      for (const fc of [].concat(j)) for (const f of fc.features || []) {
+        const c = (f.geometry || {}).coordinates || [], p = f.properties || {};
+        if (!seen.has(f.id) && p["latest-image-large"]) seen.set(f.id, [String(f.id), r5(c[0]), r5(c[1]), tidy(p.title), https(new URL(p["latest-image-large"], "https://images.geonet.org.nz/volcano/cameras/").href)]);
+      }
+      return [...seen.values()];
+    } },
+  { id: "jp-jma-volcano", type: "volcano", tz: "Asia/Tokyo", cc: "jp", country: "Japan (volcanoes)", agency: "Japan Meteorological Agency (volcano cameras)", every: 2,
+    licence: "JMA website terms of use (credit the Japan Meteorological Agency)", page: "https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/",
+    // each picture's address carries the minute it was taken, so the page reads JMA's camera page for the newest one (kind "jma")
+    kind: "jma",
+    async list() {
+      const j = await get("https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/param/geojson/camicon.geojson");
+      return (j.features || []).filter((f) => /^\d+$/.test((f.properties || {}).code || "")).map((f) => [f.properties.code, r5(f.geometry.coordinates[1]), r5(f.geometry.coordinates[0]), tidy(f.properties.name), null]);
+    } },
+  { id: "jp-mlit-river", type: "river", tz: "Asia/Tokyo", cc: "jp", country: "Japan (rivers)", agency: "Ministry of Land, Infrastructure, Transport and Tourism (river cameras, river.go.jp)", every: 10,
+    licence: "River.go.jp terms of use (river disaster information of MLIT and the prefectures)", page: "https://www.river.go.jp/",
+    async list() {
+      const t = await get("https://www.river.go.jp/kawabou/file/files/map/twn/twnarea.json"), out = new Map();
+      // the camera list comes one town at a time: only towns that have river cameras are asked
+      const towns = (t.towns || []).filter((x) => x.scamExistFlg == 1);
+      for (const x of towns) {
+        try {
+          const g = await get(`https://www.river.go.jp/kawabou/file/gjson/scam/${x.twnCd}.json`);
+          for (const f of g.features || []) {
+            const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];
+            if (p.id && !p.pause && !out.has(p.id)) out.set(p.id, [String(p.id), r5(c[1]), r5(c[0]), tidy(p.name + (x.twnNm ? ", " + x.twnNm : "")), `https://cam.river.go.jp/cam/now/${p.id}.jpg`]);
+          }
+        } catch (e) { console.log(`  jp-mlit-river ${x.twnCd}: ${e.message}`); }
+        await pause(80);
+      }
+      console.log(`  jp-mlit-river: ${towns.length} towns`);
+      return [...out.values()];
+    } },
+  { id: "us-nims", type: "river", tz: "America/Chicago", cc: "us", country: "United States (rivers)", agency: "U.S. Geological Survey (HIVIS river cameras)", every: 15,
+    licence: "U.S. Geological Survey, public domain", page: "https://apps.usgs.gov/hivis/",
+    async list() {
+      const j = await get("https://api.waterdata.usgs.gov/nims/v0/cameras?enabled=true"), week = Date.now() - 7 * 864e5;
+      // c[6]: the camera's own time zone, as USGS gives it
+      return (Array.isArray(j) ? j : j.cameras || []).filter((c) => !c.hideCam && c.camId && Date.parse(c.newestImageDT) > week && /^https:\/\/usgs-nims-images\.s3\.amazonaws\.com\//.test(c.smallDir || ""))
+        .map((c) => [c.camId, r5(c.lat), r5(c.lng), tidy(c.camName + (c.stateAbrv ? ", " + c.stateAbrv : "")), c.smallDir + c.camId + "_newest.jpg", null, String(c.tz || "").replace(/^US\/Eastern$/, "America/New_York").replace(/^US\/Central$/, "America/Chicago").replace(/^US\/Mountain$/, "America/Denver").replace(/^US\/Pacific$/, "America/Los_Angeles").replace(/^US\/Alaska$/, "America/Anchorage").replace(/^US\/Hawaii$/, "Pacific/Honolulu").replace(/^US\/Arizona$/, "America/Phoenix") || null]);
+    } },
+  { id: "us-hpwren", type: "weather", tz: "America/Los_Angeles", cc: "us", country: "United States (Southern California mountains)", agency: "HPWREN, UC San Diego (fire and weather cameras)", every: 2,
+    licence: "HPWREN public camera images (credit HPWREN, UC San Diego)", page: "https://www.hpwren.ucsd.edu/cameras/",
+    async list() {
+      const t = await get("https://www.hpwren.ucsd.edu/cameras/sites.js", "text");
+      const j = JSON.parse(t.replace(/^[\s\S]*?=\s*/, "").replace(/;\s*$/, ""));
+      // one camera point per mountain-top site, its colour cameras (one per direction) as the views
+      return Object.entries(j).map(([k, x]) => {
+        const v = Object.entries(x.cams || {}).filter(([, c]) => c.imager === "color" && c.active === "y" && c.experimental !== "y").sort((a, b) => (a[1].azimuth || 0) - (b[1].azimuth || 0)).map(([id]) => `https://hpwren.ucsd.edu/cameras/L/${id}.jpg`);
+        return v.length && isFinite(x.lat) ? [k, r5(x.lat), r5(x.long), tidy(x.name), one(v)] : null;
+      }).filter(Boolean);
+    } },
+  { id: "th-egat", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (dams)", agency: "Electricity Generating Authority of Thailand (dam cameras, via ThaiWater)", every: 15,
+    licence: "Public dam camera images listed by ThaiWater (HII) (no licence stated)", page: "https://www.thaiwater.net/water/cctv",
+    async list() {
+      const j = await get("https://api-v3.thaiwater.net/api/v1/thaiwater30/analyst/cctv");
+      // only the cameras whose pictures come over https (the others are plain http addresses a secure page cannot show)
+      return (j.data || []).filter((c) => c.media_type === "img" && /^https:\/\/egatwater\.egat\.co\.th\//.test(c.cctv_url || ""))
+        .map((c) => [String(c.id), r5(c.lat), r5(c.long), tidy(c.title + (((c.geocode || {}).province_name || {}).en ? ", " + c.geocode.province_name.en : "")), c.cctv_url]);
+    } },
 ];
 // LKS-94 (Transverse Mercator on GRS80, central meridian 24°E, scale 0.9998, false easting 500 km) to latitude and longitude
 function lks94(x, y) {
@@ -321,14 +399,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const old = existsSync(ixPath) ? JSON.parse(readFileSync(ixPath, "utf8")) : { sources: [] };
   const sources = [];
   let bad = 0;
+  // ONLY=id,id rebuilds just those sources and keeps every other list as it is (a quick run while adding a source)
+  const only = (process.env.ONLY || "").split(",").filter(Boolean);
   for (const s of SOURCES) {
     const prev = old.sources.find((o) => o.id === s.id);
+    if (only.length && !only.includes(s.id)) { if (prev) sources.push(prev); continue; }
     const meta = { id: s.id, cc: s.cc, tz: s.tz, country: s.country, agency: s.agency, licence: s.licence, page: s.page, every: s.every };
     if (s.live) meta.live = s.live;
     if (s.kind) meta.kind = s.kind;
+    if (s.type) meta.type = s.type;
     try {
       const t = Date.now();
-      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr"));
+      const cams = (await s.list()).filter((c) => c && c[0] && isFinite(c[1]) && isFinite(c[2]) && Math.abs(c[1]) <= 90 && Math.abs(c[2]) <= 180 && (c[1] || c[2]) && (c[4] || s.live || s.kind === "dwr" || s.kind === "jma"));
       if (!cams.length || (prev && cams.length < prev.n * 0.5)) throw new Error(`only ${cams.length} cameras (had ${prev ? prev.n : 0})`);
       const lat = cams.map((c) => c[1]), lon = cams.map((c) => c[2]);
       meta.n = cams.length; meta.box = [Math.min(...lat), Math.min(...lon), Math.max(...lat), Math.max(...lon)].map(r5);
