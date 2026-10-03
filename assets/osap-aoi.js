@@ -76,7 +76,7 @@
       var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: zw ? zw(st ? st.w : 2) : 2, dashArray: t.dash,
         fillColor: st ? st.fill : t.col, fillOpacity: st ? st.op : 0.06, interactive: false });
       p.__aoiW = st ? st.w : 2;
-      p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + '</span><span class="aoidelx" role="button" aria-label="Delete ' + esc(label(a)) + '" title="Delete" data-aoi-delx="' + esc(a.id) + '">\u2715</span>', { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
+      p.bindTooltip('<span data-aoi-lbl="' + esc(a.id) + '">' + esc(label(a)) + '<span class="aoisz"> \u00b7 ' + esc(areaTxt(a)) + '</span></span><span class="aoidelx" role="button" aria-label="Delete ' + esc(label(a)) + '" title="Delete" data-aoi-delx="' + esc(a.id) + '">\u2715</span>', { permanent: true, direction: "center", className: "aoilbl aoi-" + a.type.toLowerCase(), interactive: true, opacity: 1 });
       return p;
     })).addTo(map);
   }
@@ -106,6 +106,9 @@
   }
   function close() { if (dEl) { dEl.hidden = true; dEl.innerHTML = ""; } }
   function head(t) { return '<div class="cbox"><div class="chead"><h2 id="aoi-h">' + esc(t) + '</h2><button type="button" class="x" aria-label="Close" data-aoi-x>&times;</button></div>'; }
+  /* the shape's size in the Measure unit (page's areaApi.size, assets/osap-geo.js); km2() if the page has not loaded that */
+  function size(a) { var api = A(), st = okSt(a.st), z = api && api.size ? api.size(a.pts, st && st.kind || "") : null; return z; }
+  function areaTxt(a) { var z = size(a); return z ? z.short.split(" \u00b7 ").pop() : km2(a.pts); }
   function km2(P) {
     var R = 6371, t = Math.PI / 180, s = 0;
     for (var i = 0, j = P.length - 1; i < P.length; j = i++) s += (P[j][1] - P[i][1]) * t * (2 + Math.sin(P[i][0] * t) + Math.sin(P[j][0] * t));
@@ -147,7 +150,7 @@
     var el = dlg(), api = A(), cur = api && api.area && api.area(), on = cur && JSON.stringify(cur) === JSON.stringify(a.pts);
     el.innerHTML = head(label(a)) +
       '<p><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(TYPES[a.type].name) + '<br><span class="obs">' +
-      esc(a.pts.length + " corners · about " + km2(a.pts) + " · saved " + (window.OSAP_TIME ? window.OSAP_TIME.dualT(a.updated || a.created, { date: true }) : new Date(a.updated || a.created).toISOString())) + "</span></p>" +
+      esc((size(a) ? size(a).long : a.pts.length + " corners · about " + km2(a.pts)) + " · saved " + (window.OSAP_TIME ? window.OSAP_TIME.dualT(a.updated || a.created, { date: true }) : new Date(a.updated || a.created).toISOString())) + "</span></p>" +
       (a.notes ? '<p class="aoinote">' + esc(a.notes).replace(/\n/g, "<br>") + "</p>" : "") +
       (note ? '<p class="note">' + esc(note) + "</p>" : "") +
       '<div class="wbtns">' +
@@ -215,6 +218,8 @@
     var hx = function (v) { return /^#[0-9a-f]{6}$/i.test(v) ? v : ""; }, o = { fill: hx(t.fill), line: hx(t.line), op: +t.op, w: +t.w };
     if (!o.fill || !o.line || !isFinite(o.op) || !isFinite(o.w)) return null;
     o.op = Math.max(0, Math.min(0.8, o.op)); o.w = Math.max(1, Math.min(8, o.w));
+    /* drawn as a circle or square: kept so the card can give its radius or sides */
+    if (t.kind === "circle" || t.kind === "rect") o.kind = t.kind;
     return o;
   }
 
@@ -373,7 +378,7 @@
     "#aoidlg .wbtns .on{border-color:var(--accent);color:var(--accent)}.aoinote{white-space:normal;border-left:3px solid var(--line);padding-left:8px}" +
     ".chip.aoichip{font-weight:700;text-transform:none}.chip.aoi-nai{color:#1971c2;border-color:#1971c2}.chip.aoi-tai{color:#c92a2a;border-color:#c92a2a}" +
     ".leaflet-tooltip.aoilbl{font:700 11px/1.2 'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:pointer;pointer-events:auto;background:var(--surface,#fff);color:var(--ink,#111)}" +
-    ".leaflet-tooltip.aoilbl{display:flex;align-items:center;gap:6px}" +
+    ".leaflet-tooltip.aoilbl{display:flex;align-items:center;gap:6px}.aoisz{font-weight:600;opacity:.85}" +
     ".aoidelx{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-2px -4px -2px 0;border-radius:50%;background:#c92a2a;color:#fff;font:700 12px/1 system-ui,sans-serif}" +
     ".leaflet-container .aoiundo.leaflet-control{position:absolute!important;left:50%;right:auto;top:auto;bottom:64px;margin:0;float:none;transform:translateX(-50%);z-index:1200;display:flex;gap:12px;align-items:center;background:#222;color:#fff;border-radius:6px;padding:8px 8px 8px 14px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.4);white-space:nowrap}" +
     ".aoiundo[hidden]{display:none}.aoiundo button{font:inherit;font-weight:700;background:none;border:0;color:#8fd3ff;padding:6px 8px;cursor:pointer}" +
@@ -383,5 +388,8 @@
   document.head.appendChild(st);
 
   function start() { draw(); hookCtl(); hookWatch(); }
+  /* labels give each area's size in the Measure unit: redraw when it changes, and once the page's geodesy has loaded */
+  window.addEventListener("osap-meas-unit", function () { draw(); });
+  window.addEventListener("load", function () { draw(); });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();
