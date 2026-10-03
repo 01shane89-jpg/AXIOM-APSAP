@@ -1,2 +1,8 @@
-[["w522366393",20.97991,-73.16217,"bs",{"name":"Plane","aeroway":"aerodrome","military":"airfield"}],
+[["n629531979",20.01901,-72.72469,"ht",{"name":"HOPITAL NOTRE DAME DES PALMISTES","amenity":"hospital","operator":"MSPP / SOI-MEME"}],
+["n629531984",20.03347,-72.80828,"ht",{"name":"DISPENSAIRE DE MONTRY","amenity":"hospital","operator":"MSPP / EGLISE EPISCOPALE"}],
+["n629531995",20.03818,-72.86421,"ht",{"name":"DISPENSAIRE LA VALLEE","amenity":"hospital"}],
+["n629532004",20.03653,-72.7912,"ht",{"name":"DISPENSAIRE DE MARE ROUGE","amenity":"hospital","operator":"MSPP"}],
+["n629532015",20.01051,-72.66355,"ht",{"name":"DISPENSAIRE AUX PLAINES","amenity":"hospital"}],
+["n631504478",20.0447,-72.78864,"ht",{"name":"Marie Curie","amenity":"hospital"}],
+["w522366393",20.97991,-73.16217,"bs",{"name":"Plane","aeroway":"aerodrome","military":"airfield"}],
 ["w68429864",20.97441,-73.66728,"bs",{"name":"Inagua Airport","phone":"1-242-339-1254","addr:city":"Matthew Town","aeroway":"aerodrome","icao":"MYIG","iata":"IGA","wikidata":"Q3016787"}]]

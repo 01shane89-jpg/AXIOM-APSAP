@@ -1,0 +1,4 @@
+[["n11932812247",31.92359,34.88098,"il",{"name":"ארגון תורמי דם מתנדבים ע\"ר","healthcare":"blood_donation","healthcare:speciality":"תרומות_דם","operator":"ארגון תורמי דם מתנדבים ע\"ר","phone":"+972-3-5300468","website":"https://www.dam.org.il","addr:housenumber":"133","addr:street":"שדרות הרצל","addr:city":"רמלה"}],
+["n11932834800",31.92357,34.88075,"il",{"name":"בנק הדם החדש של מד\"א","healthcare":"blood_donation","healthcare:speciality":"blood_donation","operator":"מד\"א","phone":"+972-35300400","website":"https://www.mdais.org/blood-donation","addr:housenumber":"133","addr:street":"שדרות הרצל","addr:city":"רמלה"}],
+["n5081029921",32.04585,34.84682,"il",{"name":"בנק הדם - תל השומר","healthcare":"blood_bank"}],
+["w295743535",32.04587,34.8468,"il",{"name":"בנק הדם","name:en":"Blood Bank","healthcare":"blood_bank","opening_hours":"Su,Mo,We,Th 08:00-14:30; Tu 08:00-18:00; Fr 08:00-12:30"}]]

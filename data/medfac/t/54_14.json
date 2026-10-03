@@ -1,7 +1,9 @@
 [["n14156155937",55.17704,14.81306,"dk",{"emergency":"ambulance_station","operator":"Falck"}],
 ["n9160367471",55.32002,15.1865,"dk",{"name":"Lægeklinikken Christiansø","amenity":"clinic","healthcare":"clinic"}],
 ["r1997582",55.09336,14.70925,"dk",{"name":"Psykiatrisk Center Bornholm","amenity":"hospital","healthcare":"hospital"}],
+["r20055889",54.03872,14.02262,"de",{"name":"Fachklinik Klaus Störtebeker Ostseestrand","amenity":"hospital","healthcare":"hospital","operator":"Johannesbad Holding SE & Co. KG","website":"https://www.johannesbad-medizin.com","addr:housenumber":"13","addr:street":"Strandstraße","addr:city":"Loddin","addr:postcode":"17459"}],
 ["w1247272257",55.31912,15.18899,"dk",{"aeroway":"helipad"}],
+["w1315567782",54.04034,14.02638,"de",{"name":"IFA Therapiezentrum Usedom","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"physiatry","operator":"Balticum OpCo 1 Usedom GmbH","website":"https://www.ifagesundheit.de/ifa-kurheim-usedom","addr:housenumber":"3","addr:street":"Strandstraße","addr:city":"Loddin","addr:postcode":"17459"}],
 ["w205327457",55.0918,14.70767,"dk",{"name":"Bornholms Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+45 3867 0000","website":"https://www.bornholmshospital.dk/","wikidata":"Q1877820"}],
 ["w205339898",55.09055,14.70831,"dk",{"aeroway":"helipad","icao":"EKRB"}],
 ["w300960825",55.06485,14.76019,"dk",{"name":"Bornholms Lufthavn","name:en":"Bornholm Airport","operator":"Danish Civil Aviation Administration (Statens Luftfartsvæsen)","phone":"+45 5695 2626","website":"https://www.bornholms-lufthavn.dk/","aeroway":"aerodrome","icao":"EKRN","iata":"RNN","aerodrome:type":"regional","wikidata":"Q835129"}]]

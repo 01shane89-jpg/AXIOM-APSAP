@@ -98,7 +98,7 @@
 ["w1374150125",25.44557,94.95472,"mm",{"amenity":"hospital"}],
 ["w1374150130",25.33104,95.28997,"mm",{"amenity":"hospital","healthcare":"hospital"}],
 ["w311490967",24.62518,94.01289,"in",{"name":"Thoubal District Hospital","amenity":"hospital","addr:district":"Thoubal","addr:city":"Khangabok","addr:postcode":"795138"}],
-["w489512195",25.9879,95.67416,"mm",{"name":"ခန္တီး လေဆိပ်","name:en":"Khamti Airport","aeroway":"aerodrome","icao":"VYKI","iata":"KHM"}],
+["w489512195",25.9879,95.67416,"mm",{"name":"ခန္တီး လေဆိပ်","name:en":"Khamti Airport","aeroway":"aerodrome","icao":"VYKI","iata":"KHM","wikidata":"Q6400012"}],
 ["w489554450",24.89909,94.9155,"mm",{"name":"ဟုမ္မလင်း လေဆိပ်","name:en":"Homalin Airport","aeroway":"aerodrome","icao":"VYHL","iata":"HOX"}],
 ["w671265564",25.65513,94.1217,"in",{"aeroway":"helipad"}],
 ["w751045586",25.56081,94.07754,"in",{"aeroway":"helipad"}],

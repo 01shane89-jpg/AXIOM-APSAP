@@ -1,0 +1,11 @@
+[["n1042045284",33.05903,40.39664,"iq",{"name":"Ar Rutbah Highway Strip","aeroway":"aerodrome"}],
+["n1042045285",32.83169,40.34038,"iq",{"name":"Ar Rutbah South Airport","aeroway":"aerodrome"}],
+["n1042045291",33.8187,41.4322,"iq",{"name":"H1 New Air Base","aeroway":"aerodrome"}],
+["n6762180385",33.0374,40.29034,"iq",{"name":"مستشفى الرطبة العام","name:en":"Al-Rutba General Hospital","amenity":"hospital","healthcare":"doctor","addr:street":"شارع السوق"}],
+["w1415972858",33.04011,40.27159,"iq",{"aeroway":"helipad"}],
+["w1415972859",33.04004,40.27128,"iq",{"aeroway":"helipad"}],
+["w1415972860",33.03976,40.27135,"iq",{"aeroway":"helipad"}],
+["w584459798",32.4058,41.95972,"iq",{"aeroway":"helipad"}],
+["w729747707",32.41334,41.94934,"iq",{"name":"قاعدة موديس الجوية","aeroway":"aerodrome"}],
+["w742052702",33.35696,40.59614,"iq",{"name":"قاعدة اج 2","name:en":"H2 Airbase","aeroway":"aerodrome","military":"airfield"}],
+["w761983189",33.79386,41.45096,"iq",{"aeroway":"helipad"}]]

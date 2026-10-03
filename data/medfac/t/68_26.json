@@ -1,0 +1,8 @@
+[["n3757699617",68.42745,27.56646,"fi",{"name":"Pelastushelikopterin laskeutumispaikka","aeroway":"helipad"}],
+["n559401050",68.59753,27.44031,"fi",{"name:en":"Ivalo Seaplane Quay","aeroway":"aerodrome","aerodrome:type":"seaplane"}],
+["w1101438009",68.60635,27.40919,"fi",{"name":"Ivalon lentoasema","name:en":"Ivalo Airport","operator":"Finavia","website":"https://www.finavia.fi/lentoasemat/lentoasema_ivalo","addr:housenumber":"290","addr:street":"Lentokentäntie","addr:city":"Ivalo","addr:postcode":"99800","aeroway":"aerodrome","icao":"EFIV","iata":"IVL","aerodrome:type":"regional","wikidata":"Q850269"}],
+["w1226499321",68.65689,27.52537,"fi",{"aeroway":"helipad"}],
+["w163125129",69.90076,27.01675,"fi",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"1","addr:street":"Seitatie","addr:city":"Utsjoki","addr:postcode":"99980"}],
+["w398531218",68.65666,27.52425,"fi",{"name":"Ivalon terveyskeskus","amenity":"clinic","healthcare":"clinic","emergency":"yes","operator":"Lapin hyvinvointialue","operator:type":"public","website":"https://www.inari.fi/fi/yhteystiedot/sosiaali-ja-terveysosasto/ivalon-terveyskeskus.html","addr:housenumber":"15","addr:street":"Sairaalantie","addr:city":"Ivalo","addr:postcode":"99800","wikidata":"Q97625461"}],
+["w428276154",69.90085,27.01649,"fi",{"name":"Utsjoen terveyskeskus","amenity":"clinic","healthcare":"clinic","phone":"+358 40 181 0285","addr:city":"Utsjoki"}],
+["w813893775",68.59719,27.44044,"fi",{"aeroway":"helipad"}]]

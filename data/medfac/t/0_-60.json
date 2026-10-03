@@ -2,4 +2,5 @@
 ["n1042071901",1.99,-59.9572,"br",{"name":"Wapum","aeroway":"aerodrome","wikidata":"Q31206108"}],
 ["n12377528697",0.88416,-59.69522,"br",{"name":"Hospital de Caroebe","amenity":"hospital","healthcare":"hospital","addr:street":"Rua Paulino Gomes Costa","addr:city":"Caroebe","addr:postcode":"69378-000"}],
 ["n14064746659",0.81711,-59.85305,"br",{"name":"Fazenda Sonho Azul","addr:street":"Vicinal 32","addr:city":"São João da Baliza","aeroway":"aerodrome","icao":"SJ8T"}],
-["n6753629521",0.95034,-59.90872,"br",{"amenity":"hospital","healthcare":"hospital"}]]
+["n6753629521",0.95034,-59.90872,"br",{"amenity":"hospital","healthcare":"hospital"}],
+["n7668135629",1.65224,-58.64583,"gy",{"name":"Kanashen Airport","aeroway":"aerodrome"}]]

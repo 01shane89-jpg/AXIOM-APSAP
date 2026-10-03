@@ -12,7 +12,7 @@
 ["w1058092336",22.40807,104.59024,"vn",{"name":"Bệnh viện Đa khoa khu vực Quang Bình","amenity":"hospital","healthcare":"hospital"}],
 ["w1058092337",22.62499,104.94018,"vn",{"name":"Bệnh viện Phục hồi chức năng Hà Giang","amenity":"hospital","healthcare":"hospital"}],
 ["w1058092338",22.67766,104.46207,"vn",{"name":"Bệnh viện Đa khoa khu vực Xín Mần","amenity":"hospital","healthcare":"hospital"}],
-["w1058092339",22.81903,104.98375,"vn",{"name":"Bệnh viện Mắt Hà Giang","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"ophthalmology","emergency":"no","operator:type":"community","addr:housenumber":"10","addr:subdistrict":"Minh Khai","addr:city":"Ha Giang","addr:province":"Ha Giang","addr:postcode":"0219"}],
+["w1058092339",22.81903,104.98375,"vn",{"name":"Bệnh viện Mắt Hà Giang","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"ophthalmology","emergency":"no","operator:type":"community","addr:housenumber":"10","addr:subdistrict":"Minh Khai","addr:city":"Ha Giang","addr:province":"Ha Giang","addr:postcode":"0219","opening_hours":"24/7"}],
 ["w1058092340",22.73964,105.3043,"vn",{"name":"Bệnh viện Đa khoa khu vực Bắc Mê","amenity":"hospital","healthcare":"hospital"}],
 ["w1058092341",22.73909,104.68005,"vn",{"name":"Bệnh viện Đa khoa khu vực Hoàng Su Phì","amenity":"hospital","healthcare":"hospital"}],
 ["w1058092342",22.5118,104.51272,"vn",{"name":"Bệnh viện Đa khoa khu vực Nà Chì","amenity":"hospital","healthcare":"hospital"}],

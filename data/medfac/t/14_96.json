@@ -11,7 +11,7 @@
 ["n12753750329",15.67436,97.77329,"mm",{"name":"အနင်းတိုက်နယ်ဆေးရုံ","name:en":"Ah Nin Station Hospital","amenity":"hospital","beds":"16"}],
 ["n3016173957",15.24619,97.85297,"mm",{"name":"ရေးမြို့နယ်ဆေးရုံ","name:en":"Ye Township Hospital","amenity":"hospital","healthcare":"hospital","beds":"100"}],
 ["n4226241703",15.97776,97.70407,"mm",{"name":"Jivita Dana Hospital","amenity":"hospital"}],
-["n4490195490",15.9692,97.7268,"mm",{"amenity":"clinic","operator":"Ziwaka","addr:city":"သံဖြူဇရပ်မြို့","osap:withheld":"1"}],
+["n4490195490",15.9692,97.7268,"mm",{"amenity":"clinic","operator":"Ziwaka","addr:city":"သံဖြူဇရပ်မြို့","opening_hours":"Mo-Sa 7:00-17:00","osap:withheld":"1"}],
 ["n4696519891",15.90836,97.72696,"mm",{"amenity":"clinic","operator":"Yar Zar","osap:withheld":"1"}],
 ["n6332265886",15.979,97.71435,"mm",{"name:en":"ေဒါက္ တာ ခြန္ေအေမာင္","amenity":"clinic"}],
 ["w1265703647",14.67239,97.97843,"mm",{"aeroway":"helipad"}],

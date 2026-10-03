@@ -80,6 +80,27 @@
     });
   }
 
+  /* blood banks and donation centres, hyperbaric chambers and air rescue bases within R (data/medfac/x/<cc>.json, one small
+     file per country): { els (Overpass-shaped), missing (country names without the file), at, near }; a country's file that
+     cannot be read counts as missing, so the plan asks Overpass for it instead */
+  function extras(o, R) {
+    return mfIndex().then(function (idx) {
+      var near = ccNear(o, R), have = near.filter(function (c) { return idx.countries[c.id] && idx.countries[c.id].x; }), miss = near.filter(function (c) { return have.indexOf(c) < 0; });
+      return Promise.all(have.map(function (c) {
+        return getJSON(MEDFAC + "x/" + c.id + ".json", 20000).then(function (rows) { return { c: c, rows: rows || [] }; }, function () { miss.push(c); return null; });
+      })).then(function (got) {
+        var els = [], ats = [];
+        got.forEach(function (g) {
+          if (!g) return;
+          ats.push(idx.countries[g.c.id].at);
+          g.rows.forEach(function (r) { var p = [r[1], r[2]]; if (hav(o, p) <= R) els.push({ type: { n: "node", w: "way", r: "relation" }[r[0].charAt(0)] || "node", id: +r[0].slice(1), lat: r[1], lon: r[2], tags: r[4] || {} }); });
+        });
+        ats.sort();
+        return { els: els, missing: miss.map(function (c) { return c.name; }), missingIds: miss.map(function (c) { return c.id; }), at: ats[0] || "", near: near.map(function (c) { return c.id; }) };
+      });
+    });
+  }
+
   function isHosp(t) { return t.amenity === "hospital" || t.healthcare === "hospital"; }
   function isClinic(t) { return t.amenity === "clinic" || t.amenity === "doctors" || /^(clinic|centre|doctor)$/.test(t.healthcare || ""); }
   /* one OpenStreetMap element as a canonical record; cc is the country the element lies in (upper-cased in the id) */
@@ -127,5 +148,5 @@
   }
 
   H.register({ id: "osm", tier: 2, countries: null, label: "OpenStreetMap (OSAP's stored copy)", discoverFacilities: discoverFacilities,
-    stored: stored, toFacility: toFacility, tileKeys: tileKeys, ccNear: ccNear, inRing: inRing, nearOutline: nearOutline });
+    stored: stored, extras: extras, toFacility: toFacility, tileKeys: tileKeys, ccNear: ccNear, inRing: inRing, nearOutline: nearOutline });
 })();

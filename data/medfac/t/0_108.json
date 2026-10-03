@@ -10,7 +10,7 @@
 ["n5854378275",1.17358,108.97882,"id",{"name":"Regional General Hospital","name:en":"Regional General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","phone":"+62 562 241203","addr:housenumber":"20","addr:street":"Jalan Ahmad Kadir Kasim","addr:city":"Pemangkat","addr:postcode":"79154"}],
 ["n5854378276",1.17356,108.97796,"id",{"name":"Amkur Maternity Hospital","name:en":"Amkur Maternity Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"maternity"}],
 ["n9020158413",1.53047,109.80567,"my",{"aeroway":"helipad"}],
-["w1016534636",1.8133,109.76441,"my",{"name":"Sematan Airport","name:en":"Sematan Airport","operator":"Malaysia Airports","aeroway":"aerodrome","icao":"WBGN","iata":"BSE"}],
+["w1016534636",1.8133,109.76441,"my",{"name":"Sematan Airport","name:en":"Sematan Airport","operator":"Malaysia Airports","aeroway":"aerodrome","icao":"WBGN","iata":"BSE","wikidata":"Q7449138"}],
 ["w1160196660",0.33664,108.96263,"id",{"name":"Rumah Sakit Umum Daerah dr. Rubini Mempawah","name:en":"Regional General Hospital Dr. Rubini Mempawah","amenity":"hospital"}],
 ["w1193723566",0.90556,108.98635,"id",{"name":"Rumah Sakit Santo Vincentius","official_name":"Rumah Sakit Umum Santo Vincentius","amenity":"hospital","healthcare":"hospital","operator":"Yayasan Karya Kesehatan Santo Vincentius","operator:type":"private","addr:street":"Jalan Pangeran Diponegoro","addr:district":"Singkawang Barat","addr:city":"Singkawang","addr:province":"Kalimantan Barat","addr:postcode":"79111"}],
 ["w1194210476",0.91277,108.99421,"id",{"name":"klinik dan Apotik Insan Citra Madanj","amenity":"clinic","healthcare":"clinic","addr:street":"Jalan Jenderal Sudirman","addr:city":"Singkawang"}],
