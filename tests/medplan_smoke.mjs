@@ -623,7 +623,9 @@ async function openPlan(p) {
   const ctx = await browser.newContext({ serviceWorkers: "block" }), p = await ctx.newPage();
   await p.goto(base + "tests/", { waitUntil: "domcontentloaded" }).catch(() => {});
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
-  await p.addScriptTag({ url: base + "assets/osap-geo.js" }); await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
+  await p.addScriptTag({ url: base + "assets/osap-geo.js" });
+  for (const f of ["base-provider", "sof-provider", "osm-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
+  await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
     d: M._facName({ name: "Hospital Drive Clinic" }, "clinic"), e: M._parseGrid("13.75, 100.5"), f: M._parseGrid("47P PR 6300 2000"), g: M._parseGrid("nonsense"),
