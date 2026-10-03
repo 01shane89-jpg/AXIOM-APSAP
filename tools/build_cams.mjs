@@ -50,10 +50,10 @@ const https = (u) => /^https:\/\//.test(String(u || "")) ? String(u) : null;
 const one = (a) => (a.length === 1 ? a[0] : a.length ? a : null);
 // 511 traveller sites built on the same platform (Iteris/IBI): the camera list behind each site's own public Cameras page,
 // read 100 at a time (the most it gives), and each camera's still image at /map/Cctv/<image id> on the same site
-async function atis(host, video) {
+async function atis(host, video, size = 100) {
   const out = [];
-  for (let start = 0, total = 1; start < total && start < 20000; start += 100) {
-    const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start, length: 100, search: { value: "" } }));
+  for (let start = 0, total = 1; start < total && start < 20000; start += size) {
+    const q = encodeURIComponent(JSON.stringify({ columns: [{ data: null, name: "" }, { name: "sortOrder", s: true }], order: [{ column: 1, dir: "asc" }], start, length: size, search: { value: "" } }));
     const j = await get(`https://${host}/List/GetData/Cameras?query=${q}&lang=en`, "json", { "X-Requested-With": "XMLHttpRequest" }).catch((e) => { throw new Error(e.message + " at camera " + start); });
     total = j.recordsTotal || 0;
     (j.data || []).forEach((c) => {
@@ -77,12 +77,12 @@ async function cars(p, video) {
     return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)].concat(vid ? [vid] : []) : null;
   }).filter(Boolean);
 }
-// Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder), Saskatchewan (placeholders), Kentucky and Hawaii (http-only images, which a https page
+// Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder), Saskatchewan (placeholders), Massachusetts (matg CARS list: half its images are one "unavailable" picture), Kentucky and Hawaii (http-only images, which a https page
 // cannot show), Texas, Virginia, Michigan, Tennessee (no keyless list), Taiwan (refuses connections from abroad), Vietnam
 // (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
 // video: only where the streams answered a browser from GitHub without sign-in (Pennsylvania's "open" ones answered 401)
-const atisSrc = (id, host, tz, cc, country, agency, video) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host, video) });
+const atisSrc = (id, host, tz, cc, country, agency, video, size) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host, video, size) });
 const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
 // USGS AshCam: volcano cameras in Alaska, Hawaii, the Cascades and the Northern Marianas
@@ -247,8 +247,6 @@ export const SOURCES = [
   carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)", true),
   carsSrc("us-ne", "netg", "511.nebraska.gov", "America/Chicago", "United States (Nebraska)", "Nebraska DOT (Nebraska 511)"),
   carsSrc("us-ks", "kstg", "kandrive.gov", "America/Chicago", "United States (Kansas)", "Kansas DOT (KanDrive)"),
-  carsSrc("us-ma", "matg", "mass511.com", "America/New_York", "United States (Massachusetts)", "Massachusetts DOT (Mass511)"),
-  carsSrc("us-sd", "sdtg", "sd511.org", "America/Chicago", "United States (South Dakota)", "South Dakota DOT (SD511)"),
   atisSrc("us-nc", "drivenc.gov", "America/New_York", "us", "United States (North Carolina)", "North Carolina DOT (DriveNC)"),
   { id: "us-wa", tz: "America/Los_Angeles", cc: "us", country: "United States (Washington)", agency: "Washington State DOT (WSDOT)", every: 2,
     licence: "WSDOT traveler information (public)", page: "https://wsdot.com/travel/real-time/cameras",
@@ -269,7 +267,7 @@ export const SOURCES = [
   atisSrc("ca-nb", "511.gnb.ca", "America/Moncton", "ca", "Canada (New Brunswick)", "New Brunswick Transportation (511 NB)"),
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
-  atisSrc("ca-ab", "511.alberta.ca", "America/Edmonton", "ca", "Canada (Alberta)", "Alberta Transportation and Economic Corridors (511 Alberta)"),
+  atisSrc("ca-ab", "511.alberta.ca", "America/Edmonton", "ca", "Canada (Alberta)", "Alberta Transportation and Economic Corridors (511 Alberta)", false, 10), // its list refuses pages of 100
   atisSrc("ca-mb", "manitoba511.ca", "America/Winnipeg", "ca", "Canada (Manitoba)", "Manitoba Transportation and Infrastructure (Manitoba 511)"),
   atisSrc("ca-pe", "511.gov.pe.ca", "America/Halifax", "ca", "Canada (Prince Edward Island)", "PEI Transportation and Infrastructure (511 PEI)"),
   atisSrc("ca-yt", "511yukon.ca", "America/Whitehorse", "ca", "Canada (Yukon)", "Yukon Highways and Public Works (511 Yukon)"),
