@@ -108,7 +108,11 @@ export function buildRules(inp, R) {
     const s = c.stats && c.stats.reports; if (!s) return;
     watch.push({ from: "conflict", text: `${c.name}: ${s.d1 || 0} report${s.d1 === 1 ? "" : "s"} in the last day, ${s.d7 || 0} in 7 days on the conflict tab.`, refs: [], tab: c.id });
   });
-  (inp.flashpoints || []).slice(0, 2).forEach((f) => watch.push({ from: "flashpoint", text: `${f.title}${f.where ? ", " + f.where : ""}. ${f.why || ""}`.trim(), refs: [] }));
+  // a flashpoint carries the reports that mention it (resolved from the watch list by refresh_daily.mjs), newest first, so the
+  // line opens onto them and Print lists them as sources
+  (inp.flashpoints || []).slice(0, 2).forEach((f) => watch.push({ from: "flashpoint", text: `${f.title}${f.where ? ", " + f.where : ""}. ${f.why || ""}`.trim(),
+    refs: [...new Set((f._reports || []).slice().sort((x, y) => String(y.ts || "").localeCompare(String(x.ts || ""))).slice(0, 8)
+      .map((r) => r && /^https?:\/\//i.test(String(r.url || "")) ? ref({ title: r.title, outlet: String(r.source || "").replace(/\s*\(.*\)\s*$/, ""), url: r.url, date: String(r.ts || "").slice(0, 16), via: "flashpoint" }) : 0).filter(Boolean))], fp: f.title }));
   const W = (inp.warnings || []).filter((w) => w.date >= iso(from) && !/lifted|cancel|解除|ended|expired|no longer/i.test((w.title_en || w.title) + " " + (w.summary_en || w.summary || "")));
   if (W.length) {
     const seen = new Set(), top = W.filter((w) => { const k = fold(w.summary_en || w.title_en || w.title).slice(0, 60); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 2);
