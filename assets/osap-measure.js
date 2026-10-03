@@ -12,7 +12,8 @@
   if (!G || !map || !window.L) return;
   var UKEY = "osap-meas-unit", phoneMq = window.matchMedia("(max-width: 700px)"), S = { on: false, more: !phoneMq.matches, pts: [], closed: false, unit: "km", mils: false, fmt: "mgrs", hover: null, down: null, dragging: false };
   try { var u0 = JSON.parse(localStorage.getItem(UKEY) || "null"); if (u0) { if (G.UNITS[u0.unit]) S.unit = u0.unit; S.mils = !!u0.mils; if (/^(mgrs|dec|dms)$/.test(u0.fmt)) S.fmt = u0.fmt; } } catch (e) {}
-  function keep() { try { localStorage.setItem(UKEY, JSON.stringify({ unit: S.unit, mils: S.mils, fmt: S.fmt })); } catch (e) {} }
+  /* other tools that show distances (the drawn area's size label, saved NAI/TAI labels) listen for "osap-meas-unit" */
+  function keep() { try { localStorage.setItem(UKEY, JSON.stringify({ unit: S.unit, mils: S.mils, fmt: S.fmt })); } catch (e) {} try { window.dispatchEvent(new Event("osap-meas-unit")); } catch (e) {} }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
   if (!map.getPane("measpane")) { map.createPane("measpane"); map.getPane("measpane").style.zIndex = 675; }
