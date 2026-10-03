@@ -253,7 +253,32 @@ async function round5() {
   for (const c of ["grsm", "yose", "olym", "bibe"]) await img(`https://www.nps.gov/featurecontent/ard/webcams/images/${c}.jpg`, "  NPS");
   for (const u of ["https://www.cenapred.unam.mx/popo/UltimaImagen.jpg", "https://www.fs.usda.gov/Internet/FSE_MEDIA/sthelens.jpg", "https://trollcam.npolar.no/TrollWebCam3HD.jpg"]) await img(u, "  single");
 }
+/* ---------- round 6: image addresses for the lists round 5 found ---------- */
+async function round6() {
+  const show = (k, r, n = 700) => { line(k, r); if (r.n) console.log("   " + r.b.toString("utf8").slice(0, n).replace(/\s+/g, " ")); };
+  for (const id of [100257123, 100257127]) { const r = await get(`https://www.river.go.jp/kawabou/file/files/master/obs/scam/${id}.json`, 30000); show("MLIT cam " + id, r, 900);
+    try { const t = r.b.toString("utf8"); for (const u of [...new Set(t.match(/https?:[^"]+\.(jpg|jpeg|png)/gi) || [])].slice(0, 3)) await img(u.replace(/\\\//g, "/")); } catch {} }
+  for (const u of ["https://cam.river.go.jp/cam/now/100257123.jpg", "https://www.river.go.jp/kawabou/file/files/scam/now/100257123.jpg"]) await img(u, "  MLIT guess");
+  for (const vc of ["10401", "50601"]) { const r = await get(`https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/volcam.php?VC=${vc}`, 30000); line("JMA page " + vc, r);
+    const t = r.b.toString("utf8"); const m = [...new Set(t.match(/[^"'\s]+\.(jpg|jpeg|png)/gi) || [])].filter((x) => !/icon|logo|banner/i.test(x)); console.log("   imgs " + m.slice(0, 8).join(" | "));
+    for (const x of m.slice(0, 2)) await img(new URL(x, r.url || "https://www.data.jma.go.jp/svd/vois/data/tokyo/volcam/").href, "  JMA"); }
+  const hp = await get("https://www.hpwren.ucsd.edu/cameras/sites.js", 30000); let ids = [];
+  try { const t = hp.b.toString("utf8"); ids = [...t.matchAll(/"([a-z0-9]+-[a-z]+-mobo-c)"/g)].map((m) => m[1]); console.log("HPWREN colour cams " + ids.length); } catch {}
+  for (const id of ids.slice(0, 2)) for (const u of [`https://www.hpwren.ucsd.edu/cameras/L/${id}.jpg`, `https://www.hpwren.ucsd.edu/cameras/LTA/${id}/large/latest.jpg`, `https://hpwren.ucsd.edu/cameras/L/${id}.jpg`]) await img(u, "  HPWREN");
+  const tw = await get("https://api-v3.thaiwater.net/api/v1/thaiwater30/analyst/cctv", 60000);
+  try { const d = JSON.parse(tw.b).data || []; const k = {}; d.forEach((c) => { const u = c.cctv_url || ""; const key = c.media_type + " " + (u.match(/^\w+:\/\/[^/]+/) || [""])[0].replace(/\d+/g, "#"); k[key] = (k[key] || 0) + 1; });
+    console.log("ThaiWater " + d.length + " by type/host: " + JSON.stringify(k).slice(0, 1500)); const ag = {}; d.forEach((c) => { const a = ((c.agency || {}).agency_name || {}).en; ag[a] = (ag[a] || 0) + 1; }); console.log("   agencies " + JSON.stringify(ag));
+    for (const c of d.filter((c) => /^https:/.test(c.cctv_url || "")).slice(0, 4)) await img(c.cctv_url, "  ThaiWater " + c.media_type); } catch (e) { console.log("   " + e); }
+  const ms = await get("https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcam_overview.json", 30000);
+  try { const j = JSON.parse(ms.b); console.log("MeteoSwiss keys " + Object.keys(j).join(",") + " station keys " + Object.keys(j.stations[0]).join(",")); } catch {}
+  for (const u of ["https://www.meteoswiss.admin.ch/product/output/webcams/BIV/latest.jpg", "https://s3-eu-central-1.amazonaws.com/app-prod-static-fra.meteoswiss-app.ch/v1/webcams/BIV.jpg", "https://data.geo.admin.ch/ch.meteoschweiz.ogd-webcam/"]) { const r = await get(u, 20000); show("MeteoSwiss guess " + u, r, 300); }
+  const hk = await get("https://www.hko.gov.hk/en/wxinfo/ts/index_webcam.htm", 30000); line("HKO index", hk);
+  try { const t = hk.b.toString("utf8"); console.log("   codes " + [...new Set([...t.matchAll(/hko_mica\/([a-z0-9]+)\//gi)].map((m) => m[1]))].join(",")); const js = [...new Set(t.match(/[^"'\s]+\.js/g) || [])]; console.log("   js " + js.slice(0, 10).join(" | ")); } catch {}
+  const nps = await get("https://www.nps.gov/subjects/air/webcams.htm", 30000); line("NPS air webcams page", nps);
+  try { const t = nps.b.toString("utf8"); console.log("   codes " + [...new Set([...t.matchAll(/webcams\/images\/([a-z0-9_]+)\.jpg/gi)].map((m) => m[1]))].join(",")); } catch {}
+}
 if (only === "r5") await round5();
+if (only === "r6") await round6();
 if (only === "r2") await round2();
 if (only === "r4") await round4();
 if (only === "r3") await round3();
