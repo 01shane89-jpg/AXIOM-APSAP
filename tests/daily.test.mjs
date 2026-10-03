@@ -65,4 +65,14 @@ t("fingerprint is stable and ignores the build time", () => {
   assert.equal(fingerprint({ ...d, made: "a" }), fingerprint({ ...d, made: "b" }));
   assert.match(fingerprint(d), /^[0-9a-f]{64}$/);
 });
+t("a flashpoint line carries the reports that mention it, newest first, as numbered sources", () => {
+  const fp = buildRules({ ...inp, flashpoints: [{ title: "Budo Mountains", where: "Deep South", why: "2 reports mention it.", _reports: [
+    { source: "Old Paper (News outlet)", title: "Older story", url: "https://o/1", ts: "2026-09-10T08:00" },
+    { source: "New Paper (News outlet)", title: "Newer story", url: "https://n/1", ts: "2026-09-26T08:00" },
+    { source: "Bad", title: "No link", url: "javascript:alert(1)", ts: "2026-09-27T08:00" }] }] }, R);
+  const w = fp.watch.find((x) => x.from === "flashpoint");
+  assert.equal(w.fp, "Budo Mountains");
+  assert.deepEqual(w.refs.map((n) => fp.refs[n - 1].url), ["https://n/1", "https://o/1"]);
+  assert.equal(fp.refs[w.refs[0] - 1].outlet, "New Paper");
+});
 console.log(`${ok} passed`);

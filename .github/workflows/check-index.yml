@@ -71,4 +71,5 @@ jobs:
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/watch_links_smoke.mjs
       - run: node tests/speed_budget.mjs
