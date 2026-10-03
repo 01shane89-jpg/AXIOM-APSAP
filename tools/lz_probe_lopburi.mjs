@@ -17,6 +17,7 @@ const d = 0.003, bb = [START[1] - d, START[0] - d, START[1] + d, START[0] + d];
 const ex = (extra) => `${SVC}/exportImage?bbox=${bb.join(",")}&bboxSR=4326&imageSR=4326&size=120,120&format=png&interpolation=RSP_NearestNeighbor&f=image${extra}`;
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const server = createServer(async (req, res) => {
+  if (req.url === "/blank") { res.writeHead(200, { "Content-Type": "text/html" }); res.end("<!doctype html><title>probe</title>"); return; }
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
   try { const body = await readFile(join(process.cwd(), path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
@@ -24,7 +25,7 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.once("listening", r));
 const browser = await chromium.launch();
 const p = await (await browser.newContext()).newPage();
-await p.goto(`http://127.0.0.1:${server.address().port}/manifest.webmanifest`);
+await p.goto(`http://127.0.0.1:${server.address().port}/blank`);
 for (const extra of ["", "&renderingRule=" + encodeURIComponent(JSON.stringify({ rasterFunction: "None" })), "&time=1704067200000", "&renderingRule=" + encodeURIComponent(JSON.stringify({ rasterFunction: "None" })) + "&time=1704067200000"]) {
   const url = ex(extra);
   const out = await p.evaluate(async ({ url, START, B, bb }) => {
