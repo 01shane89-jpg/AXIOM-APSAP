@@ -484,6 +484,9 @@ const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.ear
   /\/map\/Cctv\/\d+/, /carsprogram\.org\//, /websvc\.coloradosprings\.gov\//, /atmsqf\.iowadot\.gov\//, /dot511\.nebraska\.gov\/images\//, /kcscout\.net\//,
   /images\.wsdot\.wa\.gov\//, /tripcheck\.com\/RoadCams\//, /cameras\.qldtraffic\.qld\.gov\.au\//, /vegagerdin\.is\/vgdata\/vefmyndavelar\//, /eismoinfo\.lt\/eismoinfo-backend\/image-provider\//, /data\.livetraffic\.com\/cameras\/[^/]+\.jpe?g/,
   /camerai1\.iticfoundation\.org\//, /telemetry\.dwr\.go\.th\/api\//,
+  // volcano, river and weather camera stills (and JMA's camera page, read for the newest picture)
+  /volcview\.wr\.usgs\.gov\/ashcam-api\/images\//, /images\.geonet\.org\.nz\/volcano\/cameras\//, /data\.jma\.go\.jp\/.*(volcam\.php|\/camera\/)/, /cam\.river\.go\.jp\/cam\//,
+  /usgs-nims-images\.s3\.amazonaws\.com\//, /hpwren\.ucsd\.edu\/cameras\//, /egatwater\.egat\.co\.th\/assets\/CCTV\//,
   // live camera video (playlists and their pieces): never kept, always the stream as it is now
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
