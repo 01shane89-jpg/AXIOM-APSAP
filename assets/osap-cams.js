@@ -27,7 +27,7 @@
   /* the kinds of camera, by the source's type (road when it has none) */
   var TYPES = { road: { n: "Road", t: "Traffic camera", c: "#0b7285" }, river: { n: "River", t: "River camera", c: "#1971c2" },
     volcano: { n: "Volcano", t: "Volcano camera", c: "#c92a2a" }, weather: { n: "Weather", t: "Weather and fire camera", c: "#6741d9" },
-    ocean: { n: "Sea", t: "Ocean buoy camera", c: "#0c8599" } };
+    ocean: { n: "Sea", t: "Ocean buoy camera", c: "#0c8599", z: 4 } }; // z: a kind spread thinly enough to show from further out
   var KINDS = { dwr: 1, hls: 1, jma: 1 };
   function typeOf(s) { return TYPES[s && s.type] ? s.type : "road"; }
   var OFF = {};
@@ -299,10 +299,16 @@
       S.msg = "No official open cameras" + (Object.keys(OFF).length ? " of the kinds chosen" : "") + " on screen. Cameras are published openly in: " + names(S.ix.sources.filter(function (s) { return !OFF[typeOf(s)]; })) + ".";
       paintSec(); legend(); return;
     }
+    /* zoomed out, only the thinly spread kinds (the ocean buoys) are drawn; the rest wait for a closer view */
+    var later = [];
     if (z < MINZ) {
-      layer.clearLayers(); drawn = {};
-      S.msg = "Zoom in to a city or region to see the cameras (" + names(here) + ").";
-      paintSec(); legend(); return;
+      later = here.filter(function (s) { return z < (TYPES[typeOf(s)].z || MINZ); });
+      here = here.filter(function (s) { return z >= (TYPES[typeOf(s)].z || MINZ); });
+      if (!here.length) {
+        layer.clearLayers(); drawn = {};
+        S.msg = "Zoom in to a city or region to see the cameras (" + names(later) + ").";
+        paintSec(); legend(); return;
+      }
     }
     var pb = b.pad(0.25), want = {}, n = 0, more = 0, loading = 0;
     here.forEach(function (s) { s._here = 0; });
@@ -320,7 +326,7 @@
     Object.keys(want).forEach(function (k) { if (!drawn[k]) drawn[k] = marker(want[k][0], want[k][1]).addTo(layer); });
     var shown = Object.keys(drawn).length;
     S.msg = loading ? "Loading the camera list…" : shown + " camera" + (shown === 1 ? "" : "s") + " on screen" + (more ? " (zoom in to see " + more + " more)" : "") +
-      (function (a) { return a.length ? " · " + a.join("; ") : ""; })(here.filter(function (s) { return s._here; }).map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); })) + "." + (S.failed ? " Some camera lists did not load." : "");
+      (function (a) { return a.length ? " · " + a.join("; ") : ""; })(here.filter(function (s) { return s._here; }).map(function (s) { return s.agency.replace(/ \(.*\)$|, via .*$/, ""); })) + "." + (later.length ? " Zoom in to see the other cameras (" + names(later) + ")." : "") + (S.failed ? " Some camera lists did not load." : "");
     paintSec(); legend();
   }
   var t0 = 0;
