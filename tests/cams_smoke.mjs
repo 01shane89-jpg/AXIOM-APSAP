@@ -206,7 +206,8 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   ok(await p.evaluate(() => /Play video clip/.test((document.querySelector(".leaflet-popup-content [data-camlive]") || {}).textContent || "")), "London: the pop-up offers the agency's video clip");
   const clipN = imgs.length;
   await p.click(".leaflet-popup-content [data-camlive]");
-  await p.waitForFunction(() => /not available|did not start/.test((document.querySelector(".leaflet-popup-content") || {}).textContent || "") || !!document.querySelector(".leaflet-popup-content video"), null, { timeout: 25000 }).catch(() => {});
+  // the video element goes in at once (hidden until it has a frame), so wait for the clip request itself
+  for (let i = 0; i < 50 && !imgs.slice(clipN).some((u) => /\.mp4/.test(u)); i++) await p.waitForTimeout(200);
   ok(imgs.slice(clipN).some((u) => /\.mp4/.test(u)), "London: Play video clip asks TfL for the clip");
   await p.click(".leaflet-popup-content [data-camref]"); await p.waitForTimeout(800);
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content img.cam-big") && !document.querySelector(".leaflet-popup-content video")), "London: Refresh goes back to the newest still");
