@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-03"]=[["lb","2026-09-03T23:24","In southern Lebanon, Israeli demolitions continue ‘day and night’","","Al Jazeera on MSN (via Bing News search)","https://www.msn.com/en-us/news/world/in-southern-lebanon-israeli-demolitions-continue-day-and-night/ar-AA2bxYeZ","","s","attacks","insurgency,security"]];
