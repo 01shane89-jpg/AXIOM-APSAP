@@ -57,18 +57,22 @@ async function atis(host) {
     (j.data || []).forEach((c) => {
       const m = /POINT \(([-\d.]+) ([-\d.]+)\)/.exec((((c.latLng || {}).geography) || {}).wellKnownText || "");
       const imgs = (c.images || []).filter((i) => !i.disabled && !i.blocked && i.imageUrl).map((i) => https(new URL(i.imageUrl, `https://${host}/`).href)).filter(Boolean);
-      if (m && imgs.length) out.push([String(c.id), r5(m[2]), r5(m[1]), tidy(c.location || c.roadway || "Camera " + c.id), one(imgs)]);
+      // live video too, where the site streams it to anyone (no sign-in)
+      const vid = (c.images || []).map((i) => (!i.isVideoAuthRequired && !i.videoDisabled && /^https:\/\/[^?#]+\.m3u8$/.test(i.videoUrl || "") ? i.videoUrl : null)).find(Boolean);
+      if (m && imgs.length) out.push([String(c.id), r5(m[2]), r5(m[1]), tidy(c.location || c.roadway || "Camera " + c.id), one(imgs)].concat(vid ? [vid] : []));
     });
     await pause(250);
   }
   return out;
 }
 // CARS program states: the cameras_v1 list their 511 sites use, with a still image or a video's preview still per view
-async function cars(p) {
+async function cars(p, video) {
   const j = await get(`https://${p}.carsprogram.org/cameras_v1/api/cameras`);
   return j.filter((c) => c.public !== false && c.active !== false && c.location).map((c) => {
     const v = (c.views || []).map((v) => https(v.type === "STILL_IMAGE" ? v.url : v.videoPreviewUrl)).filter(Boolean);
-    return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)] : null;
+    // live video where the state's streams answer any browser (checked from GitHub; Minnesota's answer 404, Kansas's carry expiring tokens)
+    const vid = video ? (c.views || []).map((v) => (v.type === "WMP" && /^https:\/\/[^?#]+\.m3u8$/.test(v.url || "") ? v.url : null)).find(Boolean) : null;
+    return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)].concat(vid ? [vid] : []) : null;
   }).filter(Boolean);
 }
 // Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder),
@@ -77,7 +81,7 @@ async function cars(p) {
 // (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
 const atisSrc = (id, host, tz, cc, country, agency) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host) });
-const carsSrc = (id, p, host, tz, country, agency) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p) });
+const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p, video) });
 
 export const SOURCES = [
   { id: "sg-lta", tz: "Asia/Singapore", cc: "sg", country: "Singapore", agency: "Land Transport Authority (LTA), via data.gov.sg", every: 1,
@@ -121,7 +125,8 @@ export const SOURCES = [
       return j.map((p) => {
         const a = {}; (p.additionalProperties || []).forEach((q) => { a[q.key] = q.value; });
         if (a.available === "false") return null;
-        return [String(p.id).replace(/^JamCams_/, ""), r5(p.lat), r5(p.lon), tidy(p.commonName + (a.view ? ", looking " + a.view : "")), https(a.imageUrl)];
+        // each JamCam also has a short video clip of the last moments, renewed with the still
+        return [String(p.id).replace(/^JamCams_/, ""), r5(p.lat), r5(p.lon), tidy(p.commonName + (a.view ? ", looking " + a.view : "")), https(a.imageUrl)].concat(/^https:\/\/[^?#]+\.mp4$/.test(a.videoUrl || "") ? [a.videoUrl] : []);
       }).filter(Boolean);
     } },
   { id: "fi-digitraffic", tz: "Europe/Helsinki", cc: "fi", country: "Finland", agency: "Fintraffic Digitraffic road weather cameras", every: 10,
@@ -158,7 +163,9 @@ export const SOURCES = [
         (j.data || []).forEach((e) => {
           const c = e.cctv || {}, l = c.location || {}, img = (((c.imageData || {}).static) || {}).currentImageURL;
           if (c.inService !== "true" || !https(img)) return;
-          out.push(["d" + d + "-" + c.index, r5(l.latitude), r5(l.longitude), tidy(l.locationName + (l.nearbyPlace ? ", " + l.nearbyPlace : "") + (l.direction ? " (" + l.direction + ")" : "")), img]);
+          const vid = (c.imageData || {}).streamingVideoURL;
+          out.push(["d" + d + "-" + c.index, r5(l.latitude), r5(l.longitude), tidy(l.locationName + (l.nearbyPlace ? ", " + l.nearbyPlace : "") + (l.direction ? " (" + l.direction + ")" : "")), img]
+            .concat(/^https:\/\/[^?#]+\.m3u8$/.test(vid || "") ? [vid] : []));
         });
       }
       return out;
@@ -181,10 +188,28 @@ export const SOURCES = [
   atisSrc("us-id", "511.idaho.gov", "America/Boise", "us", "United States (Idaho)", "Idaho Transportation Department (511 Idaho)"),
   atisSrc("us-nv", "nvroads.com", "America/Los_Angeles", "us", "United States (Nevada)", "Nevada DOT (NVroads)"),
   atisSrc("us-ak", "511.alaska.gov", "America/Anchorage", "us", "United States (Alaska)", "Alaska DOT&PF (Alaska 511)"),
-  carsSrc("us-co", "cotg", "cotrip.org", "America/Denver", "United States (Colorado)", "Colorado DOT (COtrip)"),
+  { id: "us-de", tz: "America/New_York", cc: "us", country: "United States (Delaware)", agency: "Delaware DOT (DelDOT TMC)", every: 0,
+    licence: "DelDOT public traffic camera video", page: "https://deldot.gov/map/", kind: "hls",
+    async list() {
+      const j = await get("https://tmc.deldot.gov/json/videocamera.json");
+      return (j.videoCameras || j).filter((c) => c.enabled !== false && c.status !== "Offline" && c.urls && /^https:\/\/[^?#]+\.m3u8$/.test(c.urls.m3u8s || ""))
+        .map((c) => [String(c.id), r5(c.lat ?? c.latitude), r5(c.lon ?? c.lng ?? c.longitude), tidy(c.title || c.name || c.id), c.urls.m3u8s]);
+    } },
+  { id: "us-md", tz: "America/New_York", cc: "us", country: "United States (Maryland)", agency: "Maryland DOT State Highway Administration (CHART)", every: 0,
+    licence: "MDOT SHA CHART public traffic camera video", page: "https://chart.maryland.gov/", kind: "hls",
+    async list() {
+      const out = [];
+      for (let off = 0; off < 5000; off += 1000) {
+        const j = await get(`https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0/query?where=1%3D1&outFields=ID,location,hlsurl,Latitude,Longitude&f=json&resultOffset=${off}&resultRecordCount=1000`);
+        for (const f of j.features || []) { const a = f.attributes || {}; if (/^https:\/\/[^?#]+\.m3u8$/.test(a.hlsurl || "")) out.push([String(a.ID), r5(a.Latitude), r5(a.Longitude), tidy(a.location), a.hlsurl]); }
+        if (!j.exceededTransferLimit) break;
+      }
+      return out;
+    } },
+  carsSrc("us-co", "cotg", "cotrip.org", "America/Denver", "United States (Colorado)", "Colorado DOT (COtrip)", true),
   carsSrc("us-mn", "mntg", "511mn.org", "America/Chicago", "United States (Minnesota)", "Minnesota DOT (511MN)"),
-  carsSrc("us-ia", "iatg", "511ia.org", "America/Chicago", "United States (Iowa)", "Iowa DOT (511IA)"),
-  carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)"),
+  carsSrc("us-ia", "iatg", "511ia.org", "America/Chicago", "United States (Iowa)", "Iowa DOT (511IA)", true),
+  carsSrc("us-in", "intg", "511in.org", "America/Indiana/Indianapolis", "United States (Indiana)", "Indiana DOT (511IN)", true),
   carsSrc("us-ne", "netg", "511.nebraska.gov", "America/Chicago", "United States (Nebraska)", "Nebraska DOT (Nebraska 511)"),
   carsSrc("us-ks", "kstg", "kandrive.gov", "America/Chicago", "United States (Kansas)", "Kansas DOT (KanDrive)"),
   { id: "us-wa", tz: "America/Los_Angeles", cc: "us", country: "United States (Washington)", agency: "Washington State DOT (WSDOT)", every: 2,
