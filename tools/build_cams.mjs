@@ -89,7 +89,7 @@ const carsSrc = (id, p, host, tz, country, agency, video) => ({ id, tz, cc: "us"
 // USGS AshCam: volcano cameras in Alaska, Hawaii, the Cascades and the Northern Marianas
 // rough local clock for a buoy, from where it is (the page always shows Zulu as well)
 function seaZone(lat, lon) {
-  if (lon > 0) return lat < 0 ? "Pacific/Pago_Pago" : "Pacific/Guam";
+  if (lon > 0) return lat > 45 ? "America/Adak" : lat < 0 ? "Pacific/Pago_Pago" : "Pacific/Guam";
   if (lon < -150 && lat < 35) return "Pacific/Honolulu";
   if (lon < -169) return lat > 30 ? "America/Adak" : "Pacific/Pago_Pago";
   if (lon < -130 && lat > 50) return "America/Anchorage";
@@ -331,7 +331,7 @@ export const SOURCES = [
         const b = m[2], u = tag(b, "fse:deviceUrl"); if (!/camera/.test(tag(b, "ns2:typeOfDevice")) || !/^https:\/\/etraffic\.dgt\.es\/camarasEtraffic\//.test(u)) continue;
         const lat = +tag(b, "loc:latitude"), lon = +tag(b, "loc:longitude"), km = tag(b, "lse:kilometerPoint"), pr = tag(b, "lse:province"), to = tag(b, "loc:roadDestination");
         // c[6]: the Canary Islands keep their own clock
-        out.push([m[1], r5(lat), r5(lon), tidy(tag(b, "loc:roadName") + (km ? " km " + km : "") + (to ? " towards " + title(to) : "") + (pr ? ", " + title(pr) : "")), u, null, lon < -12 ? "Atlantic/Canary" : null]);
+        out.push([m[1], r5(lat), r5(lon), tidy(tag(b, "loc:roadName") + (km ? " km " + km : "") + (to ? " towards " + title(to) : "") + (pr ? ", " + title(pr) : "")), u].concat(lon < -12 ? [null, "Atlantic/Canary"] : []));
       }
       return out;
     } },
@@ -399,7 +399,7 @@ export const SOURCES = [
     } },
   /* the ocean buoys' cameras (NOAA National Data Buoy Center): a strip of views round the horizon, about once an hour */
   ndbcSrc("us-ndbc", "United States (ocean buoys)", (lon) => lon < 0),
-  ndbcSrc("us-ndbc-w", "United States (western Pacific buoys)", (lon) => lon > 0),
+  ndbcSrc("us-ndbc-w", "United States (buoys west of the date line)", (lon) => lon > 0),
   { id: "th-egat", type: "river", tz: "Asia/Bangkok", cc: "th", country: "Thailand (dams)", agency: "Electricity Generating Authority of Thailand (dam cameras, via ThaiWater)", every: 15,
     licence: "Public dam camera images listed by ThaiWater (HII) (no licence stated)", page: "https://www.thaiwater.net/water/cctv",
     async list() {
