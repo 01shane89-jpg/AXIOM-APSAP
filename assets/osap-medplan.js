@@ -45,9 +45,6 @@
   var OSRM = ["https://routing.openstreetmap.de/routed-car/", "https://router.project-osrm.org/"];
   var METEO = "https://api.open-meteo.com/v1/forecast";
   var VH = "https://valhalla1.openstreetmap.de/", VALHALLA = VH + "isochrone";
-  /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
-     weeks): 2-degree tiles, so a plan lists hospitals even when Overpass does not answer */
-  var MEDFAC = W.OSAP_MEDFAC || "data/medfac/", MF_TILE = 2;
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
@@ -364,82 +361,15 @@
   /* ---------- capability ---------- */
   /* OSAP's sourced hospital list for a country (data/sof/<cc>.js), loaded on demand for neighbours */
   function sofOf(c) { return (W.ASAP_SOF || {})[c] || null; }
-  function loadSof(c) {
-    if (sofOf(c)) return Promise.resolve(sofOf(c));
-    var F = W.OSAP_COUNTRY_FILES; if (F && F.sof && F.sof.indexOf(c) < 0) return Promise.resolve(null);
-    return new Promise(function (res) {
-      var s = D.createElement("script"), t = setTimeout(function () { res(sofOf(c)); }, 10000);
-      s.src = "data/sof/" + c + ".js"; s.async = true;
-      s.onload = function () { clearTimeout(t); res(sofOf(c)); }; s.onerror = function () { clearTimeout(t); res(null); };
-      D.head.appendChild(s);
-    });
-  }
-  /* ---------- OSAP's stored copy of OpenStreetMap facilities ---------- */
-  var mfIdxP = null;
-  function mfIndex() {
-    if (!mfIdxP) mfIdxP = getJSON(MEDFAC + "index.json", 15000).then(function (j) { if (!j || !j.countries || !j.tiles) throw new Error("no index"); return j; })
-      .catch(function (e) { mfIdxP = null; throw e; });
-    return mfIdxP;
-  }
-  function tileKeys(o, R) {
-    var dLa = R / 111320, dLo = R / (111320 * Math.max(0.1, Math.cos(o[0] * Math.PI / 180))), out = [];
-    for (var a = Math.floor((o[0] - dLa) / MF_TILE) * MF_TILE; a <= o[0] + dLa; a += MF_TILE)
-      for (var b = Math.floor((o[1] - dLo) / MF_TILE) * MF_TILE; b <= o[1] + dLo; b += MF_TILE) {
-        var k = a + "_" + ((((b + 180) % 360) + 360) % 360 - 180); if (out.indexOf(k) < 0) out.push(k);
-      }
-    return out;
-  }
-  /* the countries a circle round the point can reach, from their bounding boxes */
-  /* countries within R of the POI: by the packaged country outlines (COUNTRY_BASE, WORLD_BASE) where there is one, so a
-     country whose bounding box merely overlaps (Laos over central Thailand) is not counted; else by bounding box */
-  var NE_IDX = null;
-  function neIndex() {
-    if (NE_IDX) return NE_IDX;
-    NE_IDX = {};
-    [W.COUNTRY_BASE, W.WORLD_BASE].forEach(function (fc) { ((fc && fc.features) || []).forEach(function (f) { if (f.properties && f.geometry && !NE_IDX[f.properties.n]) NE_IDX[f.properties.n] = f.geometry; }); });
-    return NE_IDX;
-  }
-  function inRing(o, ring) {
-    var x = o[1], y = o[0], inside = false;
-    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
-      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
-    }
-    return inside;
-  }
-  /* true when the outline comes within R of o (vertices, with a 30 km allowance for simplified edges) or holds o */
-  function nearOutline(o, g, R) {
-    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
-    for (var p = 0; p < polys.length; p++) {
-      var ring = polys[p][0] || [];
-      if (inRing(o, ring)) return true;
-      for (var i = 0; i < ring.length; i++) if (hav(o, [ring[i][1], ring[i][0]]) <= R + 30000) return true;
-    }
-    return false;
-  }
-  function ccNear(o, R) {
-    var dLa = R / 111320, dLo = R / (111320 * Math.max(0.1, Math.cos(o[0] * Math.PI / 180))), ne = neIndex();
-    var meta = {};
-    (W.ASAP_WORLD || []).forEach(function (w) { meta[w.id] = w; });
-    return (W.OSAP_COUNTRIES || []).filter(function (c) {
-      var b = c.bounds; if (!b || !/^[a-z]{2}$/.test(c.id)) return false;
-      if (!(o[0] + dLa >= b[0][0] && o[0] - dLa <= b[1][0] && o[1] + dLo >= b[0][1] && o[1] - dLo <= b[1][1])) return false;
-      var g = ne[(meta[c.id] && meta[c.id].ne) || c.ne || c.name];
-      return g ? nearOutline(o, g, R) : true;
-    });
-  }
-  function storedFac(o, R) {
-    return mfIndex().then(function (idx) {
-      var near = ccNear(o, R), missing = near.filter(function (c) { return !idx.countries[c.id]; }).map(function (c) { return c.name; });
-      var ks = tileKeys(o, R).filter(function (k) { return idx.tiles[k]; });
-      return Promise.all(ks.map(function (k) { return getJSON(MEDFAC + "t/" + k + ".json", 20000); })).then(function (tiles) {
-        var els = [];
-        tiles.forEach(function (t) { (t || []).forEach(function (r) { els.push({ type: { n: "node", w: "way", r: "relation" }[r[0].charAt(0)] || "node", id: +r[0].slice(1), lat: r[1], lon: r[2], tags: r[4] || {} }); }); });
-        var ats = near.map(function (c) { return idx.countries[c.id] && idx.countries[c.id].at; }).filter(Boolean).sort();
-        return { els: els, missing: missing, at: ats[0] || "", n: near.length };
-      });
-    });
-  }
+  /* discovery runs through the hospital data layer (assets/hospital-sources/): OSAP's researched list and its stored copy of
+     OpenStreetMap are providers there, so the plan reads hospitals the way every other OSAP view will */
+  function hp(id) { var p = W.OSAP_HOSP && W.OSAP_HOSP.provider(id); if (!p) throw new Error("hospital data layer not loaded"); return p; }
+  function loadSof(c) { return hp("sof").load(c); }
+  function tileKeys(o, R) { return hp("osm").tileKeys(o, R); }
+  function ccNear(o, R) { return hp("osm").ccNear(o, R); }
+  /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
+     weeks), so a plan lists hospitals even when Overpass does not answer */
+  function storedFac(o, R) { return Promise.resolve().then(function () { return hp("osm").stored(o, R); }); }
   /* the same reach as the live query: hospitals rH, clinics rC, landing sites rA, ambulance stations rE */
   function clipEls(els, o, r) {
     return els.filter(function (e) {
@@ -539,16 +469,7 @@
     ["spec.rehabilitation", "Rehabilitation"], ["trans.helipad", "Helipad"], ["trans.transfer", "Ambulance transfer"], ["trans.critical_care_transport", "Critical care transport"]];
   var CAP_NAME = {}; CAPS.forEach(function (c) { CAP_NAME[c[0]] = c[1]; });
   /* healthcare:speciality values that state a flag (whole values, so "neurology" is not neurosurgery) */
-  var CAP_RE = {
-    "surg.trauma": /^(trauma|traumatology|trauma_surgery)$/, "surg.general": /^(surgery|general_surgery)$/, "surg.anaesthesia": /^(anaesthetics?|anesthesiology|anaesthesiology|anesthesia)$/,
-    "blood.bank": /^(blood_bank|transfusion(_medicine)?|haematology_blood_bank)$/, "dx.xray": /^(x_?ray|radiography)$/, "dx.ultrasound": /^(ultrasound|sonography)$/,
-    "dx.ct": /^(ct|computed_tomography|tomography)$/, "dx.mri": /^(mri|magnetic_resonance_imaging)$/, "dx.ir": /^interventional_radiology$/,
-    "cc.icu": /^(intensive(_care)?|critical_care|icu)$/, "surg.neuro": /^neurosurgery$/, "surg.ortho": /^(orthopa?edics|orthopa?edic_surgery|orthopa?edic_trauma)$/,
-    "surg.vascular": /^vascular_surgery$/, "surg.thoracic": /^(thoracic_surgery|cardiothoracic_surgery|cardiac_surgery)$/, "surg.plastic": /^(plastic_surgery|reconstructive_surgery)$/,
-    "surg.ophthalmology": /^ophthalmology$/, "surg.maxfac": /^(maxillofacial_surgery|oral_and_maxillofacial_surgery|oral_surgery)$/, "spec.burn": /^(burns?|burn_care|burn_unit)$/,
-    "spec.pediatric_trauma": /^(paediatric|pediatric)_trauma$/, "spec.obstetric": /^(obstetrics|gynaecology_obstetrics|obstetrics_gynaecology|obstetrics_gynecology)$/,
-    "spec.cath_lab": /^(cardiac_catheterisation|cardiac_catheterization|interventional_cardiology)$/, "spec.stroke": /^(stroke|stroke_unit)$/,
-    "spec.hyperbaric": /^(hyperbaric(_medicine)?|diving_medicine)$/, "spec.rehabilitation": /^(rehabilitation|physical_medicine_and_rehabilitation)$/ };
+  var CAP_RE = W.OSAP_HOSP.SPECIALITY_RE;
   function capFlags(f, m) {
     var C = {}, osm = { kind: "osm", url: f.osm || "", name: "OpenStreetMap" }, sof = m ? { kind: "sof", url: m.src, name: m.srcname || "source", at: m.asof || "" } : null;
     CAPS.forEach(function (c) { C[c[0]] = { status: "UNKNOWN", confidence: "UNKNOWN", availability: "unknown", source: null, last_verified: null }; });
