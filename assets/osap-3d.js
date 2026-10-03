@@ -307,6 +307,46 @@
     return libP;
   }
 
+  /* What the open building data records about one building, for its popup: only what is in the record, "not recorded" for the
+     rest, and where each part came from. Every value is the data's own text, escaped; nothing is inferred except the footprint
+     area, which is measured from the outline drawn. */
+  function word(s) { s = String(s).replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function jsonOf(s) { try { return typeof s === "string" ? JSON.parse(s) : s; } catch (e) { return null; } }
+  function ringArea(r) {   /* square metres of a lon/lat ring, on a sphere */
+    var a = 0, R = 6378137, k = Math.PI / 180;
+    for (var i = 0, n = r.length; i < n; i++) { var p = r[i], q = r[(i + 1) % n]; a += (q[0] - p[0]) * k * (2 + Math.sin(p[1] * k) + Math.sin(q[1] * k)); }
+    return Math.abs(a * R * R / 2);
+  }
+  function footArea(g) {
+    if (!g) return 0;
+    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    return polys.reduce(function (t, pg) { return t + pg.reduce(function (u, r, i) { return u + (i ? -1 : 1) * ringArea(r); }, 0); }, 0);
+  }
+  var SRC = { "OpenStreetMap": "OpenStreetMap (drawn by volunteers)", "Google Open Buildings": "Google Open Buildings (traced by a computer from satellite photos)",
+    "Microsoft ML Buildings": "Microsoft building footprints (traced by a computer from satellite photos)" };
+  function bldInfo(q, geom) {
+    var rows = [], nm = jsonOf(q.names) || {}, prim = nm.primary || q["@name"] || "", en = nm.common && nm.common.en, NR = '<i class="o3-nr">not recorded</i>';
+    function row(k, v) { rows.push("<tr><th>" + esc(k) + "</th><td>" + v + "</td></tr>"); }
+    var use = q["class"] ? word(q["class"]) + (q.subtype && q.subtype !== q["class"] ? " (" + esc(word(q.subtype)).toLowerCase() + ")" : "") : q.subtype ? word(q.subtype) : "";
+    row("Use", use ? esc(use) : NR);
+    var hs = q["@height_source"] ? " (" + esc(q["@height_source"]) + ")" : "";
+    row("Height", q.height != null ? esc(Math.round(q.height * 10) / 10) + " m" + hs : NR + " – the 3D height shown is an estimate");
+    row("Floors", q.num_floors != null ? esc(q.num_floors) + (q.num_floors_underground ? " + " + esc(q.num_floors_underground) + " below ground" : "") : NR);
+    if (q.min_height != null || q.min_floor != null) row("Starts at", q.min_height != null ? esc(q.min_height) + " m up" : "floor " + esc(q.min_floor));
+    if (q.roof_shape || q.roof_material || q.roof_color) row("Roof", esc([q.roof_shape, q.roof_material, q.roof_color].filter(Boolean).map(word).join(", ")));
+    if (q.facade_material || q.facade_color) row("Walls", esc([q.facade_material, q.facade_color].filter(Boolean).map(word).join(", ")));
+    var a = footArea(geom); if (a > 1) row("Footprint", "about " + esc((a >= 1000 ? Math.round(a / 10) * 10 : Math.round(a)).toLocaleString("en-US")) + " m²");
+    var src = (jsonOf(q.sources) || [])[0] || {}, gs = q["@geometry_source"] || src.dataset || "", from = SRC[gs] ? esc(SRC[gs]) : gs ? esc(gs) : NR;
+    if (src.confidence != null) from += "; the computer was " + esc(Math.round(src.confidence * 100)) + "% sure it is a building";
+    var m = /^([nwr])(\d+)/.exec(src.record_id || "");
+    if (gs === "OpenStreetMap" && m) from += ' · <a href="https://www.openstreetmap.org/' + { n: "node", w: "way", r: "relation" }[m[1]] + "/" + m[2] + '" target="_blank" rel="noopener">see it on OpenStreetMap</a>';
+    row("Outline from", from);
+    if (src.update_time) row(gs === "OpenStreetMap" ? "Last edited" : "Dated", esc(String(src.update_time).slice(0, 10)));
+    return "<h3>" + (prim ? esc(prim) : "Building") + "</h3>" + (en && en !== prim ? "<p>" + esc(en) + "</p>" : prim ? "" : "<p>No name recorded</p>") +
+      '<table class="o3-bt">' + rows.join("") + "</table>" +
+      '<p class="o3-bn">Open data from Overture Maps, not an official survey: details can be missing, out of date or wrong.' + (q.id ? " ID " + esc(q.id) : "") + "</p>";
+  }
+
   /* the PMTiles reader for the buildings, loaded the first time buildings are drawn; its protocol is added to the engine once */
   var pmP = null;
   function loadPm(ml) {
@@ -368,6 +408,9 @@
     '<path d="M3 21h18M5 21V8l6-3v16M11 21V3l8 4v14"/><path d="M14 9h2M14 12h2M14 15h2M7.5 11h1M7.5 14h1M7.5 17h1" stroke-linecap="round"/></svg>';
   function prefs() { var p = {}; try { p = JSON.parse(lsGet(K_3D) || "{}") || {}; } catch (e) {} return { pitch: p.pitch >= 0 && p.pitch <= 85 ? p.pitch : 60, ex: [1, 1.5, 2, 3].indexOf(p.ex) >= 0 ? p.ex : 1.5, bld: p.bld !== false }; }
   function savePrefs(o) { var p = prefs(); for (var k in o) p[k] = o[k]; lsSet(K_3D, JSON.stringify(p)); }
+  var POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  /* the engine's bearing (-180 to 180) as a heading 0 to 359 */
+  function heading(b) { var h = Math.round(((b % 360) + 360) % 360); return h === 360 ? 0 : h; }
   var COMPASS = '<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="rgba(20,24,28,.86)" stroke="rgba(255,255,255,.35)"/>' +
     '<g class="o3-needle"><path d="M20 5l5 15h-10z" fill="#e03131"/><path d="M20 35l-5-15h10z" fill="#dee2e6"/><text x="20" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">N</text></g></svg>';
 
@@ -405,7 +448,7 @@
     box.innerHTML = '<div class="o3-map"></div><div class="o3-msg" role="status">Loading 3D…</div>' +
       '<div class="o3-load" role="progressbar" aria-label="Loading the 3D map" aria-valuemin="0" aria-valuemax="100" hidden><i></i><span></span></div>' +
       '<div class="o3-side"><button type="button" class="o3-b o3-2d" title="Back to the flat map at this place" aria-label="Back to 2D">2D</button>' +
-      '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + "</button>" +
+      '<button type="button" class="o3-b o3-cmp" title="North up and flat. Shows where north is" aria-label="Compass: north up and flat">' + COMPASS + '<span class="o3-deg" aria-hidden="true">000° N</span></button>' +
       '<button type="button" class="o3-b o3-zi" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="o3-b o3-zo" aria-label="Zoom out" title="Zoom out">−</button>' +
       '<button type="button" class="o3-b o3-ex" title="Relief: how strongly hills and valleys are raised"></button>' +
       '<button type="button" class="o3-b o3-bld" title="3D buildings (Overture Maps). They appear when you zoom in close; grey ones have no recorded height and are drawn at an estimate" aria-label="3D buildings">' + BLD_ICON + "</button></div>" +
@@ -507,12 +550,15 @@
         clearTimeout(hintT);
         if (P.bld && gl.getZoom() < BLD_Z) { say("Buildings appear when you zoom in close."); hintT = setTimeout(function () { say(""); }, 2600); }
       });
-      var needle = box.querySelector(".o3-needle"), tilt = box.querySelector(".o3-tilt input"), tOut = box.querySelector(".o3-tilt output"), ex = box.querySelector(".o3-ex"), sc = box.querySelector(".o3-scale");
+      var cmp = box.querySelector(".o3-cmp"), deg = box.querySelector(".o3-deg"), needle = box.querySelector(".o3-needle"), tilt = box.querySelector(".o3-tilt input"), tOut = box.querySelector(".o3-tilt output"), ex = box.querySelector(".o3-ex"), sc = box.querySelector(".o3-scale");
       function paint() {
         var b = gl.getBearing(), p = gl.getPitch();
         needle.setAttribute("transform", "rotate(" + (-b).toFixed(1) + " 20 20)");
         needle.parentNode.style.transform = "rotateX(" + (p * 0.6).toFixed(0) + "deg)";
         tilt.value = Math.round(p); tOut.textContent = Math.round(p) + "°";
+        /* the way the view faces, clockwise from true north, as on a hand compass */
+        var h = heading(b), txt = ("00" + h).slice(-3) + "° " + POINTS[Math.round(h / 22.5) % 16];
+        if (deg.textContent !== txt) { deg.textContent = txt; cmp.setAttribute("aria-label", "Compass: facing " + txt.replace("°", " degrees") + ". Press for north up and flat"); }
       }
       function drawSc() {
         var cc = gl.getCenter(), mpp = 40075016.686 * Math.cos(cc.lat * Math.PI / 180) / (512 * Math.pow(2, gl.getZoom()));
@@ -588,14 +634,24 @@
         });
         popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl);
       }
+      /* tap a building: what the open data records about it */
+      function bldPop(f, at) {
+        if (popup) popup.remove();
+        var d = D.createElement("div"); d.className = "o3-pop"; d.innerHTML = '<div class="o3-pc">' + bldInfo(f.properties || {}, f.geometry) + "</div>";
+        popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl);
+      }
       gl.on("click", function (e) {
         var f = gl.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: ["vp", "vl", "vld", "vf"] })
           .filter(function (x) { return x.properties.i; });
-        if (!f.length) return;
+        if (!f.length) {
+          var b = gl.getLayer("bld") ? gl.queryRenderedFeatures(e.point, { layers: ["bldp", "bld"] }) : [];
+          if (b.length) bldPop(b[0], [e.lngLat.lng, e.lngLat.lat]);
+          return;
+        }
         var hit = f[0], l = V.layers[hit.id];
         pop(l, hit.geometry.type === "Point" ? hit.geometry.coordinates : [e.lngLat.lng, e.lngLat.lat]);
       });
-      ["vp", "vl", "vld", "vf"].forEach(function (id) {
+      ["vp", "vl", "vld", "vf", "bld", "bldp"].forEach(function (id) {
         gl.on("mouseenter", id, function () { gl.getCanvas().style.cursor = "pointer"; });
         gl.on("mouseleave", id, function () { gl.getCanvas().style.cursor = ""; });
       });
@@ -628,7 +684,9 @@
     "#o3d .o3-side{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:6px;z-index:2;align-items:center}" +
     "#o3d .o3-b{min-width:44px;min-height:44px;border:0;border-radius:10px;background:rgba(20,24,28,.86);color:#f1f3f5;font:700 14px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35);padding:0 8px}" +
     "#o3d .o3-b:focus-visible{outline:2px solid #4dabf7;outline-offset:1px}#o3d .o3-2d{background:#0b7285;color:#fff}" +
-    "#o3d .o3-cmp{padding:0;background:none;box-shadow:none;border-radius:50%}#o3d .o3-cmp svg{display:block;transition:transform .15s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}" +
+    "#o3d .o3-cmp{padding:0;background:none;box-shadow:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;gap:2px}" +
+    "#o3d .o3-deg{background:rgba(20,24,28,.86);color:#fff;font:700 11px/1 system-ui,sans-serif;font-variant-numeric:tabular-nums;padding:3px 5px;border-radius:5px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35)}" +
+    "#o3d .o3-cmp svg{display:block;transition:transform .15s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}" +
     "#o3d .o3-zi,#o3d .o3-zo{font-size:22px;font-weight:500}#o3d .o3-ex{font-size:12.5px}" +
     "#o3d .o3-bld{display:flex;align-items:center;justify-content:center;color:#adb5bd}#o3d .o3-bld.on{color:#fff;background:#1c7ed6}" +
     "#o3d .o3-tilt{position:absolute;right:8px;bottom:34px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(20,24,28,.86);color:#f1f3f5;border-radius:10px;padding:6px 10px;font:600 12.5px/1 system-ui,sans-serif}" +
@@ -641,13 +699,15 @@
     "#o3d .o3-mark i{width:14px;height:14px;border-radius:50%;background:#e8590c;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);box-sizing:border-box}" +
     "#o3d .o3-mark span{background:rgba(20,24,28,.85);color:#fff;font:600 11.5px/1 system-ui,sans-serif;padding:3px 5px;border-radius:4px;white-space:nowrap}#o3d .o3-mark span:empty{display:none}" +
     "#o3d .o3-popw .maplibregl-popup-content{padding:10px 12px;border-radius:10px;color:#212529;font:13px/1.35 system-ui,sans-serif;max-height:45vh;overflow:auto}" +
+    "#o3d .o3-bt{border-collapse:collapse;margin:4px 0;width:100%}#o3d .o3-bt th{text-align:left;font-weight:600;color:#495057;padding:2px 8px 2px 0;vertical-align:top;white-space:nowrap}#o3d .o3-bt td{padding:2px 0;overflow-wrap:anywhere}" +
+    "#o3d .o3-nr{color:#868e96}#o3d .o3-bn{font-size:11.5px;color:#868e96;overflow-wrap:anywhere}" +
     "#o3d .o3-pop h3{font-size:14px;margin:4px 0}#o3d .o3-pop p{margin:6px 0}#o3d .o3-pop .o3-pc .atk-pb{display:none}" +
     "#o3d .o3-go{margin-top:6px;min-height:34px;padding:0 12px;border:0;border-radius:8px;background:#0b7285;color:#fff;font:600 13px/1 system-ui,sans-serif;cursor:pointer}" +
     "@media (max-width:700px){#o3d .o3-tilt{padding:6px 8px;gap:4px}#o3d .o3-tilt label{gap:6px}#o3d .o3-tilt input{width:84px}}";
   D.head.appendChild(st);
 
   W.OSAP_3D = { open: open3d, close: function () { if (view3) view3.close(); }, isOpen: function () { return !!view3; }, gl: null,
-    _scaleFit: scaleFit, _rasters: rasters, _demTile: demTile, _vectors: vectors };
+    _scaleFit: scaleFit, _bldInfo: bldInfo, _heading: heading, _rasters: rasters, _demTile: demTile, _vectors: vectors };
   /* the toolbar may be built after this file runs (or rebuilt): add the 3D button when it appears */
   if (!D.querySelector("[data-o3d]")) {
     var tries = 0, t = setInterval(function () { if (addToolbarBtn() || ++tries > 20) clearInterval(t); }, 500);
