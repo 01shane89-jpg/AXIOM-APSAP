@@ -51,7 +51,9 @@
   function clear(el) {
     var map = W.__asapMap, pad = { tl: [0, 0], br: [0, 0] }; if (!map) return pad;
     var mr = map.getContainer().getBoundingClientRect();
-    (el ? [el] : LIST).forEach(function (w) {
+    /* every shown docked window: the ones registered with add() and the ones that dock themselves (Find LZ's #lz-dock) */
+    var all = el ? [el] : LIST.concat(Array.prototype.filter.call(D.querySelectorAll(".osplit"), function (w) { return LIST.indexOf(w) < 0; }));
+    all.forEach(function (w) {
       if (!w || w.hidden || !w.classList.contains("osplit")) return;
       var bx = w.firstElementChild || w, r = bx.getBoundingClientRect();
       var ox = Math.min(r.right, mr.right) - Math.max(r.left, mr.left), oy = Math.min(r.bottom, mr.bottom) - Math.max(r.top, mr.top);
