@@ -1,14 +1,17 @@
-/* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves
-   as open data, with no key, account or login (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly).
-   Never private, unsecured or scraped cameras. Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
+/* AXIOM OSAP: traffic cameras. Still images from the road cameras that government and transport agencies publish themselves,
+   openly, with no key, account or login: their open-data feeds or the camera lists on their own public traveller websites (511
+   sites) (data/cams/index.json lists them; tools/build_cams.mjs rebuilds the lists weekly). Never private or unsecured cameras.
+   Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
    closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
      draws a camera icon per camera, up to MAX at a time.
    - Hover (mouse) shows the latest still image; a tap or click opens it larger with the agency, licence and fetch time, a refresh
-     button, and the other views where the camera has several (Finland). Each image comes straight from the agency's server
+     button, and the other views where the camera has several (Finland, Ontario, Nebraska). The image shows "Loading" until it
+     has arrived, says so plainly when the agency gives none or does not answer in 20 s, and renews itself while the pop-up stays
+     open. Each image comes straight from the agency's server
      when it is opened, so it is as fresh as the agency makes it; Singapore's addresses change every minute, so the page asks
      data.gov.sg's keyless API for the current one.
-   window.OSAP_CAMS {set, state, inView}. */
+   window.OSAP_CAMS {set, state, inView, timing (tests)}. */
 (function () {
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;

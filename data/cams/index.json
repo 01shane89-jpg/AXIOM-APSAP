@@ -165,24 +165,6 @@
    "checked": "2026-10-03T06:33Z"
   },
   {
-   "id": "us-ga",
-   "cc": "us",
-   "tz": "America/New_York",
-   "country": "United States (Georgia)",
-   "agency": "Georgia DOT (511 Georgia)",
-   "licence": "Public camera images on the agency's 511 traveller website (no open-data licence stated)",
-   "page": "https://511ga.org/cctv",
-   "every": 2,
-   "n": 4331,
-   "box": [
-    30.67987,
-    -85.51913,
-    34.98642,
-    84.30885
-   ],
-   "checked": "2026-10-03T06:33Z"
-  },
-  {
    "id": "us-fl",
    "cc": "us",
    "tz": "America/New_York",

@@ -1,6 +1,6 @@
 // Builds the traffic camera lists for Map overlays > Infrastructure > Traffic cameras (assets/osap-cams.js).
-// Only cameras that a government or transport agency publishes itself as open data, with no key, account or login:
-// never private, unsecured or scraped cameras. Each source becomes data/cams/<id>.json, a list of
+// Only cameras that a government or transport agency publishes itself, openly, with no key, account or login: as open data,
+// or as the camera list behind its own public traveller website (the 511 sites below). Never private or unsecured cameras. Each source becomes data/cams/<id>.json, a list of
 // [camera id, lat, lon, name, image URL or [URLs]]; data/cams/index.json lists the sources with their agency, licence,
 // country, box and count. The page loads a source's list only when the camera switch is on and the map shows its box, and
 // the browser then fetches each still image straight from the agency when a camera is hovered or tapped.
@@ -60,6 +60,10 @@ async function cars(p) {
     return v.length ? [String(c.id), r5(c.location.latitude), r5(c.location.longitude), tidy(c.name), one(v)] : null;
   }).filter(Boolean);
 }
+// Left out after testing from GitHub (2026-10-03): Georgia (511ga.org, most images are a "not available" placeholder),
+// Alberta (its list answers HTTP 500), Saskatchewan (placeholders), Kentucky and Hawaii (http-only images, which a https page
+// cannot show), Texas, Virginia, Michigan, Tennessee (no keyless list), Taiwan (refuses connections from abroad), Vietnam
+// (Ho Chi Minh City's images are public but its camera list is only on a private company's app), Thailand (video only).
 const ATIS_LIC = "Public camera images on the agency's 511 traveller website (no open-data licence stated)";
 const atisSrc = (id, host, tz, cc, country, agency) => ({ id, tz, cc, country, agency, every: 2, licence: ATIS_LIC, page: `https://${host}/cctv`, list: () => atis(host) });
 const carsSrc = (id, p, host, tz, country, agency) => ({ id, tz, cc: "us", country, agency, every: 5, licence: "Public camera images on the agency's 511 traveller website (no open-data licence stated)", page: `https://${host}/`, list: () => cars(p) });
@@ -155,7 +159,6 @@ export const SOURCES = [
       return j.filter((c) => c.isOnline !== "false" && c.isOnline !== false).map((c) => [String(c.id), r5(c.latitude), r5(c.longitude), tidy(c.name + (c.area ? ", " + c.area : "")), https(c.imageUrl)]);
     } },
   /* ---- more US states and Canadian provinces (511 traveller sites) ---- */
-  atisSrc("us-ga", "511ga.org", "America/New_York", "us", "United States (Georgia)", "Georgia DOT (511 Georgia)"),
   atisSrc("us-fl", "fl511.com", "America/New_York", "us", "United States (Florida)", "Florida DOT (FL511)"),
   atisSrc("us-pa", "511pa.com", "America/New_York", "us", "United States (Pennsylvania)", "PennDOT (511PA)"),
   atisSrc("us-ne511", "newengland511.org", "America/New_York", "us", "United States (Vermont, New Hampshire, Maine)", "New England 511 (VTrans, NHDOT, MaineDOT)"),
@@ -189,7 +192,6 @@ export const SOURCES = [
       return (j.features || j).map((f) => { const a = f.attributes || {}; return a.filename ? [String(a.cameraId) + "-" + a.publishedImageId, r5(a.latitude), r5(a.longitude), tidy(a.title), https("https://www.tripcheck.com/RoadCams/cams/" + encodeURIComponent(a.filename))] : null; }).filter(Boolean);
     } },
   atisSrc("ca-on", "511on.ca", "America/Toronto", "ca", "Canada (Ontario)", "Ontario Ministry of Transportation (Ontario 511)"),
-  atisSrc("ca-ab", "511.alberta.ca", "America/Edmonton", "ca", "Canada (Alberta)", "Alberta Transportation (511 Alberta)"),
   atisSrc("ca-nb", "511.gnb.ca", "America/Moncton", "ca", "Canada (New Brunswick)", "New Brunswick Transportation (511 NB)"),
   atisSrc("ca-ns", "511.novascotia.ca", "America/Halifax", "ca", "Canada (Nova Scotia)", "Nova Scotia Public Works (511 Nova Scotia)"),
   atisSrc("ca-nl", "511nl.ca", "America/St_Johns", "ca", "Canada (Newfoundland and Labrador)", "Newfoundland and Labrador Transportation (511 NL)"),
