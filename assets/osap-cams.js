@@ -59,24 +59,53 @@
   /* the newest image: a minute-stamped address so neither the browser nor the agency's cache hands back an old one */
   /* Refresh (now) stamps the exact time, so a second press in the same minute still asks the agency again */
   function fresh(u, now) { return u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + (now ? Date.now() : Math.floor(Date.now() / 6e4)) : ""; }
-  function imgTag(u, cls, alt) {
-    return '<img class="' + cls + '" src="' + esc(u) + '" alt="' + esc(alt) + '" referrerpolicy="no-referrer" decoding="async" ' +
-      'onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'cam-no\',textContent:\'No image from the agency right now.\'}))">';
-  }
+  var NOIMG = "No image from the agency right now.";
   function when(ms, tz) { return W.OSAP_TIME ? W.OSAP_TIME.dualT(ms, { tz: tz, date: true }) : new Date(ms).toISOString().slice(0, 16) + "Z"; }
+  /* loads the image off-screen first: the "Loading" line (or the previous image) stays until the new one has arrived, a
+     failure or a slow agency (20 s) says so plainly with a link to open the image directly, and nothing ever sits blank */
+  var WAIT = 20000;
+  function loadInto(im, url, cls, alt, done) {
+    var gen = (im._camGen = (im._camGen || 0) + 1), had = im.querySelector("img");
+    if (!had) im.innerHTML = '<span class="cam-no">Loading the image…</span>';
+    else im.setAttribute("data-camloading", "");
+    var img = new Image(), over = false;
+    var finish = function (ok, why) {
+      if (over || im._camGen !== gen) return;
+      over = true; clearTimeout(tm); im.removeAttribute("data-camloading");
+      if (ok) { img.className = cls; img.alt = alt; im.innerHTML = ""; im.appendChild(img); }
+      else {
+        im.innerHTML = '<span class="cam-no">' + esc(why) + (url ? ' <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open the image</a>' : "") + "</span>";
+        img.src = "";
+      }
+      if (done) done(ok);
+    };
+    var tm = setTimeout(function () { finish(false, "The agency's camera did not answer in 20 s."); }, WAIT);
+    img.referrerPolicy = "no-referrer"; img.decoding = "async";
+    img.onload = function () { finish(img.naturalWidth > 1, NOIMG); };
+    img.onerror = function () { finish(false, NOIMG); };
+    img.src = url;
+  }
   /* fills an element with the camera's image; Singapore's address comes from the live API first */
   function fill(el, s, c, view, big, now) {
     var u = Array.isArray(c[4]) ? c[4][view || 0] : c[4], alt = c[3];
     var put = function (url, ts) {
       if (!el.isConnected && !el.parentNode) return;
-      var im = el.querySelector("[data-camimg]");
-      if (im) im.innerHTML = url ? imgTag(url, big ? "cam-big" : "cam-tip", alt) : '<span class="cam-no">No image from the agency right now.</span>';
-      var t = el.querySelector("[data-camt]");
-      if (t) t.textContent = (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min";
+      var im = el.querySelector("[data-camimg]"), t = el.querySelector("[data-camt]");
+      var stamp = function (ok) {
+        S.loads = (S.loads || 0) + 1;
+        if (t) t.textContent = ok ? (ts ? "Image taken " + when(Date.parse(ts), s.tz) : "Fetched " + when(Date.now(), s.tz)) + " · updated about every " + s.every + " min"
+          : "Tried " + when(Date.now(), s.tz) + " · trying again on its own while this stays open";
+      };
+      if (!im) return;
+      if (!url) { im._camGen = (im._camGen || 0) + 1; im.innerHTML = '<span class="cam-no">' + NOIMG + "</span>"; stamp(false); return; }
+      if (t && !im.querySelector("img")) t.textContent = "Asking " + s.agency + " for the newest image…";
+      loadInto(im, url, big ? "cam-big" : "cam-tip", alt, stamp);
     };
     if (s.live) liveImg(s, c[0]).then(function (r) { put(r && r.u, r && r.ts); });
     else put(fresh(safeUrl(u), now));
   }
+  /* while a pop-up stays open the image renews on its own, as often as the agency renews it (not more than once a minute) */
+  function every(s) { return Math.max(60, (+s.every || 1) * 60) * 1000; }
 
   /* ---------- map layer ---------- */
   var map = null, layer = null, drawn = {};
@@ -114,6 +143,11 @@
       /* the image arrives after the pop-up opens: fit and pan again once it has its size */
       el.addEventListener("load", function () { if (e.popup.isOpen()) e.popup.update(); }, true);
       fill(el, s, c, view, true);
+      clearInterval(m._camTick);
+      m._camTick = setInterval(function () {
+        if (!e.popup.isOpen()) { clearInterval(m._camTick); return; }
+        if (!document.hidden) { delete live[s.id]; fill(el, s, c, view, true, true); }
+      }, S.tick || every(s));
       el.onclick = function (ev) {
         var t = ev.target;
         if (t.hasAttribute("data-camref")) { delete live[s.id]; fill(el, s, c, view, true, true); }
@@ -124,6 +158,7 @@
         }
       };
     });
+    m.on("popupclose", function () { clearInterval(m._camTick); });
     return m;
   }
   function draw() {
@@ -205,6 +240,7 @@
     ".cam-tip{display:block;width:238px;max-height:170px;object-fit:contain;background:#111;border-radius:3px}" +
     ".cam-frame{min-height:60px;margin:4px 0}.cam-big{display:block;width:100%;max-height:260px;object-fit:contain;background:#111;border-radius:4px}" +
     "@media (max-width:500px){.cam-big{max-height:170px}.cam-pop h3{font-size:13px}.cam-pop .obs{font-size:11px}}" +
+    "[data-camloading] img{opacity:.55}.cam-no a{display:block;margin-top:4px}" +
     ".cam-no{display:block;padding:14px 6px;text-align:center;font-size:12px;color:var(--muted,#666);background:var(--surface2,#eee);border-radius:4px}" +
     ".cam-views{display:flex;gap:4px;margin:4px 0}.cam-views button{font:inherit;font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line,#ccc);background:var(--surface,#fff);color:inherit;cursor:pointer}" +
     '.cam-views button[aria-pressed="true"]{background:#0b7285;color:#fff;border-color:#0b7285}';
