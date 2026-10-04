@@ -5,7 +5,7 @@
      keyword watches and push topics, My work, medical and evacuation plans, map and device settings) plus the point photos
      (IndexedDB "osap-points", original bytes with their SHA-256). Stores are picked by name (osap-, asap-, tsap-, tfw-, tw-,
      tbw-), so a new feature's store moves without a change here. Left out: caches that refill by themselves, the list of
-     offline map downloads (the maps themselves stay on the old device), this device's "Use my location" choice, and
+     offline map downloads (the maps themselves stay on the old device), this device's "Use my location" choice and On-device AI settings, and
      one-visit notes.
    - The lock: PBKDF2-SHA-256 (600,000 rounds, random 16-byte salt) turns the passphrase into an AES-256-GCM key; the file is
      sealed with a random 12-byte nonce and the file's own header as associated data, so a wrong passphrase, a damaged file
@@ -23,7 +23,7 @@
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var MAGIC = "OSAPMOVE", VER = 1, ITER = 600000, MIN_PASS = 8, MAX_FILE = 500 * 1048576, MAX_PHOTOS = 5000, MSG = "osap-move-msg";
   var PICK = /^(osap|asap|tsap|tfw|tw|tbw)[-.]/;
-  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", MSG];
+  var SKIP = ["osap-offline", "osap-offline-prev", "osap-loc", "osap-loc-go", "osap-boot", "osap-boot-t", "osap-tile-fail", "osap-ws-msg", "osap-ws-go", "osap-rt-link", "osap-ai", MSG];
   var SKIP_PRE = /^(asap-xrecs-|osap-today-wx-)/;
   var te = new TextEncoder(), td = new TextDecoder();
 
