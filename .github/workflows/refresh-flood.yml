@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, news, topics, et, health-test, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, news, topics, et, health-test, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt); empty runs all"
         required: false
         default: ""
       lane:
@@ -46,18 +46,18 @@ jobs:
       # Translation runs on the job's own CPU with Google's open MADLAD-400 model (tools/mt/madlad.py, Apache-2.0): no key,
       # no quota. The converted model (about 3 GB) is kept in the Actions cache, so the conversion only runs when that is empty.
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || inputs.only == 'probe-mt' }}
         with:
           python-version: "3.11"
       - name: Restore the translation model
         id: mt-cache
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || inputs.only == 'probe-mt' }}
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/osap-mt
           key: madlad400-3b-mt-ct2-int8-v1
       - name: Install the translation runtime
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || inputs.only == 'probe-mt' }}
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
       - name: Convert the translation model (only when the cache is empty)
@@ -74,6 +74,11 @@ jobs:
           python tools/mt/setup_madlad.py
           rm -rf /mnt/hf
         continue-on-error: true
+      # diagnostic, writes nothing: invented translations under each decoding setting (tools/mt/probe_settings.mjs)
+      - name: Compare translation settings
+        if: ${{ inputs.only == 'probe-mt' }}
+        timeout-minutes: 45
+        run: node tools/mt/probe_settings.mjs
       - name: Pull ThaiWater feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'flood' }}
         timeout-minutes: 4
@@ -168,7 +173,7 @@ jobs:
         timeout-minutes: 14
         continue-on-error: true
       - name: Report translation coverage
-        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || inputs.only == 'probe-mt' }}
         run: node tools/mt/coverage.mjs
         continue-on-error: true
       - name: Print the shape of the cyclone sources (diagnostic, writes nothing)
@@ -248,7 +253,7 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
-        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && inputs.only != 'probe-refdata' && inputs.only != 'probe-leads' && inputs.only != 'probe-et' && github.ref == 'refs/heads/main' }}
+        if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && inputs.only != 'probe-refdata' && inputs.only != 'probe-leads' && inputs.only != 'probe-et' && inputs.only != 'probe-mt' && github.ref == 'refs/heads/main' }}
         env:
           LANE: ${{ inputs.lane }}
         run: |

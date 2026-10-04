@@ -47,6 +47,14 @@ for (const t of ["Nene Royal's AGT win drives 105m social engagements", "Thai sh
 assert.equal(relevance(R, "Warning issued for heavy rain"), "keep");          // "war$" does not match "warning"
 assert.equal(relevance(R, "Songkhla district office reopens"), "none");       // "song$" (entertainment) does not match "Songkhla"
 assert.equal(relevance(R, "Two wars on the border"), "strong");               // plural allowed on a $ word
+// sport_senses: "shooting", "shot" and "attack" are sport terms beside a competition word, and security words everywhere else
+assert.equal(relevance(R, "(Asiad) S. Korea goes goldless for 1st time; silver medals come from shooting, kurash, diving"), "drop");
+assert.equal(relevance(R, "Taiwan snatches 2 more silvers in shooting, Kurash at Asian Games"), "drop");
+assert.equal(relevance(R, "FIFA attacks UEFA"), "drop");
+assert.equal(relevance(R, "Mass shooting at Bangkok mall"), "strong");
+assert.equal(relevance(R, "Shooting at football match"), "strong");               // a sport's name alone is not a competition word
+assert.equal(relevance(R, "Goalkeeper shot dead outside stadium"), "strong");     // "shot dead" still counts
+assert.equal(relevance(R, "Gunman opens fire at championship venue"), "strong");
 console.log("topics tests passed:", cfg.topics.length, "data sets");
 
 // a data set marked "relevance": "exempt" (the ET tab's UFO and UAP reports) is kept whatever the word lists say,
