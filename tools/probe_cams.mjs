@@ -378,7 +378,32 @@ async function round13() {
   console.log("   page text " + t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1200));
   console.log("   terms " + ((t.match(/[^.]{0,200}(uvjeti|copyright|©|zabranjeno|prenošenje)[^.]{0,200}/i) || [""])[0]));
 }
+/* ---------- round 14: ALERTCalifornia / AlertWest wildfire cams + keyless ArcGIS camera layers ---------- */
+async function round14() {
+  const urls = (t) => [...new Set((t.match(/https?:\/\/[^\s"'<>()]+/g) || []))];
+  // 1) ALERTCalifornia Frontend API docs: find the real API base + endpoint paths
+  for (const d of ["https://docs.rd.alertcalifornia.org/Alert.CA.Frontend.API/introduction/", "https://docs.rd.alertcalifornia.org/Alert.CA.Frontend.API/api-endpoints/"]) {
+    const r = await get(d, 30000); line("ACdoc " + d, r); const t = r.b.toString("utf8");
+    console.log("   api hosts: " + urls(t).filter((u) => /api|alertcalifornia|camera|\.json/i.test(u) && !/github|fonts|cdn|schema\.org|w3\.org/.test(u)).slice(0, 20).join(" "));
+    console.log("   paths: " + [...new Set(t.match(/\/(?:api|v\d|cameras?|stations?|media|image|latest)[\w\/{}.-]*/gi) || [])].slice(0, 25).join(" "));
+  }
+  // 2) try likely keyless Frontend API bases for a camera list + openapi
+  for (const u of ["https://api.alertcalifornia.org/", "https://api.rd.alertcalifornia.org/", "https://data.alertcalifornia.org/", "https://api.alertcalifornia.org/openapi.json", "https://api.alertcalifornia.org/v1/cameras", "https://api.alertcalifornia.org/cameras", "https://api.alertcalifornia.org/camera/public"]) { const r = await get(u, 20000); line("ACapi " + u, r); if (r.s === 200) sample(r); }
+  // 3) AlertWest OpenAPI docs: base + "latest data for all public cameras"
+  for (const d of ["https://docs.alertwest.org/docs/OpenAPI/Reference/get-latest-data-for-all-public-cameras/", "https://docs.alertwest.org/openapi.json", "https://docs.alertwest.org/api/openapi"]) {
+    const r = await get(d, 30000); line("AWdoc " + d, r); const t = r.b.toString("utf8");
+    console.log("   hosts: " + urls(t).filter((u) => /api|alertwest|camera|\.json/i.test(u) && !/github|fonts|cdn|w3\.org|schema/.test(u)).slice(0, 20).join(" "));
+    console.log("   paths: " + [...new Set(t.match(/\/(?:api|v\d|cameras?|public|latest|data)[\w\/{}.-]*/gi) || [])].slice(0, 25).join(" "));
+  }
+  for (const u of ["https://api.alertwest.org/v1/cameras/public/latest", "https://api.alertwest.org/cameras/public", "https://api.alertwest.org/"]) { const r = await get(u, 20000); line("AWapi " + u, r); if (r.s === 200) sample(r); }
+  // 4) keyless ArcGIS camera-location layers (locations only; images may still need the API above)
+  for (const u of [
+    "https://socogis.sonomacounty.ca.gov/map/rest/services/FIREPublic/Fire_Camera_Locations_OLD/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=3",
+    "https://gis.data.ca.gov/api/search/v1/collections?q=alertcalifornia%20cameras",
+  ]) { const r = await get(u, 30000); line("ArcGIS " + u.slice(0, 120), r); if (r.s === 200) sample(r, 900); }
+}
 if (only === "r13") await round13();
+if (only === "r14") await round14();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
