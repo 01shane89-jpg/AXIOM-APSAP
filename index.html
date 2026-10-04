@@ -1226,8 +1226,92 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   /* views drawn before the map legend exists queue their key here; the legend control takes the queue over (see "the legend on the map") */
   if (!window.OSAP_LEGEND) window.OSAP_LEGEND = { q: {}, set: function (id, html, home) { this.q[id] = [html, home]; } };
-  /* sideways panning stops about 60 degrees past the dateline on each side, so the world does not scroll forever but Fiji, Kiribati and the Pacific can still be seen across it */
-  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true, maxBounds: [[-85, -240], [85, 240]], maxBoundsViscosity: 1 });
+  /* the map pans round the globe without end: see "the map wraps round the globe" just below */
+  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
+  /* ---------- the map wraps round the globe ----------
+     Panning east or west carries on round the world. Everything drawn on the map (symbols, lines, shapes, pop-ups, pictures)
+     is placed on the world copy nearest the middle of the screen, so it follows across the dateline; a line or shape is
+     moved as one piece (its longitudes made continuous first, so a track over the dateline is not drawn the long way round).
+     When a pan ends more than 180 degrees from Greenwich the view steps back one whole world, which looks the same,
+     so every view reads its centre and edges within one world either side of the dateline. */
+  (function () {
+    var rawLP = map.latLngToLayerPoint, rawNew = map._latLngToNewLayerPoint, last = null, stepping = false;
+    function ref() { return map._loaded ? map.getCenter().lng : null; }
+    function shift(lng, r) { return r == null || !isFinite(lng) ? 0 : 360 * Math.round((r - lng) / 360); }
+    /* the same place, on the world copy nearest longitude r (the middle of the screen when r is left out) */
+    function near(ll, r) { ll = L.latLng(ll); var k = shift(ll.lng, r === undefined ? ref() : r); return k ? L.latLng(ll.lat, ll.lng + k, ll.alt) : ll; }
+    map.latLngToLayerPoint = function (ll) { return rawLP.call(map, near(ll)); };
+    map._latLngToNewLayerPoint = function (ll, zoom, center) { return rawNew.call(map, near(ll, L.latLng(center).lng), zoom, center); };
+    /* lines and shapes: each ring is moved whole; one that spans half the world or more is also drawn one world either side */
+    L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
+      var i, n = lls.length;
+      if (!n) return;
+      if (!(lls[0] instanceof L.LatLng)) { for (i = 0; i < n; i++) this._projectLatlngs(lls[i], result, pxb); return; }
+      var lo = new Array(n), prev = 0, mn = Infinity, mx = -Infinity;
+      for (i = 0; i < n; i++) {
+        var a = lls[i].lng;
+        /* a step of more than half the world between two points crosses the dateline (a ring edge running along +/-180 is left alone) */
+        if (i && Math.abs(a - prev) > 180 && !(Math.abs(a) === 180 && Math.abs(lls[i - 1].lng) === 180)) a += 360 * Math.round((prev - a) / 360);
+        lo[i] = prev = a; if (a < mn) mn = a; if (a > mx) mx = a;
+      }
+      var k = shift((mn + mx) / 2, ref()), offs = mx - mn >= 180 ? [k - 360, k, k + 360] : [k];
+      for (var j = 0; j < offs.length; j++) {
+        var ring = [];
+        for (i = 0; i < n; i++) { var p = rawLP.call(this._map, L.latLng(lls[i].lat, lo[i] + offs[j])); ring.push(p); pxb.extend(p); }
+        result.push(ring);
+      }
+    };
+    /* circles in metres and pictures laid on the map are placed by their middle */
+    function around(proto, name, key, move) {
+      var f = proto[name];
+      proto[name] = function () {
+        var o = this[key], w = o && move(o);
+        if (!w || w === o) return f.apply(this, arguments);
+        this[key] = w; try { return f.apply(this, arguments); } finally { this[key] = o; }
+      };
+    }
+    around(L.Circle.prototype, "_project", "_latlng", function (o) { return near(o); });
+    function boxNear(b, r) {
+      var k = shift(b.getCenter().lng, r);
+      return k ? L.latLngBounds([b.getSouth(), b.getWest() + k], [b.getNorth(), b.getEast() + k]) : b;
+    }
+    around(L.ImageOverlay.prototype, "_reset", "_bounds", function (b) { return boxNear(b, ref()); });
+    L.ImageOverlay.prototype._animateZoom = (function (f) {
+      return function (e) {
+        var o = this._bounds, w = boxNear(o, L.latLng(e.center).lng);
+        if (w === o) return f.call(this, e);
+        this._bounds = w; try { return f.call(this, e); } finally { this._bounds = o; }
+      };
+    })(L.ImageOverlay.prototype._animateZoom);
+    /* put everything on the copies nearest the new middle of the screen */
+    function rewrap() {
+      last = ref();
+      map.eachLayer(function (l) {
+        try {
+          if (l instanceof L.Path) { if (l._renderer) l.redraw(); }
+          else if (l instanceof L.Marker) l.update();
+          else if (l instanceof L.DivOverlay) { if (l._container) l._updatePosition(); }
+          else if (l instanceof L.ImageOverlay) { if (l._image) l._reset(); }
+        } catch (e) {}
+      });
+    }
+    /* how far the middle may drift before something on screen could be on the wrong copy: half a world, less half the (padded) screen */
+    function slack() { return 180 - map.getSize().x * 0.6 / map.options.crs.scale(map.getZoom()) * 360; }
+    map.on("zoomend viewreset", function () { last = ref(); });
+    map.on("move", function () { if (!stepping && last != null && Math.abs(ref() - last) > Math.max(20, slack() - 1)) rewrap(); });
+    map.on("moveend", function () {
+      if (stepping) return;
+      var c = ref(); if (c == null) return;
+      if (Math.abs(c) > 180) {
+        /* step the view back by whole worlds: it looks the same, and its centre is between -180 and 180 again */
+        stepping = true;
+        try { map.panBy([-Math.round(c / 360) * map.options.crs.scale(map.getZoom()), 0], { animate: false }); } finally { stepping = false; }
+        rewrap(); return;
+      }
+      if (last == null || Math.abs(c - last) > Math.max(0, slack() - 1)) rewrap();
+    });
+    window.OSAP_WRAP = { near: near };
+  })();
   /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
   if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
