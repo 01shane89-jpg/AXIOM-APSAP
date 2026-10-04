@@ -562,7 +562,8 @@
       Object.keys(CAP_RE).forEach(function (k) { if (CAP_RE[k].test(v)) rep(k, osm, "healthcare:speciality=" + v, "LOW"); });
     });
     if (m && NEURO.test(String(m.notes || ""))) rep("surg.neuro", sof, "neurosurgery in the source notes", "MODERATE");
-    return C;
+    /* a planner's check outranks every source (V1), and only it says whether a capability can be used now */
+    return FI() ? FI().apply(C, checks(), f.id, new Date().toISOString()) : C;
   }
   function has(C, k) { var x = C[k]; return !!x && (x.status === "VERIFIED" || x.status === "REPORTED" || x.status === "INFERRED"); }
   /* the T-class rule (draft for clinical review, from the medical planning engine design): each class needs everything of
@@ -892,6 +893,10 @@
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
     ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
     ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
+    ".mpdoc .mpgrade{display:inline-block;font-size:11px;font-weight:700;padding:0 4px;border-radius:3px;border:1px solid #888;margin-right:3px;color:#111}.mpdoc .mpg-v1{background:#d7f0dc;border-color:#2e7d32}" +
+    ".mpdoc .mpg-v2{background:#dde9fb;border-color:#2f5fa7}.mpdoc .mpg-v3{background:#f3ecd9;border-color:#8a6d1f}.mpdoc .mpg-v4{background:#eee;border-color:#999}.mpdoc .mpg-u{background:#fff;border-style:dashed}" +
+    ".mpdoc .mpnow-available{color:#1b5e20}.mpdoc .mpnow-unavailable{color:#b00020}.mpdoc .mpchkf{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:flex-end;margin:6px 0}" +
+    ".mpdoc .mpchkf label{display:flex;flex-direction:column;font-size:12px;max-width:100%}.mpdoc .mpchkf input,.mpdoc .mpchkf select{max-width:100%;font-size:14px}.mpdoc .mpchkf p{flex-basis:100%;margin:2px 0}.mpdoc .mpold td{opacity:.6}" +
     "@media (max-width:700px){.mpdoc table.mpas th{width:auto;display:block;border-bottom:0;padding-bottom:0}.mpdoc table.mpas td{display:block}}" +
     ".mpdoc{--surface:#fff;--ink:#111;--muted:#444;--line:#b9c0c7;--line-soft:#dde2e6;--bg:#f3f5f7;color:#111;background:#fff;font-size:12px}" +
     ".mpdoc .mpdh{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;border-bottom:2px solid #111;padding-bottom:4px;margin-bottom:6px}.mpdoc .mpdh h2{margin:0;font-size:19px;flex:1 1 auto}" +
@@ -931,6 +936,10 @@
   function offKey() { return KEY + "off-" + (cc() || "x"); }
   function offIds() { var v = lsGet(offKey()); return Array.isArray(v) ? v : []; }
   function isOff(f) { return !!f && f.kind === "hospital" && offIds().indexOf(f.id) >= 0; }
+  /* planner's checks of hospital capabilities (assets/osap-facility-intel.js, Build Plan v2 phase 1), kept on this device */
+  function FI() { return W.OSAP_FACINTEL || null; }
+  function chkKey() { return "osap-medcheck-" + (cc() || "x"); }
+  function checks() { var v = lsGet(chkKey()); return Array.isArray(v) ? v : []; }
   function setOff(id, off) { var L = offIds().filter(function (x) { return x !== id; }); if (off) L.push(id); lsSet(offKey(), L.slice(-500)); }
   function fieldVals() { return lsGet(fieldsKey()) || {}; }
   function num(k) { var v = +fieldVals()[k]; return isFinite(v) && (v > 0 || (k === "dwell" || k === "xact") && v === 0 && fieldVals()[k] !== "") && v < 1000 ? v : DEF[k]; }
@@ -1172,6 +1181,8 @@
     if (k === "trauma.designated") { var d = f.official_trauma_designation; return !d || d.level === "NONE_IDENTIFIED" ? "unknown" : d.status === "VERIFIED" || !crowd(d.source) ? "yes" : "crowd"; }
     var x = f.caps && f.caps[k]; if (!x) return "unknown";
     if (x.status === "NOT_AVAILABLE") return "no";
+    /* a planner's unexpired check saying it cannot be used now takes the hospital out for that need until it expires */
+    if (x.now && x.now.state === "UNAVAILABLE") return "no";
     if (!has(f.caps, k)) return "unknown";
     return x.status === "VERIFIED" || !crowd(x.source) ? "yes" : "crowd";
   }
@@ -1183,9 +1194,12 @@
     var l = f.official_trauma_designation.level;
     return alt === "I-V" || ["I", "II", "III", "III-N", "UNSPECIFIED"].indexOf(l) >= 0;
   }
+  /* a planner's check saying the hospital lacks it, or cannot use it now */
+  function plannerNo(f, k) { var x = f.caps && f.caps[k]; return !!x && ((x.status === "NOT_AVAILABLE" && x.source && x.source.kind === "planner") || (!!x.now && x.now.state === "UNAVAILABLE")); }
   function stageFit(f, st) {
     var r = { met: [], missing: [], unknown: [], crowd: [], gain: [] };
-    if (desigFits(f, st.alt)) { r.met = ["trauma.designated"]; r.ok = true; r.byDesig = true; return r; }
+    /* a designation stands for the stage unless a planner's check says a required capability is missing or down now */
+    if (desigFits(f, st.alt) && !st.required.some(function (k) { return plannerNo(f, k); })) { r.met = ["trauma.designated"]; r.ok = true; r.byDesig = true; return r; }
     st.required.forEach(function (k) { var v = capOk(f, k); (v === "yes" ? r.met : v === "no" ? r.missing : v === "crowd" ? r.crowd : r.unknown).push(k); });
     (st.gain || []).forEach(function (k) { if (capOk(f, k) === "yes") r.gain.push(k); });
     r.ok = r.met.length === st.required.length && (!st.gain || r.gain.length > 0);
@@ -1987,8 +2001,12 @@
   }
   var KEY_CAPS = ["blood.bank", "surg.or_emergency", "ed.24_7", "dx.ct", "cc.icu", "cc.ventilator", "surg.neuro"];
   function planFac(f) {
-    var c = {}; KEY_CAPS.forEach(function (k) { c[k] = capOk(f, k); });
-    return { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, designation: tierLabel(f), source: f.osm || f.src || "" };
+    var c = {}, n = {}; KEY_CAPS.forEach(function (k) { c[k] = capOk(f, k); n[k] = f.caps && f.caps[k] && f.caps[k].now ? f.caps[k].now.state : "UNKNOWN"; });
+    var r = { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, caps_now: n, designation: tierLabel(f), source: f.osm || f.src || "" };
+    /* Build Plan v2's Facility object: every capability with who says it exists (V1 to U) and whether it can be used now */
+    if (FI()) r.intel = FI().record({ id: f.id, name: f.name, aliases: r.name_local ? [r.name_local] : [], cc: ST ? ST.cc : "", lat: f.lat, lon: f.lon, mgrs: r.mgrs, caps: f.caps, designation: f.official_trauma_designation || null,
+      contacts: { phone: f.phone || "", emergency_phone: f.ephone || "", hotline: f.hot || "", web: f.web || "", address: f.addr || "" }, sources: [f.osm, f.sofRec && f.sofRec.src, f.gov && "MOPH " + f.gov.hcode].filter(Boolean) }, checks(), new Date().toISOString());
+    return r;
   }
   function srcState(st) { return /^(not reached|not read)/.test(st) ? "failed" : /reading|waiting/.test(st) ? "pending" : "read"; }
   function planInput(s) {
@@ -1997,7 +2015,7 @@
     return {
       cc: s.cc, country: s.name, built_at: new Date(s.at).toISOString(), now: new Date().toISOString(),
       poi: { lat: s.o[0], lon: s.o[1], mgrs: grid(s.o[0], s.o[1]), set_by: s.from },
-      fields: v, ll: ll,
+      fields: v, ll: ll, checks: checks(),
       categories: CATS.map(function (c) {
         return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
           return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null };
@@ -2162,16 +2180,27 @@
     return L;
   }
   /* every flag with its status, confidence and source; the unknown ones in one line so the page stays readable */
+  /* whether it can be used now: only a planner's unexpired check says */
+  function nowTxt(x) {
+    var n = x && x.now, M = FI() ? FI().METHOD : {};
+    if (!n || !n.checked_at) return "available now: <b>UNKNOWN</b> (no planner's check)";
+    var how = (M[n.method] || "").toLowerCase() + (n.contact_role ? ", " + n.contact_role : "");
+    if (n.state === "UNKNOWN") return "available now: <b>UNKNOWN</b> (" + (n.expired ? "the check of " + esc(dual(Date.parse(n.checked_at), true)) + " said " + esc(String(n.was).toLowerCase()) + " and expired " + esc(dual(Date.parse(n.expires_at), true)) : "checked " + esc(dual(Date.parse(n.checked_at), true)) + ", not said") + ")";
+    return 'available now: <b class="mpnow-' + n.state.toLowerCase() + '">' + n.state + "</b> (checked " + esc(dual(Date.parse(n.checked_at), true)) + (how ? " by " + esc(how) : "") + "; expires " + esc(dual(Date.parse(n.expires_at), true)) + ")";
+  }
+  function gradeTxt(x) { var g = (x && x.grade) || "U", G = FI() ? FI().GRADE : {}; return '<span class="mpgrade mpg-' + g.toLowerCase() + '" title="Who says it exists: V1 a planner\'s check, V2 an official source, V3 the facility\'s own statement, V4 a community source, U no source">' + g + " " + esc(G[g] || "") + "</span>"; }
   function capTable(f, s) {
-    var C = f.caps || {}, known = CAPS.filter(function (c) { return C[c[0]] && C[c[0]].status !== "UNKNOWN"; }), unk = CAPS.filter(function (c) { return !C[c[0]] || C[c[0]].status === "UNKNOWN"; });
+    var C = f.caps || {}, seen = function (c) { var x = C[c[0]]; return x && (x.status !== "UNKNOWN" || (x.now && x.now.checked_at)); };
+    var known = CAPS.filter(seen), unk = CAPS.filter(function (c) { return !seen(c); });
     var at = s && (s.osmBase || (s.stored && s.stored.at)) ? String(s.osmBase || s.stored.at).slice(0, 10) : "";
     var L = known.map(function (c) {
       var x = C[c[0]], src = x.source ? (x.source.url ? link(x.source.url, x.source.name) : esc(x.source.name)) + (x.how ? " <code>" + esc(x.how) + "</code>" : "") +
         (x.source.kind === "osm" && at ? ", data as of " + esc(at) : x.source.at ? ", as of " + esc(x.source.at) : "") : "";
       var cf = x.conflict ? " · <b>against</b>: " + (x.conflict.source && x.conflict.source.url ? link(x.conflict.source.url, x.conflict.source.name) : esc((x.conflict.source && x.conflict.source.name) || "a source")) + (x.conflict.how ? " <code>" + esc(x.conflict.how) + "</code>" : "") + " (both kept; confirm with the hospital)" : "";
-      return [c[1], "<b>" + esc(x.status) + "</b>, confidence " + esc(x.confidence) + (src ? " · " + src : "") + (x.source && x.source.sha ? ' · evidence SHA-256 <code title="' + esc(x.source.sha) + '">' + esc(x.source.sha.slice(0, 12)) + "</code>" : "") + cf + " · last verified: " + (x.last_verified ? esc(x.last_verified) : "never")];
+      return [c[1], gradeTxt(x) + " <b>" + esc(x.status) + "</b>, confidence " + esc(x.confidence) + " · " + nowTxt(x) + (src ? " · " + src : "") + (x.source && x.source.sha ? ' · evidence SHA-256 <code title="' + esc(x.source.sha) + '">' + esc(x.source.sha.slice(0, 12)) + "</code>" : "") + cf + " · last verified: " + (x.last_verified ? esc(x.last_verified) : "never") +
+        (x.prior && x.prior.status !== "UNKNOWN" ? '<span class="sub">Before the planner\'s check the sources said ' + esc(x.prior.status) + (x.prior.source ? " (" + esc(x.prior.source.name) + ")" : "") + ".</span>" : "")];
     });
-    if (unk.length) L.push(["Unknown", '<span class="mpnk">UNKNOWN</span> <span class="obs">No source states: ' + esc(unk.map(function (c) { return c[1]; }).join(", ")) + ". Unknown is not the same as absent; confirm with the hospital.</span>"]);
+    if (unk.length) L.push(["Unknown", '<span class="mpgrade mpg-u">U Unknown</span> <span class="obs">No source states: ' + esc(unk.map(function (c) { return c[1]; }).join(", ")) + ". Unknown is not the same as absent; confirm with the hospital.</span>"]);
     return asTable(L);
   }
   /* the hospital's official record as published (HA Thailand open data), Thai kept beside the English */
@@ -2197,14 +2226,43 @@
       '<span class="sub">Record built ' + esc(g.retrieved || "") + ', SHA-256 <code title="' + esc(g.sha256 || "") + '">' + esc(String(g.sha256 || "").slice(0, 12)) + "</code>. Official status as published; confirm current capability with the hospital.</span>"]);
     return L;
   }
-  function assessHtml(f, s, r) {
+  /* the planner's checks of this hospital: a form to record one (not printed) and every check so far, newest first */
+  var EX_TXT = { yes: "Has it", no: "Does not have it", unknown: "Not said" }, NOW_TXT = { available: "Available now", unavailable: "Not available now", unknown: "Not said" };
+  function chkLog(f) {
+    var I = FI(); if (!I) return "";
+    var L = I.forFacility(checks(), f.id).slice().reverse(), now = Date.now();
+    if (!L.length) return '<p class="obs">No planner has checked this hospital on this device. Until one does, whether anything can be used now is unknown.</p>';
+    return '<table class="mpas mpchkl"><thead><tr><th>Checked</th><th>Capability</th><th>Answer</th><th>How</th><th>Good until</th></tr></thead><tbody>' + L.map(function (c) {
+      var cur = I.latest(L, c.facility_id, c.cap) === c, exp = Date.parse(c.expires_at) <= now;
+      return "<tr" + (cur ? "" : ' class="mpold"') + "><td>" + esc(dual(Date.parse(c.at), true)) + "</td><td>" + esc(CAP_NAME[c.cap] || c.cap) + "</td><td>" + esc(EX_TXT[c.exists]) + "; " + esc(NOW_TXT[c.now]) + (c.note ? '<span class="sub">' + esc(c.note) + "</span>" : "") +
+        "</td><td>" + esc(I.METHOD[c.method] || "") + (c.contact_role ? ", " + esc(c.contact_role) : "") + "</td><td>" + (c.now === "unknown" ? "" : esc(dual(Date.parse(c.expires_at), true)) + (exp ? " <b>expired</b>" : "")) + (cur ? "" : '<span class="sub">replaced by a newer check</span>') + "</td></tr>";
+    }).join("") + "</tbody></table>";
+  }
+  function chkForm(f) {
+    var I = FI(); if (!I) return "";
+    var order = KEY_CAPS.concat(CAPS.map(function (c) { return c[0]; }).filter(function (k) { return KEY_CAPS.indexOf(k) < 0; }));
+    function sel(n, L) { return '<select name="' + n + '">' + L.map(function (o) { return '<option value="' + esc(o[0]) + '">' + esc(o[1]) + "</option>"; }).join("") + "</select>"; }
+    return '<form class="mpchkf noprint" data-mp-chk="' + esc(f.id) + '">' +
+      "<label>Capability " + sel("cap", order.map(function (k) { return [k, CAP_NAME[k] || k]; })) + "</label>" +
+      "<label>Does the hospital have it? " + sel("exists", [["unknown", "Not said"], ["yes", "Yes"], ["no", "No"]]) + "</label>" +
+      "<label>Can it be used now? " + sel("now", [["unknown", "Not said"], ["available", "Available"], ["unavailable", "Not available"]]) + "</label>" +
+      "<label>How checked " + sel("method", Object.keys(I.METHOD).map(function (k) { return [k, I.METHOD[k]]; })) + "</label>" +
+      '<label>Who confirmed (a role, no names) <input name="role" maxlength="80" placeholder="ED charge nurse"></label>' +
+      '<label>Note <input name="note" maxlength="300"></label>' +
+      '<label>Good for (hours) <input name="h" type="number" min="1" max="720" value="' + I.DEF_HOURS + '"></label>' +
+      '<button type="submit" class="refresh primary">Record check</button><span class="mpchkmsg obs" role="status"></span>' +
+      '<p class="obs">Kept on this device, carried into the plan record and its fingerprint, and saved with a move-to-device backup. A planner\'s check outranks every source (V1). "Available now" expires after the hours set; then it reads unknown again. A newer check replaces an older one, which stays listed; to undo one, record "Not said" for both.</p></form>';
+  }
+  function chkHtml(f, print) { return (print ? "" : chkForm(f)) + '<div class="mpchkw">' + chkLog(f) + "</div>"; }
+  function assessHtml(f, s, r, print) {
     var tb = asTable;
     var R = assessRows(f, s), gaps = R.filter(function (x) { return /mpnk/.test(x[1]); }).map(function (x) { return x[0]; });
     return "<h3>Location</h3>" + tb([["Grid (MGRS)", "<code>" + esc(grid(f.lat, f.lon)) + "</code>"], ["Lat, lon", f.lat.toFixed(5) + ", " + f.lon.toFixed(5)]].concat(f.alias && f.alias !== f.name ? [["Also mapped as", esc(f.alias)]] : [])) +
       "<h3>From the point of injury</h3><div id=\"mpa-times\">" + tb(assessTimes(f, s, r)) + "</div>" +
       (f.gov ? "<h3>Official record</h3>" + tb(govRows(f.gov, s)) : "") +
       "<h3>Capability and services</h3>" + tb(R.slice(0, R.findIndex(function (x) { return x[0] === "Helipad"; }))) +
-      "<h3>Capability flags</h3>" + capTable(f, s) +
+      "<h3>Capability flags</h3><div id=\"mpa-caps\">" + capTable(f, s) + "</div>" +
+      "<h3>Planner's checks</h3><div id=\"mpa-chk\">" + chkHtml(f, print) + "</div>" +
       "<h3>Landing</h3>" + tb(R.filter(function (x) { return x[0] === "Helipad" || x[0] === "Nearest airfield"; })) +
       "<h3>Contacts and cover</h3>" + tb(R.filter(function (x) { return /^(Contacts|Address|TRICARE)$/.test(x[0]); })) +
       '<p class="obs">' + (gaps.length ? "Not known: " + esc(gaps.join(", ")) + ". " : "") + "Each line says where it comes from. OpenStreetMap is community data and can be out of date; a source's statement is that source's claim. Phone the hospital to confirm capability, beds and acceptance before relying on it.</p>";
@@ -2215,7 +2273,7 @@
     return P.map(function (p) {
       var f = p.f, H = s.fac.H.indexOf(f), known = (s.rts || []).filter(function (x) { return x.f === f && x.r; })[0];
       return '<section class="mpaprint"><h3>Hospital assessment, ' + esc(p.role) + ": H" + (H + 1) + " " + esc(f.name) + "</h3>" +
-        assessHtml(f, s, known ? known.r : null).replace(/ id="[^"]*"/g, "").replace("Working out the route…", "Not worked out yet when this print was made; see section 3 of the plan, or print again once the routes are drawn.") + "</section>";
+        assessHtml(f, s, known ? known.r : null, true).replace(/ id="[^"]*"/g, "").replace("Working out the route…", "Not worked out yet when this print was made; see section 3 of the plan, or print again once the routes are drawn.") + "</section>";
     }).join("");
   }
   function assessView(id) {
@@ -2249,7 +2307,25 @@
     }).catch(function () { var cap = D.getElementById("mpa-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
     D.getElementById("mpa-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
     D.getElementById("mpa-close").addEventListener("click", closeA);
+    if (!el.__mpChk) { el.addEventListener("submit", chkSubmit); el.__mpChk = true; }
     return ready;
+  }
+
+  /* a planner's check from the assessment form: saved, the hospital's flags worked out again, the plan re-picked */
+  function chkSubmit(e) {
+    var fm = e.target.closest && e.target.closest("form[data-mp-chk]"); if (!fm) return;
+    e.preventDefault();
+    var I = FI(), f = find(fm.getAttribute("data-mp-chk")), msg = fm.querySelector(".mpchkmsg"); if (!I || !f) return;
+    var g = function (n) { return fm.elements[n] ? fm.elements[n].value : ""; };
+    var c = I.makeCheck({ facility_id: f.id, facility_name: f.name, cap: g("cap"), exists: g("exists"), now: g("now"), method: g("method"), contact_role: g("role"), note: g("note"), valid_h: g("h") }, new Date().toISOString());
+    if (c.errors) { if (msg) msg.textContent = "Not recorded: check " + c.errors.join(", ") + "."; return; }
+    var L = I.addCheck(checks(), c); lsSet(chkKey(), L);
+    if (checks().length !== L.length) { if (msg) msg.textContent = "Not recorded: this device's storage is full."; return; }
+    f.caps = capFlags(f, f.sofRec); f.tc = tClass(f.caps);
+    var cp = D.getElementById("mpa-caps"), ck = D.getElementById("mpa-chk");
+    if (cp) cp.innerHTML = capTable(f, ST);
+    if (ck) { ck.innerHTML = chkHtml(f); var m2 = ck.querySelector(".mpchkmsg"); if (m2) m2.textContent = "Recorded " + (CAP_NAME[c.cap] || c.cap) + ", " + dual(Date.parse(c.at), true) + "."; var b = ck.querySelector("button[type=submit]"); if (b) b.focus(); }
+    offChanged();
   }
 
   /* ---------- picking the point of injury on the map ---------- */
