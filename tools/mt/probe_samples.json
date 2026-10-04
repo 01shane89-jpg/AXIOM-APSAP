@@ -1,0 +1,282 @@
+{
+ "note": "Headlines for tools/mt/probe_settings.mjs, copied from data/history on 2026-10-04: 'bad' got an invented MADLAD-400 translation (tools/mt_guard.mjs), 'good' a faithful-looking one. 'was' is that translation.",
+ "bad": [
+  {
+   "lang": "th",
+   "text": "สส.ภูมิใจไทยจากพื้นที่น้ำไม่ท่วม ร่วมช่วยผู้ประสบภัยกรุงเทพฯ-ปทุมธานี เตรียมข้าวกล่อง 2,000 กล่อง ส่งถึงชุมชนน้ำท่วมขัง",
+   "was": "The 2013 floods in Thailand were the worst ever to hit this country."
+  },
+  {
+   "lang": "th",
+   "text": "เพื่อไทยลงพื้นที่เคหะร่มเกล้า-ลาดกระบัง ประสาน ‘ศูนย์ซ่อมสร้างสุข’ ผ่าน Traffy Fondue",
+   "was": "The 2013-14 season, the club was in a difficult position."
+  },
+  {
+   "lang": "th",
+   "text": "พัฒนา สั่ง รพ.พุทธโสธร เสริมแนวกันน้ำ เตรียมแผนย้าย-ส่งต่อผู้ป่วย รับมือวิกฤตน้ำท่วมฉะเชิงเทรา",
+   "was": "The 1980s were a time of great growth for the city, and it was one of the most successful in its history."
+  },
+  {
+   "lang": "th",
+   "text": "ชาย เอี่ยมศิริ โพสต์เดือด! ปัดทุจริตจัดซื้อไวน์การบินไทย แจงชัดพ้นเก้าอี้ CEO ปมเหตุบริหารจัดการน้ำท่วม",
+   "was": "The 1980s were a time of great success for the Thai Airways Group."
+  },
+  {
+   "lang": "th",
+   "text": "เจเศรษฐ์ โต้เลือกปฏิบัติถุงยังชีพ ยัน ปภ. ส่งของช่วยทุกพื้นที่ ชี้หากมัวแต่เล่นการเมือง คนเดือดร้อนคือประชาชน",
+   "was": "The 1980s, the U.S. had a very strong military presence in Vietnam and it was not surprising that many of these soldiers were also involved in political activities."
+  },
+  {
+   "lang": "th",
+   "text": "‘สายไหมไม่ใช่เขตกระจอก’ สมชาย เวสารัชตระกูล ส.ก.คนพื้นที่ นอนตี 2 สู้มหาอุทกภัย",
+   "was": "\"The 2013-14 season of the NHL: The Biggest Changes in Season Two\"."
+  },
+  {
+   "lang": "th",
+   "text": "“เจเศรษฐ์” ลั่น ไม่ใช่เวลาเล่นการเมือง หลังมีดราม่าจับผิดถุง ...",
+   "was": "The 2013-14 season was a great one for the team, but they were not able to win any of their last three games."
+  },
+  {
+   "lang": "th",
+   "text": "กทม. เร่งพร่องน้ำรับมือฝนระลอกใหม่ ช่วง 5-6 ต.ค. และ 10–11 ต.ค. จับตามวล ...",
+   "was": "2013-09-15."
+  },
+  {
+   "lang": "th",
+   "text": "ระทึก! ยิงสกัดไล่ล่าเก๋งต้องสงสัยกลางชุมชนวัดธรรมฯ ชลบุรี ยึด ...",
+   "was": "The 1980s were a time of great success for the band."
+  },
+  {
+   "lang": "th",
+   "text": "‘วีระยุทธ’ ลงพื้นที่บางคล้า พบชาวบ้านโดนน้ำท่วมนานนับสัปดาห์ แต่ยังไร้ความช่วยเหลือ",
+   "was": "The 1980s were a time of great success for the band, but they had to face financial difficulties."
+  },
+  {
+   "lang": "th",
+   "text": "‘อนุชา’ ลงพื้นที่ตรวจเยี่ยมให้กำลังใจเจ้าหน้าที่-พี่น้อง ...",
+   "was": "The 2013-14 school year will begin on Monday, June 15."
+  },
+  {
+   "lang": "th",
+   "text": "“วราวุธ” เผยตัวเลขน้ำท่วมกระทบอุตสาหกรรม 55 จังหวัด เสียหาย 147 ...",
+   "was": "2015-04-17 - The World's Most Dangerous City: A Guide to the World's Worst Cities"
+  },
+  {
+   "lang": "ko",
+   "text": "충주 자동차부품 공장서 끼임 사고…40대 노동자 사망",
+   "was": "2016-04-30 - Accident in the automotive parts factory of Chongju..."
+  },
+  {
+   "lang": "ko",
+   "text": "충주 자동차부품 공장서 끼임 사고…40대 근로자 사망",
+   "was": "2016-09-30 - Accident in the automotive parts factory of Chonju..."
+  },
+  {
+   "lang": "ko",
+   "text": "평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)",
+   "was": "10:35 PM - The night of the dead (2014)"
+  },
+  {
+   "lang": "ko",
+   "text": "‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게 끝 [대구 리뷰]",
+   "was": "2016-09-30 - The Sun: \"There's a lot of work to be done,\" says former U.S. Secretary of State Mike Pompeo [Photo by Reuters]"
+  },
+  {
+   "lang": "ko",
+   "text": "국힘, 조희대 국감 증인 불출석에 \"與, 검증 아닌 겁박 정치\"",
+   "was": "\"There is no evidence that the 1980s were a time of violence,\" he said."
+  },
+  {
+   "lang": "ko",
+   "text": "민주당 \"조희대 대법원장, 국감 출석 불응 의사…국회법 위반\"",
+   "was": "\"The Supreme Court of the Republic of Korea, 1948-2007\"."
+  },
+  {
+   "lang": "ko",
+   "text": "목포대 \"의대 후보 선정 집행정지 각하에 즉시 항고 검토\"",
+   "was": "\"The 2016-17 season of the National League will be a very difficult one for us.\""
+  },
+  {
+   "lang": "ko",
+   "text": "방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여",
+   "was": "The 19th century was a time of great change in the world."
+  },
+  {
+   "lang": "ko",
+   "text": "경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송",
+   "was": "2015-09-30 - A helicopter crashed into a mountain in Gyeonggi Province, killing two people"
+  },
+  {
+   "lang": "ko",
+   "text": "주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원",
+   "was": "2016-09-30 - Policeman arrested for driving under the influence in parking lot"
+  },
+  {
+   "lang": "ko",
+   "text": "휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'",
+   "was": "2016-05-23 - Rain in the Northeast of China, with rainfall less than 5mm"
+  },
+  {
+   "lang": "ko",
+   "text": "김지용 인선에 말 아끼는 與…강경파 비판 계속되자 \"엄정 검증\" 원론 입장",
+   "was": "\"There is no doubt that the 2015 election will be a very difficult one for the Democratic Party."
+  },
+  {
+   "lang": "zh",
+   "text": "蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算",
+   "was": "\"The 2016 World Cup: China's Kim Jong-un to be the first Chinese president to face a worldwide ban on his visit\"."
+  },
+  {
+   "lang": "zh",
+   "text": "助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴",
+   "was": "The 2014-15 season, the team was led by Lee Chong Wei."
+  },
+  {
+   "lang": "zh",
+   "text": "高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤",
+   "was": "The 1980 election was a turning point for the party."
+  },
+  {
+   "lang": "zh",
+   "text": "影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動",
+   "was": "\"蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動\" (in Chinese)."
+  },
+  {
+   "lang": "zh",
+   "text": "北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版",
+   "was": "The 2016 election in Beijing was a fierce battle against drugs."
+  },
+  {
+   "lang": "zh",
+   "text": "(影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖",
+   "was": "(2013) 73-year-old dictator's health is on the red light?"
+  },
+  {
+   "lang": "ja",
+   "text": "AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事",
+   "was": "The Okinawa Times published an article on the cover of a lecture by the President of the United Nations University in Naha, Japan, 8th June, 2013."
+  },
+  {
+   "lang": "ja",
+   "text": "「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム",
+   "was": "\"「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長浜も飛躍誓う\" (in Japanese)."
+  },
+  {
+   "lang": "ja",
+   "text": "【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース",
+   "was": "The number of people who have been diagnosed with influenza in Naha city has doubled since 1987."
+  },
+  {
+   "lang": "mn",
+   "text": "УЛААНБААТАРТ ГАЗРЫН ТОСНЫ БҮТЭЭГДЭХҮҮН ХАДГАЛАХ АГУУЛАХЫН ЦОГЦОЛБОР БАЙГУУЛАХАД ДЭМЖИН АЖИЛЛАХАА ИЛЭРХИЙЛЭВ",
+   "was": "2017-09-30 - The Ministry of Environment and Natural Resources of the Republic of Mongolia"
+  },
+  {
+   "lang": "mn",
+   "text": "МОНГОЛ, КАЗАХСТАНЫ ЗАСГИЙН ГАЗАР ХООРОНДЫН КОМИССЫН X ХУРАЛДААН ЭНЭ ОНЫ АРАВДУГААР САРД БОЛНО",
+   "was": "10th Meeting of the Mongolia-Kazakhstan Intergovernmental Commission to be held on April 2, 2017"
+  }
+ ],
+ "good": [
+  {
+   "lang": "th",
+   "text": "\"มดดำ\" ขอบคุณ \"อั้ม อธิชาติ\" ลุยน้ำท่วมแทน พร้อมสมทบทุนโรงทาน",
+   "was": "\"Black Ant\" thanks Am Adhinat for flooding and donating to the restaurant."
+  },
+  {
+   "lang": "th",
+   "text": "เร่งช่วยเหลือผู้ประสบอุทกภัย ในพื้นที่กรุงเทพมหานครและภูมิภาคใกล้เคียง",
+   "was": "The flood victims in the area of Bangkok and nearby regions are being assisted."
+  },
+  {
+   "lang": "th",
+   "text": "น้ำท่วมสายไหมคลี่คลาย เริ่มกลับเข้าพื้นที่ แต่เอื้ออาทรคลองถนนยังวิกฤต",
+   "was": "Silk Road floods are slowly returning to the area, but the road is still in a critical state."
+  },
+  {
+   "lang": "th",
+   "text": "อ่วมหนัก 'ตั๊ก มยุรา' อัดคลิปแฉสภาพถนนภายในหมู่บ้าน น้ำท่วมขัง ‘เริ่มส่งกลิ่นเหม็น’",
+   "was": "\"Floods in the Philippines: 10,000 people flooded after storm\"."
+  },
+  {
+   "lang": "th",
+   "text": "‘บิ๊กดุลย์’ ลุยช่วยน้ำท่วม เขตสายไหม ลั่นจะลงพื้นที่ทุกวัน จะเคียงข้างประชาชนจนกว่าน้ำลด",
+   "was": "The 10th anniversary of the floods in Sai Lai district, which killed more than 25 people and left hundreds injured."
+  },
+  {
+   "lang": "th",
+   "text": "ด่วน! เขื่อนป่าสัก ปริมาณน้ำเกินความจุ 106% ต้องปรับการระบาย เตือนประชาชนท้ายเขื่อน",
+   "was": "Emergency, Badak Dam 106% over capacity."
+  },
+  {
+   "lang": "ko",
+   "text": "검찰 폐지에 특검 검사 권한 혼선…“공소청, 공소유지 담당 재파견을”",
+   "was": "\"The Prosecutor General's Office, the Public Prosecution Service and the National Investigative Agency\"."
+  },
+  {
+   "lang": "ko",
+   "text": "휴지통 하나가 130만원…야노시호, 日 상위 1% 지인 별장 공개",
+   "was": "One bin is 130,000 won... Yanoshi Ho, the top 1% of Japanese acquaintances villa revealed"
+  },
+  {
+   "lang": "ko",
+   "text": "법원, ‘전남광주 국립의대 추진’ 집행정지 신청 각하…목포대 “모든 방안 강구”",
+   "was": "The Court, 'Promotion of the National Medical University in Gyeongnam' Application for Suspension..."
+  },
+  {
+   "lang": "ko",
+   "text": "중국, 10월부터 휘발유·경유 수출 중단···글로벌 유가 4% 상승",
+   "was": "China suspends export of gasoline and transit oil from October, global oil prices rise 4%"
+  },
+  {
+   "lang": "ko",
+   "text": "[단독]강호동 농협회장 비서 구속…'고가 기념품 공금 구매' 관련",
+   "was": "[Exclusive] Kang Ho-dong Secretary of the President of agricultural cooperation arrested... 'high priced souvenirs purchase' related"
+  },
+  {
+   "lang": "ko",
+   "text": "‘기본’ 안 지켜 발생한 공공 보안사고, 기관장에도 책임 묻는다",
+   "was": "The public security incident that occurred due to failure to observe the basic rules, and the head of the agency is also held responsible."
+  },
+  {
+   "lang": "zh",
+   "text": "毒品防治成政治攻防 北市府：政策與沈伯洋倡議完全不同",
+   "was": "The North City Hall: Policy is completely different from the initiative of Shen Boyang"
+  },
+  {
+   "lang": "zh",
+   "text": "Threads貼文涉造謠假民調 桃園男子10萬元交保",
+   "was": "Threads Post about making a fake poll, Taoyuan man 100 thousand yuan guarantee"
+  },
+  {
+   "lang": "zh",
+   "text": "快訊／關渡大橋國軍八輪甲車自撞分隔島 駕駛軍官曝：座椅壞了",
+   "was": "快訊/關渡大橋國軍八輪裝甲車自撞分隔島 駕駛軍官曝：座椅壞"
+  },
+  {
+   "lang": "zh",
+   "text": "台東貨車肇逃 駕駛自殘拒捕",
+   "was": "Taidong truck accident"
+  },
+  {
+   "lang": "ja",
+   "text": "うるま市議選、投票率は43.77％で過去最低 前回の市議選を5.37ポイント下回る - 沖縄タイムス＋プラス ニュース",
+   "was": "The voting rate in the Uruma City Council election was 43.77%, which is a record low, and it is 5.37 points lower than that of the previous elections - Okinawa Times + Plus News"
+  },
+  {
+   "lang": "ja",
+   "text": "普天間の危険除去、渋滞解消…古謝県政の船出、エール送る支持者が期待 初登庁の新知事「緊張していますよ、やっぱり」 - 沖縄タイムス＋プラス プレミアム",
+   "was": "The new governor of Okinawa, who is in office for the first time, said he was \"very nervous\" about removing dangers from public transport and reducing traffic jams."
+  },
+  {
+   "lang": "mn",
+   "text": "Улаанбурхан өвчин нь халдварлалт өндөртэй ч вакцинаар сэргийлэгдэх боломжтой",
+   "was": "Measles is highly contagious , but it can be prevented with a vaccine ."
+  },
+  {
+   "lang": "mn",
+   "text": "“Чингис хаан” олон улсын нисэх буудлын хүчин чадал гурав дахин нэмэгдэж, жилд 5.2 сая зорчигч хүлээн авдаг болно",
+   "was": "The capacity of the “Genghis Khan” International Airport will be tripled to receive 5.2 million passengers per year"
+  }
+ ]
+}

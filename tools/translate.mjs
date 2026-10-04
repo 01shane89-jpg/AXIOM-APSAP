@@ -57,9 +57,15 @@ export async function translateAll(items, opts = {}) {
     return c && c.en ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
-  // texts the model already got wrong go straight to the fallback
-  const fresh = todo.filter((k) => !(cache[key(items[k].text, items[k].lang)] || {}).rejected);
-  if (fresh.length && opts.model !== false) localModel(items, fresh, out);
+  // A text the quick (greedy) pass got wrong is asked once more with beam search, which on 2026-10-04 left 9 of 35 such headlines
+  // invented instead of 28 (tools/mt/probe_settings.mjs); a text that fails that too goes to the fallback service only.
+  if (opts.model !== false) {
+    const state = (k) => cache[key(items[k].text, items[k].lang)] || {};
+    const fresh = todo.filter((k) => !state(k).rejected), again = todo.filter((k) => state(k).rejected && !state(k).beam);
+    const bad = fresh.length ? localModel(items, fresh, out) : [];
+    const retry = [...again, ...bad].slice(0, MT_BEAM_LIMIT);
+    if (retry.length) localModel(items, retry, out, { MT_BEAM: "4" });
+  }
   for (const k of todo) {
     if (out[k] || myMemoryUsed >= MYMEMORY_LIMIT) continue;
     const it = items[k], src = (it.lang || "").split("-")[0] || "autodetect";
@@ -77,22 +83,25 @@ export async function translateAll(items, opts = {}) {
 }
 export const MT_TOOL = "MADLAD-400 (Google open model, run in the refresh job)";
 const MT_DIR = process.env.MT_DIR || path.join(os.homedir(), ".cache/osap-mt/madlad400-3b-mt-ct2-int8");
-const MT_LIMIT = Number(process.env.MT_LIMIT || 400);
+const MT_LIMIT = Number(process.env.MT_LIMIT || 400), MT_BEAM_LIMIT = Number(process.env.MT_BEAM_LIMIT || 80);
 // Hand the untranslated texts to the model in one batch; a missing model or any failure leaves them for the fallback.
-function localModel(items, todo, out) {
-  if (process.env.MT === "0" || !fs.existsSync(path.join(MT_DIR, "model.bin"))) { console.log("MADLAD-400: model not installed, skipping"); return; }
+// beam: { MT_BEAM: "4" } for the second pass over rejected texts. Returns the texts whose translation was rejected.
+function localModel(items, todo, out, beam) {
+  if (process.env.MT === "0" || !fs.existsSync(path.join(MT_DIR, "model.bin"))) { console.log("MADLAD-400: model not installed, skipping"); return []; }
   const pick = todo.slice(0, MT_LIMIT), t0 = Date.now();
   const r = spawnSync(process.env.PYTHON || "python", ["tools/mt/madlad.py"], { input: JSON.stringify({ items: pick.map((k) => items[k]) }),
-    encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: "300", ...process.env, MT_DIR } });
-  if (r.status !== 0) { console.error("MADLAD-400 failed:", (r.stderr || r.error || "").toString().slice(-600)); return; }
-  let res; try { res = JSON.parse(r.stdout).out; } catch (e) { console.error("MADLAD-400 returned unreadable output"); return; }
-  let n = 0, bad = 0;
+    encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: beam ? "120" : "300", ...process.env, MT_DIR, ...(beam || {}) } });
+  if (r.status !== 0) { console.error("MADLAD-400 failed:", (r.stderr || r.error || "").toString().slice(-600)); return []; }
+  let res; try { res = JSON.parse(r.stdout).out; } catch (e) { console.error("MADLAD-400 returned unreadable output"); return []; }
+  let n = 0, bad = [];
   pick.forEach((k, j) => {
     const en = res[j]; if (!en) return;
-    if (mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, at: Date.now() }; bad++; return; }
+    if (mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }; bad.push(k); return; }
     out[k] = { en, tool: MT_TOOL }; cache[key(items[k].text, items[k].lang)] = { en, tool: MT_TOOL, at: Date.now() }; n++;
   });
-  console.log("MADLAD-400: translated " + n + " of " + pick.length + " texts in " + Math.round((Date.now() - t0) / 1000) + " s" + (bad ? ", " + bad + " invented lines rejected" : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
+  console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
+    Math.round((Date.now() - t0) / 1000) + " s" + (bad.length ? ", " + bad.length + " invented lines rejected" : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
+  return bad;
 }
 export function saveCache() {
   const ents = Object.entries(cache).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);

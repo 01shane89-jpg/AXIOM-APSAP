@@ -65,6 +65,7 @@ window.TSAP.areaApi
 
 # tidy screen: one view chooser (Overlays), one country picker, Reports/Settings menus (claude/ui-cleanup)
 <script src="assets/osap-tidy.js"></script>
+<script src="assets/osap-panels.js"></script>
 setSheet: function (s)
 refresh: function () { dsUi(); }
 
