@@ -21,7 +21,7 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 await mkdir(OUT, { recursive: true });
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1.4, isMobile: true, hasTouch: true, serviceWorkers: "block", locale: "en-GB", timezoneId: "Asia/Bangkok" });
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1.4, isMobile: true, hasTouch: true, serviceWorkers: "block", locale: "en-GB", timezoneId: "Asia/Bangkok", permissions: ["notifications"] });
 // Chiang Mai: hills for the terrain tools, hospitals for the medical plan, roads for routes
 const AT = [18.79, 98.98];
 const seed = (home) => ctx.addInitScript((h) => {
@@ -32,13 +32,13 @@ const seed = (home) => ctx.addInitScript((h) => {
 await seed("map");
 
 let fails = 0;
-async function page(hash) {
+async function page(hash, bm) {
   const p = await ctx.newPage();
   p.on("pageerror", (e) => console.log("  page error:", e.message));
   await p.goto(base + (hash || "#th/map"));
   await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 });
-  // Streets (English labels) reads best in a small picture
-  await p.evaluate((a) => { if (window.OSAP_BASEMAP) window.OSAP_BASEMAP.set("streets"); window.__asapMap.setView(a, 12, { animate: false }); }, AT);
+  // Streets (English labels) reads best in a small picture; the planning windows use Hybrid (imagery with labels)
+  await p.evaluate((a) => { if (window.OSAP_BASEMAP) window.OSAP_BASEMAP.set(a[1]); window.__asapMap.setView(a[0], 12, { animate: false }); }, [AT, bm || "streets"]);
   await p.waitForTimeout(9000);
   return p;
 }
@@ -74,20 +74,28 @@ const SCENES = {
   route: async () => { const p = await page(); await tool(p, "route"); await p.waitForTimeout(2500); return p; },
   area: async () => { const p = await page(); await tool(p, "area"); return p; },
   ring: async () => { const p = await page(); await ring(p); return p; },
-  medplan: async () => { const p = await page(); await tool(p, "medplan"); await p.waitForTimeout(50000); return p; },
-  evac: async () => { const p = await page(); await tool(p, "evac"); await p.waitForTimeout(3000); return p; },
-  lz: async () => { const p = await page(); await ring(p); await ringPress(p, "lz"); await p.waitForTimeout(70000); return p; },
+  medplan: async () => {
+    const p = await page(null, "hybrid"); await tool(p, "medplan");
+    await p.waitForFunction(() => { const m = document.getElementById("medplan"); return m && !/Still reading/.test(m.textContent); }, null, { timeout: 150000 }).catch(() => {});
+    await p.waitForTimeout(3000); return p;
+  },
+  evac: async () => {
+    const p = await page(null, "hybrid"); await tool(p, "evac"); await p.waitForTimeout(1500);
+    await p.evaluate((a) => window.OSAP_EPE && window.OSAP_EPE.open({ at: a }), AT); await p.waitForTimeout(1500);
+    await press(p, "Work out the options"); await p.waitForTimeout(45000); return p;
+  },
+  lz: async () => { const p = await page(null, "hybrid"); await ring(p); await ringPress(p, "lz"); await p.waitForTimeout(70000); return p; },
   terrain: async () => {
-    const p = await page(); await p.waitForFunction(() => window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 30000 });
+    const p = await page(null, "hybrid"); await p.waitForFunction(() => window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 30000 });
     await ring(p); await ringPress(p, "terrain"); await p.waitForTimeout(800); await press(p, "Viewshed from here"); await p.waitForTimeout(1500);
     await press(p, "CALCULATE"); await p.waitForTimeout(30000); return p;
   },
-  comms: async () => { const p = await page(); await tool(p, "overlays"); await p.waitForTimeout(800); await p.evaluate(() => { const r = [...document.querySelectorAll("b")].find((b) => b.textContent === "Communications infrastructure"); if (r) (r.closest("button,[role=button],label,div") || r).click(); }); await p.waitForTimeout(5000); return p; },
   point: async () => { const p = await page(); await tool(p, "point"); await p.waitForTimeout(500); await press(p, "At the map centre"); await p.waitForTimeout(1500); return p; },
   watch: async () => { const p = await page(); await tool(p, "watch"); return p; },
   mywork: async () => { const p = await page(); await tool(p, "mine"); await p.waitForTimeout(500); await press(p, "Saved work"); await p.waitForTimeout(1000); return p; },
   settings: async () => { const p = await page(); await p.evaluate(() => document.getElementById("tidy-set").click()); return p; },
-  reports: async () => { const p = await page("#th/map"); await p.evaluate(() => { const b = document.getElementById("tidy-reptool"); if (b) b.click(); }); return p; }
+  reports: async () => { const p = await page("#th/map"); await p.evaluate(() => { const b = document.getElementById("tidy-reptool"); if (b) b.click(); }); return p; },
+  comms: async () => { const p = await page(); await tool(p, "overlays"); await p.waitForTimeout(800); await p.evaluate(() => { const r = [...document.querySelectorAll("b")].find((b) => b.textContent === "Communications infrastructure"); if (r) (r.closest("button,[role=button],label,div") || r).click(); }); await p.waitForTimeout(5000); return p; }
 };
 for (const [name, run] of Object.entries(SCENES)) {
   if (ONLY.length && !ONLY.includes(name)) continue;
