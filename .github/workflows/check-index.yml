@@ -31,6 +31,7 @@ jobs:
       - run: node tests/illum.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/medplan_model.test.mjs
+      - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
@@ -80,6 +81,7 @@ jobs:
       - run: node tests/medplan_smoke.mjs
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
+      - run: node tests/terrain_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs
