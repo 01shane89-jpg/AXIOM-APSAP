@@ -126,3 +126,4 @@ offline: { name: "Offline map"
 # terrain analysis: viewshed and line of sight (claude/terrain-viewshed)
 <script src="assets/osap-terrain.js"></script>
 data-terrain-open
+id="ml-viewsheds"

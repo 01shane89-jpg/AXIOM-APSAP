@@ -1436,7 +1436,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
            not here (Shane 2026-10-01) */
         '<div id="ml-elev"><div class="mlh">Elevation and terrain analysis</div>' +
         /* Terrain analysis (assets/osap-terrain.js): viewshed and line of sight; also on the long-press ring > Terrain */
-        '<div class="mlrow"><button type="button" class="mlbtn2" data-terrain-open>Terrain analysis</button><span><i>Viewshed: what ground an observer can see; line of sight to any point</i></span></div>' +
+        '<div class="mlrow"><button type="button" class="mlbtn2" data-terrain-open>Terrain analysis</button><span><i>Viewshed, reverse viewshed, line of sight and elevation profiles</i></span></div>' +
+        /* saved viewsheds with their on/off toggles, filled in by assets/osap-terrain.js */
+        '<div id="ml-viewsheds"></div>' +
         Object.keys(HSX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
         }).join("") +
