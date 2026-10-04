@@ -29,7 +29,7 @@ const F = "e".repeat(64);
 const smalls = [];
 for (let k = 0; k < 700; k++) smalls.push({ k: "af", t: "S", id: "oa:S" + k, nm: "Airstrip S" + k, la: 8 + (k % 70) * 0.2, lo: 98 + Math.floor(k / 70) * 0.5, s: "oa", u: "https://ourairports.com/airports/S" + k + "/", x: {}, fp: F });
 const TH = { v: 1, cc: "th", at: IX.at, items: [
-  { k: "af", t: "L", id: "oa:VTBS", nm: "Suvarnabhumi Airport", la: 13.6811, lo: 100.747, s: "oa", u: "https://ourairports.com/airports/VTBS/", x: { icao: "VTBS", iata: "BKK", rw_m: 4000, elev_ft: 5, sched: 1 }, fp: F },
+  { k: "af", t: "L", id: "oa:VTBS", nm: "Suvarnabhumi Airport", la: 13.6811, lo: 100.747, s: "oa", u: "https://ourairports.com/airports/VTBS/", x: { icao: "VTBS", iata: "BKK", rw_m: 4000, elev_ft: 5, sched: 1 }, also: [{ s: "osm", u: "https://www.openstreetmap.org/way/1", nm: "Suvarnabhumi <i>Intl</i>" }], fp: F },
   { k: "af", t: "H", id: "oa:TH-0001", nm: "Bangkok Hospital <b>x</b> Heliport", la: 13.75, lo: 100.58, s: "oa", u: "https://ourairports.com/airports/TH-0001/", x: {}, fp: F },
   ...smalls,
   { k: "port", t: "M", id: "wpi:1", nm: "Laem Chabang", la: 13.08, lo: 100.88, s: "wpi", u: "https://msi.nga.mil/Publications/WPI", x: { size: "Large", chan_m: 14 }, fp: F },
@@ -91,7 +91,7 @@ const popWith = async (p, re) => {
   ok(asked.filter((u) => /th\.json/.test(u)).length === 1, "the country file is read once");
   await om(p, false);
   let pop = await popWith(p, "Suvarnabhumi");
-  ok(/Major airport · OurAirports/.test(pop) && /4,000 m/.test(pop) && /public domain/.test(pop) && /Fingerprint/.test(pop) && /MGRS|13\.6811/.test(pop), "popup: airport type, runway, licence, fingerprint");
+  ok(/Major airport · OurAirports/.test(pop) && /4,000 m/.test(pop) && /public domain/.test(pop) && /Fingerprint/.test(pop) && /MGRS|13\.6811/.test(pop) && /Also listed by.*OpenStreetMap/.test(pop) && /ODbL/.test(pop) && !/<i>Intl/.test(pop), "popup: airport type, runway, licence, fingerprint, other sources that list it");
   pop = await popWith(p, "Bhumibol Dam");
   ok(/Dam · Wikidata/.test(pop) && /154 m/.test(pop) && /CC0/.test(pop), "popup: dam height and licence");
   pop = await popWith(p, "Test Cable 1");

@@ -6,10 +6,15 @@
 //     seaplane base is often named after the person who owns it, so it keeps its name only when the name says what it is
 //     (hospital, military, police, government, a place); otherwise it is shown as "Airstrip" or "Heliport" with its code and town.
 //   - NGA World Port Index, Pub. 150 (U.S. Government, public domain): seaports with harbour size and type.
-//   - OpenStreetMap (ODbL): ports (landuse/industrial=port) not already in the World Port Index, ferry terminals, and named dams.
+//   - UN/LOCODE (UNECE, via the datasets/un-locode mirror; free reuse): locations UNECE codes as seaports (function 1), placed to
+//     the arc-minute, so they only add a port no other source has within 5 km.
+//   - OpenStreetMap (ODbL): airfields and heliports (aeroway=aerodrome/heliport), ports (landuse/industrial=port), ferry terminals
+//     and named dams.
 //   - Wikidata (CC0): dams with height and reservoir, where OpenStreetMap has none within 1 km.
 //   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
 //     landing points. A cable goes in the file of every country it lands in.
+// Several sources are merged per layer: the first source to list a site leads, and another source's record of the same site
+// (within a set distance) is folded into it as "also listed by" with its own link, so a popup shows every source that has it.
 // Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
 // and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
 // good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
@@ -25,6 +30,7 @@ const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP infrastructure snapshot (
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const WDQS = "https://query.wikidata.org/sparql";
 const OA = "https://davidmegginson.github.io/ourairports-data/";
+const LOCODE = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv";
 const WPI = ["https://msi.nga.mil/api/publications/world-port-index?output=json"];
 const TG = "https://www.submarinecablemap.com/api/v3/";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -146,7 +152,23 @@ async function wpi() {
   return out;
 }
 
-/* ---------- OpenStreetMap: ports, ferry terminals, dams ---------- */
+/* ---------- UN/LOCODE seaports ---------- */
+async function locode() {
+  const rows = csv(await get(LOCODE));
+  log("  un/locode rows", rows.length);
+  const out = [];
+  for (const r of rows) {
+    if (!/^1/.test(r.Function || "") || /^X/.test(r.Change || "")) continue;
+    const m = /^(\d{2})(\d{2})([NS])\s+(\d{3})(\d{2})([EW])$/.exec(r.Coordinates || ""); if (!m) continue;
+    const la = (+m[1] + +m[2] / 60) * (m[3] === "S" ? -1 : 1), lo = (+m[4] + +m[5] / 60) * (m[6] === "W" ? -1 : 1);
+    const hint = ccFromA2(r.Country), cc = ccOf(la, lo, hint) || hint; if (!cc) continue;
+    out.push({ k: "port", t: "P", cc, id: "locode:" + r.Country + r.Location, nm: clip(r.NameWoDiacritics || r.Name), la: r4(la), lo: r4(lo), s: "locode",
+      u: "https://service.unece.org/trade/locode/" + r.Country.toLowerCase() + ".htm", x: { unlocode: r.Country + " " + r.Location, approx: 1 } });
+  }
+  return out;
+}
+
+/* ---------- OpenStreetMap: airfields, ports, ferry terminals, dams ---------- */
 async function overpass(q) {
   let err;
   for (let round = 0; round < 2; round++) for (const u of OVERPASS) {
@@ -163,7 +185,7 @@ async function osm() {
   const els = [];
   for (let w = -180; w < 180; w += 20) {
     const bb = [-60, w, 84, w + 20].join(",");
-    const q = `[out:json][timeout:400][maxsize:1073741824][bbox:${bb}];(nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];nwr["waterway"="dam"]["name"];);out center tags;`;
+    const q = `[out:json][timeout:400][maxsize:1073741824][bbox:${bb}];(nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];nwr["waterway"="dam"]["name"];nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];);out center tags;`;
     const e = await overpass(q);
     log("  osm band", w, e.length);
     els.push(...e);
@@ -179,6 +201,16 @@ async function osm() {
     const nm = clip(t["name:en"] || t.name || t["int_name"] || "");
     const u = "https://www.openstreetmap.org/" + { n: "node", w: "way", r: "relation" }[id[0]] + "/" + id.slice(1);
     let k, ty, x = {};
+    if (t.aeroway === "aerodrome" || t.aeroway === "heliport") {
+      const heli = t.aeroway === "heliport", major = /^(international|public|regional)$/.test(t.aerodrome || t["aerodrome:type"] || "") || !!t.iata;
+      const code = t.icao || t.iata || t.ref || "";
+      const nmA = major || (SAYS.test(nm) && !PERSON.test(nm)) ? nm : (heli ? "Heliport" : "Airstrip") + (code ? " " + clip(code, 8) : "");
+      const xa = Object.fromEntries([["icao", t.icao], ["iata", t.iata], ["elev_ft", num(t.ele) != null ? Math.round(num(t.ele) / 0.3048) : null],
+        ["surface", clip(t.surface, 30) || null], ["military", t.military || /military/.test(t.aerodrome || "") || t.landuse === "military" ? 1 : null]].filter((p) => p[1] != null && p[1] !== ""));
+      if (/^(private|no)$/.test(t.access || "") && !major && !xa.military) xa.private = 1;
+      out.push({ k: "af", t: heli ? "H" : major ? "M" : "S", cc, id: "osm:" + id, nm: nmA, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xa });
+      continue;
+    }
     if (t.waterway === "dam") { k = "dam"; ty = "D"; x = { height_m: num(t.height), purpose: clip(t.purpose || t["dam:purpose"], 40), river: clip(t["waterway:name"] || "", 40), built: clip(t.start_date, 12) }; }
     else if (t.amenity === "ferry_terminal") { k = "port"; ty = "F"; x = { ferry: 1 }; }
     else { k = "port"; ty = "O"; }
@@ -264,6 +296,7 @@ for (const f of existsSync(OUT) ? readdirSync(OUT) : []) {
 const SRC = {
   oa: { name: "OurAirports", lic: "Public domain", link: "https://ourairports.com/data/" },
   wpi: { name: "NGA World Port Index (Pub. 150)", lic: "Public domain (U.S. Government)", link: "https://msi.nga.mil/Publications/WPI" },
+  locode: { name: "UN/LOCODE (UNECE)", lic: "Free reuse (UNECE)", link: "https://unece.org/trade/uncefact/unlocode" },
   osm: { name: "OpenStreetMap", lic: "ODbL", link: "https://www.openstreetmap.org/copyright" },
   wd: { name: "Wikidata", lic: "CC0", link: "https://www.wikidata.org/wiki/Q12323" },
   tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
@@ -282,22 +315,52 @@ async function run(s, f) {
 }
 await run("oa", ourairports);
 await run("wpi", wpi);
+await run("locode", locode);
 await run("osm", osm);
 await run("wd", wikidams);
 await run("tg", cables);
 
-/* OpenStreetMap ports already in the World Port Index; Wikidata dams already in OpenStreetMap */
-const nearWpi = grid(got.wpi.items), nearDam = grid(got.osm.items.filter((i) => i.k === "dam"));
-const osmKept = got.osm.items.filter((i) => !(i.k === "port" && i.t === "O" && nearWpi(i.la, i.lo, 3000)));
-const wdKept = got.wd.items.filter((i) => !nearDam(i.la, i.lo, 1000));
-log("osm ports dropped as WPI duplicates", got.osm.items.length - osmKept.length, "; wikidata dams kept", wdKept.length, "of", got.wd.items.length);
+/* one site, several sources: the first list to have it leads; a later source's record within reach is folded in as "also listed
+   by" (its link kept, its extra details added where the lead has none); anything new is added */
+const REACH = { af: 1500, port: 3000, dam: 1000 };
+function merge(lists, k, reach) {
+  const lead = [], g = new Map(), key = (la, lo) => Math.floor(la / 0.05) + ":" + Math.floor(lo / 0.05);
+  const find = (i, m) => { const a = Math.floor(i.la / 0.05), b = Math.floor(i.lo / 0.05); let best = null, bd = m;
+    for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) {
+      if (o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
+      const d = dist(i.la, i.lo, o.la, o.lo); if (d < bd) { bd = d; best = o; } }
+    return best; };
+  let folded = 0;
+  for (const list of lists) for (const i of list) {
+    if (i.k !== k) continue;
+    const m = i.s === "locode" ? 5000 : i.t === "H" ? 300 : reach, o = find(i, m);
+    if (o && o.s !== i.s) {
+      (o.also = o.also || []).push({ s: i.s, u: i.u, ...(i.nm && i.nm !== o.nm ? { nm: i.nm } : {}) });
+      for (const [kk, v] of Object.entries(i.x || {})) if (o.x[kk] == null && kk !== "approx") o.x[kk] = v;
+      if (!o.nm && i.nm) o.nm = i.nm;
+      folded++; continue;
+    }
+    const c = { ...i, x: { ...(i.x || {}) } }; lead.push(c);
+    const kk = key(c.la, c.lo); (g.get(kk) || g.set(kk, []).get(kk)).push(c);
+  }
+  log("merge", k, "sites", lead.length, "folded duplicates", folded);
+  return lead;
+}
+const merged = [
+  ...merge([got.oa.items, got.osm.items], "af", REACH.af),
+  ...merge([got.wpi.items, got.osm.items, got.locode.items], "port", REACH.port),
+  ...merge([got.osm.items, got.wd.items], "dam", REACH.dam),
+];
+/* a private OpenStreetMap-only strip is left out */
+const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));
+for (const i of kept) if (i.x) delete i.x.private;
 
 const by = {};
 const slot = (cc) => (by[cc] = by[cc] || { items: [], lines: [] });
-for (const i of [...got.oa.items, ...got.wpi.items, ...osmKept, ...wdKept, ...got.tg.items]) {
+for (const i of [...kept, ...got.tg.items]) {
   if (!i.cc || !IDS.has(i.cc)) continue;
   const { cc, ...rest } = i;
-  const it = { ...rest, fp: fp(rest.s, rest.id, rest.la, rest.lo, rest.nm, JSON.stringify(rest.x || {})) };
+  const it = { ...rest, fp: fp(rest.s, rest.id, rest.la, rest.lo, rest.nm, JSON.stringify(rest.x || {}), JSON.stringify(rest.also || [])) };
   slot(cc).items.push(it);
   if (cc === "jp" && inOki(rest.la, rest.lo)) slot("oki").items.push(it);
 }
