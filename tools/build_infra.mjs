@@ -8,7 +8,7 @@
 //   - NGA World Port Index, Pub. 150 (U.S. Government, public domain): seaports with harbour size and type.
 //   - UN/LOCODE (UNECE, via the datasets/un-locode mirror; free reuse): locations UNECE codes as seaports (function 1), placed to
 //     the arc-minute, so they only add a port no other source has within 5 km.
-//   - OpenStreetMap (ODbL): airfields and heliports (aeroway=aerodrome/heliport), ports (landuse/industrial=port), ferry terminals
+//   - OpenStreetMap (ODbL, read through Geofabrik's Postpass API): airfields and heliports (aeroway=aerodrome/heliport), ports (landuse/industrial=port), ferry terminals
 //     and named dams.
 //   - Wikidata (CC0): dams with height and reservoir, where OpenStreetMap has none within 1 km.
 //   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
@@ -28,7 +28,6 @@ import { ccsAt, ccFromA2, ccFromName, COUNTRIES } from "./geo_cc.mjs";
 const OUT = process.env.INFRA_OUT || "data/infra", DEBUG = !!process.env.INFRA_DEBUG;
 const ONLY = process.env.INFRA_ONLY ? new Set(process.env.INFRA_ONLY.split(",")) : null;
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP infrastructure snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass-api.de/api/interpreter"];
 const WDQS = "https://query.wikidata.org/sparql";
 const OA = "https://davidmegginson.github.io/ourairports-data/";
 const LOCODE = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv";
@@ -180,51 +179,56 @@ async function locode() {
 }
 
 /* ---------- OpenStreetMap: airfields, ports, ferry terminals, dams ---------- */
-async function overpass(q) {
+let osmCover = null;
+const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
+/* OpenStreetMap is read through Postpass (Geofabrik's keyless SQL API over a live OpenStreetMap database; public Overpass servers
+   time out or refuse GitHub's runners on whole-world tag searches). The world is read in tiles (30 degrees of longitude by three
+   latitude bands, one query per kind of site), each cached in data/infra/_osm/ with the time it was read. A run reads the tiles
+   never read first, then the oldest, until its time budget (INFRA_OSM_MIN minutes, default 60) is spent; a tile that fails keeps
+   its last copy. So a busy server never empties the map. Lines (dams are usually mapped as lines) are placed at their midpoint. */
+const POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator)$/;
+async function postpass(sql) {
   let err;
-  for (let round = 0; round < 1; round++) for (const u of OVERPASS) {
+  for (let k = 0; k < 2; k++) {
     try {
-      const j = JSON.parse(await get(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "content-type": "application/x-www-form-urlencoded" } }, 330000));
-      if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error("remark: " + j.remark.slice(0, 120));
-      return j.elements || [];
-    } catch (e) { err = e; log("  overpass", u.split("/")[2], e.message); await sleep(10000 + round * 30000); }
+      const j = JSON.parse(await get(POSTPASS, { method: "POST", body: "data=" + encodeURIComponent(sql), headers: { "content-type": "application/x-www-form-urlencoded" } }, 600000));
+      if (!j.features) throw new Error("no features");
+      return j.features;
+    } catch (e) { err = e; log("  postpass", e.message.slice(0, 120)); await sleep(20000); }
   }
   throw err;
 }
-let osmCover = null;
-const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
-/* The world is read in tiles (15 degrees of longitude by three latitude bands, one query per kind of site), each cached in
-   data/infra/_osm/ with the time it was read. A run reads the tiles never read first, then the oldest, until its time budget
-   (INFRA_OSM_MIN minutes, default 55) is spent; a tile that fails keeps its last copy. So the whole world fills in over a few
-   runs and then refreshes in turn, and a busy Overpass server never empties the map. */
-const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator)$/;
 async function osm() {
-  const Q = { af: `nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];`, port: `nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];`, dam: `nwr["waterway"="dam"]["name"];` };
+  const W = { af: `tags->>'aeroway' IN ('aerodrome','heliport')`, port: `(tags->>'landuse' = 'port' OR tags->>'industrial' = 'port' OR (tags->>'amenity' = 'ferry_terminal' AND tags ? 'name'))`,
+    dam: `tags->>'waterway' = 'dam' AND tags ? 'name'` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
-  for (const part of Object.keys(Q)) for (let w = -180; w < 180; w += 15) for (const [s0, n0] of LAT) {
-    const f = join(OSM_DIR, part + "_" + w + "_" + s0 + ".json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
+  for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
+    const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
     tiles.push({ part, w, s0, n0, f, old, at: old ? Date.parse(old.at) : 0 });
   }
-  const budget = Date.now() + (+process.env.INFRA_OSM_MIN || 55) * 60000;
+  const budget = Date.now() + (+process.env.INFRA_OSM_MIN || 60) * 60000;
   let fresh = 0, failed = 0;
   for (const t of tiles.slice().sort((a, b) => a.at - b.at)) {
     if (Date.now() > budget) break;
     if (t.at && Date.now() - t.at < 3 * 864e5) continue;   // read in the last three days
+    const env = `geom && ST_MakeEnvelope(${t.w}, ${t.s0}, ${t.w + 30}, ${t.n0}, 4326)`;
+    const sql = `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${W[t.part]} AND ${env}` +
+      ` UNION ALL SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom FROM postpass_line WHERE ${W[t.part]} AND ${env}`;
     try {
-      const e = await overpass(`[out:json][timeout:240][bbox:${[t.s0, t.w, t.n0, t.w + 15].join(",")}];(${Q[t.part]});out center tags;`);
-      const els = [];
-      for (const x of e) {
-        const c = x.center || (x.lat != null ? x : null); if (!c) continue;
-        const tg = x.tags || {};
+      const t0 = Date.now(), fs = await postpass(sql), els = [];
+      for (const f of fs) {
+        const p = f.properties || {}, c = (f.geometry || {}).coordinates; if (!c) continue;
+        let tg = p.tags || {}; if (typeof tg === "string") try { tg = JSON.parse(tg); } catch (e) { tg = {}; }
         if (Object.keys(tg).some((k) => DEAD.test(k)) || tg.disused === "yes" || tg.abandoned === "yes") continue;
-        els.push([x.type[0] + x.id, r4(c.lat), r4(c.lon), Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]))]);
+        els.push([String(p.osm_type || "n")[0].toLowerCase() + p.osm_id, r4(c[1]), r4(c[0]), Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]))]);
       }
       t.old = { at: new Date().toISOString(), els }; writeFileSync(t.f, JSON.stringify(t.old)); fresh++;
-      log("  osm tile", t.part, t.w, t.s0, els.length);
+      log("  osm tile", t.part, t.w, t.s0, els.length, Math.round((Date.now() - t0) / 1000) + " s");
     } catch (e) { failed++; log("  osm tile FAILED", t.part, t.w, t.s0, e.message); }
-    await sleep(2000);
   }
   const have = tiles.filter((t) => t.old).length;
   log("  osm tiles read this run", fresh, "failed", failed, "; tiles held", have, "of", tiles.length);
