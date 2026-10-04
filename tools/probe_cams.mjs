@@ -403,7 +403,27 @@ async function round14() {
   ]) { const r = await get(u, 30000); line("ArcGIS " + u.slice(0, 120), r); if (r.s === 200) sample(r, 900); }
 }
 if (only === "r13") await round13();
+/* ---------- round 15: AlertWest API base discovery + keyless public image/list test; CA geoportal ALERTCalifornia FeatureServer ---------- */
+async function round15() {
+  // 1) pull the embedded OpenAPI out of the docusaurus docs page: servers/base host + getCameraDataByLoc params
+  const d = await get("https://docs.alertwest.org/docs/OpenAPI/Reference/get-latest-data-for-all-public-cameras/", 30000);
+  const t = d.b.toString("utf8"); line("AWdoc", d);
+  for (const re of [/"servers"\s*:\s*\[[^\]]*\]/i, /"url"\s*:\s*"https?:\/\/[^"]+"/gi, /https?:\/\/[a-z0-9.-]*alertwest[^\s"'<>]*/gi, /getCameraDataByLoc[^<]{0,400}/i, /(api[_-]?key|apikey|authorization|bearer|x-api-key)/gi]) {
+    const m = t.match(re); if (m) console.log("   " + (Array.isArray(m) ? [...new Set(m)].slice(0, 8).join("  ") : m[0]).replace(/\s+/g, " ").slice(0, 500));
+  }
+  // 2) try the documented sample image + list endpoint against candidate hosts
+  const sample = "/data/img/12224/2025/04/01/Ridge_Tahoe_NV_1743530801_6917.jpg";
+  for (const h of ["https://api.alertwest.org", "https://www.alertwest.org", "https://alertwest.org", "https://data.alertwest.org", "https://cdn.alertwest.org", "https://media.alertwest.org", "https://app.alertwest.org"]) {
+    const r = await get(h + sample, 20000); line("AWimg " + h, r);
+    const l = await get(h + "/api/getCameraDataByLoc", 20000); line("AWlist " + h + "/api/getCameraDataByLoc", l); if (l.s === 200) sample2(l);
+  }
+  // 3) CA geoportal: resolve the ALERTCalifornia Fire Cameras dataset -> FeatureServer URL (locations, keyless)
+  const q = await get("https://gis.data.ca.gov/api/search/v1/collections/dataset/items?q=alertcalifornia+fire+cameras&limit=5", 30000); line("CAportal", q);
+  if (q.s === 200) { const t2 = q.b.toString("utf8"); console.log("   servers: " + [...new Set(t2.match(/https?:\/\/[^\s"']*(FeatureServer|MapServer)[^\s"']*/gi) || [])].slice(0, 6).join(" ")); console.log("   titles: " + [...new Set(t2.match(/"title"\s*:\s*"[^"]{0,60}"/g) || [])].slice(0, 8).join(" ")); }
+}
+function sample2(r, max = 500) { try { const j = JSON.parse(r.b.toString("utf8")); const a = Array.isArray(j) ? j : j.data || j.cameras || j.features || j.results || Object.values(j).find(Array.isArray); if (Array.isArray(a)) console.log("   array " + a.length + "; first: " + JSON.stringify(a[0]).slice(0, max)); else console.log("   keys: " + Object.keys(j).slice(0, 12).join(",")); } catch { console.log("   text: " + r.b.toString("utf8").slice(0, 200).replace(/\s+/g, " ")); } }
 if (only === "r14") await round14();
+if (only === "r15") await round15();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
