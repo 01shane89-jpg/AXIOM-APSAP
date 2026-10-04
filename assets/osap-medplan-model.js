@@ -10,7 +10,7 @@
    is UNKNOWN until a planner records it. */
 (function (root) {
   "use strict";
-  var SCHEMA = "osap-medplan/3";
+  var SCHEMA = "osap-medplan/4";
   var STAGE = { primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
   /* the capabilities whose absence a planner must close before the plan is relied on (Build Plan v2, CONOP "critical gaps") */
   var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
@@ -31,10 +31,35 @@
       return hit >= 2 && hit >= Math.ceil(Math.min(a.length, b.length) * 0.6);
     });
   }
-  function point(text, ll, role) { return { role: role, text: str(text), lat: ll ? ll[0] : null, lon: ll ? ll[1] : null, mgrs: ll && ll.mgrs || "", status: blank(text) ? "NOT_SET" : "PLANNER_ENTERED", verified_at: null }; }
+  /* a CCP, AXP or HLZ: what the planner typed, its grid, and the planner's own check (status, when, capacity, notes) */
+  var SITE_STATUS = { usable: "USABLE", limited: "LIMITED", unusable: "UNUSABLE" };
+  function point(text, ll, role, v, k) {
+    v = v || {}; var st = !blank(text) && SITE_STATUS[v[k + "_st"]];
+    return { role: role, text: str(text), lat: ll ? ll[0] : null, lon: ll ? ll[1] : null, mgrs: ll && ll.mgrs || "", status: blank(text) ? "NOT_SET" : st || "PLANNER_ENTERED",
+      verified_at: st ? v[k + "_at"] || null : null, capacity: blank(text) ? "" : str(v[k + "_cap"]).slice(0, 60), notes: blank(text) ? "" : str(v[k + "_note"]).slice(0, 200) };
+  }
   function fac(f) {
     return { id: f.id, name: f.name, name_local: f.name_local || "", aliases: f.aliases || [], lat: f.lat, lon: f.lon, mgrs: f.mgrs || "", caps: f.caps || {},
       caps_now: f.caps_now || {}, intel: f.intel || null, designation: f.designation || "", source: f.source || "" };
+  }
+
+  function mins(sec) { var m = Math.round((+sec || 0) / 60); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + ("0" + m % 60).slice(-2) + " min"; }
+  /* the road lines to each hospital: P is the plan's own route (its time drives the plan); A and C, and the hazards along every
+     line, come from the Route tab's alternates (phase 3). router_time_s is the router's time for that line, so A and C compare
+     with P like for like. */
+  function groundRoutes(I) {
+    var pac = {}, out = [];
+    (I.pac || []).forEach(function (x) { pac[x.facility_id] = x; });
+    (I.routes || []).forEach(function (r) {
+      var L = (pac[r.facility_id] || {}).lines || [], p = L.filter(function (l) { return l.id === "P"; })[0];
+      out.push({ facility_id: r.facility_id, option: "P", time_s: r.s, distance_m: r.m, source: r.src || "", basis: r.s == null ? "not routed" : "road router",
+        router_time_s: p ? p.s : null, hazards: p ? p.hazards : null });
+      L.forEach(function (l) {
+        if (l.id === "P") return;
+        out.push({ facility_id: r.facility_id, option: l.id, time_s: l.s, distance_m: l.m, source: l.src || "", how: l.how || "", basis: "road router", router_time_s: l.s, hazards: l.hazards });
+      });
+    });
+    return out;
   }
 
   /* input: see planInput() in assets/osap-medplan.js */
@@ -83,11 +108,12 @@
       stabilization_facilities: stab, definitive_facilities: defi, alternates: alts,
       facilities: F,
       evacuation_assets: air,
-      ground_routes: (I.routes || []).map(function (r) { return { facility_id: r.facility_id, option: "P", time_s: r.s, distance_m: r.m, source: r.src || "", basis: r.s == null ? "not routed" : "road router" }; }),
+      ground_routes: groundRoutes(I),
+      ground_alternates: (I.pac || []).map(function (x) { return { facility_id: x.facility_id, state: x.state, error: x.err || "", lines: (x.lines || []).length, hazard_km: x.hazard_km, hazard_days: x.hazard_days }; }),
       air_routes: (I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; }),
-      ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate")],
-      axp: [point(v.axp, I.ll && I.ll.axp, "primary")],
-      hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate")],
+      ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary", v, "ccp1"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate", v, "ccp2")],
+      axp: [point(v.axp, I.ll && I.ll.axp, "primary", v, "axp")],
+      hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary", v, "hlz1"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate", v, "hlz2")],
       communications: { medevac: [str(v.freq1), str(v.freq2)].filter(function (x) { return !blank(x); }) },
       receiving: { primary: str(v.recv1), alternate: str(v.recv2) },
       /* the planner's checks of the plan's hospitals (phase 1), oldest first */
@@ -118,7 +144,26 @@
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];
     add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? "Road router" : def ? "No road route to the definitive facility yet." : "No destination to route to.");
-    add("route.alternate", "warning", "Alternate ground route", "Not built yet (Build Plan v2 phase 3).");
+    /* phase 3: the alternate and contingency lines to the definitive facility, and the hazards OSAP holds along the primary */
+    var ga = def && (p.ground_alternates || []).filter(function (x) { return x.facility_id === def.facility_id; })[0];
+    var lines = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option !== "P"; }) : [];
+    var pl = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option === "P"; })[0], pt = pl && pl.router_time_s;
+    function plus(r) { return (pt != null && r.time_s != null ? "+" + mins(Math.max(0, r.time_s - pt)) + " on the primary, " : "") + mins(r.time_s) + " drive"; }
+    if (!def) add("route.alternate", "warning", "Alternate ground route", "No destination to route to.");
+    else if (!ga) add("route.alternate", "warning", "Alternate ground route", "Not looked for.");
+    else if (ga.state === "pending") add("route.alternate", "warning", "Alternate ground route", "Still looking.");
+    else if (ga.state === "failed") add("route.alternate", "warning", "Alternate ground route", "None found (" + ga.error + "); plan one by hand.");
+    else if (!lines.length) add("route.alternate", "warning", "Alternate ground route", "The routers gave no distinct alternate line; plan one by hand.");
+    else add("route.alternate", "ok", "Alternate ground route", lines.map(function (r) { return r.option + " " + plus(r); }).join(", ") + (lines.length < 2 ? "; no contingency line" : "") + ". The planner decides which line to drive.");
+    var hz = pl && pl.hazards;
+    if (!def || !ga || ga.state !== "done" || !pl) { /* nothing to check the hazards on yet: the items above say why */ }
+    else if (hz == null) add("route.hazards", "warning", "Hazards along the primary route", "Could not be checked on this device.");
+    else if (hz.length) {
+      var calm = lines.filter(function (r) { return r.hazards && r.hazards.length < hz.length; })[0];
+      add("route.hazards", "warning", "Hazards along the primary route", hz.length + " reported within " + ga.hazard_km + " km in the last " + ga.hazard_days + " days, first: " + hz[0].kind + " at " + hz[0].at_km + " km" +
+        (calm ? "; line " + calm.option + " has " + calm.hazards.length : "") + ". Check against current reporting.");
+    }
+    else add("route.hazards", "ok", "Hazards along the primary route", "None held within " + ga.hazard_km + " km in the last " + ga.hazard_days + " days (not a clearance).");
     /* what the planner typed as the receiving facility must name the hospital the plan sends the casualty to */
     var rec = p.receiving.primary;
     if (!rec.trim()) add("receiving.match", "warning", "Receiving facility (unit details)", def ? "Not filled in; the plan's definitive care is " + def.name + "." : "Not filled in.");
@@ -140,9 +185,18 @@
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; });
     var planned = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "PLANNED"; });
     add("medevac.provider", conf.length ? "ok" : "warning", "Air MEDEVAC provider", conf.length ? conf[0].name : planned.length ? planned[0].name + " (entered, not confirmed)" : "None confirmed.");
-    add("ccp", p.ccp[0].status !== "NOT_SET" ? "ok" : "warning", "Casualty collection point (CCP)", p.ccp[0].text || "Not set.");
-    add("hlz", p.hlz[0].status !== "NOT_SET" ? "ok" : "warning", "Helicopter landing zone (HLZ)", p.hlz[0].text || "Not set.");
-    add("hlz.alternate", p.hlz[1].status !== "NOT_SET" ? "ok" : "warning", "Alternate HLZ", p.hlz[1].text || "Not set.");
+    /* phase 3: a CCP, AXP or HLZ is a map object only with a grid; a name alone cannot be drawn, routed or flown to */
+    function site(code, label, x) {
+      if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");
+      else if (x.lat == null) add(code, "warning", label, x.text + ": no grid, so it is not on the map. Give an MGRS grid or lat, lon.");
+      else if (x.status === "UNUSABLE") add(code, "warning", label, x.text + ": checked not usable" + (x.verified_at ? " (" + x.verified_at.slice(0, 16).replace("T", " ") + "Z)" : "") + (x.notes ? ": " + x.notes : "") + ". Choose another.");
+      else if (x.status === "LIMITED") add(code, "warning", label, x.text + ": usable with limits" + (x.notes ? ": " + x.notes : "") + ".");
+      else add(code, "ok", label, x.text + (x.status === "USABLE" && x.verified_at ? " (checked usable " + x.verified_at.slice(0, 16).replace("T", " ") + "Z)" : ""));
+    }
+    site("ccp", "Casualty collection point (CCP)", p.ccp[0]);
+    site("axp", "Ambulance exchange point (AXP)", p.axp[0]);
+    site("hlz", "Helicopter landing zone (HLZ)", p.hlz[0]);
+    site("hlz.alternate", "Alternate HLZ", p.hlz[1]);
     var cv = p.evacuation_assets.filter(function (a) { return a.kind === "ground"; })[0];
     add("casevac", cv ? "ok" : "warning", "CASEVAC platform", cv ? cv.name : "Not set.");
     add("comms", p.communications.medevac.length ? "ok" : "warning", "MEDEVAC communications", p.communications.medevac[0] || "No frequency or call sign set.");

@@ -12,9 +12,11 @@
      and an analytical map card (road, surface, lanes, bridge ahead, fuel and hospital distances). It never stops at "no imagery".
    - Pictures show how a place looked when they were taken. What OSAP currently reports there (its feeds, as the Route tab lists
      them) is shown apart, with its own source and date, and the two are never merged into one statement.
-   - Drive: "Drive the route from here" plays the street pictures along the line in order inside OSAP, as if driving it, with
-     the map's car marker, the next turn, the next critical point and what OSAP reports ahead kept in step, satellite where no
-     street picture exists, and a 360° picture turned to look along the road (drag to look round). Google Street View cannot be
+   - Drive: "Drive the route from here" drives the line inside OSAP in 3D: a camera behind the car at road level moves along
+     the route at a steady speed over satellite pictures and the terrain model, turning smoothly round bends, with each street
+     picture near the car shown in a corner with its date and age. "Photos only" plays the street pictures one by one instead
+     (satellite where none exists, a 360° picture turned to look along the road). Either way the map's car marker, the next
+     turn, the next critical point and what OSAP reports ahead are kept in step. Google Street View cannot be
      shown inside OSAP without a Google key (Mapillary likewise needs a token, checked from GitHub Actions), so it is not used.
    - Nothing is kept: picture metadata lives in memory for this visit only (cache policy per provider), no picture is stored.
      Requests go to the providers with the point's position only. */
@@ -212,7 +214,7 @@
   var P0 = lsGet(PKEY, {}) || {};
   var S = { snap: null, R: null, pts: [], cur: 0, filter: "all", dens: /^(sparse|normal|dense)$/.test(P0.dens) ? P0.dens : "normal", tab: null, feats: [], featErr: "", featBusy: false,
     tok: 0, queue: [], running: 0, el: null, lyr: null, cache: {}, follow: P0.follow !== false, show: { cor: true, pts: true, feat: true }, notes: [] };
-  function prefs() { lsSet(PKEY, { dens: S.dens, follow: S.follow, dspd: P0.dspd }); }
+  function prefs() { lsSet(PKEY, { dens: S.dens, follow: S.follow, dspd: P0.dspd, dspd3: P0.dspd3, dmode: P0.dmode }); }
   function dist(m) { return G.fmtDist(m, (S.snap && S.snap.unit) || "km"); }
   function kmTxt(m) { return (S.snap && S.snap.unit && S.snap.unit !== "km" ? dist(m) : (m / 1000).toFixed(m < 10000 ? 2 : 1) + " km"); }
 
@@ -437,7 +439,7 @@
     var w = D.createElement("div"); w.id = "rtpv"; w.className = "osplit"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", "Route preview");
     w.innerHTML = '<div class="rtpv-box"><div class="chead"><h2>Route preview <span class="rtpv-name"></span></h2><button type="button" class="x" data-pv="close" aria-label="Close the route preview">Close</button></div>' +
       '<p class="rtpv-prog obs" role="status"></p>' +
-      '<div class="rtbtns rtpv-drv"><button type="button" class="pri" data-pv="drive" title="Play the street pictures along the route in order, from this point, as if driving it">▶ Drive the route from here</button></div>' +
+      '<div class="rtbtns rtpv-drv"><button type="button" class="pri" data-pv="drive" title="Drive the route in 3D from this point, with the street pictures near the car in a corner">▶ Drive the route from here</button></div>' +
       '<div class="rtpv-nav"><button type="button" data-pv="prev" aria-label="Previous point">◀ Previous</button><span class="rtpv-pos"></span><button type="button" data-pv="next" aria-label="Next point">Next ▶</button></div>' +
       '<div class="rtpv-tools"><label>Show <select data-pvs="filter">' + FILTERS.map(function (f) { return '<option value="' + f[0] + '">' + E(f[1]) + "</option>"; }).join("") + "</select></label>" +
       '<form class="rtpv-jump"><label>Jump to <input type="number" min="0" step="0.1" inputmode="decimal" aria-label="Jump to distance along the route"> km</label><button type="submit">Go</button></form></div>' +
@@ -463,8 +465,8 @@
     if (S.drv && S.drv.on) {
       var d = S.drv;
       if (e.key === " " && !(t && /^(BUTTON|A)$/.test(t.tagName))) { e.preventDefault(); d.el.querySelector('[data-dv="play"]').click(); }
-      else if (e.key === "ArrowRight") { e.preventDefault(); d.playing = false; clearTimeout(d.timer); drvStep(1, 0); }
-      else if (e.key === "ArrowLeft") { e.preventDefault(); d.playing = false; clearTimeout(d.timer); drvStep(-1, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); d.el.querySelector('[data-dv="fwd"]').click(); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); d.el.querySelector('[data-dv="back"]').click(); }
       else if (e.key === "Escape") drvStop();
       return;
     }
@@ -829,7 +831,8 @@
     var tot = S.R.cum[S.R.cum.length - 1], n = Math.max(1, Math.ceil(tot / DCH)), ch = [];
     for (var k = 0; k < n; k++) ch.push({ k: k, a: k * DCH, b: Math.min(tot, (k + 1) * DCH), st: "new", fr: [], note: "" });
     var steps = (S.R.steps || []).map(function (s) { var pj = s.at ? project(S.R, s.at) : null; return pj && pj.d < 300 ? { m: pj.m, text: clean(s.text, 90) } : null; }).filter(Boolean);
-    S.drv = { on: false, ch: ch, tot: tot, m: 0, f: null, playing: false, wait: false, spd: DSPEEDS.some(function (x) { return x[0] === P0.dspd; }) ? P0.dspd : DSPD0, yaw: 0, pip: false, tok: 0, tok2: 0, busy: 0, timer: 0, pre: [], steps: steps, el: null, mk: null, fail: {} };
+    S.drv = { on: false, ch: ch, tot: tot, m: 0, f: null, playing: false, wait: false, spd: DSPEEDS.some(function (x) { return x[0] === P0.dspd; }) ? P0.dspd : DSPD0, yaw: 0, pip: false, tok: 0, tok2: 0, busy: 0, timer: 0, pre: [], steps: steps, el: null, mk: null, fail: {},
+      mode: P0.dmode === "photo" ? "photo" : "3d", spd3: V3.some(function (x) { return x[0] === P0.dspd3; }) ? P0.dspd3 : V30, hd: 0, inTok: 0, inF: null };
   }
   function chunkAt(m) { var d = S.drv; return d.ch[Math.max(0, Math.min(d.ch.length - 1, Math.floor(m / DCH)))]; }
   /* the coordinate index range of a piece of route, a little wider than the piece */
@@ -992,8 +995,9 @@
   }
   function drvHud() {
     var d = S.drv; if (!d || !d.el) return;
-    var f = d.f, top = d.el.querySelector(".rtdv-tag"), c = f && f.kind === "street" ? f.c : null, pr = c ? PROVIDERS[c.prov] : null, a = c ? ageOf(c.date) : null;
-    if (!f) top.innerHTML = '<span class="rtdv-badge unk">Loading street pictures for the road ahead…</span>';
+    var m3 = d.mode === "3d", f = m3 ? null : d.f, top = d.el.querySelector(".rtdv-tag"), c = m3 ? (d.inF && d.inF.c) : f && f.kind === "street" ? f.c : null, pr = c ? PROVIDERS[c.prov] : null, a = c ? ageOf(c.date) : null;
+    if (m3) top.innerHTML = d3Tag();
+    else if (!f) top.innerHTML = '<span class="rtdv-badge unk">Loading street pictures for the road ahead…</span>';
     else if (c) top.innerHTML = '<span class="rtdv-badge ' + a.cls + '">' + E(pr.name) + (c.pano ? " · 360°" : "") + " · captured " + E(dstr(c.date)) + (c.date ? " · " + E(ageTxt(c.date)) + " old" : "") + "</span>" +
       '<span class="rtdv-note">' + (a.k === "stale" ? "STALE, over 3 years old. " : "") + "Visual reference: how this looked then, not now</span>";
     else { var s = f.sat || {}, a2 = s.date ? ageOf(s.date) : null, gp = drvGap(f.m);
@@ -1010,8 +1014,9 @@
     d.el.querySelector(".rtdv-km").textContent = kmTxt(d.m) + " / " + kmTxt(d.tot) + (d.wait ? " · loading ahead…" : d.endMsg ? " · end of the route" : "");
     var rg = d.el.querySelector(".rtdv-rg"); if (!d.drag) rg.value = Math.round(d.m);
     var pb = d.el.querySelector('[data-dv="play"]'); pb.textContent = d.playing ? "❚❚ Pause" : "▶ Drive"; pb.setAttribute("aria-pressed", d.playing);
-    d.el.querySelector('[data-dv="look"]').hidden = !(c && c.pano);
-    d.el.querySelector(".rtdv-attr").innerHTML = c ? E(pr.attribution(c)) + (safeUrl(c.page) ? ' · <a href="' + E(c.page) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") : f ? E(PROVIDERS.satellite.attribution()) : "";
+    d.el.querySelector('[data-dv="look"]').hidden = m3 || !(c && c.pano);
+    d.el.querySelector(".rtdv-attr").innerHTML = (c ? E(pr.attribution(c)) + (safeUrl(c.page) ? ' · <a href="' + E(c.page) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") : "") +
+      (m3 ? (c ? " · " : "") + E(PROVIDERS.satellite.attribution()) + " · Terrain: AWS Terrain Tiles (Mapzen terrarium)" : !c && f ? E(PROVIDERS.satellite.attribution()) : "");
     drvStrip();
   }
   /* the whole route as a small line: green where street pictures were found, red where none, grey not checked yet */
@@ -1032,7 +1037,7 @@
   }
   function drvMarker() {
     var d = S.drv; if (!d || !d.on || !S.curL) return;
-    var p = at(S.R, d.m).p, hd = (d.f ? d.f.rh : heading(S.R, d.m)) + d.yaw;
+    var p = at(S.R, d.m).p, hd = d.mode === "3d" ? d.hd : (d.f ? d.f.rh : heading(S.R, d.m)) + d.yaw;
     if (!d.mk || !S.curL.hasLayer(d.mk)) {
       S.curL.clearLayers();
       d.mk = L.marker(p, { pane: "rtpvtop", keyboard: false, interactive: false, icon: L.divIcon({ className: "rtpv-cur rtdv-car", html: "<span></span>", iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(S.curL);
@@ -1056,18 +1061,19 @@
     if (d.pip) { var pw = Math.min(Wd - 16, Math.max(260, Wd * 0.42)), ph = Math.min(Ht - 16, pw * 0.75 + 70); st.left = (L0 + 8) + "px"; st.top = (T0 + Ht - ph - 8) + "px"; st.width = pw + "px"; st.height = ph + "px"; }
     else { st.left = L0 + "px"; st.top = T0 + "px"; st.width = Wd + "px"; st.height = Ht + "px"; }
     d.el.classList.toggle("pip", !!d.pip); d.el.classList.toggle("cover", !!cover); d.el.classList.toggle("tall", !d.pip && Ht > Wd * 1.15);
-    drvAim();
+    if (d.mode === "3d") d3Pad(); else drvAim();
   }
   function drvUi() {
     if (S.dvEl) { S.drv.el = S.dvEl; return; }
     var w = D.createElement("div"); w.id = "rtdv"; w.setAttribute("role", "region"); w.setAttribute("aria-label", "Drive the route");
-    w.innerHTML = '<div class="rtdv-pic"></div><div class="rtdv-tag" role="status"></div>' +
+    w.innerHTML = '<div class="rtdv-pic"></div><div class="rtdv-3d"></div><div class="rtdv-tag" role="status"></div>' +
+      '<div class="rtdv-ins" title="Street picture near the car: tap to enlarge"></div>' +
       '<div class="rtdv-tr"><button type="button" data-dv="pip" title="Show the map with the picture in a corner">Map</button><button type="button" data-dv="exit" aria-label="Stop driving">✕</button></div>' +
       '<svg class="rtdv-strip" aria-hidden="true"></svg><div class="rtdv-live" hidden></div>' +
       '<div class="rtdv-bot"><div class="rtdv-next"></div>' +
       '<div class="rtdv-ctl"><button type="button" data-dv="back" aria-label="Previous picture">◀</button><button type="button" data-dv="play" class="pri">▶ Drive</button><button type="button" data-dv="fwd" aria-label="Next picture">▶</button>' +
       '<label>Speed <select data-dvs="spd">' + DSPEEDS.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + "</option>"; }).join("") + "</select></label>" +
-      '<button type="button" data-dv="look" hidden title="Turn the view back to the road ahead">Look ahead</button><span class="rtdv-km"></span></div>' +
+      '<button type="button" data-dv="look" hidden title="Turn the view back to the road ahead">Look ahead</button><button type="button" data-dv="mode" title="Switch between the 3D drive and the street pictures one by one">Photos only</button><span class="rtdv-km"></span></div>' +
       '<input type="range" class="rtdv-rg" min="0" step="1" aria-label="Position along the route">' +
       '<div class="rtdv-attr"></div></div>';
     (D.body).appendChild(w); S.dvEl = S.drv.el = w;
@@ -1075,6 +1081,8 @@
     w.addEventListener("click", function (e) {
       var b = e.target.closest && e.target.closest("button"), d = S.drv; if (!b || !w.contains(b) || !d) return;
       var k = b.getAttribute("data-dv");
+      if (k === "mode") { drvMode(d.mode === "3d" ? "photo" : "3d"); return; }
+      if (d.mode === "3d" && /^(play|fwd|back)$/.test(k)) { d3Btn(k); return; }
       if (k === "exit") drvStop();
       else if (k === "play") { d.playing = !d.playing; if (d.playing) { if (d.endMsg || d.m >= d.tot - 1) { drvSeek(0); return; } drvStep(1); } else clearTimeout(d.timer); drvHud(); }
       else if (k === "fwd") { d.playing = false; clearTimeout(d.timer); drvStep(1, 0); }
@@ -1083,10 +1091,11 @@
       else if (k === "look") { d.yaw = 0; drvAim(); drvMarker(); }
       else if (k === "skip") { var gp = drvGap(d.m); clearTimeout(d.timer); drvSeek(gp.end != null ? gp.end : gp.known); }
     });
-    w.querySelector('[data-dvs="spd"]').addEventListener("change", function () { var d = S.drv; if (!d) return; d.spd = +this.value; P0.dspd = d.spd; prefs(); });
+    w.querySelector('[data-dvs="spd"]').addEventListener("change", function () { var d = S.drv; if (!d) return; if (d.mode === "3d") { d.spd3 = +this.value; P0.dspd3 = d.spd3; } else { d.spd = +this.value; P0.dspd = d.spd; } prefs(); });
+    w.querySelector(".rtdv-ins").addEventListener("click", function () { this.classList.toggle("big"); });
     var rg = w.querySelector(".rtdv-rg");
-    rg.addEventListener("input", function () { var d = S.drv; if (!d) return; d.drag = true; w.querySelector(".rtdv-km").textContent = kmTxt(+rg.value) + " / " + kmTxt(d.tot); });
-    rg.addEventListener("change", function () { var d = S.drv; if (!d) return; d.drag = false; clearTimeout(d.timer); drvSeek(+rg.value); });
+    rg.addEventListener("input", function () { var d = S.drv; if (!d) return; d.drag = true; if (d.mode === "3d") d.m = +rg.value; w.querySelector(".rtdv-km").textContent = kmTxt(+rg.value) + " / " + kmTxt(d.tot); });
+    rg.addEventListener("change", function () { var d = S.drv; if (!d) return; d.drag = false; if (d.mode === "3d") { d.m = +rg.value; d.endMsg = false; d3Tick(); return; } clearTimeout(d.timer); drvSeek(+rg.value); });
     w.querySelector(".rtdv-strip").addEventListener("click", function (e) {
       var sv = this, d = S.drv, r = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal; if (!d || !vb || !r.width) return;
       var s = Math.min(r.width / vb.width, r.height / vb.height), ox = (r.width - vb.width * s) / 2, oy = (r.height - vb.height * s) / 2;
@@ -1113,17 +1122,158 @@
     d.el.querySelector('[data-dvs="spd"]').value = d.spd;
     D.documentElement.classList.add("rtdv-on");
     drvPlace();
-    var p = S.pts[S.cur], m0 = p ? p.m : 0; d.playing = true; d.endMsg = false;
-    if (!d.f && online()) { var q = at(S.R, m0).p; drvLayer(satFig({ lat: q[0], lon: q[1], m: m0, hd: heading(S.R, m0) }, 640, 480, 220)); }
-    drvSeek(m0);
-    drvHud(); drawPts();
+    var p = S.pts[S.cur], m0 = p ? p.m : 0; d.playing = true; d.endMsg = false; d.m = m0; d.inF = null;
+    d.el.querySelector(".rtdv-ins").classList.remove("on", "big");
+    if (d.mode !== "3d" && !d.f && online()) { var q = at(S.R, m0).p; drvLayer(satFig({ lat: q[0], lon: q[1], m: m0, hd: heading(S.R, m0) }, 640, 480, 220)); }
+    drvMode(d.mode); /* 3D starts the camera loop; photos seek to m0 */
+    drvNeed(d.m); drvHud(); drawPts();
   }
   function drvStop(quiet) {
     var d = S.drv; if (!d || !d.on) return;
-    d.on = false; d.playing = false; d.tok++; clearTimeout(d.timer); d.pre = [];
+    d.on = false; d.playing = false; d.tok++; clearTimeout(d.timer); cancelAnimationFrame(d.raf); d.pre = [];
     if (d.el) d.el.hidden = true; d.mk = null;
     D.documentElement.classList.remove("rtdv-on");
     if (!quiet && S.el && !S.el.hidden) { drawPts(); var p = S.pts[S.cur]; if (p && S.follow) focusMap(p); }
+  }
+
+  /* ---------- Drive in 3D: a continuous drive along the route over satellite pictures and the terrain model ----------
+     The camera follows the line at road level, tilted towards the horizon, at a steady speed; its heading is eased round bends
+     so it never jumps. Street photos (the same KartaView and Panoramax pictures, chosen the same way) appear in a corner
+     whenever the car passes one, with their date and age; between them the 3D satellite view carries on, so the drive never
+     stops for a gap. Uses the 3D map's engine (MapLibre GL, assets/vendor) and its keyless sources: Esri World Imagery with
+     the World Transportation and Boundaries and Places labels (the 2D Hybrid map), and the AWS terrarium elevation tiles.
+     Without WebGL, or by choice, the photo-by-photo drive above is used instead. */
+  var GLLIB = "assets/vendor/maplibre-gl-5.24.0", ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/", DEM3 = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+  /* speed in 3D: 1× is 60 km/h, real driving; 5× gets through a 20 km route in four minutes */
+  var V3 = [[1, "1× (60 km/h)", 16.7], [2, "2×", 33.3], [5, "5×", 83.3], [10, "10×", 166.7], [20, "20×", 333.3]], V30 = 5;
+  var glP = null;
+  function glLib() {
+    if (W.maplibregl) return Promise.resolve(W.maplibregl);
+    if (glP) return glP;
+    glP = new Promise(function (ok, bad) {
+      var css = D.createElement("link"); css.rel = "stylesheet"; css.href = GLLIB + ".css"; D.head.appendChild(css);
+      var s = D.createElement("script"); s.src = GLLIB + ".js";
+      s.onload = function () { W.maplibregl ? ok(W.maplibregl) : bad(new Error("no 3D engine")); };
+      s.onerror = function () { glP = null; bad(new Error("the 3D engine did not download")); };
+      D.head.appendChild(s);
+    });
+    return glP;
+  }
+  function webgl() { try { var c = D.createElement("canvas"); return !!(W.WebGLRenderingContext && (c.getContext("webgl2") || c.getContext("webgl"))); } catch (e) { return false; } }
+  function v3() { var d = S.drv; return (V3.filter(function (x) { return x[0] === d.spd3; })[0] || V3[2])[2]; }
+  function d3Init() {
+    var d = S.drv; if (d.gl || d.glBusy) return; d.glBusy = true;
+    var box = d.el.querySelector(".rtdv-3d");
+    glLib().then(function (ml) {
+      d.glBusy = false;
+      if (S.drv !== d || !d.on || d.mode !== "3d") return;
+      var p = at(S.R, d.m).p, line = { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: S.R.coords.map(function (c) { return [G.wrap(c[1]), c[0]]; }) } };
+      var hz = { type: "FeatureCollection", features: (S.snap.haz || []).filter(function (h) { return h.p; }).map(function (h) { return { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [G.wrap(h.p[1]), h.p[0]] } }; }) };
+      var t = function (n) { return { type: "raster", tiles: [ESRI + n + "/MapServer/tile/{z}/{y}/{x}"], tileSize: 256, maxzoom: 19 }; };
+      var style = { version: 8, sources: { sat: t("World_Imagery"), rd: t("Reference/World_Transportation"), pl: t("Reference/World_Boundaries_and_Places"),
+          dem: { type: "raster-dem", tiles: [DEM3], tileSize: 256, maxzoom: 14, encoding: "terrarium" }, rt: { type: "geojson", data: line }, hz: { type: "geojson", data: hz } },
+        layers: [{ id: "bg", type: "background", paint: { "background-color": "#6b7064" } },
+          { id: "sat", type: "raster", source: "sat", paint: { "raster-fade-duration": 0 } }, { id: "rd", type: "raster", source: "rd", paint: { "raster-opacity": 0.75, "raster-fade-duration": 0 } },
+          { id: "pl", type: "raster", source: "pl", paint: { "raster-fade-duration": 0 } },
+          { id: "rtc", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#0b3d6b", "line-width": 9, "line-opacity": 0.55 } },
+          { id: "rtl", type: "line", source: "rt", layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": "#4dabf7", "line-width": 5, "line-opacity": 0.9 } },
+          { id: "hz", type: "circle", source: "hz", paint: { "circle-color": "#e03131", "circle-radius": 7, "circle-stroke-color": "#fff", "circle-stroke-width": 2, "circle-pitch-alignment": "map" } }],
+        terrain: { source: "dem", exaggeration: 1 },
+        sky: { "sky-color": "#5b93cf", "horizon-color": "#d6e4f0", "fog-color": "#dfe8ef", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.7, "fog-ground-blend": 0.5 } };
+      try {
+        d.gl = new ml.Map({ container: box, style: style, center: [G.wrap(p[1]), p[0]], zoom: 16.5, pitch: 72, bearing: heading(S.R, d.m), maxPitch: 80, maxZoom: 19,
+          interactive: false, attributionControl: false, pixelRatio: Math.min(W.devicePixelRatio || 1, 1.5), fadeDuration: 0 });
+      } catch (e) { d3Fail("3D needs WebGL, which this browser has turned off"); return; }
+      var car = D.createElement("div"); car.className = "rtdv-car3"; car.innerHTML = "<span></span>";
+      d.car = new ml.Marker({ element: car, rotationAlignment: "viewport", pitchAlignment: "viewport", opacityWhenCovered: "1" }).setLngLat([G.wrap(p[1]), p[0]]).addTo(d.gl);
+      d.demErr = 0; d.gl.on("error", function (e) { if (e && e.sourceId === "dem") d.demErr++; });
+      d.hd = heading(S.R, d.m); d.lt = 0; d3Pad();
+      cancelAnimationFrame(d.raf); d.raf = requestAnimationFrame(d3Loop);
+    }, function (e) { d.glBusy = false; d3Fail(e.message); });
+  }
+  function d3Fail(why) {
+    var d = S.drv; if (!d) return;
+    d.no3d = why; drvMode("photo"); drvHud();
+  }
+  /* keep the car in the lower part of the view, with the road ahead above it */
+  function d3Pad() { var d = S.drv; if (!d.gl) return; var h = d.el.querySelector(".rtdv-3d").clientHeight || 400; d.gl.resize(); d.gl.setPadding({ top: Math.round(h * 0.28), bottom: 0, left: 0, right: 0 }); }
+  function d3Loop(t) {
+    var d = S.drv; if (!d || !d.on || d.mode !== "3d" || !d.gl) return;
+    d.raf = requestAnimationFrame(d3Loop);
+    var dt = d.lt ? Math.min(0.1, (t - d.lt) / 1000) : 0; d.lt = t;
+    if (d.playing && !d.drag) {
+      d.m = Math.min(d.tot, d.m + v3() * dt);
+      if (d.m >= d.tot) { d.playing = false; d.endMsg = true; drvHud(); }
+    }
+    /* heading: the line from a little behind to a little ahead (further ahead when faster), eased so bends turn smoothly */
+    var look = Math.max(60, v3() * 3), want = brg(at(S.R, Math.max(0, d.m - 15)).p, at(S.R, Math.min(d.tot, d.m + look)).p);
+    d.hd = ((d.hd + sdiff(want, d.hd) * Math.min(1, dt * 2.2 || 1)) + 360) % 360;
+    var p = at(S.R, d.m).p, z = Math.max(15.2, Math.min(17.4, 17.4 - Math.log(v3() / 16.7) / Math.LN2 * 0.45));
+    d.gl.jumpTo({ center: [G.wrap(p[1]), p[0]], bearing: d.hd, pitch: 72, zoom: z });
+    d.car.setLngLat([G.wrap(p[1]), p[0]]);
+    if (t - (d.slow || 0) > 250) { d.slow = t; d3Tick(); }
+  }
+  /* four times a second: the street photo inset, the panel, the 2D map's car, what is ahead, pieces to load */
+  function d3Tick() {
+    var d = S.drv;
+    drvNeed(d.m); d3Photo(); d3Sat(); drvMarker(); drvSync(); drvHud();
+  }
+  /* the street photo nearest the car (within 30 m along the road), in the corner; none: the corner is empty */
+  function d3Photo() {
+    var d = S.drv, best = null, bd = 31;
+    [chunkAt(d.m - DCH), chunkAt(d.m), chunkAt(d.m + DCH)].forEach(function (c) { c.fr.forEach(function (f) { if (f.kind === "street" && Math.abs(f.m - d.m) < bd) { bd = Math.abs(f.m - d.m); best = f; } }); });
+    /* hold a photo a moment so they do not flicker past at speed */
+    if (!best && d.inF && d.m - d.inF.m < Math.max(60, v3() * 1.5) && d.m >= d.inF.m - 5) best = d.inF;
+    var ins = d.el.querySelector(".rtdv-ins");
+    if (!best) { if (d.inF) { d.inF = null; ins.classList.remove("on"); } return; }
+    if (best === d.inF) return;
+    d.inF = best; var f = best, c = f.c, url = c.pano && c.prov === "kartaview" ? c.full || c.img : c.img, tok = ++d.inTok;
+    var im = new Image(); im.referrerPolicy = "no-referrer";
+    im.onload = function () {
+      if (tok !== d.inTok) return;
+      var a = ageOf(c.date), pr = PROVIDERS[c.prov];
+      ins.innerHTML = '<div class="rtdv-iimg' + (c.pano ? " pano" : "") + '"></div><span class="rtdv-badge ' + a.cls + '">' + E(pr.name) + (c.pano ? " · 360°" : "") + " · " + E(dstr(c.date)) + (c.date ? " · " + E(ageTxt(c.date)) : "") + (a.k === "stale" ? " · STALE" : "") + "</span>";
+      var el = ins.firstChild; el.style.backgroundImage = cssUrl(url);
+      if (c.pano) { var w = ins.clientWidth || 240, h = ins.clientHeight || 160, bw = Math.max(w * 360 / DFOV, 2 * h), fr = 0.5 + sdiff(f.rh, c.hd == null ? f.rh : c.hd) / 360; el.style.backgroundSize = bw.toFixed(0) + "px " + (bw / 2).toFixed(0) + "px"; el.style.backgroundPosition = (w / 2 - fr * bw).toFixed(0) + "px " + ((h - bw / 2) / 2).toFixed(0) + "px"; }
+      ins.classList.add("on");
+    };
+    im.src = url;
+  }
+  /* the satellite picture's capture date where the car is (looked up about every kilometre) */
+  function d3Sat() {
+    var d = S.drv; if (!online() || (d.satM != null && Math.abs(d.m - d.satM) < 1000)) return;
+    d.satM = d.m; var p = at(S.R, d.m).p;
+    cached("satellite", p[0], p[1], 0, PROVIDERS.satellite.find).then(function (cs) { d.sat = cs[0] || { none: true }; }, function (e) { d.sat = { err: e.message }; });
+  }
+  function d3Tag() {
+    var d = S.drv, s = d.sat || {}, a = s.date ? ageOf(s.date) : null;
+    return '<span class="rtdv-badge ' + (a ? a.cls : "unk") + '">3D satellite view · ' + E(s.date ? "captured " + dstr(s.date) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : d.sat ? "date not published" : "checking date…") + "</span>" +
+      '<span class="rtdv-note">Satellite pictures over a terrain model: how it looked then, not now.' + (d.demErr > 3 ? " Elevation is not loading, so the ground may look flat." : "") + "</span>";
+  }
+  function drvMode(m) {
+    var d = S.drv; if (!d) return;
+    if (m === "3d" && (!webgl() || d.no3d)) m = "photo";
+    d.mode = m; P0.dmode = m; prefs();
+    d.el.classList.toggle("m3d", m === "3d");
+    var sel = d.el.querySelector('[data-dvs="spd"]'), L0 = m === "3d" ? V3 : DSPEEDS;
+    sel.innerHTML = L0.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + "</option>"; }).join("");
+    sel.value = m === "3d" ? d.spd3 : d.spd;
+    d.el.querySelector('[data-dv="mode"]').textContent = m === "3d" ? "Photos only" : "3D drive";
+    d.el.querySelector('[data-dv="mode"]').hidden = !webgl() || !!d.no3d;
+    clearTimeout(d.timer); cancelAnimationFrame(d.raf);
+    if (m === "3d") { d.f = null; d.wait = false; d.pend = null; if (d.gl) { d3Pad(); d.lt = 0; d.hd = heading(S.R, d.m); d.raf = requestAnimationFrame(d3Loop); } else d3Init(); }
+    else { d.el.querySelector(".rtdv-ins").classList.remove("on"); d.inF = null; drvSeek(d.m); }
+    drvHud();
+  }
+  /* play, and ◀ ▶ which jump to the previous or next preview point (the place the preview panel describes) */
+  function d3Btn(k) {
+    var d = S.drv;
+    if (k === "play") { d.playing = !d.playing; if (d.playing && (d.endMsg || d.m >= d.tot - 1)) d.m = 0; d.endMsg = false; d.lt = 0; drvHud(); return; }
+    var t = null;
+    if (k === "fwd") S.pts.forEach(function (q) { if (!t && q.m > d.m + 20) t = q; });
+    else S.pts.forEach(function (q) { if (q.m < d.m - 20) t = q; });
+    d.m = t ? t.m : k === "fwd" ? d.tot : 0; d.endMsg = false;
+    d3Tick();
   }
 
   /* ---------- open / close ---------- */
@@ -1172,6 +1322,7 @@
   }
   function close(quiet) {
     drvStop(true);
+    if (S.drv && S.drv.gl) { try { S.drv.gl.remove(); } catch (e) {} S.drv.gl = null; }
     S.tok++; S.queue = [];
     if (S.lyr && S.snap && S.snap.map) { S.snap.map.removeLayer(S.lyr); S.snap.map.off("preclick", onMapClick); S.snap.map.off("zoomend", corW); }
     S.lyr = null; S.cor = null;
@@ -1214,7 +1365,8 @@
     "#rtdv[hidden]{display:none!important}#rtdv{position:fixed;z-index:1150;background:#111;color:#fff;overflow:hidden;font:13px/1.35 system-ui,sans-serif;box-shadow:0 0 0 1px rgba(255,255,255,.08)}" +
     "#rtdv.cover{z-index:4100}#rtdv.pip{border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.5)}#rtdv .rtdv-pic{position:absolute;inset:0;touch-action:none}" +
     "#rtdv .rtdv-lay{position:absolute;inset:0;opacity:0;transition:opacity .3s ease}#rtdv .rtdv-lay.in{opacity:1}" +
-    "#rtdv .rtdv-img{position:absolute;inset:0;background:#000 center/cover no-repeat}#rtdv.tall .rtdv-img:not(.pano){background-size:contain;background-position:center 38%}#rtdv.tall .rtdv-img.pano{bottom:28%}#rtdv .rtdv-img.pano{background-repeat:repeat-x;cursor:grab}" +
+    "#rtdv .rtdv-img{position:absolute;inset:0;background:#000 center/cover no-repeat}#rtdv.tall .rtdv-img:not(.pano){background-size:contain;background-position:center 26%}#rtdv.tall .rtdv-img.pano{top:9%;bottom:42%}" +
+    "#rtdv.tall .rtdv-strip{top:auto;left:8px;right:auto;bottom:150px;width:calc(100% - 16px);height:18%}#rtdv.tall .rtdv-live{top:auto;bottom:calc(150px + 18% + 8px);left:8px;right:8px;max-width:none}#rtdv .rtdv-img.pano{background-repeat:repeat-x;cursor:grab}" +
     "#rtdv .rtpv-satw{position:absolute;inset:0;width:auto;aspect-ratio:auto;border-radius:0}#rtdv .rtdv-miss{position:absolute;top:45%;left:0;right:0;text-align:center;color:#ced4da}" +
     "#rtdv button{font:inherit;font-size:12.5px;font-weight:600;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;border-radius:4px;padding:4px 10px;min-height:34px;cursor:pointer}" +
     "#rtdv select{font:inherit;font-size:12.5px;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:4px;padding:3px 4px}" +
@@ -1230,6 +1382,13 @@
     "#rtdv.pip .rtdv-strip,#rtdv.pip .rtdv-next,#rtdv.pip .rtdv-live,#rtdv.pip .rtdv-note,#rtdv.pip label,#rtdv.pip [data-dv=look]{display:none!important}#rtdv.pip .rtdv-tag{top:48px;right:8px}#rtdv.pip .rtdv-badge{font-size:11px}#rtdv.pip .rtdv-bot{padding-top:12px}" +
     "@media (max-width:700px){#rtdv .rtdv-strip{width:72px;height:72px}#rtdv .rtdv-live{top:128px;font-size:11px}#rtdv .rtdv-tag{right:96px}#rtdv .rtdv-badge{font-size:11px}#rtdv .rtdv-note{font-size:10.5px}" +
     "#rtdv button{min-height:34px;padding:3px 8px;font-size:12px}#rtdv .rtdv-next{font-size:11.5px}#rtdv .rtdv-attr{font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#rtdv .rtdv-ctl{gap:4px}#rtdv .rtdv-ctl label{font-size:0}#rtdv .rtdv-ctl label select{font-size:16px}}" +
+    "#rtdv .rtdv-3d{position:absolute;inset:0;display:none;background:#6b7064}#rtdv.m3d .rtdv-3d{display:block}#rtdv.m3d .rtdv-pic,#rtdv.m3d .rtdv-strip{display:none}" +
+    "#rtdv .rtdv-ins{position:absolute;right:8px;top:50px;width:min(40%,360px);aspect-ratio:4/3;background:#000;border-radius:5px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s,width .2s;cursor:zoom-in}" +
+    "#rtdv.m3d .rtdv-ins.on{opacity:1;visibility:visible}#rtdv .rtdv-ins.big{width:min(72%,640px);cursor:zoom-out}#rtdv .rtdv-iimg{position:absolute;inset:0;background:#000 center/cover no-repeat}#rtdv .rtdv-iimg.pano{background-repeat:repeat-x}" +
+    "#rtdv .rtdv-ins .rtdv-badge{position:absolute;left:0;right:0;bottom:0;border-radius:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
+    "#rtdv.m3d .rtdv-tag{right:calc(min(40%,360px) + 16px)}#rtdv.m3d .rtdv-live{left:8px;right:auto;top:96px;max-width:min(320px,48%)}#rtdv.m3d.tall .rtdv-live{bottom:auto}#rtdv.pip .rtdv-ins{display:none}" +
+    "@media (max-width:700px){#rtdv.m3d .rtdv-tag{right:96px}#rtdv .rtdv-ins{top:100px;width:46%}#rtdv .rtdv-ins.big{width:calc(100% - 16px)}#rtdv.m3d .rtdv-live,#rtdv.m3d.tall .rtdv-live{top:100px;max-width:calc(54% - 24px)}}" +
+    ".rtdv-car3{width:34px;height:30px;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 2px 3px rgba(0,0,0,.6))}.rtdv-car3 span{display:block;width:34px;height:30px;background:#e8590c;clip-path:polygon(50% 0,100% 100%,50% 72%,0 100%)}" +
     ".rtdv-car span{background:radial-gradient(circle,#fff 0 6px,#e8590c 7px 10px,rgba(232,89,12,.25) 11px)}.rtdv-car span::after{border-bottom-color:#e8590c}" +
     "@media (pointer:coarse){#rtpv select,#rtpv input,#rtdv select{font-size:16px!important}}";
   D.head.appendChild(st);
@@ -1237,7 +1396,7 @@
   W.OSAP_PREVIEW = { open: open, close: function () { close(); }, isOpen: function () { return !!(S.el && !S.el.hidden); }, PROVIDERS: PROVIDERS,
     state: function () { return { n: S.pts.length, cur: S.cur, pts: S.pts.map(function (p) { return { id: p.id, m: p.m, cat: p.cat, crit: p.crit, dep: !!p.dep, hd: p.hd, label: p.label, live: !!p.live, state: p.state, street: p.street ? { prov: p.street.prov, date: p.street.date, off: p.street.off } : null, sat: p.sat && p.sat.date || null }; }),
       feats: S.feats.length, featErr: S.featErr, stats: stats(),
-      drive: S.drv ? { on: S.drv.on, playing: S.drv.playing, m: S.drv.m, wait: S.drv.wait, pip: S.drv.pip, yaw: S.drv.yaw, kind: S.drv.f ? S.drv.f.kind : null, prov: S.drv.f && S.drv.f.c ? S.drv.f.c.prov : null, pano: !!(S.drv.f && S.drv.f.c && S.drv.f.c.pano), date: S.drv.f && S.drv.f.c ? S.drv.f.c.date : null,
+      drive: S.drv ? { on: S.drv.on, mode: S.drv.mode, gl: !!S.drv.gl, no3d: S.drv.no3d || null, hd: S.drv.hd, ins: S.drv.inF && S.drv.mode === "3d" ? S.drv.inF.c.prov : null, playing: S.drv.playing, m: S.drv.m, wait: S.drv.wait, pip: S.drv.pip, yaw: S.drv.yaw, kind: S.drv.f ? S.drv.f.kind : null, prov: S.drv.f && S.drv.f.c ? S.drv.f.c.prov : null, pano: !!(S.drv.f && S.drv.f.c && S.drv.f.c.pano), date: S.drv.f && S.drv.f.c ? S.drv.f.c.date : null,
         chunks: S.drv.ch.map(function (c) { return { a: c.a, st: c.st, n: c.n || 0, fr: c.fr.length }; }) } : null, tab: $(".rtpv-tabs [aria-selected=true]") ? $(".rtpv-tabs [aria-selected=true]").getAttribute("data-tab") : null }; },
     _score: score, _age: ageOf };
 })();
