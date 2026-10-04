@@ -1022,12 +1022,12 @@
       '<h3>7. Health threats</h3><div id="mp-thr"></div>' +
       '<h3>8. Evacuation weather and ground</h3><div id="mp-wx"><p class="obs">Reading the forecast…</p></div>' +
       '<h3>9. Unit and evacuation details</h3><p class="obs noprint">Fill these in. They stay on this device only and are the same for every area in this country. Grids can be MGRS or lat, lon.</p>' +
-      '<div class="mpgrid">' + fieldsHtml() + "</div>" +
+      '<div class="mpgrid">' + fieldsHtml() + "</div>" + '<div id="mp-sites"></div>' +
       '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
       "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source; OpenStreetMap and Wikipedia are shown but never qualify. Official trauma designations appear only as a source states them. Observed classes T1 to T5 are inferred from capability flags and are not official levels. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
       "</div>";
-    ghRender(); ocRender(); thrRender();
+    ghRender(); ocRender(); thrRender(); siteRender();
   }
 
   function build() {
@@ -1931,6 +1931,26 @@
   /* ---------- the map: numbered marks, routes and the golden-hour reach while the plan is open ---------- */
   var SITE_MK = [["ccp1", "CCP", "Casualty collection point"], ["ccp2", "CCP2", "Alternate casualty collection point"], ["axp", "AXP", "Ambulance exchange point"],
     ["hlz1", "HLZ", "Helicopter landing zone"], ["hlz2", "HLZ2", "Alternate helicopter landing zone"]];
+  /* each point's own record (Build Plan v2 phase 3): where it is from the POI, the planner's check of whether it can be used,
+     its capacity and notes, all kept with the unit details on this device. "Checked" carries when, so it can go stale. */
+  var SITE_ST = [["", "Not checked"], ["usable", "Checked: usable"], ["limited", "Checked: usable with limits"], ["unusable", "Checked: not usable"]];
+  function siteRender() {
+    var el = D.getElementById("mp-sites"), s = ST; if (!el || !s) return;
+    var v = fieldVals(), rows = SITE_MK.filter(function (m) { return String(v[m[0]] || "").trim(); });
+    if (!rows.length) { el.innerHTML = ""; return; }
+    el.innerHTML = '<div class="mpscroll"><table class="mproles mpsites"><thead><tr><th scope="col">Point</th><th scope="col">Where</th><th scope="col">Status</th><th scope="col">Capacity</th><th scope="col">Notes</th></tr></thead><tbody>' +
+      rows.map(function (m) {
+        var k = m[0], g = parseGrid(v[k]), st = v[k + "_st"] || "", at = v[k + "_at"];
+        var where = g ? esc(grid(g[0], g[1])) + (s.o ? '<span class="sub">' + esc(km(distM(s.o, g))) + " " + card(brg(s.o, g)) + " of " + esc(fieldLabel(s.from)) + "</span>" : "") +
+            (W.OSAP_ROUTE_SEED && s.o ? ' <button type="button" class="refresh noprint" data-mp-siteroute="' + k + '">Route to it</button>' : "")
+          : '<span class="mpwarn">No grid: not on the map</span>';
+        return '<tr><th scope="row">' + esc(m[1]) + '<span class="sub">' + esc(clip(v[k], 80)) + '</span></th><td data-l="Where">' + where + '</td><td data-l="Status"><select data-mp-sst="' + k + '" aria-label="' + esc(m[2]) + ' status">' +
+          SITE_ST.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === st ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>" +
+          (st && at ? '<span class="sub">' + esc(dual(Date.parse(at), true)) + "</span>" : "") + '</td><td data-l="Capacity"><input data-mpf="' + k + '_cap" maxlength="60" autocomplete="off" aria-label="' + esc(m[2]) + ' capacity" placeholder="e.g. 2 litters, 1 UH-60" value="' + esc(v[k + "_cap"] || "") + '"></td>' +
+          '<td data-l="Notes"><input data-mpf="' + k + '_note" maxlength="200" autocomplete="off" aria-label="' + esc(m[2]) + ' notes" placeholder="Access, marking, hazards" value="' + esc(v[k + "_note"] || "") + '"></td></tr>';
+      }).join("") + "</tbody></table></div>" +
+      '<p class="obs">Distance and direction are straight-line from the plan centre. Status is your check, kept with the time you set it; recheck before use.</p>';
+  }
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }];
   /* what the map shows, once for the live map and once for the printed map: [kind, ...] items in drawing order */
   function mapItems() {
@@ -2461,7 +2481,7 @@
   function setField(k, v) {
     var vals = fieldVals(); vals[k] = v; lsSet(fieldsKey(), vals);
     var i = D.getElementById("mpf-" + k); if (i) i.value = v;
-    if (/^(ccp|axp|hlz)/.test(k)) { mapShow(); srcRender(); }
+    if (/^(ccp[12]|axp|hlz[12])$/.test(k)) { mapShow(); siteRender(); srcRender(); }
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
@@ -2477,6 +2497,7 @@
     if (k === "print") { printView(); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
+    if (b.hasAttribute("data-mp-siteroute")) { var sg = parseGrid(fieldVals()[b.getAttribute("data-mp-siteroute")]); if (sg && W.OSAP_ROUTE_SEED) { close(); W.OSAP_ROUTE_SEED([[ST.o[0], ST.o[1]], sg]); } return; }
     if (b.hasAttribute("data-mp-assess")) { assessView(b.getAttribute("data-mp-assess")); return; }
     var f = find(b.getAttribute("data-mp-go") || b.getAttribute("data-mp-route") || b.getAttribute("data-mp-id"));
     if (!f) return;
@@ -2500,6 +2521,10 @@
       setOff(t.getAttribute("data-mp-off"), !t.checked); offChanged();
       var b = D.querySelector('#medplan [data-mp-off="' + (W.CSS && CSS.escape ? CSS.escape(t.getAttribute("data-mp-off")) : t.getAttribute("data-mp-off")) + '"]'); if (b) b.focus();
       return;
+    }
+    if (t.getAttribute && t.getAttribute("data-mp-sst")) {
+      var ks = t.getAttribute("data-mp-sst"), vs = fieldVals(); vs[ks + "_st"] = t.value; vs[ks + "_at"] = t.value ? new Date().toISOString() : ""; lsSet(fieldsKey(), vs);
+      siteRender(); srcRender(); var sl = D.querySelector('#medplan [data-mp-sst="' + ks + '"]'); if (sl) sl.focus(); return;
     }
     if (t.getAttribute && t.getAttribute("data-mp-oc")) {
       var vals = fieldVals(); vals.oc = t.checked ? 1 : 0; lsSet(fieldsKey(), vals);
@@ -2527,8 +2552,8 @@
     if (k === "dwell" || k === "xact" || k === "handoff") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
-    if (/^(ccp|axp|hlz)/.test(k)) siteDirty = true;
-    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); } srcRender(); }, 600);
+    if (/^(ccp[12]|axp|hlz[12])$/.test(k)) siteDirty = true;
+    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); siteRender(); } srcRender(); }, 600);
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });

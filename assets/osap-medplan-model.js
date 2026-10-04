@@ -31,7 +31,13 @@
       return hit >= 2 && hit >= Math.ceil(Math.min(a.length, b.length) * 0.6);
     });
   }
-  function point(text, ll, role) { return { role: role, text: str(text), lat: ll ? ll[0] : null, lon: ll ? ll[1] : null, mgrs: ll && ll.mgrs || "", status: blank(text) ? "NOT_SET" : "PLANNER_ENTERED", verified_at: null }; }
+  /* a CCP, AXP or HLZ: what the planner typed, its grid, and the planner's own check (status, when, capacity, notes) */
+  var SITE_STATUS = { usable: "USABLE", limited: "LIMITED", unusable: "UNUSABLE" };
+  function point(text, ll, role, v, k) {
+    v = v || {}; var st = !blank(text) && SITE_STATUS[v[k + "_st"]];
+    return { role: role, text: str(text), lat: ll ? ll[0] : null, lon: ll ? ll[1] : null, mgrs: ll && ll.mgrs || "", status: blank(text) ? "NOT_SET" : st || "PLANNER_ENTERED",
+      verified_at: st ? v[k + "_at"] || null : null, capacity: blank(text) ? "" : str(v[k + "_cap"]).slice(0, 60), notes: blank(text) ? "" : str(v[k + "_note"]).slice(0, 200) };
+  }
   function fac(f) {
     return { id: f.id, name: f.name, name_local: f.name_local || "", aliases: f.aliases || [], lat: f.lat, lon: f.lon, mgrs: f.mgrs || "", caps: f.caps || {},
       caps_now: f.caps_now || {}, intel: f.intel || null, designation: f.designation || "", source: f.source || "" };
@@ -105,9 +111,9 @@
       ground_routes: groundRoutes(I),
       ground_alternates: (I.pac || []).map(function (x) { return { facility_id: x.facility_id, state: x.state, error: x.err || "", lines: (x.lines || []).length, hazard_km: x.hazard_km, hazard_days: x.hazard_days }; }),
       air_routes: (I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; }),
-      ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate")],
-      axp: [point(v.axp, I.ll && I.ll.axp, "primary")],
-      hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate")],
+      ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary", v, "ccp1"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate", v, "ccp2")],
+      axp: [point(v.axp, I.ll && I.ll.axp, "primary", v, "axp")],
+      hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary", v, "hlz1"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate", v, "hlz2")],
       communications: { medevac: [str(v.freq1), str(v.freq2)].filter(function (x) { return !blank(x); }) },
       receiving: { primary: str(v.recv1), alternate: str(v.recv2) },
       /* the planner's checks of the plan's hospitals (phase 1), oldest first */
@@ -183,7 +189,9 @@
     function site(code, label, x) {
       if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");
       else if (x.lat == null) add(code, "warning", label, x.text + ": no grid, so it is not on the map. Give an MGRS grid or lat, lon.");
-      else add(code, "ok", label, x.text);
+      else if (x.status === "UNUSABLE") add(code, "warning", label, x.text + ": checked not usable" + (x.verified_at ? " (" + x.verified_at.slice(0, 16).replace("T", " ") + "Z)" : "") + (x.notes ? ": " + x.notes : "") + ". Choose another.");
+      else if (x.status === "LIMITED") add(code, "warning", label, x.text + ": usable with limits" + (x.notes ? ": " + x.notes : "") + ".");
+      else add(code, "ok", label, x.text + (x.status === "USABLE" && x.verified_at ? " (checked usable " + x.verified_at.slice(0, 16).replace("T", " ") + "Z)" : ""));
     }
     site("ccp", "Casualty collection point (CCP)", p.ccp[0]);
     site("axp", "Ambulance exchange point (AXP)", p.axp[0]);

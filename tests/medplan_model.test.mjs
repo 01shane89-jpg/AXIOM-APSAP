@@ -106,5 +106,9 @@ ok(M.canonical(pA) !== M.canonical(pA0) && pA.ground_alternates[0].lines === 3, 
 const pG = M.build(input({ fields: { ccp1: "Bridge", hlz1: "14.79, 100.67" }, ll: { hlz1: [14.79, 100.67] } }));
 ok(by(pG, "ccp").level === "warning" && /Bridge: no grid, so it is not on the map/.test(by(pG, "ccp").detail) && by(pG, "hlz").level === "ok" && by(pG, "axp").detail === "Not set." && pG.hlz[0].lat === 14.79, "phase 3: a named CCP without a grid is amber; an HLZ with a grid is on the map; AXP is checked");
 
+const pH = M.build(input({ fields: { hlz1: "14.79, 100.67", hlz1_st: "unusable", hlz1_at: "2026-10-04T08:00:00.000Z", hlz1_note: "wires on approach", hlz1_cap: "1 UH-60", ccp1: "14.8, 100.6", ccp1_st: "usable", ccp1_at: "2026-10-04T07:30:00.000Z" }, ll: { hlz1: [14.79, 100.67], ccp1: [14.8, 100.6] } }));
+ok(pH.hlz[0].status === "UNUSABLE" && pH.hlz[0].capacity === "1 UH-60" && by(pH, "hlz").level === "warning" && /checked not usable \(2026-10-04 08:00Z\): wires on approach\. Choose another/.test(by(pH, "hlz").detail) &&
+  pH.ccp[0].status === "USABLE" && /checked usable 2026-10-04 07:30Z/.test(by(pH, "ccp").detail), "phase 3: a planner's check of a point (usable or not, when, capacity, notes) is in the record and the validation");
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
