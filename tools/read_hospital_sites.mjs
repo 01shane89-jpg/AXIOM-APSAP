@@ -74,7 +74,9 @@ async function get(url) {
   } catch (e) { return { url, status: 0, err: String(e.name === "AbortError" ? "timeout" : e.message).slice(0, 80) }; }
   finally { clearTimeout(tm); }
 }
-function links(html, base) {
+/* a hospital group's branches share one host: each branch reads only its own section */
+const SCOPE = { "sof:th:hospital:bangkok-hospital": /^\/(en|th)\/bangkok\//, "x:th:bh-phuket": /^\/(en|th)\/phuket\// };
+function links(html, base, scope) {
   const out = [], b = new URL(base);
   for (const m of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)[^"']*["'][^>]*>([\s\S]{0,300}?)<\/a>/gi)) {
     const href = m[1].trim(), label = text(m[2]).trim();
@@ -83,6 +85,7 @@ function links(html, base) {
     if (!/^https?:$/.test(u.protocol) || u.hostname.replace(/^www\./, "") !== b.hostname.replace(/^www\./, "")) continue;
     let du; try { du = decodeURIComponent(u.pathname + u.search); } catch (e) { du = u.pathname + u.search; }
     if (!FOLLOW.test(du) && !FOLLOW.test(label)) continue;
+    if (scope && !scope.test(u.pathname)) continue;
     u.hash = ""; out.push(u.href);
   }
   return [...new Set(out)];
@@ -103,7 +106,7 @@ async function readSite(h) {
         break;
       }
     }
-    if (pages.length <= 3 || h.seed) for (const l of links(r.html, r.url)) if (!seen.has(l) && queue.length < 200) queue.push(l);
+    if (pages.length <= 3 || h.seed) for (const l of links(r.html, r.url, SCOPE[h.id])) if (!seen.has(l) && queue.length < 200) queue.push(l);
   }
   return { ...h, start: undefined, pages, hits };
 }
@@ -120,14 +123,14 @@ function osmHospitals() {
   return H;
 }
 const HOME = { th: {
-  "sof:th:hospital:siriraj-hospital": ["https://www.si.mahidol.ac.th/th/", "https://www2.si.mahidol.ac.th/en/"],
+  "sof:th:hospital:siriraj-hospital": ["https://www.si.mahidol.ac.th/th/department/surgery/version2/trauma/index.html", "https://www2.si.mahidol.ac.th/en/facts-and-figures/", "https://www.si.mahidol.ac.th/th/", "https://www2.si.mahidol.ac.th/en/"],
   "sof:th:hospital:ramathibodi-hospital": ["https://www.rama.mahidol.ac.th/", "https://www.rama.mahidol.ac.th/en"],
-  "sof:th:hospital:king-chulalongkorn-memorial-hospital": ["https://kcmh.chulalongkornhospital.go.th/en/", "https://chulalongkornhospital.go.th/"],
+  "sof:th:hospital:king-chulalongkorn-memorial-hospital": ["https://em.md.chula.ac.th/alumni/resident/", "https://kcmh.chulalongkornhospital.go.th/en/", "https://chulalongkornhospital.go.th/"],
   "sof:th:hospital:rajavithi-hospital": ["https://www.rajavithi.go.th/rj/"],
   "sof:th:hospital:phramongkutklao-hospital": ["https://www.pmk.ac.th/", "https://clinic.pmk.ac.th/"],
   "sof:th:hospital:vajira-hospital": ["https://www.vajira.ac.th/"],
-  "sof:th:hospital:bangkok-hospital": ["https://www.bangkokhospital.com/en/bangkok"],
-  "sof:th:hospital:bumrungrad-international-hospital": ["https://www.bumrungrad.com/en"],
+  "sof:th:hospital:bangkok-hospital": ["https://www.bangkokhospital.com/en/bangkok/center-clinic/trauma/trauma-center/trauma-specialists", "https://www.bangkokhospital.com/en/bangkok"],
+  "sof:th:hospital:bumrungrad-international-hospital": ["https://www.bumrungrad.com/en/centers/emergency-center-bangkok-thailand", "https://www.bumrungrad.com/en/patient-services/patient-services-overview", "https://www.bumrungrad.com/en"],
   "sof:th:hospital:maharaj-nakorn-chiang-mai-hospital": ["https://w2.med.cmu.ac.th/", "https://www.med.cmu.ac.th/"],
   "sof:th:hospital:songklanagarind-hospital": ["https://hospital.psu.ac.th/"],
   "sof:th:hospital:srinagarind-hospital": ["https://srinagarind.md.kku.ac.th/", "https://md.kku.ac.th/"],
@@ -154,12 +157,18 @@ const EXTRA = { th: [
   { id: "x:th:nopparat", name: "Nopparat Rajathanee Hospital", lat: 13.82, lon: 100.68, start: ["https://www.nopparat.go.th/"] },
   { id: "x:th:lerdsin", name: "Lerdsin Hospital", lat: 13.727, lon: 100.519, start: ["https://www.lerdsin.go.th/"] },
   { id: "x:th:thammasat", name: "Thammasat University Hospital", lat: 14.07, lon: 100.61, start: ["https://www.hospital.tu.ac.th/"] },
+  /* capability and trauma-centre pages the hospitals publish (leads from Shane's list, 2026-10-04; each page is the hospital's own claim) */
+  { id: "x:th:siph", name: "Siriraj Piyamaharajkarun Hospital", lat: 13.7588, lon: 100.4856, start: ["https://www.siphhospital.com/en/home"] },
+  { id: "x:th:bh-phuket", name: "Bangkok Hospital Phuket", lat: 7.8963, lon: 98.3765, start: ["https://www.bangkokhospital.com/en/phuket/center-clinic/trauma/trauma-center-bpk/treatments-and-services", "https://www.bangkokhospital.com/en/phuket/center-clinic/trauma/trauma-center-bpk/overview"] },
   { id: "x:th:naresuan", name: "Buddhachinaraj Hospital (Phitsanulok)", lat: 16.82, lon: 100.27, start: ["https://www.budhosp.go.th/"] }
 ] };
 
 const seeds = [...sofSeeds(), ...(EXTRA[CC] || []).map((h) => ({ ...h, web: h.start[0], seed: true })), ...osmHospitals()];
 const byHost = new Map();
-for (const h of seeds) { let k; try { k = new URL(h.start[0]).hostname.replace(/^www\./, ""); } catch (e) { continue; } if (!byHost.has(k)) byHost.set(k, h); else if (h.seed) byHost.get(k).start.push(...h.start); }
+/* one entry per site, except that hospital groups share one host (bangkokhospital.com): a referral seed whose pages sit on
+   a host another seed already holds keeps its own entry, so a branch's pages are never credited to the group's head office */
+for (const h of seeds) { let k; try { k = new URL(h.start[0]).hostname.replace(/^www\./, ""); } catch (e) { continue; } const o = byHost.get(k);
+  if (!o) byHost.set(k, h); else if (h.seed && o.seed && o.id !== h.id) byHost.set(k + "#" + h.id, h); else if (h.seed) o.start.push(...h.start); }
 const list = [...byHost.values()];
 console.log(CC + ": " + list.length + " sites (" + list.filter((h) => h.seed).length + " referral seeds)");
 const out = []; let i = 0;
