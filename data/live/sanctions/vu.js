@@ -1,1 +1,1 @@
-window.ASAP_SANC_CC={"cc":"vu","asof":"2026-10-04 04:37Z","items":[{"id":"8600","n":"HERNANDEZ ZEA, Luis Antonio","t":"person","p":"SDNT","ccs":["co","vu"]},{"id":"8744","n":"TRANS PACIFIC WORLD LEASING LIMITED","t":"entity","p":"SDNT","ccs":["vu"]}]};
+window.ASAP_SANC_CC={"cc":"vu","asof":"2026-10-04 04:52Z","items":[{"id":"8600","n":"HERNANDEZ ZEA, Luis Antonio","t":"person","p":"SDNT","ccs":["co","vu"]},{"id":"8744","n":"TRANS PACIFIC WORLD LEASING LIMITED","t":"entity","p":"SDNT","ccs":["vu"]}]};
