@@ -16,7 +16,8 @@
 // Several sources are merged per layer: the first source to list a site leads, and another source's record of the same site
 // (within a set distance) is folded into it as "also listed by" with its own link, so a popup shows every source that has it.
 // Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
-// and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
+// split by layer into data/infra/<cc>/<layer>.json (af, port, dam, cable: landing points plus cable lines) so a switch loads only
+// its own layer, and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
 // good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
 // Privacy: no phone numbers, emails, websites of people, or private persons' names. Only facility names, codes and public bodies.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from "node:fs";
@@ -116,6 +117,16 @@ async function ourairports() {
   return out;
 }
 
+/* "30°20'00\"N" or 30.33 -> decimal degrees */
+function deg(v) {
+  if (v == null || v === "") return null;
+  if (typeof v === "number") return v;
+  const m = /^\s*(\d+(?:\.\d+)?)\D+(\d+(?:\.\d+)?)?\D*?(\d+(?:\.\d+)?)?\D*([NSEW])\s*$/i.exec(String(v));
+  if (!m) return num(v);
+  const d = +m[1] + (m[2] ? +m[2] / 60 : 0) + (m[3] ? +m[3] / 3600 : 0);
+  return /[SW]/i.test(m[4]) ? -d : d;
+}
+
 /* ---------- World Port Index ---------- */
 async function wpi() {
   let rows = null, err;
@@ -134,10 +145,10 @@ async function wpi() {
   const SIZE = { L: "Large", M: "Medium", S: "Small", V: "Very small" };
   const out = [];
   for (const r of rows) {
-    const la = num(pick(r, "ycoord", "latitude", "lat", "Latitude")), lo = num(pick(r, "xcoord", "longitude", "lon", "Longitude"));
+    const la = deg(pick(r, "ycoord", "latitude", "lat", "Latitude")), lo = deg(pick(r, "xcoord", "longitude", "lon", "Longitude"));
     const nm = pick(r, "portName", "mainPortName", "Main Port Name", "name");
     if (la == null || lo == null || !nm) continue;
-    const hint = ccFromName(pick(r, "countryName", "countryCode", "country")) || null;
+    const hint = ccFromA2(r.countryCode) || ccFromName(pick(r, "countryName", "country")) || null;
     const cc = ccOf(la, lo, hint); if (!cc) continue;
     const size = String(pick(r, "harborSize", "harbourSize", "Harbor Size") || "").trim();
     const sz = SIZE[size] || (/^(large|medium|small|very small)$/i.test(size) ? size[0].toUpperCase() + size.slice(1).toLowerCase() : "");
@@ -171,9 +182,9 @@ async function locode() {
 /* ---------- OpenStreetMap: airfields, ports, ferry terminals, dams ---------- */
 async function overpass(q) {
   let err;
-  for (let round = 0; round < 2; round++) for (const u of OVERPASS) {
+  for (let round = 0; round < 1; round++) for (const u of OVERPASS) {
     try {
-      const j = JSON.parse(await get(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "content-type": "application/x-www-form-urlencoded" } }, 420000));
+      const j = JSON.parse(await get(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "content-type": "application/x-www-form-urlencoded" } }, 330000));
       if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error("remark: " + j.remark.slice(0, 120));
       return j.elements || [];
     } catch (e) { err = e; log("  overpass", u.split("/")[2], e.message); await sleep(10000 + round * 30000); }
@@ -183,14 +194,19 @@ async function overpass(q) {
 const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
 async function osm() {
   const els = [];
-  for (let w = -180; w < 180; w += 20) {
-    const bb = [-60, w, 84, w + 20].join(",");
-    const q = `[out:json][timeout:400][maxsize:1073741824][bbox:${bb}];(nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];nwr["waterway"="dam"]["name"];nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];);out center tags;`;
-    const e = await overpass(q);
-    log("  osm band", w, e.length);
-    els.push(...e);
-    await sleep(4000);
+  const Q = [`nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];`, `nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];`, `nwr["waterway"="dam"]["name"];`];
+  let failed = 0;
+  for (let w = -180; w < 180; w += 15) for (const part of Q) {
+    const bb = [-60, w, 84, w + 15].join(",");
+    try {
+      const e = await overpass(`[out:json][timeout:300][maxsize:536870912][bbox:${bb}];(${part});out center tags;`);
+      log("  osm band", w, part.slice(6, 30), e.length);
+      els.push(...e);
+    } catch (e) { failed++; log("  osm band FAILED", w, part.slice(6, 30), e.message); }
+    await sleep(3000);
   }
+  /* a few busy bands may fail; most of the world failing means the source failed */
+  if (failed > 12) throw new Error(failed + " of " + Q.length * 24 + " Overpass queries failed");
   const seen = new Set(), out = [];
   for (const e of els) {
     const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
@@ -287,11 +303,17 @@ const now = new Date().toISOString().slice(0, 16) + "Z";
 mkdirSync(OUT, { recursive: true });
 const prevIx = existsSync(join(OUT, "index.json")) ? JSON.parse(readFileSync(join(OUT, "index.json"), "utf8")) : { sources: {} };
 const prev = {};
+const readPrev = (path, cc) => {
+  const j = JSON.parse(readFileSync(path, "utf8"));
+  for (const i of j.items || []) {
+    (prev[i.s] = prev[i.s] || { items: [], lines: [] }).items.push({ ...i, cc: j.cc || cc });
+    for (const a of i.also || []) (prev[a.s] = prev[a.s] || { items: [], lines: [] }).items.push({ ...i, s: a.s, u: a.u, nm: a.nm || i.nm, also: undefined, cc: j.cc || cc });
+  }
+  for (const l of j.lines || []) (prev[l.s] = prev[l.s] || { items: [], lines: [] }).lines.push({ ...l, cc: j.cc || cc });
+};
 for (const f of existsSync(OUT) ? readdirSync(OUT) : []) {
-  if (!/^[a-z]{2,3}\.json$/.test(f)) continue;
-  const j = JSON.parse(readFileSync(join(OUT, f), "utf8"));
-  for (const i of j.items || []) (prev[i.s] = prev[i.s] || { items: [], lines: [] }).items.push({ ...i, cc: j.cc });
-  for (const l of j.lines || []) (prev[l.s] = prev[l.s] || { items: [], lines: [] }).lines.push({ ...l, cc: j.cc });
+  if (/^[a-z]{2,3}\.json$/.test(f) && f !== "oki.json") readPrev(join(OUT, f), f.slice(0, -5));
+  else if (/^[a-z]{2,3}$/.test(f) && f !== "oki") for (const g of readdirSync(join(OUT, f))) readPrev(join(OUT, f, g), f);
 }
 const SRC = {
   oa: { name: "OurAirports", lic: "Public domain", link: "https://ourairports.com/data/" },
@@ -349,7 +371,7 @@ function merge(lists, k, reach) {
 const merged = [
   ...merge([got.oa.items, got.osm.items], "af", REACH.af),
   ...merge([got.wpi.items, got.osm.items, got.locode.items], "port", REACH.port),
-  ...merge([got.osm.items, got.wd.items], "dam", REACH.dam),
+  ...merge([got.osm.items, got.wd.items], "dam", REACH.dam).filter((i) => i.s !== "wd" || (i.x.height_m || 0) >= 15 || i.x.reservoir),
 ];
 /* a private OpenStreetMap-only strip is left out */
 const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));
@@ -373,12 +395,19 @@ for (const l of got.tg.lines) {
 }
 
 const countries = {};
-for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f) && !by[f.slice(0, -5)]) unlinkSync(join(OUT, f));
+const FILE = { af: "af", port: "port", dam: "dam", lp: "cable" };
+for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f)) unlinkSync(join(OUT, f));   // the old one-file layout
+for (const d of readdirSync(OUT)) if (/^[a-z]{2,3}$/.test(d) && !by[d]) for (const f of readdirSync(join(OUT, d))) unlinkSync(join(OUT, d, f));
 const KORD = { af: 0, port: 1, dam: 2, lp: 3 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
 for (const [cc, c] of Object.entries(by).sort()) {
   c.items.sort((a, b) => (KORD[a.k] - KORD[b.k]) || ((TORD[a.t] || 0) - (TORD[b.t] || 0)) || String(a.id).localeCompare(String(b.id)));
   c.lines.sort((a, b) => String(a.id).localeCompare(String(b.id)));
-  writeFileSync(join(OUT, cc + ".json"), JSON.stringify({ v: 1, cc, at: now, items: c.items, lines: c.lines }));
+  mkdirSync(join(OUT, cc), { recursive: true });
+  const files = {};
+  for (const i of c.items) (files[FILE[i.k]] = files[FILE[i.k]] || { items: [], lines: [] }).items.push(i);
+  if (c.lines.length) (files.cable = files.cable || { items: [], lines: [] }).lines = c.lines;
+  for (const f of readdirSync(join(OUT, cc))) if (!files[f.replace(/\.json$/, "")]) unlinkSync(join(OUT, cc, f));
+  for (const [f, v] of Object.entries(files)) writeFileSync(join(OUT, cc, f + ".json"), JSON.stringify({ v: 1, cc, at: now, layer: f, items: v.items, lines: v.lines }));
   const n = {};
   for (const i of c.items) n[i.k] = (n[i.k] || 0) + 1;
   if (c.lines.length) n.cable = c.lines.length;

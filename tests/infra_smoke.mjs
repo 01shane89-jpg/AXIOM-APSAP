@@ -45,7 +45,9 @@ async function open(opts, hash = "", mode = "ok") {
     const u = new URL(r.request().url()).pathname; asked.push(u);
     if (mode === "fail") return r.fulfill({ status: 500, body: "x" });
     if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(IX) });
-    if (/\/th\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TH) });
+    const m = /\/th\/(af|port|dam|cable)\.json$/.exec(u);
+    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"] }[m[1]];
+      return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...TH, layer: m[1], items: TH.items.filter((i) => ks.includes(i.k)), lines: m[1] === "cable" ? TH.lines : [] }) }); }
     return r.fulfill({ status: 404, body: "" });
   });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -88,7 +90,7 @@ const popWith = async (p, re) => {
   await view(p, [12, 100.5], 6);
   s = await st(p);
   ok(s.drawn.lines === 1 && s.shown.port >= 1 && s.shown.dam === 1 && s.shown.cable === 1, "ports, dams and cables drawn (" + JSON.stringify(s) + ")");
-  ok(asked.filter((u) => /th\.json/.test(u)).length === 1, "the country file is read once");
+  ok(["af", "port", "dam", "cable"].every((k) => asked.filter((u) => u.endsWith("/th/" + k + ".json")).length === 1), "each layer file is read once, only when its switch is on: " + asked.join(" "));
   await om(p, false);
   let pop = await popWith(p, "Suvarnabhumi");
   ok(/Major airport · OurAirports/.test(pop) && /4,000 m/.test(pop) && /public domain/.test(pop) && /Fingerprint/.test(pop) && /MGRS|13\.6811/.test(pop) && /Also listed by.*OpenStreetMap/.test(pop) && /ODbL/.test(pop) && !/<i>Intl/.test(pop), "popup: airport type, runway, licence, fingerprint, other sources that list it");
@@ -121,7 +123,7 @@ const popWith = async (p, re) => {
   const { ctx, p, errors, asked } = await open({ viewport: { width: 1360, height: 860 } }, "#ng/timeline");
   await p.evaluate(() => window.OSAP_INFRA.set("dam", true)); await p.waitForTimeout(1200);
   const s = await st(p);
-  ok(s.drawn.points === 0 && /none listed for this country/.test(s.msg) && !asked.some((u) => /ng\.json/.test(u)), "Nigeria (not in the index): nothing drawn, says so, no file asked: " + s.msg);
+  ok(s.drawn.points === 0 && /none listed for this country/.test(s.msg) && !asked.some((u) => /\/ng\//.test(u)), "Nigeria (not in the index): nothing drawn, says so, no file asked: " + s.msg);
   ok(errors.length === 0, "Nigeria: no page errors " + errors.join(" | "));
   await ctx.close();
 }
