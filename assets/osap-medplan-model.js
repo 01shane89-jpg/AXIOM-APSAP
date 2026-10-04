@@ -10,7 +10,7 @@
    is UNKNOWN until a planner records it. */
 (function (root) {
   "use strict";
-  var SCHEMA = "osap-medplan/3";
+  var SCHEMA = "osap-medplan/4";
   var STAGE = { primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
   /* the capabilities whose absence a planner must close before the plan is relied on (Build Plan v2, CONOP "critical gaps") */
   var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
@@ -35,6 +35,25 @@
   function fac(f) {
     return { id: f.id, name: f.name, name_local: f.name_local || "", aliases: f.aliases || [], lat: f.lat, lon: f.lon, mgrs: f.mgrs || "", caps: f.caps || {},
       caps_now: f.caps_now || {}, intel: f.intel || null, designation: f.designation || "", source: f.source || "" };
+  }
+
+  function mins(sec) { var m = Math.round((+sec || 0) / 60); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + ("0" + m % 60).slice(-2) + " min"; }
+  /* the road lines to each hospital: P is the plan's own route (its time drives the plan); A and C, and the hazards along every
+     line, come from the Route tab's alternates (phase 3). router_time_s is the router's time for that line, so A and C compare
+     with P like for like. */
+  function groundRoutes(I) {
+    var pac = {}, out = [];
+    (I.pac || []).forEach(function (x) { pac[x.facility_id] = x; });
+    (I.routes || []).forEach(function (r) {
+      var L = (pac[r.facility_id] || {}).lines || [], p = L.filter(function (l) { return l.id === "P"; })[0];
+      out.push({ facility_id: r.facility_id, option: "P", time_s: r.s, distance_m: r.m, source: r.src || "", basis: r.s == null ? "not routed" : "road router",
+        router_time_s: p ? p.s : null, hazards: p ? p.hazards : null });
+      L.forEach(function (l) {
+        if (l.id === "P") return;
+        out.push({ facility_id: r.facility_id, option: l.id, time_s: l.s, distance_m: l.m, source: l.src || "", how: l.how || "", basis: "road router", router_time_s: l.s, hazards: l.hazards });
+      });
+    });
+    return out;
   }
 
   /* input: see planInput() in assets/osap-medplan.js */
@@ -83,7 +102,8 @@
       stabilization_facilities: stab, definitive_facilities: defi, alternates: alts,
       facilities: F,
       evacuation_assets: air,
-      ground_routes: (I.routes || []).map(function (r) { return { facility_id: r.facility_id, option: "P", time_s: r.s, distance_m: r.m, source: r.src || "", basis: r.s == null ? "not routed" : "road router" }; }),
+      ground_routes: groundRoutes(I),
+      ground_alternates: (I.pac || []).map(function (x) { return { facility_id: x.facility_id, state: x.state, error: x.err || "", lines: (x.lines || []).length, hazard_km: x.hazard_km, hazard_days: x.hazard_days }; }),
       air_routes: (I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; }),
       ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate")],
       axp: [point(v.axp, I.ll && I.ll.axp, "primary")],
@@ -118,7 +138,26 @@
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];
     add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? "Road router" : def ? "No road route to the definitive facility yet." : "No destination to route to.");
-    add("route.alternate", "warning", "Alternate ground route", "Not built yet (Build Plan v2 phase 3).");
+    /* phase 3: the alternate and contingency lines to the definitive facility, and the hazards OSAP holds along the primary */
+    var ga = def && (p.ground_alternates || []).filter(function (x) { return x.facility_id === def.facility_id; })[0];
+    var lines = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option !== "P"; }) : [];
+    var pl = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option === "P"; })[0], pt = pl && pl.router_time_s;
+    function plus(r) { return (pt != null && r.time_s != null ? "+" + mins(Math.max(0, r.time_s - pt)) + " on the primary, " : "") + mins(r.time_s) + " drive"; }
+    if (!def) add("route.alternate", "warning", "Alternate ground route", "No destination to route to.");
+    else if (!ga) add("route.alternate", "warning", "Alternate ground route", "Not looked for.");
+    else if (ga.state === "pending") add("route.alternate", "warning", "Alternate ground route", "Still looking.");
+    else if (ga.state === "failed") add("route.alternate", "warning", "Alternate ground route", "None found (" + ga.error + "); plan one by hand.");
+    else if (!lines.length) add("route.alternate", "warning", "Alternate ground route", "The routers gave no distinct alternate line; plan one by hand.");
+    else add("route.alternate", "ok", "Alternate ground route", lines.map(function (r) { return r.option + " " + plus(r); }).join(", ") + (lines.length < 2 ? "; no contingency line" : "") + ". The planner decides which line to drive.");
+    var hz = pl && pl.hazards;
+    if (!def || !ga || ga.state !== "done" || !pl) { /* nothing to check the hazards on yet: the items above say why */ }
+    else if (hz == null) add("route.hazards", "warning", "Hazards along the primary route", "Could not be checked on this device.");
+    else if (hz.length) {
+      var calm = lines.filter(function (r) { return r.hazards && r.hazards.length < hz.length; })[0];
+      add("route.hazards", "warning", "Hazards along the primary route", hz.length + " reported within " + ga.hazard_km + " km in the last " + ga.hazard_days + " days, first: " + hz[0].kind + " at " + hz[0].at_km + " km" +
+        (calm ? "; line " + calm.option + " has " + calm.hazards.length : "") + ". Check against current reporting.");
+    }
+    else add("route.hazards", "ok", "Hazards along the primary route", "None held within " + ga.hazard_km + " km in the last " + ga.hazard_days + " days (not a clearance).");
     /* what the planner typed as the receiving facility must name the hospital the plan sends the casualty to */
     var rec = p.receiving.primary;
     if (!rec.trim()) add("receiving.match", "warning", "Receiving facility (unit details)", def ? "Not filled in; the plan's definitive care is " + def.name + "." : "Not filled in.");
