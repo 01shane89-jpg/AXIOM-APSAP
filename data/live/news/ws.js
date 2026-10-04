@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-04 21:30Z","sources":[{"cc":"ws","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Samoa%22&format=rss","ok":true,"n":6,"old":4}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"ws":[]}};
+window.ASAP_NEWS={"asof":"2026-10-04 21:38Z","sources":[{"cc":"ws","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Samoa%22&format=rss","ok":true,"n":4,"old":4}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"ws":[]}};
