@@ -143,7 +143,8 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   const vs = await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshed({ lat: c[0], lon: c[1], observer_height_m: 2, target_height_m: 2, radius_m: 3000, refraction_k: 0.25 }).then((r) => ({ n: r.n, vis: r.stats.visible_pct, k: r.assumptions.refraction_k, curv: r.assumptions.curvature, cls: r.cls.length, b: r.bounds })), C0);
   ok(vs.n > 100 && vs.cls === vs.n * vs.n && vs.vis > 30 && vs.k === 0.25 && vs.curv === true, "desktop: API viewshed() with radio refraction k = 0.25: " + JSON.stringify({ n: vs.n, vis: vs.vis, k: vs.k }));
 
-  const both = await p.evaluate((c) => { const A = window.OSAP_TERRAIN_ANALYSIS; const pr = A.viewshed({ lat: c[0], lon: c[1], observer_height_m: 5, target_height_m: 5, radius_m: 10000, res_m: 30 }); document.querySelector('#terrain [data-ts="calc"]').click();
+  await settled(p);
+  const both = await p.evaluate((c) => { const A = window.OSAP_TERRAIN_ANALYSIS; const pr = A.viewshed({ lat: c[0], lon: c[1], observer_height_m: 5, target_height_m: 5, radius_m: 10000, res_m: 30 }); (document.querySelector('#terrain [data-ts="calc"]') || document.querySelector('#terrain [data-ts="cancel"]')).click();
     return Promise.race([pr.then((r) => "done " + r.stats.visible_pct.toFixed(1)), new Promise((ok) => setTimeout(() => ok("hung"), 20000))]); }, C0);
   ok(/^done/.test(both), "desktop: API viewshed() from another module survives the panel recalculating at the same time (" + both + ")");
   await settled(p);
