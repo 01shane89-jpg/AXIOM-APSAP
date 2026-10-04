@@ -11,25 +11,33 @@
 //   - OpenStreetMap (ODbL, read through Geofabrik's Postpass API): airfields and heliports (aeroway=aerodrome/heliport), ports (landuse/industrial=port), ferry terminals
 //     and named dams.
 //   - Wikidata (CC0): dams with height and reservoir, where OpenStreetMap has none within 1 km.
+//   - WRI Global Power Plant Database (CC BY 4.0; frozen in 2021): power plants of every fuel with capacity and owner.
+//   - Wikidata (CC0): power stations with capacity and energy source, for plants newer than the WRI list.
+//   - OpenStreetMap: power plants (power=plant; a solar farm only when named or 1 MW and up), refineries, oil and gas
+//     facilities, fuel depots and LNG terminals, and oil, gas and fuel pipelines of 2 km and more (lines, simplified).
+//     Every plant gets one fuel class (coal, gas, oil, nuclear, hydro, pumped storage, solar, wind, offshore wind, geothermal,
+//     bioenergy and waste, tidal and wave, battery storage, other) so the map can colour and filter by it.
 //   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
 //     landing points. A cable goes in the file of every country it lands in.
 // Several sources are merged per layer: the first source to list a site leads, and another source's record of the same site
 // (within a set distance) is folded into it as "also listed by" with its own link, so a popup shows every source that has it.
 // Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
-// split by layer into data/infra/<cc>/<layer>.json (af, port, dam, cable: landing points plus cable lines) so a switch loads only
+// split by layer into data/infra/<cc>/<layer>.json (af, port, dam, cable: landing points plus cable lines, plant, fuel: sites plus
+// pipelines) so a switch loads only
 // its own layer, and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
 // good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
 // Privacy: no phone numbers, emails, websites of people, or private persons' names. Only facility names, codes and public bodies.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { ccsAt, ccFromA2, ccFromName, COUNTRIES } from "./geo_cc.mjs";
+import { ccsAt, ccFromA2, ccFromA3, ccFromName, COUNTRIES } from "./geo_cc.mjs";
 
 const OUT = process.env.INFRA_OUT || "data/infra", DEBUG = !!process.env.INFRA_DEBUG;
 const ONLY = process.env.INFRA_ONLY ? new Set(process.env.INFRA_ONLY.split(",")) : null;
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP infrastructure snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
 const WDQS = "https://query.wikidata.org/sparql";
 const OA = "https://davidmegginson.github.io/ourairports-data/";
+const WRI = "https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv";
 const LOCODE = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv";
 const WPI = ["https://msi.nga.mil/api/publications/world-port-index?output=json"];
 const TG = "https://www.submarinecablemap.com/api/v3/";
@@ -180,6 +188,31 @@ async function locode() {
 
 /* ---------- OpenStreetMap: airfields, ports, ferry terminals, dams ---------- */
 let osmCover = null;
+/* an operator or owner is kept only when it reads as an organisation, never a person */
+const ORG = /\b(authority|port|ministry|department|government|navy|army|corporation|corp|company|co\.|ltd|limited|inc|plc|s\.a\.|sa|gmbh|ag|bv|nv|llc|lp|state|national|public|group|holdings?|energy|power|electric\w*|petro\w*|oil|gas|utilit\w*|board|agency|council|municipal\w*|city|county|province|provincial|cooperative|co-op|enterprise|pte|sdn|bhd|tbk|pt|jsc|pjsc|ojsc|ooo|kk|k\.k\.)\b/i;
+/* "1,200 MW", "1.2 GW", "800 kW" -> MW */
+function mwOf(v) {
+  const m = /([\d.]+)\s*(gw|mw|kw)/i.exec(String(v || "").replace(/,/g, "")); if (!m) return null;
+  const n = parseFloat(m[1]), u = m[2].toLowerCase(); return u === "gw" ? n * 1000 : u === "kw" ? n / 1000 : n;
+}
+/* one fuel class per plant, from the source's own fuel words (OpenStreetMap plant:source, WRI primary_fuel, Wikidata energy
+   source); the first fuel named leads ("coal;gas" is coal) */
+function fuelClass(src, name, t = {}) {
+  const f = String(src || "").toLowerCase().split(/[;,/]/)[0].trim(), n = String(name || "");
+  if (/pump/.test(f) || /pumped/i.test(t["plant:method"] || "") || /pump/i.test(t["plant:storage"] || "") || (/hydro|water|storage/.test(f) && /pumped/i.test(n))) return "pumped";
+  if (/^(battery|storage|batteries|electricity storage)/.test(f)) return "battery";
+  if (/nuclear|uranium/.test(f)) return "nuclear";
+  if (/coal|lignite|anthracite/.test(f)) return "coal";
+  if (/gas|lng|methane/.test(f) && !/bio/.test(f)) return "gas";
+  if (/oil|diesel|petcoke|petroleum|fuel oil|kerosene|heavy fuel/.test(f)) return "oil";
+  if (/hydro|water/.test(f)) return "hydro";
+  if (/solar|photovoltaic/.test(f)) return "solar";
+  if (/wind/.test(f)) return t.offshore === "yes" || /offshore/i.test(n) || /offshore/i.test(t.location || "") ? "windoff" : "wind";
+  if (/geotherm/.test(f)) return "geo";
+  if (/tid|wave|marine/.test(f)) return "tidal";
+  if (/bio|waste|wood|straw|landfill|refuse|cogeneration/.test(f)) return "bio";
+  return "other";
+}
 const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
 /* OpenStreetMap is read through Postpass (Geofabrik's keyless SQL API over a live OpenStreetMap database; public Overpass servers
    time out or refuse GitHub's runners on whole-world tag searches). The world is read in tiles (30 degrees of longitude by three
@@ -187,7 +220,7 @@ const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|propose
    never read first, then the oldest, until its time budget (INFRA_OSM_MIN minutes, default 60) is spent; a tile that fails keeps
    its last copy. So a busy server never empties the map. Lines (dams are usually mapped as lines) are placed at their midpoint. */
 const POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
-const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator)$/;
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|location|diameter|usage)$/;
 async function postpass(sql) {
   let err;
   for (let k = 0; k < 2; k++) {
@@ -201,10 +234,12 @@ async function postpass(sql) {
 }
 async function osm() {
   const W = { af: `tags->>'aeroway' IN ('aerodrome','heliport')`, port: `(tags->>'landuse' = 'port' OR tags->>'industrial' = 'port' OR (tags->>'amenity' = 'ferry_terminal' AND tags ? 'name'))`,
-    dam: `tags->>'waterway' = 'dam' AND tags ? 'name'` };
+    dam: `tags->>'waterway' = 'dam' AND tags ? 'name'`, plant: `tags->>'power' = 'plant'`,
+    fuel: `tags->>'industrial' IN ('refinery','oil','gas','fuel','fuel_depot','oil_storage','lng','petroleum_terminal','oil_terminal','gas_terminal')`,
+    pipe: `tags->>'man_made' = 'pipeline' AND tags->>'substance' IN ('gas','oil','fuel','natural_gas','petroleum','crude_oil','lng','lpg','hydrocarbons','diesel','kerosene','gasoline')` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
-  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuel|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
   for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
     const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
@@ -216,15 +251,24 @@ async function osm() {
     if (Date.now() > budget) break;
     if (t.at && Date.now() - t.at < 3 * 864e5) continue;   // read in the last three days
     const env = `geom && ST_MakeEnvelope(${t.w}, ${t.s0}, ${t.w + 30}, ${t.n0}, 4326)`;
-    const sql = `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${W[t.part]} AND ${env}` +
-      ` UNION ALL SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom FROM postpass_line WHERE ${W[t.part]} AND ${env}`;
+    /* pipelines keep their line (simplified to about 500 m, and 2 km long or more); everything else is one point */
+    const sql = t.part === "pipe"
+      ? `SELECT osm_type, osm_id, tags, ST_Simplify(geom, 0.005) AS geom FROM postpass_line WHERE ${W.pipe} AND ${env} AND ST_Length(geom::geography) > 2000`
+      : `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${W[t.part]} AND ${env}` +
+        ` UNION ALL SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom FROM postpass_line WHERE ${W[t.part]} AND ${env}`;
     try {
       const t0 = Date.now(), fs = await postpass(sql), els = [];
       for (const f of fs) {
-        const p = f.properties || {}, c = (f.geometry || {}).coordinates; if (!c) continue;
+        const p = f.properties || {}, gm = f.geometry || {}, c = gm.coordinates; if (!c) continue;
         let tg = p.tags || {}; if (typeof tg === "string") try { tg = JSON.parse(tg); } catch (e) { tg = {}; }
         if (Object.keys(tg).some((k) => DEAD.test(k)) || tg.disused === "yes" || tg.abandoned === "yes") continue;
-        els.push([String(p.osm_type || "n")[0].toLowerCase() + p.osm_id, r4(c[1]), r4(c[0]), Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]))]);
+        const keep = Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]));
+        const oid = String(p.osm_type || "n")[0].toLowerCase() + p.osm_id;
+        if (t.part === "pipe") {
+          const parts = gm.type === "MultiLineString" ? c : gm.type === "LineString" ? [c] : [];
+          const g = parts.map((ln) => ln.map(([lo, la]) => [r3(la), r3(lo)])).filter((ln) => ln.length > 1);
+          if (g.length) els.push([oid, null, null, keep, g]);
+        } else els.push([oid, r4(c[1]), r4(c[0]), keep]);
       }
       t.old = { at: new Date().toISOString(), els }; writeFileSync(t.f, JSON.stringify(t.old)); fresh++;
       log("  osm tile", t.part, t.w, t.s0, els.length, Math.round((Date.now() - t0) / 1000) + " s");
@@ -235,8 +279,22 @@ async function osm() {
   if (!have) throw new Error("no OpenStreetMap tile could be read");
   osmCover = { tiles: have, of: tiles.length, fresh };
   const els = [];
-  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags] of t.old.els) els.push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags });
-  const seen = new Set(), out = [];
+  const pipes = [];
+  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags, g] of t.old.els) (g ? pipes : els).push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags, g });
+  const seen = new Set(), out = [], lines = [];
+  /* a pipeline goes in the file of every country its line passes through */
+  for (const e of pipes) {
+    const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
+    const t = e.tags || {}, sub = /gas|lng|lpg/i.test(t.substance) ? "gas" : /oil|petroleum|crude/i.test(t.substance) ? "oil" : "fuel";
+    const ccs = new Set();
+    for (const ln of e.g) for (let i = 0; i < ln.length; i += Math.max(1, Math.floor(ln.length / 12))) { const c = ccOf(ln[i][0], ln[i][1]); if (c) ccs.add(c); }
+    for (const ln of e.g) { const v = ln[ln.length - 1], c = ccOf(v[0], v[1]); if (c) ccs.add(c); }
+    const x = Object.fromEntries([["substance", clip(t.substance, 30)], ["location", clip(t.location, 20)], ["diameter", clip(t.diameter, 20)], ["usage", clip(t.usage, 20)],
+      ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+    for (const cc of ccs) lines.push({ k: "pipe", t: sub, cc, id: "osm:" + id, nm: clip(t["name:en"] || t.name || ""), g: e.g, s: "osm",
+      u: "https://www.openstreetmap.org/" + e.type + "/" + e.id, x });
+  }
+  seen.clear();
   for (const e of els) {
     const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
     const c = e.center || (e.lat != null ? e : null); if (!c) continue;
@@ -256,14 +314,29 @@ async function osm() {
       out.push({ k: "af", t: heli ? "H" : major ? "M" : "S", cc, id: "osm:" + id, nm: nmA, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xa });
       continue;
     }
+    if (t.power === "plant") {
+      const cl = fuelClass(t["plant:source"] || "", nm, t), out_mw = mwOf(t["plant:output:electricity"]);
+      if (cl === "solar" && !(out_mw >= 1) && !t.name) continue;   // rooftop and small solar
+      const xp = Object.fromEntries([["fuel", clip(t["plant:source"], 40)], ["method", clip(t["plant:method"], 30)], ["mw", out_mw != null ? Math.round(out_mw * 10) / 10 : null],
+        ["built", clip(t.start_date, 12)], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1] != null && p[1] !== ""));
+      out.push({ k: "plant", t: cl, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xp });
+      continue;
+    }
+    if (t.industrial && t.industrial !== "port") {
+      const kind = /refinery/.test(t.industrial) ? "R" : /lng/.test(t.industrial) ? "L" : /depot|storage|terminal|fuel/.test(t.industrial) ? "T" : "G";
+      const xf = Object.fromEntries([["facility", clip(t.industrial.replace(/_/g, " "), 30)], ["product", clip(t.product, 40)],
+        ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "fuel", t: kind, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xf });
+      continue;
+    }
     if (t.waterway === "dam") { k = "dam"; ty = "D"; x = { height_m: num(t.height), purpose: clip(t.purpose || t["dam:purpose"], 40), river: clip(t["waterway:name"] || "", 40), built: clip(t.start_date, 12) }; }
     else if (t.amenity === "ferry_terminal") { k = "port"; ty = "F"; x = { ferry: 1 }; }
     else { k = "port"; ty = "O"; }
     x = Object.fromEntries(Object.entries(x).filter((p) => p[1] != null && p[1] !== ""));
-    if (t.operator && /\b(authority|port|ministry|department|government|navy|corporation|company|ltd|limited|inc|co\.|plc|s\.a\.|gmbh|ag|bv|state|national|public)\b/i.test(t.operator)) x.op = clip(t.operator, 60);
+    if (t.operator && ORG.test(t.operator)) x.op = clip(t.operator, 60);
     out.push({ k, t: ty, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x });
   }
-  return out;
+  return { items: out, lines };
 }
 
 /* ---------- Wikidata dams ---------- */
@@ -283,6 +356,48 @@ async function wikidams() {
     const x = Object.fromEntries([["height_m", b.h ? num(b.h.value) : null], ["reservoir", b.resLabel && !/^Q\d+$/.test(b.resLabel.value) ? clip(b.resLabel.value, 50) : null],
       ["built", b.inc ? String(b.inc.value).slice(0, 4) : null]].filter((p) => p[1] != null && p[1] !== ""));
     by.set(qid, { k: "dam", t: "D", cc, id: "wd:" + qid, nm: clip(nm), la: r4(lat), lo: r4(lon), s: "wd", u: "https://www.wikidata.org/wiki/" + qid, x });
+  }
+  return [...by.values()];
+}
+
+/* ---------- WRI Global Power Plant Database ---------- */
+async function wriPlants() {
+  const rows = csv(await get(WRI, {}, 240000));
+  log("  wri rows", rows.length);
+  const out = [];
+  for (const r of rows) {
+    const la = num(r.latitude), lo = num(r.longitude); if (la == null || lo == null) continue;
+    const hint = ccFromA3(r.country), cc = ccOf(la, lo, hint) || hint; if (!cc) continue;
+    const x = Object.fromEntries([["fuel", clip([r.primary_fuel, r.other_fuel1, r.other_fuel2].filter(Boolean).join(", "), 60)], ["mw", num(r.capacity_mw)],
+      ["built", r.commissioning_year ? String(Math.round(num(r.commissioning_year))) : null], ["op", r.owner && ORG.test(r.owner) ? clip(r.owner, 60) : null],
+      ["data_year", r.year_of_capacity_data || null]].filter((p) => p[1] != null && p[1] !== ""));
+    out.push({ k: "plant", t: fuelClass(r.primary_fuel, r.name), cc, id: "wri:" + r.gppd_idnr, nm: clip(r.name), la: r4(la), lo: r4(lo), s: "wri",
+      u: "https://datasets.wri.org/dataset/globalpowerplantdatabase", x });
+  }
+  return out;
+}
+
+/* ---------- Wikidata power stations ---------- */
+async function wikiplants() {
+  const q = `SELECT ?item ?itemLabel ?coord ?cap ?srcLabel ?a2 ?inc WHERE {
+  ?item wdt:P31/wdt:P279* wd:Q159719; wdt:P625 ?coord.
+  OPTIONAL { ?item wdt:P2109 ?cap. } OPTIONAL { ?item wdt:P618 ?src. } OPTIONAL { ?item wdt:P17 ?c. ?c wdt:P297 ?a2. } OPTIONAL { ?item wdt:P571 ?inc. }
+  FILTER NOT EXISTS { ?item wdt:P576 ?gone. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". } }`;
+  const j = JSON.parse(await get(WDQS, { method: "POST", body: "query=" + encodeURIComponent(q),
+    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 290000));
+  const by = new Map();
+  for (const b of j.results.bindings) {
+    const m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const qid = b.item.value.split("/").pop(), prev = by.get(qid);
+    if (prev) { if (b.srcLabel && !prev.x.fuel) { prev.x.fuel = clip(b.srcLabel.value, 40); prev.t = fuelClass(b.srcLabel.value, prev.nm); } continue; }
+    const lon = +m[1], lat = +m[2], cc = ccOf(lat, lon, ccFromA2(b.a2 && b.a2.value)); if (!cc) continue;
+    const nm = b.itemLabel && b.itemLabel.value !== qid ? b.itemLabel.value : ""; if (!nm) continue;
+    /* capacity is in watts or megawatts depending on the editor; read big numbers as watts */
+    let cap = b.cap ? num(b.cap.value) : null; if (cap != null && cap > 1e5) cap = cap / 1e6;
+    const fuel = b.srcLabel && !/^Q\d+$/.test(b.srcLabel.value) ? b.srcLabel.value : "";
+    const x = Object.fromEntries([["fuel", clip(fuel, 40)], ["mw", cap != null ? Math.round(cap * 10) / 10 : null], ["built", b.inc ? String(b.inc.value).slice(0, 4) : null]].filter((p) => p[1] != null && p[1] !== ""));
+    by.set(qid, { k: "plant", t: fuelClass(fuel, nm), cc, id: "wd:" + qid, nm: clip(nm), la: r4(lat), lo: r4(lon), s: "wdp", u: "https://www.wikidata.org/wiki/" + qid, x });
   }
   return [...by.values()];
 }
@@ -350,6 +465,8 @@ const SRC = {
   locode: { name: "UN/LOCODE (UNECE)", lic: "Free reuse (UNECE)", link: "https://unece.org/trade/uncefact/unlocode" },
   osm: { name: "OpenStreetMap", lic: "ODbL", link: "https://www.openstreetmap.org/copyright" },
   wd: { name: "Wikidata", lic: "CC0", link: "https://www.wikidata.org/wiki/Q12323" },
+  wri: { name: "WRI Global Power Plant Database", lic: "CC BY 4.0", link: "https://datasets.wri.org/dataset/globalpowerplantdatabase" },
+  wdp: { name: "Wikidata (power stations)", lic: "CC0", link: "https://www.wikidata.org/wiki/Q159719" },
   tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
 };
 const got = {}, status = {};
@@ -369,16 +486,18 @@ await run("wpi", wpi);
 await run("locode", locode);
 await run("osm", osm);
 await run("wd", wikidams);
+await run("wri", wriPlants);
+await run("wdp", wikiplants);
 await run("tg", cables);
 
 /* one site, several sources: the first list to have it leads; a later source's record within reach is folded in as "also listed
    by" (its link kept, its extra details added where the lead has none); anything new is added */
-const REACH = { af: 1500, port: 3000, dam: 1000 };
+const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 0 };
 function merge(lists, k, reach) {
   const lead = [], g = new Map(), key = (la, lo) => Math.floor(la / 0.05) + ":" + Math.floor(lo / 0.05);
   const find = (i, m) => { const a = Math.floor(i.la / 0.05), b = Math.floor(i.lo / 0.05); let best = null, bd = m;
     for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) {
-      if (o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
+      if (k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? false : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
       const d = dist(i.la, i.lo, o.la, o.lo); if (d < bd) { bd = d; best = o; } }
     return best; };
   let folded = 0;
@@ -389,6 +508,7 @@ function merge(lists, k, reach) {
       (o.also = o.also || []).push({ s: i.s, u: i.u, ...(i.nm && i.nm !== o.nm ? { nm: i.nm } : {}) });
       for (const [kk, v] of Object.entries(i.x || {})) if (o.x[kk] == null && kk !== "approx") o.x[kk] = v;
       if (!o.nm && i.nm) o.nm = i.nm;
+      if (k === "plant" && o.t === "other" && i.t !== "other") o.t = i.t;
       folded++; continue;
     }
     const c = { ...i, x: { ...(i.x || {}) } }; lead.push(c);
@@ -401,6 +521,9 @@ const merged = [
   ...merge([got.oa.items, got.osm.items], "af", REACH.af),
   ...merge([got.wpi.items, got.osm.items, got.locode.items], "port", REACH.port),
   ...merge([got.osm.items, got.wd.items], "dam", REACH.dam).filter((i) => i.s !== "wd" || (i.x.height_m || 0) >= 15 || i.x.reservoir),
+  /* WRI leads (capacity and fuel for every plant); OpenStreetMap and Wikidata add plants built since and smaller ones */
+  ...merge([got.wri.items, got.osm.items, got.wdp.items], "plant", REACH.plant),
+  ...got.osm.items.filter((i) => i.k === "fuel"),
 ];
 /* a private OpenStreetMap-only strip is left out */
 const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));
@@ -415,31 +538,31 @@ for (const i of [...kept, ...got.tg.items]) {
   slot(cc).items.push(it);
   if (cc === "jp" && inOki(rest.la, rest.lo)) slot("oki").items.push(it);
 }
-for (const l of got.tg.lines) {
+for (const l of [...got.tg.lines, ...got.osm.lines]) {
   if (!l.cc || !IDS.has(l.cc)) continue;
   const { cc, ...rest } = l;
-  const it = { ...rest, fp: rest.fp || fp(rest.s, rest.id, rest.nm, JSON.stringify(rest.g)) };
+  const it = { ...rest, fp: rest.fp || fp(rest.s, rest.id, rest.nm, JSON.stringify(rest.g), JSON.stringify(rest.x || {})) };
   slot(cc).lines.push(it);
   if (cc === "jp" && rest.g.some((ln) => ln.some((v) => inOki(v[0], v[1])))) slot("oki").lines.push(it);
 }
 
 const countries = {};
-const FILE = { af: "af", port: "port", dam: "dam", lp: "cable" };
+const FILE = { af: "af", port: "port", dam: "dam", lp: "cable", cable: "cable", plant: "plant", fuel: "fuel", pipe: "fuel" };
 for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f)) unlinkSync(join(OUT, f));   // the old one-file layout
 for (const d of readdirSync(OUT)) if (/^[a-z]{2,3}$/.test(d) && !by[d]) for (const f of readdirSync(join(OUT, d))) unlinkSync(join(OUT, d, f));
-const KORD = { af: 0, port: 1, dam: 2, lp: 3 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
+const KORD = { af: 0, port: 1, dam: 2, lp: 3, plant: 4, fuel: 5 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
 for (const [cc, c] of Object.entries(by).sort()) {
   c.items.sort((a, b) => (KORD[a.k] - KORD[b.k]) || ((TORD[a.t] || 0) - (TORD[b.t] || 0)) || String(a.id).localeCompare(String(b.id)));
   c.lines.sort((a, b) => String(a.id).localeCompare(String(b.id)));
   mkdirSync(join(OUT, cc), { recursive: true });
   const files = {};
   for (const i of c.items) (files[FILE[i.k]] = files[FILE[i.k]] || { items: [], lines: [] }).items.push(i);
-  if (c.lines.length) (files.cable = files.cable || { items: [], lines: [] }).lines = c.lines;
+  for (const l of c.lines) (files[FILE[l.k]] = files[FILE[l.k]] || { items: [], lines: [] }).lines.push(l);
   for (const f of readdirSync(join(OUT, cc))) if (!files[f.replace(/\.json$/, "")]) unlinkSync(join(OUT, cc, f));
   for (const [f, v] of Object.entries(files)) writeFileSync(join(OUT, cc, f + ".json"), JSON.stringify({ v: 1, cc, at: now, layer: f, items: v.items, lines: v.lines }));
   const n = {};
   for (const i of c.items) n[i.k] = (n[i.k] || 0) + 1;
-  if (c.lines.length) n.cable = c.lines.length;
+  for (const l of c.lines) n[l.k] = (n[l.k] || 0) + 1;
   countries[cc] = n;
 }
 writeFileSync(join(OUT, "index.json"), JSON.stringify({ v: 1, at: now, sources: Object.fromEntries(Object.entries(SRC).map(([k, v]) => [k, { ...v, ...status[k] }])), countries }, null, 1));

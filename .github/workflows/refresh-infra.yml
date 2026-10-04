@@ -1,6 +1,7 @@
 # Stored infrastructure sites for Map overlays > Infrastructure (tools/build_infra.mjs -> data/infra): airfields and heliports
 # (OurAirports), ports (NGA World Port Index, OpenStreetMap), dams (OpenStreetMap, Wikidata), submarine cables and landing points
-# (TeleGeography, non-commercial). Every country. Twice a week; OpenStreetMap is read in tiles, a time-boxed share each run; commits on the branch it runs on (main on schedule). A source that fails
+# (TeleGeography, non-commercial), power plants of every fuel (WRI, Wikidata, OpenStreetMap), refineries, fuel depots, LNG
+# terminals and pipelines (OpenStreetMap). Every country. Twice a week; OpenStreetMap is read in tiles, a time-boxed share each run; commits on the branch it runs on (main on schedule). A source that fails
 # keeps its last good copy and is reported in data/infra/index.json.
 name: Refresh infrastructure sites
 
@@ -32,6 +33,8 @@ jobs:
       - name: Build
         env:
           INFRA_DEBUG: "1"
+          # minutes of OpenStreetMap tile reads per run; the rest of the build takes about 15
+          INFRA_OSM_MIN: "85"
         run: node tools/build_infra.mjs
       - name: Commit
         run: |
