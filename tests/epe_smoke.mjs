@@ -150,9 +150,11 @@ let state;
   await p.evaluate(() => { document.getElementById("epe").hidden || window.OSAP_EPE.close(); });
   const box = await p.evaluate(() => { const r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + r.width * 0.4, y: r.top + r.height * 0.5 }; });
   await p.mouse.click(box.x, box.y, { button: "right" }); await p.waitForTimeout(400);
-  ok(await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="evac"]')), "long-press ring offers Evac");
-  if (await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="evac"]'))) {
-    await p.click('#atk-ring [data-rk="evac"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="plans"]') && document.querySelectorAll("#atk-ring [data-rk]").length === 9), "long-press ring has Plans, still 9 buttons");
+  if (await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="plans"]'))) {
+    await p.click('#atk-ring [data-rk="plans"]'); await p.waitForTimeout(200);
+    ok(/Evacuate from here/.test(await p.textContent("#atk-pop")), "Plans lists Evacuate from here");
+    await p.click('#atk-pop [data-pk="evac"]'); await p.waitForTimeout(400);
     const s4 = await st(p);
     ok(s4.origin && /Long-press/.test(s4.origin.how) && !s4.plan, "Evacuate from here sets that point as a new origin");
   }

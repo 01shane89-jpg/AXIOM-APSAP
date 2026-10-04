@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Medical plan from this point, Evacuate from here, Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Plans (Medical plan or Evacuate from here), Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -53,6 +53,7 @@
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
     pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
     search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
+    plans: ic('<rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V2.8h6V4M8.5 10h7M8.5 14h7M8.5 18h4"/>'),
     evac: ic('<path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4M18 12H9"/>'),
     heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>')
   };
@@ -140,7 +141,7 @@
     pop.innerHTML = items.map(function (it) {
       return it ? '<button type="button" role="menuitem" data-pk="' + it[0] + '"' + (it[2] ? ' class="on"' : "") + ">" + esc(it[1]) + "</button>" : '<hr>';
     }).join("");
-    pop.hidden = false; pop._for = btn.getAttribute("data-atk");
+    pop.hidden = false; pop._for = btn.getAttribute("data-atk"); pop.style.left = "";
     var r = btn.getBoundingClientRect(), mr = mapEl.getBoundingClientRect();
     pop.style.top = Math.max(4, Math.min(r.top - mr.top, mr.height - pop.offsetHeight - 34)) + "px";
     pop.style.right = (mr.right - r.left + 6) + "px";
@@ -215,8 +216,9 @@
   });
   pop.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pk]"); if (!b) return;
-    var k = b.getAttribute("data-pk"), f = pop._for; popClose();
-    if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
+    var k = b.getAttribute("data-pk"), f = pop._for, pll = pop._ll; popClose(); pop._ll = null;
+    if (f === "plans") { if (pll) act(k, pll); }
+    else if (f === "basemap") { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set(k); }
     else if (f === "area") {
       /* area tools from other modules (a medical plan): W.OSAP_AREA_TOOLS = [{ id, label, run, point }, ...] */
       var at = (W.OSAP_AREA_TOOLS || []).filter(function (x) { return x && x.id === k; })[0];
@@ -399,10 +401,22 @@
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["medplan", "Med plan", I.medic], ["evac", "Evac", I.evac], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["plans", "Plans", I.plans], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
   ];
-  /* Med plan only once assets/osap-medplan.js has loaded (it loads after this file) */
-  function radNow() { return RAD.filter(function (a) { return a[0] !== "medplan" || W.OSAP_MEDPLAN; }); }
+  /* "Plans" opens a short list: Med plan from here (once assets/osap-medplan.js has loaded; it loads after this file) and
+     Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
+  function radNow() { return RAD; }
+  function plansOpen(r, ll) {
+    var items = (W.OSAP_MEDPLAN ? [["medplan", "Med plan from here"]] : []).concat([["evac", "Evacuate from here"]]);
+    pop.innerHTML = items.map(function (it) { return '<button type="button" role="menuitem" data-pk="' + it[0] + '">' + esc(it[1]) + "</button>"; }).join("");
+    pop.hidden = false; pop._for = "plans"; pop._ll = ll;
+    /* under the Plans button, kept inside the map */
+    var mr = mapEl.getBoundingClientRect();
+    pop.style.right = "auto";
+    pop.style.left = Math.max(4, Math.min(r.left - mr.left, mr.width - pop.offsetWidth - 4)) + "px";
+    pop.style.top = Math.max(4, Math.min(r.bottom - mr.top + 4, mr.height - pop.offsetHeight - 34)) + "px";
+    var f = pop.querySelector("[data-pk]"); if (f) f.focus({ preventScroll: true });
+  }
   var RADII = [0.5, 1, 5, 10];
   function radius() { var r = +lsGet(K_R); return RADII.indexOf(r) >= 0 ? r : 1; }
   var ring = D.createElement("div"); ring.id = "atk-ring"; ring.className = "leaflet-control"; ring.hidden = true; ring.setAttribute("role", "menu"); ring.setAttribute("aria-label", "Actions at this point");
@@ -459,8 +473,9 @@
     if (rr) { lsSet(K_R, rr.getAttribute("data-rr")); Array.prototype.forEach.call(ring.querySelectorAll("[data-rr]"), function (b) { b.setAttribute("aria-pressed", String(b === rr)); }); return; }
     if (e.target.closest(".atk-rc")) { var l0 = ringLL; ringClose(); act("copy", l0); return; }
     var b = e.target.closest("[data-rk]"); if (!b) return;
-    var k = b.getAttribute("data-rk"), ll = ringLL; ringClose();
-    if (k !== "close" && ll) act(k, ll);
+    var k = b.getAttribute("data-rk"), ll = ringLL, br = b.getBoundingClientRect(); ringClose();
+    if (k === "plans" && ll) plansOpen(br, ll);
+    else if (k !== "close" && ll) act(k, ll);
   });
   D.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (!ring.hidden) ringClose(); popClose(); } });
   D.addEventListener("pointerdown", function (e) { if (!ring.hidden && !ring.contains(e.target)) ringClose(); }, true);
