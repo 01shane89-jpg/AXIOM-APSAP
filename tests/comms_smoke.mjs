@@ -116,6 +116,18 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.evaluate(() => window.__asapMap.panBy([30, 20], { animate: false })); await p.waitForTimeout(1200);
   ok(overpassCalls === before, "a small pan inside loaded boxes asks Overpass nothing new");
 
+  // tapping a mast opens its info and it stays open: the tap must not also start a place check that redraws the masts
+  {
+    const mp = await p.evaluate(() => { const q = window.__asapMap.latLngToContainerPoint([13.76, 100.51]), r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + q.x, y: r.top + q.y }; });
+    const rk = async () => { const r = (await st(p)).result; return r ? r.lat + "," + r.lon : ""; }, before = await rk();
+    await p.mouse.click(mp.x, mp.y); await p.waitForTimeout(2500);
+    const pop = await p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "");
+    ok(/OpenStreetMap node\/1/.test(pop), "tapping a mast keeps its info box open");
+    ok((await rk()) === before, "tapping a mast does not start a place check");
+    await p.evaluate(() => window.__asapMap.panBy([0, 0], { animate: false }) || window.__asapMap.fire("moveend")); await p.waitForTimeout(800);
+    ok(!!(await p.evaluate(() => document.querySelector(".leaflet-popup-content"))), "the info box survives the masts being redrawn after a map move");
+    await p.evaluate(() => window.__asapMap.closePopup());
+  }
   // place check in central Bangkok: tests in the spot and a phone mast in sight
   await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
   await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v; }, null, { timeout: 20000 });

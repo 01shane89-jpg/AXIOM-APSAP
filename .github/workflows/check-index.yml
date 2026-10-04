@@ -58,6 +58,7 @@ jobs:
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
       - run: node tests/maploading_smoke.mjs
+      - run: node tests/streets_english_smoke.mjs
       - run: node tests/sw_data_smoke.mjs
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
