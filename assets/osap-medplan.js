@@ -2221,7 +2221,9 @@
     var P = s.fac ? picks(s) : [], roles = P.map(function (p) { return PK_TXT[p.role]; }).filter(function (t) { return t !== "STB"; });
     o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan centre", ""]);
     if (has("stb")) o.push(["mk", "#b34700", "STB", "Stabilization stop", "Quickest hospital inside the golden hour with a documented emergency department, when the Primary is beyond it"]);
-    if (roles.length) o.push(["mk", "#8b0010", roles.join(" "), "Planned MTFs, major trauma", "Primary, Secondary, Tertiary: each needs care documented by a credible source"]);
+    /* one entry per role, never one combined chip (Shane 2026-10-04: "you merged the three options into 1") */
+    var RL = { PRI: ["Primary MTF", "Quickest hospital giving a real step up in care"], SEC: ["Secondary MTF", "Surgery, blood, CT and ICU documented"], TER: ["Tertiary MTF", "Definitive specialty care documented"] };
+    ["PRI", "SEC", "TER"].forEach(function (t) { if (roles.indexOf(t) >= 0) o.push(["mk", "#8b0010", t, RL[t][0], RL[t][1] + " (major trauma)"]); });
     if (has("alt")) o.push(["mka", "#8a4b00", "ALT", "Alternate MTF", "Also qualifies on documented care, if the planned one cannot take the casualty"]);
     if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation"]);
     if (has("", /^C\d/)) o.push(["mk", "#D7141A", "C", "Clinic or first-aid post", ""]);
