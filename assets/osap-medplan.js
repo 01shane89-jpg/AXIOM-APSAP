@@ -524,6 +524,8 @@
     ["spec.obstetric", "Obstetrics"], ["spec.cath_lab", "Cardiac catheterisation"], ["spec.stroke", "Stroke"], ["spec.hyperbaric", "Hyperbaric medicine"],
     ["spec.rehabilitation", "Rehabilitation"], ["trans.helipad", "Helipad"], ["trans.transfer", "Ambulance transfer"], ["trans.critical_care_transport", "Critical care transport"]];
   var CAP_NAME = {}; CAPS.forEach(function (c) { CAP_NAME[c[0]] = c[1]; });
+  var MED_SCHOOL = /\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e41\u0e1e\u0e17\u0e22\u0e4c/,
+    OFFICIAL_CAPS = { full: ["ed.basic", "ed.24_7", "surg.general", "surg.or_emergency", "surg.anaesthesia", "blood.bank", "dx.ct", "cc.icu"], ed: ["ed.basic", "ed.24_7"] };
   /* healthcare:speciality values that state a flag (whole values, so "neurology" is not neurosurgery) */
   var CAP_RE = W.OSAP_HOSP.SPECIALITY_RE;
   function capFlags(f, m) {
@@ -563,6 +565,19 @@
       Object.keys(CAP_RE).forEach(function (k) { if (CAP_RE[k].test(v)) rep(k, osm, "healthcare:speciality=" + v, "LOW"); });
     });
     if (m && NEURO.test(String(m.notes || ""))) rep("surg.neuro", sof, "neurosurgery in the source notes", "MODERATE");
+    /* the official record's hospital status (Shane 2026-10-04, option "official status"): a medical school hospital or MOPH
+       service level A (regional referral) stands for the Secondary trauma capabilities, and level S or M1 (standard and
+       mid-level referral) for a 24-hour emergency department. INFERRED from the official status, never VERIFIED, and named
+       as such; read after every source, it fills only what is unknown or listed by OpenStreetMap alone, so a source stating it one by one, or saying it is not available, wins */
+    if (g) {
+      var oc = g.level === "A" || MED_SCHOOL.test(g.type_th || "") ? OFFICIAL_CAPS.full : g.level === "S" || g.level === "M1" ? OFFICIAL_CAPS.ed : null, ps0 = gs.hospital || {};
+      if (oc) oc.forEach(function (k) {
+        if (!C[k] || !(C[k].status === "UNKNOWN" || (C[k].status === "REPORTED" && crowd(C[k].source)))) return;
+        C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
+          source: { kind: "register", url: ps0.page || "", name: ps0.name || "HA Thailand official hospital record", at: g.retrieved, sha: g.sha256 || "" },
+          how: "inferred from the official record: " + (g.level === "A" ? "MOPH service level A (regional referral)" : MED_SCHOOL.test(g.type_th || "") ? "medical school hospital" : "MOPH service level " + g.level) + ", H code " + g.hcode };
+      });
+    }
     /* a planner's check outranks every source (V1), and only it says whether a capability can be used now */
     return FI() ? FI().apply(C, checks(), f.id, new Date().toISOString()) : C;
   }
