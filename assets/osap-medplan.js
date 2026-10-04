@@ -911,6 +911,11 @@
     "#medplan tr.mpoff td{opacity:.55}#medplan tr.mpoff td:first-child{opacity:1}#medplan .mpofftag{font-size:11.5px;font-weight:700;color:#8b0010}" +
     ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
     "#medplan .mpvs{display:inline-block;margin:2px 0 4px;padding:3px 8px;border-radius:4px;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}#medplan .mpvs-valid{background:#d3f0d8;color:#0b4d1c}#medplan .mpvs-warning{background:#ffe8a3;color:#5a3d00}#medplan .mpvs-blocking{background:#f8c9c4;color:#7a0d02}" +
+    "#medplan .mpconop{border:2px solid var(--ink,#1b2733);border-radius:6px;padding:8px 10px;margin:10px 0}#medplan .mpconop .mpch{margin:0 0 6px;font-size:16px;text-transform:uppercase}" +
+    "#medplan .mpcats{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}#medplan .mpcats button{min-height:36px;text-transform:uppercase;font-weight:600}#medplan .mpcats button.on{background:#1b2733;color:#fff;border-color:#1b2733}" +
+    "#medplan .mpcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 12px}#medplan .mpcx{display:grid;gap:1px;font-size:13px;align-content:start}#medplan .mpcx.wide{grid-column:1/-1}" +
+    "#medplan .mpcx i{font-style:normal;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted,#56626F)}#medplan .mpcx span{color:var(--muted,#56626F);font-size:12px}#medplan .mpcx ul{margin:0;padding-left:18px}" +
+    "#medplan .mpcy{color:#1e7a3a}#medplan .mpcn{color:#8a4b00}:root[data-map=grey] #medplan .mpcy,:root[data-map=dark] #medplan .mpcy{color:#7FD99A}:root[data-map=grey] #medplan .mpcn,:root[data-map=dark] #medplan .mpcn{color:#F5C877}.mpdoc .mpcy{color:#1e7a3a!important}.mpdoc .mpcn{color:#8a4b00!important}" +
     "#medplan ul.mppic{list-style:none;margin:2px 0 6px;padding:0;display:grid;gap:4px}#medplan ul.mppic li{background:#ffe8a3;color:#3d2900;border-left:4px solid #a35f00;border-radius:4px;padding:5px 8px;font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
     "#medplan ul.mppic li b{display:block;font-size:13px;letter-spacing:.01em}#medplan ul.mppic li span{display:block;color:#3d2900}#medplan table.mpage tr.mpstale td,#medplan table.mpage tr.mpstale th{color:#8a4b00}:root[data-map=grey] #medplan table.mpage tr.mpstale td,:root[data-map=dark] #medplan table.mpage tr.mpstale td,:root[data-map=grey] #medplan table.mpage tr.mpstale th,:root[data-map=dark] #medplan table.mpage tr.mpstale th{color:#F5C877}" +
     "#medplan ul.mpvl{list-style:none;margin:0 0 4px;padding:0;columns:2 300px;column-gap:18px}#medplan ul.mpvl li{break-inside:avoid;margin:0 0 3px;font-size:12.5px}#medplan .mpvm{display:inline-block;width:1.2em;text-align:center;font-weight:700}#medplan .mpv-ok .mpvm{color:#1e7a3a}#medplan .mpv-warning .mpvm{color:#a35f00}#medplan .mpv-blocking{color:#8b0d02}#medplan .mpv-blocking .mpvm{color:#b3261e}" +
@@ -1005,13 +1010,15 @@
     var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, the picks and every section">Print view (map and details)</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">Print CONOP</button>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Print intelligence annex</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
       '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label></div>" +
       '<p><b>Centred on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
       (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to centre the plan on it.</span>' : "") + "</p>" +
+      '<div id="mp-conop"></div>' +
       '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
       '<h3>Plan status</h3><div id="mp-val"></div>' +
       '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs">Looking up hospitals…</p></div>' +
@@ -1984,6 +1991,31 @@
     if (A.length) R.push({ key: "aircraft", label: "Aircraft confirmation", at: A[0].last_confirmed, expires_at: A[0].expires_at, basis: A[0].provider });
     return R;
   }
+  /* ---------- page 1: the medical CONOP (Build Plan v2 phase 6) ----------
+     The plan at a glance for one casualty type, read from the plan record (OSAP_MEDPLAN_MODEL.conop): status, POI, ground
+     and air, the stabilization stop, the definitive care, the P and A lines and the critical gaps. The casualty buttons choose
+     which pathway it shows; the choice is kept on this device. */
+  var CAT_KEY = "osap-medcat", CAT_BTN = { "cat.major_trauma": "Trauma", "cat.severe_tbi": "Head injury", "cat.major_burn": "Burn", "cat.complex_limb": "Limb / vascular" };
+  function conopCat() { var c = lsGet(CAT_KEY); return CAT_BTN[c] ? c : "cat.major_trauma"; }
+  function conopRender() {
+    var el = D.getElementById("mp-conop"), s = ST, M = W.OSAP_MEDPLAN_MODEL; if (!el || !s || !s.plan || !M || !M.conop) return;
+    var cat = conopCat(), c = M.conop(s.plan, cat), v = fieldVals(), st = c.status.toLowerCase();
+    function stopTxt(x, none) { return x ? "<b>" + esc(x.name) + "</b><span>" + esc((x.time_s != null ? mins(x.time_s) : "time not known") + (x.distance_m != null ? " / " + km(x.distance_m) : "") + (x.way ? " " + x.way : "")) + "</span>" : '<b class="mpcn">' + esc(none) + "</b>"; }
+    function cell(k, h, cls) { return '<div class="mpcx' + (cls ? " " + cls : "") + '"><i>' + esc(k) + "</i>" + h + "</div>"; }
+    function word(w) { return '<b class="' + (/^(AVAILABLE|CONFIRMED)$/.test(w) ? "mpcy" : "mpcn") + '">' + esc(w) + "</b>"; }
+    el.innerHTML = '<section class="mpconop" aria-label="Medical CONOP">' +
+      '<h3 class="mpch">Medical plan: ' + esc(String(v.unit || "").trim() || s.name) + "</h3>" +
+      '<div class="mpcats noprint" role="group" aria-label="Casualty type">' + Object.keys(CAT_BTN).map(function (k) { return '<button type="button" class="refresh' + (k === cat ? " on" : "") + '" data-mp-cat="' + k + '" aria-pressed="' + (k === cat) + '">' + esc(CAT_BTN[k]) + "</button>"; }).join("") + "</div>" +
+      '<div class="mpcgrid">' +
+      cell("Status", '<b class="mpvs mpvs-' + st + '">' + esc(c.status_label) + "</b>", "wide") +
+      cell("POI", "<b>" + esc(c.poi || "not set") + "</b>") + cell("Ground evac", word(c.ground)) + cell("Air MEDEVAC", word(c.air) + (c.air_asset ? "<span>" + esc(c.air_asset) + "</span>" : "")) +
+      cell("Stabilization", stopTxt(c.stabilization, c.bypass ? "BYPASS: direct is quicker" : "none planned")) +
+      cell("Definitive care: " + (c.casualty ? c.casualty.label : ""), stopTxt(c.definitive, "NOT DOCUMENTED")) +
+      cell("Primary route", word(c.primary_route)) + cell("Alternate route", word(c.alternate_route)) +
+      (c.route_flags.length ? cell("Route", c.route_flags.map(function (t) { return '<b class="mpcn">' + esc(t) + "</b>"; }).join(""), "wide") : "") +
+      cell("Critical gaps", c.critical_gaps.length ? "<ul>" + c.critical_gaps.map(function (g) { return "<li>" + esc(g) + "</li>"; }).join("") + "</ul>" : "<b>None</b>", "wide") +
+      "</div><p class=\"obs\">From the plan record below, for " + esc(c.casualty ? c.casualty.label.toLowerCase() : "this casualty") + ". The map, routes and sections below follow major trauma.</p></section>";
+  }
   function picRender() {
     var el = D.getElementById("mp-pic"), s = ST, pc = s && s.plan && s.plan.operational_picture; if (!el || !pc) return;
     var F = pc.flags, A = pc.data_age;
@@ -2287,14 +2319,24 @@
   }
   function valRender() {
     var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
-    s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender();
+    s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender(); conopRender();
     /* an open print view waiting on data rebuilds itself once the data is in */
-    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(); }
+    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(s.printMode); }
   }
 
-  function printView() {
+  /* two printed products (Build Plan v2 phase 6): the Medical CONOP, what is needed during an emergency (page-1 CONOP, the
+     picture, the plan status, the destination matrix, the golden hour, routes P/A/C, contacts and air, sites, out-of-country
+     contingency, unit details); and the Medical Intelligence Annex, every section with the hospital evidence, sources and
+     each hospital's assessment. Both are the same plan record and fingerprint; nothing is worked out again for print. */
+  var CONOP_DROP = ["mp-fac", "mp-air", "mp-thr", "mp-wx"];
+  function printView(mode) {
     var el = D.getElementById("brief"), src = D.querySelector("#medplan .mpbox"), s = ST; if (!el || !src) return false;
-    var c = src.cloneNode(true);
+    var c = src.cloneNode(true), conop = mode === "conop";
+    s.printMode = conop ? "conop" : "";
+    if (conop) {
+      CONOP_DROP.forEach(function (id) { var d = c.querySelector("#" + id); if (!d) return; var h = d.previousElementSibling; if (h && h.tagName === "H3") h.remove(); d.remove(); });
+      [].forEach.call(c.querySelectorAll("#mp-src > ul"), function (x) { x.remove(); });
+    }
     /* the fields print as their values; buttons, pickers and on-screen hints go */
     [].forEach.call(c.querySelectorAll("input[type=checkbox]"), function (i) { var o = src.querySelector('[data-mp-opt="' + i.getAttribute("data-mp-opt") + '"]') || src.querySelector("[data-mp-oc]"); i.replaceWith(D.createTextNode((o && o.checked ? "☑ " : "☐ "))); });
     [].forEach.call(c.querySelectorAll("input,textarea"), function (i) {
@@ -2304,7 +2346,7 @@
     [].forEach.call(c.querySelectorAll(".noprint,button,select,.mphead,.mppoi"), function (x) { x.remove(); });
     [].forEach.call(c.querySelectorAll("details"), function (x) { x.open = true; });
     [].forEach.call(c.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
-    var title = "Medical plan, " + s.name, pts = picks(s), pl = s.plan = planNow(s), vs = pl ? pl.validation_status : null;
+    var title = (conop ? "Medical CONOP, " : "Medical intelligence annex, ") + s.name, pts = picks(s), pl = s.plan = planNow(s), vs = pl ? pl.validation_status : null;
     /* printing is held while data is still being read (no "Looking up…" ever reaches paper) or a blocking error stands */
     var held = pl && pl.pending.length ? "Still reading " + pl.pending.join(", ") + ". Printing starts to work as soon as they finish or fail; this page refreshes itself." :
       vs && vs.status === "BLOCKING" ? "Blocking error: " + vs.items.filter(function (x) { return x.level === "blocking"; }).map(function (x) { return x.detail; }).join(" ") : "";
@@ -2319,7 +2361,8 @@
       '<article class="bpage mpdoc mpplanp"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
-      c.innerHTML + assessPrint(s, pts) + "</article>";
+      (conop ? '<p class="obs">Operational plan. The Medical Intelligence Annex (Print intelligence annex) holds every hospital found, landing sites, health threats, the weather table, the sources and each hospital\'s assessment; it carries the same plan fingerprint.</p>' : "") +
+      c.innerHTML + (conop ? "" : assessPrint(s, pts)) + "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
     var ready = mapImage(1000, 640).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
@@ -2622,7 +2665,8 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf],[data-mp-cat]"); if (!b) return;
+    if (b.hasAttribute("data-mp-cat")) { lsSet(CAT_KEY, b.getAttribute("data-mp-cat")); conopRender(); var cb = D.querySelector('#mp-conop [data-mp-cat="' + b.getAttribute("data-mp-cat") + '"]'); if (cb) cb.focus(); return; }
     if (b.hasAttribute("data-mp-offbtn")) { setOff(b.getAttribute("data-mp-offbtn"), true); offChanged(); var pb = D.querySelector("#mp-pst [data-mp-assess]"); if (pb) pb.focus(); return; }
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
@@ -2632,6 +2676,7 @@
     if (k === "pick") { pickStart(); return; }
     if (k === "setpoi") { setPoi(); return; }
     if (k === "print") { printView(); return; }
+    if (k === "printc") { printView("conop"); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
     if (b.hasAttribute("data-mpa-add")) { airAdd(); return; }

@@ -157,5 +157,18 @@ ok(ff.join(" | ") === "HOSPITAL DATASET 46 DAYS OLD / CONFIRM BEFORE USE | FACIL
 ok(by(fic({ data_age: AGE.slice(1, 3), offline: true }), "data.age").level === "ok" && /offline: saved copies/.test(by(fic({ data_age: AGE.slice(1, 3), offline: true }), "data.age").detail), "phase 5: all current is green, and an offline device says its copies are saved ones");
 ok(M.canonical(pD5) !== M.canonical(pFl) && pW.environmental_conditions.hlz.days.length === 2, "phase 5: the picture and the HLZ forecast are in the record and the fingerprint");
 
+/* phase 6: page 1, the medical CONOP for one casualty type, read from the record */
+const c1 = M.conop(pFl, "cat.major_trauma");
+ok(c1.casualty.label === "Major trauma" && c1.status === "WARNING" && c1.poi === "47P PS 8255 3804" && c1.ground === "AVAILABLE" && c1.air === "NOT CONFIRMED" &&
+  c1.stabilization.name === "King Narai Hospital" && c1.stabilization.time_s === 360 && c1.stabilization.distance_m === 4400 && c1.definitive.name === "Thammasat University Hospital" && c1.definitive.time_s === 5640 &&
+  c1.primary_route === "AVAILABLE" && c1.alternate_route === "AVAILABLE" && c1.route_flags[0] === "PRIMARY ROUTE INTERSECTS FLOOD WARNING / ALTERNATE ROUTE A AVAILABLE +14 MINUTES",
+  "phase 6: the CONOP reads status, POI, ground, air, stabilization, definitive, P and A lines and the route flag from the record");
+ok(c1.critical_gaps.join() === "Blood availability,Emergency operating theatre,Receiving hospital acceptance,Air MEDEVAC provider", "phase 6: critical gaps at the definitive care, acceptance and air: " + c1.critical_gaps.join(", "));
+const c2 = M.conop(M.build(input({ fields: { recv1: "Somewhere Else Clinic" }, categories: [{ id: "cat.major_burn", label: "Major burn", rows: [{ role: "tertiary", state: "gap" }] }] })), "cat.major_burn");
+ok(c2.definitive === null && c2.ground === "NO DESTINATION" && c2.alternate_route === "NO DESTINATION" && /^Receiving facility \(unit details\): /.test(c2.critical_gaps[0]) && c2.critical_gaps.includes("Definitive care for major burn not documented"),
+  "phase 6: no definitive care says so, and a blocking error leads the gaps: " + c2.critical_gaps.join(" | "));
+const cA = M.conop(M.build(input({ aircraft: [AC], now: "2026-10-03T20:00:00.000Z" })), "cat.major_trauma");
+ok(cA.air === "CONFIRMED" && cA.air_asset === "Test Air Ambulance (H145)" && !cA.critical_gaps.includes("Air MEDEVAC provider") && cA.alternate_route === "NOT LOOKED FOR", "phase 6: a confirmed aircraft shows as confirmed and leaves the gaps");
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
