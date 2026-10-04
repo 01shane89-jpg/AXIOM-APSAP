@@ -1,0 +1,329 @@
+// Stored infrastructure sites for Map overlays > Infrastructure (assets/osap-infra.js), every country. Run by
+// .github/workflows/refresh-infra.yml, or by hand with Node 20+:   node tools/build_infra.mjs   (INFRA_DEBUG=1 prints more)
+// Sources, all keyless and public, each tagged with its licence in data/infra/index.json and on every point's popup:
+//   - OurAirports (public domain): every airport, airfield, heliport and seaplane base that is not closed, with its longest open
+//     runway. Large and medium airports and anything with scheduled service keep their names. A small airstrip, heliport or
+//     seaplane base is often named after the person who owns it, so it keeps its name only when the name says what it is
+//     (hospital, military, police, government, a place); otherwise it is shown as "Airstrip" or "Heliport" with its code and town.
+//   - NGA World Port Index, Pub. 150 (U.S. Government, public domain): seaports with harbour size and type.
+//   - OpenStreetMap (ODbL): ports (landuse/industrial=port) not already in the World Port Index, ferry terminals, and named dams.
+//   - Wikidata (CC0): dams with height and reservoir, where OpenStreetMap has none within 1 km.
+//   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
+//     landing points. A cable goes in the file of every country it lands in.
+// Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
+// and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
+// good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
+// Privacy: no phone numbers, emails, websites of people, or private persons' names. Only facility names, codes and public bodies.
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { join } from "node:path";
+import { ccsAt, ccFromA2, ccFromName, COUNTRIES } from "./geo_cc.mjs";
+
+const OUT = process.env.INFRA_OUT || "data/infra", DEBUG = !!process.env.INFRA_DEBUG;
+const ONLY = process.env.INFRA_ONLY ? new Set(process.env.INFRA_ONLY.split(",")) : null;
+const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP infrastructure snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
+const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+const WDQS = "https://query.wikidata.org/sparql";
+const OA = "https://davidmegginson.github.io/ourairports-data/";
+const WPI = ["https://msi.nga.mil/api/publications/world-port-index?output=json"];
+const TG = "https://www.submarinecablemap.com/api/v3/";
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const log = (...a) => console.log(...a);
+const fp = (...p) => createHash("sha256").update(p.join("|")).digest("hex");
+const r4 = (x) => Math.round(x * 1e4) / 1e4;
+const r3 = (x) => Math.round(x * 1e3) / 1e3;
+const clip = (s, n = 100) => { const t = String(s == null ? "" : s).replace(/\s+/g, " ").trim(); return t.length > n ? t.slice(0, n - 1) + "…" : t; };
+const num = (s) => { const n = parseFloat(String(s == null ? "" : s).replace(/[, ]/g, "")); return isFinite(n) ? n : null; };
+const IDS = new Set(COUNTRIES.map((c) => c.id));
+const OKI = COUNTRIES.find((c) => c.id === "oki");
+const inOki = (la, lo) => OKI && la >= OKI.bounds[0][0] && la <= OKI.bounds[1][0] && lo >= OKI.bounds[0][1] && lo <= OKI.bounds[1][1];
+
+async function get(url, opt = {}, ms = 180000) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(url, { ...opt, signal: ctl.signal, headers: { "user-agent": UA, accept: "*/*", ...(opt.headers || {}) } });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+function ccOf(lat, lon, hint) {
+  if (lat == null || lon == null || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+  const at = ccsAt(lat, lon, 0.3);
+  if (hint && at.includes(hint)) return hint;
+  return at[0] || hint || null;
+}
+function csv(text) {
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(f); f = ""; }
+    else if (ch === "\n" || ch === "\r") { if (ch === "\r" && text[i + 1] === "\n") i++; row.push(f); rows.push(row); row = []; f = ""; }
+    else f += ch;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  const head = rows.shift() || [];
+  return rows.filter((r) => r.some((c) => c.trim())).map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
+}
+function dist(la1, lo1, la2, lo2) {
+  const R = 6371000, a = (la1 * Math.PI) / 180, b = (la2 * Math.PI) / 180, dl = ((lo2 - lo1) * Math.PI) / 180;
+  const h = Math.sin((b - a) / 2) ** 2 + Math.cos(a) * Math.cos(b) * Math.sin(dl / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+/* points near a point: a 0.05-degree grid */
+function grid(items) {
+  const g = new Map();
+  for (const i of items) { const k = Math.floor(i.la / 0.05) + ":" + Math.floor(i.lo / 0.05); (g.get(k) || g.set(k, []).get(k)).push(i); }
+  return (la, lo, m) => { const a = Math.floor(la / 0.05), b = Math.floor(lo / 0.05);
+    for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) if (dist(la, lo, o.la, o.lo) < m) return o; return null; };
+}
+
+/* ---------- OurAirports ---------- */
+/* a small field keeps its name only when the name says what the place is, not whose it is */
+const SAYS = /\b(hospital|medical|clinic|health|ambulance|rescue|emergency|police|military|army|navy|naval|air force|air base|airbase|afb|marine|coast ?guard|national guard|base|government|ministry|state|provincial|municipal|county|city|regional|international|domestic|airport|aerodrome|aeroporto|aeropuerto|aéroport|flughafen|bandar udara|lapangan terbang|sân bay|ท่าอากาศยาน|station|island|lake|river|bay|mine|oil|gas|platform|rig)\b/i;
+const PERSON = /('s\b|\branch\b|\bfarms?\b|\bresidence\b|\bprivate\b|\bpvt\b|\bhomestead\b|\bestate\b)/i;
+async function ourairports() {
+  const ap = csv(await get(OA + "airports.csv")), rw = csv(await get(OA + "runways.csv"));
+  log("  ourairports rows", ap.length, "runways", rw.length);
+  const best = new Map();
+  for (const r of rw) {
+    if (r.closed === "1") continue;
+    const L = num(r.length_ft); if (!L) continue;
+    const b = best.get(r.airport_ident); if (!b || L > b.L) best.set(r.airport_ident, { L, s: r.surface });
+  }
+  const TYPE = { large_airport: "L", medium_airport: "M", small_airport: "S", heliport: "H", seaplane_base: "W" };
+  const WORD = { S: "Airstrip", H: "Heliport", W: "Seaplane base" };
+  const out = [];
+  for (const r of ap) {
+    const t = TYPE[r.type]; if (!t) continue;
+    const la = num(r.latitude_deg), lo = num(r.longitude_deg); if (la == null || lo == null) continue;
+    const cc = ccFromA2(r.iso_country) || ccOf(la, lo); if (!cc) continue;
+    const code = r.icao_code || r.gps_code || r.ident;
+    const keep = t === "L" || t === "M" || r.scheduled_service === "yes" || (SAYS.test(r.name) && !PERSON.test(r.name));
+    const nm = keep ? clip(r.name) : WORD[t] + (code ? " " + code : "") + (r.municipality ? ", " + clip(r.municipality, 40) : "");
+    const b = best.get(r.ident);
+    const x = Object.fromEntries([["icao", r.icao_code || r.gps_code], ["iata", r.iata_code], ["elev_ft", num(r.elevation_ft)], ["rw_m", b ? Math.round(b.L * 0.3048) : null],
+      ["surface", b && b.s ? clip(b.s, 30) : null], ["sched", r.scheduled_service === "yes" ? 1 : null], ["town", keep ? clip(r.municipality, 40) : null]].filter((p) => p[1] != null && p[1] !== ""));
+    out.push({ k: "af", t, cc, id: "oa:" + r.ident, nm, la: r4(la), lo: r4(lo), s: "oa", u: "https://ourairports.com/airports/" + encodeURIComponent(r.ident) + "/", x });
+  }
+  return out;
+}
+
+/* ---------- World Port Index ---------- */
+async function wpi() {
+  let rows = null, err;
+  for (const u of WPI) {
+    try {
+      const j = JSON.parse(await get(u, { headers: { accept: "application/json" } }, 240000));
+      rows = j.ports || j.data || (Array.isArray(j) ? j : null);
+      if (rows) break;
+      err = new Error("no ports in " + Object.keys(j).join(","));
+    } catch (e) { err = e; log("  wpi", u, e.message); }
+  }
+  if (!rows) throw err || new Error("no World Port Index");
+  log("  wpi rows", rows.length, "fields:", Object.keys(rows[0] || {}).slice(0, 60).join(" "));
+  if (DEBUG) log("  wpi sample:", JSON.stringify(rows[0]).slice(0, 1500));
+  const pick = (r, ...ks) => { for (const k of ks) if (r[k] != null && r[k] !== "") return r[k]; return null; };
+  const SIZE = { L: "Large", M: "Medium", S: "Small", V: "Very small" };
+  const out = [];
+  for (const r of rows) {
+    const la = num(pick(r, "ycoord", "latitude", "lat", "Latitude")), lo = num(pick(r, "xcoord", "longitude", "lon", "Longitude"));
+    const nm = pick(r, "portName", "mainPortName", "Main Port Name", "name");
+    if (la == null || lo == null || !nm) continue;
+    const hint = ccFromName(pick(r, "countryName", "countryCode", "country")) || null;
+    const cc = ccOf(la, lo, hint); if (!cc) continue;
+    const size = String(pick(r, "harborSize", "harbourSize", "Harbor Size") || "").trim();
+    const sz = SIZE[size] || (/^(large|medium|small|very small)$/i.test(size) ? size[0].toUpperCase() + size.slice(1).toLowerCase() : "");
+    const x = Object.fromEntries([["size", sz], ["type", clip(pick(r, "harborType", "Harbor Type"), 40)], ["shelter", clip(pick(r, "shelter", "Shelter Afforded"), 30)],
+      ["max_len_m", num(pick(r, "maxVesselLength", "Maximum Vessel Length (m)"))], ["chan_m", num(pick(r, "chDepth", "channelDepth", "Channel Depth (m)"))],
+      ["anch_m", num(pick(r, "anDepth", "anchorageDepth", "Anchorage Depth (m)"))], ["unlocode", clip(pick(r, "unloCode", "UN/LOCODE"), 12)],
+      ["wpi", pick(r, "portNumber", "World Port Index Number")]].filter((p) => p[1] != null && p[1] !== ""));
+    const id = "wpi:" + (x.wpi || fp(nm, la, lo).slice(0, 10));
+    out.push({ k: "port", t: /^(L|M|Large|Medium)$/i.test(size) ? "M" : "P", cc, id, nm: clip(String(nm).replace(/\b([A-Z])([A-Z]+)\b/g, (m, a, b) => a + b.toLowerCase())),
+      la: r4(la), lo: r4(lo), s: "wpi", u: "https://msi.nga.mil/Publications/WPI", x });
+  }
+  return out;
+}
+
+/* ---------- OpenStreetMap: ports, ferry terminals, dams ---------- */
+async function overpass(q) {
+  let err;
+  for (let round = 0; round < 2; round++) for (const u of OVERPASS) {
+    try {
+      const j = JSON.parse(await get(u, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "content-type": "application/x-www-form-urlencoded" } }, 420000));
+      if (j.remark && /error|timed out|out of memory/i.test(j.remark)) throw new Error("remark: " + j.remark.slice(0, 120));
+      return j.elements || [];
+    } catch (e) { err = e; log("  overpass", u.split("/")[2], e.message); await sleep(10000 + round * 30000); }
+  }
+  throw err;
+}
+const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
+async function osm() {
+  const els = [];
+  for (let w = -180; w < 180; w += 20) {
+    const bb = [-60, w, 84, w + 20].join(",");
+    const q = `[out:json][timeout:400][maxsize:1073741824][bbox:${bb}];(nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];nwr["waterway"="dam"]["name"];);out center tags;`;
+    const e = await overpass(q);
+    log("  osm band", w, e.length);
+    els.push(...e);
+    await sleep(4000);
+  }
+  const seen = new Set(), out = [];
+  for (const e of els) {
+    const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
+    const c = e.center || (e.lat != null ? e : null); if (!c) continue;
+    const t = e.tags || {};
+    if (Object.keys(t).some((k) => DEAD.test(k)) || t.disused === "yes" || t.abandoned === "yes") continue;
+    const cc = ccOf(c.lat, c.lon); if (!cc) continue;
+    const nm = clip(t["name:en"] || t.name || t["int_name"] || "");
+    const u = "https://www.openstreetmap.org/" + { n: "node", w: "way", r: "relation" }[id[0]] + "/" + id.slice(1);
+    let k, ty, x = {};
+    if (t.waterway === "dam") { k = "dam"; ty = "D"; x = { height_m: num(t.height), purpose: clip(t.purpose || t["dam:purpose"], 40), river: clip(t["waterway:name"] || "", 40), built: clip(t.start_date, 12) }; }
+    else if (t.amenity === "ferry_terminal") { k = "port"; ty = "F"; x = { ferry: 1 }; }
+    else { k = "port"; ty = "O"; }
+    x = Object.fromEntries(Object.entries(x).filter((p) => p[1] != null && p[1] !== ""));
+    if (t.operator && /\b(authority|port|ministry|department|government|navy|corporation|company|ltd|limited|inc|co\.|plc|s\.a\.|gmbh|ag|bv|state|national|public)\b/i.test(t.operator)) x.op = clip(t.operator, 60);
+    out.push({ k, t: ty, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x });
+  }
+  return out;
+}
+
+/* ---------- Wikidata dams ---------- */
+async function wikidams() {
+  const q = `SELECT ?item ?itemLabel ?coord ?h ?a2 ?resLabel ?inc WHERE {
+  ?item wdt:P31 wd:Q12323; wdt:P625 ?coord.
+  OPTIONAL { ?item wdt:P2048 ?h. } OPTIONAL { ?item wdt:P17 ?c. ?c wdt:P297 ?a2. } OPTIONAL { ?item wdt:P4661 ?res. } OPTIONAL { ?item wdt:P571 ?inc. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". } }`;
+  const j = JSON.parse(await get(WDQS + "?format=json&query=" + encodeURIComponent(q), { headers: { accept: "application/sparql-results+json" } }, 280000));
+  const by = new Map();
+  for (const b of j.results.bindings) {
+    const m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const qid = b.item.value.split("/").pop(); if (by.has(qid)) continue;
+    const lon = +m[1], lat = +m[2], cc = ccOf(lat, lon, ccFromA2(b.a2 && b.a2.value)); if (!cc) continue;
+    const nm = b.itemLabel && b.itemLabel.value !== qid ? b.itemLabel.value : "";
+    if (!nm) continue;
+    const x = Object.fromEntries([["height_m", b.h ? num(b.h.value) : null], ["reservoir", b.resLabel && !/^Q\d+$/.test(b.resLabel.value) ? clip(b.resLabel.value, 50) : null],
+      ["built", b.inc ? String(b.inc.value).slice(0, 4) : null]].filter((p) => p[1] != null && p[1] !== ""));
+    by.set(qid, { k: "dam", t: "D", cc, id: "wd:" + qid, nm: clip(nm), la: r4(lat), lo: r4(lon), s: "wd", u: "https://www.wikidata.org/wiki/" + qid, x });
+  }
+  return [...by.values()];
+}
+
+/* ---------- TeleGeography submarine cables ---------- */
+async function cables() {
+  const lp = JSON.parse(await get(TG + "landing-point/landing-point-geo.json"));
+  const cg = JSON.parse(await get(TG + "cable/cable-geo.json"));
+  log("  landing points", (lp.features || []).length, "cables", (cg.features || []).length);
+  const pts = [];
+  for (const f of lp.features || []) {
+    const [lo, la] = (f.geometry || {}).coordinates || []; if (la == null) continue;
+    const p = f.properties || {}, nm = String(p.name || "");
+    const hint = ccFromName(nm.split(",").pop());
+    const cc = ccOf(la, lo, hint); if (!cc) continue;
+    pts.push({ k: "lp", t: "C", cc, id: "tg:lp:" + p.id, nm: clip(nm), la: r4(la), lo: r4(lo), s: "tg", u: "https://www.submarinecablemap.com/landing-point/" + encodeURIComponent(p.id), x: {} });
+  }
+  const near = grid(pts);
+  const lines = [];
+  for (const f of cg.features || []) {
+    const p = f.properties || {}, g = f.geometry || {};
+    const parts = g.type === "MultiLineString" ? g.coordinates : g.type === "LineString" ? [g.coordinates] : [];
+    if (!parts.length) continue;
+    const ccs = new Set();
+    const gg = parts.map((ln) => {
+      const o = [];
+      ln.forEach(([lo, la], i) => {
+        if (i === 0 || i === ln.length - 1) { const q = near(la, lo, 5000); if (q) ccs.add(q.cc); }
+        const v = [r3(la), r3(lo)], last = o[o.length - 1];
+        if (!last || Math.abs(last[0] - v[0]) + Math.abs(last[1] - v[1]) > 0.02 || i === ln.length - 1) o.push(v);
+      });
+      return o;
+    }).filter((l) => l.length > 1);
+    if (!ccs.size || !gg.length) continue;
+    const col = /^#[0-9a-f]{6}$/i.test(p.color || "") ? p.color : "#0b7285";
+    for (const cc of ccs) lines.push({ k: "cable", cc, id: "tg:" + p.id, nm: clip(p.name), c: col, g: gg, s: "tg", u: "https://www.submarinecablemap.com/submarine-cable/" + encodeURIComponent(p.id) });
+  }
+  /* a landing point lists the cables that reach it */
+  const at = new Map();
+  for (const l of lines) for (const ln of l.g) for (const v of [ln[0], ln[ln.length - 1]]) { const q = near(v[0], v[1], 5000); if (q) (at.get(q.id) || at.set(q.id, new Set()).get(q.id)).add(l.nm); }
+  for (const q of pts) { const s = at.get(q.id); if (s) q.x.cables = [...s].slice(0, 30).join("; "); }
+  return { items: pts, lines };
+}
+
+/* ---------- run ---------- */
+const now = new Date().toISOString().slice(0, 16) + "Z";
+mkdirSync(OUT, { recursive: true });
+const prevIx = existsSync(join(OUT, "index.json")) ? JSON.parse(readFileSync(join(OUT, "index.json"), "utf8")) : { sources: {} };
+const prev = {};
+for (const f of existsSync(OUT) ? readdirSync(OUT) : []) {
+  if (!/^[a-z]{2,3}\.json$/.test(f)) continue;
+  const j = JSON.parse(readFileSync(join(OUT, f), "utf8"));
+  for (const i of j.items || []) (prev[i.s] = prev[i.s] || { items: [], lines: [] }).items.push({ ...i, cc: j.cc });
+  for (const l of j.lines || []) (prev[l.s] = prev[l.s] || { items: [], lines: [] }).lines.push({ ...l, cc: j.cc });
+}
+const SRC = {
+  oa: { name: "OurAirports", lic: "Public domain", link: "https://ourairports.com/data/" },
+  wpi: { name: "NGA World Port Index (Pub. 150)", lic: "Public domain (U.S. Government)", link: "https://msi.nga.mil/Publications/WPI" },
+  osm: { name: "OpenStreetMap", lic: "ODbL", link: "https://www.openstreetmap.org/copyright" },
+  wd: { name: "Wikidata", lic: "CC0", link: "https://www.wikidata.org/wiki/Q12323" },
+  tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
+};
+const got = {}, status = {};
+async function run(s, f) {
+  if (ONLY && !ONLY.has(s)) { got[s] = prev[s] || { items: [], lines: [] }; status[s] = { ...(prevIx.sources[s] || {}), kept: true }; return; }
+  try {
+    const r = await f(); got[s] = Array.isArray(r) ? { items: r, lines: [] } : r;
+    status[s] = { ok: true, at: now, n: got[s].items.length + got[s].lines.length }; log(s, "ok", got[s].items.length, "points", got[s].lines.length, "lines");
+  } catch (e) {
+    got[s] = prev[s] || { items: [], lines: [] };
+    status[s] = { ok: false, at: (prevIx.sources[s] || {}).at || null, n: got[s].items.length + got[s].lines.length, err: String(e.message || e).slice(0, 120), tried: now };
+    log(s, "FAILED", e.message, "- kept", status[s].n, "from the last run");
+  }
+}
+await run("oa", ourairports);
+await run("wpi", wpi);
+await run("osm", osm);
+await run("wd", wikidams);
+await run("tg", cables);
+
+/* OpenStreetMap ports already in the World Port Index; Wikidata dams already in OpenStreetMap */
+const nearWpi = grid(got.wpi.items), nearDam = grid(got.osm.items.filter((i) => i.k === "dam"));
+const osmKept = got.osm.items.filter((i) => !(i.k === "port" && i.t === "O" && nearWpi(i.la, i.lo, 3000)));
+const wdKept = got.wd.items.filter((i) => !nearDam(i.la, i.lo, 1000));
+log("osm ports dropped as WPI duplicates", got.osm.items.length - osmKept.length, "; wikidata dams kept", wdKept.length, "of", got.wd.items.length);
+
+const by = {};
+const slot = (cc) => (by[cc] = by[cc] || { items: [], lines: [] });
+for (const i of [...got.oa.items, ...got.wpi.items, ...osmKept, ...wdKept, ...got.tg.items]) {
+  if (!i.cc || !IDS.has(i.cc)) continue;
+  const { cc, ...rest } = i;
+  const it = { ...rest, fp: fp(rest.s, rest.id, rest.la, rest.lo, rest.nm, JSON.stringify(rest.x || {})) };
+  slot(cc).items.push(it);
+  if (cc === "jp" && inOki(rest.la, rest.lo)) slot("oki").items.push(it);
+}
+for (const l of got.tg.lines) {
+  if (!l.cc || !IDS.has(l.cc)) continue;
+  const { cc, ...rest } = l;
+  const it = { ...rest, fp: rest.fp || fp(rest.s, rest.id, rest.nm, JSON.stringify(rest.g)) };
+  slot(cc).lines.push(it);
+  if (cc === "jp" && rest.g.some((ln) => ln.some((v) => inOki(v[0], v[1])))) slot("oki").lines.push(it);
+}
+
+const countries = {};
+for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f) && !by[f.slice(0, -5)]) unlinkSync(join(OUT, f));
+const KORD = { af: 0, port: 1, dam: 2, lp: 3 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
+for (const [cc, c] of Object.entries(by).sort()) {
+  c.items.sort((a, b) => (KORD[a.k] - KORD[b.k]) || ((TORD[a.t] || 0) - (TORD[b.t] || 0)) || String(a.id).localeCompare(String(b.id)));
+  c.lines.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  writeFileSync(join(OUT, cc + ".json"), JSON.stringify({ v: 1, cc, at: now, items: c.items, lines: c.lines }));
+  const n = {};
+  for (const i of c.items) n[i.k] = (n[i.k] || 0) + 1;
+  if (c.lines.length) n.cable = c.lines.length;
+  countries[cc] = n;
+}
+writeFileSync(join(OUT, "index.json"), JSON.stringify({ v: 1, at: now, sources: Object.fromEntries(Object.entries(SRC).map(([k, v]) => [k, { ...v, ...status[k] }])), countries }, null, 1));
+const tot = {};
+for (const n of Object.values(countries)) for (const [k, v] of Object.entries(n)) tot[k] = (tot[k] || 0) + v;
+log("countries", Object.keys(countries).length, "totals", JSON.stringify(tot));
+log("th", JSON.stringify(countries.th || {}), "| sb", JSON.stringify(countries.sb || {}), "| us", JSON.stringify(countries.us || {}));
+if (!Object.values(status).some((s) => s.ok)) process.exit(1);
