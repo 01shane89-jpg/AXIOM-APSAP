@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-04 12:55Z","sources":[{"cc":"bh","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Bahrain%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"bh":[]}};
+window.ASAP_NEWS={"asof":"2026-10-04 13:11Z","sources":[{"cc":"bh","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Bahrain%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"bh":[]}};
