@@ -6,7 +6,7 @@
      service worker keeps after install. A picture that is not there yet is left out, never shown broken.
    - "Print or save PDF" prints the same content with every section open and the app hidden, so the paper copy and the
      screen copy never drift apart.
-   - The pictures are taken by tools/guide_shots.mjs (the "Guide screenshots" workflow) on a phone-sized screen.
+   - The pictures are taken by tools/guide_shots.mjs on a phone-sized screen, run where the live map services can be reached.
    Nothing here reads or changes a record, a setting or a saved item.
    window.OSAP_GUIDE { open(sectionId?), close(), isOpen(), sections() } */
 (function () {
