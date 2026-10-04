@@ -26,6 +26,8 @@ const { chromium } = require(process.env.PW || 'playwright');
     if (n < 0 || errs.length) failed = true; errs.length = 0;
   }
   // the United States, a state opened as a sub-area, and the region drop-downs
+  // (the United States is a hidden area, assets/osap-lock.js: this app session is unlocked first)
+  await p.addInitScript(() => { try { sessionStorage.setItem('osap-lock-open', '1'); } catch (e) {} });
   for (const u of ['#us/timeline', '?st=TX#us/timeline', '?st=AK#us/timeline']) {
     await p.goto('about:blank'); await p.goto(url + u); await p.waitForTimeout(1200);
     const r = await p.evaluate(() => ({ n: window.TSAP ? TSAP.records.length : -1, states: document.querySelectorAll('#country-seg button[data-st]').length,
