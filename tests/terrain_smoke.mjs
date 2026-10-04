@@ -6,6 +6,10 @@
 // and draws the overlay, observer and horizon; ground west is visible, ground behind the ridge masked; tapping a point gives the
 // line of sight card (BLOCKED, blocking terrain about 2 km, highest ground 160 m, "Urban/vegetation obstruction: NOT MODELED");
 // raising the observer to 300 m recalculates at once and sees over the ridge; the headless API (profile, viewshed) agrees;
+// the reverse viewshed swaps the heights and its tap card runs from the tapped observer to the point; the skyline chart shows
+// the ridge to the east; Line of sight from here sets A and the next tap B (BLOCKED by the ridge, recalculated when A's height
+// changes); Measure's Profile gives A to B for two points and the elevation profile (climb, descent) for a path, none for a
+// closed shape; modules' OSAP_PROFILE_EXT sections get the profile;
 // tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -151,6 +155,85 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   await p.evaluate(() => document.querySelector('#terrain [data-ts="clear"]').click()); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.querySelector(".leaflet-vspane-pane img") && window.OSAP_TERRAIN_ANALYSIS.state().marks === 0), "desktop: Clear removes the overlay and marks");
   ok(errors.length === 0, "desktop: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- reverse viewshed, line of sight A to B, Measure's Profile, skyline, the profile hook ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1366, height: 860 } });
+  const east = [13.75, 100.5350], west = [13.75, 100.4700];
+  /* a module adds a section under the profile */
+  await p.evaluate(() => { window.OSAP_PROFILE_EXT = [{ id: "test", label: "Test section", render: (box, pr) => { box.appendChild(document.createTextNode("ext got " + pr.samples.length + " samples, los " + pr.los)); } }]; });
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_ATAK.ring(c[0], c[1]); }, C0); await p.waitForTimeout(200);
+  await p.click('#atk-ring [data-rk="terrain"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => ["vs", "rv", "lo", "el"].every((k) => document.querySelector('.vsmenu [data-vm="' + k + '"]'))), "tools: Terrain lists Viewshed, Reverse viewshed, Line of sight and Elevation here");
+  await p.click('.vsmenu [data-vm="rv"]'); await settled(p);
+  let st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  let txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.mode === "rev" && st.stats && st.stats.masked > 0 && /Reverse viewshed/.test(txt) && /REVERSE TERRAIN VIEWSHED/.test(txt) && /Can see the point/.test(txt) && /heights swapped/.test(txt), "reverse: the panel says Reverse viewshed, its key and the swapped heights (" + (st.stats ? st.stats.visible_pct.toFixed(1) + "% can see" : st.err) + ")");
+  /* the point at 1.7 m, observers at 20 m: the swap must show (with 1.7 m everywhere the two would match) */
+  await p.fill("#ts-oh", "20"); await p.waitForTimeout(700); await settled(p);
+  const revPct = (await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state())).stats.visible_pct;
+  let L1 = await tapLos(p, east);
+  const rcard = await p.evaluate(() => (document.querySelector(".leaflet-popup .vslos") || {}).textContent || "");
+  ok(/Observer here\s*→\s*The point/.test(rcard) && /Observer elevation:\s*100 m MSL\s*\+ 20 m/.test(rcard) && /Point elevation:\s*100 m MSL\s*\+ 1\.7 m/.test(rcard), "reverse: the tap card runs from an observer at the tapped point (20 m) to the point (1.7 m): " + rcard.replace(/\s+/g, " ").slice(0, 160));
+  ok(L1.los === "BLOCKED" && Math.abs(L1.blockD - 1690) < 120, "reverse: from 3.8 km east the ridge blocks the point, about 1.7 km from the observer (" + JSON.stringify(L1) + ")");
+  ok(await p.evaluate(() => !!document.querySelector("#terrain svg.sky path") && /SKYLINE/.test(document.getElementById("terrain").textContent)), "skyline: the chart is drawn under the result");
+  ok(/towards (8\d|9\d|10\d)°/.test(await p.evaluate(() => document.getElementById("terrain").textContent)), "skyline: the highest ground is towards the east (the ridge)");
+  /* the reverse result is the viewshed from the point at its own height (1.7 m) with 20 m targets */
+  const api = await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshed({ lat: c[0], lon: c[1], observer_height_m: 1.7, target_height_m: 20, radius_m: 10000, res_m: 30 }).then((r) => r.stats.visible_pct), C0);
+  const api2 = await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshed({ lat: c[0], lon: c[1], observer_height_m: 20, target_height_m: 1.7, radius_m: 10000, res_m: 30 }).then((r) => r.stats.visible_pct), C0);
+  await settled(p);
+  const both = await p.evaluate((c) => { const A = window.OSAP_TERRAIN_ANALYSIS; const pr = A.viewshed({ lat: c[0], lon: c[1], observer_height_m: 5, target_height_m: 5, radius_m: 10000, res_m: 30 }); (document.querySelector('#terrain [data-ts="calc"]') || document.querySelector('#terrain [data-ts="cancel"]')).click();
+    return Promise.race([pr.then((r) => "done " + r.stats.visible_pct.toFixed(1)), new Promise((ok) => setTimeout(() => ok("hung"), 20000))]); }, C0);
+  ok(/^done/.test(both), "API: a viewshed() call from another module survives the panel recalculating at the same time (" + both + ")");
+  await settled(p);
+  ok(Math.abs(api - revPct) < 0.05 && Math.abs(api2 - revPct) > 0.05, "reverse: equals the viewshed with the heights swapped (" + revPct.toFixed(2) + "% = " + api.toFixed(2) + "%, unswapped " + api2.toFixed(2) + "%)");
+  await p.click('#terrain [data-mode="vs"]'); await settled(p);
+  await p.fill("#ts-oh", "1.7"); await p.waitForTimeout(700); await settled(p);
+
+  /* line of sight A to B: the ring entry sets A, the next tap B */
+  await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.losFrom(c), C0); await p.waitForTimeout(200);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(st.mode === "los" && st.arm === "pickB" && st.line.pts.length === 1, "line of sight: from here sets A and waits for B");
+  await p.evaluate((ll) => window.__asapMap.fire("click", { latlng: window.L.latLng(ll[0], ll[1]) }), east);
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.line.result && st.line.result.los === "BLOCKED" && Math.abs(st.line.result.block_m - 1990) < 120 && Math.round(st.line.result.max_elev_m) === 160, "line of sight: A to B 3.8 km east is BLOCKED by the ridge (" + JSON.stringify(st.line.result && { los: st.line.result.los, b: st.line.result.block_m, max: st.line.result.max_elev_m }) + ")");
+  ok(/Point A\s*→\s*Point B/.test(txt) && /Blocking terrain:\s*(1\.9\d?|2\.0\d?) km from A/.test(txt) && /TERRAIN LINE OF SIGHT/.test(txt) && /NOT MODELED/.test(txt) && !!(await p.evaluate(() => document.querySelector("#terrain svg.prof path"))), "line of sight: card, profile and assumptions in the panel");
+  ok(/ext got \d+ samples, los BLOCKED/.test(txt) && /Test section/.test(txt), "profile hook: OSAP_PROFILE_EXT gets the profile");
+  ok(st.marks >= 3, "line of sight: A, B and the line are on the map (" + st.marks + " marks)");
+  await p.fill("#ts-oh", "300"); await p.waitForTimeout(800);
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && s.line.result && s.line.result.los === "CLEAR"; }, null, { timeout: 30000 }).catch(() => {});
+  ok((await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().line.result.los)) === "CLEAR", "line of sight: A at 300 m recalculates at once and clears the ridge");
+  await p.fill("#ts-oh", "1.7"); await p.waitForTimeout(800);
+
+  /* Measure: Profile shows for a line, gives A to B for two points and the path profile for three */
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.close());
+  await p.evaluate((pts) => { window.OSAP_MEASURE.on(true); window.OSAP_MEASURE.set(pts, false); }, [west, east]); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !!document.querySelector('#meas-card [data-m="profile"]')), "measure: a two-point line has a Profile button");
+  await p.click('#meas-card [data-m="profile"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(st.line.result && st.line.result.los === "BLOCKED" && Math.abs(st.line.result.total_m - 7040) < 120, "measure: Profile on two points is the line of sight A to B (" + (st.line.result && st.line.result.los + ", " + Math.round(st.line.result.total_m) + " m") + ")");
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.close());
+  await p.evaluate((pts) => { window.OSAP_MEASURE.on(true); window.OSAP_MEASURE.set(pts, false); }, [west, C0, east]); await p.waitForTimeout(200);
+  await p.click('#meas-card [data-m="profile"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.line.result && st.line.result.los === null && st.line.result.vertices.length === 3 && /Elevation profile/.test(txt) && /ELEVATION PROFILE/.test(txt) && /3 points from Measure/.test(txt), "measure: Profile on three points is the elevation profile along the path");
+  ok(/Highest:\s*160 m MSL/.test(txt) && /Lowest:\s*100 m MSL/.test(txt) && /Climb:\s*60 m/.test(txt) && /Descent:\s*60 m/.test(txt), "path profile: highest, lowest, climb and descent over the ridge: " + (txt.match(/Lowest[^.]*?Descent:\s*\d+ m/) || [""])[0]);
+  ok(/ext got \d+ samples, los null/.test(txt), "profile hook: also under a path profile");
+  await p.evaluate(() => { window.OSAP_MEASURE.set([[13.75, 100.47], [13.75, 100.48], [13.76, 100.48]], true); }); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => !document.querySelector('#meas-card [data-m="profile"]')), "measure: a closed shape has no Profile button");
+  await p.evaluate(() => window.OSAP_MEASURE.on(false));
+  if (OUT) await p.screenshot({ path: OUT + "/terrain-path-profile.png" });
+  /* Clear in line of sight mode */
+  await p.evaluate(() => document.querySelector('#terrain [data-ts="clear"]').click()); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().marks === 0), "line of sight: Clear removes A, B and the line");
+  ok(errors.length === 0, "tools: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 

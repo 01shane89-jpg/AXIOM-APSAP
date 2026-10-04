@@ -1,6 +1,14 @@
-/* AXIOM OSAP Terrain analysis (Shane 2026-10-03): what the ground lets an observer see. Phase 1: the terrain viewshed, with
-   a line-of-sight card for any point inside it and the terrain profile along that line.
-   - Where it lives (layout owner, 2026-10-03): long-press ring > Terrain (Viewshed from here, Elevation here, plus tools other
+/* AXIOM OSAP Terrain analysis (Shane 2026-10-03): what the ground lets an observer see. Three tools in one panel:
+   - Viewshed: the ground an observer can see, with a line-of-sight card and terrain profile for any point inside it and the
+     skyline (the highest ground angle in every direction).
+   - Reverse viewshed: the ground from which a point can be seen. Line of sight is the same straight line both ways, so it is
+     the viewshed from the point with the two heights swapped (the point gets the target height, every other cell the
+     observer height).
+   - Line of sight: A to B with the terrain profile, or the elevation profile along a path measured with Measure (its
+     "Profile" button). Modules can add a section under the profile through window.OSAP_PROFILE_EXT
+     ([{ id, label, render(container, profile) }], profile as returned by OSAP_TERRAIN_ANALYSIS.profile).
+   - Where it lives (layout owner, 2026-10-03): long-press ring > Terrain (Viewshed from here, Reverse viewshed to here, Line of
+     sight from here, Elevation here, plus tools other
      modules add through window.OSAP_TERRAIN_TOOLS), and Map overlays > Elevation and terrain analysis > Terrain analysis.
      No toolbar button. The panel uses the shared split view (W.OSAP_SPLIT.add(el, ".chead")).
    - Model: observer altitude = ground at the observer + observer height; target altitude = ground at the target + target
@@ -13,7 +21,8 @@
      city blocks, which the result also says (tools/terrain_live.mjs: from 1.7 m in central Bangkok almost nothing is visible). Ground with no elevation data is UNKNOWN (grey), never "not visible".
    - Nothing is sent anywhere: the elevation tiles are downloaded and everything is worked out on this device. The result is
      the analyst's own working aid, not a report, a finding or evidence.
-   window.OSAP_TERRAIN_ANALYSIS = { version, open, close, isOpen, menu, viewshedAt, elevationAt, profile, viewshed, losTo, state }
+   window.OSAP_TERRAIN_ANALYSIS = { version, open, close, isOpen, menu, viewshedAt, reverseAt, losFrom, line, elevationAt, profile,
+     viewshed, losTo, state }
    (the API other modules use, agreed with the Communications planning thread: per-call heights, any refraction k).
    Not to be confused with window.OSAP_TERRAIN and localStorage "osap-terrain": the per-country terrain and flashpoint data
    layer in index.html (data/terrain/<cc>.js). */
@@ -40,8 +49,9 @@
   var S = {
     obsH: Math.min(1000, Math.max(0, num(S0.obsH, 1.7))), tgtH: Math.min(1000, Math.max(0, num(S0.tgtH, 1.7))),
     obsP: S0.obsP || "stand", tgtP: S0.tgtP || "stand", km: RANGES.indexOf(S0.km) >= 0 ? S0.km : 10, res: RES[S0.res] ? S0.res : "std",
-    curv: !!S0.curv, refr: !!S0.refr, hz: S0.hz !== false, prof: !!S0.prof
+    curv: !!S0.curv, refr: !!S0.refr, hz: S0.hz !== false, prof: !!S0.prof, mode: /^(vs|rev|los)$/.test(S0.mode) ? S0.mode : "vs"
   };
+  var MODES = [["vs", "Viewshed"], ["rev", "Reverse viewshed"], ["los", "Line of sight"]];
   function keep() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
   /* ---------- loading the provider, the sources and the engine (first use only) ---------- */
@@ -194,13 +204,13 @@
     ring.setLatLng(ll).setRadius(S.km * 1000);
   }
   function clearMap() {
-    lay.clearLayers(); losLay.clearLayers(); img = null; hzLine = null; obsMark = null; ring = null;
+    lay.clearLayers(); losLay.clearLayers(); if (typeof lnMarks !== "undefined") lnMarks.clearLayers(); img = null; hzLine = null; obsMark = null; ring = null;
     if (imgUrl) { URL.revokeObjectURL(imgUrl); imgUrl = null; }
     map.closePopup();
   }
 
   /* ---------- the panel ---------- */
-  var ST = { obs: null, busy: "", err: "", res: null, grid: null, pass: "", arm: false, at: 0, los: null, losTo: null, warn: "" };
+  var ST = { obs: null, busy: "", err: "", res: null, grid: null, pass: "", arm: "", at: 0, los: null, losTo: null, warn: "", line: { pts: [], x: null, len: 0 } };
   var RUN = 0, ac = null, el = null;
   var CSS = "#terrain{position:fixed;inset:0;z-index:100000;overflow:auto;background:rgba(0,0,0,.45);padding:16px}" +
     "#terrain .cbox{max-width:560px;margin:0 auto;background:var(--surface,#fff);color:var(--ink,#111);border-radius:8px;padding:10px 16px 16px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.3)}" +
@@ -221,6 +231,8 @@
     "#terrain .losc{border:1px solid var(--line,#ddd);border-radius:6px;padding:6px 9px;margin:8px 0}#terrain svg.prof{width:100%;height:auto;display:block;margin-top:6px}" +
     ".vslos p{margin:2px 0}.vslos .v{font-weight:700}.vslos .v.BLOCKED{color:#b71c1c}.vslos .v.CLEAR{color:#2e7d32}.vslos .v.UNKNOWN{color:#616161}.vslos .h{font-weight:700;letter-spacing:.04em;margin-bottom:3px}" +
     ".vslos button{font:inherit;font-size:12px;margin-top:5px;border:1px solid #bbb;border-radius:5px;background:#fff;padding:3px 8px;cursor:pointer}.vsimg{image-rendering:pixelated}" +
+    "#terrain .tsm{display:flex;margin:2px 0 8px}#terrain .tsm button{flex:1;font-weight:600}#terrain .tsx{border-top:1px solid var(--line,#ddd);margin-top:8px;padding-top:6px}" +
+    ".vsab{background:none;border:0}.vsab span{display:block;min-width:20px;height:20px;padding:0 3px;border-radius:10px;background:#0b7285;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);color:#fff;font:700 11px/20px system-ui,sans-serif;text-align:center;margin:0}" +
     ".vsmenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;margin:3px 0;border:1px solid #bbb;border-radius:5px;background:#fff;padding:6px 9px;cursor:pointer}.vsmenu .h{font-weight:700;margin-bottom:4px}.vsmenu .el{margin-top:6px}" +
     /* phone: labels above their fields, so the fields get the full width */
     "@media (max-width:700px){#terrain{padding:6px}#terrain .chk{grid-template-columns:1fr}#terrain .tsg{grid-template-columns:1fr;gap:2px 0}#terrain .tsg>span{margin-top:6px;font-size:12px}#terrain .tsh{flex-wrap:nowrap}#terrain .tsh select{flex:1;min-width:0}}";
@@ -241,20 +253,37 @@
   function presetSel(id, cur) {
     return '<select id="' + id + '" aria-label="Height preset">' + PRESETS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === cur ? " selected" : "") + ">" + esc(p[1]) + (p[2] != null ? " " + p[2] + " m" : ", custom") + "</option>"; }).join("") + "</select>";
   }
+  function rev() { return S.mode === "rev"; }
+  function lineN() { return ST.line.pts.length; }
+  function title() { return S.mode === "rev" ? "Reverse viewshed" : S.mode === "los" ? (lineN() > 2 ? "Elevation profile" : "Line of sight") : "Terrain viewshed"; }
+  function ptRow(label, p, pick, centre) {
+    return "<span>" + label + '</span><div class="tsr">' + (p ? '<span class="pt">' + esc(p[0].toFixed(5) + ", " + p[1].toFixed(5)) + "</span>" : "<i>not set</i>") +
+      '<button type="button" data-ts="' + pick + '" aria-pressed="' + (ST.arm === pick) + '">Pick on map</button>' + (centre ? '<button type="button" data-ts="' + centre + '">Map centre</button>' : "") + "</div>" +
+      (p ? '<span></span><div class="pt" style="color:var(--muted,#555)">' + esc(gridRef(p[0], p[1])) + "</div>" : "");
+  }
+  function hRow(label, id, v, pre, tip) {
+    return '<span title="' + esc(tip) + '">' + label + '</span><div class="tsr tsh"><input type="number" id="' + id + '" min="0" max="1000" step="0.1" value="' + v + '" aria-label="' + esc(label) + ' in metres above the ground"> m ' + presetSel(id === "ts-oh" ? "ts-op" : "ts-tp", pre) + "</div>";
+  }
+  function resRow() {
+    return '<span>Resolution</span><div class="seg" role="group" aria-label="Resolution">' + Object.keys(RES).map(function (k) { return '<button type="button" data-res="' + k + '" aria-pressed="' + (S.res === k) + '" title="' + esc(RES[k][2]) + '">' + esc(RES[k][1]) + "</button>"; }).join("") + "</div>" +
+      '<span>Terrain source</span><div>OSAP DEM <span class="tag" title="Elevation tiles: Terrain Tiles on AWS (mostly SRTM, about 30 m) everywhere, GSI Japan 5 to 10 m in Japan">elevation model, not buildings</span></div>';
+  }
+  function curvBoxes() {
+    return '<label><input type="checkbox" id="ts-curv"' + (S.curv ? " checked" : "") + "> Account for Earth curvature</label>" +
+      '<label><input type="checkbox" id="ts-refr"' + (S.refr ? " checked" : "") + "> Atmospheric refraction</label>";
+  }
   function render() {
-    var c = ensure().firstElementChild, o = ST.obs, r = ST.res && ST.res.res, g = ST.grid;
-    var h = '<div class="chead"><h2 id="terrain-h">Terrain viewshed <span class="tag" tabindex="0" title="Worked out on this device from open elevation data by fixed rules. Not AI, not a survey and not analyst-approved.">Terrain only</span></h2>' +
+    var c = ensure().firstElementChild, o = ST.obs, r = ST.res && ST.res.res, g = ST.grid, R0 = rev();
+    var h = '<div class="chead"><h2 id="terrain-h">' + title() + ' <span class="tag" tabindex="0" title="Worked out on this device from open elevation data by fixed rules. Not AI, not a survey and not analyst-approved.">Terrain only</span></h2>' +
       (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-ts="close" aria-label="Close terrain analysis">Close</button></div>';
-    h += '<div class="tsg"><span>Observer</span><div class="tsr">' + (o ? '<span class="pt">' + esc(o[0].toFixed(5) + ", " + o[1].toFixed(5)) + "</span>" : "<i>not set</i>") +
-      '<button type="button" data-ts="pick" aria-pressed="' + ST.arm + '">Pick on map</button><button type="button" data-ts="centre">Map centre</button></div>' +
-      (o ? '<span></span><div class="pt" style="color:var(--muted,#555)">' + esc(gridRef(o[0], o[1])) + "</div>" : "") +
-      '<span>Observer height</span><div class="tsr tsh"><input type="number" id="ts-oh" min="0" max="1000" step="0.1" value="' + S.obsH + '" aria-label="Observer height in metres above the ground"> m ' + presetSel("ts-op", S.obsP) + "</div>" +
-      '<span>Target height</span><div class="tsr tsh"><input type="number" id="ts-th" min="0" max="1000" step="0.1" value="' + S.tgtH + '" aria-label="Target height in metres above the ground"> m ' + presetSel("ts-tp", S.tgtP) + "</div>" +
+    h += '<div class="seg tsm" role="group" aria-label="Terrain tool">' + MODES.map(function (m) { return '<button type="button" data-mode="' + m[0] + '" aria-pressed="' + (S.mode === m[0]) + '">' + m[1] + "</button>"; }).join("") + "</div>";
+    if (S.mode === "los") { c.innerHTML = h + renderLine(); el.hidden = false; extras(c); return; }
+    var hO = hRow("Observer height", "ts-oh", S.obsH, S.obsP, R0 ? "Eye or antenna height of anyone who might be looking, above the ground everywhere" : "Eye or antenna height above the ground at the observer");
+    var hT = hRow(R0 ? "Point height" : "Target height", "ts-th", S.tgtH, S.tgtP, R0 ? "Height above the ground of the person or thing to be seen" : "Height above the ground of what is to be seen, everywhere");
+    h += '<div class="tsg">' + ptRow(R0 ? "Point" : "Observer", o, "pick", "centre") + (R0 ? hT + hO : hO + hT) +
       '<span>Maximum range</span><div class="tsr"><select id="ts-km" aria-label="Maximum range">' + RANGES.map(function (k) { return '<option value="' + k + '"' + (k === S.km ? " selected" : "") + ">" + k + " km</option>"; }).join("") + "</select></div>" +
-      '<span>Resolution</span><div class="seg" role="group" aria-label="Resolution">' + Object.keys(RES).map(function (k) { return '<button type="button" data-res="' + k + '" aria-pressed="' + (S.res === k) + '" title="' + esc(RES[k][2]) + '">' + esc(RES[k][1]) + "</button>"; }).join("") + "</div>" +
-      '<span>Terrain source</span><div>OSAP DEM <span class="tag" title="Elevation tiles: Terrain Tiles on AWS (mostly SRTM, about 30 m) everywhere, GSI Japan 5 to 10 m in Japan">elevation model, not buildings</span></div></div>' +
-      '<div class="chk"><label><input type="checkbox" id="ts-curv"' + (S.curv ? " checked" : "") + "> Account for Earth curvature</label>" +
-      '<label><input type="checkbox" id="ts-refr"' + (S.refr ? " checked" : "") + "> Atmospheric refraction</label>" +
+      resRow() + "</div>" +
+      '<div class="chk">' + curvBoxes() +
       '<label><input type="checkbox" id="ts-hz"' + (S.hz ? " checked" : "") + "> Show horizon</label>" +
       '<label><input type="checkbox" id="ts-prof"' + (S.prof ? " checked" : "") + "> Show terrain profile</label></div>";
     var eff = effRes(S.km * 1000, RES[S.res][0]);
@@ -265,43 +294,122 @@
     if (ST.busy) h += '<p class="msg" aria-live="polite">' + esc(ST.busy) + '</p><div class="bar"><i style="width:' + Math.round(ST.at * 100) + '%"></i></div>';
     if (ST.err) h += '<p class="msg err" aria-live="polite">' + esc(ST.err) + "</p>";
     if (r && g) {
-      h += '<div class="key"><b>Terrain visibility</b><label><span style="background:rgba(' + C_VIS.slice(0, 3) + ',.7)"></span>Visible terrain</label><label><span style="background:rgba(' + C_MASK.slice(0, 3) + ',.7)"></span>Terrain-masked</label>' +
+      h += '<div class="key"><b>Terrain visibility</b><label><span style="background:rgba(' + C_VIS.slice(0, 3) + ',.7)"></span>' + (R0 ? "Can see the point" : "Visible terrain") + '</label><label><span style="background:rgba(' + C_MASK.slice(0, 3) + ',.7)"></span>' + (R0 ? "Cannot see it: terrain in the way" : "Terrain-masked") + "</label>" +
         '<label><span style="background:repeating-linear-gradient(45deg,#464646 0 2px,#bbb 2px 6px)"></span>Unknown: no elevation data</label>' + (S.hz ? '<label><span style="background:#ffd600;border-color:#111"></span>Horizon</label>' : "") + "</div>";
       if (g.coverage_pct < 99.5) h += '<div class="warn"><b>VIEWSHED DATA WARNING</b><br>Terrain coverage: ' + Math.floor(g.coverage_pct) + "%. Areas without elevation data are shown as UNKNOWN, not as hidden." + (g.failedTiles ? " " + g.failedTiles + " of " + g.tiles + " elevation tiles did not load: press Calculate to try again." : "") + "</div>";
-      h += '<p style="margin:4px 0">Tap any point inside the result for the line of sight to it.</p>';
+      h += '<p style="margin:4px 0">' + (R0 ? "Tap any point inside the result for the line of sight from there to the point." : "Tap any point inside the result for the line of sight to it.") + "</p>";
       if (ST.los) h += losCard(ST.los, true);
+      if (S.hz) h += skylineSvg(r);
       h += assumptions(r, g);
-    } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick the observer on the map, set the heights and range, then Calculate. The result shows which ground the terrain lets the observer see.</p>';
+    } else if (!ST.busy && !ST.err) h += '<p class="msg">' + (R0 ? "Pick the point on the map, set its height and the height of whoever might be looking, then Calculate. The result shows the ground from which the terrain lets the point be seen." :
+      "Pick the observer on the map, set the heights and range, then Calculate. The result shows which ground the terrain lets the observer see.") + "</p>";
     c.innerHTML = h;
     el.hidden = false;
+  }
+  /* Line of sight mode: A to B, or the elevation profile along a measured path */
+  function renderLine() {
+    var P = ST.line.pts, n = P.length, x = ST.line.x, h = '<div class="tsg">';
+    if (n > 2) h += '<span>Path</span><div>' + n + " points from Measure · " + km(ST.line.len) + ' <button type="button" data-ts="lnclear">Start again with A and B</button></div>';
+    else h += ptRow("Point A", P[0], "pickA", "centreA") + ptRow("Point B", P[1], "pickB", "") +
+      hRow("Height at A", "ts-oh", S.obsH, S.obsP, "Eye or antenna height above the ground at A") + hRow("Height at B", "ts-th", S.tgtH, S.tgtP, "Height above the ground of what is at B");
+    h += resRow() + "</div>";
+    if (n <= 2) h += '<div class="chk">' + curvBoxes() + "</div>";
+    if (n === 2 && !S.curv && ST.line.len >= 15000) h += '<p class="msg">Over ' + km(ST.line.len) + " the Earth's curve matters: consider ticking Earth curvature.</p>";
+    h += '<div class="tsr">' + (ST.busy ? '<button type="button" data-ts="cancel">Cancel</button>' : '<button type="button" class="pri" data-ts="calc"' + (n >= 2 ? "" : " disabled") + ">CALCULATE</button>") +
+      (n ? '<button type="button" data-ts="clear">Clear</button>' : "") + "</div>";
+    if (ST.busy) h += '<p class="msg" aria-live="polite">' + esc(ST.busy) + '</p><div class="bar"><i style="width:' + Math.round(ST.at * 100) + '%"></i></div>';
+    if (ST.err) h += '<p class="msg err" aria-live="polite">' + esc(ST.err) + "</p>";
+    if (x) {
+      var m = x.meta;
+      if (m.coverage_pct < 99.5) h += '<div class="warn"><b>PROFILE DATA WARNING</b><br>Terrain coverage along the line: ' + Math.floor(m.coverage_pct) + "%. Gaps are shown as gaps, not as low ground." + (m.failedTiles ? " " + m.failedTiles + " of " + m.tiles + " elevation tiles did not load: press Calculate to try again." : "") + "</div>";
+      h += x.path ? pathCard(x) : losCard(x, true);
+      h += '<div class="tsext"></div>';
+      var curv = x.path ? "not used for a path" : ST.line.o.curvature ? "on" + (ST.line.o.k ? ", with atmospheric refraction (k = " + ST.line.o.k + ")" : ", no refraction") : "off";
+      h += '<div class="asm"><p class="nm">' + (x.path ? "TERRAIN ELEVATION PROFILE" : "TERRAIN LINE OF SIGHT") + "</p>" +
+        "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model: walls, single trees and most buildings are not in it, while SRTM (most of the world outside Japan and the US) partly carries dense forest canopy and big city blocks.</p>" +
+        "<p><b>Elevation:</b> " + esc((m.sources || []).map(function (q) { return q.label; }).join("; ") || "none loaded") + ", tile zoom " + m.z + " · <b>Sampled every</b> " + Math.round(m.res_m / 2) + " m · <b>Coverage:</b> " + (m.coverage_pct >= 99.95 ? "complete" : m.coverage_pct.toFixed(1) + "%") + "</p>" +
+        "<p><b>Earth curvature:</b> " + curv + " · Sea deeper than 40 m is read as sea level</p>" +
+        "<p><b>Calculated locally</b> on this device " + esc(T().dualT(ST.line.when, { date: true })) + "</p></div>";
+    } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick A and B on the map (or use Line of sight from here on the long-press ring, or Profile on a line drawn with Measure), then Calculate. The result shows whether the terrain lets A see B, and the ground in between.</p>';
+    return h;
+  }
+  /* sections other modules add under a profile (window.OSAP_PROFILE_EXT) */
+  function extras(c) {
+    var box = c.querySelector(".tsext"), list = (W.OSAP_PROFILE_EXT || []).filter(function (e) { return e && e.id && typeof e.render === "function"; });
+    if (!box || !ST.line.x || !list.length) return;
+    var pr = pub(ST.line.x);
+    list.forEach(function (e) {
+      var d = D.createElement("div"); d.className = "tsx"; d.setAttribute("data-ext", e.id);
+      if (e.label) { var t = D.createElement("div"); t.className = "nm"; t.textContent = e.label; d.appendChild(t); }
+      box.appendChild(d);
+      try { e.render(d, pr); } catch (er) { d.appendChild(D.createTextNode("This section could not be shown.")); }
+    });
+  }
+  /* a path's elevation profile: distance, ground at each end, lowest and highest, climb and descent, steepest stretch */
+  function pathCard(x) {
+    var s = x.samples.filter(function (p) { return !p.nodata; }), lo = Infinity, hi = -Infinity, up = 0, dn = 0, ref = null, steep = 0, steepAt = 0;
+    s.forEach(function (p) { if (p.z < lo) lo = p.z; if (p.z > hi) hi = p.z;
+      /* climb and descent count changes of 5 m or more, so the small ups and downs of the elevation data do not add up */
+      if (ref == null) ref = p.z; else if (p.z - ref >= 5) { up += p.z - ref; ref = p.z; } else if (ref - p.z >= 5) { dn += ref - p.z; ref = p.z; } });
+    var j = 0;
+    for (var i = 0; i < s.length; i++) { while (j < s.length && s[j].d - s[i].d < 100) j++; if (j >= s.length) break; var gr = Math.abs(s[j].z - s[i].z) / (s[j].d - s[i].d); if (gr > steep) { steep = gr; steepAt = s[i].d; } }
+    var h = '<div class="losc vslos"><div class="h">ELEVATION PROFILE</div><p>Distance along the path: <b>' + km(x.dist) + "</b> (" + (x.vertices.length - 1) + " legs)</p>" +
+      "<p>Start: <b>" + mm(x.zA) + "</b> · End: <b>" + mm(x.zB) + "</b></p>" +
+      (s.length ? "<p>Lowest: <b>" + mm(lo) + "</b> · Highest: <b>" + mm(hi) + "</b></p><p>Climb: <b>" + Math.round(up) + " m</b> · Descent: <b>" + Math.round(dn) + " m</b></p>" : "<p>No elevation data along the path.</p>") +
+      (steep ? "<p>Steepest 100 m: <b>" + Math.round(steep * 100) + "%</b> at " + km(steepAt) + " from the start</p>" : "") +
+      "<p>Urban/vegetation obstruction: NOT MODELED</p>";
+    return h + profileSvg(x) + "</div>";
+  }
+  /* the skyline: the highest ground angle in every direction within the range, from the observer's eye */
+  function skylineSvg(r) {
+    var B = new Array(360), hz = r.horizon, WD = 340, HT = 120, P = { l: 30, r: 6, t: 8, b: 22 };
+    hz.forEach(function (q) { if (!isFinite(q.maxAngle)) return; var k = Math.floor(q.az) % 360; if (B[k] == null || q.maxAngle > B[k].a) B[k] = { a: q.maxAngle, d: q.dMax }; });
+    var vals = B.filter(Boolean).map(function (b) { return b.a; });
+    if (!vals.length) return "";
+    var lo = Math.min(0, Math.min.apply(null, vals)), hi = Math.max(0.5, Math.max.apply(null, vals)), pad = (hi - lo) * 0.1; lo -= pad; hi += pad;
+    function X(a) { return P.l + (WD - P.l - P.r) * a / 360; } function Y(v) { return P.t + (HT - P.t - P.b) * (1 - (v - lo) / (hi - lo)); }
+    var path = "", area = "", top = { a: -Infinity, az: 0, d: 0 }, started = false;
+    for (var k = 0; k <= 360; k++) { var b = B[k % 360]; if (!b) { started = false; continue; } path += (started ? "L" : "M") + X(k).toFixed(1) + "," + Y(b.a).toFixed(1); started = true; if (k < 360 && b.a > top.a) top = { a: b.a, az: k, d: b.d }; }
+    var pts = []; for (k = 0; k <= 360; k++) { var q = B[k % 360]; if (q) pts.push(X(k).toFixed(1) + "," + Y(q.a).toFixed(1)); }
+    area = "M" + X(0) + "," + Y(lo) + "L" + pts.join("L") + "L" + X(360) + "," + Y(lo) + "Z";
+    var ax = [[0, "N"], [90, "E"], [180, "S"], [270, "W"], [360, "N"]].map(function (t) { return '<line x1="' + X(t[0]) + '" x2="' + X(t[0]) + '" y1="' + P.t + '" y2="' + (HT - P.b) + '" stroke="currentColor" stroke-opacity=".15"/><text x="' + X(t[0]) + '" y="' + (HT - 8) + '" text-anchor="middle">' + t[1] + "</text>"; }).join("");
+    var st = niceStep((hi - lo) / 3), yt = "";
+    for (var v = Math.ceil(lo / st) * st; v <= hi; v += st) yt += '<text x="' + (P.l - 3) + '" y="' + (Y(v) + 3) + '" text-anchor="end">' + (Math.round(v * 10) / 10) + "°</text>";
+    return '<div class="losc"><div class="h nm">SKYLINE</div><svg class="prof sky" viewBox="0 0 ' + WD + " " + HT + '" role="img" aria-label="Skyline: the highest ground angle in every direction" font-size="9" fill="currentColor">' +
+      '<path d="' + area + '" fill="#8d6e63" fill-opacity=".35"/><path d="' + path + '" fill="none" stroke="#5d4037" stroke-width="1.3"/>' +
+      '<line x1="' + P.l + '" x2="' + (WD - P.r) + '" y1="' + Y(0) + '" y2="' + Y(0) + '" stroke="#0b7285" stroke-dasharray="4 3"/>' + ax + yt + "</svg>" +
+      '<p style="font-size:11.5px;color:var(--muted,#555);margin:2px 0">The highest ground in each direction within ' + S.km + " km, in degrees above level from " + (rev() ? "the point" : "the observer's eye") + " (blue: level). Highest: " + (Math.round(top.a * 10) / 10) + "° towards " + top.az + "°" + (top.d === top.d ? ", " + km(top.d) + " away" : "") + ".</p></div>";
   }
   function assumptions(r, g) {
     var st = r.stats, src = (g.sources || []).map(function (s) { return s.label; }).join("; ") || "none loaded";
     var curv = ST.ran.curvature ? "on" + (ST.ran.k ? ", with atmospheric refraction (k = " + ST.ran.k + ")" : ", no refraction") : "off";
-    return '<div class="asm"><p class="nm">TERRAIN VIEWSHED ' + (ST.pass === "coarse" ? '<span class="tag">rough first pass, refining…</span>' : "") + "</p>" +
-      "<p><b>Visible terrain:</b> " + st.visible_pct.toFixed(0) + "% · <b>Terrain-masked:</b> " + (100 - st.visible_pct - st.unknown_pct).toFixed(0) + "% · <b>Unknown:</b> " + st.unknown_pct.toFixed(0) + "% of the ground within " + S.km + " km</p>" +
-      "<p><b>Observer:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Target height:</b> " + ST.ran.tgtH + " m above the ground</p>" +
+    return '<div class="asm"><p class="nm">' + (ST.ranRev ? "REVERSE TERRAIN VIEWSHED " : "TERRAIN VIEWSHED ") + (ST.pass === "coarse" ? '<span class="tag">rough first pass, refining…</span>' : "") + "</p>" +
+      "<p><b>" + (ST.ranRev ? "Can see the point" : "Visible terrain") + ":</b> " + st.visible_pct.toFixed(0) + "% · <b>" + (ST.ranRev ? "Cannot" : "Terrain-masked") + ":</b> " + (100 - st.visible_pct - st.unknown_pct).toFixed(0) + "% · <b>Unknown:</b> " + st.unknown_pct.toFixed(0) + "% of the ground within " + S.km + " km</p>" +
+      (ST.ranRev ? "<p><b>Point:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Observer height:</b> " + ST.ran.tgtH + " m above the ground everywhere. Line of sight is the same both ways, so this is the viewshed from the point with the two heights swapped.</p>" :
+      "<p><b>Observer:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Target height:</b> " + ST.ran.tgtH + " m above the ground</p>") +
       "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model, not a model of buildings or trees: walls, single trees and most buildings are not in it, while SRTM (most of the world outside Japan and the US) partly carries dense forest canopy and big city blocks, so city and jungle results are rough.</p>" +
       "<p><b>Elevation:</b> " + esc(src) + ", tile zoom " + g.z + " · <b>Grid:</b> " + g.res + " m · <b>Coverage:</b> " + (g.coverage_pct >= 99.95 ? "complete" : g.coverage_pct.toFixed(1) + "%") + "</p>" +
       "<p><b>Earth curvature:</b> " + curv + " · Sea deeper than 40 m is read as sea level</p>" +
       "<p><b>Calculated locally</b> on this device " + esc(T().dualT(ST.when, { date: true })) + (navigator.onLine === false ? " · offline, from elevation already on this device" : "") + "</p></div>";
   }
   function losCard(x, inPanel) {
-    var h = '<div class="' + (inPanel ? "losc " : "") + 'vslos"' + (inPanel ? "" : " data-keep-pop") + '><div class="h">LINE OF SIGHT</div><p>Observer → Selected point <span class="pt">' + esc(gridRef(x.to[0], x.to[1])) + "</span></p>" +
-      "<p>Distance: <b>" + km(x.dist) + "</b></p><p>Observer elevation: <b>" + mm(x.zA) + "</b> + " + x.hA + " m</p><p>Target elevation: <b>" + mm(x.zB) + "</b> + " + x.hB + " m</p>" +
+    var h = '<div class="' + (inPanel ? "losc " : "") + 'vslos"' + (inPanel ? "" : " data-keep-pop") + '><div class="h">LINE OF SIGHT</div><p>' + esc(x.nA) + " → " + esc(x.nB) + ' <span class="pt">' + esc(gridRef(x.to[0], x.to[1])) + "</span></p>" +
+      "<p>Distance: <b>" + km(x.dist) + "</b></p><p>" + esc(x.eA) + " elevation: <b>" + mm(x.zA) + "</b> + " + x.hA + " m</p><p>" + esc(x.eB) + " elevation: <b>" + mm(x.zB) + "</b> + " + x.hB + " m</p>" +
       "<p>Maximum intervening terrain: <b>" + mm(x.maxZ) + "</b>" + (x.maxD === x.maxD ? " at " + km(x.maxD) : "") + "</p>" +
       '<p>Terrain LOS: <span class="v ' + x.los + '">' + (x.los === "CLEAR" ? "VISIBLE" : x.los) + "</span></p>" +
-      (x.los === "BLOCKED" ? "<p>Blocking terrain: <b>" + km(x.blockD) + "</b> from observer</p>" : "") +
+      (x.los === "BLOCKED" ? "<p>Blocking terrain: <b>" + km(x.blockD) + "</b> from " + esc(x.fA) + "</p>" : "") +
       (x.los === "UNKNOWN" ? "<p>Part of the line has no elevation data.</p>" : "") +
       "<p>Urban/vegetation obstruction: NOT MODELED</p>";
-    if (inPanel && S.prof) h += profileSvg(x);
+    if (inPanel && (S.prof || S.mode === "los")) h += profileSvg(x);
     else if (!inPanel) h += '<button type="button" data-vsprof>' + (S.prof ? "Profile in the panel" : "Show profile") + "</button>";
     return h + "</div>";
   }
   /* the terrain profile under the line: terrain, the line of sight, observer, target, highest ground, where it is blocked */
   function profileSvg(x) {
     var s = x.samples, WD = 340, HT = 150, P = { l: 40, r: 8, t: 10, b: 24 }, D0 = x.dist || 1;
-    var ys = s.filter(function (p) { return !p.nodata; }).map(function (p) { return p.z - x.drop(p.d); }).concat([x.ZA, x.ZBeff]);
+    if (!x.drop) x.drop = function () { return 0; };
+    var ys = s.filter(function (p) { return !p.nodata; }).map(function (p) { return p.z - x.drop(p.d); }).concat(x.path ? [] : [x.ZA, x.ZBeff]);
+    if (!ys.length) return "";
     var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max(5, (hi - lo) * 0.1); lo -= pad; hi += pad;
     function X(d) { return P.l + (WD - P.l - P.r) * d / D0; } function Y(z) { return P.t + (HT - P.t - P.b) * (1 - (z - lo) / (hi - lo)); }
     var path = "", started = false, area = "";
@@ -313,31 +421,36 @@
     var zs = niceStep((hi - lo) / 3), yt = "";
     for (var z = Math.ceil(lo / zs) * zs; z <= hi; z += zs) yt += '<text x="' + (P.l - 4) + '" y="' + (Y(z) + 3) + '" text-anchor="end">' + Math.round(z) + "</text>";
     var col = x.los === "BLOCKED" ? "#c62828" : x.los === "CLEAR" ? "#2e7d32" : "#757575";
-    var blk = x.los === "BLOCKED" ? (function () { var zz = interpZ(s, x.blockD); return '<path d="M' + (X(x.blockD) - 4) + "," + (Y(zz - x.drop(x.blockD)) - 4) + "l8,8m0,-8l-8,8" + '" stroke="#c62828" stroke-width="2.2"/>'; })() : "";
-    var mx = x.maxD === x.maxD ? '<path d="M' + X(x.maxD) + "," + (Y(x.maxZ - x.drop(x.maxD)) - 9) + 'l-4,-6h8z" fill="#5d4037"/><text x="' + X(x.maxD) + '" y="' + (Y(x.maxZ - x.drop(x.maxD)) - 17) + '" text-anchor="middle">' + Math.round(x.maxZ) + " m</text>" : "";
-    return '<svg class="prof" viewBox="0 0 ' + WD + " " + HT + '" role="img" aria-label="Terrain profile from observer to the selected point" font-size="9" fill="currentColor">' +
-      '<path d="' + area + '" fill="#a1887f" fill-opacity=".35" stroke="none"/><path d="' + path + '" fill="none" stroke="#5d4037" stroke-width="1.4"/>' +
-      '<line x1="' + X(0) + '" y1="' + Y(x.ZA) + '" x2="' + X(D0) + '" y2="' + Y(x.ZBeff) + '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 3"/>' +
-      '<circle cx="' + X(0) + '" cy="' + Y(x.ZA) + '" r="4" fill="#0b7285" stroke="#fff"/><circle cx="' + X(D0) + '" cy="' + Y(x.ZBeff) + '" r="4" fill="' + col + '" stroke="#fff"/>' + blk + mx +
+    var legs = x.path ? x.vertices.slice(1, -1).map(function (k) { var d = s[k].d; return '<line x1="' + X(d) + '" x2="' + X(d) + '" y1="' + P.t + '" y2="' + (HT - P.b) + '" stroke="#e8590c" stroke-dasharray="2 3"/>'; }).join("") : "";
+    var blk = x.los === "BLOCKED" && !x.path ? (function () { var zz = interpZ(s, x.blockD); return '<path d="M' + (X(x.blockD) - 4) + "," + (Y(zz - x.drop(x.blockD)) - 4) + "l8,8m0,-8l-8,8" + '" stroke="#c62828" stroke-width="2.2"/>'; })() : "";
+    var mx = x.maxD === x.maxD && !x.path ? '<path d="M' + X(x.maxD) + "," + (Y(x.maxZ - x.drop(x.maxD)) - 9) + 'l-4,-6h8z" fill="#5d4037"/><text x="' + X(x.maxD) + '" y="' + (Y(x.maxZ - x.drop(x.maxD)) - 17) + '" text-anchor="middle">' + Math.round(x.maxZ) + " m</text>" : "";
+    var ends = x.path ? "" : '<line x1="' + X(0) + '" y1="' + Y(x.ZA) + '" x2="' + X(D0) + '" y2="' + Y(x.ZBeff) + '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 3"/>' +
+      '<circle cx="' + X(0) + '" cy="' + Y(x.ZA) + '" r="4" fill="#0b7285" stroke="#fff"/><circle cx="' + X(D0) + '" cy="' + Y(x.ZBeff) + '" r="4" fill="' + col + '" stroke="#fff"/>';
+    return '<svg class="prof" viewBox="0 0 ' + WD + " " + HT + '" role="img" aria-label="' + (x.path ? "Elevation profile along the path" : "Terrain profile from " + esc(x.nA) + " to " + esc(x.nB)) + '" font-size="9" fill="currentColor">' +
+      '<path d="' + area + '" fill="#a1887f" fill-opacity=".35" stroke="none"/><path d="' + path + '" fill="none" stroke="#5d4037" stroke-width="1.4"/>' + legs + ends + blk + mx +
       '<line x1="' + P.l + '" x2="' + (WD - P.r) + '" y1="' + (HT - P.b) + '" y2="' + (HT - P.b) + '" stroke="currentColor" stroke-opacity=".5"/>' + ticks + yt +
       '<text x="' + (WD - P.r) + '" y="' + (HT - 8) + '" text-anchor="end" dy="-10">km</text><text x="2" y="' + (P.t + 2) + '">m MSL</text></svg>' +
-      '<p style="font-size:11.5px;color:var(--muted,#555);margin:2px 0">Brown: terrain' + (x.curv ? " (lowered for Earth curvature)" : "") + ". Dashed: line of sight. ▼ highest ground" + (x.los === "BLOCKED" ? "; ✕ first terrain above the line" : "") + ".</p>";
+      '<p style="font-size:11.5px;color:var(--muted,#555);margin:2px 0">' + (x.path ? "Brown: terrain along the path. Orange dashes: the measured points." :
+      "Brown: terrain" + (x.curv ? " (lowered for Earth curvature)" : "") + ". Dashed: line of sight. ▼ highest ground" + (x.los === "BLOCKED" ? "; ✕ first terrain above the line" : "") + ".") + "</p>";
   }
   function niceStep(v) { var p = Math.pow(10, Math.floor(Math.log10(Math.max(v, 1e-6)))), f = v / p; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p; }
   function interpZ(s, d) { for (var i = 1; i < s.length; i++) if (s[i].d >= d) { var a = s[i - 1], b = s[i], t = (d - a.d) / ((b.d - a.d) || 1); return a.z + (b.z - a.z) * t; } return s[s.length - 1].z; }
 
   function setObs(lat, lon) { ST.obs = [lat, L.Util.wrapNum(lon, [-180, 180], true)]; ST.err = ""; ST.los = null; losLay.clearLayers(); drawObserver(); }
   function onClick(e) {
-    var b = e.target.closest("[data-ts]"), rb = e.target.closest("[data-res]");
+    var b = e.target.closest("[data-ts]"), rb = e.target.closest("[data-res]"), mb = e.target.closest("[data-mode]");
+    if (mb) { setMode(mb.getAttribute("data-mode")); return; }
     if (rb) { S.res = rb.getAttribute("data-res"); keep(); render(); auto(true); return; }
     if (!b) return;
     var a = b.getAttribute("data-ts");
     if (a === "close") close();
-    else if (a === "pick") { if (ST.arm) { pickEnd(); render(); } else pickStart(); }
+    else if (a === "pick" || a === "pickA" || a === "pickB") { if (ST.arm === a) { pickEnd(); render(); } else pickStart(a); }
     else if (a === "centre") { var c = map.getCenter(); pickEnd(); setObs(c.lat, c.lng); render(); calc(); }
+    else if (a === "centreA") { var c2 = map.getCenter(); pickEnd(); setLinePt(0, [c2.lat, c2.lng]); if (lineN() < 2) pickStart("pickB"); else { render(); calc(); } }
+    else if (a === "lnclear") { lineReset([]); render(); pickStart("pickA"); }
     else if (a === "calc") calc();
     else if (a === "cancel") { RUN++; if (ac) ac.abort(); engineCancel(); ST.busy = ""; ST.err = "Stopped."; render(); }
-    else if (a === "clear") { RUN++; if (ac) ac.abort(); engineCancel(); ST.res = null; ST.grid = null; ST.obs = null; ST.busy = ""; ST.err = ""; ST.los = null; clearMap(); render(); }
+    else if (a === "clear") { RUN++; if (ac) ac.abort(); engineCancel(); ST.res = null; ST.grid = null; ST.obs = null; ST.busy = ""; ST.err = ""; ST.los = null; ST.line = { pts: [], x: null, len: 0 }; clearMap(); render(); }
   }
   function heightOf(p) { var x = PRESETS.filter(function (q) { return q[0] === p; })[0]; return x && x[2]; }
   function onChange(e) {
@@ -371,18 +484,68 @@
   }
   function onInput(e) { if (e.target.id === "ts-oh" || e.target.id === "ts-th") heightIn(e.target); }
   /* once there is a result, every change recalculates straight away (heights reuse the loaded elevation, so it is quick) */
-  function auto() { if (ST.res && ST.obs) calc(); }
+  function auto() { if (S.mode === "los" ? ST.line.x && lineN() >= 2 : ST.res && ST.obs) calc(); }
 
-  function pickStart() {
-    ST.arm = true; map.getContainer().style.cursor = "crosshair";
+  /* which: "pick" (observer / point), "pickA", "pickB" */
+  function pickStart(which) {
+    pickEnd(); ST.arm = which || "pick"; map.getContainer().style.cursor = "crosshair";
+    /* Measure takes map taps too: step it aside while a point is picked (its line stays drawn) */
+    if (measuring() && W.OSAP_MEASURE) W.OSAP_MEASURE.on(false);
     /* full window covers the map: step out of the way until the point is picked */
     if (!split() && el) el.hidden = true;
-    hint("Tap the map where the observer stands.");
+    hint(ST.arm === "pickA" ? "Tap the map at point A (the observer)." : ST.arm === "pickB" ? "Tap the map at point B (the target)." : rev() ? "Tap the map at the point to be seen." : "Tap the map where the observer stands.");
     setTimeout(function () { map.once("click", onPick); }, 0);
     if (el && !el.hidden) render();
   }
-  function pickEnd() { ST.arm = false; map.getContainer().style.cursor = ""; map.off("click", onPick); hint(""); }
-  function onPick(e) { pickEnd(); setObs(e.latlng.lat, e.latlng.lng); render(); calc(); }
+  function pickEnd() { ST.arm = ""; map.getContainer().style.cursor = ""; map.off("click", onPick); hint(""); }
+  function onPick(e) {
+    var a = ST.arm, ll = [e.latlng.lat, e.latlng.lng]; pickEnd();
+    if (a === "pickA" || a === "pickB") {
+      setLinePt(a === "pickA" ? 0 : 1, ll);
+      if (lineN() < 2) { pickStart("pickB"); return; }
+      render(); calc(); return;
+    }
+    setObs(ll[0], ll[1]); render(); calc();
+  }
+  /* Line of sight mode's points: A, B (or a measured path) */
+  function lineReset(pts) {
+    RUN++; if (ac) ac.abort(); engineCancel();
+    ST.line = { pts: pts.map(function (p) { return [+p[0], +p[1]]; }), x: null, len: 0 }; ST.err = ""; ST.busy = "";
+    for (var i = 1; i < ST.line.pts.length; i++) ST.line.len += hav(ST.line.pts[i - 1], ST.line.pts[i]);
+    losLay.clearLayers(); drawLinePts();
+  }
+  function setLinePt(i, ll) {
+    var P = ST.line.pts.length > 2 ? [ST.line.pts[0], ST.line.pts[ST.line.pts.length - 1]] : ST.line.pts.slice();
+    ll = [ll[0], L.Util.wrapNum(ll[1], [-180, 180], true)];
+    if (i === 0) P[0] = ll; else { if (!P.length) P[0] = ll; else P[1] = ll; }
+    lineReset(P.filter(Boolean));
+  }
+  var lnMarks = L.layerGroup().addTo(map);
+  function drawLinePts() {
+    lnMarks.clearLayers();
+    if (S.mode !== "los") return;
+    var P = ST.line.pts;
+    if (P.length > 2) lnMarks.addLayer(L.polyline(P, { pane: "vslines", color: "#5d4037", weight: 2, opacity: 0.8, dashArray: "2 5", interactive: false }));
+    [[P[0], "A"], [P.length > 1 ? P[P.length - 1] : null, P.length > 2 ? "End" : "B"]].forEach(function (q) {
+      if (!q[0]) return;
+      lnMarks.addLayer(L.marker(q[0], { pane: "vslines", interactive: false, keyboard: false, icon: L.divIcon({ className: "vsab", html: "<span>" + q[1] + "</span>", iconSize: [24, 24], iconAnchor: [12, 12] }) }));
+    });
+  }
+  function setMode(m) {
+    if (!/^(vs|rev|los)$/.test(m) || m === S.mode) return;
+    var was = S.mode; S.mode = m; keep();
+    pickEnd(); RUN++; if (ac) ac.abort(); engineCancel();
+    ST.res = null; ST.grid = null; ST.los = null; ST.busy = ""; ST.err = "";
+    lay.clearLayers(); losLay.clearLayers(); img = null; hzLine = null; obsMark = null; ring = null; if (imgUrl) { URL.revokeObjectURL(imgUrl); imgUrl = null; }
+    map.closePopup();
+    /* carry the point over: the observer becomes A, A becomes the observer */
+    if (m === "los" && ST.obs && !lineN()) lineReset([ST.obs]);
+    else if (m !== "los" && was === "los" && ST.line.pts[0]) ST.obs = ST.line.pts[0].slice();
+    drawLinePts(); if (m !== "los") drawObserver();
+    render();
+    if (m === "los") { if (lineN() >= 2) calc(); }
+    else if (ST.obs) calc();
+  }
   var hintEl = null;
   function hint(t) {
     if (!t) { if (hintEl) hintEl.hidden = true; return; }
@@ -392,19 +555,21 @@
 
   /* ---------- calculate ---------- */
   function calc() {
+    if (S.mode === "los") return calcLine();
     if (!ST.obs) return;
     var run = ++RUN; if (ac) ac.abort(); engineCancel();
     ac = W.AbortController ? new AbortController() : null;
-    var R = S.km * 1000, res = effRes(R, RES[S.res][0]), o = opts({ observer_height_m: S.obsH, target_height_m: S.tgtH, radius_m: R, curvature: S.curv, refraction: S.refr });
+    /* reverse: the sweep runs from the point with its height (the target height), every other cell at the observer height */
+    var R = S.km * 1000, res = effRes(R, RES[S.res][0]), R0 = rev(), o = opts({ observer_height_m: R0 ? S.tgtH : S.obsH, target_height_m: R0 ? S.obsH : S.tgtH, radius_m: R, curvature: S.curv, refraction: S.refr });
     ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.los = null; losLay.clearLayers(); map.closePopup(); render();
     getGrid(ST.obs[0], ST.obs[1], R, res, { signal: ac && ac.signal, prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.6; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (g) {
       if (run !== RUN) return;
       if (!g.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this place on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
-      ST.busy = "Calculating the viewshed…"; ST.at = 0.7; render();
+      ST.busy = R0 ? "Calculating the reverse viewshed…" : "Calculating the viewshed…"; ST.at = 0.7; render();
       var f = res < 90 && g.n > 401 ? Math.round(90 / res) : 0;
       return engineRun(g, o, f, function (m) {
         if (run !== RUN) return;
-        ST.res = m; ST.grid = g; ST.pass = m.pass; ST.when = Date.now(); ST.ran = o;
+        ST.res = m; ST.grid = g; ST.pass = m.pass; ST.when = Date.now(); ST.ran = o; ST.ranRev = R0;
         paint(m.res, m.n, m.f, g); drawMarks(m.res, m.n, m.f, g); drawObserver();
         if (m.pass === "fine") { ST.busy = ""; ST.at = 1; } else { ST.busy = "Refining to " + res + " m…"; ST.at = 0.85; }
         render();
@@ -416,41 +581,69 @@
     });
   }
 
+  function calcLine() {
+    var P = ST.line.pts; if (P.length < 2) return;
+    var run = ++RUN; if (ac) ac.abort(); engineCancel();
+    ac = W.AbortController ? new AbortController() : null;
+    var path = P.length > 2, o = opts({ observer_height_m: S.obsH, target_height_m: S.tgtH, curvature: !path && S.curv, refraction: !path && S.refr });
+    ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.line.x = null; losLay.clearLayers(); render();
+    lineRun(P, { res: RES[S.res][0], hA: path ? 0 : o.obsH, hB: path ? 0 : o.tgtH, curvature: o.curvature, k: o.k, signal: ac && ac.signal,
+      prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.9; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (x) {
+      if (run !== RUN) return;
+      if (!x.meta.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this line on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
+      x = decorate(x, P[0], P[P.length - 1], path ? 0 : o.obsH, path ? 0 : o.tgtH, o);
+      x.nA = "Point A"; x.nB = "Point B"; x.eA = "A"; x.eB = "B"; x.fA = "A";
+      ST.line.x = x; ST.line.o = o; ST.line.when = Date.now(); ST.busy = ""; ST.at = 1;
+      if (!path) drawLos(x, false); else losLay.clearLayers();
+      render();
+    }).catch(function (e) {
+      if (run !== RUN) return;
+      ST.busy = ""; ST.err = e && e.name === "AbortError" ? "Stopped." : (e && e.message) || "The line of sight could not be calculated.";
+      render();
+    });
+  }
+
   /* ---------- tap inside the result: line of sight to that point ---------- */
   function measuring() { var b = D.getElementById("meas-btn"); return !!(b && b.getAttribute("aria-pressed") === "true"); }
   map.on("click", function (e) {
-    if (ST.arm || !ST.res || !ST.obs || !ST.grid || measuring()) return;
+    if (ST.arm || S.mode === "los" || !ST.res || !ST.obs || !ST.grid || measuring()) return;
     var p = [e.latlng.lat, L.Util.wrapNum(e.latlng.lng, [-180, 180], true)];
     if (hav(ST.obs, p) > S.km * 1000) return;
     losTo(p).catch(function () {});
   });
   function losTo(p) {
-    var g = ST.grid, SRC = W.OSAP_TERRAIN_SRC, half = (g.n - 1) / 2, b = SRC.toCell(g.spec, p[0], p[1]), o = ST.ran;
-    return engineLos(g, [half, half], b, { hA: o.obsH, hB: o.tgtH, curvature: o.curvature, k: o.k }).then(function (x) {
-      x = decorate(x, ST.obs, p, o.obsH, o.tgtH, o);
-      ST.los = x; drawLos(x, true);
+    var g = ST.grid, SRC = W.OSAP_TERRAIN_SRC, half = (g.n - 1) / 2, b = SRC.toCell(g.spec, p[0], p[1]), o = ST.ran, R0 = ST.ranRev;
+    /* reverse: from an observer at the tapped point (observer height, which the sweep gave every cell) to the point */
+    var A = R0 ? b : [half, half], B = R0 ? [half, half] : b, hA = R0 ? o.tgtH : o.obsH, hB = R0 ? o.obsH : o.tgtH;
+    return engineLos(g, A, B, { hA: hA, hB: hB, curvature: o.curvature, k: o.k }).then(function (x) {
+      x = decorate(x, R0 ? p : ST.obs, R0 ? ST.obs : p, hA, hB, o);
+      if (R0) { x.nA = "Observer here"; x.nB = "The point"; x.eA = "Observer"; x.eB = "Point"; x.fA = "the observer"; }
+      ST.los = x; drawLos(x, true, p);
       if (el && !el.hidden) render();
       return x;
     });
   }
   function decorate(x, a, b, hA, hB, o) {
     x.from = a; x.to = b; x.hA = hA; x.hB = hB; x.curv = !!o.curvature;
+    x.nA = "Observer"; x.nB = "Selected point"; x.eA = "Observer"; x.eB = "Target"; x.fA = "observer";
     x.drop = function (d) { return o.curvature ? d * d / (2 * R_EARTH) * (1 - (o.k || 0)) : 0; };
     x.ZBeff = x.zB + hB - x.drop(x.dist);
     return x;
   }
-  function drawLos(x, popup) {
+  function drawLos(x, popup, at) {
     losLay.clearLayers();
     var col = x.los === "BLOCKED" ? "#c62828" : x.los === "CLEAR" ? "#2e7d32" : "#616161";
     losLay.addLayer(L.polyline([x.from, x.to], { pane: "vslines", color: "#fff", weight: 5, opacity: 0.8, interactive: false }));
     losLay.addLayer(L.polyline([x.from, x.to], { pane: "vslines", color: col, weight: 2.5, dashArray: x.los === "CLEAR" ? null : "6 4", interactive: false }));
     if (x.los === "BLOCKED" && x.dist) {
       var t = x.blockD / x.dist, bp = [x.from[0] + (x.to[0] - x.from[0]) * t, x.from[1] + (x.to[1] - x.from[1]) * t];
-      losLay.addLayer(L.circleMarker(bp, { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#c62828", fillOpacity: 1, interactive: false }).bindTooltip("Blocking terrain " + km(x.blockD) + " from observer", { direction: "top" }));
+      /* a sampled line knows where each sample is */
+      var hit = x.samples.filter(function (q) { return q.lat != null && q.d >= x.blockD; })[0]; if (hit) bp = [hit.lat, hit.lon];
+      losLay.addLayer(L.circleMarker(bp, { pane: "vslines", radius: 5, color: "#fff", weight: 2, fillColor: "#c62828", fillOpacity: 1, interactive: false }).bindTooltip("Blocking terrain " + km(x.blockD) + " from " + x.fA, { direction: "top" }));
     }
     if (popup) {
       var pad = split() && W.OSAP_SPLIT ? W.OSAP_SPLIT.clear() : { tl: [0, 0], br: [0, 0] };
-      L.popup({ maxWidth: 290, autoPanPaddingTopLeft: L.point(pad.tl[0] + 8, pad.tl[1] + 8), autoPanPaddingBottomRight: L.point(pad.br[0] + 8, pad.br[1] + 8) }).setLatLng(x.to).setContent(losCard(x, false)).openOn(map);
+      L.popup({ maxWidth: 290, autoPanPaddingTopLeft: L.point(pad.tl[0] + 8, pad.tl[1] + 8), autoPanPaddingBottomRight: L.point(pad.br[0] + 8, pad.br[1] + 8) }).setLatLng(at || x.to).setContent(losCard(x, false)).openOn(map);
     }
   }
   D.addEventListener("click", function (e) {
@@ -462,7 +655,8 @@
   /* ---------- the long-press ring's Terrain list ---------- */
   function menu(P) {
     var extra = (W.OSAP_TERRAIN_TOOLS || []).filter(function (t) { return t && t.id && t.label && typeof t.run === "function"; });
-    var h = '<div class="vsmenu" data-keep-pop><div class="h">Terrain</div><button type="button" data-vm="vs">Viewshed from here</button><button type="button" data-vm="el">Elevation here</button>' +
+    var h = '<div class="vsmenu" data-keep-pop><div class="h">Terrain</div><button type="button" data-vm="vs">Viewshed from here</button><button type="button" data-vm="rv">Reverse viewshed to here</button>' +
+      '<button type="button" data-vm="lo">Line of sight from here</button><button type="button" data-vm="el">Elevation here</button>' +
       extra.map(function (t, i) { return '<button type="button" data-vm="x' + i + '">' + esc(t.label) + "</button>"; }).join("") + '<div class="el" aria-live="polite"></div></div>';
     ensureCss();
     MENU = { P: P, extra: extra, pop: L.popup({ maxWidth: 240, className: "vsmenu-pop" }).setLatLng(P).setContent(h).openOn(map) };
@@ -473,6 +667,8 @@
     var b = e.target.closest && e.target.closest(".vsmenu [data-vm]"); if (!b || !MENU) return;
     var k = b.getAttribute("data-vm"), P = MENU.P, box = b.closest(".vsmenu");
     if (k === "vs") { map.closePopup(MENU.pop); viewshedAt(P); }
+    else if (k === "rv") { map.closePopup(MENU.pop); reverseAt(P); }
+    else if (k === "lo") { map.closePopup(MENU.pop); losFrom(P); }
     else if (k === "el") {
       var out = box.querySelector(".el"); out.textContent = "Looking up…";
       elevationAt(P[0], P[1]).then(function (r) {
@@ -483,33 +679,45 @@
   function ensureCss() { if (!D.getElementById("terrain-css")) { var st = D.createElement("style"); st.id = "terrain-css"; st.textContent = CSS; D.head.appendChild(st); } }
 
   /* ---------- open, close, API ---------- */
-  function open() { ensure(); drawObserver(); render(); }
+  function open() { ensure(); if (S.mode === "los") drawLinePts(); else drawObserver(); render(); }
   function close() { pickEnd(); RUN++; if (ac) ac.abort(); engineCancel(); ST.busy = ""; if (el) el.hidden = true; }
   function isOpen() { return !!el && !el.hidden; }
-  function viewshedAt(P) { open(); pickEnd(); setObs(P[0], P[1]); render(); calc(); }
+  function viewshedAt(P) { if (S.mode !== "vs") setMode("vs"); open(); pickEnd(); setObs(P[0], P[1]); render(); calc(); }
+  function reverseAt(P) { if (S.mode !== "rev") setMode("rev"); open(); pickEnd(); setObs(P[0], P[1]); render(); calc(); }
+  /* line of sight from P: A is set, B is picked next */
+  function losFrom(P) { if (S.mode !== "los") setMode("los"); open(); lineReset([[P[0], P[1]]]); render(); pickStart("pickB"); }
+  /* a line or path (Measure's Profile): two points give A to B, more give the elevation profile along the path */
+  function line(pts) {
+    pts = (pts || []).filter(function (p) { return p && p.length >= 2; });
+    if (pts.length < 2) return;
+    if (S.mode !== "los") setMode("los"); open(); pickEnd(); lineReset(pts); render(); calc();
+  }
   /* the ground height at one point: { elev_m, nodata, res_m, sources } */
   function elevationAt(lat, lon) { return need().then(function (SRC) { return SRC.elevationAt(lat, L.Util.wrapNum(lon, [-180, 180], true)); }); }
-  /* the ground along a line: { total_m, samples: [{ dist_m, elev_m, nodata }], res_m, sources }. opt: { res_m } */
+  /* the ground along a line: { total_m, samples: [{ dist_m, elev_m, nodata }], los, block_m, max_elev_m, max_at_m, res_m,
+     coverage_pct, sources }. opt: { res_m, hA, hB, curvature, k } (the heights at A and B in metres above the ground) */
   function profile(a, b, opt) {
     opt = opt || {};
-    var A = [+a[0], +a[1]], B = [+b[0], +b[1]], D0 = hav(A, B), res = Math.max(+opt.res_m || 30, Math.ceil(D0 / 4000));
+    return lineRun([a, b], { res: +opt.res_m || 30, hA: num(opt.hA, 0), hB: num(opt.hB, 0), curvature: !!opt.curvature, k: opt.k || 0, signal: opt.signal }).then(pub);
+  }
+  /* the ground along points [[lat, lon], ...] and, for two points, the line of sight between them (engine losAlong) */
+  function lineRun(pts, o) {
     return need().then(function (SRC) {
-      var s = SRC.box([Math.min(A[0], B[0]), Math.min(A[1], B[1]), Math.max(A[0], B[0]), Math.max(A[1], B[1])], res);
-      return SRC.grid(s, { signal: opt.signal }).then(function (r) {
-        var g = { E: r.E, n: s.w, rowM: r.rowM };
-        if (s.w !== s.h) { /* the engine's grids are square: pad the short side with no data */
-          var n = Math.max(s.w, s.h), E = new Float32Array(n * n), rowM = new Float32Array(n); E.fill(NaN);
-          for (var j = 0; j < s.h; j++) { E.set(r.E.subarray(j * s.w, (j + 1) * s.w), j * n); rowM[j] = r.rowM[j]; }
-          for (j = s.h; j < n; j++) rowM[j] = r.rowM[s.h - 1];
-          g = { E: E, n: n, rowM: rowM };
-        }
+      return SRC.line(pts.map(function (p) { return [+p[0], +p[1]]; }), o.res, { signal: o.signal, prog: o.prog }).then(function (r) {
         return onPage().then(function (VS) {
-          var x = VS.los(g, SRC.toCell(s, A[0], A[1]), SRC.toCell(s, B[0], B[1]), { hA: num(opt.hA, 0), hB: num(opt.hB, 0), curvature: !!opt.curvature, k: opt.k || 0 });
-          return { total_m: x.dist, samples: x.samples.map(function (p) { return { dist_m: p.d, elev_m: p.nodata ? null : p.z, nodata: p.nodata }; }), los: x.los, block_m: x.los === "BLOCKED" ? x.blockD : null,
-            max_elev_m: x.maxZ === x.maxZ ? x.maxZ : null, max_at_m: x.maxD === x.maxD ? x.maxD : null, res_m: res, coverage_pct: r.coverage_pct, sources: r.sources, version: VERSION };
+          var x = VS.losAlong(r.samples, { hA: o.hA, hB: o.hB, curvature: !!o.curvature, k: o.k || 0 });
+          x.meta = r; x.path = pts.length > 2; x.vertices = r.vertices;
+          return x;
         });
       });
     });
+  }
+  /* the shape other modules get (OSAP_TERRAIN_ANALYSIS.profile, OSAP_PROFILE_EXT) */
+  function pub(x) {
+    var r = x.meta;
+    return { total_m: x.dist, samples: x.samples.map(function (p) { return { dist_m: p.d, elev_m: p.nodata ? null : p.z, nodata: p.nodata, lat: p.lat, lon: p.lon }; }),
+      los: x.path ? null : x.los, block_m: x.los === "BLOCKED" && !x.path ? x.blockD : null, max_elev_m: x.maxZ === x.maxZ ? x.maxZ : null, max_at_m: x.maxD === x.maxD ? x.maxD : null,
+      vertices: x.vertices, res_m: r.res_m, coverage_pct: r.coverage_pct, sources: r.sources, version: VERSION };
   }
   /* a viewshed with no panel or marks (other modules): opts { lat, lon, observer_height_m, target_height_m, radius_m, res_m,
      curvature, refraction, refraction_k, returnRays }. Resolves with { cls, n, bounds, stats, blockD, obsMax, horizon, rays,
@@ -533,8 +741,8 @@
   D.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-terrain-open]"); if (b) { e.preventDefault(); open(); } });
   W.OSAP_TERRAIN_TOOLS = W.OSAP_TERRAIN_TOOLS || [];
   W.OSAP_TERRAIN_ANALYSIS = {
-    version: VERSION, open: open, close: close, isOpen: isOpen, menu: menu, viewshedAt: viewshedAt,
+    version: VERSION, open: open, close: close, isOpen: isOpen, menu: menu, viewshedAt: viewshedAt, reverseAt: reverseAt, losFrom: losFrom, line: line,
     elevationAt: elevationAt, profile: profile, viewshed: viewshed, losTo: function (p) { return ST.res ? losTo(p) : Promise.reject(new Error("no viewshed")); },
-    state: function () { return { obs: ST.obs, busy: ST.busy, err: ST.err, pass: ST.pass, stats: ST.res && ST.res.res.stats, grid: ST.grid && { n: ST.grid.n, res: ST.grid.res, z: ST.grid.z, coverage_pct: ST.grid.coverage_pct, sources: ST.grid.sources }, los: ST.los, marks: lay.getLayers().length + losLay.getLayers().length, settings: Object.assign({}, S) }; }
+    state: function () { return { mode: S.mode, arm: ST.arm, line: { pts: ST.line.pts.slice(), result: ST.line.x ? pub(ST.line.x) : null }, obs: ST.obs, busy: ST.busy, err: ST.err, pass: ST.pass, stats: ST.res && ST.res.res.stats, grid: ST.grid && { n: ST.grid.n, res: ST.grid.res, z: ST.grid.z, coverage_pct: ST.grid.coverage_pct, sources: ST.grid.sources }, los: ST.los, marks: lay.getLayers().length + losLay.getLayers().length + lnMarks.getLayers().length, settings: Object.assign({}, S) }; }
   };
 })();
