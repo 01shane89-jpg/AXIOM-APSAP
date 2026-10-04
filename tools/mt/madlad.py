@@ -36,10 +36,12 @@ def main():
     budget, t0, res = float(os.environ.get("MT_BUDGET", "300")), time.time(), []
     # The penalty and the no-repeat rule stop the greedy decoder looping ("single-track, single-track, ..."), which it did on
     # short Thai headlines.
+    # MT_BEAM, MT_REP_PENALTY and MT_NO_REPEAT override them (tools/mt/probe_settings.mjs compares settings).
+    beam, pen, norep = int(os.environ.get("MT_BEAM", "1")), float(os.environ.get("MT_REP_PENALTY", "1.2")), int(os.environ.get("MT_NO_REPEAT", "4"))
     for k in range(0, len(jobs), 32):
         if res and time.time() - t0 > budget: break
-        res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=1, max_batch_size=16, max_decoding_length=256,
-                                repetition_penalty=1.2, no_repeat_ngram_size=4)
+        res += tr.translate_batch([j[1] for j in jobs[k:k + 32]], beam_size=beam, max_batch_size=16, max_decoding_length=256,
+                                repetition_penalty=pen, no_repeat_ngram_size=norep)
     done = set(i for (i, _), _r in zip(jobs, res))
     out = [None] * len(items)
     for (i, _), r in zip(jobs, res):
