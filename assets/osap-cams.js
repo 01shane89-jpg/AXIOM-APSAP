@@ -47,7 +47,7 @@
   function hits(b) {
     return ((S.ix || {}).sources || []).filter(function (s) {
       /* a kind of camera this copy of the page does not know how to fetch (a newer list read by an older page) is left out */
-      var x = s.box; return x && !OFF[typeOf(s)] && (!s.kind || KINDS[s.kind]) && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
+      var x = s.box; return x && !(W.OSAP_LOCK && W.OSAP_LOCK.hidden(s.cc)) && !OFF[typeOf(s)] && (!s.kind || KINDS[s.kind]) && !(x[2] < b.getSouth() || x[0] > b.getNorth() || x[3] < b.getWest() || x[1] > b.getEast());
     });
   }
   function loadList(id) {

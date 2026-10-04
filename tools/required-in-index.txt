@@ -6,6 +6,7 @@
 
 # script tags
 <script src="assets/osap-start.js"></script>
+<script src="assets/osap-lock.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-work.js"></script>
@@ -133,3 +134,4 @@ offline: { name: "Offline map"
 <script src="assets/osap-terrain.js"></script>
 data-terrain-open
 id="ml-viewsheds"
+if (window.OSAP_LOCK) window.OSAP_LOCK.prune();
