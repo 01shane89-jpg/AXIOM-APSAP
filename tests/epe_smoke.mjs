@@ -150,7 +150,7 @@ let state;
   await p.evaluate(() => { document.getElementById("epe").hidden || window.OSAP_EPE.close(); });
   const box = await p.evaluate(() => { const r = document.getElementById("map").getBoundingClientRect(); return { x: r.left + r.width * 0.4, y: r.top + r.height * 0.5 }; });
   await p.mouse.click(box.x, box.y, { button: "right" }); await p.waitForTimeout(400);
-  ok(await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="plans"]') && document.querySelectorAll("#atk-ring [data-rk]").length === 9), "long-press ring has Plans, still 9 buttons");
+  ok(await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="plans"]') && document.querySelectorAll("#atk-ring [data-rk]").length === 10), "long-press ring has Plans (9 actions and close)");
   if (await p.evaluate(() => !!document.querySelector('#atk-ring:not([hidden]) [data-rk="plans"]'))) {
     await p.click('#atk-ring [data-rk="plans"]'); await p.waitForTimeout(200);
     ok(/Evacuate from here/.test(await p.textContent("#atk-pop")), "Plans lists Evacuate from here");

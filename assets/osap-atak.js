@@ -55,7 +55,9 @@
     search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
     plans: ic('<rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V2.8h6V4M8.5 10h7M8.5 14h7M8.5 18h4"/>'),
     evac: ic('<path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4M18 12H9"/>'),
-    heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>')
+    heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>'),
+    /* terrain: a ridge with a sight line over it */
+    mtn: ic('<path d="M2 19l6-9 4 5 3-4 7 8z"/><path d="M3 7h18" stroke-dasharray="2.5 2"/>')
   };
 
   /* ---------- the page's own controls, pressed on the analyst's behalf ---------- */
@@ -401,7 +403,7 @@
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["plans", "Plans", I.plans], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["plans", "Plans", I.plans], ["lz", "Find LZ", I.heli], ["terrain", "Terrain", I.mtn], ["copy", "Copy", I.copy]
   ];
   /* "Plans" opens a short list: Med plan from here (once assets/osap-medplan.js has loaded; it loads after this file) and
      Evacuate from here (layout owner 2026-10-04: one ring entry for both, so the ring stays at 9 buttons) */
@@ -452,6 +454,8 @@
     else if (k === "route") { if (W.OSAP_ROUTE_SEED) W.OSAP_ROUTE_SEED([P]); }
     else if (k === "pin") ptAdd(ll);
     else if (k === "lz") lzLoad(function (Z) { Z.at(P); });
+    /* Terrain analysis (assets/osap-terrain.js): a short list at the point, Viewshed from here, Elevation here, and tools other modules add */
+    else if (k === "terrain") { if (W.OSAP_TERRAIN_ANALYSIS) W.OSAP_TERRAIN_ANALYSIS.menu(P); else toast("Terrain analysis is still loading. Try again in a moment."); }
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
     /* the medical plan from this point as the point of injury; no drawn area needed */
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }

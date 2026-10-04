@@ -466,6 +466,7 @@ select.mini{
 .mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlbtn2{flex:none;font:inherit;font-size:13px;font-weight:600;min-height:32px;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
@@ -1433,7 +1434,9 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         }).join("") + "</div>" +
         /* flooding and fires are natural disasters: they sit in Data sets > Natural disasters (dsUi, through window.OSAP_DISASTERX),
            not here (Shane 2026-10-01) */
-        '<div id="ml-elev"><div class="mlh">Elevation and LiDAR</div>' +
+        '<div id="ml-elev"><div class="mlh">Elevation and terrain analysis</div>' +
+        /* Terrain analysis (assets/osap-terrain.js): viewshed and line of sight; also on the long-press ring > Terrain */
+        '<div class="mlrow"><button type="button" class="mlbtn2" data-terrain-open>Terrain analysis</button><span><i>Viewshed: what ground an observer can see; line of sight to any point</i></span></div>' +
         Object.keys(HSX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
         }).join("") +
@@ -8460,6 +8463,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-illum.js"></script>
+<!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
+<script src="assets/osap-terrain.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>
