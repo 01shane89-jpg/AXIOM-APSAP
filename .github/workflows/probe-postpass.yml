@@ -1,0 +1,22 @@
+name: Probe postpass (temporary)
+on:
+  push:
+    branches: ["claude/infra-sites-2"]
+    paths: [".github/workflows/probe-postpass.yml"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - run: |
+          P=https://postpass.geofabrik.de/api/interpreter
+          run() { echo "== $1"; curl -sSL -m 600 -A "AXIOM-OSAP probe" --data-urlencode "data=$2" $P | head -c 3000; echo; }
+          run industrial "SELECT tags->>'industrial' AS v, count(*) AS n, ST_MakePoint(0,0) AS geom FROM postpass_pointpolygon WHERE tags ? 'industrial' AND geom && ST_MakeEnvelope(60,-15,150,55,4326) GROUP BY 1 ORDER BY 2 DESC LIMIT 40"
+          run plantsource "SELECT tags->>'plant:source' AS v, count(*) AS n, ST_MakePoint(0,0) AS geom FROM postpass_pointpolygon WHERE tags->>'power'='plant' AND geom && ST_MakeEnvelope(60,-15,150,55,4326) GROUP BY 1 ORDER BY 2 DESC LIMIT 40"
+          run pipesub "SELECT tags->>'substance' AS v, count(*) AS n, sum(ST_Length(geom::geography))/1000 AS km, ST_MakePoint(0,0) AS geom FROM postpass_line WHERE tags->>'man_made'='pipeline' AND geom && ST_MakeEnvelope(90,0,110,25,4326) GROUP BY 1 ORDER BY 2 DESC LIMIT 20"
+          run storage "SELECT tags->>'content' AS v, count(*) AS n, ST_MakePoint(0,0) AS geom FROM postpass_pointpolygon WHERE tags->>'man_made'='storage_tank' AND geom && ST_MakeEnvelope(97,5,106,21,4326) GROUP BY 1 ORDER BY 2 DESC LIMIT 20"
+          W=https://query.wikidata.org/sparql
+          for q in Q235356 Q15911738 Q159719; do echo "== wd $q"; curl -sS -m 120 -A "AXIOM-OSAP probe" -H 'accept: application/sparql-results+json' --data-urlencode "query=SELECT (COUNT(?i) AS ?n) WHERE { ?i wdt:P31/wdt:P279* wd:$q; wdt:P625 ?c. }" $W | head -c 400; echo; done
+          echo "== gem"; curl -sSL -m 60 -o /dev/null -w '%{http_code} %{size_download}\n' https://globalenergymonitor.org/projects/global-integrated-power-tracker/download-data/
