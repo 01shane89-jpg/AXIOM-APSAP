@@ -127,6 +127,19 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(await p.evaluate(() => !document.querySelector("#com-res b b")), "OSM names are escaped");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-comchk-pane .comv").length === 1 && document.querySelectorAll(".leaflet-comchk-pane path").length >= 2), "check pin and line-of-sight lines drawn");
   if (OUT) await p.screenshot({ path: OUT + "/comms-place.png" });
+  // the sight lines explain themselves: a legend entry for each kind, and tapping one names the mast and the reason
+  ok(await p.evaluate(() => /Mast in clear line of sight/.test(document.body.innerHTML) && /Terrain blocks the mast/.test(document.body.innerHTML)), "legend explains the green and red sight lines");
+  const sight = await p.evaluate(() => { const l = document.querySelector(".leaflet-comchk-pane path.comsight"); if (!l) return ""; const b = l.getBoundingClientRect(); return JSON.stringify([b.left + b.width / 2, b.top + b.height / 2]); });
+  ok(!!sight, "each sight line has a wide tap target");
+  if (sight) {
+    const [sx, sy] = JSON.parse(sight); await p.evaluate(() => window.__asapMap.closePopup());
+    await p.evaluate(([x, y]) => { const l = document.querySelector(".leaflet-comchk-pane path.comsight"); l.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: x, clientY: y })); }, [sx, sy]);
+    await p.waitForTimeout(300);
+    ok(/line of sight/.test(await p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "")), "tapping a sight line says which mast and whether terrain blocks it");
+    ok((await st(p)).result && (await st(p)).result.v, "tapping a sight line does not start a new check");
+    await p.evaluate(() => window.__asapMap.closePopup());
+  }
+  ok(await p.evaluate(() => !!document.querySelector(".leaflet-comchk-pane .comv svg")), "the checked place shows a phone icon, not a plain dot");
 
   // a place in the sea off the coast, far from any mast and with no tests
   await p.evaluate(() => window.OSAP_COMMSTAB.check(8.2, 101.9));
@@ -165,6 +178,10 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(/By provider/.test(await p.textContent("#com-res")), "the answer lists each provider");
   if (OUT) await p.screenshot({ path: OUT + "/comms-providers.png", fullPage: true });
   const drawnAll = (await st(p)).drawn;
+  // the provider and map switches live on the Comms planning > Networks tab (assets/osap-commsplan.js)
+  ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length === 0 && document.querySelector(".combtns").getClientRects().length > 0), "Coverage tab: the provider switches are on the Networks tab, not here");
+  await p.click('[data-cptab="networks"]');
+  ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length > 0 && document.querySelector(".combtns").getClientRects().length === 0), "Networks tab: provider switches show, the signal check hides");
   await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
   await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.offN === 1; }, null, { timeout: 20000 });
   s = await st(p);
@@ -230,6 +247,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(await p.evaluate(() => document.querySelector(".comzoom").hidden), "country zoom with a stored copy: no zoom-in button");
   ok(/stored OpenStreetMap copy of 2026-10-03/.test(await p.textContent("#com-st")), "the panel says the masts come from the stored copy and its date");
   const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((e) => e.getAttribute("data-comprov") + ":" + e.parentNode.querySelector(".comsw").style.background));
+  await p.click('[data-cptab="networks"]');
   ok(provs.length === 3 && provs[0].startsWith("ais:") && provs[1].startsWith("true:") && provs[2].startsWith("?:") && new Set(provs.map((x) => x.split(":").slice(1).join(":"))).size === 3, "country zoom: providers listed with their own colours: " + provs.join(" | "));
   await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
   ok((await st(p)).drawn === 4, "country zoom: AIS off leaves its own masts out, shared AIS;True stays (" + (await st(p)).drawn + ")");

@@ -466,6 +466,7 @@ select.mini{
 .mlrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
 .mlrow input{margin-top:3px;flex:none}
 .mlrow b{display:block;font-weight:600}.mlrow i{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.mlbtn2{flex:none;font:inherit;font-size:13px;font-weight:600;min-height:32px;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
 .mlkey{margin:4px 0 0;color:var(--muted);font-size:11.5px}.mlkey span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 8px;vertical-align:-1px}.mlkey span:first-child{margin-left:0}.mlkey span.rep{border:2px dashed #c62828;width:8px;height:8px}
 .mlh .dsall{float:right;text-transform:none;letter-spacing:0}.mlh .dsall button{font:inherit;background:none;border:0;padding:0 2px;color:var(--accent);cursor:pointer;text-decoration:underline}
 #ml-ds{border-bottom:1px solid var(--line);padding-bottom:6px}
@@ -1433,7 +1434,11 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
         }).join("") + "</div>" +
         /* flooding and fires are natural disasters: they sit in Data sets > Natural disasters (dsUi, through window.OSAP_DISASTERX),
            not here (Shane 2026-10-01) */
-        '<div id="ml-elev"><div class="mlh">Elevation and LiDAR</div>' +
+        '<div id="ml-elev"><div class="mlh">Elevation and terrain analysis</div>' +
+        /* Terrain analysis (assets/osap-terrain.js): viewshed and line of sight; also on the long-press ring > Terrain */
+        '<div class="mlrow"><button type="button" class="mlbtn2" data-terrain-open>Terrain analysis</button><span><i>Viewshed, reverse viewshed, line of sight and elevation profiles</i></span></div>' +
+        /* saved viewsheds with their on/off toggles, filled in by assets/osap-terrain.js */
+        '<div id="ml-viewsheds"></div>' +
         Object.keys(HSX).map(function (k) {
           return '<label class="mlrow"><input type="checkbox" data-hs="' + k + '"' + (ML["hs_" + k] ? " checked" : "") + '><span><b>' + HSX[k].name + "</b><i>" + HSX[k].note + "</i></span></label>";
         }).join("") +
@@ -3195,7 +3200,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
     { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
     { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
-    { id: "comms", name: "Comms", title: "Comms: towers and phone coverage", sof: true, live: true });
+    { id: "comms", name: "Comms planning", title: "Comms planning: PACE, coverage, links, networks, power and status", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -5919,7 +5924,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     sofLayer.clearLayers(); sofM = {};
     if (!window.OSAP_ROUTETAB) {
       window.OSAP_ROUTE_WAIT = showRoute; railO.innerHTML = '<div class="sec"><p class="obs">Loading the route planner…</p></div>';
-      if (!routeLoading) {
+      /* the evacuation planner (assets/osap-epe.js) may already be fetching the same file */
+      if (!routeLoading && !document.querySelector('script[src="assets/osap-route.js"]')) {
         routeLoading = true;
         var s = document.createElement("script"); s.src = "assets/osap-route.js";
         s.onerror = function () { routeLoading = false; if (current === "route") railO.innerHTML = '<div class="sec"><p class="obs">The route planner could not be loaded. Check the connection and open the tab again.</p></div>'; };
@@ -5931,21 +5937,25 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
   }
   /* Comms: communication masts, radio and TV towers and a phone coverage check (assets/osap-comms.js, loaded the first time
-     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record. */
+     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record.
+     Comms planning (assets/osap-commsplan.js with assets/comms/radio-lib.js) shows it as six tabs: Plan (PACE), Coverage, Link,
+     Networks, Equipment (battery and power) and Status; the operator's plans stay on this device. */
   var commsLoading = false;
   function showComms() {
     sofLayer.clearLayers(); sofM = {};
-    if (!window.OSAP_COMMSTAB) {
-      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading the communications tab…</p></div>';
+    if (!window.OSAP_COMMSTAB || !window.OSAP_COMMSPLAN || !window.OSAP_RADIO) {
+      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading comms planning…</p></div>';
       if (!commsLoading) {
         commsLoading = true;
-        var s = document.createElement("script"); s.src = "assets/osap-comms.js";
-        s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">The communications tab could not be loaded. Check the connection and open the tab again.</p></div>'; };
-        document.body.appendChild(s);
+        ["assets/comms/radio-lib.js", "assets/osap-comms.js", "assets/osap-commsplan.js"].forEach(function (src) {
+          var s = document.createElement("script"); s.src = src; s.async = false;
+          s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">Comms planning could not be loaded. Check the connection and open the tab again.</p></div>'; };
+          document.body.appendChild(s);
+        });
       }
       return;
     }
-    window.OSAP_COMMSTAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
+    window.OSAP_COMMSPLAN.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
   }
   window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
@@ -6126,7 +6136,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
     if (cv && !row) {
       row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
-      row.innerHTML = "<b>Communications infrastructure</b><i>Phone masts, radio and TV towers, and a phone coverage check</i>";
+      row.innerHTML = "<b>Communications infrastructure</b><i>Comms planning: masts and towers, coverage, PACE plan, links, power and network status</i>";
       row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
       box.appendChild(row);
     }
@@ -6211,7 +6221,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles; coverage is an estimate, not a promise of signal" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
@@ -8456,6 +8466,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-illum.js"></script>
+<!-- terrain analysis: viewshed and line of sight (Map overlays > Elevation and terrain analysis, long-press > Terrain) -->
+<script src="assets/osap-terrain.js"></script>
 <!-- a new deploy reloads the page at once only if it has not been touched yet; otherwise when it is next put away, never under a finger -->
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { var had = !!navigator.serviceWorker.controller, reloaded = false, used = false, t0 = Date.now(); ["pointerdown", "keydown"].forEach(function (k) { window.addEventListener(k, function () { used = true; }, { capture: true, once: true }); }); function reload() { if (!reloaded) { reloaded = true; location.reload(); } } navigator.serviceWorker.addEventListener("controllerchange", function () { if (!had) return; if (!used && Date.now() - t0 < 8000) reload(); else document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") reload(); }); }); navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) { reg.update().catch(function () {}); navigator.serviceWorker.ready.then(function (r) { /* the offline copy is saved once the first map has filled in and the phone is idle, so it never competes with the map's pictures */ setTimeout(function () { (window.requestIdleCallback || setTimeout)(function () { if (r.active) r.active.postMessage("warm"); }, { timeout: 10000 }); }, 10000); }); document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); }); }).catch(function () {}); });</script>
 </body></html>

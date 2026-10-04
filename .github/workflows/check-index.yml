@@ -27,10 +27,12 @@ jobs:
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/comms.test.mjs
+      - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
       - run: node tests/hosp.test.mjs
       - run: node tests/medplan_model.test.mjs
+      - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/medplan_decide.test.mjs
   map-smoke:
@@ -65,6 +67,7 @@ jobs:
       - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
+      - run: node tests/commsplan_smoke.mjs
       - run: node tests/power_smoke.mjs
       - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
@@ -75,12 +78,14 @@ jobs:
       - run: node tests/route_wpdel_smoke.mjs
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
+      - run: node tests/epe_smoke.mjs
       - run: node tests/route_preview_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
+      - run: node tests/terrain_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs

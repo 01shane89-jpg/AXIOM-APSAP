@@ -34,7 +34,7 @@ const layers = () => p.evaluate(() => [...document.querySelectorAll("#map .leafl
 await load("#th");
 const rows = await p.evaluate(() => [...document.querySelectorAll('#ml-panel input[data-hs]')].map((i) => i.dataset.hs));
 ok(rows.join() === "world,jp", "Layers menu lists the world hillshade and Japan relief rows: " + rows.join());
-ok(await p.evaluate(() => /Elevation and LiDAR/.test(document.querySelector("#ml-panel").textContent)), "rows sit under an Elevation and LiDAR heading");
+ok(await p.evaluate(() => /Elevation and terrain analysis/.test(document.querySelector("#ml-panel").textContent)), "rows sit under the Elevation and terrain analysis heading");
 asked.length = 0; await tick("world", true); await p.waitForTimeout(800);
 let L1 = await layers();
 ok(L1.length === 1 && L1[0].blend === "multiply", "ticking the world hillshade adds one multiplied layer in the base-map pane");
