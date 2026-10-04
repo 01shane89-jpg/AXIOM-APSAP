@@ -69,7 +69,7 @@
   /* already on the page (the single-file review copy carries them inline) or fetched now */
   function need() {
     if (W.OSAP_TERRAIN_SRC && (W.OSAP_TERRAIN_PROVIDERS || []).length) return Promise.resolve(W.OSAP_TERRAIN_SRC);
-    return Promise.all([script(BASE + "terrain-provider.js"), script(BASE + "providers/remote-dem.js")]).then(function () { return W.OSAP_TERRAIN_SRC; }); }
+    return Promise.all([script(BASE + "terrain-provider.js"), script(BASE + "providers/remote-dem.js"), script(BASE + "providers/packaged-dem.js")]).then(function () { return W.OSAP_TERRAIN_SRC; }); }
 
   /* ---------- the engine: in a worker, on the page if workers fail ----------
      Two engines: the panel's, which a new calculation may stop (its worker is replaced, so a big sum never holds up the
@@ -82,7 +82,7 @@
       if (wk || wkDead) return wk;
       try {
         wk = new Worker(BASE + "viewshed-worker.js");
-        wk.onmessage = function (e) { var m = e.data, p = PEND[m.rid]; if (!p) return; if (m.error || m.los || m.pass === "fine") delete PEND[m.rid]; p(m); };
+        wk.onmessage = function (e) { var m = e.data; if (m && m.fatal) { if (wk) wk.onerror(); return; } var p = PEND[m.rid]; if (!p) return; if (m.error || m.los || m.pass === "fine") delete PEND[m.rid]; p(m); };
         wk.onerror = function () { wkDead = true; wk = null; wkGid = 0; var P = PEND; PEND = {}; Object.keys(P).forEach(function (k) { P[k]({ error: "worker" }); }); };
       } catch (e) { wkDead = true; wk = null; }
       return wk;
@@ -390,12 +390,14 @@
   function assumptions(r, g) {
     var st = r.stats, src = (g.sources || []).map(function (s) { return s.label; }).join("; ") || "none loaded";
     var curv = ST.ran.curvature ? "on" + (ST.ran.k ? ", with atmospheric refraction (k = " + ST.ran.k + ")" : ", no refraction") : "off";
-    return '<div class="asm"><p class="nm">' + (ST.ranRev ? "REVERSE TERRAIN VIEWSHED " : "TERRAIN VIEWSHED ") + (ST.pass === "coarse" ? '<span class="tag">rough first pass, refining…</span>' : "") + "</p>" +
+    var cached = (g.sources || []).some(function (q) { return /^saved-dem/.test(q.id); }), only = cached && (g.sources || []).every(function (q) { return /^saved-dem/.test(q.id); });
+    return '<div class="asm"><p class="nm">' + (only && navigator.onLine === false ? "OFFLINE " : "") + (ST.ranRev ? "REVERSE TERRAIN VIEWSHED " : "TERRAIN VIEWSHED ") + (ST.pass === "coarse" ? '<span class="tag">rough first pass, refining…</span>' : "") + "</p>" +
       "<p><b>" + (ST.ranRev ? "Can see the point" : "Visible terrain") + ":</b> " + st.visible_pct.toFixed(0) + "% · <b>" + (ST.ranRev ? "Cannot" : "Terrain-masked") + ":</b> " + (100 - st.visible_pct - st.unknown_pct).toFixed(0) + "% · <b>Unknown:</b> " + st.unknown_pct.toFixed(0) + "% of the ground within " + S.km + " km</p>" +
       (ST.ranRev ? "<p><b>Point:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Observer height:</b> " + ST.ran.tgtH + " m above the ground everywhere. Line of sight is the same both ways, so this is the viewshed from the point with the two heights swapped.</p>" :
       "<p><b>Observer:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Target height:</b> " + ST.ran.tgtH + " m above the ground</p>") +
       "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model, not a model of buildings or trees: walls, single trees and most buildings are not in it, while SRTM (most of the world outside Japan and the US) partly carries dense forest canopy and big city blocks, so city and jungle results are rough.</p>" +
       "<p><b>Elevation:</b> " + esc(src) + ", tile zoom " + g.z + " · <b>Grid:</b> " + g.res + " m · <b>Coverage:</b> " + (g.coverage_pct >= 99.95 ? "complete" : g.coverage_pct.toFixed(1) + "%") + "</p>" +
+      (cached ? "<p><b>DEM:</b> " + (only ? "cached on this device (saved in Offline maps and data)" : "partly cached on this device") + ((g.sources || []).some(function (q) { return q.id === "saved-dem-coarse"; }) ? "; some of it coarser than asked, enlarged" : "") + "</p>" : "") +
       "<p><b>Earth curvature:</b> " + curv + " · Sea deeper than 40 m is read as sea level</p>" +
       "<p><b>Calculated locally</b> on this device " + esc(T().dualT(ST.when, { date: true })) + (navigator.onLine === false ? " · offline, from elevation already on this device" : "") + "</p></div>";
   }

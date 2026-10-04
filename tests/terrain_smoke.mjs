@@ -13,6 +13,8 @@
 // a viewshed saves under a name with the agreed fields, its visible ground as polygons and its horizon; toggles in the panel
 // and Map overlays agree; rename, recalculate (kept in place) and delete (asks first); the workspace lists it and its KML
 // carries the observer, polygons and horizon; after a reload it is drawn from the stored shapes with nothing downloaded;
+// terrain saved from Offline maps and data runs the viewshed with no signal (OFFLINE, DEM cached, nothing downloaded), finer
+// detail than saved is enlarged and said so, outside it says there is no elevation, and Delete clears it;
 // tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -62,10 +64,12 @@ async function open(opts, failWest) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
   let demCalls = 0;
+  const net = { off: false };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     const m = u.match(/elevation-tiles-prod\/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
     if (m) {
+      if (net.off) return r.abort("internetdisconnected");
       demCalls++;
       /* the failing run: every tile wholly west of 100.47 E answers 500 */
       if (failWest && tileLon(+m[2] + 1, +m[1]) < 100.47) return r.fulfill({ status: 500, body: "down" });
@@ -77,7 +81,7 @@ async function open(opts, failWest) {
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 60000 }); await p.waitForTimeout(3000);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, dem: () => demCalls };
+  return { ctx, p, errors, dem: () => demCalls, net };
 }
 const TA = "window.OSAP_TERRAIN_ANALYSIS";
 const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.pass === "fine" || s.err); }, null, { timeout: 60000 });
@@ -300,6 +304,49 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   ok(dem() === d0 && await p.evaluate(() => !window.OSAP_TERRAIN_SRC), "reload: drawn from the stored shapes, no elevation downloaded");
   if (OUT) await p.screenshot({ path: OUT + "/terrain-saved.png" });
   ok(errors.length === 0, "saved: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- offline terrain: saved from Offline maps and data, used with no signal ---------- */
+{
+  const { ctx, p, errors, dem, net } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate((c) => window.__asapMap.setView(c, 12), C0); await p.waitForTimeout(300);
+  await p.evaluate(() => window.OSAP_OFFLINE.open()); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => /Terrain for viewshed and line of sight/.test(document.getElementById("offdlg").textContent) && !!document.querySelector("#offdlg [data-off-tdl]")), "offline: Offline maps and data has a Terrain section with Download terrain");
+  await p.selectOption("#offdlg [data-off-tz]", "13");
+  const est = await p.evaluate(() => document.getElementById("off-terrain").textContent.match(/([\d,]+) elevation tiles, about ([\d.]+ [KM]B)/));
+  await p.click("#offdlg [data-off-tdl]");
+  await p.waitForFunction(() => /Terrain saved/.test((document.querySelector("#offdlg .offmsg") || {}).textContent || ""), null, { timeout: 60000 });
+  const tp = await p.evaluate(() => { const r = JSON.parse(localStorage.getItem("osap-terrain-offline")); return r.packs.th && r.packs.th.areas[0]; });
+  const nCached = await p.evaluate(() => caches.open("osap-terrain").then((c) => c.keys()).then((k) => k.length));
+  ok(tp && tp.z === 13 && tp.n > 20 && nCached === tp.n && est && +est[1].replace(/,/g, "") === tp.n, "offline: " + tp.n + " zoom 13 elevation tiles saved (" + (est && est[2]) + " estimated), listed and cached (" + nCached + ")");
+  await p.evaluate(() => document.querySelector("#offdlg .x").click());
+  /* the app's own files come from the service worker's copy when offline; here (no service worker) load them first, far away */
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.profile([15.5, 102.5], [15.51, 102.5]));
+  /* no signal */
+  await ctx.setOffline(true); net.off = true; const d0 = dem();
+  await p.evaluate((c) => { window.OSAP_TERRAIN_ANALYSIS.open(); }, C0);
+  await p.selectOption("#ts-km", "5");
+  await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshedAt(c), C0); await settled(p);
+  let st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  let txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(!st.err && st.grid && st.grid.coverage_pct > 99.9 && st.grid.sources.map((x) => x.id).join() === "saved-dem" && st.stats.masked > 0, "offline: the viewshed runs from the saved terrain alone, coverage complete (" + (st.err || st.grid.sources.map((x) => x.id).join()) + ")");
+  ok(/OFFLINE TERRAIN VIEWSHED/.test(txt) && /DEM:\s*cached on this device/.test(txt) && /Calculated locally/.test(txt) && dem() === d0, "offline: the result says OFFLINE, DEM cached, calculated locally; nothing downloaded");
+  /* finer than saved: enlarged from the saved zoom 13, and said so */
+  await p.click('#terrain [data-res="high"]'); await p.selectOption("#ts-km", "1"); await settled(p);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(!st.err && st.grid.coverage_pct > 99.9 && st.grid.sources.some((x) => x.id === "saved-dem-coarse") && /coarser than asked/.test(txt), "offline: High detail with only zoom 13 saved uses it enlarged and says so (" + (st.err || st.grid.sources.map((x) => x.id).join()) + ")");
+  /* outside the saved area: no elevation, a clear message */
+  await p.click('#terrain [data-res="std"]');
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.viewshedAt([14.6, 101.5])); await settled(p);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(/No elevation for this place on this device/.test(st.err || ""), "offline: outside the saved terrain it says there is no elevation here and no connection (" + st.err + ")");
+  await ctx.setOffline(false); net.off = false;
+  /* delete */
+  const left = await p.evaluate(() => window.OSAP_OFFLINE.terrain.remove("th", JSON.parse(localStorage.getItem("osap-terrain-offline")).packs.th.areas[0].id).then(() => caches.open("osap-terrain").then((c) => c.keys()).then((k) => [k.length, localStorage.getItem("osap-terrain-offline")])));
+  ok(left[0] === 0 && left[1] === null, "offline: Delete removes the saved terrain and its record " + JSON.stringify(left));
+  ok(errors.length === 0, "offline: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 
