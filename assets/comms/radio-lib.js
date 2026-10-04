@@ -232,6 +232,39 @@
     return b.some(function (x) { return /\d/.test(x) && /[A-Z]/.test(x) && /[a-z]/.test(x); });
   }
 
+
+  /* ---------- route corridor ---------- */
+  /* cut a line of [lat, lon] points into pieces of about seg_km along it (the last one takes the remainder, merged into the one
+     before when under a quarter of seg_km), in the segment format the evacuation planner also uses:
+     { id: prefix + "-" + index, coords, km_from, km_to } */
+  function splitLine(pts, seg_km, prefix) {
+    var step = Math.max(0.1, num(seg_km, 2)), out = [], cur = [pts[0]], from = 0, run = 0, i;
+    if (!pts || pts.length < 2) return [];
+    for (i = 1; i < pts.length; i++) {
+      var a = pts[i - 1], b = pts[i], d = hav_km(a, b), used = 0;
+      while (run + (d - used) >= step - 1e-9 && d > 0) {
+        var t = (used + (step - run)) / d, p = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+        cur.push(p); out.push({ coords: cur, km_from: from, km_to: from + step });
+        from += step; used += step - run; run = 0; cur = [p];
+      }
+      run += d - used; cur.push(b);
+    }
+    if (run > 1e-6) {
+      if (out.length && run < step / 4) { var last = out[out.length - 1]; last.coords = last.coords.concat(cur.slice(1)); last.km_to += run; }
+      else out.push({ coords: cur, km_from: from, km_to: from + run });
+    }
+    return out.map(function (s, k) { s.id = (prefix || "route-L1") + "-" + k; s.km_from = round(s.km_from, 3); s.km_to = round(s.km_to, 3); return s; });
+  }
+  /* one segment's answer from the coverage levels of its sample points (3 likely, 2 possible, 1 no sign, 0 unknown):
+     unknown when half or more could not be read, never "none"; good when 70% or more is likely; none when half or more shows no sign */
+  function segStatus(levels) {
+    var n = levels.length, c = [0, 0, 0, 0];
+    levels.forEach(function (l) { c[l >= 0 && l <= 3 ? l : 0]++; });
+    if (!n || c[0] * 2 >= n) return "unknown";
+    if (c[3] >= n * 0.7) return "good";
+    if (c[1] * 2 >= n) return "none";
+    return "degraded";
+  }
   root.OSAP_RADIO = {
     version: "osap-radio/1", R_EARTH_M: R_EARTH_M,
     wToDbm: wToDbm, dbmToW: dbmToW, fspl: fspl, wavelength_m: wavelength_m, fresnel_m: fresnel_m, bulge_m: bulge_m, horizon_km: horizon_km,
@@ -239,6 +272,7 @@
     DEVICES: DEVICES, BATTERIES: BATTERIES, avgW: avgW, coldFactor: coldFactor, powerPlan: powerPlan,
     METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
     CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,
-    ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey
+    ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey,
+    splitLine: splitLine, segStatus: segStatus
   };
 })(typeof window !== "undefined" ? window : globalThis);
