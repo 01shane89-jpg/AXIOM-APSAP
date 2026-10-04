@@ -15,7 +15,7 @@
    - Drive: "Drive the route from here" plays the street pictures along the line in order inside OSAP, as if driving it, with
      the map's car marker, the next turn, the next critical point and what OSAP reports ahead kept in step, satellite where no
      street picture exists, and a 360° picture turned to look along the road (drag to look round). Google Street View cannot be
-     shown inside OSAP without a Google key (Mapillary likewise needs a token: tools/probe_drive.sh), so it is not used.
+     shown inside OSAP without a Google key (Mapillary likewise needs a token, checked from GitHub Actions), so it is not used.
    - Nothing is kept: picture metadata lives in memory for this visit only (cache policy per provider), no picture is stored.
      Requests go to the providers with the point's position only. */
 (function () {
