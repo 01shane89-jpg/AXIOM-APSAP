@@ -6,8 +6,9 @@
      with the WebAuthn PRF extension. PRF gives a secret that the authenticator only releases after Face ID. A new P-256 key
      pair is made in the browser; its private half is encrypted (AES-GCM, key from PRF via HKDF) and kept in this browser's
      storage only. The public half is shown as a "setup code" to send to Claude: it can only lock data for the owner, never open it.
-   - Unlock: Face ID releases the PRF secret, which decrypts the private key. Only then does the app show the hidden areas, for this
-     app session (sessionStorage, cleared when the app is closed).
+   - Unlock: Face ID releases the PRF secret, which decrypts the private key. Only then does the app show the hidden areas. The
+     unlock lasts STAY hours on this device, across reloads and app restarts (Shane 2026-10-04: "why do i keep having to enter my
+     pass key??"), or until Lock now; it is kept in localStorage "osap-lock-open" with its end time.
    - OWNER lists the owners' public keys once they are in the code. From then on only a device holding one of those keys can
      unlock; a passkey made on anyone else's device opens nothing. The hidden countries' data files are being moved to
      encrypted-at-rest form (only the owner's private key can read them); until then this is an in-app lock and the plain files
@@ -19,7 +20,7 @@
   var HIDDEN = ["us"];
   /* the owners' public keys (setup codes, "osap-pub:v1:<base64url SPKI>"), added by hand after setup */
   var OWNER = [];
-  var K_DEV = "osap-lock-dev", K_OPEN = "osap-lock-open";
+  var K_DEV = "osap-lock-dev", K_OPEN = "osap-lock-open", STAY = 12;
   var PRF_SALT_TEXT = "AXIOM OSAP hidden areas v1";
 
   function sGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
@@ -30,8 +31,15 @@
   function code(d) { return "osap-pub:v1:" + d.pub; }
   function ownerOk(d) { return !OWNER.length || (!!d && OWNER.indexOf(code(d)) >= 0); }
   /* unlocked = this app session was opened with Face ID, on a device whose key is an owner key */
-  var OPEN = !!sGet(K_OPEN) && ownerOk(dev());
-  if (sGet(K_OPEN) && !OPEN) sSet(K_OPEN, null);
+  /* the unlock on this device: {until, key}, or the session-only flag "1" (tests set that) */
+  function held() {
+    var r = null; try { r = JSON.parse(lGet(K_OPEN) || "null"); } catch (e) {}
+    if (r && r.until > Date.now() && r.key) return r;
+    if (r) lSet(K_OPEN, null);
+    return sGet(K_OPEN) ? { key: sGet("osap-lock-key") } : null;
+  }
+  var OPEN = !!held() && ownerOk(dev());
+  if (!OPEN) { lSet(K_OPEN, null); sSet(K_OPEN, null); sSet("osap-lock-key", null); }
   function hidden(cc) { return !OPEN && HIDDEN.indexOf(String(cc || "").toLowerCase()) >= 0; }
 
   /* ---------- the address: a locked hidden country (or one of its states) opens the default view instead ---------- */
@@ -84,19 +92,20 @@
   }
 
   function setup() {
-    var cred;
-    return navigator.credentials.create({ publicKey: {
+    var cred, salt;
+    /* the PRF secret is asked for at creation too: where the passkey gives it straight away (iOS 18+), setup needs one Face ID */
+    return prfSalt().then(function (x) { salt = x; return navigator.credentials.create({ publicKey: {
       rp: { name: "AXIOM OSAP", id: location.hostname },
       user: { id: rnd(16), name: "OSAP owner", displayName: "OSAP hidden areas" },
       challenge: rnd(32), timeout: 60000,
       pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
       authenticatorSelection: { authenticatorAttachment: "platform", residentKey: "required", requireResidentKey: true, userVerification: "required" },
-      extensions: { prf: {} }
-    } }).then(function (c) {
+      extensions: { prf: { eval: { first: salt } } }
+    } }); }).then(function (c) {
       var r = c && c.getClientExtensionResults ? c.getClientExtensionResults() : {};
       if (!r.prf || r.prf.enabled === false) throw new Error("noprf");
       cred = b64u(c.rawId);
-      return faceId(cred);
+      return r.prf.results && r.prf.results.first ? r.prf.results.first : faceId(cred);
     }).then(function (prf) {
       return Promise.all([wrapKey(prf), SUB.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey", "deriveBits"])]);
     }).then(function (x) {
@@ -117,13 +126,13 @@
     return faceId(d.cred).then(wrapKey).then(function (wk) {
       return SUB.decrypt({ name: "AES-GCM", iv: unb64u(d.iv) }, wk, unb64u(d.wrapped));
     }).then(function (pk) {
-      sSet("osap-lock-key", b64u(pk)); sSet(K_OPEN, "1"); return true;
+      lSet(K_OPEN, JSON.stringify({ until: Date.now() + STAY * 3600e3, key: b64u(pk) })); return true;
     });
   }
-  function lock() { sSet(K_OPEN, null); sSet("osap-lock-key", null); }
+  function lock() { lSet(K_OPEN, null); sSet(K_OPEN, null); sSet("osap-lock-key", null); }
   /* the owner's private key (ECDH P-256) while unlocked, for reading the hidden areas' encrypted files */
   function privateKey() {
-    var k = OPEN && sGet("osap-lock-key"); if (!k || !SUB) return Promise.resolve(null);
+    var h = OPEN && held(), k = h && h.key; if (!k || !SUB) return Promise.resolve(null);
     return SUB.importKey("pkcs8", unb64u(k), { name: "ECDH", namedCurve: "P-256" }, false, ["deriveKey", "deriveBits"]);
   }
   function why(e) {
@@ -145,17 +154,17 @@
     if (!box || box.hidden) return;
     var d = dev(), owner = ownerOk(d), dis = UI.busy ? " disabled" : "";
     var h = '<div class="cbox"><div class="chead"><h2 id="lk-h">Hidden areas</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
-      '<p class="obs">Some areas are hidden from everyone except the owner. They show only after the owner unlocks this app with Face ID, and stay unlocked until the app is closed.</p>' +
+      '<p class="obs">Some areas are hidden from everyone except the owner. They show only after the owner unlocks this app with Face ID, and stay unlocked on this device for ' + STAY + ' hours or until Lock now.</p>' +
       '<p class="lkmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (UI.ok === false) h += '<p class="obs">This browser cannot use Face ID or another built-in lock here.</p>';
-    else if (OPEN) h += '<p><b>Unlocked.</b> Hidden areas are showing on this device.</p><div class="lkbtns"><button type="button" class="refresh" data-lk="lock"' + dis + ">Lock now</button></div>";
+    else if (OPEN) h += '<p><b>Unlocked.</b> Hidden areas are showing on this device' + (held() && held().until ? " until " + new Date(held().until).toTimeString().slice(0, 5) + " (this device's time)" : "") + '.</p><div class="lkbtns"><button type="button" class="refresh" data-lk="lock"' + dis + ">Lock now</button></div>";
     else if (d && owner) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="unlock"' + dis + ">Unlock with Face ID</button></div>";
     else if (d) h += '<p class="obs">This device was set up, but it is not one of the owner\'s devices, so it cannot unlock.</p>';
     if (d && !OPEN && !OWNER.length) h += '<p class="obs">Waiting for this device\'s setup code to be added to OSAP. Until then it can unlock, but so could anyone else\'s device.</p>';
     if (d) h += '<details class="lknote"' + (OWNER.length ? "" : " open") + '><summary>Setup code for this device</summary><p class="obs">Send this to Claude in the "Hide US Data" thread. It can only lock data for this device, not open it, so it is safe to share.</p>' +
       '<textarea readonly rows="4" data-lk-code>' + esc(code(d)) + '</textarea><div class="lkbtns"><button type="button" data-lk="copy">Copy setup code</button></div></details>';
     if (!d && UI.ok !== false) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="setup"' + dis + ">Set up Face ID on this device</button></div>" +
-      '<p class="obs">Makes a passkey for OSAP on this device (you\'ll see Face ID twice) and a lock key that only Face ID can open. Nothing leaves the device.</p>';
+      '<p class="obs">Makes a passkey for OSAP on this device (Face ID once or twice) and a lock key that only Face ID can open. Nothing leaves the device.</p>';
     if (d && !OPEN) h += '<details class="lknote"><summary>Start again on this device</summary><p class="obs">Forgets this device\'s lock key. Data locked for it can no longer be opened here.</p><div class="lkbtns"><button type="button" data-lk="forget"' + dis + ">Forget this device's key</button></div></details>";
     box.innerHTML = h + "</div>";
   }
