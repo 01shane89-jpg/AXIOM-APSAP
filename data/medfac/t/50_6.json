@@ -39,7 +39,7 @@
 ["n10300404286",51.77109,6.1162,"de",{"name":"Frauenärzte am Niederrhein","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"gynaecology;geburtshilfe","addr:housenumber":"2","addr:street":"Querallee","addr:city":"Kleve","addr:postcode":"47533"}],
 ["n10300404290",51.77434,6.13251,"de",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"mund-;kiefer-_und_gesichtschirurgie","addr:city":"Kleve","addr:postcode":"47533","osap:withheld":"1"}],
 ["n10300463718",51.7573,6.39641,"de",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"internal","addr:city":"Rees","addr:postcode":"46459","osap:withheld":"1"}],
-["n10301895788",51.44377,6.26646,"de",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"otolaryngology","addr:city":"Straelen","addr:postcode":"47638","osap:withheld":"1"}],
+["n10301895788",51.44377,6.26646,"de",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"otolaryngology","addr:city":"Straelen","addr:postcode":"47638","opening_hours":"Mo-Fr 09:00-12:00, Mo,Th 15:00-18:00, Tu 15:00-17:30","osap:withheld":"1"}],
 ["n10301995538",51.44409,6.2834,"de",{"name":"Facharztpraxis K22","amenity":"clinic","healthcare":"clinic","addr:housenumber":"22","addr:street":"Kromsteg","addr:city":"Straelen","addr:postcode":"47638"}],
 ["n10303996760",51.7617,6.18954,"de",{"name":"Hausarztpraxis Bedburg-Hau","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"internal","addr:housenumber":"10a","addr:street":"Rosendaler Weg","addr:city":"Bedburg-Hau","addr:postcode":"47551"}],
 ["n10303999232",51.67707,6.1805,"de",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"strahlentherapie","addr:city":"Goch","addr:postcode":"47574","osap:withheld":"1"}],
