@@ -13,7 +13,7 @@ const RASTER = {
   esri_ref_places: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
 };
 const PLACES = { bkk: [13.75, 100.5], tokyo: [35.68, 139.76], moscow: [55.75, 37.62] };
-const ZS = [7, 12, 15];
+const ZS = [7, 13];
 function tile(lat, lon, z) { const n = 2 ** z, r = lat * Math.PI / 180;
   return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.asinh(Math.tan(r)) / Math.PI) / 2 * n)]; }
 const browser = await chromium.launch();
@@ -41,10 +41,13 @@ for (const [k, su] of Object.entries(STYLES)) for (const [p, [la, lo]] of Object
     const m = new maplibregl.Map({ container: "m", style: st, center: [lo, la], zoom: z - 1, attributionControl: false });
     await new Promise((r) => { m.on("idle", r); setTimeout(r, 25000); });
     // which name keys exist in the place layer
-    const f = m.queryRenderedFeatures().filter((x) => x.properties && x.properties.name).slice(0, 5).map((x) => Object.keys(x.properties).filter((q) => /name/.test(q)).join(","));
-    return { fields: [...fields].slice(0, 4), keys: f };
+    const sym = m.queryRenderedFeatures().filter((x) => x.layer.type === "symbol" && x.properties && x.properties.name);
+    const keys = [...new Set(sym.flatMap((x) => Object.keys(x.properties).filter((q) => /name/.test(q))))].join(",");
+    const shown = [...new Set(sym.map((x) => x.properties["name:en"] || x.properties.name_en || x.properties.name))].slice(0, 12).join(" | ");
+    const en = sym.filter((x) => x.properties["name:en"] || x.properties.name_en).length;
+    return { fields: [...fields].slice(0, 2), keys, en: en + "/" + sym.length, shown };
   }, [su, la, lo, z]).catch((e) => ({ err: String(e) }));
-  console.log(k, p, z, JSON.stringify(res));
+  console.log(`::notice title=${k} ${p} z${z}::` + JSON.stringify(res).replace(/\n/g, " "));
   await vp.screenshot({ path: `probe-out/${k}-${p}-z${z}.png` }); await vp.close();
 }
 await browser.close();
