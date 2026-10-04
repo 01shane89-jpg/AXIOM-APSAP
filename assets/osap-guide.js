@@ -51,6 +51,7 @@
         "The strip along the bottom shows the grid of the map centre. Tap the grid to switch between MGRS, decimal degrees and DMS, or tap the copy icon to copy it.",
         "When " + b("Use my location") + " is on, the strip also shows your own position. The target button locks the map on you until you move the map.",
         "The reports list sits under the map on a phone. Tap or drag it up to read it. On a computer, " + b("Layout") + " chooses Map only, Map and list, or List.",
+        "On a computer you can size and move the side panels (Details, Reports and windows such as the medical plan). Drag the small grip on a panel's edge to make it wider or narrower; double-click it for the normal width. Click the grip to " + b("Dock on the left") + ", " + b("Dock on the right") + ", " + b("Float over the map") + " or " + b("Reset size and place") + ". A floating panel moves by the bar on its top and gets taller or shorter by its bottom edge. Your choice is kept on this device.",
         "The title at the top names what you are looking at. Tap it to open " + b("Data sets") + " and change it.",
         "The " + b("Data") + " badge says how fresh the data is: green is fresh, amber means a feed is late, red means data has stopped. Tap it for details and " + b("Refresh now") + "."]) },
 
