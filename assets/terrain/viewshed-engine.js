@@ -91,26 +91,29 @@
   }
 
   /* Line of sight between two points of the same grid (fractional cells). a, b: [x, y]; o: { hA, hB, curvature, k }.
-     Samples the ground about every half cell. Returns the profile and the verdict:
-     { dist, zA, zB, ZA, ZB, maxZ, maxD, los: "CLEAR" | "BLOCKED" | "UNKNOWN", blockD (first ground above the line),
-       samples: [{ d, z, nodata }] } */
+     Samples the ground about every half cell, then judges it with losAlong, so the two always agree. */
   function los(g, a, b, o) {
     var E = g.E, n = g.n, rowM = g.rowM;
     var dx = b[0] - a[0], dy = b[1] - a[1], cellsLen = Math.sqrt(dx * dx + dy * dy);
     var steps = Math.max(2, Math.ceil(cellsLen * 2));
-    var scale = (rowScale(rowM, a[1]) + rowScale(rowM, b[1])) / 2, D = cellsLen * scale;
-    var zA = sample(E, n, a[0], a[1]), zB = sample(E, n, b[0], b[1]);
+    var scale = (rowScale(rowM, a[1]) + rowScale(rowM, b[1])) / 2, D = cellsLen * scale, samples = [];
+    for (var s = 0; s <= steps; s++) { var t = s / steps, z = sample(E, n, a[0] + dx * t, a[1] + dy * t); samples.push({ d: D * t, z: z, nodata: !(z === z) }); }
+    return losAlong(samples, o);
+  }
+  /* Line of sight along a sampled line: samples [{ d (metres from A), z (ground, NaN = no value) }], the first at A and the
+     last at B. o: { hA, hB, curvature, k }. Returns the profile and the verdict:
+     { dist, zA, zB, ZA, ZB, maxZ, maxD, los: "CLEAR" | "BLOCKED" | "UNKNOWN", blockD (first ground above the line), samples } */
+  function losAlong(samples, o) {
+    var last = samples.length - 1, D = samples[last].d, zA = samples[0].z, zB = samples[last].z;
     var ZA = zA + (+o.hA || 0), ZB = zB + (+o.hB || 0) - drop(D, o);
-    var out = { dist: D, zA: zA, zB: zB, ZA: ZA, ZB: ZB + drop(D, o), maxZ: NaN, maxD: NaN, los: "CLEAR", blockD: NaN, samples: [] };
+    var out = { dist: D, zA: zA, zB: zB, ZA: ZA, ZB: ZB + drop(D, o), maxZ: NaN, maxD: NaN, los: "CLEAR", blockD: NaN, samples: samples };
     if (!(zA === zA) || !(zB === zB)) out.los = "UNKNOWN";
     var unk = false;
-    for (var s = 0; s <= steps; s++) {
-      var t = s / steps, z = sample(E, n, a[0] + dx * t, a[1] + dy * t), d = D * t;
-      out.samples.push({ d: d, z: z, nodata: !(z === z) });
-      if (s === 0 || s === steps) continue;
+    for (var s = 1; s < last; s++) {
+      var z = samples[s].z, d = samples[s].d;
       if (!(z === z)) { unk = true; continue; }
       if (!(z <= out.maxZ)) { out.maxZ = z; out.maxD = d; }
-      var line = ZA + (ZB - ZA) * t;
+      var line = ZA + (ZB - ZA) * (D ? d / D : 0);
       if (z - drop(d, o) > line && out.los !== "BLOCKED") { out.los = "BLOCKED"; out.blockD = d; }
     }
     if (out.los === "CLEAR" && unk) out.los = "UNKNOWN";
@@ -127,7 +130,7 @@
     return { E: E, n: nc, rowM: rowM, f: f };
   }
 
-  var API = { viewshed: viewshed, los: los, sample: sample, coarsen: coarsen, drop: drop, R_EARTH: R_EARTH, OUT: OUT, VIS: VIS, MASK: MASK, UNK: UNK, version: "osap-viewshed/1" };
+  var API = { viewshed: viewshed, los: los, losAlong: losAlong, sample: sample, coarsen: coarsen, drop: drop, R_EARTH: R_EARTH, OUT: OUT, VIS: VIS, MASK: MASK, UNK: UNK, version: "osap-viewshed/1" };
   root.OSAP_VS = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof self !== "undefined" ? self : this);
