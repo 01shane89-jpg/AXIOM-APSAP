@@ -220,7 +220,7 @@ const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|propose
    never read first, then the oldest, until its time budget (INFRA_OSM_MIN minutes, default 60) is spent; a tile that fails keeps
    its last copy. So a busy server never empties the map. Lines (dams are usually mapped as lines) are placed at their midpoint. */
 const POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
-const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|location|diameter|usage)$/;
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|content|man_made|location|diameter|usage)$/;
 async function postpass(sql) {
   let err;
   for (let k = 0; k < 2; k++) {
@@ -235,11 +235,15 @@ async function postpass(sql) {
 async function osm() {
   const W = { af: `tags->>'aeroway' IN ('aerodrome','heliport')`, port: `(tags->>'landuse' = 'port' OR tags->>'industrial' = 'port' OR (tags->>'amenity' = 'ferry_terminal' AND tags ? 'name'))`,
     dam: `tags->>'waterway' = 'dam' AND tags ? 'name'`, plant: `tags->>'power' = 'plant'`,
-    fuel: `tags->>'industrial' IN ('refinery','oil','gas','fuel','fuel_depot','oil_storage','lng','petroleum_terminal','oil_terminal','gas_terminal')`,
+    /* few refineries carry industrial=refinery: also works that make oil, gas or fuel, storage that holds them, and sites named so */
+    oilgas: `(tags->>'industrial' IN ('refinery','oil','gas','fuel','fuel_depot','oil_storage','lng','petroleum_terminal','oil_terminal','gas_terminal')` +
+      ` OR (tags->>'man_made' = 'works' AND tags->>'product' ~* '(oil|petrol|diesel|fuel|gasoline|kerosene|lng|lpg|natural gas|bitumen)')` +
+      ` OR (tags->>'industrial' IN ('storage','depot','terminal') AND coalesce(tags->>'product', tags->>'content', '') ~* '(oil|petrol|diesel|fuel|gasoline|lng|lpg|gas)')` +
+      ` OR ((tags->>'landuse' = 'industrial' OR tags ? 'industrial' OR tags->>'man_made' = 'works') AND tags->>'name' ~* '(refinery|refineries|lng terminal|oil terminal|fuel terminal|oil depot|fuel depot|petroleum depot|tank farm)'))`,
     pipe: `tags->>'man_made' = 'pipeline' AND tags->>'substance' IN ('gas','oil','fuel','natural_gas','petroleum','crude_oil','lng','lpg','hydrocarbons','diesel','kerosene','gasoline')` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
-  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuel|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|oilgas|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
   for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
     const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
@@ -280,7 +284,7 @@ async function osm() {
   osmCover = { tiles: have, of: tiles.length, fresh };
   const els = [];
   const pipes = [];
-  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags, g] of t.old.els) (g ? pipes : els).push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags, g });
+  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags, g] of t.old.els) (g ? pipes : els).push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags, g, part: t.part });
   const seen = new Set(), out = [], lines = [];
   /* a pipeline goes in the file of every country its line passes through */
   for (const e of pipes) {
@@ -296,7 +300,7 @@ async function osm() {
   }
   seen.clear();
   for (const e of els) {
-    const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
+    const id = e.type[0] + e.id; if (seen.has(id + e.part)) continue; seen.add(id + e.part);
     const c = e.center || (e.lat != null ? e : null); if (!c) continue;
     const t = e.tags || {};
     if (Object.keys(t).some((k) => DEAD.test(k)) || t.disused === "yes" || t.abandoned === "yes") continue;
@@ -314,7 +318,7 @@ async function osm() {
       out.push({ k: "af", t: heli ? "H" : major ? "M" : "S", cc, id: "osm:" + id, nm: nmA, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xa });
       continue;
     }
-    if (t.power === "plant") {
+    if (e.part === "plant") {
       const cl = fuelClass(t["plant:source"] || "", nm, t), out_mw = mwOf(t["plant:output:electricity"]);
       if (cl === "solar" && !(out_mw >= 1) && !t.name) continue;   // rooftop and small solar
       const xp = Object.fromEntries([["fuel", clip(t["plant:source"], 40)], ["method", clip(t["plant:method"], 30)], ["mw", out_mw != null ? Math.round(out_mw * 10) / 10 : null],
@@ -322,9 +326,11 @@ async function osm() {
       out.push({ k: "plant", t: cl, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xp });
       continue;
     }
-    if (t.industrial && t.industrial !== "port") {
-      const kind = /refinery/.test(t.industrial) ? "R" : /lng/.test(t.industrial) ? "L" : /depot|storage|terminal|fuel/.test(t.industrial) ? "T" : "G";
-      const xf = Object.fromEntries([["facility", clip(t.industrial.replace(/_/g, " "), 30)], ["product", clip(t.product, 40)],
+    if (e.part === "oilgas") {
+      const what = [t.industrial, t.product, t.content, nm, t.name].join(" ");
+      const kind = /refin/i.test(what) || (t.man_made === "works" && /oil|petrol|diesel|gasoline|kerosene|bitumen/i.test(t.product || "")) ? "R"
+        : /\blng\b/i.test(what) ? "L" : /depot|storage|terminal|tank farm/i.test(what) || /^fuel/.test(t.industrial || "") ? "T" : "G";
+      const xf = Object.fromEntries([["facility", clip((t.industrial || (t.man_made === "works" ? "works" : "")).replace(/_/g, " "), 30)], ["product", clip(t.product || t.content, 40)],
         ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
       out.push({ k: "fuel", t: kind, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xf });
       continue;
