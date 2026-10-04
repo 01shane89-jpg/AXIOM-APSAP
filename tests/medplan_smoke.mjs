@@ -274,6 +274,20 @@ async function openPlan(p) {
   ok(!/Trauma Test Hospital/.test(roles[1][1] + roles[2][1] + roles[3][1]) && /Head trauma \(neurosurgery\):.*for information; the planned destination is the Severe head injury row/.test(await p.textContent("#mp-pst")), "desktop: OpenStreetMap-only neurosurgery never makes a severe head injury pick (shown for information only)");
   ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-pst [data-mp-assess]")].every((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth; })), "desktop: the picks' Assessment buttons are on screen");
+  // the role cards follow the theme: readable text on the card in light, grey and dark
+  const contrast = await p.evaluate(() => {
+    const lum = (c) => { const m = c.match(/[\d.]+/g).map(Number).slice(0, 3).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]; };
+    const out = {}, prev = document.documentElement.getAttribute("data-map");
+    for (const t of ["light", "grey", "dark"]) {
+      if (t === "light") document.documentElement.removeAttribute("data-map"); else document.documentElement.setAttribute("data-map", t);
+      const td = document.querySelector("#mp-pst table.mppst td"), b = td.querySelector("b") || td;
+      const a = lum(getComputedStyle(td).backgroundColor), c = lum(getComputedStyle(b).color);
+      out[t] = Math.round((Math.max(a, c) + 0.05) / (Math.min(a, c) + 0.05) * 10) / 10;
+    }
+    if (prev) document.documentElement.setAttribute("data-map", prev); else document.documentElement.removeAttribute("data-map");
+    return out;
+  });
+  ok(contrast.light >= 4.5 && contrast.grey >= 4.5 && contrast.dark >= 4.5, "role cards: the hospital name is readable on the card in light, grey and dark " + JSON.stringify(contrast));
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   ok(/Main roads: Rama IV Road \(5\.0 km\) → 3 Sukhumvit Road \(2\.5 km\)/.test(rt), "desktop: each route lists its main roads");
   const ghs = await p.textContent("#mp-gh");
