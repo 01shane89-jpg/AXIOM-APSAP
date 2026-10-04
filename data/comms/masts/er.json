@@ -1,0 +1,15 @@
+{"cc":"er","at":"2026-10-04T10:09:44Z","base":"2026-10-04T10:08:06Z","m":[
+["n10750161526",16.49951,37.94895,{"height":"21","man_made":"communications_tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n11542457104",15.10833,37.33812,{"height":"35","man_made":"communications_tower","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n13006124428",15.21945,38.8747,{"communication:radio":"yes","man_made":"tower"}],
+["n13006124429",15.21761,38.8771,{"communication:radio":"yes","man_made":"tower"}],
+["n13006124430",15.21767,38.87672,{"communication:radio":"yes","man_made":"tower"}],
+["n13006124431",15.21539,38.87635,{"communication:radio":"yes","man_made":"tower"}],
+["n13006124432",15.21681,38.87365,{"communication:radio":"yes","man_made":"tower"}],
+["n13006124433",15.21643,38.87356,{"communication:radio":"yes","man_made":"tower"}],
+["n7039515991",14.6946,40.96072,{"communication:microwave":"yes","ele":"5","height":"35","man_made":"mast","material":"steel","tower:construction":"lattice","tower:type":"communication"}],
+["n8662211050",13.07205,42.65385,{"height":"60","man_made":"mast","material":"metal","tower:construction":"freestanding","tower:type":"communication"}],
+["n9101619926",14.92893,37.84614,{"height":"15","man_made":"mast","material":"concrete","tower:construction":"freestanding","tower:type":"communication"}],
+["n9127218041",14.72298,37.8038,{"man_made":"mast","tower:type":"communication"}],
+["w319780414",14.76154,36.75277,{"man_made":"tower","tower:type":"communication"}]
+]}
