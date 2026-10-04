@@ -2,9 +2,13 @@
 name: Probe camera sources
 on:
   push:
-    branches: [claude/cams-na]
+    branches: [claude/cams-wildfire]
     paths: [tools/probe_cams.mjs, .github/workflows/probe-cams.yml]
   workflow_dispatch:
+    inputs:
+      only:
+        description: probe round (e.g. r14)
+        default: r14
 permissions:
   contents: read
 jobs:
@@ -18,4 +22,4 @@ jobs:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
-      - run: ONLY=r13 node tools/probe_cams.mjs
+      - run: ONLY=${{ github.event.inputs.only || 'r14' }} node tools/probe_cams.mjs
