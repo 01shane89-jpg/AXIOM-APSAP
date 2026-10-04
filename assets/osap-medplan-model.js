@@ -16,6 +16,7 @@
   var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
 
   function str(x) { return x == null ? "" : String(x); }
+  function lower(L) { var n = L.map(function (c, i) { return i && !/^.[A-Z]/.test(c[1]) ? c[1].charAt(0).toLowerCase() + c[1].slice(1) : c[1]; }); return n.length < 2 ? n.join("") : n.slice(0, -1).join(", ") + " and " + n[n.length - 1]; }
   function blank(x) { return !str(x).trim(); }
   /* a facility name reduced to the words that tell it apart, for matching what a planner typed */
   var GENERIC = /\b(the|hospital|hospitals|medical|center|centre|clinic|general|of|and|hosp|rph|international)\b|โรงพยาบาล|รพ\.?/gi;
@@ -33,7 +34,7 @@
   function point(text, ll, role) { return { role: role, text: str(text), lat: ll ? ll[0] : null, lon: ll ? ll[1] : null, mgrs: ll && ll.mgrs || "", status: blank(text) ? "NOT_SET" : "PLANNER_ENTERED", verified_at: null }; }
   function fac(f) {
     return { id: f.id, name: f.name, name_local: f.name_local || "", aliases: f.aliases || [], lat: f.lat, lon: f.lon, mgrs: f.mgrs || "", caps: f.caps || {},
-      designation: f.designation || "", source: f.source || "" };
+      caps_now: f.caps_now || {}, intel: f.intel || null, designation: f.designation || "", source: f.source || "" };
   }
 
   /* input: see planInput() in assets/osap-medplan.js */
@@ -87,7 +88,8 @@
       hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate")],
       communications: { medevac: [str(v.freq1), str(v.freq2)].filter(function (x) { return !blank(x); }) },
       receiving: { primary: str(v.recv1), alternate: str(v.recv2) },
-      facility_verifications: [],
+      /* the planner's checks of the plan's hospitals (phase 1), oldest first */
+      facility_verifications: (I.checks || []).filter(function (c) { return c && F[c.facility_id]; }),
       receiving_acceptance: defi.concat(stab).map(function (x) { return { facility_id: x.facility_id, status: "UNKNOWN", recorded_at: null }; }),
       environmental_conditions: { weather: I.weather || null, at: I.weather_at || "" },
       unresolved_requirements: unresolved,
@@ -125,6 +127,12 @@
       else add("receiving.match", "blocking", "Receiving facility (unit details)", "“" + rec + "” does not match the calculated " + (def ? "definitive destination, " + def.name : "plan: no definitive destination was found") + ". Correct section 9 or the plan before use.");
     }
     add("acceptance", "warning", "Definitive facility acceptance", "Not recorded: call the receiving hospital.");
+    /* phase 1: the critical capabilities at the definitive facility, usable now only on a planner's unexpired check */
+    var dF = def && p.facilities[def.facility_id], nowC = dF ? dF.caps_now || {} : {};
+    var off = CRITICAL.filter(function (c) { return nowC[c[0]] === "UNAVAILABLE"; }), unc = CRITICAL.filter(function (c) { return nowC[c[0]] !== "AVAILABLE" && nowC[c[0]] !== "UNAVAILABLE"; });
+    add("verification", dF && !off.length && !unc.length ? "ok" : "warning", "Capabilities confirmed available now",
+      !dF ? "No definitive facility." : off.length ? lower(off) + " reported not available now at " + dF.name + " by a planner's check; find another destination or check again." :
+      unc.length ? lower(unc) + " at " + dF.name + " not confirmed available now: no planner's check in date." : "Checked by a planner and in date at " + dF.name + ".");
     var blood = p.unresolved_requirements.filter(function (u) { return u.code === "cap.blood.bank"; })[0];
     add("blood", def && !blood ? "ok" : "warning", "Blood availability", def ? (blood ? blood.text + "." : "Documented at " + def.name + ".") : "No definitive facility.");
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; });
