@@ -90,6 +90,8 @@ data-ev-tlr="1"
 
 # Comms tab: masts, radio and TV towers, phone coverage check (claude/comms-tab)
   function showComms() {
+# Comms planning: six tabs, PACE, power, link (claude/comms-planning)
+        ["assets/comms/radio-lib.js", "assets/osap-comms.js", "assets/osap-commsplan.js"].forEach(function (src) {
 # power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
 <script src="assets/osap-power.js"></script>
 <script src="assets/osap-surveil.js"></script>
@@ -103,6 +105,7 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/web-provider.js"></script>
 <script src="assets/hospital-sources/osm-provider.js"></script>
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
+<script src="assets/osap-facility-intel.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
