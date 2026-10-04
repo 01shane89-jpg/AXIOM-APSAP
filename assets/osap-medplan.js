@@ -1010,7 +1010,8 @@
     var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, the picks and every section">Print view (map and details)</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
+      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">Print CONOP</button>' +
+      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Print intelligence annex</button>' + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
@@ -2320,12 +2321,22 @@
     var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
     s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender(); conopRender();
     /* an open print view waiting on data rebuilds itself once the data is in */
-    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(); }
+    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(s.printMode); }
   }
 
-  function printView() {
+  /* two printed products (Build Plan v2 phase 6): the Medical CONOP, what is needed during an emergency (page-1 CONOP, the
+     picture, the plan status, the destination matrix, the golden hour, routes P/A/C, contacts and air, sites, out-of-country
+     contingency, unit details); and the Medical Intelligence Annex, every section with the hospital evidence, sources and
+     each hospital's assessment. Both are the same plan record and fingerprint; nothing is worked out again for print. */
+  var CONOP_DROP = ["mp-fac", "mp-air", "mp-thr", "mp-wx"];
+  function printView(mode) {
     var el = D.getElementById("brief"), src = D.querySelector("#medplan .mpbox"), s = ST; if (!el || !src) return false;
-    var c = src.cloneNode(true);
+    var c = src.cloneNode(true), conop = mode === "conop";
+    s.printMode = conop ? "conop" : "";
+    if (conop) {
+      CONOP_DROP.forEach(function (id) { var d = c.querySelector("#" + id); if (!d) return; var h = d.previousElementSibling; if (h && h.tagName === "H3") h.remove(); d.remove(); });
+      [].forEach.call(c.querySelectorAll("#mp-src > ul"), function (x) { x.remove(); });
+    }
     /* the fields print as their values; buttons, pickers and on-screen hints go */
     [].forEach.call(c.querySelectorAll("input[type=checkbox]"), function (i) { var o = src.querySelector('[data-mp-opt="' + i.getAttribute("data-mp-opt") + '"]') || src.querySelector("[data-mp-oc]"); i.replaceWith(D.createTextNode((o && o.checked ? "☑ " : "☐ "))); });
     [].forEach.call(c.querySelectorAll("input,textarea"), function (i) {
@@ -2335,7 +2346,7 @@
     [].forEach.call(c.querySelectorAll(".noprint,button,select,.mphead,.mppoi"), function (x) { x.remove(); });
     [].forEach.call(c.querySelectorAll("details"), function (x) { x.open = true; });
     [].forEach.call(c.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
-    var title = "Medical plan, " + s.name, pts = picks(s), pl = s.plan = planNow(s), vs = pl ? pl.validation_status : null;
+    var title = (conop ? "Medical CONOP, " : "Medical intelligence annex, ") + s.name, pts = picks(s), pl = s.plan = planNow(s), vs = pl ? pl.validation_status : null;
     /* printing is held while data is still being read (no "Looking up…" ever reaches paper) or a blocking error stands */
     var held = pl && pl.pending.length ? "Still reading " + pl.pending.join(", ") + ". Printing starts to work as soon as they finish or fail; this page refreshes itself." :
       vs && vs.status === "BLOCKING" ? "Blocking error: " + vs.items.filter(function (x) { return x.level === "blocking"; }).map(function (x) { return x.detail; }).join(" ") : "";
@@ -2350,7 +2361,8 @@
       '<article class="bpage mpdoc mpplanp"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
-      c.innerHTML + assessPrint(s, pts) + "</article>";
+      (conop ? '<p class="obs">Operational plan. The Medical Intelligence Annex (Print intelligence annex) holds every hospital found, landing sites, health threats, the weather table, the sources and each hospital\'s assessment; it carries the same plan fingerprint.</p>' : "") +
+      c.innerHTML + (conop ? "" : assessPrint(s, pts)) + "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
     var ready = mapImage(1000, 640).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
@@ -2664,6 +2676,7 @@
     if (k === "pick") { pickStart(); return; }
     if (k === "setpoi") { setPoi(); return; }
     if (k === "print") { printView(); return; }
+    if (k === "printc") { printView("conop"); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
     if (b.hasAttribute("data-mpa-add")) { airAdd(); return; }
