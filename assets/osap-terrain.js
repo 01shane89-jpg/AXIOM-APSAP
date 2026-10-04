@@ -59,59 +59,71 @@
     if (W.OSAP_TERRAIN_SRC && (W.OSAP_TERRAIN_PROVIDERS || []).length) return Promise.resolve(W.OSAP_TERRAIN_SRC);
     return Promise.all([script(BASE + "terrain-provider.js"), script(BASE + "providers/remote-dem.js")]).then(function () { return W.OSAP_TERRAIN_SRC; }); }
 
-  /* ---------- the engine: in a worker, on the page if workers fail ---------- */
-  var wk = null, wkDead = false, RID = 0, PEND = {}, GID = 0, wkGid = 0, gridNow = null;
-  function worker() {
-    if (wk || wkDead) return wk;
-    try {
-      wk = new Worker(BASE + "viewshed-worker.js");
-      wk.onmessage = function (e) { var m = e.data, p = PEND[m.rid]; if (!p) return; if (m.error || m.los || m.pass === "fine") delete PEND[m.rid]; p(m); };
-      wk.onerror = function () { wkDead = true; wk = null; wkGid = 0; var P = PEND; PEND = {}; Object.keys(P).forEach(function (k) { P[k]({ error: "worker" }); }); };
-    } catch (e) { wkDead = true; wk = null; }
-    return wk;
-  }
-  /* a grid the engine works on: { gid, E, n, rowM } (kept on the page too, so a dead or reset worker can be given it again) */
-  function engineGrid(g) {
-    if (worker() && wkGid !== g.gid) { wk.postMessage({ cmd: "grid", gid: g.gid, E: g.E, n: g.n, rowM: g.rowM }); wkGid = g.gid; }
-  }
+  /* ---------- the engine: in a worker, on the page if workers fail ----------
+     Two engines: the panel's, which a new calculation may stop (its worker is replaced, so a big sum never holds up the
+     next), and one for other modules' calls (viewshed() in the API), which the panel never stops. */
+  var GID = 0, gridNow = null;
   function onPage() { return W.OSAP_VS ? Promise.resolve(W.OSAP_VS) : script(BASE + "viewshed-engine.js").then(function () { return W.OSAP_VS; }); }
-  /* viewshed on grid g; onPass(pass) is called with the rough pass first (when asked), then the full one */
-  function engineRun(g, o, coarse, onPass) {
-    return new Promise(function (res, rej) {
-      function page() {
-        onPage().then(function (VS) {
-          setTimeout(function () {
-            try { var r = VS.viewshed(g, o); var m = { pass: "fine", f: 1, n: g.n, res: r }; onPass(m); res(m); } catch (e) { rej(e); }
-          }, 0);
-        }, rej);
-      }
-      if (!worker()) return page();
-      engineGrid(g);
-      var rid = ++RID, retried = false;
-      PEND[rid] = function cb(m) {
-        if (m.error === "worker") return page();
-        if (m.error === "stale" && !retried) { retried = true; wkGid = 0; engineGrid(g); PEND[rid] = cb; wk.postMessage({ cmd: "run", gid: g.gid, rid: rid, o: o, coarse: coarse }); return; }
-        if (m.error) return rej(new Error(m.error));
-        onPass(m); if (m.pass === "fine") res(m);
-      };
-      wk.postMessage({ cmd: "run", gid: g.gid, rid: rid, o: o, coarse: coarse });
-    });
+  function Engine() {
+    var wk = null, wkDead = false, RID = 0, PEND = {}, wkGid = 0;
+    function worker() {
+      if (wk || wkDead) return wk;
+      try {
+        wk = new Worker(BASE + "viewshed-worker.js");
+        wk.onmessage = function (e) { var m = e.data, p = PEND[m.rid]; if (!p) return; if (m.error || m.los || m.pass === "fine") delete PEND[m.rid]; p(m); };
+        wk.onerror = function () { wkDead = true; wk = null; wkGid = 0; var P = PEND; PEND = {}; Object.keys(P).forEach(function (k) { P[k]({ error: "worker" }); }); };
+      } catch (e) { wkDead = true; wk = null; }
+      return wk;
+    }
+    /* a grid the engine works on: { gid, E, n, rowM } (kept on the page too, so a dead or reset worker can be given it again) */
+    function grid(g) {
+      if (worker() && wkGid !== g.gid) { wk.postMessage({ cmd: "grid", gid: g.gid, E: g.E, n: g.n, rowM: g.rowM }); wkGid = g.gid; }
+    }
+    /* viewshed on grid g; onPass(pass) is called with the rough pass first (when asked), then the full one */
+    function run(g, o, coarse, onPass) {
+      return new Promise(function (res, rej) {
+        function page() {
+          onPage().then(function (VS) {
+            setTimeout(function () {
+              try { var r = VS.viewshed(g, o); var m = { pass: "fine", f: 1, n: g.n, res: r }; onPass(m); res(m); } catch (e) { rej(e); }
+            }, 0);
+          }, rej);
+        }
+        if (!worker()) return page();
+        grid(g);
+        var rid = ++RID, retried = false;
+        PEND[rid] = function cb(m) {
+          if (m.error === "worker") return page();
+          if (m.error === "cancelled") return rej(new DOMException("Stopped", "AbortError"));
+          if (m.error === "stale" && !retried) { retried = true; wkGid = 0; grid(g); PEND[rid] = cb; wk.postMessage({ cmd: "run", gid: g.gid, rid: rid, o: o, coarse: coarse }); return; }
+          if (m.error) return rej(new Error(m.error));
+          onPass(m); if (m.pass === "fine") res(m);
+        };
+        wk.postMessage({ cmd: "run", gid: g.gid, rid: rid, o: o, coarse: coarse });
+      });
+    }
+    function los(g, a, b, o) {
+      return new Promise(function (res, rej) {
+        function page() { onPage().then(function (VS) { try { res(VS.los(g, a, b, o)); } catch (e) { rej(e); } }, rej); }
+        if (!worker()) return page();
+        grid(g);
+        var rid = ++RID;
+        PEND[rid] = function (m) { if (m.error === "worker" || m.error === "stale") return page(); if (m.error === "cancelled") return rej(new DOMException("Stopped", "AbortError")); if (m.error) return rej(new Error(m.error)); res(m.los); };
+        wk.postMessage({ cmd: "los", gid: g.gid, rid: rid, a: a, b: b, o: o });
+      });
+    }
+    /* abandon what is running: the busy worker is replaced, and every waiting call is told (never left hanging) */
+    function cancel() {
+      var P = PEND, k = Object.keys(P); if (!k.length) return;
+      PEND = {}; if (wk) { wk.terminate(); wk = null; wkGid = 0; }
+      k.forEach(function (id) { P[id]({ error: "cancelled" }); });
+    }
+    return { run: run, los: los, cancel: cancel };
   }
-  function engineLos(g, a, b, o) {
-    return new Promise(function (res, rej) {
-      function page() { onPage().then(function (VS) { try { res(VS.los(g, a, b, o)); } catch (e) { rej(e); } }, rej); }
-      if (!worker()) return page();
-      engineGrid(g);
-      var rid = ++RID;
-      PEND[rid] = function (m) { if (m.error === "worker" || m.error === "stale") return page(); if (m.error) return rej(new Error(m.error)); res(m.los); };
-      wk.postMessage({ cmd: "los", gid: g.gid, rid: rid, a: a, b: b, o: o });
-    });
-  }
-  /* abandon a run that is no longer wanted: a busy worker is replaced, so a big sum never holds up the next */
-  function engineCancel() {
-    if (!Object.keys(PEND).length) return;
-    PEND = {}; if (wk) { wk.terminate(); wk = null; wkGid = 0; }
-  }
+  var PANEL = Engine(), APIE = Engine();
+  function engineRun(g, o, coarse, onPass) { return PANEL.run(g, o, coarse, onPass); }
+  function engineLos(g, a, b, o) { return PANEL.los(g, a, b, o); }
+  function engineCancel() { PANEL.cancel(); }
 
   /* ---------- the elevation grid for a request ---------- */
   function effRes(radius, res) { return Math.max(res, Math.ceil(2 * radius / (MAXN - 1))); }
@@ -150,7 +162,8 @@
     var s = g.spec, half = (s.n - 1) / 2, cX = s.x0 + (half + 0.5) * s.cellPx, cY = s.y0 + (half + 0.5) * s.cellPx, he = n * f * s.cellPx / 2, SRC = W.OSAP_TERRAIN_SRC;
     var b = L.latLngBounds([SRC.latOf(cY + he, s.z), SRC.lonOf(cX - he, s.z)], [SRC.latOf(cY - he, s.z), SRC.lonOf(cX + he, s.z)]);
     cv.toBlob(function (bl) {
-      if (!bl) return;
+      /* cleared or replaced while the picture was being made: drop it */
+      if (!bl || !ST.res || ST.res.res !== r) return;
       var u = URL.createObjectURL(bl);
       if (img) img.setUrl(u).setBounds(b); else { img = L.imageOverlay(u, b, { pane: "vspane", interactive: false, className: "vsimg" }); lay.addLayer(img); }
       if (imgUrl) URL.revokeObjectURL(imgUrl); imgUrl = u;
@@ -508,7 +521,7 @@
       var s = SRC.around(+o.lat, +o.lon, R, res);
       return SRC.grid(s, { signal: o.signal }).then(function (r) {
         var g = { gid: ++GID, E: r.E, n: s.n, rowM: r.rowM };
-        return engineRun(g, q, 0, function () {}).then(function (m) {
+        return APIE.run(g, q, 0, function () {}).then(function (m) {
           var half = (s.n - 1) / 2, sw = SRC.toLL(s, -0.5, s.n - 0.5), ne = SRC.toLL(s, s.n - 0.5, -0.5);
           return Object.assign({}, m.res, { n: s.n, bounds: [sw, ne], centre: SRC.toLL(s, half, half), coverage_pct: r.coverage_pct, res_m: res, sources: r.sources, version: VERSION,
             assumptions: { observer_height_m: q.obsH, target_height_m: q.tgtH, radius_m: R, curvature: q.curvature, refraction_k: q.k, terrain_model: "DEM (terrain only)", urban_vegetation: "not modeled" } });
