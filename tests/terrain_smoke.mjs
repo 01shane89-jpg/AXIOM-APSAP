@@ -13,6 +13,10 @@
 // a viewshed saves under a name with the agreed fields, its visible ground as polygons and its horizon; toggles in the panel
 // and Map overlays agree; rename, recalculate (kept in place) and delete (asks first); the workspace lists it and its KML
 // carries the observer, polygons and horizon; after a reload it is drawn from the stored shapes with nothing downloaded;
+// terrain saved from Offline maps and data runs the viewshed with no signal (OFFLINE, DEM cached, nothing downloaded), finer
+// detail than saved is enlarged and said so, outside it says there is no elevation, and Delete clears it;
+// Slope shades the ground in five bands (the ridge's sides over 30 degrees) and a tap gives the slope there; route exposure
+// (corridor) finds the ground that can see a route and shows it under the line of sight result;
 // tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -62,10 +66,12 @@ async function open(opts, failWest) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   const errors = [];
   let demCalls = 0;
+  const net = { off: false };
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     const m = u.match(/elevation-tiles-prod\/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
     if (m) {
+      if (net.off) return r.abort("internetdisconnected");
       demCalls++;
       /* the failing run: every tile wholly west of 100.47 E answers 500 */
       if (failWest && tileLon(+m[2] + 1, +m[1]) < 100.47) return r.fulfill({ status: 500, body: "down" });
@@ -77,7 +83,7 @@ async function open(opts, failWest) {
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.OSAP_ATAK && window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 60000 }); await p.waitForTimeout(3000);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
-  return { ctx, p, errors, dem: () => demCalls };
+  return { ctx, p, errors, dem: () => demCalls, net };
 }
 const TA = "window.OSAP_TERRAIN_ANALYSIS";
 const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.pass === "fine" || s.err); }, null, { timeout: 60000 });
@@ -300,6 +306,102 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   ok(dem() === d0 && await p.evaluate(() => !window.OSAP_TERRAIN_SRC), "reload: drawn from the stored shapes, no elevation downloaded");
   if (OUT) await p.screenshot({ path: OUT + "/terrain-saved.png" });
   ok(errors.length === 0, "saved: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- offline terrain: saved from Offline maps and data, used with no signal ---------- */
+{
+  const { ctx, p, errors, dem, net } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate((c) => window.__asapMap.setView(c, 12), C0); await p.waitForTimeout(300);
+  await p.evaluate(() => window.OSAP_OFFLINE.open()); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => /Terrain for viewshed and line of sight/.test(document.getElementById("offdlg").textContent) && !!document.querySelector("#offdlg [data-off-tdl]")), "offline: Offline maps and data has a Terrain section with Download terrain");
+  await p.selectOption("#offdlg [data-off-tz]", "13");
+  const est = await p.evaluate(() => document.getElementById("off-terrain").textContent.match(/([\d,]+) elevation tiles, about ([\d.]+ [KM]B)/));
+  await p.click("#offdlg [data-off-tdl]");
+  await p.waitForFunction(() => /Terrain saved/.test((document.querySelector("#offdlg .offmsg") || {}).textContent || ""), null, { timeout: 60000 });
+  const tp = await p.evaluate(() => { const r = JSON.parse(localStorage.getItem("osap-terrain-offline")); return r.packs.th && r.packs.th.areas[0]; });
+  const nCached = await p.evaluate(() => caches.open("osap-terrain").then((c) => c.keys()).then((k) => k.length));
+  ok(tp && tp.z === 13 && tp.n > 20 && nCached === tp.n && est && +est[1].replace(/,/g, "") === tp.n, "offline: " + tp.n + " zoom 13 elevation tiles saved (" + (est && est[2]) + " estimated), listed and cached (" + nCached + ")");
+  await p.evaluate(() => document.querySelector("#offdlg .x").click());
+  /* the app's own files come from the service worker's copy when offline; here (no service worker) load them first, far away */
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.profile([15.5, 102.5], [15.51, 102.5]));
+  /* no signal */
+  await ctx.setOffline(true); net.off = true; const d0 = dem();
+  await p.evaluate((c) => { window.OSAP_TERRAIN_ANALYSIS.open(); }, C0);
+  await p.selectOption("#ts-km", "5");
+  await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshedAt(c), C0); await settled(p);
+  let st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  let txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(!st.err && st.grid && st.grid.coverage_pct > 99.9 && st.grid.sources.map((x) => x.id).join() === "saved-dem" && st.stats.masked > 0, "offline: the viewshed runs from the saved terrain alone, coverage complete (" + (st.err || st.grid.sources.map((x) => x.id).join()) + ")");
+  ok(/OFFLINE TERRAIN VIEWSHED/.test(txt) && /DEM:\s*cached on this device/.test(txt) && /Calculated locally/.test(txt) && dem() === d0, "offline: the result says OFFLINE, DEM cached, calculated locally; nothing downloaded");
+  /* finer than saved: enlarged from the saved zoom 13, and said so */
+  await p.click('#terrain [data-res="high"]'); await p.selectOption("#ts-km", "1"); await settled(p);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(!st.err && st.grid.coverage_pct > 99.9 && st.grid.sources.some((x) => x.id === "saved-dem-coarse") && /coarser than asked/.test(txt), "offline: High detail with only zoom 13 saved uses it enlarged and says so (" + (st.err || st.grid.sources.map((x) => x.id).join()) + ")");
+  /* outside the saved area: no elevation, a clear message */
+  await p.click('#terrain [data-res="std"]');
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.viewshedAt([14.6, 101.5])); await settled(p);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(/No elevation for this place on this device/.test(st.err || ""), "offline: outside the saved terrain it says there is no elevation here and no connection (" + st.err + ")");
+  await ctx.setOffline(false); net.off = false;
+  /* delete */
+  const left = await p.evaluate(() => window.OSAP_OFFLINE.terrain.remove("th", JSON.parse(localStorage.getItem("osap-terrain-offline")).packs.th.areas[0].id).then(() => caches.open("osap-terrain").then((c) => c.keys()).then((k) => [k.length, localStorage.getItem("osap-terrain-offline")])));
+  ok(left[0] === 0 && left[1] === null, "offline: Delete removes the saved terrain and its record " + JSON.stringify(left));
+  ok(errors.length === 0, "offline: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- slope and route exposure ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_TERRAIN_ANALYSIS.open(); }, C0);
+  await p.click('#terrain [data-mode="slope"]'); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => /Terrain slope/.test(document.getElementById("terrain").textContent) && !!document.querySelector("#terrain [data-ts=pick]")), "slope: the Slope tool opens with a centre to pick");
+  await p.click('#terrain [data-ts="centre"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.slope || s.err); }, null, { timeout: 60000 });
+  let st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(!st.err && st.slope && st.slope.pct[0] > 80 && st.slope.pct[4] > 0 && st.slope.unk_pct === 0, "slope: flat ground is 0-3 degrees and the ridge's sides over 30 (" + (st.slope ? st.slope.pct.map((x) => x.toFixed(1)).join("/") : st.err) + ")");
+  ok(st.slope && st.slope.k === 1, "slope: measured across +-1 cell (about +-30 m) on the Standard grid");
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => !!document.querySelector(".leaflet-vspane-pane img.vsimg")), "slope: the slope picture is drawn");
+  const flat = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.slopeAt([13.75, 100.49]));
+  const edge = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.slopeAt([13.75, 100.5180]));
+  ok(flat && flat.slope_deg < 1 && Math.round(flat.elev_m) === 100, "slope: flat ground reads under 1 degree, 100 m (" + JSON.stringify(flat) + ")");
+  ok(edge && edge.slope_deg > 30 && /very steep/.test(edge.band), "slope: the ridge's side reads over 30 degrees, very steep (" + (edge && edge.slope_deg.toFixed(1)) + ")");
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.slopeAt([14.5, 100.5]) === null), "slope: outside the area there is no answer");
+  const pt = await p.evaluate(() => { const m = window.__asapMap, q = m.latLngToContainerPoint([13.75, 100.5180]), r = m.getContainer().getBoundingClientRect(); return [r.left + q.x, r.top + q.y]; });
+  await p.mouse.click(pt[0], pt[1]); await p.waitForTimeout(300);
+  const pop = await p.evaluate(() => (document.querySelector(".leaflet-popup .vslos") || {}).textContent || "");
+  ok(/SLOPE/.test(pop) && /grade/.test(pop) && /not a survey/.test(pop), "slope: a tap shows the slope there: " + pop.replace(/\s+/g, " ").slice(0, 120));
+  const txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(/TERRAIN SLOPE/.test(txt) && /NOT MODELED/.test(txt) && /landing zone finder/.test(txt) && /0–3°/.test(txt) && /over 30°/.test(txt), "slope: key with the five bands and the method and assumptions");
+
+  /* route exposure: the API */
+  const route = [[13.73, 100.50], [13.77, 100.50]];
+  const C = await p.evaluate((r) => window.OSAP_TERRAIN_ANALYSIS.corridor(r, { radius_m: 3000 }).then((c) => {
+    const S = window.OSAP_TERRAIN_SRC, at = (ll) => { const x = S.toCell(c.spec, ll[0], ll[1]), i = Math.round(x[0]), j = Math.round(x[1]); return i < 0 || j < 0 || i >= c.n || j >= c.n ? -1 : c.cls[j * c.n + i]; };
+    return { st: c.stations.length, sk: c.skipped, stats: c.stats, w: at([13.75, 100.48]), e: at([13.75, 100.525]), far: at([13.75, 100.466]), poly: c.visible.length, a: c.assumptions };
+  }), route);
+  ok(C.st >= 5 && C.sk === 0 && C.a.spacing_m === 750, "route exposure: stations every 750 m along a 4.4 km route (" + C.st + ")");
+  ok(C.w === 1 && C.e === 2 && C.far <= 0, "route exposure: ground west can see the route, ground behind the ridge cannot, 3.6 km west is outside (" + [C.w, C.e, C.far] + ")");
+  ok(C.stats.exposed_pct > 30 && C.stats.exposed_pct < 95 && C.stats.masked_pct > 0 && C.poly > 0, "route exposure: " + C.stats.exposed_pct.toFixed(1) + "% exposed, polygons for the exposed ground");
+  /* in the panel, under the line of sight result */
+  await p.evaluate((r) => window.OSAP_TERRAIN_ANALYSIS.line(r), route);
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 60000 });
+  ok(await p.evaluate(() => /ROUTE EXPOSURE/.test(document.getElementById("terrain").textContent) && !!document.querySelector('#terrain [data-ts="cor"]')), "route exposure: the line of sight result offers Show where this route can be seen from");
+  await p.click('#terrain [data-ts="cor"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.cor || s.err); }, null, { timeout: 60000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  await p.waitForTimeout(300);
+  const t2 = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.cor && Math.abs(st.cor.stats.exposed_pct - C.stats.exposed_pct) < 0.01 && st.corMarks > st.cor.stations && /can see part of it/.test(t2) && /Most exposed points/.test(t2) && /NOT MODELED/.test(t2), "route exposure: the panel shows the same result, drawn on the map with its stations (" + (st.cor ? st.corMarks : st.err) + ")");
+  /* the evacuation planner's route tools hook */
+  const H = await p.evaluate((r) => { const t = (window.OSAP_EPE_CORRIDOR_TOOLS || []).filter((x) => x.id === "terrain-exposure")[0]; return t ? t.run({ id: "opt1", coords: r, km: 4.4, dest: "x" }, {}).then((c) => ({ label: t.label, ok: !!c && c.stats.exposed_pct > 30 })) : null; }, route);
+  ok(H && H.ok && /seen from/.test(H.label), "route exposure: the evacuation route tools hook runs it on a route " + JSON.stringify(H));
+  await p.click('#terrain [data-ts="corclear"]'); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.cor && s.corMarks === 0; }), "route exposure: Hide takes it off the map");
+  ok(errors.length === 0, "slope/exposure: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 
