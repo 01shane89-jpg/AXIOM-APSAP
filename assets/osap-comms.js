@@ -560,14 +560,16 @@ function main() {
     if (!canv) canv = L.canvas({ padding: 0.3 });
     if (!mastLayer) mastLayer = L.layerGroup();
     if (!S.ctx.layer.hasLayer(mastLayer)) S.ctx.layer.addLayer(mastLayer);
-    mastLayer.clearLayers();
-    var map = S.ctx.map; if (!seeMasts()) { S.drawn = 0; paintCounts(); paintStatus(); return; }
+    /* the mast whose info box is open is kept through a redraw (a map move, a finished check), so the box stays open */
+    var map = S.ctx.map, pop = map._popup, keep = pop && map.hasLayer(pop) && pop._source && mastLayer.hasLayer(pop._source) ? pop._source : null;
+    mastLayer.eachLayer(function (l) { if (l !== keep) mastLayer.removeLayer(l); });
+    if (!seeMasts()) { S.drawn = 0; paintCounts(); paintStatus(); return; }
     var z = map.getZoom(), b = map.getBounds().pad(0.1), n = 0, rad = z < 7 ? 0.6 : z < 9 ? 0.75 : z < 11 ? 1.4 : 1.8;
     shown = []; hoverOff();
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
-      var k = KINDS[m.kind];
-      var mk = new MastMark([m.lat, m.lon], { renderer: canv, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
+      if (keep && keep.options.mid === id) { n++; shown.push(m); return; }
+      var mk = new MastMark([m.lat, m.lon], { renderer: canv, mid: id, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
       mk.bindPopup(function () { return mastPopup(m); });
       mk.addTo(mastLayer); n++; shown.push(m);
     });
@@ -888,6 +890,9 @@ function main() {
     var mapEl = S.ctx.map.getContainer();
     if (!mapEl.contains(e.target) || mapEl.classList.contains("measuring") || D.querySelector("#area-ctl .areahint")) return false;
     if (e.target.closest && e.target.closest(".leaflet-control,.leaflet-popup,.comv,.leaflet-interactive,.leaflet-marker-icon")) return false;
+    /* masts sit on a canvas that ignores the pointer, so a tap on one reaches here as a tap on the map: leave it to the
+       mast (its info box), or the place check it started redrew the masts and closed the box straight away */
+    if (shown.length && mastAt(e)) return false;
     return true;
   }
   W.addEventListener("pointerdown", function (e) { down = mine(e) ? [e.clientX, e.clientY] : null; }, true);
