@@ -581,12 +581,12 @@ function main() {
   function skeleton() {
     var r = S.ctx.rail;
     r.innerHTML =
-      '<div class="sec comsec"><h3>Will I have phone signal?</h3>' +
+      '<div class="sec comsec" data-cppart="coverage"><h3>Will I have phone signal?</h3>' +
       '<div class="combtns" role="group" aria-label="What to check"><button type="button" data-cmode="place">A place</button><button type="button" data-cmode="line">Along a line</button><button type="button" data-cmode="route">Planned route</button></div>' +
       '<p class="obs" id="com-hint"></p><div id="com-res" aria-live="polite"></div></div>' +
-      '<div class="sec comsec"><h3>On the map</h3><div id="com-tg"></div><p class="obs" id="com-st"></p></div>' +
-      '<div class="sec comsec" id="com-ops"></div>' +
-      '<div class="sec comsec"><h3>How the answer is worked out</h3>' +
+      '<div class="sec comsec" data-cppart="networks"><h3>On the map</h3><div id="com-tg"></div><p class="obs" id="com-st"></p></div>' +
+      '<div class="sec comsec" id="com-ops" data-cppart="networks"></div>' +
+      '<div class="sec comsec" data-cppart="coverage"><h3>How the answer is worked out</h3>' +
       "<p>1. <b>Measured</b>: did phones run speed tests on a mobile network in this spot (a cell about 2.4 km across) or right next to it? A test there proves there was some service, on some network, in those months.</p>" +
       "<p>2. <b>Estimated</b>: for the nearest mapped masts within 35 km, is there a clear line of sight over the terrain from a " +
       "mast (its mapped height, or 30 m) to a phone held 1.5 m up, allowing for the Earth's curve? In sight within 12 km counts as likely, 12 to 35 km as possible, and a mast within 3 km but behind a hill as possible.</p>" +

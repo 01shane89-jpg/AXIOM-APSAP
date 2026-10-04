@@ -1,7 +1,7 @@
 /* AXIOM OSAP: workspaces, and KML/KMZ import and export (Shane 2026-09-29: "where am I saving all these places? ... a workspace
    where you can save items into a project"; "Can we import kmz/kml files?").
    - A workspace holds everything the analyst makes on this device: map points and their photos, the drawn area of each country,
-     NAI/TAI areas, routes, imported KML shapes, saved viewsheds, keyword watches, and My work (saved reports, notes, review marks).
+     NAI/TAI areas, routes, imported KML shapes, saved viewsheds, keyword watches, Comms planning PACE and power plans, and My work (saved reports, notes, review marks).
    - One workspace is active. Every feature keeps saving to its own browser store as before, and those stores are the active
      workspace. Switching packs the active workspace's stores away (localStorage "osap-ws-data-<id>") and unpacks the other
      one, then reloads, so no other feature needs to know about workspaces. A half-done switch is rolled back on the next load.
@@ -21,7 +21,7 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var REG = "osap-ws", DATA = "osap-ws-data-", GO = "osap-ws-go", MSG = "osap-ws-msg", SHAPES = "osap-shapes", PTS = "osap-atak-pts";
-  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds"];
+  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds"];
   var AREA_RE = /^asap-area-([a-z]{2,3})$/, AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var MAX_FILE = 25 * 1048576, MAX_UNZIP = 60 * 1048576, MAX_PTS = 500, MAX_SHAPES = 300, MAX_VERT = 2000, MAX_WS = 30, SHOW = 40;
 
