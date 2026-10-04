@@ -442,7 +442,27 @@ async function round16() {
   for (const u of ["https://www.alertwest.com/terms", "https://www.alertwest.com/terms-of-service", "https://www.alertwest.com/legal", "https://alertwest.com/terms"]) { const r = await get(u, 20000); line("AWterms " + u, r); if (r.s === 200) { const x = r.b.toString("utf8").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); console.log("   " + ((x.match(/[^.]{0,160}(redistribut|public|licen[sc]e|non-commercial|attribution|personal use|may not)[^.]{0,160}/i) || [""])[0]).slice(0, 400)); } }
 }
 if (only === "r15") await round15();
+/* ---------- round 17: original alertwildfire.org public map data + HPWREN camera list (known host) ---------- */
+async function round17() {
+  // 1) alertwildfire.org — does the public map expose a keyless camera list / still image?
+  for (const u of ["https://www.alertwildfire.org/", "https://www.alertwildfire.org/region/", "https://data.alertwildfire.org/", "https://api.alertwildfire.org/", "https://www.alertwildfire.org/cameras.json", "https://www.alertwildfire.org/data/cameras.json"]) {
+    const r = await get(u, 25000); line("AWF " + u, r);
+    if (r.s === 200) { const t = r.b.toString("utf8"); if (/json/.test(r.ct)) sample(r); else console.log("   cam urls: " + [...new Set(t.match(/https?:\/\/[^\s"'<>]*(camera|image|snapshot|axis-cgi|\.jpg)[^\s"'<>]*/gi) || [])].slice(0, 8).join(" ") + "   endpoints: " + [...new Set(t.match(/\/(api|data|cameras?)[\w\/.-]*/gi) || [])].slice(0, 10).join(" ")); }
+  }
+  // 2) use the public map's own browser XHR to discover its camera feed (networkidle capture)
+  const ctx = await br.newContext({ userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36" }); const pg = await ctx.newPage(); const seen = [];
+  pg.on("response", async (r) => { const ct = r.headers()["content-type"] || "", url = r.url();
+    if ((/json|xml/.test(ct) && /cam|image|fire|site|region|map/i.test(url)) || (/image\/jpe?g/.test(ct) && seen.filter((x) => /image\//.test(x)).length < 3)) { let n = 0; try { n = (await r.body()).length; } catch {} seen.push(r.status() + " " + ct.split(";")[0] + " " + n + "B " + url.slice(0, 200)); } });
+  try { await pg.goto("https://www.alertwildfire.org/region/", { waitUntil: "networkidle", timeout: 40000 }); } catch (e) { seen.push("goto " + e.message.slice(0, 80)); }
+  await pg.waitForTimeout(3000); console.log("AWF map XHR:\n   " + (seen.slice(0, 16).join("\n   ") || "(nothing)")); await ctx.close();
+  // 3) HPWREN camera definitions (we already use HPWREN; find the full keyless list)
+  for (const u of ["https://hpwren.ucsd.edu/cameras/", "https://hpwren.ucsd.edu/cameras/Camera-definitions-v3.json", "http://hpwren.ucsd.edu/cameras/Camera-definitions.json", "https://hpwren.ucsd.edu/cameras/cameras.json"]) {
+    const r = await get(u, 25000); line("HPWREN " + u, r);
+    if (r.s === 200) { if (/json/.test(r.ct)) sample(r, 500); else { const t = r.b.toString("utf8"); console.log("   defs: " + [...new Set(t.match(/Camera-definitions[\w.-]*\.json|[\w-]+\.json/gi) || [])].slice(0, 8).join(" ")); } }
+  }
+}
 if (only === "r16") await round16();
+if (only === "r17") await round17();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
