@@ -137,11 +137,19 @@ const done = (p) => p.waitForFunction(() => window.OSAP_LZ && !window.OSAP_LZ.st
   ok(await p.evaluate(() => /Only 1 building is mapped/.test(document.getElementById("lz-card").textContent)), "desktop: thin building mapping is warned about");
   ok(st.pads.length === 1 && st.pads[0].name === "Test Pad", "desktop: mapped helipad is listed");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-lzpane-pane path.leaflet-interactive").length >= 3), "desktop: candidate circles are drawn on the map");
+  /* a 100 m search also marks open ground that takes only a 50 m LZ (the village pitch), numbered after the 100 m candidates */
+  const sm = await p.evaluate(() => { const r = window.OSAP_LZ.state().res; return { n: r.cands.length, small: (r.small || []).map((k) => ({ lat: k.lat, lon: k.lon, clearD: k.clearD, rank: k.rank, small: k.small })) }; });
+  ok(sm.small.length >= 1 && sm.small.every((k, i) => k.small === 50 && k.clearD >= 50 && k.clearD < 100 && k.rank === sm.n + i + 1), "desktop: 50 m only spots are marked too, each 50 to 100 m clear, numbered after the rest " + JSON.stringify(sm.small.map((k) => [k.rank, k.clearD])));
+  ok(sm.small.some((k) => inBox([k.lat, k.lon], 13.7383, 100.4965, 13.7400, 100.4983)), "desktop: the sports pitch in the village is one of the 50 m spots");
+  ok(await p.evaluate((n) => document.querySelectorAll("#lz-card li[data-lzi]").length === n && /Also 50 m only \(UH-60 and smaller\)/.test(document.getElementById("lz-card").textContent) && document.querySelectorAll(".leaflet-tooltip.lznum.s").length >= 1 && getComputedStyle(document.querySelector(".leaflet-tooltip.lznum.s")).backgroundColor === "rgb(123, 31, 162)", sm.n + sm.small.length), "desktop: the list has a 50 m only section and the map has purple numbered spots");
+  ok(await p.evaluate(() => { const t = [...document.querySelectorAll("#lz-card li[data-lzi] .lzac")].map((e) => e.textContent); return t.length && /^Aircraft: CH-47 with sling load, CH-47, UH-60, UH-1, AH-64, MH-6, OH-58/.test(t[0]) && t.some((x) => /^Aircraft: UH-60, UH-1, AH-64, MH-6, OH-58$/.test(x)); }), "desktop: each candidate lists the aircraft it takes (100 m: up to CH-47 with sling load; 50 m: UH-60 and smaller)");
+  ok(await p.evaluate((sm) => window.OSAP_LZ.state().res.small.every((k) => !!k._m)), "desktop: every 50 m spot has its map mark", sm);
   await p.click("#lz-card li[data-lzi='0']"); await p.waitForTimeout(500);
   const pop = await p.evaluate(() => { const e = document.querySelector(".leaflet-popup-content"); return e ? e.textContent : ""; });
   ok(/candidate from open data, verify on the ground/.test(pop), "desktop: pop-up says candidate from open data, verify on the ground");
   ok(/Grid:\s*47P\s?[A-Z]{2}\s?\d{5}\s?\d{5}/.test(pop), "desktop: pop-up gives an MGRS grid (" + (pop.match(/Grid:[^C]*/) || [""])[0].trim() + ")");
   ok(/Slope:.*average.*steepest/.test(pop) && /Clear ground: about \d+ m across/.test(pop), "desktop: pop-up gives slope and clear size");
+  ok(/Aircraft that fit \(pathfinder landing point sizes\): CH-47 with sling load/.test(pop), "desktop: pop-up lists the aircraft that fit");
   ok(/Approach and departure \(10:1 clearance\): (clear straight through along \d{3}°–\d{3}°|confined)/.test(pop), "desktop: pop-up gives the approach and departure directions (" + (pop.match(/Approach and departure[^.]*/) || [""])[0].slice(0, 120) + ")");
   ok(await p.evaluate(() => !!document.querySelector(".leaflet-popup-content [data-keep-pop] [data-lzcopy]")), "desktop: pop-up keeps its Copy button");
   await p.check("#lz-mask"); await p.waitForTimeout(300);
