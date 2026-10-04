@@ -106,5 +106,30 @@ const idx = (g, eM, nM) => (g.half - Math.round(nM / g.cell)) * g.n + g.half + M
   ok(/No elevation at the observer/.test(msg), "no elevation at the observer: refused with a message");
 }
 
+/* 8. line of sight along samples (the A-to-B tool and Measure's Profile) agrees with the grid line of sight, and the reverse
+   viewshed (heights swapped) agrees with a line of sight run from each observer to the point */
+{
+  const g = grid(100, 30, (e, nn) => 100 + (e > 1400 && e < 1500 ? 50 : 0) + 15 * Math.sin(nn / 500));
+  const a = [g.half, g.half], b = [g.half + 2400 / 30, g.half - 600 / 30];
+  const G1 = VS.los(g, a, b, { hA: 2, hB: 1.7 });
+  const samples = G1.samples.map((q) => ({ d: q.d, z: q.z }));
+  const A1 = VS.losAlong(samples, { hA: 2, hB: 1.7 });
+  ok(A1.los === G1.los && A1.blockD === G1.blockD && A1.maxZ === G1.maxZ && A1.dist === G1.dist, "losAlong: same verdict, blocking point and highest ground as the grid line of sight (" + A1.los + ")");
+  const flat = [0, 1, 2, 3, 4].map((k) => ({ d: k * 1000, z: 50 }));
+  ok(VS.losAlong(flat, { hA: 1.7, hB: 1.7 }).los === "CLEAR", "losAlong: flat ground is CLEAR");
+  ok(VS.losAlong(flat.map((q, k) => (k === 2 ? { d: q.d, z: 60 } : q)), { hA: 1.7, hB: 1.7 }).blockD === 2000, "losAlong: a 10 m bump half way blocks at 2 km");
+  ok(VS.losAlong(flat.map((q, k) => (k === 2 ? { d: q.d, z: NaN } : q)), { hA: 1.7, hB: 1.7 }).los === "UNKNOWN", "losAlong: a gap in the data is UNKNOWN, not CLEAR");
+  ok(VS.losAlong([{ d: 0, z: 0 }, { d: 20000, z: 0 }, { d: 40000, z: 0 }], { hA: 2, hB: 2, curvature: true }).los === "BLOCKED", "losAlong: 40 km over flat sea with curvature, 2 m eyes: the bulge blocks");
+  /* reverse: the point P at 1.7 m, observers everywhere at 10 m */
+  const r = VS.viewshed(g, { obsH: 1.7, tgtH: 10, radius_m: 2900 });
+  let agree = 0, tot = 0;
+  for (const [e, nn] of [[1000, 0], [2000, 0], [2500, 300], [-1500, 800], [1800, -1200], [2600, 900], [600, 2400], [1700, 400]]) {
+    const i = g.half + Math.round(e / 30), j = g.half - Math.round(nn / 30), c = r.cls[j * g.n + i];
+    const l = VS.los(g, [i, j], [g.half, g.half], { hA: 10, hB: 1.7 });
+    tot++; if ((c === VS.VIS) === (l.los === "CLEAR")) agree++;
+  }
+  ok(agree === tot, "reverse viewshed: every sampled cell matches a line of sight from an observer there to the point (" + agree + "/" + tot + ")");
+}
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
