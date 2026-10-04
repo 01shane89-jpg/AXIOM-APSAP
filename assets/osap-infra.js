@@ -3,7 +3,9 @@
    (data/infra/<cc>.json, built weekly by tools/build_infra.mjs) load only when a switch is turned on.
    - Airfields and heliports: every airport, airstrip, helipad and seaplane base in OurAirports (public domain) that is not closed.
      Small fields stay unnamed unless their name says what they are (a private strip is often named after its owner).
-   - Ports and harbours: seaports in the NGA World Port Index (public domain), plus ports and ferry terminals in OpenStreetMap.
+   - Ports and harbours: seaports in the NGA World Port Index (public domain) and UN/LOCODE, plus ports and ferry terminals in
+     OpenStreetMap.
+   Each site is merged from every source that lists it; the popup names the others under "Also listed by".
    - Dams: named dams in OpenStreetMap and Wikidata.
    - Submarine cables: cables and landing points from TeleGeography (CC BY-NC-SA, non-commercial; marked so it can be removed).
    Big sites (large and medium airports, large and medium ports, cable routes) draw at every zoom; the rest from zoom 8, or sooner
@@ -14,15 +16,15 @@
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   var D = document, W = window;
   var KINDS = [
-    { k: "af", name: "Airfields and heliports", sub: "Every airport, airstrip and helipad (OurAirports). Small fields from zoom 8", items: ["af"] },
-    { k: "port", name: "Ports and harbours", sub: "Seaports (NGA World Port Index), ports and ferry terminals (OpenStreetMap)", items: ["port"] },
+    { k: "af", name: "Airfields and heliports", sub: "Every airport, airstrip and heliport (OurAirports, OpenStreetMap). Small fields from zoom 8", items: ["af"] },
+    { k: "port", name: "Ports and harbours", sub: "Seaports (NGA World Port Index, UN/LOCODE), ports and ferry terminals (OpenStreetMap)", items: ["port"] },
     { k: "dam", name: "Dams", sub: "Named dams (OpenStreetMap, Wikidata)", items: ["dam"] },
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: true }
   ];
   var S = { on: {}, data: null, busy: false, err: "", ix: null, cc: "", n: {} };
-  var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map" };
+  var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", locode: "UN/LOCODE", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map" };
   var LIC = { oa: "OurAirports (public domain)", wpi: "NGA World Port Index, Pub. 150 (public domain, U.S. Government)", osm: "&copy; OpenStreetMap contributors (ODbL)",
-    wd: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)" };
+    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)" };
   /* what each point is, its colour and whether it is big enough to draw at every zoom */
   var TYPE = {
     "af:L": ["Major airport", "#1864ab", 1], "af:M": ["Airport", "#1c7ed6", 1], "af:S": ["Airstrip", "#4dabf7", 0], "af:H": ["Heliport", "#9c36b5", 0], "af:W": ["Seaplane base", "#3bc9db", 0],
@@ -73,23 +75,33 @@
   var LBL = { icao: "ICAO", iata: "IATA", elev_ft: "Elevation", rw_m: "Longest runway", surface: "Runway surface", sched: "Scheduled flights", town: "Serves",
     size: "Harbour size", type: "Harbour type", shelter: "Shelter", max_len_m: "Largest vessel", chan_m: "Channel depth", anch_m: "Anchorage depth", unlocode: "UN/LOCODE",
     wpi: "World Port Index no.", ferry: "Ferry terminal", op: "Operator", height_m: "Height", purpose: "Purpose", river: "River", reservoir: "Reservoir", built: "Built",
-    cables: "Cables landing here" };
+    cables: "Cables landing here", military: "Military" };
   function val(k, v) {
     if (k === "elev_ft") return fmt(v) + " ft (" + fmt(v * 0.3048) + " m)";
     if (k === "rw_m") return fmt(v) + " m (" + fmt(v / 0.3048) + " ft)";
     if (/_m$/.test(k)) return fmt(v) + " m";
-    if (k === "sched" || k === "ferry") return "Yes";
+    if (k === "sched" || k === "ferry" || k === "military") return "Yes";
     return String(v);
   }
   function pop(i) {
     var ty = TYPE[i.k + ":" + i.t] || ["Site", "#495057"], x = i.x || {};
     var rows = Object.keys(LBL).filter(function (k) { return x[k] != null && x[k] !== ""; }).map(function (k) { return "<dt>" + LBL[k] + "</dt><dd>" + esc(val(k, x[k])) + "</dd>"; }).join("");
     return '<div class="pop"><div class="tier" style="color:' + ty[1] + '">' + esc(ty[0]) + " · " + esc(SRC[i.s] || i.s) + "</div>" +
-      "<h3>" + esc(i.nm || ty[0] + " (no name mapped)") + "</h3>" + (rows ? "<dl>" + rows + "</dl>" : "") +
+      "<h3>" + esc(i.nm || ty[0] + " (no name mapped)") + "</h3>" + (rows ? "<dl>" + rows + "</dl>" : "") + also(i) +
       '<p class="obs">' + (safeUrl(i.u) ? '<a href="' + esc(i.u) + '" target="_blank" rel="noopener">Source record</a> · ' : "") + LIC[i.s] +
       "<br>" + esc(i.la.toFixed(4) + ", " + i.lo.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.la, i.lo)) : "") +
       (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") +
+      (x.approx ? "<br>Placed to the nearest arc-minute by the source (about 2 km)." : "") +
       (i.s === "osm" ? "<br>Community-mapped; may be incomplete or out of date." : "") + "</p></div>";
+  }
+  /* the other sources that list the same site */
+  function also(i) {
+    var a = i.also || [];
+    if (!a.length) return "";
+    return '<p class="obs inf-also"><b>Also listed by</b> ' + a.map(function (o) {
+      var t = esc(SRC[o.s] || o.s) + (o.nm ? " as \u201c" + esc(o.nm) + "\u201d" : "");
+      return safeUrl(o.u) ? '<a href="' + esc(o.u) + '" target="_blank" rel="noopener">' + t + "</a>" : t;
+    }).join("; ") + ". " + a.map(function (o) { return LIC[o.s] || ""; }).filter(function (v, j, r) { return v && r.indexOf(v) === j; }).join(" · ") + "</p>";
   }
   function lpop(l) {
     return '<div class="pop"><div class="tier" style="color:' + esc(l.c) + '">Submarine cable · ' + esc(SRC[l.s] || l.s) + "</div><h3>" + esc(l.nm || "Submarine cable") + "</h3>" +
@@ -167,7 +179,7 @@
       return '<label class="mlrow"><input type="checkbox" data-inf="' + x.k + '"><span><b>' + esc(x.name) + "</b><i>" + esc(x.sub) + "</i></span></label>";
     }).join("") +
       '<p class="mlkey pwr-m" data-infmsg aria-live="polite" hidden></p>' +
-      '<p class="mlkey pwr-m">OurAirports and NGA World Port Index (public domain) · &copy; OpenStreetMap contributors (ODbL) · Wikidata (CC0) · TeleGeography (CC BY-NC-SA, non-commercial).</p>';
+      '<p class="mlkey pwr-m">OurAirports and NGA World Port Index (public domain) · UN/LOCODE (UNECE) · &copy; OpenStreetMap contributors (ODbL) · Wikidata (CC0) · TeleGeography (CC BY-NC-SA, non-commercial).</p>';
   }
   function paint() {
     if (sec) {
