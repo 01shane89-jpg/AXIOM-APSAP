@@ -326,8 +326,35 @@
         (o.exp.hits.length ? '<ol class="epehits">' + o.exp.hits.slice(0, 8).map(function (h) {
           return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
         }).join("") + "</ol>" : "") +
-        '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button></div></div>' : "") +
+        '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button>' + toolsHtml(o) + "</div>" + toolNote(o) + "</div>" : "") +
       "</div>";
+  }
+  /* route tools other modules add (W.OSAP_EPE_CORRIDOR_TOOLS, e.g. Terrain's "Where this route can be seen from"):
+     run(route, { signal }) with route { id, coords, km, dest }. Results are working views, not kept with the plan */
+  function tools() { return (W.OSAP_EPE_CORRIDOR_TOOLS || []).filter(function (t) { return t && t.id && t.label && typeof t.run === "function"; }); }
+  function toolsHtml(o) {
+    return tools().map(function (t) { return '<button type="button" data-ep-tool="' + E(t.id) + '"' + (S.tool && S.tool.opt === o.id && S.tool.id === t.id && S.tool.busy ? ' aria-busy="true"' : "") + ">" + E(t.label) + "</button>"; }).join("");
+  }
+  function toolNote(o) {
+    var t = S.tool; if (!t || t.opt !== o.id || !t.msg) return "";
+    return '<p class="obs epetool">' + E(t.msg) + (t.busy ? ' <button type="button" class="linkish" data-ep="toolstop">Stop</button>' : "") + "</p>";
+  }
+  function runTool(id) {
+    var o = optOf(S.sel), t = tools().filter(function (x) { return x.id === id; })[0]; if (!o || !t) return;
+    if (S.tool && S.tool.ac) S.tool.ac.abort();
+    var ac = typeof AbortController === "function" ? new AbortController() : null;
+    var cur = S.tool = { id: id, opt: o.id, busy: true, ac: ac, msg: t.label + ": working it out along " + dist(o.route.m) + " of route…" };
+    render();
+    var done = function (msg) { if (S.tool !== cur) return; cur.busy = false; cur.ac = null; cur.msg = msg; render(); };
+    var rt = { id: o.id, coords: o.route.coords.slice(), km: Math.round(o.route.m / 100) / 10, dest: { name: o.dest.i.name, lat: o.dest.i.lat, lon: o.dest.i.lon, kind: o.kind } };
+    var pr; try { pr = Promise.resolve(t.run(rt, { signal: ac ? ac.signal : undefined })); } catch (err) { pr = Promise.reject(err); }
+    pr.then(function (res) {
+      if (!res) return done(t.label + ": stopped or no result. Nothing was changed in this plan.");
+      var st = res.stats || {};
+      var n = function (v) { return isFinite(+v) ? Math.round(+v) : null; };
+      done(t.label + ": shown on the map" + (n(st.exposed_pct) != null ? ". About " + n(st.exposed_pct) + "% of the ground near the route can see part of it" + (n(st.exposed_km2) != null ? " (" + n(st.exposed_km2) + " km²)" : "") : "") +
+        (n(st.unknown_pct) ? ", " + n(st.unknown_pct) + "% unknown" : "") + ". A terrain estimate from elevation data; buildings and trees are not counted.");
+    }, function (err) { done(t.label + " failed: " + clean(err && err.message || String(err), 160) + ". The plan is unchanged."); });
   }
   function keptHtml() {
     var list = all(); if (!list.length) return "";
@@ -348,6 +375,8 @@
     else if (k === "stop") { S.tok++; S.busy = false; S.msg = "Stopped."; render(); }
     else if (k === "sug") { if (S.plan) { S.plan.opts.forEach(function (o) { o.role = o.sug || ""; }); save(); render(); draw(); } }
     else if (k === "route") toRoute(optOf(S.sel));
+    else if (k === "toolstop") { if (S.tool && S.tool.ac) S.tool.ac.abort(); }
+    else if (b.hasAttribute("data-ep-tool")) runTool(b.getAttribute("data-ep-tool"));
     else if (b.hasAttribute("data-ep-found")) { var f = S.found && S.found.list[+b.getAttribute("data-ep-found")]; if (f) { setOrigin(f.lat, f.lon, f.name, "Searched place (" + f.src + ")"); S.found = null; render(); draw(); fitPlan(); } }
     else if (b.hasAttribute("data-ep-sel")) { S.sel = b.getAttribute("data-ep-sel"); render(); draw(); fitOpt(optOf(S.sel)); }
     else if (b.hasAttribute("data-ep-open")) { var id = b.getAttribute("data-ep-open"), pl = all().filter(function (x) { return x.id === id; })[0]; if (pl) { S.tok++; S.busy = false; S.plan = pl; S.origin = pl.origin; S.mode = pl.mode || "car"; S.days = pl.days || 30; S.sel = pl.opts[0] && pl.opts[0].id; S.msg = ""; lsSet(CUR, pl.id); render(); draw(); fitPlan(); } }
