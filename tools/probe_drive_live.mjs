@@ -30,13 +30,14 @@ for (const [name, hash, a, b] of RUNS) {
     await p.waitForFunction(() => window.OSAP_PREVIEW && window.OSAP_PREVIEW.isOpen(), null, { timeout: 30000 });
     await p.evaluate(() => document.querySelector('#rtpv [data-pv="drive"]').click());
     const t0 = Date.now(), tl = [];
-    for (let k = 0; k < 18; k++) {
+    for (let k = 0; k < 12; k++) {
       await p.waitForTimeout(5000);
-      tl.push(await p.evaluate((t) => { const d = window.OSAP_PREVIEW.state().drive; return Math.round(t / 1000) + "s m" + Math.round(d.m) + (d.wait ? " WAIT" : "") + " " + (d.kind || "-") + (d.prov ? ":" + d.prov[0] : "") + " busy" + d.chunks.filter((c) => c.st === "busy").length; }, Date.now() - t0));
-      if (k === 5 || k === 17) await p.screenshot({ path: `/tmp/drive-live/${name}-${k}.jpg`, type: "jpeg", quality: 30 });
+      const fps = await p.evaluate(() => new Promise((ok) => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < 1000) requestAnimationFrame(f); else ok(n); })(); }));
+      tl.push(await p.evaluate(({ t, fps }) => { const d = window.OSAP_PREVIEW.state().drive; return Math.round(t / 1000) + "s " + d.mode + (d.gl ? "+gl" : "") + (d.no3d ? " NO3D:" + d.no3d : "") + " m" + Math.round(d.m) + " fps" + fps + " ins:" + (d.ins || "-") + " busy" + d.chunks.filter((c) => c.st === "busy").length + " tag:" + document.querySelector("#rtdv .rtdv-tag").textContent.slice(0, 60); }, { t: Date.now() - t0, fps }));
+      if (k === 2 || k === 9) await p.screenshot({ path: `/tmp/drive-live/${name}-${k}.jpg`, type: "jpeg", quality: 30 });
     }
     await writeFile(`/tmp/drive-live/${name}-tl.txt`, tl.join("\n") + "\n");
-    const st = await p.evaluate(() => { const d = window.OSAP_PREVIEW.state().drive; return { m: Math.round(d.m), kind: d.kind, prov: d.prov, pano: d.pano, date: d.date, chunks: d.chunks.map((c) => c.st[0] + c.n).join(" "), tag: document.querySelector("#rtdv .rtdv-tag").textContent }; });
+    const st = await p.evaluate(() => { const d = window.OSAP_PREVIEW.state().drive; return { m: Math.round(d.m), mode: d.mode, gl: d.gl, ins: d.ins, kind: d.kind, prov: d.prov, pano: d.pano, date: d.date, chunks: d.chunks.map((c) => c.st[0] + c.n).join(" "), tag: document.querySelector("#rtdv .rtdv-tag").textContent }; });
     await writeFile(`/tmp/drive-live/${name}.txt`, JSON.stringify(st) + "\nerrors: " + errs.join(" | ") + "\n");
   } catch (e) { await writeFile(`/tmp/drive-live/${name}.txt`, "FAILED " + e.message + "\nerrors: " + errs.join(" | ") + "\n"); await p.screenshot({ path: `/tmp/drive-live/${name}-fail.jpg`, type: "jpeg", quality: 25 }).catch(() => {}); }
   await ctx.close();
