@@ -90,6 +90,7 @@ jobs:
       - run: node tests/route_api_smoke.mjs
       - run: node tests/route_preview_smoke.mjs
       - run: node tests/dc_smoke.mjs
+      - run: node tests/infra_smoke.mjs
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
       - run: node tests/lz_smoke.mjs
