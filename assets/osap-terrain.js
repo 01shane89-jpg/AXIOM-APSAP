@@ -290,7 +290,7 @@
     "#terrain .tsg{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin:6px 0}#terrain .tsg>span{color:var(--muted,#555)}" +
     "#terrain .tsr{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center}" +
     "#terrain button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:30px;cursor:pointer}" +
-    "#terrain button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700;letter-spacing:.04em}#terrain button[aria-pressed=true]{background:#e3f2f4;border-color:#0b7285}" +
+    "#terrain button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700;letter-spacing:.04em}#terrain button[aria-pressed=true]{background:var(--accent-soft,#e3f2f4);color:var(--ink,#111);border-color:var(--accent,#0b7285)}" +
     "#terrain select,#terrain input[type=number]{font:inherit;font-size:12.5px;max-width:100%}#terrain input[type=number]{width:5.2em}" +
     "#terrain .pt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}#terrain .seg{display:inline-flex}#terrain .seg button{border-radius:0;margin-left:-1px}#terrain .seg button:first-child{border-radius:5px 0 0 5px}#terrain .seg button:last-child{border-radius:0 5px 5px 0}" +
     "#terrain .chk{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin:6px 0}#terrain .chk label{display:flex;gap:5px;align-items:center}" +
@@ -301,13 +301,13 @@
     "#terrain .nm{font-weight:700;letter-spacing:.03em}#terrain .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
     "#terrain .losc{border:1px solid var(--line,#ddd);border-radius:6px;padding:6px 9px;margin:8px 0}#terrain svg.prof{width:100%;height:auto;display:block;margin-top:6px}" +
     ".vslos p{margin:2px 0}.vslos .v{font-weight:700}.vslos .v.BLOCKED{color:#b71c1c}.vslos .v.CLEAR{color:#2e7d32}.vslos .v.UNKNOWN{color:#616161}.vslos .h{font-weight:700;letter-spacing:.04em;margin-bottom:3px}" +
-    ".vslos button{font:inherit;font-size:12px;margin-top:5px;border:1px solid #bbb;border-radius:5px;background:#fff;padding:3px 8px;cursor:pointer}.vsimg{image-rendering:pixelated}" +
+    ".vslos button{font:inherit;font-size:12px;margin-top:5px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:var(--ink,#111);padding:3px 8px;cursor:pointer}.vsimg{image-rendering:pixelated}" +
     "#terrain .tsm{display:flex;margin:2px 0 8px}#terrain .tsm button{flex:1;font-weight:600}#terrain .tsx{border-top:1px solid var(--line,#ddd);margin-top:8px;padding-top:6px}" +
     ".vsab{background:none;border:0}.vsab span{display:block;min-width:20px;height:20px;padding:0 3px;border-radius:10px;background:#0b7285;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);color:#fff;font:700 11px/20px system-ui,sans-serif;text-align:center;margin:0}" +
     "#terrain .tsave{margin:8px 0}#terrain .tsave input{font:inherit;font-size:13px;flex:1;min-width:8em;padding:4px 6px}#terrain .vssaved{border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "#terrain .vsrow{border:1px solid var(--line,#ddd);border-radius:6px;padding:5px 8px;margin:5px 0}#terrain .vsrow label{display:flex;gap:6px;align-items:center}#terrain .vsrow .sub{font-size:11.5px;color:var(--muted,#555);margin:2px 0 4px}#terrain .vsrow input[type=text]{font:inherit;flex:1}" +
     ".vsname{background:none;border:0}.vsname span{display:inline-block;transform:translate(8px,-50%);white-space:nowrap;font:600 11px/1.2 system-ui,sans-serif;background:rgba(255,255,255,.9);color:#1b5e20;border:1px solid #1b5e20;border-radius:3px;padding:1px 4px}" +
-    ".vsmenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;margin:3px 0;border:1px solid #bbb;border-radius:5px;background:#fff;padding:6px 9px;cursor:pointer}.vsmenu .h{font-weight:700;margin-bottom:4px}.vsmenu .el{margin-top:6px}" +
+    ".vsmenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;margin:3px 0;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:var(--ink,#111);padding:6px 9px;cursor:pointer}.vsmenu .h{font-weight:700;margin-bottom:4px}.vsmenu .el{margin-top:6px}" +
     /* phone: labels above their fields, so the fields get the full width */
     "@media (max-width:700px){#terrain{padding:6px}#terrain .chk{grid-template-columns:1fr}#terrain .tsg{grid-template-columns:1fr;gap:2px 0}#terrain .tsg>span{margin-top:6px;font-size:12px}#terrain .tsh{flex-wrap:nowrap}#terrain .tsh select{flex:1;min-width:0}}";
   function ensure() {
