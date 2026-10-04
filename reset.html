@@ -34,7 +34,7 @@ settings go back to their defaults, and the app downloads a fresh copy of itself
   var log = document.getElementById("log"), lines = [];
   function out(s) { lines.push(s); log.textContent = lines.join("\n"); }
   /* layout and display settings only; saved work (points, areas, workspaces, watches, routes, shapes, my work) is not touched */
-  var LAYOUT = /^(asap-rv-mode|asap-col-rv|asap-col-rail|asap-map-layers|asap-legend-shut|asap-ev-split|asap-ev-on|osap-ui|osap-atak-fold|osap-tools-fold|osap-mlfold|osap-3d|osap-terrain|osap-grid|osap-gridrows|osap-xhair|osap-xh|osap-heat|osap-hs|osap-sides|osap-mobility|osap-air|osap-wx-layers|osap-mapsets-.*|osap-g[123]|osap-gimg|osap-x-off|osap-cf-ua|osap-cf-sites|osap-cf-hist|osap-aoi-show|osap-blank)$/;
+  var LAYOUT = /^(asap-rv-mode|asap-col-rv|asap-col-rail|asap-map-layers|asap-legend-shut|asap-ev-split|asap-ev-on|osap-ui|osap-atak-fold|osap-tools-fold|osap-mlfold|osap-3d|osap-terrain|osap-grid|osap-gridrows|osap-xhair|osap-xh|osap-heat|osap-hs|osap-sides|osap-mobility|osap-air|osap-wx-layers|osap-mapsets-.*|osap-g[123]|osap-gimg|osap-x-off|osap-cf-ua|osap-cf-sites|osap-cf-hist|osap-aoi-show|osap-blank|osap-panels)$/;
   out("page: " + location.href);
   out("time: " + new Date().toISOString());
   try {

@@ -66,6 +66,16 @@ const usFile = (u) => /(^|\/)(us|us-states)(\/|\.js)|layers\/us\/|brief\/us\.js/
   ok(errors.length === 0, "unlocked: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// 4. an unlock lasts on this device across app restarts until it runs out (localStorage {until, key}); a lapsed one is cleared
+for (const [ahead, want] of [[3600e3, true], [-1000, false]]) {
+  const ctx = await browser.newContext({ serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript((ms) => { try { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-lock-open", JSON.stringify({ until: Date.now() + ms, key: "x" })); } } catch (e) {} }, ahead);
+  const p = await ctx.newPage(); await p.goto(base + "#us/timeline"); await p.waitForTimeout(4000);
+  const s = await p.evaluate(() => ({ open: window.OSAP_LOCK.isOpen(), cc: window.TSAP && window.TSAP.country, rec: localStorage.getItem("osap-lock-open") }));
+  ok(want ? s.open && s.cc === "us" : !s.open && s.cc === "th" && s.rec === null, (want ? "unlock still in time: US opens on a fresh start " : "unlock run out: locked again and cleared ") + JSON.stringify(s));
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "ALL PASS");
 process.exit(fails ? 1 : 0);

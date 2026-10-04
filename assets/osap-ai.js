@@ -44,15 +44,53 @@
     try { var x = new URL(u); if (x.pathname === "/" || x.pathname === "") u = x.origin + "/v1"; } catch (e) {}
     return u.replace(/\/(chat\/completions|models)$/, "");
   }
+  /* Chrome and Edge 142+ (Local Network Access) ask before a web site may reach this computer (127.0.0.1, localhost) or the
+     home network; a plain http private address (not loopback) from the https site also needs the fetch to name that space. Other browsers
+     ignore the option; one that rejects it as unknown is asked again without it. */
+  function loopback(u) { try { var h = new URL(u).hostname.replace(/^\[|\]$/g, "").toLowerCase(); return h === "localhost" || h === "::1" || /\.localhost$/.test(h) || /^127\./.test(h); } catch (e) { return false; } }
+  function lnaFetch(url, opt) {
+    if (loopback(url) || !/^http:/.test(url) || location.protocol !== "https:") return fetch(url, opt);
+    var o = {}; Object.keys(opt).forEach(function (k) { o[k] = opt[k]; });
+    o.targetAddressSpace = "local";
+    var first; try { first = fetch(url, o); } catch (e) { first = Promise.reject(e); }
+    return first.catch(function (e) { if (e && e.name === "TypeError" && /targetAddressSpace/i.test(e.message || "")) return fetch(url, opt); throw e; });
+  }
+  /* The browser's Local Network Access permission for this site: "granted", "denied", "prompt", or "" where there is none. */
+  function lnaState(url) {
+    var names = (loopback(url) ? ["loopback-network"] : ["local-network"]).concat(["local-network-access"]);
+    if (!(navigator.permissions && navigator.permissions.query)) return Promise.resolve("");
+    return names.reduce(function (p, n) {
+      return p.then(function (st) { return st || navigator.permissions.query({ name: n }).then(function (r) { return String(r && r.state || ""); }, function () { return ""; }); });
+    }, Promise.resolve(""));
+  }
   function timed(url, opt, ms) {
     var ac = W.AbortController ? new AbortController() : null, t = ac ? setTimeout(function () { ac.abort(); }, ms) : 0;
     if (ac) opt.signal = ac.signal;
-    return fetch(url, opt).then(function (r) { clearTimeout(t); return r; }, function (e) {
+    return lnaFetch(url, opt).then(function (r) { clearTimeout(t); return r; }, function (e) {
       clearTimeout(t); throw new Error(e && e.name === "AbortError" ? "no answer in " + Math.round(ms / 1000) + " s" : "could not reach it (" + (e && e.message || e) + ")");
     });
   }
-  function localModels(base) {
-    return timed(base + "/models", { method: "GET", mode: "cors", credentials: "omit", cache: "no-store" }, 8000).then(function (r) {
+  /* After a failed test, name the actual cause. A no-cors request needs no CORS from the server, so if it gets through the
+     server is up and only CORS is missing; if it fails too, either the browser stopped it (permission) or nothing answers. */
+  function why(url, host) {
+    var mixed = location.protocol === "https:" && /^http:/.test(url) && !loopback(url);
+    return lnaState(url).then(function (st) {
+      if (st === "denied") return "This browser is blocking the site from reaching " + (loopback(url) ? "apps on this computer" : "devices on your network") +
+        ". In Chrome or Edge: click the icon left of the web address, Site settings, set \u201c" + (loopback(url) ? "Apps on device" : "Local network access") +
+        "\u201d (or \u201cLocal network access\u201d) to Allow, reload OSAP and test again.";
+      return timed(url + "/models", { method: "GET", mode: "no-cors", credentials: "omit", cache: "no-store" }, 8000).then(function () {
+        return host + " answered, but the browser cannot read the answer because CORS is off. LM Studio: pick Developer at the bottom of its window, open the Developer tab, click Settings next to the server switch, turn on \u201cEnable CORS\u201d, then stop and start the server (or run: lms server start --cors). Ollama: set OLLAMA_ORIGINS to " + location.origin + " and restart it.";
+      }, function () {
+        var port = new URL(url).port || "80";
+        return "Nothing answered at " + host + ". In LM Studio open the Developer tab and check Status says Running on port " + port + " with a model loaded" +
+          (loopback(url) ? "." : "; with LM Studio on another computer, also turn on \u201cServe on Local Network\u201d there.") +
+          (st === "prompt" ? " If the browser asked to connect to apps or devices on your network and it was not allowed, test again and choose Allow." : "") +
+          (mixed ? " Safari and Firefox block plain http addresses on your network from the live https site: use Chrome or Edge, an https address (for example a Tailscale .ts.net name), or LM Studio on this computer at http://localhost:1234." : "");
+      });
+    });
+  }
+  function localModels(base, ms) {
+    return timed(base + "/models", { method: "GET", mode: "cors", credentials: "omit", cache: "no-store" }, ms || 8000).then(function (r) {
       if (!r.ok) throw new Error("it answered " + r.status);
       return r.json();
     }).then(function (j) { return ((j && j.data) || []).map(function (m) { return String(m && m.id || ""); }).filter(Boolean); });
@@ -161,9 +199,9 @@
       (UI.models && UI.models.length ? '<datalist id="ai-models">' + UI.models.map(function (m) { return '<option value="' + esc(m) + '">'; }).join("") + "</datalist>" : "") +
       '<div class="aibtns"><button type="button" class="refresh" data-ai-test' + (UI.busy ? " disabled" : "") + ">Test and save</button>" + (L.url ? '<button type="button" data-ai-clear>Stop using it</button>' : "") + "</div>" +
       '<details class="ainote"><summary>How to turn the server on</summary>' +
-      "<p><b>LM Studio</b> (Mac, Windows, Linux): Developer tab, Start server, and turn on Enable CORS. Address http://localhost:1234/v1 on the same computer.</p>" +
+      "<p><b>LM Studio</b> (Mac, Windows, Linux): pick Developer at the bottom of the window, open the Developer tab, switch the server on, and in Settings next to it turn on Enable CORS (or run: lms server start --cors). Address http://localhost:1234 on the same computer (/v1 is added for you). In Chrome or Edge, choose Allow when the browser asks to connect to apps or devices on your network.</p>" +
       "<p><b>Ollama</b>: start it with OLLAMA_ORIGINS set to " + esc(location.origin) + ". Address http://localhost:11434/v1.</p>" +
-      "<p>From another device, the live site can only reach an https address (a browser blocks plain http from an https page), for example a Tailscale https name ending in .ts.net.</p>" +
+      "<p>From another device: Chrome and Edge can reach a plain http private address (192.168…) once allowed; Safari and Firefox need an https address, for example a Tailscale https name ending in .ts.net.</p>" +
       "<p>Phone apps (LM Studio's iPhone app and similar) cannot be used: they run no server that other apps can call, and iOS pauses them while OSAP is on screen. Use OSAP's own model below instead.</p></details></section>" +
       '<section class="aisec"><h3>3. OSAP\'s own model, in this browser</h3>' +
       (gpu ? '<p class="obs">' + esc(MODEL_NAME) + " (4-bit), run on this device's graphics chip. Under 1 GB, downloaded once from Hugging Face when you tap Download, then kept in this browser and usable offline. Nothing about the reports leaves the device.</p>" +
@@ -182,16 +220,18 @@
       if (!url) { say("Type the server's address first, for example http://localhost:1234/v1."); return; }
       if (!okHost(url)) { say("Not saved: " + url + " is not on this device or a private network. Use localhost, a private address (192.168…, 10…), or a .local, .lan or .ts.net name."); return; }
       UI.busy = "local"; say("Testing " + url + "…");
-      localModels(url).then(function (ms) {
+      // While the browser's "allow local network" question is open the request waits, so give the analyst time to answer it.
+      lnaState(url).then(function (st) { return localModels(url, st === "prompt" ? 60000 : 8000); }).then(function (ms) {
         UI.busy = ""; UI.models = ms;
         if (model && ms.length && ms.indexOf(model) < 0) { say("The server answered, but has no model called " + model + ". Pick one of: " + ms.slice(0, 8).join(", ") + "."); return; }
         prefs({ local: { url: url, model: model || ms[0] || "" } });
         say("Saved. The server answered with " + (ms.length ? ms.length + " model" + (ms.length === 1 ? "" : "s") : "no model list") + "; summaries will use " + (model || ms[0] || "its loaded model") + ".");
       }, function (err) {
-        UI.busy = "";
-        var mixed = location.protocol === "https:" && /^http:/.test(url) && !/^http:\/\/(localhost|127\.|\[::1\])/.test(url);
-        say("Not saved: " + (err && err.message || err) + ". " + (mixed ? "This browser blocks plain http addresses from the live site; use localhost on the same computer or an https address." :
-          "Check the server is running and that CORS is turned on (LM Studio: Enable CORS; Ollama: OLLAMA_ORIGINS)."));
+        var m = String(err && err.message || err);
+        if (/^no answer/.test(m)) { UI.busy = ""; say("Not saved: " + hostOf(url) + " gave " + m + ". Check the server is running and a model is loaded."); return; }
+        if (!/^could not reach/.test(m)) { UI.busy = ""; say("Not saved: the server at " + hostOf(url) + " was reached but " + m + ". Check the address ends in /v1 (OSAP adds it when there is no path)."); return; }
+        say("Not saved: could not reach " + hostOf(url) + ". Finding out why…");
+        why(url, hostOf(url)).then(function (t) { UI.busy = ""; say("Not saved. " + t); });
       });
       return;
     }
