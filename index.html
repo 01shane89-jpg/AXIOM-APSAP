@@ -1297,6 +1297,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
     /* how far the middle may drift before something on screen could be on the wrong copy: half a world, less half the (padded) screen */
     function slack() { return 180 - map.getSize().x * 0.6 / map.options.crs.scale(map.getZoom()) * 360; }
+    /* everything added so far was placed against the first view; only a later move far enough needs it placed again */
+    map.whenReady(function () { last = ref(); });
     map.on("zoomend viewreset", function () { last = ref(); });
     map.on("move", function () { if (!stepping && last != null && Math.abs(ref() - last) > Math.max(20, slack() - 1)) rewrap(); });
     map.on("moveend", function () {
