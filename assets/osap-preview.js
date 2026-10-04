@@ -1200,7 +1200,8 @@
   function d3Loop(t) {
     var d = S.drv; if (!d || !d.on || d.mode !== "3d" || !d.gl) return;
     d.raf = requestAnimationFrame(d3Loop);
-    var dt = d.lt ? Math.min(0.1, (t - d.lt) / 1000) : 0; d.lt = t;
+    /* the true time since the last frame (up to half a second), so a slow phone keeps the chosen speed in bigger steps */
+    var dt = d.lt ? Math.min(0.5, (t - d.lt) / 1000) : 0; d.lt = t;
     if (d.playing && !d.drag) {
       d.m = Math.min(d.tot, d.m + v3() * dt);
       if (d.m >= d.tot) { d.playing = false; d.endMsg = true; drvHud(); }
