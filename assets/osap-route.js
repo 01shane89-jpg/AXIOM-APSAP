@@ -362,6 +362,10 @@ function main() {
     else if (k === "search") search();
     else if (k === "evac") evPlan();
     else if (k === "preview") preview(b);
+    else if (k === "comms") { /* Comms planning > Coverage checks phone and data coverage segment by segment along this route */
+      W.OSAP_COMMSPLAN_WANT = "route";
+      if (W.OSAP_COMMSPLAN && D.documentElement.getAttribute("data-view") === "comms") { W.OSAP_COMMSPLAN_WANT = null; W.OSAP_COMMSPLAN.routeCorridor(); }
+      else if (W.TSAP && W.TSAP.setView) { W.TSAP.setView("comms"); D.dispatchEvent(new Event("osap:view")); } }
     else if (k === "evsave") evSave();
     else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
   }
@@ -465,7 +469,7 @@ function main() {
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
       '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : r.xc ? "Cross-country estimate at off-path walking pace (about 3 km/h on the flat), slowed by slope and seasonal water, with no time for water crossings; averages " + r.kmh + " km/h without rests." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button></div>';
+      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button><button type="button" data-rt="comms" title="Phone and data coverage segment by segment along this route, in Comms planning">Comms along route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + E(x.label || (i ? "Alternative " + i : "Fastest")) + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
     }).join("") + "</div>" : "";
