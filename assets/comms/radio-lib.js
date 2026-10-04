@@ -265,6 +265,25 @@
     if (c[1] * 2 >= n) return "none";
     return "degraded";
   }
+
+  /* ---------- satellite planning geometry (geostationary only) ----------
+     Pointing from a ground station to a geostationary slot at sat_lon: azimuth (true, degrees clockwise from north),
+     elevation above the horizon and slant range, on a spherical Earth (good to a few tenths of a degree, enough to plan a
+     site with a clear view; the terminal's own pointing aid is the authority). Elevation below 0 means it is not visible. */
+  var R_GEO_KM = 42164.2, R_E_KM = 6378.137;
+  function geoLook(lat, lon, sat_lon) {
+    lat = num(lat); lon = num(lon); sat_lon = num(sat_lon);
+    if (!isFinite(lat) || !isFinite(lon) || !isFinite(sat_lon)) return null;
+    var d = Math.PI / 180, p = lat * d, dl = (sat_lon - lon) * d;
+    /* the satellite relative to the station, in east / north / up */
+    var sx = R_GEO_KM * Math.cos(dl), sy = R_GEO_KM * Math.sin(dl);
+    var rx = sx - R_E_KM * Math.cos(p), rz = -R_E_KM * Math.sin(p);
+    var e = sy, n = -Math.sin(p) * rx + Math.cos(p) * rz, u = Math.cos(p) * rx + Math.sin(p) * rz;
+    /* the frame above: x toward the station's meridian at the equator, rotated so x,z hold the station; e = east */
+    var rng = Math.sqrt(e * e + n * n + u * u);
+    var az = (Math.atan2(e, n) / d + 360) % 360, el = Math.asin(u / rng) / d;
+    return { az: az, el: el, range_km: rng, visible: el > 0 };
+  }
   root.OSAP_RADIO = {
     version: "osap-radio/1", R_EARTH_M: R_EARTH_M,
     wToDbm: wToDbm, dbmToW: dbmToW, fspl: fspl, wavelength_m: wavelength_m, fresnel_m: fresnel_m, bulge_m: bulge_m, horizon_km: horizon_km,
@@ -273,6 +292,6 @@
     METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
     CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,
     ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey,
-    splitLine: splitLine, segStatus: segStatus
+    splitLine: splitLine, segStatus: segStatus, geoLook: geoLook
   };
 })(typeof window !== "undefined" ? window : globalThis);
