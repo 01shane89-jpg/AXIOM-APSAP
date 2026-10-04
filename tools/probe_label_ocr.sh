@@ -1,8 +1,10 @@
 #!/bin/sh
-# Test only: reads the probe screenshots with tesseract and reports how many Latin vs Thai/Japanese/Cyrillic letters each shows
-for f in probe-out/*.png; do
-  t=$(tesseract "$f" - -l eng+tha+jpn+rus 2>/dev/null | tr '\n' ' ')
-  lat=$(printf '%s' "$t" | grep -o '[A-Za-z]' | wc -l)
-  loc=$(printf '%s' "$t" | grep -oP '[\x{0E00}-\x{0E7F}\x{3040}-\x{30FF}\x{4E00}-\x{9FFF}\x{0400}-\x{04FF}]' | wc -l)
-  echo "::notice title=$(basename "$f" .png)::latin=$lat local=$loc $(printf '%s' "$t" | tr -s ' ' | cut -c1-160)"
+# Test only: reads the probe screenshots with tesseract (English) and reports the real-looking English words each one shows
+for src in $(ls probe-out/*.png | sed 's#probe-out/##; s#-[a-z]*-z[0-9]*\.png##' | sort -u); do
+  line=""
+  for f in probe-out/$src-*.png; do
+    w=$(tesseract "$f" - -l eng 2>/dev/null | grep -oE '\b[A-Z][a-z]{3,}\b' | sort -u | head -12 | tr '\n' ' ')
+    line="$line ## $(basename "$f" .png | sed "s/^$src-//"): $w"
+  done
+  echo "::notice title=ocr $src::$line"
 done

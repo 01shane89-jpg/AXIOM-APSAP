@@ -16,6 +16,7 @@ const PLACES = { bkk: [13.75, 100.5], tokyo: [35.68, 139.76], moscow: [55.75, 37
 const ZS = [7, 13];
 function tile(lat, lon, z) { const n = 2 ** z, r = lat * Math.PI / 180;
   return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.asinh(Math.tan(r)) / Math.PI) / 2 * n)]; }
+const OUT = {};
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 768, height: 512 } });
 for (const [k, u] of Object.entries(RASTER)) for (const [p, [la, lo]] of Object.entries(PLACES)) for (const z of ZS) {
@@ -23,7 +24,7 @@ for (const [k, u] of Object.entries(RASTER)) for (const [p, [la, lo]] of Object.
   for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) h += `<img src="${u.replace("{z}", z).replace("{x}", x + dx).replace("{y}", y + dy)}" width=256 height=256>`;
   await page.setContent(h, { waitUntil: "networkidle", timeout: 30000 }).catch(() => {});
   const ok = await page.evaluate(() => [...document.images].filter((i) => i.naturalWidth).length);
-  console.log(k, p, z, "tiles ok:", ok + "/9");
+  OUT[k] = (OUT[k] || "") + ` ${p}z${z}:${ok}/9`;
   await page.screenshot({ path: `probe-out/${k}-${p}-z${z}.png` });
 }
 // vector: OpenFreeMap and VersaTiles with every label forced to English, falling back to the local name
@@ -45,9 +46,10 @@ for (const [k, su] of Object.entries(STYLES)) for (const [p, [la, lo]] of Object
     const keys = [...new Set(sym.flatMap((x) => Object.keys(x.properties).filter((q) => /name/.test(q))))].join(",");
     const shown = [...new Set(sym.map((x) => x.properties["name:en"] || x.properties.name_en || x.properties.name))].slice(0, 12).join(" | ");
     const en = sym.filter((x) => x.properties["name:en"] || x.properties.name_en).length;
-    return { fields: [...fields].slice(0, 2), keys, en: en + "/" + sym.length, shown };
+    return { en: en + "/" + sym.length, shown };
   }, [su, la, lo, z]).catch((e) => ({ err: String(e) }));
-  console.log(`::notice title=${k} ${p} z${z}::` + JSON.stringify(res).replace(/\n/g, " "));
+  OUT[k] = (OUT[k] || "") + ` ## ${p}z${z} ` + JSON.stringify(res).replace(/\\n/g, " ");
   await vp.screenshot({ path: `probe-out/${k}-${p}-z${z}.png` }); await vp.close();
 }
 await browser.close();
+for (const [k, v] of Object.entries(OUT)) console.log(`::notice title=${k}::` + v.slice(0, 3000));
