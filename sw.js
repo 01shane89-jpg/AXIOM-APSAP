@@ -480,6 +480,27 @@ const PRECACHE = [
 "assets/osap-reports.js",
 "assets/osap-offline.js",
 "assets/osap-move.js",
+"assets/osap-guide.js",
+"assets/guide/today.jpg",
+"assets/guide/map.jpg",
+"assets/guide/datasets.jpg",
+"assets/guide/weather.jpg",
+"assets/guide/overlays.jpg",
+"assets/guide/grid.jpg",
+"assets/guide/ring.jpg",
+"assets/guide/measure.jpg",
+"assets/guide/route.jpg",
+"assets/guide/area.jpg",
+"assets/guide/point.jpg",
+"assets/guide/watch.jpg",
+"assets/guide/mywork.jpg",
+"assets/guide/medplan.jpg",
+"assets/guide/evac.jpg",
+"assets/guide/lz.jpg",
+"assets/guide/terrain.jpg",
+"assets/guide/comms.jpg",
+"assets/guide/reports.jpg",
+"assets/guide/settings.jpg",
 "assets/osap-illum.js",
 "assets/osap-locate.js",
 "assets/osap-drones.js",
@@ -515,7 +536,7 @@ const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw
   /cctv\d*\.dot\.wi\.gov\//, /itsstreaming[\w-]*\.dotd\.la\.gov\//i, /\.its\.nv\.gov(:\d+)?\//, /publicstreamer\d*\.cotrip\.org(:\d+)?\//, /video\d*\.iowadot\.gov(:\d+)?\//,
   /skysfs\d*\.trafficwise\.org\//, /wzmedia\.dot\.ca\.gov(:\d+)?\//, /video\.deldot\.gov(:\d+)?\//, /strmr\d*\.sha\.maryland\.gov\//];
 // Saved after install rather than during it (see the top of this file).
-const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/];
+const LATER = [/^data\//, /^assets\/tiles-/, /^assets\/vendor\/milsymbol/, /^assets\/osap-milsym-cat/, /^assets\/logo\.png$/, /^assets\/world-watermark\.svg$/, /^assets\/guide\//];
 const CORE = PRECACHE.filter((u) => !LATER.some((r) => r.test(u)));
 const DATA = "asap-data";
 const home = (u) => new URL(u, self.registration.scope).href;
