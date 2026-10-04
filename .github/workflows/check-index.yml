@@ -27,6 +27,7 @@ jobs:
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/comms.test.mjs
+      - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
       - run: node tests/hosp.test.mjs
@@ -63,6 +64,7 @@ jobs:
       - run: node tests/search_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
+      - run: node tests/commsplan_smoke.mjs
       - run: node tests/power_smoke.mjs
       - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
