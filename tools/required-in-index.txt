@@ -28,6 +28,8 @@
 <script src="assets/osap-cf-sites.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
+# on-device AI for the AI summaries: your AI server or OSAP's own model (assets/osap-ai.js; Settings > On-device AI)
+<script src="assets/osap-ai.js"></script>
 <script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
