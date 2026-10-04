@@ -41,6 +41,12 @@ const OSM = { osm3s: { timestamp_osm_base: "2026-09-30T06:00:00Z" }, elements: [
   { type: "node", id: 12, lat: 13.7608, lon: 100.5108, tags: { amenity: "hospital", name: "โรงพยาบาลใกล้" } },
   { type: "node", id: 11, lat: 13.752, lon: 100.498, tags: { emergency: "ambulance_station", name: "City Ambulance Station", phone: "+66 2 111 2222" } }
 ] };
+/* hospitals' published phone numbers (data/hospitals/th/phones.json): Far North's own OSM number stays; Trauma Test gets
+   its emergency line and call centre from its website */
+const PHONES = { schema: "osap-hospital-phones/1", cc: "th", read_at: "2026-10-03T23:39:00Z", hospitals: {
+  n1: { p: { n: "02 000 0001", src: "embassy_list", name: "Test Embassy hospital list", url: "https://example.org/embassy.pdf", at: "2026-10-03" } },
+  n10: { e: { n: "02 777 1669", src: "hospital_website", name: "Trauma Test Hospital website", url: "https://trauma.example.org/contact", at: "2026-10-03" },
+    h: { n: "1719", src: "hospital_website", name: "Trauma Test Hospital website", url: "https://trauma.example.org/", at: "2026-10-03" } } } };
 /* air rescue bases and U.S. posts (the second, wider Overpass request) */
 const OSMX = { elements: [
   { type: "node", id: 20, lat: 13.90, lon: 100.60, tags: { emergency: "air_rescue_service", name: "Test Air Rescue", phone: "+66 2 555 0100" } },
@@ -156,7 +162,7 @@ async function open(opts, o) {
   /* what hospitals state on their own websites (data/hospitals/<cc>/web.json) and the official records (th/registry.json):
      none unless a check supplies them */
   await ctx.route(/\/data\/hospitals\//, (r) => o.web === "fail" ? r.fulfill({ status: 503, body: "" }) : o.web && /\/th\/web\.json/.test(r.request().url()) ? J(r, o.web) :
-    o.gov && /\/th\/registry\.json/.test(r.request().url()) ? J(r, o.gov) : r.fulfill({ status: 404, body: "" }));
+    o.gov && /\/th\/registry\.json/.test(r.request().url()) ? J(r, o.gov) : o.phones !== null && /\/th\/phones\.json/.test(r.request().url()) ? J(r, o.phones || PHONES) : r.fulfill({ status: 404, body: "" }));
   /* the split view setting (shared with Find LZ, Watch, NAI/TAI) starts on; these checks start from the full window */
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -232,6 +238,12 @@ async function openPlan(p) {
   await p.waitForFunction(() => /Wikidata Q900001/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
   const wdRow = await p.evaluate(() => [...document.querySelectorAll("#mp-fac tbody tr")].map((r) => r.textContent).find((t) => /Trauma Test Hospital/.test(t)) || "");
   ok(/\+66 2 777 1000 \(Wikidata Q900001, matched by location, \d+ m\)/.test(wdRow) && /Website \(Wikidata Q900001/.test(wdRow) && !/listed in OpenStreetMap/.test(wdRow) && !/000 0000/.test(await p.textContent("#mp-fac")), "desktop: a hospital OSM lists without contacts gets Wikidata's phone and website, each labelled: " + wdRow.slice(0, 200));
+  await p.waitForFunction(() => /Call centre: 1719/.test(document.getElementById("mp-fac").textContent), null, { timeout: 8000 }).catch(() => {});
+  const phRow = await p.evaluate(() => [...document.querySelectorAll("#mp-fac tbody tr")].map((r) => r.innerHTML).find((t) => /Trauma Test Hospital/.test(t)) || "");
+  ok(/Emergency: <a href="tel:027771669">02 777 1669<\/a> \(<a [^>]*href="https:\/\/trauma\.example\.org\/contact"[^>]*>the hospital's website<\/a>, read 2026-10-03\)/.test(phRow) && /Call centre: <a href="tel:1719">1719<\/a>/.test(phRow),
+    "phones: a hospital's emergency line and call centre from its own website, each with its page and date");
+  ok(!/02 000 0001/.test(await p.textContent("#mp-fac")) && /\+66 2 123 4567/.test(await p.textContent("#mp-fac")), "phones: a number OpenStreetMap lists is kept; the stored list only fills gaps");
+  ok(/OSAP stored list of hospitals' published phone numbers.*read 2026-10-03, numbers for 2 hospitals in the country/.test(await p.textContent("#mp-src")), "phones: the sources list names the stored phone list and its date");
   ok(/flight|kn/i.test(fac) && /at 120 kn/.test(fac), "desktop: flight time from the POI at the stated cruise speed");
   const rt = await p.textContent("#mp-rt");
   ok(/Primary: H3 Far North Hospital/.test(rt) && /Secondary: H2 Sourced Trauma Centre/.test(rt) && /Tertiary: H1 Trauma Test Hospital/.test(rt), "desktop: routes to the Primary, Secondary and Tertiary hospitals");
