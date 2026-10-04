@@ -28,6 +28,8 @@
 <script src="assets/osap-cf-sites.js"></script>
 <script src="assets/osap-tlreport.js"></script>
 <script src="assets/osap-areasum.js"></script>
+# on-device AI for the AI summaries: your AI server or OSAP's own model (assets/osap-ai.js; Settings > On-device AI)
+<script src="assets/osap-ai.js"></script>
 <script src="assets/osap-aoi.js"></script>
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
@@ -106,6 +108,7 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/osm-provider.js"></script>
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
 <script src="assets/osap-facility-intel.js"></script>
+<script src="assets/osap-medplan-decide.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
