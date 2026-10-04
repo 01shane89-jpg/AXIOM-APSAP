@@ -911,6 +911,8 @@
     "#medplan tr.mpoff td{opacity:.55}#medplan tr.mpoff td:first-child{opacity:1}#medplan .mpofftag{font-size:11.5px;font-weight:700;color:#8b0010}" +
     ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
     "#medplan .mpvs{display:inline-block;margin:2px 0 4px;padding:3px 8px;border-radius:4px;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}#medplan .mpvs-valid{background:#d3f0d8;color:#0b4d1c}#medplan .mpvs-warning{background:#ffe8a3;color:#5a3d00}#medplan .mpvs-blocking{background:#f8c9c4;color:#7a0d02}" +
+    "#medplan ul.mppic{list-style:none;margin:2px 0 6px;padding:0;display:grid;gap:4px}#medplan ul.mppic li{background:#ffe8a3;color:#3d2900;border-left:4px solid #a35f00;border-radius:4px;padding:5px 8px;font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+    "#medplan ul.mppic li b{display:block;font-size:13px;letter-spacing:.01em}#medplan ul.mppic li span{display:block;color:#3d2900}#medplan table.mpage tr.mpstale td,#medplan table.mpage tr.mpstale th{color:#8a4b00}:root[data-map=grey] #medplan table.mpage tr.mpstale td,:root[data-map=dark] #medplan table.mpage tr.mpstale td,:root[data-map=grey] #medplan table.mpage tr.mpstale th,:root[data-map=dark] #medplan table.mpage tr.mpstale th{color:#F5C877}" +
     "#medplan ul.mpvl{list-style:none;margin:0 0 4px;padding:0;columns:2 300px;column-gap:18px}#medplan ul.mpvl li{break-inside:avoid;margin:0 0 3px;font-size:12.5px}#medplan .mpvm{display:inline-block;width:1.2em;text-align:center;font-weight:700}#medplan .mpv-ok .mpvm{color:#1e7a3a}#medplan .mpv-warning .mpvm{color:#a35f00}#medplan .mpv-blocking{color:#8b0d02}#medplan .mpv-blocking .mpvm{color:#b3261e}" +
     "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
     "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}";
@@ -1010,6 +1012,7 @@
       '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label></div>" +
       '<p><b>Centred on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
       (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to centre the plan on it.</span>' : "") + "</p>" +
+      '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
       '<h3>Plan status</h3><div id="mp-val"></div>' +
       '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs">Looking up hospitals…</p></div>' +
       '<h3>1. Golden hour</h3><div id="mp-gh"></div>' +
@@ -1036,7 +1039,7 @@
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
     s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.pac = null; s.pacTok = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
-    s.ph = null; s.phErr = "";
+    s.ph = null; s.phErr = ""; s.wxAt = null; s.hwx = null;
     var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
     var phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
@@ -1097,7 +1100,7 @@
     facP.then(xGo, xGo);
     isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
-    weather(o).then(function (w) { if (ST !== s) return; s.wx = w; wxRender(); srcRender(); }, function (e) { if (ST !== s) return; s.wxErr = e.message; wxRender(); srcRender(); });
+    weather(o).then(function (w) { if (ST !== s) return; s.wx = w; s.wxAt = new Date().toISOString(); wxRender(); hlzWx(s); srcRender(); }, function (e) { if (ST !== s) return; s.wxErr = e.message; wxRender(); hlzWx(s); srcRender(); });
     if (fieldVals().oc) evac(s);
     srcRender();
   }
@@ -1936,6 +1939,63 @@
     el.innerHTML = (li.length ? "<ul>" + li.join("") + "</ul>" : '<p class="obs">OSAP holds no outbreak notice, travel health notice or health report for this country' + (t.period ? " for " + esc(t.period) : "") + ".</p>") +
       '<p class="obs">What each source reports, not confirmed. Check vaccinations, malaria prophylaxis, water and food safety, venomous animals and heat or cold injury for the area.</p>';
   }
+  /* ---------- the medical operational picture (Build Plan v2 phase 5) ----------
+     The forecast at the primary HLZ (its own forecast when it is more than 5 km from the point of injury, else the point of
+     injury's), and the date of every dataset the plan stands on, taken from the data itself, not from when this device
+     fetched it: a saved copy is never shown as live. The rules and flags are in assets/osap-medplan-model.js (picture). */
+  var HLZ_OWN_M = 5000, WX_STALE_H = 6, HOSP_STALE_H = 35 * 24, HAZ_STALE_H = 6;
+  function hlzWx(s) {
+    var g = parseGrid(fieldVals().hlz1), key = g ? g[0].toFixed(3) + "," + g[1].toFixed(3) : "poi";
+    if (s.hwx && s.hwx.key === key) return;
+    if (!g || hav(g, s.o) <= HLZ_OWN_M) {
+      s.hwx = { key: key, hlz: !!g, name: g ? "the primary HLZ" : "the point of injury", mgrs: grid((g || s.o)[0], (g || s.o)[1]), own: false };
+      return valRender();
+    }
+    var x = s.hwx = { key: key, hlz: true, name: "the primary HLZ", mgrs: grid(g[0], g[1]), own: true, busy: true };
+    valRender();
+    weather(g).then(function (w) { if (ST !== s || s.hwx !== x) return; x.busy = false; x.days = w.days; x.at = new Date().toISOString(); valRender(); },
+      function (e) { if (ST !== s || s.hwx !== x) return; x.busy = false; x.err = e.message || "no answer"; valRender(); });
+  }
+  function hlzInput(s) {
+    var x = s.hwx; if (!x || x.busy) return null;
+    var src = x.own ? x : s.wx ? { days: s.wx.days, at: s.wxAt } : null, err = x.own ? x.err : s.wxErr;
+    if (!src && !err) return null;
+    return { name: x.name, hlz: x.hlz, mgrs: x.mgrs, at: src ? src.at || "" : "", err: err || "", basis: x.own ? "forecast at the HLZ" : x.hlz ? "point of injury forecast (HLZ within 5 km)" : "point of injury forecast (no HLZ grid)",
+      days: src ? src.days.map(function (d) { return { day: d.day, vis: d.vis, gust: d.gust, lc: d.lc }; }) : [] };
+  }
+  /* the oldest "as of" of the hazard feeds this device holds: the route hazards are no newer than that */
+  function feedAt(a) { var m = /^(\d{4}-\d\d-\d\d)[ T](\d\d:\d\d)/.exec(String(a || "")); return m ? m[1] + "T" + m[2] + ":00.000Z" : null; }
+  function dataAges(s) {
+    var R = [], now = new Date().toISOString();
+    if (s.fac) R.push(s.osmAt ? { key: "hospitals", label: "Hospital dataset", at: s.osmBase ? feedAt(s.osmBase) || new Date(s.osmAt).toISOString() : new Date(s.osmAt).toISOString(), basis: "live read from OpenStreetMap", live: true, stale_h: HOSP_STALE_H } :
+      { key: "hospitals", label: "Hospital dataset", at: s.stored && s.stored.at ? feedAt(s.stored.at) : null, basis: "OSAP's stored copy of OpenStreetMap", stale_h: HOSP_STALE_H });
+    if (s.pac && Object.keys(s.pac).some(function (k) { return s.pac[k].L; })) {
+      var F = [["ASAP_ROADS", "road notices"], ["ASAP_GDACS", "GDACS"], ["ASAP_QUAKES", "earthquakes"], ["ASAP_EONET", "storms"], ["ASAP_UCDP", "conflict events"]].filter(function (f) { return W[f[0]] && feedAt(W[f[0]].asof); });
+      var ats = F.map(function (f) { return feedAt(W[f[0]].asof); }).sort();
+      R.push({ key: "hazards", label: "Road hazards", at: ats[0] || null, basis: F.length ? "oldest of the feeds held on this device: " + F.map(function (f) { return f[1]; }).join(", ") : "no hazard feed loaded on this device", stale_h: HAZ_STALE_H });
+    }
+    if (s.wx || s.wxErr) R.push({ key: "weather", label: "Weather forecast", at: s.wxAt, basis: s.wxErr ? "not read: " + clip(s.wxErr, 80) : "live read from Open-Meteo", live: !!s.wxAt, stale_h: WX_STALE_H });
+    if (s.fac) {
+      var ids = picks(s).map(function (p) { return p.f.id; }), C = checks().filter(function (c) { return c && ids.indexOf(c.facility_id) >= 0 && c.now !== "unknown"; }).sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+      var nm = C[0] ? (s.fac.H.filter(function (f) { return f.id === C[0].facility_id; })[0] || {}).name : "";
+      R.push({ key: "verification", label: "Facility verification", at: C[0] ? C[0].at : null, expires_at: C[0] ? C[0].expires_at : null, basis: C[0] ? "newest planner's check, " + (nm || "a planned hospital") : "no planner's check of a planned hospital" });
+    }
+    var A = aircraft().filter(function (a) { return a.status === "CONFIRMED"; }).sort(function (a, b) { return String(b.last_confirmed).localeCompare(String(a.last_confirmed)); });
+    if (A.length) R.push({ key: "aircraft", label: "Aircraft confirmation", at: A[0].last_confirmed, expires_at: A[0].expires_at, basis: A[0].provider });
+    return R;
+  }
+  function picRender() {
+    var el = D.getElementById("mp-pic"), s = ST, pc = s && s.plan && s.plan.operational_picture; if (!el || !pc) return;
+    var F = pc.flags, A = pc.data_age;
+    el.innerHTML = (F.length ? '<ul class="mppic">' + F.map(function (f) { return '<li><b>' + esc(f.text) + "</b><span>" + esc(f.detail) + "</span></li>"; }).join("") + "</ul>" : '<p class="obs">No flags from the routes, forecast, aircraft or data dates (not a clearance).</p>') +
+      (s.hwx && s.hwx.busy ? '<p class="obs">Reading the forecast at the primary HLZ…</p>' : "") +
+      (A.length ? '<div class="mpscroll"><table class="mpage"><thead><tr><th scope="col">Data</th><th scope="col">Dated</th><th scope="col">Age</th><th scope="col">From</th></tr></thead><tbody>' + A.map(function (a) {
+        return '<tr class="' + (a.state === "CURRENT" ? "" : "mpstale") + '"><th scope="row">' + esc(a.label) + '</th><td class="n" data-l="Dated">' + (a.at ? esc(a.at.slice(0, 16).replace("T", " ") + "Z") : "–") + '</td><td class="n" data-l="Age">' +
+          esc(a.state === "NONE" ? "none" : (a.age_h < 1 ? "under 1 h" : a.age_h < 48 ? a.age_h + " h" : Math.round(a.age_h / 24) + " days") + (a.state === "STALE" ? (a.expires_at ? ", expired" : ", stale") : { live: ", live", record: ", in date", snapshot: ", snapshot" }[a.kind] || "")) + '</td><td data-l="From">' + esc(a.basis) + "</td></tr>";
+      }).join("") + "</tbody></table></div>" : "") +
+      '<p class="obs">' + (pc.offline ? "<b>This device is offline</b>: every dataset is the last copy saved on it. " : "") + "Flags from fixed rules (" + esc(pc.rule) + "): HLZ visibility under " + pc.rules.hlz_vis_m / 1000 + " km, gusts " + pc.rules.hlz_gust_kn + " kn or more or low cloud " + pc.rules.hlz_low_cloud_pct +
+      "% or more need an air evacuation review; " + pc.rules.rain_mm + " mm of rain or more may flood roads and landing zones; hazards are what OSAP holds within " + HAZ_KM + " km of the line. Each date is the data's own, not when this device fetched it. Prompts to check, never a clearance.</p>";
+  }
   function wxRender() {
     var el = D.getElementById("mp-wx"), s = ST; if (!el) return;
     if (s.wxErr) { el.innerHTML = '<p class="obs mpwarn">The forecast could not be read (' + esc(clip(s.wxErr, 140)) + "). Use the Weather tab.</p>"; return; }
@@ -2169,6 +2229,7 @@
     if (!s.x && !s.xErr) p.push("blood banks, chambers and air rescue bases");
     if (!s.ems && !s.emsErr) p.push("emergency numbers");
     if (!s.wx && !s.wxErr) p.push("weather");
+    if (s.hwx && s.hwx.busy) p.push("HLZ forecast");
     if (s.oc && !s.oc.dst) p.push("out-of-country destinations");
     return p;
   }
@@ -2207,6 +2268,8 @@
       air_bases: s.x ? s.x.R.slice(0, 3).map(function (b) { return { name: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "" }; }) : [],
       air_legs: s.fac && airOn() ? picks(s).map(function (p) { return { facility_id: p.f.id, s: Math.round(potTotal(p.f)), kn: num("rwkn"), base: m.b ? m.b.name : "no base" }; }) : [],
       weather: s.wx ? s.wx.days.map(function (x) { return { day: x.day, flags: wxFlags(x) }; }) : null,
+      weather_at: s.wxAt || "", weather_days: s.wx ? s.wx.days.map(function (x) { return { day: x.day, rain: x.rain }; }) : [],
+      hlz_wx: hlzInput(s), data_age: dataAges(s), offline: W.navigator && W.navigator.onLine === false,
       pending: pending(s),
       sources: srcList(s).map(function (x) { return { name: x[0].name, state: srcState(x[1]), note: x[1] }; })
     };
@@ -2224,7 +2287,7 @@
   }
   function valRender() {
     var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
-    s.plan = planNow(s); el.innerHTML = valHtml(s.plan);
+    s.plan = planNow(s); el.innerHTML = valHtml(s.plan); picRender();
     /* an open print view waiting on data rebuilds itself once the data is in */
     if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(); }
   }
@@ -2636,7 +2699,7 @@
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
     if (/^(ccp[12]|axp|hlz[12])$/.test(k)) siteDirty = true;
-    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); siteRender(); } srcRender(); }, 600);
+    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); siteRender(); if (ST && (ST.wx || ST.wxErr)) hlzWx(ST); } srcRender(); }, 600);
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
