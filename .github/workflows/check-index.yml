@@ -63,6 +63,7 @@ jobs:
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/guide_smoke.mjs
       - run: node tests/ai_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/period_smoke.mjs
