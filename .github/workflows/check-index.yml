@@ -87,6 +87,7 @@ jobs:
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
       - run: node tests/terrain_smoke.mjs
+      - run: node tests/selected_contrast_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs
