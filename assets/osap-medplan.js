@@ -87,6 +87,7 @@
     web: { name: "Hospitals' own websites, read automatically", url: "", note: "Quoted sentences in which a hospital states a service (tools/read_hospital_sites.mjs on GitHub Actions). The hospital's own claim: reported, not confirmed. News, job and procurement pages are left out." },
     osrm: { name: "Road routing: FOSSGIS OSRM, OSRM demo server, FOSSGIS Valhalla (first that answers)", url: "https://routing.openstreetmap.de/", note: "Road drive time without traffic, checkpoints or damage." },
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
+    ph: { name: "OSAP stored list of hospitals' published phone numbers", url: "", note: "Each number from an embassy's published hospital list, the hospital's own website (home or contact page) or Wikidata, read on GitHub Actions (tools/read_hospital_phones.mjs) and linked in the plan. Institutional numbers only: no mobile, fax or personal numbers. Used only where OpenStreetMap lists none." },
     wdh: { name: "Wikidata hospitals: phone (P1329), website (P856), beds (P6801)", url: "https://www.wikidata.org/wiki/Q16917", note: "Used only where OpenStreetMap has no value; matched by the OSM wikidata tag or within 300 m. Community data; confirm with the hospital." },
     wd: { name: "Wikidata emergency phone numbers (P2852)", url: "https://www.wikidata.org/wiki/Property:P2852", note: "Community data; confirm locally." },
     state: { name: "U.S. Department of State: emergencies abroad", url: STATE_EMERG.url },
@@ -380,6 +381,28 @@
   function hp(id) { var p = W.OSAP_HOSP && W.OSAP_HOSP.provider(id); if (!p) throw new Error("hospital data layer not loaded"); return p; }
   function loadSof(c) { return hp("sof").load(c); }
   function loadWeb(c) { return hp("web").load(c); }
+  /* hospitals' published phone numbers for a country (data/hospitals/<cc>/phones.json, tools/build_hospital_phones.mjs),
+     keyed by the OpenStreetMap entry; a country without the file has none (404), a failed read is reported */
+  var PHONES = {};
+  function loadPhones(c) {
+    if (!/^[a-z]{2,3}$/.test(c || "")) return Promise.resolve(null);
+    if (!PHONES[c]) PHONES[c] = getJSON((W.OSAP_HOSP_DATA || "data/hospitals/") + c + "/phones.json", 20000).then(function (j) { return j && j.schema === "osap-hospital-phones/1" ? j : null; }, function (e) {
+      delete PHONES[c]; if (/404/.test(e.message)) return null; throw e;
+    });
+    return PHONES[c];
+  }
+  function osmKey(f) { var m = /\/(node|way|relation)\/(\d+)$/.exec(f.osm || ""); return m ? m[1].charAt(0) + m[2] : ""; }
+  /* fills a hospital's phone, emergency number and call-centre line from the stored list where OpenStreetMap has none */
+  function applyPhones(s) {
+    var d = s.ph, n = 0; if (!d || !s.fac) return 0;
+    s.fac.H.forEach(function (f) {
+      var r = d.hospitals[osmKey(f)]; if (!r) return;
+      if (!f.phone && r.p) { f.phone = r.p.n; f.phs = r.p; n++; }
+      if (!f.ephone && r.e) { f.ephone = r.e.n; f.ephs = r.e; }
+      if (r.h && !f.hot) f.hot = r.h;
+    });
+    return n;
+  }
   /* the country's official hospital records (a tier-0 provider, Thailand first), indexed for the plan; GOV is the index in use */
   var GOV = null, GOV_P = null;
   function regProv(c) { var H = W.OSAP_HOSP; return H ? H.providers(c).filter(function (p) { return p.tier === 0 && p.index; })[0] || null : null; }
@@ -1000,7 +1023,9 @@
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
     s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
+    s.ph = null; s.phErr = "";
     var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
+    var phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
        live check); otherwise the live answer is added to it, and a failed live answer leaves the stored copy */
     var facP = storedFac(o, Math.max(rH, rA)).catch(function (e) { s.storedErr = e.message; return null; }).then(function (st) {
@@ -1024,6 +1049,7 @@
       s.fac = sortOsm(got ? got.els : [], o);
       s.fac.H = pickHosp(s.fac, o, rH, hosp); s.fac.H.sort(byCap); s.sofList = hosp;
       facRender(); airRender(); emsRender(); mevRender(); mapShow(); srcRender();
+      phP.then(function (d) { if (ST !== s) return; s.ph = d; s.phN = applyPhones(s); facRender(); pickRender(); srcRender(); });
       wdHosp(s, o, rH);
       return driveTimes(o, s.fac.H.concat(s.fac.C, s.fac.U)).then(function (host) {
         if (ST !== s) return; s.route = host; s.routeDone = true;
@@ -1318,15 +1344,18 @@
   function wdNote(f, what) {
     return f.wd && f.wd.used.indexOf(what) >= 0 ? " (" + link("https://www.wikidata.org/wiki/" + f.wd.q, "Wikidata " + f.wd.q) + ", " + esc(f.wd.how) + ")" : "";
   }
+  var PH_KIND = { embassy_list: "", hospital_website: "the hospital's website", wikidata: "" };
+  function phNote(r) { return r ? " (" + link(r.url, PH_KIND[r.src] || r.name) + ", read " + esc(r.at) + ")" : ""; }
   function ctHtml(f, src) {
     var bits = [];
     if (f.addr) bits.push("Address: " + esc(f.addr));
-    if (f.phone) bits.push('Phone: <a href="tel:' + esc(f.phone.replace(/[^0-9+]/g, "")) + '">' + esc(f.phone) + "</a>" + wdNote(f, "phone"));
-    if (f.ephone) bits.push('Emergency: <a href="tel:' + esc(f.ephone.replace(/[^0-9+]/g, "")) + '">' + esc(f.ephone) + "</a>");
+    if (f.phone) bits.push('Phone: <a href="tel:' + esc(f.phone.replace(/[^0-9+]/g, "")) + '">' + esc(f.phone) + "</a>" + (f.phs ? phNote(f.phs) : wdNote(f, "phone")));
+    if (f.ephone) bits.push('Emergency: <a href="tel:' + esc(f.ephone.replace(/[^0-9+]/g, "")) + '">' + esc(f.ephone) + "</a>" + phNote(f.ephs));
+    if (f.hot) bits.push('Call centre: <a href="tel:' + esc(f.hot.n) + '">' + esc(f.hot.n) + "</a>" + phNote(f.hot));
     if (f.web) bits.push(link(f.web, "Website") + wdNote(f, "website"));
     var from = src || (f.osm ? link(f.osm, "listed in OpenStreetMap") : f.src ? link(f.src, f.srcname || "source") : "");
-    if (!f.phone && !f.ephone && !/withheld/.test(f.name || "")) bits.push('<span class="obs">No published phone in ' + (f.osm ? "OpenStreetMap or Wikidata" : "the source") + (f.web ? "; see the website" : "") + "</span>");
-    return bits.length ? '<span class="mpct">' + bits.join(" · ") + (from && ((f.phone && !wdNote(f, "phone")) || f.ephone || f.addr) ? ' <span class="obs">(' + from + ")</span>" : "") + "</span>" : "";
+    if (!f.phone && !f.ephone && !/withheld/.test(f.name || "")) bits.push('<span class="obs">No published phone in ' + (f.osm ? "OpenStreetMap, Wikidata or OSAP's stored list" : "the source") + (f.web ? "; see the website" : "") + "</span>");
+    return bits.length ? '<span class="mpct">' + bits.join(" · ") + (from && ((f.phone && !wdNote(f, "phone") && !f.phs) || (f.ephone && !f.ephs) || f.addr) ? ' <span class="obs">(' + from + ")</span>" : "") + "</span>" : "";
   }
   function facRow(f, i, best, pre) {
     var mk = (pre || (f.kind === "hospital" ? "H" : "C")) + (i + 1), rw = num("rwkn");
@@ -1771,6 +1800,7 @@
     if (sofOf(s.cc)) li.push(srcLi(SRC.sof, "as of " + (sofOf(s.cc).asof || "")));
     if (s.gov || s.govErr) li.push(srcLi(SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")));
     if (s.web || s.webErr) li.push(srcLi(SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"));
+    if (s.ph || s.phErr) li.push(srcLi(SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"));
     li.push(srcLi(SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"));
     li.push(srcLi(SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"));
     if (s.fac) li.push(srcLi(SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) + "; filled gaps for " + s.wdN + " hospital" + (s.wdN === 1 ? "" : "s") : "reading…"));

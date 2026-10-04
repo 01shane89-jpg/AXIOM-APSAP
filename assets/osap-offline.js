@@ -92,11 +92,13 @@
   /* the stored hospital copy for this country, from its index, with its blood, chamber and air rescue file (assets/osap-medplan.js reads the same files) */
   function medFiles(c) {
     return fetch("data/medfac/index.json", { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-      var x = j && j.countries && j.countries[c]; return (x && x.tiles ? x.tiles.map(function (t) { return "data/medfac/t/" + t + ".json"; }) : []).concat(x && x.x ? ["data/medfac/x/" + c + ".json"] : []);
+      var x = j && j.countries && j.countries[c]; return (x && x.tiles ? x.tiles.map(function (t) { return "data/medfac/t/" + t + ".json"; }) : []).concat(x && x.x ? ["data/medfac/x/" + c + ".json"] : [])
+        /* the country's hospital records, website evidence and published phone numbers (a country without them answers 404, which is skipped) */
+        .concat(["registry", "web", "phones"].map(function (k) { return "data/hospitals/" + c + "/" + k + ".json"; }));
     }).catch(function () { return []; });
   }
   /* files only this country uses (deleting the country removes them; shared files stay) */
-  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp)/" + c + "\\.js$)").test(u); }
+  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|hospitals/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp)/" + c + "\\.js$)").test(u); }
 
   /* ---------- downloading ---------- */
   var JOB = null;
