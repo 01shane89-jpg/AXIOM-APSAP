@@ -2,9 +2,11 @@
    Messages in:  { cmd: "grid", gid, E, n, rowM }                        keep this elevation grid (one at a time)
                  { cmd: "run", gid, rid, o, coarse }                     viewshed on the kept grid; coarse = the quick first pass factor
                  { cmd: "los", gid, rid, a, b, o }                       line of sight between two grid points
-   Messages out: { rid, pass: "coarse" | "fine", res } | { rid, los } | { rid, error }
+                 { cmd: "slope", gid, rid, k }                           slope in degrees at every cell (+-k cells)
+   Messages out: { rid, pass: "coarse" | "fine", res } | { rid, los } | { rid, slope } | { rid, error } | { fatal: true } (the engine did not load)
    It never fetches anything: the elevation comes from the page's terrain provider. */
-importScripts("viewshed-engine.js");
+/* the engine could not load (no signal and no saved copy): say so, so the page works it out itself */
+try { importScripts("viewshed-engine.js"); } catch (e) { self.postMessage({ fatal: true }); self.close(); }
 var G = null;
 self.onmessage = function (e) {
   var m = e.data || {};
@@ -20,6 +22,9 @@ self.onmessage = function (e) {
       self.postMessage({ rid: m.rid, pass: "fine", f: 1, n: G.n, res: pack(r) }, [r.cls.buffer, r.blockD.buffer, r.obsMax.buffer]);
     } else if (m.cmd === "los") {
       self.postMessage({ rid: m.rid, los: self.OSAP_VS.los(G, m.a, m.b, m.o) });
+    } else if (m.cmd === "slope") {
+      var sl = self.OSAP_VS.slope(G, m.k);
+      self.postMessage({ rid: m.rid, slope: sl }, [sl.buffer]);
     }
   } catch (x) { self.postMessage({ rid: m.rid, error: String(x && x.message || x) }); }
 };
