@@ -476,6 +476,9 @@ async function openPlan(p) {
   const st = await p.evaluate(() => ({ t: document.getElementById("mp-sites").textContent, rows: document.querySelectorAll("#mp-sites tbody tr").length, val: document.getElementById("mp-val").textContent,
     kept: JSON.parse(localStorage.getItem(Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0])) }));
   ok(st.rows === 2 && /km [NESW]{1,2} of/.test(st.t) && st.kept.ccp1_st === "unusable" && st.kept.ccp1_note === "bridge out" && /checked not usable .*bridge out/.test(st.val), "phase 3: each point's status, capacity and notes are kept and the validation reads them " + JSON.stringify(st.val.slice(st.val.indexOf("Casualty collection"), st.val.indexOf("Casualty collection") + 120)));
+  const seeded = await p.evaluate(() => { const o = window.OSAP_ROUTE_SEED; let got = null; window.OSAP_ROUTE_SEED = (pts) => { got = pts; }; document.querySelector('#mp-sites [data-mp-siteroute="hlz1"]').click(); window.OSAP_ROUTE_SEED = o; return got; });
+  ok(seeded && seeded.length === 2 && Math.abs(seeded[1][0] - 13.74) > 0, "phase 3: Route to it hands the plan centre and the point to the Route tab " + JSON.stringify(seeded));
+  await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
