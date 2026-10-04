@@ -486,11 +486,11 @@ async function openPlan(p) {
   const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
     return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery"), or: row("Operating rooms"), s24: row("24-hour surgeon"), oh: row("Opening hours"),
       blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
-      ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: d.querySelectorAll("button,input,select").length, w: document.getElementById("mpa-map").naturalWidth }; });
+      ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: [...d.querySelectorAll("button,input,select")].filter((x) => !x.closest(".noprint")).length, w: document.getElementById("mpa-map").naturalWidth }; });
   ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
   ok(as.w >= 900, "assessment: has its own map " + as.w);
   ok(/^Yes/.test(as.ed) && /^300/.test(as.beds) && /Trauma Level IV \(official designation, reported\)/.test(as.cap) && /not yet verified with the designating authority/.test(as.cap), "assessment: emergency department, beds and the official designation as reported, with its source");
-  ok(as.h3.includes("Capability flags") && /^Observed T5/.test(as.cls) && /REPORTED, confidence LOW · OpenStreetMap emergency=yes/.test(as.flag) && /UNKNOWN No source states: 24\/7 emergency department, Trauma team/.test(as.unk), "assessment: capability flags with status, confidence and source; unknown listed as unknown: " + [as.cls, as.flag, as.unk.slice(0, 80)].join(" | "));
+  ok(as.h3.includes("Capability flags") && /^Observed T5/.test(as.cls) && /^V4 Community source REPORTED, confidence LOW · available now: UNKNOWN \(no planner's check\) · OpenStreetMap emergency=yes/.test(as.flag) && /^U Unknown No source states: 24\/7 emergency department, Trauma team/.test(as.unk), "assessment: capability flags with status, confidence and source; unknown listed as unknown: " + [as.cls, as.flag, as.unk.slice(0, 80)].join(" | "));
   ok(/^Not known/.test(as.icu) && /^Not known/.test(as.surg) && /^Not known/.test(as.blood) && /^Not known/.test(as.ct), "assessment: every gap says Not known (surgery, ICU, blood bank, CT/MRI)");
   ok(/^Not known/.test(as.or) && /^Not known/.test(as.s24) && /ask the hospital/.test(as.s24) && /^Not known/.test(as.oh), "assessment: operating rooms, 24-hour surgeon and opening hours rows, Not known where nothing is published");
   ok(/47P [A-Z]{2} \d{4} \d{4}/.test(as.mgrs) && /min/.test(as.road) && /golden hour/i.test(as.road) && /kn/.test(as.air), "assessment: MGRS, road and air times from the point of injury against the golden hour");
@@ -499,6 +499,28 @@ async function openPlan(p) {
   ok(/TRICARE status not known/.test(as.tc) && !/accept/i.test(as.tc.replace(/acceptance/g, "")) && as.tclinks >= 2, "assessment: TRICARE status not known, never assumed, with where to confirm: " + as.tc);
   ok(/Pacific Area regional call centre: \+65-6339-2676/.test(as.tc), "assessment: TRICARE line gives the Pacific call centre to confirm with");
   ok(as.btn === 0, "assessment: no buttons inside the printed pages");
+  // Phase 1: a planner's check, graded V1, with an expiring "available now"; it outranks the designation for the pick
+  const chk = async (cap, ex, now, extra) => p.evaluate(([cap, ex, now, extra]) => {
+    const f = document.querySelector("#brief form[data-mp-chk]"); f.elements.cap.value = cap; f.elements.exists.value = ex; f.elements.now.value = now; f.elements.method.value = "phone";
+    f.elements.role.value = (extra && extra.role) || "ED charge nurse"; f.elements.note.value = (extra && extra.note) || ""; f.elements.h.value = (extra && extra.h) || "24";
+    f.querySelector("button[type=submit]").click();
+    return { msg: (document.querySelector("#brief .mpchkmsg") || {}).textContent || "", flags: document.getElementById("mpa-caps").textContent, log: document.getElementById("mpa-chk").textContent, logHtml: document.getElementById("mpa-chk").innerHTML };
+  }, [cap, ex, now, extra]);
+  ok(await p.evaluate(() => /No planner has checked this hospital/.test(document.getElementById("mpa-chk").textContent) && document.querySelector("#brief form[data-mp-chk]").classList.contains("noprint")), "checks: none yet, and the form does not print");
+  let ck = await chk("dx.ct", "yes", "available", { note: "<b>CT up</b>" });
+  ok(/^Recorded CT,/.test(ck.msg) && /CTV1 Human verified VERIFIED, confidence HIGH · available now: AVAILABLE \(checked .* by phone call, ED charge nurse; expires/.test(ck.flags) && /Planner's check \(phone call\)/.test(ck.flags), "checks: a phone check makes CT V1 human verified and available now, with its expiry: " + ck.flags.slice(ck.flags.indexOf("CTV1"), ck.flags.indexOf("CTV1") + 160));
+  ok(/<b>CT up<\/b>/.test(ck.log) && /&lt;b&gt;CT up&lt;\/b&gt;/.test(ck.logHtml), "checks: a typed note is shown as text, never as markup");
+  ck = await chk("dx.ct", "no", "available");
+  ok(/^Not recorded: check cannot be available now when the hospital does not have it/.test(ck.msg), "DENY checks: available now but does not have it is refused");
+  ok(/Primary\s*H3 Far North Hospital/.test(await p.textContent("#mp-pst")), "checks: Far North is Primary before any check of its emergency department");
+  ck = await chk("ed.basic", "yes", "unavailable", { note: "ED closed for flooding" });
+  const pst2 = await p.textContent("#mp-pst");
+  ok(/available now: UNAVAILABLE/.test(ck.flags) && !/Primary\s*H3 Far North Hospital/.test(pst2), "checks: emergency department not available now takes Far North off Primary, even with its designation: " + pst2.slice(0, 120));
+  ck = await chk("ed.basic", "unknown", "unknown");
+  ok(/Primary\s*H3 Far North Hospital/.test(await p.textContent("#mp-pst")) && /replaced by a newer check/.test(ck.log) && /ED closed for flooding/.test(ck.log), "checks: \"not said\" for both undoes it; the older check stays listed as replaced");
+  const stored = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-medcheck-th") || "[]"));
+  ok(stored.length === 3 && stored.every((c) => c.by === "planner on this device" && c.expires_at && c.at) && stored[2].supersedes === stored[1].id, "checks: kept on this device as an append-only log, each naming the check it replaced");
+  ok(/Capabilities confirmed available now/.test(await p.textContent("#mp-val")), "checks: the plan status says whether the definitive facility's critical capabilities are confirmed available now");
   const aprn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpa-print").click(); setTimeout(() => res(false), 5000); }));
   ok(aprn, "assessment: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
@@ -722,8 +744,8 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   const b = await p.textContent("#brief"), h = await p.innerHTML("#brief");
   ok(/Official record/.test(b) && /99001/.test(b) && /Regional hospital/.test(b) && /A \(advanced: regional referral\)/.test(b) && /450 open, 500 registered/.test(b) && /Advanced HA accreditation \(x\), 2025-01-01 to 2028-12-31/.test(b), "official records: the assessment shows the H code, type, MOPH level, beds and HA accreditation");
   ok(/Stroke care/.test(b) && /Hip fracture surgery in older people[^<]*2021-01-01 to 2024-01-01 expired/.test(b), "official records: certified programmes are listed and a past end date reads expired");
-  ok(/<th scope="row">Stroke<\/th><td><b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
-  ok(/<th scope="row">Orthopaedic surgery<\/th><td><b>REPORTED<\/b>, confidence LOW[^<]*<a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
+  ok(/<th scope="row">Stroke<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>VERIFIED<\/b>, confidence HIGH/.test(h) && /HA Thailand open data: certifications test/.test(b) && /cccccccccccc/.test(b), "official records: a current certificate makes its capability VERIFIED at HIGH confidence, with the source and SHA-256");
+  ok(/<th scope="row">Orthopaedic surgery<\/th><td><span class="mpgrade mpg-v2"[^>]*>V2 Official source<\/span> <b>REPORTED<\/b>, confidence LOW · available now: <b>UNKNOWN<\/b> \(no planner's check\) · <a[^>]*>[^<]*<\/a> <code>[^<]*expired/.test(h), "official records: an expired certificate leaves its capability REPORTED at LOW confidence, marked expired");
   ok(!/<th scope="row">Cardiac catheterisation<\/th><td><b>(VERIFIED|NOT_AVAILABLE)/.test(h), "official records: no certificate is never read as no capability");
   ok(/450 open \(official record, H code 99001\)/.test(b) && /teaching or referral hospital: MOPH service level A/.test(b), "official records: beds open and the MOPH level A referral status come from the official record");
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>y<\/b>/.test(document.getElementById("brief").textContent)), "official records: registry text is shown as text, never as markup");
