@@ -1,14 +1,14 @@
 // Screenshots for the in-app user guide (assets/osap-guide.js), taken headless on a phone-sized screen.
 // Map tiles, routing and elevation come from the live services, so run it where the browser can reach them (the
 // "Guide screenshots" workflow does). Each picture is its own scene on a fresh page, so one failing scene leaves the rest.
-// Run from the repo root: node tools/guide_shots.mjs   (needs the playwright package and Chromium; OUT=dir, default guide-shots;
-// ONLY=name,name to take some scenes only). The pictures are then shrunk to JPEG and saved as assets/guide/<name>.jpg.
+// Run from the repo root: node tools/guide_shots.mjs   (needs the playwright package and Chromium; OUT=dir, default
+// assets/guide; ONLY=name,name to take some scenes only). Each picture is a 546 px wide JPEG, assets/guide/<name>.jpg.
 import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
 
-const OUT = process.env.OUT || "guide-shots";
+const OUT = process.env.OUT || "assets/guide";
 const ONLY = (process.env.ONLY || "").split(",").filter(Boolean);
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".webp": "image/webp" };
 const root = process.cwd();
@@ -21,7 +21,7 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 await mkdir(OUT, { recursive: true });
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: "block", locale: "en-GB", timezoneId: "Asia/Bangkok" });
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1.4, isMobile: true, hasTouch: true, serviceWorkers: "block", locale: "en-GB", timezoneId: "Asia/Bangkok" });
 // Chiang Mai: hills for the terrain tools, hospitals for the medical plan, roads for routes
 const AT = [18.79, 98.98];
 const seed = (home) => ctx.addInitScript((h) => {
@@ -93,7 +93,7 @@ for (const [name, run] of Object.entries(SCENES)) {
   try {
     p = await run();
     await p.waitForTimeout(1500);
-    await p.screenshot({ path: `${OUT}/${name}.png` });
+    await p.screenshot({ path: `${OUT}/${name}.jpg`, type: "jpeg", quality: 72 });
     console.log("PASS", name);
   } catch (e) { fails++; console.log("FAIL", name, e.message.split("\n")[0]); }
   if (p) await p.close();
