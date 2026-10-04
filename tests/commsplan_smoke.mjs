@@ -209,6 +209,47 @@ const pane = (p) => p.textContent("#cp-pane");
   ok(/Internet outages/.test(nt) && /REPORTED/.test(nt) && /IODA/.test(nt), "Networks: internet outages shown as a reported source");
   ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length > 0 && document.querySelector("#com-tg").getClientRects().length > 0), "Networks: mast and provider switches are here");
 
+  // route comms corridor (Coverage)
+  await tab(p, "coverage");
+  ok(/Route comms corridor/.test(await pane(p)) && await p.evaluate(() => { const a = document.querySelector("#cp-pane"), b = document.querySelector("#cp-comms"); return !!(b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING) || a.getBoundingClientRect().top >= b.getBoundingClientRect().top; }), "Coverage: corridor section shows below the phone signal check");
+  await p.evaluate(() => { try { localStorage.removeItem("osap-route-cur"); } catch (e) {} });
+  await p.click('[data-cpcr="run"]');
+  ok(/no planned route/i.test(await p.textContent("#cp-crout")), "corridor: no route says so");
+  await p.evaluate(() => localStorage.setItem("osap-route-cur", JSON.stringify({ wps: [{ lat: 13.75, lon: 100.5 }, { lat: 13.75, lon: 100.55 }, { lat: 13.78, lon: 100.55 }] })));
+  await p.fill("#cpcr-seg", "2");
+  await p.click('[data-cpcr="run"]');
+  await p.waitForFunction(() => document.querySelector(".cpstrip"), null, { timeout: 60000 });
+  const cr = await p.textContent("#cp-crout");
+  ok(/Good|Degraded|Likely none|Unknown/.test(cr) && /PACE/.test(cr) && /OBSERVED|REPORTED|MAPPED/.test(cr), "corridor: strip, ratings, PACE line and labelled sources");
+  ok((await p.evaluate(() => document.querySelectorAll(".cpstrip span").length)) === 5, "corridor: about 9 km in 2 km segments = 5 segments");
+  ok(await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l.options && l.options.weight === 7 && l.getLatLngs) n++; }); return n === 5; }), "corridor: segments drawn on the map");
+  await tab(p, "link");
+  ok(await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l.options && l.options.weight === 7 && l.getLatLngs) n++; }); return n === 0; }), "corridor: leaving Coverage takes it off the map");
+  await tab(p, "coverage");
+  ok((await p.evaluate(() => document.querySelectorAll(".cpstrip span").length)) === 5, "corridor: answer kept when coming back");
+  // the shared API: EPE segment format, unknown never 'none', abort
+  const api = await p.evaluate(async () => {
+    const CP = window.OSAP_COMMSPLAN, T = window.OSAP_COMMSTAB, real = T.evaluate;
+    const r1 = await CP.corridor([{ id: "opt1-L1-0", coords: [[13.75, 100.5]], km_from: 0, km_to: 0 }, { id: "opt1-L1-1", coords: [[13.75, 179.99], [13.75, 180.02]], km_from: 0, km_to: 3 }], { cc: "th" });
+    T.evaluate = () => Promise.resolve({ samples: [{ at: 0, v: { level: 0 }, meas: { ok: false } }, { at: 1000, v: { level: 1 }, meas: { ok: false } }], total: 1000, big: false, mastsOk: false });
+    const r2 = await CP.corridor([{ id: "x-L1-0", coords: [[13.75, 100.5], [13.76, 100.5]], km_from: 0, km_to: 1 }]);
+    T.evaluate = real;
+    const ac = new AbortController(); ac.abort(); let ab = "";
+    try { await CP.corridor([{ id: "y", coords: [[13.75, 100.5], [13.76, 100.5]], km_from: 0, km_to: 1 }], { signal: ac.signal }); } catch (e) { ab = e.name; }
+    return { r1, r2, ab };
+  });
+  ok(api.r1.length === 2 && api.r1[0].id === "opt1-L1-0" && api.r1[0].status === "unknown" && /fewer than two/.test(api.r1[0].reason), "corridor API: a one-point segment is unknown with the reason");
+  ok(["good", "degraded", "none", "unknown"].includes(api.r1[1].status) && api.r1[1].sources.every((s) => ["observed", "mapped", "modelled", "reported"].includes(s.kind)) && api.r1[1].sources.some((s) => s.kind === "reported"), "corridor API: a segment across 180° is checked, sources are typed, IODA is reported");
+  ok(api.r2[0].status === "unknown" && /cannot say/.test(api.r2[0].reason), "corridor API: nothing readable gives unknown, never none");
+  ok(api.ab === "AbortError", "corridor API: honours an aborted signal");
+  await p.click('[data-cpcr="clear"]');
+  // Route tab's "Comms along route" hands over
+  await p.evaluate(() => { window.OSAP_COMMSPLAN_WANT = "route"; window.TSAP.setView("map"); window.TSAP.setView("comms"); });
+  await p.waitForFunction(() => document.querySelector(".cpstrip"), null, { timeout: 60000 });
+  ok(await p.evaluate(() => window.OSAP_COMMSPLAN_WANT === null && document.querySelector('.cptabs [data-cptab="coverage"]').getAttribute("aria-selected") === "true"), "Comms along route: opens Coverage and runs the corridor");
+  if (OUT) await p.screenshot({ path: OUT + "/commsplan-corridor.png" });
+  await tab(p, "networks");
+
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 
   // last tab remembered

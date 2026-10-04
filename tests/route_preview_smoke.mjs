@@ -2,9 +2,11 @@
 // points (start, end, a long router turn, a bridge the route runs over but not one crossing over it, a town, fuel, a hospital,
 // a road closure OSAP holds) and interval points between them; it asks KartaView and Panoramax for each point, picks the best
 // picture, falls back to dated satellite where neither has one and when KartaView fails; it shows the capture date and age,
-// keeps the current status apart from the picture, offers Google Street View only as a link facing the route, lists the
-// storyboard and the coverage figures, steps with the keyboard, filters, previews a tapped place on the line, and offline
-// shows the map instead of claiming pictures. Every outside host is answered by made-up test data.
+// keeps the current status apart from the picture, offers Google Street View only as a link facing the route where no open
+// picture exists, lists the storyboard and the coverage figures, steps with the keyboard, filters, previews a tapped place on
+// the line, drives the route inside OSAP (street pictures in order, a 360° picture turned along the road, satellite where none,
+// the next turn and OSAP's reports ahead kept apart, the map's car marker in step), and offline shows the map instead of
+// claiming pictures. Every outside host is answered by made-up test data.
 // Run from the repo root: node tests/route_preview_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -66,7 +68,7 @@ async function open(offline) {
       }
       return J(r, { elements: [] });
     }
-    if (/openstreetcam\.org/.test(u)) {
+    if (/api\.openstreetcam\.org/.test(u)) {
       calls.kv++;
       const pd = new URLSearchParams(r.request().postData() || ""), lat = +pd.get("lat"), lon = +pd.get("lng"), t = tOf(lat);
       if (t > 0.5 && t < 0.72) return r.abort();               /* KartaView fails here: Panoramax must still be used */
@@ -135,10 +137,10 @@ let ctx, errors, p;
 
   /* the first point: KartaView picture with date, age, offset, attribution; Google is a link facing the route */
   await p.evaluate(() => document.querySelector('#rtpv [data-pvi="0"]').click()); await p.waitForTimeout(300);
-  let v = await p.evaluate(() => ({ t: document.querySelector("#rtpv .rtpv-view").textContent, tab: window.OSAP_PREVIEW.state().tab, g: document.querySelector("#rtpv .rtpv-ext").href, live: document.querySelector("#rtpv .rtpv-live").textContent }));
+  let v = await p.evaluate(() => ({ t: document.querySelector("#rtpv .rtpv-view").textContent, tab: window.OSAP_PREVIEW.state().tab, g: document.querySelector("#rtpv .rtpv-ext"), live: document.querySelector("#rtpv .rtpv-live").textContent }));
   ok(v.tab === "street" && /KartaView/.test(v.t) && /12 JUN 2026/.test(v.t) && /VISUAL REFERENCE/.test(v.t) && /may have changed/.test(v.t), "street picture shows provider, capture date and the visual-reference warning");
   ok(!/someone/.test(v.t), "the contributor's user name is not shown");
-  ok(/map_action=pano/.test(v.g) && /heading=1[89]\d/.test(v.g) && !/key=/.test(v.g), "Google Street View is a keyless link facing the route");
+  ok(!v.g, "where an open picture exists there is no link out to Google");
   if (OUT) await p.screenshot({ path: OUT + "/preview-street.png" });
 
   /* the bridge: the closure is shown as current status, apart from the picture */
@@ -157,6 +159,8 @@ let ctx, errors, p;
   await p.evaluate((i) => document.querySelector('#rtpv [data-pvi="' + i + '"]').click(), ni); await p.waitForTimeout(400);
   v = await p.evaluate(() => ({ t: document.querySelector("#rtpv .rtpv-view").textContent, c: document.querySelector("#rtpv .rtpv-chain").textContent, tab: window.OSAP_PREVIEW.state().tab, img: !!document.querySelector("#rtpv .rtpv-satw img") }));
   ok(v.tab === "sat" && v.img && /05 MAR 2026/.test(v.t) && /Street-level imagery unavailable here: using satellite/.test(v.c), "no street picture: satellite with its capture date, and the fallback said in words");
+  const g = await p.evaluate(() => { const a = document.querySelector("#rtpv .rtpv-ext"); return a ? { h: a.href, t: a.textContent } : null; });
+  ok(g && /map_action=pano/.test(g.h) && /heading=1[89]\d/.test(g.h) && !/key=/.test(g.h) && /leaves OSAP/.test(g.t), "only where no open picture exists: a keyless Google link facing the route, marked as leaving OSAP");
   await p.click('#rtpv [data-tab="terrain"]'); await p.waitForFunction(() => /Steepest/.test(document.querySelector("#rtpv .rtpv-view").textContent), null, { timeout: 10000 });
   ok(/SIMULATED TERRAIN VIEW/.test(await p.textContent("#rtpv .rtpv-view")), "terrain is labelled simulated");
   await p.click('#rtpv [data-tab="map"]'); await p.waitForFunction(() => /Highway 1/.test(document.querySelector("#rtpv .rtpv-view").textContent), null, { timeout: 10000 });
@@ -185,8 +189,69 @@ let ctx, errors, p;
   ok(s.pts[s.cur] && s.pts[s.cur].cat === "manual" && s.n === n0 + 1, "a tap on the route previews that place");
   ok((await p.evaluate(() => window.OSAP_ROUTETAB.state().wps.length)) === 2, "the tap did not add a waypoint");
   if (OUT) await p.screenshot({ path: OUT + "/preview-sat.png" });
+
+  /* Drive: the route played as street pictures inside OSAP */
+  await p.evaluate(() => document.querySelector('#rtpv [data-pvi="0"]').click()); await p.waitForTimeout(200);
+  const pages0 = ctx.pages().length;
+  await p.click('#rtpv [data-pv="drive"]');
+  await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d && d.on && d.kind === "street" && document.querySelector("#rtdv .rtdv-img"); }, null, { timeout: 15000 });
+  let d = (await st(p)).drive;
+  v = await p.evaluate(() => { const e = document.getElementById("rtdv"), r = e.getBoundingClientRect(), mr = window.__asapMap.getContainer().getBoundingClientRect(), pv = document.getElementById("rtpv").firstElementChild.getBoundingClientRect();
+    return { vis: !e.hidden && r.width > 300 && r.height > 300, over: r.left >= mr.left - 1 && r.right <= pv.left + 1, tag: e.querySelector(".rtdv-tag").textContent, img: getComputedStyle(e.querySelector(".rtdv-img")).backgroundImage, car: !!document.querySelector(".rtdv-car") }; });
+  ok(v.vis && v.over, "Drive fills the map area beside the preview, inside OSAP");
+  ok(d.prov === "kartaview" && /KartaView · captured 12 JUN 2026/.test(v.tag) && /Visual reference: how this looked then, not now/.test(v.tag) && /openstreetcam/.test(v.img), "each frame shows its picture with provider, capture date, age and the visual-reference note");
+  ok(v.car, "the map shows the car where the picture was taken");
+  ok(ctx.pages().length === pages0, "nothing opens outside OSAP");
+  const seek = (f) => p.evaluate((m) => { const r = document.querySelector("#rtdv .rtdv-rg"); r.value = m; r.dispatchEvent(new Event("change")); }, Math.round(f * TOT));
+  /* the next turn and OSAP's own reports ahead, kept apart from the picture */
+  await seek(0.27); await p.waitForFunction(() => /closed for repair/.test(document.querySelector("#rtdv .rtdv-live").textContent), null, { timeout: 8000 }).catch(() => {});
+  v = await p.evaluate(() => ({ live: document.querySelector("#rtdv .rtdv-live").textContent, tag: document.querySelector("#rtdv .rtdv-tag").textContent, next: document.querySelector("#rtdv .rtdv-next").textContent }));
+  ok(/OSAP reports ahead/.test(v.live) && /not the picture/.test(v.live) && /closed for repair/.test(v.live) && !/closed/.test(v.tag), "the closure ahead comes from OSAP's feeds, shown apart from the picture");
+  ok(/In .*:.*right/i.test(v.next) && /BRIDGE.*Test River Bridge/.test(v.next), "the next turn and the next critical point are shown (" + v.next.slice(0, 90) + ")");
+  /* a 360° picture is turned to look along the road and can be dragged round */
+  await seek(0.6); await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d.prov === "panoramax"; }, null, { timeout: 8000 }).catch(() => {});
+  d = (await st(p)).drive;
+  v = await p.evaluate(() => { const e = document.querySelector("#rtdv .rtdv-img.pano"); return { pano: !!e, bs: e ? e.style.backgroundSize : "", bp: e ? e.style.backgroundPosition : "", look: !document.querySelector('#rtdv [data-dv="look"]').hidden, tag: document.querySelector("#rtdv .rtdv-tag").textContent }; });
+  ok(d.pano && v.pano && /px/.test(v.bs) && v.look && /Panoramax · 360°/.test(v.tag) && /STALE/.test(v.tag), "a 360° Panoramax picture is shown as a view along the road, marked stale");
+  const box = await p.evaluate(() => { const r = document.querySelector("#rtdv .rtdv-pic").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+  await p.mouse.move(box[0], box[1]); await p.mouse.down(); await p.mouse.move(box[0] - 200, box[1], { steps: 4 }); await p.mouse.up();
+  const v2 = await p.evaluate(() => document.querySelector("#rtdv .rtdv-img.pano").style.backgroundPosition);
+  ok((await st(p)).drive.yaw > 10 && v2 !== v.bp, "dragging the 360° picture looks round");
+  await p.click('#rtdv [data-dv="look"]');
+  ok((await st(p)).drive.yaw === 0, "Look ahead turns the view back along the road");
+  /* where no street picture exists: satellite, dated, said in words */
+  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  d = (await st(p)).drive;
+  v = await p.evaluate(() => ({ tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: !!document.querySelector("#rtdv .rtpv-satw img") }));
+  ok(d.kind === "sat" && v.img && /No street pictures here · Satellite · captured 05 MAR 2026/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such");
+  ok(d.chunks.some((c) => c.st === "done" && c.n > 0) && d.chunks.some((c) => c.st === "done" && c.n === 0), "the route strip knows where pictures were and were not found");
+  /* it drives on its own */
+  await seek(0.02); await p.waitForTimeout(400);
+  await p.selectOption('#rtdv [data-dvs="spd"]', "8");
+  const m0 = (await st(p)).drive.m;
+  if (!(await st(p)).drive.playing) await p.click('#rtdv [data-dv="play"]');
+  await p.waitForTimeout(3500);
+  d = (await st(p)).drive;
+  ok(d.playing && d.m > m0 + 500, "Drive plays on along the route (" + Math.round(m0) + " → " + Math.round(d.m) + " m)");
+  const pc = (await st(p)).cur, ptm = (await st(p)).pts[pc].m;
+  ok(ptm <= d.m + 5, "the preview window follows the point the car has passed");
+  await p.click('#rtdv [data-dv="play"]');
+  ok(!(await st(p)).drive.playing, "Pause stops it");
+  await p.click('#rtdv [data-dv="pip"]'); await p.waitForTimeout(200);
+  v = await p.evaluate(() => { const e = document.getElementById("rtdv"), r = e.getBoundingClientRect(), mr = window.__asapMap.getContainer().getBoundingClientRect(); return { pip: e.classList.contains("pip"), small: r.width < mr.width * 0.6 }; });
+  ok(v.pip && v.small, "Map puts the picture in a corner so the map shows");
+  if (OUT) await p.screenshot({ path: OUT + "/drive-pip.png" });
+  await p.click('#rtdv [data-dv="pip"]'); await seek(0.6); await p.waitForTimeout(600);
+  if (OUT) await p.screenshot({ path: OUT + "/drive.png" });
+  await p.keyboard.press("Escape"); await p.waitForTimeout(200);
+  ok(!(await st(p)).drive.on && (await p.evaluate(() => document.getElementById("rtdv").hidden && window.OSAP_PREVIEW.isOpen())), "Escape leaves Drive and keeps the preview open");
   await p.click('#rtpv [data-pv="close"]'); await p.waitForTimeout(200);
   ok(!(await p.evaluate(() => window.OSAP_PREVIEW.isOpen() || document.documentElement.classList.contains("rtpv-on"))), "Close shuts the preview");
+  // Comms along route: opens Comms planning on Coverage and checks the route segment by segment
+  ok(await p.evaluate(() => !!document.querySelector('#rt-sum [data-rt="comms"]')), "Comms along route button sits with the route summary");
+  await p.click('#rt-sum [data-rt="comms"]');
+  await p.waitForFunction(() => document.documentElement.getAttribute("data-view") === "comms" && document.querySelector('.cptabs [data-cptab="coverage"][aria-selected="true"]') && document.querySelector("#cp-crout #cpcr-prog, #cp-crout .cpstrip"), null, { timeout: 30000 });
+  ok(true, "Comms along route opens Comms planning > Coverage and starts the corridor check");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 3).join(" | ") : ""));
   await ctx.close();
 }
