@@ -130,7 +130,23 @@
     return { E: E, n: nc, rowM: rowM, f: f };
   }
 
-  var API = { viewshed: viewshed, los: los, losAlong: losAlong, sample: sample, coarsen: coarsen, drop: drop, R_EARTH: R_EARTH, OUT: OUT, VIS: VIS, MASK: MASK, UNK: UNK, version: "osap-viewshed/1" };
+  /* Slope in degrees at every cell: the height difference across +-k cells east-west and north-south (the same method as the
+     landing zone finder, which uses about +-30 m), clamped at the grid's edge. NaN where a needed height has no value. */
+  function slope(g, k) {
+    var E = g.E, n = g.n, w = g.w || n, h = g.h || n, rowM = g.rowM, out = new Float32Array(w * h);
+    k = Math.max(1, Math.round(k || 1));
+    for (var y = 0; y < h; y++) {
+      var ya = Math.max(0, y - k), yb = Math.min(h - 1, y + k), cell = rowM[y];
+      for (var x = 0; x < w; x++) {
+        var xa = Math.max(0, x - k), xb = Math.min(w - 1, x + k);
+        var gx = (E[y * w + xb] - E[y * w + xa]) / ((xb - xa) * cell), gy = (E[yb * w + x] - E[ya * w + x]) / ((yb - ya) * cell);
+        out[y * w + x] = Math.atan(Math.sqrt(gx * gx + gy * gy)) * 180 / Math.PI;
+      }
+    }
+    return out;
+  }
+
+  var API = { viewshed: viewshed, los: los, losAlong: losAlong, slope: slope, sample: sample, coarsen: coarsen, drop: drop, R_EARTH: R_EARTH, OUT: OUT, VIS: VIS, MASK: MASK, UNK: UNK, version: "osap-viewshed/1" };
   root.OSAP_VS = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })(typeof self !== "undefined" ? self : this);
