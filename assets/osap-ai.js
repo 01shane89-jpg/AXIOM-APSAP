@@ -79,7 +79,7 @@
         ". In Chrome or Edge: click the icon left of the web address, Site settings, set \u201c" + (loopback(url) ? "Apps on device" : "Local network access") +
         "\u201d (or \u201cLocal network access\u201d) to Allow, reload OSAP and test again.";
       return timed(url + "/models", { method: "GET", mode: "no-cors", credentials: "omit", cache: "no-store" }, 8000).then(function () {
-        return host + " answered, but the browser cannot read the answer because CORS is off. LM Studio: Developer tab, Settings (next to the server switch), turn on \u201cEnable CORS\u201d, then stop and start the server. Ollama: set OLLAMA_ORIGINS to " + location.origin + " and restart it.";
+        return host + " answered, but the browser cannot read the answer because CORS is off. LM Studio: pick Developer at the bottom of its window, open the Developer tab, click Settings next to the server switch, turn on \u201cEnable CORS\u201d, then stop and start the server (or run: lms server start --cors). Ollama: set OLLAMA_ORIGINS to " + location.origin + " and restart it.";
       }, function () {
         var port = new URL(url).port || "80";
         return "Nothing answered at " + host + ". In LM Studio open the Developer tab and check Status says Running on port " + port + " with a model loaded" +
@@ -199,7 +199,7 @@
       (UI.models && UI.models.length ? '<datalist id="ai-models">' + UI.models.map(function (m) { return '<option value="' + esc(m) + '">'; }).join("") + "</datalist>" : "") +
       '<div class="aibtns"><button type="button" class="refresh" data-ai-test' + (UI.busy ? " disabled" : "") + ">Test and save</button>" + (L.url ? '<button type="button" data-ai-clear>Stop using it</button>' : "") + "</div>" +
       '<details class="ainote"><summary>How to turn the server on</summary>' +
-      "<p><b>LM Studio</b> (Mac, Windows, Linux): Developer tab, switch the server on, and in its Settings turn on Enable CORS. Address http://localhost:1234 on the same computer (/v1 is added for you). In Chrome or Edge, choose Allow when the browser asks to connect to apps or devices on your network.</p>" +
+      "<p><b>LM Studio</b> (Mac, Windows, Linux): pick Developer at the bottom of the window, open the Developer tab, switch the server on, and in Settings next to it turn on Enable CORS (or run: lms server start --cors). Address http://localhost:1234 on the same computer (/v1 is added for you). In Chrome or Edge, choose Allow when the browser asks to connect to apps or devices on your network.</p>" +
       "<p><b>Ollama</b>: start it with OLLAMA_ORIGINS set to " + esc(location.origin) + ". Address http://localhost:11434/v1.</p>" +
       "<p>From another device: Chrome and Edge can reach a plain http private address (192.168…) once allowed; Safari and Firefox need an https address, for example a Tailscale https name ending in .ts.net.</p>" +
       "<p>Phone apps (LM Studio's iPhone app and similar) cannot be used: they run no server that other apps can call, and iOS pauses them while OSAP is on screen. Use OSAP's own model below instead.</p></details></section>" +
