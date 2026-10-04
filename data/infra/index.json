@@ -1,13 +1,13 @@
 {
  "v": 1,
- "at": "2026-10-04T13:42Z",
+ "at": "2026-10-04T14:49Z",
  "sources": {
   "oa": {
    "name": "OurAirports",
    "lic": "Public domain",
    "link": "https://ourairports.com/data/",
    "ok": true,
-   "at": "2026-10-04T13:42Z",
+   "at": "2026-10-04T14:49Z",
    "n": 72074
   },
   "wpi": {
@@ -15,7 +15,7 @@
    "lic": "Public domain (U.S. Government)",
    "link": "https://msi.nga.mil/Publications/WPI",
    "ok": true,
-   "at": "2026-10-04T13:42Z",
+   "at": "2026-10-04T14:49Z",
    "n": 2858
   },
   "locode": {
@@ -23,7 +23,7 @@
    "lic": "Free reuse (UNECE)",
    "link": "https://unece.org/trade/uncefact/unlocode",
    "ok": true,
-   "at": "2026-10-04T13:42Z",
+   "at": "2026-10-04T14:49Z",
    "n": 11611
   },
   "osm": {
@@ -31,21 +31,23 @@
    "lic": "ODbL",
    "link": "https://www.openstreetmap.org/copyright",
    "ok": true,
-   "at": "2026-10-04T13:42Z",
-   "n": 755,
+   "at": "2026-10-04T14:49Z",
+   "n": 93281,
    "cover": {
-    "tiles": 8,
-    "of": 216,
-    "fresh": 8
+    "tiles": 106,
+    "of": 108,
+    "fresh": 106
    }
   },
   "wd": {
    "name": "Wikidata",
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q12323",
-   "ok": true,
+   "ok": false,
    "at": "2026-10-04T13:42Z",
-   "n": 74606
+   "n": 5910,
+   "err": "Bad control character in string literal in JSON at position 29735155",
+   "tried": "2026-10-04T14:49Z"
   },
   "tg": {
    "name": "TeleGeography Submarine Cable Map",
@@ -53,7 +55,7 @@
    "nc": true,
    "link": "https://www.submarinecablemap.com/",
    "ok": true,
-   "at": "2026-10-04T13:42Z",
+   "at": "2026-10-04T14:49Z",
    "n": 3287
   }
  },
@@ -62,261 +64,276 @@
    "af": 2
   },
   "ae": {
-   "af": 297,
-   "port": 41,
-   "dam": 7,
+   "af": 304,
+   "port": 75,
+   "dam": 78,
    "lp": 9,
    "cable": 20
   },
   "af": {
-   "af": 76,
-   "port": 2
+   "af": 80,
+   "port": 4,
+   "dam": 28
   },
   "ag": {
-   "af": 5,
+   "af": 6,
    "port": 3,
    "lp": 3,
    "cable": 3
   },
   "al": {
    "af": 12,
-   "port": 7,
-   "dam": 4,
+   "port": 29,
+   "dam": 8,
    "lp": 2,
    "cable": 3
   },
   "am": {
-   "af": 12,
-   "dam": 1
+   "af": 14,
+   "dam": 4
   },
   "ao": {
-   "af": 115,
-   "port": 34,
-   "dam": 1,
+   "af": 134,
+   "port": 43,
+   "dam": 15,
    "lp": 7,
    "cable": 5
   },
   "ar": {
-   "af": 967,
-   "port": 96,
-   "dam": 10,
+   "af": 1053,
+   "port": 142,
+   "dam": 160,
    "lp": 3,
    "cable": 8
   },
   "at": {
    "af": 188,
    "port": 106,
-   "dam": 1
+   "dam": 90
   },
   "au": {
-   "af": 2683,
-   "port": 239,
-   "dam": 58,
+   "af": 3257,
+   "port": 619,
+   "dam": 298,
    "lp": 28,
    "cable": 35
   },
   "az": {
-   "af": 38,
-   "port": 4,
+   "af": 44,
+   "port": 12,
+   "dam": 14,
    "lp": 1,
    "cable": 1
   },
   "ba": {
    "af": 25,
-   "port": 10,
-   "dam": 2
+   "port": 17,
+   "dam": 30
   },
   "bb": {
    "af": 2,
    "port": 1,
+   "dam": 1,
    "lp": 3,
    "cable": 2
   },
   "bd": {
-   "af": 53,
-   "port": 7,
+   "af": 58,
+   "port": 257,
+   "dam": 23,
    "lp": 2,
    "cable": 4
   },
   "be": {
    "af": 163,
    "port": 458,
-   "dam": 4,
+   "dam": 19,
    "lp": 2,
    "cable": 4
   },
   "bf": {
-   "af": 49,
+   "af": 51,
    "port": 1,
-   "dam": 1
+   "dam": 7
   },
   "bg": {
    "af": 120,
-   "port": 18,
-   "dam": 6,
+   "port": 26,
+   "dam": 15,
    "lp": 3,
    "cable": 3
   },
   "bh": {
-   "af": 21,
+   "af": 22,
    "port": 5,
    "lp": 3,
    "cable": 6
   },
   "bi": {
    "af": 6,
-   "port": 1
+   "port": 3
   },
   "bj": {
-   "af": 10,
-   "port": 1,
+   "af": 11,
+   "port": 46,
+   "dam": 1,
    "lp": 1,
    "cable": 3
   },
   "bn": {
-   "af": 16,
-   "port": 5,
+   "af": 17,
+   "port": 7,
    "lp": 3,
    "cable": 5
   },
   "bo": {
-   "af": 205,
-   "port": 13
+   "af": 248,
+   "port": 38,
+   "dam": 608
   },
   "br": {
-   "af": 7746,
-   "port": 220,
-   "dam": 638,
+   "af": 8040,
+   "port": 839,
+   "dam": 1129,
    "lp": 75,
    "cable": 26
   },
   "bs": {
-   "af": 66,
+   "af": 70,
    "port": 23,
    "lp": 21,
    "cable": 5
   },
   "bt": {
-   "af": 12
+   "af": 12,
+   "dam": 3
   },
   "bw": {
-   "af": 129,
-   "port": 2
+   "af": 168,
+   "port": 3,
+   "dam": 5
   },
   "by": {
-   "af": 48,
-   "port": 6
+   "af": 54,
+   "port": 14,
+   "dam": 13
   },
   "bz": {
-   "af": 33,
+   "af": 46,
    "port": 3,
+   "dam": 3,
    "lp": 3,
    "cable": 1
   },
   "ca": {
-   "af": 2484,
-   "port": 510,
-   "dam": 438,
+   "af": 2571,
+   "port": 771,
+   "dam": 1303,
    "lp": 158,
    "cable": 22
   },
   "cd": {
-   "af": 270,
-   "port": 6,
+   "af": 429,
+   "port": 32,
+   "dam": 19,
    "lp": 5,
    "cable": 5
   },
   "cf": {
-   "af": 43,
-   "port": 1,
+   "af": 58,
+   "port": 5,
    "dam": 1
   },
   "cg": {
-   "af": 56,
-   "port": 9,
+   "af": 63,
+   "port": 14,
+   "dam": 5,
    "lp": 1,
    "cable": 2
   },
   "ch": {
    "af": 121,
    "port": 63,
-   "dam": 13
+   "dam": 107
   },
   "ci": {
-   "af": 30,
-   "port": 12,
+   "af": 35,
+   "port": 46,
+   "dam": 15,
    "lp": 1,
    "cable": 5
   },
   "cl": {
-   "af": 522,
-   "port": 107,
-   "dam": 8,
+   "af": 572,
+   "port": 320,
+   "dam": 32,
    "lp": 19,
    "cable": 9
   },
   "cm": {
-   "af": 45,
-   "port": 5,
-   "dam": 2,
+   "af": 55,
+   "port": 10,
+   "dam": 34,
    "lp": 3,
    "cable": 5
   },
   "cn": {
-   "af": 845,
-   "port": 406,
-   "dam": 27,
+   "af": 1097,
+   "port": 1855,
+   "dam": 1000,
    "lp": 27,
    "cable": 22
   },
   "co": {
-   "af": 722,
-   "port": 21,
+   "af": 1174,
+   "port": 22,
+   "dam": 53,
    "lp": 10,
    "cable": 11
   },
   "cr": {
-   "af": 140,
+   "af": 148,
    "port": 53,
-   "dam": 1,
+   "dam": 12,
    "lp": 2,
    "cable": 3
   },
   "cu": {
-   "af": 124,
+   "af": 134,
    "port": 26,
-   "dam": 2,
+   "dam": 17,
    "lp": 4,
    "cable": 4
   },
   "cv": {
-   "af": 8,
-   "port": 2,
+   "af": 10,
+   "port": 8,
    "lp": 10,
    "cable": 6
   },
   "cy": {
    "af": 87,
-   "port": 14,
-   "dam": 22,
+   "port": 15,
+   "dam": 52,
    "lp": 4,
    "cable": 14
   },
   "cz": {
    "af": 379,
    "port": 68,
-   "dam": 23
+   "dam": 81
   },
   "de": {
    "af": 1315,
-   "port": 654,
-   "dam": 40,
+   "port": 655,
+   "dam": 212,
    "lp": 9,
    "cable": 10
   },
   "dj": {
-   "af": 16,
-   "port": 3,
+   "af": 24,
+   "port": 7,
+   "dam": 3,
    "lp": 2,
    "cable": 12
   },
@@ -333,21 +350,23 @@
    "cable": 2
   },
   "do": {
-   "af": 41,
+   "af": 44,
    "port": 21,
+   "dam": 18,
    "lp": 5,
    "cable": 10
   },
   "dz": {
-   "af": 110,
-   "port": 23,
-   "dam": 8,
+   "af": 126,
+   "port": 41,
+   "dam": 29,
    "lp": 5,
    "cable": 6
   },
   "ec": {
-   "af": 349,
-   "port": 29,
+   "af": 357,
+   "port": 98,
+   "dam": 35,
    "lp": 4,
    "cable": 5
   },
@@ -359,37 +378,43 @@
    "cable": 7
   },
   "eg": {
-   "af": 134,
-   "port": 43,
+   "af": 148,
+   "port": 78,
+   "dam": 4,
    "lp": 9,
    "cable": 24
   },
   "eh": {
-   "af": 29
+   "af": 30
   },
   "er": {
-   "af": 19,
-   "port": 2
+   "af": 29,
+   "port": 3,
+   "dam": 3
   },
   "es": {
-   "af": 552,
-   "port": 340,
-   "dam": 53,
+   "af": 564,
+   "port": 486,
+   "dam": 565,
    "lp": 48,
    "cable": 37
   },
   "et": {
-   "af": 59
+   "af": 73,
+   "port": 8,
+   "dam": 45
   },
   "fi": {
    "af": 115,
-   "port": 204,
+   "port": 206,
+   "dam": 37,
    "lp": 11,
    "cable": 14
   },
   "fj": {
-   "af": 33,
-   "port": 14,
+   "af": 36,
+   "port": 28,
+   "dam": 3,
    "lp": 3,
    "cable": 8
   },
@@ -400,22 +425,23 @@
    "cable": 4
   },
   "fr": {
-   "af": 1673,
-   "port": 801,
-   "dam": 35,
+   "af": 1677,
+   "port": 963,
+   "dam": 506,
    "lp": 29,
    "cable": 38
   },
   "ga": {
-   "af": 43,
-   "port": 10,
+   "af": 51,
+   "port": 17,
+   "dam": 3,
    "lp": 2,
    "cable": 5
   },
   "gb": {
-   "af": 1219,
-   "port": 1049,
-   "dam": 39,
+   "af": 1248,
+   "port": 1465,
+   "dam": 184,
    "lp": 125,
    "cable": 65
   },
@@ -426,231 +452,247 @@
    "cable": 2
   },
   "ge": {
-   "af": 44,
-   "port": 5,
-   "dam": 8,
+   "af": 45,
+   "port": 9,
+   "dam": 23,
    "lp": 1,
    "cable": 3
   },
   "gh": {
-   "af": 18,
-   "port": 2,
+   "af": 19,
+   "port": 9,
+   "dam": 15,
    "lp": 1,
    "cable": 6
   },
   "gm": {
    "af": 1,
-   "port": 2,
+   "port": 12,
    "lp": 1,
    "cable": 1
   },
   "gn": {
-   "af": 18,
-   "port": 12,
+   "af": 19,
+   "port": 26,
+   "dam": 8,
    "lp": 1,
    "cable": 1
   },
   "gq": {
    "af": 8,
-   "port": 8,
+   "port": 11,
+   "dam": 2,
    "lp": 3,
    "cable": 4
   },
   "gr": {
    "af": 146,
-   "port": 321,
-   "dam": 5,
+   "port": 580,
+   "dam": 67,
    "lp": 35,
    "cable": 19
   },
   "gt": {
-   "af": 63,
-   "port": 5,
+   "af": 104,
+   "port": 32,
+   "dam": 15,
    "lp": 2,
    "cable": 5
   },
   "gw": {
    "af": 10,
-   "port": 9,
+   "port": 24,
    "lp": 1,
    "cable": 1
   },
   "gy": {
-   "af": 59,
-   "port": 5,
+   "af": 68,
+   "port": 26,
    "lp": 1,
    "cable": 3
   },
   "hn": {
-   "af": 136,
+   "af": 147,
    "port": 6,
+   "dam": 8,
    "lp": 3,
    "cable": 3
   },
   "hr": {
    "af": 65,
-   "port": 160,
+   "port": 228,
+   "dam": 65,
    "lp": 2,
    "cable": 2
   },
   "ht": {
    "af": 19,
    "port": 6,
+   "dam": 1,
    "lp": 2,
    "cable": 2
   },
   "hu": {
    "af": 128,
    "port": 50,
-   "dam": 1
+   "dam": 45
   },
   "id": {
-   "af": 686,
-   "port": 235,
-   "dam": 34,
+   "af": 860,
+   "port": 673,
+   "dam": 306,
    "lp": 146,
    "cable": 75
   },
   "ie": {
-   "af": 116,
-   "port": 70,
+   "af": 123,
+   "port": 122,
+   "dam": 8,
    "lp": 14,
    "cable": 15
   },
   "il": {
-   "af": 52,
-   "port": 14,
+   "af": 65,
+   "port": 19,
+   "dam": 12,
    "lp": 8,
    "cable": 7
   },
   "in": {
-   "af": 621,
-   "port": 79,
-   "dam": 243,
+   "af": 715,
+   "port": 640,
+   "dam": 726,
    "lp": 26,
    "cable": 24
   },
   "iq": {
-   "af": 85,
-   "port": 16,
-   "dam": 1,
+   "af": 108,
+   "port": 26,
+   "dam": 91,
    "lp": 1,
    "cable": 3
   },
   "ir": {
-   "af": 325,
-   "port": 32,
-   "dam": 2,
+   "af": 397,
+   "port": 58,
+   "dam": 209,
    "lp": 7,
    "cable": 6
   },
   "is": {
-   "af": 78,
-   "port": 33,
-   "dam": 1,
+   "af": 91,
+   "port": 74,
+   "dam": 6,
    "lp": 3,
    "cable": 4
   },
   "it": {
    "af": 1028,
-   "port": 280,
-   "dam": 13,
+   "port": 326,
+   "dam": 331,
    "lp": 54,
    "cable": 37
   },
   "jm": {
-   "af": 22,
+   "af": 23,
    "port": 6,
+   "dam": 4,
    "lp": 9,
    "cable": 6
   },
   "jo": {
-   "af": 24,
-   "port": 2,
-   "dam": 1,
+   "af": 30,
+   "port": 5,
+   "dam": 6,
    "lp": 1,
    "cable": 5
   },
   "jp": {
-   "af": 3325,
-   "port": 251,
-   "dam": 1742,
+   "af": 3359,
+   "port": 797,
+   "dam": 2109,
    "lp": 68,
    "cable": 47
   },
   "ke": {
-   "af": 345,
-   "port": 6,
-   "dam": 1,
+   "af": 415,
+   "port": 29,
+   "dam": 76,
    "lp": 3,
    "cable": 10
   },
   "kg": {
-   "af": 25
+   "af": 36,
+   "port": 1,
+   "dam": 16
   },
   "kh": {
-   "af": 17,
-   "port": 3,
+   "af": 20,
+   "port": 41,
+   "dam": 13,
    "lp": 1,
    "cable": 3
   },
   "ki": {
    "af": 21,
-   "port": 9,
+   "port": 14,
    "lp": 2,
    "cable": 2
   },
   "km": {
    "af": 3,
-   "port": 5,
+   "port": 12,
    "lp": 4,
    "cable": 5
   },
   "kn": {
-   "af": 4,
+   "af": 5,
    "port": 3,
+   "dam": 1,
    "lp": 3,
    "cable": 3
   },
   "kp": {
-   "af": 87,
-   "port": 18,
-   "dam": 1
+   "af": 99,
+   "port": 22,
+   "dam": 47
   },
   "kr": {
-   "af": 1384,
-   "port": 72,
-   "dam": 2,
+   "af": 1403,
+   "port": 359,
+   "dam": 84,
    "lp": 10,
    "cable": 10
   },
   "kw": {
-   "af": 46,
-   "port": 9,
+   "af": 47,
+   "port": 11,
    "lp": 2,
    "cable": 5
   },
   "kz": {
-   "af": 168,
-   "port": 3,
-   "dam": 2,
+   "af": 187,
+   "port": 18,
+   "dam": 33,
    "lp": 1,
    "cable": 1
   },
   "la": {
-   "af": 20,
-   "port": 1,
-   "dam": 1
+   "af": 25,
+   "port": 20,
+   "dam": 40
   },
   "lb": {
-   "af": 35,
+   "af": 37,
    "port": 9,
+   "dam": 5,
    "lp": 4,
    "cable": 4
   },
   "lc": {
    "af": 2,
    "port": 2,
+   "dam": 1,
    "lp": 2,
    "cable": 1
   },
@@ -658,49 +700,53 @@
    "af": 2
   },
   "lk": {
-   "af": 37,
-   "port": 6,
-   "dam": 1,
+   "af": 39,
+   "port": 17,
+   "dam": 31,
    "lp": 4,
    "cable": 9
   },
   "lr": {
-   "af": 19,
-   "port": 5,
+   "af": 20,
+   "port": 7,
+   "dam": 2,
    "lp": 1,
    "cable": 1
   },
   "ls": {
-   "af": 34,
-   "dam": 2
+   "af": 45,
+   "dam": 9
   },
   "lt": {
    "af": 65,
    "port": 4,
-   "dam": 1,
+   "dam": 4,
    "lp": 2,
    "cable": 3
   },
   "lu": {
    "af": 14,
-   "port": 4
+   "port": 4,
+   "dam": 5
   },
   "lv": {
    "af": 60,
    "port": 12,
+   "dam": 5,
    "lp": 2,
    "cable": 3
   },
   "ly": {
-   "af": 75,
-   "port": 18,
+   "af": 84,
+   "port": 19,
+   "dam": 9,
    "lp": 14,
    "cable": 6
   },
   "ma": {
-   "af": 38,
-   "port": 26,
-   "dam": 7,
+   "af": 45,
+   "port": 65,
+   "dam": 56,
    "lp": 9,
    "cable": 10
   },
@@ -712,130 +758,142 @@
   },
   "md": {
    "af": 12,
-   "dam": 1
+   "dam": 4
   },
   "me": {
    "af": 7,
-   "port": 10
+   "port": 18,
+   "dam": 2
   },
   "mg": {
-   "af": 93,
-   "port": 15,
+   "af": 114,
+   "port": 35,
+   "dam": 11,
    "lp": 4,
    "cable": 5
   },
   "mh": {
-   "af": 33,
-   "port": 3,
+   "af": 34,
+   "port": 4,
    "lp": 2,
    "cable": 2
   },
   "mk": {
    "af": 27,
-   "port": 4,
-   "dam": 2
+   "port": 8,
+   "dam": 13
   },
   "ml": {
-   "af": 33,
-   "dam": 1
+   "af": 43,
+   "port": 15,
+   "dam": 9
   },
   "mm": {
-   "af": 80,
-   "port": 6,
+   "af": 89,
+   "port": 149,
+   "dam": 111,
    "lp": 2,
    "cable": 3
   },
   "mn": {
-   "af": 37,
-   "port": 2
+   "af": 39,
+   "port": 4,
+   "dam": 1
   },
   "mr": {
-   "af": 28,
-   "port": 4,
+   "af": 32,
+   "port": 15,
+   "dam": 35,
    "lp": 2,
    "cable": 2
   },
   "mt": {
    "af": 3,
-   "port": 12,
+   "port": 27,
    "lp": 7,
    "cable": 8
   },
   "mu": {
    "af": 8,
-   "port": 3,
+   "port": 8,
+   "dam": 4,
    "lp": 4,
    "cable": 4
   },
   "mv": {
    "af": 31,
-   "port": 15,
+   "port": 26,
    "lp": 17,
    "cable": 11
   },
   "mw": {
-   "af": 27,
-   "port": 2
+   "af": 34,
+   "port": 15,
+   "dam": 14
   },
   "mx": {
-   "af": 2079,
-   "port": 97,
-   "dam": 4,
+   "af": 2111,
+   "port": 151,
+   "dam": 147,
    "lp": 14,
    "cable": 10
   },
   "my": {
-   "af": 122,
-   "port": 87,
-   "dam": 1,
+   "af": 127,
+   "port": 278,
+   "dam": 59,
    "lp": 21,
    "cable": 30
   },
   "mz": {
-   "af": 95,
-   "port": 13,
+   "af": 119,
+   "port": 14,
+   "dam": 3,
    "lp": 3,
    "cable": 4
   },
   "na": {
-   "af": 295,
-   "port": 3,
+   "af": 507,
+   "port": 5,
+   "dam": 9,
    "lp": 1,
    "cable": 2
   },
   "ne": {
-   "af": 26
+   "af": 39,
+   "dam": 1
   },
   "ng": {
-   "af": 67,
-   "port": 23,
-   "dam": 9,
+   "af": 89,
+   "port": 178,
+   "dam": 27,
    "lp": 2,
    "cable": 8
   },
   "ni": {
-   "af": 39,
+   "af": 55,
    "port": 8,
-   "dam": 3,
+   "dam": 34,
    "lp": 2
   },
   "nl": {
    "af": 236,
    "port": 359,
-   "dam": 1,
+   "dam": 6,
    "lp": 8,
    "cable": 12
   },
   "no": {
-   "af": 271,
-   "port": 599,
-   "dam": 3,
+   "af": 272,
+   "port": 603,
+   "dam": 259,
    "lp": 42,
    "cable": 17
   },
   "np": {
-   "af": 65,
-   "port": 1
+   "af": 69,
+   "port": 1,
+   "dam": 26
   },
   "nr": {
    "af": 1,
@@ -844,74 +902,77 @@
    "cable": 1
   },
   "nz": {
-   "af": 320,
-   "port": 45,
-   "dam": 10,
+   "af": 419,
+   "port": 149,
+   "dam": 41,
    "lp": 19,
    "cable": 10
   },
   "oki": {
-   "af": 42,
+   "af": 43,
    "port": 11,
-   "dam": 16,
+   "dam": 33,
    "lp": 17,
    "cable": 17
   },
   "om": {
-   "af": 59,
-   "port": 12,
-   "dam": 1,
+   "af": 71,
+   "port": 14,
+   "dam": 15,
    "lp": 6,
    "cable": 18
   },
   "pa": {
-   "af": 77,
+   "af": 85,
    "port": 25,
-   "dam": 2,
+   "dam": 15,
    "lp": 7,
    "cable": 9
   },
   "pe": {
-   "af": 183,
-   "port": 28,
+   "af": 207,
+   "port": 73,
+   "dam": 48,
    "lp": 3,
    "cable": 3
   },
   "pg": {
-   "af": 577,
-   "port": 50,
+   "af": 661,
+   "port": 54,
+   "dam": 2,
    "lp": 15,
    "cable": 5
   },
   "ph": {
-   "af": 675,
-   "port": 158,
-   "dam": 4,
+   "af": 687,
+   "port": 193,
+   "dam": 175,
    "lp": 71,
    "cable": 23
   },
   "pk": {
-   "af": 167,
-   "port": 6,
-   "dam": 4,
+   "af": 189,
+   "port": 13,
+   "dam": 68,
    "lp": 1,
    "cable": 9
   },
   "pl": {
    "af": 349,
    "port": 77,
-   "dam": 2,
+   "dam": 89,
    "lp": 1,
    "cable": 1
   },
   "ps": {
-   "af": 2,
-   "port": 3
+   "af": 5,
+   "port": 3,
+   "dam": 1
   },
   "pt": {
-   "af": 197,
-   "port": 102,
-   "dam": 9,
+   "af": 202,
+   "port": 227,
+   "dam": 299,
    "lp": 19,
    "cable": 21
   },
@@ -922,89 +983,93 @@
    "cable": 2
   },
   "py": {
-   "af": 114,
-   "port": 12
+   "af": 156,
+   "port": 31,
+   "dam": 8
   },
   "qa": {
-   "af": 21,
+   "af": 26,
    "port": 12,
    "lp": 5,
    "cable": 7
   },
   "ro": {
    "af": 181,
-   "port": 48,
-   "dam": 8,
+   "port": 60,
+   "dam": 107,
    "lp": 1,
    "cable": 1
   },
   "rs": {
    "af": 57,
-   "port": 16,
-   "dam": 2
+   "port": 17,
+   "dam": 22
   },
   "ru": {
-   "af": 1504,
-   "port": 230,
-   "dam": 22,
+   "af": 2298,
+   "port": 1144,
+   "dam": 171,
    "lp": 30,
    "cable": 14
   },
   "rw": {
-   "af": 8,
-   "port": 1
+   "af": 9,
+   "port": 4
   },
   "sa": {
-   "af": 180,
-   "port": 31,
+   "af": 216,
+   "port": 34,
+   "dam": 372,
    "lp": 6,
    "cable": 25
   },
   "sb": {
    "af": 38,
-   "port": 10,
+   "port": 12,
    "lp": 4,
    "cable": 3
   },
   "sc": {
    "af": 24,
-   "port": 1,
+   "port": 6,
    "lp": 2,
    "cable": 3
   },
   "sd": {
-   "af": 52,
-   "port": 2,
-   "dam": 2,
+   "af": 69,
+   "port": 9,
+   "dam": 7,
    "lp": 1,
    "cable": 5
   },
   "se": {
    "af": 244,
    "port": 203,
+   "dam": 145,
    "lp": 28,
    "cable": 26
   },
   "sg": {
-   "af": 10,
-   "port": 10,
-   "dam": 4,
+   "af": 11,
+   "port": 31,
+   "dam": 11,
    "lp": 8,
    "cable": 45
   },
   "si": {
    "af": 46,
-   "port": 32
+   "port": 32,
+   "dam": 25
   },
   "sk": {
    "af": 118,
    "port": 23,
-   "dam": 2
+   "dam": 26
   },
   "sl": {
-   "af": 11,
-   "port": 4,
-   "dam": 1,
+   "af": 15,
+   "port": 15,
+   "dam": 2,
    "lp": 1,
    "cable": 1
   },
@@ -1012,102 +1077,110 @@
    "af": 1
   },
   "sn": {
-   "af": 20,
-   "port": 5,
+   "af": 24,
+   "port": 56,
+   "dam": 7,
    "lp": 1,
    "cable": 5
   },
   "so": {
-   "af": 40,
+   "af": 57,
    "port": 9,
+   "dam": 23,
    "lp": 3,
    "cable": 6
   },
   "sr": {
-   "af": 63,
-   "port": 7,
+   "af": 68,
+   "port": 20,
    "dam": 1,
    "lp": 2,
    "cable": 3
   },
   "ss": {
-   "af": 101
+   "af": 222,
+   "port": 1
   },
   "st": {
    "af": 3,
-   "port": 2,
+   "port": 5,
    "lp": 1,
    "cable": 2
   },
   "sv": {
-   "af": 27,
+   "af": 31,
    "port": 7,
-   "dam": 1
+   "dam": 4
   },
   "sy": {
-   "af": 56,
-   "port": 8,
-   "dam": 2,
+   "af": 69,
+   "port": 9,
+   "dam": 20,
    "lp": 1,
    "cable": 5
   },
   "sz": {
-   "af": 16,
-   "port": 3
+   "af": 19,
+   "port": 3,
+   "dam": 5
   },
   "td": {
-   "af": 47
+   "af": 70
   },
   "tg": {
-   "af": 7,
-   "port": 1,
+   "af": 10,
+   "port": 3,
+   "dam": 3,
    "lp": 1,
    "cable": 3
   },
   "th": {
-   "af": 117,
-   "port": 70,
-   "dam": 36,
+   "af": 131,
+   "port": 442,
+   "dam": 112,
    "lp": 7,
    "cable": 17
   },
   "tj": {
-   "af": 21,
-   "dam": 2
+   "af": 29,
+   "dam": 11
   },
   "tl": {
    "af": 13,
    "port": 1,
+   "dam": 1,
    "lp": 1,
    "cable": 3
   },
   "tm": {
-   "af": 55,
-   "port": 5
+   "af": 67,
+   "port": 13,
+   "dam": 1
   },
   "tn": {
    "af": 25,
-   "port": 25,
-   "dam": 1,
+   "port": 43,
+   "dam": 22,
    "lp": 2,
    "cable": 5
   },
   "to": {
    "af": 6,
-   "port": 3,
+   "port": 6,
    "lp": 3,
    "cable": 3
   },
   "tr": {
-   "af": 379,
-   "port": 117,
-   "dam": 28,
+   "af": 387,
+   "port": 292,
+   "dam": 756,
    "lp": 7,
    "cable": 7
   },
   "tt": {
    "af": 3,
-   "port": 10,
+   "port": 12,
+   "dam": 7,
    "lp": 4,
    "cable": 6
   },
@@ -1118,106 +1191,114 @@
    "cable": 1
   },
   "tw": {
-   "af": 113,
-   "port": 18,
-   "dam": 12,
+   "af": 122,
+   "port": 23,
+   "dam": 30,
    "lp": 18,
    "cable": 18
   },
   "tz": {
-   "af": 206,
-   "port": 12,
-   "dam": 1,
+   "af": 230,
+   "port": 53,
+   "dam": 30,
    "lp": 2,
    "cable": 5
   },
   "ua": {
-   "af": 208,
-   "port": 24,
-   "dam": 6,
+   "af": 491,
+   "port": 121,
+   "dam": 73,
    "lp": 1,
    "cable": 1
   },
   "ug": {
-   "af": 40,
-   "port": 1,
+   "af": 53,
+   "port": 29,
+   "dam": 8,
    "lp": 2,
    "cable": 2
   },
   "us": {
-   "af": 25120,
-   "port": 2045,
-   "dam": 2037,
+   "af": 26360,
+   "port": 2821,
+   "dam": 40193,
    "lp": 169,
    "cable": 120
   },
   "uy": {
-   "af": 69,
-   "port": 10,
+   "af": 91,
+   "port": 11,
+   "dam": 6,
    "lp": 2,
    "cable": 4
   },
   "uz": {
-   "af": 78,
-   "port": 2
+   "af": 97,
+   "port": 10,
+   "dam": 18
   },
   "vc": {
    "af": 5,
    "port": 5,
+   "dam": 1,
    "lp": 7,
    "cable": 2
   },
   "ve": {
-   "af": 840,
-   "port": 26,
-   "dam": 4,
+   "af": 1189,
+   "port": 34,
+   "dam": 41,
    "lp": 16,
    "cable": 6
   },
   "vn": {
-   "af": 71,
-   "port": 93,
+   "af": 80,
+   "port": 473,
+   "dam": 223,
    "lp": 3,
    "cable": 9
   },
   "vu": {
    "af": 31,
-   "port": 3,
+   "port": 10,
    "lp": 4,
    "cable": 2
   },
   "ws": {
-   "af": 4,
-   "port": 1,
+   "af": 5,
+   "port": 18,
+   "dam": 2,
    "lp": 2,
    "cable": 3
   },
   "xk": {
    "af": 13,
-   "port": 1
+   "port": 1,
+   "dam": 2
   },
   "ye": {
-   "af": 43,
-   "port": 8,
+   "af": 50,
+   "port": 10,
+   "dam": 23,
    "lp": 3,
    "cable": 5
   },
   "za": {
-   "af": 640,
-   "port": 34,
-   "dam": 164,
+   "af": 1136,
+   "port": 45,
+   "dam": 276,
    "lp": 8,
    "cable": 14
   },
   "zm": {
-   "af": 127,
-   "port": 1,
-   "dam": 1
+   "af": 151,
+   "port": 12,
+   "dam": 10
   },
   "zw": {
-   "af": 152,
-   "port": 5,
-   "dam": 1
+   "af": 199,
+   "port": 6,
+   "dam": 15
   }
  }
 }
