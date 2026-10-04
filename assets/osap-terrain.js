@@ -695,7 +695,7 @@
     ac = W.AbortController ? new AbortController() : null;
     var path = P.length > 2, o = opts({ observer_height_m: S.obsH, target_height_m: S.tgtH, curvature: !path && S.curv, refraction: !path && S.refr });
     ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.line.x = null; losLay.clearLayers(); render();
-    lineRun(P, { res: RES[S.res][0], hA: path ? 0 : o.obsH, hB: path ? 0 : o.tgtH, curvature: o.curvature, k: o.k, signal: ac && ac.signal,
+    return lineRun(P, { res: RES[S.res][0], hA: path ? 0 : o.obsH, hB: path ? 0 : o.tgtH, curvature: o.curvature, k: o.k, signal: ac && ac.signal,
       prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.9; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (x) {
       if (run !== RUN) return;
       if (!x.meta.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this line on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
@@ -847,15 +847,17 @@
     var run = ++RUN; if (ac) ac.abort(); engineCancel();
     ac = W.AbortController ? new AbortController() : null;
     corClear(); ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; render();
-    corridor(P, { radius_m: S.ckm * 1000, route_height_m: S.crH, observer_height_m: S.cwH, res_m: RES[S.res][0], curvature: S.curv, refraction: S.refr, signal: ac && ac.signal,
+    return corridor(P, { radius_m: S.ckm * 1000, route_height_m: S.crH, observer_height_m: S.cwH, res_m: RES[S.res][0], curvature: S.curv, refraction: S.refr, signal: ac && ac.signal,
       prog: function (d, n) { if (run !== RUN) return; ST.at = d / n; ST.busy = "Working out where the route can be seen from: point " + Math.min(n, d + 1) + " of " + n + "…"; render(); } }, PANEL).then(function (c) {
       if (run !== RUN) return;
       if (!c.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this route on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
       ST.cor = c; ST.busy = ""; ST.at = 1; drawCor(c); render();
+      return c;
     }).catch(function (e) {
-      if (run !== RUN) return;
+      if (run !== RUN) return null;
       ST.busy = ""; ST.err = e && e.name === "AbortError" ? "Stopped." : (e && e.message) || "The route exposure could not be worked out.";
       render();
+      return null;
     });
   }
   function drawCor(c) {
@@ -887,8 +889,18 @@
     if (o.route_height_m != null) S.crH = Math.min(1000, Math.max(0, num(o.route_height_m, S.crH)));
     if (o.observer_height_m != null) S.cwH = Math.min(1000, Math.max(0, num(o.observer_height_m, S.cwH)));
     keep();
-    line(pts); calcCor();
+    /* the line of sight or path result first: the exposure shows under it */
+    return Promise.resolve(line(pts)).then(function () { return ST.line.x ? calcCor() : null; });
   }
+  /* evacuation planning's route tools (agreed with the evacuation thread 2026-10-04): run(route, { signal }) with
+     route { id, coords: [[lat, lon], ...], km, dest }; resolves with the exposure result (or null when stopped or failed) */
+  W.OSAP_EPE_CORRIDOR_TOOLS = W.OSAP_EPE_CORRIDOR_TOOLS || [];
+  if (!W.OSAP_EPE_CORRIDOR_TOOLS.some(function (t) { return t && t.id === "terrain-exposure"; }))
+    W.OSAP_EPE_CORRIDOR_TOOLS.push({ id: "terrain-exposure", label: "Where this route can be seen from", run: function (route, ctx) {
+      var pts = route && route.coords || [];
+      if (ctx && ctx.signal) ctx.signal.addEventListener("abort", function () { if (ST.busy) { RUN++; if (ac) ac.abort(); engineCancel(); ST.busy = ""; ST.err = "Stopped."; render(); } });
+      return Promise.resolve(routeExposure(pts) || null);
+    } });
 
   /* ---------- tap inside the result: line of sight to that point ---------- */
   function measuring() { var b = D.getElementById("meas-btn"); return !!(b && b.getAttribute("aria-pressed") === "true"); }
@@ -1154,7 +1166,7 @@
   function line(pts) {
     pts = (pts || []).filter(function (p) { return p && p.length >= 2; });
     if (pts.length < 2) return;
-    if (S.mode !== "los") setMode("los"); open(); pickEnd(); lineReset(pts); render(); calc();
+    if (S.mode !== "los") setMode("los"); open(); pickEnd(); lineReset(pts); render(); return calcLine();
   }
   /* the ground height at one point: { elev_m, nodata, res_m, sources } */
   function elevationAt(lat, lon) { return need().then(function (SRC) { return SRC.elevationAt(lat, L.Util.wrapNum(lon, [-180, 180], true)); }); }
