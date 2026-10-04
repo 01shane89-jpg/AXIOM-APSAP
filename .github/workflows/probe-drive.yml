@@ -1,0 +1,27 @@
+# Test only, on the probe branch: drives Thai routes at phone size against the live picture services (tools/probe_drive_live.mjs).
+name: Probe route drive live
+on:
+  push:
+    branches: [claude/route-drive-probe]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: node tools/probe_drive_live.mjs; ls -la /tmp/drive-live
+      - run: python3 -c "import glob;[print('::notice title=txt::'+(f+chr(10)+open(f).read()).replace('%','%25').replace(chr(10),'%0A')[:3900]) for f in sorted(glob.glob('/tmp/drive-live/*.txt'))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[0],'rb').read() if len(f)>0 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img0-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[1],'rb').read() if len(f)>1 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img1-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[2],'rb').read() if len(f)>2 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img2-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[3],'rb').read() if len(f)>3 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img3-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[4],'rb').read() if len(f)>4 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img4-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
+      - run: python3 -c "import base64,glob;f=sorted(glob.glob('/tmp/drive-live/*.jpg'));t=open(f[5],'rb').read() if len(f)>5 else b'';b=base64.b64encode(t).decode()[:24000];[print('::notice title=img5-'+str(n)+'::'+b[i:i+4000]) for n,i in enumerate(range(0,len(b),4000))]"
