@@ -21,7 +21,11 @@ jobs:
       - run: node tools/probe_label_lang.mjs
       - run: sudo apt-get install -y -q tesseract-ocr >/dev/null
       - run: sh tools/probe_label_ocr.sh
-      - run: node tools/probe_label_img.mjs esri_street-bkk-z13 carto_voyager-bkk-z13 esri_topo-bkk-z13 osm-bkk-z13 esri_street-tokyo-z13 carto_voyager-tokyo-z13
+      - run: node tools/probe_label_img.mjs esri_street-bkk-z13
+      - run: node tools/probe_label_img.mjs carto_voyager-bkk-z13
+      - run: node tools/probe_label_img.mjs esri_topo-bkk-z13
+      - run: node tools/probe_label_img.mjs esri_street-tokyo-z13
+      - run: node tools/probe_label_img.mjs carto_voyager-tokyo-z13
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
