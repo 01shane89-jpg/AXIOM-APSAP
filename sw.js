@@ -12,7 +12,7 @@
    - Live feeds (ThaiWater, GISTDA) are never cached here; the page handles their failure itself.
    - Map tiles from other hosts: cached as they are viewed, capped at MAX_TILES entries. Tiles a person saved for offline use
      (assets/osap-offline.js) live in their own cache, OFFLINE, which is read first and never trimmed. */
-const VERSION = "43a193afda5d";
+const VERSION = "3cbb216d48ab";
 const SHELL = "asap-shell-" + VERSION, TILES = "asap-tiles", MAX_TILES = 1500, OFFLINE = "osap-offline";
 // A phone on a slow connection opens from its saved copies rather than waiting: feed files wait at most DATA_WAIT ms and the
 // page itself PAGE_WAIT ms for the network; the network copy keeps downloading and is used on the next open.
@@ -446,6 +446,7 @@ const PRECACHE = [
 "assets/osap-surveil.js",
 "assets/osap-cams.js",
 "assets/osap-borders.js",
+"assets/osap-lidar.js",
 "assets/osap-evac.js",
 "assets/osap-dc.js",
 "assets/osap-route.js",
@@ -496,6 +497,8 @@ const PRECACHE = [
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
 const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
+  // Mapterhorn's coverage file (assets/osap-lidar.js) is read in byte ranges, which the Cache API cannot keep
+  /download\.mapterhorn\.com\//,
   /thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
   // traffic camera stills (assets/osap-cams.js): always the agency's newest image, never a saved copy
   /api\.data\.gov\.sg\/v1\/transport/, /images\.data\.gov\.sg\//, /tdcctv\.data\.one\.gov\.hk/, /trafficnz\.info\/camera/, /jamcams\.tfl\.gov\.uk/,

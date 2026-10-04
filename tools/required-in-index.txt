@@ -133,3 +133,6 @@ offline: { name: "Offline map"
 <script src="assets/osap-terrain.js"></script>
 data-terrain-open
 id="ml-viewsheds"
+# LiDAR hillshade, LiDAR coverage and LiDAR heights for Terrain analysis (claude/lidar-coverage); kept across data set changes
+<script src="assets/osap-lidar.js"></script>
+:not([data-lidar])

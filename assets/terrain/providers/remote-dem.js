@@ -4,7 +4,11 @@
      15 where it exists, otherwise the 10 m national model (zoom 14 and below; at 15 the zoom 14 tile is enlarged).
    - "aws-terrarium": everywhere, Terrain Tiles on AWS (Mapzen/Tilezen terrarium PNG: SRTM about 30 m on land, 3DEP in the
      US, GMTED and ETOPO1 where nothing finer exists). Fills any pixel GSI has no value for.
-   Both register in window.OSAP_TERRAIN_PROVIDERS (see terrain-provider.js). A pixel with no value is NaN, never 0. */
+   - "mapterhorn" (tried first): Mapterhorn elevation tiles through window.OSAP_LIDAR.dem (assets/osap-lidar.js): national
+     LiDAR and fine elevation models (0.25 to 20 m) wherever they are published, Copernicus GLO-30 (about 30 m) elsewhere.
+     Its finest zoom at a place follows the coverage lookup (OSAP_LIDAR.cachedBest); a missing zoom is enlarged from the next
+     coarser tile, so it never leaves a hole. If it cannot be reached the next sources answer as before.
+   All register in window.OSAP_TERRAIN_PROVIDERS (see terrain-provider.js). A pixel with no value is NaN, never 0. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -67,6 +71,16 @@
   /* shared with the saved-terrain source (providers/packaged-dem.js) */
   W.OSAP_DEM_CODEC = { decode: decode, terrarium: terrarium, child: child, AWS: AWS };
   var L = W.OSAP_TERRAIN_PROVIDERS = W.OSAP_TERRAIN_PROVIDERS || [];
+  /* the 256 px zoom that holds the finest model at a place (0.25 to 0.6 m: 18, 1 m: 17, 2.5 m: 16, 5 m: 15, 10 m: 14) */
+  function zoomForRes(r) { return r == null ? 14 : r <= 0.6 ? 18 : r <= 1.2 ? 17 : r <= 2.5 ? 16 : r <= 5 ? 15 : 14; }
+  L.push({
+    id: "mapterhorn", label: "Mapterhorn elevation (national LiDAR where published, Copernicus 30 m elsewhere)", kind: "DEM", order: 3,
+    attribution: '<a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener">Mapterhorn</a> (national LiDAR and elevation models; Copernicus GLO-30)',
+    maxZoom: function (lat, lon) { var X = W.OSAP_LIDAR; return X ? zoomForRes(X.cachedBest(lat, lon)) : 0; },
+    covers: function () { return !!(W.OSAP_LIDAR && W.OSAP_LIDAR.dem) && navigator.onLine !== false; },
+    /* sea read as sea level, as for the AWS tiles (SEA_FLOOR) */
+    tile: function (z, x, y, signal) { return W.OSAP_LIDAR.dem(z, x, y, signal).then(function (r) { if (!r) return null; var h = r.h; for (var i = 0; i < h.length; i++) if (h[i] < SEA_FLOOR) h[i] = 0; return h; }); }
+  });
   L.push({
     id: "gsi-japan", label: "GSI Japan elevation (5 m laser survey, 10 m)", kind: "DEM", order: 10,
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">GSI Japan</a> elevation tiles',
