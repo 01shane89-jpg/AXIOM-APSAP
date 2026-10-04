@@ -3200,7 +3200,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
     { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
     { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
-    { id: "comms", name: "Comms", title: "Comms: towers and phone coverage", sof: true, live: true });
+    { id: "comms", name: "Comms planning", title: "Comms planning: PACE, coverage, links, networks, power and status", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
   var LCOL = { flood: "--rain", border: "--over" };
   Object.keys(TD).forEach(function (lid) {
@@ -5936,21 +5936,25 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     window.OSAP_ROUTETAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; }, seed: seed });
   }
   /* Comms: communication masts, radio and TV towers and a phone coverage check (assets/osap-comms.js, loaded the first time
-     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record. */
+     the tab opens). The coverage answer is an estimate from public data, worked out in this browser; never a record.
+     Comms planning (assets/osap-commsplan.js with assets/comms/radio-lib.js) shows it as six tabs: Plan (PACE), Coverage, Link,
+     Networks, Equipment (battery and power) and Status; the operator's plans stay on this device. */
   var commsLoading = false;
   function showComms() {
     sofLayer.clearLayers(); sofM = {};
-    if (!window.OSAP_COMMSTAB) {
-      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading the communications tab…</p></div>';
+    if (!window.OSAP_COMMSTAB || !window.OSAP_COMMSPLAN || !window.OSAP_RADIO) {
+      window.OSAP_COMMS_WAIT = showComms; railO.innerHTML = '<div class="sec"><p class="obs">Loading comms planning…</p></div>';
       if (!commsLoading) {
         commsLoading = true;
-        var s = document.createElement("script"); s.src = "assets/osap-comms.js";
-        s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">The communications tab could not be loaded. Check the connection and open the tab again.</p></div>'; };
-        document.body.appendChild(s);
+        ["assets/comms/radio-lib.js", "assets/osap-comms.js", "assets/osap-commsplan.js"].forEach(function (src) {
+          var s = document.createElement("script"); s.src = src; s.async = false;
+          s.onerror = function () { commsLoading = false; if (current === "comms") railO.innerHTML = '<div class="sec"><p class="obs">Comms planning could not be loaded. Check the connection and open the tab again.</p></div>'; };
+          document.body.appendChild(s);
+        });
       }
       return;
     }
-    window.OSAP_COMMSTAB.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
+    window.OSAP_COMMSPLAN.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
   }
   window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
@@ -6131,7 +6135,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var cv = seg.querySelector('button[data-view="comms"]'), row = box.querySelector("[data-infra-comms]");
     if (cv && !row) {
       row = document.createElement("button"); row.type = "button"; row.className = "mlopen"; row.setAttribute("data-infra-comms", "");
-      row.innerHTML = "<b>Communications infrastructure</b><i>Phone masts, radio and TV towers, and a phone coverage check</i>";
+      row.innerHTML = "<b>Communications infrastructure</b><i>Comms planning: masts and towers, coverage, PACE plan, links, power and network status</i>";
       row.addEventListener("click", function () { cv.click(); document.dispatchEvent(new CustomEvent("osap:dsopen", { detail: "comms" })); });
       box.appendChild(row);
     }
@@ -6216,7 +6220,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
     });
     h1.textContent = l.title || l.name;
-    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles; coverage is an estimate, not a promise of signal" }[v]) ||
+    srcline.textContent = (l.sof && { presence: "Public reporting and official statements; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organisers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
