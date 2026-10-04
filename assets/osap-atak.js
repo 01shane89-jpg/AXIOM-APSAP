@@ -3,7 +3,7 @@
      its buttons press the page's own controls (Layers, Measure, Draw area, Watch, My work with What's new, Layout (not on a phone),
      Full screen), which stay in the page but out of sight, so nothing about how they work changes;
    - long-press anywhere on the map (right-click with a mouse) for a radial menu at that point: Measure from here, Route from
-     here, Drop a point, Save as NAI/TAI, Watch this area, Medical plan from this point, Find LZ, Copy the grid;
+     here, Drop a point, Save as NAI/TAI, Watch this area, Medical plan from this point, Evacuate from here, Find LZ, Copy the grid;
    - a readout strip along the bottom of the map: the grid of the map centre (or the mouse), your own position when
      "Use my location" is on, and a lock-on-me button that keeps the map on you until you pan it away;
    - one Overlay Manager sheet holding the data sets, the page's own Layers panel, your marks and saved areas.
@@ -11,7 +11,8 @@
    Dropped points are the analyst's own marks, kept in this browser only (localStorage "osap-atak-pts"), never records.
    assets/osap-points.js (when loaded) gives each point a name, a note and photos, and the Point tool adds one.
    The magnifying glass loads assets/osap-search.js (Search places) on its first press.
-   Find LZ and Area > Landing zones load assets/osap-lz.js (the landing zone finder) on first use.
+   Find LZ and Area > Landing zones load assets/osap-lz.js (the landing zone finder) on first use; Evac loads assets/osap-epe.js
+   (the evacuation planner) the same way.
    Uses window.OSAP_GEO (grid maths), OSAP_MEASURE, OSAP_ROUTE_SEED, OSAP_LOC, OSAP_AOI, OSAP_WATCH and TSAP.areaApi. */
 (function () {
   "use strict";
@@ -52,6 +53,7 @@
     x: ic('<path d="M6 6l12 12M18 6 6 18"/>'),
     pen: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
     search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
+    evac: ic('<path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4M18 12H9"/>'),
     heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>')
   };
 
@@ -104,6 +106,8 @@
     ["area", "Area", I.area, "Draw an area to filter the map, summarise it or save it as an NAI/TAI"],
     /* its own button (Shane 2026-10-02): the plan for the drawn area, or from the map centre when nothing is drawn */
     ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
+    /* its own button next to Med plan (Shane 2026-10-03, EPE decision 1): ways out from one point, with the analyst's P/A/C/E roles */
+    ["evac", "Evac", I.evac, "Evacuation plan: ground routes from one point to the embassy, airports, airfields and seaport, with your P/A/C/E roles"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
     ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
@@ -150,6 +154,7 @@
     var nb = q('[data-wk-btn="new"] .wkn'), mw = q('[data-wk-btn="mine"] .wkn'), mm = bar.querySelector('[data-atk="mine"]');
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
     var mb2 = bar.querySelector('[data-atk="medplan"]'), mpe = D.getElementById("medplan"); if (mb2) mb2.setAttribute("aria-pressed", String(!!(mpe && !mpe.hidden)));
+    var evb = bar.querySelector('[data-atk="evac"]'), epe = D.getElementById("epe"); if (evb) evb.setAttribute("aria-pressed", String(!!(epe && !epe.hidden)));
     var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
@@ -185,6 +190,11 @@
     else if (k === "medplan") {
       var mp = D.getElementById("medplan");
       if (mp && !mp.hidden && W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.close(); else if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open();
+      setTimeout(paintTools, 60);
+    }
+    else if (k === "evac") {
+      var ep = D.getElementById("epe");
+      if (ep && !ep.hidden && W.OSAP_EPE) W.OSAP_EPE.close(); else epeGo({});
       setTimeout(paintTools, 60);
     }
     else if (k === "watch") press("#watch-btn");
@@ -371,12 +381,25 @@
     sc.onerror = function () { lzWait = null; sc.remove(); toast("The landing zone finder could not load. Check the connection."); };
     D.head.appendChild(sc);
   }
+  /* the evacuation planner lives in assets/osap-epe.js, fetched the first time Evac (toolbar, long-press or the Route tab) is used.
+     opts: { at: [lat, lon], how } sets the origin */
+  var epeWait = null;
+  function epeGo(opts) {
+    function go(E) { E.open(opts || {}); setTimeout(paintTools, 60); }
+    if (W.OSAP_EPE) { go(W.OSAP_EPE); return; }
+    if (epeWait) { epeWait.push(go); return; } epeWait = [go];
+    var sc = D.createElement("script"); sc.src = "assets/osap-epe.js";
+    sc.onload = function () { var f = epeWait; epeWait = null; if (W.OSAP_EPE) f.forEach(function (g) { g(W.OSAP_EPE); }); };
+    sc.onerror = function () { epeWait = null; sc.remove(); toast("The evacuation planner could not load. Check the connection."); };
+    D.head.appendChild(sc);
+  }
+  W.OSAP_EPE_GO = epeGo;
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "lz", label: "Landing zones", run: function () { lzLoad(function (Z) { Z.area(); }); } });
 
   /* ---------- the radial menu ---------- */
   var RAD = [
     ["measure", "Measure", I.ruler], ["route", "Route", I.route], ["pin", "Point", I.pin],
-    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["medplan", "Med plan", I.medic], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
+    ["nai", "NAI/TAI", I.nai], ["watch", "Watch", I.eye], ["medplan", "Med plan", I.medic], ["evac", "Evac", I.evac], ["lz", "Find LZ", I.heli], ["copy", "Copy", I.copy]
   ];
   /* Med plan only once assets/osap-medplan.js has loaded (it loads after this file) */
   function radNow() { return RAD.filter(function (a) { return a[0] !== "medplan" || W.OSAP_MEDPLAN; }); }
@@ -393,7 +416,7 @@
   function ringOpen(ll) {
     ringLL = ll; var p = map.latLngToContainerPoint(ll), sz = mapEl.getBoundingClientRect(), R = 118;
     var x = Math.max(R, Math.min(sz.width - R, p.x)), y = Math.max(R - 10, Math.min(sz.height - R - 30, p.y));
-    var RN = radNow(), n = RN.length, r = sz.width < 380 ? 70 : 76;
+    var RN = radNow(), n = RN.length, r = Math.max(sz.width < 380 ? 70 : 76, Math.round(n * 9.4));  /* wider as actions are added, so the buttons do not touch */
     ring.innerHTML = RN.map(function (a, i) {
       var t = -Math.PI / 2 + i * 2 * Math.PI / n, bx = Math.round(Math.cos(t) * r), by = Math.round(Math.sin(t) * r);
       return '<button type="button" role="menuitem" data-rk="' + a[0] + '" style="transform:translate(' + bx + "px," + by + 'px)">' + a[2] + "<span>" + esc(a[1]) + "</span></button>";
@@ -418,6 +441,8 @@
     else if (k === "copy") copy(fmtPt(P[0], P[1]));
     /* the medical plan from this point as the point of injury; no drawn area needed */
     else if (k === "medplan") { if (W.OSAP_MEDPLAN) W.OSAP_MEDPLAN.open({ at: P }); }
+    /* Evacuate from here: this point is the origin */
+    else if (k === "evac") epeGo({ at: P, how: "Long-press on the map" });
     else if (k === "nai" || k === "watch") {
       var A = W.TSAP && W.TSAP.areaApi; if (!A || !A.setArea) return;
       A.setArea(circle(ll, radius())); setTimeout(paintTools, 30);
