@@ -187,6 +187,11 @@ let ctx, errors, p;
   if (OUT) await p.screenshot({ path: OUT + "/preview-sat.png" });
   await p.click('#rtpv [data-pv="close"]'); await p.waitForTimeout(200);
   ok(!(await p.evaluate(() => window.OSAP_PREVIEW.isOpen() || document.documentElement.classList.contains("rtpv-on"))), "Close shuts the preview");
+  // Comms along route: opens Comms planning on Coverage and checks the route segment by segment
+  ok(await p.evaluate(() => !!document.querySelector('#rt-sum [data-rt="comms"]')), "Comms along route button sits with the route summary");
+  await p.click('#rt-sum [data-rt="comms"]');
+  await p.waitForFunction(() => document.documentElement.getAttribute("data-view") === "comms" && document.querySelector('.cptabs [data-cptab="coverage"][aria-selected="true"]') && document.querySelector("#cp-crout #cpcr-prog, #cp-crout .cpstrip"), null, { timeout: 30000 });
+  ok(true, "Comms along route opens Comms planning > Coverage and starts the corridor check");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 3).join(" | ") : ""));
   await ctx.close();
 }
