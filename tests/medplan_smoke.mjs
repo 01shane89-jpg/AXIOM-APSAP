@@ -469,6 +469,16 @@ async function openPlan(p) {
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
   const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
+  /* phase 3: the CCP and HLZ with grids are map objects; the validation says so */
+  const sites = await p.evaluate(() => ({ mk: [...document.querySelectorAll(".mpicon.cp")].map((m) => m.textContent).sort().join(), val: document.getElementById("mp-val").textContent }));
+  ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
+  await p.selectOption('#mp-sites [data-mp-sst="ccp1"]', "unusable"); await p.fill('#mp-sites [data-mpf="ccp1_note"]', "bridge out"); await p.waitForTimeout(900);
+  const st = await p.evaluate(() => ({ t: document.getElementById("mp-sites").textContent, rows: document.querySelectorAll("#mp-sites tbody tr").length, val: document.getElementById("mp-val").textContent,
+    kept: JSON.parse(localStorage.getItem(Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0])) }));
+  ok(st.rows === 2 && /km [NESW]{1,2} of/.test(st.t) && st.kept.ccp1_st === "unusable" && st.kept.ccp1_note === "bridge out" && /checked not usable .*bridge out/.test(st.val), "phase 3: each point's status, capacity and notes are kept and the validation reads them " + JSON.stringify(st.val.slice(st.val.indexOf("Casualty collection"), st.val.indexOf("Casualty collection") + 120)));
+  const seeded = await p.evaluate(() => { const o = window.OSAP_ROUTE_SEED; let got = null; window.OSAP_ROUTE_SEED = (pts) => { got = pts; }; document.querySelector('#mp-sites [data-mp-siteroute="hlz1"]').click(); window.OSAP_ROUTE_SEED = o; return got; });
+  ok(seeded && seeded.length === 2 && Math.abs(seeded[1][0] - 13.74) > 0, "phase 3: Route to it hands the plan centre and the point to the Route tab " + JSON.stringify(seeded));
+  await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
