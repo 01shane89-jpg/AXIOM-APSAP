@@ -6,6 +6,13 @@
 // and draws the overlay, observer and horizon; ground west is visible, ground behind the ridge masked; tapping a point gives the
 // line of sight card (BLOCKED, blocking terrain about 2 km, highest ground 160 m, "Urban/vegetation obstruction: NOT MODELED");
 // raising the observer to 300 m recalculates at once and sees over the ridge; the headless API (profile, viewshed) agrees;
+// the reverse viewshed swaps the heights and its tap card runs from the tapped observer to the point; the skyline chart shows
+// the ridge to the east; Line of sight from here sets A and the next tap B (BLOCKED by the ridge, recalculated when A's height
+// changes); Measure's Profile gives A to B for two points and the elevation profile (climb, descent) for a path, none for a
+// closed shape; modules' OSAP_PROFILE_EXT sections get the profile;
+// a viewshed saves under a name with the agreed fields, its visible ground as polygons and its horizon; toggles in the panel
+// and Map overlays agree; rename, recalculate (kept in place) and delete (asks first); the workspace lists it and its KML
+// carries the observer, polygons and horizon; after a reload it is drawn from the stored shapes with nothing downloaded;
 // tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -151,6 +158,148 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   await p.evaluate(() => document.querySelector('#terrain [data-ts="clear"]').click()); await p.waitForTimeout(200);
   ok(await p.evaluate(() => !document.querySelector(".leaflet-vspane-pane img") && window.OSAP_TERRAIN_ANALYSIS.state().marks === 0), "desktop: Clear removes the overlay and marks");
   ok(errors.length === 0, "desktop: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- reverse viewshed, line of sight A to B, Measure's Profile, skyline, the profile hook ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1366, height: 860 } });
+  const east = [13.75, 100.5350], west = [13.75, 100.4700];
+  /* a module adds a section under the profile */
+  await p.evaluate(() => { window.OSAP_PROFILE_EXT = [{ id: "test", label: "Test section", render: (box, pr) => { box.appendChild(document.createTextNode("ext got " + pr.samples.length + " samples, los " + pr.los)); } }]; });
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_ATAK.ring(c[0], c[1]); }, C0); await p.waitForTimeout(200);
+  await p.click('#atk-ring [data-rk="terrain"]'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => ["vs", "rv", "lo", "el"].every((k) => document.querySelector('.vsmenu [data-vm="' + k + '"]'))), "tools: Terrain lists Viewshed, Reverse viewshed, Line of sight and Elevation here");
+  await p.click('.vsmenu [data-vm="rv"]'); await settled(p);
+  let st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  let txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.mode === "rev" && st.stats && st.stats.masked > 0 && /Reverse viewshed/.test(txt) && /REVERSE TERRAIN VIEWSHED/.test(txt) && /Can see the point/.test(txt) && /heights swapped/.test(txt), "reverse: the panel says Reverse viewshed, its key and the swapped heights (" + (st.stats ? st.stats.visible_pct.toFixed(1) + "% can see" : st.err) + ")");
+  /* the point at 1.7 m, observers at 20 m: the swap must show (with 1.7 m everywhere the two would match) */
+  await p.fill("#ts-oh", "20"); await p.waitForTimeout(700); await settled(p);
+  const revPct = (await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state())).stats.visible_pct;
+  let L1 = await tapLos(p, east);
+  const rcard = await p.evaluate(() => (document.querySelector(".leaflet-popup .vslos") || {}).textContent || "");
+  ok(/Observer here\s*→\s*The point/.test(rcard) && /Observer elevation:\s*100 m MSL\s*\+ 20 m/.test(rcard) && /Point elevation:\s*100 m MSL\s*\+ 1\.7 m/.test(rcard), "reverse: the tap card runs from an observer at the tapped point (20 m) to the point (1.7 m): " + rcard.replace(/\s+/g, " ").slice(0, 160));
+  ok(L1.los === "BLOCKED" && Math.abs(L1.blockD - 1690) < 120, "reverse: from 3.8 km east the ridge blocks the point, about 1.7 km from the observer (" + JSON.stringify(L1) + ")");
+  ok(await p.evaluate(() => !!document.querySelector("#terrain svg.sky path") && /SKYLINE/.test(document.getElementById("terrain").textContent)), "skyline: the chart is drawn under the result");
+  ok(/towards (8\d|9\d|10\d)°/.test(await p.evaluate(() => document.getElementById("terrain").textContent)), "skyline: the highest ground is towards the east (the ridge)");
+  /* the reverse result is the viewshed from the point at its own height (1.7 m) with 20 m targets */
+  const api = await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshed({ lat: c[0], lon: c[1], observer_height_m: 1.7, target_height_m: 20, radius_m: 10000, res_m: 30 }).then((r) => r.stats.visible_pct), C0);
+  const api2 = await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.viewshed({ lat: c[0], lon: c[1], observer_height_m: 20, target_height_m: 1.7, radius_m: 10000, res_m: 30 }).then((r) => r.stats.visible_pct), C0);
+  await settled(p);
+  const both = await p.evaluate((c) => { const A = window.OSAP_TERRAIN_ANALYSIS; const pr = A.viewshed({ lat: c[0], lon: c[1], observer_height_m: 5, target_height_m: 5, radius_m: 10000, res_m: 30 }); (document.querySelector('#terrain [data-ts="calc"]') || document.querySelector('#terrain [data-ts="cancel"]')).click();
+    return Promise.race([pr.then((r) => "done " + r.stats.visible_pct.toFixed(1)), new Promise((ok) => setTimeout(() => ok("hung"), 20000))]); }, C0);
+  ok(/^done/.test(both), "API: a viewshed() call from another module survives the panel recalculating at the same time (" + both + ")");
+  await settled(p);
+  ok(Math.abs(api - revPct) < 0.05 && Math.abs(api2 - revPct) > 0.05, "reverse: equals the viewshed with the heights swapped (" + revPct.toFixed(2) + "% = " + api.toFixed(2) + "%, unswapped " + api2.toFixed(2) + "%)");
+  await p.click('#terrain [data-mode="vs"]'); await settled(p);
+  await p.fill("#ts-oh", "1.7"); await p.waitForTimeout(700); await settled(p);
+
+  /* line of sight A to B: the ring entry sets A, the next tap B */
+  await p.evaluate((c) => window.OSAP_TERRAIN_ANALYSIS.losFrom(c), C0); await p.waitForTimeout(200);
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(st.mode === "los" && st.arm === "pickB" && st.line.pts.length === 1, "line of sight: from here sets A and waits for B");
+  await p.evaluate((ll) => window.__asapMap.fire("click", { latlng: window.L.latLng(ll[0], ll[1]) }), east);
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.line.result && st.line.result.los === "BLOCKED" && Math.abs(st.line.result.block_m - 1990) < 120 && Math.round(st.line.result.max_elev_m) === 160, "line of sight: A to B 3.8 km east is BLOCKED by the ridge (" + JSON.stringify(st.line.result && { los: st.line.result.los, b: st.line.result.block_m, max: st.line.result.max_elev_m }) + ")");
+  ok(/Point A\s*→\s*Point B/.test(txt) && /Blocking terrain:\s*(1\.9\d?|2\.0\d?) km from A/.test(txt) && /TERRAIN LINE OF SIGHT/.test(txt) && /NOT MODELED/.test(txt) && !!(await p.evaluate(() => document.querySelector("#terrain svg.prof path"))), "line of sight: card, profile and assumptions in the panel");
+  ok(/ext got \d+ samples, los BLOCKED/.test(txt) && /Test section/.test(txt), "profile hook: OSAP_PROFILE_EXT gets the profile");
+  ok(st.marks >= 3, "line of sight: A, B and the line are on the map (" + st.marks + " marks)");
+  await p.fill("#ts-oh", "300"); await p.waitForTimeout(800);
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && s.line.result && s.line.result.los === "CLEAR"; }, null, { timeout: 30000 }).catch(() => {});
+  ok((await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().line.result.los)) === "CLEAR", "line of sight: A at 300 m recalculates at once and clears the ridge");
+  await p.fill("#ts-oh", "1.7"); await p.waitForTimeout(800);
+
+  /* Measure: Profile shows for a line, gives A to B for two points and the path profile for three */
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.close());
+  await p.evaluate((pts) => { window.OSAP_MEASURE.on(true); window.OSAP_MEASURE.set(pts, false); }, [west, east]); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => !!document.querySelector('#meas-card [data-m="profile"]')), "measure: a two-point line has a Profile button");
+  await p.click('#meas-card [data-m="profile"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  ok(st.line.result && st.line.result.los === "BLOCKED" && Math.abs(st.line.result.total_m - 7040) < 120, "measure: Profile on two points is the line of sight A to B (" + (st.line.result && st.line.result.los + ", " + Math.round(st.line.result.total_m) + " m") + ")");
+  await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.close());
+  await p.evaluate((pts) => { window.OSAP_MEASURE.on(true); window.OSAP_MEASURE.set(pts, false); }, [west, C0, east]); await p.waitForTimeout(200);
+  await p.click('#meas-card [data-m="profile"]');
+  await p.waitForFunction(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.busy && (s.line.result || s.err); }, null, { timeout: 30000 });
+  st = await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state());
+  txt = await p.evaluate(() => document.getElementById("terrain").textContent);
+  ok(st.line.result && st.line.result.los === null && st.line.result.vertices.length === 3 && /Elevation profile/.test(txt) && /ELEVATION PROFILE/.test(txt) && /3 points from Measure/.test(txt), "measure: Profile on three points is the elevation profile along the path");
+  ok(/Highest:\s*160 m MSL/.test(txt) && /Lowest:\s*100 m MSL/.test(txt) && /Climb:\s*60 m/.test(txt) && /Descent:\s*60 m/.test(txt), "path profile: highest, lowest, climb and descent over the ridge: " + (txt.match(/Lowest[^.]*?Descent:\s*\d+ m/) || [""])[0]);
+  ok(/ext got \d+ samples, los null/.test(txt), "profile hook: also under a path profile");
+  await p.evaluate(() => { window.OSAP_MEASURE.set([[13.75, 100.47], [13.75, 100.48], [13.76, 100.48]], true); }); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => !document.querySelector('#meas-card [data-m="profile"]')), "measure: a closed shape has no Profile button");
+  await p.evaluate(() => window.OSAP_MEASURE.on(false));
+  if (OUT) await p.screenshot({ path: OUT + "/terrain-path-profile.png" });
+  /* Clear in line of sight mode */
+  await p.evaluate(() => document.querySelector('#terrain [data-ts="clear"]').click()); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().marks === 0), "line of sight: Clear removes A, B and the line");
+  ok(errors.length === 0, "tools: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- saved viewsheds: save, toggles, rename, recalculate, delete, workspace, KML ---------- */
+{
+  const { ctx, p, errors, dem } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_TERRAIN_ANALYSIS.viewshedAt(c); }, C0);
+  await settled(p);
+  ok(await p.evaluate(() => !!document.querySelector('#terrain [data-ts="save"]') && document.getElementById("ts-name").value === "Viewshed 01"), "save: a finished result offers Save viewshed, named Viewshed 01");
+  await p.fill("#ts-name", "Ridge watch");
+  await p.click('#terrain [data-ts="save"]'); await p.waitForTimeout(200);
+  let saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  const v = saved[0] || {};
+  ok(saved.length === 1 && v.name === "Ridge watch" && v.type === "viewshed" && v.mode === "viewshed" && v.observer && Math.abs(v.observer.lat - 13.75) < 1e-4 && v.observer.height_m === 1.7 && v.target_height_m === 1.7 && v.radius_m === 10000 &&
+    v.terrain_resolution_m === 30 && v.curvature === false && v.dem_source === "OSAP DEM" && v.terrain_model === "DEM (terrain only)" && v.engine === "osap-viewshed/1" && v.result && v.result.visible_pct > 30 && /^\d{4}-\d\d-\d\dT/.test(v.created),
+    "save: stored in osap-viewsheds with the agreed fields: " + JSON.stringify({ name: v.name, obs: v.observer, r: v.radius_m, res: v.terrain_resolution_m, dem: v.dem_detail, result: v.result }));
+  const geo = await p.evaluate((vv) => {
+    function inR(p, r) { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[i], b = r[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+    function vis(p) { return vv.visible.some((q) => inR(p, q.o) && !(q.h || []).some((h) => inR(p, h))); }
+    return { n: vv.visible.length, verts: vv.visible.reduce((a, q) => a + q.o.length + (q.h || []).reduce((b, h) => b + h.length, 0), 0), west: vis([13.75, 100.47]), east: vis([13.75, 100.535]), hz: vv.horizon.length, bytes: JSON.stringify(vv).length };
+  }, v);
+  ok(geo.n >= 1 && geo.west && !geo.east && geo.verts < 4000 && geo.hz > 50, "save: the visible ground is stored as polygons (west of the ridge inside, behind it outside) with the horizon line: " + JSON.stringify(geo));
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3), "save: the saved viewshed is drawn on the map");
+  ok(await p.evaluate(() => /Saved as\s*Ridge watch/.test(document.getElementById("terrain").textContent) && /SAVED VIEWSHEDS \(1\)/.test(document.getElementById("terrain").textContent)), "save: the panel says where it went and lists it");
+  ok(await p.evaluate(() => { const b = document.querySelector('#ml-viewsheds [data-vson]'); return !!b && b.checked && /Ridge watch/.test(document.getElementById("ml-viewsheds").textContent); }), "Map overlays: the saved viewshed is listed with an on toggle");
+  /* toggle off from Map overlays */
+  await p.evaluate(() => document.querySelector('#ml-viewsheds [data-vson]').click()); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks === 0 && JSON.parse(localStorage.getItem("osap-viewsheds"))[0].on === false && !document.querySelector('#terrain [data-vson]').checked), "toggle: off in Map overlays hides it and the panel follows");
+  await p.evaluate(() => document.querySelector('#terrain [data-vson]').click()); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3), "toggle: on again in the panel");
+  /* a second one, a reverse viewshed: names do not clash */
+  await p.click('#terrain [data-mode="rev"]'); await settled(p);
+  ok(await p.evaluate(() => document.getElementById("ts-name").value === "Reverse viewshed 01"), "save: a reverse viewshed gets its own name");
+  await p.click('#terrain [data-ts="save"]'); await p.waitForTimeout(200);
+  saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  ok(saved.length === 2 && saved[1].mode === "reverse", "save: two saved viewsheds, the second reverse");
+  /* rename */
+  await p.click(`#terrain [data-vsren="${saved[1].id}"]`); await p.fill(`#terrain [data-vsrenin="${saved[1].id}"]`, "Who sees the CP"); await p.press(`#terrain [data-vsrenin="${saved[1].id}"]`, "Enter"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds"))[1].name === "Who sees the CP" && /Who sees the CP/.test(document.getElementById("ml-viewsheds").textContent)), "rename: the name changes everywhere");
+  /* recalculate the first: the saved record is replaced, same id */
+  await p.click(`#terrain [data-vsopen="${saved[0].id}"]`); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().mode === "vs"), "recalculate: reopens in Viewshed mode");
+  await settled(p); await p.waitForTimeout(200);
+  saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  ok(saved.length === 2 && saved[0].name === "Ridge watch" && saved[0].calculated >= saved[0].created, "recalculate: worked out again and kept in place (" + saved[0].calculated + ")");
+  /* workspace and KML */
+  const ws = await p.evaluate(() => { const I = window.OSAP_WS.items(); return { n: I.vs.length, names: I.vs.map((x) => x.name), kml: window.OSAP_WS.kml() }; });
+  ok(ws.n === 2 && ws.names.includes("Ridge watch"), "workspace: My work > Workspaces lists the saved viewsheds");
+  ok(/<Folder><name>Viewsheds<\/name>/.test(ws.kml) && /<Folder><name>Viewshed visible terrain<\/name>/.test(ws.kml) && /<Folder><name>Viewshed horizons<\/name>/.test(ws.kml) && /NOT MODELED/.test(ws.kml) && /Ridge watch: visible terrain/.test(ws.kml), "KML: observer with its settings, visible terrain polygons and horizon lines");
+  ok(await p.evaluate(() => { const d = new DOMParser().parseFromString(window.OSAP_WS.kml(), "application/xml"); return !d.getElementsByTagName("parsererror").length && d.getElementsByTagName("Polygon").length >= 1; }), "KML: well-formed, with polygons");
+  /* delete asks once more */
+  await p.click(`#terrain [data-vsdel="${saved[1].id}"]`); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds")).length === 2 && /Delete: sure\?/.test(document.getElementById("terrain").textContent)), "delete: asks first");
+  await p.click(`#terrain [data-vsdel="${saved[1].id}"]`); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds")).length === 1), "delete: removed on the second tap");
+  /* after a reload the saved one is drawn straight away from its stored shapes, with nothing downloaded */
+  await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 60000 }); await p.waitForTimeout(2000);
+  const d0 = dem();
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3 && /Ridge watch/.test(document.getElementById("ml-viewsheds").textContent)), "reload: the saved viewshed is back on the map and in Map overlays");
+  await p.waitForTimeout(500);
+  ok(dem() === d0 && await p.evaluate(() => !window.OSAP_TERRAIN_SRC), "reload: drawn from the stored shapes, no elevation downloaded");
+  if (OUT) await p.screenshot({ path: OUT + "/terrain-saved.png" });
+  ok(errors.length === 0, "saved: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 
