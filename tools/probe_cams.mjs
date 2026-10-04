@@ -423,7 +423,26 @@ async function round15() {
 }
 function sample2(r, max = 500) { try { const j = JSON.parse(r.b.toString("utf8")); const a = Array.isArray(j) ? j : j.data || j.cameras || j.features || j.results || Object.values(j).find(Array.isArray); if (Array.isArray(a)) console.log("   array " + a.length + "; first: " + JSON.stringify(a[0]).slice(0, max)); else console.log("   keys: " + Object.keys(j).slice(0, 12).join(",")); } catch { console.log("   text: " + r.b.toString("utf8").slice(0, 200).replace(/\s+/g, " ")); } }
 if (only === "r14") await round14();
+/* ---------- round 16: AlertWest .com image CDN keyless test + API host discovery + licence text ---------- */
+async function round16() {
+  // 1) the documented sample image on the real CDN host
+  const si = "https://img.cdn.prod.alertwest.com/data/img/12224/2025/04/01/Ridge_Tahoe_NV_1743530801_6917.jpg";
+  await img(si, "AWimg sample");
+  // 2) extract the API server base + request example + any auth/licence wording from the docs page
+  const d = await get("https://docs.alertwest.org/docs/OpenAPI/Reference/get-latest-data-for-all-public-cameras/", 30000); const t = d.b.toString("utf8");
+  for (const re of [/https?:\/\/[a-z0-9.-]*alertwest\.com[^\s"'<>)\]]*/gi, /"(?:url|server|baseUrl|host)"\s*:\s*"[^"]+"/gi, /getCameraDataByLoc[\s\S]{0,300}/i, /(api[_-]?key|apikey|authorization|bearer|x-api-key|token|licen[sc]e|terms|attribution|non-commercial)/gi]) {
+    const m = t.match(re); if (m) console.log("   doc: " + [...new Set(Array.isArray(m) ? m : [m[0]])].slice(0, 10).join("  ").replace(/\s+/g, " ").slice(0, 600));
+  }
+  // 3) try candidate .com API hosts for getCameraDataByLoc (no params = probe reachability/shape)
+  for (const h of ["https://api.prod.alertwest.com", "https://api.alertwest.com", "https://prod.alertwest.com", "https://www.alertwest.com", "https://cdn.prod.alertwest.com", "https://img.cdn.prod.alertwest.com"]) {
+    const l = await get(h + "/api/getCameraDataByLoc", 20000); line("AWlist " + h, l);
+    if (l.s === 200 || l.s === 400 || l.s === 422) sample2(l);
+  }
+  // 4) the AlertWest site terms/licence page (look for redistribution wording)
+  for (const u of ["https://www.alertwest.com/terms", "https://www.alertwest.com/terms-of-service", "https://www.alertwest.com/legal", "https://alertwest.com/terms"]) { const r = await get(u, 20000); line("AWterms " + u, r); if (r.s === 200) { const x = r.b.toString("utf8").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); console.log("   " + ((x.match(/[^.]{0,160}(redistribut|public|licen[sc]e|non-commercial|attribution|personal use|may not)[^.]{0,160}/i) || [""])[0]).slice(0, 400)); } }
+}
 if (only === "r15") await round15();
+if (only === "r16") await round16();
 if (only === "r12") await round12();
 if (only === "r11") await round11();
 if (only === "r10") await round10();
