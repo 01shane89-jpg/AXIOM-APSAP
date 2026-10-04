@@ -1,0 +1,24 @@
+# Test only: asks candidate keyless LiDAR and high-resolution elevation services for a sample answer (tools/probe_lidar.mjs),
+# then runs the LiDAR rows and Terrain analysis on the real Mapterhorn service (tools/lidar_live.mjs). Prints to the log;
+# writes nothing to the repo.
+name: Probe lidar sources
+on:
+  push:
+    branches: [claude/lidar-coverage]
+    paths: [tools/probe_lidar.mjs, tools/lidar_live.mjs, assets/osap-lidar.js, assets/osap-terrain.js, "assets/terrain/**", .github/workflows/probe-lidar.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: node tools/probe_lidar.mjs
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium
+      - run: SHOTS=1 node tools/lidar_live.mjs

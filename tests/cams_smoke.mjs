@@ -31,6 +31,8 @@ const sgList = JSON.parse(await readFile(join(root, "data/cams/sg-lta.json"), "u
 const ctxMode = { v: "" }; // "fail": every agency image 404s; "hang": they answer after 4 s
 async function open(opts, hash = "") {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
+  /* US agencies' cameras (Caltrans, NOAA buoys...) belong to a hidden area (assets/osap-lock.js): this app session is unlocked */
+  await ctx.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} });
   const errors = [], imgs = [];
   ctxMode.v = "";
   await ctx.route(/api\.data\.gov\.sg\/v1\/transport\/traffic-images/, (r) => r.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" },

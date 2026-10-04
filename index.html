@@ -45,6 +45,7 @@
   timer = setTimeout(done, 15000);
 })();
 </script>
+<script src="assets/osap-lock.js"></script>
 <script src="assets/osap-start.js"></script>
 <script>
 /* Times: every time on the page is shown in Zulu (UTC) and in local time, 24-hour, for example "27 Sept 2026 0340Z / 10:40 ICT".
@@ -1226,8 +1227,94 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   if (window.matchMedia && matchMedia("(pointer: coarse)").matches) L.Canvas.prototype.options.tolerance = 14;
   /* views drawn before the map legend exists queue their key here; the legend control takes the queue over (see "the legend on the map") */
   if (!window.OSAP_LEGEND) window.OSAP_LEGEND = { q: {}, set: function (id, html, home) { this.q[id] = [html, home]; } };
-  /* sideways panning stops about 60 degrees past the dateline on each side, so the world does not scroll forever but Fiji, Kiribati and the Pacific can still be seen across it */
-  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true, maxBounds: [[-85, -240], [85, 240]], maxBoundsViscosity: 1 });
+  /* the map pans round the globe without end: see "the map wraps round the globe" just below */
+  var map = L.map("map", { center: [14.6, 101], zoom: 6, minZoom: 2, maxZoom: 13, preferCanvas: true });
+  /* ---------- the map wraps round the globe ----------
+     Panning east or west carries on round the world. Everything drawn on the map (symbols, lines, shapes, pop-ups, pictures)
+     is placed on the world copy nearest the middle of the screen, so it follows across the dateline; a line or shape is
+     moved as one piece (its longitudes made continuous first, so a track over the dateline is not drawn the long way round).
+     When a pan ends more than 180 degrees from Greenwich the view steps back one whole world, which looks the same,
+     so every view reads its centre and edges within one world either side of the dateline. */
+  (function () {
+    var rawLP = map.latLngToLayerPoint, rawNew = map._latLngToNewLayerPoint, last = null, stepping = false;
+    function ref() { return map._loaded ? map.getCenter().lng : null; }
+    function shift(lng, r) { return r == null || !isFinite(lng) ? 0 : 360 * Math.round((r - lng) / 360); }
+    /* the same place, on the world copy nearest longitude r (the middle of the screen when r is left out) */
+    function near(ll, r) { ll = L.latLng(ll); var k = shift(ll.lng, r === undefined ? ref() : r); return k ? L.latLng(ll.lat, ll.lng + k, ll.alt) : ll; }
+    map.latLngToLayerPoint = function (ll) { return rawLP.call(map, near(ll)); };
+    map._latLngToNewLayerPoint = function (ll, zoom, center) { return rawNew.call(map, near(ll, L.latLng(center).lng), zoom, center); };
+    /* lines and shapes: each ring is moved whole; one that spans half the world or more is also drawn one world either side */
+    L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
+      var i, n = lls.length;
+      if (!n) return;
+      if (!(lls[0] instanceof L.LatLng)) { for (i = 0; i < n; i++) this._projectLatlngs(lls[i], result, pxb); return; }
+      var lo = new Array(n), prev = 0, mn = Infinity, mx = -Infinity;
+      for (i = 0; i < n; i++) {
+        var a = lls[i].lng;
+        /* a step of more than half the world between two points crosses the dateline (a ring edge running along +/-180 is left alone) */
+        if (i && Math.abs(a - prev) > 180 && !(Math.abs(a) === 180 && Math.abs(lls[i - 1].lng) === 180)) a += 360 * Math.round((prev - a) / 360);
+        lo[i] = prev = a; if (a < mn) mn = a; if (a > mx) mx = a;
+      }
+      var k = shift((mn + mx) / 2, ref()), offs = mx - mn >= 180 ? [k - 360, k, k + 360] : [k];
+      for (var j = 0; j < offs.length; j++) {
+        var ring = [];
+        for (i = 0; i < n; i++) { var p = rawLP.call(this._map, L.latLng(lls[i].lat, lo[i] + offs[j])); ring.push(p); pxb.extend(p); }
+        result.push(ring);
+      }
+    };
+    /* circles in metres and pictures laid on the map are placed by their middle */
+    function around(proto, name, key, move) {
+      var f = proto[name];
+      proto[name] = function () {
+        var o = this[key], w = o && move(o);
+        if (!w || w === o) return f.apply(this, arguments);
+        this[key] = w; try { return f.apply(this, arguments); } finally { this[key] = o; }
+      };
+    }
+    around(L.Circle.prototype, "_project", "_latlng", function (o) { return near(o); });
+    function boxNear(b, r) {
+      var k = shift(b.getCenter().lng, r);
+      return k ? L.latLngBounds([b.getSouth(), b.getWest() + k], [b.getNorth(), b.getEast() + k]) : b;
+    }
+    around(L.ImageOverlay.prototype, "_reset", "_bounds", function (b) { return boxNear(b, ref()); });
+    L.ImageOverlay.prototype._animateZoom = (function (f) {
+      return function (e) {
+        var o = this._bounds, w = boxNear(o, L.latLng(e.center).lng);
+        if (w === o) return f.call(this, e);
+        this._bounds = w; try { return f.call(this, e); } finally { this._bounds = o; }
+      };
+    })(L.ImageOverlay.prototype._animateZoom);
+    /* put everything on the copies nearest the new middle of the screen */
+    function rewrap() {
+      last = ref();
+      map.eachLayer(function (l) {
+        try {
+          if (l instanceof L.Path) { if (l._renderer) l.redraw(); }
+          else if (l instanceof L.Marker) l.update();
+          else if (l instanceof L.DivOverlay) { if (l._container) l._updatePosition(); }
+          else if (l instanceof L.ImageOverlay) { if (l._image) l._reset(); }
+        } catch (e) {}
+      });
+    }
+    /* how far the middle may drift before something on screen could be on the wrong copy: half a world, less half the (padded) screen */
+    function slack() { return 180 - map.getSize().x * 0.6 / map.options.crs.scale(map.getZoom()) * 360; }
+    /* everything added so far was placed against the first view; only a later move far enough needs it placed again */
+    map.whenReady(function () { last = ref(); });
+    map.on("zoomend viewreset", function () { last = ref(); });
+    map.on("move", function () { if (!stepping && last != null && Math.abs(ref() - last) > Math.max(20, slack() - 1)) rewrap(); });
+    map.on("moveend", function () {
+      if (stepping) return;
+      var c = ref(); if (c == null) return;
+      if (Math.abs(c) > 180) {
+        /* step the view back by whole worlds: it looks the same, and its centre is between -180 and 180 again */
+        stepping = true;
+        try { map.panBy([-Math.round(c / 360) * map.options.crs.scale(map.getZoom()), 0], { animate: false }); } finally { stepping = false; }
+        rewrap(); return;
+      }
+      if (last == null || Math.abs(c - last) > Math.max(0, slack() - 1)) rewrap();
+    });
+    window.OSAP_WRAP = { near: near };
+  })();
   /* the hidden watch-check copies of this page (?watchscan=1) never show their map, so they download no map tiles */
   if (/[?&]watchscan=1(&|$)/.test(location.search)) L.GridLayer.prototype._update = function () {};
   /* side labels on symbols (KH) only from zoom 10, so dense layers stay readable */
@@ -1443,7 +1530,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
      Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
      Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
   var HSX = {
-    world: { name: "Hillshade, LiDAR where published", note: "Esri World Hillshade, worldwide. Uses 1 m LiDAR where governments publish it (much of the US and Europe, and more added each year), about 30 m satellite elevation elsewhere, including most of South-East Asia",
+    world: { name: "Esri hillshade", note: "Esri World Hillshade, worldwide. Sharp (1 m LiDAR) only in parts of the US and Europe; about 30 m satellite elevation elsewhere, including most of South-East Asia. LiDAR hillshade above covers far more; LiDAR coverage shows where",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", max: 16, lic: "restricted",
       attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener">coverage</a>)' },
     jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
@@ -2841,6 +2928,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
    location stay, because they are about the whole country. The table matches tools/build_us_states.py. */
 (function () {
   var US = [["AL","Alabama","America/Chicago"],["AK","Alaska","America/Anchorage"],["AZ","Arizona","America/Phoenix"],["AR","Arkansas","America/Chicago"],["CA","California","America/Los_Angeles"],["CO","Colorado","America/Denver"],["CT","Connecticut","America/New_York"],["DE","Delaware","America/New_York"],["DC","Washington, D.C.","America/New_York"],["FL","Florida","America/New_York"],["GA","Georgia","America/New_York"],["HI","Hawaii","Pacific/Honolulu"],["ID","Idaho","America/Boise"],["IL","Illinois","America/Chicago"],["IN","Indiana","America/Indiana/Indianapolis"],["IA","Iowa","America/Chicago"],["KS","Kansas","America/Chicago"],["KY","Kentucky","America/New_York"],["LA","Louisiana","America/Chicago"],["ME","Maine","America/New_York"],["MD","Maryland","America/New_York"],["MA","Massachusetts","America/New_York"],["MI","Michigan","America/Detroit"],["MN","Minnesota","America/Chicago"],["MS","Mississippi","America/Chicago"],["MO","Missouri","America/Chicago"],["MT","Montana","America/Denver"],["NE","Nebraska","America/Chicago"],["NV","Nevada","America/Los_Angeles"],["NH","New Hampshire","America/New_York"],["NJ","New Jersey","America/New_York"],["NM","New Mexico","America/Denver"],["NY","New York","America/New_York"],["NC","North Carolina","America/New_York"],["ND","North Dakota","America/Chicago"],["OH","Ohio","America/New_York"],["OK","Oklahoma","America/Chicago"],["OR","Oregon","America/Los_Angeles"],["PA","Pennsylvania","America/New_York"],["RI","Rhode Island","America/New_York"],["SC","South Carolina","America/New_York"],["SD","South Dakota","America/Chicago"],["TN","Tennessee","America/Chicago"],["TX","Texas","America/Chicago"],["UT","Utah","America/Denver"],["VT","Vermont","America/New_York"],["VA","Virginia","America/New_York"],["WA","Washington","America/Los_Angeles"],["WV","West Virginia","America/New_York"],["WI","Wisconsin","America/Chicago"],["WY","Wyoming","America/Denver"]];
+  /* the states are hidden with the United States while hidden areas are locked (assets/osap-lock.js) */
+  if (window.OSAP_LOCK && window.OSAP_LOCK.hidden("us")) return;
   window.OSAP_SUBS = { us: US.map(function (s) { return { code: s[0], name: s[1], tz: s[2] }; }) };
   var h = (location.hash || "").replace("#", "").split("/"), cc = h.length > 1 ? h[0] : "th";
   var q = new URLSearchParams(location.search), st = String(q.get("st") || "").toUpperCase(), hit = null;
@@ -2882,6 +2971,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="data/live/wx-forecast.js"></script>
 <script src="data/basemap/country-outlines.js"></script>
 <script src="data/basemap/world-countries.js"></script>
+<script>/* hidden areas: left out of the country list while locked (assets/osap-lock.js) */ if (window.OSAP_LOCK) window.OSAP_LOCK.prune();</script>
 <script src="data/basemap/world-outlines.js"></script>
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
@@ -6054,9 +6144,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
      whenever the data set changes, and on start. The base map choice stays. */
-  /* elevation shading (data-hs) and country borders (data-bd) belong with the base map, so they stay on across tabs */
+  /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-lidar]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -8552,10 +8642,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
 <script src="assets/osap-facility-intel.js"></script>
 <script src="assets/osap-medplan-decide.js"></script>
+<script src="assets/osap-medplan-air.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
+<!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
+<script src="assets/osap-lidar.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-illum.js"></script>

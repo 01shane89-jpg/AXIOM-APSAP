@@ -13,7 +13,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
 const OUT = process.env.OUT || "";
-const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
@@ -72,6 +72,7 @@ async function open(offline) {
       calls.kv++;
       const pd = new URLSearchParams(r.request().postData() || ""), lat = +pd.get("lat"), lon = +pd.get("lng"), t = tOf(lat);
       if (t > 0.5 && t < 0.72) return r.abort();               /* KartaView fails here: Panoramax must still be used */
+      if (t > 0.37 && t < 0.45) return J(r, { status: { httpCode: 200 }, currentPageItems: [] });   /* a stretch with no pictures: Drive skips it */
       if (t <= 0.5) return J(r, { status: { httpCode: 200 }, currentPageItems: [{ id: "9" + Math.round(t * 1e4), sequence_id: "123", sequence_index: "4", lat: String(lat + 0.0001), lng: String(lon),
         name: "storage13/files/photo/2026/6/12/proc/1_a.jpg", lth_name: "storage13/files/photo/2026/6/12/lth/1_a.jpg", shot_date: "2026-06-12 07:35:32.000", heading: "189.00", projection: "PLANE", username: "someone" }] });
       return J(r, { status: { httpCode: 200 }, currentPageItems: [] });
@@ -194,11 +195,43 @@ let ctx, errors, p;
   await p.evaluate(() => document.querySelector('#rtpv [data-pvi="0"]').click()); await p.waitForTimeout(200);
   const pages0 = ctx.pages().length;
   await p.click('#rtpv [data-pv="drive"]');
-  await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d && d.on && d.kind === "street" && document.querySelector("#rtdv .rtdv-img"); }, null, { timeout: 15000 });
+  /* 3D first: a continuous drive along the line over satellite and terrain, street pictures in a corner */
+  await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d && d.on && (d.no3d || (d.gl && document.querySelector("#rtdv .rtdv-3d canvas"))); }, null, { timeout: 20000 }).catch(() => {});
   let d = (await st(p)).drive;
+  ok(d && d.mode === "3d" && d.gl && await p.evaluate(() => document.getElementById("rtdv").classList.contains("m3d")), "Drive opens as a 3D drive over satellite and terrain (" + JSON.stringify(d && { mode: d.mode, gl: d.gl, no3d: d.no3d }) + ")");
+  ok((await p.evaluate(() => document.querySelector('#rtdv [data-dvs="spd"]').value)) === "5", "3D starts at 5×");
+  const ms = [];
+  for (let i = 0; i < 3; i++) { ms.push((await st(p)).drive.m); await p.waitForTimeout(800); }
+  ms.push((await st(p)).drive.m);
+  const steps3 = ms.slice(1).map((m, i) => m - ms[i]);
+  ok(steps3.every((x) => x > 10), "the 3D drive moves on steadily without waiting for pictures (" + steps3.map(Math.round).join(", ") + " m per 0.8 s)");
+  await p.waitForFunction(() => window.OSAP_PREVIEW.state().drive.ins === "kartaview" && document.querySelector("#rtdv .rtdv-ins.on .rtdv-iimg"), null, { timeout: 12000 }).catch(() => {});
+  v = await p.evaluate(() => ({ ins: document.querySelector("#rtdv .rtdv-ins").textContent, tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: (document.querySelector("#rtdv .rtdv-iimg") || {}).style?.backgroundImage || "" }));
+  ok(/KartaView · 12 JUN 2026/.test(v.ins) && /url\(/.test(v.img), "a street picture near the car appears in the corner with its source and date (" + v.ins.slice(0, 80) + ")");
+  ok(!/someone/.test(v.ins + v.tag), "the corner picture never names who took it");
+  await p.waitForFunction(() => /captured 05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  v = await p.evaluate(() => document.querySelector("#rtdv .rtdv-tag").textContent);
+  ok(/3D satellite view · captured 05 MAR 2026/.test(v) && /how it looked then, not now/.test(v), "the 3D view is labelled as dated satellite over a terrain model (" + v.slice(0, 120) + ")");
+  if (OUT) await p.screenshot({ path: OUT + "/drive-3d.png" });
+  await p.click('#rtdv [data-dv="play"]'); await p.waitForTimeout(300);
+  const pz = (await st(p)).drive.m; await p.waitForTimeout(600);
+  ok(!(await st(p)).drive.playing && Math.abs((await st(p)).drive.m - pz) < 1, "Pause stops the 3D drive");
+  await p.click('#rtdv [data-dv="fwd"]'); await p.waitForTimeout(300);
+  d = (await st(p)).drive; s = await st(p);
+  ok(d.m > pz + 20 && s.pts.some((q) => Math.abs(q.m - d.m) < 1), "▶ jumps to the next preview point (" + Math.round(pz) + " → " + Math.round(d.m) + " m)");
+  await p.evaluate((m) => { const r = document.querySelector("#rtdv .rtdv-rg"); r.value = m; r.dispatchEvent(new Event("input")); r.dispatchEvent(new Event("change")); }, Math.round(0.5 * TOT));
+  ok(Math.abs((await st(p)).drive.m - Math.round(0.5 * TOT)) < 2, "the scrub bar moves the 3D car");
+  await p.evaluate(() => { const r = document.querySelector("#rtdv .rtdv-rg"); r.value = 0; r.dispatchEvent(new Event("change")); });
+  await p.click('#rtdv [data-dv="mode"]');
+  ok((await st(p)).drive.mode === "photo", "Photos only switches to the street pictures one by one");
+  await p.click('#rtdv [data-dv="play"]');   /* playing on, as Drive starts */
+  await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d && d.on && d.kind === "street" && document.querySelector("#rtdv .rtdv-img"); }, null, { timeout: 15000 });
+  d = (await st(p)).drive;
   v = await p.evaluate(() => { const e = document.getElementById("rtdv"), r = e.getBoundingClientRect(), mr = window.__asapMap.getContainer().getBoundingClientRect(), pv = document.getElementById("rtpv").firstElementChild.getBoundingClientRect();
     return { vis: !e.hidden && r.width > 300 && r.height > 300, over: r.left >= mr.left - 1 && r.right <= pv.left + 1, tag: e.querySelector(".rtdv-tag").textContent, img: getComputedStyle(e.querySelector(".rtdv-img")).backgroundImage, car: !!document.querySelector(".rtdv-car") }; });
   ok(v.vis && v.over, "Drive fills the map area beside the preview, inside OSAP");
+  ok((await st(p)).drive && (await p.evaluate(() => document.querySelector('#rtdv [data-dvs="spd"]').value)) === "4", "Drive starts at 4×, one picture every 60 m or more");
+  ok(await p.evaluate(() => !!document.querySelector("#rtdv .rtdv-lay.in")), "frames fade in over each other");
   ok(d.prov === "kartaview" && /KartaView · captured 12 JUN 2026/.test(v.tag) && /Visual reference: how this looked then, not now/.test(v.tag) && /openstreetcam/.test(v.img), "each frame shows its picture with provider, capture date, age and the visual-reference note");
   ok(v.car, "the map shows the car where the picture was taken");
   ok(ctx.pages().length === pages0, "nothing opens outside OSAP");
@@ -220,10 +253,18 @@ let ctx, errors, p;
   await p.click('#rtdv [data-dv="look"]');
   ok((await st(p)).drive.yaw === 0, "Look ahead turns the view back along the road");
   /* where no street picture exists: satellite, dated, said in words */
-  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent) && /to the end/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 10000 }).catch(() => {});
   d = (await st(p)).drive;
   v = await p.evaluate(() => ({ tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: !!document.querySelector("#rtdv .rtpv-satw img") }));
-  ok(d.kind === "sat" && v.img && /No street pictures here · Satellite · captured 05 MAR 2026/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such");
+  ok(d.kind === "sat" && v.img && /Satellite · captured 05 MAR 2026/.test(v.tag) && /No street pictures from here to the end/.test(v.tag) && !/Skip ahead/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such, and says how far it runs (" + d.kind + ": " + v.tag.slice(0, 160) + ")");
+  /* a gap with pictures after it: say how long it is and offer to skip it */
+  await seek(0.38); await p.waitForFunction(() => /No street pictures for the next/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  v = await p.evaluate(() => document.querySelector("#rtdv .rtdv-tag").textContent);
+  ok(/No street pictures for the next \d/.test(v) && /Skip ahead/.test(v), "inside a gap Drive says how long it is and offers to skip it (" + v.slice(0, 120) + ")");
+  const g0 = (await st(p)).drive.m;
+  await p.click('#rtdv [data-dv="skip"]'); await p.waitForFunction((m) => { const d = window.OSAP_PREVIEW.state().drive; return d.kind === "street" && d.m > m + 300; }, g0, { timeout: 8000 }).catch(() => {});
+  d = (await st(p)).drive;
+  ok(d.kind === "street" && d.m > g0 + 300, "Skip ahead jumps to the next street picture (" + Math.round(g0) + " → " + Math.round(d.m) + " m)");
   ok(d.chunks.some((c) => c.st === "done" && c.n > 0) && d.chunks.some((c) => c.st === "done" && c.n === 0), "the route strip knows where pictures were and were not found");
   /* it drives on its own */
   await seek(0.02); await p.waitForTimeout(400);

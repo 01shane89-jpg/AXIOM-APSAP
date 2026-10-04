@@ -89,7 +89,13 @@
     have(function () {
       var rows = ((window.OSAP_NEWSIX_DAY || {})[day]) || [];
       if (window.OSAP_NEWSIX_DAY) delete window.OSAP_NEWSIX_DAY[day];
-      rows.forEach(function (r) { S.rows.push({ r: r, ccs: String(r[0] || "").split(",").filter(Boolean), f: fold(r[2] + " \n " + r[3] + " \n " + r[4]), tp: String(r[8] || "").split(",") }); });
+      /* reports only about hidden areas are left out while they are locked (assets/osap-lock.js) */
+      var LK = window.OSAP_LOCK, hid = function (c) { return !!(LK && LK.hidden(c)); };
+      rows.forEach(function (r) {
+        var cs = String(r[0] || "").split(",").filter(Boolean), ok = cs.filter(function (c) { return !hid(c); });
+        if (cs.length && !ok.length) return;
+        S.rows.push({ r: r, ccs: ok, f: fold(r[2] + " \n " + r[3] + " \n " + r[4]), tp: String(r[8] || "").split(",") });
+      });
       S.loaded++; S.busy = false; draw(); ensure();
     });
   }
