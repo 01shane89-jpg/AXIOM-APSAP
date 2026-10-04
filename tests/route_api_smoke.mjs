@@ -76,15 +76,17 @@ ok(await p.evaluate(() => document.documentElement.getAttribute("data-view") !==
 
 /* incidents the app holds: a road closure on the straight line a third of the way, a disaster alert 10 km off it, an old one */
 const today = new Date().toISOString().slice(0, 10), old = new Date(Date.now() - 40 * 864e5).toISOString().slice(0, 10);
-await p.evaluate(([A, B, today, old]) => {
+/* the page loads the real road-closure file (data/live/roads.js) later on its own: the test incidents are set again
+   right before each call so that file arriving cannot replace them */
+await p.evaluate(([A, B, today, old]) => { window.__inject = () => {
   const at = (t, off) => [A[0] + (B[0] - A[0]) * t + off, A[1] + (B[1] - A[1]) * t];
   const c1 = at(1 / 3, 0), g = at(0.5, 0.09), o = at(0.8, 0);
   window.ASAP_ROADS = { items: [{ lat: c1[0], lon: c1[1], kind: "closure", title: "Bridge closed", link: "https://example.org/closed", updated: today },
     { lat: o[0], lon: o[1], kind: "closure", title: "Old works", link: "", updated: old }] };
   window.ASAP_GDACS = { events: [{ lat: g[0], lon: g[1], name: "Flood alert", url: "https://example.org/gdacs", from: today }] };
-}, [A, B, today, old]);
+}; }, [A, B, today, old]);
 
-const r3 = await p.evaluate(([A, B]) => window.OSAP_ROUTETAB.alternates(A, B, { mode: "car", n: 3 }).then((x) => x.map((y) => ({ id: y.id, n: y.coords.length, m: y.m, s: y.s, road: y.road, xc: y.xc, src: y.src, how: y.how, a: y.coords[0], b: y.coords[y.coords.length - 1] }))), [A, B]);
+const r3 = await p.evaluate(([A, B]) => (window.__inject(), window.OSAP_ROUTETAB.alternates(A, B, { mode: "car", n: 3 }).then((x) => x.map((y) => ({ id: y.id, n: y.coords.length, m: y.m, s: y.s, road: y.road, xc: y.xc, src: y.src, how: y.how, a: y.coords[0], b: y.coords[y.coords.length - 1] })))), [A, B]);
 ok(r3.length === 3 && r3.map((x) => x.id).join("") === "PAC", "three distinct lines as P, A, C: " + r3.map((x) => x.id + " " + x.how).join(", "));
 ok(r3[0].s <= r3[1].s && r3[1].s <= r3[2].s, "fastest first");
 ok(r3.filter((x) => x.how === "alternative").length === 1, "the router's alternative that repeats the fastest line is dropped");
@@ -94,7 +96,7 @@ ok(Math.abs(r3[0].a[0] - A[0]) < 1e-4 && Math.abs(r3[0].b[1] - B[1]) < 1e-4, "li
 const r1 = await p.evaluate(([A, B]) => window.OSAP_ROUTETAB.alternates(A, B, { mode: "car", n: 1 }).then((x) => x.map((y) => y.id)), [A, B]);
 ok(r1.join("") === "P", "n: 1 gives only the primary");
 
-const hz = await p.evaluate(([A, B]) => { const L = []; for (let i = 0; i <= 50; i++) { const t = i / 50; L.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); } return { d2: window.OSAP_ROUTETAB.hazards(L), d20: window.OSAP_ROUTETAB.hazards(L, { km: 20 }), d7: window.OSAP_ROUTETAB.hazards(L, { days: 7 }), len: L }; }, [A, B]);
+const hz = await p.evaluate(([A, B]) => { window.__inject(); const L = []; for (let i = 0; i <= 50; i++) { const t = i / 50; L.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); } return { d2: window.OSAP_ROUTETAB.hazards(L), d20: window.OSAP_ROUTETAB.hazards(L, { km: 20 }), d7: window.OSAP_ROUTETAB.hazards(L, { days: 7 }), len: L }; }, [A, B]);
 const cl = hz.d2.find((x) => x.text === "Bridge closed");
 ok(cl && cl.layer === "roads" && cl.kind === "Road closure" && cl.off_km < 0.2 && cl.age_h != null && cl.age_h < 48 && cl.src && cl.url, "the closure on the line: " + JSON.stringify(cl));
 const tot = await p.evaluate((L) => { let m = 0; for (let i = 1; i < L.length; i++) m += window.OSAP_GEO.dist(L[i - 1], L[i]); return m / 1000; }, hz.len);
