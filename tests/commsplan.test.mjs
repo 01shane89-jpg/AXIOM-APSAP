@@ -52,5 +52,17 @@ ok(R.covers(area, { lat: 13.8, lon: 100.6 }) && !R.covers(area, { lat: 14.5, lon
 ok(R.covers(area, { s: 13.9, w: 100.4, n: 14.2, e: 100.6 }) && !R.covers(area, { s: 15, w: 100.4, n: 16, e: 100.6 }), "PACE area overlaps a box near it only");
 ok(!R.covers(null, { lat: 13.75, lon: 100.5 }), "a plan with no area covers nothing");
 
+// equipment references
+ok(near(R.cableDb100("lmr400", 450), 8.9, 0.05), "LMR-400 at 450 MHz about 8.9 dB per 100 m");
+ok(R.cableDb100("rg58", 450) > R.cableDb100("lmr400", 450) && R.cableDb100("lmr400", 1000) > R.cableDb100("lmr400", 100), "thinner cable and higher frequency lose more");
+const fl = R.feedline({ cable: "lmr400", f_mhz: 450, len_m: 20, connectors: 2, conn_db: 0.15, ptx_w: 20, gain_dbi: 2 });
+ok(near(fl.total_db, 2.08, 0.02) && fl.w_at_antenna < 20, "feedline: 20 m LMR-400 + 2 connectors = " + fl.total_db.toFixed(2) + " dB");
+ok(near(R.antennaLen_m(150, 0.25), 0.475, 0.005) && near(R.antennaLen_m(150, 1, 1), 1.9986, 0.001), "antenna lengths at 150 MHz");
+ok(R.adapterChain({ type: "bnc", gender: "f" }, { type: "bnc", gender: "m" }, 150).direct && !R.adapterChain({ type: "bnc", gender: "f" }, { type: "n", gender: "f" }, 150).direct, "connector chain: direct fit and adapter needed");
+ok(R.adapterChain({ type: "bnc", gender: "f" }, { type: "n", gender: "f" }, 5000).notes.length > 0, "connector chain warns above a connector's rated frequency");
+ok(R.ituRegion("th") === 3 && R.ituRegion("us") === 2 && R.ituRegion("de") === 1 && R.ituRegion("mn") === 1, "ITU regions");
+ok(R.spectrumAt(121.5, 3).some((x) => x.kind === "distress") && R.spectrumAt(156.8, 1).some((x) => x.kind === "distress"), "distress frequencies are marked");
+ok(!R.looksLikeKey("Key list A ed 12") && !R.looksLikeKey("RTO Smith") && R.looksLikeKey("a3f9c1d2e4b5a6978c0d1e2f") && R.looksLikeKey("1234 5678 9012 3456 7890"), "key-like text is detected, ordinary text is not");
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

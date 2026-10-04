@@ -135,11 +135,110 @@
     }
     return !!q && hav_km(c, [num(q.lat), num(q.lon)]) <= rad;
   }
+  /* ---------- cables: typical datasheet attenuation, dB per 100 m, at reference frequencies (MHz); approximate ---------- */
+  var CABLES = [
+    { id: "rg58", name: "RG-58 (thin, flexible)", pts: [[100, 16], [400, 33], [1000, 60]] },
+    { id: "rg8x", name: "RG-8X (mini-8)", pts: [[100, 12.1], [400, 26], [1000, 43]] },
+    { id: "rg213", name: "RG-213 (thick)", pts: [[100, 7.2], [400, 15.4], [1000, 27.9]] },
+    { id: "lmr240", name: "LMR-240 class", pts: [[150, 9.9], [450, 17.4], [900, 24.9], [2400, 41.9]] },
+    { id: "lmr400", name: "LMR-400 class", pts: [[150, 5.0], [450, 8.9], [900, 12.8], [2400, 21.7]] },
+    { id: "lmr600", name: "LMR-600 class", pts: [[150, 3.2], [450, 5.6], [900, 8.2], [2400, 14.1]] }
+  ];
+  /* dB per 100 m at f: log-log between datasheet points, square-root-of-frequency outside them */
+  function cableDb100(id, f_mhz) {
+    var c = CABLES.filter(function (x) { return x.id === id; })[0]; f_mhz = num(f_mhz); if (!c || !(f_mhz > 0)) return NaN;
+    var p = c.pts;
+    if (f_mhz <= p[0][0]) return p[0][1] * Math.sqrt(f_mhz / p[0][0]);
+    if (f_mhz >= p[p.length - 1][0]) return p[p.length - 1][1] * Math.sqrt(f_mhz / p[p.length - 1][0]);
+    for (var i = 1; i < p.length; i++) if (f_mhz <= p[i][0]) {
+      var a = p[i - 1], b = p[i], t = Math.log(f_mhz / a[0]) / Math.log(b[0] / a[0]);
+      return Math.exp(Math.log(a[1]) + t * (Math.log(b[1]) - Math.log(a[1])));
+    }
+    return NaN;
+  }
+  /* feedline: cable loss + connectors; power reaching the antenna and EIRP */
+  function feedline(o) {
+    var per = cableDb100(o.cable, o.f_mhz), len = Math.max(0, num(o.len_m, 0)), nc = Math.max(0, Math.round(num(o.connectors, 0))), lc = Math.max(0, num(o.conn_db, 0.15));
+    var cab = per * len / 100, tot = cab + nc * lc, ptx = num(o.ptx_w), gain = num(o.gain_dbi, 0);
+    var atAnt = isFinite(ptx) ? ptx * Math.pow(10, -tot / 10) : NaN;
+    return { db_per_100m: per, cable_db: cab, connector_db: nc * lc, total_db: tot, w_at_antenna: atAnt, eirp_dbm: isFinite(atAnt) && atAnt > 0 ? wToDbm(atAnt) + gain : NaN, lost_pct: 100 * (1 - Math.pow(10, -tot / 10)) };
+  }
+
+  /* ---------- antennas: resonant lengths (velocity / end-effect factor 0.95 for wire, 1 for free space) ---------- */
+  function antennaLen_m(f_mhz, fraction, k) { f_mhz = num(f_mhz); if (!(f_mhz > 0)) return NaN; return 299.792458 / f_mhz * num(fraction, 0.5) * num(k, 0.95); }
+
+  /* ---------- RF connectors: adapter chain between two ports ---------- */
+  var CONNECTORS = [
+    { id: "bnc", name: "BNC", max_mhz: 4000 }, { id: "tnc", name: "TNC", max_mhz: 11000 }, { id: "n", name: "N", max_mhz: 11000 },
+    { id: "sma", name: "SMA", max_mhz: 18000 }, { id: "rpsma", name: "RP-SMA", max_mhz: 18000, note: "RP-SMA and SMA screw together but the centre pins do not mate." },
+    { id: "uhf", name: "UHF (PL-259 / SO-239)", max_mhz: 300, note: "UHF connectors are not constant impedance; losses rise above about 300 MHz." },
+    { id: "miniuhf", name: "Mini-UHF", max_mhz: 2500 }, { id: "qma", name: "QMA", max_mhz: 6000 }, { id: "fme", name: "FME", max_mhz: 2000 }, { id: "mcx", name: "MCX", max_mhz: 6000 }
+  ];
+  /* a = {type, gender: "m"|"f"} on device A, b likewise on device B (genders are of the port itself). Returns the parts to
+     fit between them, in order, with their typical loss. */
+  function adapterChain(a, b, f_mhz) {
+    var ca = CONNECTORS.filter(function (x) { return x.id === (a && a.type); })[0], cb = CONNECTORS.filter(function (x) { return x.id === (b && b.type); })[0];
+    if (!ca || !cb) return null;
+    var g = function (x) { return x === "m" ? "male" : "female"; }, opp = function (x) { return x === "m" ? "f" : "m"; };
+    var parts = [], notes = [];
+    if (ca.id === cb.id && a.gender !== b.gender) parts = [];
+    else if (ca.id === cb.id) parts.push({ name: ca.name + " " + g(opp(a.gender)) + " to " + g(opp(b.gender)) + " barrel", db: 0.1 });
+    else parts.push({ name: ca.name + " " + g(opp(a.gender)) + " to " + cb.name + " " + g(opp(b.gender)) + " adapter", db: 0.15 });
+    [ca, cb].forEach(function (c) { if (c.note && notes.indexOf(c.note) < 0) notes.push(c.note); });
+    f_mhz = num(f_mhz);
+    [ca, cb].forEach(function (c) { if (isFinite(f_mhz) && f_mhz > c.max_mhz) notes.push(c.name + " is not rated for " + f_mhz + " MHz (about " + c.max_mhz + " MHz)."); });
+    return { direct: !parts.length, parts: parts, db: parts.reduce(function (s, p) { return s + p.db; }, 0), notes: notes };
+  }
+
+  /* ---------- ITU region of a country (Radio Regulations): 2 = Americas, 3 = most of Asia and Oceania, 1 = the rest ---------- */
+  var R2 = "ag ai ar aw bb bm bo br bs bz ca cl co cr cu dm do ec fk gd gf gl gp gt gy hn ht jm kn ky lc mq ms mx ni pa pe pm pr py sr sv tc tt us uy vc ve vg vi";
+  var R3 = "af au bd bn bt cc ck cn cx fj fm gu hk id in io ir ki kh kp kr la lk mh mm mo mp mv my nc nf np nr nu nz oki pf pg ph pk pn pw sb sg th tk tl to tv tw vn vu wf ws jp";
+  function ituRegion(cc) { cc = String(cc || "").toLowerCase(); return (" " + R2 + " ").indexOf(" " + cc + " ") >= 0 ? 2 : (" " + R3 + " ").indexOf(" " + cc + " ") >= 0 ? 3 : 1; }
+  /* broad civil reference points (not an allocation table, not a licence): what is commonly found where */
+  var SPECTRUM = [
+    { lo: 2.182, hi: 2.182, name: "2182 kHz maritime distress and calling (HF voice)", kind: "distress" },
+    { lo: 3, hi: 30, name: "HF: long-range voice and data, broadcast, amateur, aviation and maritime HF", kind: "band" },
+    { lo: 30, hi: 88, name: "VHF low: land mobile; in many countries government and military", kind: "band" },
+    { lo: 87.5, hi: 108, name: "FM broadcast", kind: "civil", r: { 2: [88, 108] } },
+    { lo: 108, hi: 117.975, name: "Aeronautical radionavigation (VOR, ILS localiser)", kind: "civil" },
+    { lo: 118, hi: 137, name: "Aeronautical VHF voice (air band)", kind: "civil" },
+    { lo: 121.5, hi: 121.5, name: "121.5 MHz aeronautical emergency", kind: "distress" },
+    { lo: 144, hi: 146, name: "Amateur 2 m", kind: "civil", r: { 2: [144, 148], 3: [144, 148] } },
+    { lo: 156, hi: 162.025, name: "Maritime VHF", kind: "civil" },
+    { lo: 156.8, hi: 156.8, name: "156.8 MHz marine channel 16, distress and calling", kind: "distress" },
+    { lo: 225, hi: 400, name: "UHF: in many countries government and military aviation and SATCOM", kind: "band" },
+    { lo: 243, hi: 243, name: "243.0 MHz military aviation emergency", kind: "distress" },
+    { lo: 406, hi: 406.1, name: "406 MHz COSPAS-SARSAT distress beacons (do not transmit)", kind: "distress" },
+    { lo: 430, hi: 440, name: "Amateur 70 cm (edges vary by region)", kind: "civil", r: { 2: [420, 450] } },
+    { lo: 1525, hi: 1559, name: "L-band mobile satellite (downlink)", kind: "civil" },
+    { lo: 1559, hi: 1610, name: "Satellite navigation (GPS L1 1575.42, Galileo, GLONASS, BeiDou): do not transmit", kind: "distress" },
+    { lo: 1616, hi: 1626.5, name: "Iridium satellite service", kind: "civil" },
+    { lo: 1626.5, hi: 1660.5, name: "L-band mobile satellite (uplink)", kind: "civil" },
+    { lo: 2400, hi: 2483.5, name: "2.4 GHz ISM: Wi-Fi, Bluetooth, many data links", kind: "civil" },
+    { lo: 5725, hi: 5875, name: "5.8 GHz ISM: Wi-Fi, video and data links", kind: "civil" }
+  ];
+  function spectrumAt(f_mhz, region) {
+    f_mhz = num(f_mhz); if (!(f_mhz > 0)) return [];
+    return SPECTRUM.filter(function (s) { var r = s.r && s.r[region], lo = r ? r[0] : s.lo, hi = r ? r[1] : s.hi; return lo === hi ? Math.abs(f_mhz - lo) < 0.0125 : f_mhz >= lo && f_mhz <= hi; });
+  }
+
+  /* COMSEC fields are administrative only: refuse anything that looks like key material (long runs of hex, base64 or digits) */
+  function looksLikeKey(s) {
+    s = String(s == null ? "" : s);
+    var t = s.replace(/[\s:.\-]+/g, "");
+    if (/[0-9a-f]{20,}/i.test(t)) return true;
+    if (/\d{16,}/.test(t)) return true;
+    var b = t.match(/[A-Za-z0-9+/=]{24,}/g) || [];
+    return b.some(function (x) { return /\d/.test(x) && /[A-Z]/.test(x) && /[a-z]/.test(x); });
+  }
+
   root.OSAP_RADIO = {
     version: "osap-radio/1", R_EARTH_M: R_EARTH_M,
     wToDbm: wToDbm, dbmToW: dbmToW, fspl: fspl, wavelength_m: wavelength_m, fresnel_m: fresnel_m, bulge_m: bulge_m, horizon_km: horizon_km,
     linkBudget: linkBudget, marginClass: marginClass, BANDS: BANDS,
     DEVICES: DEVICES, BATTERIES: BATTERIES, avgW: avgW, coldFactor: coldFactor, powerPlan: powerPlan,
-    METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round
+    METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
+    CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,
+    ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey
   };
 })(typeof window !== "undefined" ? window : globalThis);
