@@ -904,6 +904,8 @@
     "#medplan .mpon{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;margin-top:4px;cursor:pointer}#medplan .mpon input{width:18px;height:18px;margin:0}" +
     "#medplan tr.mpoff td{opacity:.55}#medplan tr.mpoff td:first-child{opacity:1}#medplan .mpofftag{font-size:11.5px;font-weight:700;color:#8b0010}" +
     ".mpdoc .mpaprint{break-before:page;margin-top:14px}.mpdoc .mpaprint h3:first-child{font-size:15px}#medplan .mppst .mpact{display:flex;gap:6px;margin-top:5px}#medplan .mppst .mpct{display:block;margin-top:3px}" +
+    "#medplan .mpvs{display:inline-block;margin:2px 0 4px;padding:3px 8px;border-radius:4px;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}#medplan .mpvs-valid{background:#d3f0d8;color:#0b4d1c}#medplan .mpvs-warning{background:#ffe8a3;color:#5a3d00}#medplan .mpvs-blocking{background:#f8c9c4;color:#7a0d02}" +
+    "#medplan ul.mpvl{list-style:none;margin:0 0 4px;padding:0;columns:2 300px;column-gap:18px}#medplan ul.mpvl li{break-inside:avoid;margin:0 0 3px;font-size:12.5px}#medplan .mpvm{display:inline-block;width:1.2em;text-align:center;font-weight:700}#medplan .mpv-ok .mpvm{color:#1e7a3a}#medplan .mpv-warning .mpvm{color:#a35f00}#medplan .mpv-blocking{color:#8b0d02}#medplan .mpv-blocking .mpvm{color:#b3261e}" +
     "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
     "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}";
   /* every #medplan rule also styles the print view's copy of the plan (.mpdoc) */
@@ -998,6 +1000,7 @@
       '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label></div>" +
       '<p><b>Centred on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
       (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to centre the plan on it.</span>' : "") + "</p>" +
+      '<h3>Plan status</h3><div id="mp-val"></div>' +
       '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs">Looking up hospitals…</p></div>' +
       '<h3>1. Golden hour</h3><div id="mp-gh"></div>' +
       '<h3>2. Receiving hospitals, most capable first</h3>' +
@@ -1792,39 +1795,46 @@
       ' <span class="obs noprint">The Ground movement layer (Overlays) shows go, slow-go and no-go terrain and movement restrictions.</span></p>' +
       '<p class="obs">Forecast for ' + esc(fieldLabel(s.from)) + ". Visibility, gusts and low cloud are model values for one point; use an aviation forecast for flying decisions.</p>";
   }
+  /* every source with its state, as [source, state text]; the sources section and the plan record both read it */
+  function srcList(s) {
+    var li = [];
+    li.push([SRC.medfac, s.storedErr ? "not read: " + s.storedErr : s.stored ? "OpenStreetMap as of " + (s.stored.at || "unknown").slice(0, 10) + (s.stored.missing.length ? "; not yet stored: " + s.stored.missing.join(", ") : "") : "reading…"]);
+    li.push([SRC.osm, s.osmErr ? "not reached: " + s.osmErr : s.osmAt ? "read " + dual(s.osmAt, true) + (s.osmBase ? "; OSM data as of " + s.osmBase : "") : s.fac ? "not asked: the stored copy covers this area" : "waiting"]);
+    if (sofOf(s.cc)) li.push([SRC.sof, "as of " + (sofOf(s.cc).asof || "")]);
+    if (s.gov || s.govErr) li.push([SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")]);
+    if (s.web || s.webErr) li.push([SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"]);
+    if (s.ph || s.phErr) li.push([SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"]);
+    li.push([SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"]);
+    li.push([SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"]);
+    if (s.fac) li.push([SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) + "; filled gaps for " + s.wdN + " hospital" + (s.wdN === 1 ? "" : "s") : "reading…"]);
+    li.push([SRC.wd, s.emsErr ? "not reached: " + s.emsErr : s.ems ? "read " + dual(s.ems.at, true) : "reading…"]);
+    if (s.oc) li.push([SRC.state, "published numbers"]);
+    if (s.oc && stratChains(s).length) li.push([SRC.strat, "read " + SE_AT]);
+    li.push([SRC.isos, "published numbers, read " + ISOS_AT]);
+    li.push([SRC.tricare, "regional call centres as published, page updated 23 May 2025; archived copy read 2026-10-01"]);
+    li.push([SRC.meteo, s.wxErr ? "not reached: " + s.wxErr : s.wx ? "read" : "reading…"]);
+    if (s.thr) {
+      if (s.thr.who.length) li.push([SRC.who, "OSAP snapshot " + ((W.ASAP_WHO || {}).asof || "")]);
+      if (s.thr.cdc.length) li.push([SRC.cdc, "OSAP snapshot " + ((W.ASAP_CDC || {}).asof || "")]);
+      if (s.thr.adv) li.push([SRC.adv, "OSAP snapshot " + ((W.ASAP_ADV || {}).asof || "")]);
+      if (s.thr.aq) li.push([SRC.aq, "OSAP snapshot " + (s.thr.aq.asof || "")]);
+    }
+    return li;
+  }
   function srcRender() {
     var el = D.getElementById("mp-src"), s = ST; if (!el) return;
-    var li = [];
-    li.push(srcLi(SRC.medfac, s.storedErr ? "not read: " + s.storedErr : s.stored ? "OpenStreetMap as of " + (s.stored.at || "unknown").slice(0, 10) + (s.stored.missing.length ? "; not yet stored: " + s.stored.missing.join(", ") : "") : "reading…"));
-    li.push(srcLi(SRC.osm, s.osmErr ? "not reached: " + s.osmErr : s.osmAt ? "read " + dual(s.osmAt, true) + (s.osmBase ? "; OSM data as of " + s.osmBase : "") : s.fac ? "not asked: the stored copy covers this area" : "waiting"));
-    if (sofOf(s.cc)) li.push(srcLi(SRC.sof, "as of " + (sofOf(s.cc).asof || "")));
-    if (s.gov || s.govErr) li.push(srcLi(SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")));
-    if (s.web || s.webErr) li.push(srcLi(SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"));
-    if (s.ph || s.phErr) li.push(srcLi(SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"));
-    li.push(srcLi(SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"));
-    li.push(srcLi(SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"));
-    if (s.fac) li.push(srcLi(SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) + "; filled gaps for " + s.wdN + " hospital" + (s.wdN === 1 ? "" : "s") : "reading…"));
-    li.push(srcLi(SRC.wd, s.emsErr ? "not reached: " + s.emsErr : s.ems ? "read " + dual(s.ems.at, true) : "reading…"));
-    if (s.oc) li.push(srcLi(SRC.state, "published numbers"));
-    if (s.oc && stratChains(s).length) li.push(srcLi(SRC.strat, "read " + SE_AT));
-    li.push(srcLi(SRC.isos, "published numbers, read " + ISOS_AT));
-    li.push(srcLi(SRC.tricare, "regional call centres as published, page updated 23 May 2025; archived copy read 2026-10-01"));
-    li.push(srcLi(SRC.meteo, s.wxErr ? "not reached: " + s.wxErr : s.wx ? "read" : "reading…"));
-    if (s.thr) {
-      if (s.thr.who.length) li.push(srcLi(SRC.who, "OSAP snapshot " + ((W.ASAP_WHO || {}).asof || "")));
-      if (s.thr.cdc.length) li.push(srcLi(SRC.cdc, "OSAP snapshot " + ((W.ASAP_CDC || {}).asof || "")));
-      if (s.thr.adv) li.push(srcLi(SRC.adv, "OSAP snapshot " + ((W.ASAP_ADV || {}).asof || "")));
-      if (s.thr.aq) li.push(srcLi(SRC.aq, "OSAP snapshot " + (s.thr.aq.asof || "")));
-    }
+    var li = srcList(s).map(function (x) { return srcLi(x[0], x[1]); });
+    valRender();
     el.innerHTML = "<ul>" + li.join("") + "</ul>" +
-      '<p class="obs mpfp">Plan fingerprint (SHA-256 of the point of injury, facilities, contacts, routes, sites, weather and fields above): <code id="mp-fp">computing…</code></p>';
-    var F = s.fac || {}, snap = JSON.stringify({ area: s.P, from: s.from, poi: s.o, built: s.at, fields: fieldVals(),
+      '<p class="obs mpfp">Plan fingerprint (SHA-256 of the plan record, the point of injury, facilities, contacts, routes, sites, weather and fields above): <code id="mp-fp">computing…</code></p>';
+    var F = s.fac || {}, snap = JSON.stringify({ plan: s.plan && W.OSAP_MEDPLAN_MODEL ? W.OSAP_MEDPLAN_MODEL.canonical(s.plan) : null, area: s.P, from: s.from, poi: s.o, built: s.at, fields: fieldVals(),
       fac: (F.H || []).concat(F.C || []).map(function (f) { return [f.id, f.name, f.tier, Math.round(f.m), f.s == null ? null : Math.round(f.s), f.phone || "", f.web || ""]; }),
       ems: s.ems ? s.ems.nums : null, amb: (F.E || []).map(function (e) { return [e.id, e.phone || ""]; }), air: s.x ? s.x.R.map(function (b) { return [b.id, b.phone || ""]; }) : null,
       routes: (s.rts || []).map(function (x) { return [x.f.id, x.r ? Math.round(x.r.s) : null]; }),
       oc: s.oc ? { ap: s.oc.ap.map(function (a) { return a.id; }), dst: (s.oc.dst || []).map(function (d) { return d.id; }) } : null,
       sites: (F.L || []).concat(F.AF || []).map(function (l) { return [l.id, l.name]; }), wx: s.wx });
-    sha(snap).then(function (h) { var c = D.getElementById("mp-fp"); if (c) c.textContent = h || "not available in this browser"; });
+    var pl = s.plan;
+    sha(snap).then(function (h) { if (pl) pl.fingerprint = h || null; var c = D.getElementById("mp-fp"); if (c) c.textContent = h || "not available in this browser"; });
   }
   function srcLi(x, st) { return "<li>" + (x.url ? link(x.url, x.name) : esc(x.name)) + (x.note ? ". " + esc(x.note) : "") + ' <span class="obs">(' + esc(st) + ")</span></li>"; }
 
@@ -1961,6 +1971,64 @@
   }
 
   /* ---------- print view: the whole plan as pages in OSAP's report overlay, with the map, then Print or Save as PDF ---------- */
+  /* ---------- the plan as one record (assets/osap-medplan-model.js, Build Plan v2 phase 0) ----------
+     Everything the plan worked out goes into one MedicalPlan record; its validation (VALID, WARNING, BLOCKING) is shown at the
+     top, and the print view holds printing while data is still being read or a blocking error stands. */
+  function pending(s) {
+    var p = [];
+    if (!s.fac && !s.osmErr) p.push("hospitals");
+    if (s.fac && !s.routeDone) p.push("road drive times");
+    if (s.rts && s.rts.some(function (x) { return !x.r && !x.err; })) p.push("routes");
+    if (!s.x && !s.xErr) p.push("blood banks, chambers and air rescue bases");
+    if (!s.ems && !s.emsErr) p.push("emergency numbers");
+    if (!s.wx && !s.wxErr) p.push("weather");
+    if (s.oc && !s.oc.dst) p.push("out-of-country destinations");
+    return p;
+  }
+  var KEY_CAPS = ["blood.bank", "surg.or_emergency", "ed.24_7", "dx.ct", "cc.icu", "cc.ventilator", "surg.neuro"];
+  function planFac(f) {
+    var c = {}; KEY_CAPS.forEach(function (k) { c[k] = capOk(f, k); });
+    return { id: f.id, name: f.name, name_local: f.alias && f.alias !== f.name ? f.alias : "", aliases: [], lat: f.lat, lon: f.lon, mgrs: grid(f.lat, f.lon), caps: c, designation: tierLabel(f), source: f.osm || f.src || "" };
+  }
+  function srcState(st) { return /^(not reached|not read)/.test(st) ? "failed" : /reading|waiting/.test(st) ? "pending" : "read"; }
+  function planInput(s) {
+    var R = s.fac ? planRoles(s) : [], v = fieldVals(), ll = {}, m = s.fac ? mbase(s) : {};
+    ["ccp1", "ccp2", "axp", "hlz1", "hlz2"].forEach(function (k) { var g = parseGrid(v[k]); if (g) { g.mgrs = grid(g[0], g[1]); ll[k] = g; } });
+    return {
+      cc: s.cc, country: s.name, built_at: new Date(s.at).toISOString(), now: new Date().toISOString(),
+      poi: { lat: s.o[0], lon: s.o[1], mgrs: grid(s.o[0], s.o[1]), set_by: s.from },
+      fields: v, ll: ll,
+      categories: CATS.map(function (c) {
+        return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
+          return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null };
+        }) };
+      }),
+      routes: (s.rts || []).map(function (x) { return { facility_id: x.f.id, s: x.r ? Math.round(x.r.s) : null, m: x.r ? Math.round(x.r.m) : null, src: s.route ? s.route.split("/")[2] : "" }; }),
+      air_bases: s.x ? s.x.R.slice(0, 3).map(function (b) { return { name: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "" }; }) : [],
+      air_legs: s.fac && airOn() ? picks(s).map(function (p) { return { facility_id: p.f.id, s: Math.round(airTotal(p.f)), kn: num("rwkn"), base: m.b ? m.b.name : "no base" }; }) : [],
+      weather: s.wx ? s.wx.days.map(function (x) { return { day: x.day, flags: wxFlags(x) }; }) : null,
+      pending: pending(s),
+      sources: srcList(s).map(function (x) { return { name: x[0].name, state: srcState(x[1]), note: x[1] }; })
+    };
+  }
+  function planNow(s) { return W.OSAP_MEDPLAN_MODEL ? W.OSAP_MEDPLAN_MODEL.build(planInput(s)) : null; }
+  var VAL_MARK = { ok: "✓", warning: "!", blocking: "✗" };
+  function valHtml(p) {
+    if (!p) return '<p class="obs mpwarn">The plan record could not be built on this device.</p>';
+    var v = p.validation_status;
+    return '<p class="mpvs mpvs-' + v.status.toLowerCase() + '"><b>' + esc(v.label) + "</b></p>" +
+      '<ul class="mpvl">' + v.items.map(function (x) {
+        return '<li class="mpv-' + x.level + '"><span class="mpvm">' + VAL_MARK[x.level] + "</span> <b>" + esc(x.label) + "</b>" + (x.detail ? ": " + esc(x.detail) : "") + "</li>";
+      }).join("") + "</ul>" +
+      '<p class="obs">Checked by fixed rules (' + esc(v.rule) + '): red stops printing, amber needs a planner or medic to confirm. Approval state: automatic draft.</p>';
+  }
+  function valRender() {
+    var el = D.getElementById("mp-val"), s = ST; if (!el || !s) return;
+    s.plan = planNow(s); el.innerHTML = valHtml(s.plan);
+    /* an open print view waiting on data rebuilds itself once the data is in */
+    if (s.printHeld && s.plan && !s.plan.pending.length) { s.printHeld = false; var b = D.getElementById("brief"); if (b && !b.hidden && b.querySelector(".mpplanp")) printView(); }
+  }
+
   function printView() {
     var el = D.getElementById("brief"), src = D.querySelector("#medplan .mpbox"), s = ST; if (!el || !src) return false;
     var c = src.cloneNode(true);
@@ -1973,15 +2041,19 @@
     [].forEach.call(c.querySelectorAll(".noprint,button,select,.mphead,.mppoi"), function (x) { x.remove(); });
     [].forEach.call(c.querySelectorAll("details"), function (x) { x.open = true; });
     [].forEach.call(c.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
-    var title = "Medical plan, " + s.name, pts = picks(s);
+    var title = "Medical plan, " + s.name, pts = picks(s), pl = s.plan = planNow(s), vs = pl ? pl.validation_status : null;
+    /* printing is held while data is still being read (no "Looking up…" ever reaches paper) or a blocking error stands */
+    var held = pl && pl.pending.length ? "Still reading " + pl.pending.join(", ") + ". Printing starts to work as soon as they finish or fail; this page refreshes itself." :
+      vs && vs.status === "BLOCKING" ? "Blocking error: " + vs.items.filter(function (x) { return x.level === "blocking"; }).map(function (x) { return x.detail; }).join(" ") : "";
+    s.printHeld = !!(pl && pl.pending.length);
     var key = '<div class="mpkeyd"><span><b style="background:#111;color:#fff;padding:0 3px">POI</b> point of injury</span>' + (pts.length ? '<span><b style="background:#8b0010;color:#fff;padding:0 3px">PRI SEC TER</b> Primary, Secondary, Tertiary</span>' : "") +
       '<span><b style="background:#D7141A;color:#fff;padding:0 3px">H</b> hospital, <b style="background:#D7141A;color:#fff;padding:0 3px">C</b> clinic</span><span><b style="background:#1d5fa8;color:#fff;padding:0 3px">L A M</b> helipad, airfield, air rescue</span><span><b style="background:#a4005b;color:#fff;padding:0 3px">B</b> blood bank</span><span><b style="background:#00727a;color:#fff;padding:0 3px">D</b> decompression chamber</span>' +
       '<span><i style="color:#D7141A"></i>route to Primary</span><span><i style="color:#222"></i>Secondary, <i style="color:#222;border-top-style:dashed"></i>Tertiary</span>' +
       (ringsOn("gr") && s.iso ? '<span><i style="color:#1e7a3a;border-top-style:dashed"></i>30 min road</span><span><i style="color:#c77700;border-top-style:dashed"></i>' + (GOLDEN_MIN - PREP_MIN) + " min road</span>" : "") +
       (ringsOn("ar") ? '<span><i style="color:#6fa8dc;border-top-style:dashed"></i>air ' + (GOLDEN_MIN - 10) + ' min</span><span><i style="color:#1d5fa8"></i>air ' + GOLDEN_MIN + " min</span>" : "") + "</div>";
-    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpd-print">Print or save PDF</button> <button type="button" class="refresh" id="mpd-close">Back to the plan</button> ' +
-      '<span class="obs">This is every page as it prints. In the print dialog choose "Save as PDF" (iPhone: Share, then Print, then pinch out) to keep a copy.</span></div>' +
-      '<article class="bpage mpdoc"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
+    el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpd-print"' + (held ? " disabled" : "") + '>Print or save PDF</button> <button type="button" class="refresh" id="mpd-close">Back to the plan</button> ' +
+      (held ? '<span class="obs mpwarn" id="mpd-held">' + esc(held) + "</span>" : '<span class="obs">This is every page as it prints. In the print dialog choose "Save as PDF" (iPhone: Share, then Print, then pinch out) to keep a copy.</span>') + "</div>" +
+      '<article class="bpage mpdoc mpplanp"><header class="mpdh"><h2>' + esc(title) + '</h2><span class="aitag" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved.">Automatic draft</span>' +
       '<span class="obs">Built ' + esc(dual(s.at, true)) + " · " + esc(fieldLabel(s.from)) + " <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + ")</span></header>" +
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
       c.innerHTML + assessPrint(s, pts) + "</article>";
@@ -2004,8 +2076,8 @@
         return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
       }).catch(function () { var cap = sm.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
     }
-    D.getElementById("mpd-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
-    D.getElementById("mpd-close").addEventListener("click", function () { el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
+    D.getElementById("mpd-print").addEventListener("click", function () { if (this.disabled) return; ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
+    D.getElementById("mpd-close").addEventListener("click", function () { s.printHeld = false; el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
     return ready;
   }
 
