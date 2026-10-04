@@ -26,7 +26,7 @@ const by = (p, code) => p.validation_status.items.filter((x) => x.code === code)
 
 // ---------- the record ----------
 const p = M.build(input({ fields: { recv1: "Thammasat University Hospital" } }));
-ok(p.schema === "osap-medplan/3" && p.poi.mgrs === "47P PS 8255 3804" && p.approvals.state === "AUTOMATED_DRAFT" && p.fingerprint === null, "one record: schema, POI, automatic draft, fingerprint set later");
+ok(p.schema === "osap-medplan/4" && p.poi.mgrs === "47P PS 8255 3804" && p.approvals.state === "AUTOMATED_DRAFT" && p.fingerprint === null, "one record: schema, POI, automatic draft, fingerprint set later");
 ok(p.stabilization_facilities.length === 1 && p.stabilization_facilities[0].name === "King Narai Hospital" && p.definitive.name === "Thammasat University Hospital" && p.definitive.time_s === 5640,
   "POI > stabilization (King Narai, 6 min) > definitive care (Thammasat, 94 min)");
 ok(p.casualty_profiles[0].pathway.map((x) => x.stage).join() === "stabilization,definitive", "the casualty pathway runs stabilization then definitive care");
@@ -51,7 +51,8 @@ ok(pP.validation_status.status === "BLOCKING" && /Still reading: weather/.test(b
 const p0 = M.build(input({ poi: { lat: 14.8, lon: 100.6, mgrs: "x", set_by: "c" }, categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "primary", state: "gap" }, { role: "secondary", state: "gap" }, { role: "tertiary", state: "gap" }] }] }));
 ok(by(p0, "poi").level === "warning" && by(p0, "definitive").level === "warning" && p0.definitive === null && p0.unresolved_requirements.some((u) => u.code === "no_definitive.cat.major_trauma"),
   "no POI and no documented definitive care are warnings, and the gap is listed, never filled in");
-const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC, +66 0", freq1: "DUSTOFF 41.5", ccp1: "Bridge", hlz1: "Football field", hlz2: "Temple yard", casevac: "2 x HMMWV" },
+const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC, +66 0", freq1: "DUSTOFF 41.5", ccp1: "47P PS 8255 3804 Bridge", axp: "14.80, 100.66", hlz1: "14.79, 100.67", hlz2: "14.78, 100.68", casevac: "2 x HMMWV" },
+  ll: { ccp1: Object.assign([14.81, 100.69], { mgrs: "47P PS 8255 3804" }), axp: [14.8, 100.66], hlz1: [14.79, 100.67], hlz2: [14.78, 100.68] },
   categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes }) }] }] }));
 const warn = pF.validation_status.items.filter((x) => x.level !== "ok").map((x) => x.code).sort().join();
 ok(warn === "acceptance,medevac.provider,route.alternate,stabilization,verification", "with everything filled, only what phase 0 cannot confirm stays amber: " + warn);
@@ -84,6 +85,30 @@ const pD = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major 
 const pd = pD.casualty_profiles[0].decisions;
 ok(pd.length === 1 && pd[0].to_role === "tertiary" && pd[0].decision === "stabilise" && pd[0].via.total_s === 8460 && pd[0].access.state === "not_confirmed", "phase 2: each decision is in the casualty profile with both totals and whether care is confirmed now");
 ok(M.canonical(pD) !== M.canonical(M.build(input())), "phase 2: the decision is in the fingerprint");
+
+/* phase 3: alternate and contingency lines to the definitive facility, hazards along the primary */
+const H1 = { kind: "Conflict event", layer: "ucdp", at_km: 12.3, off_km: 0.4, src: "UCDP", age_h: 72, text: "x", url: "https://ucdp.uu.se/" };
+const pacOf = (lines, state) => [{ facility_id: TU.id, state: state || "done", err: state === "failed" ? "OSRM: 504" : "", hazard_km: 2, hazard_days: 30, lines }];
+const pA = M.build(input({ pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "FOSSGIS OSRM", how: "fastest", hazards: [H1, H1] }, { id: "A", s: 6200, m: 104000, src: "FOSSGIS OSRM", how: "alternative", hazards: [H1] }, { id: "C", s: 7000, m: 120000, src: "FOSSGIS Valhalla", how: "detour", hazards: [] }]) }));
+const gA = pA.ground_routes.filter((r) => r.facility_id === TU.id);
+ok(gA.map((r) => r.option).join() === "P,A,C" && gA[0].time_s === 5640 && gA[0].router_time_s === 5600 && gA[0].hazards.length === 2 && gA[2].how === "detour", "phase 3: P keeps the plan's route time; A and C follow with their hazards");
+ok(by(pA, "route.alternate").level === "ok" && /A \+10 min on the primary, 1 h 43 min drive, C \+23 min on the primary, 1 h 57 min drive/.test(by(pA, "route.alternate").detail), "phase 3: alternate is green with A and C and how much longer each is: " + by(pA, "route.alternate").detail);
+ok(by(pA, "route.hazards").level === "warning" && /2 reported within 2 km in the last 30 days, first: Conflict event at 12.3 km; line A has 1/.test(by(pA, "route.hazards").detail), "phase 3: hazards on the primary are amber and name the line with fewer: " + by(pA, "route.hazards").detail);
+const pA0 = M.build(input({ pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "OSRM", hazards: [] }]) }));
+ok(by(pA0, "route.alternate").level === "warning" && /no distinct alternate/.test(by(pA0, "route.alternate").detail) && by(pA0, "route.hazards").level === "ok" && /not a clearance/.test(by(pA0, "route.hazards").detail), "phase 3: one line only is amber; no hazards held is green but not a clearance");
+const pAf = M.build(input({ pac: pacOf([], "failed") })), pAp = M.build(input({ pac: pacOf([], "pending") }));
+ok(/None found \(OSRM: 504\)/.test(by(pAf, "route.alternate").detail) && !by(pAf, "route.hazards").code && /Still looking/.test(by(pAp, "route.alternate").detail), "phase 3: a failed or pending lookup says so and checks no hazards");
+const pAn = M.build(input({ pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "OSRM", hazards: null }, { id: "A", s: 5900, m: 99000, src: "OSRM", hazards: null }]) }));
+ok(by(pAn, "route.hazards").level === "warning" && /Could not be checked/.test(by(pAn, "route.hazards").detail) && /no contingency line/.test(by(pAn, "route.alternate").detail), "phase 3: hazards that could not be checked are amber, never clear");
+ok(M.canonical(pA) !== M.canonical(pA0) && pA.ground_alternates[0].lines === 3, "phase 3: the lines and hazards are in the fingerprint");
+
+/* phase 3: CCP, AXP and HLZ are map objects only with a grid */
+const pG = M.build(input({ fields: { ccp1: "Bridge", hlz1: "14.79, 100.67" }, ll: { hlz1: [14.79, 100.67] } }));
+ok(by(pG, "ccp").level === "warning" && /Bridge: no grid, so it is not on the map/.test(by(pG, "ccp").detail) && by(pG, "hlz").level === "ok" && by(pG, "axp").detail === "Not set." && pG.hlz[0].lat === 14.79, "phase 3: a named CCP without a grid is amber; an HLZ with a grid is on the map; AXP is checked");
+
+const pH = M.build(input({ fields: { hlz1: "14.79, 100.67", hlz1_st: "unusable", hlz1_at: "2026-10-04T08:00:00.000Z", hlz1_note: "wires on approach", hlz1_cap: "1 UH-60", ccp1: "14.8, 100.6", ccp1_st: "usable", ccp1_at: "2026-10-04T07:30:00.000Z" }, ll: { hlz1: [14.79, 100.67], ccp1: [14.8, 100.6] } }));
+ok(pH.hlz[0].status === "UNUSABLE" && pH.hlz[0].capacity === "1 UH-60" && by(pH, "hlz").level === "warning" && /checked not usable \(2026-10-04 08:00Z\): wires on approach\. Choose another/.test(by(pH, "hlz").detail) &&
+  pH.ccp[0].status === "USABLE" && /checked usable 2026-10-04 07:30Z/.test(by(pH, "ccp").detail), "phase 3: a planner's check of a point (usable or not, when, capacity, notes) is in the record and the validation");
 
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");

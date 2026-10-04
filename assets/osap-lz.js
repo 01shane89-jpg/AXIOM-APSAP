@@ -453,7 +453,7 @@
     "#lz-card h3{position:sticky;top:-8px;background:var(--surface,#fff);padding:4px 0;margin-top:-4px;z-index:1}" +
     "#lz-dock #lz-card{padding:10px 14px;border:0;font-size:13px}#lz-dock #lz-card h3{top:-10px;padding:6px 0;margin-top:0}" +
     "#lz-card button{font:inherit;font-size:12px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 8px;min-height:28px;cursor:pointer}" +
-    "#lz-card button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:600}#lz-card button[aria-pressed=true]{background:#e3f2f4}" +
+    "#lz-card button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:600}#lz-card button[aria-pressed=true]{background:var(--accent-soft,#e3f2f4);color:var(--ink,#111);border-color:var(--accent,#0b7285)}" +
     "#lz-card select,#lz-card input[type=text]{font:inherit;font-size:12px;max-width:100%}" +
     "#lz-card .lzrow{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;margin:4px 0}#lz-card .lzrow label{display:flex;gap:4px;align-items:center}" +
     "#lz-card .lzpt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}" +

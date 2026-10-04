@@ -75,5 +75,13 @@ ok(R.splitLine([[0, 0], [0, 0.0189]], 2).length === 1, "a 2.1 km line with 2 km 
 ok(R.splitLine([[0, 0]], 2).length === 0, "one point gives no segments");
 ok(R.segStatus([3, 3, 3, 2]) === "good" && R.segStatus([3, 2, 1]) === "degraded" && R.segStatus([1, 1, 3]) === "none" && R.segStatus([0, 0, 1]) === "unknown" && R.segStatus([]) === "unknown", "segment ratings; unreadable is unknown, never none");
 
+// geostationary pointing (spherical Earth): London to 25°E about 149° / 26.5°; Sydney to 143.5°E about 346° / 49.7°
+const lon = R.geoLook(51.5, -0.1, 25), syd = R.geoLook(-33.9, 151.2, 143.5), sub = R.geoLook(0, 100, 100), far = R.geoLook(60, 10, -170);
+ok(near(lon.az, 149.1, 0.3) && near(lon.el, 26.5, 0.3) && lon.visible, "London to 25°E: az " + lon.az.toFixed(1) + ", el " + lon.el.toFixed(1));
+ok(near(syd.az, 346.4, 0.3) && near(syd.el, 49.7, 0.3), "Sydney to 143.5°E: az " + syd.az.toFixed(1) + ", el " + syd.el.toFixed(1));
+ok(near(sub.el, 90, 1e-6) && near(sub.range_km, 35786, 1), "straight overhead on the equator at 35,786 km");
+ok(!far.visible && far.el < 0, "a slot on the far side of the Earth is below the horizon");
+ok(R.geoLook("x", 0, 0) === null, "bad input gives no answer");
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

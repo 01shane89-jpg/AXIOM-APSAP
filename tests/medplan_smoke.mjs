@@ -83,6 +83,13 @@ function osrmRoute(url) {
   return { code: "Ok", routes: [{ duration: d, distance: d * 10, geometry: { type: "LineString", coordinates: [pts[0], [(pts[0][0] + pts[1][0]) / 2, pts[0][1]], pts[1]] },
     legs: [{ steps: [{ name: "Rama IV Road", distance: 5000 }, { name: "", distance: 50 }, { name: "Sukhumvit Road", ref: "3", distance: 2500 }, { name: "Soi 1", distance: 300 }] }] }] };
 }
+function osrmAlts(url) {
+  const pts = new URL(url).pathname.split("/").pop().split(";").map((x) => x.split(",").map(Number)), d = secsTo(pts[1][0], pts[1][1]);
+  const step = (n, at) => ({ name: n, distance: 5000, duration: 300, maneuver: { type: "depart", location: at, bearing_after: 90 } });
+  const line = (k) => [pts[0], [(pts[0][0] + pts[1][0]) / 2, pts[0][1] + k], pts[1]];
+  return { code: "Ok", routes: [0, 0.2].map((k, i) => ({ duration: d * (1 + i * 0.3), distance: d * 10 * (1 + i * 0.4), geometry: { type: "LineString", coordinates: line(k) },
+    legs: [{ distance: d * 10, duration: d, steps: [step(i ? "Bypass Road" : "Rama IV Road", pts[0])] }] })) };
+}
 function iso(url) {
   const j = JSON.parse(new URL(url).searchParams.get("json")), c = j.locations[0], ring = (d) => [[c.lon - d, c.lat - d], [c.lon + d, c.lat - d], [c.lon + d, c.lat + d], [c.lon - d, c.lat + d], [c.lon - d, c.lat - d]];
   return { type: "FeatureCollection", features: j.contours.map((x) => ({ type: "Feature", properties: { contour: x.time }, geometry: { type: "Polygon", coordinates: [ring(x.time / 300)] } })) };
@@ -140,8 +147,11 @@ async function open(opts, o) {
       calls.overpass++; return overpassFails ? r.fulfill({ status: 504, body: "" }) : J(r, OSM);
     }
     if (/\/table\/v1\//.test(u)) { calls.osrm++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrm(u)); }
+    /* the Route tab's alternates (phase 3 P/A/C): two lines, the second slower round a bend */
+    if (/\/route\/v1\/.*alternatives=3/.test(u)) { calls.alt = (calls.alt || 0) + 1; return o.altFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrmAlts(u)); }
     if (/\/route\/v1\//.test(u)) { calls.route++; return o.osrmFails ? r.fulfill({ status: 504, body: "" }) : J(r, osrmRoute(u)); }
     if (/valhalla.*sources_to_targets/.test(u)) { calls.vhm++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhMatrix(u)); }
+    if (/valhalla.*\/route\?/.test(u) && /exclude_locations/.test(decodeURIComponent(u))) { calls.vhx = (calls.vhx || 0) + 1; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla.*\/route\?/.test(u)) { calls.vhr++; return o.vhFails ? r.fulfill({ status: 504, body: "" }) : J(r, vhRoute(u)); }
     if (/valhalla/.test(u)) { calls.iso++; return J(r, iso(u)); }
     if (/query\.wikidata\.org/.test(u) && /wikibase%3Aaround|wikibase:around/.test(u)) { calls.wdh = (calls.wdh || 0) + 1; return o.wdFails ? r.fulfill({ status: 504, body: "" }) : J(r, WDH); }
@@ -310,6 +320,15 @@ async function openPlan(p) {
   ok(!/2026-09-29/.test(wx), "desktop: past days are not listed as forecast");
   ok(/24 mm of rain in the last 3 days/.test(wx) && /ground is probably wet/.test(wx), "desktop: ground state from the last 3 days of rain (24 mm: wet)");
   ok(calls.overpass === 1 && calls.overpassX === 1 && calls.osrm === 1 && calls.route === 3 && calls.meteo === 1 && calls.wd === 1 && calls.iso === 1 && calls.vhm === 0, "desktop: one request per source, three routes " + JSON.stringify(calls));
+  /* phase 3: primary, alternate and contingency lines per hospital from the Route tab's API, with hazards along each */
+  await p.waitForFunction(() => document.querySelectorAll("#mp-rt table.mppac").length >= 1 && !/Looking for alternate/.test(document.getElementById("mp-rt").textContent), null, { timeout: 30000 }).catch(() => {});
+  const pac = await p.evaluate(() => ({ t: document.getElementById("mp-rt").textContent, n: document.querySelectorAll("#mp-rt table.mppac").length,
+    rows: [...document.querySelectorAll("#mp-rt table.mppac")].map((t) => [...t.querySelectorAll("tbody th")].map((x) => x.textContent).join()),
+    val: document.getElementById("mp-val").textContent, src: document.getElementById("mp-src").textContent, blue: (() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polyline && !(l instanceof L.Polygon) && l.options.color === "#1d5fa8" && l.options.dashArray) n++; }); return n; })() }));
+  ok(pac.n === 3 && pac.rows.every((r) => r === "P primary,A alternate") && /\(\+\d+ min\)/.test(pac.t) && /an order \(fastest first\), not a judgement/.test(pac.t) && /not a clearance/.test(pac.t), "phase 3: each routed hospital gets P and A lines with how much longer A is " + JSON.stringify(pac.rows));
+  ok(calls.alt === 3 && pac.blue >= 3, "phase 3: one Route-tab request per hospital, alternates drawn in blue " + JSON.stringify({ alt: calls.alt, blue: pac.blue }));
+  ok(/Alternate ground route: A \+\d+ min on the primary/.test(pac.val) && /no contingency line/.test(pac.val) && /Hazards along the primary route/.test(pac.val), "phase 3: validation names the alternate and checks hazards on the primary");
+  ok(/Alternate routes and hazards along them/.test(pac.src) && /3 of 3 hospitals routed/.test(pac.src), "phase 3: the sources list the Route tab's lines and what was read");
   /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
   const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
   ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
@@ -450,6 +469,16 @@ async function openPlan(p) {
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
   const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
+  /* phase 3: the CCP and HLZ with grids are map objects; the validation says so */
+  const sites = await p.evaluate(() => ({ mk: [...document.querySelectorAll(".mpicon.cp")].map((m) => m.textContent).sort().join(), val: document.getElementById("mp-val").textContent }));
+  ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
+  await p.selectOption('#mp-sites [data-mp-sst="ccp1"]', "unusable"); await p.fill('#mp-sites [data-mpf="ccp1_note"]', "bridge out"); await p.waitForTimeout(900);
+  const st = await p.evaluate(() => ({ t: document.getElementById("mp-sites").textContent, rows: document.querySelectorAll("#mp-sites tbody tr").length, val: document.getElementById("mp-val").textContent,
+    kept: JSON.parse(localStorage.getItem(Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0])) }));
+  ok(st.rows === 2 && /km [NESW]{1,2} of/.test(st.t) && st.kept.ccp1_st === "unusable" && st.kept.ccp1_note === "bridge out" && /checked not usable .*bridge out/.test(st.val), "phase 3: each point's status, capacity and notes are kept and the validation reads them " + JSON.stringify(st.val.slice(st.val.indexOf("Casualty collection"), st.val.indexOf("Casualty collection") + 120)));
+  const seeded = await p.evaluate(() => { const o = window.OSAP_ROUTE_SEED; let got = null; window.OSAP_ROUTE_SEED = (pts) => { got = pts; }; document.querySelector('#mp-sites [data-mp-siteroute="hlz1"]').click(); window.OSAP_ROUTE_SEED = o; return got; });
+  ok(seeded && seeded.length === 2 && Math.abs(seeded[1][0] - 13.74) > 0, "phase 3: Route to it hands the plan centre and the point to the Route tab " + JSON.stringify(seeded));
+  await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
