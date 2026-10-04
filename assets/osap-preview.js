@@ -820,15 +820,16 @@
      turned to the direction of travel and labelled as satellite. Every frame shows its provider, capture date and age; what OSAP
      currently reports ahead is shown apart, from OSAP's feeds. Google Street View cannot be shown inside OSAP without a Google
      key, so it is not part of the drive. */
-  var DCH = 300, DBIN = 10, DOFF = 25, DGAP = 200, DSAT = 300, DMS = 700, DAHEAD = 1500, DFOV = 100;
-  var DSPEEDS = [[1, "1×", 0], [2, "2×", 25], [4, "4×", 60], [8, "8×", 150]];
+  var DCH = 300, DBIN = 10, DOFF = 25, DGAP = 200, DSAT = 400, DMS = 650, DAHEAD = 3000, DCONC = 3, DGRACE = 3000, DFOV = 100;
+  /* speed = the least road between frames: 1× shows every picture (about city driving speed), 4× one every 60 m or more */
+  var DSPEEDS = [[1, "1×", 0], [2, "2×", 25], [4, "4×", 60], [8, "8×", 150], [16, "16×", 300]], DSPD0 = 4;
   function cssUrl(u) { return 'url("' + String(u).replace(/["\\\s()]/g, function (c) { return encodeURIComponent(c); }) + '")'; }
   function sdiff(a, b) { var d = ((a - b) % 360 + 540) % 360 - 180; return d; }
   function drvInit() {
     var tot = S.R.cum[S.R.cum.length - 1], n = Math.max(1, Math.ceil(tot / DCH)), ch = [];
     for (var k = 0; k < n; k++) ch.push({ k: k, a: k * DCH, b: Math.min(tot, (k + 1) * DCH), st: "new", fr: [], note: "" });
     var steps = (S.R.steps || []).map(function (s) { var pj = s.at ? project(S.R, s.at) : null; return pj && pj.d < 300 ? { m: pj.m, text: clean(s.text, 90) } : null; }).filter(Boolean);
-    S.drv = { on: false, ch: ch, tot: tot, m: 0, f: null, playing: false, wait: false, spd: DSPEEDS.some(function (x) { return x[0] === P0.dspd; }) ? P0.dspd : 1, yaw: 0, pip: false, tok: 0, tok2: 0, busy: 0, timer: 0, pre: [], steps: steps, el: null, mk: null, fail: {} };
+    S.drv = { on: false, ch: ch, tot: tot, m: 0, f: null, playing: false, wait: false, spd: DSPEEDS.some(function (x) { return x[0] === P0.dspd; }) ? P0.dspd : DSPD0, yaw: 0, pip: false, tok: 0, tok2: 0, busy: 0, timer: 0, pre: [], steps: steps, el: null, mk: null, fail: {} };
   }
   function chunkAt(m) { var d = S.drv; return d.ch[Math.max(0, Math.min(d.ch.length - 1, Math.floor(m / DCH)))]; }
   /* the coordinate index range of a piece of route, a little wider than the piece */
@@ -841,7 +842,7 @@
   function drvNeed(m) {
     var d = S.drv; if (!d) return;
     var k0 = chunkAt(m).k, k1 = chunkAt(m + DAHEAD).k;
-    for (var k = k0; k <= k1 && d.busy < 2; k++) if (d.ch[k].st === "new") drvLoad(d.ch[k]);
+    for (var k = k0; k <= k1 && d.busy < DCONC; k++) if (d.ch[k].st === "new") drvLoad(d.ch[k]);
   }
   function drvLoad(c) {
     var d = S.drv, tok = d.tok, R = S.R;
@@ -853,17 +854,28 @@
     var errs = [], asked = STREET.filter(function (pv) { return (d.fail[pv] || 0) < 2; });
     /* a service that has not answered twice running is left out for the rest of this drive, so the car does not wait on it */
     STREET.forEach(function (pv) { if (asked.indexOf(pv) < 0) errs.push(PROVIDERS[pv].name + ": left out after not answering twice"); });
-    Promise.all(asked.map(function (pv) {
-      return PROVIDERS[pv].find(mid[0], mid[1], rad, 200).then(function (cs) { d.fail[pv] = 0; return cs; }, function (e) { d.fail[pv] = (d.fail[pv] || 0) + 1; errs.push(PROVIDERS[pv].name + ": " + e.message); return []; });
-    })).then(function (all) {
-      if (!S.drv || S.drv !== d || tok !== d.tok) return;
-      d.busy--;
+    /* the piece is ready when every service has answered, or a few seconds after one answered with pictures (KartaView can be
+       slow in Asia); a later answer is folded in if the car has not reached the piece yet */
+    var got = [], left = asked.length, ready = false, grace = 0;
+    function finish() {
+      if (ready || !S.drv || S.drv !== d || tok !== d.tok) return;
+      ready = true; clearTimeout(grace); d.busy--;
       c.st = errs.length === STREET.length ? "err" : "done"; c.note = errs.join("; ");
-      drvFrames(c, [].concat.apply([], all));
+      drvFrames(c, got);
       drvNeed(d.m);
       if (d.wait) { d.wait = false; if (d.pend) { var pd = d.pend; d.pend = null; drvStep(pd); } }
+      else if (d.f && d.f.kind === "sat") drvHud(); /* the gap's length may now be known */
       drvStrip();
+    }
+    asked.forEach(function (pv) {
+      PROVIDERS[pv].find(mid[0], mid[1], rad, 200).then(function (cs) { d.fail[pv] = 0; return cs; }, function (e) { d.fail[pv] = (d.fail[pv] || 0) + 1; errs.push(PROVIDERS[pv].name + ": " + e.message); return []; }).then(function (cs) {
+        if (!S.drv || S.drv !== d || tok !== d.tok) return;
+        got = got.concat(cs); left--;
+        if (ready) { if (cs.length && d.m < c.a) { drvFrames(c, got); drvStrip(); } return; }
+        if (!left) finish(); else if (cs.length && !grace) grace = setTimeout(finish, DGRACE);
+      });
     });
+    if (!asked.length) finish();
   }
   /* choose a picture per 10 m of road in this piece, then satellite frames across stretches with none */
   function drvFrames(c, cs) {
@@ -922,27 +934,36 @@
     drvNeed(f.m);
     /* Panoramax "sd" is the whole 2048 px sphere for a 360° picture; KartaView's smaller sizes are cut, so a sphere uses the full one */
     var p = at(S.R, f.m).p, url = f.kind === "street" ? (f.c.pano && f.c.prov === "kartaview" ? f.c.full || f.c.img : f.c.img) : null;
-    var lay = d.el.querySelector(".rtdv-pic"), next = function () { if (d.playing && tok === d.tok2) d.timer = setTimeout(function () { if (d.playing && tok === d.tok2) drvStep(1); }, f.kind === "sat" ? 1300 : DMS); };
+    var next = function () { if (d.playing && tok === d.tok2) d.timer = setTimeout(function () { if (d.playing && tok === d.tok2) drvStep(1); }, f.kind === "sat" ? 900 : DMS); };
     if (f.kind === "street") {
       var im = new Image(), done = false, fin = function (ok) {
         if (done || tok !== d.tok2) return; done = true; clearTimeout(to);
-        if (ok) { lay.innerHTML = '<div class="rtdv-img' + (f.c.pano ? " pano" : "") + '"></div>'; var el = lay.firstChild; el.style.backgroundImage = cssUrl(url); drvAim(); }
-        else lay.innerHTML = '<p class="rtdv-miss">This picture did not load. Moving on.</p>';
+        if (ok) { var el = drvLayer('<div class="rtdv-img' + (f.c.pano ? " pano" : "") + '"></div>'); el.style.backgroundImage = cssUrl(url); drvAim(); }
+        else drvLayer('<p class="rtdv-miss">This picture did not load. Moving on.</p>');
         next();
       }, to = setTimeout(function () { fin(false); }, 6000);
       im.referrerPolicy = "no-referrer"; im.onload = function () { fin(true); }; im.onerror = function () { fin(false); }; im.src = url;
     } else {
       var half = 220;
-      lay.innerHTML = online() ? satFig({ lat: p[0], lon: p[1], m: f.m, hd: f.rh }, 640, 480, half) : '<p class="rtdv-miss">No street pictures here, and satellite needs a connection.</p>';
+      drvLayer(online() ? satFig({ lat: p[0], lon: p[1], m: f.m, hd: f.rh }, 640, 480, half) : '<p class="rtdv-miss">No street pictures here, and satellite needs a connection.</p>');
       if (online() && !f.sat) cached("satellite", p[0], p[1], 0, PROVIDERS.satellite.find).then(function (cs) { f.sat = cs[0] || { none: true }; if (d.f === f) drvHud(); }, function (e) { f.sat = { err: e.message }; if (d.f === f) drvHud(); });
       next();
     }
     drvPreload(f);
     drvHud(); drvMarker(); drvSync();
   }
+  /* the new frame fades in over the last one, so the drive runs like a film rather than a slide show */
+  function drvLayer(html) {
+    var lay = S.drv.el.querySelector(".rtdv-pic"), w = D.createElement("div"); w.className = "rtdv-lay"; w.innerHTML = html;
+    lay.appendChild(w);
+    var old = Array.prototype.slice.call(lay.children, 0, -1);
+    requestAnimationFrame(function () { w.classList.add("in"); });
+    setTimeout(function () { old.forEach(function (o) { if (o.parentNode === lay) lay.removeChild(o); }); }, 400);
+    return w.firstChild;
+  }
   /* point a 360° picture: the view centre looks along the route (plus the turn the user dragged); a flat picture fills the frame */
   function drvAim() {
-    var d = S.drv, f = d && d.f, el = d && d.el && d.el.querySelector(".rtdv-img.pano"); if (!el || !f || f.kind !== "street") return;
+    var d = S.drv, f = d && d.f, all = d && d.el ? d.el.querySelectorAll(".rtdv-img.pano") : [], el = all[all.length - 1]; if (!el || !f || f.kind !== "street") return;
     var w = el.clientWidth || 640, h = el.clientHeight || 360, bw = Math.max(w * 360 / DFOV, 2 * h), bh = bw / 2;
     var look = f.rh + d.yaw, ctr = f.c.hd == null ? f.rh : f.c.hd, fr = 0.5 + sdiff(look, ctr) / 360;
     el.style.backgroundSize = bw.toFixed(0) + "px " + bh.toFixed(0) + "px";
@@ -952,6 +973,15 @@
     var d = S.drv, k = chunkAt(f.m).k, list = [], adv = DSPEEDS.filter(function (x) { return x[0] === d.spd; })[0][2], last = f.m;
     for (; k < d.ch.length && list.length < 4; k++) d.ch[k].fr.forEach(function (g) { if (list.length < 4 && g.kind === "street" && g.m > last + 0.5 && g.m >= last + adv) { list.push(g); last = g.m; } });
     d.pre = list.map(function (g) { var im = new Image(); im.referrerPolicy = "no-referrer"; im.src = g.c.pano && g.c.prov === "kartaview" ? g.c.full || g.c.img : g.c.img; return im; });
+  }
+  /* the stretch without street pictures the car is in: where the next street picture is (null while a piece ahead is loading) */
+  function drvGap(m) {
+    var d = S.drv, k = chunkAt(m).k;
+    for (; k < d.ch.length; k++) {
+      var c = d.ch[k]; if (c.st === "new" || c.st === "busy") return { end: null, known: c.a };
+      for (var i = 0; i < c.fr.length; i++) if (c.fr[i].kind === "street" && c.fr[i].m > m) return { end: c.fr[i].m };
+    }
+    return { end: d.tot, last: true };
   }
   function drvAhead(m) {
     var d = S.drv, st = null, pt = null, hz = [];
@@ -963,12 +993,14 @@
   function drvHud() {
     var d = S.drv; if (!d || !d.el) return;
     var f = d.f, top = d.el.querySelector(".rtdv-tag"), c = f && f.kind === "street" ? f.c : null, pr = c ? PROVIDERS[c.prov] : null, a = c ? ageOf(c.date) : null;
-    if (!f) top.innerHTML = '<span class="rtdv-badge unk">' + (d.wait ? "Loading pictures for the road ahead…" : "Starting…") + "</span>";
+    if (!f) top.innerHTML = '<span class="rtdv-badge unk">Loading street pictures for the road ahead…</span>';
     else if (c) top.innerHTML = '<span class="rtdv-badge ' + a.cls + '">' + E(pr.name) + (c.pano ? " · 360°" : "") + " · captured " + E(dstr(c.date)) + (c.date ? " · " + E(ageTxt(c.date)) + " old" : "") + "</span>" +
-      '<span class="rtdv-note">Visual reference: how this looked then, not now' + (a.k === "stale" ? ". STALE: over 3 years old" : "") + "</span>";
-    else { var s = f.sat || {}, a2 = s.date ? ageOf(s.date) : null;
-      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">No street pictures here · Satellite · ' + E(s.date ? "captured " + dstr(s.date) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : f.sat ? "date not published" : "checking date…") + "</span>" +
-        '<span class="rtdv-note">' + E(chunkAt(f.m).st === "err" ? "Street picture services did not answer here (" + (chunkAt(f.m).note || "error") + ")." : "KartaView and Panoramax hold no picture on this stretch.") + " Direction of travel is up.</span>"; }
+      '<span class="rtdv-note">' + (a.k === "stale" ? "STALE, over 3 years old. " : "") + "Visual reference: how this looked then, not now</span>";
+    else { var s = f.sat || {}, a2 = s.date ? ageOf(s.date) : null, gp = drvGap(f.m);
+      var gl = gp.end != null ? (gp.last ? "No street pictures from here to the end (" + dist(gp.end - f.m) + ")." : "No street pictures for the next " + dist(gp.end - f.m) + ".") : "No street pictures for at least " + dist(Math.max(0, gp.known - f.m)) + ".";
+      top.innerHTML = '<span class="rtdv-badge ' + (a2 ? a2.cls : "unk") + '">Satellite · ' + E(s.date ? "captured " + dstr(s.date) + " · " + ageTxt(s.date) + " old" : s.err ? "date lookup failed" : f.sat ? "date not published" : "checking date…") + "</span>" +
+        '<span class="rtdv-note">' + E(chunkAt(f.m).st === "err" ? "Street picture services did not answer here (" + (chunkAt(f.m).note || "error") + ")." : gl) + " Direction of travel is up." +
+        (!gp.last && (gp.end == null || gp.end - f.m > 500) ? ' <button type="button" data-dv="skip">Skip ahead ▶▶</button>' : "") + "</span>"; }
     var ah = drvAhead(d.m);
     d.el.querySelector(".rtdv-next").innerHTML = (ah.st ? "<div><b>In " + E(dist(ah.st.m - d.m)) + ":</b> " + E(ah.st.text) + "</div>" : "") +
       (ah.pt ? '<div><span class="rtpv-chip ' + E(CAT[ah.pt.cat].g) + '">' + E(CAT[ah.pt.cat].chip || CAT[ah.pt.cat].n) + "</span> " + E(ah.pt.label) + " in " + E(dist(ah.pt.m - d.m)) + "</div>" : "");
@@ -1023,7 +1055,7 @@
     var st = d.el.style;
     if (d.pip) { var pw = Math.min(Wd - 16, Math.max(260, Wd * 0.42)), ph = Math.min(Ht - 16, pw * 0.75 + 70); st.left = (L0 + 8) + "px"; st.top = (T0 + Ht - ph - 8) + "px"; st.width = pw + "px"; st.height = ph + "px"; }
     else { st.left = L0 + "px"; st.top = T0 + "px"; st.width = Wd + "px"; st.height = Ht + "px"; }
-    d.el.classList.toggle("pip", !!d.pip); d.el.classList.toggle("cover", !!cover);
+    d.el.classList.toggle("pip", !!d.pip); d.el.classList.toggle("cover", !!cover); d.el.classList.toggle("tall", !d.pip && Ht > Wd * 1.15);
     drvAim();
   }
   function drvUi() {
@@ -1049,6 +1081,7 @@
       else if (k === "back") { d.playing = false; clearTimeout(d.timer); drvStep(-1, 0); }
       else if (k === "pip") { d.pip = !d.pip; b.textContent = d.pip ? "Big picture" : "Map"; drvPlace(); }
       else if (k === "look") { d.yaw = 0; drvAim(); drvMarker(); }
+      else if (k === "skip") { var gp = drvGap(d.m); clearTimeout(d.timer); drvSeek(gp.end != null ? gp.end : gp.known); }
     });
     w.querySelector('[data-dvs="spd"]').addEventListener("change", function () { var d = S.drv; if (!d) return; d.spd = +this.value; P0.dspd = d.spd; prefs(); });
     var rg = w.querySelector(".rtdv-rg");
@@ -1080,8 +1113,9 @@
     d.el.querySelector('[data-dvs="spd"]').value = d.spd;
     D.documentElement.classList.add("rtdv-on");
     drvPlace();
-    var p = S.pts[S.cur]; d.playing = true; d.endMsg = false;
-    drvSeek(p ? p.m : 0);
+    var p = S.pts[S.cur], m0 = p ? p.m : 0; d.playing = true; d.endMsg = false;
+    if (!d.f && online()) { var q = at(S.R, m0).p; drvLayer(satFig({ lat: q[0], lon: q[1], m: m0, hd: heading(S.R, m0) }, 640, 480, 220)); }
+    drvSeek(m0);
     drvHud(); drawPts();
   }
   function drvStop(quiet) {
@@ -1179,11 +1213,12 @@
     "#rtpv .rtpv-drv{margin:2px 0 6px}#rtpv .rtpv-drv .pri,#rtdv .pri{background:var(--accent,#1c7ed6);color:var(--on-accent,#fff);border-color:var(--accent,#1c7ed6)}" +
     "#rtdv[hidden]{display:none!important}#rtdv{position:fixed;z-index:1150;background:#111;color:#fff;overflow:hidden;font:13px/1.35 system-ui,sans-serif;box-shadow:0 0 0 1px rgba(255,255,255,.08)}" +
     "#rtdv.cover{z-index:4100}#rtdv.pip{border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.5)}#rtdv .rtdv-pic{position:absolute;inset:0;touch-action:none}" +
-    "#rtdv .rtdv-img{position:absolute;inset:0;background:#000 center/cover no-repeat}#rtdv .rtdv-img.pano{background-repeat:repeat-x;cursor:grab}" +
+    "#rtdv .rtdv-lay{position:absolute;inset:0;opacity:0;transition:opacity .3s ease}#rtdv .rtdv-lay.in{opacity:1}" +
+    "#rtdv .rtdv-img{position:absolute;inset:0;background:#000 center/cover no-repeat}#rtdv.tall .rtdv-img:not(.pano){background-size:contain;background-position:center 38%}#rtdv.tall .rtdv-img.pano{bottom:28%}#rtdv .rtdv-img.pano{background-repeat:repeat-x;cursor:grab}" +
     "#rtdv .rtpv-satw{position:absolute;inset:0;width:auto;aspect-ratio:auto;border-radius:0}#rtdv .rtdv-miss{position:absolute;top:45%;left:0;right:0;text-align:center;color:#ced4da}" +
     "#rtdv button{font:inherit;font-size:12.5px;font-weight:600;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;border-radius:4px;padding:4px 10px;min-height:34px;cursor:pointer}" +
     "#rtdv select{font:inherit;font-size:12.5px;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:4px;padding:3px 4px}" +
-    "#rtdv .rtdv-tag{position:absolute;left:8px;top:8px;right:120px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;pointer-events:none}" +
+    "#rtdv .rtdv-tag{position:absolute;left:8px;top:8px;right:120px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;pointer-events:none}#rtdv .rtdv-tag button{pointer-events:auto;margin-left:6px;min-height:28px;padding:2px 8px}" +
     "#rtdv .rtdv-badge{background:rgba(0,0,0,.72);border-left:4px solid #868e96;padding:3px 8px;border-radius:3px;font-weight:700;font-size:12px}#rtdv .rtdv-badge.ok{border-color:#40c057}#rtdv .rtdv-badge.mid{border-color:#fd7e14}#rtdv .rtdv-badge.bad{border-color:#fa5252}" +
     "#rtdv .rtdv-note{background:rgba(0,0,0,.6);padding:2px 8px;border-radius:3px;font-size:11.5px}" +
     "#rtdv .rtdv-tr{position:absolute;right:8px;top:8px;display:flex;gap:6px}#rtdv .rtdv-strip{position:absolute;right:8px;top:50px;width:110px;height:110px;background:rgba(0,0,0,.45);border-radius:4px;cursor:pointer}" +
@@ -1193,7 +1228,8 @@
     "#rtdv .rtdv-next{display:flex;flex-direction:column;gap:2px;margin-bottom:4px;font-size:12.5px;text-shadow:0 1px 2px #000}#rtdv .rtdv-ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}" +
     "#rtdv .rtdv-km{margin-left:auto;font:600 12px 'IBM Plex Mono',monospace}#rtdv .rtdv-rg{width:100%;margin:6px 0 2px}#rtdv .rtdv-attr{font-size:10.5px;opacity:.8}#rtdv .rtdv-attr a{color:#a5d8ff}" +
     "#rtdv.pip .rtdv-strip,#rtdv.pip .rtdv-next,#rtdv.pip .rtdv-live,#rtdv.pip .rtdv-note,#rtdv.pip label,#rtdv.pip [data-dv=look]{display:none!important}#rtdv.pip .rtdv-tag{top:48px;right:8px}#rtdv.pip .rtdv-badge{font-size:11px}#rtdv.pip .rtdv-bot{padding-top:12px}" +
-    "@media (max-width:700px){#rtdv .rtdv-strip{width:80px;height:80px}#rtdv .rtdv-live{top:136px}#rtdv .rtdv-tag{right:100px}}" +
+    "@media (max-width:700px){#rtdv .rtdv-strip{width:72px;height:72px}#rtdv .rtdv-live{top:128px;font-size:11px}#rtdv .rtdv-tag{right:96px}#rtdv .rtdv-badge{font-size:11px}#rtdv .rtdv-note{font-size:10.5px}" +
+    "#rtdv button{min-height:34px;padding:3px 8px;font-size:12px}#rtdv .rtdv-next{font-size:11.5px}#rtdv .rtdv-attr{font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#rtdv .rtdv-ctl{gap:4px}#rtdv .rtdv-ctl label{font-size:0}#rtdv .rtdv-ctl label select{font-size:16px}}" +
     ".rtdv-car span{background:radial-gradient(circle,#fff 0 6px,#e8590c 7px 10px,rgba(232,89,12,.25) 11px)}.rtdv-car span::after{border-bottom-color:#e8590c}" +
     "@media (pointer:coarse){#rtpv select,#rtpv input,#rtdv select{font-size:16px!important}}";
   D.head.appendChild(st);
