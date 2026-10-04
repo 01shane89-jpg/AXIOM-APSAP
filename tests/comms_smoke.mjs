@@ -127,6 +127,19 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(await p.evaluate(() => !document.querySelector("#com-res b b")), "OSM names are escaped");
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-comchk-pane .comv").length === 1 && document.querySelectorAll(".leaflet-comchk-pane path").length >= 2), "check pin and line-of-sight lines drawn");
   if (OUT) await p.screenshot({ path: OUT + "/comms-place.png" });
+  // the sight lines explain themselves: a legend entry for each kind, and tapping one names the mast and the reason
+  ok(await p.evaluate(() => /Mast in clear line of sight/.test(document.body.innerHTML) && /Terrain blocks the mast/.test(document.body.innerHTML)), "legend explains the green and red sight lines");
+  const sight = await p.evaluate(() => { const l = document.querySelector(".leaflet-comchk-pane path.comsight"); if (!l) return ""; const b = l.getBoundingClientRect(); return JSON.stringify([b.left + b.width / 2, b.top + b.height / 2]); });
+  ok(!!sight, "each sight line has a wide tap target");
+  if (sight) {
+    const [sx, sy] = JSON.parse(sight); await p.evaluate(() => window.__asapMap.closePopup());
+    await p.evaluate(([x, y]) => { const l = document.querySelector(".leaflet-comchk-pane path.comsight"); l.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: x, clientY: y })); }, [sx, sy]);
+    await p.waitForTimeout(300);
+    ok(/line of sight/.test(await p.evaluate(() => (document.querySelector(".leaflet-popup-content") || {}).textContent || "")), "tapping a sight line says which mast and whether terrain blocks it");
+    ok((await st(p)).result && (await st(p)).result.v, "tapping a sight line does not start a new check");
+    await p.evaluate(() => window.__asapMap.closePopup());
+  }
+  ok(await p.evaluate(() => !!document.querySelector(".leaflet-comchk-pane .comv svg")), "the checked place shows a phone icon, not a plain dot");
 
   // a place in the sea off the coast, far from any mast and with no tests
   await p.evaluate(() => window.OSAP_COMMSTAB.check(8.2, 101.9));
