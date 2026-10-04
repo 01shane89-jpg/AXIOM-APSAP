@@ -35,10 +35,12 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/medplan_decide.test.mjs
+      - run: node tests/medplan_air.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # the whole suite now runs about 29 to 30 minutes, so 30 cancelled green runs (2026-10-04)
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -48,6 +50,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
+      - run: node tests/lock_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/points_smoke.mjs
@@ -63,6 +66,7 @@ jobs:
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/guide_smoke.mjs
       - run: node tests/ai_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/period_smoke.mjs
@@ -70,11 +74,13 @@ jobs:
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
       - run: node tests/commsplan_smoke.mjs
+      - run: node tests/commslink_smoke.mjs
       - run: node tests/power_smoke.mjs
       - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
       - run: node tests/privacy_smoke.mjs
       - run: node tests/borders_smoke.mjs
+      - run: node tests/wrap_smoke.mjs
       - run: node tests/evac_smoke.mjs
       - run: node tests/evacroute_smoke.mjs
       - run: node tests/route_wpdel_smoke.mjs
@@ -90,6 +96,8 @@ jobs:
       - run: node tests/lz_smoke.mjs
       - run: node tests/lz_landcover_smoke.mjs
       - run: node tests/terrain_smoke.mjs
+      - run: node tests/lidar_smoke.mjs
+      - run: node tests/selected_contrast_smoke.mjs
       - run: node tests/event_pin_smoke.mjs
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/reports_smoke.mjs

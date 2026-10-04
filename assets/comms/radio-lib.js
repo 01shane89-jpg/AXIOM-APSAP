@@ -265,6 +265,66 @@
     if (c[1] * 2 >= n) return "none";
     return "degraded";
   }
+
+  /* ---------- satellite planning geometry (geostationary only) ----------
+     Pointing from a ground station to a geostationary slot at sat_lon: azimuth (true, degrees clockwise from north),
+     elevation above the horizon and slant range, on a spherical Earth (good to a few tenths of a degree, enough to plan a
+     site with a clear view; the terminal's own pointing aid is the authority). Elevation below 0 means it is not visible. */
+  var R_GEO_KM = 42164.2, R_E_KM = 6378.137;
+  function geoLook(lat, lon, sat_lon) {
+    lat = num(lat); lon = num(lon); sat_lon = num(sat_lon);
+    if (!isFinite(lat) || !isFinite(lon) || !isFinite(sat_lon)) return null;
+    var d = Math.PI / 180, p = lat * d, dl = (sat_lon - lon) * d;
+    /* the satellite relative to the station, in east / north / up */
+    var sx = R_GEO_KM * Math.cos(dl), sy = R_GEO_KM * Math.sin(dl);
+    var rx = sx - R_E_KM * Math.cos(p), rz = -R_E_KM * Math.sin(p);
+    var e = sy, n = -Math.sin(p) * rx + Math.cos(p) * rz, u = Math.cos(p) * rx + Math.sin(p) * rz;
+    /* the frame above: x toward the station's meridian at the equator, rotated so x,z hold the station; e = east */
+    var rng = Math.sqrt(e * e + n * n + u * u);
+    var az = (Math.atan2(e, n) / d + 360) % 360, el = Math.asin(u / rng) / d;
+    return { az: az, el: el, range_km: rng, visible: el > 0 };
+  }
+  /* ---------- terrain link: a ground profile between two antennas against the line of sight and the Fresnel zone ----------
+     prof: { samples: [{ dist_m, elev_m (null when the ground is unknown), nodata }] } as OSAP_TERRAIN_ANALYSIS.profile returns it
+     (ground heights above sea level, no Earth curvature applied). o: { f_mhz, hA_m, hB_m (antennas above the ground), k }.
+     The ground is raised by the Earth bulge for k, the line runs antenna top to antenna top, and every sample is checked against
+     the first Fresnel zone there. The worst point is the lowest clearance as a share of the zone; its single knife-edge loss
+     (ITU-R P.526) is the terrain estimate. need_* is the extra height that clears 60% of the zone everywhere, raising one end
+     or both. Terrain only: trees, buildings and the ground's own clutter are not in the elevation data, so a CLEAR answer is
+     a best case. */
+  function knifeEdge_db(v) { return v <= -0.78 ? 0 : 6.9 + 20 * Math.log10(Math.sqrt((v - 0.1) * (v - 0.1) + 1) + v - 0.1); }
+  function terrainLink(prof, o) {
+    o = o || {};
+    var s = (prof && prof.samples) || [], n = s.length, f = num(o.f_mhz), k = num(o.k, 4 / 3), hA = Math.max(0, num(o.hA_m, 2)), hB = Math.max(0, num(o.hB_m, 2));
+    var out = { verdict: "unknown", total_m: n ? num(s[n - 1].dist_m, 0) : 0, nodata_pct: 100, rows: [], worst: null, knife_db: NaN, need_a_m: NaN, need_b_m: NaN, need_both_m: NaN, f_mhz: f, k: k, hA_m: hA, hB_m: hB };
+    if (n < 2 || !(f > 0) || !(out.total_m > 0)) return out;
+    var known = s.filter(function (p) { return !p.nodata && p.elev_m != null && isFinite(p.elev_m); }).length;
+    out.nodata_pct = 100 * (n - known) / n;
+    var A = s[0], B = s[n - 1];
+    if (A.nodata || A.elev_m == null || B.nodata || B.elev_m == null) { out.reason = "no ground height at one end"; return out; }
+    var D = out.total_m, za = num(A.elev_m) + hA, zb = num(B.elev_m) + hB, lam = wavelength_m(f), na = 0, nb = 0, nboth = 0, worst = null;
+    for (var i = 0; i < n; i++) {
+      var p = s[i], d = num(p.dist_m), d2 = D - d, los = za + (zb - za) * d / D, f1 = fresnel_m(d, d2, f), g = null, clr = null, r = null;
+      if (!p.nodata && p.elev_m != null && isFinite(p.elev_m)) {
+        g = num(p.elev_m) + bulge_m(d, d2, k); clr = los - g;
+        if (i > 0 && i < n - 1 && f1 > 0) {
+          r = clr / f1;
+          if (!worst || r < worst.ratio) worst = { i: i, dist_m: d, clear_m: clr, f1_m: f1, ratio: r, lat: p.lat, lon: p.lon, ground_m: g };
+          var short = 0.6 * f1 - clr;
+          if (short > 0) { na = Math.max(na, short / (1 - d / D)); nb = Math.max(nb, short / (d / D)); nboth = Math.max(nboth, short); }
+        }
+      }
+      out.rows.push({ dist_m: d, ground_m: g, los_m: los, f1_m: f1 || 0, clear_m: clr });
+    }
+    out.worst = worst; out.need_a_m = na; out.need_b_m = nb; out.need_both_m = nboth;
+    if (worst) {
+      var v = -worst.clear_m * Math.sqrt(2 * D / (lam * worst.dist_m * (D - worst.dist_m)));
+      out.knife_db = knifeEdge_db(v); out.v = v;
+    }
+    out.verdict = !worst ? "unknown" : worst.clear_m < 0 ? "blocked" : worst.ratio < 0.6 ? "fresnel" : "clear";
+    if (out.nodata_pct > 20 && out.verdict === "clear") { out.verdict = "unknown"; out.reason = "ground unknown along " + Math.round(out.nodata_pct) + "% of the path"; }
+    return out;
+  }
   root.OSAP_RADIO = {
     version: "osap-radio/1", R_EARTH_M: R_EARTH_M,
     wToDbm: wToDbm, dbmToW: dbmToW, fspl: fspl, wavelength_m: wavelength_m, fresnel_m: fresnel_m, bulge_m: bulge_m, horizon_km: horizon_km,
@@ -273,6 +333,6 @@
     METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
     CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,
     ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey,
-    splitLine: splitLine, segStatus: segStatus
+    splitLine: splitLine, segStatus: segStatus, geoLook: geoLook, knifeEdge_db: knifeEdge_db, terrainLink: terrainLink
   };
 })(typeof window !== "undefined" ? window : globalThis);

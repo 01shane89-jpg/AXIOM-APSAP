@@ -2,7 +2,8 @@
    network status, sustainment and troubleshooting rather than just showing towers on a map"). Window.OSAP_COMMSPLAN.
    The Comms view (Map overlays > Infrastructure > Communications) opens as six tabs:
      Plan       PACE planner: Primary / Alternate / Contingency / Emergency per phase, with device, net, coverage expectation
-                and its basis, dependencies, failure trigger and next action
+                and its basis, dependencies, failure trigger and next action; a contact directory, geostationary satellite pointing,
+                a printable comms annex and an offline package file of all of it
      Coverage   the phone signal check (assets/osap-comms.js) and the route comms corridor (corridor(), shared with the
                 evacuation planner); the terrain coverage estimate joins it with the terrain engine
      Link       a free-space link budget, Fresnel zone and radio horizon calculator; the terrain profile joins it later
@@ -70,8 +71,8 @@
       '<label class="cpw">Failure trigger<input' + at + '"trigger" value="' + E(r.trigger) + '" maxlength="160" placeholder="e.g. two missed comms checks"></label>' +
       '<label class="cpw">Then<input' + at + '"action" value="' + E(r.action) + '" maxlength="160" placeholder="e.g. move to Alternate on the next window"></label></div>';
   }
-  function renderPlan() {
-    var el = pane(), d = loadPace(), p = curPlan(d);
+  function renderPlan(el) {
+    var d = loadPace(), p = curPlan(d);
     if (!p) {
       el.innerHTML = '<div class="sec cpsec"><h3>PACE plan</h3><p class="obs">Build a Primary, Alternate, Contingency and Emergency communications plan for each phase of the mission: method, device, net, the coverage you expect and why, what it depends on, and what makes you move to the next one.</p>' +
         '<div class="cpbtns"><button type="button" class="cpgo" data-cpa="new">New PACE plan</button></div><p class="obs">Kept on this device in the active workspace. Nothing is sent anywhere.</p></div>';
@@ -401,14 +402,14 @@
   function renderLink() {
     var el = pane(), L = linkIn(), Rd = R();
     var fld = function (k, lab, step, unit) { return '<label>' + lab + '<span class="cpu"><input type="number" step="' + step + '" data-cpl="' + k + '" value="' + E(L[k]) + '">' + (unit ? " " + unit : "") + "</span></label>"; };
-    el.innerHTML = '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
+    el.innerHTML = tlSection() + '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
       '<div class="cprow"><label>Band<select data-cpl="band">' + opts(Rd.BANDS.map(function (b) { return [b.id, b.label]; }).concat([["custom", "Custom"]]), L.band) + "</select></label>" +
       fld("f_mhz", "Frequency", "any", "MHz") + fld("d_km", "Distance", "any", "km") + fld("ptx_w", "Transmit power", "any", "W") +
       fld("gtx_dbi", "Tx antenna gain", "any", "dBi") + fld("ltx_db", "Tx cable + connectors", "any", "dB") + fld("grx_dbi", "Rx antenna gain", "any", "dBi") + fld("lrx_db", "Rx cable + connectors", "any", "dB") +
       fld("sens_dbm", "Rx sensitivity", "any", "dBm") + fld("fade_db", "Fade margin wanted", "any", "dB") + fld("ha_m", "Antenna A height", "any", "m") + fld("hb_m", "Antenna B height", "any", "m") + fld("k", "k-factor", "0.01", "") + "</div>" +
       '<div id="cp-lout" aria-live="polite"></div>' +
-      '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link (ground profile between two points, what blocks it, and how much antenna height clears it) joins this tab with the terrain engine.</p></div>';
-    linkOut();
+      '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link above adds the ground between two points.</p></div>';
+    linkOut(); tlOut(); tlDraw();
   }
   function linkOut() {
     var el = S.ctx && S.ctx.rail.querySelector("#cp-lout"); if (!el) return;
@@ -434,8 +435,120 @@
     var o = linkIn();
     if (k === "band") { o.band = t.value; var b = R().BANDS.filter(function (x) { return x.id === t.value; })[0]; if (b) { o.f_mhz = b.f_mhz; var fi = S.ctx.rail.querySelector('[data-cpl="f_mhz"]'); if (fi) fi.value = b.f_mhz; } }
     else { var v = parseFloat(t.value); if (!isFinite(v)) return; o[k] = v; if (k === "f_mhz") { o.band = "custom"; var bs = S.ctx.rail.querySelector('[data-cpl="band"]'); if (bs) bs.value = "custom"; } }
-    put(KL, o); linkOut();
+    put(KL, Object.assign(get(KL, {}), o)); linkOut();
+    if (/^(f_mhz|ha_m|hb_m|k|band)$/.test(k)) tlRecalc(); else tlOut();
   }
+
+  /* ---------- Link: terrain link between two points (A and B kept in osap-cp-link as tA, tB) ----------
+     The ground between them from the terrain engine (OSAP_TERRAIN_ANALYSIS.profile, elevation tiles worked out on this
+     device), checked by OSAP_RADIO.terrainLink against the line of sight and the first Fresnel zone for this tab's frequency,
+     antenna heights and k. MODELLED, terrain only. */
+  var TL = { arm: null, busy: false, err: "", res: null, prof: null, run: 0 }, tlLayer = null, tlDown = null;
+  var TLV = { clear: ["CLEAR", "#2b8a3e", "Line of sight and at least 60% of the first Fresnel zone are clear of the ground."],
+    fresnel: ["FRESNEL ZONE OBSTRUCTED", "#e67700", "The line of sight clears the ground, but the ground cuts into the Fresnel zone, which costs signal."],
+    blocked: ["BLOCKED BY TERRAIN", "#c92a2a", "The ground rises above the straight line between the antennas."],
+    unknown: ["UNKNOWN", "#6c757d", "Not enough ground data to say."] };
+  function tlLayerOff() { if (tlLayer && S.ctx) { S.ctx.layer.removeLayer(tlLayer); tlLayer = null; } }
+  function tlPts() { var o = get(KL, {}); return { a: Array.isArray(o.tA) ? o.tA : null, b: Array.isArray(o.tB) ? o.tB : null }; }
+  function tlSet(k, p) { var o = get(KL, {}); if (p) o[k] = [+p[0].toFixed(6), +p[1].toFixed(6)]; else delete o[k]; put(KL, o); }
+  function tlPtTxt(p) { return p ? E(mgrs(p[0], p[1]) || p[0].toFixed(5) + ", " + p[1].toFixed(5)) : "not set"; }
+  function tlSection() {
+    var P = tlPts(), arm = TL.arm;
+    return '<div class="sec cpsec" id="cp-tl"><h3>Terrain link: A to B</h3>' +
+      '<div class="cprow"><div><b>A</b> <span id="cptl-a">' + tlPtTxt(P.a) + '</span><br><button type="button" data-tl="a" aria-pressed="' + (arm === "a") + '">' + (arm === "a" ? "Tap the map for A…" : "Set A on map") + "</button></div>" +
+      "<div><b>B</b> <span id=\"cptl-b\">" + tlPtTxt(P.b) + '</span><br><button type="button" data-tl="b" aria-pressed="' + (arm === "b") + '">' + (arm === "b" ? "Tap the map for B…" : "Set B on map") + "</button></div></div>" +
+      '<p><button type="button" data-tl="go"' + (P.a && P.b && !TL.busy ? "" : " disabled") + '>Check terrain</button> <button type="button" data-tl="swap"' + (P.a || P.b ? "" : " disabled") + '>Swap A and B</button> <button type="button" data-tl="clear"' + (P.a || P.b ? "" : " disabled") + ">Clear</button></p>" +
+      '<div id="cp-tlout" aria-live="polite"></div>' +
+      '<p class="obs">Uses the frequency, antenna heights and k-factor below. <b>MODELLED, terrain only:</b> the ground from elevation data, raised for the Earth\'s curve. Trees, buildings, weather and interference are not in it, so a clear answer is a best case.</p></div>';
+  }
+  function tlRepaint() { var box = S.ctx && S.ctx.rail.querySelector("#cp-tl"); if (!box) return; var d = D.createElement("div"); d.innerHTML = tlSection(); box.replaceWith(d.firstChild); tlOut(); }
+  function tlRecalc() { if (!TL.prof) return; var L = linkIn(); TL.res = R().terrainLink(TL.prof, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k }); tlOut(); tlDraw(); }
+  function tlRun() {
+    var P = tlPts(), T = W.OSAP_TERRAIN_ANALYSIS; if (!P.a || !P.b) return;
+    if (!T || !T.profile) { TL.err = "The terrain engine is not available on this page."; tlOut(); return; }
+    var my = ++TL.run, d = R().hav_km(P.a, P.b);
+    if (!(d > 0.02)) { TL.err = "A and B are the same place."; TL.res = null; tlOut(); return; }
+    if (d > 300) { TL.err = "A and B are " + f(d, 0) + " km apart: the terrain check works up to 300 km."; TL.res = null; tlOut(); return; }
+    TL.busy = true; TL.err = ""; tlRepaint();
+    T.profile(P.a, P.b, { res_m: Math.max(30, Math.round(d * 1000 / 600)) }).then(function (pr) {
+      if (my !== TL.run) return;
+      TL.busy = false; TL.prof = pr; var L = linkIn(); L.d_km = Math.round(pr.total_m) / 1000; put(KL, Object.assign(get(KL, {}), { d_km: L.d_km }));
+      var di = S.ctx && S.ctx.rail.querySelector('[data-cpl="d_km"]'); if (di) di.value = L.d_km;
+      tlRepaint(); tlRecalc(); linkOut();
+    }, function (e) { if (my !== TL.run) return; TL.busy = false; TL.err = "The ground could not be read (" + E(e && e.message || "error") + "). Elevation tiles need a connection the first time."; tlRepaint(); });
+  }
+  function tlChart(x) {
+    var rows = x.rows, WD = 340, HT = 160, P = { l: 40, r: 8, t: 10, b: 22 }, D0 = x.total_m || 1, ys = [];
+    rows.forEach(function (r) { if (r.ground_m != null) ys.push(r.ground_m); ys.push(r.los_m + r.f1_m, r.los_m - r.f1_m); });
+    if (!ys.length) return "";
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max(5, (hi - lo) * 0.06); lo -= pad; hi += pad;
+    function X(d) { return (P.l + (WD - P.l - P.r) * d / D0).toFixed(1); } function Y(z) { return (P.t + (HT - P.t - P.b) * (1 - (z - lo) / (hi - lo))).toFixed(1); }
+    var up = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m + r.f1_m); }), dn = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m - r.f1_m); }).reverse();
+    var up6 = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m + 0.6 * r.f1_m); }), dn6 = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m - 0.6 * r.f1_m); }).reverse();
+    var g = "", area = "", seg = [];
+    rows.forEach(function (r) { if (r.ground_m == null) { if (seg.length) { area += "M" + seg[0][0] + "," + Y(lo) + "L" + seg.join("L") + "L" + seg[seg.length - 1][0] + "," + Y(lo) + "Z"; seg = []; } return; } seg.push([X(r.dist_m), Y(r.ground_m)]); });
+    if (seg.length) area += "M" + seg[0][0] + "," + Y(lo) + "L" + seg.join("L") + "L" + seg[seg.length - 1][0] + "," + Y(lo) + "Z";
+    var w = x.worst, col = TLV[x.verdict][1], mk = w ? '<circle cx="' + X(w.dist_m) + '" cy="' + Y(w.ground_m) + '" r="4" fill="' + col + '" stroke="#fff"/>' : "";
+    var km = D0 / 1000, step = km > 40 ? 10 : km > 16 ? 5 : km > 6 ? 2 : km > 2.5 ? 1 : 0.5, ticks = "";
+    for (var t = 0; t <= km + 1e-9; t += step) ticks += '<text x="' + X(t * 1000) + '" y="' + (HT - 6) + '" text-anchor="middle">' + (Math.round(t * 10) / 10) + "</text>";
+    var r0 = rows[0], r1 = rows[rows.length - 1];
+    return '<svg class="cptlc" viewBox="0 0 ' + WD + " " + HT + '" role="img" aria-label="Terrain profile from A to B with the line of sight and Fresnel zone" font-size="9" fill="currentColor">' +
+      '<polygon points="' + up.concat(dn).join(" ") + '" fill="#4dabf7" fill-opacity=".14"/><polygon points="' + up6.concat(dn6).join(" ") + '" fill="#4dabf7" fill-opacity=".22"/>' +
+      '<path d="' + area + '" fill="#8d6e63" fill-opacity=".55"/>' +
+      '<line x1="' + X(0) + '" y1="' + Y(r0.los_m) + '" x2="' + X(D0) + '" y2="' + Y(r1.los_m) + '" stroke="' + col + '" stroke-width="1.6"/>' + mk +
+      '<text x="' + X(0) + '" y="' + (+Y(r0.los_m) - 5) + '" font-weight="700">A</text><text x="' + X(D0) + '" y="' + (+Y(r1.los_m) - 5) + '" text-anchor="end" font-weight="700">B</text>' +
+      '<text x="' + (P.l - 4) + '" y="' + (+Y(hi) + 8) + '" text-anchor="end">' + Math.round(hi) + '</text><text x="' + (P.l - 4) + '" y="' + Y(lo) + '" text-anchor="end">' + Math.round(lo) + "</text>" + ticks +
+      '<text x="' + (WD - P.r) + '" y="' + (HT - 16) + '" text-anchor="end">km</text><text x="2" y="' + (P.t + 2) + '">m</text></svg>' +
+      '<p class="obs">Brown: ground (raised for the Earth\'s curve). Line: line of sight. Blue: first Fresnel zone, darker where the 60% that should stay clear is. ● the tightest point.</p>';
+  }
+  function tlOut() {
+    var el = S.ctx && S.ctx.rail.querySelector("#cp-tlout"); if (!el) return;
+    if (TL.busy) { el.innerHTML = '<p class="cpres">Reading the ground between A and B…</p>'; return; }
+    if (TL.err) { el.innerHTML = '<p class="cpres" style="border-left:5px solid #6c757d">' + TL.err + "</p>"; return; }
+    var x = TL.res; if (!x) { el.innerHTML = ""; return; }
+    var v = TLV[x.verdict], L = linkIn(), w = x.worst;
+    var b = R().linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: x.total_m / 1000, f_mhz: L.f_mhz, extra_db: isFinite(x.knife_db) ? x.knife_db : 0 });
+    var rows = "<tr><th>Path</th><td>" + f(x.total_m / 1000, 2) + " km at " + f(L.f_mhz, 3) + " MHz, antennas " + f(L.ha_m, 1) + " m (A) and " + f(L.hb_m, 1) + " m (B) above the ground, k " + f(L.k, 2) + "</td></tr>";
+    if (w) rows += "<tr><th>Tightest point</th><td>" + f(w.dist_m / 1000, 2) + " km from A" + (w.lat != null ? " (" + E(mgrs(w.lat, w.lon)) + ")" : "") + ": " + (w.clear_m < 0 ? "ground " + f(-w.clear_m, 1) + " m above the line" : f(w.clear_m, 1) + " m below the line") + ", " + f(Math.max(0, w.ratio) * 100, 0) + "% of the " + f(w.f1_m, 1) + " m Fresnel radius clear</td></tr>" +
+      "<tr><th>Terrain loss</th><td>" + (x.knife_db > 0.05 ? "about " + f(x.knife_db, 1) + " dB (single knife-edge estimate at the tightest point)" : "none expected") + "</td></tr>" +
+      "<tr><th>Margin with terrain</th><td>" + (isFinite(b.margin_db) ? "<b>" + f(b.margin_db, 1) + " dB</b> above the receiver's sensitivity" + (b.margin_db < L.fade_db ? ' <b class="cpbad">(less than the ' + f(L.fade_db, 0) + " dB you want)</b>" : "") : "enter the link numbers below") + "</td></tr>";
+    if (x.verdict !== "clear" && w) rows += "<tr><th>Antenna height to clear 60%</th><td>raise A by " + f(x.need_a_m, 1) + " m, or B by " + f(x.need_b_m, 1) + " m, or both by " + f(x.need_both_m, 1) + " m</td></tr>";
+    rows += "<tr><th>Ground data</th><td>" + (x.nodata_pct > 0.5 ? f(x.nodata_pct, 0) + "% of the path has no elevation data (shown as gaps)" : "the whole path") + (TL.prof && TL.prof.res_m ? ", every " + f(TL.prof.res_m, 0) + " m" : "") + (TL.prof && TL.prof.sources && TL.prof.sources.length ? "; " + E(TL.prof.sources.map(function (s) { return s.name || s; }).join(", ")) : "") + "</td></tr>";
+    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + v[1] + '"><b>' + v[0] + "</b> (modelled): " + E(x.reason ? "ground unknown, " + x.reason + "." : v[2]) + "</p>" + tlChart(x) + '<table class="rttab"><tbody>' + rows + "</tbody></table>";
+  }
+  function tlDraw() {
+    tlLayerOff(); if (!S.ctx || S.tab !== "link" || !W.L) return;
+    var P = tlPts(), x = TL.res; if (!P.a && !P.b) return;
+    tlLayer = W.L.layerGroup();
+    var col = x ? TLV[x.verdict][1] : "#1c7ed6", svg = W.L.svg();
+    if (P.a && P.b) W.L.polyline([P.a, P.b], { renderer: svg, color: col, weight: 4, opacity: 0.9, dashArray: x && x.verdict === "blocked" ? "8 6" : null, interactive: false }).addTo(tlLayer);
+    [["A", P.a], ["B", P.b]].forEach(function (q) {
+      if (!q[1]) return;
+      W.L.marker(q[1], { keyboard: false, interactive: false, icon: W.L.divIcon({ className: "cptlm", html: "<span>" + q[0] + "</span>", iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(tlLayer);
+    });
+    if (x && x.worst && x.worst.lat != null) W.L.circleMarker([x.worst.lat, x.worst.lon], { renderer: svg, radius: 6, color: "#fff", weight: 2, fillColor: col, fillOpacity: 1, interactive: false }).addTo(tlLayer);
+    S.ctx.layer.addLayer(tlLayer);
+  }
+  function tlAct(b) {
+    var a = b.getAttribute("data-tl"); if (!a) return false;
+    if (a === "a" || a === "b") TL.arm = TL.arm === a ? null : a;
+    else if (a === "go") { TL.arm = null; tlRun(); return true; }
+    else if (a === "swap") { var P = tlPts(); tlSet("tA", P.b); tlSet("tB", P.a); TL.arm = null; if (TL.prof) { tlRun(); return true; } }
+    else if (a === "clear") { TL.run++; tlSet("tA", null); tlSet("tB", null); TL.arm = null; TL.res = null; TL.prof = null; TL.err = ""; TL.busy = false; }
+    tlRepaint(); tlDraw(); return true;
+  }
+  function tlInMap(e) { var m = S.ctx && S.ctx.map && S.ctx.map.getContainer(); return !!m && m.contains(e.target) && !(e.target.closest && e.target.closest(".leaflet-control,.leaflet-popup")); }
+  W.addEventListener("pointerdown", function (e) { tlDown = TL.arm && S.tab === "link" && tlInMap(e) ? [e.clientX, e.clientY] : null; }, true);
+  W.addEventListener("click", function (e) {
+    if (!TL.arm || S.tab !== "link" || !tlDown || !tlInMap(e) || D.documentElement.getAttribute("data-view") !== "comms") return;
+    if (Math.abs(e.clientX - tlDown[0]) + Math.abs(e.clientY - tlDown[1]) > 8) return;
+    e.stopPropagation(); e.preventDefault();
+    var ll = S.ctx.map.mouseEventToLatLng(e), lon = W.L.Util.wrapNum(ll.lng, [-180, 180], true), k = TL.arm;
+    tlSet(k === "a" ? "tA" : "tB", [ll.lat, lon]);
+    var P = tlPts(); TL.arm = k === "a" && !P.b ? "b" : null; TL.res = null; TL.prof = null;
+    tlRepaint(); tlDraw();
+    if (P.a && P.b) tlRun();
+  }, true);
 
   /* ---------- Equipment: battery and power planner (localStorage osap-cp-power, part of the workspace) ---------- */
   function loadPower() {
@@ -600,7 +713,7 @@
   function cableAct(t) {
     if (t.getAttribute("data-cb") !== "use") return;
     var c = cableIn(), r = R().feedline(c), L = linkIn();
-    L.f_mhz = c.f_mhz; L.ptx_w = c.ptx_w; L.gtx_dbi = c.gain_dbi; L.ltx_db = Math.round(r.total_db * 100) / 100; L.band = "custom"; put(KL, L);
+    L.f_mhz = c.f_mhz; L.ptx_w = c.ptx_w; L.gtx_dbi = c.gain_dbi; L.ltx_db = Math.round(r.total_db * 100) / 100; L.band = "custom"; put(KL, Object.assign(get(KL, {}), L));
     setTab("link");
   }
 
@@ -865,6 +978,228 @@
   /* "Comms along route" on the Route tab opens Comms planning on Coverage and runs the corridor */
   function routeCorridor() { setTab("coverage"); corrRun(); }
 
+  /* ---------- Plan outputs: contacts, satellite pointing, comms annex, offline package ---------- */
+  var PSUBS = [["pace", "PACE"], ["contacts", "Contacts"], ["sat", "Satellite"], ["annex", "Comms annex"], ["package", "Package"]];
+  var KPS = "osap-cp-psub", KCT = "osap-cp-contacts", KSAT = "osap-cp-sats";
+  function psub() { return S.psub || "pace"; }
+  function renderPlanTab() {
+    var el = pane(), sub = psub();
+    el.innerHTML = '<div class="cpsub" role="group" aria-label="Plan views">' + PSUBS.map(function (s) { return '<button type="button" data-cppsub="' + s[0] + '" aria-pressed="' + (s[0] === sub) + '">' + s[1] + "</button>"; }).join("") + '</div><div id="cp-psub"></div>';
+    var box = el.querySelector("#cp-psub");
+    if (sub === "pace") renderPlan(box); else if (sub === "contacts") renderContacts(box); else if (sub === "sat") renderSat(box); else if (sub === "annex") renderAnnex(box); else renderPackage(box);
+  }
+  function planClick(b) {
+    var s = b.getAttribute("data-cppsub");
+    if (s) { S.psub = s; try { localStorage.setItem(KPS, s); } catch (e) {} render(); return; }
+    var sub = psub();
+    if (sub === "pace") { if (b.hasAttribute("data-cpa")) planAction(b.getAttribute("data-cpa"), b); }
+    else if (sub === "contacts") ctAct(b); else if (sub === "sat") satAct(b); else if (sub === "annex") annexAct(b); else pkgAct(b);
+  }
+  function planInputAny(t, type) {
+    var sub = psub();
+    if (sub === "pace") { if (t.getAttribute("data-cpa") === "pick") { if (type === "change") planAction("pick", t); } else planInput(t); }
+    else if (sub === "package" && t.id === "cppk-file" && type === "change") pkgLoad(t);
+  }
+
+  /* contact directory: stations, callsigns, how and when to reach them (entered by the operator) */
+  function loadCt() { var v = get(KCT, []); return Array.isArray(v) ? v : []; }
+  function renderContacts(box) {
+    var L = loadCt();
+    box.innerHTML = '<div class="sec cpsec"><h3>Contact directory</h3><p class="obs">Stations and callsigns, with how and when to reach them. Entered by you; kept on this device in the active workspace.</p><div class="cprow">' +
+      '<label>Callsign / station<input id="cpct-cs" maxlength="40"></label><label>Role<input id="cpct-ro" maxlength="60" placeholder="e.g. base, relay, medevac"></label>' +
+      '<label>Method<select id="cpct-me">' + opts([["", "Choose…"]].concat(R().METHODS), "") + "</select></label><label>Net / channel<input id=\"cpct-net\" maxlength=\"60\"></label>" +
+      '<label>Frequency (MHz)<input type="number" step="any" min="0" id="cpct-f"></label><label>Number, ID or handle<input id="cpct-ad" maxlength="60"></label>' +
+      '<label class="cpw">Contact windows (Zulu)<input id="cpct-win" maxlength="120" placeholder="e.g. 0600Z and 1800Z daily, 10 min"></label><label class="cpw">Notes<input id="cpct-no" maxlength="160"></label></div>' +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-ct="add">Add the contact</button>' + (L.length ? '<button type="button" data-ct="text">Copy as text</button>' : "") + '</div><p class="obs" id="cp-msg">' + L.length + " contact" + (L.length === 1 ? "" : "s") + ".</p>" +
+      (L.length ? '<table class="rttab cplog"><thead><tr><th>Station</th><th>How</th><th>When</th><th></th></tr></thead><tbody>' + L.map(function (c) {
+        return "<tr><td><b>" + E(c.cs) + "</b>" + (c.ro ? "<br><small>" + E(c.ro) + "</small>" : "") + "</td><td>" + E(c.me || "") + (c.net ? "<br><small>" + E(c.net) + "</small>" : "") + (c.f ? "<br><small>" + E(c.f) + " MHz</small>" : "") + (c.ad ? "<br><small>" + E(c.ad) + "</small>" : "") +
+          "</td><td><small>" + E(c.win) + (c.no ? "<br>" + E(c.no) : "") + '</small></td><td><button type="button" class="cpx" data-ct="del" data-id="' + E(c.id) + '" aria-label="Delete contact">×</button></td></tr>';
+      }).join("") + "</tbody></table>" : "") + "</div>";
+  }
+  function ctLine(c) { return c.cs + (c.ro ? " (" + c.ro + ")" : "") + (c.me ? " | " + c.me : "") + (c.net ? " | " + c.net : "") + (c.f ? " | " + c.f + " MHz" : "") + (c.ad ? " | " + c.ad : "") + (c.win ? " | " + c.win : "") + (c.no ? " | " + c.no : ""); }
+  function ctAct(t) {
+    var a = t.getAttribute("data-ct"); if (!a) return;
+    var L = loadCt();
+    if (a === "add") {
+      var c = { id: rid("ct"), cs: clip(fv("#cpct-cs"), 40).trim(), ro: clip(fv("#cpct-ro"), 60), me: R().METHODS.indexOf(fv("#cpct-me")) >= 0 ? fv("#cpct-me") : "", net: clip(fv("#cpct-net"), 60),
+        f: parseFloat(fv("#cpct-f")) > 0 ? parseFloat(fv("#cpct-f")) : "", ad: clip(fv("#cpct-ad"), 60), win: clip(fv("#cpct-win"), 120), no: clip(fv("#cpct-no"), 160) };
+      if (!c.cs) { note("Enter a callsign or station."); return; }
+      if (L.length >= 300) return;
+      L.push(c); L.sort(function (x, y) { return x.cs.localeCompare(y.cs); });
+    } else if (a === "del") { if (!W.confirm("Delete this contact?")) return; L = L.filter(function (c) { return c.id !== t.getAttribute("data-id"); }); }
+    else if (a === "text") { copyText(["CONTACT DIRECTORY"].concat(L.map(ctLine)).join("\n")); return; }
+    if (!put(KCT, L)) { note("This device's storage is full: not saved."); return; }
+    render();
+  }
+
+  /* satellite pointing: geostationary look angles from the plan's area (or the map centre) to slots the operator enters */
+  function loadSats() { var v = get(KSAT, null); return v && Array.isArray(v.list) ? v : { list: [], at: null }; }
+  function satStation(v) {
+    if (v.at && isFinite(v.at.lat) && isFinite(v.at.lon)) return { lat: v.at.lat, lon: v.at.lon, from: "the point you set" };
+    var p = curPlan(loadPace());
+    if (p && p.area) return { lat: p.area.lat, lon: p.area.lon, from: "the centre of PACE plan " + p.name };
+    var c = S.ctx.map.getCenter(); return { lat: c.lat, lon: W.OSAP_GEO && W.OSAP_GEO.wrap ? W.OSAP_GEO.wrap(c.lng) : c.lng, from: "the map centre" };
+  }
+  function magOf(az, st) {
+    var G = W.OSAP_GEO; if (!G || !G.decl) return NaN;
+    try { var dc = G.decl(st.lat, st.lon, G.decYear ? G.decYear(new Date()) : 2026.75, 0); return isFinite(dc) ? ((az - dc) % 360 + 360) % 360 : NaN; } catch (e) { return NaN; }
+  }
+  function lookRows(v, st) {
+    return v.list.map(function (s) { var g = R().geoLook(st.lat, st.lon, s.lon); return { s: s, g: g, mag: g ? magOf(g.az, st) : NaN }; });
+  }
+  function renderSat(box) {
+    var v = loadSats(), st = satStation(v), rows = lookRows(v, st), T = W.OSAP_TERRAIN_ANALYSIS;
+    box.innerHTML = '<div class="sec cpsec"><h3>Satellite pointing <span class="cptag">MODELLED</span></h3>' +
+      '<p>From ' + E(st.from) + ', <code>' + E(mgrs(st.lat, st.lon)) + '</code>. <button type="button" class="linkish" data-sat="here">Use the map centre</button>' + (v.at ? ' <button type="button" class="linkish" data-sat="plan">Use the plan area</button>' : "") + "</p>" +
+      '<div class="cprow"><label>Satellite name<input id="cpsat-n" maxlength="40" placeholder="as in your terminal guide"></label><label>Orbital slot (° longitude, east +)<input type="number" step="any" min="-180" max="180" id="cpsat-l" placeholder="e.g. 143.5 or -98"></label></div>' +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-sat="add">Add the satellite</button></div><p class="obs" id="cp-msg"></p>' +
+      (rows.length ? '<table class="rttab cplog"><thead><tr><th>Satellite</th><th>Azimuth</th><th>Elevation</th><th></th></tr></thead><tbody>' + rows.map(function (r) {
+        var g = r.g, low = g && g.visible && g.el < 10;
+        return "<tr><td><b>" + E(r.s.name) + "</b><br><small>" + f(r.s.lon, 1) + "°</small></td><td>" + (g ? f(g.az, 1) + "° true" + (isFinite(r.mag) ? "<br><small>" + f(r.mag, 1) + "° magnetic</small>" : "") : "–") + "</td><td>" +
+          (!g ? "–" : !g.visible ? '<b class="cpbad">Below the horizon</b>' : f(g.el, 1) + "°" + (low ? '<br><small class="cpbad">Low: hills, trees and buildings likely block it</small>' : "")) +
+          '<div id="cpsat-t-' + E(r.s.id) + '"></div></td><td><button type="button" class="cpx" data-sat="del" data-id="' + E(r.s.id) + '" aria-label="Delete satellite">×</button></td></tr>';
+      }).join("") + "</tbody></table>" +
+        (T && T.profile ? '<div class="cpbtns"><button type="button" data-sat="terrain">Check the terrain toward each</button></div>' : '<p class="obs">The terrain check toward each satellite comes with the terrain tools.</p>') : "") +
+      '<p class="obs">Planning geometry for geostationary satellites only, on a smooth Earth: it does not know if a satellite is in service or covers this place. Low-orbit services (for example Iridium or Starlink) need a wide clear view of the sky rather than one direction. Point with your terminal\'s own aid.</p></div>';
+  }
+  function satAct(t) {
+    var a = t.getAttribute("data-sat"); if (!a) return;
+    var v = loadSats();
+    if (a === "add") {
+      var nm = clip(fv("#cpsat-n"), 40).trim(), lo = parseFloat(fv("#cpsat-l"));
+      if (!nm || !(lo >= -180 && lo <= 180)) { note("Enter a name and an orbital slot between -180 and 180."); return; }
+      if (v.list.length >= 20) return;
+      v.list.push({ id: rid("sat"), name: nm, lon: lo });
+    } else if (a === "del") v.list = v.list.filter(function (s) { return s.id !== t.getAttribute("data-id"); });
+    else if (a === "here") { var c = S.ctx.map.getCenter(); v.at = { lat: Math.round(c.lat * 1e5) / 1e5, lon: Math.round((W.OSAP_GEO && W.OSAP_GEO.wrap ? W.OSAP_GEO.wrap(c.lng) : c.lng) * 1e5) / 1e5 }; }
+    else if (a === "plan") v.at = null;
+    else if (a === "terrain") { satTerrain(v); return; }
+    put(KSAT, v); render();
+  }
+  /* terrain toward each satellite: the highest angle of the ground within 20 km along its azimuth, against its elevation */
+  function satTerrain(v) {
+    var T = W.OSAP_TERRAIN_ANALYSIS, G = W.OSAP_GEO, st = satStation(v); if (!T || !T.profile || !G || !G.dest) return;
+    lookRows(v, st).forEach(function (r) {
+      var el = S.ctx.rail.querySelector("#cpsat-t-" + r.s.id); if (!el || !r.g || !r.g.visible) return;
+      el.innerHTML = "<small>Checking terrain…</small>";
+      var b = G.dest([st.lat, st.lon], r.g.az, 20000);
+      Promise.resolve(T.profile([st.lat, st.lon], b, { res_m: 60 })).then(function (pf) {
+        var sm = (pf && pf.samples) || [], h0 = sm[0] && !sm[0].nodata ? sm[0].elev_m + 2 : NaN, best = -90, nod = 0;
+        sm.forEach(function (x, i) { if (!i) return; if (x.nodata) { nod++; return; } var ang = Math.atan2(x.elev_m - h0, x.dist_m) * 180 / Math.PI; if (ang > best) best = ang; });
+        if (!isFinite(h0) || nod > sm.length / 2) { el.innerHTML = "<small>Terrain: unknown here</small>"; return; }
+        el.innerHTML = best >= r.g.el ? '<small class="cpbad">Terrain blocks it: the ground rises to ' + f(best, 1) + "° that way</small>" : "<small>Terrain clear: the ground rises to " + f(Math.max(best, 0), 1) + "° that way (trees and buildings not counted)</small>";
+      }, function () { el.innerHTML = "<small>Terrain: unknown here</small>"; });
+    });
+  }
+
+  /* comms annex: one printable document from the PACE plan, contacts, channel plan, satellite pointing, power and COMSEC status */
+  function annexParts(p) {
+    var ch = loadChan(), ct = loadCt(), sv = loadSats(), st = satStation(sv), pw = loadPower(), pr = R().powerPlan(pw), cs = loadCs(), lo = loadLo();
+    var lw = lo.items.reduce(function (s, x) { return s + num(x.qty, 0) * num(x.kg, 0); }, 0);
+    return { p: p, ch: ch, ct: ct, sats: lookRows(sv, st), st: st, pw: pw, pr: pr, cs: cs, lw: lw };
+  }
+  function annexText(A) {
+    var p = A.p, o = ["COMMS ANNEX: " + p.name, "Made " + when(Date.now()) + " in OSAP on this device. Planning document; estimates carry their basis.", planText(p)];
+    if (A.ch.length) o.push("", "CHANNEL PLAN"); A.ch.forEach(function (c) { o.push(" " + c.name + " | " + c.f + " MHz" + (c.mode ? " | " + c.mode : "") + (c.net ? " | " + c.net : "") + (c.note ? " | " + c.note : "")); });
+    if (A.ct.length) o.push("", "CONTACTS AND WINDOWS"); A.ct.forEach(function (c) { o.push(" " + ctLine(c)); });
+    if (A.sats.length) o.push("", "SATELLITE POINTING from " + mgrs(A.st.lat, A.st.lon)); A.sats.forEach(function (r) { o.push(" " + r.s.name + " (" + r.s.lon + "°): " + (r.g && r.g.visible ? "az " + f(r.g.az, 1) + "° true" + (isFinite(r.mag) ? " / " + f(r.mag, 1) + "° mag" : "") + ", el " + f(r.g.el, 1) + "°" : "below the horizon")); });
+    o.push("", "POWER AND SUSTAINMENT", " " + f(A.pr.wh_day, 0) + " Wh a day; " + (isFinite(A.pr.batteries_mission) ? A.pr.batteries_mission + " batteries for " + A.pw.days + " days (" + f(A.pr.weight_kg, 1) + " kg)" : "batteries not worked out") + (A.lw ? "; loadout " + f(A.lw, 1) + " kg" : ""));
+    if (A.cs.length) o.push("", "COMSEC (administrative status only)"); A.cs.forEach(function (x) { o.push(" " + x.st + (x.ed ? " ed. " + x.ed : "") + " | " + x.status + (x.expires ? " | expires " + x.expires : "")); });
+    return o.join("\n");
+  }
+  function renderAnnex(box) {
+    var d = loadPace(), p = curPlan(d);
+    if (!p) { box.innerHTML = '<div class="sec cpsec"><h3>Comms annex</h3><p class="obs">Make a PACE plan first: the annex is built around it.</p><div class="cpbtns"><button type="button" data-cppsub="pace">Open PACE</button></div></div>'; return; }
+    var A = annexParts(p);
+    box.innerHTML = '<div class="sec cpsec"><h3>Comms annex</h3><p>One document for <b>' + E(p.name) + "</b>, ready to print or paste into an order:</p><ul>" +
+      "<li>PACE by phase: " + p.phases.length + " phase" + (p.phases.length === 1 ? "" : "s") + "</li><li>Channel plan: " + A.ch.length + "</li><li>Contacts and windows: " + A.ct.length + "</li><li>Satellite pointing: " + A.sats.length + "</li>" +
+      "<li>Power: " + f(A.pr.wh_day, 0) + " Wh a day" + (isFinite(A.pr.batteries_mission) ? ", " + A.pr.batteries_mission + " batteries" : "") + "</li><li>COMSEC status: " + A.cs.length + " (administrative only)</li></ul>" +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-ax="print">Print the annex</button><button type="button" data-ax="text">Copy as text</button></div><p class="obs" id="cp-msg">Fill the parts on the Plan, Equipment and Status tabs; empty parts are left out.</p></div>';
+  }
+  function annexAct(t) {
+    var a = t.getAttribute("data-ax"); if (!a) return;
+    var p = curPlan(loadPace()); if (!p) return;
+    var A = annexParts(p);
+    if (a === "text") { copyText(annexText(A)); return; }
+    var pr = D.getElementById("cp-print"); if (!pr) { pr = D.createElement("div"); pr.id = "cp-print"; D.body.appendChild(pr); }
+    var tab = function (head, rows) { return "<table><thead><tr>" + head.map(function (h) { return "<th>" + E(h) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + E(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>"; };
+    var h = "<h1>Comms annex: " + E(p.name) + "</h1><p>" + (p.mission ? "Mission: " + E(p.mission) + ". " : "") + (p.team ? "Stations: " + E(p.team) + ". " : "") + (p.area ? "Area: " + E(mgrs(p.area.lat, p.area.lon)) + ", radius " + E(p.area.radius_km) + " km. " : "") + "Made " + E(when(Date.now())) + ".</p>";
+    h += "<h2>1. PACE by phase</h2>";
+    p.phases.forEach(function (ph, i) {
+      h += "<p><b>Phase " + (i + 1) + ": " + E(ph.name) + "</b></p>" + tab(["", "Method", "Device / callsign", "Net", "Coverage expected", "Failure trigger", "Then"], PACE.map(function (k) {
+        var r = ph.rows[k[0]] || emptyRow(), c = COV.filter(function (x) { return x[0] === r.cov; })[0], b = BASIS.filter(function (x) { return x[0] === r.cov_src; })[0];
+        return [k[0], r.method, r.device, r.net, (c ? c[1] : "Not assessed") + (r.cov_src && b ? " (" + b[1] + ")" : ""), r.trigger, r.action];
+      }));
+    });
+    var n = 2;
+    if (A.ch.length) h += "<h2>" + n++ + ". Channel plan</h2>" + tab(["Channel", "MHz", "Mode", "Net", "Note"], A.ch.map(function (c) { return [c.name, String(c.f), c.mode, c.net, c.note]; }));
+    if (A.ct.length) h += "<h2>" + n++ + ". Contacts and windows</h2>" + tab(["Station", "Role", "Method", "Net", "MHz", "Number / ID", "Windows (Zulu)", "Notes"], A.ct.map(function (c) { return [c.cs, c.ro, c.me, c.net, String(c.f || ""), c.ad, c.win, c.no]; }));
+    if (A.sats.length) h += "<h2>" + n++ + ". Satellite pointing</h2><p>From " + E(mgrs(A.st.lat, A.st.lon)) + " (modelled, smooth Earth).</p>" + tab(["Satellite", "Slot", "Azimuth true", "Azimuth magnetic", "Elevation"], A.sats.map(function (r) { return [r.s.name, r.s.lon + "°", r.g && r.g.visible ? f(r.g.az, 1) + "°" : "–", r.g && r.g.visible && isFinite(r.mag) ? f(r.mag, 1) + "°" : "–", r.g ? (r.g.visible ? f(r.g.el, 1) + "°" : "below horizon") : "–"]; }));
+    h += "<h2>" + n++ + ". Power and sustainment</h2><p>" + E(f(A.pr.wh_day, 0)) + " Wh a day for " + E(A.pw.days) + " days" + (isFinite(A.pr.batteries_mission) ? ": " + A.pr.batteries_mission + " batteries (" + E(f(A.pr.weight_kg, 1)) + " kg) with " + E(A.pw.spare_pct) + "% spares" : "") + (A.lw ? ". Loadout " + E(f(A.lw, 1)) + " kg." : ".") + " Planning estimate from typical figures.</p>";
+    if (A.cs.length) h += "<h2>" + n++ + ". COMSEC status (administrative only)</h2>" + tab(["Short title", "Edition", "Equipment", "Status", "Expires"], A.cs.map(function (x) { return [x.st, x.ed, x.eq, x.status, x.expires]; }));
+    pr.innerHTML = h + "<p>Planning document made in OSAP on this device. Coverage and pointing figures are estimates with their basis shown, not guarantees.</p>";
+    D.documentElement.classList.add("cpprinting");
+    var done = function () { D.documentElement.classList.remove("cpprinting"); W.removeEventListener("afterprint", done); };
+    W.addEventListener("afterprint", done);
+    try { W.print(); } catch (e) {}
+    setTimeout(done, 1500);
+  }
+
+  /* offline comms package: every Comms planning record in this workspace as one file to keep, carry or load on another device */
+  var PKG_KEYS = [KP, KW, KL, KC, KM, KI, KLO, KCB, KCH, KCS, KCT, KSAT];
+  function sha256(text) {
+    if (!W.crypto || !W.crypto.subtle || !W.TextEncoder) return Promise.resolve("");
+    return W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }, function () { return ""; });
+  }
+  function renderPackage(box) {
+    var n = PKG_KEYS.filter(function (k) { try { return localStorage.getItem(k) != null; } catch (e) { return false; } }).length;
+    box.innerHTML = '<div class="sec cpsec"><h3>Offline comms package</h3><p>One file with this workspace\'s comms plans, power, loadout, channel plan, contacts, satellite list, logs and COMSEC status (' + n + " of " + PKG_KEYS.length + " parts have data). Keep it, carry it, or load it on another device.</p>" +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-pk="save">Save the package</button><label class="cpu"><button type="button" data-pk="pick">Load a package</button><input type="file" id="cppk-file" accept=".json,application/json" hidden></label></div>' +
+      '<p class="obs" id="cp-msg"></p><p class="obs">The file is not encrypted: treat it like the paper plan. The Comms planning screens work without a connection once opened; for maps and masts offline, save the area with Offline maps.</p></div>';
+  }
+  function pkgAct(t) {
+    var a = t.getAttribute("data-pk"); if (!a) return;
+    if (a === "pick") { var i = S.ctx.rail.querySelector("#cppk-file"); if (i) i.click(); return; }
+    var data = {}; PKG_KEYS.forEach(function (k) { var v = get(k, null); if (v != null) data[k] = v; });
+    var body = JSON.stringify(data);
+    sha256(body).then(function (h) {
+      var pkg = { type: "osap-comms-package", version: 1, created: new Date().toISOString(), sha256: h, data: data };
+      var blob = new Blob([JSON.stringify(pkg, null, 1)], { type: "application/json" }), url = URL.createObjectURL(blob), lk = D.createElement("a");
+      lk.href = url; lk.download = "osap-comms-" + new Date().toISOString().slice(0, 10) + ".json"; D.body.appendChild(lk); lk.click(); lk.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      note("Saved. Fingerprint (SHA-256) " + (h ? h.slice(0, 16) + "…" : "not available in this browser") + ".");
+      S.lastPkg = pkg;
+    });
+  }
+  /* loading checks the file before anything is replaced: type, size, each part's shape, the fingerprint, and no key-like COMSEC text */
+  function pkgCheck(pkg) {
+    if (!pkg || pkg.type !== "osap-comms-package" || pkg.version !== 1 || !pkg.data || typeof pkg.data !== "object") return "This is not an OSAP comms package.";
+    var bad = Object.keys(pkg.data).filter(function (k) { return PKG_KEYS.indexOf(k) < 0; });
+    if (bad.length) return "The package holds parts OSAP does not know: not loaded.";
+    var arrays = [KC, KM, KI, KCH, KCS, KCT];
+    if (Object.keys(pkg.data).some(function (k) { var v = pkg.data[k]; return arrays.indexOf(k) >= 0 ? !Array.isArray(v) : (v === null || typeof v !== "object" || Array.isArray(v)); })) return "A part of the package is damaged: not loaded.";
+    if ((pkg.data[KCS] || []).some(function (x) { return !x || [x.st, x.ed, x.eq, x.cu, x.ac].some(function (s) { return s && R().looksLikeKey(String(s)); }); })) return "Refused: a COMSEC entry looks like key data.";
+    return "";
+  }
+  function pkgLoad(input) {
+    var file = input.files && input.files[0]; input.value = "";
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { note("The file is too large for a comms package."); return; }
+    var rd = new FileReader();
+    rd.onload = function () {
+      var pkg; try { pkg = JSON.parse(rd.result); } catch (e) { note("This is not an OSAP comms package."); return; }
+      var err = pkgCheck(pkg); if (err) { note(err); return; }
+      sha256(JSON.stringify(pkg.data)).then(function (h) {
+        if (pkg.sha256 && h && pkg.sha256 !== h) { note("The fingerprint does not match: the file was changed or damaged. Not loaded."); return; }
+        if (!W.confirm("Replace this workspace's comms planning with the package from " + String(pkg.created || "").slice(0, 16).replace("T", " ") + "Z?")) return;
+        var ok = Object.keys(pkg.data).every(function (k) { return put(k, pkg.data[k]); });
+        S.psub = "package"; render();
+        note(ok ? "Loaded " + Object.keys(pkg.data).length + " parts" + (h ? ", fingerprint " + h.slice(0, 16) + "… checked" : "") + "." : "This device's storage is full: only part of the package was loaded.");
+      });
+    };
+    rd.readAsText(file);
+  }
+
   /* ---------- Networks: internet outage signals for the country (IODA, loaded at start as window.ASAP_IODA) ---------- */
   var SRC = { bgp: "Routing (BGP)", "ping-slash24": "Active probing", "merit-nt": "Telescope traffic", gtr: "Google traffic" };
   function renderNetworks() {
@@ -890,8 +1225,9 @@
     if (cm) { cm.hidden = !(t === "coverage" || t === "networks"); cm.setAttribute("data-part", t); }
     if (t !== "status") intfLayerOff();
     if (t !== "coverage") corrLayerOff();
+    if (t !== "link") { tlLayerOff(); TL.arm = null; }
     if (el) el.setAttribute("data-tab", t);
-    if (t === "plan") renderPlan(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderEquip(); else if (t === "networks") renderNetworks();
+    if (t === "plan") renderPlanTab(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderEquip(); else if (t === "networks") renderNetworks();
     else { renderCoverage(); drawCorr(); }
   }
   function setTab(t) { if (!TABS.some(function (x) { return x[0] === t; })) t = "coverage"; S.tab = t; try { localStorage.setItem(KT, t); } catch (e) {} render(); }
@@ -906,27 +1242,29 @@
     r.querySelector(".cp").addEventListener("click", function (e) {
       var tb = e.target.closest("[data-cptab]"); if (tb) { setTab(tb.getAttribute("data-cptab")); return; }
       var b = e.target.closest("button"); if (!b || !e.target.closest("#cp-pane")) return;
-      if (S.tab === "plan" && b.hasAttribute("data-cpa")) planAction(b.getAttribute("data-cpa"), b);
+      if (S.tab === "plan") planClick(b);
       else if (S.tab === "status") statusAct(b);
       else if (S.tab === "equipment") equipClick(b);
       else if (S.tab === "coverage") corrAct(b);
+      else if (S.tab === "link") tlAct(b);
     });
     var onIn = function (e) {
       var t = e.target; if (!t.closest || !t.closest("#cp-pane") || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
-      if (e.type === "input" && t.tagName === "SELECT") return;
-      if (S.tab === "plan") { if (t.getAttribute("data-cpa") === "pick") { if (e.type === "change") planAction("pick", t); } else planInput(t); }
+      if (e.type === "input" && (t.tagName === "SELECT" || t.type === "file")) return;
+      if (S.tab === "plan") planInputAny(t, e.type);
       else if (S.tab === "status") { if (e.type === "change" || t.hasAttribute("data-cpsn")) statusAct(t); }
       else if (S.tab === "link") linkInput(t);
       else if (S.tab === "equipment") equipInput(t, e.type);
       else if (S.tab === "coverage") corrInput(t);
     };
     r.querySelector(".cp").addEventListener("input", onIn);
-    r.querySelector(".cp").addEventListener("change", function (e) { if (e.target.tagName === "SELECT" || e.target.type === "number") onIn(e); });
+    r.querySelector(".cp").addEventListener("change", function (e) { if (e.target.tagName === "SELECT" || e.target.type === "number" || e.target.type === "file") onIn(e); });
     var t0 = null; try { t0 = localStorage.getItem(KT); S.sub = localStorage.getItem(KS) || "board"; } catch (e) {}
     if (!SUBS.some(function (x) { return x[0] === S.sub; })) S.sub = "board";
-    try { S.esub = localStorage.getItem(KE) || "power"; } catch (e) { S.esub = "power"; }
+    try { S.esub = localStorage.getItem(KE) || "power"; S.psub = localStorage.getItem(KPS) || "pace"; } catch (e) { S.esub = "power"; S.psub = "pace"; }
+    if (!PSUBS.some(function (x) { return x[0] === S.psub; })) S.psub = "pace";
     if (!ESUBS.some(function (x) { return x[0] === S.esub; })) S.esub = "power";
-    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null;
+    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null; tlLayer = null; TL.arm = null;
     if (W.OSAP_COMMSPLAN_WANT === "route") { W.OSAP_COMMSPLAN_WANT = null; routeCorridor(); } else setTab(t0 || "coverage");
   }
 
@@ -975,9 +1313,11 @@
     ".cpsub button[aria-pressed=true]{background:var(--ink);color:var(--surface,#fff)}table.cplog td{font-family:system-ui,sans-serif;font-size:12px}table.cplog small{color:var(--muted)}" +
     "tr.cpdis td{color:#c92a2a}.cpant p{font-size:13px;line-height:1.45;margin:6px 0 0}" +
     ".cpchk{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:12.5px;color:var(--ink)}ol.cpfixs{margin:6px 0;padding-left:20px;font-size:12.5px}ol.cpfixs li.cur{font-weight:700}ul.cpfixl{margin:4px 0;padding-left:18px;font-size:13px;line-height:1.5}" +
+    ".cptlc{width:100%;height:auto;display:block;margin:6px 0 0}#cp-tl .rttab{table-layout:fixed}#cp-tl .rttab th{width:32%}#cp-tl .rttab td{overflow-wrap:anywhere}#cp-tl button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}" +
+    ".cptlm{background:none;border:0}.cptlm span{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1c7ed6;color:#fff;font:700 12px/1 system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
     "@media (pointer:coarse){.cp input,.cp select,.cp textarea{font-size:16px!important}}";
   D.head.appendChild(st);
 
-  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
+  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, picking: function () { return !!TL.arm && S.tab === "link"; }, terrainLink: function () { return { arm: TL.arm, busy: TL.busy, err: TL.err, res: TL.res, pts: tlPts() }; }, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 })();

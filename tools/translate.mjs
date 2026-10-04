@@ -5,12 +5,16 @@
 //      the same interface (tools/mt/madlad.py's JSON stdin/stdout contract).
 //   2. MyMemory's free anonymous service: a fallback for when the model is not installed (a local run).
 // Texts neither could translate stay untranslated and are marked so; they are retried on later runs.
+// Every translation, new or cached, passes tools/mt_guard.mjs: a line the model invented ("The 1980s were a time of great
+// success for the band." for a Thai flood story) is never used. The model is not asked again for that text (the cache keeps
+// the rejection); the fallback service may still translate it.
 // Results are cached in data/live/translation-cache.json so the same text is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
+import { mtSuspect } from "./mt_guard.mjs";
 
 const CACHE_FILE = "data/live/translation-cache.json";
 const MAX_CACHE = 6000, TIMEOUT = 30000, MYMEMORY_LIMIT = Number(process.env.MYMEMORY_LIMIT || 60);
@@ -48,11 +52,14 @@ export async function translateAll(items, opts = {}) {
     if (!it.text || /^en\b/i.test(it.lang || "")) return { en: orig[i].text || "", tool: null };
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
     if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
-    const c = cache[key(it.text, it.lang)];
-    return c ? { en: c.en, tool: c.tool } : null;
+    const k = key(it.text, it.lang), c = cache[k];
+    if (c && c.en && mtSuspect(it.text, c.en)) { if (c.tool === MT_TOOL) cache[k] = { en: null, rejected: MT_TOOL, at: c.at }; else delete cache[k]; return null; }
+    return c && c.en ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
-  if (todo.length && opts.model !== false) localModel(items, todo, out);
+  // texts the model already got wrong go straight to the fallback
+  const fresh = todo.filter((k) => !(cache[key(items[k].text, items[k].lang)] || {}).rejected);
+  if (fresh.length && opts.model !== false) localModel(items, fresh, out);
   for (const k of todo) {
     if (out[k] || myMemoryUsed >= MYMEMORY_LIMIT) continue;
     const it = items[k], src = (it.lang || "").split("-")[0] || "autodetect";
@@ -60,7 +67,7 @@ export async function translateAll(items, opts = {}) {
       myMemoryUsed++;
       const j = await get("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(it.text.slice(0, 480)) + "&langpair=" + encodeURIComponent(src + "|en"));
       const en = j && j.responseStatus == 200 && j.responseData && j.responseData.translatedText;
-      if (en && !/MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(en)) {
+      if (en && !/MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(en) && !mtSuspect(it.text, en)) {
         out[k] = { en, tool: "MyMemory" };
         cache[key(it.text, it.lang)] = { en, tool: "MyMemory", at: Date.now() };
       }
@@ -79,12 +86,13 @@ function localModel(items, todo, out) {
     encoding: "utf8", maxBuffer: 64 * 1024 * 1024, timeout: 12 * 60 * 1000, env: { MT_BUDGET: "300", ...process.env, MT_DIR } });
   if (r.status !== 0) { console.error("MADLAD-400 failed:", (r.stderr || r.error || "").toString().slice(-600)); return; }
   let res; try { res = JSON.parse(r.stdout).out; } catch (e) { console.error("MADLAD-400 returned unreadable output"); return; }
-  let n = 0;
+  let n = 0, bad = 0;
   pick.forEach((k, j) => {
     const en = res[j]; if (!en) return;
+    if (mtSuspect(items[k].text, en)) { cache[key(items[k].text, items[k].lang)] = { en: null, rejected: MT_TOOL, at: Date.now() }; bad++; return; }
     out[k] = { en, tool: MT_TOOL }; cache[key(items[k].text, items[k].lang)] = { en, tool: MT_TOOL, at: Date.now() }; n++;
   });
-  console.log("MADLAD-400: translated " + n + " of " + pick.length + " texts in " + Math.round((Date.now() - t0) / 1000) + " s" + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
+  console.log("MADLAD-400: translated " + n + " of " + pick.length + " texts in " + Math.round((Date.now() - t0) / 1000) + " s" + (bad ? ", " + bad + " invented lines rejected" : "") + (todo.length > pick.length ? " (" + (todo.length - pick.length) + " left for the next run)" : ""));
 }
 export function saveCache() {
   const ents = Object.entries(cache).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);

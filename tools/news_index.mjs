@@ -8,6 +8,7 @@
 // files: it holds nothing of its own. Unchanged days are rewritten byte-identical, so a refresh only changes the recent ones.
 import fs from "node:fs";
 import { compileTopics, topicsOf, compileRelevance, itemRelevance } from "./topics_lib.mjs";
+import { dropSuspectMt } from "./mt_guard.mjs";
 import { compileViews, viewsOf } from "./view_reports_lib.mjs";
 
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
@@ -26,7 +27,9 @@ const V = compileViews(JSON.parse(fs.readFileSync("tools/view_reports.json", "ut
 const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), topics), relN = {}, dropped = [];
 
 const pool = new Map();   // link -> { item, ccs:Set }
+// a stored translation the model invented (tools/mt_guard.mjs) is not used: the row shows the original headline
 function add(i, ccs) {
+  if (i && i.mt) { i = { ...i }; dropSuspectMt(i); }
   if (!i || !i.link || !/^https?:\/\//.test(i.link) || !(i.title || i.title_en)) return;
   const d = i.date || (i.first_seen || "").replace(" ", "T").replace(/Z$/, "");
   if (!d || d < cutoff) return;
