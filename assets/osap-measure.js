@@ -135,7 +135,10 @@
       '<button type="button" data-m="clear"' + (P.length ? "" : " disabled") + ">Clear</button>" +
       (P.length >= 3 ? '<button type="button" data-m="close">' + (S.closed ? "Open shape" : "Close shape") + "</button>" : "") +
       (P.length ? '<button type="button" data-m="copy">Copy all</button>' : "") +
-      (P.length >= 2 && window.OSAP_ROUTE_SEED ? '<button type="button" data-m="route" class="pri">Plan route</button>' : "") + "</div>";
+      (P.length >= 2 && window.OSAP_ROUTE_SEED ? '<button type="button" data-m="route" class="pri">Plan route</button>' : "") +
+      /* the ground along the line (Terrain analysis, assets/osap-terrain.js): A to B line of sight for two points, the
+         elevation profile along the path for more */
+      (P.length >= 2 && !S.closed && window.OSAP_TERRAIN_ANALYSIS ? '<button type="button" data-m="profile" title="' + (P.length === 2 ? "Terrain line of sight and profile from point 1 to point 2" : "Terrain elevation profile along the line") + '">Profile</button>' : "") + "</div>";
     /* on a phone the buttons sit above the legs and points, so they are reachable without scrolling the card */
     if (phone && h.indexOf('<table class="mlegs"') > 0) h = h.replace('<table class="mlegs"', bt + '<table class="mlegs"');
     else if (phone && h.indexOf('<div class="mrow mfmt"') > 0) h = h.replace('<div class="mrow mfmt"', bt + '<div class="mrow mfmt"');
@@ -210,6 +213,7 @@
     else if (k === "clear") { S.pts = []; S.closed = false; }
     else if (k === "close") S.closed = !S.closed;
     else if (k === "copy") return copy(text(), b);
+    else if (k === "profile") { if (window.OSAP_TERRAIN_ANALYSIS) window.OSAP_TERRAIN_ANALYSIS.line(S.pts.slice()); return; }
     else if (k === "route") { if (window.OSAP_ROUTE_SEED) { var pts = S.pts.slice(); setOn(false); window.OSAP_ROUTE_SEED(pts); } return; }
     draw(); ui();
   });

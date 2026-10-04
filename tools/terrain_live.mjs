@@ -1,6 +1,7 @@
 // Test only: runs Terrain analysis (assets/osap-terrain.js, assets/terrain/) in a headless browser on real elevation tiles
 // (Terrain Tiles on AWS everywhere, GSI Japan in Japan) at a few places and prints what came back: grid, tile zoom, sources,
-// coverage, visible share, time taken, and a line of sight with its verdict. Fails when a place errors, the coverage is
+// coverage, visible share, time taken, and a line of sight with its verdict (from the viewshed's tap card and from the A-to-B
+// tool, which samples only the tiles under the line). Fails when a place errors, the coverage is
 // incomplete, or a result is plainly wrong for the ground (a flat city that sees nothing, a summit that sees nothing, the sea
 // hidden from a coastal hill). Tiles are fetched by node and handed to the browser, so it also runs behind a proxy.
 // Run by the "Probe terrain analysis" workflow; writes nothing to the repo. With OUT=dir it saves a screenshot per place.
@@ -80,6 +81,10 @@ for (const P of PLACES) {
   ok(s.visible_pct >= P.min && s.visible_pct <= P.max, P.tag + ": visible share " + s.visible_pct.toFixed(1) + "% within " + P.min + " to " + P.max + "%");
   if (P.elev) ok(elev.elev_m >= P.elev[0] && elev.elev_m <= P.elev[1], P.tag + ": observer ground " + Math.round(elev.elev_m) + " m is within " + P.elev.join(" to ") + " m");
   if (P.los[1]) ok(L.los === P.los[1], P.tag + ": line of sight " + L.los + " (expected " + P.los[1] + ")");
+  /* the A-to-B tool (sampled along the line, only the tiles under it) must agree with the viewshed's tap card */
+  const A2B = await p.evaluate((a) => window.OSAP_TERRAIN_ANALYSIS.profile(a[0], a[1], { hA: a[2], hB: 1.7, curvature: a[3], k: a[4] }).then((x) => ({ los: x.los, n: x.samples.length, cov: x.coverage_pct, km: Math.round(x.total_m) })), [P.c, P.los[0], +(P.obsH || 1.7), !!P.curv, P.refr ? 0.13 : 0]);
+  console.log(`   A-to-B tool: ${A2B.los}, ${A2B.km} m, ${A2B.n} samples, coverage ${A2B.cov.toFixed(1)}%`);
+  if (P.los[1]) ok(A2B.los === P.los[1], P.tag + ": A-to-B line of sight " + A2B.los + " (expected " + P.los[1] + ")");
   if (P.gsi) console.log("   " + (g.sources.some((x) => x.id === "gsi-japan") ? "GSI Japan used" : "GSI Japan not reachable from here: AWS tiles used instead"));
   ok(errors.length === 0, P.tag + ": no page errors " + JSON.stringify(errors.slice(0, 3)));
   if (OUT) await p.screenshot({ path: `${OUT}/terrain-${P.tag}.png` });
