@@ -1,0 +1,17 @@
+# Test only: checks what Route Preview's Drive mode needs from the keyless street picture hosts (tools/probe_drive.sh).
+# Prints to the log; writes nothing to the repo.
+name: Probe route drive hosts
+on:
+  push:
+    branches: [claude/route-drive]
+    paths: [tools/probe_drive.sh, .github/workflows/probe-drive.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: bash tools/probe_drive.sh
