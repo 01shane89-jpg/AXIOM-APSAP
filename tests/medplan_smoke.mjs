@@ -336,12 +336,20 @@ async function openPlan(p) {
   /* phase 5: the operational picture: the forecast at the pickup against review rules, heavy rain, air state and data age */
   const pic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, flags: [...document.querySelectorAll("#mp-pic ul.mppic li b")].map((b) => b.textContent),
     ages: [...document.querySelectorAll("#mp-pic table.mpage tbody tr")].map((r) => r.textContent), val: document.getElementById("mp-val").textContent,
-    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).slice(0, 2).join("|") }));
+    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).filter((t) => /^(Operational picture|Plan status)$/.test(t)).join("|") }));
   ok(pic.flags.includes("POINT OF INJURY (NO HLZ GRID) VISIBILITY FORECAST 0.8 KM, GUSTS 35 KN / AIR EVACUATION REVIEW REQUIRED") && pic.flags.includes("HEAVY RAIN FORECAST 25 MM 2026-10-01 / ROADS AND LANDING ZONES MAY FLOOD") &&
     !pic.flags.some((f) => /AIR MEDEVAC|CONFIRMED AIRCRAFT/.test(f)) && /Forecast at the pickup: POINT OF INJURY/.test(pic.val) && pic.order === "Operational picture|Plan status",
     "phase 5: the picture flags the forecast at the pickup and heavy rain (the confirmed aircraft clears the air flag), above the plan status " + JSON.stringify(pic.flags));
   ok(pic.ages.some((r) => /^Hospital dataset/.test(r) && /live read from OpenStreetMap/.test(r)) && pic.ages.some((r) => /^Weather forecast.*live.*Open-Meteo/.test(r)) && pic.ages.some((r) => /^Facility verification.*none.*no planner's check/.test(r)) &&
     /Data age: .*Facility verification not available/.test(pic.val) && /not when this device fetched it/.test(pic.t), "phase 5: each dataset with its own date and whether it is live or a saved copy " + JSON.stringify(pic.ages));
+  /* phase 6: page 1, the medical CONOP, with casualty buttons that switch the pathway it shows */
+  const cn = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, first: document.querySelector("#medplan .mpbox > #mp-conop") !== null && [...document.querySelectorAll("#medplan h3")][0].textContent }));
+  ok(/^Medical plan: /i.test(cn.t) && /Status(GREEN|AMBER|RED)/.test(cn.t) && /Ground evac(AVAILABLE|NOT ROUTED)/.test(cn.t) && /Air MEDEVACCONFIRMED/.test(cn.t) && /Definitive care: Major trauma/.test(cn.t) && /Primary routeAVAILABLE/.test(cn.t) && /Critical gaps/.test(cn.t) && /Receiving hospital acceptance/.test(cn.t),
+    "phase 6: the CONOP shows status, ground, air, definitive care, routes and critical gaps " + JSON.stringify(cn.t.slice(0, 400)));
+  await p.click('#mp-conop [data-mp-cat="cat.severe_tbi"]');
+  const cn2 = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, on: document.querySelector('#mp-conop [aria-pressed="true"]').textContent, kept: localStorage.getItem("osap-medcat") }));
+  ok(/Definitive care: Severe head injury/.test(cn2.t) && cn2.on === "Head injury" && cn2.kept === '"cat.severe_tbi"', "phase 6: Head injury switches the CONOP to that pathway and is kept on this device " + JSON.stringify(cn2.t.slice(0, 300)));
+  await p.click('#mp-conop [data-mp-cat="cat.major_trauma"]');
   /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
   const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
   ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));

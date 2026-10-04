@@ -215,6 +215,39 @@
     return plan;
   }
 
+  /* ---------- page 1: the medical CONOP for one casualty type (phase 6) ----------
+     Read straight from the plan record, never worked out again: the status, the POI, ground and air state, the stabilization
+     stop and the definitive care for the casualty type chosen, the state of the P and A lines to it, and the critical gaps
+     a planner must close. */
+  function conop(p, catId) {
+    var prof = p.casualty_profiles.filter(function (c) { return c.id === catId; })[0] || p.casualty_profiles[0] || null;
+    function stop(x) {
+      if (!x) return null;
+      var g = p.ground_routes.filter(function (r) { return r.facility_id === x.facility_id && r.option === "P"; })[0];
+      return { facility_id: x.facility_id, name: x.name, way: x.way, time_s: x.time_s, distance_m: g ? g.distance_m : null };
+    }
+    var path = prof ? prof.pathway : [], stab = stop(path.filter(function (x) { return x.stage === "stabilization"; })[0]), def = stop(path.filter(function (x) { return x.stage === "definitive"; })[0]);
+    var routes = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; }) : [], P = routes.filter(function (r) { return r.option === "P"; })[0];
+    var ga = def && (p.ground_alternates || []).filter(function (x) { return x.facility_id === def.facility_id; })[0], A = routes.filter(function (r) { return r.option !== "P"; })[0];
+    var air = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED" && !(a.limits_now || []).length; })[0];
+    var gaps = [], dF = def && p.facilities[def.facility_id];
+    if (!def) gaps.push("Definitive care for " + (prof ? prof.label.toLowerCase() : "this casualty") + " not documented");
+    if (dF) CRITICAL.forEach(function (c) { if ((dF.caps || {})[c[0]] !== "yes") gaps.push(c[1]); else if ((dF.caps_now || {})[c[0]] === "UNAVAILABLE") gaps.push(c[1] + " reported not available now"); });
+    if (def) gaps.push("Receiving hospital acceptance");
+    if (!air) gaps.push("Air MEDEVAC provider");
+    (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
+    return {
+      casualty: prof ? { id: prof.id, label: prof.label } : null, status: p.validation_status.status, status_label: p.validation_status.label, poi: p.poi ? p.poi.mgrs : "",
+      ground: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
+      air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : "",
+      stabilization: stab, definitive: def, bypass: !!(prof && prof.bypass),
+      primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
+      alternate_route: !def ? "NO DESTINATION" : A ? "AVAILABLE" : !ga ? "NOT LOOKED FOR" : ga.state === "pending" ? "CHECKING" : "NONE FOUND",
+      route_flags: (p.operational_picture && def && p.definitive && p.definitive.facility_id === def.facility_id ? p.operational_picture.flags : []).filter(function (f) { return /^route\./.test(f.code); }).map(function (f) { return f.text; }),
+      critical_gaps: gaps
+    };
+  }
+
   /* one check: ok, warning or blocking, in the order a planner reads them (Build Plan v2 validation screen) */
   function validate(p) {
     var it = [];
@@ -313,5 +346,5 @@
     return JSON.stringify(walk(p));
   }
 
-  root.OSAP_MEDPLAN_MODEL = { SCHEMA: SCHEMA, PIC: PIC, build: build, validate: validate, picture: picture, dataAge: dataAge, canonical: canonical, names: names, core: core };
+  root.OSAP_MEDPLAN_MODEL = { SCHEMA: SCHEMA, PIC: PIC, build: build, validate: validate, picture: picture, conop: conop, dataAge: dataAge, canonical: canonical, names: names, core: core };
 })(typeof window !== "undefined" ? window : globalThis);
