@@ -2485,7 +2485,7 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute]"); if (!b) return;
     if (b.hasAttribute("data-mp-offbtn")) { setOff(b.getAttribute("data-mp-offbtn"), true); offChanged(); var pb = D.querySelector("#mp-pst [data-mp-assess]"); if (pb) pb.focus(); return; }
     var k = b.getAttribute("data-mp");
     if (k === "close") { close(); return; }
