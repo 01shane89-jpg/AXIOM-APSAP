@@ -1443,7 +1443,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
      Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
      Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
   var HSX = {
-    world: { name: "Hillshade, LiDAR where published", note: "Esri World Hillshade, worldwide. Uses 1 m LiDAR where governments publish it (much of the US and Europe, and more added each year), about 30 m satellite elevation elsewhere, including most of South-East Asia",
+    world: { name: "Esri hillshade", note: "Esri World Hillshade, worldwide. Sharp (1 m LiDAR) only in parts of the US and Europe; about 30 m satellite elevation elsewhere, including most of South-East Asia. LiDAR hillshade above covers far more; LiDAR coverage shows where",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", max: 16, lic: "restricted",
       attr: 'Hillshade &copy; Esri, USGS, NGA, NASA, CGIAR and national elevation agencies (<a href="https://www.arcgis.com/home/item.html?id=3af669838f594b378f90c10f98e46a7f" target="_blank" rel="noopener">coverage</a>)' },
     jp: { name: "Japan relief (GSI)", note: "Sharper shading of Japan and Okinawa from GSI, the national mapping agency. Draws only inside Japan. In 3D, Japan uses GSI elevation: 5 m LiDAR (airborne laser survey) where it exists, 10 m elsewhere",
@@ -6054,9 +6054,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,
      flood extent, road closures, and any another module adds there) and the Border tab's terrain toggles switch off
      whenever the data set changes, and on start. The base map choice stays. */
-  /* elevation shading (data-hs) and country borders (data-bd) belong with the base map, so they stay on across tabs */
+  /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-hs]):not([data-bd]):not([data-lidar]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -8556,6 +8556,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-medplan.js"></script>
 <script src="assets/osap-reports.js"></script>
 <script src="assets/osap-borders.js"></script>
+<!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
+<script src="assets/osap-lidar.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-illum.js"></script>
