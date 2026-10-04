@@ -9,7 +9,7 @@
    Tiles are Web Mercator 256 px. For each tile the sources are tried in order; a pixel the first has no value for is taken
    from the next. Only "DEM" sources are used until a terrain + structures mode exists.
 
-   window.OSAP_TERRAIN_SRC = { around, box, grid, elevationAt, mpp, zoomFor, providers }  */
+   window.OSAP_TERRAIN_SRC = { around, box, grid, line, elevationAt, mpp, zoomFor, providers }  */
 (function () {
   "use strict";
   var W = window;
@@ -118,6 +118,62 @@
       return { E: E, rowM: rowM, coverage_pct: cnt ? (1 - nan / cnt) * 100 : 0, failedTiles: failed, tiles: jobs.length, sources: src, z: z };
     });
   }
+  /* the ground along a line through points [[lat, lon], ...] (a line of sight, a measured path), sampled every half cell of
+     res metres, straight in Web Mercator between the points. Only the tiles under the line are loaded.
+     { samples: [{ d (metres from the first point), z, nodata, lat, lon }], vertices (sample index of each point), total_m,
+       res_m, z, coverage_pct, failedTiles, tiles, sources } */
+  var R_EARTH = 6371008.8, MAX_SAMPLES = 20000;
+  function hav(a, b) { var r = Math.PI / 180, dl = (b[0] - a[0]) * r, dn = (b[1] - a[1]) * r, q = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dn / 2) * Math.sin(dn / 2); return 2 * R_EARTH * Math.asin(Math.min(1, Math.sqrt(q))); }
+  function line(pts, res, opt) {
+    opt = opt || {};
+    var P = pts.map(function (p) { return [+p[0], +p[1]]; }), total = 0, lat = 0, lon = 0;
+    for (var i = 1; i < P.length; i++) total += hav(P[i - 1], P[i]);
+    P.forEach(function (p) { lat += p[0] / P.length; lon += p[1] / P.length; });
+    res = Math.max(+res || 30, total * 2 / MAX_SAMPLES);
+    var z = zoomFor(res, lat, lon), pos, keys;
+    for (;;) {
+      pos = []; keys = {}; var verts = [];
+      for (i = 1; i < P.length; i++) {
+        var a = P[i - 1], b = P[i], ax = gx(a[1], z), ay = gy(a[0], z), bx = gx(b[1], z), by = gy(b[0], z);
+        var steps = Math.max(2, Math.ceil(hav(a, b) / (res / 2)));
+        if (i === 1) verts.push(0);
+        for (var s = i === 1 ? 0 : 1; s <= steps; s++) {
+          var X = ax + (bx - ax) * s / steps, Y = ay + (by - ay) * s / steps; pos.push([X, Y]);
+          for (var dx = -1; dx <= 1; dx += 2) for (var dy = -1; dy <= 1; dy += 2) keys[Math.floor((X + dx * 0.5) / 256) + "/" + Math.floor((Y + dy * 0.5) / 256)] = 1;
+        }
+        verts.push(pos.length - 1);
+      }
+      if (z <= 6 || Object.keys(keys).length <= MAX_TILES) break;
+      z--;
+    }
+    var nT = Math.pow(2, z), list = Object.keys(keys), T = {}, k = 0, failed = 0, used = {};
+    function worker() {
+      if (k >= list.length) return Promise.resolve();
+      if (opt.signal && opt.signal.aborted) return Promise.reject(new DOMException("Aborted", "AbortError"));
+      var key = list[k++], tx = +key.split("/")[0], ty = +key.split("/")[1];
+      if (ty < 0 || ty >= nT) return worker();
+      return tileOf(z, ((tx % nT) + nT) % nT, ty, opt.signal).then(function (t) {
+        if (t.failed) failed++; t.src.forEach(function (id) { used[id] = 1; }); T[key] = t.h;
+        if (opt.prog) opt.prog(k, list.length);
+        return worker();
+      });
+    }
+    function px(ix, iy) { var tx = Math.floor(ix / 256), ty = Math.floor(iy / 256), h = T[tx + "/" + ty]; return h ? h[(iy - ty * 256) * 256 + ix - tx * 256] : NaN; }
+    var ws = []; for (var w = 0; w < Math.min(PAR, list.length); w++) ws.push(worker());
+    return Promise.all(ws).then(function () {
+      var out = [], d = 0, prev = null, nan = 0;
+      pos.forEach(function (q) {
+        var fx = q[0] - 0.5, fy = q[1] - 0.5, ix = Math.floor(fx), iy = Math.floor(fy); fx -= ix; fy -= iy;
+        var v = (px(ix, iy) * (1 - fx) + px(ix + 1, iy) * fx) * (1 - fy) + (px(ix, iy + 1) * (1 - fx) + px(ix + 1, iy + 1) * fx) * fy;
+        var ll = [latOf(q[1], z), lonOf(q[0], z)];
+        if (prev) d += hav(prev, ll); prev = ll;
+        if (!(v === v)) nan++;
+        out.push({ d: d, z: v, nodata: !(v === v), lat: ll[0], lon: ll[1] });
+      });
+      var src = provs().filter(function (p) { return used[p.id]; }).map(function (p) { return { id: p.id, label: p.label, attribution: p.attribution || "" }; });
+      return { samples: out, vertices: verts, total_m: d, res_m: res, z: z, coverage_pct: out.length ? (1 - nan / out.length) * 100 : 0, failedTiles: failed, tiles: list.length, sources: src };
+    });
+  }
   /* the ground height at one point, from the finest tile the sources have */
   function elevationAt(lat, lon, opt) {
     opt = opt || {};
@@ -131,5 +187,5 @@
       return { elev_m: v === v ? v : null, nodata: !(v === v), failed: t.failed, res_m: mpp(z, lat), z: z, sources: src };
     });
   }
-  W.OSAP_TERRAIN_SRC = { around: around, box: box, grid: grid, elevationAt: elevationAt, toLL: toLL, toCell: toCell, mpp: mpp, zoomFor: zoomFor, providers: function () { return provs().slice(); }, gx: gx, gy: gy, latOf: latOf, lonOf: lonOf };
+  W.OSAP_TERRAIN_SRC = { around: around, box: box, grid: grid, line: line, elevationAt: elevationAt, toLL: toLL, toCell: toCell, mpp: mpp, zoomFor: zoomFor, providers: function () { return provs().slice(); }, gx: gx, gy: gy, latOf: latOf, lonOf: lonOf };
 })();
