@@ -69,6 +69,8 @@ async function page(ctx, errors) {
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
   await p.evaluate((s) => window.OSAP_ROUTE_SEED([s]), START);
   await p.waitForFunction(() => window.OSAP_ROUTETAB && document.getElementById("rt-evac"), null, { timeout: 30000 }); await p.waitForTimeout(500);
+  /* the one-route planner sits folded under the Evac link (EPE phase 1) */
+  await p.evaluate(() => { document.getElementById("rt-evone").open = true; });
   return p;
 }
 
