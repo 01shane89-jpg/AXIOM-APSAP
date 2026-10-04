@@ -172,7 +172,8 @@
     var s = g.spec, half = (s.n - 1) / 2, cX = s.x0 + (half + 0.5) * s.cellPx, cY = s.y0 + (half + 0.5) * s.cellPx, he = n * f * s.cellPx / 2, SRC = W.OSAP_TERRAIN_SRC;
     var b = L.latLngBounds([SRC.latOf(cY + he, s.z), SRC.lonOf(cX - he, s.z)], [SRC.latOf(cY - he, s.z), SRC.lonOf(cX + he, s.z)]);
     cv.toBlob(function (bl) {
-      if (!bl) return;
+      /* cleared or replaced while the picture was being made: drop it */
+      if (!bl || !ST.res || ST.res.res !== r) return;
       var u = URL.createObjectURL(bl);
       if (img) img.setUrl(u).setBounds(b); else { img = L.imageOverlay(u, b, { pane: "vspane", interactive: false, className: "vsimg" }); lay.addLayer(img); }
       if (imgUrl) URL.revokeObjectURL(imgUrl); imgUrl = u;
