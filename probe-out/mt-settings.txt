@@ -1,0 +1,454 @@
+
+=== current (greedy, penalty 1.2, no-repeat 4) (34 s)
+  [bad INVENTED: year 2013 not in the original] สส.ภูมิใจไทยจากพื้นที่น้ำไม่ท่วม ร่วมช่วยผู้ประสบภัยกรุงเทพฯ
+      -> The 2013 floods in Thailand were the worst ever to hit this country.
+  [bad INVENTED: year 2013 not in the original] เพื่อไทยลงพื้นที่เคหะร่มเกล้า-ลาดกระบัง ประสาน ‘ศูนย์ซ่อมสร้
+      -> The 2013-14 season, the club was in a difficult position.
+  [bad INVENTED: stock text] พัฒนา สั่ง รพ.พุทธโสธร เสริมแนวกันน้ำ เตรียมแผนย้าย-ส่งต่อผู
+      -> The 1980s were a time of great growth for the city, and it was one of the most successful in its history.
+  [bad INVENTED: stock text] ชาย เอี่ยมศิริ โพสต์เดือด! ปัดทุจริตจัดซื้อไวน์การบินไทย แจง
+      -> The 1980s were a time of great success for the Thai Airways Group.
+  [bad INVENTED: stock text] เจเศรษฐ์ โต้เลือกปฏิบัติถุงยังชีพ ยัน ปภ. ส่งของช่วยทุกพื้นท
+      -> The 1970s were a time of great success for the band, and they continued to perform live in concert.
+  [bad INVENTED: year 2013 not in the original] ‘สายไหมไม่ใช่เขตกระจอก’ สมชาย เวสารัชตระกูล ส.ก.คนพื้นที่ นอ
+      -> "The 2013-14 season of the NHL: The Biggest Changes in Season Two".
+  [bad] “เจเศรษฐ์” ลั่น ไม่ใช่เวลาเล่นการเมือง หลังมีดราม่าจับผิดถุง
+      -> “There is no time for politics after the drama of wrong bag ...
+  [bad INVENTED: year 2013 not in the original] กทม. เร่งพร่องน้ำรับมือฝนระลอกใหม่ ช่วง 5-6 ต.ค. และ 10–11 ต
+      -> 2013-09-15 - The city of Seoul has been in the middle of a storm.
+  [bad INVENTED: stock text] ระทึก! ยิงสกัดไล่ล่าเก๋งต้องสงสัยกลางชุมชนวัดธรรมฯ ชลบุรี ยึ
+      -> The 1980s were a time of great success for the band.
+  [bad] ‘วีระยุทธ’ ลงพื้นที่บางคล้า พบชาวบ้านโดนน้ำท่วมนานนับสัปดาห์
+      -> The villagers have been flooded for weeks, but still no help.
+  [bad INVENTED: year 2013 not in the original] ‘อนุชา’ ลงพื้นที่ตรวจเยี่ยมให้กำลังใจเจ้าหน้าที่-พี่น้อง ...
+      -> The 2013-2014 fiscal year, the Department of Finance (DFS) has been conducting a comprehensive review of its financial performance.
+  [bad] “วราวุธ” เผยตัวเลขน้ำท่วมกระทบอุตสาหกรรม 55 จังหวัด เสียหาย 
+      -> “Warawuth” reveals the number of flood affected industry 55 provinces damaged 147 ...
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 노동자 사망
+      -> 2016-04-30 - Accident in the automotive parts factory of Chongju...
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 근로자 사망
+      -> 2016-09-30 - Accident in the automotive parts factory of Chongju...
+  [bad INVENTED: year 2014 not in the original] 평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)
+      -> 10:35 PM - The night of the dead (2014)
+  [bad INVENTED: year 2016 not in the original] ‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게
+      -> 2016-09-30 - The Sun: "There's a lot of work to be done," says former U.S. Secretary of State Mike Pompeo [Photo by Reuters]
+  [bad INVENTED: year 1980 not in the original] 국힘, 조희대 국감 증인 불출석에 "與, 검증 아닌 겁박 정치"
+      -> "There is no evidence that the 1980s were a time of violence, racism or discrimination."
+  [bad] 민주당 "조희대 대법원장, 국감 출석 불응 의사…국회법 위반"
+      -> "The Supreme Court of the United States," The New York Times.
+  [bad INVENTED: year 2016 not in the original] 목포대 "의대 후보 선정 집행정지 각하에 즉시 항고 검토"
+      -> "The 2016-17 School Year is the first year of a new school year."
+  [bad] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+      -> The 10th of July, the night before Christmas, a man was shot dead in the middle of the street.
+  [bad INVENTED: year 2015 not in the original] 경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송
+      -> 2015-09-30 - A helicopter crashed into a forest in the north of Kenya.
+  [bad INVENTED: year 2016 not in the original] 주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원
+      -> 2016-09-30 - Policeman arrested for driving under the influence in parking lot
+  [bad INVENTED: year 2016 not in the original] 휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'
+      -> 2016-05-23 - Rain in the Northeast of China, with rainfall less than 5mm
+  [bad INVENTED: year 2015 not in the original] 김지용 인선에 말 아끼는 與…강경파 비판 계속되자 "엄정 검증" 원론 입장
+      -> "There is no doubt that the 2015 election will be a very difficult one for the Democratic Party.
+  [bad INVENTED: year 2016 not in the original] 蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算
+      -> "The 2016 World Cup: China's Kim Jong-un to be the first Chinese president to face a worldwide ban on his visit".
+  [bad INVENTED: year 2014 not in the original] 助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴
+      -> The 2014-15 season, he was a regular in the team's starting lineup.
+  [bad INVENTED: year 1980 not in the original] 高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤
+      -> The 1980 election was a turning point for the party.
+  [bad INVENTED: stock text] 影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動
+      -> "蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動" (in Chinese).
+  [bad INVENTED: year 2016 not in the original] 北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版
+      -> The 2016 Beijing Olympics were held in the Chinese city of Beijing.
+  [bad INVENTED: year 2013 not in the original] (影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖
+      -> (2013) 73-year-old dictator's health is on the red light?
+  [bad] AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事
+      -> The Okinawa Times published an article on the cover page of a lecture given by the President of UN University in Naha, Japan, on 8th June.
+  [bad INVENTED: stock text] 「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム
+      -> "「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長浜も飛躍誓う" (in Japanese).
+  [bad] 【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース
+      -> Okinawa Times+Plus News
+  [bad INVENTED: year 2017 not in the original] УЛААНБААТАРТ ГАЗРЫН ТОСНЫ БҮТЭЭГДЭХҮҮН ХАДГАЛАХ АГУУЛАХЫН ЦО
+      -> 2017-09-30 - The Ministry of Environment and Natural Resources of the Republic of Mongolia
+  [bad INVENTED: year 2017 not in the original] МОНГОЛ, КАЗАХСТАНЫ ЗАСГИЙН ГАЗАР ХООРОНДЫН КОМИССЫН X ХУРАЛД
+      -> 10th Meeting of the Mongolia-Kazakhstan Intergovernmental Commission to be held on April 2, 2017
+  [good] "มดดำ" ขอบคุณ "อั้ม อธิชาติ" ลุยน้ำท่วมแทน พร้อมสมทบทุนโรงทา
+      -> "Black Ant" thanks to "Am Adhinat", who helped with the floods and donated money for a restaurant.
+  [good] เร่งช่วยเหลือผู้ประสบอุทกภัย ในพื้นที่กรุงเทพมหานครและภูมิภา
+      -> The flood victims in the metropolitan area of Bangkok and nearby regions are being assisted.
+  [good] น้ำท่วมสายไหมคลี่คลาย เริ่มกลับเข้าพื้นที่ แต่เอื้ออาทรคลองถ
+      -> Silk Road floods are slowly returning to the area, but the road is still in a critical state.
+  [good] อ่วมหนัก 'ตั๊ก มยุรา' อัดคลิปแฉสภาพถนนภายในหมู่บ้าน น้ำท่วมข
+      -> "Floods in the Philippines: 10,000 people flooded after storm".
+  [good] ‘บิ๊กดุลย์’ ลุยช่วยน้ำท่วม เขตสายไหม ลั่นจะลงพื้นที่ทุกวัน จ
+      -> The 10th anniversary of the floods in Sai Lai district, which killed more than 25 people.
+  [good] ด่วน! เขื่อนป่าสัก ปริมาณน้ำเกินความจุ 106% ต้องปรับการระบาย
+      -> Emergency, Badak Dam 106% over capacity.
+  [good] 검찰 폐지에 특검 검사 권한 혼선…“공소청, 공소유지 담당 재파견을”
+      -> "The Prosecutor General's Office, the Public Prosecution Service and the National Investigative Agency".
+  [good] 휴지통 하나가 130만원…야노시호, 日 상위 1% 지인 별장 공개
+      -> One bin is 130,000 won... Yanoshi Ho, the top 1% of Japanese acquaintances villa revealed
+  [good] 법원, ‘전남광주 국립의대 추진’ 집행정지 신청 각하…목포대 “모든 방안 강구”
+      -> The Court, 'Promotion of the National Medical University in Gyeongnam' Application for Suspension...
+  [good] 중국, 10월부터 휘발유·경유 수출 중단···글로벌 유가 4% 상승
+      -> China suspends export of diesel and transit oil from October, global oil prices rise 4%
+  [good] [단독]강호동 농협회장 비서 구속…'고가 기념품 공금 구매' 관련
+      -> [Individual] Kang Ho-dong Secretary of the President of agricultural cooperation arrested... 'high priced souvenirs purchase' related
+  [good] ‘기본’ 안 지켜 발생한 공공 보안사고, 기관장에도 책임 묻는다
+      -> The public security incident that occurred due to failure to observe the "basic" rules, and the head of the agency is also held responsible.
+  [good] 毒品防治成政治攻防 北市府：政策與沈伯洋倡議完全不同
+      -> The North City Hall: Policy is completely different from the initiative of Shen Boyang
+  [good] Threads貼文涉造謠假民調 桃園男子10萬元交保
+      -> Threads Post about making a fake poll, Taoyuan man 100 thousand yuan guarantee
+  [good] 快訊／關渡大橋國軍八輪甲車自撞分隔島 駕駛軍官曝：座椅壞了
+      -> 快訊/關渡大橋國軍八輪裝甲車自撞分隔島 駕駛軍官曝：座椅壞
+  [good] 台東貨車肇逃 駕駛自殘拒捕
+      -> Taidong truck accident
+  [good] うるま市議選、投票率は43.77％で過去最低 前回の市議選を5.37ポイント下回る - 沖縄タイムス＋プラス ニュース
+      -> The voting rate in the Uruma City Council election was 43.77%, which is a record low, and it is 5.37 points lower than that of the previous 
+  [good] 普天間の危険除去、渋滞解消…古謝県政の船出、エール送る支持者が期待 初登庁の新知事「緊張していますよ、やっぱり」 - 沖
+      -> The new governor of Okinawa, who is in office for the first time, said he was "very nervous" about removing dangers from public transport an
+  [good] Улаанбурхан өвчин нь халдварлалт өндөртэй ч вакцинаар сэргий
+      -> Measles is highly contagious , but it can be prevented with vaccines .
+  [good] “Чингис хаан” олон улсын нисэх буудлын хүчин чадал гурав дах
+      -> The capacity of the “Genghis Khan” International Airport will be tripled to receive 5.2 million passengers per year
+
+=== before 2026-09-27 (greedy, no penalty) (91 s)
+  [bad INVENTED: year 2011 not in the original] สส.ภูมิใจไทยจากพื้นที่น้ำไม่ท่วม ร่วมช่วยผู้ประสบภัยกรุงเทพฯ
+      -> The 2011 floods in Thailand were the worst in 100 years.
+  [bad INVENTED: year 2011 not in the original] เพื่อไทยลงพื้นที่เคหะร่มเกล้า-ลาดกระบัง ประสาน ‘ศูนย์ซ่อมสร้
+      -> The 2011-12 season of the Thai Premier League was a success for the club.
+  [bad INVENTED: year 1999 not in the original] พัฒนา สั่ง รพ.พุทธโสธร เสริมแนวกันน้ำ เตรียมแผนย้าย-ส่งต่อผู
+      -> The 1999 floods in Thailand were the worst floods in the country's history.
+  [bad INVENTED: stock text] ชาย เอี่ยมศิริ โพสต์เดือด! ปัดทุจริตจัดซื้อไวน์การบินไทย แจง
+      -> The 1990s were a time of great success for the Thai Airways Group.
+  [bad INVENTED: stock text] เจเศรษฐ์ โต้เลือกปฏิบัติถุงยังชีพ ยัน ปภ. ส่งของช่วยทุกพื้นท
+      -> The 1990s were a time of great economic growth, but the 2000s saw a decline in the population.
+  [bad INVENTED: year 2010 not in the original] ‘สายไหมไม่ใช่เขตกระจอก’ สมชาย เวสารัชตระกูล ส.ก.คนพื้นที่ นอ
+      -> "The 2010 World Cup: The 2010 World Cup: The 2010 World Cup: The 2010 World Cup: The 2010 World Cup: The 2010 World Cup: The 2010 World Cup:
+  [bad] “เจเศรษฐ์” ลั่น ไม่ใช่เวลาเล่นการเมือง หลังมีดราม่าจับผิดถุง
+      -> “There is no time for politics after the drama of the wrong bag ...
+  [bad INVENTED: year 2013 not in the original] กทม. เร่งพร่องน้ำรับมือฝนระลอกใหม่ ช่วง 5-6 ต.ค. และ 10–11 ต
+      -> 2013-09-10 10:00:00 - 2013-09-11 10:00:00 - 2013-09-11 10:00:00 - 2013-09-11 10:00:00 - 2013-09-11 10:00:00 - 2013-09-11 10:00:00 - 2013-09-
+  [bad INVENTED: stock text] ระทึก! ยิงสกัดไล่ล่าเก๋งต้องสงสัยกลางชุมชนวัดธรรมฯ ชลบุรี ยึ
+      -> The 1990s were a time of great success for the 1990s.
+  [bad] ‘วีระยุทธ’ ลงพื้นที่บางคล้า พบชาวบ้านโดนน้ำท่วมนานนับสัปดาห์
+      -> The villagers have been flooded for weeks, but still have no help.
+  [bad INVENTED: year 2013 not in the original] ‘อนุชา’ ลงพื้นที่ตรวจเยี่ยมให้กำลังใจเจ้าหน้าที่-พี่น้อง ...
+      -> The 2013-2014 fiscal year, the Department of Finance (DFS) has been conducting a comprehensive review of the financial performance of the St
+  [bad] “วราวุธ” เผยตัวเลขน้ำท่วมกระทบอุตสาหกรรม 55 จังหวัด เสียหาย 
+      -> “Warawuth” reveals the number of floods affecting 55 provinces industrial damage 147 ...
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 노동자 사망
+      -> 2016-04-14 10:00:00 - Accident in the automotive parts factory in Chongju
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 근로자 사망
+      -> 2016-09-14 10:00:00 - Accident in the automotive parts factory in Chongju...
+  [bad] 평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)
+      -> 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100% 100%
+  [bad INVENTED: year 2016 not in the original] ‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게
+      -> 2016-06-12 12:00:00 - 0-12 to Dusan, 6-win streak ends in vain [Daegu Review]
+  [bad INVENTED: year 1990 not in the original] 국힘, 조희대 국감 증인 불출석에 "與, 검증 아닌 겁박 정치"
+      -> "There is no evidence that the 1990s were a time of violence, violence, violence."
+  [bad] 민주당 "조희대 대법원장, 국감 출석 불응 의사…국회법 위반"
+      -> "The Supreme Court of the United States, the Supreme Court of the United States of America, and the Supreme Court of the United States of Am
+  [bad INVENTED: year 2016 not in the original] 목포대 "의대 후보 선정 집행정지 각하에 즉시 항고 검토"
+      -> "The 2016-17 SEC Season: The Finals of the SEC Season"
+  [bad] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+      -> The 1000th day of the month of Muharram, the 1000th day of the year of the Islamic calendar.
+  [bad INVENTED: year 2015 not in the original] 경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송
+      -> 2015-05-15 10:00:00 - 10:00:00 - 10:00:00 - 10:00:00
+  [bad INVENTED: year 2016 not in the original] 주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원
+      -> 2016-02-20 10:00:00 - 2016-02-20 10:00:00 - 2016-02-20 10:00:00 - 2016-02-20 10:00:00
+  [bad] 휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'
+      -> 22-26 degrees during the day, with occasional clouds.
+  [bad INVENTED: year 2010 not in the original] 김지용 인선에 말 아끼는 與…강경파 비판 계속되자 "엄정 검증" 원론 입장
+      -> "There is no doubt that the 2010 election will be a very difficult one for the Democratic Party.
+  [bad INVENTED: year 2012 not in the original] 蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算
+      -> "The 2012 World Cup: China's Kim Jong-un and the Chinese President Xi Jinping meet in Beijing".
+  [bad INVENTED: year 2010 not in the original] 助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴
+      -> The 2010-2011 season was a success for the team.
+  [bad INVENTED: year 1996 not in the original] 高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤
+      -> The 1996 election was a turning point for the party.
+  [bad INVENTED: stock text] 影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動
+      -> "蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動" (in Chinese).
+  [bad INVENTED: year 2012 not in the original] 北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版
+      -> The 2012 election in Beijing was a triumph for the anti-drug campaign.
+  [bad INVENTED: year 2008 not in the original] (影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖
+      -> (2008) 73-year-old dictator's health is on the red light?
+  [bad] AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事
+      -> The Okinawa Times published an article on the cover page of the lecture given by the President of the United Nations University in Naha on 8
+  [bad INVENTED: stock text] 「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム
+      -> "「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長浜も飛躍誓う" (in Japanese).
+  [bad] 【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース
+      -> Okinawa Times+Plus News
+  [bad INVENTED: year 2017 not in the original] УЛААНБААТАРТ ГАЗРЫН ТОСНЫ БҮТЭЭГДЭХҮҮН ХАДГАЛАХ АГУУЛАХЫН ЦО
+      -> 2017-09-15 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:00:00 10:
+  [bad INVENTED: year 2017 not in the original] МОНГОЛ, КАЗАХСТАНЫ ЗАСГИЙН ГАЗАР ХООРОНДЫН КОМИССЫН X ХУРАЛД
+      -> 10th Meeting of the Mongolia-Kazakhstan Inter-Governmental Commission to be held on 11th of March 2017
+  [good] "มดดำ" ขอบคุณ "อั้ม อธิชาติ" ลุยน้ำท่วมแทน พร้อมสมทบทุนโรงทา
+      -> "Black Ant" thanks "Am Adhinath" for flooding and donating to the restaurant.
+  [good] เร่งช่วยเหลือผู้ประสบอุทกภัย ในพื้นที่กรุงเทพมหานครและภูมิภา
+      -> The flood victims in the metropolitan area of Bangkok and the surrounding regions are being assisted.
+  [good] น้ำท่วมสายไหมคลี่คลาย เริ่มกลับเข้าพื้นที่ แต่เอื้ออาทรคลองถ
+      -> Silk Road floods are slowly returning to the area, but the roads are still in a critical state.
+  [good] อ่วมหนัก 'ตั๊ก มยุรา' อัดคลิปแฉสภาพถนนภายในหมู่บ้าน น้ำท่วมข
+      -> "Floods in the Philippines: 100,000 people flooded in 10 days".
+  [good INVENTED: year 1990 not in the original] ‘บิ๊กดุลย์’ ลุยช่วยน้ำท่วม เขตสายไหม ลั่นจะลงพื้นที่ทุกวัน จ
+      -> The 100th anniversary of the 1990s floods in the city of Sai Lai, China, is celebrated by the city's residents and visitors.
+  [good] ด่วน! เขื่อนป่าสัก ปริมาณน้ำเกินความจุ 106% ต้องปรับการระบาย
+      -> Emergency, Badak Dam, 106% overflow, re-drain, warning to residents at the back of the dam.
+  [good] 검찰 폐지에 특검 검사 권한 혼선…“공소청, 공소유지 담당 재파견을”
+      -> "The Prosecutor General's Office, the Office of the Prosecutor General, and the Office of the Attorney General."
+  [good] 휴지통 하나가 130만원…야노시호, 日 상위 1% 지인 별장 공개
+      -> One bin is 130,000 won... Yanoshi Ho, the top 1% of the Japanese knows villa revealed
+  [good] 법원, ‘전남광주 국립의대 추진’ 집행정지 신청 각하…목포대 “모든 방안 강구”
+      -> The Court, 'Promotion of the National Medical University of Gyeongnam Gwangju' Application for Suspension of Enforcement...
+  [good] 중국, 10월부터 휘발유·경유 수출 중단···글로벌 유가 4% 상승
+      -> China suspends exports of diesel and transit oil from October, global oil prices rise 4%
+  [good] [단독]강호동 농협회장 비서 구속…'고가 기념품 공금 구매' 관련
+      -> [Individual] Kang Ho-dong Secretary of the President of the agricultural cooperation arrested...
+  [good] ‘기본’ 안 지켜 발생한 공공 보안사고, 기관장에도 책임 묻는다
+      -> The public security incident that occurred due to failure to observe the "basic" rules, the head of the agency is also held responsible.
+  [good] 毒品防治成政治攻防 北市府：政策與沈伯洋倡議完全不同
+      -> The North City Hall: The policy is completely different from the initiative of Shen Boyang
+  [good] Threads貼文涉造謠假民調 桃園男子10萬元交保
+      -> Threads Post about making a fake poll, Taoyuan man 100,000 yuan guarantee
+  [good] 快訊／關渡大橋國軍八輪甲車自撞分隔島 駕駛軍官曝：座椅壞了
+      -> 緊急通報/関渡大橋国軍八輪装甲車自衝突分隔島 ドライバー軍官暴露：座席破損
+  [good] 台東貨車肇逃 駕駛自殘拒捕
+      -> Taidong truck accident
+  [good] うるま市議選、投票率は43.77％で過去最低 前回の市議選を5.37ポイント下回る - 沖縄タイムス＋プラス ニュース
+      -> The voting rate in the Uruma City Council election was 43.77%, the lowest ever, 5.37 points lower than in the previous election.
+  [good] 普天間の危険除去、渋滞解消…古謝県政の船出、エール送る支持者が期待 初登庁の新知事「緊張していますよ、やっぱり」 - 沖
+      -> The new governor of Okinawa, who is in office for the first time, is "excited, of course."
+  [good] Улаанбурхан өвчин нь халдварлалт өндөртэй ч вакцинаар сэргий
+      -> Measles is highly contagious , but it can be prevented with vaccines .
+  [good] “Чингис хаан” олон улсын нисэх буудлын хүчин чадал гурав дах
+      -> The capacity of the “Genghis Khan” International Airport will be tripled to receive 5.2 million passengers per year
+
+=== greedy, no-repeat 4 only (41 s)
+  [bad INVENTED: year 2011 not in the original] สส.ภูมิใจไทยจากพื้นที่น้ำไม่ท่วม ร่วมช่วยผู้ประสบภัยกรุงเทพฯ
+      -> The 2011 floods in Thailand were the worst in 100 years.
+  [bad INVENTED: year 2011 not in the original] เพื่อไทยลงพื้นที่เคหะร่มเกล้า-ลาดกระบัง ประสาน ‘ศูนย์ซ่อมสร้
+      -> The 2011-12 season of the Thai Premier League was a success for the club.
+  [bad INVENTED: year 1999 not in the original] พัฒนา สั่ง รพ.พุทธโสธร เสริมแนวกันน้ำ เตรียมแผนย้าย-ส่งต่อผู
+      -> The 1999 floods in Thailand were the worst floods to hit Thailand since the 1930s.
+  [bad INVENTED: stock text] ชาย เอี่ยมศิริ โพสต์เดือด! ปัดทุจริตจัดซื้อไวน์การบินไทย แจง
+      -> The 1990s were a time of great success for the Thai Airways Group.
+  [bad INVENTED: stock text] เจเศรษฐ์ โต้เลือกปฏิบัติถุงยังชีพ ยัน ปภ. ส่งของช่วยทุกพื้นท
+      -> The 1990s were a time of great economic growth, but the 2000s saw a decline in the population.
+  [bad INVENTED: year 2010 not in the original] ‘สายไหมไม่ใช่เขตกระจอก’ สมชาย เวสารัชตระกูล ส.ก.คนพื้นที่ นอ
+      -> "The 2010 World Cup: The 2009 World Cup: Nothing to Lose".
+  [bad] “เจเศรษฐ์” ลั่น ไม่ใช่เวลาเล่นการเมือง หลังมีดราม่าจับผิดถุง
+      -> “There is no time for politics after the drama of the wrong bag ...
+  [bad INVENTED: year 2013 not in the original] กทม. เร่งพร่องน้ำรับมือฝนระลอกใหม่ ช่วง 5-6 ต.ค. และ 10–11 ต
+      -> 2013-09-10 10:00:01 - 2009-09 10-11-11 10000:100:200: 2020-09.01.11 00:30:02 - 2100.01 2150.00 2160.0 2200.1 2210.1
+  [bad INVENTED: stock text] ระทึก! ยิงสกัดไล่ล่าเก๋งต้องสงสัยกลางชุมชนวัดธรรมฯ ชลบุรี ยึ
+      -> The 1990s were a time of great success for the 1980s.
+  [bad] ‘วีระยุทธ’ ลงพื้นที่บางคล้า พบชาวบ้านโดนน้ำท่วมนานนับสัปดาห์
+      -> The villagers have been flooded for weeks, but still have no help.
+  [bad INVENTED: year 2013 not in the original] ‘อนุชา’ ลงพื้นที่ตรวจเยี่ยมให้กำลังใจเจ้าหน้าที่-พี่น้อง ...
+      -> The 2013-2014 fiscal year, the Department of Finance (DFS) has been conducting a comprehensive review of the financial performance of the St
+  [bad] “วราวุธ” เผยตัวเลขน้ำท่วมกระทบอุตสาหกรรม 55 จังหวัด เสียหาย 
+      -> “Warawuth” reveals the number of floods affecting 55 provinces industrial damage 147 ...
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 노동자 사망
+      -> 2016-04-14 10:00:01 - Accident in the automotive parts factory in Chongju
+  [bad INVENTED: year 2016 not in the original] 충주 자동차부품 공장서 끼임 사고…40대 근로자 사망
+      -> 2016-09-14 10:00:01 - Accident in the automotive parts factory in Chongju
+  [bad INVENTED: year 2012 not in the original] 평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)
+      -> 100% 101% 110% 200% The 10th of July 2012 (Afternoon)
+  [bad INVENTED: year 2016 not in the original] ‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게
+      -> 2016-06-12 12:00:00 - 0-12 to Dusan, 6-win streak ends in vain [Daegu Review]
+  [bad INVENTED: year 1990 not in the original] 국힘, 조희대 국감 증인 불출석에 "與, 검증 아닌 겁박 정치"
+      -> "There is no evidence that the 1990s were a time of violence, violence, violence."
+  [bad] 민주당 "조희대 대법원장, 국감 출석 불응 의사…국회법 위반"
+      -> "The Supreme Court of the United States, the Supreme Court of Canada, and the Supreme Courts of the United Kingdom".
+  [bad INVENTED: year 2016 not in the original] 목포대 "의대 후보 선정 집행정지 각하에 즉시 항고 검토"
+      -> "The 2016-17 SEC Season: The Finals of the SEC Season"
+  [bad] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+      -> The 1000th day of the month of Muharram, the 10th day in the Islamic calendar.
+  [bad INVENTED: year 2015 not in the original] 경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송
+      -> 2015-05-15 10:00:01 - 2009-05 15:00 10000 2020-05
+  [bad INVENTED: year 2016 not in the original] 주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원
+      -> 2016-02-20 10:00:01 - Policeman arrested for driving under the influence in parking lot
+  [bad] 휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'
+      -> 22-26 degrees during the day, with occasional clouds.
+  [bad INVENTED: year 2010 not in the original] 김지용 인선에 말 아끼는 與…강경파 비판 계속되자 "엄정 검증" 원론 입장
+      -> "There is no doubt that the 2010 election will be a very difficult one for the Democratic Party.
+  [bad INVENTED: year 2012 not in the original] 蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算
+      -> "The 2012 World Cup: China's Kim Jong-un and the Chinese President Xi Jinping meet in Beijing".
+  [bad INVENTED: year 2010 not in the original] 助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴
+      -> The 2010-2011 season was a success for the team.
+  [bad INVENTED: year 1996 not in the original] 高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤
+      -> The 1996 election was a turning point for the party.
+  [bad INVENTED: stock text] 影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動
+      -> "蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動" (in Chinese).
+  [bad INVENTED: year 2012 not in the original] 北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版
+      -> The 2012 election in Beijing was a triumph for the anti-drug campaign.
+  [bad INVENTED: year 2008 not in the original] (影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖
+      -> (2008) 73-year-old dictator's health is on the red light?
+  [bad] AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事
+      -> The Okinawa Times published an article on the cover page of the lecture given by the President of the United Nations University in Naha on 8
+  [bad INVENTED: stock text] 「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム
+      -> "「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長浜も飛躍誓う" (in Japanese).
+  [bad] 【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース
+      -> Okinawa Times+Plus News
+  [bad INVENTED: year 2017 not in the original] УЛААНБААТАРТ ГАЗРЫН ТОСНЫ БҮТЭЭГДЭХҮҮН ХАДГАЛАХ АГУУЛАХЫН ЦО
+      -> 2017-09-15 10:00:01 100% of the total area of the city is protected by the National Park.
+  [bad INVENTED: year 2017 not in the original] МОНГОЛ, КАЗАХСТАНЫ ЗАСГИЙН ГАЗАР ХООРОНДЫН КОМИССЫН X ХУРАЛД
+      -> 10th Meeting of the Mongolia-Kazakhstan Inter-Governmental Commission to be held on 11th of March 2017
+  [good] "มดดำ" ขอบคุณ "อั้ม อธิชาติ" ลุยน้ำท่วมแทน พร้อมสมทบทุนโรงทา
+      -> "Black Ant" thanks "Am Adhinath" for flooding and donating to the restaurant.
+  [good] เร่งช่วยเหลือผู้ประสบอุทกภัย ในพื้นที่กรุงเทพมหานครและภูมิภา
+      -> The flood victims in the metropolitan area of Bangkok and the surrounding regions are being assisted.
+  [good] น้ำท่วมสายไหมคลี่คลาย เริ่มกลับเข้าพื้นที่ แต่เอื้ออาทรคลองถ
+      -> Silk Road floods are slowly returning to the area, but the roads are still in a critical state.
+  [good] อ่วมหนัก 'ตั๊ก มยุรา' อัดคลิปแฉสภาพถนนภายในหมู่บ้าน น้ำท่วมข
+      -> "Floods in the Philippines: 100,000 people flooded in 10 days".
+  [good INVENTED: year 1990 not in the original] ‘บิ๊กดุลย์’ ลุยช่วยน้ำท่วม เขตสายไหม ลั่นจะลงพื้นที่ทุกวัน จ
+      -> The 100th anniversary of the 1990s floods in the city of Sai Lai, China, is celebrated by the city's residents and visitors.
+  [good] ด่วน! เขื่อนป่าสัก ปริมาณน้ำเกินความจุ 106% ต้องปรับการระบาย
+      -> Emergency, Badak Dam, 106% overflow, re-drain, warning to residents at the back of the dam.
+  [good] 검찰 폐지에 특검 검사 권한 혼선…“공소청, 공소유지 담당 재파견을”
+      -> "The Prosecutor General's Office, the Office of the Prosecution Service, and the Office of Public Prosecutors".
+  [good] 휴지통 하나가 130만원…야노시호, 日 상위 1% 지인 별장 공개
+      -> One bin is 130,000 won... Yanoshi Ho, the top 1% of the Japanese knows villa revealed
+  [good] 법원, ‘전남광주 국립의대 추진’ 집행정지 신청 각하…목포대 “모든 방안 강구”
+      -> The Court, 'Promotion of the National Medical University of Gyeongnam Gwangju' Application for Suspension of Enforcement...
+  [good] 중국, 10월부터 휘발유·경유 수출 중단···글로벌 유가 4% 상승
+      -> China suspends exports of diesel and transit oil from October, global oil prices rise 4%
+  [good] [단독]강호동 농협회장 비서 구속…'고가 기념품 공금 구매' 관련
+      -> [Individual] Kang Ho-dong Secretary of the President of the agricultural cooperation arrested...
+  [good] ‘기본’ 안 지켜 발생한 공공 보안사고, 기관장에도 책임 묻는다
+      -> The public security incident that occurred due to failure to observe the "basic" rules, the head of the agency is also held responsible.
+  [good] 毒品防治成政治攻防 北市府：政策與沈伯洋倡議完全不同
+      -> The North City Hall: The policy is completely different from the initiative of Shen Boyang
+  [good] Threads貼文涉造謠假民調 桃園男子10萬元交保
+      -> Threads Post about making a fake poll, Taoyuan man 100,000 yuan guarantee
+  [good] 快訊／關渡大橋國軍八輪甲車自撞分隔島 駕駛軍官曝：座椅壞了
+      -> 緊急通報/関渡大橋国軍八輪装甲車自衝突分隔島 ドライバー軍官暴露：座席破損
+  [good] 台東貨車肇逃 駕駛自殘拒捕
+      -> Taidong truck accident
+  [good] うるま市議選、投票率は43.77％で過去最低 前回の市議選を5.37ポイント下回る - 沖縄タイムス＋プラス ニュース
+      -> The voting rate in the Uruma City Council election was 43.77%, the lowest ever, 5.37 points lower than in the previous election.
+  [good] 普天間の危険除去、渋滞解消…古謝県政の船出、エール送る支持者が期待 初登庁の新知事「緊張していますよ、やっぱり」 - 沖
+      -> The new governor of Okinawa, who is in office for the first time, is "excited, of course."
+  [good] Улаанбурхан өвчин нь халдварлалт өндөртэй ч вакцинаар сэргий
+      -> Measles is highly contagious , but it can be prevented with vaccines .
+  [good] “Чингис хаан” олон улсын нисэх буудлын хүчин чадал гурав дах
+      -> The capacity of the “Genghis Khan” International Airport will be tripled to receive 5.2 million passengers per year
+
+=== beam 4, no-repeat 4 (70 s)
+  [bad] สส.ภูมิใจไทยจากพื้นที่น้ำไม่ท่วม ร่วมช่วยผู้ประสบภัยกรุงเทพฯ
+      -> 2,000 boxes of rice sent to flood-hit communities in Bangkok and Pattaya.
+  [bad] เพื่อไทยลงพื้นที่เคหะร่มเกล้า-ลาดกระบัง ประสาน ‘ศูนย์ซ่อมสร้
+      -> Traffy Fondue.com.au.
+  [bad INVENTED: year 2011 not in the original] พัฒนา สั่ง รพ.พุทธโสธร เสริมแนวกันน้ำ เตรียมแผนย้าย-ส่งต่อผู
+      -> 2011-09-01.  "Thai government orders hospitals to strengthen water barriers and prepare plans to transfer patients to cope with flood crisis
+  [bad] ชาย เอี่ยมศิริ โพสต์เดือด! ปัดทุจริตจัดซื้อไวน์การบินไทย แจง
+      -> "Thai Airline's Wine Purchase Fraud Revealed, CEO Says He Wasn't Involved In Flood Management".
+  [bad] เจเศรษฐ์ โต้เลือกปฏิบัติถุงยังชีพ ยัน ปภ. ส่งของช่วยทุกพื้นท
+      -> "Jeeraseth opposes decision to distribute food packs, says PPF is sending supplies to all areas, says if they play politics, the people suff
+  [bad] ‘สายไหมไม่ใช่เขตกระจอก’ สมชาย เวสารัชตระกูล ส.ก.คนพื้นที่ นอ
+      -> “Silk Road is not a circle” Samchai Wesa Ratchakul MP, local man, sleeps 2 to fight the flood.
+  [bad] “เจเศรษฐ์” ลั่น ไม่ใช่เวลาเล่นการเมือง หลังมีดราม่าจับผิดถุง
+      -> “There is no time to play politics after the drama caught the wrong bag ...
+  [bad INVENTED: year 1999 not in the original] กทม. เร่งพร่องน้ำรับมือฝนระลอกใหม่ ช่วง 5-6 ต.ค. และ 10–11 ต
+      -> 10-11 October 2011, 5-6 October and 10–11 October, 2009, 11-12 October, 1999.
+  [bad INVENTED: year 2013 not in the original] ระทึก! ยิงสกัดไล่ล่าเก๋งต้องสงสัยกลางชุมชนวัดธรรมฯ ชลบุรี ยึ
+      -> 2013-09-07 11:00:00 - 11.09.2014 10:01:01 - 10.09 2009-10-09 10-11-2010 11-12-2008
+  [bad INVENTED: year 2011 not in the original] ‘วีระยุทธ’ ลงพื้นที่บางคล้า พบชาวบ้านโดนน้ำท่วมนานนับสัปดาห์
+      -> 2011-09-07 11:00:00 2009-10-09 10:05:00
+  [bad] ‘อนุชา’ ลงพื้นที่ตรวจเยี่ยมให้กำลังใจเจ้าหน้าที่-พี่น้อง ...
+      -> “Anucha” visits the site to encourage officers-brothers...
+  [bad] “วราวุธ” เผยตัวเลขน้ำท่วมกระทบอุตสาหกรรม 55 จังหวัด เสียหาย 
+      -> “Warawuth” revealed the number of floods affecting industry 55 provinces damaged 147 ...
+  [bad] 충주 자동차부품 공장서 끼임 사고…40대 노동자 사망
+      -> 40-year-old worker dies in accident at Chonju auto parts factory
+  [bad] 충주 자동차부품 공장서 끼임 사고…40대 근로자 사망
+      -> 40-year-old worker dies in accident at Chonju auto parts factory
+  [bad] 평택 주택가 공원서 한밤중 외국인 패싸움…각목 들고 발길질(종합)
+      -> In the middle of the night, a foreigner fights in a residential park in Pyeongtaek.
+  [bad] ‘페덱 담 증세→선발 교체’ 삼성, 제대로 꼬였다…'20안타 폭발' 두산에 0-12 충격패, 6연승 허무하게
+      -> 'Fedek dam symptoms → starting replacement' Samsung, really twisted... '20 hits explosion' Dusan 0-12 shock loss, six straight wins in vain 
+  [bad] 국힘, 조희대 국감 증인 불출석에 "與, 검증 아닌 겁박 정치"
+      -> "There's nothing wrong with it," he said, "but it's not good enough."
+  [bad] 민주당 "조희대 대법원장, 국감 출석 불응 의사…국회법 위반"
+      -> Democratic Party "President of the Supreme Court, Choi refuses to attend the National Audit... violation of parliamentary law"
+  [bad INVENTED: year 2010 not in the original] 목포대 "의대 후보 선정 집행정지 각하에 즉시 항고 검토"
+      -> "Review of the 2010-2011 Annual Report of the Department of Health".
+  [bad INVENTED: year 2013 not in the original] 방망이 휘두르고 발길질…외국인들 한밤중 노상서 패싸움 벌여
+      -> 2013-01-14 11:00:00 - Foreigners fight in the streets in the middle of the night
+  [bad INVENTED: year 2017 not in the original] 경북 영양서 오르막길 경운기 5m 아래 추락…중상 2명 헬기 이송
+      -> 2017-05-05 12:00:00 2009-09-15 10:05:00
+  [bad] 주차장서 ‘2m’ 만취 운전 적발되자 경찰관 폭행한 20대, 벌금 1000만원
+      -> 20-year-old assaulted police officer when caught drunk driving in parking lot '2m', fine 1000 million won
+  [bad] 휴일 전북 밤부터 '5㎜ 미만 비'…낮 22~26도'가끔 구름'
+      -> 22 to 26 degrees during the day, with occasional clouds.
+  [bad] 김지용 인선에 말 아끼는 與…강경파 비판 계속되자 "엄정 검증" 원론 입장
+      -> Kim Ji-young's nomination is sparing words with... "Strict verification" as the criticism of the severe faction continues
+  [bad] 蔡康永現身沈伯洋競總引爆震撼 網驚「知識藍倒戈」憂遭出征清算
+      -> 蔡康永出现沈伯洋竞总引爆震惊网惊"知识蓝倒戈"忧遭出征清算
+  [bad] 助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴
+      -> 李四川被诬蔑 蒋万安：自己也被扔满身泥
+  [bad INVENTED: year 2014 not in the original] 高大成為鄭功進助選授戰旗 看好何欣純台中選情翻盤
+      -> 2014 Taiwan presidential election
+  [bad INVENTED: stock text] 影》蔡英文驚喜現身引發騷動！賴清德見歷史級洋流人潮：我非常感動
+      -> "蔡英文驚訝現身引起騷動！賴清德見歷史級洋流人潮：我非常感動" (in Chinese).
+  [bad] 北市選舉激辯反毒 藍疑蔣萬安臉書遭機器人洗版
+      -> "Beijing election: anti-narcotics campaign intensifies, China suspects Jiang Wan's Facebook account has been spoofed by bots".
+  [bad] (影)73歲獨裁者健康亮紅燈？矢板明夫：彭麗媛或許已成習近平拐杖
+      -> 73-year-old dictator's health is on the red light?
+  [bad] AI時代のSDGs学ぶ 8日那覇 国連大学長講演 - 沖縄タイムス紙面掲載記事
+      -> Speech by the President of the United Nations University in Naha on October 8, 2008, on learning about the SDGs in the AI era.
+  [bad] 「最後まで諦めず戦う」琉球コラソンが決起会 元日本代表・東長濱も飛躍誓う - 沖縄タイムス＋プラス プレミアム
+      -> Okinawa Times+Plus Premium
+  [bad] 【速報】那覇市がインフル警報を発令 7年ぶりに基準2倍を突破、1定点60人超え - 沖縄タイムス＋プラス ニュース
+      -> Okinawa Times+Plus News
+  [bad] УЛААНБААТАРТ ГАЗРЫН ТОСНЫ БҮТЭЭГДЭХҮҮН ХАДГАЛАХ АГУУЛАХЫН ЦО
+      -> ULAN BATOR REGION PROTECTION OF NATURE PROTECTION COMMITTEE HAS INITIATED STRONG WORK ON ORGANIZATION
+  [bad] МОНГОЛ, КАЗАХСТАНЫ ЗАСГИЙН ГАЗАР ХООРОНДЫН КОМИССЫН X ХУРАЛД
+      -> THE 10TH MEETING OF THE COMMISSION BETWEEN THE GOVERNMENTS OF MONGOLIA AND KAZAKHSTAN
+  [good] "มดดำ" ขอบคุณ "อั้ม อธิชาติ" ลุยน้ำท่วมแทน พร้อมสมทบทุนโรงทา
+      -> "Black Ant" thanks "Aum Adhikari" for helping with the floods and donating money for the restaurant.
+  [good] เร่งช่วยเหลือผู้ประสบอุทกภัย ในพื้นที่กรุงเทพมหานครและภูมิภา
+      -> Assistance to flood victims in the metropolitan area of Bangkok and the surrounding regions has been expedited.
+  [good] น้ำท่วมสายไหมคลี่คลาย เริ่มกลับเข้าพื้นที่ แต่เอื้ออาทรคลองถ
+      -> Silk Road flooding has subsided and is returning to the area, but the roads and canals are still in crisis.
+  [good] อ่วมหนัก 'ตั๊ก มยุรา' อัดคลิปแฉสภาพถนนภายในหมู่บ้าน น้ำท่วมข
+      -> It's not a bad thing. It's just a bad thing that's happening.
+  [good INVENTED: year 2017 not in the original] ‘บิ๊กดุลย์’ ลุยช่วยน้ำท่วม เขตสายไหม ลั่นจะลงพื้นที่ทุกวัน จ
+      -> "Bigg Boss 13: Bigg Boss 2017: Bigg boss 13, Bigg boss2018, Bigg Boss, Big Boss 2, Big Boss2019, Big Boss3, Big Boss4, Big Boss5, Big Boss6,
+  [good] ด่วน! เขื่อนป่าสัก ปริมาณน้ำเกินความจุ 106% ต้องปรับการระบาย
+      -> Pasak Dam, 106% overflow.
+  [good] 검찰 폐지에 특검 검사 권한 혼선…“공소청, 공소유지 담당 재파견을”
+      -> "The Prosecutor General's Office, the Office of the Prosecuting Attorney, and the Office of Public Prosecutors".
+  [good] 휴지통 하나가 130만원…야노시호, 日 상위 1% 지인 별장 공개
+      -> One garbage can 130,000 won... Yanoshi Ho, Japan top 1% acquaintance villa revealed
+  [good] 법원, ‘전남광주 국립의대 추진’ 집행정지 신청 각하…목포대 “모든 방안 강구”
+      -> The Court, 'Promotion of the National Medical University of Gyeongnam Gwangju' Application for Suspension...
+  [good] 중국, 10월부터 휘발유·경유 수출 중단···글로벌 유가 4% 상승
+      -> China suspends exports of gasoline and transit oil from October, global oil prices rise 4%
+  [good] [단독]강호동 농협회장 비서 구속…'고가 기념품 공금 구매' 관련
+      -> [Exclusive] Kang Ho-dong agricultural cooperation secretary arrested... related to 'high-priced souvenirs public funds purchase'
+  [good] ‘기본’ 안 지켜 발생한 공공 보안사고, 기관장에도 책임 묻는다
+      -> Public security incidents caused by failure to comply with the "basic" rules, the head of the agency will also be held responsible.
+  [good] 毒品防治成政治攻防 北市府：政策與沈伯洋倡議完全不同
+      -> The North City Hall: The policy is completely different from the initiative of Shen Boyang.
+  [good] Threads貼文涉造謠假民調 桃園男子10萬元交保
+      -> Threads Post about making a fake poll Taoyuan man 100,000 yuan bail
+  [good] 快訊／關渡大橋國軍八輪甲車自撞分隔島 駕駛軍官曝：座椅壞了
+      -> 快訊/關渡大橋國軍八輪裝甲車自撞分隔島 駕駛軍官曝：座椅壞
+  [good] 台東貨車肇逃 駕駛自殘拒捕
+      -> Taidong truck accident
+  [good] うるま市議選、投票率は43.77％で過去最低 前回の市議選を5.37ポイント下回る - 沖縄タイムス＋プラス ニュース
+      -> 43.77% is the lowest voter turnout ever recorded in the Uruma City Council election, down 5.37 points from the previous election - Okinawa T
+  [good] 普天間の危険除去、渋滞解消…古謝県政の船出、エール送る支持者が期待 初登庁の新知事「緊張していますよ、やっぱり」 - 沖
+      -> Okinawa Times+Plus Premium
+  [good] Улаанбурхан өвчин нь халдварлалт өндөртэй ч вакцинаар сэргий
+      -> Measles is highly contagious , but it can be prevented with a vaccine .
+  [good] “Чингис хаан” олон улсын нисэх буудлын хүчин чадал гурав дах
+      -> The capacity of Genghis Khan International Airport will be tripled to 5.2 million passengers per year.
+
+=== summary
+current (greedy, penalty 1.2, no-repeat 4): invented 28/35 of the bad set, 0/20 of the good set; loops 0; empty 0
+before 2026-09-27 (greedy, no penalty): invented 26/35 of the bad set, 1/20 of the good set; loops 0; empty 0
+greedy, no-repeat 4 only: invented 27/35 of the bad set, 1/20 of the good set; loops 0; empty 0
+beam 4, no-repeat 4: invented 9/35 of the bad set, 1/20 of the good set; loops 0; empty 0
