@@ -4,6 +4,7 @@
 // The page loads only the open area's file. Writes nothing when run outside the repository root.
 import fs from "node:fs";
 import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
+import { dropSuspectMt } from "./mt_guard.mjs";
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
 // geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
@@ -12,7 +13,8 @@ const KEEP = ["title", "title_en", "summary", "summary_en", "date", "link", "geo
 // Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
 const CODE = /\bwindow\.\w+|addEventListener\s*\(|document\.getElementById|function\s*\(\s*\w*\s*\)\s*\{/;
-const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; return i; };
+// A machine translation the model invented (tools/mt_guard.mjs) is removed from new and kept items alike; the original stays.
+const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; dropSuspectMt(i); return i; };
 function read(cc) {
   try {
     const t = fs.readFileSync(`${DIR}/${cc}.js`, "utf8");

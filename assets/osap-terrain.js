@@ -155,14 +155,41 @@
 
   /* ---------- the elevation grid for a request ---------- */
   function effRes(radius, res) { return Math.max(res, Math.ceil(2 * radius / (MAXN - 1))); }
+  /* ---------- LiDAR (assets/osap-lidar.js): which elevation models cover the points, looked up before the tiles load so the
+     Mapterhorn source knows how fine it can go there. Never holds a calculation up: no answer in 4 s, or no connection,
+     gives null and the sum runs as before. { share_pct (of the points inside a LiDAR-class model, 2.5 m or finer), best,
+     centre (the model at the first point) } */
+  function lidarInfo(pts) {
+    var X = W.OSAP_LIDAR; if (!X || !X.describe || navigator.onLine === false) return Promise.resolve(null);
+    return Promise.race([X.describe(pts).catch(function () { return null; }), new Promise(function (r) { setTimeout(function () { r(null); }, 4000); })]);
+  }
+  /* points over a circle: the centre, then rings at a third, two thirds and the edge */
+  function ringPts(lat, lon, radius) {
+    var out = [[lat, lon]], dl = radius / 111320, dn = dl / Math.max(0.2, Math.cos(lat * Math.PI / 180));
+    [1 / 3, 2 / 3, 1].forEach(function (f) { for (var a = 0; a < 360; a += 30) out.push([lat + dl * f * Math.cos(a * Math.PI / 180), lon + dn * f * Math.sin(a * Math.PI / 180)]); });
+    return out;
+  }
+  /* "High detail": as fine as the LiDAR at the centre allows (not below 1 m), else the usual 10 m */
+  function fineRes(li, res) { return li && li.centre && li.centre.res <= 5 ? Math.min(res, Math.max(1, li.centre.res)) : res; }
+  /* the result's LiDAR line */
+  function lidarHtml(li, what) {
+    var X = W.OSAP_LIDAR; if (!X) return "";
+    if (!li) return "<p><b>LiDAR:</b> coverage not checked (no answer from the coverage lookup)</p>";
+    var c = li.centre, cl = c && X.classOf(c.res);
+    return "<p><b>LiDAR:</b> " + (c ? esc((cl ? cl.name : "Elevation model") + " at " + what + ": " + c.name + ", " + X.fmtRes(c.res) + (c.producer ? ", " + c.producer : "") + (c.licence ? " (" + c.licence + ")" : "")) : "none at " + esc(what) + "; " + esc(X.SAT)) +
+      " · <b>LiDAR-class ground (2.5 m or finer):</b> " + Math.round(li.share_pct) + "% of the points checked</p>";
+  }
   /* { spec, E, rowM, coverage_pct, sources, z } for an observer, range and resolution; reused while they are the same */
   function getGrid(lat, lon, radius, res, opt) {
-    return need().then(function (SRC) {
+    var li = null;
+    return need().then(function () { return lidarInfo(ringPts(lat, lon, radius)); }).then(function (x) {
+      li = x; var SRC = W.OSAP_TERRAIN_SRC;
+      if (opt && opt.fine) res = effRes(radius, fineRes(li, res));
       var key = [lat.toFixed(6), lon.toFixed(6), radius, res].join("|");
       if (gridNow && gridNow.key === key && !gridNow.failedTiles) return gridNow;
       var spec = SRC.around(lat, lon, radius, res);
       return SRC.grid(spec, opt).then(function (r) {
-        var g = { key: key, gid: ++GID, spec: spec, E: r.E, n: spec.n, rowM: r.rowM, coverage_pct: r.coverage_pct, failedTiles: r.failedTiles, tiles: r.tiles, sources: r.sources, z: r.z, res: res, radius: radius, lat: lat, lon: lon };
+        var g = { key: key, gid: ++GID, spec: spec, E: r.E, n: spec.n, rowM: r.rowM, coverage_pct: r.coverage_pct, failedTiles: r.failedTiles, tiles: r.tiles, sources: r.sources, z: r.z, res: res, radius: radius, lat: lat, lon: lon, lidar: li };
         gridNow = g; return g;
       });
     });
@@ -263,7 +290,7 @@
     "#terrain .tsg{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin:6px 0}#terrain .tsg>span{color:var(--muted,#555)}" +
     "#terrain .tsr{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center}" +
     "#terrain button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:30px;cursor:pointer}" +
-    "#terrain button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700;letter-spacing:.04em}#terrain button[aria-pressed=true]{background:#e3f2f4;border-color:#0b7285}" +
+    "#terrain button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700;letter-spacing:.04em}#terrain button[aria-pressed=true]{background:var(--accent-soft,#e3f2f4);color:var(--ink,#111);border-color:var(--accent,#0b7285)}" +
     "#terrain select,#terrain input[type=number]{font:inherit;font-size:12.5px;max-width:100%}#terrain input[type=number]{width:5.2em}" +
     "#terrain .pt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}#terrain .seg{display:inline-flex}#terrain .seg button{border-radius:0;margin-left:-1px}#terrain .seg button:first-child{border-radius:5px 0 0 5px}#terrain .seg button:last-child{border-radius:0 5px 5px 0}" +
     "#terrain .chk{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin:6px 0}#terrain .chk label{display:flex;gap:5px;align-items:center}" +
@@ -274,13 +301,13 @@
     "#terrain .nm{font-weight:700;letter-spacing:.03em}#terrain .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
     "#terrain .losc{border:1px solid var(--line,#ddd);border-radius:6px;padding:6px 9px;margin:8px 0}#terrain svg.prof{width:100%;height:auto;display:block;margin-top:6px}" +
     ".vslos p{margin:2px 0}.vslos .v{font-weight:700}.vslos .v.BLOCKED{color:#b71c1c}.vslos .v.CLEAR{color:#2e7d32}.vslos .v.UNKNOWN{color:#616161}.vslos .h{font-weight:700;letter-spacing:.04em;margin-bottom:3px}" +
-    ".vslos button{font:inherit;font-size:12px;margin-top:5px;border:1px solid #bbb;border-radius:5px;background:#fff;padding:3px 8px;cursor:pointer}.vsimg{image-rendering:pixelated}" +
+    ".vslos button{font:inherit;font-size:12px;margin-top:5px;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:var(--ink,#111);padding:3px 8px;cursor:pointer}.vsimg{image-rendering:pixelated}" +
     "#terrain .tsm{display:flex;margin:2px 0 8px}#terrain .tsm button{flex:1;font-weight:600}#terrain .tsx{border-top:1px solid var(--line,#ddd);margin-top:8px;padding-top:6px}" +
     ".vsab{background:none;border:0}.vsab span{display:block;min-width:20px;height:20px;padding:0 3px;border-radius:10px;background:#0b7285;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);color:#fff;font:700 11px/20px system-ui,sans-serif;text-align:center;margin:0}" +
     "#terrain .tsave{margin:8px 0}#terrain .tsave input{font:inherit;font-size:13px;flex:1;min-width:8em;padding:4px 6px}#terrain .vssaved{border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "#terrain .vsrow{border:1px solid var(--line,#ddd);border-radius:6px;padding:5px 8px;margin:5px 0}#terrain .vsrow label{display:flex;gap:6px;align-items:center}#terrain .vsrow .sub{font-size:11.5px;color:var(--muted,#555);margin:2px 0 4px}#terrain .vsrow input[type=text]{font:inherit;flex:1}" +
     ".vsname{background:none;border:0}.vsname span{display:inline-block;transform:translate(8px,-50%);white-space:nowrap;font:600 11px/1.2 system-ui,sans-serif;background:rgba(255,255,255,.9);color:#1b5e20;border:1px solid #1b5e20;border-radius:3px;padding:1px 4px}" +
-    ".vsmenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;margin:3px 0;border:1px solid #bbb;border-radius:5px;background:#fff;padding:6px 9px;cursor:pointer}.vsmenu .h{font-weight:700;margin-bottom:4px}.vsmenu .el{margin-top:6px}" +
+    ".vsmenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;margin:3px 0;border:1px solid var(--line,#bbb);border-radius:5px;background:var(--surface,#fff);color:var(--ink,#111);padding:6px 9px;cursor:pointer}.vsmenu .h{font-weight:700;margin-bottom:4px}.vsmenu .el{margin-top:6px}" +
     /* phone: labels above their fields, so the fields get the full width */
     "@media (max-width:700px){#terrain{padding:6px}#terrain .chk{grid-template-columns:1fr}#terrain .tsg{grid-template-columns:1fr;gap:2px 0}#terrain .tsg>span{margin-top:6px;font-size:12px}#terrain .tsh{flex-wrap:nowrap}#terrain .tsh select{flex:1;min-width:0}}";
   function ensure() {
@@ -377,8 +404,9 @@
       h += '<div class="tsext"></div>';
       var curv = x.path ? "not used for a path" : ST.line.o.curvature ? "on" + (ST.line.o.k ? ", with atmospheric refraction (k = " + ST.line.o.k + ")" : ", no refraction") : "off";
       h += '<div class="asm"><p class="nm">' + (x.path ? "TERRAIN ELEVATION PROFILE" : "TERRAIN LINE OF SIGHT") + "</p>" +
-        "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model: walls, single trees and most buildings are not in it, while SRTM (most of the world outside Japan and the US) partly carries dense forest canopy and big city blocks.</p>" +
+        "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model: walls, single trees and most buildings are not in it, while the satellite elevation used where there is no LiDAR (Copernicus 30 m, SRTM) partly carries dense forest canopy and big city blocks. LiDAR models are bare ground.</p>" +
         "<p><b>Elevation:</b> " + esc((m.sources || []).map(function (q) { return q.label; }).join("; ") || "none loaded") + ", tile zoom " + m.z + " · <b>Sampled every</b> " + Math.round(m.res_m / 2) + " m · <b>Coverage:</b> " + (m.coverage_pct >= 99.95 ? "complete" : m.coverage_pct.toFixed(1) + "%") + "</p>" +
+        lidarHtml(m.lidar, "point A") +
         "<p><b>Earth curvature:</b> " + curv + " · Sea deeper than 40 m is read as sea level</p>" +
         "<p><b>Calculated locally</b> on this device " + esc(T().dualT(ST.line.when, { date: true })) + "</p></div>";
     } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick A and B on the map (or use Line of sight from here on the long-press ring, or Profile on a line drawn with Measure), then Calculate. The result shows whether the terrain lets A see B, and the ground in between.</p>';
@@ -404,8 +432,9 @@
       if (ST.slopeAt) h += slopeCard(ST.slopeAt, true);
       h += '<div class="asm"><p class="nm">TERRAIN SLOPE</p>' +
         "<p><b>Method:</b> the steepest fall of the ground across about ±" + Math.round(s.k * g.rowM[(g.n - 1) >> 1]) + " m (the elevation " + s.k + " cell" + (s.k > 1 ? "s" : "") + " either side, east-west and north-south), the same way the landing zone finder judges slope. Short steep banks, ditches and walls narrower than that do not show.</p>" +
-        "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. Buildings, trees and walls are not in the terrain model; SRTM partly carries forest canopy and big city blocks, which can make them look like slopes. Water reads as flat.</p>" +
+        "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. Buildings, trees and walls are not in the terrain model; satellite elevation (where there is no LiDAR) partly carries forest canopy and big city blocks, which can make them look like slopes. Water reads as flat.</p>" +
         "<p><b>Elevation:</b> " + esc((g.sources || []).map(function (q) { return q.label; }).join("; ") || "none loaded") + ", tile zoom " + g.z + " · <b>Grid:</b> " + g.res + " m · <b>Coverage:</b> " + (g.coverage_pct >= 99.95 ? "complete" : g.coverage_pct.toFixed(1) + "%") + "</p>" +
+        lidarHtml(g.lidar, "the centre") +
         "<p><b>Calculated locally</b> on this device " + esc(T().dualT(s.when, { date: true })) + "</p></div>";
     } else if (!ST.busy && !ST.err) h += '<p class="msg">Pick the centre on the map and the size of the area, then Calculate. The result shades the ground by steepness: green is gentle, red is very steep.</p>';
     return h;
@@ -488,8 +517,9 @@
       "<p><b>" + (ST.ranRev ? "Can see the point" : "Visible terrain") + ":</b> " + st.visible_pct.toFixed(0) + "% · <b>" + (ST.ranRev ? "Cannot" : "Terrain-masked") + ":</b> " + (100 - st.visible_pct - st.unknown_pct).toFixed(0) + "% · <b>Unknown:</b> " + st.unknown_pct.toFixed(0) + "% of the ground within " + S.km + " km</p>" +
       (ST.ranRev ? "<p><b>Point:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Observer height:</b> " + ST.ran.tgtH + " m above the ground everywhere. Line of sight is the same both ways, so this is the viewshed from the point with the two heights swapped.</p>" :
       "<p><b>Observer:</b> " + mm(r.Zg) + " ground + " + ST.ran.obsH + " m = " + Math.round(r.Z0 * 10) / 10 + " m · <b>Target height:</b> " + ST.ran.tgtH + " m above the ground</p>") +
-      "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model, not a model of buildings or trees: walls, single trees and most buildings are not in it, while SRTM (most of the world outside Japan and the US) partly carries dense forest canopy and big city blocks, so city and jungle results are rough.</p>" +
+      "<p><b>Urban/vegetation obstruction:</b> NOT MODELED. The elevation is a terrain model, not a model of buildings or trees: walls, single trees and most buildings are not in it, while the satellite elevation used where there is no LiDAR (Copernicus 30 m, SRTM) partly carries dense forest canopy and big city blocks, so city and jungle results are rough there. LiDAR models are bare ground.</p>" +
       "<p><b>Elevation:</b> " + esc(src) + ", tile zoom " + g.z + " · <b>Grid:</b> " + g.res + " m · <b>Coverage:</b> " + (g.coverage_pct >= 99.95 ? "complete" : g.coverage_pct.toFixed(1) + "%") + "</p>" +
+      lidarHtml(g.lidar, ST.ranRev ? "the point" : "the observer") +
       (cached ? "<p><b>DEM:</b> " + (only ? "cached on this device (saved in Offline maps and data)" : "partly cached on this device") + ((g.sources || []).some(function (q) { return q.id === "saved-dem-coarse"; }) ? "; some of it coarser than asked, enlarged" : "") + "</p>" : "") +
       "<p><b>Earth curvature:</b> " + curv + " · Sea deeper than 40 m is read as sea level</p>" +
       "<p><b>Calculated locally</b> on this device " + esc(T().dualT(ST.when, { date: true })) + (navigator.onLine === false ? " · offline, from elevation already on this device" : "") + "</p></div>";
@@ -670,10 +700,11 @@
     /* reverse: the sweep runs from the point with its height (the target height), every other cell at the observer height */
     var R = S.km * 1000, res = effRes(R, RES[S.res][0]), R0 = rev(), o = opts({ observer_height_m: R0 ? S.tgtH : S.obsH, target_height_m: R0 ? S.obsH : S.tgtH, radius_m: R, curvature: S.curv, refraction: S.refr });
     ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.los = null; ST.saved = ""; losLay.clearLayers(); map.closePopup(); render();
-    getGrid(ST.obs[0], ST.obs[1], R, res, { signal: ac && ac.signal, prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.6; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (g) {
+    getGrid(ST.obs[0], ST.obs[1], R, res, { fine: S.res === "high", signal: ac && ac.signal, prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.6; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (g) {
       if (run !== RUN) return;
       if (!g.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this place on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
       ST.busy = R0 ? "Calculating the reverse viewshed…" : "Calculating the viewshed…"; ST.at = 0.7; render();
+      res = g.res;
       var f = res < 90 && g.n > 401 ? Math.round(90 / res) : 0;
       return engineRun(g, o, f, function (m) {
         if (run !== RUN) return;
@@ -695,7 +726,7 @@
     ac = W.AbortController ? new AbortController() : null;
     var path = P.length > 2, o = opts({ observer_height_m: S.obsH, target_height_m: S.tgtH, curvature: !path && S.curv, refraction: !path && S.refr });
     ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.line.x = null; losLay.clearLayers(); render();
-    return lineRun(P, { res: RES[S.res][0], hA: path ? 0 : o.obsH, hB: path ? 0 : o.tgtH, curvature: o.curvature, k: o.k, signal: ac && ac.signal,
+    return lineRun(P, { res: RES[S.res][0], fine: S.res === "high", hA: path ? 0 : o.obsH, hB: path ? 0 : o.tgtH, curvature: o.curvature, k: o.k, signal: ac && ac.signal,
       prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.9; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (x) {
       if (run !== RUN) return;
       if (!x.meta.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this line on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
@@ -717,7 +748,7 @@
     ac = W.AbortController ? new AbortController() : null;
     var R = slopeKm() * 1000, res = effRes(R, RES[S.res][0]);
     ST.busy = "Loading elevation…"; ST.err = ""; ST.at = 0; ST.slope = null; ST.slopeAt = null; map.closePopup(); lay.clearLayers(); img = null; obsMark = null; ring = null; render();
-    getGrid(ST.obs[0], ST.obs[1], R, res, { signal: ac && ac.signal, prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.8; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (g) {
+    getGrid(ST.obs[0], ST.obs[1], R, res, { fine: S.res === "high", signal: ac && ac.signal, prog: function (d, n) { if (run !== RUN) return; ST.at = d / n * 0.8; ST.busy = "Loading elevation " + d + " of " + n + " tiles…"; render(); } }).then(function (g) {
       if (run !== RUN) return;
       if (!g.sources.length) throw new Error(navigator.onLine === false ? "No elevation for this place on this device, and no connection to download it." : "The elevation tiles did not load. Check the connection and try again.");
       ST.busy = "Working out the slope…"; ST.at = 0.85; render();
@@ -972,7 +1003,7 @@
     else if (k === "el") {
       var out = box.querySelector(".el"); out.textContent = "Looking up…";
       elevationAt(P[0], P[1]).then(function (r) {
-        out.innerHTML = r.nodata ? (r.failed ? "The elevation did not load. Check the connection." : "No elevation data here.") : "<b>" + Math.round(r.elev_m) + " m MSL</b> ground elevation<br><span style=\"font-size:11.5px\">" + esc(r.sources.map(function (s) { return s.label; }).join("; ")) + ", about " + Math.round(r.res_m) + " m pixels. Terrain model, not a survey.</span>";
+        out.innerHTML = r.nodata ? (r.failed ? "The elevation did not load. Check the connection." : "No elevation data here.") : "<b>" + Math.round(r.elev_m) + " m MSL</b> ground elevation<br><span style=\"font-size:11.5px\">" + esc(r.sources.map(function (s) { return s.label; }).join("; ")) + ", about " + Math.round(r.res_m) + " m pixels. " + (r.lidar && r.lidar.centre ? esc(W.OSAP_LIDAR.classOf(r.lidar.centre.res) ? W.OSAP_LIDAR.classOf(r.lidar.centre.res).name : "") + " here (" + esc(r.lidar.centre.name) + ")" : r.lidar ? "No LiDAR here: satellite elevation" : "") + ". Terrain model, not a survey.</span>";
       }, function (e2) { out.textContent = (e2 && e2.message) || "The elevation did not load."; });
     } else if (k.charAt(0) === "x") { map.closePopup(MENU.pop); var t = MENU.extra[+k.slice(1)]; try { t.run(L.latLng(P[0], P[1])); } catch (x) {} }
   });
@@ -1068,7 +1099,8 @@
       /* as the engine ran it: for a reverse viewshed the "observer" is the point and target_height_m the observers' height */
       observer: { lat: r5(ST.obs[0]), lon: r5(ST.obs[1]), height_m: o.obsH }, target_height_m: o.tgtH,
       radius_m: o.radius_m, terrain_resolution_m: g.res, curvature: !!o.curvature, refraction: !!o.k, refraction_k: o.k || K_REFR,
-      dem_source: "OSAP DEM", dem_detail: { provider: (g.sources || []).map(function (q) { return q.id; }).join(","), zoom: g.z, coverage_pct: Math.round(g.coverage_pct * 10) / 10 },
+      dem_source: "OSAP DEM", dem_detail: { provider: (g.sources || []).map(function (q) { return q.id; }).join(","), zoom: g.z, coverage_pct: Math.round(g.coverage_pct * 10) / 10,
+        lidar: g.lidar ? { at_observer: g.lidar.centre ? { model: g.lidar.centre.name, res_m: g.lidar.centre.res, licence: g.lidar.centre.licence } : null, share_pct: Math.round(g.lidar.share_pct) } : null },
       terrain_model: "DEM (terrain only)", urban_vegetation: "not modeled", engine: "osap-viewshed/1",
       result: { visible_pct: Math.round(r.stats.visible_pct * 10) / 10, unknown_pct: Math.round(r.stats.unknown_pct * 10) / 10, observer_ground_m: Math.round(r.Zg * 10) / 10 },
       created: old ? old.created : now, calculated: now, cc: (W.TSAP && W.TSAP.country) || "", on: old ? old.on !== false : true,
@@ -1169,7 +1201,11 @@
     if (S.mode !== "los") setMode("los"); open(); pickEnd(); lineReset(pts); render(); return calcLine();
   }
   /* the ground height at one point: { elev_m, nodata, res_m, sources } */
-  function elevationAt(lat, lon) { return need().then(function (SRC) { return SRC.elevationAt(lat, L.Util.wrapNum(lon, [-180, 180], true)); }); }
+  function elevationAt(lat, lon) {
+    lon = L.Util.wrapNum(lon, [-180, 180], true);
+    var li = null;
+    return need().then(function () { return lidarInfo([[lat, lon]]); }).then(function (x) { li = x; return W.OSAP_TERRAIN_SRC.elevationAt(lat, lon); }).then(function (r) { r.lidar = li; return r; });
+  }
   /* the ground along a line: { total_m, samples: [{ dist_m, elev_m, nodata }], los, block_m, max_elev_m, max_at_m, res_m,
      coverage_pct, sources }. opt: { res_m, hA, hB, curvature, k } (the heights at A and B in metres above the ground) */
   function profile(a, b, opt) {
@@ -1178,8 +1214,16 @@
   }
   /* the ground along points [[lat, lon], ...] and, for two points, the line of sight between them (engine losAlong) */
   function lineRun(pts, o) {
-    return need().then(function (SRC) {
-      return SRC.line(pts.map(function (p) { return [+p[0], +p[1]]; }), o.res, { signal: o.signal, prog: o.prog }).then(function (r) {
+    var li = null, P = pts.map(function (p) { return [+p[0], +p[1]]; });
+    /* the points checked for LiDAR: A, then every vertex and 10 points between each pair */
+    var chk = [P[0]];
+    for (var i = 1; i < P.length; i++) for (var f = 1; f <= 10; f++) chk.push([P[i - 1][0] + (P[i][0] - P[i - 1][0]) * f / 10, P[i - 1][1] + (P[i][1] - P[i - 1][1]) * f / 10]);
+    if (chk.length > 80) chk = chk.filter(function (_, k) { return k % Math.ceil(chk.length / 80) === 0; });
+    return need().then(function () { return lidarInfo(chk); }).then(function (x) {
+      li = x; var SRC = W.OSAP_TERRAIN_SRC;
+      var res = o.fine && li && li.best && li.best.res <= 5 && li.share_pct >= 50 ? Math.min(o.res, Math.max(1, li.best.res)) : o.res;
+      return SRC.line(P, res, { signal: o.signal, prog: o.prog }).then(function (r) {
+        r.lidar = li;
         return onPage().then(function (VS) {
           var x = VS.losAlong(r.samples, { hA: o.hA, hB: o.hB, curvature: !!o.curvature, k: o.k || 0 });
           x.meta = r; x.path = pts.length > 2; x.vertices = r.vertices;

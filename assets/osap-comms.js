@@ -896,6 +896,8 @@ function main() {
     /* masts sit on a canvas that ignores the pointer, so a tap on one reaches here as a tap on the map: leave it to the
        mast (its info box), or the place check it started redrew the masts and closed the box straight away */
     if (shown.length && mastAt(e)) return false;
+    /* Comms planning is waiting for a tap to set a terrain link end (Link tab) */
+    if (W.OSAP_COMMSPLAN && W.OSAP_COMMSPLAN.picking && W.OSAP_COMMSPLAN.picking()) return false;
     return true;
   }
   W.addEventListener("pointerdown", function (e) { down = mine(e) ? [e.clientX, e.clientY] : null; }, true);
@@ -914,7 +916,7 @@ function main() {
 
   var st = D.createElement("style");
   st.textContent = ".comsec h3{margin-bottom:6px}.combtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}.combtns button{flex:1 1 auto}" +
-    ".combtns button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}" +
+    ".combtns button[aria-pressed=true]{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}" +
     ".comtg{display:flex;align-items:center;gap:6px;margin:3px 0}.comn{color:var(--muted);font-size:12px}" +
     ".comsw{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}" +
     ".comsq{display:inline-block;width:12px;height:12px;margin-right:2px;vertical-align:middle;opacity:.8}" +

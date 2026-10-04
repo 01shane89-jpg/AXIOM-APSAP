@@ -6,6 +6,7 @@
 
 # script tags
 <script src="assets/osap-start.js"></script>
+<script src="assets/osap-lock.js"></script>
 <script src="assets/vendor/leaflet-1.9.4.js"></script>
 <script src="assets/osap-symbols.js"></script>
 <script src="assets/osap-work.js"></script>
@@ -109,6 +110,7 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
 <script src="assets/osap-facility-intel.js"></script>
 <script src="assets/osap-medplan-decide.js"></script>
+<script src="assets/osap-medplan-air.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
@@ -128,9 +130,16 @@ data-ev-tlr="1"
 
 # move saved data to another device: encrypted backup file, no account (claude/move-device)
 <script src="assets/osap-move.js"></script>
+
+# the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
+<script src="assets/osap-guide.js"></script>
 offline: { name: "Offline map"
 
 # terrain analysis: viewshed and line of sight (claude/terrain-viewshed)
 <script src="assets/osap-terrain.js"></script>
 data-terrain-open
 id="ml-viewsheds"
+
+# the map pans round the globe without end; drawings follow onto the world copy in view (claude/map-wrap-globe)
+/* ---------- the map wraps round the globe ----------
+L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
