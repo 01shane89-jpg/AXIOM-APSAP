@@ -213,6 +213,8 @@ function fuelClass(src, name, t = {}) {
   if (/bio|waste|wood|straw|landfill|refuse|cogeneration/.test(f)) return "bio";
   return "other";
 }
+/* palm, coconut and other food oils are not fuel */
+const EDIBLE = "palm|coconut|vegetable|olive|edible|cooking|soy|sunflower|rice bran|copra|food|crude palm|cpo";
 const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
 /* OpenStreetMap is read through Postpass (Geofabrik's keyless SQL API over a live OpenStreetMap database; public Overpass servers
    time out or refuse GitHub's runners on whole-world tag searches). The world is read in tiles (30 degrees of longitude by three
@@ -236,14 +238,15 @@ async function osm() {
   const W = { af: `tags->>'aeroway' IN ('aerodrome','heliport')`, port: `(tags->>'landuse' = 'port' OR tags->>'industrial' = 'port' OR (tags->>'amenity' = 'ferry_terminal' AND tags ? 'name'))`,
     dam: `tags->>'waterway' = 'dam' AND tags ? 'name'`, plant: `tags->>'power' = 'plant'`,
     /* few refineries carry industrial=refinery: also works that make oil, gas or fuel, storage that holds them, and sites named so */
-    oilgas: `(tags->>'industrial' IN ('refinery','oil','gas','fuel','fuel_depot','oil_storage','lng','petroleum_terminal','oil_terminal','gas_terminal')` +
-      ` OR (tags->>'man_made' = 'works' AND tags->>'product' ~* '(oil|petrol|diesel|fuel|gasoline|kerosene|lng|lpg|natural gas|bitumen)')` +
+    fuelsite: `(tags->>'industrial' IN ('refinery','oil','gas','fuel','fuel_depot','oil_storage','lng','petroleum_terminal','oil_terminal','gas_terminal')` +
+      ` OR (tags->>'man_made' = 'works' AND tags->>'product' ~* '(oil|petrol|diesel|fuel|gasoline|kerosene|lng|lpg|natural gas|bitumen)' AND tags->>'product' !~* '${EDIBLE}')` +
       ` OR (tags->>'industrial' IN ('storage','depot','terminal') AND coalesce(tags->>'product', tags->>'content', '') ~* '(oil|petrol|diesel|fuel|gasoline|lng|lpg|gas)')` +
-      ` OR ((tags->>'landuse' = 'industrial' OR tags ? 'industrial' OR tags->>'man_made' = 'works') AND tags->>'name' ~* '(refinery|refineries|lng terminal|oil terminal|fuel terminal|oil depot|fuel depot|petroleum depot|tank farm)'))`,
+      ` OR ((tags->>'landuse' = 'industrial' OR tags ? 'industrial' OR tags->>'man_made' = 'works') AND coalesce(tags->>'name:en', tags->>'name', '') ~* '(oil refinery|petroleum refinery|refinery|refineries|lng terminal|oil terminal|fuel terminal|oil depot|fuel depot|petroleum depot|tank farm)'` +
+      ` AND coalesce(tags->>'name:en', tags->>'name', '') !~* '(sugar|salt|${EDIBLE})'))`,
     pipe: `tags->>'man_made' = 'pipeline' AND tags->>'substance' IN ('gas','oil','fuel','natural_gas','petroleum','crude_oil','lng','lpg','hydrocarbons','diesel','kerosene','gasoline')` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
-  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|oilgas|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuelsite|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
   for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
     const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
@@ -326,8 +329,9 @@ async function osm() {
       out.push({ k: "plant", t: cl, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xp });
       continue;
     }
-    if (e.part === "oilgas") {
+    if (e.part === "fuelsite") {
       const what = [t.industrial, t.product, t.content, nm, t.name].join(" ");
+      if (new RegExp(EDIBLE, "i").test([t.product, t.content, nm].join(" "))) continue;
       const kind = /refin/i.test(what) || (t.man_made === "works" && /oil|petrol|diesel|gasoline|kerosene|bitumen/i.test(t.product || "")) ? "R"
         : /\blng\b/i.test(what) ? "L" : /depot|storage|terminal|tank farm/i.test(what) || /^fuel/.test(t.industrial || "") ? "T" : "G";
       const xf = Object.fromEntries([["facility", clip((t.industrial || (t.man_made === "works" ? "works" : "")).replace(/_/g, " "), 30)], ["product", clip(t.product || t.content, 40)],
@@ -408,6 +412,32 @@ async function wikiplants() {
   return [...by.values()];
 }
 
+/* ---------- Wikidata refineries and LNG terminals ---------- */
+/* classes found by their English label, so a renumbered item does not silently empty the list */
+async function wikifuel() {
+  const q = `SELECT ?item ?itemLabel ?coord ?a2 ?clsLabel ?inc WHERE {
+  VALUES ?lbl { "oil refinery"@en "petroleum refinery"@en "refinery"@en "LNG terminal"@en "liquefied natural gas terminal"@en "oil terminal"@en "oil depot"@en "tank farm"@en }
+  ?cls rdfs:label ?lbl. ?item wdt:P31/wdt:P279* ?cls; wdt:P625 ?coord.
+  OPTIONAL { ?item wdt:P17 ?c. ?c wdt:P297 ?a2. } OPTIONAL { ?item wdt:P571 ?inc. }
+  FILTER NOT EXISTS { ?item wdt:P576 ?gone. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". } }`;
+  const j = JSON.parse(await get(WDQS, { method: "POST", body: "query=" + encodeURIComponent(q),
+    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 290000));
+  const by = new Map();
+  for (const b of j.results.bindings) {
+    const m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const qid = b.item.value.split("/").pop(); if (by.has(qid)) continue;
+    const lon = +m[1], lat = +m[2], cc = ccOf(lat, lon, ccFromA2(b.a2 && b.a2.value)); if (!cc) continue;
+    const nm = b.itemLabel && b.itemLabel.value !== qid ? b.itemLabel.value : ""; if (!nm) continue;
+    const cls = (b.clsLabel && b.clsLabel.value) || "";
+    if (new RegExp(EDIBLE + "|sugar|salt", "i").test(nm)) continue;
+    const t = /lng|liquefied/i.test(cls + " " + nm) ? "L" : /refiner/i.test(cls) ? "R" : "T";
+    by.set(qid, { k: "fuel", t, cc, id: "wd:" + qid, nm: clip(nm), la: r4(lat), lo: r4(lon), s: "wdf", u: "https://www.wikidata.org/wiki/" + qid,
+      x: Object.fromEntries([["facility", clip(cls, 40)], ["built", b.inc ? String(b.inc.value).slice(0, 4) : null]].filter((p) => p[1])) });
+  }
+  return [...by.values()];
+}
+
 /* ---------- TeleGeography submarine cables ---------- */
 async function cables() {
   const lp = JSON.parse(await get(TG + "landing-point/landing-point-geo.json"));
@@ -473,6 +503,7 @@ const SRC = {
   wd: { name: "Wikidata", lic: "CC0", link: "https://www.wikidata.org/wiki/Q12323" },
   wri: { name: "WRI Global Power Plant Database", lic: "CC BY 4.0", link: "https://datasets.wri.org/dataset/globalpowerplantdatabase" },
   wdp: { name: "Wikidata (power stations)", lic: "CC0", link: "https://www.wikidata.org/wiki/Q159719" },
+  wdf: { name: "Wikidata (refineries and terminals)", lic: "CC0", link: "https://www.wikidata.org/" },
   tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
 };
 const got = {}, status = {};
@@ -494,16 +525,17 @@ await run("osm", osm);
 await run("wd", wikidams);
 await run("wri", wriPlants);
 await run("wdp", wikiplants);
+await run("wdf", wikifuel);
 await run("tg", cables);
 
 /* one site, several sources: the first list to have it leads; a later source's record within reach is folded in as "also listed
    by" (its link kept, its extra details added where the lead has none); anything new is added */
-const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 0 };
+const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 3000 };
 function merge(lists, k, reach) {
   const lead = [], g = new Map(), key = (la, lo) => Math.floor(la / 0.05) + ":" + Math.floor(lo / 0.05);
   const find = (i, m) => { const a = Math.floor(i.la / 0.05), b = Math.floor(i.lo / 0.05); let best = null, bd = m;
     for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) {
-      if (k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? false : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
+      if (k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? !(o.t === i.t || o.t === "G" || i.t === "G") : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
       const d = dist(i.la, i.lo, o.la, o.lo); if (d < bd) { bd = d; best = o; } }
     return best; };
   let folded = 0;
@@ -515,6 +547,7 @@ function merge(lists, k, reach) {
       for (const [kk, v] of Object.entries(i.x || {})) if (o.x[kk] == null && kk !== "approx") o.x[kk] = v;
       if (!o.nm && i.nm) o.nm = i.nm;
       if (k === "plant" && o.t === "other" && i.t !== "other") o.t = i.t;
+      if (k === "fuel" && o.t === "G" && i.t !== "G") o.t = i.t;
       folded++; continue;
     }
     const c = { ...i, x: { ...(i.x || {}) } }; lead.push(c);
@@ -529,7 +562,8 @@ const merged = [
   ...merge([got.osm.items, got.wd.items], "dam", REACH.dam).filter((i) => i.s !== "wd" || (i.x.height_m || 0) >= 15 || i.x.reservoir),
   /* WRI leads (capacity and fuel for every plant); OpenStreetMap and Wikidata add plants built since and smaller ones */
   ...merge([got.wri.items, got.osm.items, got.wdp.items], "plant", REACH.plant),
-  ...got.osm.items.filter((i) => i.k === "fuel"),
+  /* OpenStreetMap leads (it has the site's outline); Wikidata adds refineries and terminals it lacks */
+  ...merge([got.osm.items, got.wdf.items], "fuel", REACH.fuel),
 ];
 /* a private OpenStreetMap-only strip is left out */
 const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));

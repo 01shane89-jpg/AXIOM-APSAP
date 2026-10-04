@@ -26,7 +26,7 @@
     { k: "dam", name: "Dams", sub: "Named dams (OpenStreetMap, Wikidata)", items: ["dam"] },
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: "cable" },
     { k: "plant", name: "Power plants", sub: "Every fuel, coloured by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
-    { k: "fuel", name: "Refineries, fuel depots and pipelines", sub: "Refineries, LNG and oil terminals, fuel depots, oil and gas pipelines (OpenStreetMap)", items: ["fuel"], lines: "pipe" }
+    { k: "fuel", name: "Refineries, fuel depots and pipelines", sub: "Refineries, LNG and oil terminals, fuel depots (OpenStreetMap, Wikidata), oil and gas pipelines (OpenStreetMap)", items: ["fuel"], lines: "pipe" }
   ];
   /* power plant fuels, in the order of the filter: [label, colour] */
   var FUELS = [["coal", "Coal", "#343a40"], ["gas", "Gas", "#f08c00"], ["oil", "Oil and diesel", "#8d5524"], ["nuclear", "Nuclear", "#ae3ec9"],
@@ -36,9 +36,9 @@
   var PIPE = { gas: ["Gas pipeline", "#f08c00"], oil: ["Oil pipeline", "#6f4518"], fuel: ["Fuel pipeline", "#d9480f"] };
   var S = { on: {}, data: null, got: {}, busy: false, err: "", ix: null, cc: "", n: {}, off: {} };
   var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", locode: "UN/LOCODE", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map",
-    wri: "WRI Global Power Plant Database", wdp: "Wikidata" };
+    wri: "WRI Global Power Plant Database", wdp: "Wikidata", wdf: "Wikidata" };
   var LIC = { oa: "OurAirports (public domain)", wpi: "NGA World Port Index, Pub. 150 (public domain, U.S. Government)", osm: "&copy; OpenStreetMap contributors (ODbL)",
-    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
+    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", wdf: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
     wri: "WRI Global Power Plant Database (CC BY 4.0; last updated 2021)" };
   /* what each point is, its colour and whether it is big enough to draw at every zoom */
   var TYPE = {
