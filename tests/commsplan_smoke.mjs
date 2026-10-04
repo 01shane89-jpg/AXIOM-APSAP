@@ -90,6 +90,43 @@ const pane = (p) => p.textContent("#cp-pane");
   ok(/does not test any network/.test(sp), "says OSAP does not test the network");
   if (OUT) await p.screenshot({ path: OUT + "/commsplan-status.png" });
 
+  // comms check log updates the board
+  await p.click('[data-cpsub="checks"]');
+  await p.fill("#cpcl-st", 'Base <b>x</b>'); await p.fill("#cpcl-net", "Team net"); await p.selectOption("#cpcl-r", "weak"); await p.fill("#cpcl-q", "3x2");
+  await p.fill("#cpcl-pb", "broken audio"); await p.selectOption("#cpcl-row", "P"); await p.click('[data-cl="add"]');
+  let lg = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-checks")));
+  ok(lg.length === 1 && lg[0].result === "weak" && lg[0].q === "3x2", "check logged on the device");
+  ok(await p.evaluate(() => window.OSAP_COMMSPLAN.state().pace.plans[0].phases[0].rows.P.status === "amber"), "a weak check turns the primary AMBER on the board");
+  ok(await p.evaluate(() => !document.querySelector("#cp-pane b b") && /Base <b>x<\/b>/.test(document.querySelector("#cp-pane .cplog").textContent)), "station name shown as text, never as markup");
+  await p.fill("#cpcl-st", "Base"); await p.fill("#cpcl-t", "0630"); await p.click('[data-cl="add"]');
+  lg = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-checks")));
+  ok(lg.length === 2 && new Date(lg.find((x) => x.station === "Base").t).toISOString().slice(11, 16) === "06:30", "a typed Zulu time is used");
+  // traffic log with acknowledgements
+  await p.click('[data-cpsub="traffic"]');
+  await p.fill("#cptl-f", "Team"); await p.fill("#cptl-to", "Base"); await p.selectOption("#cptl-p", "Priority"); await p.fill("#cptl-s", "SITREP 3"); await p.click('[data-tl="add"]');
+  ok(/1 awaiting acknowledgement/.test(await pane(p)) && await p.evaluate(() => /1/.test(document.querySelector('[data-cpsub="traffic"]').textContent)), "message awaiting acknowledgement is counted");
+  await p.click('[data-tl="ack"]');
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-traffic"))[0].ack === "done") && /0 awaiting/.test(await pane(p)), "Acknowledged clears it");
+  // interference reports: grouped, drawn, never attributed
+  await p.click('[data-cpsub="intf"]');
+  await p.fill("#cpif-n", "steady carrier"); await p.click('[data-if="add"]'); await p.click('[data-if="add"]');
+  const it = await pane(p);
+  ok(/1 other within 10 km and 24 h, same band/.test(it), "two reports near each other are grouped");
+  ok(/does not listen, locate or attribute/.test(it), "says it does not locate or attribute a source");
+  ok(await p.evaluate(() => Object.values(window.__asapMap._layers).filter((l) => l.options && l.options.fillColor === "#d9480f").length === 2), "reports drawn on the map");
+  await tab(p, "plan");
+  ok(await p.evaluate(() => Object.values(window.__asapMap._layers).filter((l) => l.options && l.options.fillColor === "#d9480f").length === 0), "leaving Status takes the reports off the map");
+  await tab(p, "status");
+  // troubleshooting walk-through
+  await p.click('[data-cpsub="fix"]');
+  await p.click('[data-fx="ok"]'); await p.click('[data-fx="bad"]');
+  for (let i = 0; i < 6; i++) await p.click('[data-fx="skip"]');
+  ok(/Look first at:\s*Antenna/.test(await pane(p)) && /do not prove the cause/.test(await pane(p)), "troubleshooting points to the antenna without claiming a cause");
+  await p.fill("#cpfx-n", "replaced whip antenna"); await p.click('[data-fx="log"]');
+  lg = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-checks")));
+  ok(lg.some((x) => x.station === "Troubleshooting" && /Antenna/.test(x.problem) && x.action === "replaced whip antenna"), "the outcome goes into the check log");
+  await p.click('[data-cpsub="board"]');
+
   // link
   await tab(p, "link");
   let lt = await pane(p);
