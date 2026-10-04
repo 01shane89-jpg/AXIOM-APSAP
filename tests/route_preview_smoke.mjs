@@ -72,6 +72,7 @@ async function open(offline) {
       calls.kv++;
       const pd = new URLSearchParams(r.request().postData() || ""), lat = +pd.get("lat"), lon = +pd.get("lng"), t = tOf(lat);
       if (t > 0.5 && t < 0.72) return r.abort();               /* KartaView fails here: Panoramax must still be used */
+      if (t > 0.37 && t < 0.45) return J(r, { status: { httpCode: 200 }, currentPageItems: [] });   /* a stretch with no pictures: Drive skips it */
       if (t <= 0.5) return J(r, { status: { httpCode: 200 }, currentPageItems: [{ id: "9" + Math.round(t * 1e4), sequence_id: "123", sequence_index: "4", lat: String(lat + 0.0001), lng: String(lon),
         name: "storage13/files/photo/2026/6/12/proc/1_a.jpg", lth_name: "storage13/files/photo/2026/6/12/lth/1_a.jpg", shot_date: "2026-06-12 07:35:32.000", heading: "189.00", projection: "PLANE", username: "someone" }] });
       return J(r, { status: { httpCode: 200 }, currentPageItems: [] });
@@ -199,6 +200,8 @@ let ctx, errors, p;
   v = await p.evaluate(() => { const e = document.getElementById("rtdv"), r = e.getBoundingClientRect(), mr = window.__asapMap.getContainer().getBoundingClientRect(), pv = document.getElementById("rtpv").firstElementChild.getBoundingClientRect();
     return { vis: !e.hidden && r.width > 300 && r.height > 300, over: r.left >= mr.left - 1 && r.right <= pv.left + 1, tag: e.querySelector(".rtdv-tag").textContent, img: getComputedStyle(e.querySelector(".rtdv-img")).backgroundImage, car: !!document.querySelector(".rtdv-car") }; });
   ok(v.vis && v.over, "Drive fills the map area beside the preview, inside OSAP");
+  ok((await st(p)).drive && (await p.evaluate(() => document.querySelector('#rtdv [data-dvs="spd"]').value)) === "4", "Drive starts at 4×, one picture every 60 m or more");
+  ok(await p.evaluate(() => !!document.querySelector("#rtdv .rtdv-lay.in")), "frames fade in over each other");
   ok(d.prov === "kartaview" && /KartaView · captured 12 JUN 2026/.test(v.tag) && /Visual reference: how this looked then, not now/.test(v.tag) && /openstreetcam/.test(v.img), "each frame shows its picture with provider, capture date, age and the visual-reference note");
   ok(v.car, "the map shows the car where the picture was taken");
   ok(ctx.pages().length === pages0, "nothing opens outside OSAP");
@@ -220,10 +223,18 @@ let ctx, errors, p;
   await p.click('#rtdv [data-dv="look"]');
   ok((await st(p)).drive.yaw === 0, "Look ahead turns the view back along the road");
   /* where no street picture exists: satellite, dated, said in words */
-  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent) && /to the end/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 10000 }).catch(() => {});
   d = (await st(p)).drive;
   v = await p.evaluate(() => ({ tag: document.querySelector("#rtdv .rtdv-tag").textContent, img: !!document.querySelector("#rtdv .rtpv-satw img") }));
-  ok(d.kind === "sat" && v.img && /No street pictures here · Satellite · captured 05 MAR 2026/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such");
+  ok(d.kind === "sat" && v.img && /Satellite · captured 05 MAR 2026/.test(v.tag) && /No street pictures from here to the end/.test(v.tag) && !/Skip ahead/.test(v.tag), "a stretch without street pictures shows dated satellite, labelled as such, and says how far it runs (" + d.kind + ": " + v.tag.slice(0, 160) + ")");
+  /* a gap with pictures after it: say how long it is and offer to skip it */
+  await seek(0.38); await p.waitForFunction(() => /No street pictures for the next/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 8000 }).catch(() => {});
+  v = await p.evaluate(() => document.querySelector("#rtdv .rtdv-tag").textContent);
+  ok(/No street pictures for the next \d/.test(v) && /Skip ahead/.test(v), "inside a gap Drive says how long it is and offers to skip it (" + v.slice(0, 120) + ")");
+  const g0 = (await st(p)).drive.m;
+  await p.click('#rtdv [data-dv="skip"]'); await p.waitForFunction((m) => { const d = window.OSAP_PREVIEW.state().drive; return d.kind === "street" && d.m > m + 300; }, g0, { timeout: 8000 }).catch(() => {});
+  d = (await st(p)).drive;
+  ok(d.kind === "street" && d.m > g0 + 300, "Skip ahead jumps to the next street picture (" + Math.round(g0) + " → " + Math.round(d.m) + " m)");
   ok(d.chunks.some((c) => c.st === "done" && c.n > 0) && d.chunks.some((c) => c.st === "done" && c.n === 0), "the route strip knows where pictures were and were not found");
   /* it drives on its own */
   await seek(0.02); await p.waitForTimeout(400);
