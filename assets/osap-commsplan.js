@@ -9,6 +9,7 @@
                 providers switches of assets/osap-comms.js
      Equipment  battery and power planner
      Status     network status board for the plan's current phase (GREEN / AMBER / RED / UNKNOWN, last check, note)
+   Status also holds the comms check log, the message / traffic log, interference reports and a troubleshooting walk-through.
    Everything the operator enters stays on this device, in the active workspace (assets/osap-ws.js), and is never sent anywhere.
    Every answer is labelled with its basis: MODELLED (worked out here), OBSERVED (measured), REPORTED (an outside feed) or
    the operator's own judgement; unknown is never shown as "no". The maths is assets/comms/radio-lib.js (window.OSAP_RADIO). */
@@ -162,8 +163,8 @@
   }
 
   /* ---------- Status board (the plan's current phase) ---------- */
-  function renderStatus() {
-    var el = pane(), d = loadPace(), p = curPlan(d);
+  function renderBoard(el) {
+    var d = loadPace(), p = curPlan(d);
     if (!p) { el.innerHTML = '<div class="sec cpsec"><h3>Network status</h3><p class="obs">Make a PACE plan first (Plan tab): the status board shows each of its nets.</p><div class="cpbtns"><button type="button" data-cptab="plan">Open the Plan tab</button></div></div>'; return; }
     var ph = phaseOf(p, p.cur_phase) || p.phases[0];
     var h = '<div class="sec cpsec"><h3>Network status</h3><div class="cpbtns"><label>Plan <b>' + E(p.name) + '</b></label><label>Phase <select data-cps="phase">' +
@@ -183,7 +184,7 @@
     el.innerHTML = h + (down ? '<div class="sec cpsec cpwarn"><b>' + down.k[1] + " is RED.</b> " + (down.r.trigger ? "Your failure trigger: " + E(down.r.trigger) + ". " : "") + (down.r.action ? "Your plan says: " + E(down.r.action) + ". " : "") +
       (down.next ? "Next in the plan: " + down.next.k[1] + " (" + E(down.next.r.method || "method not set") + ")." : "") + "</div>" : "");
   }
-  function statusAct(t) {
+  function boardAct(t) {
     var d = loadPace(), p = curPlan(d); if (!p) return;
     var ph = phaseOf(p, p.cur_phase) || p.phases[0], k, r;
     if (t.getAttribute("data-cps") === "phase") { p.cur_phase = t.value; savePace(d); render(); return; }
@@ -192,6 +193,203 @@
     else if ((k = t.getAttribute("data-cpsn"))) { r = ph.rows[k]; if (!r) return; r.snote = clip(t.value, 160); p.updated = Date.now(); savePace(d); return; }
     else return;
     p.updated = Date.now(); savePace(d); render();
+  }
+
+  /* ---------- Status tab: board, comms check log, message / traffic log, interference reports, troubleshooting ----------
+     All entries are what the operator records; OSAP tests, listens to and collects nothing. Kept on this device in the active
+     workspace (osap-cp-checks, osap-cp-traffic, osap-cp-intf), newest first, capped so storage cannot fill. */
+  var KC = "osap-cp-checks", KM = "osap-cp-traffic", KI = "osap-cp-intf", KS = "osap-cp-sub", MAXLOG = 500;
+  var SUBS = [["board", "Board"], ["checks", "Check log"], ["traffic", "Traffic"], ["intf", "Interference"], ["fix", "Troubleshoot"]];
+  var RES = [["ok", "OK", "green"], ["weak", "Weak / broken", "amber"], ["fail", "Failed", "red"], ["none", "No contact", "red"]];
+  var PREC = ["Routine", "Priority", "Immediate", "Flash"];
+  var SEV = [["low", "Low"], ["moderate", "Moderate"], ["severe", "Severe"]];
+  var IMP = [["none", "No effect"], ["degraded", "Degraded"], ["lost", "Comms lost"]];
+  var FIX = [
+    ["power", "Power", ["Battery charged and seated; the right battery for the set", "Power switch on, indicator lit, voltage normal", "Cold: warm the battery or swap in a warm one", "Spare battery or other power source tried"]],
+    ["antenna", "Antenna", ["Right antenna for the band, fully connected", "Not damaged, bent or shorted against metal or ground", "Orientation and polarisation match the other station", "HF: counterpoise or ground laid out"]],
+    ["cable", "Cable and connectors", ["Connectors clean, dry and tight", "No crushed, kinked or cut cable", "Right adapters in the chain", "Spare cable tried"]],
+    ["prog", "Programming", ["Right frequency, channel or net loaded", "Right mode, bandwidth and power setting", "Fill or keying status current and matching the other station (status only, never key data)", "Time synchronised where the system needs it", "Volume and squelch set"]],
+    ["net", "Network and schedule", ["Other station is on and inside its comms window", "Right callsigns, net and schedule", "Net control or gateway reachable by another means", "Satellite or cellular service active on this device"]],
+    ["path", "Line of sight and distance", ["Within the planned range (Link tab)", "No hill or ridge between the stations", "Moved to higher ground or raised the antenna", "Relay or retrans available"]],
+    ["intf", "Interference", ["Noise or a carrier heard on the channel", "Generators, vehicles or electronics close to the antenna", "Alternate channel or frequency tried"]],
+    ["ext", "Outside infrastructure", ["Internet outage reported for the country (Networks tab)", "Mast, repeater or gateway reported down", "Weather or space weather affecting the band"]]];
+  var FS = { step: 0, res: {}, note: "" };
+
+  function logs(k) { var v = get(k, []); return Array.isArray(v) ? v : []; }
+  function saveLog(k, v) { if (v.length > MAXLOG) v.length = MAXLOG; if (!put(k, v)) note("This device's storage is full: the entry was not saved."); }
+  function fv(sel) { var el = S.ctx.rail.querySelector(sel); return el ? el.value : ""; }
+  /* a typed time "0630" or "06:30" is read as today in Zulu (yesterday if that is still ahead); blank is now */
+  function zTime(s) {
+    var m = /^\s*(\d{1,2}):?(\d{2})\s*z?\s*$/i.exec(s || ""); if (!m || +m[1] > 23 || +m[2] > 59) return Date.now();
+    var d = new Date(); d.setUTCHours(+m[1], +m[2], 0, 0); var t = d.getTime(); if (t > Date.now() + 60000) t -= 86400000; return t;
+  }
+  function zT(ms) { var d = new Date(ms); return ("0" + d.getUTCDate()).slice(-2) + " " + ("0" + d.getUTCHours()).slice(-2) + ("0" + d.getUTCMinutes()).slice(-2) + "Z"; }
+  function nets() {
+    var p = curPlan(loadPace()), o = []; if (!p) return o;
+    var ph = phaseOf(p, p.cur_phase) || p.phases[0];
+    PACE.forEach(function (k) { var r = ph.rows[k[0]]; if (r && (r.net || r.method)) o.push([k[0], k[0] + " · " + (r.net || r.method)]); });
+    return o;
+  }
+
+  function renderStatus() {
+    var el = pane(), sub = S.sub || "board";
+    var h = '<div class="cpsub" role="group" aria-label="Status views">' + SUBS.map(function (s) { return '<button type="button" data-cpsub="' + s[0] + '" aria-pressed="' + (s[0] === sub) + '">' + s[1] + (s[0] === "traffic" ? pendingBadge() : "") + "</button>"; }).join("") + "</div><div id=\"cp-sub\"></div>";
+    el.innerHTML = h;
+    var box = el.querySelector("#cp-sub");
+    if (sub !== "intf") intfLayerOff();
+    if (sub === "board") renderBoard(box); else if (sub === "checks") renderChecks(box); else if (sub === "traffic") renderTraffic(box); else if (sub === "intf") renderIntf(box); else renderFix(box);
+  }
+  function pendingBadge() { var n = logs(KM).filter(function (m) { return m.ack === "pending"; }).length; return n ? ' <span class="cpbadge" style="background:#e67700">' + n + "</span>" : ""; }
+  function statusAct(t) {
+    var s = t.getAttribute("data-cpsub");
+    if (s) { S.sub = s; try { localStorage.setItem(KS, s); } catch (e) {} render(); return; }
+    var sub = S.sub || "board";
+    if (sub === "board") boardAct(t); else if (sub === "checks") checksAct(t); else if (sub === "traffic") trafficAct(t); else if (sub === "intf") intfAct(t); else fixAct(t);
+  }
+
+  /* comms check log */
+  function renderChecks(box) {
+    var L = logs(KC), nl = nets();
+    box.innerHTML = '<div class="sec cpsec"><h3>Comms check log</h3><div class="cprow">' +
+      '<label>Time (Z)<input id="cpcl-t" placeholder="now, or 0630" maxlength="6"></label><label>Station<input id="cpcl-st" maxlength="60" placeholder="callsign"></label>' +
+      '<label>Net / channel<input id="cpcl-net" maxlength="60"></label><label>Result<select id="cpcl-r">' + opts(RES.map(function (r) { return [r[0], r[1]]; }), "ok") + "</select></label>" +
+      '<label>Signal<input id="cpcl-q" maxlength="12" placeholder="e.g. 5x5, 4/3"></label><label>Operator<input id="cpcl-op" maxlength="40"></label>' +
+      '<label class="cpw">Problem<input id="cpcl-pb" maxlength="160"></label><label class="cpw">Corrective action<input id="cpcl-ca" maxlength="160"></label>' +
+      (nl.length ? '<label class="cpw">Update the status board<select id="cpcl-row">' + opts([["", "No"]].concat(nl), "") + "</select></label>" : "") + "</div>" +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-cl="add">Log the check</button>' + (L.length ? '<button type="button" data-cl="text">Copy log as text</button>' : "") + "</div>" +
+      '<p class="obs" id="cp-msg">' + (L.length ? L.length + " entr" + (L.length === 1 ? "y" : "ies") + ", newest first." : "No checks logged yet.") + " Kept on this device in the active workspace.</p>" +
+      (L.length ? '<div class="cpscroll"><table class="rttab cplog"><thead><tr><th>Time</th><th>Station / net</th><th>Result</th><th>Problem / action</th><th></th></tr></thead><tbody>' +
+        L.slice(0, 100).map(function (c) {
+          var r = RES.filter(function (x) { return x[0] === c.result; })[0] || RES[0];
+          return "<tr><td>" + E(zT(c.t)) + "</td><td>" + E(c.station) + (c.net ? "<br><small>" + E(c.net) + "</small>" : "") + '</td><td><span class="cpbadge" style="background:' + ST[r[2]][1] + '">' + E(r[1]) + "</span>" + (c.q ? "<br><small>" + E(c.q) + "</small>" : "") +
+            "</td><td>" + E(c.problem) + (c.action ? "<br><small>→ " + E(c.action) + "</small>" : "") + (c.op ? "<br><small>Op " + E(c.op) + "</small>" : "") + '</td><td><button type="button" class="cpx" data-cl="del" data-id="' + E(c.id) + '" aria-label="Delete entry">×</button></td></tr>';
+        }).join("") + "</tbody></table></div>" : "") + "</div>";
+  }
+  function checksAct(t) {
+    var a = t.getAttribute("data-cl"); if (!a) return;
+    var L = logs(KC);
+    if (a === "add") {
+      var c = { id: rid("ck"), type: "comms-check", t: zTime(fv("#cpcl-t")), station: clip(fv("#cpcl-st"), 60), net: clip(fv("#cpcl-net"), 60), result: fv("#cpcl-r"), q: clip(fv("#cpcl-q"), 12),
+        problem: clip(fv("#cpcl-pb"), 160), action: clip(fv("#cpcl-ca"), 160), op: clip(fv("#cpcl-op"), 40), created: Date.now() };
+      if (!RES.some(function (x) { return x[0] === c.result; })) c.result = "ok";
+      if (!c.station && !c.net) { note("Enter the station or the net."); return; }
+      L.unshift(c); L.sort(function (x, y) { return y.t - x.t; }); saveLog(KC, L);
+      var row = fv("#cpcl-row");
+      if (row) { var d = loadPace(), p = curPlan(d), ph = p && (phaseOf(p, p.cur_phase) || p.phases[0]), r = ph && ph.rows[row]; if (r) { r.status = RES.filter(function (x) { return x[0] === c.result; })[0][2]; r.checked = c.t; if (c.problem) r.snote = c.problem; p.updated = Date.now(); savePace(d); } }
+    } else if (a === "del") { if (!W.confirm("Delete this log entry?")) return; L = L.filter(function (x) { return x.id !== t.getAttribute("data-id"); }); saveLog(KC, L); }
+    else if (a === "text") { copyText(["COMMS CHECK LOG (Zulu)"].concat(L.map(function (c) { var r = RES.filter(function (x) { return x[0] === c.result; })[0] || RES[0]; return zT(c.t) + " | " + c.station + (c.net ? " | " + c.net : "") + " | " + r[1] + (c.q ? " " + c.q : "") + (c.problem ? " | " + c.problem : "") + (c.action ? " -> " + c.action : "") + (c.op ? " | op " + c.op : ""); })).join("\n")); return; }
+    render();
+  }
+  function copyText(tx) { if (W.navigator.clipboard) W.navigator.clipboard.writeText(tx).then(function () { note("Copied as text."); }, function () { note("Copy was refused by the browser."); }); }
+
+  /* message / traffic log */
+  function renderTraffic(box) {
+    var L = logs(KM), only = !!S.pendOnly, show = only ? L.filter(function (m) { return m.ack === "pending"; }) : L;
+    box.innerHTML = '<div class="sec cpsec"><h3>Message and traffic log</h3><p class="obs">Track messages sent and received by any means, and which still wait for an acknowledgement. The messages themselves travel outside OSAP.</p><div class="cprow">' +
+      '<label>Time (Z)<input id="cptl-t" placeholder="now, or 0630" maxlength="6"></label><label>Direction<select id="cptl-d">' + opts([["out", "Sent"], ["in", "Received"]], "out") + "</select></label>" +
+      '<label>From<input id="cptl-f" maxlength="60"></label><label>To<input id="cptl-to" maxlength="60"></label>' +
+      '<label>Method<select id="cptl-m">' + opts(R().METHODS, "") + '</select></label><label>Precedence<select id="cptl-p">' + opts(PREC, "Routine") + "</select></label>" +
+      '<label class="cpw">Subject<input id="cptl-s" maxlength="120" placeholder="short subject or message number"></label>' +
+      '<label class="cpw">Pending action<input id="cptl-a" maxlength="160" placeholder="what has to happen next, if anything"></label>' +
+      '<label class="cpchk"><input type="checkbox" id="cptl-ack" checked> Needs an acknowledgement</label></div>' +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-tl="add">Log the message</button><button type="button" data-tl="pend" aria-pressed="' + only + '">Awaiting acknowledgement only</button>' + (L.length ? '<button type="button" data-tl="text">Copy log as text</button>' : "") + "</div>" +
+      '<p class="obs" id="cp-msg">' + L.filter(function (m) { return m.ack === "pending"; }).length + " awaiting acknowledgement, " + L.length + " logged. Kept on this device in the active workspace.</p>" +
+      (show.length ? '<div class="cpscroll"><table class="rttab cplog"><thead><tr><th>Time</th><th>Message</th><th>Ack</th><th></th></tr></thead><tbody>' +
+        show.slice(0, 100).map(function (m) {
+          return "<tr><td>" + E(zT(m.t)) + "<br><small>" + (m.dir === "in" ? "Received" : "Sent") + "</small></td><td><b>" + E(m.prec) + "</b> " + E(m.subject) + "<br><small>" + E(m.from) + " → " + E(m.to) + (m.method ? " · " + E(m.method) : "") + "</small>" + (m.action ? "<br><small>Pending: " + E(m.action) + "</small>" : "") + "</td><td>" +
+            (m.ack === "pending" ? '<button type="button" data-tl="ack" data-id="' + E(m.id) + '">Acknowledged</button>' : m.ack === "done" ? '<span class="cpbadge" style="background:#2b8a3e">ACK</span><br><small>' + E(zT(m.ackt)) + "</small>" : "<small>not needed</small>") +
+            '</td><td><button type="button" class="cpx" data-tl="del" data-id="' + E(m.id) + '" aria-label="Delete entry">×</button></td></tr>';
+        }).join("") + "</tbody></table></div>" : "") + "</div>";
+  }
+  function trafficAct(t) {
+    var a = t.getAttribute("data-tl"); if (!a) return;
+    var L = logs(KM), id = t.getAttribute("data-id");
+    if (a === "add") {
+      var ack = S.ctx.rail.querySelector("#cptl-ack");
+      var m = { id: rid("msg"), type: "traffic", t: zTime(fv("#cptl-t")), dir: fv("#cptl-d") === "in" ? "in" : "out", from: clip(fv("#cptl-f"), 60), to: clip(fv("#cptl-to"), 60), method: R().METHODS.indexOf(fv("#cptl-m")) >= 0 ? fv("#cptl-m") : "",
+        prec: PREC.indexOf(fv("#cptl-p")) >= 0 ? fv("#cptl-p") : "Routine", subject: clip(fv("#cptl-s"), 120), action: clip(fv("#cptl-a"), 160), ack: ack && ack.checked ? "pending" : "none", created: Date.now() };
+      if (!m.subject) { note("Enter a subject or message number."); return; }
+      L.unshift(m); L.sort(function (x, y) { return y.t - x.t; }); saveLog(KM, L);
+    } else if (a === "ack") { L.forEach(function (m) { if (m.id === id) { m.ack = "done"; m.ackt = Date.now(); } }); saveLog(KM, L); }
+    else if (a === "del") { if (!W.confirm("Delete this log entry?")) return; saveLog(KM, L.filter(function (m) { return m.id !== id; })); }
+    else if (a === "pend") S.pendOnly = !S.pendOnly;
+    else if (a === "text") { copyText(["MESSAGE / TRAFFIC LOG (Zulu)"].concat(L.map(function (m) { return zT(m.t) + " | " + (m.dir === "in" ? "IN" : "OUT") + " | " + m.prec + " | " + m.from + " -> " + m.to + (m.method ? " | " + m.method : "") + " | " + m.subject + " | " + (m.ack === "pending" ? "AWAITING ACK" : m.ack === "done" ? "ACK " + zT(m.ackt) : "no ack needed") + (m.action ? " | pending: " + m.action : ""); })).join("\n")); return; }
+    render();
+  }
+
+  /* interference reports: what the operator observed; OSAP groups reports that are close in place, band and time, and does
+     not locate, identify or attribute any source */
+  var intfLayer = null;
+  function intfLayerOff() { if (intfLayer && S.ctx) { S.ctx.layer.removeLayer(intfLayer); intfLayer = null; } }
+  function near(a, L) { return L.filter(function (b) { return b.id !== a.id && b.band === a.band && Math.abs(b.t - a.t) <= 86400000 && R().hav_km([a.lat, a.lon], [b.lat, b.lon]) <= 10; }).length; }
+  function renderIntf(box) {
+    var L = logs(KI), c = S.ctx.map.getCenter();
+    box.innerHTML = '<div class="sec cpsec"><h3>Interference reports</h3><p class="obs">Record interference you observed. OSAP groups reports close in place, band and time; it does not listen, locate or attribute a source.</p><div class="cprow">' +
+      '<label>Time (Z)<input id="cpif-t" placeholder="now, or 0630" maxlength="6"></label><label>Band<select id="cpif-b">' + opts(R().BANDS.map(function (b) { return [b.id, b.label]; }).concat([["other", "Other"]]), "vhf") + "</select></label>" +
+      '<label>About (MHz)<input id="cpif-f" type="number" step="any" min="0" placeholder="optional"></label><label>Severity<select id="cpif-s">' + opts(SEV, "moderate") + "</select></label>" +
+      '<label>Impact<select id="cpif-i">' + opts(IMP, "degraded") + '</select></label><label class="cpw">What was observed<input id="cpif-n" maxlength="160" placeholder="noise, tone, carrier, pulsing…"></label></div>' +
+      '<p class="cparea">Place: the map centre, <code>' + E(mgrs(c.lat, c.lng)) + '</code>. Move the map to where it was observed.</p>' +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-if="add">Record the report</button></div><p class="obs" id="cp-msg">' + L.length + " report" + (L.length === 1 ? "" : "s") + ". Kept on this device in the active workspace.</p>" +
+      (L.length ? '<div class="cpscroll"><table class="rttab cplog"><thead><tr><th>Time</th><th>Report</th><th>Nearby</th><th></th></tr></thead><tbody>' +
+        L.slice(0, 100).map(function (r) {
+          var b = R().BANDS.filter(function (x) { return x.id === r.band; })[0], n = near(r, L), sv = SEV.filter(function (x) { return x[0] === r.sev; })[0], im = IMP.filter(function (x) { return x[0] === r.impact; })[0];
+          return "<tr><td>" + E(zT(r.t)) + '</td><td><b>' + E(b ? b.label : "Other band") + "</b>" + (r.f ? " ~" + E(r.f) + " MHz" : "") + "<br><small>" + E(sv ? sv[1] : "") + " · " + E(im ? im[1] : "") + " · <code>" + E(mgrs(r.lat, r.lon)) + "</code></small>" + (r.note ? "<br><small>" + E(r.note) + "</small>" : "") +
+            "</td><td>" + (n ? "<b>" + n + "</b> other" + (n === 1 ? "" : "s") + " within 10 km and 24 h, same band" : "<small>none</small>") + '</td><td><button type="button" class="cpx" data-if="del" data-id="' + E(r.id) + '" aria-label="Delete report">×</button></td></tr>';
+        }).join("") + "</tbody></table></div>" : "") + "</div>";
+    drawIntf(L);
+  }
+  function drawIntf(L) {
+    intfLayerOff(); if (!W.L || !L.length) return;
+    intfLayer = W.L.layerGroup();
+    var col = { low: "#e67700", moderate: "#d9480f", severe: "#c92a2a" };
+    L.slice(0, 200).forEach(function (r) {
+      if (!isFinite(r.lat) || !isFinite(r.lon)) return;
+      W.L.circleMarker([r.lat, r.lon], { radius: 7, color: "#fff", weight: 1.5, fillColor: col[r.sev] || "#c92a2a", fillOpacity: 0.9 })
+        .bindPopup("<b>Interference (operator report)</b><br>" + E(zT(r.t)) + " · " + E((R().BANDS.filter(function (x) { return x.id === r.band; })[0] || { label: "Other band" }).label) + (r.note ? "<br>" + E(r.note) : "")).addTo(intfLayer);
+    });
+    S.ctx.layer.addLayer(intfLayer);
+  }
+  function intfAct(t) {
+    var a = t.getAttribute("data-if"); if (!a) return;
+    var L = logs(KI);
+    if (a === "add") {
+      var c = S.ctx.map.getCenter(), f = parseFloat(fv("#cpif-f")), b = fv("#cpif-b");
+      L.unshift({ id: rid("if"), type: "interference-report", t: zTime(fv("#cpif-t")), band: R().BANDS.some(function (x) { return x.id === b; }) ? b : "other", f: isFinite(f) && f > 0 ? Math.round(f * 1000) / 1000 : null,
+        sev: SEV.some(function (x) { return x[0] === fv("#cpif-s"); }) ? fv("#cpif-s") : "moderate", impact: IMP.some(function (x) { return x[0] === fv("#cpif-i"); }) ? fv("#cpif-i") : "degraded",
+        note: clip(fv("#cpif-n"), 160), lat: Math.round(c.lat * 1e5) / 1e5, lon: Math.round((W.OSAP_GEO && W.OSAP_GEO.wrap ? W.OSAP_GEO.wrap(c.lng) : c.lng) * 1e5) / 1e5, created: Date.now() });
+      L.sort(function (x, y) { return y.t - x.t; }); saveLog(KI, L);
+    } else if (a === "del") { if (!W.confirm("Delete this report?")) return; saveLog(KI, L.filter(function (r) { return r.id !== t.getAttribute("data-id"); })); }
+    render();
+  }
+
+  /* troubleshooting: a fixed order of checks; it points to where to look and never claims a cause */
+  function renderFix(box) {
+    var i = FS.step, h = '<div class="sec cpsec"><h3>Troubleshooting</h3><p class="obs">Work through the checks in order: power, antenna, cable, programming, network, line of sight, interference, outside infrastructure. The checks point to where to look; they do not prove the cause.</p>' +
+      '<ol class="cpfixs">' + FIX.map(function (f, j) { var r = FS.res[f[0]]; return '<li class="' + (j === i ? "cur" : "") + '">' + E(f[1]) + (r ? ' <span class="cpbadge" style="background:' + (r === "ok" ? "#2b8a3e" : r === "bad" ? "#c92a2a" : "#6c757d") + '">' + (r === "ok" ? "OK" : r === "bad" ? "PROBLEM" : "SKIPPED") + "</span>" : "") + "</li>"; }).join("") + "</ol></div>";
+    if (i < FIX.length) {
+      var f = FIX[i];
+      h += '<div class="sec cpsec"><h3>' + (i + 1) + ". " + E(f[1]) + "</h3><ul class=\"cpfixl\">" + f[2].map(function (c) { return "<li>" + E(c) + "</li>"; }).join("") + "</ul>" +
+        '<div class="cpbtns"><button type="button" class="cpgo" data-fx="ok">All fine</button><button type="button" data-fx="bad">Found a problem</button><button type="button" data-fx="skip">Skip</button>' + (i ? '<button type="button" data-fx="back">Back</button>' : "") + "</div></div>";
+    }
+    var bad = FIX.filter(function (f) { return FS.res[f[0]] === "bad"; });
+    if (bad.length || i >= FIX.length) {
+      h += '<div class="sec cpsec' + (bad.length ? " cpwarn" : "") + '">' + (bad.length ? "<b>Look first at:</b> " + bad.map(function (f) { return E(f[1]); }).join(", ") + "." : "<b>No problem found in these checks.</b> The fault may be at the other station or outside what these checks cover; record what you tried.") +
+        '<label class="cpw">What you changed<input id="cpfx-n" maxlength="160" value="' + E(FS.note) + '"></label><div class="cpbtns"><button type="button" data-fx="log">Add to the check log</button><button type="button" data-fx="reset">Start again</button></div></div>';
+    }
+    box.innerHTML = h;
+  }
+  function fixAct(t) {
+    var a = t.getAttribute("data-fx"); if (!a) return;
+    var n = S.ctx.rail.querySelector("#cpfx-n"); if (n) FS.note = clip(n.value, 160);
+    if (a === "ok" || a === "bad" || a === "skip") { FS.res[FIX[FS.step][0]] = a; FS.step++; }
+    else if (a === "back") FS.step = Math.max(0, FS.step - 1);
+    else if (a === "reset") FS = { step: 0, res: {}, note: "" };
+    else if (a === "log") {
+      var bad = FIX.filter(function (f) { return FS.res[f[0]] === "bad"; }).map(function (f) { return f[1]; });
+      var L = logs(KC); L.unshift({ id: rid("ck"), type: "comms-check", t: Date.now(), station: "Troubleshooting", net: "", result: bad.length ? "fail" : "ok", q: "", problem: bad.length ? "Checks found a problem in: " + bad.join(", ") : "No problem found in the checks", action: FS.note, op: "", created: Date.now() });
+      saveLog(KC, L); S.sub = "checks"; try { localStorage.setItem(KS, "checks"); } catch (e) {}
+    }
+    render();
   }
 
   /* ---------- Link: free-space link budget ---------- */
@@ -319,6 +517,7 @@
     var el = pane(), t = S.tab, cm = S.ctx.rail.querySelector("#cp-comms");
     S.ctx.rail.querySelectorAll("[data-cptab]").forEach(function (b) { if (b.closest(".cptabs")) b.setAttribute("aria-selected", String(b.getAttribute("data-cptab") === t)); });
     if (cm) { cm.hidden = !(t === "coverage" || t === "networks"); cm.setAttribute("data-part", t); }
+    if (t !== "status") intfLayerOff();
     if (t === "plan") renderPlan(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderPower(); else if (t === "networks") renderNetworks();
     else el.innerHTML = "";
   }
@@ -348,7 +547,9 @@
     };
     r.querySelector(".cp").addEventListener("input", onIn);
     r.querySelector(".cp").addEventListener("change", function (e) { if (e.target.tagName === "SELECT" || e.target.type === "number") onIn(e); });
-    var t0 = null; try { t0 = localStorage.getItem(KT); } catch (e) {}
+    var t0 = null; try { t0 = localStorage.getItem(KT); S.sub = localStorage.getItem(KS) || "board"; } catch (e) {}
+    if (!SUBS.some(function (x) { return x[0] === S.sub; })) S.sub = "board";
+    intfLayer = null;
     setTab(t0 || "coverage");
   }
 
@@ -389,6 +590,9 @@
     "#cp-print{display:none}@media print{html.cpprinting body>*:not(#cp-print){display:none!important}html.cpprinting #cp-print{display:block!important;font:10pt/1.35 system-ui,sans-serif;color:#000;background:#fff}" +
     "html.cpprinting #cp-print h1{font-size:15pt;margin:0 0 4px}html.cpprinting #cp-print h2{font-size:12pt;margin:12px 0 4px}html.cpprinting #cp-print table{border-collapse:collapse;width:100%}" +
     "html.cpprinting #cp-print td,html.cpprinting #cp-print th{border-bottom:1px solid #ccc;padding:2px 6px 2px 0;text-align:left;vertical-align:top}}" +
+    ".cpsub{display:flex;flex-wrap:wrap;gap:4px;padding:8px 0 2px}.cpsub button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface2,var(--surface));color:var(--ink);border-radius:14px;padding:4px 10px;min-height:32px;cursor:pointer}" +
+    ".cpsub button[aria-pressed=true]{background:var(--ink);color:var(--surface,#fff)}table.cplog td{font-family:system-ui,sans-serif;font-size:12px}table.cplog small{color:var(--muted)}" +
+    ".cpchk{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:12.5px;color:var(--ink)}ol.cpfixs{margin:6px 0;padding-left:20px;font-size:12.5px}ol.cpfixs li.cur{font-weight:700}ul.cpfixl{margin:4px 0;padding-left:18px;font-size:13px;line-height:1.5}" +
     "@media (pointer:coarse){.cp input,.cp select,.cp textarea{font-size:16px!important}}";
   D.head.appendChild(st);
 
