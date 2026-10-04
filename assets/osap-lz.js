@@ -28,7 +28,8 @@
      straight-through axis ranks above a confined one (in and out the same way);
    - candidates are ranked by clear size, average slope, surface (mapped pitch or farmland helps, paddy hurts; satellite
      crops, bare ground and snow count against), clear approach axes and distance from the search point: the best spot in each separate patch of open ground first, then more spots in the biggest
-     patches, up to eight.
+     patches, up to eight. A search for an LZ bigger than 50 m also marks up to six spots that take a 50 m LZ but not the chosen
+     size (purple, numbered after the rest), and every candidate lists the aircraft its clear size takes (pathfinder sizes).
    Every candidate is labelled "candidate from open data, verify on the ground". Its pop-up gives the grid (MGRS),
    clear size, average and steepest slope, elevation, mapped surface and land cover, approach and departure directions, the nearest obstacles beyond its edge with direction,
    and the distance and bearing from the search point. Mapped helipads and airfields in the search area are listed too.
@@ -51,6 +52,15 @@
   /* clear landing point diameters: the Army pathfinder sizes 1 to 5 (FM 3-21.38), then larger areas for several aircraft */
   var SIZES = [[25, "25 m: size 1, light (MH-6, OH-58)"], [35, "35 m: size 2 (UH-1, AH-64)"], [50, "50 m: size 3 (UH-60)"], [80, "80 m: size 4 (CH-47)"],
     [100, "100 m: size 5 (CH-47 with sling load)"], [150, "150 m: several aircraft"], [250, "250 m: many aircraft"]];
+  /* which aircraft a clear diameter takes, by the pathfinder landing point sizes above (largest first) */
+  var CRAFT = [[100, "CH-47 with sling load"], [80, "CH-47"], [50, "UH-60"], [35, "UH-1, AH-64"], [25, "MH-6, OH-58"]];
+  /* when the search is for a bigger LZ, open ground that only fits this size is marked too (purple, numbered after the rest) */
+  var SMALL = 50, MAXS = 6;
+  function craft(d) { return CRAFT.filter(function (c) { return d >= c[0]; }).map(function (c) { return c[1]; }); }
+  function craftText(d) {
+    var a = craft(d);
+    return a.length ? a.join(", ") + (d >= 250 ? " (room for many aircraft)" : d >= 150 ? " (room for several aircraft)" : "") : "none: under 25 m clear";
+  }
   var SLOPES = [[3, "3°"], [7, "7°: landing limit"], [10, "10°"], [15, "15°: caution limit"]];
   /* obstacle classes: the code is stored in the red channel of the obstacle canvas (code x 20) */
   var OB = [null,
@@ -358,9 +368,9 @@
     /* which of 16 directions (every 22.5°, from north) give a clear approach or departure: a corridor 1.4 times the LZ radius
        wide, from the LZ edge out to APPR, with no obstacle closer than RATIO times its assumed height (terrain: its rise above
        the LZ centre, less 3 m for the elevation model's noise) */
-    var steps = Math.ceil(APPR / cell);
-    function approach(bx, by) {
-      var out = [], e0 = E[by * w + bx];
+    var steps = Math.ceil(APPR / cell), need0 = need;
+    function approach(bx, by, nd) {
+      var need = nd || need0, out = [], e0 = E[by * w + bx];
       for (var k = 0; k < 16; k++) {
         var a = k * Math.PI / 8, ux = Math.sin(a), uy = -Math.cos(a), clear = true;
         for (var l = -1; l <= 1 && clear; l++) for (var st = 0; st <= steps; st++) {
@@ -374,9 +384,16 @@
       }
       return out;
     }
-    var rejected = 0;
+    /* o.notFit (m): only spots where an LZ of that size does not work (too small, or no clear approach for it): the 50 m
+       spots of a bigger search. A spot that would take the bigger LZ is skipped with the ground round it */
+    var rejected = 0, fitted = 0, nbig = o.notFit ? o.notFit / 2 / cell : 0;
+    function drop(bx, by, rr) {
+      var r0 = Math.ceil(rr);
+      for (var y1 = Math.max(0, by - r0); y1 <= Math.min(h - 1, by + r0); y1++) for (var x1 = Math.max(0, bx - r0); x1 <= Math.min(w - 1, bx + r0); x1++) if ((x1 - bx) * (x1 - bx) + (y1 - by) * (y1 - by) <= rr * rr) SC[y1 * w + x1] = -9;
+    }
     function take(b) {
       var bx = b % w, by = (b - bx) / w, br = Math.sqrt(D2[b]) - 0.5, sup = Math.max(br + need, 2 * need), s0 = Math.ceil(sup);
+      if (nbig && br >= nbig && approach(bx, by, nbig).some(Boolean)) { fitted++; drop(bx, by, Math.max(br, nbig)); return; }
       var dirs = approach(bx, by), axes = [], open = [];
       for (var k = 0; k < 16; k++) { if (dirs[k]) open.push(k * 22.5); if (k < 8 && dirs[k] && dirs[k + 8]) axes.push(k * 22.5); }
       if (!open.length) {
@@ -394,7 +411,7 @@
     var order = [];
     for (i = 0; i < n; i++) if (SC[i] > -9) order.push(i);
     order.sort(function (a, b) { return SC[b] - SC[a]; });
-    for (var oi = 0; oi < order.length && picks.length < MAXC && rejected < 400; oi++) if (SC[order[oi]] > -9) take(order[oi]);
+    for (var oi = 0; oi < order.length && picks.length < MAXC && rejected < 400 && fitted < 3000; oi++) if (SC[order[oi]] > -9) take(order[oi]);
     picks.sort(function (a, b) { return b.sc - a.sc; });
     var nearC = Math.ceil((R + NEAR) / cell);
     var cands = picks.map(function (p, k) {
@@ -442,12 +459,12 @@
     "#lz-card .lzpt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}" +
     "#lz-card .lzmsg{margin:6px 0;color:var(--muted,#555)}#lz-card .lzmsg.err{color:#b71c1c}" +
     "#lz-card ol{margin:6px 0;padding:0;list-style:none}#lz-card li{border-top:1px solid var(--line,#ddd);padding:5px 0;cursor:pointer}#lz-card li:hover{background:rgba(11,114,133,.07)}" +
-    "#lz-card li b.n{display:inline-block;min-width:20px;text-align:center;border-radius:10px;color:#fff;background:#2e7d32;margin-right:5px}#lz-card li.c b.n{background:#e65100}" +
+    "#lz-card li b.n{display:inline-block;min-width:20px;text-align:center;border-radius:10px;color:#fff;background:#2e7d32;margin-right:5px}#lz-card li.c b.n{background:#e65100}#lz-card li.s b.n{background:#7b1fa2}#lz-card .lzac{color:var(--ink,#111)}#lz-card .lzsh{margin:8px 0 2px}" +
     "#lz-card .lzsm{font-size:11.5px;color:var(--muted,#555)}#lz-card .lztag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
     /* candidate numbers on the map: a solid badge in the list's colours, no blurred text shadow, sized in whole pixels so it stays sharp */
     ".leaflet-tooltip.lznum{box-sizing:border-box;min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:#2e7d32;border:2px solid #fff;color:#fff;" +
     "font:700 13px/20px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums;text-align:center;text-shadow:none;box-shadow:0 1px 3px rgba(0,0,0,.45);" +
-    "-webkit-font-smoothing:antialiased}.leaflet-tooltip.lznum.c{background:#e65100}.leaflet-tooltip.lznum:before{display:none}" +
+    "-webkit-font-smoothing:antialiased}.leaflet-tooltip.lznum.c{background:#e65100}.leaflet-tooltip.lznum.s{background:#7b1fa2}.leaflet-tooltip.lznum:before{display:none}" +
     ".lzpad{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1565c0;color:#fff;font:700 12px sans-serif;border:2px solid #fff;box-sizing:border-box}" +
     ".lzmask{image-rendering:pixelated}.lzpop p{margin:3px 0}.lzpop .tier{font-weight:600}";
   function style() { if (D.getElementById("lz-css")) return; var s = D.createElement("style"); s.id = "lz-css"; s.textContent = CSS; D.head.appendChild(s); }
@@ -496,15 +513,12 @@
     if (ST.msg || ST.err) h += '<p class="lzmsg' + (ST.err ? " err" : "") + '" aria-live="polite">' + esc(ST.err || ST.msg) + "</p>";
     if (r) {
       if (!r.cands.length) h += '<p class="lzmsg">No open, flat ground of ' + S.d + " m across with slope under " + S.s + "° and a clear approach was found " + (ST.poly ? "in the drawn area" : "within " + S.r + " km") + "." + (r.boxed ? " " + r.boxed + " open spot" + (r.boxed === 1 ? " was" : "s were") + " boxed in by trees, buildings or wires with no approach at 10 to 1." : "") + " Try a smaller LZ size, a wider radius or a higher slope limit.</p>";
-      else h += '<ol>' + r.cands.map(function (k) {
-        return '<li data-lzi="' + (k.rank - 1) + '"' + (k.caution ? ' class="c"' : "") + '><b class="n">' + k.rank + '</b><span class="lzpt">' + esc(grid(k.lat, k.lon)) + "</span><br>" +
-          '<span class="lzsm">Clear about ' + k.clearD + " m · slope " + k.mean.toFixed(1) + "° avg, " + k.max.toFixed(1) + "° max · " + esc(fmtKm(k.dist)) + " " + Math.round(k.brg) + "°" +
-          (k.near.length ? " · " + esc(k.near[0].n.toLowerCase()) + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : "") + "</span></li>";
-      }).join("") + "</ol>";
+      else h += '<ol>' + r.cands.map(liHtml).join("") + "</ol>";
+      if (r.small && r.small.length) h += '<p class="lzsm lzsh"><b>Also ' + SMALL + " m only (UH-60 and smaller):</b> open ground that takes a " + SMALL + " m LZ but not " + r.size + " m.</p><ol>" + r.small.map(liHtml).join("") + "</ol>";
       if (r.pads.length) h += '<p class="lzsm"><b>Mapped helipads and airfields:</b> ' + r.pads.map(function (p) { return esc((p.name || (p.kind === "aerodrome" ? "Airfield" : "Helipad")) + " " + fmtKm(p.dist) + " " + Math.round(p.brg) + "°"); }).join("; ") + "</p>";
       if (r.warn.length) h += '<p class="lzmsg err">' + r.warn.map(esc).join(" ") + "</p>";
       h += '<p class="lzsm">Candidates from open data: verify on the ground and on current imagery before use. Not checked: soil and surface firmness, crops, ' +
-        "small trees, poles and wires missing from OpenStreetMap, and approach and departure paths. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
+        "small trees, poles and wires missing from OpenStreetMap; approach paths use assumed obstacle heights. Elevation is about 30 m detail (AWS Terrain Tiles); obstacles &copy; OpenStreetMap contributors (ODbL)" + (r.counts.lcOk ? "; built-up land, trees and water also from Esri / Impact Observatory Sentinel-2 10 m land cover (" + LC_YEAR + ", CC BY 4.0)" : "") + ".</p>" +
         '<div class="lzrow"><button type="button" data-lz="sat">Check on satellite</button><button type="button" data-lz="clear">Clear marks</button></div>';
     }
     c.innerHTML = h; c.hidden = false; syncDock();
@@ -516,15 +530,27 @@
     W.OSAP_LEGEND.set("lz", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Landing zones (open data)</div>' +
       '<div class="lg"><span class="sw" style="background:rgba(46,125,50,.35);border:2px solid #2e7d32;border-radius:50%"></span><div>Candidate LZ<span class="d">' + S.d + " m across, slope under 7°</span></div></div>" +
       '<div class="lg"><span class="sw" style="background:rgba(230,81,0,.35);border:2px solid #e65100;border-radius:50%"></span><div>Candidate, caution<span class="d">Slope over 7°: land upslope or hover</span></div></div>' +
+      (ST.res.small && ST.res.small.length ? '<div class="lg"><span class="sw" style="background:rgba(123,31,162,.3);border:2px dashed #7b1fa2;border-radius:50%"></span><div>Candidate, ' + SMALL + " m only<span class=\"d\">UH-60 and smaller</span></div></div>" : "") +
       '<div class="lg"><span class="sw" style="background:#1565c0;border-radius:50%"></span><div>Mapped helipad or airfield</div></div>' +
       (S.mask ? '<div class="lg"><span class="sw" style="background:rgba(198,40,40,.45)"></span><div>Blocked: obstacle<span class="d">Buildings, trees, wires, water, fences (OpenStreetMap)</span></div></div><div class="lg"><span class="sw" style="background:rgba(239,108,0,.45)"></span><div>Blocked: too steep</div></div>' : ""));
   }
+  /* every candidate in rank order: the chosen size first, then the 50 m only spots */
+  function allC(r) { return r ? r.cands.concat(r.small || []) : []; }
+  function liHtml(k) {
+    return '<li data-lzi="' + (k.rank - 1) + '"' + (k.small ? ' class="s"' : k.caution ? ' class="c"' : "") + '><b class="n">' + k.rank + '</b><span class="lzpt">' + esc(grid(k.lat, k.lon)) + "</span><br>" +
+      '<span class="lzsm">Clear about ' + k.clearD + " m · slope " + k.mean.toFixed(1) + "° avg, " + k.max.toFixed(1) + "° max · " + esc(fmtKm(k.dist)) + " " + Math.round(k.brg) + "°" +
+      (k.near.length ? " · " + esc(k.near[0].n.toLowerCase()) + " " + Math.round(k.near[0].m) + " m " + k.near[0].dir : "") + "</span><br>" +
+      '<span class="lzsm lzac">Aircraft: ' + esc(kCraft(k)) + "</span></li>";
+  }
+  /* a 50 m spot had its approach checked for 50 m, so it is offered for those aircraft only */
+  function kCraft(k) { return craftText(k.small ? Math.min(k.clearD, k.small) : k.clearD); }
   function popHtml(k) {
     var lim = S.s;
-    return '<div class="pop lzpop" data-keep-pop="1"><div class="tier">Candidate LZ ' + k.rank + ": candidate from open data, verify on the ground</div>" +
+    return '<div class="pop lzpop" data-keep-pop="1"><div class="tier">Candidate LZ ' + k.rank + (k.small ? " (" + k.small + " m only)" : "") + ": candidate from open data, verify on the ground</div>" +
       '<p><b>Grid:</b> <span class="lzpt">' + esc(grid(k.lat, k.lon)) + '</span> <button type="button" data-lzcopy="' + esc(grid(k.lat, k.lon)) + '">Copy</button></p>' +
       "<p><b>Lat, lon:</b> " + k.lat.toFixed(5) + ", " + k.lon.toFixed(5) + "</p>" +
-      "<p><b>Clear ground:</b> about " + k.clearD + " m across (needs " + S.d + " m)</p>" +
+      "<p><b>Clear ground:</b> about " + k.clearD + " m across (needs " + (k.small || S.d) + " m)</p>" +
+      "<p><b>Aircraft that fit (pathfinder landing point sizes):</b> " + esc(kCraft(k)) + (k.small ? " (approach checked for a " + k.small + " m LZ only)" : "") + "</p>" +
       "<p><b>Slope:</b> " + k.mean.toFixed(1) + "° average, " + k.max.toFixed(1) + "° steepest (limit " + lim + "°)" + (k.caution ? ". Caution: over 7°, land upslope or hover" : "") + "</p>" +
       "<p><b>Elevation:</b> " + k.elev + " m (varies " + k.relief + " m across the LZ)</p>" +
       "<p><b>Surface (OpenStreetMap):</b> " + esc(k.surface || "not mapped") + (k.cover ? "</p><p><b>Land cover (satellite, 10 m):</b> " + esc(k.cover) : "") + "</p>" +
@@ -552,6 +578,11 @@
       var col = k.caution ? "#e65100" : "#2e7d32";
       var c = L.circle([k.lat, k.lon], { pane: "lzpane", renderer: rend, radius: r.size / 2, color: col, weight: 2.5, fillColor: col, fillOpacity: 0.3, lgk: "lz", lgl: "Candidate LZ" })
         .on("click", function () { popFit(c); }).bindPopup(popHtml(k), { maxWidth: 320 }).bindTooltip(String(k.rank), { permanent: true, direction: "center", className: "lznum" + (k.caution ? " c" : ""), opacity: 1, interactive: false });
+      c.addTo(layer); k._m = c;
+    });
+    (r.small || []).forEach(function (k) {
+      var c = L.circle([k.lat, k.lon], { pane: "lzpane", renderer: rend, radius: k.small / 2, color: "#7b1fa2", weight: 2.5, dashArray: "5 4", fillColor: "#7b1fa2", fillOpacity: 0.25, lgk: "lz", lgl: "Candidate LZ, " + k.small + " m only" })
+        .on("click", function () { popFit(c); }).bindPopup(popHtml(k), { maxWidth: 320 }).bindTooltip(String(k.rank), { permanent: true, direction: "center", className: "lznum s", opacity: 1, interactive: false });
       c.addTo(layer); k._m = c;
     });
     r.pads.forEach(function (p) {
@@ -593,7 +624,7 @@
      Used by find() below and by Route > Evacuation route ("nearest landing zone"). prog(done, total) reports elevation tiles;
      busy() is called before the heavy work and may return false to stop. Resolves the analysis (cands best first, pads, warn,
      bounds) or rejects with "elevation: ..." or the Overpass failure; never resolves "no landing zone" for a failed request. */
-  function scan(o, radius, size, slope, poly, prog, busy) {
+  function scan(o, radius, size, slope, poly, prog, busy, small) {
     /* the window reaches APPR past the farthest LZ edge, so approach paths can be checked */
     var win = windowFor(o, radius + size / 2 + APPR + 20);
     var nw = fromCell(win, -0.5, -0.5), se = fromCell(win, win.w - 0.5, win.h - 0.5);
@@ -606,7 +637,12 @@
       if (busy && busy() === false) return null;
       return new Promise(function (r) { setTimeout(r, 30); }).then(function () {
         var res = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: size, slope: slope, poly: poly, lc: v[2] });
-        res.o = o; res.radius = radius; res.size = size; res.slope = slope; res.poly = poly; res.warn = []; res.win = win;
+        res.o = o; res.radius = radius; res.size = size; res.slope = slope; res.poly = poly; res.warn = []; res.win = win; res.small = [];
+        /* a search for a bigger LZ also marks open ground that takes a 50 m LZ (UH-60 and smaller) but not the chosen size */
+        if (small && size > SMALL) {
+          var sm = analyse(win, v[0].E, v[1], { o: o, radius: radius, size: SMALL, slope: slope, poly: poly, lc: v[2], notFit: size });
+          res.small = sm.cands.slice(0, MAXS).map(function (k, i) { k.rank = res.cands.length + i + 1; k.small = SMALL; return k; });
+        }
         if (v[0].failed) res.warn.push(v[0].failed + " of " + v[0].tiles + " elevation tiles did not load; that ground is treated as blocked.");
         /* rural areas in much of the world have few houses mapped: say so rather than let open-looking ground mislead */
         var km2 = poly ? Math.PI * radius * radius / 1e6 / 2 : Math.PI * radius * radius / 1e6;
@@ -633,13 +669,14 @@
     ST.busy = 1; ST.err = ""; ST.res = null; ST.msg = "Loading elevation…"; render(); layer.clearLayers(); if (mask) { map.removeLayer(mask); mask = null; }
     var size = S.d, slope = S.s;
     scan(o, radius, size, slope, poly, function (d, t) { if (run === RUN && ST.busy) { ST.msg = "Loading elevation " + d + " of " + t + ", obstacles from OpenStreetMap…"; var m = card && card.querySelector(".lzmsg"); if (m) m.textContent = ST.msg; } },
-      function () { if (run === RUN) { ST.msg = "Working out slope and clear ground…"; render(); } return run === RUN; }).then(function (res) {
+      function () { if (run === RUN) { ST.msg = "Working out slope and clear ground…"; render(); } return run === RUN; }, true).then(function (res) {
         if (run !== RUN || !res) return;
+        var ns = res.small.length;
         res.maskUrl = maskImage(res.win, res.OBC); delete res.OBC; delete res.win;
-        ST.res = res; ST.busy = 0; ST.msg = res.cands.length ? res.cands.length + " candidate" + (res.cands.length === 1 ? "" : "s") + ", best first. Tap one for details." : "";
+        ST.res = res; ST.busy = 0; ST.msg = res.cands.length || ns ? res.cands.length + " candidate" + (res.cands.length === 1 ? "" : "s") + " for " + res.size + " m, best first" + (ns ? ", and " + ns + " more for " + SMALL + " m only" : "") + ". Tap one for details." : "";
         render(); draw();
         /* keep the marks clear of the card: beside it on a large screen, above it on a phone; docked, clear of the panel */
-        var b = res.cands.length ? L.latLngBounds(res.cands.map(function (k) { return [k.lat, k.lon]; })).extend(o).pad(0.2) : poly ? L.latLngBounds(poly).pad(0.1) : L.latLng(o[0], o[1]).toBounds(radius * 2.2);
+        var all = allC(res), b = all.length ? L.latLngBounds(all.map(function (k) { return [k.lat, k.lon]; })).extend(o).pad(0.2) : poly ? L.latLngBounds(poly).pad(0.1) : L.latLng(o[0], o[1]).toBounds(radius * 2.2);
         var cr = card.getBoundingClientRect(), phone = phoneMq.matches;
         var sp = split() && W.OSAP_SPLIT.clear(dock);
         if (sp) { try { map.fitBounds(b, { maxZoom: 16, paddingTopLeft: [sp.tl[0] + 10, 10], paddingBottomRight: [sp.br[0] + 70, sp.br[1] + 10] }); } catch (e) {} return; }
@@ -673,7 +710,7 @@
   function onClick(e) {
     var b = e.target.closest("[data-lz]"), li = e.target.closest("[data-lzi]");
     if (e.target.closest("[data-osplit]")) { W.OSAP_SPLIT.set(!split()); var nb = card.querySelector("[data-osplit]"); if (nb) nb.focus(); return; }
-    if (li && ST.res) { var k = ST.res.cands[+li.getAttribute("data-lzi")]; if (k && k._m) { if (split()) W.OSAP_SPLIT.focus(k.lat, k.lon, Math.max(map.getZoom(), 15)); else map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); popFit(k._m); k._m.openPopup(); } return; }
+    if (li && ST.res) { var k = allC(ST.res)[+li.getAttribute("data-lzi")]; if (k && k._m) { if (split()) W.OSAP_SPLIT.focus(k.lat, k.lon, Math.max(map.getZoom(), 15)); else map.setView([k.lat, k.lon], Math.max(map.getZoom(), 15)); popFit(k._m); k._m.openPopup(); } return; }
     if (!b) return;
     var a = b.getAttribute("data-lz");
     if (a === "close") close();
