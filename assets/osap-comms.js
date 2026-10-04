@@ -896,6 +896,8 @@ function main() {
     /* masts sit on a canvas that ignores the pointer, so a tap on one reaches here as a tap on the map: leave it to the
        mast (its info box), or the place check it started redrew the masts and closed the box straight away */
     if (shown.length && mastAt(e)) return false;
+    /* Comms planning is waiting for a tap to set a terrain link end (Link tab) */
+    if (W.OSAP_COMMSPLAN && W.OSAP_COMMSPLAN.picking && W.OSAP_COMMSPLAN.picking()) return false;
     return true;
   }
   W.addEventListener("pointerdown", function (e) { down = mine(e) ? [e.clientX, e.clientY] : null; }, true);
