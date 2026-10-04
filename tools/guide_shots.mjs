@@ -37,11 +37,13 @@ async function page(hash) {
   p.on("pageerror", (e) => console.log("  page error:", e.message));
   await p.goto(base + (hash || "#th/map"));
   await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 });
-  await p.evaluate((a) => window.__asapMap.setView(a, 12, { animate: false }), AT);
-  await p.waitForTimeout(6000);
+  // Streets (English labels) reads best in a small picture
+  await p.evaluate((a) => { if (window.OSAP_BASEMAP) window.OSAP_BASEMAP.set("streets"); window.__asapMap.setView(a, 12, { animate: false }); }, AT);
+  await p.waitForTimeout(9000);
   return p;
 }
-const tool = (p, k) => p.evaluate((k) => { const b = document.querySelector(`#atk-tools [data-atk="${k}"]`) || document.querySelector(`#atk-tools [data-tidy="${k}"]`); if (b) b.click(); return !!b; }, k);
+// a toolbar button by its key, or by its label (Grid, Crosshair and 3D are added by their own scripts)
+const tool = (p, k) => p.evaluate((k) => { const b = document.querySelector(`#atk-tools [data-atk="${k}"]`) || document.querySelector(`#atk-tools [data-tidy="${k}"]`) || document.querySelector(`#atk-tools .atk-list button[aria-label="${k}"]`); if (b) b.click(); return !!b; }, k);
 // press the visible button whose text is exactly t (inside sel when given)
 const press = (p, t, sel) => p.evaluate(([t, sel]) => {
   const el = [...document.querySelectorAll((sel || "body") + " button, " + (sel || "body") + " [role=button], " + (sel || "body") + " [role=menuitem], " + (sel || "body") + " a")]
@@ -62,7 +64,7 @@ const SCENES = {
   datasets: async () => { const p = await page(); await tool(p, "datasets"); return p; },
   weather: async () => { const p = await page(); await tool(p, "weather"); return p; },
   overlays: async () => { const p = await page(); await tool(p, "overlays"); return p; },
-  grid: async () => { const p = await page(); await p.evaluate(() => window.__asapMap.setZoom(14, { animate: false })); await tool(p, "grid"); await tool(p, "crosshair"); await p.waitForTimeout(3000); return p; },
+  grid: async () => { const p = await page(); await p.evaluate(() => { window.__asapMap.setZoom(14, { animate: false }); }); await tool(p, "Grid"); await tool(p, "Crosshair"); await p.waitForTimeout(3000); return p; },
   measure: async () => {
     const p = await page(); await tool(p, "measure"); await p.waitForTimeout(500);
     const box = await p.locator("#map").boundingBox();
@@ -72,9 +74,9 @@ const SCENES = {
   route: async () => { const p = await page(); await tool(p, "route"); await p.waitForTimeout(2500); return p; },
   area: async () => { const p = await page(); await tool(p, "area"); return p; },
   ring: async () => { const p = await page(); await ring(p); return p; },
-  medplan: async () => { const p = await page(); await tool(p, "medplan"); await p.waitForTimeout(25000); return p; },
+  medplan: async () => { const p = await page(); await tool(p, "medplan"); await p.waitForTimeout(50000); return p; },
   evac: async () => { const p = await page(); await tool(p, "evac"); await p.waitForTimeout(3000); return p; },
-  lz: async () => { const p = await page(); await ring(p); await ringPress(p, "lz"); await p.waitForTimeout(30000); return p; },
+  lz: async () => { const p = await page(); await ring(p); await ringPress(p, "lz"); await p.waitForTimeout(70000); return p; },
   terrain: async () => {
     const p = await page(); await p.waitForFunction(() => window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 30000 });
     await ring(p); await ringPress(p, "terrain"); await p.waitForTimeout(800); await press(p, "Viewshed from here"); await p.waitForTimeout(1500);
@@ -95,7 +97,7 @@ for (const [name, run] of Object.entries(SCENES)) {
     await p.waitForTimeout(1500);
     await p.screenshot({ path: `${OUT}/${name}.jpg`, type: "jpeg", quality: 72 });
     console.log("PASS", name);
-  } catch (e) { fails++; console.log("FAIL", name, e.message.split("\n")[0]); }
+  } catch (e) { fails++; console.log("FAIL", name, e.message.split("\n")[0]); if (process.env.GITHUB_ACTIONS) console.log(`::warning::guide shot ${name} failed: ${e.message.split("\n")[0]}`); }
   if (p) await p.close();
 }
 await browser.close(); server.close();
