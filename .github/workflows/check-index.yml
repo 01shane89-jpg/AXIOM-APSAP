@@ -63,6 +63,7 @@ jobs:
       - run: node tests/offline_smoke.mjs
       - run: node tests/workspaces_smoke.mjs
       - run: node tests/move_smoke.mjs
+      - run: node tests/ai_smoke.mjs
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/period_smoke.mjs
       - run: node tests/search_smoke.mjs
@@ -80,6 +81,7 @@ jobs:
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
+      - run: node tests/route_api_smoke.mjs
       - run: node tests/route_preview_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/traffic_smoke.mjs

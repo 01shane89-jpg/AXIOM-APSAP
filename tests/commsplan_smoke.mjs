@@ -149,11 +149,106 @@ const pane = (p) => p.textContent("#cp-pane");
   ok(/Planning estimate/.test(await pane(p)), "power plan is labelled a planning estimate");
   if (OUT) await p.screenshot({ path: OUT + "/commsplan-power.png" });
 
+  // equipment sub-views
+  const esub = (s) => p.click('[data-cpesub="' + s + '"]');
+  await esub("loadout");
+  await p.click('[data-loa="add"]'); await p.click('[data-loa="add"]');
+  await p.fill('[data-lo="0"][data-cpk="name"]', "<b>PRC set</b>"); await p.fill('[data-lo="0"][data-cpk="qty"]', "2"); await p.fill('[data-lo="0"][data-cpk="kg"]', "4.5"); await p.fill('[data-lo="0"][data-cpk="who"]', "RTO");
+  await p.selectOption('[data-lo="1"][data-cpk="cat"]', "Antenna"); await p.fill('[data-lo="1"][data-cpk="kg"]', "1");
+  let lt2 = await p.textContent("#cp-loout");
+  ok(/Total\s*10(\.0)? kg/.test(lt2) && /RTO\s*9(\.0)? kg/.test(lt2) && /Not assigned\s*1(\.0)? kg/.test(lt2), "loadout: totals by type and by carrier");
+  await p.click('[data-loa="bats"]');
+  const bm = await p.evaluate(() => window.OSAP_RADIO.powerPlan(window.OSAP_COMMSPLAN.state().power).batteries_mission);
+  ok(await p.evaluate((bm) => { const v = JSON.parse(localStorage.getItem("osap-cp-loadout")); const x = v.items[v.items.length - 1]; return x.cat === "Battery" && x.qty === bm; }, bm), "loadout: batteries added from the power plan (" + bm + ")");
+  ok(await p.evaluate(() => !document.querySelector("#cp-pane b") || ![...document.querySelectorAll("#cp-pane b")].some((b) => b.textContent === "PRC set")), "loadout: item names are escaped");
+
+  await esub("cable");
+  await p.selectOption('[data-cb="cable"]', "lmr400"); await p.fill('[data-cb="f_mhz"]', "450"); await p.fill('[data-cb="len_m"]', "20"); await p.fill('[data-cb="connectors"]', "2"); await p.fill('[data-cb="conn_db"]', "0.15");
+  const ct = await p.textContent("#cp-cbout");
+  ok(/8\.9 dB per 100 m/.test(ct) && /Total loss\s*2\.08 dB/.test(ct), "cable: LMR-400 20 m at 450 MHz with 2 connectors = 2.08 dB");
+  await p.click('[data-cb="use"]');
+  ok(await p.evaluate(() => document.querySelector('.cptabs [data-cptab="link"]').getAttribute("aria-selected") === "true") && (await p.inputValue('[data-cpl="ltx_db"]')) === "2.08" && (await p.inputValue('[data-cpl="f_mhz"]')) === "450", "cable: 'Use these in the Link tab' fills the link loss and frequency");
+  await tab(p, "equipment");
+
+  await esub("antennas");
+  await p.fill("#cpant-f", "150");
+  ok(/Quarter-wave whip\s*0\.47 m/.test(await p.textContent("#cp-antout")) && (await p.evaluate(() => document.querySelectorAll(".cpant").length)) >= 8, "antennas: quarter wave at 150 MHz is 0.47 m and reference cards show");
+
+  await esub("connectors");
+  await p.selectOption("#cpcn-a", "bnc"); await p.selectOption("#cpcn-b", "n");
+  ok(/Needs:/.test(await p.textContent("#cp-cnout")), "connectors: BNC to N needs an adapter");
+  await p.selectOption("#cpcn-b", "bnc"); await p.selectOption("#cpcn-bg", "m");
+  ok(/Direct fit/.test(await p.textContent("#cp-cnout")), "connectors: female BNC to male BNC fits directly");
+
+  await esub("spectrum");
+  ok(/ITU Region 3/.test(await pane(p)), "spectrum: Thailand is ITU Region 3");
+  await p.fill("#cpsp-f", "121.5");
+  ok(await p.evaluate(() => !!document.querySelector("#cp-spout .cpbad")), "spectrum: 121.5 MHz is flagged as distress");
+  await p.fill("#cpch-n", "Guard"); await p.fill("#cpch-f", "121.5"); await p.click('[data-ch="add"]');
+  await p.fill("#cpch-n", "Net 1"); await p.fill("#cpch-f", "45.3"); await p.click('[data-ch="add"]');
+  const chs = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-chan")).map((c) => c.f));
+  ok(chs.join(",") === "45.3,121.5" && /Distress, emergency or navigation frequency/.test(await pane(p)), "spectrum: channel plan sorted and a distress entry is warned");
+
+  await esub("comsec");
+  await p.fill("#cpcs-st", "a3f9c1d2e4b5a6978c0d1e2f"); await p.click('[data-cs="add"]');
+  ok(/Refused/.test(await p.textContent("#cp-msg")) && !(await p.evaluate(() => localStorage.getItem("osap-cp-comsec"))), "COMSEC: key-like entry is refused and not stored");
+  const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  for (const [st, ex] of [["KL-OLD", day(-3)], ["KL-SOON", day(3)], ["KL-NEW", day(40)]]) { await p.fill("#cpcs-st", st); await p.fill("#cpcs-ex", ex); await p.click('[data-cs="add"]'); }
+  const cs = await pane(p);
+  ok(/EXPIRED/.test(cs) && /EXPIRES SOON/.test(cs) && /CURRENT/.test(cs), "COMSEC: expiry badges");
+  await p.selectOption('[data-csst]', "Destroyed");
+  ok(/CLOSED/.test(await pane(p)), "COMSEC: a destroyed item shows closed");
+  const wsSrc = await p.evaluate(() => fetch("assets/osap-ws.js").then((r) => r.text()));
+  ok(["osap-cp-loadout", "osap-cp-chan", "osap-cp-comsec"].every((k) => wsSrc.includes('"' + k + '"')), "equipment records are kept per workspace");
+  if (OUT) await p.screenshot({ path: OUT + "/commsplan-comsec.png" });
+  await esub("power");
+
   // networks
   await tab(p, "networks");
   const nt = await pane(p);
   ok(/Internet outages/.test(nt) && /REPORTED/.test(nt) && /IODA/.test(nt), "Networks: internet outages shown as a reported source");
   ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length > 0 && document.querySelector("#com-tg").getClientRects().length > 0), "Networks: mast and provider switches are here");
+
+  // route comms corridor (Coverage)
+  await tab(p, "coverage");
+  ok(/Route comms corridor/.test(await pane(p)) && await p.evaluate(() => { const a = document.querySelector("#cp-pane"), b = document.querySelector("#cp-comms"); return !!(b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING) || a.getBoundingClientRect().top >= b.getBoundingClientRect().top; }), "Coverage: corridor section shows below the phone signal check");
+  await p.evaluate(() => { try { localStorage.removeItem("osap-route-cur"); } catch (e) {} });
+  await p.click('[data-cpcr="run"]');
+  ok(/no planned route/i.test(await p.textContent("#cp-crout")), "corridor: no route says so");
+  await p.evaluate(() => localStorage.setItem("osap-route-cur", JSON.stringify({ wps: [{ lat: 13.75, lon: 100.5 }, { lat: 13.75, lon: 100.55 }, { lat: 13.78, lon: 100.55 }] })));
+  await p.fill("#cpcr-seg", "2");
+  await p.click('[data-cpcr="run"]');
+  await p.waitForFunction(() => document.querySelector(".cpstrip"), null, { timeout: 60000 });
+  const cr = await p.textContent("#cp-crout");
+  ok(/Good|Degraded|Likely none|Unknown/.test(cr) && /PACE/.test(cr) && /OBSERVED|REPORTED|MAPPED/.test(cr), "corridor: strip, ratings, PACE line and labelled sources");
+  ok((await p.evaluate(() => document.querySelectorAll(".cpstrip span").length)) === 5, "corridor: about 9 km in 2 km segments = 5 segments");
+  ok(await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l.options && l.options.weight === 7 && l.getLatLngs) n++; }); return n === 5; }), "corridor: segments drawn on the map");
+  await tab(p, "link");
+  ok(await p.evaluate(() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l.options && l.options.weight === 7 && l.getLatLngs) n++; }); return n === 0; }), "corridor: leaving Coverage takes it off the map");
+  await tab(p, "coverage");
+  ok((await p.evaluate(() => document.querySelectorAll(".cpstrip span").length)) === 5, "corridor: answer kept when coming back");
+  // the shared API: EPE segment format, unknown never 'none', abort
+  const api = await p.evaluate(async () => {
+    const CP = window.OSAP_COMMSPLAN, T = window.OSAP_COMMSTAB, real = T.evaluate;
+    const r1 = await CP.corridor([{ id: "opt1-L1-0", coords: [[13.75, 100.5]], km_from: 0, km_to: 0 }, { id: "opt1-L1-1", coords: [[13.75, 179.99], [13.75, 180.02]], km_from: 0, km_to: 3 }], { cc: "th" });
+    T.evaluate = () => Promise.resolve({ samples: [{ at: 0, v: { level: 0 }, meas: { ok: false } }, { at: 1000, v: { level: 1 }, meas: { ok: false } }], total: 1000, big: false, mastsOk: false });
+    const r2 = await CP.corridor([{ id: "x-L1-0", coords: [[13.75, 100.5], [13.76, 100.5]], km_from: 0, km_to: 1 }]);
+    T.evaluate = real;
+    const ac = new AbortController(); ac.abort(); let ab = "";
+    try { await CP.corridor([{ id: "y", coords: [[13.75, 100.5], [13.76, 100.5]], km_from: 0, km_to: 1 }], { signal: ac.signal }); } catch (e) { ab = e.name; }
+    return { r1, r2, ab };
+  });
+  ok(api.r1.length === 2 && api.r1[0].id === "opt1-L1-0" && api.r1[0].status === "unknown" && /fewer than two/.test(api.r1[0].reason), "corridor API: a one-point segment is unknown with the reason");
+  ok(["good", "degraded", "none", "unknown"].includes(api.r1[1].status) && api.r1[1].sources.every((s) => ["observed", "mapped", "modelled", "reported"].includes(s.kind)) && api.r1[1].sources.some((s) => s.kind === "reported"), "corridor API: a segment across 180° is checked, sources are typed, IODA is reported");
+  ok(api.r2[0].status === "unknown" && /cannot say/.test(api.r2[0].reason), "corridor API: nothing readable gives unknown, never none");
+  ok(api.ab === "AbortError", "corridor API: honours an aborted signal");
+  await p.click('[data-cpcr="clear"]');
+  // Route tab's "Comms along route" hands over
+  await p.evaluate(() => { window.OSAP_COMMSPLAN_WANT = "route"; window.TSAP.setView("map"); window.TSAP.setView("comms"); });
+  await p.waitForFunction(() => document.querySelector(".cpstrip"), null, { timeout: 60000 });
+  ok(await p.evaluate(() => window.OSAP_COMMSPLAN_WANT === null && document.querySelector('.cptabs [data-cptab="coverage"]').getAttribute("aria-selected") === "true"), "Comms along route: opens Coverage and runs the corridor");
+  if (OUT) await p.screenshot({ path: OUT + "/commsplan-corridor.png" });
+  await tab(p, "networks");
 
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 
@@ -170,6 +265,7 @@ const pane = (p) => p.textContent("#cp-pane");
   for (const t of ["plan", "equipment", "link", "status"]) {
     await p.evaluate((t) => window.OSAP_COMMSPLAN.tab(t), t);
     if (t === "plan") await p.evaluate(() => { const b = document.querySelector('[data-cpa="new"]'); if (b) b.click(); });
+    if (t === "equipment") for (const s of ["loadout", "cable", "antennas", "connectors", "spectrum", "comsec"]) { await p.click('[data-cpesub="' + s + '"]'); await p.waitForTimeout(100); ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone equipment " + s + ": no sideways scroll"); }
     await p.waitForTimeout(200);
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone " + t + ": no sideways scroll");
   }

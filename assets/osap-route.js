@@ -364,6 +364,10 @@ function main() {
     else if (k === "search") search();
     else if (k === "evac") evPlan();
     else if (k === "preview") preview(b);
+    else if (k === "comms") { /* Comms planning > Coverage checks phone and data coverage segment by segment along this route */
+      W.OSAP_COMMSPLAN_WANT = "route";
+      if (W.OSAP_COMMSPLAN && D.documentElement.getAttribute("data-view") === "comms") { W.OSAP_COMMSPLAN_WANT = null; W.OSAP_COMMSPLAN.routeCorridor(); }
+      else if (W.TSAP && W.TSAP.setView) { W.TSAP.setView("comms"); D.dispatchEvent(new Event("osap:view")); } }
     else if (k === "evsave") evSave();
     else if (k === "epe") { if (W.OSAP_EPE_GO) W.OSAP_EPE_GO(S.wps.length ? { at: [S.wps[0].lat, S.wps[0].lon], how: "Route waypoint A" } : {}); }
     else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
@@ -468,7 +472,7 @@ function main() {
       '<div class="rtkpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.total)) + "</b><span>time" + (S.stopMin && S.wps.length > 2 ? " with stops" : "") + "</span></div>" +
       "<div><b>" + E(zOnly(arr)) + "</b><span>arrive</span></div></div>" +
       '<p class="obs">Depart ' + E(when(dep)) + " · arrive " + E(when(arr)) + ". " + (r.road ? "Times are the router's estimate for normal traffic." : r.xc ? "Cross-country estimate at off-path walking pace (about 3 km/h on the flat), slowed by slope and seasonal water, with no time for water crossings; averages " + r.kmh + " km/h without rests." : "At " + r.kmh + " km/h without stops for terrain.") + "</p>" +
-      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button></div>';
+      '<div class="rtbtns"><button type="button" data-rt="search" class="rtgo">Search this route</button><button type="button" data-rt="preview" title="Step through the route with street-level pictures where they exist, satellite, terrain or map where not">Preview route</button><button type="button" data-rt="comms" title="Phone and data coverage segment by segment along this route, in Comms planning">Comms along route</button></div>';
     alt.innerHTML = S.routes.length > 1 ? '<div class="rtalts">' + S.routes.map(function (x, i) {
       return '<button type="button" data-alt="' + i + '" aria-pressed="' + (i === S.sel) + '"><b>' + E(x.label || (i ? "Alternative " + i : "Fastest")) + "</b> " + E(dist(x.m)) + " · " + E(dur(x.s)) + "</button>";
     }).join("") + "</div>" : "";
@@ -850,6 +854,92 @@ function main() {
       c = c.sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
       if (!c.length) throw new Error("no " + (to === "any" ? "evacuation point" : EV_KINDS[to].toLowerCase()) + " within 1,500 km in the reference data");
       return c;
+    });
+  }
+
+  /* ---------- route API for other modules (agreed with the medical plan thread 2026-10-03) ----------
+     alternates(a, b, { mode, n, foot }) -> Promise of up to n (1-3) distinct lines from a to b ([lat, lon]), fastest first,
+       as [{ id: "P" | "A" | "C", coords: [[lat, lon], ...], m, s, road, xc, src, how }]. The routers' own alternatives come
+       first; when they give fewer than n distinct lines, Valhalla is asked for a detour round the incidents reported nearest
+       the fastest one (as the evacuation planner does). foot (mode "foot" only): "paths" (default), "xc" (only a cross-country
+       line over open ground) or "both". The ids are an order (primary, alternate, contingency), not a judgement: the analyst
+       decides which line is which. Rejects when no router answers.
+     hazards(coords, { km, days }) -> what the app already holds within km (default 2) of the line, in order along it:
+       [{ kind, layer, at_km, off_km, src, age_h (null when undated), text, url, p }], plus saved NAI/TAI areas it crosses
+       (layer "aoi"). Nothing new is fetched: reports are the open country's, road closures only once that file is loaded.
+       An empty list is not a clearance. */
+  var API_IDS = ["P", "A", "C"];
+  function apiLayer(kind) {
+    return kind === "Report" ? "reports" : /^Road /.test(kind) ? "roads" : kind === "Disaster alert" ? "gdacs" : /^Earthquake/.test(kind) ? "quakes" :
+      kind === "Conflict event" ? "ucdp" : kind === "Storm" ? "storms" : "other";
+  }
+  function apiLine(coords) {
+    var c = (coords || []).filter(function (p) { return p && isFinite(+p[0]) && isFinite(+p[1]); }).map(function (p) { return [+p[0], +p[1]]; }), m = 0;
+    for (var i = 1; i < c.length; i++) m += hav(c[i - 1], c[i]);
+    return { coords: c, m: m, s: 0, legs: [{ m: m, s: 0 }] };
+  }
+  /* share of b's line lying within 150 m of a's: two lines this alike are the same option */
+  function apiSame(a, b) {
+    var ra = apiLine(a.coords), rb = apiLine(b.coords);
+    if (ra.coords.length < 2 || rb.coords.length < 2) return false;
+    var w = [{ lat: ra.coords[0][0], lon: ra.coords[0][1] }, { lat: ra.coords[ra.coords.length - 1][0], lon: ra.coords[ra.coords.length - 1][1] }];
+    return withWps(w, function () {
+      var pa = sample(ra, Math.min(300, Math.max(30, Math.round(ra.m / 300)))), pb = sample(rb, 40), close = 0;
+      pb.forEach(function (x) { if (near(ra, x.p, pa).d <= 150) close++; });
+      return close / pb.length >= 0.9;
+    });
+  }
+  function alternates(a, b, o) {
+    o = o || {};
+    var mode = { car: 1, truck: 1, foot: 1, bike: 1 }[o.mode] ? o.mode : "car", n = Math.max(1, Math.min(3, +o.n || 3));
+    var foot = mode === "foot" ? ({ paths: 1, xc: 1, both: 1 }[o.foot] ? o.foot : "paths") : "paths";
+    if (!a || !b || !isFinite(+a[0]) || !isFinite(+a[1]) || !isFinite(+b[0]) || !isFinite(+b[1])) return Promise.reject(new Error("two points are needed"));
+    var wps = [{ lat: +a[0], lon: +a[1], name: "A" }, { lat: +b[0], lon: +b[1], name: "B" }], out = [], errs = [];
+    function add(r, how) {
+      var x = { coords: r.coords.map(function (p) { return [Math.round(p[0] * 1e6) / 1e6, Math.round(p[1] * 1e6) / 1e6]; }), m: Math.round(r.m), s: Math.round(r.s), road: !!r.road, xc: !!r.xc,
+        src: r.xc ? "Cross-country (this browser: open elevation and surface water)" : (r.src && r.src.name) || "", how: how };
+      if (x.coords.length > 1 && !out.some(function (y) { return apiSame(y, x); })) out.push(x);
+    }
+    var xc = foot === "paths" ? Promise.resolve() : xcLoad().then(function (X) { return X.route([wps[0].lat, wps[0].lon], [wps[1].lat, wps[1].lon], {}); })
+      .then(function (r) { if (r) { r.xc = true; add(r, "cross-country"); } }, function (e) { errs.push("cross-country: " + e.message); });
+    return xc.then(function () {
+      if (foot === "xc") return;
+      return roadRoutes(mode, wps).then(function (rs) { rs.forEach(function (r, j) { add(r, j ? "alternative" : "fastest"); }); }, function (e) { errs.push(e.message); });
+    }).then(function () {
+      var fast = out.filter(function (x) { return x.road; })[0];
+      if (foot === "xc" || out.length >= n || !fast) return;
+      var hz = evHaz(30), exp = withWps(wps, function () { return evExposure(apiLine(fast.coords), hz); }), avoid = exp.hits.slice().sort(function (x, y) { return y.w - x.w; }).slice(0, 50);
+      if (!avoid.length) return;
+      return valhalla(evCost(mode), wps, { alternates: 0, exclude_locations: avoid.map(function (h) { return { lat: h.p[0], lon: G.wrap(h.p[1]) }; }) })
+        .then(function (rs) { rs.forEach(function (r) { add(r, "detour"); }); }, function () { /* no detour: the routers' lines stand */ });
+    }).then(function () {
+      if (!out.length) throw new Error(errs.join("; ") || "no route");
+      return out.sort(function (x, y) { return x.s - y.s; }).slice(0, n).map(function (x, i) { x.id = API_IDS[i]; return x; });
+    });
+  }
+  function apiHazards(coords, o) {
+    o = o || {};
+    var r = apiLine(coords); if (r.coords.length < 2) return [];
+    var km = Math.max(0.1, Math.min(50, +o.km || 2)), buf = km * 1000, days = +o.days || 0, now = Date.now(), c = r.coords, out = [];
+    var w = [{ lat: c[0][0], lon: c[0][1] }, { lat: c[c.length - 1][0], lon: c[c.length - 1][1] }];
+    return withWps(w, function () {
+      var pts = sample(r, Math.min(400, Math.max(40, Math.round(r.m / 500)))), src = hazSources();
+      var lat0 = Infinity, lat1 = -Infinity, lo0 = Infinity, lo1 = -Infinity;
+      pts.forEach(function (x) { lat0 = Math.min(lat0, x.p[0]); lat1 = Math.max(lat1, x.p[0]); lo0 = Math.min(lo0, x.p[1]); lo1 = Math.max(lo1, x.p[1]); });
+      var pad = buf / 111000 + 0.01;
+      src.forEach(function (h) {
+        var lo = h.p[1]; while (lo < lo0 - 180) lo += 360; while (lo > lo1 + 180) lo -= 360;
+        if (h.p[0] < lat0 - pad || h.p[0] > lat1 + pad || lo < lo0 - pad * 3 || lo > lo1 + pad * 3) return;
+        var t = Date.parse(String(h.date || "").slice(0, 10)), age = isFinite(t) ? Math.max(0, Math.round((now - t) / 36e5)) : null;
+        if (days && age != null && age > days * 24) return;
+        var nr = near(r, [h.p[0], lo], pts); if (nr.d > buf) return;
+        out.push({ kind: h.kind, layer: apiLayer(h.kind), at_km: Math.round(nr.along / 100) / 10, off_km: Math.round(nr.d / 100) / 10, src: h.src || "", age_h: age, text: h.title || "", url: h.url || null, p: h.p.slice() });
+      });
+      (src.aoi || []).forEach(function (a) {
+        var inside = pts.filter(function (x) { return inPoly(x.p, a.pts); });
+        if (inside.length) out.push({ kind: "Saved area " + a.type, layer: "aoi", at_km: Math.round(inside[0].m / 100) / 10, off_km: 0, src: "Your saved areas", age_h: null, text: a.name, url: null, p: inside[0].p.slice() });
+      });
+      return out.sort(function (x, y) { return x.at_km - y.at_km; });
     });
   }
 
@@ -1604,6 +1694,8 @@ function main() {
     /* the evacuation engine for the evacuation planner (assets/osap-epe.js): evRun(to, start, o) -> { opts, nCand, notes };
        evShow(plan in the kept shape) opens one line here with its checkpoints */
     evRun: evRun, evShow: function (k) { if (S.ctx) evShow(k); }, evKinds: EV_KINDS, evR: EV_R,
+    /* primary, alternate and contingency lines between two points, and what the app holds along a line (the medical plan) */
+    alternates: alternates, hazards: apiHazards,
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
     line: function () { var r = S.routes[S.sel]; return r && r.coords && r.coords.length > 1 ? r.coords.map(function (c) { return c.lat != null ? [c.lat, c.lng] : [c[0], c[1]]; }) : null; } };
   if (W.OSAP_ROUTE_WAIT && D.documentElement.getAttribute("data-view") === "route") W.OSAP_ROUTE_WAIT();

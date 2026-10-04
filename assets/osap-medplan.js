@@ -845,14 +845,14 @@
     "#medplan .mphead h2{margin:0;font-size:17px;flex:1 1 auto}#medplan .mpcc{font-weight:400;color:var(--muted,#56626F)}#medplan .mphead button{min-height:32px}" +
     "#medplan h3{font-size:14px;margin:14px 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#medplan p{margin:4px 0;line-height:1.45}#medplan h4{font-size:13px;margin:8px 0 2px}" +
     "#medplan .obs{color:var(--muted,#56626F);font-size:12px}#medplan .mpwarn{color:#8a4b00}" +
-    "#medplan .mppoi{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-end;background:var(--bg,#f6f8fa);border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:8px;margin:8px 0}" +
+    "#medplan .mppoi{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-end;background:var(--bg,var(--surface2,#f6f8fa));border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:8px;margin:8px 0}" +
     "#medplan .mppoi label{display:grid;gap:2px;font-size:12px;color:var(--muted,#56626F);flex:1 1 220px}#medplan .mppoi b{color:var(--ink,#1b2733)}" +
     "#medplan .mppoi input,#medplan .mppoi select{font:inherit;font-size:13px;min-height:32px;box-sizing:border-box;width:100%;color:var(--ink,#1b2733);background:var(--surface,#fff);border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:4px 7px}" +
     "#medplan .mppoi button{min-height:32px}#medplan .mpnum{width:5.5em!important;flex:0 0 auto}#medplan .mpspd{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted,#56626F)}" +
-    "#medplan .mpspd input{width:5em;font:inherit;font-size:13px;min-height:28px;border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:2px 5px;background:var(--bg,#f6f8fa);color:var(--ink,#1b2733)}" +
+    "#medplan .mpspd input{width:5em;font:inherit;font-size:13px;min-height:28px;border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:2px 5px;background:var(--bg,var(--surface2,#f6f8fa));color:var(--ink,#1b2733)}" +
     "#medplan .mpgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:6px 14px}" +
     "#medplan .mpgrid label{display:grid;gap:2px;font-size:12px;color:var(--muted,#56626F)}" +
-    "#medplan .mpgrid input,#medplan .mpgrid textarea{font:inherit;font-size:13px;color:var(--ink,#1b2733);background:var(--bg,#f6f8fa);border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:5px 7px;min-height:30px;box-sizing:border-box;width:100%}" +
+    "#medplan .mpgrid input,#medplan .mpgrid textarea{font:inherit;font-size:13px;color:var(--ink,#1b2733);background:var(--bg,var(--surface2,#f6f8fa));border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:5px 7px;min-height:30px;box-sizing:border-box;width:100%}" +
     "#medplan .mpgrid .wide{grid-column:1/-1}#medplan .mpgrid textarea{min-height:52px;resize:vertical}" +
     "#medplan .mpscroll{overflow-x:auto}#medplan table{border-collapse:collapse;width:100%;font-size:12px}" +
     "#medplan th,#medplan td{text-align:left;vertical-align:top;padding:4px 6px;border-bottom:1px solid var(--line-soft,#e3e7eb)}#medplan th{font-weight:600;white-space:nowrap}" +
@@ -887,7 +887,7 @@
     "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
     "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
-    "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,#f6f8fa)}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
+    "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,var(--surface2,#f6f8fa))}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
     ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
