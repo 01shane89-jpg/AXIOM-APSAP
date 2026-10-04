@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-04"]=[["et","2026-09-04T20:05","After Pretoria peace deal, old enemies in Ethiopia’s Tigray find new ground","","Al Jazeera on MSN (via Bing News search)","https://www.msn.com/en-us/news/other/after-pretoria-peace-deal-old-enemies-in-ethiopia-s-tigray-find-new-ground/ar-AA2bBFio","","s","",""]];
