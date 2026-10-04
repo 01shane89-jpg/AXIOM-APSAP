@@ -155,14 +155,13 @@
       var path = [];
       stops.forEach(function (r) {
         var stage = r === last ? "definitive" : STAGE[r.role] === "definitive" ? "definitive" : "stabilization";
-        var un = r.unconfirmed ? { unconfirmed: true, confidence: r.confidence || "" } : {};
-        path.push(Object.assign({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate" }, un));
-        addFac(stage === "definitive" ? defi : stab, r.facility, Object.assign({ for: [c.id], role: r.role, way: r.way, time_s: r.time_s }, un));
+        path.push({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate" });
+        addFac(stage === "definitive" ? defi : stab, r.facility, { for: [c.id], role: r.role, way: r.way, time_s: r.time_s });
       });
-      /* alternate MTFs: another hospital that also qualifies, or an unconfirmed one (crowd-listed or part listed); never a stop */
+      /* alternate MTFs: another hospital that also qualifies on documented care; never a planned stop */
       rows.forEach(function (r) {
         if (!r.alt || !r.alt.facility) return;
-        addFac(alts, r.alt.facility, { for: [c.id], role: r.role, why: "alternate " + r.role + " (" + r.alt.confidence + ")", way: r.alt.way, time_s: r.alt.time_s, confidence: r.alt.confidence, unconfirmed: r.alt.confidence !== "documented" });
+        addFac(alts, r.alt.facility, { for: [c.id], role: r.role, why: "alternate " + r.role + ": also qualifies on documented care", way: r.alt.way, time_s: r.alt.time_s });
       });
       filled.filter(function (r) { return !r.stop && r.stabilisation_option; }).forEach(function (r) {
         addFac(alts, r.facility, { for: [c.id], role: r.role, why: "bypassed: going direct reaches the needed care sooner; stays the stabilization option", way: r.way, time_s: r.time_s });
@@ -171,7 +170,7 @@
       if (!last) unresolved.push({ code: "no_definitive." + c.id, text: "No definitive care documented for " + c.label.toLowerCase() });
       /* phase 2: each stabilise-or-bypass decision with its time to the required care, part by part */
       var decisions = rows.filter(function (r) { return r.decision; }).map(function (r) { return Object.assign({ to_role: r.role }, r.decision); });
-      profiles.push({ id: c.id, label: c.label, pathway: path, gaps: gaps, bypass: path.length && stops.length < filled.length, decisions: decisions });
+      profiles.push({ id: c.id, label: c.label, pathway: path, gaps: gaps, stabilization_gap: rows.some(function (r) { return r.role === "stabilization" && r.state !== "filled"; }), bypass: path.length && stops.length < filled.length, decisions: decisions });
     });
     var trauma = profiles.filter(function (p) { return p.id === "cat.major_trauma"; })[0] || profiles[0] || null;
     var def = trauma ? trauma.pathway.filter(function (x) { return x.stage === "definitive"; })[0] : null;
@@ -233,7 +232,7 @@
     function stop(x) {
       if (!x) return null;
       var g = p.ground_routes.filter(function (r) { return r.facility_id === x.facility_id && r.option === "P"; })[0];
-      return { facility_id: x.facility_id, name: x.name, way: x.way, time_s: x.time_s, distance_m: g ? g.distance_m : null, unconfirmed: !!x.unconfirmed, confidence: x.confidence || "" };
+      return { facility_id: x.facility_id, name: x.name, way: x.way, time_s: x.time_s, distance_m: g ? g.distance_m : null };
     }
     var path = prof ? prof.pathway : [], stab = stop(path.filter(function (x) { return x.stage === "stabilization"; })[0]), def = stop(path.filter(function (x) { return x.stage === "definitive"; })[0]);
     var routes = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; }) : [], P = routes.filter(function (r) { return r.option === "P"; })[0];
@@ -242,7 +241,7 @@
     var gaps = [], dF = def && p.facilities[def.facility_id];
     if (!def) gaps.push("Definitive care for " + (prof ? prof.label.toLowerCase() : "this casualty") + " not documented");
     if (dF) CRITICAL.forEach(function (c) { if ((dF.caps || {})[c[0]] !== "yes") gaps.push(c[1]); else if ((dF.caps_now || {})[c[0]] === "UNAVAILABLE") gaps.push(c[1] + " reported not available now"); });
-    if (stab && stab.unconfirmed) gaps.push("Stabilization stop " + stab.name + " unconfirmed: call ahead");
+    if (prof && prof.stabilization_gap) gaps.push("No stabilization stop documented inside the golden hour");
     if (def) gaps.push("Receiving hospital acceptance");
     if (!air) gaps.push("Air MEDEVAC provider");
     (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
@@ -250,7 +249,7 @@
       casualty: prof ? { id: prof.id, label: prof.label } : null, status: p.validation_status.status, status_label: p.validation_status.label, poi: p.poi ? p.poi.mgrs : "",
       ground: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
       air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : "",
-      stabilization: stab, definitive: def, bypass: !!(prof && prof.bypass),
+      stabilization: stab, stabilization_gap: !!(prof && prof.stabilization_gap), definitive: def, bypass: !!(prof && prof.bypass),
       primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
       alternate_route: !def ? "NO DESTINATION" : A ? "AVAILABLE" : !ga ? "NOT LOOKED FOR" : ga.state === "pending" ? "CHECKING" : "NONE FOUND",
       route_flags: (p.operational_picture && def && p.definitive && p.definitive.facility_id === def.facility_id ? p.operational_picture.flags : []).filter(function (f) { return /^route\./.test(f.code); }).map(function (f) { return f.text; }),
@@ -266,7 +265,7 @@
     else add("data.pending", "ok", "Plan data complete");
     add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centred on " + (p.poi && p.poi.set_by === "c" ? "the map or area centre" : "a stand-in point") + ".");
     var stab = p.stabilization_facilities[0], def = p.definitive;
-    add("stabilization", stab && !stab.unconfirmed ? "ok" : "warning", "Stabilization facility", stab ? stab.name + (stab.unconfirmed ? " (unconfirmed: " + (stab.confidence === "crowd" ? "emergency department listed only by OpenStreetMap" : "no emergency department listed") + "; call ahead)" : "") : "None documented by a credible source; stabilize en route or confirm a local facility.");
+    add("stabilization", stab ? "ok" : "warning", "Stabilization facility", stab ? stab.name : "None documented by a credible source; stabilize en route or confirm a local facility.");
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];
     add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? "Road router" : def ? "No road route to the definitive facility yet." : "No destination to route to.");

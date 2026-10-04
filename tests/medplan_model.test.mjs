@@ -170,22 +170,26 @@ ok(c2.definitive === null && c2.ground === "NO DESTINATION" && c2.alternate_rout
 const cA = M.conop(M.build(input({ aircraft: [AC], now: "2026-10-03T20:00:00.000Z" })), "cat.major_trauma");
 ok(cA.air === "CONFIRMED" && cA.air_asset === "Test Air Ambulance (H145)" && !cA.critical_gaps.includes("Air MEDEVAC provider") && cA.alternate_route === "NOT LOOKED FOR", "phase 6: a confirmed aircraft shows as confirmed and leaves the gaps");
 
-/* Shane 2026-10-04: a stabilization stop when the first MTF is beyond the golden hour, and alternate MTFs with their confidence */
-const SH = { id: "TH-OSM-n12", name: "Sena Hospital", lat: 14.82, lon: 100.7, caps: { "ed.basic": "crowd" } };
-const ALT = { id: "TH-OSM-n7", name: "Other Regional Hospital", lat: 14.5, lon: 100.6, caps: { "ed.24_7": "crowd", "cc.icu": "crowd" } };
+/* Shane 2026-10-04: a stabilization stop when the first MTF is beyond the golden hour, and documented alternate MTFs; nothing
+   short of credible documentation is either (Shane 2026-10-02) */
+const SH = { id: "TH-OSM-n12", name: "Sena Hospital", lat: 14.82, lon: 100.7, caps: { "ed.basic": "yes" } };
+const ALT = { id: "TH-OSM-n7", name: "Other Regional Hospital", lat: 14.5, lon: 100.6, caps: { "ed.24_7": "yes", "cc.icu": "yes" } };
 const pStab = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [
-  { role: "primary", state: "filled", stop: true, way: "road", time_s: 6600, facility: TU },
-  { role: "secondary", state: "gap", alt: { facility: ALT, way: "road", time_s: 2400, confidence: "crowd" } },
+  { role: "primary", state: "filled", stop: true, way: "road", time_s: 6600, facility: TU, alt: { facility: ALT, way: "road", time_s: 7000 } },
+  { role: "secondary", state: "gap" },
   { role: "tertiary", state: "gap" },
-  { role: "stabilization", state: "filled", stop: true, unconfirmed: true, confidence: "crowd", way: "road", time_s: 240, facility: SH }] }],
+  { role: "stabilization", state: "filled", stop: true, way: "road", time_s: 240, facility: SH }] }],
   routes: [{ facility_id: TU.id, s: 6600, m: 98000, src: "x" }, { facility_id: SH.id, s: 240, m: 2000, src: "x" }] }));
 ok(pStab.casualty_profiles[0].pathway.map((x) => x.stage + ":" + x.name).join() === "stabilization:Sena Hospital,definitive:Thammasat University Hospital" && pStab.definitive.name === "Thammasat University Hospital",
   "stabilization stop: first on the path, never the definitive care: " + pStab.casualty_profiles[0].pathway.map((x) => x.stage + ":" + x.name).join());
-ok(pStab.casualty_profiles[0].gaps.join() === "secondary,tertiary" && pStab.stabilization_facilities[0].unconfirmed === true && by(pStab, "stabilization").level === "warning" && /Sena Hospital \(unconfirmed: emergency department listed only by OpenStreetMap; call ahead\)/.test(by(pStab, "stabilization").detail),
-  "stabilization stop: an OpenStreetMap-only emergency department is a warning, unconfirmed, call ahead: " + by(pStab, "stabilization").detail);
-ok(pStab.alternates.some((a) => a.name === "Other Regional Hospital" && a.role === "secondary" && a.unconfirmed && a.confidence === "crowd") && !!pStab.facilities[ALT.id], "alternate MTF: an unconfirmed alternate for a gap is in the record with its confidence");
+ok(pStab.casualty_profiles[0].gaps.join() === "secondary,tertiary" && by(pStab, "stabilization").level === "ok" && by(pStab, "stabilization").detail === "Sena Hospital", "stabilization stop: a documented emergency department is the stabilization facility");
+ok(pStab.alternates.some((a) => a.name === "Other Regional Hospital" && a.role === "primary") && !!pStab.facilities[ALT.id], "alternate MTF: a documented alternate is in the record");
 const cStab = M.conop(pStab, "cat.major_trauma");
-ok(cStab.stabilization.name === "Sena Hospital" && cStab.stabilization.unconfirmed && cStab.critical_gaps.includes("Stabilization stop Sena Hospital unconfirmed: call ahead"), "CONOP: the stabilization stop is named, marked unconfirmed, and listed as a gap to close");
-
+ok(cStab.stabilization.name === "Sena Hospital" && !cStab.stabilization_gap, "CONOP: the stabilization stop is named");
+const pNo = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [
+  { role: "primary", state: "filled", stop: true, way: "road", time_s: 6600, facility: TU }, { role: "secondary", state: "gap" }, { role: "tertiary", state: "gap" }, { role: "stabilization", state: "gap" }] }] }));
+const cNo = M.conop(pNo, "cat.major_trauma");
+ok(pNo.stabilization_facilities.length === 0 && by(pNo, "stabilization").level === "warning" && cNo.stabilization === null && cNo.stabilization_gap && cNo.critical_gaps.includes("No stabilization stop documented inside the golden hour") && pNo.casualty_profiles[0].gaps.join() === "secondary,tertiary",
+  "stabilization: with none documented inside the golden hour, the record, validation and CONOP say so and nothing is put in");
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");

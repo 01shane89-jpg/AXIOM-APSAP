@@ -888,7 +888,7 @@
     "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
     "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
     "#medplan .mppst{margin:4px 0 6px}#medplan .mprow{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-bottom:2px}#medplan .mprl{font-size:11.5px;color:var(--muted,#555)}" +
-    ".mprole{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:#8b0010;border-radius:3px;padding:1px 5px;line-height:1.4}.mprole.r-sec,.mprole.r-ter{background:#222}.mprole.r-sta{background:#b34700}.mprole.r-unc{background:#fff;color:#8a4b00;border:1px solid #b36b00}.mprole.r-alt{background:#fff;color:#8a4b00;border:1px dashed #b36b00;margin-right:4px}" +
+    ".mprole{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:#8b0010;border-radius:3px;padding:1px 5px;line-height:1.4}.mprole.r-sec,.mprole.r-ter{background:#222}.mprole.r-sta{background:#b34700}.mprole.r-alt{background:#fff;color:#8a4b00;border:1px dashed #b36b00;margin-right:4px}" +
     "#medplan .mpalts{font-size:12.5px;margin:2px 0 8px}#medplan .mpaltl{display:block;margin:2px 0}#medplan .mpalt{display:block;font-weight:700;color:#8a4b00;font-size:12px}#medplan .mpalt2{color:#8a4b00}#medplan .mpstb{color:#9a3d00;font-weight:600}" +
     ":root[data-map=grey] #medplan .mpalt,:root[data-map=dark] #medplan .mpalt,:root[data-map=grey] #medplan .mpalt2,:root[data-map=dark] #medplan .mpalt2,:root[data-map=grey] #medplan .mpstb,:root[data-map=dark] #medplan .mpstb{color:#F5C877}.mpdoc .mpalt,.mpdoc .mpalt2,.mpdoc .mpstb{color:#8a4b00!important}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,var(--surface2,#f6f8fa))}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
@@ -1264,61 +1264,56 @@
       });
       var R3 = rows.slice(-3);
       bypassTiming(R3);
-      R3.forEach(function (r) { r.alt = altFor(r, c.stages[r.role], H, R3); });
+      R3.forEach(function (r) { r.alt = altFor(r, c.stages[r.role], H, R3); if (!r.choice) r.partial = refFor(c.stages[r.role], H); });
       var st0 = stabStop(c, R3, s); if (st0) rows.push(st0);
     });
     return rows;
   }
-  /* an alternate MTF for each role (Shane 2026-10-04: "the map shows no alternate MTFs"): for a filled role, the next hospital
-     that also qualifies; otherwise, or for a gap, the nearest hospital whose required care is listed only by OpenStreetMap or
-     Wikipedia, else the one with the most of it listed. Hospitals already used in this casualty type's plan are left out. An
-     alternate never becomes a planned stop: anything short of a credible source is UNCONFIRMED and says so. */
+  /* an alternate MTF for each role (Shane 2026-10-04: "the map shows no alternate MTFs"): the next hospital that also qualifies
+     on capabilities a credible source documents, leaving out hospitals already used in this casualty type's plan. Nothing
+     short of credible documentation is an alternate (Shane 2026-10-02: "unless there is credible documentation regarding the
+     facility's status it is not even an option"); for a gap, the nearest hospital with part of it documented is shown for
+     reference only, not eligible. */
   function altFor(r, st, H, R3) {
     var used = R3.map(function (x) { return x.choice && x.choice.f; }).filter(Boolean), L = H.filter(function (f) { return used.indexOf(f) < 0; });
     if (st.byLevel) L = L.slice().sort(function (a, b) { return rankOf(b) - rankOf(a) || bestWay(a)[0] - bestWay(b)[0]; });
-    function mk(f, conf, met, crowdL) {
-      var b = bestWay(f);
-      return { facility_id: f.id, f: f, way: b[1], time_s: Math.round(b[0]), confidence: conf, met: met, crowd: crowdL, not_documented: st.required.filter(function (k) { return met.indexOf(k) < 0 && crowdL.indexOf(k) < 0; }) };
-    }
-    for (var i = 0; i < L.length; i++) if (stageFit(L[i], st).ok) return mk(L[i], "documented", st.required.filter(function (k) { return capOk(L[i], k) === "yes"; }), []);
-    var best = null;
-    L.forEach(function (f) {
-      var met = [], cr = [];
-      st.required.forEach(function (k) { var v = capOk(f, k); if (v === "yes") met.push(k); else if (v === "crowd") cr.push(k); });
-      if (!met.length && !cr.length) return;
-      /* a stage that needs one of a few extras (Primary's blood bank or surgeon) counts them the same way */
-      var gN = st.gain ? st.gain.filter(function (k) { return capOk(f, k) !== "unknown" && capOk(f, k) !== "no"; }) : null;
-      var full = met.length + cr.length === st.required.length && (!gN || gN.length > 0), sc = (full ? 1000 : 0) + met.length * 10 + cr.length;
-      if (!best || sc > best.sc) { var x = mk(f, full ? "crowd" : "partial", met, cr); if (gN && !gN.length) x.no_gain = st.gain; best = { sc: sc, x: x }; }
-    });
-    return best ? best.x : null;
+    for (var i = 0; i < L.length; i++) if (stageFit(L[i], st).ok) { var b = bestWay(L[i]); return { facility_id: L[i].id, f: L[i], way: b[1], time_s: Math.round(b[0]) }; }
+    return null;
   }
-  var ALT_CONF = { documented: "documented by a credible source", crowd: "unconfirmed: listed only by OpenStreetMap or Wikipedia", partial: "unconfirmed: only part of the required care is listed" };
-  function altText(a) {
-    return (a.met.length ? andList(capNames(a.met)) + " documented" : "") + (a.crowd.length ? (a.met.length ? "; " : "") + andList(capNames(a.crowd)) + " listed only by OpenStreetMap or Wikipedia" : "") +
-      (a.not_documented.length ? "; " + andList(capNames(a.not_documented)) + " not listed" : "") + (a.no_gain ? "; none of " + capNames(a.no_gain).join(" or ") + " listed" : "");
+  /* reference only for a gap: the quickest hospital with any of the required care documented, and the one with the most */
+  function refFor(st, H) {
+    var near = null, most = null;
+    H.forEach(function (f) {
+      var met = st.required.filter(function (k) { return capOk(f, k) === "yes"; });
+      if (!met.length) return;
+      var x = { facility_id: f.id, f: f, met: met, not_documented: st.required.filter(function (k) { return met.indexOf(k) < 0; }) };
+      if (!near) near = x;
+      if (!most || met.length > most.met.length) most = x;
+    });
+    return near ? (most.f === near.f ? [near] : [near, most]) : null;
   }
   /* a stabilization stop (Shane 2026-10-04: "why does this plan not mention stopping for stabilization?"): when the first planned
-     stop for a casualty type is beyond the golden hour, or there is none, the quickest hospital inside the golden hour that is
-     quicker than that stop, preferring an emergency department documented by a credible source, then one listed by
-     OpenStreetMap, then any hospital (unknown is not no; a hospital a source says has no emergency department is left out).
-     Anything short of a credible source is marked UNCONFIRMED: call ahead. */
+     stop for a casualty type is beyond the golden hour, or there is none, the quickest hospital inside the golden hour, and
+     quicker than that stop, whose emergency department a credible source documents. With none, the row says so and names the
+     quickest hospital for reference only, not eligible. */
   function stabStop(c, R3, s) {
     var first = R3.filter(function (r) { return r.state === "filled" && r.stop; })[0], gs = GOLDEN_MIN * 60;
     var t0 = first ? first.choice.time_to_required_care.s : Infinity;
     if (t0 <= gs) return null;
-    function ed(f) { var a = capOk(f, "ed.basic"), b = capOk(f, "ed.24_7"); return a === "yes" || b === "yes" ? 2 : a === "crowd" || b === "crowd" ? 1 : a === "no" ? -1 : 0; }
-    var C = ((s.fac && s.fac.H) || []).concat((s.fac && s.fac.U) || []).filter(function (f) { if (isOff(f)) return false; var b = bestWay(f); return b && b[0] <= gs && b[0] < t0 && ed(f) >= 0; });
-    C.sort(function (a, b) { return ed(b) - ed(a) || bestWay(a)[0] - bestWay(b)[0]; });
-    var f = C[0]; if (!f) return null;
-    var b = bestWay(f), e = ed(f), conf = e === 2 ? "documented" : e === 1 ? "crowd" : "none";
-    return { casualty_category: c.id, label: c.label, role: "stabilization", state: "filled", stop: true, unconfirmed: e < 2, confidence: conf, beyond: first ? { role: first.role, s: t0 } : null,
-      bypassed: [], required: ["ed.basic"], decision_note: DECISION_NOTE,
-      choice: { facility_id: f.id, f: f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: e === 2 ? ["ed.basic"] : [], missing: [], unknown: e === 2 ? [] : ["ed.basic"], gain: [] } };
+    function ed(f) { return capOk(f, "ed.basic") === "yes" || capOk(f, "ed.24_7") === "yes"; }
+    var C = ((s.fac && s.fac.H) || []).concat((s.fac && s.fac.U) || []).filter(function (f) { if (isOff(f)) return false; var b = bestWay(f); return b && b[0] <= gs && b[0] < t0; })
+      .sort(function (a, b) { return bestWay(a)[0] - bestWay(b)[0]; });
+    var f = C.filter(ed)[0], row = { casualty_category: c.id, label: c.label, role: "stabilization", state: f ? "filled" : "gap", stop: !!f, beyond: first ? { role: first.role, s: t0 } : null,
+      bypassed: [], required: ["ed.basic"], decision_note: DECISION_NOTE };
+    if (!f) { if (C[0]) { var b0 = bestWay(C[0]); row.ref = { facility_id: C[0].id, f: C[0], way: b0[1], time_s: Math.round(b0[0]) }; } return row; }
+    var b = bestWay(f);
+    row.choice = { facility_id: f.id, f: f, way: b[1], time_to_required_care: { s: Math.round(b[0]), basis: "estimate" }, met: ["ed.basic"], missing: [], unknown: [], gain: [] };
+    return row;
   }
-  var STAB_CONF = { documented: "emergency department documented by a credible source", crowd: "UNCONFIRMED: emergency department listed only by OpenStreetMap", none: "UNCONFIRMED: no emergency department listed" };
   function stabWhy(r) {
-    return (r.beyond ? "The " + ROLE_NAME[r.beyond.role] + " is " + mins(r.beyond.s) + " from injury, beyond the golden hour" : "No planned destination") + "; stabilize here first (" + mins(r.choice.time_to_required_care.s) + " by " + r.choice.way + "). " + STAB_CONF[r.confidence] + (r.unconfirmed ? "; call ahead" : "") + ".";
+    var why = r.beyond ? "The " + ROLE_NAME[r.beyond.role] + " is " + mins(r.beyond.s) + " from injury, beyond the golden hour" : "No planned destination";
+    return r.choice ? why + "; stabilize here first (" + mins(r.choice.time_to_required_care.s) + " by " + r.choice.way + "; emergency department documented by a credible source)."
+      : why + ", and no hospital inside the golden hour has an emergency department documented by a credible source" + (r.ref ? ". Nearest, for reference only and not eligible: " + r.ref.f.name + ", " + mins(r.ref.time_s) + " by " + r.ref.way : "") + ".";
   }
   function facTag(s, f) { var i = s.fac.H.indexOf(f); if (i >= 0) return "H" + (i + 1); i = (s.fac.U || []).indexOf(f); return i >= 0 ? "U" + (i + 1) : ""; }
   /* Step 2 of Shane's MTF classification: bypass by time to required care. For a casualty type, stopping at a lower role
@@ -1382,8 +1377,8 @@
     function cell(r) {
       var dl = ' data-l="' + ROLE_NAME[r.role] + '"';
       var a = r.alt, aT = a ? facTag(s, a.f) + " " + a.f.name + ", " + km(a.f.m) + ", " + mins(a.time_s) + " by " + a.way : "";
-      if (r.state === "gap") return '<td class="mpgap"' + dl + '>' + (a ? '<span class="mpalt">Unconfirmed alternate</span><b>' + esc(aT) + '</b><span class="sub mpfar">' + esc(altText(a)) + ". Call to confirm before using it.</span>" : '<span class="mpnk">Gap</span>') +
-        '<span class="sub">No hospital within ' + km0 + " km" + (farN ? ", nor any of the " + farN + " documented hospitals farther out (up to " + FAR_KM + " km)," : "") + " has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+      if (r.state === "gap") return '<td class="mpgap"' + dl + '><span class="mpnk">Gap</span><span class="sub">No hospital within ' + km0 + " km" + (farN ? ", nor any of the " + farN + " documented hospitals farther out (up to " + FAR_KM + " km)," : "") + " has documented " + esc(andList(capNames(r.required))) + ".</span>" +
+        (r.partial ? r.partial.map(function (x, i) { return '<span class="sub mpfar">Reference only, not eligible: ' + (i ? "most documented" : "nearest with part documented") + ", H" + (s.fac.H.indexOf(x.f) + 1) + " " + esc(x.f.name) + ", " + esc(km(x.f.m)) + " (" + esc(andList(capNames(x.met))) + " documented; " + esc(andList(capNames(x.not_documented))) + " not).</span>"; }).join("") : "") +
         (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
       var c = r.choice, f = c.f, unk = capNames(c.unknown);
       var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
@@ -1394,14 +1389,14 @@
       return "<td" + dl + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv + tt +
         (f.far ? '<span class="sub mpfar">Wider search: nothing within ' + km0 + " km has this documented; " + esc(km(f.m)) + " away</span>" : "") +
         (unk.length ? '<span class="sub obs">Not documented: ' + esc(unk.join(", ")) + "</span>" : "") +
-        (a ? '<span class="sub mpalt2">Alternate: ' + esc(aT) + " (" + esc(ALT_CONF[a.confidence]) + ")</span>" : "") + "</td>";
+        (a ? '<span class="sub mpalt2">Alternate: ' + esc(aT) + "</span>" : '<span class="sub obs">No documented alternate</span>') + "</td>";
     }
     var h = '<div class="mpscroll"><table class="mproles"><thead><tr><th scope="col">Casualty type</th><th scope="col">Primary</th><th scope="col">Secondary</th><th scope="col">Tertiary</th></tr></thead><tbody>';
     CATS.forEach(function (c) {
       var r = R.filter(function (x) { return x.casualty_category === c.id; }), by = function (k) { return r.filter(function (x) { return x.role === k; })[0]; };
       var sb = by("stabilization");
       h += '<tr><th scope="row">' + esc(c.label) + '<span class="sub">' + esc(pathText(r)) + "</span>" +
-        (sb ? '<span class="sub mpstb">Stabilize first: ' + esc(facTag(s, sb.choice.f) + " " + sb.choice.f.name) + ". " + esc(stabWhy(sb)) + "</span>" : "") + "</th>" + cell(by("primary")) + cell(by("secondary")) + cell(by("tertiary")) + "</tr>";
+        (sb ? '<span class="sub mpstb">' + (sb.choice ? "Stabilize first: " + esc(facTag(s, sb.choice.f) + " " + sb.choice.f.name) + ". " : "No documented stabilization stop. ") + esc(stabWhy(sb)) + "</span>" : "") + "</th>" + cell(by("primary")) + cell(by("secondary")) + cell(by("tertiary")) + "</tr>";
     });
     return h + "</tbody></table></div>" +
       '<p class="obs">MTF roles per casualty type (draft templates, not clinically reviewed): Primary is the quickest hospital giving a meaningful increase in care; Secondary adds advanced resuscitation, surgery, blood, CT and ICU; Tertiary has the definitive specialty care for that type. ' +
@@ -1590,7 +1585,7 @@
          buttons sit off-screen on a phone) */
       var cap = (f.why || []).slice(); if (f.beds && cap.indexOf(f.beds + " beds") < 0) cap.push(f.beds + " beds"); if (f.pad && cap.indexOf("helipad on site") < 0) cap.push("helipad on site");
       /* a small role label, not a block (Shane 2026-10-04: "the big red primary button makes no sense") */
-      var rw = p.row, lab = '<span class="mprole r-' + p.role.slice(0, 3).toLowerCase() + '">' + esc(p.why.join(" + ")) + "</span>" + (rw.unconfirmed ? '<span class="mprole r-unc">Unconfirmed</span>' : "") +
+      var rw = p.row, lab = '<span class="mprole r-' + p.role.slice(0, 3).toLowerCase() + '">' + esc(p.why.join(" + ")) + "</span>" +
         '<span class="mprl">major trauma · ' + esc(mins(rw.choice.time_to_required_care.s)) + " by " + esc(rw.choice.way) + (rw.role !== "stabilization" && !rw.stop ? " · bypassed" : "") + "</span>";
       return '<tr data-mp-role="' + esc(p.role) + '"><td><span class="mprow">' + lab + "</span><b>" + esc(facTag(s, f) || "H" + (H + 1)) + " " + esc(f.name) + "</b>" +
         '<span class="sub">' + esc(p.reason) + "</span>" + lowTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
@@ -1609,10 +1604,10 @@
   }
   /* the alternate MTFs for major trauma, one line per role, each with how far it is confirmed */
   function altsHtml(s) {
-    var A = planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.alt; });
-    if (!A.length) return "";
-    return '<p class="mpalts"><b>Alternate MTFs, major trauma:</b> ' + A.map(function (r) { var a = r.alt;
-      return '<span class="mpaltl"><span class="mprole r-alt">' + (a.confidence === "documented" ? "ALT " : "") + PK_TXT[ROLE_NAME[r.role]] + (a.confidence === "documented" ? "" : "?") + "</span>" + esc(facTag(s, a.f) + " " + a.f.name + ", " + mins(a.time_s) + " by " + a.way) + " <span class=\"obs\">(" + esc(ALT_CONF[a.confidence]) + ")</span></span>"; }).join("") + "</p>";
+    var R = planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role !== "stabilization"; });
+    if (!R.length) return "";
+    return '<p class="mpalts"><b>Alternate MTFs, major trauma</b> (documented by a credible source): ' + R.map(function (r) { var a = r.alt;
+      return '<span class="mpaltl"><span class="mprole r-alt">ALT ' + PK_TXT[ROLE_NAME[r.role]] + "</span>" + (a ? esc(facTag(s, a.f) + " " + a.f.name + ", " + mins(a.time_s) + " by " + a.way) : '<span class="obs">none documented</span>') + "</span>"; }).join("") + "</p>";
   }
   function facRender() {
     var el = D.getElementById("mp-fac"), s = ST; if (!el || !s.fac) return;
@@ -2062,7 +2057,7 @@
   function conopRender() {
     var el = D.getElementById("mp-conop"), s = ST, M = W.OSAP_MEDPLAN_MODEL; if (!el || !s || !s.plan || !M || !M.conop) return;
     var cat = conopCat(), c = M.conop(s.plan, cat), v = fieldVals(), st = c.status.toLowerCase();
-    function stopTxt(x, none) { return x ? "<b>" + esc(x.name) + "</b>" + (x.unconfirmed ? '<b class="mpcn">UNCONFIRMED: call ahead</b>' : "") + "<span>" + esc((x.time_s != null ? mins(x.time_s) : "time not known") + (x.distance_m != null ? " / " + km(x.distance_m) : "") + (x.way ? " " + x.way : "")) + "</span>" : '<b class="mpcn">' + esc(none) + "</b>"; }
+    function stopTxt(x, none) { return x ? "<b>" + esc(x.name) + "</b>" + "<span>" + esc((x.time_s != null ? mins(x.time_s) : "time not known") + (x.distance_m != null ? " / " + km(x.distance_m) : "") + (x.way ? " " + x.way : "")) + "</span>" : '<b class="mpcn">' + esc(none) + "</b>"; }
     function cell(k, h, cls) { return '<div class="mpcx' + (cls ? " " + cls : "") + '"><i>' + esc(k) + "</i>" + h + "</div>"; }
     function word(w) { return '<b class="' + (/^(AVAILABLE|CONFIRMED)$/.test(w) ? "mpcy" : "mpcn") + '">' + esc(w) + "</b>"; }
     el.innerHTML = '<section class="mpconop" aria-label="Medical CONOP">' +
@@ -2071,7 +2066,7 @@
       '<div class="mpcgrid">' +
       cell("Status", '<b class="mpvs mpvs-' + st + '">' + esc(c.status_label) + "</b>", "wide") +
       cell("POI", "<b>" + esc(c.poi || "not set") + "</b>") + cell("Ground evac", word(c.ground)) + cell("Air MEDEVAC", word(c.air) + (c.air_asset ? "<span>" + esc(c.air_asset) + "</span>" : "")) +
-      cell("Stabilization", stopTxt(c.stabilization, c.bypass ? "BYPASS: direct is quicker" : "none planned")) +
+      cell("Stabilization", stopTxt(c.stabilization, c.stabilization_gap ? "NONE DOCUMENTED inside the golden hour" : c.bypass ? "BYPASS: direct is quicker" : "none planned")) +
       cell("Definitive care: " + (c.casualty ? c.casualty.label : ""), stopTxt(c.definitive, "NOT DOCUMENTED")) +
       cell("Primary route", word(c.primary_route)) + cell("Alternate route", word(c.alternate_route)) +
       (c.route_flags.length ? cell("Route", c.route_flags.map(function (t) { return '<b class="mpcn">' + esc(t) + "</b>"; }).join(""), "wide") : "") +
@@ -2177,14 +2172,12 @@
   }
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER", Stabilization: "STB" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }],
     RT_ROLE = { Primary: RT_STYLE[0], Secondary: RT_STYLE[1], Tertiary: RT_STYLE[2], Stabilization: { color: "#e06c00", weight: 4 } };
-  /* the alternate MTFs for major trauma as map marks: ALT PRI when another hospital also qualifies, PRI? (SEC?, TER?) when it is
-     unconfirmed; keyed by facility, the first role wins */
+  /* the alternate MTFs for major trauma as map marks (ALT PRI, ALT SEC, ALT TER), keyed by facility, the first role wins */
   function altMarks(s) {
     var o = {};
     planRoles(s).forEach(function (r) {
       if (r.casualty_category !== "cat.major_trauma" || !r.alt || o[r.alt.facility_id]) return;
-      var d = r.alt.confidence === "documented", t = PK_TXT[ROLE_NAME[r.role]];
-      o[r.alt.facility_id] = { t: d ? "ALT " + t : t + "?", tip: "Alternate " + ROLE_NAME[r.role] + " (" + ALT_CONF[r.alt.confidence] + ")" };
+      o[r.alt.facility_id] = { t: "ALT " + PK_TXT[ROLE_NAME[r.role]], tip: "Alternate " + ROLE_NAME[r.role] + " (documented by a credible source)" };
     });
     return o;
   }
@@ -2206,7 +2199,7 @@
       s.fac.L.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "L" + (i + 1), "air", l.name]); });
       s.fac.AF.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
       s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id];
-        out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), !!(r || a)]); });
+        out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
       /* a stabilization stop from the hospitals with no details listed */
       P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) out.push(["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
     }
@@ -2227,10 +2220,10 @@
     var s = ST, it = mapItems(), has = function (k, t) { return it.some(function (x) { return x[0] === "mk" && x[3] === k && (!t || t.test(x[2])); }); }, ln = function (c) { return it.some(function (x) { return x[0] === "line" && x[2].color === c; }); }, o = [];
     var P = s.fac ? picks(s) : [], roles = P.map(function (p) { return PK_TXT[p.role]; }).filter(function (t) { return t !== "STB"; });
     o.push(["mk", "#111", s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", s.from === "poi" ? "Point of injury" : "Plan centre", ""]);
-    if (has("stb")) o.push(["mk", "#b34700", "STB", "Stabilization stop", "Quickest hospital inside the golden hour when the Primary is beyond it"]);
+    if (has("stb")) o.push(["mk", "#b34700", "STB", "Stabilization stop", "Quickest hospital inside the golden hour with a documented emergency department, when the Primary is beyond it"]);
     if (roles.length) o.push(["mk", "#8b0010", roles.join(" "), "Planned MTFs, major trauma", "Primary, Secondary, Tertiary: each needs care documented by a credible source"]);
-    if (has("alt")) o.push(["mka", "#8a4b00", "ALT / ?", "Alternate MTF", "ALT also qualifies; ? is unconfirmed (OpenStreetMap or part listed only): call first"]);
-    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", ""]);
+    if (has("alt")) o.push(["mka", "#8a4b00", "ALT", "Alternate MTF", "Also qualifies on documented care, if the planned one cannot take the casualty"]);
+    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation"]);
     if (has("", /^C\d/)) o.push(["mk", "#D7141A", "C", "Clinic or first-aid post", ""]);
     if (has("e")) o.push(["mk", "#b35c00", "E", "Ambulance station", ""]);
     if (has("air")) o.push(["mk", "#1d5fa8", "L A M P", "Helipad, airfield, air rescue base, airport", ""]);
@@ -2396,8 +2389,8 @@
       fields: v, ll: ll, checks: checks(),
       categories: CATS.map(function (c) {
         return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
-          return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, unconfirmed: !!r.unconfirmed, confidence: r.confidence || "", way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null,
-            alt: r.alt ? { facility: planFac(r.alt.f), way: r.alt.way, time_s: r.alt.time_s, confidence: r.alt.confidence } : null,
+          return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null,
+            alt: r.alt ? { facility: planFac(r.alt.f), way: r.alt.way, time_s: r.alt.time_s } : null,
             decision: r.decision ? { rule: r.decision.rule, decision: r.decision.decision, reason: r.decision.reason, from: r.via.from, direct: r.decision.direct, via: r.decision.via, access: r.decision.access, golden_s: r.decision.golden_s, basis: "estimate" } : null };
         }) };
       }),
