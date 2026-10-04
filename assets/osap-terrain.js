@@ -54,7 +54,10 @@
       D.head.appendChild(s);
     }));
   }
-  function need() { return Promise.all([script(BASE + "terrain-provider.js"), script(BASE + "providers/remote-dem.js")]).then(function () { return W.OSAP_TERRAIN_SRC; }); }
+  /* already on the page (the single-file review copy carries them inline) or fetched now */
+  function need() {
+    if (W.OSAP_TERRAIN_SRC && (W.OSAP_TERRAIN_PROVIDERS || []).length) return Promise.resolve(W.OSAP_TERRAIN_SRC);
+    return Promise.all([script(BASE + "terrain-provider.js"), script(BASE + "providers/remote-dem.js")]).then(function () { return W.OSAP_TERRAIN_SRC; }); }
 
   /* ---------- the engine: in a worker, on the page if workers fail ---------- */
   var wk = null, wkDead = false, RID = 0, PEND = {}, GID = 0, wkGid = 0, gridNow = null;
@@ -71,7 +74,7 @@
   function engineGrid(g) {
     if (worker() && wkGid !== g.gid) { wk.postMessage({ cmd: "grid", gid: g.gid, E: g.E, n: g.n, rowM: g.rowM }); wkGid = g.gid; }
   }
-  function onPage() { return script(BASE + "viewshed-engine.js").then(function () { return W.OSAP_VS; }); }
+  function onPage() { return W.OSAP_VS ? Promise.resolve(W.OSAP_VS) : script(BASE + "viewshed-engine.js").then(function () { return W.OSAP_VS; }); }
   /* viewshed on grid g; onPass(pass) is called with the rough pass first (when asked), then the full one */
   function engineRun(g, o, coarse, onPass) {
     return new Promise(function (res, rej) {
