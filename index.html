@@ -5919,7 +5919,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     sofLayer.clearLayers(); sofM = {};
     if (!window.OSAP_ROUTETAB) {
       window.OSAP_ROUTE_WAIT = showRoute; railO.innerHTML = '<div class="sec"><p class="obs">Loading the route planner…</p></div>';
-      if (!routeLoading) {
+      /* the evacuation planner (assets/osap-epe.js) may already be fetching the same file */
+      if (!routeLoading && !document.querySelector('script[src="assets/osap-route.js"]')) {
         routeLoading = true;
         var s = document.createElement("script"); s.src = "assets/osap-route.js";
         s.onerror = function () { routeLoading = false; if (current === "route") railO.innerHTML = '<div class="sec"><p class="obs">The route planner could not be loaded. Check the connection and open the tab again.</p></div>'; };
