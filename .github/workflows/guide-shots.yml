@@ -1,6 +1,6 @@
-# Takes the user guide's screenshots (tools/guide_shots.mjs) on a phone-sized screen with live map tiles, and uploads them
-# as the "guide-shots" artifact. Writes nothing to the repo: the pictures are shrunk to JPEG and committed by hand as
-# assets/guide/<name>.jpg. Run it from the Actions tab after the app's look changes.
+# Takes the user guide's screenshots (tools/guide_shots.mjs) on a phone-sized screen with live map tiles, shrinks them to
+# JPEG and commits them as assets/guide/<name>.jpg on the branch it runs on (the guide shows them; the service worker keeps
+# them for offline use). Run it from the Actions tab after the app's look changes.
 name: Guide screenshots
 on:
   push:
@@ -8,7 +8,7 @@ on:
     paths: [tools/guide_shots.mjs, .github/workflows/guide-shots.yml]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   shots:
     runs-on: ubuntu-latest
@@ -21,7 +21,16 @@ jobs:
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
       - run: node tools/guide_shots.mjs
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: guide-shots
-          path: guide-shots/
+      - name: Shrink and commit
+        run: |
+          mkdir -p assets/guide
+          for f in guide-shots/*.png; do convert "$f" -resize 540x -strip -quality 72 "assets/guide/$(basename "$f" .png).jpg"; done
+          ls -l assets/guide
+          git add -A assets/guide
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Guide screenshots $(date -u +'%Y-%m-%d %H:%MZ')"
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1

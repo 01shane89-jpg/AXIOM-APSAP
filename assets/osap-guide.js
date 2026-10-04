@@ -69,7 +69,9 @@
         b("Reports") + " (phone) or the " + b("Reports") + " button in the header: every printable report OSAP makes.",
         b("Full") + ": full-screen map. Press Esc on a keyboard to leave."]) +
       fig("datasets", "Data sets: tick to show on the map") +
-      fig("overlays", "Map overlays") },
+      fig("weather", "Weather layers") +
+      fig("overlays", "Map overlays") +
+      fig("grid", "Grid and crosshair") },
 
     { id: "ring", t: "Long-press the map", h:
       fig("ring", "The ring of actions at a point") +

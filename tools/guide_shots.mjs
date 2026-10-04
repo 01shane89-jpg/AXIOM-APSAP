@@ -62,7 +62,6 @@ const SCENES = {
   datasets: async () => { const p = await page(); await tool(p, "datasets"); return p; },
   weather: async () => { const p = await page(); await tool(p, "weather"); return p; },
   overlays: async () => { const p = await page(); await tool(p, "overlays"); return p; },
-  basemap: async () => { const p = await page(); await tool(p, "basemap"); return p; },
   grid: async () => { const p = await page(); await p.evaluate(() => window.__asapMap.setZoom(14, { animate: false })); await tool(p, "grid"); await tool(p, "crosshair"); await p.waitForTimeout(3000); return p; },
   measure: async () => {
     const p = await page(); await tool(p, "measure"); await p.waitForTimeout(500);
@@ -86,8 +85,7 @@ const SCENES = {
   watch: async () => { const p = await page(); await tool(p, "watch"); return p; },
   mywork: async () => { const p = await page(); await tool(p, "mine"); await p.waitForTimeout(500); await press(p, "Saved work"); await p.waitForTimeout(1000); return p; },
   settings: async () => { const p = await page(); await p.evaluate(() => document.getElementById("tidy-set").click()); return p; },
-  reports: async () => { const p = await page("#th/map"); await p.evaluate(() => { const b = document.getElementById("tidy-reptool"); if (b) b.click(); }); return p; },
-  guide: async () => { const p = await page(); await p.evaluate(() => window.OSAP_GUIDE && window.OSAP_GUIDE.open()); await p.waitForTimeout(1500); return p; }
+  reports: async () => { const p = await page("#th/map"); await p.evaluate(() => { const b = document.getElementById("tidy-reptool"); if (b) b.click(); }); return p; }
 };
 for (const [name, run] of Object.entries(SCENES)) {
   if (ONLY.length && !ONLY.includes(name)) continue;
