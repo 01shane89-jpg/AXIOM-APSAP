@@ -264,10 +264,12 @@ async function openPlan(p) {
      Primary and Secondary are both bypassed and kept as stabilisation options */
   const bt = await p.evaluate(() => { const R = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.major_trauma"), g = (k) => R.filter((x) => x.role === k)[0];
     return { p: [g("primary").stop, g("primary").stabilisation_option, (g("secondary").bypassed[0] || {}).reason, !!(g("secondary").bypassed[0] || {}).via_time], s: g("secondary").stop, t: [g("tertiary").stop, g("tertiary").via && g("tertiary").via.from] }; });
-  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_route_faster_to_required_care", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilisation option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
+  ok(JSON.stringify(bt) === JSON.stringify({ p: [false, true, "direct_inside_golden_hour", true], s: false, t: [true, "secondary"] }) && /POI → Tertiary/.test(roles[0][0]) && /Bypass: go direct to Secondary/.test(roles[0][1]) && /Stabilisation option/.test(roles[0][1]) && /Bypass: go direct to Tertiary/.test(roles[0][2]),
     "desktop: bypass by time to required care: direct to Tertiary by air inside the golden hour, Primary and Secondary kept as stabilisation options " + JSON.stringify(bt) + " " + roles[0].join(" | ").slice(0, 300));
   await p.fill('#mp-pst [data-mpf="dwell"]', "0"); await p.waitForTimeout(1100);
-  ok(/Time at a stop \(0 min\)|\(0 min\) plus transfer/.test(await p.textContent("#mp-pst")), "desktop: the time at a stop can be set, and the comparison uses it");
+  ok(/its time there \(0 min\), transfer activation/.test(await p.textContent("#mp-pst")), "desktop: the time at a stop can be set, and the comparison uses it");
+  await p.fill('#mp-pst [data-mpf="handoff"]', "2"); await p.waitForTimeout(1100);
+  ok(/plus handoff \(2 min\)/.test(await p.textContent("#mp-pst")) && /Time to required care direct: to Trauma Test Hospital \d+ min \+ handoff 2 min = \d+ min; required care not confirmed available now\./.test(await p.textContent("#mp-pst")), "phase 2: handoff can be set, and the Tertiary shows its time to required care part by part, not confirmed now");
   await p.fill('#mp-pst [data-mpf="dwell"]', "30"); await p.waitForTimeout(1100);
   ok(!/Trauma Test Hospital/.test(roles[1][1] + roles[2][1] + roles[3][1]) && /Head trauma \(neurosurgery\):.*for information; the planned destination is the Severe head injury row/.test(await p.textContent("#mp-pst")), "desktop: OpenStreetMap-only neurosurgery never makes a severe head injury pick (shown for information only)");
   ok(/Phone: \+66 2 777 1000 \(Wikidata Q900001/.test(pst) && /Listed: /.test(pst) && await p.evaluate(() => document.querySelectorAll("#mp-pst [data-mp-assess]").length === 3 && document.querySelectorAll("#mp-pst [data-mp-go]").length === 3), "desktop: each pick shows its contacts, what is listed, and its own Assessment and Map buttons");
@@ -793,6 +795,7 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
   for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider", "countries/th-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
+  for (const f of ["osap-facility-intel", "osap-medplan-decide", "osap-medplan-model"]) await p.addScriptTag({ url: base + "assets/" + f + ".js" });
   await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
