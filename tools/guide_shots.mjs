@@ -1,6 +1,6 @@
 // Screenshots for the in-app user guide (assets/osap-guide.js), taken headless on a phone-sized screen.
-// Map tiles, routing and elevation come from the live services, so run it where the browser can reach them (the
-// "Guide screenshots" workflow does). Each picture is its own scene on a fresh page, so one failing scene leaves the rest.
+// Map tiles, routing and elevation come from the live services, so run it where the browser can reach them, such as a
+// GitHub Actions runner. Each picture is its own scene on a fresh page, so one failing scene leaves the rest.
 // Run from the repo root: node tools/guide_shots.mjs   (needs the playwright package and Chromium; OUT=dir, default
 // assets/guide; ONLY=name,name to take some scenes only). Each picture is a 546 px wide JPEG, assets/guide/<name>.jpg.
 import { createServer } from "node:http";
