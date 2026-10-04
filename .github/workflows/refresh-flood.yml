@@ -78,7 +78,14 @@ jobs:
       - name: Compare translation settings
         if: ${{ inputs.only == 'probe-mt' }}
         timeout-minutes: 45
-        run: node tools/mt/probe_settings.mjs
+        # the report is also parked on a branch, where it can be read without the Actions log service
+        run: |
+          mkdir -p probe-out && node tools/mt/probe_settings.mjs | tee probe-out/mt-settings.txt
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            git config user.name "github-actions[bot]"; git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
+            git checkout -q --orphan mt-probe-out && git rm -rq --cached . && git add -f probe-out/mt-settings.txt
+            git commit -qm "Translation settings probe $(date -u +'%Y-%m-%d %H:%MZ')" && git push -qf origin HEAD:refs/heads/claude/mt-probe-out
+          fi
       - name: Pull ThaiWater feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'flood' }}
         timeout-minutes: 4
