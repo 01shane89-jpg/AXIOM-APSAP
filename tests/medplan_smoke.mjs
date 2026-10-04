@@ -336,12 +336,20 @@ async function openPlan(p) {
   /* phase 5: the operational picture: the forecast at the pickup against review rules, heavy rain, air state and data age */
   const pic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, flags: [...document.querySelectorAll("#mp-pic ul.mppic li b")].map((b) => b.textContent),
     ages: [...document.querySelectorAll("#mp-pic table.mpage tbody tr")].map((r) => r.textContent), val: document.getElementById("mp-val").textContent,
-    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).slice(0, 2).join("|") }));
+    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).filter((t) => /^(Operational picture|Plan status)$/.test(t)).join("|") }));
   ok(pic.flags.includes("POINT OF INJURY (NO HLZ GRID) VISIBILITY FORECAST 0.8 KM, GUSTS 35 KN / AIR EVACUATION REVIEW REQUIRED") && pic.flags.includes("HEAVY RAIN FORECAST 25 MM 2026-10-01 / ROADS AND LANDING ZONES MAY FLOOD") &&
     !pic.flags.some((f) => /AIR MEDEVAC|CONFIRMED AIRCRAFT/.test(f)) && /Forecast at the pickup: POINT OF INJURY/.test(pic.val) && pic.order === "Operational picture|Plan status",
     "phase 5: the picture flags the forecast at the pickup and heavy rain (the confirmed aircraft clears the air flag), above the plan status " + JSON.stringify(pic.flags));
   ok(pic.ages.some((r) => /^Hospital dataset/.test(r) && /live read from OpenStreetMap/.test(r)) && pic.ages.some((r) => /^Weather forecast.*live.*Open-Meteo/.test(r)) && pic.ages.some((r) => /^Facility verification.*none.*no planner's check/.test(r)) &&
     /Data age: .*Facility verification not available/.test(pic.val) && /not when this device fetched it/.test(pic.t), "phase 5: each dataset with its own date and whether it is live or a saved copy " + JSON.stringify(pic.ages));
+  /* phase 6: page 1, the medical CONOP, with casualty buttons that switch the pathway it shows */
+  const cn = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, first: document.querySelector("#medplan .mpbox > #mp-conop") !== null && [...document.querySelectorAll("#medplan h3")][0].textContent }));
+  ok(/^Medical plan: /i.test(cn.t) && /Status(GREEN|AMBER|RED)/.test(cn.t) && /Ground evac(AVAILABLE|NOT ROUTED)/.test(cn.t) && /Air MEDEVACCONFIRMED/.test(cn.t) && /Definitive care: Major trauma/.test(cn.t) && /Primary routeAVAILABLE/.test(cn.t) && /Critical gaps/.test(cn.t) && /Receiving hospital acceptance/.test(cn.t),
+    "phase 6: the CONOP shows status, ground, air, definitive care, routes and critical gaps " + JSON.stringify(cn.t.slice(0, 400)));
+  await p.click('#mp-conop [data-mp-cat="cat.severe_tbi"]');
+  const cn2 = await p.evaluate(() => ({ t: document.getElementById("mp-conop").textContent, on: document.querySelector('#mp-conop [aria-pressed="true"]').textContent, kept: localStorage.getItem("osap-medcat") }));
+  ok(/Definitive care: Severe head injury/.test(cn2.t) && cn2.on === "Head injury" && cn2.kept === '"cat.severe_tbi"', "phase 6: Head injury switches the CONOP to that pathway and is kept on this device " + JSON.stringify(cn2.t.slice(0, 300)));
+  await p.click('#mp-conop [data-mp-cat="cat.major_trauma"]');
   /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
   const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
   ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
@@ -531,6 +539,15 @@ async function openPlan(p) {
   ok(!/Looking up|Reading…|Still reading/.test(pv.t) && /Plan status/.test(pv.t), "print view: the plan status prints and no lookup is left in progress");
   const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
   ok(pa3.length === 3 && /^Hospital assessment, Primary: H3 Far North Hospital/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
+  /* phase 6: the Medical CONOP prints apart from the intelligence annex: the operational sections only, no hospital assessments */
+  ok(/^Medical intelligence annex, /.test(await p.textContent("#brief .mpdoc h2")), "print view: the full print is the medical intelligence annex");
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+  const pc = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), a: d.querySelectorAll(".mpaprint").length, src: !!d.querySelector("#brief .mpdoc .mpfp"), srcList: /OpenStreetMap as of|Open-Meteo/.test((d.querySelector(".mpfp") || { parentElement: { textContent: "" } }).parentElement.textContent) }; });
+  ok(/^Medical CONOP, /.test(pc.h2) && /^Medical plan: /i.test(pc.h3[0]) && ["Operational picture", "Plan status", "Primary, Secondary", "1. Golden hour", "3. Routes", "4. Emergency", "6. Evacuate out", "9. Unit"].every((x) => pc.h3.some((h) => h.indexOf(x) === 0)) &&
+    !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="print"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
   ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
