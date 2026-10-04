@@ -3,7 +3,7 @@
 name: Probe terrain analysis
 on:
   push:
-    branches: [claude/terrain-viewshed]
+    branches: [claude/terrain-viewshed, claude/terrain-los]
     paths: [tools/terrain_live.mjs, assets/osap-terrain.js, "assets/terrain/**", .github/workflows/probe-terrain.yml]
   workflow_dispatch:
 permissions:

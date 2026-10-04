@@ -244,7 +244,9 @@ function main() {
     ctx.rail.innerHTML =
       '<div class="sec rtsec"><div class="banner" style="margin:0"><b>Planning aid, not navigation.</b> Routes come from OpenStreetMap routers and change with the map; ' +
       "closures, checkpoints and conditions must be checked on the ground. Everything here is worked out in this browser and kept on this device.</div></div>" +
-      '<div class="sec rtsec" id="rt-evac"><h2>Evacuation route</h2>' +
+      '<div class="sec rtsec" id="rt-evac"><h2>Evacuation</h2>' +
+      '<p><button type="button" class="linkish" data-rt="epe">Plan an evacuation (Evac)</button> <span class="obs">several ways out from one point, side by side, with your P/A/C/E roles.</span></p>' +
+      '<details id="rt-evone"><summary>One route to the nearest point</summary>' +
       '<p class="obs">From waypoint A (tap the map, My location, or a grid typed under Waypoints) to the nearest evacuation point, weighing the quickest way against incidents reported near the road.</p>' +
       '<div class="rtrow"><label>To <select id="rt-evto"><option value="any">Nearest of any kind</option><option value="lz">Nearest landing zone (LZ)</option>' +
       '<option value="airfields">Airfield of any size (regional, military, airstrip)</option><option value="airports">Major airport</option><option value="posts">U.S. embassy or consulate</option>' +
@@ -252,7 +254,7 @@ function main() {
       '<label id="rt-evfootl"' + (S.mode === "foot" ? "" : " hidden") + '>Walking <select id="rt-evfoot"><option value="both"' + (S.evFoot === "both" ? " selected" : "") + '>Compare paths and cross-country</option>' +
       '<option value="xc"' + (S.evFoot === "xc" ? " selected" : "") + '>Cross-country, over open ground</option><option value="paths"' + (S.evFoot === "paths" ? " selected" : "") + ">On roads and paths only</option></select></label>" +
       '<label>Incidents from the last <select id="rt-evdays"><option>7</option><option selected>30</option><option>90</option></select> days</label></div>' +
-      '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
+      '<div class="rtbtns"><button type="button" data-rt="evac" class="rtgo">Plan evacuation route</button></div></details><div id="rt-evres"></div><div id="rt-evsaved"></div></div>' +
       '<div class="sec rtsec"><h2>Travel by</h2><div class="rtseg" role="group" aria-label="Travel by" id="rt-modes"></div><div id="rt-speed"></div></div>' +
       '<div class="sec rtsec"><h2>Waypoints</h2>' +
       '<form id="rt-find" class="rtfind" autocomplete="off"><input type="search" id="rt-q" placeholder="Place, lat/lon or MGRS" aria-label="Add a waypoint: place, lat/lon or MGRS" maxlength="120">' +
@@ -363,6 +365,7 @@ function main() {
     else if (k === "evac") evPlan();
     else if (k === "preview") preview(b);
     else if (k === "evsave") evSave();
+    else if (k === "epe") { if (W.OSAP_EPE_GO) W.OSAP_EPE_GO(S.wps.length ? { at: [S.wps[0].lat, S.wps[0].lon], how: "Route waypoint A" } : {}); }
     else if (k === "goto") { var to = el(b.getAttribute("data-to")); if (to) { if (to.tagName === "DETAILS") to.open = true; to.scrollIntoView({ behavior: "smooth", block: "start" }); } }
   }
   function onChange(e) {
@@ -533,7 +536,7 @@ function main() {
   /* taps on the map add a waypoint while the Route tab is open (not while measuring or drawing an area) */
   var down = null;
   function mine(e) {
-    var ctx = S.ctx; if (!ctx || !S.tap || D.documentElement.getAttribute("data-view") !== "route") return false;
+    var ctx = S.ctx; if (!ctx || !S.tap || D.documentElement.getAttribute("data-view") !== "route" || D.documentElement.classList.contains("epe-picking")) return false;
     /* while Route preview is open, a tap on the route previews that place instead of adding a waypoint */
     if (D.documentElement.classList.contains("rtpv-on")) return false;
     var mapEl = ctx.map.getContainer();
@@ -649,7 +652,7 @@ function main() {
 
   /* ---------- hazards near the route (what the app already holds; nothing new is fetched except the road-closure file) ---------- */
   function hazSources() {
-    var out = [], T = W.TSAP, A = T && T.areaApi, cc = S.ctx.cc;
+    var out = [], T = W.TSAP, A = T && T.areaApi, cc = S.ctx ? S.ctx.cc : S.cc0 || "";
     function push(lat, lon, kind, title, url, date, src) { if (isFinite(+lat) && isFinite(+lon)) out.push({ p: [+lat, +lon], kind: kind, title: clean(title, 160), url: safeUrl(url), date: date || "", src: src || "" }); }
     ((T && T.records) || []).forEach(function (r) {
       if (r.lat == null || r.lon == null || (A && A.inPeriod && !A.inPeriod(r))) return;
@@ -763,29 +766,43 @@ function main() {
     var start = { lat: a.lat, lon: a.lon, name: a.name || "Start" };
     S.evac = null; drawCps();
     box.innerHTML = '<p class="obs">' + (to === "lz" ? "Searching for open, flat ground round the start…" : to === "airfields" ? "Finding the nearest airfields in OpenStreetMap…" : "Finding the nearest evacuation points…") + "</p>";
-    var notes = [], foot = mode === "foot" ? S.evFoot : "paths", xcMax = 60000;
-    evCands(to, [a.lat, a.lon], notes, function (t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">' + E(t) + "</p>"; }).then(function (c) {
+    evRun(to, start, { mode: mode, days: days, foot: mode === "foot" ? S.evFoot : "paths", alive: function () { return tok === S.evTok; },
+      say: function (t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">' + E(t) + "</p>"; } }).then(function (res) {
       if (tok !== S.evTok) return;
+      evChoose(res.opts, start, days, mode, res.nCand, res.notes);
+    }).catch(function (e) { if (tok !== S.evTok) return; box.innerHTML = '<p class="rtbad">No evacuation route: ' + E(e.message) + ".</p>"; });
+  }
+  /* the lines from start to the nearest points of one kind (to), each scored by the incidents near it:
+     { opts: [{ r, cand, exp }], nCand, notes }. o: { mode, days, foot (paths | xc | both), alive(), say(text), max (candidates) }.
+     Used by evPlan here and by the evacuation planner (assets/osap-epe.js) through OSAP_ROUTETAB.evRun. */
+  function evRun(to, start, o) {
+    var mode = o.mode || "car", days = o.days || 30, foot = mode === "foot" ? o.foot || "paths" : "paths", xcMax = 60000, notes = [];
+    var alive = o.alive || function () { return true; }, say = o.say || function () {};
+    if (o.cc) S.cc0 = o.cc;
+    function gone() { var e = new Error("cancelled"); e.cancelled = true; return e; }
+    return evCands(to, [start.lat, start.lon], notes, say).then(function (c) {
+      if (!alive()) throw gone();
+      if (o.max) c = c.slice(0, o.max);
       var hz = evHaz(days), opts = [], n = 0;
       /* one candidate at a time: the routers are free services that ask for fair use */
       return c.reduce(function (pr, cand) {
         return pr.then(function () {
-          if (tok !== S.evTok) return;
-          n++; box.innerHTML = '<p class="obs">Routing to ' + E(cand.i.name) + " (" + n + " of " + c.length + ") and weighing reported incidents…</p>";
+          if (!alive()) return;
+          n++; say("Routing to " + cand.i.name + " (" + n + " of " + c.length + ") and weighing reported incidents…");
           var b = { lat: cand.i.lat, lon: cand.i.lon, name: cand.i.name }, wps = [start, b];
           /* on foot: a cross-country line over open ground as well as (or instead of) the paths the router knows */
           var xc = foot === "paths" || cand.line > xcMax ? Promise.resolve() : xcLoad().then(function (X) {
-            if (tok !== S.evTok) return;
-            return X.route([start.lat, start.lon], [b.lat, b.lon], { prog: function (d, t) { if (tok === S.evTok) box.innerHTML = '<p class="obs">Working out a cross-country line to ' + E(cand.i.name) + " (" + n + " of " + c.length + "): loading elevation and surface water " + d + " of " + t + "…</p>"; } });
+            if (!alive()) return;
+            return X.route([start.lat, start.lon], [b.lat, b.lon], { prog: function (d, t) { say("Working out a cross-country line to " + cand.i.name + " (" + n + " of " + c.length + "): loading elevation and surface water " + d + " of " + t + "…"); } });
           }).then(function (r) {
-            if (!r || tok !== S.evTok) return;
+            if (!r || !alive()) return;
             r.evHow = "cross-country"; r.note = "Cross-country over open ground, worked out in this browser from open elevation and surface water (" + r.cellM + " m grid). " + r.notes.join(" ");
             opts.push(evScore({ r: r, cand: cand }, wps, hz));
           }, function (e) { cand.xcErr = e.message; });
           if (foot === "xc") return xc;
           return xc.then(function () { return roadRoutes(mode, wps); }).then(function (rs) {
             rs.forEach(function (r, j) { r.evHow = j ? "alternative" : "fastest"; opts.push(evScore({ r: r, cand: cand }, wps, hz)); });
-            var fast = opts.filter(function (o) { return o.cand === cand; }).sort(function (x, y) { return x.r.s - y.r.s; })[0];
+            var fast = opts.filter(function (x) { return x.cand === cand; }).sort(function (x, y) { return x.r.s - y.r.s; })[0];
             if (!fast || !fast.exp.hits.length) return;
             var avoid = fast.exp.hits.slice().sort(function (x, y) { return y.w - x.w; }).slice(0, 50);
             return valhalla(evCost(mode), wps, { alternates: 0, exclude_locations: avoid.map(function (h) { return { lat: h.p[0], lon: G.wrap(h.p[1]) }; }) }).then(function (rs2) {
@@ -794,7 +811,7 @@ function main() {
           }, function (e) { cand.err = e.message; });
         });
       }, Promise.resolve()).then(function () {
-        if (tok !== S.evTok) return;
+        if (!alive()) throw gone();
         if (foot !== "paths") {
           var far = c.filter(function (x) { return x.line > xcMax; }).length, xe = c.filter(function (x) { return x.xcErr; })[0];
           if (far) notes.push(far + " of the " + c.length + " nearest points " + (far === 1 ? "is" : "are") + " more than " + xcMax / 1000 + " km away in a straight line, too far for a cross-country line" + (foot === "xc" ? "" : ": only the path route was worked out to " + (far === 1 ? "it" : "them")) + ".");
@@ -804,9 +821,9 @@ function main() {
           if (foot === "xc") throw new Error(c.every(function (x) { return x.line > xcMax; }) ? "the nearest point is " + Math.round(c[0].line / 1000) + " km away in a straight line; cross-country lines are worked out up to " + xcMax / 1000 + " km. Pick On roads and paths, or another destination" : "no cross-country line could be worked out" + (c[0].xcErr ? " (" + c[0].xcErr + ")" : ""));
           throw new Error("the routers did not answer" + (c[0].err ? " (" + c[0].err + ")" : "") + ". Try again in a minute");
         }
-        evChoose(opts, start, days, mode, c.length, notes);
+        return { opts: opts, nCand: c.length, notes: notes };
       });
-    }).catch(function (e) { if (tok !== S.evTok) return; box.innerHTML = '<p class="rtbad">No evacuation route: ' + E(e.message) + ".</p>"; });
+    });
   }
   /* the candidates to route to, nearest first (at most four): { k, i: { name, lat, lon, ... }, cc, line: straight-line metres }.
      Reference kinds come from OSAP_EVAC; "airfields" and "lz" are looked up live (OpenStreetMap, the landing zone finder).
@@ -1066,7 +1083,7 @@ function main() {
     var cps = r ? evCps(r) : [];
     drawCps(cps);
     var phone = function (p) { return p ? '<a href="tel:' + E(tel(p)) + '">' + E(p) + "</a>" : ""; };
-    box.innerHTML = (ev.saved ? '<p class="obs">Kept plan from ' + E(when(ev.at)) + ". Incidents and roads are as they were then.</p>" : "") +
+    box.innerHTML = (ev.saved ? '<p class="obs">' + (ev.epe ? "Option from the evacuation plan (Evac), worked out " : "Kept plan from ") + E(when(ev.at)) + ". Incidents and roads are as they were then.</p>" : "") +
       '<div class="rtalts">' + ev.opts.map(function (x, j) {
         return '<button type="button" data-alt="' + j + '" aria-pressed="' + (j === S.sel) + '"><b>' + E(x.label) + "</b> to " + E(x.cand.i.name) + " (" + E(evKindName(x.cand)) + ")<br>" +
           (ev.mode === "foot" ? (x.r.xc ? "Cross-country · " : "Roads and paths · ") : "") + E(dist(x.r.m)) + " · " + E(dur(x.r.s)) + " · " + (x.r.xc && x.r.water && x.r.water.length ? x.r.water.length + " water crossing" + (x.r.water.length === 1 ? "" : "s") + " · " : "") + (x.exp.hits.length ? x.exp.hits.length + " reported incident" + (x.exp.hits.length === 1 ? "" : "s") + " within " + EV_R / 1000 + " km (weight " + x.exp.score + ")" : "no incidents OSAP holds within " + EV_R / 1000 + " km") + "</button>";
@@ -1107,13 +1124,14 @@ function main() {
     msg(lsSet(EV_KEY, list) ? "Kept on this device: it opens from Evacuation route with no connection." : "This browser would not keep it (storage full or blocked).");
     evSavedUi();
   }
-  function evOpen(id) {
-    var k = evAll().filter(function (x) { return x.id === id; })[0]; if (!k) return;
+  function evOpen(id) { var k = evAll().filter(function (x) { return x.id === id; })[0]; if (k) evShow(k); }
+  /* a plan in the kept shape (evSave), from this device's list or handed over by the evacuation planner (OSAP_ROUTETAB.evShow) */
+  function evShow(k) {
     var r = { coords: k.route.coords, m: k.route.m, s: k.route.s, legs: k.route.legs || [{ m: k.route.m, s: k.route.s }], steps: [], src: { name: k.route.src || "the router", data: k.route.xc ? "AWS Terrain Tiles (Mapzen); JRC Global Surface Water" : "OpenStreetMap contributors, ODbL" }, road: !k.route.xc, xc: !!k.route.xc, kmh: k.route.xc ? Math.round(k.route.m / Math.max(1, k.route.s) * 36) / 10 : null, cellM: k.route.cellM, climb: k.route.climb, water: k.route.water || [], note: "Kept plan: the line as it was routed on " + String(k.saved).slice(0, 10) + ".", label: k.label };
     var o = { r: r, cand: { k: k.dest.k, cc: k.dest.cc, i: k.dest.i }, exp: k.exp, label: k.label };
     S.token++; S.evTok++; S.busy = false; S.err = "";
     S.wps = cleanWps(k.wps); S.routes = [r]; S.sel = 0;
-    S.evac = { at: Date.parse(k.saved), days: k.days, mode: k.mode, opts: [o], n: k.n, nCand: k.nCand, saved: k.id, notes: Array.isArray(k.notes) ? k.notes : [] };
+    S.evac = { at: Date.parse(k.saved), days: k.days, mode: k.mode, opts: [o], n: k.n, nCand: k.nCand, saved: k.id, epe: !!k.epe, notes: Array.isArray(k.notes) ? k.notes : [] };
     keepCur(); wpsUi(); S.fitNext = true; afterRoute();
   }
   function evSavedUi() {
@@ -1583,6 +1601,9 @@ function main() {
     route: function () { var r = S.routes[S.sel]; return r ? { coords: r.coords.slice(), xc: !!r.xc, road: !!r.road, water: (r.water || []).slice(), m: r.m, s: r.s } : null; },
     state: function () { return { token: S.token, wps: S.wps.slice(), mode: S.mode, routes: S.routes.length, sel: S.sel, err: S.err, busy: S.busy, haz: S.haz && S.haz.hits.length, elev: !!S.elev, wx: !!S.wx }; },
     hosts: HOST, preview: function () { preview(null); },
+    /* the evacuation engine for the evacuation planner (assets/osap-epe.js): evRun(to, start, o) -> { opts, nCand, notes };
+       evShow(plan in the kept shape) opens one line here with its checkpoints */
+    evRun: evRun, evShow: function (k) { if (S.ctx) evShow(k); }, evKinds: EV_KINDS, evR: EV_R,
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
     line: function () { var r = S.routes[S.sel]; return r && r.coords && r.coords.length > 1 ? r.coords.map(function (c) { return c.lat != null ? [c.lat, c.lng] : [c[0], c[1]]; }) : null; } };
   if (W.OSAP_ROUTE_WAIT && D.documentElement.getAttribute("data-view") === "route") W.OSAP_ROUTE_WAIT();
