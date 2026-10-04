@@ -1,9 +1,8 @@
 /* AXIOM OSAP: power grid section. Power plants, transmission lines and substations on the map, and power outage reporting.
    Self-contained block loaded after the main page script. Its switches sit in Map overlays > Infrastructure (#ml-infra, next to
    Communications), or at the foot of the Layers menu on a page without that block. It is not a data set: it never filters reports.
-   - Power plants: the country's largest plants from the WRI Global Power Plant Database (already in the country's reference data,
-     data/sof/<cc>.js, CC BY 4.0), shown at any zoom; plus OpenStreetMap plants for the area on screen (100 MW and up from zoom 8,
-     every named plant from zoom 11).
+   - Power plants: the switch is here, the plants are drawn by assets/osap-infra.js (every fuel, merged from WRI, Wikidata and
+     OpenStreetMap, coloured by fuel with a fuel filter under the switch). Only the grid is read live from Overpass.
    - Transmission lines and substations: OpenStreetMap power=line and power=substation for the area on screen, from the keyless
      Overpass API. 200 kV and up from zoom 8, everything down to distribution feeders' parents (power=line, not minor_line) from zoom 11.
      Coloured by voltage. Community-mapped: coverage is uneven between countries and some lines have no voltage.
@@ -25,7 +24,6 @@
     { min: 0, col: "#5c7cfa", w: 1.4, l: "Under 100 kV" },
     { min: -1, col: "#868e96", w: 1.4, l: "Voltage not mapped" }
   ];
-  var BOLT = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13.5 2L5 13.5h6L9.8 22 19 10h-6.2z"/></svg>';
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
@@ -50,16 +48,10 @@
   }
 
   /* ---------- map layers ---------- */
-  var map = null, lineL = null, ptL = null, wriL = null;
+  var map = null, lineL = null, ptL = null;
   function panes() {
     if (!map.getPane("pwrpane")) { map.createPane("pwrpane"); map.getPane("pwrpane").style.zIndex = 430; }
     if (!map.getPane("pwrpt")) { map.createPane("pwrpt"); map.getPane("pwrpt").style.zIndex = 655; }
-  }
-  function plantIcon(big) {
-    var s = big ? 22 : 16, sy = !big ? null : (W.osapSym ? W.osapSym("power") : null);
-    if (sy) return sy;
-    return L.divIcon({ className: "pwr-pl", iconSize: [s, s], iconAnchor: [s / 2, s / 2],
-      html: '<span style="width:' + s + "px;height:" + s + 'px">' + BOLT.replace('width="20" height="20"', 'width="' + (s - 4) + '" height="' + (s - 4) + '"') + "</span>" });
   }
   function subIcon(b) {
     return L.divIcon({ className: "pwr-sub", iconSize: [11, 11], iconAnchor: [5.5, 5.5], html: '<span style="background:' + b.col + '"></span>' });
@@ -73,29 +65,11 @@
       "<dl>" + rows.filter(function (r) { return t[r[0]]; }).map(function (r) { return "<dt>" + r[1] + "</dt><dd>" + esc(String(t[r[0]]).slice(0, 120)) + "</dd>"; }).join("") + "</dl>" +
       '<p class="obs">Community-mapped; may be incomplete or out of date. <a href="https://www.openstreetmap.org/' + esc(id) + '" target="_blank" rel="noopener">OSM ' + esc(id) + "</a> · &copy; OpenStreetMap contributors (ODbL)</p></div>";
   }
-  function wriDraw() {
-    if (!wriL) return;
-    wriL.clearLayers();
-    if (!S.plants) return;
-    var sof = ((W.ASAP_SOF || {})[cc()] || {}).power || [];
-    sof.forEach(function (i) {
-      if (i.lat == null || i.lon == null) return;
-      var m = L.marker([i.lat, i.lon], { icon: plantIcon(true), keyboard: false, pane: "pwrpt", lgk: "pwr:plant", lgl: "Power plant (WRI)" });
-      m.bindPopup('<div class="pop"><div class="tier" style="color:var(--power)">Power plant · reference</div><h3>' + esc(i.name) + "</h3><dl>" +
-        [["Fuel", i.fuel], ["Capacity", i.capacity_mw != null ? Math.round(i.capacity_mw) + " MW" : null], ["Commissioned", i.commissioning_year], ["Owner", i.owner]]
-          .filter(function (p) { return p[1] != null && p[1] !== ""; }).map(function (p) { return "<dt>" + p[0] + "</dt><dd>" + esc(String(p[1])) + "</dd>"; }).join("") + "</dl>" +
-        '<p class="obs">Source: <a href="' + esc(safeUrl(i.src)) + '" target="_blank" rel="noopener">' + esc(i.srcname || "WRI Global Power Plant Database") + "</a>" +
-        (i.plant_src && safeUrl(i.plant_src) ? ' · <a href="' + esc(i.plant_src) + '" target="_blank" rel="noopener">plant record</a>' : "") +
-        "<br>Location " + esc(i.prec || "approx") + " · " + esc(i.lat.toFixed(4) + ", " + i.lon.toFixed(4)) + (W.MGRS_OF ? " · MGRS " + esc(W.MGRS_OF(i.lat, i.lon)) : "") +
-        (i.fp ? '<br>Fingerprint <code class="fp">' + esc(i.fp.slice(0, 16)) + "…</code>" : "") + "</p></div>", { maxWidth: 320 });
-      wriL.addLayer(m);
-    });
-  }
   /* draws one Overpass answer; exported for the tests */
   function draw(els, z) {
-    if (!lineL || !ptL) return { lines: 0, subs: 0, plants: 0 };
+    if (!lineL || !ptL) return { lines: 0, subs: 0 };
     lineL.clearLayers(); ptL.clearLayers();
-    var n = { lines: 0, subs: 0, plants: 0 };
+    var n = { lines: 0, subs: 0 };
     (els || []).forEach(function (e) {
       var t = e.tags || {};
       if (t.power === "line" || t.power === "cable") {
@@ -112,37 +86,28 @@
         L.marker([c.lat, c.lon], { icon: subIcon(band(kv(t))), pane: "pwrpt", keyboard: false, lgk: "pwr:sub", lgl: "Substation" })
           .bindPopup(osmPop("sub", t, e), { maxWidth: 300 }).addTo(ptL);
         n.subs++;
-      } else if (t.power === "plant") {
-        if (!S.plants) return;
-        var p = e.center || (e.lat != null ? e : null); if (!p) return;
-        var out = mw(t);
-        if (z < ALLZ && !(out >= 100)) return;
-        L.marker([p.lat, p.lon], { icon: plantIcon(false), pane: "pwrpt", keyboard: false, lgk: "pwr:osmplant", lgl: "Power plant (OpenStreetMap)" })
-          .bindPopup(osmPop("plant", t, e), { maxWidth: 300 }).addTo(ptL);
-        n.plants++;
       }
     });
     return n;
   }
   /* the Overpass query for a box at a zoom; exported for the tests */
-  var HV = '["voltage"~"^([2-9][0-9]{5}|[1-9][0-9]{6})"]', BIG = '["plant:output:electricity"~"^ *(([1-9][0-9]{2,}|[1-9][0-9]{0,2},[0-9]{3})([.][0-9]+)? *MW|[0-9.]+ *GW)",i]';
+  var HV = '["voltage"~"^([2-9][0-9]{5}|[1-9][0-9]{6})"]';
   function query(b, z, want) {
     var bb = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(4); }).join(",");
     var all = z >= ALLZ, q = "[out:json][timeout:25][bbox:" + bb + "];";
     var lines = want.lines ? (all ? 'way["power"="line"];way["power"="cable"]' + HV + ";" : 'way["power"="line"]' + HV + ";") : "";
-    var pts = (want.subs ? (all ? 'nwr["power"="substation"];' : 'nwr["power"="substation"]' + HV + ";") : "") +
-      (want.plants ? (all ? 'nwr["power"="plant"];' : 'nwr["power"="plant"]' + BIG + ";") : "");
+    var pts = want.subs ? (all ? 'nwr["power"="substation"];' : 'nwr["power"="substation"]' + HV + ";") : "";
     return q + (lines ? "(" + lines + ")->.l;.l out geom(" + bb + ") 4000;" : "") + (pts ? "(" + pts + ")->.p;.p out center tags 1500;" : "");
   }
   var busy = null, key = "", cache = {}, t0 = 0;
   function load() {
     t0 = 0;
     if (!map) return;
-    if (!S.lines && !S.subs && !S.plants) { lineL && lineL.clearLayers(); ptL && ptL.clearLayers(); key = ""; S.msg = ""; paint(); return; }
+    if (!S.lines && !S.subs) { lineL && lineL.clearLayers(); ptL && ptL.clearLayers(); key = ""; S.msg = ""; paint(); return; }
     var z = map.getZoom();
-    if (z < HVZ) { lineL.clearLayers(); ptL.clearLayers(); key = ""; S.msg = (S.lines || S.subs ? "Zoom in to a region to see transmission lines and substations." : "") + (S.plants ? (S.lines || S.subs ? " " : "") + "Zoom in for more plants from OpenStreetMap." : ""); paint(); return; }
-    var b = map.getBounds().pad(0.1), want = { lines: S.lines, subs: S.subs, plants: S.plants };
-    var k = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(2); }).join(",") + "|" + (z >= ALLZ ? "a" : "h") + "|" + +want.lines + +want.subs + +want.plants;
+    if (z < HVZ) { lineL.clearLayers(); ptL.clearLayers(); key = ""; S.msg = "Zoom in to a region to see transmission lines and substations."; paint(); return; }
+    var b = map.getBounds().pad(0.1), want = { lines: S.lines, subs: S.subs };
+    var k = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(function (v) { return v.toFixed(2); }).join(",") + "|" + (z >= ALLZ ? "a" : "h") + "|" + +want.lines + +want.subs;
     if (k === key) return; key = k;
     if (busy) { busy.abort(); busy = null; }
     if (cache[k]) { done(draw(cache[k], z), z); return; }
@@ -180,8 +145,7 @@
     var bits = [];
     if (S.lines) bits.push(n.lines + " line" + (n.lines === 1 ? "" : "s"));
     if (S.subs) bits.push(n.subs + " substation" + (n.subs === 1 ? "" : "s"));
-    if (S.plants) bits.push(n.plants + " OpenStreetMap plant" + (n.plants === 1 ? "" : "s"));
-    S.msg = bits.join(", ") + " on screen" + (z < ALLZ ? " (200 kV and up, plants 100 MW and up; zoom in closer for all of them)." : ".");
+    S.msg = bits.join(", ") + " on screen" + (z < ALLZ ? " (200 kV and up; zoom in closer for all of them)." : ".");
     paint();
     if (map) map.fire("layeradd", { layer: lineL });
   }
@@ -240,18 +204,19 @@
 
   /* ---------- the rows in Map overlays > Infrastructure, the legend ---------- */
   function switches() {
-    var sofN = (((W.ASAP_SOF || {})[cc()] || {}).power || []).length;
-    return [["plants", "Power plants", sofN ? "The " + sofN + " largest plants (WRI), plus OpenStreetMap plants as you zoom in" : "From OpenStreetMap as you zoom in"],
+    return [["plants", "Power plants", "Every fuel, coloured by fuel, with a fuel filter (WRI, Wikidata, OpenStreetMap)"],
       ["lines", "Transmission lines", "Coloured by voltage: 200 kV and up from region zoom, every line close in"],
       ["subs", "Substations", "Switching and transformer stations"]].map(function (r) {
-      return '<label class="mlrow"><input type="checkbox" data-pwr="' + r[0] + '"' + (S[r[0]] ? " checked" : "") + "><span><b>" + r[1] + "</b><i>" + esc(r[2]) + "</i></span></label>";
+      return '<label class="mlrow"><input type="checkbox" data-pwr="' + r[0] + '"' + (S[r[0]] ? " checked" : "") + "><span><b>" + r[1] + "</b><i>" + esc(r[2]) + "</i></span></label>" +
+        /* osap-infra.js fills this with the fuel filter and the plant count */
+        (r[0] === "plants" ? "<div data-inffuel hidden></div>" : "");
     }).join("");
   }
   var sec = null;
   function secHtml() {
     return '<div class="pwr-t">Power grid</div>' + switches() + '<p class="mlkey pwr-m" data-pwrmsg aria-live="polite"></p>' +
       '<details class="pwr-out"><summary>Outage reports, last ' + DAYS + ' days</summary><div data-pwrnews></div></details>' +
-      '<p class="mlkey pwr-m">Grid: &copy; OpenStreetMap contributors (ODbL), community-mapped and uneven. Plants: WRI Global Power Plant Database (CC BY 4.0).</p>';
+      '<p class="mlkey pwr-m">Grid: &copy; OpenStreetMap contributors (ODbL), community-mapped and uneven. Plants: WRI Global Power Plant Database (CC BY 4.0), Wikidata (CC0), OpenStreetMap.</p>';
   }
   function paint() {
     if (sec) {
@@ -272,10 +237,11 @@
   function set(k, on) {
     if (!/^(plants|lines|subs)$/.test(k) || !map) return;
     S[k] = !!on;
-    if (k === "plants") wriDraw();
+    /* plants are drawn by the infrastructure sites module */
+    if (k === "plants") { (function go(n) { if (W.OSAP_INFRA) W.OSAP_INFRA.set("plant", S.plants); else if (n < 40) setTimeout(function () { go(n + 1); }, 250); })(0); paint(); return; }
     key = ""; load(); paint();
     /* the panel note sits under the switch, often off screen on a phone: say it on the map too */
-    if (on && k !== "plants" && map.getZoom() < HVZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to a region to see " + (k === "lines" ? "transmission lines" : "substations"));
+    if (on && map.getZoom() < HVZ && W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast("Zoom in to a region to see " + (k === "lines" ? "transmission lines" : "substations"));
   }
   function onChange(e) { var k = e.target && e.target.getAttribute("data-pwr"); if (k) set(k, e.target.checked); }
   var css = D.createElement("style");
@@ -307,16 +273,16 @@
     map = W.__asapMap;
     if (!map || !W.L || !mount()) return false;
     panes();
-    lineL = L.layerGroup().addTo(map); ptL = L.layerGroup().addTo(map); wriL = L.layerGroup().addTo(map);
+    lineL = L.layerGroup().addTo(map); ptL = L.layerGroup().addTo(map);
     map.on("moveend", function () { if (anyOn()) soon(); });
     /* the page rebuilds the Overlays panel's data set list; keep the Infrastructure block shown with this in it */
     D.addEventListener("osap:dsopen", function () { setTimeout(mount, 0); });
-    wriDraw(); paint();
+    paint();
     return true;
   }
   W.OSAP_POWER = { set: set, news: function () { loadNews(); }, state: function () {
       return { plants: S.plants, lines: S.lines, subs: S.subs, msg: S.msg, news: S.news ? S.news.length : null,
-        drawn: { lines: lineL ? lineL.getLayers().map(function (l) { return l.options.color; }) : [], points: ptL ? ptL.getLayers().length : 0, wri: wriL ? wriL.getLayers().length : 0 } };
+        drawn: { lines: lineL ? lineL.getLayers().map(function (l) { return l.options.color; }) : [], points: ptL ? ptL.getLayers().length : 0 } };
     },
     query: query, draw: draw, kv: kv, mw: mw, band: band, isOutage: isOutage };
   (function wait(n) { if (!init() && n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);

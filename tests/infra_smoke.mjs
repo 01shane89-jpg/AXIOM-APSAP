@@ -24,7 +24,7 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
 
 const IX = { v: 1, at: "2026-10-04T10:00Z", sources: { oa: { name: "OurAirports", ok: true }, wpi: { name: "NGA World Port Index (Pub. 150)", ok: false }, osm: { name: "OpenStreetMap", ok: true },
-  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1 } } };
+  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1, plant: 3, fuel: 1, pipe: 1 } } };
 const F = "e".repeat(64);
 const smalls = [];
 for (let k = 0; k < 700; k++) smalls.push({ k: "af", t: "S", id: "oa:S" + k, nm: "Airstrip S" + k, la: 8 + (k % 70) * 0.2, lo: 98 + Math.floor(k / 70) * 0.5, s: "oa", u: "https://ourairports.com/airports/S" + k + "/", x: {}, fp: F });
@@ -35,8 +35,13 @@ const TH = { v: 1, cc: "th", at: IX.at, items: [
   { k: "port", t: "M", id: "wpi:1", nm: "Laem Chabang", la: 13.08, lo: 100.88, s: "wpi", u: "https://msi.nga.mil/Publications/WPI", x: { size: "Large", chan_m: 14 }, fp: F },
   { k: "port", t: "F", id: "osm:n5", nm: "Pier 5", la: 13.72, lo: 100.51, s: "osm", u: "https://www.openstreetmap.org/node/5", x: { ferry: 1 }, fp: F },
   { k: "dam", t: "D", id: "wd:Q1", nm: "Bhumibol Dam", la: 17.24, lo: 98.97, s: "wd", u: "https://www.wikidata.org/wiki/Q1", x: { height_m: 154, reservoir: "Bhumibol reservoir" }, fp: F },
+  { k: "plant", t: "nuclear", id: "wd:Q9", nm: "Test Nuclear", la: 14.5, lo: 101.0, s: "wdp", u: "https://www.wikidata.org/wiki/Q9", x: { mw: 40 }, fp: F },
+  { k: "plant", t: "gas", id: "wri:THA1", nm: "Test Gas", la: 13.0, lo: 101.2, s: "wri", u: "https://datasets.wri.org/", x: { fuel: "Gas", mw: 1400, built: "2001" }, also: [{ s: "osm", u: "https://www.openstreetmap.org/way/9" }], fp: F },
+  { k: "plant", t: "solar", id: "osm:w10", nm: "", la: 13.3, lo: 101.3, s: "osm", u: "https://www.openstreetmap.org/way/10", x: { mw: 5 }, fp: F },
+  { k: "fuel", t: "R", id: "osm:w11", nm: "Test Refinery", la: 13.1, lo: 100.9, s: "osm", u: "https://www.openstreetmap.org/way/11", x: { facility: "refinery", op: "Test Oil Co" }, fp: F },
   { k: "lp", t: "C", id: "tg:lp:songkhla", nm: "Songkhla, Thailand", la: 7.19, lo: 100.6, s: "tg", u: "https://www.submarinecablemap.com/landing-point/songkhla", x: { cables: "Test Cable 1" }, fp: F }
-], lines: [{ k: "cable", id: "tg:test-1", nm: "Test Cable 1", c: "#aa3377", g: [[[7.19, 100.6], [6, 102], [3, 105]]], s: "tg", u: "https://www.submarinecablemap.com/submarine-cable/test-1", fp: F }] };
+], lines: [{ k: "pipe", t: "gas", id: "osm:w12", nm: "Test Gas Pipeline", g: [[[13.1, 100.9], [13.5, 101.5]]], s: "osm", u: "https://www.openstreetmap.org/way/12", x: { substance: "gas", location: "underground" }, fp: F },
+  { k: "cable", id: "tg:test-1", nm: "Test Cable 1", c: "#aa3377", g: [[[7.19, 100.6], [6, 102], [3, 105]]], s: "tg", u: "https://www.submarinecablemap.com/submarine-cable/test-1", fp: F }] };
 
 async function open(opts, hash = "", mode = "ok") {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -45,9 +50,9 @@ async function open(opts, hash = "", mode = "ok") {
     const u = new URL(r.request().url()).pathname; asked.push(u);
     if (mode === "fail") return r.fulfill({ status: 500, body: "x" });
     if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(IX) });
-    const m = /\/th\/(af|port|dam|cable)\.json$/.exec(u);
-    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"] }[m[1]];
-      return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...TH, layer: m[1], items: TH.items.filter((i) => ks.includes(i.k)), lines: m[1] === "cable" ? TH.lines : [] }) }); }
+    const m = /\/th\/(af|port|dam|cable|plant|fuel)\.json$/.exec(u);
+    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"], plant: ["plant"], fuel: ["fuel"] }[m[1]], lk = { cable: "cable", fuel: "pipe" }[m[1]];
+      return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...TH, layer: m[1], items: TH.items.filter((i) => ks.includes(i.k)), lines: TH.lines.filter((l) => l.k === lk) }) }); }
     return r.fulfill({ status: 404, body: "" });
   });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -108,6 +113,40 @@ const popWith = async (p, re) => {
   s = await st(p);
   ok(s.drawn.points === 0 && s.drawn.lines === 0 && !s.legend && !s.msg, "all off: map and legend cleared " + JSON.stringify(s));
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- energy: plants of every fuel (power grid's switch), refineries and pipelines ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await om(p, true);
+  ok(await shown(p, '#atk-om #inf-sec input[data-inf="fuel"]'), "energy: refineries and pipelines switch in Infrastructure");
+  ok(!(await shown(p, '#atk-om #inf-sec input[data-inf="plant"]')) && await shown(p, '#atk-om #pwr-sec input[data-pwr="plants"]'), "energy: one Power plants switch, in the power grid block");
+  await view(p, [13.5, 101], 6);
+  await p.check('#pwr-sec input[data-pwr="plants"]'); await p.waitForFunction(() => window.OSAP_INFRA.state().on.plant && !window.OSAP_INFRA.state().busy, null, { timeout: 10000 }); await p.waitForTimeout(600);
+  let s = await st(p);
+  ok(s.shown.plant === 3, "energy: plants drawn (few in view, so small ones too): " + JSON.stringify(s.shown));
+  ok(/Power plants: 3 in this country/.test(s.plantMsg), "energy: plant count under the switch: " + s.plantMsg);
+  const chips = await p.evaluate(() => Array.from(document.querySelectorAll("#pwr-sec [data-inffuel] button")).map((b) => b.getAttribute("data-fuel")));
+  ok(chips.join() === "gas,nuclear,solar", "energy: a chip for each fuel this country has, in order: " + chips.join());
+  await p.click('#pwr-sec [data-inffuel] button[data-fuel="gas"]'); await p.waitForTimeout(300);
+  s = await st(p);
+  ok(s.shown.plant === 2 && s.off.join() === "gas", "energy: gas filtered out (" + s.shown.plant + ")");
+  ok(await p.evaluate(() => /Gas power plant/.test(document.querySelector(".leaflet-control-container").innerHTML)) === false, "energy: legend drops the filtered fuel");
+  await p.click('#pwr-sec [data-inffuel] button[data-fuel="*"]'); await p.waitForTimeout(300);
+  await p.check('#inf-sec input[data-inf="fuel"]'); await p.waitForTimeout(800);
+  s = await st(p);
+  ok(s.shown.fuel === 1 && s.drawn.lines === 1, "energy: refinery and pipeline drawn " + JSON.stringify(s.shown) + " lines " + s.drawn.lines);
+  ok(/Refineries, fuel depots and pipelines: 1 sites, 1 pipelines/.test(s.msg) && !/Power plants/.test(s.msg), "energy: block message counts sites and pipelines, plants stay under their switch: " + s.msg);
+  await om(p, false);
+  let pop = await popWith(p, "Test Gas<");
+  ok(/Gas power plant · WRI/.test(pop) && /1,400 MW/.test(pop) && /CC BY 4.0/.test(pop) && /Also listed by.*OpenStreetMap/.test(pop), "popup: plant fuel, capacity, WRI licence, other sources");
+  pop = await popWith(p, "Test Nuclear");
+  ok(/Nuclear power plant · Wikidata/.test(pop) && /40 MW/.test(pop), "popup: nuclear plant from Wikidata");
+  pop = await popWith(p, "Test Gas Pipeline");
+  ok(/Gas pipeline · OpenStreetMap/.test(pop) && /underground/.test(pop) && /ODbL/.test(pop), "popup: pipeline, what it carries, licence");
+  pop = await popWith(p, "Test Refinery");
+  ok(/Oil refinery/.test(pop) && /Test Oil Co/.test(pop), "popup: refinery and operator");
+  ok(errors.length === 0, "energy: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- read failure, and a country with nothing listed ----------
