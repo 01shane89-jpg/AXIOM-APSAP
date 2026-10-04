@@ -3,7 +3,8 @@
    The Comms view (Map overlays > Infrastructure > Communications) opens as six tabs:
      Plan       PACE planner: Primary / Alternate / Contingency / Emergency per phase, with device, net, coverage expectation
                 and its basis, dependencies, failure trigger and next action
-     Coverage   the phone signal check (assets/osap-comms.js); the terrain coverage estimate joins it with the terrain engine
+     Coverage   the phone signal check (assets/osap-comms.js) and the route comms corridor (corridor(), shared with the
+                evacuation planner); the terrain coverage estimate joins it with the terrain engine
      Link       a free-space link budget, Fresnel zone and radio horizon calculator; the terrain profile joins it later
      Networks   country internet outage signals (IODA, already loaded for Security signals), and the masts, towers and
                 providers switches of assets/osap-comms.js
@@ -715,6 +716,155 @@
     var L = loadCs(); L.forEach(function (x) { if (x.id === id) { x.status = t.value; x.changed = Date.now(); } }); put(KCS, L); render();
   }
 
+  /* ---------- Coverage: route comms corridor ----------
+     corridor(segments, opts) is shared with the evacuation planner: segments = [{ id, coords: [[lat, lon], ...], km_from, km_to }]
+     (lon may run past 180). Per segment it resolves { id, status: good | degraded | none | unknown, sources: [{ kind: observed |
+     mapped | modelled | reported, label, time }], reason, km_from, km_to, levels }. No panel or map changes; opts.signal stops it;
+     opts.cc adds the country's IODA outage signal. A segment where nothing could be read is "unknown" with the reason. */
+  var KCR = "osap-cp-corr", CSTAT = { good: ["Good", "#2b8a3e"], degraded: ["Degraded", "#e67700"], none: ["Likely none", "#c92a2a"], unknown: ["Unknown", "#868e96"] };
+  var LIB_SRC = ["assets/comms/radio-lib.js", "assets/osap-comms.js"];
+  function ensureComms() {
+    if (W.OSAP_COMMSTAB && W.OSAP_COMMSTAB.evaluate && W.OSAP_RADIO) return Promise.resolve();
+    LIB_SRC.forEach(function (src) {
+      if (D.querySelector('script[src="' + src + '"]')) return;
+      var sc = D.createElement("script"); sc.src = src; sc.async = false; D.head.appendChild(sc);
+    });
+    return new Promise(function (res, rej) {
+      var n = 0; (function wait() { if (W.OSAP_COMMSTAB && W.OSAP_COMMSTAB.evaluate && W.OSAP_RADIO) res(); else if (++n > 400) rej(new Error("The coverage check did not load")); else setTimeout(wait, 50); })();
+    });
+  }
+  function ioda(cc) {
+    var I = W.ASAP_IODA, o = I && I.items && cc ? I.items[cc === "oki" ? "jp" : cc] : null;
+    if (!I || !cc) return null;
+    return { kind: "reported", label: o ? "IODA: " + o.events + " internet outage signal" + (o.events === 1 ? "" : "s") + " in the country since " + (I.from || "the last week") : "IODA: no internet outage signal in the country since " + (I.from || "the last week"), time: I.asof || "", events: o ? o.events : 0 };
+  }
+  function corridor(segments, opts) {
+    opts = opts || {};
+    var sig = opts.signal, out = [], i = 0;
+    return ensureComms().then(function () {
+      var src = W.OSAP_COMMSTAB.sources(), rep = ioda(opts.cc);
+      function one(sg) {
+        var base = { id: sg.id, km_from: sg.km_from, km_to: sg.km_to };
+        var pts = (sg.coords || []).filter(function (p) { return p && isFinite(p[0]) && isFinite(p[1]); }).map(function (p) { return [p[0], ((p[1] + 180) % 360 + 360) % 360 - 180]; });
+        if (pts.length < 2) return Promise.resolve(Object.assign(base, { status: "unknown", sources: [], reason: "The segment has fewer than two points.", levels: [] }));
+        return W.OSAP_COMMSTAB.evaluate(pts, { signal: sig }).then(function (r) {
+          var lv = r.samples.map(function (x) { return x.v ? x.v.level : 0; }), measOk = r.samples.some(function (x) { return x.meas && x.meas.ok; }), sources = [];
+          if (measOk) sources.push({ kind: "observed", label: "Speedtest by Ookla measured tests (all networks)", time: src.cov });
+          if (r.mastsOk) sources.push({ kind: "mapped", label: "OpenStreetMap masts and towers", time: src.masts || "live" });
+          if (r.mastsOk && !r.big) sources.push({ kind: "modelled", label: "Terrain line of sight to the nearest masts", time: "" });
+          if (rep) sources.push({ kind: rep.kind, label: rep.label, time: rep.time });
+          var status = measOk || r.mastsOk ? R().segStatus(lv) : "unknown", c = [0, 0, 0, 0];
+          lv.forEach(function (l) { c[l]++; });
+          var pc = function (k) { return Math.round(c[k] / (lv.length || 1) * 100); };
+          var reason = !measOk && !r.mastsOk ? "Neither measured coverage nor masts could be loaded, so OSAP cannot say." :
+            pc(3) + "% likely, " + pc(2) + "% possible, " + pc(1) + "% no sign" + (c[0] ? ", " + pc(0) + "% unknown" : "") + " at " + lv.length + " points." +
+            (!measOk ? " Measured coverage could not be loaded." : "") + (!r.mastsOk ? " Masts could not be loaded." : r.big ? " Too long for the mast line-of-sight estimate." : "") +
+            (rep && rep.events ? " The country has recent internet outage signals." : "");
+          return Object.assign(base, { status: status, sources: sources, reason: reason, levels: lv });
+        }, function (e) {
+          if (e && e.name === "AbortError") throw e;
+          return Object.assign(base, { status: "unknown", sources: rep ? [{ kind: rep.kind, label: rep.label, time: rep.time }] : [], reason: "The check could not be finished for this segment.", levels: [] });
+        });
+      }
+      function next() {
+        if (sig && sig.aborted) return Promise.reject(new DOMException("Stopped", "AbortError"));
+        if (i >= segments.length) return Promise.resolve();
+        var k = i++;
+        return one(segments[k]).then(function (r) { out[k] = r; if (opts.progress) opts.progress(out.filter(Boolean).length, segments.length); return next(); });
+      }
+      return Promise.all([next(), next()]).then(function () { return out; });
+    });
+  }
+
+  /* the Coverage tab's corridor section: the planned route cut into segments, a strip along it, the stretches that are not
+     good, and the operator's PACE plans for the area. Kept on the device: the segment length; the answer is not stored. */
+  var corrLayer = null, corrAbort = null;
+  function corrLayerOff() { if (corrLayer && S.ctx) { S.ctx.layer.removeLayer(corrLayer); corrLayer = null; } }
+  function plannedRoute() {
+    var rt = W.OSAP_ROUTETAB, c = rt && rt.line && rt.line();
+    if (c && c.length >= 2) return c;
+    var cur = get("osap-route-cur", null);
+    return cur && Array.isArray(cur.wps) && cur.wps.length >= 2 ? cur.wps.map(function (w) { return [+w.lat, +w.lon]; }).filter(function (p) { return isFinite(p[0]) && isFinite(p[1]); }) : null;
+  }
+  function segKm() { var v = num(get(KCR, {}).seg_km, 2); return Math.min(20, Math.max(0.5, v)); }
+  function renderCoverage() {
+    var el = pane(); if (!el) return;
+    el.innerHTML = '<div class="sec cpsec"><h3>Route comms corridor</h3>' +
+      '<p class="obs">The planned route from the Route tab, cut into segments, each rated Good, Degraded, Likely none or Unknown for phone and data coverage, with why.</p>' +
+      '<div class="cpbtns"><label class="cpu">Segments of <input type="number" id="cpcr-seg" min="0.5" max="20" step="0.5" value="' + E(segKm()) + '"> km</label>' +
+      '<button type="button" class="cpgo" data-cpcr="run">Check the planned route</button></div><div id="cp-crout" aria-live="polite"></div></div>';
+    if (S.corr) paintCorr();
+  }
+  function corrRun() {
+    var pts = plannedRoute(), out = S.ctx.rail.querySelector("#cp-crout");
+    if (!pts) { S.corr = null; corrLayerOff(); if (out) out.innerHTML = '<p class="cpres" style="border-left:5px solid #6c757d">There is no planned route yet. Plan one on the Route tab, then check it here (or press <b>Comms along route</b> there).</p>'; return; }
+    if (corrAbort) corrAbort.abort();
+    var ac = W.AbortController ? new AbortController() : null; corrAbort = ac;
+    var segs = R().splitLine(pts, segKm(), "route-L1"), tok = {};
+    S.corr = { busy: true, tok: tok, pts: pts, segs: segs };
+    if (out) out.innerHTML = '<p class="obs" id="cpcr-prog">Checking ' + segs.length + " segments…</p>" + '<div class="cpbtns"><button type="button" data-cpcr="stop">Stop</button></div>';
+    /* after the page has fitted the country (opening from the Route tab), zoom to the route */
+    setTimeout(function () { if (S.corr && S.corr.tok === tok) S.ctx.map.fitBounds(W.L.latLngBounds(pts).pad(0.15), { maxZoom: 13 }); }, 0);
+    if (out && out.scrollIntoView) out.scrollIntoView({ block: "nearest" });
+    corridor(segs, { signal: ac && ac.signal, cc: S.ctx.cc, progress: function (n, of) { var p = S.ctx && S.ctx.rail.querySelector("#cpcr-prog"); if (p) p.textContent = "Checking segment " + n + " of " + of + "…"; } })
+      .then(function (res) { if (!S.corr || S.corr.tok !== tok) return; S.corr = { pts: pts, segs: segs, res: res, when: Date.now() }; paintCorr(); var o = S.ctx.rail.querySelector("#cp-crout"); if (o && o.scrollIntoView) o.scrollIntoView({ block: "nearest" }); },
+        function (e) { if (!S.corr || S.corr.tok !== tok) return; S.corr = null; var o = S.ctx.rail.querySelector("#cp-crout"); if (o) o.innerHTML = '<p class="obs">' + (e && e.name === "AbortError" ? "Stopped." : "The check could not be finished: " + E(e && e.message || "error") + ".") + "</p>"; });
+  }
+  function stretches(res) {
+    var out = [];
+    res.forEach(function (r) { var l = out[out.length - 1]; if (l && l.status === r.status) { l.km_to = r.km_to; l.n++; } else out.push({ status: r.status, km_from: r.km_from, km_to: r.km_to, first: r, n: 1 }); });
+    return out;
+  }
+  function paintCorr() {
+    var o = S.ctx && S.ctx.rail.querySelector("#cp-crout"), c = S.corr; if (!o || !c || !c.res) return;
+    var res = c.res, total = res.length ? res[res.length - 1].km_to : 0, km = { good: 0, degraded: 0, none: 0, unknown: 0 };
+    res.forEach(function (r) { km[r.status] += r.km_to - r.km_from; });
+    var bad = stretches(res).filter(function (s) { return s.status !== "good"; });
+    var pts = c.pts, bb = { s: 90, w: 180, n: -90, e: -180 }; pts.forEach(function (p) { bb.s = Math.min(bb.s, p[0]); bb.n = Math.max(bb.n, p[0]); bb.w = Math.min(bb.w, p[1]); bb.e = Math.max(bb.e, p[1]); });
+    var plans = paceFor(bb), srcs = {};
+    res.forEach(function (r) { r.sources.forEach(function (s) { srcs[s.kind + s.label] = s; }); });
+    o.innerHTML = '<div class="cpstrip" role="img" aria-label="Coverage along the route">' + res.map(function (r) { return '<span style="flex:' + Math.max(0.01, r.km_to - r.km_from) + ";background:" + CSTAT[r.status][1] + '" title="km ' + f(r.km_from, 1) + "–" + f(r.km_to, 1) + ": " + CSTAT[r.status][0] + '"></span>'; }).join("") + "</div>" +
+      '<div class="cpstripk"><span>0 km</span><span>' + f(total, 1) + " km</span></div>" +
+      '<table class="rttab"><tbody>' + ["good", "degraded", "none", "unknown"].map(function (k) { return '<tr><th><span class="cpbadge" style="background:' + CSTAT[k][1] + '">' + CSTAT[k][0] + "</span></th><td>" + f(km[k], 1) + " km (" + f(total ? km[k] / total * 100 : 0, 0) + "%)</td></tr>"; }).join("") + "</tbody></table>" +
+      (bad.length ? "<p><b>Stretches that are not good</b></p><ul class=\"cpcrl\">" + bad.slice(0, 30).map(function (s) {
+        var p = s.first.id && c.segs.filter(function (x) { return x.id === s.first.id; })[0], at = p ? p.coords[0] : null;
+        return '<li><span class="cpbadge" style="background:' + CSTAT[s.status][1] + '">' + CSTAT[s.status][0] + "</span> km " + f(s.km_from, 1) + "–" + f(s.km_to, 1) + (at ? ' from <code>' + E(mgrs(at[0], at[1])) + "</code>" : "") + "<br><small>" + E(s.first.reason) + (s.n > 1 ? " (first segment of " + s.n + ")" : "") + "</small></li>";
+      }).join("") + "</ul>" : "<p>Every segment is rated good.</p>") +
+      "<p><b>PACE</b>: " + (plans.length ? "your plan" + (plans.length === 1 ? " " : "s ") + plans.map(function (p) { return "<b>" + E(p.name || "Untitled") + "</b>"; }).join(", ") + " cover" + (plans.length === 1 ? "s" : "") + " this route's area. Check the alternates for the stretches above." :
+        'no PACE plan covers this route\'s area. <button type="button" class="linkish" data-cpcr="plan">Make one on Plan</button>') + "</p>" +
+      '<p class="obs">Sources: ' + Object.keys(srcs).map(function (k) { var s = srcs[k]; return '<span class="cptag">' + E(s.kind.toUpperCase()) + "</span> " + E(s.label) + (s.time ? " (" + E(s.time) + ")" : ""); }).join("; ") + ". " +
+      "A planning estimate for phones and data on public networks, not a promise: it cannot see which network you use, outages, jamming, buildings or trees. Radio links are worked out on the Link tab.</p>" +
+      '<div class="cpbtns"><button type="button" data-cpcr="zoom">Zoom to the route</button><button type="button" data-cpcr="text">Copy as text</button><button type="button" data-cpcr="clear">Clear</button></div>';
+    drawCorr();
+  }
+  function drawCorr() {
+    corrLayerOff();
+    var c = S.corr; if (!c || !c.res || !S.ctx || S.tab !== "coverage") return;
+    corrLayer = W.L.layerGroup();
+    c.res.forEach(function (r, k) {
+      var sg = c.segs[k]; if (!sg) return;
+      W.L.polyline(sg.coords, { color: CSTAT[r.status][1], weight: 7, opacity: 0.85, dashArray: r.status === "unknown" ? "6 6" : null })
+        .bindPopup("<b>" + E(CSTAT[r.status][0]) + "</b> km " + f(r.km_from, 1) + "–" + f(r.km_to, 1) + "<br>" + E(r.reason)).addTo(corrLayer);
+    });
+    S.ctx.layer.addLayer(corrLayer);
+  }
+  function corrAct(t) {
+    var a = t.getAttribute("data-cpcr"); if (!a) return;
+    if (a === "run") corrRun();
+    else if (a === "stop") { if (corrAbort) corrAbort.abort(); }
+    else if (a === "clear") { if (corrAbort) corrAbort.abort(); S.corr = null; corrLayerOff(); var o = S.ctx.rail.querySelector("#cp-crout"); if (o) o.innerHTML = ""; }
+    else if (a === "zoom") { if (S.corr && S.corr.pts) S.ctx.map.fitBounds(W.L.latLngBounds(S.corr.pts).pad(0.15), { maxZoom: 13 }); }
+    else if (a === "plan") setTab("plan");
+    else if (a === "text" && S.corr && S.corr.res) copyText(["ROUTE COMMS CORRIDOR (" + zT(S.corr.when) + ")"].concat(S.corr.res.map(function (r, k) { var at = S.corr.segs[k].coords[0]; return "km " + f(r.km_from, 1) + "-" + f(r.km_to, 1) + " | " + CSTAT[r.status][0].toUpperCase() + " | " + mgrs(at[0], at[1]) + " | " + r.reason; })).join("\n"));
+  }
+  function corrInput(t) {
+    if (t.id !== "cpcr-seg") return;
+    var v = parseFloat(t.value); if (!(v >= 0.5 && v <= 20)) return;
+    put(KCR, { seg_km: v });
+  }
+  /* "Comms along route" on the Route tab opens Comms planning on Coverage and runs the corridor */
+  function routeCorridor() { setTab("coverage"); corrRun(); }
+
   /* ---------- Networks: internet outage signals for the country (IODA, loaded at start as window.ASAP_IODA) ---------- */
   var SRC = { bgp: "Routing (BGP)", "ping-slash24": "Active probing", "merit-nt": "Telescope traffic", gtr: "Google traffic" };
   function renderNetworks() {
@@ -739,8 +889,10 @@
     S.ctx.rail.querySelectorAll("[data-cptab]").forEach(function (b) { if (b.closest(".cptabs")) b.setAttribute("aria-selected", String(b.getAttribute("data-cptab") === t)); });
     if (cm) { cm.hidden = !(t === "coverage" || t === "networks"); cm.setAttribute("data-part", t); }
     if (t !== "status") intfLayerOff();
+    if (t !== "coverage") corrLayerOff();
+    if (el) el.setAttribute("data-tab", t);
     if (t === "plan") renderPlan(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderEquip(); else if (t === "networks") renderNetworks();
-    else el.innerHTML = "";
+    else { renderCoverage(); drawCorr(); }
   }
   function setTab(t) { if (!TABS.some(function (x) { return x[0] === t; })) t = "coverage"; S.tab = t; try { localStorage.setItem(KT, t); } catch (e) {} render(); }
 
@@ -757,6 +909,7 @@
       if (S.tab === "plan" && b.hasAttribute("data-cpa")) planAction(b.getAttribute("data-cpa"), b);
       else if (S.tab === "status") statusAct(b);
       else if (S.tab === "equipment") equipClick(b);
+      else if (S.tab === "coverage") corrAct(b);
     });
     var onIn = function (e) {
       var t = e.target; if (!t.closest || !t.closest("#cp-pane") || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
@@ -765,6 +918,7 @@
       else if (S.tab === "status") { if (e.type === "change" || t.hasAttribute("data-cpsn")) statusAct(t); }
       else if (S.tab === "link") linkInput(t);
       else if (S.tab === "equipment") equipInput(t, e.type);
+      else if (S.tab === "coverage") corrInput(t);
     };
     r.querySelector(".cp").addEventListener("input", onIn);
     r.querySelector(".cp").addEventListener("change", function (e) { if (e.target.tagName === "SELECT" || e.target.type === "number") onIn(e); });
@@ -772,8 +926,8 @@
     if (!SUBS.some(function (x) { return x[0] === S.sub; })) S.sub = "board";
     try { S.esub = localStorage.getItem(KE) || "power"; } catch (e) { S.esub = "power"; }
     if (!ESUBS.some(function (x) { return x[0] === S.esub; })) S.esub = "power";
-    intfLayer = null;
-    setTab(t0 || "coverage");
+    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null;
+    if (W.OSAP_COMMSPLAN_WANT === "route") { W.OSAP_COMMSPLAN_WANT = null; routeCorridor(); } else setTab(t0 || "coverage");
   }
 
   /* Other tools (medical plan, evacuation) read the operator's PACE plans for a place: read-only copies of every plan whose
@@ -785,6 +939,10 @@
 
   var st = D.createElement("style");
   st.textContent =
+    /* on Coverage the corridor sits between the phone signal check and its explanation */
+    ".cp{display:flex;flex-direction:column}.cp>#cp-pane[data-tab=coverage]{order:2}#cp-comms:not([hidden]){display:contents}#cp-comms>[data-cppart]{order:3}#cp-comms>[data-cppart]:first-child{order:1}" +
+    ".cpstrip{display:flex;height:16px;border-radius:3px;overflow:hidden;margin:8px 0 2px;border:1px solid var(--line)}.cpstrip span{min-width:1px}" +
+    ".cpstripk{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}.cpcrl{list-style:none;padding:0;margin:4px 0 8px}.cpcrl li{margin:4px 0;font-size:12.5px}.cpcrl .cpbadge{margin:0 4px 0 0}" +
     ".cptabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0 2px;border-bottom:1px solid var(--line)}" +
     ".cptabs button{font:inherit;font-size:12.5px;font-weight:600;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);padding:9px 8px;min-height:40px;cursor:pointer}" +
     ".cptabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}" +
@@ -820,6 +978,6 @@
     "@media (pointer:coarse){.cp input,.cp select,.cp textarea{font-size:16px!important}}";
   D.head.appendChild(st);
 
-  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, paceFor: paceFor, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
+  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 })();

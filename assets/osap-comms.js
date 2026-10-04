@@ -359,7 +359,7 @@ function main() {
     var mp = opt.noMasts ? Promise.resolve(false) : ensureMasts(bb[0], bb[1], bb[2], bb[3]).then(function () { return true; }, function () { return false; });
     return Promise.all([measured(lat, lon), mp]).then(function (r) {
       var meas = r[0], ok = r[1];
-      var near = mastsNear(lat, lon, R_BCAST), inRange = near.filter(function (x) { return x.m.kind !== "bcast" && x.d <= R_CHECK && provOn(x.m); });
+      var near = mastsNear(lat, lon, R_BCAST), inRange = near.filter(function (x) { return x.m.kind !== "bcast" && x.d <= R_CHECK && (opt.all || provOn(x.m)); });
       var cellish = inRange.slice(0, opt.few ? 2 : 6);
       /* for a place, also the nearest mast of each provider in range (up to 8), so each network gets its own answer */
       var provs = [], seenP = {};
@@ -396,7 +396,9 @@ function main() {
     var run = 0; for (i = 0; i < out.length; i++) { if (i) run += hav(out[i - 1].p, out[i].p); out[i].at = run; }
     return { pts: out, total: total };
   }
-  function checkLine(pts) {
+  /* opt (from other tools): all = every provider, whatever the switches say; quiet = no progress text; signal = stop when aborted */
+  function checkLine(pts, opt) {
+    opt = opt || {};
     var sm = sampleLine(pts), s = 90, w = 180, n = -90, e = -180, pad;
     sm.pts.forEach(function (x) { s = Math.min(s, x.p[0]); n = Math.max(n, x.p[0]); w = Math.min(w, x.p[1]); e = Math.max(e, x.p[1]); });
     pad = around((s + n) / 2, (w + e) / 2, R_CHECK);
@@ -407,8 +409,9 @@ function main() {
       var out = [], i = 0;
       function next() {
         if (i >= sm.pts.length) return Promise.resolve();
+        if (opt.signal && opt.signal.aborted) return Promise.reject(new DOMException("Stopped", "AbortError"));
         var x = sm.pts[i++];
-        return checkPlace(x.p[0], x.p[1], { bcast: false, few: true, noMasts: !ok }).then(function (r) { r.at = x.at; out.push(r); prog(i, sm.pts.length); return next(); });
+        return checkPlace(x.p[0], x.p[1], { bcast: false, few: true, noMasts: !ok, all: opt.all }).then(function (r) { r.at = x.at; out.push(r); if (!opt.quiet) prog(i, sm.pts.length); return next(); });
       }
       return Promise.all([next(), next(), next(), next()]).then(function () {
         out.sort(function (a, b) { return a.at - b.at; });
@@ -873,6 +876,10 @@ function main() {
     setTimeout(loadView, 0);
   }
   W.OSAP_COMMSTAB = { show: show, check: function (lat, lon) { S.mode = "place"; paintMode(); runPlace(lat, lon); }, line: function (pts) { runLine(pts); },
+    /* the line check without touching the panel or the map, for Comms planning's route corridor: every provider counted.
+       Resolves { samples: [{ at (m), v: { level 0-3 }, meas: { ok }, mastsOk }], total, big, mastsOk }. */
+    evaluate: function (pts, opt) { return checkLine(pts, { all: true, quiet: true, signal: opt && opt.signal }); },
+    sources: function () { var st = S.ctx && S.stored[S.ctx.cc]; return { cov: S.cov ? (S.cov.periods || []).join(" and ") : "", masts: st && st.ok ? String(st.at || "").slice(0, 10) : "" }; },
     state: function () { return { drawn: S.drawn, prov: S.prov, off: S.off, masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 }
