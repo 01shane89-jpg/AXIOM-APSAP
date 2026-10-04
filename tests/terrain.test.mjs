@@ -131,5 +131,15 @@ const idx = (g, eM, nM) => (g.half - Math.round(nM / g.cell)) * g.n + g.half + M
   ok(agree === tot, "reverse viewshed: every sampled cell matches a line of sight from an observer there to the point (" + agree + "/" + tot + ")");
 }
 
+/* 9. slope: flat 0, a 10 % ramp 5.7 degrees, a gap NaN */
+{
+  const g = grid(20, 30, (e) => (e > 0 ? e * 0.1 : 0));
+  const sl = VS.slope(g, 1);
+  ok(near(sl[idx(g, -300, 0)], 0, 1e-6), "slope: flat ground is 0 degrees");
+  ok(near(sl[idx(g, 300, 0)], Math.atan(0.1) * 180 / Math.PI, 0.01), "slope: a 10 % ramp is 5.71 degrees (" + sl[idx(g, 300, 0)].toFixed(2) + ")");
+  const h = grid(10, 30, (e) => (e === 60 ? NaN : 100));
+  ok(Number.isNaN(VS.slope(h, 1)[idx(h, 30, 0)]), "slope: next to a gap in the data it is unknown (NaN)");
+}
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
