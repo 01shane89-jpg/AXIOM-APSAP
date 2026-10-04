@@ -4,7 +4,7 @@ name: Probe lidar sources
 on:
   push:
     branches: [claude/lidar-coverage]
-    paths: [tools/probe_lidar.mjs, .github/workflows/probe-lidar.yml]
+    paths: [tools/probe_lidar.mjs, tools/probe_lidar2.mjs, .github/workflows/probe-lidar.yml]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,3 +18,4 @@ jobs:
         with:
           node-version: 22
       - run: node tools/probe_lidar.mjs
+      - run: node tools/probe_lidar2.mjs
