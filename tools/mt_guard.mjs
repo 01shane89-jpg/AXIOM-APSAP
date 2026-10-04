@@ -5,7 +5,8 @@
 // one story carried by several outlets, so it can lead the daily summary. A translation is suspect when it:
 //   - names a year or a decade the original does not have (Buddhist Era years such as 2569 or "ปี 69" count as 2026);
 //   - is one of the model's stock inventions ("... were a time of great success", "(in Japanese)", a web error page);
-//   - repeats a word run (the model looping).
+//   - repeats a word run (the model looping);
+//   - is still mostly in another script (the model gave Chinese back as Chinese).
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
@@ -35,6 +36,9 @@ export function mtSuspect(orig, en, now = Date.now()) {
   if (!orig.trim() || !en || orig.trim() === en) return "";
   for (const re of STOCK) if (re.test(en)) return "stock text";
   if (/\b(\w+)(?:[\s,.]+\1\b){3,}/i.test(en)) return "loop";
+  // still in the original's script (Chinese given back as Chinese): not a translation
+  const lat = (en.match(/[A-Za-z]/g) || []).length, oth = (en.match(/\p{L}/gu) || []).length - lat;
+  if (oth > lat) return "not English";
   // the original's numbers, thousands separators dropped, with the forms a year in it may take in English
   const o = asciiDigits(orig).replace(/(\d)[,.\s](?=\d{3}(?!\d))/g, "$1");
   const nums = o.match(/\d+/g) || [];
