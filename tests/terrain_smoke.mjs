@@ -396,6 +396,9 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   await p.waitForTimeout(300);
   const t2 = await p.evaluate(() => document.getElementById("terrain").textContent);
   ok(st.cor && Math.abs(st.cor.stats.exposed_pct - C.stats.exposed_pct) < 0.01 && st.corMarks > st.cor.stations && /can see part of it/.test(t2) && /Most exposed points/.test(t2) && /NOT MODELED/.test(t2), "route exposure: the panel shows the same result, drawn on the map with its stations (" + (st.cor ? st.corMarks : st.err) + ")");
+  /* the evacuation planner's route tools hook */
+  const H = await p.evaluate((r) => { const t = (window.OSAP_EPE_CORRIDOR_TOOLS || []).filter((x) => x.id === "terrain-exposure")[0]; return t ? t.run({ id: "opt1", coords: r, km: 4.4, dest: "x" }, {}).then((c) => ({ label: t.label, ok: !!c && c.stats.exposed_pct > 30 })) : null; }, route);
+  ok(H && H.ok && /seen from/.test(H.label), "route exposure: the evacuation route tools hook runs it on a route " + JSON.stringify(H));
   await p.click('#terrain [data-ts="corclear"]'); await p.waitForTimeout(100);
   ok(await p.evaluate(() => { const s = window.OSAP_TERRAIN_ANALYSIS.state(); return !s.cor && s.corMarks === 0; }), "route exposure: Hide takes it off the map");
   ok(errors.length === 0, "slope/exposure: no page errors " + JSON.stringify(errors.slice(0, 3)));
