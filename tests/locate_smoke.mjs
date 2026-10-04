@@ -65,9 +65,13 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
   const p2 = await ctx.newPage(); let loads = 0; p2.on("load", () => loads++);
   await p2.goto(base); await settle(p2);
   ok(await cc(p2) === "au" && loads === 1, "fresh open: starts in Australia with no extra reload (" + loads + " loads)");
-  // 4. crossed into Texas: fresh open moves to us?st=TX
+  // 4. crossed into Texas: the United States is a hidden area (assets/osap-lock.js), so a locked app never moves there
   await ctx.setGeolocation({ latitude: 30.2672, longitude: -97.7431 }); await p2.evaluate(() => window.OSAP_LOC && 0);
-  const p3 = await ctx.newPage(); await p3.goto(base);
+  const p3l = await ctx.newPage(); await p3l.goto(base); await settle(p3l, 6000);
+  ok(await cc(p3l) !== "us" && !/st=|#us/.test(p3l.url()), "locked: Texas does not open the United States: " + p3l.url());
+  await p3l.close();
+  // ... and once unlocked, a fresh open moves to us?st=TX
+  const p3 = await ctx.newPage(); await p3.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} }); await p3.goto(base);
   await p3.waitForFunction(() => window.TSAP && window.TSAP.country === "us", null, { timeout: 25000 }).catch(() => {});
   await settle(p3);
   ok(await cc(p3) === "us" && /st=TX/.test(p3.url()), "moved to Texas on fresh open: " + p3.url());
@@ -110,7 +114,8 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
 // 9. country lookup spot checks
 {
   const { ctx } = await ctxWith({ latitude: 0, longitude: 0 });
-  const p = await ctx.newPage(); await p.goto(base + "#th/timeline"); await settle(p);
+  const p = await ctx.newPage(); await p.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} });
+  await p.goto(base + "#th/timeline"); await settle(p);
   const r = await p.evaluate(() => Promise.all([[26.21, 127.68], [35.68, 139.69], [51.5, -0.12], [-41.29, 174.78], [6.52, 3.37], [-22.9, -43.2], [48.85, 2.35], [13.75, 100.5], [0, -30], [30.27, -97.74], [38.9, -77.03], [61.2, -149.9], [45.42, -75.69], [55.75, 37.62], [-1.29, 36.82], [24.71, 46.67], [31.77, 35.21], [42.66, 21.17], [25.03, 121.56], [1.35, 103.82]].map((q) => new Promise((res) => window.OSAP_LOC.placeAt(q[0], q[1], (x) => res(x.cc + (x.st ? "-" + x.st : "")))))));
   ok(r.join(",") === "oki,jp,gb,nz,ng,br,fr,th,,us-TX,us-DC,us-AK,ca,ru,ke,sa,il,xk,tw,sg", "lookup: " + r.join(","));
   await ctx.close();

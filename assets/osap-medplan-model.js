@@ -6,11 +6,11 @@
    Terms: a casualty's path runs POI > stabilization > definitive care. Internally the plan still picks Primary, Secondary and
    Tertiary per casualty type; here a Tertiary (or a Secondary when it is the last planned stop) is the definitive care and the
    stops before it are stabilization. Air assets are POTENTIAL (an air rescue base found in open data) or PLANNED (entered by
-   the planner); none is CONFIRMED until a planner confirms it, so no air asset is treated as available. Receiving acceptance
+   the planner), or CONFIRMED when the planner records the provider's confirmation (phase 4, assets/osap-medplan-air.js), which expires. Receiving acceptance
    is UNKNOWN until a planner records it. */
 (function (root) {
   "use strict";
-  var SCHEMA = "osap-medplan/4";
+  var SCHEMA = "osap-medplan/5";
   var STAGE = { primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
   /* the capabilities whose absence a planner must close before the plan is relied on (Build Plan v2, CONOP "critical gaps") */
   var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
@@ -62,6 +62,79 @@
     return out;
   }
 
+  /* ---------- the medical operational picture (phase 5) ----------
+     What the other OSAP layers say about this plan, as flags a planner reads first: the hazards OSAP holds along the primary
+     route (a flood warning above all) with the alternate that avoids them, the forecast at the primary HLZ against fixed
+     rotary-wing review rules, heavy rain, the air MEDEVAC state, and how old every dataset is. Each flag is a prompt to
+     check, never a clearance or a decision; the rules are fixed and named so the same input always flags the same way. */
+  var PIC = { vis_m: 1600, gust_kn: 30, lc: 90, rain_mm: 20, rule: "osap.medplan.picture/1" };
+  var FLOOD = /flood|inundat|flash.?water/i;
+  function isFlood(h) { return FLOOD.test(str(h.kind) + " " + str(h.text)); }
+  function hrs(a, b) { var x = Date.parse(a), y = Date.parse(b); return isFinite(x) && isFinite(y) ? Math.max(0, Math.round((y - x) / 36e5)) : null; }
+  function ageWord(h) { return h == null ? "age unknown" : h < 1 ? "under 1 hour old" : h < 48 ? h + " h old" : Math.round(h / 24) + " days old"; }
+  /* each dataset with when its content dates from (not when this device fetched it) and whether it is past its use-by */
+  function dataAge(rows, now) {
+    return (rows || []).map(function (x) {
+      var at = x.at || null, h = at ? hrs(at, now) : null, ex = x.expires_at || null;
+      var stale = at == null ? true : ex ? !(Date.parse(now) < Date.parse(ex)) : x.stale_h != null && h != null && h > x.stale_h;
+      return { key: x.key, label: x.label, at: at, age_h: h, basis: str(x.basis), live: !!x.live, kind: x.live ? "live" : x.expires_at || x.key === "verification" || x.key === "aircraft" ? "record" : "snapshot", stale_after_h: x.stale_h == null ? null : x.stale_h, expires_at: ex, stale: stale,
+        state: at == null ? "NONE" : stale ? "STALE" : "CURRENT", note: str(x.note) };
+    });
+  }
+  function picture(p, I) {
+    var F = [], now = I.now || I.built_at || "";
+    function flag(code, level, text, detail, src) { F.push({ code: code, level: level, text: text, detail: detail || "", source: src || "" }); }
+    /* the primary road line to the definitive facility and the hazards OSAP holds along it */
+    var def = p.definitive, ga = def && (p.ground_alternates || []).filter(function (x) { return x.facility_id === def.facility_id; })[0];
+    var pl = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option === "P"; })[0];
+    var alts = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option !== "P" && r.hazards; }) : [];
+    if (pl && ga && ga.state === "done" && pl.hazards && pl.hazards.length) {
+      var hz = pl.hazards, fl = hz.filter(isFlood), pt = pl.router_time_s;
+      var clear = (fl.length ? alts.filter(function (r) { return !r.hazards.some(isFlood); }) : alts.filter(function (r) { return r.hazards.length < hz.length; }))
+        .sort(function (a, b) { return a.time_s - b.time_s; })[0];
+      var head = fl.length ? "PRIMARY ROUTE INTERSECTS FLOOD WARNING" : "PRIMARY ROUTE PASSES " + hz.length + " REPORTED HAZARD" + (hz.length === 1 ? "" : "S");
+      var tail = clear ? "ALTERNATE ROUTE " + clear.option + " AVAILABLE " + (pt != null ? "+" + Math.round(Math.max(0, clear.time_s - pt) / 60) + " MINUTES" : "(TIME NOT KNOWN)") : "NO CLEARER ALTERNATE ROUTE FOUND";
+      var first = (fl[0] || hz[0]);
+      flag(fl.length ? "route.flood" : "route.hazard", "warning", head + " / " + tail,
+        "To " + def.name + ": " + first.kind + " at " + first.at_km + " km along, " + first.off_km + " km off the road" + (first.text ? " (" + first.text + ")" : "") + (first.src ? ", " + first.src : "") +
+        (clear ? ". Line " + clear.option + " has " + (fl.length ? "no flood warning" : clear.hazards.length + " hazard" + (clear.hazards.length === 1 ? "" : "s")) + " held within " + ga.hazard_km + " km." : ". Plan a line by hand in the Route tab.") +
+        " Check against current reporting.", "OSAP hazards along the route (" + ga.hazard_km + " km, " + ga.hazard_days + " days)");
+    }
+    /* heavy rain at the point of injury: roads and landing zones may flood */
+    var wet = (I.weather_days || []).filter(function (d) { return d.rain != null && d.rain >= PIC.rain_mm; })[0];
+    if (wet) flag("weather.rain", "warning", "HEAVY RAIN FORECAST " + Math.round(wet.rain) + " MM " + wet.day + " / ROADS AND LANDING ZONES MAY FLOOD", "Forecast for the point of injury. Check the routes and the HLZ on the day.", "Open-Meteo forecast");
+    /* the forecast at the primary HLZ (or at the point of injury when the HLZ has no grid) against rotary-wing review rules */
+    var hw = I.hlz_wx;
+    if (hw) {
+      var where = hw.hlz ? "PRIMARY HLZ" : "POINT OF INJURY (NO HLZ GRID)";
+      if (hw.err) flag("weather.hlz", "warning", where + " FORECAST NOT READ / CHECK AVIATION WEATHER", "The forecast for " + (hw.name || "the pickup") + " could not be read: " + hw.err + ".", "Open-Meteo forecast");
+      else {
+        var bad = (hw.days || []).map(function (d) {
+          var w = [];
+          if (d.vis != null && d.vis < PIC.vis_m) w.push("VISIBILITY FORECAST " + (Math.round(d.vis / 100) / 10) + " KM");
+          if (d.gust != null && d.gust >= PIC.gust_kn) w.push("GUSTS " + Math.round(d.gust) + " KN");
+          if (d.lc != null && d.lc >= PIC.lc) w.push("LOW CLOUD " + Math.round(d.lc) + "%");
+          return { d: d, w: w };
+        }).filter(function (x) { return x.w.length; })[0];
+        if (bad) flag("weather.hlz", "warning", where + " " + bad.w.join(", ") + " / AIR EVACUATION REVIEW REQUIRED",
+          bad.d.day + " (UTC day) at " + (hw.mgrs || hw.name || "the pickup") + ". Rules: visibility under " + PIC.vis_m / 1000 + " km, gusts " + PIC.gust_kn + " kn or more, low cloud " + PIC.lc + "% or more. Model values for one point; use an aviation forecast for the flying decision.", "Open-Meteo forecast");
+      }
+    }
+    /* air MEDEVAC: only a confirmed aircraft inside its limits is an air option */
+    var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; }), fit = conf.filter(function (a) { return !(a.limits_now || []).length; });
+    if (!fit.length) flag("air.none", "warning", conf.length ? "CONFIRMED AIRCRAFT STOPPED BY ITS LIMITS NOW / GROUND EVACUATION PLANNED" : "NO CONFIRMED AIR MEDEVAC / GROUND EVACUATION PLANNED",
+      conf.length ? conf[0].name + ": " + conf[0].limits_now.join("; ") + "." : "Air times are potential only until a provider confirms an aircraft (section 4).", "planner's aircraft records");
+    /* data age: anything past its use-by, or never read, is said, never shown as if live */
+    var ages = dataAge(I.data_age, now);
+    ages.forEach(function (a) {
+      if (a.state === "CURRENT") return;
+      flag("data.age." + a.key, "warning", a.label.toUpperCase() + (a.state === "NONE" ? " NOT AVAILABLE" : " " + ageWord(a.age_h).toUpperCase()) + " / CONFIRM BEFORE USE",
+        (a.state === "NONE" ? "No date for it on this device" : "Dated " + a.at.slice(0, 16).replace("T", " ") + "Z" + (a.expires_at ? ", expired " + a.expires_at.slice(0, 16).replace("T", " ") + "Z" : a.stale_after_h != null ? ", older than " + (a.stale_after_h >= 48 ? Math.round(a.stale_after_h / 24) + " days" : a.stale_after_h + " h") : "")) +
+        (a.basis ? " (" + a.basis + ")" : "") + (a.note ? ". " + a.note : "") + ".", a.label);
+    });
+    return { flags: F, data_age: ages, offline: !!I.offline, rule: PIC.rule, rules: { hlz_vis_m: PIC.vis_m, hlz_gust_kn: PIC.gust_kn, hlz_low_cloud_pct: PIC.lc, rain_mm: PIC.rain_mm } };
+  }
+
   /* input: see planInput() in assets/osap-medplan.js */
   function build(I) {
     var F = {}, stab = [], defi = [], alts = [], profiles = [], unresolved = [];
@@ -97,6 +170,14 @@
     var v = I.fields || {};
     var air = (I.air_bases || []).map(function (b) { return { kind: "air", name: b.name, base: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "", status: "POTENTIAL", source: "OpenStreetMap air rescue base", last_confirmed: null }; });
     ["medevac1", "medevac2"].forEach(function (k, i) { if (!blank(v[k])) air.unshift({ kind: "air", name: str(v[k]), status: "PLANNED", source: "planner (unit details " + (i ? "alternate" : "primary") + ")", last_confirmed: null }); });
+    /* phase 4: the aircraft the planner recorded, each with its status now (a confirmation past its time reads UNKNOWN) */
+    (I.aircraft || []).slice().reverse().forEach(function (a) {
+      air.unshift({ kind: "air", id: a.id, name: a.provider + (a.aircraft_type ? " (" + a.aircraft_type + ")" : ""), provider: a.provider, aircraft_type: a.aircraft_type, base: a.base ? a.base.name : "",
+        lat: a.base ? a.base.lat : null, lon: a.base ? a.base.lon : null, status: a.status_now || a.status, recorded_status: a.status, limits_now: a.limits_now || [], launch_time_min: a.launch_min, cruise_speed_kn: a.cruise_kn,
+        day_capable: a.day_capable, night_capable: a.night_capable, weather_limits: a.weather_limits, patient_capacity: a.patient_capacity, litter_capacity: a.litter_capacity,
+        critical_care_capability: a.critical_care_capability, hoist: a.hoist, request_method: a.request_method, call_sign: a.call_sign, frequency: a.frequency, phone: a.phone,
+        source: "planner (aircraft for this plan)", last_confirmed: a.last_confirmed, expires_at: a.expires_at });
+    });
     if (!blank(v.casevac)) air.push({ kind: "ground", name: str(v.casevac), status: "PLANNED", source: "planner (CASEVAC vehicles)", last_confirmed: null });
     var plan = {
       schema: SCHEMA, id: "mp-" + str(I.cc) + "-" + (I.poi ? I.poi.lat.toFixed(4) + "_" + I.poi.lon.toFixed(4) : "none"), version: 1,
@@ -110,7 +191,8 @@
       evacuation_assets: air,
       ground_routes: groundRoutes(I),
       ground_alternates: (I.pac || []).map(function (x) { return { facility_id: x.facility_id, state: x.state, error: x.err || "", lines: (x.lines || []).length, hazard_km: x.hazard_km, hazard_days: x.hazard_days }; }),
-      air_routes: (I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; }),
+      air_routes: (I.air_missions || []).map(function (a) { return { facility_id: a.facility_id, asset_id: a.asset_id, provider: a.provider, time_s: a.s, pickup: a.pickup, legs: a.parts, status: "CONFIRMED", basis: "confirmed aircraft; straight-line legs, an estimate" }; })
+        .concat((I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, status: "POTENTIAL", basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; })),
       ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary", v, "ccp1"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate", v, "ccp2")],
       axp: [point(v.axp, I.ll && I.ll.axp, "primary", v, "axp")],
       hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary", v, "hlz1"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate", v, "hlz2")],
@@ -119,7 +201,7 @@
       /* the planner's checks of the plan's hospitals (phase 1), oldest first */
       facility_verifications: (I.checks || []).filter(function (c) { return c && F[c.facility_id]; }),
       receiving_acceptance: defi.concat(stab).map(function (x) { return { facility_id: x.facility_id, status: "UNKNOWN", recorded_at: null }; }),
-      environmental_conditions: { weather: I.weather || null, at: I.weather_at || "" },
+      environmental_conditions: { weather: I.weather || null, at: I.weather_at || "", hlz: I.hlz_wx ? { name: I.hlz_wx.name || "", hlz: !!I.hlz_wx.hlz, mgrs: I.hlz_wx.mgrs || "", at: I.hlz_wx.at || "", error: I.hlz_wx.err || "", days: I.hlz_wx.days || [] } : null },
       unresolved_requirements: unresolved,
       pending: (I.pending || []).slice(),
       approvals: { state: "AUTOMATED_DRAFT", history: [] },
@@ -127,6 +209,7 @@
       definitive: defF ? { facility_id: defF.id, name: defF.name, time_s: def.time_s, way: def.way } : null,
       fingerprint: null
     };
+    plan.operational_picture = picture(plan, I);
     if (defF) CRITICAL.forEach(function (c) { if ((defF.caps || {})[c[0]] !== "yes") unresolved.push({ code: "cap." + c[0], text: c[1] + " at " + defF.name + " not documented" }); });
     plan.validation_status = validate(plan);
     return plan;
@@ -184,7 +267,12 @@
     add("blood", def && !blood ? "ok" : "warning", "Blood availability", def ? (blood ? blood.text + "." : "Documented at " + def.name + ".") : "No definitive facility.");
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; });
     var planned = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "PLANNED"; });
-    add("medevac.provider", conf.length ? "ok" : "warning", "Air MEDEVAC provider", conf.length ? conf[0].name : planned.length ? planned[0].name + " (entered, not confirmed)" : "None confirmed.");
+    var fit = conf.filter(function (a) { return !(a.limits_now || []).length; }), lapsed = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.recorded_status === "CONFIRMED" && a.status !== "CONFIRMED"; });
+    add("medevac.provider", fit.length ? "ok" : "warning", "Air MEDEVAC provider",
+      fit.length ? fit[0].name + " confirmed" + (fit[0].expires_at ? " until " + fit[0].expires_at.slice(0, 16).replace("T", " ") + "Z" : "") :
+      conf.length ? conf[0].name + " confirmed but stopped by its limits now: " + conf[0].limits_now.join("; ") + "." :
+      lapsed.length ? lapsed[0].name + ": confirmation expired; confirm again." :
+      planned.length ? planned[0].name + " (entered, not confirmed). Air does not compete with the road until an aircraft is confirmed." : "None confirmed. Air does not compete with the road until an aircraft is confirmed.");
     /* phase 3: a CCP, AXP or HLZ is a map object only with a grid; a name alone cannot be drawn, routed or flown to */
     function site(code, label, x) {
       if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");
@@ -197,6 +285,16 @@
     site("axp", "Ambulance exchange point (AXP)", p.axp[0]);
     site("hlz", "Helicopter landing zone (HLZ)", p.hlz[0]);
     site("hlz.alternate", "Alternate HLZ", p.hlz[1]);
+    /* phase 5: the forecast at the pickup and the age of the data the plan stands on */
+    var op = p.operational_picture;
+    if (op) {
+      var wf = op.flags.filter(function (f) { return f.code === "weather.hlz"; })[0], hw = p.environmental_conditions && p.environmental_conditions.hlz;
+      if (wf) add("weather.hlz", "warning", "Forecast at the pickup", wf.text + ". " + wf.detail);
+      else if (hw && hw.days && hw.days.length) add("weather.hlz", "ok", "Forecast at the pickup", "No review rule met at " + (hw.hlz ? "the primary HLZ" : "the point of injury (the HLZ has no grid)") + " for the next " + hw.days.length + " days (not a flying decision).");
+      var st = op.data_age.filter(function (a) { return a.state !== "CURRENT"; });
+      if (op.data_age.length) add("data.age", st.length ? "warning" : "ok", "Data age", st.length ? st.map(function (a) { return a.label + (a.state === "NONE" ? " not available" : " " + ageWord(a.age_h)); }).join("; ") + "." :
+        "Every dataset is within its use-by" + (op.offline ? " (this device is offline: saved copies)" : "") + ".");
+    }
     var cv = p.evacuation_assets.filter(function (a) { return a.kind === "ground"; })[0];
     add("casevac", cv ? "ok" : "warning", "CASEVAC platform", cv ? cv.name : "Not set.");
     add("comms", p.communications.medevac.length ? "ok" : "warning", "MEDEVAC communications", p.communications.medevac[0] || "No frequency or call sign set.");
@@ -215,5 +313,5 @@
     return JSON.stringify(walk(p));
   }
 
-  root.OSAP_MEDPLAN_MODEL = { SCHEMA: SCHEMA, build: build, validate: validate, canonical: canonical, names: names, core: core };
+  root.OSAP_MEDPLAN_MODEL = { SCHEMA: SCHEMA, PIC: PIC, build: build, validate: validate, picture: picture, dataAge: dataAge, canonical: canonical, names: names, core: core };
 })(typeof window !== "undefined" ? window : globalThis);
