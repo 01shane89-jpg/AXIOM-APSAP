@@ -11,7 +11,7 @@
 (function (root) {
   "use strict";
   var SCHEMA = "osap-medplan/5";
-  var STAGE = { primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
+  var STAGE = { stabilization: "stabilization", primary: "stabilization", secondary: "stabilization", tertiary: "definitive" };
   /* the capabilities whose absence a planner must close before the plan is relied on (Build Plan v2, CONOP "critical gaps") */
   var CRITICAL = [["blood.bank", "Blood availability"], ["surg.or_emergency", "Emergency operating theatre"], ["ed.24_7", "24-hour emergency department"], ["dx.ct", "CT scanner"]];
 
@@ -146,19 +146,28 @@
     }
     (I.categories || []).forEach(function (c) {
       var rows = c.rows || [], filled = rows.filter(function (r) { return r.state === "filled"; });
-      var stops = filled.filter(function (r) { return r.stop; });
+      /* a stabilization stop (the quickest hospital inside the golden hour when the first MTF is beyond it) comes first and is
+         never the definitive care */
+      var stops = filled.filter(function (r) { return r.stop; }).sort(function (a, b) { return (b.role === "stabilization") - (a.role === "stabilization"); });
+      var mtf = stops.filter(function (r) { return r.role !== "stabilization"; });
       /* the definitive care is the last planned stop that reaches Tertiary care, else the last planned stop */
-      var last = stops.filter(function (r) { return r.role === "tertiary"; })[0] || stops[stops.length - 1] || null;
+      var last = mtf.filter(function (r) { return r.role === "tertiary"; })[0] || mtf[mtf.length - 1] || null;
       var path = [];
       stops.forEach(function (r) {
         var stage = r === last ? "definitive" : STAGE[r.role] === "definitive" ? "definitive" : "stabilization";
-        path.push({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate" });
-        addFac(stage === "definitive" ? defi : stab, r.facility, { for: [c.id], role: r.role, way: r.way, time_s: r.time_s });
+        var un = r.unconfirmed ? { unconfirmed: true, confidence: r.confidence || "" } : {};
+        path.push(Object.assign({ stage: stage, role: r.role, facility_id: r.facility.id, name: r.facility.name, way: r.way, time_s: r.time_s, basis: "estimate" }, un));
+        addFac(stage === "definitive" ? defi : stab, r.facility, Object.assign({ for: [c.id], role: r.role, way: r.way, time_s: r.time_s }, un));
+      });
+      /* alternate MTFs: another hospital that also qualifies, or an unconfirmed one (crowd-listed or part listed); never a stop */
+      rows.forEach(function (r) {
+        if (!r.alt || !r.alt.facility) return;
+        addFac(alts, r.alt.facility, { for: [c.id], role: r.role, why: "alternate " + r.role + " (" + r.alt.confidence + ")", way: r.alt.way, time_s: r.alt.time_s, confidence: r.alt.confidence, unconfirmed: r.alt.confidence !== "documented" });
       });
       filled.filter(function (r) { return !r.stop && r.stabilisation_option; }).forEach(function (r) {
         addFac(alts, r.facility, { for: [c.id], role: r.role, why: "bypassed: going direct reaches the needed care sooner; stays the stabilization option", way: r.way, time_s: r.time_s });
       });
-      var gaps = rows.filter(function (r) { return r.state !== "filled"; }).map(function (r) { return r.role; });
+      var gaps = rows.filter(function (r) { return r.state !== "filled" && r.role !== "stabilization"; }).map(function (r) { return r.role; });
       if (!last) unresolved.push({ code: "no_definitive." + c.id, text: "No definitive care documented for " + c.label.toLowerCase() });
       /* phase 2: each stabilise-or-bypass decision with its time to the required care, part by part */
       var decisions = rows.filter(function (r) { return r.decision; }).map(function (r) { return Object.assign({ to_role: r.role }, r.decision); });
@@ -224,7 +233,7 @@
     function stop(x) {
       if (!x) return null;
       var g = p.ground_routes.filter(function (r) { return r.facility_id === x.facility_id && r.option === "P"; })[0];
-      return { facility_id: x.facility_id, name: x.name, way: x.way, time_s: x.time_s, distance_m: g ? g.distance_m : null };
+      return { facility_id: x.facility_id, name: x.name, way: x.way, time_s: x.time_s, distance_m: g ? g.distance_m : null, unconfirmed: !!x.unconfirmed, confidence: x.confidence || "" };
     }
     var path = prof ? prof.pathway : [], stab = stop(path.filter(function (x) { return x.stage === "stabilization"; })[0]), def = stop(path.filter(function (x) { return x.stage === "definitive"; })[0]);
     var routes = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; }) : [], P = routes.filter(function (r) { return r.option === "P"; })[0];
@@ -233,6 +242,7 @@
     var gaps = [], dF = def && p.facilities[def.facility_id];
     if (!def) gaps.push("Definitive care for " + (prof ? prof.label.toLowerCase() : "this casualty") + " not documented");
     if (dF) CRITICAL.forEach(function (c) { if ((dF.caps || {})[c[0]] !== "yes") gaps.push(c[1]); else if ((dF.caps_now || {})[c[0]] === "UNAVAILABLE") gaps.push(c[1] + " reported not available now"); });
+    if (stab && stab.unconfirmed) gaps.push("Stabilization stop " + stab.name + " unconfirmed: call ahead");
     if (def) gaps.push("Receiving hospital acceptance");
     if (!air) gaps.push("Air MEDEVAC provider");
     (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
@@ -256,7 +266,7 @@
     else add("data.pending", "ok", "Plan data complete");
     add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centred on " + (p.poi && p.poi.set_by === "c" ? "the map or area centre" : "a stand-in point") + ".");
     var stab = p.stabilization_facilities[0], def = p.definitive;
-    add("stabilization", stab ? "ok" : "warning", "Stabilization facility", stab ? stab.name : "None documented by a credible source; stabilize en route or confirm a local facility.");
+    add("stabilization", stab && !stab.unconfirmed ? "ok" : "warning", "Stabilization facility", stab ? stab.name + (stab.unconfirmed ? " (unconfirmed: " + (stab.confidence === "crowd" ? "emergency department listed only by OpenStreetMap" : "no emergency department listed") + "; call ahead)" : "") : "None documented by a credible source; stabilize en route or confirm a local facility.");
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];
     add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? "Road router" : def ? "No road route to the definitive facility yet." : "No destination to route to.");
