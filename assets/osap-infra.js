@@ -1,6 +1,6 @@
 /* AXIOM OSAP: infrastructure sites on the map, in Map overlays > Infrastructure (#ml-infra, after the other infrastructure rows;
    Roads stays last). Not a data set: it never filters reports. Loaded when the page is idle; the country's sites
-   (data/infra/<cc>.json, built weekly by tools/build_infra.mjs) load only when a switch is turned on.
+   (data/infra/<cc>/<layer>.json, built weekly by tools/build_infra.mjs) load one layer at a time, when its switch is turned on.
    - Airfields and heliports: every airport, airstrip, helipad and seaplane base in OurAirports (public domain) that is not closed.
      Small fields stay unnamed unless their name says what they are (a private strip is often named after its owner).
    - Ports and harbours: seaports in the NGA World Port Index (public domain) and UN/LOCODE, plus ports and ferry terminals in
@@ -21,7 +21,7 @@
     { k: "dam", name: "Dams", sub: "Named dams (OpenStreetMap, Wikidata)", items: ["dam"] },
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: true }
   ];
-  var S = { on: {}, data: null, busy: false, err: "", ix: null, cc: "", n: {} };
+  var S = { on: {}, data: null, got: {}, busy: false, err: "", ix: null, cc: "", n: {} };
   var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", locode: "UN/LOCODE", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map" };
   var LIC = { oa: "OurAirports (public domain)", wpi: "NGA World Port Index, Pub. 150 (public domain, U.S. Government)", osm: "&copy; OpenStreetMap contributors (ODbL)",
     locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)" };
@@ -48,21 +48,35 @@
   function kindOf(i) { for (var j = 0; j < KINDS.length; j++) if (KINDS[j].items.indexOf(i.k) >= 0) return KINDS[j].k; return null; }
 
   /* ---------- data ---------- */
-  function load(done) {
+  /* each layer has its own file (data/infra/<cc>/<layer>.json), read the first time its switch is turned on */
+  var busyN = 0;
+  function has(ix, c, k) {
+    var n = ix && ix.countries && ix.countries[c]; if (!n) return false;
+    var x = KINDS.filter(function (y) { return y.k === k; })[0];
+    return x.items.some(function (i) { return n[i]; }) || (x.lines && n.cable);
+  }
+  function load(k, done) {
     var c = cc();
-    if (S.data && S.cc === c) { if (done) done(); return; }
-    if (S.busy) return;
-    S.busy = true; S.err = ""; paint();
-    var ok = function (j) { S.busy = false; S.cc = c; S.data = j; ptL.clearLayers(); have = {}; draw(); paint(); if (done) done(); };
-    fetch("data/infra/index.json" + bust()).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (ix) {
+    if (S.cc !== c) { S.cc = c; S.got = {}; S.data = null; if (ptL) ptL.clearLayers(); have = {}; lastLines = ""; }
+    if (S.got[k]) { if (done) done(); return; }
+    if (S.got[k] === 0) return;   /* already being read */
+    S.got[k] = 0; busyN++; S.busy = true; S.err = ""; paint();
+    var fin = function (j) { busyN--; S.busy = busyN > 0; if (S.cc !== c) return; S.got[k] = j || { items: [], lines: [] }; S.data = view(); draw(); paint(); if (done) done(); };
+    (S.ix ? Promise.resolve(S.ix) : fetch("data/infra/index.json" + bust()).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })).then(function (ix) {
       S.ix = ix;
-      if (ix && ix.countries && !ix.countries[c]) return ok({ items: [], lines: [] });
-      return fetch("data/infra/" + encodeURIComponent(c) + ".json" + bust()).then(function (r) {
-        if (r.status === 404) return { items: [], lines: [] };
+      if (ix && ix.countries && !has(ix, c, k)) return fin(null);
+      return fetch("data/infra/" + encodeURIComponent(c) + "/" + k + ".json" + bust()).then(function (r) {
+        if (r.status === 404) return null;
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.json();
-      }).then(ok);
-    }).catch(function () { S.busy = false; S.err = "The infrastructure list could not be read just now. Switch it off and on to try again."; paint(); });
+      }).then(fin);
+    }).catch(function () { busyN--; S.busy = busyN > 0; delete S.got[k]; S.err = "The infrastructure list could not be read just now. Switch it off and on to try again."; paint(); });
+  }
+  /* every layer read so far, as one list */
+  function view() {
+    var d = { items: [], lines: [] };
+    Object.keys(S.got).forEach(function (k) { var g = S.got[k]; if (g) { d.items = d.items.concat(g.items || []); d.lines = d.lines.concat(g.lines || []); } });
+    return d;
   }
 
   /* ---------- map ---------- */
@@ -113,7 +127,7 @@
     if (!ptL || !map) return;
     var d = (S.data && S.cc === cc() && S.data) || { items: [], lines: [] };
     /* cable routes: redrawn only when the switch or country changes */
-    var lk = (S.on.cable ? "1" : "0") + S.cc;
+    var lk = (S.on.cable ? "1" : "0") + S.cc + ":" + (d.lines || []).length;
     if (lk !== lastLines) {
       lnL.clearLayers(); lastLines = lk;
       if (S.on.cable) (d.lines || []).forEach(function (l) {
@@ -163,6 +177,7 @@
     if (S.busy) return "Loading infrastructure sites…";
     if (S.err) return S.err;
     if (!S.data) return "";
+    if (KINDS.some(function (x) { return S.on[x.k] && !S.got[x.k]; })) return "Loading infrastructure sites…";
     var n = S.n || { shown: {}, total: {}, hidden: 0 }, bits = [];
     KINDS.forEach(function (x) {
       if (!S.on[x.k]) return;
@@ -203,7 +218,7 @@
   function set(k, on) {
     if (!KINDS.some(function (x) { return x.k === k; }) || !map) return;
     S.on[k] = !!on;
-    if (S.on[k]) load(function () { draw(); paint(); }); else draw();
+    if (S.on[k]) { S.err = ""; load(k, function () { draw(); paint(); }); } else draw();
     paint();
   }
   var css = D.createElement("style");
