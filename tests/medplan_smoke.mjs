@@ -218,6 +218,10 @@ async function openPlan(p) {
   await p.evaluate(() => { const m = document.getElementById("atk-pop"); if (!m.hidden) document.querySelector('#atk-tools [data-atk="area"]').click(); });
   ok(await p.evaluate(() => document.querySelector('#atk-tools [data-atk="medplan"]').getAttribute("aria-pressed") === "false"), "desktop: closing the plan releases the Med plan button");
   ok(!/Medical plan/.test(await areaMenu(p)), "desktop: still not in the Area menu once an area is drawn");
+  /* phase 4: only a confirmed aircraft competes with the road. These checks confirm one at Test Air Rescue with the same legs
+     the potential estimate counts (no call, approval or handoff time), so the air times below are the same either way. */
+  await p.evaluate((A) => { const n = Date.now === window.__realNow ? Date.now() : window.__realNow(), a = window.OSAP_MEDAIR.makeAsset(Object.assign({}, A, { last_confirmed: new Date(n - 3600000).toISOString() }), new Date(n).toISOString());
+    localStorage.setItem("osap-medair-th", JSON.stringify([a])); }, { provider: "Test Air Rescue", base_name: "Test Air Rescue", base_lat: 13.9, base_lon: 100.6, status: "CONFIRMED", valid_h: 48, call_min: 0, approval_min: 0, handoff_min: 0, ground_min: 10, launch_min: 15, cruise_kn: 120, night_capable: "yes", day_capable: "yes" });
   await openPlan(p);
   ok(await p.evaluate(() => !!window.OSAP_MEDPLAN && !document.getElementById("medplan").hidden), "desktop: the Med plan button opens the plan for the drawn area");
   ok(/Centred on the centre of the area/.test(await p.textContent("#medplan")), "desktop: with no point of injury set, the plan is centred on the area's centre");
@@ -341,7 +345,8 @@ async function openPlan(p) {
   ok(/Test Hyperbaric Centre/.test(dc.f) && /healthcare:speciality=hyperbaric_medicine/.test(dc.f) && /\+66 38 000 911/.test(dc.f) && /km/.test(dc.f) && /fly as low as safely possible/.test(dc.f) && dc.mk.includes("D1"), "chamber: the nearest decompression chamber is listed with its source, contacts, distance, a D mark and the low-altitude note " + JSON.stringify(dc).slice(0, 240));
   /* air times count the aircraft's flight from its base to the POI (Shane) */
   await p.waitForFunction(() => /Aircraft base: Test Air Rescue/.test(document.getElementById("mp-gh").textContent), null, { timeout: 8000 }).catch(() => {});
-  const airMin = () => p.evaluate(() => { const m = /(\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent) || /(\d+) h (\d+) min from injury by air/.exec(document.getElementById("mp-pst").textContent); return m ? +m[1] : null; });
+  /* the base chosen here moves the potential estimate (planning only); the confirmed aircraft's own base is unchanged */
+  const airMin = () => p.evaluate(() => { const m = /(\d+) min to fly to it/.exec(document.getElementById("mp-gh").textContent); return m ? +m[1] : /set to start at the point of injury/.test(document.getElementById("mp-gh").textContent) ? 0 : null; });
   const ab = await p.evaluate(() => ({ gh: document.getElementById("mp-gh").textContent, mev: document.getElementById("mp-mev").textContent, fac: document.getElementById("mp-fac").textContent }));
   const withBase = await airMin();
   ok(/Aircraft base: Test Air Rescue, [\d.]+ km from the POI, \d+ min to fly to it \(nearest air rescue base in OpenStreetMap\)/.test(ab.gh) && /Aircraft base used for every air time: Test Air Rescue/.test(ab.mev) && /from the call, with the aircraft's flight in/.test(ab.fac), "air times: the aircraft's base is named and its flight to the POI is counted " + ab.gh.slice(ab.gh.indexOf("Aircraft base"), ab.gh.indexOf("Aircraft base") + 120));
@@ -530,7 +535,7 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });
   const as = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); const row = (k) => { const th = [...d.querySelectorAll("table.mpas th")].find((x) => x.textContent === k); return th ? th.nextElementSibling.textContent : null; };
     return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), ed: row("Emergency department"), beds: row("Beds"), icu: row("Intensive care (ICU)"), surg: row("Surgery"), or: row("Operating rooms"), s24: row("24-hour surgeon"), oh: row("Opening hours"),
-      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
+      blood: row("Blood bank"), ct: row("CT and MRI"), pad: row("Helipad"), af: row("Nearest airfield"), tc: row("TRICARE"), mgrs: row("Grid (MGRS)"), road: row("By road"), air: row("By air (potential)"), rt: row("Route"), cap: row("Official trauma designation"), cls: row("Observed class"), flag: [...d.querySelectorAll("table.mpas")].map((t) => [...t.querySelectorAll("tr")].find((r) => r.querySelector("th").textContent === "Emergency department" && /REPORTED/.test(r.textContent))).filter(Boolean).map((r) => r.querySelector("td").textContent)[0] || "", unk: row("Unknown"),
       ct2: row("Contacts"), tclinks: [...d.querySelectorAll("a")].filter((a) => /tricare/.test(a.href)).length, btn: [...d.querySelectorAll("button,input,select")].filter((x) => !x.closest(".noprint")).length, w: document.getElementById("mpa-map").naturalWidth }; });
   ok(/Hospital assessment: Far North Hospital/.test(as.h2) && ["Location", "From the point of injury", "Capability and services", "Landing", "Contacts and cover"].every((h) => as.h3.includes(h)), "assessment: opens for the hospital with every section " + as.h3.join(" | "));
   ok(as.w >= 900, "assessment: has its own map " + as.w);
@@ -582,6 +587,22 @@ async function openPlan(p) {
   ok(calls.route > r0 && /Main roads/.test(await p.textContent("#brief")), "assessment: a hospital that is not a pick gets its road route asked when opened");
   ok(/Test wiki/.test(await p.textContent("#brief")), "assessment: a sourced hospital names its source");
   await p.click("#mpa-close");
+  /* phase 4: the aircraft for this plan. The confirmed one competes; a planned one is listed but never chosen; removing the
+     confirmed one leaves the picks on road times, and the provider item says why */
+  const ac0 = await p.evaluate(() => ({ t: document.getElementById("mp-mev").textContent, pst: document.getElementById("mp-pst").textContent, val: document.getElementById("mp-val").textContent }));
+  ok(/Aircraft for this plan/.test(ac0.t) && /Test Air Rescue.*Confirmed/.test(ac0.t) && /call 0 min \+ mission approval 0 min \+ launch 15 min \+ fly Test Air Rescue to the (primary HLZ|point of injury) \d+ min/.test(ac0.t) && /by air/.test(ac0.pst) && /Air MEDEVAC provider: Test Air Rescue confirmed until/.test(ac0.val),
+    "phase 4: the confirmed aircraft is listed with its mission leg by leg, competes, and clears the provider item " + JSON.stringify([ac0.t.slice(ac0.t.indexOf("Aircraft for this plan"), ac0.t.indexOf("Aircraft for this plan") + 500), /by air/.test(ac0.pst), ac0.val.slice(ac0.val.indexOf("Air MEDEVAC"), ac0.val.indexOf("Air MEDEVAC") + 120)]));
+  await p.click("#mp-mev .mpaform summary");
+  await p.fill('#mp-mev [data-mpa="provider"]', "Planned Heli"); await p.fill('#mp-mev [data-mpa="base_grid"]', "13.75, 100.50"); await p.fill('#mp-mev [data-mpa="cruise_kn"]', "300");
+  await p.click('#mp-mev [data-mpa-add]'); await p.waitForTimeout(400);
+  const delId = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-medair-th")).filter((a) => a.provider === "Test Air Rescue")[0].id);
+  await p.click(`#mp-mev [data-mpa-del="${delId}"]`); await p.waitForTimeout(400);
+  const ac1 = await p.evaluate(() => ({ t: document.getElementById("mp-mev").textContent, pst: document.getElementById("mp-pst").textContent, val: document.getElementById("mp-val").textContent, n: JSON.parse(localStorage.getItem("osap-medair-th")).length }));
+  ok(ac1.n === 1 && /Planned Heli.*Planned, not confirmed/.test(ac1.t) && !/by air/.test(ac1.pst) && /Planned Heli \(entered, not confirmed\)\. Air does not compete with the road/.test(ac1.val) && /air times shown are potential/.test(await p.textContent("#mp-gh")),
+    "phase 4: a planned aircraft, even a fast one, is never chosen: with no confirmed aircraft the picks use road times and the provider item says why");
+  await p.click('#mp-mev [data-mpa-conf]'); await p.waitForTimeout(400);
+  ok(/Planned Heli.*Confirmed/.test(await p.textContent("#mp-mev")) && /Air MEDEVAC provider: Planned Heli confirmed but stopped by its limits now: night capability not known/.test(await p.textContent("#mp-val")) && /Stopped by its limits: night capability not known/.test(await p.textContent("#mp-mev")),
+    "phase 4: Confirmed now confirms it; at night with night capability not recorded it still does not compete, and says so " + JSON.stringify([(await p.textContent("#mp-val")).match(/Air MEDEVAC provider[^!✓]*/), (await p.textContent("#mp-mev")).match(/Planned Heli.{0,300}/)]));
   if (OUT) await p.screenshot({ path: OUT + "/desk-plan.png" });
   await p.click('#medplan [data-mp="close"]');
   ok(await p.evaluate(() => document.getElementById("medplan").hidden && !document.querySelector(".mpicon")) && JSON.stringify(await lines()) === '{"r":0,"g":0,"a":0}', "desktop: Close hides the plan and takes the marks, routes, outlines and rings off the map");
@@ -838,7 +859,7 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   p.on("pageerror", (e) => console.log("helper page error: " + e.message));
   await p.addScriptTag({ url: base + "assets/osap-geo.js" });
   for (const f of ["base-provider", "resolver", "sof-provider", "web-provider", "osm-provider", "countries/th-provider"]) await p.addScriptTag({ url: base + "assets/hospital-sources/" + f + ".js" });
-  for (const f of ["osap-facility-intel", "osap-medplan-decide", "osap-medplan-model"]) await p.addScriptTag({ url: base + "assets/" + f + ".js" });
+  for (const f of ["osap-facility-intel", "osap-medplan-decide", "osap-medplan-air", "osap-medplan-model"]) await p.addScriptTag({ url: base + "assets/" + f + ".js" });
   await p.addScriptTag({ url: base + "assets/osap-medplan.js" });
   const r = await p.evaluate(() => { const M = window.OSAP_MEDPLAN; return {
     a: M._facName({ name: "Klinik dr. Budi" }, "clinic"), b: M._facName({ name: "Dr. Smith's Surgery" }, "clinic"), c: M._facName({ name: "Bangkok Hospital" }, "hospital"),
