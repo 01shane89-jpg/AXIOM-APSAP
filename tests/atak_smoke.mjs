@@ -64,7 +64,7 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // long-press radial menu
   await longPress(p);
   ok(await shown(p, "#atk-ring"), "phone: long-press opens the radial menu");
-  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 9, "phone: radial has 8 actions (Med plan and Find LZ included) and close");
+  ok(await p.evaluate(() => document.querySelectorAll("#atk-ring [data-rk]").length) === 10, "phone: radial has 9 actions (Med plan, Find LZ and Terrain included) and close");
   if (OUT) await p.screenshot({ path: OUT + "/phone-radial.png" });
   await ringBtn(p, "pin");
   ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-atak-pts") || "[]").length === 1 && document.querySelectorAll(".leaflet-atakpane-pane .atk-pt").length === 1), "phone: Drop point draws P1 and keeps it");
