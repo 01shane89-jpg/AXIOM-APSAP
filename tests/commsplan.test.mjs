@@ -83,5 +83,29 @@ ok(near(sub.el, 90, 1e-6) && near(sub.range_km, 35786, 1), "straight overhead on
 ok(!far.visible && far.el < 0, "a slot on the far side of the Earth is below the horizon");
 ok(R.geoLook("x", 0, 0) === null, "bad input gives no answer");
 
+// terrain link: knife-edge loss (ITU-R P.526) is 6 dB with the obstacle exactly on the line, 0 dB well clear, 13.9 dB at v = 1
+ok(near(R.knifeEdge_db(0), 6.02, 0.05) && R.knifeEdge_db(-1) === 0 && near(R.knifeEdge_db(1), 13.93, 0.05), "knife-edge loss: v 0 = " + R.knifeEdge_db(0).toFixed(2) + " dB, v 1 = " + R.knifeEdge_db(1).toFixed(2) + " dB");
+const flat = (D, n, z, hole) => ({ samples: Array.from({ length: n + 1 }, (_, i) => ({ dist_m: D * i / n, elev_m: hole && hole(i) ? null : (typeof z === "function" ? z(i) : z), nodata: !!(hole && hole(i)) })) });
+// flat ground, 10 km at 155 MHz, 2 m antennas, no Earth bulge (k huge): line of sight clear, Fresnel zone (69.5 m mid-path) mostly in the ground
+const t1 = R.terrainLink(flat(10000, 100, 50), { f_mhz: 155, hA_m: 2, hB_m: 2, k: 1e9 });
+ok(t1.verdict === "fresnel" && near(t1.worst.f1_m, 69.5, 0.3) && near(t1.worst.dist_m, 5000, 1), "flat 10 km at 155 MHz with 2 m antennas: line clear, Fresnel zone obstructed (" + t1.verdict + ", F1 " + (t1.worst && t1.worst.f1_m.toFixed(1)) + " m)");
+ok(near(t1.need_both_m, 0.6 * t1.worst.f1_m - 2, 0.3), "raising both antennas " + t1.need_both_m.toFixed(1) + " m clears 60% of the zone");
+const t1b = R.terrainLink(flat(10000, 100, 50), { f_mhz: 155, hA_m: 2 + t1.need_both_m + 0.01, hB_m: 2 + t1.need_both_m + 0.01, k: 1e9 });
+ok(t1b.verdict === "clear", "with that extra height the link is clear");
+const t1a = R.terrainLink(flat(10000, 100, 50), { f_mhz: 155, hA_m: 2 + t1.need_a_m + 0.01, hB_m: 2, k: 1e9 });
+ok(t1a.verdict === "clear" && t1.need_a_m > t1.need_both_m, "raising only end A by " + t1.need_a_m.toFixed(1) + " m also clears it, and needs more than raising both");
+// a 100 m ridge in the middle with 10 m antennas: 91.5 m above the line, v = 1.86, knife-edge loss 18.5 dB
+const t2 = R.terrainLink(flat(10000, 100, i => (i === 50 ? 150 : 50)), { f_mhz: 155, hA_m: 10, hB_m: 10, k: 4 / 3 });
+ok(t2.verdict === "blocked" && t2.worst.dist_m === 5000 && near(t2.v, 1.86, 0.01) && near(t2.knife_db, 18.5, 0.1), "a ridge above the line blocks it (" + t2.knife_db.toFixed(1) + " dB knife-edge loss)");
+// Earth bulge counts: flat 40 km, 10 m antennas, k 4/3: bulge 23.5 m mid-path hides each end from the other
+const t3 = R.terrainLink(flat(40000, 200, 0), { f_mhz: 155, hA_m: 10, hB_m: 10, k: 4 / 3 });
+ok(t3.verdict === "blocked" && near(t3.rows[100].ground_m, 23.5, 0.1), "40 km over flat ground with 10 m antennas: the Earth itself blocks the line");
+ok(R.terrainLink(flat(10000, 100, 0), { f_mhz: 155, hA_m: 100, hB_m: 100, k: 4 / 3 }).verdict === "clear", "100 m masts over 10 km of flat ground: clear");
+// unknown ground is never a clear answer
+ok(R.terrainLink(flat(10000, 100, 0, i => i === 0), { f_mhz: 155, hA_m: 100, hB_m: 100 }).verdict === "unknown", "no ground height at an end: unknown");
+ok(R.terrainLink(flat(10000, 100, 0, i => i > 10 && i < 45), { f_mhz: 155, hA_m: 100, hB_m: 100 }).verdict === "unknown", "a third of the path with no ground data: unknown, not clear");
+ok(R.terrainLink(flat(10000, 100, i => (i === 50 ? 500 : 0), i => i > 10 && i < 45), { f_mhz: 155, hA_m: 10, hB_m: 10 }).verdict === "blocked", "known ground above the line still blocks it when other ground is unknown");
+ok(R.terrainLink({ samples: [] }, { f_mhz: 155 }).verdict === "unknown" && R.terrainLink(flat(1000, 10, 0), { f_mhz: 0 }).verdict === "unknown", "no profile or no frequency: unknown");
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

@@ -110,5 +110,15 @@ const pH = M.build(input({ fields: { hlz1: "14.79, 100.67", hlz1_st: "unusable",
 ok(pH.hlz[0].status === "UNUSABLE" && pH.hlz[0].capacity === "1 UH-60" && by(pH, "hlz").level === "warning" && /checked not usable \(2026-10-04 08:00Z\): wires on approach\. Choose another/.test(by(pH, "hlz").detail) &&
   pH.ccp[0].status === "USABLE" && /checked usable 2026-10-04 07:30Z/.test(by(pH, "ccp").detail), "phase 3: a planner's check of a point (usable or not, when, capacity, notes) is in the record and the validation");
 
+/* phase 4: recorded aircraft with their status now; only a confirmed one inside its limits clears the provider item */
+const AC = { id: "air:1", provider: "Test Air Ambulance", aircraft_type: "H145", base: { name: "Test Base", lat: 14, lon: 100.6 }, status: "CONFIRMED", status_now: "CONFIRMED", limits_now: [], launch_min: 15, cruise_kn: 120, last_confirmed: "2026-10-03T14:00:00.000Z", expires_at: "2026-10-04T02:00:00.000Z" };
+const pAir = M.build(input({ aircraft: [AC], air_missions: [{ facility_id: TU.id, asset_id: "air:1", provider: "Test Air Ambulance", s: 3000, parts: [{ code: "call", s: 300 }], pickup: "the point of injury" }] }));
+ok(pAir.evacuation_assets[0].status === "CONFIRMED" && pAir.evacuation_assets[0].name === "Test Air Ambulance (H145)" && by(pAir, "medevac.provider").level === "ok" && /confirmed until 2026-10-04 02:00Z/.test(by(pAir, "medevac.provider").detail) &&
+  pAir.air_routes[0].status === "CONFIRMED" && pAir.air_routes[0].legs.length === 1, "phase 4: a confirmed aircraft clears the provider item and its mission is an air route");
+const pLap = M.build(input({ aircraft: [Object.assign({}, AC, { status_now: "UNKNOWN" })] })), pLim = M.build(input({ aircraft: [Object.assign({}, AC, { limits_now: ["not night capable"] })] }));
+const pPl = M.build(input({ aircraft: [Object.assign({}, AC, { status: "PLANNED", status_now: "PLANNED" })] }));
+ok(/confirmation expired; confirm again/.test(by(pLap, "medevac.provider").detail) && /stopped by its limits now: not night capable/.test(by(pLim, "medevac.provider").detail) && /entered, not confirmed\)\. Air does not compete/.test(by(pPl, "medevac.provider").detail) &&
+  [pLap, pLim, pPl].every((q) => by(q, "medevac.provider").level === "warning"), "phase 4: an expired, limited or planned aircraft keeps the provider item amber and says why");
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
