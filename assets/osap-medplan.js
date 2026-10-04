@@ -890,7 +890,7 @@
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,var(--surface2,#f6f8fa))}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
-    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
+    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.cp{background:#1e7a3a;border-color:#fff}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
     ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
     ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
@@ -1929,6 +1929,8 @@
   function srcLi(x, st) { return "<li>" + (x.url ? link(x.url, x.name) : esc(x.name)) + (x.note ? ". " + esc(x.note) : "") + ' <span class="obs">(' + esc(st) + ")</span></li>"; }
 
   /* ---------- the map: numbered marks, routes and the golden-hour reach while the plan is open ---------- */
+  var SITE_MK = [["ccp1", "CCP", "Casualty collection point"], ["ccp2", "CCP2", "Alternate casualty collection point"], ["axp", "AXP", "Ambulance exchange point"],
+    ["hlz1", "HLZ", "Helicopter landing zone"], ["hlz2", "HLZ2", "Alternate helicopter landing zone"]];
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }];
   /* what the map shows, once for the live map and once for the printed map: [kind, ...] items in drawing order */
   function mapItems() {
@@ -1953,6 +1955,9 @@
     if (s.x) s.x.D.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "D" + (i + 1), "dc", b.name + " (decompression chamber)"]); });
     if (s.x) s.x.B.forEach(function (b, i) { out.push(["mk", [b.lat, b.lon], "B" + (i + 1), "bl", b.name + (b.bank ? " (blood bank)" : " (blood donation)")]); });
     if (s.oc) s.oc.ap.forEach(function (a, i) { out.push(["mk", [a.lat, a.lon], "P" + (i + 1), "air", a.name]); });
+    /* the unit's own points (section 9) as map objects once they hold a grid: CCP, AXP and HLZ, primary and alternate */
+    var fv = fieldVals();
+    SITE_MK.forEach(function (m) { var g = parseGrid(fv[m[0]]); if (g) out.push(["mk", g, m[1], "cp", m[2] + ": " + clip(fv[m[0]], 120), true]); });
     if (s.oc) out = out.concat(stratItems(s));
     out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
     return out;
@@ -2456,6 +2461,7 @@
   function setField(k, v) {
     var vals = fieldVals(); vals[k] = v; lsSet(fieldsKey(), vals);
     var i = D.getElementById("mpf-" + k); if (i) i.value = v;
+    if (/^(ccp|axp|hlz)/.test(k)) { mapShow(); srcRender(); }
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
@@ -2509,6 +2515,7 @@
     if (t.id === "mpf-poi" && parseGrid(t.value) && !(ST.from === "poi" && parseGrid(t.value).join() === ST.o.join())) setPoi();
   }
   var inT = 0;
+  var siteDirty = false;
   function onInput(e) {
     var t = e.target;
     if (t.getAttribute && t.getAttribute("data-mp-from")) {
@@ -2520,7 +2527,8 @@
     if (k === "dwell" || k === "xact" || k === "handoff") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
-    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); srcRender(); }, 600);
+    if (/^(ccp|axp|hlz)/.test(k)) siteDirty = true;
+    clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); } srcRender(); }, 600);
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });

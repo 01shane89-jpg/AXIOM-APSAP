@@ -469,6 +469,9 @@ async function openPlan(p) {
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
   const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
+  /* phase 3: the CCP and HLZ with grids are map objects; the validation says so */
+  const sites = await p.evaluate(() => ({ mk: [...document.querySelectorAll(".mpicon.cp")].map((m) => m.textContent).sort().join(), val: document.getElementById("mp-val").textContent }));
+  ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
