@@ -429,13 +429,31 @@ function main() {
     createTile: function (co, done) {
       var t = D.createElement("canvas"); t.width = t.height = 256;
       var z = co.z, cs = 256 * Math.pow(2, z - CZ), x0 = co.x * 256, y0 = co.y * 256;
-      var cx0 = Math.floor(x0 / cs), cy0 = Math.floor(y0 / cs), cx1 = Math.floor((x0 + 255) / cs), cy1 = Math.floor((y0 + 255) / cs), qs = {}, a, b;
+      /* zoomed in, cells are blended smoothly: one pixel per cell on a small canvas, scaled up with smoothing,
+         so neighbouring cells fade into each other instead of reading as hard squares. A one-cell margin
+         from the next tile keeps the blend seamless across tile edges */
+      var smooth = cs >= 3, mg = smooth ? 1 : 0;
+      var cx0 = Math.floor(x0 / cs) - mg, cy0 = Math.floor(y0 / cs) - mg, cx1 = Math.floor((x0 + 255) / cs) + mg, cy1 = Math.floor((y0 + 255) / cs) + mg, qs = {}, a, b;
       var SS = 1 << (CZ - SZ), NS = 1 << SZ;
       for (b = Math.floor(cy0 / SS); b <= Math.floor(cy1 / SS); b++) for (a = Math.floor(cx0 / SS); a <= Math.floor(cx1 / SS); a++) if (b >= 0 && b < NS) qs[quadkey(((a % NS) + NS) % NS, b, SZ)] = 1;
       Promise.all(Object.keys(qs).map(function (q) { return loadShard(q).catch(function () { return []; }); })).then(function (lists) {
+        var g = t.getContext("2d");
+        if (smooth) {
+          var nw = cx1 - cx0 + 1, nh = cy1 - cy0 + 1, o = D.createElement("canvas"), og;
+          o.width = nw; o.height = nh; og = o.getContext("2d");
+          lists.forEach(function (cells) {
+            (cells || []).forEach(function (c) {
+              if (c[0] < cx0 || c[0] > cx1 || c[1] < cy0 || c[1] > cy1) return;
+              og.fillStyle = BCOL[c[2]]; og.fillRect(c[0] - cx0, c[1] - cy0, 1, 1);
+            });
+          });
+          g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+          g.drawImage(o, cx0 * cs - x0, cy0 * cs - y0, nw * cs, nh * cs);
+          done(null, t); return;
+        }
         /* draw from the shards' own cell lists: zoomed out, a tile spans up to a million cells and most are empty;
            a cell under 2 px is drawn 2 px so measured coverage still reads at country zoom */
-        var g = t.getContext("2d"), w = Math.max(z < CZ - 6 ? 2 : 1, cs);
+        var w = Math.max(z < CZ - 6 ? 2 : 1, cs);
         lists.forEach(function (cells) {
           (cells || []).forEach(function (c) {
             if (c[0] < cx0 || c[0] > cx1 || c[1] < cy0 || c[1] > cy1) return;
@@ -492,6 +510,7 @@ function main() {
   function hoverOff() { if (tip && S.ctx) S.ctx.layer.removeLayer(tip); tip = null; tipId = ""; }
   function mastAt(e) {
     var map = S.ctx.map, pt = map.mouseEventToContainerPoint(e), best = null, bd = 9;
+    bd = map.getZoom() < 9 ? 9 : 12;
     shown.forEach(function (m) { var q = map.latLngToContainerPoint([m.lat, m.lon]), d = Math.hypot(q.x - pt.x, q.y - pt.y); if (d < bd) { bd = d; best = m; } });
     return best;
   }
@@ -508,6 +527,34 @@ function main() {
       tipId = m.id; S.ctx.layer.addLayer(tip);
     });
   }
+  /* a mast drawn as a tower icon on the shared canvas (thousands stay fast; taps still hit the round badge):
+     a coloured badge with a white lattice tower, radio waves for phone masts, wider waves for broadcast towers.
+     Small zoomed-out badges stay plain dots, where a glyph would only be noise */
+  var MastMark = W.L && L.CircleMarker.extend({
+    _updatePath: function () {
+      var R = this._renderer; if (!R._drawing || this._empty()) return;
+      var c = R._ctx, p = this._point, r = this._radius, o = this.options, k = o.kind;
+      c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2);
+      c.fillStyle = o.fillColor; c.globalAlpha = o.fillOpacity; c.fill(); c.globalAlpha = 1;
+      c.lineWidth = o.weight; c.strokeStyle = o.color; c.stroke();
+      if (r < 6) return;
+      var h = r * 0.62, x = p.x, y = p.y + r * 0.08;
+      c.strokeStyle = "#fff"; c.lineWidth = Math.max(1.2, r / 6); c.lineCap = "round"; c.lineJoin = "round";
+      c.beginPath();
+      c.moveTo(x - h * 0.5, y + h); c.lineTo(x, y - h * 0.75); c.lineTo(x + h * 0.5, y + h);
+      c.moveTo(x - h * 0.28, y + h * 0.3); c.lineTo(x + h * 0.28, y + h * 0.3);
+      c.stroke();
+      c.beginPath(); c.arc(x, y - h * 0.75, Math.max(1, r / 9), 0, Math.PI * 2); c.fillStyle = "#fff"; c.fill();
+      if (k === "comm") return;
+      var waves = k === "bcast" ? [0.5, 0.85] : [0.5];
+      c.lineWidth = Math.max(1, r / 8);
+      waves.forEach(function (w) {
+        var rr = h * w;
+        c.beginPath(); c.arc(x, y - h * 0.75, rr, -Math.PI * 0.32, Math.PI * 0.32); c.stroke();
+        c.beginPath(); c.arc(x, y - h * 0.75, rr, Math.PI * 0.68, Math.PI * 1.32); c.stroke();
+      });
+    }
+  });
   function drawMasts() {
     if (!S.ctx) return;
     if (!canv) canv = L.canvas({ padding: 0.3 });
@@ -515,12 +562,12 @@ function main() {
     if (!S.ctx.layer.hasLayer(mastLayer)) S.ctx.layer.addLayer(mastLayer);
     mastLayer.clearLayers();
     var map = S.ctx.map; if (!seeMasts()) { S.drawn = 0; paintCounts(); paintStatus(); return; }
-    var z = map.getZoom(), b = map.getBounds().pad(0.1), n = 0, rad = z < 7 ? 0.6 : z < 9 ? 0.75 : 1;
+    var z = map.getZoom(), b = map.getBounds().pad(0.1), n = 0, rad = z < 7 ? 0.6 : z < 9 ? 0.75 : z < 11 ? 1.4 : 1.8;
     shown = []; hoverOff();
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
       var k = KINDS[m.kind];
-      var mk = L.circleMarker([m.lat, m.lon], { renderer: canv, radius: (m.kind === "bcast" ? 6 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
+      var mk = new MastMark([m.lat, m.lon], { renderer: canv, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
       mk.bindPopup(function () { return mastPopup(m); });
       mk.addTo(mastLayer); n++; shown.push(m);
     });
@@ -559,21 +606,37 @@ function main() {
       }
       return;
     }
+    /* one sight line per nearby mast: solid green = clear line of sight over the terrain, dashed red = terrain in the way.
+       A wide invisible line under each one makes it easy to tap for the mast's name and the reason */
     r.rows.forEach(function (x) {
       if (x.kind === "bcast" || x.clear == null) return;
-      L.polyline([[x.m.lat, x.m.lon], [r.lat, r.lon]], { pane: "comchk", renderer: svg, color: x.clear ? "#2f9e44" : "#e03131", weight: 2, opacity: 0.8, dashArray: x.clear ? null : "4 5", interactive: false }).addTo(chkLayer);
+      var ll = [[x.m.lat, x.m.lon], [r.lat, r.lon]], why = sightText(x);
+      L.polyline(ll, { pane: "comchk", renderer: svg, color: x.clear ? "#2f9e44" : "#e03131", weight: 2.5, opacity: 0.9, dashArray: x.clear ? null : "5 5", interactive: false }).addTo(chkLayer);
+      var hit = L.polyline(ll, { pane: "comchk", renderer: svg, color: "#000", weight: 16, opacity: 0, className: "comsight" });
+      hit.bindPopup(function () { return '<div data-keep-pop="1">' + why + "</div>"; });
+      if (HOVER) hit.bindTooltip(why, { sticky: true, className: "comtipw" });
+      hit.addTo(chkLayer);
     });
     var pin = L.marker([r.lat, r.lon], { pane: "comchk", keyboard: true, title: LV[r.v.level].t,
-      icon: L.divIcon({ className: "comv", html: '<span style="background:' + LV[r.v.level].c + '"></span>', iconSize: [22, 22], iconAnchor: [11, 11] }) });
+      icon: L.divIcon({ className: "comv", html: '<span style="background:' + LV[r.v.level].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) });
     pin.addTo(chkLayer);
     if (S.ctx.put) S.ctx.put("com:check", pin);
+  }
+  /* the checked place: a phone with signal bars on a badge coloured by the answer */
+  var PHONE = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="4" y="3" width="9" height="18" rx="2"/><path d="M8 17.5h1"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+  function sightText(x) {
+    var pn = x.m.p.map(provName).join(", "), n = clean(x.m.t.name || "", 60) || pn || KINDS[x.kind].name;
+    return "<b>" + E(n) + "</b>, " + E(km(x.d)) + "<br>" + (x.clear ? "Clear line of sight from this mast to the checked place"
+      : "Terrain blocks the line of sight from this mast (" + Math.round(-x.worst) + " m short)") + '<br><small>Estimate over terrain only: no buildings, trees or antenna direction</small>';
   }
   function legend() {
     var Lg = W.OSAP_LEGEND; if (!Lg || !S.ctx) return;
     var h = "<h3>Comms</h3>";
     Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
-    if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast</small></div>";
+    if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast; each test cell is about 2.4 km, blended for display</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
+    if (S.result && !S.result.line) h += '<div class="comkey"><span class="comln"></span>Mast in clear line of sight<br><span class="comln comln-x"></span>Terrain blocks the mast</div>';
     Lg.set("comms", h, S.ctx.rail);
   }
 
@@ -847,9 +910,10 @@ function main() {
     ".comtg{display:flex;align-items:center;gap:6px;margin:3px 0}.comn{color:var(--muted);font-size:12px}" +
     ".comsw{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}" +
     ".comsq{display:inline-block;width:12px;height:12px;margin-right:2px;vertical-align:middle;opacity:.8}" +
+    ".comln{display:inline-block;width:22px;height:0;border-top:3px solid #2f9e44;margin-right:6px;vertical-align:middle}.comln-x{border-top:3px dashed #e03131}" +
     ".comv-h{border-left:5px solid;padding:6px 10px;margin:6px 0;background:var(--card,rgba(0,0,0,.03));border-radius:4px}.comv-h b{font-size:16px}.comv-h span{font-size:12px}" +
     ".comlist,.comgaps{margin:4px 0 8px;padding-left:18px}.comlist li,.comgaps li{margin:2px 0}.comlist{list-style:none;padding-left:0}" +
-    ".comv{background:none;border:0}.comv span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
+    ".comv{background:none;border:0}.comv span{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}.comv svg{display:block}" +
     ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
     ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}" +
     ".comzoom{position:absolute;left:50%;top:44px;transform:translateX(-50%);z-index:800;padding:8px 14px;min-height:40px;border-radius:20px;border:1px solid var(--line,#ccc);" +
