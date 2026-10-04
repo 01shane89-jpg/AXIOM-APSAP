@@ -44,13 +44,18 @@ export function countriesNamed(countries, text) {
 export function compileRelevance(cfg, topics) {
   const flat = (o) => Object.values(o || {}).flat();
   const exempt = compileTopics((topics || []).filter((t) => t && t.relevance === "exempt").map((t) => ({ ...t, countries: [] })));
-  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)), exempt, native: new Set(cfg.native_langs || []) };
+  const ss = cfg.sport_senses || {}, sw = wordRe(ss.words);
+  return { strong: wordRe(flat(cfg.strong)), drop: wordRe(flat(cfg.drop)), keep: wordRe(flat(cfg.keep)), exempt, native: new Set(cfg.native_langs || []),
+    sportWords: sw && new RegExp(sw.source, "gu"), sportContext: wordRe(ss.context) };
 }
 // returns "strong" | "keep" (kept) or "drop" | "none" (left out)
 export function relevance(R, text) {
   const f = fold(text);
   if (R.exempt && R.exempt.length && topicsOf(R.exempt, f, []).length) return "strong";
-  if (R.strong && R.strong.test(f)) return "strong";
+  // a security word that is also a sport term ("shooting", "shot", "attack") does not count beside a sport context word
+  // ("medal", "tournament"): relevance.json sport_senses
+  const fx = R.sportWords && R.sportContext && R.sportContext.test(f) ? f.replace(R.sportWords, " ") : f;
+  if (R.strong && R.strong.test(fx)) return "strong";
   if (R.drop && R.drop.test(f)) return "drop";
   if (R.keep && R.keep.test(f)) return "keep";
   return "none";

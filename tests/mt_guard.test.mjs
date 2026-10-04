@@ -15,6 +15,10 @@ t("invented stock lines are rejected", () => {
   assert.ok(mtSuspect("批桃園「被按下停止鍵」 賴清德力挺黃世杰：需要一流人才帶領", "The 1980s were a time of great success for the company.", now));
   assert.ok(mtSuspect("韓國瑜輔選大讚謝國樑 童子瑋：「太少來基隆」與市民感受有落差", "\"韓國瑜副選大讚謝國樑\" (in Korean).", now));
 });
+t("a line still in the original's script is not a translation", () => {
+  assert.equal(mtSuspect("助講不捨李四川被抹黑 蔣萬安：自己也被丟滿身泥巴", "李四川被诬蔑 蒋万安：自己也被扔满身泥", now), "not English");
+  assert.equal(mtSuspect("蔣萬安：TPASS 擴大", "Chiang Wan-an: TPASS expands (蔣萬安)", now), "");
+});
 t("a year or decade the original does not have is rejected", () => {
   assert.match(mtSuspect("포천 플라스틱 재활용 공장서 화재…인명 피해 없어", "2016-09-30 - Fire in plastic recycling plant", now), /2016/);
   assert.match(mtSuspect("Registro Civil reporta más de 509.000 adultos mayores atendidos entre 2025 y 2026", "Civil Registry reports more than 509,000 elderly adults assisted between 2025 and 2016", now), /2016/);
