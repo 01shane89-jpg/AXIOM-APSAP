@@ -26,7 +26,7 @@ const by = (p, code) => p.validation_status.items.filter((x) => x.code === code)
 
 // ---------- the record ----------
 const p = M.build(input({ fields: { recv1: "Thammasat University Hospital" } }));
-ok(p.schema === "osap-medplan/4" && p.poi.mgrs === "47P PS 8255 3804" && p.approvals.state === "AUTOMATED_DRAFT" && p.fingerprint === null, "one record: schema, POI, automatic draft, fingerprint set later");
+ok(p.schema === "osap-medplan/5" && p.poi.mgrs === "47P PS 8255 3804" && p.approvals.state === "AUTOMATED_DRAFT" && p.fingerprint === null, "one record: schema, POI, automatic draft, fingerprint set later");
 ok(p.stabilization_facilities.length === 1 && p.stabilization_facilities[0].name === "King Narai Hospital" && p.definitive.name === "Thammasat University Hospital" && p.definitive.time_s === 5640,
   "POI > stabilization (King Narai, 6 min) > definitive care (Thammasat, 94 min)");
 ok(p.casualty_profiles[0].pathway.map((x) => x.stage).join() === "stabilization,definitive", "the casualty pathway runs stabilization then definitive care");
@@ -119,6 +119,43 @@ const pLap = M.build(input({ aircraft: [Object.assign({}, AC, { status_now: "UNK
 const pPl = M.build(input({ aircraft: [Object.assign({}, AC, { status: "PLANNED", status_now: "PLANNED" })] }));
 ok(/confirmation expired; confirm again/.test(by(pLap, "medevac.provider").detail) && /stopped by its limits now: not night capable/.test(by(pLim, "medevac.provider").detail) && /entered, not confirmed\)\. Air does not compete/.test(by(pPl, "medevac.provider").detail) &&
   [pLap, pLim, pPl].every((q) => by(q, "medevac.provider").level === "warning"), "phase 4: an expired, limited or planned aircraft keeps the provider item amber and says why");
+
+/* phase 5: the operational picture: flood on the primary with the alternate that avoids it, HLZ forecast, data age */
+const FL = { kind: "Disaster alert", layer: "gdacs", at_km: 31.2, off_km: 0.8, src: "GDACS", age_h: 20, text: "Orange flood alert for Thailand", url: "https://www.gdacs.org/" };
+const fic = (o) => M.build(input(Object.assign({ now: "2026-10-04T12:00:00.000Z", pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "OSRM", hazards: [H1, FL] }, { id: "A", s: 6440, m: 104000, src: "OSRM", hazards: [H1] }, { id: "C", s: 6000, m: 101000, src: "OSRM", hazards: [FL] }]) }, o || {})));
+const pFl = fic(), fFl = pFl.operational_picture.flags.filter((f) => f.code === "route.flood")[0];
+ok(fFl && fFl.text === "PRIMARY ROUTE INTERSECTS FLOOD WARNING / ALTERNATE ROUTE A AVAILABLE +14 MINUTES" && /Disaster alert at 31\.2 km along, 0\.8 km off the road \(Orange flood alert for Thailand\), GDACS\. Line A has no flood warning/.test(fFl.detail),
+  "phase 5: a flood warning on the primary is flagged with the quickest line clear of floods and its extra time: " + (fFl || {}).text);
+const pFl2 = M.build(input({ now: "2026-10-04T12:00:00.000Z", pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "OSRM", hazards: [FL] }, { id: "A", s: 6000, m: 101000, src: "OSRM", hazards: [FL] }]) }));
+ok(/^PRIMARY ROUTE INTERSECTS FLOOD WARNING \/ NO CLEARER ALTERNATE ROUTE FOUND$/.test(pFl2.operational_picture.flags[0].text), "phase 5: no line clear of the flood says so, never a false alternate");
+ok(pA.operational_picture.flags[0].text === "PRIMARY ROUTE PASSES 2 REPORTED HAZARDS / ALTERNATE ROUTE A AVAILABLE +10 MINUTES",
+  "phase 5: other hazards: the quickest line with fewer: " + pA.operational_picture.flags[0].text);
+ok(!pA0.operational_picture.flags.some((f) => /^route\./.test(f.code)) && !pAn.operational_picture.flags.some((f) => /^route\./.test(f.code)), "phase 5: no route flag without hazards held (and none invented when they could not be checked: the validation says that)");
+
+const HW = (days, o) => Object.assign({ name: "the primary HLZ", hlz: true, mgrs: "47P PS 81 37", at: "2026-10-04T11:50:00.000Z", days }, o || {});
+const pW = fic({ hlz_wx: HW([{ day: "2026-10-04", vis: 9000, gust: 12, lc: 20 }, { day: "2026-10-05", vis: 1400, gust: 34, lc: 40 }]) });
+const fW = pW.operational_picture.flags.filter((f) => f.code === "weather.hlz")[0];
+ok(fW && fW.text === "PRIMARY HLZ VISIBILITY FORECAST 1.4 KM, GUSTS 34 KN / AIR EVACUATION REVIEW REQUIRED" && /^2026-10-05 \(UTC day\) at 47P PS 81 37/.test(fW.detail) && by(pW, "weather.hlz").level === "warning",
+  "phase 5: HLZ visibility under 1.6 km or gusts of 30 kn need an air evacuation review: " + (fW || {}).text);
+const pWok = fic({ hlz_wx: HW([{ day: "2026-10-04", vis: 9000, gust: 12, lc: 20 }]) }), pWpoi = fic({ hlz_wx: HW([{ day: "2026-10-04", vis: 800, gust: 5, lc: 95 }], { hlz: false, name: "the point of injury" }) });
+const pWerr = fic({ hlz_wx: HW([], { err: "no answer in 20 s" }) });
+ok(by(pWok, "weather.hlz").level === "ok" && /not a flying decision/.test(by(pWok, "weather.hlz").detail) && /^POINT OF INJURY \(NO HLZ GRID\) VISIBILITY FORECAST 0\.8 KM, LOW CLOUD 95%/.test(pWpoi.operational_picture.flags.filter((f) => f.code === "weather.hlz")[0].text) &&
+  /FORECAST NOT READ \/ CHECK AVIATION WEATHER/.test(by(pWerr, "weather.hlz").detail), "phase 5: a clear HLZ forecast is green (not a flying decision); no HLZ grid says it used the POI; an unread forecast is amber");
+ok(/^HEAVY RAIN FORECAST 34 MM 2026-10-05 \/ ROADS AND LANDING ZONES MAY FLOOD$/.test((fic({ weather_days: [{ day: "2026-10-04", rain: 2 }, { day: "2026-10-05", rain: 34.2 }] }).operational_picture.flags.filter((f) => f.code === "weather.rain")[0] || {}).text), "phase 5: heavy rain at the POI is flagged");
+ok(pFl.operational_picture.flags.some((f) => f.code === "air.none" && /^NO CONFIRMED AIR MEDEVAC/.test(f.text)) && !fic({ aircraft: [AC], now: "2026-10-03T20:00:00.000Z" }).operational_picture.flags.some((f) => f.code === "air.none"), "phase 5: no confirmed aircraft is flagged; a confirmed one clears it");
+
+const AGE = [{ key: "hospitals", label: "Hospital dataset", at: "2026-08-20T00:00:00.000Z", basis: "OSAP's stored copy of OpenStreetMap", stale_h: 840 },
+  { key: "hazards", label: "Road hazards", at: "2026-10-04T11:40:00.000Z", basis: "feeds held on this device", stale_h: 6 },
+  { key: "weather", label: "Weather forecast", at: "2026-10-04T11:50:00.000Z", basis: "live read", live: true, stale_h: 6 },
+  { key: "verification", label: "Facility verification", at: "2026-10-03T08:00:00.000Z", expires_at: "2026-10-04T08:00:00.000Z", basis: "planner's check" },
+  { key: "aircraft", label: "Aircraft confirmation", at: null, basis: "none recorded" }];
+const pD5 = fic({ data_age: AGE }), da = pD5.operational_picture.data_age;
+ok(da.map((a) => a.state).join() === "STALE,CURRENT,CURRENT,STALE,NONE" && da[0].age_h === 1092 && da[2].live && !da[0].live, "phase 5: each dataset dated by its content, current or stale by its own use-by, none when undated: " + da.map((a) => a.key + " " + a.state).join(", "));
+const ff = pD5.operational_picture.flags.filter((f) => /^data\.age/.test(f.code)).map((f) => f.text);
+ok(ff.join(" | ") === "HOSPITAL DATASET 46 DAYS OLD / CONFIRM BEFORE USE | FACILITY VERIFICATION 28 H OLD / CONFIRM BEFORE USE | AIRCRAFT CONFIRMATION NOT AVAILABLE / CONFIRM BEFORE USE" &&
+  by(pD5, "data.age").level === "warning" && /Hospital dataset 46 days old; Facility verification 28 h old; Aircraft confirmation not available/.test(by(pD5, "data.age").detail), "phase 5: stale or missing data is flagged and amber, never shown as live: " + ff.join(" | "));
+ok(by(fic({ data_age: AGE.slice(1, 3), offline: true }), "data.age").level === "ok" && /offline: saved copies/.test(by(fic({ data_age: AGE.slice(1, 3), offline: true }), "data.age").detail), "phase 5: all current is green, and an offline device says its copies are saved ones");
+ok(M.canonical(pD5) !== M.canonical(pFl) && pW.environmental_conditions.hlz.days.length === 2, "phase 5: the picture and the HLZ forecast are in the record and the fingerprint");
 
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
