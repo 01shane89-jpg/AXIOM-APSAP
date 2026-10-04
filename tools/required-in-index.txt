@@ -92,6 +92,7 @@ data-ev-tlr="1"
   function showComms() {
 # power grid section: plants, transmission lines, substations, outage reporting (claude/power-grid)
 <script src="assets/osap-power.js"></script>
+<script src="assets/osap-surveil.js"></script>
 # traffic cameras from official open data, in Map overlays > Infrastructure (claude/traffic-cameras)
 <script src="assets/osap-cams.js"></script>
 <script src="assets/osap-evac.js"></script>

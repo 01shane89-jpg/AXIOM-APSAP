@@ -64,6 +64,7 @@ jobs:
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
       - run: node tests/power_smoke.mjs
+      - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
       - run: node tests/privacy_smoke.mjs
       - run: node tests/borders_smoke.mjs
@@ -73,6 +74,7 @@ jobs:
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
+      - run: node tests/route_preview_smoke.mjs
       - run: node tests/dc_smoke.mjs
       - run: node tests/traffic_smoke.mjs
       - run: node tests/medplan_smoke.mjs
