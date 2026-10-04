@@ -54,7 +54,16 @@ ok(by(p0, "poi").level === "warning" && by(p0, "definitive").level === "warning"
 const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC, +66 0", freq1: "DUSTOFF 41.5", ccp1: "Bridge", hlz1: "Football field", hlz2: "Temple yard", casevac: "2 x HMMWV" },
   categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes }) }] }] }));
 const warn = pF.validation_status.items.filter((x) => x.level !== "ok").map((x) => x.code).sort().join();
-ok(warn === "acceptance,medevac.provider,route.alternate,stabilization", "with everything filled, only what phase 0 cannot confirm stays amber: " + warn);
+ok(warn === "acceptance,medevac.provider,route.alternate,stabilization,verification", "with everything filled, only what phase 0 cannot confirm stays amber: " + warn);
+ok(/not confirmed available now: no planner's check in date/.test(by(pF, "verification").detail) && /Blood availability, emergency operating theatre, 24-hour emergency department and CT scanner/.test(by(pF, "verification").detail),
+  "phase 1: critical capabilities are not usable now until a planner's check says so (names keep their capitals)");
+const allNow = { "blood.bank": "AVAILABLE", "surg.or_emergency": "AVAILABLE", "ed.24_7": "AVAILABLE", "dx.ct": "AVAILABLE" };
+const chk = { id: "chk:1", facility_id: TU.id, cap: "dx.ct", exists: "yes", now: "available", at: "2026-10-03T14:00:00.000Z" };
+const pV = M.build(input({ checks: [chk, Object.assign({}, chk, { id: "chk:2", facility_id: "elsewhere" })], categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes, caps_now: allNow }) }] }] }));
+ok(by(pV, "verification").level === "ok" && pV.facility_verifications.length === 1 && pV.facility_verifications[0].id === "chk:1", "phase 1: all four checked and in date is green; only checks of the plan's hospitals are carried");
+const pU = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes, caps_now: Object.assign({}, allNow, { "dx.ct": "UNAVAILABLE" }) }) }] }] }));
+ok(by(pU, "verification").level === "warning" && /CT scanner reported not available now at Thammasat University Hospital/.test(by(pU, "verification").detail), "phase 1: a check saying not available now is named");
+ok(M.canonical(pV) !== M.canonical(M.build(input({ checks: [], categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes, caps_now: allNow }) }] }] }))), "phase 1: the planner's checks are in the fingerprint");
 ok(pF.evacuation_assets[0].status === "PLANNED" && /entered, not confirmed/.test(by(pF, "medevac.provider").detail), "a medevac provider the planner typed is PLANNED, not confirmed");
 const pS = M.build(input({ sources: [{ name: "FOSSGIS OSRM", state: "failed" }] }));
 ok(by(pS, "sources").level === "warning" && /FOSSGIS OSRM/.test(by(pS, "sources").detail), "a source that was not reached is named");
