@@ -86,6 +86,7 @@
     gov: { name: "Official hospital records (HA Thailand open data)", url: "https://data.ha.or.th/", note: "MOPH hospital codes, official type, MOPH service level, beds open, HA accreditation and the programmes HA has certified (tools/build_th_registry.mjs, monthly). A certificate confirms only what the certified programme cannot run without; no certificate does not mean no service." },
     web: { name: "Hospitals' own websites, read automatically", url: "", note: "Quoted sentences in which a hospital states a service (tools/read_hospital_sites.mjs on GitHub Actions). The hospital's own claim: reported, not confirmed. News, job and procurement pages are left out." },
     osrm: { name: "Road routing: FOSSGIS OSRM, OSRM demo server, FOSSGIS Valhalla (first that answers)", url: "https://routing.openstreetmap.de/", note: "Road drive time without traffic, checkpoints or damage." },
+    pac: { name: "Alternate routes and hazards along them: OSAP's Route tab (assets/osap-route.js)", url: "", note: "Up to three distinct road lines per hospital from the same routers (their own alternatives, else a detour round the incidents reported nearest the fastest line). Hazards are what OSAP already holds within " + 2 + " km of each line from the last 30 days: reports for the open country in the chosen period, UCDP conflict events, GDACS alerts, USGS and national earthquakes, NASA EONET storms, road agency notices once loaded, and your saved NAI/TAI areas. An empty list is not a clearance." },
     vh: { name: "FOSSGIS Valhalla isochrones", url: "https://valhalla1.openstreetmap.de/", note: "Road reach in 30 and 50 minutes, no traffic." },
     ph: { name: "OSAP stored list of hospitals' published phone numbers", url: "", note: "Each number from an embassy's published hospital list, the hospital's own website (home or contact page) or Wikidata, read on GitHub Actions (tools/read_hospital_phones.mjs) and linked in the plan. Institutional numbers only: no mobile, fax or personal numbers. Used only where OpenStreetMap lists none." },
     wdh: { name: "Wikidata hospitals: phone (P1329), website (P856), beds (P6801)", url: "https://www.wikidata.org/wiki/Q16917", note: "Used only where OpenStreetMap has no value; matched by the OSM wikidata tag or within 300 m. Community data; confirm with the hospital." },
@@ -1034,7 +1035,7 @@
     var rH = Math.min(150000, Math.max(40000, s.reach + 30000)), rC = Math.min(40000, Math.max(15000, s.reach + 5000)), rA = Math.min(200000, Math.max(80000, s.reach + 60000));
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
-    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
+    s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.pac = null; s.pacTok = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
     s.ph = null; s.phErr = "";
     var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
     var phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
@@ -1331,6 +1332,72 @@
     s.rts.forEach(function (x) {
       route(s.o, x.f).then(function (r) { if (ST !== s) return; x.r = r; rtRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; x.err = e.message; rtRender(); });
     });
+    pacRun(s, P);
+  }
+
+  /* ---------- ground primary, alternate and contingency lines (Build Plan v2 phase 3) ----------
+     For each hospital the plan routes to: up to three distinct road lines from the Route tab's API (OSAP_ROUTETAB.alternates,
+     fastest first, ids P, A, C as an order, not a judgement), each with the hazards OSAP already holds near it
+     (OSAP_ROUTETAB.hazards). One hospital at a time, so the public routers are not asked in a burst. Nothing here decides
+     which line to drive: the planner does. */
+  var HAZ_KM = 2, HAZ_DAYS = 30, routeWait = null;
+  function routeApi() {
+    var R = W.OSAP_ROUTETAB; if (R && R.alternates && R.hazards) return Promise.resolve(R);
+    if (routeWait) return routeWait;
+    routeWait = new Promise(function (res, rej) {
+      if (!D.querySelector('script[src="assets/osap-route.js"]')) {
+        var sc = D.createElement("script"); sc.src = "assets/osap-route.js";
+        sc.onerror = function () { sc.remove(); routeWait = null; rej(new Error("the route planner could not load; check the connection")); };
+        D.body.appendChild(sc);
+      }
+      var n = 0; (function wait() { var R = W.OSAP_ROUTETAB; if (R && R.alternates && R.hazards) res(R); else if (++n > 600) { routeWait = null; rej(new Error("the route planner did not start")); } else setTimeout(wait, 50); })();
+    });
+    return routeWait;
+  }
+  function hazOn(R, coords) { try { return R.hazards(coords, { km: HAZ_KM, days: HAZ_DAYS }) || []; } catch (e) { return null; } }
+  function pacRun(s, P) {
+    var tok = {}; s.pacTok = tok; s.pac = {};
+    P.forEach(function (p) { s.pac[p.f.id] = { busy: true }; });
+    function live() { return ST === s && s.pacTok === tok; }
+    function done() { if (!live()) return; rtRender(); mapShow(); srcRender(); }
+    if (!P.length) return;
+    routeApi().then(function (R) {
+      return P.reduce(function (q, p) {
+        return q.then(function () {
+          if (!live()) return;
+          return R.alternates(s.o, [p.f.lat, p.f.lon], { mode: "car", n: 3 }).then(function (L) {
+            if (!live()) return;
+            s.pac[p.f.id] = { L: L.map(function (x) { x.haz = hazOn(R, x.coords); return x; }) };
+          }, function (e) { if (live()) s.pac[p.f.id] = { err: e.message || "no route" }; }).then(done);
+        });
+      }, Promise.resolve());
+    }, function (e) { if (!live()) return; P.forEach(function (p) { s.pac[p.f.id] = { err: e.message }; }); done(); });
+  }
+  function ageTxt(h) { return h == null ? "undated" : h < 48 ? h + " h ago" : Math.round(h / 24) + " days ago"; }
+  function hazTxt(H) {
+    if (H == null) return '<span class="mpwarn">could not be checked</span>';
+    if (!H.length) return "none held";
+    return "<b>" + H.length + "</b>: " + H.slice(0, 3).map(function (h) {
+      var t = h.kind + " at " + h.at_km + " km (" + h.off_km + " km off, " + ageTxt(h.age_h) + ")";
+      return h.url ? link(h.url, t) || esc(t) : esc(t);
+    }).join("; ") + (H.length > 3 ? "; +" + (H.length - 3) + " more" : "");
+  }
+  var PAC_NAME = { P: "P primary", A: "A alternate", C: "C contingency" }, PAC_STYLE = { A: { color: "#1d5fa8", weight: 2.5, dashArray: "8 6" }, C: { color: "#1d5fa8", weight: 2.5, dashArray: "2 6" } };
+  function pacHtml(s, f) {
+    var x = s.pac && s.pac[f.id]; if (!x) return "";
+    if (x.busy) return '<p class="obs">Looking for alternate routes and hazards along them…</p>';
+    if (x.err) return '<p class="obs mpwarn">No alternate routes (' + esc(clip(x.err, 120)) + "). Plan one by hand in the Route tab.</p>";
+    var L = x.L, p = L[0], h = '<div class="mpscroll"><table class="mproles mppac"><thead><tr><th scope="col">Line</th><th scope="col">From injury</th><th scope="col">Distance</th><th scope="col">Hazards within ' + HAZ_KM + " km, last " + HAZ_DAYS + ' days</th><th scope="col">Router</th></tr></thead><tbody>' +
+      L.map(function (l) {
+        var t = l.s + PREP_MIN * 60;
+        return '<tr><th scope="row">' + esc(PAC_NAME[l.id] || l.id) + '</th><td data-l="From injury">' + esc(mins(t)) + (l !== p ? ' <span class="obs">(+' + esc(mins(Math.max(0, l.s - p.s))) + ")</span>" : "") + " " + ghTag(t, PREP_MIN + " min to treat and load + drive: ") + '</td><td data-l="Distance">' + esc(km(l.m)) + '</td><td data-l="Hazards">' + hazTxt(l.haz) + '</td><td data-l="Router">' + esc(clip(l.src || "", 60)) + (l.how ? " (" + esc(l.how) + ")" : "") + "</td></tr>";
+      }).join("") + "</tbody></table></div>", n = [];
+    if (L.length < 2) n.push("The routers gave no distinct alternate line: plan one by hand in the Route tab.");
+    if (p.haz && p.haz.length) {
+      var calm = L.slice(1).filter(function (l) { return l.haz && l.haz.length < p.haz.length; })[0];
+      n.push("The primary line passes " + p.haz.length + " reported hazard" + (p.haz.length === 1 ? "" : "s") + (calm ? "; " + PAC_NAME[calm.id] + " is " + mins(Math.max(0, calm.s - p.s)) + " longer with " + calm.haz.length : "") + ".");
+    }
+    return h + (n.length ? '<p class="obs mpwarn">' + esc(n.join(" ")) + "</p>" : "");
   }
 
   /* Wikidata hospitals near the plan: phone (P1329), website (P856) and beds (P6801) for hospitals OpenStreetMap lists
@@ -1526,8 +1593,8 @@
         (r ? "<p>" + esc(mins(r.s)) + ", " + esc(km(r.m)) + " by road. " + ghTag(r.s + PREP_MIN * 60, PREP_MIN + " min to treat and load + drive: ") + "</p>" +
           (r.roads.length ? '<p class="obs">Main roads: ' + esc(r.roads.map(function (q) { return q.n + " (" + km(q.m) + ")"; }).join(" → ")) + "</p>" : "") +
           '<p class="obs noprint">Drawn on the map as a ' + ["red", "dark", "dark dashed"][i] + " line." + (W.OSAP_ROUTE_SEED ? ' <button type="button" class="refresh" data-mp-route="' + esc(f.id) + '">Open in Route</button>' : "") + "</p>"
-          : x.err ? '<p class="obs mpwarn">No road route (' + esc(clip(x.err, 120)) + ").</p>" : '<p class="obs">Working out the route…</p>');
-    }).join("") + '<p class="obs">Road routes on OpenStreetMap roads from the first router that answered (FOSSGIS OSRM, the OSRM demo server or FOSSGIS Valhalla): no traffic, checkpoints, closures or damage. Drive each route or check it against current reporting.</p>';
+          : x.err ? '<p class="obs mpwarn">No road route (' + esc(clip(x.err, 120)) + ").</p>" : '<p class="obs">Working out the route…</p>') + pacHtml(s, f);
+    }).join("") + (s.pac ? '<p class="obs">Lines P, A and C are an order (fastest first), not a judgement: the planner decides which to drive. Alternates are drawn on the map in blue, A dashed and C dotted. Hazards are what OSAP already holds near each line; an empty list is not a clearance.</p>' : "") + '<p class="obs">Road routes on OpenStreetMap roads from the first router that answered (FOSSGIS OSRM, the OSRM demo server or FOSSGIS Valhalla): no traffic, checkpoints, closures or damage. Drive each route or check it against current reporting.</p>';
   }
   /* air golden-hour rings round the POI: the flight that still arrives inside 50 and 60 minutes after the launch time and
      the time on the ground */
@@ -1826,6 +1893,7 @@
     if (s.web || s.webErr) li.push([SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"]);
     if (s.ph || s.phErr) li.push([SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"]);
     li.push([SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"]);
+    if (s.pac) { var pk = Object.keys(s.pac).map(function (k) { return s.pac[k]; }); li.push([SRC.pac, pk.some(function (x) { return x.busy; }) ? "reading…" : pk.filter(function (x) { return x.L; }).length + " of " + pk.length + " hospitals routed" + (pk.some(function (x) { return x.err; }) ? "; not reached: " + clip(pk.filter(function (x) { return x.err; })[0].err, 100) : "")]); }
     li.push([SRC.vh, s.isoErr ? "not reached: " + s.isoErr : s.iso ? "read" : "reading…"]);
     if (s.fac) li.push([SRC.wdh, s.wdErr ? "not reached: " + s.wdErr : s.wdAt ? "read " + dual(s.wdAt, true) + "; filled gaps for " + s.wdN + " hospital" + (s.wdN === 1 ? "" : "s") : "reading…"]);
     li.push([SRC.wd, s.emsErr ? "not reached: " + s.emsErr : s.ems ? "read " + dual(s.ems.at, true) : "reading…"]);
@@ -1852,6 +1920,7 @@
       fac: (F.H || []).concat(F.C || []).map(function (f) { return [f.id, f.name, f.tier, Math.round(f.m), f.s == null ? null : Math.round(f.s), f.phone || "", f.web || ""]; }),
       ems: s.ems ? s.ems.nums : null, amb: (F.E || []).map(function (e) { return [e.id, e.phone || ""]; }), air: s.x ? s.x.R.map(function (b) { return [b.id, b.phone || ""]; }) : null,
       routes: (s.rts || []).map(function (x) { return [x.f.id, x.r ? Math.round(x.r.s) : null]; }),
+      pac: s.pac ? Object.keys(s.pac).map(function (k) { return [k, ((s.pac[k] || {}).L || []).map(function (l) { return [l.id, l.s, l.m, l.haz ? l.haz.length : null]; })]; }) : null,
       oc: s.oc ? { ap: s.oc.ap.map(function (a) { return a.id; }), dst: (s.oc.dst || []).map(function (d) { return d.id; }) } : null,
       sites: (F.L || []).concat(F.AF || []).map(function (l) { return [l.id, l.name]; }), wx: s.wx });
     var pl = s.plan;
@@ -1871,6 +1940,7 @@
     });
     if (ringsOn("ar")) airRings().forEach(function (r, i) { if (r.r > 0) out.push(["ring", s.o, r.r, i ? "#1d5fa8" : "#6fa8dc", r.t]); });
     (s.rts || []).forEach(function (x, i) { if (x.r && x.r.line.length) out.push(["line", x.r.line, RT_STYLE[i] || RT_STYLE[1]]); });
+    if (s.pac) Object.keys(s.pac).forEach(function (id) { ((s.pac[id] || {}).L || []).forEach(function (l) { if (PAC_STYLE[l.id] && l.coords.length > 1) out.push(["line", l.coords, PAC_STYLE[l.id]]); }); });
     if (s.oc && s.oc.rt && s.oc.rt.line.length) out.push(["line", s.oc.rt.line, { color: "#6a3d9a", weight: 3, dashArray: "8 6" }]);
     if (s.fac) {
       s.fac.C.forEach(function (f, i) { out.push(["mk", [f.lat, f.lon], "C" + (i + 1), "", f.name]); });
@@ -2000,6 +2070,7 @@
     if (!s.fac && !s.osmErr) p.push("hospitals");
     if (s.fac && !s.routeDone) p.push("road drive times");
     if (s.rts && s.rts.some(function (x) { return !x.r && !x.err; })) p.push("routes");
+    if (s.pac && Object.keys(s.pac).some(function (k) { return s.pac[k].busy; })) p.push("alternate routes");
     if (!s.x && !s.xErr) p.push("blood banks, chambers and air rescue bases");
     if (!s.ems && !s.emsErr) p.push("emergency numbers");
     if (!s.wx && !s.wxErr) p.push("weather");
@@ -2030,6 +2101,12 @@
         }) };
       }),
       routes: (s.rts || []).map(function (x) { return { facility_id: x.f.id, s: x.r ? Math.round(x.r.s) : null, m: x.r ? Math.round(x.r.m) : null, src: s.route ? s.route.split("/")[2] : "" }; }),
+      pac: s.pac ? Object.keys(s.pac).map(function (id) {
+        var x = s.pac[id];
+        return { facility_id: id, state: x.busy ? "pending" : x.err ? "failed" : "done", err: x.err || "", hazard_km: HAZ_KM, hazard_days: HAZ_DAYS,
+          lines: (x.L || []).map(function (l) { return { id: l.id, s: l.s, m: l.m, src: l.src || "", how: l.how || "",
+            hazards: l.haz ? l.haz.map(function (h) { return { kind: h.kind, layer: h.layer, at_km: h.at_km, off_km: h.off_km, src: h.src, age_h: h.age_h, text: clip(h.text || "", 160), url: h.url || "" }; }) : null }; }) };
+      }) : [],
       air_bases: s.x ? s.x.R.slice(0, 3).map(function (b) { return { name: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "" }; }) : [],
       air_legs: s.fac && airOn() ? picks(s).map(function (p) { return { facility_id: p.f.id, s: Math.round(airTotal(p.f)), kn: num("rwkn"), base: m.b ? m.b.name : "no base" }; }) : [],
       weather: s.wx ? s.wx.days.map(function (x) { return { day: x.day, flags: wxFlags(x) }; }) : null,
