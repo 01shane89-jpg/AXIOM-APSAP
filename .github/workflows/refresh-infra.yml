@@ -1,6 +1,6 @@
 # Stored infrastructure sites for Map overlays > Infrastructure (tools/build_infra.mjs -> data/infra): airfields and heliports
 # (OurAirports), ports (NGA World Port Index, OpenStreetMap), dams (OpenStreetMap, Wikidata), submarine cables and landing points
-# (TeleGeography, non-commercial). Every country. Weekly; commits on the branch it runs on (main on schedule). A source that fails
+# (TeleGeography, non-commercial). Every country. Twice a week; OpenStreetMap is read in tiles, a time-boxed share each run; commits on the branch it runs on (main on schedule). A source that fails
 # keeps its last good copy and is reported in data/infra/index.json.
 name: Refresh infrastructure sites
 
@@ -10,7 +10,7 @@ on:
     branches: ["claude/infra-sites*"]
     paths: ["tools/build_infra.mjs", ".github/workflows/refresh-infra.yml"]
   schedule:
-    - cron: "17 4 * * 2"
+    - cron: "17 4 * * 2,5"
   workflow_dispatch:
 
 permissions:
