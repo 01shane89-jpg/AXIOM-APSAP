@@ -6,7 +6,7 @@
    Terms: a casualty's path runs POI > stabilization > definitive care. Internally the plan still picks Primary, Secondary and
    Tertiary per casualty type; here a Tertiary (or a Secondary when it is the last planned stop) is the definitive care and the
    stops before it are stabilization. Air assets are POTENTIAL (an air rescue base found in open data) or PLANNED (entered by
-   the planner); none is CONFIRMED until a planner confirms it, so no air asset is treated as available. Receiving acceptance
+   the planner), or CONFIRMED when the planner records the provider's confirmation (phase 4, assets/osap-medplan-air.js), which expires. Receiving acceptance
    is UNKNOWN until a planner records it. */
 (function (root) {
   "use strict";
@@ -97,6 +97,14 @@
     var v = I.fields || {};
     var air = (I.air_bases || []).map(function (b) { return { kind: "air", name: b.name, base: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "", status: "POTENTIAL", source: "OpenStreetMap air rescue base", last_confirmed: null }; });
     ["medevac1", "medevac2"].forEach(function (k, i) { if (!blank(v[k])) air.unshift({ kind: "air", name: str(v[k]), status: "PLANNED", source: "planner (unit details " + (i ? "alternate" : "primary") + ")", last_confirmed: null }); });
+    /* phase 4: the aircraft the planner recorded, each with its status now (a confirmation past its time reads UNKNOWN) */
+    (I.aircraft || []).slice().reverse().forEach(function (a) {
+      air.unshift({ kind: "air", id: a.id, name: a.provider + (a.aircraft_type ? " (" + a.aircraft_type + ")" : ""), provider: a.provider, aircraft_type: a.aircraft_type, base: a.base ? a.base.name : "",
+        lat: a.base ? a.base.lat : null, lon: a.base ? a.base.lon : null, status: a.status_now || a.status, recorded_status: a.status, limits_now: a.limits_now || [], launch_time_min: a.launch_min, cruise_speed_kn: a.cruise_kn,
+        day_capable: a.day_capable, night_capable: a.night_capable, weather_limits: a.weather_limits, patient_capacity: a.patient_capacity, litter_capacity: a.litter_capacity,
+        critical_care_capability: a.critical_care_capability, hoist: a.hoist, request_method: a.request_method, call_sign: a.call_sign, frequency: a.frequency, phone: a.phone,
+        source: "planner (aircraft for this plan)", last_confirmed: a.last_confirmed, expires_at: a.expires_at });
+    });
     if (!blank(v.casevac)) air.push({ kind: "ground", name: str(v.casevac), status: "PLANNED", source: "planner (CASEVAC vehicles)", last_confirmed: null });
     var plan = {
       schema: SCHEMA, id: "mp-" + str(I.cc) + "-" + (I.poi ? I.poi.lat.toFixed(4) + "_" + I.poi.lon.toFixed(4) : "none"), version: 1,
@@ -110,7 +118,8 @@
       evacuation_assets: air,
       ground_routes: groundRoutes(I),
       ground_alternates: (I.pac || []).map(function (x) { return { facility_id: x.facility_id, state: x.state, error: x.err || "", lines: (x.lines || []).length, hazard_km: x.hazard_km, hazard_days: x.hazard_days }; }),
-      air_routes: (I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; }),
+      air_routes: (I.air_missions || []).map(function (a) { return { facility_id: a.facility_id, asset_id: a.asset_id, provider: a.provider, time_s: a.s, pickup: a.pickup, legs: a.parts, status: "CONFIRMED", basis: "confirmed aircraft; straight-line legs, an estimate" }; })
+        .concat((I.air_legs || []).map(function (a) { return { facility_id: a.facility_id, time_s: a.s, status: "POTENTIAL", basis: "straight-line estimate at " + a.kn + " kn from " + a.base + "; not an executable air plan" }; })),
       ccp: [point(v.ccp1, I.ll && I.ll.ccp1, "primary", v, "ccp1"), point(v.ccp2, I.ll && I.ll.ccp2, "alternate", v, "ccp2")],
       axp: [point(v.axp, I.ll && I.ll.axp, "primary", v, "axp")],
       hlz: [point(v.hlz1, I.ll && I.ll.hlz1, "primary", v, "hlz1"), point(v.hlz2, I.ll && I.ll.hlz2, "alternate", v, "hlz2")],
@@ -184,7 +193,12 @@
     add("blood", def && !blood ? "ok" : "warning", "Blood availability", def ? (blood ? blood.text + "." : "Documented at " + def.name + ".") : "No definitive facility.");
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; });
     var planned = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "PLANNED"; });
-    add("medevac.provider", conf.length ? "ok" : "warning", "Air MEDEVAC provider", conf.length ? conf[0].name : planned.length ? planned[0].name + " (entered, not confirmed)" : "None confirmed.");
+    var fit = conf.filter(function (a) { return !(a.limits_now || []).length; }), lapsed = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.recorded_status === "CONFIRMED" && a.status !== "CONFIRMED"; });
+    add("medevac.provider", fit.length ? "ok" : "warning", "Air MEDEVAC provider",
+      fit.length ? fit[0].name + " confirmed" + (fit[0].expires_at ? " until " + fit[0].expires_at.slice(0, 16).replace("T", " ") + "Z" : "") :
+      conf.length ? conf[0].name + " confirmed but stopped by its limits now: " + conf[0].limits_now.join("; ") + "." :
+      lapsed.length ? lapsed[0].name + ": confirmation expired; confirm again." :
+      planned.length ? planned[0].name + " (entered, not confirmed). Air does not compete with the road until an aircraft is confirmed." : "None confirmed. Air does not compete with the road until an aircraft is confirmed.");
     /* phase 3: a CCP, AXP or HLZ is a map object only with a grid; a name alone cannot be drawn, routed or flown to */
     function site(code, label, x) {
       if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");
