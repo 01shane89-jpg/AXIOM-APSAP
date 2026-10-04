@@ -1274,7 +1274,11 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
      The choice is remembered on this device. */
   var BASES = {
     grey: { name: "Grey", note: "Esri canvas, follows the light or dark theme" },
-    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19, attr: "" },
+    /* drawn on the device from OpenFreeMap's OpenStreetMap vector tiles so every name can be shown in English (see VectorBase);
+       if the drawing engine cannot start, the plain OpenStreetMap tiles (names in local script) stand in */
+    streets: { name: "Streets", note: "OpenStreetMap: roads, towns and names, labelled in English",
+      vector: "https://tiles.openfreemap.org/styles/liberty", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", max: 19,
+      attr: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' },
     topo: { name: "Topographic", note: "OpenTopoMap: relief, rivers and roads", url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", max: 17,
       attr: 'Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' },
     /* sharp imagery. Licences are tagged so restricted ones can be dropped before any commercial use:
@@ -1304,6 +1308,90 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       url: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg", max: 13, zmax: 16, lic: "CC BY-NC-SA 4.0",
       attr: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2021), CC BY-NC-SA 4.0' }
   };
+  /* ---------- a vector base map with English labels ----------
+     OpenStreetMap raster tiles carry each place's name in its own script (Thai in Thailand). The vector tiles keep every
+     recorded name, so the map is drawn on the device (the MapLibre engine the 3D view already ships) with each label
+     chosen in this order: the English name, then the Latin-letter spelling, then the local name. The engine's canvas sits
+     at the back of the tile pane and follows the 2D map; a little spare edge hides the redraw while panning. */
+  var ML_LIB = "assets/vendor/maplibre-gl-5.24.0", mlLibP = null;
+  function loadMapLibre() {
+    if (window.maplibregl) return Promise.resolve(window.maplibregl);
+    if (mlLibP) return mlLibP;
+    mlLibP = new Promise(function (ok, bad) {
+      var css = document.createElement("link"); css.rel = "stylesheet"; css.href = ML_LIB + ".css"; document.head.appendChild(css);
+      var sc = document.createElement("script"); sc.src = ML_LIB + ".js";
+      sc.onload = function () { window.maplibregl ? ok(window.maplibregl) : bad(new Error("no engine")); };
+      sc.onerror = function () { mlLibP = null; bad(new Error("engine did not download")); };
+      document.head.appendChild(sc);
+    });
+    return mlLibP;
+  }
+  var EN_NAME = ["coalesce", ["get", "name:en"], ["get", "name:latin"], ["get", "name_en"], ["get", "name"]];
+  function englishStyle(st) {
+    (st.layers || []).forEach(function (l) {
+      var f = l.layout && l.layout["text-field"];
+      if (f && /name/.test(JSON.stringify(f))) l.layout["text-field"] = EN_NAME;
+    });
+    return st;
+  }
+  var VectorBase = L.Layer.extend({
+    PAD: 0.15,
+    initialize: function (styleUrl, o) { this._styleUrl = styleUrl; L.setOptions(this, o); },
+    onAdd: function (map) {
+      var self = this;
+      this._box = L.DomUtil.create("div", "leaflet-layer leaflet-zoom-animated osap-vbase");
+      this._box.style.position = "absolute"; this._box.style.zIndex = 0; this._box.style.pointerEvents = "none";
+      var tp = map.getPane("tilePane"); tp.insertBefore(this._box, tp.firstChild);
+      map.on("move zoom resize viewreset", this._update, this);
+      map.on("zoomanim", this._anim, this);
+      this._update();
+      Promise.all([loadMapLibre(), fetch(this._styleUrl).then(function (r) { if (!r.ok) throw new Error("style " + r.status); return r.json(); })])
+        .then(function (a) {
+          if (self._map !== map) return;
+          self._gl = new a[0].Map({ container: self._box, style: englishStyle(a[1]), interactive: false, attributionControl: false,
+            center: [0, 0], zoom: 0, fadeDuration: 0, maxZoom: 22 });
+          self._gl.on("error", function () {});   /* a missing tile is not fatal; the engine keeps drawing the rest */
+          self._update();
+        })
+        .catch(function () { if (self._map === map) self._fail(); });
+    },
+    onRemove: function (map) {
+      map.off("move zoom resize viewreset", this._update, this);
+      map.off("zoomanim", this._anim, this);
+      if (this._gl) { try { this._gl.remove(); } catch (e) {} this._gl = null; }
+      if (this._fb) { map.removeLayer(this._fb); this._fb = null; }
+      L.DomUtil.remove(this._box); this._box = null;
+    },
+    /* for the 3D view, which draws plain tiles: the OpenStreetMap tiles of the same map (unless the stand-in already is them) */
+    rasterTwin: function () { return this._fb ? null : { url: this.options.fallback, max: this.options.max, attr: "&copy; OpenStreetMap contributors" }; },
+    /* no engine (old phone, no WebGL, offline before the style was saved): the plain OpenStreetMap tiles instead */
+    _fail: function () {
+      if (this._fb || !this.options.fallback) return;
+      this._fb = L.tileLayer(this.options.fallback, { maxNativeZoom: this.options.max, maxZoom: this._map.getMaxZoom(), attribution: "" }).addTo(this._map);
+      this._fb.bringToBack();
+    },
+    _update: function () {
+      var map = this._map, box = this._box; if (!map || !box) return;
+      var sz = map.getSize(), p = this.PAD, w = Math.round(sz.x * (1 + 2 * p)), h = Math.round(sz.y * (1 + 2 * p));
+      L.DomUtil.setPosition(box, map.containerPointToLayerPoint([-Math.round(sz.x * p), -Math.round(sz.y * p)]));
+      if (box.style.width !== w + "px" || box.style.height !== h + "px") {
+        box.style.width = w + "px"; box.style.height = h + "px";
+        if (this._gl) this._gl.resize();
+      }
+      if (!this._gl) return;
+      var c = map.getCenter();
+      /* Leaflet counts 256 px tiles, MapLibre 512 px ones: one level apart */
+      this._gl.jumpTo({ center: [c.lng, c.lat], zoom: Math.max(0, map.getZoom() - 1), bearing: 0, pitch: 0 });
+    },
+    _anim: function (e) {
+      var map = this._map; if (!map || !this._box) return;
+      var sz = map.getSize(), p = this.PAD, scale = map.getZoomScale(e.zoom);
+      var tl = map._latLngToNewLayerPoint(map.containerPointToLatLng([-Math.round(sz.x * p), -Math.round(sz.y * p)]), e.zoom, e.center);
+      L.DomUtil.setTransform(this._box, tl, scale);
+    }
+  });
+  window.OSAP_ENGLISH_STYLE = englishStyle;
+
   function mlGet() { try { return JSON.parse(localStorage.getItem("asap-map-layers")) || {}; } catch (e) { return {}; } }
   function mlSet() { try { localStorage.setItem("asap-map-layers", JSON.stringify(ML)); } catch (e) {} }
   var ML = mlGet();
@@ -1320,6 +1408,10 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     /* imagery can be zoomed closer than the other maps */
     var zmax = b.zmax || 13; map.setMaxZoom(zmax); if (map.getZoom() > zmax) map.setZoom(zmax);
     if (!b.url) { if (!map.hasLayer(baseLayer)) baseLayer.addTo(map); }
+    else if (b.vector) {
+      if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
+      altBase = new VectorBase(b.vector, { attribution: b.attr, fallback: b.url, max: b.max }).addTo(map);
+    }
     else {
       if (map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
       var url = b.url.replace("{date}", new Date(Date.now() - 864e5).toISOString().slice(0, 10));
@@ -4661,7 +4753,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, available under the Open Database License (ODbL).'],
       ['Background map: Powered by <a href="https://www.esri.com/">Esri</a>. Sources: Esri, HERE, Garmin, FAO, NOAA, USGS.'],
       ['Country outlines: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).'],
-      ['Streets base map: tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
+      ['Streets base map: vector tiles and style by <a href="https://openfreemap.org/">OpenFreeMap</a> (free, no key) &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data from OpenStreetMap; labels shown in English where OpenStreetMap records an English or Latin-letter name. Drawn with <a href="https://maplibre.org/">MapLibre GL JS</a> (BSD-3-Clause). If it cannot be drawn, tiles from the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> Foundation stand in, under its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.'],
       ['Topographic base map: map style &copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA); map data &copy; OpenStreetMap contributors; elevation SRTM.'],
       ['Satellite and Hybrid base maps: <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri World Imagery</a> and Esri reference labels, &copy; Esri, Maxar, Earthstar Geographics, HERE, Garmin and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
       ['Satellite, second look base map: Esri World Imagery (Clarity), &copy; Esri, Maxar, Earthstar Geographics and the GIS user community. Licence: Esri terms of use, <b>restricted</b> (not cleared for commercial use).'],
