@@ -64,6 +64,8 @@
     for (var j = 0; j < 256; j++) for (var i = 0; i < 256; i++) h[j * 256 + i] = P[(oy + (j >> 1)) * 256 + ox + (i >> 1)];
     return h;
   }
+  /* shared with the saved-terrain source (providers/packaged-dem.js) */
+  W.OSAP_DEM_CODEC = { decode: decode, terrarium: terrarium, child: child, AWS: AWS };
   var L = W.OSAP_TERRAIN_PROVIDERS = W.OSAP_TERRAIN_PROVIDERS || [];
   L.push({
     id: "gsi-japan", label: "GSI Japan elevation (5 m laser survey, 10 m)", kind: "DEM", order: 10,

@@ -75,5 +75,15 @@ ok(M.canonical(a) === M.canonical(b), "the same plan gives the same fingerprint 
 ok(M.canonical(a) !== M.canonical(M.build(input({ fields: { recv1: "X" } }))), "a change in the plan changes the fingerprint input");
 ok(M.names("Thammasat Hosp.", TU) && !M.names("Hospital", TU) && !M.names("King", TU), "name matching ignores generic words and needs a distinctive part");
 
+// ---------- phase 2: the stabilise-or-bypass decision rides in the record ----------
+const dec = { rule: "osap.medplan.decide/1", decision: "stabilise", reason: "direct_beyond_golden_hour", from: "primary", direct: { total_s: 5940, parts: [] }, via: { total_s: 8460, parts: [] }, access: { state: "not_confirmed", down: [], of: ["dx.ct"] }, golden_s: 3600, basis: "estimate" };
+const pD = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [
+  { role: "primary", state: "filled", stop: true, way: "road", time_s: 360, facility: KN },
+  { role: "secondary", state: "gap" },
+  { role: "tertiary", state: "filled", stop: true, way: "road", time_s: 5640, facility: TU, decision: dec }] }] }));
+const pd = pD.casualty_profiles[0].decisions;
+ok(pd.length === 1 && pd[0].to_role === "tertiary" && pd[0].decision === "stabilise" && pd[0].via.total_s === 8460 && pd[0].access.state === "not_confirmed", "phase 2: each decision is in the casualty profile with both totals and whether care is confirmed now");
+ok(M.canonical(pD) !== M.canonical(M.build(input())), "phase 2: the decision is in the fingerprint");
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");

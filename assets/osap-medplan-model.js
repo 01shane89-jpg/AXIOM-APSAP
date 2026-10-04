@@ -62,7 +62,9 @@
       });
       var gaps = rows.filter(function (r) { return r.state !== "filled"; }).map(function (r) { return r.role; });
       if (!last) unresolved.push({ code: "no_definitive." + c.id, text: "No definitive care documented for " + c.label.toLowerCase() });
-      profiles.push({ id: c.id, label: c.label, pathway: path, gaps: gaps, bypass: path.length && stops.length < filled.length });
+      /* phase 2: each stabilise-or-bypass decision with its time to the required care, part by part */
+      var decisions = rows.filter(function (r) { return r.decision; }).map(function (r) { return Object.assign({ to_role: r.role }, r.decision); });
+      profiles.push({ id: c.id, label: c.label, pathway: path, gaps: gaps, bypass: path.length && stops.length < filled.length, decisions: decisions });
     });
     var trauma = profiles.filter(function (p) { return p.id === "cat.major_trauma"; })[0] || profiles[0] || null;
     var def = trauma ? trauma.pathway.filter(function (x) { return x.stage === "definitive"; })[0] : null;

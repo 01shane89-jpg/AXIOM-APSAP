@@ -48,7 +48,7 @@
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
-  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450, dwell: 30, xact: 15 };
+  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450, dwell: 30, xact: 15, handoff: 5 };
   var STATE_EMERG = { url: "https://travel.state.gov/content/travel/en/international-travel/emergencies.html", us: "1-888-407-4747", abroad: "+1 202-501-4444" };
   /* International SOS assistance centres: published 24-hour numbers, read from ISOS's public page on 2026-10-01. City
      points are only used to show the nearest centres; ISOS's clinic and network data needs a login and is not used. */
@@ -845,14 +845,14 @@
     "#medplan .mphead h2{margin:0;font-size:17px;flex:1 1 auto}#medplan .mpcc{font-weight:400;color:var(--muted,#56626F)}#medplan .mphead button{min-height:32px}" +
     "#medplan h3{font-size:14px;margin:14px 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#medplan p{margin:4px 0;line-height:1.45}#medplan h4{font-size:13px;margin:8px 0 2px}" +
     "#medplan .obs{color:var(--muted,#56626F);font-size:12px}#medplan .mpwarn{color:#8a4b00}" +
-    "#medplan .mppoi{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-end;background:var(--bg,#f6f8fa);border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:8px;margin:8px 0}" +
+    "#medplan .mppoi{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-end;background:var(--bg,var(--surface2,#f6f8fa));border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:8px;margin:8px 0}" +
     "#medplan .mppoi label{display:grid;gap:2px;font-size:12px;color:var(--muted,#56626F);flex:1 1 220px}#medplan .mppoi b{color:var(--ink,#1b2733)}" +
     "#medplan .mppoi input,#medplan .mppoi select{font:inherit;font-size:13px;min-height:32px;box-sizing:border-box;width:100%;color:var(--ink,#1b2733);background:var(--surface,#fff);border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:4px 7px}" +
     "#medplan .mppoi button{min-height:32px}#medplan .mpnum{width:5.5em!important;flex:0 0 auto}#medplan .mpspd{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted,#56626F)}" +
-    "#medplan .mpspd input{width:5em;font:inherit;font-size:13px;min-height:28px;border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:2px 5px;background:var(--bg,#f6f8fa);color:var(--ink,#1b2733)}" +
+    "#medplan .mpspd input{width:5em;font:inherit;font-size:13px;min-height:28px;border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:2px 5px;background:var(--bg,var(--surface2,#f6f8fa));color:var(--ink,#1b2733)}" +
     "#medplan .mpgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:6px 14px}" +
     "#medplan .mpgrid label{display:grid;gap:2px;font-size:12px;color:var(--muted,#56626F)}" +
-    "#medplan .mpgrid input,#medplan .mpgrid textarea{font:inherit;font-size:13px;color:var(--ink,#1b2733);background:var(--bg,#f6f8fa);border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:5px 7px;min-height:30px;box-sizing:border-box;width:100%}" +
+    "#medplan .mpgrid input,#medplan .mpgrid textarea{font:inherit;font-size:13px;color:var(--ink,#1b2733);background:var(--bg,var(--surface2,#f6f8fa));border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:5px 7px;min-height:30px;box-sizing:border-box;width:100%}" +
     "#medplan .mpgrid .wide{grid-column:1/-1}#medplan .mpgrid textarea{min-height:52px;resize:vertical}" +
     "#medplan .mpscroll{overflow-x:auto}#medplan table{border-collapse:collapse;width:100%;font-size:12px}" +
     "#medplan th,#medplan td{text-align:left;vertical-align:top;padding:4px 6px;border-bottom:1px solid var(--line-soft,#e3e7eb)}#medplan th{font-weight:600;white-space:nowrap}" +
@@ -887,7 +887,7 @@
     "#medplan.dock .mpbox{pointer-events:auto;height:100%;overflow:auto;border-radius:0;max-width:none;box-shadow:-4px 0 18px rgba(0,0,0,.3)}#medplan.dock .mphead{top:0}" +
     "@media (max-width:700px){#medplan.dock{top:auto;left:0;width:auto;height:55vh}#medplan.dock .mpbox{min-height:0;box-shadow:0 -4px 18px rgba(0,0,0,.3);border-top:3px solid var(--line,#d5dbe1)}}" +
     "#medplan .mppst{margin:4px 0 6px}#medplan .mppst th{width:6.5em;font-size:12.5px;color:#fff;background:#8b0010;text-align:center;vertical-align:middle;border-bottom:2px solid var(--surface,#fff)}" +
-    "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,#f6f8fa)}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
+    "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,var(--surface2,#f6f8fa))}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
     ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
@@ -942,7 +942,7 @@
   function checks() { var v = lsGet(chkKey()); return Array.isArray(v) ? v : []; }
   function setOff(id, off) { var L = offIds().filter(function (x) { return x !== id; }); if (off) L.push(id); lsSet(offKey(), L.slice(-500)); }
   function fieldVals() { return lsGet(fieldsKey()) || {}; }
-  function num(k) { var v = +fieldVals()[k]; return isFinite(v) && (v > 0 || (k === "dwell" || k === "xact") && v === 0 && fieldVals()[k] !== "") && v < 1000 ? v : DEF[k]; }
+  function num(k) { var v = +fieldVals()[k]; return isFinite(v) && (v > 0 || (k === "dwell" || k === "xact" || k === "handoff") && v === 0 && fieldVals()[k] !== "") && v < 1000 ? v : DEF[k]; }
   function fieldsHtml() {
     var v = fieldVals();
     return FIELDS.map(function (f) {
@@ -1254,19 +1254,23 @@
   function xferS(a, b) { return hav([a.lat, a.lon], [b.lat, b.lon]) * XFER_FACTOR / (XFER_KMH / 3.6); }
   function bypassTiming(R) {
     var byRole = {}; R.forEach(function (r) { byRole[r.role] = r; });
-    var order = ["primary", "secondary", "tertiary"], gh = GOLDEN_MIN * 60;
+    var order = ["primary", "secondary", "tertiary"], DC = W.OSAP_MEDDECIDE;
     R.forEach(function (r) { r.stop = r.state === "filled"; });
+    function nowOf(f) { var o = {}; Object.keys(f.caps || {}).forEach(function (k) { o[k] = f.caps[k].now ? f.caps[k].now.state : "UNKNOWN"; }); return o; }
     for (var i = 0; i < 2; i++) {
       var lo = byRole[order[i]], hi = byRole[order[i + 1]];
       if (!lo.choice || !hi.choice) continue;
       var a = lo.choice.f, b = hi.choice.f;
       if (a === b) { lo.stop = false; lo.same_as = hi.role; continue; }
-      var tLo = lo.choice.time_to_required_care.s, direct = hi.choice.time_to_required_care.s;
-      var via = tLo + (num("dwell") + num("xact")) * 60 + xferS(a, b);
-      hi.via = { from: lo.role, via_s: Math.round(via), direct_s: Math.round(direct) };
-      if (direct <= gh || direct <= via && tLo >= direct) {
+      /* phase 2: time to the required capability, decided by assets/osap-medplan-decide.js */
+      var d = DC.compare({ name: a.name, to_s: lo.choice.time_to_required_care.s, gain: lo.choice.met.concat(lo.choice.gain || []), now: nowOf(a) },
+        { name: b.name, to_s: hi.choice.time_to_required_care.s, required: hi.required, now: nowOf(b) }, xferS(a, b),
+        { golden_min: GOLDEN_MIN, handoff_min: num("handoff"), dwell_min: num("dwell"), xact_min: num("xact") });
+      hi.via = { from: lo.role, via_s: d.via.total_s, direct_s: d.direct.total_s };
+      hi.decision = d;
+      if (d.decision === "bypass") {
         lo.stop = false;
-        lo.bypass = { facility_id: a.id, f: a, reason: "direct_route_faster_to_required_care", via_time: { s: Math.round(via), basis: "estimate" }, direct_time: { s: Math.round(direct), basis: "estimate" } };
+        lo.bypass = { facility_id: a.id, f: a, reason: d.reason, via_time: { s: d.via.total_s, basis: "estimate" }, direct_time: { s: d.direct.total_s, basis: "estimate" } };
         hi.bypassed.unshift(lo.bypass);
       }
     }
@@ -1302,9 +1306,11 @@
         (r.bypassed.length ? '<span class="sub obs">Nearest not eligible: ' + esc(r.bypassed.slice(0, 2).map(function (b) { return "H" + (s.fac.H.indexOf(b.f) + 1) + " " + b.f.name; }).join(", ")) + "</span>" : "") + "</td>";
       var c = r.choice, f = c.f, unk = capNames(c.unknown);
       var tag = r.same_as ? '<span class="mpbyp">Same hospital as ' + ROLE_NAME[r.same_as] + "</span>" : r.bypass ? '<span class="mpbyp">Bypass: go direct to ' + (r.role === "primary" ? "Secondary" : "Tertiary") + "</span>" +
-        '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here. Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
+        '<span class="sub obs">Direct ' + esc(mins(r.bypass.direct_time.s)) + " against " + esc(mins(r.bypass.via_time.s)) + " via here to the required care: " + esc(W.OSAP_MEDDECIDE.why({ reason: r.bypass.reason })) + ". Stabilisation option if the casualty cannot tolerate the longer move.</span>" : "";
+      var dc = r.decision, acc = dc ? ({ confirmed: "required care confirmed available now by a planner's check", unavailable: "a planner's check says " + andList(capNames(dc.access.down)) + " is not available now", not_confirmed: "required care not confirmed available now" })[dc.access.state] : "";
+      var tt = dc ? '<span class="sub obs mpdec">Time to required care ' + (r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? "via " + ROLE_NAME[r.via.from] + ": " + esc(dc.via.parts.map(function (p) { return p.label + " " + mins(p.s); }).join(" + ")) + " = " + esc(mins(dc.via.total_s)) : "direct: " + esc(dc.direct.parts.map(function (p) { return p.label + " " + mins(p.s); }).join(" + ")) + " = " + esc(mins(dc.direct.total_s))) + "; " + esc(acc) + ".</span>" : "";
       var hv = r.via && r.stop && byRoleOf(r, -1) && byRoleOf(r, -1).stop ? '<span class="sub obs">Reached via ' + ROLE_NAME[r.via.from] + " in about " + esc(mins(r.via.via_s)) + "; direct would be " + esc(mins(r.via.direct_s)) + ", beyond the golden hour.</span>" : "";
-      return "<td" + dl + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv +
+      return "<td" + dl + (r.stop ? "" : ' class="mpbypc"') + ">" + tag + "<b>H" + (s.fac.H.indexOf(f) + 1) + " " + esc(f.name) + "</b><span class=\"sub\">" + esc(mins(c.time_to_required_care.s)) + " from injury by " + esc(c.way) + "</span>" + hv + tt +
         (f.far ? '<span class="sub mpfar">Wider search: nothing within ' + km0 + " km has this documented; " + esc(km(f.m)) + " away</span>" : "") +
         (unk.length ? '<span class="sub obs">Not documented: ' + esc(unk.join(", ")) + "</span>" : "") + "</td>";
     }
@@ -1316,8 +1322,9 @@
     return h + "</tbody></table></div>" +
       '<p class="obs">MTF roles per casualty type (draft templates, not clinically reviewed): Primary is the quickest hospital giving a meaningful increase in care; Secondary adds advanced resuscitation, surgery, blood, CT and ICU; Tertiary has the definitive specialty care for that type. ' +
       "A hospital qualifies only on capabilities documented by a credible source (an official register or a planner's check); OpenStreetMap and Wikipedia are shown but never qualify. " +
-      "Bypass: a lower stop is skipped when going direct reaches the higher care inside the golden hour; otherwise it is a planned stop to stabilise. Via a stop counts its time there (" + num("dwell") + " min) plus transfer activation (" + num("xact") + " min) plus a transfer drive (straight line x " + XFER_FACTOR + " at " + XFER_KMH + " km/h, an estimate). " + esc(DECISION_NOTE) + "</p>" +
-      '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
+      "Bypass is decided on time to the required care (rule " + W.OSAP_MEDDECIDE.RULE + "): a lower stop is skipped when going direct reaches it inside the golden hour, when going direct is no slower, or when a planner's check says what the stop adds is not available now; otherwise it is a planned stop to stabilise. " +
+      "Direct counts the move from injury (treat and load included) plus handoff (" + num("handoff") + " min). Via a stop counts the move there, handoff, its time there (" + num("dwell") + " min), transfer activation (" + num("xact") + " min), a transfer drive (straight line x " + XFER_FACTOR + " at " + XFER_KMH + " km/h, an estimate) and handoff again. " + esc(DECISION_NOTE) + "</p>" +
+      '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label><label>Handoff <input type="number" min="0" max="60" step="1" data-mpf="handoff" value="' + num("handoff") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
   }
   function routes(s) {
     var P = picks(s); s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "" }; }); rtRender();
@@ -2018,7 +2025,8 @@
       fields: v, ll: ll, checks: checks(),
       categories: CATS.map(function (c) {
         return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
-          return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null };
+          return { role: r.role, state: r.state, stop: !!r.stop, stabilisation_option: !!r.stabilisation_option, way: r.choice ? r.choice.way : "", time_s: r.choice ? r.choice.time_to_required_care.s : null, facility: r.choice ? planFac(r.choice.f) : null,
+            decision: r.decision ? { rule: r.decision.rule, decision: r.decision.decision, reason: r.decision.reason, from: r.via.from, direct: r.decision.direct, via: r.decision.via, access: r.decision.access, golden_s: r.decision.golden_s, basis: "estimate" } : null };
         }) };
       }),
       routes: (s.rts || []).map(function (x) { return { facility_id: x.f.id, s: x.r ? Math.round(x.r.s) : null, m: x.r ? Math.round(x.r.m) : null, src: s.route ? s.route.split("/")[2] : "" }; }),
@@ -2432,7 +2440,7 @@
     }
     var k = t.getAttribute && t.getAttribute("data-mpf"); if (!k) return;
     var vals2 = fieldVals(); vals2[k] = String(t.value || "").slice(0, 600); lsSet(fieldsKey(), vals2);
-    if (k === "dwell" || k === "xact") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
+    if (k === "dwell" || k === "xact" || k === "handoff") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
     clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); srcRender(); }, 600);
