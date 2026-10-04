@@ -19,7 +19,7 @@ jobs:
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
       - run: node tools/probe_label_lang.mjs
-      - run: sudo apt-get install -y -q tesseract-ocr tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-rus >/dev/null
+      - run: sudo apt-get install -y -q tesseract-ocr >/dev/null
       - run: sh tools/probe_label_ocr.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
