@@ -179,9 +179,16 @@
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; });
     var planned = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "PLANNED"; });
     add("medevac.provider", conf.length ? "ok" : "warning", "Air MEDEVAC provider", conf.length ? conf[0].name : planned.length ? planned[0].name + " (entered, not confirmed)" : "None confirmed.");
-    add("ccp", p.ccp[0].status !== "NOT_SET" ? "ok" : "warning", "Casualty collection point (CCP)", p.ccp[0].text || "Not set.");
-    add("hlz", p.hlz[0].status !== "NOT_SET" ? "ok" : "warning", "Helicopter landing zone (HLZ)", p.hlz[0].text || "Not set.");
-    add("hlz.alternate", p.hlz[1].status !== "NOT_SET" ? "ok" : "warning", "Alternate HLZ", p.hlz[1].text || "Not set.");
+    /* phase 3: a CCP, AXP or HLZ is a map object only with a grid; a name alone cannot be drawn, routed or flown to */
+    function site(code, label, x) {
+      if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");
+      else if (x.lat == null) add(code, "warning", label, x.text + ": no grid, so it is not on the map. Give an MGRS grid or lat, lon.");
+      else add(code, "ok", label, x.text);
+    }
+    site("ccp", "Casualty collection point (CCP)", p.ccp[0]);
+    site("axp", "Ambulance exchange point (AXP)", p.axp[0]);
+    site("hlz", "Helicopter landing zone (HLZ)", p.hlz[0]);
+    site("hlz.alternate", "Alternate HLZ", p.hlz[1]);
     var cv = p.evacuation_assets.filter(function (a) { return a.kind === "ground"; })[0];
     add("casevac", cv ? "ok" : "warning", "CASEVAC platform", cv ? cv.name : "Not set.");
     add("comms", p.communications.medevac.length ? "ok" : "warning", "MEDEVAC communications", p.communications.medevac[0] || "No frequency or call sign set.");

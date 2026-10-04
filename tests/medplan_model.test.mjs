@@ -51,7 +51,8 @@ ok(pP.validation_status.status === "BLOCKING" && /Still reading: weather/.test(b
 const p0 = M.build(input({ poi: { lat: 14.8, lon: 100.6, mgrs: "x", set_by: "c" }, categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "primary", state: "gap" }, { role: "secondary", state: "gap" }, { role: "tertiary", state: "gap" }] }] }));
 ok(by(p0, "poi").level === "warning" && by(p0, "definitive").level === "warning" && p0.definitive === null && p0.unresolved_requirements.some((u) => u.code === "no_definitive.cat.major_trauma"),
   "no POI and no documented definitive care are warnings, and the gap is listed, never filled in");
-const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC, +66 0", freq1: "DUSTOFF 41.5", ccp1: "Bridge", hlz1: "Football field", hlz2: "Temple yard", casevac: "2 x HMMWV" },
+const pF = M.build(input({ fields: { recv1: "Thammasat", medevac1: "Unit MEDEVAC, +66 0", freq1: "DUSTOFF 41.5", ccp1: "47P PS 8255 3804 Bridge", axp: "14.80, 100.66", hlz1: "14.79, 100.67", hlz2: "14.78, 100.68", casevac: "2 x HMMWV" },
+  ll: { ccp1: Object.assign([14.81, 100.69], { mgrs: "47P PS 8255 3804" }), axp: [14.8, 100.66], hlz1: [14.79, 100.67], hlz2: [14.78, 100.68] },
   categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "tertiary", state: "filled", stop: true, way: "road", time_s: 600, facility: Object.assign({}, TU, { caps: yes }) }] }] }));
 const warn = pF.validation_status.items.filter((x) => x.level !== "ok").map((x) => x.code).sort().join();
 ok(warn === "acceptance,medevac.provider,route.alternate,stabilization,verification", "with everything filled, only what phase 0 cannot confirm stays amber: " + warn);
@@ -100,6 +101,10 @@ ok(/None found \(OSRM: 504\)/.test(by(pAf, "route.alternate").detail) && !by(pAf
 const pAn = M.build(input({ pac: pacOf([{ id: "P", s: 5600, m: 98000, src: "OSRM", hazards: null }, { id: "A", s: 5900, m: 99000, src: "OSRM", hazards: null }]) }));
 ok(by(pAn, "route.hazards").level === "warning" && /Could not be checked/.test(by(pAn, "route.hazards").detail) && /no contingency line/.test(by(pAn, "route.alternate").detail), "phase 3: hazards that could not be checked are amber, never clear");
 ok(M.canonical(pA) !== M.canonical(pA0) && pA.ground_alternates[0].lines === 3, "phase 3: the lines and hazards are in the fingerprint");
+
+/* phase 3: CCP, AXP and HLZ are map objects only with a grid */
+const pG = M.build(input({ fields: { ccp1: "Bridge", hlz1: "14.79, 100.67" }, ll: { hlz1: [14.79, 100.67] } }));
+ok(by(pG, "ccp").level === "warning" && /Bridge: no grid, so it is not on the map/.test(by(pG, "ccp").detail) && by(pG, "hlz").level === "ok" && by(pG, "axp").detail === "Not set." && pG.hlz[0].lat === 14.79, "phase 3: a named CCP without a grid is amber; an HLZ with a grid is on the map; AXP is checked");
 
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
