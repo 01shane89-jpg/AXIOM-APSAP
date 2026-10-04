@@ -110,6 +110,7 @@ data-ev-tlr="1"
 <script src="assets/hospital-sources/countries/th-provider.js"></script>
 <script src="assets/osap-facility-intel.js"></script>
 <script src="assets/osap-medplan-decide.js"></script>
+<script src="assets/osap-medplan-air.js"></script>
 <script src="assets/osap-medplan-model.js"></script>
 <script src="assets/osap-medplan.js"></script>
 # Reports menu lists every report OSAP makes (claude/reports-menu)
@@ -134,4 +135,7 @@ offline: { name: "Offline map"
 <script src="assets/osap-terrain.js"></script>
 data-terrain-open
 id="ml-viewsheds"
-if (window.OSAP_LOCK) window.OSAP_LOCK.prune();
+
+# the map pans round the globe without end; drawings follow onto the world copy in view (claude/map-wrap-globe)
+/* ---------- the map wraps round the globe ----------
+L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {

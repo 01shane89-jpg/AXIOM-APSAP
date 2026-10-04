@@ -402,14 +402,14 @@
   function renderLink() {
     var el = pane(), L = linkIn(), Rd = R();
     var fld = function (k, lab, step, unit) { return '<label>' + lab + '<span class="cpu"><input type="number" step="' + step + '" data-cpl="' + k + '" value="' + E(L[k]) + '">' + (unit ? " " + unit : "") + "</span></label>"; };
-    el.innerHTML = '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
+    el.innerHTML = tlSection() + '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
       '<div class="cprow"><label>Band<select data-cpl="band">' + opts(Rd.BANDS.map(function (b) { return [b.id, b.label]; }).concat([["custom", "Custom"]]), L.band) + "</select></label>" +
       fld("f_mhz", "Frequency", "any", "MHz") + fld("d_km", "Distance", "any", "km") + fld("ptx_w", "Transmit power", "any", "W") +
       fld("gtx_dbi", "Tx antenna gain", "any", "dBi") + fld("ltx_db", "Tx cable + connectors", "any", "dB") + fld("grx_dbi", "Rx antenna gain", "any", "dBi") + fld("lrx_db", "Rx cable + connectors", "any", "dB") +
       fld("sens_dbm", "Rx sensitivity", "any", "dBm") + fld("fade_db", "Fade margin wanted", "any", "dB") + fld("ha_m", "Antenna A height", "any", "m") + fld("hb_m", "Antenna B height", "any", "m") + fld("k", "k-factor", "0.01", "") + "</div>" +
       '<div id="cp-lout" aria-live="polite"></div>' +
-      '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link (ground profile between two points, what blocks it, and how much antenna height clears it) joins this tab with the terrain engine.</p></div>';
-    linkOut();
+      '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link above adds the ground between two points.</p></div>';
+    linkOut(); tlOut(); tlDraw();
   }
   function linkOut() {
     var el = S.ctx && S.ctx.rail.querySelector("#cp-lout"); if (!el) return;
@@ -435,8 +435,120 @@
     var o = linkIn();
     if (k === "band") { o.band = t.value; var b = R().BANDS.filter(function (x) { return x.id === t.value; })[0]; if (b) { o.f_mhz = b.f_mhz; var fi = S.ctx.rail.querySelector('[data-cpl="f_mhz"]'); if (fi) fi.value = b.f_mhz; } }
     else { var v = parseFloat(t.value); if (!isFinite(v)) return; o[k] = v; if (k === "f_mhz") { o.band = "custom"; var bs = S.ctx.rail.querySelector('[data-cpl="band"]'); if (bs) bs.value = "custom"; } }
-    put(KL, o); linkOut();
+    put(KL, Object.assign(get(KL, {}), o)); linkOut();
+    if (/^(f_mhz|ha_m|hb_m|k|band)$/.test(k)) tlRecalc(); else tlOut();
   }
+
+  /* ---------- Link: terrain link between two points (A and B kept in osap-cp-link as tA, tB) ----------
+     The ground between them from the terrain engine (OSAP_TERRAIN_ANALYSIS.profile, elevation tiles worked out on this
+     device), checked by OSAP_RADIO.terrainLink against the line of sight and the first Fresnel zone for this tab's frequency,
+     antenna heights and k. MODELLED, terrain only. */
+  var TL = { arm: null, busy: false, err: "", res: null, prof: null, run: 0 }, tlLayer = null, tlDown = null;
+  var TLV = { clear: ["CLEAR", "#2b8a3e", "Line of sight and at least 60% of the first Fresnel zone are clear of the ground."],
+    fresnel: ["FRESNEL ZONE OBSTRUCTED", "#e67700", "The line of sight clears the ground, but the ground cuts into the Fresnel zone, which costs signal."],
+    blocked: ["BLOCKED BY TERRAIN", "#c92a2a", "The ground rises above the straight line between the antennas."],
+    unknown: ["UNKNOWN", "#6c757d", "Not enough ground data to say."] };
+  function tlLayerOff() { if (tlLayer && S.ctx) { S.ctx.layer.removeLayer(tlLayer); tlLayer = null; } }
+  function tlPts() { var o = get(KL, {}); return { a: Array.isArray(o.tA) ? o.tA : null, b: Array.isArray(o.tB) ? o.tB : null }; }
+  function tlSet(k, p) { var o = get(KL, {}); if (p) o[k] = [+p[0].toFixed(6), +p[1].toFixed(6)]; else delete o[k]; put(KL, o); }
+  function tlPtTxt(p) { return p ? E(mgrs(p[0], p[1]) || p[0].toFixed(5) + ", " + p[1].toFixed(5)) : "not set"; }
+  function tlSection() {
+    var P = tlPts(), arm = TL.arm;
+    return '<div class="sec cpsec" id="cp-tl"><h3>Terrain link: A to B</h3>' +
+      '<div class="cprow"><div><b>A</b> <span id="cptl-a">' + tlPtTxt(P.a) + '</span><br><button type="button" data-tl="a" aria-pressed="' + (arm === "a") + '">' + (arm === "a" ? "Tap the map for A…" : "Set A on map") + "</button></div>" +
+      "<div><b>B</b> <span id=\"cptl-b\">" + tlPtTxt(P.b) + '</span><br><button type="button" data-tl="b" aria-pressed="' + (arm === "b") + '">' + (arm === "b" ? "Tap the map for B…" : "Set B on map") + "</button></div></div>" +
+      '<p><button type="button" data-tl="go"' + (P.a && P.b && !TL.busy ? "" : " disabled") + '>Check terrain</button> <button type="button" data-tl="swap"' + (P.a || P.b ? "" : " disabled") + '>Swap A and B</button> <button type="button" data-tl="clear"' + (P.a || P.b ? "" : " disabled") + ">Clear</button></p>" +
+      '<div id="cp-tlout" aria-live="polite"></div>' +
+      '<p class="obs">Uses the frequency, antenna heights and k-factor below. <b>MODELLED, terrain only:</b> the ground from elevation data, raised for the Earth\'s curve. Trees, buildings, weather and interference are not in it, so a clear answer is a best case.</p></div>';
+  }
+  function tlRepaint() { var box = S.ctx && S.ctx.rail.querySelector("#cp-tl"); if (!box) return; var d = D.createElement("div"); d.innerHTML = tlSection(); box.replaceWith(d.firstChild); tlOut(); }
+  function tlRecalc() { if (!TL.prof) return; var L = linkIn(); TL.res = R().terrainLink(TL.prof, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k }); tlOut(); tlDraw(); }
+  function tlRun() {
+    var P = tlPts(), T = W.OSAP_TERRAIN_ANALYSIS; if (!P.a || !P.b) return;
+    if (!T || !T.profile) { TL.err = "The terrain engine is not available on this page."; tlOut(); return; }
+    var my = ++TL.run, d = R().hav_km(P.a, P.b);
+    if (!(d > 0.02)) { TL.err = "A and B are the same place."; TL.res = null; tlOut(); return; }
+    if (d > 300) { TL.err = "A and B are " + f(d, 0) + " km apart: the terrain check works up to 300 km."; TL.res = null; tlOut(); return; }
+    TL.busy = true; TL.err = ""; tlRepaint();
+    T.profile(P.a, P.b, { res_m: Math.max(30, Math.round(d * 1000 / 600)) }).then(function (pr) {
+      if (my !== TL.run) return;
+      TL.busy = false; TL.prof = pr; var L = linkIn(); L.d_km = Math.round(pr.total_m) / 1000; put(KL, Object.assign(get(KL, {}), { d_km: L.d_km }));
+      var di = S.ctx && S.ctx.rail.querySelector('[data-cpl="d_km"]'); if (di) di.value = L.d_km;
+      tlRepaint(); tlRecalc(); linkOut();
+    }, function (e) { if (my !== TL.run) return; TL.busy = false; TL.err = "The ground could not be read (" + E(e && e.message || "error") + "). Elevation tiles need a connection the first time."; tlRepaint(); });
+  }
+  function tlChart(x) {
+    var rows = x.rows, WD = 340, HT = 160, P = { l: 40, r: 8, t: 10, b: 22 }, D0 = x.total_m || 1, ys = [];
+    rows.forEach(function (r) { if (r.ground_m != null) ys.push(r.ground_m); ys.push(r.los_m + r.f1_m, r.los_m - r.f1_m); });
+    if (!ys.length) return "";
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max(5, (hi - lo) * 0.06); lo -= pad; hi += pad;
+    function X(d) { return (P.l + (WD - P.l - P.r) * d / D0).toFixed(1); } function Y(z) { return (P.t + (HT - P.t - P.b) * (1 - (z - lo) / (hi - lo))).toFixed(1); }
+    var up = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m + r.f1_m); }), dn = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m - r.f1_m); }).reverse();
+    var up6 = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m + 0.6 * r.f1_m); }), dn6 = rows.map(function (r) { return X(r.dist_m) + "," + Y(r.los_m - 0.6 * r.f1_m); }).reverse();
+    var g = "", area = "", seg = [];
+    rows.forEach(function (r) { if (r.ground_m == null) { if (seg.length) { area += "M" + seg[0][0] + "," + Y(lo) + "L" + seg.join("L") + "L" + seg[seg.length - 1][0] + "," + Y(lo) + "Z"; seg = []; } return; } seg.push([X(r.dist_m), Y(r.ground_m)]); });
+    if (seg.length) area += "M" + seg[0][0] + "," + Y(lo) + "L" + seg.join("L") + "L" + seg[seg.length - 1][0] + "," + Y(lo) + "Z";
+    var w = x.worst, col = TLV[x.verdict][1], mk = w ? '<circle cx="' + X(w.dist_m) + '" cy="' + Y(w.ground_m) + '" r="4" fill="' + col + '" stroke="#fff"/>' : "";
+    var km = D0 / 1000, step = km > 40 ? 10 : km > 16 ? 5 : km > 6 ? 2 : km > 2.5 ? 1 : 0.5, ticks = "";
+    for (var t = 0; t <= km + 1e-9; t += step) ticks += '<text x="' + X(t * 1000) + '" y="' + (HT - 6) + '" text-anchor="middle">' + (Math.round(t * 10) / 10) + "</text>";
+    var r0 = rows[0], r1 = rows[rows.length - 1];
+    return '<svg class="cptlc" viewBox="0 0 ' + WD + " " + HT + '" role="img" aria-label="Terrain profile from A to B with the line of sight and Fresnel zone" font-size="9" fill="currentColor">' +
+      '<polygon points="' + up.concat(dn).join(" ") + '" fill="#4dabf7" fill-opacity=".14"/><polygon points="' + up6.concat(dn6).join(" ") + '" fill="#4dabf7" fill-opacity=".22"/>' +
+      '<path d="' + area + '" fill="#8d6e63" fill-opacity=".55"/>' +
+      '<line x1="' + X(0) + '" y1="' + Y(r0.los_m) + '" x2="' + X(D0) + '" y2="' + Y(r1.los_m) + '" stroke="' + col + '" stroke-width="1.6"/>' + mk +
+      '<text x="' + X(0) + '" y="' + (+Y(r0.los_m) - 5) + '" font-weight="700">A</text><text x="' + X(D0) + '" y="' + (+Y(r1.los_m) - 5) + '" text-anchor="end" font-weight="700">B</text>' +
+      '<text x="' + (P.l - 4) + '" y="' + (+Y(hi) + 8) + '" text-anchor="end">' + Math.round(hi) + '</text><text x="' + (P.l - 4) + '" y="' + Y(lo) + '" text-anchor="end">' + Math.round(lo) + "</text>" + ticks +
+      '<text x="' + (WD - P.r) + '" y="' + (HT - 16) + '" text-anchor="end">km</text><text x="2" y="' + (P.t + 2) + '">m</text></svg>' +
+      '<p class="obs">Brown: ground (raised for the Earth\'s curve). Line: line of sight. Blue: first Fresnel zone, darker where the 60% that should stay clear is. ● the tightest point.</p>';
+  }
+  function tlOut() {
+    var el = S.ctx && S.ctx.rail.querySelector("#cp-tlout"); if (!el) return;
+    if (TL.busy) { el.innerHTML = '<p class="cpres">Reading the ground between A and B…</p>'; return; }
+    if (TL.err) { el.innerHTML = '<p class="cpres" style="border-left:5px solid #6c757d">' + TL.err + "</p>"; return; }
+    var x = TL.res; if (!x) { el.innerHTML = ""; return; }
+    var v = TLV[x.verdict], L = linkIn(), w = x.worst;
+    var b = R().linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: x.total_m / 1000, f_mhz: L.f_mhz, extra_db: isFinite(x.knife_db) ? x.knife_db : 0 });
+    var rows = "<tr><th>Path</th><td>" + f(x.total_m / 1000, 2) + " km at " + f(L.f_mhz, 3) + " MHz, antennas " + f(L.ha_m, 1) + " m (A) and " + f(L.hb_m, 1) + " m (B) above the ground, k " + f(L.k, 2) + "</td></tr>";
+    if (w) rows += "<tr><th>Tightest point</th><td>" + f(w.dist_m / 1000, 2) + " km from A" + (w.lat != null ? " (" + E(mgrs(w.lat, w.lon)) + ")" : "") + ": " + (w.clear_m < 0 ? "ground " + f(-w.clear_m, 1) + " m above the line" : f(w.clear_m, 1) + " m below the line") + ", " + f(Math.max(0, w.ratio) * 100, 0) + "% of the " + f(w.f1_m, 1) + " m Fresnel radius clear</td></tr>" +
+      "<tr><th>Terrain loss</th><td>" + (x.knife_db > 0.05 ? "about " + f(x.knife_db, 1) + " dB (single knife-edge estimate at the tightest point)" : "none expected") + "</td></tr>" +
+      "<tr><th>Margin with terrain</th><td>" + (isFinite(b.margin_db) ? "<b>" + f(b.margin_db, 1) + " dB</b> above the receiver's sensitivity" + (b.margin_db < L.fade_db ? ' <b class="cpbad">(less than the ' + f(L.fade_db, 0) + " dB you want)</b>" : "") : "enter the link numbers below") + "</td></tr>";
+    if (x.verdict !== "clear" && w) rows += "<tr><th>Antenna height to clear 60%</th><td>raise A by " + f(x.need_a_m, 1) + " m, or B by " + f(x.need_b_m, 1) + " m, or both by " + f(x.need_both_m, 1) + " m</td></tr>";
+    rows += "<tr><th>Ground data</th><td>" + (x.nodata_pct > 0.5 ? f(x.nodata_pct, 0) + "% of the path has no elevation data (shown as gaps)" : "the whole path") + (TL.prof && TL.prof.res_m ? ", every " + f(TL.prof.res_m, 0) + " m" : "") + (TL.prof && TL.prof.sources && TL.prof.sources.length ? "; " + E(TL.prof.sources.map(function (s) { return s.name || s; }).join(", ")) : "") + "</td></tr>";
+    el.innerHTML = '<p class="cpres" style="border-left:5px solid ' + v[1] + '"><b>' + v[0] + "</b> (modelled): " + E(x.reason ? "ground unknown, " + x.reason + "." : v[2]) + "</p>" + tlChart(x) + '<table class="rttab"><tbody>' + rows + "</tbody></table>";
+  }
+  function tlDraw() {
+    tlLayerOff(); if (!S.ctx || S.tab !== "link" || !W.L) return;
+    var P = tlPts(), x = TL.res; if (!P.a && !P.b) return;
+    tlLayer = W.L.layerGroup();
+    var col = x ? TLV[x.verdict][1] : "#1c7ed6", svg = W.L.svg();
+    if (P.a && P.b) W.L.polyline([P.a, P.b], { renderer: svg, color: col, weight: 4, opacity: 0.9, dashArray: x && x.verdict === "blocked" ? "8 6" : null, interactive: false }).addTo(tlLayer);
+    [["A", P.a], ["B", P.b]].forEach(function (q) {
+      if (!q[1]) return;
+      W.L.marker(q[1], { keyboard: false, interactive: false, icon: W.L.divIcon({ className: "cptlm", html: "<span>" + q[0] + "</span>", iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(tlLayer);
+    });
+    if (x && x.worst && x.worst.lat != null) W.L.circleMarker([x.worst.lat, x.worst.lon], { renderer: svg, radius: 6, color: "#fff", weight: 2, fillColor: col, fillOpacity: 1, interactive: false }).addTo(tlLayer);
+    S.ctx.layer.addLayer(tlLayer);
+  }
+  function tlAct(b) {
+    var a = b.getAttribute("data-tl"); if (!a) return false;
+    if (a === "a" || a === "b") TL.arm = TL.arm === a ? null : a;
+    else if (a === "go") { TL.arm = null; tlRun(); return true; }
+    else if (a === "swap") { var P = tlPts(); tlSet("tA", P.b); tlSet("tB", P.a); TL.arm = null; if (TL.prof) { tlRun(); return true; } }
+    else if (a === "clear") { TL.run++; tlSet("tA", null); tlSet("tB", null); TL.arm = null; TL.res = null; TL.prof = null; TL.err = ""; TL.busy = false; }
+    tlRepaint(); tlDraw(); return true;
+  }
+  function tlInMap(e) { var m = S.ctx && S.ctx.map && S.ctx.map.getContainer(); return !!m && m.contains(e.target) && !(e.target.closest && e.target.closest(".leaflet-control,.leaflet-popup")); }
+  W.addEventListener("pointerdown", function (e) { tlDown = TL.arm && S.tab === "link" && tlInMap(e) ? [e.clientX, e.clientY] : null; }, true);
+  W.addEventListener("click", function (e) {
+    if (!TL.arm || S.tab !== "link" || !tlDown || !tlInMap(e) || D.documentElement.getAttribute("data-view") !== "comms") return;
+    if (Math.abs(e.clientX - tlDown[0]) + Math.abs(e.clientY - tlDown[1]) > 8) return;
+    e.stopPropagation(); e.preventDefault();
+    var ll = S.ctx.map.mouseEventToLatLng(e), lon = W.L.Util.wrapNum(ll.lng, [-180, 180], true), k = TL.arm;
+    tlSet(k === "a" ? "tA" : "tB", [ll.lat, lon]);
+    var P = tlPts(); TL.arm = k === "a" && !P.b ? "b" : null; TL.res = null; TL.prof = null;
+    tlRepaint(); tlDraw();
+    if (P.a && P.b) tlRun();
+  }, true);
 
   /* ---------- Equipment: battery and power planner (localStorage osap-cp-power, part of the workspace) ---------- */
   function loadPower() {
@@ -601,7 +713,7 @@
   function cableAct(t) {
     if (t.getAttribute("data-cb") !== "use") return;
     var c = cableIn(), r = R().feedline(c), L = linkIn();
-    L.f_mhz = c.f_mhz; L.ptx_w = c.ptx_w; L.gtx_dbi = c.gain_dbi; L.ltx_db = Math.round(r.total_db * 100) / 100; L.band = "custom"; put(KL, L);
+    L.f_mhz = c.f_mhz; L.ptx_w = c.ptx_w; L.gtx_dbi = c.gain_dbi; L.ltx_db = Math.round(r.total_db * 100) / 100; L.band = "custom"; put(KL, Object.assign(get(KL, {}), L));
     setTab("link");
   }
 
@@ -1113,6 +1225,7 @@
     if (cm) { cm.hidden = !(t === "coverage" || t === "networks"); cm.setAttribute("data-part", t); }
     if (t !== "status") intfLayerOff();
     if (t !== "coverage") corrLayerOff();
+    if (t !== "link") { tlLayerOff(); TL.arm = null; }
     if (el) el.setAttribute("data-tab", t);
     if (t === "plan") renderPlanTab(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderEquip(); else if (t === "networks") renderNetworks();
     else { renderCoverage(); drawCorr(); }
@@ -1133,6 +1246,7 @@
       else if (S.tab === "status") statusAct(b);
       else if (S.tab === "equipment") equipClick(b);
       else if (S.tab === "coverage") corrAct(b);
+      else if (S.tab === "link") tlAct(b);
     });
     var onIn = function (e) {
       var t = e.target; if (!t.closest || !t.closest("#cp-pane") || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
@@ -1150,7 +1264,7 @@
     try { S.esub = localStorage.getItem(KE) || "power"; S.psub = localStorage.getItem(KPS) || "pace"; } catch (e) { S.esub = "power"; S.psub = "pace"; }
     if (!PSUBS.some(function (x) { return x[0] === S.psub; })) S.psub = "pace";
     if (!ESUBS.some(function (x) { return x[0] === S.esub; })) S.esub = "power";
-    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null;
+    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null; tlLayer = null; TL.arm = null;
     if (W.OSAP_COMMSPLAN_WANT === "route") { W.OSAP_COMMSPLAN_WANT = null; routeCorridor(); } else setTab(t0 || "coverage");
   }
 
@@ -1199,9 +1313,11 @@
     ".cpsub button[aria-pressed=true]{background:var(--ink);color:var(--surface,#fff)}table.cplog td{font-family:system-ui,sans-serif;font-size:12px}table.cplog small{color:var(--muted)}" +
     "tr.cpdis td{color:#c92a2a}.cpant p{font-size:13px;line-height:1.45;margin:6px 0 0}" +
     ".cpchk{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:12.5px;color:var(--ink)}ol.cpfixs{margin:6px 0;padding-left:20px;font-size:12.5px}ol.cpfixs li.cur{font-weight:700}ul.cpfixl{margin:4px 0;padding-left:18px;font-size:13px;line-height:1.5}" +
+    ".cptlc{width:100%;height:auto;display:block;margin:6px 0 0}#cp-tl .rttab{table-layout:fixed}#cp-tl .rttab th{width:32%}#cp-tl .rttab td{overflow-wrap:anywhere}#cp-tl button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}" +
+    ".cptlm{background:none;border:0}.cptlm span{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1c7ed6;color:#fff;font:700 12px/1 system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
     "@media (pointer:coarse){.cp input,.cp select,.cp textarea{font-size:16px!important}}";
   D.head.appendChild(st);
 
-  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
+  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, picking: function () { return !!TL.arm && S.tab === "link"; }, terrainLink: function () { return { arm: TL.arm, busy: TL.busy, err: TL.err, res: TL.res, pts: tlPts() }; }, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 })();
