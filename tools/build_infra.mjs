@@ -28,7 +28,7 @@ import { ccsAt, ccFromA2, ccFromName, COUNTRIES } from "./geo_cc.mjs";
 const OUT = process.env.INFRA_OUT || "data/infra", DEBUG = !!process.env.INFRA_DEBUG;
 const ONLY = process.env.INFRA_ONLY ? new Set(process.env.INFRA_ONLY.split(",")) : null;
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AXIOM-OSAP infrastructure snapshot (+https://github.com/01shane89-jpg/AXIOM-APSAP)";
-const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+const OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass-api.de/api/interpreter"];
 const WDQS = "https://query.wikidata.org/sparql";
 const OA = "https://davidmegginson.github.io/ourairports-data/";
 const LOCODE = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv";
@@ -191,22 +191,47 @@ async function overpass(q) {
   }
   throw err;
 }
+let osmCover = null;
 const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|proposed|construction)[:_]/;
+/* The world is read in tiles (15 degrees of longitude by three latitude bands, one query per kind of site), each cached in
+   data/infra/_osm/ with the time it was read. A run reads the tiles never read first, then the oldest, until its time budget
+   (INFRA_OSM_MIN minutes, default 55) is spent; a tile that fails keeps its last copy. So the whole world fills in over a few
+   runs and then refreshes in turn, and a busy Overpass server never empties the map. */
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator)$/;
 async function osm() {
-  const els = [];
-  const Q = [`nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];`, `nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];`, `nwr["waterway"="dam"]["name"];`];
-  let failed = 0;
-  for (let w = -180; w < 180; w += 15) for (const part of Q) {
-    const bb = [-60, w, 84, w + 15].join(",");
-    try {
-      const e = await overpass(`[out:json][timeout:300][maxsize:536870912][bbox:${bb}];(${part});out center tags;`);
-      log("  osm band", w, part.slice(6, 30), e.length);
-      els.push(...e);
-    } catch (e) { failed++; log("  osm band FAILED", w, part.slice(6, 30), e.message); }
-    await sleep(3000);
+  const Q = { af: `nwr["aeroway"="aerodrome"];nwr["aeroway"="heliport"];`, port: `nwr["landuse"="port"];nwr["industrial"="port"];nwr["amenity"="ferry_terminal"]["name"];`, dam: `nwr["waterway"="dam"]["name"];` };
+  const LAT = [[-60, 0], [0, 30], [30, 84]];
+  mkdirSync(OSM_DIR, { recursive: true });
+  const tiles = [];
+  for (const part of Object.keys(Q)) for (let w = -180; w < 180; w += 15) for (const [s0, n0] of LAT) {
+    const f = join(OSM_DIR, part + "_" + w + "_" + s0 + ".json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
+    tiles.push({ part, w, s0, n0, f, old, at: old ? Date.parse(old.at) : 0 });
   }
-  /* a few busy bands may fail; most of the world failing means the source failed */
-  if (failed > 12) throw new Error(failed + " of " + Q.length * 24 + " Overpass queries failed");
+  const budget = Date.now() + (+process.env.INFRA_OSM_MIN || 55) * 60000;
+  let fresh = 0, failed = 0;
+  for (const t of tiles.slice().sort((a, b) => a.at - b.at)) {
+    if (Date.now() > budget) break;
+    if (t.at && Date.now() - t.at < 3 * 864e5) continue;   // read in the last three days
+    try {
+      const e = await overpass(`[out:json][timeout:240][bbox:${[t.s0, t.w, t.n0, t.w + 15].join(",")}];(${Q[t.part]});out center tags;`);
+      const els = [];
+      for (const x of e) {
+        const c = x.center || (x.lat != null ? x : null); if (!c) continue;
+        const tg = x.tags || {};
+        if (Object.keys(tg).some((k) => DEAD.test(k)) || tg.disused === "yes" || tg.abandoned === "yes") continue;
+        els.push([x.type[0] + x.id, r4(c.lat), r4(c.lon), Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]))]);
+      }
+      t.old = { at: new Date().toISOString(), els }; writeFileSync(t.f, JSON.stringify(t.old)); fresh++;
+      log("  osm tile", t.part, t.w, t.s0, els.length);
+    } catch (e) { failed++; log("  osm tile FAILED", t.part, t.w, t.s0, e.message); }
+    await sleep(2000);
+  }
+  const have = tiles.filter((t) => t.old).length;
+  log("  osm tiles read this run", fresh, "failed", failed, "; tiles held", have, "of", tiles.length);
+  if (!have) throw new Error("no OpenStreetMap tile could be read");
+  osmCover = { tiles: have, of: tiles.length, fresh };
+  const els = [];
+  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags] of t.old.els) els.push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags });
   const seen = new Set(), out = [];
   for (const e of els) {
     const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
@@ -328,7 +353,7 @@ async function run(s, f) {
   if (ONLY && !ONLY.has(s)) { got[s] = prev[s] || { items: [], lines: [] }; status[s] = { ...(prevIx.sources[s] || {}), kept: true }; return; }
   try {
     const r = await f(); got[s] = Array.isArray(r) ? { items: r, lines: [] } : r;
-    status[s] = { ok: true, at: now, n: got[s].items.length + got[s].lines.length }; log(s, "ok", got[s].items.length, "points", got[s].lines.length, "lines");
+    status[s] = { ok: true, at: now, n: got[s].items.length + got[s].lines.length, ...(s === "osm" && osmCover ? { cover: osmCover } : {}) }; log(s, "ok", got[s].items.length, "points", got[s].lines.length, "lines");
   } catch (e) {
     got[s] = prev[s] || { items: [], lines: [] };
     status[s] = { ok: false, at: (prevIx.sources[s] || {}).at || null, n: got[s].items.length + got[s].lines.length, err: String(e.message || e).slice(0, 120), tried: now };

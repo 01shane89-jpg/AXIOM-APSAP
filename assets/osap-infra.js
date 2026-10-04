@@ -185,7 +185,8 @@
       bits.push(x.name + ": " + (t || l ? fmt(t) + (x.lines ? " landing points, " + fmt(l) + " cables" : "") + " in this country" : "none listed for this country"));
     });
     var ix = S.ix, stale = ix && ix.sources ? Object.keys(ix.sources).filter(function (k) { return ix.sources[k].ok === false; }).map(function (k) { return ix.sources[k].name; }) : [];
-    return bits.join(". ") + "." + (n.hidden ? " " + fmt(n.hidden) + " smaller sites in view appear when you zoom in." : "") +
+    var cv = ix && ix.sources && ix.sources.osm && ix.sources.osm.cover;
+    return bits.join(". ") + "." + (cv && cv.tiles < cv.of ? " OpenStreetMap sites are still filling in: " + cv.tiles + " of " + cv.of + " map tiles read so far." : "") + (n.hidden ? " " + fmt(n.hidden) + " smaller sites in view appear when you zoom in." : "") +
       (ix && ix.at ? " List built " + String(ix.at).replace("T", " ") + "." : "") +
       (stale.length ? " Last refresh could not reach " + stale.join(", ") + "; their sites are from the run before." : "");
   }
