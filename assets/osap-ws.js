@@ -1,7 +1,7 @@
 /* AXIOM OSAP: workspaces, and KML/KMZ import and export (Shane 2026-09-29: "where am I saving all these places? ... a workspace
    where you can save items into a project"; "Can we import kmz/kml files?").
    - A workspace holds everything the analyst makes on this device: map points and their photos, the drawn area of each country,
-     NAI/TAI areas, routes, imported KML shapes, keyword watches, and My work (saved reports, notes, review marks).
+     NAI/TAI areas, routes, imported KML shapes, saved viewsheds, keyword watches, Comms planning PACE and power plans, and My work (saved reports, notes, review marks).
    - One workspace is active. Every feature keeps saving to its own browser store as before, and those stores are the active
      workspace. Switching packs the active workspace's stores away (localStorage "osap-ws-data-<id>") and unpacks the other
      one, then reloads, so no other feature needs to know about workspaces. A half-done switch is rolled back on the next load.
@@ -21,7 +21,7 @@
   var W = window, D = document;
   if (/[?&]watchscan=1(&|$)/.test(location.search)) return;
   var REG = "osap-ws", DATA = "osap-ws-data-", GO = "osap-ws-go", MSG = "osap-ws-msg", SHAPES = "osap-shapes", PTS = "osap-atak-pts";
-  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES];
+  var KEYS = [PTS, "osap-aoi", "osap-routes", "osap-route-cur", "osap-evac-plans", "osap-cp-pace", "osap-cp-power", "osap-epe-plans", "osap-epe-cur", "asap-watches", "asap-watch-hits", "asap-watch-seen", "osap-work", SHAPES, "osap-viewsheds"];
   var AREA_RE = /^asap-area-([a-z]{2,3})$/, AREA_ANY = /^asap-area-[a-z]{2,3}(-st)?$/;
   var MAX_FILE = 25 * 1048576, MAX_UNZIP = 60 * 1048576, MAX_PTS = 500, MAX_SHAPES = 300, MAX_VERT = 2000, MAX_WS = 30, SHOW = 40;
 
@@ -112,11 +112,12 @@
     return [[s, w], [n, e]];
   }
   function itemsOf(get) {
-    var I = { pts: [], areas: [], aoi: [], routes: [], shapes: [], watches: [], work: [] };
+    var I = { pts: [], areas: [], aoi: [], routes: [], shapes: [], vs: [], watches: [], work: [] };
     arr(json(get(PTS) || "[]", [])).forEach(function (p) { if (p && isFinite(p.lat) && isFinite(p.lon)) I.pts.push({ id: p.id, name: p.n || "Point", cc: p.cc, ph: +p.ph || 0, sym: p.sym, go: { c: [+p.lat, +p.lon], z: 14 } }); });
     arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) I.aoi.push({ id: a.id, name: a.type + " " + a.name, cc: a.cc, go: { b: bounds(a.pts) } }); });
     arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat) && isFinite(p.lon); }); if (w.length > 1) I.routes.push({ id: x.id, name: x.name || "Route", cc: x.cc, sub: w.length + " waypoints", go: { route: w.map(function (p) { return [+p.lat, +p.lon]; }) } }); });
     arr(json(get(SHAPES) || "[]", [])).forEach(function (s) { if (okShape(s)) I.shapes.push({ id: s.id, name: s.name || (s.kind === "line" ? "Line" : "Area"), cc: s.cc, sub: (s.kind === "line" ? "line" : "area") + (s.file ? " from " + s.file : ""), go: { b: bounds(s.pts) } }); });
+    vsOf(get).forEach(function (v) { I.vs.push({ id: v.id, name: v.name || "Viewshed", cc: v.cc, sub: (v.mode === "reverse" ? "reverse viewshed, " : "viewshed, ") + Math.round(v.radius_m / 1000) + " km", go: { vs: v.id, c: [v.observer.lat, v.observer.lon], z: 12 } }); });
     arr(json(get("asap-watches") || "[]", [])).forEach(function (w) { if (w) I.watches.push({ id: w.id, name: w.name || (Array.isArray(w.kw) ? w.kw.join(", ") : "") || "Watch", cc: w.cc, go: { watch: 1 } }); });
     var wk = json(get("osap-work") || "null", null), it = wk && wk.items && typeof wk.items === "object" ? wk.items : {};
     Object.keys(it).forEach(function (k) { var x = it[k]; if (x && (x.saved || x.note || x.reviewed)) I.work.push({ id: k, name: (x.snap && x.snap.title) || "Saved report", cc: x.cc, sub: [x.saved ? "saved" : "", x.note ? "note" : "", x.reviewed ? "reviewed" : ""].filter(String).join(", "), go: { work: 1 } }); });
@@ -124,7 +125,7 @@
   }
   function liveItems() { var I = itemsOf(raw), keys = liveKeys(); keys.forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(raw(k), [])); if (P && P.length > 2) I.areas.push({ id: m[1], name: "Drawn area", cc: m[1], go: { b: bounds(P) } }); }); return I; }
   function storedItems(id) { var S = stored(id), I = itemsOf(function (k) { return S[k]; }); Object.keys(S).forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(S[k], [])); if (P && P.length > 2) I.areas.push({ id: m[1], name: "Drawn area", cc: m[1] }); }); return I; }
-  var GROUPS = [["pts", "Map points"], ["areas", "Drawn areas"], ["aoi", "NAI / TAI"], ["routes", "Routes"], ["shapes", "Imported shapes"], ["watches", "Keyword watches"], ["work", "Saved reports and notes"]];
+  var GROUPS = [["pts", "Map points"], ["areas", "Drawn areas"], ["aoi", "NAI / TAI"], ["routes", "Routes"], ["shapes", "Imported shapes"], ["vs", "Viewsheds"], ["watches", "Keyword watches"], ["work", "Saved reports and notes"]];
   function summary(I) { var o = []; GROUPS.forEach(function (g) { if (I[g[0]].length) o.push(I[g[0]].length + " " + g[1].toLowerCase()); }); return o.length ? o.join(", ") : "empty"; }
 
   /* ---------- open an item on the map: another country's item reloads the page on that country first ---------- */
@@ -141,12 +142,14 @@
     if (t.work && W.OSAP_WORK) { W.OSAP_WORK.open("mine"); return; }
     if (t.watch && W.OSAP_WATCH) { W.OSAP_WATCH.open(); return; }
     if (t.route && W.OSAP_ROUTE_SEED) { W.OSAP_ROUTE_SEED(t.route); return; }
+    if (t.vs && W.OSAP_TERRAIN_ANALYSIS && W.OSAP_TERRAIN_ANALYSIS.showSaved) { W.OSAP_TERRAIN_ANALYSIS.showSaved(t.vs); return; }
     if (t.c) map.setView(t.c, Math.max(map.getZoom(), t.z || 13));
     else if (t.b) map.fitBounds(t.b, { padding: [30, 30], maxZoom: 15 });
   }
 
   /* ---------- imported shapes (KML lines and polygons), drawn on their own country's map ---------- */
   function okShape(s) { return s && typeof s.id === "string" && (s.kind === "line" || s.kind === "poly") && Array.isArray(s.pts) && s.pts.length >= (s.kind === "line" ? 2 : 3); }
+  function vsOf(get) { return arr(json(get("osap-viewsheds") || "[]", [])).filter(function (v) { return v && typeof v.id === "string" && v.observer && isFinite(v.observer.lat) && isFinite(v.observer.lon) && isFinite(v.radius_m); }); }
   function shapes() { return arr(json(raw(SHAPES) || "[]", [])).filter(okShape); }
   function col(c, d) { return /^#[0-9a-f]{6}$/i.test(c || "") ? c : d; }
   var shLayer = null, shSvg = null;
@@ -379,12 +382,22 @@
     Object.keys(areas).forEach(function (c) { F.push({ g: "Polygon", kind: "drawn-area", name: "Drawn area, " + cName(c), cc: c, P: areas[c], col: "#1c7ed6" }); });
     arr(json(get("osap-aoi") || "[]", [])).forEach(function (a) { if (a && Array.isArray(a.pts) && a.pts.length > 2) F.push({ g: "Polygon", kind: a.type, name: a.type + " " + a.name, note: a.notes, cc: a.cc, P: a.pts, col: a.type === "TAI" ? "#c92a2a" : "#1971c2" }); });
     arr(json(get("osap-routes") || "[]", [])).forEach(function (x) { var w = arr(x && x.wps).filter(function (p) { return p && isFinite(p.lat); }); if (w.length > 1) F.push({ g: "LineString", kind: "route", name: x.name, note: "Waypoints of a planned route (" + (x.mode || "") + ")", cc: x.cc, P: w.map(function (p) { return [+p.lat, +p.lon]; }), col: "#7048e8" }); });
+    /* saved viewsheds (assets/osap-terrain.js): the observer with its settings, the visible ground, the horizon */
+    vsOf(get).forEach(function (v) {
+      var what = v.mode === "reverse" ? "Reverse terrain viewshed: the ground from which this point can be seen" : "Terrain viewshed: the ground this observer can see";
+      F.push({ g: "Point", kind: "viewshed", name: v.name, cc: v.cc, P: [[v.observer.lat, v.observer.lon]], col: "#1b5e20",
+        note: what + ". " + (v.mode === "reverse" ? "Point height " + v.observer.height_m + " m, observer height " + v.target_height_m + " m" : "Observer height " + v.observer.height_m + " m, target height " + v.target_height_m + " m") +
+          ", range " + Math.round(v.radius_m / 1000) + " km, grid " + v.terrain_resolution_m + " m, Earth curvature " + (v.curvature ? "on" + (v.refraction ? ", refraction k = " + v.refraction_k : "") : "off") +
+          ". Visible " + (v.result && v.result.visible_pct) + "%, unknown " + (v.result && v.result.unknown_pct) + "%. Elevation: " + (v.dem_source || "OSAP DEM") + ", terrain only: urban/vegetation obstruction NOT MODELED. Calculated " + (v.calculated || v.created || "") + "." });
+      arr(v.visible).forEach(function (q) { if (q && Array.isArray(q.o) && q.o.length > 2) F.push({ g: "Polygon", kind: "viewshed-visible", name: v.name + (v.mode === "reverse" ? ": can see the point" : ": visible terrain"), cc: v.cc, P: q.o, H: arr(q.h).filter(function (h) { return Array.isArray(h) && h.length > 2; }), col: "#2e7d32" }); });
+      if (arr(v.horizon).length > 2) F.push({ g: "LineString", kind: "viewshed-horizon", name: v.name + ": horizon", cc: v.cc, P: v.horizon.concat([v.horizon[0]]), col: "#ffd600" });
+    });
     S.forEach(function (s) { F.push({ g: s.kind === "line" ? "LineString" : "Polygon", kind: "imported-" + s.kind, name: s.name, note: s.desc, cc: s.cc, P: s.pts, col: col((s.st || {}).line, "#e8590c"), fill: (s.st || {}).fill }); });
     return F;
   }
   function liveAreas(get, keys) { var o = {}; keys.forEach(function (k) { var m = AREA_RE.exec(k), P = m && arr(json(get(k), [])); if (P && P.length > 2) o[m[1]] = P; }); return o; }
   function toKml(name, F) {
-    var groups = {}, order = [["point", "Map points"], ["drawn-area", "Drawn areas"], ["NAI", "NAI"], ["TAI", "TAI"], ["route", "Routes"], ["imported-line", "Imported lines"], ["imported-poly", "Imported areas"]];
+    var groups = {}, order = [["point", "Map points"], ["drawn-area", "Drawn areas"], ["NAI", "NAI"], ["TAI", "TAI"], ["route", "Routes"], ["imported-line", "Imported lines"], ["imported-poly", "Imported areas"], ["viewshed", "Viewsheds"], ["viewshed-visible", "Viewshed visible terrain"], ["viewshed-horizon", "Viewshed horizons"]];
     F.forEach(function (f) { (groups[f.kind] = groups[f.kind] || []).push(f); });
     return '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xesc(name) + "</name>" +
       "<description>AXIOM OSAP workspace, exported " + xesc(new Date().toISOString().slice(0, 16)) + "Z. The analyst's own marks and areas, not reports.</description>" +
@@ -393,7 +406,8 @@
           var st = f.g === "Point" ? "<IconStyle><color>" + kHex(f.col) + "</color></IconStyle>" : "<LineStyle><color>" + kHex(f.col) + "</color><width>3</width></LineStyle>" +
             (f.g === "Polygon" ? "<PolyStyle><color>" + kHex(f.fill || f.col, 0.2) + "</color></PolyStyle>" : "");
           var geo = f.g === "Point" ? "<Point><coordinates>" + ll(f.P) + "</coordinates></Point>" : f.g === "LineString" ? "<LineString><tessellate>1</tessellate><coordinates>" + ll(f.P) + "</coordinates></LineString>"
-            : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + ll(f.P, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>";
+            : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + ll(f.P, true) + "</coordinates></LinearRing></outerBoundaryIs>" +
+              (f.H || []).map(function (h) { return "<innerBoundaryIs><LinearRing><coordinates>" + ll(h, true) + "</coordinates></LinearRing></innerBoundaryIs>"; }).join("") + "</Polygon>";
           return "<Placemark><name>" + xesc(f.name || "") + "</name>" + (f.note || f.cc ? "<description>" + xesc([f.note || "", f.cc ? cName(f.cc) : ""].filter(String).join("\n")) + "</description>" : "") + "<Style>" + st + "</Style>" + geo + "</Placemark>";
         }).join("") + "</Folder>";
       }).join("") + "</Document></kml>\n";
@@ -402,7 +416,7 @@
     return JSON.stringify({ type: "FeatureCollection", features: F.map(function (f) {
       var c = f.P.map(function (p) { return [p[1], p[0]]; });
       return { type: "Feature", properties: { kind: f.kind, name: f.name || "", note: f.note || "", country: f.cc || "", photos: f.photos || undefined },
-        geometry: f.g === "Point" ? { type: "Point", coordinates: c[0] } : f.g === "LineString" ? { type: "LineString", coordinates: c } : { type: "Polygon", coordinates: [c.concat([c[0]])] } };
+        geometry: f.g === "Point" ? { type: "Point", coordinates: c[0] } : f.g === "LineString" ? { type: "LineString", coordinates: c } : { type: "Polygon", coordinates: [c.concat([c[0]])].concat((f.H || []).map(function (h) { var q = h.map(function (p) { return [p[1], p[0]]; }); return q.concat([q[0]]); })) } };
     }) });
   }
   function fname(n) { return String(n || "workspace").replace(/[^A-Za-z0-9 _-]+/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "workspace"; }
