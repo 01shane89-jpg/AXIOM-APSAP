@@ -10,6 +10,9 @@
 // the ridge to the east; Line of sight from here sets A and the next tap B (BLOCKED by the ridge, recalculated when A's height
 // changes); Measure's Profile gives A to B for two points and the elevation profile (climb, descent) for a path, none for a
 // closed shape; modules' OSAP_PROFILE_EXT sections get the profile;
+// a viewshed saves under a name with the agreed fields, its visible ground as polygons and its horizon; toggles in the panel
+// and Map overlays agree; rename, recalculate (kept in place) and delete (asks first); the workspace lists it and its KML
+// carries the observer, polygons and horizon; after a reload it is drawn from the stored shapes with nothing downloaded;
 // tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -234,6 +237,69 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   await p.evaluate(() => document.querySelector('#terrain [data-ts="clear"]').click()); await p.waitForTimeout(200);
   ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().marks === 0), "line of sight: Clear removes A, B and the line");
   ok(errors.length === 0, "tools: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- saved viewsheds: save, toggles, rename, recalculate, delete, workspace, KML ---------- */
+{
+  const { ctx, p, errors, dem } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_TERRAIN_ANALYSIS.viewshedAt(c); }, C0);
+  await settled(p);
+  ok(await p.evaluate(() => !!document.querySelector('#terrain [data-ts="save"]') && document.getElementById("ts-name").value === "Viewshed 01"), "save: a finished result offers Save viewshed, named Viewshed 01");
+  await p.fill("#ts-name", "Ridge watch");
+  await p.click('#terrain [data-ts="save"]'); await p.waitForTimeout(200);
+  let saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  const v = saved[0] || {};
+  ok(saved.length === 1 && v.name === "Ridge watch" && v.type === "viewshed" && v.mode === "viewshed" && v.observer && Math.abs(v.observer.lat - 13.75) < 1e-4 && v.observer.height_m === 1.7 && v.target_height_m === 1.7 && v.radius_m === 10000 &&
+    v.terrain_resolution_m === 30 && v.curvature === false && v.dem_source === "OSAP DEM" && v.terrain_model === "DEM (terrain only)" && v.engine === "osap-viewshed/1" && v.result && v.result.visible_pct > 30 && /^\d{4}-\d\d-\d\dT/.test(v.created),
+    "save: stored in osap-viewsheds with the agreed fields: " + JSON.stringify({ name: v.name, obs: v.observer, r: v.radius_m, res: v.terrain_resolution_m, dem: v.dem_detail, result: v.result }));
+  const geo = await p.evaluate((vv) => {
+    function inR(p, r) { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[i], b = r[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+    function vis(p) { return vv.visible.some((q) => inR(p, q.o) && !(q.h || []).some((h) => inR(p, h))); }
+    return { n: vv.visible.length, verts: vv.visible.reduce((a, q) => a + q.o.length + (q.h || []).reduce((b, h) => b + h.length, 0), 0), west: vis([13.75, 100.47]), east: vis([13.75, 100.535]), hz: vv.horizon.length, bytes: JSON.stringify(vv).length };
+  }, v);
+  ok(geo.n >= 1 && geo.west && !geo.east && geo.verts < 4000 && geo.hz > 50, "save: the visible ground is stored as polygons (west of the ridge inside, behind it outside) with the horizon line: " + JSON.stringify(geo));
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3), "save: the saved viewshed is drawn on the map");
+  ok(await p.evaluate(() => /Saved as\s*Ridge watch/.test(document.getElementById("terrain").textContent) && /SAVED VIEWSHEDS \(1\)/.test(document.getElementById("terrain").textContent)), "save: the panel says where it went and lists it");
+  ok(await p.evaluate(() => { const b = document.querySelector('#ml-viewsheds [data-vson]'); return !!b && b.checked && /Ridge watch/.test(document.getElementById("ml-viewsheds").textContent); }), "Map overlays: the saved viewshed is listed with an on toggle");
+  /* toggle off from Map overlays */
+  await p.evaluate(() => document.querySelector('#ml-viewsheds [data-vson]').click()); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks === 0 && JSON.parse(localStorage.getItem("osap-viewsheds"))[0].on === false && !document.querySelector('#terrain [data-vson]').checked), "toggle: off in Map overlays hides it and the panel follows");
+  await p.evaluate(() => document.querySelector('#terrain [data-vson]').click()); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3), "toggle: on again in the panel");
+  /* a second one, a reverse viewshed: names do not clash */
+  await p.click('#terrain [data-mode="rev"]'); await settled(p);
+  ok(await p.evaluate(() => document.getElementById("ts-name").value === "Reverse viewshed 01"), "save: a reverse viewshed gets its own name");
+  await p.click('#terrain [data-ts="save"]'); await p.waitForTimeout(200);
+  saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  ok(saved.length === 2 && saved[1].mode === "reverse", "save: two saved viewsheds, the second reverse");
+  /* rename */
+  await p.click(`#terrain [data-vsren="${saved[1].id}"]`); await p.fill(`#terrain [data-vsrenin="${saved[1].id}"]`, "Who sees the CP"); await p.press(`#terrain [data-vsrenin="${saved[1].id}"]`, "Enter"); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds"))[1].name === "Who sees the CP" && /Who sees the CP/.test(document.getElementById("ml-viewsheds").textContent)), "rename: the name changes everywhere");
+  /* recalculate the first: the saved record is replaced, same id */
+  await p.click(`#terrain [data-vsopen="${saved[0].id}"]`); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().mode === "vs"), "recalculate: reopens in Viewshed mode");
+  await settled(p); await p.waitForTimeout(200);
+  saved = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds") || "[]"));
+  ok(saved.length === 2 && saved[0].name === "Ridge watch" && saved[0].calculated >= saved[0].created, "recalculate: worked out again and kept in place (" + saved[0].calculated + ")");
+  /* workspace and KML */
+  const ws = await p.evaluate(() => { const I = window.OSAP_WS.items(); return { n: I.vs.length, names: I.vs.map((x) => x.name), kml: window.OSAP_WS.kml() }; });
+  ok(ws.n === 2 && ws.names.includes("Ridge watch"), "workspace: My work > Workspaces lists the saved viewsheds");
+  ok(/<Folder><name>Viewsheds<\/name>/.test(ws.kml) && /<Folder><name>Viewshed visible terrain<\/name>/.test(ws.kml) && /<Folder><name>Viewshed horizons<\/name>/.test(ws.kml) && /NOT MODELED/.test(ws.kml) && /Ridge watch: visible terrain/.test(ws.kml), "KML: observer with its settings, visible terrain polygons and horizon lines");
+  ok(await p.evaluate(() => { const d = new DOMParser().parseFromString(window.OSAP_WS.kml(), "application/xml"); return !d.getElementsByTagName("parsererror").length && d.getElementsByTagName("Polygon").length >= 1; }), "KML: well-formed, with polygons");
+  /* delete asks once more */
+  await p.click(`#terrain [data-vsdel="${saved[1].id}"]`); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds")).length === 2 && /Delete: sure\?/.test(document.getElementById("terrain").textContent)), "delete: asks first");
+  await p.click(`#terrain [data-vsdel="${saved[1].id}"]`); await p.waitForTimeout(150);
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem("osap-viewsheds")).length === 1), "delete: removed on the second tap");
+  /* after a reload the saved one is drawn straight away from its stored shapes, with nothing downloaded */
+  await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.OSAP_TERRAIN_ANALYSIS, null, { timeout: 60000 }); await p.waitForTimeout(2000);
+  const d0 = dem();
+  ok(await p.evaluate(() => window.OSAP_TERRAIN_ANALYSIS.state().savedMarks >= 3 && /Ridge watch/.test(document.getElementById("ml-viewsheds").textContent)), "reload: the saved viewshed is back on the map and in Map overlays");
+  await p.waitForTimeout(500);
+  ok(dem() === d0 && await p.evaluate(() => !window.OSAP_TERRAIN_SRC), "reload: drawn from the stored shapes, no elevation downloaded");
+  if (OUT) await p.screenshot({ path: OUT + "/terrain-saved.png" });
+  ok(errors.length === 0, "saved: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 
