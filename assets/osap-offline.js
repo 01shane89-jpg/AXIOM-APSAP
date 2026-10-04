@@ -15,7 +15,8 @@
    press only fetches what is missing.
    Tiles live in the cache OFFLINE ("osap-offline"), which the service worker reads first and never trims; data files go in
    the service worker's own data cache ("asap-data", plain address). What was saved is listed in localStorage "osap-offline".
-   window.OSAP_OFFLINE {open, packs, has, tilesFor, est}. */
+   Terrain for viewshed and line of sight is saved the same way into its own cache (see "terrain" below).
+   window.OSAP_OFFLINE {open, packs, has, tilesFor, est, terrain}. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -206,11 +207,90 @@
     });
   }
 
+  /* ---------- terrain for viewshed and line of sight ----------
+     Elevation tiles (Terrain Tiles on AWS, keyless, open data) saved in their own cache, TCACHE, under their own address, and
+     listed in localStorage TKEY. Terrain analysis (assets/osap-terrain.js) reads them through its saved-terrain source
+     (assets/terrain/providers/packaged-dem.js) before going to the network, and with no signal enlarges coarser saved tiles
+     where the detail asked for was not saved. Same politeness as the map tiles: capped, four at a time, saved tiles skipped. */
+  var TCACHE = "osap-terrain", TKEY = "osap-terrain-offline", TKB = 45, TZ = [10, 11, 12, 13, 14];
+  var TURL = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+  function tget() { try { var r = JSON.parse(localStorage.getItem(TKEY)); if (r && r.packs) return r; } catch (e) {} return { v: 1, packs: {} }; }
+  function tput(r) { try { if (Object.keys(r.packs).length) localStorage.setItem(TKEY, JSON.stringify(r)); else localStorage.removeItem(TKEY); } catch (e) {} }
+  function turls(a) { return positions(a.b, a.z).map(function (p) { return TURL.replace("{z}", p[0]).replace("{x}", p[1]).replace("{y}", p[2]); }); }
+  function tzName(z) { return ({ 10: "About 150 m (zoom 10)", 11: "About 75 m (zoom 11)", 12: "About 40 m (zoom 12)", 13: "About 20 m: the Standard viewshed grid (zoom 13)", 14: "About 10 m: High detail (zoom 14)" })[z] || "Zoom " + z; }
+  function tArea(kind, z) {
+    var a = areaFor(kind, null), best = TZ[0];
+    TZ.forEach(function (k) { if (count(a.b, k) <= (kind === "view" ? MAX_POS : 3000)) best = k; });
+    a.z = z == null ? best : z; a.id = kind === "view" ? "t" + Date.now().toString(36) : "country";
+    return a;
+  }
+  function downloadTerrain(area) {
+    if (JOB) return;
+    var c = cc(), job = JOB = { stop: false, c: c, done: 0, total: 0, bytes: 0, fail: 0, skip: 0, files: 0, fbytes: 0, ffail: 0, phase: "terrain" };
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+    var urls = turls(area); job.total = urls.length;
+    render();
+    var tick = 0; function prog(n) { job.done = n; if (Date.now() - tick > 300) { tick = Date.now(); paint(); } }
+    return caches.open(TCACHE).then(function (tc) {
+      return pool(urls, function (u) {
+        return tc.match(u).then(function (hit) {
+          if (hit) { job.skip++; return; }
+          return fetch(u, { mode: "cors", credentials: "omit", cache: "no-store" }).then(function (res) {
+            /* S3 answers 403 for a tile that does not exist (open sea far from land): nothing to save */
+            if (!res.ok) { if (res.status !== 404 && res.status !== 403) job.fail++; return; }
+            return saveTo(tc, u, res).then(function (n) { job.bytes += n; });
+          }).catch(function () { job.fail++; });
+        });
+      }, prog);
+    }).then(function () {
+      var r = tget(), p = r.packs[c] || (r.packs[c] = { name: cinfo(c).name, areas: [] });
+      if (job.done || job.skip || job.bytes) {
+        area.at = new Date().toISOString(); area.n = job.total; area.bytes = (area.bytes || 0) + job.bytes;
+        if (!job.stop) { var i = p.areas.findIndex(function (a) { return a.id === area.id; }); if (i >= 0) { area.bytes += p.areas[i].bytes || 0; p.areas[i] = area; } else p.areas.push(area); }
+      }
+      if (!p.areas.length) delete r.packs[c];
+      tput(r);
+      JOB = null;
+      UI.msg = job.stop ? "Stopped. The terrain saved so far is kept; press Download terrain again to carry on." :
+        "Terrain saved. " + (job.fail ? job.fail + " elevation tiles could not be fetched; press Download terrain again to try just those." : "Viewshed, reverse viewshed and line of sight now work in this area with no signal.");
+      render();
+    }).catch(function (e) { JOB = null; UI.msg = "Could not save the terrain: " + (e && e.message || e) + ". The device may be out of space."; render(); });
+  }
+  function delTerrain(c, areaId) {
+    var r = tget(), p = r.packs[c]; if (!p) return Promise.resolve();
+    var gone = p.areas.filter(function (a) { return !areaId || a.id === areaId; }), keep = {};
+    Object.keys(r.packs).forEach(function (k) { (r.packs[k].areas || []).forEach(function (a) { if (gone.indexOf(a) < 0) turls(a).forEach(function (u) { keep[u] = 1; }); }); });
+    return caches.open(TCACHE).then(function (tc) {
+      var urls = []; gone.forEach(function (a) { turls(a).forEach(function (u) { if (!keep[u]) urls.push(u); }); });
+      return pool(urls, function (u) { return tc.delete(u); }, function () {});
+    }).then(function () {
+      var r2 = tget(), p2 = r2.packs[c]; if (!p2) return;
+      p2.areas = p2.areas.filter(function (a) { return areaId && a.id !== areaId; });
+      if (!p2.areas.length) delete r2.packs[c];
+      tput(r2);
+    });
+  }
+  function terrainSec(c, ci) {
+    var tp = tget().packs[c], a = tArea(UI.tkind, UI.tz), n = count(a.b, a.z), big = n > MAX_POS, mine = JOB && JOB.phase === "terrain";
+    var zopts = TZ.map(function (z) { var k = count(a.b, z); return '<option value="' + z + '"' + (z === a.z ? " selected" : "") + (k > MAX_POS ? " disabled" : "") + ">" + tzName(z) + (k > MAX_POS ? " (too big for this area)" : "") + "</option>"; }).join("");
+    return '<section class="offsec" id="off-terrain"><h3>Terrain for viewshed and line of sight</h3>' +
+      (tp && tp.areas.length ? "<ul>" + tp.areas.map(function (x) {
+        return "<li><span>" + esc(x.kind === "country" ? "Whole country" : "Map area " + x.b[0][0].toFixed(2) + ", " + x.b[0][1].toFixed(2) + " to " + x.b[1][0].toFixed(2) + ", " + x.b[1][1].toFixed(2)) +
+          ' <i class="obs">' + esc(tzName(x.z) + " · " + (x.n || 0).toLocaleString() + " tiles · " + mb(x.bytes || 0) + " · " + when(x.at)) + '</i></span><button type="button" data-off-tdel="' + esc(x.id) + '">Delete</button></li>';
+      }).join("") + "</ul>" : '<p class="obs">No terrain saved for ' + esc(ci.name) + " yet.</p>") +
+      '<div class="offrow" role="group" aria-label="Terrain area"><label><input type="radio" name="off-tkind" value="view"' + (UI.tkind === "view" ? " checked" : "") + "> What the map shows now</label>" +
+      '<label><input type="radio" name="off-tkind" value="country"' + (UI.tkind === "country" ? " checked" : "") + "> Whole country</label></div>" +
+      '<label class="offrow">Detail <select data-off-tz>' + zopts + "</select></label>" +
+      '<p class="obs">' + n.toLocaleString() + " elevation tiles, about " + mb(n * TKB * 1024) + (big ? ". Too big: zoom the map in and pick What the map shows now." : ". With no signal, a viewshed asking for finer detail than saved uses this terrain enlarged, and says so.") + "</p>" +
+      (mine ? '<div class="offprog"><progress max="1" value="0"></progress><span></span></div><div class="offbtns"><button type="button" class="refresh" data-off-stop>Stop</button></div>' :
+        '<div class="offbtns"><button type="button" class="refresh" data-off-tdl' + (can && !big && !JOB ? "" : " disabled") + ">Download terrain</button></div>") + "</section>";
+  }
+
   /* ---------- the panel ---------- */
   var box = D.createElement("div"); box.id = "offdlg"; box.hidden = true; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-labelledby", "off-h");
-  var UI = { msg: "", kind: "country", z: null, use: null, quota: null, persisted: null };
+  var UI = { msg: "", kind: "country", z: null, tkind: "view", tz: null, use: null, quota: null, persisted: null };
   function open() {
-    UI.msg = ""; UI.z = null; box.hidden = false; if (!box.parentNode) D.body.appendChild(box);
+    UI.msg = ""; UI.z = null; UI.tz = null; box.hidden = false; if (!box.parentNode) D.body.appendChild(box);
     if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { UI.use = e.usage; UI.quota = e.quota; render(); }).catch(function () {});
     if (navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(function (p) { UI.persisted = p; render(); }).catch(function () {});
     render(); var x = box.querySelector(".x"); if (x) x.focus();
@@ -219,8 +299,8 @@
   function paint() {
     var j = JOB, pr = box.querySelector(".offprog"); if (!j || !pr) return;
     pr.querySelector("progress").max = j.total || 1; pr.querySelector("progress").value = j.done;
-    pr.querySelector("span").textContent = (j.phase === "tiles" ? "Map tiles " : "Data files ") + j.done + " of " + j.total +
-      (j.phase === "tiles" ? " · " + mb(j.bytes) + " new" + (j.skip ? " · " + j.skip + " already saved" : "") + (j.fail ? " · " + j.fail + " failed" : "") : " · " + mb(j.fbytes));
+    pr.querySelector("span").textContent = (j.phase === "tiles" ? "Map tiles " : j.phase === "terrain" ? "Elevation tiles " : "Data files ") + j.done + " of " + j.total +
+      (j.phase === "tiles" || j.phase === "terrain" ? " · " + mb(j.bytes) + " new" + (j.skip ? " · " + j.skip + " already saved" : "") + (j.fail ? " · " + j.fail + " failed" : "") : " · " + mb(j.fbytes));
   }
   function render() {
     if (box.hidden) return;
@@ -246,10 +326,10 @@
       '<label><input type="radio" name="off-kind" value="view"' + (UI.kind === "view" ? " checked" : "") + "> What the map shows now</label></div>" +
       '<label class="offrow">Detail <select data-off-z>' + zopts + "</select></label>" +
       '<p class="obs">' + e.pos.toLocaleString() + " map squares, about " + mb(e.bytes) + ", plus the country's data (usually 5 to 20 MB)" + (big ? ". Too big: zoom the map in and pick What the map shows now." : ".") + "</p>" +
-      (JOB ? '<div class="offprog"><progress max="1" value="0"></progress><span></span></div><div class="offbtns"><button type="button" class="refresh" data-off-stop>Stop</button></div>' :
+      (JOB && JOB.phase !== "terrain" ? '<div class="offprog"><progress max="1" value="0"></progress><span></span></div><div class="offbtns"><button type="button" class="refresh" data-off-stop>Stop</button></div>' : JOB ? "" :
         '<div class="offbtns"><button type="button" class="refresh" data-off-dl' + (can && !big ? "" : " disabled") + ">" + (p ? "Download or update" : "Download for offline") + "</button>" +
         (p ? '<button type="button" data-off-del="' + esc(c) + '">Delete ' + esc(ci.name) + "</button>" : "") +
-        '<button type="button" data-off-use>Show the Offline map</button></div>') + "</section>" +
+        '<button type="button" data-off-use>Show the Offline map</button></div>') + "</section>" + terrainSec(c, ci) +
       "<h3>Saved on this device</h3>" + (saved ? '<ul class="offlist">' + saved + "</ul>" : '<p class="obs">Nothing yet.</p>') +
       '<p class="obs">' + (UI.use != null ? "OSAP uses " + mb(UI.use) + " on this device" + (UI.quota ? " of about " + mb(UI.quota) + " allowed" : "") + ". " : "") +
       (UI.persisted === true ? "Kept until you delete it." : UI.persisted === false ? "The browser may clear saved maps if the device runs short of space; installing OSAP to the home screen makes that less likely." : "") + "</p>" +
@@ -257,6 +337,7 @@
       "<p>The Offline map is Sentinel-2 cloudless 2021 satellite imagery by EOX (10 m, CC BY-NC-SA 4.0, non-commercial), which allows saving tiles. It has no street names; OSAP's own borders, reports and your points still draw on it. " +
       "Saved detail stops at zoom 13; closer in, the map enlarges the saved picture.</p>" +
       "<p>The Grey, Streets, Topographic and Esri satellite maps cannot be saved in bulk under their providers' terms. Parts of them you have already looked at are kept (up to 1,500 squares) and show offline.</p>" +
+      "<p>Terrain for viewshed and line of sight is Terrain Tiles on AWS (open data, mostly SRTM), saved separately above. In Japan, offline terrain uses these tiles, not GSI's finer ones.</p>" +
       "<p>Saved evacuation plans open offline; planning a new evacuation or road route needs signal.</p>" +
       "<p>Still needs signal: live weather and radar, road routing, satellite fire and flood layers, Refresh now, AI summaries and anything fetched from another website.</p></details></div>";
     paint();
@@ -267,6 +348,8 @@
     if (t === box || t.closest(".x")) { close(); return; }
     if (t.closest("[data-off-dl]")) { UI.msg = ""; download(areaFor(UI.kind, UI.z), true); return; }
     if (t.closest("[data-off-stop]")) { if (JOB) JOB.stop = true; return; }
+    if (t.closest("[data-off-tdl]")) { UI.msg = ""; downloadTerrain(tArea(UI.tkind, UI.tz)); return; }
+    if ((b = t.closest("[data-off-tdel]"))) { UI.msg = "Deleting…"; render(); delTerrain(cc(), b.getAttribute("data-off-tdel")).then(function () { UI.msg = "Terrain deleted from this device."; render(); }); return; }
     if (t.closest("[data-off-use]")) { if (W.OSAP_BASEMAP) W.OSAP_BASEMAP.set("offline"); close(); return; }
     if ((b = t.closest("[data-off-go]"))) { location.hash = b.getAttribute("data-off-go") + "/map"; location.reload(); return; }
     if ((b = t.closest("[data-off-del]"))) {
@@ -280,6 +363,8 @@
     var t = e.target;
     if (t.name === "off-kind") { UI.kind = t.value; UI.z = null; render(); }
     else if (t.hasAttribute("data-off-z")) { UI.z = +t.value; render(); }
+    else if (t.name === "off-tkind") { UI.tkind = t.value; UI.tz = null; render(); }
+    else if (t.hasAttribute("data-off-tz")) { UI.tz = +t.value; render(); }
   });
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && !box.hidden) close(); });
   var css = D.createElement("style");
@@ -319,5 +404,5 @@
   W.addEventListener("online", goOnline);
   if (navigator.onLine === false) setTimeout(goOffline, 0);
 
-  W.OSAP_OFFLINE = { open: open, area: areaFor, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
+  W.OSAP_OFFLINE = { open: open, area: areaFor, terrain: { packs: function () { return tget().packs; }, area: tArea, urls: turls, download: downloadTerrain, remove: delTerrain }, packs: function () { return get().packs; }, has: hasMap, tilesFor: urlsFor, est: est, count: count, positions: positions, bestZ: bestZ, MAX_POS: MAX_POS };
 })();

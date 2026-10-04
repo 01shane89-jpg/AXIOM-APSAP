@@ -2,9 +2,10 @@
    Messages in:  { cmd: "grid", gid, E, n, rowM }                        keep this elevation grid (one at a time)
                  { cmd: "run", gid, rid, o, coarse }                     viewshed on the kept grid; coarse = the quick first pass factor
                  { cmd: "los", gid, rid, a, b, o }                       line of sight between two grid points
-   Messages out: { rid, pass: "coarse" | "fine", res } | { rid, los } | { rid, error }
+   Messages out: { rid, pass: "coarse" | "fine", res } | { rid, los } | { rid, error } | { fatal: true } (the engine did not load)
    It never fetches anything: the elevation comes from the page's terrain provider. */
-importScripts("viewshed-engine.js");
+/* the engine could not load (no signal and no saved copy): say so, so the page works it out itself */
+try { importScripts("viewshed-engine.js"); } catch (e) { self.postMessage({ fatal: true }); self.close(); }
 var G = null;
 self.onmessage = function (e) {
   var m = e.data || {};
