@@ -424,6 +424,8 @@ const PRECACHE = [
 "assets/osap-start.js",
 "assets/osap-symbols.js",
 "assets/osap-tlreport.js",
+"assets/osap-ai.js",
+"assets/osap-ai-worker.js",
 "assets/osap-areasum.js",
 "assets/osap-aoi.js",
 "assets/osap-viewrep.js",
@@ -491,7 +493,8 @@ const PRECACHE = [
 // Network-first: the page and every data file. Only data/live and the flood snapshot change between deploys (the refresh
 // jobs), but briefs, layers and reference data change in ordinary merges that do not touch assets/, so all of data/ is asked for.
 const FRESH = [/\/index\.html$/, /\/$/, /\/data\//];
-const NEVER = [/thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
+const NEVER = [/\/\/([^/]*\.)?huggingface\.co\//, /\/\/([^/]*\.)?hf\.co\//, /raw\.githubusercontent\.com\/mlc-ai\//,  // OSAP's AI model (assets/osap-ai.js): WebLLM keeps its own copy
+  /thaiwater\.net/, /gistda\.or\.th/, /open-meteo\.com/, /gibs\.earthdata\.nasa\.gov/, /rainviewer\.com/, /nowcoast\.noaa\.gov/, /api\.weather\.gov/, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-drones\//, /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/live-air\//, /ais\.openwaters\.io/,
   // traffic camera stills (assets/osap-cams.js): always the agency's newest image, never a saved copy
   /api\.data\.gov\.sg\/v1\/transport/, /images\.data\.gov\.sg\//, /tdcctv\.data\.one\.gov\.hk/, /trafficnz\.info\/camera/, /jamcams\.tfl\.gov\.uk/,
   /weathercam\.digitraffic\.fi/, /drivebc\.ca\/images\//, /webcams\.transport\.nsw\.gov\.au/, /cwwp2\.dot\.ca\.gov\/data\/d\d+\/cctv\/image/, /webcams\.nyctmc\.org\/api\/cameras\/[^/]+\/image/,
