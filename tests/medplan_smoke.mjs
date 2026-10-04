@@ -333,6 +333,15 @@ async function openPlan(p) {
   ok(calls.alt === 3 && pac.blue >= 3, "phase 3: one Route-tab request per hospital, alternates drawn in blue " + JSON.stringify({ alt: calls.alt, blue: pac.blue }));
   ok(/Alternate ground route: A \+\d+ min on the primary/.test(pac.val) && /no contingency line/.test(pac.val) && /Hazards along the primary route/.test(pac.val), "phase 3: validation names the alternate and checks hazards on the primary");
   ok(/Alternate routes and hazards along them/.test(pac.src) && /3 of 3 hospitals routed/.test(pac.src), "phase 3: the sources list the Route tab's lines and what was read");
+  /* phase 5: the operational picture: the forecast at the pickup against review rules, heavy rain, air state and data age */
+  const pic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, flags: [...document.querySelectorAll("#mp-pic ul.mppic li b")].map((b) => b.textContent),
+    ages: [...document.querySelectorAll("#mp-pic table.mpage tbody tr")].map((r) => r.textContent), val: document.getElementById("mp-val").textContent,
+    order: [...document.querySelectorAll("#medplan h3")].map((h) => h.textContent).slice(0, 2).join("|") }));
+  ok(pic.flags.includes("POINT OF INJURY (NO HLZ GRID) VISIBILITY FORECAST 0.8 KM, GUSTS 35 KN / AIR EVACUATION REVIEW REQUIRED") && pic.flags.includes("HEAVY RAIN FORECAST 25 MM 2026-10-01 / ROADS AND LANDING ZONES MAY FLOOD") &&
+    !pic.flags.some((f) => /AIR MEDEVAC|CONFIRMED AIRCRAFT/.test(f)) && /Forecast at the pickup: POINT OF INJURY/.test(pic.val) && pic.order === "Operational picture|Plan status",
+    "phase 5: the picture flags the forecast at the pickup and heavy rain (the confirmed aircraft clears the air flag), above the plan status " + JSON.stringify(pic.flags));
+  ok(pic.ages.some((r) => /^Hospital dataset/.test(r) && /live read from OpenStreetMap/.test(r)) && pic.ages.some((r) => /^Weather forecast.*live.*Open-Meteo/.test(r)) && pic.ages.some((r) => /^Facility verification.*none.*no planner's check/.test(r)) &&
+    /Data age: .*Facility verification not available/.test(pic.val) && /not when this device fetched it/.test(pic.t), "phase 5: each dataset with its own date and whether it is live or a saved copy " + JSON.stringify(pic.ages));
   /* head trauma (Shane): where neurosurgery is, sourced, else the likely place labelled as an estimate */
   const hd = await p.evaluate(() => (document.querySelector("#mp-pst .mpneuro") || {}).textContent || "");
   ok(/^Head trauma \(neurosurgery\):/.test(hd) && /H\d+ Trauma Test Hospital, \d+ min from injury by (air|road)/.test(hd) && /neurosurgery stated by OpenStreetMap healthcare:speciality/.test(hd) && !/Not known/.test(hd), "head trauma: the nearest hospital that states neurosurgery is named with its time and source: " + hd.slice(0, 220));
@@ -474,6 +483,10 @@ async function openPlan(p) {
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
   const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
+  await p.waitForFunction(() => /PRIMARY HLZ|Forecast at the pickup: No review rule met at the primary HLZ/.test(document.getElementById("mp-pic").textContent + document.getElementById("mp-val").textContent), null, { timeout: 10000 }).catch(() => {});
+  const hpic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, v: document.getElementById("mp-val").textContent }));
+  ok(/PRIMARY HLZ VISIBILITY FORECAST 0\.8 KM, GUSTS 35 KN \/ AIR EVACUATION REVIEW REQUIRED/.test(hpic.t) && !/NO HLZ GRID/.test(hpic.t) && calls.meteo >= 1, "phase 5: with an HLZ grid the forecast flag is for the primary HLZ (meteo calls " + calls.meteo + ")");
+
   /* phase 3: the CCP and HLZ with grids are map objects; the validation says so */
   const sites = await p.evaluate(() => ({ mk: [...document.querySelectorAll(".mpicon.cp")].map((m) => m.textContent).sort().join(), val: document.getElementById("mp-val").textContent }));
   ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
