@@ -35,6 +35,9 @@ jobs:
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/medplan_decide.test.mjs
+      # machine translation guard and the daily summary rules (an invented translation must never lead a summary)
+      - run: node tests/mt_guard.test.mjs
+      - run: node tests/daily.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
