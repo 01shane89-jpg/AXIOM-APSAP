@@ -539,6 +539,15 @@ async function openPlan(p) {
   ok(!/Looking up|Reading…|Still reading/.test(pv.t) && /Plan status/.test(pv.t), "print view: the plan status prints and no lookup is left in progress");
   const pa3 = await p.evaluate(() => [...document.querySelectorAll("#brief .mpdoc .mpaprint")].map((x) => ({ h: x.querySelector("h3").textContent, ct: /Contacts and cover/.test(x.textContent), cap: /Capability and services/.test(x.textContent), ids: x.querySelectorAll("[id]").length, brk: getComputedStyle(x).breakBefore })));
   ok(pa3.length === 3 && /^Hospital assessment, Primary: H3 Far North Hospital/.test(pa3[0].h) && /Secondary/.test(pa3[1].h) && /Tertiary/.test(pa3[2].h) && pa3.every((x) => x.ct && x.cap && !x.ids && x.brk === "page"), "print view: the full assessment of Primary, Secondary and Tertiary prints, each from a new page " + JSON.stringify(pa3.map((x) => x.h)));
+  /* phase 6: the Medical CONOP prints apart from the intelligence annex: the operational sections only, no hospital assessments */
+  ok(/^Medical intelligence annex, /.test(await p.textContent("#brief .mpdoc h2")), "print view: the full print is the medical intelligence annex");
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+  const pc = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), a: d.querySelectorAll(".mpaprint").length, src: !!d.querySelector("#brief .mpdoc .mpfp"), srcList: /OpenStreetMap as of|Open-Meteo/.test((d.querySelector(".mpfp") || { parentElement: { textContent: "" } }).parentElement.textContent) }; });
+  ok(/^Medical CONOP, /.test(pc.h2) && /^Medical plan: /i.test(pc.h3[0]) && ["Operational picture", "Plan status", "Primary, Secondary", "1. Golden hour", "3. Routes", "4. Emergency", "6. Evacuate out", "9. Unit"].every((x) => pc.h3.some((h) => h.indexOf(x) === 0)) &&
+    !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="print"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
   ok(prn, "print view: Print or save PDF opens the print dialog");
   await p.emulateMedia({ media: "print" });
