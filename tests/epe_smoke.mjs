@@ -173,6 +173,21 @@ let state;
   await p.click("#epe .epekept [data-ep-open]");
   s = await st(p);
   ok(s.plan && s.plan.opts.some((o) => o.role === "P") && s.plan.opts.some((o) => o.st === "Available"), "roles and the analyst's status stick after a reload");
+  /* route tools other modules add (Terrain's exposure is one): a button per tool on the selected card, run with that
+     option's line; the plan itself is not changed by a tool */
+  ok(await p.evaluate(() => !!document.querySelector('#epe [data-ep-tool="terrain-exposure"]')), "Terrain's route exposure tool is on the selected option card");
+  const before = await p.evaluate(() => JSON.stringify(window.OSAP_EPE.state().plan));
+  await p.evaluate(() => { window.OSAP_EPE_CORRIDOR_TOOLS.push({ id: "t-test", label: "Test tool", run: (r, c) => { window.__tt = { r, sig: !!(c && c.signal) }; return Promise.resolve({ stats: { exposed_pct: 41.6, exposed_km2: 12.2, unknown_pct: 3.1 } }); } }); window.OSAP_EPE.open({}); });
+  await p.click('#epe [data-ep-tool="t-test"]');
+  await p.waitForFunction(() => /41% of the ground/.test((document.querySelector("#epe .epetool") || {}).textContent || ""), null, { timeout: 5000 }).catch(() => {});
+  const tt = await p.evaluate(() => ({ w: window.__tt, txt: (document.querySelector("#epe .epetool") || {}).textContent || "", plan: JSON.stringify(window.OSAP_EPE.state().plan) }));
+  ok(tt.w && tt.w.sig && tt.w.r.coords.length > 1 && tt.w.r.dest && tt.w.r.dest.name && tt.w.r.km > 0, "a route tool gets the option's line, destination, km and a stop signal");
+  ok(/About 42% of the ground near the route can see part of it \(12 km²\), 3% unknown/.test(tt.txt), "the tool's result shows on the card: " + tt.txt);
+  ok(tt.plan === before, "running a route tool does not change the kept plan");
+  await p.evaluate(() => { window.OSAP_EPE_CORRIDOR_TOOLS.push({ id: "t-bad", label: "Bad tool", run: () => { throw new Error("boom"); } }); window.OSAP_EPE.open({}); });
+  await p.click('#epe [data-ep-tool="t-bad"]');
+  ok(/Bad tool failed: boom\. The plan is unchanged/.test(await p.evaluate(() => (document.querySelector("#epe .epetool") || {}).textContent || "")), "a failing route tool says so and leaves the plan alone");
+  await p.evaluate(() => { window.OSAP_EPE_CORRIDOR_TOOLS = window.OSAP_EPE_CORRIDOR_TOOLS.filter((t) => !/^t-/.test(t.id)); window.OSAP_EPE.open({}); });
   /* Open in Route: the selected option with its checkpoints */
   await p.click('#epe [data-ep="route"]');
   await p.waitForFunction(() => /Option from the evacuation plan/.test((document.getElementById("rt-evres") || {}).textContent || ""), null, { timeout: 30000 }).catch(() => {});
