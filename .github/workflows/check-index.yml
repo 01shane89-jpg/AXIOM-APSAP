@@ -48,6 +48,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
+      - run: node tests/lock_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/points_smoke.mjs
