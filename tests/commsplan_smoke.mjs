@@ -41,7 +41,7 @@ const pane = (p) => p.textContent("#cp-pane");
 
 // ---------- desktop ----------
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 }, acceptDownloads: true });
   const tabs = await p.evaluate(() => [...document.querySelectorAll(".cptabs [data-cptab]")].map((b) => b.textContent));
   ok(tabs.join(",") === "Plan,Coverage,Link,Networks,Equipment,Status", "six tabs: " + tabs.join(", "));
   ok(await p.evaluate(() => document.querySelector('.cptabs [data-cptab="coverage"]').getAttribute("aria-selected") === "true" && document.querySelector(".combtns").getClientRects().length > 0), "opens on Coverage with the phone signal check");
@@ -248,6 +248,44 @@ const pane = (p) => p.textContent("#cp-pane");
   await p.waitForFunction(() => document.querySelector(".cpstrip"), null, { timeout: 60000 });
   ok(await p.evaluate(() => window.OSAP_COMMSPLAN_WANT === null && document.querySelector('.cptabs [data-cptab="coverage"]').getAttribute("aria-selected") === "true"), "Comms along route: opens Coverage and runs the corridor");
   if (OUT) await p.screenshot({ path: OUT + "/commsplan-corridor.png" });
+
+  // Plan outputs: contacts, satellite pointing, comms annex, offline package
+  await tab(p, "plan");
+  ok(await p.evaluate(() => [...document.querySelectorAll("[data-cppsub]")].map((b) => b.textContent).join(",") === "PACE,Contacts,Satellite,Comms annex,Package"), "Plan has PACE, Contacts, Satellite, Comms annex and Package");
+  await p.click('[data-cppsub="contacts"]');
+  await p.fill("#cpct-cs", "<i>BRAVO</i>"); await p.selectOption("#cpct-me", "HF radio"); await p.fill("#cpct-f", "7.5"); await p.fill("#cpct-win", "0600Z daily"); await p.click('[data-ct="add"]');
+  ok(/BRAVO/.test(await pane(p)) && !(await p.evaluate(() => !!document.querySelector("#cp-pane i"))) && /0600Z daily/.test(await pane(p)), "contacts: added, shown as text, with the window");
+  await p.click('[data-cppsub="sat"]');
+  await p.evaluate(() => window.__asapMap.setView([51.5, -0.1], 8, { animate: false }));
+  await p.click('[data-sat="here"]');
+  await p.fill("#cpsat-n", "Slot 25E"); await p.fill("#cpsat-l", "25"); await p.click('[data-sat="add"]');
+  await p.fill("#cpsat-n", "Far side"); await p.fill("#cpsat-l", "-170"); await p.click('[data-sat="add"]');
+  const sat = await pane(p);
+  ok(/149\.\d° true/.test(sat) && /26\.\d°/.test(sat) && /magnetic/.test(sat), "satellite: London to 25°E points about 149° true, 26.5° up, with magnetic");
+  ok(/Below the horizon/.test(sat) && /MODELLED/.test(sat) && /Low-orbit/.test(sat), "satellite: a slot on the far side is below the horizon; labelled modelled with its limits");
+  await p.click('[data-cppsub="annex"]');
+  ok(/Channel plan: 2/.test(await pane(p)) && /Contacts and windows: 1/.test(await pane(p)) && /COMSEC status: 3/.test(await pane(p)), "annex: lists the parts it will hold");
+  await p.evaluate(() => { window.print = () => {}; });
+  await p.click('[data-ax="print"]');
+  const ax = await p.evaluate(() => document.getElementById("cp-print").innerHTML);
+  ok(/Comms annex/.test(ax) && /PACE by phase/.test(ax) && /Channel plan/.test(ax) && /Contacts and windows/.test(ax) && /Satellite pointing/.test(ax) && /Power and sustainment/.test(ax) && /COMSEC status/.test(ax) && !/<i>BRAVO/.test(ax), "annex: one printable document with every part, text escaped");
+  // package: save, change, load back; refuse a changed file and key-like COMSEC
+  await p.click('[data-cppsub="package"]');
+  const [dl] = await Promise.all([p.waitForEvent("download"), p.click('[data-pk="save"]')]);
+  const pkgTxt = await readFile(await dl.path(), "utf8"), pkg = JSON.parse(pkgTxt);
+  ok(pkg.type === "osap-comms-package" && /^[0-9a-f]{64}$/.test(pkg.sha256) && Array.isArray(pkg.data["osap-cp-contacts"]) && pkg.data["osap-cp-pace"], "package: saved with a SHA-256 fingerprint and every part");
+  await p.evaluate(() => localStorage.setItem("osap-cp-contacts", "[]"));
+  const load = async (txt) => { await p.setInputFiles("#cppk-file", { name: "pkg.json", mimeType: "application/json", buffer: Buffer.from(txt) }); await p.waitForTimeout(600); return p.textContent("#cp-msg"); };
+  const m1 = await load(pkgTxt);
+  ok(/Loaded/.test(m1) && (await p.evaluate(() => JSON.parse(localStorage.getItem("osap-cp-contacts")).length)) === 1, "package: loading it back restores the contacts (" + m1.trim() + ")");
+  const bad1 = JSON.parse(pkgTxt); bad1.data["osap-cp-contacts"][0].cs = "CHANGED";
+  ok(/fingerprint does not match/.test(await load(JSON.stringify(bad1))), "package: a changed file is refused by its fingerprint");
+  const bad2 = JSON.parse(pkgTxt); bad2.sha256 = ""; bad2.data["osap-cp-comsec"] = [{ st: "a3f9c1d2e4b5a6978c0d1e2f", status: "On hand" }];
+  ok(/looks like key data/.test(await load(JSON.stringify(bad2))), "package: key-like COMSEC text is refused");
+  ok(/not an OSAP comms package/.test(await load('{"hello":1}')), "package: another file is refused");
+  const ws2 = await p.evaluate(() => fetch("assets/osap-ws.js").then((r) => r.text()));
+  ok(["osap-cp-contacts", "osap-cp-sats"].every((k) => ws2.includes('"' + k + '"')), "contacts and satellites are kept per workspace");
+  await p.click('[data-cppsub="pace"]');
   await tab(p, "networks");
 
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
@@ -265,6 +303,7 @@ const pane = (p) => p.textContent("#cp-pane");
   for (const t of ["plan", "equipment", "link", "status"]) {
     await p.evaluate((t) => window.OSAP_COMMSPLAN.tab(t), t);
     if (t === "plan") await p.evaluate(() => { const b = document.querySelector('[data-cpa="new"]'); if (b) b.click(); });
+    if (t === "plan") for (const s of ["contacts", "sat", "annex", "package", "pace"]) { await p.click('[data-cppsub="' + s + '"]'); await p.waitForTimeout(100); ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone plan " + s + ": no sideways scroll"); }
     if (t === "equipment") for (const s of ["loadout", "cable", "antennas", "connectors", "spectrum", "comsec"]) { await p.click('[data-cpesub="' + s + '"]'); await p.waitForTimeout(100); ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone equipment " + s + ": no sideways scroll"); }
     await p.waitForTimeout(200);
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone " + t + ": no sideways scroll");
