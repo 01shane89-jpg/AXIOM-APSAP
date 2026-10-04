@@ -37,6 +37,12 @@ const ai = createServer((req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => ai.once("listening", r));
 const AIURL = `http://127.0.0.1:${ai.address().port}`;
+/* LM Studio with "Enable CORS" off: it answers, but with no CORS headers; and a port where nothing listens */
+const nocors = createServer((req, res) => { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: [{ id: "x" }] })); }).listen(0, "127.0.0.1");
+await new Promise((r) => nocors.once("listening", r));
+const NOCORS = `http://127.0.0.1:${nocors.address().port}`;
+const gone = createServer().listen(0, "127.0.0.1"); await new Promise((r) => gone.once("listening", r));
+const DEAD = `http://127.0.0.1:${gone.address().port}`; gone.close();
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
@@ -93,6 +99,14 @@ async function summary(p) {
   await p.fill("#aidlg [data-ai-url]", "http://8.8.8.8:1234/v1"); await p.click("#aidlg [data-ai-test]");
   ok(/Not saved: .*not on this device or a private network/.test(await p.textContent("#aidlg .aimsg")), "a public address is refused");
   ok(!(await p.evaluate(() => window.OSAP_AI.prefs().local)), "and nothing is saved");
+  const done = () => p.waitForFunction(() => /^Not saved\. /.test(document.querySelector("#aidlg .aimsg").textContent), null, { timeout: 20000 });
+  await p.fill("#aidlg [data-ai-url]", NOCORS); await p.click("#aidlg [data-ai-test]"); await done();
+  const m1 = await p.textContent("#aidlg .aimsg");
+  ok(/answered, but .*CORS is off.*Enable CORS/.test(m1), "a server with CORS off is named as such, with the LM Studio setting", m1);
+  await p.fill("#aidlg [data-ai-url]", DEAD + "/v1"); await p.click("#aidlg [data-ai-test]"); await done();
+  const m2 = await p.textContent("#aidlg .aimsg");
+  ok(/Nothing answered at 127\.0\.0\.1:\d+.*Running on port/.test(m2), "a port where nothing listens says nothing answered and what to check", m2);
+  ok(!(await p.evaluate(() => window.OSAP_AI.prefs().local)), "and neither is saved");
   await p.fill("#aidlg [data-ai-url]", AIURL); await p.click("#aidlg [data-ai-test]");
   await p.waitForFunction(() => /Saved\./.test(document.querySelector("#aidlg .aimsg").textContent), null, { timeout: 10000 });
   const L = await p.evaluate(() => window.OSAP_AI.prefs().local);
@@ -174,6 +188,6 @@ async function summary(p) {
   ok(!errs.length, "no page errors", errs);
   await ctx.close();
 }
-await browser.close(); server.close(); ai.close();
+await browser.close(); server.close(); ai.close(); nocors.close();
 console.log(fails ? fails + " FAILED" : "ALL PASS");
 process.exit(fails ? 1 : 0);
