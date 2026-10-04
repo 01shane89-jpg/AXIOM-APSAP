@@ -130,6 +130,8 @@
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
     if (W.OSAP_LOCK) h += '<button type="button" role="menuitem" data-tp="@lock">Hidden areas</button>';
+    /* the user guide, offline and printable (assets/osap-guide.js) */
+    if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     h += '<button type="button" role="menuitem" data-tp="#credits-btn">Credits and data sources</button>';
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
@@ -187,6 +189,7 @@
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
+    else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
     else press(sel);
   });
   pop.addEventListener("change", function (e) {
