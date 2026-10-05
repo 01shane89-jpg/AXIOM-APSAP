@@ -3,6 +3,8 @@
 ["w1094260467",43.08856,81.22301,"cn",{"name":"昭苏天马机场 موڭعولكۇرە اۋەجايى","name:en":"Zhaosu Tianma Airport","operator":"新疆机场集团有限责任公司昭苏天马机场","operator:type":"government","addr:housenumber":"7","addr:street":"机场路","addr:district":"昭苏县","addr:province":"新疆维吾尔自治区","addr:postcode":"835500","aeroway":"aerodrome","icao":"ZWZS","iata":"ZFL"}],
 ["w1110908751",43.84972,80.539,"cn",{"aeroway":"helipad"}],
 ["w1110908752",43.84858,80.53939,"cn",{"aeroway":"helipad"}],
+["w1162378162",42.93677,80.49573,"kz",{"aeroway":"helipad"}],
+["w1162397678",43.10245,80.45087,"kz",{"aeroway":"helipad"}],
 ["w1162413769",43.11949,80.78739,"cn",{"aeroway":"helipad"}],
 ["w1162423250",43.46393,80.76421,"cn",{"aeroway":"helipad"}],
 ["w1162423251",43.46427,80.7649,"cn",{"aeroway":"helipad"}],
@@ -25,6 +27,8 @@
 ["w167862517",43.95603,81.33058,"cn",{"name":"伊宁机场 غۇلجا ئايرودرومى","name:en":"Yining Airport","addr:housenumber":"273号","addr:street":"机场路","addr:district":"伊宁市","addr:city":"伊犁州","addr:province":"新疆维吾尔自治区","aeroway":"aerodrome","icao":"ZWYN","iata":"YIN"}],
 ["w899060632",42.69722,80.24774,"cn",{"aeroway":"helipad"}],
 ["w899060633",42.6948,80.24729,"cn",{"aeroway":"helipad"}],
+["w909699978",43.78437,80.50018,"kz",{"aeroway":"helipad"}],
+["w909700898",43.7847,80.49824,"kz",{"aeroway":"helipad"}],
 ["w921413521",43.96278,81.50548,"cn",{"name":"伊宁县人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w943473954",43.93018,81.00179,"cn",{"name":"可克达拉市人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w987324327",43.22294,81.8373,"cn",{"name":"特克斯县妇幼保健院","amenity":"hospital","healthcare":"hospital"}]]

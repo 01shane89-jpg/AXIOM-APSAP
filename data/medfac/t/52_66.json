@@ -1,0 +1,11 @@
+[["n13130956587",53.27612,66.72789,"kz",{"amenity":"hospital","healthcare":"hospital"}],
+["n4397762301",53.20619,66.81094,"kz",{"name":"Поликлиника","amenity":"clinic","addr:postcode":"150400"}],
+["n4592394792",52.80482,66.46542,"kz",{"amenity":"hospital"}],
+["n5058579976",53.20214,66.82497,"kz",{"name":"Центральная районная больница","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","addr:street":"Центральная районная больница"}],
+["n5234432432",53.74298,66.48714,"kz",{"name":"Тимирязевская центральная Районная Больница","amenity":"hospital"}],
+["w1268593638",52.05166,67.68299,"kz",{"name":"ФАП","amenity":"hospital","healthcare":"hospital"}],
+["w1381137387",53.74277,66.4871,"kz",{"amenity":"hospital","healthcare":"hospital"}],
+["w1387819870",53.896,67.4196,"kz",{"name":"Районная поликлиника","name:en":"District Policlinic","amenity":"clinic"}],
+["w1486539421",52.55728,67.24457,"kz",{"name":"Чистопольская враченбная амбулатория","amenity":"hospital","healthcare":"hospital"}],
+["w476113247",53.89539,67.42328,"kz",{"name":"Центральная Районная Больница","name:en":"Central District Hospital","amenity":"hospital"}],
+["w838367826",53.21743,66.78922,"kz",{"aeroway":"aerodrome"}]]

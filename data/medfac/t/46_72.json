@@ -1,0 +1,9 @@
+[["w1087591629",47.81681,73.95431,"kz",{"aeroway":"helipad"}],
+["w1087591632",47.92449,73.69146,"kz",{"aeroway":"helipad"}],
+["w1160807448",46.3019,73.96376,"kz",{"name":"Клиника","amenity":"hospital","healthcare":"hospital","addr:housenumber":"10"}],
+["w171842825",46.02538,73.48632,"kz",{"name":"Камбала","name:en":"Kambala Air Base","aeroway":"aerodrome","icao":"XAAM","military":"airfield","wikidata":"Q4210753"}],
+["w265380640",46.04021,73.68658,"kz",{"name":"Хирургическое отделение","amenity":"hospital","addr:city":"Приозерск"}],
+["w265380680",46.03618,73.67575,"kz",{"name":"Центральная больница","amenity":"hospital","addr:city":"Приозерск"}],
+["w265380693",46.03592,73.67558,"kz",{"name":"Медцентр","amenity":"hospital","addr:city":"Приозерск"}],
+["w265380818",46.03614,73.67476,"kz",{"name":"Городская поликлиника","amenity":"hospital","addr:housenumber":"19","addr:city":"Приозерск"}],
+["w265380832",46.03775,73.68471,"kz",{"amenity":"hospital","addr:city":"Приозерск"}]]
