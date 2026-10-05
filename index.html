@@ -1540,6 +1540,8 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
       }
     }
   };
+  /* flood pixels are sparse (often well under 1% of a tile), so flooding now stays a step stronger than the shared Opacity slider */
+  function fldOp(k) { return k === "now" ? Math.min(1, ML.op + 0.35) : ML.op; }
   var KeyedTiles = L.TileLayer.extend({
     createTile: function (coords, done) {
       var c = document.createElement("canvas"), img = new Image(), key = this.options.rekey;
@@ -1559,7 +1561,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
   var FLOODX = {
     now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Red = flood water, amber = seasonal flood. Satellite-derived and approximate (about 250 m); faint grey = cloud hid the ground all 3 days, so flooding there is not seen.",
       layer: function () { return new KeyedTiles("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
-        { pane: "fldpane", rekey: FLD_KEY.now, maxNativeZoom: 9, maxZoom: 13, opacity: ML.op, attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
+        { pane: "fldpane", rekey: FLD_KEY.now, maxNativeZoom: 9, maxZoom: 13, opacity: fldOp("now"), attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
     hist: { name: "Flood history", short: "How often each place has flooded, 1984 to 2021", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Pale violet = rarely under water, deeper violet = often; rivers and lakes that are always wet are kept faint.",
       layer: function () { return new KeyedTiles("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
         { pane: "fldhpane", rekey: FLD_KEY.hist, maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } },
@@ -1573,7 +1575,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
   }
-  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(fldOp(k)); }); }
   /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
      Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
      Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
