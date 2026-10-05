@@ -1,8 +1,9 @@
 # Builds the AXIOM OSAP desktop program (desktop/) for Windows, Mac and Linux with free GitHub runners.
 # - Pull request touching desktop/: builds all three, runs desktop/test.mjs on Linux, starts each built program
 #   against the live site, and keeps the installers as run artifacts for 7 days.
-# - Tag desktop-vX.Y.Z (pushed by a maintainer): the same, then publishes the installers as a GitHub Release.
-#   A tag with a "-" (desktop-v0.1.0-preview.1) makes a pre-release for testing.
+# - Release: run this workflow from the Actions tab (Run workflow) with a version such as 0.1.0, or push a tag
+#   desktop-v0.1.0. It builds and checks the same way, then publishes the installers as GitHub Release desktop-v<version>.
+#   A version with a "-" (0.1.0-preview.1) makes a pre-release for testing.
 # Installers are not code-signed (a certificate costs money), so Windows SmartScreen and macOS Gatekeeper warn once.
 name: Desktop program
 on:
@@ -11,6 +12,11 @@ on:
   push:
     tags: ["desktop-v*"]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish as a GitHub Release (e.g. 0.1.0). Leave empty to only build and check."
+        required: false
+        default: ""
 permissions:
   contents: read
 concurrency:
@@ -52,8 +58,12 @@ jobs:
       - name: Set version
         env:
           REF: ${{ github.ref }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [[ "$REF" == refs/tags/desktop-v* ]]; then v="${REF#refs/tags/desktop-v}"; else v="0.0.0-test.${GITHUB_RUN_NUMBER}"; fi
+          if [[ "$REF" == refs/tags/desktop-v* ]]; then v="${REF#refs/tags/desktop-v}"
+          elif [ -n "$INPUT_VERSION" ]; then v="$INPUT_VERSION"
+          else v="0.0.0-test.${GITHUB_RUN_NUMBER}"; fi
+          [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "::error::version '$v' is not like 1.2.3 or 1.2.3-preview.1"; exit 1; }
           npm pkg set version="$v"
           echo "version $v"
       - name: Build installers
@@ -88,7 +98,7 @@ jobs:
             desktop/dist/*.deb
 
   release:
-    if: startsWith(github.ref, 'refs/tags/desktop-v')
+    if: startsWith(github.ref, 'refs/tags/desktop-v') || inputs.version != ''
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -103,10 +113,10 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ startsWith(github.ref, 'refs/tags/desktop-v') && github.ref_name || format('desktop-v{0}', inputs.version) }}
         run: |
           cd out && sha256sum * > SHA256SUMS.txt && ls -la
-          pre=""; [[ "$TAG" == *-*-* ]] && pre="--prerelease"
+          pre=""; [[ "${TAG#desktop-v}" == *-* ]] && pre="--prerelease"
           cat > notes.md <<'NOTES'
           AXIOM OSAP desktop program. It opens the live OSAP site in its own window, updates itself the same way the website does, and works offline after the first start with internet.
 
@@ -118,4 +128,4 @@ jobs:
           - **Linux AppImage:** make it executable (`chmod +x`), then run it.
           NOTES
           sed -i 's/^          //' notes.md
-          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "AXIOM OSAP desktop ${TAG#desktop-v}" --notes-file notes.md $pre $(ls | grep -v notes.md)
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "AXIOM OSAP desktop ${TAG#desktop-v}" --notes-file notes.md $pre $(ls | grep -v notes.md)

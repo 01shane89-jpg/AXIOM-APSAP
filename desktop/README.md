@@ -11,8 +11,8 @@ offline, and it updates itself whenever the website does. Rebuild the program on
 ## Build and release
 
 `.github/workflows/desktop.yml` builds Windows (`.exe`), Mac (`.dmg`, Apple silicon and Intel) and Linux (`.AppImage`,
-`.deb`) on free GitHub runners. To publish a release, push a tag: `git tag desktop-v0.1.0 && git push origin desktop-v0.1.0`.
-A tag with a hyphen (`desktop-v0.1.0-preview.1`) makes a pre-release. The installers are not code-signed, so Windows and
+`.deb`) on free GitHub runners. To publish a release, open Actions > Desktop program > Run workflow on `main` and enter a
+version such as `0.1.0` (or push a tag `desktop-v0.1.0`). A version with a hyphen (`0.1.0-preview.1`) makes a pre-release. The installers are not code-signed, so Windows and
 macOS warn on first start (the release notes say how to get past it).
 
 ## Local
