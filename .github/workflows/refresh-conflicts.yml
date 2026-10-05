@@ -115,6 +115,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           case "${ONLY:-conflicts}" in conflicts|history|sites|probe-sites|probe-conflicts) ;; *) echo "unknown input: only"; exit 1;; esac
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -128,6 +129,7 @@ jobs:
       - name: Commit if the conflict data changed
         if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-conflicts' && inputs.only != 'probe-sites' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live/conflicts
           if git diff --quiet -- data/live/conflicts; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"

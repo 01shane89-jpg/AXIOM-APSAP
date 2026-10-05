@@ -1,0 +1,17 @@
+{
+  "_about": "Hidden areas (assets/osap-lock.js, Settings > Hidden areas). tools/seal_hidden.mjs seals every file matching 'sealed' for the owner keys and strips the hidden countries' parts from the shared files in 'strip'. 'owners' must equal OWNER in assets/osap-lock.js (tests/seal.test.mjs checks). A key is a setup code: a public key, safe to publish; only the owner's device holds the private half.",
+  "hidden": ["us"],
+  "owners": [
+    "osap-pub:v1:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4szScDUlf52qw3rj8u8INzz6Atximq6IwbWPX3vogQtQpdoaj57inC2XVtzVhLyCm9vCEtyaj-tMLIPWfsPPgg"
+  ],
+  "sealed": [
+    "^data/layers/us/",
+    "^data/infra/us/",
+    "^data/(sof|brief|history)/us\\.js$",
+    "^data/dc/us\\.json$",
+    "^data/live/[a-z]+/us\\.js$",
+    "^data/live/news/us-states/",
+    "^data/cams/us-[a-z0-9-]+\\.json$",
+    "^source/(sof|countries)/us\\.json$"
+  ]
+}

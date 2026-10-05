@@ -5,6 +5,7 @@ blocks=[]
 for f in sorted(glob.glob(D+"/*.json")):
   n=os.path.basename(f)[:-5]
   if n=="exercises-outside": continue
+  if open(f).read(20).startswith("/*osap-sealed:"): continue  # a hidden area's research is sealed (tools/seal_hidden.mjs)
   j=json.load(open(f)); p=json.dumps(j,ensure_ascii=True,separators=(",",":")).replace("</","<\\/")
   blocks.append('<script>window.ASAP_SOF=window.ASAP_SOF||{};window.ASAP_SOF[%s]=%s;</script>'%(json.dumps(n),p))
 j=json.load(open(D+"/exercises-outside.json"))
