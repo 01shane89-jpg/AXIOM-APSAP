@@ -6,6 +6,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
+import { UNLOCK, OWNER_PUB } from "./lock_seed.mjs";
 const OUT = process.env.OUT || "";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
@@ -71,7 +72,7 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
   ok(await cc(p3l) !== "us" && !/st=|#us/.test(p3l.url()), "locked: Texas does not open the United States: " + p3l.url());
   await p3l.close();
   // ... and once unlocked, a fresh open moves to us?st=TX
-  const p3 = await ctx.newPage(); await p3.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} }); await p3.goto(base);
+  const p3 = await ctx.newPage(); await p3.addInitScript({ content: UNLOCK }); await p3.goto(base);
   await p3.waitForFunction(() => window.TSAP && window.TSAP.country === "us", null, { timeout: 25000 }).catch(() => {});
   await settle(p3);
   ok(await cc(p3) === "us" && /st=TX/.test(p3.url()), "moved to Texas on fresh open: " + p3.url());
@@ -114,7 +115,7 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
 // 9. country lookup spot checks
 {
   const { ctx } = await ctxWith({ latitude: 0, longitude: 0 });
-  const p = await ctx.newPage(); await p.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} });
+  const p = await ctx.newPage(); await p.addInitScript({ content: UNLOCK });
   await p.goto(base + "#th/timeline"); await settle(p);
   const r = await p.evaluate(() => Promise.all([[26.21, 127.68], [35.68, 139.69], [51.5, -0.12], [-41.29, 174.78], [6.52, 3.37], [-22.9, -43.2], [48.85, 2.35], [13.75, 100.5], [0, -30], [30.27, -97.74], [38.9, -77.03], [61.2, -149.9], [45.42, -75.69], [55.75, 37.62], [-1.29, 36.82], [24.71, 46.67], [31.77, 35.21], [42.66, 21.17], [25.03, 121.56], [1.35, 103.82]].map((q) => new Promise((res) => window.OSAP_LOC.placeAt(q[0], q[1], (x) => res(x.cc + (x.st ? "-" + x.st : "")))))));
   ok(r.join(",") === "oki,jp,gb,nz,ng,br,fr,th,,us-TX,us-DC,us-AK,ca,ru,ke,sa,il,xk,tw,sg", "lookup: " + r.join(","));

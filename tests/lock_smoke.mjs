@@ -6,6 +6,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
+import { UNLOCK, OWNER_PUB } from "./lock_seed.mjs";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
@@ -23,7 +24,7 @@ async function open(url, unlocked) {
   const local = [], errors = [];
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   ctx.on("request", (q) => { if (q.url().startsWith(base)) local.push(q.url().slice(base.length)); });
-  if (unlocked) await ctx.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} });
+  if (unlocked) await ctx.addInitScript({ content: UNLOCK });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + url); await p.waitForTimeout(5000);
   return { ctx, p, local, errors };
@@ -70,10 +71,30 @@ const usFile = (u) => /(^|\/)(us|us-states)(\/|\.js)|layers\/us\/|brief\/us\.js/
 for (const [ahead, want] of [[3600e3, true], [-1000, false]]) {
   const ctx = await browser.newContext({ serviceWorkers: "block" });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-  await ctx.addInitScript((ms) => { try { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-lock-open", JSON.stringify({ until: Date.now() + ms, key: "x" })); } } catch (e) {} }, ahead);
+  await ctx.addInitScript(([ms, pub]) => { try { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-lock-dev", JSON.stringify({ v: 1, cred: "t", iv: "", wrapped: "t", pub: pub })); localStorage.setItem("osap-lock-open", JSON.stringify({ until: Date.now() + ms, key: "x" })); } } catch (e) {} }, [ahead, OWNER_PUB]);
   const p = await ctx.newPage(); await p.goto(base + "#us/timeline"); await p.waitForTimeout(4000);
   const s = await p.evaluate(() => ({ open: window.OSAP_LOCK.isOpen(), cc: window.TSAP && window.TSAP.country, rec: localStorage.getItem("osap-lock-open") }));
   ok(want ? s.open && s.cc === "us" : !s.open && s.cc === "th" && s.rec === null, (want ? "unlock still in time: US opens on a fresh start " : "unlock run out: locked again and cleared ") + JSON.stringify(s));
+  await ctx.close();
+}
+// 5. a device set up with its own passkey but not listed as an owner cannot unlock, even with an unlock record
+{
+  ok(OWNER_PUB.length > 80, "an owner key is listed in OWNER");
+  const ctx = await browser.newContext({ serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); localStorage.setItem("osap-lock-dev", JSON.stringify({ v: 1, cred: "t", iv: "", wrapped: "t", pub: "MFkwSomeoneElsesKey" })); localStorage.setItem("osap-lock-open", JSON.stringify({ until: Date.now() + 3600e3, key: "x" })); } catch (e) {} });
+  const p = await ctx.newPage(); await p.goto(base + "#us/timeline"); await p.waitForTimeout(4000);
+  const s = await p.evaluate(() => ({ open: window.OSAP_LOCK.isOpen(), cc: window.TSAP && window.TSAP.country, us: (window.OSAP_COUNTRIES || []).some((c) => c.id === "us") }));
+  ok(!s.open && s.cc !== "us" && !s.us, "a device that is not an owner stays locked " + JSON.stringify(s));
+  await ctx.close();
+}
+// 6. no device record at all: the unlock flag alone opens nothing
+{
+  const ctx = await browser.newContext({ serviceWorkers: "block" });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await ctx.addInitScript(() => { try { sessionStorage.setItem("osap-lock-open", "1"); } catch (e) {} });
+  const p = await ctx.newPage(); await p.goto(base + "#us/timeline"); await p.waitForTimeout(4000);
+  ok(await p.evaluate(() => !window.OSAP_LOCK.isOpen() && window.TSAP.country !== "us"), "an unlock flag with no owner device stays locked");
   await ctx.close();
 }
 await browser.close(); server.close();
