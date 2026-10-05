@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-05 12:43Z","sources":[{"cc":"cz","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Czechia%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"cz":[]}};
+window.ASAP_NEWS={"asof":"2026-10-05 13:06Z","sources":[{"cc":"cz","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Czechia%22&format=rss","ok":true,"n":2}],"coverage":{"countries":198,"with":197,"none":["ad"]},"items":{"cz":[]}};
