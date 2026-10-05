@@ -16,7 +16,8 @@
    capability: { status, value, sources[] }. status is one of STATUS; "unknown" is never read as "no": a capability is
    "not_available" only where a source says so.
    source: { source_type, source_name, url, observed_date, retrieved_date, reliability (A-F), credibility (1-6), language,
-     machine_translated, ai_derived, excerpt, sha256 }. Reliability follows the source type (SOURCE_TYPES), never the domain
+     machine_translated, ai_derived, excerpt, excerpt_en (an English machine translation of a non-English excerpt, the excerpt
+     itself kept), sha256 }. Reliability follows the source type (SOURCE_TYPES), never the domain
    alone: a .go.th page is graded by what kind of page it is.
    Every record is a draft computed by fixed rules from open data: not analyst-approved and not AI. */
 (function () {
@@ -75,7 +76,7 @@
     o = o || {};
     return { source_type: SOURCE_TYPES[type] ? type : "unknown", source_name: clip(o.name || g.label, 140), url: /^https?:\/\//i.test(o.url || "") ? o.url : "",
       observed_date: o.observed || "", retrieved_date: o.retrieved || "", reliability: o.reliability || g.reliability, credibility: o.credibility || g.credibility,
-      language: o.lang || "", machine_translated: !!o.mt, ai_derived: false, excerpt: o.excerpt ? clip(o.excerpt, 300) : "", sha256: "" };
+      language: o.lang || "", machine_translated: !!o.mt, ai_derived: false, excerpt: o.excerpt ? clip(o.excerpt, 300) : "", excerpt_en: o.excerpt_en ? clip(o.excerpt_en, 400) : "", sha256: "" };
   }
   /* a canonical record with every field present, so readers never meet undefined */
   function facility(o) {
