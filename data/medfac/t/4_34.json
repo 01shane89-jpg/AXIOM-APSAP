@@ -1,1 +1,7 @@
-[["n1042042715",5.833,35.533,"et",{"name":"Tume Airport","aeroway":"aerodrome"}]]
+[["n1042042715",5.833,35.533,"et",{"name":"Tume Airport","aeroway":"aerodrome"}],
+["n1042043304",4.32,35.6878,"ke",{"name":"Lokitaung Airport","aeroway":"aerodrome","icao":"HKLG","wikidata":"Q6668694"}],
+["n10872787125",5.29037,35.83245,"ke",{"name":"Kibish Airstrip","addr:city":"Kibish","aeroway":"aerodrome"}],
+["n12212874751",4.67466,35.71188,"ke",{"name":"Kokuro Airport","aeroway":"aerodrome"}],
+["n1815620095",4.37027,34.14974,"ke",{"aeroway":"aerodrome"}],
+["n974606224",4.47499,35.91395,"ke",{"name":"Todenyang Airport","aeroway":"aerodrome"}],
+["w198653254",4.20358,34.34846,"ke",{"name":"Lokichoggio Airport","aeroway":"aerodrome","icao":"HKLK","iata":"LKG","wikidata":"Q2289515"}]]

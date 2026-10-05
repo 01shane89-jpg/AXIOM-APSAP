@@ -1,0 +1,7 @@
+{"cc":"ki","at":"2026-10-05T11:27:31Z","base":"2026-10-05T11:25:32Z","m":[
+["n2375865695",1.32963,172.9939,{"communication:radio":"yes","man_made":"tower","name":"Radio Tower","tower:type":"communication"}],
+["n2399105478",1.3297,172.99412,{"man_made":"tower","tower:type":"communication"}],
+["n5384903643",1.35426,172.92076,{"man_made":"tower","tower:type":"communication"}],
+["n5630334342",2.04482,-157.44578,{"man_made":"mast","tower:construction":"mast","tower:type":"communication"}],
+["n5839183471",1.36539,173.15322,{"man_made":"mast","tower:type":"ATHK_mobile_tower"}]
+]}

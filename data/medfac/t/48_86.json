@@ -1,1 +1,5 @@
-[["w183940000",48.22193,86.9959,"cn",{"name":"布尔津喀纳斯机场 بۋىرشىن قاناس اۋەجايى","name:en":"Burqin Kanas Airport","addr:district":"布尔津县","addr:city":"阿勒泰地区","addr:province":"新疆维吾尔自治区","addr:postcode":"836500","aeroway":"aerodrome","icao":"ZWKN","iata":"KJI"}]]
+[["w1231190344",48.71699,86.68877,"kz",{"aeroway":"helipad"}],
+["w1541257703",49.53262,86.51111,"kz",{"aeroway":"helipad"}],
+["w183940000",48.22193,86.9959,"cn",{"name":"布尔津喀纳斯机场 بۋىرشىن قاناس اۋەجايى","name:en":"Burqin Kanas Airport","addr:district":"布尔津县","addr:city":"阿勒泰地区","addr:province":"新疆维吾尔自治区","addr:postcode":"836500","aeroway":"aerodrome","icao":"ZWKN","iata":"KJI"}],
+["w402100143",48.59016,86.18101,"kz",{"aeroway":"helipad"}],
+["w794835096",49.80011,86.62334,"kz",{"healthcare:speciality":"emergency","emergency":"landing_site","operator":"Спасотряд ВКО РК","operator:type":"government","website":"http://shqo.emer.gov.kz/ru/Territorial_divisions06.htm","aeroway":"helipad","surface":"ice? snow"}]]
