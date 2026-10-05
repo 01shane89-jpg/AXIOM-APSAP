@@ -21,7 +21,8 @@
   }
   function pub(r) { return (r.name || r.name_local || "Hospital") + " website"; }
   function evSource(r, e) {
-    var s = H.source("hospital_website", { name: pub(r), url: e.url, observed: e.observed, retrieved: e.observed, excerpt: e.excerpt, lang: /[\u0e00-\u0e7f]/.test(e.excerpt) ? "th" : "" });
+    var s = H.source("hospital_website", { name: pub(r), url: e.url, observed: e.observed, retrieved: e.observed, excerpt: e.excerpt, lang: /[\u0e00-\u0e7f]/.test(e.excerpt) ? "th" : "",
+      excerpt_en: e.excerpt_en || "", mt: e.excerpt_en ? e.mt || "machine translation" : "" });
     s.sha256 = e.sha256 || ""; s.page_title = e.title || "";
     return s;
   }
@@ -43,6 +44,8 @@
     Object.keys(r.caps || {}).forEach(function (k) {
       var e = (r.caps[k] || [])[0]; if (!e || !H.CAP_BY_CODE[k]) return;
       o[k] = { src: e.url, srcname: pub(r), quote: e.excerpt, quote_basis: BASIS, asof: e.observed, sha256: e.sha256 || "", stype: "hospital_website" };
+      /* the English machine translation stored beside a Thai quote (tools/build_hospital_web.mjs), with the tool named */
+      if (e.excerpt_en) { o[k].quote_en = e.excerpt_en; o[k].quote_mt = e.mt || "machine translation"; }
     });
     return o;
   }

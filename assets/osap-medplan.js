@@ -555,7 +555,8 @@
        or a government page, quoted, so they count as credible; read before OpenStreetMap so they win */
     if (m && m.caps) Object.keys(m.caps).forEach(function (k) {
       var x = m.caps[k]; if (!C[k] || !x || !x.src) return;
-      rep(k, { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "", sha: x.sha256 || "" }, (x.quote ? "\u201c" + clip(x.quote, 160) + "\u201d" : "stated by the source") + (x.quote_basis ? " (" + x.quote_basis + ")" : ""), "MODERATE");
+      rep(k, { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "", sha: x.sha256 || "" }, (x.quote_en ? "\u201c" + clip(x.quote_en, 200) + "\u201d (machine translated, " + clip(x.quote_mt, 60) + "; original: \u201c" + clip(x.quote, 120) + "\u201d)" :
+        x.quote ? "\u201c" + clip(x.quote, 160) + "\u201d" : "stated by the source") + (x.quote_basis ? " (" + x.quote_basis + ")" : ""), "MODERATE");
       if (k === "ed.24_7") rep("ed.basic", { kind: "institution", url: x.src, name: x.srcname || "source", at: x.asof || "" }, "24-hour emergency department", "MODERATE");
     });
     if (f.er === "yes") rep("ed.basic", osm, "emergency=yes", "LOW"); else if (f.er === "no") na("ed.basic", osm, "emergency=no");
