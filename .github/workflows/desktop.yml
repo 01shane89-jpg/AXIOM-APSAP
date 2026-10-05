@@ -1,0 +1,113 @@
+# Builds the AXIOM OSAP desktop program (desktop/) for Windows, Mac and Linux with free GitHub runners.
+# - Pull request touching desktop/: builds all three, runs desktop/test.mjs on Linux, starts each built program
+#   against the live site, and keeps the installers as run artifacts for 7 days.
+# - Tag desktop-vX.Y.Z (pushed by a maintainer): the same, then publishes the installers as a GitHub Release.
+#   A tag with a "-" (desktop-v0.1.0-preview.1) makes a pre-release for testing.
+# Installers are not code-signed (a certificate costs money), so Windows SmartScreen and macOS Gatekeeper warn once.
+name: Desktop program
+on:
+  pull_request:
+    paths: ["desktop/**", ".github/workflows/desktop.yml"]
+  push:
+    tags: ["desktop-v*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: --linux
+            exe: dist/linux-unpacked/axiom-osap
+          - os: windows-latest
+            target: --win
+            exe: dist/win-unpacked/AXIOM OSAP.exe
+          - os: macos-latest
+            target: --mac
+            exe: dist/mac-arm64/AXIOM OSAP.app/Contents/MacOS/AXIOM OSAP
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    steps:
+      # Linux runs desktop/test.mjs against a local copy of the whole site; the others only need desktop/.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          sparse-checkout: ${{ matrix.os == 'ubuntu-latest' && '/*' || 'desktop' }}
+          sparse-checkout-cone-mode: ${{ matrix.os != 'ubuntu-latest' }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Set version
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [[ "$REF" == refs/tags/desktop-v* ]]; then v="${REF#refs/tags/desktop-v}"; else v="0.0.0-test.${GITHUB_RUN_NUMBER}"; fi
+          npm pkg set version="$v"
+          echo "version $v"
+      - name: Build installers
+        run: npx electron-builder ${{ matrix.target }} --publish never
+      - name: Checks (link handling, permissions, offline start)
+        if: matrix.os == 'ubuntu-latest'
+        run: OSAP_TEST_ELECTRON="$PWD/${{ matrix.exe }}" xvfb-run -a node test.mjs
+      # Starts the built program against the live site; it prints the page title and exits 1 if OSAP does not load.
+      - name: Start the built program against the live site
+        env:
+          OSAP_SMOKE: "1"
+          EXE: ${{ matrix.exe }}
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then xvfb-run -a "$EXE" --no-sandbox; else "./$EXE"; fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: installers-${{ runner.os }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.dmg
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/desktop-v')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: installers-*
+          merge-multiple: true
+          path: out
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          cd out && sha256sum * > SHA256SUMS.txt && ls -la
+          pre=""; [[ "$TAG" == *-*-* ]] && pre="--prerelease"
+          cat > notes.md <<'NOTES'
+          AXIOM OSAP desktop program. It opens the live OSAP site in its own window, updates itself the same way the website does, and works offline after the first start with internet.
+
+          **Download:** Windows `.exe`, Mac `.dmg` (`arm64` = Apple silicon, `x64` = Intel), Linux `.AppImage` or `.deb`. `SHA256SUMS.txt` lists each file's fingerprint.
+
+          These files are not code-signed, so the first start shows a warning:
+          - **Windows:** "Windows protected your PC". Click **More info**, then **Run anyway**.
+          - **Mac:** "cannot be opened". Right-click the app, choose **Open**, then **Open** again (or System Settings > Privacy & Security > **Open Anyway**).
+          - **Linux AppImage:** make it executable (`chmod +x`), then run it.
+          NOTES
+          sed -i 's/^          //' notes.md
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "AXIOM OSAP desktop ${TAG#desktop-v}" --notes-file notes.md $pre $(ls | grep -v notes.md)
