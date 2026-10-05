@@ -1508,13 +1508,63 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     }
   }
   map.createPane("fldpane"); map.getPane("fldpane").style.zIndex = 430; map.getPane("fldpane").style.pointerEvents = "none";
+  /* flood history sits under flooding now, so today's flooding is never painted over by 40 years of history */
+  map.createPane("fldhpane"); map.getPane("fldhpane").style.zIndex = 425; map.getPane("fldhpane").style.pointerEvents = "none";
+  /* Both flood sources are re-coloured in the browser (both hosts send Access-Control-Allow-Origin: *), checked on 2026-10-05 from a
+     runner (tools/probe_flood.sh). As published they swamped the map:
+     - NASA MODIS flood (MCDWD) paints "insufficient data" (cloud over all 3 days) solid grey #AFAFAF; over central Thailand that was
+       61 to 95% of every tile, so at 60% the whole country went grey and the real flood pixels (well under 1%) were lost in it.
+       Kept: flood (#FA1E24) strong red; recurring (seasonal) flood (#FFFF00) amber; cloud a faint grey so "not seen" still shows;
+       normal water (#32D2F5) dropped, the base map already has rivers and lakes.
+     - JRC Global Surface Water occurrence runs red (rarely wet) to blue (always wet) with alpha = occurrence, so history drew in the
+       same red as flooding now. Re-coloured to one soft violet whose strength follows how often the spot was wet; permanent water
+       (90% and up) is kept faint for the same reason as normal water above.
+     Display only: the tiles are read, re-coloured and drawn; nothing is stored. A tile the browser may not read draws blank. */
+  var FLD_KEY = {
+    now: function (d) {
+      for (var i = 0; i < d.length; i += 4) {
+        var r = d[i], g = d[i + 1], b = d[i + 2], a = d[i + 3];
+        if (a < 128) { d[i + 3] = 0; continue; }
+        if (r > 200 && g < 90 && b < 90) { d[i] = 255; d[i + 1] = 23; d[i + 2] = 68; d[i + 3] = 255; }
+        else if (r > 200 && g > 200 && b < 90) { d[i] = 255; d[i + 1] = 166; d[i + 2] = 0; d[i + 3] = 175; }
+        else if (Math.abs(r - g) < 12 && Math.abs(g - b) < 12 && r > 120) { d[i] = d[i + 1] = d[i + 2] = 150; d[i + 3] = 30; }
+        else d[i + 3] = 0;
+      }
+    },
+    hist: function (d) {
+      for (var i = 0; i < d.length; i += 4) {
+        var o = d[i + 3] / 255;
+        if (o < 0.02) { d[i + 3] = 0; continue; }
+        d[i] = 150 - Math.round(70 * o); d[i + 1] = 110 - Math.round(60 * o); d[i + 2] = 235;
+        d[i + 3] = o >= 0.9 ? 40 : Math.round(45 + 120 * o);
+      }
+    }
+  };
+  /* flood pixels are sparse (often well under 1% of a tile), so flooding now stays a step stronger than the shared Opacity slider */
+  function fldOp(k) { return k === "now" ? Math.min(1, ML.op + 0.35) : ML.op; }
+  var KeyedTiles = L.TileLayer.extend({
+    createTile: function (coords, done) {
+      var c = document.createElement("canvas"), img = new Image(), key = this.options.rekey;
+      c.width = c.height = 256;
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        try { var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, 256, 256); var px = g.getImageData(0, 0, 256, 256); key(px.data); g.putImageData(px, 0, 0); }
+        catch (e) { c.width = c.width; }
+        c.complete = true; done(null, c);
+      };
+      /* "complete" tells Leaflet's zoom clean-up the tile is finished, as it reads it off an <img>; without it every finished tile is torn down mid-zoom */
+      img.onerror = function (e) { c.complete = true; done(e, c); };
+      img.src = this.getTileUrl(coords);
+      return c;
+    }
+  });
   var FLOODX = {
-    now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Satellite-derived and approximate (about 250 m); cloud can hide water.",
-      layer: function () { return L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
-        { pane: "fldpane", maxNativeZoom: 9, maxZoom: 13, opacity: ML.op, attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
-    hist: { name: "Flood history", short: "How often each place has flooded, 1984 to 2021", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Includes rivers and lakes: pale = rarely wet, deep = always wet.",
-      layer: function () { return L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
-        { pane: "fldpane", maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } },
+    now: { name: "Flooding now", short: "Satellite flood map, last 3 days", note: "NASA MODIS flood map, 3 days to yesterday, worldwide. Red = flood water, amber = seasonal flood. Satellite-derived and approximate (about 250 m); faint grey = cloud hid the ground all 3 days, so flooding there is not seen.",
+      layer: function () { return new KeyedTiles("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + new Date(Date.now() - 864e5).toISOString().slice(0, 10) + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png",
+        { pane: "fldpane", rekey: FLD_KEY.now, maxNativeZoom: 9, maxZoom: 13, opacity: fldOp("now"), attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }); } },
+    hist: { name: "Flood history", short: "How often each place has flooded, 1984 to 2021", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water, 30 m Landsat). Pale violet = rarely under water, deeper violet = often; rivers and lakes that are always wet are kept faint.",
+      layer: function () { return new KeyedTiles("https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
+        { pane: "fldhpane", rekey: FLD_KEY.hist, maxNativeZoom: 13, maxZoom: 13, opacity: ML.op, attribution: "&copy; EC JRC / Google, Global Surface Water (CC BY 4.0)" }); } },
     fire: { name: "Fires now", short: "Satellite heat detections, yesterday", note: "NASA VIIRS satellite heat detections (375 m), yesterday, worldwide. Includes field and forest burning; a detection does not say what caused it.",
       layer: function () { return L.tileLayer.wms("https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi", { layers: "VIIRS_NOAA20_Thermal_Anomalies_375m_All", format: "image/png", transparent: true,
         version: "1.3.0", TIME: new Date(Date.now() - 864e5).toISOString().slice(0, 10), pane: "fldpane", maxZoom: 13, opacity: ML.op, attribution: "NASA FIRMS / GIBS" }); } }
@@ -1525,7 +1575,7 @@ function osapSym(k, o) { return window.OSAP_SYM && OSAP_SYM.d[k] ? OSAP_SYM.icon
     if (on && !fldOn[k]) fldOn[k] = FLOODX[k].layer().addTo(map);
     if (!on && fldOn[k]) { map.removeLayer(fldOn[k]); delete fldOn[k]; }
   }
-  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(v); }); }
+  function setOpacity(v) { ML.op = v; mlSet(); Object.keys(fldOn).forEach(function (k) { fldOn[k].setOpacity(fldOp(k)); }); }
   /* ---------- elevation shading: hillshade tiles built from LiDAR where a government publishes it, satellite elevation elsewhere ----------
      Display only, drawn in the base-map pane and multiplied into whatever base map is chosen (so it also carries into the 3D view).
      Licences tagged like the base maps: Esri World Hillshade is under Esri's terms of use (restricted); GSI tiles are free with credit. */
