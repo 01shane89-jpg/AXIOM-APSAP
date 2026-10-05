@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "daily", "wxbrief", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "daily", "wxbrief", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
