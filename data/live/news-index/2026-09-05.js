@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-05"]=[["lb","2026-09-05T19:56","Nearly 9,000 killed in Israeli attacks on Lebanon since 2023","","Al Jazeera on MSN (via Bing News search)","https://www.msn.com/en-us/news/world/nearly-9000-killed-in-israeli-attacks-on-lebanon-since-2023/ar-AA2bENRX","","s","",""]];
