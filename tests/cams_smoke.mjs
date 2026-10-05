@@ -13,9 +13,19 @@ const OUT = process.env.OUT || "";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const reads = [];
+// A hidden area's cameras (assets/osap-lock.js) are listed in a sealed data/cams/<cc>-index.json that only an unlocked owner device
+// can read (sw.js opens it). The test cannot open the real one, so it serves a made-up ocean buoy agency in its place: an unlocked
+// page must read that index and draw its cameras like any other.
+const FIX = {
+  "data/cams/us-index.json": { built: "2026-10-05T00:00Z", sources: [{ id: "us-testbuoy", cc: "us", tz: "America/New_York", country: "Test buoys", agency: "Test buoy agency",
+    licence: "test", page: "https://www.ndbc.noaa.gov/", every: 60, type: "ocean", n: 1, box: [31.5, -74.5, 31.5, -74.5] },
+    { id: "us-testroad", cc: "us", tz: "America/New_York", country: "Test roads", agency: "Test road agency", licence: "test", page: "https://example.org/", every: 5, n: 1, box: [34.5, -78.5, 35.5, -77.5] }] },
+  "data/cams/us-testbuoy.json": { id: "us-testbuoy", cams: [["T0001", 31.5, -74.5, "Test buoy", "https://www.ndbc.noaa.gov/buoycam.php?station=T0001", null, "America/New_York"]] },
+};
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
   if (/^data\/cams\//.test(path)) reads.push(path);
+  if (FIX[path]) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(FIX[path])); return; }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
 }).listen(0, "127.0.0.1");
@@ -117,7 +127,7 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
   s = await st(p);
   ok(s.on && s.drawn === 0 && /No official open cameras on screen.*Hong Kong/.test(s.msg), "desktop: Kolkata has none; the note says where they are: " + s.msg.slice(0, 120));
-  ok(reads.length === 1 && reads[0] === "data/cams/index.json", "desktop: only the index is read (" + reads.join(",") + ")");
+  ok(reads.join(",") === "data/cams/index.json,data/cams/us-index.json", "desktop: only the index (and, unlocked, the hidden area's index) is read (" + reads.join(",") + ")");
   await p.evaluate(() => { const d = document.querySelector("#cam-sec .cam-cov"); d.open = true; }); await p.waitForTimeout(300);
   ok(/Hong Kong/.test(await p.evaluate(() => document.querySelector("#cam-sec [data-camcov]").textContent)), "desktop: Where cameras are available lists the agencies");
   await om(p, false);
@@ -207,11 +217,11 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   const dgt = await p.evaluate(() => { const i = document.querySelector(".leaflet-popup-content img.cam-big"); return { src: i ? i.getAttribute("src") : "", t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "" }; });
   ok(/^https:\/\/etraffic\.dgt\.es\/camarasEtraffic\/176130\.jpg\?t=/.test(dgt.src) && /Traffic camera/.test(dgt.t) && /DGT/.test(dgt.t), "Spain DGT camera shows the DGT's picture: " + dgt.src.slice(0, 60));
   await p.evaluate(() => window.__asapMap.closePopup());
-  await at(p, [31.743, -74.955], 9);
-  ok(await p.evaluate(() => window.OSAP_CAMS.open("us-ndbc", "41002")), "NOAA buoy camera drawn off Cape Hatteras");
+  await at(p, [31.5, -74.5], 9);
+  ok(await p.evaluate(() => window.OSAP_CAMS.open("us-testbuoy", "T0001")), "unlocked: a buoy camera from the hidden area's own index is drawn");
   await p.waitForFunction(() => !!document.querySelector(".leaflet-popup-content img.cam-big"), null, { timeout: 15000 }).catch(() => {});
   const sea = await p.evaluate(() => { const i = document.querySelector(".leaflet-popup-content img.cam-big"); return { src: i ? i.getAttribute("src") : "", strip: !!(i && i.classList.contains("cam-strip")), h: i ? i.getBoundingClientRect().height : 0, t: (document.querySelector(".leaflet-popup-content") || {}).textContent || "" }; });
-  ok(/buoycam\.php\?station=41002&t=/.test(sea.src) && sea.strip && sea.h >= 140 && /Ocean buoy camera/.test(sea.t), "NOAA buoy camera: the strip of views shown " + Math.round(sea.h) + " px high, scrolled sideways");
+  ok(/buoycam\.php\?station=T0001&t=/.test(sea.src) && sea.strip && sea.h >= 140 && /Ocean buoy camera/.test(sea.t), "Ocean buoy camera: the strip of views shown " + Math.round(sea.h) + " px high, scrolled sideways");
   await p.evaluate(() => window.__asapMap.closePopup());
   await at(p, [33, -77], 6); await p.waitForTimeout(1200);
   const far = await p.evaluate(() => { const s = window.OSAP_CAMS.state(); return { n: s.drawn, msg: s.msg }; });

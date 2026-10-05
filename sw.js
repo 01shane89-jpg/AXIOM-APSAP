@@ -544,6 +544,58 @@ const home = (u) => new URL(u, self.registration.scope).href;
 const isData = (u) => /\/data\//.test(new URL(u, self.registration.scope).pathname);
 const store = (u) => (isData(u) ? DATA : SHELL);
 const save = (req, res) => caches.open(store(typeof req === "string" ? req : req.url)).then((c) => c.put(req, res)).catch(() => {});
+// Hidden areas (assets/osap-lock.js, tools/seal_hidden.mjs): these files are sealed in the repository and on the site, readable only
+// with an owner device's private key. While that device is unlocked the page keeps the key in IndexedDB ("osap-lock", as a
+// CryptoKey that cannot be exported) with its end time, and this worker opens the sealed files on their way to the page. The
+// caches only ever hold the sealed copies; the opened copy is marked (X-OSAP-Unsealed) so the page does not save it either.
+// Locked, or with no key, the sealed text is passed on as it is: one JavaScript comment, so a script runs nothing.
+// SEALED must equal "sealed" in tools/hidden-areas.json (tests/seal.test.mjs).
+const SEALED = ["^data/layers/us/", "^data/infra/us/", "^data/(sof|brief|history)/us\\.js$", "^data/dc/us\\.json$", "^data/live/[a-z]+/us\\.js$",
+  "^data/live/news/us-states/", "^data/cams/us-[a-z0-9-]+\\.json$", "^source/(sof|countries)/us\\.json$"].map((r) => new RegExp(r));
+const SEAL_PREFIX = "/*osap-sealed:v1 ";
+function sealedPath(u) {
+  const p = new URL(u).pathname, s = new URL(self.registration.scope).pathname;
+  return p.startsWith(s) && SEALED.some((r) => r.test(p.slice(s.length)));
+}
+const unb64u = (t) => Uint8Array.from(atob(String(t).replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+function lockKey() {
+  return new Promise((done) => {
+    try {
+      const o = indexedDB.open("osap-lock", 1);
+      o.onupgradeneeded = () => o.result.createObjectStore("k");
+      o.onerror = () => done(null);
+      o.onsuccess = () => {
+        const db = o.result;
+        try {
+          const g = db.transaction("k").objectStore("k").get("open");
+          g.onsuccess = () => { const r = g.result; db.close(); done(r && r.until > Date.now() && r.key && r.f ? r : null); };
+          g.onerror = () => { db.close(); done(null); };
+        } catch (e) { db.close(); done(null); }
+      };
+    } catch (e) { done(null); }
+  });
+}
+async function unseal(res) {
+  if (!res || !res.ok) return res;
+  try {
+    const text = await res.clone().text();
+    if (!text.startsWith(SEAL_PREFIX)) return res;
+    const k = await lockKey();
+    if (!k) return res;
+    const env = JSON.parse(text.slice(SEAL_PREFIX.length).replace(/\*\/\s*$/, "")), r = (env.r || []).find((x) => x.f === k.f);
+    if (!r) return res;
+    const S = crypto.subtle, e = unb64u(r.e);
+    const eph = await S.importKey("spki", e, { name: "ECDH", namedCurve: "P-256" }, false, []);
+    const hk = await S.importKey("raw", await S.deriveBits({ name: "ECDH", public: eph }, k.key, 256), "HKDF", false, ["deriveKey"]);
+    const kek = await S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: e, info: new TextEncoder().encode("osap-seal v1") }, hk, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const ck = await S.importKey("raw", await S.decrypt({ name: "AES-GCM", iv: unb64u(r.iv) }, kek, unb64u(r.w)), "AES-GCM", false, ["decrypt"]);
+    const z = await S.decrypt({ name: "AES-GCM", iv: unb64u(env.iv) }, ck, unb64u(env.c));
+    const body = await new Response(new Blob([z]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+    const h = new Headers(res.headers); h.delete("content-length"); h.delete("content-encoding"); h.set("X-OSAP-Unsealed", "1");
+    return new Response(body, { status: 200, statusText: "OK", headers: h });
+  } catch (err) { return res; }
+}
+const opened = (req) => (r) => (r && sealedPath(req.url) ? unseal(r) : r);
 
 self.addEventListener("install", (e) => {
   // cache: "reload" skips the browser's HTTP cache (GitHub Pages lets it keep files for 10 minutes),
@@ -595,7 +647,7 @@ self.addEventListener("fetch", (e) => {
       e.respondWith(fetch(req.url, { cache: "no-store", credentials: "same-origin" }).then((res) => {
         if (res.ok) e.waitUntil(save(url.origin + url.pathname, res.clone()));
         return res;
-      }).catch(() => caches.match(req, { ignoreSearch: true })));
+      }).catch(() => caches.match(req, { ignoreSearch: true })).then(opened(req)));
       return;
     }
     // "no-cache" asks the server every time (a cheap check when nothing changed), so a new deploy shows on the next load.
@@ -616,7 +668,7 @@ self.addEventListener("fetch", (e) => {
     // the network copy keeps downloading and is saved for the next open (or Refresh now, above).
     const wait = /\/data\//.test(url.pathname) ? DATA_WAIT : PAGE_WAIT;
     e.respondWith(Promise.race([net.catch(() => null), new Promise((r) => setTimeout(() => r(null), wait))])
-      .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback));
+      .then((res) => res || caches.match(req, { ignoreSearch: true }).then((r) => r || net)).catch(fallback).then(opened(req)));
     return;
   }
   if (url.origin === location.origin) {

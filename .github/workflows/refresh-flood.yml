@@ -240,6 +240,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
@@ -264,10 +265,12 @@ jobs:
         env:
           LANE: ${{ inputs.lane }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live data/history
           if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/seal_hidden.mjs --check
           git add data/thailand/flood-live-snapshot.js data/live data/history
           git commit -m "Refresh live snapshots${LANE:+ ($LANE)} $(date -u +'%Y-%m-%d %H:%MZ')"
           # Pulling takes over a minute, and merges or the other refresh jobs often land on main meanwhile, so try a few times.
@@ -316,6 +319,7 @@ jobs:
       - name: Park test output on a preview-data branch
         if: ${{ inputs.only == 'evsum' && github.ref != 'refs/heads/main' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan evsum-preview-data
@@ -327,6 +331,7 @@ jobs:
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' && inputs.only != 'probe-models' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live/evsum.js data/live/aiwatch.js 2>/dev/null || true
           if git diff --quiet -- data/live/evsum.js data/live/aiwatch.js; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
@@ -367,6 +372,7 @@ jobs:
       - name: Park test output on a preview-data branch
         if: ${{ inputs.only == 'daily' && github.ref != 'refs/heads/main' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan daily-preview-data
@@ -378,6 +384,7 @@ jobs:
       - name: Commit the summaries if they changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live/daily.js data/live/daily 2>/dev/null || true
           if git diff --quiet -- data/live/daily.js data/live/daily; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
