@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' file:">
+<title>AXIOM OSAP</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #12324a; color: #fff; font: 16px/1.5 system-ui, sans-serif; }
+  main { max-width: 30rem; padding: 1.5rem; text-align: center; }
+  img { width: 96px; height: 96px; }
+  button { margin-top: 1rem; padding: .6rem 1.4rem; font: inherit; border: 0; border-radius: 6px; background: #fff; color: #12324a; cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <img src="build/icon.png" alt="">
+  <h1>No internet connection</h1>
+  <p>OSAP needs the internet the first time it opens, to save the app and its data on this computer. After that it opens and works offline.</p>
+  <button id="retry" type="button">Try again</button>
+</main>
+<script>
+  // The app address comes from main.js; only an https address (or this computer, for tests) is followed.
+  var u = new URLSearchParams(location.search).get("u") || "";
+  function go() { if (/^(https:\/\/|http:\/\/(127\.0\.0\.1|localhost)[:/])/.test(u)) location.href = u; }
+  document.getElementById("retry").onclick = go;
+  window.addEventListener("online", go);
+</script>
+</body>
+</html>

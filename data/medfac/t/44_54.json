@@ -1,0 +1,8 @@
+[["w1236893783",44.84289,54.00655,"kz",{"aeroway":"helipad"}],
+["w227889975",45.32011,55.19279,"kz",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"21/1","addr:street":"улица Тауелсиздик","addr:city":"Бейнеу"}],
+["w227890011",45.31923,55.19275,"kz",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"2/3","addr:street":"улица Акшабай","addr:city":"Бейнеу"}],
+["w251454562",45.33176,55.12352,"kz",{"name":"Бейнеу","name:en":"Beyneu","aeroway":"aerodrome","wikidata":"Q4081225"}],
+["w279678052",44.5973,54.02393,"kz",{"aeroway":"helipad"}],
+["w366090217",45.32383,55.18328,"kz",{"amenity":"hospital","healthcare":"hospital"}],
+["w796724434",45.27727,55.18007,"kz",{"name":"Поликлиника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"232","addr:street":"Бейімбет Майлин","addr:city":"Бейнеу"}],
+["w800618690",45.03863,55.75357,"kz",{"name":"Амбулатория","amenity":"clinic","addr:housenumber":"7","addr:street":"Тауелсиздик","addr:city":"Акжигит"}]]

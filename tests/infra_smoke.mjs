@@ -24,7 +24,7 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
 
 const IX = { v: 1, at: "2026-10-04T10:00Z", sources: { oa: { name: "OurAirports", ok: true }, wpi: { name: "NGA World Port Index (Pub. 150)", ok: false }, osm: { name: "OpenStreetMap", ok: true },
-  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1, plant: 3, fuel: 1, pipe: 1 } } };
+  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1, plant: 3, fuel: 1, pipe: 1, stn: 1, rail: 1, br: 2, tn: 1 } } };
 const F = "e".repeat(64);
 const smalls = [];
 for (let k = 0; k < 700; k++) smalls.push({ k: "af", t: "S", id: "oa:S" + k, nm: "Airstrip S" + k, la: 8 + (k % 70) * 0.2, lo: 98 + Math.floor(k / 70) * 0.5, s: "oa", u: "https://ourairports.com/airports/S" + k + "/", x: {}, fp: F });
@@ -39,8 +39,13 @@ const TH = { v: 1, cc: "th", at: IX.at, items: [
   { k: "plant", t: "gas", id: "wri:THA1", nm: "Test Gas", la: 13.0, lo: 101.2, s: "wri", u: "https://datasets.wri.org/", x: { fuel: "Gas", mw: 1400, built: "2001" }, also: [{ s: "osm", u: "https://www.openstreetmap.org/way/9" }], fp: F },
   { k: "plant", t: "solar", id: "osm:w10", nm: "", la: 13.3, lo: 101.3, s: "osm", u: "https://www.openstreetmap.org/way/10", x: { mw: 5 }, fp: F },
   { k: "fuel", t: "R", id: "osm:w11", nm: "Test Refinery", la: 13.1, lo: 100.9, s: "osm", u: "https://www.openstreetmap.org/way/11", x: { facility: "refinery", op: "Test Oil Co" }, fp: F },
+  { k: "stn", t: "S", id: "osm:n20", nm: "Krung Thep Aphiwat", la: 13.804, lo: 100.54, s: "osm", u: "https://www.openstreetmap.org/node/20", x: { ref: "BKA" }, also: [{ s: "wdr", u: "https://www.wikidata.org/wiki/Q20" }], fp: F },
+  { k: "br", t: "H", id: "osm:w21", nm: "Bridge on 9", la: 13.65, lo: 100.53, s: "osm", u: "https://www.openstreetmap.org/way/21", x: { carries: "Motorway", road: "9", len_m: 1450, maxweight: "25" }, fp: F },
+  { k: "br", t: "R", id: "wd:Q22", nm: "Rama VI Bridge", la: 13.8, lo: 100.51, s: "wdb", u: "https://www.wikidata.org/wiki/Q22", x: { len_m: 442, kind: "railway bridge" }, fp: F },
+  { k: "tn", t: "P", id: "osm:w23", nm: "Tunnel on 3", la: 13.7, lo: 100.6, s: "osm", u: "https://www.openstreetmap.org/way/23", x: { carries: "Main road", len_m: 300, maxheight: "4.2" }, fp: F },
   { k: "lp", t: "C", id: "tg:lp:songkhla", nm: "Songkhla, Thailand", la: 7.19, lo: 100.6, s: "tg", u: "https://www.submarinecablemap.com/landing-point/songkhla", x: { cables: "Test Cable 1" }, fp: F }
-], lines: [{ k: "pipe", t: "gas", id: "osm:w12", nm: "Test Gas Pipeline", g: [[[13.1, 100.9], [13.5, 101.5]]], s: "osm", u: "https://www.openstreetmap.org/way/12", x: { substance: "gas", location: "underground" }, fp: F },
+], lines: [{ k: "rail", t: "M", id: "osm:w30@90_0", nm: "Northern Line", g: [[[13.8, 100.54], [14.5, 100.6], [15.2, 100.1]]], s: "osm", u: "https://www.openstreetmap.org/way/30", x: { usage: "main", gauge: "1000" }, fp: F },
+  { k: "pipe", t: "gas", id: "osm:w12", nm: "Test Gas Pipeline", g: [[[13.1, 100.9], [13.5, 101.5]]], s: "osm", u: "https://www.openstreetmap.org/way/12", x: { substance: "gas", location: "underground" }, fp: F },
   { k: "cable", id: "tg:test-1", nm: "Test Cable 1", c: "#aa3377", g: [[[7.19, 100.6], [6, 102], [3, 105]]], s: "tg", u: "https://www.submarinecablemap.com/submarine-cable/test-1", fp: F }] };
 
 async function open(opts, hash = "", mode = "ok") {
@@ -50,8 +55,8 @@ async function open(opts, hash = "", mode = "ok") {
     const u = new URL(r.request().url()).pathname; asked.push(u);
     if (mode === "fail") return r.fulfill({ status: 500, body: "x" });
     if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(IX) });
-    const m = /\/th\/(af|port|dam|cable|plant|fuel)\.json$/.exec(u);
-    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"], plant: ["plant"], fuel: ["fuel"] }[m[1]], lk = { cable: "cable", fuel: "pipe" }[m[1]];
+    const m = /\/th\/(af|port|dam|cable|plant|fuel|rail|bridge)\.json$/.exec(u);
+    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"], plant: ["plant"], fuel: ["fuel"], rail: ["stn"], bridge: ["br", "tn"] }[m[1]], lk = { cable: "cable", fuel: "pipe", rail: "rail" }[m[1]];
       return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...TH, layer: m[1], items: TH.items.filter((i) => ks.includes(i.k)), lines: TH.lines.filter((l) => l.k === lk) }) }); }
     return r.fulfill({ status: 404, body: "" });
   });
@@ -147,6 +152,31 @@ const popWith = async (p, re) => {
   pop = await popWith(p, "Test Refinery");
   ok(/Oil refinery/.test(pop) && /Test Oil Co/.test(pop), "popup: refinery and operator");
   ok(errors.length === 0, "energy: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- railways, bridges and tunnels ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await om(p, true);
+  for (const k of ["rail", "bridge"]) ok(await shown(p, '#atk-om #inf-sec input[data-inf="' + k + '"]'), "mobility: switch " + k + " in Infrastructure");
+  await view(p, [13.8, 100.55], 9);
+  await p.check('#inf-sec input[data-inf="rail"]'); await p.check('#inf-sec input[data-inf="bridge"]');
+  await p.waitForFunction(() => { const s = window.OSAP_INFRA.state(); return s.on.rail && s.on.bridge && !s.busy; }, null, { timeout: 10000 }); await p.waitForTimeout(600);
+  let s = await st(p);
+  ok(s.shown.rail === 1 && s.shown.bridge === 3 && s.drawn.lines === 1, "mobility: station, bridges, tunnel and the railway line drawn " + JSON.stringify(s.shown) + " lines " + s.drawn.lines);
+  ok(/Railways and stations: 1 stations, 1 lines/.test(s.msg) && /Bridges and tunnels: 3 in this country/.test(s.msg), "mobility: counts: " + s.msg);
+  const lg = await p.evaluate(() => document.querySelector(".leaflet-control-container").innerHTML);
+  ok(/Railway, main line/.test(lg) && /Bridge, motorway or trunk road/.test(lg) && !/Railway, military/.test(lg) && !/Tunnel, motorway/.test(lg), "mobility: legend lists only the kinds this country has");
+  await om(p, false);
+  let pop = await popWith(p, "Bridge on 9");
+  ok(/Bridge, motorway or trunk road · OpenStreetMap/.test(pop) && /1,450 m/.test(pop) && /25 t/.test(pop) && /Motorway/.test(pop), "popup: bridge length, weight limit, what it carries");
+  pop = await popWith(p, "Tunnel on 3");
+  ok(/Tunnel, main road/.test(pop) && /4\.2 m/.test(pop), "popup: tunnel height limit");
+  pop = await popWith(p, "Northern Line");
+  ok(/Railway, main line · OpenStreetMap/.test(pop) && /1000/.test(pop) && /sidings and yards left out/.test(pop), "popup: railway line, gauge, how it was drawn");
+  pop = await popWith(p, "Krung Thep Aphiwat");
+  ok(/Railway station/.test(pop) && /Also listed by.*Wikidata/.test(pop) && /BKA/.test(pop), "popup: station with its code and Wikidata");
+  ok(errors.length === 0, "mobility: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- read failure, and a country with nothing listed ----------

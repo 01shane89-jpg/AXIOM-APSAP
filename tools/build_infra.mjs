@@ -17,13 +17,18 @@
 //     facilities, fuel depots and LNG terminals, and oil, gas and fuel pipelines of 2 km and more (lines, simplified).
 //     Every plant gets one fuel class (coal, gas, oil, nuclear, hydro, pumped storage, solar, wind, offshore wind, geothermal,
 //     bioenergy and waste, tidal and wave, battery storage, other) so the map can colour and filter by it.
+//   - OpenStreetMap: main and branch railways (no sidings, yards, industrial or tourist lines; joined per name and use and
+//     simplified to about 500 m), railway stations (not metro or tram), and bridges and tunnels of 150 m and more that carry
+//     motorways, trunk, primary and secondary roads or railways, with length, weight and height limits where mapped; the two
+//     carriageways of one road are one bridge. Wikidata (CC0) adds railway stations, bridges (100 m and up, or length not given)
+//     and tunnels that OpenStreetMap lacks.
 //   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
 //     landing points. A cable goes in the file of every country it lands in.
 // Several sources are merged per layer: the first source to list a site leads, and another source's record of the same site
 // (within a set distance) is folded into it as "also listed by" with its own link, so a popup shows every source that has it.
 // Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
 // split by layer into data/infra/<cc>/<layer>.json (af, port, dam, cable: landing points plus cable lines, plant, fuel: sites plus
-// pipelines) so a switch loads only
+// pipelines, rail: stations plus railway lines, bridge: bridges and tunnels) so a switch loads only
 // its own layer, and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
 // good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
 // Privacy: no phone numbers, emails, websites of people, or private persons' names. Only facility names, codes and public bodies.
@@ -222,7 +227,7 @@ const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|propose
    never read first, then the oldest, until its time budget (INFRA_OSM_MIN minutes, default 60) is spent; a tile that fails keeps
    its last copy. So a busy server never empties the map. Lines (dams are usually mapped as lines) are placed at their midpoint. */
 const POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
-const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|content|man_made|location|diameter|usage)$/;
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|content|man_made|location|diameter|usage|bridge|bridge:name|tunnel|tunnel:name|highway|railway|maxweight|maxheight|lanes|gauge|electrified|station|train)$/;
 async function postpass(sql) {
   let err;
   for (let k = 0; k < 2; k++) {
@@ -243,10 +248,17 @@ async function osm() {
       ` OR (tags->>'industrial' IN ('storage','depot','terminal') AND coalesce(tags->>'product', tags->>'content', '') ~* '(oil|petrol|diesel|fuel|gasoline|lng|lpg|gas)')` +
       ` OR ((tags->>'landuse' = 'industrial' OR tags ? 'industrial' OR tags->>'man_made' = 'works') AND coalesce(tags->>'name:en', tags->>'name', '') ~* '(oil refinery|petroleum refinery|refinery|refineries|lng terminal|oil terminal|fuel terminal|oil depot|fuel depot|petroleum depot|tank farm)'` +
       ` AND coalesce(tags->>'name:en', tags->>'name', '') !~* '(sugar|salt|${EDIBLE})'))`,
-    pipe: `tags->>'man_made' = 'pipeline' AND tags->>'substance' IN ('gas','oil','fuel','natural_gas','petroleum','crude_oil','lng','lpg','hydrocarbons','diesel','kerosene','gasoline')` };
+    pipe: `tags->>'man_made' = 'pipeline' AND tags->>'substance' IN ('gas','oil','fuel','natural_gas','petroleum','crude_oil','lng','lpg','hydrocarbons','diesel','kerosene','gasoline')`,
+    /* main-line railways: no sidings, yards or spurs (service=*), no industrial, tourist or test track */
+    rail: `tags->>'railway' IN ('rail','narrow_gauge') AND NOT tags ? 'service' AND coalesce(tags->>'usage', '') NOT IN ('industrial','tourism','test','scientific')`,
+    /* passenger and freight stations of the national railways, not metro or tram stops */
+    station: `tags->>'railway' = 'station' AND coalesce(tags->>'station', '') NOT IN ('subway','light_rail','monorail','funicular','miniature','tram') AND coalesce(tags->>'subway', '') <> 'yes'`,
+    /* bridges and tunnels that carry motorways, trunk and primary roads or railways, 150 m and longer, plus mapped bridge outlines with a name */
+    bridge: `tags->>'bridge' IN ('yes','viaduct','cantilever','suspension','movable','covered','trestle') AND (tags->>'highway' IN ('motorway','trunk','primary','secondary') OR tags->>'railway' IN ('rail','narrow_gauge'))`,
+    tunnel: `tags->>'tunnel' IN ('yes','building_passage') AND tags->>'tunnel' <> 'culvert' AND (tags->>'highway' IN ('motorway','trunk','primary','secondary') OR tags->>'railway' IN ('rail','narrow_gauge'))` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
-  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuelsite|pipe)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuelsite|pipe|rail|station|bridge|tunnel)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
   for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
     const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
@@ -259,8 +271,20 @@ async function osm() {
     if (t.at && Date.now() - t.at < 3 * 864e5) continue;   // read in the last three days
     const env = `geom && ST_MakeEnvelope(${t.w}, ${t.s0}, ${t.w + 30}, ${t.n0}, 4326)`;
     /* pipelines keep their line (simplified to about 500 m, and 2 km long or more); everything else is one point */
+    const box = `ST_MakeEnvelope(${t.w}, ${t.s0}, ${t.w + 30}, ${t.n0}, 4326)`;
+    /* railways: the tile's track joined into one line per name and use, cut to the tile so nothing is drawn twice */
     const sql = t.part === "pipe"
       ? `SELECT osm_type, osm_id, tags, ST_Simplify(geom, 0.005) AS geom FROM postpass_line WHERE ${W.pipe} AND ${env} AND ST_Length(geom::geography) > 2000`
+      : t.part === "rail"
+      ? `SELECT 'W' AS osm_type, min(osm_id) AS osm_id, jsonb_build_object('name', tags->>'name', 'name:en', tags->>'name:en', 'usage', tags->>'usage', 'railway', tags->>'railway',` +
+        ` 'gauge', min(tags->>'gauge'), 'electrified', min(tags->>'electrified'), 'operator', min(tags->>'operator')) AS tags,` +
+        ` ST_Simplify(ST_LineMerge(ST_Collect(ST_CollectionExtract(ST_Intersection(geom, ${box}), 2))), 0.005) AS geom FROM postpass_line WHERE ${W.rail} AND ${env}` +
+        ` GROUP BY tags->>'name', tags->>'name:en', tags->>'usage', tags->>'railway'`
+      : t.part === "bridge" || t.part === "tunnel"
+      /* a bridge or tunnel mapped as several lines (a relation) has no single midpoint: any point on it does */
+      ? `SELECT osm_type, osm_id, tags, CASE WHEN GeometryType(geom) = 'LINESTRING' THEN ST_LineInterpolatePoint(geom, 0.5) ELSE ST_PointOnSurface(geom) END AS geom,` +
+        ` round(ST_Length(geom::geography)::numeric) AS len FROM postpass_line WHERE ${W[t.part]} AND ${env} AND ST_Length(geom::geography) > 150` +
+        (t.part === "bridge" ? ` UNION ALL SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom, NULL::float AS len FROM postpass_pointpolygon WHERE tags->>'man_made' = 'bridge' AND tags ? 'name' AND ${env}` : "")
       : `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${W[t.part]} AND ${env}` +
         ` UNION ALL SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom FROM postpass_line WHERE ${W[t.part]} AND ${env}`;
     try {
@@ -269,9 +293,11 @@ async function osm() {
         const p = f.properties || {}, gm = f.geometry || {}, c = gm.coordinates; if (!c) continue;
         let tg = p.tags || {}; if (typeof tg === "string") try { tg = JSON.parse(tg); } catch (e) { tg = {}; }
         if (Object.keys(tg).some((k) => DEAD.test(k)) || tg.disused === "yes" || tg.abandoned === "yes") continue;
-        const keep = Object.fromEntries(Object.entries(tg).filter(([k]) => KEEP.test(k)).map(([k, v]) => [k, clip(v, 80)]));
-        const oid = String(p.osm_type || "n")[0].toLowerCase() + p.osm_id;
-        if (t.part === "pipe") {
+        const keep = Object.fromEntries(Object.entries(tg).filter(([k, v]) => KEEP.test(k) && v != null).map(([k, v]) => [k, clip(v, 80)]));
+        if (p.len != null) keep._len = Math.round(+p.len);
+        /* a railway line is the tile's joined track: its id names the tile too */
+        const oid = String(p.osm_type || "n")[0].toLowerCase() + p.osm_id + (t.part === "rail" ? "@" + t.w + "_" + t.s0 : "");
+        if (t.part === "pipe" || t.part === "rail") {
           const parts = gm.type === "MultiLineString" ? c : gm.type === "LineString" ? [c] : [];
           const g = parts.map((ln) => ln.map(([lo, la]) => [r3(la), r3(lo)])).filter((ln) => ln.length > 1);
           if (g.length) els.push([oid, null, null, keep, g]);
@@ -287,17 +313,24 @@ async function osm() {
   osmCover = { tiles: have, of: tiles.length, fresh };
   const els = [];
   const pipes = [];
-  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags, g] of t.old.els) (g ? pipes : els).push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: +id.slice(1), lat, lon, tags, g, part: t.part });
+  for (const t of tiles) if (t.old) for (const [id, lat, lon, tags, g] of t.old.els) (g ? pipes : els).push({ type: { n: "node", w: "way", r: "relation" }[id[0]], id: id.slice(1), lat, lon, tags, g, part: t.part });
   const seen = new Set(), out = [], lines = [];
   /* a pipeline goes in the file of every country its line passes through */
   for (const e of pipes) {
     const id = e.type[0] + e.id; if (seen.has(id)) continue; seen.add(id);
     const t = e.tags || {}, sub = /gas|lng|lpg/i.test(t.substance) ? "gas" : /oil|petroleum|crude/i.test(t.substance) ? "oil" : "fuel";
-    const ccs = new Set();
+    const ccs = new Set(), wid = String(e.id).split("@")[0];
     for (const ln of e.g) for (let i = 0; i < ln.length; i += Math.max(1, Math.floor(ln.length / 12))) { const c = ccOf(ln[i][0], ln[i][1]); if (c) ccs.add(c); }
     for (const ln of e.g) { const v = ln[ln.length - 1], c = ccOf(v[0], v[1]); if (c) ccs.add(c); }
     const x = Object.fromEntries([["substance", clip(t.substance, 30)], ["location", clip(t.location, 20)], ["diameter", clip(t.diameter, 20)], ["usage", clip(t.usage, 20)],
       ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+    if (e.part === "rail") {
+      const xr = Object.fromEntries([["usage", clip(t.usage, 20)], ["gauge", clip(t.gauge, 20)], ["electrified", t.electrified && t.electrified !== "no" ? clip(t.electrified, 20) : null],
+        ["narrow", t.railway === "narrow_gauge" ? 1 : null], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      const ty = t.usage === "main" ? "M" : t.usage === "branch" ? "B" : t.usage === "military" ? "X" : "O";
+      for (const cc of ccs) lines.push({ k: "rail", t: ty, cc, id: "osm:" + id, nm: clip(t["name:en"] || t.name || ""), g: e.g, s: "osm", u: "https://www.openstreetmap.org/way/" + wid, x: xr });
+      continue;
+    }
     for (const cc of ccs) lines.push({ k: "pipe", t: sub, cc, id: "osm:" + id, nm: clip(t["name:en"] || t.name || ""), g: e.g, s: "osm",
       u: "https://www.openstreetmap.org/" + e.type + "/" + e.id, x });
   }
@@ -327,6 +360,21 @@ async function osm() {
       const xp = Object.fromEntries([["fuel", clip(t["plant:source"], 40)], ["method", clip(t["plant:method"], 30)], ["mw", out_mw != null ? Math.round(out_mw * 10) / 10 : null],
         ["built", clip(t.start_date, 12)], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1] != null && p[1] !== ""));
       out.push({ k: "plant", t: cl, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xp });
+      continue;
+    }
+    if (e.part === "station") {
+      const xs = Object.fromEntries([["ref", clip(t.ref, 12)], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "stn", t: "S", cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xs });
+      continue;
+    }
+    if (e.part === "bridge" || e.part === "tunnel") {
+      const br = e.part === "bridge", rail = !!t.railway, road = clip(t.ref || t["name:en"] || t.name || "", 50);
+      const ty = t.man_made === "bridge" ? "B" : rail ? "R" : /^(motorway|trunk)$/.test(t.highway) ? "H" : "P";
+      const own = clip(t[br ? "bridge:name" : "tunnel:name"] || (t.man_made === "bridge" ? nm : ""), 80);
+      const xb = Object.fromEntries([["carries", rail ? "Railway" : { motorway: "Motorway", trunk: "Trunk road", primary: "Main road", secondary: "Secondary road" }[t.highway] || null],
+        ["road", own || t.man_made === "bridge" ? null : road], ["len_m", t._len || null], ["maxweight", clip(t.maxweight, 20)], ["maxheight", clip(t.maxheight, 20)],
+        ["lanes", clip(t.lanes, 4)]].filter((p) => p[1] != null && p[1] !== ""));
+      out.push({ k: br ? "br" : "tn", t: ty, cc, id: "osm:" + id, nm: own || (br ? "Bridge" : "Tunnel") + (road ? " on " + road : ""), la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xb });
       continue;
     }
     if (e.part === "fuelsite") {
@@ -438,6 +486,37 @@ async function wikifuel() {
   return [...by.values()];
 }
 
+/* ---------- Wikidata railway stations, bridges and tunnels ---------- */
+/* each class found by its English label; only items that are directly one of them (subclass trees run to footbridges and metro stops) */
+async function wikiclass(labels, mk) {
+  const q = `SELECT ?item ?itemLabel ?coord ?a2 ?clsLabel ?len ?inc WHERE {
+  VALUES ?lbl { ${labels.map((l) => JSON.stringify(l) + "@en").join(" ")} }
+  ?cls rdfs:label ?lbl. ?item wdt:P31 ?cls; wdt:P625 ?coord.
+  OPTIONAL { ?item wdt:P17 ?c. ?c wdt:P297 ?a2. } OPTIONAL { ?item p:P2043/psn:P2043/wikibase:quantityAmount ?len. } OPTIONAL { ?item wdt:P571 ?inc. }
+  FILTER NOT EXISTS { ?item wdt:P576 ?gone. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". } }`;
+  const j = JSON.parse(await get(WDQS, { method: "POST", body: "query=" + encodeURIComponent(q),
+    headers: { accept: "application/sparql-results+json", "content-type": "application/x-www-form-urlencoded" } }, 290000));
+  const by = new Map();
+  for (const b of j.results.bindings) {
+    const m = /Point\(([-\d.eE]+) ([-\d.eE]+)\)/.exec(b.coord.value); if (!m) continue;
+    const qid = b.item.value.split("/").pop(); if (by.has(qid)) continue;
+    const lon = +m[1], lat = +m[2], cc = ccOf(lat, lon, ccFromA2(b.a2 && b.a2.value)); if (!cc) continue;
+    const nm = b.itemLabel && b.itemLabel.value !== qid ? b.itemLabel.value : ""; if (!nm) continue;
+    const it = mk(nm, (b.clsLabel && b.clsLabel.value) || "", b.len ? Math.round(num(b.len.value)) : null, b.inc ? String(b.inc.value).slice(0, 4) : null);
+    if (it) by.set(qid, { ...it, cc, id: "wd:" + qid, nm: clip(nm), la: r4(lat), lo: r4(lon), u: "https://www.wikidata.org/wiki/" + qid });
+  }
+  return [...by.values()];
+}
+const wikistations = () => wikiclass(["railway station", "train station", "passenger railway station"],
+  (nm, cls, len, inc) => ({ k: "stn", t: "S", s: "wdr", x: inc ? { built: inc } : {} }));
+const wikibridges = () => wikiclass(["bridge", "road bridge", "railway bridge", "viaduct", "suspension bridge", "cable-stayed bridge", "arch bridge", "truss bridge",
+  "beam bridge", "cantilever bridge", "tunnel", "road tunnel", "railway tunnel"], (nm, cls, len, inc) => {
+  const tn = /tunnel/i.test(cls);
+  return { k: tn ? "tn" : "br", t: /rail/i.test(cls) ? "R" : tn ? "P" : "B", s: "wdb",
+    x: Object.fromEntries([["len_m", len], ["kind", clip(cls, 30)], ["built", inc]].filter((p) => p[1] != null && p[1] !== "")) };
+});
+
 /* ---------- TeleGeography submarine cables ---------- */
 async function cables() {
   const lp = JSON.parse(await get(TG + "landing-point/landing-point-geo.json"));
@@ -504,6 +583,8 @@ const SRC = {
   wri: { name: "WRI Global Power Plant Database", lic: "CC BY 4.0", link: "https://datasets.wri.org/dataset/globalpowerplantdatabase" },
   wdp: { name: "Wikidata (power stations)", lic: "CC0", link: "https://www.wikidata.org/wiki/Q159719" },
   wdf: { name: "Wikidata (refineries and terminals)", lic: "CC0", link: "https://www.wikidata.org/" },
+  wdr: { name: "Wikidata (railway stations)", lic: "CC0", link: "https://www.wikidata.org/" },
+  wdb: { name: "Wikidata (bridges and tunnels)", lic: "CC0", link: "https://www.wikidata.org/" },
   tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
 };
 const got = {}, status = {};
@@ -526,22 +607,30 @@ await run("wd", wikidams);
 await run("wri", wriPlants);
 await run("wdp", wikiplants);
 await run("wdf", wikifuel);
+await run("wdr", wikistations);
+await run("wdb", wikibridges);
 await run("tg", cables);
 
 /* one site, several sources: the first list to have it leads; a later source's record within reach is folded in as "also listed
    by" (its link kept, its extra details added where the lead has none); anything new is added */
-const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 3000 };
+const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 3000, stn: 500, br: 300, tn: 300 };
 function merge(lists, k, reach) {
   const lead = [], g = new Map(), key = (la, lo) => Math.floor(la / 0.05) + ":" + Math.floor(lo / 0.05);
   const find = (i, m) => { const a = Math.floor(i.la / 0.05), b = Math.floor(i.lo / 0.05); let best = null, bd = m;
     for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) {
-      if (k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? !(o.t === i.t || o.t === "G" || i.t === "G") : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
+      if (k === "br" || k === "tn" ? (o.t === "R") !== (i.t === "R") && o.t !== "B" && i.t !== "B" : k === "stn" ? false :
+        k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? !(o.t === i.t || o.t === "G" || i.t === "G") : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
       const d = dist(i.la, i.lo, o.la, o.lo); if (d < bd) { bd = d; best = o; } }
     return best; };
   let folded = 0;
   for (const list of lists) for (const i of list) {
     if (i.k !== k) continue;
-    const m = i.s === "locode" ? 5000 : i.t === "H" ? 300 : reach, o = find(i, m);
+    const m = i.s === "locode" ? 5000 : i.t === "H" && k === "af" ? 300 : reach, o = find(i, m);
+    /* the two carriageways of a road (or the spans of one structure) are mapped as separate bridges: one site */
+    if (o && o.s === i.s && (k === "br" || k === "tn") && o.t === i.t && dist(i.la, i.lo, o.la, o.lo) < 150) {
+      if ((i.x.len_m || 0) > (o.x.len_m || 0)) o.x.len_m = i.x.len_m;
+      folded++; continue;
+    }
     if (o && o.s !== i.s) {
       (o.also = o.also || []).push({ s: i.s, u: i.u, ...(i.nm && i.nm !== o.nm ? { nm: i.nm } : {}) });
       for (const [kk, v] of Object.entries(i.x || {})) if (o.x[kk] == null && kk !== "approx") o.x[kk] = v;
@@ -564,6 +653,10 @@ const merged = [
   ...merge([got.wri.items, got.osm.items, got.wdp.items], "plant", REACH.plant),
   /* OpenStreetMap leads (it has the site's outline); Wikidata adds refineries and terminals it lacks */
   ...merge([got.osm.items, got.wdf.items], "fuel", REACH.fuel),
+  ...merge([got.osm.items, got.wdr.items], "stn", REACH.stn),
+  /* a Wikidata bridge nobody else maps is kept only when it is 100 m or more long, or its length is not given */
+  ...merge([got.osm.items, got.wdb.items], "br", REACH.br).filter((i) => i.s !== "wdb" || !(i.x.len_m < 100)),
+  ...merge([got.osm.items, got.wdb.items], "tn", REACH.tn),
 ];
 /* a private OpenStreetMap-only strip is left out */
 const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));
@@ -587,10 +680,10 @@ for (const l of [...got.tg.lines, ...got.osm.lines]) {
 }
 
 const countries = {};
-const FILE = { af: "af", port: "port", dam: "dam", lp: "cable", cable: "cable", plant: "plant", fuel: "fuel", pipe: "fuel" };
+const FILE = { af: "af", port: "port", dam: "dam", lp: "cable", cable: "cable", plant: "plant", fuel: "fuel", pipe: "fuel", stn: "rail", rail: "rail", br: "bridge", tn: "bridge" };
 for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f)) unlinkSync(join(OUT, f));   // the old one-file layout
 for (const d of readdirSync(OUT)) if (/^[a-z]{2,3}$/.test(d) && !by[d]) for (const f of readdirSync(join(OUT, d))) unlinkSync(join(OUT, d, f));
-const KORD = { af: 0, port: 1, dam: 2, lp: 3, plant: 4, fuel: 5 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
+const KORD = { af: 0, port: 1, dam: 2, lp: 3, plant: 4, fuel: 5, stn: 6, br: 7, tn: 8 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
 for (const [cc, c] of Object.entries(by).sort()) {
   c.items.sort((a, b) => (KORD[a.k] - KORD[b.k]) || ((TORD[a.t] || 0) - (TORD[b.t] || 0)) || String(a.id).localeCompare(String(b.id)));
   c.lines.sort((a, b) => String(a.id).localeCompare(String(b.id)));

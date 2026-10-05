@@ -8,6 +8,8 @@
 ["n6239297785",5.60559,37.89383,"et",{"name":"Melka Jewe health centre","amenity":"clinic"}],
 ["n7153138829",5.27492,36.2037,"et",{"name":"Dus Health Clinic","amenity":"clinic","healthcare":"clinic","operator":"Humedica","operator:type":"public"}],
 ["n8276468192",5.33125,37.02368,"et",{"aeroway":"aerodrome"}],
+["n974605738",4.30553,36.2358,"ke",{"name":"Seislucho Airport","aeroway":"aerodrome"}],
 ["w1442827489",5.74939,36.56055,"et",{"name":"Baco Airport","aeroway":"aerodrome","icao":"HAJK","iata":"BCO"}],
 ["w190667427",5.78204,36.56281,"et",{"amenity":"hospital","healthcare":"hospital"}],
-["w615593086",4.43186,37.99504,"et",{"name":"Gobiso Health Center","amenity":"hospital","healthcare":"hospital"}]]
+["w615593086",4.43186,37.99504,"et",{"name":"Gobiso Health Center","amenity":"hospital","healthcare":"hospital"}],
+["w674683422",4.28021,36.26823,"ke",{"name":"TBI - Ileret facility","aeroway":"aerodrome"}]]

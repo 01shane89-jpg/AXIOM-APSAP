@@ -13,6 +13,9 @@
      add the rest. Each fuel has its own colour and can be filtered. The switch sits with the power grid (#pwr-sec) when that block is
      on the page; osap-power.js hands it here.
    - Refineries, LNG and oil terminals, fuel depots and oil and gas pipelines (OpenStreetMap).
+   - Railways and stations: main and branch lines and railway stations (OpenStreetMap), stations also from Wikidata.
+   - Bridges and tunnels: 150 m and longer on motorways, main roads and railways, with weight and height limits where mapped
+     (OpenStreetMap, Wikidata). Mobility planning should still check the crossing on the ground.
    Big sites (large and medium airports, large and medium ports, cable routes) draw at every zoom; the rest from zoom 8, or sooner
    when only a few are in view. Nothing here changes a record; each point keeps its source link, licence and a SHA-256
    fingerprint. window.OSAP_INFRA {set, state, load, kinds}. */
@@ -26,6 +29,8 @@
     { k: "dam", name: "Dams", sub: "Named dams (OpenStreetMap, Wikidata)", items: ["dam"] },
     { k: "cable", name: "Submarine cables", sub: "Cables and landing points (TeleGeography, non-commercial)", items: ["lp"], lines: "cable" },
     { k: "plant", name: "Power plants", sub: "Every fuel, coloured by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
+    { k: "rail", name: "Railways and stations", sub: "Main and branch lines, railway stations (OpenStreetMap, Wikidata). Stations from zoom 8", items: ["stn"], lines: "rail" },
+    { k: "bridge", name: "Bridges and tunnels", sub: "150 m and longer on motorways, main roads and railways, with weight and height limits where mapped (OpenStreetMap, Wikidata)", items: ["br", "tn"] },
     { k: "fuel", name: "Refineries, fuel depots and pipelines", sub: "Refineries, LNG and oil terminals, fuel depots (OpenStreetMap, Wikidata), oil and gas pipelines (OpenStreetMap)", items: ["fuel"], lines: "pipe" }
   ];
   /* power plant fuels, in the order of the filter: [label, colour] */
@@ -33,30 +38,37 @@
     ["hydro", "Hydro", "#1971c2"], ["pumped", "Pumped storage", "#4c6ef5"], ["solar", "Solar", "#f2c200"], ["wind", "Wind, onshore", "#12b886"],
     ["windoff", "Wind, offshore", "#0b7285"], ["geo", "Geothermal", "#c92a2a"], ["bio", "Biomass and waste", "#5c940d"], ["tidal", "Tidal and wave", "#15aabf"],
     ["battery", "Battery storage", "#e64980"], ["other", "Other or not listed", "#868e96"]];
+  var RAIL = { M: ["Railway, main line", "#343a40", 2.6], B: ["Railway, branch line", "#6c757d", 1.9], X: ["Railway, military", "#c92a2a", 2], O: ["Railway", "#868e96", 1.6] };
   var PIPE = { gas: ["Gas pipeline", "#f08c00"], oil: ["Oil pipeline", "#6f4518"], fuel: ["Fuel pipeline", "#d9480f"] };
   var S = { on: {}, data: null, got: {}, busy: false, err: "", ix: null, cc: "", n: {}, off: {} };
   var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", locode: "UN/LOCODE", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map",
-    wri: "WRI Global Power Plant Database", wdp: "Wikidata", wdf: "Wikidata" };
+    wri: "WRI Global Power Plant Database", wdp: "Wikidata", wdf: "Wikidata", wdr: "Wikidata", wdb: "Wikidata" };
   var LIC = { oa: "OurAirports (public domain)", wpi: "NGA World Port Index, Pub. 150 (public domain, U.S. Government)", osm: "&copy; OpenStreetMap contributors (ODbL)",
-    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", wdf: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
+    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", wdf: "Wikidata (CC0)", wdr: "Wikidata (CC0)", wdb: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
     wri: "WRI Global Power Plant Database (CC BY 4.0; last updated 2021)" };
   /* what each point is, its colour and whether it is big enough to draw at every zoom */
   var TYPE = {
     "af:L": ["Major airport", "#1864ab", 1], "af:M": ["Airport", "#1c7ed6", 1], "af:S": ["Airstrip", "#4dabf7", 0], "af:H": ["Heliport", "#9c36b5", 0], "af:W": ["Seaplane base", "#3bc9db", 0],
     "port:M": ["Seaport, large or medium", "#087f5b", 1], "port:P": ["Seaport, small", "#0ca678", 0], "port:O": ["Port (OpenStreetMap)", "#20c997", 0], "port:F": ["Ferry terminal", "#66a80f", 0],
     "dam:D": ["Dam", "#a0522d", 0], "lp:C": ["Cable landing point", "#c2255c", 0],
+    "stn:S": ["Railway station", "#495057", 0],
+    "br:H": ["Bridge, motorway or trunk road", "#e8590c", 0], "br:P": ["Bridge, main road", "#f08c00", 0], "br:R": ["Railway bridge", "#5c5f66", 0], "br:B": ["Bridge", "#d9480f", 0],
+    "tn:H": ["Tunnel, motorway or trunk road", "#364fc7", 0], "tn:P": ["Tunnel, main road", "#4c6ef5", 0], "tn:R": ["Railway tunnel", "#5f3dc4", 0], "tn:B": ["Tunnel", "#4c6ef5", 0],
     "fuel:R": ["Oil refinery", "#5f3dc4", 1], "fuel:L": ["LNG terminal", "#e8590c", 1], "fuel:T": ["Fuel terminal or depot", "#9c6644", 0], "fuel:G": ["Oil or gas site", "#a17a5a", 0]
   };
   FUELS.forEach(function (f) { TYPE["plant:" + f[0]] = [f[0] === "other" ? "Power plant, fuel not listed" : f[1] + " power plant", f[2], 0]; });
   TYPE["plant:battery"][0] = "Battery storage"; TYPE["plant:pumped"][0] = "Pumped-storage hydro plant";
   /* big enough to draw at every zoom: the type says so, or a plant of 100 MW and up, or any nuclear plant */
-  function isBig(i, ty) { return !!ty[2] || (i.k === "plant" && (i.t === "nuclear" || ((i.x && i.x.mw) || 0) >= 100)); }
+  function isBig(i, ty) { return !!ty[2] || (i.k === "plant" && (i.t === "nuclear" || ((i.x && i.x.mw) || 0) >= 100)) || ((i.k === "br" || i.k === "tn") && ((i.x && i.x.len_m) || 0) >= 1000); }
   var GLY = {
     af: '<path d="M12 2.5c.8 0 1.4.7 1.4 1.5v5.2l7.1 4.2v1.9l-7.1-2.1v4.4l2.1 1.6v1.5L12 20l-3.5.7v-1.5l2.1-1.6v-4.4l-7.1 2.1v-1.9l7.1-4.2V4c0-.8.6-1.5 1.4-1.5z" fill="currentColor"/>',
     port: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M7 11h10M5 15a7 7 0 0 0 14 0"/></g>',
     dam: '<path d="M4 20V8l6-3v15zM12 20V6h8v14z" fill="currentColor"/>',
     lp: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 17c3-4 6-4 9 0s6 4 9 0"/><circle cx="12" cy="8" r="3"/></g>',
     plant: '<path d="M13.5 2L5 13.5h6L9.8 22 19 10h-6.2z" fill="currentColor"/>',
+    stn: '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 20l-2 2M15 20l2 2"/><circle cx="9" cy="13" r=".6" fill="currentColor"/><circle cx="15" cy="13" r=".6" fill="currentColor"/></g>',
+    br: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 9h20M4 9v10M20 9v10M4 19c3-6 13-6 16 0"/></g>',
+    tn: '<path d="M3 21V12a9 9 0 0 1 18 0v9h-4v-8a5 5 0 0 0-10 0v8z" fill="currentColor"/>',
     fuel: '<path d="M12 2.5c3.2 4.6 6 8.1 6 11.5a6 6 0 0 1-12 0c0-3.4 2.8-6.9 6-11.5z" fill="currentColor"/>'
   };
   var MAXDOM = 300, MINZ = 8, FEW = 600;
@@ -112,13 +124,16 @@
     size: "Harbour size", type: "Harbour type", shelter: "Shelter", max_len_m: "Largest vessel", chan_m: "Channel depth", anch_m: "Anchorage depth", unlocode: "UN/LOCODE",
     wpi: "World Port Index no.", ferry: "Ferry terminal", op: "Operator", height_m: "Height", purpose: "Purpose", river: "River", reservoir: "Reservoir", built: "Built",
     cables: "Cables landing here", military: "Military", fuel: "Fuel", method: "Method", mw: "Capacity", data_year: "Capacity as of", facility: "Facility",
-    product: "Product", substance: "Carries", location: "Laid", diameter: "Diameter", usage: "Use" };
+    product: "Product", substance: "Carries", location: "Laid", diameter: "Diameter", usage: "Use", carries: "Carries", road: "Road", len_m: "Length",
+    maxweight: "Weight limit", maxheight: "Height limit", lanes: "Lanes", gauge: "Gauge (mm)", electrified: "Electrified", narrow: "Narrow gauge", kind: "Type", ref: "Code" };
   function val(k, v) {
     if (k === "elev_ft") return fmt(v) + " ft (" + fmt(v * 0.3048) + " m)";
     if (k === "rw_m") return fmt(v) + " m (" + fmt(v / 0.3048) + " ft)";
     if (/_m$/.test(k)) return fmt(v) + " m";
     if (k === "mw") return (v >= 10 ? fmt(v) : String(Math.round(v * 10) / 10)) + " MW";
-    if (k === "sched" || k === "ferry" || k === "military") return "Yes";
+    if (k === "sched" || k === "ferry" || k === "military" || k === "narrow") return "Yes";
+    if (k === "maxweight" && /^[\d.]+$/.test(String(v))) return v + " t";
+    if (k === "maxheight" && /^[\d.]+$/.test(String(v))) return v + " m";
     return String(v);
   }
   function pop(i) {
@@ -142,15 +157,16 @@
     }).join("; ") + ". " + a.map(function (o) { return LIC[o.s] || ""; }).filter(function (v, j, r) { return v && r.indexOf(v) === j; }).join(" · ") + "</p>";
   }
   function lpop(l) {
-    var pipe = l.k === "pipe", ty = pipe ? PIPE[l.t] || PIPE.fuel : ["Submarine cable", l.c], x = l.x || {};
+    var pipe = l.k === "pipe" || l.k === "rail", ty = l.k === "rail" ? RAIL[l.t] || RAIL.O : pipe ? PIPE[l.t] || PIPE.fuel : ["Submarine cable", l.c], x = l.x || {};
     var rows = pipe ? Object.keys(LBL).filter(function (k) { return x[k] != null && x[k] !== ""; }).map(function (k) { return "<dt>" + LBL[k] + "</dt><dd>" + esc(val(k, x[k])) + "</dd>"; }).join("") : "";
     return '<div class="pop"><div class="tier" style="color:' + esc(ty[1]) + '">' + esc(ty[0]) + " · " + esc(SRC[l.s] || l.s) + "</div><h3>" + esc(l.nm || ty[0] + (pipe ? " (no name mapped)" : "")) + "</h3>" +
       (rows ? "<dl>" + rows + "</dl>" : "") +
       '<p class="obs">' + (safeUrl(l.u) ? '<a href="' + esc(l.u) + '" target="_blank" rel="noopener">Source record</a> · ' : "") + LIC[l.s] +
-      (pipe ? "<br>Community-mapped and simplified to about 500 m; many pipelines are buried and unmapped." : "<br>Route as drawn by the source; the real cable path at sea is approximate.") +
+      (l.k === "rail" ? "<br>Community-mapped; track is joined per line and simplified to about 500 m, sidings and yards left out." :
+        pipe ? "<br>Community-mapped and simplified to about 500 m; many pipelines are buried and unmapped." : "<br>Route as drawn by the source; the real cable path at sea is approximate.") +
       (l.fp ? '<br>Fingerprint <code class="fp">' + esc(l.fp.slice(0, 16)) + "…</code>" : "") + "</p></div>";
   }
-  function lineKind(l) { return l.k === "pipe" ? "fuel" : "cable"; }
+  function lineKind(l) { return l.k === "pipe" ? "fuel" : l.k === "rail" ? "rail" : "cable"; }
   /* a line's box, worked out once */
   function lbox(l) {
     if (!l._b) { var s = 90, w = 180, n = -90, e = -180; l.g.forEach(function (ln) { ln.forEach(function (v) { if (v[0] < s) s = v[0]; if (v[0] > n) n = v[0]; if (v[1] < w) w = v[1]; if (v[1] > e) e = v[1]; }); }); l._b = L.latLngBounds([s, w], [n, e]); }
@@ -171,9 +187,9 @@
     Object.keys(haveL).forEach(function (id) { if (!wantL[id]) { lnL.removeLayer(haveL[id]); delete haveL[id]; } });
     Object.keys(wantL).forEach(function (id) {
       if (haveL[id]) return;
-      var l = wantL[id], pipe = l.k === "pipe", ty = pipe ? PIPE[l.t] || PIPE.fuel : null;
-      haveL[id] = L.polyline(l.g, { renderer: lrend, pane: "infln", color: pipe ? ty[1] : l.c || "#0b7285", weight: pipe ? 2.2 : 2, opacity: pipe ? 0.9 : 0.8,
-        dashArray: pipe ? "6 3" : null, lgk: pipe ? "inf:pipe:" + l.t : "inf:cable", lgl: pipe ? ty[0] : "Submarine cable (TeleGeography)" })
+      var l = wantL[id], pipe = l.k === "pipe", rail = l.k === "rail", ty = rail ? RAIL[l.t] || RAIL.O : pipe ? PIPE[l.t] || PIPE.fuel : null;
+      haveL[id] = L.polyline(l.g, { renderer: lrend, pane: "infln", color: ty ? ty[1] : l.c || "#0b7285", weight: rail ? ty[2] : pipe ? 2.2 : 2, opacity: pipe || rail ? 0.9 : 0.8,
+        dashArray: pipe ? "6 3" : null, lgk: rail ? "inf:rail:" + l.t : pipe ? "inf:pipe:" + l.t : "inf:cable", lgl: ty ? ty[0] : "Submarine cable (TeleGeography)" })
         .bindPopup(lpop(l), { maxWidth: 320 }).addTo(lnL);
     });
     (d.items || []).forEach(function (i) {
@@ -220,7 +236,7 @@
   function kmsg(x) {
     var n = S.n || { total: {}, lines: {} }, t = n.total[x.k] || 0, l = (n.lines || {})[x.k] || 0;
     if (!t && !l) return x.name + ": " + (x.k === "plant" && Object.keys(S.off).length ? "none of the fuels picked" : "none listed for this country");
-    return x.name + ": " + fmt(t) + (x.k === "cable" ? " landing points, " + fmt(l) + " cables" : x.k === "fuel" ? " sites, " + fmt(l) + " pipelines" : "") + " in this country";
+    return x.name + ": " + fmt(t) + (x.k === "cable" ? " landing points, " + fmt(l) + " cables" : x.k === "fuel" ? " sites, " + fmt(l) + " pipelines" : x.k === "rail" ? " stations, " + fmt(l) + " lines" : "") + " in this country";
   }
   function msg(only) {
     var ks = KINDS.filter(function (x) { return S.on[x.k] && (only ? x.k === only : here(x)); });
@@ -254,6 +270,7 @@
         (x.pwr ? '<div data-inffuel hidden></div>' : "");
     }).join("") +
       '<p class="mlkey pwr-m" data-infmsg aria-live="polite" hidden></p>' +
+      '<p class="mlkey pwr-m">Bridge and tunnel limits are as mapped; check a crossing on the ground before relying on it.</p>' +
       '<p class="mlkey pwr-m">OurAirports and NGA World Port Index (public domain) · UN/LOCODE (UNECE) · &copy; OpenStreetMap contributors (ODbL) · Wikidata (CC0) · WRI Global Power Plant Database (CC BY 4.0) · TeleGeography (CC BY-NC-SA, non-commercial).</p>';
   }
   function paint() {
@@ -274,14 +291,18 @@
     if (!W.OSAP_LEGEND) return;
     if (!anyOn()) { W.OSAP_LEGEND.set("infra", ""); return; }
     var h = '<div class="lgh" style="font-weight:600;margin-bottom:2px">Infrastructure sites</div>';
-    var pc = {}; ((S.got.plant && S.got.plant.items) || []).forEach(function (i) { pc[i.t] = 1; });
+    /* only the kinds of site this country has */
+    var pc = {}, d = S.data || { items: [], lines: [] };
+    (d.items || []).forEach(function (i) { pc[i.k + ":" + i.t] = 1; });
     Object.keys(TYPE).forEach(function (t) {
-      var k = t.split(":")[0], kind = kindOf({ k: k }); if (!S.on[kind]) return;
-      if (k === "plant" && (!pc[t.slice(6)] || S.off[t.slice(6)])) return;
+      var k = t.split(":")[0], kind = kindOf({ k: k }); if (!S.on[kind] || !pc[t]) return;
+      if (k === "plant" && S.off[t.slice(6)]) return;
       var ty = TYPE[t];
       h += '<div class="lg"><span class="sw" style="background:' + ty[1] + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span><div>' + esc(ty[0]) + "</div></div>";
     });
     if (S.on.cable) h += '<div class="lg"><span class="sw" style="background:#0b7285;height:3px;width:16px"></span><div>Submarine cable (each in its own colour)</div></div>';
+    var lc = {}; (d.lines || []).forEach(function (l) { lc[l.k + ":" + l.t] = 1; });
+    if (S.on.rail) Object.keys(RAIL).forEach(function (t) { if (!lc["rail:" + t]) return; h += '<div class="lg"><span class="sw" style="background:' + RAIL[t][1] + ';height:3px;width:16px"></span><div>' + RAIL[t][0] + "</div></div>"; });
     if (S.on.fuel) Object.keys(PIPE).forEach(function (t) { h += '<div class="lg"><span class="sw" style="background:repeating-linear-gradient(90deg,' + PIPE[t][1] + ' 0 6px,transparent 6px 9px);height:3px;width:16px"></span><div>' + PIPE[t][0] + "</div></div>"; });
     if (S.on.plant) h += '<div class="lg"><div><span class="d">Plants of 100 MW and up, and nuclear plants, show at every zoom.</span></div></div>';
     W.OSAP_LEGEND.set("infra", h);

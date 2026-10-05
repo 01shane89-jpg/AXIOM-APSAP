@@ -1,0 +1,4 @@
+[["n9120316016",51.65881,64.21779,"kz",{"name":"Наурзумская центральная районная больница","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"covid19;gynaecology;paediatrics;vaccination","addr:housenumber":"43","addr:street":"улица Абая","addr:city":"Караменды"}],
+["w986693554",51.6588,64.21627,"kz",{"name":"Инфекционное отделение","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"vaccination;emergency"}],
+["w986693555",51.65868,64.21599,"kz",{"amenity":"hospital","healthcare":"hospital"}],
+["w986693556",51.65893,64.21573,"kz",{"name":"Стационар","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"gynaecology;emergency","addr:housenumber":"47А","addr:street":"улица Абая","addr:city":"Караменды"}]]
