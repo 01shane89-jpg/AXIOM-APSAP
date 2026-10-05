@@ -241,17 +241,21 @@ let ctx, errors, p;
   v = await p.evaluate(() => ({ live: document.querySelector("#rtdv .rtdv-live").textContent, tag: document.querySelector("#rtdv .rtdv-tag").textContent, next: document.querySelector("#rtdv .rtdv-next").textContent }));
   ok(/OSAP reports ahead/.test(v.live) && /not the picture/.test(v.live) && /closed for repair/.test(v.live) && !/closed/.test(v.tag), "the closure ahead comes from OSAP's feeds, shown apart from the picture");
   ok(/In .*:.*right/i.test(v.next) && /BRIDGE.*Test River Bridge/.test(v.next), "the next turn and the next critical point are shown (" + v.next.slice(0, 90) + ")");
-  /* a 360° picture is turned to look along the road and can be dragged round */
-  await seek(0.6); await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive; return d.prov === "panoramax"; }, null, { timeout: 8000 }).catch(() => {});
+  /* a 360° picture is turned to look along the road and can be dragged round; paused first, so the next frame cannot replace
+     the picture mid-drag (a satellite frame has no 360° picture to drag, and the press is then ignored) */
+  const playing0 = (await st(p)).drive.playing;
+  if (playing0) { await p.click('#rtdv [data-dv="play"]'); await p.waitForTimeout(200); }
+  await seek(0.6); await p.waitForFunction(() => { const d = window.OSAP_PREVIEW.state().drive, e = document.querySelector("#rtdv .rtdv-img.pano"); return d.prov === "panoramax" && e && /px/.test(e.style.backgroundSize) && /STALE/.test(document.querySelector("#rtdv .rtdv-tag").textContent); }, null, { timeout: 8000 }).catch(() => {});
   d = (await st(p)).drive;
   v = await p.evaluate(() => { const e = document.querySelector("#rtdv .rtdv-img.pano"); return { pano: !!e, bs: e ? e.style.backgroundSize : "", bp: e ? e.style.backgroundPosition : "", look: !document.querySelector('#rtdv [data-dv="look"]').hidden, tag: document.querySelector("#rtdv .rtdv-tag").textContent }; });
-  ok(d.pano && v.pano && /px/.test(v.bs) && v.look && /Panoramax · 360°/.test(v.tag) && /STALE/.test(v.tag), "a 360° Panoramax picture is shown as a view along the road, marked stale");
+  ok(d.pano && v.pano && /px/.test(v.bs) && v.look && /Panoramax · 360°/.test(v.tag) && /STALE/.test(v.tag), "a 360° Panoramax picture is shown as a view along the road, marked stale (" + JSON.stringify({ pano: d.pano, prov: d.prov, kind: d.kind, img: v.pano, bs: v.bs, look: v.look, tag: v.tag.slice(0, 90) }) + ")");
   const box = await p.evaluate(() => { const r = document.querySelector("#rtdv .rtdv-pic").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
   await p.mouse.move(box[0], box[1]); await p.mouse.down(); await p.mouse.move(box[0] - 200, box[1], { steps: 4 }); await p.mouse.up();
   const v2 = await p.evaluate(() => document.querySelector("#rtdv .rtdv-img.pano").style.backgroundPosition);
   ok((await st(p)).drive.yaw > 10 && v2 !== v.bp, "dragging the 360° picture looks round");
   await p.click('#rtdv [data-dv="look"]');
   ok((await st(p)).drive.yaw === 0, "Look ahead turns the view back along the road");
+  if (playing0) await p.click('#rtdv [data-dv="play"]');   /* driving on, so the pieces ahead keep loading */
   /* where no street picture exists: satellite, dated, said in words */
   await seek(0.85); await p.waitForFunction(() => /05 MAR 2026/.test(document.querySelector("#rtdv .rtdv-tag").textContent) && /to the end/.test(document.querySelector("#rtdv .rtdv-tag").textContent), null, { timeout: 10000 }).catch(() => {});
   d = (await st(p)).drive;
