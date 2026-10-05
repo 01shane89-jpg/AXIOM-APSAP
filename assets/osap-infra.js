@@ -16,6 +16,8 @@
    - Railways and stations: main and branch lines and railway stations (OpenStreetMap), stations also from Wikidata.
    - Bridges and tunnels: 150 m and longer on motorways, main roads and railways, with weight and height limits where mapped
      (OpenStreetMap, Wikidata). Mobility planning should still check the crossing on the ground.
+   - Water and sewage works: drinking water treatment, desalination and sewage plants (OpenStreetMap, Wikidata).
+   - Telephone exchanges: central offices of the fixed telephone network (OpenStreetMap, Wikidata).
    Big sites (large and medium airports, large and medium ports, cable routes) draw at every zoom; the rest from zoom 8, or sooner
    when only a few are in view. Nothing here changes a record; each point keeps its source link, licence and a SHA-256
    fingerprint. window.OSAP_INFRA {set, state, load, kinds}. */
@@ -31,6 +33,8 @@
     { k: "plant", name: "Power plants", sub: "Every fuel, coloured by fuel (WRI, Wikidata, OpenStreetMap). Small plants from zoom 8", items: ["plant"], pwr: true },
     { k: "rail", name: "Railways and stations", sub: "Main and branch lines, railway stations (OpenStreetMap, Wikidata). Stations from zoom 8", items: ["stn"], lines: "rail" },
     { k: "bridge", name: "Bridges and tunnels", sub: "150 m and longer on motorways, main roads and railways, with weight and height limits where mapped (OpenStreetMap, Wikidata)", items: ["br", "tn"] },
+    { k: "water", name: "Water and sewage works", sub: "Drinking water treatment, desalination and sewage plants (OpenStreetMap, Wikidata)", items: ["wat"] },
+    { k: "telecom", name: "Telephone exchanges", sub: "Central offices of the fixed telephone network (OpenStreetMap, Wikidata)", items: ["tx"] },
     { k: "fuel", name: "Refineries, fuel depots and pipelines", sub: "Refineries, LNG and oil terminals, fuel depots (OpenStreetMap, Wikidata), oil and gas pipelines (OpenStreetMap)", items: ["fuel"], lines: "pipe" }
   ];
   /* power plant fuels, in the order of the filter: [label, colour] */
@@ -42,9 +46,9 @@
   var PIPE = { gas: ["Gas pipeline", "#f08c00"], oil: ["Oil pipeline", "#6f4518"], fuel: ["Fuel pipeline", "#d9480f"] };
   var S = { on: {}, data: null, got: {}, busy: false, err: "", ix: null, cc: "", n: {}, off: {} };
   var SRC = { oa: "OurAirports", wpi: "NGA World Port Index", locode: "UN/LOCODE", osm: "OpenStreetMap", wd: "Wikidata", tg: "TeleGeography Submarine Cable Map",
-    wri: "WRI Global Power Plant Database", wdp: "Wikidata", wdf: "Wikidata", wdr: "Wikidata", wdb: "Wikidata" };
+    wri: "WRI Global Power Plant Database", wdp: "Wikidata", wdf: "Wikidata", wdr: "Wikidata", wdb: "Wikidata", wdw: "Wikidata", wdt: "Wikidata" };
   var LIC = { oa: "OurAirports (public domain)", wpi: "NGA World Port Index, Pub. 150 (public domain, U.S. Government)", osm: "&copy; OpenStreetMap contributors (ODbL)",
-    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", wdf: "Wikidata (CC0)", wdr: "Wikidata (CC0)", wdb: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
+    locode: "UN/LOCODE, UNECE (free reuse)", wd: "Wikidata (CC0)", wdp: "Wikidata (CC0)", wdf: "Wikidata (CC0)", wdr: "Wikidata (CC0)", wdb: "Wikidata (CC0)", wdw: "Wikidata (CC0)", wdt: "Wikidata (CC0)", tg: "TeleGeography (CC BY-NC-SA 3.0, non-commercial use only)",
     wri: "WRI Global Power Plant Database (CC BY 4.0; last updated 2021)" };
   /* what each point is, its colour and whether it is big enough to draw at every zoom */
   var TYPE = {
@@ -54,6 +58,8 @@
     "stn:S": ["Railway station", "#495057", 0],
     "br:H": ["Bridge, motorway or trunk road", "#e8590c", 0], "br:P": ["Bridge, main road", "#f08c00", 0], "br:R": ["Railway bridge", "#5c5f66", 0], "br:B": ["Bridge", "#d9480f", 0],
     "tn:H": ["Tunnel, motorway or trunk road", "#364fc7", 0], "tn:P": ["Tunnel, main road", "#4c6ef5", 0], "tn:R": ["Railway tunnel", "#5f3dc4", 0], "tn:B": ["Tunnel", "#4c6ef5", 0],
+    "wat:W": ["Water treatment works", "#1c7ed6", 0], "wat:D": ["Desalination plant", "#0c8599", 1], "wat:S": ["Sewage works", "#795548", 0],
+    "tx:E": ["Telephone exchange", "#7048e8", 0],
     "fuel:R": ["Oil refinery", "#5f3dc4", 1], "fuel:L": ["LNG terminal", "#e8590c", 1], "fuel:T": ["Fuel terminal or depot", "#9c6644", 0], "fuel:G": ["Oil or gas site", "#a17a5a", 0]
   };
   FUELS.forEach(function (f) { TYPE["plant:" + f[0]] = [f[0] === "other" ? "Power plant, fuel not listed" : f[1] + " power plant", f[2], 0]; });
@@ -69,6 +75,8 @@
     stn: '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 20l-2 2M15 20l2 2"/><circle cx="9" cy="13" r=".6" fill="currentColor"/><circle cx="15" cy="13" r=".6" fill="currentColor"/></g>',
     br: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 9h20M4 9v10M20 9v10M4 19c3-6 13-6 16 0"/></g>',
     tn: '<path d="M3 21V12a9 9 0 0 1 18 0v9h-4v-8a5 5 0 0 0-10 0v8z" fill="currentColor"/>',
+    wat: '<path d="M12 3c3 4.4 5.5 7.6 5.5 10.6a5.5 5.5 0 0 1-11 0C6.5 10.6 9 7.4 12 3z" fill="none" stroke="currentColor" stroke-width="2.2"/>',
+    tx: '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></g>',
     fuel: '<path d="M12 2.5c3.2 4.6 6 8.1 6 11.5a6 6 0 0 1-12 0c0-3.4 2.8-6.9 6-11.5z" fill="currentColor"/>'
   };
   var MAXDOM = 300, MINZ = 8, FEW = 600;
@@ -125,7 +133,7 @@
     wpi: "World Port Index no.", ferry: "Ferry terminal", op: "Operator", height_m: "Height", purpose: "Purpose", river: "River", reservoir: "Reservoir", built: "Built",
     cables: "Cables landing here", military: "Military", fuel: "Fuel", method: "Method", mw: "Capacity", data_year: "Capacity as of", facility: "Facility",
     product: "Product", substance: "Carries", location: "Laid", diameter: "Diameter", usage: "Use", carries: "Carries", road: "Road", len_m: "Length",
-    maxweight: "Weight limit", maxheight: "Height limit", lanes: "Lanes", gauge: "Gauge (mm)", electrified: "Electrified", narrow: "Narrow gauge", kind: "Type", ref: "Code" };
+    capacity: "Capacity", maxweight: "Weight limit", maxheight: "Height limit", lanes: "Lanes", gauge: "Gauge (mm)", electrified: "Electrified", narrow: "Narrow gauge", kind: "Type", ref: "Code" };
   function val(k, v) {
     if (k === "elev_ft") return fmt(v) + " ft (" + fmt(v * 0.3048) + " m)";
     if (k === "rw_m") return fmt(v) + " m (" + fmt(v / 0.3048) + " ft)";
