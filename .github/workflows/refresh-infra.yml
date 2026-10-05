@@ -1,8 +1,8 @@
 # Stored infrastructure sites for Map overlays > Infrastructure (tools/build_infra.mjs -> data/infra): airfields and heliports
 # (OurAirports), ports (NGA World Port Index, OpenStreetMap), dams (OpenStreetMap, Wikidata), submarine cables and landing points
 # (TeleGeography, non-commercial), power plants of every fuel (WRI, Wikidata, OpenStreetMap), refineries, fuel depots, LNG
-# terminals and pipelines (OpenStreetMap), railways and stations, bridges and tunnels, water and sewage works, telephone exchanges
-# (OpenStreetMap, Wikidata). Every country. Twice a week; OpenStreetMap is read in tiles, a time-boxed share each run; commits on the branch it runs on (main on schedule). A source that fails
+# terminals and pipelines (OpenStreetMap), railways and stations, bridges and tunnels, water and sewage works, telephone exchanges,
+# government seats, prisons, border crossings, police and fire stations (OpenStreetMap, Wikidata). Every country. Twice a week; OpenStreetMap is read in tiles, a time-boxed share each run; commits on the branch it runs on (main on schedule). A source that fails
 # keeps its last good copy and is reported in data/infra/index.json.
 name: Refresh infrastructure sites
 
