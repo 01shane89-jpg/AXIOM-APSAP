@@ -66,7 +66,11 @@ function createWindow() {
   // First start with no internet: the site has not been saved yet, so show a local page that explains and retries.
   win.webContents.on("did-fail-load", (_e, code, desc, url, isMain) => {
     if (!isMain || code === -3 /* aborted by a newer navigation */) return;
-    if (SMOKE) { console.error(`OSAP smoke: failed to load ${url}: ${desc} (${code})`); app.exit(1); return; }
+    if (SMOKE) {
+      console.error(`OSAP smoke: failed to load ${url}: ${desc} (${code})`);
+      if (process.env.OSAP_SMOKE_OUT) try { fs.writeFileSync(process.env.OSAP_SMOKE_OUT, `OSAP smoke: failed ${desc}\n`); } catch {}
+      app.exit(1); return;
+    }
     win.loadFile(path.join(__dirname, "offline.html"), { query: { u: APP_URL } });
   });
   if (SMOKE) {
@@ -75,7 +79,10 @@ function createWindow() {
       clearTimeout(t);
       const title = win.webContents.getTitle();
       const sw = await win.webContents.executeJavaScript("'serviceWorker' in navigator").catch(() => false);
-      console.log(`OSAP smoke: loaded ${win.webContents.getURL()} title="${title}" serviceWorker=${sw}`);
+      const line = `OSAP smoke: loaded ${win.webContents.getURL()} title="${title}" serviceWorker=${sw}`;
+      console.log(line);
+      // Windows GUI programs have no console, so the build workflow reads the result from this file.
+      if (process.env.OSAP_SMOKE_OUT) try { fs.writeFileSync(process.env.OSAP_SMOKE_OUT, line + "\n"); } catch {}
       app.exit(/OSAP/.test(title) && sw ? 0 : 1);
     });
   }
