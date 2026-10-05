@@ -281,7 +281,9 @@ async function osm() {
         ` ST_Simplify(ST_LineMerge(ST_Collect(ST_CollectionExtract(ST_Intersection(geom, ${box}), 2))), 0.005) AS geom FROM postpass_line WHERE ${W.rail} AND ${env}` +
         ` GROUP BY tags->>'name', tags->>'name:en', tags->>'usage', tags->>'railway'`
       : t.part === "bridge" || t.part === "tunnel"
-      ? `SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom, round(ST_Length(geom::geography)) AS len FROM postpass_line WHERE ${W[t.part]} AND ${env} AND ST_Length(geom::geography) > 150` +
+      /* a bridge or tunnel mapped as several lines (a relation) has no single midpoint: any point on it does */
+      ? `SELECT osm_type, osm_id, tags, CASE WHEN GeometryType(geom) = 'LINESTRING' THEN ST_LineInterpolatePoint(geom, 0.5) ELSE ST_PointOnSurface(geom) END AS geom,` +
+        ` round(ST_Length(geom::geography)::numeric) AS len FROM postpass_line WHERE ${W[t.part]} AND ${env} AND ST_Length(geom::geography) > 150` +
         (t.part === "bridge" ? ` UNION ALL SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom, NULL::float AS len FROM postpass_pointpolygon WHERE tags->>'man_made' = 'bridge' AND tags ? 'name' AND ${env}` : "")
       : `SELECT osm_type, osm_id, tags, ST_PointOnSurface(geom) AS geom FROM postpass_pointpolygon WHERE ${W[t.part]} AND ${env}` +
         ` UNION ALL SELECT osm_type, osm_id, tags, ST_LineInterpolatePoint(geom, 0.5) AS geom FROM postpass_line WHERE ${W[t.part]} AND ${env}`;
