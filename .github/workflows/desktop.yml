@@ -60,14 +60,22 @@ jobs:
         run: npx electron-builder ${{ matrix.target }} --publish never
       - name: Checks (link handling, permissions, offline start)
         if: matrix.os == 'ubuntu-latest'
-        run: OSAP_TEST_ELECTRON="$PWD/${{ matrix.exe }}" xvfb-run -a node test.mjs
-      # Starts the built program against the live site; it prints the page title and exits 1 if OSAP does not load.
+        run: |
+          OSAP_TEST_ELECTRON="$PWD/${{ matrix.exe }}" xvfb-run -a node test.mjs | tee test.out
+          echo "::notice title=Desktop checks::$(grep -c '^PASS' test.out) passed, $(grep -c '^FAIL' test.out) failed"
+      # Starts the built program against the live site and fails unless OSAP loads with its service worker.
+      # The result goes to a file because a Windows GUI program has no console output.
       - name: Start the built program against the live site
         env:
           OSAP_SMOKE: "1"
           EXE: ${{ matrix.exe }}
         run: |
-          if [ "$RUNNER_OS" = Linux ]; then xvfb-run -a "$EXE" --no-sandbox; else "./$EXE"; fi
+          export OSAP_SMOKE_OUT="$RUNNER_TEMP/smoke.txt"
+          if [ "$RUNNER_OS" = Linux ]; then xvfb-run -a "$EXE" --no-sandbox || true; else "./$EXE" || true; fi
+          for i in $(seq 1 120); do [ -s "$OSAP_SMOKE_OUT" ] && break; sleep 1; done
+          r="$(cat "$OSAP_SMOKE_OUT" 2>/dev/null || echo 'OSAP smoke: no result')"
+          echo "::notice title=Built program on $RUNNER_OS::$r"
+          grep -q 'title="AXIOM OSAP" serviceWorker=true' <<<"$r"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: installers-${{ runner.os }}
