@@ -18,8 +18,12 @@
   "use strict";
   var W = window, D = document;
   var HIDDEN = ["us"];
-  /* the owners' public keys (setup codes, "osap-pub:v1:<base64url SPKI>"), added by hand after setup */
-  var OWNER = [];
+  /* the owners' public keys (setup codes, "osap-pub:v1:<base64url SPKI>"), added by hand after setup. Only a device holding the
+     private half of one of these can unlock; another owner device (a PC with Windows Hello) is added by its own setup code. */
+  var OWNER = [
+    /* Shane's iPhone, 2026-10-05 */
+    "osap-pub:v1:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4szScDUlf52qw3rj8u8INzz6Atximq6IwbWPX3vogQtQpdoaj57inC2XVtzVhLyCm9vCEtyaj-tMLIPWfsPPgg"
+  ];
   var K_DEV = "osap-lock-dev", K_OPEN = "osap-lock-open", STAY = 12;
   var PRF_SALT_TEXT = "AXIOM OSAP hidden areas v1";
 
@@ -158,12 +162,12 @@
       '<p class="lkmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
     if (UI.ok === false) h += '<p class="obs">This browser cannot use Face ID or another built-in lock here.</p>';
     else if (OPEN) h += '<p><b>Unlocked.</b> Hidden areas are showing on this device' + (held() && held().until ? " until " + new Date(held().until).toTimeString().slice(0, 5) + " (this device's time)" : "") + '.</p><div class="lkbtns"><button type="button" class="refresh" data-lk="lock"' + dis + ">Lock now</button></div>";
-    else if (d && owner) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="unlock"' + dis + ">Unlock with Face ID</button></div>";
+    else if (d && owner) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="unlock"' + dis + ">Unlock (Face ID or Windows Hello)</button></div>";
     else if (d) h += '<p class="obs">This device was set up, but it is not one of the owner\'s devices, so it cannot unlock.</p>';
     if (d && !OPEN && !OWNER.length) h += '<p class="obs">Waiting for this device\'s setup code to be added to OSAP. Until then it can unlock, but so could anyone else\'s device.</p>';
     if (d) h += '<details class="lknote"' + (OWNER.length ? "" : " open") + '><summary>Setup code for this device</summary><p class="obs">Send this to Claude in the "Hide US Data" thread. It can only lock data for this device, not open it, so it is safe to share.</p>' +
       '<textarea readonly rows="4" data-lk-code>' + esc(code(d)) + '</textarea><div class="lkbtns"><button type="button" data-lk="copy">Copy setup code</button></div></details>';
-    if (!d && UI.ok !== false) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="setup"' + dis + ">Set up Face ID on this device</button></div>" +
+    if (!d && UI.ok !== false) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="setup"' + dis + ">Set up Face ID or Windows Hello on this device</button></div>" +
       '<p class="obs">Makes a passkey for OSAP on this device (Face ID once or twice) and a lock key that only Face ID can open. Nothing leaves the device.</p>';
     if (d && !OPEN) h += '<details class="lknote"><summary>Start again on this device</summary><p class="obs">Forgets this device\'s lock key. Data locked for it can no longer be opened here.</p><div class="lkbtns"><button type="button" data-lk="forget"' + dis + ">Forget this device's key</button></div></details>";
     box.innerHTML = h + "</div>";
