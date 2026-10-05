@@ -17,7 +17,8 @@
 // detail than saved is enlarged and said so, outside it says there is no elevation, and Delete clears it;
 // Slope shades the ground in five bands (the ridge's sides over 30 degrees) and a tap gives the slope there; route exposure
 // (corridor) finds the ground that can see a route and shows it under the line of sight result;
-// tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a 360 px phone the ring's 10 labels do
+// tiles that fail make UNKNOWN ground and a coverage warning, never "not visible"; on a conflict tab (which hides the map
+// layers it does not list) the viewshed picture, observer and horizon still show; on a 360 px phone the ring's 10 labels do
 // not overlap; no page errors.
 // Run from the repo root: node tests/terrain_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
@@ -416,6 +417,23 @@ const tapLos = (p, ll) => p.evaluate((ll) => window.OSAP_TERRAIN_ANALYSIS.losTo(
   const L = await tapLos(p, [13.75, 100.4560]);
   ok(L.los === "UNKNOWN", "no data: line of sight into the gap is UNKNOWN, not BLOCKED (" + L.los + ")");
   ok(errors.length === 0, "no data: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+
+/* ---------- a conflict tab hides the map layers it does not list: the viewshed and its lines must still show ---------- */
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1366, height: 860 } });
+  await p.evaluate(() => document.querySelector('#view-seg [data-view="cf-thailand-cambodia"]').click()); await p.waitForTimeout(2500);
+  ok(await p.evaluate(() => document.documentElement.getAttribute("data-cf") === "thailand-cambodia"), "conflict tab: the Thai-Cambodian tab opens");
+  await p.evaluate((c) => { window.__asapMap.setView(c, 13); window.OSAP_TERRAIN_ANALYSIS.viewshedAt(c); }, C0); await settled(p); await p.waitForTimeout(400);
+  const cf = await p.evaluate(() => {
+    const v = (n) => { const e = window.__asapMap.getPane(n); return e ? getComputedStyle(e).visibility : "none"; };
+    const im = document.querySelector(".leaflet-vspane-pane img.vsimg");
+    return { vs: v("vspane"), lines: v("vslines"), img: !!im && getComputedStyle(im).visibility, vis: window.OSAP_TERRAIN_ANALYSIS.state().stats.visible_pct };
+  });
+  ok(cf.img === "visible" && cf.vs !== "hidden" && cf.lines !== "hidden", "conflict tab: the viewshed picture, observer and horizon show on the map " + JSON.stringify(cf));
+  if (OUT) await p.screenshot({ path: OUT + "/terrain-conflict-tab.png" });
+  ok(errors.length === 0, "conflict tab: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 

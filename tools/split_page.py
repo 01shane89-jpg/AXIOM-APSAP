@@ -72,8 +72,8 @@ PWA_TAIL = ('<script>if ("serviceWorker" in navigator && /^https?:$/.test(locati
             ' document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update().catch(function () {}); });'
             ' }).catch(function () {}); });</script>')
 if not page.lstrip().lower().startswith("<!doctype"):
-    page = ('<!doctype html>\n<html lang="en" translate="no"><head><meta charset="utf-8">'
-            '<meta name="google" content="notranslate"><meta http-equiv="content-language" content="en">'
+    page = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+            '<meta http-equiv="content-language" content="en">'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + PWA_HEAD + '</head><body>\n' + page + "\n" + PWA_TAIL + "\n</body></html>\n")
 open("index.html", "w", encoding="utf-8").write(page)
 
