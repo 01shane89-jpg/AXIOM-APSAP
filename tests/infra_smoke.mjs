@@ -24,7 +24,7 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const shown = (p, s) => p.evaluate((s) => { const e = document.querySelector(s); return !!e && !e.hidden && getComputedStyle(e).display !== "none" && e.getClientRects().length > 0; }, s);
 
 const IX = { v: 1, at: "2026-10-04T10:00Z", sources: { oa: { name: "OurAirports", ok: true }, wpi: { name: "NGA World Port Index (Pub. 150)", ok: false }, osm: { name: "OpenStreetMap", ok: true },
-  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1, plant: 3, fuel: 1, pipe: 1, stn: 1, rail: 1, br: 2, tn: 1 } } };
+  wd: { name: "Wikidata", ok: true }, tg: { name: "TeleGeography Submarine Cable Map", ok: true, nc: true } }, countries: { th: { af: 3, port: 2, dam: 1, lp: 1, cable: 1, plant: 3, fuel: 1, pipe: 1, stn: 1, rail: 1, br: 2, tn: 1, wat: 2, tx: 1 } } };
 const F = "e".repeat(64);
 const smalls = [];
 for (let k = 0; k < 700; k++) smalls.push({ k: "af", t: "S", id: "oa:S" + k, nm: "Airstrip S" + k, la: 8 + (k % 70) * 0.2, lo: 98 + Math.floor(k / 70) * 0.5, s: "oa", u: "https://ourairports.com/airports/S" + k + "/", x: {}, fp: F });
@@ -43,6 +43,9 @@ const TH = { v: 1, cc: "th", at: IX.at, items: [
   { k: "br", t: "H", id: "osm:w21", nm: "Bridge on 9", la: 13.65, lo: 100.53, s: "osm", u: "https://www.openstreetmap.org/way/21", x: { carries: "Motorway", road: "9", len_m: 1450, maxweight: "25" }, fp: F },
   { k: "br", t: "R", id: "wd:Q22", nm: "Rama VI Bridge", la: 13.8, lo: 100.51, s: "wdb", u: "https://www.wikidata.org/wiki/Q22", x: { len_m: 442, kind: "railway bridge" }, fp: F },
   { k: "tn", t: "P", id: "osm:w23", nm: "Tunnel on 3", la: 13.7, lo: 100.6, s: "osm", u: "https://www.openstreetmap.org/way/23", x: { carries: "Main road", len_m: 300, maxheight: "4.2" }, fp: F },
+  { k: "wat", t: "W", id: "osm:w40", nm: "Bang Khen Water Treatment Plant", la: 13.87, lo: 100.6, s: "osm", u: "https://www.openstreetmap.org/way/40", x: { op: "Metropolitan Waterworks Authority" }, also: [{ s: "wdw", u: "https://www.wikidata.org/wiki/Q40" }], fp: F },
+  { k: "wat", t: "S", id: "osm:w41", nm: "", la: 13.7, lo: 100.45, s: "osm", u: "https://www.openstreetmap.org/way/41", x: {}, fp: F },
+  { k: "tx", t: "E", id: "osm:n42", nm: "", la: 13.74, lo: 100.52, s: "osm", u: "https://www.openstreetmap.org/node/42", x: { ref: "BKK-01" }, fp: F },
   { k: "lp", t: "C", id: "tg:lp:songkhla", nm: "Songkhla, Thailand", la: 7.19, lo: 100.6, s: "tg", u: "https://www.submarinecablemap.com/landing-point/songkhla", x: { cables: "Test Cable 1" }, fp: F }
 ], lines: [{ k: "rail", t: "M", id: "osm:w30@90_0", nm: "Northern Line", g: [[[13.8, 100.54], [14.5, 100.6], [15.2, 100.1]]], s: "osm", u: "https://www.openstreetmap.org/way/30", x: { usage: "main", gauge: "1000" }, fp: F },
   { k: "pipe", t: "gas", id: "osm:w12", nm: "Test Gas Pipeline", g: [[[13.1, 100.9], [13.5, 101.5]]], s: "osm", u: "https://www.openstreetmap.org/way/12", x: { substance: "gas", location: "underground" }, fp: F },
@@ -55,8 +58,8 @@ async function open(opts, hash = "", mode = "ok") {
     const u = new URL(r.request().url()).pathname; asked.push(u);
     if (mode === "fail") return r.fulfill({ status: 500, body: "x" });
     if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(IX) });
-    const m = /\/th\/(af|port|dam|cable|plant|fuel|rail|bridge)\.json$/.exec(u);
-    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"], plant: ["plant"], fuel: ["fuel"], rail: ["stn"], bridge: ["br", "tn"] }[m[1]], lk = { cable: "cable", fuel: "pipe", rail: "rail" }[m[1]];
+    const m = /\/th\/(af|port|dam|cable|plant|fuel|rail|bridge|water|telecom)\.json$/.exec(u);
+    if (m) { const ks = { af: ["af"], port: ["port"], dam: ["dam"], cable: ["lp"], plant: ["plant"], fuel: ["fuel"], rail: ["stn"], bridge: ["br", "tn"], water: ["wat"], telecom: ["tx"] }[m[1]], lk = { cable: "cable", fuel: "pipe", rail: "rail" }[m[1]];
       return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...TH, layer: m[1], items: TH.items.filter((i) => ks.includes(i.k)), lines: TH.lines.filter((l) => l.k === lk) }) }); }
     return r.fulfill({ status: 404, body: "" });
   });
@@ -177,6 +180,24 @@ const popWith = async (p, re) => {
   pop = await popWith(p, "Krung Thep Aphiwat");
   ok(/Railway station/.test(pop) && /Also listed by.*Wikidata/.test(pop) && /BKA/.test(pop), "popup: station with its code and Wikidata");
   ok(errors.length === 0, "mobility: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- water and sewage works, telephone exchanges ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await om(p, true);
+  for (const k of ["water", "telecom"]) ok(await shown(p, '#atk-om #inf-sec input[data-inf="' + k + '"]'), "utilities: switch " + k + " in Infrastructure");
+  await view(p, [13.75, 100.55], 10);
+  await p.check('#inf-sec input[data-inf="water"]'); await p.check('#inf-sec input[data-inf="telecom"]');
+  await p.waitForFunction(() => { const s = window.OSAP_INFRA.state(); return s.on.water && s.on.telecom && !s.busy; }, null, { timeout: 10000 }); await p.waitForTimeout(600);
+  const s = await st(p);
+  ok(s.shown.water === 2 && s.shown.telecom === 1, "utilities: works and exchange drawn " + JSON.stringify(s.shown));
+  await om(p, false);
+  let pop = await popWith(p, "Bang Khen");
+  ok(/Water treatment works · OpenStreetMap/.test(pop) && /Metropolitan Waterworks Authority/.test(pop) && /Also listed by.*Wikidata/.test(pop), "popup: water works, operator, Wikidata");
+  pop = await popWith(p, "BKK-01");
+  ok(/Telephone exchange \(no name mapped\)/.test(pop) && /BKK-01/.test(pop), "popup: unnamed exchange shows its code");
+  ok(errors.length === 0, "utilities: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- read failure, and a country with nothing listed ----------
