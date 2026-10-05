@@ -34,6 +34,7 @@ Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) a
 When the site is hosted (for example on GitHub Pages), OSAP installs as an app:
 
 - **Computer (Chrome or Edge):** open the site and click the install icon at the right of the address bar.
+- **Computer, as a program:** download the installer for Windows, Mac or Linux from [Releases](https://github.com/01shane89-jpg/AXIOM-APSAP/releases/latest) (see `desktop/README.md`; the first start warns because the installers are not code-signed).
 - **Android (Chrome):** open the site, tap the menu, then **Install app** (or **Add to Home screen**).
 - **iPhone or iPad (Safari):** open the site, tap **Share**, then **Add to Home Screen**.
 
