@@ -795,7 +795,8 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   { key: "osm:w2", osm: "w2", sof: "", name: "Near Hospital", lat: 13.76, lon: 100.51, website: "https://near.example.org/",
     caps: { "dx.ct": [{ url: "https://near.example.org/ct", title: "CT", excerpt: "CT scanner open 24 hours", observed: "2026-10-03", sha256: "a".repeat(64) }] } },
   { key: "osm:n99", osm: "n99", sof: "", name: "Website Only Hospital", lat: 13.73, lon: 100.52, website: "https://wo.example.org/",
-    caps: { "ed.24_7": [{ url: "https://wo.example.org/er", title: "ER", excerpt: "Emergency room open 24 hours <b>x</b>", observed: "2026-10-03", sha256: "b".repeat(64) }] } }] };
+    caps: { "ed.24_7": [{ url: "https://wo.example.org/er", title: "ER", excerpt: "Emergency room open 24 hours <b>x</b>", observed: "2026-10-03", sha256: "b".repeat(64) }],
+      "cc.icu": [{ url: "https://wo.example.org/icu", title: "ICU", excerpt: "\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01 12 \u0e40\u0e15\u0e35\u0e22\u0e07", excerpt_en: "Intensive care ward, 12 beds", mt: "MADLAD-400 (Google open model, run in the refresh job)", observed: "2026-10-03", sha256: "9".repeat(64) }] } }] };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, web: WEB });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
@@ -811,6 +812,9 @@ const WEB = { schema: "osap-hospital-web/1", cc: "th", read_at: "2026-10-03T07:4
   await p.click('#mp-fac tr:has-text("Website Only Hospital") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>x<\/b>/.test(document.getElementById("brief").textContent)), "websites: quoted page text is shown as text, never as markup");
+  /* Shane 2026-10-04 "Machine translation is failing": a Thai quote reads in English, says it is machine translated and by what, and keeps the original */
+  const bt = await p.textContent("#brief");
+  ok(/\u201cIntensive care ward, 12 beds\u201d \(machine translated, MADLAD-400 \(Google open model, run in the refresh job\); original: \u201c\u0e2b\u0e2d\u0e1c\u0e39\u0e49\u0e1b\u0e48\u0e27\u0e22\u0e2b\u0e19\u0e31\u0e01 12 \u0e40\u0e15\u0e35\u0e22\u0e07\u201d\)/.test(bt), "websites: a Thai quote shows its English machine translation, the tool and the original " + (bt.match(/Intensive care ward[^\u00b7]{0,200}/) || [""])[0]);
   await p.click("#mpa-close");
   ok(!errors.length, "websites: no page errors " + errors.join(" | "));
   await ctx.close();
