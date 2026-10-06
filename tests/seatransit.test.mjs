@@ -1,0 +1,48 @@
+// Unit checks of the sea transit assessment's geometry (assets/osap-seatransit.js core), run in node without a browser.
+// Distances are great-circle NM (Earth radius 3,440.065 NM) as in the supplied maritime medevac assessment (2026-10-05).
+// Run: node tests/seatransit.test.mjs
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
+const box = {}; vm.runInNewContext(readFileSync(new URL("../assets/osap-seatransit.js", import.meta.url), "utf8"), box);
+const C = box.OSAP_SEATRANSIT && box.OSAP_SEATRANSIT.core;
+let fails = 0;
+function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
+const near = (a, b, t) => Math.abs(a - b) <= t;
+
+ok(!!C && typeof C.densify === "function", "core loads in node with no document");
+// The assessment's distance table: northern Malacca (5.5 N 98.0 E) to Phuket town (7.8804 N 98.3923 E) is about 144.5 NM
+const d = C.nm([5.5, 98.0], [7.8804, 98.3923]);
+ok(near(d, 144.5, 1), `northern Malacca to Phuket ${d.toFixed(1)} NM (about 144.5)`);
+ok(near(C.nm([0, 0], [0, 1]), 60.04, 0.05), "one degree of longitude on the equator is about 60 NM");
+ok(near(C.nm([0, 179.5], [0, -179.5]), 60.04, 0.05), "distance across the date line is the short way");
+// gcAt / dest / ring
+const m = C.gcAt([0, 0], [0, 10], 0.5); ok(near(m[0], 0, 1e-6) && near(m[1], 5, 1e-6), "great-circle midpoint on the equator");
+const p = C.dest([10, 100], 90, 100); ok(near(C.nm([10, 100], p), 100, 0.01), "a point 100 NM out is 100 NM away");
+const r = C.ring([7.88, 98.39], 200, 36); ok(r.length === 37 && r.every((x) => near(C.nm([7.88, 98.39], x), 200, 0.01)), "200 NM ring: every point is 200 NM from the centre");
+// densify keeps every waypoint and samples each leg at the step
+const wps = [{ n: "A", lat: 0, lon: 0 }, { n: "B", lat: 0, lon: 5 }, { n: "C", lat: 3, lon: 5 }];
+const pts = C.densify(wps, 50);
+ok(pts.filter((x) => x.wp >= 0).length === 3, "densify keeps all three waypoints");
+ok(near(pts[pts.length - 1].nm, C.nm([0, 0], [0, 5]) + C.nm([0, 5], [3, 5]), 0.01), "the last point's distance is the corridor length");
+ok(pts.every((x, i) => !i || x.nm > pts[i - 1].nm), "sample distances increase along the corridor");
+ok(pts.every((x, i) => !i || x.nm - pts[i - 1].nm <= 50 * 1.26), "no gap between samples is much over the step");
+ok(pts.filter((x) => x.leg === 0 && x.wp < 0).length === 5, "the 300 NM first leg gets 5 samples between its ends at 50 NM");
+// line: no jump across the date line
+const L = C.line([{ lat: 0, lon: 179 }, { lat: 0, lon: -179 }]);
+ok(L.every((x, i) => !i || Math.abs(x[1] - L[i - 1][1]) < 5), "the drawn line does not jump across the map at the date line");
+// assess: remote only when no sourced hospital within remH AND no port within remP
+const sets = { hosp: [{ id: "h", lat: 0, lon: 0 }], ports: [{ id: "p", lat: 3, lon: 5 }], osm: [], af: [] };
+const rows = C.assess(pts, sets, { remH: 120, remP: 60, kn: 10, dep: Date.UTC(2026, 9, 5, 0, 0) });
+ok(!rows[0].remote && rows[0].hosp.nm < 0.01, "the start (on the hospital) is not remote");
+ok(!rows[rows.length - 1].remote, "the end (on the port) is not remote");
+const mid = rows.find((x) => near(x.pt.nm, 250, 1)); ok(mid && mid.remote, "250 NM out, hospital and port both far: remote");
+ok(rows.every((x) => x.osm === null && x.af === null), "an empty set gives no nearest point (never invented)");
+ok(rows[rows.length - 1].eta === Date.UTC(2026, 9, 5) + pts[pts.length - 1].nm / 10 * 3600000, "ETA follows speed and departure");
+// segments
+const S = C.segments(wps, rows, { kn: 10, dep: null });
+ok(S.length === 2 && near(S[0].nm + S[1].nm, pts[pts.length - 1].nm, 0.01), "two segments, lengths add up to the corridor");
+ok(S[0].remote > 0 && S[0].remoteNm[0] > 100, "the first segment flags its remote stretch");
+ok(S[0].t0 === null && near(S[0].hours, S[0].nm / 10, 1e-9), "no departure time: no clock times, hours still given");
+ok(near(S[1].worstHosp, C.nm([0, 0], [3, 5]), 0.5) && S[1].worstPort > 100, "worst gaps: the far end of each segment from the hospital and the port");
+if (fails) { console.log(fails + " failed"); process.exit(1); }
+console.log("all passed");

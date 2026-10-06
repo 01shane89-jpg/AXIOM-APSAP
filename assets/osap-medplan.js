@@ -1199,6 +1199,7 @@
       "<li><b>Helicopter landing</b> on a deck the aircraft operator has accepted for that aircraft (size, load, obstacles, motion, deck crew).</li>" +
       "<li><b>Helicopter hoist</b>: a serviceable hoist, a qualified crew, an accepted hoist area and sea-state limits. A fixed-wing air ambulance cannot collect from a ship; it can only fly onward from an airport.</li></ul>" +
       '<p class="obs">Air times in this plan assume the aircraft can collect at the POI; OSAP does not know whether any deck or hoist is available. Coordinate through the responsible rescue coordination centre (RCC): being nearest to a country does not make it the coordinating authority. The master controls the vessel, the aircraft commander accepts or rejects the aviation task, and the clinical lead decides what care the casualty needs.</p>';
+    if (W.OSAP_SEATRANSIT) h += '<p class="noprint"><button type="button" data-mp-seatr>Sea transit assessment</button> <span class="obs">For a voyage: every stretch of the corridor against hospitals, ports, airfields and rescue centres.</span></p>';
     var P = w.ports || [];
     if (!P.length) h += '<p class="mpwarn">' + (w.ports ? "No port within " + SEA_PORT_KM + " km is in OSAP's ports layer" + (w.portsFailed && w.portsFailed.length ? " (not read: " + esc(w.portsFailed.join(", ")) + ")" : "") : "Reading the ports near the point…") + ". Plan prolonged onboard care, early diversion and RCC coordination.</p>";
     else {
@@ -2894,7 +2895,8 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
-    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf],[data-mp-cat]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf],[data-mp-cat],[data-mp-seatr]"); if (!b) return;
+    if (b.hasAttribute("data-mp-seatr")) { var o = ST && ST.o; close(); W.OSAP_SEATRANSIT.open(o ? { at: o } : {}); return; }
     if (b.hasAttribute("data-mp-cat")) { lsSet(CAT_KEY, b.getAttribute("data-mp-cat")); conopRender(); var cb = D.querySelector('#mp-conop [data-mp-cat="' + b.getAttribute("data-mp-cat") + '"]'); if (cb) cb.focus(); return; }
     if (b.hasAttribute("data-mp-offbtn")) { setOff(b.getAttribute("data-mp-offbtn"), true); offChanged(); var pb = D.querySelector("#mp-pst [data-mp-assess]"); if (pb) pb.focus(); return; }
     var k = b.getAttribute("data-mp");
