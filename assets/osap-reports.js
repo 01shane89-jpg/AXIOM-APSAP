@@ -56,6 +56,8 @@
     /* no drawn area needed: the plan opens on the drawn area when there is one, else on the map centre (Pick on map moves it) */
     ["medplan", "Point on the map", "Medical plan", "Draft MEDEVAC plan from a point of injury: hospitals by capability, routes, contacts, golden hour, evacuation",
       function () { return !!W.OSAP_MEDPLAN || "Not available"; }, function () { W.OSAP_MEDPLAN.open(areaOn() ? undefined : { centre: true }); }],
+    ["seatransit", "Point on the map", "Sea transit medevac assessment", "A voyage corridor: distances to documented hospitals, ports and airfields, remote stretches, rescue centres, onboard triggers, a readiness sheet to print",
+      function () { return !!W.OSAP_SEATRANSIT || "Not available"; }, function () { W.OSAP_SEATRANSIT.open(); }],
 
     ["route", "Route", "Route plan (print)", "Legs, timings, light, weather and hazards along a planned route",
       function () { return !!shown('[data-rt="print"]') || "Plan a route first"; }, function () { press(shown('[data-rt="print"]')); }, openRoute],

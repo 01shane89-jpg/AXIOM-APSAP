@@ -112,6 +112,10 @@ const settle = (p) => p.waitForFunction(() => { const f = document.getElementByI
   /* the planner says it is on land: the land plan comes back */
   await p.selectOption("#mp-env", "land"); await settle(p);
   ok(!/at sea/.test(await p.textContent("#mp-sea")) && calls.iso > 0, "at sea: 'On land' gives the land plan back (road reach drawn)");
+  /* at sea the plan links to the sea transit assessment, starting from the POI */
+  await p.selectOption("#mp-env", "sea"); await settle(p);
+  await p.click("#mp-sea [data-mp-seatr]");
+  ok(await p.evaluate(() => { const e = document.getElementById("seatr"), w = window.OSAP_SEATRANSIT.state().plan.wps; return e && !e.hidden && document.getElementById("medplan").hidden && w.length === 1 && Math.abs(w[0].lat - 7.6) < 1e-3; }), "at sea: 'Sea transit assessment' opens with the POI as the first waypoint");
   ok(errors.length === 0, "at sea: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
