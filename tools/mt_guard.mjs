@@ -5,6 +5,7 @@
 // one story carried by several outlets, so it can lead the daily summary. A translation is suspect when it:
 //   - names a year or a decade the original does not have (Buddhist Era years such as 2569 or "ปี 69" count as 2026);
 //   - is one of the model's stock inventions ("... were a time of great success", "(in Japanese)", a web error page);
+//   - gives a clock time the original does not have ("10.35am: The rain continues ..." for a Thai headline with no time in it);
 //   - repeats a word run (the model looping);
 //   - is still mostly in another script (the model gave Chinese back as Chinese).
 // Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
@@ -27,6 +28,8 @@ const STOCK = [
 const DECADE = /\b(1[5-9]|20)(\d)0s\b|['’](\d)0s\b|\b(twenties|thirties|forties|fifties|sixties|seventies|eighties|nineties)\b/gi;
 const DECADE_WORD = { twenties: 2, thirties: 3, forties: 4, fifties: 5, sixties: 6, seventies: 7, eighties: 8, nineties: 9 };
 const CENTURY = /\b(\d{1,2})(?:st|nd|rd|th) century\b/gi;
+// a clock time in the English: "10:35", "10.35am", "10.35 a.m.", "9am", "22.30 hrs"
+const CLOCK = /(?<![\d.,:])([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(a\.?m\b\.?|p\.?m\b\.?|hrs\b|h\b|o'clock\b)?(?![\d.,:]?\d)/gi;
 const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?![\d,])/g;
 
 // reason the English is not a translation of orig, or "" when nothing is wrong. now: the time of the check (ms), for the
@@ -55,6 +58,15 @@ export function mtSuspect(orig, en, now = Date.now()) {
     const d = m[2] || m[3] || String(DECADE_WORD[String(m[4] || "").toLowerCase()] || "");
     const full = m[1] ? +(m[1] + d + "0") : 0;
     if (!(full && ok.has(full)) && !nums.some((x) => x === d + "0" || (x.length === 4 && x.slice(2) === d + "0"))) return "decade not in the original";
+  }
+  // an hour and minute (or an hour with am/pm) the original does not give; a 24-hour time may come back as am/pm
+  for (const m of en.matchAll(CLOCK)) {
+    const h = +m[1], mi = m[2], ap = m[3] || "";
+    if (!mi && !ap) continue;                    // a bare number, not a time
+    if (mi && !ap && m[0].includes(".")) continue; // "6.5" is a magnitude or a decimal unless it has am/pm
+    const hours = [h, h + 12, h - 12, h === 12 ? 0 : -1].filter((v) => v >= 0);
+    const hourIn = hours.some((v) => nums.some((x) => +x === v));
+    if (!hourIn || (mi && mi !== "00" && !nums.some((x) => x === mi || +x === +mi))) return "clock time not in the original";
   }
   for (const m of en.matchAll(CENTURY)) if (!nums.includes(m[1])) return "century not in the original";
   return "";

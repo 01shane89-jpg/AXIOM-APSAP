@@ -21,6 +21,23 @@ function read(cc) {
     return JSON.parse(t.slice(t.indexOf("=", t.indexOf("]")) + 1).trim().replace(/;$/, ""));
   } catch (e) { return {}; }
 }
+// The English already stored for each kept item, as [{ text, lang, en, tool }] for tools/translate.mjs seed(): a refresh
+// reuses these instead of asking the model again, so an item does not fall back to its original language when the
+// translation cache has dropped it. ccs: the areas to read (default every stored area).
+export function storedTranslations(kind, ccs) {
+  const out = [];
+  let list = ccs;
+  if (!list) { try { list = fs.readdirSync(DIR).filter((f) => /^[a-z]{2,3}\.js$/.test(f)).map((f) => f.slice(0, -3)); } catch (e) { list = []; } }
+  for (const cc of list) {
+    if (!/^[a-z]{2,3}$/.test(cc)) continue;
+    for (const i of read(cc)[kind] || []) {
+      if (!i || !i.mt || i.mt === "untranslated" || /^en\b/i.test(i.lang || "")) continue;
+      if (i.title && i.title_en) out.push({ text: i.title, lang: i.lang || "", en: i.title_en, tool: i.mt });
+      if (i.summary && i.summary_en) out.push({ text: i.summary, lang: i.lang || "", en: i.summary_en, tool: i.mt });
+    }
+  }
+  return out;
+}
 // caps: an optional { cc: n } of larger news caps for the focus countries (tools/news_feeds.json "focus")
 export async function updateHistory(kind, items, stamp, caps) {
   if (!CAP[kind]) throw new Error("unknown history kind " + kind);
@@ -37,6 +54,13 @@ export async function updateHistory(kind, items, stamp, caps) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;
       const o = {}; for (const k of KEEP) if (i[k] != null && i[k] !== "") o[k] = i[k];
+      // a run that could not translate the item this time keeps the English an earlier run stored for the same words
+      const prev = byLink.get(i.link);
+      if (prev && prev.mt && prev.mt !== "untranslated") {
+        let kept = false;
+        for (const [t, e] of [["title", "title_en"], ["summary", "summary_en"]]) if (!o[e] && o[t] && prev[e] && prev[t] === o[t]) { o[e] = prev[e]; kept = true; }
+        if (kept && (!o.mt || o.mt === "untranslated")) o.mt = prev.mt;
+      }
       unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
       byLink.set(i.link, o);

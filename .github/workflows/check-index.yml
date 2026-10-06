@@ -40,6 +40,9 @@ jobs:
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
+      # machine translation: invented lines rejected, and a translation stays with its item
+      - run: node tests/mt_guard.test.mjs
+      - run: node tests/translate_keep.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
@@ -113,4 +116,5 @@ jobs:
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
+      - run: node tests/report_english_smoke.mjs
       - run: node tests/speed_budget.mjs
