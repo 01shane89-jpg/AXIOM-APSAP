@@ -22,13 +22,17 @@
 //     motorways, trunk, primary and secondary roads or railways, with length, weight and height limits where mapped; the two
 //     carriageways of one road are one bridge. Wikidata (CC0) adds railway stations, bridges (100 m and up, or length not given)
 //     and tunnels that OpenStreetMap lacks.
+//   - OpenStreetMap and Wikidata (CC0): drinking water treatment works, desalination plants and sewage works; telephone
+//     exchanges (central offices). Exchange operators are kept only when they read as an organisation.
+//   - OpenStreetMap and Wikidata (CC0): ministries and other national government seats, parliaments, supreme and
+//     constitutional courts, prisons and border crossings; police and fire stations. Facility names only.
 //   - TeleGeography Submarine Cable Map (CC BY-NC-SA 3.0, non-commercial; tagged nc so it can be stripped): cables and their
 //     landing points. A cable goes in the file of every country it lands in.
 // Several sources are merged per layer: the first source to list a site leads, and another source's record of the same site
 // (within a set distance) is folded into it as "also listed by" with its own link, so a popup shows every source that has it.
 // Output: data/infra/<cc>.json { v, cc, at, items: [{ k, id, nm, la, lo, s, u, t?, x?, fp }], lines: [{ k, id, nm, c, g, s, u, fp }] }
 // split by layer into data/infra/<cc>/<layer>.json (af, port, dam, cable: landing points plus cable lines, plant, fuel: sites plus
-// pipelines, rail: stations plus railway lines, bridge: bridges and tunnels) so a switch loads only
+// pipelines, rail: stations plus railway lines, bridge: bridges and tunnels, water, telecom, gov, emg) so a switch loads only
 // its own layer, and data/infra/index.json { v, at, sources, countries: { cc: { kind: n } } }. A source that fails keeps its items from the last
 // good run (its ok flag false, with that run's time), so a busy server never empties the map; the panel names it.
 // Privacy: no phone numbers, emails, websites of people, or private persons' names. Only facility names, codes and public bodies.
@@ -227,7 +231,7 @@ const DEAD = /^(disused|abandoned|demolished|razed|removed|destroyed|was|propose
    never read first, then the oldest, until its time budget (INFRA_OSM_MIN minutes, default 60) is spent; a tile that fails keeps
    its last copy. So a busy server never empties the map. Lines (dams are usually mapped as lines) are placed at their midpoint. */
 const POSTPASS = "https://postpass.geofabrik.de/api/interpreter";
-const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|content|man_made|location|diameter|usage|bridge|bridge:name|tunnel|tunnel:name|highway|railway|maxweight|maxheight|lanes|gauge|electrified|station|train)$/;
+const OSM_DIR = join(OUT, "_osm"), KEEP = /^(name|name:en|int_name|aeroway|aerodrome|aerodrome:type|iata|icao|ref|ele|surface|military|landuse|access|industrial|amenity|waterway|height|purpose|dam:purpose|waterway:name|start_date|operator|power|plant:source|plant:method|plant:output:electricity|plant:storage|offshore|substance|product|content|man_made|location|diameter|usage|bridge|bridge:name|tunnel|tunnel:name|highway|railway|maxweight|maxheight|lanes|gauge|electrified|station|train|water_works|wastewater_plant|telecom|building|capacity|government|amenity|barrier|court|police)$/;
 async function postpass(sql) {
   let err;
   for (let k = 0; k < 2; k++) {
@@ -255,10 +259,19 @@ async function osm() {
     station: `tags->>'railway' = 'station' AND coalesce(tags->>'station', '') NOT IN ('subway','light_rail','monorail','funicular','miniature','tram') AND coalesce(tags->>'subway', '') <> 'yes'`,
     /* bridges and tunnels that carry motorways, trunk and primary roads or railways, 150 m and longer, plus mapped bridge outlines with a name */
     bridge: `tags->>'bridge' IN ('yes','viaduct','cantilever','suspension','movable','covered','trestle') AND (tags->>'highway' IN ('motorway','trunk','primary','secondary') OR tags->>'railway' IN ('rail','narrow_gauge'))`,
+    /* drinking water treatment, desalination and sewage works */
+    water: `(tags->>'man_made' IN ('water_works','wastewater_plant','desalination_plant') OR tags->>'water_works' = 'desalination')`,
+    /* telephone exchanges (central offices) */
+    telex: `(tags->>'telecom' IN ('exchange','central_office') OR tags->>'building' = 'telephone_exchange')`,
+    /* national government seats, prisons and border crossings */
+    gov: `((tags->>'office' = 'government' AND tags->>'government' IN ('ministry','presidency','prime_minister','legislative','parliament','cabinet','executive'))` +
+      ` OR tags->>'amenity' = 'prison' OR tags->>'barrier' = 'border_control' OR tags->>'amenity' = 'courthouse' AND tags->>'court' IN ('supreme','constitutional'))`,
+    /* police and fire stations */
+    emg: `tags->>'amenity' IN ('police','fire_station')`,
     tunnel: `tags->>'tunnel' IN ('yes','building_passage') AND tags->>'tunnel' <> 'culvert' AND (tags->>'highway' IN ('motorway','trunk','primary','secondary') OR tags->>'railway' IN ('rail','narrow_gauge'))` };
   const LAT = [[-60, 0], [0, 30], [30, 84]];
   mkdirSync(OSM_DIR, { recursive: true });
-  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuelsite|pipe|rail|station|bridge|tunnel)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
+  for (const f of readdirSync(OSM_DIR)) if (!/^(af|port|dam|plant|fuelsite|pipe|rail|station|bridge|tunnel|water|telex|gov|emg)_-?\d+_-?\d+_30\.json$/.test(f)) unlinkSync(join(OSM_DIR, f));   // tiles of an older layout
   const tiles = [];
   for (const part of Object.keys(W)) for (let w = -180; w < 180; w += 30) for (const [s0, n0] of LAT) {
     const f = join(OSM_DIR, part + "_" + w + "_" + s0 + "_30.json"), old = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : null;
@@ -375,6 +388,29 @@ async function osm() {
         ["road", own || t.man_made === "bridge" ? null : road], ["len_m", t._len || null], ["maxweight", clip(t.maxweight, 20)], ["maxheight", clip(t.maxheight, 20)],
         ["lanes", clip(t.lanes, 4)]].filter((p) => p[1] != null && p[1] !== ""));
       out.push({ k: br ? "br" : "tn", t: ty, cc, id: "osm:" + id, nm: own || (br ? "Bridge" : "Tunnel") + (road ? " on " + road : ""), la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xb });
+      continue;
+    }
+    if (e.part === "water") {
+      const ty = t.man_made === "wastewater_plant" ? "S" : t.man_made === "desalination_plant" || t.water_works === "desalination" || /desal/i.test(nm) ? "D" : "W";
+      const xw = Object.fromEntries([["capacity", clip(t.capacity, 30)], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "wat", t: ty, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xw });
+      continue;
+    }
+    if (e.part === "gov") {
+      const ty = t.amenity === "prison" ? "J" : t.barrier === "border_control" ? "X" : t.amenity === "courthouse" ? "C" : /legislat|parliament/.test(t.government || "") ? "L" : /presiden|prime|cabinet|executive/.test(t.government || "") ? "E" : "M";
+      const xg = Object.fromEntries([...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "gov", t: ty, cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xg });
+      continue;
+    }
+    if (e.part === "emg") {
+      const xe = Object.fromEntries([["police", t.amenity === "police" && t.police ? clip(t.police, 30) : null], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "emg", t: t.amenity === "police" ? "P" : "F", cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xe });
+      continue;
+    }
+    if (e.part === "telex") {
+      /* an exchange is often unnamed or named only by its code */
+      const xt = Object.fromEntries([["ref", clip(t.ref, 16)], ...(t.operator && ORG.test(t.operator) ? [["op", clip(t.operator, 60)]] : [])].filter((p) => p[1]));
+      out.push({ k: "tx", t: "E", cc, id: "osm:" + id, nm, la: r4(c.lat), lo: r4(c.lon), s: "osm", u, x: xt });
       continue;
     }
     if (e.part === "fuelsite") {
@@ -508,6 +544,15 @@ async function wikiclass(labels, mk) {
   }
   return [...by.values()];
 }
+const wikiwater = () => wikiclass(["water treatment plant", "drinking water treatment plant", "sewage treatment plant", "wastewater treatment plant", "desalination plant"],
+  (nm, cls) => ({ k: "wat", t: /desal/i.test(cls) ? "D" : /sewage|wastewater/i.test(cls) ? "S" : "W", s: "wdw", x: { kind: clip(cls, 30) } }));
+const wikitelex = () => wikiclass(["telephone exchange", "telephone switching centre"], (nm, cls) => ({ k: "tx", t: "E", s: "wdt", x: { kind: clip(cls, 30) } }));
+const wikigov = () => wikiclass(["prison", "border crossing", "border checkpoint", "ministry", "government ministry", "presidential palace", "parliament building",
+  "supreme court", "police station", "fire station"], (nm, cls) => {
+  const c = cls.toLowerCase();
+  if (/police|fire/.test(c)) return { k: "emg", t: /police/.test(c) ? "P" : "F", s: "wdg", x: {} };
+  return { k: "gov", t: /prison/.test(c) ? "J" : /border/.test(c) ? "X" : /court/.test(c) ? "C" : /parliament/.test(c) ? "L" : /presiden/.test(c) ? "E" : "M", s: "wdg", x: { kind: clip(cls, 30) } };
+});
 const wikistations = () => wikiclass(["railway station", "train station", "passenger railway station"],
   (nm, cls, len, inc) => ({ k: "stn", t: "S", s: "wdr", x: inc ? { built: inc } : {} }));
 const wikibridges = () => wikiclass(["bridge", "road bridge", "railway bridge", "viaduct", "suspension bridge", "cable-stayed bridge", "arch bridge", "truss bridge",
@@ -585,6 +630,9 @@ const SRC = {
   wdf: { name: "Wikidata (refineries and terminals)", lic: "CC0", link: "https://www.wikidata.org/" },
   wdr: { name: "Wikidata (railway stations)", lic: "CC0", link: "https://www.wikidata.org/" },
   wdb: { name: "Wikidata (bridges and tunnels)", lic: "CC0", link: "https://www.wikidata.org/" },
+  wdw: { name: "Wikidata (water and sewage works)", lic: "CC0", link: "https://www.wikidata.org/" },
+  wdt: { name: "Wikidata (telephone exchanges)", lic: "CC0", link: "https://www.wikidata.org/" },
+  wdg: { name: "Wikidata (government, prisons, border crossings, police and fire)", lic: "CC0", link: "https://www.wikidata.org/" },
   tg: { name: "TeleGeography Submarine Cable Map", lic: "CC BY-NC-SA 3.0", nc: true, link: "https://www.submarinecablemap.com/" },
 };
 const got = {}, status = {};
@@ -609,16 +657,19 @@ await run("wdp", wikiplants);
 await run("wdf", wikifuel);
 await run("wdr", wikistations);
 await run("wdb", wikibridges);
+await run("wdw", wikiwater);
+await run("wdt", wikitelex);
+await run("wdg", wikigov);
 await run("tg", cables);
 
 /* one site, several sources: the first list to have it leads; a later source's record within reach is folded in as "also listed
    by" (its link kept, its extra details added where the lead has none); anything new is added */
-const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 3000, stn: 500, br: 300, tn: 300 };
+const REACH = { af: 1500, port: 3000, dam: 1000, plant: 2000, fuel: 3000, stn: 500, br: 300, tn: 300, wat: 1000, tx: 300, gov: 500, emg: 300 };
 function merge(lists, k, reach) {
   const lead = [], g = new Map(), key = (la, lo) => Math.floor(la / 0.05) + ":" + Math.floor(lo / 0.05);
   const find = (i, m) => { const a = Math.floor(i.la / 0.05), b = Math.floor(i.lo / 0.05); let best = null, bd = m;
     for (let p = -1; p <= 1; p++) for (let q = -1; q <= 1; q++) for (const o of g.get(a + p + ":" + (b + q)) || []) {
-      if (k === "br" || k === "tn" ? (o.t === "R") !== (i.t === "R") && o.t !== "B" && i.t !== "B" : k === "stn" ? false :
+      if (k === "br" || k === "tn" ? (o.t === "R") !== (i.t === "R") && o.t !== "B" && i.t !== "B" : k === "stn" || k === "tx" ? false : k === "gov" || k === "emg" ? o.t !== i.t : k === "wat" ? !(o.t === i.t || o.s === "osm" && i.s !== "osm") :
         k === "plant" ? !(o.t === i.t || o.t === "other" || i.t === "other") : k === "fuel" ? !(o.t === i.t || o.t === "G" || i.t === "G") : o.t === "F" || i.t === "F" ? o.t !== i.t : (o.t === "H") !== (i.t === "H")) continue;
       const d = dist(i.la, i.lo, o.la, o.lo); if (d < bd) { bd = d; best = o; } }
     return best; };
@@ -657,6 +708,10 @@ const merged = [
   /* a Wikidata bridge nobody else maps is kept only when it is 100 m or more long, or its length is not given */
   ...merge([got.osm.items, got.wdb.items], "br", REACH.br).filter((i) => i.s !== "wdb" || !(i.x.len_m < 100)),
   ...merge([got.osm.items, got.wdb.items], "tn", REACH.tn),
+  ...merge([got.osm.items, got.wdw.items], "wat", REACH.wat),
+  ...merge([got.osm.items, got.wdt.items], "tx", REACH.tx),
+  ...merge([got.osm.items, got.wdg.items], "gov", REACH.gov),
+  ...merge([got.osm.items, got.wdg.items], "emg", REACH.emg),
 ];
 /* a private OpenStreetMap-only strip is left out */
 const kept = merged.filter((i) => !(i.x && i.x.private && !(i.also || []).length));
@@ -680,10 +735,10 @@ for (const l of [...got.tg.lines, ...got.osm.lines]) {
 }
 
 const countries = {};
-const FILE = { af: "af", port: "port", dam: "dam", lp: "cable", cable: "cable", plant: "plant", fuel: "fuel", pipe: "fuel", stn: "rail", rail: "rail", br: "bridge", tn: "bridge" };
+const FILE = { af: "af", port: "port", dam: "dam", lp: "cable", cable: "cable", plant: "plant", fuel: "fuel", pipe: "fuel", stn: "rail", rail: "rail", br: "bridge", tn: "bridge", wat: "water", tx: "telecom", gov: "gov", emg: "emg" };
 for (const f of readdirSync(OUT)) if (/^[a-z]{2,3}\.json$/.test(f)) unlinkSync(join(OUT, f));   // the old one-file layout
 for (const d of readdirSync(OUT)) if (/^[a-z]{2,3}$/.test(d) && !by[d]) for (const f of readdirSync(join(OUT, d))) unlinkSync(join(OUT, d, f));
-const KORD = { af: 0, port: 1, dam: 2, lp: 3, plant: 4, fuel: 5, stn: 6, br: 7, tn: 8 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
+const KORD = { af: 0, port: 1, dam: 2, lp: 3, plant: 4, fuel: 5, stn: 6, br: 7, tn: 8, wat: 9, tx: 10, gov: 11, emg: 12 }, TORD = { L: 0, M: 1, P: 2, F: 3, O: 4, D: 5, S: 6, H: 7, W: 8, C: 9 };
 for (const [cc, c] of Object.entries(by).sort()) {
   c.items.sort((a, b) => (KORD[a.k] - KORD[b.k]) || ((TORD[a.t] || 0) - (TORD[b.t] || 0)) || String(a.id).localeCompare(String(b.id)));
   c.lines.sort((a, b) => String(a.id).localeCompare(String(b.id)));
