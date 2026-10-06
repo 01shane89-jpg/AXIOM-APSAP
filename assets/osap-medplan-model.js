@@ -192,7 +192,8 @@
       created_at: I.built_at || "", updated_at: I.now || I.built_at || "",
       country: { cc: I.cc || "", name: I.country || "" },
       mission: { unit: str(v.unit), mission: str(v.mission), notes: str(v.notes) },
-      poi: I.poi ? { lat: I.poi.lat, lon: I.poi.lon, mgrs: I.poi.mgrs || "", set_by: I.poi.set_by || "" } : null,
+      poi: I.poi ? { lat: I.poi.lat, lon: I.poi.lon, mgrs: I.poi.mgrs || "", set_by: I.poi.set_by || "", environment: I.poi.environment || "land", coast_km: I.poi.coast_km == null ? null : I.poi.coast_km, env_set_by: I.poi.env_set_by || "map" } : null,
+      sea_leg: I.sea_leg || null,
       casualty_profiles: profiles,
       stabilization_facilities: stab, definitive_facilities: defi, alternates: alts,
       facilities: F,
@@ -244,10 +245,13 @@
     if (prof && prof.stabilization_gap) gaps.push("No stabilization stop documented inside the golden hour");
     if (def) gaps.push("Receiving hospital acceptance");
     if (!air) gaps.push("Air MEDEVAC provider");
+    var sea = p.poi && p.poi.environment === "sea", sl = sea ? p.sea_leg : null;
+    if (sea) gaps.push("Air pickup at sea: accepted deck landing or hoist" + (sl && sl.port ? "; landing at " + sl.port + " confirmed with the port" : ""));
     (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
     return {
       casualty: prof ? { id: prof.id, label: prof.label } : null, status: p.validation_status.status, status_label: p.validation_status.label, poi: p.poi ? p.poi.mgrs : "",
-      ground: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
+      ground: sea && !(sl && sl.port) ? "NONE: AT SEA, NO LANDING PORT" : P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
+      at_sea: sea, sea_leg: sl && sl.port ? { port: sl.port, nm: sl.nm, kn: sl.kn, s: sl.s } : null,
       air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : "",
       stabilization: stab, stabilization_gap: !!(prof && prof.stabilization_gap), definitive: def, bypass: !!(prof && prof.bypass),
       primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
@@ -264,11 +268,17 @@
     if (p.pending && p.pending.length) add("data.pending", "blocking", "Plan data complete", "Still reading: " + p.pending.join(", ") + ". The plan cannot be printed until they finish or fail.");
     else add("data.pending", "ok", "Plan data complete");
     add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centred on " + (p.poi && p.poi.set_by === "c" ? "the map or area centre" : "a stand-in point") + ".");
+    /* a point of injury at sea: no road starts there; the road legs start at the landing port after a boat leg */
+    if (p.poi && p.poi.environment === "sea") {
+      var sl = p.sea_leg;
+      add("poi.sea", "warning", "Point of injury at sea", sl && sl.port ? "Road legs start at " + sl.port + " after " + sl.nm + " NM by boat at " + sl.kn + " kn (straight line, not a navigation route). Air pickup needs an accepted deck landing or a hoist; confirm both, and coordinate through the responsible RCC."
+        : "No landing port is known within reach: no road leg. Plan air extraction (accepted deck or hoist), prolonged onboard care and early diversion, through the responsible RCC.");
+    }
     var stab = p.stabilization_facilities[0], def = p.definitive;
     add("stabilization", stab ? "ok" : "warning", "Stabilization facility", stab ? stab.name : "None documented by a credible source; stabilize en route or confirm a local facility.");
     add("definitive", def ? "ok" : "warning", "Definitive care facility", def ? def.name : "No hospital with the needed care documented by a credible source.");
     var r0 = def && p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id; })[0];
-    add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? "Road router" : def ? "No road route to the definitive facility yet." : "No destination to route to.");
+    add("route.primary", r0 && r0.time_s != null ? "ok" : "warning", "Primary ground route", r0 && r0.time_s != null ? (p.sea_leg && p.sea_leg.port ? "Road router, from the landing port " + p.sea_leg.port : "Road router") : p.poi && p.poi.environment === "sea" && !(p.sea_leg && p.sea_leg.port) ? "None: the point of injury is at sea with no landing port known." : def ? "No road route to the definitive facility yet." : "No destination to route to.");
     /* phase 3: the alternate and contingency lines to the definitive facility, and the hazards OSAP holds along the primary */
     var ga = def && (p.ground_alternates || []).filter(function (x) { return x.facility_id === def.facility_id; })[0];
     var lines = def ? p.ground_routes.filter(function (r) { return r.facility_id === def.facility_id && r.option !== "P"; }) : [];
