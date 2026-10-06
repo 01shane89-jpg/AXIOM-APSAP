@@ -48,7 +48,7 @@
   var WIKIDATA = "https://query.wikidata.org/sparql";
   var MAX_HOSP = 14, MAX_CLIN = 8, MAX_AIR = 12, MAX_ROUTE = 32, KEY = "osap-medplan-";
   /* planning assumptions, shown wherever they are used */
-  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450, dwell: 30, xact: 15, handoff: 5 };
+  var PREP_MIN = 10, GOLDEN_MIN = 60, ONSCENE_MIN = 10, DEF = { rwkn: 120, fwkn: 250, launch: 15, sjkn: 450, dwell: 30, xact: 15, handoff: 5, vkn: 12, pxfer: 20 };
   var STATE_EMERG = { url: "https://travel.state.gov/content/travel/en/international-travel/emergencies.html", us: "1-888-407-4747", abroad: "+1 202-501-4444" };
   /* International SOS assistance centres: published 24-hour numbers, read from ISOS's public page on 2026-10-01. City
      points are only used to show the nearest centres; ISOS's clinic and network data needs a login and is not used. */
@@ -896,6 +896,7 @@
     "#medplan .mpgh{display:inline-block;font-size:11px;font-weight:600;border-radius:3px;padding:0 5px;margin-top:2px;color:#fff}#medplan .mpgh.g{background:#1e7a3a}#medplan .mpgh.a{background:#a86400}#medplan .mpgh.r{background:#b3141a}" +
     "#medplan .mpkey{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;align-items:center}" +
     ".mpicon{background:#D7141A;color:#fff;border:2px solid #fff;border-radius:4px;font:700 11px/16px system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.5)}" +
+    ".mpicon.pt{background:#0b4f8a;border-radius:2px}#medplan .mpsea{border-left:4px solid #0b4f8a;padding:4px 10px;margin:6px 0}#medplan .mpsea table td,#medplan .mpsea table th{padding:2px 6px}" +
     ".mpicon.air{background:#1d5fa8}.mpicon.e{background:#b35c00}.mpicon.o{background:#111;border-radius:10px}" +
     "#mp-pickbar{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:4001;background:#111;color:#fff;border-radius:6px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
     "#mp-pickbar button{min-height:30px}" +
@@ -1035,10 +1036,10 @@
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², centre " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
-      '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label></div>" +
+      '<label class="noprint" for="mp-from">Plan centred on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label>" + envSel() + "</div>" +
       '<p><b>Centred on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
       (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to centre the plan on it.</span>' : "") + "</p>" +
-      '<div id="mp-conop"></div>' +
+      '<div id="mp-sea"></div><div id="mp-conop"></div>' +
       '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
       '<h3>Plan status</h3><div id="mp-val"></div>' +
       '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs">Looking up hospitals…</p></div>' +
@@ -1066,7 +1067,8 @@
     s.radii = { h: rH, c: rC, a: rA, e: Math.max(rC, 30000) };
     s.fac = null; s.osmErr = ""; s.osmAt = null; s.osmBase = null; s.stored = null; s.storedErr = ""; s.forceLive = false; s.route = null; s.routeErr = ""; s.routeDone = false;
     s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.pac = null; s.pacTok = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
-    s.ph = null; s.phErr = ""; s.wxAt = null; s.hwx = null;
+    s.ph = null; s.phErr = ""; s.wxAt = null; s.hwx = null; s.sea = null; s.leg = null; s.ro = o;
+    var seaP = seaCheck(s);
     var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
     var phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
@@ -1081,7 +1083,7 @@
         return { els: (j.elements || []).concat(mine) };
       }, function (e) { s.osmErr = e.message; return st ? { els: mine } : null; });
     });
-    Promise.all([facP, sofP, webP, govP]).then(function (r) {
+    Promise.all([facP, sofP, webP, govP, seaP]).then(function (r) {
       if (ST !== s) return;
       /* official records first: each hospital's record is attached by capability() (H code, level, beds, certificates) */
       s.gov = r[3]; GOV = r[3] ? r[3].ix : null; GOV_P = r[3] ? r[3].p : null;
@@ -1094,7 +1096,9 @@
       facRender(); airRender(); emsRender(); mevRender(); mapShow(); srcRender();
       phP.then(function (d) { if (ST !== s) return; s.ph = d; s.phN = applyPhones(s); facRender(); pickRender(); srcRender(); });
       wdHosp(s, o, rH);
-      return driveTimes(o, s.fac.H.concat(s.fac.C, s.fac.U)).then(function (host) {
+      /* at sea the road legs start at the port the casualty is landed at (section "At sea"); with no port known there is no road leg */
+      if (s.leg === false) { s.routeErr = "the point of injury is at sea and no port within " + SEA_PORT_KM + " km is known"; s.routeDone = true; s.fac.H.sort(byCap); facRender(); mapShow(); srcRender(); ghRender(); seaRender(); routes(s); return; }
+      return driveTimes(s.ro, s.fac.H.concat(s.fac.C, s.fac.U)).then(function (host) {
         if (ST !== s) return; s.route = host; s.routeDone = true;
         s.fac.H.sort(byCap); s.fac.C.sort(byDrive); s.fac.U.sort(byDrive); facRender(); mevRender(); mapShow(); srcRender(); ghRender();
         routes(s);
@@ -1125,17 +1129,113 @@
     };
     var pGo = function () { if (ST !== s) return; overpass(pQuery(o), 30000).then(function (j) { if (ST !== s) return; s.xPost = sortX(j.elements, o); ocRender(); }, function () {}); };
     facP.then(xGo, xGo);
-    isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
+    /* road reach round the POI: none at sea */
+    seaP.then(function () {
+      if (ST !== s) return;
+      if (s.leg != null) { s.isoErr = "the point of injury is at sea, so there is no road reach round it"; ghRender(); return; }
+      isochrone(o).then(function (g) { if (ST !== s) return; s.iso = g; ghRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; s.isoErr = e.message; ghRender(); srcRender(); });
+    });
     ems(s.cc).then(function (r) { if (ST !== s) return; s.ems = r; emsRender(); srcRender(); }, function (e) { if (ST !== s) return; s.emsErr = e.message; emsRender(); srcRender(); });
     weather(o).then(function (w) { if (ST !== s) return; s.wx = w; s.wxAt = new Date().toISOString(); wxRender(); hlzWx(s); srcRender(); }, function (e) { if (ST !== s) return; s.wxErr = e.message; wxRender(); hlzWx(s); srcRender(); });
     if (fieldVals().oc) evac(s);
     srcRender();
   }
+  /* ---------- a point of injury at sea (Shane 2026-10-05: a med plan from the sea gave a ground evac option) ----------
+     assets/osap-sea.js tells land from sea (the app's own coastline outlines, then a road check for small islands they leave
+     out). At sea no road starts at the POI: the casualty goes by boat to a port and then by road, or is lifted off by
+     helicopter (an accepted deck landing or a hoist). The plan then counts, for every road time: treat and load, the boat
+     leg to the chosen port (great-circle distance at the stated vessel speed: separation only, not a navigation route), the
+     port transfer, then the road from the port. The planner can say the point is on land or at sea when the outlines are
+     wrong. ST.sea is what osap-sea.js said; ST.leg is { port, nm, kn, s, xs } at sea, false at sea with no port known,
+     null on land; ST.ro is where road legs start (the port at sea, else the POI). */
+  var SEA_PORT_KM = 400;
+  function SEA() { return W.OSAP_SEA || null; }
+  function envOf() { var v = fieldVals().env; return v === "land" || v === "sea" ? v : "auto"; }
+  function envSel() {
+    var e = envOf();
+    return '<label class="noprint" for="mp-env" title="OSAP tells land from sea with its coastline outlines. Choose here when the point is on a vessel next to the shore, or on an island the outlines miss.">The point is<select id="mp-env" data-mp-env="1">' +
+      [["auto", "Found from the map"], ["land", "On land"], ["sea", "At sea (on a vessel)"]].map(function (o) { return '<option value="' + o[0] + '"' + (e === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>";
+  }
+  function legS(s) { return s && s.leg ? s.leg.s + s.leg.xs : 0; }
+  function legOf(s) {
+    var L = s.sea && s.sea.ports || [], want = fieldVals().seaport, p = L.filter(function (x) { return x.id === want; })[0] || L[0];
+    if (!p) return false;
+    var kn = num("vkn"), nmi = SEA().nm(s.o, [p.lat, p.lon]);
+    return { port: p, nm: nmi, kn: kn, s: nmi / kn * 3600, xs: num("pxfer") * 60 };
+  }
+  function seaCheck(s) {
+    var env = envOf();
+    if (env === "land" || !SEA()) { s.sea = { sea: false, forced: env === "land", none: !SEA() }; return Promise.resolve(); }
+    var p = env === "sea" ? SEA().where(s.o[0], s.o[1]).then(function (w) { w.sea = true; w.forced = true; return w; }) : SEA().check(s.o[0], s.o[1]);
+    return p.then(function (w) {
+      if (ST !== s) return;
+      s.sea = w;
+      if (w.sea !== true) { seaRender(); return; }
+      return SEA().ports(s.o[0], s.o[1], SEA_PORT_KM, 8).then(function (P) {
+        if (ST !== s) return;
+        s.sea.ports = P.items; s.sea.portsFailed = P.failed;
+        s.leg = legOf(s); s.ro = s.leg ? [s.leg.port.lat, s.leg.port.lon] : s.o;
+        seaRender(); mapShow();
+      }, function (e) { if (ST !== s) return; s.sea.ports = []; s.sea.portsErr = e.message; s.leg = false; seaRender(); });
+    }, function (e) { if (ST !== s) return; s.sea = { sea: null, err: e.message }; seaRender(); });
+  }
+  /* "by road" wording: at sea every road time starts at the port */
+  function byRoad() { return ST && ST.leg ? " by road from " + ST.leg.port.name : " by road"; }
+  function gPre() { return ST && ST.leg ? PREP_MIN + " min to treat and load + " + mins(ST.leg.s) + " by boat to " + ST.leg.port.name + " + " + mins(ST.leg.xs) + " port transfer + drive: " : PREP_MIN + " min to treat and load + drive: "; }
+  function wayTxt(w) { return w === "road" && ST && ST.leg ? "boat and road" : w; }
+  function nmTxt(n) { return (n >= 100 ? Math.round(n) : n.toFixed(1)) + " NM"; }
+  function seaRender() {
+    var el = D.getElementById("mp-sea"), s = ST; if (!el || !s) return;
+    var w = s.sea;
+    if (!w || w.none || w.forced && w.sea === false) { el.innerHTML = ""; return; }
+    if (w.sea === null) { el.innerHTML = w.err || (w.failed && w.failed.length) ? '<p class="obs noprint">OSAP could not tell whether the point is at sea (' + esc(clip(w.err || "coastline outlines not read: " + w.failed.join(", "), 120)) + '). If the casualty is on a vessel, choose "At sea" above.</p>' : ""; return; }
+    if (w.sea === false) {
+      el.innerHTML = w.island ? '<p class="obs">The coastline outlines put this point offshore, but a mapped road is ' + w.road_m + ' m away, so it is treated as land (an island). If the casualty is on a vessel, choose "At sea" above.</p>' : "";
+      return;
+    }
+    var off = w.coast_km == null ? "more than 300 km (" + nmTxt(162) + ") from any coast OSAP holds" : "about " + nmTxt(w.coast_km / 1.852) + " (" + km(w.coast_km * 1000) + ") off the nearest coast" + (w.region ? " (" + esc(w.region) + ")" : "");
+    var h = '<div class="mpsea"><h3>At sea</h3><p><b>The point of injury is at sea</b>, ' + off + (w.forced ? ", as set above" : "") + ". <b>No road starts here.</b> Ways off the vessel, each needing its own acceptance before it counts:</p><ul>" +
+      "<li><b>By boat to a port</b>, then by road to the hospital. Every road time in this plan includes that boat leg and the port transfer (below).</li>" +
+      "<li><b>Helicopter landing</b> on a deck the aircraft operator has accepted for that aircraft (size, load, obstacles, motion, deck crew).</li>" +
+      "<li><b>Helicopter hoist</b>: a serviceable hoist, a qualified crew, an accepted hoist area and sea-state limits. A fixed-wing air ambulance cannot collect from a ship; it can only fly onward from an airport.</li></ul>" +
+      '<p class="obs">Air times in this plan assume the aircraft can collect at the POI; OSAP does not know whether any deck or hoist is available. Coordinate through the responsible rescue coordination centre (RCC): being nearest to a country does not make it the coordinating authority. The master controls the vessel, the aircraft commander accepts or rejects the aviation task, and the clinical lead decides what care the casualty needs.</p>';
+    var P = w.ports || [];
+    if (!P.length) h += '<p class="mpwarn">' + (w.ports ? "No port within " + SEA_PORT_KM + " km is in OSAP's ports layer" + (w.portsFailed && w.portsFailed.length ? " (not read: " + esc(w.portsFailed.join(", ")) + ")" : "") : "Reading the ports near the point…") + ". Plan prolonged onboard care, early diversion and RCC coordination.</p>";
+    else {
+      var L = s.leg, kn = num("vkn");
+      h += "<h4>Ports to land the casualty at</h4>" + '<div class="mpscroll"><table><thead><tr><th></th><th>Port</th><th>Distance</th><th>At ' + kn + " kn</th><th>Source</th></tr></thead><tbody>" +
+        P.map(function (p) {
+          var on = L && L.port.id === p.id, d = SEA().nm(s.o, [p.lat, p.lon]);
+          return "<tr><td><label class=\"mpchk\"><input type=\"radio\" name=\"mp-port\" data-mp-port=\"" + esc(p.id) + '"' + (on ? " checked" : "") + '><span class="noprint">Land here</span>' + (on ? '<span class="sub">chosen</span>' : "") + "</label></td>" +
+            "<td><b>" + esc(p.name) + "</b> <span class=\"obs\">" + esc(String(p.cc).toUpperCase()) + (p.size ? " · " + esc(p.size) + " harbour" : "") + (p.approx ? " · position approximate" : "") + "</span><br><code>" + esc(grid(p.lat, p.lon)) + "</code></td>" +
+            '<td class="n">' + nmTxt(d) + '<span class="sub">' + esc(km(d * 1852)) + "</span></td>" +
+            '<td class="n">' + esc(mins(d / kn * 3600)) + "</td>" +
+            "<td>" + (link(p.url, { wpi: "World Port Index", osm: "OpenStreetMap", locode: "UN/LOCODE" }[p.src] || p.src) || esc(p.src)) + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+      h += '<div class="mpgrid noprint"><label for="mpf-vkn">Vessel speed toward port (kn)<input id="mpf-vkn" data-mpf="vkn" inputmode="decimal" maxlength="5" value="' + esc(fieldVals().vkn || "") + '" placeholder="' + DEF.vkn + '"></label>' +
+        '<label for="mpf-pxfer">Port transfer: alongside to ambulance moving (min)<input id="mpf-pxfer" data-mpf="pxfer" inputmode="numeric" maxlength="4" value="' + esc(fieldVals().pxfer || "") + '" placeholder="' + DEF.pxfer + '"></label></div>' +
+        (L ? "<p>Boat leg: <b>" + nmTxt(L.nm) + " to " + esc(L.port.name) + "</b> at " + L.kn + " kn = " + esc(mins(L.s)) + ", then " + esc(mins(L.xs)) + " port transfer. Road times in sections 1 to 3 start at this port.</p>" : "") +
+        '<p class="obs">Ports are from OSAP\'s ports layer (NGA World Port Index, UN/LOCODE, OpenStreetMap), nearest first. A port listing does not show a safe approach, a berth, stretcher lifting or a waiting ambulance: confirm each with the port and the receiving hospital. Distances are great-circle (Earth radius 3,440.065 NM): separation only, not a navigation route, a rescue radius or a jurisdiction boundary; the master supplies the real route and time.</p>';
+    }
+    el.innerHTML = h + "</div>";
+  }
+  /* a different landing port: the road legs start again from it */
+  function reroad(s) {
+    if (!s || !s.fac || !s.sea || !s.sea.sea) return;
+    s.leg = legOf(s); s.ro = s.leg ? [s.leg.port.lat, s.leg.port.lon] : s.o;
+    var list = s.fac.H.concat(s.fac.C, s.fac.U); list.forEach(function (f) { f.s = null; f.rm = null; });
+    s.route = null; s.routeErr = ""; s.routeDone = false; s.rts = null; s.pac = null;
+    seaRender(); facRender(); mapShow();
+    if (!s.leg) { s.routeDone = true; facRender(); ghRender(); routes(s); return; }
+    driveTimes(s.ro, list).then(function (host) { if (ST !== s) return; s.route = host; }, function (e) { if (ST !== s) return; s.routeErr = e.message; }).then(function () {
+      if (ST !== s) return; s.routeDone = true; s.fac.H.sort(byCap); s.fac.C.sort(byDrive); s.fac.U.sort(byDrive); facRender(); pickRender(); mevRender(); mapShow(); srcRender(); ghRender(); routes(s);
+    });
+  }
   function lookupErr(s) {
     return [s.osmErr ? "OpenStreetMap live: " + s.osmErr : "", s.storedErr ? "OSAP's stored copy: " + s.storedErr : ""].filter(Boolean).join("; ") || "no answer";
   }
   function byDrive(x, y) { var a = x.s == null ? Infinity : x.s, b = y.s == null ? Infinity : y.s; return a - b || x.m - y.m; }
-  function groundTotal(f) { return f.s == null ? null : f.s + PREP_MIN * 60; }
+  function groundTotal(f) { return f.s == null ? null : f.s + PREP_MIN * 60 + legS(ST); }
   /* by air (Shane: the aircraft has to get from its home to the POI first): launch, the flight from the aircraft's base to
      the POI, time on the ground at the POI, then the flight to the hospital. The base is the one chosen in section 4, else the
      nearest air rescue base, else the nearest heliport or airfield (an assumption, said so), else the POI itself (said so). */
@@ -1422,9 +1522,12 @@
       '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label><label>Handoff <input type="number" min="0" max="60" step="1" data-mpf="handoff" value="' + num("handoff") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
   }
   function routes(s) {
-    var P = picks(s); s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "" }; }); rtRender();
+    var P = picks(s);
+    /* at sea with no landing port there is no road to route: never a line from the water */
+    if (s.sea && s.sea.sea && !s.leg) { s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "the point of injury is at sea and no landing port is known" }; }); s.pac = null; rtRender(); return; }
+    s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "" }; }); rtRender();
     s.rts.forEach(function (x) {
-      route(s.o, x.f).then(function (r) { if (ST !== s) return; x.r = r; rtRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; x.err = e.message; rtRender(); });
+      route(s.ro || s.o, x.f).then(function (r) { if (ST !== s) return; x.r = r; rtRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; x.err = e.message; rtRender(); });
     });
     pacRun(s, P.filter(function (p) { return p.role !== "Stabilization"; }));
   }
@@ -1459,7 +1562,7 @@
       return P.reduce(function (q, p) {
         return q.then(function () {
           if (!live()) return;
-          return R.alternates(s.o, [p.f.lat, p.f.lon], { mode: "car", n: 3 }).then(function (L) {
+          return R.alternates(s.ro || s.o, [p.f.lat, p.f.lon], { mode: "car", n: 3 }).then(function (L) {
             if (!live()) return;
             s.pac[p.f.id] = { L: L.map(function (x) { x.haz = hazOn(R, x.coords); return x; }) };
           }, function (e) { if (live()) s.pac[p.f.id] = { err: e.message || "no route" }; }).then(done);
@@ -1552,7 +1655,7 @@
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
       (f.far ? '<span class="mpfar">Beyond the ' + Math.round(ST.radii.h / 1000) + " km search: added as a hospital with documented capability</span><br>" : "") + "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
-      '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + " by road" + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, PREP_MIN + " min to treat and load + drive: ") : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
+      '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + byRoad() + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, gPre()) : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(potTotal(f))) + " from the call, with the aircraft's flight in (potential)</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +
       '<td class="n"><code>' + esc(grid(f.lat, f.lon)) + "</code></td>" +
@@ -1696,7 +1799,7 @@
     el.innerHTML = s.rts.map(function (x, i) {
       var f = x.f, H = s.fac.H.indexOf(f), r = x.r;
       return "<h4>" + esc(x.why[0] || "Route " + (i + 1)) + ": H" + (H + 1) + " " + esc(f.name) + "</h4>" +
-        (r ? "<p>" + esc(mins(r.s)) + ", " + esc(km(r.m)) + " by road. " + ghTag(r.s + PREP_MIN * 60, PREP_MIN + " min to treat and load + drive: ") + "</p>" +
+        (r ? "<p>" + esc(mins(r.s)) + ", " + esc(km(r.m)) + byRoad() + ". " + ghTag(r.s + PREP_MIN * 60 + legS(s), gPre()) + "</p>" +
           (r.roads.length ? '<p class="obs">Main roads: ' + esc(r.roads.map(function (q) { return q.n + " (" + km(q.m) + ")"; }).join(" → ")) + "</p>" : "") +
           '<p class="obs noprint">Drawn on the map as a ' + ["red", "dark", "dark dashed"][i] + " line." + (W.OSAP_ROUTE_SEED ? ' <button type="button" class="refresh" data-mp-route="' + esc(f.id) + '">Open in Route</button>' : "") + "</p>"
           : x.err ? '<p class="obs mpwarn">No road route (' + esc(clip(x.err, 120)) + ").</p>" : '<p class="obs">Working out the route…</p>') + pacHtml(s, f);
@@ -1712,14 +1815,14 @@
   function ghRender() {
     var el = D.getElementById("mp-gh"), s = ST; if (!el) return;
     var P = s.fac ? picks(s) : [], rw = num("rwkn"), R = airRings(), li = [];
-    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving; air times count " + num("launch") + " minutes to launch, the flight from the aircraft's base to the POI, " + ONSCENE_MIN + " minutes on the ground, then the flight to the hospital at " + rw + " kn.</li>" +
+    li.push("<li>Golden hour: " + GOLDEN_MIN + " minutes from injury to arrival at surgical care. Road times allow " + PREP_MIN + " minutes to treat and load before moving" + (s.leg ? ", then the boat leg to " + esc(s.leg.port.name) + " (" + esc(mins(s.leg.s)) + ") and " + esc(mins(s.leg.xs)) + " port transfer" : "") + "; air times count " + num("launch") + " minutes to launch, the flight from the aircraft's base to the POI, " + ONSCENE_MIN + " minutes on the ground, then the flight to the hospital at " + rw + " kn.</li>" +
       (function () { var m = mbase(s); return '<li' + (m.b ? "" : ' class="mpwarn"') + ">Aircraft base: " + (m.b ? "<b>" + esc(m.b.name) + "</b>, " + esc(km(m.b.m)) + " from the POI, " + esc(mins(inboundS(s))) + " to fly to it (" + esc(m.how) + ")" : esc(m.how)) + ". Change it in section 4.</li>"; })());
-    P.forEach(function (p) { var b = bestWay(p.f); if (b) li.push("<li>" + esc(p.role) + " (H" + (s.fac.H.indexOf(p.f) + 1) + " " + esc(p.f.name) + "): " + esc(mins(b[0])) + " from injury by " + b[1] + ". " + ghTag(b[0]) + "</li>"); });
+    P.forEach(function (p) { var b = bestWay(p.f); if (b) li.push("<li>" + esc(p.role) + " (H" + (s.fac.H.indexOf(p.f) + 1) + " " + esc(p.f.name) + "): " + esc(mins(b[0])) + " from injury by " + wayTxt(b[1]) + ". " + ghTag(b[0]) + "</li>"); });
     if (s.fac && s.routeDone && P.length && !P.some(function (p) { var b = bestWay(p.f); return b && b[0] <= GOLDEN_MIN * 60; }))
-      li.push('<li class="mpwarn"><b>No hospital is inside the golden hour' + (airOn() ? " by road or air" : " by road") + ".</b> Plan forward surgical or damage-control capability.</li>");
+      li.push('<li class="mpwarn"><b>No hospital is inside the golden hour' + (s.leg ? (airOn() ? " by boat and road, or by air" : " by boat and road") : airOn() ? " by road or air" : " by road") + ".</b> Plan forward surgical or damage-control capability.</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="gr"' + (ringsOn("gr") ? " checked" : "") + "> Ground rings on the map</label> " +
       (s.iso ? "Road reach from the POI: green 30 minutes, amber " + (GOLDEN_MIN - PREP_MIN) + " minutes, so a hospital inside amber is inside the golden hour by road."
-        : s.isoErr ? '<span class="mpwarn">The road reach could not be drawn (' + esc(clip(s.isoErr, 120)) + ").</span>" : "Drawing the 30 and " + (GOLDEN_MIN - PREP_MIN) + " minute road reach…") + "</li>");
+        : s.sea && s.sea.sea ? "No road reach: the point of injury is at sea." : s.isoErr ? '<span class="mpwarn">The road reach could not be drawn (' + esc(clip(s.isoErr, 120)) + ").</span>" : "Drawing the 30 and " + (GOLDEN_MIN - PREP_MIN) + " minute road reach…") + "</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="ar"' + (ringsOn("ar") ? " checked" : "") + "> Air rings on the map</label> " +
       "Helicopter at " + rw + " kn: inside the light blue ring a hospital is reached inside " + R[0].t + " minutes (" + esc(km(R[0].r)) + "), inside the dark blue ring inside " + R[1].t + " minutes (" + esc(km(R[1].r)) + "). " +
       "The rings include the launch, the flight from the aircraft's base to the POI and the time on the ground.</li>");
@@ -2081,7 +2184,7 @@
       '<div class="mpcats noprint" role="group" aria-label="Casualty type">' + Object.keys(CAT_BTN).map(function (k) { return '<button type="button" class="refresh' + (k === cat ? " on" : "") + '" data-mp-cat="' + k + '" aria-pressed="' + (k === cat) + '">' + esc(CAT_BTN[k]) + "</button>"; }).join("") + "</div>" +
       '<div class="mpcgrid">' +
       cell("Status", '<b class="mpvs mpvs-' + st + '">' + esc(c.status_label) + "</b>", "wide") +
-      cell("POI", "<b>" + esc(c.poi || "not set") + "</b>") + cell("Ground evac", word(c.ground)) + cell("Air MEDEVAC", word(c.air) + (c.air_asset ? "<span>" + esc(c.air_asset) + "</span>" : "")) +
+      cell("POI", "<b>" + esc(c.poi || "not set") + "</b>") + cell(c.at_sea ? "Boat and road evac" : "Ground evac", word(c.ground) + (c.sea_leg ? "<span>" + esc(nmTxt(c.sea_leg.nm) + " by boat to " + c.sea_leg.port + " (" + mins(c.sea_leg.s) + " at " + c.sea_leg.kn + " kn), then road") + "</span>" : "")) + cell("Air MEDEVAC", word(c.air) + (c.air_asset ? "<span>" + esc(c.air_asset) + "</span>" : "")) +
       cell("Stabilization", stopTxt(c.stabilization, c.stabilization_gap ? "NONE DOCUMENTED inside the golden hour" : c.bypass ? "BYPASS: direct is quicker" : "none planned")) +
       cell("Definitive care: " + (c.casualty ? c.casualty.label : ""), stopTxt(c.definitive, "NOT DOCUMENTED")) +
       cell("Primary route", word(c.primary_route)) + cell("Alternate route", word(c.alternate_route)) +
@@ -2186,6 +2289,7 @@
       }).join("") + "</tbody></table></div>" +
       '<p class="obs">Distance and direction are straight-line from the plan centre. Status is your check, kept with the time you set it; recheck before use.</p>';
   }
+  var SEA_STYLE = { color: "#0b4f8a", weight: 3, dashArray: "2 7" };
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER", Stabilization: "STB" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }],
     RT_ROLE = { Primary: RT_STYLE[0], Secondary: RT_STYLE[1], Tertiary: RT_STYLE[2], Stabilization: { color: "#e06c00", weight: 4 } };
   /* the alternate MTFs for major trauma as map marks (ALT PRI, ALT SEC, ALT TER), keyed by facility, the first role wins */
@@ -2227,6 +2331,7 @@
     var fv = fieldVals();
     SITE_MK.forEach(function (m) { var g = parseGrid(fv[m[0]]); if (g) out.push(["mk", g, m[1], "cp", m[2] + ": " + clip(fv[m[0]], 120), true]); });
     if (s.oc) out = out.concat(stratItems(s));
+    if (s.leg) { out.push(["line", [s.o, [s.leg.port.lat, s.leg.port.lon]], SEA_STYLE]); out.push(["mk", [s.leg.port.lat, s.leg.port.lon], "PORT", "pt", "Landing port: " + s.leg.port.name + " · " + nmTxt(s.leg.nm) + " by boat (straight line, not a navigation route)", true]); }
     out.push(["mk", s.o, s.from === "poi" || /^pt:/.test(s.from) ? "POI" : "S", "o", (s.from === "poi" ? "Anticipated point of injury" : "Plan centre: " + fieldLabel(s.from)) + " " + grid(s.o[0], s.o[1]), true]);
     return out;
   }
@@ -2244,6 +2349,7 @@
     if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation"]);
     if (has("", /^C\d/)) o.push(["mk", "#D7141A", "C", "Clinic or first-aid post", ""]);
     if (has("e")) o.push(["mk", "#b35c00", "E", "Ambulance station", ""]);
+    if (has("pt")) o.push(["mk", "#0b4f8a", "PORT", "Landing port", "Where the casualty is landed from the sea; the dotted line is the boat leg, straight, not a navigation route"]);
     if (has("air")) o.push(["mk", "#1d5fa8", "L A M P", "Helipad, airfield, air rescue base, airport", ""]);
     if (has("bl")) o.push(["mk", "#a4005b", "B", "Blood bank or donation centre", ""]);
     if (has("dc")) o.push(["mk", "#00727a", "D", "Decompression chamber", ""]);
@@ -2337,7 +2443,7 @@
       items.filter(function (it) { return it[0] === "mk"; }).sort(function (x, y) { return (x[5] ? 1 : 0) - (y[5] ? 1 : 0); }).forEach(function (it) {
         var q = xy(it[1]); if (q[0] < -20 || q[1] < -20 || q[0] > Wd + 20 || q[1] > Ht + 20) return;
         g.setLineDash([]); g.globalAlpha = 1; g.font = "700 11px system-ui, sans-serif";
-        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "stb" ? "#b34700" : it[3] === "alt" ? "#8a4b00" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : "#D7141A";
+        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "pt" ? "#0b4f8a" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "stb" ? "#b34700" : it[3] === "alt" ? "#8a4b00" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : "#D7141A";
         g.fillStyle = bg; g.strokeStyle = it[3] === "pk" || it[3] === "stb" ? "#ffd166" : "#fff"; g.lineWidth = 2;
         g.beginPath(); g.rect(q[0] - w / 2, q[1] - h / 2, w, h); g.fill(); g.stroke();
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
@@ -2403,7 +2509,8 @@
     ["ccp1", "ccp2", "axp", "hlz1", "hlz2"].forEach(function (k) { var g = parseGrid(v[k]); if (g) { g.mgrs = grid(g[0], g[1]); ll[k] = g; } });
     return {
       cc: s.cc, country: s.name, built_at: new Date(s.at).toISOString(), now: new Date().toISOString(),
-      poi: { lat: s.o[0], lon: s.o[1], mgrs: grid(s.o[0], s.o[1]), set_by: s.from },
+      poi: { lat: s.o[0], lon: s.o[1], mgrs: grid(s.o[0], s.o[1]), set_by: s.from, environment: s.sea && s.sea.sea === true ? "sea" : s.sea && s.sea.sea === null ? "unknown" : "land", coast_km: s.sea && s.sea.coast_km != null ? s.sea.coast_km : null, env_set_by: envOf() === "auto" ? "map" : "planner" },
+      sea_leg: s.leg ? { port: s.leg.port.name, port_id: s.leg.port.id, port_cc: s.leg.port.cc, lat: s.leg.port.lat, lon: s.leg.port.lon, nm: Math.round(s.leg.nm * 10) / 10, kn: s.leg.kn, s: Math.round(s.leg.s), transfer_s: s.leg.xs, src: s.leg.port.src } : s.leg === false ? { port: null } : null,
       fields: v, ll: ll, checks: checks(),
       categories: CATS.map(function (c) {
         return { id: c.id, label: c.label, rows: R.filter(function (r) { return r.casualty_category === c.id; }).map(function (r) {
@@ -2583,7 +2690,7 @@
   function assessTimes(f, s, r) {
     var rw = num("rwkn"), g = groundTotal(f), a = potTotal(f), bw = bestWay(f), L = [];
     L.push(["Straight line", esc(km(f.m)) + ", " + Math.round(f.brg) + "° " + card(f.brg) + " of the point of injury"]);
-    L.push(["By road", f.s != null ? esc(mins(f.s)) + ", " + esc(km(f.rm || 0)) + (f.est ? " (estimate: no road router answered)" : "") + ". From injury with " + PREP_MIN + " min to treat and load: " + esc(mins(g)) + " " + ghTag(g) : nk("No road time.")]);
+    L.push([ST && ST.leg ? "By boat and road" : "By road", f.s != null ? esc(mins(f.s)) + ", " + esc(km(f.rm || 0)) + esc(byRoad()) + (f.est ? " (estimate: no road router answered)" : "") + ". From injury with " + esc(gPre().replace(/ \+ drive: $/, "")) + ": " + esc(mins(g)) + " " + ghTag(g) : nk(ST && ST.sea && ST.sea.sea ? "No road time: the point of injury is at sea and no landing port is known." : "No road time.")]);
     var am = airMission(f);
     if (am) L.push(["By air (confirmed)", esc(am.provider) + ": " + esc(missionTxt(am)) + " " + ghTag(am.total_s) + (airOn() ? "" : ' <span class="obs">(air evacuation is off in this plan)</span>')]);
     L.push(["By air (potential)", "From the call: " + esc(airLegs(f)) + " " + ghTag(a) + ' <span class="obs">(not a confirmed aircraft: planning only)</span>']);
@@ -2843,6 +2950,14 @@
       if (t.checked) evac(ST); else { ST.oc = null; ocRender(); mapShow(); }
       srcRender(); return;
     }
+    if (t.hasAttribute && t.hasAttribute("data-mp-env")) {
+      var ve = fieldVals(); ve.env = t.value === "land" || t.value === "sea" ? t.value : ""; lsSet(fieldsKey(), ve);
+      render(); build(); var se = D.getElementById("mp-env"); if (se) se.focus(); return;
+    }
+    if (t.getAttribute && t.getAttribute("data-mp-port")) {
+      var vp = fieldVals(); vp.seaport = t.getAttribute("data-mp-port"); lsSet(fieldsKey(), vp);
+      reroad(ST); var rp = D.querySelector('#medplan [data-mp-port="' + (W.CSS && CSS.escape ? CSS.escape(vp.seaport) : vp.seaport) + '"]'); if (rp) rp.focus(); return;
+    }
     var opt = t.getAttribute && t.getAttribute("data-mp-opt");
     if (opt) {
       var v2 = fieldVals(); v2[opt] = t.checked ? 1 : 0; lsSet(fieldsKey(), v2);
@@ -2864,6 +2979,7 @@
     var vals2 = fieldVals(); vals2[k] = String(t.value || "").slice(0, 600); lsSet(fieldsKey(), vals2);
     if (k === "dwell" || k === "xact" || k === "handoff") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
+    if (k === "vkn" || k === "pxfer") { clearTimeout(inT); inT = setTimeout(function () { if (ST && ST.leg) ST.leg = legOf(ST); seaRender(); facRender(); pickRender(); ghRender(); rtRender(); mevRender(); mapShow(); srcRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "poi") return;
     if (/^(ccp[12]|axp|hlz[12])$/.test(k)) siteDirty = true;
     clearTimeout(inT); inT = setTimeout(function () { var sel = D.getElementById("mp-from"); if (sel && D.activeElement !== sel) sel.innerHTML = startOpts(); if (/^(medevac|freq)/.test(k)) mevRender(); if (siteDirty) { siteDirty = false; mapShow(); siteRender(); if (ST && (ST.wx || ST.wxErr)) hlzWx(ST); } srcRender(); }, 600);
