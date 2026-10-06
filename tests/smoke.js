@@ -27,7 +27,8 @@ const { chromium } = require(process.env.PW || 'playwright');
   }
   // the United States, a state opened as a sub-area, and the region drop-downs
   // (the United States is a hidden area, assets/osap-lock.js: this app session is unlocked first)
-  await p.addInitScript(() => { try { sessionStorage.setItem('osap-lock-open', '1'); } catch (e) {} });
+  const ownerPub = (fs.readFileSync(path.join(__dirname, '../assets/osap-lock.js'), 'utf8').match(/"osap-pub:v1:([A-Za-z0-9_-]+)"/) || [])[1] || '';
+  await p.addInitScript((pub) => { try { sessionStorage.setItem('osap-lock-open', '1'); localStorage.setItem('osap-lock-dev', JSON.stringify({ v: 1, cred: 'test', iv: '', wrapped: 'test', pub: pub })); } catch (e) {} }, ownerPub);
   for (const u of ['#us/timeline', '?st=TX#us/timeline', '?st=AK#us/timeline']) {
     await p.goto('about:blank'); await p.goto(url + u); await p.waitForTimeout(1200);
     const r = await p.evaluate(() => ({ n: window.TSAP ? TSAP.records.length : -1, states: document.querySelectorAll('#country-seg button[data-st]').length,
