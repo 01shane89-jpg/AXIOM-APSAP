@@ -3643,6 +3643,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   var STATE = { observation: ["Observed", "instrument reading, not reviewed"], claim: ["Reported", "official statement, not confirmed"],
                 event: ["Reported", "sourced report, not confirmed"] };
+  /* a social media post is the account's own claim, not an official statement, even from a news desk */
+  function stateSub(r) { var st = STATE[r.type] || ["", ""]; return r.social ? "the account's own post, not confirmed" : r.news && r.type === "claim" ? "state media report, not confirmed" : st[1]; }
   function chip(cls, text) { return '<span class="chip ' + esc(cls) + '">' + esc(text) + "</span>"; }
 
   function markerStyle(r) {
@@ -3790,16 +3792,18 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   /* words that appear in many records ("bank" in every gauge reading) say nothing about a link, so they are ignored */
   var rDF = null, rDFn = -1;
+  /* the words a record is matched by: an untranslated report's own words, not the plain line standing in for its headline */
+  function rText(o) { return o.untr ? String(o.orig || "") : o.title + " " + String(o.detail || "").slice(0, 240); }
   function rCommon() {
     if (rDFn === R.length) return rDF;
     rDF = {}; rDFn = R.length;
-    R.forEach(function (o) { Object.keys(rTok(o.title + " " + String(o.detail || "").slice(0, 240))).forEach(function (w) { rDF[w] = (rDF[w] || 0) + 1; }); });
+    R.forEach(function (o) { Object.keys(rTok(rText(o))).forEach(function (w) { rDF[w] = (rDF[w] || 0) + 1; }); });
     var cut = Math.max(8, R.length * 0.02);
     Object.keys(rDF).forEach(function (w) { if (rDF[w] <= cut) delete rDF[w]; });
     return rDF;
   }
   function relatedStories(r) {
-    var common = rCommon(), mine = rTok(r.title + " " + String(r.detail || "").slice(0, 240) + " " + (r.place || "") + " " + (r.prov || ""));
+    var common = rCommon(), mine = rTok(rText(r) + " " + (r.place || "") + " " + (r.prov || ""));
     Object.keys(common).forEach(function (w) { delete mine[w]; });
     var t0 = Date.parse(String(r.ts).slice(0, 10)), hasLL = r.lat != null && isFinite(r.lat), out = [];
     function score(title, text, ts, lat, lon, place) {
@@ -3817,7 +3821,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
        three days (or nearby) is enough, and the list shows how long before or after this report each was posted */
     var h0 = rMs(r), soc = [];
     function scoreSoc(o) {
-      var tk = rTok(o.title + " " + String(o.detail || "").slice(0, 240)), shared = Object.keys(tk).filter(function (w) { return mine[w]; });
+      var tk = rTok(rText(o)), shared = Object.keys(tk).filter(function (w) { return mine[w]; });
       var h = rMs(o), dh = isFinite(h0) && isFinite(h) ? (h - h0) / 36e5 : null, dd = dh == null ? null : Math.abs(dh) / 24;
       var d = hasLL && o.lat != null && isFinite(o.lat) ? km(r, { lat: o.lat, lon: o.lon }) : null, near = d != null ? d <= 50 : !!(r.place && o.place && o.place === r.place);
       if (dd == null || dd > 14) return null;
@@ -3832,7 +3836,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         var ms = scoreSoc(o); if (ms) soc.push({ s: ms.s, h: ms.h, why: ms.why, rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: "Social media, unverified" });
         return;
       }
-      var m = score(o.title, o.detail, o.ts, o.lat, o.lon, o.place); if (!m) return;
+      var m = score(o.untr ? o.orig : o.title, o.untr ? "" : o.detail, o.ts, o.lat, o.lon, o.place); if (!m) return;
       out.push({ s: m.s, why: m.why, rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
     });
     var X = typeof xMine === "function" ? xMine() : null, FD = typeof xFeeds === "function" ? xFeeds() : {};
@@ -3926,7 +3930,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "<dt>Reported by</dt><dd>" + esc(s.name) + '<span class="sub">' + esc(s.kind) + "</span>" +
           (r.cites ? '<span class="sub">Cites ' + esc(r.cites) + "</span>" : "") +
           (r.operator ? '<span class="sub">Gauge operator ' + esc(r.operator) + "</span>" : "") + "</dd>" +
-        "<dt>Verified?</dt><dd>" + esc(st[0]) + '<span class="sub">' + esc(st[1]) + ". No analyst has confirmed it.</span></dd>" +
+        "<dt>Verified?</dt><dd>" + esc(st[0]) + '<span class="sub">' + esc(stateSub(r)) + ". No analyst has confirmed it.</span></dd>" +
       "</dl>" +
       '<h4 class="pkgh">Source traceability</h4><dl class="pkgdl">' +
         "<dt>Issuing source</dt><dd>" + esc(s.name) + "</dd>" +
@@ -5309,6 +5313,38 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return i.mt === "untranslated" ? "Not translated yet (the free translation quota ran out); shown in the original " + ln + "."
       : "English is a machine translation (" + i.mt + ") of the original " + ln + " text, which is kept. It may be wrong.";
   }
+  /* English only on a report: words the refresh job could not translate are never shown as the report's English text; they stay
+     under "<language> original". A part still in another script inside an English headline ("Analysis: ... | สถานการณ์ติดตาม |",
+     a programme name the model left as it was) is dropped. A report with no English headline takes the first sentence of its
+     English summary, or else a plain line naming the language and the source (untr: matched to other reports by its own words). */
+  var NOT_LATIN = /(?=\p{L})\P{Script=Latin}/gu;
+  function enOnly(s) {
+    s = String(s || "");
+    if (!s.match(NOT_LATIN)) return s;
+    var kept = s.split(/\s*[|•]\s*/).filter(function (p) { var o = (p.match(NOT_LATIN) || []).length, a = (p.match(/\p{L}/gu) || []).length; return a && o * 2 < a; });
+    return kept.join(" | ");
+  }
+  function enParts(i, what, from) {
+    var t = i.title_en ? enOnly(unent(i.title_en)) : i.mt ? "" : unent(i.title || ""),
+      sm = i.summary_en ? enOnly(unent(i.summary_en)) : i.mt ? "" : unent(i.summary || "");
+    var untr = !t && !sm, sumLeft = !!(i.mt && i.summary && !sm);
+    if (!t && sm) t = sm.split(/(?<=[.!?])\s/)[0].slice(0, 200);
+    if (!t) t = (origLang(i) === "language" ? "Foreign-language" : origLang(i)) + " " + what + (from ? " from " + from : "") + ", not translated yet";
+    var ln = origLang(i), cut = t !== unent(i.title_en || i.title || "") || (i.summary && sm !== unent(i.summary_en || i.summary || ""));
+    return { t: t, s: sm && sm !== t ? sm : "", untr: untr, lang: ln, orig: i.mt || untr || cut ? (i.title + (i.summary ? " — " + i.summary : "")) : "",
+      note: untr ? "Not translated yet; read it in the original " + ln + " below."
+      : sumLeft ? "The summary is not translated yet; it is kept in the original " + ln + " below." : "" };
+  }
+  /* the original's language: the feed's tag, or the script when a feed tagged English carries another language */
+  function origLang(i) {
+    if (i.lang && !/^en\b/i.test(i.lang)) return LANGN[i.lang] || i.lang;
+    var s = String(i.title || "") + String(i.summary || "");
+    var by = [[/\p{Script=Thai}/u, "Thai"], [/\p{Script=Hangul}/u, "Korean"], [/[\p{Script=Hiragana}\p{Script=Katakana}]/u, "Japanese"], [/\p{Script=Han}/u, "Chinese"],
+      [/\p{Script=Khmer}/u, "Khmer"], [/\p{Script=Lao}/u, "Lao"], [/\p{Script=Myanmar}/u, "Burmese"], [/\p{Script=Cyrillic}/u, "Cyrillic-script"], [/\p{Script=Arabic}/u, "Arabic-script"],
+      [/\p{Script=Bengali}/u, "Bengali"], [/\p{Script=Devanagari}/u, "Devanagari-script"], [/\p{Script=Sinhala}/u, "Sinhala"], [/\p{Script=Tamil}/u, "Tamil"]];
+    for (var k = 0; k < by.length; k++) if (by[k][0].test(s)) return by[k][1];
+    return "language";
+  }
   function warnItems() { var w = window.ASAP_WARN; return w && w.items ? (w.items[CC] || []) : []; }
   function addWarnRecords() {
     R = R.filter(function (r) { if (r.warn) { delete byId[r.id]; r.src.n--; return false; } return true; });
@@ -5317,10 +5353,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     warnItems().forEach(function (i) {
       var s = src("warn-" + i.agency.toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.agency, "National weather or disaster agency", "B",
         "Official warning feed, read every 15 minutes. Warnings are the agency's statements.", i.feed);
-      var en = i.title_en || i.title, sen = i.summary_en || i.summary;
+      var ep = enParts(i, "warning", i.agency), en = ep.t, sen = ep.s;
       add({ layer: "weather", type: "claim", cat: "Official weather warning", kind: "other", warn: true, live: true,
-        title: en + (sen && sen !== en ? ": " + sen.slice(0, 140) : ""), detail: sen || "",
-        orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang, derived: mtNote(i) || undefined,
+        title: en + (sen && sen !== en && !ep.untr ? ": " + sen.slice(0, 140) : ""), detail: sen || "", untr: ep.untr || undefined,
+        orig: ep.orig, origLang: ep.lang, derived: [ep.note, ep.untr ? "" : mtNote(i)].filter(Boolean).join(" ") || undefined,
         ts: i.date || (w ? w.asof.slice(0, 10) : ""), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: "", prov: "", lat: null, lon: null, prec: "none",
         sev: /extreme|severe|特別警報/i.test(i.title + " " + i.severity) ? 3 : 2, src: s, url: i.link || i.feed, issued: i.date, recorded: w ? w.asof : "" });
     });
@@ -5419,9 +5455,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       /* a job placement read from a dateline alone (items placed before the job left datelines out) is dropped and read again here */
       if (g && namesPlace(txt, g.name) && !namesPlace(stripDatelines(txt), g.name)) g = null;
       var pl = g || placeFor(txt);
+      var ep = enParts(i, layer === "news" ? "report" : "post", i.outlet || i.account);
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
-        title: en, detail: (sen && sen !== en ? sen : ""), orig: i.mt ? (i.title + (i.summary ? " — " + i.summary : "")) : "", origLang: LANGN[i.lang] || i.lang,
-        derived: [mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
+        title: ep.t, detail: ep.s, untr: ep.untr || undefined, orig: ep.orig, origLang: ep.lang,
+        derived: [ep.note, ep.untr ? "" : mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
         thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined };

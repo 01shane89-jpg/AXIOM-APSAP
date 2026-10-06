@@ -62,4 +62,16 @@ t("regression: invented lines never lead the daily summary or merge different st
   assert.ok(d.events.some((e) => /ยิงสกัดไล่ล่า/.test(e.text)), "the shooting chase is listed in its own words");
   assert.ok(d.events.some((e) => /policeman/.test(e.text)) && d.events.some((e) => /blast/.test(e.text)));
 });
+// 2026-10-06: a Thai PBS YouTube headline with no time in it came back as "10.35am: The rain continues ..." (Mae Hong Son floods)
+t("a clock time the original does not give is rejected; times it does give pass", () => {
+  assert.equal(mtSuspect("น้ำป่าทะลักท่วมหลายจุดใน จ.แม่ฮ่องสอน | จับตาสถานการณ์ | 6 ต.ค. 69",
+    "10.35am: The rain continues to fall in Mae Hong Son Province, causing flooding and damage to the infrastructure of many areas.", now), "clock time not in the original");
+  assert.ok(mtSuspect("اخبار ساعت شش دوشنبه ۱۳ مهر: آمریکا تمام بمب‌افکن‌های خود را از پایگاه فرفورد بریتانیا منتقل کرد", "6:30 a.m. – The United States announces that it has removed all of its bombers.", now));
+  assert.equal(mtSuspect("เวลา 10.35 น. ฝนตกหนัก", "At 10.35am heavy rain fell", now), "");
+  assert.equal(mtSuspect("เวลา 22.30 น. ฝนตกหนัก", "At 10:30pm heavy rain fell", now), "");
+  assert.equal(mtSuspect("রাত ৮টার সংবাদ", "8:00pm news", now), "");
+  assert.equal(mtSuspect("แผ่นดินไหว ขนาด 6.5", "A magnitude 6.5 earthquake", now), "");
+  assert.equal(mtSuspect("ราคา 1,234.50 บาท", "Price 1,234.50 baht", now), "");
+  assert.equal(mtSuspect("ฝนตก 3 วัน", "Rain for 3 days", now), "");
+});
 console.log(ok + " passed");

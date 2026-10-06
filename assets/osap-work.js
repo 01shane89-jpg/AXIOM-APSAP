@@ -25,7 +25,7 @@
   function nowTxt() { return T().dualT(Date.now(), { date: true }); }
   /* record times shown the page's way: Zulu and local, 24-hour; a date alone stays a date */
   function tsTxt(ts) { var t = T(); return t.asofT ? t.asofT(String(ts || "")) : String(ts || "").replace("T", " "); }
-  function claimStatus(r) { var s = STATE[r.type]; return s ? s[0] + " (" + s[1] + ")" : String(r.type || "Not stated"); }
+  function claimStatus(r) { var s = STATE[r.type]; return s ? s[0] + " (" + (r.social ? "the account's own post, not confirmed" : r.news && r.type === "claim" ? "state media report, not confirmed" : s[1]) + ")" : String(r.type || "Not stated"); }
 
   /* a stable key per item across page loads (record ids are renumbered on every load). Feed items keep their link;
      curated records use link, title and date together. Two FNV-1a passes give 16 hex characters. */
