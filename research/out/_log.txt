@@ -15,3 +15,11 @@ thaiscience 000 cannot open `/tmp/thaiscience.bin' (No such file or directory)
 sjtrem 200 text/html 3038
 wiki_eas 200 text/html 107223
 thaipublica 403 text/html 5554
+mophbuild 200 application/pdf 8526878
+sptrauma_rh1 200 application/pdf 710860
+skydoc_guide 200 text/html 90598
+jhr_skydoc 200 text/html 30442
+sjtrem_pmc 200 text/html 3038
+niems_home 000 cannot open `/tmp/niems_home.bin' (No such file or directory) 
+bdms_main 404 text/html 160999
+usemb_med 404 text/html 143600
