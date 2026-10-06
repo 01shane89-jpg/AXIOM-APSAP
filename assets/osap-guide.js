@@ -60,7 +60,7 @@
       ul([b("Today") + ": back to the start screen.",
         b("Search") + ": find a place, or type an MGRS, UTM or lat/long grid. Grids work with no signal. Tap a result for " + b("Save as point") + ", " + b("Route to here") + " or " + b("Copy grid") + ".",
         b("Data sets") + ": the reporting topics, such as conflict, crime, natural disasters, public safety and news. Tick a set to show it on the map; tap its name to open its list. " + b("Clear map") + " takes everything off.",
-        b("Weather") + ": radar, satellite rain, cloud, wind, temperature, air quality, cyclones and warnings. " + b("Model time") + " looks ahead up to 72 hours. " + b("Open forecasts and warnings") + " opens the full weather view.",
+        b("Weather") + ": radar, satellite rain, cloud, wind, temperature, air quality, cyclones and warnings. " + b("Model time") + " looks ahead up to 72 hours. " + b("Open forecasts and warnings") + " opens the full weather view, with the one-page brief, the detailed report and the " + b("5-day chart") + " (a military-style chart: night and day halves, winds, crosswind on a runway you pick, density and pressure altitude, sun, moon, illumination and mission impacts hour by hour).",
         b("Overlays") + ": map layers that are not reports: infrastructure (communications, power plants of every fuel, the grid, data centres, airfields, ports, dams, submarine cables, railways, bridges and tunnels, water and sewage works, telephone exchanges, government sites, prisons, border crossings, police and fire stations, refineries and pipelines, roads), embassies and evacuation points, elevation and terrain analysis, key terrain, aircraft and ships, borders, and your own marks.",
         b("Base map") + ": Grey, Streets, Topographic, Satellite, Hybrid, Sentinel-2 cloudless, Daily satellite and Offline map. Streets are labelled in English.",
         b("Grid") + " and " + b("Crosshair") + ": MGRS grid lines that get finer as you zoom in, and a cross on the map centre with its grid.",
@@ -202,7 +202,7 @@
 
     { id: "reports", t: "Reports to print or share", h:
       fig("reports", "The Reports menu") +
-      ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
+      ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief, 5-day weather chart and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
         "A greyed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
         "Each report opens as a page you can print or save as PDF."]) },
 

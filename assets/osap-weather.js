@@ -796,7 +796,7 @@
       '<p class="note">Generic planning thresholds, for illustration only: not doctrine and not any unit&rsquo;s limits. Hover or tap a cell for the reason. G green, A amber, R red.</p>' +
       "<h3>Forecast at " + esc(ref.name) + "</h3>" + fcTable(A, D) +
       '<p class="note">Ceiling is estimated from the model&rsquo;s cloud layers (lowest layer at 60% cover or more), not observed. Wind in knots (direction from, true); G = gusts. HI heat index, WC wind chill. Official warnings take precedence over this model output.</p>' +
-      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-ilopen="1">Night illumination</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
+      '<p><button type="button" class="refresh primary" data-wxreport="1">Detailed report</button> <button type="button" class="refresh" data-wxbrief="1">One-page brief</button> <button type="button" class="refresh" data-wxchart="1">5-day chart</button> <button type="button" class="refresh" data-ilopen="1">Night illumination</button> <button type="button" class="refresh" data-wxgo="1">Refresh</button></p></div>';
   }
   /* where the section goes: above the storms, warnings and forecast of the Weather view; for countries that have no Weather view
      (those with automatic global feeds only), at the top of the Live hazards view */
@@ -832,7 +832,7 @@
       function (e) { ST.busy = false; ST.err = e.message || String(e); redraw(); throw e; });
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxb],[data-wxpick],[data-wxfound]");
+    var t = e.target.closest && e.target.closest("[data-wxper],[data-wxgo],[data-wxbrief],[data-wxreport],[data-wxchart],[data-wxb],[data-wxpick],[data-wxfound]");
     if (!t) return;
     if (t.hasAttribute("data-wxpick")) return pickStart();
     if (t.hasAttribute("data-wxfound")) { var g = ST.found && ST.found.list[+t.getAttribute("data-wxfound")]; if (g) chooseSpot(g.lat, g.lon, g.name + (g.admin1 && g.admin1 !== g.name ? ", " + g.admin1 : "")); return; }
@@ -840,6 +840,7 @@
     else if (t.hasAttribute("data-wxgo")) go(true).catch(function () {});
     else if (t.hasAttribute("data-wxbrief")) openBrief();
     else if (t.hasAttribute("data-wxreport")) openReport();
+    else if (t.hasAttribute("data-wxchart")) openChart();
     else if (t.getAttribute("data-wxb") === "print") window.print();
     else if (t.getAttribute("data-wxb") === "close") closeBrief();
   });
@@ -954,6 +955,7 @@
   function closeBrief() {
     var el = document.getElementById("brief");
     if (!el || !el.querySelector("#wxb-page,#wxr-page,[data-wxb]")) return;
+    chartPageStyle(false);
     el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("briefing");
   }
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeBrief(); });
@@ -1180,6 +1182,271 @@
     }
     if (ST.data) show(ST.data); else go().then(show, function () {});
   }
+
+  /* ---------- 5-day forecast chart ----------
+     The layout military weather portals print for a training or operating area: each local day split into night (00-12) and day
+     (12-24) halves with temperatures, winds, crosswind on a runway, sky, density and pressure altitude, sun and moon times and night
+     illumination, then hour-by-hour mission impact bars. Filled from the brief's own Open-Meteo forecast at the reference point:
+     model output, not observed and not an official forecast. One landscape page. */
+  var RWYK = "osap-wx-rwy";
+  function rwyNum() { var v = +lsGet(RWYK); return v >= 1 && v <= 36 ? Math.round(v) : 36; }
+  function rwyName(n) { var a = (n - 1) % 18 + 1; return ("0" + a).slice(-2) + "/" + (a + 18); }
+  function locHM(ms, tz) {
+    try { var p = {}; new Intl.DateTimeFormat("en-GB", { timeZone: tz, hourCycle: "h23", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; }); return p.hour + ":" + p.minute; }
+    catch (e) { return new Date(ms).toISOString().slice(11, 16); }
+  }
+  function locHour(ms, tz) { return +locHM(ms, tz).slice(0, 2); }
+  function dateYY(ms, tz) { try { return new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit", timeZone: tz }).toUpperCase(); } catch (e) { return new Date(ms).toISOString().slice(0, 10); } }
+  function hm(ms, tz) { return ms == null || !isFinite(ms) ? "none" : locHM(ms, tz); }
+  /* pressure altitude from the model's sea-level pressure (about 27 ft per hPa below standard) and the ground height; density altitude by
+     the usual rule (120 ft for every °C above the standard atmosphere at that pressure altitude) */
+  function paFt(p, i) { var q = at(p, "pressure_msl", i); return q == null ? null : (p.elev || 0) * M2FT + (1013.25 - q) * 27; }
+  function daFt(p, i) { var pa = paFt(p, i), t = at(p, "temperature_2m", i); return pa == null || t == null ? null : pa + 120 * (t - (15 - 1.98 * pa / 1000)); }
+  function sunAlt(ms, lat, lon) {
+    var d = jd(ms), c = sunEq(d), H = AR * (280.16 + 360.9856235 * d) + AR * lon - c.ra, phi = AR * lat;
+    return Math.asin(Math.sin(phi) * Math.sin(c.dec) + Math.cos(phi) * Math.cos(c.dec) * Math.cos(H)) / AR;
+  }
+  /* Pasquill stability class (Turner's table): daytime by sun height and cloud, night by cloud, both by wind. A-C unstable, D neutral,
+     E-F stable (an inversion: a release stays concentrated and drifts far downwind) */
+  function stability(p, i) {
+    var kt = at(p, "wind_speed_10m", i), cc = at(p, "cloud_cover", i), ms = kt == null ? null : kt * 0.5144;
+    if (ms == null) return null;
+    var w = ms < 2 ? 0 : ms < 3 ? 1 : ms < 5 ? 2 : ms < 6 ? 3 : 4, alt = sunAlt(p.h.t[i], p.lat, p.lon);
+    if (alt > 0) {
+      var ins = alt > 60 ? 0 : alt > 35 ? 1 : alt > 15 ? 2 : 3;
+      if (cc != null && cc >= 85 && ins < 3) ins++;
+      if (ins === 3) return "D";
+      return [["A", "A", "B"], ["A", "B", "C"], ["B", "B", "C"], ["C", "C", "D"], ["C", "D", "D"]][w][ins];
+    }
+    return (cc != null && cc >= 50) ? ["E", "E", "D", "D", "D"][w] : ["F", "F", "E", "D", "D"][w];
+  }
+  /* mission rows: generic planning thresholds (red, amber), same keys as the impact table above. Not doctrine, not any unit's limits. */
+  var CHR = [
+    ["halo", "HALO / HAHO", "Military free fall", { wind: 18, gust: 23, ceil: 2500, vis: 1600, ts: 1, frz: 1 }, { wind: 14, gust: 18, ceil: 5000, vis: 4800, ts: 1 }],
+    ["sl", "Static line", "Static-line parachuting", { wind: 13, gust: 18, ceil: 1000, vis: 1600, ts: 1 }, { wind: 10, gust: 15, ceil: 1500, vis: 4800, ts: 1 }],
+    ["rw", "Rotary wing", "Rotary wing, medium (Black Hawk class)", { ceil: 500, vis: 1600, gust: 35, ts: 1, frz: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, tmax: 35 }],
+    ["fw", "Fixed wing", "Fixed wing, medium transport (IFR)", { ceil: 200, vis: 800, gust: 35, ts: 1 }, { ceil: 1000, vis: 4800, gust: 25, ts: 1, frz: 1 }],
+    ["gnd", "Ground ops", "Ground manoeuvre and dismounted troops", { gust: 50, vis: 200, pr24: 40, hi: 41, wc: -28 }, { gust: 35, vis: 1000, pr24: 20, hi: 32, wc: -10, ts: 1 }],
+    ["isr", "ISR", "Drones (Group 3) and EO sensors", { wind: 25, gust: 30, prh: 4, ceil: 500, vis: 1000, ts: 1, frz: 1 }, { wind: 18, gust: 22, prh: 1, ceil: 1500, vis: 3000, ts: 1 }],
+    ["nbc", "NBC ops", "Chemical or biological release: air stability and wind", null, null]
+  ];
+  var LETTER = { ts: "T", frz: "I", ceil: "C", vis: "V", wind: "W", gust: "W", prh: "P", pr24: "P", sn: "P", hi: "H", wc: "H", tmax: "H" };
+  function limKey(w, L, red) {
+    for (var n = 0; n < LIM_ORDER.length; n++) {
+      var k = LIM_ORDER[n], x = L[k]; if (x == null) continue;
+      if (k === "ts") { if (red ? w.ts === 2 : w.ts) return k; continue; }
+      if (k === "frz") { if (frz(w.code)) return k; continue; }
+      var op = limOp(k); if (op === "<" ? lt(w[k], x) : op === "<=" ? le(w[k], x) : ge(w[k], x)) return k;
+    }
+    return null;
+  }
+  function hourW(p, i) {
+    var t = at(p, "temperature_2m", i), ws = at(p, "wind_speed_10m", i), pr24 = 0;
+    for (var j = Math.max(0, i - 23); j <= i; j++) pr24 += at(p, "precipitation", j) || 0;
+    return { wind: ws, gust: at(p, "wind_gusts_10m", i), ceil: ceilingFt(p, i), vis: at(p, "visibility", i), ts: tsState(p, i), code: at(p, "weather_code", i),
+      prh: at(p, "precipitation", i), pr24: pr24, hi: heatIndex(t, at(p, "relative_humidity_2m", i)), wc: windChill(t, ws), tmax: t };
+  }
+  function rateHour(row, p, i) {
+    var w = hourW(p, i);
+    if (row[0] === "nbc") {
+      var s = stability(p, i);
+      if (s === "E" || s === "F") return [2, "S", "stable air (Pasquill " + s + ")"];
+      if (w.wind != null && w.wind >= 20) return [1, "W", "wind " + Math.round(w.wind) + " kt"];
+      if (s === "D") return [1, "S", "neutral air (Pasquill D)"];
+      return s ? [0, "", "unstable air (Pasquill " + s + ")"] : [-1, "", ""];
+    }
+    var k = limKey(w, row[3], true); if (k) return [2, LETTER[k], why(w, limConds(row[3], true))];
+    k = limKey(w, row[4], false); if (k) return [1, LETTER[k], why(w, limConds(row[4], false))];
+    return [0, "", ""];
+  }
+  /* the local days the chart covers: from today, or from tomorrow once it is evening (as the portals do) */
+  function chartDays(tz, n) {
+    var now = Date.now(), m = nextLocalMidnight(now, tz) - DMS;
+    if (locHour(now, tz) >= 18) m += DMS;
+    var out = [];
+    for (var k = 0; k < n; k++) { var e = nextLocalMidnight(m + 36e5, tz); out.push({ t0: m, t1: e }); m = e; }
+    return out;
+  }
+  function idxIn(p, t0, t1) { var o = []; p.h.t.forEach(function (t, i) { if (t >= t0 && t < t1) o.push(i); }); return o; }
+  var ICO = {
+    sun: '<circle cx="20" cy="18" r="8" fill="#f9a825" stroke="#e65100" stroke-width="1"/>' + [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) { return '<line x1="20" y1="5" x2="20" y2="8" stroke="#f9a825" stroke-width="2" transform="rotate(' + a + ' 20 18)"/>'; }).join(""),
+    moon: '<path d="M24 8a10 10 0 1 0 6 16a8 8 0 1 1 -6 -16z" fill="#fff59d" stroke="#9e9d24" stroke-width="1"/>',
+    cloud: '<path d="M10 30h22a6 6 0 0 0 0-12a8 8 0 0 0-15-2a6 6 0 0 0-7 14z" fill="#eceff1" stroke="#78909c" stroke-width="1.2"/>',
+    dark: '<path d="M10 30h22a6 6 0 0 0 0-12a8 8 0 0 0-15-2a6 6 0 0 0-7 14z" fill="#90a4ae" stroke="#546e7a" stroke-width="1.2"/>',
+    rain: '<path d="M14 33l-2 5M21 33l-2 5M28 33l-2 5" stroke="#1565c0" stroke-width="2" stroke-linecap="round"/>',
+    snow: '<g fill="#1565c0"><circle cx="13" cy="35" r="1.6"/><circle cx="20" cy="37" r="1.6"/><circle cx="27" cy="35" r="1.6"/></g>',
+    bolt: '<path d="M22 30l-5 7h4l-3 6 8-9h-4l3-4z" fill="#f9a825" stroke="#e65100" stroke-width=".8"/>',
+    fog: '<path d="M8 34h26M10 38h22M12 42h18" stroke="#78909c" stroke-width="2" stroke-linecap="round"/>'
+  };
+  function icon(code, cover, day) {
+    var s = "", body = day ? ICO.sun : ICO.moon;
+    if (code === 45 || code === 48) s = ICO.cloud + ICO.fog;
+    else if (code != null && code >= 95) s = ICO.dark + ICO.rain + ICO.bolt;
+    else if (code != null && (code >= 71 && code <= 77 || code === 85 || code === 86)) s = ICO.dark + ICO.snow;
+    else if (code != null && code >= 51) s = ICO.dark + ICO.rain;
+    else if (cover != null && cover >= 85) s = ICO.dark;
+    else if (cover != null && cover >= 35) s = '<g transform="translate(-5 -4)">' + body + "</g>" + ICO.cloud;
+    else s = body;
+    return '<svg class="wxcico" viewBox="0 0 40 44" width="40" height="44" aria-hidden="true">' + s + "</svg>";
+  }
+  function arrow(dir) {
+    if (dir == null) return "";
+    return '<svg class="wxcarr" viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true"><g transform="rotate(' + Math.round(dir + 180) + ')"><path d="M-3.5 -9h7v8h4.5l-8 10-8-10h4.5z" fill="#26c6da" stroke="#00838f" stroke-width="1"/></g></svg>';
+  }
+  function half(D, t0, t1) {
+    var p = D.pts[0], ix = idxIn(p, t0, t1); if (!ix.length) return null;
+    var o = { pr: 0, tmin: null, tmax: null, iMin: null, iMax: null, ws: null, gs: null, xw: null, hi: null, wc: null, dust: null, cov: 0, nc: 0, cs: [], vs: [], da: null, pa: null, code: null, codes: {} };
+    var dirs = [], spd = [], R = rwyNum() * 10;
+    ix.forEach(function (i) {
+      o.pr += at(p, "precipitation", i) || 0;
+      var t = at(p, "temperature_2m", i);
+      if (t != null && (o.tmin == null || t < o.tmin)) { o.tmin = t; o.iMin = i; }
+      if (t != null && (o.tmax == null || t > o.tmax)) { o.tmax = t; o.iMax = i; }
+      var ws = at(p, "wind_speed_10m", i), wd = at(p, "wind_direction_10m", i), g = at(p, "wind_gusts_10m", i);
+      if (ws != null && (o.ws == null || ws > o.ws)) o.ws = ws; if (g != null && (o.gs == null || g > o.gs)) o.gs = g;
+      dirs.push(wd); spd.push(ws);
+      if (ws != null && wd != null) { var x = Math.abs(ws * Math.sin((wd - R) * AR)); if (o.xw == null || x > o.xw) o.xw = x; }
+      var h = heatIndex(t, at(p, "relative_humidity_2m", i)); if (h != null && (o.hi == null || h > o.hi)) o.hi = h;
+      var c = windChill(t, ws); if (c != null && (o.wc == null || c < o.wc)) o.wc = c;
+      var cv = at(p, "cloud_cover", i); if (cv != null) { o.cov += cv; o.nc++; }
+      var ce = ceilingFt(p, i); if (ce != null) o.cs.push(ce);
+      var v = at(p, "visibility", i); if (v != null) o.vs.push(v);
+      var da = daFt(p, i), pa = paFt(p, i); if (da != null && (o.da == null || da > o.da)) o.da = da; if (pa != null && (o.pa == null || pa > o.pa)) o.pa = pa;
+      var code = at(p, "weather_code", i); if (code != null) { if (code > 3 && wxRank(code) > wxRank(o.code)) o.code = code; o.codes[code] = (o.codes[code] || 0) + 1; }
+    });
+    /* a weather code (fog, rain, storms) shows when it lasts 2 hours or more; otherwise the commonest sky */
+    if (o.code != null && o.codes[o.code] < 2 && o.code < 95) o.code = null;
+    if (o.code == null) o.code = +Object.keys(o.codes).sort(function (a, b) { return o.codes[b] - o.codes[a]; })[0];
+    o.cov = o.nc ? o.cov / o.nc : null;
+    /* ceiling and visibility count when they last 2 hours or more: the second-lowest hour, as the impact table does */
+    o.cs.sort(function (a, b) { return a - b; }); o.ceil = o.cs.length >= 2 ? o.cs[1] : null;
+    o.vs.sort(function (a, b) { return a - b; }); o.vmin = o.vs.length ? o.vs[Math.min(1, o.vs.length - 1)] : null;
+    o.dir = vecMean(dirs, spd);
+    if (D.aq) D.aq.t.forEach(function (t, i) { if (t < t0 || t >= t1) return; var d = D.aq.v.dust[i]; if (d != null && (o.dust == null || d > o.dust)) o.dust = d; });
+    o.dp = o.iMin == null ? null : [at(p, "dew_point_2m", o.iMin), at(p, "dew_point_2m", o.iMax)];
+    o.rh = o.iMin == null ? null : [at(p, "relative_humidity_2m", o.iMin), at(p, "relative_humidity_2m", o.iMax)];
+    return o;
+  }
+  function fc(c) { return c == null ? "–" : Math.round(cToF(c)) + "F/" + Math.round(c) + "C"; }
+  function sm(v) {
+    if (v == null) return "–";
+    var s = v / 1609.34;
+    return s >= 7 ? "7 SM" : s >= 1 ? Math.floor(s) + " SM" : s >= 0.74 ? "3/4 SM" : s >= 0.49 ? "1/2 SM" : s >= 0.24 ? "1/4 SM" : "<1/4 SM";
+  }
+  function cigTxt(c) { return c == null ? "NO CIG" : (c < 1000 ? Math.max(100, Math.round(c / 100) * 100) : Math.round(c / 500) * 500) + "FT"; }
+  function sky(h, dayHalf) {
+    if (h.dust != null && h.dust >= 100) return h.ws != null && h.ws >= 15 ? "BLOWING DUST" : "DUST";
+    var c = h.code;
+    if (c != null && c > 3) return String(WMO[c] || "").toUpperCase();
+    var cv = h.cov;
+    return cv == null ? "–" : cv < 12 ? (dayHalf ? "SUNNY" : "CLEAR") : cv < 35 ? "MOSTLY CLEAR" : cv < 65 ? "PARTLY CLOUDY" : cv < 88 ? "MOSTLY CLOUDY" : "OVERCAST";
+  }
+  function sgn(v) { return v == null ? "–" : (v >= 0 ? "+" : "−") + Math.abs(Math.round(v)) + "FT"; }
+  /* night illumination bar: EENT to the next BMNT, yellow while the moon is up, black while it is down; % lit at each end */
+  function illumBar(ref, d, tz) {
+    var s0 = sunTimes(d.t0 + DMS / 2, ref.lat, ref.lon), s1 = sunTimes(d.t1 + DMS / 2, ref.lat, ref.lon), a = s0.eent, b = s1.bmnt;
+    if (a == null || b == null || !isFinite(a) || !isFinite(b) || b <= a) return '<span class="wxcil">no full dark (twilight all night)</span>';
+    var n = 48, step = (b - a) / n, segs = "", W2 = 100 / n;
+    for (var k = 0; k < n; k++) { var up = moonAlt(a + (k + 0.5) * step, ref.lat, ref.lon) > 0; segs += '<rect x="' + (k * W2).toFixed(2) + '" y="0" width="' + (W2 + 0.05).toFixed(2) + '" height="10" fill="' + (up ? "#ffeb3b" : "#111") + '"/>'; }
+    var p0 = Math.round(moonIllum(a).frac * 100), p1 = Math.round(moonIllum(b).frac * 100);
+    return '<span class="wxcil"><b>' + p0 + '%</b><svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-label="moon up (yellow) or down (black) from EENT ' + esc(hm(a, tz)) + " to BMNT " + esc(hm(b, tz)) + '">' + segs + "</svg><b>" + p1 + "%</b></span>";
+  }
+  function chartHtml(D) {
+    var ref = D.pts[0], tz = D.tz, now = Date.now(), days = chartDays(tz, 5), H = [];
+    days.forEach(function (d) { var mid = d.t0 + (d.t1 - d.t0) / 2; H.push({ t0: d.t0, t1: mid, day: d, n: 0 }, { t0: mid, t1: d.t1, day: d, n: 1 }); });
+    H.forEach(function (h) { h.v = half(D, h.t0, h.t1); });
+    var rn = rwyNum(), T0 = days[0].t0, T1 = days[days.length - 1].t1;
+    function row(label, f, cls) { return '<tr class="' + (cls || "") + '"><th>' + label + "</th>" + H.map(function (h) { return '<td class="' + (h.n ? "h1" : "h0") + '">' + (h.v ? f(h.v, h) : "–") + "</td>"; }).join("") + "</tr>"; }
+    var bar = '<div class="bbar noprint"><button type="button" class="refresh primary" data-wxb="print">Print</button> <button type="button" class="refresh" data-wxb="close">Close</button> ' +
+      '<label class="obs">Crosswind runway <select data-wxrwy="1">' + Array.apply(null, Array(18)).map(function (_, k) { var n = k + 1; return '<option value="' + n + '"' + ((rn - 1) % 18 + 1 === n ? " selected" : "") + ">" + rwyName(n) + "</option>"; }).join("") + "</select></label>" +
+      ' <span class="obs">One landscape page. Use the print dialog&rsquo;s &ldquo;Save as PDF&rdquo; to keep a copy.</span></div>';
+    var o = bar + '<article class="bpage wxcp" id="wxc-page"><div class="wxcban">OPEN-SOURCE MODEL FORECAST · PLANNING USE ONLY · NOT AN OFFICIAL FORECAST</div>' +
+      "<h2>" + esc(String(ref.name).toUpperCase()) + " 5-DAY FORECAST</h2>" +
+      '<div class="wxcsub">AS OF ' + esc(locHM(D.at, tz).replace(":", "")) + " HRS LOCAL " + esc(dateYY(D.at, tz)) + " (" + esc(zOnly(D.at)) + ") · " +
+      esc(mgrs(ref.lat, ref.lon) || ll(ref.lat, ref.lon)) + " · ELEV " + Math.round((ref.elev || 0) * M2FT) + "FT · " + esc(tz) + "</div>";
+    o += '<div class="wxscroll"><table class="wxct"><colgroup><col class="wxclab">' + H.map(function () { return "<col>"; }).join("") + "</colgroup>";
+    o += "<tr><th></th>" + days.map(function (d) { return '<th colspan="2" class="wxcday">' + esc(dayLbl(d.t0 + DMS / 2, tz)) + "</th>"; }).join("") + "</tr>";
+    o += row('<span class="wxcvert">FORECAST</span>', function (v, h) {
+      var dayHalf = sunAlt(h.t0 + (h.n ? 3 : 9) * 36e5, ref.lat, ref.lon) > 0;
+      return icon(v.code, v.cov, dayHalf) + (v.dust != null && v.dust >= 100 ? '<span class="wxcdust">DUST</span>' : "");
+    }, "wxcicons");
+    o += row("12H PRECIP", function (v) { return '<span class="wxcpr">' + (v.pr / 25.4).toFixed(2) + " in</span> <span class=\"wxcmm\">" + (v.pr >= 0.05 ? v.pr.toFixed(1) : "0") + " mm</span>"; });
+    o += row("TEMPS", function (v, h) {
+      var hiT = h.n === 1, val = hiT ? v.tmax : v.tmin, k = hiT ? 1 : 0;
+      return '<div class="wxct' + (hiT ? "hi" : "lo") + '"><b>' + (hiT ? "HI: " : "LO: ") + esc(fc(val)) + "</b></div>" +
+        '<div class="wxckv"><span>DP:</span><b>' + esc(v.dp ? fc(v.dp[k]) : "–") + "</b></div>" +
+        '<div class="wxckv"><span>RH:</span><b>' + (v.rh && v.rh[k] != null ? Math.round(v.rh[k]) + "%" : "–") + "</b></div>" +
+        '<div class="wxckv"><span class="wxcsm">' + (hiT ? "HEAT<br>INDEX" : "WIND<br>CHILL") + "</span><b>" + esc(hiT ? (v.hi != null ? fc(v.hi) : "N/A") : (v.wc != null ? fc(v.wc) : "N/A")) + "</b></div>";
+    }, "wxctemps");
+    o += row("WINDS", function (v) {
+      var s = v.ws == null ? "–" : Math.round(v.ws) + (v.gs != null && v.gs >= v.ws + 10 ? "G" + Math.round(v.gs) : "");
+      return '<div class="wxcwind">' + arrow(v.dir) + "<b>" + esc(s) + " KTS</b></div>";
+    });
+    o += row("X-WINDS", function (v) { return '<span class="wxcsm">' + rwyName(rn) + " L&amp;R:</span> <b class=\"wxcx\">" + (v.xw == null ? "–" : Math.round(v.xw) + " KTS") + "</b>"; }, "wxcxw");
+    o += row("SKY/VIS/WX<br>CONDITIONS", function (v, h) {
+      return '<b title="' + esc(vis(v.vmin)) + '">' + esc(sm(v.vmin)) + " / " + esc(cigTxt(v.ceil)) + '</b><div class="wxcsm">' + esc(sky(v, sunAlt(h.t0 + (h.n ? 3 : 9) * 36e5, ref.lat, ref.lon) > 0)) + "</div>";
+    });
+    /* one value per day: the highest density altitude on the left, the highest pressure altitude on the right */
+    o += "<tr><th>DA / PA</th>" + days.map(function (d, k) {
+      var a = H[2 * k].v, b = H[2 * k + 1].v; if (!a || !b) return '<td colspan="2">–</td>';
+      return '<td class="h0">MAX DA: <b class="wxcda">' + esc(sgn(Math.max(a.da, b.da))) + '</b></td><td class="h1">MAX PA: <b class="wxcda">' + esc(sgn(Math.max(a.pa, b.pa))) + "</b></td>";
+    }).join("") + "</tr>";
+    o += "<tr class=\"wxclight\"><th>SOLAR /<br>LUNAR<br>DATA<br>(LOCAL)</th>" + days.map(function (d) {
+      var st = sunTimes(d.t0 + DMS / 2, ref.lat, ref.lon), mr = moonRiseSet(d.t0, d.t1, ref.lat, ref.lon);
+      function kv(k, ms) { return "<div><span>" + k + ":</span><b>" + esc(hm(ms, tz)) + "</b></div>"; }
+      return '<td class="h0">' + kv("BMNT", st.bmnt) + kv("SR", st.rise) + kv("MR", mr.rise) + '</td><td class="h1">' + kv("EENT", st.eent) + kv("SS", st.set) + kv("MS", mr.set) + "</td>";
+    }).join("") + "</tr>";
+    o += "<tr><th>ILLUM DATA</th>" + days.map(function (d) { return '<td colspan="2">' + illumBar(ref, d, tz) + "</td>"; }).join("") + "</tr>";
+    /* mission impacts hour by hour, merged into runs; a letter marks the limiting factor at the start of each run */
+    var p = ref, ix = idxIn(p, T0, T1), span = T1 - T0;
+    CHR.forEach(function (r) {
+      var runs = [], cur = null;
+      ix.forEach(function (i) {
+        var x = rateHour(r, p, i), t = p.h.t[i];
+        if (cur && cur.c === x[0] && cur.l === x[1]) { cur.t1 = t + 36e5; return; }
+        cur = { c: x[0], l: x[1], why: x[2], t0: t, t1: t + 36e5 }; runs.push(cur);
+      });
+      var svg = '<svg class="wxcbar" viewBox="0 0 1000 14" preserveAspectRatio="none" role="img" aria-label="' + esc(r[2]) + ' impacts">' + runs.map(function (u) {
+        var x0 = (u.t0 - T0) / span * 1000, w = (u.t1 - u.t0) / span * 1000, col = u.c === 2 ? "#d50000" : u.c === 1 ? "#ffea00" : u.c === 0 ? "#1b8a1b" : "#bbb";
+        return '<rect x="' + x0.toFixed(2) + '" y="0" width="' + (w + 0.3).toFixed(2) + '" height="14" fill="' + col + '"><title>' + esc(zt(u.t0, tz, true) + ": " + RAGN[u.c] + (u.why ? " (" + u.why + ")" : "")) + "</title></rect>" +
+          (u.l && w >= 8 ? '<text x="' + (x0 + Math.min(w / 2, 14)).toFixed(1) + '" y="11" text-anchor="middle" class="' + (u.c === 2 ? "wl" : "") + '">' + u.l + "</text>" : "");
+      }).join("") + (now > T0 && now < T1 ? '<line x1="' + ((now - T0) / span * 1000).toFixed(1) + '" x2="' + ((now - T0) / span * 1000).toFixed(1) + '" y1="0" y2="14" stroke="#000" stroke-width="2"/>' : "") +
+        days.slice(1).map(function (d) { var x = ((d.t0 - T0) / span * 1000).toFixed(1); return '<line x1="' + x + '" x2="' + x + '" y1="0" y2="14" stroke="#fff" stroke-width="1.2"/>'; }).join("") + "</svg>";
+      o += '<tr class="wxcimp"><th title="' + esc(r[2]) + '">' + esc(r[1].toUpperCase()) + '</th><td colspan="10">' + svg + "</td></tr>";
+    });
+    /* time axes every 6 local hours, local and Zulu */
+    var ticks = [];
+    for (var t = T0; t <= T1; t += 36e5) { var lh = locHour(t, tz); if (lh % 6 === 0) ticks.push(t); }
+    function axis(f) { return '<svg class="wxcax" viewBox="0 0 1000 12" preserveAspectRatio="none">' + ticks.map(function (t) { var x = (t - T0) / span * 1000; return '<text x="' + x.toFixed(1) + '" y="10" text-anchor="' + (x < 5 ? "start" : x > 995 ? "end" : "middle") + '">' + f(t) + "</text>"; }).join("") + "</svg>"; }
+    o += '<tr class="wxctime"><th>TIME (LOCAL)</th><td colspan="10">' + axis(function (t) { return ("0" + locHour(t, tz)).slice(-2); }) + "</td></tr>";
+    o += '<tr class="wxctime"><th>TIME (ZULU)</th><td colspan="10">' + axis(function (t) { return ("0" + new Date(t).getUTCHours()).slice(-2); }) + "</td></tr></table></div>";
+    o += '<p class="wxcleg"><b>W</b> wind · <b>C</b> ceiling · <b>V</b> visibility · <b>T</b> thunderstorms · <b>I</b> icing or freezing rain · <b>P</b> precipitation · <b>H</b> heat or cold · <b>S</b> air stability. ' +
+      '<span class="wxcsw g"></span>little or no effect <span class="wxcsw a"></span>degraded <span class="wxcsw r"></span>severe or unsafe. Black line: now.</p>';
+    o += '<p class="wxcthr"><b>Generic planning thresholds, not doctrine and not any unit&rsquo;s limits.</b> ' + CHR.filter(function (r) { return r[3]; }).map(function (r) { return "<b>" + esc(r[1]) + "</b> R: " + esc(limText(r[3], true)) + "; A: " + esc(limText(r[4], false)) + "."; }).join(" ") +
+      " <b>NBC ops</b> R: stable air (Pasquill E or F, an inversion keeps a release concentrated far downwind); A: neutral air (D) or wind 20 kt or more; G: unstable air (A to C).</p>";
+    o += '<footer>FORECAST: Open-Meteo.com model blend (CC BY 4.0) at ' + esc(ref.name) + ", fetched " + esc(zt(D.at, tz, true)) + "; dust: CAMS through Open-Meteo. Not a forecaster&rsquo;s product, not observed, not analyst-approved; official warnings take precedence. " +
+      "Ceiling (60% cloud cover or more, from model cloud layers) and visibility are the second-lowest hour of each half, so a single hour does not set them. Visibility capped at 7 SM. LO and HI with dew point and humidity at that hour. Winds: highest sustained, G = gusts 10 kt or more above it; arrows fly with the wind. " +
+      "Crosswind: the largest sustained component across runway " + rwyName(rn) + ". DA/PA from model sea-level pressure, temperature and ground height (" + Math.round((ref.elev || 0) * M2FT) + " ft). " +
+      "Sun and moon computed; BMNT and EENT are nautical twilight. Illumination: moon lit at EENT and at the next BMNT; bar yellow while the moon is up.</footer></article>";
+    return o;
+  }
+  function chartPageStyle(on) {
+    var s = document.getElementById("wxc-pagestyle");
+    if (on && !s) { s = document.createElement("style"); s.id = "wxc-pagestyle"; s.textContent = "@media print{@page{size:landscape;margin:7mm}html,body{background:#fff!important}}"; document.head.appendChild(s); }
+    if (!on && s) s.parentNode.removeChild(s);
+  }
+  function openChart() {
+    var el = document.getElementById("brief");
+    if (!el) return;
+    function show(D) { el.innerHTML = chartHtml(D); el.hidden = false; document.documentElement.classList.add("briefing"); chartPageStyle(true); el.scrollTop = 0; }
+    if (ST.data) show(ST.data); else go().then(show, function () {});
+  }
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t.hasAttribute || !t.hasAttribute("data-wxrwy")) return;
+    lsSet(RWYK, +t.value);
+    if (document.getElementById("wxc-page")) openChart();
+  });
 
   /* ---------- weather map layers ---------- */
   var LSK = "osap-wx-layers", LS = lsGet(LSK) || {};
@@ -1529,6 +1796,21 @@
       ".wxrp{margin-bottom:18px}.wxrp table.wxhr{font-size:.9em}.wxrp table.wxhr td,.wxrp table.wxhr th{padding:1px 2px;white-space:nowrap}.wxrp tr.wxday td{border-top:1.5px solid #12324a}.wxrp tr.hot td,.wxrp td.hot{background:#fff3e0}",
       ".wxrp td.wxconf{font-weight:700}.wxrp td.wxcH{color:#2e7d32}.wxrp td.wxcM{color:#b26a00}.wxrp td.wxcL{color:#c62828}.wxrp table.wxbt{table-layout:auto}.wxrp table.wxbt td:first-child{white-space:nowrap}",
       "@media print{html.briefing .wxbp p.wxthr{column-count:2;column-gap:12px;font-size:.8em}html.briefing table.wxm th:first-child{width:84px}html.briefing table.wxm td{padding:0 2px;line-height:1.2}html.briefing .wxrp{margin:0}html.briefing .wxrp+.wxrp{break-before:page;page-break-before:always}html.briefing .wxrp tr{break-inside:avoid}html.briefing .wxrp{font-size:8.6px}html.briefing .wxrp table.wxhr{font-size:7.8px}}",
+      /* the 5-day chart: one landscape page; on a phone the table scrolls sideways */
+      "#brief .wxcp{max-width:1180px;font:10.5px/1.2 Arial,Helvetica,sans-serif;padding:0 0 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.wxcp .wxcban{background:#1faa00;color:#111;font-weight:700;text-align:center;font-size:11px;padding:1px 0;letter-spacing:.02em}",
+      ".wxcp h2{text-align:center;font-size:20px;margin:6px 0 1px;letter-spacing:.02em}.wxcp .wxcsub{text-align:center;font-weight:700;font-size:11px;margin-bottom:4px}.wxcp footer,.wxcp .wxcleg,.wxcp .wxcthr{margin:3px 10px}",
+      ".wxcp table.wxct{width:100%;min-width:960px;border-collapse:collapse;table-layout:fixed}.wxcp col.wxclab{width:88px}.wxcp table.wxct td,.wxcp table.wxct th{border:0;padding:1px 2px;vertical-align:middle;text-align:center;overflow-wrap:normal;white-space:normal}",
+      ".wxcp table.wxct th{font-weight:700;font-size:11px;text-align:right;padding-right:5px;color:#111}.wxcp table.wxct td.h0{border-left:1.5px solid #333}.wxcp table.wxct tr:first-child th.wxcday{font-size:15px;text-align:center;border:1.5px solid #333;border-bottom:0}",
+      ".wxcp .wxcvert{writing-mode:vertical-rl;text-orientation:upright;letter-spacing:-2px;font-size:9px}.wxcp .wxcicons td{height:48px}.wxcp .wxcico{display:block;margin:0 auto}.wxcp .wxcdust{display:block;font:900 10px Arial;color:#555;letter-spacing:.06em;margin-top:-6px}",
+      ".wxcp .wxcpr{color:#1a237e;font-weight:700}.wxcp .wxcmm{color:#555;font-size:.9em}.wxcp .wxctlo b{color:#1565c0;font-size:13px}.wxcp .wxcthi b{color:#d50000;font-size:13px}",
+      ".wxcp .wxckv{display:flex;justify-content:space-between;gap:4px;padding:0 4px}.wxcp .wxckv span{color:#1565c0;font-weight:700}.wxcp td.h1 .wxckv span{color:#d50000}.wxcp .wxckv b{color:#1565c0}.wxcp td.h1 .wxckv b{color:#d50000}.wxcp .wxcsm{font-size:8px;line-height:1;text-align:left}",
+      ".wxcp .wxcwind{display:flex;align-items:center;justify-content:center;gap:4px}.wxcp .wxcwind b{font-size:11px}.wxcp .wxcxw td{font-size:9px}.wxcp b.wxcx{color:#1565c0}.wxcp b.wxcda{color:#1a237e}",
+      ".wxcp tr.wxclight td div{display:flex;justify-content:space-between;padding:0 8px}.wxcp tr.wxclight td span{font-weight:700}.wxcp tr.wxclight td b{color:#6a1b9a;font-weight:600}",
+      ".wxcp .wxcil{display:flex;align-items:center;gap:4px;font-size:9px}.wxcp .wxcil svg{flex:1;height:10px;border:1px solid #333}.wxcp tr.wxcimp th{font-size:10.5px;padding-top:0;padding-bottom:0}.wxcp tr.wxcimp td{padding:0;border-left:0!important}",
+      ".wxcp svg.wxcbar{display:block;width:100%;height:14px}.wxcp svg.wxcbar text{font:700 10px Arial;fill:#111}.wxcp svg.wxcbar text.wl{fill:#111}.wxcp svg.wxcax{display:block;width:100%;height:12px;background:#fbe3c8}.wxcp svg.wxcax text{font:9px Arial;fill:#111}",
+      ".wxcp tr.wxctime td{padding:0;border-left:0!important}.wxcp .wxcsw{display:inline-block;width:12px;height:9px;margin:0 3px 0 8px;vertical-align:middle}.wxcp .wxcsw.g{background:#1b8a1b}.wxcp .wxcsw.a{background:#ffea00;border:1px solid #bbb}.wxcp .wxcsw.r{background:#d50000}",
+      ".wxcp .wxcleg{text-align:center;font-size:10.5px}.wxcp .wxcthr{font-size:8px;line-height:1.25;color:#333}.wxcp footer{font-size:8px}",
+      "@media print{html.briefing .wxcp{font-size:9.5px}html.briefing .wxcp table.wxct{min-width:0}html.briefing .wxcp .wxscroll{overflow:visible}}",
       "#wx-ops .wxbtns{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}#wx-ops .wxsyn{margin:6px 0;line-height:1.4}",
       ".wxl{color:var(--muted,#667);font-size:.88em;font-weight:400}",
       ".wxscroll{overflow-x:auto;max-width:100%}#wx-ops table.wxsm{font-size:11px}#wx-ops table.wxsm th{font-size:10px;padding:1px 2px}#wx-ops table.wxsm td{padding:1px 2px}#wx-ops table.wxf{font-size:12px}",
@@ -1571,12 +1853,12 @@
     map.on("moveend", function () { if (gridOn()) gridSoon(); if (ON.warn && LYR.warn) { map.removeLayer(LYR.warn); LYR.warn = warnLayer(opOf("warn", 0.8)).addTo(map); } });
     setInterval(function () { if (ON.radar && LYR.radar) { RV.at = 0; map.removeLayer(LYR.radar); LYR.radar = LBYK.radar.make(opOf("radar", 0.75)).addTo(map); } }, 10 * 60 * 1000);
     legendDraw();
-    W.OSAP_WX = { region: region, brief: openBrief, report: openReport,
+    W.OSAP_WX = { region: region, brief: openBrief, report: openReport, chart: openChart,
       /* for the Today card: the chosen province or spot (null for the whole country or a drawn area), the province list, and choosing one */
       placePoint: function (c) { var pl = place(c, lsGet("asap-area-" + c)); return pl.k === "reg" ? { name: pl.n, lat: pl.la, lon: pl.lo } : pl.k === "spot" ? { name: pl.name, lat: pl.lat, lon: pl.lon } : null; },
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
       chooseRegion: function (c, i) { var l = regsFor(c), r = l && l[i]; if (!r || c !== cc()) return false; setPlace({ k: "reg", n: r[0], t: r[1], la: r[2], lo: r[3], b: r[4], r: r[5] }); return true; }, refresh: function () { return go(true); }, layers: function () { return Object.keys(ON).filter(function (k) { return ON[k]; }); },
-      _test: { agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
+      _test: { chartHtml: chartHtml, stability: stability, daFt: daFt, paFt: paFt, agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
   }
   function boot() { map = W.__asapMap; if (!map || !W.L || !W.TSAP || !W.OSAP_TIME) return setTimeout(boot, 300); init(); }
   boot();
