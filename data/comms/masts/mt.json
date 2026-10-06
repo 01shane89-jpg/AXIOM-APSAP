@@ -1,0 +1,15 @@
+{"cc":"mt","at":"2026-10-06T11:25:50Z","base":"2026-10-06T11:23:51Z","m":[
+["n1525186072",35.89216,14.52878,{"man_made":"tower","tower:type":"communication"}],
+["n4236450784",35.85291,14.38441,{"man_made":"tower","tower:type":"communication"}],
+["n4236450785",35.85296,14.38452,{"man_made":"tower","tower:type":"communication"}],
+["n4236450786",35.85301,14.38441,{"man_made":"tower","tower:type":"communication"}],
+["n4702120632",35.89475,14.40068,{"man_made":"tower","tower:type":"communication"}],
+["n5139582021",35.8415,14.55745,{"communication:mobile_phone":"yes","man_made":"mast","operator":"GO","tower:construction":"lattice_steel","tower:type":"communication"}],
+["n5309155208",35.85212,14.3815,{"man_made":"mast","tower:type":"radio"}],
+["n5349992071",35.89362,14.52811,{"man_made":"tower","tower:type":"communication"}],
+["n7234694908",35.95528,14.36458,{"man_made":"mast","tower:type":"communication"}],
+["n9225114279",35.92799,14.45217,{"man_made":"mast","tower:type":"communication"}],
+["w1173352981",35.84221,14.41562,{"man_made":"tower","tower:construction":"dome","tower:type":"communication"}],
+["w183451667",36.01716,14.2744,{"height":"15","man_made":"tower","name":"It-Torri ta' Mġarr ix-Xini","name:en":"Mġarr ix-Xini Tower","start_date":"1661","tower:construction":"stone","tower:type":"communication"}],
+["w403576732",36.03555,14.28397,{"man_made":"tower","name":"It-Torri ta' Kenuna","tower:type":"communication"}]
+]}
