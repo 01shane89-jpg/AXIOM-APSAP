@@ -1,21 +1,21 @@
 {
  "v": 1,
- "at": "2026-10-05T01:55Z",
+ "at": "2026-10-06T11:15Z",
  "sources": {
   "oa": {
    "name": "OurAirports",
    "lic": "Public domain",
    "link": "https://ourairports.com/data/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
-   "n": 72093
+   "at": "2026-10-06T11:15Z",
+   "n": 72117
   },
   "wpi": {
    "name": "NGA World Port Index (Pub. 150)",
    "lic": "Public domain (U.S. Government)",
    "link": "https://msi.nga.mil/Publications/WPI",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 2858
   },
   "locode": {
@@ -23,7 +23,7 @@
    "lic": "Free reuse (UNECE)",
    "link": "https://unece.org/trade/uncefact/unlocode",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 11611
   },
   "osm": {
@@ -31,12 +31,12 @@
    "lic": "ODbL",
    "link": "https://www.openstreetmap.org/copyright",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
-   "n": 1097098,
+   "at": "2026-10-06T11:15Z",
+   "n": 1097763,
    "cover": {
-    "tiles": 495,
+    "tiles": 498,
     "of": 504,
-    "fresh": 72
+    "fresh": 3
    }
   },
   "wd": {
@@ -44,7 +44,7 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q12323",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 74606
   },
   "wri": {
@@ -52,23 +52,25 @@
    "lic": "CC BY 4.0",
    "link": "https://datasets.wri.org/dataset/globalpowerplantdatabase",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 34928
   },
   "wdp": {
    "name": "Wikidata (power stations)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q159719",
-   "ok": true,
+   "ok": false,
    "at": "2026-10-05T01:55Z",
-   "n": 23621
+   "n": 11371,
+   "err": "Expected ',' or '}' after property value in JSON at position 20354315",
+   "tried": "2026-10-06T11:15Z"
   },
   "wdf": {
    "name": "Wikidata (refineries and terminals)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 512
   },
   "wdr": {
@@ -77,26 +79,24 @@
    "link": "https://www.wikidata.org/",
    "ok": false,
    "at": "2026-10-05T01:05Z",
-   "n": 88875,
-   "err": "Bad control character in string literal in JSON at position 30605477",
-   "tried": "2026-10-05T01:55Z"
+   "n": 85230,
+   "err": "Bad control character in string literal in JSON at position 4692662",
+   "tried": "2026-10-06T11:15Z"
   },
   "wdb": {
    "name": "Wikidata (bridges and tunnels)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
-   "ok": false,
-   "at": "2026-10-05T01:05Z",
-   "n": 44712,
-   "err": "Expected double-quoted property name in JSON at position 32879171",
-   "tried": "2026-10-05T01:55Z"
+   "ok": true,
+   "at": "2026-10-06T11:15Z",
+   "n": 47047
   },
   "wdw": {
    "name": "Wikidata (water and sewage works)",
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 274
   },
   "wdt": {
@@ -104,7 +104,7 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 58
   },
   "wdg": {
@@ -112,7 +112,7 @@
    "lic": "CC0",
    "link": "https://www.wikidata.org/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
+   "at": "2026-10-06T11:15Z",
    "n": 10865
   },
   "tg": {
@@ -121,8 +121,8 @@
    "nc": true,
    "link": "https://www.submarinecablemap.com/",
    "ok": true,
-   "at": "2026-10-05T01:55Z",
-   "n": 3287
+   "at": "2026-10-06T11:15Z",
+   "n": 3286
   }
  },
  "countries": {
@@ -187,7 +187,7 @@
    "br": 138,
    "tn": 41,
    "wat": 1,
-   "gov": 18,
+   "gov": 48,
    "emg": 134,
    "pipe": 13,
    "rail": 8,
@@ -246,7 +246,7 @@
    "plant": 314,
    "fuel": 7,
    "stn": 1405,
-   "br": 1644,
+   "br": 1645,
    "tn": 754,
    "wat": 11,
    "gov": 59,
@@ -297,7 +297,7 @@
    "br": 258,
    "tn": 189,
    "wat": 3,
-   "gov": 18,
+   "gov": 113,
    "emg": 381,
    "rail": 23,
    "pipe": 2
@@ -449,7 +449,7 @@
    "rail": 55
   },
   "br": {
-   "af": 8059,
+   "af": 8062,
    "port": 839,
    "dam": 1129,
    "lp": 75,
@@ -534,7 +534,7 @@
    "br": 4335,
    "tn": 196,
    "wat": 188,
-   "tx": 189,
+   "tx": 196,
    "gov": 982,
    "emg": 5105,
    "rail": 753,
@@ -753,7 +753,7 @@
    "plant": 514,
    "fuel": 10,
    "stn": 1248,
-   "br": 1903,
+   "br": 1905,
    "tn": 192,
    "wat": 9,
    "tx": 2,
@@ -767,7 +767,7 @@
    "port": 655,
    "dam": 212,
    "lp": 9,
-   "plant": 1745,
+   "plant": 1744,
    "fuel": 34,
    "stn": 6830,
    "br": 7879,
@@ -846,7 +846,7 @@
    "tn": 161,
    "wat": 23,
    "tx": 4,
-   "gov": 23,
+   "gov": 37,
    "emg": 2261,
    "rail": 46,
    "pipe": 478,
@@ -897,7 +897,7 @@
    "tn": 46,
    "wat": 8,
    "tx": 5,
-   "gov": 51,
+   "gov": 63,
    "emg": 232,
    "pipe": 36,
    "rail": 35,
@@ -929,11 +929,11 @@
    "plant": 1031,
    "fuel": 18,
    "stn": 2265,
-   "br": 6227,
+   "br": 6226,
    "tn": 2250,
    "wat": 178,
    "tx": 1,
-   "gov": 183,
+   "gov": 185,
    "emg": 4623,
    "rail": 725,
    "pipe": 940,
@@ -1007,7 +1007,7 @@
    "br": 4630,
    "tn": 1571,
    "wat": 180,
-   "tx": 2,
+   "tx": 164,
    "gov": 99,
    "emg": 10504,
    "pipe": 2603,
@@ -1035,13 +1035,13 @@
    "port": 1465,
    "dam": 184,
    "lp": 125,
-   "plant": 3691,
+   "plant": 3690,
    "fuel": 31,
    "stn": 8361,
-   "br": 13548,
+   "br": 13549,
    "tn": 1058,
    "wat": 647,
-   "tx": 27,
+   "tx": 61,
    "gov": 262,
    "emg": 4045,
    "pipe": 1153,
@@ -1141,7 +1141,7 @@
    "br": 726,
    "tn": 277,
    "wat": 74,
-   "gov": 32,
+   "gov": 52,
    "emg": 629,
    "rail": 56,
    "pipe": 45,
@@ -1207,7 +1207,7 @@
    "stn": 219,
    "br": 519,
    "tn": 158,
-   "gov": 17,
+   "gov": 25,
    "emg": 869,
    "rail": 67,
    "pipe": 106,
@@ -1265,9 +1265,10 @@
    "plant": 179,
    "fuel": 2,
    "stn": 522,
-   "br": 1650,
+   "br": 1649,
    "tn": 19,
    "wat": 12,
+   "tx": 2,
    "gov": 30,
    "emg": 684,
    "pipe": 133,
@@ -1291,7 +1292,7 @@
    "cable": 7
   },
   "in": {
-   "af": 715,
+   "af": 716,
    "port": 640,
    "dam": 726,
    "lp": 26,
@@ -1369,7 +1370,7 @@
    "tn": 4100,
    "wat": 28,
    "tx": 3,
-   "gov": 63,
+   "gov": 86,
    "emg": 8200,
    "pipe": 439,
    "rail": 836,
@@ -1409,7 +1410,7 @@
   "jp": {
    "af": 3359,
    "port": 797,
-   "dam": 2109,
+   "dam": 2108,
    "lp": 68,
    "plant": 749,
    "fuel": 103,
@@ -1712,7 +1713,7 @@
    "br": 68,
    "tn": 2,
    "wat": 42,
-   "gov": 7,
+   "gov": 67,
    "emg": 697,
    "pipe": 50,
    "rail": 3,
@@ -1766,7 +1767,7 @@
    "stn": 27,
    "br": 67,
    "tn": 150,
-   "gov": 5,
+   "gov": 39,
    "emg": 57,
    "rail": 125
   },
@@ -1803,7 +1804,7 @@
    "stn": 62,
    "br": 104,
    "tn": 34,
-   "gov": 8,
+   "gov": 29,
    "emg": 105,
    "pipe": 3,
    "rail": 9
@@ -1875,7 +1876,7 @@
    "br": 11,
    "tn": 7,
    "wat": 4,
-   "gov": 3,
+   "gov": 5,
    "emg": 76,
    "cable": 8
   },
@@ -2034,7 +2035,7 @@
    "plant": 211,
    "fuel": 13,
    "stn": 662,
-   "br": 5099,
+   "br": 5108,
    "tn": 216,
    "wat": 2,
    "tx": 3,
@@ -2092,7 +2093,7 @@
    "plant": 181,
    "fuel": 19,
    "stn": 462,
-   "br": 2063,
+   "br": 2067,
    "tn": 165,
    "wat": 306,
    "tx": 1,
@@ -2167,7 +2168,7 @@
    "cable": 3
   },
   "pg": {
-   "af": 661,
+   "af": 664,
    "port": 54,
    "dam": 2,
    "lp": 15,
@@ -2198,7 +2199,7 @@
    "cable": 23
   },
   "pk": {
-   "af": 189,
+   "af": 190,
    "port": 13,
    "dam": 68,
    "lp": 1,
@@ -2323,7 +2324,7 @@
    "stn": 345,
    "br": 384,
    "tn": 271,
-   "gov": 18,
+   "gov": 54,
    "emg": 378,
    "rail": 186,
    "pipe": 18
@@ -2685,7 +2686,7 @@
    "br": 134,
    "tn": 12,
    "wat": 13,
-   "gov": 6,
+   "gov": 44,
    "emg": 383,
    "rail": 15,
    "pipe": 19,
@@ -2703,7 +2704,7 @@
    "cable": 3
   },
   "tr": {
-   "af": 390,
+   "af": 405,
    "port": 292,
    "dam": 756,
    "lp": 7,
@@ -2713,7 +2714,7 @@
    "br": 2538,
    "tn": 1251,
    "wat": 39,
-   "gov": 78,
+   "gov": 84,
    "emg": 1303,
    "pipe": 750,
    "rail": 162,
@@ -2816,15 +2817,15 @@
   "us": {
    "af": 26360,
    "port": 2821,
-   "dam": 40195,
-   "lp": 169,
-   "plant": 13668,
+   "dam": 40194,
+   "lp": 168,
+   "plant": 12558,
    "fuel": 1089,
-   "stn": 3911,
-   "br": 28452,
-   "tn": 1491,
+   "stn": 1872,
+   "br": 28455,
+   "tn": 1492,
    "wat": 3095,
-   "tx": 318,
+   "tx": 339,
    "gov": 4536,
    "emg": 49792,
    "pipe": 17782,
@@ -2939,7 +2940,7 @@
    "stn": 29,
    "br": 49,
    "tn": 18,
-   "gov": 8,
+   "gov": 26,
    "emg": 122,
    "rail": 13
   },
