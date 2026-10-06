@@ -110,6 +110,7 @@ jobs:
       - run: node tests/layout_list_smoke.mjs
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
+      - run: node tests/wxchart_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
