@@ -15,3 +15,11 @@ thaiscience https://www.thaiscience.info/journals/Article/JHRE/10987728.pdf
 sjtrem https://sjtrem.biomedcentral.com/articles/10.1186/s13049-025-01498-w
 wiki_eas https://en.wikipedia.org/wiki/Emergency_Aeromedical_Service
 thaipublica https://thaipublica.org/2018/05/hems-caat-eu/
+mophbuild https://dcd.hss.moph.go.th/web/attachments/article/248/151217_042853.pdf
+sptrauma_rh1 https://webnew.rh1.go.th/include/tiny/source/66%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%B8%E0%B8%A1%20SP%20%E0%B8%AA%E0%B8%B2%E0%B8%82%E0%B8%B2%E0%B8%AD%E0%B8%B8%E0%B8%9A%E0%B8%B1%E0%B8%95%E0%B8%B4%E0%B9%80%E0%B8%AB%E0%B8%95%E0%B8%B8%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%89%E0%B8%B8%E0%B8%81%E0%B9%80%E0%B8%89%E0%B8%B4%E0%B8%99%20%E0%B9%80%E0%B8%82%E0%B8%95%E0%B8%AA%E0%B8%B8%E0%B8%82%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97%E0%B8%B5%E0%B9%88%201/file.%E0%B8%A5%E0%B8%B3%E0%B8%9E%E0%B8%B9%E0%B8%99_%E0%B8%99%E0%B8%B3%E0%B9%80%E0%B8%AA%E0%B8%99%E0%B8%AD%20SP%20trauma%20%E0%B9%80%E0%B8%82%E0%B8%95%201%2020_02_2566.pdf
+skydoc_guide https://www.thailand.go.th/guide-book-detail/001_07_002-2
+jhr_skydoc https://he01.tci-thaijo.org/index.php/jhealthres/article/view/104315
+sjtrem_pmc https://link.springer.com/article/10.1186/s13049-025-01498-w
+niems_home https://www.niems.go.th/1/Home/Main
+bdms_main https://www.bdms.co.th/en/
+usemb_med https://th.usembassy.gov/u-s-citizen-services/doctors/
