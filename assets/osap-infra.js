@@ -72,22 +72,21 @@
   TYPE["plant:battery"][0] = "Battery storage"; TYPE["plant:pumped"][0] = "Pumped-storage hydro plant";
   /* big enough to draw at every zoom: the type says so, or a plant of 100 MW and up, or any nuclear plant */
   function isBig(i, ty) { return !!ty[2] || (i.k === "plant" && (i.t === "nuclear" || ((i.x && i.x.mw) || 0) >= 100)) || ((i.k === "br" || i.k === "tn") && ((i.x && i.x.len_m) || 0) >= 1000); }
-  var GLY = {
-    af: '<path d="M12 2.5c.8 0 1.4.7 1.4 1.5v5.2l7.1 4.2v1.9l-7.1-2.1v4.4l2.1 1.6v1.5L12 20l-3.5.7v-1.5l2.1-1.6v-4.4l-7.1 2.1v-1.9l7.1-4.2V4c0-.8.6-1.5 1.4-1.5z" fill="currentColor"/>',
-    port: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M7 11h10M5 15a7 7 0 0 0 14 0"/></g>',
-    dam: '<path d="M4 20V8l6-3v15zM12 20V6h8v14z" fill="currentColor"/>',
-    lp: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 17c3-4 6-4 9 0s6 4 9 0"/><circle cx="12" cy="8" r="3"/></g>',
-    plant: '<path d="M13.5 2L5 13.5h6L9.8 22 19 10h-6.2z" fill="currentColor"/>',
-    stn: '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 20l-2 2M15 20l2 2"/><circle cx="9" cy="13" r=".6" fill="currentColor"/><circle cx="15" cy="13" r=".6" fill="currentColor"/></g>',
-    br: '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 9h20M4 9v10M20 9v10M4 19c3-6 13-6 16 0"/></g>',
-    tn: '<path d="M3 21V12a9 9 0 0 1 18 0v9h-4v-8a5 5 0 0 0-10 0v8z" fill="currentColor"/>',
-    wat: '<path d="M12 3c3 4.4 5.5 7.6 5.5 10.6a5.5 5.5 0 0 1-11 0C6.5 10.6 9 7.4 12 3z" fill="none" stroke="currentColor" stroke-width="2.2"/>',
-    tx: '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></g>',
-    gov: '<path d="M12 2.5 3 7v2h18V7zM5 10.5h2.5v7H5zm5.75 0h2.5v7h-2.5zm5.75 0H19v7h-2.5zM3 19h18v2.5H3z" fill="currentColor"/>',
-    emg: '<path d="M12 2.5 4 5.5v6c0 4.7 3.3 8.9 8 10 4.7-1.1 8-5.3 8-10v-6z" fill="none" stroke="currentColor" stroke-width="2.2"/>',
-    fuel: '<path d="M12 2.5c3.2 4.6 6 8.1 6 11.5a6 6 0 0 1-12 0c0-3.4 2.8-6.9 6-11.5z" fill="currentColor"/>'
-  };
-  var MAXDOM = 300, MINZ = 8, FEW = 600;
+  /* the official symbol for each kind of site: MIL-STD-2525D / APP-6 land installations in the neutral (civilian) frame, drawn by
+     assets/osap-symbols.js (keys i_*). Power plants carry the fuel modifier where the standard has one (coal, gas, oil, hydro,
+     geothermal, nuclear) and a dot in the fuel's colour, so the fuel filter and its colours still read on the map. */
+  var SYM = { "af:L": "i_air", "af:M": "i_air", "af:S": "i_air", "af:W": "i_air", "af:H": "i_heli",
+    "port:M": "i_port", "port:P": "i_port", "port:O": "i_port", "port:F": "i_ferry", "dam:D": "i_dam", "lp:C": "i_telecom", "stn:S": "i_rail",
+    "br:H": "i_bridge", "br:P": "i_bridge", "br:R": "i_bridge", "br:B": "i_bridge", "tn:H": "i_tunnel", "tn:P": "i_tunnel", "tn:R": "i_tunnel", "tn:B": "i_tunnel",
+    "wat:W": "i_watert", "wat:D": "i_water", "wat:S": "i_sewage", "tx:E": "i_phone",
+    "gov:M": "i_gov", "gov:E": "i_govlead", "gov:L": "i_gov", "gov:C": "i_gov", "gov:J": "i_prison", "gov:X": "i_customs", "emg:P": "i_police", "emg:F": "i_fire",
+    "fuel:R": "i_petrol", "fuel:L": "i_natgas", "fuel:T": "i_pol", "fuel:G": "i_pol",
+    "plant:coal": "i_coal", "plant:gas": "i_gas", "plant:oil": "i_oil", "plant:nuclear": "i_nuclear", "plant:hydro": "i_hydro", "plant:pumped": "i_hydro", "plant:geo": "i_geo" };
+  function symOf(t) { return SYM[t] || (/^plant:/.test(t) ? "i_gen" : null); }
+  function haveSym(t) { var k = symOf(t); return !!(k && W.OSAP_SYM && W.OSAP_SYM.d[k] && W.OSAP_SYM.mark); }
+  /* the fuel dot on a power plant's symbol */
+  function badgeOf(t) { return /^plant:/.test(t) ? TYPE[t][1] : null; }
+  var MINZ = 8, FEW = 600;
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
@@ -131,11 +130,6 @@
 
   /* ---------- map ---------- */
   var map = null, ptL = null, lnL = null, rend = null, lrend = null;
-  function icon(i, col) {
-    var s = (i.k === "af" && i.t === "L") || (i.k === "plant" && ((i.x && i.x.mw) || 0) >= 1000) ? 24 : 20;
-    return L.divIcon({ className: "inf-ic", iconSize: [s, s], iconAnchor: [s / 2, s / 2],
-      html: '<span style="width:' + s + "px;height:" + s + "px;background:" + col + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + (GLY[i.k] || "") + "</svg></span>" });
-  }
   var LBL = { icao: "ICAO", iata: "IATA", elev_ft: "Elevation", rw_m: "Longest runway", surface: "Runway surface", sched: "Scheduled flights", town: "Serves",
     size: "Harbour size", type: "Harbour type", shelter: "Shelter", max_len_m: "Largest vessel", chan_m: "Channel depth", anch_m: "Anchorage depth", unlocode: "UN/LOCODE",
     wpi: "World Port Index no.", ferry: "Ferry terminal", op: "Operator", height_m: "Height", purpose: "Purpose", river: "River", reservoir: "Reservoir", built: "Built",
@@ -215,28 +209,26 @@
       if (b.contains([i.la, i.lo])) (inView[k] = inView[k] || []).push(i);
     });
     /* each kind on its own: small sites show when few of that kind are in view, or from zoom 8 */
-    var want = {}, all = [];
-    Object.keys(inView).forEach(function (k) { all = all.concat(inView[k]); });
-    var big = all.filter(function (i) { return isBig(i, TYPE[i.k + ":" + i.t] || []); }).length;
+    var want = {};
     Object.keys(inView).forEach(function (k) {
       var few = inView[k].length <= FEW;
       inView[k].forEach(function (i) {
         var ty = TYPE[i.k + ":" + i.t] || ["Site", "#495057", 0];
-        var bg = isBig(i, ty);
-        if (!bg && !few && z < MINZ) { n.hidden++; return; }
-        var dom = !!(bg && big <= MAXDOM), key = i.id + (dom ? "|i" : "|c");
-        want[key] = [i, ty, dom];
+        if (!isBig(i, ty) && !few && z < MINZ) { n.hidden++; return; }
+        want[i.id] = [i, ty];
         n.shown[k] = (n.shown[k] || 0) + 1;
       });
     });
-    /* keep what is already drawn (an open popup stays open when the map pans to show it); add only what is new */
+    /* keep what is already drawn (an open popup stays open when the map pans to show it); add only what is new.
+       Every site is its official symbol on the shared canvas (thousands stay fast on a phone); big sites draw a little larger. */
     Object.keys(have).forEach(function (key) { if (!want[key]) { ptL.removeLayer(have[key]); delete have[key]; } });
     Object.keys(want).forEach(function (key) {
       if (have[key]) return;
-      var i = want[key][0], ty = want[key][1];
-      var m = want[key][2]
-        ? L.marker([i.la, i.lo], { icon: icon(i, ty[1]), pane: "infpt", keyboard: false, title: i.nm || ty[0], lgk: "inf:" + i.k + ":" + i.t, lgl: ty[0] })
-        : L.circleMarker([i.la, i.lo], { renderer: rend, pane: "infpt", radius: isBig(i, ty) ? 6 : 4.5, color: "#fff", weight: 1.3, fillColor: ty[1], fillOpacity: 0.95, lgk: "inf:" + i.k + ":" + i.t, lgl: ty[0] });
+      var i = want[key][0], ty = want[key][1], t = i.k + ":" + i.t, bg = isBig(i, ty);
+      var huge = t === "af:L" || (i.k === "plant" && ((i.x && i.x.mw) || 0) >= 1000);
+      var m = haveSym(t)
+        ? W.OSAP_SYM.mark([i.la, i.lo], symOf(t), { renderer: rend, pane: "infpt", scale: huge ? 0.9 : bg ? 0.75 : 0.6, badge: badgeOf(t), lgk: "inf:" + t, lgl: ty[0] })
+        : L.circleMarker([i.la, i.lo], { renderer: rend, pane: "infpt", radius: bg ? 6 : 4.5, color: "#fff", weight: 1.3, fillColor: ty[1], fillOpacity: 0.95, lgk: "inf:" + t, lgl: ty[0] });
       m.bindPopup(pop(i), { maxWidth: 320 }).addTo(ptL);
       have[key] = m;
     });
@@ -314,13 +306,15 @@
       var k = t.split(":")[0], kind = kindOf({ k: k }); if (!S.on[kind] || !pc[t]) return;
       if (k === "plant" && S.off[t.slice(6)]) return;
       var ty = TYPE[t];
-      h += '<div class="lg"><span class="sw" style="background:' + ty[1] + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span><div>' + esc(ty[0]) + "</div></div>";
+      h += haveSym(t) ? '<div class="lg msyml">' + W.OSAP_SYM.sw(symOf(t), badgeOf(t)) + "<div>" + esc(ty[0]) + "</div></div>"
+        : '<div class="lg"><span class="sw" style="background:' + ty[1] + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span><div>' + esc(ty[0]) + "</div></div>";
     });
     if (S.on.cable) h += '<div class="lg"><span class="sw" style="background:#0b7285;height:3px;width:16px"></span><div>Submarine cable (each in its own colour)</div></div>';
     var lc = {}; (d.lines || []).forEach(function (l) { lc[l.k + ":" + l.t] = 1; });
     if (S.on.rail) Object.keys(RAIL).forEach(function (t) { if (!lc["rail:" + t]) return; h += '<div class="lg"><span class="sw" style="background:' + RAIL[t][1] + ';height:3px;width:16px"></span><div>' + RAIL[t][0] + "</div></div>"; });
     if (S.on.fuel) Object.keys(PIPE).forEach(function (t) { h += '<div class="lg"><span class="sw" style="background:repeating-linear-gradient(90deg,' + PIPE[t][1] + ' 0 6px,transparent 6px 9px);height:3px;width:16px"></span><div>' + PIPE[t][0] + "</div></div>"; });
     if (S.on.plant) h += '<div class="lg"><div><span class="d">Plants of 100 MW and up, and nuclear plants, show at every zoom.</span></div></div>';
+    if (W.OSAP_SYM && W.OSAP_SYM.mark) h += '<div class="lg"><div><span class="d">Official map symbols (MIL-STD-2525D / APP-6 installations, green square = civilian facility).' + (S.on.plant ? " The dot on a power plant is its fuel colour." : "") + "</span></div></div>";
     W.OSAP_LEGEND.set("infra", h);
   }
   function set(k, on) {
@@ -332,8 +326,6 @@
   var css = D.createElement("style");
   css.textContent =
     "#inf-sec{margin:2px 0 6px}#inf-sec .inf-t{font-weight:600;font-size:13px;margin:8px 0 0}#inf-sec .pwr-m[hidden]{display:none}" +
-    ".inf-ic span{display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.55);box-sizing:border-box;padding:3px}" +
-    ".inf-ic svg{width:100%;height:100%}" +
     ".inf-fuels{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 2px 26px}.inf-fuels button{display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:11.5px;padding:3px 7px;border-radius:12px;border:1px solid var(--line,rgba(128,128,128,.4));background:var(--panel,transparent);color:inherit;cursor:pointer;min-height:26px}" +
     ".inf-fuels button span{width:9px;height:9px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.3)}.inf-fuels button[aria-pressed=false]{opacity:.45;text-decoration:line-through}" +
     "[data-inffuel] .pwr-m{margin-left:26px}.mlrow[hidden]{display:none}";

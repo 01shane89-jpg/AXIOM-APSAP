@@ -53,7 +53,9 @@
     if (!map.getPane("pwrpane")) { map.createPane("pwrpane"); map.getPane("pwrpane").style.zIndex = 430; }
     if (!map.getPane("pwrpt")) { map.createPane("pwrpt"); map.getPane("pwrpt").style.zIndex = 655; }
   }
+  /* a substation: the official symbol (MIL-STD-2525D electric power installation, neutral frame) with a dot in its voltage colour */
   function subIcon(b) {
+    if (W.OSAP_SYM && W.OSAP_SYM.d.i_power) return W.OSAP_SYM.icon("i_power", { scale: 0.6, badge: b.col, cls: "pwr-sub" });
     return L.divIcon({ className: "pwr-sub", iconSize: [11, 11], iconAnchor: [5.5, 5.5], html: '<span style="background:' + b.col + '"></span>' });
   }
   function osmPop(kind, t, e) {
@@ -232,7 +234,8 @@
     if (!S.lines && !S.subs) { W.OSAP_LEGEND.set("pwr", ""); return; }
     W.OSAP_LEGEND.set("pwr", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Power grid · voltage</div>' +
       BANDS.map(function (b) { return '<div class="lg"><span class="sw" style="background:' + b.col + ';height:' + Math.max(3, Math.round(b.w + 1)) + 'px;border-radius:2px"></span><div>' + b.l + "</div></div>"; }).join("") +
-      '<div class="lg"><div><span class="d">Dashed: underground or submarine cable. Squares: substations, coloured the same way. OpenStreetMap.</span></div></div>');
+      '<div class="lg"><div><span class="d">Dashed: underground or submarine cable. ' + (W.OSAP_SYM && W.OSAP_SYM.d.i_power ? "Substations: official electric power symbol, the dot coloured the same way." : "Squares: substations, coloured the same way.") + ' OpenStreetMap.</span></div></div>' +
+      (S.subs && W.OSAP_SYM && W.OSAP_SYM.d.i_power ? '<div class="lg msyml">' + W.OSAP_SYM.sw("i_power") + "<div>Substation</div></div>" : ""));
   }
   function set(k, on) {
     if (!/^(plants|lines|subs)$/.test(k) || !map) return;
@@ -251,7 +254,7 @@
     ".pwr-news{list-style:none;margin:0;padding:0}.pwr-news li{padding:5px 0;border-bottom:1px solid var(--line-soft,rgba(128,128,128,.2));font-size:12.5px}.pwr-news .pwr-m{display:block;margin:1px 0 0;color:var(--muted);font-size:11.5px}" +
     ".pwr-m{font-size:11.5px;color:var(--muted);margin:4px 0 0}" +
     ".pwr-pl span{display:flex;align-items:center;justify-content:center;border-radius:50%;background:#6B3FA0;color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.5);box-sizing:border-box}" +
-    ".pwr-sub span{display:block;width:11px;height:11px;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.55);box-sizing:border-box}";
+    ".pwr-sub>span{display:block;width:11px;height:11px;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.55);box-sizing:border-box}";
   D.head.appendChild(css);
 
   /* the home is Map overlays > Infrastructure (#ml-infra, shared with Communications); older pages have only #ml-extra */

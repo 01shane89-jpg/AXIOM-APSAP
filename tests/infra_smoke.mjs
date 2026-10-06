@@ -100,6 +100,9 @@ const popWith = async (p, re) => {
   ok(s.shown.af === 1 && s.hidden > 0, "airfields at zoom 6 with many in view: only the major airport drawn, small ones held back (" + JSON.stringify(s.shown) + ", hidden " + s.hidden + ")");
   ok(/Airfields and heliports: 702 in this country/.test(s.msg) && /appear when you zoom in/.test(s.msg) && /NGA World Port Index/.test(s.msg), "message: count, zoom hint and the failed source: " + s.msg);
   ok(s.legend, "legend on the map");
+  ok(await p.evaluate(() => { let n = 0, sym = 0; window.__asapMap.eachLayer((l) => { if (l.options && /^inf:/.test(l.options.lgk || "") && !l.getLatLngs) { n++; if (/^i_/.test(l.options.sym || "")) sym++; } }); return n > 0 && n === sym; }),
+    "sites drawn as official map symbols, not coloured circles");
+  ok(await p.evaluate(() => /class="lg msyml"><span class="msw"/.test(document.querySelector(".leaflet-control-container").innerHTML)), "legend shows the same symbols");
   await view(p, [13.75, 100.58], 10);
   s = await st(p);
   ok(s.shown.af >= 2 && s.hidden === 0, "zoom 10: small sites in view drawn too (" + JSON.stringify(s.shown) + ")");
