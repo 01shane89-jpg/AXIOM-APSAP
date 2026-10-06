@@ -210,7 +210,7 @@
       fig("settings", "Settings, under the gear") +
       ul(["The gear holds settings for this device: " + b("Map colours") + " (Light, Grey, Dark), " + b("Grid format") + " (MGRS, Lat/long, DMS) and " + b("Distance units") + " (km, miles, nautical mi).",
         b("Use my location") + ": off until you turn it on. OSAP then starts on your country and shows where you are. Only the country is stored, never your position.",
-        b("Language") + ": shows OSAP's menus, lists and reports in another language, using Google's machine translation. Nothing goes to Google while English is picked. The map stays in English.",
+        b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
         b("User guide") + ": this guide."]) +
       "<h3>Offline maps and data</h3>" +
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",

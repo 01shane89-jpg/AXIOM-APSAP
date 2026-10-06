@@ -1,7 +1,7 @@
-// Headless check of the interface language picker (assets/osap-lang.js): English loads nothing from Google, Settings >
-// Language opens the picker, picking a language loads the translator and switches it, the choice comes back after a
-// reload, English again clears it, an unreachable translator leaves the page in English with a message, and the map
-// stays marked translate="no". Google's script is replaced by a local stand-in, so the test needs no network.
+// Headless check of the interface language menu (assets/osap-i18n.js + assets/i18n/<code>.js): English by default and
+// nothing loaded, Settings (the gear) shows the Language menu above Credits, picking Thai swaps the app's own words and
+// loads only the Thai table, reports are left as published, the choice comes back after a reload, English puts every
+// word back, and no request leaves the site.
 // Run from the repo root: node tests/lang_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -20,76 +20,41 @@ const browser = await chromium.launch(process.env.CHROME ? { executablePath: pro
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
-/* stands in for Google's element.js: builds the hidden language box and records what it was asked for */
-const STUB = `(function(){window.google={translate:{TranslateElement:function(o,el){window.__gtOpts=o;var s=document.createElement("select");
-s.className="goog-te-combo";["","fr","th","de"].forEach(function(v){var x=document.createElement("option");x.value=v;s.appendChild(x);});
-s.addEventListener("change",function(){window.__gtLang=s.value;document.documentElement.classList.add("translated-ltr");});el.appendChild(s);}}};
-var m=/[?&]cb=([^&]+)/.exec(document.currentScript.src);if(m)window[m[1]]();})();`;
+const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
+const tables = []; const errors = [];
+await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+ctx.on("request", (r) => { const m = /assets\/i18n\/([a-z]+)\.js/.exec(r.url()); if (m) tables.push(m[1]); });
+ctx.on("page", (p) => p.on("pageerror", (e) => errors.push(e.message)));
+const p = await ctx.newPage(); await p.goto(base); await p.waitForTimeout(4000);
+const gear = () => p.evaluate(() => document.getElementById("tidy-set").click());
 
-async function ctxWith(google = "stub") {
-  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, serviceWorkers: "block" });
-  const gt = []; const errors = [];
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
-    const u = r.request().url();
-    if (/translate\.google\.com\/translate_a\/element\.js/.test(u)) { gt.push(u); return google === "stub" ? r.fulfill({ contentType: "text/javascript", body: STUB }) : r.abort(); }
-    r.abort();
-  });
-  ctx.on("page", (p) => p.on("pageerror", (e) => errors.push(e.message)));
-  return { ctx, gt, errors };
-}
-const settle = (p, ms = 4000) => p.waitForTimeout(ms);
-
-{
-  const { ctx, gt, errors } = await ctxWith();
-  const p = await ctx.newPage(); await p.goto(base); await settle(p);
-  ok(await p.evaluate(() => !!window.OSAP_LANG && window.OSAP_LANG.cur() === "en"), "English by default");
-  ok(gt.length === 0, "English loads nothing from Google");
-  ok(await p.evaluate(() => document.documentElement.getAttribute("translate") !== "no"), "page itself is translatable");
-  ok(await p.evaluate(() => document.getElementById("map").getAttribute("translate") === "no"), "map is marked translate=no");
-  // Settings (gear) has a Language row that opens the picker
-  await p.evaluate(() => document.getElementById("tidy-set").click());
-  await p.waitForTimeout(300);
-  ok(await p.evaluate(() => { const b = document.querySelector('#tidy-pop [data-tp="@lang"]'); return !!b && /Language/.test(b.textContent) && /English/.test(b.textContent); }), "Settings shows Language: English");
-  await p.evaluate(() => document.querySelector('#tidy-pop [data-tp="@lang"]').click());
-  await p.waitForTimeout(300);
-  ok(await p.evaluate(() => { const b = document.querySelector(".olang"); return !!b && !b.hidden && b.querySelectorAll("[data-lang]").length >= 30; }), "picker opens with the language list");
-  ok(await p.evaluate(() => document.querySelector('.olang [data-lang="en"]').getAttribute("aria-pressed") === "true"), "English is the pressed choice");
-  // pick French
-  await p.click('.olang [data-lang="fr"]');
-  await p.waitForFunction(() => window.__gtLang === "fr", null, { timeout: 10000 }).catch(() => {});
-  ok(gt.length === 1, "picking French loads the translator once");
-  ok(await p.evaluate(() => window.__gtLang === "fr"), "translator switched to French");
-  ok(await p.evaluate(() => window.__gtOpts && window.__gtOpts.pageLanguage === "en"), "translator told the page is English");
-  ok(await p.evaluate(() => localStorage.getItem("osap-lang") === "fr" && /googtrans=\/en\/fr/.test(document.cookie)), "choice kept on this device");
-  ok(await p.evaluate(() => document.querySelector(".olang").hidden), "picker closes after a pick");
-  ok(await p.evaluate(() => { const g = document.getElementById("google_translate_element"); return !!g && getComputedStyle(g).display === "none"; }), "Google's own control stays hidden");
-  // reload: French comes back on its own
-  await p.reload(); await settle(p);
-  await p.waitForFunction(() => window.__gtLang === "fr", null, { timeout: 10000 }).catch(() => {});
-  ok(await p.evaluate(() => window.__gtLang === "fr"), "French comes back after a reload");
-  // back to English: storage and cookie cleared, page reloads in English with nothing from Google
-  const before = gt.length;
-  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => {}), p.evaluate(() => window.OSAP_LANG.set("en"))]);
-  await settle(p, 3000);
-  ok(await p.evaluate(() => !localStorage.getItem("osap-lang") && !/googtrans=\/en\//.test(document.cookie)), "English clears the choice");
-  ok(gt.length === before, "English after a reload loads nothing from Google");
-  ok(errors.length === 0, "no page errors " + errors.join(" | "));
-  await ctx.close();
-}
-{
-  // translator unreachable: message shown, page still in English and usable
-  const { ctx, errors } = await ctxWith("blocked");
-  const p = await ctx.newPage(); await p.goto(base); await settle(p);
-  await p.evaluate(() => window.OSAP_LANG.open());
-  await p.click('.olang [data-lang="th"]');
-  await p.waitForFunction(() => /could not be reached/.test((document.querySelector(".olang .olmsg") || {}).textContent || ""), null, { timeout: 10000 }).catch(() => {});
-  ok(await p.evaluate(() => /could not be reached/.test(document.querySelector(".olang .olmsg").textContent)), "unreachable translator says so");
-  ok(await p.evaluate(() => !document.documentElement.classList.contains("translated-ltr")), "page stays as written");
-  await p.click(".olang [data-lang-close]");
-  ok(await p.evaluate(() => document.querySelector(".olang").hidden), "picker closes");
-  ok(errors.length === 0, "no page errors " + errors.join(" | "));
-  await ctx.close();
-}
+ok(await p.evaluate(() => !!window.OSAP_I18N && window.OSAP_I18N.lang() === "en"), "English by default");
+ok(tables.length === 0, "English loads no word table");
+ok(await p.evaluate(() => window.OSAP_I18N.langs().length === 9), "nine languages offered");
+await gear(); await p.waitForTimeout(300);
+ok(await p.evaluate(() => { const s = document.querySelector("#tidy-pop .tpset #osap-lang-sel"); const c = document.querySelector('#tidy-pop [data-tp="#credits-btn"]');
+  return !!s && !!c && !!(s.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING); }), "Settings shows the Language menu above Credits");
+// pick Thai from the menu
+await p.selectOption("#osap-lang-sel", "th");
+await p.waitForFunction(() => document.documentElement.getAttribute("data-ui-lang") === "th", null, { timeout: 10000 }).catch(() => {});
+ok(JSON.stringify(tables) === '["th"]', "picking Thai loads only the Thai table " + JSON.stringify(tables));
+ok(await p.evaluate(() => localStorage.getItem("osap-lang") === "th"), "choice kept on this device");
+ok(await p.evaluate(() => /ภาษา/.test(document.getElementById("osap-lang-h").textContent) && /Language/.test(document.getElementById("osap-lang-h").textContent)), "menu heading shows Thai and English");
+ok(await p.evaluate(() => !document.querySelector(".tplnote").hidden), "AI generated note shown for an AI-drafted table");
+ok(await p.evaluate(() => [...document.querySelectorAll("button,h1,h2,h3,[title]")].filter((e) => /[\u0E00-\u0E7F]/.test((e.getAttribute("title") || "") + e.textContent)).length >= 20), "app words swapped to Thai on screen");
+ok(await p.evaluate(() => { const m = document.getElementById("map"); return !!m && m.getAttribute("translate") === "no"; }), "map still marked translate=no");
+// reload: Thai comes back on its own
+tables.length = 0;
+await p.reload(); await p.waitForTimeout(4000);
+await p.waitForFunction(() => document.documentElement.getAttribute("data-ui-lang") === "th", null, { timeout: 10000 }).catch(() => {});
+ok(await p.evaluate(() => window.OSAP_I18N.lang() === "th" && document.documentElement.getAttribute("data-ui-lang") === "th"), "Thai comes back after a reload");
+// back to English: every swapped word restored
+await p.evaluate(() => window.OSAP_I18N.set("en"));
+await p.waitForFunction(() => document.documentElement.getAttribute("data-ui-lang") === "en", null, { timeout: 10000 }).catch(() => {});
+ok(await p.evaluate(() => !localStorage.getItem("osap-lang")), "English clears the choice");
+ok(await p.evaluate(() => !/[฀-๿]/.test([...document.querySelectorAll("#tidy-set,#tidy-rep,#phone-nav,.atak-tb,.atak-tb *")].map((e) => (e.getAttribute("title") || "") + e.textContent).join(" "))), "toolbar and gear back in English");
+ok(await p.evaluate(() => document.getElementById("tidy-set").getAttribute("title") === "Settings" || /^Settings/.test(document.getElementById("tidy-set").getAttribute("title") || "")), "Settings tooltip back in English");
+ok(errors.length === 0, "no page errors " + errors.join(" | "));
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

@@ -129,8 +129,6 @@
     /* the AI model the AI summaries use where the browser has none of its own (assets/osap-ai.js) */
     if (W.OSAP_AI) h += '<button type="button" role="menuitem" data-tp="@ai">On-device AI</button>';
     /* the user guide, offline and printable (assets/osap-guide.js) */
-    /* the interface language, translated by Google only once a language other than English is picked (assets/osap-lang.js) */
-    if (W.OSAP_LANG) h += '<button type="button" role="menuitem" data-tp="@lang">Language<span class="notranslate" translate="no">' + esc(W.OSAP_LANG.name(W.OSAP_LANG.cur()).replace(/ .*$/, "")) + "</span></button>";
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
     if (W.OSAP_LOCK) h += '<button type="button" role="menuitem" data-tp="@lock">Hidden areas</button>';
@@ -191,7 +189,6 @@
     else if (sel === "@move") { if (W.OSAP_MOVE) W.OSAP_MOVE.open(); }
     else if (sel === "@ai") { if (W.OSAP_AI) W.OSAP_AI.open(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
-    else if (sel === "@lang") { if (W.OSAP_LANG) W.OSAP_LANG.open(); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else press(sel);
   });
