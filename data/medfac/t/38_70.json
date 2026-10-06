@@ -1,3 +1,9 @@
 [["n1042050677",38.4611,70.8825,"af",{"name":"Darwaz Airport","aeroway":"aerodrome","icao":"OADZ","iata":"DAZ"}],
+["n5843487931",39.6413,70.27356,"kg",{"aeroway":"helipad"}],
+["r3411747",39.93914,71.3417,"kg",{"name":"Перинаталдык борбор","amenity":"hospital","healthcare":"centre","healthcare:speciality":"gynaecology"}],
+["w1115183960",39.89888,71.07664,"kg",{"name":"ФАП","amenity":"clinic","healthcare":"clinic"}],
+["w1115420297",39.89966,71.10333,"kg",{"name":"Больница Таян","amenity":"hospital","healthcare":"hospital"}],
 ["w1267013951",38.31134,71.29965,"af",{"aeroway":"helipad"}],
-["w1267013952",38.31134,71.29965,"af",{"aeroway":"helipad"}]]
+["w1267013952",38.31134,71.29965,"af",{"aeroway":"helipad"}],
+["w328350892",39.94343,71.65753,"kg",{"aeroway":"helipad"}],
+["w443523602",39.48879,71.7937,"kg",{"name":"Д.Молдоболотов атындагы больница","amenity":"hospital","emergency":"no","addr:housenumber":"25","addr:street":"Тилек Баатыр","addr:city":"Карамык"}]]

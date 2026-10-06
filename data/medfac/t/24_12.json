@@ -1,0 +1,4 @@
+[["n7884168585",25.91581,13.91901,"ly",{"name":"جمعية الهلال الاحمر - مرزق","name:en":"Libyan Red Crescent Society","amenity":"clinic"}],
+["w790401760",25.91665,13.92481,"ly",{"name":"مستشفى الدرن","name:en":"Tuberculosis Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"مرزق"}],
+["w813499596",25.91422,13.9259,"ly",{"name":"مستشفي مرزق العام","name:en":"Murzuq General Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w914745970",25.92393,13.91644,"ly",{"name":"مستشفي العلاج الطبيعي -مرزق","name:en":"Physiotherapy Hospital - Murzuq","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"psychiatry","operator:type":"public"}]]

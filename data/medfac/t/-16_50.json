@@ -1,0 +1,7 @@
+[["n1042037147",-14.99907,50.31825,"mg",{"name":"Antsirabato Airport","aeroway":"aerodrome","icao":"FMNH","iata":"ANM","wikidata":"Q4777396"}],
+["n11439411170",-14.90214,50.27526,"mg",{"amenity":"clinic","osap:withheld":"1"}],
+["n11619003930",-14.2714,50.11345,"mg",{"name":"Mahasoa","amenity":"clinic"}],
+["n722853356",-14.27818,50.17666,"mg",{"name":"Aéroport de Sambava","name:en":"Sambava Airport","aeroway":"aerodrome","icao":"FMNS","iata":"SVB","wikidata":"Q7409017"}],
+["w1043652832",-14.26524,50.13428,"mg",{"name":"Centre Hospitalier de Référence Régional Sambava","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w480497645",-14.27181,50.17452,"mg",{"name":"Hôpital Médico-chirurgical SALFA Sambava","amenity":"hospital","healthcare":"hospital","operator":"FLM","operator:type":"religious"}],
+["w800705715",-14.2873,50.18179,"mg",{"name":"Service Médical Interentreprises de Sambava","amenity":"clinic","healthcare":"clinic","operator:type":"private"}]]
