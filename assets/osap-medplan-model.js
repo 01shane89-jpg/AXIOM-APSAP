@@ -43,6 +43,9 @@
       caps_now: f.caps_now || {}, intel: f.intel || null, designation: f.designation || "", source: f.source || "" };
   }
 
+  /* the first air medical service documented for the country, and the words that say how to ask for it */
+  function docAir(p) { return p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "DOCUMENTED"; })[0] || null; }
+  function askAir(d) { return d ? "Documented service: " + d.name + ". " + d.request_method + "." : "No air medevac service documented for this country in OSAP yet: ask the national emergency number and International SOS (section 4)."; }
   function mins(sec) { var m = Math.round((+sec || 0) / 60); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + ("0" + m % 60).slice(-2) + " min"; }
   /* the road lines to each hospital: P is the plan's own route (its time drives the plan); A and C, and the hazards along every
      line, come from the Route tab's alternates (phase 3). router_time_s is the router's time for that line, so A and C compare
@@ -123,7 +126,7 @@
     /* air MEDEVAC: only a confirmed aircraft inside its limits is an air option */
     var conf = p.evacuation_assets.filter(function (a) { return a.kind === "air" && a.status === "CONFIRMED"; }), fit = conf.filter(function (a) { return !(a.limits_now || []).length; });
     if (!fit.length) flag("air.none", "warning", conf.length ? "CONFIRMED AIRCRAFT STOPPED BY ITS LIMITS NOW / GROUND EVACUATION PLANNED" : "NO CONFIRMED AIR MEDEVAC / GROUND EVACUATION PLANNED",
-      conf.length ? conf[0].name + ": " + conf[0].limits_now.join("; ") + "." : "Air times are potential only until a provider confirms an aircraft (section 4).", "planner's aircraft records");
+      conf.length ? conf[0].name + ": " + conf[0].limits_now.join("; ") + "." : "Air times are potential only until a provider confirms an aircraft (section 4). " + askAir(docAir(p)), "planner's aircraft records");
     /* data age: anything past its use-by, or never read, is said, never shown as if live */
     var ages = dataAge(I.data_age, now);
     ages.forEach(function (a) {
@@ -186,6 +189,12 @@
         critical_care_capability: a.critical_care_capability, hoist: a.hoist, request_method: a.request_method, call_sign: a.call_sign, frequency: a.frequency, phone: a.phone,
         source: "planner (aircraft for this plan)", last_confirmed: a.last_confirmed, expires_at: a.expires_at });
     });
+    /* air medical services a government or the service itself documents for the country (assets/osap-medplan-air.js): who to
+       ask and how, never an aircraft for this mission and never in the plan's choice of hospital */
+    (I.air_providers || []).forEach(function (d) {
+      air.push({ kind: "air", id: d.id, name: d.provider, provider: d.provider, status: "DOCUMENTED", request_method: str(d.request), phone: str(d.phone), missions: str(d.missions),
+        source: str(d.srcname), source_url: str(d.src), fp: str(d.fp), last_confirmed: null });
+    });
     if (!blank(v.casevac)) air.push({ kind: "ground", name: str(v.casevac), status: "PLANNED", source: "planner (CASEVAC vehicles)", last_confirmed: null });
     var plan = {
       schema: SCHEMA, id: "mp-" + str(I.cc) + "-" + (I.poi ? I.poi.lat.toFixed(4) + "_" + I.poi.lon.toFixed(4) : "none"), version: 1,
@@ -244,7 +253,8 @@
     if (dF) CRITICAL.forEach(function (c) { if ((dF.caps || {})[c[0]] !== "yes") gaps.push(c[1]); else if ((dF.caps_now || {})[c[0]] === "UNAVAILABLE") gaps.push(c[1] + " reported not available now"); });
     if (prof && prof.stabilization_gap) gaps.push("No stabilization stop documented inside the golden hour");
     if (def) gaps.push("Receiving hospital acceptance");
-    if (!air) gaps.push("Air MEDEVAC provider");
+    var dA = air ? null : docAir(p);
+    if (!air) gaps.push(dA ? "Air MEDEVAC provider not confirmed: request " + dA.name + " (" + dA.request_method + ") and record the aircraft in section 4" : "Air MEDEVAC provider: none documented for this country in OSAP; ask the national emergency number and International SOS");
     var sea = p.poi && p.poi.environment === "sea", sl = sea ? p.sea_leg : null;
     if (sea) gaps.push("Air pickup at sea: accepted deck landing or hoist" + (sl && sl.port ? "; landing at " + sl.port + " confirmed with the port" : ""));
     (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
@@ -252,7 +262,8 @@
       casualty: prof ? { id: prof.id, label: prof.label } : null, status: p.validation_status.status, status_label: p.validation_status.label, poi: p.poi ? p.poi.mgrs : "",
       ground: sea && !(sl && sl.port) ? "NONE: AT SEA, NO LANDING PORT" : P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
       at_sea: sea, sea_leg: sl && sl.port ? { port: sl.port, nm: sl.nm, kn: sl.kn, s: sl.s } : null,
-      air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : "",
+      air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : dA ? "Request: " + dA.name + ", " + (dA.phone ? "call " + dA.phone : dA.request_method) + " (documented service, not confirmed for this mission)" : "No air medevac service documented for this country in OSAP",
+      air_documented: dA ? { name: dA.name, request: dA.request_method, phone: dA.phone, source: dA.source, source_url: dA.source_url } : null,
       stabilization: stab, stabilization_gap: !!(prof && prof.stabilization_gap), definitive: def, bypass: !!(prof && prof.bypass),
       primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
       alternate_route: !def ? "NO DESTINATION" : A ? "AVAILABLE" : !ga ? "NOT LOOKED FOR" : ga.state === "pending" ? "CHECKING" : "NONE FOUND",
@@ -324,7 +335,7 @@
       fit.length ? fit[0].name + " confirmed" + (fit[0].expires_at ? " until " + fit[0].expires_at.slice(0, 16).replace("T", " ") + "Z" : "") :
       conf.length ? conf[0].name + " confirmed but stopped by its limits now: " + conf[0].limits_now.join("; ") + "." :
       lapsed.length ? lapsed[0].name + ": confirmation expired; confirm again." :
-      planned.length ? planned[0].name + " (entered, not confirmed). Air does not compete with the road until an aircraft is confirmed." : "None confirmed. Air does not compete with the road until an aircraft is confirmed.");
+      planned.length ? planned[0].name + " (entered, not confirmed). Air does not compete with the road until an aircraft is confirmed." : "None confirmed. " + askAir(docAir(p)) + " Air does not compete with the road until an aircraft is confirmed.");
     /* phase 3: a CCP, AXP or HLZ is a map object only with a grid; a name alone cannot be drawn, routed or flown to */
     function site(code, label, x) {
       if (x.status === "NOT_SET") add(code, "warning", label, "Not set.");

@@ -526,6 +526,32 @@
   var CAP_NAME = {}; CAPS.forEach(function (c) { CAP_NAME[c[0]] = c[1]; });
   var MED_SCHOOL = /\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19\u0e41\u0e1e\u0e17\u0e22\u0e4c/,
     OFFICIAL_CAPS = { full: ["ed.basic", "ed.24_7", "surg.general", "surg.or_emergency", "surg.anaesthesia", "blood.bank", "dx.ct", "cc.icu"], ed: ["ed.basic", "ed.24_7"] };
+  /* what Thailand's Ministry of Public Health says each service level has, beyond the official status above (Shane 2026-10-06:
+     King Narai, level S with 548 beds 5 km from his point, was credited with an emergency department only). Each capability
+     is INFERRED from the level, never VERIFIED, and names the government text it rests on:
+       def  MOPH Service Plan levels as printed in the Department of Health Service Support building standard (2560, pp. 10-11):
+            M2 has specialists in all six major branches (medicine, surgery, obstetrics, paediatrics, orthopaedics, anaesthesia),
+            an operating theatre, an intensive care ward and diagnostic radiology; M1 has every major branch and some
+            secondary ones; S every major and secondary branch and some sub-specialties; A all of them
+       kpi  MOPH health KPI 046.2: trauma triage level 1 patients needing surgery in level A, S and M1 hospitals reach the
+            operating room within 60 minutes (target 80%), so those levels run an emergency department and emergency theatre
+       icu  Department of Health Service Support criteria table (Journal of the DHSS, 2561, vol. 14 no. 2): hospital
+            infrastructure (ICU, OR) is a criterion for levels M2, M1, S and A
+     Blood bank and CT are named by none of these for levels below A: they stay unknown until a source states them. */
+  var MOPH_SRC = {
+    def: { name: "MOPH Service Plan hospital levels (Department of Health Service Support building standard, 2560, pp. 10-11)", url: "https://dcd.hss.moph.go.th/web/attachments/article/248/151217_042853.pdf", at: "2026-10-06" },
+    kpi: { name: "MOPH health KPI 046.2: trauma patients in level A, S and M1 hospitals in the operating room within 60 minutes", url: "https://healthkpi.moph.go.th/kpi2/kpi-list/view/?id=1520", at: "2026-10-06" },
+    icu: { name: "Department of Health Service Support: hospital level criteria (ICU, OR from level M2 up)", url: "https://thaidj.org/index.php/jdhss/article/download/6559/6169/9140", at: "2026-10-06" } };
+  var MOPH_WHY = {
+    def: { M2: "level M2: specialists in all six major branches, operating theatre, intensive care ward, diagnostic radiology", M1: "level M1: specialists in every major branch (surgery, orthopaedics and anaesthesia among them)",
+      S: "level S: specialists in every major and secondary branch", A: "level A: specialists in every branch" },
+    kpi: "level A, S and M1 hospitals are measured on getting trauma patients who need surgery into the operating room within 60 minutes",
+    icu: "ICU and operating theatre are level criteria from M2 up" };
+  var MOPH_LEVEL_CAPS = {
+    A: [["surg.ortho", "def"]],
+    S: [["ed.basic", "kpi"], ["ed.24_7", "kpi"], ["surg.or_emergency", "kpi"], ["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "icu"]],
+    M2: [["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "def"], ["dx.xray", "def"]] };
+  MOPH_LEVEL_CAPS.M1 = MOPH_LEVEL_CAPS.S;
   /* healthcare:speciality values that state a flag (whole values, so "neurology" is not neurosurgery) */
   var CAP_RE = W.OSAP_HOSP.SPECIALITY_RE;
   function capFlags(f, m) {
@@ -577,6 +603,13 @@
         C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
           source: { kind: "register", url: ps0.page || "", name: ps0.name || "HA Thailand official hospital record", at: g.retrieved, sha: g.sha256 || "" },
           how: "inferred from the official record: " + (g.level === "A" ? "MOPH service level A (regional referral)" : MED_SCHOOL.test(g.type_th || "") ? "medical school hospital" : "MOPH service level " + g.level) + ", H code " + g.hcode };
+      });
+      (MOPH_LEVEL_CAPS[g.level] || []).forEach(function (x) {
+        var k = x[0], src = MOPH_SRC[x[1]];
+        if (!C[k] || !(C[k].status === "UNKNOWN" || (C[k].status === "REPORTED" && crowd(C[k].source)))) return;
+        C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
+          source: { kind: "register", url: src.url, name: src.name, at: src.at },
+          how: "inferred from the official record: MOPH service level " + g.level + ", H code " + g.hcode + "; " + (x[1] === "def" ? MOPH_WHY.def[g.level] : MOPH_WHY[x[1]]) };
       });
     }
     /* a planner's check outranks every source (V1), and only it says whether a capability can be used now */
@@ -969,7 +1002,60 @@
   function chkKey() { return "osap-medcheck-" + (cc() || "x"); }
   function checks() { var v = lsGet(chkKey()); return Array.isArray(v) ? v : []; }
   function setOff(id, off) { var L = offIds().filter(function (x) { return x !== id; }); if (off) L.push(id); lsSet(offKey(), L.slice(-500)); }
-  function fieldVals() { return lsGet(fieldsKey()) || {}; }
+  /* section 9's place-bound fields (Shane 2026-10-06: a Sukhothai receiving facility turned up in a plan near Lop Buri and
+     blocked it): the receiving facilities, CCP, AXP, HLZ, their checks, the landing port and the chosen aircraft base belong to
+     the place a plan was made for, never to the whole country. They are kept per place: a plan uses the set saved nearest to
+     where it was opened, within 25 km, or starts an empty one. Unit, mission, frequencies, providers and timings stay per
+     country. Values saved before this change (per country) are never used silently: section 9 offers them once. */
+  var LOC_RE = /^(recv[12]|ccp[12]|axp|hlz[12]|seaport|mbase)(_st|_at|_cap|_note)?$/, SITE_R = 25000, MAX_SETS = 40;
+  function setsKey() { return KEY + "sites-" + (cc() || "x"); }
+  function placeSets() { var v = lsGet(setsKey()); return Array.isArray(v) ? v.filter(function (x) { return x && x.id && Array.isArray(x.o); }) : []; }
+  function curSet() {
+    if (!ST || !ST.o) return null;
+    if (ST.ss) return ST.ss;
+    var best = null;
+    placeSets().forEach(function (x) { var m = hav(x.o, ST.o); if (m <= SITE_R && (!best || m < best.m)) best = { x: x, m: m }; });
+    ST.ss = best ? { id: best.x.id, o: best.x.o } : { id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), o: [ST.o[0], ST.o[1]] };
+    return ST.ss;
+  }
+  function fieldVals() {
+    var v = lsGet(fieldsKey()) || {}, out = {}, c = curSet();
+    Object.keys(v).forEach(function (k) { if (!LOC_RE.test(k)) out[k] = v[k]; });
+    var x = c && placeSets().filter(function (y) { return y.id === c.id; })[0];
+    if (x && x.v) Object.keys(x.v).forEach(function (k) { if (LOC_RE.test(k)) out[k] = x.v[k]; });
+    return out;
+  }
+  /* saves what fieldVals() gave back: place-bound keys to this plan's place, the rest to the country; a value saved per country
+     before this change stays where it was until the planner uses or discards it */
+  function saveVals(vals) {
+    var base = lsGet(fieldsKey()) || {}, rest = {}, loc = {};
+    Object.keys(base).forEach(function (k) { if (LOC_RE.test(k)) rest[k] = base[k]; });
+    Object.keys(vals || {}).forEach(function (k) { if (LOC_RE.test(k)) loc[k] = vals[k]; else rest[k] = vals[k]; });
+    lsSet(fieldsKey(), rest);
+    var c = curSet(); if (!c) return;
+    var L = placeSets().filter(function (y) { return y.id !== c.id; });
+    if (Object.keys(loc).some(function (k) { return String(loc[k] == null ? "" : loc[k]).trim(); })) L.push({ id: c.id, o: c.o, at: new Date().toISOString(), v: loc });
+    lsSet(setsKey(), L.slice(-MAX_SETS));
+  }
+  /* place-bound values still saved per country (before 2026-10-06): shown in section 9 to use here or discard, never used unasked */
+  function legacyVals() {
+    var v = lsGet(fieldsKey()) || {}, o = {};
+    Object.keys(v).forEach(function (k) { if (LOC_RE.test(k) && String(v[k] == null ? "" : v[k]).trim()) o[k] = v[k]; });
+    return o;
+  }
+  function legacyHtml() {
+    var L = legacyVals(), shown = FIELDS.filter(function (f) { return LOC_RE.test(f[0]) && L[f[0]]; });
+    if (!shown.length) return "";
+    return '<div class="mpwarn noprint" id="mp-legacy"><p><b>Saved from an earlier plan, not used here.</b> These were saved for the whole country before details were tied to a place, so this plan does not use them: ' +
+      shown.map(function (f) { return esc(f[1]) + " \u201c" + esc(clip(L[f[0]], 80)) + "\u201d"; }).join("; ") + '.</p><p><button type="button" class="refresh" data-mp="legacyuse">Use them in this plan</button> <button type="button" class="refresh" data-mp="legacydrop">Discard them</button></p></div>';
+  }
+  function legacyMove(use) {
+    var base = lsGet(fieldsKey()) || {}, L = legacyVals(), v = fieldVals();
+    if (use) Object.keys(L).forEach(function (k) { if (!String(v[k] == null ? "" : v[k]).trim()) v[k] = L[k]; });
+    Object.keys(L).forEach(function (k) { delete base[k]; });
+    lsSet(fieldsKey(), base);
+    if (use) saveVals(v);
+  }
   function num(k) { var v = +fieldVals()[k]; return isFinite(v) && (v > 0 || (k === "dwell" || k === "xact" || k === "handoff") && v === 0 && fieldVals()[k] !== "") && v < 1000 ? v : DEF[k]; }
   function fieldsHtml() {
     var v = fieldVals();
@@ -1052,8 +1138,8 @@
       '<h3>6. Evacuate out of country</h3><div id="mp-oc"></div>' +
       '<h3>7. Health threats</h3><div id="mp-thr"></div>' +
       '<h3>8. Evacuation weather and ground</h3><div id="mp-wx"><p class="obs">Reading the forecast…</p></div>' +
-      '<h3>9. Unit and evacuation details</h3><p class="obs noprint">Fill these in. They stay on this device only and are the same for every area in this country. Grids can be MGRS or lat, lon.</p>' +
-      '<div class="mpgrid">' + fieldsHtml() + "</div>" + '<div id="mp-sites"></div>' +
+      '<h3>9. Unit and evacuation details</h3><p class="obs noprint">Fill these in. They stay on this device only. The receiving facilities, CCPs, AXP and HLZs belong to this place: a plan opened more than 25 km away starts without them. The unit, mission, providers and frequencies are the same for every plan in this country. Grids can be MGRS or lat, lon.</p>' +
+      legacyHtml() + '<div class="mpgrid">' + fieldsHtml() + "</div>" + '<div id="mp-sites"></div>' +
       '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
       "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source; OpenStreetMap and Wikipedia are shown but never qualify. Official trauma designations appear only as a source states them. Observed classes T1 to T5 are inferred from capability flags and are not official levels. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
@@ -1847,6 +1933,17 @@
     }
     el.innerHTML = h;
   }
+  /* the air medical services a government or the service documents for this country (assets/osap-medplan-air.js): who to
+     call and how, quoted and linked; never an aircraft for this mission until the planner records one as confirmed below */
+  function airDocHtml(s) {
+    var L = MA() ? MA().providers(s.cc) : [];
+    if (!L.length) return '<p><b>Air medevac service:</b> <span class="mpwarn">none documented for this country in OSAP yet.</span> That does not mean there is none: ask the national emergency number above and International SOS, and record any aircraft you confirm under Aircraft for this plan.</p>';
+    return "<p><b>Air medevac service documented for this country</b> (who to ask; not an aircraft for this mission until you record it as confirmed below)</p><ul>" + L.map(function (d) {
+      return "<li><b>" + esc(d.provider) + "</b>. " + esc(d.request) + (d.phone ? ': <a href="tel:' + esc(d.phone.replace(/[^0-9+]/g, "")) + '">' + esc(d.phone) + "</a>" : "") + "." +
+        '<span class="sub">' + esc(d.missions) + ". " + esc(d.aircraft) + ". Bases: " + esc(d.bases) + ". " + esc(d.eligibility) + ".</span>" +
+        '<span class="sub">Source: \u201c' + esc(d.quote) + "\u201d " + link(d.src, "(" + d.srcname + ", page updated " + d.page_updated + ", read " + d.read + ")") + "</span></li>";
+    }).join("") + "</ul>";
+  }
   function mevRender() {
     var el = D.getElementById("mp-mev"), s = ST; if (!el) return;
     var v = fieldVals(), rw = num("rwkn"), launch = num("launch"), best = s.fac && s.fac.H[0];
@@ -1854,6 +1951,7 @@
     var mine = ["medevac1", "medevac2", "freq1", "freq2"].filter(function (k) { return v[k]; });
     h += mine.length ? "<ul>" + mine.map(function (k) { return "<li>" + esc(fieldLabel(k)) + ": <b>" + esc(v[k]) + "</b></li>"; }).join("") + "</ul>"
       : '<p class="obs">Add your medevac provider, phone and frequencies in section 9; they print here.</p>';
+    h += airDocHtml(s);
     h += '<p><b>Assistance and medevac coordination</b> (published institutional numbers)</p><ul>' + isosHtml(s.o) + tricareHtml(s.cc, true) + '</ul><p class="obs">International SOS arranges medevac for its members and their clients; confirm your organisation\'s membership and policy number before the mission.</p>';
     h += '<p class="mpspd noprint"><label>Helicopter cruise <input type="number" min="60" max="300" step="5" data-mpf="rwkn" value="' + rw + '"> kn</label><label>Fixed-wing cruise <input type="number" min="100" max="600" step="10" data-mpf="fwkn" value="' + num("fwkn") + '"> kn</label><label>Launch time <input type="number" min="0" max="120" step="5" data-mpf="launch" value="' + launch + '"> min</label></p>';
     var mb = mbase(s), BL = baseList(s), cur = fieldVals().mbase || "";
@@ -2229,6 +2327,8 @@
     li.push([SRC.osm, s.osmErr ? "not reached: " + s.osmErr : s.osmAt ? "read " + dual(s.osmAt, true) + (s.osmBase ? "; OSM data as of " + s.osmBase : "") : s.fac ? "not asked: the stored copy covers this area" : "waiting"]);
     if (sofOf(s.cc)) li.push([SRC.sof, "as of " + (sofOf(s.cc).asof || "")]);
     if (s.gov || s.govErr) li.push([SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")]);
+    (MA() ? MA().providers(s.cc) : []).forEach(function (d) { li.push([{ name: d.srcname, url: d.src }, "page updated " + d.page_updated + ", read " + d.read + "; air medevac service, how to request it (record SHA-256 " + d.fp.slice(0, 12) + "\u2026)"]); });
+    if (s.gov) ["def", "kpi", "icu"].forEach(function (k) { li.push([MOPH_SRC[k], "read " + MOPH_SRC[k].at + "; what each MOPH service level has, used as inferred capability"]); });
     if (s.web || s.webErr) li.push([SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"]);
     if (s.ph || s.phErr) li.push([SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"]);
     li.push([SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"]);
@@ -2319,7 +2419,9 @@
       s.fac.E.forEach(function (f, i) { out.push(["mk", [f.lat, f.lon], "E" + (i + 1), "e", f.name]); });
       s.fac.L.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "L" + (i + 1), "air", l.name]); });
       s.fac.AF.forEach(function (l, i) { out.push(["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
-      s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id];
+      /* only the hospitals the plan uses (Shane 2026-10-06): its picks, stabilization stops and documented alternates; the
+         rest stay listed in section 2 for reference but are not drawn */
+      s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id]; if (!r && !a) return;
         out.push(["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
       /* a stabilization stop from the hospitals with no details listed */
       P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) out.push(["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
@@ -2529,6 +2631,7 @@
       }) : [],
       aircraft: aircraft().map(function (a) { var st = MA() ? MA().state(a, new Date().toISOString()) : { status: "UNKNOWN" }; return Object.assign({}, a, { status_now: st.status, limits_now: MA() ? MA().limits(a, wxNow(s)) : [] }); }),
       air_missions: s.fac && MA() ? picks(s).map(function (p) { var m = airMission(p.f); return m ? { facility_id: p.f.id, asset_id: m.asset_id, provider: m.provider, s: m.total_s, parts: m.parts, pickup: m.pickup } : null; }).filter(Boolean) : [],
+      air_providers: MA() ? MA().providers(s.cc) : [],
       air_bases: s.x ? s.x.R.slice(0, 3).map(function (b) { return { name: b.name, lat: b.lat, lon: b.lon, phone: b.phone || "" }; }) : [],
       air_legs: s.fac && airOn() ? picks(s).map(function (p) { return { facility_id: p.f.id, s: Math.round(potTotal(p.f)), kn: num("rwkn"), base: m.b ? m.b.name : "no base" }; }) : [],
       weather: s.wx ? s.wx.days.map(function (x) { return { day: x.day, flags: wxFlags(x) }; }) : null,
@@ -2878,7 +2981,11 @@
     var pt = /^pt:/.test(v) && ownPt(v.slice(3));
     p = p || (v === "c" ? ST.c : pt ? [pt.lat, pt.lon] : parseGrid(fieldVals()[v]));
     if (!p) return false;
-    ST = Object.assign({}, ST, { from: v, o: p, at: Date.now() }); ST.oc = null; render(); build(); return true;
+    ST = Object.assign({}, ST, { from: v, o: p, at: Date.now() }); ST.oc = null;
+    /* a new point of injury elsewhere is a plan for another place: its section 9 places follow it (a CCP or HLZ chosen as the
+       centre keeps the plan's own) */
+    if (!LOC_RE.test(v) && ST.ss && hav(ST.ss.o, p) > SITE_R) ST.ss = null;
+    render(); build(); return true;
   }
   function setPoi() {
     var i = D.getElementById("mpf-poi"), v = i ? String(i.value || "").trim() : "";
@@ -2889,7 +2996,7 @@
 
   /* ---------- clicks and typing ---------- */
   function setField(k, v) {
-    var vals = fieldVals(); vals[k] = v; lsSet(fieldsKey(), vals);
+    var vals = fieldVals(); vals[k] = v; saveVals(vals);
     var i = D.getElementById("mpf-" + k); if (i) i.value = v;
     if (/^(ccp[12]|axp|hlz[12])$/.test(k)) { mapShow(); siteRender(); srcRender(); }
   }
@@ -2906,6 +3013,7 @@
     if (k === "allon") { lsSet(offKey(), []); offChanged(); return; }
     if (k === "pick") { pickStart(); return; }
     if (k === "setpoi") { setPoi(); return; }
+    if (k === "legacyuse" || k === "legacydrop") { legacyMove(k === "legacyuse"); render(); build(); return; }
     if (k === "print") { printView(); return; }
     if (k === "printc") { printView("conop"); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
@@ -2935,7 +3043,7 @@
     var t = e.target;
     if (t.getAttribute && t.getAttribute("data-mpa")) { AIR_DRAFT[t.getAttribute("data-mpa")] = t.value; AIR_OPEN = true; return; }
     if (t.hasAttribute && t.hasAttribute("data-mp-base")) {
-      var vb = fieldVals(); vb.mbase = t.value; lsSet(fieldsKey(), vb); timesChanged();
+      var vb = fieldVals(); vb.mbase = t.value; saveVals(vb); timesChanged();
       var sb = D.querySelector("#medplan [data-mp-base]"); if (sb) sb.focus(); return;
     }
     if (t.getAttribute && t.getAttribute("data-mp-off")) {
@@ -2944,25 +3052,25 @@
       return;
     }
     if (t.getAttribute && t.getAttribute("data-mp-sst")) {
-      var ks = t.getAttribute("data-mp-sst"), vs = fieldVals(); vs[ks + "_st"] = t.value; vs[ks + "_at"] = t.value ? new Date().toISOString() : ""; lsSet(fieldsKey(), vs);
+      var ks = t.getAttribute("data-mp-sst"), vs = fieldVals(); vs[ks + "_st"] = t.value; vs[ks + "_at"] = t.value ? new Date().toISOString() : ""; saveVals(vs);
       siteRender(); srcRender(); var sl = D.querySelector('#medplan [data-mp-sst="' + ks + '"]'); if (sl) sl.focus(); return;
     }
     if (t.getAttribute && t.getAttribute("data-mp-oc")) {
-      var vals = fieldVals(); vals.oc = t.checked ? 1 : 0; lsSet(fieldsKey(), vals);
+      var vals = fieldVals(); vals.oc = t.checked ? 1 : 0; saveVals(vals);
       if (t.checked) evac(ST); else { ST.oc = null; ocRender(); mapShow(); }
       srcRender(); return;
     }
     if (t.hasAttribute && t.hasAttribute("data-mp-env")) {
-      var ve = fieldVals(); ve.env = t.value === "land" || t.value === "sea" ? t.value : ""; lsSet(fieldsKey(), ve);
+      var ve = fieldVals(); ve.env = t.value === "land" || t.value === "sea" ? t.value : ""; saveVals(ve);
       render(); build(); var se = D.getElementById("mp-env"); if (se) se.focus(); return;
     }
     if (t.getAttribute && t.getAttribute("data-mp-port")) {
-      var vp = fieldVals(); vp.seaport = t.getAttribute("data-mp-port"); lsSet(fieldsKey(), vp);
+      var vp = fieldVals(); vp.seaport = t.getAttribute("data-mp-port"); saveVals(vp);
       reroad(ST); var rp = D.querySelector('#medplan [data-mp-port="' + (W.CSS && CSS.escape ? CSS.escape(vp.seaport) : vp.seaport) + '"]'); if (rp) rp.focus(); return;
     }
     var opt = t.getAttribute && t.getAttribute("data-mp-opt");
     if (opt) {
-      var v2 = fieldVals(); v2[opt] = t.checked ? 1 : 0; lsSet(fieldsKey(), v2);
+      var v2 = fieldVals(); v2[opt] = t.checked ? 1 : 0; saveVals(v2);
       if (opt === "air" && ST.fac) { facRender(); routes(ST); mevRender(); }
       ghRender(); mapShow(); return;
     }
@@ -2978,7 +3086,7 @@
       return;
     }
     var k = t.getAttribute && t.getAttribute("data-mpf"); if (!k) return;
-    var vals2 = fieldVals(); vals2[k] = String(t.value || "").slice(0, 600); lsSet(fieldsKey(), vals2);
+    var vals2 = fieldVals(); vals2[k] = String(t.value || "").slice(0, 600); saveVals(vals2);
     if (k === "dwell" || k === "xact" || k === "handoff") { clearTimeout(inT); inT = setTimeout(function () { pickRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "rwkn" || k === "fwkn" || k === "launch" || k === "sjkn") { clearTimeout(inT); inT = setTimeout(function () { facRender(); ghRender(); mevRender(); ocRender(); srcRender(); mapShow(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
     if (k === "vkn" || k === "pxfer") { clearTimeout(inT); inT = setTimeout(function () { if (ST && ST.leg) ST.leg = legOf(ST); seaRender(); facRender(); pickRender(); ghRender(); rtRender(); mevRender(); mapShow(); srcRender(); var i = D.querySelector('#medplan [data-mpf="' + k + '"]'); if (i) { i.focus(); try { i.setSelectionRange(99, 99); } catch (x) {} } }, 700); return; }
@@ -2988,6 +3096,6 @@
   }
 
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "med", label: "Medical plan", point: true, run: function () { open(); } });
-  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
+  W.OSAP_MEDPLAN = { open: open, close: close, printView: printView, assessView: assessView, _tcArea: tcArea, _picks: function () { return picks(ST); }, _tileKeys: tileKeys, _ccNear: ccNear, _poly6: poly6, _tierLabel: tierLabel, _rankOf: rankOf, _tClass: tClass, _tcText: tcText, _roles: function () { return planRoles(ST); }, _fields: function () { return fieldVals(); }, _sortOsm: sortOsm, _wxFlags: wxFlags, _parseGrid: parseGrid, _facName: facName, _centre: centre,
     _capability: capability, _golden: golden, _flightS: flightS, _phoneOf: phoneOf, _webOf: webOf, _boxDist: boxDist };
 })();
