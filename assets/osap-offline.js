@@ -150,6 +150,8 @@
             /* ?fresh=1 makes the service worker wait for the network copy (and save it too) */
             return fetch(u + "?fresh=1", { cache: "no-store", credentials: "same-origin" }).then(function (res) {
               if (!res.ok) { if (res.status !== 404) job.ffail++; else job.list = job.list.filter(function (x) { return x !== u; }); return; }
+              /* a hidden area's file opened for this unlocked device: the service worker has already saved its sealed copy */
+              if (res.headers.get("X-OSAP-Unsealed")) { job.files++; return; }
               return saveTo(dc, abs(u), res).then(function (n) { job.files++; job.fbytes += n; });
             }).catch(function () { job.ffail++; });
           }, prog);

@@ -39,6 +39,7 @@ jobs:
         run: node tools/build_infra.mjs
       - name: Commit
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -A data/infra
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"

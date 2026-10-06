@@ -198,7 +198,8 @@ function setContacts(p, o, site) {
 }
 
 async function main() {
-  const files = readdirSync(SRC).filter((f) => /^[a-z]{2,3}\.json$/.test(f) && f !== "exercises-outside.json");
+  // a hidden area's research is sealed (tools/seal_hidden.mjs): this job cannot read it, so that country is left as it is
+  const files = readdirSync(SRC).filter((f) => /^[a-z]{2,3}\.json$/.test(f) && f !== "exercises-outside.json" && !readFileSync(SRC + "/" + f, "utf8").startsWith("/*osap-sealed:"));
   const SOF = Object.fromEntries(files.map((f) => [f.slice(0, -5), JSON.parse(readFileSync(SRC + "/" + f, "utf8"))]));
   const posts = await osmPosts();
   await sleep(10000);

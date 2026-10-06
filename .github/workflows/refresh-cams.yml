@@ -44,6 +44,7 @@ jobs:
       - name: Commit
         if: ${{ github.ref == 'refs/heads/main' || inputs.commit == 'true' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -A data/cams
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"

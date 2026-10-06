@@ -18,6 +18,9 @@ jobs:
         with:
           fetch-depth: 2
       - run: node tools/check_index.mjs
+      # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
+      - run: node tools/seal_hidden.mjs --check --skip-live
+      - run: node tests/seal.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -52,6 +55,7 @@ jobs:
       - run: node tools/smoke_map.mjs
       - run: node tests/locate_smoke.mjs
       - run: node tests/lock_smoke.mjs
+      - run: node tests/seal_sw_smoke.mjs
       - run: node tests/atak_smoke.mjs
       - run: node tests/area_shapes_smoke.mjs
       - run: node tests/points_smoke.mjs
