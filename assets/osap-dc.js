@@ -43,7 +43,11 @@
 
   /* ---------- map ---------- */
   var map = null, aiL = null, allL = null, rend = null;
+  /* official symbol (MIL-STD-2525D telecoms installation, cyberspace modifier, neutral frame) from assets/osap-symbols.js;
+     AI data centres carry a dot in the AI colour, and a faded symbol when placed at the named town only */
+  function sym() { return !!(W.OSAP_SYM && W.OSAP_SYM.d.i_data && W.OSAP_SYM.mark); }
   function aiIcon(i) {
+    if (sym()) return W.OSAP_SYM.icon("i_data", { badge: AIC, cls: "dc-ai" + (i.p === "exact" ? "" : " dc-approx old") });
     var s = i.p === "exact" ? 24 : 20;
     return L.divIcon({ className: "dc-ai" + (i.p === "exact" ? "" : " dc-approx"), iconSize: [s, s], iconAnchor: [s / 2, s / 2],
       html: '<span style="width:' + s + "px;height:" + s + 'px">' + RACK + "</span>" });
@@ -77,7 +81,8 @@
         n.ai++;
       } else {
         if (!S.all) return;
-        L.circleMarker([i.la, i.lo], { renderer: rend, pane: "dcpt", radius: 5, color: "#fff", weight: 1.5, fillColor: ALLC, fillOpacity: 0.95, lgk: "dc:all", lgl: "Data centre (OpenStreetMap, Wikidata)" })
+        (sym() ? W.OSAP_SYM.mark([i.la, i.lo], "i_data", { renderer: rend, pane: "dcpt", scale: 0.65, lgk: "dc:all", lgl: "Data centre (OpenStreetMap, Wikidata)" })
+          : L.circleMarker([i.la, i.lo], { renderer: rend, pane: "dcpt", radius: 5, color: "#fff", weight: 1.5, fillColor: ALLC, fillOpacity: 0.95, lgk: "dc:all", lgl: "Data centre (OpenStreetMap, Wikidata)" }))
           .bindPopup(pop(i), { maxWidth: 320 }).addTo(allL);
         n.all++;
       }
@@ -130,8 +135,9 @@
     if (!W.OSAP_LEGEND) return;
     if (!S.ai && !S.all) { W.OSAP_LEGEND.set("dc", ""); return; }
     W.OSAP_LEGEND.set("dc", '<div class="lgh" style="font-weight:600;margin-bottom:2px">Data centres</div>' +
-      (S.ai ? '<div class="lg"><span class="dc-ai" style="display:inline-flex"><span style="width:16px;height:16px">' + RACK + '</span></span><div>AI data centre (Epoch AI). Faded: placed at the named town</div></div>' : "") +
-      (S.all ? '<div class="lg"><span class="sw" style="background:' + ALLC + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span><div>Data centre (OpenStreetMap, Wikidata)</div></div>' : ""));
+      (S.ai ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data", AIC) : '"><span class="dc-ai" style="display:inline-flex"><span style="width:16px;height:16px">' + RACK + "</span></span>") + '<div>AI data centre (Epoch AI). Faded: placed at the named town</div></div>' : "") +
+      (S.all ? '<div class="lg' + (sym() ? ' msyml">' + W.OSAP_SYM.sw("i_data") : '"><span class="sw" style="background:' + ALLC + ';border-radius:50%;width:10px;height:10px;border:1.5px solid #fff"></span>') + "<div>Data centre (OpenStreetMap, Wikidata)</div></div>" : "") +
+      (sym() ? '<div class="lg"><div><span class="d">Official map symbol (MIL-STD-2525D telecoms installation, cyberspace).</span></div></div>' : ""));
   }
   function set(k, on) {
     if (!/^(ai|all)$/.test(k) || !map) return;
@@ -144,8 +150,8 @@
     "#dc-sec{margin:2px 0 6px}#dc-sec .dc-t{font-weight:600;font-size:13px;margin:8px 0 0}#dc-sec .pwr-m[hidden]{display:none}" +
     "#dc-sec .dc-un{margin:4px 0}#dc-sec .dc-un summary{cursor:pointer;font-size:12.5px;font-weight:600;padding:3px 0}#dc-sec .dc-un ul{list-style:none;margin:0;padding:0}" +
     "#dc-sec .dc-un li{font-size:12px;padding:4px 0;border-bottom:1px solid var(--line-soft,rgba(128,128,128,.2))}#dc-sec .dc-un .pwr-m{display:block}" +
-    ".dc-ai span{display:flex;align-items:center;justify-content:center;border-radius:5px;background:" + AIC + ";color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.55);box-sizing:border-box;padding:3px}" +
-    ".dc-ai svg{width:100%;height:100%}.dc-approx span{opacity:.72;border-style:dashed}" +
+    ".dc-ai>span{display:flex;align-items:center;justify-content:center;border-radius:5px;background:" + AIC + ";color:#fff;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.55);box-sizing:border-box;padding:3px}" +
+    ".dc-ai>span>svg{width:100%;height:100%}.dc-approx>span{opacity:.72;border-style:dashed}" +
     ".pop .dc-why{margin:2px 0 6px;font-size:12.5px}";
   D.head.appendChild(css);
 
