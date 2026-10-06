@@ -34,6 +34,20 @@ export function decodeEntities(s) {
     return Object.prototype.hasOwnProperty.call(NAMED, n.toLowerCase()) ? NAMED[n.toLowerCase()] : m;
   });
 }
+// Translations already stored with the feed history (tools/history.mjs storedTranslations) are put in the in-memory cache,
+// so an item keeps its English after the 6,000-entry cache file has dropped its entry (on 2026-10-06 that file held only the
+// last 6 hours, and older items lost their translation on the next run and showed the original). Seeded entries carry no
+// time, so saveCache never writes them back; they pass the same guard as every cached translation.
+export function seed(pairs) {
+  let n = 0;
+  for (const p of pairs || []) {
+    if (!p || !p.text || !p.en || p.text === p.en) continue;
+    const k = key(decodeEntities(p.text), p.lang || "");
+    if (cache[k] && (cache[k].en || cache[k].rejected)) continue;
+    cache[k] = { en: p.en, tool: p.tool || MT_TOOL, seeded: true }; n++;
+  }
+  return n;
+}
 // Drop a cached translation that a caller found to be wrong, so it is not served again.
 export function forget(text, lang) { delete cache[key(decodeEntities(text), lang)]; }
 
@@ -104,7 +118,7 @@ function localModel(items, todo, out, beam) {
   return bad;
 }
 export function saveCache() {
-  const ents = Object.entries(cache).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
+  const ents = Object.entries(cache).filter((e) => !e[1].seeded).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify(Object.fromEntries(ents)));
 }
