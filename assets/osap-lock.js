@@ -10,9 +10,11 @@
      unlock lasts STAY hours on this device, across reloads and app restarts (Shane 2026-10-04: "why do i keep having to enter my
      pass key??"), or until Lock now; it is kept in localStorage "osap-lock-open" with its end time.
    - OWNER lists the owners' public keys once they are in the code. From then on only a device holding one of those keys can
-     unlock; a passkey made on anyone else's device opens nothing. The hidden countries' data files are being moved to
-     encrypted-at-rest form (only the owner's private key can read them); until then this is an in-app lock and the plain files
-     in the public repository are still readable on GitHub.
+     unlock; a passkey made on anyone else's device opens nothing.
+   - The hidden countries' data files are sealed in the repository and on the site (tools/seal_hidden.mjs): encrypted for the
+     owners' public keys, so only an owner device's private key reads them. While unlocked, that key is also kept in IndexedDB
+     ("osap-lock") as a CryptoKey that cannot be exported, with the unlock's end time; the service worker (sw.js, unseal())
+     uses it to open the sealed files on their way to the page. Lock now, or the end of the unlock, removes it.
    Loaded first, before any script reads the address: a locked hidden country in the address is replaced by the default view. */
 (function () {
   "use strict";
@@ -130,10 +132,38 @@
     return faceId(d.cred).then(wrapKey).then(function (wk) {
       return SUB.decrypt({ name: "AES-GCM", iv: unb64u(d.iv) }, wk, unb64u(d.wrapped));
     }).then(function (pk) {
-      lSet(K_OPEN, JSON.stringify({ until: Date.now() + STAY * 3600e3, key: b64u(pk) })); return true;
+      var until = Date.now() + STAY * 3600e3;
+      lSet(K_OPEN, JSON.stringify({ until: until, key: b64u(pk) }));
+      return keepKey(pk, until).then(function () { return true; });
     });
   }
-  function lock() { lSet(K_OPEN, null); sSet(K_OPEN, null); sSet("osap-lock-key", null); }
+  function lock() { lSet(K_OPEN, null); sSet(K_OPEN, null); sSet("osap-lock-key", null); return keyStore(null); }
+
+  /* ---------- the key the service worker opens sealed files with (IndexedDB "osap-lock", store "k", entry "open") ---------- */
+  function keyStore(rec) {
+    return new Promise(function (done) {
+      try {
+        var o = indexedDB.open("osap-lock", 1);
+        o.onupgradeneeded = function () { o.result.createObjectStore("k"); };
+        o.onerror = function () { done(false); };
+        o.onsuccess = function () {
+          var db = o.result;
+          try {
+            var tx = db.transaction("k", "readwrite"), st = tx.objectStore("k");
+            if (rec) st.put(rec, "open"); else st.delete("open");
+            tx.oncomplete = function () { db.close(); done(true); };
+            tx.onerror = tx.onabort = function () { db.close(); done(false); };
+          } catch (e) { db.close(); done(false); }
+        };
+      } catch (e) { done(false); }
+    });
+  }
+  /* the device's private key (pkcs8 bytes) as a key that can only derive, never be read back, named like a sealed file names it */
+  function keepKey(pk, until) {
+    var d = dev(); if (!SUB || !d || !W.indexedDB) return Promise.resolve(false);
+    return Promise.all([SUB.importKey("pkcs8", pk, { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]), SUB.digest("SHA-256", unb64u(d.pub))])
+      .then(function (x) { return keyStore({ key: x[0], f: b64u(x[1]).slice(0, 16), until: until }); }).catch(function () { return false; });
+  }
   /* the owner's private key (ECDH P-256) while unlocked, for reading the hidden areas' encrypted files */
   function privateKey() {
     var h = OPEN && held(), k = h && h.key; if (!k || !SUB) return Promise.resolve(null);
@@ -160,8 +190,9 @@
     var h = '<div class="cbox"><div class="chead"><h2 id="lk-h">Hidden areas</h2><button type="button" class="x" aria-label="Close">&times;</button></div>' +
       '<p class="obs">Some areas are hidden from everyone except the owner. They show only after the owner unlocks this app with Face ID, and stay unlocked on this device for ' + STAY + ' hours or until Lock now.</p>' +
       '<p class="lkmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
-    if (UI.ok === false) h += '<p class="obs">This browser cannot use Face ID or another built-in lock here.</p>';
-    else if (OPEN) h += '<p><b>Unlocked.</b> Hidden areas are showing on this device' + (held() && held().until ? " until " + new Date(held().until).toTimeString().slice(0, 5) + " (this device's time)" : "") + '.</p><div class="lkbtns"><button type="button" class="refresh" data-lk="lock"' + dis + ">Lock now</button></div>";
+    /* Lock now is always offered while unlocked, even where this browser cannot use Face ID itself */
+    if (OPEN) h += '<p><b>Unlocked.</b> Hidden areas are showing on this device' + (held() && held().until ? " until " + new Date(held().until).toTimeString().slice(0, 5) + " (this device's time)" : "") + '.</p><div class="lkbtns"><button type="button" class="refresh" data-lk="lock"' + dis + ">Lock now</button></div>";
+    else if (UI.ok === false) h += '<p class="obs">This browser cannot use Face ID or another built-in lock here.</p>';
     else if (d && owner) h += '<div class="lkbtns"><button type="button" class="refresh" data-lk="unlock"' + dis + ">Unlock (Face ID or Windows Hello)</button></div>";
     else if (d) h += '<p class="obs">This device was set up, but it is not one of the owner\'s devices, so it cannot unlock.</p>';
     if (d && !OPEN && !OWNER.length) h += '<p class="obs">Waiting for this device\'s setup code to be added to OSAP. Until then it can unlock, but so could anyone else\'s device.</p>';
@@ -208,13 +239,21 @@
         function () { if (ta) { ta.focus(); ta.select(); } say("Select the code and copy it."); });
       return;
     }
-    if (k === "lock") { lock(); OPEN = false; reload(true); return; }
+    if (k === "lock") { OPEN = false; lock().then(function () { reload(true); }); return; }
     if (k === "forget") { if (!confirm("Forget this device's lock key?")) return; lSet(K_DEV, null); lock(); say("Forgotten. You can set up again."); return; }
     UI.busy = true; say(k === "setup" ? "Follow the Face ID prompts…" : "Look at your phone…");
     (k === "setup" ? setup().then(function () { return "Set up. Copy the setup code below and send it to Claude in the \"Hide US Data\" thread."; })
       : unlock().then(function () { OPEN = true; setTimeout(function () { reload(false); }, 600); return "Unlocked. Reloading…"; }))
       .then(function (m) { UI.busy = false; say(m); }, function (err) { UI.busy = false; say(why(err)); });
   }
+
+  /* at every start: an unlock still in time puts its key where the service worker finds it (an unlock made before sealed files
+     existed has none there yet); locked, or run out, removes it */
+  try {
+    var h0 = OPEN && held();
+    if (h0 && h0.key && h0.until) keepKey(unb64u(h0.key), h0.until);
+    else if (!OPEN && dev() && W.indexedDB) keyStore(null);
+  } catch (e) { /* an unreadable record: the hidden files simply stay sealed */ }
 
   W.OSAP_LOCK = {
     hidden: hidden,

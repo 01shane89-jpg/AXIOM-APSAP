@@ -236,7 +236,9 @@ const prevIx = existsSync(join(OUT, "index.json")) ? JSON.parse(readFileSync(joi
 const prev = {};   // source -> items from the last run, for a source that fails this time
 for (const f of existsSync(OUT) ? readdirSync(OUT) : []) {
   if (!/^[a-z]{2,3}\.json$/.test(f)) continue;
-  const j = JSON.parse(readFileSync(join(OUT, f), "utf8"));
+  // a hidden area's file is sealed (tools/seal_hidden.mjs): this job cannot read it, so its sources start afresh
+  const t = readFileSync(join(OUT, f), "utf8"); if (t.startsWith("/*osap-sealed:")) continue;
+  const j = JSON.parse(t);
   for (const i of [...(j.items || []), ...(j.unplaced || []).map((u) => ({ ...u, unplaced: true }))]) (prev[i.s] = prev[i.s] || []).push({ ...i, cc: j.cc });
 }
 const SRC = {
