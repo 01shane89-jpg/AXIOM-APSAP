@@ -136,6 +136,7 @@ data-ev-tlr="1"
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
 <script src="assets/osap-guide.js"></script>
+<script src="assets/osap-i18n.js"></script>
 offline: { name: "Offline map"
 
 # terrain analysis: viewshed and line of sight (claude/terrain-viewshed)
