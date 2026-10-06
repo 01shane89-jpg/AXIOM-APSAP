@@ -1,0 +1,91 @@
+name: Refresh live public transport
+
+# Live public transport layer (buses, trams, trains, ferries). Two steps:
+#  meta  (weekly): tools/build_transit_feeds.mjs finds every keyless GTFS-Realtime vehicle feed in the Mobility Database
+#        catalog, keeps those that answer, reads each agency's route table, and publishes them on the transit-meta branch.
+#  sweep (every 15 minutes, about every three minutes while a run lasts): tools/refresh_transit.mjs asks every kept feed and
+#        publishes one file per 5° map cell on the live-transit branch (one commit, replaced each time, so it never grows).
+# The page reads live-transit from raw.githubusercontent.com (the agencies' servers mostly do not let another site read them).
+# Nothing is committed to main, so this does not rebuild Pages. Runs on other branches publish to *-test branches.
+on:
+  schedule:
+    - cron: "6,21,36,51 * * * *"
+    - cron: "40 3 * * 1"
+  push:
+    branches: ["claude/transit-*"]
+    paths: [tools/build_transit_feeds.mjs, tools/refresh_transit.mjs, tools/gtfsrt.mjs, tools/transit_lib.mjs, .github/workflows/refresh-transit.yml]
+  workflow_dispatch:
+    inputs:
+      meta:
+        description: "Rebuild the feed list first (slow: tries every catalog feed and reads route tables)"
+        type: boolean
+        default: false
+      sweeps:
+        description: "Sweeps in this run (about three minutes apart)"
+        required: false
+        default: "4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-transit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  transit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      META: ${{ github.ref == 'refs/heads/main' && 'transit-meta' || 'transit-meta-test' }}
+      TARGET: ${{ github.ref == 'refs/heads/main' && 'live-transit' || 'live-transit-test' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Get the feed list
+        id: meta
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/tm /tmp/tr/prev
+          if git fetch -q --depth=1 origin "$META" 2>/dev/null; then git archive FETCH_HEAD | tar -x -C /tmp/tm; fi
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/tr/prev 2>/dev/null || true
+          rebuild=no
+          [ -f /tmp/tm/feeds.json ] || rebuild=yes
+          [ "${{ github.event.schedule }}" = "40 3 * * 1" ] && rebuild=yes
+          [ "${{ inputs.meta }}" = "true" ] && rebuild=yes
+          [ "${{ github.event_name }}" = "push" ] && rebuild=yes
+          echo "rebuild=$rebuild" >> "$GITHUB_OUTPUT"
+      - name: Rebuild the feed list
+        if: steps.meta.outputs.rebuild == 'yes'
+        timeout-minutes: 30
+        run: |
+          rm -rf /tmp/tm-new
+          if node tools/build_transit_feeds.mjs /tmp/tm-new; then
+            rm -rf /tmp/tm && mv /tmp/tm-new /tmp/tm
+            git worktree add -q --detach /tmp/tmwt
+            ( cd /tmp/tmwt && git checkout -q --orphan tm && git rm -rfq . && cp -r /tmp/tm/. . && git add -A &&
+              git commit -qm "Transit feed list $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$META" )
+          else
+            echo "::warning::feed list rebuild failed; keeping the previous list"
+          fi
+      - name: Sweep and publish
+        if: github.event.schedule != '40 3 * * 1'
+        env:
+          SWEEPS: ${{ inputs.sweeps || '4' }}
+        run: |
+          [ -f /tmp/tm/feeds.json ] || { echo "no feed list"; exit 1; }
+          git worktree add -q --detach /tmp/trwt
+          for i in $(seq 1 "$SWEEPS"); do
+            start=$(date +%s)
+            rm -rf /tmp/tr/out
+            if node tools/refresh_transit.mjs /tmp/tm /tmp/tr/out /tmp/tr/prev; then
+              rm -rf /tmp/tr/prev && cp -r /tmp/tr/out /tmp/tr/prev
+              ( cd /tmp/trwt && git checkout -q --orphan "tr-$i" && git rm -rfq . && cp -r /tmp/tr/out/. . && git add -A &&
+                git commit -qm "Live public transport $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET" ) || echo "publish failed"
+            fi
+            # about three minutes between sweeps (raw.githubusercontent.com serves each file for up to five minutes anyway)
+            if [ "$i" -lt "$SWEEPS" ]; then left=$(( 180 - $(date +%s) + start )); [ "$left" -gt 0 ] && sleep "$left"; fi
+          done

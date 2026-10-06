@@ -40,6 +40,7 @@ jobs:
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
       - run: node tests/seatransit.test.mjs
+      - run: node tests/transit.test.mjs
   map-smoke:
     # Opens Thailand's map headless and fails when a tab draws nothing or the page throws (tools/smoke_map.mjs).
     runs-on: ubuntu-latest
