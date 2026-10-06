@@ -163,7 +163,21 @@ ok(c1.casualty.label === "Major trauma" && c1.status === "WARNING" && c1.poi ===
   c1.stabilization.name === "King Narai Hospital" && c1.stabilization.time_s === 360 && c1.stabilization.distance_m === 4400 && c1.definitive.name === "Thammasat University Hospital" && c1.definitive.time_s === 5640 &&
   c1.primary_route === "AVAILABLE" && c1.alternate_route === "AVAILABLE" && c1.route_flags[0] === "PRIMARY ROUTE INTERSECTS FLOOD WARNING / ALTERNATE ROUTE A AVAILABLE +14 MINUTES",
   "phase 6: the CONOP reads status, POI, ground, air, stabilization, definitive, P and A lines and the route flag from the record");
-ok(c1.critical_gaps.join() === "Blood availability,Emergency operating theatre,Receiving hospital acceptance,Air MEDEVAC provider", "phase 6: critical gaps at the definitive care, acceptance and air: " + c1.critical_gaps.join(", "));
+ok(c1.critical_gaps.join() === "Blood availability,Emergency operating theatre,Receiving hospital acceptance,Air MEDEVAC provider: none documented for this country in OSAP; ask the national emergency number and International SOS", "phase 6: critical gaps at the definitive care, acceptance and air: " + c1.critical_gaps.join(", "));
+ok(c1.air_asset === "No air medevac service documented for this country in OSAP" && c1.air_documented === null, "air: with no documented service the CONOP says so, never blank");
+/* Shane 2026-10-06 ("We NEED to know about air medevac"): a documented air medical service names who to call and how, stays
+   NOT CONFIRMED, never competes with the road, and is named in the gaps, the provider check and the picture */
+const SKY = { id: "th-niem-sky-doctor", provider: "Thai Sky Doctor (National Institute for Emergency Medicine, NIEM)", request: "Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport",
+  phone: "1669", missions: "Scene pickup by helicopter", src: "https://thailand.go.th/issue-focus-detail/001_07_002-2", srcname: "THAILAND.GO.TH", fp: "abc" };
+const pSky = M.build(input({ air_providers: [SKY] })), cSky = M.conop(pSky, "cat.major_trauma"), sky = pSky.evacuation_assets.filter((a) => a.status === "DOCUMENTED");
+ok(sky.length === 1 && sky[0].kind === "air" && sky[0].phone === "1669" && sky[0].source_url === SKY.src && pSky.air_routes.every((r) => r.provider !== SKY.provider), "air: a documented service is an asset with its source, never an air route");
+ok(cSky.air === "NOT CONFIRMED" && cSky.air_asset === "Request: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM), call 1669 (documented service, not confirmed for this mission)" && cSky.air_documented.phone === "1669",
+  "air: the CONOP names the documented service and how to call it, still not confirmed: " + cSky.air_asset);
+ok(cSky.critical_gaps.some((g) => /^Air MEDEVAC provider not confirmed: request Thai Sky Doctor .*Call 1669.* and record the aircraft in section 4$/.test(g)), "air: the gap says who to request and to record it: " + cSky.critical_gaps.join(" | "));
+ok(/None confirmed\. Documented service: Thai Sky Doctor .*Call 1669/.test(by(pSky, "medevac.provider").detail) && by(pSky, "medevac.provider").level === "warning", "air: the provider check stays amber and names the documented service: " + by(pSky, "medevac.provider").detail);
+ok(/Documented service: Thai Sky Doctor/.test(pSky.operational_picture.flags.filter((f) => f.code === "air.none")[0].detail), "air: the picture's no-confirmed-air flag names the documented service");
+const cSkyA = M.conop(M.build(input({ air_providers: [SKY], aircraft: [AC], now: "2026-10-03T20:00:00.000Z" })), "cat.major_trauma");
+ok(cSkyA.air === "CONFIRMED" && cSkyA.air_asset === "Test Air Ambulance (H145)" && !cSkyA.critical_gaps.some((g) => /Air MEDEVAC/.test(g)), "air: a confirmed aircraft still wins over a documented service");
 const c2 = M.conop(M.build(input({ fields: { recv1: "Somewhere Else Clinic" }, categories: [{ id: "cat.major_burn", label: "Major burn", rows: [{ role: "tertiary", state: "gap" }] }] })), "cat.major_burn");
 ok(c2.definitive === null && c2.ground === "NO DESTINATION" && c2.alternate_route === "NO DESTINATION" && /^Receiving facility \(unit details\): /.test(c2.critical_gaps[0]) && c2.critical_gaps.includes("Definitive care for major burn not documented"),
   "phase 6: no definitive care says so, and a blocking error leads the gaps: " + c2.critical_gaps.join(" | "));

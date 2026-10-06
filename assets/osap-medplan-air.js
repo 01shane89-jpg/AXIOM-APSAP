@@ -112,5 +112,27 @@
     return b;
   }
 
-  root.OSAP_MEDAIR = { STATUS: STATUS, STATUS_LABEL: STATUS_LABEL, DEF: DEF, MAX_ASSETS: MAX_ASSETS, makeAsset: makeAsset, upsert: upsert, state: state, limits: limits, mission: mission, best: best };
+  /* air medical services documented by a government or the service's own published page, per country (Shane 2026-10-06:
+     "We NEED to know about air medevac"). A documented service is not an aircraft for this mission: it is who to ask and how,
+     with the source's own words. It never competes with the road; only an aircraft the planner records as CONFIRMED does.
+     Published institutional numbers only. fp: SHA-256 of the entry's canonical JSON (keys sorted, fp left out), checked by
+     tests/medplan_air.test.mjs. A country without an entry has none documented in OSAP yet, which is not "no air medevac". */
+  var DIRECTORY = {
+    th: [{
+      id: "th-niem-sky-doctor", provider: "Thai Sky Doctor (National Institute for Emergency Medicine, NIEM)", kind: "public air medical service",
+      request: "Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport", phone: "1669",
+      missions: "Scene pickup by helicopter (HEMS, primary mission); hospital-to-hospital transfer by helicopter or aeroplane (secondary mission)",
+      aircraft: "Aircraft of government and private agencies under agreement with NIEM; the Royal Thai Police, Royal Thai Air Force and Marine Police support its missions",
+      bases: "Not published in the source", eligibility: "Not stated in the source: confirm cost, eligibility and response time with 1669",
+      quote: "Calls for this service, like a medical emergency call, can be made using the 1669 system.",
+      quote2: "Primary Mission is an emergency operation that is performed before reaching the hospital, known as a Helicopter Emergency Medical Service (HEMS), operated by helicopter only",
+      src: "https://thailand.go.th/issue-focus-detail/001_07_002-2", srcname: "THAILAND.GO.TH (Royal Thai Government): Thai Sky Doctor: Air Patient Assistance Program",
+      page_updated: "2023-07-12", read: "2026-10-06",
+      fp: "a010b2e66a283b3ad8844f6d23e0e864f2504c48b1eca78f7ad8c10d8cb45f9a"
+    }]
+  };
+  Object.keys(DIRECTORY).forEach(function (k) { DIRECTORY[k].forEach(Object.freeze); Object.freeze(DIRECTORY[k]); }); Object.freeze(DIRECTORY);
+  function providers(cc) { return (DIRECTORY[String(cc || "").toLowerCase()] || []).map(function (d) { return Object.assign({}, d); }); }
+
+  root.OSAP_MEDAIR = { STATUS: STATUS, STATUS_LABEL: STATUS_LABEL, DEF: DEF, MAX_ASSETS: MAX_ASSETS, makeAsset: makeAsset, upsert: upsert, state: state, limits: limits, mission: mission, best: best, providers: providers, DIRECTORY: DIRECTORY };
 })(typeof window !== "undefined" ? window : globalThis);

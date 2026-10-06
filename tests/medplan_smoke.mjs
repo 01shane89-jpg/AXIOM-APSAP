@@ -306,7 +306,7 @@ async function openPlan(p) {
   ok(await p.evaluate(() => ["PRI", "SEC", "TER"].every((t) => [...document.querySelectorAll(".mpicon")].some((m) => m.textContent === t))), "desktop: the three picks are marked on the map");
   /* Shane 2026-10-04: the legend follows the plan, alternates are marked, and a stabilization stop is named when nothing near is in the golden hour */
   const lgd = await p.evaluate(() => { const l = document.querySelector('[data-lg="medplan"]'); return { t: l ? l.textContent : "", shown: !!l && !l.hidden, alt: document.querySelectorAll(".mpicon.alt").length }; });
-  ok(lgd.shown && /Point of injury|Plan centre/.test(lgd.t) && /PRI\s*Primary MTF/.test(lgd.t) && /SEC\s*Secondary MTF/.test(lgd.t) && /TER\s*Tertiary MTF/.test(lgd.t) && !/PRI SEC/.test(lgd.t) && /Route to Primary/.test(lgd.t) && (!lgd.alt || /Alternate MTF/.test(lgd.t)) && /Other hospital/.test(lgd.t), "legend: the map legend explains the medical plan's own marks and lines " + JSON.stringify(lgd));
+  ok(lgd.shown && /Point of injury|Plan centre/.test(lgd.t) && /PRI\s*Primary MTF/.test(lgd.t) && /SEC\s*Secondary MTF/.test(lgd.t) && /TER\s*Tertiary MTF/.test(lgd.t) && !/PRI SEC/.test(lgd.t) && /Route to Primary/.test(lgd.t) && (!lgd.alt || /Alternate MTF/.test(lgd.t)) && !/Other hospital/.test(lgd.t), "legend: the map legend explains the medical plan's own marks and lines " + JSON.stringify(lgd));
   const stb = await p.evaluate(() => { const r = window.OSAP_MEDPLAN._roles().filter((x) => x.casualty_category === "cat.complex_limb" && x.role === "stabilization")[0]; return r ? [r.state, !!r.choice, r.ref && r.ref.f.name] : null; });
   ok(JSON.stringify(stb) === JSON.stringify(["gap", false, "Far North Hospital"]) && /^Complex limb traumaNo planned destination/.test(roles[3][0]) && /No documented stabilization stop\. No planned destination, and no hospital inside the golden hour has an emergency department documented by a credible source\. Nearest, for reference only and not eligible: Far North Hospital, 20 min by road\./.test(roles[3][0]),
     "stabilization: an emergency department OpenStreetMap lists is never a stabilization stop; the plan says none is documented and names the nearest for reference only " + JSON.stringify(stb) + " " + roles[3][0]);
@@ -409,7 +409,8 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="allon"]');
   await p.waitForFunction(() => /Primary(?: \+ [A-Z][a-z]+)*major trauma[^H]*H3 Far North Hospital/.test(document.getElementById("mp-pst").textContent), null, { timeout: 8000 }).catch(() => {});
   ok(/no stored copy|not read: HTTP 404/.test(await p.textContent("#mp-src")), "desktop: with no stored copy, the plan says so and asks OpenStreetMap live");
-  ok(await p.evaluate(() => document.querySelectorAll(".mpicon").length === 16), "desktop: numbered marks on the map (centre, 5 hospitals incl. the wider search, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services, 1 chamber)");
+  const mks = await p.evaluate(() => [...document.querySelectorAll(".mpicon")].map((m) => m.textContent));
+  ok(mks.length === 15 && !mks.some((t) => /^H\d/.test(t)) && ["PRI", "SEC", "TER"].every((t) => mks.includes(t)), "desktop: numbered marks on the map (centre, only the plan's hospitals, 2 clinics, ambulance station, 2 helipads, airfield, air rescue base, 2 blood services, 1 chamber) " + mks.join(","));
   const lines = () => p.evaluate(() => { let r = 0, g = 0, a = 0; window.__asapMap.eachLayer((l) => { if (l instanceof L.Polygon) { if (/#1e7a3a|#c77700/.test(l.options.color)) g++; } else if (l instanceof L.Polyline && /#D7141A|#222|#6a3d9a/.test(l.options.color)) r++; else if (l instanceof L.Circle && /#6fa8dc|#1d5fa8/.test(l.options.color)) a++; }); return { r, g, a }; });
   const ln = await lines();
   ok(ln.r === 3 && ln.g === 2 && ln.a === 2, "desktop: three routes, two road-reach outlines and two air rings drawn on the map " + JSON.stringify(ln));
@@ -497,7 +498,7 @@ async function openPlan(p) {
   const hlz = await p.inputValue("#mpf-hlz1");
   ok(/^\d{2}[A-Z] [A-Z]{2} \d{4} \d{4}/.test(hlz), "desktop: Use as HLZ fills the HLZ with the grid: " + hlz);
   await p.fill("#mpf-unit", "Test element"); await p.fill("#mpf-ccp1", "13.7400, 100.4900"); await p.fill("#mpf-medevac1", "Test Air Rescue, +66 2 555 0100"); await p.waitForTimeout(900);
-  const kept = await p.evaluate(() => { const k = Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0]; return k && JSON.parse(localStorage.getItem(k)); });
+  const kept = await p.evaluate(() => window.OSAP_MEDPLAN._fields());
   ok(kept && kept.unit === "Test element" && kept.hlz1 === hlz && kept.oc === 1, "desktop: fields kept on this device");
   await p.waitForFunction(() => /PRIMARY HLZ|Forecast at the pickup: No review rule met at the primary HLZ/.test(document.getElementById("mp-pic").textContent + document.getElementById("mp-val").textContent), null, { timeout: 10000 }).catch(() => {});
   const hpic = await p.evaluate(() => ({ t: document.getElementById("mp-pic").textContent, v: document.getElementById("mp-val").textContent }));
@@ -508,11 +509,33 @@ async function openPlan(p) {
   ok(sites.mk === "CCP,HLZ" && /Casualty collection point \(CCP\): 13\.7400, 100\.4900/.test(sites.val) && /Ambulance exchange point \(AXP\): Not set/.test(sites.val), "phase 3: CCP and HLZ drawn on the map from their grids, AXP checked " + JSON.stringify(sites.mk));
   await p.selectOption('#mp-sites [data-mp-sst="ccp1"]', "unusable"); await p.fill('#mp-sites [data-mpf="ccp1_note"]', "bridge out"); await p.waitForTimeout(900);
   const st = await p.evaluate(() => ({ t: document.getElementById("mp-sites").textContent, rows: document.querySelectorAll("#mp-sites tbody tr").length, val: document.getElementById("mp-val").textContent,
-    kept: JSON.parse(localStorage.getItem(Object.keys(localStorage).filter((x) => /^osap-medplan-[a-z]+$/.test(x))[0])) }));
+    kept: window.OSAP_MEDPLAN._fields() }));
   ok(st.rows === 2 && /km [NESW]{1,2} of/.test(st.t) && st.kept.ccp1_st === "unusable" && st.kept.ccp1_note === "bridge out" && /checked not usable .*bridge out/.test(st.val), "phase 3: each point's status, capacity and notes are kept and the validation reads them " + JSON.stringify(st.val.slice(st.val.indexOf("Casualty collection"), st.val.indexOf("Casualty collection") + 120)));
   const seeded = await p.evaluate(() => { const o = window.OSAP_ROUTE_SEED; let got = null; window.OSAP_ROUTE_SEED = (pts) => { got = pts; }; document.querySelector('#mp-sites [data-mp-siteroute="hlz1"]').click(); window.OSAP_ROUTE_SEED = o; return got; });
   ok(seeded && seeded.length === 2 && Math.abs(seeded[1][0] - 13.74) > 0, "phase 3: Route to it hands the plan centre and the point to the Route tab " + JSON.stringify(seeded));
-  await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
+  /* Shane 2026-10-06 (a Sukhothai receiving facility blocked a plan near Lop Buri): section 9's places belong to the place a
+     plan was made for, never to the whole country */
+  const pk0 = await p.evaluate(() => ({ c: JSON.parse(localStorage.getItem("osap-medplan-th") || "{}"), s: JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]"), m: window.__asapMap.getCenter() }));
+  ok(!("hlz1" in pk0.c) && !("ccp1" in pk0.c) && pk0.c.unit === "Test element" && pk0.s.length === 1 && pk0.s[0].v.hlz1 === hlz && pk0.s[0].v.ccp1_note === "bridge out",
+    "section 9: the HLZ, CCP and their checks are kept with this plan's place, the unit with the country " + JSON.stringify({ c: Object.keys(pk0.c), s: pk0.s.length }));
+  await p.evaluate(() => window.OSAP_MEDPLAN.open({ at: [14.80592, 100.70098] }));
+  await p.waitForFunction(() => document.getElementById("mpf-hlz1") && /14\.80592/.test(document.getElementById("medplan").textContent), null, { timeout: 10000 });
+  const farP = await p.evaluate(() => ({ h: document.getElementById("mpf-hlz1").value, c: document.getElementById("mpf-ccp1").value, u: document.getElementById("mpf-unit").value, mk: document.querySelectorAll(".mpicon.cp").length, f: window.OSAP_MEDPLAN._fields() }));
+  ok(farP.h === "" && farP.c === "" && farP.u === "Test element" && farP.mk === 0 && !farP.f.ccp1_st && !farP.f.hlz1, "section 9: a plan opened more than 25 km away starts without the other place's HLZ and CCP and keeps the unit " + JSON.stringify({ h: farP.h, c: farP.c, u: farP.u, mk: farP.mk }));
+  await p.fill("#mpf-recv1", "Lop Buri Test Hospital"); await p.waitForTimeout(900);
+  await p.evaluate((m) => window.__asapMap.setView([m.lat, m.lng], window.__asapMap.getZoom(), { animate: false }), pk0.m);
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
+  const back = await p.evaluate(() => ({ h: document.getElementById("mpf-hlz1").value, r: document.getElementById("mpf-recv1").value, s: JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]").length }));
+  ok(back.h === hlz && back.r === "" && back.s === 2, "section 9: back at the first place its HLZ returns, and the other place's receiving facility does not follow " + JSON.stringify(back));
+  /* a receiving facility saved per country before this change is offered once, never used silently */
+  await p.evaluate(() => { const k = "osap-medplan-th", v = JSON.parse(localStorage.getItem(k) || "{}"); v.recv1 = "Srisangworn Sukhothai Hospital (47Q NU 9210 9816)"; localStorage.setItem(k, JSON.stringify(v)); });
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites") && window.OSAP_MEDPLAN_MODEL && /AMBER|GREEN|RED/.test((document.querySelector("#mp-val .mpvs") || {}).textContent || ""), null, { timeout: 20000 });
+  const leg = await p.evaluate(() => ({ n: (document.getElementById("mp-legacy") || {}).textContent || "", r: document.getElementById("mpf-recv1").value, v: document.getElementById("mp-val").textContent }));
+  ok(/Saved from an earlier plan, not used here/.test(leg.n) && /Srisangworn Sukhothai/.test(leg.n) && leg.r === "" && !/Srisangworn/.test(leg.v), "section 9: an old country-wide receiving facility is shown to use or discard, not used: " + leg.n.slice(0, 120));
+  await p.click('#medplan [data-mp="legacydrop"]');
+  await p.waitForFunction(() => document.getElementById("mp-sites") && !document.getElementById("mp-legacy"), null, { timeout: 10000 }).catch(() => {});
+  ok(await p.evaluate(() => !document.getElementById("mp-legacy") && !("recv1" in JSON.parse(localStorage.getItem("osap-medplan-th") || "{}"))), "section 9: Discard removes it for good");
+  await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
@@ -864,6 +887,26 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   ok(/450 open \(official record, H code 99001\)/.test(b) && /teaching or referral hospital: MOPH service level A/.test(b), "official records: beds open and the MOPH level A referral status come from the official record");
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>y<\/b>/.test(document.getElementById("brief").textContent)), "official records: registry text is shown as text, never as markup");
   await p.click("#mpa-close");
+  /* Shane 2026-10-06 (King Narai, level S, credited with an emergency department only): what the MOPH says each service level
+     has is INFERRED, named and linked; blood bank and CT, which it does not state below level A, stay unknown */
+  ok(/MOPH Service Plan hospital levels/.test(src) && /MOPH health KPI 046\.2/.test(src) && /hospital level criteria \(ICU, OR from level M2 up\)/.test(src), "MOPH levels: the three government sources are in the sources list");
+  await p.click('#mp-fac tr:has-text("Sourced Trauma Centre") [data-mp-assess]');
+  await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || "") && /Sourced Trauma Centre/.test(document.getElementById("brief").textContent), null, { timeout: 20000 });
+  const hS = await p.innerHTML("#brief"), rowS = (n) => (hS.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
+  ok(/INFERRED/.test(rowS("General surgeon")) && /MOPH service level S, H code 99002; level S: specialists in every major and secondary branch/.test(rowS("General surgeon")) && /INFERRED/.test(rowS("Orthopaedic surgery")) && /INFERRED/.test(rowS("Anaesthesia")) &&
+    /INFERRED/.test(rowS("Emergency operating room")) && /operating room within 60 minutes/.test(rowS("Emergency operating room")) && /INFERRED/.test(rowS("ICU")) && /ICU and operating theatre are level criteria from M2 up/.test(rowS("ICU")) &&
+    !/INFERRED/.test(rowS("Blood bank")) && !/INFERRED/.test(rowS("CT")) && !/INFERRED/.test(rowS("Neurosurgery")),
+    "MOPH levels: a level S hospital gets surgery, orthopaedics, anaesthesia, emergency theatre and ICU as INFERRED with the reason; blood bank, CT and neurosurgery stay unknown " + JSON.stringify(["General surgeon", "Emergency operating room", "ICU", "Blood bank", "CT"].map((n) => rowS(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 150))));
+  await p.click("#mpa-close");
+  /* Shane 2026-10-06 ("We NEED to know about air medevac"): the documented service, how to request it and its source */
+  await p.waitForFunction(() => /Thai Sky Doctor/.test((document.getElementById("mp-mev") || {}).textContent || "") && /Thai Sky Doctor/.test((document.getElementById("mp-conop") || {}).textContent || ""), null, { timeout: 20000 }).catch(() => {});
+  const airT = await p.evaluate(() => ({ mev: document.getElementById("mp-mev").textContent, tel: !!document.querySelector('#mp-mev a[href="tel:1669"]'), href: !!document.querySelector('#mp-mev a[href="https://thailand.go.th/issue-focus-detail/001_07_002-2"]'),
+    conop: document.getElementById("mp-conop").textContent, src: document.getElementById("mp-src").textContent }));
+  ok(/Air medevac service documented for this country/.test(airT.mev) && /Thai Sky Doctor \(National Institute for Emergency Medicine, NIEM\)/.test(airT.mev) && airT.tel && airT.href && /can be made using the 1669 system/.test(airT.mev),
+    "air: section 4 names Thai Sky Doctor, a tap-to-call 1669, the government source and its words");
+  ok(/NOT CONFIRMED/.test(airT.conop) && /Request: Thai Sky Doctor .*call 1669 \(documented service, not confirmed for this mission\)/.test(airT.conop) && /Air MEDEVAC provider not confirmed: request Thai Sky Doctor/.test(airT.conop),
+    "air: the CONOP card says who to request and that it is not confirmed " + airT.conop.slice(airT.conop.indexOf("AIR"), airT.conop.indexOf("AIR") + 200));
+  ok(/THAILAND\.GO\.TH \(Royal Thai Government\): Thai Sky Doctor/.test(airT.src), "air: the source is in the sources list with its record fingerprint");
   ok(!errors.length, "official records: no page errors " + errors.join(" | "));
   await ctx.close();
 }
