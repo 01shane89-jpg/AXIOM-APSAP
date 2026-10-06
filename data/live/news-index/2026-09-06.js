@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-06"]=[["","2026-09-06T20:46","What to Know About the Miami Plane Crash That Killed 5 People","","TIME on MSN (via Bing News search)","https://www.msn.com/en-us/news/other/what-to-know-about-the-miami-plane-crash-that-killed-5-people/ar-AA2bH9uJ","","sn","air-crashes","transport"]];
