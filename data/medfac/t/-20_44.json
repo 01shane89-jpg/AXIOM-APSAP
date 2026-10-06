@@ -1,0 +1,11 @@
+[["n1042037119",-18.80582,45.27397,"mg",{"name":"Aérodrome d'Ankavandra","aeroway":"aerodrome","iata":"JVA"}],
+["n1042037120",-18.05,44.033,"mg",{"name":"Maintirano Airport","aeroway":"aerodrome","iata":"MXT"}],
+["n2972034192",-19.95292,44.58858,"mg",{"name":"Analabe","aeroway":"aerodrome"}],
+["n414349077",-19.5592,45.44932,"mg",{"name":"Miandrivazo Airport","aeroway":"aerodrome","icao":"FMMN","iata":"ZVA","aerodrome:type":"public","wikidata":"Q3565428"}],
+["n6670073020",-18.06012,44.02647,"mg",{"name":"Centre médical Avotra","amenity":"clinic","healthcare":"clinic"}],
+["n6679524325",-18.0619,44.02292,"mg",{"name":"Centre Hospitalier Régional de Référence Maintirano","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["n6680055455",-18.05857,44.02362,"mg",{"name":"Centre Médical Fy Aina","amenity":"clinic","healthcare":"clinic","phone":"+261345623877","opening_hours":"24/7"}],
+["n724521807",-18.69949,44.61604,"mg",{"name":"Antsalova","aeroway":"aerodrome","iata":"WAQ","wikidata":"Q4777392"}],
+["n725564921",-19.68982,44.54481,"mg",{"name":"Belo sur Tsiribihina","aeroway":"aerodrome","icao":"FMML","iata":"BMD","wikidata":"Q1654849"}],
+["w1184663368",-18.67715,44.62353,"mg",{"name":"CHRD Antsalova","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w800705000",-19.68549,44.54874,"mg",{"name":"Centre Hospitalier Saint François d'Assise","amenity":"hospital","healthcare":"hospital"}]]

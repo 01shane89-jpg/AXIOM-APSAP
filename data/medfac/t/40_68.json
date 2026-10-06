@@ -15,6 +15,7 @@
 ["n4573713694",41.46969,69.23751,"kz",{"amenity":"clinic"}],
 ["n4593851489",41.45645,69.19597,"kz",{"name":"ДОС Клиник","amenity":"clinic","addr:street":"улица Исмаилова"}],
 ["n5257961636",41.39732,69.11847,"kz",{"name":"Ауылдық дәрігерлік емхана","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics;clinic","operator":"Министерство здравоохранения РК","addr:street":"Абылайхан","addr:postcode":"160923"}],
+["n5661725292",40.12233,69.66486,"kg",{"name":"Больничный комплекс","amenity":"hospital","healthcare":"hospital"}],
 ["n5778910944",41.28137,68.00018,"kz",{"name":"Туб диспансер","amenity":"hospital","healthcare":"hospital"}],
 ["w1013231863",40.85654,68.4906,"kz",{"name":"Районная больница","amenity":"hospital","healthcare":"hospital"}],
 ["w1032892177",40.83904,68.53179,"kz",{"amenity":"clinic"}],

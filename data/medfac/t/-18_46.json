@@ -1,0 +1,9 @@
+[["n1042037154",-16.75,47.617,"mg",{"name":"Tsaratanàna Airport","aeroway":"aerodrome","icao":"FMNT","iata":"TTS","wikidata":"Q7849413"}],
+["n2028884419",-17.63039,47.72279,"mg",{"name":"Andriamena","aeroway":"aerodrome","iata":"WAD"}],
+["n3578422905",-17.64498,46.96044,"mg",{"aeroway":"helipad"}],
+["w1158505143",-16.11166,46.64772,"mg",{"name":"Centre Hospitalier de Référence de District Niveau II de Marovoay","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w1359012687",-16.41426,46.7637,"mg",{"amenity":"clinic","healthcare":"clinic"}],
+["w178929815",-16.07177,47.64286,"mg",{"name":"Mampikony Airport","aeroway":"aerodrome","icao":"FMNP","iata":"WMP","wikidata":"Q11824568"}],
+["w800634033",-16.95075,46.83247,"mg",{"name":"Centre Hospitalier de Référence Régional de Maevatanàna","amenity":"hospital","healthcare":"hospital"}],
+["w881694304",-16.46994,46.71916,"mg",{"name":"Centre Hospitalier de Référence de District d'Ambato Boeny","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w936354221",-17.44987,47.51233,"mg",{"name":"Andriamena","aeroway":"aerodrome"}]]

@@ -1,0 +1,11 @@
+[["n4428111196",29.74008,15.21617,"ly",{"name":"مستشفى نينة الكبريتي","name:en":"Nina","amenity":"hospital","healthcare":"hospital","addr:street":"طريق مشروع النخيل"}],
+["n4927767722",29.98473,14.26808,"ly",{"name":"الرعاية الصحية","name:en":"Healthcare","amenity":"hospital","opening_hours":"Mo-Su 09:00-14:00"}],
+["w1063978921",29.10995,15.9657,"ly",{"name":"مطار هون","name:en":"Hon Airport","aeroway":"aerodrome","icao":"HLON","iata":"HUQ","wikidata":"Q12693021"}],
+["w225923339",28.47926,14.81034,"ly",{"name":"مطار منظومة الحساونة","name:en":"Al Hasouna System Airport","aeroway":"aerodrome"}],
+["w407699771",29.12287,15.93962,"ly",{"name":"مستشفى التأمين","name:en":"Insurance Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"هون"}],
+["w782825097",29.03865,15.66749,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w790281631",29.98122,14.25965,"ly",{"name":"مجمع الشويرف الصحي","name:en":"Shuirif  General Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"طريق مزدة-براك","opening_hours":"24/7"}],
+["w813662092",29.07292,15.78082,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w813662095",29.13232,15.94626,"ly",{"name":"مستشفي العافية","name:en":"Al Afiya Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w833500958",29.74069,15.21662,"ly",{"amenity":"hospital","healthcare":"hospital"}],
+["w833500959",29.74005,15.21614,"ly",{"amenity":"hospital","healthcare":"hospital"}]]

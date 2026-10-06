@@ -1,0 +1,12 @@
+[["n10024289519",-24.35156,44.5169,"mg",{"name":"Hopitaly Dr Stanley Quanbeck","amenity":"hospital","healthcare":"hospital","operator":"FLM","operator:type":"religious"}],
+["n1042037170",-24.6997,44.7342,"mg",{"name":"Ampanihy Airport","aeroway":"aerodrome","icao":"FMSY","iata":"AMP","wikidata":"Q12691527"}],
+["n10743697199",-24.69792,44.7463,"mg",{"name":"CHRD Ampanihy","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["n10781899408",-25.31611,45.48728,"mg",{"name":"CHRD II Tsihombe","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["n11765699069",-25.49828,45.51747,"mg",{"amenity":"hospital"}],
+["n14022261381",-24.04848,45.01508,"mg",{"name":"Hopitaly Zoara Fotadrevo","amenity":"hospital","healthcare":"hospital","operator":"Doctors for Madagascar","operator:type":"ngo"}],
+["n2012474925",-24.17393,45.66552,"mg",{"name":"Beraketa","aeroway":"aerodrome"}],
+["n2012474938",-24.8362,45.67391,"mg",{"name":"Antanimora","aeroway":"aerodrome"}],
+["n2973628313",-25.33806,45.47592,"mg",{"name":"Tsihombe","aeroway":"aerodrome"}],
+["w190602043",-24.23646,45.30436,"mg",{"name":"Bekily Airfield","aeroway":"aerodrome","icao":"FMSL","iata":"OVA"}],
+["w209000482",-24.22035,45.31822,"mg",{"name":"CHD I Bekily","amenity":"hospital","healthcare":"hospital","operator:type":"public"}],
+["w934124335",-24.03124,45.02625,"mg",{"name":"Fotadrevo Airport","aeroway":"aerodrome"}]]
