@@ -1,0 +1,17 @@
+kpi1520 https://healthkpi.moph.go.th/kpi2/kpi-list/view/?id=1520
+crit2025 https://r8way.moph.go.th/r8wayNewadmin/page/upload_file/20250303023108.pdf
+crit2022 https://r8way.moph.go.th/r8wayNewadmin/page/upload_file/20221108041847.pdf
+upgrade2024 https://r8way.moph.go.th/r8wayNewadmin/page/upload_file/20240503062821.pdf
+thaidj https://thaidj.org/index.php/jdhss/article/download/6559/6169/9140
+healthserv https://healthserv.net/healthupdate/1071
+uckkpho https://www.uckkpho.com/download/3364/
+kpitrauma https://pbio.moph.go.th/upload/2021/11/202111221374480169.pdf
+skydoc_gov https://thailand.go.th/issue-focus-detail/001_07_002-2
+niems8938 https://www.niems.go.th/1/News/Detail/8938?group=17
+bdms_medevac https://www.bangkokhospital.com/en/bangkok/center-clinic/trauma/bdms-medevac-center/medical-evacuation-and-repatriation
+bdms_fleet https://www.bangkokhospital.com/en/bangkok/center-clinic/trauma/bdms-emergency-services-bes/our-fleet
+bdms_scope https://www.bangkokhospital.com/en/bangkok/center-clinic/trauma/bdms-emergency-services-bes/scope-of-services
+thaiscience https://www.thaiscience.info/journals/Article/JHRE/10987728.pdf
+sjtrem https://sjtrem.biomedcentral.com/articles/10.1186/s13049-025-01498-w
+wiki_eas https://en.wikipedia.org/wiki/Emergency_Aeromedical_Service
+thaipublica https://thaipublica.org/2018/05/hems-caat-eu/
