@@ -1,0 +1,19 @@
+# Scratch research fetcher (branch claude/medplan-air-raw only, never merged)
+name: Research raw fetch
+on:
+  push:
+    branches: [claude/medplan-air-raw]
+    paths: [research/urls.txt]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: sudo apt-get install -y poppler-utils >/dev/null
+      - run: bash research/fetch.sh
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add research/out && git commit -m "research raw fetch" && git push || true
