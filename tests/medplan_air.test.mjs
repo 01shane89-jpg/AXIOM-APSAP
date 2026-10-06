@@ -40,5 +40,21 @@ ok(A.best([A.makeAsset(Object.assign({}, base, { status: "UNAVAILABLE" }), NOW)]
 let L = A.upsert([], a); L = A.upsert(L, Object.assign({}, a, { status: "UNAVAILABLE" }));
 ok(L.length === 1 && L[0].status === "UNAVAILABLE", "the same aircraft is replaced, not added twice");
 
+/* the documented air medical services (Shane 2026-10-06): each entry sourced, quoted, an institutional number only, and its
+   SHA-256 record fingerprint matching its content */
+const { createHash } = await import("node:crypto");
+const canon = (o) => Array.isArray(o) ? "[" + o.map(canon).join(",") + "]" : o && typeof o === "object" ? "{" + Object.keys(o).sort().map((k) => JSON.stringify(k) + ":" + canon(o[k])).join(",") + "}" : JSON.stringify(o);
+const th = A.providers("TH");
+ok(th.length >= 1 && th[0].provider.includes("Sky Doctor") && th[0].phone === "1669" && /1669/.test(th[0].quote) && /HEMS/.test(th[0].quote2), "Thailand: Thai Sky Doctor, requested through 1669, in the source's words");
+ok(A.providers("zz").length === 0 && A.providers("").length === 0, "a country without an entry has none documented (the plan says so; it is not 'no air medevac')");
+Object.keys(A.DIRECTORY).forEach((cc) => A.DIRECTORY[cc].forEach((d) => {
+  const e = Object.assign({}, d); delete e.fp;
+  ok(/^https:\/\//.test(d.src) && d.srcname && d.quote && /^\d{4}-\d{2}-\d{2}$/.test(d.read) && d.request && d.provider, cc + " " + d.id + ": sourced, quoted, dated, says how to request it");
+  ok(!/\b0?[689]\d[- ]?\d{3}[- ]?\d{4}\b/.test(d.phone || "") && (d.phone || "").replace(/\D/g, "").length <= 12, cc + " " + d.id + ": an institutional number, never a mobile: " + d.phone);
+  ok(createHash("sha256").update(canon(e)).digest("hex") === d.fp, cc + " " + d.id + ": record fingerprint matches its content");
+}));
+th[0].phone = "x";
+ok(A.providers("th")[0].phone === "1669", "the directory cannot be changed through what providers() returns");
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all passed");
