@@ -6,8 +6,8 @@
 //   YouTube  - each listed channel's public video feed (titles, dates, thumbnails and links only).
 // Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js.
 import fs from "node:fs";
-import { translateAll, saveCache } from "./translate.mjs";
-import { updateHistory } from "./history.mjs";
+import { translateAll, saveCache, seed } from "./translate.mjs";
+import { updateHistory, storedTranslations } from "./history.mjs";
 import { splitByCountry, newsCodes } from "./split_country.mjs";
 
 const TIMEOUT = 15000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
@@ -250,8 +250,18 @@ for (const cc of Object.keys(items)) {
 }
 const all = [...new Set(Object.values(items).flat())];
 const tTr = Date.now();
-const tr = await translateAll(all.map((i) => ({ text: i.title, lang: i.lang || "" })));
+// English already stored with the history is reused (tools/history.mjs), so a post keeps its translation after the cache drops it.
+// Headlines first, then the video descriptions (YouTube's summary); a description the model has no time for this run stays
+// untranslated and the page shows only the English headline, with the original under "<language> original".
+console.log("translations reused from the history:", seed(storedTranslations("social", Object.keys(items))));
+const sums = all.filter((i) => i.summary && !/^en\b/i.test(i.lang || ""));
+const tr = await translateAll([...all.map((i) => ({ text: i.title, lang: i.lang || "" })), ...sums.map((i) => ({ text: i.summary, lang: i.lang || "" }))]);
 all.forEach((i, n) => { i.title_en = tr[n].en; i.mt = /^en\b/i.test(i.lang || "") ? null : (tr[n].tool || "untranslated"); if (i.mt && tr[n].en === i.title) i.mt = null; });
+sums.forEach((i, n) => {
+  const b = tr[all.length + n]; if (!b.en || b.en === i.summary) return;
+  i.summary_en = b.en.slice(0, 400);
+  if (!i.mt || i.mt === "untranslated") i.mt = b.tool;
+});
 saveCache();
 lap("Translation", tTr);
 if (!status.some((s) => s.ok)) { console.error("no social source worked"); status.forEach((s) => console.error(" ", s.platform, s.source, s.error)); process.exit(1); }
