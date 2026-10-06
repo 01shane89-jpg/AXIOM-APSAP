@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "daily", "wxbrief", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "seatransit", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "daily", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "medplan", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -36,8 +36,8 @@ async function open(hash, opts) {
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(300);
   /* count the weather and medical plan calls instead of fetching forecasts and OpenStreetMap */
   await p.evaluate(() => {
-    window.__calls = { wxbrief: 0, wxreport: 0, med: 0 };
-    if (window.OSAP_WX) { window.OSAP_WX.brief = () => window.__calls.wxbrief++; window.OSAP_WX.report = () => window.__calls.wxreport++; }
+    window.__calls = { wxbrief: 0, wxreport: 0, wxchart: 0, med: 0 };
+    if (window.OSAP_WX) { window.OSAP_WX.brief = () => window.__calls.wxbrief++; window.OSAP_WX.report = () => window.__calls.wxreport++; window.OSAP_WX.chart = () => window.__calls.wxchart++; }
     if (window.OSAP_MEDPLAN) window.OSAP_MEDPLAN.open = () => window.__calls.med++;
   });
   return { ctx, p, errors };
@@ -77,8 +77,8 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   m = await menu(p);
   if (!item(m, "Timeline report").off) { await pick(p, "timeline"); await p.waitForTimeout(1500); ok(await briefOpen(p, ".tlr"), "Timeline report opens"); await closeBrief(p); }
   else ok(false, "Timeline report ready on Thailand (" + item(m, "Timeline report").hint + ")");
-  m = await menu(p); await pick(p, "wxbrief"); m = await menu(p); await pick(p, "wxreport");
-  ok(await p.evaluate(() => window.__calls.wxbrief === 1 && window.__calls.wxreport === 1), "weather brief and detailed report open through the weather tool");
+  m = await menu(p); await pick(p, "wxbrief"); m = await menu(p); await pick(p, "wxreport"); m = await menu(p); await pick(p, "wxchart");
+  ok(await p.evaluate(() => window.__calls.wxbrief === 1 && window.__calls.wxreport === 1 && window.__calls.wxchart === 1), "weather brief, 5-day chart and detailed report open through the weather tool");
   m = await menu(p); await pick(p, "sitrep");
   ok(await p.evaluate(() => { const w = document.getElementById("wk"); return w && !w.hidden && /Situation report/.test(w.textContent); }), "Situation report opens My work at Export");
   await p.evaluate(() => { const x = document.querySelector("#wk .x"); if (x) x.click(); });

@@ -33,6 +33,8 @@
       function () { W.OSAP_TODAY.show(); setTimeout(function () { var d = D.getElementById("td-daily"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "start" }); }, 120); }],
     ["wxbrief", "Country", "Weather brief", "One page: impacts, forecast and light for the country or the drawn area",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.brief) || "Weather is still loading"; }, function () { W.OSAP_WX.brief(); }],
+    ["wxchart", "Country", "5-day weather chart", "Military-style chart: night and day halves, winds, crosswind, DA/PA, light, illumination and mission impacts",
+      function () { return !!(W.OSAP_WX && W.OSAP_WX.chart) || "Weather is still loading"; }, function () { W.OSAP_WX.chart(); }],
     ["wxreport", "Country", "Detailed weather report", "Hour by hour, 16 days, model agreement, sea, air and light",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.report) || "Weather is still loading"; }, function () { W.OSAP_WX.report(); }],
     ["illum", "Country", "Night illumination", "Sunset, twilight (BMNT/EENT), moonrise and set, moon phase and percent lit, night by night, with a chart",
