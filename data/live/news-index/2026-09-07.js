@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-09-07"]=[["cl","2026-09-07T19:19","La dulce obsesión de los turistas brasileños en Chile: ¿por qué compran tanto Sahne Nuss?","","La Tercera","https://www.latercera.com/tendencias/noticia/la-obsesion-de-los-turistas-brasilenos-en-chile-por-que-compran-tanto-sahne-nuss/","","","",""]];
