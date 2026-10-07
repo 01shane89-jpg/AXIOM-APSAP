@@ -5,6 +5,7 @@
 ["n5313018008",-18.03753,24.31754,"bw",{"name":"Parakarungu clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n5318475102",-18.13411,24.069,"bw",{"name":"Saile Airstrip","aeroway":"aerodrome","icao":"FBSI"}],
 ["n5526356043",-18.61929,25.49883,"bw",{"name":"Fortvest Base Airstrip","aeroway":"aerodrome"}],
+["n9688810465",-18.07145,24.01744,"na",{"name":"Linyanti Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w1059824507",-18.07536,24.58432,"bw",{"name":"Kavimba Health Clinic","amenity":"clinic","healthcare":"clinic","addr:city":"Kavimba","opening_hours":"Mo-Su 07:30-16:30"}],
 ["w1228550053",-19.3293,24.84151,"bw",{"name":"Masame Airstrip","aeroway":"aerodrome"}],
 ["w1228915097",-19.50845,25.07807,"bw",{"name":"Tonunga Airstrip","aeroway":"aerodrome","icao":"FBTN"}],

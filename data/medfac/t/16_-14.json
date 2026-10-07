@@ -1,0 +1,6 @@
+[["n13072385469",17.19506,-13.02261,"mr",{"name":"Point de santé de lairdi","amenity":"hospital","healthcare":"hospital","addr:city":"Lairdi"}],
+["n9955124519",17.04824,-13.8984,"mr",{"name:en":"Alag center health","amenity":"hospital"}],
+["r6885794",16.15951,-13.50783,"mr",{"name":"Aéroport de Kaédi مطار كيهيدي","name:en":"Kaédi Airport","aeroway":"aerodrome","icao":"GQNK","iata":"KED","wikidata":"Q6381845"}],
+["w1083272914",16.14684,-13.78461,"mr",{"name":"Dispensaire","amenity":"hospital","healthcare":"hospital","operator":"oui"}],
+["w1083462377",16.14686,-13.78453,"mr",{"name":"Dispensaire M'bagne","amenity":"hospital","healthcare":"hospital","operator":"population"}],
+["w360412328",16.15057,-13.50724,"mr",{"name":"Hôpital de Kaédi مستشفى كيهيدي","name:en":"Kaihaidi Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Kaédi كيهيدي","wikidata":"Q144829"}]]

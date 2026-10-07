@@ -1,4 +1,6 @@
-[["n4681663993",19.9549,2.96403,"dz",{"name":"EPSP Tinzaouatine;المؤسسة العمومية للصحة الجوارية تين ظواتين","amenity":"hospital","healthcare":"hospital","addr:city":"تين ظواتين","addr:postcode":"11150"}],
+[["n2157549638",18.45227,2.49094,"ml",{"name":"CSREF de Tin-Essako","amenity":"clinic","healthcare":"clinic"}],
+["n2163841223",18.45221,2.49041,"ml",{"name":"Clinique de Tin-Essako","amenity":"clinic","healthcare":"clinic"}],
+["n4681663993",19.9549,2.96403,"dz",{"name":"EPSP Tinzaouatine;المؤسسة العمومية للصحة الجوارية تين ظواتين","amenity":"hospital","healthcare":"hospital","addr:city":"تين ظواتين","addr:postcode":"11150"}],
 ["w1304679435",19.97641,2.96132,"dz",{"aeroway":"helipad"}],
 ["w1304679436",19.97601,2.96153,"dz",{"aeroway":"helipad"}],
 ["w438324669",19.95495,2.96401,"dz",{"name":"Epsp Tin Zaouatine","amenity":"hospital","healthcare":"hospital","addr:city":"تين ظواتين","addr:postcode":"11150"}],

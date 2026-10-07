@@ -150,6 +150,7 @@
 ["w379740114",52.11342,25.91808,"by",{"amenity":"hospital"}],
 ["w379877298",52.31917,25.57929,"by",{"name":"Мотальская ўчастковая бальніца","amenity":"hospital","healthcare":"hospital"}],
 ["w380253164",52.2085,24.76812,"by",{"amenity":"hospital","emergency":"yes"}],
+["w383068279",53.95079,24.32232,"lt",{"aeroway":"helipad"}],
 ["w39636619",52.19201,25.16515,"by",{"name":"Інфекцыйнае аддзяленне","amenity":"hospital","healthcare":"hospital"}],
 ["w39637940",52.19227,25.16845,"by",{"name":"Раённы цэнтр гігіены і эпідэміялогіі","amenity":"clinic","healthcare":"clinic"}],
 ["w397435158",52.55843,24.88517,"by",{"name":"927-ы цэнтр падрыхтоўкі і прымянення беспілотных авіяцыйных комплексаў","name:en":"Osovtsy Air Base","aeroway":"aerodrome","icao":"UMMO","military":"airfield"}],

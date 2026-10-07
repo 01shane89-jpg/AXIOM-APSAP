@@ -1,5 +1,6 @@
 [["n1042031886",14.12216,-1.62806,"bf",{"name":"Aéroport de Djibo","aeroway":"aerodrome","iata":"XDJ","wikidata":"Q1657268"}],
 ["n1042031927",14.217,-0.883,"bf",{"name":"Aribinda Airport","aeroway":"aerodrome","icao":"DFOY","iata":"XAR","wikidata":"Q4790277"}],
+["n12556375204",15.26591,-1.5729,"ml",{"name":"CSCOM Wami","amenity":"clinic","healthcare":"clinic"}],
 ["n5656850795",14.10056,-1.6296,"bf",{"name":"Hôpita de district de Djibo","amenity":"clinic","healthcare":"clinic"}],
 ["n5656850798",14.09921,-1.63392,"bf",{"name":"Dispensaire Croix-Rouge","amenity":"clinic","healthcare":"clinic"}],
 ["n5659422932",14.10008,-1.63347,"bf",{"name":"Croix-Rouge","amenity":"clinic","healthcare":"clinic"}],
@@ -15,4 +16,10 @@
 ["w590488297",14.01,-1.66909,"bf",{"amenity":"hospital","healthcare":"hospital"}],
 ["w873224093",14.09626,-1.65515,"bf",{"aeroway":"helipad"}],
 ["w887485830",14.10078,-1.62993,"bf",{"amenity":"hospital","healthcare":"hospital"}],
+["w930825069",15.82707,-1.27913,"ml",{"aeroway":"helipad"}],
+["w930825070",15.82714,-1.27869,"ml",{"aeroway":"helipad"}],
+["w930825071",15.82723,-1.27821,"ml",{"aeroway":"helipad"}],
+["w930825072",15.82688,-1.27815,"ml",{"aeroway":"helipad"}],
+["w930825073",15.82679,-1.27863,"ml",{"aeroway":"helipad"}],
+["w930825074",15.82672,-1.27907,"ml",{"aeroway":"helipad"}],
 ["w945129896",14.22745,-0.86772,"bf",{"name":"Centre Medical Urbain","amenity":"hospital","healthcare":"hospital"}]]

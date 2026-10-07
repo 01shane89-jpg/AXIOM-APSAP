@@ -1,0 +1,13 @@
+[["n11342882132",-27.02338,18.84236,"na",{"aeroway":"aerodrome"}],
+["n11343091951",-27.91113,18.00251,"na",{"aeroway":"aerodrome"}],
+["n11343117919",-27.97652,19.03545,"na",{"name":"Kleinbegin Game Lodge Airstrip","aeroway":"aerodrome"}],
+["n11343563199",-26.89972,18.60072,"na",{"name":"Narubis Airstrip","aeroway":"aerodrome","icao":"FYNS"}],
+["n11375338229",-26.39458,19.68646,"na",{"name":"Arabi Hunting Farm Airfield","aeroway":"aerodrome","icao":"FYBI"}],
+["w1222893371",-26.77623,19.63772,"na",{"name":"Aroab B Airport","aeroway":"aerodrome","icao":"FYAB"}],
+["w1241217839",-26.79789,19.65081,"na",{"name":"Aroab Health Centre","amenity":"clinic","healthcare":"clinic","addr:city":"Aroab","addr:postcode":"23005"}],
+["w1355841888",-26.70459,18.01507,"na",{"name":"Brukkaros Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w369069399",-26.56723,18.15563,"na",{"name":"Keetmanshoop District Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+264 63 2209000","addr:city":"Keetmanshoop"}],
+["w742974153",-26.5842,18.14704,"na",{"name":"Tseiblaagte Clinic","amenity":"clinic","healthcare":"clinic","addr:city":"Keetmanshoop"}],
+["w744589658",-26.57646,18.13136,"na",{"name":"Khabuser Clinic","amenity":"clinic","healthcare":"clinic","addr:street":"Mittel Street","addr:city":"Keetmanshoop"}],
+["w795605992",-26.5766,18.13668,"na",{"name":"Daan Viljoen Clinic","amenity":"clinic","healthcare":"clinic","addr:city":"Keetmanshoop"}],
+["w88058474",-26.53877,18.11084,"na",{"name":"Keetmanshoop Airport","name:en":"Keetmanshoop Airport","operator":"Namibia Airports Company Ltd.","aeroway":"aerodrome","icao":"FYKT","iata":"KMP","wikidata":"Q851725"}]]

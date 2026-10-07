@@ -1,7 +1,7 @@
 [["n10066778320",39.79206,19.70157,"gr",{"amenity":"clinic"}],
 ["n14141204051",39.97538,18.08802,"it",{"name":"Poliambulatorio di Taviano","amenity":"clinic","healthcare":"clinic","operator":"ASL Lecce","operator:type":"public"}],
 ["n14141204052",39.97535,18.08779,"it",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
-["n14141204084",39.9769,18.0876,"it",{"name":"Laboratorio Centro Analisi Gennaio","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"blood_check;haematology;biology","phone":"+39 0833 911 610","addr:housenumber":"18/A","addr:street":"Via Don Luigi Sturzo","addr:city":"Taviano","addr:postcode":"73057","opening_hours":"Mo-Fr 07:00-12:30,17:00-19:00; Sa 07:30-11:00"}],
+["n14141204084",39.9769,18.0876,"it",{"name":"Laboratorio Centro Analisi Gennaio","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"blood_check;haematology;biology","operator:type":"private","phone":"+39 0833 911 610","website":"https://www.analisigennaio.it/","addr:housenumber":"18/A","addr:street":"Via Don Luigi Sturzo","addr:city":"Taviano","addr:postcode":"73057","opening_hours":"Mo-Fr 07:00-12:30,17:00-19:00; Sa 07:30-11:00"}],
 ["n2914522622",39.47938,19.92599,"gr",{"name":"Primary Health Care","amenity":"clinic","healthcare":"clinic","phone":"+30 2661 076900"}],
 ["n3710860698",39.98326,18.38338,"it",{"name":"ASL","amenity":"clinic","healthcare":"clinic"}],
 ["n4226448491",39.75864,19.69611,"gr",{"name":"Corfu Naturopathy","amenity":"clinic","healthcare":"clinic","phone":"+306931091551","website":"https://www.greencorfu.com/naturopathy-corfu-colleen-grassnik/","addr:street":"Kounavades","opening_hours":"Mo-Sa 10:00-13:00, 15:00-18:00"}],
