@@ -1,0 +1,18 @@
+{"cc":"fm","at":"2026-10-07T10:36:53Z","base":"2026-10-07T10:34:34Z","m":[
+["n3229859444",6.96948,158.18963,{"man_made":"tower","name":"Cell phone tower","operator":"FSMTC","tower:type":"communication"}],
+["n3230314834",6.94914,158.19349,{"frequency":"999 kHz/104.1 MHz","man_made":"tower","name":"Baptist Radio","tower:type":"communication"}],
+["n3298426410",6.96619,158.2048,{"man_made":"tower","tower:type":"communication"}],
+["n3347595636",7.45818,151.84933,{"man_made":"tower","tower:type":"communication"}],
+["n3347647177",9.51355,138.11224,{"man_made":"tower","tower:type":"communication"}],
+["n3393456848",6.95947,158.20987,{"man_made":"tower","tower:type":"communication"}],
+["n3394811124",6.94997,158.20163,{"man_made":"tower","name":"FSMBS","tower:type":"communication"}],
+["n3404782163",6.96952,158.1896,{"man_made":"tower","tower:type":"communication"}],
+["n3424338058",5.36981,162.9975,{"man_made":"tower","tower:type":"communication"}],
+["n3426186595",5.32667,163.01292,{"man_made":"tower","operator":"FSMBS","tower:type":"communication"}],
+["n3432287251",7.45904,151.8418,{"man_made":"tower","tower:type":"communication"}],
+["n3432508801",7.44782,151.85142,{"man_made":"tower","operator":"V6BBC","tower:type":"communication"}],
+["n3432508812",7.45674,151.83985,{"man_made":"tower","tower:type":"communication"}],
+["n3440266444",9.5558,138.15953,{"height":"61","man_made":"tower","name":"Joy Family Radio","operator":"V6JY","tower:type":"communication"}],
+["n3996595644",5.49014,153.53997,{"man_made":"tower","name":"radio tower","tower:type":"communication"}],
+["n3996595645",5.33593,153.73532,{"man_made":"tower","name":"satawan tower","tower:type":"communication"}]
+]}
