@@ -1,0 +1,11 @@
+[["n4499713500",-24.22472,35.42163,"mz",{"aeroway":"helipad"}],
+["n5951828224",-24.04346,35.08846,"mz",{"name":"Centro de Saúde de Maiaice","amenity":"clinic"}],
+["n6476125511",-24.26526,35.23735,"mz",{"name":"Centro de Saude Ravene","amenity":"clinic"}],
+["n6476125517",-24.11097,35.31784,"mz",{"name":"Centro de Saude Jangamo","amenity":"clinic"}],
+["n6476125520",-24.14462,35.21769,"mz",{"name":"Centro de Saude Cumbana","amenity":"clinic","healthcare":"clinic"}],
+["n6476125524",-24.47695,35.0307,"mz",{"name":"Centro de Saude de Siane","amenity":"clinic"}],
+["n6476125531",-24.63116,34.06755,"mz",{"name":"Centro de Saude de Mandlakazi","amenity":"clinic"}],
+["w1446721767",-24.47224,35.02109,"mz",{"name":"Antiga Aeródromo","operator":"Tem","operator:type":"public/government","addr:city":"Vila de Inharrime","aeroway":"aerodrome"}],
+["w225382770",-24.49568,35.16969,"mz",{"amenity":"hospital"}],
+["w457924093",-24.71433,34.74747,"mz",{"name":"Hospital Distrital de Quissico","amenity":"hospital"}],
+["w833983023",-24.4762,35.01704,"mz",{"name":"Posto de Saúde de Inharrime","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Vila de Inharrime"}]]

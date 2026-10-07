@@ -1,1 +1,8 @@
-[["n3735854284",-17.45461,22.60695,"ao",{"name":"Aeroporto da Jamba","name:en":"Jamba Airport","aeroway":"aerodrome"}]]
+[["n11220763910",-17.77627,23.2814,"na",{"name":"Susuwe Airfield (closed)","aeroway":"aerodrome"}],
+["n3735854284",-17.45461,22.60695,"ao",{"name":"Aeroporto da Jamba","name:en":"Jamba Airport","aeroway":"aerodrome"}],
+["n3735854296",-17.77524,23.30682,"na",{"name":"Immelmann Airstrip","aeroway":"aerodrome","icao":"FYIM","aerodrome:type":"airstrip"}],
+["n6268958004",-17.81938,22.56457,"na",{"name":"Bwabwata Airport","aeroway":"aerodrome","icao":"FYBW","aerodrome:type":"airstrip"}],
+["w1036027244",-17.75181,23.3973,"na",{"name":"Sesheke Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1036095190",-17.96619,23.44615,"na",{"name":"Sachona Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1053924427",-17.73019,23.97241,"na",{"name":"Kaenda Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1053928832",-17.78517,23.82118,"na",{"name":"Sibbinda Health Centre","amenity":"clinic","healthcare":"clinic"}]]

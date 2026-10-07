@@ -1,0 +1,6 @@
+[["n2697741708",20.16739,-90.14055,"mx",{"name":"hospital rural IMSS hecelchakan","amenity":"hospital","healthcare":"hospital"}],
+["n3637344565",20.59628,-90.08071,"mx",{"name":"Aeródromo Santa Rosa de Lima","aeroway":"aerodrome"}],
+["w1507095865",20.37435,-90.06048,"mx",{"name":"ISSSTE UMF Calkini","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community;vaccination","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado","operator:type":"public","addr:housenumber":"1-G","addr:street":"Calle Violeta","addr:city":"Calkini","addr:postcode":"24900"}],
+["w618178516",20.40103,-90.14934,"mx",{"name":"Hospital comunitario Nunkiní","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"no","addr:street":"19","addr:city":"Nunkini","addr:postcode":"24910"}],
+["w729758292",21.16334,-90.04257,"mx",{"name":"Centro de Salud Sisal","amenity":"clinic"}],
+["w822707123",20.20332,-91.96142,"mx",{"aeroway":"helipad","surface":"paved"}]]

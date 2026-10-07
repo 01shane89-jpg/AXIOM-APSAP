@@ -1,0 +1,10 @@
+[["n11343162099",-28.12463,19.83905,"na",{"name":"Ariamsvlei Airfield","aeroway":"aerodrome","icao":"FYAV"}],
+["n11343178742",-28.45252,18.69346,"na",{"name":"Warmbad Airstrip","aeroway":"aerodrome","icao":"FYWM"}],
+["n11343271067",-28.69604,18.77586,"na",{"name":"Tantalite Valley Airstrip","aeroway":"aerodrome"}],
+["n11343286998",-28.88782,18.23929,"na",{"name":"Haklesdoorn Airport","aeroway":"aerodrome"}],
+["n11343288411",-28.72313,18.49914,"na",{"name":"Sandfontein Airstrip","aeroway":"aerodrome","icao":"FYSJ"}],
+["n2393771201",-28.37699,19.77415,"na",{"name":"Skuit Drift Airport","aeroway":"aerodrome"}],
+["w1083975127",-28.44484,18.73353,"na",{"name":"Warmbad Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1088009883",-28.11973,19.83348,"na",{"name":"Ariamsvlei Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1222920472",-28.03148,18.73637,"na",{"name":"Karasburg Airport","aeroway":"aerodrome","icao":"FYKB","iata":"KAS","wikidata":"Q11824471"}],
+["w369046415",-28.017,18.74102,"na",{"name":"Karasburg State Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Johannes Nangura Street","addr:city":"Karasburg","addr:postcode":"23008"}]]

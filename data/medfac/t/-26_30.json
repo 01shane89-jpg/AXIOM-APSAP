@@ -1,5 +1,6 @@
 [["n1042036667",-25.79495,31.41332,"sz",{"name":"Piggs Peak Airfield","aeroway":"aerodrome","icao":"FDNG","wikidata":"Q18388545"}],
 ["n5946919243",-25.93505,31.27298,"sz",{"aeroway":"helipad"}],
 ["n59649330",-25.95818,31.24997,"sz",{"name":"Swaziland Red Cross","amenity":"clinic","healthcare":"clinic","operator":"International Red Cross","operator:type":"ngo"}],
+["n6476197721",-25.44367,31.98946,"mz",{"name":"Centro de Saude de Ressano Garcia","amenity":"clinic"}],
 ["w784172517",-25.95805,31.24826,"sz",{"name":"Piggs Peak Public Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w874120616",-25.98766,31.75277,"sz",{"name":"Tshaneni Airstrip","aeroway":"aerodrome","icao":"FDTS"}]]

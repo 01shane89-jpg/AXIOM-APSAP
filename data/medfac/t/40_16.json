@@ -273,6 +273,6 @@
 ["w885611930",40.4853,17.20021,"it",{"name":"Regione Puglia - ARPA","amenity":"hospital","healthcare":"hospital"}],
 ["w909130399",40.39928,16.23501,"it",{"aeroway":"helipad"}],
 ["w909130400",40.39991,16.23467,"it",{"amenity":"hospital","healthcare":"hospital"}],
-["w928340267",40.65134,17.94657,"it",{"name":"Aeroporto militare \"Orazio Pierozzi\"","operator":"Aeronautica Militare;United Nations","aeroway":"aerodrome","icao":"LIBR","military":"base"}],
+["w928340267",40.65133,17.94657,"it",{"name":"Aeroporto militare \"Orazio Pierozzi\"","operator":"Aeronautica Militare;United Nations","aeroway":"aerodrome","icao":"LIBR","military":"base"}],
 ["w996944591",40.39976,16.23446,"it",{"name":"Ospedale Distrettuale Salvatore Peragine","amenity":"hospital"}],
 ["w997965990",40.48461,16.25312,"it",{"name":"Distretto Sanitario","healthcare":"clinic"}]]

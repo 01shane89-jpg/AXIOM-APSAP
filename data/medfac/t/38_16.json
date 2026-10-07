@@ -86,6 +86,7 @@
 ["w1418852732",39.73804,16.12378,"it",{"aeroway":"helipad"}],
 ["w1423065775",39.60343,16.64175,"it",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1447524322",39.78054,16.32767,"it",{"name":"Hospice Cassano All'Ionio","amenity":"hospital"}],
+["w1463568573",39.62573,16.56533,"it",{"name":"Ospedale della Sibaritide","amenity":"hospital","healthcare":"hospital","addr:city":"Corigliano-Rossano"}],
 ["w1463752898",39.59581,16.63689,"it",{"aeroway":"helipad"}],
 ["w1463752934",39.59683,16.6381,"it",{"emergency":"ambulance_station"}],
 ["w1524409151",39.29319,16.24971,"it",{"aeroway":"helipad"}],

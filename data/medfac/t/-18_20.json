@@ -1,2 +1,11 @@
 [["n1042020264",-17.98192,20.76806,"ao",{"name":"Aeroporto de Dirico","name:en":"Dirico Airport","aeroway":"aerodrome","iata":"DRC"}],
-["w1055434262",-16.70399,20.26747,"ao",{"aeroway":"aerodrome"}]]
+["n11215168510",-17.98577,20.54126,"na",{"name":"Ndonga Linena Airstrip","aeroway":"aerodrome"}],
+["w1037837976",-17.95546,21.16279,"na",{"name":"Kangongo Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1037841137",-17.99012,21.32409,"na",{"name":"Biro Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1037841432",-17.96339,21.23264,"na",{"name":"Mayara Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1037843223",-17.97011,21.00734,"na",{"name":"Mbambi Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1038021535",-17.95218,20.47488,"na",{"name":"Ndonga Linena Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1038026977",-17.9938,20.57779,"na",{"name":"Karukuta Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1040056093",-17.90524,20.13872,"na",{"name":"Mashare Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1055434262",-16.70399,20.26747,"ao",{"aeroway":"aerodrome"}],
+["w1086823947",-17.90672,20.02916,"na",{"name":"Shambyu Health Center","amenity":"clinic","healthcare":"clinic"}]]

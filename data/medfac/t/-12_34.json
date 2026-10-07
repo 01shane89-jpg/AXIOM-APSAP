@@ -2,6 +2,7 @@
 ["n11384969353",-11.60843,34.29497,"mw",{"amenity":"clinic","operator":"Private"}],
 ["n11384982815",-11.61023,34.29734,"mw",{"name":"Chipatala Health Clinic","amenity":"hospital","operator":"Private"}],
 ["n476501750",-10.28746,34.10772,"mw",{"name":"Nyungwe Hospital","amenity":"hospital"}],
+["n6481646939",-11.61561,34.96132,"mz",{"name":"Centro de Saude Wikihi","amenity":"clinic"}],
 ["n6802281386",-11.46148,34.01739,"mw",{"name":"Mzuzu Youth Life Centre","amenity":"clinic"}],
 ["n6815961885",-10.4528,34.21118,"mw",{"name":"Tiwonge Private Clinic","amenity":"clinic","healthcare":"clinic","phone":"0882182350","opening_hours":"Mo-Sa 07:30-18:30"}],
 ["n6823009385",-10.45384,34.2105,"mw",{"name":"Shalom Private Clinic","amenity":"clinic","healthcare":"clinic","phone":"0999916024","opening_hours":"Mo-Sa 07:30-20:00"}],
@@ -16,5 +17,6 @@
 ["w343963186",-11.60864,34.2534,"mw",{"name":"Nkhata District Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w426299296",-11.46124,34.01587,"mw",{"name":"Malawi Blood Transfusion Service","amenity":"hospital","healthcare":"hospital"}],
 ["w432014406",-11.45175,34.0278,"mw",{"name":"St. John's Hospital","amenity":"hospital","emergency":"yes","operator":"Catholic Church"}],
+["w464283468",-11.61032,35.46122,"mz",{"aeroway":"aerodrome"}],
 ["w507576234",-10.29177,34.16054,"mw",{"name":"Phapa Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w680692224",-10.60401,34.11117,"mw",{"name":"David Gordon Memorial Hospital","amenity":"hospital","healthcare":"hospital"}]]

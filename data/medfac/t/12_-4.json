@@ -1,4 +1,6 @@
-[["n1042031893",12.2,-2.583,"bf",{"name":"Tenado Airport","aeroway":"aerodrome"}],
+[["n10240522553",13.84306,-3.75446,"ml",{"name":"Hôpital Epoux BRIEUX","amenity":"hospital"}],
+["n10246832979",13.78096,-3.77034,"ml",{"name":"CSCOM de Sama","amenity":"hospital"}],
+["n1042031893",12.2,-2.583,"bf",{"name":"Tenado Airport","aeroway":"aerodrome"}],
 ["n1042031917",12.15,-3.183,"bf",{"name":"Safane Airport","aeroway":"aerodrome"}],
 ["n1042031925",13.05926,-3.07658,"bf",{"name":"Tougan Airport","aeroway":"aerodrome","icao":"DFOT","iata":"TUQ","wikidata":"Q4202989"}],
 ["n13033804412",12.43527,-2.03721,"bf",{"name":"Centre Médical","amenity":"hospital","operator":"Public"}],

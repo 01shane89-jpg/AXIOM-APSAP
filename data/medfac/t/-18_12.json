@@ -1,2 +1,15 @@
-[["w1450999897",-16.8833,12.57103,"ao",{"name":"Hospital Municipal do Iona","amenity":"hospital","healthcare":"hospital","addr:city":"Iona"}],
-["w828418667",-16.6572,13.42401,"ao",{"name":"Hospital Municipal do Curoca","amenity":"hospital","healthcare":"hospital"}]]
+[["n11197258490",-17.02926,13.2106,"na",{"name":"Epupa Falls Airstrip","aeroway":"aerodrome","icao":"FYEF"}],
+["n11197388419",-17.4029,13.83114,"na",{"name":"Swartbooisdrift Airstrip","aeroway":"aerodrome","icao":"FYRL"}],
+["n3735854305",-17.25877,12.43041,"na",{"name":"Okahirongo River Camp Airstrip","aeroway":"aerodrome","icao":"FYIC"}],
+["n5034116000",-17.00333,13.2447,"na",{"name":"Primary Healthcare","amenity":"clinic","healthcare":"clinic"}],
+["w1086302378",-17.76733,13.64062,"na",{"name":"Ohandungu Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1086302846",-17.86754,13.02569,"na",{"name":"Etanga Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1208435061",-17.37504,12.25473,"na",{"name":"Hartman Valley","aeroway":"aerodrome","icao":"FYHV"}],
+["w1208451593",-17.43857,13.27797,"na",{"name":"Okanguati Airport","aeroway":"aerodrome","icao":"FYKW"}],
+["w1208455343",-17.48906,13.83592,"na",{"name":"Ehomba Airport","aeroway":"aerodrome","icao":"FYEH"}],
+["w1450999897",-16.8833,12.57103,"ao",{"name":"Hospital Municipal do Iona","amenity":"hospital","healthcare":"hospital","addr:city":"Iona"}],
+["w1452399064",-17.40771,13.49661,"na",{"name":"Otjomuru Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w1550513946",-17.99025,12.58981,"na",{"name":"Onjuva Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w521523397",-17.33428,13.83742,"na",{"name":"Otjimuhaka Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w828418667",-16.6572,13.42401,"ao",{"name":"Hospital Municipal do Curoca","amenity":"hospital","healthcare":"hospital"}],
+["w849455897",-17.43376,13.27337,"na",{"name":"Okanguati Health Centre","amenity":"clinic","healthcare":"clinic","addr:city":"Okanguati"}]]

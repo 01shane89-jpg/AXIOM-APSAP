@@ -1,3 +1,14 @@
 [["n1042031905",14.36597,0.08664,"bf",{"name":"Piste d'Essakane","aeroway":"aerodrome"}],
+["n12863673491",15.66607,0.50261,"ml",{"name":"CSREF Ansongo","amenity":"hospital"}],
+["n2163839525",14.96894,0.70493,"ml",{"name":"CSCOM de LABBEZANGA","amenity":"clinic"}],
 ["n3455739156",14.79028,0.03801,"bf",{"name":"Piste de Tambao","name:en":"Tambao Airport","aeroway":"aerodrome","icao":"DFEM","iata":"TMQ","wikidata":"Q6588001"}],
-["w1224460216",14.36707,0.08664,"bf",{"aeroway":"helipad"}]]
+["r13558545",15.85289,1.39398,"ml",{"aeroway":"aerodrome"}],
+["w1014287736",14.97292,0.7117,"ml",{"aeroway":"helipad"}],
+["w1014306718",15.70519,0.48902,"ml",{"aeroway":"helipad","surface":"ground"}],
+["w1018551845",15.47552,0.71016,"ml",{"name":"CSOM","amenity":"clinic"}],
+["w1018759917",15.58464,0.88951,"ml",{"name":"CSCOM","amenity":"clinic"}],
+["w1019954191",15.18419,0.72007,"ml",{"amenity":"clinic"}],
+["w1224460216",14.36707,0.08664,"bf",{"aeroway":"helipad"}],
+["w201540392",15.70064,0.49405,"ml",{"name":"Aéroport de Ansongo","name:en":"Ansongo Airport","aeroway":"aerodrome","icao":"GAAO","wikidata":"Q4770743"}],
+["w902716115",15.5028,0.72294,"ml",{"aeroway":"helipad","surface":"unpaved"}],
+["w902716116",15.5044,0.71496,"ml",{"aeroway":"aerodrome"}]]

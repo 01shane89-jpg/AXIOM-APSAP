@@ -1,0 +1,6 @@
+[["n1042041836",22.67334,-12.72883,"mr",{"name":"Aéroport de Fderik مطار افديرك","name:en":"Fderik Airport","aeroway":"aerodrome","icao":"GQPF","iata":"FGD","wikidata":"Q937065"}],
+["w252474641",22.73266,-12.47759,"mr",{"amenity":"hospital"}],
+["w252494426",22.73585,-12.46359,"mr",{"amenity":"hospital","healthcare":"hospital"}],
+["w346365515",22.67984,-12.71245,"mr",{"name":"Hôpital F'Derick مستشفى افديرك","amenity":"hospital","healthcare":"hospital","addr:city":"F'Derick افديرك"}],
+["w377151289",22.67422,-12.72773,"mr",{"aeroway":"helipad","surface":"ground"}],
+["w402052556",22.75752,-12.48604,"mr",{"name":"Aérodrome de Zouérat-Tazadit مطار ازويرات تازاديت","name:en":"Zouérat Tazadit Airport","aeroway":"aerodrome","icao":"GQPZ","iata":"OUZ","wikidata":"Q6587931"}]]

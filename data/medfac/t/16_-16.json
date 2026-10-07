@@ -1,0 +1,13 @@
+[["n10022820772",16.63631,-14.19104,"mr",{"name":"Aéroport d'Abaye مطار أباي","aeroway":"aerodrome","icao":"GQNE","iata":"BGH"}],
+["n10136094265",16.55064,-15.78409,"mr",{"name":"Piste d'Atterrissage de Rosso مهبط روسو","aeroway":"aerodrome"}],
+["n13004555818",16.82186,-14.04478,"mr",{"name":"Hopital Azlat","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general"}],
+["n4418877590",16.92,-15.66165,"mr",{"name":"Centre de sante Mederdra مركز الصحة المذرذرة","amenity":"clinic","healthcare":"clinic","addr:city":"Mederdra المذرذرة"}],
+["n5269610024",17.377,-14.97259,"mr",{"amenity":"clinic"}],
+["n5269622921",17.37667,-14.97268,"mr",{"name:en":"م","amenity":"clinic"}],
+["n7904220085",17.25785,-15.97156,"mr",{"name:en":"dar 13092020","amenity":"clinic"}],
+["w1094348933",17.53087,-14.70996,"mr",{"aeroway":"helipad"}],
+["w1449390331",16.63612,-14.19084,"mr",{"name":"Aéroport d'Abaye مطار أباي","name:en":"Abbaye Airport","aeroway":"aerodrome","icao":"GQNE","iata":"BGH","wikidata":"Q4663917"}],
+["w227409816",17.53115,-14.70789,"mr",{"name":"Hôpital Hamad Bin Khalifa","amenity":"hospital","healthcare":"hospital","addr:city":"Boutilimit بوتلميت"}],
+["w334308412",17.96767,-15.96544,"mr",{"name":"Centre de santé","amenity":"hospital","healthcare":"hospital"}],
+["w698251957",16.58329,-14.2725,"mr",{"name":"Dispensaire de Boghe مستوصف بوغي","amenity":"hospital","healthcare":"hospital","operator":"بلدية بوغي","addr:city":"Boghé بوغي"}],
+["w783972433",16.91931,-15.23755,"mr",{"amenity":"hospital","healthcare":"hospital"}]]

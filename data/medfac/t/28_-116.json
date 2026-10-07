@@ -1,0 +1,9 @@
+[["n388438361",28.92148,-114.15172,"mx",{"name":"Punta Prieta Airstrip","name:en":"Punta Prieta Airstrip","aeroway":"aerodrome","aerodrome:type":"public","wikidata":"Q6588809"}],
+["n388487247",29.72657,-114.69906,"mx",{"name":"Rancho Santa Inés Airstrip","name:en":"Rancho Santa Inés Airstrip","aeroway":"aerodrome","icao":"MM23","iata":"CTV","aerodrome:type":"public","wikidata":"Q10849409"}],
+["n388719737",29.79236,-114.4031,"mx",{"name":"Rancho Grande Airstrip","aeroway":"aerodrome","surface":"hard packed dirt","aerodrome:type":"public","wikidata":"Q10849421"}],
+["n388779706",29.6194,-115.5033,"mx",{"name":"Punta San Carlos Airstrip","name:en":"Punta San Carlos Airstrip","aeroway":"aerodrome","aerodrome:type":"public","wikidata":"Q6588802"}],
+["n388779713",29.7358,-114.3117,"mx",{"name":"Punta Final Airstrip","name:en":"Punta Final Airstrip","aeroway":"aerodrome","aerodrome:type":"public","wikidata":"Q4272450"}],
+["n393227618",29.8039,-114.3971,"mx",{"name":"Alfonsina's Airstrip","name:en":"Alfonsina's Airstrip","operator":"Alfonsina's Resort","aeroway":"aerodrome","surface":"dirt","aerodrome:type":"public","wikidata":"Q4721981"}],
+["w239003891",28.09384,-115.19431,"mx",{"name":"IMSS","amenity":"hospital","healthcare":"hospital"}],
+["w670263104",28.02549,-114.0232,"mx",{"name":"Aeropuerto Regional de Guerrero Negro","name:en":"Guerrero Negro Airport","operator":"Exportadora de Sal S.A de C.V (ESSA), Military of Mexico","aeroway":"aerodrome","icao":"MMGR","iata":"GUB","surface":"rough paved","aerodrome:type":"regional","wikidata":"Q430333"}],
+["w937022109",28.03843,-115.18917,"mx",{"name":"Aeropuerto de Isla Cedros","name:en":"Isla de Cedros Airport","aeroway":"aerodrome","icao":"MMCD","aerodrome:type":"public","wikidata":"Q1320793"}]]

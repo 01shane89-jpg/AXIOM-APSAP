@@ -1,0 +1,12 @@
+[["n10262218636",48.15779,28.30245,"md",{"name":"Sante","amenity":"clinic","healthcare":"clinic","operator":"Clinica Sante","contact:phone":"+373 22 667 266;+373 797 74 420","contact:website":"https://sante.md","opening_hours":"Mo-Fr 07:30-15:00; Sa 08:00-13:00"}],
+["n4345635691",48.03456,28.70595,"md",{"name":"Приёмное отделение","amenity":"hospital","healthcare":"hospital"}],
+["w113985230",48.17592,28.3161,"md",{"name":"Centrul Medicilor de Familie de la Soroca Nouă","amenity":"hospital"}],
+["w129706291",48.15424,28.29848,"md",{"name":"Centrul de Sănătate Soroca","amenity":"hospital","healthcare":"hospital","emergency":"no","operator":"Consiliu Raional Soroca","operator:type":"government","phone":"+37323022710","addr:housenumber":"14","addr:street":"Strada Mihai Eminescu","addr:district":"Raionul Soroca","addr:city":"Soroca","addr:postcode":"MD-3000"}],
+["w156024156",48.15456,28.30371,"md",{"name":"Spitalul Raional Soroca „A. Prisacari“","amenity":"hospital"}],
+["w184483676",48.03428,28.70529,"md",{"name":"Каменская центраьная районная больница","amenity":"hospital","healthcare":"hospital","website":"https://minzdrav.gospmr.org/node/291"}],
+["w220376915",48.16562,28.30813,"md",{"name":"Urgența Medicală","amenity":"hospital","healthcare":"hospital","addr:street":"Strada Petrov","addr:city":"Soroca"}],
+["w50834498",48.17513,28.2915,"md",{"name":"Spitalul raionul Soroca","amenity":"hospital","healthcare":"hospital"}],
+["w717330240",48.03006,28.53178,"md",{"name":"Policlinica Tîrgul Vertiujeni","amenity":"clinic","healthcare":"clinic"}],
+["w762358008",48.04892,28.55463,"md",{"name":"Medpunct Zăluceni","amenity":"clinic","healthcare":"clinic"}],
+["w877853767",48.16676,28.25685,"md",{"aeroway":"helipad"}],
+["w892771027",48.20059,28.04892,"md",{"amenity":"hospital","healthcare":"hospital"}]]

@@ -1,0 +1,7 @@
+[["n388752603",27.85682,-115.16535,"mx",{"name":"Isla Natividad Airstrip","name:en":"Isla Natividad Airstrip","operator":"SCPP \\\"Buzos y Pescadores de la Baja California\\\", SCL","aeroway":"aerodrome","aerodrome:type":"private","wikidata":"Q3015078"}],
+["n393218550",27.18346,-114.27784,"mx",{"name":"Bahía Asunción Airstrip","name:en":"Bahía Asunción Airstrip","aeroway":"aerodrome","aerodrome:type":"public","wikidata":"Q2902599"}],
+["w1339003648",27.97514,-114.02834,"mx",{"name":"Unidad de Medicina Familiar Guerrero Negro","amenity":"hospital","healthcare":"hospital","operator":"Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado","operator:type":"public","addr:street":"Calle Sebastián Vizcaíno","addr:city":"Guerrero Negro"}],
+["w1339414121",27.96481,-114.05132,"mx",{"aeroway":"helipad"}],
+["w1339414128",27.97087,-114.0464,"mx",{"name":"IMSS Unidad de Medicina Familiar","amenity":"hospital","healthcare":"hospital","operator":"Instituto Mexicano del Seguro Social","operator:type":"government","addr:street":"Calle Sergio Noyola N.","addr:city":"Guerrero Negro"}],
+["w238289529",27.70527,-114.91087,"mx",{"name":"Aedronomo de Bahia Tortugas","name:en":"Bahía Tortugas Airfield","aeroway":"aerodrome","aerodrome:type":"public"}],
+["w749336583",27.96652,-114.04941,"mx",{"name":"IMSS Hospital General de Subzona Número 5","name:en":"IMSS Subzone Number 5 General Hospital","amenity":"hospital","healthcare":"hospital","operator":"Instituto Mexicano del Seguro Social","operator:type":"government","addr:city":"Guerrero Negro"}]]

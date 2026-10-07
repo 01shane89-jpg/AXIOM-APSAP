@@ -1,0 +1,8 @@
+[["n1042023334",28.97625,-113.56077,"mx",{"name":"Aeródromo Bahía de los Ángeles","aeroway":"aerodrome","iata":"BHL","wikidata":"Q2901305"}],
+["n389903105",28.8914,-113.5286,"mx",{"name":"Muñoz Airstrip","name:en":"Muñoz Airstrip","aeroway":"aerodrome","aerodrome:type":"private","wikidata":"Q1528671"}],
+["n389903107",28.4131,-112.86043,"mx",{"name":"Punta San Francisquito Airfield","name:en":"Punta San Francisquito Airfield","aeroway":"aerodrome","surface":"dirt","aerodrome:type":"public","wikidata":"Q7260558"}],
+["n390091828",28.30656,-112.88382,"mx",{"name":"Rancho El Barril Airstrip","name:en":"Rancho El Barril Airstrip","operator":"Rancho El Barril, S.A. de C.V.","aeroway":"aerodrome","surface":"dirt","aerodrome:type":"private","wikidata":"Q7290952"}],
+["n5794678503",29.01779,-112.19891,"mx",{"name":"Tiburón Aerodrome","aeroway":"aerodrome"}],
+["w535906569",28.28554,-113.99909,"mx",{"name":"IMSS","amenity":"hospital","healthcare":"hospital"}],
+["w614141472",29.9294,-112.65652,"mx",{"name":"Aeropuero Puerto Libertad Norte","name:en":"Puerto Libertad North Airport","operator":"Gobierno del Estado de Sonora","aeroway":"aerodrome","icao":"MM32","aerodrome:type":"public"}],
+["w832856134",29.01983,-112.19615,"mx",{"aeroway":"helipad"}]]
