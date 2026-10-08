@@ -1,0 +1,566 @@
+SOURCE https://r8.moph.go.th/r8wayNewadmin/page/upload_file/20240402152906.pdf
+แผนการพัฒนางาน Service Plan สาขาอุบัติเหตุและฉุกเฉิน
+           เขตสุขภาพที่ 8 ปี 2567-2569
+Plan 2567-2569 ภาพเขตสุ ขภาพ
+• Prehospital
+   • ระบบ AOC
+• In hospital
+   • ER Quality
+   • Fast tract: Trauma ,Stroke, Sepsis, MI
+   • Trauma center
+• Interfacility
+   • One Region One Sky Doctor (OROS)
+   • Trauma fast 8
+                    แผนการพั ฒนางาน Service Plan สาขาอุบัติเหตุและฉุกเฉินเขตสุขภาพที่ 8 ปี 2567-2569
+                           Ambulance Operation Center และ Ambulance Tele-medicine
+                      1) SAP T15 AOC                                                                      4) เพิ่ มการเข้าถึง และลดความเหลื่อมล้า
+หลักการเหตุผล และ Gap 2) OROR + Seamless referral system                                                  5) ข้อมูลส่งต่อที่ขาดช่วงทาให้วิเคราะห์ กากับติดตามได้ยาก
+                      3) 3P safety                                                                        6) เขตสุขภาพที่ 8 เป็นเขตเดียวที่ยังไม่มีระบบ AOC ทั้งเขต
+
+
+
+
+                        R8 Ambulance Operation Center
+
+
+
+
+              พั ฒนาการแจ้งเหตุระบุ
+                  พิ กัดได้แม่นยา
+                                                                        AOC                  ATM
+                                                                                                                        Virtual ER            AOC         ATM
+             (phase พั ฒนาต่อเนื่อง)                                                                                  (phase ถัดไป)
+
+กระบวนการ
+              รับแจ้งเหตุ และ                   ส่งรถ EMS    การรักษา           การดูแล                 ส่งถึง       ดูแล ณ รพ. ต้นทาง   การดูแลระหว่าง    นาส่ง รพ
+              Phone triage                         ออก      ณ จุดเกิดเหตุ     ระหว่างนาส่ง            รพ.ต้นทาง      ปรึกษา รพ.ปลายทาง       นาส่ง         ปลายทาง
+
+
+
+                   EMS system                                                                                                   Referral system
+                   1)    AOC ศูนย์สั่งการ (7 รพ.จังหวัด)                                                     1)   AOC ศูนย์ refer (7 รพ จังหวัด, 15 รพ.แม่ข่าย)
+กลุ่มเป้าหมาย      2)    ATM รถบริการการแพทย์ฉุกเฉินของรัฐ                                                   2)   ATM refer ambulance (รพ. ทั้งเขต 88 แห่ง)
+                        (ALS ทั้งเขต 88 แห่ง + BLS/FR)
+
+
+       28012567                                                             wisit-seamless refer R8
+       สรุปการประชุมคณะกรรมการ Service Plan สาขาอุบตั ิ เหตุฉุกเฉินและส่งต่อเขตสุขภาพที่ ๘
+  วันที่ ๕ กุมภาพันธ์๒๕๖๗ เวลา ๑๐.๐๐ น. – ๑๒.๐๐ น. ณ ห้องประชุมการบูร สานักงานเขตสุขภาพที่ ๘
+
+สรุปมติทป่ี ระชุม                                  ลำดับ                  หน่วยงำน                มติทป่ี ระชุม
+                                                     ๑   โรงพยำบำอุดรธำนี            เห็นชอบกำรติดตัง้ ระบบ AOC
+๑.เห็นชอบกำรติดตัง้ ระบบ AOC เพือ่ สนับสนุน         ๒    สสจ.อุดรธำนี                ไม่ได้เข้ำร่วม / นพ.สสจ เห็นชอบ
+                                                                                     กำรติดตัง้ ระบบ AOC
+นโยบำย Seamless Refer ของเขตสุขภำพที่ ๘              ๓    โรงพยำบำลหนองบัวลำภู       เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                     ๔    สสจ.หนองบัวลำภู            เห็นชอบกำรติดตัง้ ระบบ AOC
+๒.เห็นชอบนำเข้ำทีป่ ระชุมบอร์ดเขต เพือ่ ขอ           ๕
+                                                     ๖
+                                                          โรงพยำบำลนครพนม
+                                                          สสจ.นครพนม
+                                                                                     เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                                                     เห็นชอบกำรติดตัง้ ระบบ AOC
+งบประมำณในกำรติดตัง้ ระบบจำนวน ๑๐,๕๖๐,๐๐๐           ๗     โรงพยำบำลบึงกำฬ            เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                     ๘    สสจ.บึงกำฬ                 เห็นชอบกำรติดตัง้ ระบบ AOC
+บำท เพือ่ ดำเนินกำรในปี ๒๕๖๗                         ๙    โรงพยำบำลเลย               เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                    ๑๐    สสจ.เลย                    เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                    ๑๑    โรงพยำบำลหนองคำย           เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                    ๑๒    สสจ.หนองคำย                เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                    ๑๓    โรงพยำบำลสกลนคร            เห็นชอบกำรติดตัง้ ระบบ AOC
+                                                    ๑๔    สสจ.สกลนคร                 เห็นชอบกำรติดตัง้ ระบบ AOC
+Emergency Physician
+เขตสุขภาพที่ 8                                                                    จานวน
+
+
+
+39 คน
+                                                                   รพ.           แพทย์ EP
+                                               1                   บึงกาฬ            1
+                                                                   นครพนม            1
+                                                                   เลย               3
+                                                                   กุมภวาปี          3
+                                                                   ท่าบ่อ            5
+                                                                   บ้านผือ           1
+                                                                   วานรนิวาส         1
+                              5    4                               วาริชภูมิ         1
+                                                                   สกลนคร            4
+                                                                   สว่างแดนดิน       2
+                          1                                        หนองคาย           4
+                                                                   หนองบัวลาภู       2
+                                                                   หนองหาน           1
+          3                                                        อุดรธานี         10
+                                                                   รวม              39
+                              10           1       2           1
+                      2                                1
+                                       3                   4
+                 แพทย์เฉพาะทางศัลยกรรม
+                 เขตสุขภาพที่ 8
+
+
+115
+                 Surgeon                  81
+                 Neurosurgeon             14                     7 Surgeon
+                 Vascular surgeon          3                     2 Neurosurgeon
+
+
+                                                                                                                                 3
+                                                                 1 Plastic and
+                 Trauma surgeon            1                                                                     รพ.บึงกาฬ
+                                                                   Reconstructive Surgeon
+                 Plastic and              10                                                                     Surgeon 2
+
+คน
+                                                                 1 Thorasic surgeon
+                 Reconstructive Surgeon
+                 Thorasic surgeon         6
+
+
+6 Surgeon
+                                                                 17           รพ.หนองคาย
+                                                                                           รพ. โพนพิ สัย
+                                                                                           Surgeon 1
+                                                                                                                                 รพ.เซกา
+                                                                                                                                 Surgeon 1                   7 Surgeon
+1 Plastic and                                                                                                                                                1 Neurosurgeon
+                                                                      รพร.ท่าบ่อ
+                                                                                                                                                             2 Plastic and
+
+                                                                                      43
+  Reconstructive Surgeon                                              Surgeon 5
+                                                                                                   รพร.บ้านดุง                                                 Reconstructive Surgeon
+                                                                                                   Surgeon 2          รพ.วานรนิวาส
+
+                                                                                                                                                        11
+                                                                 รพ.บ้านผือ                                           Surgeon 2
+                                      รพ.เลย                     Surgeon 2                                                              รพ.นาหว้า
+
+
+                             8
+                                                                                                                                        Surgeon 1
+                                                                                                            รพร.สว่างแดนดิน
+                                                     รพ.นากลาง                 รพ.อุดรธานี รพ.หนองหาน       Surgeon 4 รพ.พั งโคน
+                                                                                           Surgeon 1                                                         รพ.นครพนม
+                                                     Surgeon 1
+                                                                                                                        Surgeon 1
+                                      รพ.วังสะพุ ง
+                                      Surgeon 1             รพ.หนองบัวลาภู                                                   24        รพ.สกลนคร
+
+                                                                                     รพ.กุมภวาปี
+
+                                                     รพ.ศรีบุญเรือง
+                                                     Surgeon 1
+                                                                       9             Surgeon 4
+
+
+
+                             5 Surgeon                            19 Surgeon                                                 8    Surgeon
+                             2 Neurosurgeon                       5 Neurosurgeon                                             4    Neurosurgeon
+                                                                  2 Vascular surgeon                                         1    Vascular surgeon
+                                                                  1 Trauma surgeon                                           2    Plastic and Reconstructive Surgeon
+                                                                  4 Plastic and Reconstructive Surgeon                       2    Thorasic surgeon
+                                                                  3 Thorasic surgeon
+แผนการจัดบริการสุขภาพ Service Delivery ปี 2567-2570
+จังหวัดอุดรธานี
+                                      4
+                                                                                                                                                      Trauma center
+                                  รพ.นายูง
+                                    (F2)
+                                                                     ไม่มี anes                            4
+                                                                                                                                     3
+                                             4
+                                                   3-                                       4
+                                                                                                    รพ.สร้างคอม
+                                      รพ.น้้าโสม                                                        (F2)               รพร.บ้านดุง (M2)
+                                        (F2)
+                                                   รพ.บ้านผือ                             รพ.เพ็ญ              4
+                                                     (M2)                                  (M2)                                    4
+                                                                4                                   รพ.พิบูลย์รักษ์ (F2)
+                                                                                                                                   รพ.ทุ่งฝน (F2)
+                                                                                  1-                            3-
+                                                         รพ.กุดจับ
+                                                                                                                           รพ.หนองหาน
+                                                                                                                                                           ไม่มี anes
+                                                           (F1)
+                  ขาด นิติเวช                                                                       4                          (M2)
+                ขาด วิจยั ต่อเนื่อง                                  4       รพ.อุดรธานี
+                                                                                 (A)     4      รพ.ประจักษ์ศิลปาคม (F3)                    4
+           ขาด resident training                                                                                         4
+                                                           รพ.หนองวัวซอ     4                               2
+                                                                                       รพ.ห้วยเกิ้ง                                    รพ.ไชยวาน
+                     etc                                       (F1)
+                                                                                           (F3)                       รพ.กู่แก้ว          (F2)         4
+                                                                                รพ.หนองแสง                              (F3)
+                                                                                                        รพ.กุมภวาปี                    4            รพ.วังสามหมอ
+                                                                                           4                (S)
+                                                                                                                                                         (F1)
+                                                                                                                             รพ.ศรีธาตุ (F2)
+                                                                                   รพ.โนนสะอาด (F2)
+
+
+
+
+                                                                                                                                                                        9
+สาระสาคัญของ บทที่ 1 และ 2
+• ปี 2541 – American Collage of Surgeon กาหนดเกณฑ์แบ่ง Trauma Center
+  ออกเป็ น 4 Level
+• Level 1 Trauma Center → เช่น โรงเรียนแพทย์, โรงพยาบาลศูนย์ขนาดใหญ่
+   • ดูแลระดับเขต เป็ นแม่ข่าย วางระบบ
+   • การผ่าตัดซับซ้อนมาก
+   • แพทย์และบริการครบถ้วนทุกสาขา ตลอด 24 ชั่วโมง 7 วันต่อสัปดาห์
+   • มี CVT, Interventional radiologists, Advance Critical Care
+   • การเรียนการสอน การวิจยั
+• Level 2 Trauma Center → เช่น โรงพยาบาลศูนย์
+   • ดูแลระดับเขตที่ไม่มี Level 1 เป็ นแม่ข่าย วางระบบ
+   • การผ่าตัดซับซ้อน แต่ไม่เท่า Level 1
+   • แพทย์และบริการ เกือบครบถ้วนทุกสาขา ตลอด 24 ชั่วโมง 7 วันต่อสัปดาห์
+สาระสาคัญของ บทที่ 1 และ 2
+• Level 3 Trauma Center → เช่น โรงพยาบาลทั่วไป
+    • ดูแลพืน้ ที่ ที่ไม่มี Level 1-2 Trauma center
+    • การผ่าตัดฉุกเฉิน ห้ามเลือด ยือ้ ชีวิต แล้วส่งต่อ
+    • มีแพทย์เฉพาะทาง Gen sx, Ortho และ EP
+• Level 4 Trauma Center เช่น โรงพยาบาลชุมชน (บางแห่ง)
+    • ดูแลระดับท้องที่
+    • กูช้ ีพ รักษาเบือ้ งต้น แล้วรีบส่งต่อ
+    • มีแพทย์จบหลักสูตร ATLS
+• เกณฑ์การประเมินมีรายละเอียดที่ซบั ซ้อน
+                                                                                                       เพ็ญ M2 trauma center level                                                        บ้านดุง M2 trauma center level
+  แผนการจัดบริการสุขภาพ Service Delivery ปี 2567-2570                                                  Gen Sx 0
+                                                                                                       EP 0 (4)
+                                                                                                                                                                                          Gen Sx 2
+                                                                                                                                                                                          Anes 1
+  จังหวัดอุดรธานี                                                                                      ENP/RN(นับรวม ENP) 0/14 (4/15)
+                                                                                                       Paramedic 0 (4)
+                                                                                                                                                                                          Ortho 2
+                                                                                                                                                                                          Rx 0
+                                                    S                                                  AEMT 5 (2)                                                                         EP 0 (4)
+      น้าโสม F2 trauma center level                                                                    ☢️ CT 16 slides 1                                                                  ENP/RN(นับรวม ENP) 6/15 (4/15)
+      Gen Sx 0                                                                                         🩸มีคลังเลือด                                                                       Paramedic 0 (4)
+      ENP/RN(นับรวม ENP) 0/10 (4/12)             รพ.นายูง                                              OR 2 ห้อง                                                                          AEMT 5 (2)
+      Paramedic 0 (4)                              (F2)                                                                         S                                                         EMT 1 (2)
+      AEMT 4 (2)                                        S+
+                                                                                                       ไม่มี ICU trauma                                       A
+                                                                                                       ไม่มี ICU neuroSx                                                                  ☢️ CT 32 slides 1 เครื่อง
+      ไม่มี CT แผนวางปี 68                                               A                                                     รพ.สร้างคอม                                                คลังเลือด
+      🩸มีคลังเลือด                                                                                                   S+            (F2)               รพร.บ้านดุง (M2)                    OR
+      มี OR                                         รพ.น้้าโสม
+                                                                                                                                                                                          ไม่มี ICU trauma
+                                                      (F2)
+                                                                        รพ.บ้านผือ                                 รพ.เพ็ญ                                                                ไม่มี ICU neuroSx
+                                                                                                                                         S
+                                                                          (M2)                                      (M2)                                   S
+                                                                                     S                                         รพ.พิบูลย์รักษ์ (F2)                                       หนองหาน M2 trauma center level
+                                                                                                                                                                                          Gen Sx 1
+                                                                                                                                                          รพ.ทุ่งฝน (F2)
+     บ้านผือ M2 trauma center level    กุมภวาปี S trauma center level                                                                        A                                            Anes 0
+     Gen Sx 2                          Gen Sx 6                               รพ.กุดจับ                     P+                                                                            Ortho 1
+     Anes 0                            vascular Sx ปี 2572                      (F1)                                                                รพ.หนองหาน                            Rx 0
+     Ortho 0                           Neuro Sx ปี 73                                                                          S                        (M2)                              EP 1 (4)
+     Rx 1                              UroSx 1                                            S             รพ.อุดรธานี
+                                                                                                                                                                    S                     ENP/RN(นับรวม ENP) 5/15 (4/15)
+     EP 1 (4)                          Anes 3                                                               (A) S         รพ.ประจักษ์ศิลปาคม (F3)                                         Paramedic 1 (4)
+     ENP/RN(นับรวม ENP) 4/12 (4/15)    Ortho 3                                                        S
+                                       Rx 3
+                                                                                รพ.หนองวัวซอ
+                                                                                                                                      A+              S           รพ.ไชยวาน
+                                                                                                                                                                                          AEMT 5 (2)
+     Paramedic 1 (4)                                                                (F1)                        รพ.ห้วยเกิ้ง                                                              ☢️ CT 32 slides 1 เครื่อง
+                                       Rehab 2                                                                                                                       (F2)   S+
+     AEMT 5 (2)                                                                                                    (F3)                                                                   🩸มีคลังเลือด
+                                       EP 3 (8)                                                           รพ.หนองแสง                             รพ.กู่แก้ว
+     ☢️ CT 64 slides 1 เครื่อง                                                                                                                                                            OR 3 ห้อง ต้องการเพิ่ม 1
+     🩸มีคลังเลือด                      ENP/RN(นับรวม ENP) 1/16 (8/24)                                                              รพ.กุมภวาปี     (F3)        S           รพ.วังสามหมอ   ไม่มี ICU trauma
+     OR 3 ห้อง                         Paramedic 1 (8)                                                                S                (S)
+                                                                                                                                                                                (F1)      ไม่มี ICU neuroSx วังสามหมอ F2 trauma center level
+     มี ICU trauma                     AEMT 7 (4)                                                                                                                                                               Gen Sx 0
+                                                                                                                                                       รพ.ศรีธาตุ (F2)
+     ไม่มี ICU neuroSx                 ☢️ CT 32 slides 1 เครื่อง                                                                                                                                                ENP/RN(นับรวม ENP) 0/11 (4/12)
+                                                                                              ต้ากว่าเกณฑ์มาก รพ.โนนสะอาด (F2)
+                                       MRI ปี 69 (Out source)                                                                                                                                                   Paramedic 0 (4)
+                                                                                              ต้ากว่าเกณฑ์
+                                       🩸มีคลังเลือด                                                                                                                                                             AEMT 5 (2)
+                                                                                              ตามเกณฑ์
+                                       OR ห้อง 6 ห้อง ต้องการเพิ่ม 4                                                                                                                                            ไม่มี CT แผนวางปี 67
+                                                                                              สูงกว่าเกณฑ์
+                                       ไม่มี ICU trauma plan ปี 2573                                                                                                                                            🩸คลังเลือดใช้ของสภากาชาด
+                                                                                              ทราบข้อมูล                                                                                                        OR ห้อง (TR ผ่าตัดเล็ก)
+                                       ไม่มี ICU neuroSx                                      (จ้านวนเป้าหมาย)
+Update 9 มีนาคม 2567
+                                                                                                          R8 SERVICE PLAN
+   แผนการจัดบริการสุขภาพ Service Delivery ปี 2567-2570                                                                                  สร้างคอม F2
+                                                                                                                                        ENP/RN (รวม ENP) 0/8 (4/12)
+                                                                                                                                        Paramedic 0 (4))
+   จังหวัดอุดรธานี                                                                                                                      AEMT 0 (2)
+                                                                                                ต้ากว่าเกณฑ์มาก                         EMT 2 (2)
+                                                              S                                 ต้ากว่าเกณฑ์                            🩸ใช้ของสภากาชาด
+            นายูง F2                                                                            ตามเกณฑ์                                มี OR 1 ห้อง
+            ENP/RN (รวม ENP) 0/6 (4/12)                                                         สูงกว่าเกณฑ์
+                                                           รพ.นายูง
+            Paramedic 0 (4)                                                                     ทราบข้อมูล                                      S
+                                                             (F2)                                                                                                                                                                ทุ่งฝน F2
+            AEMT 3 (2)                                            S+
+                                                                                                (จ้านวนเป้าหมาย)                                                         A                   พิบูลรักษ์ F2
+                                                                                                                                                                                                                                 ENP/RN (รวม ENP) 0/7 (4/12)
+                                                                                                                                                                                             ENP/RN (รวม ENP) 0/8 (4/12)
+            🩸มีคลังเลือด
+            ไม่มี OR
+                                                                               A                                                        รพ.สร้างคอม                                          Paramedic 0 (4))                    Paramedic 0 (4))
+                                                                                                                              S+            (F2)               รพร.บ้านดุง (M2)              AEMT 2 (2)                          AEMT 2 (2)
+                                                              รพ.น้้าโสม
+                                                                                                                                                                                             EMT 0 (2)                           EMT 0 (2)
+            กุดจับ F2                                           (F2)
+                                                                              รพ.บ้านผือ                                    รพ.เพ็ญ                                                          🩸ใช้ของสภากาชาด                     🩸มีคลังเลือด
+            ENP/RN (รวม ENP) 0/11 (4/12)                                                                                                            S                                        ไม่มี OR                            มี OR (TR)
+            Paramedic 0 (4)                                                     (M2)                                         (M2)                                    S
+            AEMT 3 (2)                                                                     S                                            รพ.พิบูลย์รักษ์ (F2)
+            🩸คลังเลือดใช้ของสภากาชาด                                                                                                                                 รพ.ทุ่งฝน (F2)
+            OR 1 ห้อง(TR,ผ่าตา)                                                                                                                         A
+                                                                                    รพ.กุดจับ                        P+                                                                       ประจักษ์ฯ F3                       ไชยวาน F2
+                                                                                      (F1)                                                                     รพ.หนองหาน                     ENP/RN (รวม ENP) 0/5 (4/10)        ENP/RN (รวม ENP) 1/6 (4/12)
+            หนองวัวซอ F2                                                                                                                S                          (M2)                       Paramedic 0 (4))                   Paramedic 0 (4))
+            ENP/RN (รวม ENP) 1/10 (4/12)
+                                                                                                S              รพ.อุดรธานี
+                                                                                                                                                                               S              AEMT 2 (2)                         AEMT 3 (2)
+                                                                                                                   (A) S           รพ.ประจักษ์ศิลปาคม (F3)                                    EMT 1 (2)                          EMT 0 (2)
+            Paramedic 0 (4)
+                                                                                                                                                                                              ไม่มีมีคลังเลือด                   🩸มีคลังเลือด(แต่ไม่เพียงพอ) ใช้
+            AEMT 4 (2)                                                                รพ.หนองวัวซอ            S                                A+               S            รพ.ไชยวาน        ไม่มี OR                           ของสภากาชาดในเคสด่วน
+                                                                                          (F1)                           รพ.ห้วยเกิ้ง
+            🩸มีคลังเลือด                                                                                                                                                        (F2)   S+                                        ไม่มี OR
+            OR 1 ห้อง                                                                                                       (F3)
+                                                                                                                   รพ.หนองแสง                               รพ.กู่แก้ว
+            หนองแสง F2                     ห้วยเกิง F3                                                                                      รพ.กุมภวาปี       (F3)       S            รพ.วังสามหมอ
+            ENP/RN (รวม ENP) 0/7 (4/12)    ENP/RN (รวม ENP) 0/4 (4/10)     โนนสะอาด F2                                         S                (S)
+                                                                                                                                                                                           (F1)
+                                           Paramedic 0 (4)                 ENP/RN (รวม ENP) 0/10 (4/12)
+            Paramedic 0 (4)                                                Paramedic 0 (4)                                                                       รพ.ศรีธาตุ (F2)                          ศรีธาตุ F2
+            AEMT 3 (2)                     AEMT 0 (2)                                                                  รพ.โนนสะอาด (F2)                                                                   ENP/RN (รวม ENP) 0/8 (4/10)
+                                           EMT 1 (2)                       AEMT 3 (2)
+            มีคลังเลือด                                                    🩸คลังเลือดใช้ของสภากาชาด                                                                                                       Paramedic 0 (4)
+                                           ไม่มีมีคลังเลือด                                                            กู่แก้ว F3                                                                         AEMT 4 (2)
+            มี OR 1 ห้อง                                                   ไม่มี OR
+                                           ไม่มี OR                                                                    ENP/RN (รวม ENP) 0/6 (4/10)                                                        คลังเลือดใช้ของสภากาชาด
+                                                                                                                       Paramedic 0 (4))                                                                    OR 1 ห้อง (TR)
+                                                                                                                       AEMT 3 (2)
+Update 9 มีนาคม 2567                                                                                                   ไม่มีคลังเลือด                                                                                                               13
+                                                                                                                       ไม่มี OR
+                                                                                                               R8 SERVICE PLAN
+    Flow of Trauma Fast Tract
+ Community Hospital
+  Trauma Fast Tract       General Surgeon/Trauma Surgeon
+                             Activate Trauma Fast Tract           Anes
+                                                           OR     Scrub
+Online Patient Referral                                           Nurse
+       System
+
+                                Referral Center            ICU
+ Registration System
+                                                           Neuro Sx
+                                      ER
+                                                            Ortho
+                                                             CVT
+                               Blood Component
+                                                           Vascular
+                                  Trauma Bay
+                                                              IR
+                               Team Preparation
+                Patient arrives at check point
+           (15 min before arrive at Trauma Center)
+
+
+
+                Trauma team stand by at ER
+
+
+                                                     Algorithms 1
+                    Patient arrives at ER
+                                                     Algorithms 2
+                Assessment and Resuscitation
+                                                     Algorithms N
+
+
+
+
+Ward/ICU                Investigation                  OR
+Trauma Fast Tract Algorithms
+
+  • Unstable Hemodynamics/Traumatic Circulatory Arrest
+  • Vascular Injury
+  • Severe Chest Injury
+  • Severe TBI Fast Tract
+  • Pelvic Fracture with unstable hemodynamics
+  • Spine Fast Tract
+  • Digital Replantation
+  • Burn Fast tract
+  • Unstable pediatric trauma patient
+แผนการจัดบริการสุขภาพ Service Delivery ปี 2567-2570
+จังหวัดอุดรธานี
+                                     4
+                                                                                        Unstable Hemodynamics
+                                  รพ.นายูง
+                                    (F2)                                                              4
+                                                                                                                                3
+                                             4
+                                                  3-                                     4
+                                                                                                 รพ.สร้างคอม
+                                     รพ.น้้าโสม                                                      (F2)               รพร.บ้านดุง (M2)
+                                       (F2)
+                                                  รพ.บ้านผือ                           รพ.เพ็ญ            4
+                                                    (M2)                                (M2)                                  4
+                                                               4                                 รพ.พิบูลย์รักษ์ (F2)
+                                                                                                                              รพ.ทุ่งฝน (F2)
+                                                        รพ.กุดจับ             1-                           3-
+                                                          (F1)                                                        รพ.หนองหาน
+                                                                                             4                            (M2)
+                                                                    4    รพ.อุดรธานี
+                                                                                     4 รพ.ประจักษ์ศิลปาคม (F3)4                       4
+         เดิมที เคส unstable                              รพ.หนองวัวซอ   4
+                                                                             (A)
+                                                                                                       2
+    hemodynamics จะถูกส่งไปยัง                                (F1)                  รพ.ห้วยเกิ้ง
+                                                                                        (F3)                     รพ.กู่แก้ว
+                                                                                                                                  รพ.ไชยวาน
+                                                                                                                                     (F2)         4
+                                                                             รพ.หนองแสง                            (F3)
+ โรงพยาบาลศูนย์ท่ีใกล้ท่ีสดุ ที่สามารถผ่าตัด                                                       รพ.กุมภวาปี                    4            รพ.วังสามหมอ
+                                                                                        4              (S)
+      ห้ามเลือดได้ มีเครือ่ งมือพร้อม                                                                                    รพ.ศรีธาตุ (F2)
+                                                                                                                                                    (F1)
+
+    แต่หลักสาคัญของการช่วยชีวิตคือ...                                           รพ.โนนสะอาด (F2)
+
+
+        การห้ามเลือดให้เร็วทีส่ ุด
+                                                                                                                                                              18
+แผนการจัดบริการสุขภาพ Service Delivery ปี 2567-2570
+จังหวัดอุดรธานี
+                                       4
+                                                                                          Unstable Hemodynamics
+                                    รพ.นายูง
+                                      (F2)                                                              4
+                                                                                                                                  3
+                                               4
+                                                    3-                                     4
+                                                                                                   รพ.สร้างคอม
+                                       รพ.น้้าโสม                                                      (F2)               รพร.บ้านดุง (M2)
+                                         (F2)
+                                                    รพ.บ้านผือ                           รพ.เพ็ญ            4
+                                                      (M2)                                (M2)                                  4
+                                                                 4
+    ถ้าในอนาคต รพ.กุมภวาปี ได้พฒ    ั นาขีด                                                        รพ.พิบูลย์รักษ์ (F2)
+                                                                                                                                รพ.ทุ่งฝน (F2)
+                                                                                1-                           3-
+  ความสามารถขึน้ มาจนสามารถรองรับการ                      รพ.กุดจับ
+                                                            (F1)                                                        รพ.หนองหาน
+ ผ่าตัดที่ซบั ซ้อนได้มากขึน้ เช่น ขยาย ICU,                           4    รพ.อุดรธานี
+                                                                                               4                            (M2)
+                                                                                       4 รพ.ประจักษ์ศิลปาคม (F3)4                       4
+   เพิ่มจานวนศัลยแพทย์เฉพาะทาง เป็ นต้น                     รพ.หนองวัวซอ   4
+                                                                               (A)
+                                                                                                         2
+                                                                                      รพ.ห้วยเกิ้ง                                  รพ.ไชยวาน
+            Time to OR จะสั้นลง                                 (F1)
+                                                                               รพ.หนองแสง
+                                                                                          (F3)                     รพ.กู่แก้ว
+                                                                                                                     (F3)
+                                                                                                                                       (F2)         4
+
+            โอกาสรอดชีวิตจะเพิม่ ขึน้                                                     4
+                                                                                                     รพ.กุมภวาปี
+                                                                                                         (S)
+                                                                                                                                    4            รพ.วังสามหมอ
+
+หลังผ่าตัดห้ามเลือดชั่วคราวแล้ว สามารถส่ง                                                                                  รพ.ศรีธาตุ (F2)
+                                                                                                                                                      (F1)
+
+                                                                                  รพ.โนนสะอาด (F2)
+ต่อผูป้ ่ วยมารักษาต่อที่ ICU Trauma ของ
+ รพ.ศุนย์อดุ รธานี ที่มีศกั ยภาพสูงกว่าได้ โดย
+                 ไม่ตอ้ ง admit                                                                                                                                 19
+Referral Network Formation Zone 8.1                                                                 TBI Fast Tract
+
+
+
+                                                                                         หลายจังหวัดในเขต 8 กาลังประสบปั ญหา
+                                                                                                     ขาดแคลน Neuro Sx
+                                                                                        ผูป้ ่ วยถูกส่งต่อข้ามจังหวัดเพื่อมาผ่าตัดสมอง
+                                                                                                          เป็ นจานวนมาก
+                                                                                         บ่อยครั้งทีอ่ าการแย่ลงอย่างรวดเร็วช่วง
+                                                                          ห้วยเกิง                 ก่อนหรือระหว่างการส่งต่อ
+                                                                                       เมื่อถึง รพ.ปลายทาง ก็ไม่สามารถผ่าตัดได้แล้ว
+
+             รพ. ระดับ P+   รพ. ระดับ P   รพ. ระดับ A+                รพ. ระดับ A    รพ. ระดับ S+      รพ. ระดับ S
+
+                                                  Service Plan เขตสุขภาพที่ 8
+       TBI Fast Tract
+
+
+
+      เรารูต้ าแหน่งของ CT scan...
+     เรารูต้ าแหน่งของ Neuro Sx...
+
+ระบบที่นาผูป้ ่ วยไปถึง CT Scan ได้เร็ว และ
+ส่งต่อไปถึงมือ Neuro sx ได้เร็ว จึงสาคัญ
+Referral Network Formation Zone 8.1                                                                 TBI Fast Tract
+
+
+
+                                                                                             ปั จจุบนั จ.เลย ขาด Neuro Sx
+                                                                                       เคส TBI ที่มีความจาเป็ นต้องผ่าตัดสมอง จะ
+                                                                                       ถูกส่งต่อมาที่ รพ.ศูนย์อดุ รธานี ที่มี Neuro
+                                                                                                  Sx 5 คน (ขึน้ เวร 4 คน)
+
+                                                                          ห้วยเกิง
+
+
+
+
+             รพ. ระดับ P+   รพ. ระดับ P   รพ. ระดับ A+                รพ. ระดับ A    รพ. ระดับ S+      รพ. ระดับ S
+
+                                                  Service Plan เขตสุขภาพที่ 8
+Referral Network Formation Zone 8.1                                                                       TBI Fast Tract
+
+
+
+                                                                                                           ยกตัวอย่าง...
+                                                                                เคส TBI ที่ อ.ภูหลวง ควรได้ไปทา CT scan ที่ รพ.วังสะพุง
+                                                                                และหากมีขอ้ บ่งชีต้ อ้ งผ่าตัด ควรประสานไปที่ รพ.หนองบัวลาภู
+                                                                                         (มี Neuro sx 2 คน) เป็ นอันดับแรก
+
+                                                                          ห้วยเกิง
+
+
+
+
+             รพ. ระดับ P+   รพ. ระดับ P   รพ. ระดับ A+                รพ. ระดับ A          รพ. ระดับ S+      รพ. ระดับ S
+
+                                                  Service Plan เขตสุขภาพที่ 8
+        R8 SKY DOCTOR PLANNING 2567-2569
+           2567                             2568                               2569
+
+                  2   /       ,         •                            •
+1   /
+                                             5     /                            5     /
+•
+•        BHEMS
+
+
+
+
+        Phase 1           -       67               : .     , .       , .
+
+        Phase 2           -       67               : .     , .       , .
+
+        Phase 3                        67              :         .       , .        , .
+  ประเภทกำรปฏิบตั :ิ              ห้วงเวลำทีป่ ฏิบตั กิ ำร:
+  แบบทุตยิ ภูมิ (Secondary        8.30-16.30 น.
+  Mission)
+
+
+
+
+วันทีป่ ฏิบตั กิ ำร (updated):      ขอบเขตพืน้ ทีป่ ฏิบตั กิ ำร:
+เม.ย. อังคำร,พุธ, พฤหัสบดี          เขตสุขภำพที่ 8 โดยมี
+                                    Response time ไม่เกิน 1
+พ.ค. เป็ นต้นไป จันทร์-พฤหัสบดี     ชัวโมง
+                                      ่ (พืน้ ทีร่ ะบุตำม
+                                    Timeline)
+
