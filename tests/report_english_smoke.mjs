@@ -51,7 +51,9 @@ ok(res.untrSample.every((u) => /not translated yet/.test(u.t) && !/^(Foreign-lan
 ok(!!res.card, "the Thai PBS Mae Hong Son post is on the map");
 if (res.card) {
   ok(res.foreignCard[0] === false && res.foreignCard[1] === 0, "its card has no Thai in the headline or body: " + res.card.h + " | " + res.card.d);
-  ok(/Thai original/.test(res.card.orig) && /แม่สะเรียง/.test(res.card.origText), "the Thai description is kept under Thai original");
+  /* the post ages from the live list into history, which keeps its Thai title but not its description, so the check reads
+     the place name both carry (Mae Hong Son) rather than a word only the description had */
+  ok(/Thai original/.test(res.card.orig) && /แม่ฮ่องสอน/.test(res.card.origText), "the Thai text is kept under Thai original: " + res.card.origText.slice(0, 120));
   ok(/account's own post/.test(res.card.ver) && !/official statement/.test(res.card.ver), "Verified calls it the account's own post: " + res.card.ver);
 }
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));

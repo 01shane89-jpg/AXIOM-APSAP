@@ -943,7 +943,7 @@
     ":root[data-map=grey] #medplan .mpalt,:root[data-map=dark] #medplan .mpalt,:root[data-map=grey] #medplan .mpalt2,:root[data-map=dark] #medplan .mpalt2,:root[data-map=grey] #medplan .mpstb,:root[data-map=dark] #medplan .mpstb{color:#F5C877}.mpdoc .mpalt,.mpdoc .mpalt2,.mpdoc .mpstb{color:#8a4b00!important}" +
     "#medplan .mppst td{font-size:13px;padding:5px 8px;background:var(--bg,var(--surface2,#f6f8fa))}#medplan .mpchk{display:inline-flex;gap:5px;align-items:center;font-weight:600;margin-right:4px}" +
     "#medplan details.mpu{margin:8px 0;border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px}#medplan details.mpu summary{cursor:pointer;font-weight:600;font-size:13px;padding:4px 0}" +
-    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.stb{background:#b34700;border-color:#ffd166}.mpicon.alt{background:#8a4b00;border-style:dashed}.mpicon.cp{background:#1e7a3a;border-color:#fff}#medplan .mpaform summary{cursor:pointer;font-weight:600;margin:6px 0}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty{display:none}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
+    ".mpicon.bl{background:#a4005b}#medplan .mpmark.bl{background:#a4005b}.mpicon.dc{background:#00727a}#medplan .mpmark.dc{background:#00727a}.mpicon.pk{background:#8b0010;border-color:#ffd166}.mpicon.stb{background:#b34700;border-color:#ffd166}.mpicon.alt{background:#8a4b00;border-style:dashed}.mpicon.cp{background:#1e7a3a;border-color:#fff}#medplan .mpaform summary{cursor:pointer;font-weight:600;margin:6px 0}.mpicon.se{background:#0b6e4f}.mpicon.sw{background:#7a1fa2}#medplan .mpscmap:empty,#medplan .mpairmap:empty{display:none}.mpdoc .mpairmap img{width:100%;height:auto;border:1px solid #bbb}.mpdoc .mpscmap img{width:100%;height:auto;border:1px solid #bbb}" +
     /* the print view, shown in OSAP's report overlay (#brief, html.briefing), which prints every page and nothing else */
     ".mpdoc table.mpas{width:100%;border-collapse:collapse;margin:2px 0 8px}.mpdoc table.mpas th{width:28%;text-align:left;vertical-align:top;font-weight:600;padding:3px 6px 3px 0;border-bottom:1px solid var(--line-soft)}.mpdoc table.mpas td{padding:3px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}" +
     ".mpdoc .mpnk{font-weight:700;color:#8a4b00}.mpdoc table.mpas .sub{display:block}" +
@@ -1899,6 +1899,54 @@
     return [GOLDEN_MIN - 10, GOLDEN_MIN].map(function (t) { return { t: t, r: Math.max(0, t - used) * 60 * rw * 1852 / 3600 }; });
   }
   function ringsOn(k) { return fieldVals()[k] !== 0; }
+  /* the air evacuation map (Shane 2026-10-08): the air rings are often far wider than the ground picture, so when fitting
+     them would zoom the plan map out the rings get a map of their own and the plan map keeps its ground zoom */
+  function ringPts(s) {
+    var R = ringsOn("ar") ? airRings().filter(function (r) { return r.r > 0; }) : [], r = R.length ? R[R.length - 1].r : 0;
+    if (!r) return [];
+    var dy = r / 111320, dx = r / (111320 * Math.max(0.05, Math.cos(s.o[0] * Math.PI / 180)));
+    return [[s.o[0] + dy, s.o[1]], [s.o[0] - dy, s.o[1]], [s.o[0], s.o[1] + dx], [s.o[0], s.o[1] - dx]];
+  }
+  function airSplit(s, Wd, Ht) {
+    var R = ringPts(s); if (!R.length) return false;
+    var g = groundPts(s);
+    return fitZoom(g.concat(R), Wd, Ht).z < fitZoom(g, Wd, Ht).z;
+  }
+  /* what the air map shows: the rings, the aircraft's leg from its base to the pickup, the air sites, the unit's points,
+     the planned hospitals and the POI */
+  var AIR_MK = { air: 1, pk: 1, stb: 1, alt: 1, cp: 1, o: 1 }, INBOUND = { color: "#1d5fa8", weight: 2, dashArray: "2 5" };
+  function airItems(s) {
+    var it = mapItems(), m = mbase(s), pu = pickupPt(s), out = it.filter(function (x) { return x[0] === "ring"; });
+    if (m.b) out.push(["line", [[m.b.lat, m.b.lon], pu.ll], INBOUND]);
+    return out.concat(it.filter(function (x) { return x[0] === "mk" && AIR_MK[x[3]]; }));
+  }
+  function airFramePts(s) {
+    var pts = ringPts(s).concat([s.o]), m = mbase(s);
+    if (m.b) pts.push([m.b.lat, m.b.lon]);
+    (s.fac ? picks(s) : []).forEach(function (p) { pts.push([p.f.lat, p.f.lon]); });
+    return pts;
+  }
+  function airKeyHtml(items) {
+    var R = airRings(), has = function (k) { return items.some(function (x) { return x[0] === "mk" && x[3] === k; }); }, o = [];
+    function chip(bg, t, d) { o.push('<span><b style="background:' + bg + ';color:#fff;padding:0 3px">' + esc(t) + "</b> " + esc(d) + "</span>"); }
+    function ln(c, st, d) { o.push('<span><i style="color:' + c + (st ? ";border-top-style:" + st : "") + '"></i>' + esc(d) + "</span>"); }
+    var c0 = items.filter(function (x) { return x[0] === "mk" && x[3] === "o"; })[0];
+    if (c0) chip("#111", c0[2], c0[2] === "POI" ? "Point of injury" : "Plan centre");
+    if (has("pk")) chip("#8b0010", "PRI SEC TER", "Planned hospitals");
+    if (has("stb")) chip("#b34700", "STB", "Stabilization stop");
+    if (has("alt")) chip("#8a4b00", "ALT", "Alternate MTF");
+    if (has("air")) chip("#1d5fa8", "L A M", "Helipad, airfield, air rescue base");
+    if (has("cp")) chip("#1e7a3a", "HLZ", "Unit points");
+    ln("#6fa8dc", "dashed", "Light blue: a hospital inside it is reached inside " + R[0].t + " min (" + km(R[0].r) + ")");
+    ln("#1d5fa8", "", "Blue: inside " + R[1].t + " min (" + km(R[1].r) + ")");
+    if (items.some(function (x) { return x[0] === "line"; })) ln("#1d5fa8", "dotted", "Aircraft base to pickup");
+    return '<div class="mpkeyd">' + o.join("") + "</div>";
+  }
+  function airFit() {
+    var map = W.__asapMap, s = ST; if (!map || !s || !W.L) return;
+    var pts = ringPts(s).concat([s.o]), m = mbase(s); if (m.b) pts.push([m.b.lat, m.b.lon]);
+    if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [30, 30] });
+  }
   function ghRender() {
     var el = D.getElementById("mp-gh"), s = ST; if (!el) return;
     var P = s.fac ? picks(s) : [], rw = num("rwkn"), R = airRings(), li = [];
@@ -1912,10 +1960,11 @@
         : s.sea && s.sea.sea ? "No road reach: the point of injury is at sea." : s.isoErr ? '<span class="mpwarn">The road reach could not be drawn (' + esc(clip(s.isoErr, 120)) + ").</span>" : "Drawing the 30 and " + (GOLDEN_MIN - PREP_MIN) + " minute road reach…") + "</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="ar"' + (ringsOn("ar") ? " checked" : "") + "> Air rings on the map</label> " +
       "Helicopter at " + rw + " kn: inside the light blue ring a hospital is reached inside " + R[0].t + " minutes (" + esc(km(R[0].r)) + "), inside the dark blue ring inside " + R[1].t + " minutes (" + esc(km(R[1].r)) + "). " +
-      "The rings include the launch, the flight from the aircraft's base to the POI and the time on the ground.</li>");
+      "The rings include the launch, the flight from the aircraft's base to the POI and the time on the ground." +
+      (ringsOn("ar") && R[1].r > 0 ? ' <button type="button" class="refresh noprint" data-mp="airfit">Show the air rings on the map</button>' : "") + "</li>");
     li.push('<li><label class="mpchk noprint"><input type="checkbox" data-mp-opt="air"' + (airOn() ? " checked" : "") + "> Air evacuation available</label> " +
       (airOn() ? (airCompeting() ? "Primary and Secondary may be chosen by the air time of a confirmed aircraft (section 4)." : "No confirmed aircraft in section 4, so Primary and Secondary are chosen by road time; air times shown are potential.") : "Off: Primary and Secondary are chosen by road time only.") + "</li>");
-    el.innerHTML = '<div class="mpkey"><span class="mpgh g">Inside golden hour</span><span class="obs">up to ' + (GOLDEN_MIN - 10) + ' min</span><span class="mpgh a">At the golden-hour limit</span><span class="obs">' + (GOLDEN_MIN - 10) + "-" + GOLDEN_MIN + ' min</span><span class="mpgh r">Beyond golden hour</span><span class="obs">over ' + GOLDEN_MIN + " min</span></div><ul>" + li.join("") + "</ul>";
+    el.innerHTML = '<div class="mpkey"><span class="mpgh g">Inside golden hour</span><span class="obs">up to ' + (GOLDEN_MIN - 10) + ' min</span><span class="mpgh a">At the golden-hour limit</span><span class="obs">' + (GOLDEN_MIN - 10) + "-" + GOLDEN_MIN + ' min</span><span class="mpgh r">Beyond golden hour</span><span class="obs">over ' + GOLDEN_MIN + " min</span></div><ul>" + li.join("") + "</ul>" + '<div class="mpairmap"></div>';
   }
   function emsRender() {
     var el = D.getElementById("mp-ems"), s = ST; if (!el) return;
@@ -2511,21 +2560,29 @@
     if (y < 0 || y >= n) return Promise.resolve(null);
     return one(url).then(function (im) { return im === false ? one(url + "?print=1").then(function (r) { return r || null; }) : im; });
   }
-  function mapImage(Wd, Ht, focus) {
-    var s = ST, items = focus ? focus.items : mapItems(), P = s.fac ? picks(s) : [], pts = [s.o];
-    if (focus) pts = focus.pts.slice();
-    else {
-      P.forEach(function (p) { pts.push([p.f.lat, p.f.lon]); });
-      (s.rts || []).forEach(function (x) { if (x.r) x.r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); });
-    }
+  /* the ground picture the printed plan map is framed on: the POI, the picks and their road routes */
+  function groundPts(s) {
+    var pts = [s.o];
+    (s.fac ? picks(s) : []).forEach(function (p) { pts.push([p.f.lat, p.f.lon]); });
+    (s.rts || []).forEach(function (x) { if (x.r) x.r.line.forEach(function (q, i) { if (i % 10 === 0) pts.push(q); }); });
     if (pts.length < 2) pts.push([s.o[0] + 0.05, s.o[1] + 0.05], [s.o[0] - 0.05, s.o[1] - 0.05]);
+    return pts;
+  }
+  /* the closest zoom (15 down to minZ) at which every point fits a Wd x Ht picture with a margin */
+  function fitZoom(pts, Wd, Ht, minZ) {
     var z = 15, a, b;
-    for (; z > (focus && focus.minZ || 3); z--) {
+    for (; z > (minZ || 3); z--) {
       var xs = pts.map(function (p) { return wpx(p, z); });
       a = [Math.min.apply(null, xs.map(function (q) { return q[0]; })), Math.min.apply(null, xs.map(function (q) { return q[1]; }))];
       b = [Math.max.apply(null, xs.map(function (q) { return q[0]; })), Math.max.apply(null, xs.map(function (q) { return q[1]; }))];
       if ((b[0] - a[0]) * 1.12 <= Wd && (b[1] - a[1]) * 1.12 <= Ht) break;
     }
+    return { z: z, a: a, b: b };
+  }
+  function mapImage(Wd, Ht, focus) {
+    var s = ST, items = focus ? focus.items : mapItems(), pts = focus ? focus.pts.slice() : groundPts(s);
+    if (pts.length < 2) pts.push([s.o[0] + 0.05, s.o[1] + 0.05], [s.o[0] - 0.05, s.o[1] - 0.05]);
+    var fz = fitZoom(pts, Wd, Ht, focus && focus.minZ), z = fz.z, a = fz.a, b = fz.b;
     var c0 = [(a[0] + b[0]) / 2 - Wd / 2, (a[1] + b[1]) / 2 - Ht / 2], K = 2;
     var cv = D.createElement("canvas"); cv.width = Wd * K; cv.height = Ht * K;
     var g = cv.getContext("2d"); g.scale(K, K);
@@ -2546,7 +2603,7 @@
       items.filter(function (it) { return it[0] === "mk"; }).sort(function (x, y) { return (x[5] ? 1 : 0) - (y[5] ? 1 : 0); }).forEach(function (it) {
         var q = xy(it[1]); if (q[0] < -20 || q[1] < -20 || q[0] > Wd + 20 || q[1] > Ht + 20) return;
         g.setLineDash([]); g.globalAlpha = 1; g.font = "700 11px system-ui, sans-serif";
-        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "pt" ? "#0b4f8a" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "stb" ? "#b34700" : it[3] === "alt" ? "#8a4b00" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : "#D7141A";
+        var w = Math.max(22, g.measureText(it[2]).width + 10), h = 17, bg = it[3] === "air" ? "#1d5fa8" : it[3] === "pt" ? "#0b4f8a" : it[3] === "e" ? "#b35c00" : it[3] === "o" ? "#111" : it[3] === "pk" ? "#8b0010" : it[3] === "stb" ? "#b34700" : it[3] === "alt" ? "#8a4b00" : it[3] === "se" ? "#0b6e4f" : it[3] === "sw" ? "#7a1fa2" : it[3] === "bl" ? "#a4005b" : it[3] === "dc" ? "#00727a" : it[3] === "cp" ? "#1e7a3a" : "#D7141A";
         g.fillStyle = bg; g.strokeStyle = it[3] === "pk" || it[3] === "stb" ? "#ffd166" : "#fff"; g.lineWidth = 2;
         g.beginPath(); g.rect(q[0] - w / 2, q[1] - h / 2, w, h); g.fill(); g.stroke();
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
@@ -2686,7 +2743,9 @@
     var held = pl && pl.pending.length ? "Still reading " + pl.pending.join(", ") + ". Printing starts to work as soon as they finish or fail; this page refreshes itself." :
       vs && vs.status === "BLOCKING" ? "Blocking error: " + vs.items.filter(function (x) { return x.level === "blocking"; }).map(function (x) { return x.detail; }).join(" ") : "";
     s.printHeld = !!(pl && pl.pending.length);
-    var key = '<div class="mpkeyd">' + legendItems().map(function (x) {
+    /* the air rings go on their own map when fitting them would zoom the plan map out of its ground picture */
+    var split = airSplit(s, 1000, 640);
+    var key = '<div class="mpkeyd">' + legendItems().filter(function (x) { return !(split && /^Air reach/.test(x[3])); }).map(function (x) {
       return "<span>" + (x[0] === "ln" || x[0] === "dl" ? '<i style="color:' + x[1] + (x[0] === "dl" ? ";border-top-style:dashed" : "") + '"></i>' : '<b style="background:' + x[1] + ';color:#fff;padding:0 3px">' + esc(x[2]) + "</b> ") + esc(x[3]) + "</span>";
     }).join("") + "</div>";
     el.innerHTML = '<div class="bbar noprint"><button type="button" class="refresh primary" id="mpd-print"' + (held ? " disabled" : "") + '>Print or save PDF</button> <button type="button" class="refresh" id="mpd-close">Back to the plan</button> ' +
@@ -2697,12 +2756,26 @@
       (conop ? '<p class="obs">Operational plan. The Medical Intelligence Annex (Print intelligence annex) holds every hospital found, landing sites, health threats, the weather table, the sources and each hospital\'s assessment; it carries the same plan fingerprint.</p>' : "") +
       c.innerHTML + (conop ? "" : assessPrint(s, pts)) + "</article>";
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
-    var ready = mapImage(1000, 640).then(function (m) {
+    var mi = mapItems();
+    var ready = mapImage(1000, 640, split ? { items: mi.filter(function (x) { return x[0] !== "ring"; }), pts: groundPts(s) } : { items: mi, pts: groundPts(s).concat(ringPts(s)) }).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
       im.src = m.url;
-      if (cap) cap.textContent = (m.base ? "" : "The basemap could not be loaded; the plan is drawn without it. ") + "Straight north up, Web Mercator, zoom " + m.z + ". Routes from the road router; rings and outlines as set in section 1.";
+      if (cap) cap.textContent = (m.base ? "" : "The basemap could not be loaded; the plan is drawn without it. ") + "Straight north up, Web Mercator, zoom " + m.z + ". Routes from the road router; rings and outlines as set in section 1." +
+        (split ? " The air rings reach beyond this map, so they are on the air evacuation map with the golden hour." : "");
       return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
     }).catch(function () { var cap = D.getElementById("mpd-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
+    /* the air evacuation map, with the golden hour, only when the rings did not fit the plan map at its ground zoom */
+    var am = el.querySelector(".mpdoc .mpairmap");
+    if (am && split) {
+      var ai = airItems(s), R = airRings(), mb = mbase(s);
+      am.innerHTML = '<h4>Air evacuation map</h4><figure><img alt="Map of the air evacuation rings round the point of injury"><figcaption class="obs">Drawing the map…</figcaption>' + airKeyHtml(ai) + "</figure>";
+      ready = Promise.all([ready, mapImage(1000, 560, { items: ai, pts: airFramePts(s) }).then(function (m) {
+        var im = am.querySelector("img"), cap = am.querySelector("figcaption"); im.src = m.url;
+        cap.textContent = (m.base ? "" : "The basemap could not be loaded. ") + "Helicopter at " + num("rwkn") + " kn from " + (mb.b ? mb.b.name : "the point of injury") + ": " + R[0].t + " min ring " + km(R[0].r) + ", " + R[1].t + " min ring " + km(R[1].r) +
+          ", counting " + num("launch") + " min to launch, the flight to the pickup and " + ONSCENE_MIN + " min on the ground. Straight north up, Web Mercator, zoom " + m.z + ". Straight lines show distance, not a flight route.";
+        return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
+      }).catch(function () { var cap = am.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
+    }
     /* the strategic chains on a world-scale map, in section 6 */
     var sm = el.querySelector(".mpdoc .mpscmap"), C = s.oc ? stratChains(s) : [];
     if (sm && C.length) {
@@ -3016,6 +3089,7 @@
     if (k === "legacyuse" || k === "legacydrop") { legacyMove(k === "legacyuse"); render(); build(); return; }
     if (k === "print") { printView(); return; }
     if (k === "printc") { printView("conop"); return; }
+    if (k === "airfit") { if (!dockOn()) close(); mapShow(); airFit(); return; }
     if (k === "strat") { if (!dockOn()) close(); mapShow(); stratFit(); return; }
     if (k === "live") { ST.forceLive = true; build(); return; }
     if (b.hasAttribute("data-mpa-add")) { airAdd(); return; }
