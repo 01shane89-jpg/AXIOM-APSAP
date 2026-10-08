@@ -473,6 +473,9 @@ async function openPlan(p) {
   await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-oc [data-mp="strat"]'); await p.waitForTimeout(400);
   ok(await p.evaluate(() => window.__asapMap.getZoom() <= 4 && !document.getElementById("medplan").hidden), "out of country: Show on the map zooms out to the whole chain, beside the side panel");
   await p.click('#medplan [data-mp="dock"]');
+  await p.click('#medplan [data-mp="dock"]'); await p.click('#mp-gh [data-mp="airfit"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => { const m = window.__asapMap, rings = []; m.eachLayer((l) => { if (l.getRadius && l.options && l.options.fill === false) rings.push(l); }); const b = m.getBounds(); return rings.length >= 1 && rings.every((r) => b.contains(r.getBounds().pad(-0.01))) && !document.getElementById("medplan").hidden; }), "air map: Show the air rings on the map fits the whole of both rings, beside the side panel");
+  await p.click('#medplan [data-mp="dock"]');
   await p.fill('#mp-oc [data-mpf="sjkn"]', "300");
   await p.waitForFunction(() => /at 300 kn with 2 h/.test(document.getElementById("mp-oc").textContent), null, { timeout: 5000 }).catch(() => {});
   ok(/at 300 kn with 2 h/.test(await p.textContent("#mp-oc")), "out of country: a new strategic cruise speed recomputes the chains");
@@ -565,6 +568,17 @@ async function openPlan(p) {
   await p.waitForFunction(() => /^data:image\/png/.test((document.querySelector("#brief .mpscmap img") || {}).src || ""), null, { timeout: 20000 });
   ok(/East: JPN → HAW → USA/.test(await p.textContent("#brief .mpscmap figcaption")), "print view: the strategic chains have their own world map in section 6");
   if (OUT) await (await p.$("#brief .mpscmap")).screenshot({ path: OUT + "/chain-map.png" });
+  /* the air evacuation map (Shane 2026-10-08): rings that would zoom the plan map out get their own map with the golden hour */
+  {
+    const am = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"), a = d.querySelector(".mpairmap img"); return { air: !!a, cap: document.getElementById("mpd-cap").textContent, key: d.querySelector("figure .mpkeyd").textContent, inGh: !!(a && a.closest(".mpairmap")) }; });
+    if (am.air) {
+      await p.waitForFunction(() => /^data:image\/png/.test((document.querySelector("#brief .mpairmap img") || {}).src || ""), null, { timeout: 20000 });
+      const ac = await p.evaluate(() => ({ cap: document.querySelector("#brief .mpairmap figcaption").textContent, key: document.querySelector("#brief .mpairmap .mpkeyd").textContent, w: document.querySelector("#brief .mpairmap img").naturalWidth }));
+      ok(ac.w >= 1000 && /Helicopter at \d+ kn/.test(ac.cap) && /Light blue/.test(ac.key) && /air evacuation map/.test(am.cap) && !/Air reach/.test(am.key), "air map: the rings are on their own map and the plan map keeps its ground zoom: " + ac.cap.slice(0, 90));
+      if (OUT) await (await p.$("#brief .mpairmap")).screenshot({ path: OUT + "/air-map.png" });
+    } else ok(/Air reach/.test(am.key) && !/air evacuation map/.test(am.cap), "air map: the rings fit the plan map at its ground zoom, so there is one map");
+  }
+  const split = await p.evaluate(() => !!document.querySelector("#brief .mpairmap img"));
   ok(["Primary, Secondary", "1. Golden hour", "2. Receiving", "3. Routes", "4. Emergency", "5. Evacuation landing", "6. Evacuate out", "7. Health", "8. Evacuation weather", "9. Unit", "10. Sources"].every((x) => pv.h3.some((h) => h.indexOf(x) === 0)), "print view: every section is there: " + pv.h3.join(" | "));
   ok(pv.btn === 0 && /Test element/.test(pv.t) && /Primary/.test(pv.t), "print view: fields print as their values, no buttons or inputs");
   ok(!/Looking up|Reading…|Still reading/.test(pv.t) && /Plan status/.test(pv.t), "print view: the plan status prints and no lookup is left in progress");
@@ -577,6 +591,7 @@ async function openPlan(p) {
   const pc = await p.evaluate(() => { const d = document.querySelector("#brief .mpdoc"); return { h2: d.querySelector("h2").textContent, h3: [...d.querySelectorAll("h3")].map((h) => h.textContent), a: d.querySelectorAll(".mpaprint").length, src: !!d.querySelector("#brief .mpdoc .mpfp"), srcList: /OpenStreetMap as of|Open-Meteo/.test((d.querySelector(".mpfp") || { parentElement: { textContent: "" } }).parentElement.textContent) }; });
   ok(/^Medical CONOP, /.test(pc.h2) && /^Medical plan: /i.test(pc.h3[0]) && ["Operational picture", "Plan status", "Primary, Secondary", "1. Golden hour", "3. Routes", "4. Emergency", "6. Evacuate out", "9. Unit"].every((x) => pc.h3.some((h) => h.indexOf(x) === 0)) &&
     !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
+  ok(split === await p.evaluate(() => !!document.querySelector("#brief .mpairmap img")), "air map: the CONOP carries the same air evacuation map as the annex");
   await p.click("#mpd-close"); await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
