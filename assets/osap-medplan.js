@@ -412,7 +412,13 @@
   function govOf(f) {
     if (!GOV) return null;
     var c = f.sofRec && hp("sof").toFacility(f.sofRec, ST ? ST.cc : "", "");
-    return GOV_P.lookup(GOV, f.osm, f.osm ? null : c) || null;
+    var r = GOV_P.lookup(GOV, f.osm, f.osm ? null : c);
+    if (r || !f.osm || f.lat == null) return r || null;
+    /* an OpenStreetMap hospital no record was placed on: the record placed only by its MOPH location, when the resolver
+       finds it to be the same hospital (same name within 2.5 km); a record already on another entry is never taken */
+    if (!GOV.moph) GOV.moph = { doc: GOV.doc, byOsm: {}, placed: GOV.placed.filter(function (x) { return !x.osm; }), total: GOV.total };
+    var t = f.tags || {};
+    return GOV_P.lookup(GOV.moph, "", W.OSAP_HOSP.facility({ name: f.name || "", name_local: t["name:th"] || "", aliases: [t["name:en"], t.official_name].filter(Boolean), lat: f.lat, lon: f.lon })) || null;
   }
   function tileKeys(o, R) { return hp("osm").tileKeys(o, R); }
   function ccNear(o, R) { return hp("osm").ccNear(o, R); }
@@ -695,6 +701,18 @@
       H.push(capability({ id: "sof:" + (h.id || h.name), kind: "hospital", name: clip(h.name, 90), lat: h.lat, lon: h.lon, m: m, brg: brg(o, [h.lat, h.lon]),
         osm: "", src: h.src, srcname: h.srcname, sofRec: h, er: "", addr: h.address ? clip(h.address, 160) : "", phone: "", web: "" }, sofList));
     });
+    /* official hospitals OpenStreetMap does not have (Shane 2026-10-08, fix 2 of the medical data gaps): a record placed by
+       its MOPH location and not already one of the plan's hospitals joins the plan at that location, which says where it
+       came from */
+    if (GOV) {
+      var gUsed = {}; H.forEach(function (f) { if (f.gov) gUsed[f.gov.hcode] = 1; });
+      GOV.placed.forEach(function (r) {
+        if (r.osm || gUsed[r.hcode] || r.kind !== "hospital") return;
+        var m = distM(o, [r.lat, r.lon]); if (m > rH) return;
+        H.push(capability({ id: "gov:" + r.hcode, kind: "hospital", name: clip(r.name_en || r.name_th, 90), alias: r.name_en ? clip(r.name_th, 90) : "", lat: r.lat, lon: r.lon, m: m, brg: brg(o, [r.lat, r.lon]),
+          osm: "", gov: r, govLoc: r.coord_basis, er: "", addr: "", phone: "", web: "" }, sofList));
+      });
+    }
     /* only hospitals with something known go in the ranked list; named ones with nothing listed are kept apart, and
        entries with no name are left out */
     var U = H.filter(function (f) { return f.tier === 0 && !f.sofRec && !/no name/.test(f.name); }), nNo = H.filter(function (f) { return f.tier === 0 && !f.sofRec && /no name/.test(f.name); }).length;
@@ -1752,7 +1770,7 @@
     var tot = groundTotal(f);
     var off = isOff(f), tg = f.kind === "hospital" ? '<label class="mpon noprint" title="Untick to leave this hospital out of the picks, routes, map and print"><input type="checkbox" data-mp-off="' + esc(f.id) + '"' + (off ? "" : " checked") + "> Use</label>" : "";
     return "<tr" + (off ? ' class="mpoff"' : "") + "><td class=\"n\"><span class=\"mpmark\">" + mk + "</span>" + tg + "</td><td class=\"mpfac\">" + (off ? '<span class="mpofftag">Turned off: not used for the picks, map or print</span><br>' : "") + (best ? best.map(function (b) { return '<span class="mpbest">' + esc(b) + "</span>"; }).join("") + "<br>" : "") +
-      (f.far ? '<span class="mpfar">Beyond the ' + Math.round(ST.radii.h / 1000) + " km search: added as a hospital with documented capability</span><br>" : "") + "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
+      (f.far ? '<span class="mpfar">Beyond the ' + Math.round(ST.radii.h / 1000) + " km search: added as a hospital with documented capability</span><br>" : "") + "<b>" + esc(f.name) + "</b>" + (f.alias && f.alias !== f.name ? ' <span class="obs">(' + esc(f.alias) + ")</span>" : "") + (f.govLoc ? '<span class="sub mpgovloc">Official record, not in OpenStreetMap; location: ' + esc(f.govLoc) + "</span>" : "") + "<br>" + tier + lowTag(f) + tr + (f.kind !== "hospital" ? '<span class="sub">' + esc(cap || "No capability tags in OSM") + "</span>" : f.trauma && f.why.length ? '<span class="sub">Listed services: ' + esc(f.why.join(", ")) + "</span>" : "") + ctHtml(f) + (f.kind === "hospital" ? '<span class="sub mptc">TRICARE: not known, confirm with TRICARE Overseas</span>' : "") + "</td>" +
       '<td class="n">' + (f.s != null ? esc(mins(f.s)) + '<span class="sub">' + esc(km(f.rm || 0)) + byRoad() + (f.est ? " (estimate)" : "") + "</span>" + ghTag(tot, gPre()) : '<span class="sub">' + (ST.routeDone ? "no road route" : "…") + "</span>") + "</td>" +
       '<td class="n">' + esc(mins(flightS(f.m, rw))) + '<span class="sub">POI to here at ' + rw + " kn</span>" + (f.kind === "hospital" ? '<span class="sub" title="' + esc(airLegs(f)) + '">' + esc(mins(potTotal(f))) + " from the call, with the aircraft's flight in (potential)</span>" : "") + "</td>" +
       '<td class="n">' + esc(km(f.m)) + '<span class="sub">' + Math.round(f.brg) + "° " + card(f.brg) + "</span></td>" +

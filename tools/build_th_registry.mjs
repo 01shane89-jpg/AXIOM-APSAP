@@ -181,7 +181,8 @@ export async function build(raw, opt = {}) {
   const odm = new Map();
   for (const r of T.odm.slice(1)) {
     const ag = val(r[3]), i = ag.indexOf("โรงพยาบาล"); if (i < 0 || /ส่งเสริมสุขภาพ/.test(ag)) continue;
-    const k = key(ag.slice(i)), la = +r[5], lo = +r[6]; if (!k || !la || !lo) continue;
+    /* CITIZENinfo names carry the province after the hospital ("โรงพยาบาลบ้านหมี่ จังหวัดลพบุรี"); the registry names do not */
+    const k = key(ag.slice(i).replace(/\s+จังหวัด\S+$/, "")), la = +r[5], lo = +r[6]; if (!k || !la || !lo) continue;
     odm.set(k, (odm.get(k) || []).concat([{ lat: la, lon: lo, addr: val(r[4]) }]));
   }
   /* OpenStreetMap entries without a province take it from the nearest MOPH-listed facility (any kind) within 15 km */
@@ -216,8 +217,10 @@ export async function build(raw, opt = {}) {
       let c = one((osmByKey.get(k) || []).filter((o) => !o.prov || o.prov === h.province));
       if (c.length > 1 || !strong) c = one(c.filter((o) => o.prov === h.province || near(o)));
       if (c.length > 1 && omk.length === 1) c = one(c.filter(near));
-      if (c.length === 1 && omk.length === 1 && !near(c[0])) { n.coord_conflict++; h.coord_note = "OpenStreetMap and MOPH locations more than 5 km apart; MOPH location used"; c = []; }
-      if (c.length === 1) { placed = { o: c[0], moph: omk.length === 1, how: strong ? "the same name" : k === ekey(h.name_en) ? "the same English name" : "the same short name" }; break; }
+      /* the 2020 MOPH locations are off by several km for some hospitals (Krabi, Betong) where OpenStreetMap is right, so a
+         name match keeps the OpenStreetMap entry and the distance is noted */
+      if (c.length === 1 && omk.length === 1 && !near(c[0])) { n.coord_conflict++; h.coord_note = "OpenStreetMap and MOPH (2020) locations " + (hav([c[0].lat, c[0].lon], [omk[0].lat, omk[0].lon]) / 1000).toFixed(1) + " km apart; OpenStreetMap used"; }
+      if (c.length === 1) { placed = { o: c[0], moph: omk.length === 1 && near(c[0]), how: strong ? "the same name" : k === ekey(h.name_en) ? "the same English name" : "the same short name" }; break; }
     }
     h._placed = placed; h._om = om;
   }
