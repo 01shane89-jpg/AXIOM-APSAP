@@ -9,7 +9,7 @@ while read -r id url; do
   code=$(curl -sSL -m 90 -A "$ua" -o "/tmp/$id.bin" -w "%{http_code}" "$url" 2>/tmp/$id.err)
   t=$(file -b --mime-type "/tmp/$id.bin" 2>/dev/null)
   echo "$id $code $t $(stat -c %s /tmp/$id.bin 2>/dev/null)" >> research/out/_log.txt
-  if [ "$t" = "application/pdf" ]; then pdftotext -layout "/tmp/$id.bin" "research/out/$id.txt"
+  if [ "$t" = "application/pdf" ]; then pdftotext -layout "/tmp/$id.bin" "research/out/$id.txt"; [ $(stat -c %s /tmp/$id.bin) -lt 20000000 ] && cp "/tmp/$id.bin" "research/out/$id.pdf"
   else python3 research/h2t.py "/tmp/$id.bin" > "research/out/$id.txt"; fi
   echo "SOURCE $url" | cat - "research/out/$id.txt" > /tmp/x && mv /tmp/x "research/out/$id.txt"
 done < research/urls.txt
