@@ -1,1 +1,7 @@
-[["n6395357641",68.1533,28.27831,"fi",{"name":"Hammaskota","aeroway":"helipad"}]]
+[["n2320810476",69.7209,29.90348,"no",{"aeroway":"helipad"}],
+["n6395357641",68.1533,28.27831,"fi",{"name":"Hammaskota","aeroway":"helipad"}],
+["n7464912257",69.72111,29.90298,"no",{"aeroway":"helipad"}],
+["n8260193447",69.68615,29.98644,"no",{"name":"Sør-Varanger AmbulanceTjeneste","emergency":"ambulance_station","operator":"Finnmarkssykehuset","phone":"+47 78 99 09 25"}],
+["r15323258",69.72317,29.89299,"no",{"name":"Kirkenes lufthavn","name:en":"Kirkenes Airport","operator":"Avinor","website":"https://avinor.no/en/airport/kirkenes-airport/","aeroway":"aerodrome","icao":"ENKR","iata":"KKN","aerodrome:type":"international","wikidata":"Q1431737"}],
+["w1132582170",69.72165,29.87245,"no",{"aeroway":"helipad"}],
+["w1132582171",69.72159,29.87203,"no",{"aeroway":"helipad"}]]
