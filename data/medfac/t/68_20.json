@@ -1,5 +1,10 @@
-[["n8084881856",69.00107,20.89697,"fi",{"name":"Kilpisjärvi Seaplane Mooring","operator":"Polar Lento Oy","operator:type":"private","aeroway":"aerodrome","aerodrome:type":"seaplane"}],
+[["n11730588557",69.60335,20.52981,"no",{"aeroway":"helipad","surface":"ground"}],
+["n11736419774",69.76654,21.03639,"no",{"name":"Distriktsmedisinsk senter Nord-Troms, Storslett","amenity":"clinic","healthcare":"clinic"}],
+["n1974500697",69.54362,20.54261,"no",{"aeroway":"helipad"}],
+["n8084881856",69.00107,20.89697,"fi",{"name":"Kilpisjärvi Seaplane Mooring","operator":"Polar Lento Oy","operator:type":"private","aeroway":"aerodrome","aerodrome:type":"seaplane"}],
 ["w172982471",69.00239,20.89707,"fi",{"name":"Kilpisjärvi  Heliport","aeroway":"heliport","icao":"EFEK"}],
+["w382916461",69.78748,20.9579,"no",{"name":"Sørkjosen lufthavn","name:en":"Sørkjosen Airport","operator":"Avinor","website":"https://avinor.no/en/airport/sorkjosen-airport/","aeroway":"aerodrome","icao":"ENSR","iata":"SOJ","aerodrome:type":"public","wikidata":"Q1432968"}],
 ["w430371016",69.00211,20.89687,"fi",{"name":"Kilpisjärvi  Heliport","operator":"Heliflite Oy","phone":"+358 40 0155111","website":"https://heliflite.fi/","addr:street":"Lentosatama","addr:city":"Kilpisjärvi","addr:postcode":"99490","aeroway":"helipad","surface":"paved"}],
+["w447865942",69.76385,21.04452,"no",{"aeroway":"helipad"}],
 ["w453389728",69.05014,20.78874,"fi",{"aeroway":"helipad"}],
 ["w603389401",69.1952,21.01877,"fi",{"aeroway":"helipad"}]]

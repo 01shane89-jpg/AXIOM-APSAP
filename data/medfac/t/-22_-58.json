@@ -1,4 +1,8 @@
-[["n1042064692",-21.84806,-57.89917,"br",{"name":"Aeródromo Fazenda Quebracho Brasil","aeroway":"aerodrome","wikidata":"Q31204584"}],
+[["n1042055597",-21.2732,-57.9242,"py",{"name":"Puerto Guaraní Airport","aeroway":"aerodrome"}],
+["n1042055603",-21.5556,-57.9685,"py",{"name":"Estancia Cunataí Airport","aeroway":"aerodrome"}],
+["n1042055610",-21.67727,-57.91322,"py",{"name":"Colonia Carmelo Peralta Airport","aeroway":"aerodrome","wikidata":"Q15958340"}],
+["n1042055737",-20.9046,-57.9271,"py",{"name":"Aeropuerto Puerto Leda","aeroway":"aerodrome","iata":"PBT","wikidata":"Q35291132"}],
+["n1042064692",-21.84806,-57.89917,"br",{"name":"Aeródromo Fazenda Quebracho Brasil","aeroway":"aerodrome","wikidata":"Q31204584"}],
 ["n1042065095",-21.68722,-57.35806,"br",{"name":"Aeródromo Fazenda Marabá","aeroway":"aerodrome"}],
 ["n1042065235",-20.88333,-57.41778,"br",{"name":"Aeródromo Fazenda Bandeirantes","aeroway":"aerodrome"}],
 ["n1042065277",-20.11917,-57.11194,"br",{"name":"Aeródromo Fazenda Santa Júlia","aeroway":"aerodrome"}],
@@ -52,6 +56,7 @@
 ["n2038928961",-21.46266,-56.10758,"br",{"name":"Hospital Edelmira Nunes de Oliveira","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+55 67 3269 2008","addr:housenumber":"860","addr:street":"Rua 7 De Setembro","addr:postcode":"79230-000"}],
 ["n2039728073",-21.45212,-56.10085,"br",{"name":"Posto de Saúde","amenity":"clinic","emergency":"no"}],
 ["n2039728283",-21.454,-56.1071,"br",{"name":"Posto de Saúde Familiar","amenity":"clinic","emergency":"no"}],
+["n2124088298",-21.03937,-57.87003,"py",{"amenity":"hospital","healthcare":"hospital"}],
 ["n2950123792",-21.13143,-56.47652,"br",{"name":"Darcy João Bigaton","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"201","addr:street":"Rua São Pedro Apóstolo","addr:city":"Bonito","addr:postcode":"79290-000"}],
 ["n3895208506",-21.88678,-56.8863,"br",{"aeroway":"aerodrome"}],
 ["n8664370947",-20.02737,-56.32086,"br",{"name":"Aeródromo Fazenda Novo Horizonte","aeroway":"aerodrome","icao":"SSFO","wikidata":"Q31204421"}],
@@ -64,4 +69,7 @@
 ["w418174279",-20.76672,-56.70725,"br",{"name":"Fazenda Boca da Onça Airport","aeroway":"aerodrome","wikidata":"Q31203571"}],
 ["w418174280",-20.94439,-56.67636,"br",{"name":"Fazenda Santa Feliciana Airport","aeroway":"aerodrome"}],
 ["w418174281",-21.01973,-56.27583,"br",{"name":"Fazenda São Sebastião Airport","aeroway":"aerodrome"}],
-["w456850530",-20.18006,-56.63432,"br",{"name":"Aeródromo Fazenda Marema","aeroway":"aerodrome","wikidata":"Q31204324"}]]
+["w456850530",-20.18006,-56.63432,"br",{"name":"Aeródromo Fazenda Marema","aeroway":"aerodrome","wikidata":"Q31204324"}],
+["w549581604",-21.04581,-57.88302,"py",{"name":"Fuerte Olimpo Airport","aeroway":"aerodrome","icao":"SGOL","iata":"OLK","wikidata":"Q11824386"}],
+["w762978374",-20.91141,-57.92588,"py",{"name":"Aerodromo Puerto Leda","aeroway":"aerodrome"}],
+["w762983552",-20.9634,-57.89318,"py",{"name":"Aerodomo Puerto Lidia","aeroway":"aerodrome"}]]

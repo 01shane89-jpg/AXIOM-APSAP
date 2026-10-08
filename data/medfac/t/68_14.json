@@ -1,0 +1,5 @@
+[["n8525088917",68.39021,15.89946,"no",{"aeroway":"helipad"}],
+["w1468119519",68.55873,14.90801,"no",{"name":"Stokmarknes helikopterplass, Nordlandssykehuset","aeroway":"helipad"}],
+["w160601864",68.58077,15.02184,"no",{"name":"Stokmarknes lufthavn","name:en":"Stokmarknes Airport","operator":"Avinor","website":"https://avinor.no/en/airport/stokmarknes-airport/","aeroway":"aerodrome","icao":"ENSK","iata":"SKN","aerodrome:type":"public","wikidata":"Q1703543"}],
+["w381434971",68.24171,14.66753,"no",{"name":"Svolvær lufthavn, Helle","name:en":"Svolvær Airport, Helle","operator":"Avinor","website":"https://avinor.no/en/airport/svolvar-airport/","aeroway":"aerodrome","icao":"ENSH","iata":"SVJ","aerodrome:type":"international","wikidata":"Q1703557"}],
+["w397959960",68.55999,14.91023,"no",{"name":"Stokmarknes sykehus","amenity":"hospital","healthcare":"hospital","emergency":"yes","wikidata":"Q12003329"}]]

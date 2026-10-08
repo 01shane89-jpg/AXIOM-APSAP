@@ -1,0 +1,8 @@
+[["n9128726110",78.24646,15.48544,"no",{"name":"FATO West","aeroway":"helipad","surface":"asphalt"}],
+["n9128726111",78.24558,15.49978,"no",{"name":"FATO East","aeroway":"helipad","surface":"asphalt"}],
+["w190025212",78.22003,15.64492,"no",{"name":"Longyearbyen sykehus","name:en":"Longyearbyen Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+4779024200","website":"https://unn.no/longyear","wikidata":"Q21778088"}],
+["w358229675",78.2462,15.46327,"no",{"name":"Svalbard lufthavn","name:en":"Svalbard Airport","operator":"Avinor","phone":"+47 79023800","website":"https://avinor.no/en/airport/svalbard-airport/","aeroway":"aerodrome","icao":"ENSB","iata":"LYR","aerodrome:type":"public","wikidata":"Q59633"}],
+["w360063601",78.06154,14.21727,"no",{"name":"Hospital - Больница","name:en":"Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w536860268",78.10084,14.20597,"no",{"name":"Barentsburg helikopterplass, Kapp Heer","aeroway":"helipad","icao":"ENBA"}],
+["w690378346",78.10068,14.19988,"no",{"aeroway":"helipad"}],
+["w72843517",78.10134,14.19801,"no",{"name":"Barentsburg Heliport","operator":"Arktikugol","aeroway":"heliport","icao":"ENBA","surface":"concrete","wikidata":"Q16950357"}]]
