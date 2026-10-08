@@ -1,8 +1,8 @@
-# Scratch research fetcher (branch claude/medplan-air-raw only, never merged)
+# Scratch research fetcher (branch claude/medplan-gaps-raw only, never merged)
 name: Research raw fetch
 on:
   push:
-    branches: [claude/medplan-air-raw]
+    branches: [claude/medplan-gaps-raw]
     paths: [research/urls.txt]
 permissions:
   contents: write
