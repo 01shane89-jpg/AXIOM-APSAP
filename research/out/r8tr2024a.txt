@@ -1,0 +1,363 @@
+SOURCE https://r8.moph.go.th/r8wayNewadmin/page/upload_file/20240430105259.pdf
+ การนําเสนอแผนการพั ฒนา
+    ระบบบริการสุขภาพ
+สาขาอุบัติเหตุ ฉุกเฉิน และส่งต่อ
+
+
+                       นพ.วิสิษฐ์ วิจต
+                                     ิ รโกสุม
+                        30 เมษายน 2567
+ตัวชี้วด
+       ั ข้อมูลไตรมาส 1 ปีงบประมาณ 2567
+ตัวชี้วด
+       ั ข้อมูลไตรมาส 1 ปีงบประมาณ 2567
+                 Human resource INFOGRAPHIC
+
+                   ENP
+ RN ที่อยู่ในห้องฉุกเฉิน 970 คน
+    ENP 76 คน คิดเป็น 7.83%
+  (เป้าหมาย ENP/RN >30%)               EP
+                                       EP: แสนประชากร = 0.74
+                                       (เป้าหมาย >2.4)
+
+Trauma team
+  Neuro surgeon 12 คน
+          Trauma 1 คน                   PARAMEDIC
+                     .
+                                              ขาดแคลน
+                                              paramedic ทุกพื้ นที่
+                           DEMOGRAPHIC INFOGRAPHIC
+
+
+
+
+(เป้าหมาย <ร้อยละ 10)             (เป้าหมาย>ร้อยละ 30)           (เป้าหมาย A->M2)                 (เป้าหมาย A->M2)
+
+  อัตราการเสียชีวต
+                 ิ ผู้เจ็บป่วย      ประชากรเข้าถึงบริการ           ศักยภาพการให้การดูแล        ครุภัณฑ์/โครงสร้างในการพั ฒนา
+วิกฤตฉุกเฉินภายใน 24 ชัว  ่ โมง   การแพทย์ฉุกเฉินยังตํ่ากว่า   ผู้บาดเจ็บรุนแรงของรพช เพื่ อ   ระบบ trauma care system ทัง
+                                                                                                                         ้ เขต
+สูงเกินเกณฑ์ในจังหวัด เลย และ      เกณฑ์มากที่ ร้อยละ 18.5     พั ฒนา trauma care system           ไม่สอดคล้อง ไปพร้อมกัน
+     บึงกาฬ (เคส trauma)                                           ตามเป้าหมายของ SAP
+  สรุปสถานการณ์ภาพเขต
+1. ระบบการแพทย์ฉุกเฉิน
+     1. ประชากรเข้าถึงบริการการแพทย์ฉุกเฉินยังตํ่ากว่าเกณฑ์มาก
+     2. ขาดแคลน paramedic และทีม sky doctor /ทุนในการอบรม BHEMS
+     3. ขาดการ revise และ implement offline protocol
+
+2. การส่งต่อ
+     1. ระบบการ consultation ใช้เวลานาน โดยเฉพาะ multiple trauma และการปฏิเสธการส่งต่อ
+     2. จังหวัดที่ไม่มีรพ. node ทําให้รพ. จังหวัดรับภาระเป็นอย่างมาก
+     3. ยังไม่สามารถใช้โปรแกรม Smart refer ได้
+3. ห้องฉุกเฉิน
+     1. ขาดแคลน EP และ ENP
+4. สนับสนุนงาน academic
+
+     1. plan เปิด ENP training/ paramedic training
+     2. Plan CPR center training
+สรุปสถานการณ์ภาพเขต
+1. ประเด็นหลักที่ต้องติดตามรายจังหวัด
+   1.จังหวัดอุดรธานี และสกลนคร : ติดตามการพั ฒนาระบบ trauma/referral system
+   2.จังหวัดหนองคาย : ระบบ EMS เนื่องจากพบปัญหาเรื่องการควบคุมคุณภาพ
+   3.จังหวัดหนองบัวลําภู : พั ฒนาระบบ refer back
+   4.จังหวัดบึงกาฬ และจังหวัดนครพนม : ระบบ consultation/refer out , ประสบปัญหา
+     ขาดทรัพยากรบุคคลอย่างมาก, เพิ่ มศักยภาพรพช.
+   5.จังหวัดเลย : ตัวชี้วด
+                         ั ยังตกเกณฑ์เกือบทั้งหมด, ผู้ป่วย refer in จํานวนมาก เนื่องจาก
+     ปัญหาขาดแคลนบุคลากร และไม่มีรพ. แม่ข่ายในจังหวัด
+House Model
+House Model
+                          แผนการพั ฒนาปี 2567-2569
+การจัดบริการเพื่ อ
+ตอบโจทย์กลยุทธ์/                         2567                                              2568                                               2569
+   แก้ปัญหา
+
+  Ambulance
+operation center     • ติดตั้งระบบ
+   (AOC) T15
+
+
+   Virtual ER                                                          •   ติดตั้งระบบ
+
+
+   Ambulance
+telemedicine T15
+                                                                                                                         One
+                                                                                                                          • ติดRegion
+                                                                                                                               ตั้งระบบ One ER
+
+                     •   Easy pass for admit                           •   Easy pass for admit                            •   Easy pass for admit
+                     •   มีเทคโนโลยีหรือโปรแกรมใช้รว่ มกันทั้งเขต      •   มีเทคโนโลยีหรือโปรแกรมใช้รว่ มกันทั้งเขต       •   มีเทคโนโลยีหรือโปรแกรมใช้รว่ มกันทั้งเขต
+Seamless referral        เพื่ อเก็บข้อมูลและวิเคราะห์ได้สะดวกและเป็น       เพื่ อเก็บข้อมูลและวิเคราะห์ได้สะดวกและเป็น        เพื่ อเก็บข้อมูลและวิเคราะห์ได้สะดวกและเป็น
+    system               แนวทางเดียวกัน                                    แนวทางเดียวกัน                                     แนวทางเดียวกัน
+                     •   ลดขั้นตอน Fast track เข้าถึง definitive       •   ลดขั้นตอน Fast track เข้าถึง definitive        •   ลดขั้นตอน Fast track เข้าถึง definitive
+                         care ไม่ต้องผ่าน ER                               care ไม่ต้องผ่าน ER                                care ไม่ต้องผ่าน ER
+
+ Sky doctor T12
+                     •   ปฏิบัติการอย่างน้อย 5 วัน/สัปดาห์             •   ปฏิบัติการอย่างน้อย 7 วัน/สัปดาห์
+
+
+
+Regional trauma      •   Trauma Fast 8                                 •   Trauma Fast 8
+  care system        •   รพ อุดรธานี จัดตั้ง TEA unit                  •   รพ สกลนคร จัดตั้ง TEA unit
+
+                                                                       •   เปิด ENP training
+       HR            •   เปิด ENP training
+                                                                       •   เปิด CPR training center รพ อุดรธานี
+2568 (1)
+Emergency Physician
+เขตสุขภำพที่ 8                                                                    จำนวน
+
+
+
+39 คน
+                                                                   รพ.           แพทย์ EP
+                                               1                   บึงกำฬ            1
+                                                                   นครพนม            1
+                                                                   เลย               3
+                                                                   กุมภวำปี          3
+                                                                   ท่ำบ่อ            5
+                                                                   บ้ำนผือ           1
+                                                                   วำนรนิวำส         1
+                              5    4                               วำริชภูมิ         1
+                                                                   สกลนคร            4
+                                                                   สว่ำงแดนดิน       2
+                          1                                        หนองคำย           4
+                                                                   หนองบัวลำภู       2
+                                                                   หนองหำน           1
+          3                                                        อุดรธำนี         10
+                                                                   รวม              39
+                              10           1       2           1
+                      2                                1
+                                       3                   4
+                                                             สถานการณ(จำนวน EP เขต 8
+EP: แสนประชากร (เปRาหมาย >2.4) = 0.74
+                                                                                                                                      เป0าหมาย EP     ปฏิบัติ
+นครพนม (0.13) บึงกาฬ (0.23) หนองบัวลำภู (0.39) เลย (0.62) สกลนคร (0.87) อุดรธานี (0.89) หนองคาย (1.93)     จังหวัด     จำนวนประชากร
+                                                                                                                                        ใน 10 ป9    งานป>จจุบัน
+                                                                                                                                                                        2567         2568         2569       ที่ยังขาด
+
+
+
+                                                                                                           อุดรธานี      1,566,510        38             14              14           15           16           22
+
+
+                                                                                                          สกลนคร         1,146,286        28             10              10           11           11           17
+
+                                                                                                             เลย         638,732          16              4               6            6            6           10
+                                                                                                                                                         10
+                                                                                                          หนองคาย        516,843          13         update เพิ่ม 1      10           10           10           4
+                                                                                                                                                    รายรพ หนองคาย
+
+
+                                                                                                         หนองบัวลำภู     509,001          13              2               3            3            3           10
+
+                                                                                                                                                          1
+                                                                                                          นครพนม         717,040          18        อาจจะมี plan      1 (หรือ 0)   1 (หรือ 0)   2 (หรือ 1)   16 -17
+                                                                                                                                                      ศึกษาต1อ
+
+                                                                                                           บึงกาฬ        421,995          11              1               1            1            1           10
+
+                                                                                                             รวม         5,516,407    137 (0.24)*   41 (0.74)*        44 (0.79)*   46 (0.83)*   48 (0.87)*      89
+    • มีการส'งอบรม ENP ใหม'ป2ละ >20% ของ ENP ที่มีอยู'
+    • มีจำนวน ENP/ RN ที่ปฏิบัติงานใน ER >9 %                                                                                                                                       * ในวงเล็บคือจำนวนต1อแสนประชากร
+    • มีจำนวนแพทยK EP มากกว'า 0.79: แสนประชากร
+                  สถานการณ(จำนวน ENP เขต 8                      *ขWอมูล ณ วันที่ 26 กรกฎาคม 2566
+
+                                 จำนวน ENP (สัดส0วนร2อยละต0อจำนวน RN) เป#าหมาย 30%
+    จังหวัด        จำนวน RN
+                                      2565                              2566*
+
+    อุดรธานี         234            15 (6.41)                         20 (8.54)
+
+    สกลนคร           195            17 (8.72)                        22 (11.28)
+
+   หนองคาย           104            7 (6.73)                           8 (7.69)
+
+      เลย            147            8 (5.44)                          12 (8.16)
+
+  หนองบัวลำภู         69             4 (5.8)                            4 (5.8)
+
+    นครพนม           141            4 (2.84)                           4 (2.84)
+
+    บึงกาฬ            80            5 (6.25)                            6 (7.5)
+
+ภาพรวมเขตสุขภาพ      970            60 (6.19)                         76 (7.83)
+                 แพทย์เฉพำะทำงศัลยกรรม
+                 เขตสุขภำพที่ 8
+
+
+115
+                 Surgeon                  81
+                 Neurosurgeon             14                     7 Surgeon
+                 Vascular surgeon          3                     2 Neurosurgeon
+
+
+                                                                                                                                 3
+                                                                 1 Plastic and
+                 Trauma surgeon            1                                                                     รพ.บึงกำฬ
+                                                                   Reconstructive Surgeon
+                 Plastic and              10                                                                     Surgeon 2
+
+คน
+                                                                 1 Thorasic surgeon
+                 Reconstructive Surgeon
+                 Thorasic surgeon         6
+
+
+6 Surgeon
+                                                                 17           รพ.หนองคำย
+                                                                                           รพ. โพนพิ สัย
+                                                                                           Surgeon 1
+                                                                                                                                 รพ.เซกำ
+                                                                                                                                 Surgeon 1                   7 Surgeon
+1 Plastic and                                                                                                                                                1 Neurosurgeon
+                                                                      รพร.ท่ำบ่อ
+                                                                                                                                                             2 Plastic and
+
+                                                                                      43
+  Reconstructive Surgeon                                              Surgeon 5
+                                                                                                   รพร.บ้ำนดุง                                                 Reconstructive Surgeon
+                                                                                                   Surgeon 2          รพ.วำนรนิวำส
+
+                                                                                                                                                        11
+                                                                 รพ.บ้ำนผือ                                           Surgeon 2
+                                      รพ.เลย                     Surgeon 2                                                              รพ.นำหว้ำ
+
+                             8
+                                                                                                                                        Surgeon 1
+                                                                                                            รพร.สว่ำงแดนดิน
+                                                     รพ.นำกลำง                 รพ.อุดรธำนี รพ.หนองหำน       Surgeon 4 รพ.พั งโคน
+                                                                                           Surgeon 1                                                         รพ.นครพนม
+                                                     Surgeon 1
+                                                                                                                        Surgeon 1
+                                      รพ.วังสะพุ ง
+                                      Surgeon 1             รพ.หนองบัวลำภู                                                   24        รพ.สกลนคร
+
+                                                                                     รพ.กุมภวำปี
+
+                                                     รพ.ศรีบุญเรือง
+                                                     Surgeon 1
+                                                                       9             Surgeon 4
+
+
+
+                             5 Surgeon                            19 Surgeon                                                 8    Surgeon
+                             2 Neurosurgeon                       5 Neurosurgeon                                             4    Neurosurgeon
+                                                                  2 Vascular surgeon                                         1    Vascular surgeon
+                                                                  1 Trauma surgeon                                           2    Plastic and Reconstructive Surgeon
+                                                                  4 Plastic and Reconstructive Surgeon                       2    Thorasic surgeon
+                                                                  3 Thorasic surgeon
+                                                                                                       เพ็ญ M2 trauma center level                                                        บVานดุง M2 trauma center level
+  แผนการจัดบริการสุขภาพ Service Delivery ป< 2567-2570                                                  Gen Sx 0
+                                                                                                       EP 0 (4)
+                                                                                                                                                                                          Gen Sx 2
+                                                                                                                                                                                          Anes 1
+  จังหวัดอุดรธานี                                                                                      ENP/RN(นับรวม ENP) 0/14 (4/15)
+                                                                                                       Paramedic 0 (4)
+                                                                                                                                                                                          Ortho 2
+                                                                                                                                                                                          Rx 0
+                                                    S                                                  AEMT 5 (2)                                                                         EP 0 (4)
+      น้ำโสม F2 trauma center level                                                                    ☢ CT 16 slides 1                                                                   ENP/RN(นับรวม ENP) 6/15 (4/15)
+      Gen Sx 0                                                                                         "มีคลังเลือด                                                                       Paramedic 0 (4)
+      ENP/RN(นับรวม ENP) 0/10 (4/12)             รพ.นายูง                                              OR 2 หVอง                                                                          AEMT 5 (2)
+      Paramedic 0 (4)                              (F2)                                                                         S                                                         EMT 1 (2)
+      AEMT 4 (2)                                        S+
+                                                                                                       ไมXมี ICU trauma                                       A
+                                                                                                       ไมXมี ICU neuroSx                                                                  ☢ CT 32 slides 1 เครื่อง
+      ไมXมี CT แผนวางปi 68                                               A                                                     รพ.สรBางคอม                                                คลังเลือด
+      "มีคลังเลือด                                                                                                   S+            (F2)             รพร.บBานดุง (M2)                      OR
+      มี OR                                          รพ.น้ำโสม
+                                                                                                                                                                                          ไมXมี ICU trauma
+                                                       (F2)                                                                                                                               ไมXมี ICU neuroSx
+                                                                        รพ.บBานผือ                                 รพ.เพ็ญ               S
+                                                                          (M2)                                      (M2)                                  S
+                                                                                     S                                         รพ.พิบูลยPรักษP (F2)                                       หนองหาน M2 trauma center level
+                                                                                                                                                          รพ.ทุIงฝน (F2)                  Gen Sx 1
+     บVานผือ M2 trauma center level    กุมภวาปi S trauma center level                                                                        A                                            Anes 0
+     Gen Sx 2                          Gen Sx 6                               รพ.กุดจับ                     P+                                                                            Ortho 1
+     Anes 0                            vascular Sx ปi 2572                      (F1)                                                                รพ.หนองหาน                            Rx 0
+     Ortho 0                           Neuro Sx ปi 73                                                                          S                        (M2)                              EP 1 (4)
+     Rx 1                              UroSx 1                                            S             รพ.อุดรธานี
+                                                                                                                                                                    S                     ENP/RN(นับรวม ENP) 5/15 (4/15)
+     EP 1 (4)                          Anes 3                                                               (A) S         รพ.ประจักษ*ศิลปาคม (F3)                                         Paramedic 1 (4)
+                                       Ortho 3                                                        S
+     ENP/RN(นับรวม ENP) 4/12 (4/15)
+                                       Rx 3
+                                                                                รพ.หนองวัวซอ
+                                                                                                                                      A+              S           รพ.ไชยวาน
+                                                                                                                                                                                          AEMT 5 (2)
+     Paramedic 1 (4)                                                                (F1)                        รพ.หBวยเกิ้ง                                                              ☢ CT 32 slides 1 เครื่อง
+     AEMT 5 (2)                        Rehab 2                                                                                                                       (F2)   S+
+                                                                                                                   (F3)                                                                   "มีคลังเลือด
+     ☢ CT 64 slides 1 เครื่อง          EP 3 (8)                                                           รพ.หนองแสง                             รพ.กูIแกBว                               OR 3 หVอง ตVองการเพิ่ม 1
+     "มีคลังเลือด                      ENP/RN(นับรวม ENP) 1/16 (8/24)                                                              รพ.กุมภวาป3     (F3)       S            รพ.วังสามหมอ   ไมXมี ICU trauma
+     OR 3 หVอง                         Paramedic 1 (8)                                                                S                (S)
+                                                                                                                                                                                (F1)      ไมXมี ICU neuroSx วังสามหมอ F2 trauma center level
+     มี ICU trauma                     AEMT 7 (4)                                                                                                                                                                       Gen Sx 0
+                                                                                                                                                      รพ.ศรีธาตุ (F2)
+     ไมXมี ICU neuroSx                 ☢ CT 32 slides 1 เครื่อง                                                                                                                                                         ENP/RN(นับรวม ENP) 0/11 (4/12)
+                                                                                              ต่ำกวQาเกณฑ*มาก รพ.โนนสะอาด (F2)
+                                       MRI ปF 69 (Out source)                                                                                                                                                           Paramedic 0 (4)
+                                                                                              ต่ำกวQาเกณฑ*
+                                       "มีคลังเลือด                                                                                                                                                                     AEMT 5 (2)
+                                                                                                                                                                                                        ขับเคลือ( นโดย Bing
+                                                                                              ตามเกณฑ*                                                                                                       © TomTom
+                                       OR หVอง 6 หVอง ตVองการเพิ่ม 4                                                                                                                                                    ไมXมี CT แผนวางปi 67
+                                                                                              สูงกวQาเกณฑ*                                                                                                              " คลังเลือดใชVของสภากาชาด
+                                       ไมXมี ICU trauma plan ปi 2573                          ทราบข[อมูล
+                                       ไมXมี ICU neuroSx                                                                                                                                                                OR หVอง (TR ผXาตัดเล็ก)
+                                                                                              (จำนวนเป]าหมาย)
+Update 9 มีนาคม 2567
+                                                                                                          R8 SERVICE PLAN
+    Flow of Trauma Fast Tract
+ Community Hospital                                                                      Pa#ent arrives at check point
+  Trauma Fast Tract      General Surgeon/Trauma Surgeon                             (15 min before arrive at Trauma Center)
+                            Ac1vate Trauma Fast Tract            Anest
+                                                          OR     Scrub
+Online Pa1ent Referral                                           Nurse                   Trauma team stand by at ER
+       System
+
+                               Referral Center            ICU
+                                                                                                                              Algorithms 1
+ Registra1on System                                                                         Pa#ent arrives at ER
+                                                                                                                              Algorithms 2
+                                                                                        Assessment and Resuscita#on
+                                                          Neuro Sx                                                            Algorithms N
+                                     ER
+                                                           Ortho
+                                                            CVT
+                              Blood Component
+                                                          Vascular                               Inves#ga#on                    OR
+                                 Trauma Bay                              Ward/ICU
+                                                             IR
+                              Team Prepara1on
+                   R8 SKY DOCTOR PLANNING 2567-2569
+    ปี
+เป้าหมาย                    2567                               2568                          2569
+                          อุดรธานี                  อุดรธานี                      อุดรธานี
+           สามารถปฏิบัติการได้จริง 2 วัน/สัปดาห์,   • สามารถปฏิบัติการได้จริง     • สามารถปฏิบัติการได้จริง
+            1 เคส/เดือน
+                         เลย และ สกลนคร                 อย่างน้อย 5 วัน/สัปดาห์       อย่างน้อย 5 วัน/สัปดาห์
+           •    ผ่านการประเมินหน่วย
+           •    ส่งอบรม BHEMS
+
+
+
+
+                      Phase 1 มีค-พค 67 พื้ นที่ให้บริการ: อ.นายูง, อ. นํ้าโสม, อ. วังสามหมอ               เคสไม่ซับซ้อน
+
+
+                      Phase 2 มิย-กย 67 พื้ นที่ให้บริการ: อ.นายูง, อ. นํ้าโสม, อ. วังสามหมอ               เคสวิกฤติ
+
+
+                      Phase 3 ตัง
+                                ้ แต่ ตค 67 พื้ นที่ให้บริการ: ขยายเพิ่ ม จ.เลย, จ.บึงกาฬ, จ.นครพนม
+บทสรุปขอสนับสนุน
+1. ระบบ Smart refer ยังไม9สามารถใช>ได>
+1. Virtual ER system (2568)
+2. Ambulance TeleMedicine (2569)
+3. EP and ENP training, CPR training center (2568)
+4. Life threatening device ในทุกแห9งตั้งแต9 M2 ขึ้นมา (2568)
+5. เพิ่มตำแหน9ง paramedic
+
