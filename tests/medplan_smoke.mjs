@@ -903,15 +903,18 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   ok(await p.evaluate(() => !document.querySelector("#brief b b") && /<b>y<\/b>/.test(document.getElementById("brief").textContent)), "official records: registry text is shown as text, never as markup");
   await p.click("#mpa-close");
   /* Shane 2026-10-06 (King Narai, level S, credited with an emergency department only): what the MOPH says each service level
-     has is INFERRED, named and linked; blood bank and CT, which it does not state below level A, stay unknown */
-  ok(/MOPH Service Plan hospital levels/.test(src) && /MOPH health KPI 046\.2/.test(src) && /hospital level criteria \(ICU, OR from level M2 up\)/.test(src), "MOPH levels: the three government sources are in the sources list");
+     has is INFERRED, named and linked; Shane 2026-10-08 ("an unverified T5 is not good"): the Service Plan rooms per level add
+     X-ray, blood bank, CT and burn unit from level S, so a level S hospital reads T3; neurosurgery stays unknown */
+  ok(/MOPH Service Plan hospital levels/.test(src) && /MOPH health KPI 046\.2/.test(src) && /hospital level criteria \(ICU, OR from level M2 up\)/.test(src) && /MOPH Service Plan 2555 rooms and beds per hospital level/.test(src), "MOPH levels: the four government sources are in the sources list");
   await p.click('#mp-fac tr:has-text("Sourced Trauma Centre") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || "") && /Sourced Trauma Centre/.test(document.getElementById("brief").textContent), null, { timeout: 20000 });
   const hS = await p.innerHTML("#brief"), rowS = (n) => (hS.match(new RegExp('<th scope="row">' + n + '</th>[\\s\\S]*?</tr>')) || [""])[0];
   ok(/INFERRED/.test(rowS("General surgeon")) && /MOPH service level S, H code 99002; level S: specialists in every major and secondary branch/.test(rowS("General surgeon")) && /INFERRED/.test(rowS("Orthopaedic surgery")) && /INFERRED/.test(rowS("Anaesthesia")) &&
     /INFERRED/.test(rowS("Emergency operating room")) && /operating room within 60 minutes/.test(rowS("Emergency operating room")) && /INFERRED/.test(rowS("ICU")) && /ICU and operating theatre are level criteria from M2 up/.test(rowS("ICU")) &&
-    !/INFERRED/.test(rowS("Blood bank")) && !/INFERRED/.test(rowS("CT")) && !/INFERRED/.test(rowS("Neurosurgery")),
-    "MOPH levels: a level S hospital gets surgery, orthopaedics, anaesthesia, emergency theatre and ICU as INFERRED with the reason; blood bank, CT and neurosurgery stay unknown " + JSON.stringify(["General surgeon", "Emergency operating room", "ICU", "Blood bank", "CT"].map((n) => rowS(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 150))));
+    /INFERRED/.test(rowS("Blood bank")) && /Service Plan rooms for level S \(general hospital, 300-500 beds\)/.test(rowS("Blood bank")) && /INFERRED/.test(rowS("CT")) && /1 CT room/.test(rowS("CT")) &&
+    /INFERRED/.test(rowS("X-ray")) && /INFERRED/.test(rowS("Burn care")) && !/INFERRED/.test(rowS("Neurosurgery")) && !/INFERRED/.test(rowS("Mechanical ventilation")),
+    "MOPH levels: a level S hospital gets surgery, orthopaedics, anaesthesia, emergency theatre, ICU, X-ray, blood bank, CT and burn unit as INFERRED with the reason; neurosurgery and ventilation stay unknown " + JSON.stringify(["General surgeon", "Emergency operating room", "ICU", "Blood bank", "CT"].map((n) => rowS(n).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 150))));
+  ok(/Observed T3 selective definitive trauma \(inferred\)/.test(hS), "MOPH levels: with the Service Plan rooms, a level S hospital reads as observed T3, not T5");
   await p.click("#mpa-close");
   /* Shane 2026-10-06 ("We NEED to know about air medevac"): the documented service, how to request it and its source */
   await p.waitForFunction(() => /Thai Sky Doctor/.test((document.getElementById("mp-mev") || {}).textContent || "") && /Thai Sky Doctor/.test((document.getElementById("mp-conop") || {}).textContent || ""), null, { timeout: 20000 }).catch(() => {});

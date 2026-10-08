@@ -537,21 +537,32 @@
             operating room within 60 minutes (target 80%), so those levels run an emergency department and emergency theatre
        icu  Department of Health Service Support criteria table (Journal of the DHSS, 2561, vol. 14 no. 2): hospital
             infrastructure (ICU, OR) is a criterion for levels M2, M1, S and A
-     Blood bank and CT are named by none of these for levels below A: they stay unknown until a source states them. */
+       sp   the same building standard's comparison tables (pp. 35-43), column "Service Plan 2555": the rooms and beds the
+            Service Plan sets for each level (Shane 2026-10-08, "an unverified T5 is not good"): M2 an emergency room;
+            M1 an emergency unit with its own X-ray room, general X-ray, ICU and a central lab with blood bank; S the same
+            plus a CT room, ultrasound and a burn unit; A CT, MRI, ICU, burn unit and blood bank
+     A room the Service Plan sets for the level is not a confirmation that it runs today, so these stay INFERRED and
+     a planner's check outranks them. CT is set from level S up and stays unknown at M1 and M2. */
   var MOPH_SRC = {
     def: { name: "MOPH Service Plan hospital levels (Department of Health Service Support building standard, 2560, pp. 10-11)", url: "https://dcd.hss.moph.go.th/web/attachments/article/248/151217_042853.pdf", at: "2026-10-06" },
     kpi: { name: "MOPH health KPI 046.2: trauma patients in level A, S and M1 hospitals in the operating room within 60 minutes", url: "https://healthkpi.moph.go.th/kpi2/kpi-list/view/?id=1520", at: "2026-10-06" },
-    icu: { name: "Department of Health Service Support: hospital level criteria (ICU, OR from level M2 up)", url: "https://thaidj.org/index.php/jdhss/article/download/6559/6169/9140", at: "2026-10-06" } };
+    icu: { name: "Department of Health Service Support: hospital level criteria (ICU, OR from level M2 up)", url: "https://thaidj.org/index.php/jdhss/article/download/6559/6169/9140", at: "2026-10-06" },
+    sp: { name: "MOPH Service Plan 2555 rooms and beds per hospital level (Department of Health Service Support building standard, 2560, pp. 35-43)", url: "https://dcd.hss.moph.go.th/web/attachments/article/248/151217_042853.pdf", at: "2026-10-08" } };
   var MOPH_WHY = {
     def: { M2: "level M2: specialists in all six major branches, operating theatre, intensive care ward, diagnostic radiology", M1: "level M1: specialists in every major branch (surgery, orthopaedics and anaesthesia among them)",
       S: "level S: specialists in every major and secondary branch", A: "level A: specialists in every branch" },
     kpi: "level A, S and M1 hospitals are measured on getting trauma patients who need surgery into the operating room within 60 minutes",
-    icu: "ICU and operating theatre are level criteria from M2 up" };
+    icu: "ICU and operating theatre are level criteria from M2 up",
+    sp: { M2: "Service Plan rooms for level M2 (community hub hospital, 120-180 beds): emergency room with 4 beds, X-ray, ICU, 4 operating rooms",
+      M1: "Service Plan rooms for level M1 (general hospital, 180-300 beds): emergency unit with its own X-ray room, 2 general X-ray rooms, ICU, central lab and blood bank; no CT room",
+      S: "Service Plan rooms for level S (general hospital, 300-500 beds): emergency unit with X-ray, 4-6 general X-ray rooms, 2 ultrasound rooms, 1 CT room, ICU, 6-bed burn unit, central lab and blood bank",
+      A: "Service Plan rooms for level A (regional hospital, 500-800 beds): emergency unit with X-ray, 6-8 general X-ray rooms, 2 ultrasound rooms, 1-2 CT rooms, 1 MRI room, ICU, 8-bed burn unit, central lab and blood bank" } };
+  var MOPH_SM1 = [["ed.basic", "kpi"], ["ed.24_7", "kpi"], ["surg.or_emergency", "kpi"], ["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "icu"]];
   var MOPH_LEVEL_CAPS = {
-    A: [["surg.ortho", "def"]],
-    S: [["ed.basic", "kpi"], ["ed.24_7", "kpi"], ["surg.or_emergency", "kpi"], ["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "icu"]],
-    M2: [["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "def"], ["dx.xray", "def"]] };
-  MOPH_LEVEL_CAPS.M1 = MOPH_LEVEL_CAPS.S;
+    A: [["surg.ortho", "def"], ["dx.xray", "sp"], ["dx.ultrasound", "sp"], ["dx.ct", "sp"], ["dx.mri", "sp"], ["blood.bank", "sp"], ["cc.icu", "sp"], ["spec.burn", "sp"]],
+    S: MOPH_SM1.concat([["dx.xray", "sp"], ["dx.ultrasound", "sp"], ["dx.ct", "sp"], ["blood.bank", "sp"], ["spec.burn", "sp"]]),
+    M1: MOPH_SM1.concat([["dx.xray", "sp"], ["blood.bank", "sp"]]),
+    M2: [["surg.general", "def"], ["surg.ortho", "def"], ["surg.anaesthesia", "def"], ["cc.icu", "def"], ["dx.xray", "def"], ["ed.basic", "sp"]] };
   /* healthcare:speciality values that state a flag (whole values, so "neurology" is not neurosurgery) */
   var CAP_RE = W.OSAP_HOSP.SPECIALITY_RE;
   function capFlags(f, m) {
@@ -609,7 +620,7 @@
         if (!C[k] || !(C[k].status === "UNKNOWN" || (C[k].status === "REPORTED" && crowd(C[k].source)))) return;
         C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
           source: { kind: "register", url: src.url, name: src.name, at: src.at },
-          how: "inferred from the official record: MOPH service level " + g.level + ", H code " + g.hcode + "; " + (x[1] === "def" ? MOPH_WHY.def[g.level] : MOPH_WHY[x[1]]) };
+          how: "inferred from the official record: MOPH service level " + g.level + ", H code " + g.hcode + "; " + (typeof MOPH_WHY[x[1]] === "object" ? MOPH_WHY[x[1]][g.level] : MOPH_WHY[x[1]]) };
       });
     }
     /* a planner's check outranks every source (V1), and only it says whether a capability can be used now */
@@ -2377,7 +2388,7 @@
     if (sofOf(s.cc)) li.push([SRC.sof, "as of " + (sofOf(s.cc).asof || "")]);
     if (s.gov || s.govErr) li.push([SRC.gov, s.govErr ? "not read: " + s.govErr : "built " + String(s.gov.ix.doc.built || "").slice(0, 10) + ", " + s.gov.ix.total + " hospitals, " + s.gov.ix.placed.length + " placed on the map" + (s.fac ? "; " + s.fac.H.filter(function (f) { return f.gov; }).length + " in this plan" : "")]);
     (MA() ? MA().providers(s.cc) : []).forEach(function (d) { li.push([{ name: d.srcname, url: d.src }, "page updated " + d.page_updated + ", read " + d.read + "; air medevac service, how to request it (record SHA-256 " + d.fp.slice(0, 12) + "\u2026)"]); });
-    if (s.gov) ["def", "kpi", "icu"].forEach(function (k) { li.push([MOPH_SRC[k], "read " + MOPH_SRC[k].at + "; what each MOPH service level has, used as inferred capability"]); });
+    if (s.gov) ["def", "sp", "kpi", "icu"].forEach(function (k) { li.push([MOPH_SRC[k], "read " + MOPH_SRC[k].at + "; what each MOPH service level has, used as inferred capability"]); });
     if (s.web || s.webErr) li.push([SRC.web, s.webErr ? "not read: " + s.webErr : "read " + String(s.web.read_at || "").slice(0, 10) + ", " + s.web.facilities.length + " hospitals"]);
     if (s.ph || s.phErr) li.push([SRC.ph, s.phErr ? "not read: " + s.phErr : "read " + String(s.ph.read_at || "").slice(0, 10) + ", numbers for " + Object.keys(s.ph.hospitals).length + " hospitals in the country, " + (s.phN || 0) + " used in this plan"]);
     li.push([SRC.osrm, s.routeErr ? "not reached, drive times estimated: " + s.routeErr : s.route ? "answered by " + s.route.split("/")[2] : s.fac ? "reading…" : "waiting"]);
@@ -2831,19 +2842,28 @@
     var listed = function (re, what) { var m = spl.filter(function (x) { return re.test(x); }); return m.length ? esc(what + ": " + m.join(", ")) + (osm ? " (" + osm + " healthcare:speciality)" : "") : ""; };
     var R = [];
     function row(k, v) { R.push([k, v]); }
+    /* what the capability flags below say, when nothing is listed here, so the summary never reads "Not known" for a flag
+       an official record or the hospital's own page supports (Shane 2026-10-08) */
+    function flag() {
+      for (var i = 0; i < arguments.length; i++) {
+        var c = f.caps && f.caps[arguments[i]]; if (!c || !has(f.caps, arguments[i]) || !c.source || c.source.kind === "osm") continue;
+        return "<b>" + esc(c.status) + "</b> " + esc(CAP_NAME[arguments[i]] || arguments[i]) + " (" + (link(c.source.url, c.source.name) || esc(c.source.name)) + ")" + (c.how ? '<span class="sub">' + esc(clip(c.how, 260)) + "</span>" : "");
+      }
+      return "";
+    }
     row("Official trauma designation", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + "). Status REPORTED: not yet verified with the designating authority.</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
     row("Observed class", esc(tcText(f)) + '<span class="sub">' + esc(f.tc ? f.tc.wording : "") + " Inferred by rule " + TC_RULE_ID + "; not an official level and not used to pick.</span>" + (f.why && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : ""));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
-      sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : nk("No emergency department listed."));
-    row("Surgery", listed(SURG, "Surgical services listed") || nk("No surgery listed."));
+      sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : flag("ed.24_7", "ed.basic") || nk("No emergency department listed."));
+    row("Surgery", listed(SURG, "Surgical services listed") || flag("surg.general") || nk("No surgery listed."));
     row("Operating rooms", nk("Number of operating rooms not published in OpenStreetMap, Wikidata or OSAP's sources; ask the hospital."));
     row("24-hour surgeon", nk("No source states a surgeon on duty around the clock; ask the hospital.") + (sr && sr.emergency_24h === true ? ' <span class="sub">The emergency department is open 24 hours (' + sof + ").</span>" : ""));
     var oh = t["opening_hours:emergency"] || t.opening_hours;
     row("Opening hours", oh ? esc(clip(oh, 80)) + (osm ? " (" + osm + ")" : "") : nk());
-    row("Intensive care (ICU)", listed(ICU, "Listed") || nk("No intensive care listed."));
+    row("Intensive care (ICU)", listed(ICU, "Listed") || flag("cc.icu") || nk("No intensive care listed."));
     row("Beds", f.beds ? esc(String(f.beds)) + (f.bedsGov ? " open (official record, H code " + esc(f.gov.hcode) + ")" : "") + (f.bedsGov ? "" : wdNote(f, "beds") || (osm ? " (" + osm + " beds)" : "")) : nk("Bed count not listed."));
-    row("Blood bank", listed(BLOOD, "Listed") || nk("No blood bank or transfusion service listed."));
-    row("CT and MRI", listed(IMG, "Imaging listed") ? listed(IMG, "Imaging listed") + ' <span class="obs">CT and MRI are not stated separately.</span>' : nk("No imaging listed."));
+    row("Blood bank", listed(BLOOD, "Listed") || flag("blood.bank") || nk("No blood bank or transfusion service listed."));
+    row("CT and MRI", listed(IMG, "Imaging listed") ? listed(IMG, "Imaging listed") + ' <span class="obs">CT and MRI are not stated separately.</span>' : flag("dx.ct", "dx.mri") || nk("No imaging listed."));
     row("Specialities", spl.length ? esc(spl.join(", ")) + (osm ? " (" + osm + ")" : "") : nk("None listed."));
     row("Operator", f.op || (sr && sr.type) ? esc((f.op || sr.type).replace(/_/g, " ")) + (t.operator ? ", " + esc(clip(t.operator, 80)) : "") : t.operator ? esc(clip(t.operator, 80)) : nk());
     if (sr && sr.notes) row("Source notes", esc(clip(sr.notes, 240)) + " (" + sof + ")");
