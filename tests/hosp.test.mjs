@@ -178,23 +178,28 @@ ok(ob && !ob.ok && /registry offline/.test(ob.err) && of && of.ok && of.n === 1 
     ["13", BKK, "โรงพยาบาลธนบุรี 2", "Thonburi 2 Hospital", "11640", "เอกชน", "รพ.เอกชน", "", "100", "", "", "", ""],
     ["13", BKK, "โรงพยาบาลเอ", "Same Hospital", "20001", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
     ["13", BKK, "โรงพยาบาลบี", "Same Hospital", "20002", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
-    ["13", BKK, "โรงพยาบาลไม่มีที่", "Nowhere Hospital", "20003", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""]]);
+    ["13", BKK, "โรงพยาบาลไม่มีที่", "Nowhere Hospital", "20003", "เอกชน", "รพ.เอกชน", "", "", "", "", "", ""],
+    ["13", BKK, "โรงพยาบาลกลางเมือง", "Klang Mueang Hospital", "20004", "สังกัดสำนักงานปลัดกระทรวงสาธารณสุข", "รพ.ทั่วไป", "", "300", "", "", "", ""]]);
   W("ha-accreditation.csv", [["h"], ["13", BKK, "โรงพยาบาลศิริราช", "13814", "", "", "ขั้นก้าวหน้า", "2024-09-26", "2028-09-25", ""]]);
   W("ha-pdsc.csv", [["h"], [BKK, "โรงพยาบาลธนบุรี", "โรคหลอดเลือดสมอง (Stroke)", "PDSC", "2025-01-01", "2028-01-01", ""], [BKK, "โรงพยาบาลไม่มีในรายชื่อ", "โรคหลอดเลือดสมอง", "PDSC", "2025-01-01", "2028-01-01", ""]]);
   W("ha-2p-safety.csv", [["h"], ["13814", "", "", "", "", "", "", "รพศ.(A) มีการเรียน-สอนครบทุกสาขา"]]);
   W("ha-hnc.csv", [["h"]]);
-  W("odm-health-facilities-th.csv", [["ID", "Ministry", "Department", "Agency", "Address", "Lat", "Long"], ["1", "", "", "x รพ.สต.ใกล้", "แขวงศิริราช เขตบางกอกน้อย จ.กรุงเทพมหานคร 10700", "13.7590", "100.4860"]]);
+  W("odm-health-facilities-th.csv", [["ID", "Ministry", "Department", "Agency", "Address", "Lat", "Long"], ["1", "", "", "x รพ.สต.ใกล้", "แขวงศิริราช เขตบางกอกน้อย จ.กรุงเทพมหานคร 10700", "13.7590", "100.4860"],
+    ["2", "", "", "โรงพยาบาลกลางเมือง จังหวัดกรุงเทพมหานคร", "แขวงบางรัก เขตบางรัก จ.กรุงเทพมหานคร 10500", "13.7300", "100.5200"],
+    ["3", "", "", "โรงพยาบาลธนบุรี จังหวัดกรุงเทพมหานคร", "แขวงบางรัก เขตบางรัก จ.กรุงเทพมหานคร 10500", "13.8500", "100.5800"]]);
   const osm = [R.osmEntry("r1", 13.7578, 100.4854, { name: "โรงพยาบาลศิริราช", "name:en": "Siriraj Hospital" }),
     R.osmEntry("n2", 13.7600, 100.4800, { name: "โรงพยาบาลธนบุรี", "addr:province": BKK }),
     R.osmEntry("n3", 13.7000, 100.5000, { name: "Same Hospital", "addr:province": BKK })];
   const { doc } = await R.build(dir, { osm });
   const by = Object.fromEntries(doc.hospitals.map((h) => [h.hcode, h]));
-  ok(doc.schema === "osap-th-registry/1" && doc.hospitals.length === 6 && doc.hospitals.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)), "registry: one record per H code, each fingerprinted");
+  ok(doc.schema === "osap-th-registry/1" && doc.hospitals.length === 7 && doc.hospitals.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)), "registry: one record per H code, each fingerprinted");
   ok(by["13814"].osm === "r1" && /nearest MOPH-listed facility/.test(by["13814"].coord_basis), "registry: a long official name is placed on its OpenStreetMap entry by its first part, province taken from the nearest MOPH facility");
   ok(by["13814"].level === "A" && /teaching in all specialties/.test(by["13814"].level_en) && by["13814"].ha.accredited && by["13814"].beds_open === 2136 && by["13814"].name_en === "Siriraj Hospital", "registry: MOPH level, HA accreditation and beds are read; English names are title-cased");
   ok(by["11645"].osm === "n2" && by["11640"].osm === "" && by["11640"].lat === null, "registry: a numbered branch is never placed on the main hospital's entry");
   ok(by["20001"].lat === null && by["20002"].lat === null && /claimed by more than one/.test(by["20001"].coord_note || ""), "registry: one OpenStreetMap entry claimed equally by two records goes to neither");
   ok(by["20003"].lat === null && /not placed/.test(by["20003"].coord_basis), "registry: a hospital with no match is kept, without a location");
+  ok(by["20004"].lat === 13.73 && by["20004"].osm === "" && /MOPH location/.test(by["20004"].coord_basis) && doc.stats.placed_moph === 1, "registry: a hospital OpenStreetMap lacks is placed on its MOPH location, whose name carries the province after it");
+  ok(by["11645"].osm === "n2" && /km apart; OpenStreetMap used/.test(by["11645"].coord_note || "") && doc.stats.coord_conflict === 1, "registry: when the MOPH location is more than 5 km from the named OpenStreetMap entry, the entry is kept and the gap noted");
   ok(by["11645"].programs.length === 1 && by["11645"].programs[0].caps.join() === "spec.stroke" && doc.stats.programmes_unmatched === 1, "registry: a certificate joins the one hospital of that name and province; others are counted as unmatched");
   ok(R.key("คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี") === "รามาธิบดี" && R.ekey("Bangkok 8 Hospital") === "bangkok8" && R.ekey("Bangkok Hospital") === "bangkok", "registry: name keys drop generic words, never digits");
   fs.rmSync(dir, { recursive: true, force: true });
