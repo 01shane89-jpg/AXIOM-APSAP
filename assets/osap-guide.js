@@ -65,7 +65,7 @@
         b("Base map") + ": Grey, Streets, Topographic, Satellite, Hybrid, Sentinel-2 cloudless, Daily satellite and Offline map. Streets are labelled in English.",
         b("Grid") + " and " + b("Crosshair") + ": MGRS grid lines that get finer as you zoom in, and a cross on the map centre with its grid.",
         b("3D") + ": tilt and turn the map over real ground. Tap the compass for north-up and flat, " + b("2D") + " to go back.",
-        b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Med plan") + ", " + b("Evac") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below.",
+        b("Measure") + ", " + b("Route") + ", " + b("Area") + ", " + b("Med plan") + ", " + b("Evac") + ", " + b("Comms") + ", " + b("Point") + " and " + b("Watch") + ": each has its own section below.",
         b("My work") + ": what is new since your last visit, and your saved work.",
         b("Reports") + " (phone) or the " + b("Reports") + " button in the header: every printable report OSAP makes.",
         b("Full") + ": full-screen map. Press Esc on a keyboard to leave."]) +
@@ -191,7 +191,7 @@
 
     { id: "comms", t: "Comms planning", h:
       fig("comms", "Comms planning on the Coverage tab") +
-      ul(["Open Overlays, Infrastructure, " + b("Communications infrastructure") + ". From Route, " + b("Comms along route") + " opens it on the route.",
+      ul(["Tap " + b("Comms") + " on the toolbar; tap it again to go back. Or open Overlays, Infrastructure, " + b("Communications infrastructure") + ". From Route, " + b("Comms along route") + " opens it on the route.",
         b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Print it or copy it as text.",
         b("Coverage") + ": " + b("Will I have phone signal?") + " at a place, along a line or along your planned route. Answers are Likely, Possible, No sign of coverage or Unknown.",
         b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone.",
