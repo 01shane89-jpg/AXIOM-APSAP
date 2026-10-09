@@ -1,0 +1,349 @@
+FAILED https://gibs.earthdata.nasa.gov/legends/IMERG_Precipitation_Rate_H.svg net::ERR_BLOCKED_BY_ORB
+FAILED https://01shane89-jpg.github.io/AXIOM-APSAP/data/terrain/th.js net::ERR_ABORTED
+AT [14.209019331824427,100.62702852081463]
+HTTP 400 https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF
+error: Failed to load resource: the server responded with a status of 400 (Bad Request)
+FAILED https://gibs.earthdata.nasa.gov/legends/IMERG_Precipitation_Rate_H.svg net::ERR_BLOCKED_BY_ORB
+FAILED https://01shane89-jpg.github.io/AXIOM-APSAP/data/terrain/kh.js net::ERR_ABORTED
+HTTP 400 https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF
+error: Failed to load resource: the server responded with a status of 400 (Bad Request)
+FAILED https://gistdaportal.gistda.or.th/arcgis/rest/services/app/admin_poly/MapServer/0/query net::ERR_ABORTED
+FAILED https://gibs.earthdata.nasa.gov/legends/IMERG_Precipitation_Rate_H.svg net::ERR_BLOCKED_BY_ORB
+FAILED https://01shane89-jpg.github.io/AXIOM-APSAP/data/terrain/vn.js net::ERR_ABORTED
+HTTP 400 https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF
+error: Failed to load resource: the server responded with a status of 400 (Bad Request)
+FAILED https://gibs.earthdata.nasa.gov/legends/IMERG_Precipitation_Rate_H.svg net::ERR_BLOCKED_BY_ORB
+FAILED https://01shane89-jpg.github.io/AXIOM-APSAP/data/terrain/la.js net::ERR_ABORTED
+HTTP 400 https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF
+error: Failed to load resource: the server responded with a status of 400 (Bad Request)
+FAILED https://gistdaportal.gistda.or.th/arcgis/rest/services/app/admin_poly/MapServer/0/query net::ERR_ABORTED
+error: Access to fetch at 'https://overpass.private.coffee/api/interpreter' from origin 'https://01shane89-jpg.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+FAILED https://overpass.private.coffee/api/interpreter net::ERR_FAILED
+error: Failed to load resource: net::ERR_FAILED
+HTTP 504 https://maps.mail.ru/osm/tools/overpass/api/interpreter
+error: Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+
+--- t=40s
+Medical plan Thailand
+Automatic draft
+Print CONOP
+Print intelligence annex
+Full window
+Close
+
+Planned from a point, no drawn area needed. Opened at 47P PR 7556 7145 · built 9 Oct 2026 0914Z / 16:14 ICT
+
+Anticipated point of injury (POI): MGRS or lat, lon
+Pick on map
+Set
+Plan centred on
+Point of injury: 47P PR 7556 7145
+Map centre when opened
+The point is
+Found from the map
+On land
+At sea (on a vessel)
+
+Centred on the anticipated point of injury: 47P PR 7556 7145 (14.20902, 100.62703). Every distance, drive, flight and route below is from here.
+
+MEDICAL PLAN: THAILAND
+TRAUMA
+HEAD INJURY
+BURN
+LIMB / VASCULAR
+STATUS
+AMBER: medical verification required
+POI
+47P PR 7556 7145
+GROUND EVAC
+AVAILABLE
+AIR MEDEVAC
+NOT CONFIRMED
+Request: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM), call 1669 (documented service, not confirmed for this mission)
+STABILIZATION
+BYPASS: direct is quicker
+DEFINITIVE CARE: MAJOR TRAUMA
+Phra Nakhon Si Ayutthaya Hospital
+35 min / 24 km road
+PRIMARY ROUTE
+AVAILABLE
+ALTERNATE ROUTE
+NONE FOUND
+ROUTE
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+CRITICAL GAPS
+Receiving hospital acceptance
+Air MEDEVAC provider not confirmed: request Thai Sky Doctor (National Institute for Emergency Medicine, NIEM) (Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport) and record the aircraft in section 4
+
+From the plan record below, for major trauma. The map, routes and sections below follow major trauma.
+
+Operational picture
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+To Phra Nakhon Si Ayutthaya Hospital: Report at 10.9 km along, 0.2 km off the road (0.27 m over the bank at Khanon Ti Temple), Hydro-Informatics Institute (ThaiWater). Plan a line by hand in the Route tab. Check against current reporting.
+HEAVY RAIN FORECAST 22 MM 2026-10-10 / ROADS AND LANDING ZONES MAY FLOOD
+Forecast for the point of injury. Check the routes and the HLZ on the day.
+POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED
+2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+NO CONFIRMED AIR MEDEVAC / GROUND EVACUATION PLANNED
+Air times are potential only until a provider confirms an aircraft (section 4). Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport.
+FACILITY VERIFICATION NOT AVAILABLE / CONFIRM BEFORE USE
+No date for it on this device (no planner's check of a planned hospital).
+DATA	DATED	AGE	FROM
+HOSPITAL DATASET	2026-10-03 13:10Z	6 days, snapshot	OSAP's stored copy of OpenStreetMap
+ROAD HAZARDS	2026-10-09 09:08Z	under 1 h, snapshot	oldest of the feeds held on this device: road notices, GDACS, earthquakes, storms, conflict events
+WEATHER FORECAST	2026-10-09 09:14Z	under 1 h, live	live read from Open-Meteo
+FACILITY VERIFICATION	–	none	no planner's check of a planned hospital
+
+Flags from fixed rules (osap.medplan.picture/1): HLZ visibility under 1.6 km, gusts 30 kn or more or low cloud 90% or more need an air evacuation review; 20 mm of rain or more may flood roads and landing zones; hazards are what OSAP holds within 2 km of the line. Each date is the data's own, not when this device fetched it. Prompts to check, never a clearance.
+
+Plan status
+
+AMBER: medical verification required
+
+✓ Plan data complete
+✓ Point of injury: 47P PR 7556 7145
+✓ Stabilization facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Definitive care facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Primary ground route: Road router
+! Alternate ground route: The routers gave no distinct alternate line; plan one by hand.
+! Hazards along the primary route: 3 reported within 2 km in the last 30 days, first: Report at 10.9 km. Check against current reporting.
+! Receiving facility (unit details): Not filled in; the plan's definitive care is Phra Nakhon Si Ayutthaya Hospital.
+! Definitive facility acceptance: Not recorded: call the receiving hospital.
+! Capabilities confirmed available now: Blood availability, emergency operating theatre, 24-hour emergency department and CT scanner at Phra Nakhon Si Ayutthaya Hospital not confirmed available now: no planner's check in date.
+✓ Blood availability: Documented at Phra Nakhon Si Ayutthaya Hospital.
+! Air MEDEVAC provider: None confirmed. Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport. Air does not compete with the road until an aircraft is confirmed.
+! Casualty collection point (CCP): Not set.
+! Ambulance exchange point (AXP): Not set.
+! Helicopter landing zone (HLZ): Not set.
+! Alternate HLZ: Not set.
+! Forecast at the pickup: POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED. 2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+! Data age: Facility verification not available.
+! CASEVAC platform: Not set.
+! MEDEVAC communications: No frequency or call sign set.
+
+Checked by fixed rules (osap.medplan.validate/1): red stops printing, amber needs a planner or medic to confirm. Approval state: automatic draft.
+
+Primary, Secondary and Tertiary hospitals
+PRIMARY
+major trauma · 28 min by road · bypassed
+H8 Rajthanee Hospital
+Primary for major trauma: No verified trauma designation, 28 min from injury by road (inside golden hour); documented: emergency department, CT, general surgeon, ICU and mechanical ventilation; bypass: going direct reaches Secondary care in 40 min (via here 1 h 32 min), so this is the stabilisation option
+Observed T5 basic emergency facility (inferred); could be T4 if blood bank is confirmed
+Listed: emergency depar
+
+--- t=50s
+Medical plan Thailand
+Automatic draft
+Print CONOP
+Print intelligence annex
+Full window
+Close
+
+Planned from a point, no drawn area needed. Opened at 47P PR 7556 7145 · built 9 Oct 2026 0914Z / 16:14 ICT
+
+Anticipated point of injury (POI): MGRS or lat, lon
+Pick on map
+Set
+Plan centred on
+Point of injury: 47P PR 7556 7145
+Map centre when opened
+The point is
+Found from the map
+On land
+At sea (on a vessel)
+
+Centred on the anticipated point of injury: 47P PR 7556 7145 (14.20902, 100.62703). Every distance, drive, flight and route below is from here.
+
+MEDICAL PLAN: THAILAND
+TRAUMA
+HEAD INJURY
+BURN
+LIMB / VASCULAR
+STATUS
+AMBER: medical verification required
+POI
+47P PR 7556 7145
+GROUND EVAC
+AVAILABLE
+AIR MEDEVAC
+NOT CONFIRMED
+Request: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM), call 1669 (documented service, not confirmed for this mission)
+STABILIZATION
+BYPASS: direct is quicker
+DEFINITIVE CARE: MAJOR TRAUMA
+Phra Nakhon Si Ayutthaya Hospital
+35 min / 24 km road
+PRIMARY ROUTE
+AVAILABLE
+ALTERNATE ROUTE
+NONE FOUND
+ROUTE
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+CRITICAL GAPS
+Receiving hospital acceptance
+Air MEDEVAC provider not confirmed: request Thai Sky Doctor (National Institute for Emergency Medicine, NIEM) (Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport) and record the aircraft in section 4
+
+From the plan record below, for major trauma. The map, routes and sections below follow major trauma.
+
+Operational picture
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+To Phra Nakhon Si Ayutthaya Hospital: Report at 10.9 km along, 0.2 km off the road (0.27 m over the bank at Khanon Ti Temple), Hydro-Informatics Institute (ThaiWater). Plan a line by hand in the Route tab. Check against current reporting.
+HEAVY RAIN FORECAST 22 MM 2026-10-10 / ROADS AND LANDING ZONES MAY FLOOD
+Forecast for the point of injury. Check the routes and the HLZ on the day.
+POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED
+2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+NO CONFIRMED AIR MEDEVAC / GROUND EVACUATION PLANNED
+Air times are potential only until a provider confirms an aircraft (section 4). Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport.
+FACILITY VERIFICATION NOT AVAILABLE / CONFIRM BEFORE USE
+No date for it on this device (no planner's check of a planned hospital).
+DATA	DATED	AGE	FROM
+HOSPITAL DATASET	2026-10-03 13:10Z	6 days, snapshot	OSAP's stored copy of OpenStreetMap
+ROAD HAZARDS	2026-10-09 09:08Z	under 1 h, snapshot	oldest of the feeds held on this device: road notices, GDACS, earthquakes, storms, conflict events
+WEATHER FORECAST	2026-10-09 09:14Z	under 1 h, live	live read from Open-Meteo
+FACILITY VERIFICATION	–	none	no planner's check of a planned hospital
+
+Flags from fixed rules (osap.medplan.picture/1): HLZ visibility under 1.6 km, gusts 30 kn or more or low cloud 90% or more need an air evacuation review; 20 mm of rain or more may flood roads and landing zones; hazards are what OSAP holds within 2 km of the line. Each date is the data's own, not when this device fetched it. Prompts to check, never a clearance.
+
+Plan status
+
+AMBER: medical verification required
+
+✓ Plan data complete
+✓ Point of injury: 47P PR 7556 7145
+✓ Stabilization facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Definitive care facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Primary ground route: Road router
+! Alternate ground route: The routers gave no distinct alternate line; plan one by hand.
+! Hazards along the primary route: 3 reported within 2 km in the last 30 days, first: Report at 10.9 km. Check against current reporting.
+! Receiving facility (unit details): Not filled in; the plan's definitive care is Phra Nakhon Si Ayutthaya Hospital.
+! Definitive facility acceptance: Not recorded: call the receiving hospital.
+! Capabilities confirmed available now: Blood availability, emergency operating theatre, 24-hour emergency department and CT scanner at Phra Nakhon Si Ayutthaya Hospital not confirmed available now: no planner's check in date.
+✓ Blood availability: Documented at Phra Nakhon Si Ayutthaya Hospital.
+! Air MEDEVAC provider: None confirmed. Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport. Air does not compete with the road until an aircraft is confirmed.
+! Casualty collection point (CCP): Not set.
+! Ambulance exchange point (AXP): Not set.
+! Helicopter landing zone (HLZ): Not set.
+! Alternate HLZ: Not set.
+! Forecast at the pickup: POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED. 2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+! Data age: Facility verification not available.
+! CASEVAC platform: Not set.
+! MEDEVAC communications: No frequency or call sign set.
+
+Checked by fixed rules (osap.medplan.validate/1): red stops printing, amber needs a planner or medic to confirm. Approval state: automatic draft.
+
+Primary, Secondary and Tertiary hospitals
+PRIMARY
+major trauma · 28 min by road · bypassed
+H8 Rajthanee Hospital
+Primary for major trauma: No verified trauma designation, 28 min from injury by road (inside golden hour); documented: emergency department, CT, general surgeon, ICU and mechanical ventilation; bypass: going direct reaches Secondary care in 40 min (via here 1 h 32 min), so this is the stabilisation option
+Observed T5 basic emergency facility (inferred); could be T4 if blood bank is confirmed
+Listed: emergency depar
+
+FIRST:
+--- t=10s
+Medical plan Thailand
+Automatic draft
+Print CONOP
+Print intelligence annex
+Full window
+Close
+
+Planned from a point, no drawn area needed. Opened at 47P PR 7556 7145 · built 9 Oct 2026 0914Z / 16:14 ICT
+
+Anticipated point of injury (POI): MGRS or lat, lon
+Pick on map
+Set
+Plan centred on
+Point of injury: 47P PR 7556 7145
+Map centre when opened
+The point is
+Found from the map
+On land
+At sea (on a vessel)
+
+Centred on the anticipated point of injury: 47P PR 7556 7145 (14.20902, 100.62703). Every distance, drive, flight and route below is from here.
+
+MEDICAL PLAN: THAILAND
+TRAUMA
+HEAD INJURY
+BURN
+LIMB / VASCULAR
+STATUS
+AMBER: medical verification required
+POI
+47P PR 7556 7145
+GROUND EVAC
+AVAILABLE
+AIR MEDEVAC
+NOT CONFIRMED
+Request: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM), call 1669 (documented service, not confirmed for this mission)
+STABILIZATION
+BYPASS: direct is quicker
+DEFINITIVE CARE: MAJOR TRAUMA
+Phra Nakhon Si Ayutthaya Hospital
+35 min / 24 km road
+PRIMARY ROUTE
+AVAILABLE
+ALTERNATE ROUTE
+NONE FOUND
+ROUTE
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+CRITICAL GAPS
+Receiving hospital acceptance
+Air MEDEVAC provider not confirmed: request Thai Sky Doctor (National Institute for Emergency Medicine, NIEM) (Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport) and record the aircraft in section 4
+
+From the plan record below, for major trauma. The map, routes and sections below follow major trauma.
+
+Operational picture
+PRIMARY ROUTE PASSES 3 REPORTED HAZARDS / NO CLEARER ALTERNATE ROUTE FOUND
+To Phra Nakhon Si Ayutthaya Hospital: Report at 10.9 km along, 0.2 km off the road (0.27 m over the bank at Khanon Ti Temple), Hydro-Informatics Institute (ThaiWater). Plan a line by hand in the Route tab. Check against current reporting.
+HEAVY RAIN FORECAST 22 MM 2026-10-10 / ROADS AND LANDING ZONES MAY FLOOD
+Forecast for the point of injury. Check the routes and the HLZ on the day.
+POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED
+2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+NO CONFIRMED AIR MEDEVAC / GROUND EVACUATION PLANNED
+Air times are potential only until a provider confirms an aircraft (section 4). Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport.
+FACILITY VERIFICATION NOT AVAILABLE / CONFIRM BEFORE USE
+No date for it on this device (no planner's check of a planned hospital).
+DATA	DATED	AGE	FROM
+HOSPITAL DATASET	2026-10-03 13:10Z	6 days, snapshot	OSAP's stored copy of OpenStreetMap
+ROAD HAZARDS	2026-10-09 09:08Z	under 1 h, snapshot	oldest of the feeds held on this device: road notices, GDACS, earthquakes, storms, conflict events
+WEATHER FORECAST	2026-10-09 09:14Z	under 1 h, live	live read from Open-Meteo
+FACILITY VERIFICATION	–	none	no planner's check of a planned hospital
+
+Flags from fixed rules (osap.medplan.picture/1): HLZ visibility under 1.6 km, gusts 30 kn or more or low cloud 90% or more need an air evacuation review; 20 mm of rain or more may flood roads and landing zones; hazards are what OSAP holds within 2 km of the line. Each date is the data's own, not when this device fetched it. Prompts to check, never a clearance.
+
+Plan status
+
+AMBER: medical verification required
+
+✓ Plan data complete
+✓ Point of injury: 47P PR 7556 7145
+✓ Stabilization facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Definitive care facility: Phra Nakhon Si Ayutthaya Hospital
+✓ Primary ground route: Road router
+! Alternate ground route: The routers gave no distinct alternate line; plan one by hand.
+! Hazards along the primary route: 3 reported within 2 km in the last 30 days, first: Report at 10.9 km. Check against current reporting.
+! Receiving facility (unit details): Not filled in; the plan's definitive care is Phra Nakhon Si Ayutthaya Hospital.
+! Definitive facility acceptance: Not recorded: call the receiving hospital.
+! Capabilities confirmed available now: Blood availability, emergency operating theatre, 24-hour emergency department and CT scanner at Phra Nakhon Si Ayutthaya Hospital not confirmed available now: no planner's check in date.
+✓ Blood availability: Documented at Phra Nakhon Si Ayutthaya Hospital.
+! Air MEDEVAC provider: None confirmed. Documented service: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM). Call 1669, Thailand's emergency medical number, and ask for Sky Doctor air transport. Air does not compete with the road until an aircraft is confirmed.
+! Casualty collection point (CCP): Not set.
+! Ambulance exchange point (AXP): Not set.
+! Helicopter landing zone (HLZ): Not set.
+! Alternate HLZ: Not set.
+! Forecast at the pickup: POINT OF INJURY (NO HLZ GRID) LOW CLOUD 99% / AIR EVACUATION REVIEW REQUIRED. 2026-10-10 (UTC day) at 47P PR 7556 7145. Rules: visibility under 1.6 km, gusts 30 kn or more, low cloud 90% or more. Model values for one point; use an aviation forecast for the flying decision.
+! Data age: Facility verification not available.
+! CASEVAC platform: Not set.
+! MEDEVAC communications: No frequency or call sign set.
+
+Checked by fixed rules (osap.medplan.validate/1): red stops printing, amber needs a planner or medic to confirm. Approval state: automatic draft.
+
+Primary, Secondary and Tertiary hospitals
+PRIMARY
+major trauma · 28 min by road · bypassed
+H8 Rajthanee Hospital
+Primary for major trauma: No verified trauma designation, 28 min from injury by road (inside golden hour); documented: emergency department, CT, general surgeon, ICU and mechanical ventilation; bypass: going direct reaches Secondary care in 40 min (via here 1 h 32 min), so this is the stabilisation option
+Observed T5 basic emergency facility (inferred); could be T4 if blood bank is confirmed
+Listed: emergency depar
