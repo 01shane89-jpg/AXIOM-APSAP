@@ -1,0 +1,19 @@
+# Scratch probe (branch claude/medplan-gaps-raw only, never merged)
+name: Med plan probe
+on:
+  push:
+    branches: [claude/medplan-gaps-raw]
+    paths: [research/probe/**]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: npm i --no-save playwright@1.48.2 >/dev/null && npx playwright install --with-deps chromium >/dev/null
+      - run: node research/probe/medplan_probe.mjs || true
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add research/out && git commit -m "research: med plan probe" && git pull --rebase -q && git push || true
