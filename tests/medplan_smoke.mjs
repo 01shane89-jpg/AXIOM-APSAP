@@ -23,6 +23,8 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
+const TILES = { mode: "", osm: 0, esri: 0, now: 0, max: 0 };
+const PNG1 = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 /* a small made-up neighbourhood round 13.75 N, 100.50 E */
@@ -156,6 +158,15 @@ async function open(opts, o) {
     if (/valhalla/.test(u)) { calls.iso++; return J(r, iso(u)); }
     if (/query\.wikidata\.org/.test(u) && /wikibase%3Aaround|wikibase:around/.test(u)) { calls.wdh = (calls.wdh || 0) + 1; return o.wdFails ? r.fulfill({ status: 504, body: "" }) : J(r, WDH); }
     if (/query\.wikidata\.org/.test(u)) { calls.wd++; return J(r, WD); }
+    /* print map tiles (off unless a check sets TILES): "half" fails OpenStreetMap's odd columns, the Esri street map stands in */
+    if (TILES.mode && /tile\.openstreetmap\.org\/|World_Street_Map/.test(u)) {
+      const osm = /openstreetmap/.test(u), x = osm ? +u.split("/").slice(-2)[0] : 0;
+      if (osm) { TILES.osm++; TILES.now++; TILES.max = Math.max(TILES.max, TILES.now); } else TILES.esri++;
+      return new Promise((res) => setTimeout(res, osm ? 150 : 0)).then(() => {
+        if (osm) TILES.now--;
+        return osm && TILES.mode === "half" && x % 2 ? r.fulfill({ status: 503, body: "" }) : r.fulfill({ status: 200, contentType: "image/png", headers: { "access-control-allow-origin": "*" }, body: PNG1 });
+      });
+    }
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u)) { if (/hourly=visibility,wind_gusts_10m,cloud_cover_low/.test(u)) calls.meteo++; return J(r, meteo()); }
     return r.abort();
   });
@@ -594,6 +605,21 @@ async function openPlan(p) {
   ok(/^Medical CONOP, /.test(pc.h2) && /^Medical plan: /i.test(pc.h3[0]) && ["Operational picture", "Plan status", "Primary, Secondary", "1. Golden hour", "3. Routes", "4. Emergency", "6. Evacuate out", "9. Unit"].every((x) => pc.h3.some((h) => h.indexOf(x) === 0)) &&
     !pc.h3.some((h) => /^(2\. Receiving|5\. Evacuation landing|7\. Health|8\. Evacuation weather)/.test(h)) && pc.a === 0 && pc.src && !pc.srcList, "phase 6: Print CONOP is the operational plan only, with the fingerprint and without the annex material " + JSON.stringify(pc.h3));
   ok(split === await p.evaluate(() => !!document.querySelector("#brief .mpairmap img")), "air map: the CONOP carries the same air evacuation map as the annex");
+  ok(/basemap could not be loaded/.test(await p.textContent("#mpd-cap")), "print map: with no tile host reachable the caption says the basemap could not be loaded");
+  /* Shane 2026-10-09: most OpenStreetMap tiles of the CONOP map never came back on his iPhone. Six at a time; a failed tile is asked for again, then taken from Esri's street map */
+  Object.assign(TILES, { mode: "half", osm: 0, esri: 0, now: 0, max: 0 });
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
+  const tc = await p.textContent("#mpd-cap");
+  ok(TILES.osm > 0 && TILES.max <= 6 && TILES.esri > 0 && /Some squares are from Esri's street map/.test(tc) && !/could not be loaded/.test(tc), "print map: tiles load six at a time and a tile OpenStreetMap fails comes from Esri's street map, said in the caption " + JSON.stringify(TILES) + " " + tc.slice(0, 120));
+  /* let the annex maps of the last view finish before counting again */
+  for (let n = -1; n !== TILES.osm + TILES.esri; ) { n = TILES.osm + TILES.esri; await p.waitForTimeout(1500); }
+  Object.assign(TILES, { mode: "osm", osm: 0, esri: 0 });
+  await p.click("#mpd-close"); await p.click('#medplan [data-mp="printc"]');
+  await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || "") && !/Drawing the map/.test(document.getElementById("mpd-cap").textContent), null, { timeout: 60000 });
+  const tc2 = await p.textContent("#mpd-cap");
+  ok(TILES.esri === 0 && !/Esri|could not be loaded/.test(tc2), "print map: with OpenStreetMap answering, every tile is its own and the caption says nothing about the basemap " + JSON.stringify(TILES) + " " + tc2.slice(0, 120));
+  TILES.mode = "";
   await p.click("#mpd-close"); await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   const prn = await p.evaluate(() => new Promise((res) => { window.print = () => res(true); document.getElementById("mpd-print").click(); setTimeout(() => res(false), 5000); }));
