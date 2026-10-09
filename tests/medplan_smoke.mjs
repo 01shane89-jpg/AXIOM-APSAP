@@ -539,6 +539,8 @@ async function openPlan(p) {
   await p.waitForFunction(() => document.getElementById("mp-sites") && !document.getElementById("mp-legacy"), null, { timeout: 10000 }).catch(() => {});
   ok(await p.evaluate(() => !document.getElementById("mp-legacy") && !("recv1" in JSON.parse(localStorage.getItem("osap-medplan-th") || "{}"))), "section 9: Discard removes it for good");
   await p.evaluate(() => window.OSAP_MEDPLAN.close()); await medBtn(p); await p.waitForFunction(() => document.getElementById("mp-sites"), null, { timeout: 10000 });
+  /* section 4 is drawn once the hospital lookup returns; wait for it rather than read an empty box */
+  await p.waitForFunction(() => /Emergency medevac provider and phone: Test Air Rescue/.test((document.getElementById("mp-mev") || {}).textContent || ""), null, { timeout: 20000 }).catch(() => {});
   ok(/Emergency medevac provider and phone: Test Air Rescue/.test(await p.textContent("#mp-mev")), "desktop: the medevac provider typed in prints in the medevac section");
   ok(await p.evaluate(() => [...document.querySelectorAll("#mp-from option")].some((o) => o.value === "ccp1")), "desktop: the typed CCP is offered as the centre");
   const before = calls.osrm;
