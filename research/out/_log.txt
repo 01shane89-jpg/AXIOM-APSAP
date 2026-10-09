@@ -333,3 +333,14 @@ gsi308 200 application/json 176
 gsi309 200 application/json 169
 gsi310 200 application/json 169
 gsi311 200 application/json 158
+yk_crit_shaho 200 application/pdf 59288
+yk_crit_hk 200 application/pdf 51670
+yk_crit_kinki 404 text/html 32659
+yk_idx_hokkaido 200 text/html 34909
+yk_idx_tohoku 200 text/html 75884
+yk_idx_tokaihokuriku 404 text/html 34971
+yk_idx_cs 404 text/html 32335
+yk_idx_kanto 404 text/html 37583
+yk_idx_kinki 200 text/html 52899
+yk_idx_shikoku 200 text/html 65167
+yk_idx_kyushu 200 text/html 116325
