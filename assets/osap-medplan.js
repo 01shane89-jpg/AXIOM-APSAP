@@ -470,10 +470,11 @@
   var ROMAN = ["", "I", "II", "III", "IV", "V"];
   /* the official designation only as a source states it (status REPORTED: OSAP's sources are not the designating authority) */
   function tierLabel(f) {
-    if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : "Trauma centre, level not stated (reported)";
+    if (f.trauma) return f.lvl ? "Trauma Level " + ROMAN[f.lvl] + " (official designation, reported)" : f.trauma.official ? clip(f.trauma.text, 90) + " (official designation)" : "Trauma centre, level not stated (reported)";
     return NK_LVL;
   }
   function desigNote(f) {
+    if (f.trauma && f.trauma.official) return "Published by the designating authority" + (f.trauma.authority ? " (" + f.trauma.authority + ")" : "") + " in " + f.trauma.srcname + ": \"" + f.trauma.text + "\".";
     return f.trauma ? "Reported by " + f.trauma.srcname + ": \"" + f.trauma.text + "\". Not yet verified with the designating authority." : "No official trauma designation found in OSAP's sources.";
   }
   /* rank: a sourced level above every hospital without one (Level 1 highest; a trauma centre with no stated level after
@@ -486,6 +487,8 @@
       if (m.trauma_level) tr = { text: clip(m.trauma_level, 120), src: m.trauma_src || m.src, srcname: m.trauma_srcname || m.srcname || "source", authority: m.trauma_authority || "", jurisdiction: m.trauma_jurisdiction || "", official: m.trauma_official === true };
       if (m.emergency_24h === true) { er24 = true; sc += 3; why.push("24-hour emergency (" + (m.srcname || "source") + ")"); }
       if (!f.addr && m.address) { f.addr = clip(m.address, 160); f.addrSof = true; }
+      /* OpenStreetMap maps the building without a name: the sourced record's name stands in */
+      if (/^Hospital \(no name in OSM\)$/.test(f.name) && m.name) f.name = clip(m.name, 90);
       if (REFERRAL.test(m.notes || "")) ref = clip(m.notes, 90) + " (" + (m.srcname || "source") + ")";
     }
     if (f.gov === undefined) f.gov = govOf(f);
@@ -629,6 +632,18 @@
           how: "inferred from the official record: MOPH service level " + g.level + ", H code " + g.hcode + "; " + (typeof MOPH_WHY[x[1]] === "object" ? MOPH_WHY[x[1]][g.level] : MOPH_WHY[x[1]]) };
       });
     }
+    /* what an official designation's standard requires of every hospital that holds it (m.caps_std, e.g. Japan's critical
+       care centre standard: its own ICU and X-ray room): INFERRED from the designation, never stated for the hospital, so it
+       fills only what is unknown or listed by OpenStreetMap alone */
+    if (m && m.caps_std) Object.keys(m.caps_std).forEach(function (k) {
+      var x = m.caps_std[k];
+      if (!C[k] || !x || !x.src || !(C[k].status === "UNKNOWN" || (C[k].status === "REPORTED" && crowd(C[k].source)))) return;
+      C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
+        source: { kind: "register", url: x.src, name: x.srcname || "source", at: x.asof || "", sha: x.sha256 || "" },
+        how: "inferred from the designation (" + clip(m.trauma_level || "official designation", 90) + "): the standard says " +
+          (x.quote_en ? "\u201c" + clip(x.quote_en, 160) + "\u201d (" + clip(x.quote_mt || "translated", 60) + "; original: \u201c" + clip(x.quote, 120) + "\u201d)" : "\u201c" + clip(x.quote, 160) + "\u201d") +
+          (x.quote_basis ? " (" + x.quote_basis + ")" : "") };
+    });
     /* a planner's check outranks every source (V1), and only it says whether a capability can be used now */
     return FI() ? FI().apply(C, checks(), f.id, new Date().toISOString()) : C;
   }
@@ -2869,7 +2884,7 @@
       }
       return "";
     }
-    row("Official trauma designation", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + "). Status REPORTED: not yet verified with the designating authority.</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
+    row("Official trauma designation", '<b>' + esc(tierLabel(f)) + "</b>" + lowTag(f) + (f.trauma ? '<span class="sub">' + esc(f.trauma.text) + " (" + (link(f.trauma.src, f.trauma.srcname) || esc(f.trauma.srcname)) + ")" + (f.trauma.official ? ". Status VERIFIED: published by the designating authority" + (f.trauma.authority ? " (" + esc(f.trauma.authority) + ")" : "") + "." : ". Status REPORTED: not yet verified with the designating authority.") + "</span>" : '<span class="sub">None identified in OSAP\'s sources. This does not mean the hospital cannot treat injured patients; see the observed class and capability flags.</span>'));
     row("Observed class", esc(tcText(f)) + '<span class="sub">' + esc(f.tc ? f.tc.wording : "") + " Inferred by rule " + TC_RULE_ID + "; not an official level and not used to pick.</span>" + (f.why && f.why.length ? '<span class="sub">Listed: ' + esc(f.why.join(", ")) + "</span>" : ""));
     row("Emergency department", f.er === "yes" ? "Yes" + (osm ? " (" + osm + " emergency=yes)" : "") : f.er === "no" ? "No" + (osm ? " (" + osm + " emergency=no)" : "") :
       sr && sr.emergency_24h === true ? "24-hour emergency (" + sof + ")" : flag("ed.24_7", "ed.basic") || nk("No emergency department listed."));
