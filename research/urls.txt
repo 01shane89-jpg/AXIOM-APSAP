@@ -20,3 +20,4 @@ jpr7s2 https://www.mhlw.go.jp/content/10800000/001682703.pdf
 jpyoko1 https://www.pref.osaka.lg.jp/documents/23350/10_shiryou4-3.pdf
 jpyoko2 https://www.pref.aichi.jp/uploaded/attachment/213459.pdf
 jpyoko3 https://www.pref.okinawa.lg.jp/_res/projects/default_project/_page_/001/005/870/004.pdf
+jp2018 https://www.mhlw.go.jp/file/06-Seisakujouhou-10800000-Iseikyoku/0000197847.pdf
