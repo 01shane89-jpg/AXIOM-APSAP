@@ -17,3 +17,6 @@ jpr7s1 200 application/pdf 276711
 jpr7s3 200 application/pdf 423029
 jpr8tsuchi 200 application/pdf 1566104
 jpr7s2 200 application/pdf 1141019
+jpyoko1 200 application/pdf 153370
+jpyoko2 200 application/pdf 218340
+jpyoko3 200 application/pdf 294970
