@@ -12,3 +12,4 @@ twmohw https://www.mohw.gov.tw/cp-2624-19430-1.html
 jpcc5 https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000188907_00008.html
 jpcc6 https://www.mhlw.go.jp/stf/newpage_72097.html
 jpcc7 https://www.mhlw.go.jp/stf/newpage_32614.html
+jpcc5b https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000188907_00008.html?r
