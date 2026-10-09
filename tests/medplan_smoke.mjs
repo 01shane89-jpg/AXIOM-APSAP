@@ -879,13 +879,19 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   { hcode: "99002", name_th: "x", name_en: "Sourced Trauma Centre", province: "Testburi", type_th: "x", type_en: "General hospital", kind: "hospital", beds_open: 120, level: "S", level_en: "S (standard: provincial)",
     ha: null, programs: [{ kind: "network", name_th: "er-th", name_en: "Emergency care system", stage: "HNC", from: "2025-01-01", to: "2029-01-01", caps: ["ed.basic"], src: "hnc" }],
     lat: 13.8002, lon: 100.5601, osm: "", coord_basis: "MOPH location", retrieved: "2026-10-03", sha256: "d".repeat(64) },
+  { hcode: "99004", name_th: "z", name_en: "Moph Only Hospital", province: "Testburi", type_en: "General hospital", kind: "hospital", beds_open: 200, level: "M1", programs: [],
+    lat: 13.765, lon: 100.515, osm: "", coord_basis: "MOPH location (CITIZENinfo 2020) for the same name in the same province", retrieved: "2026-10-03", sha256: "f".repeat(64) },
   { hcode: "99003", name_th: "y", name_en: "Unplaced Hospital", province: "Testburi", kind: "hospital", programs: [], lat: null, lon: null, osm: "", coord_basis: "not placed", retrieved: "2026-10-03", sha256: "e".repeat(64) }] };
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1400, height: 900 } }, { medfac: MF_ALL, gov: GOVDOC });
   await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02));
   await openPlan(p);
   const src = await p.textContent("#mp-src");
-  ok(/Official hospital records \(HA Thailand open data\)/.test(src) && /built 2026-10-03, 3 hospitals, 2 placed on the map; 2 in this plan/.test(src), "official records: the sources list names the registry, its date, the placed count and how many plan hospitals it covers " + src.slice(0, 300));
+  ok(/Official hospital records \(HA Thailand open data\)/.test(src) && /built 2026-10-03, 4 hospitals, 3 placed on the map; 3 in this plan/.test(src), "official records: the sources list names the registry, its date, the placed count and how many plan hospitals it covers " + src.slice(0, 300));
+  /* Shane 2026-10-08 (fix 2): an official hospital OpenStreetMap lacks joins the plan at its MOPH location, and says so */
+  const fac0 = await p.textContent("#mp-fac");
+  ok(/Moph Only Hospital/.test(fac0) && /Official record, not in OpenStreetMap; location: MOPH location \(CITIZENinfo 2020\)/.test(fac0) && (fac0.match(/Sourced Trauma Centre/g) || []).length >= 1 && !/Unplaced Hospital/.test(fac0),
+    "official records: a hospital placed only by its MOPH location is in the plan, labelled with where its location comes from; an unplaced one is not");
   await p.click('#mp-fac tr:has-text("Near Hospital") [data-mp-assess]');
   await p.waitForFunction(() => /Capability flags/.test((document.getElementById("brief") || {}).textContent || ""), null, { timeout: 20000 });
   const b = await p.textContent("#brief"), h = await p.innerHTML("#brief");

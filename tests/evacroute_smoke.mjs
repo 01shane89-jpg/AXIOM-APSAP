@@ -89,6 +89,8 @@ let ctx, errors, p;
   const bkk = await p.evaluate(() => { const x = window.ASAP_SOF.th.posts.find((x) => x.id === "sof:th:post:u-s-embassy-bangkok"); return [x.lat, x.lon]; });
   await p.evaluate(({ a, b }) => {
     const d = new Date().toISOString().slice(0, 10), at = (t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    /* only the test incidents: live reports on the real Thai-Cambodia border would otherwise sit on the mocked detour */
+    window.TSAP.records.length = 0; ["ASAP_ROADS", "ASAP_GDACS", "ASAP_QUAKES", "ASAP_NQ", "ASAP_EONET"].forEach((k) => { window[k] = null; });
     window.ASAP_UCDP = { items: [0.3, 0.5, 0.7].map((t) => ({ lat: at(t)[0], lon: at(t)[1], where: "Test district", best: 2, date: d })) };
     window.TSAP.records.push({ lat: at(0.4)[0], lon: at(0.4)[1], title: "Army checkpoint set up on the highway", url: "https://example.org/chk", ts: d + "T00:00:00Z", src: { name: "Test" } });
   }, { a: START, b: bkk });

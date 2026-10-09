@@ -123,7 +123,8 @@ let state;
   ok(calls.osrm >= 4, "routed with the routers (" + calls.osrm + " OSRM, " + calls.valhalla + " Valhalla, " + calls.overpass + " Overpass calls)");
 
   /* plan again without the closure: no report is not a clearance */
-  await p.evaluate(() => { window.ASAP_ROADS = { items: [] }; });
+  /* and no live reports either: today's Thai-Cambodia border news would otherwise sit on the mocked lines */
+  await p.evaluate(() => { window.ASAP_ROADS = { items: [] }; window.TSAP.records.length = 0; ["ASAP_GDACS", "ASAP_QUAKES", "ASAP_NQ", "ASAP_UCDP", "ASAP_EONET"].forEach((k) => { window[k] = null; }); });
   await p.click('#epe [data-ep="plan"]');
   await p.waitForFunction(() => { const s = window.OSAP_EPE.state(); return !s.busy && s.plan; }, null, { timeout: 90000 });
   s1 = await st(p);
