@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%9F%B3%E5%B7%9D%E7%9C%8C%E9%87%91%E6%B2%A2%E5%B8%82%E9%9E%8D%E6%9C%88%E6%9D%B12-1
+[{"geometry":{"coordinates":[136.628723,36.59539],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"石川県金沢市鞍月東二丁目１番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E7%A6%8F%E5%B2%A1%E5%B8%82%E6%9D%B1%E5%8C%BA%E9%A6%AC%E5%87%BA3-1-1
+[{"geometry":{"coordinates":[130.415726,33.609234],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県福岡市東区馬出三丁目１番"}}]

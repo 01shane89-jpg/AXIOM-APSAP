@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A9%E6%89%8B%E7%9C%8C%E7%B4%AB%E6%B3%A2%E9%83%A1%E7%9F%A2%E5%B7%BE%E7%94%BA%E5%8C%BB%E5%A4%A7%E9%80%9A%E4%BA%8C%E4%B8%81%E7%9B%AE1%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[141.161835,39.61805],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岩手県矢巾町医大通二丁目１番１号"}}]

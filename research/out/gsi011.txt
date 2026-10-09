@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8C%97%E6%B5%B7%E9%81%93%E6%97%AD%E5%B7%9D%E5%B8%82%E6%9B%991%E6%9D%A11%E4%B8%81%E7%9B%AE1-1
+[{"geometry":{"coordinates":[142.348373,43.768848],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"北海道旭川市曙一条一丁目１番１号"}}]

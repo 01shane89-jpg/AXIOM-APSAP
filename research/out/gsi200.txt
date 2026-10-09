@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E5%AE%87%E6%B2%BB%E5%B8%82%E5%B0%8F%E5%80%89%E7%94%BA%E6%98%A5%E6%97%A5%E6%A3%AE86
+[{"geometry":{"coordinates":[135.782593,34.899227],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府宇治市小倉町春日森８６番地"}}]

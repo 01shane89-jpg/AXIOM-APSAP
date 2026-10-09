@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%8D%8A%E7%94%B0%E5%B8%82%E6%A8%AA%E5%B1%B1%E7%94%BA192%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[136.88736,34.899956],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県半田市横山町"}}]

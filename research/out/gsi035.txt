@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B3%B6%E7%9C%8C%E7%A6%8F%E5%B3%B6%E5%B8%82%E5%85%89%E3%81%8C%E4%B8%981
+[{"geometry":{"coordinates":[140.471603,37.689926],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福島県福島市光が丘１番地"}}]

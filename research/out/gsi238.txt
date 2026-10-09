@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%92%8C%E6%AD%8C%E5%B1%B1%E7%9C%8C%E5%92%8C%E6%AD%8C%E5%B1%B1%E5%B8%82%E5%B0%8F%E6%9D%BE%E5%8E%9F%E9%80%9A4-20
+[{"geometry":{"coordinates":[135.168732,34.220352],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"和歌山県和歌山市小松原通四丁目２０番地"}}]

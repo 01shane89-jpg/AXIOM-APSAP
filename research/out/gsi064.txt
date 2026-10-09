@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%9D%B1%E9%87%91%E5%B8%82%E4%B8%98%E5%B1%B1%E5%8F%B0%E4%B8%89%E4%B8%81%E7%9B%AE6%E7%95%AA%E5%9C%B02
+[{"geometry":{"coordinates":[140.307907,35.55838],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県東金市丘山台三丁目６番"}}]

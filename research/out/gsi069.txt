@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E5%8D%83%E8%91%89%E5%B8%82%E7%BE%8E%E6%B5%9C%E5%8C%BA%E8%B1%8A%E7%A0%826%E7%95%AA1
+[{"geometry":{"coordinates":[140.02507,35.649628],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県千葉市美浜区豊砂６番"}}]

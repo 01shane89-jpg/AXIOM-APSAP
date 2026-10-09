@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%96%B0%E6%BD%9F%E7%9C%8C%E6%96%B0%E6%BD%9F%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E6%97%AD%E7%94%BA%E9%80%9A%E4%B8%80%E7%95%AA%E7%94%BA754
+[{"geometry":{"coordinates":[139.03508,37.919731],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"新潟県新潟市中央区旭町通一番町７５４番地"}}]

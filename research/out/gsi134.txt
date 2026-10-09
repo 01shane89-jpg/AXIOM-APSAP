@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AF%8C%E5%B1%B1%E7%9C%8C%E5%AF%8C%E5%B1%B1%E5%B8%82%E8%A5%BF%E9%95%B7%E6%B1%9F2-2-78
+[{"geometry":{"coordinates":[137.236526,36.692074],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"富山県富山市西長江二丁目２番７８号"}}]

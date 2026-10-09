@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E5%8D%B0%E8%A5%BF%E5%B8%82%E9%8E%8C%E8%8B%851715
+[{"geometry":{"coordinates":[140.196228,35.78017],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県印西市鎌苅１７１５番地"}}]

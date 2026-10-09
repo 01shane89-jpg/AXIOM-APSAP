@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%B8%82%E6%98%AD%E5%92%8C%E5%8C%BA%E5%A6%99%E8%A6%8B%E7%94%BA2-9
+[{"geometry":{"coordinates":[136.965668,35.145416],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県名古屋市昭和区妙見町２番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E6%A2%A8%E7%9C%8C%E7%94%B2%E5%BA%9C%E5%B8%82%E5%AF%8C%E5%A3%AB%E8%A6%8B1-1-1
+[{"geometry":{"coordinates":[138.550201,35.670956],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山梨県甲府市富士見一丁目１番"}}]

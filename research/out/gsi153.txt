@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%90%E9%98%9C%E7%9C%8C%E9%B3%A5%E7%BE%BD%E9%83%A1%E7%AC%A0%E6%9D%BE%E7%94%BA%E7%94%B0%E4%BB%A3185-1
+[{"geometry":{"coordinates":[136.723663,35.391174],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岐阜県"}}]

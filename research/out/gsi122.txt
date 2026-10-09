@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E9%9D%92%E8%91%89%E5%8C%BA%E8%97%A4%E3%81%8C%E4%B8%981-30
+[{"geometry":{"coordinates":[139.52951,35.544819],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県横浜市青葉区藤が丘一丁目３０番"}}]

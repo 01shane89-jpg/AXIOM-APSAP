@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E7%A6%8F%E7%9F%A5%E5%B1%B1%E5%B8%82%E5%8E%9A%E4%B8%AD%E7%94%BA231
+[{"geometry":{"coordinates":[135.111801,35.303772],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府福知山市厚中町２３１番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E9%9D%99%E5%B2%A1%E5%B8%82%E9%A7%BF%E6%B2%B3%E5%8C%BA%E5%B0%8F%E9%B9%BF1-1-1
+[{"geometry":{"coordinates":[138.412262,34.975925],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県静岡市駿河区小鹿一丁目１番１号"}}]

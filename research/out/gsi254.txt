@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E7%A6%8F%E5%B1%B1%E5%B8%82%E8%94%B5%E7%8E%8B%E7%94%BA5-23-1
+[{"geometry":{"coordinates":[133.397003,34.512035],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県福山市蔵王町五丁目２３番１号"}}]

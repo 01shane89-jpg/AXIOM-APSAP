@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A5%88%E8%89%AF%E7%9C%8C%E5%A5%88%E8%89%AF%E5%B8%82%E4%B8%83%E6%9D%A1%E8%A5%BF%E7%94%BA2-897-5
+[{"geometry":{"coordinates":[135.769989,34.663071],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"奈良県奈良市七条西町二丁目８９７番地"}}]

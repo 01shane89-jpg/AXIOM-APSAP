@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A0%BA%E5%B8%82%E8%A5%BF%E5%8C%BA%E5%AE%B6%E5%8E%9F%E5%AF%BA%E7%94%BA1%E4%B8%811%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[135.473618,34.537155],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府堺市西区家原寺町一丁"}}]

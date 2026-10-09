@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A1%E5%B1%B1%E7%9C%8C%E6%B4%A5%E5%B1%B1%E5%B8%82%E5%B7%9D%E5%B4%8E1756
+[{"geometry":{"coordinates":[134.03743,35.06432],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岡山県津山市川崎１７５６番地"}}]

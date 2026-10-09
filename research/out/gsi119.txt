@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%B5%B7%E8%80%81%E5%90%8D%E5%B8%82%E6%B2%B3%E5%8E%9F%E5%8F%A31320
+[{"geometry":{"coordinates":[139.385284,35.447342],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県海老名市河原口１３２０番地"}}]

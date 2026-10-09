@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%BD%A2%E7%9C%8C%E9%85%92%E7%94%B0%E5%B8%82%E3%81%82%E3%81%8D%E3%81%BB%E7%94%BA30%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[139.854111,38.890736],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山形県酒田市あきほ町３０番地"}}]

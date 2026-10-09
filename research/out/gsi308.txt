@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E6%B5%A6%E6%B7%BB%E5%B8%82%E5%89%8D%E7%94%B0%E4%B8%80%E4%B8%81%E7%9B%AE56%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[127.737488,26.240776],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"沖縄県浦添市前田一丁目５６番１号"}}]

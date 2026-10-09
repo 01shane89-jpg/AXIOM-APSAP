@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E4%B8%80%E5%AE%AE%E5%B8%82%E6%96%87%E4%BA%AC2-2-22
+[{"geometry":{"coordinates":[136.806808,35.312656],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県一宮市文京二丁目２番２２号"}}]

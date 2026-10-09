@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B3%A5%E5%8F%96%E7%9C%8C%E7%B1%B3%E5%AD%90%E5%B8%82%E8%A5%BF%E7%94%BA36-1
+[{"geometry":{"coordinates":[133.324478,35.428909],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鳥取県米子市西町３６番地"}}]

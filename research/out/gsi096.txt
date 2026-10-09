@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%87%E4%BA%AC%E5%8C%BA%E6%9C%AC%E9%83%B77-3-1
+[{"geometry":{"coordinates":[139.763214,35.714146],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都文京区本郷七丁目３番"}}]

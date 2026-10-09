@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%96%B0%E6%BD%9F%E7%9C%8C%E5%8D%97%E9%AD%9A%E6%B2%BC%E5%B8%82%E6%B5%A6%E4%BD%904132%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[138.922089,37.167477],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"新潟県南魚沼市浦佐"}}]

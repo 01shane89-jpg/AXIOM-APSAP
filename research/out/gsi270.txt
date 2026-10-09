@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E5%AA%9B%E7%9C%8C%E6%9D%BE%E5%B1%B1%E5%B8%82%E6%98%A5%E6%97%A5%E7%94%BA83
+[{"geometry":{"coordinates":[132.765106,33.83284],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛媛県松山市春日町"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E5%85%90%E5%B3%B6%E7%9C%8C%E9%B9%BF%E5%85%90%E5%B3%B6%E5%B8%82%E5%8A%A0%E6%B2%BB%E5%B1%8B%E7%94%BA20-17
+[{"geometry":{"coordinates":[130.553528,31.584398],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鹿児島県鹿児島市加治屋町２０番１７号"}}]

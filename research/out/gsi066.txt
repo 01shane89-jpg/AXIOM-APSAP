@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E5%B8%82%E5%8E%9F%E5%B8%82%E5%A7%89%E5%B4%8E3426-3
+[{"geometry":{"coordinates":[140.061722,35.465435],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県市原市姉崎３４２６番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%BA%83%E5%B3%B6%E5%B8%82%E5%8D%97%E5%8C%BA%E5%AE%87%E5%93%81%E7%A5%9E%E7%94%B01-5-54
+[{"geometry":{"coordinates":[132.465866,34.367886],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県広島市南区宇品神田一丁目５番５４号"}}]

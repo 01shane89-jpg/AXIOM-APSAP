@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E8%B1%8A%E6%98%8E%E5%B8%82%E6%B2%93%E6%8E%9B%E7%94%BA%E7%94%B0%E6%A5%BD%E3%82%B1%E7%AA%AA1-98
+[{"geometry":{"coordinates":[137.001389,35.070999],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県豊明市沓掛町田楽ケ窪１番地"}}]

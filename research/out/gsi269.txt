@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E5%AA%9B%E7%9C%8C%E6%96%B0%E5%B1%85%E6%B5%9C%E5%B8%82%E6%9C%AC%E9%83%B73-1-1
+[{"geometry":{"coordinates":[133.280045,33.932789],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛媛県新居浜市本郷三丁目１番"}}]

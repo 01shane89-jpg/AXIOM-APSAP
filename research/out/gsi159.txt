@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E9%9D%99%E5%B2%A1%E5%B8%82%E8%91%B5%E5%8C%BA%E5%8C%97%E5%AE%89%E6%9D%B14-27-1
+[{"geometry":{"coordinates":[138.386093,35.003246],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県静岡市葵区北安東四丁目２７番"}}]

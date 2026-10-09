@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E6%B3%95%E5%86%86%E5%9D%822-1-14
+[{"geometry":{"coordinates":[135.52095,34.679611],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府大阪市中央区法円坂二丁目１番１４号"}}]

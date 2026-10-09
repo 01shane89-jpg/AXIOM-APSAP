@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A9%E6%89%8B%E7%9C%8C%E7%9B%9B%E5%B2%A1%E5%B8%82%E4%B8%8A%E7%94%B01%E4%B8%81%E7%9B%AE4%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[141.146545,39.712734],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岩手県盛岡市上田一丁目４番１号"}}]

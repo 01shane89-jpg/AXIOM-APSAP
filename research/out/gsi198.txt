@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%BB%8B%E8%B3%80%E7%9C%8C%E9%95%B7%E6%B5%9C%E5%B8%82%E5%AE%AE%E5%89%8D%E7%94%BA14-7
+[{"geometry":{"coordinates":[136.272797,35.383327],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"滋賀県長浜市宮前町１４番７号"}}]

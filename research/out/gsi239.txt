@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B3%A5%E5%8F%96%E7%9C%8C%E9%B3%A5%E5%8F%96%E5%B8%82%E6%B1%9F%E6%B4%A5730
+[{"geometry":{"coordinates":[134.211868,35.522636],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鳥取県鳥取市江津７３０番地"}}]

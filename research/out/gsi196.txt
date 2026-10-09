@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%BB%8B%E8%B3%80%E7%9C%8C%E6%A0%97%E6%9D%B1%E5%B8%82%E5%A4%A7%E6%A9%8B2-4-1
+[{"geometry":{"coordinates":[136.001404,35.033474],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"滋賀県栗東市大橋二丁目４番"}}]

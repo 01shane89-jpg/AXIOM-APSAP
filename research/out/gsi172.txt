@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%B8%82%E7%91%9E%E7%A9%82%E5%8C%BA%E7%91%9E%E7%A9%82%E7%94%BA%E5%AD%97%E5%B7%9D%E6%BE%841%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[136.935196,35.139385],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県名古屋市瑞穂区瑞穂町川澄１番地"}}]

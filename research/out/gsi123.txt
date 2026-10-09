@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E6%97%AD%E5%8C%BA%E7%9F%A2%E6%8C%87%E7%94%BA1197-1
+[{"geometry":{"coordinates":[139.502441,35.476376],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県横浜市旭区矢指町１１９７番地"}}]

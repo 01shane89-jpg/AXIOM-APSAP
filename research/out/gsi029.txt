@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%BD%A2%E7%9C%8C%E5%B1%B1%E5%BD%A2%E5%B8%82%E5%A4%A7%E5%AD%97%E9%9D%92%E6%9F%B31800
+[{"geometry":{"coordinates":[140.346176,38.300449],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山形県山形市青柳１８００番地"}}]

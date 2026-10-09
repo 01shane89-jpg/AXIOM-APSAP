@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A9%E6%89%8B%E7%9C%8C%E4%B9%85%E6%85%88%E5%B8%82%E6%97%AD%E7%94%BA10-1
+[{"geometry":{"coordinates":[141.777466,40.201584],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岩手県久慈市旭町"}}]

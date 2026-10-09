@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E8%B6%B3%E7%AB%8B%E5%8C%BA%E6%B1%9F%E5%8C%974-33-1
+[{"geometry":{"coordinates":[139.765991,35.773937],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都足立区江北四丁目３３番"}}]

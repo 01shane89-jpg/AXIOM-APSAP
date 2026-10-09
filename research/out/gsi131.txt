@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%96%B0%E6%BD%9F%E7%9C%8C%E6%96%B0%E7%99%BA%E7%94%B0%E5%B8%82%E6%9C%AC%E7%94%BA1-2-8
+[{"geometry":{"coordinates":[139.333191,37.946373],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"新潟県新発田市本町一丁目２番８号"}}]

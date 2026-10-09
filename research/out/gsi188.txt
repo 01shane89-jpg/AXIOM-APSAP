@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%AE%89%E5%9F%8E%E5%B8%82%E5%AE%89%E5%9F%8E%E7%94%BA%E6%9D%B1%E5%BA%83%E7%95%9428
+[{"geometry":{"coordinates":[137.077179,34.940254],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県安城市安城町東広畔２８番地"}}]

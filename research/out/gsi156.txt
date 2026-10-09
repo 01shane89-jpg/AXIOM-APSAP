@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E6%B2%BC%E6%B4%A5%E5%B8%82%E6%9D%B1%E6%A4%8E%E8%B7%AF%E5%AD%97%E6%98%A5%E3%81%AE%E6%9C%A8550
+[{"geometry":{"coordinates":[138.835129,35.119942],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県沼津市東椎路春ノ木５５０番地"}}]

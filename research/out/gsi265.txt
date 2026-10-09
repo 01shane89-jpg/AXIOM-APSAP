@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BE%B3%E5%B3%B6%E7%9C%8C%E5%B0%8F%E6%9D%BE%E5%B3%B6%E5%B8%82%E5%B0%8F%E6%9D%BE%E5%B3%B6%E7%94%BA%E5%AD%97%E4%BA%95%E5%88%A9%E3%83%8E%E5%8F%A3103
+[{"geometry":{"coordinates":[134.583252,34.012112],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"徳島県小松島市小松島町井利ノ口１０３番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%8A%A0%E9%A0%88%E5%B8%82%E4%B8%8A%E9%AB%98%E6%9F%B31680%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[139.591843,36.115406],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県加須市上高柳"}}]

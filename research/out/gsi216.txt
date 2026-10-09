@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E9%AB%98%E6%A7%BB%E5%B8%82%E5%A4%A7%E5%AD%A6%E7%94%BA2%E7%95%AA7%E5%8F%B7
+[{"geometry":{"coordinates":[135.62471,34.85228],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府高槻市大学町２番７号"}}]

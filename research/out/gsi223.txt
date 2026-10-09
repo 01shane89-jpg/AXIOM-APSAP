@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E7%A5%9E%E6%88%B8%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E8%84%87%E6%B5%9C%E6%B5%B7%E5%B2%B8%E9%80%9A1-3-1
+[{"geometry":{"coordinates":[135.212784,34.696205],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県神戸市中央区脇浜海岸通一丁目３番"}}]

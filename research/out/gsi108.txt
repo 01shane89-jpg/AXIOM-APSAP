@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E8%97%A4%E6%B2%A2%E5%B8%82%E8%97%A4%E6%B2%A22-6-1
+[{"geometry":{"coordinates":[139.481842,35.350033],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県藤沢市藤沢二丁目６番１号"}}]

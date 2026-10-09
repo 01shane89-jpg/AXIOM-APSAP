@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AE%AE%E5%B4%8E%E7%9C%8C%E5%AE%AE%E5%B4%8E%E5%B8%82%E6%B8%85%E6%AD%A6%E7%94%BA%E6%9C%A8%E5%8E%9F5200
+[{"geometry":{"coordinates":[131.399185,31.840258],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"宮崎県宮崎市清武町木原５２００番地"}}]

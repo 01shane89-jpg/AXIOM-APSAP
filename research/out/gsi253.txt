@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%91%89%E5%B8%82%E9%9D%92%E5%B1%B1%E7%94%BA3-1
+[{"geometry":{"coordinates":[132.565506,34.238857],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県呉市青山町３番"}}]

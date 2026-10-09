@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E6%B1%9F%E5%8D%97%E5%B8%82%E9%AB%98%E5%B1%8B%E7%94%BA%E5%A4%A7%E6%9D%BE%E5%8E%9F137
+[{"geometry":{"coordinates":[136.877869,35.355091],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県江南市高屋町大松原１３７番地"}}]

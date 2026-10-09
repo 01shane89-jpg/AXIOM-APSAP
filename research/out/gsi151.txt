@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%90%E9%98%9C%E7%9C%8C%E9%96%A2%E5%B8%82%E8%8B%A5%E8%8D%89%E9%80%9A5-1
+[{"geometry":{"coordinates":[136.921417,35.494949],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岐阜県関市若草通五丁目１番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%B3%B6%E5%B0%BB%E9%83%A1%E5%8D%97%E9%A2%A8%E5%8E%9F%E7%94%BA%E5%AD%97%E6%96%B0%E5%B7%9D118-1
+[{"geometry":{"coordinates":[127.72374,26.205864],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"沖縄県南風原町新川１１８番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E5%88%86%E7%9C%8C%E7%94%B1%E5%B8%83%E5%B8%82%E6%8C%BE%E9%96%93%E7%94%BA%E5%8C%BB%E5%A4%A7%E3%83%B6%E4%B8%981-1
+[{"geometry":{"coordinates":[131.534531,33.210209],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大分県由布市挾間町医大ケ丘一丁目１番地"}}]

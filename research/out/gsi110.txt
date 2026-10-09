@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E5%B0%8F%E7%94%B0%E5%8E%9F%E5%B8%82%E4%B9%85%E9%87%8E46
+[{"geometry":{"coordinates":[139.151993,35.267757],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県小田原市久野４６番地"}}]

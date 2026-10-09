@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E5%B7%9D%E5%B4%8E%E5%B8%82%E5%AE%AE%E5%89%8D%E5%8C%BA%E8%8F%85%E7%94%9F2-16-1
+[{"geometry":{"coordinates":[139.547073,35.59956],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県川崎市宮前区菅生二丁目１６番"}}]

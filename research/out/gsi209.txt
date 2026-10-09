@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E9%83%BD%E5%B3%B6%E5%8C%BA%E9%83%BD%E5%B3%B6%E6%9C%AC%E9%80%9A2-13-22
+[{"geometry":{"coordinates":[135.523514,34.708454],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府大阪市都島区都島本通二丁目１３番２２号"}}]

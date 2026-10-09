@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%B8%82%E6%89%8B%E7%A8%B2%E5%8C%BA%E5%89%8D%E7%94%B01%E6%9D%A112-1-40
+[{"geometry":{"coordinates":[141.243591,43.122437],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"北海道札幌市手稲区前田一条十二丁目１番４０号"}}]

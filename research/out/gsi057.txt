@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E6%89%80%E6%B2%A2%E5%B8%82%E4%B8%A6%E6%9C%A83-2
+[{"geometry":{"coordinates":[139.46727,35.801842],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県所沢市並木三丁目２番"}}]

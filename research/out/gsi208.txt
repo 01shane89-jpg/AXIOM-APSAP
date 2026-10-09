@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E6%B3%89%E4%BD%90%E9%87%8E%E5%B8%82%E3%82%8A%E3%82%93%E3%81%8F%E3%81%86%E5%BE%80%E6%9D%A5%E5%8C%972-23
+[{"geometry":{"coordinates":[135.302505,34.411983],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府泉佐野市りんくう往来北２番地"}}]

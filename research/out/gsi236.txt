@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%92%8C%E6%AD%8C%E5%B1%B1%E7%9C%8C%E5%92%8C%E6%AD%8C%E5%B1%B1%E5%B8%82%E7%B4%80%E4%B8%89%E4%BA%95%E5%AF%BA811-1
+[{"geometry":{"coordinates":[135.181717,34.187664],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"和歌山県和歌山市紀三井寺８１１番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E6%8E%9B%E5%B7%9D%E5%B8%82%E8%8F%96%E8%92%B2%E3%83%B6%E6%B1%A01%E7%95%AA%E5%9C%B0%E3%81%AE1
+[{"geometry":{"coordinates":[138.002869,34.755684],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県掛川市菖蒲ヶ池１番地"}}]

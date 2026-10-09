@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E6%9D%B1%E5%B1%B1%E5%8C%BA%E6%9C%AC%E7%94%BA15%E4%B8%81%E7%9B%AE749
+[{"geometry":{"coordinates":[135.772827,34.980305],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府京都市東山区本町十五丁目７４９番地"}}]

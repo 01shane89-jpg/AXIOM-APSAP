@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%BA%83%E5%B3%B6%E5%B8%82%E4%B8%AD%E5%8C%BA%E5%9F%BA%E7%94%BA7-33
+[{"geometry":{"coordinates":[132.458832,34.397812],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県広島市中区基町７番３３号"}}]

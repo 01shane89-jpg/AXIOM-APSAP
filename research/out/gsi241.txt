@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B3%B6%E6%A0%B9%E7%9C%8C%E6%9D%BE%E6%B1%9F%E5%B8%82%E6%AF%8D%E8%A1%A3%E7%94%BA200
+[{"geometry":{"coordinates":[133.057068,35.470592],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"島根県松江市母衣町２００番地"}}]

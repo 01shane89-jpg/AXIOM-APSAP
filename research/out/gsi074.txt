@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%88%90%E7%94%B0%E5%B8%82%E9%A3%AF%E7%94%B0%E7%94%BA90-1
+[{"geometry":{"coordinates":[140.303375,35.765102],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県成田市飯田町９０番地"}}]

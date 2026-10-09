@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%85%AB%E7%8E%8B%E5%AD%90%E5%B8%82%E9%A4%A8%E7%94%BA1163
+[{"geometry":{"coordinates":[139.288834,35.632919],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都八王子市館町１１６３番地"}}]

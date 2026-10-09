@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%B8%89%E9%87%8D%E7%9C%8C%E6%B4%A5%E5%B8%82%E6%B1%9F%E6%88%B8%E6%A9%8B2%E4%B8%81%E7%9B%AE-174%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[136.522507,34.742409],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"三重県津市江戸橋二丁目１７４番地"}}]

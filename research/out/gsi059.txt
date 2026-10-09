@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E8%B6%8A%E8%B0%B7%E5%B8%82%E5%8D%97%E8%B6%8A%E8%B0%B72-1-50
+[{"geometry":{"coordinates":[139.789307,35.878487],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県越谷市南越谷二丁目１番５０号"}}]

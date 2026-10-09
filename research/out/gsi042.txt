@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E6%97%A5%E7%AB%8B%E5%B8%82%E5%9F%8E%E5%8D%97%E7%94%BA2-1-1
+[{"geometry":{"coordinates":[140.643677,36.591316],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"茨城県日立市城南町二丁目１番"}}]

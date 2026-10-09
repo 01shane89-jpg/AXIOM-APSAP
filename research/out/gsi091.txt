@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%B0%8F%E5%B9%B3%E5%B8%82%E8%8A%B1%E5%B0%8F%E9%87%91%E4%BA%958-1-1
+[{"geometry":{"coordinates":[139.502655,35.731667],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都小平市花小金井八丁目１番"}}]

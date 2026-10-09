@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E7%A6%8F%E5%B2%A1%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%A4%A9%E7%A5%9E1-3-46
+[{"geometry":{"coordinates":[130.403229,33.589699],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県福岡市中央区天神一丁目３番４６号"}}]

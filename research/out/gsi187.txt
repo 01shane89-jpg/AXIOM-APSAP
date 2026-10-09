@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%B0%8F%E7%89%A7%E5%B8%82%E5%B8%B8%E6%99%AE%E8%AB%8B1-20
+[{"geometry":{"coordinates":[136.917191,35.287514],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県小牧市常普請一丁目２０番地"}}]

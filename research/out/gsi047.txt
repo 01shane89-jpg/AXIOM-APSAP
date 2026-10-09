@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%A0%83%E6%9C%A8%E7%9C%8C%E4%B8%8B%E9%83%BD%E8%B3%80%E9%83%A1%E5%A3%AC%E7%94%9F%E7%94%BA%E5%A4%A7%E5%AD%97%E5%8C%97%E5%B0%8F%E6%9E%97880
+[{"geometry":{"coordinates":[139.825363,36.472305],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"栃木県壬生町北小林８８０番地"}}]

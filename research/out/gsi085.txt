@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%A4%9A%E6%91%A9%E5%B8%82%E6%B0%B8%E5%B1%B11-7-1
+[{"geometry":{"coordinates":[139.446304,35.631214],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都多摩市永山一丁目７番"}}]

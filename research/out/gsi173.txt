@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E8%B1%8A%E7%94%B0%E5%B8%82%E5%B9%B3%E5%92%8C%E7%94%BA1-1
+[{"geometry":{"coordinates":[137.177521,35.057915],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県豊田市平和町一丁目１番地"}}]

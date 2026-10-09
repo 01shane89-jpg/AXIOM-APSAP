@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A7%8B%E7%94%B0%E7%9C%8C%E7%A7%8B%E7%94%B0%E5%B8%82%E5%BA%83%E9%9D%A2%E5%AD%97%E8%93%AE%E6%B2%BC44%E7%95%AA2
+[{"geometry":{"coordinates":[140.149078,39.729149],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"秋田県秋田市広面蓮沼４４番地"}}]

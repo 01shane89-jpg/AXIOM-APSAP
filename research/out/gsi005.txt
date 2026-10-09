@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%8C%9711%E6%9D%A1%E8%A5%BF13%E4%B8%81%E7%9B%AE
+[{"geometry":{"coordinates":[141.335037,43.071274],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"北海道札幌市中央区北十一条西十三丁目"}}]

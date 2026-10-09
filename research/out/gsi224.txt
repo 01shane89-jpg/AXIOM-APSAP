@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E6%B4%B2%E6%9C%AC%E5%B8%82%E5%A1%A9%E5%B1%8B1-1-137
+[{"geometry":{"coordinates":[134.896713,34.34618],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県洲本市塩屋一丁目１番１３７号"}}]

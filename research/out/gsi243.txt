@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B3%B6%E6%A0%B9%E7%9C%8C%E5%87%BA%E9%9B%B2%E5%B8%82%E5%A1%A9%E5%86%B6%E7%94%BA89%E2%88%921
+[{"geometry":{"coordinates":[132.752869,35.347454],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"島根県出雲市塩冶町８９番地"}}]

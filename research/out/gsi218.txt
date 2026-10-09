@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E6%9E%9A%E6%96%B9%E5%B8%82%E6%96%B0%E7%94%BA2-3-1
+[{"geometry":{"coordinates":[135.64505,34.817467],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府枚方市新町二丁目３番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%95%B7%E5%B4%8E%E7%9C%8C%E9%95%B7%E5%B4%8E%E5%B8%82%E6%96%B0%E5%9C%B0%E7%94%BA6%E7%95%AA39%E5%8F%B7
+[{"geometry":{"coordinates":[129.87236,32.740009],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"長崎県長崎市新地町６番３９号"}}]

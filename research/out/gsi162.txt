@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E6%B5%9C%E6%9D%BE%E5%B8%82%E5%8C%97%E5%8C%BA%E4%B8%89%E6%96%B9%E5%8E%9F%E7%94%BA3453
+[{"geometry":{"coordinates":[137.726303,34.710808],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県浜松市"}}]

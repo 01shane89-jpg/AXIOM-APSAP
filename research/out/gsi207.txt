@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%90%B9%E7%94%B0%E5%B8%82%E6%B4%A5%E9%9B%B2%E5%8F%B01-1-6
+[{"geometry":{"coordinates":[135.510178,34.79488],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府吹田市津雲台一丁目１番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E9%B4%A8%E5%B7%9D%E5%B8%82%E6%9D%B1%E7%94%BA929
+[{"geometry":{"coordinates":[140.125504,35.120132],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県鴨川市東町９２９番地"}}]

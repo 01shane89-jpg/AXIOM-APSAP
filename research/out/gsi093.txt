@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%B8%AF%E5%8C%BA%E4%B8%89%E7%94%B01-4-17
+[{"geometry":{"coordinates":[139.742737,35.653156],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都港区三田一丁目４番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8A%E4%BA%AC%E5%8C%BA%E9%87%9C%E5%BA%A7%E9%80%9A%E4%B8%B8%E5%A4%AA%E7%94%BA%E4%B8%8A%E3%83%AB%E6%98%A5%E5%B8%AF%E7%94%BA355-5
+[{"geometry":{"coordinates":[135.756714,35.029552],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府京都市上京区"}}]

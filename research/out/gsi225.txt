@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E7%A5%9E%E6%88%B8%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E6%B8%AF%E5%B3%B6%E5%8D%97%E7%94%BA2-1-1
+[{"geometry":{"coordinates":[135.21521,34.6586],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県神戸市中央区港島南町二丁目１番地"}}]
