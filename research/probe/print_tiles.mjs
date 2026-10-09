@@ -11,11 +11,16 @@ for (const [bn, bt] of [["webkit", webkit], ["chromium", chromium]]) {
   pg.on("request", (r) => { if (/tile\.openstreetmap/.test(r.url())) t0[r.url()] = Date.now(); });
   pg.on("requestfinished", async (r) => { if (/tile\.openstreetmap/.test(r.url())) { const res = await r.response(); log.push("TILE " + (res ? res.status() + " " + (res.headers()["access-control-allow-origin"] || "-") + " sw=" + res.fromServiceWorker() : "?") + " " + (Date.now() - (t0[r.url()] || 0)) + "ms " + r.url().replace("https://tile.openstreetmap.org/", "")); } });
   pg.on("requestfailed", (r) => { if (/tile\.openstreetmap/.test(r.url())) log.push("TILEFAIL " + (r.failure() || {}).errorText + " " + (Date.now() - (t0[r.url()] || 0)) + "ms " + r.url().replace("https://tile.openstreetmap.org/", "")); });
-  for (const pass of ["cold", "sw"]) {
+  for (const pass of ["cold", "sw", "bigcache"]) {
     log.push("##### " + bn + " " + pass);
     try {
       if (pass === "cold") await pg.goto(URL, { waitUntil: "domcontentloaded", timeout: 120000 }); else await pg.reload({ waitUntil: "domcontentloaded", timeout: 120000 });
       await pg.waitForFunction(() => window.OSAP_MEDPLAN && window.OSAP_MEDPLAN._parseGrid, null, { timeout: 120000 });
+      if (pass === "bigcache") {
+        const t = Date.now();
+        await pg.evaluate(async () => { for (const [name, n] of [["osap-offline", 12000], ["asap-tiles", 1500]]) { const c = await caches.open(name); for (let i = 0; i < n; i += 200) await Promise.all(Array.from({ length: 200 }, (_, j) => c.put("https://tile.openstreetmap.org/9/" + (i + j) + "/1.png?fill", new Response(new Uint8Array(20000))))); } });
+        log.push("filled caches in " + (Date.now() - t) + "ms");
+      }
       log.push("controlled=" + (await pg.evaluate(() => !!(navigator.serviceWorker && navigator.serviceWorker.controller))));
       const at = await pg.evaluate((g) => window.OSAP_MEDPLAN._parseGrid(g), GRID);
       await pg.evaluate((at) => window.OSAP_MEDPLAN.open({ at }), at);
