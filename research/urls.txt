@@ -333,3 +333,14 @@ gsi308 https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%
 gsi309 https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E3%81%86%E3%82%8B%E3%81%BE%E5%B8%82%E5%AD%97%E5%AE%AE%E9%87%8C281%E7%95%AA%E5%9C%B0
 gsi310 https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%B3%B6%E5%B0%BB%E9%83%A1%E5%8D%97%E9%A2%A8%E5%8E%9F%E7%94%BA%E5%AD%97%E6%96%B0%E5%B7%9D118-1
 gsi311 https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%AE%9C%E9%87%8E%E6%B9%BE%E5%B8%82%E5%96%9C%E5%8F%8B%E5%90%8D1076%E7%95%AA%E5%9C%B0
+yk_crit_shaho https://ika.shaho.co.jp/r08_ika_kaishaku/assets/pdf/tsy73.pdf
+yk_crit_hk https://kouseikyoku.mhlw.go.jp/hokkaido/shinsei/shido_kansa/shitei_kijun/documents/t-73-p.pdf
+yk_crit_kinki https://kouseikyoku.mhlw.go.jp/kinki/r6-t73.pdf
+yk_idx_hokkaido https://kouseikyoku.mhlw.go.jp/hokkaido/gyomu/gyomu/hoken_kikan/todokede_juri_ichiran.html
+yk_idx_tohoku https://kouseikyoku.mhlw.go.jp/tohoku/gyomu/gyomu/hoken_kikan/documents/201805koushin.html
+yk_idx_tokaihokuriku https://kouseikyoku.mhlw.go.jp/tokaihokuriku/newpage_00735.html
+yk_idx_cs https://kouseikyoku.mhlw.go.jp/chugokushikoku/gyomu/gyomu/hoken_kikan/shitei_jokyo_00004.html
+yk_idx_kanto https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/kijun.html
+yk_idx_kinki https://kouseikyoku.mhlw.go.jp/kinki/gyomu/gyomu/hoken_kikan/shitei_jokyo_00004.html
+yk_idx_shikoku https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index.html
+yk_idx_kyushu https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00007.html
