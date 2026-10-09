@@ -44,7 +44,12 @@ C.forEach((c) => {
 ok(match === C.length, "CT/MRI only at item 21 = 2, theatre only at item 22 >= 1, trauma surgery only at item 12 >= 1, burns only for advanced centres");
 const noCt = C.find((c) => I(c, "21") === 0);
 ok(!!noCt, "a centre without CT and MRI at all times exists in the data (" + (noCt && noCt.list_name) + ")");
-ok(R.every((h) => !h.caps["blood.bank"] && !(h.caps_std || {})["blood.bank"] && !h.caps["cc.icu"]), "no record claims a blood bank, and ICU is never stated as the centre's own evaluation");
+const T = JSON.parse(readFileSync("source/japan/transfusion-2026.json", "utf8"));
+const TX = new Set(T.centres.map((c) => "sof:jp:ccc:" + createHash("sha256").update(c.pref + c.list_name).digest("hex").slice(0, 12)));
+ok(TX.size >= 300 && R.every((h) => !!h.caps["blood.bank"] === TX.has(h.id)), "blood bank only where the bureau lists the centre for transfusion management (" + TX.size + ")");
+ok(R.every((h) => !(h.caps_std || {})["blood.bank"] && !h.caps["cc.icu"]), "blood bank is never inferred from the designation, and ICU is never stated as the centre's own evaluation");
+ok(T.centres.every((c) => /^(I|II)$/.test(c.level) && T.files[c.file] && /^[0-9a-f]{64}$/.test(T.files[c.file].sha256) && !/\d{2,4}-\d{2,4}-\d{4}/.test(JSON.stringify(c))), "each registration names its level and hashed bureau file, and carries no phone number");
+ok(R.filter((h) => h.caps["blood.bank"]).every((h) => { const x = J.cap_refs[h.caps["blood.bank"].ref]; return x && T.files[x.src] && /常時実施できる体制/.test(x.quote) && /crossmatch/.test(x.quote_en); }), "each blood bank points at its bureau's file and quotes the all-hours testing requirement");
 ok(R.every((h) => Object.values(h.caps).every((x) => J.cap_refs[x.ref])), "every capability points at a quoted text");
 ok(Object.values(J.cap_refs).every((x) => /mhlw\.go\.jp|pref\.okinawa\.lg\.jp/.test(x.src) && x.quote && x.quote_en && x.quote_basis !== undefined || x.ref), "quoted texts come from MHLW's files");
 
