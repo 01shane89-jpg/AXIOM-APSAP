@@ -34,6 +34,7 @@ jobs:
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
       - run: node tests/hosp.test.mjs
+      - run: node tests/jp_ccc.test.mjs
       - run: node tests/medplan_model.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/facility_intel.test.mjs
