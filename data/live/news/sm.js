@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-09 07:22Z","sources":[{"cc":"sm","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22San%20Marino%22&format=rss","ok":true,"n":6,"old":2}],"coverage":{"countries":198,"with":197,"none":["nr"]},"items":{"sm":[]}};
+window.ASAP_NEWS={"asof":"2026-10-09 07:37Z","sources":[{"cc":"sm","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22San%20Marino%22&format=rss","ok":true,"n":7,"old":1}],"coverage":{"countries":198,"with":194,"none":["ad","bg","cz","nr"]},"items":{"sm":[]}};
