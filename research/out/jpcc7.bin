@@ -1,0 +1,3757 @@
+
+
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<?ra-page viewport="auto" image-convert="no" g="SP" ?>
+-->
+<!DOCTYPE html>
+<html lang="ja" class="is-nojs">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta property="og:title" content="救命救急センター設置状況一覧">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mhlw.go.jp/stf/newpage_32614.html">
+<meta property="og:image" content="">
+<meta property="og:site_name" content="">
+<meta property="og:description" content="">
+<meta property="fb:app_id" content="">
+<title>救命救急センター設置状況一覧｜厚生労働省</title>
+<link rel="canonical" href="https://www.mhlw.go.jp/stf/newpage_32614.html">
+<link rel="stylesheet" href="/common/css/app.css">
+<link rel="stylesheet" href="/common/css/acn.css">
+<script>document.documentElement.className = document.documentElement.className.replace('is-nojs', 'is-js');</script>
+<script id="pt_loader" src="/common/js/ewbc.min.js"></script>
+<script src="/common/js/newDate.js"></script>
+</head>
+<body class="t-mhlw nav03">
+<!--
+<?ra g="!MB" line="*"?>
+-->
+<noscript>
+<p>このページではJavaScriptを使用しています。JavaScriptを有効にしてください。</p>
+</noscript>
+<!--
+<?ra break?>
+-->
+<div class="l-wrapper" id="top">
+<!--
+<?ra g="!MB" line="*"?>
+-->
+<header class="l-header">
+<div class="l-headerMain renewsize">
+<div class="l-headerMain__inner">
+<div class="l-headerMain__left">
+<div class="m-headerLogo"><a href="https://www.mhlw.go.jp/"><img src="/content/000269503.png" alt="厚生労働省"><img src="/common/img/transparent-header.png" alt="" class="transparent"></a></div>
+<button type="button" class="m-headerOpenSearch js-openSearchButton"><span class="m-headerOpenSearch__line"><span>検索</span></span></button>
+<button type="button" class="m-headerHmenu js-hmenu"><span class="m-headerHmenu__line"><span>メニュー</span></span></button>
+<!-- /.l-headerMain__left --></div>
+<div class="l-headerMain__right">
+<ul class="m-headerLink">
+<li><a href="#content" class="m-headerLink--main js-scroll" data-id="#content">本文へ</a></li>
+
+<li><a href="https://www.mhlw.go.jp/otoiawase/index.html">お問合わせ窓口</a></li>
+
+<li><a href="https://www.mhlw.go.jp/qa/index.html">よくある御質問</a></li>
+
+<li><a href="https://www.mhlw.go.jp/sitemap/index.html">サイトマップ</a></li>
+
+<li><a href="https://www.mhlw.go.jp/houdou_kouhou/sanka/index.html">国民参加の場</a></li>
+
+<li class="m-headerLink--sp"><a href="https://www.mhlw.go.jp/tenji/index.html">点字ダウンロード</a></li>
+
+
+</ul>
+
+
+<form action="/search.html">
+<div class="m-headerSearch">
+<label for="q"><input class="m-headerSearch__textbox" type="text" name="q" id="q" title="カスタム検索" placeholder="カスタム検索"></label>
+<input type="hidden" name="cx" value="005876357619168369638:ydrbkuj3fss">
+<input type="hidden" name="cof" value="FORID:9">
+<input type="hidden" name="ie" value="UTF-8">
+<button type="submit" name="sa" class="m-headerSearch__button">検索</button>
+<!-- /.m-headerSearch --></div>
+</form>
+<button type="button" class="m-headerOpenSearchClose js-openSearchButtonClose"><span>閉じる</span></button>
+<script src="https://www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+
+<!-- /.l-headerMain__right --></div>
+<!-- /.l-headerMain__inner --></div>
+<!-- /.l-headerMain --></div>
+<div class="l-headerUtil">
+<div class="l-headerUtil__inner">
+<div class="m-headerUtil">
+<div class="m-headerUtil__lang">
+<div class="m-headerUtil__lang__ttl"><span>Language</span></div>
+<p class="m-headerUtil__lang__help"><a href="#" class="js-modal"><img src="/common/img/icn_help.svg" alt="ヘルプ情報"></a></p>
+<div class="m-modal">
+<div class="m-modal__content">
+<div class="m-modal__inner" tabindex="0">
+<div class="m-hdgLv3"><div class="m-hdgLv3__hdg">「言語切替」サービスについて</div></div>
+<div><p class="m-txtM">このホームページを、英語・中国語・韓国語へ機械的に自動翻訳します。以下の内容をご理解のうえ、ご利用いただきますようお願いします。</p>
+
+<ul class="m-listOrder">
+<li><span class="m-listOrder__sym">1.</span>
+
+<div class="m-listOrder__txt">翻訳対象はページ内に記載されている文字情報となります。画像等で表現する内容は翻訳されません。</div>
+</li>
+<li><span class="m-listOrder__sym">2.</span>
+<div class="m-listOrder__txt">機械による自動翻訳のため、必ずしも正確な翻訳であるとは限りません。</div>
+</li>
+<li><span class="m-listOrder__sym">3.</span>
+<div class="m-listOrder__txt">翻訳前の日本語ページに比べ、画面の表示に若干時間がかかる場合があります。</div>
+</li>
+</ul></div>
+<button type="button" class="m-modal__close"><span>閉じる</span></button>
+<!-- /.m-modal__inner --></div>
+<!-- /.m-modal__content --></div>
+<!-- /.m-modal --></div>
+<div class="m-headerUtil__lang__select">
+<div class="m-headerUtil__lang__select__current"><button type="button" id="headerLang">
+<span class="is-ja">Japanese</span>
+<span class="is-en">English</span>
+<span class="is-cn">中文(简体字)</span>
+<span class="is-tw">中文(繁體字)</span>
+<span class="is-ko">한국어</span>
+<img src="/common/img/icn_lang.svg" alt="開く"></button></div>
+<ul class="m-headerUtil__lang__select__list">
+<li><olang><a href="" lang="ja" data-lang="ja">Japanese</a></olang></li>
+<li><olang><a href="https://translation.mhlw.go.jp
+/LUCMHLW/ns/w1/jaen/" lang="en" data-lang="en">English</a></olang></li>
+<li><olang><a href="https://translation.mhlw.go.jp
+/LUCMHLW/ns/w1/jazh/" lang="zh-cn" data-lang="zh-cn">中文(简体字)</a></olang></li>
+<li><olang><a href="https://translation.mhlw.go.jp
+/LUCMHLW/ns/w1/jazhb/" lang="zh-tw" data-lang="zh-tw">中文(繁體字)</a></olang></li>
+<li><olang><a href="https://translation.mhlw.go.jp
+/LUCMHLW/ns/w1/jako/" lang="ko" data-lang="ko">한국어</a></olang></li>
+</ul>
+<olang><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script></olang>
+<script>
+$(function(){
+	if (location.href.indexOf("tl.cgi") != -1) {
+	var url = location.href
+	var translation_url = url.slice(0,url.indexOf("?SLANG")).slice(url.indexOf("tl.cgi/") + 7);
+	}else{
+	var translation_url = location.href;
+	}
+	$("ul.m-headerUtil__lang__select__list a").each(function() {
+	$(this).attr("href",$(this).attr("href") + translation_url);
+	});
+});
+</script>
+
+<!-- /.m-headerUtil__lang__select --></div>
+<!-- /.m-headerUtil__lang --></div>
+<div class="m-headerUtil__support">
+<ul class="m-headerUtil__tool">
+
+<li><a href="https://www.mhlw.go.jp/tenji/index.html">点字ダウンロード</a></li>
+
+<li class="etsuran"><a href="javascript:ptspkLoader('toggle')" id="pt_enable">サイト閲覧支援ツール起動</a><a href="https://www.mhlw.go.jp/etsuranshien/index.html" class="etsuran_on">(ヘルプ)</a></li>
+
+</ul>
+<dl class="m-headerUtil__fontsize">
+<dt>文字サイズの変更</dt>
+<dd><a href="#" class="js-fontAdjust is-current" data-size="m">標準</a></dd>
+<dd><a href="#" class="js-fontAdjust" data-size="l">大</a></dd>
+<dd><a href="#" class="js-fontAdjust" data-size="xl">特大</a></dd>
+<!-- /.m-headerUtil__fontsize --></dl>
+<ul class="m-headerUtil__support__list">
+
+
+</ul>
+<!-- /.m-headerUtil__support --></div>
+<!-- /.m-headerUtil --></div>
+<!-- /.l-headerUtil__inner --></div>
+<!-- /.l-headerUtil --></div>
+<nav class="l-headerGnav">
+<div class="l-headerGnav__inner">
+<ul class="m-headerGnav">
+<li><a href="#" class="js-mdrop" data-id="megadrop-01"><span><span>テーマ別に探す</span></span></a>
+<div class="m-headerMdrop" id="megadrop-01">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/theme/index.html" class="js-toggle-sp" data-id="mdorop-01">テーマ別に探す
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/theme/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">テーマ別に探す
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-01">
+<li class="m-headerMdrop__menu--sp"><a href="/theme/index.html"><span>テーマ別に探すトップへ</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/index.html"><span>健康・医療</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/index.html"><span>福祉・介護</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/index.html"><span>雇用・労働</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/nenkin/index.html"><span>年金</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/index.html"><span>他分野の取り組み</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+<div class="m-headerMdrop__hdg--lv3 mhlw-top_mt0">政策分野別に探す</div>
+<div class="m-headerMdrop__box">
+<div class="m-headerMdrop__list--ttl">
+<div class="m-headerMdrop__list--ttl__hdg"><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/index.html">健康・医療</a></div>
+<ul class="m-headerMdrop__list--ttl__list">
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/index.html">健康</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/index.html">食品</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/index.html">医療</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/index.html">医療保険</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/index.html">医薬品・医療機器</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000099450.html">生活衛生</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/suido/index.html">水道</a></li>
+</ul>
+</div>
+<div class="m-headerMdrop__list--ttl">
+<div class="m-headerMdrop__list--ttl__hdg"><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/index.html">福祉・介護</a></div>
+<ul class="m-headerMdrop__list--ttl__list">
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/index.html">障害者福祉</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/index.html">生活保護・福祉一般</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/kaigo_koureisha/index.html">介護・高齢者福祉</a></li>
+</ul>
+</div>
+<div class="m-headerMdrop__list--ttl">
+<div class="m-headerMdrop__list--ttl__hdg"><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/index.html">雇用・労働</a></div>
+<ul class="m-headerMdrop__list--ttl__list">
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/koyou/index.html">雇用</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/jinzaikaihatsu/index.html">人材開発</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/index.html">労働基準</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/index.html">雇用環境・均等</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kodomo/shokuba_kosodate/index.html">職場における子育て支援</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/index.html">非正規雇用（有期・パート・派遣労働）</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/roudouzenpan/index.html">労働政策全般</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/soudanmadogutitou/index.html">相談窓口等</a></li>
+</ul>
+</div>
+<div class="m-headerMdrop__list--ttl">
+<div class="m-headerMdrop__list--ttl__hdg"><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/nenkin/index.html">年金</a></div>
+<ul class="m-headerMdrop__list--ttl__list">
+<li><a href="/stf/seisakunitsuite/bunya/nenkin/nenkin/index.html">年金・日本年金機構関係</a></li>
+</ul>
+</div>
+<div class="m-headerMdrop__list--ttl">
+<div class="m-headerMdrop__list--ttl__hdg"><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hokabunya/index.html">他分野の取り組み</a></div>
+<ul class="m-headerMdrop__list--ttl__list">
+<li><a href="/stf/taiou_001_00002.html">「年収の壁」への対応</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/kokusai/index.html">国際関係</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/kenkyujigyou/index.html">研究事業</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/shakaihoshou/index.html">社会保障全般</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/senbotsusha/index.html">戦没者遺族等への援護</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000055967.html">災害・危機管理</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/jyouhouseisaku/index.html">情報政策</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/kansoka/index_00003.html">規制改革・行政手続関係</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/index_00005.html">医薬品等行政評価・監視委員会</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaishakoyou/index_00007.html"> 性的マイノリティに関する厚生労働省の取組</a></li>
+</ul>
+</div>
+<!-- /.m-headerMdrop__box --></div>
+<div class="m-headerMdrop__hdg--lv3">キーワードで探す</div>
+<div class="m-headerMdrop__box">
+<div class="m-headerMdrop__list--ttl">
+
+<ul class="m-headerMdrop__list--ttl__list m-link--pipe g-mt0">
+<li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou/kekkaku-kansenshou19/mers.html">中東呼吸器症候群（MERS）</a></li>
+<li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000131101.html">デング熱</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/index.html">予防接種</a></li>
+<li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_00184.html">新型コロナワクチン</a></li>
+<li><a href="/bunya/shakaihosho/iryouseido01/info02d.html">後期高齢者医療制度</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000106602.html">診療報酬改定</a></li>
+<li><a href="/bunya/iryouhoken/iryouhoken09/07-2.html">出産一時金</a></li>
+<li><a href="/shinsai_jouhou/shokuhin.html">食品中の放射性物質への対応</a></li>
+<li><a href="/seisakunitsuite/bunya/kenkou_iryou/iryou/kouhatu-iyaku/index.html">後発医薬品の使用促進</a></li>
+<li><a href="/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/rubella/">風しん</a></li>
+<li><a href="/seisakunitsuite/bunya/kenkou_iryou/kenkou/nanbyou/">難病対策</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/iryouhoken14/index.html">消費税と診療報酬について</a></li>
+<li><a href="/seisakunitsuite/bunya/hokabunya/shakaihoshou/hokeniryou2035/index.html">保健医療2035</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000109881.html">ジカウイルス感染症</a></li>
+<li><a href="/bunya/kenkou/eizu/">12月1日は世界エイズデー</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kodomo/shokuba_kosodate/kurumin/index.html">くるみんマークについて</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/kaigo_koureisha/ninchi/index.html">認知症施策</a></li>
+<li><a href="/seisakunitsuite/bunya/hukushi_kaigo/kaigo_koureisha/kouhyou/">介護サービス情報公表システム</a></li>
+<li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/jisatsu/index.html">自殺</a></li>
+<li><a href="https://www.worldautismawarenessday.jp/">世界自閉症啓発デー2017</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000077386.html">労働者派遣法の改正</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/jinzaikaihatsu/kyouiku.html">教育訓練給付制度について</a></li>
+<li><a href="https://safeconsortium.mhlw.go.jp/">SAFEコンソーシアム</a></li>
+<li><a href="/seisakunitsuite/bunya/koyou_roudou/roudouseisaku/chushoukigyou/index.html">中小企業お役立ち</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jakunen/index.html">若者の就職支援</a></li>
+<li><a href="/general/seido/chihou/kaiketu/index.html">個別労働紛争解決制度</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000053276.html">人材確保対策</a></li>
+<li><a href="/stf/houdou/0000073981.html">労働基準法の見直し</a></li>
+<li><a href="/stf/houdou/0000073981.html">高度プロフェッショナル制度</a></li>
+<li><a href="https://work-holiday.mhlw.go.jp/">働き方・休み方改善ポータルサイト</a></li>
+<li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/jinzaikaihatsu/chousa/r1/index_00003.html">能力開発基本調査</a></li>
+<li><a href="https://saposute-net.mhlw.go.jp/">サポステ</a></li>
+<li><a href="/bunya/roudoukijun/anzeneisei12/">ストレスチェック</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/jinzaikaihatsu/global_cooperation/01.html">外国人技能実習制度</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000152638.html">日本年金機構における不正アクセスによる情報流出事案について</a></li>
+<li><a href="https://www.nenkin.go.jp/service/nenkinkiroku/torikumi/sonota/kini-cam/20140331.html">年金記録の再確認をお願いします</a></li>
+<li><a href="https://www.nenkin.go.jp/denshibenri_kojin/n_net/index.html">「ねんきんネット」であなたの年金を簡単確認</a></li>
+<li><a href="https://www.nenkin.go.jp/service/kokunen/menjo/20150428.html">保険料が払えないと思っている方へ</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/nenkin/kyoshutsu/ideco.html">iDeCo（個人型確定拠出年金）</a></li>
+<li><a href="/seisakunitsuite/bunya/hokabunya/shakaihoshou/kaikaku.html">社会保障改革</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000039987.html">戦没者の遺品をお持ちの方へ</a></li>
+<li><a href="/topics/bukyoku/syakai/soren/">ロシア連邦政府等から提供された抑留者に関する資料について</a></li>
+<li><a href="https://www.mhlw.go.jp/stf/birth-navi/index.html">出産なび</a></li>
+<li><a href="https://www.mhlw.go.jp/nanntyou/index.html">難聴への対応</a></li>
+</ul>
+</div>
+<!-- /.m-headerMdrop__box --></div>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-02"><span><span>報道・広報</span></span></a>
+<div class="m-headerMdrop" id="megadrop-02">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/houdou_kouhou/index.html" class="js-toggle-sp" data-id="mdorop-02">報道・広報
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/houdou_kouhou/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">報道・広報
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-02">
+<li class="m-headerMdrop__menu--sp"><a href="/houdou_kouhou/index.html"><span>報道・広報トップへ</span></a></li>
+<li><a href="/stf/kaiken/index.html"><span>大臣記者会見</span></a></li>
+<li><a href="/stf/houdou/index.html"><span>報道発表資料</span></a></li>
+<li><a href="https://www.mhlw.go.jp/houdou_kouhou/kouhou_shuppan/"><span>広報・出版</span></a></li>
+<li><a href="https://www.mhlw.go.jp/houdou_kouhou/gyouji_kaigi/"><span>行事・会議の予定</span></a></li>
+<li><a href="/houdou_kouhou/sanka/index.html"><span>国民参加の場</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-03"><span><span>政策について</span></span></a>
+<div class="m-headerMdrop" id="megadrop-03">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/stf/seisakunitsuite/index.html" class="js-toggle-sp" data-id="mdorop-03">政策について
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/stf/seisakunitsuite/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">政策について
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-03">
+<li class="m-headerMdrop__menu--sp"><a href="/stf/seisakunitsuite/index.html"><span>政策についてトップへ</span></a></li>
+<li><a href="/stf/seisakunitsuite/bunya/index.html"><span>分野別の政策一覧</span></a></li>
+<li><a href="/stf/seisakunitsuite/soshiki/index.html"><span>組織別の政策一覧</span></a></li>
+<li><a href="/seisakunitsuite/joseikin_shoureikin/index.html"><span>各種助成金・奨励金等の制度</span></a></li>
+<li><a href="/stf/shingi/indexshingi.html"><span>審議会・研究会等</span></a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/kaigiroku/"><span>国会会議録</span></a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/yosan/"><span>予算および決算・税制の概要</span></a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/seisakuhyouka/"><span>政策評価・独法評価</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-04"><span><span>厚生労働省について</span></span></a>
+<div class="m-headerMdrop" id="megadrop-04">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/kouseiroudoushou/index.html" class="js-toggle-sp" data-id="mdorop-04">厚生労働省について
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/kouseiroudoushou/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">厚生労働省について
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-04">
+<li class="m-headerMdrop__menu--sp"><a href="/kouseiroudoushou/index.html"><span>厚生労働省についてトップへ</span></a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/profile/"><span>大臣・副大臣・政務官の紹介</span></a></li>
+<li><a href="/kouseiroudoushou/kanbumeibo/index.html"><span>幹部名簿</span></a></li>
+<li><a href="/kouseiroudoushou/shozaiannai/index.html"><span>所在地案内</span></a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/shigoto/"><span>主な仕事（所掌事務）</span></a></li>
+<li><a href="/stf/kouseiroudoushou/chihoukouseikyoku/index.html"><span>地方厚生（支）局</span></a></li>
+<li><a href="/stf/kouseiroudoushou/roudoukyoku/index.html"><span>労働局・労働基準監督署・ハローワーク</span></a></li>
+<li><a href="/stf/kouseiroudoushou/sisetu/index.html"><span>施設等機関</span></a></li>
+<li><a href="https://www.mhlw.go.jp/churoi/"><span>中央労働委員会</span></a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/shikaku_shiken/"><span>資格・試験情報</span></a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/saiyou/"><span>採用情報</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-05"><span><span>統計情報・白書</span></span></a>
+<div class="m-headerMdrop" id="megadrop-05">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/toukei_hakusho/index.html" class="js-toggle-sp" data-id="mdorop-05">統計情報・白書
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/toukei_hakusho/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">統計情報・白書
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-05">
+<li class="m-headerMdrop__menu--sp"><a href="/toukei_hakusho/index.html"><span>統計情報・白書トップへ</span></a></li>
+<li><a href="https://www.mhlw.go.jp/toukei_hakusho/toukei/"><span>各種統計調査</span></a></li>
+<li><a href="https://www.mhlw.go.jp/toukei_hakusho/hakusho/"><span>白書、年次報告書</span></a></li>
+<li><a href="/stf/toukei/goriyou/chousahyo.html"><span>調査票情報を利用したい方へ</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-06"><span><span>所管の法令等</span></span></a>
+<div class="m-headerMdrop" id="megadrop-06">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/shokanhourei/index.html" class="js-toggle-sp" data-id="mdorop-06">所管の法令等
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/shokanhourei/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">所管の法令等
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-06">
+<li class="m-headerMdrop__menu--sp"><a href="/shokanhourei/index.html"><span>所管の法令等トップへ</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shokanhourei/teishutsuhouan/"><span>国会提出法案</span></a></li>
+<li><a href="https://www.mhlw.go.jp/hourei/"><span>所管の法令、告示・通達等</span></a></li>
+<li><a href="/stf/newpage_19921.html"><span>覚書等</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<li><a href="#" class="js-mdrop" data-id="megadrop-07"><span><span>申請・募集・情報公開</span></span></a>
+<div class="m-headerMdrop" id="megadrop-07">
+<div class="m-headerMdrop__content">
+<div class="m-headerMdrop__hdg">
+<div class="megah2-sp">
+<div class="m-headerMdrop__hdg--lv2"><a href="/shinsei_boshu/index.html" class="js-toggle-sp" data-id="mdorop-07">申請・募集・情報公開
+<span class="m-headerMdrop__hdg--lv2__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a></div>
+</div>
+<div class="megah2-pc">
+<a href="/shinsei_boshu/index.html" style="text-decoration: none;width:100%; cursor:pointer;">
+<div class="m-headerMdrop__hdg--lv2">申請・募集・情報公開
+</div>
+</a>
+</div>
+<!-- /.m-headerMdrop__hdg --></div>
+<div class="m-headerMdrop__content__inner">
+<ul class="m-headerMdrop__menu" id="mdorop-07">
+<li class="m-headerMdrop__menu--sp"><a href="/shinsei_boshu/index.html"><span>申請・募集・情報公開トップへ</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/denshishinesei/"><span>電子申請（申請・届出等の手続案内）</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/houreitekiyou/"><span>法令適用事前確認手続</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/choutatsujouhou/"><span>調達情報</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gray_zone/gray_zone.html"><span>グレーゾーン解消制度・新事業特例制度</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/kouekitsuhousha/"><span>公益通報者の保護</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/jouhoukoukai/"><span>情報公開・個人情報保護</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/denshiseihu/"><span>デジタル・ガバメントの推進</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseibunsho/"><span>公文書管理</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseitetsuzuki_moushide/index.html"><span>行政手続法に基づく申出</span></a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseihuhukushinsa/index.html"><span>行政不服審査法に基づく審理員候補者名簿</span></a></li>
+<!-- /.m-headerMdrop__menu --></ul>
+
+
+
+
+<!-- /.m-headerMdrop__content__inner --></div>
+<button type="button" class="m-headerMdrop__close"><span>閉じる</span></button>
+<!-- /.m-headerMdrop__content --></div>
+<!-- /.m-headerMdrop --></div>
+</li>
+<!-- /.m-headerGnav --></ul>
+<!-- /.l-headerGnav__inner --></div>
+<div class="m-headerGnav__close--sp"><button type="button" class="m-headerGnav__close--sp__button"><span>閉じる</span></button></div>
+<!-- /.l-headerGnav --></nav>
+<!-- /.l-header --></header>
+<!--
+<?ra break?>
+-->
+<main class="l-content" id="content">
+<!--
+<?ra g="!MB" line="*"?>
+-->
+<div class="l-contentHead">
+<div class="l-contentHead__inner">
+<ol class="m-navBreadcrumb" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<a href="/index.html" itemprop="item"><span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1"><span>&gt;</span></li>
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<a href="/stf/seisakunitsuite/index.html" itemprop="item"><span itemprop="name">政策について</span></a>
+<meta itemprop="position" content="2"><span>&gt;</span></li>
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<a href="/stf/seisakunitsuite/bunya/index.html" itemprop="item"><span itemprop="name">分野別の政策一覧</span></a>
+<meta itemprop="position" content="3"><span>&gt;</span></li>
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<a href="/stf/seisakunitsuite/bunya/kenkou_iryou/index.html" itemprop="item"><span itemprop="name">健康・医療</span></a>
+<meta itemprop="position" content="4"><span>&gt;</span></li>
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/index.html" itemprop="item"><span itemprop="name">医療</span></a>
+<meta itemprop="position" content="5"><span>&gt;</span></li>
+<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+<span itemprop="name" aria-current="page">救命救急センター設置状況一覧</span>
+<meta itemprop="position" content="6"></li>
+<!-- /.m-navBreadcrumb --></ol>
+<!-- /.l-contentHead__inner --></div>
+<!-- /.l-contentHead --></div>
+<!--
+<?ra break?>
+-->
+<div class="l-contentBody">
+<div class="l-contentBody__inner">
+<div class="l-contentMain">
+
+<div class="m-hdgLv1">
+	<h1 class="m-hdgLv1__hdg">救命救急センター設置状況一覧</h1>
+	</div>
+
+<div class="m-grid">
+	<div class="m-grid__col1"><div>令和７年４月１日現在</div>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width: 500px;">
+	<tbody>
+		<tr>
+			<td>
+				<table border="1" style="border-collapse: collapse; width: 800px;">
+					<tbody>
+						<tr>
+							<td style="height: 40px; width: 85px; text-align: center;"><strong>都道府県</strong></td>
+							<td style="width: 50px; text-align: center; height: 40px;"><strong>区分</strong></td>
+							<td style="border-left-width: 1px; border-left-style: none; width: 50px; text-align: center; height: 40px;"><strong>ＤＨ</strong></td>
+							<td style="width: 85px; text-align: center; height: 40px;"><strong>施設名</strong></td>
+							<td style="width: 100px; text-align: center; height: 40px;"><strong>指定年月日</strong></td>
+							<td style="width: 85px; text-align: center; height: 40px;"><strong>設置者</strong></td>
+							<td style="border-left-width: 1px; border-left-style: none; width: 85px; text-align: center; height: 40px;"><strong>所在地</strong></td>
+							<td style="border-left-width: 1px; border-left-style: none; width: 85px; text-align: center; height: 40px;"><strong>電話番号</strong></td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="13" style="border-bottom:.10px solid black;height:260px;border-top:none 1px;">北海道</td>
+							<td style="border-top:none 1px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">旭川赤十字病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S53.7.10</td>
+							<td class="m-txt--center" style="border-top:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">旭川市曙1条1丁目1-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">0166-22-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>市立函館病院</td>
+							<td class="m-txt--center">S56.4.1</td>
+							<td class="m-txt--center">函館市</td>
+							<td style="border-left:none 1px;">函館市港町1丁目10番地1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0138-43-2000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>市立釧路総合病院</td>
+							<td class="m-txt--center">S57.10.1</td>
+							<td class="m-txt--center">釧路市</td>
+							<td style="border-left:none 1px;">釧路市春湖台1-12</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0154-41-6121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>北見赤十字病院</td>
+							<td class="m-txt--center">H4.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">北見市北６条東２丁目1番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0157-24-3115</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>市立札幌病院</td>
+							<td class="m-txt--center">H5.4.1</td>
+							<td class="m-txt--center">札幌市</td>
+							<td style="border-left:none 1px;">札幌市中央区北11条西13丁目</td>
+							<td class="m-txt--center" style="border-left:none 1px;">011-726-2211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>帯広厚生病院</td>
+							<td class="m-txt--center">H11.5.6</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">帯広市西14条南10丁目1番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0155-65-0101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>札幌医科大学附属病院</td>
+							<td class="m-txt--center">H14.4.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">札幌市中央区南1条西16丁目</td>
+							<td class="m-txt--center" style="border-left:none 1px;">011-611-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>手稲渓仁会病院</td>
+							<td class="m-txt--center">H17.3.25</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">札幌市手稲区前田1条12-1-40</td>
+							<td class="m-txt--center" style="border-left:none 1px;">011-681-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　北海道医療センター</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">札幌市西区山の手5条7丁目1番1号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">011-611-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>旭川医科大学病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H22.10.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">国立大学法人</td>
+							<td>旭川市緑が丘東2条1-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0166-65-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>砂川市立病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H23.12.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">砂川市</td>
+							<td>砂川市西４条北３丁目１番１号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0125-54-2131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">名寄市立総合病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H27.8.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">名寄市</td>
+							<td>名寄市西７条南８丁目１番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">01654-3-3101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>北海道大学病院</td>
+							<td class="m-txt--center">R3.12.24</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td>札幌市北区北14条西５丁目</td>
+							<td class="m-txt--center" style="border-left:none 1px;">011-716-1161</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;">青森県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>青森県立中央病院</td>
+							<td class="m-txt--center">S56.9.25</td>
+							<td class="m-txt--center">青森県</td>
+							<td style="border-left:none 1px;">青森市東造道2丁目-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">017-726-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>八戸市立市民病院</td>
+							<td class="m-txt--center">H9.9.1</td>
+							<td class="m-txt--center">八戸市</td>
+							<td style="border-left:none 1px;">八戸市田向三丁目１－１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0178-72-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>弘前大学医学部附属病院</td>
+							<td class="m-txt--center">H22.3.31</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">弘前市本町53</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0172-33-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">岩手県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>岩手医科大学附属病院</td>
+							<td class="m-txt--center">S55.11.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">紫波郡矢巾町医大通二丁目1番1号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">019-613-7111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岩手県立久慈病院</td>
+							<td class="m-txt--center">H10.3.1</td>
+							<td class="m-txt--center">岩手県</td>
+							<td style="border-left:none 1px;">久慈市旭町10-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0194-53-6131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岩手県立大船渡病院</td>
+							<td class="m-txt--center">H10.8.1</td>
+							<td class="m-txt--center">岩手県</td>
+							<td style="border-left:none 1px;">大船渡市大船渡町字山馬越10-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0192-26-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岩手県立中央病院</td>
+							<td class="m-txt--center">R4.4.1</td>
+							<td class="m-txt--center">岩手県</td>
+							<td style="border-left:none 1px;">盛岡市上田１丁目４番１号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">019-653-1151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="6" style="border-bottom:.10px solid black;height:120px;">宮城県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>独立行政法人国立病院機構&nbsp; 仙台医療センター</td>
+							<td class="m-txt--center">S53.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">仙台市宮城野区宮城野2-11-12</td>
+							<td class="m-txt--center" style="border-left:none 1px;">022-293-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>仙台市立病院</td>
+							<td class="m-txt--center">H3.4.24</td>
+							<td class="m-txt--center">仙台市</td>
+							<td style="border-left:none 1px;">仙台市太白区あすと長町1丁目1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">022-308-7111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大崎市民病院</td>
+							<td class="m-txt--center">H6.7.1</td>
+							<td class="m-txt--center">大崎市</td>
+							<td style="border-left:none 1px;">大崎市古川穂波3丁目8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0229-23-3311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○※</td>
+							<td>東北大学病院</td>
+							<td class="m-txt--center">H18.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">仙台市青葉区星陵町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">022-717-7000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>石巻赤十字病院</td>
+							<td class="m-txt--center">H21.7.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">石巻市蛇田字西道下71番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0225-21-7220</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>みやぎ県南中核病院</td>
+							<td class="m-txt--center">H26.7.1</td>
+							<td class="m-txt--center">みやぎ県南中核病院企業団</td>
+							<td style="border-left:none 1px;">柴田郡大河原町字西38－1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0224-51-5500</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="2" style="border-bottom:.10px solid black;height:40px;border-top:none 1px;">秋田県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">秋田赤十字病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">H10.7.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">秋田市上北手猿田字苗代沢222番地1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">018-829-5000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>秋田大学医学部附属病院</td>
+							<td class="m-txt--center">R3.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">秋田市広面字蓮沼44番2</td>
+							<td class="m-txt--center">018-834-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">山形県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">山形県立中央病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S59.6</td>
+							<td class="m-txt--center" style="border-top:none 1px;">山形県</td>
+							<td style="border-top:none 1px;border-left:none 1px;">山形市大字青柳1800</td>
+							<td class="m-txt--center" style="border-top:none 1px;">023-685-2626</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>公立置賜総合病院</td>
+							<td class="m-txt--center">H12.11.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">東置賜郡川西町大字西大塚2000</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0238-46-5000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>日本海総合病院</td>
+							<td class="m-txt--center"><span style="text-align: -webkit-right;">H23.4.1</span></td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">酒田市あきほ町30番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0234-26-2001</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>山形県立新庄病院</td>
+							<td class="m-txt--center">R5.10.1</td>
+							<td class="m-txt--center">山形県</td>
+							<td style="border-left:none 1px;">山形県新庄市金沢720番地の１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0233-22-5525</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">福島県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">いわき市医療センター</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S55.4.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">いわき市</td>
+							<td style="border-top:none 1px;border-left:none 1px;">いわき市内郷御厩町久世原16</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">0246-26-3151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>一般財団法人太田綜合病院附属太田西ノ内病院</td>
+							<td class="m-txt--center">H1.9.23</td>
+							<td class="m-txt--center">財団法人</td>
+							<td style="border-left:none 1px;">郡山市西ノ内2-5-20</td>
+							<td class="m-txt--center" style="border-left:none 1px;">024-925-1188</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>一般財団法人温知会会津中央病院</td>
+							<td class="m-txt--center">S61.10.1</td>
+							<td class="m-txt--center">財団法人</td>
+							<td style="border-left:none 1px;">会津若松市鶴賀町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0242-25-1515</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>福島県立医科大学附属病院</td>
+							<td class="m-txt--center">H20.1.28</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">福島市光が丘1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">024-547-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="7" style="border-bottom:.10px solid black;height:140px;border-top:none 1px;">茨城県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">独立行政法人国立病院機構 　水戸医療センター</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S56.4.2</td>
+							<td class="m-txt--center" style="border-top:none 1px;">国立病院機構</td>
+							<td style="border-top:none 1px;border-left:none 1px;">東茨城郡茨城町桜の郷280番地</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">029-240-7711</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>筑波メディカルセンター病院</td>
+							<td class="m-txt--center">S60.2.16</td>
+							<td class="m-txt--center">財団法人</td>
+							<td style="border-left:none 1px;">つくば市天久保1-3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">029-851-3511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>総合病院土浦協同病院</td>
+							<td class="m-txt--center">H2.4.12</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">土浦市真鍋新町11-7</td>
+							<td class="m-txt--center" style="border-left:none 1px;">029-823-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>茨城西南医療センター病院</td>
+							<td class="m-txt--center">H12.4.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">猿島郡境町2190</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0280-87-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○※</td>
+							<td>水戸済生会総合病院</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">水戸市双葉台3丁目3番10号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">029-254-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>株式会社日立製作所日立総合病院</td>
+							<td class="m-txt--center">H24.10.20</td>
+							<td class="m-txt--center">会社</td>
+							<td style="border-left:none 1px;">日立市城南町2-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0294-23-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>国立大学法人筑波大学附属病院</td>
+							<td class="m-txt--center">R2.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">つくば市天久保２丁目１番地１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">029-853-3900</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="5" style="border-bottom:.10px solid black;height:100px;border-top:none 1px;">栃木県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>済生会宇都宮病院</td>
+							<td class="m-txt--center">S56.8.11</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">宇都宮市竹林町911-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">028-626-5500</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>足利赤十字病院</td>
+							<td class="m-txt--center">H8.11.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">足利市五十部町284-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0284-21-0121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>那須赤十字病院</td>
+							<td class="m-txt--center">H10.6.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">大田原市中田原1081-4</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0287-23-1122</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>獨協医科大学病院</td>
+							<td class="m-txt--center">H14.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">下都賀郡壬生町大字北小林880</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0282-86-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>自治医科大学附属病院</td>
+							<td class="m-txt--center">H14.9.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">下野市薬師寺3311-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0285-44-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">群馬県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　高崎総合医療センター</td>
+							<td class="m-txt--center">S56.12.9</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">高崎市高松町36</td>
+							<td class="m-txt--center" style="border-left:none 1px;">027-322-5901</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>前橋赤十字病院</td>
+							<td class="m-txt--center">H11.3.30</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">前橋市朝倉町389番地1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">027-265-3333</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>SUBARU健康保険組合太田記念病院</td>
+							<td class="m-txt--center">H31.6.1</td>
+							<td class="m-txt--center">健康保険組合</td>
+							<td style="border-left:none 1px;">太田市八幡町29-5</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0276-22-6631</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">群馬大学医学部附属病院</td>
+							<td class="m-txt--center">H28.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">前橋市昭和町三丁目39番15号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">027-220-8541</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="11" style="border-bottom:.10px solid black;height:220px;border-top:none 1px;">埼玉県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">さいたま赤十字病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">S55.7.17</td>
+							<td class="m-txt--center" style="border-left:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">さいたま市中央区新都心1-5</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">048-852-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>埼玉医科大学総合医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">S62.4.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">学校法人</td>
+							<td style="border-left:none 1px;">川越市鴨田1981番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">049-228-3400</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>深谷赤十字病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H4.4.20</td>
+							<td class="m-txt--center" style="border-left:none 1px;">日赤</td>
+							<td style="border-left:none 1px;">深谷市上柴町西5-8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-571-1511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>防衛医科大学校病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H4.9.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">防衛省</td>
+							<td style="border-left:none 1px;">所沢市並木3-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">04-2995-1511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>川口市立医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H6.5.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">川口市</td>
+							<td style="border-left:none 1px;">川口市西新井宿180番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-287-2525</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>獨協医科大学埼玉医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H10.5.11</td>
+							<td class="m-txt--center" style="border-left:none 1px;">学校法人</td>
+							<td style="border-left:none 1px;">越谷市南越谷2-1-50</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-965-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>埼玉医科大学国際医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H20.6.12</td>
+							<td class="m-txt--center" style="border-left:none 1px;">学校法人</td>
+							<td style="border-left:none 1px;">日高市山根1397-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-984-4111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>自治医科大学附属さいたま医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H28.4.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">学校法人</td>
+							<td style="border-left:none 1px;">さいたま市大宮区天沼町1-847</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-647-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>さいたま市立病院</td>
+							<td class="m-txt--center">R2.12.1</td>
+							<td class="m-txt--center">さいたま市</td>
+							<td style="border-left:none 1px;">さいたま市緑区大字三室2460番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-873-4111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構埼玉病院</td>
+							<td class="m-txt--center">R3.5.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">和光市諏訪２－１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">048-462-1101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>社会福祉法人恩賜財団済生会支部埼玉県済生会加須病院</td>
+							<td class="m-txt--center">R4.6.1</td>
+							<td class="m-txt--center">社会福祉法人</td>
+							<td style="border-left:none 1px;">加須市上高柳１６８０番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0480-70-0888</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="15" style="border-bottom:.10px solid black;height:280px;">千葉県</td>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>総合病院国保旭中央病院</td>
+							<td class="m-txt--center">S59.1.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">旭市イの1326</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0479-63-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>国保直営総合病院君津中央病院</td>
+							<td class="m-txt--center">S59.3.31</td>
+							<td class="m-txt--center">君津中央病院企業団</td>
+							<td style="border-left:none 1px;">木更津市桜井1010</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0438-36-1071</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>医療法人鉄蕉会亀田総合病院</td>
+							<td class="m-txt--center">S60.3.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">鴨川市東町929</td>
+							<td class="m-txt--center" style="border-left:none 1px;">04-7092-2211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>松戸市立総合医療センター</td>
+							<td>H29.12.27</td>
+							<td class="m-txt--center">松戸市</td>
+							<td style="border-left:none 1px;">松戸市千駄堀993番地の1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">047-712-2511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>成田赤十字病院</td>
+							<td class="m-txt--center">S61.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">成田市飯田町90-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0476-22-2311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>船橋市立医療センター</td>
+							<td class="m-txt--center">H6.5.13</td>
+							<td class="m-txt--center">船橋市</td>
+							<td style="border-left:none 1px;">船橋市金杉1-21-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">047-438-3321</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>日本医科大学千葉北総病院</td>
+							<td class="m-txt--center">H11.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">印西市鎌苅1715</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0476-99-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>順天堂大学医学部附属浦安病院</td>
+							<td class="m-txt--center">H17.7.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">浦安市富岡2-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">047-353-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京慈恵会医科大学附属柏病院</td>
+							<td class="m-txt--center">H24.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">柏市柏下163番地1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">04-7164-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東千葉メディカルセンター</td>
+							<td class="m-txt--center">H26.4.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">東金市丘山台三丁目6番地2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0475-50-1199</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京女子医科大学附属八千代医療センター</td>
+							<td class="m-txt--center">H28.8.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">八千代市大和田新田477-96</td>
+							<td class="m-txt--center" style="border-left:none 1px;">047-450-6000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>帝京大学ちば総合医療センター</td>
+							<td class="m-txt--center">H29.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">市原市姉崎3426-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0436-62-1211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>千葉大学医学部附属病院</td>
+							<td class="m-txt--center"><span style="text-align: -webkit-right;">H31.4.1</span></td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">千葉市中央区亥鼻1-8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">043-222-7171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>東京ベイ・浦安市川医療センター</td>
+							<td class="m-txt--center"><span style="text-align: -webkit-right;">R5.9.1</span></td>
+							<td class="m-txt--center">公益社団法人</td>
+							<td style="border-left:none 1px;">浦安市当代島３丁目４&minus;３２</td>
+							<td class="m-txt--center" style="border-left:none 1px;">047-351-3101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>千葉県総合救急災害医療センター</td>
+							<td class="m-txt--center">R5.11.1</td>
+							<td class="m-txt--center">千葉県</td>
+							<td style="border-left:none 1px;">千葉市美浜区豊砂６番１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">043-239-3333</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="28" style="border-bottom:.10px solid black;height:560px;border-top:none 1px;">東京都</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">日本医科大学付属病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S52.1.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">学校法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">文京区千駄木1-1-5</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">03-3822-2131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　東京医療センター</td>
+							<td class="m-txt--center">S51.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">目黒区東が丘2-5-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3411-0111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東邦大学医療センター大森病院</td>
+							<td class="m-txt--center">S53.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">大田区大森西6-11-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3762-4151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>杏林大学医学部付属病院</td>
+							<td class="m-txt--center">S54.10.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">三鷹市新川6-20-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0422-47-5511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京都立広尾病院</td>
+							<td class="m-txt--center">S55.10.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">渋谷区恵比寿2-34-10</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3444-1181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京医科大学八王子医療センター</td>
+							<td class="m-txt--center">S55.6.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">八王子市館町1163</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-665-5611</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>武蔵野赤十字病院</td>
+							<td class="m-txt--center">S57.1.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">武蔵野市境南町1-26-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0422-32-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>帝京大学医学部附属病院</td>
+							<td class="m-txt--center">S56.12.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">板橋区加賀2-11-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3964-1211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本医科大学多摩永山病院</td>
+							<td class="m-txt--center">S58.3.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">多摩市永山1-7-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-371-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京都立墨東病院</td>
+							<td class="m-txt--center">S60.11.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">墨田区江東橋4-23-15</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3633-6151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京女子医科大学病院</td>
+							<td class="m-txt--center">H1.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">新宿区河田町8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3353-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京都立多摩総合医療センター</td>
+							<td class="m-txt--center">H2.8.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">府中市武蔵台2-8-29</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-323-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本大学病院</td>
+							<td class="m-txt--center">H3.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">千代田区神田駿河台1-6</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3293-1711</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本大学医学部附属板橋病院</td>
+							<td class="m-txt--center">H3.11.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">板橋区大谷口上町30-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">03-3972-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>公立昭和病院</td>
+							<td class="m-txt--center">H5.4.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">小平市花小金井8-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-461-0052</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　災害医療センター</td>
+							<td class="m-txt--center">H7.7.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">立川市緑町3256</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-526-5511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京医科大学病院</td>
+							<td class="m-txt--center">H11.9.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">新宿区西新宿6-7-1</td>
+							<td class="m-txt--center">03-3342-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>昭和大学病院</td>
+							<td class="m-txt--center">H11.9.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">品川区旗の台1-5-8</td>
+							<td class="m-txt--center">03-3784-8000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京女子医科大学附属足立医療センター</td>
+							<td class="m-txt--center">H11.9.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">足立区江北4-33-1</td>
+							<td class="m-txt--center">03-3857-0111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>聖路加国際病院</td>
+							<td class="m-txt--center">H9.9.16</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">中央区明石町9-1</td>
+							<td class="m-txt--center">03-3541-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>市立青梅総合医療センター</td>
+							<td class="m-txt--center">H12.6.1</td>
+							<td class="m-txt--center">青梅市</td>
+							<td style="border-left:none 1px;">青梅市東青梅4-16-5</td>
+							<td class="m-txt--center">0428-22-3191</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京科学大学病院</td>
+							<td class="m-txt--center">H19.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">文京区湯島1-5-45</td>
+							<td class="m-txt--center">03-3813-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本赤十字社医療センター</td>
+							<td class="m-txt--center">H20.10.31</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">渋谷区広尾4-1-22</td>
+							<td class="m-txt--center">03-3400-1311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>国立研究開発法人　国立国際医療研究センター病院</td>
+							<td class="m-txt--center">H22.9.1</td>
+							<td class="m-txt--center">国立研究開発法人</td>
+							<td style="border-left:none 1px;">新宿区戸山1-21-1</td>
+							<td class="m-txt--center">03-3202-7181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京大学医学部附属病院</td>
+							<td class="m-txt--center">H22.12.28</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">文京区本郷7-3-1</td>
+							<td class="m-txt--center">03-3815-5411</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京都済生会中央病院</td>
+							<td class="m-txt--center">H24.12.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">港区三田1-4-17</td>
+							<td class="m-txt--center">03-3451-8211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>東京慈恵会医科大学附属病院</td>
+							<td class="m-txt--center">R5.3.20</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">港区西新橋3-19-18</td>
+							<td class="m-txt--center">03-3433-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>順天堂大学医学部附属練馬病院</td>
+							<td class="m-txt--center">R5.3.20</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">練馬区高野台3-1-10</td>
+							<td class="m-txt--center">03-5923-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="21" style="border-bottom:.10px solid black;height:420px;border-top:none 1px;">神奈川県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">聖マリアンナ医科大学病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S55.7.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">学校法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">川崎市宮前区菅生2-16-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">044-977-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　横浜医療センター</td>
+							<td class="m-txt--center">S57.8.2</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">横浜市戸塚区原宿町3-60-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-851-2621</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>北里大学病院</td>
+							<td class="m-txt--center">S58.3.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">相模原市南区北里1-15-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">042-778-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>東海大学医学部付属病院</td>
+							<td class="m-txt--center">S59.3.31</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">伊勢原市下糟屋143</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0463-93-1121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>昭和大学藤が丘病院</td>
+							<td class="m-txt--center">S60.3.30</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">横浜市青葉区藤が丘1-30</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-971-1151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>聖マリアンナ医科大学横浜市西部病院</td>
+							<td class="m-txt--center">S62.5.25</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">横浜市旭区矢指町1197-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-366-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>公立大学法人横浜市立大学附属市民総合医療センター</td>
+							<td class="m-txt--center">H2.1.16</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">横浜市南区浦舟町4-57</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-261-5656</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>国家公務員共済組合連合会横須賀共済病院</td>
+							<td class="m-txt--center">H17.7.1</td>
+							<td class="m-txt--center">国共済</td>
+							<td style="border-left:none 1px;">横須賀市米が浜通1-16</td>
+							<td class="m-txt--center" style="border-left:none 1px;">046-822-2710</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>川崎市立川崎病院</td>
+							<td class="m-txt--center">H18.4.1</td>
+							<td class="m-txt--center">川崎市</td>
+							<td style="border-left:none 1px;">川崎市川崎区新川通12-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">044-233-5521</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本医科大学武蔵小杉病院</td>
+							<td class="m-txt--center">H18.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">川崎市中原区小杉町1-383</td>
+							<td class="m-txt--center" style="border-left:none 1px;">044-733-5181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>藤沢市民病院</td>
+							<td class="m-txt--center">H18.12.1</td>
+							<td class="m-txt--center">藤沢市</td>
+							<td style="border-left:none 1px;">藤沢市藤沢2-6-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0446-25-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>恩賜財団済生会横浜市東部病院</td>
+							<td class="m-txt--center">H19.9.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">横浜市鶴見区下末吉3-6-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-576-3000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>横浜市立みなと赤十字病院</td>
+							<td class="m-txt--center">H21.4.1</td>
+							<td class="m-txt--center">横浜市</td>
+							<td style="border-left:none 1px;">横浜市中区新山下3-12-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-628-6100</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>小田原市立病院</td>
+							<td class="m-txt--center">H21.4.1</td>
+							<td class="m-txt--center">小田原市</td>
+							<td style="border-left:none 1px;">小田原市久野46</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0465-34-3175</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>横浜市立市民病院</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">横浜市</td>
+							<td style="border-left:none 1px;">横浜市神奈川区三ツ沢西町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-316-4580</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">独立行政法人労働者健康安全機構横浜労災病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">独立行政法人</td>
+							<td style="border-left:none 1px;">横浜市港北区小机町3211番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-474-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>横須賀市立うわまち病院</td>
+							<td class="m-txt--center">H25.4.1</td>
+							<td class="m-txt--center">横須賀市</td>
+							<td style="border-left:none 1px;">横須賀市上町2-36</td>
+							<td class="m-txt--center" style="border-left:none 1px;">046-823-2630</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>医療法人徳州会湘南鎌倉総合病院</td>
+							<td class="m-txt--center">H25.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">鎌倉市岡本1370-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0467-46-1717</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>国家公務員共済組合連合会横浜南共済病院</td>
+							<td class="m-txt--center">H28.4.1</td>
+							<td class="m-txt--center">国共済</td>
+							<td style="border-left:none 1px;">横浜市金沢区六浦東1-21-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">045-782-2101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>平塚市民病院</td>
+							<td class="m-txt--center">H29.4.1</td>
+							<td class="m-txt--center">平塚市</td>
+							<td style="border-left:none 1px;">平塚市南原1-19-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0463-32-0015</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>海老名総合病院</td>
+							<td class="m-txt--center">H29.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">海老名市河原口1320</td>
+							<td class="m-txt--center" style="border-left:none 1px;">046-233-1311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="6" style="border-bottom:.10px solid black;height:120px;border-top:none 1px;">新潟県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>長岡赤十字病院</td>
+							<td class="m-txt--center">H9.9.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">長岡市千秋2-297-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0258-28-3600</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>新潟市民病院</td>
+							<td class="m-txt--center">S62.4.1</td>
+							<td class="m-txt--center">新潟市</td>
+							<td style="border-left:none 1px;">新潟市中央区鐘木463-7</td>
+							<td class="m-txt--center" style="border-left:none 1px;">025-281-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>新潟県立中央病院</td>
+							<td class="m-txt--center">H9.9.1</td>
+							<td class="m-txt--center">新潟県</td>
+							<td style="border-left:none 1px;">上越市新南町205</td>
+							<td class="m-txt--center" style="border-left:none 1px;">025-522-7711</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>新潟県立新発田病院</td>
+							<td class="m-txt--center">H18.11.1</td>
+							<td class="m-txt--center">新潟県</td>
+							<td style="border-left:none 1px;">新発田市本町1-2-8</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0254-22-3121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>新潟大学医歯学総合病院</td>
+							<td class="m-txt--center">H21.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">新潟市中央区旭町通一番町754</td>
+							<td class="m-txt--center" style="border-left:none 1px;">025-223-6161</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>新潟県地域医療推進機構魚沼基幹病院</td>
+							<td class="m-txt--center">H27.6.1</td>
+							<td class="m-txt--center">新潟県</td>
+							<td style="border-left:none 1px;">南魚沼市浦佐4132番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">025-777-3200</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="2" style="border-bottom:.10px solid black;height:40px;border-top:none 1px;">富山県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>富山県立中央病院</td>
+							<td class="m-txt--center">S54.8.1</td>
+							<td class="m-txt--center">富山県</td>
+							<td style="border-left:none 1px;">富山市西長江2-2-78</td>
+							<td class="m-txt--center" style="border-left:none 1px;">076-424-1531</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>富山県厚生農業協同組合連合会　高岡病院</td>
+							<td class="m-txt--center">H9.4.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">高岡市永楽町5-10</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0766-21-3930</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="2" style="border-bottom:.10px solid black;height:40px;border-top:none 1px;">石川県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>石川県立中央病院</td>
+							<td class="m-txt--center">S52.12.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">石川県</td>
+							<td style="border-left:none 1px;">金沢市鞍月東2-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">076-237-8211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>公立能登総合病院</td>
+							<td class="m-txt--center">H12.5.1</td>
+							<td class="m-txt--center">七尾市</td>
+							<td style="border-left:none 1px;">七尾市藤橋町ア部6-4</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0767-52-6611</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="2" style="border-bottom:.10px solid black;height:40px;border-top:none 1px;">福井県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>福井県立病院</td>
+							<td class="m-txt--center">S58.4.11</td>
+							<td class="m-txt--center">福井県</td>
+							<td style="border-left:none 1px;">福井市四ツ井2-8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0776-54-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>公立小浜病院</td>
+							<td class="m-txt--center">H19.10.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">小浜市大手町2-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0770-52-0990</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-top:none 1px;">山梨県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">山梨県立中央病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S51.11.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">山梨県</td>
+							<td style="border-top:none 1px;border-left:none 1px;">甲府市富士見1-1-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">055-253-7111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="7" style="border-bottom:.10px solid black;height:140px;border-top:none 1px;">長野県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>長野赤十字病院</td>
+							<td class="m-txt--center">S56.10.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">長野市若里5-22-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">026-226-4131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>長野県厚生農業協同組合連合会　佐久総合病院佐久医療センター</td>
+							<td class="m-txt--center">S58.10.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">佐久市中込3400-28</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0267-62-8181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>慈泉会相澤病院</td>
+							<td class="m-txt--center">H17.4.1</td>
+							<td class="m-txt--center">特定医療法人</td>
+							<td style="border-left:none 1px;">松本市本庄2-5-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0263-33-8600</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>信州大学医学部附属病院</td>
+							<td class="m-txt--center">H17.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">松本市旭3-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0263-35-4600</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>諏訪赤十字病院</td>
+							<td class="m-txt--center">H18.10.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">諏訪市湖岸通り5-11-50</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0266-52-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>飯田市立病院</td>
+							<td class="m-txt--center">H18.10.1</td>
+							<td class="m-txt--center">飯田市</td>
+							<td style="border-left:none 1px;">飯田市八幡町438</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0265-21-1255</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>伊那中央病院</td>
+							<td class="m-txt--center">H24.4.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">伊那市小四郎久保1313-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0265-72-3121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="8" style="border-bottom:.10px solid black;height:120px;border-top:none 1px;">岐阜県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">岐阜県総合医療センター</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S58.11.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">地方独立行政法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">岐阜市野一色4-6-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">058-246-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岐阜県立多治見病院</td>
+							<td class="m-txt--center">H2.11.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">多治見市前畑町5-161</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0572-22-5311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>高山赤十字病院</td>
+							<td class="m-txt--center">H4.12.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">高山市天満町3-11</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0577-32-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大垣市民病院</td>
+							<td class="m-txt--center">H6.10.1</td>
+							<td class="m-txt--center">大垣市</td>
+							<td style="border-left:none 1px;">大垣市南頬町4-86</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0584-81-3341</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岐阜県厚生農業協同組合連合会　中濃厚生病院</td>
+							<td class="m-txt--center">H12.8.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">関市若草通5-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0575-22-2211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;"><span style="text-align: center;">○</span></td>
+							<td>岐阜大学医学部付属病院</td>
+							<td class="m-txt--center">H16.11.</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">岐阜市柳戸1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">058-230-6000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>松波総合病院</td>
+							<td class="m-txt--center">R7.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">鳥羽郡笠松町田代185-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">058-388-0111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>中部国際医療センター</td>
+							<td class="m-txt--center">R7.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">美濃加茂市健康のまち一町目１番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0574-66-1100</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="11" style="border-bottom:.10px solid black;height:220px;border-top:none 1px;">静岡県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">静岡済生会総合病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S55.7.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">済生会</td>
+							<td style="border-top:none 1px;border-left:none 1px;">静岡市駿河区小鹿1-1-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">054-285-6171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>順天堂大学医学部附属静岡病院</td>
+							<td class="m-txt--center">S56.11.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">伊豆の国市長岡1129</td>
+							<td class="m-txt--center" style="border-left:none 1px;">055-948-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>浜松医療センター</td>
+							<td class="m-txt--center">S57.10.15</td>
+							<td class="m-txt--center">浜松市</td>
+							<td style="border-left:none 1px;">浜松市中区富塚町328</td>
+							<td class="m-txt--center" style="border-left:none 1px;">053-453-7111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>静岡赤十字病院</td>
+							<td class="m-txt--center">H4.5.11</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">静岡市葵区追手町8-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">054-253-8381</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>聖隷三方原病院</td>
+							<td class="m-txt--center">H13.9.17</td>
+							<td class="m-txt--center">社会福祉法人</td>
+							<td style="border-left:none 1px;">浜松市北区三方原町3453</td>
+							<td class="m-txt--center" style="border-left:none 1px;">053-436-1251</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>沼津市立病院</td>
+							<td class="m-txt--center">H16.4.14</td>
+							<td class="m-txt--center">沼津市</td>
+							<td style="border-left:none 1px;">沼津市東椎路字春の木５５０</td>
+							<td class="m-txt--center" style="border-left:none 1px;">055-924-5100</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>磐田市立総合病院</td>
+							<td class="m-txt--center">H21.4.1</td>
+							<td class="m-txt--center">磐田市</td>
+							<td style="border-left:none 1px;">磐田市大久保512-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0538-38-5000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>聖隷浜松病院</td>
+							<td class="m-txt--center">H22.5.1</td>
+							<td class="m-txt--center">社会福祉法人</td>
+							<td style="border-left:none 1px;">浜松市中区住吉2-12-12</td>
+							<td class="m-txt--center" style="border-left:none 1px;">053-474-2222</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人静岡県立病院機構　静岡県立総合病院</td>
+							<td class="m-txt--center">H25.7.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">静岡市葵区北安東4-27-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">054-247-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>中東遠総合医療センター</td>
+							<td class="m-txt--center">H27.8.1</td>
+							<td class="m-txt--center">掛川市・袋井市病院企業団</td>
+							<td style="border-left:none 1px;">掛川市菖蒲ヶ池１番地の１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0537-21-5555</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>藤枝市立総合病院</td>
+							<td class="m-txt--center">H29.4.1</td>
+							<td class="m-txt--center">藤枝市</td>
+							<td style="border-left:none 1px;">藤枝市駿河台4丁目1番11号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">054-646-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="24" style="border-bottom:.10px solid black;height:480px;border-top:none 1px;">愛知県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>名古屋掖済会病院</td>
+							<td class="m-txt--center">S53.5.23</td>
+							<td class="m-txt--center">社団法人</td>
+							<td style="border-left:none 1px;">名古屋市中川区松年町4-66</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-652-7711</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;"><span style="text-align: center;">○</span>　</td>
+							<td>藤田医科大学病院</td>
+							<td class="m-txt--center">S54.4.5</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">豊明市沓掛町田楽ケ窪1-98</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0562-93-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　名古屋医療センター</td>
+							<td class="m-txt--center">S54.6.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">名古屋市中区三の丸4-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-951-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>愛知医科大学病院</td>
+							<td class="m-txt--center">S54.7.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">長久手市岩作雁又1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0561-62-3311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岡崎市民病院</td>
+							<td class="m-txt--center">S56.4.1</td>
+							<td class="m-txt--center">岡崎市</td>
+							<td style="border-left:none 1px;">岡崎市高隆寺町字五所合3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0564-21-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>豊橋市民病院</td>
+							<td class="m-txt--center">S56.4.8</td>
+							<td class="m-txt--center">豊橋市</td>
+							<td style="border-left:none 1px;">豊橋市青竹町字八間西50</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0532-33-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本赤十字社愛知医療センター名古屋第二病院</td>
+							<td class="m-txt--center">S59.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">名古屋市昭和区妙見町2-9</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-832-1121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>小牧市民病院</td>
+							<td class="m-txt--center">H3.4.1</td>
+							<td class="m-txt--center">小牧市</td>
+							<td style="border-left:none 1px;">小牧市常普請1-20</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0568-76-4131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>愛知県厚生農業協同組合連合会　安城更生病院</td>
+							<td class="m-txt--center">H14.5.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">安城市安城町東広畔28</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0566-75-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>中京病院</td>
+							<td class="m-txt--center">H15.4.1</td>
+							<td class="m-txt--center">独立行政法人</td>
+							<td style="border-left:none 1px;">名古屋市南区三条1-1-10</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-691-7151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>日本赤十字社愛知医療センター名古屋第一病院</td>
+							<td class="m-txt--center">H15.5.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">名古屋市中村区道下町3-35</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-481-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>愛知県厚生農業協同組合連合会　豊田厚生病院</td>
+							<td class="m-txt--center">H20.1.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">豊田市浄水町伊保原500-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0565-43-5000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>総合大雄会病院</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">一宮市桜1丁目9番9号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0586-72-1211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>一宮市立市民病院</td>
+							<td class="m-txt--center">H22.5.1</td>
+							<td class="m-txt--center">一宮市</td>
+							<td style="border-left:none 1px;">一宮市文京2-2-22</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0586-71-1911</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>名古屋市立大学病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">名古屋市瑞穂区瑞穂町字川澄1番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-851-5511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>刈谷豊田総合病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">刈谷市住吉町5-15</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0566-21-2450</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">トヨタ記念病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">会社</td>
+							<td style="border-left:none 1px;">豊田市平和町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0565-28-0100</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">愛知厚生連海南病院</td>
+							<td class="m-txt--center">H25.9.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">弥富市前ヶ須町南本田396</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0567-65-2511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>公立陶生病院</td>
+							<td class="m-txt--center">H26.1.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">瀬戸市西追分町160</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0561-82-5101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>愛知県厚生農業協同組合連合会江南厚生病院</td>
+							<td class="m-txt--center">H27.10.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">江南市高屋町大松原137</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0587-51-3333</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>春日井市民病院</td>
+							<td class="m-txt--center">H27.10.1</td>
+							<td class="m-txt--center">春日井市</td>
+							<td style="border-left:none 1px;">春日井市鷹来町1-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0568-57-0057</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>名古屋市立大学医学部附属東部医療センター</td>
+							<td class="m-txt--center">R3.4.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">名古屋市千種区若水1-2-23</td>
+							<td class="m-txt--center" style="border-left:none 1px;">052-721-7171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center">&nbsp;</td>
+							<td>豊川市民病院</td>
+							<td class="m-txt--center">R1.12.1</td>
+							<td class="m-txt--center">豊川市</td>
+							<td style="border-left:none 1px;">豊川市八幡町野路23</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0533-86-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td style="width:325px;">知多半島総合医療センター</td>
+							<td class="m-txt--center">R7.4.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">半田市横山町192番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0569-89-0515</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="5" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">三重県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;">○</td>
+							<td style="border-top:none 1px;">伊勢赤十字病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S60.4.8</td>
+							<td class="m-txt--center" style="border-top:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">伊勢市船江1丁目471番2</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">0596-28-2171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>三重県立総合医療センター</td>
+							<td class="m-txt--center">H6.10.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">四日市市大字日永5450-132</td>
+							<td class="m-txt--center" style="border-left:none 1px;">059-345-2321</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center">　</td>
+							<td>市立四日市病院</td>
+							<td class="m-txt--center">H21.2.25</td>
+							<td class="m-txt--center">四日市市</td>
+							<td style="border-left:none 1px;">四日市市芝田2-2-37</td>
+							<td class="m-txt--center" style="border-left:none 1px;">059-354-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center">〇※</td>
+							<td>三重大学医学部附属病院</td>
+							<td class="m-txt--center">H22.6.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">津市江戸橋２丁目-174番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">059-232-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center">&nbsp;</td>
+							<td>松阪中央総合病院</td>
+							<td class="m-txt--center">R6.10.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">松阪市川井町字小望102</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0598-21-5252</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">滋賀県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大津赤十字病院</td>
+							<td class="m-txt--center">S57.3.24</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">大津市長等1-1-35</td>
+							<td class="m-txt--center" style="border-left:none 1px;">077-522-4131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>長浜赤十字病院</td>
+							<td class="m-txt--center">S58.2.15</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">長浜市宮前町14-7</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0749-63-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>済生会滋賀県病院</td>
+							<td class="m-txt--center">H8.4.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">栗東市大橋2-4-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">077-552-1221</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>近江八幡市立総合医療センター</td>
+							<td class="m-txt--center">H18.10.1</td>
+							<td class="m-txt--center">近江八幡市</td>
+							<td style="border-left:none 1px;">近江八幡市土田町1379</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0748-33-3151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="8" style="border-bottom:.10px solid black;height:120px;border-top:none 1px;">京都府</td>
+							<td class="m-txt--center" style="border-left:none 1px;"><span style="text-align: center;">◎</span></td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>京都第二赤十字病院</td>
+							<td class="m-txt--center">S53.1.21</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">京都市上京区釜座通丸太町上ル春帯町355-5</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-231-5171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　京都医療センター</td>
+							<td class="m-txt--center">S59.3.24</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">京都市伏見区深草向畑町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-641-9161</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>京都第一赤十字病院</td>
+							<td class="m-txt--center">H9.11.10</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">京都市東山区本町15丁目749</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-561-1121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>市立福知山市民病院</td>
+							<td class="m-txt--center">H24.3.30</td>
+							<td class="m-txt--center">福知山市</td>
+							<td style="border-left:none 1px;">福知山市厚中町231</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0773-22-2101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>医療法人社団洛和会音羽病院</td>
+							<td class="m-txt--center">H24.3.30</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;width:269px;">京都市山科区音羽珍事町2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-593-4111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>宇治徳洲会病院</td>
+							<td class="m-txt--center"><span style="text-align: -webkit-right;">H24.3.30</span></td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;width:269px;">宇治市小倉町春日森86</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0774-20-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>京都大学医学部附属病院</td>
+							<td class="m-txt--center">R6.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;width:269px;">京都市左京区聖護院川原町54</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-751-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>京都府立医科大学附属病院</td>
+							<td class="m-txt--center">R6.4.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">京都市上京区河原町広小路上る梶井町465</td>
+							<td class="m-txt--center" style="border-left:none 1px;">075-251-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="16" style="border-bottom:.10px solid black;height:320px;border-top:none 1px;">大阪府</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人大阪府立病院機構 大阪急性期・総合医療センター</td>
+							<td class="m-txt--center">S52.4.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">地方独立行政法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">大阪市住吉区万代東3-1-56</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">06-6692-1201</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>関西医科大学総合医療センター</td>
+							<td class="m-txt--center">S54.3.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">守口市文園町10-15</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6992-1001</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪府済生会千里病院</td>
+							<td class="m-txt--center">S54.4.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">吹田市津雲台1-1-6</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6871-0121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　大阪医療センター</td>
+							<td class="m-txt--center">S56.1.10</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">大阪市中央区法円坂2-1-14</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6942-1331</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>近畿大学病院</td>
+							<td class="m-txt--center">S57.6.14</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">大阪狭山市大野東377-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-366-0221</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪市立総合医療センター</td>
+							<td class="m-txt--center">H5.12.1</td>
+							<td class="m-txt--center">大阪市</td>
+							<td style="border-left:none 1px;">大阪市都島区都島本通2-13-22</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6929-1221</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人りんくう総合医療センター</td>
+							<td class="m-txt--center">H6.10.3</td>
+							<td class="m-txt--center" style="width:125px;">地方独立行政法人</td>
+							<td style="border-left:none 1px;">泉佐野市りんくう往来北2-23</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-464-9911</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪府立中河内救命救急センター</td>
+							<td class="m-txt--center">H10.5.6</td>
+							<td class="m-txt--center">大阪府</td>
+							<td style="border-left:none 1px;">東大阪市西岩田3-4-13</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6785-6166</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>大阪大学医学部附属病院</td>
+							<td class="m-txt--center">H12.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">吹田市山田丘2-15</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6879-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪赤十字病院</td>
+							<td class="m-txt--center">H20.2.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">大阪市天王寺区筆ヶ崎町5-30</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6774-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪警察病院</td>
+							<td class="m-txt--center">H20.2.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">大阪市天王寺区北山町10-31</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6771-6051</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>関西医科大学附属病院</td>
+							<td class="m-txt--center">H20.2.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">枚方市新町2-3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-804-0101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪公立大学医学部附属病院</td>
+							<td class="m-txt--center">H22.2.19</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">大阪市阿倍野区旭町1丁目5番7号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6645-2121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岸和田徳洲会病院</td>
+							<td class="m-txt--center">H24.12.16</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">岸和田市加守町4-27-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-445-9915</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>堺市立総合医療センター</td>
+							<td class="m-txt--center">H27.7.1</td>
+							<td class="m-txt--center" style="width:125px;">地方独立行政法人</td>
+							<td style="border-left:none 1px;">堺市西区家原寺町１丁１番１号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-272-1199</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大阪医科薬科大学病院</td>
+							<td class="m-txt--center">R4.7.1</td>
+							<td class="m-txt--center" style="width:125px;">学校法人</td>
+							<td style="border-left:none 1px;">高槻市大学町２番７号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">072-683-1221</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="10" style="border-bottom:.10px solid black;height:200px;border-top:none 1px;">兵庫県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>神戸市立医療センター中央市民病院</td>
+							<td class="m-txt--center">S52.1.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">神戸市中央区港島南町2-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">078-302-4321</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>兵庫医科大学病院</td>
+							<td class="m-txt--center">S55.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">西宮市武庫川町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0798-45-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>公立豊岡病院</td>
+							<td class="m-txt--center">S57.11.1</td>
+							<td class="m-txt--center">事務組合</td>
+							<td style="border-left:none 1px;">豊岡市戸牧1094</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0796-22-6111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>兵庫県災害医療センター</td>
+							<td class="m-txt--center">H15.8.1</td>
+							<td class="m-txt--center">兵庫県</td>
+							<td style="border-left:none 1px;">神戸市中央区脇浜海岸通1-3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">078-241-3131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>兵庫県立加古川医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H21.11.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">兵庫県</td>
+							<td style="border-left:none 1px;">加古川市神野町神野203</td>
+							<td class="m-txt--center" style="border-left:none 1px;">079-497-7000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">兵庫県立西宮病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">兵庫県</td>
+							<td style="border-left:none 1px;">西宮市六湛寺町13-9</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0798-34-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>兵庫県立淡路医療センター</td>
+							<td class="m-txt--center">H25.5.1</td>
+							<td class="m-txt--center">兵庫県</td>
+							<td style="border-left:none 1px;">洲本市塩屋1-1-137</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0799-22-1200</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>兵庫県立尼崎総合医療センター</td>
+							<td class="m-txt--center">H27.7.1</td>
+							<td class="m-txt--center">兵庫県</td>
+							<td style="border-left:none 1px;">尼崎市東難波町二丁目17番77号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">06-6480-7000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>神戸大学医学部附属病院</td>
+							<td class="m-txt--center">R1.7.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">神戸市中央区楠町７丁目５番２号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">078-382-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○※</td>
+							<td>兵庫県立はりま姫路総合医療センター</td>
+							<td class="m-txt--center">R4.5.1</td>
+							<td class="m-txt--center">兵庫県</td>
+							<td style="border-left:none 1px;">姫路市神屋町３丁目２６４番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">079-289-5080</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">奈良県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>奈良県総合医療センター</td>
+							<td class="m-txt--center">S57.9.24</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">奈良市七条西町2-897-5</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0742-46-6001</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>奈良県立医科大学附属病院</td>
+							<td class="m-txt--center">H9.4.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">橿原市四条町840</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0744-22-3051</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>近畿大学奈良病院</td>
+							<td class="m-txt--center">H15.4.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">生駒市乙田町1248-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0743-77-0880</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">和歌山県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">日本赤十字社和歌山医療センター</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S61.5.6</td>
+							<td class="m-txt--center" style="border-top:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">和歌山市小松原通4-20</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">073-422-4171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>和歌山県立医科大学附属病院</td>
+							<td class="m-txt--center">H12.6.1</td>
+							<td class="m-txt--center">公立大学法人</td>
+							<td style="border-left:none 1px;">和歌山市紀三井寺811-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">073-447-2300</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　南和歌山医療センター</td>
+							<td class="m-txt--center">H18.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">田辺市たきない町27番1号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0739-26-7050</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="2" style="border-bottom:.10px solid black;height:40px;border-top:none 1px;">鳥取県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">鳥取県立中央病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S55.9.13</td>
+							<td class="m-txt--center" style="border-top:none 1px;">鳥取県</td>
+							<td style="border-top:none 1px;border-left:none 1px;">鳥取市江津730</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">0857-26-2271</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>鳥取大学医学部附属病院</td>
+							<td class="m-txt--center">H16.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">米子市西町36-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0859-33-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">島根県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>島根県立中央病院</td>
+							<td class="m-txt--center">S55.1.1</td>
+							<td class="m-txt--center">島根県</td>
+							<td style="border-left:none 1px;">出雲市姫原4-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0853-22-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>松江赤十字病院</td>
+							<td class="m-txt--center">H16.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">松江市母衣町200</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0852-24-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　浜田医療センター</td>
+							<td class="m-txt--center">H17.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">浜田市浅井町777-12</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0855-25-0505</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>島根大学医学部附属病院</td>
+							<td class="m-txt--center">H24.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">出雲市塩冶町８９&minus;１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0853-23-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="5" style="border-bottom:.10px solid black;height:100px;border-top:none 1px;">岡山県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">川崎医科大学附属病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S54.1.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">学校法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">倉敷市松島577</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">086-462-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岡山赤十字病院</td>
+							<td class="m-txt--center">S58.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">岡山市北区青江2-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">086-222-8811</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>津山中央病院</td>
+							<td class="m-txt--center">H12.2.1</td>
+							<td class="m-txt--center">一般財団法人</td>
+							<td style="border-left:none 1px;">津山市川崎1756</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0868-21-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>岡山大学病院</td>
+							<td class="m-txt--center">H24.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;width:269px;">岡山市北区鹿田町2-5-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">086-223-7151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>倉敷中央病院</td>
+							<td class="m-txt--center">H25.4.16</td>
+							<td class="m-txt--center">公益財団法人</td>
+							<td style="border-left:none 1px;width:269px;">倉敷市美和1-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">086-422-0210</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="8" style="border-bottom:.10px solid black;height:160px;border-top:none 1px;">広島県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人広島市立病院機構　広島市立広島市民病院</td>
+							<td class="m-txt--center">S52.7.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">広島市中区基町7-33</td>
+							<td class="m-txt--center" style="border-left:none 1px;">082-221-2291</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　呉医療センター</td>
+							<td class="m-txt--center">S54.10.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">呉市青山町3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0823-22-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>県立広島病院</td>
+							<td class="m-txt--center">H8.11.1</td>
+							<td class="m-txt--center">広島県</td>
+							<td style="border-left:none 1px;">広島市南区宇品神田1-5-54</td>
+							<td class="m-txt--center" style="border-left:none 1px;">082-254-1818</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>広島大学病院</td>
+							<td class="m-txt--center">H17.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">広島市南区霞1-2-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">082-257-5555</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>福山市民病院</td>
+							<td class="m-txt--center">H17.4.1</td>
+							<td class="m-txt--center">福山市</td>
+							<td style="border-left:none 1px;">福山市蔵王町5-23-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">084-941-5151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>広島県厚生農業協同組合連合会　廣島総合病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">厚生連</td>
+							<td style="border-left:none 1px;">廿日市市地御前1-3-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0829-36-3111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">広島県厚生農業協同組合連合会　尾道総合病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H27.4.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">厚生連</td>
+							<td style="border-left:none 1px;">尾道市平原１丁目１０&minus;２３</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0848-22-8111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>広島市立北部医療センター安佐市民病院</td>
+							<td class="m-txt--center">R4.5.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">広島市安佐北区亀山南１丁目２－１</td>
+							<td class="m-txt--center" style="border-left:none 1px;">082-815-5211</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="5" style="border-bottom:.10px solid black;height:100px;border-top:none 1px;">山口県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　岩国医療センター</td>
+							<td class="m-txt--center">S55.3.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">岩国市愛宕町1-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0827-34-1000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人山口県立病院機構　山口県立総合医療センター</td>
+							<td class="m-txt--center">S58.5.2</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">防府市大字大崎10077</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0835-22-4411</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>山口大学医学部附属病院</td>
+							<td class="m-txt--center">H11.10.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">宇部市南小串1-1-1</td>
+							<td class="m-txt--center">0836-22-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　関門医療センター</td>
+							<td class="m-txt--center">H17.5.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">下関市長府外浦町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">083-241-1199</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>徳山中央病院</td>
+							<td class="m-txt--center">H23.4.1</td>
+							<td class="m-txt--center">独立行政法人</td>
+							<td style="border-left:none 1px;">周南市孝田町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0834-28-4411</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">徳島県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">徳島県立中央病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S55.4.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">徳島県</td>
+							<td style="border-top:none 1px;border-left:none 1px;">徳島市蔵本町1-10-3</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">088-631-7151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>徳島赤十字病院</td>
+							<td class="m-txt--center">H14.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">小松島市小松島町字井利ノ口103</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0885-32-2555</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>徳島県立三好病院</td>
+							<td class="m-txt--center">H17.8.29</td>
+							<td class="m-txt--center">徳島県</td>
+							<td style="border-left:none 1px;">三好市池田町字シマ815-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0883-72-1131</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">香川県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>香川県立中央病院</td>
+							<td class="m-txt--center">S56.1.10</td>
+							<td class="m-txt--center">香川県</td>
+							<td style="border-left:none 1px;">高松市朝日町一丁目2番1号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">087-811-3333</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○※</td>
+							<td>香川大学医学部附属病院</td>
+							<td class="m-txt--center">H13.11.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">木田郡三木町池戸1750-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">087-898-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">三豊総合病院</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H24.3.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">事務組合</td>
+							<td style="border-left:none 1px;">観音寺市豊浜町姫浜708</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0875-52-3366</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">愛媛県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td>愛媛県立中央病院</td>
+							<td class="m-txt--center">S56.4.14</td>
+							<td class="m-txt--center">愛媛県</td>
+							<td style="border-left:none 1px;">松山市春日町83</td>
+							<td class="m-txt--center" style="border-left:none 1px;">089-947-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>愛媛県立新居浜病院</td>
+							<td class="m-txt--center">H4.8.18</td>
+							<td class="m-txt--center">愛媛県</td>
+							<td style="border-left:none 1px;">新居浜市本郷3-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0897-43-6161</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>市立宇和島病院</td>
+							<td class="m-txt--center">H4.4.1</td>
+							<td class="m-txt--center">宇和島市</td>
+							<td style="border-left:none 1px;">宇和島市御殿町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0895-25-1111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">高知県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">高知赤十字病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">H6.11.10</td>
+							<td class="m-txt--center" style="border-top:none 1px;">日赤</td>
+							<td style="border-top:none 1px;border-left:none 1px;">高知市秦南町一丁目4番63-11</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">088-822-1201</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>高知県・高知市病院企業団立高知医療センター</td>
+							<td class="m-txt--center" style="border-left:none 1px;">H17.3.25</td>
+							<td class="m-txt--center" style="border-left:none 1px;">事務組合</td>
+							<td style="border-left:none 1px;">高知市池2125-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">088-837-3000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td style="border-left:none 1px;">近森病院</td>
+							<td class="m-txt--center">H23.5.16</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">高知市大川筋1-1-16</td>
+							<td class="m-txt--center" style="border-left:none 1px;">088-822-5231</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="10" style="border-bottom:.10px solid black;height:200px;border-top:none 1px;">福岡県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td style="border-top:none 1px;">北九州市立八幡病院</td>
+							<td class="m-txt--center">S53.10.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-top:none 1px;border-left:none 1px;">北九州市八幡東区尾倉2-6-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">093-662-6565</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>福岡県済生会福岡総合病院</td>
+							<td class="m-txt--center">S55.11.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">福岡市中央区天神1-3-46</td>
+							<td class="m-txt--center" style="border-left:none 1px;">092-771-8151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>久留米大学病院</td>
+							<td class="m-txt--center">S56.6.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">久留米市旭町67</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0942-35-3311</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>飯塚病院</td>
+							<td class="m-txt--center">S57.4.1</td>
+							<td class="m-txt--center">会社</td>
+							<td style="border-left:none 1px;">飯塚市芳雄町3-83</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0948-22-3800</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>福岡大学病院</td>
+							<td class="m-txt--center">H4.6.1</td>
+							<td class="m-txt--center">学校法人</td>
+							<td style="border-left:none 1px;">福岡市城南区七隈7-45-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">092-801-1011</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>北九州総合病院</td>
+							<td class="m-txt--center">H7.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">北九州市小倉北区東城野町1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">093-921-0560</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>九州大学病院</td>
+							<td class="m-txt--center">H18.8.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">福岡市東区馬出3-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">092-641-1151</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>聖マリア病院</td>
+							<td class="m-txt--center">H18.8.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">久留米市津福本町422</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0942-35-3322</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構福岡東医療センター</td>
+							<td class="m-txt--center">H26.7.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">古賀市千鳥1-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">092-943-2331</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構 九州医療センター</td>
+							<td class="m-txt--center">H28.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">福岡市中央区地行浜1-8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">092-852-0700</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;">佐賀県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○※</td>
+							<td>佐賀県医療センター好生館</td>
+							<td class="m-txt--center">S62.3.1</td>
+							<td class="m-txt--center">地方独立行政法人</td>
+							<td style="border-left:none 1px;">佐賀市嘉瀬町大字中原400</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0952-24-2171</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>佐賀大学医学部附属病院　</td>
+							<td class="m-txt--center">H17.9.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">佐賀市鍋島5-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0952-31-6511</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>唐津赤十字病院</td>
+							<td class="m-txt--center">H21.4.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">唐津市和多田2430</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0955-72-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　嬉野医療センター</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">嬉野市嬉野町大字下宿甲4279-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0954-43-1120</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">長崎県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>独立行政法人国立病院機構　長崎医療センター</td>
+							<td class="m-txt--center">S53.3.15</td>
+							<td class="m-txt--center" style="border-top:none 1px;">国立病院機構</td>
+							<td style="border-top:none 1px;border-left:none 1px;">大村市久原2-1001-1</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">0957-52-3121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>長崎大学病院</td>
+							<td class="m-txt--center">H22.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">長崎市坂本1-7-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">095-819-7243</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>地方独立行政法人佐世保市総合医療センター</td>
+							<td class="m-txt--center">H24.4.1</td>
+							<td class="m-txt--center">佐世保市</td>
+							<td style="border-left:none 1px;">佐世保市平瀬町9-3</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0956-24-1515</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>長崎みなとメディカルセンター</td>
+							<td class="m-txt--center">R2.2.1</td>
+							<td class="m-txt--center">長崎市</td>
+							<td style="border-left:none 1px;">長崎市新地町６番39号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">095-822-3251</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">熊本県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>熊本赤十字病院</td>
+							<td class="m-txt--center">S55.3.1</td>
+							<td class="m-txt--center">日赤</td>
+							<td style="border-left:none 1px;">熊本市長嶺南2-1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">096-384-2111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>独立行政法人国立病院機構　熊本医療センター</td>
+							<td class="m-txt--center">H15.8.1</td>
+							<td class="m-txt--center">国立病院機構</td>
+							<td style="border-left:none 1px;">熊本市二の丸1-5</td>
+							<td class="m-txt--center" style="border-left:none 1px;">096-353-6501</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>済生会熊本病院</td>
+							<td class="m-txt--center">H22.5.1</td>
+							<td class="m-txt--center">済生会</td>
+							<td style="border-left:none 1px;">熊本市近見5-3-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">096-351-8000</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="5" style="border-bottom:.10px solid black;height:80px;border-top:none 1px;">大分県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>大分市医師会立アルメイダ病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">S54.4.1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">大分市医師会</td>
+							<td style="border-left:none 1px;">大分市大字宮崎1509-2</td>
+							<td class="m-txt--center" style="border-left:none 1px;">097-569-3121</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">◎</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>大分大学医学部附属病院</td>
+							<td class="m-txt--center">H20.5.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">由布市挾間町医大ヶ丘1-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">097-549-4411</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　<br />
+								&nbsp;</td>
+							<td>大分県立病院</td>
+							<td class="m-txt--center">H20.11.1</td>
+							<td class="m-txt--center">大分県</td>
+							<td style="border-left:none 1px;">大分市大字豊饒二丁目8-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">097-546-7111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>国家公務員共済組合連合会新別府病院</td>
+							<td class="m-txt--center">H21.3.1</td>
+							<td class="m-txt--center">国共済</td>
+							<td style="border-left:none 1px;">別府市大字鶴見3898</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0977-22-0391</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>中津市立中津市民病院</td>
+							<td class="m-txt--center">R7.4.1</td>
+							<td class="m-txt--center">中津市</td>
+							<td style="border-left:none 1px;">中津市大字下池水173</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0979-22-2480</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="3" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">宮崎県</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>県立宮崎病院</td>
+							<td class="m-txt--center">S59.4.1</td>
+							<td class="m-txt--center">宮崎県</td>
+							<td style="border-left:none 1px;">宮崎市北高松町5-30</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0985-24-4181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>県立延岡病院</td>
+							<td class="m-txt--center">H10.4.1</td>
+							<td class="m-txt--center">宮崎県</td>
+							<td style="border-left:none 1px;">延岡市新小路2-1-10</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0982-32-6181</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>宮崎大学医学部附属病院</td>
+							<td class="m-txt--center">H24.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">宮崎市清武町木原5200</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0985-85-1510</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" rowspan="4" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">鹿児島県</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">○</td>
+							<td style="border-top:none 1px;">鹿児島市立病院</td>
+							<td class="m-txt--center" style="border-top:none 1px;">S60.1.1</td>
+							<td class="m-txt--center" style="border-top:none 1px;">鹿児島市</td>
+							<td style="border-top:none 1px;border-left:none 1px;">鹿児島市加治屋町20-17</td>
+							<td class="m-txt--center" style="border-top:none 1px;border-left:none 1px;">099-224-2101</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">　</td>
+							<td class="m-txt--center" style="border-left:none 1px;">　</td>
+							<td>鹿児島大学病院</td>
+							<td class="m-txt--center">H26.4.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left:none 1px;">鹿児島市桜ヶ丘8-35-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">099-275-5111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">〇</td>
+							<td>県立大島病院</td>
+							<td class="m-txt--center">H26.５.20</td>
+							<td class="m-txt--center">鹿児島県</td>
+							<td style="border-left:none 1px;">奄美市名瀬真名津町18-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">0997-52-3611</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">〇</td>
+							<td>社会医療法人緑泉会米盛病院</td>
+							<td class="m-txt--center">R.6.8.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">鹿児島市与次郎1丁目7番1号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">099-230-0100</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" colspan="1" rowspan="4" style="border-bottom:.10px solid black;height:60px;border-top:none 1px;">沖縄県</td>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>沖縄県立中部病院</td>
+							<td class="m-txt--center">S50.10.1</td>
+							<td class="m-txt--center">沖縄県</td>
+							<td style="border-left:none 1px;">うるま市字宮里281番地</td>
+							<td class="m-txt--center" style="border-left:none 1px;">098-973-4111</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">域</td>
+							<td class="m-txt--center" style="border-left:none 1px;">○</td>
+							<td>浦添総合病院</td>
+							<td class="m-txt--center">H17.4.1</td>
+							<td class="m-txt--center">医療法人</td>
+							<td style="border-left:none 1px;">浦添市前田一丁目56番１号</td>
+							<td class="m-txt--center" style="border-left:none 1px;">098-878-0231</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>沖縄県立南部医療センター・こども医療センター</td>
+							<td class="m-txt--center">H18.9.28</td>
+							<td class="m-txt--center">沖縄県</td>
+							<td style="border-left:none 1px;">島尻郡南風原町字新川118-1</td>
+							<td class="m-txt--center" style="border-left:none 1px;">098-888-0123</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td>琉球大学病院</td>
+							<td class="m-txt--center">R7.1.1</td>
+							<td class="m-txt--center">国立大学法人</td>
+							<td style="border-left: 1px none;"><span style=" letter-spacing: 0.7px;">宜野湾市喜友名1076番地</span></td>
+							<td class="m-txt--center" style="border-left:none 1px;">098-894<br />
+								-1301</td>
+						</tr>
+						<tr>
+							<td class="m-txt--center" style="border-bottom-width: 0.1px; border-bottom-style: solid; height: 20px; border-top-width: 1px; border-top-style: none;">計</td>
+							<td class="m-txt--center" style="height:20px;border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center" style="border-left:none 1px;">&nbsp;</td>
+							<td class="m-txt--center">312</td>
+							<td class="m-txt--center">&nbsp;</td>
+							<td class="m-txt--center">&nbsp;</td>
+							<td style="border-left:none 1px;">&nbsp;</td>
+							<td style="border-left:none 1px;">&nbsp;</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+※「区分」欄の「◎」は高度救命救急センターであり、「域」は地域救命救急センターである。<br />
+　「ＤＨ」欄の「○」はドクターヘリ導入病院である。<br />
+　　　　高度救命救急センター&hellip;50<br />
+　　　　地域救命救急センター&hellip;19<br />
+　　　　ドクターヘリ（ＤＨ）運用施設&hellip;57　※　宮城県、茨城県、三重県、兵庫県、香川県、佐賀県では２病院を基地病院<br />
+　　　　　　　　　　　　　　　　　　　　　　として運航している。</div>
+</div>
+
+
+
+<div class="m-grid">
+	<div class="m-grid__col1"><div class="m-boxWideInfo" data-type="other">
+	<p class="m-box__ttl">お問い合わせ先</p>
+
+	<address>
+		<p>医政局地域医療計画課救急・周産期医療等対策室</p>
+
+		<p>救急医療係</p>
+
+		<p>TEL:03-5253-1111（内線2550）</p>
+	</address>
+</div>
+</div>
+</div>
+
+<div class="m-boxReader">
+<a href="https://get.adobe.com/jp/reader/" target="_blank">
+<div class="m-boxReader__body">
+<p class="m-boxReader__txt">PDFファイルを見るためには、Adobe Readerというソフトが必要です。Adobe Readerは無料で配布されていますので、こちらからダウンロードしてください。</p>
+<!-- /.m-boxReader__body --></div>
+<div class="m-boxReader__figure">
+<img src="/common/img/img_reader.png" alt="">
+<!-- /.m-boxReader__figure --></div></a>
+<!-- /.m-boxReader --></div>
+<!-- /.l-contentMain --></div>
+<!--
+<?ra g="!MB" line="*"?>
+-->
+<div class="l-contentSub">
+<nav class="m-navLocal">
+<h2 class="m-navLocal__hdg"><a href="/stf/seisakunitsuite/index.html">政策について</a></h2>
+<ul class="m-navLocal__layer3rd">
+<li><a href="/stf/seisakunitsuite/bunya/index.html" class="is-current">分野別の政策一覧</a>
+<ul class="m-navLocal__layer4th">
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/index.html" class="is-current">健康・医療</a>
+<ul class="m-navLocal__layer5th">
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/index.html">健康</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/index.html">食品</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/index.html" class="is-current" aria-current="page">医療</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/index.html">医療保険</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/index.html">医薬品・医療機器</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/0000099450.html">生活衛生</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/suido/index.html">水道</a></li>
+<!-- /.m-navLocal__layer5th --></ul>
+</li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/index.html">福祉・介護</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/index.html">雇用・労働</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/nenkin/index.html">年金</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/index.html">他分野の取り組み</a></li>
+<!-- /.m-navLocal__layer4th --></ul>
+</li>
+<li><a href="/stf/seisakunitsuite/soshiki/index.html">組織別の政策一覧</a></li>
+<li><a href="/seisakunitsuite/joseikin_shoureikin/index.html">各種助成金・奨励金等の制度</a></li>
+<li><a href="/stf/shingi/indexshingi.html">審議会・研究会等</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/kaigiroku/">国会会議録</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/yosan/">予算および決算・税制の概要</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/seisakuhyouka/">政策評価・独法評価</a></li>
+<!-- /.m-navLocal__layer3rd --></ul>
+<!-- /.m-navLocal --></nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- /.l-contentSub --></div>
+<!--
+<?ra break?>
+-->
+<!-- /.l-contentBody__inner --></div>
+<!-- /.l-contentBody --></div>
+<!-- /.l-content --></main>
+<!--
+<?ra g="!MB" line="*"?>
+-->
+<footer class="l-footer">
+<div class="l-footerPagetop">
+<div class="l-footerInner">
+<a href="#top" class="m-footerPagetop js-scroll" data-id="#top"><span>ページの先頭へ</span></a>
+<!-- /.l-footerInner --></div>
+<!-- /.l-footerPagetop --></div>
+<div class="l-footerNav">
+<div class="l-footerInner">
+<div class="m-footerPost">
+<p class="m-footerPost__idea"><b class="m-footerPost__idea__ttl">御意見募集やパブリックコメント</b>
+<a href="https://www.mhlw.go.jp/houdou_kouhou/sanka/" class="m-footerPost__idea__btn">国民参加の場</a></p>
+<!-- /.m-footerPost --></div>
+
+
+<div class="m-footerSitemap">
+<div class="m-footerSitemap__content--col2-3">
+<ul class="m-footerSitemap__parent">
+<li><a href="/theme/index.html" class="js-toggle-sp" data-id="footer-sitemap-01">テーマ別に探す
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-01">
+<li class="m-footerSitemap__child__top"><a href="/theme/index.html">テーマ別に探すトップへ</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/kenkou_iryou/index.html">健康・医療</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hukushi_kaigo/index.html">福祉・介護</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/koyou_roudou/index.html">雇用・労働</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/nenkin/index.html">年金</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/hokabunya/index.html">他分野の取り組み</a></li>
+</ul>
+</li>
+<li><a href="/houdou_kouhou/index.html" class="js-toggle-sp" data-id="footer-sitemap-02">報道・広報
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-02">
+<li class="m-footerSitemap__child__top"><a href="/houdou_kouhou/index.html">報道・広報トップへ</a></li>
+<li><a href="/stf/kaiken/index.html">大臣記者会見</a></li>
+<li><a href="/stf/houdou/index.html">報道発表資料</a></li>
+<li><a href="https://www.mhlw.go.jp/houdou_kouhou/kouhou_shuppan/">広報・出版</a></li>
+<li><a href="https://www.mhlw.go.jp/houdou_kouhou/gyouji_kaigi/">行事・会議の予定</a></li>
+<li><a href="/houdou_kouhou/sanka/index.html">国民参加の場</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="m-footerSitemap__content">
+<ul class="m-footerSitemap__parent">
+<li><a href="/stf/seisakunitsuite/index.html" class="js-toggle-sp" data-id="footer-sitemap-03">政策について
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-03">
+<li class="m-footerSitemap__child__top"><a href="/stf/seisakunitsuite/index.html">政策についてトップへ</a></li>
+<li><a href="/stf/seisakunitsuite/bunya/index.html">分野別の政策一覧</a></li>
+<li><a href="/stf/seisakunitsuite/soshiki/index.html">組織別の政策一覧</a></li>
+<li><a href="/seisakunitsuite/joseikin_shoureikin/index.html">各種助成金・奨励金等の制度</a></li>
+<li><a href="/stf/shingi/indexshingi.html">審議会・研究会等</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/kaigiroku/">国会会議録</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/yosan/">予算および決算・税制の概要</a></li>
+<li><a href="https://www.mhlw.go.jp/seisakunitsuite/seisakuhyouka/">政策評価・独法評価</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="m-footerSitemap__content">
+<ul class="m-footerSitemap__parent">
+<li><a href="/kouseiroudoushou/index.html" class="js-toggle-sp" data-id="footer-sitemap-04">厚生労働省について
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-04">
+<li class="m-footerSitemap__child__top"><a href="/kouseiroudoushou/index.html">厚生労働省についてトップへ</a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/profile/">大臣・副大臣・政務官の紹介</a></li>
+<li><a href="/kouseiroudoushou/kanbumeibo/index.html">幹部名簿</a></li>
+<li><a href="/kouseiroudoushou/shozaiannai/index.html">所在地案内</a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/shigoto/">主な仕事（所掌事務）</a></li>
+<li><a href="/stf/kouseiroudoushou/chihoukouseikyoku/index.html">地方厚生（支）局</a></li>
+<li><a href="/stf/kouseiroudoushou/roudoukyoku/index.html">労働局・労働基準監督署・ハローワーク</a></li>
+<li><a href="/stf/kouseiroudoushou/sisetu/index.html">施設等機関</a></li>
+<li><a href="https://www.mhlw.go.jp/churoi/">中央労働委員会</a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/shikaku_shiken/">資格・試験情報</a></li>
+<li><a href="https://www.mhlw.go.jp/kouseiroudoushou/saiyou/">採用情報</a></li>
+</ul>
+</li>
+<li><a href="/toukei_hakusho/index.html" class="js-toggle-sp" data-id="footer-sitemap-05">統計情報・白書
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-05">
+<li class="m-footerSitemap__child__top"><a href="/toukei_hakusho/index.html">統計情報・白書トップへ</a></li>
+<li><a href="https://www.mhlw.go.jp/toukei_hakusho/toukei/">各種統計調査</a></li>
+<li><a href="https://www.mhlw.go.jp/toukei_hakusho/hakusho/">白書、年次報告書</a></li>
+<li><a href="/stf/toukei/goriyou/chousahyo.html">調査票情報を利用したい方へ</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="m-footerSitemap__content">
+<ul class="m-footerSitemap__parent">
+<li><a href="/shokanhourei/index.html" class="js-toggle-sp" data-id="footer-sitemap-06">所管の法令等
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-06">
+<li class="m-footerSitemap__child__top"><a href="/shokanhourei/index.html">所管の法令等トップへ</a></li>
+<li><a href="https://www.mhlw.go.jp/shokanhourei/teishutsuhouan/">国会提出法案</a></li>
+<li><a href="https://www.mhlw.go.jp/hourei/">所管の法令、告示・通達等</a></li>
+<li><a href="/stf/newpage_19921.html">覚書等</a></li>
+</ul>
+</li>
+<li><a href="/shinsei_boshu/index.html" class="js-toggle-sp" data-id="footer-sitemap-07">申請・募集・情報公開
+<span class="m-footerSitemap__parent__icn"><img src="/common/img/icn_toggle_plus.svg" alt="開く"></span></a>
+<ul class="m-footerSitemap__child" id="footer-sitemap-07">
+<li class="m-footerSitemap__child__top"><a href="/shinsei_boshu/index.html">申請・募集・情報公開トップへ</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/denshishinesei/">電子申請（申請・届出等の手続案内）</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/houreitekiyou/">法令適用事前確認手続</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/choutatsujouhou/">調達情報</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gray_zone/gray_zone.html">グレーゾーン解消制度・新事業特例制度</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/kouekitsuhousha/">公益通報者の保護</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/jouhoukoukai/">情報公開・個人情報保護</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/denshiseihu/">デジタル・ガバメントの推進</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseibunsho/">公文書管理</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseitetsuzuki_moushide/index.html">行政手続法に基づく申出</a></li>
+<li><a href="https://www.mhlw.go.jp/shinsei_boshu/gyouseihuhukushinsa/index.html">行政不服審査法に基づく審理員候補者名簿</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<!-- /.m-footerSitemap --></div>
+
+
+<div class="m-footerRelated">
+<h2 class="m-footerRelated__hdg">関連リンク</h2>
+<ul class="m-footerRelated__list">
+<li><a href="/link/">他府省</a></li>
+<li><a href="https://www.mhlw.go.jp/link/#navAncLink-houjin">所管の法人等</a></li>
+<li><a href="https://www.mhlw.go.jp/library/opac4/opac/top">図書館利用案内</a></li>
+<li><a href="/closeup/index.html">クローズアップ厚生労働省一覧</a></li>
+<!-- /.m-footerRelated__list --></ul>
+<!-- /.m-footerRelated --></div>
+<!-- /.l-footerInner --></div>
+<!-- /.l-footerNav --></div>
+
+
+
+<div class="l-footerUtil">
+<div class="l-footerInner">
+<div class="m-footerUtil">
+<div class="m-footerUtil__service">
+<h2 class="m-footerUtil__hdg">情報配信サービス</h2>
+
+<ul class="m-footerUtil__list">
+
+<li class="m-footerUtil__list--mail"><a href="https://www.mhlw.go.jp/mailmagazine/"><span>情報配信サービスメルマガ登録</span></a></li>
+
+<li class="m-footerUtil__list--mag"><a href="https://www.mhlw.go.jp/web_magazine/"><span>WEBマガジン「厚生労働」</span></a></li>
+
+</ul>
+
+
+
+<!-- /.m-footerUtil__service --></div>
+
+<div class="m-footerUtil__social">
+<h2 class="m-footerUtil__hdg">ソーシャルメディア</h2>
+
+<ul class="m-footerUtil__list">
+
+<li class="m-footerUtil__list--fb"><a href="https://www.mhlw.go.jp/stf/facebook.html"><span>facebook</span></a></li>
+
+<li class="m-footerUtil__list--tw"><a href="https://www.mhlw.go.jp/stf/twitter.html"><span>Ｘ（旧Twitter）</span></a></li>
+
+<li class="m-footerUtil__list--video"><a href="https://www.mhlw.go.jp/stf/SNSpage.html"><span>SNS一覧</span></a></li>
+
+</ul>
+
+<!-- /.m-footerUtil__social --></div>
+<!-- /.m-footerUtil --></div>
+<!-- /.l-footerInner --></div>
+<!-- /.l-footerUtil --></div>
+<div class="l-footerInfo">
+<div class="l-footerInner">
+
+<ul class="m-footerLink">
+<li><a href="/chosakuken/index.html">利用規約・リンク・著作権等</a></li>
+<li><a href="/kojinjouhouhogo/index.html">個人情報保護方針</a></li>
+<li><a href="/kouseiroudoushou/symbol/index.html">シンボルマークとキャッチフレーズについて</a></li>
+<li><a href="/accessibility/index.html">アクセシビリティについて</a></li>
+<li><a href="/tsukaikata/index.html">サイトの使い方(ヘルプ)</a></li>
+<li><a href="/rss/index.html">RSSについて</a></li>
+<li><a href="https://www.mhlw.go.jp/form/pub/mhlw01/getmail">ホームページへのご意見</a></li>
+</ul>
+
+<div class="m-footerInfo">
+<p class="m-footerInfo__logo"><a href="https://www.mhlw.go.jp/"><img src="/content/000225173.png" alt="厚生労働省"><img src="/common/img/transparent-footer.png" alt="" class="transparent"></a></p>
+<p class="m-footerInfo__address"><span>法人番号6000012070001</span><br>
+〒100-8916　東京都千代田区霞が関1-2-2 <br>電話番号　<a href="tel:0352531111" class="m-footerInfo__tel">03-5253-1111</a>（代表）</p>
+<!-- /.m-footerInfo --></div>
+<small class="m-footerCopy">Copyright © Ministry of Health, Labour and Welfare, All Rights reserved.</small>
+<!-- /.l-footerInner --></div>
+<!-- /.l-footerInfo --></div>
+<!-- /.l-footer --></footer>
+
+<!--
+<?ra break?>
+-->
+<!-- /.l-wrapper --></div>
+<script src="/common/js/bundle.js"></script>
+<script src="/common/js/app.js"></script>
+</body>
+</html>
