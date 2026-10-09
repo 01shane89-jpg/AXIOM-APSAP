@@ -222,6 +222,8 @@
       environmental_conditions: { weather: I.weather || null, at: I.weather_at || "", hlz: I.hlz_wx ? { name: I.hlz_wx.name || "", hlz: !!I.hlz_wx.hlz, mgrs: I.hlz_wx.mgrs || "", at: I.hlz_wx.at || "", error: I.hlz_wx.err || "", days: I.hlz_wx.days || [] } : null },
       unresolved_requirements: unresolved,
       pending: (I.pending || []).slice(),
+      /* hospital records the plan needs to choose a hospital that could not be read on this device: [{ name, error }] */
+      hospital_sources_failed: (I.hospital_sources_failed || []).map(function (x) { return { name: str(x.name), error: str(x.error) }; }),
       approvals: { state: "AUTOMATED_DRAFT", history: [] },
       source_manifest: (I.sources || []).slice(),
       definitive: defF ? { facility_id: defF.id, name: defF.name, time_s: def.time_s, way: def.way } : null,
@@ -256,17 +258,19 @@
     var dA = air ? null : docAir(p);
     if (!air) gaps.push(dA ? "Air MEDEVAC provider not confirmed: request " + dA.name + " (" + dA.request_method + ") and record the aircraft in section 4" : "Air MEDEVAC provider: none documented for this country in OSAP; ask the national emergency number and International SOS");
     var sea = p.poi && p.poi.environment === "sea", sl = sea ? p.sea_leg : null;
+    /* no destination because the hospital records were not read is not "no hospital": say which (Shane 2026-10-09) */
+    var noDest = (p.hospital_sources_failed || []).length ? "HOSPITAL RECORDS NOT READ" : "NO DESTINATION";
     if (sea) gaps.push("Air pickup at sea: accepted deck landing or hoist" + (sl && sl.port ? "; landing at " + sl.port + " confirmed with the port" : ""));
     (p.validation_status.items || []).forEach(function (x) { if (x.level === "blocking") gaps.unshift(x.label + ": " + x.detail); });
     return {
       casualty: prof ? { id: prof.id, label: prof.label } : null, status: p.validation_status.status, status_label: p.validation_status.label, poi: p.poi ? p.poi.mgrs : "",
-      ground: sea && !(sl && sl.port) ? "NONE: AT SEA, NO LANDING PORT" : P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
+      ground: sea && !(sl && sl.port) ? "NONE: AT SEA, NO LANDING PORT" : P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : noDest,
       at_sea: sea, sea_leg: sl && sl.port ? { port: sl.port, nm: sl.nm, kn: sl.kn, s: sl.s } : null,
       air: air ? "CONFIRMED" : "NOT CONFIRMED", air_asset: air ? air.name : dA ? "Request: " + dA.name + ", " + (dA.phone ? "call " + dA.phone : dA.request_method) + " (documented service, not confirmed for this mission)" : "No air medevac service documented for this country in OSAP",
       air_documented: dA ? { name: dA.name, request: dA.request_method, phone: dA.phone, source: dA.source, source_url: dA.source_url } : null,
       stabilization: stab, stabilization_gap: !!(prof && prof.stabilization_gap), definitive: def, bypass: !!(prof && prof.bypass),
-      primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : "NO DESTINATION",
-      alternate_route: !def ? "NO DESTINATION" : A ? "AVAILABLE" : !ga ? "NOT LOOKED FOR" : ga.state === "pending" ? "CHECKING" : "NONE FOUND",
+      primary_route: P && P.time_s != null ? "AVAILABLE" : def ? "NOT ROUTED" : noDest,
+      alternate_route: !def ? noDest : A ? "AVAILABLE" : !ga ? "NOT LOOKED FOR" : ga.state === "pending" ? "CHECKING" : "NONE FOUND",
       route_flags: (p.operational_picture && def && p.definitive && p.definitive.facility_id === def.facility_id ? p.operational_picture.flags : []).filter(function (f) { return /^route\./.test(f.code); }).map(function (f) { return f.text; }),
       critical_gaps: gaps
     };
@@ -278,6 +282,11 @@
     function add(code, level, label, detail) { it.push({ code: code, level: level, label: label, detail: detail || "" }); }
     if (p.pending && p.pending.length) add("data.pending", "blocking", "Plan data complete", "Still reading: " + p.pending.join(", ") + ". The plan cannot be printed until they finish or fail.");
     else add("data.pending", "ok", "Plan data complete");
+    /* a hospital record that could not be read leaves hospitals without their documented care, so none can be chosen: the plan
+       would read "no destination" when the hospitals are there. Red until they are read (Shane 2026-10-09, plan near Bangkok). */
+    var hf = p.hospital_sources_failed || [];
+    if (hf.length) add("hospital.sources", "blocking", "Hospital records read", "Not read on this device: " + hf.map(function (x) { return x.name + (x.error ? " (" + x.error + ")" : ""); }).join("; ") +
+      ". Without them the plan cannot say which hospitals have the care needed" + (p.definitive ? ", so its choice may be wrong" : ", so it shows no destination") + ". Try again, or wait for a better connection.");
     add("poi", p.poi && p.poi.set_by === "poi" ? "ok" : "warning", "Point of injury", p.poi && p.poi.set_by === "poi" ? p.poi.mgrs : "Not set: the plan is centred on " + (p.poi && p.poi.set_by === "c" ? "the map or area centre" : "a stand-in point") + ".");
     /* a point of injury at sea: no road starts there; the road legs start at the landing port after a boat leg */
     if (p.poi && p.poi.environment === "sea") {
@@ -317,7 +326,9 @@
     else {
       var st = p.stabilization_facilities.filter(function (x) { return names(rec, p.facilities[x.facility_id]); })[0];
       if (st) add("receiving.match", "warning", "Receiving facility (unit details)", "“" + rec + "” is the stabilization stop; the definitive care is " + (def ? def.name : "not identified") + ".");
-      else add("receiving.match", "blocking", "Receiving facility (unit details)", "“" + rec + "” does not match the calculated " + (def ? "definitive destination, " + def.name : "plan: no definitive destination was found") + ". Correct section 9 or the plan before use.");
+      /* with no definitive destination there is nothing to compare against: the items above say why there is none */
+      else if (!def) add("receiving.match", "warning", "Receiving facility (unit details)", "“" + rec + "” cannot be checked: the plan has no definitive destination.");
+      else add("receiving.match", "blocking", "Receiving facility (unit details)", "“" + rec + "” does not match the calculated definitive destination, " + def.name + ". Correct section 9 or the plan before use.");
     }
     add("acceptance", "warning", "Definitive facility acceptance", "Not recorded: call the receiving hospital.");
     /* phase 1: the critical capabilities at the definitive facility, usable now only on a planner's unexpired check */
