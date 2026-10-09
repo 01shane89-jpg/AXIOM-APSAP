@@ -17,3 +17,6 @@ jpr7s1 https://www.mhlw.go.jp/content/10800000/001691287.pdf
 jpr7s3 https://www.mhlw.go.jp/content/10800000/001682704.pdf
 jpr8tsuchi https://www.mhlw.go.jp/content/10800000/001704854.pdf
 jpr7s2 https://www.mhlw.go.jp/content/10800000/001682703.pdf
+jpyoko1 https://www.pref.osaka.lg.jp/documents/23350/10_shiryou4-3.pdf
+jpyoko2 https://www.pref.aichi.jp/uploaded/attachment/213459.pdf
+jpyoko3 https://www.pref.okinawa.lg.jp/_res/projects/default_project/_page_/001/005/870/004.pdf
