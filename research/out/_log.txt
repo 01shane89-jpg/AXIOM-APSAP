@@ -344,3 +344,13 @@ yk_idx_kanto 404 text/html 37583
 yk_idx_kinki 200 text/html 52899
 yk_idx_shikoku 200 text/html 65167
 yk_idx_kyushu 200 text/html 116325
+yk2_kanto 200 text/html 57480
+yk2_kinki 200 text/html 216644
+yk2_tohoku 200 text/html 170751
+yk2_shikoku 200 text/html 36113
+yk2_cs 200 text/html 52813
+yk2_th1 200 text/html 43181
+yk2_th2 200 text/html 39347
+yk2_kyushu 200 text/html 116325
+yk2_notice 404 application/javascript 48956
+yk2_knowlety 200 text/html 22569
