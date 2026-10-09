@@ -179,8 +179,10 @@ ok(/Documented service: Thai Sky Doctor/.test(pSky.operational_picture.flags.fil
 const cSkyA = M.conop(M.build(input({ air_providers: [SKY], aircraft: [AC], now: "2026-10-03T20:00:00.000Z" })), "cat.major_trauma");
 ok(cSkyA.air === "CONFIRMED" && cSkyA.air_asset === "Test Air Ambulance (H145)" && !cSkyA.critical_gaps.some((g) => /Air MEDEVAC/.test(g)), "air: a confirmed aircraft still wins over a documented service");
 const c2 = M.conop(M.build(input({ fields: { recv1: "Somewhere Else Clinic" }, categories: [{ id: "cat.major_burn", label: "Major burn", rows: [{ role: "tertiary", state: "gap" }] }] })), "cat.major_burn");
-ok(c2.definitive === null && c2.ground === "NO DESTINATION" && c2.alternate_route === "NO DESTINATION" && /^Receiving facility \(unit details\): /.test(c2.critical_gaps[0]) && c2.critical_gaps.includes("Definitive care for major burn not documented"),
-  "phase 6: no definitive care says so, and a blocking error leads the gaps: " + c2.critical_gaps.join(" | "));
+ok(c2.definitive === null && c2.ground === "NO DESTINATION" && c2.alternate_route === "NO DESTINATION" && c2.critical_gaps[0] === "Definitive care for major burn not documented" && c2.status === "WARNING",
+  "phase 6: no definitive care says so first; a receiving facility with nothing to compare against is not a blocking error: " + c2.critical_gaps.join(" | "));
+const c3 = M.conop(M.build(input({ pending: ["hospitals"] })), "cat.major_trauma");
+ok(/^Plan data complete: /.test(c3.critical_gaps[0]) && c3.status === "BLOCKING", "phase 6: a blocking error leads the gaps: " + c3.critical_gaps[0]);
 const cA = M.conop(M.build(input({ aircraft: [AC], now: "2026-10-03T20:00:00.000Z" })), "cat.major_trauma");
 ok(cA.air === "CONFIRMED" && cA.air_asset === "Test Air Ambulance (H145)" && !cA.critical_gaps.includes("Air MEDEVAC provider") && cA.alternate_route === "NOT LOOKED FOR", "phase 6: a confirmed aircraft shows as confirmed and leaves the gaps");
 
@@ -205,5 +207,21 @@ const pNo = M.build(input({ categories: [{ id: "cat.major_trauma", label: "Major
 const cNo = M.conop(pNo, "cat.major_trauma");
 ok(pNo.stabilization_facilities.length === 0 && by(pNo, "stabilization").level === "warning" && cNo.stabilization === null && cNo.stabilization_gap && cNo.critical_gaps.includes("No stabilization stop documented inside the golden hour") && pNo.casualty_profiles[0].gaps.join() === "secondary,tertiary",
   "stabilization: with none documented inside the golden hour, the record, validation and CONOP say so and nothing is put in");
+// ---------- hospital records not read (Shane 2026-10-09: a phone near Bangkok showed RED and "no destination") ----------
+{
+  const none = { categories: [{ id: "cat.major_trauma", label: "Major trauma", rows: [{ role: "primary", state: "gap" }, { role: "secondary", state: "gap" }, { role: "tertiary", state: "gap" }] }], routes: [] };
+  const hf = [{ name: "Official hospital records (HA Thailand open data)", error: "no answer in 60 s" }];
+  const q = M.build(input(Object.assign({}, none, { hospital_sources_failed: hf })));
+  ok(by(q, "hospital.sources").level === "blocking" && /HA Thailand open data\) \(no answer in 60 s\)/.test(by(q, "hospital.sources").detail) && q.validation_status.status === "BLOCKING",
+    "an unread hospital record is a named red item, not a silent empty plan");
+  const qc = M.conop(q, "cat.major_trauma");
+  ok(qc.ground === "HOSPITAL RECORDS NOT READ" && qc.primary_route === "HOSPITAL RECORDS NOT READ", "the CONOP says the records were not read, not that there is no destination: " + qc.ground);
+  const q2 = M.build(input(none));
+  ok(!by(q2, "hospital.sources").level && M.conop(q2, "cat.major_trauma").ground === "NO DESTINATION", "with every record read, no hospital with the care is still NO DESTINATION");
+  const q3 = M.build(input(Object.assign({}, none, { fields: { recv1: "Thammasat University Hospital" } })));
+  ok(by(q3, "receiving.match").level === "warning" && /cannot be checked/.test(by(q3, "receiving.match").detail), "a saved receiving facility with no destination to compare is amber, not red");
+  ok(by(p, "receiving.match").level === "ok" && !by(p, "hospital.sources").level, "a plan with its records read and a matching receiving facility is unchanged");
+}
+
 if (fails) { console.log(fails + " FAILED"); process.exit(1); }
 console.log("all medical plan record checks passed");
