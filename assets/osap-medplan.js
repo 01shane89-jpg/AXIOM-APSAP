@@ -2588,21 +2588,56 @@
     var n = 256 * Math.pow(2, z), la = Math.max(-85, Math.min(85, p[0])) * Math.PI / 180;
     return [(p[1] + 180) / 360 * n, (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n];
   }
-  /* a tile the live map already showed can come back from a cache in a form a canvas may not read (saved without CORS),
-     which failed every tile Shane had looked at on iPhone; a tile that errors is asked for once more under its own address
-     (a tile that times out is not, so a slow or absent network costs one wait) */
+  /* The print map's tiles are read straight from the network, not through the app's service worker (cache "no-store" is
+     passed through untouched by sw.js): on Shane's iPhone (2026-10-09, Bangkok) most tiles of the CONOP map never came back
+     inside the wait and the map printed as a small patch on grey. Six tiles at a time, 20 s each; a tile that fails or times
+     out is looked for in the saved offline and map tiles (only a copy a canvas may read), then asked for once more, then
+     taken from Esri's street map so the page is never blank where a picture can be had. */
+  var TILE_ALT = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
+  var tileQ = [], tileRun = 0;
+  function tileSlot(fn) {
+    return new Promise(function (res) {
+      function done(v) { tileRun--; res(v); tileNext(); }
+      tileQ.push(function () { fn().then(done, function () { done(null); }); }); tileNext();
+    });
+  }
+  function tileNext() {
+    while (tileRun < 6 && tileQ.length) {
+      tileRun++;
+      (function (job) { job(); })(tileQ.shift());
+    }
+  }
+  function blobImg(bl) {
+    return new Promise(function (res) {
+      var u = URL.createObjectURL(bl), im = new Image();
+      im.onload = function () { res(im); }; im.onerror = function () { URL.revokeObjectURL(u); res(null); };
+      im.src = u;
+    });
+  }
+  function tileNet(url) {
+    return tileSlot(function () {
+      var ac = W.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ac) ac.abort(); }, 20000);
+      return fetch(url, { mode: "cors", cache: "no-store", credentials: "omit", signal: ac ? ac.signal : undefined })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); }).then(blobImg)
+        .then(function (im) { clearTimeout(t); return im; }, function () { clearTimeout(t); return null; });
+    });
+  }
+  function tileSaved(url) {
+    if (!W.caches) return Promise.resolve(null);
+    function one(name) { return caches.open(name).then(function (c) { return c.match(url, { ignoreVary: true }); }).then(function (r) { return r && r.type !== "opaque" && r.ok ? r.blob().then(blobImg) : null; }); }
+    return one("osap-offline").then(function (im) { return im || one("asap-tiles"); }).catch(function () { return null; });
+  }
   function tileImg(z, x, y) {
     var n = Math.pow(2, z); x = ((x % n) + n) % n;
-    var url = TILE_URL.replace("{z}", z).replace("{x}", x).replace("{y}", y);
-    function one(u) {
-      return new Promise(function (res) {
-        var im = new Image(), t = setTimeout(function () { res(null); }, 10000);
-        im.crossOrigin = "anonymous"; im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); res(false); };
-        im.src = u;
-      });
-    }
     if (y < 0 || y >= n) return Promise.resolve(null);
-    return one(url).then(function (im) { return im === false ? one(url + "?print=1").then(function (r) { return r || null; }) : im; });
+    function at(T) { return T.replace("{z}", z).replace("{x}", x).replace("{y}", y); }
+    var url = at(TILE_URL);
+    return tileNet(url).then(function (im) { return im ? { im: im } : tileSaved(url).then(function (sv) { return sv ? { im: sv } : tileNet(url).then(function (r) { return r ? { im: r } : tileNet(at(TILE_ALT)).then(function (e) { return e ? { im: e, alt: 1 } : null; }); }); }); });
+  }
+  /* what the caption says about the basemap: none at all, squares missing (left grey), or squares from the fallback map */
+  function baseNote(m, none) {
+    if (!m.base) return none;
+    return (m.miss ? m.miss + (m.miss === 1 ? " square" : " squares") + " of the basemap could not be loaded and are left grey. " : "") + (m.alt ? "Some squares are from Esri's street map (OpenStreetMap's were not reached). " : "");
   }
   /* the ground picture the printed plan map is framed on: the POI, the picks and their road routes */
   function groundPts(s) {
@@ -2631,10 +2666,10 @@
     var cv = D.createElement("canvas"); cv.width = Wd * K; cv.height = Ht * K;
     var g = cv.getContext("2d"); g.scale(K, K);
     function xy(p) { var q = wpx(p, z); return [q[0] - c0[0], q[1] - c0[1]]; }
-    var jobs = [];
+    var jobs = [], alt = false;
     for (var tx = Math.floor(c0[0] / 256); tx <= Math.floor((c0[0] + Wd) / 256); tx++)
       for (var ty = Math.floor(c0[1] / 256); ty <= Math.floor((c0[1] + Ht) / 256); ty++)
-        (function (tx, ty) { jobs.push(tileImg(z, tx, ty).then(function (im) { return { im: im, x: tx * 256 - c0[0], y: ty * 256 - c0[1] }; })); })(tx, ty);
+        (function (tx, ty) { jobs.push(tileImg(z, tx, ty).then(function (r) { return { im: r && r.im, alt: r && r.alt, x: tx * 256 - c0[0], y: ty * 256 - c0[1] }; })); })(tx, ty);
     function overlays() {
       var mpp = 156543.03392 * Math.cos(s.o[0] * Math.PI / 180) / Math.pow(2, z);
       items.forEach(function (it) {
@@ -2653,12 +2688,12 @@
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(it[2], q[0], q[1] + 0.5);
       });
       /* scale bar and attribution (no scale bar on a world map: Web Mercator scale changes with latitude) */
-      if (focus && focus.noScale) { g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - 190, Ht - 16, 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText("Map data © OpenStreetMap contributors", Wd - 6, Ht - 7); return; }
+      if (focus && focus.noScale) { g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - (alt ? 230 : 190), Ht - 16, alt ? 230 : 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText(alt ? "Map data © OpenStreetMap contributors, Esri" : "Map data © OpenStreetMap contributors", Wd - 6, Ht - 7); return; }
       var nice = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000], L1 = nice.filter(function (m) { return m / mpp <= Wd / 5; }).pop() || 100, px = L1 / mpp;
       g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(8, Ht - 30, px + 70, 22); g.strokeStyle = "#111"; g.lineWidth = 2; g.setLineDash([]);
       g.beginPath(); g.moveTo(14, Ht - 14); g.lineTo(14 + px, Ht - 14); g.moveTo(14, Ht - 19); g.lineTo(14, Ht - 9); g.moveTo(14 + px, Ht - 19); g.lineTo(14 + px, Ht - 9); g.stroke();
       g.fillStyle = "#111"; g.font = "11px system-ui, sans-serif"; g.textAlign = "left"; g.fillText(L1 >= 1000 ? L1 / 1000 + " km" : L1 + " m", 20 + px, Ht - 13);
-      g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - 190, Ht - 16, 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText("Map data © OpenStreetMap contributors", Wd - 6, Ht - 7);
+      g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - (alt ? 230 : 190), Ht - 16, alt ? 230 : 190, 16); g.fillStyle = "#222"; g.font = "10px system-ui, sans-serif"; g.fillText(alt ? "Map data © OpenStreetMap contributors, Esri" : "Map data © OpenStreetMap contributors", Wd - 6, Ht - 7);
       g.textAlign = "center"; g.fillStyle = "rgba(255,255,255,.85)"; g.fillRect(Wd - 30, 6, 24, 30); g.fillStyle = "#111"; g.font = "700 12px system-ui, sans-serif"; g.fillText("N", Wd - 18, 16);
       g.beginPath(); g.moveTo(Wd - 18, 20); g.lineTo(Wd - 23, 33); g.lineTo(Wd - 13, 33); g.closePath(); g.fill();
     }
@@ -2666,8 +2701,9 @@
       g.fillStyle = "#eef0f2"; g.fillRect(0, 0, Wd, Ht);
       var got = tiles.filter(function (t) { return t.im; });
       got.forEach(function (t) { g.drawImage(t.im, t.x, t.y, 256, 256); });
+      alt = got.some(function (t) { return t.alt; });
       overlays();
-      try { return { url: cv.toDataURL("image/png"), base: got.length > 0, z: z }; }
+      try { return { url: cv.toDataURL("image/png"), base: got.length > 0, z: z, miss: tiles.length - got.length, alt: alt }; }
       catch (e) {
         /* a tile without CORS taints the canvas: draw the plan without the basemap */
         g.setTransform(K, 0, 0, K, 0, 0); g.fillStyle = "#eef0f2"; g.fillRect(0, 0, Wd, Ht); overlays();
@@ -2804,7 +2840,7 @@
     var ready = mapImage(1000, 640, split ? { items: mi.filter(function (x) { return x[0] !== "ring"; }), pts: groundPts(s) } : { items: mi, pts: groundPts(s).concat(ringPts(s)) }).then(function (m) {
       var im = D.getElementById("mpd-map"), cap = D.getElementById("mpd-cap"); if (!im) return;
       im.src = m.url;
-      if (cap) cap.textContent = (m.base ? "" : "The basemap could not be loaded; the plan is drawn without it. ") + "Straight north up, Web Mercator, zoom " + m.z + ". Routes from the road router; rings and outlines as set in section 1." +
+      if (cap) cap.textContent = baseNote(m, "The basemap could not be loaded; the plan is drawn without it. ") + "Straight north up, Web Mercator, zoom " + m.z + ". Routes from the road router; rings and outlines as set in section 1." +
         (split ? " The air rings reach beyond this map, so they are on the air evacuation map with the golden hour." : "");
       return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
     }).catch(function () { var cap = D.getElementById("mpd-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
@@ -2815,7 +2851,7 @@
       am.innerHTML = '<h4>Air evacuation map</h4><figure><img alt="Map of the air evacuation rings round the point of injury"><figcaption class="obs">Drawing the map…</figcaption>' + airKeyHtml(ai) + "</figure>";
       ready = Promise.all([ready, mapImage(1000, 560, { items: ai, pts: airFramePts(s) }).then(function (m) {
         var im = am.querySelector("img"), cap = am.querySelector("figcaption"); im.src = m.url;
-        cap.textContent = (m.base ? "" : "The basemap could not be loaded. ") + "Helicopter at " + num("rwkn") + " kn from " + (mb.b ? mb.b.name : "the point of injury") + ": " + R[0].t + " min ring " + km(R[0].r) + ", " + R[1].t + " min ring " + km(R[1].r) +
+        cap.textContent = baseNote(m, "The basemap could not be loaded. ") + "Helicopter at " + num("rwkn") + " kn from " + (mb.b ? mb.b.name : "the point of injury") + ": " + R[0].t + " min ring " + km(R[0].r) + ", " + R[1].t + " min ring " + km(R[1].r) +
           ", counting " + num("launch") + " min to launch, the flight to the pickup and " + ONSCENE_MIN + " min on the ground. Straight north up, Web Mercator, zoom " + m.z + ". Straight lines show distance, not a flight route.";
         return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
       }).catch(function () { var cap = am.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
@@ -2828,7 +2864,7 @@
       var items = stratItems(s).concat([["mk", s.o, "POI", "o", "POI", true]]);
       ready = Promise.all([ready, mapImage(1000, 520, { items: items, pts: spts, minZ: 1, noScale: true }).then(function (m) {
         var im = sm.querySelector("img"), cap = sm.querySelector("figcaption"); im.src = m.url;
-        cap.textContent = (m.base ? "" : "The basemap could not be loaded. ") + "Great-circle legs, Web Mercator. " + C.map(function (c) { return c.key + ": " + c.stops.map(function (x) { return x.k; }).join(" → ") + " (" + mins(c.t) + ")"; }).join("; ") + ".";
+        cap.textContent = baseNote(m, "The basemap could not be loaded. ") + "Great-circle legs, Web Mercator. " + C.map(function (c) { return c.key + ": " + c.stops.map(function (x) { return x.k; }).join(" → ") + " (" + mins(c.t) + ")"; }).join("; ") + ".";
         return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
       }).catch(function () { var cap = sm.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
     }
@@ -3051,7 +3087,7 @@
     }).then(function (m) {
       var im = D.getElementById("mpa-map"), cap = D.getElementById("mpa-cap"); if (!im || !m) return;
       im.src = m.url;
-      if (cap) cap.textContent = (m.base ? "" : "The basemap could not be loaded; drawn without it. ") + "POI point of injury, H this hospital, L nearest helipad, A nearest airfield; red line the road route. Straight north up, zoom " + m.z + ".";
+      if (cap) cap.textContent = baseNote(m, "The basemap could not be loaded; drawn without it. ") + "POI point of injury, H this hospital, L nearest helipad, A nearest airfield; red line the road route. Straight north up, zoom " + m.z + ".";
       return new Promise(function (r) { if (im.complete) r(); else { im.onload = r; im.onerror = r; } });
     }).catch(function () { var cap = D.getElementById("mpa-cap"); if (cap) cap.textContent = "The map could not be drawn on this device."; });
     D.getElementById("mpa-print").addEventListener("click", function () { ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
