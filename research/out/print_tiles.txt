@@ -1,0 +1,264 @@
+##### webkit cold
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+controlled=false
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.private.coffee/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+console Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.kumi.systems/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+TILE 200 * sw=true 168ms 15/25533/15122.png
+TILE 200 * sw=true 172ms 15/25533/15121.png
+TILE 200 * sw=true 176ms 15/25534/15122.png
+TILE 200 * sw=true 179ms 8/197/119.png
+TILE 200 * sw=true 181ms 8/197/118.png
+TILE 200 * sw=true 194ms 8/200/119.png
+TILE 200 * sw=true 210ms 8/197/117.png
+TILE 200 * sw=true 212ms 8/199/119.png
+TILE 200 * sw=true 211ms 8/201/118.png
+TILE 200 * sw=true 213ms 8/199/118.png
+TILE 200 * sw=true 214ms 8/200/117.png
+TILE 200 * sw=true 229ms 15/25537/15123.png
+TILE 200 * sw=true 223ms 8/198/119.png
+TILE 200 * sw=true 226ms 8/201/117.png
+TILE 200 * sw=true 227ms 8/200/118.png
+TILE 200 * sw=true 229ms 8/198/118.png
+TILE 200 * sw=true 238ms 15/25535/15121.png
+TILE 200 * sw=true 243ms 15/25534/15121.png
+TILE 200 * sw=true 233ms 8/198/117.png
+TILE 200 * sw=true 232ms 8/199/117.png
+TILE 200 * sw=true 243ms 15/25536/15122.png
+TILE 200 * sw=true 242ms 15/25537/15121.png
+TILE 200 * sw=true 245ms 15/25534/15123.png
+TILE 200 * sw=true 232ms 8/201/119.png
+TILE 200 * sw=true 625ms 15/25536/15123.png
+TILE 200 * sw=true 626ms 15/25536/15121.png
+TILE 200 * sw=true 626ms 15/25535/15122.png
+TILE 200 * sw=true 625ms 15/25537/15122.png
+TILE 200 * sw=true 626ms 15/25535/15123.png
+TILE 200 * sw=true 2392ms 15/25533/15123.png
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
+##### webkit sw
+PAGEERROR ResizeObserver loop completed with undelivered notifications.
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+controlled=true
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.private.coffee/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+console Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.kumi.systems/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+TILE 200 * sw=true 46ms 15/25533/15121.png
+TILE 200 * sw=true 47ms 15/25533/15122.png
+TILE 200 * sw=true 49ms 15/25533/15123.png
+TILE 200 * sw=true 50ms 15/25534/15121.png
+TILE 200 * sw=true 50ms 15/25534/15122.png
+TILE 200 * sw=true 50ms 15/25534/15123.png
+TILE 200 * sw=true 51ms 15/25535/15121.png
+TILE 200 * sw=true 51ms 15/25535/15122.png
+TILE 200 * sw=true 54ms 15/25535/15123.png
+TILE 200 * sw=true 54ms 15/25536/15121.png
+TILE 200 * sw=true 55ms 15/25536/15122.png
+TILE 200 * sw=true 57ms 15/25536/15123.png
+TILE 200 * sw=true 56ms 15/25537/15121.png
+TILE 200 * sw=true 59ms 15/25537/15122.png
+TILE 200 * sw=true 59ms 15/25537/15123.png
+TILE 200 * sw=true 53ms 8/197/117.png
+TILE 200 * sw=true 52ms 8/197/118.png
+TILE 200 * sw=true 52ms 8/197/119.png
+TILE 200 * sw=true 49ms 8/198/117.png
+TILE 200 * sw=true 54ms 8/198/118.png
+TILE 200 * sw=true 54ms 8/198/119.png
+TILE 200 * sw=true 54ms 8/199/117.png
+TILE 200 * sw=true 54ms 8/199/118.png
+TILE 200 * sw=true 56ms 8/199/119.png
+TILE 200 * sw=true 56ms 8/200/117.png
+TILE 200 * sw=true 56ms 8/200/118.png
+TILE 200 * sw=true 56ms 8/200/119.png
+TILE 200 * sw=true 57ms 8/201/117.png
+TILE 200 * sw=true 57ms 8/201/118.png
+TILE 200 * sw=true 56ms 8/201/119.png
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
+##### webkit bigcache
+PAGEERROR ResizeObserver loop completed with undelivered notifications.
+console Failed to load resource: the server responded with a status of 404 (Not Found)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+filled caches in 2615ms
+controlled=true
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.private.coffee/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+console Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+console Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+console Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+PAGEERROR /overpass.kumi.systems/api/interpreter due to access control checks.
+console Failed to load resource: Origin https://01shane89-jpg.github.io is not allowed by Access-Control-Allow-Origin. Status code: 500
+TILE 200 * sw=false 0ms 15/25533/15123.png
+TILE 200 * sw=false 2ms 15/25536/15123.png
+TILE 200 * sw=false 1ms 8/197/118.png
+TILE 200 * sw=false 2ms 8/197/119.png
+TILE 200 * sw=false 3ms 8/198/117.png
+TILE 200 * sw=false 4ms 8/198/118.png
+TILE 200 * sw=false 6ms 8/198/119.png
+TILE 200 * sw=false 4ms 8/199/117.png
+TILE 200 * sw=false 7ms 8/199/118.png
+TILE 200 * sw=false 6ms 8/199/119.png
+TILE 200 * sw=false 5ms 8/200/117.png
+TILE 200 * sw=false 5ms 8/200/118.png
+TILE 200 * sw=false 5ms 8/200/119.png
+TILE 200 * sw=false 5ms 8/201/117.png
+TILE 200 * sw=false 4ms 8/201/118.png
+TILE 200 * sw=false 4ms 8/201/119.png
+TILE 200 * sw=true 35ms 15/25533/15121.png
+TILE 200 * sw=true 34ms 15/25533/15122.png
+TILE 200 * sw=true 34ms 15/25534/15121.png
+TILE 200 * sw=true 33ms 15/25534/15122.png
+TILE 200 * sw=true 34ms 15/25534/15123.png
+TILE 200 * sw=true 33ms 15/25535/15121.png
+TILE 200 * sw=true 33ms 15/25535/15122.png
+TILE 200 * sw=true 33ms 15/25535/15123.png
+TILE 200 * sw=true 33ms 15/25536/15121.png
+TILE 200 * sw=true 33ms 15/25536/15122.png
+TILE 200 * sw=true 32ms 15/25537/15121.png
+TILE 200 * sw=true 31ms 15/25537/15122.png
+TILE 200 * sw=true 31ms 15/25537/15123.png
+TILE 200 * sw=true 23ms 8/197/117.png
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
+
+##### chromium cold
+controlled=false
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Access to fetch at 'https://overpass.private.coffee/api/interpreter' from origin 'https://01shane89-jpg.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cor
+console Failed to load resource: net::ERR_FAILED
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+TILE 200 * sw=true 115ms 15/25533/15121.png
+TILE 200 * sw=true 118ms 15/25533/15123.png
+TILE 200 * sw=true 121ms 15/25534/15123.png
+TILE 200 * sw=true 136ms 15/25534/15121.png
+TILE 200 * sw=true 138ms 15/25533/15122.png
+TILE 200 * sw=true 144ms 15/25534/15122.png
+TILE 200 * sw=true 149ms 15/25535/15121.png
+TILE 200 * sw=true 148ms 8/197/118.png
+TILE 200 * sw=true 150ms 8/198/117.png
+TILE 200 * sw=true 152ms 8/197/117.png
+TILE 200 * sw=true 156ms 15/25536/15122.png
+TILE 200 * sw=true 158ms 15/25536/15123.png
+TILE 200 * sw=true 161ms 8/198/118.png
+TILE 200 * sw=true 164ms 15/25535/15123.png
+TILE 200 * sw=true 167ms 15/25537/15123.png
+TILE 200 * sw=true 171ms 15/25535/15122.png
+TILE 200 * sw=true 175ms 15/25536/15121.png
+TILE 200 * sw=true 178ms 15/25537/15121.png
+TILE 200 * sw=true 179ms 15/25537/15122.png
+TILE 200 * sw=true 179ms 8/197/119.png
+TILE 200 * sw=true 641ms 8/198/119.png
+TILE 200 * sw=true 641ms 8/200/117.png
+TILE 200 * sw=true 641ms 8/199/118.png
+TILE 200 * sw=true 641ms 8/199/119.png
+TILE 200 * sw=true 641ms 8/201/118.png
+TILE 200 * sw=true 641ms 8/201/117.png
+TILE 200 * sw=true 641ms 8/200/118.png
+TILE 200 * sw=true 641ms 8/200/119.png
+TILE 200 * sw=true 641ms 8/201/119.png
+TILE 200 * sw=true 641ms 8/199/117.png
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
+##### chromium sw
+controlled=true
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Failed to load resource: the server responded with a status of 504 (Gateway Timeout)
+console Access to fetch at 'https://overpass.private.coffee/api/interpreter' from origin 'https://01shane89-jpg.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cor
+console Failed to load resource: net::ERR_FAILED
+console Failed to load resource: the server responded with a status of 504 (Gateway Time-out)
+TILE 200 * sw=true 38ms 15/25533/15121.png
+TILE 200 * sw=true 44ms 15/25533/15122.png
+TILE 200 * sw=true 44ms 15/25533/15123.png
+TILE 200 * sw=true 44ms 15/25534/15121.png
+TILE 200 * sw=true 47ms 15/25534/15122.png
+TILE 200 * sw=true 47ms 15/25534/15123.png
+TILE 200 * sw=true 54ms 15/25535/15121.png
+TILE 200 * sw=true 54ms 15/25535/15122.png
+TILE 200 * sw=true 54ms 15/25535/15123.png
+TILE 200 * sw=true 53ms 15/25536/15121.png
+TILE 200 * sw=true 53ms 15/25536/15122.png
+TILE 200 * sw=true 55ms 15/25536/15123.png
+TILE 200 * sw=true 55ms 15/25537/15121.png
+TILE 200 * sw=true 56ms 15/25537/15122.png
+TILE 200 * sw=true 56ms 15/25537/15123.png
+TILE 200 * sw=true 56ms 8/197/117.png
+TILE 200 * sw=true 56ms 8/197/118.png
+TILE 200 * sw=true 56ms 8/197/119.png
+TILE 200 * sw=true 59ms 8/198/117.png
+TILE 200 * sw=true 60ms 8/198/118.png
+TILE 200 * sw=true 60ms 8/198/119.png
+TILE 200 * sw=true 60ms 8/199/117.png
+TILE 200 * sw=true 60ms 8/199/118.png
+TILE 200 * sw=true 60ms 8/199/119.png
+TILE 200 * sw=true 60ms 8/200/117.png
+TILE 200 * sw=true 60ms 8/200/118.png
+TILE 200 * sw=true 60ms 8/200/119.png
+TILE 200 * sw=true 60ms 8/201/117.png
+TILE 200 * sw=true 60ms 8/201/118.png
+TILE 200 * sw=true 60ms 8/201/119.png
+console Access to fetch at 'https://overpass.kumi.systems/api/interpreter' from origin 'https://01shane89-jpg.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors'
+console Failed to load resource: net::ERR_FAILED
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
+##### chromium bigcache
+console Failed to load resource: the server responded with a status of 400 (Bad Request)
+filled caches in 9841ms
+controlled=true
+console Access to fetch at 'https://overpass.private.coffee/api/interpreter' from origin 'https://01shane89-jpg.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cor
+console Failed to load resource: net::ERR_FAILED
+TILE 200 * sw=true 40ms 15/25533/15121.png
+TILE 200 * sw=true 40ms 15/25533/15122.png
+TILE 200 * sw=true 60ms 15/25533/15123.png
+TILE 200 * sw=true 60ms 15/25534/15121.png
+TILE 200 * sw=true 60ms 15/25534/15122.png
+TILE 200 * sw=true 60ms 15/25534/15123.png
+TILE 200 * sw=true 60ms 15/25535/15121.png
+TILE 200 * sw=true 54ms 15/25535/15122.png
+TILE 200 * sw=true 54ms 15/25535/15123.png
+TILE 200 * sw=true 54ms 15/25536/15121.png
+TILE 200 * sw=true 54ms 15/25536/15122.png
+TILE 200 * sw=true 54ms 15/25536/15123.png
+TILE 200 * sw=true 59ms 15/25537/15121.png
+TILE 200 * sw=true 59ms 15/25537/15122.png
+TILE 200 * sw=true 59ms 15/25537/15123.png
+TILE 200 * sw=true 59ms 8/197/117.png
+TILE 200 * sw=true 59ms 8/197/118.png
+TILE 200 * sw=true 59ms 8/197/119.png
+TILE 200 * sw=true 59ms 8/198/117.png
+TILE 200 * sw=true 60ms 8/198/118.png
+TILE 200 * sw=true 60ms 8/198/119.png
+TILE 200 * sw=true 60ms 8/199/117.png
+TILE 200 * sw=true 60ms 8/199/118.png
+TILE 200 * sw=true 60ms 8/199/119.png
+TILE 200 * sw=true 60ms 8/200/117.png
+TILE 200 * sw=true 59ms 8/200/118.png
+TILE 200 * sw=true 59ms 8/200/119.png
+TILE 200 * sw=true 59ms 8/201/117.png
+TILE 200 * sw=true 59ms 8/201/118.png
+TILE 200 * sw=true 59ms 8/201/119.png
+CAP Straight north up, Web Mercator, zoom 15. Routes from the road router; rings and outlines as set in section 1. The air rings reach beyond this map, so they are on the air evacuation map with the golden hour.
+HELD 
