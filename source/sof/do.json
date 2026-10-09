@@ -34,13 +34,13 @@
    "src": "https://www.wikidata.org/entity/Q105583801",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/197660740",
-   "fp": "90c1ee5532163ed406da021a775bcda0034a408546d5c7f8b8e07bc17215331b",
+   "fp": "65e899a1610b3c77f9fc748e5a82bca92836635a07c855c60cd08224b455f2ea",
    "web": "https://do.usembassy.gov",
    "phone": "(809) 567-7775",
    "phone_after_hours": "(809) 567-7775",
    "phone_src": "https://do.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   },
   {
    "id": "sof:do:post:u-s-consular-agent-bavaro-punta-cana",
@@ -59,8 +59,8 @@
    "phone": "(809) 552-8990",
    "phone_src": "https://www.openstreetmap.org/node/12247170780",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-10-01",
-   "fp": "d5fde67e40754f9eb0b065952fdaf0047194cd0eb3f306791c329ae8022b59f0"
+   "phone_asof": "2026-10-09",
+   "fp": "8926a711aa93985a9725474d8f071fbc3698735cb7e74665e5b7b6a84d6ed8d6"
   }
  ],
  "airports": [
@@ -667,8 +667,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2040771999",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "54cb625c63ffcda40f47cbd1dc25376beff8b91b791c74764a2d93e2f0d30621"
+   "asof": "2026-10-09",
+   "fp": "2278e1d05a15d74b69093df1b4c8a2e7234b52aa76c434547993783f738efc01"
   },
   {
    "id": "sof:do:xing:node-330935496",
@@ -687,8 +687,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/330935496",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "41bdf83da74230747be88f0d9f403c7e92a9cd7a0b2e437185201da3d06e31a8"
+   "asof": "2026-10-09",
+   "fp": "432fa6d15dfec4f5b956925242a15a1cc62345e215feccea1c797ceec116c1f3"
   },
   {
    "id": "sof:do:xing:node-330935648",
@@ -707,8 +707,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/330935648",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "86e6d66dcb75dccc0c2f752d151107e9b00213b0c0aced82132568fde46854ea"
+   "asof": "2026-10-09",
+   "fp": "b8076a6366e863e7658e6ac454108d35b8066b4ba9c7358b6fa593508c271e89"
   },
   {
    "id": "sof:do:xing:node-614558469",
@@ -724,8 +724,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/614558469",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "6ca2be5d1fe045d685a55bed5f20e75fef83270e2fe32bd441bad28dc04453cc"
+   "asof": "2026-10-09",
+   "fp": "66ea6a506e5fa9d3aae19e2b55510c4f746c2a167e91ada8d4f8fb70f5f04b82"
   },
   {
    "id": "sof:do:xing:node-620011993",
@@ -741,8 +741,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/620011993",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "779930856b3849fed54e9d2c512c5fa42b59e5cca961478b58422a31959089cf"
+   "asof": "2026-10-09",
+   "fp": "acbcde553ae8e45791ac645e1cdea514f7bff48f1d35a510d507afc7d36c28b3"
   },
   {
    "id": "sof:do:xing:way-1552375981",
@@ -758,13 +758,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1552375981",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "8a34e9303ce2daf18c202a14226500772d112a8ad40387288bf2949619bbd693"
+   "asof": "2026-10-09",
+   "fp": "982b5ade6351ed9c198a47e90d7691061a9449b58ee3a12373886cbfd04d641a"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

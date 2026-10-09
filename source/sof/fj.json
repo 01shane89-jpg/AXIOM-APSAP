@@ -30,12 +30,12 @@
    "coord_basis": "OpenStreetMap node/2115183227",
    "src": "https://fj.usembassy.gov/u-s-embassy-suva/",
    "srcname": "U.S. Embassy in Fiji, Kiribati, Nauru and Tuvalu",
-   "fp": "61f602f0b936bf4f6bced3923398c51acffd290e173c5aa35d6371855c980dda",
+   "fp": "6af6f602acc27166c18e7937292789d90421696db96823dea7d8aed9c7075c63",
    "web": "https://fj.usembassy.gov/embassy/suva/",
    "phone": "+679 331 4466",
    "phone_src": "https://www.openstreetmap.org/node/2115183227",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -731,5 +731,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

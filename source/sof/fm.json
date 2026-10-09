@@ -30,13 +30,13 @@
    "src": "https://fm.usembassy.gov/medical-assistance/",
    "srcname": "U.S. Embassy Kolonia",
    "coord_basis": "OpenStreetMap way/222396123",
-   "fp": "aa4058ec1df31361e7fb7a4dc99be6e418a01a1ad52b060755191262170a9b47",
+   "fp": "39fb6e1972357fadb03b949adee03af3c471ee09d3a8b79249b61ad44ad1effe",
    "web": "https://fm.usembassy.gov",
    "phone": "+691 320-2187",
    "phone_after_hours": "691-320-2187",
    "phone_src": "https://fm.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -442,5 +442,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

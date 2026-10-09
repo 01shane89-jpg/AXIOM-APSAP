@@ -49,11 +49,11 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Maldives.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "estimated (Male city centre; no address published)",
-   "fp": "67b801a2f8e2611480aacec1910c744af156142bd27262711811ee88a1df5d50",
+   "fp": "b9111531472d6f2c8d2a3bba1792d32f306fee3cece9f71443801e291b76c2f6",
    "phone_after_hours": "00-94-11-202-8500",
    "phone_src": "https://mv.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -330,5 +330,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

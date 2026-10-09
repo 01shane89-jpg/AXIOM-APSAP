@@ -38,13 +38,13 @@
    "src": "https://www.wikidata.org/entity/Q23541051",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/601306905",
-   "fp": "73b3fce4e8167057f9ea0d9160646f91a6797ff3e57e57db45ad43b9e85c4840",
+   "fp": "408b07e70161a639e1e568a4fd6d40556d844cb519cf282c52ea6a2792d0b4c1",
    "web": "https://be.usembassy.gov/",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   },
   {
    "id": "sof:be:post:embassy-of-the-united-states-brussels",
@@ -59,12 +59,12 @@
    "src": "https://www.wikidata.org/entity/Q18071136",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "09e64a3e4ef67c5eec02ddd2b09030cd98a1e1334e73d545993c1deefc81fb41",
+   "fp": "0bdee39683416a2aa6f1dad10be4ef226ad07f8223878e3f0e11c06e83d8f3fb",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   },
   {
    "id": "sof:be:post:united-states-mission-to-nato",
@@ -79,12 +79,12 @@
    "src": "https://www.wikidata.org/entity/Q118868620",
    "srcname": "Wikidata",
    "coord_basis": "Wikidata coordinate (P625)",
-   "fp": "3766bf13ea33a4226c79458193c2eb41de3329862306b109a74308304912b1f1",
+   "fp": "2d6752f6f01142155563d90e21c6524d213474c57300316b52e9a416dc2d3b4b",
    "phone": "(32-2) 811-4000",
    "phone_after_hours": "(+32)(0)2-811-4000",
    "phone_src": "https://be.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -709,8 +709,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11347095838",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1ddb8340c2fdad3c384b6210bac1a98626a41e6dd56796f6329199b94a25a74f"
+   "asof": "2026-10-09",
+   "fp": "45eb7f1404545411634bf8141b5f532bc1af132a4290466cf38ea37290410301"
   },
   {
    "id": "sof:be:xing:node-3070897591",
@@ -726,8 +726,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3070897591",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ae4a62537e5d0aa5d55adbc7c94d742280d53c457eb0cc83fded656d62a4c25f"
+   "asof": "2026-10-09",
+   "fp": "a772e4a04593e49a6aa3053cbe4302cb34c3e4539d9d6c2026b57d8e725f2a5d"
   },
   {
    "id": "sof:be:xing:way-200951095",
@@ -743,8 +743,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/200951095",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1449212b9a531974a86872522d12dd02603b1712e323d70dae9f3bce82466156"
+   "asof": "2026-10-09",
+   "fp": "03182e53c03c5dbf889b57c56fad45e4a34ba0279652db7d99fb87e0662f97c1"
   },
   {
    "id": "sof:be:xing:way-693707041",
@@ -760,13 +760,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/693707041",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "31710c91d6b938a84654f0ebde851f8fec7ce598c824b4a9e8fef0f2c6dd72bc"
+   "asof": "2026-10-09",
+   "fp": "a9b47171e4e031d05ebacd91d3545fd721089da3544a09d733909d4db8852e3d"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }
