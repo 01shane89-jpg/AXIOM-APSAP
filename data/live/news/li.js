@@ -1,1 +1,1 @@
-window.ASAP_NEWS={"asof":"2026-10-09 19:28Z","sources":[{"cc":"li","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Liechtenstein%22&format=rss","ok":true,"n":8,"old":4}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"li":[]}};
+window.ASAP_NEWS={"asof":"2026-10-09 19:44Z","sources":[{"cc":"li","source":"Bing News search","url":"https://www.bing.com/news/search?q=%22Liechtenstein%22&format=rss","ok":true,"n":7,"old":5}],"coverage":{"countries":198,"with":198,"none":[]},"items":{"li":[]}};
