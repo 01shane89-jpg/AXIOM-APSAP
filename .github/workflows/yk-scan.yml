@@ -1,0 +1,19 @@
+# Scratch: JP transfusion registrations scan (branch claude/medplan-gaps-raw only, never merged)
+name: JP transfusion scan
+on:
+  push:
+    branches: [claude/medplan-gaps-raw]
+    paths: [research/yk_scan.py]
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: pip install -q openpyxl
+      - run: python3 research/yk_scan.py
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add research/out && git commit -m "research: transfusion scan" && git pull --rebase -q && git push || true
