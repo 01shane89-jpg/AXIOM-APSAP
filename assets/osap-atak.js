@@ -55,6 +55,8 @@
     search: ic('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>'),
     plans: ic('<rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V2.8h6V4M8.5 10h7M8.5 14h7M8.5 18h4"/>'),
     evac: ic('<path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4M18 12H9"/>'),
+    /* comms: a mast with radio waves either side */
+    radio: ic('<path d="M12 10v11M9 21h6M12 10l-3 11M12 10l3 11"/><circle cx="12" cy="8" r="1.6" fill="currentColor"/><path d="M8.5 4.5a5 5 0 0 0 0 7M15.5 4.5a5 5 0 0 1 0 7M5.6 2a9 9 0 0 0 0 12M18.4 2a9 9 0 0 1 0 12"/>'),
     heli: ic('<circle cx="12" cy="12" r="9"/><path d="M9 7.5v9M15 7.5v9M9 12h6"/>'),
     /* terrain: a ridge with a sight line over it */
     mtn: ic('<path d="M2 19l6-9 4 5 3-4 7 8z"/><path d="M3 7h18" stroke-dasharray="2.5 2"/>')
@@ -93,7 +95,7 @@
        Find:   Search
        Show:   Data sets (reporting topics), Weather, Overlays (map layers, your marks), Base map
        Map:    Grid, Crosshair (osap-grid.js) and 3D (osap-3d.js) are added here, before Measure
-       Tools:  Measure, Route, Area (draw, summarise, NAI/TAI), Point, Watch
+       Tools:  Measure, Route, Area (draw, summarise, NAI/TAI), Med plan, Evac, Comms, Point, Watch
        Yours:  My work
        Screen: Layout, Full
      New map layers (power grid, communications towers) go in Overlays; area tools (a medical plan) go in the Area menu. */
@@ -111,6 +113,9 @@
     ["medplan", "Med plan", I.medic, "Medical plan: receiving hospitals, evacuation times and routes for the drawn area or the map centre"],
     /* its own button next to Med plan (Shane 2026-10-03, EPE decision 1): ways out from one point, with the analyst's P/A/C/E roles */
     ["evac", "Evac", I.evac, "Evacuation plan: ground routes from one point to the embassy, airports, airfields and seaport, with your P/A/C/E roles"],
+    /* its own button next to Evac (Shane 2026-10-09): opens the Comms planning view (PACE, coverage, links, networks,
+       equipment, status); Map overlays > Infrastructure > Communications infrastructure still opens it too */
+    ["comms", "Comms", I.radio, "Comms planning: PACE plan, phone coverage, radio links, networks, equipment and status"],
     ["point", "Point", I.pin, "Add a point with a name, a note and photos"],
     ["watch", "Watch", I.eye, "Watch an area and get told about new reports inside it"],
     ["mine", "My work", I.work, "What's new since your last visit, and your saved work"],
@@ -158,7 +163,7 @@
     if (mm) { var b2 = mm.querySelector(".atk-n"), src = nb || mw; if (src) { if (!b2) { b2 = D.createElement("span"); mm.appendChild(b2); } b2.className = "atk-n" + (nb ? "" : " n2"); b2.textContent = src.textContent; } else if (b2) b2.remove(); }
     var mb2 = bar.querySelector('[data-atk="medplan"]'), mpe = D.getElementById("medplan"); if (mb2) mb2.setAttribute("aria-pressed", String(!!(mpe && !mpe.hidden)));
     var evb = bar.querySelector('[data-atk="evac"]'), epe = D.getElementById("epe"); if (evb) evb.setAttribute("aria-pressed", String(!!(epe && !epe.hidden)));
-    var rt = bar.querySelector('[data-atk="route"]'); if (rt) { rt.hidden = !q('#view-seg button[data-view="route"]'); rt.setAttribute("aria-pressed", String(root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf"))); }
+    ["route", "comms"].forEach(function (v) { var vb = bar.querySelector('[data-atk="' + v + '"]'); if (vb) { vb.hidden = !q('#view-seg button[data-view="' + v + '"]'); vb.setAttribute("aria-pressed", String(onView(v))); } });
     var fs = bar.querySelector('[data-atk="full"]'); if (fs) fs.setAttribute("aria-pressed", String(root.classList.contains("mapfull")));
     var lay = bar.querySelector('[data-atk="layout"]'), seg = q("#rv-seg");
     if (lay) lay.hidden = !seg || phone();   /* on a phone the list sheet is dragged up and down instead */
@@ -178,10 +183,15 @@
       popOpen(b, BM.list().map(function (x) { return [x.id, x.name, x.id === cur]; }));
     }
     else if (k === "measure") { press("#meas-btn"); setTimeout(paintTools, 30); }
-    else if (k === "route") {
-      var onRoute = root.getAttribute("data-view") === "route" && !root.getAttribute("data-cf");
-      if (!onRoute) { rtBack = root.getAttribute("data-cf") ? '#view-seg button[data-view="cf-' + root.getAttribute("data-cf") + '"]' : '#view-seg button[data-view="' + (root.getAttribute("data-view") || "timeline") + '"]'; press('#view-seg button[data-view="route"]'); }
-      else press(q(rtBack || "") ? rtBack : '#view-seg button[data-view="timeline"]');
+    else if (k === "route" || k === "comms") {
+      /* Route and Comms open their view in the list; pressed again they go back to the view that was open before */
+      if (!onView(k)) {
+        if (root.getAttribute("data-cf") || !/^(route|comms)$/.test(root.getAttribute("data-view") || "")) rtBack = root.getAttribute("data-cf") ? '#view-seg button[data-view="cf-' + root.getAttribute("data-cf") + '"]' : '#view-seg button[data-view="' + (root.getAttribute("data-view") || "timeline") + '"]';
+        press('#view-seg button[data-view="' + k + '"]');
+        /* on a phone the list comes up half way so the comms panel shows */
+        if (k === "comms" && phone() && W.ASAP_PHONE && W.ASAP_PHONE.setSheet) setTimeout(function () { W.ASAP_PHONE.setSheet("half"); }, 80);
+      }
+      else press(rtBack && q(rtBack) ? rtBack : '#view-seg button[data-view="timeline"]');
       if (phone() && !om.hidden) omClose(); setTimeout(paintTools, 60);
     }
     else if (k === "area") {
@@ -573,6 +583,7 @@
   });
   om.addEventListener("change", function (e) { if (e.target.id === "atk-classic") { setMode(!e.target.checked); if (!e.target.checked) omPaint(); } });
   function phone() { return root.classList.contains("phone") || W.innerWidth <= 700; }
+  function onView(v) { return root.getAttribute("data-view") === v && !root.getAttribute("data-cf"); }
 
   /* ---------- mode switch ---------- */
   function setMode(atak) {
