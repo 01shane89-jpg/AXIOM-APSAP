@@ -354,3 +354,4 @@ yk2_th2 200 text/html 39347
 yk2_kyushu 200 text/html 116325
 yk2_notice 404 application/javascript 48956
 yk2_knowlety 200 text/html 22569
+yk3_notice 200 application/pdf 28053758
