@@ -1,3 +1,7 @@
-[["n3885366674",-8.27167,-72.74528,"br",{"name":"Porto Walter","addr:city":"Porto Walter","aeroway":"aerodrome","icao":"SIRW","wikidata":"Q31205786"}],
+[["n13943071983",-9.65017,-73.61981,"pe",{"aeroway":"aerodrome"}],
+["n13943138736",-9.5515,-73.57757,"pe",{"aeroway":"aerodrome"}],
+["n3885366674",-8.27167,-72.74528,"br",{"name":"Porto Walter","addr:city":"Porto Walter","aeroway":"aerodrome","icao":"SIRW","wikidata":"Q31205786"}],
 ["n832642707",-8.95686,-72.78216,"br",{"name":"Marechal Thaumaturgo","addr:city":"Marechal Thaumaturgo","aeroway":"aerodrome","icao":"SSMH","wikidata":"Q31205628"}],
-["w728714702",-9.0572,-72.25377,"br",{"aeroway":"aerodrome"}]]
+["w563927274",-9.61857,-73.51879,"pe",{"aeroway":"helipad"}],
+["w728714702",-9.0572,-72.25377,"br",{"aeroway":"aerodrome"}],
+["w758211484",-9.53396,-72.75711,"pe",{"name":"Aeródromo de Tipishsa","name:en":"Tipishsa Airport","aeroway":"aerodrome","icao":"SPPB","wikidata":"Q12695311"}]]

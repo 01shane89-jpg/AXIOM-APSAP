@@ -1,4 +1,5 @@
 [["n12869375954",-4.38342,-69.9941,"br",{"name":"Posto de Saude de Filadelfia","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:street":"Rua Tchimaucu"}],
+["n7070122038",-4.22661,-69.95564,"pe",{"name":"Clas Santa Rosa","official_name":"Asociacion Comunidad Local de Administracion de Salud Santa Rosa","amenity":"clinic","healthcare":"clinic","operator":"Ministerio de Salud del Perú","operator:type":"government","phone":"+51 65 251900"}],
 ["n8126723547",-4.21682,-69.93744,"co",{"name":"Clinica Leticia","amenity":"clinic","healthcare":"clinic","operator":"Privado","operator:type":"private"}],
 ["w1029167497",-4.19052,-69.94158,"co",{"name":"Aeropuerto Internacional Alfredo Vásquez Cobo","operator":"Aerocivil","operator:type":"public/government","aeroway":"aerodrome","icao":"SKLT","iata":"LET","aerodrome:type":"international","wikidata":"Q432334"}],
 ["w1248311565",-4.21811,-69.93618,"co",{"name":"Unidad Renal","amenity":"clinic","healthcare":"clinic"}],

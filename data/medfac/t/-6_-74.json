@@ -1,1 +1,9 @@
-[["n1042086980",-5.12724,-72.81,"br",{"name":"Aeródromo Palmeiras do Javari","aeroway":"aerodrome"}]]
+[["n1042086980",-5.12724,-72.81,"br",{"name":"Aeródromo Palmeiras do Javari","aeroway":"aerodrome"}],
+["n6852672372",-4.5126,-73.90524,"pe",{"name":"San Gabriel de Varadero","amenity":"clinic","operator":"Gobierno Regional","phone":"+51 65 811092","addr:full":"Localidad San Gabriel de Varadero"}],
+["n6903952440",-4.21029,-73.20325,"pe",{"name":"Esperanza Tahuayo","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional"}],
+["n7070164182",-5.06239,-73.85699,"pe",{"name":"Centro de Atencion Primaria II Requena","amenity":"clinic","healthcare":"clinic","operator":"Seguro Social de Salud","operator:type":"government","phone":"+51 65 412066"}],
+["n7070173185",-5.0632,-73.85676,"pe",{"name":"Centro de Atencion Primaria I Requena","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 65 412173"}],
+["n7113079492",-5.14816,-72.87503,"pe",{"name":"Angamos","amenity":"clinic","operator":"Gobierno Regional"}],
+["w1076993943",-4.50637,-73.5848,"pe",{"name":"EsSalud","amenity":"clinic","healthcare":"clinic","operator":"Essalud","operator:type":"public"}],
+["w1330537731",-4.90472,-73.66474,"pe",{"name":"Centro de Salud \"Villa Jenaro Herrera\"","amenity":"hospital","healthcare":"hospital"}],
+["w623160301",-4.50526,-73.57625,"pe",{"name":"Hospital de Nauta","amenity":"hospital","healthcare":"hospital","operator":"Gobierno Regional","operator:type":"public","phone":"+51 65 787961","addr:housenumber":"414","addr:street":"Calle Rioja"}]]
