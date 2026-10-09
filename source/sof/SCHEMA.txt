@@ -61,6 +61,13 @@ hospitals: optional "caps" (added 2026-10-03, medical plan): capabilities docume
   Each { "src" URL of the hospital's own, university or government page that states it, "srcname", "quote" (the stating
   text, short), "quote_basis" (e.g. "official page title"), "asof" }. Never from Wikipedia or OpenStreetMap; never inferred.
   Researched list and leads: /mnt/project-files/apsap/mtf-capabilities/.
+hospitals: optional "caps_std" (added 2026-10-09): capabilities an official designation's published standard requires of every
+  hospital holding it (e.g. Japan's critical care centre standard: own ICU and X-ray room), same fields as "caps". The medical
+  plan reads them as INFERRED from the designation, never as stated for the hospital, and only where nothing better is known.
+Shared text (added 2026-10-09, tools/build_jp_ccc.py): "cap_refs" on the country object holds quoted texts once; a cap
+  entry {"ref": "<key>"} takes that text. "hosp_defaults" holds fields a group of records shares; a record with "g": "<group>"
+  takes the group's fields it does not set. assets/hospital-sources/sof-provider.js fills both in when the file loads.
+  Japan's MHLW critical care centres (ids sof:jp:ccc:*) are built from source/japan/ccc-2025.json; do not edit them by hand.
 
 airports (from OurAirports open data, github.com/davidmegginson/ourairports-data, fetched 2026-09-26):
   "name", "icao" (null if none), "ident" (OurAirports ident; equals ICAO when one exists),
