@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%B8%89%E9%87%8D%E7%9C%8C%E5%9B%9B%E6%97%A5%E5%B8%82%E5%B8%82%E8%8A%9D%E7%94%B02-2-37
+[{"geometry":{"coordinates":[136.608017,34.972477],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"三重県四日市市芝田二丁目２番３７号"}}]

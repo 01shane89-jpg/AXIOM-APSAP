@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E5%85%90%E5%B3%B6%E7%9C%8C%E9%B9%BF%E5%85%90%E5%B3%B6%E5%B8%82%E4%B8%8E%E6%AC%A1%E9%83%8E1%E4%B8%81%E7%9B%AE7%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[130.56192,31.571138],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鹿児島県鹿児島市与次郎一丁目７番１号"}}]

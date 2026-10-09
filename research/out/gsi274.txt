@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%AB%98%E7%9F%A5%E7%9C%8C%E9%AB%98%E7%9F%A5%E5%B8%82%E7%A7%A6%E5%8D%97%E7%94%BA%E4%B8%80%E4%B8%81%E7%9B%AE4%E7%95%AA63-11
+[{"geometry":{"coordinates":[133.543991,33.577251],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"高知県高知市秦南町一丁目４番６３-１１号"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%BA%83%E5%B3%B6%E5%B8%82%E5%AE%89%E4%BD%90%E5%8C%97%E5%8C%BA%E4%BA%80%E5%B1%B1%E5%8D%971%E4%B8%81%E7%9B%AE2-1
+[{"geometry":{"coordinates":[132.497162,34.516769],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県広島市安佐北区亀山南一丁目２番１号"}}]

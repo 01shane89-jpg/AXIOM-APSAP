@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BD%90%E8%B3%80%E7%9C%8C%E4%BD%90%E8%B3%80%E5%B8%82%E9%8D%8B%E5%B3%B65-1-1
+[{"geometry":{"coordinates":[130.266861,33.284588],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"佐賀県佐賀市鍋島五丁目１番"}}]

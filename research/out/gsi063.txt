@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%9F%8F%E5%B8%82%E6%9F%8F%E4%B8%8B163%E7%95%AA%E5%9C%B01
+[{"geometry":{"coordinates":[139.982788,35.86998],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県柏市柏下１６３番地"}}]

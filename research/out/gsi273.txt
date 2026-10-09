@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%AB%98%E7%9F%A5%E7%9C%8C%E9%AB%98%E7%9F%A5%E5%B8%82%E6%B1%A02125-1
+[{"geometry":{"coordinates":[133.585495,33.533272],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"高知県高知市池２１２５番地"}}]

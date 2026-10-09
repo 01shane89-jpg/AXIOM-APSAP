@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A5%88%E8%89%AF%E7%9C%8C%E6%A9%BF%E5%8E%9F%E5%B8%82%E5%9B%9B%E6%9D%A1%E7%94%BA840
+[{"geometry":{"coordinates":[135.792542,34.503887],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"奈良県橿原市四条町８４０番地"}}]

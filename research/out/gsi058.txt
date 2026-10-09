@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E8%A5%BF%E6%96%B0%E4%BA%95%E5%AE%BF180%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[139.730652,35.843933],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県川口市西新井宿１８０番地"}}]

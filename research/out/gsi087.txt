@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82%E5%A2%83%E5%8D%97%E7%94%BA1-26-1
+[{"geometry":{"coordinates":[139.546799,35.697903],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都武蔵野市境南町一丁目２６番１号"}}]

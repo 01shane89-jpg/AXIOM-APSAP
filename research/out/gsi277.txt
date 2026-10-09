@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E7%A6%8F%E5%B2%A1%E5%B8%82%E5%9F%8E%E5%8D%97%E5%8C%BA%E4%B8%83%E9%9A%887-45-1
+[{"geometry":{"coordinates":[130.358902,33.546318],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県福岡市城南区七隈七丁目４５番"}}]

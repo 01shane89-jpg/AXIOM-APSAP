@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E6%B0%B4%E6%88%B8%E5%B8%82%E5%8F%8C%E8%91%89%E5%8F%B03%E4%B8%81%E7%9B%AE3%E7%95%AA10%E5%8F%B7
+[{"geometry":{"coordinates":[140.393967,36.398884],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"茨城県水戸市双葉台三丁目３番"}}]

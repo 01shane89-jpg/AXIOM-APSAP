@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%B8%82%E5%8D%97%E5%8C%BA%E4%B8%89%E6%9D%A11-1-10
+[{"geometry":{"coordinates":[136.902359,35.109692],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県名古屋市南区三条一丁目１番１０号"}}]

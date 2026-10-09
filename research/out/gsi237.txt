@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%92%8C%E6%AD%8C%E5%B1%B1%E7%9C%8C%E7%94%B0%E8%BE%BA%E5%B8%82%E3%81%9F%E3%81%8D%E3%81%AA%E3%81%84%E7%94%BA27%E7%95%AA1%E5%8F%B7
+[{"geometry":{"coordinates":[135.399384,33.700748],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"和歌山県田辺市たきない町２７番"}}]

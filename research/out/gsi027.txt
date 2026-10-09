@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A7%8B%E7%94%B0%E7%9C%8C%E7%A7%8B%E7%94%B0%E5%B8%82%E4%B8%8A%E5%8C%97%E6%89%8B%E7%8C%BF%E7%94%B0%E5%AD%97%E8%8B%97%E4%BB%A3%E6%B2%A2222%E7%95%AA%E5%9C%B01
+[{"geometry":{"coordinates":[140.152466,39.68605],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"秋田県秋田市上北手猿田苗代沢２２２番地"}}]

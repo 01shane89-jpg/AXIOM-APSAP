@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%92%E6%A3%AE%E7%9C%8C%E5%85%AB%E6%88%B8%E5%B8%82%E7%94%B0%E5%90%91%E4%B8%89%E4%B8%81%E7%9B%AE1-1
+[{"geometry":{"coordinates":[141.51355,40.494961],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"青森県八戸市田向三丁目１番１号"}}]

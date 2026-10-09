@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%B0%BE%E9%81%93%E5%B8%82%E5%B9%B3%E5%8E%9F1%E4%B8%81%E7%9B%AE10%E2%88%9223
+[{"geometry":{"coordinates":[133.175125,34.407127],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県尾道市平原一丁目１０番２３号"}}]

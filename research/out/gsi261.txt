@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%8F%A3%E7%9C%8C%E5%AE%87%E9%83%A8%E5%B8%82%E5%8D%97%E5%B0%8F%E4%B8%B21-1-1
+[{"geometry":{"coordinates":[131.248962,33.959908],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山口県宇部市南小串一丁目１番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E7%8B%AD%E5%B1%B1%E5%B8%82%E5%A4%A7%E9%87%8E%E6%9D%B1377-2
+[{"geometry":{"coordinates":[135.550369,34.475994],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府大阪狭山市大野東３７７番地"}}]

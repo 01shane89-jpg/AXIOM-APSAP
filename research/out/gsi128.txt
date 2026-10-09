@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%96%B0%E6%BD%9F%E7%9C%8C%E4%B8%8A%E8%B6%8A%E5%B8%82%E6%96%B0%E5%8D%97%E7%94%BA205
+[{"geometry":{"coordinates":[138.27066,37.106815],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"新潟県上越市新南町２０５番地"}}]

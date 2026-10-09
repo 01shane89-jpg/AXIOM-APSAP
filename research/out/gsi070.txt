@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%97%AD%E5%B8%82%E3%82%A4%E3%81%AE1326
+[{"geometry":{"coordinates":[140.66864,35.723259],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県旭市イ"}}]

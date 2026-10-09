@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E6%9D%B1%E8%8C%A8%E5%9F%8E%E9%83%A1%E8%8C%A8%E5%9F%8E%E7%94%BA%E6%A1%9C%E3%81%AE%E9%83%B7280%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[140.409958,36.325058],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"茨城県茨城町桜の郷２８０番地"}}]

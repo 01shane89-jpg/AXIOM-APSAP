@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AE%AE%E5%9F%8E%E7%9C%8C%E6%9F%B4%E7%94%B0%E9%83%A1%E5%A4%A7%E6%B2%B3%E5%8E%9F%E7%94%BA%E5%AD%97%E8%A5%BF38-1
+[{"geometry":{"coordinates":[140.734695,38.061867],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"宮城県大河原町西３８番地"}}]

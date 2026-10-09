@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AE%AE%E5%9F%8E%E7%9C%8C%E5%A4%A7%E5%B4%8E%E5%B8%82%E5%8F%A4%E5%B7%9D%E7%A9%82%E6%B3%A23%E4%B8%81%E7%9B%AE8-1
+[{"geometry":{"coordinates":[140.944031,38.565533],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"宮城県大崎市古川穂波三丁目８番"}}]

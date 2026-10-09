@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%B8%8B%E8%B0%B7%E5%8C%BA%E5%BA%83%E5%B0%BE4-1-22
+[{"geometry":{"coordinates":[139.718201,35.656685],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都渋谷区広尾四丁目１番２２号"}}]

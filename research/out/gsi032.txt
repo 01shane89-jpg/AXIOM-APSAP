@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B3%B6%E7%9C%8C%E3%81%84%E3%82%8F%E3%81%8D%E5%B8%82%E5%86%85%E9%83%B7%E5%BE%A1%E5%8E%A9%E7%94%BA%E4%B9%85%E4%B8%96%E5%8E%9F16
+[{"geometry":{"coordinates":[140.867844,37.041649],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福島県いわき市内郷御厩町久世原１６番地"}}]

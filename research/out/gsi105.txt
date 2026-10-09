@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%9D%BF%E6%A9%8B%E5%8C%BA%E5%A4%A7%E8%B0%B7%E5%8F%A3%E4%B8%8A%E7%94%BA30-1
+[{"geometry":{"coordinates":[139.691055,35.749275],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都板橋区大谷口上町３０番１号"}}]

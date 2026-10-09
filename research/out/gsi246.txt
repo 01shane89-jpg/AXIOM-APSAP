@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A1%E5%B1%B1%E7%9C%8C%E5%B2%A1%E5%B1%B1%E5%B8%82%E5%8C%97%E5%8C%BA%E9%B9%BF%E7%94%B0%E7%94%BA2-5-1
+[{"geometry":{"coordinates":[133.920837,34.65099],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岡山県岡山市北区鹿田町二丁目５番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%BE%A4%E9%A6%AC%E7%9C%8C%E9%AB%98%E5%B4%8E%E5%B8%82%E9%AB%98%E6%9D%BE%E7%94%BA36
+[{"geometry":{"coordinates":[139.001633,36.321999],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"群馬県高崎市高松町３６番地"}}]

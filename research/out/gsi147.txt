@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%90%E9%98%9C%E7%9C%8C%E5%A4%9A%E6%B2%BB%E8%A6%8B%E5%B8%82%E5%89%8D%E7%95%91%E7%94%BA5-161
+[{"geometry":{"coordinates":[137.11116,35.327866],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岐阜県多治見市前畑町五丁目１６１番地"}}]

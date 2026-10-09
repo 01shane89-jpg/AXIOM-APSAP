@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E5%A4%A9%E7%8E%8B%E5%AF%BA%E5%8C%BA%E5%8C%97%E5%B1%B1%E7%94%BA10-31
+[{"geometry":{"coordinates":[135.521606,34.658192],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府大阪市天王寺区北山町１０番３１号"}}]

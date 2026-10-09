@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E8%B1%8A%E5%B2%A1%E5%B8%82%E6%88%B8%E7%89%A71094
+[{"geometry":{"coordinates":[134.800522,35.522156],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県豊岡市戸牧１０９４番地"}}]

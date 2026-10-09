@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%B8%89%E9%87%8D%E7%9C%8C%E6%9D%BE%E9%98%AA%E5%B8%82%E5%B7%9D%E4%BA%95%E7%94%BA%E5%AD%97%E5%B0%8F%E6%9C%9B102
+[{"geometry":{"coordinates":[136.510986,34.582043],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"三重県松阪市川井町小望１０２番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%A6%99%E5%B7%9D%E7%9C%8C%E8%A6%B3%E9%9F%B3%E5%AF%BA%E5%B8%82%E8%B1%8A%E6%B5%9C%E7%94%BA%E5%A7%AB%E6%B5%9C708
+[{"geometry":{"coordinates":[133.642014,34.081947],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"香川県観音寺市豊浜町姫浜７０８番地"}}]

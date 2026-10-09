@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%BD%A2%E7%9C%8C%E5%B1%B1%E5%BD%A2%E7%9C%8C%E6%96%B0%E5%BA%84%E5%B8%82%E9%87%91%E6%B2%A2720%E7%95%AA%E5%9C%B0%E3%81%AE1
+[{"geometry":{"coordinates":[140.339767,38.255459],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山形県山形市"}}]

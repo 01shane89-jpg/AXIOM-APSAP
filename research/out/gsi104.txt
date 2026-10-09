@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%9D%BF%E6%A9%8B%E5%8C%BA%E5%8A%A0%E8%B3%802-11-1
+[{"geometry":{"coordinates":[139.714478,35.759392],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都板橋区加賀二丁目１１番１号"}}]

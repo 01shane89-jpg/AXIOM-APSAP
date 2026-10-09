@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%A4%A7%E7%94%B0%E5%8C%BA%E5%A4%A7%E6%A3%AE%E8%A5%BF6-11-1
+[{"geometry":{"coordinates":[139.723694,35.569328],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都大田区大森西六丁目１１番１号"}}]

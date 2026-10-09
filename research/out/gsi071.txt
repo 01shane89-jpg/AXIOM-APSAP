@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%9C%A8%E6%9B%B4%E6%B4%A5%E5%B8%82%E6%A1%9C%E4%BA%951010
+[{"geometry":{"coordinates":[139.924438,35.36026],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県木更津市桜井１０１０番地"}}]

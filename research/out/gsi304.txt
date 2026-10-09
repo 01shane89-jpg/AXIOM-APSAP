@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E5%85%90%E5%B3%B6%E7%9C%8C%E5%A5%84%E7%BE%8E%E5%B8%82%E5%90%8D%E7%80%AC%E7%9C%9F%E5%90%8D%E6%B4%A5%E7%94%BA18-1
+[{"geometry":{"coordinates":[129.500977,28.366379],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鹿児島県奄美市名瀬真名津町１８番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BE%B3%E5%B3%B6%E7%9C%8C%E5%BE%B3%E5%B3%B6%E5%B8%82%E8%94%B5%E6%9C%AC%E7%94%BA1-10-3
+[{"geometry":{"coordinates":[134.519958,34.076641],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"徳島県徳島市蔵本町一丁目１０番地"}}]

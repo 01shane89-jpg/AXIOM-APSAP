@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E5%8F%A4%E8%B3%80%E5%B8%82%E5%8D%83%E9%B3%A51-1-1
+[{"geometry":{"coordinates":[130.473541,33.740604],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県古賀市千鳥一丁目１番"}}]

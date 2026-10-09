@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AE%AE%E5%9F%8E%E7%9C%8C%E4%BB%99%E5%8F%B0%E5%B8%82%E9%9D%92%E8%91%89%E5%8C%BA%E6%98%9F%E9%99%B5%E7%94%BA1-1
+[{"geometry":{"coordinates":[140.860947,38.272213],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"宮城県仙台市青葉区星陵町１番"}}]

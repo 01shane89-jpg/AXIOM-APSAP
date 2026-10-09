@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E8%88%B9%E6%A9%8B%E5%B8%82%E9%87%91%E6%9D%891-21-1
+[{"geometry":{"coordinates":[139.998505,35.723766],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県船橋市金杉一丁目２１番"}}]

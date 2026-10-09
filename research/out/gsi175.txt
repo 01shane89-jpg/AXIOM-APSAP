@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%BC%A5%E5%AF%8C%E5%B8%82%E5%89%8D%E3%83%B6%E9%A0%88%E7%94%BA%E5%8D%97%E6%9C%AC%E7%94%B0396
+[{"geometry":{"coordinates":[136.723114,35.108414],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県弥富市前ケ須町南本田３９６番地"}}]

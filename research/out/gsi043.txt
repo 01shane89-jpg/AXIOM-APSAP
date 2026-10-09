@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%A0%83%E6%9C%A8%E7%9C%8C%E5%AE%87%E9%83%BD%E5%AE%AE%E5%B8%82%E7%AB%B9%E6%9E%97%E7%94%BA911-1
+[{"geometry":{"coordinates":[139.89743,36.579189],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"栃木県宇都宮市竹林町９１１番地"}}]

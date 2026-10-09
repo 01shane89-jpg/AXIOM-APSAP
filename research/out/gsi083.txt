@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E9%9D%92%E6%A2%85%E5%B8%82%E6%9D%B1%E9%9D%92%E6%A2%854-16-5
+[{"geometry":{"coordinates":[139.281174,35.782513],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都青梅市東青梅四丁目１６番"}}]

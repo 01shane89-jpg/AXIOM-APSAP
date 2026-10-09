@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E7%9B%AE%E9%BB%92%E5%8C%BA%E6%9D%B1%E3%81%8C%E4%B8%982-5-1
+[{"geometry":{"coordinates":[139.666763,35.625114],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都目黒区東が丘二丁目５番１号"}}]

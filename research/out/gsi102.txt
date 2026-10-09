@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E8%A5%BF%E6%96%B0%E5%AE%BF6-7-1
+[{"geometry":{"coordinates":[139.693008,35.694145],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都新宿区西新宿六丁目７番１号"}}]

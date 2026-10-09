@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AE%AE%E5%9F%8E%E7%9C%8C%E4%BB%99%E5%8F%B0%E5%B8%82%E5%AE%AE%E5%9F%8E%E9%87%8E%E5%8C%BA%E5%AE%AE%E5%9F%8E%E9%87%8E2-11-12
+[{"geometry":{"coordinates":[140.904236,38.260201],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"宮城県仙台市宮城野区宮城野二丁目１１番１２号"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%95%B7%E9%87%8E%E7%9C%8C%E9%95%B7%E9%87%8E%E5%B8%82%E8%8B%A5%E9%87%8C5-22-1
+[{"geometry":{"coordinates":[138.189758,36.628452],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"長野県長野市若里五丁目２２番１号"}}]

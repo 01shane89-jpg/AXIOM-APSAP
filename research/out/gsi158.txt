@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E9%9D%99%E5%B2%A1%E5%B8%82%E8%91%B5%E5%8C%BA%E8%BF%BD%E6%89%8B%E7%94%BA8-2
+[{"geometry":{"coordinates":[138.381348,34.976254],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県静岡市葵区追手町８番２号"}}]

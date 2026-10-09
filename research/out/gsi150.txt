@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%90%E9%98%9C%E7%9C%8C%E5%A4%A7%E5%9E%A3%E5%B8%82%E5%8D%97%E9%A0%AC%E7%94%BA4-86
+[{"geometry":{"coordinates":[136.622345,35.354099],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岐阜県大垣市南頬町四丁目８６番地"}}]

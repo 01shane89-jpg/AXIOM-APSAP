@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8C%97%E6%B5%B7%E9%81%93%E5%87%BD%E9%A4%A8%E5%B8%82%E6%B8%AF%E7%94%BA1%E4%B8%81%E7%9B%AE10%E7%95%AA%E5%9C%B01
+[{"geometry":{"coordinates":[140.728714,41.804562],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"北海道函館市港町一丁目１０番"}}]

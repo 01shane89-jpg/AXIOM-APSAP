@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%8F%A3%E7%9C%8C%E5%91%A8%E5%8D%97%E5%B8%82%E5%AD%9D%E7%94%B0%E7%94%BA1-1
+[{"geometry":{"coordinates":[131.83287,34.047676],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山口県周南市孝田町１番１号"}}]

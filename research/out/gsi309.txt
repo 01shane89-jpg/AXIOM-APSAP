@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E3%81%86%E3%82%8B%E3%81%BE%E5%B8%82%E5%AD%97%E5%AE%AE%E9%87%8C281%E7%95%AA%E5%9C%B0
+[{"geometry":{"coordinates":[127.835503,26.35405],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"沖縄県うるま市宮里２８１番地"}}]

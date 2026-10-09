@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%AF%8C%E5%B1%B1%E7%9C%8C%E9%AB%98%E5%B2%A1%E5%B8%82%E6%B0%B8%E6%A5%BD%E7%94%BA5-10
+[{"geometry":{"coordinates":[136.995819,36.742962],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"富山県高岡市永楽町５番１０号"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E9%87%91%E6%B2%A2%E5%8C%BA%E5%85%AD%E6%B5%A6%E6%9D%B11-21-1
+[{"geometry":{"coordinates":[139.622498,35.320663],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県横浜市金沢区六浦東一丁目２１番"}}]

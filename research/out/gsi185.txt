@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E8%B1%8A%E6%A9%8B%E5%B8%82%E9%9D%92%E7%AB%B9%E7%94%BA%E5%AD%97%E5%85%AB%E9%96%93%E8%A5%BF50
+[{"geometry":{"coordinates":[137.348907,34.760651],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県豊橋市青竹町八間西５０番地"}}]

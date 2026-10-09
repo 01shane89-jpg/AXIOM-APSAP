@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%B8%82%E5%8D%83%E7%A8%AE%E5%8C%BA%E8%8B%A5%E6%B0%B41-2-23
+[{"geometry":{"coordinates":[136.943542,35.173485],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県名古屋市千種区若水一丁目２番２３号"}}]

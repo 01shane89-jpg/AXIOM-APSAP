@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%B5%A6%E5%AE%89%E5%B8%82%E5%AF%8C%E5%B2%A12-1-1
+[{"geometry":{"coordinates":[139.906921,35.645916],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県浦安市富岡二丁目１番"}}]

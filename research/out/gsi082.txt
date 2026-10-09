@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%A2%A8%E7%94%B0%E5%8C%BA%E6%B1%9F%E6%9D%B1%E6%A9%8B4-23-15
+[{"geometry":{"coordinates":[139.817917,35.694927],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都墨田区江東橋四丁目２３番１５号"}}]

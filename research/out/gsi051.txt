@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%BE%A4%E9%A6%AC%E7%9C%8C%E5%A4%AA%E7%94%B0%E5%B8%82%E5%85%AB%E5%B9%A1%E7%94%BA29-5
+[{"geometry":{"coordinates":[139.368652,36.29879],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"群馬県太田市八幡町２９番５号"}}]

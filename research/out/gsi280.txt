@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E7%A6%8F%E5%B2%A1%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%9C%B0%E8%A1%8C%E6%B5%9C1-8-1
+[{"geometry":{"coordinates":[130.362518,33.592358],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県福岡市中央区地行浜一丁目８番１号"}}]

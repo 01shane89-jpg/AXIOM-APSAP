@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%B8%8B%E8%B0%B7%E5%8C%BA%E6%81%B5%E6%AF%94%E5%AF%BF2-34-10
+[{"geometry":{"coordinates":[139.722046,35.647503],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都渋谷区恵比寿二丁目３４番１０号"}}]

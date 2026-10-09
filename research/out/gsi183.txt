@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E9%95%B7%E4%B9%85%E6%89%8B%E5%B8%82%E5%B2%A9%E4%BD%9C%E9%9B%81%E5%8F%881-1
+[{"geometry":{"coordinates":[137.048386,35.19241],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県長久手市岩作雁又１番地"}}]

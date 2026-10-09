@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B1%B1%E5%8F%A3%E7%9C%8C%E5%B2%A9%E5%9B%BD%E5%B8%82%E6%84%9B%E5%AE%95%E7%94%BA1-1-1
+[{"geometry":{"coordinates":[132.203644,34.143982],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"山口県岩国市愛宕町一丁目１番"}}]

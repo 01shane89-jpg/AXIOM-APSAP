@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%BB%8B%E8%B3%80%E7%9C%8C%E8%BF%91%E6%B1%9F%E5%85%AB%E5%B9%A1%E5%B8%82%E5%9C%9F%E7%94%B0%E7%94%BA1379
+[{"geometry":{"coordinates":[136.087204,35.123989],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"滋賀県近江八幡市土田町１３７９番地"}}]

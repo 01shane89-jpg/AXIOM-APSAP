@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BD%90%E8%B3%80%E7%9C%8C%E5%AC%89%E9%87%8E%E5%B8%82%E5%AC%89%E9%87%8E%E7%94%BA%E5%A4%A7%E5%AD%97%E4%B8%8B%E5%AE%BF%E7%94%B24279-3
+[{"geometry":{"coordinates":[129.995712,33.105453],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"佐賀県嬉野市嬉野町大字下宿甲４２７９番地"}}]

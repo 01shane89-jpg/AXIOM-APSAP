@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E5%85%90%E5%B3%B6%E7%9C%8C%E9%B9%BF%E5%85%90%E5%B3%B6%E5%B8%82%E6%A1%9C%E3%83%B6%E4%B8%988-35-1
+[{"geometry":{"coordinates":[130.525635,31.549334],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"鹿児島県鹿児島市桜ヶ丘八丁目３５番"}}]

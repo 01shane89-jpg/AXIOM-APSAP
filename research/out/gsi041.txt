@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E5%9C%9F%E6%B5%A6%E5%B8%82%E7%9C%9F%E9%8D%8B%E6%96%B0%E7%94%BA11-7
+[{"geometry":{"coordinates":[140.208878,36.089493],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"茨城県土浦市真鍋新町１１番７号"}}]

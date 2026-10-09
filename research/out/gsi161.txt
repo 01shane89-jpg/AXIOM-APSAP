@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E6%B5%9C%E6%9D%BE%E5%B8%82%E4%B8%AD%E5%8C%BA%E5%AF%8C%E5%A1%9A%E7%94%BA328
+[{"geometry":{"coordinates":[137.726303,34.710808],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県浜松市中央区"}},{"geometry":{"coordinates":[137.726303,34.710808],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県浜松市中央区"}}]

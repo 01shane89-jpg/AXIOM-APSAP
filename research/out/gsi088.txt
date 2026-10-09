@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E4%B8%89%E9%B7%B9%E5%B8%82%E6%96%B0%E5%B7%9D6-20-2
+[{"geometry":{"coordinates":[139.565598,35.677597],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都三鷹市新川六丁目２０番"}}]

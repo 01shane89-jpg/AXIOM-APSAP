@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%BA%83%E5%B3%B6%E5%B8%82%E5%8D%97%E5%8C%BA%E9%9C%9E1-2-3
+[{"geometry":{"coordinates":[132.477371,34.380127],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"広島県広島市南区霞一丁目２番３号"}}]

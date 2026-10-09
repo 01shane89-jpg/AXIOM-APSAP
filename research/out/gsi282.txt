@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E5%8C%97%E4%B9%9D%E5%B7%9E%E5%B8%82%E5%B0%8F%E5%80%89%E5%8C%97%E5%8C%BA%E6%9D%B1%E5%9F%8E%E9%87%8E%E7%94%BA1-1
+[{"geometry":{"coordinates":[130.888596,33.858799],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福岡県北九州市小倉北区東城野町１番"}}]

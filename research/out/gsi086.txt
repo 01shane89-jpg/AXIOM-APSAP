@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E7%AB%8B%E5%B7%9D%E5%B8%82%E7%B7%91%E7%94%BA3256
+[{"geometry":{"coordinates":[139.407944,35.706291],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都立川市緑町３２５６番地"}}]

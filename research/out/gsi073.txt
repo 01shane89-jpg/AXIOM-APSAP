@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%9D%BE%E6%88%B8%E5%B8%82%E5%8D%83%E9%A7%84%E5%A0%80993%E7%95%AA%E5%9C%B0%E3%81%AE1
+[{"geometry":{"coordinates":[139.932526,35.801975],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県松戸市千駄堀９９３番地"}}]

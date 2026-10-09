@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E9%B6%B4%E8%A6%8B%E5%8C%BA%E4%B8%8B%E6%9C%AB%E5%90%893-6-1
+[{"geometry":{"coordinates":[139.674911,35.523926],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県横浜市鶴見区下末吉三丁目６番"}}]

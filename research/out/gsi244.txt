@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B3%B6%E6%A0%B9%E7%9C%8C%E6%B5%9C%E7%94%B0%E5%B8%82%E6%B5%85%E4%BA%95%E7%94%BA777-12
+[{"geometry":{"coordinates":[132.087799,34.903252],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"島根県浜田市浅井町７７７番地"}}]

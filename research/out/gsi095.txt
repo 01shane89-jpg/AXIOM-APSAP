@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%87%E4%BA%AC%E5%8C%BA%E6%B9%AF%E5%B3%B61-5-45
+[{"geometry":{"coordinates":[139.765274,35.701828],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都文京区湯島一丁目５番４５号"}}]

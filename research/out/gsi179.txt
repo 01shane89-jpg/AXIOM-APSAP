@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E6%98%A5%E6%97%A5%E4%BA%95%E5%B8%82%E9%B7%B9%E6%9D%A5%E7%94%BA1-1-1
+[{"geometry":{"coordinates":[136.969574,35.271759],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県春日井市鷹来町一丁目１番地"}}]

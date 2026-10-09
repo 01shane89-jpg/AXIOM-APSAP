@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%96%B0%E6%BD%9F%E7%9C%8C%E6%96%B0%E6%BD%9F%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%90%98%E6%9C%A8463-7
+[{"geometry":{"coordinates":[139.041534,37.875706],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"新潟県新潟市中央区鐘木４６３番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E5%8A%A0%E5%8F%A4%E5%B7%9D%E5%B8%82%E7%A5%9E%E9%87%8E%E7%94%BA%E7%A5%9E%E9%87%8E203
+[{"geometry":{"coordinates":[134.883362,34.773903],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県加古川市神野町神野２０３番地"}}]

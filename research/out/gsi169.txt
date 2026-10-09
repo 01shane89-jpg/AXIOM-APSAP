@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E8%B1%8A%E7%94%B0%E5%B8%82%E6%B5%84%E6%B0%B4%E7%94%BA%E4%BC%8A%E4%BF%9D%E5%8E%9F500-1
+[{"geometry":{"coordinates":[137.134598,35.119995],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県豊田市浄水町伊保原５００番地"}}]

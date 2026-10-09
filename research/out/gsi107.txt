@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E5%B7%9D%E5%B4%8E%E5%B8%82%E5%B7%9D%E5%B4%8E%E5%8C%BA%E6%96%B0%E5%B7%9D%E9%80%9A12-1
+[{"geometry":{"coordinates":[139.706238,35.526581],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県川崎市川崎区新川通１２番"}}]

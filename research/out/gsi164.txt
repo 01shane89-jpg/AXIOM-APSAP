@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%99%E5%B2%A1%E7%9C%8C%E7%A3%90%E7%94%B0%E5%B8%82%E5%A4%A7%E4%B9%85%E4%BF%9D512-3
+[{"geometry":{"coordinates":[137.856552,34.76865],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"静岡県磐田市大久保５１２番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%86%8A%E6%9C%AC%E7%9C%8C%E7%86%8A%E6%9C%AC%E5%B8%82%E4%BA%8C%E3%81%AE%E4%B8%B81-5
+[{"geometry":{"coordinates":[130.708054,32.803333],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"熊本県熊本市"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E5%B1%B1%E7%A7%91%E5%8C%BA%E9%9F%B3%E7%BE%BD%E7%8F%8D%E4%BA%8B%E7%94%BA2
+[{"geometry":{"coordinates":[135.829788,34.987526],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府京都市山科区音羽珍事町２番地"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%BC%8F%E8%A6%8B%E5%8C%BA%E6%B7%B1%E8%8D%89%E5%90%91%E7%95%91%E7%94%BA1-1
+[{"geometry":{"coordinates":[135.773926,34.953758],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"京都府京都市伏見区深草向畑町１番地"}}]

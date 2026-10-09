@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%90%B9%E7%94%B0%E5%B8%82%E5%B1%B1%E7%94%B0%E4%B8%982-15
+[{"geometry":{"coordinates":[135.527527,34.81937],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府吹田市山田丘２番"}}]

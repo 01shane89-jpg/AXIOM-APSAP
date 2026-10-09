@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%B8%AF%E5%8C%BA%E8%A5%BF%E6%96%B0%E6%A9%8B3-19-18
+[{"geometry":{"coordinates":[139.751434,35.663685],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都港区西新橋三丁目１９番"}}]

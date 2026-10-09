@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%90%E9%98%9C%E7%9C%8C%E5%B2%90%E9%98%9C%E5%B8%82%E9%87%8E%E4%B8%80%E8%89%B24-6-1
+[{"geometry":{"coordinates":[136.798447,35.410709],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岐阜県岐阜市野一色四丁目６番"}}]

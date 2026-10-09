@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E6%B2%B3%E7%94%B0%E7%94%BA8-1
+[{"geometry":{"coordinates":[139.719635,35.696342],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都新宿区河田町８番１号"}}]

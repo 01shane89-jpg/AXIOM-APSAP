@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%85%B5%E5%BA%AB%E7%9C%8C%E5%B0%BC%E5%B4%8E%E5%B8%82%E6%9D%B1%E9%9B%A3%E6%B3%A2%E7%94%BA%E4%BA%8C%E4%B8%81%E7%9B%AE17%E7%95%AA77%E5%8F%B7
+[{"geometry":{"coordinates":[135.412354,34.730434],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"兵庫県尼崎市東難波町二丁目１７番７７号"}}]

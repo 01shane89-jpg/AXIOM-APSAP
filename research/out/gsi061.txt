@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E3%81%95%E3%81%84%E3%81%9F%E3%81%BE%E5%B8%82%E5%A4%A7%E5%AE%AE%E5%8C%BA%E5%A4%A9%E6%B2%BC%E7%94%BA1-847
+[{"geometry":{"coordinates":[139.645355,35.907181],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県さいたま市大宮区天沼町一丁目８４７番地"}}]

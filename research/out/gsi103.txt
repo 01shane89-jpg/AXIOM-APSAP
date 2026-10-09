@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E6%88%B8%E5%B1%B11-21-1
+[{"geometry":{"coordinates":[139.716217,35.703987],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都新宿区戸山一丁目２１番"}}]

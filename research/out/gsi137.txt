@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E4%BA%95%E7%9C%8C%E7%A6%8F%E4%BA%95%E5%B8%82%E5%9B%9B%E3%83%84%E4%BA%952-8-1
+[{"geometry":{"coordinates":[136.237732,36.067631],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"福井県福井市四ツ井二丁目８番１号"}}]

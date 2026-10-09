@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%93%81%E5%B7%9D%E5%8C%BA%E6%97%97%E3%81%AE%E5%8F%B01-5-8
+[{"geometry":{"coordinates":[139.704071,35.60899],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都品川区旗の台一丁目５番８号"}}]

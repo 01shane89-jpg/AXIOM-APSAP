@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%B2%B8%E5%92%8C%E7%94%B0%E5%B8%82%E5%8A%A0%E5%AE%88%E7%94%BA4-27-1
+[{"geometry":{"coordinates":[135.392456,34.472023],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府岸和田市加守町四丁目２７番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%B2%A1%E5%B1%B1%E7%9C%8C%E5%80%89%E6%95%B7%E5%B8%82%E7%BE%8E%E5%92%8C1-1-1
+[{"geometry":{"coordinates":[133.774002,34.602867],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"岡山県倉敷市美和一丁目１番１号"}}]

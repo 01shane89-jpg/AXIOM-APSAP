@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E4%B8%AD%E5%A4%AE%E5%8C%BA%E6%98%8E%E7%9F%B3%E7%94%BA9-1
+[{"geometry":{"coordinates":[139.776779,35.667965],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"東京都中央区明石町９番１号"}}]

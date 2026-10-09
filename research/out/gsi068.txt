@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E6%B5%A6%E5%AE%89%E5%B8%82%E5%BD%93%E4%BB%A3%E5%B3%B63%E4%B8%81%E7%9B%AE4%E2%88%9232
+[{"geometry":{"coordinates":[139.893219,35.671627],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"千葉県浦安市当代島三丁目４番３２号"}}]

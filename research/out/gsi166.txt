@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%B8%82%E4%B8%AD%E5%B7%9D%E5%8C%BA%E6%9D%BE%E5%B9%B4%E7%94%BA4-66
+[{"geometry":{"coordinates":[136.873505,35.119919],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛知県名古屋市中川区松年町四丁目６６番地"}}]

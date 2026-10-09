@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%92%8C%E5%85%89%E5%B8%82%E8%AB%8F%E8%A8%AA2-1
+[{"geometry":{"coordinates":[139.618439,35.775818],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"埼玉県和光市諏訪２番"}}]

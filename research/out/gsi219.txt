@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E6%9D%B1%E5%A4%A7%E9%98%AA%E5%B8%82%E8%A5%BF%E5%B2%A9%E7%94%B03-4-13
+[{"geometry":{"coordinates":[135.597656,34.665543],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"大阪府東大阪市西岩田三丁目４番１３号"}}]

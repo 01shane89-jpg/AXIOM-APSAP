@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E4%BC%8A%E5%8B%A2%E5%8E%9F%E5%B8%82%E4%B8%8B%E7%B3%9F%E5%B1%8B143
+[{"geometry":{"coordinates":[139.313675,35.406673],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"神奈川県伊勢原市下糟屋１４３番地"}}]

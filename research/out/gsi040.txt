@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E3%81%A4%E3%81%8F%E3%81%B0%E5%B8%82%E5%A4%A9%E4%B9%85%E4%BF%9D2%E4%B8%81%E7%9B%AE1%E7%95%AA%E5%9C%B01
+[{"geometry":{"coordinates":[140.10202,36.093224],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"茨城県つくば市天久保二丁目１番"}}]

@@ -1,0 +1,2 @@
+SOURCE https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%84%9B%E5%AA%9B%E7%9C%8C%E5%AE%87%E5%92%8C%E5%B3%B6%E5%B8%82%E5%BE%A1%E6%AE%BF%E7%94%BA1-1
+[{"geometry":{"coordinates":[132.565262,33.216278],"type":"Point"},"type":"Feature","properties":{"addressCode":"","title":"愛媛県宇和島市御殿町１番"}}]
