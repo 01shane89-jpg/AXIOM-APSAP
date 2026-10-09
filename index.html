@@ -5325,8 +5325,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return kept.join(" | ");
   }
   function enParts(i, what, from) {
-    var t = i.title_en ? enOnly(unent(i.title_en)) : i.mt ? "" : unent(i.title || ""),
-      sm = i.summary_en ? enOnly(unent(i.summary_en)) : i.mt ? "" : unent(i.summary || "");
+    /* a feed that says English can still carry another script (a Thai music video's description, 2026-10-09): the same rule */
+    var t = i.title_en ? enOnly(unent(i.title_en)) : i.mt ? "" : enOnly(unent(i.title || "")),
+      sm = i.summary_en ? enOnly(unent(i.summary_en)) : i.mt ? "" : enOnly(unent(i.summary || ""));
     var untr = !t && !sm, sumLeft = !!(i.mt && i.summary && !sm);
     if (!t && sm) t = sm.split(/(?<=[.!?])\s/)[0].slice(0, 200);
     if (!t) t = (origLang(i) === "language" ? "Foreign-language" : origLang(i)) + " " + what + (from ? " from " + from : "") + ", not translated yet";
