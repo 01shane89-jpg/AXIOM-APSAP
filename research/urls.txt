@@ -354,3 +354,4 @@ yk2_th2 https://kouseikyoku.mhlw.go.jp/tokaihokuriku/gyomu/gyomu/hoken_kikan/shi
 yk2_kyushu https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00007.html
 yk2_notice https://www.mhlw.go.jp/content/11120000/001688887.pdf
 yk2_knowlety https://knowlety.jp/?p=31607
+yk3_notice https://kouseikyoku.mhlw.go.jp/hokkaido/000503526.pdf
