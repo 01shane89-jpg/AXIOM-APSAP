@@ -355,3 +355,4 @@ yk2_kyushu https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_0
 yk2_notice https://www.mhlw.go.jp/content/11120000/001688887.pdf
 yk2_knowlety https://knowlety.jp/?p=31607
 yk3_notice https://kouseikyoku.mhlw.go.jp/hokkaido/000503526.pdf
+yk4_notice https://kouseikyoku.mhlw.go.jp/hokkaido/000503526.pdf
