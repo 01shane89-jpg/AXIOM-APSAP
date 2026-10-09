@@ -14,7 +14,8 @@
   /* resolves to the country's file, or null when there is none; a failed read rejects so the caller can say so */
   function load(cc) {
     if (!cc || !/^[a-z]{2,3}$/.test(cc)) return Promise.resolve(null);
-    if (!cache[cc]) cache[cc] = H.getJSON(BASE + cc + "/web.json", 20000).then(function (j) { return j && j.schema === "osap-hospital-web/1" ? j : null; }, function (e) {
+    /* 60 s: a country's file is up to 0.9 MB; at 20 s a phone on a slow link can be cut off */
+    if (!cache[cc]) cache[cc] = H.getJSON(BASE + cc + "/web.json", 60000).then(function (j) { return j && j.schema === "osap-hospital-web/1" ? j : null; }, function (e) {
       delete cache[cc]; if (/HTTP 404/.test(e.message)) return null; throw e;
     });
     return cache[cc];

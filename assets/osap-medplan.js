@@ -424,6 +424,7 @@
   function ccNear(o, R) { return hp("osm").ccNear(o, R); }
   /* OSAP's stored copy of OpenStreetMap health facilities and landing sites (tools/build_medfac.mjs, refreshed every four
      weeks), so a plan lists hospitals even when Overpass does not answer */
+  function twice(fn) { return fn().then(null, function () { return new Promise(function (r) { setTimeout(r, 1500); }).then(fn); }); }
   function storedFac(o, R) { return Promise.resolve().then(function () { return hp("osm").stored(o, R); }); }
   /* the same reach as the live query: hospitals rH, clinics rC, landing sites rA, ambulance stations rE */
   function clipEls(els, o, r) {
@@ -1199,7 +1200,10 @@
     s.wx = null; s.wxErr = ""; s.web = null; s.webErr = ""; s.gov = null; s.govErr = ""; GOV = null; GOV_P = null; s.rts = null; s.pac = null; s.pacTok = null; s.iso = null; s.isoErr = ""; s.ems = null; s.emsErr = ""; s.x = null; s.xErr = ""; s.xAt = ""; s.xMiss = null; s.xPart = ""; s.xLive = false; s.xPost = null;
     s.ph = null; s.phErr = ""; s.wxAt = null; s.hwx = null; s.sea = null; s.leg = null; s.ro = o;
     var seaP = seaCheck(s);
-    var sofP = loadSof(s.cc), webP = loadWeb(s.cc).then(null, function (e) { s.webErr = e.message; return null; }), govP = loadGov(s.cc).then(null, function (e) { s.govErr = e.message; return null; });
+    /* the official records and the hospitals' own websites are what make a hospital an option at all: a failed read is
+       tried once more before the plan goes on without them (a phone near Bangkok showed "no destination", Shane 2026-10-09) */
+    var sofP = loadSof(s.cc), webP = twice(function () { return loadWeb(s.cc); }).then(null, function (e) { s.webErr = e.message; return null; }),
+      govP = twice(function () { return loadGov(s.cc); }).then(null, function (e) { s.govErr = e.message; return null; });
     var phP = loadPhones(s.cc).then(null, function (e) { s.phErr = e.message; return null; });
     /* the stored copy first: where it covers every country in reach, Overpass is not asked (unless the user asks for a
        live check); otherwise the live answer is added to it, and a failed live answer leaves the stored copy */
@@ -2739,8 +2743,17 @@
       weather_at: s.wxAt || "", weather_days: s.wx ? s.wx.days.map(function (x) { return { day: x.day, rain: x.rain }; }) : [],
       hlz_wx: hlzInput(s), data_age: dataAges(s), offline: W.navigator && W.navigator.onLine === false,
       pending: pending(s),
+      hospital_sources_failed: hospFailed(s),
       sources: srcList(s).map(function (x) { return { name: x[0].name, state: srcState(x[1]), note: x[1] }; })
     };
+  }
+  /* the hospital records a plan chooses hospitals from that this device could not read */
+  function hospFailed(s) {
+    var o = [];
+    if (s.govErr) o.push({ name: SRC.gov.name, error: s.govErr });
+    if (s.webErr) o.push({ name: SRC.web.name, error: s.webErr });
+    if (!s.fac && s.osmErr) o.push({ name: "Hospital list (" + SRC.medfac.name + "; " + SRC.osm.name + ")", error: s.osmErr });
+    return o;
   }
   function planNow(s) { return W.OSAP_MEDPLAN_MODEL ? W.OSAP_MEDPLAN_MODEL.build(planInput(s)) : null; }
   var VAL_MARK = { ok: "✓", warning: "!", blocking: "✗" };
@@ -2749,7 +2762,8 @@
     var v = p.validation_status;
     return '<p class="mpvs mpvs-' + v.status.toLowerCase() + '"><b>' + esc(v.label) + "</b></p>" +
       '<ul class="mpvl">' + v.items.map(function (x) {
-        return '<li class="mpv-' + x.level + '"><span class="mpvm">' + VAL_MARK[x.level] + "</span> <b>" + esc(x.label) + "</b>" + (x.detail ? ": " + esc(x.detail) : "") + "</li>";
+        return '<li class="mpv-' + x.level + '"><span class="mpvm">' + VAL_MARK[x.level] + "</span> <b>" + esc(x.label) + "</b>" + (x.detail ? ": " + esc(x.detail) : "") +
+          (x.code === "hospital.sources" ? ' <button type="button" class="refresh noprint" data-mp="retry">Try again</button>' : "") + "</li>";
       }).join("") + "</ul>" +
       '<p class="obs">Checked by fixed rules (' + esc(v.rule) + '): red stops printing, amber needs a planner or medic to confirm. Approval state: automatic draft.</p>';
   }

@@ -15,7 +15,8 @@
   /* resolves to the registry, or null for another country or when there is none; a failed read rejects so the caller can say so */
   function load(cc) {
     if (cc !== "th") return Promise.resolve(null);
-    if (!cache) cache = H.getJSON(BASE + "th/registry.json", 20000).then(function (j) { return j && j.schema === "osap-th-registry/1" ? j : null; }, function (e) {
+    /* 60 s: the registry is 1.7 MB; at 20 s a phone on a slow link can be cut off and its plans left with no destination */
+    if (!cache) cache = H.getJSON(BASE + "th/registry.json", 60000).then(function (j) { return j && j.schema === "osap-th-registry/1" ? j : null; }, function (e) {
       cache = null; if (/HTTP 404/.test(e.message)) return null; throw e;
     });
     return cache;
