@@ -662,8 +662,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12308950252",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "b33fb6a2a50b6e60bf4a32c280af19edfb73e1408aed63b0585a7ee3050870be"
+   "asof": "2026-10-09",
+   "fp": "e226ec8513137d11b61cae0288e3f64f714d8a48caa1254dd0737c7794935820"
   },
   {
    "id": "sof:af:xing:node-12946518933",
@@ -679,8 +679,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/12946518933",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d3942bc5b2d4b4eb4c96098ed0a91f42a1d4b6b313c4d6da2a629c1c39014b81"
+   "asof": "2026-10-09",
+   "fp": "d1c6d7820340ef26d49687f0f010fadb230c6fd71738e9f765df865fe9b40753"
   },
   {
    "id": "sof:af:xing:node-13915085962",
@@ -698,8 +698,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/13915085962",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "98b743a9213d35a608093fdc2e5ed4bbdd1f0f9d1cf250e558e8777f5f7efdcd"
+   "asof": "2026-10-09",
+   "fp": "29fc1df15b6d15ecdbf426b2269bd6d9826bf5363af6c333cdd8465e9746f430"
   },
   {
    "id": "sof:af:xing:node-3442121712",
@@ -715,8 +715,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3442121712",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "251bbe5ff6aac40ee6a123ce796993dac10b5f5d9b669a5edfd26a6080be87f5"
+   "asof": "2026-10-09",
+   "fp": "1bf13b4638402fc90043bfcf832b014649e62002c8211a0d2e0b8690168f1cda"
   },
   {
    "id": "sof:af:xing:node-3474023333",
@@ -732,8 +732,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3474023333",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "cb3e062ee5df60fdda6ead48183b6f7fe6cccde2d90797eb58b3b90dd5e98702"
+   "asof": "2026-10-09",
+   "fp": "c1ec2945bf017d6fd85cacc464032e963cd9cea51ef7b22efb99f51aaad4cd21"
   },
   {
    "id": "sof:af:xing:node-3542519991",
@@ -754,8 +754,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3542519991",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "45a8313307337deac6e41b4b90ca5106b25fcf0e5a4cd377660f9ddecf8cf9e7"
+   "asof": "2026-10-09",
+   "fp": "56d0be7bacd4ca60d7841c63307d7c7178b61f7e5a53c17b3e3aa2c4dae07917"
   },
   {
    "id": "sof:af:xing:node-3807892114",
@@ -771,8 +771,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3807892114",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "647c075546ff053741f916512d9d9f20816128d8a7754da22f5c20f3d49957c4"
+   "asof": "2026-10-09",
+   "fp": "cc3c67b6ffb188ef25c7ae278d57b23cd0a5aeeffa419e265bf23c6212c67ca3"
   },
   {
    "id": "sof:af:xing:node-4517971475",
@@ -788,8 +788,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4517971475",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "c0be61478605a0d184fd1f420a7cbea983c614afce0a4bb3b6574bf4ebfbc808"
+   "asof": "2026-10-09",
+   "fp": "243d453425e088433d6ee1f51f8569672b51a690751c0bfb3faf4d100b94bc51"
   },
   {
    "id": "sof:af:xing:node-4851971672",
@@ -809,8 +809,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4851971672",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ee811af62e94aeb2e927a91a927c896e7e2bdd46c67f3dbad9a213707d3113ca"
+   "asof": "2026-10-09",
+   "fp": "bd386ecdfcf79065771b584fa5ed9255344f9a098e13ddde97c263bab60a21dc"
   },
   {
    "id": "sof:af:xing:node-4853206331",
@@ -829,8 +829,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4853206331",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "33bdf2b5d6f1aae3169a4534a469e242d27262286f576993812259b299efee53"
+   "asof": "2026-10-09",
+   "fp": "4ab93b232f6bc9257356be252e593ab1f7d37be17619d14594d28e1e375ec3fe"
   },
   {
    "id": "sof:af:xing:node-4974882839",
@@ -846,8 +846,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4974882839",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d42cf11c951c80880ecebd70034dba9d80af7c9e81a6c489a347783316471425"
+   "asof": "2026-10-09",
+   "fp": "e9005e6ba52ac233c20a03f7604994842e9897e4fe2ceecfb2d53fc379c49dd8"
   },
   {
    "id": "sof:af:xing:node-5225035053",
@@ -868,8 +868,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5225035053",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7d3ea03e91fe5518bda89ce1a42e77c7fdf267ffdfaf56784090fed69022e44e"
+   "asof": "2026-10-09",
+   "fp": "103be184a6d615137dd57f84b6a4e89a790fe86f7619f79dfd8ff9d75b65053e"
   },
   {
    "id": "sof:af:xing:node-5441336936",
@@ -885,8 +885,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5441336936",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ae455301700dc002db37241e6946317c06353f10664e39334151ad9467b63b03"
+   "asof": "2026-10-09",
+   "fp": "50800bea27d1784f67d04027f6160fa7b1f734bb8b65e012cfb9360261a65e53"
   },
   {
    "id": "sof:af:xing:node-6068427922",
@@ -902,8 +902,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6068427922",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "d01ee0c4d4a19fc40b82fc7709da8ed6e099b280e36073366968e6537a2b3faf"
+   "asof": "2026-10-09",
+   "fp": "31d569cc380e926242f5d436f8b37131cb3948568d1691222bb1d37adde76789"
   },
   {
    "id": "sof:af:xing:node-6693959990",
@@ -919,8 +919,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6693959990",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "0899f8a5ccf4a08c561848e337a5ed9f4ad10e4f6d3ab5eb12748c3b59472439"
+   "asof": "2026-10-09",
+   "fp": "bef8c12b187951f9c7bfbc898c016db876e3cc436d9d246104eb700fd5d3975e"
   },
   {
    "id": "sof:af:xing:node-6937462501",
@@ -936,8 +936,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6937462501",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "1a7b2316ee563e7ed0c78fb019a4806ff7186dacbb5fbcfd1919320b78875596"
+   "asof": "2026-10-09",
+   "fp": "84168201aa6bca5dc8f09d9014c6932ae2aa0368b95350ab2101299ce41cd498"
   },
   {
    "id": "sof:af:xing:node-7230953059",
@@ -953,8 +953,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7230953059",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7d0de323e0a9108737c9be5ed338f3712f09e2da070714d6cc7568e181920742"
+   "asof": "2026-10-09",
+   "fp": "269811b3fe31d65045035afd33b06f3bc929feace6b216cb69d0b0bf78b73f68"
   },
   {
    "id": "sof:af:xing:way-1018387591",
@@ -970,8 +970,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1018387591",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ebf3a2bb05d3ce808b6ffcd2833c14cbe726c28dbc285273e5926020ff9cbcf4"
+   "asof": "2026-10-09",
+   "fp": "4b125afc2a2d63cca1dd47bcbc72108bf7bd9cda49e0f673358b0572b7855c1a"
   },
   {
    "id": "sof:af:xing:way-1018636739",
@@ -987,8 +987,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1018636739",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "491eae3df0d38fe948ecd2074b060a112cdb6deb10bbe9a5bc65196826e02a49"
+   "asof": "2026-10-09",
+   "fp": "ad53087bf6261e18f687a70023eef5b50b9b7536f9754520d198526f9eb679d1"
   },
   {
    "id": "sof:af:xing:way-1266997790",
@@ -1004,8 +1004,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1266997790",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "45535c579bef25735337cbf2462679c88edc99ba10cc385996dd6cb731df418b"
+   "asof": "2026-10-09",
+   "fp": "35ad5ba00ae58969253fc5214a14574c7d2d6019ea2d3f9e397cdb6c481e3a91"
   },
   {
    "id": "sof:af:xing:way-340194614",
@@ -1021,8 +1021,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/340194614",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "68a939ea3548ff03f4a822ecc4d94058ca125fc2104567ad86532bea6f79071a"
+   "asof": "2026-10-09",
+   "fp": "04b2ab24a683f21ec1cbfbedd61e18aa1d0e7c109e22606129f8c29f41e155ca"
   },
   {
    "id": "sof:af:xing:way-342628657",
@@ -1038,8 +1038,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/342628657",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "dea6fecb6cf745ce14daddaa5057ebd2b94acdc623a18406eb6cd6f8c91b7582"
+   "asof": "2026-10-09",
+   "fp": "3bf67b21e2d2533ecb463d3da8494e8e7f597fdf797092d2dc455defbaa8e0e6"
   },
   {
    "id": "sof:af:xing:way-684951030",
@@ -1057,8 +1057,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/684951030",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "796ed2b0468b7cea6b4e27cd5f21d10a7d7ac75c3362fdadfbcccceed9f28293"
+   "asof": "2026-10-09",
+   "fp": "b94e6deac98113054abff968c02bef0610fa6533924a4fe11b351743846c1cf8"
   },
   {
    "id": "sof:af:xing:way-717835774",
@@ -1074,8 +1074,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/717835774",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "22e72b915172b5bdaa7bcb3416e904b015e290b6a071da5c36fac4b27cded49b"
+   "asof": "2026-10-09",
+   "fp": "b4541ab2d123e9701bfc2df5cae559b29313f4171791a1751dd31dec43ac9df8"
   },
   {
    "id": "sof:af:xing:way-784263305",
@@ -1091,8 +1091,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/784263305",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "cae11c5bddba06fa1bc5f555e3dc5b764a2ed709966a8658fca8d8500b0583c8"
+   "asof": "2026-10-09",
+   "fp": "574a2605a743254ce48866193df2ee9154f09e5634f860d732d7ba523d5dc599"
   },
   {
    "id": "sof:af:xing:way-784263307",
@@ -1108,8 +1108,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/784263307",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "c3f76db5afd814ff78f46d53e0e060fc374b7fcdb9336d5047190d1c41c8c2b3"
+   "asof": "2026-10-09",
+   "fp": "46acc4872ea0665ba0cdbfe5bd12788eab0ab2d7c3a7d84b01ade8b84df8fc42"
   },
   {
    "id": "sof:af:xing:way-784316325",
@@ -1125,8 +1125,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/784316325",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "9ee419f92f1df67d4f1991c3109bf1ce3a3acd40afa5d84f047655e443149bc0"
+   "asof": "2026-10-09",
+   "fp": "6ff919a892a60776a2e51a09d5614e7ca7413649deb8f31903ec9f9d50061051"
   },
   {
    "id": "sof:af:xing:way-946863757",
@@ -1142,13 +1142,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/946863757",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "c78c26d6bef81db82f9373a1272babce0f8e1f2843a01ccc0175573491079791"
+   "asof": "2026-10-09",
+   "fp": "f0d9010355abfafd10c670724f91dee99f8ba698c82d03d0cd5c4dece6661845"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

@@ -34,13 +34,13 @@
    "src": "https://www.wikidata.org/entity/Q25056609",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/107435917",
-   "fp": "0651804a5424bbf3c6dd3a1a68b1e2e3ce987c61eb49c8cdbfece8b56b183c95",
+   "fp": "9ac6513751f742b8284e4f7d107ddc4a34ae1f77fa6f9c945b0277a46864a19d",
    "web": "https://lu.usembassy.gov/",
    "phone": "+352 46 01 23 00",
    "phone_after_hours": "+352 46 01 23 00",
    "phone_src": "https://lu.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -187,5 +187,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

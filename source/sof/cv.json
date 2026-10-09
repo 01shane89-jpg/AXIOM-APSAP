@@ -35,8 +35,8 @@
    "phone_after_hours": "(+238) 260 8900",
    "phone_src": "https://cv.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01",
-   "fp": "3b65ac08588b76535d281084edac7c81d326fe028f71150fc3df23ba34ee8fde"
+   "phone_asof": "2026-10-09",
+   "fp": "de9f11ab41a8ff0afb3095178d8fd502813eb21ba6fbdc8f5a30a1a82b1a06b0"
   }
  ],
  "airports": [
@@ -311,5 +311,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

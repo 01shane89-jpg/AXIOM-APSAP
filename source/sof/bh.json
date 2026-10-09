@@ -36,12 +36,12 @@
    "src": "https://bh.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "OpenStreetMap way/785624050",
-   "fp": "74dda5f01ccb777064d13597c2b6a83bc2394a094e30dc6ba54ed7694607fe14",
+   "fp": "e7fa1b5cd8ddef5b48e4fc2faba4c91723d50dd64e33e88517db7de9ab7d3c40",
    "phone": "(+973) 17 242700",
    "phone_after_hours": "+973-1724-2700",
    "phone_src": "https://bh.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -258,5 +258,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

@@ -55,12 +55,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/PapuaNewGuinea.html",
    "srcname": "travel.state.gov Papua New Guinea country information",
    "coord_basis": "OpenStreetMap node/11532854247",
-   "fp": "d17b5ece12abf93631de45b4eec522c57904a88b0903cf9f93d167305311d0a1",
+   "fp": "c0e159d4328386f9647a793e86dd1ab8179d03e6cc683048ce238d85e283b48a",
    "phone": "+675-308-9100",
    "phone_after_hours": "+675-308-9100",
    "phone_src": "https://pg.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -436,8 +436,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1250672295",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "eacbe494e3bb43d5196231acc53ed42ef9fb4e0ddd34aa26c0678c7906d69087"
+   "asof": "2026-10-09",
+   "fp": "554efd1d7cbf10882354f4ec7993adbb900fb4de8d02deb97329eec05fd07a05"
   },
   {
    "id": "sof:pg:xing:node-5558126545",
@@ -453,8 +453,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5558126545",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "b0a3fc52cdcb1657e660bfb176626a93d44d0f04c0f11f1bdd1d0909475275ed"
+   "asof": "2026-10-09",
+   "fp": "98d53272813b6a2ef9328c20b804156b20422abf0b0a220f7208fe564b27b875"
   },
   {
    "id": "sof:pg:xing:way-806707961",
@@ -472,13 +472,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/806707961",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "4320b7547a0af4421e0fb5cb2da7b1083ed2771e43703f0e1ec618e970eeaa95"
+   "asof": "2026-10-09",
+   "fp": "2eafdb9466b28a959ad97e02973cf130e32ed3b1f091cab9ec96d23e911b672e"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }

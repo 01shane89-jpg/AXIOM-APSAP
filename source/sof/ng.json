@@ -42,13 +42,13 @@
    "src": "https://ng.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "OpenStreetMap way/206315588",
-   "fp": "4240ba1f79ee0c695c5ea0546012e6a11795aa448c89de8f500d812555999827",
+   "fp": "d1ece78234cbc4ba6681757bc4e882e97282faefaba21063ee3537da049b6354",
    "web": "https://ng.usembassy.gov",
    "phone": "+234 209 461 4000",
    "phone_after_hours": "+234 209 461 4000",
    "phone_src": "https://ng.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   },
   {
    "id": "sof:ng:post:u-s-consulate-general-lagos",
@@ -63,12 +63,12 @@
    "src": "https://ng.usembassy.gov/",
    "srcname": "U.S. mission website (not opened: usembassy.gov refuses research tools)",
    "coord_basis": "OpenStreetMap way/596634611",
-   "fp": "e7c57494aaba0fe0532eaad8fae185114d5552bf305e143ef3a1e14c6c2c6f55",
+   "fp": "a2c33de14c5119024d9685da14dcd71e2d51c604247b04b40c64e3c15b98bd31",
    "web": "https://ng.usembassy.gov/embassy-consulate/lagos/",
    "phone": "(234)-1-460-3400",
    "phone_src": "https://www.openstreetmap.org/way/596634611",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-10-01"
+   "phone_asof": "2026-10-09"
   }
  ],
  "airports": [
@@ -708,8 +708,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11307797838",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "b48e12e93d7aefffb366d7bf4ece4495ea637f500cb6b29d0f0030d6a429d844"
+   "asof": "2026-10-09",
+   "fp": "0035382fa729b312978c74f7c4d742cd2de4369c98c676792d4b5cd1afeec7d0"
   },
   {
    "id": "sof:ng:xing:node-13347836968",
@@ -725,8 +725,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/13347836968",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "ad4a3df225b1423b82bdf959600ab57086ccca0e0ca0a62c4ed690dedb665450"
+   "asof": "2026-10-09",
+   "fp": "9dfdfce9b55c839fbc5e3e3138592ca64f4bfedd51eb78dab2843e96cffde541"
   },
   {
    "id": "sof:ng:xing:node-6810816145",
@@ -742,8 +742,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6810816145",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "563fd5d36255003de815cd15f3d22d0b829dedd24fb4a114459035df48b20a39"
+   "asof": "2026-10-09",
+   "fp": "3ec8eff85346637c87b5d4cbc824ea4769a35d4dd7cb627828e9ef7c35881e8a"
   },
   {
    "id": "sof:ng:xing:node-929836425",
@@ -762,8 +762,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/929836425",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "7bf4d3c6741a6a8d76731ff7f465d779fb484158369f2cef880b191360376c33"
+   "asof": "2026-10-09",
+   "fp": "e61feb6fb5a689cec027e9d76f3c8974be2a2551d24f89e72183a382097d1990"
   },
   {
    "id": "sof:ng:xing:node-932143954",
@@ -779,13 +779,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/932143954",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-10-01",
-   "fp": "a75415e5af319cd7f7e62f33b37083500380bf4adba73ab48b4b4de72dd8b706"
+   "asof": "2026-10-09",
+   "fp": "5681e375a6b741baa39d0adba03e60fd33a4e1e1cdf02aa161774b04f30c3a12"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-10-01"
+ "evac_asof": "2026-10-09"
 }
