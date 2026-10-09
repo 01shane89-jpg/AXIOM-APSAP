@@ -13,3 +13,6 @@ jpcc5 200 text/html 22643
 jpcc6 200 application/javascript 56575
 jpcc7 200 application/javascript 214619
 jpcc5b 200 text/html 22643
+jpr7s1 200 application/pdf 276711
+jpr7s3 200 application/pdf 423029
+jpr8tsuchi 200 application/pdf 1566104
