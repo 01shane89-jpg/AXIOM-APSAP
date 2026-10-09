@@ -13,3 +13,6 @@ jpcc5 https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000188907_00008.html
 jpcc6 https://www.mhlw.go.jp/stf/newpage_72097.html
 jpcc7 https://www.mhlw.go.jp/stf/newpage_32614.html
 jpcc5b https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000188907_00008.html?r
+jpr7s1 https://www.mhlw.go.jp/content/10800000/001691287.pdf
+jpr7s3 https://www.mhlw.go.jp/content/10800000/001682704.pdf
+jpr8tsuchi https://www.mhlw.go.jp/content/10800000/001704854.pdf
