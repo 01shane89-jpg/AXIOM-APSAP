@@ -1,8 +1,8 @@
 // scratch probe (never merged): open the live med plan at a grid and dump what it shows
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 import { writeFileSync } from "node:fs";
 const GRID = process.env.GRID || "47P PR 7556 7145", URL = process.env.URL || "https://01shane89-jpg.github.io/AXIOM-APSAP/?probe=" + Date.now() + "#th/map";
-const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+const ENG = process.env.ENGINE || "chromium", OUT = "research/out/probe_medplan_" + ENG; const b = await (ENG === "webkit" ? webkit : chromium).launch(); const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, ...(ENG === "webkit" ? { isMobile: true } : { isMobile: true }),
   userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1" });
 const pg = await ctx.newPage(); const log = [];
 pg.on("console", (m) => { if (m.type() === "error" || m.type() === "warning") log.push(m.type() + ": " + m.text().slice(0, 400)); });
@@ -20,6 +20,6 @@ for (let i = 0; i < 24; i++) {
   snaps.push("--- t=" + (i + 1) * 10 + "s\n" + t);
   if (!/Still reading|Looking up/.test(t) && i > 3) break;
 }
-await pg.screenshot({ path: "research/out/probe_medplan.png", fullPage: false });
-writeFileSync("research/out/probe_medplan.txt", log.join("\n") + "\n\n" + snaps.slice(-2).join("\n\n") + "\n\nFIRST:\n" + snaps[0]);
+await pg.screenshot({ path: OUT + ".png", fullPage: false });
+writeFileSync(OUT + ".txt", log.join("\n") + "\n\n" + snaps.slice(-2).join("\n\n") + "\n\nFIRST:\n" + snaps[0]);
 await b.close();
