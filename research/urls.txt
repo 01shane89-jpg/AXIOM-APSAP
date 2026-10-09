@@ -344,3 +344,13 @@ yk_idx_kanto https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/kijun.html
 yk_idx_kinki https://kouseikyoku.mhlw.go.jp/kinki/gyomu/gyomu/hoken_kikan/shitei_jokyo_00004.html
 yk_idx_shikoku https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index.html
 yk_idx_kyushu https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00007.html
+yk2_kanto https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/kijyun.html
+yk2_kinki https://kouseikyoku.mhlw.go.jp/kinki/gyomu/gyomu/hoken_kikan/kijun_jurijoukyou.html
+yk2_tohoku https://kouseikyoku.mhlw.go.jp/tohoku/gyomu/gyomu/hoken_kikan/kijun_jurijoukyou.html
+yk2_shikoku https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index_00013.html
+yk2_cs https://kouseikyoku.mhlw.go.jp/chugokushikoku/chousaka/shisetsukijunjuri.html
+yk2_th1 https://kouseikyoku.mhlw.go.jp/tokaihokuriku/newpage_00349.html
+yk2_th2 https://kouseikyoku.mhlw.go.jp/tokaihokuriku/gyomu/gyomu/hoken_kikan/shitei.html
+yk2_kyushu https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00007.html
+yk2_notice https://www.mhlw.go.jp/content/11120000/001688887.pdf
+yk2_knowlety https://knowlety.jp/?p=31607
