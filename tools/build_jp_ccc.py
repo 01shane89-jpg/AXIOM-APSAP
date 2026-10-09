@@ -12,10 +12,14 @@ records stay. What each record says, and from where:
                  item 12 at 1+ points general surgery, neurosurgery and orthopaedics see suspected trauma promptly
   caps_std       what the designation standard (救急医療対策事業実施要綱) requires of every centre: its own ICU and an
                  X-ray room, and for advanced centres extensive burns. The plan reads these as INFERRED, never as stated.
-Nothing here says a blood bank; the plan keeps it unknown. Files keep the layout tools/apply_evac.py writes."""
-import hashlib, json, os
+  blood.bank     only where the centre is registered with its regional health bureau for the transfusion management
+                 fee (輸血管理料Ⅰ or Ⅱ; source/japan/transfusion-2026.json). Both levels require ABO, Rh(D), crossmatch or
+                 indirect Coombs, and irregular antibody tests available at all times, and blood products managed by one
+                 transfusion department (保医発0305第8号, 第80). A centre not registered keeps blood bank unknown.
+Files keep the layout tools/apply_evac.py writes."""
+import hashlib, json, os, re
 
-SNAP, SRC, OUT = "source/japan/ccc-2025.json", "source/sof/jp.json", "data/sof/jp.js"
+SNAP, TX, SRC, OUT = "source/japan/ccc-2025.json", "source/japan/transfusion-2026.json", "source/sof/jp.json", "data/sof/jp.js"
 MT = "by OSAP's AI from MHLW's Japanese"
 KIND = {"advanced": ("Advanced critical care centre", "高度救命救急センター"), "standard": ("Critical care centre", "救命救急センター"),
         "regional": ("Regional critical care centre", "地域救命救急センター")}
@@ -52,6 +56,32 @@ def refs(S):
     return R
 
 
+def tx_refs(T):
+    """one quoted text per bureau file and level; a centre's blood.bank points at the one it is registered under"""
+    R, cr = {}, T["criteria"]
+    test = "(４) 次に掲げる輸血用血液検査が常時実施できる体制が構築されていること。ＡＢＯ血液型、Ｒｈ（Ｄ）血液型、血液交叉試験又は間接Ｃｏｏｍｂｓ検査、不規則抗体検査"
+    for i, (url, f) in enumerate(sorted(T["files"].items())):
+        for lv, own in (("I", "輸血用血液製剤及びアルブミン製剤（加熱人血漿たん白を含む。）の一元管理がなされていること"), ("II", "輸血用血液製剤の一元管理がなされていること")):
+            R["tx%s_%d" % (lv, i)] = {"src": url, "srcname": f["bureau_en"] + " (" + f["bureau_ja"] + "), list of registered medical institutions", "asof": T["asof"], "sha256": f["sha256"],
+                "quote": ("第80 1 (３) 当該保険医療機関の輸血部門において%s。%s" if lv == "I" else "第80 2 (３) 当該保険医療機関の輸血部門において%s。(４) 輸血管理料Ⅰの施設基準のうち、(４)から(７)までの全てを満たしていること。1 %s") % (own, test), "quote_mt": MT,
+                "quote_en": "its transfusion department manages all the hospital's blood products; ABO, Rh(D), crossmatch or indirect Coombs and antibody screening can be done at all times",
+                "quote_basis": "the centre is on this bureau's list for 輸血管理料%s; the requirements quoted are MHLW's criteria (%s, sha256 %s)" % ("Ⅰ" if lv == "I" else "Ⅱ", cr["url"], cr["sha256"][:12])}
+    return R
+
+
+def wareki(t):
+    """平成21年 4月 1日 -> 2009-04-01 (the lists give Japanese era dates)"""
+    m = re.match(r"(平成|令和|昭和)\s*(\d+|元)年\s*(\d+)月\s*(\d+)日", t)
+    if not m: return t
+    y = 1 if m.group(2) == "元" else int(m.group(2))
+    return "%04d-%02d-%02d" % ({"昭和": 1925, "平成": 1988, "令和": 2018}[m.group(1)] + y, int(m.group(3)), int(m.group(4)))
+
+
+def tx_index(T):
+    files = sorted(T["files"])
+    return {c["pref"] + c["list_name"]: dict(c, ref="tx%s_%d" % (c["level"], files.index(c["file"]))) for c in T["centres"]}
+
+
 STD = {"cc.icu": {"ref": "s_icu"}, "dx.xray": {"ref": "s_xray"}}
 
 
@@ -62,7 +92,7 @@ def defaults(S):
             "src": S["sources"]["grade"]["url"], "srcname": "MHLW 2025 critical care centre evaluation", "caps_std": STD}
 
 
-def record(S, c):
+def record(S, c, tx=None):
     kind_en, kind_ja = KIND[c["kind"]]
     caps, std_caps = {}, {}
     p21, p22, p12 = item(S, c, "21"), item(S, c, "22"), item(S, c, "12")
@@ -74,12 +104,16 @@ def record(S, c):
         for k in ("surg.general", "surg.neuro", "surg.ortho"): caps[k] = {"ref": "i12_%d" % p12}
     if c["kind"] == "advanced":
         std_caps = dict(STD, **{"spec.burn": {"ref": "s_burn"}})
+    if tx:
+        caps["blood.bank"] = {"ref": tx["ref"]}
     n = c.get("nums") or {}
     notes = "MHLW 2025 evaluation grade %s (%d points)" % (c["grade"], c["points"])
     if n:
         notes += "; %d full-time emergency doctors, %d critical patients and %d ambulances received in 2025" % (n["ft_doctors"], n["critical_patients"], n["ambulances"])
     if c["dh"]:
         notes += "; doctor helicopter base"
+    if tx:
+        notes += "; registered for transfusion management %s (%s, since %s)" % (tx["level"], tx["reg_no"], wareki(tx["since"]))
     h = hashlib.sha256((c["pref"] + c["list_name"]).encode()).hexdigest()[:12]
     r = {"id": "sof:jp:ccc:" + h, "g": "ccc", "name": c["name_en"] or c["list_name"], "city": c["pref"], "address": c["pref"] + c["address"],
          "trauma_level": "%s (%s), MHLW-designated; 2025 evaluation grade %s" % (kind_en, kind_ja, c["grade"]),
@@ -94,17 +128,22 @@ def record(S, c):
 
 def main():
     S = json.load(open(SNAP, encoding="utf-8"))
+    T = json.load(open(TX, encoding="utf-8"))
     J = json.load(open(SRC, encoding="utf-8"))
+    X = tx_index(T)
     keep = [h for h in J["hospitals"] if not h["id"].startswith("sof:jp:ccc:")]
-    new = [record(S, c) for c in S["centres"]]
+    new = [record(S, c, X.get(c["pref"] + c["list_name"])) for c in S["centres"]]
     J["hospitals"] = keep + new
     J["ccc_asof"] = S["asof"]
-    J["cap_refs"] = refs(S)
+    J["cap_refs"] = dict(refs(S), **tx_refs(T))
+    used = {x["ref"] for r in new for x in r["caps"].values()}
+    J["cap_refs"] = {k: v for k, v in J["cap_refs"].items() if not k.startswith("tx") or k in used}
+    J["tx_asof"] = T["asof"]
     J["hosp_defaults"] = dict(J.get("hosp_defaults") or {}, ccc=defaults(S))
     open(SRC, "w", encoding="utf-8").write(json.dumps(J, indent=1, ensure_ascii=False))
     body = json.dumps(J, separators=(",", ":")).replace("</", "<\\/")
     open(OUT, "w").write("window.ASAP_SOF=window.ASAP_SOF||{};window.ASAP_SOF[%s]=%s;" % (json.dumps("jp"), body))
-    print("jp: %d hand-researched + %d critical care centres (%d placed)" % (len(keep), len(new), sum(1 for r in new if r["lat"] is not None)))
+    print("jp: %d hand-researched + %d critical care centres (%d placed, %d with a registered transfusion service)" % (len(keep), len(new), sum(1 for r in new if r["lat"] is not None), sum(1 for r in new if "blood.bank" in r["caps"])))
 
 
 if __name__ == "__main__":
