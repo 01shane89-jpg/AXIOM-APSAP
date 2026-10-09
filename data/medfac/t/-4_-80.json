@@ -21,6 +21,7 @@
 ["n10834022605",-2.17589,-79.90888,"ec",{"name":"Segurilab","amenity":"clinic"}],
 ["n10853514105",-2.88569,-79.04222,"ec",{"name":"Virgen del Milagro","amenity":"clinic","healthcare":"clinic","opening_hours":"24/7"}],
 ["n10947651493",-2.66089,-78.6328,"ec",{"name":"Subcentro de Salud","amenity":"hospital"}],
+["n10955982702",-3.53809,-78.29982,"pe",{"aeroway":"helipad"}],
 ["n11033392924",-2.87227,-79.03503,"ec",{"name":"Centro de Salud El Cebollar","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud Pública","operator:type":"public"}],
 ["n11074215707",-2.88762,-79.03915,"ec",{"name":"Sermedic","amenity":"clinic"}],
 ["n11355672419",-2.90906,-79.00686,"ec",{"name":"Centro de Rehabilitación y Fisioterapia","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"physiotherapy;physiatry","operator":"Centro de Rehabilitación y Fisioterapia","operator:type":"business"}],

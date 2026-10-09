@@ -1,2 +1,8 @@
 [["n1042073034",-2.14372,-71.75915,"co",{"name":"Arica Airport","aeroway":"aerodrome"}],
-["n5300981222",-3.77986,-70.36238,"co",{"name":"Hospital","amenity":"hospital","healthcare":"hospital"}]]
+["n5300981222",-3.77986,-70.36238,"co",{"name":"Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n5518514122",-3.31965,-71.86056,"pe",{"name":"Centro de salud Pevas","amenity":"clinic","operator":"Gobierno Regional","addr:street":"Calle Iquitos"}],
+["n7070133409",-3.90863,-70.51687,"pe",{"name":"Centro de Atencion Primaria Ii Caballococha","amenity":"clinic","healthcare":"clinic","operator":"Seguro Social de Salud","operator:type":"government","phone":"+51 65 291043","addr:housenumber":"700","addr:street":"Calle Ramon Castilla"}],
+["w1549448012",-3.91087,-70.51236,"pe",{"name":"Centro De Atención Primaria I-3 EsSalud","amenity":"hospital","healthcare":"hospital","operator":"Seguro Social de Salud","operator:type":"government"}],
+["w1549448020",-3.91726,-70.50758,"pe",{"name":"Aeropuerto de Caballococha","name:en":"Caballococha Airport","addr:street":"Avenida Aeropuerto","addr:city":"Caballococha","aeroway":"aerodrome","icao":"SPBC","iata":"LHC","wikidata":"Q3813545"}],
+["w788990991",-3.88198,-71.41138,"pe",{"name":"Santa Elena de Imaza","amenity":"clinic","healthcare":"clinic","operator":"Gobierno Regional","operator:type":"government","phone":"+51 65 251756","addr:full":"Caserio de Santa Elena de Imaza"}],
+["w839919612",-2.7962,-70.08582,"pe",{"aeroway":"helipad"}]]
