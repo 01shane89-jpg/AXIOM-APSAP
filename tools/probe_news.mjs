@@ -59,6 +59,7 @@ try {
 fs.mkdirSync("probe-out", { recursive: true });
 fs.writeFileSync("probe-out/news-probe.json", JSON.stringify({ at: new Date().toISOString(), results, agg, cap }, null, 1));
 const ok = results.filter((r) => r.n > 0);
+for (const r of results) console.log("FEED", r.cc, r.kind || "", r.status || r.error, "n=" + (r.n || 0), "last7=" + (r.last7 || 0), "newest=" + r.newest, r.url, "|", (r.sample || []).slice(0, 2).join(" / "));
 console.log("feeds answering with items:", ok.length, "/", results.length, "; countries:", new Set(ok.map((r) => r.cc)).size);
 console.log("aggregators:", agg.map((a) => a.outlet[0] + ":" + a.cc + "=" + (a.n || a.error || a.status)).join(" "));
 console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f) => f.n > 0).length, "feeds with items", cap.error || "");
@@ -87,5 +88,6 @@ console.log("CAP sources:", cap.prefixes.length, "folders,", cap.feeds.filter((f
     return r;
   });
   fs.writeFileSync("probe-out/discover.json", JSON.stringify(out, null, 1));
+  for (const d of out) { console.log("HOME", d.cc, d.home, d.status || d.error); for (const t of d.tried) if (t.n) console.log("  DISC", d.cc, t.url, "n=" + t.n, "last7=" + t.last7, "newest=" + t.newest, "|", (t.sample || []).join(" / ")); }
 }
 process.exit(0);
