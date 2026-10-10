@@ -5433,11 +5433,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     GAZ = Object.keys(g).sort(function (a, b) { return b.length - a.length; }).map(function (k) { return g[k]; });
     return GAZ;
   }
+  /* places are looked up by the first word of their name, so a headline is compared only with the places whose first word it
+     holds, not with every place (that took about a second on a phone when a country's 12-month history arrived). The answer
+     is the same as comparing with every place in turn: the longest name found wins. */
+  var GAZX = null;
+  function gazIndex() {
+    if (GAZX) return GAZX;
+    var by = Object.create(null), any = [];
+    gazetteer().forEach(function (p, i) { var n = p.name.toLowerCase(), m = /^[a-z]+/.exec(n), e = [i, n, p]; if (m) (by[m[0]] = by[m[0]] || []).push(e); else any.push(e); });
+    return (GAZX = { by: by, any: any });
+  }
   function placeFor(text) {
-    var t = " " + stripDatelines(text).toLowerCase() + " ", gz = gazetteer();
-    for (var i = 0; i < gz.length; i++) {
-      var n = gz[i].name.toLowerCase(), at = t.indexOf(n);
-      if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return gz[i];
+    var t = " " + stripDatelines(text).toLowerCase() + " ", X = gazIndex(), c = X.any, seen = Object.create(null), re = /[a-z]+/g, w;
+    while ((w = re.exec(t))) if (!seen[w[0]] && X.by[w[0]]) { seen[w[0]] = 1; c = c.concat(X.by[w[0]]); }
+    if (c !== X.any) c.sort(function (a, b) { return a[0] - b[0]; });
+    for (var i = 0; i < c.length; i++) {
+      var n = c[i][1], at = t.indexOf(n);
+      if (at > 0 && !/[a-z]/.test(t.charAt(at - 1)) && !/[a-z]/.test(t.charAt(at + n.length))) return c[i][2];
     }
     return null;
   }
@@ -5515,8 +5527,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     hs.src = "data/history/" + CC + ".js";
     hs.onload = function () {
       if (!(window.ASAP_HIST || {})[CC]) return;
-      addNewsRecords("ASAP_NEWS", "news", "news"); addNewsRecords("ASAP_SOCIAL", "social", "social");
-      try { render(); renderAlerts(); if (LBY[current] && LBY[current].sof) showSof(current); } catch (e) {}
+      /* in three steps with a break between them, so a tap or a map move is not kept waiting for the whole merge (a big
+         country's 12 months of news froze a phone for seconds in one piece) */
+      addNewsRecords("ASAP_NEWS", "news", "news");
+      setTimeout(function () {
+        addNewsRecords("ASAP_SOCIAL", "social", "social");
+        setTimeout(function () { try { render(); renderAlerts(); if (LBY[current] && LBY[current].sof) showSof(current); } catch (e) {} }, 0);
+      }, 0);
     };
     document.body.appendChild(hs);
   });
@@ -5554,6 +5571,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var here = new RegExp("\\b(" + (NDEM[CC] || C.name) + ")\\b", "i");
     var others = R.filter(function (r) { return r.social && inPeriod(r); });
     var all = recs.concat(others).map(function (r) { return { r: r, words: nWords(r.title), outlet: r.src.name }; });
+    /* which stories share each headline word: a story can only match one that shares two words or more with it (nSame), so
+       only those are compared, in the same order as before (comparing every pair took seconds on a phone for a big country) */
+    var byW = Object.create(null);
+    all.forEach(function (o, j) { for (var k in o.words) (byW[k] || (byW[k] = [])).push(j); });
+    function near(i) {
+      var cnt = Object.create(null), out = [];
+      for (var k in all[i].words) { var l = byW[k]; for (var q = 0; q < l.length; q++) { var j = l[q]; if (j !== i && (cnt[j] = (cnt[j] || 0) + 1) === 2) out.push(j); } }
+      return out.sort(function (a, b) { return a - b; });
+    }
     return recs.map(function (r, i) {
       var me = all[i], why = [], score = 0;
       var topics = NTOP.filter(function (t) { return t[1].test(r.title); }).map(function (t) { return t[0]; });
@@ -5567,7 +5593,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (routine) { score -= 2; why.push("sport or entertainment wording −2"); }
       if (here.test(r.title) || placeFor(r.title)) { score += 2; why.push("names " + C.name + " or a place in it +2"); }
       var also = [];
-      all.forEach(function (o, j) { if (j !== i && o.outlet !== me.outlet && also.indexOf(o.outlet) < 0 && nSame(me.words, o.words)) also.push(o.outlet); });
+      near(i).forEach(function (j) { var o = all[j]; if (o.outlet !== me.outlet && also.indexOf(o.outlet) < 0 && nSame(me.words, o.words)) also.push(o.outlet); });
       if (also.length) { var c = Math.min(3, also.length); score += 2 * c; why.push((also.length + 1) + " outlets or accounts +" + 2 * c); }
       if (/State media/.test(r.src.kind || "")) { score += 1; why.push("state outlet +1"); }
       var t = new Date(String(r.issued || r.ts).replace(" ", "T") + (/Z$|[+-]\d\d:?\d\d$/.test(r.issued || "") ? "" : "Z")).getTime();
@@ -5576,20 +5602,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   /* one line per story: the best-scored headline stands for the others that carry it */
-  function topStories(recs) {
-    var ranked = newsRank(recs).filter(function (x) { return x.score >= 5; }).sort(function (a, b) { return b.score - a.score || (a.r.ts < b.r.ts ? 1 : -1); });
-    var out = [], used = {};
-    ranked.forEach(function (x) {
+  function topStories(recs, rank) {
+    var ranked = (rank || newsRank(recs)).filter(function (x) { return x.score >= 5; }).sort(function (a, b) { return b.score - a.score || (a.r.ts < b.r.ts ? 1 : -1); });
+    var out = [], used = {}, W = ranked.map(function (x) { return nWords(x.r.title); });
+    ranked.forEach(function (x, i) {
       if (used[x.r.id]) return;
-      var mw = nWords(x.r.title);
-      ranked.forEach(function (y) { if (y !== x && nSame(mw, nWords(y.r.title))) used[y.r.id] = 1; });
+      var mw = W[i];
+      ranked.forEach(function (y, j) { if (y !== x && nSame(mw, W[j])) used[y.r.id] = 1; });
       used[x.r.id] = 1; out.push(x);
     });
     return out;
   }
   var newsAll = false;
   function topHtml(recs) {
-    var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs).slice(0, 12);
+    var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs, ranked).slice(0, 12);
     return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules at each refresh (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
       routine + " sport, entertainment or advertising headline" + (routine === 1 ? "" : "s") + " left out.</p>" +
       (top.length ? '<div class="tllist">' + top.map(function (x) {
