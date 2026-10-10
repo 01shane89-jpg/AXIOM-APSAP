@@ -22,10 +22,12 @@ function why(R, i, rel) {
   return m ? m[0].trim() : rel;
 }
 
-// social: the ASAP_SOCIAL object ({ asof, items: { cc: [post] } }). Pure: returns the report.
-export function shadow(R, social, policy, sampleMax = 300) {
-  const counts = {}, hidden = [], totals = { posts: 0, would_hide: 0, strong: 0, keep: 0, unchecked: 0, drop: 0, none: 0 };
+// social: the ASAP_SOCIAL object ({ asof, items: { cc: [post] } }). skip: country codes left out of the report entirely (the hidden
+// areas, tools/hidden-areas.json: this report is a shared file and is not sealed). Pure: returns the report.
+export function shadow(R, social, policy, sampleMax = 300, skip = []) {
+  const counts = {}, hidden = [], totals = { posts: 0, would_hide: 0, strong: 0, keep: 0, unchecked: 0, drop: 0, none: 0 }, off = new Set(skip);
   for (const [cc, list] of Object.entries(social.items || {})) {
+    if (off.has(cc)) continue;
     const c = (counts[cc] = { posts: 0, would_hide: 0 });
     for (const i of list || []) {
       const rel = itemRelevance(R, i);
@@ -53,7 +55,8 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
   const R = compileRelevance(JSON.parse(relText), JSON.parse(fs.readFileSync("tools/topics.json", "utf8")).topics);
   const t = fs.readFileSync("data/live/social.js", "utf8");
   const social = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
-  const rep = shadow(R, social, policyVersion(relText));
+  const skip = JSON.parse(fs.readFileSync("tools/hidden-areas.json", "utf8")).hidden || [];
+  const rep = shadow(R, social, policyVersion(relText), 300, skip);
   fs.writeFileSync("data/live/social-relevance.json", JSON.stringify(rep));
   const T = rep.totals;
   console.log(`social relevance (shadow, policy ${rep.policy}): ${T.posts} posts; would hide ${T.would_hide} ` +
