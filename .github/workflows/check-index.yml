@@ -28,6 +28,7 @@ jobs:
       - run: node tests/health.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
+      - run: node tests/places_deepsouth.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
