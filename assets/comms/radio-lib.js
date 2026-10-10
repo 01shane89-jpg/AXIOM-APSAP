@@ -37,6 +37,12 @@
     var range = isFinite(budget) && num(o.f_mhz) > 0 ? Math.pow(10, (budget - 32.44 - 20 * Math.log10(num(o.f_mhz))) / 20) : NaN;
     return { ptx_dbm: ptx, eirp_dbm: eirp, fspl_db: loss, prx_dbm: prx, margin_db: margin, fs_range_km: range };
   }
+  /* plane-earth (two-ray) loss, dB: past the breakpoint the ground reflection cancels the direct wave and the loss grows with
+     the 4th power of distance. With free space it bounds a path over open ground: the larger of the two is used. */
+  function planeEarth_db(d_km, hA_m, hB_m) {
+    var d = num(d_km) * 1000, a = Math.max(0.5, num(hA_m, 2)), b = Math.max(0.5, num(hB_m, 2));
+    return d > 0 ? 40 * Math.log10(d) - 20 * Math.log10(a) - 20 * Math.log10(b) : NaN;
+  }
   function marginClass(m) { return !isFinite(m) ? "unknown" : m >= 10 ? "likely" : m >= 0 ? "marginal" : "unlikely"; }
 
   /* frequency band presets (planning reference, not an allocation table) */
@@ -328,7 +334,7 @@
   root.OSAP_RADIO = {
     version: "osap-radio/1", R_EARTH_M: R_EARTH_M,
     wToDbm: wToDbm, dbmToW: dbmToW, fspl: fspl, wavelength_m: wavelength_m, fresnel_m: fresnel_m, bulge_m: bulge_m, horizon_km: horizon_km,
-    linkBudget: linkBudget, marginClass: marginClass, BANDS: BANDS,
+    linkBudget: linkBudget, marginClass: marginClass, planeEarth_db: planeEarth_db, BANDS: BANDS,
     DEVICES: DEVICES, BATTERIES: BATTERIES, avgW: avgW, coldFactor: coldFactor, powerPlan: powerPlan,
     METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
     CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,

@@ -402,14 +402,14 @@
   function renderLink() {
     var el = pane(), L = linkIn(), Rd = R();
     var fld = function (k, lab, step, unit) { return '<label>' + lab + '<span class="cpu"><input type="number" step="' + step + '" data-cpl="' + k + '" value="' + E(L[k]) + '">' + (unit ? " " + unit : "") + "</span></label>"; };
-    el.innerHTML = tlSection() + '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
+    el.innerHTML = tlSection() + rcSection() + '<div class="sec cpsec"><h3>Radio link (free space)</h3>' +
       '<div class="cprow"><label>Band<select data-cpl="band">' + opts(Rd.BANDS.map(function (b) { return [b.id, b.label]; }).concat([["custom", "Custom"]]), L.band) + "</select></label>" +
       fld("f_mhz", "Frequency", "any", "MHz") + fld("d_km", "Distance", "any", "km") + fld("ptx_w", "Transmit power", "any", "W") +
       fld("gtx_dbi", "Tx antenna gain", "any", "dBi") + fld("ltx_db", "Tx cable + connectors", "any", "dB") + fld("grx_dbi", "Rx antenna gain", "any", "dBi") + fld("lrx_db", "Rx cable + connectors", "any", "dB") +
       fld("sens_dbm", "Rx sensitivity", "any", "dBm") + fld("fade_db", "Fade margin wanted", "any", "dB") + fld("ha_m", "Antenna A height", "any", "m") + fld("hb_m", "Antenna B height", "any", "m") + fld("k", "k-factor", "0.01", "") + "</div>" +
       '<div id="cp-lout" aria-live="polite"></div>' +
       '<p class="obs"><b>MODELLED: free space over a smooth Earth.</b> Hills, buildings, trees, weather, interference and the ionosphere are not included. The terrain link above adds the ground between two points.</p></div>';
-    linkOut(); tlOut(); tlDraw();
+    linkOut(); tlOut(); tlDraw(); rcOut(); rcDraw();
   }
   function linkOut() {
     var el = S.ctx && S.ctx.rail.querySelector("#cp-lout"); if (!el) return;
@@ -436,6 +436,7 @@
     if (k === "band") { o.band = t.value; var b = R().BANDS.filter(function (x) { return x.id === t.value; })[0]; if (b) { o.f_mhz = b.f_mhz; var fi = S.ctx.rail.querySelector('[data-cpl="f_mhz"]'); if (fi) fi.value = b.f_mhz; } }
     else { var v = parseFloat(t.value); if (!isFinite(v)) return; o[k] = v; if (k === "f_mhz") { o.band = "custom"; var bs = S.ctx.rail.querySelector('[data-cpl="band"]'); if (bs) bs.value = "custom"; } }
     put(KL, Object.assign(get(KL, {}), o)); linkOut();
+    if (RC.rays.length && !RC.busy) { RC.stale = true; rcOut(); }
     if (/^(f_mhz|ha_m|hb_m|k|band)$/.test(k)) tlRecalc(); else tlOut();
   }
 
@@ -548,6 +549,175 @@
     var P = tlPts(); TL.arm = k === "a" && !P.b ? "b" : null; TL.res = null; TL.prof = null;
     tlRepaint(); tlDraw();
     if (P.a && P.b) tlRun();
+  }, true);
+
+  /* ---------- Link: radio coverage from one transmitter (long-press > Terrain > Radio coverage from here, or this tab) ----------
+     72 rays every 5 degrees out to the range the link numbers below can reach (2 to 40 km). Along each ray the ground comes from
+     the terrain engine (OSAP_TERRAIN_ANALYSIS.profile) and every point is checked with OSAP_RADIO.terrainLink, the same model as
+     the A to B link for the ground, with the path loss taken as the larger of free-space and plane-earth (two-ray) loss, plus
+     the single knife-edge loss where the ground rises above the line of sight, against the receiver's sensitivity. Antenna A is the transmitter, antenna B the receiver. Rays draw as they come in. MODELLED, terrain only. */
+  var RC = { run: 0, busy: false, at: null, rays: [], n: 72, done: 0, err: "", arm: false, stale: false, R_km: 0, when: 0 }, rcLayer = null, rcAbort = null;
+  var RCC = { likely: ["Likely (10 dB or more in hand)", "#2b8a3e", 0.42], marginal: ["Marginal (0 to 10 dB)", "#f08c00", 0.4], unlikely: ["Unlikely (below sensitivity)", "#c92a2a", 0.14], unknown: ["Unknown (no ground data)", "#868e96", 0.25] };
+  function rcLayerOff() { if (rcLayer && S.ctx) { S.ctx.layer.removeLayer(rcLayer); rcLayer = null; } }
+  function rcRange(L) {
+    var b = R().linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: 1, f_mhz: L.f_mhz, fade_db: 0 });
+    var hz = R().horizon_km(L.ha_m, L.k) + R().horizon_km(L.hb_m, L.k);
+    /* past free-space range nothing is heard; well past the radio horizon only diffraction is left, so stop at 3 horizons */
+    var r = Math.min(isFinite(b.fs_range_km) ? b.fs_range_km : 40, Math.max(5, 3 * hz), 40);
+    return Math.max(2, r);
+  }
+  function rcDest(lat, lon, brg, d_km) {
+    var dr = d_km / 6371.0088, b = brg * Math.PI / 180, p1 = lat * Math.PI / 180, l1 = lon * Math.PI / 180;
+    var p2 = Math.asin(Math.sin(p1) * Math.cos(dr) + Math.cos(p1) * Math.sin(dr) * Math.cos(b));
+    var l2 = l1 + Math.atan2(Math.sin(b) * Math.sin(dr) * Math.cos(p1), Math.cos(dr) - Math.sin(p1) * Math.sin(p2));
+    return [p2 * 180 / Math.PI, l2 * 180 / Math.PI];
+  }
+  /* one ray's ground into cells [{ d0, d1 (m), cls, margin, knife }] */
+  function rcCells(prof, L) {
+    var sm = (prof && prof.samples) || [], n = sm.length, out = [], step = Math.max(1, Math.round(n / 40)), prev = 0, Rd = R();
+    for (var i = step; i < n; i += step) {
+      var d = num(sm[i].dist_m, 0); if (!(d > 0)) continue;
+      var t = Rd.terrainLink({ samples: sm.slice(0, i + 1) }, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k });
+      var cls = "unknown", m = NaN;
+      var tdb = 0;
+      if (t.verdict !== "unknown") {
+        /* open ground: the larger of free-space and plane-earth loss; ground above the line of sight adds its knife-edge loss */
+        var fs = Rd.fspl(d / 1000, L.f_mhz), base = Math.max(fs, Rd.planeEarth_db(d / 1000, L.ha_m, L.hb_m));
+        tdb = t.verdict === "blocked" && isFinite(t.knife_db) ? t.knife_db : 0;
+        m = Rd.linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: d / 1000, f_mhz: L.f_mhz, extra_db: base - fs + tdb }).margin_db;
+        cls = Rd.marginClass(m);
+      }
+      out.push({ d0: prev, d1: d, cls: cls, margin: m, knife: tdb, verdict: t.verdict });
+      prev = d;
+    }
+    return out;
+  }
+  function rcRun(at) {
+    var T = W.OSAP_TERRAIN_ANALYSIS;
+    if (at) { RC.at = [+at[0], +at[1]]; put(KL, Object.assign(get(KL, {}), { rc: [+RC.at[0].toFixed(6), +RC.at[1].toFixed(6)] })); }
+    if (!RC.at) return;
+    if (rcAbort) rcAbort.abort();
+    var my = ++RC.run, L = linkIn(), Rkm = rcRange(L), ac = W.AbortController ? new AbortController() : null; rcAbort = ac;
+    RC.busy = true; RC.err = ""; RC.rays = []; RC.done = 0; RC.stale = false; RC.R_km = Rkm; RC.L = L; RC.when = Date.now(); RC.arm = false;
+    rcRepaint(); rcDraw();
+    if (!T || !T.profile) { RC.busy = false; RC.err = "The terrain engine is not available on this page."; rcRepaint(); return; }
+    var bearings = []; for (var b = 0; b < 360; b += 360 / RC.n) bearings.push(b);
+    var i = 0, fails = 0, P = RC.at, res = Math.max(30, Math.round(Rkm * 1000 / 160));
+    function next() {
+      if (my !== RC.run || i >= bearings.length) return Promise.resolve();
+      var k = i++, brg = bearings[k];
+      return T.profile(P, rcDest(P[0], P[1], brg, Rkm), { res_m: res, signal: ac && ac.signal }).then(function (pr) {
+        if (my !== RC.run) return;
+        RC.rays[k] = { brg: brg, cells: rcCells(pr, L) };
+      }, function () { if (my !== RC.run) return; fails++; RC.rays[k] = { brg: brg, cells: [{ d0: 0, d1: Rkm * 1000, cls: "unknown", margin: NaN }] }; })
+        .then(function () { if (my !== RC.run) return; RC.done++; rcDrawRay(k); rcProg(); return next(); });
+    }
+    Promise.all([next(), next(), next(), next()]).then(function () {
+      if (my !== RC.run) return;
+      RC.busy = false;
+      if (fails === bearings.length) RC.err = "The ground could not be read. Elevation tiles need a connection the first time.";
+      rcRepaint(); rcDraw();
+    });
+  }
+  function rcStats() {
+    var a = { likely: 0, marginal: 0, unlikely: 0, unknown: 0 }, tot = 0, far = { likely: 0 }, reach = [];
+    RC.rays.forEach(function (r) {
+      if (!r) return; var best = 0;
+      r.cells.forEach(function (c) { var w = c.d1 * c.d1 - c.d0 * c.d0; a[c.cls] += w; tot += w; if (c.cls === "likely" || c.cls === "marginal") best = c.d1; });
+      reach.push({ brg: r.brg, m: best });
+      if (best > far.likely) far.likely = best;
+    });
+    Object.keys(a).forEach(function (k) { a[k] = tot ? a[k] / tot * 100 : 0; });
+    return { pct: a, far_m: far.likely, reach: reach };
+  }
+  function rcSection() {
+    var at = RC.at || (Array.isArray(get(KL, {}).rc) ? get(KL, {}).rc : null);
+    if (!RC.at && at) RC.at = at;
+    return '<div class="sec cpsec" id="cp-rc"><h3>Radio coverage from a point</h3>' +
+      '<p class="obs">Where a receiver could hear a transmitter at one point, over the ground. Antenna A below is the transmitter, antenna B the receiver; the power, gains, losses and sensitivity are the link numbers below. Or long-press the map, <b>Terrain</b>, <b>Radio coverage from here</b>.</p>' +
+      '<div class="cprow"><div><b>Transmitter</b> <span id="cprc-at">' + tlPtTxt(RC.at) + '</span><br><button type="button" data-rc="arm" aria-pressed="' + RC.arm + '">' + (RC.arm ? "Tap the map for the transmitter…" : "Set on map") + "</button></div></div>" +
+      '<div class="cpbtns"><button type="button" class="cpgo" data-rc="go"' + (RC.at && !RC.busy ? "" : " disabled") + ">" + (RC.rays.length ? "Recalculate" : "Work out coverage") + "</button>" +
+      (RC.busy ? '<button type="button" data-rc="stop">Stop</button>' : "") + (RC.rays.length && !RC.busy ? '<button type="button" data-rc="zoom">Zoom to it</button><button type="button" data-rc="text">Copy as text</button><button type="button" data-rc="clear">Clear</button>' : "") + "</div>" +
+      '<div id="cp-rcout" aria-live="polite"></div></div>';
+  }
+  function rcRepaint() { var box = S.ctx && S.ctx.rail.querySelector("#cp-rc"); if (!box) return; var d = D.createElement("div"); d.innerHTML = rcSection(); box.replaceWith(d.firstChild); rcOut(); }
+  function rcProg() { var p = S.ctx && S.ctx.rail.querySelector("#cprc-prog"); if (p) p.textContent = "Reading the ground: " + RC.done + " of " + RC.n + " directions…"; else rcOut(); }
+  function rcOut() {
+    var el = S.ctx && S.ctx.rail.querySelector("#cp-rcout"); if (!el) return;
+    if (RC.err) { el.innerHTML = '<p class="cpres" style="border-left:5px solid #6c757d">' + E(RC.err) + "</p>"; return; }
+    if (!RC.rays.length && !RC.busy) { el.innerHTML = ""; return; }
+    var st = rcStats(), L = RC.L || linkIn();
+    el.innerHTML = (RC.busy ? '<p class="obs" id="cprc-prog">Reading the ground: ' + RC.done + " of " + RC.n + " directions…</p>" : "") +
+      (RC.stale ? '<p class="cpres" style="border-left:5px solid #e67700">You changed the link numbers: press <b>Recalculate</b> to use them.</p>' : "") +
+      '<p class="cpres" style="border-left:5px solid #1c7ed6"><b>MODELLED COVERAGE</b>: terrain only. Path loss is free space or open ground (two-ray), whichever is larger, plus a knife-edge loss where hills are in the way. Buildings, trees, interference and the ionosphere are not modelled, so this is a best case. ' +
+      (st.far_m ? "Heard furthest about <b>" + f(st.far_m / 1000, 1) + " km</b> out." : RC.busy ? "" : "No direction is heard.") + "</p>" +
+      '<table class="rttab"><tbody>' + ["likely", "marginal", "unlikely", "unknown"].map(function (k) { return '<tr><th><span class="cpbadge" style="background:' + RCC[k][1] + '">' + E(RCC[k][0].split(" (")[0]) + "</span></th><td>" + f(st.pct[k], 0) + "% of the ground within " + f(RC.R_km, 0) + " km</td></tr>"; }).join("") +
+      "<tr><th>Model</th><td>" + f(L.f_mhz, 3) + " MHz, " + f(L.ptx_w, 1) + " W, antennas " + f(L.ha_m, 1) + " m (transmitter) and " + f(L.hb_m, 1) + " m (receiver), sensitivity " + f(L.sens_dbm, 0) + " dBm, k " + f(L.k, 2) + "; " + RC.n + " directions every " + 360 / RC.n + "°, out to " + f(RC.R_km, 1) + " km</td></tr></tbody></table>" +
+      '<p class="obs">Green: likely, 10 dB or more above the receiver\'s sensitivity. Orange: marginal, 0 to 10 dB. Faint red: below sensitivity. Grey: no ground data. Tap the map to see a spot\'s margin.</p>';
+  }
+  function rcWedge(P, b0, b1, d0, d1) {
+    var pts = [], k;
+    for (k = 0; k <= 2; k++) pts.push(rcDest(P[0], P[1], b0 + (b1 - b0) * k / 2, d1 / 1000));
+    for (k = 2; k >= 0; k--) pts.push(d0 > 0 ? rcDest(P[0], P[1], b0 + (b1 - b0) * k / 2, d0 / 1000) : P);
+    return pts;
+  }
+  var rcRend = null;
+  function rcDraw() {
+    rcLayerOff(); if (!S.ctx || S.tab !== "link" || !W.L || !RC.at) return;
+    rcLayer = W.L.layerGroup(); rcRend = W.L.canvas({ pane: "comchk" });
+    W.L.marker(RC.at, { pane: "comchk", keyboard: false, interactive: false, title: "Transmitter",
+      icon: W.L.divIcon({ className: "cptlm", html: '<span style="background:#5f3dc4">Tx</span>', iconSize: [26, 26], iconAnchor: [13, 13] }) }).addTo(rcLayer);
+    S.ctx.layer.addLayer(rcLayer);
+    RC.rays.forEach(function (_, k) { rcDrawRay(k); });
+  }
+  function rcDrawRay(k) {
+    var r = RC.rays[k]; if (!r || !rcLayer || !RC.at) return;
+    var h = 180 / RC.n, P = RC.at, runs = [];
+    r.cells.forEach(function (c) { var l = runs[runs.length - 1]; if (l && l.cls === c.cls) l.d1 = c.d1; else runs.push({ cls: c.cls, d0: c.d0, d1: c.d1 }); });
+    runs.forEach(function (c) {
+      var s = RCC[c.cls];
+      W.L.polygon(rcWedge(P, r.brg - h, r.brg + h, c.d0, c.d1), { pane: "comchk", renderer: rcRend, stroke: false, fillColor: s[1], fillOpacity: s[2], interactive: false }).addTo(rcLayer);
+    });
+  }
+  /* the margin at a tapped spot inside the worked-out area */
+  function rcAt(lat, lon) {
+    if (!RC.at || !RC.rays.length) return null;
+    var d = R().hav_km(RC.at, [lat, lon]) * 1000; if (d > RC.R_km * 1000) return null;
+    var y = Math.sin((lon - RC.at[1]) * Math.PI / 180) * Math.cos(lat * Math.PI / 180), x = Math.cos(RC.at[0] * Math.PI / 180) * Math.sin(lat * Math.PI / 180) - Math.sin(RC.at[0] * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.cos((lon - RC.at[1]) * Math.PI / 180);
+    var brg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360, k = Math.round(brg / (360 / RC.n)) % RC.n, r = RC.rays[k]; if (!r) return null;
+    var c = r.cells.filter(function (q) { return d <= q.d1; })[0] || r.cells[r.cells.length - 1];
+    return c ? { d_m: d, brg: brg, cell: c } : null;
+  }
+  function rcAct(b) {
+    var a = b.getAttribute("data-rc"); if (!a) return false;
+    if (a === "arm") { RC.arm = !RC.arm; TL.arm = null; tlRepaint(); }
+    else if (a === "go") rcRun();
+    else if (a === "stop") { RC.run++; if (rcAbort) rcAbort.abort(); RC.busy = false; }
+    else if (a === "clear") { RC.run++; if (rcAbort) rcAbort.abort(); RC.busy = false; RC.rays = []; RC.err = ""; RC.stale = false; RC.at = null; var o = get(KL, {}); delete o.rc; put(KL, o); }
+    else if (a === "zoom") { if (RC.at) S.ctx.map.fitBounds(W.L.latLng(RC.at[0], RC.at[1]).toBounds(RC.R_km * 2000), { maxZoom: 14 }); return true; }
+    else if (a === "text") {
+      var st = rcStats();
+      copyText(["RADIO COVERAGE (MODELLED, terrain only) " + zT(RC.when), "Transmitter " + mgrs(RC.at[0], RC.at[1]), "Likely " + f(st.pct.likely, 0) + "% | Marginal " + f(st.pct.marginal, 0) + "% | Unlikely " + f(st.pct.unlikely, 0) + "% | Unknown " + f(st.pct.unknown, 0) + "% within " + f(RC.R_km, 1) + " km",
+        "Heard to (km) by bearing: " + st.reach.filter(function (_, i) { return i % 3 === 0; }).map(function (x) { return Math.round(x.brg) + "° " + f(x.m / 1000, 1); }).join(", ")].join("\n"));
+      return true;
+    }
+    rcRepaint(); rcDraw(); return true;
+  }
+  /* other modules (the long-press ring): open on Link and work out coverage from [lat, lon] */
+  function radioFrom(lat, lon) { setTab("link"); rcRun([lat, lon]); if (S.ctx && S.ctx.map) S.ctx.map.fitBounds(W.L.latLng(lat, lon).toBounds(RC.R_km * 2000), { maxZoom: 14 }); var b = S.ctx && S.ctx.rail.querySelector("#cp-rc"); if (b && b.scrollIntoView) b.scrollIntoView({ block: "nearest" }); }
+  W.addEventListener("pointerdown", function (e) { if (S.tab === "link" && (RC.arm || RC.rays.length) && tlInMap(e) && !TL.arm) rcDown = [e.clientX, e.clientY]; else rcDown = null; }, true);
+  var rcDown = null;
+  W.addEventListener("click", function (e) {
+    if (S.tab !== "link" || !rcDown || TL.arm || !tlInMap(e) || D.documentElement.getAttribute("data-view") !== "comms") return;
+    if (Math.abs(e.clientX - rcDown[0]) + Math.abs(e.clientY - rcDown[1]) > 8) return;
+    var ll = S.ctx.map.mouseEventToLatLng(e), lon = W.L.Util.wrapNum(ll.lng, [-180, 180], true);
+    if (RC.arm) { e.stopPropagation(); e.preventDefault(); rcRun([ll.lat, lon]); return; }
+    var q = rcAt(ll.lat, lon); if (!q) return;
+    e.stopPropagation(); e.preventDefault();
+    var c = q.cell, s = RCC[c.cls];
+    W.L.popup({ maxWidth: 260 }).setLatLng([ll.lat, lon]).setContent('<div data-keep-pop="1"><b style="color:' + s[1] + '">' + E(s[0]) + "</b><br>" + f(q.d_m / 1000, 2) + " km from the transmitter, bearing " + f(q.brg, 0) + "°" +
+      (isFinite(c.margin) ? "<br>Margin about " + f(c.margin, 1) + " dB" + (c.knife > 0.05 ? ", with about " + f(c.knife, 1) + " dB lost to terrain in the way" : ", no terrain above the line of sight") : "") +
+      '<br><small>Modelled, terrain only. Worked out for this direction every ' + 360 / RC.n + "°.</small></div>").openOn(S.ctx.map);
   }, true);
 
   /* ---------- Equipment: battery and power planner (localStorage osap-cp-power, part of the workspace) ---------- */
@@ -1225,7 +1395,7 @@
     if (cm) { cm.hidden = !(t === "coverage" || t === "networks"); cm.setAttribute("data-part", t); }
     if (t !== "status") intfLayerOff();
     if (t !== "coverage") corrLayerOff();
-    if (t !== "link") { tlLayerOff(); TL.arm = null; }
+    if (t !== "link") { tlLayerOff(); TL.arm = null; rcLayerOff(); RC.arm = false; }
     if (el) el.setAttribute("data-tab", t);
     if (t === "plan") renderPlanTab(); else if (t === "status") renderStatus(); else if (t === "link") renderLink(); else if (t === "equipment") renderEquip(); else if (t === "networks") renderNetworks();
     else { renderCoverage(); drawCorr(); }
@@ -1246,7 +1416,7 @@
       else if (S.tab === "status") statusAct(b);
       else if (S.tab === "equipment") equipClick(b);
       else if (S.tab === "coverage") corrAct(b);
-      else if (S.tab === "link") tlAct(b);
+      else if (S.tab === "link") { if (!tlAct(b)) rcAct(b); }
     });
     var onIn = function (e) {
       var t = e.target; if (!t.closest || !t.closest("#cp-pane") || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
@@ -1264,8 +1434,11 @@
     try { S.esub = localStorage.getItem(KE) || "power"; S.psub = localStorage.getItem(KPS) || "pace"; } catch (e) { S.esub = "power"; S.psub = "pace"; }
     if (!PSUBS.some(function (x) { return x[0] === S.psub; })) S.psub = "pace";
     if (!ESUBS.some(function (x) { return x[0] === S.esub; })) S.esub = "power";
-    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null; tlLayer = null; TL.arm = null;
-    if (W.OSAP_COMMSPLAN_WANT === "route") { W.OSAP_COMMSPLAN_WANT = null; routeCorridor(); } else setTab(t0 || "coverage");
+    intfLayer = null; corrLayer = null; if (corrAbort) corrAbort.abort(); S.corr = null; tlLayer = null; TL.arm = null; rcLayer = null; RC.arm = false;
+    var want = W.OSAP_COMMSPLAN_WANT;
+    if (want === "route") { W.OSAP_COMMSPLAN_WANT = null; routeCorridor(); }
+    else if (want && want.radio) { W.OSAP_COMMSPLAN_WANT = null; radioFrom(want.radio[0], want.radio[1]); }
+    else setTab(t0 || "coverage");
   }
 
   /* Other tools (medical plan, evacuation) read the operator's PACE plans for a place: read-only copies of every plan whose
@@ -1314,10 +1487,10 @@
     "tr.cpdis td{color:#c92a2a}.cpant p{font-size:13px;line-height:1.45;margin:6px 0 0}" +
     ".cpchk{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:12.5px;color:var(--ink)}ol.cpfixs{margin:6px 0;padding-left:20px;font-size:12.5px}ol.cpfixs li.cur{font-weight:700}ul.cpfixl{margin:4px 0;padding-left:18px;font-size:13px;line-height:1.5}" +
     ".cptlc{width:100%;height:auto;display:block;margin:6px 0 0}#cp-tl .rttab{table-layout:fixed}#cp-tl .rttab th{width:32%}#cp-tl .rttab td{overflow-wrap:anywhere}#cp-tl button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}" +
-    ".cptlm{background:none;border:0}.cptlm span{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1c7ed6;color:#fff;font:700 12px/1 system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
+    "#cp-rc button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}.cptlm{background:none;border:0}.cptlm span{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1c7ed6;color:#fff;font:700 12px/1 system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}" +
     "@media (pointer:coarse){.cp input,.cp select,.cp textarea{font-size:16px!important}}";
   D.head.appendChild(st);
 
-  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, picking: function () { return !!TL.arm && S.tab === "link"; }, terrainLink: function () { return { arm: TL.arm, busy: TL.busy, err: TL.err, res: TL.res, pts: tlPts() }; }, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
+  W.OSAP_COMMSPLAN = { version: "osap-commsplan/1", show: show, picking: function () { return S.tab === "link" && (!!TL.arm || RC.arm || RC.rays.length > 0); }, radioFrom: radioFrom, radioAt: function (lat, lon) { var q = rcAt(lat, lon); return q ? { d_m: q.d_m, brg: q.brg, cls: q.cell.cls, margin_db: q.cell.margin, terrain_db: q.cell.knife } : null; }, radio: function () { return { at: RC.at, busy: RC.busy, done: RC.done, n: RC.n, err: RC.err, R_km: RC.R_km, rays: RC.rays.filter(Boolean).length, stats: RC.rays.length ? rcStats() : null }; }, terrainLink: function () { return { arm: TL.arm, busy: TL.busy, err: TL.err, res: TL.res, pts: tlPts() }; }, paceFor: paceFor, corridor: corridor, routeCorridor: function () { if (S.ctx) routeCorridor(); }, tab: function (t) { setTab(t); }, state: function () { return { tab: S.tab, pace: loadPace(), power: loadPower(), link: linkIn() }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 })();
