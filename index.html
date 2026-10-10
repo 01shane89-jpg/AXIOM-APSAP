@@ -690,6 +690,20 @@ html.mapfull body{overflow:hidden}
 .pkgtabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:4px 0 10px}
 .pkgtabs button{font:inherit;font-size:13px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:7px 10px;cursor:pointer}
 .pkgtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+/* Social media view: By platform and Replies tabs (assets/osap-socialstats.js) */
+.sstable{display:grid;grid-template-columns:auto repeat(4,auto) minmax(40px,1fr);gap:3px 10px;font-size:12.5px;margin:6px 0 8px;align-items:center}
+.sstable .ssrow{display:contents}.sstable .sshead span{color:var(--muted);font-size:11px;font-weight:600;white-space:nowrap}
+.ssspark{display:block;width:100%;max-width:120px;height:22px}.ssspark rect{fill:var(--accent)}
+.ssbar{display:flex;height:9px;border-radius:2px;overflow:hidden;background:var(--line-soft);margin:4px 0}
+.ssbar span{display:block;height:100%}
+.ssp0,.ssdot.ssp0{background:var(--rain)}.ssp1,.ssdot.ssp1{background:var(--power)}.ssp2,.ssdot.ssp2{background:var(--sat-flood)}
+.sspos,.ssdot.sspos{background:var(--care)}.ssneu,.ssdot.ssneu{background:var(--l1-fill)}.ssneg,.ssdot.ssneg{background:var(--l3-fill)}
+.ssdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 4px 0 8px;vertical-align:-1px}.ssleg .ssdot:first-child{margin-left:0}
+.ssplat{border-top:1px solid var(--line-soft);padding-top:6px;margin-top:6px}.ssplat h3{margin:0 0 2px;font-size:13px}
+.ssthemes{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;font-size:12.5px;align-items:center}
+.ssthb{height:8px;background:var(--line-soft);border-radius:2px;overflow:hidden}.ssthb span{display:block;height:100%;background:var(--accent)}
+.ssterms{display:flex;flex-wrap:wrap;gap:4px}.ssterm{font-size:12px;padding:1px 6px;border:1px solid var(--line);border-radius:10px;color:var(--ink)}.ssterm b{color:var(--muted);font-weight:600}
+.ssth{display:contents}[data-sspane] h3{font-size:13px;margin:10px 0 4px}.ssrep{cursor:default}.ssrep .ssbar{height:6px;width:100%}
 .pkgpic{margin:0 0 10px}.pkgpic img{display:block;width:100%;max-height:240px;object-fit:cover;border-radius:4px;background:var(--surface2)}
 .pkgpic figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
 .relrow{display:flex;align-items:flex-start;gap:6px}.relrow>.tlrow{flex:1;min-width:0}
@@ -5611,8 +5625,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
-    railO.innerHTML = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the GitHub job every 15 minutes once the app is hosted.",
+    var html = feedList("ASAP_SOCIAL", "social", "social", "Social media", "Filled by the GitHub job every 15 minutes once the app is hosted.",
       "Posts from official and established accounts only (disaster agencies, police, militaries, ministries, news desks) on Bluesky, Telegram and YouTube. Every post is that account's claim. Videos open on YouTube.");
+    /* By platform and Replies tabs (assets/osap-socialstats.js) */
+    var SS = window.OSAP_SOCSTATS;
+    railO.innerHTML = SS ? SS.wrap(html) : html;
+    if (SS) SS.bind(railO, { cc: CC, name: C.name, esc: esc });
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
@@ -8705,6 +8723,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-mobility.js"></script>
 <script src="assets/osap-viewrep.js"></script>
 <script src="assets/osap-et.js"></script>
+<script src="assets/osap-socialstats.js"></script>
 <script src="assets/osap-geo.js"></script>
 <script src="assets/osap-measure.js"></script>
 <script src="assets/osap-tools.js"></script>
