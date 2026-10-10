@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-10-10T16:15:05.294Z","cell":"-30_-150","st":[{"id":"NTAT","n":"Tubuai","c":"PF","la":-23.365,"lo":-149.524,"el":2,"m":{"raw":"METAR NTAT 101600Z AUTO 14006KT 110V170 CAVOK 19/11 Q1021","t":1791648000000,"cat":"VFR","wd":140,"ws":6,"wg":null,"vis":6,"visp":true,"cig":null,"sky":null,"tc":19,"dc":11,"alt":30.15,"wx":null},"f":null}]}

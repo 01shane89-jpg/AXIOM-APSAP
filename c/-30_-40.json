@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-10-10T16:15:05.294Z","cell":"-30_-40","st":[{"id":"SBLB","n":"Platform P-25","c":"BR","la":-22.109,"lo":-39.917,"el":10,"m":{"raw":"METAR SBLB 101600Z AUTO 02022KT CAVOK 25/23 Q1016","t":1791648000000,"cat":"VFR","wd":20,"ws":22,"wg":null,"vis":6,"visp":true,"cig":null,"sky":null,"tc":25,"dc":23,"alt":30,"wx":null},"f":null}]}
