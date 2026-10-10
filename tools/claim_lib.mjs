@@ -63,8 +63,10 @@ export function extract(cap, tr, extracted) {
     if (m.ambiguity) c.ambiguity = m.ambiguity;
   }
   // casualty figures: English headline wording only (the original if it is English, else the translation)
+  // (not for statistics, court or peace-talk headlines: their numbers are period totals or past events, not this report's toll)
   const head = fields.find((f) => f.field === (en ? "title" : "title_en"));
-  if (head) for (const [pred, re] of [["killed", KILLED], ["injured", INJURED]]) {
+  const kind = [...claims.values()].find((c) => c.predicate === "event_type")?.value.kind;
+  if (head && !/^(statistics|legal|peace_talks)$/.test(kind || "")) for (const [pred, re] of [["killed", KILLED], ["injured", INJURED]]) {
     const n = figureWords(head.text, re); if (n) add(pred, { n: n.n }, ev(head, n.words));
   }
   return [...claims.values()];

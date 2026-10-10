@@ -36,6 +36,7 @@ const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eigh
 // Casualty figures only when the headline states them plainly (under 100, so a long-run toll is never read as one incident's)
 export function figure(text, re) {
   const m = text.match(re); if (!m) return null;
+  if (/\b(?:no|not)\s*$/i.test(text.slice(0, m.index))) return null;
   const n = NUM[m[1].toLowerCase()] || +m[1];
   return Number.isInteger(n) && n > 0 && n < 100 ? n : null;
 }
@@ -43,8 +44,13 @@ export function figure(text, re) {
 export function figureWords(text, re) {
   const n = figure(String(text || ""), re); return n == null ? null : { n, words: String(text).match(re)[0] };
 }
-export const KILLED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:killed|dead|die[ds]?|slain)\b/i;
-export const INJURED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:injured|wounded|hurt)\b/i;
+// The number must belong to the casualty word: the words between may not be another number, another casualty word, "and"
+// ("two men shot and killed a policeman" is one death, "two killed and 16 wounded" is 16 wounded) or a count of something else
+// ("15 shots killed"). A number after "no" is a denial ("no one was injured or killed"): figure() drops it.
+const BETWEEN = "(?:\\s+(?!(?:\\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|killed|dead|died|dies|slain|injured|wounded|hurt|and|or|shots|rounds|bullets|times|incidents|riots|attacks|years?|days?|hours?)\\b)\\w+){0,3}?";
+const NUMS = "\\b(\\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\b";
+export const KILLED = new RegExp(NUMS + BETWEEN + "\\s+(?:killed|dead|die[ds]?|slain)\\b", "i");
+export const INJURED = new RegExp(NUMS + BETWEEN + "\\s+(?:injured|wounded|hurt)\\b", "i");
 
 export function place(texts) {
   for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov, id: d.id }; }
