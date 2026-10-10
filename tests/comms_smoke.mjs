@@ -37,7 +37,7 @@ const OSM = { elements: [
   { type: "node", id: 4, lat: 13.73, lon: 100.53, tags: { man_made: "mast", "tower:type": "communication" } },
   { type: "node", id: 5, lat: 13.75, lon: 100.52, tags: { man_made: "mast", "tower:type": "lighting" } }
 ] };
-let overpassCalls = 0, remarkCalls = 0, keyFilter = 0;
+let overpassCalls = 0, remarkCalls = 0, keyFilter = 0, overpassDelay = 0;
 const overpassSpans = [];
 
 // stand-in stored country copy (data/comms/masts): masts across Thailand, two networks and one unmapped
@@ -68,7 +68,8 @@ async function open(opts, stored) {
     const body = /maps\.mail\.ru/.test(r.request().url()) ? { elements: [], remark: "runtime error: Query ran out of memory in \"query\" at line 1. It would need at least 32 MB of RAM to continue." } : OSM;
     if (/maps\.mail\.ru/.test(r.request().url())) remarkCalls++;
     if (/\[~/.test(q)) keyFilter++;
-    r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(body) });
+    const send = () => r.fulfill({ contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(body) }).catch(() => {});
+    if (overpassDelay) setTimeout(send, overpassDelay); else send();
   });
   await ctx.route(/elevation-tiles-prod\/terrarium/, (r) => r.fulfill({ contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: PNG }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
@@ -130,7 +131,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   }
   // place check in central Bangkok: tests in the spot and a phone mast in sight
   await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
-  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v; }, null, { timeout: 20000 });
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial; }, null, { timeout: 20000 });
   s = await st(p);
   ok(s.result.v.level === 3 && s.result.meas.here >= 0, "central Bangkok: Likely coverage, measured in the spot");
   ok(s.result.rows.some((r) => r.kind === "cell" && r.clear === true), "flat ground: the nearest phone mast is in line of sight");
@@ -155,7 +156,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
 
   // a place in the sea off the coast, far from any mast and with no tests
   await p.evaluate(() => window.OSAP_COMMSTAB.check(8.2, 101.9));
-  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.lat === 8.2; }, null, { timeout: 30000 });
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial && r.lat === 8.2; }, null, { timeout: 30000 });
   s = await st(p);
   ok(s.result.v.level === 1, "Gulf of Thailand far offshore: No sign of coverage");
 
@@ -184,7 +185,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
 
   // providers: switching AIS off hides its mast and leaves it out of the check
   await p.evaluate(() => window.OSAP_COMMSTAB.check(13.7563, 100.5018));
-  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.lat === 13.7563; }, null, { timeout: 20000 });
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial && r.lat === 13.7563; }, null, { timeout: 20000 });
   let bp = (await st(p)).result.byProv.map((x) => x.name + "=" + x.level).join();
   ok(/AIS=3/.test(bp) && /True=3/.test(bp) && /Operator not mapped=2/.test(bp), "by provider: " + bp);
   ok(/By provider/.test(await p.textContent("#com-res")), "the answer lists each provider");
@@ -195,7 +196,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.click('[data-cptab="networks"]');
   ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length > 0 && document.querySelector(".combtns").getClientRects().length === 0), "Networks tab: provider switches show, the signal check hides");
   await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
-  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.offN === 1; }, null, { timeout: 20000 });
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial && r.offN === 1; }, null, { timeout: 20000 });
   s = await st(p);
   ok(s.drawn === drawnAll - 1 && s.off.ais === true, "AIS off: its mast leaves the map (" + drawnAll + " to " + s.drawn + ")");
   ok(!s.result.rows.some((r) => r.m.p.includes("ais")) && !s.result.byProv.some((x) => x.key === "ais"), "AIS off: the check leaves its masts out");
@@ -267,8 +268,37 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   // inside the country at city zoom the stored copy answers; no live load
   await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(1500);
   ok(overpassCalls === calls0 && (await st(p)).drawn >= 1, "city zoom inside a stored country: no live Overpass request");
+  // a tap on the map in a stored country: the place shows at once and the answer comes from the stored masts, no live read
+  await p.click('[data-cptab="coverage"]'); await p.click('[data-cmode="place"]');
+  const mb = await p.evaluate(() => { const r = window.__asapMap.getContainer().getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
+  const t0 = Date.now();
+  await p.mouse.click(mb.x + mb.w * 0.4, mb.y + mb.h * 0.45);
+  ok(await p.evaluate(() => document.querySelectorAll(".leaflet-comchk-pane .comv").length === 1), "tap: the place is on the map straight away");
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial; }, null, { timeout: 15000 });
+  const took = Date.now() - t0;
+  ok(took < 6000 && overpassCalls === calls0, "tap in a stored country: answered in " + took + " ms with no live Overpass request");
   ok(!errors.length, "stored: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   if (OUT) await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })), await p.waitForTimeout(800), await p.screenshot({ path: OUT + "/comms-country.png" });
+  await ctx.close();
+}
+// ---------- a slow mast server: the place and an early answer show at once, the check gives up waiting after 25 s ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await view(p, "comms");
+  await p.waitForFunction(() => window.OSAP_COMMSTAB && document.querySelector(".combtns"), null, { timeout: 20000 });
+  await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 8, { animate: false })); await p.waitForTimeout(1200);
+  overpassDelay = 45000;
+  const mb = await p.evaluate(() => { const r = window.__asapMap.getContainer().getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
+  const t0 = Date.now();
+  await p.mouse.click(mb.x + mb.w * 0.4, mb.y + mb.h * 0.45);
+  ok(await p.evaluate(() => document.querySelectorAll(".leaflet-comchk-pane .comv").length === 1), "slow masts: the place is on the map straight away");
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && r.partial; }, null, { timeout: 8000 }).then(() => ok(true, "slow masts: an early answer from measured tests in " + (Date.now() - t0) + " ms"), () => ok(false, "slow masts: an early answer from measured tests"));
+  ok(/Still checking/.test(await p.textContent("#com-res")) && /Loading the masts/.test(await p.textContent("#com-res")), "slow masts: the early answer says what is still being read");
+  await p.waitForFunction(() => { const r = window.OSAP_COMMSTAB.state().result; return r && r.v && !r.partial; }, null, { timeout: 40000 });
+  const took = Date.now() - t0;
+  ok(took < 32000 && /mast server is slow/.test(await p.textContent("#com-res")), "slow masts: finishes in " + Math.round(took / 1000) + " s and says the mast server is slow");
+  overpassDelay = 0;
+  ok(!errors.length, "slow: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
 await browser.close(); server.close();

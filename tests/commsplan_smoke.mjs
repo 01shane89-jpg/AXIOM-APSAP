@@ -290,6 +290,16 @@ const pane = (p) => p.textContent("#cp-pane");
 
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 
+  // its own toolbar button (Shane 2026-10-09): pressed while open it goes back, pressed again it opens Comms planning
+  const atk = '#atk-tools [data-atk="comms"]';
+  ok(await p.evaluate((s) => { const b = document.querySelector(s); return !!b && !b.hidden && b.getAttribute("aria-label") === "Comms"; }, atk), "Comms button in the map toolbar");
+  await p.evaluate((s) => document.querySelector(s).scrollIntoView(), atk);
+  ok(await p.evaluate((s) => document.querySelector(s).getAttribute("aria-pressed") === "true", atk), "Comms button shows pressed while Comms planning is open");
+  await p.click(atk); await p.waitForTimeout(300);
+  ok(await p.evaluate((s) => document.documentElement.getAttribute("data-view") !== "comms" && document.querySelector(s).getAttribute("aria-pressed") === "false", atk), "Comms pressed again goes back to the view before");
+  await p.click(atk); await p.waitForFunction(() => document.documentElement.getAttribute("data-view") === "comms" && document.querySelector(".cptabs"), null, { timeout: 20000 });
+  ok(await p.evaluate((s) => document.querySelector(s).getAttribute("aria-pressed") === "true", atk), "Comms button opens Comms planning");
+
   // last tab remembered
   const again = await open(null, ctx);
   ok(await again.p.evaluate(() => document.querySelector('.cptabs [data-cptab="networks"]').getAttribute("aria-selected") === "true"), "the last tab is remembered");
@@ -311,6 +321,7 @@ const pane = (p) => p.textContent("#cp-pane");
   const h = await p.evaluate(() => Math.min(...[...document.querySelectorAll(".cptabs button")].map((b) => b.getBoundingClientRect().height)));
   ok(h >= 40, "phone: tabs are tappable (" + h + " px)");
   ok(await p.evaluate(() => getComputedStyle(document.querySelector('[data-cpw="temp_c"]') || document.querySelector(".cp input")).fontSize === "16px"), "phone: inputs are 16 px so iOS does not zoom");
+  ok(await p.evaluate(() => !!document.querySelector('#atk-tools [data-atk="comms"]')), "phone: Comms button in the toolbar");
   if (OUT) await p.screenshot({ path: OUT + "/commsplan-phone.png" });
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();

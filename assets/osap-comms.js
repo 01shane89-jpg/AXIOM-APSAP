@@ -188,7 +188,7 @@ function main() {
       job().finally(function () { running--; pump(); });
     }
   }
-  function loadBlock(blk) {
+  function loadBlock(blk, now) {
     var i0 = Infinity, i1 = -Infinity, j0 = Infinity, j1 = -Infinity;
     blk.forEach(function (b) { i0 = Math.min(i0, b[0]); i1 = Math.max(i1, b[0]); j0 = Math.min(j0, b[1]); j1 = Math.max(j1, b[1]); });
     var res, rej, p = new Promise(function (y, n) { res = y; rej = n; });
@@ -207,10 +207,12 @@ function main() {
       }, function (err) { S.mastErr = err && err.name === "AbortError" ? "The mast server took too long" : "The mast servers did not answer"; rej(err); })
         .finally(function () { S.mastBusy--; blk.forEach(function (b) { delete S.boxWait[boxKey(b[0], b[1])]; }); paintStatus(); });
     });
-    pump();
+    /* a place being checked jumps the queue: the view's loads can hold both slots for a minute or more */
+    if (now) { var job = queue.pop(); running++; job().finally(function () { running--; pump(); }); }
+    else pump();
     return p;
   }
-  function ensureMasts(s, w, n, e, cap) {
+  function ensureMasts(s, w, n, e, cap, now) {
     var need = boxesFor(s, w, n, e);
     if (cap && need.length > cap) {
       /* keep whole one-degree blocks, nearest the middle first, so each request is a full block */
@@ -227,7 +229,7 @@ function main() {
       if (S.boxWait[k]) { if (waits.indexOf(S.boxWait[k]) < 0) waits.push(S.boxWait[k]); return; }
       var bk = Math.floor(b[0] / 4) + ":" + Math.floor(b[1] / 4); (blocks[bk] = blocks[bk] || []).push(b);
     });
-    Object.keys(blocks).forEach(function (bk) { waits.push(loadBlock(blocks[bk])); });
+    Object.keys(blocks).forEach(function (bk) { waits.push(loadBlock(blocks[bk], now)); });
     return Promise.all(waits);
   }
   /* a colour per phone network, the biggest first, so the whole country's footprint of each reads at a glance */
@@ -254,7 +256,7 @@ function main() {
     if (!cc || S.stored[cc]) return;
     var st = S.stored[cc] = { busy: true };
     var c = withTimeout(60000);
-    (S.storedIdx = S.storedIdx || fetch(MASTS + "index.json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).catch(function () { S.storedIdx = null; return { countries: {} }; }))
+    st.p = (S.storedIdx = S.storedIdx || fetch(MASTS + "index.json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).catch(function () { S.storedIdx = null; return { countries: {} }; }))
       .then(function (ix) {
         var e = ix.countries && ix.countries[cc];
         if (!e) { st.busy = false; st.none = true; return; }
@@ -267,6 +269,13 @@ function main() {
       }).catch(function () { st.busy = false; st.err = true; delete S.stored[cc]; })
       .then(function () { if (active() && S.ctx.cc === cc) { drawMasts(); paintStatus(); } });
   }
+  /* resolves once the stored copy of the country has loaded or failed (at most ms) */
+  function storedReady(ms) {
+    var st = S.ctx && S.stored[S.ctx.cc];
+    if (!st || !st.busy || !st.p) return Promise.resolve();
+    return Promise.race([st.p.then(function () {}, function () {}), wait(ms)]);
+  }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function storedHere() { var st = S.ctx && S.stored[S.ctx.cc]; return !!(st && st.ok); }
   /* masts show at every zoom where the country is stored; elsewhere from city zoom, read live */
   function seeMasts() { return S.ctx.map.getZoom() >= MASTZ || storedHere(); }
@@ -324,6 +333,8 @@ function main() {
         } catch (err) { rej(err); }
       };
       im.onerror = function () { rej(new Error("terrain tile")); };
+      /* a tile that never arrives must not hold the answer up: count it as terrain not read */
+      setTimeout(function () { rej(new Error("terrain tile timeout")); im.src = ""; }, 12000);
       im.src = DEM.replace("{z}", DEMZ).replace("{x}", x).replace("{y}", y);
     });
     p.catch(function () { demCache.delete(k); });
@@ -353,11 +364,57 @@ function main() {
   }
 
   /* ---------- checking a place ---------- */
+  /* the masts for a place the analyst tapped: the stored copy of the country when the place is in it (no network wait),
+     else a live read of the boxes round it, ahead of the view's loads and never longer than LIVE_WAIT */
+  var LIVE_WAIT = 25000;
+  function placeMasts(lat, lon) {
+    return storedReady(15000).then(function () {
+      var cb = S.ctx && S.ctx.bounds && (typeof S.ctx.bounds === "function" ? S.ctx.bounds() : S.ctx.bounds);
+      if (storedHere() && (!cb || L.latLngBounds(cb).pad(0.02).contains([lat, lon]))) return true;
+      var bb = around(lat, lon, R_CHECK);
+      return Promise.race([ensureMasts(bb[0], bb[1], bb[2], bb[3], 0, true).then(function () { return true; }, function () { return false; }), wait(LIVE_WAIT).then(function () { return "slow"; })]);
+    });
+  }
+  /* opt.onStage(result) (a place the analyst tapped): an early answer from measured tests and the masts already known, with
+     result.partial saying what is still being read, then the full answer once the masts and the terrain are in */
   function checkPlace(lat, lon, opt) {
     opt = opt || {};
     var bb = around(lat, lon, opt.bcast === false ? R_CHECK : R_BCAST);
-    var mp = opt.noMasts ? Promise.resolve(false) : ensureMasts(bb[0], bb[1], bb[2], bb[3]).then(function () { return true; }, function () { return false; });
-    return Promise.all([measured(lat, lon), mp]).then(function (r) {
+    var mp = opt.noMasts ? Promise.resolve(!!opt.mastsOk) : opt.onStage ? placeMasts(lat, lon) : ensureMasts(bb[0], bb[1], bb[2], bb[3]).then(function () { return true; }, function () { return false; });
+    var mq = measured(lat, lon);
+    if (opt.onStage) mq.then(function (meas) {
+      if (mp.done) return;
+      var r = build(meas, false, mastsNear(lat, lon, R_BCAST), null);
+      r.partial = "masts";
+      opt.onStage(r);
+    });
+    mp.then(function () { mp.done = true; });
+    function build(meas, ok, near, sl) {
+      var inRange = near.filter(function (x) { return x.m.kind !== "bcast" && x.d <= R_CHECK && (opt.all || provOn(x.m)); });
+      var cellish = inRange.slice(0, opt.few ? 2 : 6);
+      var provs = [], seenP = {};
+      if (!opt.few) inRange.forEach(function (x) {
+        var ks = x.m.p.length ? x.m.p : ["?"];
+        ks.forEach(function (k) { if (seenP[k] || S.off[k] || provs.length >= 8) return; seenP[k] = 1; provs.push(k); if (cellish.indexOf(x) < 0) cellish.push(x); });
+      });
+      var bc = opt.bcast === false ? [] : near.filter(function (x) { return x.m.kind === "bcast"; }).slice(0, 4), all = cellish.concat(bc);
+      var rows = all.map(function (x, i) { var t = sl && sl[i]; return { m: x.m, kind: x.m.kind, d: x.d, clear: t ? t.clear : null, worst: t ? t.worst : null }; });
+      var cr = rows.filter(function (x) { return x.kind !== "bcast"; });
+      var byProv = provs.map(function (k) {
+        var mine = cr.filter(function (x) { return k === "?" ? !x.m.p.length : x.m.p.indexOf(k) >= 0; });
+        var pv = verdict({ here: -1, near: -1 }, mine, true);
+        return { key: k, name: provName(k), level: pv.level, mast: pv.mast || mine[0] || null };
+      });
+      return { lat: lat, lon: lon, meas: meas, mastsOk: ok, rows: rows, v: verdict(meas, cr, ok), byProv: byProv, all: all, offN: Object.keys(S.off).filter(function (k) { return S.off[k]; }).length, when: new Date() };
+    }
+    if (opt.onStage) return Promise.all([mq, mp]).then(function (r) {
+      var meas = r[0], ok = r[1] === true, slow = r[1] === "slow", near0 = mastsNear(lat, lon, R_BCAST), first = build(meas, ok || slow, near0, null);
+      if (slow) first.slow = true;
+      if (!first.all.length) return first;
+      first.partial = "terrain"; opt.onStage(first);
+      return Promise.all(first.all.map(function (x) { return sight(x.m, lat, lon, x.d); })).then(function (sl) { var fin = build(meas, ok || slow, near0, sl); if (slow) fin.slow = true; return fin; });
+    });
+    return Promise.all([mq, mp]).then(function (r) {
       var meas = r[0], ok = r[1];
       var near = mastsNear(lat, lon, R_BCAST), inRange = near.filter(function (x) { return x.m.kind !== "bcast" && x.d <= R_CHECK && (opt.all || provOn(x.m)); });
       var cellish = inRange.slice(0, opt.few ? 2 : 6);
@@ -404,14 +461,19 @@ function main() {
     pad = around((s + n) / 2, (w + e) / 2, R_CHECK);
     var dLat = (pad[2] - pad[0]) / 2, dLon = (pad[3] - pad[1]) / 2;
     var big = boxesFor(s - dLat, w - dLon, n + dLat, e + dLon).length > MAX_BOXES * 4;
-    var pre = big ? Promise.resolve(false) : ensureMasts(s - dLat, w - dLon, n + dLat, e + dLon).then(function () { return true; }, function () { return false; });
+    /* the stored copy of the country answers a line inside it at once; else a live read, never waited on longer than LIVE_WAIT */
+    var cb = S.ctx && S.ctx.bounds && (typeof S.ctx.bounds === "function" ? S.ctx.bounds() : S.ctx.bounds);
+    var pre = big ? Promise.resolve(false) : storedReady(15000).then(function () {
+      if (storedHere() && (!cb || L.latLngBounds(cb).pad(0.02).contains(L.latLngBounds([[s, w], [n, e]])))) return true;
+      return Promise.race([ensureMasts(s - dLat, w - dLon, n + dLat, e + dLon, 0, true).then(function () { return true; }, function () { return false; }), wait(LIVE_WAIT).then(function () { return Object.keys(S.masts).length > 0; })]);
+    });
     return pre.then(function (ok) {
       var out = [], i = 0;
       function next() {
         if (i >= sm.pts.length) return Promise.resolve();
         if (opt.signal && opt.signal.aborted) return Promise.reject(new DOMException("Stopped", "AbortError"));
         var x = sm.pts[i++];
-        return checkPlace(x.p[0], x.p[1], { bcast: false, few: true, noMasts: !ok, all: opt.all }).then(function (r) { r.at = x.at; out.push(r); if (!opt.quiet) prog(i, sm.pts.length); return next(); });
+        return checkPlace(x.p[0], x.p[1], { bcast: false, few: true, noMasts: true, mastsOk: ok, all: opt.all }).then(function (r) { r.at = x.at; out.push(r); if (!opt.quiet) prog(i, sm.pts.length); return next(); });
       }
       return Promise.all([next(), next(), next(), next()]).then(function () {
         out.sort(function (a, b) { return a.at - b.at; });
@@ -602,6 +664,12 @@ function main() {
       S.line.forEach(function (p) { L.circleMarker(p, { pane: "comchk", renderer: svg, radius: 4, color: "#1c7ed6", fillColor: "#fff", fillOpacity: 1, interactive: false }).addTo(chkLayer); });
     }
     if (!r) return;
+    if (r.busy && r.lat != null) {
+      L.marker([r.lat, r.lon], { pane: "comchk", keyboard: false, title: "Checking this place",
+        icon: L.divIcon({ className: "comv comv-wait", html: '<span style="background:' + LV[0].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) }).addTo(chkLayer);
+      return;
+    }
+    if (!r.rows && !r.line) return;
     if (r.line) {
       for (var i = 1; i < r.samples.length; i++) {
         var a = r.samples[i - 1], b = r.samples[i], lv = Math.min(a.v.level, b.v.level);
@@ -622,8 +690,8 @@ function main() {
       if (HOVER) hit.bindTooltip(why, { sticky: true, className: "comtipw" });
       hit.addTo(chkLayer);
     });
-    var pin = L.marker([r.lat, r.lon], { pane: "comchk", keyboard: true, title: LV[r.v.level].t,
-      icon: L.divIcon({ className: "comv", html: '<span style="background:' + LV[r.v.level].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) });
+    var pin = L.marker([r.lat, r.lon], { pane: "comchk", keyboard: true, title: LV[r.v.level].t + (r.partial ? " (still checking)" : ""),
+      icon: L.divIcon({ className: "comv" + (r.partial ? " comv-wait" : ""), html: '<span style="background:' + LV[r.v.level].c + '">' + PHONE + "</span>", iconSize: [28, 28], iconAnchor: [14, 14] }) });
     pin.addTo(chkLayer);
     if (S.ctx.put) S.ctx.put("com:check", pin);
   }
@@ -800,7 +868,7 @@ function main() {
   function mastRow(x) {
     var pn = x.m.p.map(provName).join(", "), n = clean(x.m.t.name || "", 60) || pn, k = KINDS[x.kind];
     if (n && pn && n !== pn) n += " (" + pn + ")";
-    var los = x.clear == null ? "terrain not read" : x.clear ? "in line of sight" : "behind terrain (" + Math.round(-x.worst) + " m short)";
+    var los = x.clear == null ? (S.result && S.result.partial ? "checking terrain…" : "terrain not read") : x.clear ? "in line of sight" : "behind terrain (" + Math.round(-x.worst) + " m short)";
     return "<li>" + '<span class="comsw" style="background:' + k.col + '"></span>' + E(n || k.name) + ", " + km(x.d) + ", " + los + "</li>";
   }
   function paintResult() {
@@ -839,11 +907,15 @@ function main() {
     else if (m.ok) parts.push("No phone speed tests were recorded within about 3 km.");
     else parts.push("Measured coverage could not be loaded.");
     var cells = r.rows.filter(function (x) { return x.kind !== "bcast"; }).sort(function (a, b) { return a.d - b.d; }).slice(0, 8), bcs = r.rows.filter(function (x) { return x.kind === "bcast"; });
-    if (!r.mastsOk) parts.push("Masts could not be loaded, so there is no line-of-sight estimate.");
+    if (r.partial === "masts") parts.push(r.mastsOk ? "Reading the masts round this place…" : "Loading the masts round this place…");
+    else if (r.partial === "terrain") parts.push("Checking the terrain between the masts and this place…");
+    if (r.slow) parts.push("The live mast server is slow, so this uses the masts already loaded; check again later for more.");
+    if (r.partial === "masts" && !cells.length) {}
+    else if (!r.mastsOk) parts.push("Masts could not be loaded, so there is no line-of-sight estimate.");
     else if (!cells.length) parts.push("No communication mast is mapped within 35 km.");
-    else if (v.mast) parts.push("The best mapped mast is " + E(km(v.mast.d)) + " away and " + (v.mast.clear ? "in line of sight" : "behind terrain, but close") + ".");
+    else if (v.mast) parts.push("The best mapped mast is " + E(km(v.mast.d)) + " away and " + (v.mast.clear ? "in line of sight" : v.mast.clear == null ? "close enough to count before the terrain is read" : "behind terrain, but close") + ".");
     else parts.push("The mapped masts nearby are out of sight behind terrain or too far away.");
-    el.innerHTML = head(v.level, "<code>" + E((G && G.mgrs(r.lat, r.lon)) || "") + "</code>") + "<p>" + parts.join(" ") + "</p>" +
+    el.innerHTML = head(v.level, "<code>" + E((G && G.mgrs(r.lat, r.lon)) || "") + "</code>" + (r.partial ? ' <span class="comwait">Still checking</span>' : "")) + "<p>" + parts.join(" ") + "</p>" +
       (r.offN ? '<p class="obs">Only the providers you ticked are counted (' + r.offN + " switched off). Measured tests are from all networks.</p>" : "") +
       (r.byProv && r.byProv.length ? "<p><b>By provider</b> <small>(estimate from their mapped masts)</small></p><ul class=\"comlist\">" + r.byProv.map(provRow).join("") + "</ul>" : "") +
       (cells.length ? "<p><b>Nearest masts</b></p><ul class=\"comlist\">" + cells.map(mastRow).join("") + "</ul>" : "") +
@@ -862,8 +934,8 @@ function main() {
   /* ---------- actions ---------- */
   function runPlace(lat, lon) {
     var tok = ++S.token;
-    S.result = { busy: "Checking this place…" }; paintResult();
-    checkPlace(lat, lon).then(function (r) { if (tok !== S.token) return; S.result = r; paintResult(); drawResult(); legend(); drawMasts(); },
+    S.result = { busy: "Checking this place…", lat: lat, lon: lon }; paintResult(); drawResult();
+    checkPlace(lat, lon, { onStage: function (r) { if (tok !== S.token) return; S.result = r; paintResult(); drawResult(); } }).then(function (r) { if (tok !== S.token) return; S.result = r; paintResult(); drawResult(); legend(); drawMasts(); },
       function () { if (tok !== S.token) return; S.result = { err: "The check could not be finished. Try again." }; paintResult(); });
   }
   function runLine(pts) {
@@ -923,6 +995,7 @@ function main() {
     ".comln{display:inline-block;width:22px;height:0;border-top:3px solid #2f9e44;margin-right:6px;vertical-align:middle}.comln-x{border-top:3px dashed #e03131}" +
     ".comv-h{border-left:5px solid;padding:6px 10px;margin:6px 0;background:var(--card,rgba(0,0,0,.03));border-radius:4px}.comv-h b{font-size:16px}.comv-h span{font-size:12px}" +
     ".comlist,.comgaps{margin:4px 0 8px;padding-left:18px}.comlist li,.comgaps li{margin:2px 0}.comlist{list-style:none;padding-left:0}" +
+    ".comv-wait span{animation:comwait 1.1s ease-in-out infinite}@keyframes comwait{50%{opacity:.45}}.comwait{font-weight:600}@media (prefers-reduced-motion:reduce){.comv-wait span{animation:none}}" +
     ".comv{background:none;border:0}.comv span{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}.comv svg{display:block}" +
     ".comkey{margin-top:4px}.rtsrc{font-size:11px}.linkish{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;cursor:pointer}" +
     ".combtns button{min-height:32px}@media (pointer:coarse){.comsec input,.comsec select{font-size:16px!important}.combtns button,[data-comact]{min-height:40px}}" +
