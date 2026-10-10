@@ -1702,6 +1702,9 @@ function main() {
     evRun: evRun, evShow: function (k) { if (S.ctx) evShow(k); }, evKinds: EV_KINDS, evR: EV_R,
     /* primary, alternate and contingency lines between two points, and what the app holds along a line (the medical plan) */
     alternates: alternates, hazards: apiHazards,
+    /* Overpass with the four mirrors in turn (the evacuation corridor's air and sea nodes), and the landing zone candidates
+       round a point as Nearest landing zone finds them: [{ k: "lz", i: { name, lat, lon, kind, note, src } }] */
+    overpass: function (q, ms) { return overpassAny(q, ms); }, lzNear: function (p, notes, say) { return evLz(p, notes || [], say || function () {}); },
     /* the incidents the evacuation weighting counts within 2 km of any line ([lat, lon] points): { score, hits } as evRun gives */
     exposure: function (coords, days) { var r = apiLine(coords); if (r.coords.length < 2) return { score: 0, hits: [] }; var c = r.coords; return withWps([{ lat: c[0][0], lon: c[0][1] }, { lat: c[c.length - 1][0], lon: c[c.length - 1][1] }], function () { return evExposure(r, evHaz(+days || 30)); }); },
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
