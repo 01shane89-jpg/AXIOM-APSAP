@@ -4,11 +4,13 @@
 //   (Reddit was tried and dropped: it refuses requests from GitHub's servers.)
 //   Telegram - no secrets: reads each listed channel's public web preview (t.me/s/<channel>).
 //   YouTube  - each listed channel's public video feed (titles, dates, thumbnails and links only).
-// Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js.
+// Posts are machine-translated to English (tools/translate.mjs) with the original kept. Writes data/live/social.js (the newest
+// 40 per country, what the page shows) and keeps every post inside the window in data/history (tools/social_lib.mjs).
 import fs from "node:fs";
 import { translateAll, saveCache, seed } from "./translate.mjs";
 import { updateHistory, storedTranslations } from "./history.mjs";
 import { splitByCountry, newsCodes } from "./split_country.mjs";
+import { splitView } from "./social_lib.mjs";
 
 const TIMEOUT = 15000, PER_AREA = 40, SINCE = Date.now() - 7 * 864e5;
 /* Speed (2026-09-27): accounts are read several at a time, each request is time-boxed, and no new YouTube channel is
@@ -244,19 +246,25 @@ await pool(cfg.youtube || [], 8, async (ch) => {
 });
 lap(`YouTube (${(cfg.youtube || []).length} channels, ${late} not reached, feeds ${feedOk} ok / ${feedBad} failed)`, tYt);
 
-for (const cc of Object.keys(items)) {
-  const seen = new Set();
-  items[cc] = items[cc].filter((i) => !seen.has(i.link) && seen.add(i.link)).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
-}
-const all = [...new Set(Object.values(items).flat())];
+// The newest PER_AREA posts per country go in the live snapshot the page reads; every post inside the window is kept for
+// the history (tools/social_lib.mjs). Translation takes the shown posts first, so its per-run limit never starves the page.
+const { kept, view, counts } = splitView(items, PER_AREA);
+const all = [...new Set(Object.values(view).flat())];
+const extra = [...new Set(Object.values(kept).flat())].filter((i) => !all.includes(i));
+const over = Object.entries(counts).filter(([, c]) => c.kept > c.shown);
+console.log(`social cap: ${over.length} of ${Object.keys(counts).length} countries had more than ${PER_AREA} posts; ` +
+  `${extra.length} posts beyond the page's ${PER_AREA} kept for the history`);
 const tTr = Date.now();
 // English already stored with the history is reused (tools/history.mjs), so a post keeps its translation after the cache drops it.
 // Headlines first, then the video descriptions (YouTube's summary); a description the model has no time for this run stays
 // untranslated and the page shows only the English headline, with the original under "<language> original".
 console.log("translations reused from the history:", seed(storedTranslations("social", Object.keys(items))));
 const sums = all.filter((i) => i.summary && !/^en\b/i.test(i.lang || ""));
-const tr = await translateAll([...all.map((i) => ({ text: i.title, lang: i.lang || "" })), ...sums.map((i) => ({ text: i.summary, lang: i.lang || "" }))]);
-all.forEach((i, n) => { i.title_en = tr[n].en; i.mt = /^en\b/i.test(i.lang || "") ? null : (tr[n].tool || "untranslated"); if (i.mt && tr[n].en === i.title) i.mt = null; });
+const tr = await translateAll([...all.map((i) => ({ text: i.title, lang: i.lang || "" })), ...sums.map((i) => ({ text: i.summary, lang: i.lang || "" })),
+  ...extra.map((i) => ({ text: i.title, lang: i.lang || "" }))]);
+const setTitle = (i, t) => { i.title_en = t.en; i.mt = /^en\b/i.test(i.lang || "") ? null : (t.tool || "untranslated"); if (i.mt && t.en === i.title) i.mt = null; };
+all.forEach((i, n) => setTitle(i, tr[n]));
+extra.forEach((i, n) => setTitle(i, tr[all.length + sums.length + n]));
 sums.forEach((i, n) => {
   const b = tr[all.length + n]; if (!b.en || b.en === i.summary) return;
   i.summary_en = b.en.slice(0, 400);
@@ -266,8 +274,8 @@ saveCache();
 lap("Translation", tTr);
 if (!status.some((s) => s.ok)) { console.error("no social source worked"); status.forEach((s) => console.error(" ", s.platform, s.source, s.error)); process.exit(1); }
 fs.mkdirSync("data/live", { recursive: true });
-fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items }).replace(/<\//g, "<\\/") + ";\n");
+fs.writeFileSync("data/live/social.js", "window.ASAP_SOCIAL=" + JSON.stringify({ asof: stamp, sources: status.map((s) => ({ ...s, source: s.platform + " " + s.source, cc: s.cc || "*" })), items: view }).replace(/<\//g, "<\\/") + ";\n");
 splitByCountry("data/live/social.js", "ASAP_SOCIAL", newsCodes()); // one small file per country for the page (tools/split_country.mjs)
-try { await updateHistory("social", items, stamp); } catch (e) { console.error("history not updated:", e.message); }
+try { await updateHistory("social", kept, stamp); } catch (e) { console.error("history not updated:", e.message); }
 status.forEach((s) => console.log(s.ok ? "ok  " : s.skipped ? "skip" : "FAIL", s.platform, s.source, s.ok ? s.n + " posts" : s.error + (s.kept ? ` (kept ${s.kept} earlier posts)` : "")));
 lap("Social refresh total", T0);
