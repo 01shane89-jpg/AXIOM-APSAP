@@ -14,6 +14,7 @@
 ["n12565674642",49.55656,22.2041,"pl",{"name":"MyLife","amenity":"clinic","healthcare":"clinic","website":"https://mylife.sanok.pl/"}],
 ["n12728152440",49.38245,22.44773,"pl",{"name":"Bieszczadzkie Pogotowie Ratunkowe - ZRM P-16 Karetka wodna","emergency":"ambulance_station","operator":"Bieszczadzkie Pogotowie Ratunkowe","website":"https://bpr-spzoz.pl","addr:housenumber":"57","addr:street":"Zdrojowa","addr:city":"Polańczyk","addr:postcode":"38-610"}],
 ["n12771835967",49.36677,22.1089,"pl",{"aeroway":"helipad","surface":"concrete"}],
+["n12926228149",48.04112,23.15414,"ro",{"amenity":"clinic","healthcare":"clinic","addr:city":"batarci","addr:postcode":"447030","osap:withheld":"1"}],
 ["n1345932010",49.55142,22.19865,"pl",{"name":"Lądowisko śmigłowców przy szpitalu","aeroway":"helipad"}],
 ["n2460714350",49.55189,22.19941,"pl",{"name":"Szpitalny Oddział Ratunkowy","name:en":"Emergency","amenity":"clinic","healthcare":"clinic","operator":"SPZOZ Sanok","operator:type":"public","phone":"+48 134656237","website":"https://www.zozsanok.pl/?page_id=518","addr:housenumber":"26","addr:street":"800-lecia","addr:city":"Sanok","addr:postcode":"38-500","opening_hours":"24/7"}],
 ["n2777482026",48.20732,22.08917,"hu",{"emergency":"ambulance_station"}],

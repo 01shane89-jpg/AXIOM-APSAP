@@ -2,5 +2,9 @@
 ["n1042040020",3.73339,19.08296,"cd",{"name":"Bau Airport","aeroway":"aerodrome"}],
 ["n1042040045",3.38342,18.65472,"cd",{"name":"Kala Airport - CLOSED","aeroway":"aerodrome"}],
 ["n1042040071",2.97814,19.35061,"cd",{"name":"Tandala Airport","aeroway":"aerodrome","icao":"FZFT","wikidata":"Q21974332"}],
+["n5686192689",3.18244,18.62358,"cg",{"name":"Centre de Santé Intégré","amenity":"hospital"}],
 ["w1009831531",3.23531,19.77184,"cd",{"name":"Gemena Airport","aeroway":"aerodrome","icao":"FZFK","iata":"GMA","wikidata":"Q3275195"}],
+["w546928271",3.05518,18.52204,"cg",{"name":"Centre de Sante","amenity":"hospital","healthcare":"hospital"}],
+["w549191687",3.06289,18.51518,"cg",{"name":"Hôpital MDA","amenity":"hospital","operator":"Médecins d'Afrique"}],
+["w784139985",3.18246,18.62353,"cg",{"name":"Centre de Santé Intégré","amenity":"hospital","healthcare":"hospital"}],
 ["w792482073",2.32999,18.60128,"cd",{"name":"Hôpital Dr EBENYA","amenity":"hospital","healthcare":"hospital"}]]

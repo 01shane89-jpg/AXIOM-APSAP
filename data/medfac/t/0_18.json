@@ -26,4 +26,5 @@
 ["r12691598",0.02167,18.28967,"cd",{"name":"Aéroport de Mbandaka","name:en":"Mbandaka Airport","aeroway":"aerodrome","icao":"FZEA","iata":"MDK","wikidata":"Q649376"}],
 ["w588047014",0.0315,18.25077,"cd",{"amenity":"hospital","healthcare":"hospital"}],
 ["w791413402",0.05416,18.26368,"cd",{"name":"CHU","amenity":"hospital","healthcare":"hospital"}],
-["w791416451",0.0485,18.26229,"cd",{"name":"Hôpital général de référence Wangata","amenity":"hospital","healthcare":"hospital"}]]
+["w791416451",0.0485,18.26229,"cd",{"name":"Hôpital général de référence Wangata","amenity":"hospital","healthcare":"hospital"}],
+["w997117833",1.58997,18.04662,"cg",{"name":"Impfondo Airport","aeroway":"aerodrome","icao":"FCOI","iata":"ION","wikidata":"Q6007117"}]]
