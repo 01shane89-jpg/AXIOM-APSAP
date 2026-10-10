@@ -30,6 +30,7 @@ import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSu
 import { staleSearchResult } from "./conflict_lib.mjs";
 import { readIndex, plan as capturePlan, write as captureWrite, toCapture, toTranslation } from "./capture_lib.mjs";
 import { plan as claimPlan, RULES as CLAIM_RULES } from "./claim_lib.mjs";
+import { build as buildIncidents } from "./incident_lib.mjs";
 
 // Kept from refresh_news.mjs: a search engine's result list is read only where its robots.txt allows the path for every agent.
 const robotsCache = {};
@@ -290,6 +291,14 @@ try {
     const by = {}; for (const c of cl.records) by[c.predicate] = (by[c.predicate] || 0) + 1;
     console.log(`Deep South claims: ${cl.records.length} written ${JSON.stringify(by)} (rules ${CLAIM_RULES})`);
   } catch (e) { console.error("Deep South claims not written:", e.message); }
+  // Incident candidates (tools/incident_lib.mjs): which reports may describe the same event, rebuilt from the stores each run.
+  // A suggestion file only (data/live/ds-incidents.json); it decides nothing and can be deleted and rebuilt.
+  try {
+    const inc = buildIncidents(EV_DIR, "data/claims/deepsouth", JSON.parse(fs.readFileSync("tools/places/deepsouth.json", "utf8")).places, stamp);
+    fs.mkdirSync("data/live", { recursive: true });
+    fs.writeFileSync("data/live/ds-incidents.json", JSON.stringify(inc));
+    console.log("Deep South incident candidates:", JSON.stringify(inc.totals));
+  } catch (e) { console.error("Deep South incident candidates not written:", e.message); }
 } catch (e) { console.error("Deep South captures not written:", e.message); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.ASAP_DS=" + JSON.stringify({ asof: stamp, keep_days: KEEP_DAYS, sources: status, items,
