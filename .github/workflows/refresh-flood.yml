@@ -155,6 +155,8 @@ jobs:
             echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
           fi
           node tools/refresh_social.mjs
+          # relevance over social, shadow mode only: writes data/live/social-relevance.json, hides nothing
+          node tools/social_relevance.mjs || echo "social relevance report not written"
         continue-on-error: true
       - name: Pull advisories, tsunami, volcano, outbreak, outage, maritime, sanctions and displacement feeds
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'more' }}
