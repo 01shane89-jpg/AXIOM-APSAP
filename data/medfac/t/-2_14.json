@@ -1,2 +1,14 @@
-[["n4088012321",-1.57065,14.28562,"ga",{"name":"Aéroport de Lékoni","aeroway":"aerodrome","iata":"LEO","aerodrome:type":"airfield","wikidata":"Q24635430"}],
-["w696367476",-1.57914,14.27209,"ga",{"aeroway":"helipad"}]]
+[["n1042036571",-0.06989,14.506,"cg",{"name":"Kellé Airport","aeroway":"aerodrome","icao":"FCOK","iata":"KEE","wikidata":"Q6385645"}],
+["n1042036572",-0.51928,15.93259,"cg",{"name":"Aéroport de Owando","aeroway":"aerodrome","icao":"FCOO","iata":"FTX","wikidata":"Q2875785"}],
+["n14091816520",-1.26966,15.88858,"cg",{"name":"Hôpital  de référence IBARA MBEMBE","healthcare":"hospital","addr:city":"Ollombo"}],
+["n3323402410",-1.44752,15.07416,"cg",{"name":"Okoyo Airport","aeroway":"aerodrome","iata":"OKG"}],
+["n4088012321",-1.57065,14.28562,"ga",{"name":"Aéroport de Lékoni","aeroway":"aerodrome","iata":"LEO","aerodrome:type":"airfield","wikidata":"Q24635430"}],
+["n922279237",-1.44752,15.07416,"cg",{"name":"Okoyo Airport","aeroway":"aerodrome","iata":"OKG","wikidata":"Q7082539"}],
+["n922283226",-1.03104,15.33601,"cg",{"name":"Boundji Airport","aeroway":"aerodrome","icao":"FCOB","iata":"BOE","wikidata":"Q4949999"}],
+["n923917053",-0.01997,15.58039,"cg",{"name":"Makoua Airport","aeroway":"aerodrome","icao":"FCOM","iata":"MKJ","wikidata":"Q2875856"}],
+["w1511778877",-1.82999,15.8851,"cg",{"name":"Aéroport de Gamboma","name:en":"Gamboma Airport","aeroway":"aerodrome","icao":"FCOG","iata":"GMM","wikidata":"Q5519729"}],
+["w261075036",-1.14062,15.97149,"cg",{"name":"Hôpital Général Edith Lucie Bongo Ondimba","amenity":"hospital","healthcare":"hospital"}],
+["w594142083",-0.85805,14.80461,"cg",{"name":"Ewo Airport","aeroway":"aerodrome","icao":"FCOE","iata":"EWO","wikidata":"Q5419071"}],
+["w595443719",-1.14262,15.97105,"cg",{"aeroway":"helipad"}],
+["w696367476",-1.57914,14.27209,"ga",{"aeroway":"helipad"}],
+["w998329722",-1.23129,15.90842,"cg",{"name":"Aeroport d'Ollombo","name:en":"Ollombo Airport","aeroway":"aerodrome","icao":"FCOD","iata":"OLL","wikidata":"Q15264912"}]]

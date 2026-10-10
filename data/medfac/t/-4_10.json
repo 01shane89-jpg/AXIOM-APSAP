@@ -1,4 +1,7 @@
 [["n1042036498",-2.45,11.65,"ga",{"name":"Mavinza Airport","aeroway":"aerodrome"}],
+["n1042036510",-2.717,11.883,"cg",{"name":"Irogo Airport","aeroway":"aerodrome"}],
+["n1042036544",-2.867,11.95,"cg",{"name":"Nyanga Airport","aeroway":"aerodrome"}],
+["n1042036595",-3.917,11.383,"cg",{"name":"N'komo Airport","aeroway":"aerodrome"}],
 ["n1042037209",-2.45624,10.93705,"ga",{"name":"Moabi","aeroway":"aerodrome","icao":"FOGI","iata":"MGX","wikidata":"Q11824596"}],
 ["w1000756842",-3.45841,10.67605,"ga",{"name":"Aéroport de Mayumba","aeroway":"aerodrome","icao":"FOOY","iata":"MYB","wikidata":"Q11824584"}],
 ["w1009817543",-2.88934,10.95629,"ga",{"name":"Aéroport de Tchibanga","name:en":"Tchibanga Airport","aeroway":"aerodrome","icao":"FOOT","iata":"TCH","aerodrome:type":"public","wikidata":"Q2250873"}],

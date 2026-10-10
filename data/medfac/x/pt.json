@@ -1,0 +1,12 @@
+[["n11432638728",41.14673,-8.62241,"pt",{"name":"Dádiva de Sangue","healthcare":"blood_donation"}],
+["n12860760011",32.64487,-16.86658,"pt",{"name":"Centro de Meios Aéreos da Cancela","emergency":"air_rescue_service","operator":"Serviço Regional de Proteção Civil","aeroway":"helipad","surface":"asphalt"}],
+["n1427440350",40.57583,-8.44491,"pt",{"name":"Grupo de Dadores de Sangue","healthcare":"blood_donation","opening_hours":"Mo-Fr 14:00-17:00"}],
+["n6261781001",38.75691,-9.14808,"pt",{"name":"IPST - Instituto Português do Sangue e da Transplantação","healthcare":"blood_donation","phone":"+351 21 792 1000","website":"http://www.ipsangue.org","addr:housenumber":"53","addr:street":"Avenida do Brasil","addr:city":"Lisboa","addr:postcode":"1749-005","opening_hours":"Mo-Fr 08:00-19:30"}],
+["n7086426058",37.13214,-8.53862,"pt",{"name":"Associaçãode Dadores de Sangue do Barlavento do Algarve","healthcare":"blood_donation"}],
+["n8393662970",40.93155,-8.54391,"pt",{"name":"Associação de dadores benévolos de sangue","healthcare":"blood_donation","addr:street":"Avenida 5 de Outubro"}],
+["r20604039",41.1798,-8.60062,"pt",{"name":"Banco de Sangue","healthcare":"blood_donation","operator":"CHUSJ"}],
+["w1010992152",40.19269,-8.45714,"pt",{"name":"Centro de Sangue e da Transplantação de Coimbra","healthcare":"blood_donation","phone":"+351 239 791 070","website":"https://www.ipst.pt/","addr:street":"Rua Escola Inês de Castro","addr:city":"São Martinho do Bispo e Ribeira de Frades","addr:postcode":"3040-226"}],
+["w1297139643",41.45606,-8.29689,"pt",{"name":"Associação de Dadores Benévolos de Sangue de Guimarães","healthcare":"blood_donation"}],
+["w1389302873",32.64487,-16.86665,"pt",{"emergency":"air_rescue_service","operator":"Serviço Regional de Proteção Civil da Madeira","aeroway":"helipad","surface":"asphalt"}],
+["w546717671",41.9122,-8.56554,"pt",{"name":"Dadores de Sangue de Paredes de Coura","healthcare":"blood_donation"}],
+["w796873429",32.64486,-16.86639,"pt",{"emergency":"air_rescue_service","operator":"Serviço Regional de Proteção Civil da Madeira","aeroway":"helipad","surface":"asphalt"}]]
