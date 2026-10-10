@@ -28,6 +28,7 @@ jobs:
       - run: node tests/health.test.mjs
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
+      - run: node tests/decisions.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -77,6 +78,7 @@ jobs:
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
+      - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
