@@ -1,0 +1,18 @@
+{"cc":"sc","at":"2026-10-10T10:09:22Z","base":"2026-10-10T10:08:05Z","m":[
+["n13646801601",-4.30742,55.70704,{"man_made":"communications_tower","name":"Praslin Airport VHF omnidirectional range"}],
+["n13914319102",-4.3562,55.84326,{"man_made":"communications_tower"}],
+["n4547531219",-4.61944,55.453,{"man_made":"mast","name":"St Elizabeth's Orphanage","tower:type":"communication"}],
+["n5148029873",-4.68115,55.45384,{"man_made":"tower","tower:type":"communication"}],
+["n5148029874",-4.6803,55.454,{"man_made":"tower","tower:type":"communication"}],
+["n5148029875",-4.67921,55.45371,{"man_made":"tower","tower:type":"communication"}],
+["n5148029876",-4.67808,55.4537,{"man_made":"tower","tower:type":"communication"}],
+["n5415349519",-4.62575,55.42622,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
+["n7694386655",-4.35188,55.76632,{"man_made":"tower","name":"Baie St Anne","tower:type":"communication"}],
+["n7694386656",-4.74695,55.47161,{"man_made":"tower","name":"Anse Soleil","tower:type":"communication"}],
+["n7694386657",-4.62057,55.44138,{"man_made":"tower","name":"St Louis","tower:type":"communication"}],
+["n7694448663",-4.73317,55.52669,{"man_made":"tower","name":"Fairyland","tower:type":"communication"}],
+["n9596811951",-4.64965,55.39892,{"man_made":"communications_tower","tower:construction":"lattice","tower:type":"communication"}],
+["n9696994022",-4.31528,55.74418,{"ele":"5","height":"20","man_made":"communications_tower","material":"metal","operator":"ATM Abasa","tower:construction":"lattice","tower:type":"communication"}],
+["n9912831971",-4.30728,55.70674,{"man_made":"mast","tower:type":"communication"}],
+["w862086444",-9.71142,46.51564,{"man_made":"tower","tower:type":"communication"}]
+]}
