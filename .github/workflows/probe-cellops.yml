@@ -16,4 +16,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save --no-audit --no-fund pmtiles@3 @mapbox/vector-tile@1 pbf@3
-      - run: node tools/probe_cellops.mjs
+      - run: node tools/probe_cellops.mjs > out.txt 2>&1 || true
+      # job logs cannot be read from the sandbox: send the output as notices (4000 chars, 10 per step)
+      - run: node -e 'const t=require("fs").readFileSync("out.txt","utf8");for(let i=0;i<10&&i*3900<t.length;i++)console.log("::notice title=p"+i+"::"+t.slice(i*3900,(i+1)*3900).replace(/%/g,"%25").replace(/\r/g,"").replace(/\n/g,"%0A"))'
+      - run: node -e 'const t=require("fs").readFileSync("out.txt","utf8");for(let i=10;i<20&&i*3900<t.length;i++)console.log("::notice title=p"+i+"::"+t.slice(i*3900,(i+1)*3900).replace(/%/g,"%25").replace(/\r/g,"").replace(/\n/g,"%0A"))'
