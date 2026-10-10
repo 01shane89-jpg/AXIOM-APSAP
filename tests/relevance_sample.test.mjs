@@ -2,7 +2,8 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { pick, score, wilson, SAMPLE, LABELS } from "../tools/relevance_sample.mjs";
+import { pick, score, wilson, socialVerdict, SAMPLE, LABELS } from "../tools/relevance_sample.mjs";
+import { compileSocial } from "../tools/social_relevance.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")), JSON.parse(fs.readFileSync("tools/topics.json", "utf8")).topics);
 const post = (cc, n, title) => ({ platform: "YouTube", account: "@a", date: "2026-10-10T00:00", title, lang: "en", link: `https://e/${cc}/${n}` });
@@ -48,4 +49,29 @@ assert.ok(S.items.every((i) => LABELS.includes(i.label)), "every sample post is 
 assert.ok(S.labelled_by, "who labelled the sample is recorded");
 const hidden = JSON.parse(fs.readFileSync("tools/hidden-areas.json", "utf8")).hidden || [];
 assert.ok(S.items.every((i) => !hidden.includes(i.cc)), "the committed sample holds no hidden-area post");
-console.log("relevance sample ok");
+
+// sampling weights: the whole-snapshot figures do not depend on which verdict a post has today
+assert.ok(s.weighted && s.weighted.accuracy > 0 && s.weighted.accuracy <= 1);
+
+// the two later samples: drawn without any post of the earlier ones, every post labelled
+const SOC = compileSocial(JSON.parse(fs.readFileSync("tools/relevance-social.json", "utf8")));
+const seen = new Set(S.items.map((i) => i.link));
+for (const f of ["tools/eval/social-relevance-holdout.json", "tools/eval/social-relevance-test.json"]) {
+  const T = JSON.parse(fs.readFileSync(f, "utf8"));
+  assert.equal(T.items.length, 200, f);
+  assert.ok(T.items.every((i) => LABELS.includes(i.label)), f + ": every post labelled");
+  assert.ok(T.labelled_by && T.purpose, f + ": labeller and purpose recorded");
+  assert.ok(T.items.every((i) => !hidden.includes(i.cc)), f + ": no hidden-area post");
+  assert.ok(T.items.every((i) => !seen.has(i.link)), f + ": no post from an earlier sample");
+  T.items.forEach((i) => seen.add(i.link));
+}
+// The switch-on bar, measured on the test sample (never used to write the rules): the social rules must beat the news rules on
+// accuracy and recall, and stay at or above the figures measured on 2026-10-10 (accuracy 0.763, recall 0.794), less a small margin.
+// A word-list change that lowers them fails here; one that raises them should raise these floors.
+const TEST = JSON.parse(fs.readFileSync("tools/eval/social-relevance-test.json", "utf8"));
+const news = score(R, TEST).weighted, soc = score(R, TEST, socialVerdict(R, SOC)).weighted;
+assert.ok(soc.accuracy > news.accuracy && soc.recall > news.recall, `social rules beat the news rules (${JSON.stringify(soc)} vs ${JSON.stringify(news)})`);
+assert.ok(soc.accuracy >= 0.75, "test accuracy " + soc.accuracy);
+assert.ok(soc.recall >= 0.78, "test recall " + soc.recall);
+assert.ok(soc.precision >= 0.8, "test precision " + soc.precision);
+console.log("relevance sample ok; test sample:", JSON.stringify({ accuracy: soc.accuracy, recall: soc.recall, precision: soc.precision }));
