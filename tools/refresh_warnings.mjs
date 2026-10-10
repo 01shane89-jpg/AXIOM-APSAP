@@ -74,6 +74,8 @@ for (const f of feeds) {
     if (f.match) { const re = new RegExp(f.match); list = list.filter((i) => re.test(i.title + " " + i.summary)); }
     // exclude: drop matching items (agencies' test alerts); max_age_days: a feed that keeps old alerts listed shows only recent ones
     if (f.exclude) { const re = new RegExp(f.exclude, "i"); list = list.filter((i) => !re.test(i.title + " " + i.summary)); }
+    // a CAP alert past its own expiry time (cap:expires) is over, even while the feed still lists it (MeteoAlarm keeps them)
+    list = list.filter((i) => { const x = Date.parse(i.expires || ""); return isNaN(x) || x > Date.now(); }).map(({ expires, ...i }) => i);
     if (f.max_age_days) { const since = Date.now() - f.max_age_days * 864e5; list = list.filter((i) => Date.parse(i.date) >= since); }
     list = list.map((i) => ({ ...i, date: iso(i.date) })).sort((a, b) => (b.date > a.date ? 1 : -1)).slice(0, PER_AREA);
     (items[f.cc] = items[f.cc] || []).push(...list.map((i) => ({ ...i, agency: f.agency, lang: f.lang, feed: f.url })));
