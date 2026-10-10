@@ -73,6 +73,31 @@ async function open(opts, stored) {
   });
   await ctx.route(/elevation-tiles-prod\/terrarium/, (r) => r.fulfill({ contentType: "image/png", headers: { "Access-Control-Allow-Origin": "*" }, body: PNG }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
+  // stand-in OpenCelliD PMTiles reader: cells of three Thai networks round Bangkok, encoded as vector-tile points (mcc, net)
+  await ctx.addInitScript(() => {
+    const CELLS = [[13.731, 100.531, 520, 1], [13.757, 100.503, 520, 1], [13.732, 100.529, 520, 5], [13.745, 100.495, 520, 5], [13.765, 100.49, 520, 4], [13.761, 100.512, 520, 4]];
+    const vi = (a, v) => { while (v > 127) { a.push((v & 127) | 128); v = Math.floor(v / 128); } a.push(v); };
+    const fld = (a, f, bytes) => { vi(a, f * 8 + 2); vi(a, bytes.length); a.push(...bytes); };
+    const zz = (v) => (v << 1) ^ (v >> 31);
+    window.__ocidReads = 0;
+    window.pmtiles = { PMTiles: function () { this.getZxy = (z, x, y) => {
+      window.__ocidReads++;
+      const n = 2 ** z, feats = [], vals = [];
+      CELLS.forEach((c) => {
+        const fx = (c[1] + 180) / 360 * n, s = Math.sin(c[0] * Math.PI / 180), fy = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
+        if (Math.floor(fx) !== x || Math.floor(fy) !== y) return;
+        const iv = (v) => { let i = vals.indexOf(v); if (i < 0) { vals.push(v); i = vals.length - 1; } return i; };
+        const f = [], tags = [0, iv(c[2]), 1, iv(c[3])], geom = []; vi(geom, 9); vi(geom, zz(Math.round((fx - x) * 4096))); vi(geom, zz(Math.round((fy - y) * 4096)));
+        const t = []; tags.forEach((v) => vi(t, v)); fld(f, 2, t); vi(f, 3 * 8); vi(f, 1); fld(f, 4, geom); feats.push(f);
+      });
+      if (!feats.length) return Promise.resolve(null);
+      const L = []; vi(L, 15 * 8); vi(L, 2); fld(L, 1, [...new TextEncoder().encode("a")]);
+      feats.forEach((f) => fld(L, 2, f)); fld(L, 3, [...new TextEncoder().encode("mcc")]); fld(L, 3, [...new TextEncoder().encode("net")]);
+      vals.forEach((v) => { const V = []; vi(V, 5 * 8); vi(V, v); fld(L, 4, V); }); vi(L, 5 * 8); vi(L, 4096);
+      const T = []; fld(T, 3, L);
+      return Promise.resolve({ data: new Uint8Array(T).buffer });
+    }; } };
+  });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.__asapMap, null, { timeout: 60000 }); await p.waitForTimeout(3000);
   await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); }); await p.waitForTimeout(400);
@@ -93,7 +118,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(/zoom in/i.test(await p.textContent("#com-st")) || (await p.evaluate(() => window.__asapMap.getZoom())) >= 9, "asks to zoom in when zoomed out");
   // country zoom: measured coverage shows, and a button on the map zooms in to the towers
   await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })); await p.waitForTimeout(2500);
-  ok(await p.evaluate(() => [...document.querySelectorAll(".leaflet-comcov-pane canvas")].some((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 4) if (d[i]) return true; return false; })), "country zoom: measured coverage is drawn");
+  ok(await p.evaluate(() => [...document.querySelectorAll(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas")].some((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 4) if (d[i]) return true; return false; })), "country zoom: measured coverage is drawn");
   ok(await p.evaluate(() => { const b = document.querySelector(".comzoom"); return !!b && !b.hidden && b.getBoundingClientRect().height >= 32; }), "country zoom: a 'Zoom in to see towers' button is on the map");
   await p.click(".comzoom"); await p.waitForTimeout(1500);
   ok(await p.evaluate(() => window.__asapMap.getZoom() === 10 && document.querySelector(".comzoom").hidden), "the button zooms in to tower level and hides");
@@ -111,8 +136,8 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   const counts = await p.evaluate(() => [...document.querySelectorAll("[data-comn]")].map((e) => e.getAttribute("data-comn") + e.textContent).join(" "));
   ok(/cell\(2 in view\)/.test(counts) && /bcast\(1 in view\)/.test(counts) && /comm\(1 in view\)/.test(counts), "counts by kind: " + counts);
   const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.getAttribute("data-comprov") + ":" + i.checked));
-  ok(provs.join() === "ais:true,true:true,?:true", "providers in view listed with switches, unmapped last: " + provs);
-  ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
+  ok(provs[0] === "ais:true" && provs.includes("true:true") && provs.includes("dtac:true") && provs[provs.length - 1] === "?:true", "the country's mobile networks listed with switches, AIS first, unmapped last: " + provs);
+  ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
   const before = overpassCalls;
   await p.evaluate(() => window.__asapMap.panBy([30, 20], { animate: false })); await p.waitForTimeout(1200);
   ok(overpassCalls === before, "a small pan inside loaded boxes asks Overpass nothing new");
@@ -211,7 +236,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.uncheck('[data-comtg="cell"]'); await p.waitForTimeout(200);
   ok(!(await st(p)).on.cell && await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms")).cell === false), "switching phone masts off is remembered");
   await p.uncheck('[data-comtg="cov"]'); await p.waitForTimeout(300);
-  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane canvas")), "measured coverage switches off");
+  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas")), "measured coverage switches off");
   await p.check('[data-comtg="cell"]'); await p.check('[data-comtg="cov"]');
 
   // a wide view at zoom 9 loads the middle in blocks of at most one degree and says so
@@ -222,7 +247,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
 
   // leaving the tab clears its layers
   await view(p, "news"); await p.waitForTimeout(800);
-  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane canvas") && !document.querySelector(".leaflet-comchk-pane .comv")), "leaving the tab clears its map layers");
+  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas") && !document.querySelector(".leaflet-comchk-pane .comv")), "leaving the tab clears its map layers");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
@@ -261,13 +286,47 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(/stored OpenStreetMap copy of 2026-10-03/.test(await p.textContent("#com-st")), "the panel says the masts come from the stored copy and its date");
   const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((e) => e.getAttribute("data-comprov") + ":" + e.parentNode.querySelector(".comsw").style.background));
   await p.click('[data-cptab="networks"]');
-  ok(provs.length === 3 && provs[0].startsWith("ais:") && provs[1].startsWith("true:") && provs[2].startsWith("?:") && new Set(provs.map((x) => x.split(":").slice(1).join(":"))).size === 3, "country zoom: providers listed with their own colours: " + provs.join(" | "));
+  ok(provs[0].startsWith("ais:") && provs.some((x) => x.startsWith("true:")) && provs[provs.length - 1].startsWith("?:") && new Set(provs.map((x) => x.split(":").slice(1).join(":"))).size === provs.length, "country zoom: providers listed with their own colours: " + provs.join(" | "));
   await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
   ok((await st(p)).drawn === 4, "country zoom: AIS off leaves its own masts out, shared AIS;True stays (" + (await st(p)).drawn + ")");
   await p.check('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
   // inside the country at city zoom the stored copy answers; no live load
   await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(1500);
   ok(overpassCalls === calls0 && (await st(p)).drawn >= 1, "city zoom inside a stored country: no live Overpass request");
+  // coverage by network: where phones picked up each network's cells (stand-in OpenCelliD), each network in its own colour
+  await p.click('[data-cptab="networks"]');
+  await p.waitForFunction(() => document.querySelectorAll(".compcov canvas").length > 0 && window.__ocidReads > 0, null, { timeout: 15000 }).catch(() => {});
+  await p.waitForTimeout(800);
+  const painted = (hex) => p.evaluate((hex) => {
+    const t = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)); let n = 0;
+    document.querySelectorAll(".compcov canvas").forEach((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 40 && Math.abs(d[i] - t[0]) < 12 && Math.abs(d[i + 1] - t[1]) < 12 && Math.abs(d[i + 2] - t[2]) < 12) n++; });
+    return n; }, hex);
+  let pc = (await st(p)).pcol;
+  ok((await st(p)).pcov && await p.isChecked('[data-comtg="pcov"]'), "coverage by network is on the map and its switch is ticked");
+  const pa = await painted(pc.ais), pd = pc.dtac && await painted(pc.dtac), pt = await painted(pc.true);
+  ok(pa > 0 && pd > 0 && pt > 0, "coverage by network: AIS, dtac and True cells each paint their own colour (" + pa + ", " + pd + ", " + pt + " px)");
+  const plist = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.parentNode.textContent.replace(/\s+/g, " ").trim()));
+  ok(plist.some((x) => /^dtac \(network in Thailand\)/.test(x)) && plist.some((x) => /^AIS/.test(x)) && plist.some((x) => /^my by NT/.test(x)), "the networks list adds Thailand's mobile networks from the MCC-MNC list: " + plist.join(" | "));
+  ok(!plist.some((x) => /AIS GSM 1800|WE PCT/.test(x)), "networks no longer operating are left out of the country list");
+  ok(/picked up each network's cells \(OpenCelliD/.test(await p.textContent("#com-ops")) && /OpenCelliD/.test(await p.textContent("#com-src")), "the panel and sources say the coloured areas come from OpenCelliD cells");
+  await p.uncheck('#com-ops [data-comprov="dtac"]'); await p.waitForTimeout(800);
+  ok(await painted(pc.dtac) === 0 && await painted(pc.ais) > 0, "dtac off: its coloured area goes, AIS stays");
+  await p.check('#com-ops [data-comprov="dtac"]'); await p.waitForTimeout(800);
+  ok(await painted(pc.dtac) > 0, "dtac back on: its area returns");
+  const near = await p.evaluate(() => window.OSAP_COMMSTAB.netsNear(13.73, 100.53));
+  ok(near.length === 2 && near.some((x) => x.name === "AIS") && near.some((x) => x.name === "dtac"), "networks heard within 500 m of an unnamed mast: " + JSON.stringify(near));
+  await p.evaluate(() => { const m = window.__asapMap; Object.values(m._layers).find((l) => l.options && /104$/.test(l.options.mid || "")).openPopup(); });
+  const popTxt = await p.waitForFunction(() => { const e = document.querySelector(".leaflet-popup [data-comnear]"); return e && /Networks heard within 500 m/.test(e.textContent) && e.textContent; }, null, { timeout: 10000 }).then((h) => h.jsonValue(), () => "");
+  ok(/True \(1 cell\)/.test(popTxt), "a mast's info box lists the networks phones heard within 500 m: " + popTxt.replace(/\s+/g, " ").slice(0, 160));
+  await p.evaluate(() => window.__asapMap.closePopup());
+  await p.uncheck('[data-comtg="pcov"]'); await p.waitForTimeout(300);
+  ok(!(await st(p)).pcov && await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms")).pcov === false), "coverage by network switches off and that is remembered");
+  await p.check('[data-comtg="pcov"]'); await p.waitForTimeout(300);
+  ok((await st(p)).pcov, "coverage by network switches back on");
+  await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })); await p.waitForTimeout(800);
+  ok(/Zoom in to about city level to see coverage by network/.test(await p.textContent("#com-st")), "zoomed out past city level the panel says to zoom in for coverage by network");
+  await p.evaluate(() => window.__asapMap.setView([13.755, 100.51], 12, { animate: false })); await p.waitForTimeout(800);
   // a tap on the map in a stored country: the place shows at once and the answer comes from the stored masts, no live read
   await p.click('[data-cptab="coverage"]'); await p.click('[data-cmode="place"]');
   const mb = await p.evaluate(() => { const r = window.__asapMap.getContainer().getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
