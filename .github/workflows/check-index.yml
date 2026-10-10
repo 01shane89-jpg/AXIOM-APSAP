@@ -33,6 +33,7 @@ jobs:
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
       - run: node tests/social_relevance.test.mjs
+      - run: node tests/relevance_sample.test.mjs
       - run: node tests/social_replies.test.mjs
       - run: node tests/comms.test.mjs
       - run: node tests/commsplan.test.mjs
