@@ -1,5 +1,6 @@
 // Unit test for tools/refresh_layerfeed.mjs (no network): one layer per headline, newest first, pins only from history,
-// Thailand's insurgency skipped, rebuilt byte-identical, stale country files removed.
+// Thailand's insurgency skipped, rebuilt byte-identical, stale country files removed, an empty file for a country with news
+// but nothing tagged (the page asks for it on every open).
 // Usage: node tests/layerfeed.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -24,6 +25,8 @@ fs.writeFileSync(path.join(dir, "data/history/ng.js"), "window.ASAP_HIST=window.
   JSON.stringify({ news: [{ link: "https://a.ng/1", geo: { n: "Kano", la: 12, lo: 8.5, p: "approx" } }] }) + ";\n");
 fs.mkdirSync(path.join(dir, "data/live/layerfeed"), { recursive: true });
 fs.writeFileSync(path.join(dir, "data/live/layerfeed/zz.js"), "stale");
+fs.mkdirSync(path.join(dir, "data/live/news"), { recursive: true });
+fs.writeFileSync(path.join(dir, "data/live/news/ki.js"), "window.ASAP_NEWS={};\n");
 const run = () => execFileSync("node", [tool], { cwd: dir, encoding: "utf8" });
 run();
 const read = (cc) => { const w = {}; new Function("window", fs.readFileSync(path.join(dir, "data/live/layerfeed", cc + ".js"), "utf8"))(w); return w.OSAP_LAYERFEED; };
@@ -33,6 +36,8 @@ assert.deepEqual(ng.items.find((i) => i.u === "https://a.ng/1").g, ["Kano", 12, 
 assert.equal(ng.items.find((i) => i.u === "https://a.ng/2").g, undefined);
 assert.ok(!fs.existsSync(path.join(dir, "data/live/layerfeed/th.js")), "Thailand's insurgency is left to the Deep South feed");
 assert.ok(!fs.existsSync(path.join(dir, "data/live/layerfeed/zz.js")), "a stale country file is removed");
+assert.deepEqual(read("ki").items, [], "a country with news but nothing tagged gets an empty file, so the page's request never fails");
+assert.equal(read("ki").cc, "ki");
 const before = fs.readFileSync(path.join(dir, "data/live/layerfeed/ng.js"), "utf8").replace(/"asof":"[^"]+"/, "");
 run();
 assert.equal(fs.readFileSync(path.join(dir, "data/live/layerfeed/ng.js"), "utf8").replace(/"asof":"[^"]+"/, ""), before, "rebuilt the same");
