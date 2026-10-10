@@ -11,8 +11,9 @@ const base = `http://127.0.0.1:${srv.address().port}/`;
 const br = await chromium.launch(); const ctx = await br.newContext({ serviceWorkers: "block", viewport: { width: 1280, height: 800 } });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
 const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
-for (const [cc, lat, lon] of [["TH", 13.745, 100.53], ["FR", 48.857, 2.352]]) {
-  await p.goto(base + "?c=" + cc + "#map", { waitUntil: "domcontentloaded" }); await p.waitForTimeout(6000);
+await p.goto(base + "#map", { waitUntil: "domcontentloaded" }); await p.waitForTimeout(6000);
+for (const [cc, lat, lon] of [["th", 13.745, 100.53], ["ph", 14.599, 120.984]]) {
+  await p.evaluate((cc) => { const b = document.querySelector('#country-seg button[data-cc="' + cc + '"]'); if (b) b.click(); }, cc); await p.waitForTimeout(5000);
   await p.evaluate(() => { const b = document.querySelector('#view-seg button[data-view="comms"]'); if (b) b.click(); });
   await p.waitForFunction(() => window.OSAP_COMMSTAB, null, { timeout: 30000 });
   await p.evaluate(([a, b]) => window.__asapMap.setView([a, b], 12, { animate: false }), [lat, lon]);
@@ -24,7 +25,7 @@ for (const [cc, lat, lon] of [["TH", 13.745, 100.53], ["FR", 48.857, 2.352]]) {
       provs: [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.parentNode.textContent.replace(/\s+/g, " ").trim()).slice(0, 12), st: (document.querySelector("#com-st") || {}).textContent };
   });
   console.log(cc, JSON.stringify(r));
-  await p.screenshot({ path: "shot-" + cc + ".jpg", type: "jpeg", quality: 45 });
+  await p.screenshot({ path: "shot-" + cc.toUpperCase() + ".jpg", type: "jpeg", quality: 45 });
 }
 console.log("errors", JSON.stringify(errs.slice(0, 5)));
 await br.close(); srv.close();
