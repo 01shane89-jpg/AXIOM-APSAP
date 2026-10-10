@@ -858,7 +858,7 @@ function main() {
   }
 
   /* ---------- route API for other modules (agreed with the medical plan thread 2026-10-03) ----------
-     alternates(a, b, { mode, n, foot }) -> Promise of up to n (1-3) distinct lines from a to b ([lat, lon]), fastest first,
+     alternates(a, b, { mode, n, foot, avoid }) -> Promise of up to n (1-3) distinct lines from a to b ([lat, lon]), fastest first,
        as [{ id: "P" | "A" | "C", coords: [[lat, lon], ...], m, s, road, xc, src, how }]. The routers' own alternatives come
        first; when they give fewer than n distinct lines, Valhalla is asked for a detour round the incidents reported nearest
        the fastest one (as the evacuation planner does). foot (mode "foot" only): "paths" (default), "xc" (only a cross-country
@@ -905,6 +905,12 @@ function main() {
     return xc.then(function () {
       if (foot === "xc") return;
       return roadRoutes(mode, wps).then(function (rs) { rs.forEach(function (r, j) { add(r, j ? "alternative" : "fastest"); }); }, function (e) { errs.push(e.message); });
+    }).then(function () {
+      /* o.avoid: points the analyst has ruled out (an evacuation leg marked unusable): Valhalla is asked to keep off them */
+      var av = (o.avoid || []).filter(function (p) { return p && isFinite(+p[0]) && isFinite(+p[1]); }).slice(0, 50);
+      if (foot === "xc" || !av.length) return;
+      return valhalla(evCost(mode), wps, { alternates: 0, exclude_locations: av.map(function (p) { return { lat: +p[0], lon: G.wrap(+p[1]) }; }) })
+        .then(function (rs) { rs.forEach(function (r) { add(r, "avoiding"); }); }, function (e) { errs.push("detour: " + e.message); });
     }).then(function () {
       var fast = out.filter(function (x) { return x.road; })[0];
       if (foot === "xc" || out.length >= n || !fast) return;
@@ -1696,6 +1702,8 @@ function main() {
     evRun: evRun, evShow: function (k) { if (S.ctx) evShow(k); }, evKinds: EV_KINDS, evR: EV_R,
     /* primary, alternate and contingency lines between two points, and what the app holds along a line (the medical plan) */
     alternates: alternates, hazards: apiHazards,
+    /* the incidents the evacuation weighting counts within 2 km of any line ([lat, lon] points): { score, hits } as evRun gives */
+    exposure: function (coords, days) { var r = apiLine(coords); if (r.coords.length < 2) return { score: 0, hits: [] }; var c = r.coords; return withWps([{ lat: c[0][0], lon: c[0][1] }, { lat: c[c.length - 1][0], lon: c[c.length - 1][1] }], function () { return evExposure(r, evHaz(+days || 30)); }); },
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
     line: function () { var r = S.routes[S.sel]; return r && r.coords && r.coords.length > 1 ? r.coords.map(function (c) { return c.lat != null ? [c.lat, c.lng] : [c[0], c[1]]; }) : null; } };
   if (W.OSAP_ROUTE_WAIT && D.documentElement.getAttribute("data-view") === "route") W.OSAP_ROUTE_WAIT();
