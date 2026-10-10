@@ -1,0 +1,40 @@
+# District outlines for the Deep South place list (data/places/deepsouth-areas.json), built from geoBoundaries by
+# tools/build_places_areas.mjs. Runs on a claude/places-* branch push that changes the builder or the place list, or by hand,
+# and commits the outlines on the branch it runs on. No key, no account. Bot commits do not start CI: push again after it lands.
+name: Build place outlines
+
+on:
+  push:
+    branches: ["claude/places-*"]
+    paths: ["tools/build_places_areas.mjs", "tools/places/deepsouth.json", ".github/workflows/build-places.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-places-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Build
+        run: node tools/build_places_areas.mjs
+        timeout-minutes: 10
+      - name: Commit
+        run: |
+          git add data/places/deepsouth-areas.json
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Deep South district outlines from geoBoundaries $(date -u +'%Y-%m-%d %H:%MZ')"
+          b="${GITHUB_REF#refs/heads/}"
+          for i in 1 2 3 4; do git pull -q --rebase origin "$b" && git push -q origin "HEAD:$b" && exit 0; sleep 7; done
+          exit 1
