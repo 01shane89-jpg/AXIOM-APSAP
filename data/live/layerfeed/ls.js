@@ -1,0 +1,1 @@
+window.OSAP_LAYERFEED={"cc":"ls","asof":"2026-10-10 17:09Z","days":30,"method":"Headlines from the news pool sorted into layers by their words (tools/view_reports.json); not reviewed","items":[{"l":"infra","d":"2026-09-15T10:07","t":"Minister May Benefit From Lesotho's R100-Billion Ai and Hydropower Deal","s":"allAfrica","u":"https://allafrica.com/stories/202609150228.html"}]};
