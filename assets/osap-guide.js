@@ -80,7 +80,7 @@
         b("Measure") + " and " + b("Route") + " start from the point. " + b("Point") + " drops a mark there.",
         b("NAI/TAI") + " and " + b("Watch") + " draw a circle of the chosen " + b("Radius") + " and open the save form or the watch form. They replace any area already drawn.",
         b("Plans") + " offers " + b("Med plan from here") + " and " + b("Evacuate from here") + ".",
-        b("Find LZ") + " searches for landing zones round the point. " + b("Terrain") + " opens viewshed, line of sight and elevation.",
+        b("Find LZ") + " searches for landing zones round the point. " + b("Terrain") + " opens viewshed, line of sight, elevation and radio coverage.",
         b("Copy") + " copies the grid. Tap the grid chip to copy it too."]) +
       tip("The ring does not open while the Measure card is open or while you are drawing an area.") },
 
@@ -180,7 +180,7 @@
 
     { id: "terrain", t: "Terrain analysis", h:
       fig("terrain", "A viewshed: what can be seen from a point") +
-      ul(["Long-press, tap " + b("Terrain") + ", then " + b("Viewshed from here") + ", " + b("Reverse viewshed to here") + ", " + b("Line of sight from here") + " or " + b("Elevation here") + ".",
+      ul(["Long-press, tap " + b("Terrain") + ", then " + b("Viewshed from here") + ", " + b("Reverse viewshed to here") + ", " + b("Line of sight from here") + ", " + b("Elevation here") + " or " + b("Radio coverage from here") + ".",
         "Or open Overlays, " + b("Elevation and terrain analysis") + ", " + b("Terrain analysis") + ". Or press " + b("Profile") + " in Measure.",
         b("Viewshed") + " shows the ground that can be seen from a point. " + b("Reverse viewshed") + " shows where a point can be seen from.",
         "Set the heights (standing person, vehicle, building or antenna), the range and the detail, then press " + b("CALCULATE") + ".",
@@ -194,7 +194,7 @@
       ul(["Tap " + b("Comms") + " on the toolbar; tap it again to go back. Or open Overlays, Infrastructure, " + b("Communications infrastructure") + ". From Route, " + b("Comms along route") + " opens it on the route.",
         b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Print it or copy it as text.",
         b("Coverage") + ": " + b("Will I have phone signal?") + " at a place, along a line or along your planned route. Answers are Likely, Possible, No sign of coverage or Unknown.",
-        b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone.",
+        b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone, the terrain between two points, and " + b("Radio coverage from a point") + ": where a radio there could be heard over the ground (green likely, orange marginal). Long-press the map, " + b("Terrain") + ", " + b("Radio coverage from here") + " does the same for that spot.",
         b("Networks") + ": reported internet outages and the masts and providers on the map.",
         b("Equipment") + ": power and batteries, loadout, cable, antenna lengths, connectors, channel plan and COMSEC records (status only, never key material).",
         b("Status") + ": a board for each PACE level, the check log, message traffic, interference reports and a troubleshooting walk-through."]) +

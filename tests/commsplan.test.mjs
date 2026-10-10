@@ -85,6 +85,7 @@ ok(R.geoLook("x", 0, 0) === null, "bad input gives no answer");
 
 // terrain link: knife-edge loss (ITU-R P.526) is 6 dB with the obstacle exactly on the line, 0 dB well clear, 13.9 dB at v = 1
 ok(near(R.knifeEdge_db(0), 6.02, 0.05) && R.knifeEdge_db(-1) === 0 && near(R.knifeEdge_db(1), 13.93, 0.05), "knife-edge loss: v 0 = " + R.knifeEdge_db(0).toFixed(2) + " dB, v 1 = " + R.knifeEdge_db(1).toFixed(2) + " dB");
+ok(near(R.planeEarth_db(10, 10, 2), 160 - 20 - 6.02, 0.05) && isNaN(R.planeEarth_db(0, 2, 2)), "plane-earth loss: 10 km, 10 m and 2 m antennas = " + R.planeEarth_db(10, 10, 2).toFixed(2) + " dB");
 const flat = (D, n, z, hole) => ({ samples: Array.from({ length: n + 1 }, (_, i) => ({ dist_m: D * i / n, elev_m: hole && hole(i) ? null : (typeof z === "function" ? z(i) : z), nodata: !!(hole && hole(i)) })) });
 // flat ground, 10 km at 155 MHz, 2 m antennas, no Earth bulge (k huge): line of sight clear, Fresnel zone (69.5 m mid-path) mostly in the ground
 const t1 = R.terrainLink(flat(10000, 100, 50), { f_mhz: 155, hA_m: 2, hB_m: 2, k: 1e9 });
