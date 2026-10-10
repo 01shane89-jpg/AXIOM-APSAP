@@ -109,7 +109,31 @@
     }
     return out;
   }
-  var core = { nm: nm, gcAt: gcAt, dest: dest, ring: ring, densify: densify, line: line, nearest: nearest, assess: assess, segments: segments, R_NM: R_NM, DEF: DEF };
+  /* hourly forecast series: times ["2026-10-10T12:00", ...] in UTC, vals numbers or null.
+     at(t): the value in the hour holding t, or null outside the series; worst(t0, hours): the largest value from t0 for that many hours */
+  function hourIdx(times, t) {
+    if (!times || !times.length) return -1;
+    var t0 = Date.parse(times[0] + "Z"), i = Math.floor((t - t0) / 3600000);
+    return i >= 0 && i < times.length ? i : -1;
+  }
+  function wxAt(times, vals, t) { var i = hourIdx(times, t); return i < 0 || !vals || vals[i] == null ? null : vals[i]; }
+  function wxWorst(times, vals, t0, hours) {
+    if (!times || !times.length || !vals) return null;
+    var i0 = hourIdx(times, t0), m = null, mi = -1;
+    if (i0 < 0) { if (t0 < Date.parse(times[0] + "Z")) i0 = 0; else return null; }
+    for (var i = i0; i < Math.min(times.length, i0 + hours); i++) if (vals[i] != null && (m === null || vals[i] > m)) { m = vals[i]; mi = i; }
+    return m === null ? null : { v: m, t: Date.parse(times[mi] + "Z") };
+  }
+  /* OSAP planning flags, never vessel, aircraft or hoist limits */
+  function wxFlags(w) {
+    var f = [];
+    if (w.hs != null && w.hs >= 4) f.push("very rough sea (4 m or more): boat transfer and hoist work likely limited");
+    else if (w.hs != null && w.hs >= 2.5) f.push("rough sea (2.5 m or more): small-boat transfer and deck work hard");
+    if (w.gust != null && w.gust >= 34) f.push("gale-force gusts (34 kn or more)");
+    if (w.vis != null && w.vis < 1000) f.push("poor visibility (under 1 km)");
+    return f;
+  }
+  var core = { nm: nm, gcAt: gcAt, dest: dest, ring: ring, densify: densify, line: line, nearest: nearest, assess: assess, segments: segments, wxAt: wxAt, wxWorst: wxWorst, wxFlags: wxFlags, R_NM: R_NM, DEF: DEF };
   if (!D) { W.OSAP_SEATRANSIT = { core: core }; return; }
 
   /* ---------- helpers ---------- */
@@ -244,10 +268,74 @@
       S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
         counts: { ports: sets.ports.length, hosp: hosp.length, osm: r[4].H.length, af: af.length }, opts: { kn: num("kn"), dep: depMs(), step: num("step"), remH: num("remH"), remP: num("remP"), rwy: num("rwy") } };
       S.busy = false; S.msg = ""; render(); draw(); fit();
+      var res = S.res;
+      wxLoad(res).then(function (wx) { if (!live() || S.res !== res) return; res.wx = wx; render(); }, function () { if (!live() || S.res !== res) return; res.wx = { at: Date.now(), rows: [], errs: ["forecast not read"] }; render(); });
     }).catch(function (e) { if (!live()) return; S.busy = false; S.msg = "The assessment failed: " + (e && e.message || e); render(); });
   }
 
   /* ---------- key judgments: facts read from the result, never a claim of coverage ---------- */
+  /* ---------- marine weather along the corridor (Open-Meteo marine and forecast, keyless) ---------- */
+  var OM = "https://api.open-meteo.com/v1/forecast", OMM = "https://marine-api.open-meteo.com/v1/marine", WX_H = 72;
+  function wxPoints(res) {
+    var out = [];
+    res.segs.forEach(function (sg, i) {
+      if (!i) out.push({ seg: i, lab: "WP1 " + (sg.from.n || ""), lat: sg.from.lat, lon: sg.from.lon, nm: sg.nm0 });
+      var m = gcAt([sg.from.lat, sg.from.lon], [sg.to.lat, sg.to.lon], 0.5);
+      out.push({ seg: i, lab: "Mid WP" + (i + 1) + "–WP" + (i + 2), lat: m[0], lon: m[1], nm: sg.nm0 + sg.nm / 2 });
+      out.push({ seg: i, lab: "WP" + (i + 2) + " " + (sg.to.n || ""), lat: sg.to.lat, lon: sg.to.lon, nm: sg.nm0 + sg.nm });
+    });
+    return out.slice(0, 41);
+  }
+  function wxList(j, n) { return Array.isArray(j) ? j : n === 1 && j && j.hourly ? [j] : []; }
+  function wxLoad(res) {
+    var pts = wxPoints(res), q = "?latitude=" + pts.map(function (p) { return p.lat.toFixed(3); }).join(",") + "&longitude=" + pts.map(function (p) { return wrap(p.lon).toFixed(3); }).join(",") + "&timezone=GMT&forecast_days=8";
+    return Promise.all([
+      getJSON(OMM + q + "&hourly=wave_height,swell_wave_height,wave_period", 25000).catch(function (e) { return { err: e.message || String(e) }; }),
+      getJSON(OM + q + "&hourly=wind_speed_10m,wind_gusts_10m,visibility&wind_speed_unit=kn", 25000).catch(function (e) { return { err: e.message || String(e) }; })
+    ]).then(function (r) {
+      var M = wxList(r[0], pts.length), F = wxList(r[1], pts.length), now = Date.now(), errs = [];
+      if (r[0] && r[0].err) errs.push("sea state not read (" + r[0].err + ")");
+      if (r[1] && r[1].err) errs.push("wind not read (" + r[1].err + ")");
+      var rows = pts.map(function (p, i) {
+        var m = M[i] && M[i].hourly, f = F[i] && F[i].hourly, eta = res.opts.dep ? res.opts.dep + p.nm / res.opts.kn * 3600000 : null, w = { p: p };
+        var tm = m && m.time, tf = f && f.time, useEta = eta != null && ((tm && hourIdx(tm, eta) >= 0) || (tf && hourIdx(tf, eta) >= 0));
+        if (useEta) {
+          w.basis = "eta"; w.t = eta;
+          w.hs = m ? wxAt(tm, m.wave_height, eta) : null; w.sw = m ? wxAt(tm, m.swell_wave_height, eta) : null; w.tp = m ? wxAt(tm, m.wave_period, eta) : null;
+          w.wind = f ? wxAt(tf, f.wind_speed_10m, eta) : null; w.gust = f ? wxAt(tf, f.wind_gusts_10m, eta) : null; w.vis = f ? wxAt(tf, f.visibility, eta) : null;
+        } else {
+          w.basis = eta != null ? "outside" : "worst"; w.t = now;
+          function wv(t, v) { var x = t && v ? wxWorst(t, v, now, WX_H) : null; return x ? x.v : null; }
+          w.hs = m ? wv(tm, m.wave_height) : null; w.sw = m ? wv(tm, m.swell_wave_height) : null; w.tp = null;
+          w.wind = f ? wv(tf, f.wind_speed_10m) : null; w.gust = f ? wv(tf, f.wind_gusts_10m) : null;
+          var vv = f && tf ? (function () { var i0 = Math.max(0, hourIdx(tf, now)), mn = null; for (var k = i0; k < Math.min(tf.length, i0 + WX_H); k++) if (f.visibility && f.visibility[k] != null && (mn === null || f.visibility[k] < mn)) mn = f.visibility[k]; return mn; })() : null;
+          w.vis = vv;
+        }
+        w.flags = wxFlags(w);
+        return w;
+      });
+      return { at: now, rows: rows, errs: errs };
+    });
+  }
+  function wxHtml(res, print) {
+    var wx = res.wx;
+    var h = "<h3>3a. Sea state and wind along the corridor</h3>";
+    if (!wx) return h + '<p class="obs">Reading the marine forecast…</p>';
+    if (!wx.rows.some(function (w) { return w.hs != null || w.wind != null; })) return h + '<p class="stbad">The marine forecast could not be read' + (wx.errs.length ? " (" + E(wx.errs.join("; ")) + ")" : "") + ". Get the forecast for each segment from the national meteorological service or GMDSS broadcasts.</p>";
+    var eta = wx.rows.some(function (w) { return w.basis === "eta"; });
+    function v(x, d, u) { return x == null ? "–" : (d ? (+x).toFixed(d) : Math.round(x)) + (u || ""); }
+    h += '<p class="obs">' + (res.opts.dep ? "At each point's ETA where the forecast reaches it; beyond that, the worst of the next " + WX_H + " hours." : "No departure time set: the worst value in the next " + WX_H + " hours at each point. Set a departure time to read the forecast at each ETA.") + "</p>" +
+      '<div class="stscroll"><table><thead><tr><th>Point</th><th>Time used</th><th>Wave height (sig.)</th><th>Swell</th><th>Wind / gusts</th><th>Visibility</th><th>OSAP flags</th></tr></thead><tbody>' +
+      wx.rows.map(function (w) {
+        return "<tr" + (w.flags.length ? ' class="strem"' : "") + "><td><b>" + E(clean(w.p.lab, 50)) + '</b><br><span class="obs">NM ' + Math.round(w.p.nm) + "</span></td>" +
+          "<td>" + (w.basis === "eta" ? "ETA " + E(zulu(w.t)) : w.basis === "outside" ? '<span class="obs">ETA beyond forecast: worst next ' + WX_H + " h</span>" : '<span class="obs">worst next ' + WX_H + " h</span>") + "</td>" +
+          '<td class="n">' + v(w.hs, 1, " m") + (w.tp != null ? '<br><span class="obs">' + v(w.tp, 0, " s") + "</span>" : "") + '</td><td class="n">' + v(w.sw, 1, " m") + '</td><td class="n">' + v(w.wind, 0, " kn") + " / " + v(w.gust, 0, " kn") + '</td><td class="n">' + (w.vis == null ? "–" : w.vis >= 10000 ? "10 km+" : v(w.vis / 1000, 1, " km")) + "</td>" +
+          "<td>" + (w.flags.length ? E(w.flags.join("; ")) : '<span class="obs">none</span>') + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      (wx.errs.length ? '<p class="stbad">' + E(wx.errs.join("; ")) + "</p>" : "") +
+      '<p class="obs">Model forecast, not observation: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo.com</a> (CC BY 4.0), read ' + E(dual(wx.at)) + ". Flags are OSAP planning cues, not vessel, aircraft, hoist or boat-transfer limits: those belong to the master, the aircraft operator and the boat crew. Check official forecasts and warnings (GMDSS, NAVTEX, the national weather service) before and during the transit.</p>";
+    return h;
+  }
   function judgments(res) {
     var segs = res.segs, rows = res.rows, tot = segs.reduce(function (a, s) { return a + s.nm; }, 0), J = [];
     J.push("The corridor is " + nmT(tot) + " in " + segs.length + " segment" + (segs.length > 1 ? "s" : "") + ", about " + hrs(tot / res.opts.kn) + " at " + res.opts.kn + " kn" + (res.opts.dep ? ", departing " + zulu(res.opts.dep) + ", arriving about " + zulu(res.opts.dep + tot / res.opts.kn * 3600000) : "") + ".");
@@ -370,6 +458,7 @@
           "<td>" + (s.leads.length ? E(s.leads.map(function (c) { return cName(res, c); }).join(", ")) : '<span class="obs">none within ' + NEAR_CC_NM + " NM</span>") + "</td>" +
           '<td class="n">' + nmT(s.worstHosp) + " / " + nmT(s.worstPort) + "</td><td>" + segConcept(s) + "</td></tr>";
       }).join("") + "</tbody></table></div>";
+    h += wxHtml(res, print);
     var R = print ? res.rows.filter(function (r, i) { return r.pt.wp >= 0 || r.remote || i % Math.max(1, Math.round(100 / res.opts.step)) === 0; }) : res.rows;
     h += "<h3>4. Distance table</h3><p class=\"obs\">Great-circle distances (spherical haversine, Earth radius 3,440.065 NM) from points along the corridor every " + res.opts.step + " NM" + (print ? " (waypoints, remote points and every ~100 NM shown)" : "") + ". Spatial separation only: they exclude the aircraft's real base, air routing, refuelling, reserves, retrieval, ground transfer and treatment delay. Do not divide an advertised maximum range by two and call the result rescue coverage.</p>" +
       '<div class="stscroll"><table><thead><tr><th>Point</th><th>NM from start' + (res.opts.dep ? " / ETA" : "") + '</th><th>Nearest coast</th><th>Port</th><th>Sourced hospital</th><th>Hospital (OSM, reference)</th><th>Airport ≥ ' + res.opts.rwy + " m runway</th></tr></thead><tbody>" +

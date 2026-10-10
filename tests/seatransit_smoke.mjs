@@ -23,7 +23,15 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
 const errors = [], outside = [];
-await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (!/tile|basemap|openfreemap|arcgisonline|cartocdn|fonts/.test(u)) outside.push(u); return r.abort(); });
+// the marine forecast for the corridor points (several latitudes in one call): 3 m seas, 20 kn wind, 25 kn gusts
+const wxCalls = [];
+function series(n, keys) {
+  const t0 = Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate());
+  const time = Array.from({ length: 192 }, (_, i) => new Date(t0 + i * 3600000).toISOString().slice(0, 16));
+  return Array.from({ length: n }, () => ({ hourly: Object.assign({ time }, ...Object.entries(keys).map(([k, v]) => ({ [k]: time.map(() => v) }))) }));
+}
+await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (/latitude=[^&]*,/.test(u) && /marine-api\.open-meteo\.com|api\.open-meteo\.com\/v1\/forecast/.test(u)) { wxCalls.push(u); const n = new URL(u).searchParams.get("latitude").split(",").length;
+    return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(/marine/.test(u) ? series(n, { wave_height: 3.0, swell_wave_height: 1.5, wave_period: 8 }) : series(n, { wind_speed_10m: 20, wind_gusts_10m: 25, visibility: 24000 })) }); } if (!/tile|basemap|openfreemap|arcgisonline|cartocdn|fonts/.test(u)) outside.push(u); return r.abort(); });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); } catch (e) {} });
 const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
 await p.goto(base, { waitUntil: "domcontentloaded" });
@@ -73,6 +81,13 @@ else {
   ok(!r.covered, "no point is called covered");
   ok(r.layer > 0, `the corridor and support points are drawn on the map (${r.layer} marks)`);
   ok(!r.errs.length, "every data set was read" + (r.errs.length ? ": " + r.errs.join("; ") : ""));
+  await p.waitForFunction(() => /Weather data by Open-Meteo/.test(document.getElementById("seatr").textContent), null, { timeout: 30000 });
+  const wx = await p.evaluate(() => { const res = window.OSAP_SEATRANSIT.state().res; return { n: res.wx.rows.length, eta: res.wx.rows.filter((w) => w.basis === "eta").length, rough: res.wx.rows.every((w) => w.hs === 3 && w.flags.some((f) => /rough sea/.test(f))), wind: res.wx.rows[0].wind, t: document.getElementById("seatr").textContent }; });
+  ok(wxCalls.length === 2, `marine weather read in two calls for every corridor point (${wxCalls.length})`);
+  ok(wx.n === 17, `sea state at each waypoint and segment midpoint (${wx.n} points)`);
+  ok(wx.eta > 0, `with a departure time, values are read at each point's ETA (${wx.eta} points)`);
+  ok(wx.rough && wx.wind === 20, "3 m seas are flagged rough; wind read in knots");
+  ok(/3a\. Sea state and wind along the corridor/.test(wx.t) && /not vessel, aircraft, hoist or boat-transfer limits/.test(wx.t), "the section says the flags are planning cues, not limits");
   // rings
   const ring = await p.evaluate(() => { const b = document.querySelector("#seatr [data-st-ring]"); if (!b) return null; b.click(); return window.OSAP_SEATRANSIT.state().plan.rings.length; });
   ok(ring === 1, "100/200 NM rings can be switched on for a support point");
