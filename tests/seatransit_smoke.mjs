@@ -24,13 +24,18 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
 const errors = [], outside = [];
 // the marine forecast for the corridor points (several latitudes in one call): 3 m seas, 20 kn wind, 25 kn gusts
-const wxCalls = [];
+const wxCalls = [], osmCalls = [];
 function series(n, keys) {
   const t0 = Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate());
   const time = Array.from({ length: 192 }, (_, i) => new Date(t0 + i * 3600000).toISOString().slice(0, 16));
   return Array.from({ length: n }, () => ({ hourly: Object.assign({ time }, ...Object.entries(keys).map(([k, v]) => ({ [k]: time.map(() => v) }))) }));
 }
-await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (/latitude=[^&]*,/.test(u) && /marine-api\.open-meteo\.com|api\.open-meteo\.com\/v1\/forecast/.test(u)) { wxCalls.push(u); const n = new URL(u).searchParams.get("latitude").split(",").length;
+await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => { const u = r.request().url(); if (/overpass|interpreter/.test(u)) { osmCalls.push(decodeURIComponent(r.request().postData() || ""));
+    return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ osm3s: { timestamp_osm_base: "2026-10-10T00:00:00Z" }, elements: [
+      { type: "node", id: 9001, lat: 7.89, lon: 98.39, tags: { healthcare: "hyperbaric_chamber", name: "Test Phuket Chamber" } },
+      { type: "node", id: 9002, lat: 1.35, lon: 103.99, tags: { emergency: "air_rescue_service", name: "Test Air Rescue Base", operator: "Test Operator" } },
+      { type: "way", id: 9003, center: { lat: 3.14, lon: 101.69 }, tags: { "healthcare:speciality": "burn", name: "Test Burns Unit" } }] }) }); }
+    if (/latitude=[^&]*,/.test(u) && /marine-api\.open-meteo\.com|api\.open-meteo\.com\/v1\/forecast/.test(u)) { wxCalls.push(u); const n = new URL(u).searchParams.get("latitude").split(",").length;
     return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(/marine/.test(u) ? series(n, { wave_height: 3.0, swell_wave_height: 1.5, wave_period: 8 }) : series(n, { wind_speed_10m: 20, wind_gusts_10m: 25, visibility: 24000 })) }); } if (!/tile|basemap|openfreemap|arcgisonline|cartocdn|fonts/.test(u)) outside.push(u); return r.abort(); });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); } catch (e) {} });
 const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -88,6 +93,11 @@ else {
   ok(wx.eta > 0, `with a departure time, values are read at each point's ETA (${wx.eta} points)`);
   ok(wx.rough && wx.wind === 20, "3 m seas are flagged rough; wind read in knots");
   ok(/3a\. Sea state and wind along the corridor/.test(wx.t) && /not vessel, aircraft, hoist or boat-transfer limits/.test(wx.t), "the section says the flags are planning cues, not limits");
+  await p.waitForFunction(() => /Test Phuket Chamber/.test(document.getElementById("seatr").textContent), null, { timeout: 30000 });
+  const sp = await p.evaluate(() => { const t = document.getElementById("seatr").textContent, o = window.OSAP_SEATRANSIT.state().res.osmSpec; return { t, hb: o.hb.length, air: o.air.length, burn: o.burn.length }; });
+  ok(osmCalls.length === 1 && /hyperbaric_chamber/.test(osmCalls[0]) && /air_rescue_service/.test(osmCalls[0]) && /around:300000/.test(osmCalls[0]), "one OpenStreetMap query for chambers, burns units and air rescue bases within 300 km of the corridor");
+  ok(sp.hb === 1 && sp.air === 1 && sp.burn === 1 && /Test Air Rescue Base/.test(sp.t) && /Test Burns Unit/.test(sp.t), "mapped chamber, burns unit and air rescue base listed with distance from the corridor");
+  ok(/5a\. Specialist care and rescue aviation/.test(sp.t) && /Neurosurgery/.test(sp.t) && /A mapped air rescue base is not a tasking/.test(sp.t), "specialist section: sourced capabilities by type, OSM labelled reference only");
   // rings
   const ring = await p.evaluate(() => { const b = document.querySelector("#seatr [data-st-ring]"); if (!b) return null; b.click(); return window.OSAP_SEATRANSIT.state().plan.rings.length; });
   ok(ring === 1, "100/200 NM rings can be switched on for a support point");
@@ -116,8 +126,8 @@ ok(await p.evaluate(() => document.getElementById("seatr").hidden && !document.q
 await p.reload({ waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_SEATRANSIT, null, { timeout: 60000 });
 ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 4), "the corridor is kept on this device after a reload");
-const asked = outside.filter((u) => /osrm|routed-|overpass|interpreter|valhalla|nominatim/.test(u));
-ok(!asked.length, "no road routing, Overpass or geocoder calls: the assessment uses the app's own data" + (asked.length ? ": " + asked.slice(0, 3).join(" ") : ""));
+const asked = outside.filter((u) => /osrm|routed-|valhalla|nominatim/.test(u));
+ok(!asked.length, "no road routing or geocoder calls: distances come from the app's own data" + (asked.length ? ": " + asked.slice(0, 3).join(" ") : ""));
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
 await browser.close(); server.close();
 if (fails) { console.log(fails + " failed"); process.exit(1); }
