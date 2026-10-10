@@ -98,6 +98,21 @@ else {
   ok(osmCalls.length === 1 && /hyperbaric_chamber/.test(osmCalls[0]) && /air_rescue_service/.test(osmCalls[0]) && /around:300000/.test(osmCalls[0]), "one OpenStreetMap query for chambers, burns units and air rescue bases within 300 km of the corridor");
   ok(sp.hb === 1 && sp.air === 1 && sp.burn === 1 && /Test Air Rescue Base/.test(sp.t) && /Test Burns Unit/.test(sp.t), "mapped chamber, burns unit and air rescue base listed with distance from the corridor");
   ok(/5a\. Specialist care and rescue aviation/.test(sp.t) && /Neurosurgery/.test(sp.t) && /A mapped air rescue base is not a tasking/.test(sp.t), "specialist section: sourced capabilities by type, OSM labelled reference only");
+  // in transit: plan status, position log, casualty request message
+  await p.selectOption("#seatr [data-st-status]", "approved");
+  await p.fill("#st-lgrid", "2.40, 101.60"); await p.fill("#st-lnote", "Test fix"); await p.click('#st-log button[type="submit"]');
+  const tr = await p.evaluate(() => { const t = document.querySelector("#seatr .stnow").textContent; return { t, st: window.OSAP_SEATRANSIT.state().plan.st, log: window.OSAP_SEATRANSIT.state().plan.log, now: [...document.querySelectorAll(".stmk.now")].length, near: /Nearest now: port/.test(document.getElementById("seatr").textContent) }; });
+  ok(tr.st.length === 1 && tr.st[0].s === "approved", "plan status is recorded with the time it was set");
+  ok(tr.log.length === 1 && /NM along/.test(tr.t) && /WP4–WP5|WP3–WP4/.test(tr.t), "a logged position shows NM along, NM to go and its leg: " + tr.t.slice(0, 120));
+  ok(tr.now === 1 && tr.near, "the last position is marked NOW on the map, with the nearest port, hospital and airport");
+  await p.selectOption('#seatr [data-st-cas="urg"]', "urgency");
+  await p.fill('#seatr [data-st-cas="n"]', "1"); await p.dispatchEvent('#seatr [data-st-cas="n"]', "change");
+  await p.fill('#seatr [data-st-cas="what"]', "Fall from height 0930Z"); await p.dispatchEvent('#seatr [data-st-cas="what"]', "change");
+  const msg = await p.inputValue("#st-castext");
+  ok(/^MEDICAL ASSISTANCE REQUEST \(URGENCY\)/.test(msg) && /Position: 2\.40 N \/ 101\.60 E/.test(msg) && /Fall from height 0930Z/.test(msg) && /NM off the planned corridor/.test(msg), "the request message carries the urgency, last position, corridor progress and what was entered");
+  ok(/Forecast sea and wind near the position/.test(msg), "the request message adds the forecast near the position");
+  await p.click('#seatr [data-st="casclear"]');
+  ok(await p.evaluate(() => Object.keys(window.OSAP_SEATRANSIT.state().plan.cas).length === 0 && /\[ \]/.test(document.getElementById("st-castext").value)), "Clear casualty details empties the form and the message");
   // rings
   const ring = await p.evaluate(() => { const b = document.querySelector("#seatr [data-st-ring]"); if (!b) return null; b.click(); return window.OSAP_SEATRANSIT.state().plan.rings.length; });
   ok(ring === 1, "100/200 NM rings can be switched on for a support point");
@@ -125,7 +140,7 @@ ok(await p.evaluate(() => document.getElementById("seatr").hidden && !document.q
 // kept on this device
 await p.reload({ waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_SEATRANSIT, null, { timeout: 60000 });
-ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 4), "the corridor is kept on this device after a reload");
+ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 4 && window.OSAP_SEATRANSIT.state().plan.log.length === 1), "the corridor and the position log are kept on this device after a reload");
 const asked = outside.filter((u) => /osrm|routed-|valhalla|nominatim/.test(u));
 ok(!asked.length, "no road routing or geocoder calls: distances come from the app's own data" + (asked.length ? ": " + asked.slice(0, 3).join(" ") : ""));
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
