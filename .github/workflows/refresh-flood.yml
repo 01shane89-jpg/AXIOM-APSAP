@@ -34,12 +34,22 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    # issues: write only so the Deep South step can read the owner's analyst-decision issues and answer and close them afterwards
+    # (tools/decision_lib.mjs, tools/decisions_close.mjs).
+    permissions:
+      contents: write
+      issues: write
     # A full run takes about 25 minutes (news ~8, social ~6, warnings ~3). At 30 the job was cancelled before "Commit if a snapshot
     # changed", so nothing was saved. Each pull step has its own time limit (about 1.5x its slowest run on 2026-10-03), so one stuck
     # feed is cut off and the run still commits everything else: on 2026-10-03 the news step hung for 50 minutes and nothing was saved.
     timeout-minutes: 55
     steps:
+      # The branch as it is when the job starts, not the commit it was dispatched at: a run queued behind another one in the same
+      # lane otherwise starts from data older than the previous run's commit. On 2026-10-10 the 06:17Z news run waited until 06:43Z,
+      # read the Deep South stores without the 06:37Z records and wrote every capture and claim a second time.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
@@ -122,9 +132,12 @@ jobs:
         continue-on-error: true
       # Thailand's Deep South (insurgency layer only): Deep South outlets and searches, the news step's Deep South items, and UCDP's
       # Patani-conflict events for the past 13 months. Runs after the news step because it reads data/live/news.js.
+      # The job's own token lets it read the owner's analyst-decision issues (tools/decision_lib.mjs); it is never logged.
       - name: Pull Deep South insurgency reporting and translate Thai headlines
         if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'deepsouth' }}
         timeout-minutes: 9
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node tools/refresh_deepsouth.mjs
         continue-on-error: true
       # The conflict tabs and their extras run hourly in their own workflow (refresh-conflicts.yml), so this one stays short.
@@ -155,8 +168,9 @@ jobs:
             echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
           fi
           node tools/refresh_social.mjs
-          # relevance over social, shadow mode only: writes data/live/social-relevance.json, hides nothing
-          node tools/social_relevance.mjs || echo "social relevance report not written"
+          # relevance over social (tools/relevance-social.json "mode": "on"): marks left-out posts in data/live/social.js and the
+          # stored history, which the page shows only on request; writes data/live/social-relevance.json. If it fails, posts show unmarked.
+          node tools/social_relevance.mjs || echo "social relevance not applied"
           # public replies to the Bluesky posts, as aggregates only (no names or reply text): data/live/replies/<cc>.js
           node tools/social_replies.mjs || echo "social replies not written"
         continue-on-error: true
@@ -249,7 +263,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/live/translation-cache.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
@@ -265,17 +279,18 @@ jobs:
         continue-on-error: true
       # Only main commits snapshots; a run on a feature branch is a test and must not add data to the branch.
       - name: Commit if a snapshot changed
+        id: commit
         if: ${{ inputs.only != 'probe' && inputs.only != 'probe-roads' && inputs.only != 'probe-dense' && inputs.only != 'probe-news' && inputs.only != 'probe-cap' && inputs.only != 'probe-deepsouth' && inputs.only != 'probe-placement' && inputs.only != 'probe-refdata' && inputs.only != 'probe-leads' && inputs.only != 'probe-et' && inputs.only != 'probe-mt' && github.ref == 'refs/heads/main' }}
         env:
           LANE: ${{ inputs.lane }}
         run: |
           node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
-          git add -N data/live data/history $(ls -d data/captures data/claims 2>/dev/null)
-          if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims 2>/dev/null); then echo "no change"; exit 0; fi
+          git add -N data/live data/history $(ls -d data/captures data/claims data/decisions 2>/dev/null)
+          if git diff --quiet data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims data/decisions 2>/dev/null); then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           node tools/seal_hidden.mjs --check
-          git add data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims 2>/dev/null)
+          git add data/thailand/flood-live-snapshot.js data/live data/history $(ls -d data/captures data/claims data/decisions 2>/dev/null)
           git commit -m "Refresh live snapshots${LANE:+ ($LANE)} $(date -u +'%Y-%m-%d %H:%MZ')"
           # Pulling takes over a minute, and merges or the other refresh jobs often land on main meanwhile, so try a few times.
           for i in 1 2 3 4 5; do
@@ -283,6 +298,16 @@ jobs:
             git rebase --abort 2>/dev/null || true; sleep $((i * 5))
           done
           exit 1
+      # Answer and close the analyst-decision issues this run read: accepted ones only once the commit that records them is pushed,
+      # refused ones (with the reason) either way. Main only: a test run on a branch never touches the issues.
+      - name: Answer and close analyst-decision issues
+        if: ${{ always() && github.ref == 'refs/heads/main' && ((!inputs.only && inputs.lane != 'fast') || inputs.only == 'deepsouth') }}
+        timeout-minutes: 3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMMITTED: ${{ steps.commit.outcome }}
+        run: node tools/decisions_close.mjs
+        continue-on-error: true
 
   # Event summaries and conflict watch lists (tools/refresh_evsum.mjs), in their own job after the refresh so they never slow it
   # down or make it time out. Grouped events reported by two or more different sources, found by opening each country's page

@@ -846,6 +846,23 @@ async function openPlan(p) {
   ok(pr.ho === "visible" && pr.bo === "visible" && pr.bh > 4 * pr.vh && pr.h > 4 * pr.vh && pr.last, "phone print: html and body run the full length of the plan, so every page prints " + JSON.stringify(pr));
   await p.emulateMedia({ media: "screen" });
   if (OUT) await p.screenshot({ path: OUT + "/phone-print-view.png", fullPage: true });
+  /* Shane 2026-10-10: on his iPhone the CONOP's data-age table ran off the left of the screen and its From column wrapped a few
+     letters a line. Every print-view table stacks as labelled cards on a phone: nothing past the screen edge, no squeezed cells */
+  for (const mode of ["print", "printc"]) {
+    await p.click("#mpd-close"); await p.click('#medplan [data-mp="' + mode + '"]');
+    await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
+    await p.waitForTimeout(300);
+    const st = await p.evaluate(() => {
+      const vw = innerWidth, d = document.querySelector("#brief .mpdoc"), T = [...d.querySelectorAll("table")];
+      const out = [...d.querySelectorAll("table, td, th, td *")].filter((e) => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > vw + 1); }).map((e) => e.tagName + ":" + e.textContent.slice(0, 30));
+      const cells = [...d.querySelectorAll("td")].filter((c) => c.offsetParent && c.textContent.trim().length > 12);
+      const narrow = cells.filter((c) => (c.querySelector(".mpcv") || c).getBoundingClientRect().width < 120).map((c) => c.textContent.slice(0, 30));
+      const age = d.querySelector("table.mpage"), td = age && age.querySelector("td[data-l=From]");
+      return { n: T.length, flat: T.filter((t) => getComputedStyle(t.querySelector("thead") || t).display !== "none" && t.tHead).length, out: out.slice(0, 5), nOut: out.length, narrow: narrow.slice(0, 5), nNarrow: narrow.length,
+        age: !!age, from: td ? getComputedStyle(td, "::before").content : "", top: getComputedStyle(document.getElementById("brief")).paddingTop };
+    });
+    ok(st.n > 3 && st.flat === 0 && st.nOut === 0 && st.nNarrow === 0 && st.age && /From/.test(st.from), "phone " + mode + ": every table stacks as labelled cards, nothing off the screen and no squeezed column " + JSON.stringify(st));
+  }
   await p.click("#mpd-close");
   await p.evaluate(() => document.querySelector('#mp-fac [data-mp-assess]').click());
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpa-map") || {}).src || ""), null, { timeout: 20000 });

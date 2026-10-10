@@ -26,8 +26,10 @@ jobs:
         run: node tools/sw_version.mjs --same-as HEAD^1
       # data health rules and tools/health.json (outage alerts and the app's data badge)
       - run: node tests/health.test.mjs
+      - run: node tests/avwx.test.mjs
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
+      - run: node tests/decisions.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
@@ -35,6 +37,7 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
+      - run: node tests/conflict_figures.test.mjs
       - run: node tests/social_relevance.test.mjs
       - run: node tests/relevance_sample.test.mjs
       - run: node tests/social_replies.test.mjs
@@ -76,6 +79,7 @@ jobs:
       - run: node tests/3d_smoke.mjs
       - run: node tests/milsym_smoke.mjs
       - run: node tests/milsites_smoke.mjs
+      - run: node tests/ds_review_smoke.mjs
       - run: node tests/cf_layout_smoke.mjs
       - run: node tests/sides_smoke.mjs
       - run: node tests/hillshade_smoke.mjs
@@ -109,6 +113,8 @@ jobs:
       - run: node tests/evac_lz_airfield_smoke.mjs
       - run: node tests/evac_foot_xc_smoke.mjs
       - run: node tests/epe_smoke.mjs
+      - run: node tests/epe_legs_smoke.mjs
+      - run: node tests/epe_corridor_smoke.mjs
       - run: node tests/route_api_smoke.mjs
       - run: node tests/route_preview_smoke.mjs
       - run: node tests/dc_smoke.mjs
@@ -127,8 +133,10 @@ jobs:
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
+      - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
       - run: node tests/report_english_smoke.mjs
+      - run: node tests/social_filter_smoke.mjs
       - run: node tests/speed_budget.mjs

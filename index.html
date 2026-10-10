@@ -5459,6 +5459,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     histN[layer] = older.length;
     var all = cur.concat(older);
     if (layer === "news") all = sameStory(all);
+    /* social posts the refresh job's relevance rules left out (tools/social_relevance.mjs marks them left_out: sport, entertainment,
+       lifestyle, or no security, politics, crime, disaster or economy word) stay off the list and the map until "Show left-out posts" */
+    if (layer === "social") {
+      leftN = all.filter(function (i) { return i.left_out; }).length;
+      if (!socialAll) all = all.filter(function (i) { return !i.left_out; });
+    }
     all.forEach(function (i) {
       var s = src(layer + "-" + String(i.outlet || i.account || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"), i.outlet || i.account || "Unknown outlet",
         layer === "news" ? (i.state ? "State media (a government's own statements)" : "News outlet, via " + (i.via || "feed")) : (i.platform || "Social media") + " account: " + (i.kind || "official or established"),
@@ -5476,7 +5482,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         derived: [ep.note, ep.untr ? "" : mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough centre of that region)" : pl.gn ? " (the town centre, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
-        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined };
+        thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined,
+        leftOut: layer === "social" && i.left_out ? String(i.left_out) : undefined };
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -5506,7 +5513,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   LCOL.social = "--sat-flood";
-  var histN = {};
+  var histN = {}, leftN = 0, socialAll = false;
   addNewsRecords("ASAP_NEWS", "news", "news");
   addNewsRecords("ASAP_SOCIAL", "social", "social");
   /* feed history for this area only, loaded after the page is up so it never delays the first view */
@@ -5617,11 +5624,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<p class="obs">' + recs.length + " in " + esc(periodLabel()) + ", " + recs.filter(function (r) { return r.lat != null; }).length + " placed on the map by a place name." +
       (histN[layer] ? " Includes " + histN[layer] + " earlier item" + (histN[layer] === 1 ? "" : "s") + " kept from past refreshes (up to 12 months)." : "") +
       (recs.length < recsAll.length ? hiddenNote(recsAll.length - recs.length, true) : "") + "</p>" +
+      (layer === "social" && leftN ? '<p class="obs">' + (socialAll ? "Showing every post, including " : "") + leftN + " post" + (leftN === 1 ? "" : "s") +
+        (socialAll ? " the relevance rules leave out (marked “left out”)." : " left out as sport, entertainment, lifestyle or off-topic (no security, politics, crime, disaster or economy word).") +
+        ' <button type="button" class="refresh" id="social-all">' + (socialAll ? "Hide left-out posts" : "Show left-out posts") + "</button></p>" : "") +
       (layer === "news" && recs.length ? topHtml(recs) + '<div id="news-full"' + (newsAll ? "" : " hidden") + '><h2 style="margin-top:10px">All headlines</h2>' : "<div>") +
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
         var pic = r.thumb || r.img;
         return '<button type="button" class="tlrow' + (pic ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (pic ? '<img class="ytthumb" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
-          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + "</span></span></button>";
+          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + (r.leftOut ? " · left out (" + esc(r.leftOut) + ")" : "") + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
@@ -5631,6 +5641,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var SS = window.OSAP_SOCSTATS;
     railO.innerHTML = SS ? SS.wrap(html) : html;
     if (SS) SS.bind(railO, { cc: CC, name: C.name, esc: esc });
+    var b = document.getElementById("social-all");
+    if (b) b.addEventListener("click", function () {
+      socialAll = !socialAll; addNewsRecords("ASAP_SOCIAL", "social", "social");
+      try { render(); } catch (e) {}
+      showSocial();
+    });
   }
   function showNews() {
     railO.innerHTML = feedList("ASAP_NEWS", "news", "news", "Local news", "Filled by the GitHub job every 15 minutes once the app is hosted.",
@@ -8714,6 +8730,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-share.js"></script>
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
+<script src="assets/osap-ds-review.js"></script>
 <script src="assets/osap-heat.js"></script>
 <script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
