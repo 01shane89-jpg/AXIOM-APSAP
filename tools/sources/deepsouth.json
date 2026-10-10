@@ -1,0 +1,1951 @@
+{
+ "schema": "osap-source-registry/1",
+ "note": "Source registry for the Deep South pilot (Conflict Coverage plan, Phase 1). One entry per source the Deep South job reads. permission.status: cleared (licence or terms checked and allow storage, translation and redistribution), nc (non-commercial use only, tagged so it can be stripped), link-only (store the link and metadata, no text), pending (not yet checked), excluded. A source's identity check says the account or site belongs to that publisher; it never says a report from it is true. tests/source_registry.test.mjs fails when a feed in tools/deepsouth_feeds.json has no entry here.",
+ "sources": [
+  {
+   "source_id": "isoc4",
+   "publisher": "ISOC Region 4 Forward Command (southpeace.go.th)",
+   "url": "https://www.southpeace.go.th/?feed=rss2",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "official",
+   "state_media": true,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": "Public government website",
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "prachatai-en",
+   "publisher": "Prachatai English",
+   "url": "https://prachataienglish.com/rss.xml",
+   "connector": "rss",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "prachatai-th",
+   "publisher": "Prachatai",
+   "url": "https://prachatai.com/rss.xml",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "khaosod-en",
+   "publisher": "Khaosod English",
+   "url": "https://www.khaosodenglish.com/feed/",
+   "connector": "rss",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "thaiexaminer",
+   "publisher": "Thai Examiner",
+   "url": "https://www.thaiexaminer.com/feed/",
+   "connector": "rss",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-th",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "matichon",
+   "publisher": "Matichon",
+   "url": "https://www.matichon.co.th/feed",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "khaosod-th",
+   "publisher": "Khaosod",
+   "url": "https://www.khaosod.co.th/feed",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-nara-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Narathiwat&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-patt-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Pattani&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-yala-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Yala%20Thailand&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-nara-th",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-patt-th",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-yala-th",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2%20%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "prd-pattani",
+   "publisher": "Pattani Provincial Public Relations Office",
+   "url": "https://pattani.prd.go.th/",
+   "connector": "html",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "official",
+   "state_media": true,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": "Public government website",
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "prd-yala",
+   "publisher": "Yala Provincial Public Relations Office",
+   "url": "https://yala.prd.go.th/",
+   "connector": "html",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "official",
+   "state_media": true,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": "Public government website",
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "isranews-south",
+   "publisher": "Isranews Southern News Center",
+   "url": "https://www.isranews.org/article/south-news.html",
+   "connector": "html",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-thaipbsworld",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbsworld.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-nation",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Anationthailand.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-isranews",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Aisranews.org%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bernama",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Abernama.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%20OR%20%22southern%20Thailand%22%29&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-wires",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%28site%3Areuters.com%20OR%20site%3Aapnews.com%29%20%22southern%20Thailand%22&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-malay",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=letupan%20selatan%20Thailand&format=rss",
+   "connector": "search",
+   "languages": [
+    "ms"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-army4",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%97%E0%B8%B1%E0%B8%9E%E0%B8%A0%E0%B8%B2%E0%B8%84%E0%B8%97%E0%B8%B5%E0%B9%88%204%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-police9",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%A0%E0%B8%B9%E0%B8%98%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%84%209%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-eod",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%9A%E0%B8%81%E0%B8%B9%E0%B9%89%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-srt",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%9F%E0%B8%97.%20%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bomb-south",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bomb-nara",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bomb-patt",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bomb-yala",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%9A%E0%B8%B4%E0%B8%94%20%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-shot-nara",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-shot-patt",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87%20%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-ranger",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-volunteer",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%AD%E0%B8%AA.%20%E0%B8%96%E0%B8%B9%E0%B8%81%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-arson",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A7%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%B4%E0%B8%87%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-raid",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B4%E0%B8%94%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%84%E0%B9%89%E0%B8%99%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-faitai",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B9%84%E0%B8%9F%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-insurg-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=southern%20Thailand%20insurgents&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bomb-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Deep%20South%20Thailand%20bomb&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-ranger-en",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Narathiwat%20ranger&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-dailynews",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Adailynews.co.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-mgr",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Amgronline.com%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-thaipbs",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%8A%E0%B8%B2%E0%B8%A2%E0%B9%81%E0%B8%94%E0%B8%99%E0%B9%83%E0%B8%95%E0%B9%89&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-bkp",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Abangkokpost.com%20%28Narathiwat%20OR%20Pattani%20OR%20Yala%29&format=rss",
+   "connector": "search",
+   "languages": [
+    "en"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-new-nara",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss&qft=sortbydate%3d%221%22",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-new-patt",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%9B%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%B2%E0%B8%99%E0%B8%B5&format=rss&qft=sortbydate%3d%221%22",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-new-yala",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2&format=rss&qft=sortbydate%3d%221%22",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-new-shot",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B4%E0%B8%87&format=rss&qft=sortbydate%3d%221%22",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-new-ranger",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%97%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%99&format=rss&qft=sortbydate%3d%221%22",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-rueso",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B9%80%E0%B8%AA%E0%B8%B2%E0%B8%B0&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-rangae",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B0%E0%B9%81%E0%B8%87%E0%B8%B0&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-bacho",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B2%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-takbai",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%95%E0%B8%B2%E0%B8%81%E0%B9%83%E0%B8%9A&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-kolok",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B9%84%E0%B8%AB%E0%B8%87%E0%B9%82%E0%B8%81-%E0%B8%A5%E0%B8%81&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-choairong",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%88%E0%B8%B2%E0%B8%B0%E0%B9%84%E0%B8%AD%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-sisakhon",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%A3&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-sukhirin",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B8%E0%B8%84%E0%B8%B4%E0%B8%A3%E0%B8%B4%E0%B8%99&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-chanae",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%88%E0%B8%B0%E0%B9%81%E0%B8%99%E0%B8%B0&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-yingo",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B5%E0%B9%88%E0%B8%87%E0%B8%AD&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-raman",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%B1%E0%B8%99&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-bannang",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%99%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%95%E0%B8%B2&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-thanto",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B9%82%E0%B8%95&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-krongpinang",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%B4%E0%B8%99%E0%B8%B1%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-nongchik",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AB%E0%B8%99%E0%B8%AD%E0%B8%87%E0%B8%88%E0%B8%B4%E0%B8%81&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-yaring",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%AB%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-saiburi",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B2%E0%B8%A2%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-khokpho",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%82%E0%B8%84%E0%B8%81%E0%B9%82%E0%B8%9E%E0%B8%98%E0%B8%B4%E0%B9%8C&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-mayo",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A1%E0%B8%B2%E0%B8%A2%E0%B8%AD&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-yarang",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%A2%E0%B8%B0%E0%B8%A3%E0%B8%B1%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-panare",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%9B%E0%B8%B0%E0%B8%99%E0%B8%B2%E0%B9%80%E0%B8%A3%E0%B8%B0&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-tyd",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%97%E0%B8%B8%E0%B9%88%E0%B8%87%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B9%81%E0%B8%94%E0%B8%87&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-kapho",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%81%E0%B8%B0%E0%B8%9E%E0%B9%89%E0%B8%AD&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-maikaen",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%84%E0%B8%A1%E0%B9%89%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-saba",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B8%AA%E0%B8%B0%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%A2&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-d-thepha",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%E0%B8%84%E0%B8%99%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A2%20%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%B2&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "bing-thaipbs-nara",
+   "publisher": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=site%3Athaipbs.or.th%20%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA&format=rss",
+   "connector": "search",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "discovery",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "nc",
+    "evidence": "Search aggregator results: leads to the outlet's article, non-commercial use only (tagged nc).",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "kaoded-border",
+   "publisher": "77 Kaoded (border section)",
+   "url": "https://77kaoded.news/category/border/feed/",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "reporters-ds",
+   "publisher": "The Reporters (Deep South section)",
+   "url": "https://www.thereporters.co/category/deepsouth/feed/",
+   "connector": "rss",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South (Pattani, Yala, Narathiwat, Songkhla: Chana, Thepha, Na Thawi, Saba Yoi)",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": null,
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "news",
+   "publisher": "Thailand's national outlets (read by the news step, tools/news_feeds.json)",
+   "url": null,
+   "connector": "news-step",
+   "languages": [
+    "th",
+    "en"
+   ],
+   "geography": "TH",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "pending",
+    "evidence": "Per outlet in tools/news_feeds.json; not yet checked one by one.",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  },
+  {
+   "source_id": "dsw-stats",
+   "publisher": "Deep South Watch (monthly statistics listing)",
+   "url": "https://deepsouthwatch.org",
+   "connector": "site-listing",
+   "languages": [
+    "th"
+   ],
+   "geography": "TH Deep South",
+   "role": "outlet",
+   "state_media": false,
+   "ownership_group": null,
+   "permission": {
+    "status": "link-only",
+    "evidence": "Links to the monthly statistics pages only; no text stored.",
+    "checked": null
+   },
+   "identity": {
+    "method": null,
+    "checked": null
+   },
+   "cadence": "news lane, about every 15 min",
+   "active": true
+  }
+ ]
+}

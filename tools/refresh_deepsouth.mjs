@@ -28,6 +28,7 @@ async function get(url, accept) {
 
 import { classify, figure, place, relevant, markAlerts, KILLED, INJURED, placeSubst, placeMismatch } from "./deepsouth_lib.mjs";
 import { staleSearchResult } from "./conflict_lib.mjs";
+import { readIndex, plan as capturePlan, write as captureWrite } from "./capture_lib.mjs";
 
 // Kept from refresh_news.mjs: a search engine's result list is read only where its robots.txt allows the path for every agent.
 const robotsCache = {};
@@ -261,6 +262,21 @@ for (const i of items) {
 markAlerts(items, (i) => [i.title, i.title_en, i.summary, i.summary_en].filter(Boolean).join(" "));
 const ok = status.some((s) => s.ok && s.id !== "ucdp") || ucdpStatus.ok;
 if (!ok) { console.error("every Deep South source failed; old file left untouched"); process.exit(1); }
+// Capture records (tools/capture_lib.mjs): every item read this run that the layer keeps is written once to data/captures/deepsouth,
+// append-only, with the source's own time, OSAP's first sighting and this run's time kept apart. A failure here is logged and
+// never stops the layer file below.
+try {
+  const EV_DIR = "data/captures/deepsouth", EV_RETAIN_DAYS = 365;
+  const registered = new Set(JSON.parse(fs.readFileSync("tools/sources/deepsouth.json", "utf8")).sources.map((s) => s.source_id));
+  const ctx = { collected: stamp.replace(" ", "T").replace(/Z$/, ""), retainDays: EV_RETAIN_DAYS,
+    sourceOf: (i) => (registered.has(i.feed) ? i.feed : "unregistered:" + (i.feed || "unknown")) };
+  const seenNow = new Set(fresh.map((i) => i.link));
+  const { records, index } = capturePlan(items.filter((i) => seenNow.has(i.link)), readIndex(EV_DIR), ctx);
+  const r = captureWrite(EV_DIR, records, index, ctx);
+  const late = records.filter((x) => x.time_check).length;
+  console.log(`Deep South captures: ${records.filter((x) => x.type === "capture").length} capture and ${records.filter((x) => x.type === "translation").length} translation records written` +
+    (late ? `, ${late} with a source time after this run` : "") + (r.dropped ? `, ${r.dropped} day files past retention removed` : ""));
+} catch (e) { console.error("Deep South captures not written:", e.message); }
 fs.mkdirSync("data/live", { recursive: true });
 fs.writeFileSync(OUT, "window.ASAP_DS=" + JSON.stringify({ asof: stamp, keep_days: KEEP_DAYS, sources: status, items,
   ucdp: [...ucdp.values()].filter((e) => e.date >= cutoff.slice(0, 10)).sort((a, b) => (a.date < b.date ? 1 : -1)), ucdp_files: [...ucdpFiles] }).replace(/<\//g, "<\\/") + ";\n");
