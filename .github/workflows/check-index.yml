@@ -29,12 +29,12 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
+      - run: node tests/social_relevance.test.mjs
       - run: node tests/comms.test.mjs
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
       - run: node tests/illum.test.mjs
       - run: node tests/hosp.test.mjs
-      - run: node tests/social_relevance.test.mjs
       - run: node tests/jp_ccc.test.mjs
       - run: node tests/medplan_model.test.mjs
       - run: node tests/terrain.test.mjs
