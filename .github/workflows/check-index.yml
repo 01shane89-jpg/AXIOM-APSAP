@@ -26,10 +26,10 @@ jobs:
         run: node tools/sw_version.mjs --same-as HEAD^1
       # data health rules and tools/health.json (outage alerts and the app's data badge)
       - run: node tests/health.test.mjs
+      - run: node tests/claims.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
-      - run: node tests/claims.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/milsites.test.mjs
