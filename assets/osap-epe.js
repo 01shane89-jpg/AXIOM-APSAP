@@ -26,6 +26,14 @@
    the node before it to the node after it (the routers' other lines, and Valhalla asked to keep off the failed line). The
    failed line stays on the plan, drawn as struck out. If no other line is found the leg stays unusable and the option is
    proposed Blocked.
+   Phase 3 (corridor, air and sea): each option has a corridor, a band of a width the analyst picks (0.5 to 25 km or their
+   own) round its line, with wider circles at the nodes they choose. OSAP lists the air and sea nodes inside it: established
+   airports (OurAirports reference list, airports with a code in OpenStreetMap), established heliports, known airfields,
+   candidate landing zones (mapped helipads and the landing zone finder's open ground) and user-verified landing zones (a
+   candidate only becomes one when the analyst presses Verify), seaports (UN/LOCODE reference list) and ferry terminals.
+   A leg can be flown or sailed: it is then a straight line timed at the speed the analyst sets (helicopter 220 kt, fixed
+   wing 400 kt, vessel 12 kt by default); OSAP cannot route aircraft or ships from open data. "Fly out from here" or "Sail
+   from here" on a node makes a ground-to-air or ground-to-sea option, ending where the analyst taps.
    Everything here is an automatic draft from open data: OSAP proposes, the analyst decides. No screen says an embassy, airport,
    crossing or road is open or safe. W.OSAP_EPE = { open(opts), close(), state() }; opts = { at: [lat, lon], how }. */
 (function () {
@@ -42,7 +50,13 @@
   var NODE_T = [["assembly", "Assembly area"], ["pickup", "Pickup point"], ["transfer", "Transfer point"], ["vehchange", "Vehicle change point"],
     ["airdep", "Air departure point"], ["seadep", "Sea departure point"], ["border", "Border crossing"], ["haven", "Safe haven"]];
   var NODE_N = {}; NODE_T.forEach(function (t) { NODE_N[t[0]] = t[1]; });
-  var MAX_NODES = 8;
+  var MAX_NODES = 8, MAX_ALL = 8;
+  /* how a leg is travelled: the plan's ground mode, or a straight line at a set speed */
+  var LEG_M = [["ground", "By road (plan's mode)"], ["helo", "Helicopter"], ["fw", "Fixed wing"], ["sea", "Vessel"]];
+  var SPD = { helo: 220, fw: 400, sea: 12 }, KT = 0.514444;
+  var WIDTHS = [0.5, 1, 2, 5, 10, 25];
+  var CLS = ["Established airport", "Established heliport", "Known airfield", "Candidate LZ", "User-verified LZ", "Seaport", "Ferry terminal"];
+  function flies(m) { return m === "helo" || m === "fw" || m === "sea"; }
 
   function G() { return W.OSAP_GEO; }
   function R() { return W.OSAP_ROUTETAB; }
@@ -78,7 +92,7 @@
   }
 
   /* ---------- state ---------- */
-  var S = { plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null };
+  var S = { plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null, atok: 0, abusy: null, amsg: "", flyPick: null };
   (function () { var c = lsGet(CUR, null), p = c && all().filter(function (x) { return x.id === c; })[0]; if (p) { S.plan = p; S.origin = p.origin; S.mode = p.mode || "car"; S.days = p.days || 30; } })();
   var layer = null;
 
@@ -117,7 +131,7 @@
     if (S.origin && Math.abs(S.origin.lat - lat) < 1e-6 && Math.abs(S.origin.lon - lon) < 1e-6) return;
     S.tok++; S.busy = false;
     S.origin = { lat: Math.round(lat * 1e6) / 1e6, lon: Math.round(lon * 1e6) / 1e6, label: clean(label, 80), how: clean(how, 60) };
-    S.plan = null; S.sel = null; S.msg = ""; S.ltok++; S.lbusy = null; S.lmsg = "";
+    S.plan = null; S.sel = null; S.msg = ""; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = "";
   }
 
   /* ---------- the engine: the Route tab's evacuation planner (assets/osap-route.js), loaded without opening the tab ---------- */
@@ -150,7 +164,7 @@
     if (!W.OSAP_EVAC) { S.msg = "The evacuation points are not loaded on this page. Reload and try again."; render(); return; }
     var tok = ++S.tok, o = S.origin, start = { lat: o.lat, lon: o.lon, name: o.label || "Origin" }, mode = S.mode, days = S.days;
     var picks = [], notes = [], k = 0;
-    S.ltok++; S.lbusy = null; S.lmsg = "";
+    S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = "";
     S.busy = true; S.msg = "Loading the route planner…"; S.plan = null; S.sel = null; render(); draw();
     function alive() { return tok === S.tok; }
     function say(t) { if (alive()) { S.msg = t; var m = D.getElementById("epe-msg"); if (m) m.textContent = t; } }
@@ -288,9 +302,11 @@
     var jobs = [];
     for (var i = 0; i < c.length - 1; i++) (function (i) {
       var a = c[i], b = c[i + 1], keepL = old.filter(function (l) { return sameP(l.a, a) && sameP(l.b, b); })[0];
-      if (keepL) { keepL.a = ref(a); keepL.b = ref(b); out[i] = keepL; return; }
+      if (keepL) { keepL.a = ref(a); keepL.b = ref(b); out[i] = flies(keepL.mode) ? straight(keepL, keepL.mode) : keepL; return; }
       jobs.push(function () {
         if (tok !== S.ltok) return;
+        var lm = a.type === "airdep" ? "helo" : a.type === "seadep" ? "sea" : "ground";
+        if (flies(lm)) { out[i] = straight({ id: "", a: ref(a), b: ref(b), failed: [] }, lm); return; }
         say2("Routing leg " + (i + 1) + " of " + (c.length - 1) + ": " + (a.name || NODE_N[a.type] || "") + " to " + (b.name || NODE_N[b.type] || "") + "…");
         routed++;
         return routeLeg(a, b, S.plan.mode).then(function (r) {
@@ -308,6 +324,182 @@
       return { routed: routed, errs: errs };
     });
   }
+  /* a flown or sailed leg: a great-circle line timed at the plan's set speed (OSAP cannot route aircraft or ships) */
+  function gc(a, b, n) {
+    var r = Math.PI / 180, p1 = [a[0] * r, a[1] * r], p2 = [b[0] * r, b[1] * r], d = hav(a, b) / 6371000, out = [];
+    if (d < 1e-9) return [a, b];
+    for (var i = 0; i <= n; i++) {
+      var f = i / n, A = Math.sin((1 - f) * d) / Math.sin(d), B = Math.sin(f * d) / Math.sin(d);
+      var x = A * Math.cos(p1[0]) * Math.cos(p1[1]) + B * Math.cos(p2[0]) * Math.cos(p2[1]), y = A * Math.cos(p1[0]) * Math.sin(p1[1]) + B * Math.cos(p2[0]) * Math.sin(p2[1]), z = A * Math.sin(p1[0]) + B * Math.sin(p2[0]);
+      out.push([Math.round(Math.atan2(z, Math.sqrt(x * x + y * y)) / r * 1e5) / 1e5, Math.round(Math.atan2(y, x) / r * 1e5) / 1e5]);
+    }
+    return out;
+  }
+  function speeds() { var p = S.plan, v = (p && p.spd) || {}; return { helo: +v.helo > 0 ? +v.helo : SPD.helo, fw: +v.fw > 0 ? +v.fw : SPD.fw, sea: +v.sea > 0 ? +v.sea : SPD.sea }; }
+  function straight(l, mode) {
+    var kt = speeds()[mode], m = hav([l.a.lat, l.a.lon], [l.b.lat, l.b.lon]);
+    l.mode = mode; l.coords = gc([l.a.lat, l.a.lon], [l.b.lat, l.b.lon], Math.max(2, Math.min(64, Math.round(m / 20000)))); l.m = Math.round(m); l.s = Math.round(m / (kt * KT));
+    l.src = "Straight line timed at " + kt + " kt, the speed set in this plan"; l.how = mode; l.calc = Date.now(); l.err = ""; l.bad = l.bad || 0;
+    return l;
+  }
+  /* the analyst changes how a leg is travelled: a flown or sailed leg is drawn straight; back to road routes it again */
+  function setLegMode(o, lid, mode) {
+    var l = legsOf(o).filter(function (x) { return x.id === lid; })[0]; if (!l) return;
+    if (flies(mode)) { straight(l, mode); l.failed = []; sumUp(o); save(); render(); draw(); return; }
+    var tok = ++S.ltok; S.lbusy = o.id; S.lmsg = l.id.replace("L", "Leg ") + " back to road: routing it…"; render();
+    routeLeg(l.a, l.b, S.plan.mode).then(function (r) {
+      if (tok !== S.ltok) return;
+      l.mode = "ground"; l.coords = r.coords; l.m = r.m; l.s = r.s; l.src = r.src; l.how = r.how; l.calc = Date.now(); l.err = ""; l.bad = 0;
+      S.lmsg = l.id.replace("L", "Leg ") + " routed by road.";
+    }, function (e) { if (tok === S.ltok) S.lmsg = l.id.replace("L", "Leg ") + ": no road route (" + e.message + "). It stays as it was."; })
+      .then(function () { if (tok !== S.ltok) return; S.lbusy = null; sumUp(o); save(); render(); draw(); });
+  }
+  function setSpeed(k, v) {
+    if (!S.plan || !SPD[k]) return;
+    v = Math.round(+v); if (!(v >= 1 && v <= 1000)) { render(); return; }
+    S.plan.spd = speeds(); S.plan.spd[k] = v;
+    S.plan.opts.forEach(function (o) { if (!o.legs) return; var ch = false; o.legs.forEach(function (l) { if (l.mode === k) { straight(l, k); ch = true; } }); if (ch) sumUp(o); });
+    save(); render(); draw();
+  }
+
+  /* ---------- the corridor and the air and sea nodes in it (phase 3) ---------- */
+  function corr(o) { if (!o.corr) o.corr = { w: 2, at: {} }; if (!o.corr.at) o.corr.at = {}; return o.corr; }
+  /* the circles round chosen nodes: [{ key, lat, lon, km }] */
+  function circles(o) {
+    var c = corr(o), out = [];
+    chain(o).forEach(function (n) { var k = nodeKey(n), km = +c.at[k]; if (km > 0) out.push({ key: k, lat: n.lat, lon: n.lon, km: km }); });
+    return out;
+  }
+  function nodeKey(n) { return n.type === "origin" ? "origin" : n.type === "dest" ? "dest" : n.id; }
+  /* route km and offset of a point from the option's line */
+  function onLine(o, p) {
+    var c = o.route.coords, best = { d: Infinity, at: 0 }, run = 0, cl = Math.cos(p[0] * Math.PI / 180), k = 111320;
+    for (var i = 0; i < c.length - 1; i++) {
+      var ax = wrap(c[i][1] - p[1]) * cl * k, ay = (c[i][0] - p[0]) * k, bx = wrap(c[i + 1][1] - p[1]) * cl * k, by = (c[i + 1][0] - p[0]) * k;
+      var dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy, f = l2 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l2)) : 0;
+      var x = ax + f * dx, y = ay + f * dy, d = Math.sqrt(x * x + y * y), seg = hav(c[i], c[i + 1]);
+      if (d < best.d) best = { d: d, at: run + f * seg };
+      run += seg;
+    }
+    return best;
+  }
+  function inCorr(o, p) {
+    var w = corr(o).w * 1000, ol = onLine(o, p);
+    return ol.d <= w || circles(o).some(function (c) { return hav([c.lat, c.lon], p) <= c.km * 1000; });
+  }
+  function q5(v) { return (+v).toFixed(5); }
+  function ovq(pts, R) {
+    var ar = "(around:" + Math.round(R) + "," + pts.map(function (p) { return q5(p[0]) + "," + q5(wrap(p[1])); }).join(",") + ")";
+    return "[out:json][timeout:60];(nwr[\"aeroway\"~\"^(aerodrome|airstrip|heliport|helipad)$\"]" + ar + ";nwr[\"military\"=\"airfield\"]" + ar + ";nwr[\"amenity\"=\"ferry_terminal\"]" + ar + ";);out center tags qt 400;";
+  }
+  function circQ(c) { return "[out:json][timeout:60];(nwr[\"aeroway\"~\"^(aerodrome|airstrip|heliport|helipad)$\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + ");nwr[\"military\"=\"airfield\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + ");nwr[\"amenity\"=\"ferry_terminal\"](around:" + Math.round(c.km * 1000) + "," + q5(c.lat) + "," + q5(wrap(c.lon)) + "););out center tags qt 200;"; }
+  function osmCls(t) {
+    var ty = String(t["aerodrome:type"] || t.aerodrome || "").toLowerCase();
+    if (t.amenity === "ferry_terminal") return ["Ferry terminal", "Ferry terminal"];
+    if (t.aeroway === "helipad") return ["Candidate LZ", "Mapped helipad"];
+    if (t.aeroway === "heliport") return ["Established heliport", "Heliport"];
+    if (t.military === "airfield" || /military|air_?base/.test(ty)) return ["Known airfield", "Military airfield"];
+    if (t.aeroway === "airstrip") return ["Known airfield", "Airstrip"];
+    if (t.iata || /international|regional/.test(ty)) return ["Established airport", /international/.test(ty) ? "International airport" : "Airport"];
+    return ["Known airfield", /private/.test(ty) ? "Private airfield" : /gliding/.test(ty) ? "Gliding field" : "Airfield"];
+  }
+  /* the air and sea nodes inside the selected option's corridor: OSAP's reference airports and seaports near the line and
+     OpenStreetMap along it (in pieces of about 300 km, the mirrors in turn), kept with the option */
+  function findAir(o) {
+    var tok = ++S.atok, w = corr(o).w, c = o.route.coords, m = lineM(c), notes = [];
+    S.abusy = o.id; S.amsg = "Looking for airports, airfields, heliports, helipads, seaports and ferry terminals within " + w + " km of the line…"; render();
+    var list = [], seen = {};
+    function add(x) {
+      var p = [x.lat, x.lon]; if (!inCorr(o, p)) return;
+      var key = x.cls + ":" + x.lat.toFixed(3) + "," + x.lon.toFixed(3); if (seen[key]) return;
+      /* an OpenStreetMap airport within 3 km of a reference one is the same place */
+      if (/^osm:/.test(x.id) && list.some(function (y) { return /^ref:/.test(y.id) && (y.cls === x.cls || y.cls === "Established airport" && /airfield|airport/i.test(x.cls)) && hav([y.lat, y.lon], p) < 3000; })) return;
+      seen[key] = 1; var ol = onLine(o, p); x.km = Math.round(ol.at / 100) / 10; x.off = Math.round(ol.d); list.push(x);
+    }
+    var EV = W.OSAP_EVAC, pieces = Math.max(1, Math.ceil(m / 300000)), at = along(c, Math.min(8, Math.max(2, Math.ceil(m / 50000))), 0, 1);
+    var ref1 = !EV ? Promise.resolve() : at.reduce(function (pr, p) {
+      return pr.then(function () { if (tok !== S.atok) return; return EV.nearest(p).then(function (nr) {
+        (nr.airports || []).forEach(function (r) { var i = r.x.i; add({ id: "ref:" + (i.id || i.name), cls: "Established airport", kind: i.kind || "Airport", name: clean(i.name, 90), lat: +i.lat, lon: +i.lon, src: safeUrl(i.src) || "OurAirports", basis: "reference list" }); });
+        (nr.seaports || []).forEach(function (r) { var i = r.x.i; add({ id: "ref:" + (i.id || i.name), cls: "Seaport", kind: i.kind || "Seaport", name: clean(i.name, 90), lat: +i.lat, lon: +i.lon, src: safeUrl(i.src) || "UN/LOCODE", basis: "reference list" }); });
+      }, function () { notes.push("The reference airports and seaports did not load for part of the line."); }); });
+    }, Promise.resolve());
+    function osm(q, what) {
+      return engine().then(function (Rt) { return Rt.overpass(q, 70000); }).then(function (j) {
+        j.elements.forEach(function (e) {
+          var t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
+          if (lat == null || lon == null || t.disused === "yes" || t.abandoned === "yes" || /\bmodel\b|aeromodel/i.test([t["aerodrome:type"], t.name].join(" "))) return;
+          var k = osmCls(t), code = clean(t.icao || t.iata || t.ref || "", 8), nm = clean(t["name:en"] || t.name || "", 70);
+          add({ id: "osm:" + e.type + "/" + e.id, cls: k[0], kind: k[1], name: nm ? nm + (code ? " (" + code + ")" : "") : k[1] + (code ? " " + code : ""), lat: +lat, lon: +wrap(+lon), surface: clean(t.surface || "", 30),
+            access: /^(private|no|military)$/.test(t.access || "") ? t.access : "", src: "https://www.openstreetmap.org/" + e.type + "/" + e.id, basis: "mapped" });
+        });
+      }, function (e) { notes.push("OpenStreetMap did not answer for " + what + " (" + e.message + "); nodes there may be missing."); });
+    }
+    ref1.then(function () {
+      var jobs = [];
+      for (var i = 0; i < pieces; i++) (function (i) {
+        var seg = along(c, 60, i / pieces, (i + 1) / pieces);
+        jobs.push(function () { if (tok !== S.atok) return; S.amsg = "Asking OpenStreetMap along the corridor, part " + (i + 1) + " of " + pieces + "…"; var m2 = D.getElementById("epe-amsg"); if (m2) m2.textContent = S.amsg; return osm(ovq(seg, Math.min(25000, w * 1000)), "part " + (i + 1) + " of the corridor"); });
+      })(i);
+      circles(o).forEach(function (cc0) { if (cc0.km > w) jobs.push(function () { if (tok !== S.atok) return; return osm(circQ(cc0), "the circle round " + cc0.key); }); });
+      return jobs.reduce(function (pr, f) { return pr.then(f); }, Promise.resolve());
+    }).then(function () {
+      if (tok !== S.atok) return;
+      var keepV = ((o.air && o.air.list) || []).filter(function (x) { return x.ver; });
+      keepV.forEach(function (v) { var x = list.filter(function (y) { return y.id === v.id; })[0]; if (x) { x.ver = v.ver; x.cls = "User-verified LZ"; } else if (inCorr(o, [v.lat, v.lon])) list.push(v); });
+      list.sort(function (a, b) { return a.km - b.km; });
+      o.air = { at: Date.now(), w: w, list: list.slice(0, 120), notes: notes };
+      S.abusy = null; S.amsg = list.length + " air and sea node" + (list.length === 1 ? "" : "s") + " inside the corridor." + (notes.length ? " " + notes.join(" ") : "");
+      save(); render(); draw();
+    });
+  }
+  /* candidate landing zones round one node of the chain (the landing zone finder's open ground and mapped helipads) */
+  function findLz(o, key) {
+    var n = chain(o).filter(function (x) { return nodeKey(x) === key; })[0]; if (!n) return;
+    var tok = ++S.atok; S.abusy = o.id; S.amsg = "Searching for open, flat ground round " + (n.name || "the node") + "…"; render();
+    engine().then(function (Rt) { return Rt.lzNear([n.lat, n.lon], [], function (t) { if (tok !== S.atok) return; S.amsg = t; var m2 = D.getElementById("epe-amsg"); if (m2) m2.textContent = t; }); }).then(function (c) {
+      if (tok !== S.atok) return;
+      o.air = o.air || { at: Date.now(), w: corr(o).w, list: [], notes: [] };
+      var nAdd = 0;
+      c.forEach(function (x) {
+        var i = x.i, id = "lz:" + (+i.lat).toFixed(5) + "," + (+i.lon).toFixed(5);
+        if (o.air.list.some(function (y) { return y.id === id || hav([y.lat, y.lon], [i.lat, i.lon]) < 30; })) return;
+        var ol = onLine(o, [i.lat, i.lon]); nAdd++;
+        o.air.list.push({ id: id, cls: i.kind === "Heliport" ? "Established heliport" : "Candidate LZ", kind: i.kind || "Landing zone candidate", name: clean(i.name, 90), lat: +i.lat, lon: +i.lon, note: clean(i.note, 400), src: safeUrl(i.src) || "Landing zone finder (this browser)", basis: i.src ? "mapped" : "modelled", km: Math.round(ol.at / 100) / 10, off: Math.round(ol.d), near: n.name || key });
+      });
+      o.air.list.sort(function (a, b) { return a.km - b.km; });
+      S.abusy = null; S.amsg = nAdd + " landing zone candidate" + (nAdd === 1 ? "" : "s") + " near " + (n.name || "the node") + ". Each stays a candidate until you verify it.";
+      save(); render(); draw();
+    }, function (e) { if (tok !== S.atok) return; S.abusy = null; S.amsg = "No landing zone candidates: " + e.message + "."; render(); });
+  }
+  function airOf(o, id) { return o.air && o.air.list.filter(function (x) { return x.id === id; })[0]; }
+  function verify(o, id, on) {
+    var x = airOf(o, id); if (!x || !(x.cls === "Candidate LZ" || x.cls === "User-verified LZ")) return;
+    if (on) { x.ver = Date.now(); x.cls = "User-verified LZ"; } else { x.ver = 0; x.cls = "Candidate LZ"; }
+    save(); render(); draw();
+  }
+  /* an air or sea node put into this option as its departure point */
+  function useAir(o, id) {
+    var x = airOf(o, id); if (!x) return;
+    var sea = x.cls === "Seaport" || x.cls === "Ferry terminal";
+    addNode(o, sea ? "seadep" : "airdep", x.lat, x.lon, x.name);
+  }
+  /* a ground-to-air or ground-to-sea option: origin by road to this node, then flown or sailed to where the analyst taps */
+  function flyOut(o, id, pt) {
+    var x = airOf(o, id); if (!x || !S.plan) return;
+    if (S.plan.opts.length >= MAX_ALL) { S.amsg = "At most " + MAX_ALL + " options in one plan. Delete one first."; render(); return; }
+    var sea = x.cls === "Seaport" || x.cls === "Ferry terminal", n = 1;
+    while (optOf("o" + n)) n++;
+    var nu = { id: "o" + n, kind: sea ? "sea" : "air", kindName: sea ? "Ground-to-sea" : "Ground-to-air", first: false, alt: false, role: "", st: "", stBy: 0, sug: "", made: Date.now(),
+      label: (sea ? "Ground-to-sea: by road to " : "Ground-to-air: by road to ") + x.name + (sea ? ", then by vessel" : ", then flown"),
+      dest: { k: "analyst", cc: "", i: { id: null, name: "Final destination (yours)", lat: Math.round(pt[0] * 1e6) / 1e6, lon: Math.round(wrap(pt[1]) * 1e6) / 1e6, kind: "Final destination set by you" } },
+      nodes: [{ id: rid("n"), type: sea ? "seadep" : "airdep", lat: x.lat, lon: x.lon, name: x.name, by: Date.now() }],
+      route: { coords: [[S.plan.origin.lat, S.plan.origin.lon], [x.lat, x.lon]], m: 0, s: 0, legs: [], src: "", note: "", xc: false, how: "", off: 0 }, exp: { score: 0, n: 0, hits: [] }, nCand: 1, corr: { w: corr(o).w, at: {} } };
+    nu.legs = [{ id: "L0", a: ref(chain(nu)[0]), b: ref(chain(nu)[0]), mode: "ground", coords: [], m: 0, s: 0, failed: [] }];
+    nu.prop = { st: "Unknown", why: "Not yet worked out." };
+    S.plan.opts.push(nu); S.sel = nu.id;
+    rechain(nu, (sea ? "Ground-to-sea" : "Ground-to-air") + " option made.");
+  }
+
   /* the option's line, distance, time and incidents worked out again from its legs */
   function sumUp(o) {
     var legs = legsOf(o), coords = [], m = 0, s = 0;
@@ -317,7 +509,13 @@
       src: Array.from(new Set(legs.map(function (l) { return l.src; }).filter(Boolean))).join(", "), note: o.route.note || "", xc: false, how: legs.length > 1 ? "legs" : legs[0].how, off: end ? Math.round(hav(end, [o.dest.i.lat, o.dest.i.lon])) : 0 };
     var Rt = R();
     if (Rt && Rt.exposure) {
-      var ex = Rt.exposure(o.route.coords, S.plan.days);
+      /* incidents near the ground legs only: a flown or sailed leg does not use the roads under it */
+      var ex = { score: 0, hits: [] }, at0 = 0;
+      legs.forEach(function (l) {
+        if (!flies(l.mode) && l.coords.length > 1) { var e1 = Rt.exposure(l.coords, S.plan.days); ex.score += e1.score; e1.hits.forEach(function (h) { h.along += at0; ex.hits.push(h); }); }
+        at0 += l.m || 0;
+      });
+      ex.score = Math.round(ex.score * 10) / 10;
       o.exp = { score: ex.score, n: ex.hits.length, hits: ex.hits.slice(0, 40).map(function (h) { return { p: h.p, kind: h.kind, k: h.k, w: Math.round(h.w * 100) / 100, title: clean(h.title, 160), url: safeUrl(h.url), date: h.date || "", src: clean(h.src, 60), d: Math.round(h.d), along: Math.round(h.along) }; }) };
     }
     o.prop = propose(o);
@@ -347,7 +545,7 @@
     }, function (e) { if (tok !== S.ltok) return; S.lbusy = null; S.lmsg = "Legs not worked out: " + e.message + "."; render(); });
   }
   /* insert a node where it adds the least straight-line distance to the chain; the analyst can move it */
-  function addNode(o, type, lat, lon) {
+  function addNode(o, type, lat, lon, name) {
     if ((o.nodes || []).length >= MAX_NODES) { S.lmsg = "At most " + MAX_NODES + " nodes on one option."; render(); return; }
     var c = chain(o), p = [lat, wrap(lon)], best = 0, cost = Infinity;
     for (var i = 0; i < c.length - 1; i++) {
@@ -356,7 +554,7 @@
     }
     o.nodes = o.nodes || [];
     var same = o.nodes.filter(function (n) { return n.type === type; }).length;
-    o.nodes.splice(best, 0, { id: rid("n"), type: type, lat: Math.round(lat * 1e6) / 1e6, lon: Math.round(wrap(lon) * 1e6) / 1e6, name: NODE_N[type] + " " + (same + 1), by: Date.now() });
+    o.nodes.splice(best, 0, { id: rid("n"), type: type, lat: Math.round(lat * 1e6) / 1e6, lon: Math.round(wrap(lon) * 1e6) / 1e6, name: clean(name, 60) || NODE_N[type] + " " + (same + 1), by: Date.now() });
     rechain(o, NODE_N[type] + " placed.");
   }
   function moveNode(o, id, dir) {
@@ -368,6 +566,7 @@
   /* a leg marked unusable: only that leg is worked out again, from the node before it; every other leg is kept */
   function failLeg(o, lid) {
     var l = legsOf(o).filter(function (x) { return x.id === lid; })[0]; if (!l) return;
+    if (flies(l.mode)) { l.bad = Date.now(); S.lmsg = l.id.replace("L", "Leg ") + " is flown or sailed in a straight line, so OSAP has no other line for it. It stays unusable; move a node or change how it is travelled."; sumUp(o); save(); render(); draw(); return; }
     l.failed = (l.failed || []).concat([{ at: Date.now(), coords: thin(l.coords, 200), m: l.m, s: l.s, src: l.src }]).slice(-4);
     var tok = ++S.ltok; S.lbusy = o.id; S.lmsg = l.id.replace("L", "Leg ") + " marked unusable. Working out another line from " + (l.a.name || "the node before it") + "…"; render(); draw();
     routeLeg(l.a, l.b, l.mode || S.plan.mode, l.failed.map(function (f) { return f.coords; })).then(function (r) {
@@ -386,7 +585,8 @@
   function pickStart(node) {
     var map = W.__asapMap; if (!map) return;
     S.picking = true; S.pickNode = node || null; D.documentElement.classList.add("epe-picking"); map.getContainer().style.cursor = "crosshair";
-    if (node) S.lmsg = "Tap the map where the " + NODE_N[node.type].toLowerCase() + " is. Esc cancels."; else S.msg = "Tap the map where the people are. Esc cancels.";
+    if (node && node.fly) { S.flyPick = node.fly; S.amsg = "Tap the map where the flight or voyage ends (safe haven or final destination). Esc cancels."; }
+    else if (node) S.lmsg = "Tap the map where the " + NODE_N[node.type].toLowerCase() + " is. Esc cancels."; else S.msg = "Tap the map where the people are. Esc cancels.";
     render();
     map.once("click", onPick);
   }
@@ -394,13 +594,14 @@
     if (!S.picking) return;
     var nd = S.pickNode;
     pickEnd();
+    if (nd && nd.fly) { var of = optOf(nd.opt); if (of) flyOut(of, nd.fly, [e.latlng.lat, e.latlng.lng]); return; }
     if (nd) { var o = optOf(nd.opt); if (o) addNode(o, nd.type, e.latlng.lat, e.latlng.lng); return; }
     setOrigin(e.latlng.lat, e.latlng.lng, "", "Tapped on the map"); render(); draw();
   }
   function pickEnd() {
     var map = W.__asapMap;
     if (map) { map.off("click", onPick); map.getContainer().style.cursor = ""; }
-    if (S.picking) { S.picking = false; if (S.pickNode) S.lmsg = ""; else S.msg = ""; S.pickNode = null; }
+    if (S.picking) { S.picking = false; if (S.pickNode && S.pickNode.fly) S.amsg = ""; else if (S.pickNode) S.lmsg = ""; else S.msg = ""; S.pickNode = null; S.flyPick = null; }
     D.documentElement.classList.remove("epe-picking");
   }
   function myLocation() {
@@ -499,7 +700,7 @@
         (o.exp.hits.length ? '<ol class="epehits">' + o.exp.hits.slice(0, 8).map(function (h) {
           return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
         }).join("") + "</ol>" : "") +
-        legsHtml(o) +
+        legsHtml(o) + corrHtml(o) +
         '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button>' + toolsHtml(o) + "</div>" + toolNote(o) + "</div>" : "") +
       "</div>";
   }
@@ -511,8 +712,10 @@
       '<ol class="epeleg">' + legs.map(function (l, i) {
         var k = km[i], pr = legProp(l, k), st = pr.st.toLowerCase();
         return '<li data-ep-leg="' + E(l.id) + '"' + (l.bad ? ' class="bad"' : "") + '><div class="epel1"><b>' + E(l.a.name || "Origin") + " → " + E(l.b.name || "Destination") + "</b>" +
+          '<select data-ep-lmode="' + E(l.id) + '" aria-label="How this leg is travelled"' + (busy ? " disabled" : "") + ">" + LEG_M.map(function (m) { return '<option value="' + m[0] + '"' + ((flies(l.mode) ? l.mode : "ground") === m[0] ? " selected" : "") + ">" + E(m[1]) + "</option>"; }).join("") + "</select>" +
           '<span class="epelkm">' + E(dist(l.m)) + " · " + E(dur(l.s)) + " · km " + E(Math.round(k.from / 100) / 10) + "–" + E(Math.round(k.to / 100) / 10) + "</span></div>" +
           '<div class="obs"><span class="st-' + st + '">' + E(pr.st) + "</span> (OSAP proposes): " + E(pr.why) +
+          (flies(l.mode) ? " " + E(l.src) + ". Straight line: no airspace, weather or sea state is checked." : "") +
           ((l.failed || []).length ? " " + E(l.failed.length) + " line" + (l.failed.length === 1 ? "" : "s") + " ruled out by you" + (l.bad ? "" : "; this is a different line") + "." : "") + (l.err ? ' <span class="epebad">' + E(l.err) + "</span>" : "") + "</div>" +
           (busy ? "" : l.bad ? '<button type="button" class="linkish" data-ep-unfail="' + E(l.id) + '">Usable again</button>' : '<button type="button" class="linkish" data-ep-fail="' + E(l.id) + '">Mark unusable</button>') + "</li>";
       }).join("") + "</ol>" +
@@ -525,6 +728,38 @@
       (busy ? '<button type="button" data-ep="lstop">Stop</button>' : "") + "</div>" +
       '<p id="epe-lmsg" class="obs" role="status">' + E(S.lmsg) + "</p>" +
       '<p class="obs">Nodes and their names are yours; OSAP routes between them. Marking a leg unusable works out that leg again from the node before it and keeps every other leg.</p></div>';
+  }
+  /* the corridor, its node circles and the air and sea nodes inside it */
+  function corrHtml(o) {
+    var c = corr(o), ch = chain(o), busy = S.abusy === o.id, a = o.air, sp = speeds();
+    var custom = WIDTHS.indexOf(c.w) < 0;
+    var h = '<div class="epecorr"><h4>Corridor <span class="obs">' + E(c.w) + " km each side of the line</span></h4>" +
+      '<div class="eperow"><label>Width <select data-ep-cw>' + WIDTHS.map(function (w) { return '<option value="' + w + '"' + (c.w === w ? " selected" : "") + ">" + w + " km</option>"; }).join("") + '<option value="x"' + (custom ? " selected" : "") + ">Your own…</option></select></label>" +
+        (custom ? '<label>km <input type="number" data-ep-cwx min="0.1" max="50" step="0.1" value="' + E(c.w) + '" style="width:80px"></label>' : "") + "</div>" +
+      '<details class="epecirc"' + (S.circOpen ? " open" : "") + '><summary>Wider circles at nodes' + (circles(o).length ? " (" + circles(o).length + ")" : "") + "</summary><ul>" + ch.map(function (n) {
+        var k = nodeKey(n), v = +c.at[k] || 0;
+        return "<li><span>" + E(n.name || NODE_N[n.type] || k) + '</span><select data-ep-circ="' + E(k) + '" aria-label="Circle round ' + E(n.name || k) + '"><option value="0">None</option>' + [2, 5, 10, 25].map(function (km) { return '<option value="' + km + '"' + (v === km ? " selected" : "") + ">" + km + " km</option>"; }).join("") + "</select></li>";
+      }).join("") + "</ul></details>" +
+      '<div class="epebtns"><button type="button" data-ep="air"' + (busy ? " disabled" : "") + ">" + (a ? "Look again for air and sea nodes" : "Find air and sea nodes in the corridor") + "</button>" +
+        '<select data-ep-lzat aria-label="Node to search round for landing zones">' + ch.map(function (n) { return '<option value="' + E(nodeKey(n)) + '">' + E(n.name || NODE_N[n.type] || "") + "</option>"; }).join("") + "</select>" +
+        '<button type="button" data-ep="lz"' + (busy ? " disabled" : "") + ">Find candidate LZs near it</button>" + (busy ? '<button type="button" data-ep="astop">Stop</button>' : "") + "</div>" +
+      '<p id="epe-amsg" class="obs" role="status">' + E(S.amsg || "") + "</p>";
+    if (a && a.list.length) {
+      h += '<p class="obs">Found ' + E(dual(a.at, true)) + (a.w !== c.w ? " with the corridor at " + E(a.w) + " km: look again for the new width" : "") + ". Mapped or listed is not open: check status, access and condition with the operator.</p>";
+      CLS.forEach(function (cls) {
+        var xs = a.list.filter(function (x) { return x.cls === cls; }); if (!xs.length) return;
+        h += '<h4 class="epecls">' + E(cls) + ' <span class="obs">' + xs.length + "</span></h4><ul class=\"epeair\">" + xs.slice(0, 25).map(function (x) {
+          var lz = cls === "Candidate LZ" || cls === "User-verified LZ", sea = cls === "Seaport" || cls === "Ferry terminal";
+          return '<li data-ep-air="' + E(x.id) + '"><span><b>' + E(x.name) + '</b> <i class="obs">' + E(x.kind) + " · km " + E(x.km) + ", " + E(dist(x.off)) + " off the line" + (x.surface ? " · " + E(x.surface) : "") + (x.access ? " · access " + E(x.access) : "") +
+            (x.ver ? " · verified by you " + E(dual(x.ver)) : "") + " · " + (/^https?:/.test(x.src) ? '<a href="' + E(x.src) + '" target="_blank" rel="noopener">source</a>' : E(x.src)) + "</i>" + (x.note ? '<br><span class="obs">' + E(x.note) + "</span>" : "") + "</span>" +
+            '<span class="epeairb">' + (lz ? '<button type="button" data-ep-ver="' + E(x.id) + '"' + (x.ver ? ' aria-pressed="true"' : "") + ">" + (x.ver ? "Verified" : "Verify LZ") + "</button>" : "") +
+            '<button type="button" data-ep-use="' + E(x.id) + '">' + (sea ? "Sea departure here" : "Air departure here") + "</button>" +
+            '<button type="button" data-ep-fly="' + E(x.id) + '"' + (S.flyPick === x.id ? ' aria-pressed="true"' : "") + ">" + (S.flyPick === x.id ? "Tap where it ends…" : sea ? "Sail from here" : "Fly out from here") + "</button></span></li>";
+        }).join("") + "</ul>";
+      });
+    } else if (a) h += '<p class="obs">No air or sea node OSAP holds or OpenStreetMap maps inside the corridor. That is not proof there is none.</p>';
+    h += '<div class="eperow"><span class="obs">Set speeds:</span>' + [["helo", "Helicopter"], ["fw", "Fixed wing"], ["sea", "Vessel"]].map(function (k) { return "<label>" + k[1] + ' <input type="number" data-ep-spd="' + k[0] + '" min="1" max="1000" value="' + E(sp[k[0]]) + '" style="width:70px"> kt</label>'; }).join("") + "</div></div>";
+    return h;
   }
   /* route tools other modules add (W.OSAP_EPE_CORRIDOR_TOOLS, e.g. Terrain's "Where this route can be seen from"):
      run(route, { signal }) with route { id, coords, km, dest }. Results are working views, not kept with the plan */
@@ -563,6 +798,8 @@
   }
 
   function onClick(e) {
+    var sm = e.target.closest("summary"), dt = sm && sm.parentNode;
+    if (dt && dt.classList.contains("epecirc")) S.circOpen = !dt.open;
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
@@ -578,11 +815,17 @@
     else if (b.hasAttribute("data-ep-unfail")) { var ou = optOf(S.sel); if (ou) unfailLeg(ou, b.getAttribute("data-ep-unfail")); }
     else if (b.hasAttribute("data-ep-nup") || b.hasAttribute("data-ep-ndn")) { var om = optOf(S.sel); if (om && !S.lbusy) moveNode(om, b.getAttribute("data-ep-nup") || b.getAttribute("data-ep-ndn"), b.hasAttribute("data-ep-nup") ? -1 : 1); }
     else if (b.hasAttribute("data-ep-ndel")) { var od = optOf(S.sel); if (od && !S.lbusy) delNode(od, b.getAttribute("data-ep-ndel")); }
+    else if (k === "air") { var oa = optOf(S.sel); if (oa) findAir(oa); }
+    else if (k === "lz") { var ol = optOf(S.sel), sel2 = D.querySelector("#epe [data-ep-lzat]"); if (ol && sel2) findLz(ol, sel2.value); }
+    else if (k === "astop") { S.atok++; S.abusy = null; S.amsg = "Stopped."; render(); }
+    else if (b.hasAttribute("data-ep-ver")) { var ov = optOf(S.sel), xv = ov && airOf(ov, b.getAttribute("data-ep-ver")); if (xv) verify(ov, xv.id, !xv.ver); }
+    else if (b.hasAttribute("data-ep-use")) { var ou2 = optOf(S.sel); if (ou2 && !S.lbusy) useAir(ou2, b.getAttribute("data-ep-use")); }
+    else if (b.hasAttribute("data-ep-fly")) { var id2 = b.getAttribute("data-ep-fly"); if (S.flyPick === id2) { pickEnd(); render(); } else { if (S.picking) pickEnd(); pickStart({ fly: id2, opt: S.sel }); } }
     else if (k === "toolstop") { if (S.tool && S.tool.ac) S.tool.ac.abort(); }
     else if (b.hasAttribute("data-ep-tool")) runTool(b.getAttribute("data-ep-tool"));
     else if (b.hasAttribute("data-ep-found")) { var f = S.found && S.found.list[+b.getAttribute("data-ep-found")]; if (f) { setOrigin(f.lat, f.lon, f.name, "Searched place (" + f.src + ")"); S.found = null; render(); draw(); fitPlan(); } }
-    else if (b.hasAttribute("data-ep-sel")) { if (S.picking) pickEnd(); S.sel = b.getAttribute("data-ep-sel"); render(); draw(); fitOpt(optOf(S.sel)); }
-    else if (b.hasAttribute("data-ep-open")) { var id = b.getAttribute("data-ep-open"), pl = all().filter(function (x) { return x.id === id; })[0]; if (pl) { S.tok++; S.busy = false; S.ltok++; S.lbusy = null; S.lmsg = ""; S.plan = pl; S.origin = pl.origin; S.mode = pl.mode || "car"; S.days = pl.days || 30; S.sel = pl.opts[0] && pl.opts[0].id; S.msg = ""; lsSet(CUR, pl.id); render(); draw(); fitPlan(); } }
+    else if (b.hasAttribute("data-ep-sel")) { if (S.picking) pickEnd(); S.atok++; S.abusy = null; S.amsg = ""; S.sel = b.getAttribute("data-ep-sel"); render(); draw(); fitOpt(optOf(S.sel)); }
+    else if (b.hasAttribute("data-ep-open")) { var id = b.getAttribute("data-ep-open"), pl = all().filter(function (x) { return x.id === id; })[0]; if (pl) { S.tok++; S.busy = false; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.plan = pl; S.origin = pl.origin; S.mode = pl.mode || "car"; S.days = pl.days || 30; S.sel = pl.opts[0] && pl.opts[0].id; S.msg = ""; lsSet(CUR, pl.id); render(); draw(); fitPlan(); } }
     else if (b.hasAttribute("data-ep-del")) { var di = b.getAttribute("data-ep-del"); lsSet(KEY, all().filter(function (x) { return x.id !== di; })); if (S.plan && S.plan.id === di) { S.plan = null; S.sel = null; draw(); } render(); }
   }
   function onChange(e) {
@@ -591,6 +834,11 @@
     else if (t.hasAttribute("data-ep-st")) { var o = optOf(t.getAttribute("data-ep-st")); if (o) { o.st = t.value === o.prop.st && !o.st ? "" : t.value; o.stBy = Date.now(); save(); render(); } }
     else if (t.hasAttribute("data-ep-mode")) { S.mode = t.value; }
     else if (t.hasAttribute("data-ep-ntype")) { S.ntype = t.value; }
+    else if (t.hasAttribute("data-ep-lmode")) { var oq = optOf(S.sel); if (oq && !S.lbusy) setLegMode(oq, t.getAttribute("data-ep-lmode"), t.value); }
+    else if (t.hasAttribute("data-ep-spd")) setSpeed(t.getAttribute("data-ep-spd"), t.value);
+    else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
+    else if (t.hasAttribute("data-ep-cwx")) { var ox = optOf(S.sel), v = Math.round(+t.value * 10) / 10; if (ox && v >= 0.1 && v <= 50) { corr(ox).w = v; save(); } render(); draw(); }
+    else if (t.hasAttribute("data-ep-circ")) { var oz = optOf(S.sel); if (oz) { var km = +t.value; if (km > 0) corr(oz).at[t.getAttribute("data-ep-circ")] = km; else delete corr(oz).at[t.getAttribute("data-ep-circ")]; save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-nname")) { var oo = optOf(S.sel), nn = oo && (oo.nodes || []).filter(function (x) { return x.id === t.getAttribute("data-ep-nname"); })[0]; if (nn) { nn.name = clean(t.value, 60) || NODE_N[nn.type]; legsOf(oo).forEach(function (l) { if (l.a.id === nn.id) l.a.name = nn.name; if (l.b.id === nn.id) l.b.name = nn.name; }); save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-days")) { S.days = +t.value || 30; }
     else if (t.hasAttribute("data-ep-pt")) { var x = myPts().filter(function (q) { return q.id === t.value; })[0]; if (x) { setOrigin(x.lat, x.lon, x.n, "Your map point"); render(); draw(); fitPlan(); } }
@@ -615,19 +863,29 @@
   /* ---------- the map ---------- */
   function draw() {
     var map = W.__asapMap; if (!map || !L) return;
-    if (!layer) layer = L.layerGroup().addTo(map);
-    layer.clearLayers();
+    if (!layer) { layer = L.layerGroup().addTo(map); if (!S.zoomOn) { S.zoomOn = true; map.on("zoomend", function () { if (layer) draw(); }); } }
+    layer.clearLayers(); S.dr = null;
     var el = D.getElementById("epe"); if (!el || el.hidden) { layer.remove(); layer = null; return; }
     var p = S.plan, o = S.origin;
     if (p) p.opts.slice().sort(function (a, b) { return (a.id === S.sel) - (b.id === S.sel); }).forEach(function (x) {
       var sel = x.id === S.sel, c = COL[x.role || ""];
       if (sel) L.polyline(x.route.coords, { color: "#fff", weight: 10, opacity: 0.9, interactive: false }).addTo(layer);
-      L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6" })
+      L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
       L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (!sel) return;
+      /* the corridor: a band its width each side of the line (a line this many pixels wide at this zoom), and the node circles */
+      var cw = corr(x).w, mpp = 40075016.686 * Math.cos((x.route.coords[0] || [0])[0] * Math.PI / 180) / Math.pow(2, map.getZoom() + 8);
+      S.dr = { band: Math.max(3, Math.min(4000, 2 * cw * 1000 / mpp)), circ: circles(x).length, air: ((x.air && x.air.list) || []).length };
+      if (x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: S.dr.band, opacity: 0.16, lineCap: "round", lineJoin: "round", interactive: false, className: "epecorrband" }).addTo(layer);
+      circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
+      ((x.air && x.air.list) || []).forEach(function (a) {
+        var k = CLS.indexOf(a.cls), col = ["#1864ab", "#1864ab", "#5f3dc4", "#e67700", "#2b8a3e", "#0b7285", "#0b7285"][k] || "#495057";
+        L.circleMarker([a.lat, a.lon], { radius: a.cls === "User-verified LZ" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: col, fillOpacity: 0.95, className: "epeairmk" })
+          .bindTooltip(E(a.name + " (" + a.cls + ", km " + a.km + ")")).addTo(layer);
+      });
       /* the selected option: failed lines struck out, leg numbers, the analyst's nodes */
       (x.legs || []).forEach(function (l, i) {
         (l.failed || []).forEach(function (f) { L.polyline(f.coords, { color: "#c92a2a", weight: 3, opacity: 0.8, dashArray: "2 8", interactive: false }).addTo(layer); });
@@ -689,12 +947,18 @@
       "#epe .epenk{font:700 12px system-ui;background:#343a40;color:#fff;border-radius:3px;padding:1px 6px}" +
       ".epelg,.epend{background:none;border:0}.epelg span{display:block;width:20px;height:20px;border-radius:50%;background:#fff;color:#212529;border:2px solid #212529;font:700 11px/16px system-ui,sans-serif;text-align:center}.epelg span.bad{border-color:#c92a2a;color:#c92a2a}" +
       ".epend span{display:block;min-width:26px;height:20px;border-radius:3px;background:#343a40;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;text-align:center;padding:0 2px}" +
+      "#epe .epecorr{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe details.epecirc ul{list-style:none;margin:4px 0;padding:0}#epe details.epecirc li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:2px 0}" +
+      "#epe ul.epeair{list-style:none;margin:2px 0 6px;padding:0}#epe ul.epeair li{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb));font-size:12px}#epe ul.epeair li>span:first-child{flex:1;min-width:200px}" +
+      "#epe .epeairb{display:flex;gap:4px;flex-wrap:wrap}#epe .epeairb button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:12px}#epe .epecls{margin-top:8px}" +
+      "#epe .epel1 select{font-size:12px;min-height:28px;padding:2px 4px}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);
   }
 
-  W.OSAP_EPE = { open: open, close: close, state: function () { return { plan: S.plan, origin: S.origin, busy: S.busy, msg: S.msg, sel: S.sel, drawn: layer ? layer.getLayers().length : 0, lbusy: S.lbusy, lmsg: S.lmsg }; },
+  W.OSAP_EPE = { open: open, close: close, state: function () { return { plan: S.plan, origin: S.origin, busy: S.busy, msg: S.msg, sel: S.sel, drawn: layer ? layer.getLayers().length : 0, lbusy: S.lbusy, lmsg: S.lmsg, dr: S.dr }; },
     /* tests and other modules: place a node on an option as a map tap would */
-    addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); } };
+    addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); },
+    abusy: function () { return S.abusy; }, amsg: function () { return S.amsg; },
+    flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); } };
 })();
