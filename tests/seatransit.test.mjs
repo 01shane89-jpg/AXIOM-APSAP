@@ -44,6 +44,16 @@ ok(S.length === 2 && near(S[0].nm + S[1].nm, pts[pts.length - 1].nm, 0.01), "two
 ok(S[0].remote > 0 && S[0].remoteNm[0] > 100, "the first segment flags its remote stretch");
 ok(S[0].t0 === null && near(S[0].hours, S[0].nm / 10, 1e-9), "no departure time: no clock times, hours still given");
 ok(near(S[1].worstHosp, C.nm([0, 0], [3, 5]), 0.5) && S[1].worstPort > 100, "worst gaps: the far end of each segment from the hospital and the port");
+// marine forecast helpers: the hour holding a time, the worst of a window, and planning flags
+const T = Array.from({ length: 48 }, (_, i) => new Date(Date.UTC(2026, 9, 10, 0) + i * 3600000).toISOString().slice(0, 16));
+const V = T.map((_, i) => (i === 30 ? 4.2 : i === 50 ? 9 : 1 + i / 100));
+ok(C.wxAt(T, V, Date.UTC(2026, 9, 10, 5, 40)) === V[5], "value in the hour holding the time");
+ok(C.wxAt(T, V, Date.UTC(2026, 9, 12, 1)) === null && C.wxAt(T, V, Date.UTC(2026, 9, 9, 23)) === null, "outside the forecast: no value (never extrapolated)");
+const W = C.wxWorst(T, V, Date.UTC(2026, 9, 10, 10), 24);
+ok(W && W.v === 4.2 && W.t === Date.UTC(2026, 9, 11, 6), "worst of the next 24 h found with its time");
+ok(C.wxWorst(T, V, Date.UTC(2026, 9, 13), 24) === null, "a window after the forecast gives nothing");
+ok(C.wxWorst(T, [null, null], Date.UTC(2026, 9, 10), 2) === null, "all-missing values give nothing");
+ok(C.wxFlags({ hs: 4.2, gust: 40, vis: 500 }).length === 3 && C.wxFlags({ hs: 2.6 })[0].startsWith("rough") && C.wxFlags({ hs: 1, gust: 20, vis: 20000 }).length === 0, "planning flags for very rough sea, gale gusts and poor visibility; none in calm weather");
 // the rescue contact directory (data/seamed/rcc.json): sourced, institutional, well formed
 const RCC = JSON.parse(readFileSync(new URL("../data/seamed/rcc.json", import.meta.url), "utf8"));
 const ids = new Set(), bad = [];
