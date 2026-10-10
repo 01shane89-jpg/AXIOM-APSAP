@@ -1018,7 +1018,12 @@
     "#medplan ul.mppic li b{display:block;font-size:13px;letter-spacing:.01em}#medplan ul.mppic li span{display:block;color:#3d2900}#medplan table.mpage tr.mpstale td,#medplan table.mpage tr.mpstale th{color:#8a4b00}:root[data-map=grey] #medplan table.mpage tr.mpstale td,:root[data-map=dark] #medplan table.mpage tr.mpstale td,:root[data-map=grey] #medplan table.mpage tr.mpstale th,:root[data-map=dark] #medplan table.mpage tr.mpstale th{color:#F5C877}" +
     "#medplan ul.mpvl{list-style:none;margin:0 0 4px;padding:0;columns:2 300px;column-gap:18px}#medplan ul.mpvl li{break-inside:avoid;margin:0 0 3px;font-size:12.5px}#medplan .mpvm{display:inline-block;width:1.2em;text-align:center;font-weight:700}#medplan .mpv-ok .mpvm{color:#1e7a3a}#medplan .mpv-warning .mpvm{color:#a35f00}#medplan .mpv-blocking{color:#8b0d02}#medplan .mpv-blocking .mpvm{color:#b3261e}" +
     "@media print{.mpdoc{font-size:9.6px}.mpdoc h3{break-after:avoid;font-size:12px}.mpdoc tr,.mpdoc figure,.mpdoc .mppst{break-inside:avoid}.mpdoc .aitag::after{content:none}}" +
-    "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}";
+    "@media (max-width:700px){.mpdoc .mpgrid{grid-template-columns:1fr}.mpdoc td.n{white-space:normal}}" +
+    /* Shane 2026-10-10: on his iPhone the CONOP tables ran off the left of the screen and the From column wrapped a few letters a line;
+       every print-view table stacks as labelled cards on a phone screen (paper keeps the columns), and the page clears the status bar */
+    "@media screen and (max-width:700px){#brief .mpdoc table.mproles td:not([data-l])::before{content:none}#brief .mpdoc table.mpst td,#brief .mpdoc table.mpst th{padding:3px 8px;overflow-wrap:anywhere}" +
+    "#brief .mpdoc table.mpst td[data-l]{display:grid;grid-template-columns:30% minmax(0,1fr);gap:0 8px;align-items:baseline;text-align:left}#brief .mpdoc table.mpst td,#brief .mpdoc table.mpst td *{white-space:normal!important}#brief .mpdoc table.mpst td[data-l]::before{margin:0;line-height:1.25;font-family:system-ui,-apple-system,sans-serif;font-size:10.5px;overflow-wrap:anywhere}}" +
+    "@media screen and (hover:none),screen and (max-width:700px){#brief.mpbrief{padding-top:max(8px,env(safe-area-inset-top,0px))}#brief.mpbrief::before{content:'';position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:#d9dee3;z-index:5}}";
   /* every #medplan rule also styles the print view's copy of the plan (.mpdoc) */
   function style() { if (D.getElementById("medplan-css")) return; var s = D.createElement("style"); s.id = "medplan-css"; s.textContent = CSS.replace(/#medplan (?=[.#a-z:])/g, ":is(#medplan,.mpdoc) "); D.head.appendChild(s); }
 
@@ -2815,6 +2820,26 @@
      contingency, unit details); and the Medical Intelligence Annex, every section with the hospital evidence, sources and
      each hospital's assessment. Both are the same plan record and fingerprint; nothing is worked out again for print. */
   var CONOP_DROP = ["mp-fac", "mp-air", "mp-thr", "mp-wx"];
+  /* every table of a print view gets the phone card layout (table.mproles): each cell labelled with its column heading */
+  function stackTables(root) {
+    [].forEach.call(root.querySelectorAll("table"), function (t) {
+      if (/\b(mpas|mproles)\b/.test(t.className)) return;
+      var hr = t.tHead && t.tHead.rows[0], heads = [];
+      if (hr) [].forEach.call(hr.cells, function (c) { for (var k = 0; k < (c.colSpan || 1); k++) heads.push(c.textContent.trim()); });
+      [].forEach.call(t.tBodies, function (b) {
+        [].forEach.call(b.rows, function (r) {
+          var i = 0;
+          [].forEach.call(r.cells, function (c) {
+            var l = heads[i]; i += c.colSpan || 1;
+            if (c.tagName !== "TD" || !l || c.hasAttribute("data-l") || (c.colSpan || 1) !== 1) return;
+            /* one box for the cell's content, so the label sits beside it however many lines it runs to */
+            var v = D.createElement("div"); v.className = "mpcv"; while (c.firstChild) v.appendChild(c.firstChild); c.appendChild(v); c.setAttribute("data-l", l);
+          });
+        });
+      });
+      t.classList.add("mproles", "mpst");
+    });
+  }
   function printView(mode) {
     var el = D.getElementById("brief"), src = D.querySelector("#medplan .mpbox"), s = ST; if (!el || !src) return false;
     var c = src.cloneNode(true), conop = mode === "conop";
@@ -2849,6 +2874,7 @@
       '<figure><img id="mpd-map" alt="Map of the plan: the point of injury, the hospitals, the routes and the golden-hour reach"><figcaption id="mpd-cap">Drawing the map…</figcaption>' + key + "</figure>" +
       (conop ? '<p class="obs">Operational plan. The Medical Intelligence Annex (Print intelligence annex) holds every hospital found, landing sites, health threats, the weather table, the sources and each hospital\'s assessment; it carries the same plan fingerprint.</p>' : "") +
       c.innerHTML + (conop ? "" : assessPrint(s, pts)) + "</article>";
+    stackTables(el.querySelector(".mpdoc")); el.classList.add("mpbrief");
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
     var mi = mapItems();
     var ready = mapImage(1000, 640, split ? { items: mi.filter(function (x) { return x[0] !== "ring"; }), pts: groundPts(s) } : { items: mi, pts: groundPts(s).concat(ringPts(s)) }).then(function (m) {
@@ -2883,7 +2909,7 @@
       }).catch(function () { var cap = sm.querySelector("figcaption"); if (cap) cap.textContent = "The map could not be drawn on this device."; })]);
     }
     D.getElementById("mpd-print").addEventListener("click", function () { if (this.disabled) return; ready.then(function () { setTimeout(function () { try { W.print(); } catch (e) {} }, 60); }); });
-    D.getElementById("mpd-close").addEventListener("click", function () { s.printHeld = false; el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
+    D.getElementById("mpd-close").addEventListener("click", function () { s.printHeld = false; el.hidden = true; el.innerHTML = ""; el.classList.remove("mpbrief"); D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp="print"]'); if (b) b.focus(); });
     return ready;
   }
 
@@ -3084,8 +3110,9 @@
       '<span class="obs">For the medical plan, ' + esc(s.name) + " · built " + esc(dual(Date.now(), true)) + " · point of injury <code>" + esc(grid(s.o[0], s.o[1])) + "</code></span></header>" +
       '<figure><img id="mpa-map" alt="Map: the point of injury, this hospital, the road route and the nearest helipad and airfield"><figcaption id="mpa-cap">Drawing the map…</figcaption></figure>' +
       '<div id="mpa-body">' + assessHtml(f, s, rt) + "</div></article>";
+    stackTables(el.querySelector(".mpdoc")); el.classList.add("mpbrief");
     el.hidden = false; D.documentElement.classList.add("briefing"); el.scrollTop = 0; try { W.scrollTo(0, 0); } catch (e) {}
-    function closeA() { el.hidden = true; el.innerHTML = ""; D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp-assess="' + (W.CSS && CSS.escape ? CSS.escape(id) : id) + '"]'); if (b) b.focus(); }
+    function closeA() { el.hidden = true; el.innerHTML = ""; el.classList.remove("mpbrief"); D.documentElement.classList.remove("briefing"); var b = D.querySelector('#medplan [data-mp-assess="' + (W.CSS && CSS.escape ? CSS.escape(id) : id) + '"]'); if (b) b.focus(); }
     /* the road route: the one already drawn for a pick, else asked now */
     var rP = rt ? Promise.resolve(rt) : route(s.o, f).then(function (r) { return r; }, function (e) { return { err: e.message }; });
     var ready = rP.then(function (r) {
