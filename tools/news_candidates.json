@@ -1,835 +1,884 @@
 {
-"note": "PROBE BRANCH ONLY (never merged), round 2",
-"feeds": [
-{
-"cc": "ph",
-"outlet": "PNA syndication",
-"url": "https://syndication.pna.gov.ph/rss",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "MND PLA activities (English list)",
-"url": "https://www.mnd.gov.tw/en/news/PlaactList",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "MOFA Taiwan RSS",
-"url": "https://en.mofa.gov.tw/Rss.aspx?n=1447",
-"lang": "en",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "CWA earthquake",
-"url": "https://www.cwa.gov.tw/rss/Data/cwa_eq.xml",
-"lang": "zh",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "CWA typhoon",
-"url": "https://www.cwa.gov.tw/rss/Data/cwa_typhoon.xml",
-"lang": "zh",
-"kind": "official",
-"state": true
-},
-{
-"cc": "tw",
-"outlet": "UDN society",
-"url": "https://udn.com/rssfeed/news/2/6639",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "UDN breaking",
-"url": "https://udn.com/rssfeed/news/1/1",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "KMA special reports RSS",
-"url": "https://www.weather.go.kr/w/rss/warning/wrn.do",
-"lang": "ko",
-"kind": "official",
-"state": true
-},
-{
-"cc": "kr",
-"outlet": "KMA (old) warnings",
-"url": "https://www.kma.go.kr/weather/special/special_rss.jsp",
-"lang": "ko",
-"kind": "official",
-"state": true
-},
-{
-"cc": "th",
-"outlet": "Thai PBS news",
-"url": "https://www.thaipbs.or.th/rss/news",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philstar Pilipino Star Ngayon",
-"url": "https://www.philstar.com/rss/psn",
-"lang": "tl",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philstar regions",
-"url": "https://www.philstar.com/rss/region",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:mindanews.com",
-"url": "https://www.bing.com/news/search?q=site%3Amindanews.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:pna.gov.ph",
-"url": "https://www.bing.com/news/search?q=site%3Apna.gov.ph&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:newsinfo.inquirer.net Mindanao",
-"url": "https://www.bing.com/news/search?q=site%3Anewsinfo.inquirer.net%20Mindanao&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:mb.com.ph",
-"url": "https://www.bing.com/news/search?q=site%3Amb.com.ph&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: site:news.abs-cbn.com",
-"url": "https://www.bing.com/news/search?q=site%3Anews.abs-cbn.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: Army soldiers killed OR clash Mindanao",
-"url": "https://www.bing.com/news/search?q=Army%20soldiers%20killed%20OR%20clash%20Mindanao&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: Philippine Coast Guard Chinese vessel",
-"url": "https://www.bing.com/news/search?q=Philippine%20Coast%20Guard%20Chinese%20vessel&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "ph",
-"outlet": "Bing News search: PNP police shot dead",
-"url": "https://www.bing.com/news/search?q=PNP%20police%20shot%20dead&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:thaipbsworld.com",
-"url": "https://www.bing.com/news/search?q=site%3Athaipbsworld.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:nationthailand.com",
-"url": "https://www.bing.com/news/search?q=site%3Anationthailand.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: site:thairath.co.th",
-"url": "https://www.bing.com/news/search?q=site%3Athairath.co.th&format=rss&setlang=th",
-"lang": "th",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "th",
-"outlet": "Bing News search: Thai police arrested",
-"url": "https://www.bing.com/news/search?q=Thai%20police%20arrested&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: site:focustaiwan.tw",
-"url": "https://www.bing.com/news/search?q=site%3Afocustaiwan.tw&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: Kinmen China coast guard",
-"url": "https://www.bing.com/news/search?q=Kinmen%20China%20coast%20guard&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "tw",
-"outlet": "Bing News search: 金門 海警",
-"url": "https://www.bing.com/news/search?q=%E9%87%91%E9%96%80%20%E6%B5%B7%E8%AD%A6&format=rss&setlang=zh",
-"lang": "zh",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: site:koreajoongangdaily.joins.com",
-"url": "https://www.bing.com/news/search?q=site%3Akoreajoongangdaily.joins.com&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: 북한 오물풍선 OR 무인기 OR 도발",
-"url": "https://www.bing.com/news/search?q=%EB%B6%81%ED%95%9C%20%EC%98%A4%EB%AC%BC%ED%92%8D%EC%84%A0%20OR%20%EB%AC%B4%EC%9D%B8%EA%B8%B0%20OR%20%EB%8F%84%EB%B0%9C&format=rss&setlang=ko",
-"lang": "ko",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "kr",
-"outlet": "Bing News search: 합참 북한",
-"url": "https://www.bing.com/news/search?q=%ED%95%A9%EC%B0%B8%20%EB%B6%81%ED%95%9C&format=rss&setlang=ko",
-"lang": "ko",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: site:montsame.mn",
-"url": "https://www.bing.com/news/search?q=site%3Amontsame.mn&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Mongolia police",
-"url": "https://www.bing.com/news/search?q=Mongolia%20police&format=rss",
-"lang": "en",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Монгол осол",
-"url": "https://www.bing.com/news/search?q=%D0%9C%D0%BE%D0%BD%D0%B3%D0%BE%D0%BB%20%D0%BE%D1%81%D0%BE%D0%BB&format=rss&setlang=mn",
-"lang": "mn",
-"kind": "search",
-"search": true,
-"nc": true
-},
-{
-"cc": "mn",
-"outlet": "Bing News search: Улаанбаатар цагдаа",
-"url": "https://www.bing.com/news/search?q=%D0%A3%D0%BB%D0%B0%D0%B0%D0%BD%D0%B1%D0%B0%D0%B0%D1%82%D0%B0%D1%80%20%D1%86%D0%B0%D0%B3%D0%B4%D0%B0%D0%B0&format=rss&setlang=mn",
-"lang": "mn",
-"kind": "search",
-"search": true,
-"nc": true
-}
-],
-"discover": [
-{
-"cc": "th",
-"outlet": "Thai News Agency",
-"home": "https://tna.mcot.net/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "PPTV",
-"home": "https://www.pptvhd36.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Amarin TV",
-"home": "https://www.amarintv.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Naewna",
-"home": "https://www.naewna.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Post Today",
-"home": "https://www.posttoday.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Komchadluek",
-"home": "https://www.komchadluek.net/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Nation TV",
-"home": "https://www.nationtv.tv/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Thai PBS",
-"home": "https://www.thaipbs.or.th/news",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "NNT (PRD)",
-"home": "https://thainews.prd.go.th/",
-"lang": "th",
-"kind": "official"
-},
-{
-"cc": "th",
-"outlet": "The Phuket News",
-"home": "https://www.thephuketnews.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Daily News",
-"home": "https://www.dailynews.co.th/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Thai MFA",
-"home": "https://www.mfa.go.th/en/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "th",
-"outlet": "Chiang Mai News",
-"home": "https://www.chiangmainews.co.th/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Hat Yai Focus",
-"home": "https://www.hatyaifocus.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "th",
-"outlet": "Korat Daily",
-"home": "https://www.koratdaily.com/",
-"lang": "th",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "SunStar",
-"home": "https://www.sunstar.com.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Daily Tribune",
-"home": "https://tribune.net.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Abante",
-"home": "https://www.abante.com.ph/",
-"lang": "tl",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Zamboanga Times",
-"home": "https://zambotimes.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Philippine News Agency",
-"home": "https://www.pna.gov.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "PAGASA",
-"home": "https://bagong.pagasa.dost.gov.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "Armed Forces of the Philippines",
-"home": "https://www.afp.mil.ph/",
-"lang": "en",
-"kind": "official"
-},
-{
-"cc": "ph",
-"outlet": "Mindanao Examiner",
-"home": "https://www.mindanaoexaminer.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Manila Standard",
-"home": "https://manilastandard.net/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Politiko",
-"home": "https://politiko.com.ph/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "Cebu Daily News",
-"home": "https://cebudailynews.inquirer.net/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "ph",
-"outlet": "The Freeman (Cebu)",
-"home": "https://www.philstar.com/the-freeman",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Montsame English",
-"home": "https://montsame.mn/en",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Montsame Mongolian",
-"home": "https://montsame.mn/mn",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "The UB Post",
-"home": "https://theubpost.mn/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "GoGo.mn",
-"home": "https://gogo.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Eagle News",
-"home": "https://eagle.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Unuudur",
-"home": "https://unuudur.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "isee.mn",
-"home": "https://isee.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "iToim",
-"home": "https://itoim.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "News.mn",
-"home": "https://news.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolia Weekly",
-"home": "https://www.mongoliaweekly.org/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "NEMA",
-"home": "https://nema.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "mn",
-"outlet": "Police (police.gov.mn)",
-"home": "https://police.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "mn",
-"outlet": "Zindaa",
-"home": "https://news.zindaa.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolian Economy",
-"home": "https://www.mongolianeconomy.mn/en",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Ikon",
-"home": "https://ikon.mn/",
-"lang": "mn",
-"kind": "news"
-},
-{
-"cc": "mn",
-"outlet": "Mongolia Government",
-"home": "https://mongolia.gov.mn/",
-"lang": "mn",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea JoongAng Daily",
-"home": "https://koreajoongangdaily.joins.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Arirang",
-"home": "https://www.arirang.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "KBS News",
-"home": "https://news.kbs.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "MBC News",
-"home": "https://imnews.imbc.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Busan Ilbo",
-"home": "https://www.busan.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kookje",
-"home": "https://www.kookje.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Jeju Ilbo",
-"home": "https://www.jejuilbo.net/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kyeongin Ilbo",
-"home": "https://www.kyeongin.com/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Gangwon Ilbo",
-"home": "https://www.kwnews.co.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Ministry of National Defense",
-"home": "https://www.mnd.go.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Joint Chiefs of Staff",
-"home": "https://www.jcs.mil.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea Coast Guard",
-"home": "https://www.kcg.go.kr/kcg/index.do",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Korea Meteorological Administration",
-"home": "https://www.weather.go.kr/w/index.do",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Ministry of Unification",
-"home": "https://www.unikorea.go.kr/",
-"lang": "ko",
-"kind": "official"
-},
-{
-"cc": "kr",
-"outlet": "Yonhap English",
-"home": "https://en.yna.co.kr/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Kookbang Ilbo",
-"home": "https://kookbang.dema.mil.kr/",
-"lang": "ko",
-"kind": "news"
-},
-{
-"cc": "kr",
-"outlet": "Korea Bizwire",
-"home": "https://koreabizwire.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Focus Taiwan",
-"home": "https://focustaiwan.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Taipei Times",
-"home": "https://www.taipeitimes.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Taiwan News",
-"home": "https://www.taiwannews.com.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "RTI English",
-"home": "https://en.rti.org.tw/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "The News Lens",
-"home": "https://international.thenewslens.com/",
-"lang": "en",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Storm Media",
-"home": "https://www.storm.mg/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "China Times",
-"home": "https://www.chinatimes.com/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "SETN",
-"home": "https://www.setn.com/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "TVBS",
-"home": "https://news.tvbs.com.tw/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Up Media",
-"home": "https://www.upmedia.mg/",
-"lang": "zh",
-"kind": "news"
-},
-{
-"cc": "tw",
-"outlet": "Coast Guard Administration",
-"home": "https://www.cga.gov.tw/GipOpen/wSite/mp?mp=999",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Mainland Affairs Council",
-"home": "https://www.mac.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "National Police Agency",
-"home": "https://www.npa.gov.tw/ch/index",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Presidential Office",
-"home": "https://www.president.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "MND (Chinese)",
-"home": "https://www.mnd.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Military News Agency",
-"home": "https://mna.gpwb.gov.tw/",
-"lang": "zh",
-"kind": "official"
-},
-{
-"cc": "tw",
-"outlet": "Taiwan CDC",
-"home": "https://www.cdc.gov.tw/",
-"lang": "zh",
-"kind": "official"
-}
-]
+ "note": "Candidates for the 20 thinnest countries by tools/density_score.mjs (2026-10-10): keyless global feed families (Guardian country pages, allAfrica, Global Voices, MeteoAlarm warnings), extra Bing queries, and national home pages for feed discovery. Checked with CANDIDATES=tools/news_candidates_thin.json node tools/probe_news.mjs (only=probe-news).",
+ "feeds": [
+  {
+   "cc": "ls",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/lesotho/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/san-marino/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/seychelles/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "ad",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/andorra/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/equatorial-guinea/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/comoros/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/sao-tome-and-principe/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/sao-tome/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "li",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/liechtenstein/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/burundi/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "kn",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/st-kitts-and-nevis/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "kn",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/saint-kitts-and-nevis/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "tm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/turkmenistan/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/botswana/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/western-sahara/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/cape-verde/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/rwanda/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/gambia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/north-macedonia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/macedonia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/czech-republic/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "fm",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/micronesia/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/eswatini/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "The Guardian (country page)",
+   "url": "https://www.theguardian.com/world/swaziland/rss",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "ls",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/lesotho/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/seychelles/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/equatorialguinea/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/comoros/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "st",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/saotomeandprincipe/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/burundi/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/botswana/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/westernsahara/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/capeverde/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/rwanda/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/gambia/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "allAfrica (country headlines)",
+   "url": "https://allafrica.com/tools/headlines/rdf/swaziland/headlines.rdf",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/comoros/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/burundi/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "allAfrica (French)",
+   "url": "https://fr.allafrica.com/tools/headlines/rdf/equatorialguinea/headlines.rdf",
+   "lang": "fr",
+   "kind": "global"
+  },
+  {
+   "cc": "ls",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/lesotho/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sc",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/seychelles/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/equatorial-guinea/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "km",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/comoros/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bi",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/burundi/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "bw",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/botswana/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "rw",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/rwanda/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "gm",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/gambia/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/swaziland/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "tm",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/central-asia-caucasus/turkmenistan/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "mk",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/eastern-central-europe/macedonia/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/eastern-central-europe/czech-republic/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "eh",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/middle-east-north-africa/western-sahara/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cv",
+   "outlet": "Global Voices",
+   "url": "https://globalvoices.org/world/sub-saharan-africa/cape-verde/feed/",
+   "lang": "en",
+   "kind": "global"
+  },
+  {
+   "cc": "cz",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Czech%20Republic%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "fm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Federated%20States%20of%20Micronesia%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "sz",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Swaziland%22%20OR%20%22Eswatini%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "sm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22San%20Marino%22%20Repubblica&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "gq",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Guinea%20Ecuatorial%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "km",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Comores%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "st",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22S%C3%A3o%20Tom%C3%A9%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "tm",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22%D0%A2%D1%83%D1%80%D0%BA%D0%BC%D0%B5%D0%BD%D0%B8%D1%81%D1%82%D0%B0%D0%BD%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "cv",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=%22Cabo%20Verde%22&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "li",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Liechtenstein%20Regierung&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "ad",
+   "outlet": "Bing News search",
+   "url": "https://www.bing.com/news/search?q=Andorra%20Govern&format=rss",
+   "lang": "en",
+   "kind": "search"
+  },
+  {
+   "cc": "ad",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-andorra",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "cz",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-czechia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "mk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-republic-of-north-macedonia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "sk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovakia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "at",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-austria",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ch",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-switzerland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "fr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-france",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "it",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-italy",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "nl",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-netherlands",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "be",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-belgium",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lu",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-luxembourg",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "dk",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-denmark",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ie",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ireland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "pl",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "hu",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-hungary",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "si",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "hr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-croatia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ba",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "rs",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-serbia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "me",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-montenegro",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "bg",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bulgaria",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ro",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-romania",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "md",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-moldova",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "gr",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-greece",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "cy",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-cyprus",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "mt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-malta",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ee",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-estonia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lv",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-latvia",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "lt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-lithuania",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "is",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "ua",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-ukraine",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "il",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-israel",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "gb",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-united-kingdom",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "de",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-germany",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "es",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "pt",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-portugal",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "no",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "se",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-sweden",
+   "lang": "en",
+   "kind": "warning"
+  },
+  {
+   "cc": "fi",
+   "outlet": "MeteoAlarm",
+   "url": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland",
+   "lang": "en",
+   "kind": "warning"
+  }
+ ],
+ "discover": [
+  {
+   "cc": "cz",
+   "home": "https://english.radio.cz/"
+  },
+  {
+   "cc": "cz",
+   "home": "https://ct24.ceskatelevize.cz/"
+  },
+  {
+   "cc": "cz",
+   "home": "https://www.expats.cz/"
+  },
+  {
+   "cc": "mk",
+   "home": "https://mia.mk/en"
+  },
+  {
+   "cc": "mk",
+   "home": "https://www.slobodenpecat.mk/"
+  },
+  {
+   "cc": "tm",
+   "home": "https://turkmen.news/"
+  },
+  {
+   "cc": "tm",
+   "home": "https://www.turkmenportal.com/"
+  },
+  {
+   "cc": "li",
+   "home": "https://www.vaterland.li/"
+  },
+  {
+   "cc": "li",
+   "home": "https://www.volksblatt.li/"
+  },
+  {
+   "cc": "sm",
+   "home": "https://www.sanmarinortv.sm/"
+  },
+  {
+   "cc": "sm",
+   "home": "https://www.libertas.sm/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.altaveu.com/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.diariandorra.ad/"
+  },
+  {
+   "cc": "ad",
+   "home": "https://www.bondia.ad/"
+  },
+  {
+   "cc": "kn",
+   "home": "https://www.thestkittsnevisobserver.com/"
+  },
+  {
+   "cc": "kn",
+   "home": "https://www.winnfm.com/"
+  },
+  {
+   "cc": "fm",
+   "home": "https://www.kpress.info/"
+  },
+  {
+   "cc": "fm",
+   "home": "https://gov.fm/"
+  },
+  {
+   "cc": "sc",
+   "home": "https://www.nation.sc/"
+  },
+  {
+   "cc": "sc",
+   "home": "https://www.seychellesnewsagency.com/"
+  },
+  {
+   "cc": "gq",
+   "home": "https://www.guineaecuatorialpress.com/"
+  },
+  {
+   "cc": "gq",
+   "home": "https://www.ahoraeg.com/"
+  },
+  {
+   "cc": "km",
+   "home": "https://www.alwatwan.net/"
+  },
+  {
+   "cc": "km",
+   "home": "https://lagazettedescomores.com/"
+  },
+  {
+   "cc": "st",
+   "home": "https://www.stp-press.st/"
+  },
+  {
+   "cc": "bi",
+   "home": "https://www.iwacu-burundi.org/"
+  },
+  {
+   "cc": "bi",
+   "home": "https://www.rtnb.bi/"
+  },
+  {
+   "cc": "bw",
+   "home": "https://www.mmegi.bw/"
+  },
+  {
+   "cc": "bw",
+   "home": "https://www.dailynews.gov.bw/"
+  },
+  {
+   "cc": "eh",
+   "home": "https://www.spsrasd.info/"
+  },
+  {
+   "cc": "cv",
+   "home": "https://www.inforpress.cv/"
+  },
+  {
+   "cc": "cv",
+   "home": "https://expressodasilhas.cv/"
+  },
+  {
+   "cc": "rw",
+   "home": "https://www.newtimes.co.rw/"
+  },
+  {
+   "cc": "gm",
+   "home": "https://www.thepoint.gm/"
+  },
+  {
+   "cc": "gm",
+   "home": "https://foroyaa.net/"
+  },
+  {
+   "cc": "ls",
+   "home": "https://www.lestimes.com/"
+  },
+  {
+   "cc": "ls",
+   "home": "https://www.thepost.co.ls/"
+  },
+  {
+   "cc": "sz",
+   "home": "https://new.observer.org.sz/"
+  },
+  {
+   "cc": "sz",
+   "home": "https://eswatininews.co.sz/"
+  }
+ ]
 }
