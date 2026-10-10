@@ -1,49 +1,14 @@
 // Deep South matching helpers for tools/refresh_deepsouth.mjs (no network): place names, relevance, kind and casualty figures.
-// District centres (approximate, placed by hand from the district seats; precision "approx"). Thai names match Thai text.
-const D = [
-  ["Pattani", "Mueang Pattani", 6.868, 101.250, ["Mueang Pattani", "Pattani town", "Pattani city"], ["เมืองปัตตานี"]],
-  ["Pattani", "Khok Pho", 6.717, 101.083, ["Khok Pho"], ["โคกโพธิ์"]],
-  ["Pattani", "Nong Chik", 6.843, 101.177, ["Nong Chik"], ["หนองจิก"]],
-  ["Pattani", "Panare", 6.861, 101.490, ["Panare"], ["ปะนาเระ"]],
-  ["Pattani", "Mayo", 6.722, 101.420, ["Mayo"], ["มายอ"]],
-  ["Pattani", "Thung Yang Daeng", 6.664, 101.451, ["Thung Yang Daeng"], ["ทุ่งยางแดง"]],
-  ["Pattani", "Sai Buri", 6.701, 101.617, ["Sai Buri", "Saiburi"], ["สายบุรี"]],
-  ["Pattani", "Mai Kaen", 6.627, 101.672, ["Mai Kaen"], ["ไม้แก่น"]],
-  ["Pattani", "Yaring", 6.866, 101.368, ["Yaring"], ["ยะหริ่ง"]],
-  ["Pattani", "Yarang", 6.752, 101.300, ["Yarang"], ["ยะรัง"]],
-  ["Pattani", "Kapho", 6.610, 101.553, ["Kapho"], ["กะพ้อ"]],
-  ["Pattani", "Mae Lan", 6.657, 101.240, ["Mae Lan"], ["แม่ลาน"]],
-  ["Yala", "Mueang Yala", 6.540, 101.281, ["Mueang Yala", "Yala town", "Yala city"], ["เมืองยะลา"]],
-  ["Yala", "Betong", 5.773, 101.072, ["Betong"], ["เบตง"]],
-  ["Yala", "Bannang Sata", 6.263, 101.253, ["Bannang Sata", "Bannang Sta"], ["บันนังสตา"]],
-  ["Yala", "Than To", 6.143, 101.226, ["Than To"], ["ธารโต"]],
-  ["Yala", "Yaha", 6.489, 101.134, ["Yaha"], ["ยะหา"]],
-  ["Yala", "Raman", 6.478, 101.430, ["Raman"], ["รามัน"]],
-  ["Yala", "Kabang", 6.402, 101.031, ["Kabang"], ["กาบัง"]],
-  ["Yala", "Krong Pinang", 6.430, 101.280, ["Krong Pinang"], ["กรงปินัง"]],
-  ["Narathiwat", "Mueang Narathiwat", 6.426, 101.823, ["Mueang Narathiwat", "Narathiwat town", "Narathiwat city"], ["เมืองนราธิวาส"]],
-  ["Narathiwat", "Tak Bai", 6.259, 102.053, ["Tak Bai"], ["ตากใบ"]],
-  ["Narathiwat", "Bacho", 6.522, 101.657, ["Bacho", "Ba Cho"], ["บาเจาะ"]],
-  ["Narathiwat", "Yi-ngo", 6.391, 101.700, ["Yi-ngo", "Yingo", "Yi Ngo"], ["ยี่งอ"]],
-  ["Narathiwat", "Ra-ngae", 6.297, 101.727, ["Ra-ngae", "Rangae", "Ra Ngae", "Tanyong Mas", "Tanyongmas"], ["ระแงะ", "ตันหยงมัส"]],
-  ["Narathiwat", "Rueso", 6.392, 101.522, ["Rueso", "Rue So"], ["รือเสาะ"]],
-  ["Narathiwat", "Si Sakhon", 6.230, 101.500, ["Si Sakhon"], ["ศรีสาคร"]],
-  ["Narathiwat", "Waeng", 5.940, 101.840, ["Waeng"], ["แว้ง"]],
-  ["Narathiwat", "Sukhirin", 5.903, 101.717, ["Sukhirin"], ["สุคิริน"]],
-  ["Narathiwat", "Su-ngai Kolok", 6.030, 101.970, ["Su-ngai Kolok", "Sungai Kolok", "Sungai Golok", "Su-ngai Ko-lok", "Sungai Kolok"], ["สุไหงโก-ลก", "สุไหงโกลก"]],
-  ["Narathiwat", "Su-ngai Padi", 6.100, 101.870, ["Su-ngai Padi", "Sungai Padi"], ["สุไหงปาดี"]],
-  ["Narathiwat", "Chanae", 6.070, 101.660, ["Chanae"], ["จะแนะ"]],
-  ["Narathiwat", "Cho-airong", 6.240, 101.860, ["Cho-airong", "Cho Airong", "Choairong"], ["เจาะไอร้อง"]],
-  ["Songkhla", "Chana", 6.910, 100.740, ["Chana district"], ["อำเภอจะนะ", "อ.จะนะ"]],
-  ["Songkhla", "Thepha", 6.830, 100.970, ["Thepha"], ["เทพา"]],
-  ["Songkhla", "Na Thawi", 6.730, 100.690, ["Na Thawi"], ["นาทวี"]],
-  ["Songkhla", "Saba Yoi", 6.620, 100.930, ["Saba Yoi"], ["สะบ้าย้อย"]],
-];
-const PROV = { Pattani: [6.87, 101.25, ["Pattani"], ["ปัตตานี"]], Yala: [6.54, 101.28, ["Yala"], ["ยะลา"]], Narathiwat: [6.43, 101.82, ["Narathiwat"], ["นราธิวาส"]] };
+// Places come from tools/places/deepsouth.json (ids, Thai and English names, approximate district-seat centres). Thai names match Thai text.
+import fs from "fs";
+export const GAZ = JSON.parse(fs.readFileSync(new URL("./places/deepsouth.json", import.meta.url), "utf8"));
+const GPROV = Object.fromEntries(GAZ.places.filter((p) => p.level === "province").map((p) => [p.id, p]));
+const D = GAZ.places.filter((p) => p.level === "district").map((p) => [GPROV[p.parent].name, p.name, p.centre[0], p.centre[1], p.names.en, p.names.th, p.id]);
+const PROV = Object.fromEntries(GAZ.places.filter((p) => p.level === "province" && p.match !== false).map((p) => [p.name, [p.centre[0], p.centre[1], p.names.en, p.names.th, p.id]]));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const wordRe = (names) => new RegExp("\\b(?:" + names.map(esc).join("|") + ")\\b", "i");
-const DIST = D.map(([prov, name, lat, lon, en, th]) => ({ prov, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
-const PROVS = Object.entries(PROV).map(([name, [lat, lon, en, th]]) => ({ name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
+const DIST = D.map(([prov, name, lat, lon, en, th, id]) => ({ id, prov, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
+const PROVS = Object.entries(PROV).map(([name, [lat, lon, en, th, id]]) => ({ id, name, lat, lon, en: wordRe(en), th: new RegExp(th.map(esc).join("|")) }));
 const REGION = /\b(?:deep south|southern border provinces|restive south|southern insurgen\w*|BRN|Barisan Revolusi Nasional|Patani)\b|\bselatan Thailand\b|ชายแดนภาคใต้|ชายแดนใต้|จังหวัดชายแดนใต้|สามจังหวัดภาคใต้|บีอาร์เอ็น|ปาตานี|ศอ\.บต\.|กอ\.รมน\.ภาค 4|กอ\.รมน\. ภาค 4/i;
 // Hat Yai and Songkhla alone are outside the conflict area unless the text is about the insurgency
 const SONGKHLA = /\b(?:Songkhla|Hat Yai)\b|สงขลา|หาดใหญ่/i;
@@ -76,9 +41,31 @@ export const KILLED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|t
 export const INJURED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:injured|wounded|hurt)\b/i;
 
 export function place(texts) {
-  for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov }; }
-  for (const t of texts) { if (!t) continue; for (const p of PROVS) if (p.en.test(t) || p.th.test(t)) return { n: p.name + " province", la: p.lat, lo: p.lon, p: "province", prov: p.name }; }
+  for (const t of texts) { if (!t) continue; for (const d of DIST) if (d.en.test(t) || d.th.test(t)) return { n: d.name + " district, " + d.prov, la: d.lat, lo: d.lon, p: "approx", prov: d.prov, id: d.id }; }
+  for (const t of texts) { if (!t) continue; for (const p of PROVS) if (p.en.test(t) || p.th.test(t)) return { n: p.name + " province", la: p.lat, lo: p.lon, p: "province", prov: p.name, id: p.id }; }
   return null;
+}
+// Every gazetteer place named in the texts, with the words that named it (the evidence for a location claim).
+// texts: [{ field, text }]. A district found means its province is not listed again from the same words.
+// level is the most precise place the words support ("district" or "province"); the centre is never an exact location.
+const AMBIG = Object.fromEntries(GAZ.places.filter((p) => p.ambiguity).map((p) => [p.id, p.ambiguity]));
+export function mentions(texts) {
+  const out = [], seen = new Set();
+  for (const { field, text } of texts) {
+    if (!text) continue;
+    for (const d of DIST) for (const [lang, re] of [["th", d.th], ["en", d.en]]) {
+      const m = String(text).match(re); if (!m || seen.has(d.id + field)) continue;
+      seen.add(d.id + field);
+      out.push({ id: d.id, level: "district", name: d.name, prov: d.prov, field, words: m[0], lang, ...(AMBIG[d.id] ? { ambiguity: AMBIG[d.id] } : {}) });
+    }
+    const provs = new Set(out.filter((o) => o.field === field).map((o) => o.prov));
+    for (const p of PROVS) for (const [lang, re] of [["th", p.th], ["en", p.en]]) {
+      const m = String(text).match(re); if (!m || provs.has(p.name) || seen.has(p.id + field)) continue;
+      seen.add(p.id + field);
+      out.push({ id: p.id, level: "province", name: p.name, prov: p.name, field, words: m[0], lang });
+    }
+  }
+  return out;
 }
 export function relevant(f, text) {
   if (!SECURITY.test(text) || SPORT.test(text)) return false;
