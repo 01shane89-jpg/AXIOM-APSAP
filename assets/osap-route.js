@@ -1704,7 +1704,15 @@ function main() {
     alternates: alternates, hazards: apiHazards,
     /* Overpass with the four mirrors in turn (the evacuation corridor's air and sea nodes), and the landing zone candidates
        round a point as Nearest landing zone finds them: [{ k: "lz", i: { name, lat, lon, kind, note, src } }] */
-    overpass: function (q, ms) { return overpassAny(q, ms); }, lzNear: function (p, notes, say) { return evLz(p, notes || [], say || function () {}); },
+    overpass: function (q, ms) { return overpassAny(q, ms); },
+    /* the way round a lost point (a bridge, tunnel or ferry): Valhalla from a to b keeping off the points in o.avoid ([lat, lon]),
+       { coords, m, s, src }; rejects when the router has no answer */
+    detour: function (a, b, o) {
+      o = o || {}; var mode = { car: 1, truck: 1, foot: 1, bike: 1 }[o.mode] ? o.mode : "car";
+      var av = (o.avoid || []).filter(function (p) { return p && isFinite(+p[0]) && isFinite(+p[1]); }).slice(0, 50);
+      return valhalla(evCost(mode), [{ lat: +a[0], lon: +a[1] }, { lat: +b[0], lon: +b[1] }], { alternates: 0, exclude_locations: av.map(function (p) { return { lat: +p[0], lon: G.wrap(+p[1]) }; }) })
+        .then(function (rs) { var r = rs[0]; return { coords: r.coords.map(function (p) { return [Math.round(p[0] * 1e6) / 1e6, Math.round(p[1] * 1e6) / 1e6]; }), m: Math.round(r.m), s: Math.round(r.s), src: (r.src && r.src.name) || "" }; });
+    }, lzNear: function (p, notes, say) { return evLz(p, notes || [], say || function () {}); },
     /* the incidents the evacuation weighting counts within 2 km of any line ([lat, lon] points): { score, hits } as evRun gives */
     exposure: function (coords, days) { var r = apiLine(coords); if (r.coords.length < 2) return { score: 0, hits: [] }; var c = r.coords; return withWps([{ lat: c[0][0], lon: c[0][1] }, { lat: c[c.length - 1][0], lon: c[c.length - 1][1] }], function () { return evExposure(r, evHaz(+days || 30)); }); },
     /* the chosen route's line as [lat, lon] points (the Comms tab checks phone coverage along it), or null */
