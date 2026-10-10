@@ -26,6 +26,7 @@ jobs:
         run: node tools/sw_version.mjs --same-as HEAD^1
       # data health rules and tools/health.json (outage alerts and the app's data badge)
       - run: node tests/health.test.mjs
+      - run: node tests/avwx.test.mjs
       - run: node tests/claims.test.mjs
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
@@ -132,6 +133,7 @@ jobs:
       - run: node tests/panels_smoke.mjs
       - run: node tests/reports_smoke.mjs
       - run: node tests/wxchart_smoke.mjs
+      - run: node tests/avwx_smoke.mjs
       - run: node tests/illum_smoke.mjs
       - run: node tests/watch_links_smoke.mjs
       - run: node tests/today_width_smoke.mjs
