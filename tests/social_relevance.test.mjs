@@ -26,4 +26,10 @@ assert.equal(rep.counts.th.would_hide, 1);
 assert.equal(rep.would_hide_sample[0].link, "https://e/2");
 assert.ok(rep.would_hide_sample[0].why, "every would-hide entry carries a reason");
 assert.equal(rep.totals.unchecked, 1);
+// a hidden area is left out of the report altogether (it is a shared, unsealed file)
+const withHidden = { ...social, items: { ...social.items, us: [{ platform: "YouTube", account: "@z", date: "2026-10-10T00:40", title: "Celebrity gossip", lang: "en", link: "https://e/4" }] } };
+const rep2 = shadow(R, withHidden, "p", 300, ["us"]);
+assert.equal(rep2.counts.us, undefined);
+assert.ok(rep2.would_hide_sample.every((x) => x.cc !== "us"));
+assert.equal(rep2.totals.posts, 3);
 console.log("social relevance shadow: ok");
