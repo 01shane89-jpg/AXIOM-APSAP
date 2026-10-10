@@ -16,7 +16,7 @@ for (const [cc, lat, lon] of [["th", 13.745, 100.53], ["ph", 14.599, 120.984]]) 
   await p.evaluate((cc) => { const b = document.querySelector('#country-seg button[data-cc="' + cc + '"]'); if (b) b.click(); }, cc); await p.waitForTimeout(5000);
   await p.evaluate(() => { const b = document.querySelector('#view-seg button[data-view="comms"]'); if (b) b.click(); });
   await p.waitForFunction(() => window.OSAP_COMMSTAB, null, { timeout: 30000 });
-  await p.evaluate(([a, b]) => window.__asapMap.setView([a, b], 12, { animate: false }), [lat, lon]);
+  await p.evaluate(([a, b]) => { window.__asapMap.setView([a, b], 12, { animate: false }); }, [lat, lon]);
   const t0 = Date.now(); await p.waitForTimeout(12000);
   const r = await p.evaluate(() => { const s = window.OSAP_COMMSTAB.state(), cnt = {};
     document.querySelectorAll(".compcov canvas").forEach((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; for (let i = 0; i < d.length; i += 16) if (d[i + 3] > 40) { const k = d[i] + "," + d[i + 1] + "," + d[i + 2]; cnt[k] = (cnt[k] || 0) + 1; } });
