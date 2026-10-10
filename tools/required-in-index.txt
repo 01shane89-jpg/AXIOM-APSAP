@@ -19,6 +19,7 @@
 <script src="assets/osap-share.js"></script>
 <script src="assets/osap-push.js"></script>
 <script src="assets/osap-health.js"></script>
+<script src="assets/osap-ds-review.js"></script>
 <script src="assets/osap-heat.js"></script>
 <script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
