@@ -54,6 +54,16 @@ ok(W && W.v === 4.2 && W.t === Date.UTC(2026, 9, 11, 6), "worst of the next 24 h
 ok(C.wxWorst(T, V, Date.UTC(2026, 9, 13), 24) === null, "a window after the forecast gives nothing");
 ok(C.wxWorst(T, [null, null], Date.UTC(2026, 9, 10), 2) === null, "all-missing values give nothing");
 ok(C.wxFlags({ hs: 4.2, gust: 40, vis: 500 }).length === 3 && C.wxFlags({ hs: 2.6 })[0].startsWith("rough") && C.wxFlags({ hs: 1, gust: 20, vis: 20000 }).length === 0, "planning flags for very rough sea, gale gusts and poor visibility; none in calm weather");
+// a logged position against the corridor
+const RT = [{ lat: 0, lon: 0 }, { lat: 0, lon: 10 }, { lat: 5, lon: 10 }];
+const tk = C.track(RT, [0.5, 4]);
+ok(tk.leg === 0 && near(tk.along, C.nm([0, 0], [0, 4]), 0.5) && near(tk.off, 30, 0.3) && tk.xtd < 0, `position north of an eastbound leg: ${tk.along.toFixed(1)} NM along, ${tk.off.toFixed(1)} NM off, to the left`);
+ok(near(tk.togo, C.nm([0, 0], [0, 10]) + C.nm([0, 10], [5, 10]) - tk.along, 0.01), "NM to go = corridor length minus NM along");
+const tk2 = C.track(RT, [3, 10.2]);
+ok(tk2.leg === 1 && near(tk2.off, 12, 0.3) && tk2.xtd > 0, "position east of the northbound leg: second leg, to the right");
+const tk3 = C.track(RT, [0, -2]);
+ok(tk3.along === 0 && near(tk3.off, 120, 0.5), "a position behind the start counts from the start");
+ok(near(C.brg([0, 0], [0, 1]), 90, 1e-6) && near(C.brg([0, 0], [1, 0]), 0, 1e-6), "bearings east and north");
 // the rescue contact directory (data/seamed/rcc.json): sourced, institutional, well formed
 const RCC = JSON.parse(readFileSync(new URL("../data/seamed/rcc.json", import.meta.url), "utf8"));
 const ids = new Set(), bad = [];
