@@ -164,6 +164,8 @@
         "Choose " + b("Travel by") + " and how many days of incidents to weigh, then press " + b("Work out the options") + ".",
         "OSAP finds routes to the nearest U.S. embassy or consulate, major airport, airfield and seaport, plus an alternate road. Its first choice has the fewest incidents near the route, unless it is much slower.",
         "Give each option a role: P Primary, A Alternate, C Contingency, E Emergency, or press " + b("Use suggested roles") + ". Set its status: Available, Degraded, Blocked or Unknown.",
+        "Legs: pick a kind of node (assembly area, pickup point, transfer, vehicle change, air or sea departure, border crossing, safe haven), press " + b("Place on map") + " and tap where it is. The option splits into numbered legs; name and reorder the nodes as you need.",
+        b("Mark unusable") + " on a leg works out a different line for that leg only, from the node before it. The other legs stay as they are. If there is no other line the leg stays unusable and the option is proposed Blocked.",
         b("Open in Route (checkpoints, print)") + " takes an option to Route to print it. " + b("Where this route can be seen from") + " shows the ground that overlooks it.",
         "Plans are kept on this device, up to 20."]) +
       tip("OSAP never proposes Available: only you do. An embassy is shown as a place to go, not a confirmed evacuation point. Call the post first.") },
