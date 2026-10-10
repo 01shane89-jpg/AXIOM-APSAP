@@ -6,8 +6,9 @@
      folded into cells of about 2.4 km by tools/build_comms_coverage.py). A shaded cell is proof of some service there during
      those months; an empty one says nothing, because nobody may have tested there.
    - Service providers: the network named on each mast (OpenStreetMap operator tags), with an on/off switch per provider; the
-     masts on the map and the coverage check follow the switches. Measured coverage is all networks together: the open data
-     does not say which network a test used. Masts with no operator tag are grouped as "Operator not mapped".
+     masts on the map, the coloured coverage areas and the coverage check follow the switches. Measured coverage is all networks
+     together: the open data does not say which network a test used. Masts with no operator tag are grouped as "Operator not mapped".
+   - Coverage by network: where phones picked up each network's cells (OpenCelliD via PMTiles, keyless), in the network's colour (ProvGrid).
    - Coverage check for a place, a line you tap, or the route planned on the Route tab: measured tests near the place, then
      terrain line of sight from the nearest mapped masts (AWS Terrain Tiles, Earth curvature with normal radio refraction).
      The answer is an estimate shown with its method and sources: Likely, Possible (may be weak), No sign of coverage, or Unknown.
@@ -141,12 +142,12 @@ function main() {
   function lsGet() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   var sv = lsGet();
   var S = {
-    ctx: null, on: { cell: sv.cell !== false, bcast: sv.bcast !== false, comm: sv.comm !== false, cov: sv.cov !== false },
+    ctx: null, on: { cell: sv.cell !== false, bcast: sv.bcast !== false, comm: sv.comm !== false, cov: sv.cov !== false, pcov: sv.pcov !== false },
     masts: {}, boxes: {}, boxWait: {}, mastErr: "", mastBusy: 0,
     cov: null, covIdx: null, covWait: {}, covCells: new Map(), covErr: "",
     mode: "place", line: [], result: null, token: 0,
     stored: {}, storedIdx: null, pcol: {}, pcolN: 0,
-    prov: {}, off: (function () { try { return JSON.parse(localStorage.getItem(KEY + "-prov")) || {}; } catch (e) { return {}; } })(), drawn: 0
+    prov: {}, netK: {}, nets: null, cellNets: {}, ocErr: false, off: (function () { try { return JSON.parse(localStorage.getItem(KEY + "-prov")) || {}; } catch (e) { return {}; } })(), drawn: 0
   };
   /* "?" stands for masts with no operator tag; broadcast towers are not switched by provider */
   function provOn(m) { if (m.kind === "bcast") return true; if (!m.p.length) return !S.off["?"]; return m.p.some(function (k) { return !S.off[k]; }); }
@@ -537,6 +538,184 @@ function main() {
     if (on && !S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.addLayer(covLayer);
     if (!on && S.ctx.layer.hasLayer(covLayer)) S.ctx.layer.removeLayer(covLayer);
   }
+  /* ---------- coverage by network, from the cells phones have seen ----------
+     OpenCelliD (community cell-ID database, CC BY-SA 4.0) records each mobile network cell that phones have picked up: its
+     network code (MCC-MNC) and a place worked out from where it was heard. The UN Smart Maps group publishes it as one PMTiles
+     file (snapshot of June 2024) that the browser reads a tile at a time, with no key. Each cell is drawn as a disc of about
+     1.5 km in its network's colour: a phone heard that network there, which is not a promise of signal. Network names come from
+     data/comms/networks.json (the MCC-MNC list, tools/build_comms_networks.mjs). Each network is painted solid on its own canvas
+     and then laid down see-through, so its own discs do not darken where they overlap and another network shows through.
+     The same cells name the networks heard round a mast that mappers left without an operator (mast info box). */
+  var OCID = W.OSAP_OCID || "https://data.source.coop/smartmaps/opencellid/cellid.pmtiles", OCID_AT = "June 2024", PMLIB = "assets/vendor/pmtiles-4.5.0.js";
+  var NETS = W.OSAP_COMMS_NETS || "data/comms/networks.json", OCZ = 14, CELL_R = 1500, NEAR_R = 500, PCOVZ = 8;
+  var ocP = null, netP = null;
+  function ocid() {
+    if (ocP) return ocP;
+    ocP = new Promise(function (ok, bad) {
+      function go() { try { ok(new W.pmtiles.PMTiles(OCID)); } catch (e) { bad(e); } }
+      if (W.pmtiles) return go();
+      var sc = D.createElement("script"); sc.src = PMLIB; sc.onload = go; sc.onerror = function () { bad(new Error("no reader")); }; D.head.appendChild(sc);
+    });
+    ocP.catch(function () { ocP = null; });
+    return ocP;
+  }
+  function nets() {
+    if (netP) return netP;
+    netP = fetch(NETS).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { S.nets = j.mcc || {}; S.netsAt = j.at || ""; colourNets(); paintCounts(); return S.nets; });
+    netP.catch(function () { netP = null; });
+    return netP;
+  }
+  /* the provider key of a cell's network: its brand in the MCC-MNC list, else the operator, else the bare code */
+  function netKey(mcc, mnc) {
+    var id = mcc + "-" + mnc, k = S.netK[id]; if (k) return k;
+    var c = S.nets && S.nets[mcc], r = c && c.n[mnc], name = r ? clean(r[0] || r[1], 60) : "";
+    if (!name) name = "Network " + id;
+    k = provKey(name) || id;
+    if (!S.prov[k]) S.prov[k] = name;
+    if (S.nets) S.netK[id] = k;
+    return k;
+  }
+  /* the mobile networks the MCC-MNC list says operate in this country, each once */
+  function countryNets() {
+    var out = [], seen = {}, cc = S.ctx && S.ctx.cc;
+    if (!S.nets || !cc) return out;
+    Object.keys(S.nets).forEach(function (mcc) {
+      var c = S.nets[mcc]; if (c.cc !== cc) return;
+      Object.keys(c.n).sort(function (a, b) { return a - b; }).forEach(function (mnc) { if (c.n[mnc][2] !== 1) return; var k = netKey(+mcc, +mnc); if (!seen[k]) { seen[k] = 1; out.push(k); } });
+    });
+    return out;
+  }
+  function colourNets() { colourProviders(); countryNets().forEach(function (k) { if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++]; }); }
+  function pcovCol(k) {
+    if (k === "?") return KINDS.cell.col;
+    if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++];
+    return S.pcol[k] || "#868e96";
+  }
+  /* the points of a vector tile with their mcc and net (MNC) numbers: [x, y, mcc, net] in tile units of ext */
+  function decodeCells(buf) {
+    var b = new Uint8Array(buf), out = [], ext = 4096, st = { p: 0 };
+    function varint() { var v = 0, m = 1, c; do { c = b[st.p++]; v += (c & 127) * m; m *= 128; } while (c & 128 && st.p < b.length); return v; }
+    function skip(t) { if (t === 0) varint(); else if (t === 1) st.p += 8; else if (t === 2) { var l = varint(); st.p += l; } else if (t === 5) st.p += 4; else st.p = b.length; }
+    while (st.p < b.length) {
+      var tag = varint();
+      if (tag >> 3 !== 3 || (tag & 7) !== 2) { skip(tag & 7); continue; }
+      var end = varint() + st.p, keys = [], vals = [], feats = [];
+      while (st.p < end) {
+        var tg = varint(), f = tg >> 3, t = tg & 7;
+        if (f === 3 && t === 2) { var l = varint(); keys.push(new TextDecoder().decode(b.subarray(st.p, st.p + l))); st.p += l; }
+        else if (f === 4 && t === 2) {
+          var ve = varint() + st.p, v = null;
+          while (st.p < ve) {
+            var vt = varint(), vf = vt >> 3;
+            if (vf === 4 || vf === 5) v = varint(); else if (vf === 6) { var z = varint(); v = z % 2 ? -(z + 1) / 2 : z / 2; } else skip(vt & 7);
+          }
+          vals.push(v);
+        } else if (f === 5 && t === 0) ext = varint();
+        else if (f === 2 && t === 2) {
+          var fe = varint() + st.p, ft = { tags: [], geom: [], type: 0 };
+          while (st.p < fe) {
+            var g = varint(), gf = g >> 3;
+            if ((gf === 2 || gf === 4) && (g & 7) === 2) { var pe = varint() + st.p, arr = gf === 2 ? ft.tags : ft.geom; while (st.p < pe) arr.push(varint()); }
+            else if (gf === 3) ft.type = varint(); else skip(g & 7);
+          }
+          feats.push(ft);
+        } else skip(t);
+      }
+      var iM = keys.indexOf("mcc"), iN = keys.indexOf("net");
+      feats.forEach(function (ft) {
+        if (ft.type !== 1 || ft.geom.length < 3) return;
+        var mcc = null, net = null;
+        for (var i = 0; i + 1 < ft.tags.length; i += 2) { if (ft.tags[i] === iM) mcc = vals[ft.tags[i + 1]]; else if (ft.tags[i] === iN) net = vals[ft.tags[i + 1]]; }
+        if (mcc == null || net == null) return;
+        var G = ft.geom, x = 0, y = 0, k = 0;
+        while (k < G.length) {
+          var cnt = G[k] >> 3; k++;
+          for (var c = 0; c < cnt && k + 1 < G.length; c++) { var dx = G[k++], dy = G[k++]; x += (dx >>> 1) ^ -(dx & 1); y += (dy >>> 1) ^ -(dy & 1); out.push([x, y, mcc, net]); }
+        }
+      });
+    }
+    return { ext: ext, cells: out };
+  }
+  var OT = new Map(), OT_N = 240;
+  function ocTile(z, x, y) {
+    var n = 1 << z; x = ((x % n) + n) % n;
+    if (y < 0 || y >= n) return Promise.resolve({ ext: 4096, cells: [] });
+    var k = z + "/" + x + "/" + y, v = OT.get(k);
+    if (v) { OT.delete(k); OT.set(k, v); return v; }
+    v = ocid().then(function (p) { return p.getZxy(z, x, y); }).then(function (r) {
+      var d = r && r.data ? decodeCells(r.data) : { ext: 4096, cells: [] };
+      d.cells.forEach(function (c) { S.cellNets[netKey(c[2], c[3])] = 1; });
+      return d;
+    });
+    v.catch(function () { OT.delete(k); S.ocErr = true; paintStatus(); });
+    OT.set(k, v); while (OT.size > OT_N) OT.delete(OT.keys().next().value);
+    return v;
+  }
+  var ProvGrid = W.L && L.GridLayer.extend({
+    createTile: function (co, done) {
+      var t = D.createElement("canvas"); t.width = t.height = 256;
+      if (!S.on.pcov) { setTimeout(function () { done(null, t); }, 0); return t; }
+      var z = co.z, pz = Math.min(OCZ, z), sc = 1 << (z - pz), px = Math.floor(co.x / sc), py = Math.floor(co.y / sc);
+      var ox = (co.x - px * sc) * 256, oy = (co.y - py * sc) * 256, jobs = [], at = [];
+      /* the tile and its eight neighbours: a disc from a cell just over the edge still reaches into this tile */
+      for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) { jobs.push(ocTile(pz, px + i, py + j).catch(function () { return { ext: 4096, cells: [] }; })); at.push([i, j]); }
+      Promise.all([nets().catch(function () {})].concat(jobs)).then(function (res) {
+        res.shift();
+        var by = {}, order = [], lat = 0, nlat = 0;
+        res.forEach(function (d, q) {
+          var s = 256 * sc / d.ext, bx = at[q][0] * 256 * sc - ox, by0 = at[q][1] * 256 * sc - oy;
+          d.cells.forEach(function (c) {
+            var k = netKey(c[2], c[3]); if (S.off[k]) return;
+            var X = bx + c[0] * s, Y = by0 + c[1] * s;
+            if (X < -400 || X > 656 || Y < -400 || Y > 656) return;
+            if (!by[k]) { by[k] = []; order.push(k); }
+            by[k].push(X, Y);
+          });
+        });
+        if (order.length) {
+          /* metres per pixel at this tile's middle latitude */
+          var yC = (co.y + 0.5) / (1 << z), la = Math.atan(Math.sinh(Math.PI * (1 - 2 * yC)));
+          var r = Math.max(1.5, CELL_R / (40075016.686 * Math.cos(la) / (256 * (1 << z))));
+          var g = t.getContext("2d"), o = D.createElement("canvas"), og; o.width = o.height = 256; og = o.getContext("2d");
+          /* the network with the most cells first, so a small network's area is not buried under the biggest one */
+          order.sort(function (a, b) { return by[b].length - by[a].length; }).forEach(function (k) {
+            var P = by[k]; og.clearRect(0, 0, 256, 256); og.fillStyle = pcovCol(k); og.beginPath();
+            for (var m = 0; m < P.length; m += 2) { if (P[m] < -r || P[m] > 256 + r || P[m + 1] < -r || P[m + 1] > 256 + r) continue; og.moveTo(P[m] + r, P[m + 1]); og.arc(P[m], P[m + 1], r, 0, 2 * Math.PI); }
+            og.fill(); g.globalAlpha = 0.3; g.drawImage(o, 0, 0);
+          });
+        }
+        done(null, t);
+        clearTimeout(S.pcT); S.pcT = setTimeout(paintCounts, 300);
+      });
+      return t;
+    }
+  });
+  /* the networks heard within 500 m of a place, from the cells phones have seen (mast info box): [{ key, n }] most cells first */
+  function netsNear(lat, lon) {
+    var z = OCZ, n = 1 << z, fx = (lon + 180) / 360 * n, s = Math.sin(lat * DEG), fy = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
+    var x = Math.floor(fx), y = Math.floor(fy), jobs = [], at = [];
+    for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) { jobs.push(ocTile(z, x + i, y + j)); at.push([x + i, y + j]); }
+    return Promise.all([nets().catch(function () {})].concat(jobs)).then(function (res) {
+      res.shift(); var c = {};
+      res.forEach(function (d, q) {
+        d.cells.forEach(function (e) {
+          var cx = at[q][0] + e[0] / d.ext, cy = at[q][1] + e[1] / d.ext, clon = cx / n * 360 - 180, clat = Math.atan(Math.sinh(Math.PI * (1 - 2 * cy / n))) / DEG;
+          if (hav([lat, lon], [clat, clon]) <= NEAR_R) { var k = netKey(e[2], e[3]); c[k] = (c[k] || 0) + 1; }
+        });
+      });
+      return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k) { return { key: k, n: c[k] }; });
+    });
+  }
+  var pcovLayer = null, pcovSig = "";
+  function drawPcov() {
+    if (!S.ctx || !ProvGrid) return;
+    if (!pcovLayer) { pcovLayer = new ProvGrid({ pane: "comcov", className: "compcov", minZoom: PCOVZ, maxNativeZoom: 18, updateWhenIdle: true, keepBuffer: 1 }); pcovSig = ""; }
+    var on = S.on.pcov, sig = JSON.stringify(S.off);
+    if (on && !S.ctx.layer.hasLayer(pcovLayer)) { S.ctx.layer.addLayer(pcovLayer); pcovSig = sig; }
+    else if (!on && S.ctx.layer.hasLayer(pcovLayer)) S.ctx.layer.removeLayer(pcovLayer);
+    else if (on && sig !== pcovSig) { pcovSig = sig; pcovLayer.redraw(); }
+  }
   /* the tower's data, for the hover card and the click popup: every line comes from its OpenStreetMap tags */
   var SKIP_TAG = /^(name|name:en|man_made|tower:type|operator|owner|height|ref|brand|source.*|note.*|fixme|created_by|check_date.*|wikidata|wikipedia|image|website|url|phone|contact:.*|email|addr:.*)$/;
   function mastInfo(m) {
@@ -565,7 +744,19 @@ function main() {
     var osm = "https://www.openstreetmap.org/" + m.id.replace(/^(node|way|relation)\//, "$1/");
     return '<div data-keep-pop="1">' + mastInfo(m) +
       '<p class="obs">OpenStreetMap, community-mapped; may be missing, moved or out of date. <a href="' + E(osm) + '" target="_blank" rel="noopener">Open in OpenStreetMap</a></p>' +
+      (m.kind === "bcast" ? "" : '<div class="comnear" data-comnear="' + E(m.id) + '"><p class="obs">Looking up the networks phones heard round this mast…</p></div>') +
       '<p><button type="button" class="linkish" data-comchk="' + m.lat.toFixed(5) + "," + m.lon.toFixed(5) + '">Check coverage here</button></p></div>';
+  }
+  /* fills the mast box with the networks whose cells phones picked up within 500 m: an inference, not the mast's own tag */
+  function fillNear(m) {
+    netsNear(m.lat, m.lon).then(function (L) {
+      var el = D.querySelector('[data-comnear="' + (W.CSS && CSS.escape ? CSS.escape(m.id) : m.id) + '"]'); if (!el) return;
+      el.innerHTML = '<p><b>Networks heard within 500 m</b> <small>(OpenCelliD cells, ' + OCID_AT + ')</small>: ' +
+        (L.length ? L.slice(0, 6).map(function (x) { return '<span class="comsw" style="background:' + pcovCol(x.key) + '"></span>' + E(provName(x.key)) + " (" + x.n + (x.n === 1 ? " cell" : " cells") + ")"; }).join(", ") : "none recorded") + "</p>" +
+        '<p class="obs">' + (m.p.length ? "Cells near a mast may be on other masts close by." : "Mappers did not name this mast's network; these are the networks phones picked up close to it, a likely match, not a record.") + "</p>";
+    }, function () {
+      var el = D.querySelector('[data-comnear="' + (W.CSS && CSS.escape ? CSS.escape(m.id) : m.id) + '"]'); if (el) el.innerHTML = '<p class="obs">The networks heard here could not be looked up.</p>';
+    });
   }
   /* hover card on mouse and pen screens; on touch the tap popup carries the same data */
   var HOVER = !!(W.matchMedia && W.matchMedia("(hover: hover)").matches);
@@ -628,18 +819,18 @@ function main() {
     /* the mast whose info box is open is kept through a redraw (a map move, a finished check), so the box stays open */
     var map = S.ctx.map, pop = map._popup, keep = pop && map.hasLayer(pop) && pop._source && mastLayer.hasLayer(pop._source) ? pop._source : null;
     mastLayer.eachLayer(function (l) { if (l !== keep) mastLayer.removeLayer(l); });
-    if (!seeMasts()) { S.drawn = 0; paintCounts(); paintStatus(); return; }
+    if (!seeMasts()) { S.drawn = 0; drawPcov(); paintCounts(); paintStatus(); return; }
     var z = map.getZoom(), b = map.getBounds().pad(0.1), n = 0, rad = z < 7 ? 0.6 : z < 9 ? 0.75 : z < 11 ? 1.4 : 1.8;
     shown = []; hoverOff();
     Object.keys(S.masts).forEach(function (id) {
       var m = S.masts[id]; if (!S.on[m.kind] || !provOn(m) || !b.contains([m.lat, m.lon])) return;
       if (keep && keep.options.mid === id) { n++; shown.push(m); return; }
       var mk = new MastMark([m.lat, m.lon], { renderer: canv, mid: id, kind: m.kind, radius: (m.kind === "bcast" ? 5.5 : 5) * rad, color: "#fff", weight: z < 9 ? 1 : 1.5, fillColor: provCol(m), fillOpacity: 0.95 });
-      mk.bindPopup(function () { return mastPopup(m); });
+      mk.bindPopup(function () { if (m.kind !== "bcast") setTimeout(function () { fillNear(m); }, 0); return mastPopup(m); });
       mk.addTo(mastLayer); n++; shown.push(m);
     });
     S.drawn = n;
-    paintCounts(); paintStatus();
+    drawPcov(); paintCounts(); paintStatus();
   }
   function loadView() {
     if (!active()) return;
@@ -708,6 +899,7 @@ function main() {
     var h = "<h3>Comms</h3>";
     Object.keys(KINDS).forEach(function (k) { if (S.on[k]) h += '<div><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + "</div>"; });
     if (S.on.cov) h += '<div class="comkey">Phones tested here: ' + BANDS.map(function (b, i) { return '<span class="comsq" style="background:' + BCOL[i] + '" title="' + E(b) + '"></span>'; }).join("") + " <small>slow to fast; each test cell is about 2.4 km, blended for display</small></div>";
+    if (S.on.pcov) h += '<div class="comkey">Coverage by network, where phones picked up its cells (OpenCelliD): ' + Object.keys(S.pcol).filter(function (k) { return !S.off[k]; }).slice(0, 8).map(function (k) { return '<span class="comsq" style="background:' + S.pcol[k] + '" title="' + E(provName(k)) + '"></span>'; }).join("") + " <small>each network in its own colour</small></div>";
     if (S.result) h += '<div class="comkey">' + [3, 2, 1].map(function (l) { return '<span class="comsw" style="background:' + LV[l].c + '"></span>' + E(LV[l].t); }).join("<br>") + "</div>";
     if (S.result && !S.result.line) h += '<div class="comkey"><span class="comln"></span>Mast in clear line of sight<br><span class="comln comln-x"></span>Terrain blocks the mast</div>';
     Lg.set("comms", h, S.ctx.rail);
@@ -758,7 +950,7 @@ function main() {
     r.querySelector("#com-tg").addEventListener("change", function (e) {
       var k = e.target.getAttribute("data-comtg"); if (!k) return;
       S.on[k] = e.target.checked; lsSet();
-      if (k === "cov") drawCov(); else drawMasts();
+      if (k === "cov") drawCov(); else if (k === "pcov") drawPcov(); else drawMasts();
       legend();
     });
     paintToggles(); paintMode(); paintResult(); paintSources(); paintStatus();
@@ -767,7 +959,8 @@ function main() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-tg"); if (!el) return;
     el.innerHTML = Object.keys(KINDS).map(function (k) {
       return '<label class="comtg"><input type="checkbox" data-comtg="' + k + '"' + (S.on[k] ? " checked" : "") + '><span class="comsw" style="background:' + KINDS[k].col + '"></span>' + E(KINDS[k].plural) + (k === "cell" ? " (named networks in their own colours)" : "") + ' <span class="comn" data-comn="' + k + '"></span></label>';
-    }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage</label>';
+    }).join("") + '<label class="comtg"><input type="checkbox" data-comtg="cov"' + (S.on.cov ? " checked" : "") + '><span class="comsq" style="background:' + BCOL[2] + '"></span>Measured phone coverage (all networks)</label>' +
+      '<label class="comtg"><input type="checkbox" data-comtg="pcov"' + (S.on.pcov ? " checked" : "") + '><span class="comsq" style="background:' + PCOL[0] + '"></span>Coverage by network (cells phones have picked up)</label>';
     paintCounts();
   }
   function paintCounts() {
@@ -786,26 +979,33 @@ function main() {
     paintProviders(ops, nm, all, z);
     legend();
   }
-  /* the providers whose masts are in view, each with its switch; a provider switched off stays listed while it is in view */
+  /* the providers whose masts are in view, then the country's mobile networks from the MCC-MNC list and any other network whose
+     cells are on the map, each with its switch; a provider switched off stays listed while it is in view */
   function paintProviders(ops, nm, all, z) {
     var oe = S.ctx.rail.querySelector("#com-ops"); if (!oe) return;
     var ol = Object.keys(ops).sort(function (a, b) { return ops[b] - ops[a] || provName(a).localeCompare(provName(b)); }).slice(0, 24);
-    if (nm) ol.push("?");
+    var cn = countryNets(), seen = {}, extra = [];
+    ol.forEach(function (k) { seen[k] = 1; });
+    cn.concat(S.on.pcov ? Object.keys(S.cellNets) : []).forEach(function (k) { if (!seen[k] && extra.length < 24) { seen[k] = 1; extra.push(k); } });
+    if (nm) extra.push("?");
+    var list = ol.concat(extra), cnSet = {}; cn.forEach(function (k) { cnSet[k] = 1; });
     var offN = Object.keys(S.off).filter(function (k) { return S.off[k]; }).length;
-    if (!z || !ol.length) {
+    if (!list.length) {
       oe.innerHTML = "<h3>Service providers</h3><p class=\"obs\">" + (z ? "No phone or communication mast in view." : "Zoom in to about city level to see the networks whose masts are here.") +
         (offN ? " " + offN + " provider" + (offN === 1 ? " is" : "s are") + ' switched off. <button type="button" class="linkish" data-comprovall="1">Switch all on</button>' : "") + "</p>";
       return;
     }
     oe.innerHTML = "<h3>Service providers</h3>" +
-      '<p class="obs">Tick the networks to show. Masts whose network is named are drawn in its colour; the masts on the map and the coverage check follow your choice.</p>' +
-      '<div class="comprov">' + ol.map(function (k) {
-        var col = k === "?" ? KINDS.cell.col : S.pcol[k] || KINDS.cell.col;
-        return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + col + '"></span>' + E(provName(k)) + ' <span class="comn">(' + (k === "?" ? nm : ops[k]) + " in view)</span></label>";
+      '<p class="obs">Tick the networks to show. Each network has its own colour for its masts and for the places phones have picked up its cells; the masts, the coloured areas and the coverage check follow your choice.</p>' +
+      '<div class="comprov">' + list.map(function (k) {
+        var why = k === "?" ? nm + " masts in view" : ops[k] ? ops[k] + " masts in view" : cnSet[k] ? "network in " + (S.ctx.name || "this country") : "cells on the map";
+        return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + pcovCol(k) + '"></span>' + E(provName(k)) + ' <span class="comn">(' + E(why) + ")</span></label>";
       }).join("") + "</div>" +
       '<p><button type="button" data-comprovall="1">All</button> <button type="button" data-comprovall="0">None</button></p>' +
-      '<p class="obs">Names come from the "operator" tags mappers put on masts in OpenStreetMap; ' + (nm ? nm + " of " + all + " masts in view have none. " : "") +
-      "Some names are tower companies that rent space to several networks. The green measured-coverage shading counts all networks together: the open data does not say which network a test used.</p>";
+      '<p class="obs">Mast names come from the "operator" tags mappers put on masts in OpenStreetMap' + (nm ? "; " + nm + " of " + all + " masts in view have none (tap one to see the networks heard round it)" : "") + ". " +
+      "Some names are tower companies that rent space to several networks. The country's networks come from the list of mobile network codes (MCC-MNC). " +
+      "The coloured areas are where phones picked up each network's cells (OpenCelliD, " + OCID_AT + " copy), drawn about 1.5 km round each cell: proof a phone heard that network there, not a promise of signal, and empty where nobody collected. " +
+      "The measured-coverage shading (yellow to green squares) counts all networks together.</p>";
   }
   function paintStatus() {
     var el = S.ctx && S.ctx.rail.querySelector("#com-st"); if (!el) return;
@@ -817,6 +1017,8 @@ function main() {
     else if (S.mastErr) msg.push(S.mastErr + "; move the map to try again.");
     else if (S.partial) msg.push("Masts are loaded for the middle of the map; zoom in or pan to see the rest.");
     if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
+    if (S.on.pcov && z < PCOVZ) msg.push("Zoom in to about region level to see coverage by network.");
+    if (S.on.pcov && S.ocErr) msg.push("Some coverage-by-network tiles did not load; move the map to try again.");
     if (S.covErr) msg.push(S.covErr + ".");
     el.textContent = msg.join(" ");
     var masts = S.on.cell || S.on.bcast || S.on.comm, far = !see && !st.busy && masts;
@@ -849,6 +1051,7 @@ function main() {
     el.innerHTML = 'Sources: masts and towers, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) via Overpass, read live. ' +
       'Measured coverage, <a href="https://github.com/teamookla/ookla-open-data" target="_blank" rel="noopener">Speedtest by Ookla Global Fixed and Mobile Network Performance Maps</a>' +
       (c ? ", " + E((c.periods || []).join(" and ")) : "") + " (CC BY-NC-SA 4.0, non-commercial). " +
+      'Coverage by network, <a href="https://opencellid.org" target="_blank" rel="noopener">OpenCelliD</a> (CC BY-SA 4.0), ' + OCID_AT + ' copy published as PMTiles by the UN Smart Maps group on Source Cooperative; network names from the MCC-MNC list (cavoq/mcc-mnc-list, from Wikipedia, CC BY-SA 4.0). ' +
       "Terrain, AWS Terrain Tiles (SRTM, GMTED and others, about 30 to 90 m). Worked out in this browser; a planning aid, not a record.";
   }
   function paintMode() {
@@ -1008,7 +1211,7 @@ function main() {
   /* ---------- entry point ---------- */
   var hooked = null;
   function show(ctx) {
-    S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null;
+    S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null; pcovLayer = null;
     panes(); skeleton(); drawCov(); drawResult(); legend();
     if (Chip) ctx.layer.addLayer(new Chip());
     if (hooked !== ctx.map) {
@@ -1017,14 +1220,16 @@ function main() {
     }
     shown = []; tip = null; tipId = "";
     covIndex().catch(function () {});
+    nets().catch(function () {});
     setTimeout(loadView, 0);
   }
   W.OSAP_COMMSTAB = { show: show, check: function (lat, lon) { S.mode = "place"; paintMode(); runPlace(lat, lon); }, line: function (pts) { runLine(pts); },
     /* the line check without touching the panel or the map, for Comms planning's route corridor: every provider counted.
        Resolves { samples: [{ at (m), v: { level 0-3 }, meas: { ok }, mastsOk }], total, big, mastsOk }. */
+    netsNear: function (lat, lon) { return netsNear(lat, lon).then(function (L) { return L.map(function (x) { return { key: x.key, name: provName(x.key), n: x.n }; }); }); },
     evaluate: function (pts, opt) { return checkLine(pts, { all: true, quiet: true, signal: opt && opt.signal }); },
     sources: function () { var st = S.ctx && S.stored[S.ctx.cc]; return { cov: S.cov ? (S.cov.periods || []).join(" and ") : "", masts: st && st.ok ? String(st.at || "").slice(0, 10) : "" }; },
-    state: function () { return { drawn: S.drawn, prov: S.prov, off: S.off, masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
+    state: function () { return { pcov: !!(pcovLayer && S.ctx && S.ctx.layer.hasLayer(pcovLayer)), pcol: S.pcol, drawn: S.drawn, prov: S.prov, off: S.off, masts: Object.keys(S.masts).length, boxes: Object.keys(S.boxes).length, cov: S.covCells.size, mode: S.mode, line: S.line.length, result: S.result, on: S.on, mastErr: S.mastErr, covErr: S.covErr }; } };
   if (W.OSAP_COMMS_WAIT && D.documentElement.getAttribute("data-view") === "comms") W.OSAP_COMMS_WAIT();
 }
   (function boot(n) { if (window.OSAP_GEO && window.L) main(); else if (n < 400) setTimeout(function () { boot(n + 1); }, 50); })(0);
