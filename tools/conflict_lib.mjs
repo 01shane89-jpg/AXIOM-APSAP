@@ -61,12 +61,23 @@ export const KIND_NAMES = { legal: "Legal and war crimes", talks: "Talks and cea
   abduction: "Abductions and hostages", raid_or_arrest: "Raids and arrests", shooting: "Shootings", attack: "Attacks (other)", statement: "Statements and claims", other: "Other" };
 export function classify(text) { for (const [k, re] of KINDS) if (re.test(text)) return k; return "other"; }
 
-const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, dozens: null, scores: null };
-// Casualty figures only when an English headline states them plainly (under 1,000, so a war's running toll is not read as one event's)
-export const KILLED = /\b(\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+[\w-]+){0,3}?\s+(?:killed|dead|die[ds]?|slain)\b|\b(?:kill(?:s|ed|ing)?)\s+(?:at least\s+)?(\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/i;
-export const INJURED = /\b(\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+[\w-]+){0,3}?\s+(?:injured|wounded|hurt)\b|\b(?:injur(?:es|ed|ing)|wound(?:s|ed|ing))\s+(?:at least\s+)?(\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/i;
+const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12 };
+// Casualty figures only when an English headline states them plainly (under 1,000, so a war's running toll is not read as one event's).
+// The number must belong to the casualty word (the same rules as tools/deepsouth_lib.mjs): the words between may not be another
+// number, another casualty word, "and" or "or" ("two killed and 16 wounded" is 16 wounded, not 2), or a count of something else
+// ("15 shots killed", "3 years"); a number inside a bigger one ("1,200") or a decimal is not read as a toll; a number after "no" or
+// "not" is a denial ("no one was injured") and gives none. "kills 5" and "wounds 12" still count.
+const WORDS = "one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve";
+const CAS = "killed|dead|died|dies|slain|injured|wounded|hurt|kills?|killing|injur(?:es|ing)|wound(?:s|ing)";
+const NUMS = "(?<!\\d[,.]?)\\b(\\d{1,3}|" + WORDS + ")\\b(?![,.]\\d)";
+const OTHER = "years?|days?|hours?|weeks?|months?|percent|shots|rounds|bullets|times|incidents|riots|attacks|rockets|missiles|drones|shells|homes|houses|buildings|km|kilometres|kilometers|miles";
+const BETWEEN = "(?:\\s+(?!(?:\\d+|" + WORDS + "|" + CAS + "|and|or|" + OTHER + ")\\b)[\\w-]+){0,3}?";
+const AFTER = "(?!\\s+(?:" + OTHER + ")\\b)";
+export const KILLED = new RegExp(NUMS + BETWEEN + "\\s+(?:killed|dead|die[ds]?|slain)\\b|\\bkill(?:s|ed|ing)?\\s+(?:at least\\s+)?" + NUMS + AFTER, "i");
+export const INJURED = new RegExp(NUMS + BETWEEN + "\\s+(?:injured|wounded|hurt)\\b|\\b(?:injur(?:es|ed|ing)|wound(?:s|ed|ing))\\s+(?:at least\\s+)?" + NUMS + AFTER, "i");
 export function figure(text, re) {
-  const m = String(text || "").match(re); if (!m) return null;
+  const t = String(text || ""), m = t.match(re); if (!m) return null;
+  if (/\b(?:no|not)\s*$/i.test(t.slice(0, m.index))) return null;
   const raw = (m[1] || m[2] || "").toLowerCase(), n = raw in NUM ? NUM[raw] : +raw;
   return Number.isInteger(n) && n > 0 && n < 1000 ? n : null;
 }
