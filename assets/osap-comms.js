@@ -547,7 +547,7 @@ function main() {
      and then laid down see-through, so its own discs do not darken where they overlap and another network shows through.
      The same cells name the networks heard round a mast that mappers left without an operator (mast info box). */
   var OCID = W.OSAP_OCID || "https://data.source.coop/smartmaps/opencellid/cellid.pmtiles", OCID_AT = "June 2024", PMLIB = "assets/vendor/pmtiles-4.5.0.js";
-  var NETS = W.OSAP_COMMS_NETS || "data/comms/networks.json", OCZ = 14, CELL_R = 1500, NEAR_R = 500, PCOVZ = 8;
+  var NETS = W.OSAP_COMMS_NETS || "data/comms/networks.json", OCZ = 14, CELL_R = 1500, NEAR_R = 500, PCOVZ = 10;
   var ocP = null, netP = null;
   function ocid() {
     if (ocP) return ocP;
@@ -656,27 +656,28 @@ function main() {
     createTile: function (co, done) {
       var t = D.createElement("canvas"); t.width = t.height = 256;
       if (!S.on.pcov) { setTimeout(function () { done(null, t); }, 0); return t; }
-      var z = co.z, pz = Math.min(OCZ, z), sc = 1 << (z - pz), px = Math.floor(co.x / sc), py = Math.floor(co.y / sc);
-      var ox = (co.x - px * sc) * 256, oy = (co.y - py * sc) * 256, jobs = [], at = [];
-      /* the tile and its eight neighbours: a disc from a cell just over the edge still reaches into this tile */
-      for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) { jobs.push(ocTile(pz, px + i, py + j).catch(function () { return { ext: 4096, cells: [] }; })); at.push([i, j]); }
+      /* the copy is thinned below its top zoom (14), so cells are read two zooms deeper than the map, up to 14; with the
+         tiles round this one, so a disc from a cell just over the edge still reaches in */
+      var z = co.z, pz = Math.min(OCZ, z + 2), f = Math.pow(2, pz - z), tx0 = co.x * f, ty0 = co.y * f, jobs = [], at = [];
+      var yC = (co.y + 0.5) / (1 << z), la = Math.atan(Math.sinh(Math.PI * (1 - 2 * yC)));
+      var r = Math.max(1.5, CELL_R / (40075016.686 * Math.cos(la) / (256 * (1 << z)))), pad = r / 256 * f;
+      for (var j = Math.floor(ty0 - pad); j <= Math.floor(ty0 + f + pad - 1e-9); j++) for (var i = Math.floor(tx0 - pad); i <= Math.floor(tx0 + f + pad - 1e-9); i++) {
+        jobs.push(ocTile(pz, i, j).catch(function () { return { ext: 4096, cells: [] }; })); at.push([i, j]);
+      }
       Promise.all([nets().catch(function () {})].concat(jobs)).then(function (res) {
         res.shift();
-        var by = {}, order = [], lat = 0, nlat = 0;
+        var by = {}, order = [];
         res.forEach(function (d, q) {
-          var s = 256 * sc / d.ext, bx = at[q][0] * 256 * sc - ox, by0 = at[q][1] * 256 * sc - oy;
+          var s = 256 / f / d.ext, bx = (at[q][0] - tx0) * 256 / f, by0 = (at[q][1] - ty0) * 256 / f;
           d.cells.forEach(function (c) {
             var k = netKey(c[2], c[3]); if (S.off[k]) return;
             var X = bx + c[0] * s, Y = by0 + c[1] * s;
-            if (X < -400 || X > 656 || Y < -400 || Y > 656) return;
+            if (X < -r || X > 256 + r || Y < -r || Y > 256 + r) return;
             if (!by[k]) { by[k] = []; order.push(k); }
             by[k].push(X, Y);
           });
         });
         if (order.length) {
-          /* metres per pixel at this tile's middle latitude */
-          var yC = (co.y + 0.5) / (1 << z), la = Math.atan(Math.sinh(Math.PI * (1 - 2 * yC)));
-          var r = Math.max(1.5, CELL_R / (40075016.686 * Math.cos(la) / (256 * (1 << z))));
           var g = t.getContext("2d"), o = D.createElement("canvas"), og; o.width = o.height = 256; og = o.getContext("2d");
           /* the network with the most cells first, so a small network's area is not buried under the biggest one */
           order.sort(function (a, b) { return by[b].length - by[a].length; }).forEach(function (k) {
@@ -1017,7 +1018,7 @@ function main() {
     else if (S.mastErr) msg.push(S.mastErr + "; move the map to try again.");
     else if (S.partial) msg.push("Masts are loaded for the middle of the map; zoom in or pan to see the rest.");
     if (S.on.cov && z < COVZ) msg.push("Zoom in to see measured coverage.");
-    if (S.on.pcov && z < PCOVZ) msg.push("Zoom in to about region level to see coverage by network.");
+    if (S.on.pcov && z < PCOVZ) msg.push("Zoom in to about city level to see coverage by network.");
     if (S.on.pcov && S.ocErr) msg.push("Some coverage-by-network tiles did not load; move the map to try again.");
     if (S.covErr) msg.push(S.covErr + ".");
     el.textContent = msg.join(" ");
