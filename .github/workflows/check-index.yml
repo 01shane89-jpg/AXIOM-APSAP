@@ -92,6 +92,7 @@ jobs:
       - run: node tests/timeline_scope_smoke.mjs
       - run: node tests/period_smoke.mjs
       - run: node tests/search_smoke.mjs
+      - run: node tests/news_speed_smoke.mjs
       - run: node tests/grid_smoke.mjs
       - run: node tests/comms_smoke.mjs
       - run: node tests/commsplan_smoke.mjs
