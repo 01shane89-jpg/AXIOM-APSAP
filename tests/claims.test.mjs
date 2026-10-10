@@ -1,6 +1,7 @@
 // Claim records: single statements tied to their words, never facts; written once per capture revision; no attribution.
 import assert from "node:assert/strict";
 import { extract, plan, RULES } from "../tools/claim_lib.mjs";
+import { figure, KILLED, INJURED } from "../tools/deepsouth_lib.mjs";
 
 const cap = { capture_id: "cap-1", rev: 1, source_id: "isranews-south", outlet: "Isranews", lang: "th", published: "2026-10-09T22:10", observed: "2026-10-09T22:30",
   title: "คนร้ายลอบวางระเบิดทหารพรานที่อำเภอรือเสาะ จังหวัดนราธิวาส", summary: "" };
@@ -47,4 +48,18 @@ assert.deepEqual(late.records.map((c) => c.predicate).sort(), ["injured", "kille
 const r2 = plan([{ cap: { ...cap, rev: 2, title: cap.title + " (แก้ไข)" }, tr }], r.index, "t3");
 assert.equal(r2.records.length, cs.length);
 assert.ok(r2.records.every((c) => !r.index[c.claim_id] && c.evidence[0].rev === 2));
+// casualty figures: the number must belong to the casualty word, and a denial is not a toll (headlines seen in the layer, 2026-10-10)
+for (const [t, k, i] of [
+  ["Luckily, no one was injured or killed.", null, null],
+  ["two killed and 16 wounded on his way home from a boat race", 2, 16],
+  ["Sukhirin police station, Narathiwat - 16 wounded, two killed", 2, 16],
+  ["Sukhirin, two men shot and killed a policeman at Tak Bai Police Station.", null, null],
+  ["Krong Pinang, 15 shots killed.", null, null],
+  ["32 year old Ranger killed in one shot incident in Narathiwat", null, null],
+  ["Encirclement orders, two policemen shot dead in a fight at Tak Bai.", 2, null],
+  ["Yala, one riot leader killed.", 1, null],
+  ["10 dead, 25 injured in convoy collision", 10, 25],
+]) assert.deepEqual([figure(t, KILLED), figure(t, INJURED)], [k, i], t);
+// no toll claims from a statistics or court headline
+assert.ok(!extract({ capture_id: "cap-4", rev: 1, lang: "en", title: "Statistics: 75 incidents this month in Yala, 11 injured", summary: "" }, null, "x").some((c) => c.predicate === "injured"));
 console.log("claims ok:", cs.length, "claims from the test report");
