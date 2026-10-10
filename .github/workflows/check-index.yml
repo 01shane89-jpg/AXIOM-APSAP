@@ -27,6 +27,7 @@ jobs:
       # data health rules and tools/health.json (outage alerts and the app's data badge)
       - run: node tests/health.test.mjs
       - run: node tests/claims.test.mjs
+      - run: node tests/incidents.test.mjs
       - run: node tests/captures.test.mjs
       - run: node tests/source_registry.test.mjs
       - run: node tests/places_deepsouth.test.mjs
