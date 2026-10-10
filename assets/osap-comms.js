@@ -147,7 +147,7 @@ function main() {
     cov: null, covIdx: null, covWait: {}, covCells: new Map(), covErr: "",
     mode: "place", line: [], result: null, token: 0,
     stored: {}, storedIdx: null, pcol: {}, pcolN: 0,
-    prov: {}, netK: {}, nets: null, cellNets: {}, ocErr: false, off: (function () { try { return JSON.parse(localStorage.getItem(KEY + "-prov")) || {}; } catch (e) { return {}; } })(), drawn: 0
+    prov: {}, netK: {}, netSt: {}, pcolCC: "", nets: null, cellNets: {}, ocErr: false, off: (function () { try { return JSON.parse(localStorage.getItem(KEY + "-prov")) || {}; } catch (e) { return {}; } })(), drawn: 0
   };
   /* "?" stands for masts with no operator tag; broadcast towers are not switched by provider */
   function provOn(m) { if (m.kind === "bcast") return true; if (!m.p.length) return !S.off["?"]; return m.p.some(function (k) { return !S.off[k]; }); }
@@ -234,7 +234,7 @@ function main() {
     return Promise.all(waits);
   }
   /* a colour per phone network, the biggest first, so the whole country's footprint of each reads at a glance */
-  var PCOL = ["#e8590c", "#2f9e44", "#c2255c", "#f59f00", "#0c8599", "#5c940d", "#3b5bdb", "#a61e4d"];
+  var PCOL = ["#e8590c", "#2f9e44", "#c2255c", "#f59f00", "#0c8599", "#5c940d", "#3b5bdb", "#a61e4d", "#7048e8", "#e64980", "#1098ad", "#862e9c"];
   function provCol(m) {
     if (m.kind === "bcast") return KINDS.bcast.col;
     var k = m.p[0]; if (!k) return KINDS[m.kind].col;
@@ -243,7 +243,8 @@ function main() {
   }
   function colourProviders() {
     var n = {};
-    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id]; if (m.kind !== "bcast" && m.p[0]) n[m.p[0]] = (n[m.p[0]] || 0) + 1; });
+    var cb = S.ctx && S.ctx.bounds && (typeof S.ctx.bounds === "function" ? S.ctx.bounds() : S.ctx.bounds), lb = cb && W.L ? L.latLngBounds(cb) : null;
+    Object.keys(S.masts).forEach(function (id) { var m = S.masts[id]; if (m.kind !== "bcast" && m.p[0] && (!lb || lb.contains([m.lat, m.lon]))) n[m.p[0]] = (n[m.p[0]] || 0) + 1; });
     Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).forEach(function (k) { if (!S.pcol[k] && S.pcolN < PCOL.length) S.pcol[k] = PCOL[S.pcolN++]; });
   }
   function addMast(id, lat, lon, t) {
@@ -573,6 +574,8 @@ function main() {
     if (!name) name = "Network " + id;
     k = provKey(name) || id;
     if (!S.prov[k]) S.prov[k] = name;
+    /* 2 a code listed as operating, 1 status unknown or not listed, 0 listed as no longer operating */
+    S.netSt[k] = Math.max(S.netSt[k] == null ? -1 : S.netSt[k], r ? (r[2] === 1 ? 2 : r[2] === 2 ? 1 : 0) : 1);
     if (S.nets) S.netK[id] = k;
     return k;
   }
@@ -999,7 +1002,7 @@ function main() {
     oe.innerHTML = "<h3>Service providers</h3>" +
       '<p class="obs">Tick the networks to show. Each network has its own colour for its masts and for the places phones have picked up its cells; the masts, the coloured areas and the coverage check follow your choice.</p>' +
       '<div class="comprov">' + list.map(function (k) {
-        var why = k === "?" ? nm + " masts in view" : ops[k] ? ops[k] + " masts in view" : cnSet[k] ? "network in " + (S.ctx.name || "this country") : "cells on the map";
+        var why = k === "?" ? nm + " masts in view" : ops[k] ? ops[k] + " masts in view" : cnSet[k] ? "network in " + (S.ctx.name || "this country") : S.netSt[k] === 0 ? "cells on the map; listed as no longer operating" : "cells on the map";
         return '<label class="comtg"><input type="checkbox" data-comprov="' + E(k) + '"' + (S.off[k] ? "" : " checked") + '><span class="comsw" style="background:' + pcovCol(k) + '"></span>' + E(provName(k)) + ' <span class="comn">(' + E(why) + ")</span></label>";
       }).join("") + "</div>" +
       '<p><button type="button" data-comprovall="1">All</button> <button type="button" data-comprovall="0">None</button></p>' +
@@ -1213,6 +1216,8 @@ function main() {
   var hooked = null;
   function show(ctx) {
     S.ctx = ctx; mastLayer = null; covLayer = null; chkLayer = null; pcovLayer = null;
+    /* colours are handed out per country, biggest networks first, so every country gets the full set */
+    if (S.pcolCC !== ctx.cc) { S.pcolCC = ctx.cc; S.pcol = {}; S.pcolN = 0; if (S.nets) colourNets(); else colourProviders(); }
     panes(); skeleton(); drawCov(); drawResult(); legend();
     if (Chip) ctx.layer.addLayer(new Chip());
     if (hooked !== ctx.map) {
