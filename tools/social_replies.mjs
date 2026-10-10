@@ -11,7 +11,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export const PER_AREA = 10, MIN_REPLIES = 3, MAX_TERMS = 8;
+export const PER_AREA = 25, MIN_REPLIES = 3, MAX_TERMS = 8;
 const API = "https://public.api.bsky.app/xrpc/", TIMEOUT = 15000, BUDGET = +(process.env.REPLIES_BUDGET_MS || 2 * 6e4);
 export const METHOD = "osap-replies/1";
 
