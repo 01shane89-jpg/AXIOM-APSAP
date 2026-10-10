@@ -6229,6 +6229,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     window.OSAP_COMMSPLAN.show({ rail: railO, layer: sofLayer, map: map, cc: CC, name: C.name, bounds: cBounds, esc: esc, put: function (k, m) { sofM[k] = m; } });
   }
+  /* long-press > Terrain > "Radio coverage from here": Comms planning > Link works out where a radio there could be heard */
+  (window.OSAP_TERRAIN_TOOLS = window.OSAP_TERRAIN_TOOLS || []).push({ id: "radiocov", label: "Radio coverage from here", run: function (ll) {
+    var at = [ll.lat, window.L.Util.wrapNum(ll.lng, [-180, 180], true)];
+    if (current === "comms" && window.OSAP_COMMSPLAN && window.OSAP_COMMSPLAN.radioFrom) { window.OSAP_COMMSPLAN.radioFrom(at[0], at[1]); return; }
+    window.OSAP_COMMSPLAN_WANT = { radio: at }; setView("comms"); document.dispatchEvent(new Event("osap:view"));
+  } });
   window.OSAP_ROUTE_SEED = function (pts) { routeSeed = pts; if (current === "route") showRoute(); else { setView("route"); document.dispatchEvent(new Event("osap:view")); } };
 
   /* each data set shows only its own markers: the extra layers from the Layers menu (terrain, flashpoints, presence,

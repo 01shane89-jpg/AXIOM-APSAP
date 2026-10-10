@@ -90,6 +90,7 @@ jobs:
       - run: node tests/comms_smoke.mjs
       - run: node tests/commsplan_smoke.mjs
       - run: node tests/commslink_smoke.mjs
+      - run: node tests/commsradio_smoke.mjs
       - run: node tests/power_smoke.mjs
       - run: node tests/surveil_smoke.mjs
       - run: node tests/cams_smoke.mjs
