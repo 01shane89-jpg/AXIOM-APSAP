@@ -49,13 +49,20 @@
    it with capability "unknown" unless OpenStreetMap tags an emergency department (unverified). Each card then shows data
    freshness (share of dated reports under 24 h) and OSAP's confidence in how complete the card is, never in the route.
    Map layers can be switched on and off; Sustainment and Medical start off.
+   Phase 6 (route package and active mode): "Make a route package" freezes the plan with everything found and its sources;
+   every finding carries its source, when it was retrieved, its basis and a SHA-256 fingerprint of the record. Packages are kept
+   on this device ("osap-epe-pkgs", in Workspaces), open with no connection, print (or save as PDF from the print dialog) and
+   export as KML or KMZ for ATAK-style viewers. Active mode, run from a package, hides almost everything: the map shows only
+   the P route, and one large card gives the next node and distance, the route's status, the next hazard, the A route's status,
+   the next fuel, the next air option and the distance to the destination. Distances count down from My location when it is
+   on (watched only while active mode is open, never stored), otherwise from the last node ticked as passed.
    Everything here is an automatic draft from open data: OSAP proposes, the analyst decides. No screen says an embassy, airport,
    crossing or road is open or safe. W.OSAP_EPE = { open(opts), close(), state() }; opts = { at: [lat, lon], how }. */
 (function () {
   "use strict";
   var W = window, D = document, L = W.L;
   if (W.OSAP_EPE) return;
-  var KEY = "osap-epe-plans", CUR = "osap-epe-cur", MAX = 20, MAX_OPTS = 6;
+  var KEY = "osap-epe-plans", CUR = "osap-epe-cur", MAX = 20, MAX_OPTS = 6, KEYP = "osap-epe-pkgs", MAX_PKG = 5;
   var KINDS = [["posts", "U.S. embassy or consulate"], ["airports", "Major airport"], ["airfields", "Airfield of any size"], ["seaports", "Seaport"]];
   var ROLES = ["P", "A", "C", "E"], ROLE_N = { P: "Primary", A: "Alternate", C: "Contingency", E: "Emergency" };
   var STATUS = ["Available", "Degraded", "Blocked", "Unknown"];
@@ -143,6 +150,7 @@
   function close() {
     var el = D.getElementById("epe"); if (el) el.hidden = true;
     pickEnd(); S.tok++; S.busy = false;
+    if (S.active) stopActive();
     if (layer) { layer.remove(); layer = null; }
     if (W.OSAP_SPLIT && W.OSAP_SPLIT.top) W.OSAP_SPLIT.top();
   }
@@ -825,6 +833,168 @@
     }).catch(function (e) { if (tok !== S.ptok) return; S.pbusy = null; S.pmsg = "Check not finished: " + e.message + "."; render(); });
   }
 
+  /* ---------- route packages and active mode (phase 6) ---------- */
+  function pkgs() { var a = lsGet(KEYP, []); return Array.isArray(a) ? a.filter(function (x) { return x && x.id && x.plan && Array.isArray(x.plan.opts); }) : []; }
+  function pkgOf(id) { return pkgs().filter(function (x) { return x.id === id; })[0]; }
+  function hex(b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  function sha(t) { return W.crypto && W.crypto.subtle ? W.crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(hex, function () { return ""; }) : Promise.resolve(""); }
+  /* every finding in a frozen plan, with the section it came from: [{ rec, src, got, basis }] */
+  function findings(pl) {
+    var out = [];
+    function add(list, got, basis, src) { (list || []).forEach(function (r) { if (r && typeof r === "object") out.push({ rec: r, got: got || pl.calc, basis: typeof basis === "function" ? basis(r) : basis, src: typeof src === "function" ? src(r) : src }); }); }
+    pl.opts.forEach(function (o) {
+      add(o.exp && o.exp.hits, o.calc2 || pl.calc2 || pl.calc, "reported", function (r) { return r.url || r.src || ""; });
+      if (o.air) add(o.air.list, o.air.at, function (r) { return r.ver ? "verified by the analyst" : r.basis || "mapped"; }, function (r) { return r.src || ""; });
+      if (o.deps) { add(o.deps.list, o.deps.at, "mapped", function (r) { return r.src || ""; }); add(o.deps.borders, o.deps.at, "mapped", function (r) { return r.src || ""; }); }
+      var a = o.along;
+      if (a) {
+        (a.haz && a.haz.ranges || []).forEach(function (rg) { add(rg.items, a.at, "reported", function (r) { return r.url || r.src || ""; }); });
+        add(a.sus && a.sus.fuel, a.at, "proximity", function (r) { return r.src || ""; });
+        add(a.us && a.us.list, a.at, "reference list", function (r) { return r.src || "travel.state.gov"; });
+        add(a.med && a.med.list, a.at, "proximity", function (r) { return r.src || ""; });
+        add(a.comms && a.comms.segs, a.at, function (r) { return (r.basis || []).join(", ") || "unknown"; }, "Comms planning");
+      }
+    });
+    return out;
+  }
+  /* the plan frozen with everything found: each finding fingerprinted (SHA-256 of the record as kept) */
+  function makePkg() {
+    var p = S.plan; if (!p || S.kbusy) return;
+    S.kbusy = true; S.msg = "Freezing the plan into a route package…"; render();
+    var pl = JSON.parse(JSON.stringify(p)), now = Date.now(), fs = findings(pl);
+    fs.forEach(function (f) { delete f.rec.fp; });
+    Promise.all(fs.map(function (f) { var r = f.rec; return sha(JSON.stringify(r)).then(function (h) { r.fp = h; r.got = r.got || f.got; r.basis = r.basis || f.basis; r.srcRef = r.srcRef || f.src; }); })).then(function () {
+      var pk = { id: rid("pkg-"), v: 1, made: now, name: clean(p.name, 90), cc: p.cc, ccName: p.ccName, plan: pl, n: fs.length };
+      return sha(JSON.stringify(pl)).then(function (h) { pk.fp = h; return pk; });
+    }).then(function (pk) {
+      var list = [pk].concat(pkgs()).slice(0, MAX_PKG), ok = lsSet(KEYP, list);
+      while (!ok && list.length > 1) { list.pop(); ok = lsSet(KEYP, list); }
+      S.kbusy = false;
+      S.msg = ok ? "Route package made: " + fs.length + " finding" + (fs.length === 1 ? "" : "s") + " with sources and fingerprints, kept on this device. It opens with no connection." + (list.length < Math.min(MAX_PKG, pkgs().length + 1) ? " Older packages were dropped to make room." : "")
+        : "This browser would not keep the package (storage full or blocked).";
+      if (ok) S.pkg = pk.id;
+      render(); draw();
+    }, function (e) { S.kbusy = false; S.msg = "No package: " + e.message + "."; render(); });
+  }
+  function delPkg(id) { lsSet(KEYP, pkgs().filter(function (x) { return x.id !== id; })); if (S.pkg === id) S.pkg = null; if (S.active && S.active.pkg === id) stopActive(); render(); draw(); }
+  function xml(t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c]; }); }
+  var KCOL = { P: "ff3e8a2b", A: "ffd67e1c", C: "ff0c59e8", E: "ff2a2ac9", "": "ff70665c" };
+  /* the package as KML: a folder per option with its line, nodes and findings; every placemark carries source, time, basis
+     and fingerprint */
+  function toKml(pk) {
+    var pl = pk.plan, h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(pk.name) + "</name>" +
+      "<description>" + xml("OSAP evacuation route package, frozen " + new Date(pk.made).toISOString() + ". Automatic draft from open data; roles and statuses are the analyst's. SHA-256 of the plan: " + pk.fp) + "</description>";
+    Object.keys(KCOL).forEach(function (k) { h += '<Style id="r' + (k || "x") + '"><LineStyle><color>' + KCOL[k] + "</color><width>4</width></LineStyle></Style>"; });
+    function pm(name, lat, lon, f, extra) {
+      return "<Placemark><name>" + xml(name) + "</name>" + (extra ? "<description>" + xml(extra) + "</description>" : "") +
+        (f ? "<ExtendedData>" + [["source", f.srcRef || f.src || f.url || ""], ["retrieved", f.got ? new Date(f.got).toISOString() : ""], ["basis", f.basis || ""], ["sha256", f.fp || ""]].map(function (d) { return '<Data name="' + d[0] + '"><value>' + xml(d[1]) + "</value></Data>"; }).join("") + "</ExtendedData>" : "") +
+        "<Point><coordinates>" + (+lon).toFixed(6) + "," + (+lat).toFixed(6) + ",0</coordinates></Point></Placemark>";
+    }
+    h += "<Folder><name>Origin</name>" + pm("Origin: " + (pl.origin.label || "origin"), pl.origin.lat, pl.origin.lon, null, pl.origin.how) + "</Folder>";
+    pl.opts.forEach(function (o) {
+      h += "<Folder><name>" + xml((o.role ? o.role + " " + ROLE_N[o.role] + ": " : "") + o.dest.i.name) + "</name><description>" + xml(o.label + ". Status " + (o.st || o.prop.st) + (o.st ? " (set by the analyst)" : " (OSAP proposal)") + ". " + dist(o.route.m) + ", " + dur(o.route.s) + ".") + "</description>" +
+        "<Placemark><name>" + xml("Route " + (o.role || o.id)) + '</name><styleUrl>#r' + (o.role || "x") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" + o.route.coords.map(function (c) { return (+c[1]).toFixed(6) + "," + (+c[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>" +
+        pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, o.kind === "posts" ? "Not verified as an evacuation destination." : "") +
+        (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst."); }).join("") +
+        ((o.deps && o.deps.list) || []).map(function (d) { return pm(DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : "") + " (km " + d.km + ")", d.lat, d.lon, d, d.status && d.status.st); }).join("") +
+        ((o.air && o.air.list) || []).map(function (a) { return pm(a.cls + ": " + a.name, a.lat, a.lon, a, a.kind); }).join("") +
+        ((o.along && o.along.haz && o.along.haz.ranges) || []).map(function (rg) { return rg.items.filter(function (x) { return x.p; }).map(function (x) { return pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text); }).join(""); }).join("") +
+        ((o.along && o.along.sus && o.along.sus.fuel) || []).map(function (f) { return pm("Fuel: " + f.name, f.lat, f.lon, f, "km " + f.km); }).join("") +
+        ((o.along && o.along.us && o.along.us.list) || []).map(function (u) { return pm(u.name, u.lat, u.lon, u, "Not verified as an evacuation destination."); }).join("") + "</Folder>";
+    });
+    return h + "</Document></kml>";
+  }
+  function fname(t) { return String(t || "plan").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "plan"; }
+  function saveFile(name, blob) { var u = URL.createObjectURL(blob), a = D.createElement("a"); a.href = u; a.download = name; D.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
+  function exportPkg(id, kmz) {
+    var pk = pkgOf(id); if (!pk) return;
+    var k = toKml(pk), base = "osap-evac-" + fname(pk.name) + "-" + new Date(pk.made).toISOString().slice(0, 10);
+    if (kmz) {
+      if (!(W.OSAP_WS && W.OSAP_WS.zip)) { S.msg = "KMZ needs the Workspaces module, which is not loaded: saved as KML instead."; saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" })); render(); return; }
+      saveFile(base + ".kmz", new Blob([W.OSAP_WS.zip([{ name: "doc.kml", data: k }])], { type: "application/vnd.google-earth.kmz" }));
+    } else saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" }));
+    S.msg = (kmz ? "KMZ" : "KML") + " saved to your downloads."; render();
+  }
+  /* the package as a page to print or save as PDF */
+  function printHtml(pk) {
+    var pl = pk.plan;
+    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}@media print{h2{break-after:avoid}}</style></head><body>" +
+      "<h1>" + E(pk.name) + "</h1><p class=\"n\">Evacuation route package, frozen " + E(dual(pk.made, true)) + ". Automatic draft from open data: roles and statuses are the analyst's; nothing here says a route, crossing or destination is open or safe. Plan SHA-256 <span class=\"m\">" + E(pk.fp) + "</span></p>" +
+      "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>";
+    pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
+      h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + "</p>" +
+        "<h3>Legs</h3><table><tr><th>#</th><th>From</th><th>To</th><th>How</th><th>Distance</th><th>Time</th></tr>" + legsOf(o).map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + E(l.a.name) + "</td><td>" + E(l.b.name) + "</td><td>" + E(flies(l.mode) ? LEG_M.filter(function (m) { return m[0] === l.mode; })[0][1] + " (straight line)" : "Road") + (l.bad ? " UNUSABLE" : "") + "</td><td>" + E(dist(l.m)) + "</td><td>" + E(dur(l.s)) + "</td></tr>"; }).join("") + "</table>";
+      var rows = [];
+      ((o.deps && o.deps.list) || []).forEach(function (d) { rows.push([d.km, DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : ""), (d.status ? d.status.st : "") + (d.detour ? d.detour.none ? "; no way round found" : d.detour.dm != null ? "; detour if lost +" + dist(Math.max(0, d.detour.dm)) : "" : ""), d]); });
+      ((o.along && o.along.haz && o.along.haz.ranges) || []).forEach(function (rg) { rg.items.forEach(function (x) { rows.push([x.at, x.kind, x.text, x]); }); });
+      ((o.along && o.along.sus && o.along.sus.fuel) || []).forEach(function (f) { rows.push([f.km, "Fuel", f.name, f]); });
+      ((o.air && o.air.list) || []).forEach(function (a) { rows.push([a.km, a.cls, a.name, a]); });
+      rows.sort(function (a, b) { return a[0] - b[0]; });
+      if (rows.length) h += "<h3>Findings by km</h3><table><tr><th>km</th><th>What</th><th>Detail</th><th>Source, retrieved, basis, SHA-256</th></tr>" + rows.slice(0, 300).map(function (r) { var f = r[3]; return "<tr><td>" + E(r[0]) + "</td><td>" + E(r[1]) + "</td><td>" + E(r[2]) + '</td><td class="m">' + E(f.srcRef || "") + "<br>" + E(f.got ? new Date(f.got).toISOString().slice(0, 16) + "Z" : "") + " · " + E(f.basis || "") + "<br>" + E(f.fp || "") + "</td></tr>"; }).join("") + "</table>";
+      (o.deps && o.deps.borders || []).forEach(function (b) { h += "<h3>Border crossing: " + E(b.name) + " (km " + E(b.km) + ")</h3><p>Country entered: " + E(b.enteredName || "not identified") + ". Hours: " + E(b.hours || "not published") + ". Advisory: " + E(b.adv ? "Level " + b.adv.level + " " + b.adv.text : "none held") + ". Status: " + E(b.closures.length ? "closure reported: " + b.closures[0].title : "no source, unknown") + ". Other crossing: " + E(b.alt ? b.alt.name + ", " + dist(b.alt.m) : "none held") + ".</p>"; });
+      if (o.along && o.along.sus && o.along.sus.gap) h += "<p>Longest stretch without fuel: <b>" + E(o.along.sus.gap.len) + " km</b> (km " + E(o.along.sus.gap.from) + " to " + E(o.along.sus.gap.to) + ").</p>";
+    });
+    return h + '<p class="n">Sources: OpenStreetMap contributors (ODbL), FOSSGIS OSRM and Valhalla, travel.state.gov, OurAirports, UN/LOCODE, and the reports OSAP holds, each linked above. Confirm everything with the post and on the ground.</p></body></html>';
+  }
+  function printPkg(id) {
+    var pk = pkgOf(id); if (!pk) return;
+    var w = W.open("", "_blank");
+    if (!w) { S.msg = "The print page was blocked by the browser. Allow pop-ups for this site and try again."; render(); return; }
+    w.document.open(); w.document.write(printHtml(pk)); w.document.close();
+    setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 300);
+  }
+
+  /* active mode: the P route only and one card that counts down */
+  function chainKm(o) { return chain(o).map(function (n) { var ol = onLine(o, [n.lat, n.lon]); return { name: n.name || NODE_N[n.type] || "", type: n.type, lat: n.lat, lon: n.lon, km: n.type === "origin" ? 0 : n.type === "dest" ? Math.round(o.route.m / 100) / 10 : Math.round(ol.at / 100) / 10 }; }); }
+  function startActive(id) {
+    var pk = pkgOf(id); if (!pk) return;
+    var P = pk.plan.opts.filter(function (o) { return o.role === "P"; })[0], A2 = pk.plan.opts.filter(function (o) { return o.role === "A"; })[0];
+    S.active = { pkg: id, opt: (P || pk.plan.opts[0]).id, alt: A2 ? A2.id : null, noP: !P, passed: 0, pos: null, gps: false, watch: null, err: "" };
+    render(); draw(); var map = W.__asapMap; if (map && L) { var o = actOpt(); if (o) map.fitBounds(L.latLngBounds(o.route.coords), { animate: false, padding: [30, 30] }); }
+  }
+  function stopActive() { if (S.active && S.active.watch != null && navigator.geolocation) navigator.geolocation.clearWatch(S.active.watch); S.active = null; render(); draw(); }
+  function actPkg() { return S.active && pkgOf(S.active.pkg); }
+  function actOpt() { var pk = actPkg(); return pk && pk.plan.opts.filter(function (o) { return o.id === S.active.opt; })[0]; }
+  function gps(on) {
+    var a = S.active; if (!a) return;
+    if (!on) { if (a.watch != null && navigator.geolocation) navigator.geolocation.clearWatch(a.watch); a.watch = null; a.gps = false; a.pos = null; render(); draw(); return; }
+    if (!navigator.geolocation) { a.err = "This browser cannot give a position."; render(); return; }
+    a.gps = true; a.err = "Waiting for a position…"; render();
+    a.watch = navigator.geolocation.watchPosition(function (p) { if (S.active !== a) return; a.pos = [p.coords.latitude, p.coords.longitude]; a.acc = Math.round(p.coords.accuracy); a.err = ""; render(); draw(); },
+      function (e) { if (S.active !== a) return; a.err = "No position: " + (e.code === 1 ? "permission was refused." : e.message || "unavailable.") + " Counting from the last node ticked."; a.gps = false; render(); }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 });
+  }
+  /* where the people are along the P route: from My location, otherwise the last node ticked as passed */
+  function actWhere(o, ck) {
+    var a = S.active;
+    if (a.pos) { var ol = onLine(o, a.pos); return { km: Math.round(ol.at / 100) / 10, off: Math.round(ol.d), how: "From My location (±" + (a.acc || "?") + " m)" }; }
+    var n = ck[Math.min(a.passed, ck.length - 1)];
+    return { km: n.km, off: 0, how: a.passed ? "From the last node ticked: " + n.name : "From the origin (no node ticked yet, My location off)" };
+  }
+  function activeHtml() {
+    var pk = actPkg(), o = actOpt(); if (!pk || !o) { S.active = null; return ""; }
+    var a = S.active, ck = chainKm(o), w = actWhere(o, ck), at = w.km, tot = Math.round(o.route.m / 100) / 10;
+    var next = ck.filter(function (n, i) { return i > a.passed && n.km > at + 0.05; })[0] || ck[ck.length - 1];
+    var al = o.along, hz = null, fuel = null, air = null;
+    if (al && al.haz) al.haz.ranges.forEach(function (r) { r.items.forEach(function (x) { if (x.at >= at && (!hz || x.at < hz.at)) hz = x; }); });
+    if (al && al.sus) fuel = al.sus.fuel.filter(function (f) { return f.km >= at; })[0];
+    if (o.air) air = o.air.list.filter(function (x) { return x.km >= at && x.cls !== "Seaport" && x.cls !== "Ferry terminal"; })[0];
+    var alt = a.alt && pk.plan.opts.filter(function (x) { return x.id === a.alt; })[0];
+    function row(k, v, sub) { return '<div class="eparow"><span class="epak">' + E(k) + '</span><span class="epav">' + v + "</span>" + (sub ? '<span class="epas">' + sub + "</span>" : "") + "</div>"; }
+    function km(d) { return E(dist(Math.max(0, d) * 1000)); }
+    return '<div class="epebox epeact"><div class="chead"><h2>Active: ' + E((o.role ? o.role + " " : "") + o.dest.i.name) + '</h2><button type="button" class="refresh x" data-ep="actstop">Exit active mode</button></div>' +
+      (a.noP ? '<p class="epebad">No option has the P role in this package: showing ' + E(o.dest.i.name) + ".</p>" : "") +
+      '<p class="obs">' + E(w.how) + (w.off > 1000 ? ' · <span class="epebad">' + E(dist(w.off)) + " off the route</span>" : "") + " · package frozen " + E(dual(pk.made, true)) + (a.err ? " · " + E(a.err) : "") + "</p>" +
+      row("Next node", E(next.name) + " · " + km(next.km - at), E(NODE_N[next.type] || (next.type === "dest" ? "Destination" : "")) + ", km " + E(next.km)) +
+      row("Route status", '<span class="st-' + E(stOf(o).toLowerCase()) + '">' + E(stOf(o)) + "</span>", E(o.st ? "set by you" : "OSAP proposal")) +
+      row("Next hazard", hz ? E(hz.kind) + " · " + km(hz.at - at) : al ? "None reported ahead" : "Not checked", hz ? E(hz.text) : al ? "No report is not a clearance" : "Run Check along the route before making the package") +
+      row("Alternate route", alt ? '<span class="st-' + E(stOf(alt).toLowerCase()) + '">' + E(stOf(alt)) + "</span> · " + E(alt.dest.i.name) : "No A route set", "") +
+      row("Next fuel", fuel ? E(fuel.name) + " · " + km(fuel.km - at) : al && al.sus ? "None mapped ahead" : "Not checked", fuel && fuel.diesel ? "diesel tagged" : "") +
+      row("Next air option", air ? E(air.name) + " · " + km(air.km - at) : o.air ? "None found ahead" : "Not checked", air ? E(air.cls) : "") +
+      row("Destination", E(o.dest.i.name) + " · " + km(tot - at), "km " + E(tot)) +
+      '<div class="epebtns"><label class="epagps"><input type="checkbox" data-ep-gps' + (a.gps ? " checked" : "") + "> Count from My location</label></div>" +
+      '<ol class="epeticks">' + ck.slice(1).map(function (n, i) { var k = i + 1; return '<li><button type="button" data-ep-pass="' + k + '"' + (a.passed >= k ? ' aria-pressed="true"' : "") + ">" + (a.passed >= k ? "Passed" : "Tick passed") + "</button> " + E(n.name) + ' <span class="obs">km ' + E(n.km) + "</span></li>"; }).join("") + "</ol></div>";
+  }
+
   /* the option's line, distance, time and incidents worked out again from its legs */
   function sumUp(o) {
     var legs = legsOf(o), coords = [], m = 0, s = 0;
@@ -973,6 +1143,7 @@
   /* ---------- the window ---------- */
   function render() {
     var el = box(), p = S.plan, o = S.origin;
+    if (S.active) { var ah = activeHtml(); if (ah) { el.innerHTML = ah; return; } }
     var head = '<div class="chead"><h2>Evacuation plan <span class="epecc">' + E(p ? p.ccName : ccName()) + "</span></h2>" +
       '<span class="aitag" tabindex="0" title="Draft worked out by fixed rules from open data on this device. Not AI and not analyst-approved. OSAP proposes; roles and status are yours. Nothing here says a route, embassy, airport or port is open or safe.">Automatic draft</span>' +
       '<button type="button" class="refresh x" data-ep="close">Close</button></div>';
@@ -987,7 +1158,7 @@
       '<label>Incidents from the last <select data-ep-days>' + [7, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
       '<div class="epebtns">' + (S.busy ? '<button type="button" data-ep="stop">Stop</button>' : '<button type="button" class="epego" data-ep="plan"' + (o ? "" : " disabled") + ">" + (p ? "Work out again" : "Work out the options") + "</button>") + "</div>" +
       '<p id="epe-msg" class="obs" role="status">' + E(S.msg) + "</p></section>";
-    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) : "") + keptHtml() +
+    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) : "") + keptHtml() + pkgsHtml() +
       '<p class="obs epefoot">Routes from the free OpenStreetMap routers (FOSSGIS OSRM and Valhalla); embassies and consulates from travel.state.gov, airports from OurAirports and OpenStreetMap, seaports from the UN/LOCODE reference list. ' +
       "The incident weighting counts what OSAP holds near each line; it is not a threat assessment. Confirm every route, destination and status with the post and on the ground. Kept on this device only.</p></div>";
   }
@@ -1187,6 +1358,16 @@
         (n(st.unknown_pct) ? ", " + n(st.unknown_pct) + "% unknown" : "") + ". A terrain estimate from elevation data; buildings and trees are not counted.");
     }, function (err) { done(t.label + " failed: " + clean(err && err.message || String(err), 160) + ". The plan is unchanged."); });
   }
+  function pkgsHtml() {
+    var list = pkgs(), p = S.plan;
+    return '<section class="eposec"><h3>Route packages <span class="obs">frozen copies kept on this device; they open with no connection</span></h3>' +
+      (p ? '<div class="epebtns"><button type="button" data-ep="pkg"' + (S.kbusy ? " disabled" : "") + ">Make a route package of this plan</button></div>" : "") +
+      (list.length ? '<ul class="epekept">' + list.map(function (x) {
+        return "<li><span><b>" + E(x.name) + '</b> <i class="obs">' + E(x.plan.opts.length) + " options, " + E(x.n) + " findings · frozen " + E(dual(x.made, true)) + '</i></span><span class="epepkb">' +
+          '<button type="button" data-ep-act="' + E(x.id) + '">Active mode</button><button type="button" data-ep-print="' + E(x.id) + '">Print</button><button type="button" data-ep-kml="' + E(x.id) + '">KML</button><button type="button" data-ep-kmz="' + E(x.id) + '">KMZ</button>' +
+          '<button type="button" data-ep-pdel="' + E(x.id) + '" aria-label="Delete package ' + E(x.name) + '">×</button></span></li>';
+      }).join("") + "</ul>" : '<p class="obs">None yet.</p>') + "</section>";
+  }
   function keptHtml() {
     var list = all(); if (!list.length) return "";
     return '<section class="eposec"><h3>Kept on this device</h3><ul class="epekept">' + list.map(function (x) {
@@ -1202,6 +1383,14 @@
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
+    else if (k === "pkg") makePkg();
+    else if (k === "actstop") stopActive();
+    else if (b.hasAttribute("data-ep-act")) startActive(b.getAttribute("data-ep-act"));
+    else if (b.hasAttribute("data-ep-print")) printPkg(b.getAttribute("data-ep-print"));
+    else if (b.hasAttribute("data-ep-kml")) exportPkg(b.getAttribute("data-ep-kml"), false);
+    else if (b.hasAttribute("data-ep-kmz")) exportPkg(b.getAttribute("data-ep-kmz"), true);
+    else if (b.hasAttribute("data-ep-pdel")) delPkg(b.getAttribute("data-ep-pdel"));
+    else if (b.hasAttribute("data-ep-pass")) { if (S.active) { var kp = +b.getAttribute("data-ep-pass"); S.active.passed = S.active.passed === kp ? kp - 1 : kp; render(); draw(); } }
     else if (k === "pick") { if (S.picking) { pickEnd(); render(); } else pickStart(); }
     else if (k === "me") myLocation();
     else if (k === "plan") plan();
@@ -1241,6 +1430,7 @@
     else if (t.hasAttribute("data-ep-mode")) { S.mode = t.value; }
     else if (t.hasAttribute("data-ep-ntype")) { S.ntype = t.value; }
     else if (t.hasAttribute("data-ep-lmode")) { var oq = optOf(S.sel); if (oq && !S.lbusy) setLegMode(oq, t.getAttribute("data-ep-lmode"), t.value); }
+    else if (t.hasAttribute("data-ep-gps")) gps(t.checked);
     else if (t.hasAttribute("data-ep-lay")) { setLay(t.getAttribute("data-ep-lay"), t.checked); draw(); }
     else if (t.hasAttribute("data-ep-spd")) setSpeed(t.getAttribute("data-ep-spd"), t.value);
     else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
@@ -1274,6 +1464,17 @@
     layer.clearLayers(); S.dr = null;
     var el = D.getElementById("epe"); if (!el || el.hidden) { layer.remove(); layer = null; return; }
     var p = S.plan, o = S.origin;
+    if (S.active) {
+      var ao = actOpt();
+      if (ao) {
+        L.polyline(ao.route.coords, { color: "#fff", weight: 11, opacity: 0.9, interactive: false }).addTo(layer);
+        L.polyline(ao.route.coords, { color: COL[ao.role || ""], weight: 7, opacity: 1, interactive: false }).addTo(layer);
+        chainKm(ao).forEach(function (n, i) { L.circleMarker([n.lat, n.lon], { radius: 7, color: "#fff", weight: 2, fillColor: i <= S.active.passed ? "#868e96" : "#212529", fillOpacity: 1 }).bindTooltip(E(n.name + " (km " + n.km + ")")).addTo(layer); });
+        if (S.active.pos) L.circleMarker(S.active.pos, { radius: 9, color: "#fff", weight: 3, fillColor: "#1c7ed6", fillOpacity: 1 }).bindTooltip("You (My location)").addTo(layer);
+      }
+      S.dr = { active: layer.getLayers().length };
+      return;
+    }
     if (p) p.opts.slice().sort(function (a, b) { return (a.id === S.sel) - (b.id === S.sel); }).forEach(function (x) {
       var sel = x.id === S.sel, c = COL[x.role || ""];
       if (sel) L.polyline(x.route.coords, { color: "#fff", weight: 10, opacity: 0.9, interactive: false }).addTo(layer);
@@ -1381,6 +1582,10 @@
       ".epedepmk{background:none;border:0}.epedepmk span{display:block;width:18px;height:18px;border-radius:3px;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.5);font:700 10px/15px system-ui,sans-serif;text-align:center}" +
       "#epe .epealong{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe h5{font-size:12px;margin:8px 0 3px}#epe h5 .obs{font-weight:400}#epe .epelay{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;margin:4px 0}" +
       "#epe ol.epehz,#epe ol.epecm{margin:2px 0;padding-left:18px;font-size:12px}#epe ol.epehz ul{margin:2px 0;padding-left:14px}#epe .epecmdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}#epe ul.epeus{margin:2px 0;padding-left:16px;font-size:12px}#epe .epegrade{font-size:12px}" +
+      "#epe .epepkb{display:flex;flex-wrap:wrap;gap:4px}#epe .epepkb button{border:1px solid var(--line,#d5dbe1);background:var(--surface2,var(--surface,#fff));color:var(--ink,#1d2329);border-radius:4px;padding:4px 8px;min-height:32px;cursor:pointer;font-weight:600}" +
+      "#epe .epeact{font-size:15px}#epe .epeact .chead h2{font-size:18px}#epe .eparow{display:grid;grid-template-columns:9em 1fr;gap:2px 10px;padding:8px 0;border-bottom:1px solid var(--line,#d5dbe1)}#epe .epak{color:var(--muted,#56626f);font-size:13px;grid-row:span 2}" +
+      "#epe .epav{font-size:20px;font-weight:700;line-height:1.25}#epe .epas{font-size:13px;color:var(--muted,#56626f)}#epe .epagps{font-size:15px;display:flex;gap:6px;align-items:center}#epe .epagps input{width:22px;height:22px}" +
+      "#epe ol.epeticks{list-style:none;padding:0;margin:6px 0}#epe ol.epeticks li{padding:4px 0}#epe ol.epeticks button{min-height:40px;min-width:110px;border:1px solid var(--line,#d5dbe1);border-radius:4px;background:var(--surface,#fff);color:var(--ink,#1d2329);font-weight:700;cursor:pointer}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);
@@ -1389,6 +1594,6 @@
   W.OSAP_EPE = { open: open, close: close, state: function () { return { plan: S.plan, origin: S.origin, busy: S.busy, msg: S.msg, sel: S.sel, drawn: layer ? layer.getLayers().length : 0, lbusy: S.lbusy, lmsg: S.lmsg, dr: S.dr }; },
     /* tests and other modules: place a node on an option as a map tap would */
     addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); },
-    abusy: function () { return S.abusy || S.pbusy; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
+    abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
     flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); } };
 })();
