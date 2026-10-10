@@ -228,7 +228,11 @@
         if (row.coast && row.coast.cc && row.coast.km != null && row.coast.km / 1.852 <= NEAR_CC_NM) near[row.coast.cc] = Math.min(near[row.coast.cc] || Infinity, row.pt.nm);
         ["ports", "hosp"].forEach(function (k) { var x = row[k]; if (x && x.nm <= NEAR_CC_NM && x.node.cc) near[x.node.cc] = Math.min(near[x.node.cc] || Infinity, row.pt.nm); });
       });
-      var rcc = r[5] ? r[5].centres.filter(function (c) { return near[c.cc] != null; }).sort(function (a, b) { return near[a.cc] - near[b.cc] || (a.kind === "rcc" ? -1 : 1); }) : [];
+      /* a centre counts when its own country is near, or a near country is one its source says it covers */
+      function dn(c) { return [c.cc].concat(c.covers || []).reduce(function (m, x) { return near[x] != null ? Math.min(m, near[x]) : m; }, Infinity); }
+      var rcc = r[5] ? r[5].centres.filter(function (c) { return dn(c) < Infinity; }).sort(function (a, b) { return dn(a) - dn(b) || (a.kind === "rcc" ? -1 : 1); }) : [];
+      /* near countries OSAP holds no sourced contact for */
+      var rccGap = r[5] ? Object.keys(near).filter(function (x) { return !rcc.some(function (c) { return c.cc === x || (c.covers || []).indexOf(x) >= 0; }); }).sort(function (a, b) { return near[a] - near[b]; }) : [];
       segs.forEach(function (sg) {
         var cs = {}; rows.forEach(function (row) { if (row.pt.leg !== sg.i && row.pt.wp !== sg.i + 1) return; ["ports", "hosp"].forEach(function (k) { var x = row[k]; if (x && x.nm <= NEAR_CC_NM) cs[x.node.cc] = 1; }); if (row.coast && row.coast.cc && row.coast.km / 1.852 <= NEAR_CC_NM) cs[row.coast.cc] = 1; });
         sg.leads = Object.keys(cs);
@@ -237,7 +241,7 @@
       var used = {};
       rows.forEach(function (row) { ["ports", "hosp", "osm", "af"].forEach(function (k) { var x = row[k]; if (!x) return; var id = x.node.id; if (!used[id] || used[id].nm > x.nm) used[id] = { node: x.node, nm: x.nm, at: row.pt.nm }; }); });
       var nodes = Object.keys(used).map(function (k) { return used[k]; }).sort(function (a, b) { return a.at - b.at; });
-      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
+      S.res = { at: Date.now(), pts: pts, rows: rows, segs: segs, nodes: nodes, rcc: rcc, rccGap: rccGap, rccDoc: r[5], ccNames: ccNames, osmAt: r[4].at || "", errs: errs.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6),
         counts: { ports: sets.ports.length, hosp: hosp.length, osm: r[4].H.length, af: af.length }, opts: { kn: num("kn"), dep: depMs(), step: num("step"), remH: num("remH"), remP: num("remP"), rwy: num("rwy") } };
       S.busy = false; S.msg = ""; render(); draw(); fit();
     }).catch(function (e) { if (!live()) return; S.busy = false; S.msg = "The assessment failed: " + (e && e.message || e); render(); });
@@ -402,10 +406,10 @@
     /* rescue coordination */
     var doc = res.rccDoc;
     h += "<h3>6. Rescue coordination leads</h3>" + (res.rcc.length ? '<div class="stscroll"><table><thead><tr><th>Authority</th><th>Telephone and email</th><th>Role and source</th></tr></thead><tbody>' + res.rcc.map(function (c) {
-      return "<tr><td><b>" + E(c.name) + "</b><br><span class=\"obs\">" + E(cName(res, c.cc)) + "</span></td><td>" + (c.tel || []).map(function (t) { var d = t.replace(/\s*\(.*\)$/, ""); return /^\+?[\d ]+$/.test(d) ? '<a href="tel:' + E(d.replace(/\s+/g, "")) + '">' + E(t) + "</a>" : E(t); }).join("<br>") +
+      return "<tr><td><b>" + E(c.name) + "</b><br><span class=\"obs\">" + E(cName(res, c.cc)) + "</span></td><td>" + (c.tel ? "" : '<span class="obs">Numbers not read by OSAP: ' + link(c.src, "open the official page") + " for current contacts.</span>") + (c.tel || []).map(function (t) { var d = t.replace(/\s*\(.*\)$/, ""); return /^\+?[\d ]+$/.test(d) ? '<a href="tel:' + E(d.replace(/\s+/g, "")) + '">' + E(t) + "</a>" : E(t); }).join("<br>") +
         (c.email || []).map(function (m) { return '<br><a href="mailto:' + E(m) + '">' + E(m) + "</a>"; }).join("") + (c.vhf ? "<br>VHF " + E(c.vhf) : "") + (c.dsc ? " · DSC " + E(c.dsc) : "") + (c.mmsi ? " · MMSI " + E(c.mmsi) : "") + "</td>" +
         "<td>" + E(c.role) + (c.note ? ' <span class="obs">' + E(c.note) + "</span>" : "") + "<br>" + link(c.src, c.srcname) + (c.src_date ? ' <span class="obs">(' + E(c.src_date) + ")</span>" : "") + "</td></tr>";
-    }).join("") + "</tbody></table></div>" : '<p class="stbad">' + (doc ? "OSAP holds no rescue coordination contacts for the countries near this corridor yet. Get the responsible RCC for each segment from current GMDSS and rescue-region publications." : "The rescue contacts could not be read.") + "</p>") +
+    }).join("") + "</tbody></table></div>" + ((res.rccGap || []).length ? '<p class="stbad">No sourced rescue contact in OSAP yet for: ' + E(res.rccGap.map(function (c) { return cName(res, c); }).join(", ")) + ". Get the responsible RCC from current GMDSS and rescue-region publications.</p>" : "") : '<p class="stbad">' + (doc ? "OSAP holds no rescue coordination contacts for the countries near this corridor yet. Get the responsible RCC for each segment from current GMDSS and rescue-region publications." : "The rescue contacts could not be read.") + "</p>") +
       '<p class="obs">' + E(doc ? doc.via : "") + ". Published institutional contacts, not called or tested by OSAP: revalidate before sailing. Email carries information but should never be the only way to make an urgent request. These are coordination leads, not a map of rescue jurisdiction: the responsible RCC coordinates cross-border support, and responsibility does not change at a nearest-coast line. No validated search and rescue region boundaries are drawn.</p>";
     h += doctrineHtml(print);
     h += "<h3>13. Evidence and limitations</h3><ul>" +

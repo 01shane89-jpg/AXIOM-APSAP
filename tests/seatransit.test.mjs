@@ -44,5 +44,23 @@ ok(S.length === 2 && near(S[0].nm + S[1].nm, pts[pts.length - 1].nm, 0.01), "two
 ok(S[0].remote > 0 && S[0].remoteNm[0] > 100, "the first segment flags its remote stretch");
 ok(S[0].t0 === null && near(S[0].hours, S[0].nm / 10, 1e-9), "no departure time: no clock times, hours still given");
 ok(near(S[1].worstHosp, C.nm([0, 0], [3, 5]), 0.5) && S[1].worstPort > 100, "worst gaps: the far end of each segment from the hospital and the port");
+// the rescue contact directory (data/seamed/rcc.json): sourced, institutional, well formed
+const RCC = JSON.parse(readFileSync(new URL("../data/seamed/rcc.json", import.meta.url), "utf8"));
+const ids = new Set(), bad = [];
+for (const c of RCC.centres) {
+  if (ids.has(c.id)) bad.push("duplicate " + c.id); ids.add(c.id);
+  if (!/^[a-z]{2}$/.test(c.cc)) bad.push(c.id + " cc");
+  if (!/^https:\/\//.test(c.src || "")) bad.push(c.id + " src not https");
+  if (!c.name || !c.role || !c.srcname) bad.push(c.id + " name/role/srcname");
+  if (!["rcc", "rsc", "national", "naval", "comms"].includes(c.kind)) bad.push(c.id + " kind");
+  if (!["pdf", "search"].includes(c.via)) bad.push(c.id + " via");
+  for (const t of c.tel || []) if (!/^\+?[\d ]+( \(.*\))?$/.test(t)) bad.push(c.id + " tel " + t);
+  for (const k of c.covers || []) if (!/^[a-z]{2}$/.test(k)) bad.push(c.id + " covers " + k);
+  if (c.lat != null && !(Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180)) bad.push(c.id + " position");
+}
+ok(!bad.length, `rescue directory: ${RCC.centres.length} centres well formed` + (bad.length ? ": " + bad.slice(0, 5).join("; ") : ""));
+ok(new Set(RCC.centres.map((c) => c.cc)).size >= 80, `rescue directory covers ${new Set(RCC.centres.map((c) => c.cc)).size} countries and territories`);
+ok(RCC.centres.filter((c) => c.via === "search").every((c) => !c.email && !c.mmsi), "web-search entries carry no email or MMSI that OSAP could not read");
+ok(RCC.missing.every((m) => /^[a-z]{2}$/.test(m.cc) && !RCC.centres.some((c) => c.cc === m.cc)), `countries with no sourced contact are listed (${RCC.missing.length}) and none also has an entry`);
 if (fails) { console.log(fails + " failed"); process.exit(1); }
 console.log("all passed");
