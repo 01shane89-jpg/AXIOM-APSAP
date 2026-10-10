@@ -85,12 +85,22 @@ else {
   ok(pr.sign, "the printed page has the master, medical and company sign-off lines");
   await p.click("#std-close");
 }
+// worldwide rescue directory: an Atlantic corridor gets the European centres, each with its official page
+await p.click('#seatr [data-st="clear"]');
+for (const [g, n] of [["50.55, -1.30", "Solent approaches"], ["48.60, -5.60", "Off Ushant"], ["43.90, -9.60", "Off Finisterre"], ["38.60, -9.60", "Off Lisbon"]]) {
+  await p.fill("#st-grid", g); await p.fill("#st-name", n); await p.click('#st-add button[type="submit"]');
+}
+await p.click('#seatr [data-st="run"]');
+await p.waitForFunction(() => { const s = window.OSAP_SEATRANSIT.state(); return !s.busy && (s.res || /failed/.test(document.getElementById("st-msg").textContent)); }, null, { timeout: 90000 });
+const eu = await p.evaluate(() => { const res = window.OSAP_SEATRANSIT.state().res; const t = document.getElementById("seatr").textContent; return res ? { cc: [...new Set(res.rcc.map((c) => c.cc))], links: (t.match(/open the official page/g) || []).length } : null; });
+ok(eu && ["gb", "fr", "es", "pt"].every((c) => eu.cc.includes(c)), "Atlantic corridor: rescue leads for the UK, France, Spain and Portugal" + (eu ? " (" + eu.cc.join(", ") + ")" : ""));
+ok(eu && eu.links > 0, "centres whose numbers OSAP could not read link to their official page");
 await p.click('#seatr [data-st="close"]');
 ok(await p.evaluate(() => document.getElementById("seatr").hidden && !document.querySelector(".stmk")), "Close hides the screen and clears the map");
 // kept on this device
 await p.reload({ waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_SEATRANSIT, null, { timeout: 60000 });
-ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 9), "the corridor is kept on this device after a reload");
+ok(await p.evaluate(() => window.OSAP_SEATRANSIT.state().plan.wps.length === 4), "the corridor is kept on this device after a reload");
 const asked = outside.filter((u) => /osrm|routed-|overpass|interpreter|valhalla|nominatim/.test(u));
 ok(!asked.length, "no road routing, Overpass or geocoder calls: the assessment uses the app's own data" + (asked.length ? ": " + asked.slice(0, 3).join(" ") : ""));
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
