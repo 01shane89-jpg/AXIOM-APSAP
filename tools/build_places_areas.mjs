@@ -42,7 +42,12 @@ function dp(pts, tol) {
   return pts.filter((_, i) => keep[i]);
 }
 const r3 = (x) => Math.round(x * 1000) / 1000;
-const ringOut = (ring) => { const t = dp(ring, TOL).map(([x, y]) => [r3(x), r3(y)]); return t.length >= 4 ? t : null; };
+// a closed ring starts and ends on the same point, which Douglas-Peucker cannot use as its baseline: thin each half
+const thinRing = (ring) => { const m = ring.length >> 1; return ring.length < 8 ? ring : dp(ring.slice(0, m + 1), TOL).concat(dp(ring.slice(m), TOL).slice(1)); };
+const ringOut = (ring) => {
+  const t = thinRing(ring).map(([x, y]) => [r3(x), r3(y)]).filter((c, i, a) => !i || c[0] !== a[i - 1][0] || c[1] !== a[i - 1][1]);
+  return t.length >= 4 ? t : null;
+};
 const simple = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z]/g, "").replace(/^amphoe|^mueang|^muang/, "");
 
 // Pure: districts + boundary features -> output areas and the problems found
@@ -53,7 +58,8 @@ export function match(places, features) {
     const f = features.find((f) => inPolys(pt, polysOf(f.geometry || {})));
     if (!f) { missing.push(p.id + " " + p.name); continue; }
     const src = (f.properties || {}).shapeName || "";
-    const polys = polysOf(f.geometry).map((poly) => poly.map(ringOut).filter(Boolean)).filter((poly) => poly.length);
+    const polys = polysOf(f.geometry).map((poly) => { const r = poly.map(ringOut); return r[0] ? r.filter(Boolean) : []; }).filter((poly) => poly.length);
+    if (!polys.length) { missing.push(p.id + " " + p.name + " (outline thinned away)"); continue; }
     const all = polys.flat(2), lons = all.map((c) => c[0]), lats = all.map((c) => c[1]);
     areas.push({ id: p.id, name: p.name, source_name: src, source_id: (f.properties || {}).shapeID || null,
       bbox: [Math.min(...lats), Math.min(...lons), Math.max(...lats), Math.max(...lons)], polygons: polys });
