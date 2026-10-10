@@ -93,7 +93,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(/zoom in/i.test(await p.textContent("#com-st")) || (await p.evaluate(() => window.__asapMap.getZoom())) >= 9, "asks to zoom in when zoomed out");
   // country zoom: measured coverage shows, and a button on the map zooms in to the towers
   await p.evaluate(() => window.__asapMap.setView([13.5, 101], 6, { animate: false })); await p.waitForTimeout(2500);
-  ok(await p.evaluate(() => [...document.querySelectorAll(".leaflet-comcov-pane canvas")].some((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 4) if (d[i]) return true; return false; })), "country zoom: measured coverage is drawn");
+  ok(await p.evaluate(() => [...document.querySelectorAll(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas")].some((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 4) if (d[i]) return true; return false; })), "country zoom: measured coverage is drawn");
   ok(await p.evaluate(() => { const b = document.querySelector(".comzoom"); return !!b && !b.hidden && b.getBoundingClientRect().height >= 32; }), "country zoom: a 'Zoom in to see towers' button is on the map");
   await p.click(".comzoom"); await p.waitForTimeout(1500);
   ok(await p.evaluate(() => window.__asapMap.getZoom() === 10 && document.querySelector(".comzoom").hidden), "the button zooms in to tower level and hides");
@@ -112,7 +112,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   ok(/cell\(2 in view\)/.test(counts) && /bcast\(1 in view\)/.test(counts) && /comm\(1 in view\)/.test(counts), "counts by kind: " + counts);
   const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((i) => i.getAttribute("data-comprov") + ":" + i.checked));
   ok(provs.join() === "ais:true,true:true,?:true", "providers in view listed with switches, unmapped last: " + provs);
-  ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
+  ok(s.cov > 0 && await p.evaluate(() => document.querySelectorAll(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas").length > 0), "measured coverage drawn from data/comms/cov (" + s.cov + " cells)");
   const before = overpassCalls;
   await p.evaluate(() => window.__asapMap.panBy([30, 20], { animate: false })); await p.waitForTimeout(1200);
   ok(overpassCalls === before, "a small pan inside loaded boxes asks Overpass nothing new");
@@ -211,7 +211,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   await p.uncheck('[data-comtg="cell"]'); await p.waitForTimeout(200);
   ok(!(await st(p)).on.cell && await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms")).cell === false), "switching phone masts off is remembered");
   await p.uncheck('[data-comtg="cov"]'); await p.waitForTimeout(300);
-  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane canvas")), "measured coverage switches off");
+  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas")), "measured coverage switches off");
   await p.check('[data-comtg="cell"]'); await p.check('[data-comtg="cov"]');
 
   // a wide view at zoom 9 loads the middle in blocks of at most one degree and says so
@@ -222,7 +222,7 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
 
   // leaving the tab clears its layers
   await view(p, "news"); await p.waitForTimeout(800);
-  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane canvas") && !document.querySelector(".leaflet-comchk-pane .comv")), "leaving the tab clears its map layers");
+  ok(await p.evaluate(() => !document.querySelector(".leaflet-comcov-pane .leaflet-layer:not(.compcov) canvas") && !document.querySelector(".leaflet-comchk-pane .comv")), "leaving the tab clears its map layers");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
@@ -262,6 +262,26 @@ const st = (p) => p.evaluate(() => window.OSAP_COMMSTAB.state());
   const provs = await p.evaluate(() => [...document.querySelectorAll("#com-ops [data-comprov]")].map((e) => e.getAttribute("data-comprov") + ":" + e.parentNode.querySelector(".comsw").style.background));
   await p.click('[data-cptab="networks"]');
   ok(provs.length === 3 && provs[0].startsWith("ais:") && provs[1].startsWith("true:") && provs[2].startsWith("?:") && new Set(provs.map((x) => x.split(":").slice(1).join(":"))).size === 3, "country zoom: providers listed with their own colours: " + provs.join(" | "));
+  // coverage by network: each network's modelled area in its own colour, following the provider switches
+  const pcolOf = async (k) => (await st(p)).pcol[k];
+  const painted = (hex) => p.evaluate((hex) => {
+    const t = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)); let n = 0;
+    document.querySelectorAll(".compcov canvas").forEach((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 40 && Math.abs(d[i] - t[0]) < 12 && Math.abs(d[i + 1] - t[1]) < 12 && Math.abs(d[i + 2] - t[2]) < 12) n++; });
+    return n; }, hex);
+  const aisCol = await pcolOf("ais"), trueCol = await pcolOf("true");
+  ok((await st(p)).pcov && await p.isChecked('[data-comtg="pcov"]'), "coverage by network is on the map and its switch is ticked");
+  let pa = await painted(aisCol), pt = await painted(trueCol);
+  ok(pa > 0 && pt > 0, "coverage by network: AIS and True each paint their own colour (" + pa + ", " + pt + " px)");
+  ok(/modelled/i.test(await p.textContent("#com-tg")) && /modelled, not measured/.test(await p.textContent("#com-ops")), "the panel says the coloured areas are modelled, not measured");
+  await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(600);
+  ok(await painted(aisCol) === 0 && await painted(trueCol) > 0, "AIS off: its coloured area goes, True's stays");
+  await p.check('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(600);
+  ok(await painted(aisCol) > 0, "AIS back on: its area returns");
+  await p.uncheck('[data-comtg="pcov"]'); await p.waitForTimeout(300);
+  ok(!(await st(p)).pcov && await p.evaluate(() => JSON.parse(localStorage.getItem("osap-comms")).pcov === false), "coverage by network switches off and that is remembered");
+  await p.check('[data-comtg="pcov"]'); await p.waitForTimeout(300);
+  ok((await st(p)).pcov, "coverage by network switches back on");
   await p.uncheck('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);
   ok((await st(p)).drawn === 4, "country zoom: AIS off leaves its own masts out, shared AIS;True stays (" + (await st(p)).drawn + ")");
   await p.check('#com-ops [data-comprov="ais"]'); await p.waitForTimeout(300);

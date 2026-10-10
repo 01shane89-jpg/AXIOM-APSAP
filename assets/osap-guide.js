@@ -195,7 +195,7 @@
         b("Plan") + ": build a PACE plan by phase, with method, device, net, expected coverage, failure trigger and what to do next. Print it or copy it as text.",
         b("Coverage") + ": " + b("Will I have phone signal?") + " at a place, along a line or along your planned route. Answers are Likely, Possible, No sign of coverage or Unknown.",
         b("Link") + ": a radio link budget with free-space loss, margin, radio horizon and Fresnel zone, the terrain between two points, and " + b("Radio coverage from a point") + ": where a radio there could be heard over the ground (green likely, orange marginal). Long-press the map, " + b("Terrain") + ", " + b("Radio coverage from here") + " does the same for that spot.",
-        b("Networks") + ": reported internet outages and the masts and providers on the map.",
+        b("Networks") + ": reported internet outages, the masts on the map and a switch for each phone network. Each network has its own colour for its masts and its modelled coverage area; tick or untick a network to show or hide it.",
         b("Equipment") + ": power and batteries, loadout, cable, antenna lengths, connectors, channel plan and COMSEC records (status only, never key material).",
         b("Status") + ": a board for each PACE level, the check log, message traffic, interference reports and a troubleshooting walk-through."]) +
       tip("Coverage is modelled from measured tests and mast line of sight. Unknown is never shown as no. OSAP does not test any network.") },
