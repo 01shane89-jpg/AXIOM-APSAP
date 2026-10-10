@@ -1,0 +1,43 @@
+name: Refresh airfield weather (METAR/TAF)
+
+# Airfield weather reports for the Weather view (tools/refresh_avwx.mjs): every METAR and TAF in the Aviation Weather Center's
+# worldwide data cache (keyless, public domain), filed into one small JSON file per 10° map cell on the live-avwx branch (one
+# commit, replaced each time, so the branch never grows). The page reads the cell around the weather place from
+# raw.githubusercontent.com, because aviationweather.gov sends no CORS headers. Nothing is committed to main, so this does not
+# rebuild Pages. METARs are issued hourly or half-hourly and TAFs every six hours, so a run every 20 minutes keeps them current.
+on:
+  schedule:
+    - cron: "7,27,47 * * * *"
+  workflow_dispatch:
+  push:
+    # test runs from the feature branch publish to live-avwx-test, never to the page's live-avwx
+    branches: ["claude/wx-metar-taf"]
+    paths: [tools/refresh_avwx.mjs, .github/workflows/refresh-avwx.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-avwx-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  avwx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Fetch and publish
+        env:
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'live-avwx' || 'live-avwx-test' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/refresh_avwx.mjs /tmp/avwx
+          ls /tmp/avwx/c | wc -l; head -c 600 /tmp/avwx/index.json; echo
+          git worktree add -q --detach /tmp/avwt
+          cd /tmp/avwt && git checkout -q --orphan avwx && git rm -rfq . && cp -r /tmp/avwx/. . && git add -A &&
+            git commit -qm "Airfield weather $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET"
