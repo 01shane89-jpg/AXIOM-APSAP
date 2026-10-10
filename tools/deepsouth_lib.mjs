@@ -30,12 +30,18 @@ const KINDS = [
   ["statistics", /\b(?:statistic\w*|incidents? (?:this|last) (?:year|month)|since 2004|year-to-date|\d[\d,]* incidents)\b|สถิติ/i],
 ];
 export function classify(text) { for (const [k, re] of KINDS) if (re.test(text)) return k; return "other"; }
+// the kind and the words that decided it (for claim evidence); null when nothing matched
+export function kindWords(text) { for (const [k, re] of KINDS) { const m = String(text || "").match(re); if (m) return { kind: k, words: m[0].trim() }; } return null; }
 const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12 };
 // Casualty figures only when the headline states them plainly (under 100, so a long-run toll is never read as one incident's)
 export function figure(text, re) {
   const m = text.match(re); if (!m) return null;
   const n = NUM[m[1].toLowerCase()] || +m[1];
   return Number.isInteger(n) && n > 0 && n < 100 ? n : null;
+}
+// the same figure with the words that state it
+export function figureWords(text, re) {
+  const n = figure(String(text || ""), re); return n == null ? null : { n, words: String(text).match(re)[0] };
 }
 export const KILLED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:killed|dead|die[ds]?|slain)\b/i;
 export const INJURED = /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?:\s+\w+){0,3}?\s+(?:injured|wounded|hurt)\b/i;
